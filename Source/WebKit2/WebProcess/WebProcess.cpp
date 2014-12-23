@@ -27,6 +27,8 @@
 #include "WebProcess.h"
 
 #include "APIFrameHandle.h"
+#include "APIPageGroupHandle.h"
+#include "APIPageHandle.h"
 #include "AuthenticationManager.h"
 #include "CustomProtocolManager.h"
 #include "DrawingArea.h"
@@ -52,7 +54,7 @@
 #include "WebMemorySampler.h"
 #include "WebOriginDataManager.h"
 #include "WebPage.h"
-#include "WebPageCreationParameters.h"
+#include "WebPageGroup.h"
 #include "WebPageGroupProxyMessages.h"
 #include "WebPlatformStrategies.h"
 #include "WebProcessCreationParameters.h"
@@ -1233,6 +1235,18 @@ RefPtr<API::Object> WebProcess::apiObjectByConvertingFromHandles(API::Object* ob
             auto& frameHandle = static_cast<const API::FrameHandle&>(object);
 
             return webFrame(frameHandle.frameID());
+        }
+
+        case API::Object::Type::PageGroupHandle: {
+            auto& pageGroupHandle = static_cast<const API::PageGroupHandle&>(object);
+
+            return webPageGroup(pageGroupHandle.webPageGroupData());
+        }
+
+        case API::Object::Type::PageHandle: {
+            auto& pageHandle = static_cast<const API::PageHandle&>(object);
+
+            return webPage(pageHandle.pageID());
         }
 
         default:

@@ -1,5 +1,17 @@
 2014-12-22  Anders Carlsson  <andersca@apple.com>
 
+        Convert pages and page groups to their respective handle objects
+        https://bugs.webkit.org/show_bug.cgi?id=139891
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::apiObjectByConvertingToHandles):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::apiObjectByConvertingFromHandles):
+
+2014-12-22  Anders Carlsson  <andersca@apple.com>
+
         Add a bunch of missing header includes in preparation for making toImpl require the complete type
         https://bugs.webkit.org/show_bug.cgi?id=139887
 

@@ -28,6 +28,7 @@
 
 #include "APIFrameHandle.h"
 #include "APIPageGroupHandle.h"
+#include "APIPageHandle.h"
 #include "CustomProtocolManagerProxyMessages.h"
 #include "DataReference.h"
 #include "DownloadProxyMap.h"
@@ -656,6 +657,11 @@ RefPtr<API::Object> WebProcessProxy::apiObjectByConvertingToHandles(API::Object*
         case API::Object::Type::Frame: {
             auto& frame = static_cast<const WebFrameProxy&>(object);
             return API::FrameHandle::create(frame.frameID());
+        }
+
+        case API::Object::Type::Page: {
+            auto& page = static_cast<const WebPageProxy&>(object);
+            return API::PageHandle::create(page.pageID());
         }
 
         case API::Object::Type::PageGroup: {
