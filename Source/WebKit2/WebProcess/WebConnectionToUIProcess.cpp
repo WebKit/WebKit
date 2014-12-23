@@ -52,6 +52,16 @@ void WebConnectionToUIProcess::invalidate()
 
 // WebConnection
 
+RefPtr<API::Object> WebConnectionToUIProcess::transformHandlesToObjects(API::Object* object)
+{
+    return m_process->transformHandlesToObjects(object);
+}
+
+RefPtr<API::Object> WebConnectionToUIProcess::transformObjectsToHandles(API::Object* object)
+{
+    return m_process->transformObjectsToHandles(object);
+}
+
 void WebConnectionToUIProcess::encodeMessageBody(IPC::ArgumentEncoder& encoder, API::Object* messageBody)
 {
     encoder << InjectedBundleUserMessageEncoder(messageBody);

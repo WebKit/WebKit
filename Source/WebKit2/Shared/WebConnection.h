@@ -45,6 +45,8 @@ public:
 protected:
     explicit WebConnection();
 
+    virtual RefPtr<API::Object> transformHandlesToObjects(API::Object*) = 0;
+    virtual RefPtr<API::Object> transformObjectsToHandles(API::Object*) = 0;
     virtual void encodeMessageBody(IPC::ArgumentEncoder&, API::Object*) = 0;
     virtual bool decodeMessageBody(IPC::ArgumentDecoder&, RefPtr<API::Object>&) = 0;
 

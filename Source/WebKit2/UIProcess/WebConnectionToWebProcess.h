@@ -44,6 +44,8 @@ private:
     WebConnectionToWebProcess(WebProcessProxy*);
 
     // WebConnection
+    virtual RefPtr<API::Object> transformHandlesToObjects(API::Object*) override;
+    virtual RefPtr<API::Object> transformObjectsToHandles(API::Object*) override;
     virtual void encodeMessageBody(IPC::ArgumentEncoder&, API::Object*) override;
     virtual bool decodeMessageBody(IPC::ArgumentDecoder&, RefPtr<API::Object>&) override;
     virtual bool hasValidConnection() const override;
