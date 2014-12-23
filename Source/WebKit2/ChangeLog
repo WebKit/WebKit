@@ -1,3 +1,20 @@
+2014-12-23  Anders Carlsson  <andersca@apple.com>
+
+        Only call shouldTransformGraph once per graph
+        https://bugs.webkit.org/show_bug.cgi?id=139910
+
+        Reviewed by Sam Weinig.
+
+        Don't call shouldTransformGraph for each node in the object graph. Instead, call it once
+        and then transform the entire graph if needed.
+
+        * Shared/mac/ObjCObjectGraph.h:
+        * Shared/mac/ObjCObjectGraph.mm:
+        (WebKit::shouldTransformGraph):
+        (WebKit::transformGraph):
+        (WebKit::ObjCObjectGraph::transform):
+        (WebKit::shouldTransform): Deleted.
+
 2014-12-22  Anders Carlsson  <andersca@apple.com>
 
         Use a Transformer for UserData as well, to avoid always copying arrays and dictionaries

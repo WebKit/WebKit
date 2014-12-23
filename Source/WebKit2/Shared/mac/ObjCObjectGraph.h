@@ -42,7 +42,7 @@ public:
 
     struct Transformer {
         virtual ~Transformer() { }
-        virtual bool shouldTransformObjectOfType(Class) const = 0;
+        virtual bool shouldTransformObject(id) const = 0;
         virtual RetainPtr<id> transformObject(id) const = 0;
     };
     static RetainPtr<id> transform(id, const Transformer&);
