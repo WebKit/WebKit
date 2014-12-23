@@ -25,3 +25,67 @@
 
 #include "config.h"
 #include "ObjCObjectGraph.h"
+
+namespace WebKit {
+
+template<typename T> T* dynamic_objc_cast(id object)
+{
+    if ([object isKindOfClass:[T class]])
+        return (T *)object;
+
+    return nil;
+}
+
+static bool shouldTransform(id object, const ObjCObjectGraph::Transformer& transformer)
+{
+    if (NSArray *array = dynamic_objc_cast<NSArray>(object)) {
+        for (id element in array) {
+            if (shouldTransform(element, transformer))
+                return true;
+        }
+    }
+
+    if (NSDictionary *dictionary = dynamic_objc_cast<NSDictionary>(object)) {
+        bool result = false;
+        [dictionary enumerateKeysAndObjectsUsingBlock:[&transformer, &result](id key, id object, BOOL* stop) {
+            if (shouldTransform(object, transformer)) {
+                result = true;
+                *stop = YES;
+            }
+        }];
+
+        return result;
+    }
+
+    return transformer.shouldTransformObjectOfType([object class]);
+}
+
+RetainPtr<id> ObjCObjectGraph::transform(id object, const Transformer& transformer)
+{
+    if (!object)
+        return nullptr;
+
+    if (!shouldTransform(object, transformer))
+        return object;
+
+    if (NSArray *array = dynamic_objc_cast<NSArray>(object)) {
+        auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:array.count]);
+        for (id element in array)
+            [result addObject:transform(element, transformer).get()];
+
+        return result;
+    }
+
+    if (NSDictionary *dictionary = dynamic_objc_cast<NSDictionary>(object)) {
+        auto result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:dictionary.count]);
+        [dictionary enumerateKeysAndObjectsUsingBlock:[&result, &transformer](id key, id object, BOOL*) {
+            [result setObject:transformer.transformObject(object).get() forKey:key];
+        }];
+
+        return result;
+    }
+
+    return transformer.transformObject(object);
+}
+
+}

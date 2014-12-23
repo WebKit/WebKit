@@ -40,6 +40,13 @@ public:
 
     id rootObject() const { return m_rootObject.get(); }
 
+    struct Transformer {
+        virtual ~Transformer() { }
+        virtual bool shouldTransformObjectOfType(Class) const = 0;
+        virtual RetainPtr<id> transformObject(id) const = 0;
+    };
+    static RetainPtr<id> transform(id, const Transformer&);
+
 private:
     explicit ObjCObjectGraph(id rootObject)
         : m_rootObject(rootObject)
