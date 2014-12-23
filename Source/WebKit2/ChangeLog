@@ -1,5 +1,20 @@
 2014-12-23  Anders Carlsson  <andersca@apple.com>
 
+        Add WebProcessProxy::transformHandlesToObjects
+        https://bugs.webkit.org/show_bug.cgi?id=139922
+
+        Reviewed by Tim Horton.
+
+        This will be used to convert between the handles and their respective UI side objects.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::transformHandlesToObjects):
+        (WebKit::WebProcessProxy::transformObjectsToHandles):
+        (WebKit::WebProcessProxy::apiObjectByConvertingToHandles): Deleted.
+        * UIProcess/WebProcessProxy.h:
+
+2014-12-23  Anders Carlsson  <andersca@apple.com>
+
         Add handle transform functions to WebConnection
         https://bugs.webkit.org/show_bug.cgi?id=139920
 

@@ -650,9 +650,53 @@ void WebProcessProxy::disableSuddenTermination()
     ++m_numberOfTimesSuddenTerminationWasDisabled;
 }
 
-RefPtr<API::Object> WebProcessProxy::apiObjectByConvertingToHandles(API::Object* object)
+RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* object)
 {
-    struct Transformer : UserData::Transformer {
+    struct Transformer final : UserData::Transformer {
+        Transformer(WebProcessProxy& webProcessProxy)
+            : m_webProcessProxy(webProcessProxy)
+        {
+        }
+
+        virtual bool shouldTransformObjectOfType(API::Object::Type type) const
+        {
+            switch (type) {
+            case API::Object::Type::FrameHandle:
+            case API::Object::Type::PageHandle:
+            case API::Object::Type::PageGroupHandle:
+                return true;
+
+            default:
+                return false;
+            }
+        }
+
+        virtual RefPtr<API::Object> transformObject(API::Object& object) const override
+        {
+            switch (object.type()) {
+            case API::Object::Type::FrameHandle:
+                return m_webProcessProxy.webFrame(static_cast<API::FrameHandle&>(object).frameID());
+
+            case API::Object::Type::PageGroupHandle:
+                return WebPageGroup::get(static_cast<API::PageGroupHandle&>(object).webPageGroupData().pageGroupID);
+
+            case API::Object::Type::PageHandle:
+                return m_webProcessProxy.webPage(static_cast<API::PageHandle&>(object).pageID());
+
+            default:
+                return &object;
+            }
+        }
+
+        WebProcessProxy& m_webProcessProxy;
+    };
+
+    return UserData::transform(object, Transformer(*this));
+}
+
+RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* object)
+{
+    struct Transformer final : UserData::Transformer {
         virtual bool shouldTransformObjectOfType(API::Object::Type type) const
         {
             switch (type) {
@@ -669,20 +713,14 @@ RefPtr<API::Object> WebProcessProxy::apiObjectByConvertingToHandles(API::Object*
         virtual RefPtr<API::Object> transformObject(API::Object& object) const override
         {
             switch (object.type()) {
-            case API::Object::Type::Frame: {
-                auto& frame = static_cast<const WebFrameProxy&>(object);
-                return API::FrameHandle::create(frame.frameID());
-            }
+            case API::Object::Type::Frame:
+                return API::FrameHandle::create(static_cast<const WebFrameProxy&>(object).frameID());
 
-            case API::Object::Type::Page: {
-                auto& page = static_cast<const WebPageProxy&>(object);
-                return API::PageHandle::create(page.pageID());
-            }
+            case API::Object::Type::Page:
+                return API::PageHandle::create(static_cast<const WebPageProxy&>(object).pageID());
 
-            case API::Object::Type::PageGroup: {
-                auto& pageGroup = static_cast<const WebPageGroup&>(object);
-                return API::PageGroupHandle::create(WebPageGroupData(pageGroup.data()));
-            }
+            case API::Object::Type::PageGroup:
+                return API::PageGroupHandle::create(WebPageGroupData(static_cast<const WebPageGroup&>(object).data()));
 
             default:
                 return &object;

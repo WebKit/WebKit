@@ -126,7 +126,8 @@ public:
 
     void requestTermination();
 
-    RefPtr<API::Object> apiObjectByConvertingToHandles(API::Object*);
+    RefPtr<API::Object> transformHandlesToObjects(API::Object*);
+    RefPtr<API::Object> transformObjectsToHandles(API::Object*);
 
     void windowServerConnectionStateChanged();
 
