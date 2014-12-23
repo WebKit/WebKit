@@ -1227,7 +1227,7 @@ void WebProcess::nonVisibleProcessCleanupTimerFired()
 #endif
 }
 
-RefPtr<API::Object> WebProcess::apiObjectByConvertingFromHandles(API::Object* object)
+RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
 {
     struct Transformer : UserData::Transformer {
         virtual bool shouldTransformObjectOfType(API::Object::Type type) const
@@ -1236,6 +1236,9 @@ RefPtr<API::Object> WebProcess::apiObjectByConvertingFromHandles(API::Object* ob
             case API::Object::Type::FrameHandle:
             case API::Object::Type::PageHandle:
             case API::Object::Type::PageGroupHandle:
+#if PLATFORM(COCOA)
+            case API::Object::Type::ObjCObjectGraph:
+#endif
                 return true;
 
             default:

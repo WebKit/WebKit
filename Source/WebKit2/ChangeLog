@@ -1,5 +1,23 @@
 2014-12-23  Anders Carlsson  <andersca@apple.com>
 
+        Add WebProcess::objectGraphByTransformingObjectsToHandles
+        https://bugs.webkit.org/show_bug.cgi?id=139912
+
+        Reviewed by Tim Horton.
+
+        This will be used to convert Objective-C object graphs containing bundle types to their handle counterparts.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::transformHandlesToObjects):
+        (WebKit::WebProcess::apiObjectByConvertingFromHandles): Deleted.
+        Rename apiObjectByConvertingFromHandles to transformHandlesToObjects.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::objectGraphByTransformingObjectsToHandles):
+
+2014-12-23  Anders Carlsson  <andersca@apple.com>
+
         Fix UserMessage::transform to only call shouldTransform once
         https://bugs.webkit.org/show_bug.cgi?id=139911
 

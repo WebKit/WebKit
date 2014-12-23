@@ -187,7 +187,7 @@ public:
     void resetAllGeolocationPermissions();
 #endif
 
-    RefPtr<API::Object> apiObjectByConvertingFromHandles(API::Object*);
+    RefPtr<API::Object> transformHandlesToObjects(API::Object*);
 
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices() const { return m_hasImageServices; }
@@ -273,6 +273,10 @@ private:
 
 #if USE(APPKIT)
     virtual void stopRunLoop() override;
+#endif
+
+#if PLATFORM(COCOA)
+    RefPtr<ObjCObjectGraph> objectGraphByTransformingObjectsToHandles(ObjCObjectGraph&);
 #endif
 
     void platformInitializeProcess(const ChildProcessInitializationParameters&);

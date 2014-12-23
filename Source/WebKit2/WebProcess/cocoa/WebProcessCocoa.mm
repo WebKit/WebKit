@@ -27,10 +27,12 @@
 #import "WebProcess.h"
 
 #import "CustomProtocolManager.h"
+#import "ObjCObjectGraph.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
 #import "WKFullKeyboardAccessWatcher.h"
+#import "WKWebProcessPlugInBrowserContextControllerPrivate.h"
 #import "WebFrame.h"
 #import "WebInspector.h"
 #import "WebPage.h"
@@ -288,6 +290,29 @@ void WebProcess::updateActivePages()
     }
     WKSetApplicationInformationItem(CFSTR("LSActivePageUserVisibleOriginsKey"), activePageURLs.get());
 #endif
+}
+
+RefPtr<ObjCObjectGraph> WebProcess::objectGraphByTransformingObjectsToHandles(ObjCObjectGraph& objectGraph)
+{
+    struct Transformer final : ObjCObjectGraph::Transformer {
+        virtual bool shouldTransformObject(id object) const override
+        {
+            if ([object isKindOfClass:[WKWebProcessPlugInBrowserContextController class]])
+                return true;
+
+            return false;
+        }
+
+        virtual RetainPtr<id> transformObject(id object) const
+        {
+            if ([object isKindOfClass:[WKWebProcessPlugInBrowserContextController class]])
+                return ((WKWebProcessPlugInBrowserContextController *)object).handle;
+
+            return object;
+        }
+    };
+
+    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer()).get());
 }
 
 } // namespace WebKit
