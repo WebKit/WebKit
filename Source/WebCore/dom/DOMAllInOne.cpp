@@ -122,6 +122,7 @@
 #include "ScriptRunner.cpp"
 #include "ScriptableDocumentParser.cpp"
 #include "SecurityContext.cpp"
+#include "SecurityOriginPolicy.cpp"
 #include "SelectorQuery.cpp"
 #include "ShadowRoot.cpp"
 #include "SpaceSplitString.cpp"
