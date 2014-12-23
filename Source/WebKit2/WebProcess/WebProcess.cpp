@@ -1229,7 +1229,12 @@ void WebProcess::nonVisibleProcessCleanupTimerFired()
 
 RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
 {
-    struct Transformer : UserData::Transformer {
+    struct Transformer final : UserData::Transformer {
+        Transformer(WebProcess& webProcess)
+            : m_webProcess(webProcess)
+        {
+        }
+
         virtual bool shouldTransformObjectOfType(API::Object::Type type) const
         {
             switch (type) {
@@ -1249,32 +1254,84 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
         virtual RefPtr<API::Object> transformObject(API::Object& object) const override
         {
             switch (object.type()) {
-            case API::Object::Type::FrameHandle: {
-                auto& frameHandle = static_cast<const API::FrameHandle&>(object);
+            case API::Object::Type::FrameHandle:
+                return m_webProcess.webFrame(static_cast<const API::FrameHandle&>(object).frameID());
 
-                return WebProcess::shared().webFrame(frameHandle.frameID());
+            case API::Object::Type::PageGroupHandle:
+                return m_webProcess.webPageGroup(static_cast<const API::PageGroupHandle&>(object).webPageGroupData());
+
+            case API::Object::Type::PageHandle:
+                return m_webProcess.webPage(static_cast<const API::PageHandle&>(object).pageID());
+
+#if PLATFORM(COCOA)
+            case API::Object::Type::ObjCObjectGraph:
+                return m_webProcess.transformHandlesToObjects(static_cast<ObjCObjectGraph&>(object));
+#endif
+            default:
+                return &object;
+            }
+        }
+
+        WebProcess& m_webProcess;
+    };
+
+    return UserData::transform(object, Transformer(*this));
+}
+
+RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
+{
+    struct Transformer final : UserData::Transformer {
+        Transformer(WebProcess& webProcess)
+            : m_webProcess(webProcess)
+        {
+        }
+
+        virtual bool shouldTransformObjectOfType(API::Object::Type type) const override
+        {
+            switch (type) {
+            case API::Object::Type::BundleFrame:
+            case API::Object::Type::BundlePage:
+            case API::Object::Type::BundlePageGroup:
+#if PLATFORM(COCOA)
+            case API::Object::Type::ObjCObjectGraph:
+#endif
+                return true;
+
+            default:
+                return false;
+            }
+        }
+
+        virtual RefPtr<API::Object> transformObject(API::Object& object) const override
+        {
+            switch (object.type()) {
+            case API::Object::Type::BundleFrame:
+                return API::FrameHandle::create(static_cast<const WebFrame&>(object).frameID());
+
+            case API::Object::Type::BundlePage:
+                return API::PageHandle::create(static_cast<const WebPage&>(object).pageID());
+
+            case API::Object::Type::BundlePageGroup: {
+                WebPageGroupData pageGroupData;
+                pageGroupData.pageGroupID = static_cast<const WebPageGroupProxy&>(object).pageGroupID();
+
+                return API::PageGroupHandle::create(WTF::move(pageGroupData));
             }
 
-            case API::Object::Type::PageGroupHandle: {
-                auto& pageGroupHandle = static_cast<const API::PageGroupHandle&>(object);
-
-                return WebProcess::shared().webPageGroup(pageGroupHandle.webPageGroupData());
-            }
-
-            case API::Object::Type::PageHandle: {
-                auto& pageHandle = static_cast<const API::PageHandle&>(object);
-
-                return WebProcess::shared().webPage(pageHandle.pageID());
-            }
+#if PLATFORM(COCOA)
+            case API::Object::Type::ObjCObjectGraph:
+                return m_webProcess.transformObjectsToHandles(static_cast<ObjCObjectGraph&>(object));
+#endif
 
             default:
                 return &object;
             }
         }
-    } transformer;
 
-    return UserData::transform(object, transformer);
+        WebProcess& m_webProcess;
+    };
 
+    return UserData::transform(object, Transformer(*this));
 }
 
 void WebProcess::setMemoryCacheDisabled(bool disabled)

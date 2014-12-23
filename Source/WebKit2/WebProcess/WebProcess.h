@@ -188,6 +188,7 @@ public:
 #endif
 
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
+    RefPtr<API::Object> transformObjectsToHandles(API::Object*);
 
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices() const { return m_hasImageServices; }

@@ -1,5 +1,23 @@
 2014-12-23  Anders Carlsson  <andersca@apple.com>
 
+        Add WebProcess::transformObjectsToHandles
+        https://bugs.webkit.org/show_bug.cgi?id=139918
+
+        Reviewed by Tim Horton.
+
+        This function will be used for transforming bundle objects to their respective handle types
+        when sending messages to the UI process.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::transformHandlesToObjects):
+        (WebKit::WebProcess::transformObjectsToHandles):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::transformHandlesToObjects):
+        (WebKit::WebProcess::transformObjectsToHandles):
+
+2014-12-23  Anders Carlsson  <andersca@apple.com>
+
         Move dynamic_objc_cast to RetainPtr.h
         https://bugs.webkit.org/show_bug.cgi?id=139915
 

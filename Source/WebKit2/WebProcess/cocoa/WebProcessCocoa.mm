@@ -303,7 +303,7 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
 
         virtual bool shouldTransformObject(id object) const override
         {
-            if ([object isKindOfClass:[WKBrowsingContextHandle class]])
+            if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
                 return true;
 
             return false;
@@ -311,8 +311,8 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
 
         virtual RetainPtr<id> transformObject(id object) const
         {
-            if ([object isKindOfClass:[WKBrowsingContextHandle class]]) {
-                if (auto* webPage = m_webProcess.webPage(((WKBrowsingContextHandle *)object)._pageID))
+            if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
+                if (auto* webPage = m_webProcess.webPage(handle._pageID))
                     return wrapper(*webPage);
 
                 return [NSNull null];
@@ -332,7 +332,7 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
     struct Transformer final : ObjCObjectGraph::Transformer {
         virtual bool shouldTransformObject(id object) const override
         {
-            if ([object isKindOfClass:[WKWebProcessPlugInBrowserContextController class]])
+            if (dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
                 return true;
 
             return false;
@@ -340,8 +340,8 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
 
         virtual RetainPtr<id> transformObject(id object) const
         {
-            if ([object isKindOfClass:[WKWebProcessPlugInBrowserContextController class]])
-                return ((WKWebProcessPlugInBrowserContextController *)object).handle;
+            if (auto* controller = dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
+                return controller.handle;
 
             return object;
         }
