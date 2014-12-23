@@ -276,7 +276,8 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    RefPtr<ObjCObjectGraph> objectGraphByTransformingObjectsToHandles(ObjCObjectGraph&);
+    RefPtr<ObjCObjectGraph> transformHandlesToObjects(ObjCObjectGraph&);
+    RefPtr<ObjCObjectGraph> transformObjectsToHandles(ObjCObjectGraph&);
 #endif
 
     void platformInitializeProcess(const ChildProcessInitializationParameters&);

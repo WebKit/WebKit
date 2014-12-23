@@ -1,5 +1,21 @@
 2014-12-23  Anders Carlsson  <andersca@apple.com>
 
+        Add WebProcess::transformHandlesToObjects
+        https://bugs.webkit.org/show_bug.cgi?id=139913
+
+        Reviewed by Tim Horton.
+
+        Rename objectGraphByTransformingObjectsToHandles to transformObjectsToHandles and add
+        transformHandlesToObjects that will try to convert handles to the actual bundle type objects.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::transformHandlesToObjects):
+        (WebKit::WebProcess::transformObjectsToHandles):
+        (WebKit::WebProcess::objectGraphByTransformingObjectsToHandles): Deleted.
+
+2014-12-23  Anders Carlsson  <andersca@apple.com>
+
         Add WebProcess::objectGraphByTransformingObjectsToHandles
         https://bugs.webkit.org/show_bug.cgi?id=139912
 

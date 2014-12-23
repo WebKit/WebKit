@@ -31,8 +31,9 @@
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
+#import "WKBrowsingContextHandleInternal.h"
 #import "WKFullKeyboardAccessWatcher.h"
-#import "WKWebProcessPlugInBrowserContextControllerPrivate.h"
+#import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import "WebFrame.h"
 #import "WebInspector.h"
 #import "WebPage.h"
@@ -292,7 +293,41 @@ void WebProcess::updateActivePages()
 #endif
 }
 
-RefPtr<ObjCObjectGraph> WebProcess::objectGraphByTransformingObjectsToHandles(ObjCObjectGraph& objectGraph)
+RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& objectGraph)
+{
+    struct Transformer final : ObjCObjectGraph::Transformer {
+        Transformer(WebProcess& webProcess)
+            : m_webProcess(webProcess)
+        {
+        }
+
+        virtual bool shouldTransformObject(id object) const override
+        {
+            if ([object isKindOfClass:[WKBrowsingContextHandle class]])
+                return true;
+
+            return false;
+        }
+
+        virtual RetainPtr<id> transformObject(id object) const
+        {
+            if ([object isKindOfClass:[WKBrowsingContextHandle class]]) {
+                if (auto* webPage = m_webProcess.webPage(((WKBrowsingContextHandle *)object)._pageID))
+                    return wrapper(*webPage);
+
+                return [NSNull null];
+            }
+
+            return object;
+        }
+
+        WebProcess& m_webProcess;
+    };
+
+    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer(*this)).get());
+}
+
+RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& objectGraph)
 {
     struct Transformer final : ObjCObjectGraph::Transformer {
         virtual bool shouldTransformObject(id object) const override
