@@ -12,6 +12,7 @@ webkit.org/b/116473 editing/selection/user-drag-element-and-user-select-none.htm
 
 webkit.org/b/139862 editing/spelling/editing-multiple-words-with-markers.html [ Timeout Pass ]
 webkit.org/b/139862 editing/spelling/grammar-edit-word.html [ Crash Timeout ]
+webkit.org/b/139903 [ Debug ] editing/spelling/grammar-paste.html [ Timeout Pass ]
 
 # media/W3C/video/networkState/networkState_during_progress.html is flaky
 webkit.org/b/76280 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
