@@ -1,3 +1,38 @@
+2014-12-23  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        shouldBecomeEqual() behaves as shouldBe() if the testing expression returns the expected value
+        https://bugs.webkit.org/show_bug.cgi?id=133939
+
+        Reviewed by Darin Adler.
+
+        First call of eval(expression) inside shouldBecomeEqual was always
+        made synchronously. If the testing expression returns the same value
+        as expected one then shouldBecomeEqual() will immediately report PASS,
+        for example,
+
+        shouldBecomeEqual(internals.hasSpellingMarker("wellcome"), false);
+
+        in consequence, assuming asynchronous path of spellchecking, spelling markers
+        may appear after a while.
+
+        The bug was caused by checking a condition at the beginning of shouldBecomeEqual(),
+        before calling a timer. As a result, queued asynchronous events doesn't effect
+        this checking.
+
+        * TestExpectations:
+        This fix reveals new bugs in execDeleteCommand() behaviour, two tests need
+        to marked as failure now.
+
+        * resources/js-test-pre.js:
+        (.condition):
+        (shouldBecomeEqual):
+        (shouldBecomeDifferent):
+        * resources/js-test.js:
+        (.condition):
+        (shouldBecomeEqual):
+        (shouldBecomeDifferent):
+        Always check a condition on timer.
+
 2014-12-22  Alexey Proskuryakov  <ap@apple.com>
 
         platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-frame-scrollability.html is flaky

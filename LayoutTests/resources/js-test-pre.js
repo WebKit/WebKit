@@ -289,7 +289,7 @@ function shouldBecomeEqual(_a, _b, completionHandler)
   if (typeof _a != "string" || typeof _b != "string")
     debug("WARN: shouldBecomeEqual() expects string arguments");
 
-  var condition = function() {
+  function condition() {
     var exception;
     var _av;
     try {
@@ -305,8 +305,8 @@ function shouldBecomeEqual(_a, _b, completionHandler)
       return true;
     }
     return false;
-  };
-  _waitForCondition(condition, completionHandler);
+  }
+  setTimeout(_waitForCondition, 0, condition, completionHandler);
 }
 
 function shouldBecomeEqualToString(value, reference, completionHandler)
@@ -401,7 +401,7 @@ function shouldBecomeDifferent(_a, _b, completionHandler)
   if (typeof _a != "string" || typeof _b != "string")
     debug("WARN: shouldBecomeDifferent() expects string arguments");
 
-  var condition = function() {
+  function condition() {
     var exception;
     var _av;
     try {
@@ -417,8 +417,8 @@ function shouldBecomeDifferent(_a, _b, completionHandler)
       return true;
     }
     return false;
-  };
-  _waitForCondition(condition, completionHandler);
+  }
+  setTimeout(_waitForCondition, 0, condition, completionHandler);
 }
 
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }
