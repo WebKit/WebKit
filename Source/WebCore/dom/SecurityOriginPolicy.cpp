@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SecurityOriginPolicy.h"
 
-#include <WebCore/SecurityOrigin.h>
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 

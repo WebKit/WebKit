@@ -1,3 +1,9 @@
+2014-12-22  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed build fix after r177661 and r177662
+
+        * dom/SecurityOriginPolicy.cpp: Modify #include path.
+
 2014-12-22  Mark Rowe  <mrowe@apple.com>
 
         [Mac] Engineering builds of WebCore on OS X 10.8 and 10.9 shouldn't build with -gline-tables-only

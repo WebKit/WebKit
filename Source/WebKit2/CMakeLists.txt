@@ -189,6 +189,7 @@ set(WebKit2_SOURCES
     Shared/API/APIError.cpp
     Shared/API/APIFrameHandle.cpp
     Shared/API/APIGeometry.cpp
+    Shared/API/APIPageGroupHandle.cpp
     Shared/API/APIPageHandle.cpp
     Shared/API/APIObject.cpp
     Shared/API/APIURLRequest.cpp
