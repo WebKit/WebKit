@@ -1,5 +1,13 @@
 2014-12-23  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
+        Add proper expectations for two spelling/ tests after r177682
+
+        Unreviewed gardening.
+
+        * TestExpectations:
+
+2014-12-23  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
         shouldBecomeEqual() behaves as shouldBe() if the testing expression returns the expected value
         https://bugs.webkit.org/show_bug.cgi?id=133939
 
