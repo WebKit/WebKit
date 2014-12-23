@@ -29,7 +29,7 @@
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
-#include <WebCore/SessionIDHash.h>
+#include <WebCore/SessionID.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>

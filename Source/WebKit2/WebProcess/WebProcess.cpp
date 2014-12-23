@@ -42,7 +42,6 @@
 #include "UserData.h"
 #include "WebApplicationCacheManager.h"
 #include "WebConnectionToUIProcess.h"
-#include "WebContextMessages.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -59,6 +58,7 @@
 #include "WebPlatformStrategies.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
+#include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebResourceCacheManager.h"
 #include <JavaScriptCore/JSLock.h>
@@ -799,7 +799,7 @@ void WebProcess::plugInDidStartFromOrigin(const String& pageOrigin, const String
     // incorrect for a little while.
     m_plugInAutoStartOriginHashes.add(sessionID, HashMap<unsigned, double>()).iterator->value.set(plugInOriginHash, currentTime() + 30 * 1000);
 
-    parentProcessConnection()->send(Messages::WebContext::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash, sessionID), 0);
+    parentProcessConnection()->send(Messages::WebProcessPool::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash, sessionID), 0);
 }
 
 void WebProcess::didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime, SessionID sessionID)
@@ -847,7 +847,7 @@ void WebProcess::plugInDidReceiveUserInteraction(const String& pageOrigin, const
     if (it->value - currentTime() > plugInAutoStartExpirationTimeUpdateThreshold)
         return;
 
-    parentProcessConnection()->send(Messages::WebContext::PlugInDidReceiveUserInteraction(plugInOriginHash, sessionID), 0);
+    parentProcessConnection()->send(Messages::WebProcessPool::PlugInDidReceiveUserInteraction(plugInOriginHash, sessionID), 0);
 }
 
 static void fromCountedSetToHashMap(TypeCountSet* countedSet, HashMap<String, uint64_t>& map)
@@ -939,7 +939,7 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
     // Get WebCore memory cache statistics
     getWebCoreMemoryCacheStatistics(data.webCoreCacheStatistics);
     
-    parentProcessConnection()->send(Messages::WebContext::DidGetStatistics(data, callbackID), 0);
+    parentProcessConnection()->send(Messages::WebProcessPool::DidGetStatistics(data, callbackID), 0);
 }
 
 void WebProcess::garbageCollectJavaScriptObjects()

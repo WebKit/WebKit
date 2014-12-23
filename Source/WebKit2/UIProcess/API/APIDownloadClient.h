@@ -36,7 +36,7 @@ class ResourceResponse;
 namespace WebKit {
 class AuthenticationChallengeProxy;
 class DownloadProxy;
-class WebContext;
+class WebProcessPool;
 }
 
 namespace API {
@@ -45,17 +45,17 @@ class DownloadClient {
 public:
     virtual ~DownloadClient() { }
 
-    virtual void didStart(WebKit::WebContext*, WebKit::DownloadProxy*) { }
-    virtual void didReceiveAuthenticationChallenge(WebKit::WebContext*, WebKit::DownloadProxy*, WebKit::AuthenticationChallengeProxy*) { }
-    virtual void didReceiveResponse(WebKit::WebContext*, WebKit::DownloadProxy*, const WebCore::ResourceResponse&) { }
-    virtual void didReceiveData(WebKit::WebContext*, WebKit::DownloadProxy*, uint64_t) { }
-    virtual bool shouldDecodeSourceDataOfMIMEType(WebKit::WebContext*, WebKit::DownloadProxy*, const WTF::String&) { return true; }
-    virtual WTF::String decideDestinationWithSuggestedFilename(WebKit::WebContext*, WebKit::DownloadProxy*, const WTF::String&, bool&) { return { }; }
-    virtual void didCreateDestination(WebKit::WebContext*, WebKit::DownloadProxy*, const WTF::String&) { }
-    virtual void didFinish(WebKit::WebContext*, WebKit::DownloadProxy*) { }
-    virtual void didFail(WebKit::WebContext*, WebKit::DownloadProxy*, const WebCore::ResourceError&) { }
-    virtual void didCancel(WebKit::WebContext*, WebKit::DownloadProxy*) { }
-    virtual void processDidCrash(WebKit::WebContext*, WebKit::DownloadProxy*) { }
+    virtual void didStart(WebKit::WebProcessPool*, WebKit::DownloadProxy*) { }
+    virtual void didReceiveAuthenticationChallenge(WebKit::WebProcessPool*, WebKit::DownloadProxy*, WebKit::AuthenticationChallengeProxy*) { }
+    virtual void didReceiveResponse(WebKit::WebProcessPool*, WebKit::DownloadProxy*, const WebCore::ResourceResponse&) { }
+    virtual void didReceiveData(WebKit::WebProcessPool*, WebKit::DownloadProxy*, uint64_t) { }
+    virtual bool shouldDecodeSourceDataOfMIMEType(WebKit::WebProcessPool*, WebKit::DownloadProxy*, const WTF::String&) { return true; }
+    virtual WTF::String decideDestinationWithSuggestedFilename(WebKit::WebProcessPool*, WebKit::DownloadProxy*, const WTF::String&, bool&) { return { }; }
+    virtual void didCreateDestination(WebKit::WebProcessPool*, WebKit::DownloadProxy*, const WTF::String&) { }
+    virtual void didFinish(WebKit::WebProcessPool*, WebKit::DownloadProxy*) { }
+    virtual void didFail(WebKit::WebProcessPool*, WebKit::DownloadProxy*, const WebCore::ResourceError&) { }
+    virtual void didCancel(WebKit::WebProcessPool*, WebKit::DownloadProxy*) { }
+    virtual void processDidCrash(WebKit::WebProcessPool*, WebKit::DownloadProxy*) { }
 };
 
 } // namespace API

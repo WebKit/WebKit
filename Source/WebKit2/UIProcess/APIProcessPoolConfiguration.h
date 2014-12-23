@@ -30,18 +30,18 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
-struct WebContextConfiguration;
+struct WebProcessPoolConfiguration;
 }
 
 namespace API {
 
-class ContextConfiguration : public ObjectImpl<Object::Type::ContextConfiguration> {
+class ProcessPoolConfiguration : public ObjectImpl<Object::Type::ProcessPoolConfiguration> {
 public:
-    static PassRefPtr<ContextConfiguration> create()
+    static PassRefPtr<ProcessPoolConfiguration> create()
     {
-        return adoptRef(new ContextConfiguration);
+        return adoptRef(new ProcessPoolConfiguration);
     }
-    virtual ~ContextConfiguration();
+    virtual ~ProcessPoolConfiguration();
 
     String indexedDBDatabaseDirectory() const { return m_indexedDBDatabaseDirectory; }
     void setIndexedDBDatabaseDirectory(const String& indexedDBDatabaseDirectory) { m_indexedDBDatabaseDirectory = indexedDBDatabaseDirectory; }
@@ -58,10 +58,10 @@ public:
     String mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
     void setMediaKeysStorageDirectory(const String& mediaKeysStorageDirectory) { m_mediaKeysStorageDirectory = mediaKeysStorageDirectory; }
 
-    WebKit::WebContextConfiguration webContextConfiguration() const;
+    WebKit::WebProcessPoolConfiguration webProcessPoolConfiguration() const;
 
 private:
-    ContextConfiguration();
+    ProcessPoolConfiguration();
 
     String m_indexedDBDatabaseDirectory;
     String m_injectedBundlePath;

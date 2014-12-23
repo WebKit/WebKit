@@ -26,6 +26,9 @@
 #ifndef SessionID_h
 #define SessionID_h
 
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
+
 namespace WebCore {
 
 class SessionID {
@@ -47,6 +50,28 @@ private:
     uint64_t m_sessionID;
 };
 
-} // namespace WebCore
+}
+
+namespace WTF {
+
+// The empty value is emptySessionID(), the deleted value is (-1)
+struct SessionIDHash {
+    static unsigned hash(const WebCore::SessionID& p) { return (unsigned)p.sessionID(); }
+    static bool equal(const WebCore::SessionID& a, const WebCore::SessionID& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+template<> struct HashTraits<WebCore::SessionID> : GenericHashTraits<WebCore::SessionID> {
+    static const uint64_t deletedValueIdentifier = 0xffffffffffffffff;
+    static const bool needsDestruction = false;
+    static WebCore::SessionID emptyValue() { return WebCore::SessionID::emptySessionID(); }
+
+    static void constructDeletedValue(WebCore::SessionID& slot) { slot = WebCore::SessionID(deletedValueIdentifier); }
+    static bool isDeletedValue(const WebCore::SessionID& slot) { return slot == WebCore::SessionID(deletedValueIdentifier); }
+};
+template<> struct DefaultHash<WebCore::SessionID> {
+    typedef SessionIDHash Hash;
+};
+
+}
 
 #endif // SessionID_h

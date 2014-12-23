@@ -26,8 +26,8 @@
 #import "config.h"
 #import "WindowServerConnection.h"
 
-#import "WebContext.h"
 #import "WebKitSystemInterface.h"
+#import "WebProcessPool.h"
 
 namespace WebKit {
 
@@ -53,8 +53,8 @@ void WindowServerConnection::applicationWindowModificationsStopped(uint32_t, voi
 
 void WindowServerConnection::windowServerConnectionStateChanged()
 {
-    for (auto* context : WebContext::allContexts())
-        context->windowServerConnectionStateChanged();
+    for (auto* processPool : WebProcessPool::allProcessPools())
+        processPool->windowServerConnectionStateChanged();
 }
 
 #endif

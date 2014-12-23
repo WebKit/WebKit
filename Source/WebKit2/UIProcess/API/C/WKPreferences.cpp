@@ -28,7 +28,6 @@
 #include "WKPreferencesRef.h"
 #include "WKPreferencesRefPrivate.h"
 #include "WKAPICast.h"
-#include "WebContext.h"
 #include "WebPreferences.h"
 #include <WebCore/Settings.h>
 #include <wtf/PassRefPtr.h>

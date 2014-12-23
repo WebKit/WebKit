@@ -35,9 +35,9 @@
 #import "WKObject.h"
 #import "WeakObjCPtr.h"
 #import "WebCertificateInfo.h"
-#import "WebContext.h"
 #import "WebCookieManagerProxy.h"
 #import "WebProcessMessages.h"
+#import "WebProcessPool.h"
 #import "_WKDownloadDelegate.h"
 #import "_WKProcessPoolConfiguration.h"
 #import <WebCore/CFNetworkSPI.h>
@@ -64,7 +64,7 @@
 
 - (void)dealloc
 {
-    _context->~WebContext();
+    _processPool->~WebProcessPool();
 
     [super dealloc];
 }
@@ -81,14 +81,14 @@
 
 - (API::Object&)_apiObject
 {
-    return *_context;
+    return *_processPool;
 }
 
 #if PLATFORM(IOS)
 - (WKGeolocationProviderIOS *)_geolocationProvider
 {
     if (!_geolocationProvider)
-        _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithContext:_context.get()]);
+        _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithProcessPool:*_processPool]);
     return _geolocationProvider.get();
 }
 #endif // PLATFORM(IOS)
@@ -154,44 +154,44 @@ static NSURL *websiteDataDirectoryURL(NSString *directoryName)
     InitWebCoreThreadSystemInterface();
 #endif
 
-    WebKit::WebContextConfiguration webContextConfiguration;
+    WebKit::WebProcessPoolConfiguration processPoolConfiguration;
 
     if (NSURL *bundleURL = [_configuration injectedBundleURL]) {
         if (!bundleURL.isFileURL)
             [NSException raise:NSInvalidArgumentException format:@"Injected Bundle URL must be a file URL"];
 
-        webContextConfiguration.injectedBundlePath = bundleURL.path;
+        processPoolConfiguration.injectedBundlePath = bundleURL.path;
     }
 
-    webContextConfiguration.localStorageDirectory = websiteDataDirectoryURL(@"LocalStorage").absoluteURL.path.fileSystemRepresentation;
-    webContextConfiguration.webSQLDatabaseDirectory = websiteDataDirectoryURL(@"WebSQL").absoluteURL.path.fileSystemRepresentation;
-    webContextConfiguration.indexedDBDatabaseDirectory = websiteDataDirectoryURL(@"IndexedDB").absoluteURL.path.fileSystemRepresentation;
-    webContextConfiguration.mediaKeysStorageDirectory = websiteDataDirectoryURL(@"MediaKeys").absoluteURL.path.fileSystemRepresentation;
+    processPoolConfiguration.localStorageDirectory = websiteDataDirectoryURL(@"LocalStorage").absoluteURL.path.fileSystemRepresentation;
+    processPoolConfiguration.webSQLDatabaseDirectory = websiteDataDirectoryURL(@"WebSQL").absoluteURL.path.fileSystemRepresentation;
+    processPoolConfiguration.indexedDBDatabaseDirectory = websiteDataDirectoryURL(@"IndexedDB").absoluteURL.path.fileSystemRepresentation;
+    processPoolConfiguration.mediaKeysStorageDirectory = websiteDataDirectoryURL(@"MediaKeys").absoluteURL.path.fileSystemRepresentation;
 
-    API::Object::constructInWrapper<WebKit::WebContext>(self, WTF::move(webContextConfiguration));
-    _context->setUsesNetworkProcess(true);
-    _context->setProcessModel(WebKit::ProcessModelMultipleSecondaryProcesses);
-    _context->setMaximumNumberOfProcesses([_configuration maximumProcessCount]);
+    API::Object::constructInWrapper<WebKit::WebProcessPool>(self, WTF::move(processPoolConfiguration));
+    _processPool->setUsesNetworkProcess(true);
+    _processPool->setProcessModel(WebKit::ProcessModelMultipleSecondaryProcesses);
+    _processPool->setMaximumNumberOfProcesses([_configuration maximumProcessCount]);
 
 #if ENABLE(CACHE_PARTITIONING)
     for (NSString *urlScheme in [_configuration cachePartitionedURLSchemes])
-        _context->registerURLSchemeAsCachePartitioned(urlScheme);
+        _processPool->registerURLSchemeAsCachePartitioned(urlScheme);
 #endif
 
     // FIXME: Add a way to configure the cache model, see <rdar://problem/16206857>.
-    _context->setCacheModel(WebKit::CacheModelPrimaryWebBrowser);
+    _processPool->setCacheModel(WebKit::CacheModelPrimaryWebBrowser);
 
     return self;
 }
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host
 {
-    _context->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((CFArrayRef)certificateChain)).get(), host);
+    _processPool->allowSpecificHTTPSCertificateForHost(WebKit::WebCertificateInfo::create(WebCore::CertificateInfo((CFArrayRef)certificateChain)).get(), host);
 }
 
 - (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value
 {
-    _context->setCanHandleHTTPSServerTrustEvaluation(value);
+    _processPool->setCanHandleHTTPSServerTrustEvaluation(value);
 }
 
 static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAcceptPolicy policy)
@@ -213,12 +213,12 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
 
 - (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy
 {
-    _context->supplement<WebKit::WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
+    _processPool->supplement<WebKit::WebCookieManagerProxy>()->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
 }
 
 - (id)_objectForBundleParameter:(NSString *)parameter
 {
-    return [_context->bundleParameters() objectForKey:parameter];
+    return [_processPool->bundleParameters() objectForKey:parameter];
 }
 
 - (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter
@@ -237,11 +237,11 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
     }
 
     if (copy)
-        [_context->ensureBundleParameters() setObject:copy.get() forKey:parameter];
+        [_processPool->ensureBundleParameters() setObject:copy.get() forKey:parameter];
     else
-        [_context->ensureBundleParameters() removeObjectForKey:parameter];
+        [_processPool->ensureBundleParameters() removeObjectForKey:parameter];
 
-    _context->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
+    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
 }
 
 - (id <_WKDownloadDelegate>)_downloadDelegate
@@ -252,7 +252,7 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
 - (void)_setDownloadDelegate:(id <_WKDownloadDelegate>)downloadDelegate
 {
     _downloadDelegate = downloadDelegate;
-    _context->setDownloadClient(std::make_unique<WebKit::DownloadClient>(downloadDelegate));
+    _processPool->setDownloadClient(std::make_unique<WebKit::DownloadClient>(downloadDelegate));
 }
 
 @end

@@ -40,6 +40,7 @@ class Connection;
 
 namespace WebKit {
 
+class WebProcessPool;
 struct SecurityOriginData;
 
 typedef GenericCallback<API::Array*> ArrayCallback;
@@ -48,7 +49,7 @@ class WebApplicationCacheManagerProxy : public API::ObjectImpl<API::Object::Type
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebApplicationCacheManagerProxy> create(WebContext*);
+    static PassRefPtr<WebApplicationCacheManagerProxy> create(WebProcessPool*);
     virtual ~WebApplicationCacheManagerProxy();
 
     void getApplicationCacheOrigins(std::function<void (API::Array*, CallbackBase::Error)>);
@@ -59,12 +60,12 @@ public:
     using API::Object::deref;
 
 private:
-    explicit WebApplicationCacheManagerProxy(WebContext*);
+    explicit WebApplicationCacheManagerProxy(WebProcessPool*);
 
     void didGetApplicationCacheOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
 
     // WebContextSupplement
-    virtual void contextDestroyed() override;
+    virtual void processPoolDestroyed() override;
     virtual void processDidClose(WebProcessProxy*) override;
     virtual bool shouldTerminate(WebProcessProxy*) const override;
     virtual void refWebContextSupplement() override;

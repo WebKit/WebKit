@@ -38,7 +38,7 @@ namespace WebKit {
 
 class ChildProcessProxy;
 class DownloadProxy;
-class WebContext;
+class WebProcessPool;
 
 class DownloadProxyMap {
     WTF_MAKE_NONCOPYABLE(DownloadProxyMap);
@@ -47,7 +47,7 @@ public:
     explicit DownloadProxyMap(ChildProcessProxy*);
     ~DownloadProxyMap();
 
-    DownloadProxy* createDownloadProxy(WebContext&, const WebCore::ResourceRequest&);
+    DownloadProxy* createDownloadProxy(WebProcessPool&, const WebCore::ResourceRequest&);
     void downloadFinished(DownloadProxy*);
 
     bool isEmpty() const { return m_downloads.isEmpty(); }

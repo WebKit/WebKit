@@ -53,8 +53,8 @@
 #import "WKURLResponseNS.h"
 #import "WeakObjCPtr.h"
 #import "WebCertificateInfo.h"
-#import "WebContext.h"
 #import "WebPageProxy.h"
+#import "WebProcessPool.h"
 #import "WebProtectionSpace.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import <wtf/NeverDestroyed.h>
@@ -173,12 +173,12 @@ static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextCon
 
 + (void)registerSchemeForCustomProtocol:(NSString *)scheme
 {
-    WebContext::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
+    WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
 }
 
 + (void)unregisterSchemeForCustomProtocol:(NSString *)scheme
 {
-    WebContext::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
+    WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(scheme);
 }
 
 - (void)loadRequest:(NSURLRequest *)request
@@ -855,7 +855,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
 {
     if (!_remoteObjectRegistry) {
         _remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page]);
-        _page->process().context().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
+        _page->process().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
     }
 
     return _remoteObjectRegistry.get();

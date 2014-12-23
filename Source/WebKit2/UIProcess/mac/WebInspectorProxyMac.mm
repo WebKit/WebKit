@@ -36,12 +36,12 @@
 #import "WKRetainPtr.h"
 #import "WKURLCF.h"
 #import "WKViewInternal.h"
-#import "WebContext.h"
 #import "WebInspectorMessages.h"
 #import "WebInspectorUIMessages.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
@@ -480,7 +480,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
             initialRect = [NSWindow contentRectForFrameRect:windowFrame styleMask:windowStyleMask];
     }
 
-    m_inspectorView = adoptNS([[WKWebInspectorWKView alloc] initWithFrame:initialRect contextRef:toAPI(&inspectorContext()) pageGroupRef:toAPI(inspectorPageGroup()) relatedToPage:nullptr]);
+    m_inspectorView = adoptNS([[WKWebInspectorWKView alloc] initWithFrame:initialRect contextRef:toAPI(&inspectorProcessPool()) pageGroupRef:toAPI(inspectorPageGroup()) relatedToPage:nullptr]);
     ASSERT(m_inspectorView);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090

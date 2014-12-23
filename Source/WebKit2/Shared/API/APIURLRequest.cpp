@@ -26,8 +26,8 @@
 #include "config.h"
 #include "APIURLRequest.h"
 
-#include "WebContext.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebProcessPool.h"
 
 using namespace WebCore;
 using namespace WebKit;
@@ -44,14 +44,13 @@ double URLRequest::defaultTimeoutInterval()
     return ResourceRequest::defaultTimeoutInterval();
 }
 
-// FIXME: This function should really be on WebContext.
+// FIXME: This function should really be on WebProcessPool or WebPageProxy.
 void URLRequest::setDefaultTimeoutInterval(double timeoutInterval)
 {
     ResourceRequest::setDefaultTimeoutInterval(timeoutInterval);
 
-    const Vector<WebContext*>& contexts = WebContext::allContexts();
-    for (size_t i = 0; i < contexts.size(); ++i)
-        contexts[i]->setDefaultRequestTimeoutInterval(timeoutInterval);
+    for (auto* processPool : WebProcessPool::allProcessPools())
+        processPool->setDefaultRequestTimeoutInterval(timeoutInterval);
 }
 
 void URLRequest::encode(IPC::ArgumentEncoder& encoder) const

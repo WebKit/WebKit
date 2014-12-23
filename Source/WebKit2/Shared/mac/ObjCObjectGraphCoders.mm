@@ -261,7 +261,7 @@ protected:
 };
 
 
-// WebContext Additions
+// ProcessPool Additions
 
 class WebContextObjCObjectGraphEncoderImpl : public ObjCObjectGraphEncoder<WebContextObjCObjectGraphEncoderImpl> {
 public:

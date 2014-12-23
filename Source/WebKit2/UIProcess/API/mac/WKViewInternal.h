@@ -54,7 +54,7 @@ namespace WebKit {
 class DrawingAreaProxy;
 class LayerTreeContext;
 class ViewSnapshot;
-class WebContext;
+class WebProcessPool;
 struct ActionMenuHitTestResult;
 struct ColorSpaceData;
 struct EditorState;
@@ -69,7 +69,7 @@ struct WebPageConfiguration;
 
 @interface WKView ()
 #if WK_API_ENABLED
-- (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView;
+- (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView;
 #endif
 
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;

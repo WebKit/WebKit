@@ -58,8 +58,8 @@ namespace WebKit {
 
 class DownloadProxyMap;
 class WebBackForwardListItem;
-class WebContext;
 class WebPageGroup;
+class WebProcessPool;
 struct WebNavigationDataStore;
     
 class WebProcessProxy : public ChildProcessProxy, ResponsivenessTimer::Client {
@@ -68,7 +68,7 @@ public:
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<uint64_t, WebPageProxy*> WebPageProxyMap;
 
-    static Ref<WebProcessProxy> create(WebContext&);
+    static Ref<WebProcessProxy> create(WebProcessPool&);
     ~WebProcessProxy();
 
     static WebProcessProxy* fromConnection(IPC::Connection* connection)
@@ -78,7 +78,7 @@ public:
 
     WebConnection* webConnection() const { return m_webConnection.get(); }
 
-    WebContext& context() { return m_context; }
+    WebProcessPool& processPool() { return m_processPool; }
 
     static WebPageProxy* webPage(uint64_t pageID);
     Ref<WebPageProxy> createWebPage(PageClient&, const WebPageConfiguration&);
@@ -140,7 +140,7 @@ public:
     ProcessThrottler& throttler() { return *m_throttler; }
     
 private:
-    explicit WebProcessProxy(WebContext&);
+    explicit WebProcessProxy(WebProcessPool&);
 
     // From ChildProcessProxy
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
@@ -196,7 +196,7 @@ private:
     ResponsivenessTimer m_responsivenessTimer;
     
     RefPtr<WebConnectionToWebProcess> m_webConnection;
-    Ref<WebContext> m_context;
+    Ref<WebProcessPool> m_processPool;
 
     bool m_mayHaveUniversalFileReadSandboxExtension; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.
     HashSet<String> m_localPathsWithAssumedReadAccess;

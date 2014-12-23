@@ -33,8 +33,8 @@
 #include "DownloadProxyMessages.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessMessages.h"
-#include "WebContext.h"
 #include "WebProcessMessages.h"
+#include "WebProcessPool.h"
 #include <wtf/RunLoop.h>
 
 #if ENABLE(SEC_ITEM_SHIM)
@@ -58,15 +58,15 @@ static uint64_t generateCallbackID()
     return ++callbackID;
 }
 
-PassRefPtr<NetworkProcessProxy> NetworkProcessProxy::create(WebContext& webContext)
+PassRefPtr<NetworkProcessProxy> NetworkProcessProxy::create(WebProcessPool& processPool)
 {
-    return adoptRef(new NetworkProcessProxy(webContext));
+    return adoptRef(new NetworkProcessProxy(processPool));
 }
 
-NetworkProcessProxy::NetworkProcessProxy(WebContext& webContext)
-    : m_webContext(webContext)
+NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
+    : m_processPool(processPool)
     , m_numPendingConnectionRequests(0)
-    , m_customProtocolManagerProxy(this, webContext)
+    , m_customProtocolManagerProxy(this, processPool)
 {
     connect();
 }
@@ -112,7 +112,7 @@ DownloadProxy* NetworkProcessProxy::createDownloadProxy(const ResourceRequest& r
     if (!m_downloadProxyMap)
         m_downloadProxyMap = std::make_unique<DownloadProxyMap>(this);
 
-    return m_downloadProxyMap->createDownloadProxy(m_webContext, resourceRequest);
+    return m_downloadProxyMap->createDownloadProxy(m_processPool, resourceRequest);
 }
 
 void NetworkProcessProxy::deleteWebsiteData(WebCore::SessionID sessionID, WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point modifiedSince,  std::function<void ()> completionHandler)
@@ -143,7 +143,7 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
     m_pendingDeleteWebsiteDataCallbacks.clear();
 
     // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
-    m_webContext.networkProcessCrashed(this);
+    m_processPool.networkProcessCrashed(this);
 }
 
 void NetworkProcessProxy::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
@@ -151,7 +151,7 @@ void NetworkProcessProxy::didReceiveMessage(IPC::Connection* connection, IPC::Me
     if (dispatchMessage(connection, decoder))
         return;
 
-    if (m_webContext.dispatchMessage(connection, decoder))
+    if (m_processPool.dispatchMessage(connection, decoder))
         return;
 
     didReceiveNetworkProcessProxyMessage(connection, decoder);
@@ -224,7 +224,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     m_numPendingConnectionRequests = 0;
 
 #if PLATFORM(COCOA)
-    if (m_webContext.processSuppressionEnabled())
+    if (m_processPool.processSuppressionEnabled())
         setProcessSuppressionEnabled(true);
 #endif
     

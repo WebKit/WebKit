@@ -37,7 +37,7 @@
 #import "WKPluginInformation.h"
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
-#import "WebContext.h"
+#import "WebProcessPool.h"
 #import <WebKitSystemInterface.h>
 #import <wtf/RetainPtr.h>
 
@@ -97,12 +97,12 @@ void WKContextResetHSTSHosts(WKContextRef context)
 
 void WKContextRegisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme)
 {
-    WebContext::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(toWTFString(scheme));
+    WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(toWTFString(scheme));
 }
 
 void WKContextUnregisterSchemeForCustomProtocol(WKContextRef context, WKStringRef scheme)
 {
-    WebContext::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(toWTFString(scheme));
+    WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(toWTFString(scheme));
 }
 
 /* DEPRECATED -  Please use constants from WKPluginInformation instead. */

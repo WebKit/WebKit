@@ -28,7 +28,7 @@
 #if WK_API_ENABLED
 
 #import "WKObject.h"
-#import "WebContext.h"
+#import "WebProcessPool.h"
 
 #if TARGET_OS_IPHONE
 @class WKGeolocationProviderIOS;
@@ -36,10 +36,10 @@
 
 namespace WebKit {
 
-inline WKProcessPool *wrapper(WebContext& context)
+inline WKProcessPool *wrapper(WebProcessPool& processPool)
 {
-    ASSERT([context.wrapper() isKindOfClass:[WKProcessPool class]]);
-    return (WKProcessPool *)context.wrapper();
+    ASSERT([processPool.wrapper() isKindOfClass:[WKProcessPool class]]);
+    return (WKProcessPool *)processPool.wrapper();
 }
 
 }
@@ -48,7 +48,7 @@ inline WKProcessPool *wrapper(WebContext& context)
 @package
     RetainPtr<_WKProcessPoolConfiguration> _configuration;
 
-    API::ObjectStorage<WebKit::WebContext> _context;
+    API::ObjectStorage<WebKit::WebProcessPool> _processPool;
 }
 
 #if TARGET_OS_IPHONE

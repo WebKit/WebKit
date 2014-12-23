@@ -26,7 +26,7 @@
 #ifndef PlugInAutoStartProvider_h
 #define PlugInAutoStartProvider_h
 
-#include <WebCore/SessionIDHash.h>
+#include <WebCore/SessionID.h>
 #include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -42,7 +42,7 @@ class Array;
 namespace WebKit {
 
 class ImmutableDictionary;
-class WebContext;
+class WebProcessPool;
 
 typedef HashMap<unsigned, double> PlugInAutoStartOriginMap;
 typedef HashMap<WebCore::SessionID, PlugInAutoStartOriginMap> SessionPlugInAutoStartOriginMap;
@@ -51,7 +51,7 @@ typedef Vector<String> PlugInAutoStartOrigins;
 class PlugInAutoStartProvider {
     WTF_MAKE_NONCOPYABLE(PlugInAutoStartProvider);
 public:
-    explicit PlugInAutoStartProvider(WebContext*);
+    explicit PlugInAutoStartProvider(WebProcessPool*);
 
     void addAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, WebCore::SessionID);
     void didReceiveUserInteraction(unsigned plugInOriginHash, WebCore::SessionID);
@@ -65,7 +65,7 @@ public:
     const PlugInAutoStartOrigins& autoStartOrigins() const { return m_autoStartOrigins; }
 
 private:
-    WebContext* m_context;
+    WebProcessPool* m_processPool;
 
     void setAutoStartOriginsTableWithItemsPassingTest(ImmutableDictionary&, std::function<bool(double expirationTimestamp)>);
 

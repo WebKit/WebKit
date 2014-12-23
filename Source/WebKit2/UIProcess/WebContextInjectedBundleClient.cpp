@@ -27,37 +27,37 @@
 #include "WebContextInjectedBundleClient.h"
 
 #include "WKAPICast.h"
-#include "WebContext.h"
+#include "WebProcessPool.h"
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebContext* context, const String& messageName, API::Object* messageBody)
+void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebProcessPool* processPool, const String& messageName, API::Object* messageBody)
 {
     if (!m_client.didReceiveMessageFromInjectedBundle)
         return;
 
-    m_client.didReceiveMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
+    m_client.didReceiveMessageFromInjectedBundle(toAPI(processPool), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
 }
 
-void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebContext* context, const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
+void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool* processPool, const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
 {
     if (!m_client.didReceiveSynchronousMessageFromInjectedBundle)
         return;
 
     WKTypeRef returnDataRef = 0;
-    m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.base.clientInfo);
+    m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(processPool), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.base.clientInfo);
     returnData = adoptRef(toImpl(returnDataRef));
 }
 
-PassRefPtr<API::Object> WebContextInjectedBundleClient::getInjectedBundleInitializationUserData(WebContext* context)
+PassRefPtr<API::Object> WebContextInjectedBundleClient::getInjectedBundleInitializationUserData(WebProcessPool* processPool)
 {
     if (!m_client.getInjectedBundleInitializationUserData)
         return 0;
 
-    return toImpl(m_client.getInjectedBundleInitializationUserData(toAPI(context), m_client.base.clientInfo));
+    return toImpl(m_client.getInjectedBundleInitializationUserData(toAPI(processPool), m_client.base.clientInfo));
 }
 
 } // namespace WebKit

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContext_h
-#define WebContext_h
+#ifndef WebProcessPool_h
+#define WebProcessPool_h
 
 #include "APIObject.h"
 #include "DownloadProxyMap.h"
@@ -97,7 +97,7 @@ int webProcessLatencyQOS();
 int webProcessThroughputQOS();
 #endif
 
-struct WebContextConfiguration {
+struct WebProcessPoolConfiguration {
     String injectedBundlePath;
     String localStorageDirectory;
     String webSQLDatabaseDirectory;
@@ -105,20 +105,20 @@ struct WebContextConfiguration {
     String mediaKeysStorageDirectory;
 };
 
-class WebContext : public API::ObjectImpl<API::Object::Type::Context>, private IPC::MessageReceiver
+class WebProcessPool : public API::ObjectImpl<API::Object::Type::ProcessPool>, private IPC::MessageReceiver
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , private PluginInfoStoreClient
 #endif
     {
 public:
-    static void applyPlatformSpecificConfigurationDefaults(WebContextConfiguration&);
+    static void applyPlatformSpecificConfigurationDefaults(WebProcessPoolConfiguration&);
 
-    WebContext(WebContextConfiguration);
+    WebProcessPool(WebProcessPoolConfiguration);
         
-    static PassRefPtr<WebContext> create(WebContextConfiguration);
-    virtual ~WebContext();
+    static PassRefPtr<WebProcessPool> create(WebProcessPoolConfiguration);
+    virtual ~WebProcessPool();
 
-    static const Vector<WebContext*>& allContexts();
+    static const Vector<WebProcessPool*>& allProcessPools();
 
     template <typename T>
     T* supplement()
@@ -414,9 +414,9 @@ private:
 
     void didGetStatistics(const StatisticsData&, uint64_t callbackID);
 
-    // Implemented in generated WebContextMessageReceiver.cpp
-    void didReceiveWebContextMessage(IPC::Connection*, IPC::MessageDecoder&);
-    void didReceiveSyncWebContextMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    // Implemented in generated WebProcessPoolMessageReceiver.cpp
+    void didReceiveWebProcessPoolMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveSyncWebProcessPoolMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     static void languageChanged(void* context);
     void languageChanged();
@@ -579,7 +579,7 @@ private:
 };
 
 template<typename T>
-void WebContext::sendToNetworkingProcess(T&& message)
+void WebProcessPool::sendToNetworkingProcess(T&& message)
 {
     switch (m_processModel) {
     case ProcessModelSharedSecondaryProcess:
@@ -606,7 +606,7 @@ void WebContext::sendToNetworkingProcess(T&& message)
 }
 
 template<typename T>
-void WebContext::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
+void WebProcessPool::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 {
     switch (m_processModel) {
     case ProcessModelSharedSecondaryProcess:
@@ -633,7 +633,7 @@ void WebContext::sendToNetworkingProcessRelaunchingIfNecessary(T&& message)
 }
 
 template<typename T>
-void WebContext::sendToDatabaseProcessRelaunchingIfNecessary(T&& message)
+void WebProcessPool::sendToDatabaseProcessRelaunchingIfNecessary(T&& message)
 {
 #if ENABLE(DATABASE_PROCESS)
     ensureDatabaseProcess();
@@ -644,7 +644,7 @@ void WebContext::sendToDatabaseProcessRelaunchingIfNecessary(T&& message)
 }
 
 template<typename T>
-void WebContext::sendToAllProcesses(const T& message)
+void WebProcessPool::sendToAllProcesses(const T& message)
 {
     size_t processCount = m_processes.size();
     for (size_t i = 0; i < processCount; ++i) {
@@ -655,16 +655,16 @@ void WebContext::sendToAllProcesses(const T& message)
 }
 
 template<typename T>
-void WebContext::sendToAllProcessesRelaunchingThemIfNecessary(const T& message)
+void WebProcessPool::sendToAllProcessesRelaunchingThemIfNecessary(const T& message)
 {
-// FIXME (Multi-WebProcess): WebContext doesn't track processes that have exited, so it cannot relaunch these. Perhaps this functionality won't be needed in this mode.
+    // FIXME (Multi-WebProcess): WebProcessPool doesn't track processes that have exited, so it cannot relaunch these. Perhaps this functionality won't be needed in this mode.
     if (m_processModel == ProcessModelSharedSecondaryProcess)
         ensureSharedWebProcess();
     sendToAllProcesses(message);
 }
 
 template<typename T>
-void WebContext::sendToOneProcess(T&& message)
+void WebProcessPool::sendToOneProcess(T&& message)
 {
     if (m_processModel == ProcessModelSharedSecondaryProcess)
         ensureSharedWebProcess();
@@ -690,4 +690,4 @@ void WebContext::sendToOneProcess(T&& message)
 
 } // namespace WebKit
 
-#endif // WebContext_h
+#endif // UIProcessPool_h

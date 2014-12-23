@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WebContext.h"
+#import "WebProcessPool.h"
 
 #import "PluginProcessManager.h"
 #import "SandboxUtilities.h"
@@ -103,7 +103,7 @@ static void registerUserDefaultsIfNeeded()
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
 }
 
-void WebContext::updateProcessSuppressionState()
+void WebProcessPool::updateProcessSuppressionState()
 {
 #if ENABLE(NETWORK_PROCESS)
     if (m_usesNetworkProcess && m_networkProcess)
@@ -118,7 +118,7 @@ void WebContext::updateProcessSuppressionState()
 #endif
 }
 
-NSMutableDictionary *WebContext::ensureBundleParameters()
+NSMutableDictionary *WebProcessPool::ensureBundleParameters()
 {
     if (!m_bundleParameters)
         m_bundleParameters = adoptNS([[NSMutableDictionary alloc] init]);
@@ -126,7 +126,7 @@ NSMutableDictionary *WebContext::ensureBundleParameters()
     return m_bundleParameters.get();
 }
 
-void WebContext::platformInitialize()
+void WebProcessPool::platformInitialize()
 {
     registerUserDefaultsIfNeeded();
     registerNotificationObservers();
@@ -136,7 +136,7 @@ void WebContext::platformInitialize()
 #endif
 }
 
-String WebContext::platformDefaultApplicationCacheDirectory() const
+String WebProcessPool::platformDefaultApplicationCacheDirectory() const
 {
     NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
     if (!appName)
@@ -164,7 +164,7 @@ String WebContext::platformDefaultApplicationCacheDirectory() const
     return stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
 }
 
-void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
+void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     parameters.presenterApplicationPid = getpid();
 
@@ -227,7 +227,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 }
 
 #if ENABLE(NETWORK_PROCESS)
-void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
+void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
     NSURLCache *urlCache = [NSURLCache sharedURLCache];
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
@@ -244,12 +244,12 @@ void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParamete
 }
 #endif
 
-void WebContext::platformInvalidateContext()
+void WebProcessPool::platformInvalidateContext()
 {
     unregisterNotificationObservers();
 }
 
-String WebContext::platformDefaultDiskCacheDirectory() const
+String WebProcessPool::platformDefaultDiskCacheDirectory() const
 {
     RetainPtr<NSString> cachePath = adoptNS((NSString *)WKCopyFoundationCacheDirectory());
     if (!cachePath)
@@ -257,7 +257,7 @@ String WebContext::platformDefaultDiskCacheDirectory() const
     return stringByResolvingSymlinksInPath([cachePath stringByStandardizingPath]);
 }
 
-String WebContext::platformDefaultCookieStorageDirectory() const
+String WebProcessPool::platformDefaultCookieStorageDirectory() const
 {
 #if PLATFORM(IOS)
     String path = pathForProcessContainer();
@@ -274,7 +274,7 @@ String WebContext::platformDefaultCookieStorageDirectory() const
 }
 
 #if PLATFORM(IOS)
-String WebContext::openGLCacheDirectory() const
+String WebProcessPool::openGLCacheDirectory() const
 {
     String path = pathForProcessContainer();
     if (path.isEmpty())
@@ -284,12 +284,12 @@ String WebContext::openGLCacheDirectory() const
     return stringByResolvingSymlinksInPath(path);
 }
 
-String WebContext::parentBundleDirectory() const
+String WebProcessPool::parentBundleDirectory() const
 {
     return [[[NSBundle mainBundle] bundlePath] stringByStandardizingPath];
 }
 
-String WebContext::networkingHSTSDatabasePath() const
+String WebProcessPool::networkingHSTSDatabasePath() const
 {
     String path = pathForProcessContainer();
     if (path.isEmpty())
@@ -308,7 +308,7 @@ String WebContext::networkingHSTSDatabasePath() const
     return path + "/HSTS.plist";
 }
 
-String WebContext::webContentHSTSDatabasePath() const
+String WebProcessPool::webContentHSTSDatabasePath() const
 {
     String path = pathForProcessContainer();
     if (path.isEmpty())
@@ -327,14 +327,14 @@ String WebContext::webContentHSTSDatabasePath() const
     return path + "/HSTS.plist";
 }
 
-String WebContext::containerTemporaryDirectory() const
+String WebProcessPool::containerTemporaryDirectory() const
 {
     String path = NSTemporaryDirectory();
     return stringByResolvingSymlinksInPath(path);
 }
 #endif
 
-String WebContext::platformDefaultWebSQLDatabaseDirectory()
+String WebProcessPool::platformDefaultWebSQLDatabaseDirectory()
 {
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
@@ -342,7 +342,7 @@ String WebContext::platformDefaultWebSQLDatabaseDirectory()
     return stringByResolvingSymlinksInPath([databasesDirectory stringByStandardizingPath]);
 }
 
-String WebContext::platformDefaultIndexedDBDatabaseDirectory()
+String WebProcessPool::platformDefaultIndexedDBDatabaseDirectory()
 {
     // Indexed databases exist in a subdirectory of the "database directory path."
     // Currently, the top level of that directory contains entities related to WebSQL databases.
@@ -351,7 +351,7 @@ String WebContext::platformDefaultIndexedDBDatabaseDirectory()
     return pathByAppendingComponent(platformDefaultWebSQLDatabaseDirectory(), "___IndexedDB");
 }
 
-String WebContext::platformDefaultIconDatabasePath() const
+String WebProcessPool::platformDefaultIconDatabasePath() const
 {
     // FIXME: <rdar://problem/9138817> - After this "backwards compatibility" radar is removed, this code should be removed to only return an empty String.
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebIconDatabaseDirectoryDefaultsKey];
@@ -360,7 +360,7 @@ String WebContext::platformDefaultIconDatabasePath() const
     return stringByResolvingSymlinksInPath([databasesDirectory stringByStandardizingPath]);
 }
 
-String WebContext::platformDefaultLocalStorageDirectory()
+String WebProcessPool::platformDefaultLocalStorageDirectory()
 {
     NSString *localStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebStorageDirectoryDefaultsKey];
     if (!localStorageDirectory || ![localStorageDirectory isKindOfClass:[NSString class]])
@@ -368,7 +368,7 @@ String WebContext::platformDefaultLocalStorageDirectory()
     return stringByResolvingSymlinksInPath([localStorageDirectory stringByStandardizingPath]);
 }
 
-String WebContext::platformDefaultMediaKeysStorageDirectory()
+String WebProcessPool::platformDefaultMediaKeysStorageDirectory()
 {
     NSString *mediaKeysStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitMediaKeysStorageDirectoryDefaultsKey];
     if (!mediaKeysStorageDirectory || ![mediaKeysStorageDirectory isKindOfClass:[NSString class]])
@@ -376,28 +376,28 @@ String WebContext::platformDefaultMediaKeysStorageDirectory()
     return stringByResolvingSymlinksInPath([mediaKeysStorageDirectory stringByStandardizingPath]);
 }
 
-bool WebContext::omitPDFSupport()
+bool WebProcessPool::omitPDFSupport()
 {
     // Since this is a "secret default" we don't bother registering it.
     return [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
 }
 
-void WebContext::getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes)
+void WebProcessPool::getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes)
 {
     PlatformPasteboard(pasteboardName).getTypes(pasteboardTypes);
 }
 
-void WebContext::getPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames)
+void WebProcessPool::getPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames)
 {
     PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
 }
 
-void WebContext::getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, String& string)
+void WebProcessPool::getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, String& string)
 {
     string = PlatformPasteboard(pasteboardName).stringForType(pasteboardType);
 }
 
-void WebContext::getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
+void WebProcessPool::getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
 {
     RefPtr<SharedBuffer> buffer = PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
     if (!buffer)
@@ -410,52 +410,52 @@ void WebContext::getPasteboardBufferForType(const String& pasteboardName, const 
     sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
 }
 
-void WebContext::pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, uint64_t& newChangeCount)
+void WebProcessPool::pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, uint64_t& newChangeCount)
 {
     newChangeCount = PlatformPasteboard(toPasteboard).copy(fromPasteboard);
 }
 
-void WebContext::getPasteboardChangeCount(const String& pasteboardName, uint64_t& changeCount)
+void WebProcessPool::getPasteboardChangeCount(const String& pasteboardName, uint64_t& changeCount)
 {
     changeCount = PlatformPasteboard(pasteboardName).changeCount();
 }
 
-void WebContext::getPasteboardUniqueName(String& pasteboardName)
+void WebProcessPool::getPasteboardUniqueName(String& pasteboardName)
 {
     pasteboardName = PlatformPasteboard::uniqueName();
 }
 
-void WebContext::getPasteboardColor(const String& pasteboardName, WebCore::Color& color)
+void WebProcessPool::getPasteboardColor(const String& pasteboardName, WebCore::Color& color)
 {
     color = PlatformPasteboard(pasteboardName).color();    
 }
 
-void WebContext::getPasteboardURL(const String& pasteboardName, WTF::String& urlString)
+void WebProcessPool::getPasteboardURL(const String& pasteboardName, WTF::String& urlString)
 {
     urlString = PlatformPasteboard(pasteboardName).url().string();
 }
 
-void WebContext::addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount)
+void WebProcessPool::addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount)
 {
     newChangeCount = PlatformPasteboard(pasteboardName).addTypes(pasteboardTypes);
 }
 
-void WebContext::setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount)
+void WebProcessPool::setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount)
 {
     newChangeCount = PlatformPasteboard(pasteboardName).setTypes(pasteboardTypes);
 }
 
-void WebContext::setPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames, uint64_t& newChangeCount)
+void WebProcessPool::setPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames, uint64_t& newChangeCount)
 {
     newChangeCount = PlatformPasteboard(pasteboardName).setPathnamesForType(pathnames, pasteboardType);
 }
 
-void WebContext::setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String& string, uint64_t& newChangeCount)
+void WebProcessPool::setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String& string, uint64_t& newChangeCount)
 {
     newChangeCount = PlatformPasteboard(pasteboardName).setStringForType(string, pasteboardType);
 }
 
-void WebContext::setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, uint64_t& newChangeCount)
+void WebProcessPool::setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, uint64_t& newChangeCount)
 {
     if (handle.isNull()) {
         newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(0, pasteboardType);
@@ -467,32 +467,32 @@ void WebContext::setPasteboardBufferForType(const String& pasteboardName, const 
 }
 
 #if PLATFORM(IOS)
-void WebContext::writeWebContentToPasteboard(const WebCore::PasteboardWebContent& content)
+void WebProcessPool::writeWebContentToPasteboard(const WebCore::PasteboardWebContent& content)
 {
     PlatformPasteboard().write(content);
 }
 
-void WebContext::writeImageToPasteboard(const WebCore::PasteboardImage& pasteboardImage)
+void WebProcessPool::writeImageToPasteboard(const WebCore::PasteboardImage& pasteboardImage)
 {
     PlatformPasteboard().write(pasteboardImage);
 }
 
-void WebContext::writeStringToPasteboard(const String& pasteboardType, const String& text)
+void WebProcessPool::writeStringToPasteboard(const String& pasteboardType, const String& text)
 {
     PlatformPasteboard().write(pasteboardType, text);
 }
 
-void WebContext::readStringFromPasteboard(uint64_t index, const String& pasteboardType, WTF::String& value)
+void WebProcessPool::readStringFromPasteboard(uint64_t index, const String& pasteboardType, WTF::String& value)
 {
     value = PlatformPasteboard().readString(index, pasteboardType);
 }
 
-void WebContext::readURLFromPasteboard(uint64_t index, const String& pasteboardType, String& url)
+void WebProcessPool::readURLFromPasteboard(uint64_t index, const String& pasteboardType, String& url)
 {
     url = PlatformPasteboard().readURL(index, pasteboardType);
 }
 
-void WebContext::readBufferFromPasteboard(uint64_t index, const String& pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
+void WebProcessPool::readBufferFromPasteboard(uint64_t index, const String& pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
 {
     RefPtr<SharedBuffer> buffer = PlatformPasteboard().readBuffer(index, pasteboardType);
     if (!buffer)
@@ -505,19 +505,19 @@ void WebContext::readBufferFromPasteboard(uint64_t index, const String& pasteboa
     sharedMemoryBuffer->createHandle(handle, SharedMemory::ReadOnly);
 }
 
-void WebContext::getPasteboardItemsCount(uint64_t& itemsCount)
+void WebProcessPool::getPasteboardItemsCount(uint64_t& itemsCount)
 {
     itemsCount = PlatformPasteboard().count();
 }
 
 #endif
 
-bool WebContext::processSuppressionEnabled() const
+bool WebProcessPool::processSuppressionEnabled() const
 {
     return !m_userObservablePageCounter.value() && !m_processSuppressionDisabledForPageCounter.value();
 }
 
-void WebContext::registerNotificationObservers()
+void WebProcessPool::registerNotificationObservers()
 {
 #if !PLATFORM(IOS)
     // Listen for enhanced accessibility changes and propagate them to the WebProcess.
@@ -549,7 +549,7 @@ void WebContext::registerNotificationObservers()
 #endif // !PLATFORM(IOS)
 }
 
-void WebContext::unregisterNotificationObservers()
+void WebProcessPool::unregisterNotificationObservers()
 {
 #if !PLATFORM(IOS)
     [[NSNotificationCenter defaultCenter] removeObserver:m_enhancedAccessibilityObserver.get()];    
@@ -577,7 +577,7 @@ static CFURLStorageSessionRef privateBrowsingSession()
 }
 #endif
 
-bool WebContext::isURLKnownHSTSHost(const String& urlString, bool privateBrowsingEnabled) const
+bool WebProcessPool::isURLKnownHSTSHost(const String& urlString, bool privateBrowsingEnabled) const
 {
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<CFURLRef> url = URL(URL(), urlString).createCFURL();
@@ -588,7 +588,7 @@ bool WebContext::isURLKnownHSTSHost(const String& urlString, bool privateBrowsin
 #endif
 }
 
-void WebContext::resetHSTSHosts()
+void WebProcessPool::resetHSTSHosts()
 {
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     _CFNetworkResetHSTSHostsWithSession(nullptr);

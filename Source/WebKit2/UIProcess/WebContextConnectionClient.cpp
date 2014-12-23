@@ -27,16 +27,16 @@
 #include "WebContextConnectionClient.h"
 
 #include "WKAPICast.h"
-#include "WebContext.h"
+#include "WebProcessPool.h"
 
 namespace WebKit {
 
-void WebContextConnectionClient::didCreateConnection(WebContext* context, WebConnection* connection)
+void WebContextConnectionClient::didCreateConnection(WebProcessPool* processPool, WebConnection* connection)
 {
     if (!m_client.didCreateConnection)
         return;
 
-    m_client.didCreateConnection(toAPI(context), toAPI(connection), m_client.base.clientInfo);
+    m_client.didCreateConnection(toAPI(processPool), toAPI(connection), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

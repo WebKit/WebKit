@@ -32,16 +32,16 @@
 #import "GeolocationPermissionRequestProxy.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebView.h"
-#import "WebContext.h"
 #import "WebGeolocationManagerProxy.h"
-#import <WebGeolocationPosition.h>
+#import "WebProcessPool.h"
 #import <WebCore/GeolocationPosition.h>
 #import <WebCore/URL.h>
+#import <WebGeolocationPosition.h>
 #import <wtf/Assertions.h>
+#import <wtf/HashSet.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/HashSet.h>
 
 // FIXME: Remove use of WebKit1 from WebKit2
 #import <WebKit/WebGeolocationCoreLocationProvider.h>
@@ -135,12 +135,12 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     return nil;
 }
 
--(id)initWithContext:(WebContext*)context
+-(id)initWithProcessPool:(WebProcessPool&)processPool
 {
     self = [super init];
     if (!self)
         return nil;
-    _geolocationManager = context->supplement<WebGeolocationManagerProxy>();
+    _geolocationManager = processPool.supplement<WebGeolocationManagerProxy>();
     WKGeolocationProvider providerCallback = {
         kWKGeolocationProviderCurrentVersion,
         self,

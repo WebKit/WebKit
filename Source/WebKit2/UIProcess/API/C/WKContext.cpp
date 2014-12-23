@@ -27,10 +27,10 @@
 #include "WKContextPrivate.h"
 
 #include "APIClient.h"
-#include "APIContextConfiguration.h"
 #include "APIDownloadClient.h"
 #include "APILegacyContextHistoryClient.h"
 #include "APINavigationData.h"
+#include "APIProcessPoolConfiguration.h"
 #include "APIURLRequest.h"
 #include "AuthenticationChallengeProxy.h"
 #include "DownloadProxy.h"
@@ -38,9 +38,9 @@
 #include "WKContextConfigurationRef.h"
 #include "WKRetainPtr.h"
 #include "WebCertificateInfo.h"
-#include "WebContext.h"
 #include "WebIconDatabase.h"
 #include "WebPluginSiteDataManager.h"
+#include "WebProcessPool.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -75,7 +75,7 @@ using namespace WebKit;
 
 WKTypeID WKContextGetTypeID()
 {
-    return toAPI(WebContext::APIType);
+    return toAPI(WebProcessPool::APIType);
 }
 
 WKContextRef WKContextCreate()
@@ -93,7 +93,7 @@ WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
 
 WKContextRef WKContextCreateWithConfiguration(WKContextConfigurationRef configuration)
 {
-    return toAPI(WebContext::create(toImpl(configuration)->webContextConfiguration()).leakRef());
+    return toAPI(WebProcessPool::create(toImpl(configuration)->webProcessPoolConfiguration()).leakRef());
 }
 
 void WKContextSetClient(WKContextRef contextRef, const WKContextClientBase* wkClient)
@@ -116,45 +116,45 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
         }
 
     private:
-        virtual void didNavigateWithNavigationData(WebContext& context, WebPageProxy& page, const WebNavigationDataStore& navigationDataStore, WebFrameProxy& frame) override
+        virtual void didNavigateWithNavigationData(WebProcessPool& processPool, WebPageProxy& page, const WebNavigationDataStore& navigationDataStore, WebFrameProxy& frame) override
         {
             if (!m_client.didNavigateWithNavigationData)
                 return;
 
             RefPtr<API::NavigationData> navigationData = API::NavigationData::create(navigationDataStore);
-            m_client.didNavigateWithNavigationData(toAPI(&context), toAPI(&page), toAPI(navigationData.get()), toAPI(&frame), m_client.base.clientInfo);
+            m_client.didNavigateWithNavigationData(toAPI(&processPool), toAPI(&page), toAPI(navigationData.get()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void didPerformClientRedirect(WebContext& context, WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebFrameProxy& frame) override
+        virtual void didPerformClientRedirect(WebProcessPool& processPool, WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebFrameProxy& frame) override
         {
             if (!m_client.didPerformClientRedirect)
                 return;
 
-            m_client.didPerformClientRedirect(toAPI(&context), toAPI(&page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(&frame), m_client.base.clientInfo);
+            m_client.didPerformClientRedirect(toAPI(&processPool), toAPI(&page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void didPerformServerRedirect(WebContext& context, WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebFrameProxy& frame) override
+        virtual void didPerformServerRedirect(WebProcessPool& processPool, WebPageProxy& page, const String& sourceURL, const String& destinationURL, WebFrameProxy& frame) override
         {
             if (!m_client.didPerformServerRedirect)
                 return;
 
-            m_client.didPerformServerRedirect(toAPI(&context), toAPI(&page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(&frame), m_client.base.clientInfo);
+            m_client.didPerformServerRedirect(toAPI(&processPool), toAPI(&page), toURLRef(sourceURL.impl()), toURLRef(destinationURL.impl()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void didUpdateHistoryTitle(WebContext& context, WebPageProxy& page, const String& title, const String& url, WebFrameProxy& frame) override
+        virtual void didUpdateHistoryTitle(WebProcessPool& processPool, WebPageProxy& page, const String& title, const String& url, WebFrameProxy& frame) override
         {
             if (!m_client.didUpdateHistoryTitle)
                 return;
 
-            m_client.didUpdateHistoryTitle(toAPI(&context), toAPI(&page), toAPI(title.impl()), toURLRef(url.impl()), toAPI(&frame), m_client.base.clientInfo);
+            m_client.didUpdateHistoryTitle(toAPI(&processPool), toAPI(&page), toAPI(title.impl()), toURLRef(url.impl()), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        virtual void populateVisitedLinks(WebContext& context) override
+        virtual void populateVisitedLinks(WebProcessPool& processPool) override
         {
             if (!m_client.populateVisitedLinks)
                 return;
 
-            m_client.populateVisitedLinks(toAPI(&context), m_client.base.clientInfo);
+            m_client.populateVisitedLinks(toAPI(&processPool), m_client.base.clientInfo);
         }
 
         virtual bool addsVisitedLinks() const override
@@ -163,12 +163,12 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
         }
     };
 
-    WebKit::WebContext& context = *toImpl(contextRef);
-    context.setHistoryClient(std::make_unique<HistoryClient>(wkClient));
+    WebProcessPool& processPool = *toImpl(contextRef);
+    processPool.setHistoryClient(std::make_unique<HistoryClient>(wkClient));
 
-    bool addsVisitedLinks = context.historyClient().addsVisitedLinks();
+    bool addsVisitedLinks = processPool.historyClient().addsVisitedLinks();
 
-    for (auto& process : context.processes()) {
+    for (auto& process : processPool.processes()) {
         for (auto& page : process->pages())
             page->setAddsVisitedLinks(addsVisitedLinks);
     }
@@ -183,93 +183,93 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             initialize(client);
         }
     private:
-        virtual void didStart(WebContext* webContext, DownloadProxy* downloadProxy) override
+        virtual void didStart(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
         {
             if (!m_client.didStart)
                 return;
 
-            m_client.didStart(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
+            m_client.didStart(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
         }
 
-        virtual void didReceiveAuthenticationChallenge(WebContext* webContext, DownloadProxy* downloadProxy, AuthenticationChallengeProxy* authenticationChallengeProxy) override
+        virtual void didReceiveAuthenticationChallenge(WebProcessPool* processPool, DownloadProxy* downloadProxy, AuthenticationChallengeProxy* authenticationChallengeProxy) override
         {
             if (!m_client.didReceiveAuthenticationChallenge)
                 return;
 
-            m_client.didReceiveAuthenticationChallenge(toAPI(webContext), toAPI(downloadProxy), toAPI(authenticationChallengeProxy), m_client.base.clientInfo);
+            m_client.didReceiveAuthenticationChallenge(toAPI(processPool), toAPI(downloadProxy), toAPI(authenticationChallengeProxy), m_client.base.clientInfo);
         }
 
-        virtual void didReceiveResponse(WebContext* webContext, DownloadProxy* downloadProxy, const ResourceResponse& response) override
+        virtual void didReceiveResponse(WebProcessPool* processPool, DownloadProxy* downloadProxy, const ResourceResponse& response) override
         {
             if (!m_client.didReceiveResponse)
                 return;
 
-            m_client.didReceiveResponse(toAPI(webContext), toAPI(downloadProxy), toAPI(API::URLResponse::create(response).get()), m_client.base.clientInfo);
+            m_client.didReceiveResponse(toAPI(processPool), toAPI(downloadProxy), toAPI(API::URLResponse::create(response).get()), m_client.base.clientInfo);
         }
 
-        virtual void didReceiveData(WebContext* webContext, DownloadProxy* downloadProxy, uint64_t length) override
+        virtual void didReceiveData(WebProcessPool* processPool, DownloadProxy* downloadProxy, uint64_t length) override
         {
             if (!m_client.didReceiveData)
                 return;
 
-            m_client.didReceiveData(toAPI(webContext), toAPI(downloadProxy), length, m_client.base.clientInfo);
+            m_client.didReceiveData(toAPI(processPool), toAPI(downloadProxy), length, m_client.base.clientInfo);
         }
 
-        virtual bool shouldDecodeSourceDataOfMIMEType(WebContext* webContext, DownloadProxy* downloadProxy, const String& mimeType) override
+        virtual bool shouldDecodeSourceDataOfMIMEType(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& mimeType) override
         {
             if (!m_client.shouldDecodeSourceDataOfMIMEType)
                 return true;
 
-            return m_client.shouldDecodeSourceDataOfMIMEType(toAPI(webContext), toAPI(downloadProxy), toAPI(mimeType.impl()), m_client.base.clientInfo);
+            return m_client.shouldDecodeSourceDataOfMIMEType(toAPI(processPool), toAPI(downloadProxy), toAPI(mimeType.impl()), m_client.base.clientInfo);
         }
 
-        virtual String decideDestinationWithSuggestedFilename(WebContext* webContext, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwrite) override
+        virtual String decideDestinationWithSuggestedFilename(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwrite) override
         {
             if (!m_client.decideDestinationWithSuggestedFilename)
                 return String();
 
-            WKRetainPtr<WKStringRef> destination(AdoptWK, m_client.decideDestinationWithSuggestedFilename(toAPI(webContext), toAPI(downloadProxy), toAPI(filename.impl()), &allowOverwrite, m_client.base.clientInfo));
+            WKRetainPtr<WKStringRef> destination(AdoptWK, m_client.decideDestinationWithSuggestedFilename(toAPI(processPool), toAPI(downloadProxy), toAPI(filename.impl()), &allowOverwrite, m_client.base.clientInfo));
             return toWTFString(destination.get());
         }
 
-        virtual void didCreateDestination(WebContext* webContext, DownloadProxy* downloadProxy, const String& path) override
+        virtual void didCreateDestination(WebProcessPool* processPool, DownloadProxy* downloadProxy, const String& path) override
         {
             if (!m_client.didCreateDestination)
                 return;
 
-            m_client.didCreateDestination(toAPI(webContext), toAPI(downloadProxy), toAPI(path.impl()), m_client.base.clientInfo);
+            m_client.didCreateDestination(toAPI(processPool), toAPI(downloadProxy), toAPI(path.impl()), m_client.base.clientInfo);
         }
 
-        virtual void didFinish(WebContext* webContext, DownloadProxy* downloadProxy) override
+        virtual void didFinish(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
         {
             if (!m_client.didFinish)
                 return;
 
-            m_client.didFinish(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
+            m_client.didFinish(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
         }
 
-        virtual void didFail(WebContext* webContext, DownloadProxy* downloadProxy, const ResourceError& error) override
+        virtual void didFail(WebProcessPool* processPool, DownloadProxy* downloadProxy, const ResourceError& error) override
         {
             if (!m_client.didFail)
                 return;
 
-            m_client.didFail(toAPI(webContext), toAPI(downloadProxy), toAPI(error), m_client.base.clientInfo);
+            m_client.didFail(toAPI(processPool), toAPI(downloadProxy), toAPI(error), m_client.base.clientInfo);
         }
         
-        virtual void didCancel(WebContext* webContext, DownloadProxy* downloadProxy) override
+        virtual void didCancel(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
         {
             if (!m_client.didCancel)
                 return;
             
-            m_client.didCancel(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
+            m_client.didCancel(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
         }
         
-        virtual void processDidCrash(WebContext* webContext, DownloadProxy* downloadProxy) override
+        virtual void processDidCrash(WebProcessPool* processPool, DownloadProxy* downloadProxy) override
         {
             if (!m_client.processDidCrash)
                 return;
             
-            m_client.processDidCrash(toAPI(webContext), toAPI(downloadProxy), m_client.base.clientInfo);
+            m_client.processDidCrash(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
         }
 
     };
@@ -304,7 +304,7 @@ void WKContextPostMessageToInjectedBundle(WKContextRef contextRef, WKStringRef m
 
 void WKContextGetGlobalStatistics(WKContextStatistics* statistics)
 {
-    const WebContext::Statistics& webContextStatistics = WebContext::statistics();
+    const WebProcessPool::Statistics& webContextStatistics = WebProcessPool::statistics();
 
     statistics->wkViewCount = webContextStatistics.wkViewCount;
     statistics->wkPageCount = webContextStatistics.wkPageCount;
@@ -588,7 +588,7 @@ void WKContextSetPlugInAutoStartOrigins(WKContextRef contextRef, WKArrayRef arra
 
 void WKContextSetInvalidMessageFunction(WKContextInvalidMessageFunction invalidMessageFunction)
 {
-    WebContext::setInvalidMessageCallback(invalidMessageFunction);
+    WebProcessPool::setInvalidMessageCallback(invalidMessageFunction);
 }
 
 void WKContextSetMemoryCacheDisabled(WKContextRef contextRef, bool disabled)

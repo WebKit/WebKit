@@ -104,7 +104,7 @@ void* Object::newObject(size_t size, Type type)
         wrapper = NSAllocateObject([WKConnection self], size, nullptr);
         break;
 
-    case Type::Context:
+    case Type::ProcessPool:
         wrapper = [WKProcessPool alloc];
         break;
 

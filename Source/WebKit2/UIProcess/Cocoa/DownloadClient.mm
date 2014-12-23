@@ -54,25 +54,25 @@ DownloadClient::DownloadClient(id <_WKDownloadDelegate> delegate)
     m_delegateMethods.downloadDidCancel = [delegate respondsToSelector:@selector(_downloadDidCancel:)];
 }
 
-void DownloadClient::didStart(WebContext*, DownloadProxy* downloadProxy)
+void DownloadClient::didStart(WebProcessPool*, DownloadProxy* downloadProxy)
 {
     if (m_delegateMethods.downloadDidStart)
         [m_delegate.get() _downloadDidStart:wrapper(*downloadProxy)];
 }
 
-void DownloadClient::didReceiveResponse(WebContext*, DownloadProxy* downloadProxy, const WebCore::ResourceResponse& response)
+void DownloadClient::didReceiveResponse(WebProcessPool*, DownloadProxy* downloadProxy, const WebCore::ResourceResponse& response)
 {
     if (m_delegateMethods.downloadDidReceiveResponse)
         [m_delegate.get() _download:wrapper(*downloadProxy) didReceiveResponse:response.nsURLResponse()];
 }
 
-void DownloadClient::didReceiveData(WebContext*, DownloadProxy* downloadProxy, uint64_t length)
+void DownloadClient::didReceiveData(WebProcessPool*, DownloadProxy* downloadProxy, uint64_t length)
 {
     if (m_delegateMethods.downloadDidReceiveData)
         [m_delegate.get() _download:wrapper(*downloadProxy) didReceiveData:length];
 }
 
-String DownloadClient::decideDestinationWithSuggestedFilename(WebContext*, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwriteParam)
+String DownloadClient::decideDestinationWithSuggestedFilename(WebProcessPool*, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwriteParam)
 {
     if (!m_delegateMethods.downloadDecideDestinationWithSuggestedFilenameAllowOverwrite)
         return String();
@@ -83,19 +83,19 @@ String DownloadClient::decideDestinationWithSuggestedFilename(WebContext*, Downl
     return destination;
 }
 
-void DownloadClient::didFinish(WebContext*, DownloadProxy* downloadProxy)
+void DownloadClient::didFinish(WebProcessPool*, DownloadProxy* downloadProxy)
 {
     if (m_delegateMethods.downloadDidFinish)
         [m_delegate.get() _downloadDidFinish:wrapper(*downloadProxy)];
 }
 
-void DownloadClient::didFail(WebContext*, DownloadProxy* downloadProxy, const WebCore::ResourceError& error)
+void DownloadClient::didFail(WebProcessPool*, DownloadProxy* downloadProxy, const WebCore::ResourceError& error)
 {
     if (m_delegateMethods.downloadDidFail)
         [m_delegate.get() _download:wrapper(*downloadProxy) didFailWithError:error.nsError()];
 }
 
-void DownloadClient::didCancel(WebContext*, DownloadProxy* downloadProxy)
+void DownloadClient::didCancel(WebProcessPool*, DownloadProxy* downloadProxy)
 {
     if (m_delegateMethods.downloadDidCancel)
         [m_delegate.get() _downloadDidCancel:wrapper(*downloadProxy)];

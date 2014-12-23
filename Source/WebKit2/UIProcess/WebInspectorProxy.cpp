@@ -30,7 +30,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "APIURLRequest.h"
-#include "WebContext.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
 #include "WebInspectorMessages.h"
@@ -39,6 +38,7 @@
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
+#include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/SchemeRegistry.h>
 #include <wtf/NeverDestroyed.h>
@@ -362,20 +362,21 @@ bool WebInspectorProxy::isInspectorPage(WebPageProxy& page)
     return WebInspectorPageGroups::shared().isInspectorPageGroup(page.pageGroup());
 }
 
-WebContext& WebInspectorProxy::inspectorContext()
+WebProcessPool& WebInspectorProxy::inspectorProcessPool()
 {
-    // Having our own context removes us from the main context's process pool and
+    // Having our own process pool removes us from the main process pool and
     // guarantees no process sharing for our user interface.
 
-    static WebContext* context;
-    if (!context) {
-        WebContextConfiguration configuration;
-        WebContext::applyPlatformSpecificConfigurationDefaults(configuration);
-        context = (WebContext::create(configuration)).leakRef();
-        context->setProcessModel(ProcessModelMultipleSecondaryProcesses);
+    static WebProcessPool* processPool;
+    if (!processPool) {
+        WebProcessPoolConfiguration configuration;
+        WebProcessPool::applyPlatformSpecificConfigurationDefaults(configuration);
+        
+        processPool = (WebProcessPool::create(WTF::move(configuration))).leakRef();
+        processPool->setProcessModel(ProcessModelMultipleSecondaryProcesses);
     }
 
-    return *context;
+    return *processPool;
 }
 
 static bool isMainOrTestInspectorPage(const WebInspectorProxy* webInspectorProxy, WKURLRequestRef requestRef)

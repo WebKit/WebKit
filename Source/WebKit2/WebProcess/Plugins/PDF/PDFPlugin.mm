@@ -40,13 +40,13 @@
 #import "PluginView.h"
 #import "WKAccessibilityWebPageObjectMac.h"
 #import "WKPageFindMatchesClient.h"
-#import "WebContextMessages.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
 #import "WebEventConversion.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
+#import "WebProcessPoolMessages.h"
 #import <JavaScriptCore/JSContextRef.h>
 #import <JavaScriptCore/JSObjectRef.h>
 #import <JavaScriptCore/JSStringRef.h>
@@ -1662,8 +1662,8 @@ void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items,
         pasteboardTypes.append(type);
 
     uint64_t newChangeCount;
-    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardTypes(pasteboardName, pasteboardTypes),
-        Messages::WebContext::SetPasteboardTypes::Reply(newChangeCount), 0);
+    WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebProcessPool::SetPasteboardTypes(pasteboardName, pasteboardTypes),
+        Messages::WebProcessPool::SetPasteboardTypes::Reply(newChangeCount), 0);
 
     for (NSUInteger i = 0, count = items.count; i < count; ++i) {
         NSString *type = [types objectAtIndex:i];
@@ -1677,8 +1677,8 @@ void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items,
 
         if ([type isEqualToString:NSStringPboardType] || [type isEqualToString:NSPasteboardTypeString]) {
             RetainPtr<NSString> plainTextString = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-            WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardStringForType(pasteboardName, type, plainTextString.get()),
-                Messages::WebContext::SetPasteboardStringForType::Reply(newChangeCount), 0);
+            WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebProcessPool::SetPasteboardStringForType(pasteboardName, type, plainTextString.get()),
+                Messages::WebProcessPool::SetPasteboardStringForType::Reply(newChangeCount), 0);
         } else {
             RefPtr<SharedBuffer> buffer = SharedBuffer::wrapNSData(data);
 
@@ -1689,8 +1689,8 @@ void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items,
             RefPtr<SharedMemory> sharedMemory = SharedMemory::create(buffer->size());
             memcpy(sharedMemory->data(), buffer->data(), buffer->size());
             sharedMemory->createHandle(handle, SharedMemory::ReadOnly);
-            WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebContext::SetPasteboardBufferForType(pasteboardName, type, handle, buffer->size()),
-                Messages::WebContext::SetPasteboardBufferForType::Reply(newChangeCount), 0);
+            WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebProcessPool::SetPasteboardBufferForType(pasteboardName, type, handle, buffer->size()),
+                Messages::WebProcessPool::SetPasteboardBufferForType::Reply(newChangeCount), 0);
         }
     }
 }

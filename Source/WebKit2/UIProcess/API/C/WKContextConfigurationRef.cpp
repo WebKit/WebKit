@@ -26,14 +26,14 @@
 #include "config.h"
 #include "WKContextConfigurationRef.h"
 
-#include "APIContextConfiguration.h"
+#include "APIProcessPoolConfiguration.h"
 #include "WKAPICast.h"
 
 using namespace WebKit;
 
 WKContextConfigurationRef WKContextConfigurationCreate()
 {
-    return toAPI(API::ContextConfiguration::create().leakRef());
+    return toAPI(API::ProcessPoolConfiguration::create().leakRef());
 }
 
 WKStringRef WKContextConfigurationCopyIndexedDBDatabaseDirectory(WKContextConfigurationRef configuration)

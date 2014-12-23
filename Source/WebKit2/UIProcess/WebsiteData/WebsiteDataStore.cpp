@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebsiteDataStore.h"
 
-#include "WebContext.h"
+#include "WebProcessPool.h"
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
@@ -145,19 +145,19 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
 
     auto networkProcessAccessType = computeNetworkProcessAccessType(dataTypes, isNonPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
-        HashSet<WebContext*> contexts;
+        HashSet<WebProcessPool*> processPools;
         for (auto& webPage : m_webPages)
-            contexts.add(&webPage->process().context());
+            processPools.add(&webPage->process().processPool());
 
-        for (auto& context : contexts) {
+        for (auto& processPool : processPools) {
             switch (networkProcessAccessType) {
             case ProcessAccessType::OnlyIfLaunched:
-                if (!context->networkProcess())
+                if (!processPool->networkProcess())
                     continue;
                 break;
 
             case ProcessAccessType::Launch:
-                context->ensureNetworkProcess();
+                processPool->ensureNetworkProcess();
                 break;
 
             case ProcessAccessType::None:
@@ -165,7 +165,7 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
             }
 
             callbackAggregator->addPendingCallback();
-            context->networkProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] {
+            processPool->networkProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] {
                 callbackAggregator->removePendingCallback();
             });
         }

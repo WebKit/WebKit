@@ -30,8 +30,8 @@
 
 namespace WebKit {
 class GeolocationPermissionRequestProxy;
-class WebContext;
 class WebFrameProxy;
+class WebProcessPool;
 }
 
 namespace WebCore {
@@ -41,7 +41,7 @@ class SecurityOrigin;
 @class WKWebView;
 
 @interface WKGeolocationProviderIOS : NSObject
--(id)initWithContext:(WebKit::WebContext*)context;
+-(id)initWithProcessPool:(WebKit::WebProcessPool&)processPool;
 -(void)decidePolicyForGeolocationRequestFromOrigin:(WebCore::SecurityOrigin&)origin frame:(WebKit::WebFrameProxy&)frame request:(WebKit::GeolocationPermissionRequestProxy&)permissionRequest view:(WKWebView*)view;
 @end
 

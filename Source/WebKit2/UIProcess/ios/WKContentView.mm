@@ -39,11 +39,11 @@
 #import "WKProcessGroupPrivate.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewInternal.h"
-#import "WebContext.h"
 #import "WebFrameProxy.h"
 #import "WebKit2Initialize.h"
 #import "WebKitSystemInterfaceIOS.h"
 #import "WebPageGroup.h"
+#import "WebProcessPool.h"
 #import "WebSystemInterface.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <UIKit/UIWindow_Private.h>
@@ -182,7 +182,7 @@ private:
     RetainPtr<NSUndoManager> _undoManager;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame context:(WebKit::WebContext&)context configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView
+- (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
@@ -191,7 +191,7 @@ private:
 
     _pageClient = std::make_unique<PageClientImpl>(self, webView);
 
-    _page = context.createWebPage(*_pageClient, WTF::move(webPageConfiguration));
+    _page = processPool.createWebPage(*_pageClient, WTF::move(webPageConfiguration));
     _page->initializeWebPage();
     _page->setIntrinsicDeviceScaleFactor(WKGetScaleFactorForScreen([UIScreen mainScreen]));
     _page->setUseFixedLayout(true);
@@ -201,7 +201,7 @@ private:
     
     _isBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
 
-    WebContext::statistics().wkViewCount++;
+    WebProcessPool::statistics().wkViewCount++;
 
     _rootContentView = adoptNS([[UIView alloc] init]);
     [_rootContentView layer].masksToBounds = NO;
@@ -238,7 +238,7 @@ private:
 
     _page->close();
 
-    WebContext::statistics().wkViewCount--;
+    WebProcessPool::statistics().wkViewCount--;
 
     [super dealloc];
 }

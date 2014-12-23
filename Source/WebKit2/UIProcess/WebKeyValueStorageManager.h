@@ -36,13 +36,14 @@
 
 namespace WebKit {
 
+class WebProcessPool;
 typedef GenericCallback<API::Array*> ArrayCallback;
 
 class WebKeyValueStorageManager : public API::ObjectImpl<API::Object::Type::KeyValueStorageManager>, public WebContextSupplement {
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebKeyValueStorageManager> create(WebContext*);
+    static PassRefPtr<WebKeyValueStorageManager> create(WebProcessPool*);
     virtual ~WebKeyValueStorageManager();
 
     void getKeyValueStorageOrigins(std::function<void (API::Array*, CallbackBase::Error)>);
@@ -58,7 +59,7 @@ public:
     static String modificationTimeKey();
 
 private:
-    explicit WebKeyValueStorageManager(WebContext*);
+    explicit WebKeyValueStorageManager(WebProcessPool*);
 
     // WebContextSupplement
     virtual void refWebContextSupplement() override;

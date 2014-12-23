@@ -59,12 +59,12 @@
 #import "WKWebViewContentProvider.h"
 #import "WebBackForwardList.h"
 #import "WebCertificateInfo.h"
-#import "WebContext.h"
 #import "WebFormSubmissionListenerProxy.h"
 #import "WebKitSystemInterface.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferencesKeys.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "_WKFindDelegate.h"
 #import "_WKFormDelegate.h"
@@ -278,7 +278,7 @@ static int32_t deviceOrientation()
 
     CGRect bounds = self.bounds;
 
-    WebKit::WebContext& context = *[_configuration processPool]->_context;
+    WebKit::WebProcessPool& processPool = *[_configuration processPool]->_processPool;
 
     WebKit::WebPageConfiguration webPageConfiguration;
     webPageConfiguration.preferences = [_configuration preferences]->_preferences.get();
@@ -314,7 +314,7 @@ static int32_t deviceOrientation()
 
     [self addSubview:_scrollView.get()];
 
-    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds context:context configuration:WTF::move(webPageConfiguration) webView:self]);
+    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds processPool:processPool configuration:WTF::move(webPageConfiguration) webView:self]);
 
     _page = [_contentView page];
     _page->setDeviceOrientation(deviceOrientation());
@@ -342,7 +342,7 @@ static int32_t deviceOrientation()
 #endif
 
 #if PLATFORM(MAC)
-    _wkView = adoptNS([[WKView alloc] initWithFrame:bounds context:context configuration:WTF::move(webPageConfiguration) webView:self]);
+    _wkView = adoptNS([[WKView alloc] initWithFrame:bounds processPool:processPool configuration:WTF::move(webPageConfiguration) webView:self]);
     [self addSubview:_wkView.get()];
     _page = WebKit::toImpl([_wkView pageRef]);
 
@@ -379,7 +379,7 @@ static int32_t deviceOrientation()
 - (void)dealloc
 {
     if (_remoteObjectRegistry)
-        _page->process().context().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID());
+        _page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID());
 
     _page->close();
 
@@ -1622,7 +1622,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     if (!_remoteObjectRegistry) {
         _remoteObjectRegistry = adoptNS([[_WKRemoteObjectRegistry alloc] _initWithMessageSender:*_page]);
-        _page->process().context().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
+        _page->process().processPool().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID(), [_remoteObjectRegistry remoteObjectRegistry]);
     }
 
     return _remoteObjectRegistry.get();

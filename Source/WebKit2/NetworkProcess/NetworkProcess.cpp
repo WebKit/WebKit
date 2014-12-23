@@ -41,8 +41,8 @@
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
-#include "WebContextMessages.h"
 #include "WebCookieManager.h"
+#include "WebProcessPoolMessages.h"
 #include "WebsiteDataTypes.h"
 #include <WebCore/Logging.h>
 #include <WebCore/MemoryPressureHandler.h>
@@ -297,7 +297,7 @@ void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)
     data.statisticsNumbers.set("DownloadsActiveCount", shared().downloadManager().activeDownloadCount());
     data.statisticsNumbers.set("OutstandingAuthenticationChallengesCount", shared().authenticationManager().outstandingAuthenticationChallengeCount());
 
-    parentProcessConnection()->send(Messages::WebContext::DidGetStatistics(data, callbackID), 0);
+    parentProcessConnection()->send(Messages::WebProcessPool::DidGetStatistics(data, callbackID), 0);
 }
 
 void NetworkProcess::terminate()

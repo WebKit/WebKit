@@ -30,7 +30,6 @@
 
 #import <WebCore/NotImplemented.h>
 
-#import "WebContext.h"
 #import "WebProcessMessages.h"
 
 namespace WebKit {

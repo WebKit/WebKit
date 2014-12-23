@@ -36,7 +36,6 @@
 
 namespace WebKit {
 
-class WebContext;
 class WebPageProxy;
 class WebProcessProxy;
     

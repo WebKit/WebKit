@@ -38,7 +38,6 @@
 #include "PluginView.h"
 #include "WKBundleAPICast.h"
 #include "WebBackForwardListProxy.h"
-#include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDocumentLoader.h"
 #include "WebErrors.h"
@@ -51,6 +50,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include "WebProcessPoolMessages.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObject.h>
 #include <WebCore/CertificateInfo.h>

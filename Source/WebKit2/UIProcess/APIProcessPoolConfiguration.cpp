@@ -24,23 +24,23 @@
  */
 
 #include "config.h"
-#include "APIContextConfiguration.h"
+#include "APIProcessPoolConfiguration.h"
 
-#include "WebContext.h"
+#include "WebProcessPool.h"
 
 namespace API {
 
-ContextConfiguration::ContextConfiguration()
+ProcessPoolConfiguration::ProcessPoolConfiguration()
 {
 }
 
-ContextConfiguration::~ContextConfiguration()
+ProcessPoolConfiguration::~ProcessPoolConfiguration()
 {
 }
 
-WebKit::WebContextConfiguration ContextConfiguration::webContextConfiguration() const
+WebKit::WebProcessPoolConfiguration ProcessPoolConfiguration::webProcessPoolConfiguration() const
 {
-    WebKit::WebContextConfiguration configuration;
+    WebKit::WebProcessPoolConfiguration configuration;
 
     configuration.indexedDBDatabaseDirectory = m_indexedDBDatabaseDirectory;
     configuration.injectedBundlePath = m_injectedBundlePath;
@@ -48,7 +48,7 @@ WebKit::WebContextConfiguration ContextConfiguration::webContextConfiguration() 
     configuration.webSQLDatabaseDirectory = m_webSQLDatabaseDirectory;
     configuration.mediaKeysStorageDirectory = m_mediaKeysStorageDirectory;
 
-    WebKit::WebContext::applyPlatformSpecificConfigurationDefaults(configuration);
+    WebKit::WebProcessPool::applyPlatformSpecificConfigurationDefaults(configuration);
 
     return configuration;
 }

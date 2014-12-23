@@ -42,15 +42,15 @@ class SecurityOrigin;
 
 namespace WebKit {
 
-class WebContext;
 class WebPageProxy;
+class WebProcessPool;
 
 class WebNotificationManagerProxy : public API::ObjectImpl<API::Object::Type::NotificationManager>, public WebContextSupplement {
 public:
 
     static const char* supplementName();
 
-    static PassRefPtr<WebNotificationManagerProxy> create(WebContext*);
+    static PassRefPtr<WebNotificationManagerProxy> create(WebProcessPool*);
 
     void initializeProvider(const WKNotificationProviderBase*);
     void populateCopyOfNotificationPermissions(HashMap<String, bool>&);
@@ -71,13 +71,13 @@ public:
     using API::Object::deref;
 
 private:
-    explicit WebNotificationManagerProxy(WebContext*);
+    explicit WebNotificationManagerProxy(WebProcessPool*);
 
     typedef bool (*NotificationFilterFunction)(uint64_t pageID, uint64_t pageNotificationID, uint64_t desiredPageID, const Vector<uint64_t>& desiredPageNotificationIDs);
     void clearNotifications(WebPageProxy*, const Vector<uint64_t>& pageNotificationIDs, NotificationFilterFunction);
 
     // WebContextSupplement
-    virtual void contextDestroyed() override;
+    virtual void processPoolDestroyed() override;
     virtual void refWebContextSupplement() override;
     virtual void derefWebContextSupplement() override;
 

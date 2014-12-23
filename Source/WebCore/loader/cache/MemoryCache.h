@@ -27,7 +27,7 @@
 
 #include "NativeImagePtr.h"
 #include "SecurityOriginHash.h"
-#include "SessionIDHash.h"
+#include "SessionID.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

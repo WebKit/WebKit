@@ -27,10 +27,10 @@
 #include "WKPagePrivateMac.h"
 
 #include "WKAPICast.h"
-#include "WebContext.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
+#include "WebProcessPool.h"
 
 using namespace WebKit;
 
@@ -44,5 +44,5 @@ bool WKPageIsURLKnownHSTSHost(WKPageRef page, WKURLRef url)
     WebPageProxy* webPageProxy = toImpl(page);
     bool privateBrowsingEnabled = webPageProxy->pageGroup().preferences().privateBrowsingEnabled();
 
-    return webPageProxy->process().context().isURLKnownHSTSHost(toImpl(url)->string(), privateBrowsingEnabled);
+    return webPageProxy->process().processPool().isURLKnownHSTSHost(toImpl(url)->string(), privateBrowsingEnabled);
 }

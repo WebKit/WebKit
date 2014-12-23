@@ -29,9 +29,9 @@
 #include "APIArray.h"
 #include "APISecurityOrigin.h"
 #include "SecurityOriginData.h"
-#include "WebContext.h"
 #include "WebCookieManagerMessages.h"
 #include "WebCookieManagerProxyMessages.h"
+#include "WebProcessPool.h"
 
 namespace WebKit {
 
@@ -40,18 +40,18 @@ const char* WebCookieManagerProxy::supplementName()
     return "WebCookieManagerProxy";
 }
 
-PassRefPtr<WebCookieManagerProxy> WebCookieManagerProxy::create(WebContext* context)
+PassRefPtr<WebCookieManagerProxy> WebCookieManagerProxy::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebCookieManagerProxy(context));
+    return adoptRef(new WebCookieManagerProxy(processPool));
 }
 
-WebCookieManagerProxy::WebCookieManagerProxy(WebContext* context)
-    : WebContextSupplement(context)
+WebCookieManagerProxy::WebCookieManagerProxy(WebProcessPool* processPool)
+    : WebContextSupplement(processPool)
 #if USE(SOUP)
     , m_cookiePersistentStorageType(SoupCookiePersistentStorageSQLite)
 #endif
 {
-    WebContextSupplement::context()->addMessageReceiver(Messages::WebCookieManagerProxy::messageReceiverName(), *this);
+    WebContextSupplement::processPool()->addMessageReceiver(Messages::WebCookieManagerProxy::messageReceiverName(), *this);
 }
 
 WebCookieManagerProxy::~WebCookieManagerProxy()
@@ -65,7 +65,7 @@ void WebCookieManagerProxy::initializeClient(const WKCookieManagerClientBase* cl
 
 // WebContextSupplement
 
-void WebCookieManagerProxy::contextDestroyed()
+void WebCookieManagerProxy::processPoolDestroyed()
 {
     invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::OwnerWasInvalidated);
     invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks, CallbackBase::Error::OwnerWasInvalidated);
@@ -85,7 +85,7 @@ void WebCookieManagerProxy::processDidClose(NetworkProcessProxy*)
 
 bool WebCookieManagerProxy::shouldTerminate(WebProcessProxy*) const
 {
-    return context()->processModel() != ProcessModelSharedSecondaryProcess
+    return processPool()->processModel() != ProcessModelSharedSecondaryProcess
         || (m_arrayCallbacks.isEmpty() && m_httpCookieAcceptPolicyCallbacks.isEmpty());
 }
 
@@ -105,7 +105,7 @@ void WebCookieManagerProxy::getHostnamesWithCookies(std::function<void (API::Arr
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
 
-    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::GetHostnamesWithCookies(callbackID));
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::GetHostnamesWithCookies(callbackID));
 }
     
 void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hostnames, uint64_t callbackID)
@@ -121,27 +121,27 @@ void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hos
 
 void WebCookieManagerProxy::deleteCookiesForHostname(const String& hostname)
 {
-    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteCookiesForHostname(hostname));
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteCookiesForHostname(hostname));
 }
 
 void WebCookieManagerProxy::deleteAllCookies()
 {
-    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookies());
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookies());
 }
 
 void WebCookieManagerProxy::deleteAllCookiesModifiedSince(std::chrono::system_clock::time_point time)
 {
-    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookiesModifiedSince(time));
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookiesModifiedSince(time));
 }
 
 void WebCookieManagerProxy::startObservingCookieChanges()
 {
-    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StartObservingCookieChanges());
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StartObservingCookieChanges());
 }
 
 void WebCookieManagerProxy::stopObservingCookieChanges()
 {
-    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StopObservingCookieChanges());
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::StopObservingCookieChanges());
 }
 
 void WebCookieManagerProxy::cookiesDidChange()
@@ -155,10 +155,10 @@ void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy pol
     persistHTTPCookieAcceptPolicy(policy);
 #endif
 #if USE(SOUP)
-    context()->setInitialHTTPCookieAcceptPolicy(policy);
+    processPool()->setInitialHTTPCookieAcceptPolicy(policy);
 #endif
 
-    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
 }
 
 void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(std::function<void (HTTPCookieAcceptPolicy, CallbackBase::Error)> callbackFunction)
@@ -168,7 +168,7 @@ void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(std::function<void (HTTPCo
     uint64_t callbackID = callback->callbackID();
     m_httpCookieAcceptPolicyCallbacks.set(callbackID, callback.release());
 
-    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::GetHTTPCookieAcceptPolicy(callbackID));
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::GetHTTPCookieAcceptPolicy(callbackID));
 }
 
 void WebCookieManagerProxy::didGetHTTPCookieAcceptPolicy(uint32_t policy, uint64_t callbackID)

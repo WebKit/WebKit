@@ -32,9 +32,9 @@
 #include "PluginProcessCreationParameters.h"
 #include "PluginProcessManager.h"
 #include "PluginProcessMessages.h"
-#include "WebContext.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPluginSiteDataManager.h"
+#include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/NotImplemented.h>
 #include <wtf/RunLoop.h>
@@ -166,9 +166,9 @@ void PluginProcessProxy::didClose(IPC::Connection*)
         exitFullscreen();
 #endif
 
-    const Vector<WebContext*>& contexts = WebContext::allContexts();
-    for (size_t i = 0; i < contexts.size(); ++i)
-        contexts[i]->sendToAllProcesses(Messages::PluginProcessConnectionManager::PluginProcessCrashed(m_pluginProcessToken));
+    const Vector<WebProcessPool*>& processPools = WebProcessPool::allProcessPools();
+    for (size_t i = 0; i < processPools.size(); ++i)
+        processPools[i]->sendToAllProcesses(Messages::PluginProcessConnectionManager::PluginProcessCrashed(m_pluginProcessToken));
 
     // This will cause us to be deleted.
     pluginProcessCrashedOrFailedToLaunch();

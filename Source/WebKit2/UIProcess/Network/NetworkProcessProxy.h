@@ -50,12 +50,12 @@ namespace WebKit {
 
 class DownloadProxy;
 class DownloadProxyMap;
-class WebContext;
+class WebProcessPool;
 struct NetworkProcessCreationParameters;
 
 class NetworkProcessProxy : public ChildProcessProxy {
 public:
-    static PassRefPtr<NetworkProcessProxy> create(WebContext&);
+    static PassRefPtr<NetworkProcessProxy> create(WebProcessPool&);
     ~NetworkProcessProxy();
 
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
@@ -69,7 +69,7 @@ public:
 #endif
 
 private:
-    NetworkProcessProxy(WebContext&);
+    NetworkProcessProxy(WebProcessPool&);
 
     // ChildProcessProxy
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
@@ -94,7 +94,7 @@ private:
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
 
-    WebContext& m_webContext;
+    WebProcessPool& m_processPool;
     
     unsigned m_numPendingConnectionRequests;
     Deque<RefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> m_pendingConnectionReplies;

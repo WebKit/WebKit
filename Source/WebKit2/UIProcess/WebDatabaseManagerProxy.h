@@ -40,7 +40,7 @@
 
 namespace WebKit {
 
-class WebContext;
+class WebProcessPool;
 class WebProcessProxy;
 
 typedef GenericCallback<API::Array*> ArrayCallback;
@@ -49,7 +49,7 @@ class WebDatabaseManagerProxy : public API::ObjectImpl<API::Object::Type::Databa
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebDatabaseManagerProxy> create(WebContext*);
+    static PassRefPtr<WebDatabaseManagerProxy> create(WebProcessPool*);
     virtual ~WebDatabaseManagerProxy();
 
     void initializeClient(const WKDatabaseManagerClientBase*);
@@ -76,10 +76,10 @@ public:
     using API::Object::deref;
 
 private:
-    explicit WebDatabaseManagerProxy(WebContext*);
+    explicit WebDatabaseManagerProxy(WebProcessPool*);
 
     // WebContextSupplement
-    virtual void contextDestroyed() override;
+    virtual void processPoolDestroyed() override;
     virtual void processDidClose(WebProcessProxy*) override;
     virtual bool shouldTerminate(WebProcessProxy*) const override;
     virtual void refWebContextSupplement() override;

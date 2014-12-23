@@ -27,10 +27,9 @@
 #include "WebMediaCacheManagerProxy.h"
 
 #include "APIArray.h"
-#include "APISecurityOrigin.h"
-#include "WebContext.h"
 #include "WebMediaCacheManagerMessages.h"
 #include "WebMediaCacheManagerProxyMessages.h"
+#include "WebProcessPool.h"
 
 namespace WebKit {
 
@@ -39,15 +38,15 @@ const char* WebMediaCacheManagerProxy::supplementName()
     return "WebMediaCacheManagerProxy";
 }
 
-PassRefPtr<WebMediaCacheManagerProxy> WebMediaCacheManagerProxy::create(WebContext* context)
+PassRefPtr<WebMediaCacheManagerProxy> WebMediaCacheManagerProxy::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebMediaCacheManagerProxy(context));
+    return adoptRef(new WebMediaCacheManagerProxy(processPool));
 }
 
-WebMediaCacheManagerProxy::WebMediaCacheManagerProxy(WebContext* context)
-    : WebContextSupplement(context)
+WebMediaCacheManagerProxy::WebMediaCacheManagerProxy(WebProcessPool* processPool)
+    : WebContextSupplement(processPool)
 {
-    WebContextSupplement::context()->addMessageReceiver(Messages::WebMediaCacheManagerProxy::messageReceiverName(), *this);
+    WebContextSupplement::processPool()->addMessageReceiver(Messages::WebMediaCacheManagerProxy::messageReceiverName(), *this);
 }
 
 WebMediaCacheManagerProxy::~WebMediaCacheManagerProxy()
@@ -56,7 +55,7 @@ WebMediaCacheManagerProxy::~WebMediaCacheManagerProxy()
 
 // WebContextSupplement
 
-void WebMediaCacheManagerProxy::contextDestroyed()
+void WebMediaCacheManagerProxy::processPoolDestroyed()
 {
     invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 }
@@ -88,7 +87,7 @@ void WebMediaCacheManagerProxy::getHostnamesWithMediaCache(std::function<void (A
     m_arrayCallbacks.set(callbackID, callback.release());
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> When we're sending this to multiple processes, we need to aggregate the callback data when it comes back.
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebMediaCacheManager::GetHostnamesWithMediaCache(callbackID));
+    processPool()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebMediaCacheManager::GetHostnamesWithMediaCache(callbackID));
 }
     
 void WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache(const Vector<String>& hostnames, uint64_t callbackID)
@@ -104,12 +103,12 @@ void WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache(const Vector<Strin
 
 void WebMediaCacheManagerProxy::clearCacheForHostname(const String& hostname)
 {
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebMediaCacheManager::ClearCacheForHostname(hostname));
+    processPool()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebMediaCacheManager::ClearCacheForHostname(hostname));
 }
 
 void WebMediaCacheManagerProxy::clearCacheForAllHostnames()
 {
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebMediaCacheManager::ClearCacheForAllHostnames());
+    processPool()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebMediaCacheManager::ClearCacheForAllHostnames());
 }
 
 } // namespace WebKit

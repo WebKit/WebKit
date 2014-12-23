@@ -30,7 +30,7 @@
 #include "SecurityOriginData.h"
 #include "WebApplicationCacheManagerMessages.h"
 #include "WebApplicationCacheManagerProxyMessages.h"
-#include "WebContext.h"
+#include "WebProcessPool.h"
 
 namespace WebKit {
 
@@ -39,15 +39,15 @@ const char* WebApplicationCacheManagerProxy::supplementName()
     return "WebApplicationCacheManagerProxy";
 }
 
-PassRefPtr<WebApplicationCacheManagerProxy> WebApplicationCacheManagerProxy::create(WebContext* context)
+PassRefPtr<WebApplicationCacheManagerProxy> WebApplicationCacheManagerProxy::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebApplicationCacheManagerProxy(context));
+    return adoptRef(new WebApplicationCacheManagerProxy(processPool));
 }
 
-WebApplicationCacheManagerProxy::WebApplicationCacheManagerProxy(WebContext* context)
-    : WebContextSupplement(context)
+WebApplicationCacheManagerProxy::WebApplicationCacheManagerProxy(WebProcessPool* processPool)
+    : WebContextSupplement(processPool)
 {
-    context->addMessageReceiver(Messages::WebApplicationCacheManagerProxy::messageReceiverName(), *this);
+    processPool->addMessageReceiver(Messages::WebApplicationCacheManagerProxy::messageReceiverName(), *this);
 }
 
 WebApplicationCacheManagerProxy::~WebApplicationCacheManagerProxy()
@@ -55,7 +55,7 @@ WebApplicationCacheManagerProxy::~WebApplicationCacheManagerProxy()
 }
 
 
-void WebApplicationCacheManagerProxy::contextDestroyed()
+void WebApplicationCacheManagerProxy::processPoolDestroyed()
 {
     invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 }
@@ -84,7 +84,7 @@ void WebApplicationCacheManagerProxy::getApplicationCacheOrigins(std::function<v
 {
     RefPtr<ArrayCallback> callback = ArrayCallback::create(WTF::move(callbackFunction));
 
-    if (!context()) {
+    if (!processPool()) {
         callback->invalidate();
         return;
     }
@@ -93,7 +93,7 @@ void WebApplicationCacheManagerProxy::getApplicationCacheOrigins(std::function<v
     m_arrayCallbacks.set(callbackID, callback.release());
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Make manipulating cache information work with per-tab WebProcess.
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebApplicationCacheManager::GetApplicationCacheOrigins(callbackID));
+    processPool()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebApplicationCacheManager::GetApplicationCacheOrigins(callbackID));
 }
     
 void WebApplicationCacheManagerProxy::didGetApplicationCacheOrigins(const Vector<SecurityOriginData>& originDatas, uint64_t callbackID)
@@ -104,7 +104,7 @@ void WebApplicationCacheManagerProxy::didGetApplicationCacheOrigins(const Vector
 
 void WebApplicationCacheManagerProxy::deleteEntriesForOrigin(API::SecurityOrigin* origin)
 {
-    if (!context())
+    if (!processPool())
         return;
 
     SecurityOriginData securityOriginData;
@@ -113,16 +113,16 @@ void WebApplicationCacheManagerProxy::deleteEntriesForOrigin(API::SecurityOrigin
     securityOriginData.port = origin->securityOrigin().port();
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Make manipulating cache information work with per-tab WebProcess.
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebApplicationCacheManager::DeleteEntriesForOrigin(securityOriginData));
+    processPool()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebApplicationCacheManager::DeleteEntriesForOrigin(securityOriginData));
 }
 
 void WebApplicationCacheManagerProxy::deleteAllEntries()
 {
-    if (!context())
+    if (!processPool())
         return;
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Make manipulating cache information work with per-tab WebProcess.
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebApplicationCacheManager::DeleteAllEntries());
+    processPool()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebApplicationCacheManager::DeleteAllEntries());
 }
 
 } // namespace WebKit

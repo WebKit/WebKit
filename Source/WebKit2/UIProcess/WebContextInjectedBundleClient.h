@@ -40,13 +40,13 @@ template<> struct ClientTraits<WKContextInjectedBundleClientBase> {
 
 namespace WebKit {
 
-class WebContext;
+class WebProcessPool;
 
 class WebContextInjectedBundleClient : public API::Client<WKContextInjectedBundleClientBase> {
 public:
-    void didReceiveMessageFromInjectedBundle(WebContext*, const String&, API::Object*);
-    void didReceiveSynchronousMessageFromInjectedBundle(WebContext*, const String&, API::Object*, RefPtr<API::Object>& returnData);
-    PassRefPtr<API::Object> getInjectedBundleInitializationUserData(WebContext*);
+    void didReceiveMessageFromInjectedBundle(WebProcessPool*, const String&, API::Object*);
+    void didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool*, const String&, API::Object*, RefPtr<API::Object>& returnData);
+    PassRefPtr<API::Object> getInjectedBundleInitializationUserData(WebProcessPool*);
 };
 
 } // namespace WebKit

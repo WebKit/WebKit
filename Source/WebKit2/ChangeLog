@@ -1,3 +1,17 @@
+2014-12-23  Sam Weinig  <sam@webkit.org>
+
+        Rename WebContext to WebProcessPool
+        https://bugs.webkit.org/show_bug.cgi?id=139909
+
+        Rubber-stamped by Anders Carlsson.
+
+        - Major renames:
+            WebContext -> WebProcessPool
+            WebContextConfiguration -> WebProcessPoolConfiguration
+            API::ContextConfiguration -> API::ProcessPoolConfiguration
+
+        * File list elided *
+
 2014-12-23  Anders Carlsson  <andersca@apple.com>
 
         Only call shouldTransformGraph once per graph

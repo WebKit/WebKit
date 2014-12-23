@@ -46,7 +46,6 @@
 #include "WKPagePolicyClientInternal.h"
 #include "WKPluginInformation.h"
 #include "WebBackForwardList.h"
-#include "WebContext.h"
 #include "WebFormClient.h"
 #include "WebInspectorProxy.h"
 #include "WebOpenPanelParameters.h"
@@ -54,6 +53,7 @@
 #include "WebPageGroup.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
+#include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
 #include <WebCore/Page.h>
@@ -92,7 +92,7 @@ WKTypeID WKPageGetTypeID()
 
 WKContextRef WKPageGetContext(WKPageRef pageRef)
 {
-    return toAPI(&toImpl(pageRef)->process().context());
+    return toAPI(&toImpl(pageRef)->process().processPool());
 }
 
 WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)
@@ -1019,7 +1019,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
 
         virtual PassRefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override
         {
-            return page.process().context().client().copyWebCryptoMasterKey(&page.process().context());
+            return page.process().processPool().client().copyWebCryptoMasterKey(&page.process().processPool());
         }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

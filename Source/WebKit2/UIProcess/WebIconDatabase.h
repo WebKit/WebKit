@@ -44,15 +44,15 @@ class Image;
 
 namespace WebKit {
 
-class WebContext;
+class WebProcessPool;
 
 class WebIconDatabase : public API::ObjectImpl<API::Object::Type::IconDatabase>, private WebCore::IconDatabaseClient, private IPC::MessageReceiver {
 public:
-    static PassRefPtr<WebIconDatabase> create(WebContext*);
+    static PassRefPtr<WebIconDatabase> create(WebProcessPool*);
     virtual ~WebIconDatabase();
 
     void invalidate();
-    void clearContext() { m_webContext = nullptr; }
+    void clearProcessPool() { m_processPool = nullptr; }
     void setDatabasePath(const String&);
     void enableDatabaseCleanup();
 
@@ -84,13 +84,13 @@ public:
 
     void setPrivateBrowsingEnabled(bool);
 
-    // Called when the WebContext is through with this WebIconDatabase but the
+    // Called when the WebProcessPool is through with this WebIconDatabase but the
     // WebCore::IconDatabase possibly isn't done shutting down.
     // In that case this WebIconDatabase will deref() itself when the time is right.
     void derefWhenAppropriate();
 
 private:
-    explicit WebIconDatabase(WebContext&);
+    explicit WebIconDatabase(WebProcessPool&);
 
     // WebCore::IconDatabaseClient
     virtual void didImportIconURLForPageURL(const String&) override;
@@ -106,7 +106,7 @@ private:
 
     void notifyIconDataReadyForPageURL(const String&);
 
-    WebContext* m_webContext;
+    WebProcessPool* m_processPool;
 
     std::unique_ptr<WebCore::IconDatabase> m_iconDatabaseImpl;
     bool m_urlImportCompleted;

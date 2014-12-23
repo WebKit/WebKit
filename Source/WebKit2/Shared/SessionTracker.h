@@ -27,7 +27,7 @@
 #define SessionTracker_h
 
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/SessionIDHash.h>
+#include <WebCore/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/CString.h>

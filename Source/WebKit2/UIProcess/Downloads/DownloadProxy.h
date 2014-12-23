@@ -46,12 +46,12 @@ namespace WebCore {
 namespace WebKit {
 
 class DownloadProxyMap;
-class WebContext;
 class WebPageProxy;
+class WebProcessPool;
 
 class DownloadProxy : public API::ObjectImpl<API::Object::Type::Download>, public IPC::MessageReceiver {
 public:
-    static PassRefPtr<DownloadProxy> create(DownloadProxyMap&, WebContext&, const WebCore::ResourceRequest&);
+    static PassRefPtr<DownloadProxy> create(DownloadProxyMap&, WebProcessPool&, const WebCore::ResourceRequest&);
     ~DownloadProxy();
 
     uint64_t downloadID() const { return m_downloadID; }
@@ -67,7 +67,7 @@ public:
     void didReceiveSyncDownloadProxyMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
 private:
-    explicit DownloadProxy(DownloadProxyMap&, WebContext&, const WebCore::ResourceRequest&);
+    explicit DownloadProxy(DownloadProxyMap&, WebProcessPool&, const WebCore::ResourceRequest&);
 
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
@@ -86,7 +86,7 @@ private:
     void didCancel(const IPC::DataReference& resumeData);
 
     DownloadProxyMap& m_downloadProxyMap;
-    RefPtr<WebContext> m_webContext;
+    RefPtr<WebProcessPool> m_processPool;
     uint64_t m_downloadID;
 
     RefPtr<API::Data> m_resumeData;

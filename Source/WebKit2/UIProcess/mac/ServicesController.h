@@ -34,8 +34,6 @@
 
 namespace WebKit {
 
-class WebContext;
-
 class ServicesController {
     WTF_MAKE_NONCOPYABLE(ServicesController);
     friend class NeverDestroyed<ServicesController>;

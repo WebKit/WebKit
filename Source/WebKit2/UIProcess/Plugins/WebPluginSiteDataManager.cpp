@@ -30,8 +30,8 @@
 
 #include "APIArray.h"
 #include "PluginProcessManager.h"
-#include "WebContext.h"
 #include "WebProcessMessages.h"
+#include "WebProcessPool.h"
 
 using namespace WebCore;
 
@@ -42,7 +42,7 @@ public:
     explicit GetSitesWithDataState(WebPluginSiteDataManager* webPluginSiteDataManager, uint64_t callbackID)
         : m_webPluginSiteDataManager(webPluginSiteDataManager)
         , m_callbackID(callbackID)
-        , m_plugins(webPluginSiteDataManager->m_webContext->pluginInfoStore().plugins())
+        , m_plugins(webPluginSiteDataManager->m_processPool->pluginInfoStore().plugins())
     {
     }
 
@@ -83,7 +83,7 @@ public:
         , m_flags(flags)
         , m_maxAgeInSeconds(maxAgeInSeconds)
         , m_callbackID(callbackID)
-        , m_plugins(webPluginSiteDataManager->m_webContext->pluginInfoStore().plugins())
+        , m_plugins(webPluginSiteDataManager->m_processPool->pluginInfoStore().plugins())
     {
     }
 
@@ -112,13 +112,13 @@ private:
     Vector<PluginModuleInfo> m_plugins;
 };
 
-PassRefPtr<WebPluginSiteDataManager> WebPluginSiteDataManager::create(WebContext* webContext)
+PassRefPtr<WebPluginSiteDataManager> WebPluginSiteDataManager::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebPluginSiteDataManager(webContext));
+    return adoptRef(new WebPluginSiteDataManager(processPool));
 }
 
-WebPluginSiteDataManager::WebPluginSiteDataManager(WebContext* webContext)
-    : m_webContext(webContext)
+WebPluginSiteDataManager::WebPluginSiteDataManager(WebProcessPool* processPool)
+    : m_processPool(processPool)
 {
 }
 
@@ -142,7 +142,7 @@ void WebPluginSiteDataManager::getSitesWithData(std::function<void (API::Array*,
 {
     RefPtr<ArrayCallback> callback = ArrayCallback::create(WTF::move(callbackFunction));
 
-    if (!m_webContext) {
+    if (!m_processPool) {
         callback->invalidate();
         return;
     }
@@ -171,7 +171,7 @@ void WebPluginSiteDataManager::didGetSitesWithData(const Vector<String>& sites, 
 void WebPluginSiteDataManager::clearSiteData(API::Array* sites, uint64_t flags, uint64_t maxAgeInSeconds, std::function<void (CallbackBase::Error)> callbackFunction)
 {
     RefPtr<VoidCallback> callback = VoidCallback::create(WTF::move(callbackFunction));
-    if (!m_webContext) {
+    if (!m_processPool) {
         // FIXME: If the context is invalid we should not call the callback. It'd be better to just return false from clearSiteData.
         callback->invalidate(CallbackBase::Error::OwnerWasInvalidated);
         return;

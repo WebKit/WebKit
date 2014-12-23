@@ -28,9 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import "WebContext.h"
-#import "WebPageGroup.h"
-#import "WebProcessMessages.h"
 #import "WKFullKeyboardAccessWatcher.h"
 
 namespace WebKit {

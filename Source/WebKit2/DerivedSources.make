@@ -107,7 +107,6 @@ MESSAGE_RECEIVERS = \
     WebApplicationCacheManager \
     WebApplicationCacheManagerProxy \
     WebConnection \
-    WebContext \
     WebCookieManager \
     WebCookieManagerProxy \
     WebDatabaseManager \
@@ -132,6 +131,7 @@ MESSAGE_RECEIVERS = \
     WebPageProxy \
     WebProcess \
     WebProcessConnection \
+    WebProcessPool \
     WebProcessProxy \
     WebResourceCacheManager \
     WebResourceCacheManagerProxy \

@@ -27,11 +27,11 @@
 #include "WebFrameProxy.h"
 
 #include "WebCertificateInfo.h"
-#include "WebContext.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
+#include "WebProcessPool.h"
 #include <WebCore/DOMImplementation.h>
 #include <WebCore/Image.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -47,12 +47,12 @@ WebFrameProxy::WebFrameProxy(WebPageProxy* page, uint64_t frameID)
     , m_isFrameSet(false)
     , m_frameID(frameID)
 {
-    WebContext::statistics().wkFrameCount++;
+    WebProcessPool::statistics().wkFrameCount++;
 }
 
 WebFrameProxy::~WebFrameProxy()
 {
-    WebContext::statistics().wkFrameCount--;
+    WebProcessPool::statistics().wkFrameCount--;
 }
 
 void WebFrameProxy::disconnect()

@@ -61,7 +61,6 @@
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
 #include "WebCertificateInfo.h"
-#include "WebContext.h"
 #include "WebContextMenuProxy.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
@@ -86,6 +85,7 @@
 #include "WebPopupMenuProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessMessages.h"
+#include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
 #include "WebUserContentControllerProxy.h"
@@ -402,7 +402,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     webPageProxyCounter.increment();
 #endif
 
-    WebContext::statistics().wkPageCount++;
+    WebProcessPool::statistics().wkPageCount++;
 
     m_preferences->addPage(*this);
     m_pageGroup->addPage(this);
@@ -424,7 +424,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 
     // FIXME: If we ever expose the session storage size as a preference, we need to pass it here.
     IPC::Connection* connection = m_process->state() == WebProcessProxy::State::Running ? m_process->connection() : nullptr;
-    m_process->context().storageManager().createSessionStorageNamespace(m_pageID, connection, std::numeric_limits<unsigned>::max());
+    m_process->processPool().storageManager().createSessionStorageNamespace(m_pageID, connection, std::numeric_limits<unsigned>::max());
     setSessionID(configuration.sessionID);
 
 #if PLATFORM(COCOA)
@@ -446,7 +446,7 @@ WebPageProxy::~WebPageProxy()
     if (!m_isClosed)
         close();
 
-    WebContext::statistics().wkPageCount--;
+    WebProcessPool::statistics().wkPageCount--;
 
     if (m_hasSpellDocumentTag)
         TextChecker::closeSpellDocumentWithTag(m_spellDocumentTag);
@@ -566,10 +566,10 @@ void WebPageProxy::reattachToWebProcess()
     m_process->removeWebPage(m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
-    if (m_process->context().processModel() == ProcessModelSharedSecondaryProcess)
-        m_process = m_process->context().ensureSharedWebProcess();
+    if (m_process->processPool().processModel() == ProcessModelSharedSecondaryProcess)
+        m_process = m_process->processPool().ensureSharedWebProcess();
     else
-        m_process = m_process->context().createNewWebProcessRespectingProcessCountLimit();
+        m_process = m_process->processPool().createNewWebProcessRespectingProcessCountLimit();
 
     ASSERT(m_process->state() != ChildProcessProxy::State::Terminated);
     if (m_process->state() == ChildProcessProxy::State::Running)
@@ -625,7 +625,7 @@ void WebPageProxy::setSessionID(SessionID sessionID)
 
 #if ENABLE(NETWORK_PROCESS)
     if (sessionID.isEphemeral())
-        m_process->context().sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(sessionID));
+        m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::EnsurePrivateBrowsingSession(sessionID));
 #endif
 }
 
@@ -692,8 +692,8 @@ void WebPageProxy::close()
     m_process->send(Messages::WebPage::Close(), m_pageID);
     m_process->removeWebPage(m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
-    m_process->context().storageManager().destroySessionStorageNamespace(m_pageID);
-    m_process->context().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
+    m_process->processPool().storageManager().destroySessionStorageNamespace(m_pageID);
+    m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
 
     m_websiteDataStore->removeWebPage(*this);
 }
@@ -1039,14 +1039,14 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType)
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     String newMimeType = mimeType;
-    PluginModuleInfo plugin = m_process->context().pluginInfoStore().findPlugin(newMimeType, URL());
+    PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, URL());
     if (!plugin.path.isNull() && m_preferences->pluginsEnabled())
         return true;
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if PLATFORM(COCOA)
     // On Mac, we can show PDFs.
-    if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(mimeType) && !WebContext::omitPDFSupport())
+    if (MIMETypeRegistry::isPDFOrPostScriptMIMEType(mimeType) && !WebProcessPool::omitPDFSupport())
         return true;
 #endif // PLATFORM(COCOA)
 
@@ -1271,7 +1271,7 @@ void WebPageProxy::updateActivityToken()
     if (m_viewState & ViewState::IsVisuallyIdle)
         m_pageIsUserObservableCount = nullptr;
     else if (!m_pageIsUserObservableCount)
-        m_pageIsUserObservableCount = m_process->context().userObservablePageCount();
+        m_pageIsUserObservableCount = m_process->processPool().userObservablePageCount();
 
 #if PLATFORM(IOS)
     if (!isViewVisible())
@@ -1286,7 +1286,7 @@ void WebPageProxy::updateProccessSuppressionState()
     if (m_preferences->pageVisibilityBasedProcessSuppressionEnabled())
         m_preventProcessSuppressionCount = nullptr;
     else if (!m_preventProcessSuppressionCount)
-        m_preventProcessSuppressionCount = m_process->context().processSuppressionDisabledForPageCount();
+        m_preventProcessSuppressionCount = m_process->processPool().processSuppressionDisabledForPageCount();
 }
 
 void WebPageProxy::layerHostingModeDidChange()
@@ -1664,7 +1664,7 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
     pluginLoadPolicy = PluginModuleLoadNormally;
 
     PluginData::AllowedPluginTypes allowedPluginTypes = allowOnlyApplicationPlugins ? PluginData::OnlyApplicationPlugins : PluginData::AllPlugins;
-    PluginModuleInfo plugin = m_process->context().pluginInfoStore().findPlugin(newMimeType, URL(URL(), urlString), allowedPluginTypes);
+    PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, URL(URL(), urlString), allowedPluginTypes);
     if (!plugin.path) {
         pluginProcessToken = 0;
         return;
@@ -1828,7 +1828,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
         // Create a download proxy.
         // FIXME: We should ensure that the downloadRequest is never empty.
         const ResourceRequest& downloadRequest = m_decidePolicyForResponseRequest ? *m_decidePolicyForResponseRequest : ResourceRequest();
-        DownloadProxy* download = m_process->context().createDownloadProxy(downloadRequest);
+        DownloadProxy* download = m_process->processPool().createDownloadProxy(downloadRequest);
         downloadID = download->downloadID();
         handleDownloadRequest(download);
     }
@@ -3079,7 +3079,7 @@ void WebPageProxy::didNavigateWithNavigationData(const WebNavigationDataStore& s
     MESSAGE_CHECK(frame->page() == this);
 
     m_loaderClient->didNavigateWithNavigationData(*this, store, *frame);
-    process().context().historyClient().didNavigateWithNavigationData(process().context(), *this, store, *frame);
+    process().processPool().historyClient().didNavigateWithNavigationData(process().processPool(), *this, store, *frame);
 }
 
 void WebPageProxy::didPerformClientRedirect(const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
@@ -3095,7 +3095,7 @@ void WebPageProxy::didPerformClientRedirect(const String& sourceURLString, const
     MESSAGE_CHECK_URL(destinationURLString);
 
     m_loaderClient->didPerformClientRedirect(*this, sourceURLString, destinationURLString, *frame);
-    process().context().historyClient().didPerformClientRedirect(process().context(), *this, sourceURLString, destinationURLString, *frame);
+    process().processPool().historyClient().didPerformClientRedirect(process().processPool(), *this, sourceURLString, destinationURLString, *frame);
 }
 
 void WebPageProxy::didPerformServerRedirect(const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
@@ -3111,7 +3111,7 @@ void WebPageProxy::didPerformServerRedirect(const String& sourceURLString, const
     MESSAGE_CHECK_URL(destinationURLString);
 
     m_loaderClient->didPerformServerRedirect(*this, sourceURLString, destinationURLString, *frame);
-    process().context().historyClient().didPerformServerRedirect(process().context(), *this, sourceURLString, destinationURLString, *frame);
+    process().processPool().historyClient().didPerformServerRedirect(process().processPool(), *this, sourceURLString, destinationURLString, *frame);
 }
 
 void WebPageProxy::didUpdateHistoryTitle(const String& title, const String& url, uint64_t frameID)
@@ -3123,7 +3123,7 @@ void WebPageProxy::didUpdateHistoryTitle(const String& title, const String& url,
     MESSAGE_CHECK_URL(url);
 
     m_loaderClient->didUpdateHistoryTitle(*this, title, url, *frame);
-    process().context().historyClient().didUpdateHistoryTitle(process().context(), *this, title, url, *frame);
+    process().processPool().historyClient().didUpdateHistoryTitle(process().processPool(), *this, title, url, *frame);
 }
 
 // UIClient
@@ -3141,7 +3141,7 @@ void WebPageProxy::createNewPage(uint64_t frameID, const ResourceRequest& reques
 
     newPageID = newPage->pageID();
     newPageParameters = newPage->creationParameters();
-    process().context().storageManager().cloneSessionStorageNamespace(m_pageID, newPage->pageID());
+    process().processPool().storageManager().cloneSessionStorageNamespace(m_pageID, newPage->pageID());
 }
     
 void WebPageProxy::showPage()
@@ -3267,14 +3267,14 @@ void WebPageProxy::connectionWillOpen(IPC::Connection* connection)
 {
     ASSERT(connection == m_process->connection());
 
-    m_process->context().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, connection);
+    m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, connection);
 }
 
 void WebPageProxy::connectionWillClose(IPC::Connection* connection)
 {
     ASSERT_UNUSED(connection, connection == m_process->connection());
 
-    m_process->context().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);
+    m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);
 }
 
 void WebPageProxy::processDidFinishLaunching()
@@ -3296,7 +3296,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
 
     RefPtr<ImmutableDictionary> pluginInformation;
     String newMimeType = mimeType;
-    PluginModuleInfo plugin = m_process->context().pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
+    PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
     pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, pluginspageAttributeURLString, pluginURLString);
 
     WKPluginUnavailabilityReason pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;
@@ -3971,15 +3971,15 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     }
 #endif
     if (item.action() == ContextMenuItemTagDownloadImageToDisk) {
-        m_process->context().download(this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteImageURL));
+        m_process->processPool().download(this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteImageURL));
         return;    
     }
     if (item.action() == ContextMenuItemTagDownloadLinkToDisk) {
-        m_process->context().download(this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteLinkURL));
+        m_process->processPool().download(this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteLinkURL));
         return;
     }
     if (item.action() == ContextMenuItemTagDownloadMediaToDisk) {
-        m_process->context().download(this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteMediaURL));
+        m_process->processPool().download(this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteMediaURL));
         return;
     }
     if (item.action() == ContextMenuItemTagCheckSpellingWhileTyping) {
@@ -4854,22 +4854,22 @@ void WebPageProxy::requestNotificationPermission(uint64_t requestID, const Strin
 
 void WebPageProxy::showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, const String& dir, const String& originString, uint64_t notificationID)
 {
-    m_process->context().supplement<WebNotificationManagerProxy>()->show(this, title, body, iconURL, tag, lang, dir, originString, notificationID);
+    m_process->processPool().supplement<WebNotificationManagerProxy>()->show(this, title, body, iconURL, tag, lang, dir, originString, notificationID);
 }
 
 void WebPageProxy::cancelNotification(uint64_t notificationID)
 {
-    m_process->context().supplement<WebNotificationManagerProxy>()->cancel(this, notificationID);
+    m_process->processPool().supplement<WebNotificationManagerProxy>()->cancel(this, notificationID);
 }
 
 void WebPageProxy::clearNotifications(const Vector<uint64_t>& notificationIDs)
 {
-    m_process->context().supplement<WebNotificationManagerProxy>()->clearNotifications(this, notificationIDs);
+    m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this, notificationIDs);
 }
 
 void WebPageProxy::didDestroyNotification(uint64_t notificationID)
 {
-    m_process->context().supplement<WebNotificationManagerProxy>()->didDestroyNotification(this, notificationID);
+    m_process->processPool().supplement<WebNotificationManagerProxy>()->didDestroyNotification(this, notificationID);
 }
 
 float WebPageProxy::headerHeight(WebFrameProxy* frame)
@@ -4966,7 +4966,7 @@ void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const S
 
 #if PLATFORM(COCOA) && ENABLE(NETSCAPE_PLUGIN_API)
     String newMimeType = mimeType;
-    PluginModuleInfo plugin = m_process->context().pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
+    PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
     pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, String(), String(), replacementObscured);
 #else
     UNUSED_PARAM(mimeType);

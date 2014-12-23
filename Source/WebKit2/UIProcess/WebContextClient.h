@@ -38,16 +38,17 @@ template<> struct ClientTraits<WKContextClientBase> {
 };
 }
 
+
 namespace WebKit {
 
-class WebContext;
+class WebProcessPool;
 
 class WebContextClient : public API::Client<WKContextClientBase> {
 public:
-    void plugInAutoStartOriginHashesChanged(WebContext*);
-    void networkProcessDidCrash(WebContext*);
-    void plugInInformationBecameAvailable(WebContext*, API::Array*);
-    PassRefPtr<API::Data> copyWebCryptoMasterKey(WebContext*);
+    void plugInAutoStartOriginHashesChanged(WebProcessPool*);
+    void networkProcessDidCrash(WebProcessPool*);
+    void plugInInformationBecameAvailable(WebProcessPool*, API::Array*);
+    PassRefPtr<API::Data> copyWebCryptoMasterKey(WebProcessPool*);
 };
 
 } // namespace WebKit

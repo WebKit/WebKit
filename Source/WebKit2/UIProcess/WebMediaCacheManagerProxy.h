@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-class WebContext;
+class WebProcessPool;
 class WebProcessProxy;
 
 typedef GenericCallback<API::Array*> ArrayCallback;
@@ -45,7 +45,7 @@ class WebMediaCacheManagerProxy : public API::ObjectImpl<API::Object::Type::Medi
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebMediaCacheManagerProxy> create(WebContext*);
+    static PassRefPtr<WebMediaCacheManagerProxy> create(WebProcessPool*);
     virtual ~WebMediaCacheManagerProxy();
     
     void getHostnamesWithMediaCache(std::function<void (API::Array*, CallbackBase::Error)>);
@@ -56,12 +56,12 @@ public:
     using API::Object::deref;
 
 private:
-    explicit WebMediaCacheManagerProxy(WebContext*);
+    explicit WebMediaCacheManagerProxy(WebProcessPool*);
 
     void didGetHostnamesWithMediaCache(const Vector<String>&, uint64_t callbackID);
 
     // WebContextSupplement
-    virtual void contextDestroyed() override;
+    virtual void processPoolDestroyed() override;
     virtual void processDidClose(WebProcessProxy*) override;
     virtual bool shouldTerminate(WebProcessProxy*) const override;
     virtual void refWebContextSupplement() override;

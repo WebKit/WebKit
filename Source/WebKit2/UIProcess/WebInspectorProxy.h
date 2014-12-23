@@ -61,10 +61,10 @@ OBJC_CLASS WKWebInspectorWKView;
 
 namespace WebKit {
 
-class WebContext;
 class WebFrameProxy;
 class WebPageGroup;
 class WebPageProxy;
+class WebProcessPool;
 
 enum AttachmentSide {
     AttachmentSideBottom,
@@ -133,7 +133,7 @@ public:
     void togglePageProfiling();
 
     static bool isInspectorPage(WebPageProxy&);
-    static WebContext& inspectorContext();
+    static WebProcessPool& inspectorProcessPool();
 
     // Provided by platform WebInspectorProxy implementations.
     String inspectorPageURL() const;

@@ -27,9 +27,9 @@
 #include "WebIconDatabase.h"
 
 #include "Logging.h"
-#include "WebContext.h"
 #include "WebIconDatabaseMessages.h"
 #include "WebIconDatabaseProxyMessages.h"
+#include "WebProcessPool.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Image.h>
@@ -39,22 +39,22 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebIconDatabase> WebIconDatabase::create(WebContext* context)
+PassRefPtr<WebIconDatabase> WebIconDatabase::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebIconDatabase(*context));
+    return adoptRef(new WebIconDatabase(*processPool));
 }
 
 WebIconDatabase::~WebIconDatabase()
 {
 }
 
-WebIconDatabase::WebIconDatabase(WebContext& context)
-    : m_webContext(&context)
+WebIconDatabase::WebIconDatabase(WebProcessPool& processPool)
+    : m_processPool(&processPool)
     , m_urlImportCompleted(false)
     , m_databaseCleanupDisabled(false)
     , m_shouldDerefWhenAppropriate(false)
 {
-    m_webContext->addMessageReceiver(Messages::WebIconDatabase::messageReceiverName(), *this);
+    m_processPool->addMessageReceiver(Messages::WebIconDatabase::messageReceiverName(), *this);
 }
 
 void WebIconDatabase::invalidate()
@@ -75,7 +75,7 @@ void WebIconDatabase::setDatabasePath(const String& path)
     m_databaseCleanupDisabled = true;
     m_iconDatabaseImpl->setEnabled(true);
 
-    // FIXME: WebIconDatabases are per-WebContext but WebContext's don't have their own notion of the current private browsing setting.
+    // FIXME: WebIconDatabases are per-ProcessPool but ProcessPools's don't have their own notion of the current private browsing setting.
     // As we clean up private browsing throughout the stack we need to clean it up here.
     m_iconDatabaseImpl->setPrivateBrowsingEnabled(WebPreferences::anyPagesAreUsingPrivateBrowsing());
 
@@ -161,12 +161,12 @@ void WebIconDatabase::getLoadDecisionForIconURL(const String& iconURL, uint64_t 
 {
     LOG(IconDatabase, "WK2 UIProcess getting load decision for icon URL %s with callback ID %lli", iconURL.ascii().data(), static_cast<long long>(callbackID));
 
-    if (!m_webContext)
+    if (!m_processPool)
         return;
 
     if (!m_iconDatabaseImpl || !m_iconDatabaseImpl->isOpen() || iconURL.isEmpty()) {
         // FIXME (Multi-WebProcess): <rdar://problem/12240223> We need to know which connection to send this message to.
-        m_webContext->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision(static_cast<int>(IconLoadNo), callbackID));
+        m_processPool->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision(static_cast<int>(IconLoadNo), callbackID));
         return;
     }
     
@@ -181,7 +181,7 @@ void WebIconDatabase::getLoadDecisionForIconURL(const String& iconURL, uint64_t 
     }
 
     // FIXME (Multi-WebProcess): <rdar://problem/12240223> We need to know which connection to send this message to.
-    m_webContext->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision((int)decision, callbackID));
+    m_processPool->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision((int)decision, callbackID));
 }
 
 void WebIconDatabase::didReceiveIconForPageURL(const String& pageURL)
@@ -191,7 +191,7 @@ void WebIconDatabase::didReceiveIconForPageURL(const String& pageURL)
 
 Image* WebIconDatabase::imageForPageURL(const String& pageURL, const IntSize& iconSize)
 {
-    if (!m_webContext || !m_iconDatabaseImpl || !m_iconDatabaseImpl->isOpen() || pageURL.isEmpty())
+    if (!m_processPool || !m_iconDatabaseImpl || !m_iconDatabaseImpl->isOpen() || pageURL.isEmpty())
         return nullptr;
 
     // The WebCore IconDatabase ignores the passed in size parameter.
@@ -201,7 +201,7 @@ Image* WebIconDatabase::imageForPageURL(const String& pageURL, const IntSize& ic
 
 NativeImagePtr WebIconDatabase::nativeImageForPageURL(const String& pageURL, const IntSize& iconSize)
 {
-    if (!m_webContext || !m_iconDatabaseImpl || !m_iconDatabaseImpl->isOpen() || pageURL.isEmpty())
+    if (!m_processPool || !m_iconDatabaseImpl || !m_iconDatabaseImpl->isOpen() || pageURL.isEmpty())
         return nullptr;
 
     return m_iconDatabaseImpl->synchronousNativeIconForPageURL(pageURL, iconSize);
@@ -262,7 +262,7 @@ void WebIconDatabase::didRemoveAllIcons()
 
 void WebIconDatabase::didFinishURLImport()
 {
-    if (!m_webContext)
+    if (!m_processPool)
         return;
 
     ASSERT(!m_urlImportCompleted);
@@ -277,7 +277,7 @@ void WebIconDatabase::didFinishURLImport()
         ASSERT(decision != IconLoadUnknown);
 
         // FIXME (Multi-WebProcess): <rdar://problem/12240223> We need to know which connection to send this message to.
-        m_webContext->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision(static_cast<int>(decision), slot.key));
+        m_processPool->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision(static_cast<int>(decision), slot.key));
     }
 
     m_pendingLoadDecisionURLMap.clear();

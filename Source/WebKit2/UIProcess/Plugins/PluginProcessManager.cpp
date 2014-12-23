@@ -29,7 +29,6 @@
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "PluginProcessProxy.h"
-#include "WebContext.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>

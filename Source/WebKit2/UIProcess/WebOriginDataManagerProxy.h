@@ -41,6 +41,7 @@ class Connection;
 
 namespace WebKit {
 
+class WebProcessPool;
 struct SecurityOriginData;
 
 typedef GenericCallback<API::Array*> ArrayCallback;
@@ -49,7 +50,7 @@ class WebOriginDataManagerProxy : public API::ObjectImpl<API::Object::Type::Orig
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebOriginDataManagerProxy> create(WebContext*);
+    static PassRefPtr<WebOriginDataManagerProxy> create(WebProcessPool*);
     virtual ~WebOriginDataManagerProxy();
 
     void getOrigins(WKOriginDataTypes, std::function<void (API::Array*, CallbackBase::Error)>);
@@ -64,14 +65,14 @@ public:
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
 private:
-    explicit WebOriginDataManagerProxy(WebContext*);
+    explicit WebOriginDataManagerProxy(WebProcessPool*);
 
     void didGetOrigins(IPC::Connection*, const Vector<SecurityOriginData>&, uint64_t callbackID);
     void didDeleteEntries(IPC::Connection*, uint64_t callbackID);
     void didDeleteAllEntries(IPC::Connection*, uint64_t callbackID);
 
     // WebContextSupplement
-    virtual void contextDestroyed() override;
+    virtual void processPoolDestroyed() override;
     virtual void processDidClose(WebProcessProxy*) override;
     virtual bool shouldTerminate(WebProcessProxy*) const override;
     virtual void refWebContextSupplement() override;

@@ -66,13 +66,13 @@
 #import "WKViewInternal.h"
 #import "WKViewPrivate.h"
 #import "WebBackForwardList.h"
-#import "WebContext.h"
 #import "WebEventFactory.h"
 #import "WebKit2Initialize.h"
 #import "WebPage.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import "WebSystemInterface.h"
 #import "_WKThumbnailViewInternal.h"
@@ -339,7 +339,7 @@ struct WKViewInterpretKeyEventsParameters {
     if (canLoadLUNotificationPopoverWillClose())
         [[NSNotificationCenter defaultCenter] removeObserver:self name:getLUNotificationPopoverWillClose() object:nil];
 
-    WebContext::statistics().wkViewCount--;
+    WebProcessPool::statistics().wkViewCount--;
 
     [super dealloc];
 }
@@ -2712,7 +2712,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)_applicationWillTerminate:(NSNotification *)notification
 {
-    _data->_page->process().context().applicationWillTerminate();
+    _data->_page->process().processPool().applicationWillTerminate();
 }
 
 - (void)_dictionaryLookupPopoverWillClose:(NSNotification *)notification
@@ -3558,7 +3558,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [self addTrackingArea:trackingArea];
 }
 
-- (instancetype)initWithFrame:(NSRect)frame context:(WebContext&)context configuration:(WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView
+- (instancetype)initWithFrame:(NSRect)frame processPool:(WebProcessPool&)processPool configuration:(WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView
 {
     self = [super initWithFrame:frame];
     if (!self)
@@ -3580,8 +3580,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [self addTrackingArea:_data->_primaryTrackingArea.get()];
 
     _data->_pageClient = std::make_unique<PageClientImpl>(self, webView);
-    _data->_page = context.createWebPage(*_data->_pageClient, WTF::move(webPageConfiguration));
-    _data->_page->setAddsVisitedLinks(context.historyClient().addsVisitedLinks());
+    _data->_page = processPool.createWebPage(*_data->_pageClient, WTF::move(webPageConfiguration));
+    _data->_page->setAddsVisitedLinks(processPool.historyClient().addsVisitedLinks());
 
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
     _data->_page->initializeWebPage();
@@ -3603,7 +3603,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     // Explicitly set the layer contents placement so AppKit will make sure that our layer has masksToBounds set to YES.
     self.layerContentsPlacement = NSViewLayerContentsPlacementTopLeft;
 
-    WebContext::statistics().wkViewCount++;
+    WebProcessPool::statistics().wkViewCount++;
 
     NSNotificationCenter* workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
     [workspaceNotificationCenter addObserver:self selector:@selector(_activeSpaceDidChange:) name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
@@ -3794,7 +3794,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     webPageConfiguration.pageGroup = toImpl(pageGroupRef);
     webPageConfiguration.relatedPage = toImpl(relatedPage);
 
-    return [self initWithFrame:frame context:*toImpl(contextRef) configuration:webPageConfiguration webView:nil];
+    return [self initWithFrame:frame processPool:*toImpl(contextRef) configuration:webPageConfiguration webView:nil];
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080

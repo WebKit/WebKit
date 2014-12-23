@@ -28,7 +28,7 @@
 
 #if PLATFORM(MAC)
 
-#import "WebContext.h"
+#import "WebProcessPool.h"
 
 NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
 const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");
@@ -37,11 +37,10 @@ using namespace WebKit;
 
 @implementation WKFullKeyboardAccessWatcher
 
-- (void)notifyAllWebContexts
+- (void)notifyAllProcessPools
 {
-    const Vector<WebContext*>& contexts = WebContext::allContexts();
-    for (size_t i = 0; i < contexts.size(); ++i)
-        contexts[i]->fullKeyboardAccessModeChanged(fullKeyboardAccessEnabled);
+    for (auto* processPool : WebProcessPool::allProcessPools())
+        processPool->fullKeyboardAccessModeChanged(fullKeyboardAccessEnabled);
 }
 
 - (void)retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification
@@ -60,7 +59,7 @@ using namespace WebKit;
     }
 
     if (fullKeyboardAccessEnabled != oldValue)
-        [self notifyAllWebContexts];
+        [self notifyAllProcessPools];
 }
 
 - (id)init

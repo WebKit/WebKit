@@ -38,7 +38,7 @@
 #include "ViewUpdateDispatcher.h"
 #include "VisitedLinkTable.h"
 #include "WebOriginDataManagerSupplement.h"
-#include <WebCore/SessionIDHash.h>
+#include <WebCore/SessionID.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

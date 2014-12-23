@@ -38,11 +38,11 @@ template<> struct ClientTraits<WKContextConnectionClientBase> {
 namespace WebKit {
 
 class WebConnection;
-class WebContext;
+class WebProcessPool;
 
 class WebContextConnectionClient : public API::Client<WKContextConnectionClientBase> {
 public:
-    void didCreateConnection(WebContext*, WebConnection*);
+    void didCreateConnection(WebProcessPool*, WebConnection*);
 };
 
 } // namespace WebKit

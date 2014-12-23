@@ -120,9 +120,9 @@ using namespace WebKit;
 
 namespace WebKit {
 
-CustomProtocolManagerProxy::CustomProtocolManagerProxy(ChildProcessProxy* childProcessProxy, WebContext& webContext)
+CustomProtocolManagerProxy::CustomProtocolManagerProxy(ChildProcessProxy* childProcessProxy, WebProcessPool& processPool)
     : m_childProcessProxy(childProcessProxy)
-    , m_webContext(webContext)
+    , m_processPool(processPool)
 {
     ASSERT(m_childProcessProxy);
     m_childProcessProxy->addMessageReceiver(Messages::CustomProtocolManagerProxy::messageReceiverName(), *this);

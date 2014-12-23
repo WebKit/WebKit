@@ -30,8 +30,9 @@
 #include "VisitedLinkProviderMessages.h"
 #include "VisitedLinkTable.h"
 #include "VisitedLinkTableControllerMessages.h"
-#include "WebContext.h"
 #include "WebProcessMessages.h"
+#include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 
 using namespace WebCore;
 
@@ -99,7 +100,7 @@ void VisitedLinkProvider::removeAll()
     m_table.clear();
 
     for (WebProcessProxy* process : m_processes) {
-        ASSERT(process->context().processes().contains(process));
+        ASSERT(process->processPool().processes().contains(process));
         process->connection()->send(Messages::VisitedLinkTableController::RemoveAllVisitedLinks(), m_identifier);
     }
 }
@@ -178,7 +179,7 @@ void VisitedLinkProvider::pendingVisitedLinksTimerFired()
         return;
 
     for (WebProcessProxy* process : m_processes) {
-        ASSERT(process->context().processes().contains(process));
+        ASSERT(process->processPool().processes().contains(process));
 
         if (addedVisitedLinks.size() > 20)
             process->connection()->send(Messages::VisitedLinkTableController::AllVisitedLinkStateChanged(), m_identifier);
@@ -234,7 +235,7 @@ void VisitedLinkProvider::resizeTable(unsigned newTableSize)
 
 void VisitedLinkProvider::sendTable(WebProcessProxy& process)
 {
-    ASSERT(process.context().processes().contains(&process));
+    ASSERT(process.processPool().processes().contains(&process));
 
     SharedMemory::Handle handle;
     if (!m_table.sharedMemory()->createHandle(handle, SharedMemory::ReadOnly))

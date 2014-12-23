@@ -29,9 +29,9 @@
 #include <wtf/Forward.h>
 
 namespace WebKit {
-class WebContext;
 class WebFrameProxy;
 class WebPageProxy;
+class WebProcessPool;
 struct WebNavigationDataStore;
 }
 
@@ -41,11 +41,11 @@ class LegacyContextHistoryClient {
 public:
     virtual ~LegacyContextHistoryClient() { }
 
-    virtual void didNavigateWithNavigationData(WebKit::WebContext&, WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore&, WebKit::WebFrameProxy&) { }
-    virtual void didPerformClientRedirect(WebKit::WebContext&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
-    virtual void didPerformServerRedirect(WebKit::WebContext&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
-    virtual void didUpdateHistoryTitle(WebKit::WebContext&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
-    virtual void populateVisitedLinks(WebKit::WebContext&) { }
+    virtual void didNavigateWithNavigationData(WebKit::WebProcessPool&, WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore&, WebKit::WebFrameProxy&) { }
+    virtual void didPerformClientRedirect(WebKit::WebProcessPool&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
+    virtual void didPerformServerRedirect(WebKit::WebProcessPool&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
+    virtual void didUpdateHistoryTitle(WebKit::WebProcessPool&, WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
+    virtual void populateVisitedLinks(WebKit::WebProcessPool&) { }
     virtual bool addsVisitedLinks() const { return false; }
 };
 

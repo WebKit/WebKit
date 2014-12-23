@@ -2335,7 +2335,6 @@
 		75793ED40D0CE85B007FC0AC /* DOMMessageEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */; };
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
 		759CB837192DA9190012BC64 /* ControlStates.h in Headers */ = {isa = PBXBuildFile; fileRef = 311C08BC18E35D6800B65615 /* ControlStates.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		75DCC7B818B81C8800A57128 /* SessionIDHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 75DCC7B718B81C8800A57128 /* SessionIDHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		760847CE19A6A27800428CCC /* AutocompleteErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 760847CD19A6A27700428CCC /* AutocompleteErrorEvent.h */; };
 		7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */; };
 		7633A72713D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */; };
@@ -9527,7 +9526,6 @@
 		75793ED00D0CE85B007FC0AC /* DOMMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEvent.h; sourceTree = "<group>"; };
 		75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMMessageEvent.mm; sourceTree = "<group>"; };
 		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
-		75DCC7B718B81C8800A57128 /* SessionIDHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionIDHash.h; sourceTree = "<group>"; };
 		760847CD19A6A27700428CCC /* AutocompleteErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutocompleteErrorEvent.h; sourceTree = "<group>"; };
 		760847CF19A6A28600428CCC /* AutocompleteErrorEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AutocompleteErrorEvent.idl; sourceTree = "<group>"; };
 		7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocaleToScriptMapping.h; sourceTree = "<group>"; };
@@ -16763,7 +16761,6 @@
 				974D2DA2146A535D00D51F8B /* SecurityPolicy.cpp */,
 				974D2DA3146A535D00D51F8B /* SecurityPolicy.h */,
 				756B2CE018B7101600FECFAA /* SessionID.h */,
-				75DCC7B718B81C8800A57128 /* SessionIDHash.h */,
 				14C9A5E90B3D105F005A0232 /* Settings.cpp */,
 				F587863A02DE3A1401EA4122 /* Settings.h */,
 				BC59DEF8169DEDC30016AC34 /* Settings.in */,
@@ -26115,7 +26112,6 @@
 				A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */,
 				2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */,
 				756B2CE118B7101600FECFAA /* SessionID.h in Headers */,
-				75DCC7B818B81C8800A57128 /* SessionIDHash.h in Headers */,
 				93309E10099E64920056E581 /* SetNodeAttributeCommand.h in Headers */,
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
 				93F1994F08245E59001E9ABC /* Settings.h in Headers */,

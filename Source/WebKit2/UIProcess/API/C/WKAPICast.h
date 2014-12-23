@@ -51,8 +51,8 @@
 #include <WebCore/Settings.h>
 
 namespace API {
-class ContextConfiguration;
 class NavigationData;
+class ProcessPoolConfiguration;
 class SessionState;
 }
 
@@ -71,7 +71,6 @@ class WebBatteryManagerProxy;
 class WebBatteryStatus;
 class WebResourceCacheManagerProxy;
 class WebColorPickerResultListenerProxy;
-class WebContext;
 class WebCookieManagerProxy;
 class WebCredential;
 class WebDatabaseManagerProxy;
@@ -96,6 +95,7 @@ class WebPageGroup;
 class WebPageProxy;
 class WebPluginSiteDataManager;
 class WebPreferences;
+class WebProcessPool;
 class WebProtectionSpace;
 class WebRenderLayer;
 class WebRenderObject;
@@ -113,8 +113,8 @@ WK_ADD_API_MAPPING(WKBatteryStatusRef, WebBatteryStatus)
 WK_ADD_API_MAPPING(WKBundleHitTestResultMediaType, BundleHitTestResultMediaType)
 WK_ADD_API_MAPPING(WKResourceCacheManagerRef, WebResourceCacheManagerProxy)
 WK_ADD_API_MAPPING(WKColorPickerResultListenerRef, WebColorPickerResultListenerProxy)
-WK_ADD_API_MAPPING(WKContextRef, WebContext)
-WK_ADD_API_MAPPING(WKContextConfigurationRef, API::ContextConfiguration)
+WK_ADD_API_MAPPING(WKContextRef, WebProcessPool)
+WK_ADD_API_MAPPING(WKContextConfigurationRef, API::ProcessPoolConfiguration)
 WK_ADD_API_MAPPING(WKCookieManagerRef, WebCookieManagerProxy)
 WK_ADD_API_MAPPING(WKCredentialRef, WebCredential)
 WK_ADD_API_MAPPING(WKDatabaseManagerRef, WebDatabaseManagerProxy)

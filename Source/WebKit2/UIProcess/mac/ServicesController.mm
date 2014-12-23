@@ -28,8 +28,8 @@
 
 #if ENABLE(SERVICE_CONTROLS)
 
-#import "WebContext.h"
 #import "WebProcessMessages.h"
+#import "WebProcessPool.h"
 #import <WebCore/NSExtensionSPI.h>
 #import <WebCore/NSSharingServicePickerSPI.h>
 #import <WebCore/NSSharingServiceSPI.h>
@@ -105,8 +105,8 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
             m_hasRichContentServices = hasRichContentServices;
 
             if (availableServicesChanged) {
-                for (auto& context : WebContext::allContexts())
-                    context->sendToAllProcesses(Messages::WebProcess::SetEnabledServices(m_hasImageServices, m_hasSelectionServices, m_hasRichContentServices));
+                for (auto& processPool : WebProcessPool::allProcessPools())
+                    processPool->sendToAllProcesses(Messages::WebProcess::SetEnabledServices(m_hasImageServices, m_hasSelectionServices, m_hasRichContentServices));
             }
 
             m_hasPendingRefresh = false;

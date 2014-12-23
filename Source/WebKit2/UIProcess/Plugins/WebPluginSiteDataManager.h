@@ -37,18 +37,18 @@
 
 namespace WebKit {
 
-class WebContext;
+class WebProcessPool;
 class WebProcessProxy;
 
 typedef GenericCallback<API::Array*> ArrayCallback;
 
 class WebPluginSiteDataManager : public API::ObjectImpl<API::Object::Type::PluginSiteDataManager> {
 public:
-    static PassRefPtr<WebPluginSiteDataManager> create(WebContext*);
+    static PassRefPtr<WebPluginSiteDataManager> create(WebProcessPool*);
     virtual ~WebPluginSiteDataManager();
 
     void invalidate();
-    void clearContext() { m_webContext = 0; }
+    void clearProcessPool() { m_processPool = nullptr; }
 
     void getSitesWithData(std::function<void (API::Array*, CallbackBase::Error)>);
     void didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID);
@@ -60,9 +60,9 @@ public:
     void didClearSiteDataForSinglePlugin(uint64_t callbackID);    
 
 private:
-    explicit WebPluginSiteDataManager(WebContext*);
+    explicit WebPluginSiteDataManager(WebProcessPool*);
 
-    WebContext* m_webContext;
+    WebProcessPool* m_processPool;
     HashMap<uint64_t, RefPtr<ArrayCallback>> m_arrayCallbacks;
     HashMap<uint64_t, RefPtr<VoidCallback>> m_voidCallbacks;
 

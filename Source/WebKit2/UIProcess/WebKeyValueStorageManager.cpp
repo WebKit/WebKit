@@ -30,7 +30,7 @@
 #include "APISecurityOrigin.h"
 #include "LocalStorageDetails.h"
 #include "SecurityOriginData.h"
-#include "WebContext.h"
+#include "WebProcessPool.h"
 #include <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
@@ -60,13 +60,13 @@ String WebKeyValueStorageManager::modificationTimeKey()
     return key;
 }
 
-PassRefPtr<WebKeyValueStorageManager> WebKeyValueStorageManager::create(WebContext* context)
+PassRefPtr<WebKeyValueStorageManager> WebKeyValueStorageManager::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebKeyValueStorageManager(context));
+    return adoptRef(new WebKeyValueStorageManager(processPool));
 }
 
-WebKeyValueStorageManager::WebKeyValueStorageManager(WebContext* context)
-    : WebContextSupplement(context)
+WebKeyValueStorageManager::WebKeyValueStorageManager(WebProcessPool* processPool)
+    : WebContextSupplement(processPool)
 {
 }
 
@@ -88,7 +88,7 @@ void WebKeyValueStorageManager::derefWebContextSupplement()
 
 void WebKeyValueStorageManager::getKeyValueStorageOrigins(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    context()->storageManager().getOrigins([callbackFunction](Vector<RefPtr<SecurityOrigin>> securityOrigins) {
+    processPool()->storageManager().getOrigins([callbackFunction](Vector<RefPtr<SecurityOrigin>> securityOrigins) {
         Vector<RefPtr<API::Object>> webSecurityOrigins;
         webSecurityOrigins.reserveInitialCapacity(securityOrigins.size());
         for (auto& origin : securityOrigins)
@@ -100,7 +100,7 @@ void WebKeyValueStorageManager::getKeyValueStorageOrigins(std::function<void (AP
 
 void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (API::Array*, CallbackBase::Error)> callbackFunction)
 {
-    context()->storageManager().getStorageDetailsByOrigin([callbackFunction](Vector<LocalStorageDetails> storageDetails) {
+    processPool()->storageManager().getStorageDetailsByOrigin([callbackFunction](Vector<LocalStorageDetails> storageDetails) {
         HashMap<String, RefPtr<API::Object>> detailsMap;
         Vector<RefPtr<API::Object>> result;
         result.reserveInitialCapacity(storageDetails.size());
@@ -125,12 +125,12 @@ void WebKeyValueStorageManager::getStorageDetailsByOrigin(std::function<void (AP
 
 void WebKeyValueStorageManager::deleteEntriesForOrigin(API::SecurityOrigin* origin)
 {
-    context()->storageManager().deleteEntriesForOrigin(origin->securityOrigin());
+    processPool()->storageManager().deleteEntriesForOrigin(origin->securityOrigin());
 }
 
 void WebKeyValueStorageManager::deleteAllEntries()
 {
-    context()->storageManager().deleteAllEntries();
+    processPool()->storageManager().deleteAllEntries();
 }
 
 } // namespace WebKit

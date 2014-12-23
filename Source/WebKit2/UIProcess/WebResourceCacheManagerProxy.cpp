@@ -29,7 +29,7 @@
 #include "APISecurityOrigin.h"
 #include "ImmutableDictionary.h"
 #include "SecurityOriginData.h"
-#include "WebContext.h"
+#include "WebProcessPool.h"
 #include "WebResourceCacheManagerMessages.h"
 #include "WebResourceCacheManagerProxyMessages.h"
 
@@ -46,15 +46,15 @@ const char* WebResourceCacheManagerProxy::supplementName()
     return "WebResourceCacheManagerProxy";
 }
 
-PassRefPtr<WebResourceCacheManagerProxy> WebResourceCacheManagerProxy::create(WebContext* webContext)
+PassRefPtr<WebResourceCacheManagerProxy> WebResourceCacheManagerProxy::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebResourceCacheManagerProxy(webContext));
+    return adoptRef(new WebResourceCacheManagerProxy(processPool));
 }
 
-WebResourceCacheManagerProxy::WebResourceCacheManagerProxy(WebContext* webContext)
-    : WebContextSupplement(webContext)
+WebResourceCacheManagerProxy::WebResourceCacheManagerProxy(WebProcessPool* processPool)
+    : WebContextSupplement(processPool)
 {
-    WebContextSupplement::context()->addMessageReceiver(Messages::WebResourceCacheManagerProxy::messageReceiverName(), *this);
+    WebContextSupplement::processPool()->addMessageReceiver(Messages::WebResourceCacheManagerProxy::messageReceiverName(), *this);
 }
 
 WebResourceCacheManagerProxy::~WebResourceCacheManagerProxy()
@@ -63,7 +63,7 @@ WebResourceCacheManagerProxy::~WebResourceCacheManagerProxy()
 
 // WebContextSupplement
 
-void WebResourceCacheManagerProxy::contextDestroyed()
+void WebResourceCacheManagerProxy::processPoolDestroyed()
 {
     invalidateCallbackMap(m_arrayCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 }
@@ -95,7 +95,7 @@ void WebResourceCacheManagerProxy::getCacheOrigins(std::function<void (API::Arra
     m_arrayCallbacks.set(callbackID, callback.release());
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> When multi-process is enabled, we need to aggregate the callback data from all processes.
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::GetCacheOrigins(callbackID));
+    processPool()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::GetCacheOrigins(callbackID));
 }
 
 void WebResourceCacheManagerProxy::didGetCacheOrigins(const Vector<SecurityOriginData>& origins, uint64_t callbackID)
@@ -112,17 +112,17 @@ void WebResourceCacheManagerProxy::clearCacheForOrigin(API::SecurityOrigin* orig
     securityOrigin.port = origin->securityOrigin().port();
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> There is no need to relaunch all processes. One process to take care of persistent cache is enough.
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForOrigin(securityOrigin, cachesToClear));
+    processPool()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForOrigin(securityOrigin, cachesToClear));
 }
 
 void WebResourceCacheManagerProxy::clearCacheForAllOrigins(ResourceCachesToClear cachesToClear)
 {
 #if ENABLE(NETWORK_PROCESS)
-    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::NetworkProcess::ClearCacheForAllOrigins(cachesToClear));
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::NetworkProcess::ClearCacheForAllOrigins(cachesToClear));
 #endif
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> There is no need to relaunch all processes. One process to take care of persistent cache is enough.
-    context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForAllOrigins(cachesToClear));
+    processPool()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForAllOrigins(cachesToClear));
 }
 
 } // namespace WebKit

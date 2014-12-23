@@ -28,9 +28,9 @@
 
 #include "APIArray.h"
 #include "ImmutableDictionary.h"
-#include "WebContext.h"
 #include "WebContextClient.h"
 #include "WebProcessMessages.h"
+#include "WebProcessPool.h"
 #include <wtf/CurrentTime.h>
 
 using namespace WebCore;
@@ -39,8 +39,8 @@ static const double plugInAutoStartExpirationTimeThreshold = 30 * 24 * 60 * 60;
 
 namespace WebKit {
 
-PlugInAutoStartProvider::PlugInAutoStartProvider(WebContext* context)
-    : m_context(context)
+PlugInAutoStartProvider::PlugInAutoStartProvider(WebProcessPool* processPool)
+    : m_processPool(processPool)
 {
     m_hashToOriginMap.add(SessionID::defaultSessionID(), HashMap<unsigned, String>());
     m_autoStartTable.add(SessionID::defaultSessionID(), AutoStartTable());
@@ -67,10 +67,10 @@ void PlugInAutoStartProvider::addAutoStartOriginHash(const String& pageOrigin, u
     it->value.set(plugInOriginHash, expirationTime);
     sessionIterator->value.set(plugInOriginHash, pageOrigin);
 
-    m_context->sendToAllProcesses(Messages::WebProcess::DidAddPlugInAutoStartOriginHash(plugInOriginHash, expirationTime, sessionID));
+    m_processPool->sendToAllProcesses(Messages::WebProcess::DidAddPlugInAutoStartOriginHash(plugInOriginHash, expirationTime, sessionID));
 
     if (!sessionID.isEphemeral())
-        m_context->client().plugInAutoStartOriginHashesChanged(m_context);
+        m_processPool->client().plugInAutoStartOriginHashesChanged(m_processPool);
 }
 
 SessionPlugInAutoStartOriginMap PlugInAutoStartProvider::autoStartOriginHashesCopy() const
@@ -154,7 +154,7 @@ void PlugInAutoStartProvider::setAutoStartOriginsTableWithItemsPassingTest(Immut
             ast.set(strDict.key, hashes);
     }
 
-    m_context->sendToAllProcesses(Messages::WebProcess::ResetPlugInAutoStartOriginDefaultHashes(hashMap));
+    m_processPool->sendToAllProcesses(Messages::WebProcess::ResetPlugInAutoStartOriginDefaultHashes(hashMap));
 }
 
 void PlugInAutoStartProvider::setAutoStartOriginsArray(API::Array& originList)
@@ -184,8 +184,8 @@ void PlugInAutoStartProvider::didReceiveUserInteraction(unsigned plugInOriginHas
 
     double newExpirationTime = expirationTimeFromNow();
     m_autoStartTable.add(sessionID, AutoStartTable()).iterator->value.add(it->value, PlugInAutoStartOriginMap()).iterator->value.set(plugInOriginHash, newExpirationTime);
-    m_context->sendToAllProcesses(Messages::WebProcess::DidAddPlugInAutoStartOriginHash(plugInOriginHash, newExpirationTime, sessionID));
-    m_context->client().plugInAutoStartOriginHashesChanged(m_context);
+    m_processPool->sendToAllProcesses(Messages::WebProcess::DidAddPlugInAutoStartOriginHash(plugInOriginHash, newExpirationTime, sessionID));
+    m_processPool->client().plugInAutoStartOriginHashesChanged(m_processPool);
 }
 
 } // namespace WebKit

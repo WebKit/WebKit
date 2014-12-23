@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebContext.h"
+#include "WebProcessPool.h"
 
 #include "APIArray.h"
 #include "APIDownloadClient.h"
@@ -40,7 +40,6 @@
 #include "WKContextPrivate.h"
 #include "WebApplicationCacheManagerProxy.h"
 #include "WebContextMessageKinds.h"
-#include "WebContextMessages.h"
 #include "WebContextSupplement.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCookieManagerProxy.h"
@@ -51,13 +50,14 @@
 #include "WebKeyValueStorageManager.h"
 #include "WebKit2Initialize.h"
 #include "WebMediaCacheManagerProxy.h"
-#include "WebNotificationManagerProxy.h"
-#include "WebPluginSiteDataManager.h"
-#include "WebPageGroup.h"
-#include "WebPreferences.h"
 #include "WebMemorySampler.h"
+#include "WebNotificationManagerProxy.h"
+#include "WebPageGroup.h"
+#include "WebPluginSiteDataManager.h"
+#include "WebPreferences.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
+#include "WebProcessPoolMessages.h"
 #include "WebProcessProxy.h"
 #include "WebResourceCacheManagerProxy.h"
 #include "WebsiteDataStore.h"
@@ -106,17 +106,18 @@
 #endif
 
 using namespace WebCore;
+using namespace WebKit;
 
 namespace WebKit {
 
 static const double sharedSecondaryProcessShutdownTimeout = 60;
 
-DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webContextCounter, ("WebContext"));
+DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, processPoolCounter, ("WebProcessPool"));
 
-void WebContext::applyPlatformSpecificConfigurationDefaults(WebContextConfiguration& configuration)
+void WebProcessPool::applyPlatformSpecificConfigurationDefaults(WebProcessPoolConfiguration& configuration)
 {
     // FIXME: This function should not be needed; all ports should make sure that the configuration has the right
-    // values, and then we should get rid of the platform specific defaults inside WebContext.
+    // values, and then we should get rid of the platform specific defaults inside WebProcessPool.
 
     if (!configuration.localStorageDirectory)
         configuration.localStorageDirectory = platformDefaultLocalStorageDirectory();
@@ -134,21 +135,21 @@ void WebContext::applyPlatformSpecificConfigurationDefaults(WebContextConfigurat
         configuration.mediaKeysStorageDirectory = platformDefaultMediaKeysStorageDirectory();
 }
 
-PassRefPtr<WebContext> WebContext::create(WebContextConfiguration configuration)
+PassRefPtr<WebProcessPool> WebProcessPool::create(WebProcessPoolConfiguration configuration)
 {
     InitializeWebKit2();
-    return adoptRef(new WebContext(WTF::move(configuration)));
+    return adoptRef(new WebProcessPool(WTF::move(configuration)));
 }
 
-static Vector<WebContext*>& contexts()
+static Vector<WebProcessPool*>& processPools()
 {
-    static NeverDestroyed<Vector<WebContext*>> contexts;
-    return contexts;
+    static NeverDestroyed<Vector<WebProcessPool*>> processPools;
+    return processPools;
 }
 
-const Vector<WebContext*>& WebContext::allContexts()
+const Vector<WebProcessPool*>& WebProcessPool::allProcessPools()
 {
-    return contexts();
+    return processPools();
 }
 
 static WebsiteDataStore::Configuration websiteDataStoreConfiguration()
@@ -159,7 +160,7 @@ static WebsiteDataStore::Configuration websiteDataStoreConfiguration()
     return configuration;
 }
 
-WebContext::WebContext(WebContextConfiguration configuration)
+WebProcessPool::WebProcessPool(WebProcessPoolConfiguration configuration)
     : m_processModel(ProcessModelSharedSecondaryProcess)
     , m_webProcessCountLimit(UINT_MAX)
     , m_haveInitialEmptyProcess(false)
@@ -199,7 +200,7 @@ WebContext::WebContext(WebContextConfiguration configuration)
 {
     platformInitialize();
 
-    addMessageReceiver(Messages::WebContext::messageReceiverName(), *this);
+    addMessageReceiver(Messages::WebProcessPool::messageReceiverName(), *this);
     addMessageReceiver(WebContextLegacyMessages::messageReceiverName(), *this);
 
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
@@ -228,7 +229,7 @@ WebContext::WebContext(WebContextConfiguration configuration)
     addSupplement<WebOriginDataManagerProxy>();
 #endif
 
-    contexts().append(this);
+    processPools().append(this);
 
     addLanguageChangeObserver(this, languageChanged);
 
@@ -242,20 +243,20 @@ WebContext::WebContext(WebContextConfiguration configuration)
 #endif
 
 #ifndef NDEBUG
-    webContextCounter.increment();
+    processPoolCounter.increment();
 #endif
 }
 
 #if !PLATFORM(COCOA)
-void WebContext::platformInitialize()
+void WebProcessPool::platformInitialize()
 {
 }
 #endif
 
-WebContext::~WebContext()
+WebProcessPool::~WebProcessPool()
 {
-    ASSERT(contexts().find(this) != notFound);
-    contexts().remove(contexts().find(this));
+    ASSERT(processPools().find(this) != notFound);
+    processPools().remove(processPools().find(this));
 
     removeLanguageChangeObserver(this);
 
@@ -264,18 +265,18 @@ WebContext::~WebContext()
     WebContextSupplementMap::const_iterator it = m_supplements.begin();
     WebContextSupplementMap::const_iterator end = m_supplements.end();
     for (; it != end; ++it) {
-        it->value->contextDestroyed();
-        it->value->clearContext();
+        it->value->processPoolDestroyed();
+        it->value->clearProcessPool();
     }
 
     m_iconDatabase->invalidate();
-    m_iconDatabase->clearContext();
+    m_iconDatabase->clearProcessPool();
     WebIconDatabase* rawIconDatabase = m_iconDatabase.release().leakRef();
     rawIconDatabase->derefWhenAppropriate();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginSiteDataManager->invalidate();
-    m_pluginSiteDataManager->clearContext();
+    m_pluginSiteDataManager->clearProcessPool();
 #endif
 
     invalidateCallbackMap(m_dictionaryCallbacks, CallbackBase::Error::OwnerWasInvalidated);
@@ -287,26 +288,26 @@ WebContext::~WebContext()
 #endif
 
 #ifndef NDEBUG
-    webContextCounter.decrement();
+    processPoolCounter.decrement();
 #endif
 }
 
-void WebContext::initializeClient(const WKContextClientBase* client)
+void WebProcessPool::initializeClient(const WKContextClientBase* client)
 {
     m_client.initialize(client);
 }
 
-void WebContext::initializeInjectedBundleClient(const WKContextInjectedBundleClientBase* client)
+void WebProcessPool::initializeInjectedBundleClient(const WKContextInjectedBundleClientBase* client)
 {
     m_injectedBundleClient.initialize(client);
 }
 
-void WebContext::initializeConnectionClient(const WKContextConnectionClientBase* client)
+void WebProcessPool::initializeConnectionClient(const WKContextConnectionClientBase* client)
 {
     m_connectionClient.initialize(client);
 }
 
-void WebContext::setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient> historyClient)
+void WebProcessPool::setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClient> historyClient)
 {
     if (!historyClient)
         m_historyClient = std::make_unique<API::LegacyContextHistoryClient>();
@@ -314,7 +315,7 @@ void WebContext::setHistoryClient(std::unique_ptr<API::LegacyContextHistoryClien
         m_historyClient = WTF::move(historyClient);
 }
 
-void WebContext::setDownloadClient(std::unique_ptr<API::DownloadClient> downloadClient)
+void WebProcessPool::setDownloadClient(std::unique_ptr<API::DownloadClient> downloadClient)
 {
     if (!downloadClient)
         m_downloadClient = std::make_unique<API::DownloadClient>();
@@ -322,7 +323,7 @@ void WebContext::setDownloadClient(std::unique_ptr<API::DownloadClient> download
         m_downloadClient = WTF::move(downloadClient);
 }
 
-void WebContext::setProcessModel(ProcessModel processModel)
+void WebProcessPool::setProcessModel(ProcessModel processModel)
 {
     // Guard against API misuse.
     if (!m_processes.isEmpty())
@@ -333,7 +334,7 @@ void WebContext::setProcessModel(ProcessModel processModel)
     m_processModel = processModel;
 }
 
-void WebContext::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
+void WebProcessPool::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
 {
     // Guard against API misuse.
     if (!m_processes.isEmpty())
@@ -345,7 +346,7 @@ void WebContext::setMaximumNumberOfProcesses(unsigned maximumNumberOfProcesses)
         m_webProcessCountLimit = maximumNumberOfProcesses;
 }
 
-IPC::Connection* WebContext::networkingProcessConnection()
+IPC::Connection* WebProcessPool::networkingProcessConnection()
 {
     switch (m_processModel) {
     case ProcessModelSharedSecondaryProcess:
@@ -366,12 +367,12 @@ IPC::Connection* WebContext::networkingProcessConnection()
     return 0;
 }
 
-void WebContext::languageChanged(void* context)
+void WebProcessPool::languageChanged(void* context)
 {
-    static_cast<WebContext*>(context)->languageChanged();
+    static_cast<WebProcessPool*>(context)->languageChanged();
 }
 
-void WebContext::languageChanged()
+void WebProcessPool::languageChanged()
 {
     sendToAllProcesses(Messages::WebProcess::UserPreferredLanguagesChanged(userPreferredLanguages()));
 #if USE(SOUP) && ENABLE(NETWORK_PROCESS)
@@ -380,17 +381,17 @@ void WebContext::languageChanged()
 #endif
 }
 
-void WebContext::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
+void WebProcessPool::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
 {
     sendToAllProcesses(Messages::WebProcess::FullKeyboardAccessModeChanged(fullKeyboardAccessEnabled));
 }
 
-void WebContext::textCheckerStateChanged()
+void WebProcessPool::textCheckerStateChanged()
 {
     sendToAllProcesses(Messages::WebProcess::SetTextCheckerState(TextChecker::state()));
 }
 
-void WebContext::setUsesNetworkProcess(bool usesNetworkProcess)
+void WebProcessPool::setUsesNetworkProcess(bool usesNetworkProcess)
 {
 #if ENABLE(NETWORK_PROCESS)
     m_usesNetworkProcess = usesNetworkProcess;
@@ -399,7 +400,7 @@ void WebContext::setUsesNetworkProcess(bool usesNetworkProcess)
 #endif
 }
 
-bool WebContext::usesNetworkProcess() const
+bool WebProcessPool::usesNetworkProcess() const
 {
 #if ENABLE(NETWORK_PROCESS)
     return m_usesNetworkProcess;
@@ -409,7 +410,7 @@ bool WebContext::usesNetworkProcess() const
 }
 
 #if ENABLE(NETWORK_PROCESS)
-void WebContext::ensureNetworkProcess()
+void WebProcessPool::ensureNetworkProcess()
 {
     if (m_networkProcess)
         return;
@@ -455,7 +456,7 @@ void WebContext::ensureNetworkProcess()
 #endif
 }
 
-void WebContext::networkProcessCrashed(NetworkProcessProxy* networkProcessProxy)
+void WebProcessPool::networkProcessCrashed(NetworkProcessProxy* networkProcessProxy)
 {
     ASSERT(m_networkProcess);
     ASSERT(networkProcessProxy == m_networkProcess.get());
@@ -470,7 +471,7 @@ void WebContext::networkProcessCrashed(NetworkProcessProxy* networkProcessProxy)
     m_client.networkProcessDidCrash(this);
 }
 
-void WebContext::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
+void WebProcessPool::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
 {
     ASSERT(reply);
 
@@ -482,7 +483,7 @@ void WebContext::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProx
 #endif
 
 #if ENABLE(DATABASE_PROCESS)
-void WebContext::ensureDatabaseProcess()
+void WebProcessPool::ensureDatabaseProcess()
 {
     if (m_databaseProcess)
         return;
@@ -502,7 +503,7 @@ void WebContext::ensureDatabaseProcess()
     m_databaseProcess->send(Messages::DatabaseProcess::InitializeDatabaseProcess(parameters), 0);
 }
 
-void WebContext::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply)
+void WebProcessPool::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply> reply)
 {
     ASSERT(reply);
 
@@ -511,7 +512,7 @@ void WebContext::getDatabaseProcessConnection(PassRefPtr<Messages::WebProcessPro
     m_databaseProcess->getDatabaseProcessConnection(reply);
 }
 
-void WebContext::databaseProcessCrashed(DatabaseProcessProxy* databaseProcessProxy)
+void WebProcessPool::databaseProcessCrashed(DatabaseProcessProxy* databaseProcessProxy)
 {
     ASSERT(m_databaseProcess);
     ASSERT(databaseProcessProxy == m_databaseProcess.get());
@@ -523,28 +524,26 @@ void WebContext::databaseProcessCrashed(DatabaseProcessProxy* databaseProcessPro
 }
 #endif
 
-void WebContext::willStartUsingPrivateBrowsing()
+void WebProcessPool::willStartUsingPrivateBrowsing()
 {
-    const Vector<WebContext*>& contexts = allContexts();
-    for (size_t i = 0, count = contexts.size(); i < count; ++i)
-        contexts[i]->setAnyPageGroupMightHavePrivateBrowsingEnabled(true);
+    for (auto* processPool : allProcessPools())
+        processPool->setAnyPageGroupMightHavePrivateBrowsingEnabled(true);
 }
 
-void WebContext::willStopUsingPrivateBrowsing()
+void WebProcessPool::willStopUsingPrivateBrowsing()
 {
-    const Vector<WebContext*>& contexts = allContexts();
-    for (size_t i = 0, count = contexts.size(); i < count; ++i)
-        contexts[i]->setAnyPageGroupMightHavePrivateBrowsingEnabled(false);
+    for (auto* processPool : allProcessPools())
+        processPool->setAnyPageGroupMightHavePrivateBrowsingEnabled(false);
 }
 
-void WebContext::windowServerConnectionStateChanged()
+void WebProcessPool::windowServerConnectionStateChanged()
 {
     size_t processCount = m_processes.size();
     for (size_t i = 0; i < processCount; ++i)
         m_processes[i]->windowServerConnectionStateChanged();
 }
 
-void WebContext::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool privateBrowsingEnabled)
+void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
     m_iconDatabase->setPrivateBrowsingEnabled(privateBrowsingEnabled);
 
@@ -565,12 +564,12 @@ void WebContext::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool privateBrow
 
 void (*s_invalidMessageCallback)(WKStringRef messageName);
 
-void WebContext::setInvalidMessageCallback(void (*invalidMessageCallback)(WKStringRef messageName))
+void WebProcessPool::setInvalidMessageCallback(void (*invalidMessageCallback)(WKStringRef messageName))
 {
     s_invalidMessageCallback = invalidMessageCallback;
 }
 
-void WebContext::didReceiveInvalidMessage(const IPC::StringReference& messageReceiverName, const IPC::StringReference& messageName)
+void WebProcessPool::didReceiveInvalidMessage(const IPC::StringReference& messageReceiverName, const IPC::StringReference& messageName)
 {
     if (!s_invalidMessageCallback)
         return;
@@ -583,14 +582,14 @@ void WebContext::didReceiveInvalidMessage(const IPC::StringReference& messageRec
     s_invalidMessageCallback(toAPI(API::String::create(messageNameStringBuilder.toString()).get()));
 }
 
-void WebContext::processDidCachePage(WebProcessProxy* process)
+void WebProcessPool::processDidCachePage(WebProcessProxy* process)
 {
     if (m_processWithPageCache && m_processWithPageCache != process)
         m_processWithPageCache->releasePageCache();
     m_processWithPageCache = process;
 }
 
-WebProcessProxy& WebContext::ensureSharedWebProcess()
+WebProcessProxy& WebProcessPool::ensureSharedWebProcess()
 {
     ASSERT(m_processModel == ProcessModelSharedSecondaryProcess);
     if (m_processes.isEmpty())
@@ -598,7 +597,7 @@ WebProcessProxy& WebContext::ensureSharedWebProcess()
     return *m_processes[0];
 }
 
-WebProcessProxy& WebContext::createNewWebProcess()
+WebProcessProxy& WebProcessPool::createNewWebProcess()
 {
 #if ENABLE(NETWORK_PROCESS)
     if (m_usesNetworkProcess)
@@ -742,7 +741,7 @@ WebProcessProxy& WebContext::createNewWebProcess()
     return process;
 }
 
-void WebContext::warmInitialProcess()  
+void WebProcessPool::warmInitialProcess()  
 {
     if (m_haveInitialEmptyProcess) {
         ASSERT(!m_processes.isEmpty());
@@ -756,7 +755,7 @@ void WebContext::warmInitialProcess()
     m_haveInitialEmptyProcess = true;
 }
 
-void WebContext::enableProcessTermination()
+void WebProcessPool::enableProcessTermination()
 {
     m_processTerminationEnabled = true;
     Vector<RefPtr<WebProcessProxy>> processes = m_processes;
@@ -766,7 +765,7 @@ void WebContext::enableProcessTermination()
     }
 }
 
-bool WebContext::shouldTerminate(WebProcessProxy* process)
+bool WebProcessPool::shouldTerminate(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
 
@@ -781,22 +780,22 @@ bool WebContext::shouldTerminate(WebProcessProxy* process)
     return true;
 }
 
-void WebContext::processWillOpenConnection(WebProcessProxy* process)
+void WebProcessPool::processWillOpenConnection(WebProcessProxy* process)
 {
     m_storageManager->processWillOpenConnection(process);
 }
 
-void WebContext::processWillCloseConnection(WebProcessProxy* process)
+void WebProcessPool::processWillCloseConnection(WebProcessProxy* process)
 {
     m_storageManager->processWillCloseConnection(process);
 }
 
-void WebContext::applicationWillTerminate()
+void WebProcessPool::applicationWillTerminate()
 {
     m_storageManager->applicationWillTerminate();
 }
 
-void WebContext::processDidFinishLaunching(WebProcessProxy* process)
+void WebProcessPool::processDidFinishLaunching(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
 
@@ -819,7 +818,7 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
     m_connectionClient.didCreateConnection(this, process->webConnection());
 }
 
-void WebContext::disconnectProcess(WebProcessProxy* process)
+void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 {
     ASSERT(m_processes.contains(process));
 
@@ -853,7 +852,7 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     m_processes.remove(m_processes.find(process));
 }
 
-WebProcessProxy& WebContext::createNewWebProcessRespectingProcessCountLimit()
+WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit()
 {
     if (m_processes.size() < m_webProcessCountLimit)
         return createNewWebProcess();
@@ -866,7 +865,7 @@ WebProcessProxy& WebContext::createNewWebProcessRespectingProcessCountLimit()
     return *process;
 }
 
-PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPageConfiguration configuration)
+PassRefPtr<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, WebPageConfiguration configuration)
 {
     if (!configuration.pageGroup)
         configuration.pageGroup = m_defaultPageGroup.ptr();
@@ -897,7 +896,7 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient& pageClient, WebPa
     return process->createWebPage(pageClient, WTF::move(configuration));
 }
 
-DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
+DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
 {
     DownloadProxy* downloadProxy = createDownloadProxy(request);
     uint64_t initiatingPageID = initiatingPage ? initiatingPage->pageID() : 0;
@@ -914,7 +913,7 @@ DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const Resource
     return downloadProxy;
 }
 
-DownloadProxy* WebContext::resumeDownload(const API::Data* resumeData, const String& path)
+DownloadProxy* WebProcessPool::resumeDownload(const API::Data* resumeData, const String& path)
 {
     DownloadProxy* downloadProxy = createDownloadProxy(ResourceRequest());
 
@@ -933,7 +932,7 @@ DownloadProxy* WebContext::resumeDownload(const API::Data* resumeData, const Str
     return downloadProxy;
 }
 
-void WebContext::postMessageToInjectedBundle(const String& messageName, API::Object* messageBody)
+void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API::Object* messageBody)
 {
     if (m_processes.isEmpty()) {
         if (m_processModel == ProcessModelSharedSecondaryProcess)
@@ -953,22 +952,22 @@ void WebContext::postMessageToInjectedBundle(const String& messageName, API::Obj
 
 // InjectedBundle client
 
-void WebContext::didReceiveMessageFromInjectedBundle(const String& messageName, API::Object* messageBody)
+void WebProcessPool::didReceiveMessageFromInjectedBundle(const String& messageName, API::Object* messageBody)
 {
     m_injectedBundleClient.didReceiveMessageFromInjectedBundle(this, messageName, messageBody);
 }
 
-void WebContext::didReceiveSynchronousMessageFromInjectedBundle(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
+void WebProcessPool::didReceiveSynchronousMessageFromInjectedBundle(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
 {
     m_injectedBundleClient.didReceiveSynchronousMessageFromInjectedBundle(this, messageName, messageBody, returnData);
 }
 
-void WebContext::populateVisitedLinks()
+void WebProcessPool::populateVisitedLinks()
 {
     m_historyClient->populateVisitedLinks(*this);
 }
 
-WebContext::Statistics& WebContext::statistics()
+WebProcessPool::Statistics& WebProcessPool::statistics()
 {
     static Statistics statistics = Statistics();
 
@@ -976,7 +975,7 @@ WebContext::Statistics& WebContext::statistics()
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebContext::setAdditionalPluginsDirectory(const String& directory)
+void WebProcessPool::setAdditionalPluginsDirectory(const String& directory)
 {
     Vector<String> directories;
     directories.append(directory);
@@ -985,37 +984,37 @@ void WebContext::setAdditionalPluginsDirectory(const String& directory)
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-void WebContext::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
+void WebProcessPool::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 {
     m_alwaysUsesComplexTextCodePath = alwaysUseComplexText;
     sendToAllProcesses(Messages::WebProcess::SetAlwaysUsesComplexTextCodePath(alwaysUseComplexText));
 }
 
-void WebContext::setShouldUseFontSmoothing(bool useFontSmoothing)
+void WebProcessPool::setShouldUseFontSmoothing(bool useFontSmoothing)
 {
     m_shouldUseFontSmoothing = useFontSmoothing;
     sendToAllProcesses(Messages::WebProcess::SetShouldUseFontSmoothing(useFontSmoothing));
 }
 
-void WebContext::registerURLSchemeAsEmptyDocument(const String& urlScheme)
+void WebProcessPool::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 {
     m_schemesToRegisterAsEmptyDocument.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsEmptyDocument(urlScheme));
 }
 
-void WebContext::registerURLSchemeAsSecure(const String& urlScheme)
+void WebProcessPool::registerURLSchemeAsSecure(const String& urlScheme)
 {
     m_schemesToRegisterAsSecure.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsSecure(urlScheme));
 }
 
-void WebContext::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme)
+void WebProcessPool::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme)
 {
     m_schemesToSetDomainRelaxationForbiddenFor.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::SetDomainRelaxationForbiddenForURLScheme(urlScheme));
 }
 
-void WebContext::setCanHandleHTTPSServerTrustEvaluation(bool value)
+void WebProcessPool::setCanHandleHTTPSServerTrustEvaluation(bool value)
 {
 #if ENABLE(NETWORK_PROCESS)
     m_canHandleHTTPSServerTrustEvaluation = value;
@@ -1028,67 +1027,67 @@ void WebContext::setCanHandleHTTPSServerTrustEvaluation(bool value)
 #endif
 }
 
-void WebContext::registerURLSchemeAsLocal(const String& urlScheme)
+void WebProcessPool::registerURLSchemeAsLocal(const String& urlScheme)
 {
     m_schemesToRegisterAsLocal.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsLocal(urlScheme));
 }
 
-void WebContext::registerURLSchemeAsNoAccess(const String& urlScheme)
+void WebProcessPool::registerURLSchemeAsNoAccess(const String& urlScheme)
 {
     m_schemesToRegisterAsNoAccess.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsNoAccess(urlScheme));
 }
 
-void WebContext::registerURLSchemeAsDisplayIsolated(const String& urlScheme)
+void WebProcessPool::registerURLSchemeAsDisplayIsolated(const String& urlScheme)
 {
     m_schemesToRegisterAsDisplayIsolated.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsDisplayIsolated(urlScheme));
 }
 
-void WebContext::registerURLSchemeAsCORSEnabled(const String& urlScheme)
+void WebProcessPool::registerURLSchemeAsCORSEnabled(const String& urlScheme)
 {
     m_schemesToRegisterAsCORSEnabled.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsCORSEnabled(urlScheme));
 }
 
-HashSet<String>& WebContext::globalURLSchemesWithCustomProtocolHandlers()
+HashSet<String>& WebProcessPool::globalURLSchemesWithCustomProtocolHandlers()
 {
     static NeverDestroyed<HashSet<String>> set;
     return set;
 }
 
-void WebContext::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String& urlScheme)
+void WebProcessPool::registerGlobalURLSchemeAsHavingCustomProtocolHandlers(const String& urlScheme)
 {
     if (!urlScheme)
         return;
 
     String schemeLower = urlScheme.lower();
     globalURLSchemesWithCustomProtocolHandlers().add(schemeLower);
-    for (auto* context : allContexts())
-        context->registerSchemeForCustomProtocol(schemeLower);
+    for (auto* processPool : allProcessPools())
+        processPool->registerSchemeForCustomProtocol(schemeLower);
 }
 
-void WebContext::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String& urlScheme)
+void WebProcessPool::unregisterGlobalURLSchemeAsHavingCustomProtocolHandlers(const String& urlScheme)
 {
     if (!urlScheme)
         return;
 
     String schemeLower = urlScheme.lower();
     globalURLSchemesWithCustomProtocolHandlers().remove(schemeLower);
-    for (auto* context : allContexts())
-        context->unregisterSchemeForCustomProtocol(schemeLower);
+    for (auto* processPool : allProcessPools())
+        processPool->unregisterSchemeForCustomProtocol(schemeLower);
 }
 
 #if ENABLE(CACHE_PARTITIONING)
-void WebContext::registerURLSchemeAsCachePartitioned(const String& urlScheme)
+void WebProcessPool::registerURLSchemeAsCachePartitioned(const String& urlScheme)
 {
     m_schemesToRegisterAsCachePartitioned.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsCachePartitioned(urlScheme));
 }
 #endif
 
-void WebContext::setCacheModel(CacheModel cacheModel)
+void WebProcessPool::setCacheModel(CacheModel cacheModel)
 {
     m_cacheModel = cacheModel;
     sendToAllProcesses(Messages::WebProcess::SetCacheModel(static_cast<uint32_t>(m_cacheModel)));
@@ -1096,12 +1095,12 @@ void WebContext::setCacheModel(CacheModel cacheModel)
     // FIXME: Inform the Network Process if in use.
 }
 
-void WebContext::setDefaultRequestTimeoutInterval(double timeoutInterval)
+void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
 {
     sendToAllProcesses(Messages::WebProcess::SetDefaultRequestTimeoutInterval(timeoutInterval));
 }
 
-DownloadProxy* WebContext::createDownloadProxy(const ResourceRequest& request)
+DownloadProxy* WebProcessPool::createDownloadProxy(const ResourceRequest& request)
 {
 #if ENABLE(NETWORK_PROCESS)
     if (usesNetworkProcess()) {
@@ -1114,35 +1113,35 @@ DownloadProxy* WebContext::createDownloadProxy(const ResourceRequest& request)
     return ensureSharedWebProcess().createDownloadProxy(request);
 }
 
-void WebContext::addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& messageReceiver)
+void WebProcessPool::addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
 }
 
-void WebContext::addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver& messageReceiver)
+void WebProcessPool::addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
 }
 
-void WebContext::removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID)
+void WebProcessPool::removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID)
 {
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
 }
 
-bool WebContext::dispatchMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+bool WebProcessPool::dispatchMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
     return m_messageReceiverMap.dispatchMessage(connection, decoder);
 }
 
-bool WebContext::dispatchSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+bool WebProcessPool::dispatchSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
     return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
-void WebContext::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+void WebProcessPool::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
 {
-    if (decoder.messageReceiverName() == Messages::WebContext::messageReceiverName()) {
-        didReceiveWebContextMessage(connection, decoder);
+    if (decoder.messageReceiverName() == Messages::WebProcessPool::messageReceiverName()) {
+        didReceiveWebProcessPoolMessage(connection, decoder);
         return;
     }
 
@@ -1163,10 +1162,10 @@ void WebContext::didReceiveMessage(IPC::Connection* connection, IPC::MessageDeco
     ASSERT_NOT_REACHED();
 }
 
-void WebContext::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+void WebProcessPool::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
-    if (decoder.messageReceiverName() == Messages::WebContext::messageReceiverName()) {
-        didReceiveSyncWebContextMessage(connection, decoder, replyEncoder);
+    if (decoder.messageReceiverName() == Messages::WebProcessPool::messageReceiverName()) {
+        didReceiveSyncWebProcessPoolMessage(connection, decoder, replyEncoder);
         return;
     }
 
@@ -1193,12 +1192,12 @@ void WebContext::didReceiveSyncMessage(IPC::Connection* connection, IPC::Message
     ASSERT_NOT_REACHED();
 }
 
-void WebContext::setEnhancedAccessibility(bool flag)
+void WebProcessPool::setEnhancedAccessibility(bool flag)
 {
     sendToAllProcesses(Messages::WebProcess::SetEnhancedAccessibility(flag));
 }
     
-void WebContext::startMemorySampler(const double interval)
+void WebProcessPool::startMemorySampler(const double interval)
 {    
     // For new WebProcesses we will also want to start the Memory Sampler
     m_memorySamplerEnabled = true;
@@ -1218,7 +1217,7 @@ void WebContext::startMemorySampler(const double interval)
     sendToAllProcesses(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, interval));
 }
 
-void WebContext::stopMemorySampler()
+void WebProcessPool::stopMemorySampler()
 {    
     // For WebProcess
     m_memorySamplerEnabled = false;
@@ -1231,7 +1230,7 @@ void WebContext::stopMemorySampler()
     sendToAllProcesses(Messages::WebProcess::StopMemorySampler());
 }
 
-String WebContext::applicationCacheDirectory() const
+String WebProcessPool::applicationCacheDirectory() const
 {
     if (!m_overrideApplicationCacheDirectory.isEmpty())
         return m_overrideApplicationCacheDirectory;
@@ -1239,7 +1238,7 @@ String WebContext::applicationCacheDirectory() const
     return platformDefaultApplicationCacheDirectory();
 }
 
-void WebContext::setIconDatabasePath(const String& path)
+void WebProcessPool::setIconDatabasePath(const String& path)
 {
     m_overrideIconDatabasePath = path;
     if (!m_overrideIconDatabasePath.isEmpty()) {
@@ -1248,7 +1247,7 @@ void WebContext::setIconDatabasePath(const String& path)
     }
 }
 
-String WebContext::iconDatabasePath() const
+String WebProcessPool::iconDatabasePath() const
 {
     if (!m_overrideIconDatabasePath.isNull())
         return m_overrideIconDatabasePath;
@@ -1256,7 +1255,7 @@ String WebContext::iconDatabasePath() const
     return platformDefaultIconDatabasePath();
 }
 
-String WebContext::diskCacheDirectory() const
+String WebProcessPool::diskCacheDirectory() const
 {
     if (!m_overrideDiskCacheDirectory.isEmpty())
         return m_overrideDiskCacheDirectory;
@@ -1264,7 +1263,7 @@ String WebContext::diskCacheDirectory() const
     return platformDefaultDiskCacheDirectory();
 }
 
-String WebContext::cookieStorageDirectory() const
+String WebProcessPool::cookieStorageDirectory() const
 {
     if (!m_overrideCookieStorageDirectory.isEmpty())
         return m_overrideCookieStorageDirectory;
@@ -1272,7 +1271,7 @@ String WebContext::cookieStorageDirectory() const
     return platformDefaultCookieStorageDirectory();
 }
 
-void WebContext::useTestingNetworkSession()
+void WebProcessPool::useTestingNetworkSession()
 {
     ASSERT(m_processes.isEmpty());
 #if ENABLE(NETWORK_PROCESS)
@@ -1288,7 +1287,7 @@ void WebContext::useTestingNetworkSession()
     m_shouldUseTestingNetworkSession = true;
 }
 
-void WebContext::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
+void WebProcessPool::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* certificate, const String& host)
 {
 #if ENABLE(NETWORK_PROCESS)
     if (m_usesNetworkProcess && m_networkProcess) {
@@ -1310,7 +1309,7 @@ void WebContext::allowSpecificHTTPSCertificateForHost(const WebCertificateInfo* 
 #endif
 }
 
-void WebContext::setHTTPPipeliningEnabled(bool enabled)
+void WebProcessPool::setHTTPPipeliningEnabled(bool enabled)
 {
 #if PLATFORM(COCOA)
     ResourceRequest::setHTTPPipeliningEnabled(enabled);
@@ -1319,7 +1318,7 @@ void WebContext::setHTTPPipeliningEnabled(bool enabled)
 #endif
 }
 
-bool WebContext::httpPipeliningEnabled() const
+bool WebProcessPool::httpPipeliningEnabled() const
 {
 #if PLATFORM(COCOA)
     return ResourceRequest::httpPipeliningEnabled();
@@ -1328,7 +1327,7 @@ bool WebContext::httpPipeliningEnabled() const
 #endif
 }
 
-void WebContext::getStatistics(uint32_t statisticsMask, std::function<void (ImmutableDictionary*, CallbackBase::Error)> callbackFunction)
+void WebProcessPool::getStatistics(uint32_t statisticsMask, std::function<void (ImmutableDictionary*, CallbackBase::Error)> callbackFunction)
 {
     if (!statisticsMask) {
         callbackFunction(nullptr, CallbackBase::Error::Unknown);
@@ -1344,7 +1343,7 @@ void WebContext::getStatistics(uint32_t statisticsMask, std::function<void (Immu
         requestNetworkingStatistics(request.get());
 }
 
-void WebContext::requestWebContentStatistics(StatisticsRequest* request)
+void WebProcessPool::requestWebContentStatistics(StatisticsRequest* request)
 {
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
         if (m_processes.isEmpty())
@@ -1359,7 +1358,7 @@ void WebContext::requestWebContentStatistics(StatisticsRequest* request)
     }
 }
 
-void WebContext::requestNetworkingStatistics(StatisticsRequest* request)
+void WebProcessPool::requestNetworkingStatistics(StatisticsRequest* request)
 {
     bool networkProcessUnavailable;
 #if ENABLE(NETWORK_PROCESS)
@@ -1383,12 +1382,12 @@ void WebContext::requestNetworkingStatistics(StatisticsRequest* request)
 }
 
 #if !PLATFORM(COCOA)
-void WebContext::dummy(bool&)
+void WebProcessPool::dummy(bool&)
 {
 }
 #endif
 
-void WebContext::didGetStatistics(const StatisticsData& statisticsData, uint64_t requestID)
+void WebProcessPool::didGetStatistics(const StatisticsData& statisticsData, uint64_t requestID)
 {
     RefPtr<StatisticsRequest> request = m_statisticsRequests.take(requestID);
     if (!request) {
@@ -1399,58 +1398,58 @@ void WebContext::didGetStatistics(const StatisticsData& statisticsData, uint64_t
     request->completedRequest(requestID, statisticsData);
 }
 
-void WebContext::garbageCollectJavaScriptObjects()
+void WebProcessPool::garbageCollectJavaScriptObjects()
 {
     sendToAllProcesses(Messages::WebProcess::GarbageCollectJavaScriptObjects());
 }
 
-void WebContext::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
+void WebProcessPool::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
 {
     sendToAllProcesses(Messages::WebProcess::SetJavaScriptGarbageCollectorTimerEnabled(flag));
 }
 
-void WebContext::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, SessionID sessionID)
+void WebProcessPool::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, SessionID sessionID)
 {
     m_plugInAutoStartProvider.addAutoStartOriginHash(pageOrigin, plugInOriginHash, sessionID);
 }
 
-void WebContext::plugInDidReceiveUserInteraction(unsigned plugInOriginHash, SessionID sessionID)
+void WebProcessPool::plugInDidReceiveUserInteraction(unsigned plugInOriginHash, SessionID sessionID)
 {
     m_plugInAutoStartProvider.didReceiveUserInteraction(plugInOriginHash, sessionID);
 }
 
-PassRefPtr<ImmutableDictionary> WebContext::plugInAutoStartOriginHashes() const
+PassRefPtr<ImmutableDictionary> WebProcessPool::plugInAutoStartOriginHashes() const
 {
     return m_plugInAutoStartProvider.autoStartOriginsTableCopy();
 }
 
-void WebContext::setPlugInAutoStartOriginHashes(ImmutableDictionary& dictionary)
+void WebProcessPool::setPlugInAutoStartOriginHashes(ImmutableDictionary& dictionary)
 {
     m_plugInAutoStartProvider.setAutoStartOriginsTable(dictionary);
 }
 
-void WebContext::setPlugInAutoStartOrigins(API::Array& array)
+void WebProcessPool::setPlugInAutoStartOrigins(API::Array& array)
 {
     m_plugInAutoStartProvider.setAutoStartOriginsArray(array);
 }
 
-void WebContext::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(ImmutableDictionary& dictionary, double time)
+void WebProcessPool::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(ImmutableDictionary& dictionary, double time)
 {
     m_plugInAutoStartProvider.setAutoStartOriginsFilteringOutEntriesAddedAfterTime(dictionary, time);
 }
 
-void WebContext::registerSchemeForCustomProtocol(const String& scheme)
+void WebProcessPool::registerSchemeForCustomProtocol(const String& scheme)
 {
     sendToNetworkingProcess(Messages::CustomProtocolManager::RegisterScheme(scheme));
 }
 
-void WebContext::unregisterSchemeForCustomProtocol(const String& scheme)
+void WebProcessPool::unregisterSchemeForCustomProtocol(const String& scheme)
 {
     sendToNetworkingProcess(Messages::CustomProtocolManager::UnregisterScheme(scheme));
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
+void WebProcessPool::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
 {
 #ifdef NDEBUG
     UNUSED_PARAM(store);
@@ -1487,7 +1486,7 @@ void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
 }
 #endif
     
-void WebContext::setMemoryCacheDisabled(bool disabled)
+void WebProcessPool::setMemoryCacheDisabled(bool disabled)
 {
     m_memoryCacheDisabled = disabled;
     sendToAllProcesses(Messages::WebProcess::SetMemoryCacheDisabled(disabled));

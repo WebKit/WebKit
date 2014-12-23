@@ -239,7 +239,7 @@ void PageClientImpl::toolTipChanged(const String&, const String&)
 
 bool PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, API::SecurityOrigin& origin, GeolocationPermissionRequestProxy& request)
 {
-    [[wrapper(m_webView->_page->process().context()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:origin.securityOrigin() frame:frame request:request view:m_webView];
+    [[wrapper(m_webView->_page->process().processPool()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:origin.securityOrigin() frame:frame request:request view:m_webView];
     return true;
 }
 

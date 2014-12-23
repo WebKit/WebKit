@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WebGeolocationManagerProxy.h"
 
-#include "WebContext.h"
 #include "WebGeolocationManagerMessages.h"
 #include "WebGeolocationManagerProxyMessages.h"
+#include "WebProcessPool.h"
 
 namespace WebKit {
 
@@ -37,15 +37,15 @@ const char* WebGeolocationManagerProxy::supplementName()
     return "WebGeolocationManagerProxy";
 }
 
-PassRefPtr<WebGeolocationManagerProxy> WebGeolocationManagerProxy::create(WebContext* context)
+PassRefPtr<WebGeolocationManagerProxy> WebGeolocationManagerProxy::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebGeolocationManagerProxy(context));
+    return adoptRef(new WebGeolocationManagerProxy(processPool));
 }
 
-WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebContext* context)
-    : WebContextSupplement(context)
+WebGeolocationManagerProxy::WebGeolocationManagerProxy(WebProcessPool* processPool)
+    : WebContextSupplement(processPool)
 {
-    WebContextSupplement::context()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), *this);
+    WebContextSupplement::processPool()->addMessageReceiver(Messages::WebGeolocationManagerProxy::messageReceiverName(), *this);
 }
 
 void WebGeolocationManagerProxy::initializeProvider(const WKGeolocationProviderBase* provider)
@@ -55,7 +55,7 @@ void WebGeolocationManagerProxy::initializeProvider(const WKGeolocationProviderB
 
 // WebContextSupplement
 
-void WebGeolocationManagerProxy::contextDestroyed()
+void WebGeolocationManagerProxy::processPoolDestroyed()
 {
     m_updateRequesters.clear();
     m_provider.stopUpdating(this);
@@ -78,24 +78,24 @@ void WebGeolocationManagerProxy::derefWebContextSupplement()
 
 void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPosition* position)
 {
-    if (!context())
+    if (!processPool())
         return;
 
-    context()->sendToAllProcesses(Messages::WebGeolocationManager::DidChangePosition(position->data()));
+    processPool()->sendToAllProcesses(Messages::WebGeolocationManager::DidChangePosition(position->data()));
 }
 
 void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String& errorMessage)
 {
-    if (!context())
+    if (!processPool())
         return;
 
-    context()->sendToAllProcesses(Messages::WebGeolocationManager::DidFailToDeterminePosition(errorMessage));
+    processPool()->sendToAllProcesses(Messages::WebGeolocationManager::DidFailToDeterminePosition(errorMessage));
 }
 
 #if PLATFORM(IOS)
 void WebGeolocationManagerProxy::resetPermissions()
 {
-    context()->sendToAllProcesses(Messages::WebGeolocationManager::ResetPermissions());
+    processPool()->sendToAllProcesses(Messages::WebGeolocationManager::ResetPermissions());
 }
 #endif
 
