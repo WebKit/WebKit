@@ -1,3 +1,13 @@
+2014-12-22  Mark Rowe  <mrowe@apple.com>
+
+        [Mac] Engineering builds of WebCore on OS X 10.8 and 10.9 shouldn't build with -gline-tables-only
+        <https://webkit.org/b/139883> / <rdar://problem/19297261>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/DebugRelease.xcconfig: Override the setting using conditional settings
+        so that they take precedence over the conditional settings in Base.xcconfig.
+
 2014-12-22  Alexey Proskuryakov  <ap@apple.com>
 
         Unreviewed build fix.
