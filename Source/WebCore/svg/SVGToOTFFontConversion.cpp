@@ -83,32 +83,45 @@ private:
             : m_converter(converter)
             , m_baseOfOffset(baseOfOffset)
             , m_location(m_converter.m_result.size())
-#if !ASSERT_DISABLED
-            , m_written(false)
-#endif
         {
             m_converter.append16(0);
         }
+
+        Placeholder(Placeholder&& other)
+            : m_converter(other.m_converter)
+            , m_baseOfOffset(other.m_baseOfOffset)
+            , m_location(other.m_location)
+#if !ASSERT_DISABLED
+            , m_active(other.m_active)
+#endif
+        {
+#if !ASSERT_DISABLED
+            other.m_active = false;
+#endif
+        }
+
         void populate()
         {
-            ASSERT(!m_written);
+            ASSERT(m_active);
             size_t delta = m_converter.m_result.size() - m_baseOfOffset;
             ASSERT(delta < std::numeric_limits<uint16_t>::max());
             m_converter.overwrite16(m_location, delta);
 #if !ASSERT_DISABLED
-            m_written = true;
+            m_active = false;
 #endif
         }
+
         ~Placeholder()
         {
-            ASSERT(m_written);
+            ASSERT(!m_active);
         }
+
     private:
         SVGToOTFFontConverter& m_converter;
         const size_t m_baseOfOffset;
         const size_t m_location;
 #if !ASSERT_DISABLED
-        bool m_written;
+        bool m_active = { true };
 #endif
     };
 

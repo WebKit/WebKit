@@ -1,3 +1,17 @@
+2014-12-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Converter] Make Placeholder a move-only type
+        https://bugs.webkit.org/show_bug.cgi?id=139870
+
+        Reviewed by Anders Carlsson.
+
+        No new tests because there is no behavior change.
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::Placeholder::Placeholder):
+        (WebCore::SVGToOTFFontConverter::Placeholder::populate):
+        (WebCore::SVGToOTFFontConverter::Placeholder::~Placeholder):
+
 2014-12-23  Chris Dumez  <cdumez@apple.com>
 
         Move color CSS properties to the new StyleBuilder
