@@ -28,4 +28,4 @@ FRAMEWORK_AND_LIBRARY_LDFLAGS_iphonesimulator = -lobjc -framework UIKit;
 FRAMEWORK_AND_LIBRARY_LDFLAGS_iphoneos = $(FRAMEWORK_AND_LIBRARY_LDFLAGS_iphonesimulator);
 FRAMEWORK_AND_LIBRARY_LDFLAGS_macosx = -framework JavaScriptCore -framework WebKit -framework CoreGraphics -framework Cocoa;
 
-OTHER_LDFLAGS = $(FRAMEWORK_AND_LIBRARY_LDFLAGS);
+OTHER_LDFLAGS = $(inherited) $(FRAMEWORK_AND_LIBRARY_LDFLAGS);
