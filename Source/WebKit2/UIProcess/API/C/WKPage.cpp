@@ -29,13 +29,13 @@
 
 #include "APIArray.h"
 #include "APIData.h"
+#include "APIDictionary.h"
 #include "APIFindClient.h"
 #include "APILoaderClient.h"
 #include "APIPolicyClient.h"
 #include "APISessionState.h"
 #include "APIUIClient.h"
 #include "AuthenticationChallengeProxy.h"
-#include "ImmutableDictionary.h"
 #include "LegacySessionStateCoding.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebWheelEvent.h"
@@ -1023,7 +1023,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
         }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        virtual void didFailToInitializePlugin(WebPageProxy* page, ImmutableDictionary* pluginInformation) override
+        virtual void didFailToInitializePlugin(WebPageProxy* page, API::Dictionary* pluginInformation) override
         {
             if (m_client.didFailToInitializePlugin_deprecatedForUseWithV0)
                 m_client.didFailToInitializePlugin_deprecatedForUseWithV0(toAPI(page), toAPI(pluginInformation->get<API::String>(pluginInformationMIMETypeKey())), m_client.base.clientInfo);
@@ -1035,7 +1035,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
                 m_client.pluginDidFail(toAPI(page), kWKErrorCodeCannotLoadPlugIn, toAPI(pluginInformation), m_client.base.clientInfo);
         }
 
-        virtual void didBlockInsecurePluginVersion(WebPageProxy* page, ImmutableDictionary* pluginInformation) override
+        virtual void didBlockInsecurePluginVersion(WebPageProxy* page, API::Dictionary* pluginInformation) override
         {
             if (m_client.pluginDidFail_deprecatedForUseWithV1)
                 m_client.pluginDidFail_deprecatedForUseWithV1(toAPI(page), kWKErrorCodeInsecurePlugInVersion, toAPI(pluginInformation->get<API::String>(pluginInformationMIMETypeKey())), toAPI(pluginInformation->get<API::String>(pluginInformationBundleIdentifierKey())), toAPI(pluginInformation->get<API::String>(pluginInformationBundleVersionKey())), m_client.base.clientInfo);
@@ -1044,7 +1044,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
                 m_client.pluginDidFail(toAPI(page), kWKErrorCodeInsecurePlugInVersion, toAPI(pluginInformation), m_client.base.clientInfo);
         }
 
-        virtual PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy* page, PluginModuleLoadPolicy currentPluginLoadPolicy, ImmutableDictionary* pluginInformation, String& unavailabilityDescription) override
+        virtual PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy* page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary* pluginInformation, String& unavailabilityDescription) override
         {
             WKStringRef unavailabilityDescriptionOut = 0;
             PluginModuleLoadPolicy loadPolicy = currentPluginLoadPolicy;
@@ -1192,7 +1192,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             if (m_client.base.version > 0 && !m_client.createNewPage)
                 return 0;
 
-            ImmutableDictionary::MapType map;
+            API::Dictionary::MapType map;
             if (windowFeatures.xSet)
                 map.set("x", API::Double::create(windowFeatures.x));
             if (windowFeatures.ySet)
@@ -1209,7 +1209,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             map.set("resizable", API::Boolean::create(windowFeatures.resizable));
             map.set("fullscreen", API::Boolean::create(windowFeatures.fullscreen));
             map.set("dialog", API::Boolean::create(windowFeatures.dialog));
-            RefPtr<ImmutableDictionary> featuresMap = ImmutableDictionary::create(WTF::move(map));
+            RefPtr<API::Dictionary> featuresMap = API::Dictionary::create(WTF::move(map));
 
             if (!m_client.base.version)
                 return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.get()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
@@ -1322,7 +1322,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        virtual void unavailablePluginButtonClicked(WebPageProxy* page, WKPluginUnavailabilityReason pluginUnavailabilityReason, ImmutableDictionary* pluginInformation) override
+        virtual void unavailablePluginButtonClicked(WebPageProxy* page, WKPluginUnavailabilityReason pluginUnavailabilityReason, API::Dictionary* pluginInformation) override
         {
             if (pluginUnavailabilityReason == kWKPluginUnavailabilityReasonPluginMissing) {
                 if (m_client.missingPluginButtonClicked_deprecatedForUseWithV0)

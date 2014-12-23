@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebResourceCacheManagerProxy.h"
 
+#include "APIDictionary.h"
 #include "APISecurityOrigin.h"
-#include "ImmutableDictionary.h"
 #include "SecurityOriginData.h"
 #include "WebProcessPool.h"
 #include "WebResourceCacheManagerMessages.h"

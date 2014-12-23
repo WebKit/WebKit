@@ -27,8 +27,8 @@
 #include "WebNotificationManagerProxy.h"
 
 #include "APIArray.h"
+#include "APIDictionary.h"
 #include "APISecurityOrigin.h"
-#include "ImmutableDictionary.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
 #include "WebPageProxy.h"
@@ -85,7 +85,7 @@ void WebNotificationManagerProxy::derefWebContextSupplement()
 
 void WebNotificationManagerProxy::populateCopyOfNotificationPermissions(HashMap<String, bool>& permissions)
 {
-    RefPtr<ImmutableDictionary> knownPermissions = m_provider.notificationPermissions();
+    RefPtr<API::Dictionary> knownPermissions = m_provider.notificationPermissions();
 
     if (!knownPermissions)
         return;

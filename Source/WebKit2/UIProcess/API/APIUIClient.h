@@ -46,7 +46,6 @@ struct WindowFeatures;
 
 namespace WebKit {
 class GeolocationPermissionRequestProxy;
-class ImmutableDictionary;
 class NativeWebKeyboardEvent;
 class NativeWebWheelEvent;
 class NotificationPermissionRequest;
@@ -62,6 +61,7 @@ struct NavigationActionData;
 namespace API {
 
 class Data;
+class Dictionary;
 class Object;
 class SecurityOrigin;
 
@@ -87,7 +87,7 @@ public:
     virtual void setStatusText(WebKit::WebPageProxy*, const WTF::String&) { }
     virtual void mouseDidMoveOverElement(WebKit::WebPageProxy*, const WebKit::WebHitTestResult::Data&, WebKit::WebEvent::Modifiers, API::Object*) { }
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual void unavailablePluginButtonClicked(WebKit::WebPageProxy*, WKPluginUnavailabilityReason, WebKit::ImmutableDictionary*) { }
+    virtual void unavailablePluginButtonClicked(WebKit::WebPageProxy*, WKPluginUnavailabilityReason, API::Dictionary*) { }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
     virtual bool implementsDidNotHandleKeyEvent() const { return false; }

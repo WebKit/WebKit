@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "APIData.h"
+#include "APIDictionary.h"
 #include "APIError.h"
 #include "APIGeometry.h"
 #include "APINumber.h"
@@ -40,7 +41,6 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
-#include "ImmutableDictionary.h"
 #include "ShareableBitmap.h"
 #include "WebCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
@@ -52,7 +52,7 @@ namespace WebKit {
 
 //   - Null -> Null
 //   - API::Array -> API::Array
-//   - Dictionary -> Dictionary
+//   - API::Dictionary -> API::Dictionary
 //   - SerializedScriptValue -> SerializedScriptValue
 //   - API::String -> API::String
 //   - UserContentURLPattern -> UserContentURLPattern
@@ -90,12 +90,12 @@ public:
             return true;
         }
         case API::Object::Type::Dictionary: {
-            ImmutableDictionary* dictionary = static_cast<ImmutableDictionary*>(m_root);
-            const ImmutableDictionary::MapType& map = dictionary->map();
+            API::Dictionary* dictionary = static_cast<API::Dictionary*>(m_root);
+            const API::Dictionary::MapType& map = dictionary->map();
             encoder << static_cast<uint64_t>(map.size());
 
-            ImmutableDictionary::MapType::const_iterator it = map.begin();
-            ImmutableDictionary::MapType::const_iterator end = map.end();
+            API::Dictionary::MapType::const_iterator it = map.begin();
+            API::Dictionary::MapType::const_iterator end = map.end();
             for (; it != end; ++it) {
                 encoder << it->key;
                 encoder << Owner(coder, it->value.get());
@@ -295,7 +295,7 @@ public:
             if (!decoder.decode(size))
                 return false;
 
-            ImmutableDictionary::MapType map;
+            API::Dictionary::MapType map;
             for (size_t i = 0; i < size; ++i) {
                 String key;
                 if (!decoder.decode(key))
@@ -306,12 +306,12 @@ public:
                 if (!decoder.decode(messageCoder))
                     return false;
 
-                ImmutableDictionary::MapType::AddResult result = map.set(key, element.release());
+                API::Dictionary::MapType::AddResult result = map.set(key, element.release());
                 if (!result.isNewEntry)
                     return false;
             }
 
-            coder.m_root = ImmutableDictionary::create(WTF::move(map));
+            coder.m_root = API::Dictionary::create(WTF::move(map));
             break;
         }
         case API::Object::Type::String: {

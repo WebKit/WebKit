@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImmutableDictionary_h
-#define ImmutableDictionary_h
+#ifndef APIDictionary_h
+#define APIDictionary_h
 
 #include "APIObject.h"
 #include <wtf/HashMap.h>
@@ -33,28 +33,22 @@
 #include <wtf/text/WTFString.h>
 
 namespace API {
+
 class Array;
-}
 
-namespace WebKit {
-
-// ImmutableDictionary - An immutable dictionary type suitable for vending to an API.
-
-class ImmutableDictionary : public API::ObjectImpl<API::Object::Type::Dictionary> {
+class Dictionary final : public ObjectImpl<Object::Type::Dictionary> {
 public:
-    typedef HashMap<String, RefPtr<API::Object>> MapType;
+    typedef HashMap<WTF::String, RefPtr<Object>> MapType;
 
-    static RefPtr<ImmutableDictionary> create();
-    static RefPtr<ImmutableDictionary> create(MapType);
+    static RefPtr<Dictionary> create();
+    static RefPtr<Dictionary> create(MapType);
 
-    virtual ~ImmutableDictionary();
-
-    virtual bool isMutable() { return false; }
+    virtual ~Dictionary();
 
     template<typename T>
-    T* get(const String& key) const
+    T* get(const WTF::String& key) const
     {
-        RefPtr<API::Object> item = m_map.get(key);
+        RefPtr<Object> item = m_map.get(key);
         if (!item)
             return 0;
 
@@ -64,30 +58,34 @@ public:
         return static_cast<T*>(item.get());
     }
 
-    API::Object* get(const String& key) const
+    Object* get(const WTF::String& key) const
     {
         return m_map.get(key);
     }
 
-    API::Object* get(const String& key, bool& exists) const
+    Object* get(const WTF::String& key, bool& exists) const
     {
         auto it = m_map.find(key);
         exists = it != m_map.end();
         return it->value.get();
     }
 
-    PassRefPtr<API::Array> keys() const;
+    PassRefPtr<Array> keys() const;
+
+    bool add(const WTF::String& key, PassRefPtr<Object>);
+    bool set(const WTF::String& key, PassRefPtr<Object>);
+    void remove(const WTF::String& key);
 
     size_t size() const { return m_map.size(); }
 
     const MapType& map() const { return m_map; }
 
 protected:
-    explicit ImmutableDictionary(MapType);
+    explicit Dictionary(MapType);
 
     MapType m_map;
 };
 
-} // namespace WebKit
+} // namespace API
 
-#endif // ImmutableDictionary_h
+#endif // APIDictionary_h

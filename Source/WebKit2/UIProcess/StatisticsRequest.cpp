@@ -27,7 +27,7 @@
 #include "StatisticsRequest.h"
 
 #include "APIArray.h"
-#include "MutableDictionary.h"
+#include "APIDictionary.h"
 
 namespace WebKit {
 
@@ -51,16 +51,16 @@ uint64_t StatisticsRequest::addOutstandingRequest()
     return requestID;
 }
 
-static void addToDictionaryFromHashMap(MutableDictionary* dictionary, const HashMap<String, uint64_t>& map)
+static void addToDictionaryFromHashMap(API::Dictionary* dictionary, const HashMap<String, uint64_t>& map)
 {
     HashMap<String, uint64_t>::const_iterator end = map.end();
     for (HashMap<String, uint64_t>::const_iterator it = map.begin(); it != end; ++it)
         dictionary->set(it->key, RefPtr<API::UInt64>(API::UInt64::create(it->value)).get());
 }
 
-static PassRefPtr<MutableDictionary> createDictionaryFromHashMap(const HashMap<String, uint64_t>& map)
+static PassRefPtr<API::Dictionary> createDictionaryFromHashMap(const HashMap<String, uint64_t>& map)
 {
-    RefPtr<MutableDictionary> result = MutableDictionary::create();
+    RefPtr<API::Dictionary> result = API::Dictionary::create();
     addToDictionaryFromHashMap(result.get(), map);
     return result;
 }
@@ -71,7 +71,7 @@ void StatisticsRequest::completedRequest(uint64_t requestID, const StatisticsDat
     m_outstandingRequests.remove(requestID);
 
     if (!m_responseDictionary)
-        m_responseDictionary = MutableDictionary::create();
+        m_responseDictionary = API::Dictionary::create();
     
     // FIXME (Multi-WebProcess) <rdar://problem/13200059>: This code overwrites any previous response data received.
     // When getting responses from multiple WebProcesses we need to combine items instead of clobbering them.

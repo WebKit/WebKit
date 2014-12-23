@@ -26,10 +26,10 @@
 #ifndef WebProcessPool_h
 #define WebProcessPool_h
 
+#include "APIDictionary.h"
 #include "APIObject.h"
 #include "DownloadProxyMap.h"
 #include "GenericCallback.h"
-#include "ImmutableDictionary.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
 #include "PlugInAutoStartProvider.h"
@@ -84,7 +84,7 @@ struct StatisticsData;
 struct WebPageConfiguration;
 struct WebProcessCreationParameters;
     
-typedef GenericCallback<ImmutableDictionary*> DictionaryCallback;
+typedef GenericCallback<API::Dictionary*> DictionaryCallback;
 
 #if ENABLE(NETWORK_PROCESS)
 struct NetworkProcessCreationParameters;
@@ -276,7 +276,7 @@ public:
     void setHTTPPipeliningEnabled(bool);
     bool httpPipeliningEnabled() const;
 
-    void getStatistics(uint32_t statisticsMask, std::function<void (ImmutableDictionary*, CallbackBase::Error)>);
+    void getStatistics(uint32_t statisticsMask, std::function<void (API::Dictionary*, CallbackBase::Error)>);
     
     void garbageCollectJavaScriptObjects();
     void setJavaScriptGarbageCollectorTimerEnabled(bool flag);
@@ -289,10 +289,10 @@ public:
 
     void textCheckerStateChanged();
 
-    PassRefPtr<ImmutableDictionary> plugInAutoStartOriginHashes() const;
-    void setPlugInAutoStartOriginHashes(ImmutableDictionary&);
+    PassRefPtr<API::Dictionary> plugInAutoStartOriginHashes() const;
+    void setPlugInAutoStartOriginHashes(API::Dictionary&);
     void setPlugInAutoStartOrigins(API::Array&);
-    void setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(ImmutableDictionary&, double time);
+    void setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary&, double time);
 
     // Network Process Management
 

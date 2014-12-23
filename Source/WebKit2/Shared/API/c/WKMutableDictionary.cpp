@@ -26,15 +26,15 @@
 #include "config.h"
 #include "WKMutableDictionary.h"
 
-#include "MutableDictionary.h"
+#include "APIDictionary.h"
 #include "WKAPICast.h"
 
 using namespace WebKit;
 
 WKMutableDictionaryRef WKMutableDictionaryCreate()
 {
-    RefPtr<MutableDictionary> dictionary = MutableDictionary::create();
-    return toAPI(dictionary.release().leakRef());
+    RefPtr<API::Dictionary> dictionary = API::Dictionary::create();
+    return const_cast<WKMutableDictionaryRef>(toAPI(dictionary.release().leakRef()));
 }
 
 bool WKDictionarySetItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)

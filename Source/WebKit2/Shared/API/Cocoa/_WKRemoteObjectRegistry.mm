@@ -28,9 +28,8 @@
 
 #if WK_API_ENABLED
 
+#import "APIDictionary.h"
 #import "Connection.h"
-#import "ImmutableDictionary.h"
-#import "MutableDictionary.h"
 #import "RemoteObjectRegistry.h"
 #import "UserData.h"
 #import "WKConnectionRef.h"
@@ -103,7 +102,7 @@ using namespace WebKit;
     RetainPtr<WKRemoteObjectEncoder> encoder = adoptNS([[WKRemoteObjectEncoder alloc] init]);
     [encoder encodeObject:invocation forKey:invocationKey];
 
-    RefPtr<MutableDictionary> body = MutableDictionary::create();
+    RefPtr<API::Dictionary> body = API::Dictionary::create();
     body->set(interfaceIdentifierKey, API::String::create(interface.identifier));
     body->set(encodedInvocationKey, [encoder rootObjectDictionary]);
 
@@ -123,13 +122,13 @@ using namespace WebKit;
     if (!invocation.object() || invocation.object()->type() != API::Object::Type::Dictionary)
         return NO;
     
-    const ImmutableDictionary& dictionary = static_cast<const ImmutableDictionary&>(*invocation.object());
+    const API::Dictionary& dictionary = static_cast<const API::Dictionary&>(*invocation.object());
 
     API::String* interfaceIdentifier = dictionary.get<API::String>(interfaceIdentifierKey);
     if (!interfaceIdentifier)
         return NO;
 
-    const ImmutableDictionary* encodedInvocation = dictionary.get<ImmutableDictionary>(encodedInvocationKey);
+    const API::Dictionary* encodedInvocation = dictionary.get<API::Dictionary>(encodedInvocationKey);
     if (!encodedInvocationKey)
         return NO;
 
@@ -138,7 +137,7 @@ using namespace WebKit;
     return YES;
 }
 
-- (void)_invokeMessageWithInterfaceIdentifier:(const String&)interfaceIdentifier encodedInvocation:(const ImmutableDictionary*)encodedInvocation
+- (void)_invokeMessageWithInterfaceIdentifier:(const String&)interfaceIdentifier encodedInvocation:(const API::Dictionary*)encodedInvocation
 {
     auto interfaceAndObject = _exportedObjects.get(interfaceIdentifier);
     if (!interfaceAndObject.second) {

@@ -35,7 +35,7 @@ namespace WebKit {
 
 struct StatisticsData;
 
-typedef GenericCallback<ImmutableDictionary*> DictionaryCallback;
+typedef GenericCallback<API::Dictionary*> DictionaryCallback;
 
 enum StatisticsRequestType {
     StatisticsRequestTypeWebContent = 0x00000001,
@@ -61,7 +61,7 @@ private:
     HashSet<uint64_t> m_outstandingRequests;
     RefPtr<DictionaryCallback> m_callback;
 
-    RefPtr<MutableDictionary> m_responseDictionary;
+    RefPtr<API::Dictionary> m_responseDictionary;
 };
 
 } // namespace WebKit

@@ -29,8 +29,8 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "APIArray.h"
+#include "APIDictionary.h"
 #include "APISecurityOrigin.h"
-#include "ImmutableDictionary.h"
 #include "WebDatabaseManagerMessages.h"
 #include "WebDatabaseManagerProxyMessages.h"
 #include "WebProcessPool.h"
@@ -190,7 +190,7 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
             if (databaseDetails.modificationTime())
                 detailsMap.set(databaseDetailsModificationTimeKey(), API::Double::create(databaseDetails.modificationTime()));
 
-            databases.uncheckedAppend(ImmutableDictionary::create(WTF::move(detailsMap)));
+            databases.uncheckedAppend(API::Dictionary::create(WTF::move(detailsMap)));
         }
 
         HashMap<String, RefPtr<API::Object>> originAndDatabasesMap;
@@ -199,7 +199,7 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
         originAndDatabasesMap.set(originUsageKey(), API::UInt64::create(originAndDatabases.originUsage));
         originAndDatabasesMap.set(databaseDetailsKey(), API::Array::create(WTF::move(databases)));
 
-        result.uncheckedAppend(ImmutableDictionary::create(WTF::move(originAndDatabasesMap)));
+        result.uncheckedAppend(API::Dictionary::create(WTF::move(originAndDatabasesMap)));
     }
 
     callback->performCallbackWithReturnValue(API::Array::create(WTF::move(result)).get());

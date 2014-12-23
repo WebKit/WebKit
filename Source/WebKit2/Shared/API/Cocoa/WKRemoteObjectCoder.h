@@ -27,21 +27,21 @@
 
 #if WK_API_ENABLED
 
-namespace WebKit {
-class ImmutableDictionary;
+namespace API {
+class Dictionary;
 }
 
 @class _WKRemoteObjectInterface;
 
 @interface WKRemoteObjectEncoder : NSCoder
 
-- (WebKit::ImmutableDictionary*)rootObjectDictionary;
+- (API::Dictionary*)rootObjectDictionary;
 
 @end
 
 @interface WKRemoteObjectDecoder : NSCoder
 
-- (id)initWithInterface:(_WKRemoteObjectInterface *)interface rootObjectDictionary:(const WebKit::ImmutableDictionary*)rootObjectDictionary;
+- (id)initWithInterface:(_WKRemoteObjectInterface *)interface rootObjectDictionary:(const API::Dictionary*)rootObjectDictionary;
 
 @end
 

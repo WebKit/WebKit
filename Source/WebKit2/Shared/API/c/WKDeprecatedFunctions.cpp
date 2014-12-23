@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "MutableDictionary.h"
+#include "APIDictionary.h"
 #include "WKArray.h"
 #include "WKMutableDictionary.h"
 #include "WKSharedAPICast.h"
@@ -43,8 +43,8 @@ WK_EXPORT bool WKArrayIsMutable(WKArrayRef array);
 
 WK_EXPORT void WKPageSetVisibilityState(WKPageRef, WKPageVisibilityState, bool);
 
-WK_EXPORT bool WKDictionaryAddItem(WKMutableDictionaryRef dictionary, WKStringRef key, WKTypeRef item);
 WK_EXPORT bool WKDictionaryIsMutable(WKDictionaryRef dictionary);
+WK_EXPORT bool WKDictionaryAddItem(WKMutableDictionaryRef dictionary, WKStringRef key, WKTypeRef item);
 WK_EXPORT void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionary, WKStringRef key);
 
 WK_EXPORT void WKPreferencesSetRegionBasedColumnsEnabled(WKPreferencesRef, bool flag);
@@ -73,9 +73,9 @@ void WKPageSetVisibilityState(WKPageRef, WKPageVisibilityState, bool)
 {
 }
 
-bool WKDictionaryIsMutable(WKDictionaryRef dictionaryRef)
+bool WKDictionaryIsMutable(WKDictionaryRef)
 {
-    return toImpl(dictionaryRef)->isMutable();
+    return true;
 }
 
 bool WKDictionaryAddItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)

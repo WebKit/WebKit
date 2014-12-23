@@ -27,11 +27,11 @@
 
 #if WK_API_ENABLED
 
-#import "ImmutableDictionary.h"
+#import "APIDictionary.h"
 #import "WKObject.h"
 
 namespace WebKit {
-inline NSDictionary *wrapper(ImmutableDictionary& dictionary) { ASSERT([dictionary.wrapper() isKindOfClass:[NSDictionary class]]); return (NSDictionary *)dictionary.wrapper(); }
+inline NSDictionary *wrapper(API::Dictionary& dictionary) { ASSERT([dictionary.wrapper() isKindOfClass:[NSDictionary class]]); return (NSDictionary *)dictionary.wrapper(); }
 }
 
 @interface WKNSDictionary : NSDictionary <WKObject>

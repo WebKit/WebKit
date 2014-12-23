@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebFormClient.h"
 
+#include "APIDictionary.h"
 #include "APIString.h"
-#include "ImmutableDictionary.h"
 #include "WKAPICast.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebPageProxy.h"
@@ -44,10 +44,10 @@ bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, Web
     if (!m_client.willSubmitForm)
         return false;
 
-    ImmutableDictionary::MapType map;
+    API::Dictionary::MapType map;
     for (size_t i = 0; i < textFieldValues.size(); ++i)
         map.set(textFieldValues[i].first, API::String::create(textFieldValues[i].second));
-    RefPtr<ImmutableDictionary> textFieldsMap = ImmutableDictionary::create(WTF::move(map));
+    RefPtr<API::Dictionary> textFieldsMap = API::Dictionary::create(WTF::move(map));
 
     m_client.willSubmitForm(toAPI(page), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), toAPI(userData), toAPI(listener), m_client.base.clientInfo);
     return true;

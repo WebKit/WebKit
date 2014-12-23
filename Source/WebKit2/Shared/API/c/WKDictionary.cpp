@@ -27,23 +27,23 @@
 #include "WKDictionary.h"
 
 #include "APIArray.h"
-#include "ImmutableDictionary.h"
+#include "APIDictionary.h"
 #include "WKAPICast.h"
 
 using namespace WebKit;
 
 WKTypeID WKDictionaryGetTypeID()
 {
-    return toAPI(ImmutableDictionary::APIType);
+    return toAPI(API::Dictionary::APIType);
 }
 
 WK_EXPORT WKDictionaryRef WKDictionaryCreate(const WKStringRef* keys, const WKTypeRef* values, size_t numberOfValues)
 {
-    ImmutableDictionary::MapType map;
+    API::Dictionary::MapType map;
     for (size_t i = 0; i < numberOfValues; ++i)
         map.add(toImpl(keys[i])->string(), toImpl(values[i]));
 
-    return toAPI(ImmutableDictionary::create(WTF::move(map)).release().leakRef());
+    return toAPI(API::Dictionary::create(WTF::move(map)).release().leakRef());
 }
 
 WKTypeRef WKDictionaryGetItemForKey(WKDictionaryRef dictionaryRef, WKStringRef key)

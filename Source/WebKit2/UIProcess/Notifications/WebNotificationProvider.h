@@ -32,6 +32,9 @@
 #include <wtf/Vector.h>
 
 namespace API {
+
+class Dictionary;
+
 template<> struct ClientTraits<WKNotificationProviderBase> {
     typedef std::tuple<WKNotificationProviderV0> Versions;
 };
@@ -39,7 +42,6 @@ template<> struct ClientTraits<WKNotificationProviderBase> {
 
 namespace WebKit {
 
-class ImmutableDictionary;
 class WebNotification;
 class WebNotificationManagerProxy;
 class WebPageProxy;
@@ -54,7 +56,7 @@ public:
     void addNotificationManager(WebNotificationManagerProxy*);
     void removeNotificationManager(WebNotificationManagerProxy*);
     
-    PassRefPtr<ImmutableDictionary> notificationPermissions();
+    PassRefPtr<API::Dictionary> notificationPermissions();
 };
 
 } // namespace WebKit

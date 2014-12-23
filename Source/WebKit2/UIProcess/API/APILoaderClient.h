@@ -39,7 +39,6 @@ class ResourceError;
 
 namespace WebKit {
 class AuthenticationChallengeProxy;
-class ImmutableDictionary;
 class QuickLookDocumentData;
 class WebBackForwardListItem;
 class WebFrameProxy;
@@ -50,6 +49,7 @@ struct WebNavigationDataStore;
 
 namespace API {
 
+class Dictionary;
 class Object;
 
 class LoaderClient {
@@ -103,9 +103,9 @@ public:
     virtual void didUpdateHistoryTitle(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) { }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual WebKit::PluginModuleLoadPolicy pluginLoadPolicy(WebKit::WebPageProxy*, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, WebKit::ImmutableDictionary*, WTF::String& /* unavailabilityDescription */) { return currentPluginLoadPolicy; }
-    virtual void didFailToInitializePlugin(WebKit::WebPageProxy*, WebKit::ImmutableDictionary*) { }
-    virtual void didBlockInsecurePluginVersion(WebKit::WebPageProxy*, WebKit::ImmutableDictionary*) { }
+    virtual WebKit::PluginModuleLoadPolicy pluginLoadPolicy(WebKit::WebPageProxy*, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary*, WTF::String& /* unavailabilityDescription */) { return currentPluginLoadPolicy; }
+    virtual void didFailToInitializePlugin(WebKit::WebPageProxy*, API::Dictionary*) { }
+    virtual void didBlockInsecurePluginVersion(WebKit::WebPageProxy*, API::Dictionary*) { }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(WEBGL)

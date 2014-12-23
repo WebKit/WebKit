@@ -27,7 +27,7 @@
 #include "InjectedBundlePageFormClient.h"
 
 #include "APIArray.h"
-#include "ImmutableDictionary.h"
+#include "APIDictionary.h"
 #include "InjectedBundleNodeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
@@ -133,10 +133,10 @@ void InjectedBundlePageFormClient::willSendSubmitEvent(WebPage* page, HTMLFormEl
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(formElement);
 
-    ImmutableDictionary::MapType map;
+    API::Dictionary::MapType map;
     for (size_t i = 0; i < values.size(); ++i)
         map.set(values[i].first, API::String::create(values[i].second));
-    auto textFieldsMap = ImmutableDictionary::create(WTF::move(map));
+    auto textFieldsMap = API::Dictionary::create(WTF::move(map));
 
     m_client.willSendSubmitEvent(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), m_client.base.clientInfo);
 }
@@ -148,10 +148,10 @@ void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(formElement);
 
-    ImmutableDictionary::MapType map;
+    API::Dictionary::MapType map;
     for (size_t i = 0; i < values.size(); ++i)
         map.set(values[i].first, API::String::create(values[i].second));
-    auto textFieldsMap = ImmutableDictionary::create(WTF::move(map));
+    auto textFieldsMap = API::Dictionary::create(WTF::move(map));
 
     WKTypeRef userDataToPass = 0;
     m_client.willSubmitForm(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), &userDataToPass, m_client.base.clientInfo);

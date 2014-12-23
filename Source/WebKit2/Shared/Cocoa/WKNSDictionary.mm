@@ -33,12 +33,12 @@
 using namespace WebKit;
 
 @implementation WKNSDictionary {
-    API::ObjectStorage<ImmutableDictionary> _dictionary;
+    API::ObjectStorage<API::Dictionary> _dictionary;
 }
 
 - (void)dealloc
 {
-    _dictionary->~ImmutableDictionary();
+    _dictionary->~Dictionary();
 
     [super dealloc];
 }
@@ -78,11 +78,7 @@ using namespace WebKit;
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    if (!_dictionary->isMutable())
-        return [self retain];
-
-    auto map = _dictionary->map();
-    return ImmutableDictionary::create(WTF::move(map)).release().leakRef()->wrapper();
+    return [self retain];
 }
 
 #pragma mark WKObject protocol implementation

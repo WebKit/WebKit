@@ -108,7 +108,7 @@ String plugInInformationReplacementObscuredKey()
     return ASCIILiteral("PlugInInformationReplacementObscured");
 }
 
-void getPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDictionary::MapType& map)
+void getPluginModuleInformation(const PluginModuleInfo& plugin, API::Dictionary::MapType& map)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     map.set(pluginInformationPathKey(), API::String::create(plugin.path));
@@ -122,17 +122,17 @@ void getPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDiction
 #endif
 }
 
-PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo& plugin)
+PassRefPtr<API::Dictionary> createPluginInformationDictionary(const PluginModuleInfo& plugin)
 {
-    ImmutableDictionary::MapType map;
+    API::Dictionary::MapType map;
     getPluginModuleInformation(plugin, map);
 
-    return ImmutableDictionary::create(WTF::move(map));
+    return API::Dictionary::create(WTF::move(map));
 }
 
-PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo& plugin, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString, bool replacementObscured)
+PassRefPtr<API::Dictionary> createPluginInformationDictionary(const PluginModuleInfo& plugin, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString, bool replacementObscured)
 {
-    ImmutableDictionary::MapType map;
+    API::Dictionary::MapType map;
     getPluginModuleInformation(plugin, map);
 
     if (!frameURLString.isEmpty())
@@ -147,12 +147,12 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginMo
         map.set(pluginInformationPluginURLKey(), API::URL::create(pluginURLString));
     map.set(plugInInformationReplacementObscuredKey(), API::Boolean::create(replacementObscured));
 
-    return ImmutableDictionary::create(WTF::move(map));
+    return API::Dictionary::create(WTF::move(map));
 }
 
-PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const String& mimeType, const String& frameURLString, const String& pageURLString)
+PassRefPtr<API::Dictionary> createPluginInformationDictionary(const String& mimeType, const String& frameURLString, const String& pageURLString)
 {
-    ImmutableDictionary::MapType map;
+    API::Dictionary::MapType map;
 
     if (!frameURLString.isEmpty())
         map.set(pluginInformationFrameURLKey(), API::URL::create(frameURLString));
@@ -161,11 +161,11 @@ PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const String& 
     if (!pageURLString.isEmpty())
         map.set(pluginInformationPageURLKey(), API::URL::create(pageURLString));
 
-    return ImmutableDictionary::create(WTF::move(map));
+    return API::Dictionary::create(WTF::move(map));
 }
 
 #if !PLATFORM(COCOA)
-void getPlatformPluginModuleInformation(const PluginModuleInfo&, ImmutableDictionary::MapType&)
+void getPlatformPluginModuleInformation(const PluginModuleInfo&, API::Dictionary::MapType&)
 {
 }
 #endif

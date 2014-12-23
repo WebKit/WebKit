@@ -27,9 +27,9 @@
 #import "WKContextPrivateMac.h"
 
 #import "APIArray.h"
+#import "APIDictionary.h"
 #import "APINumber.h"
 #import "APIString.h"
-#import "ImmutableDictionary.h"
 #import "PluginInfoStore.h"
 #import "PluginInformation.h"
 #import "StringUtilities.h"
@@ -59,7 +59,7 @@ WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextR
     if (plugin.path.isNull())
         return 0;
 
-    RefPtr<ImmutableDictionary> dictionary = createPluginInformationDictionary(plugin);
+    RefPtr<API::Dictionary> dictionary = createPluginInformationDictionary(plugin);
     return toAPI(dictionary.release().leakRef());
 #else
     return 0;

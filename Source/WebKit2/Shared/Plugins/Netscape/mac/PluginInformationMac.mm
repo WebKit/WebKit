@@ -36,7 +36,7 @@
 
 namespace WebKit {
 
-void getPlatformPluginModuleInformation(const PluginModuleInfo& plugin, ImmutableDictionary::MapType& map)
+void getPlatformPluginModuleInformation(const PluginModuleInfo& plugin, API::Dictionary::MapType& map)
 {
     map.set(pluginInformationBundleIdentifierKey(), API::String::create(plugin.bundleIdentifier));
     map.set(pluginInformationBundleVersionKey(), API::String::create(plugin.versionString));

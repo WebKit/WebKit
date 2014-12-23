@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "APIData.h"
+#include "APIDictionary.h"
 #include "APIError.h"
 #include "APIFrameHandle.h"
 #include "APIGeometry.h"
@@ -40,7 +41,6 @@
 #include "APIURLResponse.h"
 #include "ArgumentCoders.h"
 #include "ArgumentEncoder.h"
-#include "MutableDictionary.h"
 
 namespace WebKit {
 
@@ -72,7 +72,7 @@ static bool shouldTransform(const API::Object& object, const UserData::Transform
     }
 
     if (object.type() == API::Object::Type::Dictionary) {
-        const auto& dictionary = static_cast<const ImmutableDictionary&>(object);
+        const auto& dictionary = static_cast<const API::Dictionary&>(object);
 
         for (const auto& keyValuePair : dictionary.map()) {
             if (!keyValuePair.value)
@@ -104,16 +104,16 @@ static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::T
     }
 
     if (object.type() == API::Object::Type::Dictionary) {
-        auto& dictionary = static_cast<ImmutableDictionary&>(object);
+        auto& dictionary = static_cast<API::Dictionary&>(object);
 
-        ImmutableDictionary::MapType map;
+        API::Dictionary::MapType map;
         for (const auto& keyValuePair : dictionary.map()) {
             if (!keyValuePair.value)
                 map.add(keyValuePair.key, nullptr);
             else
                 map.add(keyValuePair.key, transformGraph(*keyValuePair.value, transformer));
         }
-        return ImmutableDictionary::create(WTF::move(map));
+        return API::Dictionary::create(WTF::move(map));
     }
 
     return transformer.transformObject(object);
@@ -173,7 +173,7 @@ void UserData::encode(IPC::ArgumentEncoder& encoder, const API::Object& object) 
         break;
     
     case API::Object::Type::Dictionary: {
-        auto& dictionary = static_cast<const ImmutableDictionary&>(object);
+        auto& dictionary = static_cast<const API::Dictionary&>(object);
         auto& map = dictionary.map();
 
         encoder << static_cast<uint64_t>(map.size());
@@ -290,7 +290,7 @@ bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result
         if (!decoder.decode(size))
             return false;
 
-        ImmutableDictionary::MapType map;
+        API::Dictionary::MapType map;
         for (size_t i = 0; i < size; ++i) {
             String key;
             if (!decoder.decode(key))
@@ -304,7 +304,7 @@ bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result
                 return false;
         }
 
-        result = ImmutableDictionary::create(WTF::move(map));
+        result = API::Dictionary::create(WTF::move(map));
         break;
     }
 

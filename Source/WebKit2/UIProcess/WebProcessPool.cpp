@@ -33,7 +33,6 @@
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "Logging.h"
-#include "MutableDictionary.h"
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
 #include "TextChecker.h"
@@ -1327,7 +1326,7 @@ bool WebProcessPool::httpPipeliningEnabled() const
 #endif
 }
 
-void WebProcessPool::getStatistics(uint32_t statisticsMask, std::function<void (ImmutableDictionary*, CallbackBase::Error)> callbackFunction)
+void WebProcessPool::getStatistics(uint32_t statisticsMask, std::function<void (API::Dictionary*, CallbackBase::Error)> callbackFunction)
 {
     if (!statisticsMask) {
         callbackFunction(nullptr, CallbackBase::Error::Unknown);
@@ -1418,12 +1417,12 @@ void WebProcessPool::plugInDidReceiveUserInteraction(unsigned plugInOriginHash, 
     m_plugInAutoStartProvider.didReceiveUserInteraction(plugInOriginHash, sessionID);
 }
 
-PassRefPtr<ImmutableDictionary> WebProcessPool::plugInAutoStartOriginHashes() const
+PassRefPtr<API::Dictionary> WebProcessPool::plugInAutoStartOriginHashes() const
 {
     return m_plugInAutoStartProvider.autoStartOriginsTableCopy();
 }
 
-void WebProcessPool::setPlugInAutoStartOriginHashes(ImmutableDictionary& dictionary)
+void WebProcessPool::setPlugInAutoStartOriginHashes(API::Dictionary& dictionary)
 {
     m_plugInAutoStartProvider.setAutoStartOriginsTable(dictionary);
 }
@@ -1433,7 +1432,7 @@ void WebProcessPool::setPlugInAutoStartOrigins(API::Array& array)
     m_plugInAutoStartProvider.setAutoStartOriginsArray(array);
 }
 
-void WebProcessPool::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(ImmutableDictionary& dictionary, double time)
+void WebProcessPool::setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary& dictionary, double time)
 {
     m_plugInAutoStartProvider.setAutoStartOriginsFilteringOutEntriesAddedAfterTime(dictionary, time);
 }
@@ -1462,7 +1461,7 @@ void WebProcessPool::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
     plugins.reserveInitialCapacity(pluginModules.size());
 
     for (const auto& pluginModule : pluginModules) {
-        ImmutableDictionary::MapType map;
+        API::Dictionary::MapType map;
         map.set(ASCIILiteral("path"), API::String::create(pluginModule.path));
         map.set(ASCIILiteral("name"), API::String::create(pluginModule.info.name));
         map.set(ASCIILiteral("file"), API::String::create(pluginModule.info.file));
@@ -1479,7 +1478,7 @@ void WebProcessPool::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
         map.set(ASCIILiteral("version"), API::String::create(pluginModule.versionString));
 #endif
 
-        plugins.uncheckedAppend(ImmutableDictionary::create(WTF::move(map)));
+        plugins.uncheckedAppend(API::Dictionary::create(WTF::move(map)));
     }
 
     m_client.plugInInformationBecameAvailable(this, API::Array::create(WTF::move(plugins)).get());

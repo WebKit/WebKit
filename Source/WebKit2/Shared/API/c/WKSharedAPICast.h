@@ -61,6 +61,7 @@
 
 namespace API {
 class Array;
+class Dictionary;
 class Data;
 class Point;
 class Rect;
@@ -74,8 +75,6 @@ class WebArchiveResource;
 
 namespace WebKit {
 
-class ImmutableDictionary;
-class MutableDictionary;
 class ObjCObjectGraph;
 class WebCertificateInfo;
 class WebConnection;
@@ -96,12 +95,11 @@ WK_ADD_API_MAPPING(WKCertificateInfoRef, WebCertificateInfo)
 WK_ADD_API_MAPPING(WKConnectionRef, WebConnection)
 WK_ADD_API_MAPPING(WKContextMenuItemRef, WebContextMenuItem)
 WK_ADD_API_MAPPING(WKDataRef, API::Data)
-WK_ADD_API_MAPPING(WKDictionaryRef, ImmutableDictionary)
+WK_ADD_API_MAPPING(WKDictionaryRef, API::Dictionary)
 WK_ADD_API_MAPPING(WKDoubleRef, API::Double)
 WK_ADD_API_MAPPING(WKErrorRef, API::Error)
 WK_ADD_API_MAPPING(WKGraphicsContextRef, WebGraphicsContext)
 WK_ADD_API_MAPPING(WKImageRef, WebImage)
-WK_ADD_API_MAPPING(WKMutableDictionaryRef, MutableDictionary)
 WK_ADD_API_MAPPING(WKPointRef, API::Point)
 WK_ADD_API_MAPPING(WKRectRef, API::Rect)
 WK_ADD_API_MAPPING(WKSecurityOriginRef, API::SecurityOrigin)
@@ -117,6 +115,7 @@ WK_ADD_API_MAPPING(WKUserContentURLPatternRef, API::UserContentURLPattern)
 WK_ADD_API_MAPPING(WKSessionRef, API::Session)
 
 template<> struct APITypeInfo<WKMutableArrayRef> { typedef API::Array* ImplType; };
+template<> struct APITypeInfo<WKMutableDictionaryRef> { typedef API::Dictionary* ImplType; };
 
 #if PLATFORM(COCOA)
 WK_ADD_API_MAPPING(WKWebArchiveRef, API::WebArchive)

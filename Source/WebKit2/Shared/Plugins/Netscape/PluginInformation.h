@@ -26,7 +26,7 @@
 #ifndef PluginInformation_h
 #define PluginInformation_h
 
-#include "ImmutableDictionary.h"
+#include "APIDictionary.h"
 #include <wtf/Forward.h>
 
 namespace WebKit {
@@ -51,12 +51,12 @@ String pluginInformationPluginspageAttributeURLKey();
 String pluginInformationPluginURLKey();
 String plugInInformationReplacementObscuredKey();
 
-PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo&);
-PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const PluginModuleInfo&, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString, bool replacementObscured = false);
-PassRefPtr<ImmutableDictionary> createPluginInformationDictionary(const String& mimeType, const String& frameURLString, const String& pageURLString);
+PassRefPtr<API::Dictionary> createPluginInformationDictionary(const PluginModuleInfo&);
+PassRefPtr<API::Dictionary> createPluginInformationDictionary(const PluginModuleInfo&, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString, bool replacementObscured = false);
+PassRefPtr<API::Dictionary> createPluginInformationDictionary(const String& mimeType, const String& frameURLString, const String& pageURLString);
 
-void getPluginModuleInformation(const PluginModuleInfo&, ImmutableDictionary::MapType&);
-void getPlatformPluginModuleInformation(const PluginModuleInfo&, ImmutableDictionary::MapType&);
+void getPluginModuleInformation(const PluginModuleInfo&, API::Dictionary::MapType&);
+void getPlatformPluginModuleInformation(const PluginModuleInfo&, API::Dictionary::MapType&);
 
 } // namespace WebKit
 

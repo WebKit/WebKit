@@ -37,11 +37,11 @@
 
 namespace API {
 class Array;
+class Dictionary;
 }
 
 namespace WebKit {
 
-class ImmutableDictionary;
 class WebProcessPool;
 
 typedef HashMap<unsigned, double> PlugInAutoStartOriginMap;
@@ -56,9 +56,9 @@ public:
     void addAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash, WebCore::SessionID);
     void didReceiveUserInteraction(unsigned plugInOriginHash, WebCore::SessionID);
 
-    PassRefPtr<ImmutableDictionary> autoStartOriginsTableCopy() const;
-    void setAutoStartOriginsTable(ImmutableDictionary&);
-    void setAutoStartOriginsFilteringOutEntriesAddedAfterTime(ImmutableDictionary&, double time);
+    PassRefPtr<API::Dictionary> autoStartOriginsTableCopy() const;
+    void setAutoStartOriginsTable(API::Dictionary&);
+    void setAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary&, double time);
     void setAutoStartOriginsArray(API::Array&);
 
     SessionPlugInAutoStartOriginMap autoStartOriginHashesCopy() const;
@@ -67,7 +67,7 @@ public:
 private:
     WebProcessPool* m_processPool;
 
-    void setAutoStartOriginsTableWithItemsPassingTest(ImmutableDictionary&, std::function<bool(double expirationTimestamp)>);
+    void setAutoStartOriginsTableWithItemsPassingTest(API::Dictionary&, std::function<bool(double expirationTimestamp)>);
 
     typedef HashMap<String, PlugInAutoStartOriginMap, CaseFoldingHash> AutoStartTable;
     typedef HashMap<WebCore::SessionID, AutoStartTable> SessionAutoStartTable;

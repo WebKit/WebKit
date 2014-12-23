@@ -24,33 +24,33 @@
  */
 
 #include "config.h"
-#include "ImmutableDictionary.h"
+#include "APIDictionary.h"
 
 #include "APIArray.h"
 #include "APIString.h"
 
-namespace WebKit {
+namespace API {
 
-RefPtr<ImmutableDictionary> ImmutableDictionary::create()
+RefPtr<Dictionary> Dictionary::create()
 {
     return create({ });
 }
 
-RefPtr<ImmutableDictionary> ImmutableDictionary::create(MapType map)
+RefPtr<Dictionary> Dictionary::create(MapType map)
 {
-    return adoptRef(new ImmutableDictionary(WTF::move(map)));
+    return adoptRef(new Dictionary(WTF::move(map)));
 }
 
-ImmutableDictionary::ImmutableDictionary(MapType map)
+Dictionary::Dictionary(MapType map)
     : m_map(WTF::move(map))
 {
 }
 
-ImmutableDictionary::~ImmutableDictionary()
+Dictionary::~Dictionary()
 {
 }
 
-PassRefPtr<API::Array> ImmutableDictionary::keys() const
+PassRefPtr<Array> Dictionary::keys() const
 {
     if (m_map.isEmpty())
         return API::Array::create();
@@ -64,4 +64,21 @@ PassRefPtr<API::Array> ImmutableDictionary::keys() const
     return API::Array::create(WTF::move(keys));
 }
 
-} // namespace WebKit
+bool Dictionary::add(const WTF::String& key, PassRefPtr<API::Object> item)
+{
+    MapType::AddResult result = m_map.add(key, item);
+    return result.isNewEntry;
+}
+
+bool Dictionary::set(const WTF::String& key, PassRefPtr<API::Object> item)
+{
+    MapType::AddResult result = m_map.set(key, item);
+    return result.isNewEntry;
+}
+
+void Dictionary::remove(const WTF::String& key)
+{
+    m_map.remove(key);
+}
+
+} // namespace API
