@@ -249,14 +249,14 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
             CFDictionaryRef runAttributes = CTRunGetAttributes(ctRun);
             CTFontRef runFont = static_cast<CTFontRef>(CFDictionaryGetValue(runAttributes, kCTFontAttributeName));
             ASSERT(CFGetTypeID(runFont) == CTFontGetTypeID());
-            if (!CFEqual(runFont, fontData->platformData().ctFont())) {
+            RetainPtr<CFTypeRef> runFontEqualityObject = FontPlatformData::objectForEqualityCheck(runFont);
+            if (!CFEqual(runFontEqualityObject.get(), fontData->platformData().objectForEqualityCheck().get())) {
                 // Begin trying to see if runFont matches any of the fonts in the fallback list.
-                RetainPtr<CGFontRef> runCGFont = adoptCF(CTFontCopyGraphicsFont(runFont, 0));
                 unsigned i = 0;
                 for (const FontData* candidateFontData = m_font.fontDataAt(i); candidateFontData; candidateFontData = m_font.fontDataAt(++i)) {
                     runFontData = candidateFontData->fontDataForCharacter(baseCharacter);
-                    RetainPtr<CGFontRef> cgFont = adoptCF(CTFontCopyGraphicsFont(runFontData->platformData().ctFont(), 0));
-                    if (CFEqual(cgFont.get(), runCGFont.get()))
+                    RetainPtr<CFTypeRef> runFontEqualityObject = runFontData->platformData().objectForEqualityCheck();
+                    if (CFEqual(runFontEqualityObject.get(), runFontEqualityObject.get()))
                         break;
                     runFontData = 0;
                 }

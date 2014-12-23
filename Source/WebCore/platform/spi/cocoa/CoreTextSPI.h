@@ -48,6 +48,8 @@ extern "C" {
 typedef const UniChar* (*CTUniCharProviderCallback)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void* refCon);
 typedef void (*CTUniCharDisposeCallback)(const UniChar* chars, void* refCon);
 
+extern const CFStringRef kCTFontReferenceURLAttribute;
+
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
 #if !USE(APPLE_INTERNAL_SDK)
 typedef CF_OPTIONS(uint32_t, CTFontTransformOptions)

@@ -120,6 +120,8 @@ public:
     void setFont(CTFontRef);
 
     CTFontRef ctFont() const;
+    static RetainPtr<CFTypeRef> objectForEqualityCheck(CTFontRef);
+    RetainPtr<CFTypeRef> objectForEqualityCheck() const;
 
     bool allowsLigatures() const;
     bool roundsGlyphAdvances() const;

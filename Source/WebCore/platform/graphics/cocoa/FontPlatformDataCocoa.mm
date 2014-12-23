@@ -24,6 +24,7 @@
 #import "config.h"
 #import "FontPlatformData.h"
 
+#import "CoreTextSPI.h"
 #import "SharedBuffer.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/text/WTFString.h>
@@ -287,6 +288,25 @@ CTFontRef FontPlatformData::ctFont() const
     }
 
     return m_ctFont.get();
+}
+
+RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck(CTFontRef ctFont)
+{
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED <= 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000)
+    auto fontDescriptor = adoptCF(CTFontCopyFontDescriptor(ctFont));
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=138683 This is a shallow pointer compare for web fonts
+    // because the URL contains the address of the font. This means we might erroneously get false negatives.
+    RetainPtr<CFURLRef> url = adoptCF(static_cast<CFURLRef>(CTFontDescriptorCopyAttribute(fontDescriptor.get(), kCTFontReferenceURLAttribute)));
+    ASSERT(CFGetTypeID(url.get()) == CFURLGetTypeID());
+    return url;
+#else
+    return adoptCF(CTFontCopyGraphicsFont(ctFont, 0));
+#endif
+}
+
+RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck() const
+{
+    return objectForEqualityCheck(ctFont());
 }
 
 PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const

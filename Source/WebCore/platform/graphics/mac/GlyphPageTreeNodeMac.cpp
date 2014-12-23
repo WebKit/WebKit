@@ -111,9 +111,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
         Vector<CFIndex, 512> indexVector;
         bool done = false;
 
-        // For the CGFont comparison in the loop, use the CGFont that Core Text assigns to the CTFont. This may
-        // be non-CFEqual to fontData->platformData().cgFont().
-        RetainPtr<CGFontRef> cgFont = adoptCF(CTFontCopyGraphicsFont(fontData->platformData().ctFont(), 0));
+        RetainPtr<CFTypeRef> fontEqualityObject = fontData->platformData().objectForEqualityCheck();
 
         for (CFIndex r = 0; r < runCount && !done ; ++r) {
             // CTLine could map characters over multiple fonts using its own font fallback list.
@@ -123,9 +121,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
 
             CFDictionaryRef attributes = CTRunGetAttributes(ctRun);
             CTFontRef runFont = static_cast<CTFontRef>(CFDictionaryGetValue(attributes, kCTFontAttributeName));
-            RetainPtr<CGFontRef> runCGFont = adoptCF(CTFontCopyGraphicsFont(runFont, 0));
-            // Use CGFont here as CFEqual for CTFont counts all attributes for font.
-            bool gotBaseFont = CFEqual(cgFont.get(), runCGFont.get());
+            bool gotBaseFont = CFEqual(fontEqualityObject.get(), FontPlatformData::objectForEqualityCheck(runFont).get());
             if (gotBaseFont || fontData->platformData().isCompositeFontReference()) {
                 // This run uses the font we want. Extract glyphs.
                 CFIndex glyphCount = CTRunGetGlyphCount(ctRun);

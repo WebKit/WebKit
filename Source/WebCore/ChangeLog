@@ -1,5 +1,34 @@
 2014-12-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        platform/mac/editing/input/devanagari-ligature.html is flaky on Yosemite, ligature fails to form
+        https://bugs.webkit.org/show_bug.cgi?id=138683
+
+        Reviewed by Darin Adler.
+
+        This patch changes how we check fonts for equality. In particular, this patch adds a
+        objectForEqualityCheck() to Cocoa's FontPlatformData, and callers should pass this object
+        to CFEqual() to determine if two platform fonts are equal. This patch also migrates all
+        call sites to using this function.
+
+        I don't want to implement operator==() because there are many cases where the same font
+        is compared against many others, and this solution is cleaner than caching a comparison
+        object inside the font object itself.
+
+        No new tests because this is covered by platform/mac/editing/input/devanagari-ligature.html.
+
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::objectForEqualityCheck):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::canRenderCombiningCharacterSequence):
+        * platform/spi/cocoa/CoreTextSPI.h:
+
+2014-12-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [SVG -> OTF Converter] Make Placeholder a move-only type
         https://bugs.webkit.org/show_bug.cgi?id=139870
 
