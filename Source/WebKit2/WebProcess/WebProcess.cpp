@@ -1265,7 +1265,7 @@ RefPtr<API::Object> WebProcess::apiObjectByConvertingFromHandles(API::Object* ob
             }
 
             default:
-                return nullptr;
+                return &object;
             }
         }
     } transformer;

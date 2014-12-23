@@ -86,16 +86,10 @@ static bool shouldTransform(const API::Object& object, const UserData::Transform
     return transformer.shouldTransformObjectOfType(object.type());
 }
 
-RefPtr<API::Object> UserData::transform(API::Object* object, const Transformer& transformer)
+static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::Transformer& transformer)
 {
-    if (!object)
-        return nullptr;
-
-    if (!shouldTransform(*object, transformer))
-        return object;
-
-    if (object->type() == API::Object::Type::Array) {
-        auto& array = static_cast<API::Array&>(*object);
+    if (object.type() == API::Object::Type::Array) {
+        auto& array = static_cast<API::Array&>(object);
 
         Vector<RefPtr<API::Object>> elements;
         elements.reserveInitialCapacity(array.elements().size());
@@ -109,20 +103,31 @@ RefPtr<API::Object> UserData::transform(API::Object* object, const Transformer& 
         return API::Array::create(WTF::move(elements));
     }
 
-    if (object->type() == API::Object::Type::Dictionary) {
-        auto& dictionary = static_cast<ImmutableDictionary&>(*object);
+    if (object.type() == API::Object::Type::Dictionary) {
+        auto& dictionary = static_cast<ImmutableDictionary&>(object);
 
         ImmutableDictionary::MapType map;
-        for (const auto& keyValuePair : dictionary.map())
-            map.add(keyValuePair.key, transform(keyValuePair.value.get(), transformer));
-
+        for (const auto& keyValuePair : dictionary.map()) {
+            if (!keyValuePair.value)
+                map.add(keyValuePair.key, nullptr);
+            else
+                map.add(keyValuePair.key, transformGraph(*keyValuePair.value, transformer));
+        }
         return ImmutableDictionary::create(WTF::move(map));
     }
 
-    if (auto transformedObject = transformer.transformObject(*object))
-        return transformedObject;
+    return transformer.transformObject(object);
+}
 
-    return object;
+RefPtr<API::Object> UserData::transform(API::Object* object, const Transformer& transformer)
+{
+    if (!object)
+        return nullptr;
+
+    if (!shouldTransform(*object, transformer))
+        return object;
+
+    return transformGraph(*object, transformer);
 }
 
 void UserData::encode(IPC::ArgumentEncoder& encoder) const

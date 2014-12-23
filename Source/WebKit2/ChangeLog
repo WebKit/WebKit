@@ -1,3 +1,23 @@
+2014-12-23  Anders Carlsson  <andersca@apple.com>
+
+        Fix UserMessage::transform to only call shouldTransform once
+        https://bugs.webkit.org/show_bug.cgi?id=139911
+
+        Reviewed by Sam Weinig.
+
+        Also, make it possible for transformers to return null objects and change the transformers
+        to return the passed in object when there's no need to do a transform.
+
+        * Shared/UserData.cpp:
+        (WebKit::transformGraph):
+        (WebKit::UserData::transform):
+        (WebKit::UserData::encode): Deleted.
+        (WebKit::UserData::decode): Deleted.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::apiObjectByConvertingToHandles):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::apiObjectByConvertingFromHandles):
+
 2014-12-23  Sam Weinig  <sam@webkit.org>
 
         Rename WebContext to WebProcessPool
