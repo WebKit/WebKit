@@ -100,6 +100,9 @@ static const char FeatureCounterResourceRequestInMemoryCacheUnusedReasonReloadKe
 static const char FeatureCounterResourceRequestInMemoryCacheUnusedReasonErrorKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.unused.reason.error";
 static const char FeatureCounterResourceRequestInMemoryCacheUnusedReasonMustRevalidateNoValidatorKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.unused.reason.mustRevalidateNoValidator";
 
+// WebView user actions.
+static const char FeatureCounterWebViewUserZoomedKey[] = "com.apple.WebKit.webView.user.zoomed";
+
 } // namespace WebCore
 
 #endif // FeatureCounterKeys_h

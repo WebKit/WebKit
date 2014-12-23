@@ -34,8 +34,8 @@ class Page;
 
 class FeatureCounter {
 public:
-    static void incrementKey(Page*, const char* const key);
-    static void setKey(Page*, const char* const key, int64_t value);
+    WEBCORE_EXPORT static void incrementKey(Page*, const char* const key);
+    WEBCORE_EXPORT static void setKey(Page*, const char* const key, int64_t value);
 
 private:
     static bool shouldUseForPage(Page*);

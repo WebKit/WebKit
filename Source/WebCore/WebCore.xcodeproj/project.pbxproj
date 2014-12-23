@@ -837,7 +837,7 @@
 		1AB7FC860A8B92EC00D9D37B /* XPathValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC650A8B92EC00D9D37B /* XPathValue.h */; };
 		1AB7FC870A8B92EC00D9D37B /* XPathVariableReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC660A8B92EC00D9D37B /* XPathVariableReference.cpp */; };
 		1AB7FC880A8B92EC00D9D37B /* XPathVariableReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */; };
-		1ABA34FE1A409FEA005570EA /* FeatureCounterKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABA34FD1A409FEA005570EA /* FeatureCounterKeys.h */; };
+		1ABA34FE1A409FEA005570EA /* FeatureCounterKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABA34FD1A409FEA005570EA /* FeatureCounterKeys.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1ABA76C911D20E47004C201C /* ColorData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E406F3FB1198307D009D59D6 /* ColorData.cpp */; };
 		1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */; };
 		1ABA76CB11D20E57004C201C /* CSSValueKeywords.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */; };
@@ -1620,7 +1620,7 @@
 		45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FEA5CE156DDE8C00654101 /* Decimal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		467438541A421330000494FB /* FeatureCounter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 467438531A421330000494FB /* FeatureCounter.mm */; };
 		46779CE21A40B97200B6864E /* FeatureCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46779CE01A40B97100B6864E /* FeatureCounter.cpp */; };
-		46779CE31A40B97200B6864E /* FeatureCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 46779CE11A40B97200B6864E /* FeatureCounter.h */; };
+		46779CE31A40B97200B6864E /* FeatureCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 46779CE11A40B97200B6864E /* FeatureCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4689F1AE1267BAE100E8D380 /* FileMetadata.h */; };
 		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };

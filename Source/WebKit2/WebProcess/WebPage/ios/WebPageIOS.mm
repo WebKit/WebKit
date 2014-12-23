@@ -53,6 +53,7 @@
 #import <WebCore/Element.h>
 #import <WebCore/ElementAncestorIterator.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/FeatureCounter.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
@@ -2692,6 +2693,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
 void WebPage::willStartUserTriggeredZooming()
 {
+    FEATURE_COUNTER_INCREMENT_KEY(m_page.get(), FeatureCounterWebViewUserZoomedKey);
     m_userHasChangedPageScaleFactor = true;
 }
 
