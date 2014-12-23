@@ -527,8 +527,7 @@ void JIT_OPERATION operationPutByVal(ExecState* exec, EncodedJSValue encodedBase
             if (++byValInfo.slowPathCount >= 10
                 || object->structure(vm)->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
                 // Don't ever try to optimize.
-                RepatchBuffer repatchBuffer(exec->codeBlock());
-                repatchBuffer.relinkCallerToFunction(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationPutByValGeneric));
+                ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationPutByValGeneric));
             }
         }
     }
@@ -573,8 +572,7 @@ void JIT_OPERATION operationDirectPutByVal(ExecState* callFrame, EncodedJSValue 
             if (++byValInfo.slowPathCount >= 10
                 || object->structure(vm)->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
                 // Don't ever try to optimize.
-                RepatchBuffer repatchBuffer(callFrame->codeBlock());
-                repatchBuffer.relinkCallerToFunction(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationDirectPutByValGeneric));
+                ctiPatchCallByReturnAddress(callFrame->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationDirectPutByValGeneric));
             }
         }
     }
@@ -1512,8 +1510,7 @@ EncodedJSValue JIT_OPERATION operationGetByValDefault(ExecState* exec, EncodedJS
             if (++byValInfo.slowPathCount >= 10
                 || object->structure(vm)->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
                 // Don't ever try to optimize.
-                RepatchBuffer repatchBuffer(exec->codeBlock());
-                repatchBuffer.relinkCallerToFunction(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationGetByValGeneric));
+                ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationGetByValGeneric));
             }
         }
     }
@@ -1558,8 +1555,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(ExecState* exec,
         if (++byValInfo.slowPathCount >= 10
             || object->structure(vm)->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero()) {
             // Don't ever try to optimize.
-            RepatchBuffer repatchBuffer(exec->codeBlock());
-            repatchBuffer.relinkCallerToFunction(ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationHasIndexedPropertyGeneric));
+            ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationHasIndexedPropertyGeneric)); 
         }
     }
     

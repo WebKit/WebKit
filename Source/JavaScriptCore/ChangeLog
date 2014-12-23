@@ -1,5 +1,18 @@
 2014-12-22  Mark Lam  <mark.lam@apple.com>
 
+        Use ctiPatchCallByReturnAddress() in JITOperations.cpp.
+        <https://webkit.org/b/139892>
+
+        Reviewed by Michael Saboff.
+
+        The code in JITOperations.cpp sometimes calls RepatchBuffer::relinkCallerToFunction()
+        directly, and sometimes uses a helper function, ctiPatchCallByReturnAddress().
+        This patch changes it to use the helper function consistently.
+
+        * jit/JITOperations.cpp:
+
+2014-12-22  Mark Lam  <mark.lam@apple.com>
+
         Fix some typos in a comment.
         <https://webkit.org/b/139882>
 
