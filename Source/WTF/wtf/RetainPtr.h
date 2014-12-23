@@ -309,12 +309,26 @@ struct RetainPtrObjectHash {
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
+#ifdef __OBJC__
+template<typename T> T* dynamic_objc_cast(id object)
+{
+    if ([object isKindOfClass:[T class]])
+        return (T *)object;
+
+    return nil;
+}
+#endif
+
 } // namespace WTF
 
 using WTF::RetainPtr;
 using WTF::adoptCF;
 using WTF::adoptNS;
 using WTF::retainPtr;
+
+#ifdef __OBJC__
+using WTF::dynamic_objc_cast;
+#endif
 
 #endif // USE(CF) || defined(__OBJC__)
 

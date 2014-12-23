@@ -28,14 +28,6 @@
 
 namespace WebKit {
 
-template<typename T> T* dynamic_objc_cast(id object)
-{
-    if ([object isKindOfClass:[T class]])
-        return (T *)object;
-
-    return nil;
-}
-
 static bool shouldTransformGraph(id object, const ObjCObjectGraph::Transformer& transformer)
 {
     if (NSArray *array = dynamic_objc_cast<NSArray>(object)) {
