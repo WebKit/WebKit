@@ -285,80 +285,119 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
     if (strokeStyle() == NoStroke)
         return;
 
-    CGContextRef context = platformContext();
-    float thickness = strokeThickness();
-    ASSERT(thickness);
-    bool isVerticalLine = (point1.x() + thickness == point2.x());
-    StrokeStyle strokeStyle = this->strokeStyle();
-    float strokeWidth = isVerticalLine ? point2.y() - point1.y() : point2.x() - point1.x();
-    ASSERT(strokeWidth);
-    float cornerWidth = 0;
-
-    if (strokeStyle == DottedStroke || strokeStyle == DashedStroke) {
-        // Figure out end points to ensure we always paint corners.
-        cornerWidth = strokeStyle == DottedStroke ? thickness : std::min(2 * thickness, std::max(thickness, strokeWidth / 3));
-        CGContextSaveGState(context);
-        setCGFillColor(context, strokeColor(), strokeColorSpace());
-        if (isVerticalLine) {
-            CGContextFillRect(context, FloatRect(point1.x(), point1.y(), thickness, cornerWidth));
-            CGContextFillRect(context, FloatRect(point1.x(), point2.y() - cornerWidth, thickness, cornerWidth));
-        } else {
-            CGContextFillRect(context, FloatRect(point1.x(), point1.y(), cornerWidth, thickness));
-            CGContextFillRect(context, FloatRect(point2.x() - cornerWidth, point1.y(), cornerWidth, thickness));
-        }
-        CGContextRestoreGState(context);
-        strokeWidth -= 2 * cornerWidth;
-        float patternWidth = strokeStyle == DottedStroke ? thickness : std::min(3 * thickness, std::max(thickness, strokeWidth / 3));
-        // Check if corner drawing sufficiently covers the line.
-        if (strokeWidth <= patternWidth + 1)
-            return;
-
-        // Pattern starts with full fill and ends with the empty fill.
-        // 1. Let's start with the empty phase after the corner.
-        // 2. Check if we've got odd or even number of patterns and whether they fully cover the line.
-        // 3. In case of even number of patterns and/or remainder, move the pattern start position
-        // so that the pattern is balanced between the corners.
-        float patternOffset = patternWidth;
-        int numberOfSegments = floorf(strokeWidth / patternWidth);
-        bool oddNumberOfSegments = numberOfSegments % 2;
-        float remainder = strokeWidth - (numberOfSegments * patternWidth);
-        if (oddNumberOfSegments && remainder)
-            patternOffset -= remainder / 2;
-        else if (!oddNumberOfSegments) {
-            if (remainder)
-                patternOffset += patternOffset - (patternWidth + remainder)  / 2;
-            else
-                patternOffset += patternWidth  / 2;
-        }
-        const CGFloat dashedLine[2] = { static_cast<CGFloat>(patternWidth), static_cast<CGFloat>(patternWidth) };
-        CGContextSetLineDash(context, patternOffset, dashedLine, 2);
-    }
+    float width = strokeThickness();
 
     FloatPoint p1 = point1;
     FloatPoint p2 = point2;
-    // Center line and cut off corners for pattern patining.
-    if (isVerticalLine) {
-        float centerOffset = (p2.x() - p1.x()) / 2;
-        p1.move(centerOffset, cornerWidth);
-        p2.move(-centerOffset, -cornerWidth);
-    } else {
-        float centerOffset = (p2.y() - p1.y()) / 2;
-        p1.move(cornerWidth, centerOffset);
-        p2.move(-cornerWidth, -centerOffset);
+    bool isVerticalLine = (p1.x() == p2.x());
+    
+    // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
+    // works out.  For example, with a border width of 3, KHTML will pass us (y1+y2)/2, e.g.,
+    // (50+53)/2 = 103/2 = 51 when we want 51.5. It is always true that an even width gave
+    // us a perfect position, but an odd width gave us a position that is off by exactly 0.5.
+    if (strokeStyle() == DottedStroke || strokeStyle() == DashedStroke) {
+        if (isVerticalLine) {
+            p1.move(0, width);
+            p2.move(0, -width);
+        } else {
+            p1.move(width, 0);
+            p2.move(-width, 0);
+        }
+    }
+    
+    if (((int)width) % 2) {
+        if (isVerticalLine) {
+            // We're a vertical line.  Adjust our x.
+            p1.move(0.5f, 0.0f);
+            p2.move(0.5f, 0.0f);
+        } else {
+            // We're a horizontal line. Adjust our y.
+            p1.move(0.0f, 0.5f);
+            p2.move(0.0f, 0.5f);
+        }
+    }
+    
+    int patWidth = 0;
+    switch (strokeStyle()) {
+    case NoStroke:
+    case SolidStroke:
+    case DoubleStroke:
+    case WavyStroke: // FIXME: https://bugs.webkit.org/show_bug.cgi?id=94112 - Needs platform support.
+        break;
+    case DottedStroke:
+        patWidth = (int)width;
+        break;
+    case DashedStroke:
+        patWidth = 3 * (int)width;
+        break;
     }
 
+    CGContextRef context = platformContext();
+
     if (shouldAntialias()) {
+        bool willAntialias = false;
 #if PLATFORM(IOS)
         // Force antialiasing on for line patterns as they don't look good with it turned off (<rdar://problem/5459772>).
-        CGContextSetShouldAntialias(context, strokeStyle == DottedStroke || strokeStyle == DashedStroke);
-#else
-        CGContextSetShouldAntialias(context, false);
+        willAntialias = patWidth;
 #endif
+        CGContextSetShouldAntialias(context, willAntialias);
     }
+
+    if (patWidth) {
+        CGContextSaveGState(context);
+
+        // Do a rect fill of our endpoints.  This ensures we always have the
+        // appearance of being a border.  We then draw the actual dotted/dashed line.
+        setCGFillColor(context, strokeColor(), strokeColorSpace());  // The save/restore make it safe to mutate the fill color here without setting it back to the old color.
+        if (isVerticalLine) {
+            CGContextFillRect(context, FloatRect(p1.x() - width / 2, p1.y() - width, width, width));
+            CGContextFillRect(context, FloatRect(p2.x() - width / 2, p2.y(), width, width));
+        } else {
+            CGContextFillRect(context, FloatRect(p1.x() - width, p1.y() - width / 2, width, width));
+            CGContextFillRect(context, FloatRect(p2.x(), p2.y() - width / 2, width, width));
+        }
+
+        // Example: 80 pixels with a width of 30 pixels.
+        // Remainder is 20.  The maximum pixels of line we could paint
+        // will be 50 pixels.
+        int distance = (isVerticalLine ? (int)(point2.y() - point1.y()) : (point2.x() - point1.x())) - 2*(int)width;
+        int remainder = distance % patWidth;
+        int coverage = distance - remainder;
+        int numSegments = coverage / patWidth;
+
+        float patternOffset = 0.0f;
+        // Special case 1px dotted borders for speed.
+        if (patWidth == 1)
+            patternOffset = 1.0f;
+        else {
+            bool evenNumberOfSegments = !(numSegments % 2);
+            if (remainder)
+                evenNumberOfSegments = !evenNumberOfSegments;
+            if (evenNumberOfSegments) {
+                if (remainder) {
+                    patternOffset += patWidth - remainder;
+                    patternOffset += remainder / 2;
+                } else
+                    patternOffset = patWidth / 2;
+            } else {
+                if (remainder)
+                    patternOffset = (patWidth - remainder)/2;
+            }
+        }
+
+        const CGFloat dottedLine[2] = { static_cast<CGFloat>(patWidth), static_cast<CGFloat>(patWidth) };
+        CGContextSetLineDash(context, patternOffset, dottedLine, 2);
+    }
+
     CGContextBeginPath(context);
     CGContextMoveToPoint(context, p1.x(), p1.y());
     CGContextAddLineToPoint(context, p2.x(), p2.y());
+
     CGContextStrokePath(context);
+
+    if (patWidth)
+        CGContextRestoreGState(context);
+
     if (shouldAntialias())
         CGContextSetShouldAntialias(context, true);
 }
