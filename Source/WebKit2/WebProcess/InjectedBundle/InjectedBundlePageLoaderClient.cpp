@@ -38,6 +38,7 @@
 #include "WKBundleAPICast.h"
 #include "WKSharedAPICast.h"
 #include "WebFrame.h"
+#include "WebPage.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/WTFString.h>
 

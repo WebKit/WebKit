@@ -28,6 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebPage.h"
 
 namespace WebKit {
 

@@ -1,3 +1,22 @@
+2014-12-22  Anders Carlsson  <andersca@apple.com>
+
+        Add a bunch of missing header includes in preparation for making toImpl require the complete type
+        https://bugs.webkit.org/show_bug.cgi?id=139887
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+
 2014-12-22  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Log using FeatureCounter user-triggered zooming

@@ -35,6 +35,7 @@
 #include "WKRetainPtr.h"
 #include "WKSharedAPICast.h"
 #include "WKStringPrivate.h"
+#include "WebPage.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PlatformMouseEvent.h>

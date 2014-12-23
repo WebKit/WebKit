@@ -32,6 +32,7 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebFrame.h"
+#include "WebPage.h"
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLTextAreaElement.h>

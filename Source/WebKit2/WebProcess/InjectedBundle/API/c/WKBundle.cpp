@@ -35,6 +35,8 @@
 #include "WKBundlePrivate.h"
 #include "WebConnection.h"
 #include "WebFrame.h"
+#include "WebPage.h"
+#include "WebPageGroupProxy.h"
 
 using namespace WebKit;
 

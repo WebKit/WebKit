@@ -48,6 +48,7 @@
 #include "WebImage.h"
 #include "WebInspector.h"
 #include "WebPage.h"
+#include "WebPageGroupProxy.h"
 #include "WebPageOverlay.h"
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"

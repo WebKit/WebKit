@@ -37,6 +37,7 @@
 #include "WKBundleAPICast.h"
 #include "WKData.h"
 #include "WebFrame.h"
+#include "WebPage.h"
 #include <WebCore/Document.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>

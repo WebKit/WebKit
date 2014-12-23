@@ -35,6 +35,7 @@
 #include "WebContextMenuItem.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebPage.h"
 #include <WebCore/ContextMenu.h>
 
 using namespace WebCore;

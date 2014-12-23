@@ -34,6 +34,7 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WKString.h"
+#include "WebPage.h"
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
