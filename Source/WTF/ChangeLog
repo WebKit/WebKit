@@ -1,3 +1,12 @@
+2014-12-23  Anders Carlsson  <andersca@apple.com>
+
+        Re-indent RefPtr.h and RetainPtr.h.
+
+        Rubber-stamped by Sam Weinig.
+
+        * wtf/RefPtr.h:
+        * wtf/RetainPtr.h:
+
 2014-12-20  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] add optimized fullscreen API
