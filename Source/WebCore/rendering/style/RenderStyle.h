@@ -130,6 +130,7 @@ class RenderStyle: public RefCounted<RenderStyle> {
     friend class RenderSVGResource; // FIXME: Needs to alter the visited state by hand. Should clean the SVG code up and move it into RenderStyle perhaps.
     friend class RenderTreeAsText; // FIXME: Only needed so the render tree can keep lying and dump the wrong colors.  Rebaselining would allow this to be yanked.
     friend class StyleBuilderCustom; // Sets members directly.
+    friend class StyleBuilderFunctions; // Sets members directly.
     friend class StyleResolver; // Sets members directly.
 
 public:
@@ -2082,7 +2083,7 @@ private:
     }
 
     // Color accessors are all private to make sure callers use visitedDependentColor instead to access them.
-    Color invalidColor() const { static Color invalid; return invalid; }
+    static Color invalidColor() { static Color invalid; return invalid; }
     Color borderLeftColor() const { return surround->border.left().color(); }
     Color borderRightColor() const { return surround->border.right().color(); }
     Color borderTopColor() const { return surround->border.top().color(); }

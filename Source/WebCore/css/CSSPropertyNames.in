@@ -60,11 +60,23 @@
 // * AutoFunctions:
 // Indicates that this CSS property requires handling of "auto" and has
 // corresponding hasAutoXXX() / setHasAutoXXX() methods on RenderStyle.
+//
+// * VisitedLinkColorSupport:
+// Indicates that this CSS property is a color property with a
+// "setVisitedLinkXXX()" setter on RenderStyle to be called when
+// StyleResolver::applyPropertyToVisitedLinkStyle() return true.
+// The regular setter on RenderStyle will only be called if
+// StyleResolver::applyPropertyToRegularStyle() returns true.
+//
+// * NoDefaultColor:
+// Should only with used with "VisitedLinkColorSupport". It indicates that for
+// setting the inherited value, it will not fallback to using the parent's
+// "color" property if the inherited color is invalid.
 
 
 // high-priority property names have to be listed first, to simplify the check
 // for applying them first.
-color [Inherited, LegacyStyleBuilder]
+color [Inherited, VisitedLinkColorSupport, NoDefaultColor]
 direction [Inherited, Custom=Value]
 display [Custom=Inherit|Value]
 font [Inherited, LegacyStyleBuilder]
@@ -112,7 +124,7 @@ background [LegacyStyleBuilder]
 background-attachment [LegacyStyleBuilder]
 background-blend-mode [LegacyStyleBuilder]
 background-clip [LegacyStyleBuilder]
-background-color [LegacyStyleBuilder]
+background-color [VisitedLinkColorSupport, Initial=invalidColor, NoDefaultColor]
 background-image [LegacyStyleBuilder]
 background-origin [LegacyStyleBuilder]
 background-position [LegacyStyleBuilder]
@@ -124,7 +136,7 @@ background-repeat-y [LegacyStyleBuilder]
 background-size [LegacyStyleBuilder]
 border [LegacyStyleBuilder]
 border-bottom [LegacyStyleBuilder]
-border-bottom-color [LegacyStyleBuilder]
+border-bottom-color [VisitedLinkColorSupport, Initial=invalidColor]
 border-bottom-left-radius [Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-bottom-left-radius = border-bottom-left-radius
 border-bottom-right-radius [Initial=initialBorderRadius, Converter=Radius]
@@ -140,18 +152,18 @@ border-image-slice [Custom=All]
 border-image-source [Converter=StyleImage<CSSPropertyBorderImageSource>]
 border-image-width [Custom=All]
 border-left [LegacyStyleBuilder]
-border-left-color [LegacyStyleBuilder]
+border-left-color [VisitedLinkColorSupport, Initial=invalidColor]
 border-left-style [TypeName=EBorderStyle, Initial=initialBorderStyle]
 border-left-width [Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-radius [LegacyStyleBuilder]
 border-right [LegacyStyleBuilder]
-border-right-color [LegacyStyleBuilder]
+border-right-color [VisitedLinkColorSupport, Initial=invalidColor]
 border-right-style [TypeName=EBorderStyle, Initial=initialBorderStyle]
 border-right-width [Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-spacing [Inherited, LegacyStyleBuilder]
 border-style [LegacyStyleBuilder]
 border-top [LegacyStyleBuilder]
-border-top-color [LegacyStyleBuilder]
+border-top-color [VisitedLinkColorSupport, Initial=invalidColor]
 border-top-left-radius [Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-top-left-radius = border-top-left-radius
 border-top-right-radius [Initial=initialBorderRadius, Converter=Radius]
@@ -209,7 +221,7 @@ opacity [TypeName=float]
 -webkit-opacity = opacity
 orphans [Inherited, TypeName=short, AutoFunctions]
 outline [LegacyStyleBuilder]
-outline-color [LegacyStyleBuilder]
+outline-color [VisitedLinkColorSupport, Initial=invalidColor]
 outline-offset [Converter=ComputedLength<int>]
 outline-style [Custom=All]
 outline-width [Converter=LineWidth<unsigned short>]
@@ -351,7 +363,7 @@ column-progression [TypeName=ColumnProgression]
 -webkit-column-progression = column-progression
 column-rule [LegacyStyleBuilder]
 -webkit-column-rule = column-rule
-column-rule-color [LegacyStyleBuilder]
+column-rule-color [VisitedLinkColorSupport, Initial=invalidColor]
 -webkit-column-rule-color = column-rule-color
 column-rule-style [TypeName=EBorderStyle, Initial=initialBorderStyle]
 -webkit-column-rule-style = column-rule-style
@@ -497,14 +509,14 @@ order [TypeName=int]
 -webkit-text-decoration [LegacyStyleBuilder]
 -webkit-text-decoration-line [NameForMethods=TextDecoration, Converter=TextDecoration]
 -webkit-text-decoration-style [TypeName=TextDecorationStyle]
--webkit-text-decoration-color [LegacyStyleBuilder]
+-webkit-text-decoration-color [VisitedLinkColorSupport, Initial=invalidColor]
 -webkit-text-decoration-skip [Inherited, Converter=TextDecorationSkip]
 -webkit-text-underline-position [Inherited, Converter=TextUnderlinePosition]
 -webkit-text-decorations-in-effect [Inherited, LegacyStyleBuilder]
 -webkit-text-emphasis [Inherited, LegacyStyleBuilder]
 -epub-text-emphasis = -webkit-text-emphasis
 text-emphasis = -webkit-text-emphasis
--webkit-text-emphasis-color [Inherited, LegacyStyleBuilder]
+-webkit-text-emphasis-color [Inherited, VisitedLinkColorSupport, Initial=invalidColor]
 -epub-text-emphasis-color = -webkit-text-emphasis-color
 text-emphasis-color = -webkit-text-emphasis-color
 -webkit-text-emphasis-position [Inherited, Converter=TextEmphasisPosition]
@@ -512,10 +524,10 @@ text-emphasis-position = -webkit-text-emphasis-position
 -webkit-text-emphasis-style [Inherited, Custom=All]
 -epub-text-emphasis-style = -webkit-text-emphasis-style
 text-emphasis-style = -webkit-text-emphasis-style
--webkit-text-fill-color [Inherited, LegacyStyleBuilder]
+-webkit-text-fill-color [Inherited, VisitedLinkColorSupport, Initial=invalidColor]
 -webkit-text-security [Inherited]
 -webkit-text-stroke [Inherited, LegacyStyleBuilder]
--webkit-text-stroke-color [Inherited, LegacyStyleBuilder]
+-webkit-text-stroke-color [Inherited, VisitedLinkColorSupport, Initial=invalidColor]
 -webkit-text-stroke-width [Inherited, Converter=TextStrokeWidth]
 -webkit-transform [Converter=Transform]
 -webkit-transform-origin [LegacyStyleBuilder]

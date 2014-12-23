@@ -49,8 +49,10 @@ my %styleBuilderOptions = (
   Getter => 1,
   Initial => 1,
   NameForMethods => 1,
+  NoDefaultColor => 1,
   Setter => 1,
   TypeName => 1,
+  VisitedLinkColorSupport => 1,
 );
 my %nameToId;
 my @aliases = ();
@@ -363,6 +365,13 @@ sub getAutoSetter {
   return $renderStyle . "->setHasAuto" . getNameForMethods($name) . "()";
 }
 
+sub getVisitedLinkSetter {
+  my $name = shift;
+  my $renderStyle = shift;
+
+  return $renderStyle . "->setVisitedLink" . getNameForMethods($name);
+}
+
 foreach my $name (@names) {
   # Skip properties still using the legacy style builder.
   next unless exists($propertiesWithStyleBuilderOptions{$name});
@@ -394,16 +403,66 @@ foreach my $name (@names) {
   $propertiesWithStyleBuilderOptions{$name}{"Custom"} = \%customValues;
 }
 
+use constant {
+  NOT_FOR_VISITED_LINK => 0,
+  FOR_VISITED_LINK => 1,
+};
+
+sub colorFromPrimitiveValue {
+  my $primitiveValue = shift;
+  my $forVisitedLink = @_ ? shift : NOT_FOR_VISITED_LINK;
+
+  return "styleResolver.colorFromPrimitiveValue(&" . $primitiveValue . ", /* forVisitedLink */ " . ($forVisitedLink ? "true" : "false") . ")";
+}
+
+use constant {
+  VALUE_IS_COLOR => 0,
+  VALUE_IS_PRIMITIVE => 1,
+};
+
+sub generateColorValueSetter {
+  my $name = shift;
+  my $value = shift;
+  my $indent = shift;
+  my $valueIsPrimitive = @_ ? shift : VALUE_IS_COLOR;
+
+  my $style = "styleResolver.style()";
+  my $setterContent .= $indent . "if (styleResolver.applyPropertyToRegularStyle())\n";
+  my $setValue = $style . "->" . $propertiesWithStyleBuilderOptions{$name}{"Setter"};
+  my $color = $valueIsPrimitive ? colorFromPrimitiveValue($value) : $value;
+  $setterContent .= $indent . "    " . $setValue . "(" . $color . ");\n";
+  $setterContent .= $indent . "if (styleResolver.applyPropertyToVisitedLinkStyle())\n";
+  $color = $valueIsPrimitive ? colorFromPrimitiveValue($value, FOR_VISITED_LINK) : $value;
+  $setterContent .= $indent . "    " . getVisitedLinkSetter($name, $style) . "(" . $color . ");\n";
+
+  return $setterContent;
+}
+
+sub handleCurrentColorValue {
+  my $name = shift;
+  my $primitiveValue = shift;
+  my $indent = shift;
+
+  my $code = $indent . "if (" . $primitiveValue . ".getValueID() == CSSValueCurrentcolor) {\n";
+  $code .= $indent . "    applyInherit" . $nameToId{$name} . "(styleResolver);\n";
+  $code .= $indent . "    return;\n";
+  $code .= $indent . "}\n";
+  return $code;
+}
+
 sub generateInitialValueSetter {
   my $name = shift;
   my $indent = shift;
 
   my $setterContent = "";
-  $setterContent .= $indent . "inline void applyInitial" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
+  $setterContent .= $indent . "static void applyInitial" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
   $setterContent .= $indent . "{\n";
   my $style = "styleResolver.style()";
   if (exists $propertiesWithStyleBuilderOptions{$name}{"AutoFunctions"}) {
     $setterContent .= $indent . "    " . getAutoSetter($name, $style) . ";\n";
+  } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"VisitedLinkColorSupport"}) {
+      my $initialColor = "RenderStyle::" . $propertiesWithStyleBuilderOptions{$name}{"Initial"} . "()";
+      $setterContent .= generateColorValueSetter($name, $initialColor, $indent . "    ");
   } else {
     my $setValue = $style . "->" . $propertiesWithStyleBuilderOptions{$name}{"Setter"};
     $setterContent .= $indent . "    " . $setValue . "(RenderStyle::" . $propertiesWithStyleBuilderOptions{$name}{"Initial"} . "());\n";
@@ -418,18 +477,30 @@ sub generateInheritValueSetter {
   my $indent = shift;
 
   my $setterContent = "";
-  $setterContent .= $indent . "inline void applyInherit" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
+  $setterContent .= $indent . "static void applyInherit" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
   $setterContent .= $indent . "{\n";
   my $parentStyle = "styleResolver.parentStyle()";
   my $style = "styleResolver.style()";
+  my $setValue = $style . "->" . $propertiesWithStyleBuilderOptions{$name}{"Setter"};
+  my $didCallSetValue = 0;
   if (exists $propertiesWithStyleBuilderOptions{$name}{"AutoFunctions"}) {
     $setterContent .= $indent . "    if (" . getAutoGetter($name, $parentStyle) . ") {\n";
     $setterContent .= $indent . "        " . getAutoSetter($name, $style) . ";\n";
     $setterContent .= $indent . "        return;\n";
     $setterContent .= $indent . "    }\n";
+  } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"VisitedLinkColorSupport"}) {
+    $setterContent .= $indent . "    Color color = " . $parentStyle . "->" . $propertiesWithStyleBuilderOptions{$name}{"Getter"} . "();\n";
+    if (!exists($propertiesWithStyleBuilderOptions{$name}{"NoDefaultColor"})) {
+      $setterContent .= $indent . "    if (!color.isValid())\n";
+      $setterContent .= $indent . "        color = " . $parentStyle . "->color();\n";
+    }
+    $setterContent .= generateColorValueSetter($name, "color", $indent . "    ");
+    $didCallSetValue = 1;
   }
-  my $setValue = $style . "->" . $propertiesWithStyleBuilderOptions{$name}{"Setter"};
-  $setterContent .= $indent . "    " . $setValue . "(" . $parentStyle . "->" .  $propertiesWithStyleBuilderOptions{$name}{"Getter"} . "());\n";
+  if (!$didCallSetValue) {
+    my $inheritedValue = $parentStyle . "->" .  $propertiesWithStyleBuilderOptions{$name}{"Getter"} . "()";
+    $setterContent .= $indent . "    " . $setValue . "(" . $inheritedValue . ");\n";
+  }
   $setterContent .= $indent . "}\n";
 
   return $setterContent;
@@ -440,7 +511,7 @@ sub generateValueSetter {
   my $indent = shift;
 
   my $setterContent = "";
-  $setterContent .= $indent . "inline void applyValue" . $nameToId{$name} . "(StyleResolver& styleResolver, CSSValue& value)\n";
+  $setterContent .= $indent . "static void applyValue" . $nameToId{$name} . "(StyleResolver& styleResolver, CSSValue& value)\n";
   $setterContent .= $indent . "{\n";
   my $convertedValue;
   if (exists($propertiesWithStyleBuilderOptions{$name}{"Converter"})) {
@@ -448,15 +519,27 @@ sub generateValueSetter {
   } else {
     $convertedValue = "static_cast<" . $propertiesWithStyleBuilderOptions{$name}{"TypeName"} . ">(downcast<CSSPrimitiveValue>(value))";
   }
+
   my $style = "styleResolver.style()";
+  my $didCallSetValue = 0;
   if (exists $propertiesWithStyleBuilderOptions{$name}{"AutoFunctions"}) {
     $setterContent .= $indent . "    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto) {\n";
     $setterContent .= $indent . "        ". getAutoSetter($name, $style) . ";\n";
     $setterContent .= $indent . "        return;\n";
     $setterContent .= $indent . "    }\n";
+  } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"VisitedLinkColorSupport"}) {
+      $setterContent .= $indent . "    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);\n";
+      if ($name eq "color") {
+        # The "color" property supports "currentColor" value. We should add a parameter.
+        $setterContent .= handleCurrentColorValue($name, "primitiveValue", $indent . "    ");
+      }
+      $setterContent .= generateColorValueSetter($name, "primitiveValue", $indent . "    ", VALUE_IS_PRIMITIVE);
+      $didCallSetValue = 1;
   }
-  my $setValue = $style . "->" . $propertiesWithStyleBuilderOptions{$name}{"Setter"};
-  $setterContent .= $indent . "    " . $setValue . "(" . $convertedValue . ");\n";
+  if (!$didCallSetValue) {
+    my $setValue = $style . "->" . $propertiesWithStyleBuilderOptions{$name}{"Setter"};
+    $setterContent .= $indent . "    " . $setValue . "(" . $convertedValue . ");\n";
+  }
   $setterContent .= $indent . "}\n";
 
   return $setterContent;
@@ -478,7 +561,8 @@ print STYLEBUILDER << "EOF";
 
 namespace WebCore {
 
-namespace StyleBuilderFunctions {
+class StyleBuilderFunctions {
+public:
 EOF
 
 foreach my $name (@names) {
@@ -498,7 +582,7 @@ foreach my $name (@names) {
 }
 
 print STYLEBUILDER << "EOF";
-} // namespace StyleBuilderFunctions
+};
 
 bool StyleBuilder::applyProperty(CSSPropertyID property, StyleResolver& styleResolver, CSSValue& value, bool isInitial, bool isInherit)
 {

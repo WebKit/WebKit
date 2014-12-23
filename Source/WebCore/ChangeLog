@@ -1,3 +1,39 @@
+2014-12-23  Chris Dumez  <cdumez@apple.com>
+
+        Move color CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139898
+
+        Reviewed by Antti Koivisto.
+
+        Move color CSS properties to the new StyleBuilder by teaching the
+        StyleBuilder generator how to handle them.
+
+        * css/CSSPropertyNames.in:
+        - Move color properties to the new StyleBuilder.
+
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::defaultInitialColor): Deleted.
+        (WebCore::ApplyPropertyColor::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyColor::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyColor::applyValue): Deleted.
+        (WebCore::ApplyPropertyColor::applyColorValue): Deleted.
+        (WebCore::ApplyPropertyColor::createHandler): Deleted.
+        - Drop color properties support from the DeprecatedStyleBuilder.
+
+        * css/makeprop.pl:
+        - Teach the StyleBuilder generator how to handle color properties.
+        - Use a class for StyleBuilderFunctions instead of a namespace so
+          that it can be made a friend of RenderStyle class.
+
+        * rendering/style/RenderStyle.h:
+        - Mark StyleBuilderFunctions class as friend as its functions
+          can set RenderStyle members directly. This is similar to what
+          is already done for StyleBuilderCustom class. The new color
+          properties handling calls private methods on RenderStyle.
+        - Mark invalidColor() method as static as it does not require
+          an instance.
+
 2014-12-23  Zalan Bujtas  <zalan@apple.com>
 
         Incorrect dashed and dotted border painting.
