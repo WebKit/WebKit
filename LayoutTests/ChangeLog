@@ -1,3 +1,21 @@
+2014-12-23  Zalan Bujtas  <zalan@apple.com>
+
+        Incorrect dashed and dotted border painting.
+        https://bugs.webkit.org/show_bug.cgi?id=139872
+        rdar://problem/18024205
+
+        Reviewed by Simon Fraser.
+
+        This patch makes dashed/dotted border painting symmetric and consistent.
+        It also works with subpixel positioning.
+
+        * fast/borders/border-painting-correctness-dashed-expected.html: Added.
+        * fast/borders/border-painting-correctness-dashed.html: Added.
+        * fast/borders/border-painting-correctness-dotted-expected.html: Added.
+        * fast/borders/border-painting-correctness-dotted.html: Added.
+        * fast/borders/resources/border-painting-correctness-dashed-expected.png: Added.
+        * fast/borders/resources/border-painting-correctness-dotted-expected.png: Added.
+
 2014-12-23  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         editing/spelling/grammar-paste.html is flaky in debug after r177682

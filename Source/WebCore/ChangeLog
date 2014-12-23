@@ -1,3 +1,22 @@
+2014-12-23  Zalan Bujtas  <zalan@apple.com>
+
+        Incorrect dashed and dotted border painting.
+        https://bugs.webkit.org/show_bug.cgi?id=139872
+        rdar://problem/18024205
+
+        Reviewed by Simon Fraser.
+
+        This patch makes dashed/dotted border painting symmetric and consistent.
+        It also works with subpixel positioning.
+
+        Tests: fast/borders/border-painting-correctness-dashed.html
+               fast/borders/border-painting-correctness-dotted.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+
 2014-12-22  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Log which type of resources are commonly loaded using FeatureCounter

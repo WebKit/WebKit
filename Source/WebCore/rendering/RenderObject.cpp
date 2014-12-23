@@ -733,31 +733,15 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1
             return;
         case DOTTED:
         case DASHED: {
-            if (thickness > 0) {
-                bool wasAntialiased = graphicsContext->shouldAntialias();
-                StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
-                graphicsContext->setShouldAntialias(antialias);
-                graphicsContext->setStrokeColor(color, style.colorSpace());
-                graphicsContext->setStrokeThickness(thickness);
-                graphicsContext->setStrokeStyle(borderStyle == DASHED ? DashedStroke : DottedStroke);
-
-                // FIXME: There's some odd adjustment in GraphicsContext::drawLine() that disables device pixel precision line drawing.
-                int adjustedX = floorToInt((x1 + x2) / 2);
-                int adjustedY = floorToInt((y1 + y2) / 2);
-
-                switch (side) {
-                    case BSBottom:
-                    case BSTop:
-                        graphicsContext->drawLine(FloatPoint(x1, adjustedY), FloatPoint(x2, adjustedY));
-                        break;
-                    case BSRight:
-                    case BSLeft:
-                        graphicsContext->drawLine(FloatPoint(adjustedX, y1), FloatPoint(adjustedX, y2));
-                        break;
-                }
-                graphicsContext->setShouldAntialias(wasAntialiased);
-                graphicsContext->setStrokeStyle(oldStrokeStyle);
-            }
+            bool wasAntialiased = graphicsContext->shouldAntialias();
+            StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
+            graphicsContext->setShouldAntialias(antialias);
+            graphicsContext->setStrokeColor(color, style.colorSpace());
+            graphicsContext->setStrokeThickness(thickness);
+            graphicsContext->setStrokeStyle(borderStyle == DASHED ? DashedStroke : DottedStroke);
+            graphicsContext->drawLine(roundPointToDevicePixels(LayoutPoint(x1, y1), deviceScaleFactor), roundPointToDevicePixels(LayoutPoint(x2, y2), deviceScaleFactor));
+            graphicsContext->setShouldAntialias(wasAntialiased);
+            graphicsContext->setStrokeStyle(oldStrokeStyle);
             break;
         }
         case DOUBLE: {
