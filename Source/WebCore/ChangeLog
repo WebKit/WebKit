@@ -1,3 +1,9 @@
+2014-12-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Unreviewed build fix.
+
+        * WebCore.exp.in: Move SQLiteDatabaseTracker::setClient export out of PLATFORM(IOS) section.
+
 2014-12-22  Anders Carlsson  <andersca@apple.com>
 
         Remove two functions from SecurityOrigin
