@@ -736,11 +736,11 @@ unsigned EventHandler::accessKeyModifiers()
     return PlatformEvent::CtrlKey | PlatformEvent::AltKey;
 }
 
-static ContainerNode* findEnclosingScrollableContainer(ContainerNode& node)
+static ContainerNode* findEnclosingScrollableContainer(ContainerNode* node)
 {
     // Find the first node with a valid scrollable area starting with the current
     // node and traversing its parents (or shadow hosts).
-    for (ContainerNode* candidate = &node; candidate; candidate = candidate->parentOrShadowHostNode()) {
+    for (ContainerNode* candidate = node; candidate; candidate = candidate->parentOrShadowHostNode()) {
         RenderBox* box = candidate->renderBox();
         if (box && box->canBeScrolledAndHasScrollableArea())
             return candidate;
@@ -839,7 +839,7 @@ void EventHandler::platformPrepareForWheelEvents(const PlatformWheelEvent& wheel
             scrollableContainer = wheelEventTarget;
             scrollableArea = scrollViewForEventTarget(wheelEventTarget.get());
         } else {
-            scrollableContainer = findEnclosingScrollableContainer(*wheelEventTarget);
+            scrollableContainer = findEnclosingScrollableContainer(wheelEventTarget.get());
             if (scrollableContainer) {
                 if (RenderBox* box = scrollableContainer->renderBox()) {
                     if (is<RenderListBox>(*box))

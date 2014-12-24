@@ -1,3 +1,26 @@
+2014-12-23  Andreas Kling  <akling@apple.com>
+
+        [Mac] Fix nullptr dereference in EventHandler::platformPrepareForWheelEvents().
+        <https://webkit.org/b/139923>
+        <rdar://problem/19182531>
+
+        Reviewed by Chris Dumez.
+
+        Don't dereference 'wheelEventTarget' until we know it's non-null.
+        This manifested as a crash in Node::renderBox() with some versions of LLVM.
+
+        The compiler was free to assume that the ContainerNode* 'candidate' in
+        findEnclosingScrollableContainer() would always be non-null on the first
+        iteration of the loop.
+
+        I suspect that we can get here with a null 'wheelEventTarget' during the
+        rubberbanding phase of a wheel scroll; if the cursor is sitting over the
+        exposed "gutter" area.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::findEnclosingScrollableContainer):
+        (WebCore::EventHandler::platformPrepareForWheelEvents):
+
 2014-12-23  Timothy Horton  <timothy_horton@apple.com>
 
         Install a TextIndicator for link immediate actions
