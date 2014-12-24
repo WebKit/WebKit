@@ -28,7 +28,7 @@
 
 #include "TextChecker.h"
 #include "WKAPICast.h"
-#include "WebContext.h"
+#include "WebProcessPool.h"
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
@@ -50,7 +50,7 @@ void WebTextChecker::setClient(const WKTextCheckerClientBase* client)
 
 static void updateStateForAllContexts()
 {
-    const Vector<WebContext*>& contexts = WebContext::allContexts();
+    const Vector<WebProcessPool*>& contexts = WebProcessPool::allProcessPools();
     for (size_t i = 0; i < contexts.size(); ++i)
         contexts[i]->textCheckerStateChanged();
 }

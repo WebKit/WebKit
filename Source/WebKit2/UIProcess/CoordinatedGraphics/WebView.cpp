@@ -47,7 +47,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebView::WebView(WebContext* context, WebPageGroup* pageGroup)
+WebView::WebView(WebProcessPool* context, WebPageGroup* pageGroup)
     : m_focused(false)
     , m_visible(false)
     , m_opacity(1.0)

@@ -32,11 +32,11 @@
 #include "APIObject.h"
 #include "DefaultUndoController.h"
 #include "PageClient.h"
-#include "WebContext.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
+#include "WebProcessPool.h"
 #include "WebViewClient.h"
 #include <WebCore/TransformationMatrix.h>
 
@@ -51,7 +51,7 @@ class WebView : public API::ObjectImpl<API::Object::Type::View>, public PageClie
 public:
     virtual ~WebView();
 
-    static PassRefPtr<WebView> create(WebContext*, WebPageGroup*);
+    static PassRefPtr<WebView> create(WebProcessPool*, WebPageGroup*);
 
     void initialize();
 
@@ -114,7 +114,7 @@ public:
     double opacity() const { return m_opacity; }
 
 protected:
-    WebView(WebContext*, WebPageGroup*);
+    WebView(WebProcessPool*, WebPageGroup*);
     CoordinatedGraphicsScene* coordinatedGraphicsScene();
 
     void updateViewportSize();

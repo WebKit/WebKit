@@ -26,7 +26,7 @@
 #ifndef RequestManagerClientEfl_h
 #define RequestManagerClientEfl_h
 
-#include "WebContext.h"
+#include "WebProcessPool.h"
 #include "WebSoupCustomProtocolRequestManager.h"
 #include "ewk_context_private.h"
 #include "ewk_url_scheme_request_private.h"

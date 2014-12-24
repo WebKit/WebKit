@@ -35,13 +35,13 @@ class Data;
 
 namespace WebKit {
 
-class WebContext;
+class WebProcessPool;
 
 class WebSoupRequestManagerProxy : public API::ObjectImpl<API::Object::Type::SoupRequestManager>, public WebContextSupplement, private IPC::MessageReceiver {
 public:
     static const char* supplementName();
 
-    static PassRefPtr<WebSoupRequestManagerProxy> create(WebContext*);
+    static PassRefPtr<WebSoupRequestManagerProxy> create(WebProcessPool*);
     virtual ~WebSoupRequestManagerProxy();
 
     void initializeClient(const WKSoupRequestManagerClientBase*);
@@ -58,7 +58,7 @@ public:
     using API::Object::deref;
 
 private:
-    WebSoupRequestManagerProxy(WebContext*);
+    WebSoupRequestManagerProxy(WebProcessPool*);
 
     // WebContextSupplement
     virtual void contextDestroyed() override;

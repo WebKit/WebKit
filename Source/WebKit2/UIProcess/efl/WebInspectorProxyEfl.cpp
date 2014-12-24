@@ -104,7 +104,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     if (!m_inspectorWindow)
         return 0;
 
-    WKContextRef wkContext = toAPI(&inspectorContext());
+    WKContextRef wkContext = toAPI(&inspectorProcessPool());
     WKPageGroupRef wkPageGroup = toAPI(inspectorPageGroup());
 
     m_inspectorView = EWKViewCreate(wkContext, wkPageGroup, ecore_evas_get(m_inspectorWindow), /* smart */ 0);

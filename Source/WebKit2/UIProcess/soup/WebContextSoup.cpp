@@ -25,7 +25,7 @@
 
 #include "config.h"
 #if ENABLE(NETWORK_PROCESS)
-#include "WebContext.h"
+#include "WebProcessPool.h"
 
 #include "NetworkProcessCreationParameters.h"
 #include "WebCookieManagerProxy.h"
@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-void WebContext::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
+void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
     supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;

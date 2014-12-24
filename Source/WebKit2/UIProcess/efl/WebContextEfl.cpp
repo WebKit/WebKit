@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "WebCookieManagerProxy.h"
-#include "WebContext.h"
+#include "WebProcessPool.h"
 
 #include "Logging.h"
 #include "WebInspectorServer.h"
@@ -80,12 +80,12 @@ static void initializeInspectorServer()
 #endif
 }
 
-String WebContext::platformDefaultApplicationCacheDirectory() const
+String WebProcessPool::platformDefaultApplicationCacheDirectory() const
 {
     return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl/Applications";
 }
 
-void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
+void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     initializeInspectorServer();
 
@@ -95,49 +95,49 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
 }
 
-void WebContext::platformInvalidateContext()
+void WebProcessPool::platformInvalidateContext()
 {
     notImplemented();
 }
 
-String WebContext::platformDefaultWebSQLDatabaseDirectory()
+String WebProcessPool::platformDefaultWebSQLDatabaseDirectory()
 {
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/Databases";
 }
 
-String WebContext::platformDefaultIndexedDBDatabaseDirectory()
+String WebProcessPool::platformDefaultIndexedDBDatabaseDirectory()
 {
     notImplemented();
     return String();
 }
 
-String WebContext::platformDefaultIconDatabasePath() const
+String WebProcessPool::platformDefaultIconDatabasePath() const
 {
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/IconDatabase/" + WebCore::IconDatabase::defaultDatabaseFilename();
 }
 
-String WebContext::platformDefaultLocalStorageDirectory()
+String WebProcessPool::platformDefaultLocalStorageDirectory()
 {
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/LocalStorage";
 }
 
-String WebContext::platformDefaultMediaKeysStorageDirectory()
+String WebProcessPool::platformDefaultMediaKeysStorageDirectory()
 {
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/MediaKeys";
 }
 
-String WebContext::platformDefaultDiskCacheDirectory() const
+String WebProcessPool::platformDefaultDiskCacheDirectory() const
 {
     return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl";
 }
 
-String WebContext::platformDefaultCookieStorageDirectory() const
+String WebProcessPool::platformDefaultCookieStorageDirectory() const
 {
     notImplemented();
     return String();
 }
 
-void WebContext::setIgnoreTLSErrors(bool ignoreTLSErrors)
+void WebProcessPool::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
     m_ignoreTLSErrors = ignoreTLSErrors;
     sendToAllProcesses(Messages::WebProcess::SetIgnoreTLSErrors(m_ignoreTLSErrors));

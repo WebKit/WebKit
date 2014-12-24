@@ -1,3 +1,82 @@
+2014-12-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Fix a lot of build break since r177692 
+        https://bugs.webkit.org/show_bug.cgi?id=139932
+
+        Unreviewed EFL build fix.
+
+        Rename WebContext with WebProcessPool in EFL port files.
+
+        * CMakeLists.txt:
+        * UIProcess/API/efl/EwkView.cpp:
+        * UIProcess/API/efl/ewk_context.cpp:
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::WebView):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp:
+        (WebKit::CustomProtocolManagerProxy::CustomProtocolManagerProxy):
+        (WebKit::CustomProtocolManagerProxy::startLoading):
+        (WebKit::CustomProtocolManagerProxy::stopLoading):
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.cpp:
+        (WebKit::WebSoupCustomProtocolRequestManager::create):
+        (WebKit::WebSoupCustomProtocolRequestManager::WebSoupCustomProtocolRequestManager):
+        (WebKit::WebSoupCustomProtocolRequestManager::registerSchemeForCustomProtocol):
+        (WebKit::WebSoupCustomProtocolRequestManager::unregisterSchemeForCustomProtocol):
+        (WebKit::WebSoupCustomProtocolRequestManager::didReceiveResponse):
+        (WebKit::WebSoupCustomProtocolRequestManager::didLoadData):
+        (WebKit::WebSoupCustomProtocolRequestManager::didFailWithError):
+        (WebKit::WebSoupCustomProtocolRequestManager::didFinishLoading):
+        * UIProcess/Network/CustomProtocols/soup/WebSoupCustomProtocolRequestManager.h:
+        * UIProcess/WebBatteryManagerProxy.cpp:
+        (WebKit::WebBatteryManagerProxy::create):
+        (WebKit::WebBatteryManagerProxy::WebBatteryManagerProxy):
+        (WebKit::WebBatteryManagerProxy::providerDidChangeBatteryStatus):
+        (WebKit::WebBatteryManagerProxy::providerUpdateBatteryStatus):
+        * UIProcess/WebBatteryManagerProxy.h:
+        * UIProcess/WebTextChecker.cpp:
+        (WebKit::updateStateForAllContexts):
+        * UIProcess/WebVibrationProxy.cpp:
+        (WebKit::WebVibrationProxy::WebVibrationProxy):
+        (WebKit::WebVibrationProxy::~WebVibrationProxy):
+        * UIProcess/efl/RequestManagerClientEfl.h:
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebProcessPool::platformDefaultApplicationCacheDirectory):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInvalidateContext):
+        (WebKit::WebProcessPool::platformDefaultWebSQLDatabaseDirectory):
+        (WebKit::WebProcessPool::platformDefaultIndexedDBDatabaseDirectory):
+        (WebKit::WebProcessPool::platformDefaultIconDatabasePath):
+        (WebKit::WebProcessPool::platformDefaultLocalStorageDirectory):
+        (WebKit::WebProcessPool::platformDefaultMediaKeysStorageDirectory):
+        (WebKit::WebProcessPool::platformDefaultDiskCacheDirectory):
+        (WebKit::WebProcessPool::platformDefaultCookieStorageDirectory):
+        (WebKit::WebProcessPool::setIgnoreTLSErrors):
+        (WebKit::WebContext::platformDefaultApplicationCacheDirectory): Deleted.
+        (WebKit::WebContext::platformInitializeWebProcess): Deleted.
+        (WebKit::WebContext::platformInvalidateContext): Deleted.
+        (WebKit::WebContext::platformDefaultWebSQLDatabaseDirectory): Deleted.
+        (WebKit::WebContext::platformDefaultIndexedDBDatabaseDirectory): Deleted.
+        (WebKit::WebContext::platformDefaultIconDatabasePath): Deleted.
+        (WebKit::WebContext::platformDefaultLocalStorageDirectory): Deleted.
+        (WebKit::WebContext::platformDefaultMediaKeysStorageDirectory): Deleted.
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory): Deleted.
+        (WebKit::WebContext::platformDefaultCookieStorageDirectory): Deleted.
+        (WebKit::WebContext::setIgnoreTLSErrors): Deleted.
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebView::create):
+        (WebKit::WebViewEfl::WebViewEfl):
+        * UIProcess/efl/WebViewEfl.h:
+        * UIProcess/soup/WebContextSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        (WebKit::WebContext::platformInitializeNetworkProcess): Deleted.
+        * UIProcess/soup/WebCookieManagerProxySoup.cpp:
+        (WebKit::WebCookieManagerProxy::setCookiePersistentStorage):
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+
 2014-12-23  Sam Weinig  <sam@webkit.org>
 
         Remove telephone number context support from ContextMenuContextData, it is unused

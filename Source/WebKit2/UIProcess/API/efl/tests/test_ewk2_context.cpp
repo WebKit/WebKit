@@ -193,8 +193,8 @@ TEST_F(EWK2ContextTest, ewk_context_network_process_model)
 
     ASSERT_EQ(webView1WebProcessID, webView2WebProcessID);
 
-    ASSERT_TRUE(toImpl(EWKViewGetWKView(webView1))->page()->process().context().networkProcess() == nullptr);
-    ASSERT_TRUE(toImpl(EWKViewGetWKView(webView2))->page()->process().context().networkProcess() == nullptr);
+    ASSERT_TRUE(toImpl(EWKViewGetWKView(webView1))->page()->process().processPool().networkProcess() == nullptr);
+    ASSERT_TRUE(toImpl(EWKViewGetWKView(webView2))->page()->process().processPool().networkProcess() == nullptr);
 }
 
 
@@ -213,8 +213,8 @@ TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_network_process_model)
 
     PlatformProcessIdentifier webView1WebProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processIdentifier();
     PlatformProcessIdentifier webView2WebProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processIdentifier();
-    PlatformProcessIdentifier webView1NetworkProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().context().networkProcess()->processIdentifier();
-    PlatformProcessIdentifier webView2NetworkProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().context().networkProcess()->processIdentifier();
+    PlatformProcessIdentifier webView1NetworkProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processPool().networkProcess()->processIdentifier();
+    PlatformProcessIdentifier webView2NetworkProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processPool().networkProcess()->processIdentifier();
 
     ASSERT_NE(webView1WebProcessID, webView2WebProcessID);
     ASSERT_NE(webView1WebProcessID, webView1NetworkProcessID);

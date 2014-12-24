@@ -26,14 +26,14 @@
 #include "config.h"
 #include "WebCookieManagerProxy.h"
 
-#include "WebContext.h"
 #include "WebCookieManagerMessages.h"
+#include "WebProcessPool.h"
 
 namespace WebKit {
 
 void WebCookieManagerProxy::setCookiePersistentStorage(const String& storagePath, uint32_t storageType)
 {
-    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::SetCookiePersistentStorage(storagePath, storageType));
+    processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::SetCookiePersistentStorage(storagePath, storageType));
 
     m_cookiePersistentStoragePath = storagePath;
     m_cookiePersistentStorageType = static_cast<SoupCookiePersistentStorageType>(storageType);
