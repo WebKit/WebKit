@@ -1,3 +1,15 @@
+2014-12-23  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed, fix build warning after r177712
+
+        ../../Source/WebCore/history/PageCache.cpp: In function ‘const char* WebCore::pruningReasonToFeatureCounterKey(WebCore::PruningReason)’:
+        ../../Source/WebCore/history/PageCache.cpp:449:1: error: control reaches end of non-void function [-Werror=return-type]
+
+        No new tests, no behavior changes.
+
+        * history/PageCache.cpp:
+        (WebCore::pruningReasonToFeatureCounterKey):
+
 2014-12-23  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Log better using FeatureCounter why PageCache is failing due to pruned resources

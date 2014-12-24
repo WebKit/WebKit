@@ -446,6 +446,8 @@ static const char* pruningReasonToFeatureCounterKey(PruningReason pruningReason)
         ASSERT_NOT_REACHED();
         return nullptr;
     }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page& page)
