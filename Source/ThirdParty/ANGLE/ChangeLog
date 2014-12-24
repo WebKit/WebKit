@@ -1,3 +1,11 @@
+2014-12-24  Dan Bernstein  <mitz@apple.com>
+
+        Removed the Derived Sources target.
+
+        It has been empty since r159533.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+
 2014-12-09  David Kilzer  <ddkilzer@apple.com>
 
         Switch from using PLATFORM_NAME to SDK selectors in ANGLE, bmalloc, gtest, JavaScriptCore, WTF

@@ -6,20 +6,6 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		5CB13FD6179F44C8001F851D /* Derived Sources */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 5CB13FD7179F44C8001F851D /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
-			buildPhases = (
-				5CB13FDD179F44F3001F851D /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = "Derived Sources";
-			productName = "Derived Sources";
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		31012E1218B97B9B0039062F /* BaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 31012DA018B97B9B0039062F /* BaseTypes.h */; };
 		31012E1318B97B9B0039062F /* BuiltInFunctionEmulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31012DA118B97B9B0039062F /* BuiltInFunctionEmulator.cpp */; };
@@ -180,16 +166,6 @@
 		A264F8CD169762AA006FAA5A /* khrplatform.h in Headers */ = {isa = PBXBuildFile; fileRef = A264F8CC169762AA006FAA5A /* khrplatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FB39D76E120110FC00088E69 /* ShaderLang.h in Headers */ = {isa = PBXBuildFile; fileRef = FB39D2BF1200F3E600088E69 /* ShaderLang.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		5CB13FDB179F44EE001F851D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5CB13FD6179F44C8001F851D;
-			remoteInfo = "Derived Sources";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		312BDB0B15FECAB00097EBC7 /* CopyFiles */ = {
@@ -792,7 +768,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				5CB13FDC179F44EE001F851D /* PBXTargetDependency */,
 			);
 			name = ANGLE;
 			productName = angle;
@@ -822,26 +797,9 @@
 			projectRoot = "";
 			targets = (
 				FB39D0D01200F0E300088E69 /* ANGLE */,
-				5CB13FD6179F44C8001F851D /* Derived Sources */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		5CB13FDD179F44F3001F851D /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FB39D0CE1200F0E300088E69 /* Sources */ = {
@@ -924,36 +882,7 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		5CB13FDC179F44EE001F851D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5CB13FD6179F44C8001F851D /* Derived Sources */;
-			targetProxy = 5CB13FDB179F44EE001F851D /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		5CB13FD8179F44C8001F851D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		5CB13FD9179F44C8001F851D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		5CB13FDA179F44C8001F851D /* Production */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Production;
-		};
 		5D7C59DB1208C6C3001C873E /* Production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C61208C68B001C873E /* Base.xcconfig */;
@@ -1000,16 +929,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5CB13FD7179F44C8001F851D /* Build configuration list for PBXAggregateTarget "Derived Sources" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5CB13FD8179F44C8001F851D /* Debug */,
-				5CB13FD9179F44C8001F851D /* Release */,
-				5CB13FDA179F44C8001F851D /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
 		FB39D0731200ED9200088E69 /* Build configuration list for PBXProject "ANGLE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
