@@ -32,7 +32,7 @@
 using namespace WebKit;
 using namespace WebCore;
 
-static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, const char* messageName, ImmutableDictionary& message)
+static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, const char* messageName, API::Dictionary& message)
 {
     if (g_str_equal(messageName, "DidInitiateLoadForResource")) {
         WebFrameProxy* frame = static_cast<WebFrameProxy*>(message.get(String::fromUTF8("Frame")));
@@ -106,7 +106,7 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
 static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
     ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
-    ImmutableDictionary& message = *toImpl(static_cast<WKDictionaryRef>(messageBody));
+    API::Dictionary& message = *toImpl(static_cast<WKDictionaryRef>(messageBody));
 
     CString messageNameCString = toImpl(messageName)->string().utf8();
     const char* messageNameUTF8 = messageNameCString.data();

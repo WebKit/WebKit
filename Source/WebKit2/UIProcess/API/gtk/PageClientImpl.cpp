@@ -32,12 +32,12 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NotImplemented.h"
-#include "WebContext.h"
 #include "WebContextMenuProxyGtk.h"
 #include "WebEventFactory.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyGtk.h"
+#include "WebProcessPool.h"
 #include <WebCore/Cursor.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/GtkUtilities.h>

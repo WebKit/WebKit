@@ -21,10 +21,10 @@
 #include "WebKitDownloadClient.h"
 
 #include "APIURLResponse.h"
-#include "WebContext.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
+#include "WebProcessPool.h"
 #include <WebKit/WKString.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>

@@ -20,8 +20,8 @@
 #include "config.h"
 #include "WebKitWebExtension.h"
 
+#include "APIDictionary.h"
 #include "APIString.h"
-#include "ImmutableDictionary.h"
 #include "WKBundleAPICast.h"
 #include "WKBundlePage.h"
 #include "WebKitPrivate.h"
@@ -81,7 +81,7 @@ static void webkitWebExtensionPageDestroy(WebKitWebExtension* extension, WebPage
     extension->priv->pages.remove(page);
 }
 
-static void webkitWebExtensionDidReceiveMessage(WebKitWebExtension*, const String& messageName, ImmutableDictionary& message)
+static void webkitWebExtensionDidReceiveMessage(WebKitWebExtension*, const String& messageName, API::Dictionary& message)
 {
     if (messageName == String::fromUTF8("PrefetchDNS")) {
         API::String* hostname = static_cast<API::String*>(message.get(String::fromUTF8("Hostname")));

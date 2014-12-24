@@ -1,3 +1,66 @@
+2014-12-23  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Build fix after r177692
+        https://bugs.webkit.org/show_bug.cgi?id=139919
+
+        Reviewed by Gyuyoung Kim.
+
+        This change addresses build failures introduced after r177692.
+
+        * PlatformEfl.cmake: Renamed WebContextSoup to WebProcessPoolSoup.cpp
+        * PlatformGTK.cmake: ditto.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp:
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.cpp:
+        (webkitFormSubmissionRequestCreate):
+        (webkit_form_submission_request_get_text_fields):
+        * UIProcess/API/gtk/WebKitFormSubmissionRequestPrivate.h:
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (didReceiveWebViewMessageFromInjectedBundle):
+        (didReceiveMessageFromInjectedBundle):
+        * UIProcess/API/gtk/WebKitSecurityManager.cpp:
+        (registerSecurityPolicyForURIScheme):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_prefetch_dns):
+        (webkitWebContextGetContext):
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_get_snapshot):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreate):
+        (webkitWebViewBaseCreateWebPage):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp:
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        * UIProcess/gtk/WebProcessPoolGtk.cpp: Renamed from Source/WebKit2/UIProcess/gtk/WebContextGtk.cpp.
+        (WebKit::initInspectorServer):
+        (WebKit::WebProcessPool::platformDefaultApplicationCacheDirectory):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInvalidateContext):
+        (WebKit::WebProcessPool::platformDefaultWebSQLDatabaseDirectory):
+        (WebKit::WebProcessPool::platformDefaultIndexedDBDatabaseDirectory):
+        (WebKit::WebProcessPool::platformDefaultIconDatabasePath):
+        (WebKit::WebProcessPool::platformDefaultLocalStorageDirectory):
+        (WebKit::WebProcessPool::platformDefaultMediaKeysStorageDirectory):
+        (WebKit::WebProcessPool::platformDefaultDiskCacheDirectory):
+        (WebKit::WebProcessPool::platformDefaultCookieStorageDirectory):
+        (WebKit::WebProcessPool::setIgnoreTLSErrors):
+        * UIProcess/soup/WebProcessPoolSoup.cpp: Renamed from Source/WebKit2/UIProcess/soup/WebContextSoup.cpp.
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp:
+        (webkitWebExtensionDidReceiveMessage):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (didInitiateLoadForResource):
+        (willSendRequestForFrame):
+        (didReceiveResponseForResource):
+        (didReceiveContentLengthForResource):
+        (didFinishLoadForResource):
+        (didFailLoadForResource):
+        (webkitWebPageDidReceiveMessage):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPagePrivate.h:
+
 2014-12-23  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix

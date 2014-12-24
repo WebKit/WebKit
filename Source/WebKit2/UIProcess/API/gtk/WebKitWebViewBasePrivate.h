@@ -36,10 +36,10 @@
 #include "WebKitWebViewBase.h"
 #include "WebPageProxy.h"
 
-WebKitWebViewBase* webkitWebViewBaseCreate(WebKit::WebContext*, WebKit::WebPreferences*, WebKit::WebPageGroup*, WebKit::WebUserContentControllerProxy*, WebKit::WebPageProxy*);
+WebKitWebViewBase* webkitWebViewBaseCreate(WebKit::WebProcessPool*, WebKit::WebPreferences*, WebKit::WebPageGroup*, WebKit::WebUserContentControllerProxy*, WebKit::WebPageProxy*);
 GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
 WebKit::WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WebKit::WebContext*, WebKit::WebPreferences*, WebKit::WebPageGroup*, WebKit::WebUserContentControllerProxy*, WebKit::WebPageProxy*);
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WebKit::WebProcessPool*, WebKit::WebPreferences*, WebKit::WebPageGroup*, WebKit::WebUserContentControllerProxy*, WebKit::WebPageProxy*);
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase*, const WebCore::IntRect&);
 void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);

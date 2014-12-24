@@ -21,8 +21,8 @@
 #include "WebKitWebPage.h"
 
 #include "APIArray.h"
+#include "APIDictionary.h"
 #include "ImageOptions.h"
-#include "ImmutableDictionary.h"
 #include "InjectedBundle.h"
 #include "WKBundleAPICast.h"
 #include "WKBundleFrame.h"
@@ -158,12 +158,12 @@ static void didClearWindowObjectForFrame(WKBundlePageRef, WKBundleFrameRef frame
 
 static void didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, bool /* pageLoadIsProvisional */, const void*)
 {
-    ImmutableDictionary::MapType message;
+    API::Dictionary::MapType message;
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Frame"), toImpl(frame));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
     message.set(String::fromUTF8("Request"), toImpl(request));
-    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidInitiateLoadForResource"), ImmutableDictionary::create(WTF::move(message)).get());
+    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidInitiateLoadForResource"), API::Dictionary::create(WTF::move(message)).get());
 }
 
 static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef wkRequest, WKURLResponseRef wkRedirectResponse, const void* clientInfo)
@@ -182,50 +182,50 @@ static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFra
     resourceRequest.setInitiatingPageID(toImpl(page)->pageID());
     RefPtr<API::URLRequest> newRequest = API::URLRequest::create(resourceRequest);
 
-    ImmutableDictionary::MapType message;
+    API::Dictionary::MapType message;
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
     message.set(String::fromUTF8("Request"), newRequest.get());
     if (!redirectResourceResponse.isNull())
         message.set(String::fromUTF8("RedirectResponse"), toImpl(wkRedirectResponse));
-    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidSendRequestForResource"), ImmutableDictionary::create(WTF::move(message)).get());
+    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidSendRequestForResource"), API::Dictionary::create(WTF::move(message)).get());
 
     return toAPI(newRequest.release().leakRef());
 }
 
 static void didReceiveResponseForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef response, const void*)
 {
-    ImmutableDictionary::MapType message;
+    API::Dictionary::MapType message;
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
     message.set(String::fromUTF8("Response"), toImpl(response));
-    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveResponseForResource"), ImmutableDictionary::create(WTF::move(message)).get());
+    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveResponseForResource"), API::Dictionary::create(WTF::move(message)).get());
 }
 
 static void didReceiveContentLengthForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, uint64_t length, const void*)
 {
-    ImmutableDictionary::MapType message;
+    API::Dictionary::MapType message;
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
     message.set(String::fromUTF8("ContentLength"), API::UInt64::create(length));
-    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveContentLengthForResource"), ImmutableDictionary::create(WTF::move(message)).get());
+    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveContentLengthForResource"), API::Dictionary::create(WTF::move(message)).get());
 }
 
 static void didFinishLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, const void*)
 {
-    ImmutableDictionary::MapType message;
+    API::Dictionary::MapType message;
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
-    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFinishLoadForResource"), ImmutableDictionary::create(WTF::move(message)).get());
+    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFinishLoadForResource"), API::Dictionary::create(WTF::move(message)).get());
 }
 
 static void didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKErrorRef error, const void*)
 {
-    ImmutableDictionary::MapType message;
+    API::Dictionary::MapType message;
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
     message.set(String::fromUTF8("Error"), toImpl(error));
-    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFailLoadForResource"), ImmutableDictionary::create(WTF::move(message)).get());
+    WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFailLoadForResource"), API::Dictionary::create(WTF::move(message)).get());
 }
 
 static void getContextMenuFromDefaultMenu(WKBundlePageRef, WKBundleHitTestResultRef wkHitTestResult, WKArrayRef wkDefaultMenu, WKArrayRef* wkNewMenu, WKTypeRef* wkUserData, const void* clientInfo)
@@ -448,7 +448,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     return page;
 }
 
-void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageName, ImmutableDictionary& message)
+void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageName, API::Dictionary& message)
 {
     if (messageName == String("GetSnapshot")) {
         SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(static_cast<API::UInt64*>(message.get("SnapshotOptions"))->value());
@@ -473,11 +473,11 @@ void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageNa
                 snapshotImage = webPage->scaledSnapshotWithOptions(snapshotRect, 1, snapshotOptions | SnapshotOptionsShareable);
         }
 
-        ImmutableDictionary::MapType messageReply;
+        API::Dictionary::MapType messageReply;
         messageReply.set("Page", webPage);
         messageReply.set("CallbackID", API::UInt64::create(callbackID));
         messageReply.set("Snapshot", snapshotImage);
-        WebProcess::shared().injectedBundle()->postMessage("WebPage.DidGetSnapshot", ImmutableDictionary::create(WTF::move(messageReply)).get());
+        WebProcess::shared().injectedBundle()->postMessage("WebPage.DidGetSnapshot", API::Dictionary::create(WTF::move(messageReply)).get());
     } else
         ASSERT_NOT_REACHED();
 }

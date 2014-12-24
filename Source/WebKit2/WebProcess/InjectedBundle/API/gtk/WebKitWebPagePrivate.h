@@ -20,11 +20,11 @@
 #ifndef WebKitWebPagePrivate_h
 #define WebKitWebPagePrivate_h
 
-#include "ImmutableDictionary.h"
+#include "APIDictionary.h"
 #include "WebKitWebPage.h"
 #include "WebPage.h"
 
 WebKitWebPage* webkitWebPageCreate(WebKit::WebPage*);
-void webkitWebPageDidReceiveMessage(WebKitWebPage*, const String& messageName, WebKit::ImmutableDictionary& message);
+void webkitWebPageDidReceiveMessage(WebKitWebPage*, const String& messageName, API::Dictionary& message);
 
 #endif // WebKitWebPagePrivate_h

@@ -27,13 +27,13 @@
 #define WebKitWebContextPrivate_h
 
 #include "DownloadProxy.h"
-#include "WebContext.h"
 #include "WebKitPrivate.h"
 #include "WebKitUserContentManager.h"
 #include "WebKitWebContext.h"
+#include "WebProcessPool.h"
 #include "WebSoupCustomProtocolRequestManager.h"
 
-WebKit::WebContext* webkitWebContextGetContext(WebKitWebContext*);
+WebKit::WebProcessPool* webkitWebContextGetContext(WebKitWebContext*);
 WebKitDownload* webkitWebContextGetOrCreateDownload(WebKit::DownloadProxy*);
 WebKitDownload* webkitWebContextStartDownload(WebKitWebContext*, const char* uri, WebKit::WebPageProxy*);
 void webkitWebContextRemoveDownload(WebKit::DownloadProxy*);

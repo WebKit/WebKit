@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "WebContext.h"
+#include "WebProcessPool.h"
 
 #include "Logging.h"
 #include "WebCookieManagerProxy.h"
@@ -83,13 +83,13 @@ static void initInspectorServer()
 #endif
 }
 
-WTF::String WebContext::platformDefaultApplicationCacheDirectory() const
+WTF::String WebProcessPool::platformDefaultApplicationCacheDirectory() const
 {
     GUniquePtr<gchar> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", "applications", nullptr));
     return WebCore::filenameToString(cacheDirectory.get());
 }
 
-void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
+void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     initInspectorServer();
 
@@ -108,53 +108,53 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     }
 }
 
-void WebContext::platformInvalidateContext()
+void WebProcessPool::platformInvalidateContext()
 {
 }
 
-String WebContext::platformDefaultWebSQLDatabaseDirectory()
+String WebProcessPool::platformDefaultWebSQLDatabaseDirectory()
 {
     GUniquePtr<gchar> databaseDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "databases", nullptr));
     return WebCore::filenameToString(databaseDirectory.get());
 }
 
-String WebContext::platformDefaultIndexedDBDatabaseDirectory()
+String WebProcessPool::platformDefaultIndexedDBDatabaseDirectory()
 {
     notImplemented();
     return String();
 }
 
-String WebContext::platformDefaultIconDatabasePath() const
+String WebProcessPool::platformDefaultIconDatabasePath() const
 {
     GUniquePtr<gchar> databaseDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", "icondatabase", nullptr));
     return WebCore::filenameToString(databaseDirectory.get());
 }
 
-String WebContext::platformDefaultLocalStorageDirectory()
+String WebProcessPool::platformDefaultLocalStorageDirectory()
 {
     GUniquePtr<gchar> storageDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "localstorage", nullptr));
     return WebCore::filenameToString(storageDirectory.get());
 }
 
-String WebContext::platformDefaultMediaKeysStorageDirectory()
+String WebProcessPool::platformDefaultMediaKeysStorageDirectory()
 {
     GUniquePtr<gchar> mediaKeysStorageDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "mediakeys", nullptr));
     return WebCore::filenameToString(mediaKeysStorageDirectory.get());
 }
 
-String WebContext::platformDefaultDiskCacheDirectory() const
+String WebProcessPool::platformDefaultDiskCacheDirectory() const
 {
     GUniquePtr<char> diskCacheDirectory(g_build_filename(g_get_user_cache_dir(), g_get_prgname(), nullptr));
     return WebCore::filenameToString(diskCacheDirectory.get());
 }
 
-String WebContext::platformDefaultCookieStorageDirectory() const
+String WebProcessPool::platformDefaultCookieStorageDirectory() const
 {
     notImplemented();
     return String();
 }
 
-void WebContext::setIgnoreTLSErrors(bool ignoreTLSErrors)
+void WebProcessPool::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
     m_ignoreTLSErrors = ignoreTLSErrors;
 #if ENABLE(NETWORK_PROCESS)

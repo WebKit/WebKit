@@ -20,9 +20,9 @@
 #include "config.h"
 #include "WebKitWindowProperties.h"
 
+#include "APIDictionary.h"
 #include "APINumber.h"
 #include "APIURLRequest.h"
-#include "ImmutableDictionary.h"
 #include "WebKitPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include <WebCore/IntRect.h>

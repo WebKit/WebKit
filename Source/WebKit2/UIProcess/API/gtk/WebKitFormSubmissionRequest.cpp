@@ -20,8 +20,8 @@
 #include "config.h"
 #include "WebKitFormSubmissionRequest.h"
 
+#include "APIDictionary.h"
 #include "APIString.h"
-#include "ImmutableDictionary.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebKitFormSubmissionRequestPrivate.h"
 #include <wtf/gobject/GRefPtr.h>
@@ -45,7 +45,7 @@ using namespace WebKit;
  */
 
 struct _WebKitFormSubmissionRequestPrivate {
-    RefPtr<ImmutableDictionary> webValues;
+    RefPtr<API::Dictionary> webValues;
     RefPtr<WebFormSubmissionListenerProxy> listener;
     GRefPtr<GHashTable> values;
     bool handledRequest;
@@ -70,7 +70,7 @@ static void webkit_form_submission_request_class_init(WebKitFormSubmissionReques
     objectClass->dispose = webkitFormSubmissionRequestDispose;
 }
 
-WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(ImmutableDictionary* values, WebFormSubmissionListenerProxy* listener)
+WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(API::Dictionary* values, WebFormSubmissionListenerProxy* listener)
 {
     WebKitFormSubmissionRequest* request = WEBKIT_FORM_SUBMISSION_REQUEST(g_object_new(WEBKIT_TYPE_FORM_SUBMISSION_REQUEST, NULL));
     request->priv->webValues = values;
@@ -100,9 +100,9 @@ GHashTable* webkit_form_submission_request_get_text_fields(WebKitFormSubmissionR
 
     request->priv->values = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free));
 
-    const ImmutableDictionary::MapType& map = request->priv->webValues->map();
-    ImmutableDictionary::MapType::const_iterator end = map.end();
-    for (ImmutableDictionary::MapType::const_iterator it = map.begin(); it != end; ++it) {
+    const API::Dictionary::MapType& map = request->priv->webValues->map();
+    API::Dictionary::MapType::const_iterator end = map.end();
+    for (API::Dictionary::MapType::const_iterator it = map.begin(); it != end; ++it) {
         API::String* value = static_cast<API::String*>(it->value.get());
         g_hash_table_insert(request->priv->values.get(), g_strdup(it->key.utf8().data()), g_strdup(value->string().utf8().data()));
     }

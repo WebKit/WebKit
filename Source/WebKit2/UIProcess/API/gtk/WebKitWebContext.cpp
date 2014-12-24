@@ -153,7 +153,7 @@ typedef HashMap<String, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
 typedef HashMap<uint64_t, GRefPtr<WebKitURISchemeRequest> > URISchemeRequestMap;
 
 struct _WebKitWebContextPrivate {
-    RefPtr<WebContext> context;
+    RefPtr<WebProcessPool> context;
     bool clientsDetached;
 
     GRefPtr<WebKitCookieManager> cookieManager;
@@ -257,15 +257,15 @@ static void webkitWebContextConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_web_context_parent_class)->constructed(object);
 
     GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory(), "libwebkit2gtkinjectedbundle.so", nullptr));
-    WebContextConfiguration webContextConfiguration;
+    WebProcessPoolConfiguration webContextConfiguration;
     webContextConfiguration.injectedBundlePath = WebCore::filenameToString(bundleFilename.get());
-    WebContext::applyPlatformSpecificConfigurationDefaults(webContextConfiguration);
+    WebProcessPool::applyPlatformSpecificConfigurationDefaults(webContextConfiguration);
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;
     if (!priv->localStorageDirectory.isNull())
         webContextConfiguration.localStorageDirectory = WebCore::filenameToString(priv->localStorageDirectory.data());
 
-    priv->context = WebContext::create(WTF::move(webContextConfiguration));
+    priv->context = WebProcessPool::create(WTF::move(webContextConfiguration));
 
     priv->requestManager = priv->context->supplement<WebSoupCustomProtocolRequestManager>();
     priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
@@ -1003,9 +1003,9 @@ void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* host
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(hostname);
 
-    ImmutableDictionary::MapType message;
+    API::Dictionary::MapType message;
     message.set(String::fromUTF8("Hostname"), API::String::create(String::fromUTF8(hostname)));
-    context->priv->context->postMessageToInjectedBundle(String::fromUTF8("PrefetchDNS"), ImmutableDictionary::create(WTF::move(message)).get());
+    context->priv->context->postMessageToInjectedBundle(String::fromUTF8("PrefetchDNS"), API::Dictionary::create(WTF::move(message)).get());
 }
 
 /**
@@ -1124,7 +1124,7 @@ GVariant* webkitWebContextInitializeWebExtensions(WebKitWebContext* context)
         context->priv->webExtensionsInitializationUserData.get());
 }
 
-WebContext* webkitWebContextGetContext(WebKitWebContext* context)
+WebProcessPool* webkitWebContextGetContext(WebKitWebContext* context)
 {
     g_assert(WEBKIT_IS_WEB_CONTEXT(context));
 

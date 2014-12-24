@@ -20,9 +20,9 @@
 #include "config.h"
 #include "WebKitSecurityManager.h"
 
-#include "WebContext.h"
 #include "WebKitSecurityManagerPrivate.h"
 #include "WebKitWebContextPrivate.h"
+#include "WebProcessPool.h"
 #include <WebCore/SchemeRegistry.h>
 
 using namespace WebKit;
@@ -69,7 +69,7 @@ WebKitSecurityManager* webkitSecurityManagerCreate(WebKitWebContext* webContext)
 static void registerSecurityPolicyForURIScheme(WebKitSecurityManager* manager, const char* scheme, SecurityPolicy policy)
 {
     String urlScheme = String::fromUTF8(scheme);
-    WebContext* webContext = webkitWebContextGetContext(manager->priv->webContext);
+    WebProcessPool* webContext = webkitWebContextGetContext(manager->priv->webContext);
 
     // We keep the WebCore::SchemeRegistry of the UI process in sync with the
     // web process one, so that we can return the SecurityPolicy for
