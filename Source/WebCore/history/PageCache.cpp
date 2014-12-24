@@ -51,6 +51,7 @@
 #include "SharedWorkerRepository.h"
 #include "SubframeLoader.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -370,11 +371,10 @@ bool PageCache::canCache(Page* page) const
             || loadType == FrameLoadType::IndexedBackForward);
 }
 
-void PageCache::pruneToCapacityNow(int capacity)
+void PageCache::pruneToCapacityNow(int capacity, PruningReason pruningReason)
 {
-    int savedCapacity = m_capacity;
-    setCapacity(capacity);
-    setCapacity(savedCapacity);
+    TemporaryChange<int>(m_capacity, std::max(capacity, 0));
+    prune(pruningReason);
 }
 
 void PageCache::setCapacity(int capacity)
@@ -382,7 +382,7 @@ void PageCache::setCapacity(int capacity)
     ASSERT(capacity >= 0);
     m_capacity = std::max(capacity, 0);
 
-    prune();
+    prune(PruningReason::None);
 }
 
 int PageCache::frameCount() const
@@ -433,6 +433,21 @@ void PageCache::markPagesForCaptionPreferencesChanged()
 }
 #endif
 
+static const char* pruningReasonToFeatureCounterKey(PruningReason pruningReason)
+{
+    switch (pruningReason) {
+    case PruningReason::MemoryPressure:
+        return FeatureCounterPageCacheFailurePrunedMemoryPressureKey;
+    case PruningReason::ProcessSuspended:
+        return FeatureCounterPageCacheFailurePrunedProcessedSuspendedKey;
+    case PruningReason::ReachedCapacity:
+        return FeatureCounterPageCacheFailurePrunedCapacityReachedKey;
+    case PruningReason::None:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+}
+
 void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page& page)
 {
     ASSERT(prpItem);
@@ -445,11 +460,11 @@ void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page& page)
         remove(item);
 
     item->m_cachedPage = std::make_unique<CachedPage>(page);
-    item->m_wasPruned = false;
+    item->m_pruningReason = PruningReason::None;
     addToLRUList(item);
     ++m_size;
     
-    prune();
+    prune(PruningReason::ReachedCapacity);
 }
 
 std::unique_ptr<CachedPage> PageCache::take(HistoryItem* item, Page* page)
@@ -465,8 +480,8 @@ std::unique_ptr<CachedPage> PageCache::take(HistoryItem* item, Page* page)
     item->deref(); // Balanced in add().
 
     if (!cachedPage) {
-        if (item->m_wasPruned)
-            FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureWasPrunedKey);
+        if (item->m_pruningReason != PruningReason::None)
+            FEATURE_COUNTER_INCREMENT_KEY(page, pruningReasonToFeatureCounterKey(item->m_pruningReason));
         return nullptr;
     }
 
@@ -491,8 +506,8 @@ CachedPage* PageCache::get(HistoryItem* item, Page* page)
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item->url().string().ascii().data());
         FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureExpiredKey);
         pageCache()->remove(item);
-    } else if (item->m_wasPruned)
-        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureWasPrunedKey);
+    } else if (item->m_pruningReason != PruningReason::None)
+        FEATURE_COUNTER_INCREMENT_KEY(page, pruningReasonToFeatureCounterKey(item->m_pruningReason));
 
     return nullptr;
 }
@@ -510,11 +525,11 @@ void PageCache::remove(HistoryItem* item)
     item->deref(); // Balanced in add().
 }
 
-void PageCache::prune()
+void PageCache::prune(PruningReason pruningReason)
 {
     while (m_size > m_capacity) {
         ASSERT(m_tail && m_tail->m_cachedPage);
-        m_tail->m_wasPruned = true;
+        m_tail->m_pruningReason = pruningReason;
         remove(m_tail);
     }
 }
