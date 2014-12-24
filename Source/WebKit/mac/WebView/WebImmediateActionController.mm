@@ -100,6 +100,8 @@ using namespace WebCore;
 
 - (void)_clearImmediateActionState
 {
+    [_webView _clearTextIndicator];
+
     _type = WebImmediateActionNone;
     _currentActionContext = nil;
 }
@@ -182,8 +184,12 @@ using namespace WebCore;
 {
     NSURL *url = _hitTestResult.absoluteLinkURL();
     NSString *absoluteURLString = [url absoluteString];
-    if (url && WebCore::protocolIsInHTTPFamily(absoluteURLString)) {
+    if (url && WebCore::protocolIsInHTTPFamily(absoluteURLString) && _hitTestResult.innerNode()) {
         _type = WebImmediateActionLinkPreview;
+
+        RefPtr<Range> linkRange = rangeOfContents(*_hitTestResult.innerNode());
+        RefPtr<TextIndicator> linkTextIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorPresentationTransition::FadeIn);
+        [_webView _setTextIndicator:linkTextIndicator.get() fadeOut:NO];
 
         RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem = [NSMenuItem standardQuickLookMenuItem];
         [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
@@ -250,6 +256,11 @@ using namespace WebCore;
     return NSMaxYEdge;
 }
 
+- (void)menuItemDidClose:(NSMenuItem *)menuItem
+{
+    [self _clearImmediateActionState];
+}
+
 #pragma mark Data Detectors actions
 
 - (NSMenuItem *)_menuItemForDataDetectedText
@@ -282,15 +293,14 @@ using namespace WebCore;
             return nil;
     }
 
-    _currentDetectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorPresentationTransition::FadeIn);
+    RefPtr<TextIndicator> detectedDataTextIndicator = TextIndicator::createWithRange(*detectedDataRange, TextIndicatorPresentationTransition::FadeIn);
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {
-        [self _showTextIndicator];
+        [_webView _setTextIndicator:detectedDataTextIndicator.get() fadeOut:NO];
     } interactionStoppedHandler:^() {
-        [self _hideTextIndicator];
+        [_webView _clearTextIndicator];
     }];
-    _currentDetectedDataRange = detectedDataRange;
 
     [_currentActionContext setHighlightFrame:[_webView.window convertRectToScreen:detectedDataBoundingBox]];
 
@@ -368,28 +378,6 @@ static DictionaryPopupInfo dictionaryPopupInfoForRange(Frame* frame, Range& rang
         return nil;
 
     return [_webView _animationControllerForDictionaryLookupPopupInfo:dictionaryPopupInfo];
-}
-
-#pragma mark Text Indicator
-
-- (void)_showTextIndicator
-{
-    if (_isShowingTextIndicator)
-        return;
-
-    if (_type == WebImmediateActionDataDetectedItem && _currentDetectedDataTextIndicator) {
-        [_webView _setTextIndicator:_currentDetectedDataTextIndicator.get() fadeOut:NO];
-        _isShowingTextIndicator = YES;
-    }
-}
-
-- (void)_hideTextIndicator
-{
-    if (!_isShowingTextIndicator)
-        return;
-
-    [_webView _clearTextIndicator];
-    _isShowingTextIndicator = NO;
 }
 
 @end

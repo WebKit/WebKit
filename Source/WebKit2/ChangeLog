@@ -1,5 +1,20 @@
 2014-12-23  Timothy Horton  <timothy_horton@apple.com>
 
+        Install a TextIndicator for link immediate actions
+        https://bugs.webkit.org/show_bug.cgi?id=139897
+        <rdar://problem/19333076>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _defaultAnimationController]):
+        Install the link's TextIndicator.
+
+        (-[WKImmediateActionController menuItemDidClose:]):
+        Dismiss the TextIndicator and clean up when the item closes.
+
+2014-12-23  Timothy Horton  <timothy_horton@apple.com>
+
         Expose ElementBoundingBox on WKHitTestResult
         https://bugs.webkit.org/show_bug.cgi?id=139895
         <rdar://problem/19333075>
