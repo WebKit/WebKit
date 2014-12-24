@@ -33,6 +33,7 @@
 #import "SecItemShim.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKFullKeyboardAccessWatcher.h"
+#import "WKTypeRefWrapper.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import "WebFrame.h"
 #import "WebInspector.h"
@@ -306,6 +307,9 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
 #if WK_API_ENABLED
             if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
                 return true;
+
+            if (dynamic_objc_cast<WKTypeRefWrapper>(object))
+                return true;
 #endif
             return false;
         }
@@ -319,6 +323,9 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
 
                 return [NSNull null];
             }
+
+            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
+                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(m_webProcess.transformHandlesToObjects(toImpl(wrapper.object)).get())]);
 #endif
             return object;
         }
@@ -337,7 +344,11 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
 #if WK_API_ENABLED
             if (dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
                 return true;
+
+            if (dynamic_objc_cast<WKTypeRefWrapper>(object))
+                return true;
 #endif
+
             return false;
         }
 
@@ -346,6 +357,9 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
 #if WK_API_ENABLED
             if (auto* controller = dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
                 return controller.handle;
+
+            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
+                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(transformObjectsToHandles(toImpl(wrapper.object)).get())]);
 #endif
             return object;
         }

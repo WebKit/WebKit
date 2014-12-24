@@ -1,3 +1,17 @@
+2014-12-23  Anders Carlsson  <andersca@apple.com>
+
+        Handle WKTypeRefWrapper when converting object graphs
+        https://bugs.webkit.org/show_bug.cgi?id=139927
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::transformHandlesToObjects):
+        (WebKit::WebProcessProxy::transformObjectsToHandles):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::transformHandlesToObjects):
+        (WebKit::WebProcess::transformObjectsToHandles):
+
 2014-12-23  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Log better using FeatureCounter why PageCache is failing due to pruned resources

@@ -29,6 +29,7 @@
 #import "ObjCObjectGraph.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
+#import "WKTypeRefWrapper.h"
 
 namespace WebKit {
 
@@ -45,6 +46,9 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformHandlesToObjects(ObjCObjectGra
 #if WK_API_ENABLED
             if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
                 return true;
+
+            if (dynamic_objc_cast<WKTypeRefWrapper>(object))
+                return true;
 #endif
             return false;
         }
@@ -58,6 +62,10 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformHandlesToObjects(ObjCObjectGra
 
                 return [NSNull null];
             }
+
+            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
+                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(m_webProcessProxy.transformHandlesToObjects(toImpl(wrapper.object)).get())]);
+
 #endif
             return object;
         }
@@ -76,6 +84,9 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGra
 #if WK_API_ENABLED
             if (dynamic_objc_cast<WKBrowsingContextController>(object))
                 return true;
+
+            if (dynamic_objc_cast<WKTypeRefWrapper>(object))
+                return true;
 #endif
             return false;
         }
@@ -85,7 +96,12 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGra
 #if WK_API_ENABLED
             if (auto* controller = dynamic_objc_cast<WKBrowsingContextController>(object))
                 return controller.handle;
+
+            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
+                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(transformObjectsToHandles(toImpl(wrapper.object)).get())]);
+
 #endif
+
             return object;
         }
     };
