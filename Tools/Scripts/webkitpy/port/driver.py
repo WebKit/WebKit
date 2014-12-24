@@ -374,8 +374,6 @@ class Driver(object):
 
     def _check_for_driver_crash(self, error_line):
         if error_line == "#CRASHED\n":
-            # This is used on Windows and iOS to report that the process has crashed
-            # See http://trac.webkit.org/changeset/65537.
             self._crashed_process_name = self._server_process.name()
             self._crashed_pid = self._server_process.pid()
         elif (error_line.startswith("#CRASHED - ")

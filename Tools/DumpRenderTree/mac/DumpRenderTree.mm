@@ -1121,7 +1121,6 @@ static void prepareConsistentTestingEnvironment()
 #endif
 }
 
-#if PLATFORM(IOS)
 const char crashedMessage[] = "#CRASHED\n";
 
 void writeCrashedMessageOnFatalError(int signalCode)
@@ -1134,7 +1133,6 @@ void writeCrashedMessageOnFatalError(int signalCode)
     write(STDERR_FILENO, &crashedMessage[0], sizeof(crashedMessage) - 1);
     fsync(STDERR_FILENO);
 }
-#endif
 
 void dumpRenderTree(int argc, const char *argv[])
 {
@@ -1150,12 +1148,12 @@ void dumpRenderTree(int argc, const char *argv[])
     dup2(outfd, STDOUT_FILENO);
     int errfd = open(stderrPath, O_RDWR | O_NONBLOCK);
     dup2(errfd, STDERR_FILENO);
+#endif
 
     signal(SIGILL, &writeCrashedMessageOnFatalError);
     signal(SIGFPE, &writeCrashedMessageOnFatalError);
     signal(SIGBUS, &writeCrashedMessageOnFatalError);
     signal(SIGSEGV, &writeCrashedMessageOnFatalError);
-#endif
 
     initializeGlobalsFromCommandLineOptions(argc, argv);
     prepareConsistentTestingEnvironment();
