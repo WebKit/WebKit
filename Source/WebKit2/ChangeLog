@@ -1,3 +1,11 @@
+2014-12-24  Dan Bernstein  <mitz@apple.com>
+
+        Addressed a linker warning about the definition of a method in a category overridng a method from the class.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView(Private) _targetWindowForMovePreparation]): Deleted. This was identical to the
+        definition in the main WKView implementation above.
+
 2014-12-23  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Build fix after r177692

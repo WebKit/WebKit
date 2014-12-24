@@ -4054,11 +4054,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_viewInWindowChangeWasDeferred = NO;
 }
 
-- (NSWindow *)_targetWindowForMovePreparation
-{
-    return _data->_targetWindowForMovePreparation;
-}
-
 - (BOOL)isDeferringViewInWindowChanges
 {
     return _data->_shouldDeferViewInWindowChanges;
