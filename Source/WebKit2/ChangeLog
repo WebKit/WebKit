@@ -1,5 +1,18 @@
 2014-12-23  Timothy Horton  <timothy_horton@apple.com>
 
+        Expose ElementBoundingBox on WKHitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=139895
+        <rdar://problem/19333075>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/C/WKHitTestResult.cpp:
+        (WKHitTestResultGetElementBoundingBox):
+        * UIProcess/API/C/WKHitTestResult.h:
+        Expose the rect.
+
+2014-12-23  Timothy Horton  <timothy_horton@apple.com>
+
         Remove the custom web page preview code
         https://bugs.webkit.org/show_bug.cgi?id=139894
         <rdar://problem/19333074>
