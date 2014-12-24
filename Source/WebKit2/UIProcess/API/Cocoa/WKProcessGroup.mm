@@ -235,7 +235,7 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 - (WKGeolocationProviderIOS *)_geolocationProvider
 {
     if (!_geolocationProvider)
-        _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithContext:_context.get()]);
+        _geolocationProvider = adoptNS([[WKGeolocationProviderIOS alloc] initWithProcessPool:_processPool.get()]);
     return _geolocationProvider.get();
 }
 #endif // PLATFORM(IOS)

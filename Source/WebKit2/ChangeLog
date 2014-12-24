@@ -1,3 +1,12 @@
+2014-12-23  Sam Weinig  <sam@webkit.org>
+
+        Attempt to fix the iOS build.
+
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup _geolocationProvider]):
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+
 2014-12-23  Anders Carlsson  <andersca@apple.com>
 
         Handle coding object graphs in the UI process
