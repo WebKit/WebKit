@@ -1,3 +1,16 @@
+2014-12-23  Chris Dumez  <cdumez@apple.com>
+
+        Simplify RenderStyle::invalidColor() function
+        https://bugs.webkit.org/show_bug.cgi?id=139898
+
+        Reviewed by Andreas Kling.
+
+        Simplify RenderStyle::invalidColor() function by getting rid of the
+        static variable. The default constructor for Color is very cheap
+        anyway.
+
+        * rendering/style/RenderStyle.h:
+
 2014-12-23  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed, fix build warning after r177712
