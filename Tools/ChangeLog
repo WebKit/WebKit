@@ -1,5 +1,14 @@
 2014-12-23  Alexey Proskuryakov  <ap@apple.com>
 
+        Don't force -O1 for debug ASan builds
+        https://bugs.webkit.org/show_bug.cgi?id=139926
+
+        Reviewed by Darin Adler.
+
+        * asan/asan.xcconfig:
+
+2014-12-23  Alexey Proskuryakov  <ap@apple.com>
+
         Simplify building with ASan
         https://bugs.webkit.org/show_bug.cgi?id=139916
 
