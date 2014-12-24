@@ -70,9 +70,7 @@ public:
     bool needsServicesMenu() const { return m_controlledImage || !m_controlledSelectionData.isEmpty(); }
 #endif
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
     bool isTelephoneNumberContext() const { return m_isTelephoneNumberContext; }
-#endif
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, ContextMenuContextData&);

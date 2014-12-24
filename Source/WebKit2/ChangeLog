@@ -1,3 +1,10 @@
+2014-12-23  Sam Weinig  <sam@webkit.org>
+
+        Attempt to fix the Mountain Lion build.
+
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::isTelephoneNumberContext):
+
 2014-12-23  Anders Carlsson  <andersca@apple.com>
 
         Handle WKTypeRefWrapper when converting object graphs
