@@ -354,10 +354,10 @@ static Vector<RetainPtr<NSMenuItem>> nsMenuItemVector(const Vector<WebContextMen
 void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& context)
 {
     bool includeEditorServices = context.controlledDataIsEditable();
-    bool hasControlledImage = !context.controlledImageHandle().isNull();
+    bool hasControlledImage = context.controlledImage();
     NSArray *items = nil;
     if (hasControlledImage) {
-        RefPtr<ShareableBitmap> image = ShareableBitmap::create(context.controlledImageHandle());
+        RefPtr<ShareableBitmap> image = context.controlledImage();
         if (!image)
             return;
 

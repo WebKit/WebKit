@@ -64,35 +64,11 @@ ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context
     Image* image = context.controlledImage();
     if (!image)
         return;
+
     // FIXME: figure out the rounding startegy for ShareableBitmap.
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
-    bitmap->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
-    bitmap->createHandle(m_controlledImageHandle);
+    m_controlledImage = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha);
+    m_controlledImage->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
 #endif
-}
-
-ContextMenuContextData::ContextMenuContextData(const ContextMenuContextData& other)
-{
-    *this = other;
-}
-
-ContextMenuContextData& ContextMenuContextData::operator=(const ContextMenuContextData& other)
-{
-    m_webHitTestResultData = other.m_webHitTestResultData;
-    m_isTelephoneNumberContext = other.m_isTelephoneNumberContext;
-
-#if ENABLE(SERVICE_CONTROLS)
-    m_controlledImageHandle.clear();
-
-    if (!other.m_controlledImageHandle.isNull()) {
-        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(other.m_controlledImageHandle);
-        bitmap->createHandle(m_controlledImageHandle);
-    }
-
-    m_selectionIsEditable = other.m_selectionIsEditable;
-#endif
-
-    return *this;
 }
 
 void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
@@ -104,7 +80,10 @@ void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-    encoder << m_controlledImageHandle;
+    ShareableBitmap::Handle handle;
+    if (m_controlledImage)
+        m_controlledImage->createHandle(handle, SharedMemory::ReadOnly);
+    encoder << handle;
 #endif
 }
 
@@ -119,8 +98,12 @@ bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuCo
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)
-    if (!decoder.decode(contextMenuContextData.m_controlledImageHandle))
+    ShareableBitmap::Handle handle;
+    if (!decoder.decode(handle))
         return false;
+
+    if (!handle.isNull())
+        contextMenuContextData.m_controlledImage = ShareableBitmap::create(handle, SharedMemory::ReadOnly);
 #endif
 
     return true;
@@ -132,7 +115,7 @@ bool ContextMenuContextData::controlledDataIsEditable() const
     if (!m_controlledSelectionData.isEmpty())
         return m_selectionIsEditable;
 
-    if (!m_controlledImageHandle.isNull())
+    if (m_controlledImage)
         return m_webHitTestResultData.isContentEditable;
 
     return false;

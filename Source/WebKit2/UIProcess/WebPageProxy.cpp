@@ -3913,7 +3913,7 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
     bool useProposedItems = true;
     bool askClientToChangeMenu = clientEligibility == ContextMenuClientEligibility::EligibleForClient;
 #if ENABLE(SERVICE_CONTROLS)
-    if (!contextMenuContextData.controlledImageHandle().isNull())
+    if (contextMenuContextData.controlledImage())
         askClientToChangeMenu = false;
 #endif
 
