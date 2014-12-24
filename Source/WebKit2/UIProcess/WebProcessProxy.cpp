@@ -57,6 +57,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
+#include "ObjCObjectGraph.h"
 #include "PDFPlugin.h"
 #endif
 
@@ -664,6 +665,9 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
             case API::Object::Type::FrameHandle:
             case API::Object::Type::PageHandle:
             case API::Object::Type::PageGroupHandle:
+#if PLATFORM(COCOA)
+            case API::Object::Type::ObjCObjectGraph:
+#endif
                 return true;
 
             default:
@@ -683,6 +687,10 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
             case API::Object::Type::PageHandle:
                 return m_webProcessProxy.webPage(static_cast<API::PageHandle&>(object).pageID());
 
+#if PLATFORM(COCOA)
+            case API::Object::Type::ObjCObjectGraph:
+                return m_webProcessProxy.transformHandlesToObjects(static_cast<ObjCObjectGraph&>(object));;
+#endif
             default:
                 return &object;
             }
@@ -703,6 +711,9 @@ RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* obje
             case API::Object::Type::Frame:
             case API::Object::Type::Page:
             case API::Object::Type::PageGroup:
+#if PLATFORM(COCOA)
+            case API::Object::Type::ObjCObjectGraph:
+#endif
                 return true;
 
             default:
@@ -722,13 +733,18 @@ RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* obje
             case API::Object::Type::PageGroup:
                 return API::PageGroupHandle::create(WebPageGroupData(static_cast<const WebPageGroup&>(object).data()));
 
+#if PLATFORM(COCOA)
+            case API::Object::Type::ObjCObjectGraph:
+                return transformObjectsToHandles(static_cast<ObjCObjectGraph&>(object));
+#endif
+
             default:
                 return &object;
             }
         }
-    } transformer;
+    };
 
-    return UserData::transform(object, transformer);
+    return UserData::transform(object, Transformer());
 }
 
 void WebProcessProxy::sendProcessWillSuspend()

@@ -188,7 +188,12 @@ public:
 #endif
 
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
-    RefPtr<API::Object> transformObjectsToHandles(API::Object*);
+    static RefPtr<API::Object> transformObjectsToHandles(API::Object*);
+
+#if PLATFORM(COCOA)
+    RefPtr<ObjCObjectGraph> transformHandlesToObjects(ObjCObjectGraph&);
+    static RefPtr<ObjCObjectGraph> transformObjectsToHandles(ObjCObjectGraph&);
+#endif
 
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices() const { return m_hasImageServices; }
@@ -274,11 +279,6 @@ private:
 
 #if USE(APPKIT)
     virtual void stopRunLoop() override;
-#endif
-
-#if PLATFORM(COCOA)
-    RefPtr<ObjCObjectGraph> transformHandlesToObjects(ObjCObjectGraph&);
-    RefPtr<ObjCObjectGraph> transformObjectsToHandles(ObjCObjectGraph&);
 #endif
 
     void platformInitializeProcess(const ChildProcessInitializationParameters&);

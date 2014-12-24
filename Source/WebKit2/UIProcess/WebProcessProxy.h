@@ -127,7 +127,12 @@ public:
     void requestTermination();
 
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
-    RefPtr<API::Object> transformObjectsToHandles(API::Object*);
+    static RefPtr<API::Object> transformObjectsToHandles(API::Object*);
+
+#if PLATFORM(COCOA)
+    RefPtr<ObjCObjectGraph> transformHandlesToObjects(ObjCObjectGraph&);
+    static RefPtr<ObjCObjectGraph> transformObjectsToHandles(ObjCObjectGraph&);
+#endif
 
     void windowServerConnectionStateChanged();
 

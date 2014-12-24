@@ -1281,11 +1281,6 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
 RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
 {
     struct Transformer final : UserData::Transformer {
-        Transformer(WebProcess& webProcess)
-            : m_webProcess(webProcess)
-        {
-        }
-
         virtual bool shouldTransformObjectOfType(API::Object::Type type) const override
         {
             switch (type) {
@@ -1320,18 +1315,16 @@ RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
 
 #if PLATFORM(COCOA)
             case API::Object::Type::ObjCObjectGraph:
-                return m_webProcess.transformObjectsToHandles(static_cast<ObjCObjectGraph&>(object));
+                return transformObjectsToHandles(static_cast<ObjCObjectGraph&>(object));
 #endif
 
             default:
                 return &object;
             }
         }
-
-        WebProcess& m_webProcess;
     };
 
-    return UserData::transform(object, Transformer(*this));
+    return UserData::transform(object, Transformer());
 }
 
 void WebProcess::setMemoryCacheDisabled(bool disabled)

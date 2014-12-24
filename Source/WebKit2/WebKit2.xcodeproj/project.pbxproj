@@ -136,6 +136,7 @@
 		1A043DC2124FF87500FFBFB5 /* PluginProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043DC0124FF87500FFBFB5 /* PluginProxy.cpp */; };
 		1A043F6912514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043F6712514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp */; };
 		1A043F6A12514D8B00FFBFB5 /* WebProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043F6812514D8B00FFBFB5 /* WebProcessConnectionMessages.h */; };
+		1A04F6191A4A3A7A00A21B6E /* WebProcessProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A04F6171A4A3A7A00A21B6E /* WebProcessProxyCocoa.mm */; };
 		1A07D2F81919B3A900ECDA16 /* __init__.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC0856E187CE0A900780D86 /* __init__.py */; };
 		1A07D2F91919B3A900ECDA16 /* messages.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC0856F187CE0A900780D86 /* messages.py */; };
 		1A07D2FA1919B3A900ECDA16 /* model.py in Copy Message Generation Scripts */ = {isa = PBXBuildFile; fileRef = 0FC08570187CE0A900780D86 /* model.py */; };
@@ -2116,6 +2117,7 @@
 		1A043F5912514CF300FFBFB5 /* WebProcessConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebProcessConnection.messages.in; sourceTree = "<group>"; };
 		1A043F6712514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A043F6812514D8B00FFBFB5 /* WebProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessConnectionMessages.h; sourceTree = "<group>"; };
+		1A04F6171A4A3A7A00A21B6E /* WebProcessProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessProxyCocoa.mm; sourceTree = "<group>"; };
 		1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessManager.h; sourceTree = "<group>"; };
 		1A0EC602124A9F2C007EF4A5 /* PluginProcessManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessManager.cpp; sourceTree = "<group>"; };
 		1A0EC6B1124BBD36007EF4A5 /* PluginProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PluginProcess.messages.in; sourceTree = "<group>"; };
@@ -4681,6 +4683,7 @@
 				1AFE436318B6C081009C7A48 /* UIDelegate.mm */,
 				1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */,
 				7CE4D2151A49148400C7F152 /* WebProcessPoolCocoa.mm */,
+				1A04F6171A4A3A7A00A21B6E /* WebProcessProxyCocoa.mm */,
 				1AD01BCB1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h */,
 				1AD01BCA1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm */,
 				2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */,
@@ -9247,6 +9250,7 @@
 				2D819BA11862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp in Sources */,
 				2D6CD11A189058A500E5A4A0 /* ViewSnapshotStore.mm in Sources */,
 				2684054F18B86C8E0022C38B /* ViewUpdateDispatcher.cpp in Sources */,
+				1A04F6191A4A3A7A00A21B6E /* WebProcessProxyCocoa.mm in Sources */,
 				2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */,
 				2684054C18B86C350022C38B /* VisibleContentRectUpdateInfo.cpp in Sources */,
 				1A0F29E3120B44420053D1B9 /* VisitedLinkProvider.cpp in Sources */,
