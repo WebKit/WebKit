@@ -1,5 +1,14 @@
 2014-12-24  Dan Bernstein  <mitz@apple.com>
 
+        ANGLE extern symbols are not hidden by default, but should be
+        https://bugs.webkit.org/show_bug.cgi?id=139936
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Changed GCC_SYMBOLS_PRIVATE_EXTERN to YES.
+
+2014-12-24  Dan Bernstein  <mitz@apple.com>
+
         Removed the Derived Sources target.
 
         It has been empty since r159533.
