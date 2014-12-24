@@ -1,3 +1,10 @@
+2014-12-23  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix
+
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup _geolocationProvider]):
+
 2014-12-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Fix a lot of build break since r177692 
