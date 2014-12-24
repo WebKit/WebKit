@@ -43,20 +43,16 @@ class ContextMenuContext;
 
 namespace WebKit {
 
-enum TelephoneNumberContextTag { TelephoneNumberContext };
-
 class ContextMenuContextData {
 public:
     ContextMenuContextData();
-    ContextMenuContextData(TelephoneNumberContextTag);
     ContextMenuContextData(const WebCore::ContextMenuContext&);
     
     const WebHitTestResult::Data& webHitTestResultData() const { return m_webHitTestResultData; }
 
 #if ENABLE(SERVICE_CONTROLS)
     ContextMenuContextData(const Vector<uint8_t>& selectionData, const Vector<String>& selectedTelephoneNumbers, bool isEditable)
-        : m_isTelephoneNumberContext(false)
-        , m_controlledSelectionData(selectionData)
+        : m_controlledSelectionData(selectionData)
         , m_selectedTelephoneNumbers(selectedTelephoneNumbers)
         , m_selectionIsEditable(isEditable)
     {
@@ -70,14 +66,11 @@ public:
     bool needsServicesMenu() const { return m_controlledImage || !m_controlledSelectionData.isEmpty(); }
 #endif
 
-    bool isTelephoneNumberContext() const { return m_isTelephoneNumberContext; }
-
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, ContextMenuContextData&);
 
 private:
     WebHitTestResult::Data m_webHitTestResultData;
-    bool m_isTelephoneNumberContext;
 
 #if ENABLE(SERVICE_CONTROLS)
     RefPtr<ShareableBitmap> m_controlledImage;

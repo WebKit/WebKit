@@ -38,24 +38,14 @@ using namespace WebCore;
 namespace WebKit {
 
 ContextMenuContextData::ContextMenuContextData()
-    : m_isTelephoneNumberContext(false)
 #if ENABLE(SERVICE_CONTROLS)
-    , m_selectionIsEditable(false)
-#endif
-{
-}
-
-ContextMenuContextData::ContextMenuContextData(TelephoneNumberContextTag)
-    : m_isTelephoneNumberContext(true)
-#if ENABLE(SERVICE_CONTROLS)
-    , m_selectionIsEditable(false)
+    : m_selectionIsEditable(false)
 #endif
 {
 }
 
 ContextMenuContextData::ContextMenuContextData(const ContextMenuContext& context)
     : m_webHitTestResultData(WebHitTestResult::Data(context.hitTestResult()))
-    , m_isTelephoneNumberContext(false)
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionIsEditable(false)
 #endif
@@ -75,10 +65,6 @@ void ContextMenuContextData::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << m_webHitTestResultData;
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-    encoder << m_isTelephoneNumberContext;
-#endif
-
 #if ENABLE(SERVICE_CONTROLS)
     ShareableBitmap::Handle handle;
     if (m_controlledImage)
@@ -91,11 +77,6 @@ bool ContextMenuContextData::decode(IPC::ArgumentDecoder& decoder, ContextMenuCo
 {
     if (!decoder.decode(contextMenuContextData.m_webHitTestResultData))
         return false;
-
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-    if (!decoder.decode(contextMenuContextData.m_isTelephoneNumberContext))
-        return false;
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
     ShareableBitmap::Handle handle;

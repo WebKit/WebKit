@@ -471,7 +471,7 @@ void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const
     // FIXME: That API is better than WKPopupContextMenu. In the future all menus should use either it
     // or the [NSMenu popUpContextMenu:withEvent:forView:] API, depending on the menu type.
     // Then we could get rid of NSPopUpButtonCell, custom metrics, and WKPopupContextMenu.
-    if (context.isTelephoneNumberContext() || context.needsServicesMenu()) {
+    if (context.needsServicesMenu()) {
         [menu popUpMenuPositioningItem:nil atLocation:menuLocation inView:m_webView];
         hideContextMenu();
         return;

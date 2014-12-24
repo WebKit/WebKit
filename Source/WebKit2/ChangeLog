@@ -1,5 +1,26 @@
 2014-12-23  Sam Weinig  <sam@webkit.org>
 
+        Remove telephone number context support from ContextMenuContextData, it is unused
+        https://bugs.webkit.org/show_bug.cgi?id=139931
+
+        Reviewed by Alexey Proskuryakov.
+
+        m_isTelephoneNumberContext was only ever set to true in the ContextMenuContextData
+        constructor that took a TelephoneNumberContextTag, which never got called. Remove it
+        all.
+
+        * Shared/ContextMenuContextData.cpp:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::encode):
+        (WebKit::ContextMenuContextData::decode):
+        * Shared/ContextMenuContextData.h:
+        (WebKit::ContextMenuContextData::ContextMenuContextData):
+        (WebKit::ContextMenuContextData::isTelephoneNumberContext): Deleted.
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
+2014-12-23  Sam Weinig  <sam@webkit.org>
+
         Attempt to fix the Mountain Lion build.
 
         * Shared/ContextMenuContextData.h:
