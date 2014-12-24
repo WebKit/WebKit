@@ -61,7 +61,7 @@ struct WebPageConfiguration;
 @property (nonatomic, getter=isShowingInspectorIndication) BOOL showingInspectorIndication;
 @property (nonatomic, readonly) BOOL isBackground;
 
-- (instancetype)initWithFrame:(CGRect)frame processPool:(WebProcessPool&)processPool configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView;
+- (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView;
 
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
