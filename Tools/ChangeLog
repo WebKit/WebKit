@@ -1,5 +1,26 @@
 2014-12-23  Alexey Proskuryakov  <ap@apple.com>
 
+        Simplify building with ASan
+        https://bugs.webkit.org/show_bug.cgi?id=139916
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/set-webkit-configuration: Store ASan state into a new configuration file.
+        We could also update Configuration file format, but that's a little scary because
+        of how many places in code read it.
+
+        * Scripts/webkitdirs.pm:
+        (determineASanIsEnabled): Read it from ASan configuration file.
+        (argumentsForConfiguration): Added a FIXME.
+        (asanIsEnabled): A caching wrapper similar to what we have for other configuration options.
+        (XcodeOptions): Pass the options needed for ASan.
+
+        * asan/asan.xcconfig: Use the right toolchains. Made warnings fatal again, as there
+        no warnings to avoid. Removed explicit linking options, as -fsanitize=address does
+        that automatically.
+
+2014-12-23  Alexey Proskuryakov  <ap@apple.com>
+
         TestWebKitAPI build is broken when ASan is enabled
         https://bugs.webkit.org/show_bug.cgi?id=139902
 

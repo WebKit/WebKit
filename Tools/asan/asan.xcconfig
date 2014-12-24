@@ -1,7 +1,12 @@
-GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+TOOLCHAINS[sdk=iphone*] = $(TOOLCHAINS);
+TOOLCHAINS = $(TOOLCHAINS_$(PLATFORM_NAME)_$(MAC_OS_X_VERSION_MAJOR));
+TOOLCHAINS_macosx_1080 = default;
+TOOLCHAINS_macosx_1090 = default;
+TOOLCHAINS_macosx_101000 = default;
+TOOLCHAINS_macosx_101100 = $(TOOLCHAINS);
 
-ASAN_OTHER_CFLAGS = -fsanitize=address -O1 -fsanitize-blacklist=$(ASAN_IGNORE) -Wno-error -fno-omit-frame-pointer -g -DUSE_SYSTEM_MALLOC=1;
+ASAN_OTHER_CFLAGS = -fsanitize=address -O1 -fsanitize-blacklist=$(ASAN_IGNORE) -fno-omit-frame-pointer -g -DUSE_SYSTEM_MALLOC=1;
 ASAN_OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CFLAGS);
-ASAN_OTHER_LDFLAGS = -fsanitize=address $(ASAN_OTHER_LDFLAGS_$(PLATFORM_NAME));
-ASAN_OTHER_LDFLAGS_macosx = -lclang_rt.asan_osx_dynamic;
-ASAN_OTHER_LDFLAGS_iphonesimulator = -lclang_rt.asan_iossim_dynamic;
+ASAN_OTHER_LDFLAGS = -fsanitize=address;
+
+GCC_ENABLE_OBJC_GC = NO;

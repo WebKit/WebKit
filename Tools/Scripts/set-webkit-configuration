@@ -36,6 +36,7 @@ my $usage = <<EOF;
 Usage: $programName [options]
   --32-bit                Set the default architecture to 32-bit
   --64-bit                Set the default architecture to 64-bit
+  --[no-]asan             Enable or disable clang address sanitizer
   --debug                 Set the default configuration to debug
   --release               Set the default configuration to release
   --reset                 Reset configurations
@@ -43,6 +44,8 @@ EOF
 
 my $configuration = passedConfiguration();
 my $architecture = passedArchitecture();
+my $enableASAN = checkForArgumentAndRemoveFromARGV("--asan");
+my $disableASAN = checkForArgumentAndRemoveFromARGV("--no-asan");
 
 if (!$architecture) {
     # Handle --64-bit explicitly here, as we don't want our other scripts to accept it
@@ -61,10 +64,11 @@ system "mkdir", "-p", "$baseProductDir";
 if (checkForArgumentAndRemoveFromARGV("--reset")) {
     unlink "$baseProductDir/Configuration";
     unlink "$baseProductDir/Architecture";
+    unlink "$baseProductDir/ASan";
     exit 0;
 }
 
-if (!$configuration && !$architecture) {
+if (!$configuration && !$architecture && !$enableASAN && !$disableASAN || ($enableASAN && $disableASAN)) {
     print STDERR $usage;
     exit 1;
 }
@@ -83,4 +87,12 @@ if ($architecture) {
     } else {
         unlink "$baseProductDir/Architecture";
     }
+}
+
+if ($enableASAN) {
+    open ASAN, ">", "$baseProductDir/ASan" or die;
+    print ASAN "YES";
+    close ASAN;
+} elsif ($disableASAN) {
+    unlink "$baseProductDir/ASan";
 }

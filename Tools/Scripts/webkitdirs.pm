@@ -90,6 +90,7 @@ use constant INCLUDE_OPTIONS_FOR_DEBUGGING => 1;
 our @EXPORT_OK;
 
 my $architecture;
+my $asanIsEnabled;
 my $numberOfCPUs;
 my $maxCPULoad;
 my $baseProductDir;
@@ -347,6 +348,22 @@ sub determineArchitecture
     $architecture = 'x86_64' if ($architecture =~ /amd64/ && isBSD());
 }
 
+sub determineASanIsEnabled
+{
+    return if defined $asanIsEnabled;
+    determineBaseProductDir();
+
+    $asanIsEnabled = 0;
+    my $asanConfigurationValue;
+
+    if (open ASAN, "$baseProductDir/ASan") {
+        $asanConfigurationValue = <ASAN>;
+        close ASAN;
+        chomp $asanConfigurationValue;
+        $asanIsEnabled = 1 if $asanConfigurationValue eq "YES";
+    }
+}
+
 sub determineNumberOfCPUs
 {
     return if defined $numberOfCPUs;
@@ -392,6 +409,8 @@ sub argumentsForConfiguration()
     determineXcodeSDK();
 
     my @args = ();
+    # FIXME: Is it necessary to pass --debug, --release, --32-bit or --64-bit?
+    # These are determined automatically from stored configuration.
     push(@args, '--debug') if ($configuration =~ "^Debug");
     push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--device') if (defined $xcodeSDK && $xcodeSDK =~ /^iphoneos/);
@@ -588,6 +607,12 @@ sub configuration()
     return $configuration;
 }
 
+sub asanIsEnabled()
+{
+    determineASanIsEnabled();
+    return $asanIsEnabled;
+}
+
 sub configurationForVisualStudio()
 {
     determineConfigurationForVisualStudio();
@@ -624,12 +649,14 @@ sub XcodeOptions
     determineBaseProductDir();
     determineConfiguration();
     determineArchitecture();
+    determineASanIsEnabled();
     determineXcodeSDK();
 
     my @sdkOption = ($xcodeSDK ? "SDKROOT=$xcodeSDK" : ());
     my @architectureOption = ($architecture ? "ARCHS=$architecture" : ());
+    my @asanOption = ($asanIsEnabled ? ("-xcconfig", sourceDir() . "/Tools/asan/asan.xcconfig", "ASAN_IGNORE=" . sourceDir() . "/Tools/asan/webkit-asan-ignore.txt") : ());
 
-    return (@baseProductDirOption, "-configuration", $configuration, @architectureOption, @sdkOption, argumentsForXcode());
+    return (@baseProductDirOption, "-configuration", $configuration, @architectureOption, @sdkOption, @asanOption, argumentsForXcode());
 }
 
 sub XcodeOptionString
