@@ -160,7 +160,7 @@ static WKWebViewConfiguration *defaultConfiguration()
     if (browserWindowController) {
         NSOpenPanel *openPanel = [[NSOpenPanel openPanel] retain];
         [openPanel beginSheetModalForWindow:browserWindowController.window completionHandler:^(NSInteger result) {
-            if (result != NSOKButton)
+            if (result != NSFileHandlingPanelOKButton)
                 return;
 
             NSURL *url = [openPanel.URLs objectAtIndex:0];
@@ -171,7 +171,7 @@ static WKWebViewConfiguration *defaultConfiguration()
 
     NSOpenPanel *openPanel = [NSOpenPanel openPanel];
     [openPanel beginWithCompletionHandler:^(NSInteger result) {
-        if (result != NSOKButton)
+        if (result != NSFileHandlingPanelOKButton)
             return;
 
         BrowserWindowController *newBrowserWindowController = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];

@@ -1,3 +1,17 @@
+2014-12-24  Dan Bernstein  <mitz@apple.com>
+
+        Engineering builds of MiniBrowser ignore deprecated declaration warnings
+        https://bugs.webkit.org/show_bug.cgi?id=139941
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/Configurations/Base.xcconfig: Added semicolon.
+        * MiniBrowser/Configurations/DebugRelease.xcconfig: Set GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS
+        to YES.
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate openDocument:]): Use NSFileHandlingPanelOKButton instead of
+        deprecated NSOKButton.
+
 2014-12-24  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         W3C test importer should have an option to disable testharness.js/testharnessreport.js link conversion
