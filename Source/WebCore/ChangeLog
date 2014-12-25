@@ -1,3 +1,15 @@
+2014-12-24  Benjamin Poulain  <bpoulain@apple.com>
+
+        Small cleanup of RenderBlock::paint()
+        https://bugs.webkit.org/show_bug.cgi?id=139849
+
+        Reviewed by Daniel Bates.
+
+        Remove a couple of instructions by putting variable in the right scope.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+
 2014-12-24  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] WebCoreSystemInterface.h declares two unused symbols
