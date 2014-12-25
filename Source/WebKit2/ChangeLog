@@ -1,5 +1,15 @@
 2014-12-24  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] WebKit private headers shouldn’t contain “inappropriate” macros
+        https://bugs.webkit.org/show_bug.cgi?id=139942
+
+        Reviewed by Darin Adler.
+
+        * WebKit2.xcodeproj/project.pbxproj: In the Check For Inappropriate Macros in External
+        Headers script build phase, check the PrivateHeaders directory as well.
+
+2014-12-24  Dan Bernstein  <mitz@apple.com>
+
         Addressed a linker warning about the definition of a method in a category overridng a method from the class.
 
         * UIProcess/API/mac/WKView.mm:
