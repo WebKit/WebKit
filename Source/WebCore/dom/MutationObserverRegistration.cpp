@@ -68,7 +68,7 @@ void MutationObserverRegistration::observedSubtreeNodeWillDetach(Node* node)
     m_observer->setHasTransientRegistration();
 
     if (!m_transientRegistrationNodes) {
-        m_transientRegistrationNodes = adoptPtr(new NodeHashSet);
+        m_transientRegistrationNodes = std::make_unique<NodeHashSet>();
 
         ASSERT(!m_registrationNodeKeepAlive);
         m_registrationNodeKeepAlive = m_registrationNode; // Balanced in clearTransientRegistrations.
@@ -86,7 +86,7 @@ void MutationObserverRegistration::clearTransientRegistrations()
     for (NodeHashSet::iterator iter = m_transientRegistrationNodes->begin(); iter != m_transientRegistrationNodes->end(); ++iter)
         (*iter)->unregisterTransientMutationObserver(this);
 
-    m_transientRegistrationNodes.clear();
+    m_transientRegistrationNodes = nullptr;
 
     ASSERT(m_registrationNodeKeepAlive);
     m_registrationNodeKeepAlive = 0; // Balanced in observeSubtreeNodeWillDetach.

@@ -1,3 +1,30 @@
+2014-12-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Use std::unique_ptr<> in WebCore/dom, plugin, and graphics
+        https://bugs.webkit.org/show_bug.cgi?id=139938
+        
+        Reviewed by Darin Adler.
+
+        Replace OwnPtr with std::unique_ptr<> and std::make_unique<>.
+
+        * dom/ElementIteratorAssertions.h:
+        (WebCore::ElementIteratorAssertions::ElementIteratorAssertions):
+        * dom/MutationObserverRegistration.cpp:
+        (WebCore::MutationObserverRegistration::observedSubtreeNodeWillDetach):
+        (WebCore::MutationObserverRegistration::clearTransientRegistrations):
+        * dom/MutationObserverRegistration.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::boundsForGlyph):
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::SimpleFontData::canRenderCombiningCharacterSequence):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::canRenderCombiningCharacterSequence):
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::didReceiveData):
+        * plugins/PluginStream.h:
+
 2014-12-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r177712 and r177717.

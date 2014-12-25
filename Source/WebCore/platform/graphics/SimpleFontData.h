@@ -36,7 +36,6 @@
 #include "OpenTypeVerticalData.h"
 #endif
 #include "TypesettingFeatures.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/StringHash.h>
 
@@ -248,7 +247,7 @@ private:
     FontPlatformData m_platformData;
     std::unique_ptr<AdditionalFontData> m_fontData;
 
-    mutable OwnPtr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
+    mutable std::unique_ptr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
 
     bool m_treatAsFixedPitch;
@@ -300,7 +299,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA) || USE(HARFBUZZ)
-    mutable OwnPtr<HashMap<String, bool>> m_combiningCharacterSequenceSupport;
+    mutable std::unique_ptr<HashMap<String, bool>> m_combiningCharacterSequenceSupport;
 #endif
 
 #if PLATFORM(WIN)
@@ -327,7 +326,7 @@ ALWAYS_INLINE FloatRect SimpleFontData::boundsForGlyph(Glyph glyph) const
 
     bounds = platformBoundsForGlyph(glyph);
     if (!m_glyphToBoundsMap)
-        m_glyphToBoundsMap = adoptPtr(new GlyphMetricsMap<FloatRect>);
+        m_glyphToBoundsMap = std::make_unique<GlyphMetricsMap<FloatRect>>();
     m_glyphToBoundsMap->setMetricsForGlyph(glyph, bounds);
     return bounds;
 }

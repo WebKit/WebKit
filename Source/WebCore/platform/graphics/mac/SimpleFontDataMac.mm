@@ -474,7 +474,7 @@ bool SimpleFontData::canRenderCombiningCharacterSequence(const UChar* characters
     ASSERT(isMainThread());
 
     if (!m_combiningCharacterSequenceSupport)
-        m_combiningCharacterSequenceSupport = adoptPtr(new HashMap<String, bool>);
+        m_combiningCharacterSequenceSupport = std::make_unique<HashMap<String, bool>>();
 
     WTF::HashMap<String, bool>::AddResult addResult = m_combiningCharacterSequenceSupport->add(String(characters, length), false);
     if (!addResult.isNewEntry)

@@ -36,7 +36,6 @@
 #include "Timer.h"
 #include "npruntime_internal.h"
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -103,7 +102,7 @@ namespace WebCore {
         Timer m_delayDeliveryTimer;
         void delayDeliveryTimerFired();
 
-        OwnPtr< Vector<char> > m_deliveryData;
+        std::unique_ptr<Vector<char>> m_deliveryData;
 
         PlatformFileHandle m_tempFileHandle;
 
