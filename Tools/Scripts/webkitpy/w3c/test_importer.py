@@ -120,8 +120,12 @@ def configure_logging():
 
 def parse_args():
     parser = optparse.OptionParser(usage='usage: %prog [options] w3c_test_directory')
+
     parser.add_option('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
         help='Flag to prevent duplicate test files from overwriting existing tests. By default, they will be overwritten')
+    parser.add_option('-l', '--no-links-conversion', dest='convert_test_harness_links', action='store_false', default=True,
+        help='Do not change links (testharness js or css e.g.). By default, links are converted to point to WebKit testharness files.')
+
     parser.add_option('-a', '--all', action='store_true', default=False,
         help='Import all tests including reftests, JS tests, and manual/pixel tests. By default, only reftests and JS tests are imported')
     parser.add_option('-d', '--dest-dir', dest='destination', default='w3c',
@@ -300,7 +304,7 @@ class TestImporter(object):
                 mimetype = mimetypes.guess_type(orig_filepath)
                 if 'html' in str(mimetype[0]) or 'xml' in str(mimetype[0])  or 'css' in str(mimetype[0]):
                     try:
-                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info)
+                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, convert_test_harness_links=self.options.convert_test_harness_links)
                     except:
                         _log.warn('Failed converting %s', orig_filepath)
                         failed_conversion_files.append(orig_filepath)

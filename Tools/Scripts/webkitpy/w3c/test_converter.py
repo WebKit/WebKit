@@ -37,12 +37,12 @@ from HTMLParser import HTMLParser
 _log = logging.getLogger(__name__)
 
 
-def convert_for_webkit(new_path, filename, reference_support_info, host=Host()):
+def convert_for_webkit(new_path, filename, reference_support_info, host=Host(), convert_test_harness_links=True):
     """ Converts a file's |contents| so it will function correctly in its |new_path| in Webkit.
 
     Returns the list of modified properties and the modified text if the file was modifed, None otherwise."""
     contents = host.filesystem.read_binary_file(filename)
-    converter = _W3CTestConverter(new_path, filename, reference_support_info, host)
+    converter = _W3CTestConverter(new_path, filename, reference_support_info, host, convert_test_harness_links)
     if filename.endswith('.css'):
         return converter.add_webkit_prefix_to_unprefixed_properties_and_values(contents)
     else:
@@ -52,7 +52,7 @@ def convert_for_webkit(new_path, filename, reference_support_info, host=Host()):
 
 
 class _W3CTestConverter(HTMLParser):
-    def __init__(self, new_path, filename, reference_support_info, host=Host()):
+    def __init__(self, new_path, filename, reference_support_info, host=Host(), convert_test_harness_links=True):
         HTMLParser.__init__(self)
 
         self._host = host
@@ -70,6 +70,7 @@ class _W3CTestConverter(HTMLParser):
         resources_path = self.path_from_webkit_root('LayoutTests', 'resources')
         resources_relpath = self._filesystem.relpath(resources_path, new_path)
         self.new_test_harness_path = resources_relpath
+        self.convert_test_harness_links = convert_test_harness_links
 
         # These settings might vary between WebKit and Blink
         self._css_property_file = self.path_from_webkit_root('Source', 'WebCore', 'css', 'CSSPropertyNames.in')
@@ -165,7 +166,7 @@ class _W3CTestConverter(HTMLParser):
 
     def convert_attributes_if_needed(self, tag, attrs):
         converted = self.get_starttag_text()
-        if tag in ('script', 'link'):
+        if self.convert_test_harness_links and tag in ('script', 'link'):
             attr_name = 'src'
             if tag != 'script':
                 attr_name = 'href'
