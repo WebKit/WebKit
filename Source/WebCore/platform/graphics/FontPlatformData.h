@@ -51,9 +51,6 @@ OBJC_CLASS NSFont;
 #endif
 
 typedef const struct __CTFont* CTFontRef;
-typedef UInt32 FMFont;
-typedef FMFont ATSUFontID;
-typedef UInt32 ATSFontRef;
 
 #endif
 

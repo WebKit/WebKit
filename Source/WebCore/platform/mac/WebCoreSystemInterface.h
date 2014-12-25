@@ -59,10 +59,6 @@ typedef const struct __AXUIElement *AXUIElementRef;
 #if !PLATFORM(IOS)
 typedef struct _NSRange NSRange;
 typedef double NSTimeInterval;
-
-typedef UInt32 FMFont;
-typedef FMFont ATSUFontID;
-typedef UInt16 ATSGlyphRef;
 #endif
 
 #if PLATFORM(COCOA) && USE(CA)
@@ -157,7 +153,6 @@ extern void (*wkDrawMediaUIPart)(int part, CGContextRef context, CGRect rect, un
 extern CFStringRef (*wkSignedPublicKeyAndChallengeString)(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
 #endif
 #if !PLATFORM(IOS)
-extern ATSUFontID (*wkGetNSFontATSUFontId)(NSFont*);
 extern double (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
 #endif
 extern NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
@@ -221,8 +216,6 @@ extern void (*wkHTTPRequestEnablePipelining)(CFURLRequestRef);
 extern void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 extern void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 extern CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
-
-extern BOOL (*wkUseSharedMediaUI)();
 
 #if !PLATFORM(IOS)
 extern void* wkGetHyphenationLocationBeforeIndex;

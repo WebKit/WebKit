@@ -38,8 +38,6 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
 
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer)
 {
-    ATSFontContainerRef containerRef = 0;
-
     RetainPtr<CFDataRef> bufferData = buffer.createCFData();
     RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateWithCFData(bufferData.get()));
 
@@ -47,7 +45,7 @@ std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffe
     if (!cgFontRef)
         return nullptr;
 
-    return std::make_unique<FontCustomPlatformData>(containerRef, cgFontRef.get());
+    return std::make_unique<FontCustomPlatformData>(cgFontRef.get());
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

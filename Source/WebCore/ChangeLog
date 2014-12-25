@@ -1,3 +1,22 @@
+2014-12-24  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WebCoreSystemInterface.h declares two unused symbols
+        https://bugs.webkit.org/show_bug.cgi?id=139937
+
+        Reviewed by Tim Horton.
+
+        * platform/graphics/FontPlatformData.h: Removed unused typedefs.
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData): Stop passing always-zero containerRef parameter to
+        FontCustomPlatformData constructor.
+
+        * platform/graphics/mac/FontCustomPlatformData.h: Removed unused typedefs.
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData): Removed unused container
+        parameter and m_atsContainer member variable.
+
+        * platform/mac/WebCoreSystemInterface.h: Removed unused typedefs and symbols.
+
 2014-12-23  Chris Dumez  <cdumez@apple.com>
 
         Simplify RenderStyle::invalidColor() function

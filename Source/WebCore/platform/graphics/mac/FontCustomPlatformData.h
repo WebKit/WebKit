@@ -30,8 +30,6 @@
 #include <wtf/RetainPtr.h>
 
 typedef struct CGFont* CGFontRef;
-typedef UInt32 ATSFontContainerRef;
-typedef UInt32 ATSFontRef;
 
 namespace WebCore {
 
@@ -41,9 +39,8 @@ class SharedBuffer;
 struct FontCustomPlatformData {
     WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
 public:
-    FontCustomPlatformData(ATSFontContainerRef container, CGFontRef cgFont)
-        : m_atsContainer(container)
-        , m_cgFont(cgFont)
+    explicit FontCustomPlatformData(CGFontRef cgFont)
+        : m_cgFont(cgFont)
     {
     }
 
@@ -53,7 +50,6 @@ public:
 
     static bool supportsFormat(const String&);
 
-    ATSFontContainerRef m_atsContainer;
     RetainPtr<CGFontRef> m_cgFont;
 };
 
