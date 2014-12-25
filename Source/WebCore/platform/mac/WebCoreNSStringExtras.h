@@ -48,7 +48,7 @@ WEBCORE_EXPORT NSString *filenameByFixingIllegalCharacters(NSString *);
 WEBCORE_EXPORT CFStringEncoding stringEncodingForResource(Handle resource);
 #endif
 
-NSString *preferredBundleLocalizationName();
+WEBCORE_EXPORT NSString *preferredBundleLocalizationName();
 NSString *canonicalLocaleName(NSString *);
 
 #ifdef __cplusplus

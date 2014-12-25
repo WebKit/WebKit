@@ -185,7 +185,7 @@ private:
 
     // Internals
     friend class Internals;
-    Vector<String> bufferedSamplesForTrackID(const AtomicString&);
+    WEBCORE_EXPORT Vector<String> bufferedSamplesForTrackID(const AtomicString&);
 
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;

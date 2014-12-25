@@ -183,7 +183,7 @@ private:
     RangeBoundaryPoint m_end;
 };
 
-Ref<Range> rangeOfContents(Node&);
+WEBCORE_EXPORT Ref<Range> rangeOfContents(Node&);
 
 WEBCORE_EXPORT bool areRangesEqual(const Range*, const Range*);
 bool rangesOverlap(const Range*, const Range*);

@@ -39,8 +39,8 @@ class StorageAreaImpl;
 
 class StorageNamespaceImpl : public StorageNamespace {
 public:
-    static RefPtr<StorageNamespaceImpl> createSessionStorageNamespace(unsigned quota);
-    static RefPtr<StorageNamespaceImpl> getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota);
+    WEBCORE_EXPORT static RefPtr<StorageNamespaceImpl> createSessionStorageNamespace(unsigned quota);
+    WEBCORE_EXPORT static RefPtr<StorageNamespaceImpl> getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota);
     virtual ~StorageNamespaceImpl();
 
     virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>)  override;

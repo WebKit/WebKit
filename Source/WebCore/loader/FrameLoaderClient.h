@@ -104,7 +104,7 @@ namespace WebCore {
 
     typedef std::function<void (PolicyAction)> FramePolicyFunction;
 
-    class FrameLoaderClient {
+    class WEBCORE_EXPORT FrameLoaderClient {
     public:
         // An inline function cannot be the first non-abstract virtual function declared
         // in the class as it results in the vtable being generated as a weak symbol.

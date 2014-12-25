@@ -44,12 +44,12 @@ class TextIndicatorWindow {
     WTF_MAKE_NONCOPYABLE(TextIndicatorWindow);
 
 public:
-    explicit TextIndicatorWindow(NSView *);
-    ~TextIndicatorWindow();
+    WEBCORE_EXPORT explicit TextIndicatorWindow(NSView *);
+    WEBCORE_EXPORT ~TextIndicatorWindow();
 
-    void setTextIndicator(PassRefPtr<TextIndicator>, CGRect contentRect, bool fadeOut);
+    WEBCORE_EXPORT void setTextIndicator(PassRefPtr<TextIndicator>, CGRect contentRect, bool fadeOut);
 
-    void setAnimationProgress(float);
+    WEBCORE_EXPORT void setAnimationProgress(float);
 
 private:
     void closeWindow();

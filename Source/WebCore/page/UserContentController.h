@@ -56,16 +56,16 @@ public:
     const UserScriptMap* userScripts() const { return m_userScripts.get(); }
 
     WEBCORE_EXPORT void addUserScript(DOMWrapperWorld&, std::unique_ptr<UserScript>);
-    void removeUserScript(DOMWrapperWorld&, const URL&);
+    WEBCORE_EXPORT void removeUserScript(DOMWrapperWorld&, const URL&);
     WEBCORE_EXPORT void removeUserScripts(DOMWrapperWorld&);
 
     const UserStyleSheetMap* userStyleSheets() const { return m_userStyleSheets.get(); }
 
     WEBCORE_EXPORT void addUserStyleSheet(DOMWrapperWorld&, std::unique_ptr<UserStyleSheet>, UserStyleInjectionTime);
-    void removeUserStyleSheet(DOMWrapperWorld&, const URL&);
+    WEBCORE_EXPORT void removeUserStyleSheet(DOMWrapperWorld&, const URL&);
     WEBCORE_EXPORT void removeUserStyleSheets(DOMWrapperWorld&);
 
-    void removeAllUserContent();
+    WEBCORE_EXPORT void removeAllUserContent();
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
     const UserMessageHandlerDescriptorMap* userMessageHandlerDescriptors() const { return m_userMessageHandlerDescriptors.get(); }

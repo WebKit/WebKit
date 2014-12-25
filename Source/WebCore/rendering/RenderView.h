@@ -224,7 +224,7 @@ public:
     void didCreateRenderer() { ++m_rendererCount; }
     void didDestroyRenderer() { --m_rendererCount; }
 
-    WEBCORE_EXPORT void resumePausedImageAnimationsIfNeeded();
+    void resumePausedImageAnimationsIfNeeded();
     void addRendererWithPausedImageAnimations(RenderElement&);
     void removeRendererWithPausedImageAnimations(RenderElement&);
 

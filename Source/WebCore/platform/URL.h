@@ -235,9 +235,9 @@ WEBCORE_EXPORT const URL& blankURL();
 // These are also different from the URL functions in that they don't require the string to be a valid and parsable URL.
 // This is especially important because valid javascript URLs are not necessarily considered valid by URL.
 
-bool protocolIs(const String& url, const char* protocol);
+WEBCORE_EXPORT bool protocolIs(const String& url, const char* protocol);
 WEBCORE_EXPORT bool protocolIsJavaScript(const String& url);
-bool protocolIsInHTTPFamily(const String& url);
+WEBCORE_EXPORT bool protocolIsInHTTPFamily(const String& url);
 
 bool isDefaultPortForProtocol(unsigned short port, const String& protocol);
 bool portAllowed(const URL&); // Blacklist ports that should never be used for Web resources.

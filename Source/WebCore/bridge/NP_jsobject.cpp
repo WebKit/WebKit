@@ -34,7 +34,6 @@
 #include "c_instance.h"
 #include "IdentifierRep.h"
 #include "JSDOMBinding.h"
-#include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "runtime_root.h"
 #include <runtime/Error.h>
@@ -45,6 +44,10 @@
 #include <runtime/Completion.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
+
+#pragma GCC visibility push(default)
+#include "npruntime_impl.h"
+#pragma GCC visibility pop
 
 using namespace JSC;
 using namespace JSC::Bindings;

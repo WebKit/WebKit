@@ -124,8 +124,8 @@ namespace WebCore {
         bool allowCookies() const;
         void setAllowCookies(bool allowCookies);
 
-        ResourceLoadPriority priority() const;
-        void setPriority(ResourceLoadPriority);
+        WEBCORE_EXPORT ResourceLoadPriority priority() const;
+        WEBCORE_EXPORT void setPriority(ResourceLoadPriority);
 
         bool isConditional() const;
         void makeUnconditional();

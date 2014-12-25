@@ -42,8 +42,8 @@ class StorageNamespace;
 
 class StorageNamespaceProvider : public RefCounted<StorageNamespaceProvider> {
 public:
-    StorageNamespaceProvider();
-    virtual ~StorageNamespaceProvider();
+    WEBCORE_EXPORT StorageNamespaceProvider();
+    WEBCORE_EXPORT virtual ~StorageNamespaceProvider();
 
     virtual RefPtr<StorageNamespace> createSessionStorageNamespace(Page&, unsigned quota) = 0;
     RefPtr<StorageArea> localStorageArea(Document&);

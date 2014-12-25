@@ -44,7 +44,7 @@ class URL;
 WEBCORE_EXPORT BlobRegistry& blobRegistry();
 
 // BlobRegistry is not thread-safe. It should only be called from main thread.
-class BlobRegistry {
+class WEBCORE_EXPORT BlobRegistry {
 public:
 
     // Registers a blob URL referring to the specified file.

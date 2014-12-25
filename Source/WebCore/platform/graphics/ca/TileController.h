@@ -53,7 +53,7 @@ class TileController final : public TiledBacking {
     friend class TileCoverageMap;
     friend class TileGrid;
 public:
-    explicit TileController(PlatformCALayer*);
+    WEBCORE_EXPORT explicit TileController(PlatformCALayer*);
     ~TileController();
 
     WEBCORE_EXPORT void tileCacheLayerBoundsChanged();

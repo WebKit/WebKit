@@ -75,7 +75,7 @@ public:
 
 private:
 #ifndef NDEBUG
-    static unsigned s_count;
+    WEBCORE_EXPORT static unsigned s_count;
 #endif
 };
 

@@ -155,7 +155,7 @@ private:
 typedef EnumCallback<IconLoadDecision> IconLoadDecisionCallback;
 typedef ObjectCallback<SharedBuffer*> IconDataCallback;
 
-class IconDatabaseBase {
+class WEBCORE_EXPORT IconDatabaseBase {
     WTF_MAKE_NONCOPYABLE(IconDatabaseBase);
 
 protected:

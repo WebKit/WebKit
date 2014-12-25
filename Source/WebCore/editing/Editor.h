@@ -101,7 +101,7 @@ public:
     ~Editor();
 
     WEBCORE_EXPORT EditorClient* client() const;
-    TextCheckerClient* textChecker() const;
+    WEBCORE_EXPORT TextCheckerClient* textChecker() const;
 
     CompositeEditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
 
@@ -135,7 +135,7 @@ public:
     WEBCORE_EXPORT void copyURL(const URL&, const String& title);
     void copyURL(const URL&, const String& title, Pasteboard&);
 #if !PLATFORM(IOS)
-    void copyImage(const HitTestResult&);
+    WEBCORE_EXPORT void copyImage(const HitTestResult&);
 #endif
 
     String readPlainTextFromPasteboard(Pasteboard&);

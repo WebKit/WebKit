@@ -73,7 +73,7 @@ public:
     //       that already contains content.
     void setSecurityOriginPolicy(RefPtr<SecurityOriginPolicy>&&);
 
-    SecurityOrigin* securityOrigin() const;
+    WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
 
     static SandboxFlags parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage);
 

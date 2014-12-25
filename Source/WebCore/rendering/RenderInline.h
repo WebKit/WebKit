@@ -59,7 +59,7 @@ public:
         return IntRect(0, 0, boundingBox.width(), boundingBox.height());
     }
 
-    IntRect linesBoundingBox() const;
+    WEBCORE_EXPORT IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBoxInRegion(const RenderRegion*) const;
 

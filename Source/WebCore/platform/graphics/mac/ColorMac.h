@@ -39,7 +39,7 @@ namespace WebCore {
     
 #if USE(APPKIT)
     // These functions assume NSColors are in DeviceRGB colorspace
-    Color colorFromNSColor(NSColor *);
+    WEBCORE_EXPORT Color colorFromNSColor(NSColor *);
     WEBCORE_EXPORT NSColor *nsColor(const Color&);
 #endif
 

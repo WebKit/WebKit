@@ -93,7 +93,7 @@ struct GraphicsDeviceAdapter;
 struct ViewportArguments;
 struct WindowFeatures;
 
-class ChromeClient {
+class WEBCORE_EXPORT ChromeClient {
 public:
     virtual void chromeDestroyed() = 0;
 

@@ -46,13 +46,13 @@ public:
     PageOverlayController(MainFrame&);
     virtual ~PageOverlayController();
 
-    GraphicsLayer& documentOverlayRootLayer();
-    GraphicsLayer& viewOverlayRootLayer();
+    WEBCORE_EXPORT GraphicsLayer& documentOverlayRootLayer();
+    WEBCORE_EXPORT GraphicsLayer& viewOverlayRootLayer();
 
     const Vector<RefPtr<PageOverlay>>& pageOverlays() const { return m_pageOverlays; }
 
-    void installPageOverlay(PassRefPtr<PageOverlay>, PageOverlay::FadeMode);
-    void uninstallPageOverlay(PageOverlay*, PageOverlay::FadeMode);
+    WEBCORE_EXPORT void installPageOverlay(PassRefPtr<PageOverlay>, PageOverlay::FadeMode);
+    WEBCORE_EXPORT void uninstallPageOverlay(PageOverlay*, PageOverlay::FadeMode);
 
     void setPageOverlayNeedsDisplay(PageOverlay&, const IntRect&);
     void setPageOverlayOpacity(PageOverlay&, float);
@@ -75,9 +75,9 @@ public:
 
     bool handleMouseEvent(const PlatformMouseEvent&);
 
-    bool copyAccessibilityAttributeStringValueForPoint(String attribute, FloatPoint, String& value);
-    bool copyAccessibilityAttributeBoolValueForPoint(String attribute, FloatPoint, bool& value);
-    Vector<String> copyAccessibilityAttributesNames(bool parameterizedNames);
+    WEBCORE_EXPORT bool copyAccessibilityAttributeStringValueForPoint(String attribute, FloatPoint, String& value);
+    WEBCORE_EXPORT bool copyAccessibilityAttributeBoolValueForPoint(String attribute, FloatPoint, bool& value);
+    WEBCORE_EXPORT Vector<String> copyAccessibilityAttributesNames(bool parameterizedNames);
 
 private:
     void createRootLayersIfNeeded();

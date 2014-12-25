@@ -29,7 +29,6 @@
 
 #include "IdentifierRep.h"
 #include "npruntime_internal.h"
-#include "npruntime_impl.h"
 #include "npruntime_priv.h"
 
 #include "c_utility.h"
@@ -37,6 +36,10 @@
 #include <runtime/JSLock.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+
+#pragma GCC visibility push(default)
+#include "npruntime_impl.h"
+#pragma GCC visibility pop
 
 using namespace JSC::Bindings;
 using namespace WebCore;

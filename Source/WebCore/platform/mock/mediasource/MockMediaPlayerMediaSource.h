@@ -39,7 +39,7 @@ class MockMediaSourcePrivate;
 class MockMediaPlayerMediaSource : public MediaPlayerPrivateInterface {
 public:
     // MediaPlayer Engine Support
-    static void registerMediaEngine(MediaEngineRegistrar);
+    WEBCORE_EXPORT static void registerMediaEngine(MediaEngineRegistrar);
     static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
     static void getSupportedTypes(HashSet<String>& types);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);

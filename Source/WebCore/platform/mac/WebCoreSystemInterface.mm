@@ -24,7 +24,10 @@
  */
 
 #import "config.h"
+#pragma GCC visibility push(default)
 #import "WebCoreSystemInterface.h"
+#pragma GCC visibility pop
+
 #import <Foundation/Foundation.h>
 
 void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);

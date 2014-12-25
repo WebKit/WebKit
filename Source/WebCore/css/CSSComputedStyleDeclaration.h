@@ -91,8 +91,8 @@ public:
     }
     virtual ~CSSComputedStyleDeclaration();
 
-    virtual void ref() override;
-    virtual void deref() override;
+    WEBCORE_EXPORT virtual void ref() override;
+    WEBCORE_EXPORT virtual void deref() override;
 
     String getPropertyValue(CSSPropertyID) const;
 

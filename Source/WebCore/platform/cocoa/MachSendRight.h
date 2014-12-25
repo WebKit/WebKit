@@ -32,8 +32,8 @@ namespace WebCore {
 
 class MachSendRight {
 public:
-    static MachSendRight adopt(mach_port_t);
-    static MachSendRight create(mach_port_t);
+    WEBCORE_EXPORT static MachSendRight adopt(mach_port_t);
+    WEBCORE_EXPORT static MachSendRight create(mach_port_t);
 
     MachSendRight()
         : m_port(MACH_PORT_NULL)
@@ -41,14 +41,14 @@ public:
     }
 
     MachSendRight(MachSendRight&&);
-    ~MachSendRight();
+    WEBCORE_EXPORT ~MachSendRight();
 
-    MachSendRight& operator=(MachSendRight&&);
+    WEBCORE_EXPORT MachSendRight& operator=(MachSendRight&&);
 
     mach_port_t sendRight() const { return m_port; }
 
-    MachSendRight copySendRight() const;
-    mach_port_t leakSendRight() WARN_UNUSED_RETURN;
+    WEBCORE_EXPORT MachSendRight copySendRight() const;
+    WEBCORE_EXPORT mach_port_t leakSendRight() WARN_UNUSED_RETURN;
 
 private:
     explicit MachSendRight(mach_port_t);

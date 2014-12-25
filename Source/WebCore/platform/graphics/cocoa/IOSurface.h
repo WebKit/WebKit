@@ -46,7 +46,7 @@ public:
 
     static IntSize maximumSize();
 
-    MachSendRight createSendRight() const;
+    WEBCORE_EXPORT MachSendRight createSendRight() const;
 
     // Any images created from a surface need to be released before releasing
     // the surface, or an expensive GPU readback can result.

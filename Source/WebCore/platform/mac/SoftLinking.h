@@ -126,7 +126,7 @@
         return loaded; \
     } \
     \
-    resultType functionName parameterDeclarations \
+    __attribute__((visibility("hidden"))) resultType functionName parameterDeclarations \
     { \
         ASSERT(softLink##functionName); \
         return softLink##functionName parameterNames; \

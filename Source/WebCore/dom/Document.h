@@ -1256,7 +1256,7 @@ public:
 
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override final;
 
-    virtual SecurityOrigin* topOrigin() const override final;
+    WEBCORE_EXPORT virtual SecurityOrigin* topOrigin() const override final;
 
 #if ENABLE(FONT_LOAD_EVENTS)
     RefPtr<FontLoader> fonts();
@@ -1275,10 +1275,10 @@ public:
     bool hasStyleWithViewportUnits() const { return m_hasStyleWithViewportUnits; }
     void updateViewportUnitsOnResize();
 
-    void addAudioProducer(AudioProducer*);
-    void removeAudioProducer(AudioProducer*);
+    WEBCORE_EXPORT void addAudioProducer(AudioProducer*);
+    WEBCORE_EXPORT void removeAudioProducer(AudioProducer*);
     bool isPlayingAudio() const { return m_isPlayingAudio; }
-    void updateIsPlayingAudio();
+    WEBCORE_EXPORT void updateIsPlayingAudio();
     void pageMutedStateDidChange();
 
 protected:

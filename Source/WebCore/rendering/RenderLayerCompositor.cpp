@@ -79,7 +79,7 @@
 
 #if ENABLE(3D_RENDERING)
 // This symbol is used to determine from a script whether 3D rendering is enabled (via 'nm').
-bool WebCoreHas3DRendering = true;
+WEBCORE_EXPORT bool WebCoreHas3DRendering = true;
 #endif
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)

@@ -34,7 +34,7 @@ namespace WebCore {
 class AbstractDatabaseServer;
 class IDBFactoryBackendInterface;
 
-class DatabaseStrategy {
+class WEBCORE_EXPORT DatabaseStrategy {
 public:
 #if ENABLE(SQL_DATABASE)
     WEBCORE_EXPORT virtual AbstractDatabaseServer* getDatabaseServer();

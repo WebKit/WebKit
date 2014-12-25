@@ -212,7 +212,7 @@ public:
     WEBCORE_EXPORT static bool allowsRoundingHacks();
 
 private:
-    static bool s_allowsRoundingHacks;
+    WEBCORE_EXPORT static bool s_allowsRoundingHacks;
     
     RefPtr<RenderingContext> m_renderingContext;
 

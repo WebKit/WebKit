@@ -45,8 +45,8 @@ bool isPositionInRange(const VisiblePosition&, Range*);
 bool shouldUseSelection(const VisiblePosition&, const VisibleSelection&);
 
 PassRefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition&, int numberOfCharactersToExpand);
-PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection&, NSDictionary **options);
-PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult&, NSDictionary **options);
+WEBCORE_EXPORT PassRefPtr<Range> rangeForDictionaryLookupForSelection(const VisibleSelection&, NSDictionary **options);
+WEBCORE_EXPORT PassRefPtr<Range> rangeForDictionaryLookupAtHitTestResult(const HitTestResult&, NSDictionary **options);
 
 } // namespace WebCore
 

@@ -237,7 +237,7 @@ public:
 #endif
 
     // Return an estimate of the backing store area (in pixels) allocated by this object's GraphicsLayers.
-    double backingStoreMemoryEstimate() const;
+    WEBCORE_EXPORT double backingStoreMemoryEstimate() const;
 
     LayoutSize devicePixelFractionFromRenderer() const { return m_devicePixelFractionFromRenderer; }
 

@@ -50,7 +50,7 @@ typedef unsigned SnapshotOptions;
 
 std::unique_ptr<ImageBuffer> snapshotFrameRect(Frame&, const IntRect&, SnapshotOptions = SnapshotOptionsNone);
 std::unique_ptr<ImageBuffer> snapshotNode(Frame&, Node&);
-std::unique_ptr<ImageBuffer> snapshotSelection(Frame&, SnapshotOptions = SnapshotOptionsNone);
+WEBCORE_EXPORT std::unique_ptr<ImageBuffer> snapshotSelection(Frame&, SnapshotOptions = SnapshotOptionsNone);
 
 } // namespace WebCore
 
