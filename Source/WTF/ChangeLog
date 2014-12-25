@@ -1,3 +1,19 @@
+2014-12-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        Simplify saturated integer add/sub
+        https://bugs.webkit.org/show_bug.cgi?id=139854
+
+        Reviewed by Darin Adler.
+
+        * wtf/Compiler.h:
+        Make a wrapper for __has_builtin for compilers that do not support it.
+
+        * wtf/SaturatedArithmetic.h:
+        (saturatedAddition):
+        (saturatedSubtraction):
+        Use the builtins when possible instead of reinventing the wheel.
+        On ARMv7, use the saturated math instructions.
+
 2014-12-23  Anders Carlsson  <andersca@apple.com>
 
         Move dynamic_objc_cast to RetainPtr.h
