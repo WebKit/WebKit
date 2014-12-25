@@ -1,3 +1,20 @@
+2014-12-24  Benjamin Poulain  <benjamin@webkit.org>
+
+        Import the tests for :valid/:invalid on form/fieldset from blink
+        https://bugs.webkit.org/show_bug.cgi?id=139899
+
+        Reviewed by Darin Adler.
+
+        blink's tests are incredibly basic but it is better to include them
+        for completeness.
+
+        * fast/forms/fieldset-pseudo-valid-style-expected.txt: Added.
+        * fast/forms/fieldset-pseudo-valid-style.html: Added.
+        * fast/forms/form-pseudo-valid-style-expected.txt: Added.
+        * fast/forms/form-pseudo-valid-style.html: Added.
+        Both tests are from Bartek Nowierski.
+        
+
 2014-12-23  Zalan Bujtas  <zalan@apple.com>
 
         Incorrect dashed and dotted border painting.
