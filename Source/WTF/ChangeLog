@@ -1,3 +1,9 @@
+2014-12-25  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Windows build after r177733.
+
+        * wtf/Ref.h:
+
 2014-12-25  Alexey Proskuryakov  <ap@apple.com>
 
         Simplify saturated integer add/sub

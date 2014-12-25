@@ -152,5 +152,6 @@ inline Ref<T> adoptRef(T& reference)
 } // namespace WTF
 
 using WTF::Ref;
+using WTF::adoptRef;
 
 #endif // WTF_Ref_h
