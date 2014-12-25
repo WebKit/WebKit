@@ -84,11 +84,11 @@ namespace WebCore {
 
 static double kRingBufferDuration = 1;
 
-PassRefPtr<AudioSourceProviderAVFObjC> AudioSourceProviderAVFObjC::create(AVPlayerItem *item)
+RefPtr<AudioSourceProviderAVFObjC> AudioSourceProviderAVFObjC::create(AVPlayerItem *item)
 {
     if (!canLoadMTAudioProcessingTapCreate())
         return nullptr;
-    return adoptRef(new AudioSourceProviderAVFObjC(item));
+    return adoptRef(*new AudioSourceProviderAVFObjC(item));
 }
 
 AudioSourceProviderAVFObjC::AudioSourceProviderAVFObjC(AVPlayerItem *item)

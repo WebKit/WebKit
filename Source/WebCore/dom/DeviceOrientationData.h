@@ -26,18 +26,18 @@
 #ifndef DeviceOrientationData_h
 #define DeviceOrientationData_h
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class DeviceOrientationData : public RefCounted<DeviceOrientationData> {
 public:
-    static PassRefPtr<DeviceOrientationData> create();
+    static Ref<DeviceOrientationData> create();
 #if PLATFORM(IOS)
-    WEBCORE_EXPORT static PassRefPtr<DeviceOrientationData> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideCompassHeading, double compassHeading, bool canProvideCompassAccuracy, double compassAccuracy);
+    WEBCORE_EXPORT static Ref<DeviceOrientationData> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideCompassHeading, double compassHeading, bool canProvideCompassAccuracy, double compassAccuracy);
 #else
-    WEBCORE_EXPORT static PassRefPtr<DeviceOrientationData> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute = false, bool absolute = false);
+    WEBCORE_EXPORT static Ref<DeviceOrientationData> create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute = false, bool absolute = false);
 #endif
 
     double alpha() const;

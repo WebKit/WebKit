@@ -49,9 +49,9 @@ const double DefaultGrainDuration = 0.020; // 20ms
 // to minimize linear interpolation aliasing.
 const double MaxRate = 1024;
 
-PassRefPtr<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContext* context, float sampleRate)
+Ref<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContext* context, float sampleRate)
 {
-    return adoptRef(new AudioBufferSourceNode(context, sampleRate));
+    return adoptRef(*new AudioBufferSourceNode(context, sampleRate));
 }
 
 AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, float sampleRate)

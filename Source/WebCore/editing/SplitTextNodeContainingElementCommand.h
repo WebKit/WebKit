@@ -32,9 +32,9 @@ namespace WebCore {
 
 class SplitTextNodeContainingElementCommand : public CompositeEditCommand {
 public:
-    static PassRefPtr<SplitTextNodeContainingElementCommand> create(PassRefPtr<Text> node, int offset)
+    static Ref<SplitTextNodeContainingElementCommand> create(PassRefPtr<Text> node, int offset)
     {
-        return adoptRef(new SplitTextNodeContainingElementCommand(node, offset));
+        return adoptRef(*new SplitTextNodeContainingElementCommand(node, offset));
     }
 
 private:

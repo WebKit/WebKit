@@ -26,7 +26,7 @@
 #ifndef AudioHardwareListener_h
 #define AudioHardwareListener_h
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -47,7 +47,7 @@ public:
         virtual void audioOutputDeviceChanged() = 0;
     };
 
-    WEBCORE_EXPORT static PassRefPtr<AudioHardwareListener> create(Client&);
+    WEBCORE_EXPORT static Ref<AudioHardwareListener> create(Client&);
     virtual ~AudioHardwareListener() { }
     
     AudioHardwareActivityType hardwareActivity() const { return m_activity; }

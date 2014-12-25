@@ -32,9 +32,9 @@ namespace WebCore {
 
 class SimplifyMarkupCommand : public CompositeEditCommand {
 public:
-    static PassRefPtr<SimplifyMarkupCommand> create(Document& document, Node* firstNode, Node* nodeAfterLast)
+    static Ref<SimplifyMarkupCommand> create(Document& document, Node* firstNode, Node* nodeAfterLast)
     {
-        return adoptRef(new SimplifyMarkupCommand(document, firstNode, nodeAfterLast));
+        return adoptRef(*new SimplifyMarkupCommand(document, firstNode, nodeAfterLast));
     }
 
 private:

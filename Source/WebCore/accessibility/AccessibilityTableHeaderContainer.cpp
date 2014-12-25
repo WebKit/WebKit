@@ -42,9 +42,9 @@ AccessibilityTableHeaderContainer::~AccessibilityTableHeaderContainer()
 {
 }
 
-PassRefPtr<AccessibilityTableHeaderContainer> AccessibilityTableHeaderContainer::create()
+Ref<AccessibilityTableHeaderContainer> AccessibilityTableHeaderContainer::create()
 {
-    return adoptRef(new AccessibilityTableHeaderContainer());
+    return adoptRef(*new AccessibilityTableHeaderContainer());
 }
     
 LayoutRect AccessibilityTableHeaderContainer::elementRect() const

@@ -37,7 +37,7 @@ namespace WebCore {
 
     class DOMCustomXPathNSResolver : public XPathNSResolver {
     public:
-        static PassRefPtr<DOMCustomXPathNSResolver> create(id <DOMXPathNSResolver> customResolver) { return adoptRef(new DOMCustomXPathNSResolver(customResolver)); }
+        static Ref<DOMCustomXPathNSResolver> create(id <DOMXPathNSResolver> customResolver) { return adoptRef(*new DOMCustomXPathNSResolver(customResolver)); }
         virtual ~DOMCustomXPathNSResolver();
 
         virtual String lookupNamespaceURI(const String& prefix);

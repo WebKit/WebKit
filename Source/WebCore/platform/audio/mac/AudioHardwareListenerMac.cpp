@@ -109,14 +109,14 @@ static const AudioObjectPropertyAddress& outputDevicePropertyDescriptor()
     return outputDeviceProperty;
 };
 
-PassRefPtr<AudioHardwareListener> AudioHardwareListener::create(Client& client)
+Ref<AudioHardwareListener> AudioHardwareListener::create(Client& client)
 {
     return AudioHardwareListenerMac::create(client);
 }
 
-PassRefPtr<AudioHardwareListenerMac> AudioHardwareListenerMac::create(Client& client)
+Ref<AudioHardwareListenerMac> AudioHardwareListenerMac::create(Client& client)
 {
-    return adoptRef(new AudioHardwareListenerMac(client));
+    return adoptRef(*new AudioHardwareListenerMac(client));
 }
 
 AudioHardwareListenerMac::AudioHardwareListenerMac(Client& client)

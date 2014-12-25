@@ -37,9 +37,9 @@ AccessibilityMenuList::AccessibilityMenuList(RenderMenuList* renderer)
 {
 }
 
-PassRefPtr<AccessibilityMenuList> AccessibilityMenuList::create(RenderMenuList* renderer)
+Ref<AccessibilityMenuList> AccessibilityMenuList::create(RenderMenuList* renderer)
 {
-    return adoptRef(new AccessibilityMenuList(renderer));
+    return adoptRef(*new AccessibilityMenuList(renderer));
 }
 
 bool AccessibilityMenuList::press()

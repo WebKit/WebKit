@@ -33,9 +33,9 @@ namespace WebCore {
 
 class CursorList : public RefCounted<CursorList> {
 public:
-    static PassRefPtr<CursorList> create()
+    static Ref<CursorList> create()
     {
-        return adoptRef(new CursorList);
+        return adoptRef(*new CursorList);
     }
 
     const CursorData& operator[](int i) const { return m_vector[i]; }

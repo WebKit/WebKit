@@ -32,9 +32,9 @@ namespace WebCore {
 
 class SplitElementCommand : public SimpleEditCommand {
 public:
-    static PassRefPtr<SplitElementCommand> create(PassRefPtr<Element> element, PassRefPtr<Node> splitPointChild)
+    static Ref<SplitElementCommand> create(PassRefPtr<Element> element, PassRefPtr<Node> splitPointChild)
     {
-        return adoptRef(new SplitElementCommand(element, splitPointChild));
+        return adoptRef(*new SplitElementCommand(element, splitPointChild));
     }
 
 private:

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class AccessibilitySVGRoot final : public AccessibilityRenderObject {
 public:
-    static PassRefPtr<AccessibilitySVGRoot> create(RenderObject*);
+    static Ref<AccessibilitySVGRoot> create(RenderObject*);
     virtual ~AccessibilitySVGRoot();
     
     void setParent(AccessibilityObject* parent) { m_parent = parent; }

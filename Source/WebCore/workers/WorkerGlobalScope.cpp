@@ -190,7 +190,7 @@ void WorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode&
     Vector<URL>::const_iterator end = completedURLs.end();
 
     for (Vector<URL>::const_iterator it = completedURLs.begin(); it != end; ++it) {
-        RefPtr<WorkerScriptLoader> scriptLoader(WorkerScriptLoader::create());
+        Ref<WorkerScriptLoader> scriptLoader = WorkerScriptLoader::create();
         scriptLoader->loadSynchronously(scriptExecutionContext(), *it, AllowCrossOriginRequests);
 
         // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.

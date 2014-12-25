@@ -46,9 +46,9 @@ MathMLSelectElement::MathMLSelectElement(const QualifiedName& tagName, Document&
 {
 }
 
-PassRefPtr<MathMLSelectElement> MathMLSelectElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLSelectElement> MathMLSelectElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new MathMLSelectElement(tagName, document));
+    return adoptRef(*new MathMLSelectElement(tagName, document));
 }
 
 RenderPtr<RenderElement> MathMLSelectElement::createElementRenderer(Ref<RenderStyle>&& style)

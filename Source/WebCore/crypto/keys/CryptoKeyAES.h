@@ -36,9 +36,9 @@ namespace WebCore {
 
 class CryptoKeyAES final : public CryptoKey {
 public:
-    static PassRefPtr<CryptoKeyAES> create(CryptoAlgorithmIdentifier algorithm, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsage usage)
+    static Ref<CryptoKeyAES> create(CryptoAlgorithmIdentifier algorithm, const Vector<uint8_t>& key, bool extractable, CryptoKeyUsage usage)
     {
-        return adoptRef(new CryptoKeyAES(algorithm, key, extractable, usage));
+        return adoptRef(*new CryptoKeyAES(algorithm, key, extractable, usage));
     }
     virtual ~CryptoKeyAES();
 

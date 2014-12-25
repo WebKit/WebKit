@@ -34,7 +34,7 @@ class DOMPlugin;
 
 class DOMMimeType : public RefCounted<DOMMimeType>, public FrameDestructionObserver {
 public:
-    static PassRefPtr<DOMMimeType> create(PassRefPtr<PluginData> pluginData, Frame* frame, unsigned index) { return adoptRef(new DOMMimeType(pluginData, frame, index)); }
+    static Ref<DOMMimeType> create(PassRefPtr<PluginData> pluginData, Frame* frame, unsigned index) { return adoptRef(*new DOMMimeType(pluginData, frame, index)); }
     ~DOMMimeType();
 
     const String &type() const;

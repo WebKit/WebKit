@@ -37,9 +37,9 @@ class Reverb;
     
 class ConvolverNode : public AudioNode {
 public:
-    static PassRefPtr<ConvolverNode> create(AudioContext* context, float sampleRate)
+    static Ref<ConvolverNode> create(AudioContext* context, float sampleRate)
     {
-        return adoptRef(new ConvolverNode(context, sampleRate));      
+        return adoptRef(*new ConvolverNode(context, sampleRate));
     }
     
     virtual ~ConvolverNode();

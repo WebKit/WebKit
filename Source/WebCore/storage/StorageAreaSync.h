@@ -39,7 +39,7 @@ class StorageSyncManager;
 
 class StorageAreaSync : public ThreadSafeRefCounted<StorageAreaSync> {
 public:
-    static PassRefPtr<StorageAreaSync> create(PassRefPtr<StorageSyncManager>, PassRefPtr<StorageAreaImpl>, const String& databaseIdentifier);
+    static Ref<StorageAreaSync> create(PassRefPtr<StorageSyncManager>, PassRefPtr<StorageAreaImpl>, const String& databaseIdentifier);
     ~StorageAreaSync();
 
     void scheduleFinalSync();

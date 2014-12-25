@@ -59,7 +59,7 @@ PassRefPtr<DOMMimeType> DOMMimeTypeArray::item(unsigned index)
     const Vector<MimeClassInfo>& mimes = data->mimes();
     if (index >= mimes.size())
         return 0;
-    return DOMMimeType::create(data, m_frame, index).get();
+    return DOMMimeType::create(data, m_frame, index);
 }
 
 bool DOMMimeTypeArray::canGetItemsForName(const AtomicString& propertyName)
@@ -83,7 +83,7 @@ PassRefPtr<DOMMimeType> DOMMimeTypeArray::namedItem(const AtomicString& property
     const Vector<MimeClassInfo>& mimes = data->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i) {
         if (mimes[i].type == propertyName)
-            return DOMMimeType::create(data, m_frame, i).get();
+            return DOMMimeType::create(data, m_frame, i);
     }
     return 0;
 }

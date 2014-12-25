@@ -32,9 +32,9 @@ namespace WebCore {
 
 class RemoveNodeCommand : public SimpleEditCommand {
 public:
-    static PassRefPtr<RemoveNodeCommand> create(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
+    static Ref<RemoveNodeCommand> create(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
     {
-        return adoptRef(new RemoveNodeCommand(node, shouldAssumeContentIsAlwaysEditable));
+        return adoptRef(*new RemoveNodeCommand(node, shouldAssumeContentIsAlwaysEditable));
     }
 
 private:

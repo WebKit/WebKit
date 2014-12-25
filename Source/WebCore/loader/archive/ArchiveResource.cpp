@@ -42,19 +42,19 @@ inline ArchiveResource::ArchiveResource(PassRefPtr<SharedBuffer> data, const URL
 {
 }
 
-PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
+RefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const URL& url, const String& mimeType, const String& textEncoding, const String& frameName, const ResourceResponse& response)
 {
     if (!data)
-        return 0;
+        return nullptr;
     if (response.isNull()) {
         unsigned dataSize = data->size();
-        return adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName,
+        return adoptRef(*new ArchiveResource(data, url, mimeType, textEncoding, frameName,
             ResourceResponse(url, mimeType, dataSize, textEncoding)));
     }
-    return adoptRef(new ArchiveResource(data, url, mimeType, textEncoding, frameName, response));
+    return adoptRef(*new ArchiveResource(data, url, mimeType, textEncoding, frameName, response));
 }
 
-PassRefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const URL& url, const ResourceResponse& response)
+RefPtr<ArchiveResource> ArchiveResource::create(PassRefPtr<SharedBuffer> data, const URL& url, const ResourceResponse& response)
 {
     return create(data, url, response.mimeType(), response.textEncodingName(), String(), response);
 }

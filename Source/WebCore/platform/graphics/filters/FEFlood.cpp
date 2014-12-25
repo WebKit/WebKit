@@ -36,9 +36,9 @@ FEFlood::FEFlood(Filter* filter, const Color& floodColor, float floodOpacity)
 {
 }
 
-PassRefPtr<FEFlood> FEFlood::create(Filter* filter, const Color& floodColor, float floodOpacity)
+Ref<FEFlood> FEFlood::create(Filter* filter, const Color& floodColor, float floodOpacity)
 {
-    return adoptRef(new FEFlood(filter, floodColor, floodOpacity));
+    return adoptRef(*new FEFlood(filter, floodColor, floodOpacity));
 }
 
 Color FEFlood::floodColor() const

@@ -54,9 +54,9 @@ AccessibilityListBoxOption::~AccessibilityListBoxOption()
 {
 }    
     
-PassRefPtr<AccessibilityListBoxOption> AccessibilityListBoxOption::create()
+Ref<AccessibilityListBoxOption> AccessibilityListBoxOption::create()
 {
-    return adoptRef(new AccessibilityListBoxOption());
+    return adoptRef(*new AccessibilityListBoxOption());
 }
     
 bool AccessibilityListBoxOption::isEnabled() const

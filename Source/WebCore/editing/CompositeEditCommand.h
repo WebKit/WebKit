@@ -40,7 +40,7 @@ class Text;
 
 class EditCommandComposition : public UndoStep {
 public:
-    static PassRefPtr<EditCommandComposition> create(Document&, const VisibleSelection&, const VisibleSelection&, EditAction);
+    static Ref<EditCommandComposition> create(Document&, const VisibleSelection&, const VisibleSelection&, EditAction);
 
     virtual void unapply() override;
     virtual void reapply() override;

@@ -34,7 +34,7 @@ namespace WebCore {
     
 class AccessibilitySpinButton final : public AccessibilityMockObject {
 public:
-    static PassRefPtr<AccessibilitySpinButton> create();
+    static Ref<AccessibilitySpinButton> create();
     virtual ~AccessibilitySpinButton();
     
     void setSpinButtonElement(SpinButtonElement* spinButton) { m_spinButtonElement = spinButton; }
@@ -58,7 +58,7 @@ private:
    
 class AccessibilitySpinButtonPart final : public AccessibilityMockObject {
 public:
-    static PassRefPtr<AccessibilitySpinButtonPart> create();
+    static Ref<AccessibilitySpinButtonPart> create();
     virtual ~AccessibilitySpinButtonPart() { }
     
     bool isIncrementor() const { return m_isIncrementor; }

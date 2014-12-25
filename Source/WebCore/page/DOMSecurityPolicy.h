@@ -39,9 +39,9 @@ class Frame;
 
 class DOMSecurityPolicy : public RefCounted<DOMSecurityPolicy>, public ContextDestructionObserver {
 public:
-    static PassRefPtr<DOMSecurityPolicy> create(ScriptExecutionContext* context)
+    static Ref<DOMSecurityPolicy> create(ScriptExecutionContext* context)
     {
-        return adoptRef(new DOMSecurityPolicy(context));
+        return adoptRef(*new DOMSecurityPolicy(context));
     }
     ~DOMSecurityPolicy();
 

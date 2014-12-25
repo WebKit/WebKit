@@ -34,7 +34,6 @@
 #include "BlobPart.h"
 #include "ScriptWrappable.h"
 #include "URLRegistry.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,25 +43,25 @@ class ScriptExecutionContext;
 
 class Blob : public ScriptWrappable, public URLRegistrable, public RefCounted<Blob> {
 public:
-    static PassRefPtr<Blob> create()
+    static Ref<Blob> create()
     {
-        return adoptRef(new Blob);
+        return adoptRef(*new Blob);
     }
 
-    static PassRefPtr<Blob> create(Vector<char> data, const String& contentType)
+    static Ref<Blob> create(Vector<char> data, const String& contentType)
     {
-        return adoptRef(new Blob(WTF::move(data), contentType));
+        return adoptRef(*new Blob(WTF::move(data), contentType));
     }
 
-    static PassRefPtr<Blob> create(Vector<BlobPart> blobParts, const String& contentType)
+    static Ref<Blob> create(Vector<BlobPart> blobParts, const String& contentType)
     {
-        return adoptRef(new Blob(WTF::move(blobParts), contentType));
+        return adoptRef(*new Blob(WTF::move(blobParts), contentType));
     }
 
-    static PassRefPtr<Blob> deserialize(const URL& srcURL, const String& type, long long size)
+    static Ref<Blob> deserialize(const URL& srcURL, const String& type, long long size)
     {
         ASSERT(Blob::isNormalizedContentType(type));
-        return adoptRef(new Blob(deserializationContructor, srcURL, type, size));
+        return adoptRef(*new Blob(deserializationContructor, srcURL, type, size));
     }
 
     virtual ~Blob();
@@ -84,9 +83,9 @@ public:
     // URLRegistrable
     virtual URLRegistry& registry() const override;
 
-    PassRefPtr<Blob> slice(long long start = 0, long long end = std::numeric_limits<long long>::max(), const String& contentType = String()) const
+    Ref<Blob> slice(long long start = 0, long long end = std::numeric_limits<long long>::max(), const String& contentType = String()) const
     {
-        return adoptRef(new Blob(m_internalURL, start, end, contentType));
+        return adoptRef(*new Blob(m_internalURL, start, end, contentType));
     }
 
 protected:

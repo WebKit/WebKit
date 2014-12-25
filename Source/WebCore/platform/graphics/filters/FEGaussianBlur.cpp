@@ -85,9 +85,9 @@ FEGaussianBlur::FEGaussianBlur(Filter* filter, float x, float y, EdgeModeType ed
 {
 }
 
-PassRefPtr<FEGaussianBlur> FEGaussianBlur::create(Filter* filter, float x, float y, EdgeModeType edgeMode)
+Ref<FEGaussianBlur> FEGaussianBlur::create(Filter* filter, float x, float y, EdgeModeType edgeMode)
 {
-    return adoptRef(new FEGaussianBlur(filter, x, y, edgeMode));
+    return adoptRef(*new FEGaussianBlur(filter, x, y, edgeMode));
 }
 
 float FEGaussianBlur::stdDeviationX() const

@@ -37,9 +37,9 @@ namespace WebCore {
 
 class CryptoKeyPair : public RefCounted<CryptoKeyPair> {
 public:
-    static PassRefPtr<CryptoKeyPair> create(PassRefPtr<CryptoKey> publicKey, PassRefPtr<CryptoKey> privateKey)
+    static Ref<CryptoKeyPair> create(PassRefPtr<CryptoKey> publicKey, PassRefPtr<CryptoKey> privateKey)
     {
-        return adoptRef(new CryptoKeyPair(publicKey, privateKey));
+        return adoptRef(*new CryptoKeyPair(publicKey, privateKey));
     }
     ~CryptoKeyPair();
 

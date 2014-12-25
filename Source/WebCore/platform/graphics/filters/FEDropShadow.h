@@ -28,7 +28,7 @@ namespace WebCore {
     
 class FEDropShadow : public FilterEffect {
 public:
-    static PassRefPtr<FEDropShadow> create(Filter*, float, float, float, float, const Color&, float);
+    static Ref<FEDropShadow> create(Filter*, float, float, float, float, const Color&, float);
 
     float stdDeviationX() const { return m_stdX; }
     void setStdDeviationX(float stdX) { m_stdX = stdX; }

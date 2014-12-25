@@ -44,9 +44,9 @@ AccessibilityARIAGridCell::~AccessibilityARIAGridCell()
 {
 }
 
-PassRefPtr<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(RenderObject* renderer)
+Ref<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityARIAGridCell(renderer));
+    return adoptRef(*new AccessibilityARIAGridCell(renderer));
 }
 
 AccessibilityTable* AccessibilityARIAGridCell::parentTable() const

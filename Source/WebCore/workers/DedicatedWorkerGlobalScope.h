@@ -42,7 +42,7 @@ namespace WebCore {
     class DedicatedWorkerGlobalScope : public WorkerGlobalScope {
     public:
         typedef WorkerGlobalScope Base;
-        static PassRefPtr<DedicatedWorkerGlobalScope> create(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, DedicatedWorkerThread&, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType, PassRefPtr<SecurityOrigin> topOrigin);
+        static Ref<DedicatedWorkerGlobalScope> create(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, DedicatedWorkerThread&, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType, PassRefPtr<SecurityOrigin> topOrigin);
         virtual ~DedicatedWorkerGlobalScope();
 
         virtual bool isDedicatedWorkerGlobalScope() const override { return true; }

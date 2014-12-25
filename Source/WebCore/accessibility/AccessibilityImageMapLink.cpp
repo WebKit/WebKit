@@ -49,9 +49,9 @@ AccessibilityImageMapLink::~AccessibilityImageMapLink()
 {
 }    
 
-PassRefPtr<AccessibilityImageMapLink> AccessibilityImageMapLink::create()
+Ref<AccessibilityImageMapLink> AccessibilityImageMapLink::create()
 {
-    return adoptRef(new AccessibilityImageMapLink());
+    return adoptRef(*new AccessibilityImageMapLink());
 }
 
 AccessibilityObject* AccessibilityImageMapLink::parentObject() const

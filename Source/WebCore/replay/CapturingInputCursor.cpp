@@ -49,9 +49,9 @@ CapturingInputCursor::~CapturingInputCursor()
     LOG(WebReplay, "%-30sDestroyed capture cursor=%p.\n", "[ReplayController]", this);
 }
 
-PassRefPtr<CapturingInputCursor> CapturingInputCursor::create(PassRefPtr<ReplaySessionSegment> segment)
+Ref<CapturingInputCursor> CapturingInputCursor::create(PassRefPtr<ReplaySessionSegment> segment)
 {
-    return adoptRef(new CapturingInputCursor(segment));
+    return adoptRef(*new CapturingInputCursor(segment));
 }
 
 void CapturingInputCursor::storeInput(std::unique_ptr<NondeterministicInputBase> input)

@@ -74,7 +74,7 @@ void RTCSessionDescriptionRequestImpl::requestSucceeded(PassRefPtr<RTCSessionDes
 void RTCSessionDescriptionRequestImpl::requestFailed(const String& error)
 {
     if (m_errorCallback)
-        m_errorCallback->handleEvent(DOMError::create(error).get());
+        m_errorCallback->handleEvent(DOMError::create(error).ptr());
 
     clear();
 }

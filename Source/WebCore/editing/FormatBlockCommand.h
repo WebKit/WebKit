@@ -40,9 +40,9 @@ class VisiblePosition;
 
 class FormatBlockCommand : public ApplyBlockElementCommand {
 public:
-    static PassRefPtr<FormatBlockCommand> create(Document& document, const QualifiedName& tagName)
+    static Ref<FormatBlockCommand> create(Document& document, const QualifiedName& tagName)
     {
-        return adoptRef(new FormatBlockCommand(document, tagName));
+        return adoptRef(*new FormatBlockCommand(document, tagName));
     }
     
     virtual bool preservesTypingStyle() const { return true; }

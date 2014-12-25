@@ -30,7 +30,7 @@ namespace WebCore {
 
 class FEFlood : public FilterEffect {
 public:
-    static PassRefPtr<FEFlood> create(Filter* filter, const Color&, float);
+    static Ref<FEFlood> create(Filter* filter, const Color&, float);
 
     Color floodColor() const;
     bool setFloodColor(const Color &);

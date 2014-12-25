@@ -50,9 +50,9 @@ MathMLInlineContainerElement::MathMLInlineContainerElement(const QualifiedName& 
 {
 }
 
-PassRefPtr<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLInlineContainerElement> MathMLInlineContainerElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new MathMLInlineContainerElement(tagName, document));
+    return adoptRef(*new MathMLInlineContainerElement(tagName, document));
 }
 
 void MathMLInlineContainerElement::childrenChanged(const ChildChange& change)

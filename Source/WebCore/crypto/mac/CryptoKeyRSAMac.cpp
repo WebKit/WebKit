@@ -267,7 +267,7 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, unsigned mo
         dispatch_async(dispatch_get_main_queue(), ^{
             RefPtr<CryptoKeyRSA> publicKey = CryptoKeyRSA::create(algorithm, CryptoKeyType::Public, ccPublicKey, true, usage);
             RefPtr<CryptoKeyRSA> privateKey = CryptoKeyRSA::create(algorithm, CryptoKeyType::Private, ccPrivateKey, extractable, usage);
-            (*localCallback)(*CryptoKeyPair::create(publicKey.release(), privateKey.release()));
+            (*localCallback)(CryptoKeyPair::create(publicKey.release(), privateKey.release()));
             delete localCallback;
         });
     });

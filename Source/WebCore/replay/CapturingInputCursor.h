@@ -42,7 +42,7 @@ class ReplaySessionSegment;
 class CapturingInputCursor final : public InputCursor {
     WTF_MAKE_NONCOPYABLE(CapturingInputCursor);
 public:
-    static PassRefPtr<CapturingInputCursor> create(PassRefPtr<ReplaySessionSegment>);
+    static Ref<CapturingInputCursor> create(PassRefPtr<ReplaySessionSegment>);
     virtual ~CapturingInputCursor();
 
     virtual bool isCapturing() const override { return true; }

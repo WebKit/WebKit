@@ -49,9 +49,9 @@ typedef int ExceptionCode;
 
 class FileReaderSync : public RefCounted<FileReaderSync> {
 public:
-    static PassRefPtr<FileReaderSync> create()
+    static Ref<FileReaderSync> create()
     {
-        return adoptRef(new FileReaderSync());
+        return adoptRef(*new FileReaderSync);
     }
 
     virtual ~FileReaderSync() { }

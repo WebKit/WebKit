@@ -35,7 +35,7 @@ class HTMLElement;
 
 class AccessibilityMenuListOption final : public AccessibilityMockObject {
 public:
-    static PassRefPtr<AccessibilityMenuListOption> create() { return adoptRef(new AccessibilityMenuListOption); }
+    static Ref<AccessibilityMenuListOption> create() { return adoptRef(*new AccessibilityMenuListOption); }
 
     void setElement(HTMLElement*);
 

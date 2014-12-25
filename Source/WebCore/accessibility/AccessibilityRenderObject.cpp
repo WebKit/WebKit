@@ -132,9 +132,9 @@ void AccessibilityRenderObject::init()
     AccessibilityNodeObject::init();
 }
 
-PassRefPtr<AccessibilityRenderObject> AccessibilityRenderObject::create(RenderObject* renderer)
+Ref<AccessibilityRenderObject> AccessibilityRenderObject::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityRenderObject(renderer));
+    return adoptRef(*new AccessibilityRenderObject(renderer));
 }
 
 void AccessibilityRenderObject::detach(AccessibilityDetachmentType detachmentType, AXObjectCache* cache)

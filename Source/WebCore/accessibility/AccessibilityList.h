@@ -35,7 +35,7 @@ namespace WebCore {
     
 class AccessibilityList final : public AccessibilityRenderObject {
 public:
-    static PassRefPtr<AccessibilityList> create(RenderObject*);
+    static Ref<AccessibilityList> create(RenderObject*);
     virtual ~AccessibilityList();
     
     bool isUnorderedList() const;

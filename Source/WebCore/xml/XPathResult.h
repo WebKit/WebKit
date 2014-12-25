@@ -53,7 +53,7 @@ namespace WebCore {
             FIRST_ORDERED_NODE_TYPE = 9
         };
         
-        static PassRefPtr<XPathResult> create(Document* document, const XPath::Value& value) { return adoptRef(new XPathResult(document, value)); }
+        static Ref<XPathResult> create(Document* document, const XPath::Value& value) { return adoptRef(*new XPathResult(document, value)); }
         ~XPathResult();
         
         void convertTo(unsigned short type, ExceptionCode&);

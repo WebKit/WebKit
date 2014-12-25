@@ -41,7 +41,7 @@ class DocumentFragment;
 
 class XSLTProcessor : public RefCounted<XSLTProcessor> {
 public:
-    static PassRefPtr<XSLTProcessor> create() { return adoptRef(new XSLTProcessor); }
+    static Ref<XSLTProcessor> create() { return adoptRef(*new XSLTProcessor); }
     ~XSLTProcessor();
 
     void setXSLStyleSheet(PassRefPtr<XSLStyleSheet> styleSheet) { m_stylesheet = styleSheet; }

@@ -42,7 +42,7 @@ class RenderElement;
 
 class CounterNode : public RefCounted<CounterNode> {
 public:
-    static PassRefPtr<CounterNode> create(RenderElement&, bool isReset, int value);
+    static Ref<CounterNode> create(RenderElement&, bool isReset, int value);
     ~CounterNode();
     bool actsAsReset() const { return m_hasResetType || !m_parent; }
     bool hasResetType() const { return m_hasResetType; }

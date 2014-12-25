@@ -34,9 +34,9 @@ class Text;
 
 class InsertIntoTextNodeCommand : public SimpleEditCommand {
 public:
-    static PassRefPtr<InsertIntoTextNodeCommand> create(PassRefPtr<Text> node, unsigned offset, const String& text)
+    static Ref<InsertIntoTextNodeCommand> create(PassRefPtr<Text> node, unsigned offset, const String& text)
     {
-        return adoptRef(new InsertIntoTextNodeCommand(node, offset, text));
+        return adoptRef(*new InsertIntoTextNodeCommand(node, offset, text));
     }
 
 private:

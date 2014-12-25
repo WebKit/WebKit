@@ -222,19 +222,19 @@ FrameView::FrameView(Frame& frame)
 #endif
 }
 
-PassRefPtr<FrameView> FrameView::create(Frame& frame)
+Ref<FrameView> FrameView::create(Frame& frame)
 {
-    RefPtr<FrameView> view = adoptRef(new FrameView(frame));
+    Ref<FrameView> view = adoptRef(*new FrameView(frame));
     view->show();
-    return view.release();
+    return view;
 }
 
-PassRefPtr<FrameView> FrameView::create(Frame& frame, const IntSize& initialSize)
+Ref<FrameView> FrameView::create(Frame& frame, const IntSize& initialSize)
 {
-    RefPtr<FrameView> view = adoptRef(new FrameView(frame));
+    Ref<FrameView> view = adoptRef(*new FrameView(frame));
     view->Widget::setFrameRect(IntRect(view->location(), initialSize));
     view->show();
-    return view.release();
+    return view;
 }
 
 FrameView::~FrameView()

@@ -29,9 +29,9 @@
 namespace WebCore {
 
 #if !PLATFORM(MAC)
-PassRefPtr<AudioHardwareListener> AudioHardwareListener::create(Client& client)
+Ref<AudioHardwareListener> AudioHardwareListener::create(Client& client)
 {
-    return adoptRef(new AudioHardwareListener(client));
+    return adoptRef(*new AudioHardwareListener(client));
 }
 #endif
 

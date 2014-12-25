@@ -39,7 +39,7 @@ class RenderTableSection;
 
 class AccessibilityTableColumn final : public AccessibilityMockObject {
 public:
-    static PassRefPtr<AccessibilityTableColumn> create();
+    static Ref<AccessibilityTableColumn> create();
     virtual ~AccessibilityTableColumn();
     
     AccessibilityObject* headerObject();

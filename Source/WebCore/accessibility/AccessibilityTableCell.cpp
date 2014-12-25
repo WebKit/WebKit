@@ -51,9 +51,9 @@ AccessibilityTableCell::~AccessibilityTableCell()
 {
 }
 
-PassRefPtr<AccessibilityTableCell> AccessibilityTableCell::create(RenderObject* renderer)
+Ref<AccessibilityTableCell> AccessibilityTableCell::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityTableCell(renderer));
+    return adoptRef(*new AccessibilityTableCell(renderer));
 }
 
 bool AccessibilityTableCell::computeAccessibilityIsIgnored() const

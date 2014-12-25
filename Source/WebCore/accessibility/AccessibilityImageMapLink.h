@@ -37,7 +37,7 @@ namespace WebCore {
     
 class AccessibilityImageMapLink final : public AccessibilityMockObject {
 public:
-    static PassRefPtr<AccessibilityImageMapLink> create();
+    static Ref<AccessibilityImageMapLink> create();
     virtual ~AccessibilityImageMapLink();
     
     void setHTMLAreaElement(HTMLAreaElement* element) { m_areaElement = element; }

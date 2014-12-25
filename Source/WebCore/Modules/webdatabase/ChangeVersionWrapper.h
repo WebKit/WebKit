@@ -39,7 +39,7 @@ class SQLError;
 
 class ChangeVersionWrapper : public SQLTransactionWrapper {
 public:
-    static PassRefPtr<ChangeVersionWrapper> create(const String& oldVersion, const String& newVersion) { return adoptRef(new ChangeVersionWrapper(oldVersion, newVersion)); }
+    static Ref<ChangeVersionWrapper> create(const String& oldVersion, const String& newVersion) { return adoptRef(*new ChangeVersionWrapper(oldVersion, newVersion)); }
 
     virtual bool performPreflight(SQLTransactionBackend*);
     virtual bool performPostflight(SQLTransactionBackend*);

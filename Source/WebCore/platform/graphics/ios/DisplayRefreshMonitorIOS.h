@@ -37,9 +37,9 @@ namespace WebCore {
 
 class DisplayRefreshMonitorIOS : public DisplayRefreshMonitor {
 public:
-    static PassRefPtr<DisplayRefreshMonitorIOS> create(PlatformDisplayID displayID)
+    static Ref<DisplayRefreshMonitorIOS> create(PlatformDisplayID displayID)
     {
-        return adoptRef(new DisplayRefreshMonitorIOS(displayID));
+        return adoptRef(*new DisplayRefreshMonitorIOS(displayID));
     }
     
     virtual ~DisplayRefreshMonitorIOS();

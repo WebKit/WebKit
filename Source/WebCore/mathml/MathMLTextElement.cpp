@@ -45,9 +45,9 @@ inline MathMLTextElement::MathMLTextElement(const QualifiedName& tagName, Docume
     setHasCustomStyleResolveCallbacks();
 }
 
-PassRefPtr<MathMLTextElement> MathMLTextElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLTextElement> MathMLTextElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new MathMLTextElement(tagName, document));
+    return adoptRef(*new MathMLTextElement(tagName, document));
 }
 
 void MathMLTextElement::didAttachRenderers()

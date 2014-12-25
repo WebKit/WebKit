@@ -30,7 +30,7 @@ class LightSource;
 
 class FEDiffuseLighting : public FELighting {
 public:
-    static PassRefPtr<FEDiffuseLighting> create(Filter*, const Color&, float, float,
+    static Ref<FEDiffuseLighting> create(Filter*, const Color&, float, float,
         float, float, PassRefPtr<LightSource>);
     virtual ~FEDiffuseLighting();
 

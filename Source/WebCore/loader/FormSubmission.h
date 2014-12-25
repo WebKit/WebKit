@@ -89,7 +89,7 @@ public:
         String m_acceptCharset;
     };
 
-    static PassRefPtr<FormSubmission> create(HTMLFormElement*, const Attributes&, PassRefPtr<Event> event, LockHistory, FormSubmissionTrigger);
+    static Ref<FormSubmission> create(HTMLFormElement*, const Attributes&, PassRefPtr<Event> event, LockHistory, FormSubmissionTrigger);
 
     void populateFrameLoadRequest(FrameLoadRequest&);
     

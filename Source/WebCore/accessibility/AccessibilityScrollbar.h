@@ -37,7 +37,7 @@ class Scrollbar;
 
 class AccessibilityScrollbar final : public AccessibilityMockObject {
 public:
-    static PassRefPtr<AccessibilityScrollbar> create(Scrollbar*);
+    static Ref<AccessibilityScrollbar> create(Scrollbar*);
 
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
     

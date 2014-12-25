@@ -58,7 +58,7 @@ class Widget;
     
 class AccessibilityRenderObject : public AccessibilityNodeObject {
 public:
-    static PassRefPtr<AccessibilityRenderObject> create(RenderObject*);
+    static Ref<AccessibilityRenderObject> create(RenderObject*);
     virtual ~AccessibilityRenderObject();
 
     virtual void init() override;

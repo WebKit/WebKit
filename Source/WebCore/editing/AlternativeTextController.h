@@ -62,9 +62,9 @@ struct AlternativeTextInfo {
 
 class DictationMarkerDetails : public DocumentMarkerDetails {
 public:
-    static PassRefPtr<DictationMarkerDetails> create(const String& originalText, uint64_t dictationContext)
+    static Ref<DictationMarkerDetails> create(const String& originalText, uint64_t dictationContext)
     {
-        return adoptRef(new DictationMarkerDetails(originalText, dictationContext));
+        return adoptRef(*new DictationMarkerDetails(originalText, dictationContext));
     }
     const String& originalText() const { return m_originalText; }
     uint64_t dictationContext() const { return m_dictationContext; }

@@ -33,9 +33,9 @@ FEMerge::FEMerge(Filter* filter)
 {
 }
 
-PassRefPtr<FEMerge> FEMerge::create(Filter* filter)
+Ref<FEMerge> FEMerge::create(Filter* filter)
 {
-    return adoptRef(new FEMerge(filter));
+    return adoptRef(*new FEMerge(filter));
 }
 
 void FEMerge::platformApplySoftware()

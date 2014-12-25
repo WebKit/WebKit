@@ -76,10 +76,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassRefPtr<EditCommandComposition> EditCommandComposition::create(Document& document,
+Ref<EditCommandComposition> EditCommandComposition::create(Document& document,
     const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction editAction)
 {
-    return adoptRef(new EditCommandComposition(document, startingSelection, endingSelection, editAction));
+    return adoptRef(*new EditCommandComposition(document, startingSelection, endingSelection, editAction));
 }
 
 EditCommandComposition::EditCommandComposition(Document& document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction editAction)

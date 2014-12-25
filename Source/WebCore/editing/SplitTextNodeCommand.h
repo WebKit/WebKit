@@ -34,9 +34,9 @@ class Text;
 
 class SplitTextNodeCommand : public SimpleEditCommand {
 public:
-    static PassRefPtr<SplitTextNodeCommand> create(PassRefPtr<Text> node, int offset)
+    static Ref<SplitTextNodeCommand> create(PassRefPtr<Text> node, int offset)
     {
-        return adoptRef(new SplitTextNodeCommand(node, offset));
+        return adoptRef(*new SplitTextNodeCommand(node, offset));
     }
 
 private:

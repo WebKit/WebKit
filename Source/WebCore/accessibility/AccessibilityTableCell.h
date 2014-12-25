@@ -37,7 +37,7 @@ class AccessibilityTable;
     
 class AccessibilityTableCell : public AccessibilityRenderObject {
 public:
-    static PassRefPtr<AccessibilityTableCell> create(RenderObject*);
+    static Ref<AccessibilityTableCell> create(RenderObject*);
     virtual ~AccessibilityTableCell();
     
     virtual bool isTableCell() const override final;

@@ -49,9 +49,9 @@ AccessibilityList::~AccessibilityList()
 {
 }
 
-PassRefPtr<AccessibilityList> AccessibilityList::create(RenderObject* renderer)
+Ref<AccessibilityList> AccessibilityList::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityList(renderer));
+    return adoptRef(*new AccessibilityList(renderer));
 }
 
 bool AccessibilityList::computeAccessibilityIsIgnored() const

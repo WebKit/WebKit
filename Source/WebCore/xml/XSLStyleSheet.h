@@ -31,7 +31,7 @@
 #include <libxml/parser.h>
 #include <libxslt/transform.h>
 
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -41,24 +41,24 @@ class XSLImportRule;
     
 class XSLStyleSheet final : public StyleSheet {
 public:
-    static PassRefPtr<XSLStyleSheet> create(XSLImportRule* parentImport, const String& originalURL, const URL& finalURL)
+    static Ref<XSLStyleSheet> create(XSLImportRule* parentImport, const String& originalURL, const URL& finalURL)
     {
-        return adoptRef(new XSLStyleSheet(parentImport, originalURL, finalURL));
+        return adoptRef(*new XSLStyleSheet(parentImport, originalURL, finalURL));
     }
-    static PassRefPtr<XSLStyleSheet> create(ProcessingInstruction* parentNode, const String& originalURL, const URL& finalURL)
+    static Ref<XSLStyleSheet> create(ProcessingInstruction* parentNode, const String& originalURL, const URL& finalURL)
     {
-        return adoptRef(new XSLStyleSheet(parentNode, originalURL, finalURL, false));
+        return adoptRef(*new XSLStyleSheet(parentNode, originalURL, finalURL, false));
     }
-    static PassRefPtr<XSLStyleSheet> createEmbedded(ProcessingInstruction* parentNode, const URL& finalURL)
+    static Ref<XSLStyleSheet> createEmbedded(ProcessingInstruction* parentNode, const URL& finalURL)
     {
-        return adoptRef(new XSLStyleSheet(parentNode, finalURL.string(), finalURL, true));
+        return adoptRef(*new XSLStyleSheet(parentNode, finalURL.string(), finalURL, true));
     }
 
     // Taking an arbitrary node is unsafe, because owner node pointer can become stale.
     // XSLTProcessor ensures that the stylesheet doesn't outlive its parent, in part by not exposing it to JavaScript.
-    static PassRefPtr<XSLStyleSheet> createForXSLTProcessor(Node* parentNode, const String& originalURL, const URL& finalURL)
+    static Ref<XSLStyleSheet> createForXSLTProcessor(Node* parentNode, const String& originalURL, const URL& finalURL)
     {
-        return adoptRef(new XSLStyleSheet(parentNode, originalURL, finalURL, false));
+        return adoptRef(*new XSLStyleSheet(parentNode, originalURL, finalURL, false));
     }
 
     virtual ~XSLStyleSheet();

@@ -26,7 +26,6 @@
 #ifndef DOMError_h
 #define DOMError_h
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -34,9 +33,9 @@ namespace WebCore {
 
 class DOMError : public RefCounted<DOMError> {
 public:
-    static PassRefPtr<DOMError> create(const String& name)
+    static Ref<DOMError> create(const String& name)
     {
-        return adoptRef(new DOMError(name));
+        return adoptRef(*new DOMError(name));
     }
     virtual ~DOMError() { }
 

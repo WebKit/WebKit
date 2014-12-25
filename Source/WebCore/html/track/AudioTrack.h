@@ -47,9 +47,9 @@ public:
 
 class AudioTrack final : public TrackBase, public AudioTrackPrivateClient {
 public:
-    static PassRefPtr<AudioTrack> create(AudioTrackClient* client, PassRefPtr<AudioTrackPrivate> trackPrivate)
+    static Ref<AudioTrack> create(AudioTrackClient* client, PassRefPtr<AudioTrackPrivate> trackPrivate)
     {
-        return adoptRef(new AudioTrack(client, trackPrivate));
+        return adoptRef(*new AudioTrack(client, trackPrivate));
     }
     virtual ~AudioTrack();
 

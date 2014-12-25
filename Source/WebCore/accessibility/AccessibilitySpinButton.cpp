@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-PassRefPtr<AccessibilitySpinButton> AccessibilitySpinButton::create()
+Ref<AccessibilitySpinButton> AccessibilitySpinButton::create()
 {
-    return adoptRef(new AccessibilitySpinButton);
+    return adoptRef(*new AccessibilitySpinButton);
 }
     
 AccessibilitySpinButton::AccessibilitySpinButton()
@@ -109,9 +109,9 @@ AccessibilitySpinButtonPart::AccessibilitySpinButtonPart()
 {
 }
     
-PassRefPtr<AccessibilitySpinButtonPart> AccessibilitySpinButtonPart::create()
+Ref<AccessibilitySpinButtonPart> AccessibilitySpinButtonPart::create()
 {
-    return adoptRef(new AccessibilitySpinButtonPart);
+    return adoptRef(*new AccessibilitySpinButtonPart);
 }
 
 LayoutRect AccessibilitySpinButtonPart::elementRect() const

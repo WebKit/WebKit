@@ -39,9 +39,9 @@
 
 namespace WebCore {
 
-PassRefPtr<DetailsMarkerControl> DetailsMarkerControl::create(Document& document)
+Ref<DetailsMarkerControl> DetailsMarkerControl::create(Document& document)
 {
-    return adoptRef(new DetailsMarkerControl(document));
+    return adoptRef(*new DetailsMarkerControl(document));
 }
 
 DetailsMarkerControl::DetailsMarkerControl(Document& document)

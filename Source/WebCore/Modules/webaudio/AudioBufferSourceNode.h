@@ -45,7 +45,7 @@ class AudioContext;
 
 class AudioBufferSourceNode : public AudioScheduledSourceNode {
 public:
-    static PassRefPtr<AudioBufferSourceNode> create(AudioContext*, float sampleRate);
+    static Ref<AudioBufferSourceNode> create(AudioContext*, float sampleRate);
 
     virtual ~AudioBufferSourceNode();
 

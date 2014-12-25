@@ -29,9 +29,9 @@ namespace WebCore {
 
 class DistantLightSource : public LightSource {
 public:
-    static PassRefPtr<DistantLightSource> create(float azimuth, float elevation)
+    static Ref<DistantLightSource> create(float azimuth, float elevation)
     {
-        return adoptRef(new DistantLightSource(azimuth, elevation));
+        return adoptRef(*new DistantLightSource(azimuth, elevation));
     }
 
     float azimuth() const { return m_azimuth; }

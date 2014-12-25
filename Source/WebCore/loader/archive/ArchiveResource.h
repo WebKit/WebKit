@@ -35,8 +35,8 @@ namespace WebCore {
 
 class ArchiveResource : public SubstituteResource {
 public:
-    static PassRefPtr<ArchiveResource> create(PassRefPtr<SharedBuffer>, const URL&, const ResourceResponse&);
-    WEBCORE_EXPORT static PassRefPtr<ArchiveResource> create(PassRefPtr<SharedBuffer>, const URL&,
+    static RefPtr<ArchiveResource> create(PassRefPtr<SharedBuffer>, const URL&, const ResourceResponse&);
+    WEBCORE_EXPORT static RefPtr<ArchiveResource> create(PassRefPtr<SharedBuffer>, const URL&,
         const String& mimeType, const String& textEncoding, const String& frameName,
         const ResourceResponse& = ResourceResponse());
 

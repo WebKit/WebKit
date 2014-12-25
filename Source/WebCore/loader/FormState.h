@@ -46,7 +46,7 @@ namespace WebCore {
 
     class FormState : public RefCounted<FormState> {
     public:
-        static PassRefPtr<FormState> create(PassRefPtr<HTMLFormElement>, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Document>, FormSubmissionTrigger);
+        static Ref<FormState> create(PassRefPtr<HTMLFormElement>, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Document>, FormSubmissionTrigger);
 
         HTMLFormElement* form() const { return m_form.get(); }
         const StringPairVector& textFieldValues() const { return m_textFieldValues; }

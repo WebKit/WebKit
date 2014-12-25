@@ -70,29 +70,29 @@ public:
     enum ShouldExtractMatchingStyle { ExtractMatchingStyle, DoNotExtractMatchingStyle };
     static float NoFontDelta;
 
-    static PassRefPtr<EditingStyle> create()
+    static Ref<EditingStyle> create()
     {
-        return adoptRef(new EditingStyle());
+        return adoptRef(*new EditingStyle);
     }
 
-    static PassRefPtr<EditingStyle> create(Node* node, PropertiesToInclude propertiesToInclude = OnlyEditingInheritableProperties)
+    static Ref<EditingStyle> create(Node* node, PropertiesToInclude propertiesToInclude = OnlyEditingInheritableProperties)
     {
-        return adoptRef(new EditingStyle(node, propertiesToInclude));
+        return adoptRef(*new EditingStyle(node, propertiesToInclude));
     }
 
-    static PassRefPtr<EditingStyle> create(const Position& position, PropertiesToInclude propertiesToInclude = OnlyEditingInheritableProperties)
+    static Ref<EditingStyle> create(const Position& position, PropertiesToInclude propertiesToInclude = OnlyEditingInheritableProperties)
     {
-        return adoptRef(new EditingStyle(position, propertiesToInclude));
+        return adoptRef(*new EditingStyle(position, propertiesToInclude));
     }
 
-    static PassRefPtr<EditingStyle> create(const StyleProperties* style)
+    static Ref<EditingStyle> create(const StyleProperties* style)
     {
-        return adoptRef(new EditingStyle(style));
+        return adoptRef(*new EditingStyle(style));
     }
 
-    static PassRefPtr<EditingStyle> create(CSSPropertyID propertyID, const String& value)
+    static Ref<EditingStyle> create(CSSPropertyID propertyID, const String& value)
     {
-        return adoptRef(new EditingStyle(propertyID, value));
+        return adoptRef(*new EditingStyle(propertyID, value));
     }
 
     WEBCORE_EXPORT ~EditingStyle();

@@ -31,7 +31,7 @@
 
 #include "DOMWindowProperty.h"
 #include "ScriptWrappable.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -42,7 +42,7 @@ class BarProp : public ScriptWrappable, public RefCounted<BarProp>, public DOMWi
 public:
     enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
 
-    static PassRefPtr<BarProp> create(Frame* frame, Type type) { return adoptRef(new BarProp(frame, type)); }
+    static Ref<BarProp> create(Frame* frame, Type type) { return adoptRef(*new BarProp(frame, type)); }
 
     Type type() const;
     bool visible() const;

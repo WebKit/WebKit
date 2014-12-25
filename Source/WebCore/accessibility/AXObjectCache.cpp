@@ -266,7 +266,7 @@ bool nodeHasRole(Node* node, const String& role)
     return SpaceSplitString(roleValue, true).contains(role);
 }
 
-static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer)
+static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
 {
     // FIXME: How could renderer->node() ever not be an Element?
     Node* node = renderer->node();
@@ -330,7 +330,7 @@ static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer
     return AccessibilityRenderObject::create(renderer);
 }
 
-static PassRefPtr<AccessibilityObject> createFromNode(Node* node)
+static Ref<AccessibilityObject> createFromNode(Node* node)
 {
     return AccessibilityNodeObject::create(node);
 }

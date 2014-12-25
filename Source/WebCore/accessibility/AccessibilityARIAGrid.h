@@ -39,7 +39,7 @@ class AccessibilityTableHeaderContainer;
 
 class AccessibilityARIAGrid final : public AccessibilityTable {
 public:
-    static PassRefPtr<AccessibilityARIAGrid> create(RenderObject*);
+    static Ref<AccessibilityARIAGrid> create(RenderObject*);
     virtual ~AccessibilityARIAGrid();
     
     virtual void addChildren() override;

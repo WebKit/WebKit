@@ -40,7 +40,7 @@ namespace WebCore {
 class AccessibilityMediaControl : public AccessibilityRenderObject {
 
 public:
-    static PassRefPtr<AccessibilityObject> create(RenderObject*);
+    static Ref<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaControl() { }
 
     virtual AccessibilityRole roleValue() const override;
@@ -63,7 +63,7 @@ private:
 class AccessibilityMediaTimeline final : public AccessibilitySlider {
 
 public:
-    static PassRefPtr<AccessibilityObject> create(RenderObject*);
+    static Ref<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaTimeline() { }
 
     virtual String helpText() const override;
@@ -80,7 +80,7 @@ private:
 class AccessibilityMediaControlsContainer final : public AccessibilityMediaControl {
 
 public:
-    static PassRefPtr<AccessibilityObject> create(RenderObject*);
+    static Ref<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaControlsContainer() { }
 
     virtual AccessibilityRole roleValue() const override { return ToolbarRole; }
@@ -99,7 +99,7 @@ private:
 class AccessibilityMediaTimeDisplay final : public AccessibilityMediaControl {
 
 public:
-    static PassRefPtr<AccessibilityObject> create(RenderObject*);
+    static Ref<AccessibilityObject> create(RenderObject*);
     virtual ~AccessibilityMediaTimeDisplay() { }
 
     virtual AccessibilityRole roleValue() const override { return ApplicationTimerRole; }

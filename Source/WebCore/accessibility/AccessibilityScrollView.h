@@ -36,7 +36,7 @@ class ScrollView;
     
 class AccessibilityScrollView final : public AccessibilityObject {
 public:
-    static PassRefPtr<AccessibilityScrollView> create(ScrollView*);    
+    static Ref<AccessibilityScrollView> create(ScrollView*);
     virtual AccessibilityRole roleValue() const override { return ScrollAreaRole; }
     ScrollView* scrollView() const { return m_scrollView; }
 

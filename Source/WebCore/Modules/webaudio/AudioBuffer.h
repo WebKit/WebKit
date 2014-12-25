@@ -43,10 +43,10 @@ typedef int ExceptionCode;
 
 class AudioBuffer : public RefCounted<AudioBuffer> {
 public:   
-    static PassRefPtr<AudioBuffer> create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
+    static RefPtr<AudioBuffer> create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
 
     // Returns 0 if data is not a valid audio file.
-    static PassRefPtr<AudioBuffer> createFromAudioFileData(const void* data, size_t dataSize, bool mixToMono, float sampleRate);
+    static RefPtr<AudioBuffer> createFromAudioFileData(const void* data, size_t dataSize, bool mixToMono, float sampleRate);
 
     // Format
     size_t length() const { return m_length; }

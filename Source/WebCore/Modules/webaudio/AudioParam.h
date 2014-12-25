@@ -47,9 +47,9 @@ public:
     static const double DefaultSmoothingConstant;
     static const double SnapThreshold;
 
-    static PassRefPtr<AudioParam> create(AudioContext* context, const String& name, double defaultValue, double minValue, double maxValue, unsigned units = 0)
+    static Ref<AudioParam> create(AudioContext* context, const String& name, double defaultValue, double minValue, double maxValue, unsigned units = 0)
     {
-        return adoptRef(new AudioParam(context, name, defaultValue, minValue, maxValue, units));
+        return adoptRef(*new AudioParam(context, name, defaultValue, minValue, maxValue, units));
     }
 
     // AudioSummingJunction

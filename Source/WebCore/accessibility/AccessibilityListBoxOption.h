@@ -42,7 +42,7 @@ class HTMLSelectElement;
     
 class AccessibilityListBoxOption final : public AccessibilityObject {
 public:
-    static PassRefPtr<AccessibilityListBoxOption> create();
+    static Ref<AccessibilityListBoxOption> create();
     virtual ~AccessibilityListBoxOption();
     
     void setHTMLElement(HTMLElement* element) { m_optionElement = element; }

@@ -2127,6 +2127,12 @@ private:
         return toJS(m_exec, jsCast<JSDOMGlobalObject*>(m_globalObject), nativeObj);
     }
 
+    template<class T>
+    JSValue getJSValue(T& nativeObj)
+    {
+        return getJSValue(&nativeObj);
+    }
+
     JSValue readTerminal()
     {
         SerializationTag tag = readTag();

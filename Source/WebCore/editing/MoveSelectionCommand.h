@@ -34,9 +34,9 @@ class DocumentFragment;
 
 class MoveSelectionCommand : public CompositeEditCommand {
 public:
-    static PassRefPtr<MoveSelectionCommand> create(PassRefPtr<DocumentFragment> fragment, const Position& position, bool smartInsert = false, bool smartDelete = false)
+    static Ref<MoveSelectionCommand> create(PassRefPtr<DocumentFragment> fragment, const Position& position, bool smartInsert = false, bool smartDelete = false)
     {
-        return adoptRef(new MoveSelectionCommand(fragment, position, smartInsert, smartDelete));
+        return adoptRef(*new MoveSelectionCommand(fragment, position, smartInsert, smartDelete));
     }
 
 private:

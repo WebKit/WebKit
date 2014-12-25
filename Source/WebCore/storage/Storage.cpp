@@ -38,9 +38,9 @@
 
 namespace WebCore {
 
-PassRefPtr<Storage> Storage::create(Frame* frame, PassRefPtr<StorageArea> storageArea)
+Ref<Storage> Storage::create(Frame* frame, PassRefPtr<StorageArea> storageArea)
 {
-    return adoptRef(new Storage(frame, storageArea));
+    return adoptRef(*new Storage(frame, storageArea));
 }
 
 Storage::Storage(Frame* frame, PassRefPtr<StorageArea> storageArea)

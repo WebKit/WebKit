@@ -37,9 +37,9 @@ FEOffset::FEOffset(Filter* filter, float dx, float dy)
 {
 }
 
-PassRefPtr<FEOffset> FEOffset::create(Filter* filter, float dx, float dy)
+Ref<FEOffset> FEOffset::create(Filter* filter, float dx, float dy)
 {
-    return adoptRef(new FEOffset(filter, dx, dy));
+    return adoptRef(*new FEOffset(filter, dx, dy));
 }
 
 float FEOffset::dx() const

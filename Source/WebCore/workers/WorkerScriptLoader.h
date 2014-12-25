@@ -49,9 +49,9 @@ namespace WebCore {
     class WorkerScriptLoader : public RefCounted<WorkerScriptLoader>, public ThreadableLoaderClient {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        static PassRefPtr<WorkerScriptLoader> create()
+        static Ref<WorkerScriptLoader> create()
         {
-            return adoptRef(new WorkerScriptLoader());
+            return adoptRef(*new WorkerScriptLoader);
         }
 
         void loadSynchronously(ScriptExecutionContext*, const URL&, CrossOriginRequestPolicy);

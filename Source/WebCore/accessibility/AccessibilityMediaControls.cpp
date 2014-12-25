@@ -53,7 +53,7 @@ AccessibilityMediaControl::AccessibilityMediaControl(RenderObject* renderer)
 {
 }
 
-PassRefPtr<AccessibilityObject> AccessibilityMediaControl::create(RenderObject* renderer)
+Ref<AccessibilityObject> AccessibilityMediaControl::create(RenderObject* renderer)
 {
     ASSERT(renderer->node());
 
@@ -69,7 +69,7 @@ PassRefPtr<AccessibilityObject> AccessibilityMediaControl::create(RenderObject* 
         return AccessibilityMediaControlsContainer::create(renderer);
 
     default:
-        return adoptRef(new AccessibilityMediaControl(renderer));
+        return adoptRef(*new AccessibilityMediaControl(renderer));
     }
 }
 
@@ -222,9 +222,9 @@ AccessibilityMediaControlsContainer::AccessibilityMediaControlsContainer(RenderO
 {
 }
 
-PassRefPtr<AccessibilityObject> AccessibilityMediaControlsContainer::create(RenderObject* renderer)
+Ref<AccessibilityObject> AccessibilityMediaControlsContainer::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityMediaControlsContainer(renderer));
+    return adoptRef(*new AccessibilityMediaControlsContainer(renderer));
 }
 
 String AccessibilityMediaControlsContainer::accessibilityDescription() const
@@ -266,9 +266,9 @@ AccessibilityMediaTimeline::AccessibilityMediaTimeline(RenderObject* renderer)
 {
 }
 
-PassRefPtr<AccessibilityObject> AccessibilityMediaTimeline::create(RenderObject* renderer)
+Ref<AccessibilityObject> AccessibilityMediaTimeline::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityMediaTimeline(renderer));
+    return adoptRef(*new AccessibilityMediaTimeline(renderer));
 }
 
 String AccessibilityMediaTimeline::valueDescription() const
@@ -296,9 +296,9 @@ AccessibilityMediaTimeDisplay::AccessibilityMediaTimeDisplay(RenderObject* rende
 {
 }
 
-PassRefPtr<AccessibilityObject> AccessibilityMediaTimeDisplay::create(RenderObject* renderer)
+Ref<AccessibilityObject> AccessibilityMediaTimeDisplay::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityMediaTimeDisplay(renderer));
+    return adoptRef(*new AccessibilityMediaTimeDisplay(renderer));
 }
 
 bool AccessibilityMediaTimeDisplay::computeAccessibilityIsIgnored() const

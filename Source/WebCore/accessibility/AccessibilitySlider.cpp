@@ -45,9 +45,9 @@ AccessibilitySlider::AccessibilitySlider(RenderObject* renderer)
 {
 }
 
-PassRefPtr<AccessibilitySlider> AccessibilitySlider::create(RenderObject* renderer)
+Ref<AccessibilitySlider> AccessibilitySlider::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilitySlider(renderer));
+    return adoptRef(*new AccessibilitySlider(renderer));
 }
 
 AccessibilityOrientation AccessibilitySlider::orientation() const
@@ -146,9 +146,9 @@ AccessibilitySliderThumb::AccessibilitySliderThumb()
 {
 }
 
-PassRefPtr<AccessibilitySliderThumb> AccessibilitySliderThumb::create()
+Ref<AccessibilitySliderThumb> AccessibilitySliderThumb::create()
 {
-    return adoptRef(new AccessibilitySliderThumb());
+    return adoptRef(*new AccessibilitySliderThumb());
 }
     
 LayoutRect AccessibilitySliderThumb::elementRect() const

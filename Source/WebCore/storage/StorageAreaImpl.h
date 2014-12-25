@@ -41,7 +41,7 @@ class StorageAreaSync;
 
 class StorageAreaImpl : public StorageArea {
 public:
-    static PassRefPtr<StorageAreaImpl> create(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
+    static Ref<StorageAreaImpl> create(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
     virtual ~StorageAreaImpl();
 
     virtual unsigned length() override;

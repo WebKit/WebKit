@@ -37,7 +37,7 @@ class AccessibilityTable;
 
 class AccessibilityTableRow : public AccessibilityRenderObject {
 public:
-    static PassRefPtr<AccessibilityTableRow> create(RenderObject*);
+    static Ref<AccessibilityTableRow> create(RenderObject*);
     virtual ~AccessibilityTableRow();
 
     // retrieves the "row" header (a th tag in the rightmost column)

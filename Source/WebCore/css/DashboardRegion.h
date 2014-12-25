@@ -29,7 +29,7 @@ namespace WebCore {
 
 class DashboardRegion : public RectBase, public RefCounted<DashboardRegion> {
 public:
-    static PassRefPtr<DashboardRegion> create() { return adoptRef(new DashboardRegion); }
+    static Ref<DashboardRegion> create() { return adoptRef(*new DashboardRegion); }
     bool equals(const DashboardRegion& other) const
     {
         return m_label == other.m_label && m_geometryType == other.m_geometryType

@@ -37,14 +37,14 @@ namespace WebCore {
 
 class FileList : public ScriptWrappable, public RefCounted<FileList> {
 public:
-    static PassRefPtr<FileList> create()
+    static Ref<FileList> create()
     {
-        return adoptRef(new FileList);
+        return adoptRef(*new FileList);
     }
 
-    static PassRefPtr<FileList> create(Vector<RefPtr<File>>&& files)
+    static Ref<FileList> create(Vector<RefPtr<File>>&& files)
     {
-        return adoptRef(new FileList(WTF::move(files)));
+        return adoptRef(*new FileList(WTF::move(files)));
     }
 
     unsigned length() const { return m_files.size(); }

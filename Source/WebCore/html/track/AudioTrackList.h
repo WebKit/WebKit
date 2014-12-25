@@ -36,9 +36,9 @@ class AudioTrack;
 
 class AudioTrackList final : public TrackListBase {
 public:
-    static PassRefPtr<AudioTrackList> create(HTMLMediaElement* owner, ScriptExecutionContext* context)
+    static Ref<AudioTrackList> create(HTMLMediaElement* owner, ScriptExecutionContext* context)
     {
-        return adoptRef(new AudioTrackList(owner, context));
+        return adoptRef(*new AudioTrackList(owner, context));
     }
     virtual ~AudioTrackList();
 

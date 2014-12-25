@@ -34,7 +34,7 @@ namespace WebCore {
     
 class MathMLTextElement final : public MathMLElement {
 public:
-    static PassRefPtr<MathMLTextElement> create(const QualifiedName& tagName, Document&);
+    static Ref<MathMLTextElement> create(const QualifiedName& tagName, Document&);
     virtual void didAttachRenderers() override;
 
     virtual bool isPresentationMathML() const override { return true; }

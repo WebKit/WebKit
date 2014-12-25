@@ -43,9 +43,9 @@ public:
         EncodingFromParentFrame
     };
 
-    static PassRefPtr<TextResourceDecoder> create(const String& mimeType, const TextEncoding& defaultEncoding = TextEncoding(), bool usesEncodingDetector = false)
+    static Ref<TextResourceDecoder> create(const String& mimeType, const TextEncoding& defaultEncoding = TextEncoding(), bool usesEncodingDetector = false)
     {
-        return adoptRef(new TextResourceDecoder(mimeType, defaultEncoding, usesEncodingDetector));
+        return adoptRef(*new TextResourceDecoder(mimeType, defaultEncoding, usesEncodingDetector));
     }
     WEBCORE_EXPORT ~TextResourceDecoder();
 

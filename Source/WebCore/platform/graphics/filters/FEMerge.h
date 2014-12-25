@@ -30,7 +30,7 @@ namespace WebCore {
 
 class FEMerge : public FilterEffect {
 public:
-    static PassRefPtr<FEMerge> create(Filter*);
+    static Ref<FEMerge> create(Filter*);
 
     virtual void platformApplySoftware();
 #if ENABLE(OPENCL)

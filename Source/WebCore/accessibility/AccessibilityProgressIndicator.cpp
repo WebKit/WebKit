@@ -38,9 +38,9 @@ AccessibilityProgressIndicator::AccessibilityProgressIndicator(RenderProgress* r
 {
 }
 
-PassRefPtr<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(RenderProgress* renderer)
+Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(RenderProgress* renderer)
 {
-    return adoptRef(new AccessibilityProgressIndicator(renderer));
+    return adoptRef(*new AccessibilityProgressIndicator(renderer));
 }
     
 #if ENABLE(METER_ELEMENT)
@@ -49,9 +49,9 @@ AccessibilityProgressIndicator::AccessibilityProgressIndicator(RenderMeter* rend
 {
 }
 
-PassRefPtr<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(RenderMeter* renderer)
+Ref<AccessibilityProgressIndicator> AccessibilityProgressIndicator::create(RenderMeter* renderer)
 {
-    return adoptRef(new AccessibilityProgressIndicator(renderer));
+    return adoptRef(*new AccessibilityProgressIndicator(renderer));
 }
 #endif
 

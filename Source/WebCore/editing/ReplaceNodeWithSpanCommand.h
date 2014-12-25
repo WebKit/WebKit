@@ -40,9 +40,9 @@ class HTMLElement;
 // More accurately, this is ReplaceElementWithSpanPreservingChildrenAndAttributesCommand
 class ReplaceNodeWithSpanCommand : public SimpleEditCommand {
 public:
-    static PassRefPtr<ReplaceNodeWithSpanCommand> create(PassRefPtr<HTMLElement> element)
+    static Ref<ReplaceNodeWithSpanCommand> create(PassRefPtr<HTMLElement> element)
     {
-        return adoptRef(new ReplaceNodeWithSpanCommand(element));
+        return adoptRef(*new ReplaceNodeWithSpanCommand(element));
     }
 
     HTMLElement* spanElement() { return m_spanElement.get(); }

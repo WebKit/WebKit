@@ -37,9 +37,9 @@ FileChooser::FileChooser(FileChooserClient* client, const FileChooserSettings& s
 {
 }
 
-PassRefPtr<FileChooser> FileChooser::create(FileChooserClient* client, const FileChooserSettings& settings)
+Ref<FileChooser> FileChooser::create(FileChooserClient* client, const FileChooserSettings& settings)
 {
-    return adoptRef(new FileChooser(client, settings));
+    return adoptRef(*new FileChooser(client, settings));
 }
 
 FileChooser::~FileChooser()

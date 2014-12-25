@@ -1,3 +1,538 @@
+2014-12-24  Andreas Kling  <akling@apple.com>
+
+        Convert more creator functions to return Ref instead of PassRefPtr.
+        <https://webkit.org/b/139939>
+
+        Reviewed by Darin Adler.
+
+        Convert a slew of functions to return Ref<T> instead of PassRefPtr<T>
+        where the result is guaranteed to never be null.
+
+        * Modules/geolocation/Coordinates.h:
+        (WebCore::Coordinates::create):
+        (WebCore::Coordinates::isolatedCopy):
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::isolatedWorld):
+        * Modules/webaudio/AnalyserNode.h:
+        (WebCore::AnalyserNode::create):
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::create):
+        (WebCore::AudioBuffer::createFromAudioFileData):
+        * Modules/webaudio/AudioBuffer.h:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::create):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::create):
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioListener.h:
+        (WebCore::AudioListener::create):
+        * Modules/webaudio/AudioParam.h:
+        (WebCore::AudioParam::create):
+        * Modules/webaudio/BiquadFilterNode.h:
+        (WebCore::BiquadFilterNode::create):
+        * Modules/webaudio/ConvolverNode.h:
+        (WebCore::ConvolverNode::create):
+        * Modules/webaudio/DelayNode.h:
+        (WebCore::DelayNode::create):
+        * Modules/webaudio/DynamicsCompressorNode.h:
+        (WebCore::DynamicsCompressorNode::create):
+        * Modules/webdatabase/ChangeVersionWrapper.h:
+        (WebCore::ChangeVersionWrapper::create):
+        * Modules/webdatabase/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::create):
+        * Modules/webdatabase/DatabaseAuthorizer.h:
+        * Modules/webdatabase/DatabaseThread.h:
+        (WebCore::DatabaseThread::create):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::createFromRenderer):
+        (WebCore::createFromNode):
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::create):
+        * accessibility/AccessibilityARIAGrid.h:
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::create):
+        * accessibility/AccessibilityARIAGridCell.h:
+        * accessibility/AccessibilityARIAGridRow.cpp:
+        (WebCore::AccessibilityARIAGridRow::create):
+        * accessibility/AccessibilityARIAGridRow.h:
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::create):
+        * accessibility/AccessibilityImageMapLink.h:
+        * accessibility/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::create):
+        * accessibility/AccessibilityList.h:
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::create):
+        * accessibility/AccessibilityListBox.h:
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::create):
+        * accessibility/AccessibilityListBoxOption.h:
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControl::create):
+        (WebCore::AccessibilityMediaControlsContainer::create):
+        (WebCore::AccessibilityMediaTimeline::create):
+        (WebCore::AccessibilityMediaTimeDisplay::create):
+        * accessibility/AccessibilityMediaControls.h:
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::create):
+        * accessibility/AccessibilityMenuList.h:
+        * accessibility/AccessibilityMenuListOption.h:
+        * accessibility/AccessibilityMenuListPopup.h:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::create):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        (WebCore::AccessibilityProgressIndicator::create):
+        * accessibility/AccessibilityProgressIndicator.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::create):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilitySVGRoot.cpp:
+        (WebCore::AccessibilitySVGRoot::create):
+        * accessibility/AccessibilitySVGRoot.h:
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::create):
+        * accessibility/AccessibilityScrollView.h:
+        * accessibility/AccessibilityScrollbar.cpp:
+        (WebCore::AccessibilityScrollbar::create):
+        * accessibility/AccessibilityScrollbar.h:
+        * accessibility/AccessibilitySearchFieldButtons.cpp:
+        (WebCore::AccessibilitySearchFieldCancelButton::create):
+        * accessibility/AccessibilitySearchFieldButtons.h:
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::create):
+        (WebCore::AccessibilitySliderThumb::create):
+        * accessibility/AccessibilitySlider.h:
+        * accessibility/AccessibilitySpinButton.cpp:
+        (WebCore::AccessibilitySpinButton::create):
+        (WebCore::AccessibilitySpinButtonPart::create):
+        * accessibility/AccessibilitySpinButton.h:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::create):
+        * accessibility/AccessibilityTable.h:
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::create):
+        * accessibility/AccessibilityTableCell.h:
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::create):
+        * accessibility/AccessibilityTableColumn.h:
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::create):
+        * accessibility/AccessibilityTableHeaderContainer.h:
+        * accessibility/AccessibilityTableRow.cpp:
+        (WebCore::AccessibilityTableRow::create):
+        * accessibility/AccessibilityTableRow.h:
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::create):
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::create):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::getJSValue):
+        * bindings/objc/DOMCustomXPathNSResolver.h:
+        (WebCore::DOMCustomXPathNSResolver::create):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallbackHeader):
+        * bridge/c/c_instance.h:
+        (JSC::Bindings::CInstance::create):
+        * crypto/CryptoKeyPair.h:
+        (WebCore::CryptoKeyPair::create):
+        * crypto/keys/CryptoKeyAES.h:
+        * crypto/keys/CryptoKeyHMAC.h:
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::generatePair):
+        * css/DOMWindowCSS.cpp:
+        (WebCore::DOMWindowCSS::create):
+        * css/DOMWindowCSS.h:
+        * css/DashboardRegion.h:
+        (WebCore::DashboardRegion::create):
+        * css/FontLoader.h:
+        * dom/DOMError.h:
+        (WebCore::DOMError::create):
+        * dom/DOMStringList.h:
+        (WebCore::DOMStringList::create):
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::createForCopyAndPaste):
+        (WebCore::DataTransfer::createForDragAndDrop):
+        * dom/DataTransfer.h:
+        * dom/DeviceMotionData.cpp:
+        (WebCore::DeviceMotionData::Acceleration::create):
+        (WebCore::DeviceMotionData::RotationRate::create):
+        (WebCore::DeviceMotionData::create):
+        * dom/DeviceMotionData.h:
+        * dom/DeviceOrientationData.cpp:
+        (WebCore::DeviceOrientationData::create):
+        * dom/DeviceOrientationData.h:
+        * dom/DocumentMarker.cpp:
+        (WebCore::DocumentMarkerDescription::create):
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AutocorrectionAlternativeDetails::create):
+        (WebCore::DictationAlternativeDetails::create):
+        * editing/AlternativeTextController.h:
+        (WebCore::DictationMarkerDetails::create):
+        * editing/AppendNodeCommand.h:
+        (WebCore::AppendNodeCommand::create):
+        * editing/ApplyStyleCommand.h:
+        (WebCore::ApplyStyleCommand::create):
+        * editing/BreakBlockquoteCommand.h:
+        (WebCore::BreakBlockquoteCommand::create):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::create):
+        * editing/CompositeEditCommand.h:
+        * editing/CreateLinkCommand.h:
+        (WebCore::CreateLinkCommand::create):
+        * editing/DeleteFromTextNodeCommand.h:
+        (WebCore::DeleteFromTextNodeCommand::create):
+        * editing/DeleteSelectionCommand.h:
+        (WebCore::DeleteSelectionCommand::create):
+        * editing/DictationCommand.cpp:
+        (WebCore::DictationMarkerSupplier::create):
+        * editing/DictationCommand.h:
+        (WebCore::DictationCommand::create):
+        * editing/EditingStyle.h:
+        (WebCore::EditingStyle::create):
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::applyParagraphStyle):
+        * editing/FormatBlockCommand.h:
+        (WebCore::FormatBlockCommand::create):
+        * editing/IndentOutdentCommand.h:
+        (WebCore::IndentOutdentCommand::create):
+        * editing/InsertIntoTextNodeCommand.h:
+        (WebCore::InsertIntoTextNodeCommand::create):
+        * editing/InsertLineBreakCommand.h:
+        (WebCore::InsertLineBreakCommand::create):
+        * editing/InsertNodeBeforeCommand.h:
+        (WebCore::InsertNodeBeforeCommand::create):
+        * editing/InsertParagraphSeparatorCommand.h:
+        (WebCore::InsertParagraphSeparatorCommand::create):
+        * editing/InsertTextCommand.h:
+        (WebCore::InsertTextCommand::create):
+        (WebCore::InsertTextCommand::createWithMarkerSupplier):
+        * editing/MergeIdenticalElementsCommand.h:
+        (WebCore::MergeIdenticalElementsCommand::create):
+        * editing/ModifySelectionListLevel.h:
+        (WebCore::IncreaseSelectionListLevelCommand::create):
+        (WebCore::DecreaseSelectionListLevelCommand::create):
+        * editing/MoveSelectionCommand.h:
+        (WebCore::MoveSelectionCommand::create):
+        * editing/RemoveCSSPropertyCommand.h:
+        (WebCore::RemoveCSSPropertyCommand::create):
+        * editing/RemoveFormatCommand.h:
+        (WebCore::RemoveFormatCommand::create):
+        * editing/RemoveNodeCommand.h:
+        (WebCore::RemoveNodeCommand::create):
+        * editing/RemoveNodePreservingChildrenCommand.h:
+        (WebCore::RemoveNodePreservingChildrenCommand::create):
+        * editing/ReplaceNodeWithSpanCommand.h:
+        (WebCore::ReplaceNodeWithSpanCommand::create):
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::ReplaceSelectionCommand::create):
+        * editing/SetNodeAttributeCommand.h:
+        (WebCore::SetNodeAttributeCommand::create):
+        * editing/SetSelectionCommand.h:
+        (WebCore::SetSelectionCommand::create):
+        * editing/SimplifyMarkupCommand.h:
+        (WebCore::SimplifyMarkupCommand::create):
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellCheckRequest::create):
+        * editing/SpellChecker.h:
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionRecordUndoCommand::create):
+        * editing/SpellingCorrectionCommand.h:
+        (WebCore::SpellingCorrectionCommand::create):
+        * editing/SplitElementCommand.h:
+        (WebCore::SplitElementCommand::create):
+        * editing/SplitTextNodeCommand.h:
+        (WebCore::SplitTextNodeCommand::create):
+        * editing/SplitTextNodeContainingElementCommand.h:
+        (WebCore::SplitTextNodeContainingElementCommand::create):
+        * editing/TypingCommand.h:
+        (WebCore::TypingCommand::create):
+        * editing/UnlinkCommand.h:
+        (WebCore::UnlinkCommand::create):
+        * editing/WrapContentsInDummySpanCommand.h:
+        (WebCore::WrapContentsInDummySpanCommand::create):
+        * editing/ios/DictationCommandIOS.h:
+        (WebCore::DictationCommandIOS::create):
+        * fileapi/Blob.h:
+        (WebCore::Blob::create):
+        (WebCore::Blob::deserialize):
+        (WebCore::Blob::slice):
+        * fileapi/File.h:
+        * fileapi/FileList.h:
+        (WebCore::FileList::create):
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::create):
+        * fileapi/FileReader.h:
+        * fileapi/FileReaderSync.h:
+        (WebCore::FileReaderSync::create):
+        * history/BackForwardList.h:
+        (WebCore::BackForwardList::create):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::create):
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::create):
+        * html/DOMURL.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::plugInImageElementIsolatedWorld):
+        * html/canvas/CanvasGradient.h:
+        (WebCore::CanvasGradient::create):
+        * html/canvas/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::create):
+        * html/canvas/CanvasPattern.h:
+        * html/canvas/DOMPath.h:
+        * html/shadow/DetailsMarkerControl.cpp:
+        (WebCore::DetailsMarkerControl::create):
+        * html/shadow/DetailsMarkerControl.h:
+        * html/track/AudioTrack.h:
+        * html/track/AudioTrackList.h:
+        * html/track/DataCue.h:
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::create):
+        * inspector/CommandLineAPIHost.h:
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::create):
+        * loader/FormState.cpp:
+        (WebCore::FormState::create):
+        * loader/FormState.h:
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * loader/FormSubmission.h:
+        * loader/TextResourceDecoder.h:
+        (WebCore::TextResourceDecoder::create):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::create):
+        * loader/WorkerThreadableLoader.h:
+        (WebCore::WorkerThreadableLoader::create):
+        * loader/appcache/ApplicationCache.h:
+        (WebCore::ApplicationCache::create):
+        * loader/appcache/ApplicationCacheResource.h:
+        (WebCore::ApplicationCacheResource::create):
+        * loader/appcache/DOMApplicationCache.h:
+        * loader/archive/ArchiveResource.cpp:
+        (WebCore::ArchiveResource::create):
+        * loader/archive/ArchiveResource.h:
+        * loader/icon/IconDatabaseBase.h:
+        (WebCore::EnumCallback::create):
+        (WebCore::ObjectCallback::create):
+        * loader/icon/IconRecord.h:
+        (WebCore::IconRecord::create):
+        * mathml/MathMLInlineContainerElement.cpp:
+        (WebCore::MathMLInlineContainerElement::create):
+        * mathml/MathMLInlineContainerElement.h:
+        * mathml/MathMLMathElement.cpp:
+        (WebCore::MathMLMathElement::create):
+        * mathml/MathMLMathElement.h:
+        * mathml/MathMLMencloseElement.cpp:
+        (WebCore::MathMLMencloseElement::create):
+        * mathml/MathMLMencloseElement.h:
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::create):
+        * mathml/MathMLSelectElement.h:
+        * mathml/MathMLTextElement.cpp:
+        (WebCore::MathMLTextElement::create):
+        * mathml/MathMLTextElement.h:
+        * page/BarProp.h:
+        (WebCore::BarProp::create):
+        * page/Crypto.h:
+        (WebCore::Crypto::create):
+        * page/DOMSecurityPolicy.h:
+        (WebCore::DOMSecurityPolicy::create):
+        * page/DOMSelection.h:
+        (WebCore::DOMSelection::create):
+        * page/DOMWindow.h:
+        * page/DOMWindowExtension.h:
+        (WebCore::DOMWindowExtension::create):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::create):
+        * page/FrameView.h:
+        * page/animation/CompositeAnimation.h:
+        (WebCore::CompositeAnimation::create):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * platform/Cursor.h:
+        (WebCore::SharedCursor::create):
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::create):
+        * platform/FileChooser.h:
+        * platform/animation/Animation.h:
+        (WebCore::Animation::create):
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::create):
+        (WebCore::AudioBus::createBufferFromRange):
+        (WebCore::AudioBus::createBySampleRateConverting):
+        (WebCore::AudioBus::createByMixingToMono):
+        * platform/audio/AudioBus.h:
+        * platform/audio/AudioHardwareListener.cpp:
+        (WebCore::AudioHardwareListener::create):
+        * platform/audio/AudioHardwareListener.h:
+        * platform/audio/mac/AudioHardwareListenerMac.cpp:
+        (WebCore::AudioHardwareListener::create):
+        (WebCore::AudioHardwareListenerMac::create):
+        * platform/audio/mac/AudioHardwareListenerMac.h:
+        * platform/graphics/AudioTrackPrivate.h:
+        (WebCore::AudioTrackPrivate::create):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/CrossfadeGeneratedImage.h:
+        * platform/graphics/FontFeatureSettings.h:
+        (WebCore::FontFeatureSettings::create):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::nullImage):
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h:
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::create):
+        * platform/graphics/filters/DistantLightSource.h:
+        (WebCore::DistantLightSource::create):
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::create):
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::create):
+        * platform/graphics/filters/FEColorMatrix.h:
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::create):
+        * platform/graphics/filters/FEComponentTransfer.h:
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::create):
+        * platform/graphics/filters/FEComposite.h:
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::create):
+        * platform/graphics/filters/FEConvolveMatrix.h:
+        * platform/graphics/filters/FEDiffuseLighting.cpp:
+        (WebCore::FEDiffuseLighting::create):
+        * platform/graphics/filters/FEDiffuseLighting.h:
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::create):
+        * platform/graphics/filters/FEDisplacementMap.h:
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::create):
+        * platform/graphics/filters/FEDropShadow.h:
+        * platform/graphics/filters/FEFlood.cpp:
+        (WebCore::FEFlood::create):
+        * platform/graphics/filters/FEFlood.h:
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::create):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FEMerge.cpp:
+        (WebCore::FEMerge::create):
+        * platform/graphics/filters/FEMerge.h:
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::create):
+        * platform/graphics/filters/FEMorphology.h:
+        * platform/graphics/filters/FEOffset.cpp:
+        (WebCore::FEOffset::create):
+        * platform/graphics/filters/FEOffset.h:
+        * platform/graphics/filters/FESpecularLighting.cpp:
+        (WebCore::FESpecularLighting::create):
+        * platform/graphics/filters/FESpecularLighting.h:
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::create):
+        * platform/graphics/filters/FETile.h:
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::create):
+        * platform/graphics/filters/FETurbulence.h:
+        * platform/graphics/ios/DisplayRefreshMonitorIOS.h:
+        (WebCore::DisplayRefreshMonitorIOS::create):
+        * platform/graphics/mac/ComplexTextController.h:
+        (WebCore::ComplexTextController::ComplexTextRun::create):
+        * platform/network/BlobData.h:
+        (WebCore::RawData::create):
+        (WebCore::BlobData::create):
+        * platform/network/BlobDataFileReference.h:
+        (WebCore::BlobDataFileReference::create):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        * platform/text/BidiContext.cpp:
+        (WebCore::BidiContext::createUncached):
+        (WebCore::BidiContext::create):
+        * platform/text/BidiContext.h:
+        * plugins/DOMMimeType.h:
+        (WebCore::DOMMimeType::create):
+        * plugins/DOMMimeTypeArray.cpp:
+        (WebCore::DOMMimeTypeArray::item):
+        (WebCore::DOMMimeTypeArray::namedItem):
+        * plugins/DOMMimeTypeArray.h:
+        (WebCore::DOMMimeTypeArray::create):
+        * plugins/DOMPlugin.cpp:
+        (WebCore::DOMPlugin::item):
+        (WebCore::DOMPlugin::namedItem):
+        * plugins/DOMPlugin.h:
+        (WebCore::DOMPlugin::create):
+        * plugins/DOMPluginArray.cpp:
+        (WebCore::DOMPluginArray::item):
+        (WebCore::DOMPluginArray::namedItem):
+        * plugins/DOMPluginArray.h:
+        (WebCore::DOMPluginArray::create):
+        * plugins/PluginData.h:
+        (WebCore::PluginData::create):
+        * rendering/ClipPathOperation.h:
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::create):
+        * rendering/CounterNode.h:
+        * rendering/style/BasicShapes.h:
+        * rendering/style/CursorList.h:
+        (WebCore::CursorList::create):
+        * replay/CapturingInputCursor.cpp:
+        (WebCore::CapturingInputCursor::create):
+        * replay/CapturingInputCursor.h:
+        * storage/Storage.cpp:
+        (WebCore::Storage::create):
+        * storage/Storage.h:
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::create):
+        * storage/StorageAreaImpl.h:
+        * storage/StorageAreaSync.cpp:
+        (WebCore::StorageAreaSync::create):
+        * storage/StorageAreaSync.h:
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::create):
+        * storage/StorageMap.h:
+        * storage/StorageSyncManager.cpp:
+        (WebCore::StorageSyncManager::create):
+        * storage/StorageSyncManager.h:
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::create):
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        * workers/SharedWorkerGlobalScope.cpp:
+        (WebCore::SharedWorkerGlobalScope::create):
+        * workers/SharedWorkerGlobalScope.h:
+        * workers/SharedWorkerThread.cpp:
+        (WebCore::SharedWorkerThread::create):
+        (WebCore::SharedWorkerThread::createWorkerGlobalScope):
+        * workers/SharedWorkerThread.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::importScripts):
+        * workers/WorkerLocation.h:
+        (WebCore::WorkerLocation::create):
+        * workers/WorkerScriptLoader.h:
+        (WebCore::WorkerScriptLoader::create):
+        * workers/WorkerThread.h:
+        * xml/DOMParser.h:
+        (WebCore::DOMParser::create):
+        * xml/NativeXPathNSResolver.h:
+        (WebCore::NativeXPathNSResolver::create):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::create):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::flushProgressEvent):
+        * xml/XMLSerializer.h:
+        (WebCore::XMLSerializer::create):
+        * xml/XPathEvaluator.h:
+        (WebCore::XPathEvaluator::create):
+        * xml/XPathResult.h:
+        (WebCore::XPathResult::create):
+        * xml/XSLStyleSheet.h:
+        * xml/XSLTProcessor.h:
+        (WebCore::XSLTProcessor::create):
+
 2014-12-24  Benjamin Poulain  <bpoulain@apple.com>
 
         Small cleanup of RenderBlock::paint()

@@ -52,9 +52,9 @@ namespace WebCore {
 
 class AutocorrectionAlternativeDetails : public AlternativeTextDetails {
 public:
-    static PassRefPtr<AutocorrectionAlternativeDetails> create(const String& replacementString)
+    static Ref<AutocorrectionAlternativeDetails> create(const String& replacementString)
     {
-        return adoptRef(new AutocorrectionAlternativeDetails(replacementString));
+        return adoptRef(*new AutocorrectionAlternativeDetails(replacementString));
     }
     
     const String& replacementString() const { return m_replacementString; }
@@ -68,9 +68,9 @@ private:
 
 class DictationAlternativeDetails : public AlternativeTextDetails {
 public:
-    static PassRefPtr<DictationAlternativeDetails> create(uint64_t dictationContext)
+    static Ref<DictationAlternativeDetails> create(uint64_t dictationContext)
     {
-        return adoptRef(new DictationAlternativeDetails(dictationContext));
+        return adoptRef(*new DictationAlternativeDetails(dictationContext));
     }
 
     uint64_t dictationContext() const { return m_dictationContext; }

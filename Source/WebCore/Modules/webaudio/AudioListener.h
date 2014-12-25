@@ -39,9 +39,9 @@ namespace WebCore {
 
 class AudioListener : public RefCounted<AudioListener> {
 public:
-    static PassRefPtr<AudioListener> create()
+    static Ref<AudioListener> create()
     {
-        return adoptRef(new AudioListener());
+        return adoptRef(*new AudioListener);
     }
 
     // Position

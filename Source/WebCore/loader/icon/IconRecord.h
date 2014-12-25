@@ -74,9 +74,9 @@ private:
 class IconRecord : public RefCounted<IconRecord> {
     friend class PageURLRecord;
 public:
-    static PassRefPtr<IconRecord> create(const String& url)
+    static Ref<IconRecord> create(const String& url)
     {
-        return adoptRef(new IconRecord(url));
+        return adoptRef(*new IconRecord(url));
     }
     ~IconRecord();
     

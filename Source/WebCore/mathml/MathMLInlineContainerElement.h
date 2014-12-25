@@ -34,7 +34,7 @@ namespace WebCore {
     
 class MathMLInlineContainerElement : public MathMLElement {
 public:
-    static PassRefPtr<MathMLInlineContainerElement> create(const QualifiedName& tagName, Document&);
+    static Ref<MathMLInlineContainerElement> create(const QualifiedName& tagName, Document&);
 
     virtual bool isPresentationMathML() const override { return true; }
 

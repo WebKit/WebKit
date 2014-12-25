@@ -34,9 +34,9 @@ class HTMLElement;
 
 class WrapContentsInDummySpanCommand : public SimpleEditCommand {
 public:
-    static PassRefPtr<WrapContentsInDummySpanCommand> create(PassRefPtr<Element> element)
+    static Ref<WrapContentsInDummySpanCommand> create(PassRefPtr<Element> element)
     {
-        return adoptRef(new WrapContentsInDummySpanCommand(element));
+        return adoptRef(*new WrapContentsInDummySpanCommand(element));
     }
 
 private:

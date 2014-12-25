@@ -77,7 +77,7 @@ public:
 
 class FileChooser : public RefCounted<FileChooser> {
 public:
-    static PassRefPtr<FileChooser> create(FileChooserClient*, const FileChooserSettings&);
+    static Ref<FileChooser> create(FileChooserClient*, const FileChooserSettings&);
     WEBCORE_EXPORT ~FileChooser();
 
     void invalidate();

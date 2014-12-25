@@ -42,9 +42,9 @@ inline FormState::FormState(PassRefPtr<HTMLFormElement> form, StringPairVector& 
     m_textFieldValues.swap(textFieldValuesToAdopt);
 }
 
-PassRefPtr<FormState> FormState::create(PassRefPtr<HTMLFormElement> form, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Document> sourceDocument, FormSubmissionTrigger formSubmissionTrigger)
+Ref<FormState> FormState::create(PassRefPtr<HTMLFormElement> form, StringPairVector& textFieldValuesToAdopt, PassRefPtr<Document> sourceDocument, FormSubmissionTrigger formSubmissionTrigger)
 {
-    return adoptRef(new FormState(form, textFieldValuesToAdopt, sourceDocument, formSubmissionTrigger));
+    return adoptRef(*new FormState(form, textFieldValuesToAdopt, sourceDocument, formSubmissionTrigger));
 }
 
 }

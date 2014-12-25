@@ -66,7 +66,7 @@ PassRefPtr<DOMMimeType> DOMPlugin::item(unsigned index)
     const Vector<MimeClassInfo>& mimes = m_pluginData->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i) {
         if (mimes[i] == mime && m_pluginData->mimePluginIndices()[i] == m_index)
-            return DOMMimeType::create(m_pluginData.get(), m_frame, i).get();
+            return DOMMimeType::create(m_pluginData.get(), m_frame, i);
     }
     return 0;
 }
@@ -85,7 +85,7 @@ PassRefPtr<DOMMimeType> DOMPlugin::namedItem(const AtomicString& propertyName)
     const Vector<MimeClassInfo>& mimes = m_pluginData->mimes();
     for (unsigned i = 0; i < mimes.size(); ++i)
         if (mimes[i].type == propertyName)
-            return DOMMimeType::create(m_pluginData.get(), m_frame, i).get();
+            return DOMMimeType::create(m_pluginData.get(), m_frame, i);
     return 0;
 }
 

@@ -52,11 +52,11 @@ PassRefPtr<MessageEvent> createConnectEvent(PassRefPtr<MessagePort> prpPort)
 }
 
 // static
-PassRefPtr<SharedWorkerGlobalScope> SharedWorkerGlobalScope::create(const String& name, const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, SharedWorkerThread& thread, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
+Ref<SharedWorkerGlobalScope> SharedWorkerGlobalScope::create(const String& name, const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, SharedWorkerThread& thread, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
 {
-    RefPtr<SharedWorkerGlobalScope> context = adoptRef(new SharedWorkerGlobalScope(name, url, userAgent, WTF::move(settings), thread));
+    Ref<SharedWorkerGlobalScope> context = adoptRef(*new SharedWorkerGlobalScope(name, url, userAgent, WTF::move(settings), thread));
     context->applyContentSecurityPolicyFromString(contentSecurityPolicy, contentSecurityPolicyType);
-    return context.release();
+    return context;
 }
 
 SharedWorkerGlobalScope::SharedWorkerGlobalScope(const String& name, const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, SharedWorkerThread& thread)

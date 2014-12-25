@@ -33,7 +33,7 @@ namespace WebCore {
 
 class MathMLMencloseElement final: public MathMLInlineContainerElement {
 public:
-    static PassRefPtr<MathMLMencloseElement> create(const QualifiedName& tagName, Document&);
+    static Ref<MathMLMencloseElement> create(const QualifiedName& tagName, Document&);
     const Vector<String>& notationValues() const { return m_notationValues; }
     bool isRadical() const { return m_isRadicalValue; }
     String longDivLeftPadding() const;

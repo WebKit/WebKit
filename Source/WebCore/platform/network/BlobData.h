@@ -34,7 +34,6 @@
 #include "BlobDataFileReference.h"
 #include "URL.h"
 #include <wtf/Forward.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,16 +41,16 @@ namespace WebCore {
 
 class RawData : public RefCounted<RawData> {
 public:
-    static PassRefPtr<RawData> create(Vector<char>&& data)
+    static Ref<RawData> create(Vector<char>&& data)
     {
-        return adoptRef(new RawData(WTF::move(data)));
+        return adoptRef(*new RawData(WTF::move(data)));
     }
 
-    static PassRefPtr<RawData> create(const char* data, size_t size)
+    static Ref<RawData> create(const char* data, size_t size)
     {
         Vector<char> dataVector(size);
         memcpy(dataVector.data(), data, size);
-        return adoptRef(new RawData(WTF::move(dataVector)));
+        return adoptRef(*new RawData(WTF::move(dataVector)));
     }
 
     const char* data() const { return m_data.data(); }
@@ -118,9 +117,9 @@ typedef Vector<BlobDataItem> BlobDataItemList;
 
 class BlobData : public RefCounted<BlobData> {
 public:
-    static PassRefPtr<BlobData> create()
+    static Ref<BlobData> create()
     {
-        return adoptRef(new BlobData);
+        return adoptRef(*new BlobData);
     }
 
     const String& contentType() const { return m_contentType; }

@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-PassRefPtr<StorageSyncManager> StorageSyncManager::create(const String& path)
+Ref<StorageSyncManager> StorageSyncManager::create(const String& path)
 {
-    return adoptRef(new StorageSyncManager(path));
+    return adoptRef(*new StorageSyncManager(path));
 }
 
 StorageSyncManager::StorageSyncManager(const String& path)

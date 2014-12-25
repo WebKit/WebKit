@@ -33,7 +33,7 @@ namespace WebCore {
 
 class MathMLSelectElement final : public MathMLInlineContainerElement {
 public:
-    static PassRefPtr<MathMLSelectElement> create(const QualifiedName& tagName, Document&);
+    static Ref<MathMLSelectElement> create(const QualifiedName& tagName, Document&);
     static bool isMathMLEncoding(const AtomicString& value);
     static bool isSVGEncoding(const AtomicString& value);
     static bool isHTMLEncoding(const AtomicString& value);

@@ -32,7 +32,7 @@ namespace WebCore {
 
 class AccessibilitySearchFieldCancelButton final : public AccessibilityRenderObject {
 public:
-    static PassRefPtr<AccessibilitySearchFieldCancelButton> create(RenderObject*);
+    static Ref<AccessibilitySearchFieldCancelButton> create(RenderObject*);
     
     virtual String accessibilityDescription() const override;
     virtual void accessibilityText(Vector<AccessibilityText>&) override;

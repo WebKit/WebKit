@@ -37,7 +37,7 @@ enum TurbulenceType {
 
 class FETurbulence : public FilterEffect {
 public:
-    static PassRefPtr<FETurbulence> create(Filter*, TurbulenceType, float, float, int, float, bool);
+    static Ref<FETurbulence> create(Filter*, TurbulenceType, float, float, int, float, bool);
 
     TurbulenceType type() const;
     bool setType(TurbulenceType);

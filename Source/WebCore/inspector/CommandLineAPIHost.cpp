@@ -60,9 +60,9 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PassRefPtr<CommandLineAPIHost> CommandLineAPIHost::create()
+Ref<CommandLineAPIHost> CommandLineAPIHost::create()
 {
-    return adoptRef(new CommandLineAPIHost);
+    return adoptRef(*new CommandLineAPIHost);
 }
 
 CommandLineAPIHost::CommandLineAPIHost()

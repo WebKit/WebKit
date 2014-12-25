@@ -37,7 +37,7 @@ class AccessibilityTable;
     
 class AccessibilityARIAGridRow final : public AccessibilityTableRow {
 public:
-    static PassRefPtr<AccessibilityARIAGridRow> create(RenderObject*);
+    static Ref<AccessibilityARIAGridRow> create(RenderObject*);
     virtual ~AccessibilityARIAGridRow();
     
     void disclosedRows(AccessibilityChildrenVector&);

@@ -54,9 +54,9 @@ void AccessibilityScrollView::detach(AccessibilityDetachmentType detachmentType,
     m_scrollView = nullptr;
 }
 
-PassRefPtr<AccessibilityScrollView> AccessibilityScrollView::create(ScrollView* view)
+Ref<AccessibilityScrollView> AccessibilityScrollView::create(ScrollView* view)
 {
-    return adoptRef(new AccessibilityScrollView(view));
+    return adoptRef(*new AccessibilityScrollView(view));
 }
     
 AccessibilityObject* AccessibilityScrollView::scrollBar(AccessibilityOrientation orientation)

@@ -41,7 +41,7 @@ typedef HashSet<RefPtr<HistoryItem>> HistoryItemHashSet;
 
 class BackForwardList : public BackForwardClient {
 public: 
-    static PassRefPtr<BackForwardList> create(Page* page) { return adoptRef(new BackForwardList(page)); }
+    static Ref<BackForwardList> create(Page* page) { return adoptRef(*new BackForwardList(page)); }
     virtual ~BackForwardList();
 
     Page* page() { return m_page; }

@@ -117,9 +117,9 @@ void AccessibilityNodeObject::init()
     m_role = determineAccessibilityRole();
 }
 
-PassRefPtr<AccessibilityNodeObject> AccessibilityNodeObject::create(Node* node)
+Ref<AccessibilityNodeObject> AccessibilityNodeObject::create(Node* node)
 {
-    return adoptRef(new AccessibilityNodeObject(node));
+    return adoptRef(*new AccessibilityNodeObject(node));
 }
 
 void AccessibilityNodeObject::detach(AccessibilityDetachmentType detachmentType, AXObjectCache* cache)

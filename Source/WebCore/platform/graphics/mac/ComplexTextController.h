@@ -73,14 +73,14 @@ public:
 private:
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
     public:
-        static PassRefPtr<ComplexTextRun> create(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange)
+        static Ref<ComplexTextRun> create(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange)
         {
-            return adoptRef(new ComplexTextRun(ctRun, fontData, characters, stringLocation, stringLength, runRange));
+            return adoptRef(*new ComplexTextRun(ctRun, fontData, characters, stringLocation, stringLength, runRange));
         }
 
-        static PassRefPtr<ComplexTextRun> create(const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
+        static Ref<ComplexTextRun> create(const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
         {
-            return adoptRef(new ComplexTextRun(fontData, characters, stringLocation, stringLength, ltr));
+            return adoptRef(*new ComplexTextRun(fontData, characters, stringLocation, stringLength, ltr));
         }
 
         unsigned glyphCount() const { return m_glyphCount; }

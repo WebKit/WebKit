@@ -38,7 +38,7 @@ enum BidiEmbeddingSource {
 // Used to keep track of explicit embeddings.
 class BidiContext : public RefCounted<BidiContext> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<BidiContext> create(unsigned char level, UCharDirection, bool override = false, BidiEmbeddingSource = FromStyleOrDOM, BidiContext* parent = 0);
+    WEBCORE_EXPORT static Ref<BidiContext> create(unsigned char level, UCharDirection, bool override = false, BidiEmbeddingSource = FromStyleOrDOM, BidiContext* parent = 0);
 
     BidiContext* parent() const { return m_parent.get(); }
     unsigned char level() const { return m_level; }
@@ -57,7 +57,7 @@ private:
     {
     }
 
-    static PassRefPtr<BidiContext> createUncached(unsigned char level, UCharDirection, bool override, BidiEmbeddingSource, BidiContext* parent);
+    static Ref<BidiContext> createUncached(unsigned char level, UCharDirection, bool override, BidiEmbeddingSource, BidiContext* parent);
 
     unsigned m_level : 6; // The maximium bidi level is 62: http://unicode.org/reports/tr9/#Explicit_Levels_and_Directions
     unsigned m_direction : 5; // Direction

@@ -49,9 +49,9 @@ AccessibilityTableColumn::~AccessibilityTableColumn()
 {
 }    
 
-PassRefPtr<AccessibilityTableColumn> AccessibilityTableColumn::create()
+Ref<AccessibilityTableColumn> AccessibilityTableColumn::create()
 {
-    return adoptRef(new AccessibilityTableColumn());
+    return adoptRef(*new AccessibilityTableColumn());
 }
 
 void AccessibilityTableColumn::setParent(AccessibilityObject* parent)

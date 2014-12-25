@@ -49,7 +49,7 @@ class SubtleCrypto;
 
 class Crypto : public ContextDestructionObserver, public RefCounted<Crypto> {
 public:
-    static PassRefPtr<Crypto> create(Document& document) { return adoptRef(new Crypto(document)); }
+    static Ref<Crypto> create(Document& document) { return adoptRef(*new Crypto(document)); }
     virtual ~Crypto();
 
     Document* document() const;

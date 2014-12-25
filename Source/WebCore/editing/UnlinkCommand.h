@@ -32,9 +32,9 @@ namespace WebCore {
 
 class UnlinkCommand : public CompositeEditCommand {
 public:
-    static PassRefPtr<UnlinkCommand> create(Document& document)
+    static Ref<UnlinkCommand> create(Document& document)
     {
-        return adoptRef(new UnlinkCommand(document));
+        return adoptRef(*new UnlinkCommand(document));
     }
 
 private:

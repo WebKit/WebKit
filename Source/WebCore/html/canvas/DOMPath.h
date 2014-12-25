@@ -31,7 +31,6 @@
 #include "CanvasPathMethods.h"
 #include "SVGMatrix.h"
 #include "SVGPathUtilities.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -39,11 +38,11 @@ namespace WebCore {
 class DOMPath final : public RefCounted<DOMPath>, public CanvasPathMethods {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<DOMPath> create() { return adoptRef(new DOMPath); }
-    static PassRefPtr<DOMPath> create(const Path& path) { return adoptRef(new DOMPath(path)); }
-    static PassRefPtr<DOMPath> create(const DOMPath* path) { return create(path->path()); }
+    static Ref<DOMPath> create() { return adoptRef(*new DOMPath); }
+    static Ref<DOMPath> create(const Path& path) { return adoptRef(*new DOMPath(path)); }
+    static Ref<DOMPath> create(const DOMPath* path) { return create(path->path()); }
 
-    static PassRefPtr<DOMPath> create(const String& pathData)
+    static Ref<DOMPath> create(const String& pathData)
     {
         Path path;
         buildPathFromString(pathData, path);

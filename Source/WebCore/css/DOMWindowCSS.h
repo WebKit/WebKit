@@ -31,14 +31,14 @@
 #define DOMWindowCSS_h
 
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class DOMWindowCSS : public RefCounted<DOMWindowCSS> {
 public:
-    WEBCORE_EXPORT static PassRefPtr<DOMWindowCSS> create();
+    WEBCORE_EXPORT static Ref<DOMWindowCSS> create();
 
     bool supports(const String& property, const String& value) const;
     bool supports(const String& conditionText) const;

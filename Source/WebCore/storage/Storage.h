@@ -41,7 +41,7 @@ typedef int ExceptionCode;
 
 class Storage : public ScriptWrappable, public RefCounted<Storage>, public DOMWindowProperty {
 public:
-    static PassRefPtr<Storage> create(Frame*, PassRefPtr<StorageArea>);
+    static Ref<Storage> create(Frame*, PassRefPtr<StorageArea>);
     ~Storage();
 
     unsigned length(ExceptionCode&) const;

@@ -36,7 +36,7 @@ class PluginData;
 
 class DOMPluginArray : public ScriptWrappable, public RefCounted<DOMPluginArray>, public DOMWindowProperty {
 public:
-    static PassRefPtr<DOMPluginArray> create(Frame* frame) { return adoptRef(new DOMPluginArray(frame)); }
+    static Ref<DOMPluginArray> create(Frame* frame) { return adoptRef(*new DOMPluginArray(frame)); }
     ~DOMPluginArray();
 
     unsigned length() const;

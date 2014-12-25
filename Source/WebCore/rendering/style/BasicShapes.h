@@ -147,7 +147,7 @@ private:
 
 class BasicShapeCircle final : public BasicShape {
 public:
-    static PassRefPtr<BasicShapeCircle> create() { return adoptRef(new BasicShapeCircle); }
+    static Ref<BasicShapeCircle> create() { return adoptRef(*new BasicShapeCircle); }
 
     const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
@@ -172,7 +172,7 @@ private:
 
 class BasicShapeEllipse final : public BasicShape {
 public:
-    static PassRefPtr<BasicShapeEllipse> create() { return adoptRef(new BasicShapeEllipse); }
+    static Ref<BasicShapeEllipse> create() { return adoptRef(*new BasicShapeEllipse); }
 
     const BasicShapeCenterCoordinate& centerX() const { return m_centerX; }
     const BasicShapeCenterCoordinate& centerY() const { return m_centerY; }
@@ -200,7 +200,7 @@ private:
 
 class BasicShapePolygon final : public BasicShape {
 public:
-    static PassRefPtr<BasicShapePolygon> create() { return adoptRef(new BasicShapePolygon); }
+    static Ref<BasicShapePolygon> create() { return adoptRef(*new BasicShapePolygon); }
 
     const Vector<Length>& values() const { return m_values; }
     const Length& getXAt(unsigned i) const { return m_values[2 * i]; }
@@ -226,7 +226,7 @@ private:
 
 class BasicShapeInset final : public BasicShape {
 public:
-    static PassRefPtr<BasicShapeInset> create() { return adoptRef(new BasicShapeInset); }
+    static Ref<BasicShapeInset> create() { return adoptRef(*new BasicShapeInset); }
 
     const Length& top() const { return m_top; }
     const Length& right() const { return m_right; }

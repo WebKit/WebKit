@@ -65,9 +65,9 @@ void AccessibilityTable::init()
     m_isExposableThroughAccessibility = computeIsTableExposableThroughAccessibility();
 }
 
-PassRefPtr<AccessibilityTable> AccessibilityTable::create(RenderObject* renderer)
+Ref<AccessibilityTable> AccessibilityTable::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilityTable(renderer));
+    return adoptRef(*new AccessibilityTable(renderer));
 }
 
 bool AccessibilityTable::hasARIARole() const

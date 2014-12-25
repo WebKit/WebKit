@@ -128,13 +128,13 @@ void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
 
     if (!hasEventToDispatch())
         return;
-    PassRefPtr<Event> event = XMLHttpRequestProgressEvent::create(eventNames().progressEvent, m_lengthComputable, m_loaded, m_total);
+    Ref<Event> event = XMLHttpRequestProgressEvent::create(eventNames().progressEvent, m_lengthComputable, m_loaded, m_total);
     m_hasThrottledProgressEvent = false;
 
     // We stop the timer as this is called when no more events are supposed to occur.
     stop();
 
-    dispatchEvent(event);
+    dispatchEvent(WTF::move(event));
 }
 
 void XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents()

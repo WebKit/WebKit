@@ -34,7 +34,7 @@ class PluginData;
 
 class DOMPlugin : public ScriptWrappable, public RefCounted<DOMPlugin>, public FrameDestructionObserver {
 public:
-    static PassRefPtr<DOMPlugin> create(PluginData* pluginData, Frame* frame, unsigned index) { return adoptRef(new DOMPlugin(pluginData, frame, index)); }
+    static Ref<DOMPlugin> create(PluginData* pluginData, Frame* frame, unsigned index) { return adoptRef(*new DOMPlugin(pluginData, frame, index)); }
     ~DOMPlugin();
 
     String name() const;

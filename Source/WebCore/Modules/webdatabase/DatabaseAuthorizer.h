@@ -49,7 +49,7 @@ public:
         NoAccessMask = 1 << 2
     };
 
-    static PassRefPtr<DatabaseAuthorizer> create(const String& databaseInfoTableName);
+    static Ref<DatabaseAuthorizer> create(const String& databaseInfoTableName);
 
     int createTable(const String& tableName);
     int createTempTable(const String& tableName);

@@ -28,11 +28,11 @@
 
 namespace WebCore {
 
-PassRefPtr<DeviceMotionData::Acceleration> DeviceMotionData::Acceleration::create(bool canProvideX, double x,
-                                                                                  bool canProvideY, double y,
-                                                                                  bool canProvideZ, double z)
+Ref<DeviceMotionData::Acceleration> DeviceMotionData::Acceleration::create(bool canProvideX, double x,
+                                                                           bool canProvideY, double y,
+                                                                           bool canProvideZ, double z)
 {
-    return adoptRef(new DeviceMotionData::Acceleration(canProvideX, x, canProvideY, y, canProvideZ, z));
+    return adoptRef(*new DeviceMotionData::Acceleration(canProvideX, x, canProvideY, y, canProvideZ, z));
 }
 
 DeviceMotionData::Acceleration::Acceleration(bool canProvideX, double x, bool canProvideY, double y, bool canProvideZ, double z)
@@ -46,11 +46,11 @@ DeviceMotionData::Acceleration::Acceleration(bool canProvideX, double x, bool ca
 {
 }
 
-PassRefPtr<DeviceMotionData::RotationRate> DeviceMotionData::RotationRate::create(bool canProvideAlpha, double alpha,
-                                                                                  bool canProvideBeta, double beta,
-                                                                                  bool canProvideGamma, double gamma)
+Ref<DeviceMotionData::RotationRate> DeviceMotionData::RotationRate::create(bool canProvideAlpha, double alpha,
+                                                                           bool canProvideBeta, double beta,
+                                                                           bool canProvideGamma, double gamma)
 {
-    return adoptRef(new DeviceMotionData::RotationRate(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma));
+    return adoptRef(*new DeviceMotionData::RotationRate(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma));
 }
 
 DeviceMotionData::RotationRate::RotationRate(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
@@ -63,15 +63,15 @@ DeviceMotionData::RotationRate::RotationRate(bool canProvideAlpha, double alpha,
 {
 }
 
-PassRefPtr<DeviceMotionData> DeviceMotionData::create()
+Ref<DeviceMotionData> DeviceMotionData::create()
 {
-    return adoptRef(new DeviceMotionData);
+    return adoptRef(*new DeviceMotionData);
 }
 
-PassRefPtr<DeviceMotionData> DeviceMotionData::create(PassRefPtr<Acceleration> acceleration, PassRefPtr<Acceleration> accelerationIncludingGravity,
-                                                      PassRefPtr<RotationRate> rotationRate, bool canProvideInterval, double interval)
+Ref<DeviceMotionData> DeviceMotionData::create(PassRefPtr<Acceleration> acceleration, PassRefPtr<Acceleration> accelerationIncludingGravity,
+                                               PassRefPtr<RotationRate> rotationRate, bool canProvideInterval, double interval)
 {
-    return adoptRef(new DeviceMotionData(acceleration, accelerationIncludingGravity, rotationRate, canProvideInterval, interval));
+    return adoptRef(*new DeviceMotionData(acceleration, accelerationIncludingGravity, rotationRate, canProvideInterval, interval));
 }
 
 DeviceMotionData::DeviceMotionData()

@@ -39,11 +39,11 @@ namespace WebCore {
 
     class SharedWorkerThread : public WorkerThread {
     public:
-        static PassRefPtr<SharedWorkerThread> create(const String& name, const URL&, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
+        static Ref<SharedWorkerThread> create(const String& name, const URL&, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
         virtual ~SharedWorkerThread();
 
     protected:
-        virtual PassRefPtr<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) override;
+        virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) override;
 
     private:
         SharedWorkerThread(const String& name, const URL&, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);

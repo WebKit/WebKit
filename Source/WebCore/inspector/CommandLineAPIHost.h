@@ -60,7 +60,7 @@ struct EventListenerInfo;
 
 class CommandLineAPIHost : public RefCounted<CommandLineAPIHost> {
 public:
-    static PassRefPtr<CommandLineAPIHost> create();
+    static Ref<CommandLineAPIHost> create();
     ~CommandLineAPIHost();
 
     void init(Inspector::InspectorAgent* inspectorAgent

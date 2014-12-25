@@ -50,7 +50,7 @@ class CARingBuffer;
 
 class AudioSourceProviderAVFObjC : public RefCounted<AudioSourceProviderAVFObjC>, public AudioSourceProvider {
 public:
-    static PassRefPtr<AudioSourceProviderAVFObjC> create(AVPlayerItem*);
+    static RefPtr<AudioSourceProviderAVFObjC> create(AVPlayerItem*);
     virtual ~AudioSourceProviderAVFObjC();
 
     void setPlayerItem(AVPlayerItem *);

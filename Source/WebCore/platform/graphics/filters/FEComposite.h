@@ -41,7 +41,7 @@ enum CompositeOperationType {
 
 class FEComposite : public FilterEffect {
 public:
-    static PassRefPtr<FEComposite> create(Filter*, const CompositeOperationType&, float, float, float, float);
+    static Ref<FEComposite> create(Filter*, const CompositeOperationType&, float, float, float, float);
 
     CompositeOperationType operation() const;
     bool setOperation(CompositeOperationType);

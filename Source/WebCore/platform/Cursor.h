@@ -58,7 +58,7 @@ namespace WebCore {
 #if PLATFORM(WIN)
     class SharedCursor : public RefCounted<SharedCursor> {
     public:
-        static PassRefPtr<SharedCursor> create(HCURSOR nativeCursor) { return adoptRef(new SharedCursor(nativeCursor)); }
+        static Ref<SharedCursor> create(HCURSOR nativeCursor) { return adoptRef(*new SharedCursor(nativeCursor)); }
         ~SharedCursor();
         HCURSOR nativeCursor() const { return m_nativeCursor; }
     private:

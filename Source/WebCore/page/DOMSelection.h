@@ -49,7 +49,7 @@ namespace WebCore {
 
     class DOMSelection : public RefCounted<DOMSelection>, public DOMWindowProperty {
     public:
-        static PassRefPtr<DOMSelection> create(const TreeScope* treeScope) { return adoptRef(new DOMSelection(treeScope)); }
+        static Ref<DOMSelection> create(const TreeScope* treeScope) { return adoptRef(*new DOMSelection(treeScope)); }
 
         void clearTreeScope();
 

@@ -29,7 +29,7 @@ namespace WebCore {
 
 class FEOffset : public FilterEffect {
 public:
-    static PassRefPtr<FEOffset> create(Filter*, float dx, float dy);
+    static Ref<FEOffset> create(Filter*, float dx, float dy);
 
     float dx() const;
     void setDx(float);

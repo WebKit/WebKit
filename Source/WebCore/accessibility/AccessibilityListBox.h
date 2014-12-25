@@ -35,7 +35,7 @@ namespace WebCore {
 
 class AccessibilityListBox final : public AccessibilityRenderObject {
 public:
-    static PassRefPtr<AccessibilityListBox> create(RenderObject*);
+    static Ref<AccessibilityListBox> create(RenderObject*);
     virtual ~AccessibilityListBox();
     
     virtual bool canSetSelectedChildrenAttribute() const override;

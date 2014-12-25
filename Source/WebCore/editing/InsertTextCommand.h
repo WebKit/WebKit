@@ -48,15 +48,15 @@ public:
         RebalanceAllWhitespaces
     };
 
-    static PassRefPtr<InsertTextCommand> create(Document& document, const String& text, bool selectInsertedText = false,
+    static Ref<InsertTextCommand> create(Document& document, const String& text, bool selectInsertedText = false,
         RebalanceType rebalanceType = RebalanceLeadingAndTrailingWhitespaces)
     {
-        return adoptRef(new InsertTextCommand(document, text, selectInsertedText, rebalanceType));
+        return adoptRef(*new InsertTextCommand(document, text, selectInsertedText, rebalanceType));
     }
 
-    static PassRefPtr<InsertTextCommand> createWithMarkerSupplier(Document& document, const String& text, PassRefPtr<TextInsertionMarkerSupplier> markerSupplier)
+    static Ref<InsertTextCommand> createWithMarkerSupplier(Document& document, const String& text, PassRefPtr<TextInsertionMarkerSupplier> markerSupplier)
     {
-        return adoptRef(new InsertTextCommand(document, text, markerSupplier));
+        return adoptRef(*new InsertTextCommand(document, text, markerSupplier));
     }
 
 private:

@@ -49,9 +49,9 @@ private:
 
 class FontFeatureSettings : public RefCounted<FontFeatureSettings> {
 public:
-    static PassRefPtr<FontFeatureSettings> create()
+    static Ref<FontFeatureSettings> create()
     {
-        return adoptRef(new FontFeatureSettings());
+        return adoptRef(*new FontFeatureSettings);
     }
     void append(const FontFeature& feature) { m_list.append(feature); }
     size_t size() const { return m_list.size(); }

@@ -38,20 +38,20 @@
 
 namespace WebCore {
 
-PassRefPtr<DOMURL> DOMURL::create(const String& url, const String& base, ExceptionCode& ec) 
+Ref<DOMURL> DOMURL::create(const String& url, const String& base, ExceptionCode& ec)
 {
-    return adoptRef(new DOMURL(url, base, ec)); 
+    return adoptRef(*new DOMURL(url, base, ec));
 }
 
-PassRefPtr<DOMURL> DOMURL::create(const String& url, const DOMURL* base, ExceptionCode& ec) 
+Ref<DOMURL> DOMURL::create(const String& url, const DOMURL* base, ExceptionCode& ec)
 {
     ASSERT(base);
-    return adoptRef(new DOMURL(url, *base, ec)); 
+    return adoptRef(*new DOMURL(url, *base, ec));
 }
 
-PassRefPtr<DOMURL> DOMURL::create(const String& url, ExceptionCode& ec) 
+Ref<DOMURL> DOMURL::create(const String& url, ExceptionCode& ec)
 {
-    return adoptRef(new DOMURL(url, ec)); 
+    return adoptRef(*new DOMURL(url, ec));
 }
 
 inline DOMURL::DOMURL(const String& url, const String& base, ExceptionCode& ec)

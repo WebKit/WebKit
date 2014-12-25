@@ -45,11 +45,11 @@ namespace WebCore {
 
 static const auto progressNotificationInterval = std::chrono::milliseconds(50);
 
-PassRefPtr<FileReader> FileReader::create(ScriptExecutionContext& context)
+Ref<FileReader> FileReader::create(ScriptExecutionContext& context)
 {
-    RefPtr<FileReader> fileReader(adoptRef(new FileReader(context)));
+    Ref<FileReader> fileReader = adoptRef(*new FileReader(context));
     fileReader->suspendIfNeeded();
-    return fileReader.release();
+    return fileReader;
 }
 
 FileReader::FileReader(ScriptExecutionContext& context)

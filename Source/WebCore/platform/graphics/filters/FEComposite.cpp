@@ -43,9 +43,9 @@ FEComposite::FEComposite(Filter* filter, const CompositeOperationType& type, flo
 {
 }
 
-PassRefPtr<FEComposite> FEComposite::create(Filter* filter, const CompositeOperationType& type, float k1, float k2, float k3, float k4)
+Ref<FEComposite> FEComposite::create(Filter* filter, const CompositeOperationType& type, float k1, float k2, float k3, float k4)
 {
-    return adoptRef(new FEComposite(filter, type, k1, k2, k3, k4));
+    return adoptRef(*new FEComposite(filter, type, k1, k2, k3, k4));
 }
 
 CompositeOperationType FEComposite::operation() const

@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-PassRefPtr<AccessibilitySearchFieldCancelButton> AccessibilitySearchFieldCancelButton::create(RenderObject* renderer)
+Ref<AccessibilitySearchFieldCancelButton> AccessibilitySearchFieldCancelButton::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilitySearchFieldCancelButton(renderer));
+    return adoptRef(*new AccessibilitySearchFieldCancelButton(renderer));
 }
 
 AccessibilitySearchFieldCancelButton::AccessibilitySearchFieldCancelButton(RenderObject* renderer)

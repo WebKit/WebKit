@@ -35,7 +35,7 @@ namespace WebCore {
     
 class AccessibilityARIAGridCell final : public AccessibilityTableCell {
 public:
-    static PassRefPtr<AccessibilityARIAGridCell> create(RenderObject*);
+    static Ref<AccessibilityARIAGridCell> create(RenderObject*);
     virtual ~AccessibilityARIAGridCell();
     
     // fills in the start location and row span of cell

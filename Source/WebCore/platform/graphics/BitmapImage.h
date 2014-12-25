@@ -108,13 +108,13 @@ class BitmapImage final : public Image {
     friend class GradientImage;
     friend class GraphicsContext;
 public:
-    static PassRefPtr<BitmapImage> create(PassNativeImagePtr nativeImage, ImageObserver* observer = 0)
+    static Ref<BitmapImage> create(PassNativeImagePtr nativeImage, ImageObserver* observer = 0)
     {
-        return adoptRef(new BitmapImage(nativeImage, observer));
+        return adoptRef(*new BitmapImage(nativeImage, observer));
     }
-    static PassRefPtr<BitmapImage> create(ImageObserver* observer = 0)
+    static Ref<BitmapImage> create(ImageObserver* observer = 0)
     {
-        return adoptRef(new BitmapImage(observer));
+        return adoptRef(*new BitmapImage(observer));
     }
 #if PLATFORM(WIN)
     static PassRefPtr<BitmapImage> create(HBITMAP);

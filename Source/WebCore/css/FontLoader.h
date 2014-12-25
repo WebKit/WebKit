@@ -51,9 +51,9 @@ class ScriptExecutionContext;
 
 class FontLoader final : public RefCounted<FontLoader>, public ActiveDOMObject, public EventTarget {
 public:
-    static PassRefPtr<FontLoader> create(Document* document)
+    static Ref<FontLoader> create(Document* document)
     {
-        return adoptRef<FontLoader>(new FontLoader(document));
+        return adoptRef<FontLoader>(*new FontLoader(document));
     }
     virtual ~FontLoader();
 

@@ -55,9 +55,9 @@ private:
 
 class DictationMarkerSupplier : public TextInsertionMarkerSupplier {
 public:
-    static PassRefPtr<DictationMarkerSupplier> create(const Vector<DictationAlternative>& alternatives)
+    static Ref<DictationMarkerSupplier> create(const Vector<DictationAlternative>& alternatives)
     {
-        return adoptRef(new DictationMarkerSupplier(alternatives));
+        return adoptRef(*new DictationMarkerSupplier(alternatives));
     }
 
     virtual void addMarkersToTextNode(Text* textNode, unsigned offsetOfInsertion, const String& textToBeInserted)

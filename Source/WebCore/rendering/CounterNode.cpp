@@ -90,9 +90,9 @@ CounterNode::~CounterNode()
     resetRenderers();
 }
 
-PassRefPtr<CounterNode> CounterNode::create(RenderElement& owner, bool hasResetType, int value)
+Ref<CounterNode> CounterNode::create(RenderElement& owner, bool hasResetType, int value)
 {
-    return adoptRef(new CounterNode(owner, hasResetType, value));
+    return adoptRef(*new CounterNode(owner, hasResetType, value));
 }
 
 CounterNode* CounterNode::nextInPreOrderAfterChildren(const CounterNode* stayWithin) const

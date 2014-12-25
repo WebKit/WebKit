@@ -38,9 +38,9 @@
 
 namespace WebCore {
 
-PassRefPtr<SharedWorkerThread> SharedWorkerThread::create(const String& name, const URL& scriptURL, const String& userAgent, const GroupSettings* settings, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
+Ref<SharedWorkerThread> SharedWorkerThread::create(const String& name, const URL& scriptURL, const String& userAgent, const GroupSettings* settings, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
 {
-    return adoptRef(new SharedWorkerThread(name, scriptURL, userAgent, settings, sourceCode, workerLoaderProxy, workerReportingProxy, startMode, contentSecurityPolicy, contentSecurityPolicyType));
+    return adoptRef(*new SharedWorkerThread(name, scriptURL, userAgent, settings, sourceCode, workerLoaderProxy, workerReportingProxy, startMode, contentSecurityPolicy, contentSecurityPolicyType));
 }
 
 SharedWorkerThread::SharedWorkerThread(const String& name, const URL& url, const String& userAgent, const GroupSettings* settings, const String& sourceCode, WorkerLoaderProxy& workerLoaderProxy, WorkerReportingProxy& workerReportingProxy, WorkerThreadStartMode startMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType)
@@ -53,7 +53,7 @@ SharedWorkerThread::~SharedWorkerThread()
 {
 }
 
-PassRefPtr<WorkerGlobalScope> SharedWorkerThread::createWorkerGlobalScope(const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType, PassRefPtr<SecurityOrigin>)
+Ref<WorkerGlobalScope> SharedWorkerThread::createWorkerGlobalScope(const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType, PassRefPtr<SecurityOrigin>)
 {
     return SharedWorkerGlobalScope::create(m_name, url, userAgent, WTF::move(settings), *this, contentSecurityPolicy, contentSecurityPolicyType);
 }

@@ -29,7 +29,7 @@ namespace WebCore {
     
 class FETile : public FilterEffect {
 public:
-    static PassRefPtr<FETile> create(Filter* filter);
+    static Ref<FETile> create(Filter* filter);
 
     virtual void platformApplySoftware();
     virtual void dump();

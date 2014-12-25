@@ -34,9 +34,9 @@ class Text;
 
 class DeleteFromTextNodeCommand : public SimpleEditCommand {
 public:
-    static PassRefPtr<DeleteFromTextNodeCommand> create(PassRefPtr<Text> node, unsigned offset, unsigned count)
+    static Ref<DeleteFromTextNodeCommand> create(PassRefPtr<Text> node, unsigned offset, unsigned count)
     {
-        return adoptRef(new DeleteFromTextNodeCommand(node, offset, count));
+        return adoptRef(*new DeleteFromTextNodeCommand(node, offset, count));
     }
 
 private:

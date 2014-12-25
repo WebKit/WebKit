@@ -37,9 +37,9 @@ namespace WebCore {
 
     class WorkerLocation : public RefCounted<WorkerLocation> {
     public:
-        static PassRefPtr<WorkerLocation> create(const URL& url)
+        static Ref<WorkerLocation> create(const URL& url)
         {
-            return adoptRef(new WorkerLocation(url));
+            return adoptRef(*new WorkerLocation(url));
         }
 
         const URL& url() const { return m_url; }

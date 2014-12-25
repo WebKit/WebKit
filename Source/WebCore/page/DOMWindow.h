@@ -99,7 +99,7 @@ namespace WebCore {
         , public FrameDestructionObserver
         , public Supplementable<DOMWindow> {
     public:
-        static PassRefPtr<DOMWindow> create(Document* document) { return adoptRef(new DOMWindow(document)); }
+        static Ref<DOMWindow> create(Document* document) { return adoptRef(*new DOMWindow(document)); }
         virtual ~DOMWindow();
 
         // In some rare cases, we'll re-used a DOMWindow for a new Document. For example,

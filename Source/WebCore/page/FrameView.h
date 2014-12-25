@@ -70,8 +70,8 @@ public:
     friend class RenderView;
     friend class Internals;
 
-    WEBCORE_EXPORT static PassRefPtr<FrameView> create(Frame&);
-    static PassRefPtr<FrameView> create(Frame&, const IntSize& initialSize);
+    WEBCORE_EXPORT static Ref<FrameView> create(Frame&);
+    static Ref<FrameView> create(Frame&, const IntSize& initialSize);
 
     virtual ~FrameView();
 

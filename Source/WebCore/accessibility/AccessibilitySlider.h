@@ -38,7 +38,7 @@ class HTMLInputElement;
 
 class AccessibilitySlider : public AccessibilityRenderObject {
 public:
-    static PassRefPtr<AccessibilitySlider> create(RenderObject*);
+    static Ref<AccessibilitySlider> create(RenderObject*);
     virtual ~AccessibilitySlider() { }
 
 protected:
@@ -67,7 +67,7 @@ private:
 
 class AccessibilitySliderThumb final : public AccessibilityMockObject {
 public:
-    static PassRefPtr<AccessibilitySliderThumb> create();
+    static Ref<AccessibilitySliderThumb> create();
     virtual ~AccessibilitySliderThumb() { }
 
     virtual AccessibilityRole roleValue() const override { return SliderThumbRole; }

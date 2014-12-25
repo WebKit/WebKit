@@ -35,9 +35,9 @@ class StyledElement;
 
 class RemoveCSSPropertyCommand : public SimpleEditCommand {
 public:
-    static PassRefPtr<RemoveCSSPropertyCommand> create(Document& document, PassRefPtr<StyledElement> element, CSSPropertyID property)
+    static Ref<RemoveCSSPropertyCommand> create(Document& document, PassRefPtr<StyledElement> element, CSSPropertyID property)
     {
-        return adoptRef(new RemoveCSSPropertyCommand(document, element, property));
+        return adoptRef(*new RemoveCSSPropertyCommand(document, element, property));
     }
 
 private:

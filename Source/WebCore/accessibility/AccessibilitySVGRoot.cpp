@@ -43,9 +43,9 @@ AccessibilitySVGRoot::~AccessibilitySVGRoot()
 {
 }
 
-PassRefPtr<AccessibilitySVGRoot> AccessibilitySVGRoot::create(RenderObject* renderer)
+Ref<AccessibilitySVGRoot> AccessibilitySVGRoot::create(RenderObject* renderer)
 {
-    return adoptRef(new AccessibilitySVGRoot(renderer));
+    return adoptRef(*new AccessibilitySVGRoot(renderer));
 }
     
 AccessibilityObject* AccessibilitySVGRoot::parentObject() const

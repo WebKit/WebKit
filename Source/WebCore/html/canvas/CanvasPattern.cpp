@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-PassRefPtr<CanvasPattern> CanvasPattern::create(PassRefPtr<Image> image, bool repeatX, bool repeatY, bool originClean)
+Ref<CanvasPattern> CanvasPattern::create(PassRefPtr<Image> image, bool repeatX, bool repeatY, bool originClean)
 {
-    return adoptRef(new CanvasPattern(image, repeatX, repeatY, originClean));
+    return adoptRef(*new CanvasPattern(image, repeatX, repeatY, originClean));
 }
 
 CanvasPattern::CanvasPattern(PassRefPtr<Image> image, bool repeatX, bool repeatY, bool originClean)

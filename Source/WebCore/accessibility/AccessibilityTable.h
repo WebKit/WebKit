@@ -40,7 +40,7 @@ class RenderTableSection;
     
 class AccessibilityTable : public AccessibilityRenderObject {
 public:
-    static PassRefPtr<AccessibilityTable> create(RenderObject*);
+    static Ref<AccessibilityTable> create(RenderObject*);
     virtual ~AccessibilityTable();
 
     virtual void init() override final;

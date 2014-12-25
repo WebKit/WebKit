@@ -91,7 +91,7 @@ struct _WebKitAccessiblePrivate {
 
 static AccessibilityObject* fallbackObject()
 {
-    static AccessibilityObject* object = AccessibilityListBoxOption::create().leakRef();
+    static AccessibilityObject* object = &AccessibilityListBoxOption::create().leakRef();
     return object;
 }
 

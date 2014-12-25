@@ -895,7 +895,7 @@ void Editor::applyStyle(StyleProperties* style, EditAction editingAction)
         break;
     case VisibleSelection::RangeSelection:
         if (style)
-            applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).get(), editingAction));
+            applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction));
         break;
     }
 }
@@ -914,7 +914,7 @@ void Editor::applyParagraphStyle(StyleProperties* style, EditAction editingActio
     case VisibleSelection::CaretSelection:
     case VisibleSelection::RangeSelection:
         if (style)
-            applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).get(), editingAction, ApplyStyleCommand::ForceBlockProperties));
+            applyCommand(ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::ForceBlockProperties));
         break;
     }
 }

@@ -39,7 +39,7 @@ class StorageAreaSync;
 
 class StorageSyncManager : public RefCounted<StorageSyncManager> {
 public:
-    static PassRefPtr<StorageSyncManager> create(const String& path);
+    static Ref<StorageSyncManager> create(const String& path);
     ~StorageSyncManager();
 
     void dispatch(const std::function<void ()>&);

@@ -42,9 +42,9 @@ AccessibilityScrollbar::AccessibilityScrollbar(Scrollbar* scrollbar)
     ASSERT(scrollbar);
 }
 
-PassRefPtr<AccessibilityScrollbar> AccessibilityScrollbar::create(Scrollbar* scrollbar)
+Ref<AccessibilityScrollbar> AccessibilityScrollbar::create(Scrollbar* scrollbar)
 {
-    return adoptRef(new AccessibilityScrollbar(scrollbar));
+    return adoptRef(*new AccessibilityScrollbar(scrollbar));
 }
     
 LayoutRect AccessibilityScrollbar::elementRect() const

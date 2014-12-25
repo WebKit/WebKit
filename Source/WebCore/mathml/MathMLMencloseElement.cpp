@@ -45,9 +45,9 @@ MathMLMencloseElement::MathMLMencloseElement(const QualifiedName& tagName, Docum
 {
 }
 
-PassRefPtr<MathMLMencloseElement> MathMLMencloseElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLMencloseElement> MathMLMencloseElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new MathMLMencloseElement(tagName, document));
+    return adoptRef(*new MathMLMencloseElement(tagName, document));
 }
 
 RenderPtr<RenderElement> MathMLMencloseElement::createElementRenderer(Ref<RenderStyle>&& style)

@@ -32,9 +32,9 @@ namespace WebCore {
 
 class BreakBlockquoteCommand : public CompositeEditCommand {
 public:
-    static PassRefPtr<BreakBlockquoteCommand> create(Document& document)
+    static Ref<BreakBlockquoteCommand> create(Document& document)
     {
-        return adoptRef(new BreakBlockquoteCommand(document));
+        return adoptRef(*new BreakBlockquoteCommand(document));
     }
 
 private:

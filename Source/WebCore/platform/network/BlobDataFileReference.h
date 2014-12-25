@@ -34,9 +34,9 @@ namespace WebCore {
 
 class BlobDataFileReference : public RefCounted<BlobDataFileReference> {
 public:
-    static PassRefPtr<BlobDataFileReference> create(const String& path)
+    static Ref<BlobDataFileReference> create(const String& path)
     {
-        return adoptRef(new BlobDataFileReference(path));
+        return adoptRef(*new BlobDataFileReference(path));
     }
 
     WEBCORE_EXPORT virtual ~BlobDataFileReference();

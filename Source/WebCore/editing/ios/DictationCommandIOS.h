@@ -36,9 +36,9 @@ namespace WebCore {
 
 class DictationCommandIOS : public CompositeEditCommand {
 public:
-    static PassRefPtr<DictationCommandIOS> create(Document& document, PassOwnPtr<Vector<Vector<String> > > dictationPhrase, RetainPtr<id> metadata)
+    static Ref<DictationCommandIOS> create(Document& document, PassOwnPtr<Vector<Vector<String> > > dictationPhrase, RetainPtr<id> metadata)
     {
-        return adoptRef(new DictationCommandIOS(document, dictationPhrase, metadata));
+        return adoptRef(*new DictationCommandIOS(document, dictationPhrase, metadata));
     }
     
     virtual ~DictationCommandIOS();

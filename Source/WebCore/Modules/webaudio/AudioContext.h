@@ -77,10 +77,7 @@ class PeriodicWave;
 class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTargetWithInlineData, public MediaCanStartListener, public AudioProducer {
 public:
     // Create an AudioContext for rendering to the audio hardware.
-    static PassRefPtr<AudioContext> create(Document&, ExceptionCode&);
-
-    // Create an AudioContext for offline (non-realtime) rendering.
-    static PassRefPtr<AudioContext> createOfflineContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode&);
+    static RefPtr<AudioContext> create(Document&, ExceptionCode&);
 
     virtual ~AudioContext();
 

@@ -46,7 +46,7 @@ typedef Vector<std::pair<URL, URL>> FallbackURLVector;
 
 class ApplicationCache : public RefCounted<ApplicationCache> {
 public:
-    static PassRefPtr<ApplicationCache> create() { return adoptRef(new ApplicationCache); }
+    static Ref<ApplicationCache> create() { return adoptRef(*new ApplicationCache); }
     
     WEBCORE_EXPORT static void deleteCacheForOrigin(SecurityOrigin*);
     WEBCORE_EXPORT static void deleteAllCaches();

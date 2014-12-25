@@ -36,9 +36,9 @@ FETile::FETile(Filter* filter)
 {
 }
 
-PassRefPtr<FETile> FETile::create(Filter* filter)
+Ref<FETile> FETile::create(Filter* filter)
 {
-    return adoptRef(new FETile(filter));
+    return adoptRef(*new FETile(filter));
 }
 
 void FETile::platformApplySoftware()

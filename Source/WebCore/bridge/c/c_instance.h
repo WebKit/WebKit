@@ -43,9 +43,9 @@ class CClass;
 
 class CInstance : public Instance {
 public:
-    static PassRefPtr<CInstance> create(NPObject* object, PassRefPtr<RootObject> rootObject)
+    static Ref<CInstance> create(NPObject* object, PassRefPtr<RootObject> rootObject)
     {
-        return adoptRef(new CInstance(object, rootObject));
+        return adoptRef(*new CInstance(object, rootObject));
     }
 
     static void setGlobalException(String);

@@ -79,9 +79,9 @@ class EnumCallback : public CallbackBase {
 public:
     typedef void (*CallbackFunction)(EnumType, void*);
 
-    static PassRefPtr<EnumCallback> create(void* context, CallbackFunction callback)
+    static Ref<EnumCallback> create(void* context, CallbackFunction callback)
     {
-        return adoptRef(new EnumCallback(context, callback));
+        return adoptRef(*new EnumCallback(context, callback));
     }
 
     virtual ~EnumCallback()
@@ -118,9 +118,9 @@ class ObjectCallback : public CallbackBase {
 public:
     typedef void (*CallbackFunction)(ObjectType, void*);
 
-    static PassRefPtr<ObjectCallback> create(void* context, CallbackFunction callback)
+    static Ref<ObjectCallback> create(void* context, CallbackFunction callback)
     {
-        return adoptRef(new ObjectCallback(context, callback));
+        return adoptRef(*new ObjectCallback(context, callback));
     }
 
     virtual ~ObjectCallback()

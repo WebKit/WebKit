@@ -33,9 +33,9 @@ namespace WebCore {
 
 class SpellingCorrectionCommand : public CompositeEditCommand {
 public:
-    static PassRefPtr<SpellingCorrectionCommand> create(PassRefPtr<Range> rangeToBeCorrected, const String& correction)
+    static Ref<SpellingCorrectionCommand> create(PassRefPtr<Range> rangeToBeCorrected, const String& correction)
     {
-        return adoptRef(new SpellingCorrectionCommand(rangeToBeCorrected, correction));
+        return adoptRef(*new SpellingCorrectionCommand(rangeToBeCorrected, correction));
     }
 private:
     SpellingCorrectionCommand(PassRefPtr<Range> rangeToBeCorrected, const String& correction);

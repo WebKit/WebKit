@@ -40,7 +40,7 @@ typedef int ExceptionCode;
 
 class CanvasPattern : public RefCounted<CanvasPattern> {
 public:
-    static PassRefPtr<CanvasPattern> create(PassRefPtr<Image>, bool repeatX, bool repeatY, bool originClean);
+    static Ref<CanvasPattern> create(PassRefPtr<Image>, bool repeatX, bool repeatY, bool originClean);
     ~CanvasPattern();
 
     static void parseRepetitionType(const String&, bool& repeatX, bool& repeatY, ExceptionCode&);

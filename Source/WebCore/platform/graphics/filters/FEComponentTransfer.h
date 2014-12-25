@@ -62,8 +62,8 @@ struct ComponentTransferFunction {
 
 class FEComponentTransfer : public FilterEffect {
 public:
-    static PassRefPtr<FEComponentTransfer> create(Filter*, const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
-                                                  const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
+    static Ref<FEComponentTransfer> create(Filter*, const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc,
+                                           const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
 
     ComponentTransferFunction redFunction() const;
     void setRedFunction(const ComponentTransferFunction&);

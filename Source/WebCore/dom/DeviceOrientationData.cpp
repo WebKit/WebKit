@@ -28,21 +28,21 @@
 
 namespace WebCore {
 
-PassRefPtr<DeviceOrientationData> DeviceOrientationData::create()
+Ref<DeviceOrientationData> DeviceOrientationData::create()
 {
-    return adoptRef(new DeviceOrientationData);
+    return adoptRef(*new DeviceOrientationData);
 }
 
 #if PLATFORM(IOS)
 // FIXME: We should reconcile the iOS and OpenSource differences.
-PassRefPtr<DeviceOrientationData> DeviceOrientationData::create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideCompassHeading, double compassHeading, bool canProvideCompassAccuracy, double compassAccuracy)
+Ref<DeviceOrientationData> DeviceOrientationData::create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideCompassHeading, double compassHeading, bool canProvideCompassAccuracy, double compassAccuracy)
 {
-    return adoptRef(new DeviceOrientationData(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma, canProvideCompassHeading, compassHeading, canProvideCompassAccuracy, compassAccuracy));
+    return adoptRef(*new DeviceOrientationData(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma, canProvideCompassHeading, compassHeading, canProvideCompassAccuracy, compassAccuracy));
 }
 #else
-PassRefPtr<DeviceOrientationData> DeviceOrientationData::create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute)
+Ref<DeviceOrientationData> DeviceOrientationData::create(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma, bool canProvideAbsolute, bool absolute)
 {
-    return adoptRef(new DeviceOrientationData(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma, canProvideAbsolute, absolute));
+    return adoptRef(*new DeviceOrientationData(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma, canProvideAbsolute, absolute));
 }
 #endif
 

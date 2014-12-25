@@ -38,8 +38,8 @@ class Animation : public RefCounted<Animation> {
 public:
     ~Animation();
 
-    static PassRefPtr<Animation> create() { return adoptRef(new Animation); }
-    static PassRefPtr<Animation> create(const Animation& other) { return adoptRef(new Animation(other)); }
+    static Ref<Animation> create() { return adoptRef(*new Animation); }
+    static Ref<Animation> create(const Animation& other) { return adoptRef(*new Animation(other)); }
 
     bool isDelaySet() const { return m_delaySet; }
     bool isDirectionSet() const { return m_directionSet; }

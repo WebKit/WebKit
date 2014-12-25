@@ -54,7 +54,7 @@ typedef int ExceptionCode;
 
 class FileReader final : public RefCounted<FileReader>, public ActiveDOMObject, public EventTargetWithInlineData, public FileReaderLoaderClient {
 public:
-    static PassRefPtr<FileReader> create(ScriptExecutionContext&);
+    static Ref<FileReader> create(ScriptExecutionContext&);
 
     virtual ~FileReader();
 

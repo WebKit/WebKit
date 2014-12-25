@@ -41,9 +41,9 @@ public:
 
 class AudioTrackPrivate : public TrackPrivateBase {
 public:
-    static PassRefPtr<AudioTrackPrivate> create()
+    static Ref<AudioTrackPrivate> create()
     {
-        return adoptRef(new AudioTrackPrivate());
+        return adoptRef(*new AudioTrackPrivate);
     }
 
     void setClient(AudioTrackPrivateClient* client) { m_client = client; }

@@ -32,9 +32,9 @@ namespace WebCore {
 
 class AppendNodeCommand : public SimpleEditCommand {
 public:
-    static PassRefPtr<AppendNodeCommand> create(PassRefPtr<ContainerNode> parent, PassRefPtr<Node> node)
+    static Ref<AppendNodeCommand> create(PassRefPtr<ContainerNode> parent, PassRefPtr<Node> node)
     {
-        return adoptRef(new AppendNodeCommand(parent, node));
+        return adoptRef(*new AppendNodeCommand(parent, node));
     }
 
 private:

@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-PassRefPtr<StorageMap> StorageMap::create(unsigned quota)
+Ref<StorageMap> StorageMap::create(unsigned quota)
 {
-    return adoptRef(new StorageMap(quota));
+    return adoptRef(*new StorageMap(quota));
 }
 
 StorageMap::StorageMap(unsigned quota)

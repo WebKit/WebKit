@@ -30,7 +30,7 @@ namespace WebCore {
 
 class FEGaussianBlur : public FilterEffect {
 public:
-    static PassRefPtr<FEGaussianBlur> create(Filter*, float, float, EdgeModeType);
+    static Ref<FEGaussianBlur> create(Filter*, float, float, EdgeModeType);
 
     float stdDeviationX() const;
     void setStdDeviationX(float);

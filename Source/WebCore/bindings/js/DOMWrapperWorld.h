@@ -35,9 +35,9 @@ typedef HashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
 
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
 public:
-    static PassRefPtr<DOMWrapperWorld> create(JSC::VM& vm, bool isNormal = false)
+    static Ref<DOMWrapperWorld> create(JSC::VM& vm, bool isNormal = false)
     {
-        return adoptRef(new DOMWrapperWorld(vm, isNormal));
+        return adoptRef(*new DOMWrapperWorld(vm, isNormal));
     }
     WEBCORE_EXPORT ~DOMWrapperWorld();
 

@@ -35,9 +35,9 @@ class RenderProgress;
     
 class AccessibilityProgressIndicator final : public AccessibilityRenderObject {
 public:
-    static PassRefPtr<AccessibilityProgressIndicator> create(RenderProgress*);
+    static Ref<AccessibilityProgressIndicator> create(RenderProgress*);
 #if ENABLE(METER_ELEMENT)
-    static PassRefPtr<AccessibilityProgressIndicator> create(RenderMeter*);
+    static Ref<AccessibilityProgressIndicator> create(RenderMeter*);
 #endif
     virtual Element* element() const override;
 

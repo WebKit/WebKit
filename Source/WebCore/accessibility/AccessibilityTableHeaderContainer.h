@@ -37,7 +37,7 @@ namespace WebCore {
 
 class AccessibilityTableHeaderContainer final : public AccessibilityMockObject {
 public:
-    static PassRefPtr<AccessibilityTableHeaderContainer> create();
+    static Ref<AccessibilityTableHeaderContainer> create();
     virtual ~AccessibilityTableHeaderContainer();
     
     virtual AccessibilityRole roleValue() const override { return TableHeaderContainerRole; }
