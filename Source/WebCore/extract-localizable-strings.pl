@@ -53,16 +53,18 @@ my %isDebugMacro = ( ASSERT_WITH_MESSAGE => 1, LOG_ERROR => 1, ERROR => 1, NSURL
 my $verify;
 my $exceptionsFile;
 my @directoriesToSkip = ();
+my $treatWarningsAsErrors;
 
 my %options = (
     'verify' => \$verify,
     'exceptions=s' => \$exceptionsFile,
     'skip=s' => \@directoriesToSkip,
+    'treat-warnings-as-errors' => \$treatWarningsAsErrors,
 );
 
 GetOptions(%options);
 
-@ARGV >= 2 or die "Usage: extract-localizable-strings [--verify] [--exceptions <exceptions file>] <file to update> [--skip directory | directory]...\nDid you mean to run update-webkit-localizable-strings instead?\n";
+@ARGV >= 2 or die "Usage: extract-localizable-strings [--verify] [--treat-warnings-as-errors] [--exceptions <exceptions file>] <file to update> [--skip directory | directory]...\nDid you mean to run update-webkit-localizable-strings instead?\n";
 
 -f $exceptionsFile or die "Couldn't find exceptions file $exceptionsFile\n" unless !defined $exceptionsFile;
 
@@ -90,18 +92,26 @@ my $NSLocalizeCount = 0;
 my %exception;
 my %usedException;
 
+sub emitWarning($$$)
+{
+    my ($file, $line, $message) = @_;
+    my $prefix = $treatWarningsAsErrors ? "" : "warning: ";
+    print "$file:$line: $prefix$message\n";
+    $sawError = 1 if $treatWarningsAsErrors;
+}
+
 if (defined $exceptionsFile && open EXCEPTIONS, $exceptionsFile) {
     while (<EXCEPTIONS>) {
         chomp;
         if (/^"([^\\"]|\\.)*"$/ or /^[-_\/\w\s.]+.(h|m|mm|c|cpp)$/ or /^[-_\/\w\s.]+.(h|m|mm|c|cpp):"([^\\"]|\\.)*"$/) {
             if ($exception{$_}) {
-                print "$exceptionsFile:$.: warning: exception for $_ appears twice\n";
-                print "$exceptionsFile:$exception{$_}: warning: first appearance\n";
+                emitWarning($exceptionsFile, $., "exception for $_ appears twice");
+                emitWarning($exceptionsFile, $exception{$_}, "first appearance");
             } else {
                 $exception{$_} = $.;
             }
         } else {
-            print "$exceptionsFile:$.: warning: syntax error\n";
+            emitWarning($exceptionsFile, $., "syntax error");
         }
     }
     close EXCEPTIONS;
@@ -204,7 +214,7 @@ handleString:
                     } elsif ($exception{"$file:\"$string\""}) {
                         $usedException{"$file:\"$string\""} = 1;
                     } else {
-                        print "$file:$stringLine: warning: \"$string\" is not marked for localization\n" if $warnAboutUnlocalizedStrings;
+                        emitWarning($file, $stringLine, "\"$string\" is not marked for localization") if $warnAboutUnlocalizedStrings;
                         $notLocalizedCount++;
                     }
                 }
@@ -343,14 +353,14 @@ sub HandleUIString
     }
     
     if ($stringByKey{$key} && $stringByKey{$key} ne $string) {
-        print "$file:$line: warning: encountered the same key, \"$key\", twice, with different strings\n";
-        print "$fileByKey{$key}:$lineByKey{$key}: warning: previous occurrence\n";
+        emitWarning($file, $line, "encountered the same key, \"$key\", twice, with different strings");
+        emitWarning($fileByKey{$key}, $lineByKey{$key}, "previous occurrence");
         $keyCollisionCount++;
         return;
     }
     if ($commentByKey{$key} && $commentByKey{$key} ne $comment) {
-        print "$file:$line: warning: encountered the same key, \"$key\", twice, with different comments\n";
-        print "$fileByKey{$key}:$lineByKey{$key}: warning: previous occurrence\n";
+        emitWarning($file, $line, "encountered the same key, \"$key\", twice, with different comments");
+        emitWarning($fileByKey{$key}, $lineByKey{$key}, "previous occurrence");
         $keyCollisionCount++;
         return;
     }
@@ -366,7 +376,7 @@ print "\n" if $sawError || $notLocalizedCount || $NSLocalizeCount;
 my @unusedExceptions = sort grep { !$usedException{$_} } keys %exception;
 if (@unusedExceptions) {
     for my $unused (@unusedExceptions) {
-        print "$exceptionsFile:$exception{$unused}: warning: exception $unused not used\n";
+        emitWarning($exceptionsFile, $exception{$unused}, "exception $unused not used");
     }
     print "\n";
 }

@@ -1,5 +1,23 @@
 2014-12-25  Dan Bernstein  <mitz@apple.com>
 
+        Give extract-localizable-strings an option to treat warnings as errors
+        https://bugs.webkit.org/show_bug.cgi?id=139943
+
+        Reviewed by Darin Adler.
+
+        Add a --treat-warnings-as-errors option, which makes the script emit its warnings as errors
+        and exit with a non-0 return code if it emitted any warnings.
+
+        * extract-localizable-strings.pl:
+        Added $treatWarningsAsErrors variable, set to true if the option is passed in.
+
+        (emitWarning): Added. If $treatWarningsAsErrors is true, omits the "warning: " token from
+        the message, which makes it appear as an error in Xcode, and sets $sawError to 1.
+
+        Replaced all print statements that printed warnings with calls to emitWarning.
+
+2014-12-25  Dan Bernstein  <mitz@apple.com>
+
         Bring the state of WEBCORE_EXPORT annotations closer to what the exports file specifies.
         https://bugs.webkit.org/show_bug.cgi?id=136172
 
