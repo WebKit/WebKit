@@ -96,7 +96,7 @@ inline int32_t saturatedSubtraction(int32_t a, int32_t b)
         );
 #else
     if (signedSubtractOverflows(a, b, result))
-        result = std::numeric_limits<uint32_t>::max() + (static_cast<uint32_t>(a) >> 31);
+        result = std::numeric_limits<int32_t>::max() + (static_cast<uint32_t>(a) >> 31);
 #endif
     return result;
 }

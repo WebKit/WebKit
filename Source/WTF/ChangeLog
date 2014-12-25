@@ -1,3 +1,12 @@
+2014-12-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Simplify saturated integer add/sub
+        https://bugs.webkit.org/show_bug.cgi?id=139854
+
+        Address Darin's post-commit feedback to fix API tests.
+
+        * wtf/SaturatedArithmetic.h: (saturatedSubtraction):
+
 2014-12-24  Benjamin Poulain  <benjamin@webkit.org>
 
         Simplify saturated integer add/sub
