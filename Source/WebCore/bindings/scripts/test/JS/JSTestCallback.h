@@ -32,9 +32,9 @@ namespace WebCore {
 
 class JSTestCallback : public TestCallback, public ActiveDOMCallback {
 public:
-    static PassRefPtr<JSTestCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    static Ref<JSTestCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
     {
-        return adoptRef(new JSTestCallback(callback, globalObject));
+        return adoptRef(*new JSTestCallback(callback, globalObject));
     }
 
     virtual ScriptExecutionContext* scriptExecutionContext() const { return ContextDestructionObserver::scriptExecutionContext(); }

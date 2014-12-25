@@ -1,3 +1,10 @@
+2014-12-25  Andreas Kling  <akling@apple.com>
+
+        Rebaseline bindings tests after r177733.
+
+        * bindings/scripts/test/JS/JSTestCallback.h:
+        (WebCore::JSTestCallback::create):
+
 2014-12-24  Andreas Kling  <akling@apple.com>
 
         Convert more creator functions to return Ref instead of PassRefPtr.
