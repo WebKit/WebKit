@@ -1,3 +1,17 @@
+2014-12-25  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Log better using FeatureCounter why PageCache is failing due to pruned resources
+        https://bugs.webkit.org/show_bug.cgi?id=139921
+
+        Reviewed by Gavin Barraclough and Alexey Proskuryakov.
+
+        Call PageCache::pruneToCapacityNow() instead of multiple calls to
+        setCapacity() as it does exactly what we want. Also pass the new
+        PrunedReason argument so help us do better logging.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::releasePageCache):
+
 2014-12-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r177712 and r177717.
