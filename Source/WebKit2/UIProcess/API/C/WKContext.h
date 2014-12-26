@@ -84,7 +84,7 @@ typedef struct WKContextClient {
     WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
     WKContextNetworkProcessDidCrashCallback                             networkProcessDidCrash;
     WKContextPlugInInformationBecameAvailableCallback                   plugInInformationBecameAvailable;
-} WKContextClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKContextClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 enum {
     kWKProcessModelSharedSecondaryProcess = 0,

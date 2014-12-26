@@ -51,9 +51,9 @@
 #endif
 
 #if defined(__has_extension) && __has_extension(enumerator_attributes) && __has_extension(attribute_unavailable_with_message)
-#define WK_DEPRECATED(message) __attribute__((deprecated(message)))
+#define WK_C_DEPRECATED(message) __attribute__((deprecated(message)))
 #else
-#define WK_DEPRECATED(message)
+#define WK_C_DEPRECATED(message)
 #endif
 
 #if defined(__has_extension) && __has_extension(enumerator_attributes) && __has_extension(attribute_unavailable_with_message)

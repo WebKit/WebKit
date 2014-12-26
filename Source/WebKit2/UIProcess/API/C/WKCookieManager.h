@@ -62,7 +62,7 @@ typedef struct WKCookieManagerClient {
 
     // Version 0.
     WKCookieManagerCookiesDidChangeCallback                             cookiesDidChange;
-} WKCookieManagerClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKCookieManagerClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT WKTypeID WKCookieManagerGetTypeID();
 

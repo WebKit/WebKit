@@ -64,6 +64,6 @@ typedef struct WKBundlePagePolicyClient {
     WKBundlePageDecidePolicyForNewWindowActionCallback                  decidePolicyForNewWindowAction;
     WKBundlePageDecidePolicyForResponseCallback                         decidePolicyForResponse;
     WKBundlePageUnableToImplementPolicyCallback                         unableToImplementPolicy;
-} WKBundlePagePolicyClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePagePolicyClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePagePolicyClient_h

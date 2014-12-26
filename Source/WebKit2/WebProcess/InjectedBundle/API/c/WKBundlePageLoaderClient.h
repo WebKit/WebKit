@@ -520,6 +520,6 @@ typedef struct WKBundlePageLoaderClient {
 
     // Version 7
     WKBundlePageWillDestroyFrame                                            willDestroyFrame;
-} WKBundlePageLoaderClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePageLoaderClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageLoaderClient_h

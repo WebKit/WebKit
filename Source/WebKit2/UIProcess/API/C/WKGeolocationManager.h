@@ -70,7 +70,7 @@ typedef struct WKGeolocationProvider {
 
     // Version 1.
     WKGeolocationProviderSetEnableHighAccuracyCallback                  setEnableHighAccuracy;
-} WKGeolocationProvider WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKGeolocationProvider WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 
 WK_EXPORT WKTypeID WKGeolocationManagerGetTypeID();

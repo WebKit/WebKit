@@ -59,7 +59,7 @@ typedef struct WKPageFindClient {
     WKPageDidFindStringCallback                                         didFindString;
     WKPageDidFailToFindStringCallback                                   didFailToFindString;
     WKPageDidCountStringMatchesCallback                                 didCountStringMatches;
-} WKPageFindClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKPageFindClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #ifdef __cplusplus
 }

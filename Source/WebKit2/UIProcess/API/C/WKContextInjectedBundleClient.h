@@ -68,6 +68,6 @@ typedef struct WKContextInjectedBundleClient {
 
     // Version 1.
     WKContextGetInjectedBundleInitializationUserDataCallback            getInjectedBundleInitializationUserData;
-} WKContextInjectedBundleClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKContextInjectedBundleClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKContextInjectedBundleClient_h

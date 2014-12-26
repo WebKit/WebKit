@@ -54,7 +54,7 @@ typedef struct WKPageFormClient {
 
     // Version 0.
     WKPageWillSubmitFormCallback                                        willSubmitForm;
-} WKPageFormClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKPageFormClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #ifdef __cplusplus
 }

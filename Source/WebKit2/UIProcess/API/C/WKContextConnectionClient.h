@@ -49,6 +49,6 @@ typedef struct WKContextConnectionClient {
 
     // Version 0.
     WKContextDidCreateConnection                                        didCreateConnection;
-} WKContextConnectionClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKContextConnectionClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKContextConnectionClient_h

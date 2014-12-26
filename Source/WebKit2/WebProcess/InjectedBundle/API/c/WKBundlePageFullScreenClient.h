@@ -78,6 +78,6 @@ typedef struct WKBundlePageFullScreenClient {
     WKBundlePageBeganEnterFullScreen                                    beganEnterFullScreen;
     WKBundlePageBeganExitFullScreen                                     beganExitFullScreen;
     WKBundlePageCloseFullScreen                                         closeFullScreen;
-} WKBundlePageFullScreenClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePageFullScreenClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageFullScreenClient_h

@@ -201,6 +201,6 @@ typedef struct WKBundlePageUIClient {
     WKBundlePagePlugInCreateStartLabelSubtitleCallback                  createPlugInStartLabelSubtitle;
     WKBundlePagePlugInCreateExtraStyleSheetCallback                     createPlugInExtraStyleSheet;
     WKBundlePagePlugInCreateExtraScriptCallback                         createPlugInExtraScript;
-} WKBundlePageUIClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePageUIClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageUIClient_h

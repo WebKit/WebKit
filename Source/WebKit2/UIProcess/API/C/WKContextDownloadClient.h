@@ -79,6 +79,6 @@ typedef struct WKContextDownloadClient {
     WKContextDownloadDidFailCallback                                    didFail;
     WKContextDownloadDidCancel                                          didCancel;
     WKContextDownloadProcessDidCrashCallback                            processDidCrash;
-} WKContextDownloadClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKContextDownloadClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKContextDownloadClient_h

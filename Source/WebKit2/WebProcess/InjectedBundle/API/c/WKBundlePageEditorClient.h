@@ -136,6 +136,6 @@ typedef struct WKBundlePageEditorClient {
     WKBundlePageWillWriteToPasteboard                                   willWriteToPasteboard;
     WKBundlePageGetPasteboardDataForRange                               getPasteboardDataForRange;
     WKBundlePageDidWriteToPasteboard                                    didWriteToPasteboard;
-} WKBundlePageEditorClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePageEditorClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageEditorClient_h

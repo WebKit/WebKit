@@ -95,6 +95,6 @@ typedef struct WKBundlePageResourceLoadClient {
     // Version 1.
     WKBundlePageShouldCacheResponseCallback                             shouldCacheResponse;
     WKBundlePageShouldUseCredentialStorageCallback                      shouldUseCredentialStorage;
-} WKBundlePageResourceLoadClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePageResourceLoadClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageResourceLoadClient_h

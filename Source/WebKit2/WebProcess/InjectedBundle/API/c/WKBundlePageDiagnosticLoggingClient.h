@@ -76,6 +76,6 @@ typedef struct WKBundlePageDiagnosticLoggingClient {
     WKBundlePageLogDiagnosticMessageCallback                            logDiagnosticMessage;
     WKBundlePageLogDiagnosticMessageWithResultCallback                  logDiagnosticMessageWithResult;
     WKBundlePageLogDiagnosticMessageWithValueCallback                   logDiagnosticMessageWithValue;
-} WKBundlePageDiagnosticLoggingClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePageDiagnosticLoggingClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageDiagnosticLoggingClient_h

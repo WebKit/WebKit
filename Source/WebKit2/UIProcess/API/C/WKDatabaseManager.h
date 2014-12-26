@@ -93,7 +93,7 @@ typedef struct WKDatabaseManagerClient {
     // Version 0.
     WKDatabaseManagerDidModifyOriginCallback                            didModifyOrigin;
     WKDatabaseManagerDidModifyDatabaseCallback                          didModifyDatabase;
-} WKDatabaseManagerClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKDatabaseManagerClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT WKTypeID WKDatabaseManagerGetTypeID();
 

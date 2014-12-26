@@ -69,7 +69,7 @@ typedef struct WKBundlePageBannerClient {
     WKBundlePageBannerMouseUpCallback                                   mouseUp;
     WKBundlePageBannerMouseMovedCallback                                mouseMoved;
     WKBundlePageBannerMouseDraggedCallback                              mouseDragged;
-} WKBundlePageBannerClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePageBannerClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 
 WK_EXPORT WKTypeID WKBundlePageBannerGetTypeID();

@@ -72,7 +72,7 @@ typedef struct WKIconDatabaseClient {
 
     // Version 1.
     WKIconDatabaseIconDataReadyForPageURLCallback                       iconDataReadyForPageURL;
-} WKIconDatabaseClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKIconDatabaseClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT WKTypeID WKIconDatabaseGetTypeID();
 

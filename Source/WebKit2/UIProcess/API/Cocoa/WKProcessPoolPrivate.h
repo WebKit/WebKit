@@ -37,7 +37,7 @@
 @property (nonatomic, readonly) _WKProcessPoolConfiguration *_configuration;
 
 - (void)_setAllowsSpecificHTTPSCertificate:(NSArray *)certificateChain forHost:(NSString *)host;
-- (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value;
+- (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 - (void)_setCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy;
 
 - (id)_objectForBundleParameter:(NSString *)parameter;

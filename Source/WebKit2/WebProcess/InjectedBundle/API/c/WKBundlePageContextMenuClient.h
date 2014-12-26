@@ -56,6 +56,6 @@ typedef struct WKBundlePageContextMenuClient {
 
     // Version 0.
     WKBundlePageGetContextMenuFromDefaultContextMenuCallback            getContextMenuFromDefaultMenu;
-} WKBundlePageContextMenuClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePageContextMenuClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageContextMenuClient_h

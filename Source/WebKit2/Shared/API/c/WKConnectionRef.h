@@ -56,7 +56,7 @@ typedef struct WKConnectionClient {
     // Version 0.
     WKConnectionDidReceiveMessageCallback                               didReceiveMessage;
     WKConnectionDidCloseCallback                                        didClose;
-} WKConnectionClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKConnectionClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT WKTypeID WKConnectionGetTypeID();
 

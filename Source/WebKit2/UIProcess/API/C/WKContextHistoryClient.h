@@ -61,6 +61,6 @@ typedef struct WKContextHistoryClient {
     WKContextDidPerformServerRedirectCallback                           didPerformServerRedirect;
     WKContextDidUpdateHistoryTitleCallback                              didUpdateHistoryTitle;
     WKContextPopulateVisitedLinksCallback                               populateVisitedLinks;
-} WKContextHistoryClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKContextHistoryClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKContextHistoryClient_h

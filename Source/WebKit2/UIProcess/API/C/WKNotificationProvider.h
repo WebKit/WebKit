@@ -71,7 +71,7 @@ typedef struct WKNotificationProvider {
     WKNotificationProviderRemoveNotificationManagerCallback               removeNotificationManager;
     WKNotificationProviderNotificationPermissionsCallback                 notificationPermissions;
     WKNotificationProviderClearNotificationsCallback                      clearNotifications;
-} WKNotificationProvider WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKNotificationProvider WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #ifdef __cplusplus
 }

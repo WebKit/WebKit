@@ -112,6 +112,6 @@ typedef struct WKBundlePageFormClient {
     WKBundlePageDidFocusTextFieldCallback                               didFocusTextField;
     WKBundlePageShouldNotifyOnFormChangesCallback                       shouldNotifyOnFormChanges;
     WKBundlePageDidAssociateFormControlsCallback                        didAssociateFormControls;
-} WKBundlePageFormClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePageFormClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #endif // WKBundlePageFormClient_h

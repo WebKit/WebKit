@@ -1,5 +1,64 @@
 2014-12-26  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Some modern SPI changes have missing or incorrect availability annotations
+        https://bugs.webkit.org/show_bug.cgi?id=139940
+
+        Reviewed by Darin Adler.
+
+        * Shared/API/c/WKDeclarationSpecifiers.h: Renamed WK_DEPRECATED to WK_C_DEPRECATED.
+
+        * Shared/API/Cocoa/WKFoundation.h: Define WK_DEPRECATED when API availability is not enabled
+        to mean that the declaration is currently deprecated.
+
+        * Shared/API/c/WKConnectionRef.h: Updated for the renaming of the existing WK_DEPRECATED to
+        WK_C_DEPRECATED.
+        * UIProcess/API/C/WKContext.h: Ditto.
+        * UIProcess/API/C/WKContextConnectionClient.h: Ditto.
+        * UIProcess/API/C/WKContextDownloadClient.h: Ditto.
+        * UIProcess/API/C/WKContextHistoryClient.h: Ditto.
+        * UIProcess/API/C/WKContextInjectedBundleClient.h: Ditto.
+        * UIProcess/API/C/WKCookieManager.h: Ditto.
+        * UIProcess/API/C/WKDatabaseManager.h: Ditto.
+        * UIProcess/API/C/WKGeolocationManager.h: Ditto.
+        * UIProcess/API/C/WKIconDatabase.h: Ditto.
+        * UIProcess/API/C/WKNotificationProvider.h: Ditto.
+        * UIProcess/API/C/WKPageContextMenuClient.h: Ditto.
+        * UIProcess/API/C/WKPageFindClient.h: Ditto.
+        * UIProcess/API/C/WKPageFindMatchesClient.h: Ditto.
+        * UIProcess/API/C/WKPageFormClient.h: Ditto.
+        * UIProcess/API/C/WKPageUIClient.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundle.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageBanner.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageContextMenuClient.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageDiagnosticLoggingClient.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageEditorClient.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageFormClient.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageFullScreenClient.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageLoaderClient.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePolicyClient.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageResourceLoadClient.h: Ditto.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageUIClient.h: Ditto.
+
+        * Shared/API/Cocoa/WKRenderingProgressEvents.h: Added missing availability annotation.
+
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h: Changed to use WK_MAC_TBA and WK_IOS_TBA for
+        _WKDebugOverlayRegions enum. Added availability annotations to new properties.
+
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h: Added availability annotation to new method.
+
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h: Annotated new method, changed Mac
+        availability of iOS-only method to NA.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Added availability annotation to new enum value,
+        new property, and new method. Added deprecation annotation to one method.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h: Annotated new method.
+
+        * mac/rewrite-availability-macros.sh: Rewrite WK_DEPRECATED to NS_DEPRECATED.
+
+2014-12-26  Dan Bernstein  <mitz@apple.com>
+
         <rdar://problem/19348208> REGRESSION (r177027): iOS builds use the wrong toolchain
         https://bugs.webkit.org/show_bug.cgi?id=139950
 

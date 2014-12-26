@@ -47,7 +47,7 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 @property (readonly, getter=isNonPersistent) BOOL nonPersistent;
 
-- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler;
+- (void)removeDataOfTypes:(WKWebsiteDataTypes)websiteDataTypes modifiedSince:(NSDate *)date completionHandler:(void (^)())completionHandler WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @end
 

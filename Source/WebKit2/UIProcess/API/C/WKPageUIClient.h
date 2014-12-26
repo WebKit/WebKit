@@ -503,7 +503,7 @@ typedef struct WKPageUIClient {
     WKPageShowColorPickerCallback                                       showColorPicker;
     WKPageHideColorPickerCallback                                       hideColorPicker;
     WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
-} WKPageUIClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKPageUIClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #ifdef __cplusplus
 }

@@ -100,7 +100,7 @@ typedef struct WKBundlePageOverlayClient {
     WKBundlePageOverlayMouseUpCallback                                  mouseUp;
     WKBundlePageOverlayMouseMovedCallback                               mouseMoved;
     WKBundlePageOverlayMouseDraggedCallback                             mouseDragged;
-} WKBundlePageOverlayClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePageOverlayClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 typedef WKTypeRef (*WKAccessibilityAttributeValueCallback)(WKBundlePageOverlayRef pageOverlay, WKStringRef attribute, WKTypeRef parameter, const void* clientInfo);
 typedef WKArrayRef (*WKAccessibilityAttributeNamesCallback)(WKBundlePageOverlayRef pageOverlay, bool parameterizedNames, const void* clientInfo);
@@ -126,7 +126,7 @@ typedef struct WKBundlePageOverlayAccessibilityClient {
     // Version 0.
     WKAccessibilityAttributeValueCallback                               copyAccessibilityAttributeValue;
     WKAccessibilityAttributeNamesCallback                               copyAccessibilityAttributeNames;
-} WKBundlePageOverlayAccessibilityClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundlePageOverlayAccessibilityClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT WKTypeID WKBundlePageOverlayGetTypeID();
 

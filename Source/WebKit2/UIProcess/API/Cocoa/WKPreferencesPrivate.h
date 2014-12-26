@@ -40,7 +40,7 @@ typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
 typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
     _WKNonFastScrollableRegion = 1 << 0,
     _WKWheelEventHandlerRegion = 1 << 1
-} WK_ENUM_AVAILABLE(10_11, 9_0);
+} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @interface WKPreferences (WKPrivate)
 
@@ -51,17 +51,17 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
 @property (nonatomic, setter=_setCompositingBordersVisible:) BOOL _compositingBordersVisible;
 @property (nonatomic, setter=_setCompositingRepaintCountersVisible:) BOOL _compositingRepaintCountersVisible;
 @property (nonatomic, setter=_setTiledScrollingIndicatorVisible:) BOOL _tiledScrollingIndicatorVisible;
-@property (nonatomic, setter=_setVisibleDebugOverlayRegions:) _WKDebugOverlayRegions _visibleDebugOverlayRegions;
-@property (nonatomic, setter=_setSimpleLineLayoutDebugBordersEnabled:) BOOL _simpleLineLayoutDebugBordersEnabled;
+@property (nonatomic, setter=_setVisibleDebugOverlayRegions:) _WKDebugOverlayRegions _visibleDebugOverlayRegions WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, setter=_setSimpleLineLayoutDebugBordersEnabled:) BOOL _simpleLineLayoutDebugBordersEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @property (nonatomic, setter=_setDeveloperExtrasEnabled:) BOOL _developerExtrasEnabled;
 
-@property (nonatomic, setter=_setStandalone:, getter=_isStandalone) BOOL _standalone;
+@property (nonatomic, setter=_setStandalone:, getter=_isStandalone) BOOL _standalone WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 // FIXME: This should be configured on the WKWebsiteDataStore.
 // FIXME: This property should not have the verb "is" in it.
 @property (nonatomic, setter=_setOfflineApplicationCacheIsEnabled:) BOOL _offlineApplicationCacheIsEnabled;
-@property (nonatomic, setter=_setFullScreenEnabled:) BOOL _fullScreenEnabled;
+@property (nonatomic, setter=_setFullScreenEnabled:) BOOL _fullScreenEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @end
 

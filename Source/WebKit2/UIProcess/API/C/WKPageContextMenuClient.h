@@ -116,7 +116,7 @@ typedef struct WKPageContextMenuClient {
     // Version 3.
     WKPageShowContextMenuCallback                                                showContextMenu;
     WKPageHideContextMenuCallback                                                hideContextMenu;
-} WKPageContextMenuClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKPageContextMenuClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 #ifdef __cplusplus
 }

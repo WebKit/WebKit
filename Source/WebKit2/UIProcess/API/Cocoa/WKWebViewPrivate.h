@@ -29,7 +29,7 @@
 
 typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
     _WKRenderingProgressEventFirstLayout = 1 << 0,
-    _WKRenderingProgressEventFirstVisuallyNonEmptyLayout = 1 << 1,
+    _WKRenderingProgressEventFirstVisuallyNonEmptyLayout WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA) = 1 << 1,
     _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
     _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA) = 1 << 3
 } WK_ENUM_AVAILABLE(10_10, 8_0);
@@ -80,7 +80,7 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 @property (nonatomic, readonly) NSArray *_certificateChain;
 @property (nonatomic, readonly) NSURL *_committedURL;
 @property (nonatomic, readonly) NSString *_MIMEType;
-@property (nonatomic, readonly) NSString *_userAgent;
+@property (nonatomic, readonly) NSString *_userAgent WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @property (copy, setter=_setApplicationNameForUserAgent:) NSString *_applicationNameForUserAgent;
 @property (copy, setter=_setCustomUserAgent:) NSString *_customUserAgent;
@@ -142,9 +142,9 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 // Deprecated: Use [_overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:] instead.
 // This function is kept for binary compatibility with iOS 8.0, it can be removed after the bincompat window.
-- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize minimumLayoutSizeForMinimalUI:(CGSize)minimumLayoutSizeForMinimalUI maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride;
+- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize minimumLayoutSizeForMinimalUI:(CGSize)minimumLayoutSizeForMinimalUI maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_DEPRECATED(NA, NA, 8_0, WK_IOS_TBA, "use -_overrideLayoutParametersWithMinimumLayoutSize:maximumUnobscuredSizeOverride:");
 
-- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride;
+- (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_AVAILABLE(NA, WK_IOS_TBA);
 
 - (UIView *)_viewForFindUI;
 

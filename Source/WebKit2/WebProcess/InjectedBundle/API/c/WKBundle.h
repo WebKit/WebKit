@@ -81,7 +81,7 @@ typedef struct WKBundleClient {
 
     // Version 1.
     WKBundleDidReceiveMessageToPageCallback                             didReceiveMessageToPage;
-} WKBundleClient WK_DEPRECATED("Use an explicit versioned struct instead");
+} WKBundleClient WK_C_DEPRECATED("Use an explicit versioned struct instead");
 
 WK_EXPORT WKTypeID WKBundleGetTypeID();
 
