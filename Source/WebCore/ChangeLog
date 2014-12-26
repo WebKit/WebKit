@@ -1,3 +1,22 @@
+2014-12-25  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Allow strings as argument to :lang()
+        https://bugs.webkit.org/show_bug.cgi?id=139678
+
+        Reviewed by Benjamin Poulain.
+
+        Allow strings as argument to :lang()[1]. The selector with empty string argument (e.g. :lang(""))
+        is handled as never matching.
+
+        [1] http://www.w3.org/blog/CSS/2014/12/11/minutes-telecon-231/
+
+        Test: fast/css/css-lang-selector-with-string-arguments-text.html
+              fast/selectors/lang-extended-filtering-with-string-arguments.html
+
+        * css/CSSGrammar.y.in:
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesLangPseudoClass):
+
 2014-12-25  Andreas Kling  <akling@apple.com>
 
         DOM exception creator functions should return Ref.

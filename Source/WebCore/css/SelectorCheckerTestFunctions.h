@@ -158,7 +158,7 @@ inline bool matchesLangPseudoClass(const Element* element, const Vector<AtomicSt
 #endif
         language = element->computeInheritedLanguage();
 
-    if (language.isNull())
+    if (language.isNull() || language.isEmpty())
         return false;
 
     // Implement basic and extended filterings of given language tags 
@@ -169,6 +169,9 @@ inline bool matchesLangPseudoClass(const Element* element, const Vector<AtomicSt
     language.string().split('-', true, languageSubtags);
 
     for (const AtomicString& range : ranges) {
+        if (range.isEmpty())
+            continue;
+
         if (range == "*")
             return true;
 

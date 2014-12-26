@@ -1,3 +1,15 @@
+2014-12-25  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Extend :lang() with string arguments
+        https://bugs.webkit.org/show_bug.cgi?id=139678
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/css/css-lang-selector-with-string-arguments-text-expected.txt: Added.
+        * fast/css/css-lang-selector-with-string-arguments-text.html: Added.
+        * fast/selectors/lang-extended-filtering-with-string-arguments-expected.txt: Added.
+        * fast/selectors/lang-extended-filtering-with-string-arguments.html: Added.
+
 2014-12-24  Benjamin Poulain  <benjamin@webkit.org>
 
         Import the tests for :valid/:invalid on form/fieldset from blink
