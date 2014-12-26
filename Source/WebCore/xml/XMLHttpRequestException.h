@@ -35,9 +35,9 @@ namespace WebCore {
 
 class XMLHttpRequestException : public ExceptionBase {
 public:
-    static PassRefPtr<XMLHttpRequestException> create(const ExceptionCodeDescription& description)
+    static Ref<XMLHttpRequestException> create(const ExceptionCodeDescription& description)
     {
-        return adoptRef(new XMLHttpRequestException(description));
+        return adoptRef(*new XMLHttpRequestException(description));
     }
 
     static const int XMLHttpRequestExceptionOffset = 500;

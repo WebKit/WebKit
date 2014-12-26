@@ -1171,6 +1171,7 @@ sub GenerateHeader
     }
     if (ShouldGenerateToJSDeclaration($hasParent, $interface)) {
         push(@headerContent, "WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
+        push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType& impl) { return toJS(exec, globalObject, &impl); }\n");
     }
     if ($usesToJSNewlyCreated{$interfaceName}) {
         push(@headerContent, "JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName*);\n");

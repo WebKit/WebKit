@@ -35,9 +35,9 @@ namespace WebCore {
 
 class XPathException : public ExceptionBase {
 public:
-    static PassRefPtr<XPathException> create(const ExceptionCodeDescription& description)
+    static Ref<XPathException> create(const ExceptionCodeDescription& description)
     {
-        return adoptRef(new XPathException(description));
+        return adoptRef(*new XPathException(description));
     }
 
     static const int XPathExceptionOffset = 400;

@@ -34,9 +34,9 @@ namespace WebCore {
 
 class IDBDatabaseException : public ExceptionBase {
 public:
-    static PassRefPtr<IDBDatabaseException> create(const ExceptionCodeDescription& description)
+    static Ref<IDBDatabaseException> create(const ExceptionCodeDescription& description)
     {
-        return adoptRef(new IDBDatabaseException(description));
+        return adoptRef(*new IDBDatabaseException(description));
     }
 
     static const int IDBDatabaseExceptionOffset = 1200;

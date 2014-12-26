@@ -87,6 +87,7 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestMediaQueryListLi
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestMediaQueryListListener*);
+inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestMediaQueryListListener& impl) { return toJS(exec, globalObject, &impl); }
 
 
 } // namespace WebCore

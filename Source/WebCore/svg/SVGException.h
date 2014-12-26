@@ -27,9 +27,9 @@ namespace WebCore {
 
 class SVGException : public ExceptionBase {
 public:
-    static PassRefPtr<SVGException> create(const ExceptionCodeDescription& description)
+    static Ref<SVGException> create(const ExceptionCodeDescription& description)
     {
-        return adoptRef(new SVGException(description));
+        return adoptRef(*new SVGException(description));
     }
 
     static const int SVGExceptionOffset = 300;

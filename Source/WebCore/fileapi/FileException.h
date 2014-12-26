@@ -37,9 +37,9 @@ namespace WebCore {
 
 class FileException : public ExceptionBase {
 public:
-    static PassRefPtr<FileException> create(const ExceptionCodeDescription& description)
+    static Ref<FileException> create(const ExceptionCodeDescription& description)
     {
-        return adoptRef(new FileException(description));
+        return adoptRef(*new FileException(description));
     }
 
     static const int FileExceptionOffset = 1100;

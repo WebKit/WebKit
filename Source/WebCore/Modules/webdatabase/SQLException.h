@@ -39,9 +39,9 @@ namespace WebCore {
 
 class SQLException : public ExceptionBase {
 public:
-    static PassRefPtr<SQLException> create(const ExceptionCodeDescription& description)
+    static Ref<SQLException> create(const ExceptionCodeDescription& description)
     {
-        return adoptRef(new SQLException(description));
+        return adoptRef(*new SQLException(description));
     }
 
     static const int SQLExceptionOffset = 1000;

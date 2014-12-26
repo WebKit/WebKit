@@ -1,3 +1,36 @@
+2014-12-25  Andreas Kling  <akling@apple.com>
+
+        DOM exception creator functions should return Ref.
+        <https://webkit.org/b/139947>
+
+        Reviewed by Chris Dumez.
+
+        Tweak all the FooException::create() to return Ref instead of
+        PassRefPtr since construction always succeeds.
+
+        Also add a toJS() overload for ImplType& to keep bindings building.
+
+        * Modules/indexeddb/IDBDatabaseException.h:
+        (WebCore::IDBDatabaseException::create):
+        * Modules/webdatabase/SQLException.h:
+        (WebCore::SQLException::create):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * dom/DOMCoreException.h:
+        (WebCore::DOMCoreException::create):
+        * dom/EventException.h:
+        (WebCore::EventException::create):
+        * dom/RangeException.h:
+        (WebCore::RangeException::create):
+        * fileapi/FileException.h:
+        (WebCore::FileException::create):
+        * svg/SVGException.h:
+        (WebCore::SVGException::create):
+        * xml/XMLHttpRequestException.h:
+        (WebCore::XMLHttpRequestException::create):
+        * xml/XPathException.h:
+        (WebCore::XPathException::create):
+
 2014-12-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, fix build break on win debug build since r177737.

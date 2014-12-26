@@ -89,6 +89,7 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestEventConstructor
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestEventConstructor*);
+inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestEventConstructor& impl) { return toJS(exec, globalObject, &impl); }
 
 bool fillTestEventConstructorInit(TestEventConstructorInit&, JSDictionary&);
 

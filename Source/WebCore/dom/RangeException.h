@@ -31,9 +31,9 @@ namespace WebCore {
 
 class RangeException : public ExceptionBase {
 public:
-    static PassRefPtr<RangeException> create(const ExceptionCodeDescription& description)
+    static Ref<RangeException> create(const ExceptionCodeDescription& description)
     {
-        return adoptRef(new RangeException(description));
+        return adoptRef(*new RangeException(description));
     }
 
     static const int RangeExceptionOffset = 200;

@@ -35,9 +35,9 @@ namespace WebCore {
 
 class DOMCoreException : public ExceptionBase {
 public:
-    static PassRefPtr<DOMCoreException> create(const ExceptionCodeDescription& description)
+    static Ref<DOMCoreException> create(const ExceptionCodeDescription& description)
     {
-        return adoptRef(new DOMCoreException(description));
+        return adoptRef(*new DOMCoreException(description));
     }
 
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);

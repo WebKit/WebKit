@@ -35,9 +35,9 @@ namespace WebCore {
 
 class EventException : public ExceptionBase {
 public:
-    static PassRefPtr<EventException> create(const ExceptionCodeDescription& description)
+    static Ref<EventException> create(const ExceptionCodeDescription& description)
     {
-        return adoptRef(new EventException(description));
+        return adoptRef(*new EventException(description));
     }
 
     static const int EventExceptionOffset = 100;

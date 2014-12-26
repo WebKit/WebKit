@@ -88,6 +88,7 @@ inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, attribute*)
 }
 
 WEBCORE_EXPORT JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, attribute*);
+inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, attribute& impl) { return toJS(exec, globalObject, &impl); }
 
 
 } // namespace WebCore
