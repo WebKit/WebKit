@@ -50,13 +50,13 @@ void WebConnectionToWebProcess::invalidate()
 
 // WebConnection
 
-RefPtr<API::Object> WebConnectionToWebProcess::transformHandlesToObjects(API::Object* object)
+RefPtr<API::Object> WebConnectionToWebProcess::transformHandlesToObjects(API::Object*)
 {
     // FIXME: Implement.
     return nullptr;
 }
 
-RefPtr<API::Object> WebConnectionToWebProcess::transformObjectsToHandles(API::Object* object)
+RefPtr<API::Object> WebConnectionToWebProcess::transformObjectsToHandles(API::Object*)
 {
     // FIXME: Implement.
     return nullptr;

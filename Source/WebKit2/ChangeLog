@@ -1,3 +1,14 @@
+2014-12-25  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Fix build warning after r177700
+        https://bugs.webkit.org/show_bug.cgi?id=139948
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::transformHandlesToObjects):
+        (WebKit::WebConnectionToWebProcess::transformObjectsToHandles):
+
 2014-12-25  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Log better using FeatureCounter why PageCache is failing due to pruned resources
