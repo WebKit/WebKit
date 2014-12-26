@@ -546,8 +546,8 @@ public:
     virtual void didDetachRenderers();
     virtual RefPtr<RenderStyle> customStyleForRenderer(RenderStyle& parentStyle);
 
-    void setBeforePseudoElement(PassRefPtr<PseudoElement>);
-    void setAfterPseudoElement(PassRefPtr<PseudoElement>);
+    void setBeforePseudoElement(Ref<PseudoElement>&&);
+    void setAfterPseudoElement(Ref<PseudoElement>&&);
     void clearBeforePseudoElement();
     void clearAfterPseudoElement();
     void resetComputedStyle();
@@ -635,7 +635,7 @@ private:
     virtual RefPtr<Node> cloneNodeInternal(Document&, CloningOperation) override;
     virtual RefPtr<Element> cloneElementWithoutAttributesAndChildren(Document&);
 
-    void addShadowRoot(PassRefPtr<ShadowRoot>);
+    void addShadowRoot(Ref<ShadowRoot>&&);
     void removeShadowRoot();
 
     bool rareDataStyleAffectedByEmpty() const;

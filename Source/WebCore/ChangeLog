@@ -1,3 +1,28 @@
+2014-12-26  Andreas Kling  <akling@apple.com>
+
+        Purge PassRefPtr from Element and ElementRareData.
+        <https://webkit.org/b/139949>
+
+        Reviewed by Anders Carlsson.
+
+        Make functions that used to take PassRefPtr now take Ref&& or RefPtr&&
+        instead depending on possible nullity of incoming values.
+
+        * dom/Element.cpp:
+        (WebCore::Element::addShadowRoot):
+        (WebCore::Element::setBeforePseudoElement):
+        (WebCore::Element::setAfterPseudoElement):
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::setShadowRoot):
+        (WebCore::ElementRareData::setBeforePseudoElement):
+        (WebCore::ElementRareData::setAfterPseudoElement):
+        * dom/PseudoElement.h:
+        * dom/ShadowRoot.h:
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::setBeforeOrAfterPseudoElement):
+        (WebCore::Style::attachBeforeOrAfterPseudoElementIfNeeded):
+
 2014-12-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19348208> REGRESSION (r177027): iOS builds use the wrong toolchain

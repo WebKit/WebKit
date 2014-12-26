@@ -532,14 +532,14 @@ static PseudoElement* beforeOrAfterPseudoElement(Element& current, PseudoId pseu
     return current.afterPseudoElement();
 }
 
-static void setBeforeOrAfterPseudoElement(Element& current, PassRefPtr<PseudoElement> pseudoElement, PseudoId pseudoId)
+static void setBeforeOrAfterPseudoElement(Element& current, Ref<PseudoElement>&& pseudoElement, PseudoId pseudoId)
 {
     ASSERT(pseudoId == BEFORE || pseudoId == AFTER);
     if (pseudoId == BEFORE) {
-        current.setBeforePseudoElement(pseudoElement);
+        current.setBeforePseudoElement(WTF::move(pseudoElement));
         return;
     }
-    current.setAfterPseudoElement(pseudoElement);
+    current.setAfterPseudoElement(WTF::move(pseudoElement));
 }
 
 static void clearBeforeOrAfterPseudoElement(Element& current, PseudoId pseudoId)
@@ -592,9 +592,9 @@ static void attachBeforeOrAfterPseudoElementIfNeeded(Element& current, PseudoId 
 {
     if (!needsPseudoElement(current, pseudoId))
         return;
-    RefPtr<PseudoElement> pseudoElement = PseudoElement::create(current, pseudoId);
-    setBeforeOrAfterPseudoElement(current, pseudoElement, pseudoId);
-    attachRenderTree(*pseudoElement, *current.renderStyle(), renderTreePosition, nullptr);
+    Ref<PseudoElement> pseudoElement = PseudoElement::create(current, pseudoId);
+    setBeforeOrAfterPseudoElement(current, pseudoElement.copyRef(), pseudoId);
+    attachRenderTree(pseudoElement.get(), *current.renderStyle(), renderTreePosition, nullptr);
 }
 
 static void attachRenderTree(Element& current, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition, PassRefPtr<RenderStyle> resolvedStyle)

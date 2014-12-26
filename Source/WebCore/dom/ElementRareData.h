@@ -30,7 +30,6 @@
 #include "RenderElement.h"
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -39,8 +38,8 @@ public:
     ElementRareData(Element&, RenderElement*);
     ~ElementRareData();
 
-    void setBeforePseudoElement(PassRefPtr<PseudoElement>);
-    void setAfterPseudoElement(PassRefPtr<PseudoElement>);
+    void setBeforePseudoElement(RefPtr<PseudoElement>&&);
+    void setAfterPseudoElement(RefPtr<PseudoElement>&&);
 
     PseudoElement* beforePseudoElement() const { return m_beforePseudoElement.get(); }
     PseudoElement* afterPseudoElement() const { return m_afterPseudoElement.get(); }
@@ -85,7 +84,7 @@ public:
 
     void clearShadowRoot() { m_shadowRoot = nullptr; }
     ShadowRoot* shadowRoot() const { return m_shadowRoot.get(); }
-    void setShadowRoot(PassRefPtr<ShadowRoot> shadowRoot) { m_shadowRoot = shadowRoot; }
+    void setShadowRoot(RefPtr<ShadowRoot>&& shadowRoot) { m_shadowRoot = WTF::move(shadowRoot); }
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
     void setAttributeMap(std::unique_ptr<NamedNodeMap> attributeMap) { m_attributeMap = WTF::move(attributeMap); }
@@ -189,16 +188,16 @@ inline ElementRareData::~ElementRareData()
     ASSERT(!m_afterPseudoElement);
 }
 
-inline void ElementRareData::setBeforePseudoElement(PassRefPtr<PseudoElement> pseudoElement)
+inline void ElementRareData::setBeforePseudoElement(RefPtr<PseudoElement>&& pseudoElement)
 {
     ASSERT(!m_beforePseudoElement || !pseudoElement);
-    m_beforePseudoElement = pseudoElement;
+    m_beforePseudoElement = WTF::move(pseudoElement);
 }
 
-inline void ElementRareData::setAfterPseudoElement(PassRefPtr<PseudoElement> pseudoElement)
+inline void ElementRareData::setAfterPseudoElement(RefPtr<PseudoElement>&& pseudoElement)
 {
     ASSERT(!m_afterPseudoElement || !pseudoElement);
-    m_afterPseudoElement = pseudoElement;
+    m_afterPseudoElement = WTF::move(pseudoElement);
 }
 
 inline void ElementRareData::resetComputedStyle()

@@ -43,9 +43,9 @@ public:
         UserAgentShadowRoot = 0,
     };
 
-    static PassRefPtr<ShadowRoot> create(Document& document, ShadowRootType type)
+    static Ref<ShadowRoot> create(Document& document, ShadowRootType type)
     {
-        return adoptRef(new ShadowRoot(document, type));
+        return adoptRef(*new ShadowRoot(document, type));
     }
 
     virtual ~ShadowRoot();

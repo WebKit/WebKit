@@ -36,9 +36,9 @@ namespace WebCore {
 
 class PseudoElement final : public Element {
 public:
-    static PassRefPtr<PseudoElement> create(Element& host, PseudoId pseudoId)
+    static Ref<PseudoElement> create(Element& host, PseudoId pseudoId)
     {
-        return adoptRef(new PseudoElement(host, pseudoId));
+        return adoptRef(*new PseudoElement(host, pseudoId));
     }
     virtual ~PseudoElement();
 

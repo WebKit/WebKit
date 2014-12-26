@@ -1457,24 +1457,24 @@ void Element::resetNeedsNodeRenderingTraversalSlowPath()
     setNeedsNodeRenderingTraversalSlowPath(shouldUseNodeRenderingTraversalSlowPath(*this));
 }
 
-void Element::addShadowRoot(PassRefPtr<ShadowRoot> newShadowRoot)
+void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 {
     ASSERT(!shadowRoot());
 
-    ShadowRoot* shadowRoot = newShadowRoot.get();
-    ensureElementRareData().setShadowRoot(newShadowRoot);
+    ShadowRoot& shadowRoot = newShadowRoot.get();
+    ensureElementRareData().setShadowRoot(WTF::move(newShadowRoot));
 
-    shadowRoot->setHostElement(this);
-    shadowRoot->setParentTreeScope(&treeScope());
-    shadowRoot->distributor().didShadowBoundaryChange(this);
+    shadowRoot.setHostElement(this);
+    shadowRoot.setParentTreeScope(&treeScope());
+    shadowRoot.distributor().didShadowBoundaryChange(this);
 
-    ChildNodeInsertionNotifier(*this).notify(*shadowRoot);
+    ChildNodeInsertionNotifier(*this).notify(shadowRoot);
 
     resetNeedsNodeRenderingTraversalSlowPath();
 
     setNeedsStyleRecalc(ReconstructRenderTree);
 
-    InspectorInstrumentation::didPushShadowRoot(this, shadowRoot);
+    InspectorInstrumentation::didPushShadowRoot(this, &shadowRoot);
 }
 
 void Element::removeShadowRoot()
@@ -2329,14 +2329,14 @@ PseudoElement* Element::afterPseudoElement() const
     return hasRareData() ? elementRareData()->afterPseudoElement() : 0;
 }
 
-void Element::setBeforePseudoElement(PassRefPtr<PseudoElement> element)
+void Element::setBeforePseudoElement(Ref<PseudoElement>&& element)
 {
-    ensureElementRareData().setBeforePseudoElement(element);
+    ensureElementRareData().setBeforePseudoElement(WTF::move(element));
 }
 
-void Element::setAfterPseudoElement(PassRefPtr<PseudoElement> element)
+void Element::setAfterPseudoElement(Ref<PseudoElement>&& element)
 {
-    ensureElementRareData().setAfterPseudoElement(element);
+    ensureElementRareData().setAfterPseudoElement(WTF::move(element));
 }
 
 static void disconnectPseudoElement(PseudoElement* pseudoElement)
