@@ -1,5 +1,29 @@
 2014-12-26  Anders Carlsson  <andersca@apple.com>
 
+        Move handle encoding functions to their respective implementation files
+        https://bugs.webkit.org/show_bug.cgi?id=139957
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/APIFrameHandle.cpp:
+        (API::FrameHandle::encode):
+        (API::FrameHandle::decode):
+        * Shared/API/APIFrameHandle.h:
+        * Shared/API/APIPageGroupHandle.cpp:
+        (API::PageGroupHandle::PageGroupHandle):
+        (API::PageGroupHandle::encode):
+        (API::PageGroupHandle::decode):
+        * Shared/API/APIPageGroupHandle.h:
+        * Shared/API/APIPageHandle.cpp:
+        (API::PageHandle::encode):
+        (API::PageHandle::decode):
+        * Shared/API/APIPageHandle.h:
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+
+2014-12-26  Anders Carlsson  <andersca@apple.com>
+
         Add the notion of auto-converting page and frame handles
         https://bugs.webkit.org/show_bug.cgi?id=139954
 

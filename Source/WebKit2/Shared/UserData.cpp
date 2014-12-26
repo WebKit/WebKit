@@ -34,6 +34,7 @@
 #include "APIGeometry.h"
 #include "APINumber.h"
 #include "APIPageGroupHandle.h"
+#include "APIPageHandle.h"
 #include "APISerializedScriptValue.h"
 #include "APIString.h"
 #include "APIURL.h"
@@ -192,17 +193,17 @@ void UserData::encode(IPC::ArgumentEncoder& encoder, const API::Object& object) 
         static_cast<const API::Error&>(object).encode(encoder);
         break;
 
-    case API::Object::Type::FrameHandle: {
-        auto& frameHandle = static_cast<const API::FrameHandle&>(object);
-        encoder << frameHandle.frameID();
+    case API::Object::Type::FrameHandle:
+        static_cast<const API::FrameHandle&>(object).encode(encoder);
         break;
-    }
 
-    case API::Object::Type::PageGroupHandle: {
-        auto& pageGroupHandle = static_cast<const API::PageGroupHandle&>(object);
-        encoder << pageGroupHandle.webPageGroupData();
+    case API::Object::Type::PageGroupHandle:
+        static_cast<const API::PageGroupHandle&>(object).encode(encoder);
         break;
-    }
+
+    case API::Object::Type::PageHandle:
+        static_cast<const API::PageHandle&>(object).encode(encoder);
+        break;
 
     case API::Object::Type::Point:
         static_cast<const API::Point&>(object).encode(encoder);
@@ -228,10 +229,9 @@ void UserData::encode(IPC::ArgumentEncoder& encoder, const API::Object& object) 
         break;
     }
 
-    case API::Object::Type::URL: {
+    case API::Object::Type::URL:
         static_cast<const API::URL&>(object).encode(encoder);
         break;
-    }
 
     case API::Object::Type::URLRequest:
         static_cast<const API::URLRequest&>(object).encode(encoder);
@@ -318,28 +318,24 @@ bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result
             return false;
         break;
 
-    case API::Object::Type::FrameHandle: {
-        uint64_t frameID;
-        if (!decoder.decode(frameID))
+    case API::Object::Type::FrameHandle:
+        if (!API::FrameHandle::decode(decoder, result))
             return false;
-
-        result = API::FrameHandle::create(frameID);
         break;
-    }
 
     case API::Object::Type::Null:
         result = nullptr;
         break;
 
-    case API::Object::Type::PageGroupHandle: {
-        WebKit::WebPageGroupData webPageGroupData;
-        if (!decoder.decode(webPageGroupData))
+    case API::Object::Type::PageGroupHandle:
+        if (!API::PageGroupHandle::decode(decoder, result))
             return false;
         break;
 
-        result = API::PageGroupHandle::create(WTF::move(webPageGroupData));
+    case API::Object::Type::PageHandle:
+        if (!API::PageHandle::decode(decoder, result))
+            return false;
         break;
-    }
 
     case API::Object::Type::Point:
         if (!API::Point::decode(decoder, result))

@@ -29,6 +29,11 @@
 #include "APIObject.h"
 #include <wtf/Ref.h>
 
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
+
 namespace API {
 
 class PageHandle : public ObjectImpl<Object::Type::PageHandle> {
@@ -39,6 +44,9 @@ public:
 
     uint64_t pageID() const { return m_pageID; }
     bool isAutoconverting() const { return m_isAutoconverting; }
+
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
 
 private:
     explicit PageHandle(uint64_t pageID, bool isAutoconverting);

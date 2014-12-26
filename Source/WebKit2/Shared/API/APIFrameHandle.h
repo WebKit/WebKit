@@ -29,18 +29,26 @@
 #include "APIObject.h"
 #include <wtf/Ref.h>
 
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
+
 namespace API {
 
 class FrameHandle : public ObjectImpl<Object::Type::FrameHandle> {
 public:
     static Ref<FrameHandle> create(uint64_t frameID);
     static Ref<FrameHandle> createAutoconverting(uint64_t frameID);
-    explicit FrameHandle(uint64_t frameID, bool isAutoconverting);
 
+    explicit FrameHandle(uint64_t frameID, bool isAutoconverting);
     virtual ~FrameHandle();
 
     uint64_t frameID() const { return m_frameID; }
     bool isAutoconverting() const { return m_isAutoconverting; }
+
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
 
 private:
     const uint64_t m_frameID;

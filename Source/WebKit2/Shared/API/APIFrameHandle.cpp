@@ -26,6 +26,9 @@
 #include "config.h"
 #include "APIFrameHandle.h"
 
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+
 namespace API {
 
 Ref<FrameHandle> FrameHandle::create(uint64_t frameID)
@@ -46,6 +49,26 @@ FrameHandle::FrameHandle(uint64_t frameID, bool isAutoconverting)
 
 FrameHandle::~FrameHandle()
 {
+}
+
+void FrameHandle::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << m_frameID;
+    encoder << m_isAutoconverting;
+}
+
+bool FrameHandle::decode(IPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
+{
+    uint64_t frameID;
+    if (!decoder.decode(frameID))
+        return false;
+
+    bool isAutoconverting;
+    if (!decoder.decode(isAutoconverting))
+        return false;
+
+    result = isAutoconverting ? createAutoconverting(frameID) : create(frameID);
+    return true;
 }
 
 } // namespace API

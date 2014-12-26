@@ -30,6 +30,11 @@
 #include "WebPageGroupData.h"
 #include <wtf/RefPtr.h>
 
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
+
 namespace API {
 
 class PageGroupHandle : public ObjectImpl<Object::Type::PageGroupHandle> {
@@ -38,6 +43,9 @@ public:
     virtual ~PageGroupHandle();
 
     const WebKit::WebPageGroupData& webPageGroupData() const { return m_webPageGroupData; }
+
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, RefPtr<Object>&);
 
 private:
     explicit PageGroupHandle(WebKit::WebPageGroupData&&);

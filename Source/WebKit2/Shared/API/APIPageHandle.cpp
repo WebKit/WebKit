@@ -26,6 +26,9 @@
 #include "config.h"
 #include "APIPageHandle.h"
 
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+
 namespace API {
 
 Ref<PageHandle> PageHandle::create(uint64_t pageID)
@@ -46,6 +49,26 @@ PageHandle::PageHandle(uint64_t pageID, bool isAutoconverting)
 
 PageHandle::~PageHandle()
 {
+}
+
+void PageHandle::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encoder << m_pageID;
+    encoder << m_isAutoconverting;
+}
+
+bool PageHandle::decode(IPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
+{
+    uint64_t pageID;
+    if (!decoder.decode(pageID))
+        return false;
+
+    bool isAutoconverting;
+    if (!decoder.decode(isAutoconverting))
+        return false;
+
+    result = isAutoconverting ? createAutoconverting(pageID) : create(pageID);
+    return true;
 }
 
 } // namespace API

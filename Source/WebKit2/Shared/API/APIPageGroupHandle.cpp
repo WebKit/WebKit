@@ -26,6 +26,9 @@
 #include "config.h"
 #include "APIPageGroupHandle.h"
 
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+
 namespace API {
 
 Ref<PageGroupHandle> PageGroupHandle::create(WebKit::WebPageGroupData&& webPageGroupData)
@@ -33,13 +36,28 @@ Ref<PageGroupHandle> PageGroupHandle::create(WebKit::WebPageGroupData&& webPageG
     return adoptRef(*new PageGroupHandle(WTF::move(webPageGroupData)));
 }
 
+PageGroupHandle::PageGroupHandle(WebKit::WebPageGroupData&& webPageGroupData)
+    : m_webPageGroupData(WTF::move(webPageGroupData))
+{
+}
+
 PageGroupHandle::~PageGroupHandle()
 {
 }
 
-PageGroupHandle::PageGroupHandle(WebKit::WebPageGroupData&& webPageGroupData)
-    : m_webPageGroupData(WTF::move(webPageGroupData))
+void PageGroupHandle::encode(IPC::ArgumentEncoder& encoder) const
 {
+    encoder << m_webPageGroupData;
+}
+
+bool PageGroupHandle::decode(IPC::ArgumentDecoder& decoder, RefPtr<Object>& result)
+{
+    WebKit::WebPageGroupData webPageGroupData;
+    if (!decoder.decode(webPageGroupData))
+        return false;
+
+    result = create(WTF::move(webPageGroupData));
+    return true;
 }
 
 }
