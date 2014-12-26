@@ -28,13 +28,19 @@
 
 namespace API {
 
-PassRefPtr<FrameHandle> FrameHandle::create(uint64_t frameID)
+Ref<FrameHandle> FrameHandle::create(uint64_t frameID)
 {
-    return adoptRef(new FrameHandle(frameID));
+    return adoptRef(*new FrameHandle(frameID, false));
 }
 
-FrameHandle::FrameHandle(uint64_t frameID)
+Ref<FrameHandle> FrameHandle::createAutoconverting(uint64_t frameID)
+{
+    return adoptRef(*new FrameHandle(frameID, true));
+}
+
+FrameHandle::FrameHandle(uint64_t frameID, bool isAutoconverting)
     : m_frameID(frameID)
+    , m_isAutoconverting(isAutoconverting)
 {
 }
 

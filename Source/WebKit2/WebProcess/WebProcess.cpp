@@ -1233,11 +1233,15 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
         {
         }
 
-        virtual bool shouldTransformObjectOfType(API::Object::Type type) const
+        virtual bool shouldTransformObject(const API::Object& object) const override
         {
-            switch (type) {
+            switch (object.type()) {
             case API::Object::Type::FrameHandle:
+                return static_cast<const API::FrameHandle&>(object).isAutoconverting();
+
             case API::Object::Type::PageHandle:
+                return static_cast<const API::PageHandle&>(object).isAutoconverting();
+
             case API::Object::Type::PageGroupHandle:
 #if PLATFORM(COCOA)
             case API::Object::Type::ObjCObjectGraph:
@@ -1279,9 +1283,9 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
 RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
 {
     struct Transformer final : UserData::Transformer {
-        virtual bool shouldTransformObjectOfType(API::Object::Type type) const override
+        virtual bool shouldTransformObject(const API::Object& object) const override
         {
-            switch (type) {
+            switch (object.type()) {
             case API::Object::Type::BundleFrame:
             case API::Object::Type::BundlePage:
             case API::Object::Type::BundlePageGroup:
@@ -1299,10 +1303,10 @@ RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
         {
             switch (object.type()) {
             case API::Object::Type::BundleFrame:
-                return API::FrameHandle::create(static_cast<const WebFrame&>(object).frameID());
+                return API::FrameHandle::createAutoconverting(static_cast<const WebFrame&>(object).frameID());
 
             case API::Object::Type::BundlePage:
-                return API::PageHandle::create(static_cast<const WebPage&>(object).pageID());
+                return API::PageHandle::createAutoconverting(static_cast<const WebPage&>(object).pageID());
 
             case API::Object::Type::BundlePageGroup: {
                 WebPageGroupData pageGroupData;

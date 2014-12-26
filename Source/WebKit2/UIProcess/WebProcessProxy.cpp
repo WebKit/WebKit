@@ -659,11 +659,15 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
         {
         }
 
-        virtual bool shouldTransformObjectOfType(API::Object::Type type) const
+        virtual bool shouldTransformObject(const API::Object& object) const override
         {
-            switch (type) {
+            switch (object.type()) {
             case API::Object::Type::FrameHandle:
+                return static_cast<const API::FrameHandle&>(object).isAutoconverting();
+
             case API::Object::Type::PageHandle:
+                return static_cast<const API::PageHandle&>(object).isAutoconverting();
+
             case API::Object::Type::PageGroupHandle:
 #if PLATFORM(COCOA)
             case API::Object::Type::ObjCObjectGraph:
@@ -679,12 +683,14 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
         {
             switch (object.type()) {
             case API::Object::Type::FrameHandle:
+                ASSERT(static_cast<API::FrameHandle&>(object).isAutoconverting());
                 return m_webProcessProxy.webFrame(static_cast<API::FrameHandle&>(object).frameID());
 
             case API::Object::Type::PageGroupHandle:
                 return WebPageGroup::get(static_cast<API::PageGroupHandle&>(object).webPageGroupData().pageGroupID);
 
             case API::Object::Type::PageHandle:
+                ASSERT(static_cast<API::PageHandle&>(object).isAutoconverting());
                 return m_webProcessProxy.webPage(static_cast<API::PageHandle&>(object).pageID());
 
 #if PLATFORM(COCOA)
@@ -705,9 +711,9 @@ RefPtr<API::Object> WebProcessProxy::transformHandlesToObjects(API::Object* obje
 RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* object)
 {
     struct Transformer final : UserData::Transformer {
-        virtual bool shouldTransformObjectOfType(API::Object::Type type) const
+        virtual bool shouldTransformObject(const API::Object& object) const
         {
-            switch (type) {
+            switch (object.type()) {
             case API::Object::Type::Frame:
             case API::Object::Type::Page:
             case API::Object::Type::PageGroup:
@@ -725,10 +731,10 @@ RefPtr<API::Object> WebProcessProxy::transformObjectsToHandles(API::Object* obje
         {
             switch (object.type()) {
             case API::Object::Type::Frame:
-                return API::FrameHandle::create(static_cast<const WebFrameProxy&>(object).frameID());
+                return API::FrameHandle::createAutoconverting(static_cast<const WebFrameProxy&>(object).frameID());
 
             case API::Object::Type::Page:
-                return API::PageHandle::create(static_cast<const WebPageProxy&>(object).pageID());
+                return API::PageHandle::createAutoconverting(static_cast<const WebPageProxy&>(object).pageID());
 
             case API::Object::Type::PageGroup:
                 return API::PageGroupHandle::create(WebPageGroupData(static_cast<const WebPageGroup&>(object).data()));

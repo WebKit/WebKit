@@ -87,7 +87,7 @@ using namespace WebKit;
         return nil;
     }
 
-    API::Object::constructInWrapper<API::FrameHandle>(self, frameID.unsignedLongLongValue);
+    API::Object::constructInWrapper<API::FrameHandle>(self, frameID.unsignedLongLongValue, false);
 
     return self;
 }

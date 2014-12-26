@@ -27,21 +27,24 @@
 #define APIFrameHandle_h
 
 #include "APIObject.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace API {
 
 class FrameHandle : public ObjectImpl<Object::Type::FrameHandle> {
 public:
-    explicit FrameHandle(uint64_t frameID);
+    static Ref<FrameHandle> create(uint64_t frameID);
+    static Ref<FrameHandle> createAutoconverting(uint64_t frameID);
+    explicit FrameHandle(uint64_t frameID, bool isAutoconverting);
 
-    static PassRefPtr<FrameHandle> create(uint64_t frameID);
     virtual ~FrameHandle();
 
     uint64_t frameID() const { return m_frameID; }
+    bool isAutoconverting() const { return m_isAutoconverting; }
 
 private:
-    uint64_t m_frameID;
+    const uint64_t m_frameID;
+    const bool m_isAutoconverting;
 };
 
 } // namespace API

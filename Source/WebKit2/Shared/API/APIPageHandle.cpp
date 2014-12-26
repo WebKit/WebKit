@@ -28,13 +28,19 @@
 
 namespace API {
 
-RefPtr<PageHandle> PageHandle::create(uint64_t pageID)
+Ref<PageHandle> PageHandle::create(uint64_t pageID)
 {
-    return adoptRef(new PageHandle(pageID));
+    return adoptRef(*new PageHandle(pageID, false));
 }
 
-PageHandle::PageHandle(uint64_t pageID)
+Ref<PageHandle> PageHandle::createAutoconverting(uint64_t pageID)
+{
+    return adoptRef(*new PageHandle(pageID, true));
+}
+
+PageHandle::PageHandle(uint64_t pageID, bool isAutoconverting)
     : m_pageID(pageID)
+    , m_isAutoconverting(isAutoconverting)
 {
 }
 

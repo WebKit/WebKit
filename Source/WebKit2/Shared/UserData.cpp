@@ -83,7 +83,7 @@ static bool shouldTransform(const API::Object& object, const UserData::Transform
         }
     }
 
-    return transformer.shouldTransformObjectOfType(object.type());
+    return transformer.shouldTransformObject(object);
 }
 
 static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::Transformer& transformer)

@@ -44,7 +44,7 @@ public:
 
     struct Transformer {
         virtual ~Transformer() { }
-        virtual bool shouldTransformObjectOfType(API::Object::Type) const = 0;
+        virtual bool shouldTransformObject(const API::Object&) const = 0;
         virtual RefPtr<API::Object> transformObject(API::Object&) const = 0;
     };
     static RefPtr<API::Object> transform(API::Object*, const Transformer&);

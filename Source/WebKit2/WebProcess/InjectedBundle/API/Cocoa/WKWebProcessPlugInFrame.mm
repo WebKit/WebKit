@@ -100,7 +100,7 @@ using namespace WebKit;
 
 - (_WKFrameHandle *)handle
 {
-    return [wrapper(*API::FrameHandle::create(_frame->frameID()).leakRef()) autorelease];
+    return [wrapper(API::FrameHandle::create(_frame->frameID()).leakRef()) autorelease];
 }
 
 - (BOOL)_hasCustomContentProvider

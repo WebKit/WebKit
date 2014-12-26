@@ -229,7 +229,7 @@ void UIDelegate::UIClient::printFrame(WebKit::WebPageProxy*, WebKit::WebFramePro
     if (!delegate)
         return;
 
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView printFrame:wrapper(*API::FrameHandle::create(webFrameProxy->frameID()))];
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView printFrame:wrapper(API::FrameHandle::create(webFrameProxy->frameID()))];
 }
 
 void UIDelegate::UIClient::close(WebKit::WebPageProxy*)

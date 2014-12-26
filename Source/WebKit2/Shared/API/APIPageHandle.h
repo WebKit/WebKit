@@ -27,21 +27,24 @@
 #define APIPageHandle_h
 
 #include "APIObject.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace API {
 
 class PageHandle : public ObjectImpl<Object::Type::PageHandle> {
 public:
-    static RefPtr<PageHandle> create(uint64_t pageID);
+    static Ref<PageHandle> create(uint64_t pageID);
+    static Ref<PageHandle> createAutoconverting(uint64_t pageID);
     virtual ~PageHandle();
 
     uint64_t pageID() const { return m_pageID; }
+    bool isAutoconverting() const { return m_isAutoconverting; }
 
 private:
-    explicit PageHandle(uint64_t pageID);
+    explicit PageHandle(uint64_t pageID, bool isAutoconverting);
 
-    uint64_t m_pageID;
+    const uint64_t m_pageID;
+    const bool m_isAutoconverting;
 };
 
 } // namespace API
