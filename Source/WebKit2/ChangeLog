@@ -1,5 +1,16 @@
 2014-12-26  Anders Carlsson  <andersca@apple.com>
 
+        Handle more types in the UserData encode/decode functions
+        https://bugs.webkit.org/show_bug.cgi?id=139959
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+
+2014-12-26  Anders Carlsson  <andersca@apple.com>
+
         Move handle encoding functions to their respective implementation files
         https://bugs.webkit.org/show_bug.cgi?id=139957
 
