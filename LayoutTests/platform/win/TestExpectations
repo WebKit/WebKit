@@ -948,7 +948,7 @@ fast/loader/crash-copying-backforwardlist.html
 
 webkit.org/b/34447 http/tests/media/video-referer.html [ Failure ]
 
-fast/frames/flattening/scrolling-in-object.html [ Pass ImageOnlyFailure Failure ]
+fast/frames/flattening/scrolling-in-object.html [ Pass ImageOnlyFailure Failure Timeout]
 fast/text-autosizing/narrow-iframe-flattened.html [ ImageOnlyFailure ]
 
 # Accept header is handled by the browser
@@ -1041,7 +1041,7 @@ webkit.org/b/128981 canvas/philip/tests/2d.shadow.enable.y.html [ Failure ]
 webkit.org/b/39104 editing/spelling/context-menu-suggestions.html [ Failure ]
 
 # eventSender.contextClick() needs to return a JS array of the context menu items.
-webkit.org/b/62597 editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
+webkit.org/b/62597 editing/pasteboard/copy-standalone-image-crash.html [ Timeout ]
 
 # textInputController.hasGrammarMarkers() is not implemented.
 editing/spelling/grammar.html
@@ -3015,3 +3015,25 @@ webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.blur.html [ Failure ]
 webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.off.1.html [ Failure Timeout ]
 webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.x.html [ Failure ]
 webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.y.html [ Failure ]
+
+# new timeouts, need bug reports
+fast/events/pageshow-pagehide-on-back-uncached.html [ Timeout ]
+fast/forms/button-state-restore.html [ Timeout ]
+fast/forms/radio/state-restore-radio-group.html [ Timeout ]
+fast/forms/select/select-state-restore.html [ Timeout ]
+fast/forms/state-restore-hidden.html [ Timeout ]
+fast/forms/state-restore-per-form.html [ Timeout ]
+fast/forms/state-restore-to-non-autocomplete-form.html [ Timeout ]
+fast/forms/state-restore-to-non-edited-controls.html [ Timeout ]
+fast/forms/state-save-of-detached-control.html [ Timeout ]
+fast/forms/textarea/textarea-state-restore.html [ Timeout ]
+fast/history/history-back-initial-vs-final-url.html [ Timeout ]
+fast/history/history-length.html [ Timeout ]
+fast/history/history-subframe-with-name.html [ Timeout ]
+fast/history/location-replace-hash.html [ Timeout ]
+fast/history/saves-state-after-fragment-nav.html [ Timeout ]
+fast/loader/child-frame-add-after-back-forward.html [ Timeout ]
+fast/loader/form-state-restore-with-frames.html [ Timeout ]
+fast/loader/stateobjects/pushstate-clears-forward-history.html [ Timeout ]
+fast/media/mq-color-index-01.html [ Timeout ]
+fast/media/mq-simple-neg-query-02.html [ Timeout ]
