@@ -1,5 +1,14 @@
 2014-12-27  Alexey Proskuryakov  <ap@apple.com>
 
+        http/tests/notifications/show.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=139961
+
+        Reviewed by Anders Carlsson.
+
+        * http/tests/notifications/show.html: Remove a built-in 100ms timeout.
+
+2014-12-27  Alexey Proskuryakov  <ap@apple.com>
+
         fast/parser/parser-yield-timing.html is flaky in debug builds
         https://bugs.webkit.org/show_bug.cgi?id=139962
 
