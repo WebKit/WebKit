@@ -29,6 +29,13 @@
 #include "APIObject.h"
 #include <wtf/RetainPtr.h>
 
+namespace IPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
+
+typedef struct objc_object* id;
+
 namespace WebKit {
 
 class ObjCObjectGraph : public API::ObjectImpl<API::Object::Type::ObjCObjectGraph> {
@@ -47,7 +54,13 @@ public:
     };
     static RetainPtr<id> transform(id, const Transformer&);
 
+    void encode(IPC::ArgumentEncoder&) const;
+    static bool decode(IPC::ArgumentDecoder&, RefPtr<API::Object>&);
+
 private:
+    static void encode(IPC::ArgumentEncoder&, id);
+    static bool decode(IPC::ArgumentDecoder&, RetainPtr<id>&);
+
     explicit ObjCObjectGraph(id rootObject)
         : m_rootObject(rootObject)
     {

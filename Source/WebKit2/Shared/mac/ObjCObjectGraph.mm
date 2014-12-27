@@ -23,8 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ObjCObjectGraph.h"
+#import "config.h"
+#import "ObjCObjectGraph.h"
+
+#import "ArgumentCodersMac.h"
+#import "ArgumentDecoder.h"
+#import "ArgumentEncoder.h"
+#import <wtf/Optional.h>
+
+#if WK_API_ENABLED
+#import "WKBrowsingContextHandleInternal.h"
+#endif
 
 namespace WebKit {
 
@@ -83,6 +92,231 @@ RetainPtr<id> ObjCObjectGraph::transform(id object, const Transformer& transform
         return object;
 
     return transformGraph(object, transformer);
+}
+
+enum class ObjCType {
+    Null,
+
+    NSArray,
+    NSData,
+    NSDate,
+    NSDictionary,
+    NSNumber,
+    NSString,
+
+#if WK_API_ENABLED
+    WKBrowsingContextHandle,
+#endif
+};
+
+static Optional<ObjCType> typeFromObject(id object)
+{
+    ASSERT(object);
+
+    if (dynamic_objc_cast<NSArray>(object))
+        return ObjCType::NSArray;
+    if (dynamic_objc_cast<NSData>(object))
+        return ObjCType::NSData;
+    if (dynamic_objc_cast<NSDate>(object))
+        return ObjCType::NSDate;
+    if (dynamic_objc_cast<NSDictionary>(object))
+        return ObjCType::NSDictionary;
+    if (dynamic_objc_cast<NSNumber>(object))
+        return ObjCType::NSNumber;
+    if (dynamic_objc_cast<NSString>(object))
+        return ObjCType::NSString;
+
+#if WK_API_ENABLED
+    if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
+        return ObjCType::WKBrowsingContextHandle;
+#endif
+
+    return Nullopt;
+}
+
+void ObjCObjectGraph::encode(IPC::ArgumentEncoder& encoder, id object)
+{
+    if (!object) {
+        encoder << static_cast<uint32_t>(ObjCType::Null);
+        return;
+    }
+
+    auto type = typeFromObject(object);
+    if (!type)
+        [NSException raise:NSInvalidArgumentException format:@"Can not encode objects of class type '%@'", static_cast<NSString *>(NSStringFromClass([object class]))];
+
+    encoder << static_cast<uint32_t>(type.value());
+
+    switch (type.value()) {
+    case ObjCType::NSArray: {
+        NSArray *array = object;
+
+        encoder << static_cast<uint64>(array.count);
+        for (id element in array)
+            encode(encoder, element);
+        break;
+    }
+
+    case ObjCType::NSData:
+        IPC::encode(encoder, static_cast<NSData *>(object));
+        break;
+
+    case ObjCType::NSDate:
+        IPC::encode(encoder, static_cast<NSDate *>(object));
+        break;
+
+    case ObjCType::NSDictionary: {
+        NSDictionary *dictionary = object;
+
+        encoder << static_cast<uint64_t>(dictionary.count);
+        [dictionary enumerateKeysAndObjectsUsingBlock:[&encoder](id key, id object, BOOL *stop) {
+            encode(encoder, key);
+            encode(encoder, object);
+        }];
+        break;
+    }
+
+    case ObjCType::NSNumber:
+        IPC::encode(encoder, static_cast<NSNumber *>(object));
+        break;
+
+    case ObjCType::NSString:
+        IPC::encode(encoder, static_cast<NSString *>(object));
+        break;
+
+#if WK_API_ENABLED
+    case ObjCType::WKBrowsingContextHandle:
+        encoder << static_cast<WKBrowsingContextHandle *>(object).pageID;
+        break;
+#endif
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+void ObjCObjectGraph::encode(IPC::ArgumentEncoder& encoder) const
+{
+    encode(encoder, m_rootObject.get());
+}
+
+bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RetainPtr<id>& result)
+{
+    uint32_t typeAsUInt32;
+    if (!decoder.decode(typeAsUInt32))
+        return false;
+
+    auto type = static_cast<ObjCType>(typeAsUInt32);
+
+    switch (type) {
+    case ObjCType::Null:
+        result = nullptr;
+        break;
+
+    case ObjCType::NSArray: {
+        uint64_t size;
+        if (!decoder.decode(size))
+            return false;
+
+        auto array = adoptNS([[NSMutableArray alloc] init]);
+        for (uint64_t i = 0; i < size; ++i) {
+            RetainPtr<id> element;
+            if (!decode(decoder, element))
+                return false;
+            [array addObject:element.get()];
+        }
+
+        result = WTF::move(array);
+        break;
+    }
+
+    case ObjCType::NSData: {
+        RetainPtr<NSData> data;
+        if (!IPC::decode(decoder, data))
+            return false;
+
+        result = WTF::move(data);
+        break;
+    }
+
+    case ObjCType::NSDate: {
+        RetainPtr<NSDate> date;
+        if (!IPC::decode(decoder, date))
+            return false;
+
+        result = WTF::move(date);
+        break;
+    }
+
+    case ObjCType::NSDictionary: {
+        uint64_t size;
+        if (!decoder.decode(size))
+            return false;
+
+        auto dictionary = adoptNS([[NSMutableDictionary alloc] init]);
+        for (uint64_t i = 0; i < size; ++i) {
+            RetainPtr<id> key;
+            if (!decode(decoder, key))
+                return false;
+
+            RetainPtr<id> object;
+            if (!decode(decoder, object))
+                return false;
+
+            @try {
+                [dictionary setObject:object.get() forKey:key.get()];
+            } @catch (id) {
+                return false;
+            }
+        }
+
+        result = WTF::move(dictionary);
+        break;
+    }
+
+    case ObjCType::NSNumber: {
+        RetainPtr<NSNumber> number;
+        if (!IPC::decode(decoder, number))
+            return false;
+
+        result = WTF::move(number);
+        break;
+    }
+
+    case ObjCType::NSString: {
+        RetainPtr<NSString> string;
+        if (!IPC::decode(decoder, string))
+            return false;
+
+        result = WTF::move(string);
+        break;
+    }
+
+#if WK_API_ENABLED
+    case ObjCType::WKBrowsingContextHandle: {
+        uint64_t pageID;
+        if (!decoder.decode(pageID))
+            return false;
+
+        result = adoptNS([[WKBrowsingContextHandle alloc] _initWithPageID:pageID]);
+        break;
+    }
+#endif
+    default:
+        return false;
+    }
+
+    return true;
+}
+
+bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result)
+{
+    RetainPtr<id> rootObject;
+    if (!decode(decoder, rootObject))
+        return false;
+
+    result = ObjCObjectGraph::create(rootObject.get());
+    return true;
 }
 
 }

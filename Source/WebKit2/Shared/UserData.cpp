@@ -49,6 +49,10 @@
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"
 
+#if PLATFORM(COCOA)
+#include "ObjCObjectGraph.h"
+#endif
+
 namespace WebKit {
 
 UserData::UserData()
@@ -312,6 +316,12 @@ void UserData::encode(IPC::ArgumentEncoder& encoder, const API::Object& object) 
         break;
     }
 
+#if PLATFORM(COCOA)
+    case API::Object::Type::ObjCObjectGraph:
+        static_cast<const ObjCObjectGraph&>(object).encode(encoder);
+        break;
+#endif
+
     default:
         ASSERT_NOT_REACHED();
     }
@@ -566,6 +576,13 @@ bool UserData::decode(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& result
         result = API::UserContentURLPattern::create(string);
         break;
     }
+
+#if PLATFORM(COCOA)
+    case API::Object::Type::ObjCObjectGraph:
+        if (!ObjCObjectGraph::decode(decoder, result))
+            return false;
+        break;
+#endif
 
     default:
         ASSERT_NOT_REACHED();
