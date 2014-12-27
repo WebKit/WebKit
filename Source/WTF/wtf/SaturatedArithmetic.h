@@ -39,9 +39,6 @@
 
 inline bool signedAddOverflows(int32_t a, int32_t b, int32_t& result)
 {
-#if COMPILER_HAS_CLANG_BUILTIN(__builtin_sadd_overflow)
-    return __builtin_sadd_overflow(a, b, &result);
-#else
     uint32_t ua = a;
     uint32_t ub = b;
     uint32_t uresult = ua + ub;
@@ -50,7 +47,6 @@ inline bool signedAddOverflows(int32_t a, int32_t b, int32_t& result)
     // Can only overflow if the signed bit of the two values match. If the signed
     // bit of the result and one of the values differ it did overflow.
     return !((ua ^ ub) >> 31) & (uresult ^ ua) >> 31;
-#endif
 }
 
 inline int32_t saturatedAddition(int32_t a, int32_t b)
@@ -71,9 +67,6 @@ inline int32_t saturatedAddition(int32_t a, int32_t b)
 
 inline bool signedSubtractOverflows(int32_t a, int32_t b, int32_t& result)
 {
-#if COMPILER_HAS_CLANG_BUILTIN(__builtin_ssub_overflow)
-    return __builtin_ssub_overflow(a, b, &result);
-#else
     uint32_t ua = a;
     uint32_t ub = b;
     uint32_t uresult = ua - ub;
@@ -82,7 +75,6 @@ inline bool signedSubtractOverflows(int32_t a, int32_t b, int32_t& result)
     // Can only overflow if the signed bit of the two values do not match. If the
     // signed bit of the result and the first value differ it did overflow.
     return (ua ^ ub) >> 31 & (uresult ^ ua) >> 31;
-#endif
 }
 
 inline int32_t saturatedSubtraction(int32_t a, int32_t b)
