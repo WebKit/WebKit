@@ -1,3 +1,9 @@
+2014-12-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Win] Fix test expectations after r177363 - part I
+
+        * platform/win/TestExpectations:
+
 2014-12-26  Alexey Proskuryakov  <ap@apple.com>
 
         fast/text/international/hindi-spacing.html and transforms/2d/hindi-rotated.html are flaky on Yosemite
