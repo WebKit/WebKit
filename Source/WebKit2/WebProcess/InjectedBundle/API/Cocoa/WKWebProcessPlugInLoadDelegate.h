@@ -22,8 +22,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import <Foundation/Foundation.h>
 #import <WebKit/WKRenderingProgressEvents.h>
+#import <WebKit/_WKRenderingProgressEvents.h>
 #import <WebKit/_WKSameDocumentNavigationType.h>
 
 @class WKWebProcessPlugInBrowsingContextController;
@@ -48,7 +50,7 @@
 
 // Layout
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller didLayoutForFrame:(WKWebProcessPlugInFrame *)frame;
-- (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller renderingProgressDidChange:(WKRenderingProgressEvents)events;
+- (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller renderingProgressDidChange:(_WKRenderingProgressEvents)events;
 - (void)webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController*)controller didFirstVisuallyNonEmptyLayoutForFrame:(WKWebProcessPlugInFrame *)frame;
 
 // Resource loading

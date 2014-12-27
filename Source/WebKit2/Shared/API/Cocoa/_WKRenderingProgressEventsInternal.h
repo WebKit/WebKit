@@ -23,22 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKRenderingProgressEvents.h"
+#import "_WKRenderingProgressEvents.h"
 
 #if WK_API_ENABLED
 
-static inline WKRenderingProgressEvents renderingProgressEvents(WKLayoutMilestones milestones)
+#import <WebCore/LayoutMilestones.h>
+
+static inline _WKRenderingProgressEvents renderingProgressEvents(WebCore::LayoutMilestones milestones)
 {
-    WKRenderingProgressEvents events = 0;
+    _WKRenderingProgressEvents events = 0;
 
-    if (milestones & kWKDidFirstLayout)
-        events |= WKRenderingProgressEventFirstLayout;
+    if (milestones & WebCore::DidFirstLayout)
+        events |= _WKRenderingProgressEventFirstLayout;
 
-    if (milestones & kWKDidFirstVisuallyNonEmptyLayout)
-        events |= WKRenderingProgressEventFirstVisuallyNonEmptyLayout;
+    if (milestones & WebCore::DidFirstVisuallyNonEmptyLayout)
+        events |= _WKRenderingProgressEventFirstVisuallyNonEmptyLayout;
 
-    if (milestones & kWKDidHitRelevantRepaintedObjectsAreaThreshold)
-        events |= WKRenderingProgressEventFirstPaintWithSignificantArea;
+    if (milestones & WebCore::DidHitRelevantRepaintedObjectsAreaThreshold)
+        events |= _WKRenderingProgressEventFirstPaintWithSignificantArea;
+
+    if (milestones & WebCore::ReachedSessionRestorationRenderTreeSizeThreshold)
+        events |= _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold;
 
     return events;
 }

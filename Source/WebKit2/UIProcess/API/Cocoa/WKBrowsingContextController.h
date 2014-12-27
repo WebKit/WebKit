@@ -27,7 +27,6 @@
 #import <WebKit/WKBrowsingContextGroup.h>
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKProcessGroup.h>
-#import <WebKit/WKRenderingProgressEvents.h>
 
 #if WK_API_ENABLED
 
@@ -120,8 +119,6 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 @property(readonly) NSURL *unreachableURL;
 
 @property(readonly) double estimatedProgress;
-
-@property (nonatomic) WKRenderingProgressEvents observedRenderingProgressEvents;
 
 #pragma mark Active Document Introspection
 

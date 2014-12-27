@@ -59,8 +59,6 @@
 
 - (void)browsingContextControllerDidChangeBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems;
 
-- (void)browsingContextController:(WKBrowsingContextController *)sender renderingProgressDidChange:(WKRenderingProgressEvents)progressEvent;
-
 @end
 
 #endif // WK_API_ENABLED

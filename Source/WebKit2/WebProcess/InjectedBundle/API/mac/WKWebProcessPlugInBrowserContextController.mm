@@ -41,7 +41,6 @@
 #import "WKNSString.h"
 #import "WKNSURL.h"
 #import "WKNSURLRequest.h"
-#import "WKRenderingProgressEventsInternal.h"
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
 #import "WKURLRequestNS.h"
@@ -56,6 +55,7 @@
 #import "WebPage.h"
 #import "WebProcess.h"
 #import "_WKRemoteObjectRegistryInternal.h"
+#import "_WKRenderingProgressEventsInternal.h"
 #import "_WKSameDocumentNavigationTypeInternal.h"
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
@@ -179,7 +179,7 @@ static void didLayout(WKBundlePageRef page, WKLayoutMilestones milestones, WKTyp
     auto loadDelegate = pluginContextController->_loadDelegate.get();
 
     if ([loadDelegate respondsToSelector:@selector(webProcessPlugInBrowserContextController:renderingProgressDidChange:)])
-        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController renderingProgressDidChange:renderingProgressEvents(milestones)];
+        [loadDelegate webProcessPlugInBrowserContextController:pluginContextController renderingProgressDidChange:renderingProgressEvents(toLayoutMilestones(milestones))];
 }
 
 static void didFirstVisuallyNonEmptyLayoutForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo)

@@ -1,3 +1,42 @@
+2014-12-27  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] WKWebProcessPlugInLoadDelegate uses the deprecated WKRenderingProgressEvents enum
+        https://bugs.webkit.org/show_bug.cgi?id=139964
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKRenderingProgressEventsInternal.h: Removed.
+
+        * Shared/API/Cocoa/_WKRenderingProgressEvents.h: Added. Moved the enum definition from
+        WKWebViewPrivate.h to here.
+
+        * Shared/API/Cocoa/_WKRenderingProgressEventsInternal.h: Added.
+        (renderingProgressEvents): Moved from NavigationState.mm to here.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.h: Removed observedRenderingProgressEvents
+        property declaration.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (layoutMilestones): Deleted.
+        (-[WKBrowsingContextController setObservedRenderingProgressEvents:]): Deleted. This is not
+        needed for binary compatibility.
+        (didLayout): Deleted.
+        (setUpPageLoaderClient): Removed setting up didLayout callback.
+        * UIProcess/API/Cocoa/WKBrowsingContextLoadDelegate.h: Removed unused delegate method.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Import definition of _WKRenderingProgressEvents
+        from new header.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::renderingProgressEvents): Moved into its own header.
+
+        * WebKit2.xcodeproj/project.pbxproj: Updated for file additions and removeals, and moved
+        WKRenderingProgressEvents.h into a new Deprecated group.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h: Changed the type of
+        a delegate method parameter to _WKRenderingProgressEvents.
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (didLayout): Pass the new type.
+
 2014-12-26  Conrad Shultz  <conrad_shultz@apple.com>
 
         Safari build crashes when "zooming into"/choosing a tab from tab view

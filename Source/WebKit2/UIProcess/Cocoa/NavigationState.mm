@@ -56,6 +56,7 @@
 #import "WebProtectionSpace.h"
 #import "_WKErrorRecoveryAttempting.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKRenderingProgressEventsInternal.h"
 #import "_WKSameDocumentNavigationTypeInternal.h"
 #import <WebCore/Credential.h>
 #import <wtf/NeverDestroyed.h>
@@ -597,25 +598,6 @@ void NavigationState::LoaderClient::didSameDocumentNavigationForFrame(WebPagePro
 void NavigationState::LoaderClient::didDestroyNavigation(WebPageProxy*, uint64_t navigationID)
 {
     m_navigationState.m_navigations.remove(navigationID);
-}
-
-static _WKRenderingProgressEvents renderingProgressEvents(WebCore::LayoutMilestones milestones)
-{
-    _WKRenderingProgressEvents events = 0;
-
-    if (milestones & WebCore::DidFirstLayout)
-        events |= _WKRenderingProgressEventFirstLayout;
-
-    if (milestones & WebCore::DidFirstVisuallyNonEmptyLayout)
-        events |= _WKRenderingProgressEventFirstVisuallyNonEmptyLayout;
-
-    if (milestones & WebCore::DidHitRelevantRepaintedObjectsAreaThreshold)
-        events |= _WKRenderingProgressEventFirstPaintWithSignificantArea;
-
-    if (milestones & WebCore::ReachedSessionRestorationRenderTreeSizeThreshold)
-        events |= _WKRenderingProgressEventReachedSessionRestorationRenderTreeSizeThreshold;
-
-    return events;
 }
 
 void NavigationState::LoaderClient::didLayout(WebKit::WebPageProxy*, WebCore::LayoutMilestones layoutMilestones, API::Object*)
