@@ -2704,12 +2704,12 @@ js/dom/deep-recursion-test.html
 js/dom/global-recursion-on-full-stack.html
 
 # Some inspector tests failing after r173992
-webkit.org/b/137157 inspector/css/matched-style-properties.html [ Failure ]
-webkit.org/b/137157 inspector/event-listener-set.html [ Failure ]
-webkit.org/b/137157 inspector/event-listener.html [ Failure ]
+webkit.org/b/137157 inspector/css/matched-style-properties.html [ Timeout ]
+webkit.org/b/137157 inspector/event-listener-set.html [ Timeout ]
+webkit.org/b/137157 inspector/event-listener.html [ Timeout ]
 webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Failure ]
 webkit.org/b/137157 inspector/page/main-frame-resource.html [ Failure ]
-webkit.org/b/137157 inspector/protocol-promise-result.html [ Failure ]
+webkit.org/b/137157 inspector/protocol-promise-result.html [ Timeout ]
 
 # A handful of flattening tests failing on Windows that we are skipping to get the bots green
 fast/frames/flattening/frameset-flattening-advanced.html [ Failure ]
@@ -3037,3 +3037,14 @@ fast/loader/form-state-restore-with-frames.html [ Timeout ]
 fast/loader/stateobjects/pushstate-clears-forward-history.html [ Timeout ]
 fast/media/mq-color-index-01.html [ Timeout ]
 fast/media/mq-simple-neg-query-02.html [ Timeout ]
+http/tests/security/referrer-policy-redirect.html
+http/tests/security/mixedContent/insecure-xhr-in-main-frame.html
+http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html
+http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
+http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
+http/tests/security/mixedContent/blob-url-in-iframe.html
+http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
+http/tests/security/mixedContent/insecure-image-in-main-frame.html
+http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
+http/tests/security/mixedContent/insecure-css-in-main-frame.html
+http/tests/security/mixedContent/data-url-iframe-in-main-frame.html

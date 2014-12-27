@@ -1,5 +1,11 @@
 2014-12-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Win] Fix test expectations after r177363 - part IV
+
+        * platform/win/TestExpectations:
+
+2014-12-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Win] Fix test expectations after r177363 - part III
 
         * platform/win/TestExpectations:
