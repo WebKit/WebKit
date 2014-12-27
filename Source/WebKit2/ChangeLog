@@ -1,5 +1,20 @@
 2014-12-27  Anders Carlsson  <andersca@apple.com>
 
+        Encode and decode WKTypeRefWrapper objects
+        https://bugs.webkit.org/show_bug.cgi?id=139966
+
+        Reviewed by Oliver Hunt.
+
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        * Shared/UserData.h:
+        * Shared/mac/ObjCObjectGraph.mm:
+        (WebKit::typeFromObject):
+        (WebKit::ObjCObjectGraph::encode):
+        (WebKit::ObjCObjectGraph::decode):
+
+2014-12-27  Anders Carlsson  <andersca@apple.com>
+
         Implement encoding and decoding of ObjCObjectGraph objects
         https://bugs.webkit.org/show_bug.cgi?id=139965
 

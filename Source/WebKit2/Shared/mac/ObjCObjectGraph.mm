@@ -32,7 +32,10 @@
 #import <wtf/Optional.h>
 
 #if WK_API_ENABLED
+#import "UserData.h"
+#import "WKAPICast.h"
 #import "WKBrowsingContextHandleInternal.h"
+#import "WKTypeRefWrapper.h"
 #endif
 
 namespace WebKit {
@@ -106,6 +109,7 @@ enum class ObjCType {
 
 #if WK_API_ENABLED
     WKBrowsingContextHandle,
+    WKTypeRefWrapper,
 #endif
 };
 
@@ -129,6 +133,8 @@ static Optional<ObjCType> typeFromObject(id object)
 #if WK_API_ENABLED
     if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
         return ObjCType::WKBrowsingContextHandle;
+    if (dynamic_objc_cast<WKTypeRefWrapper>(object))
+        return ObjCType::WKTypeRefWrapper;
 #endif
 
     return Nullopt;
@@ -187,6 +193,10 @@ void ObjCObjectGraph::encode(IPC::ArgumentEncoder& encoder, id object)
 #if WK_API_ENABLED
     case ObjCType::WKBrowsingContextHandle:
         encoder << static_cast<WKBrowsingContextHandle *>(object).pageID;
+        break;
+
+    case ObjCType::WKTypeRefWrapper:
+        UserData::encode(encoder, toImpl(static_cast<WKTypeRefWrapper *>(object).object));
         break;
 #endif
 
@@ -301,7 +311,16 @@ bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RetainPtr<id>& resul
         result = adoptNS([[WKBrowsingContextHandle alloc] _initWithPageID:pageID]);
         break;
     }
+
+    case ObjCType::WKTypeRefWrapper: {
+        RefPtr<API::Object> object;
+        if (!UserData::decode(decoder, object))
+            return false;
+
+        result = adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(object.get())]);
+    }
 #endif
+
     default:
         return false;
     }

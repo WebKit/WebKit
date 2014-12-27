@@ -54,11 +54,11 @@ public:
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, UserData&);
 
-private:
-    void encode(IPC::ArgumentEncoder&, const API::Object*) const;
-    void encode(IPC::ArgumentEncoder&, const API::Object&) const;
-
+    static void encode(IPC::ArgumentEncoder&, const API::Object*);
     static bool decode(IPC::ArgumentDecoder&, RefPtr<API::Object>&);
+
+private:
+    static void encode(IPC::ArgumentEncoder&, const API::Object&);
 
     RefPtr<API::Object> m_object;
 };
