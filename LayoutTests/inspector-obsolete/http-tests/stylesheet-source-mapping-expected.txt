@@ -1,4 +1,0 @@
-Tests SourceMap and StyleSheetMapping.
-
-PASS
-

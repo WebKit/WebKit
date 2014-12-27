@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 1: Done.
-CONSOLE MESSAGE: line 1: Done.
-CONSOLE MESSAGE: line 1: Done.
-Tests disabling cache from inspector.
-
-Page reloaded.
-Page reloaded.
-

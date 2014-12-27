@@ -1,5 +1,0 @@
-Tests the Timeline API instrumentation of a TimerFired events inside evaluated scripts.
-
-TimerFire :2
-TimerFire :1
-

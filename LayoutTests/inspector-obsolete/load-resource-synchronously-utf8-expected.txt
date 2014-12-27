@@ -1,5 +1,0 @@
-Tests that InspectorFrontendHost.loadResourceSynchronously() correctly loads non-ASCII resources.
-
-'ASCII - Test' (12)
-'UTF8 - Тест' (11)
-
