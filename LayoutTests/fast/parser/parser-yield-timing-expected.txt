@@ -3,9 +3,9 @@ Runs 3 separate 1 second <script> blocks with a setTimeout schedule before each.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS new Date().getTime() - startTime is within 100 of 1000
-PASS new Date().getTime() - startTime is within 100 of 2000
-PASS new Date().getTime() - startTime is within 100 of 3000
+PASS new Date().getTime() - startTime is within 300 of 1000
+PASS new Date().getTime() - startTime is within 300 of 2000
+PASS new Date().getTime() - startTime is within 300 of 3000
 PASS successfullyParsed is true
 
 TEST COMPLETE

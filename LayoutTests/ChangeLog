@@ -1,5 +1,16 @@
 2014-12-27  Alexey Proskuryakov  <ap@apple.com>
 
+        fast/parser/parser-yield-timing.html is flaky in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=139962
+
+        Reviewed by Anders Carlsson.
+
+        * fast/parser/parser-yield-timing-expected.txt:
+        * fast/parser/parser-yield-timing.html:
+        Further increase the tolerance.
+
+2014-12-27  Alexey Proskuryakov  <ap@apple.com>
+
         fast/css/hover-update.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=139960
 
