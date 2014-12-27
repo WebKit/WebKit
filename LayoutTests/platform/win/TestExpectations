@@ -863,7 +863,7 @@ http/tests/notifications
 webkit.org/b/28467 http/tests/loading/preload-img-test.html [ Pass Failure ]
 
 # Failing media tests on windows <http://webkit.org/b/29047>
-# webkit.org/b/29047 media/audio-delete-while-step-button-clicked.html [ Failure ]
+# webkit.org/b/29047 media/audio-delete-while-step-button-clicked.html [ Timeout ]
 
 # This test requires media controls has a volume slider.
 # media/video-volume-slider.html [ Failure ]
@@ -1066,6 +1066,7 @@ http/tests/security/cross-origin-worker-indexeddb-allowed.html
 http/tests/security/cross-origin-worker-indexeddb.html
 http/tests/security/no-indexeddb-from-sandbox.html
 crypto/subtle/rsa-indexeddb.html
+inspector-protocol/indexeddb/basics.html
 
 # StorageTracker is not enabled.
 storage/domstorage/localstorage/storagetracker
@@ -2178,8 +2179,8 @@ webkit.org/b/121509 loader/go-back-to-different-window-size.html	[ Skip ]
 
 # More skipped tests
 webkit.org/b/62024 http/tests/media/video-cross-site.html [ Failure ]
-media/audio-constructor-src.html	[ Failure ]
-media/audio-delete-while-slider-thumb-clicked.html	[ Failure ]
+media/audio-constructor-src.html	[ Timeout ]
+media/audio-delete-while-slider-thumb-clicked.html	[ Timeout ]
 editing/selection/caret-ltr-right.html [ Failure ]
 editing/selection/context-menu-on-text.html [ Failure ]
 editing/spelling/grammar-markers-hidpi.html [ Timeout ]
@@ -2237,7 +2238,7 @@ webkit.org/b/122021 media/video-controls-toggling.html [ Failure ]
 # The following tests also seem affected by r156730
 webkit.org/b/122166 media/track/audio-track.html [ Failure ]
 webkit.org/b/122166 media/track/video-track.html [ Failure ]
-webkit.org/b/122166 media/audio-controls-do-not-fade-out.html [ Failure ]
+webkit.org/b/122166 media/audio-controls-do-not-fade-out.html [ Timeout ]
 webkit.org/b/122166 media/controls-right-click-on-timebar.html [ Timeout Failure ]
 webkit.org/b/122166 media/media-controls-invalid-url.html [ Failure ]
 webkit.org/b/122166 media/media-volume-slider-rendered-normal.html [ Failure ]
@@ -2638,7 +2639,7 @@ dom/xhtml/level2/html/HTMLLabelElement02.xhtml [ Pass Failure ]
 
 # Remove these expected failures when the Windows test bots are upgraded to support
 # WAV files with AVCF:
-webkit.org/b/128943 media/audio-constructor.html [ Failure ]
+webkit.org/b/128943 media/audio-constructor.html [ Timeout ]
 webkit.org/b/128943 media/media-can-play-wav-audio.html [ Failure ]
 webkit.org/b/128943 media/media-load-event.html [ Failure ]
 webkit.org/b/128943 userscripts/user-script-audio-document.html [ Failure ]
@@ -2707,8 +2708,8 @@ js/dom/global-recursion-on-full-stack.html
 webkit.org/b/137157 inspector/css/matched-style-properties.html [ Timeout ]
 webkit.org/b/137157 inspector/event-listener-set.html [ Timeout ]
 webkit.org/b/137157 inspector/event-listener.html [ Timeout ]
-webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Failure ]
-webkit.org/b/137157 inspector/page/main-frame-resource.html [ Failure ]
+webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Timeout ]
+webkit.org/b/137157 inspector/page/main-frame-resource.html [ Timeout ]
 webkit.org/b/137157 inspector/protocol-promise-result.html [ Timeout ]
 
 # A handful of flattening tests failing on Windows that we are skipping to get the bots green
@@ -2780,7 +2781,7 @@ fast/borders/bidi-009a.html [ Failure ]
 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Timeout ]
 fast/text/khmer-lao-font.html [ Failure ]
 mathml/opentype/opentype-stretchy-horizontal.html [ Failure Crash ]
-inspector/dom/content-node-region-info.html [ Crash Pass Failure ]
+inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
 fast/overflow/overflow-height-float-not-removed-crash2.html [ Crash Pass ]
 fast/overflow/overflow-height-float-not-removed-crash.html [ Crash Pass ]
 fast/dom/SelectorAPI/dumpNodeList-almost-strict.html [ Crash Pass ]
@@ -2812,8 +2813,7 @@ js/slow-stress/emscripten-memops.html [ Timeout ]
 [ Debug ] js/slow-stress [ Skip ]
 
 # Skip remaining failing media tests after adding audio devices to the bots
-media/audio-delete-while-step-button-clicked.html [ Failure ]
-media/audio-only-video-intrinsic-size.html [ Failure ]
+media/audio-only-video-intrinsic-size.html [ Timeout ]
 media/audio-play-event.html [ Failure ]
 media/context-menu-actions.html [ Failure ]
 media/controls-after-reload.html [ Failure ]
@@ -3048,6 +3048,8 @@ http/tests/security/mixedContent/insecure-image-in-main-frame.html [ Timeout ]
 http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html [ Timeout ]
 http/tests/security/mixedContent/insecure-css-in-main-frame.html [ Timeout ]
 http/tests/security/mixedContent/data-url-iframe-in-main-frame.html [ Timeout ]
+inspector/css/selector-specificity.html [ Timeout ]
+inspector/css/pseudo-element-matches.html [ Timeout ]
 
 # new crashes, need bug reports
 editing/deleting/regional-indicators.html [ Crash ]
@@ -3064,3 +3066,13 @@ fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Crash ]
 fast/text/midword-break-before-surrogate-pair-2.html [ Crash ]
 fast/text/regional-indicator-symobls.html [ Crash ]
 fast/text/unicode-variation-selector.html [ Crash ]
+
+# CONSOLE MESSAGE: line 13: TypeError: undefined is not a function (evaluating 'internals.initializeMockMediaSource()')
+# CONSOLE MESSAGE: line 18: ReferenceError: Can't find variable: MediaSource
+# FAIL: Timed out waiting for notifyDone to be called
+# no bug report yet
+media/media-source/media-source-canplaythrough.html [ Timeout ]
+media/media-source/media-source-append-failed.html [ Timeout ]
+media/media-source/media-source-append-buffer.html [ Timeout ]
+media/media-source/media-source-addsourcebuffer.html [ Timeout ]
+media/media-source/media-source-append-nonsync-sample-after-abort.html [ Timeout ]
