@@ -50,27 +50,14 @@ void WebConnectionToWebProcess::invalidate()
 
 // WebConnection
 
-RefPtr<API::Object> WebConnectionToWebProcess::transformHandlesToObjects(API::Object*)
+RefPtr<API::Object> WebConnectionToWebProcess::transformHandlesToObjects(API::Object* object)
 {
-    // FIXME: Implement.
-    return nullptr;
+    return m_process->transformHandlesToObjects(object);
 }
 
-RefPtr<API::Object> WebConnectionToWebProcess::transformObjectsToHandles(API::Object*)
+RefPtr<API::Object> WebConnectionToWebProcess::transformObjectsToHandles(API::Object* object)
 {
-    // FIXME: Implement.
-    return nullptr;
-}
-
-void WebConnectionToWebProcess::encodeMessageBody(IPC::ArgumentEncoder& encoder, API::Object* messageBody)
-{
-    encoder << WebContextUserMessageEncoder(messageBody, *m_process);
-}
-
-bool WebConnectionToWebProcess::decodeMessageBody(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& messageBody)
-{
-    WebContextUserMessageDecoder messageBodyDecoder(messageBody, *m_process);
-    return decoder.decode(messageBodyDecoder);
+    return m_process->transformObjectsToHandles(object);
 }
 
 bool WebConnectionToWebProcess::hasValidConnection() const

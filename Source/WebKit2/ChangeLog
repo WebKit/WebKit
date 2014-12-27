@@ -1,5 +1,41 @@
 2014-12-27  Anders Carlsson  <andersca@apple.com>
 
+        Switch WebConnection over to sending objects with UserData
+        https://bugs.webkit.org/show_bug.cgi?id=139967
+
+        Reviewed by Oliver Hunt.
+
+        * Shared/WebConnection.cpp:
+        (WebKit::WebConnection::postMessage):
+        No need to construct the message manually anymore.
+
+        (WebKit::WebConnection::handleMessage):
+        No need to decode the message manually, just get the object from the UserData message body,
+        convert any handles to objects, and dispatch the message.
+
+        * Shared/WebConnection.h:
+        Remove now unused members.
+
+        * Shared/WebConnection.messages.in:
+        Give HandleMessage a proper signature.
+
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::transformHandlesToObjects):
+        (WebKit::WebConnectionToWebProcess::transformObjectsToHandles):
+        Call the WebProcessProxy version.
+
+        (WebKit::WebConnectionToWebProcess::encodeMessageBody): Deleted.
+        (WebKit::WebConnectionToWebProcess::decodeMessageBody): Deleted.
+
+        * UIProcess/WebConnectionToWebProcess.h:
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::encodeMessageBody): Deleted.
+        (WebKit::WebConnectionToUIProcess::decodeMessageBody): Deleted.
+        * WebProcess/WebConnectionToUIProcess.h:
+        Delete more unused members.
+
+2014-12-27  Anders Carlsson  <andersca@apple.com>
+
         Encode and decode WKTypeRefWrapper objects
         https://bugs.webkit.org/show_bug.cgi?id=139966
 

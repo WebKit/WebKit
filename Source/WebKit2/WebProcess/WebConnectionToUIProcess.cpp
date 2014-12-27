@@ -47,7 +47,7 @@ WebConnectionToUIProcess::WebConnectionToUIProcess(WebProcess* process)
 
 void WebConnectionToUIProcess::invalidate()
 {
-    m_process = 0;
+    m_process = nullptr;
 }
 
 // WebConnection
@@ -60,17 +60,6 @@ RefPtr<API::Object> WebConnectionToUIProcess::transformHandlesToObjects(API::Obj
 RefPtr<API::Object> WebConnectionToUIProcess::transformObjectsToHandles(API::Object* object)
 {
     return m_process->transformObjectsToHandles(object);
-}
-
-void WebConnectionToUIProcess::encodeMessageBody(IPC::ArgumentEncoder& encoder, API::Object* messageBody)
-{
-    encoder << InjectedBundleUserMessageEncoder(messageBody);
-}
-
-bool WebConnectionToUIProcess::decodeMessageBody(IPC::ArgumentDecoder& decoder, RefPtr<API::Object>& messageBody)
-{
-    InjectedBundleUserMessageDecoder messageBodyDecoder(messageBody);
-    return decoder.decode(messageBodyDecoder);
 }
 
 bool WebConnectionToUIProcess::hasValidConnection() const

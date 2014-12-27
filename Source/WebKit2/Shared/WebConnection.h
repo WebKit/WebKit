@@ -29,11 +29,13 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "UserData.h"
 #include "WebConnectionClient.h"
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
 
+class UserData;
 class WebConnection : public API::ObjectImpl<API::Object::Type::Connection>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
     virtual ~WebConnection();
@@ -47,8 +49,6 @@ protected:
 
     virtual RefPtr<API::Object> transformHandlesToObjects(API::Object*) = 0;
     virtual RefPtr<API::Object> transformObjectsToHandles(API::Object*) = 0;
-    virtual void encodeMessageBody(IPC::ArgumentEncoder&, API::Object*) = 0;
-    virtual bool decodeMessageBody(IPC::ArgumentDecoder&, RefPtr<API::Object>&) = 0;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
@@ -57,7 +57,7 @@ protected:
     void didReceiveWebConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);
 
     // Mesage handling implementation functions.
-    void handleMessage(IPC::MessageDecoder&);
+    void handleMessage(const String& messageName, const UserData& messageBody);
 
     virtual bool hasValidConnection() const = 0;
 
