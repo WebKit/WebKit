@@ -102,7 +102,11 @@ var unexpectedErrorMessage; // set by onerror when expectingError is not true
     }
 
     if (!isWorker()) {
-        window.addEventListener('DOMContentLoaded', handleTestFinished, false);
+        window.addEventListener('DOMContentLoaded', function() {
+            // Some tests set jsTestIsAsync in load event handler. Adding the listener late
+            // makes handleTestFinished() run after the test handles load events.
+            window.addEventListener("load", handleTestFinished, false);
+        }, false);
         insertStyleSheet();
     }
 
@@ -541,6 +545,14 @@ function shouldBeGreaterThanOrEqual(_a, _b) {
         testFailed(_a + " should be >= " + _b + ". Was " + _av + " (of type " + typeof _av + ").");
     else
         testPassed(_a + " is >= " + _b);
+}
+
+function expectTrue(v, msg) {
+  if (v) {
+    testPassed(msg);
+  } else {
+    testFailed(msg);
+  }
 }
 
 function shouldNotThrow(_a) {

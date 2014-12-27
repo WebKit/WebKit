@@ -1,3 +1,213 @@
+2014-12-27  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/canvas/webgl/angle-instanced-arrays.html is very flaky
+        https://bugs.webkit.org/show_bug.cgi?id=139958
+
+        Reviewed by Darin Adler.
+
+        WebGL test harness added js-test-post.js in a flaky manner, and to make things worse,
+        this test also had its own include of js-test-post.js.
+
+        Looking at the tests, I noticed that the way test harnesses were used was a big mess,
+        so I went over the whole directory, making these changes:
+        1. Use js-test.js instead of js-test-pre.js, because it's simpler and better macthes
+        the Khronos test model.
+        2. Removed js-test-post.js everywhere (some tests included it in particularly crazy ways).
+        3. Removed successfullyParsed = true, as js-test.js doesn't need that.
+        4. Updated DOCTYPE, while editing these tests anyway.
+        5. Tests now have correct order of lines in the output (no longer saying TEST COMPLETE
+        before PASS), so updated results.
+        6. In js-test tests, we shouldn't use waitUntilDone/notifyDone explicitly, so
+        updated these with jsTestIsAsync.
+        7. Updated async tests that used initNonKhronosFramework(false) plus some way to
+        become async to simply say initNonKhronosFramework(true).
+        8. Removed isSuccessfullyParsed() calls that several tests were using as an ugly
+        workaround for issues caused by misusing the harness. This is never expected to be
+        called directly.
+
+        * fast/canvas/webgl/angle-instanced-arrays-out-of-bounds.html:
+        Removed an unneeded js-test-style.css include.
+
+        * fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html:
+        Swapped lines to not have glErrorShouldBe after finishTest.
+
+        * fast/canvas/webgl/resources/webgl-test.js:
+        (initNonKhronosFramework): webgl-test.js relies on js-test anyway, so there is
+        no need to duplicate the work.
+        (nonKhronosFrameworkNotifyDone): Use the proper js-test mechanism.
+        (finishTest): Ditto.
+        (finishTest.epilogue.document.createElement.epilogue.onload): Deleted.
+
+        * resources/js-test.js:
+        (expectTrue): Added this function that we only has in js-test-pre.js.
+        (): Perform work after test's load event handler, not immediately on DOMContentLoaded.
+        This has two benefits:
+        1. Tests that enable jsTestIsAsync in onload do work. This is expected, because
+        tests that call waitUntilDone from onload also do work.
+        2. Non-async tests that perform work in onload have the correct order of lines in output.
+
+        * fast/dom/HTMLImageElement/sizes/image-sizes-1x-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-2x-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml-expected.txt:
+        * fast/hidpi/image-srcset-invalid-descriptor-expected.txt:
+        * fast/hidpi/image-srcset-src-selection-1x-both-expected.txt:
+        * svg/custom/html_document_set_title-expected.txt:
+        Updated results for js-test.js improvements.
+
+        * fast/canvas/webgl/WebGLContextEvent.html:
+        * fast/canvas/webgl/angle-instanced-arrays.html:
+        * fast/canvas/webgl/array-bounds-clamping.html:
+        * fast/canvas/webgl/array-buffer-crash.html:
+        * fast/canvas/webgl/array-buffer-view-crash-when-reassigned.html:
+        * fast/canvas/webgl/array-buffer-view-crash.html:
+        * fast/canvas/webgl/array-constructor.html:
+        * fast/canvas/webgl/array-get-and-set-method-removal.html:
+        * fast/canvas/webgl/array-get-out-of-bounds.html:
+        * fast/canvas/webgl/array-message-passing.html:
+        * fast/canvas/webgl/array-override-set.html:
+        * fast/canvas/webgl/array-set-invalid-arguments.html:
+        * fast/canvas/webgl/array-set-out-of-bounds.html:
+        * fast/canvas/webgl/array-set-with-offset.html:
+        * fast/canvas/webgl/array-setters.html:
+        * fast/canvas/webgl/array-unit-tests.html:
+        * fast/canvas/webgl/arraybuffer-transfer-of-control.html:
+        * fast/canvas/webgl/attrib-location-length-limits.html:
+        * fast/canvas/webgl/bad-arguments-test.html:
+        * fast/canvas/webgl/buffer-bind-test.html:
+        * fast/canvas/webgl/buffer-data-array-buffer.html:
+        * fast/canvas/webgl/canvas-2d-webgl-texture-expected.txt:
+        * fast/canvas/webgl/canvas-2d-webgl-texture.html:
+        * fast/canvas/webgl/canvas-resize-crash.html:
+        * fast/canvas/webgl/canvas-supports-context.html:
+        * fast/canvas/webgl/canvas-test.html:
+        * fast/canvas/webgl/canvas-zero-size.html:
+        * fast/canvas/webgl/compressed-tex-image.html:
+        * fast/canvas/webgl/constants.html:
+        * fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html:
+        * fast/canvas/webgl/context-creation-and-destruction.html:
+        * fast/canvas/webgl/context-lost-restored.html:
+        * fast/canvas/webgl/context-lost.html:
+        * fast/canvas/webgl/context-release-upon-reload.html:
+        * fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html:
+        * fast/canvas/webgl/data-view-crash.html:
+        * fast/canvas/webgl/data-view-test.html:
+        * fast/canvas/webgl/draw-arrays-out-of-bounds.html:
+        * fast/canvas/webgl/draw-elements-out-of-bounds.html:
+        * fast/canvas/webgl/drawingbuffer-test.html:
+        * fast/canvas/webgl/error-reporting.html:
+        * fast/canvas/webgl/framebuffer-object-attachment.html:
+        * fast/canvas/webgl/framebuffer-test.html:
+        * fast/canvas/webgl/functions-returning-strings.html:
+        * fast/canvas/webgl/get-active-test.html:
+        * fast/canvas/webgl/gl-bind-attrib-location-before-compile-test.html:
+        * fast/canvas/webgl/gl-bind-attrib-location-test.html:
+        * fast/canvas/webgl/gl-bind-attrib-mapped-names.html:
+        * fast/canvas/webgl/gl-enable-enum-test.html:
+        * fast/canvas/webgl/gl-enum-tests.html:
+        * fast/canvas/webgl/gl-get-calls.html:
+        * fast/canvas/webgl/gl-getshadersource.html:
+        * fast/canvas/webgl/gl-getstring.html:
+        * fast/canvas/webgl/gl-object-get-calls.html:
+        * fast/canvas/webgl/gl-pixelstorei.html:
+        * fast/canvas/webgl/gl-teximage.html:
+        * fast/canvas/webgl/gl-uniform-arrays.html:
+        * fast/canvas/webgl/gl-uniformmatrix4fv.html:
+        * fast/canvas/webgl/gl-vertex-attrib-zero-issues.html:
+        * fast/canvas/webgl/gl-vertex-attrib.html:
+        * fast/canvas/webgl/gl-vertexattribpointer.html:
+        * fast/canvas/webgl/glsl-conformance.html:
+        * fast/canvas/webgl/incorrect-context-object-behaviour.html:
+        * fast/canvas/webgl/index-validation-copies-indices.html:
+        * fast/canvas/webgl/index-validation-crash-with-buffer-sub-data.html:
+        * fast/canvas/webgl/index-validation-verifies-too-many-indices.html:
+        * fast/canvas/webgl/index-validation-with-resized-buffer.html:
+        * fast/canvas/webgl/index-validation.html:
+        * fast/canvas/webgl/instanceof-test.html:
+        * fast/canvas/webgl/invalid-UTF-16.html:
+        * fast/canvas/webgl/invalid-passed-params.html:
+        * fast/canvas/webgl/is-object.html:
+        * fast/canvas/webgl/null-object-behaviour.html:
+        * fast/canvas/webgl/null-uniform-location.html:
+        * fast/canvas/webgl/object-deletion-behaviour.html:
+        * fast/canvas/webgl/oes-element-index-uint.html:
+        * fast/canvas/webgl/oes-texture-float-linear-expected.txt:
+        * fast/canvas/webgl/oes-texture-float-linear.html:
+        * fast/canvas/webgl/oes-texture-half-float-linear-expected.txt:
+        * fast/canvas/webgl/oes-texture-half-float-linear.html:
+        * fast/canvas/webgl/oes-texture-half-float-with-canvas.html:
+        * fast/canvas/webgl/oes-texture-half-float-with-image.html:
+        * fast/canvas/webgl/oes-texture-half-float-with-video.html:
+        * fast/canvas/webgl/oes-texture-half-float.html:
+        * fast/canvas/webgl/oes-vertex-array-object.html:
+        * fast/canvas/webgl/point-size.html:
+        * fast/canvas/webgl/premultiplyalpha-test-expected.txt:
+        * fast/canvas/webgl/premultiplyalpha-test.html:
+        * fast/canvas/webgl/program-test.html:
+        * fast/canvas/webgl/read-pixels-pack-alignment.html:
+        * fast/canvas/webgl/read-pixels-test.html:
+        * fast/canvas/webgl/renderbuffer-initialization.html:
+        * fast/canvas/webgl/renderer-and-vendor-strings.html:
+        * fast/canvas/webgl/resources/tex-image-and-sub-image-2d-with-video.js:
+        * fast/canvas/webgl/script-tests/arraybuffer-transfer-of-control.js:
+        * fast/canvas/webgl/shader-deleted-by-accessor.html:
+        * fast/canvas/webgl/shader-precision-format.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgb565.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba4444.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas-rgba5551.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-canvas.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgb565.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgba4444.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-rgba5551.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-svg-image.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html:
+        * fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html:
+        * fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html:
+        * fast/canvas/webgl/tex-image-webgl.html:
+        * fast/canvas/webgl/tex-image-with-format-and-type.html:
+        * fast/canvas/webgl/tex-image-with-greyscale-image.html:
+        * fast/canvas/webgl/tex-input-validation.html:
+        * fast/canvas/webgl/tex-sub-image-2d-bad-args.html:
+        * fast/canvas/webgl/tex-sub-image-2d.html:
+        * fast/canvas/webgl/tex-sub-image-cube-maps.html:
+        * fast/canvas/webgl/texImageTest.html:
+        * fast/canvas/webgl/texture-active-bind.html:
+        * fast/canvas/webgl/texture-bindings-uneffected-on-resize-expected.txt:
+        * fast/canvas/webgl/texture-bindings-uneffected-on-resize.html:
+        * fast/canvas/webgl/texture-color-profile.html:
+        * fast/canvas/webgl/texture-complete.html:
+        * fast/canvas/webgl/texture-npot.html:
+        * fast/canvas/webgl/texture-transparent-pixels-initialized.html:
+        * fast/canvas/webgl/triangle.html:
+        * fast/canvas/webgl/type-conversion-test.html:
+        * fast/canvas/webgl/typed-arrays-in-workers.html:
+        * fast/canvas/webgl/uniform-array-length-overflow.html:
+        * fast/canvas/webgl/uniform-location-length-limits.html:
+        * fast/canvas/webgl/uniform-location.html:
+        * fast/canvas/webgl/uniform-samplers-test.html:
+        * fast/canvas/webgl/uninitialized-test.html:
+        * fast/canvas/webgl/viewport-unchanged-upon-resize.html:
+        * fast/canvas/webgl/webgl-array-invalid-ranges.html:
+        * fast/canvas/webgl/webgl-compressed-texture-size-limit.html:
+        * fast/canvas/webgl/webgl-depth-texture-expected.txt:
+        * fast/canvas/webgl/webgl-depth-texture.html:
+        * fast/canvas/webgl/webgl-draw-buffers.html:
+        * fast/canvas/webgl/webgl-exceptions.html:
+        * fast/canvas/webgl/webgl-specific.html:
+        * fast/canvas/webgl/webgl-texture-binding-preserved-expected.txt:
+        * fast/canvas/webgl/webgl-texture-binding-preserved.html:
+        * fast/canvas/webgl/webgl-unprefixed-context-id.html:
+        * fast/canvas/webgl/webgl-viewport-parameters-preserved-expected.txt:
+        * fast/canvas/webgl/webgl-viewport-parameters-preserved.html:
+
 2014-12-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Win] Unreviewed gardening, mark more timeouting tests.

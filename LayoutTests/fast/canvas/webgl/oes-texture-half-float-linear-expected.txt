@@ -217,4 +217,7 @@ PASS should be 255,255,255,255
 testing target: TEXTURE_CUBE_MAP, testing format: RGBA, magFilter is: LINEAR, minFilter is: LINEAR_MIPMAP_LINEAR, OES_texture_half_float_linear is enabled
 PASS getError was expected value: NO_ERROR : OES_texture_half_float texture with Linear filter should succeed with NO_ERROR if OES_texture_half_float is enabled
 PASS should be 255,255,255,255
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

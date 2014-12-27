@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <title>Verifies that GL framebuffer bindings do not change when canvas is resized</title>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="resources/webgl-test.js"></script>
 <script src="resources/webgl-test-utils.js"></script>
 </head>
@@ -71,11 +71,9 @@ debug("test after resizing canvas and waiting for compositing");
 canvas.width = 16;
 wtu.waitFrames(5, function() {
   test();
-  finishTest();
   glErrorShouldBe(gl, gl.NO_ERROR, "Should be no errors.");
+  finishTest();
 });
-
-successfullyParsed = true;
 </script>
 </body>
 </html>

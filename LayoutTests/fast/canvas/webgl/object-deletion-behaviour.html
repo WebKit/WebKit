@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="resources/webgl-test.js"></script>
 <script src="resources/webgl-test-utils.js"></script>
 </head>
@@ -413,10 +413,6 @@ if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) == gl.FRAMEBUFFER_COMPLETE) {
   // check again because many buggy implementations will have bound to the true backbuffer on deleteFramebuffer.
   shouldGenerateGLError(gl, gl.NO_ERROR, 'wtu.checkCanvasRect(gl, 0, 0, 300, 150, [0,255,0,255], "fbo should be green")');
 }
-
-successfullyParsed = true;
 </script>
-
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

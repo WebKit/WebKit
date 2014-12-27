@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="resources/webgl-test.js"></script>
 <script src="resources/webgl-test-utils.js"></script>
 <script>
@@ -67,13 +67,7 @@ function runTest2()
 }
 
 function finish() {
-    var epilogue = document.createElement("script");
-    epilogue.onload = function() {
-        if (window.nonKhronosFrameworkNotifyDone)
-            window.nonKhronosFrameworkNotifyDone();
-    };
-    epilogue.src = "../../../resources/js-test-post.js";
-    document.body.appendChild(epilogue);
+    finishTest();
 }
 
 </script>

@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="resources/webgl-test.js"></script>
 <script src="resources/webgl-test-utils.js"> </script>
 </head>
@@ -12,10 +12,7 @@ description("Checks that painting WebGL contents doesn't pollute the context sta
 
 var wtu = WebGLTestUtils;
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+window.jsTestIsAsync = true;
 
 if (window.internals)
     window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
@@ -30,16 +27,11 @@ function draw() {
   wtu.drawQuad(context);
 
   wtu.checkCanvasRect(context, 0, 0, 1, 1, [0, 0, 255, 255], "Should have rendered blue.", 1);
-  if (window.testRunner)
-    testRunner.notifyDone();
+  finishJSTest();
 }
 
 window.onload = function()
 {
-  if (window.initNonKhronosFramework) {
-    window.initNonKhronosFramework(false);
-  }
-
   canvas = document.getElementById("webgl-canvas");
   context = create3DContext(canvas);
 
@@ -64,7 +56,6 @@ window.onload = function()
   setTimeout(draw, 100);
 }
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 <canvas id="webgl-canvas" width="32px" height="32px"></canvas>
 </body>
 </html>

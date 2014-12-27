@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="resources/webgl-test.js"></script>
 <script src="resources/webgl-test-utils.js"> </script>
 </head>
@@ -11,11 +11,6 @@
 description("Checks that painting WebGL contents doesn't pollute the context's viewport state.");
 
 var wtu = WebGLTestUtils;
-
-if (window.testRunner) {
-  testRunner.dumpAsText();
-  testRunner.waitUntilDone();
-}
 
 var canvas;
 var context;
@@ -29,14 +24,13 @@ function draw() {
     testPassed("Viewport not corrupted.");
   }
 
-  if (window.testRunner)
-    testRunner.notifyDone();
+  finishTest();
 }
 
 window.onload = function()
 {
   if (window.initNonKhronosFramework) {
-    window.initNonKhronosFramework(false);
+    window.initNonKhronosFramework(true);
   }
 
   canvas = document.getElementById("webgl-canvas");
@@ -54,7 +48,6 @@ window.onload = function()
   setTimeout(draw, 0);
 }
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 <canvas id="webgl-canvas" width="32px" height="32px"></canvas>
 </body>
 </html>

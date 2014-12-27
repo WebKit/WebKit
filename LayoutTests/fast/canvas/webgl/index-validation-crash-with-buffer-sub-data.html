@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="resources/webgl-test.js"></script>
 </head>
 <body>
@@ -19,7 +19,5 @@ var data = new Uint8Array(127);
 gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 63, data);
 testPassed("bufferSubData, when buffer object was initialized with null, did not crash");
 </script>
-
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

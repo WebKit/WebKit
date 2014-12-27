@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="resources/webgl-test.js"></script>
 <script src="resources/webgl-test-utils.js"> </script>
 </head>
@@ -8,11 +8,6 @@
 description("Checks that copying canvas results to a WebGL texture functions without error.");
 
 var wtu = WebGLTestUtils;
-
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
 
 var canvas;
 var gl;
@@ -36,14 +31,13 @@ function draw()
   wtu.drawQuad(gl);
   wtu.checkCanvasRect(gl, 0, 0, 1, 1, [0, 0, 200, 255], "Should have rendered blue.", 1);
 
-  if (window.testRunner)
-      testRunner.notifyDone();
+  finishTest();
 }
 
 window.onload = function()
 {
   if (window.initNonKhronosFramework)
-    window.initNonKhronosFramework(false);
+    window.initNonKhronosFramework(true);
 
   canvas = document.getElementById("webgl-canvas");
   gl = create3DContext(canvas);
@@ -69,7 +63,6 @@ window.onload = function()
   setTimeout(draw, 0);
 }
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 <body>
 <div id="description"></div>
 <div id="console"></div>

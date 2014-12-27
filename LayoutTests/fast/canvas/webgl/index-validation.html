@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="resources/webgl-test.js"></script>
 </head>
 <body>
@@ -105,10 +105,6 @@ debug("Pass large negative index to vertexAttribPointer");
 gl.vertexAttribPointer(normalLoc, 3, gl.FLOAT, false, 7 * sizeInBytes(gl.FLOAT), -2000000000 * sizeInBytes(gl.FLOAT));
 glErrorShouldBe(gl, gl.INVALID_VALUE);
 shouldBeUndefined('gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0)');
-
-successfullyParsed = true;
 </script>
-
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

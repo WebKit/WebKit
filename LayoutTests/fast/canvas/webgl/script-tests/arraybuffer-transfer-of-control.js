@@ -452,5 +452,3 @@ window.addEventListener('message', windowHandleMessage);
 window.testsComplete = -1;
 doneTest();
 
-successfullyParsed = true;
-

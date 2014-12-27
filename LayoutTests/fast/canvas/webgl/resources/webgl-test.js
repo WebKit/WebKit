@@ -12,30 +12,18 @@ function assertMsg(assertion, msg) {
 }
 
 function initNonKhronosFramework(waitUntilDone) {
-  if (window.testRunner) {
+  if (window.testRunner)
     testRunner.overridePreference("WebKitWebGLEnabled", "1");
-    testRunner.dumpAsText();
-    if (waitUntilDone) {
-      testRunner.waitUntilDone();
-    }
-  }
+  if (waitUntilDone)
+    window.jsTestIsAsync = true;
 }
 
 function nonKhronosFrameworkNotifyDone() {
-  if (window.testRunner) {
-    testRunner.notifyDone();
-  }
+  finishJSTest();
 }
 
 function finishTest() {
-  var epilogue = document.createElement("script")
-  epilogue.onload = function() {
-    if (window.nonKhronosFrameworkNotifyDone) {
-      window.nonKhronosFrameworkNotifyDone();
-    }
-  };
-  epilogue.src = "../../../resources/js-test-post.js";
-  document.body.appendChild(epilogue);
+  finishJSTest();
 }
 
 //

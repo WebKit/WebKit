@@ -1,6 +1,3 @@
-PASS successfullyParsed is true
-
-TEST COMPLETE
 PASS document.getElementById("simple").clientWidth is window.innerWidth
 PASS currentSrcFileName("simple") is "image-set-2x.png"
 PASS document.getElementById("small_sizes").clientWidth is 300
@@ -25,4 +22,7 @@ PASS document.getElementById("half_size").clientWidth is (window.innerWidth/2)
 PASS currentSrcFileName("half_size") is "image-set-2x.png"
 PASS document.getElementById("infitisimal_sizes").clientWidth is (window.innerWidth/100)
 PASS currentSrcFileName("infitisimal_sizes") is "image-set-2x.png"
+PASS successfullyParsed is true
+
+TEST COMPLETE
             

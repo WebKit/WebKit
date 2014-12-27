@@ -77,4 +77,7 @@ PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is not gl.FRAMEBUFFER_COMPLETE
 PASS gl.clear(gl.DEPTH_BUFFER_BIT) generated expected GL error: INVALID_FRAMEBUFFER_OPERATION.
 PASS gl.getError() is gl.NO_ERROR
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

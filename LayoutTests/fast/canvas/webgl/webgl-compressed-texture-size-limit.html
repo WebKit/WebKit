@@ -29,7 +29,7 @@
 
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="resources/webgl-test.js"></script>
 <script src="resources/webgl-test-utils.js"></script>
 </head>
@@ -39,10 +39,7 @@ function init()
 "use strict";
 description("Checks size limit of the webgl compressed textures")
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+window.jsTestIsAsync = true;
 
 if (window.internals)
     window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
@@ -248,8 +245,6 @@ function testFormatType(t, test) {
     testPassed("No " + test.extension + " extension support -- this is legal");
 }
 }
-
-var successfullyParsed = true;
 </script>
 <body onload="init()">
 <canvas id="example" width="32" height="32" style="width: 40px; height: 40px;"></canvas>

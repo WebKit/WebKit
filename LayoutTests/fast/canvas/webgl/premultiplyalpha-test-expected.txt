@@ -56,4 +56,7 @@ PASS getError was expected value: NO_ERROR : Should be no errors from drawing.
 PASS getError was expected value: NO_ERROR : Should be no errors from creating copy.
 PASS getError was expected value: NO_ERROR : Should be no errors from 2nd drawing.
 PASS should draw with 128,128,128,255
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

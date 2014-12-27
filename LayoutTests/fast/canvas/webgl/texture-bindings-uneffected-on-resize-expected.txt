@@ -8,4 +8,7 @@ PASS should be green
 test after resizing canvas
 PASS should be blue
 PASS should be green
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

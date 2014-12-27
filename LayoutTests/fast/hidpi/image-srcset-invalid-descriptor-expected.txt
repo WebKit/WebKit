@@ -1,12 +1,12 @@
-PASS successfullyParsed is true
-
-TEST COMPLETE
 PASS document.getElementById("invalid_with_x").clientWidth is 100
 PASS document.getElementById("invalid_without_x").clientWidth is 100
 PASS document.getElementById("future_descriptor").clientWidth is 100
 PASS document.getElementById("future_descriptor_without_x").clientWidth is 100
 PASS document.getElementById("x_with_w_ignored").clientWidth is 200
 PASS document.getElementById("x_with_h_ignored").clientWidth is 200
+PASS successfullyParsed is true
+
+TEST COMPLETE
 This test passes if the image below is a 100px blue square when the deviceScaleFactor is 1.
 It tests that even though the 1x resource contains many invalid descriptors, only the invalid descriptors are ignored (according to the spec).
          

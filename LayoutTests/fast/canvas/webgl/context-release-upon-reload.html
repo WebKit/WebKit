@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>WebGL Context Release Test</title>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 <script src="resources/webgl-test.js"></script>
 </head>
 <body>
@@ -13,10 +13,7 @@
 <script>
 description("This test ensures that WebGL contexts are released properly upon page reload");
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
+window.jsTestIsAsync = true;
 
 var host = document.getElementById("host");
 var testIterations = 8;

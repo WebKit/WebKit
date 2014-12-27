@@ -1,10 +1,3 @@
-// This block needs to be outside the onload handler in order for this
-// test to run reliably in WebKit's test harness (at least the
-// Chromium port). https://bugs.webkit.org/show_bug.cgi?id=87448
-if (window.initNonKhronosFramework) {
-    window.initNonKhronosFramework(true);
-}
-
 function generateTest(pixelFormat, pixelType, prologue) {
     var wtu = WebGLTestUtils;
     var gl = null;
