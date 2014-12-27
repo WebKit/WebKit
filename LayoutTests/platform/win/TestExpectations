@@ -3037,14 +3037,30 @@ fast/loader/form-state-restore-with-frames.html [ Timeout ]
 fast/loader/stateobjects/pushstate-clears-forward-history.html [ Timeout ]
 fast/media/mq-color-index-01.html [ Timeout ]
 fast/media/mq-simple-neg-query-02.html [ Timeout ]
-http/tests/security/referrer-policy-redirect.html
-http/tests/security/mixedContent/insecure-xhr-in-main-frame.html
-http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html
-http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
-http/tests/security/mixedContent/blob-url-in-iframe.html
-http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-image-in-main-frame.html
-http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-css-in-main-frame.html
-http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
+http/tests/security/referrer-policy-redirect.html [ Timeout ]
+http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Timeout ]
+http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Timeout ]
+http/tests/security/mixedContent/insecure-iframe-in-main-frame.html [ Timeout ]
+http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html [ Timeout ]
+http/tests/security/mixedContent/blob-url-in-iframe.html [ Timeout ]
+http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html [ Timeout ]
+http/tests/security/mixedContent/insecure-image-in-main-frame.html [ Timeout ]
+http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html [ Timeout ]
+http/tests/security/mixedContent/insecure-css-in-main-frame.html [ Timeout ]
+http/tests/security/mixedContent/data-url-iframe-in-main-frame.html [ Timeout ]
+
+# new crashes, need bug reports
+editing/deleting/regional-indicators.html [ Crash ]
+editing/selection/extend-selection-home-end.html [ Crash ]
+editing/selection/home-end.html [ Crash ]
+editing/selection/move-by-word-visually-single-space-one-element.html [ Crash ]
+editing/selection/regional-indicators.html [ Crash ]
+editing/text-iterator/rtl-first-letter-text-iterator-crash.html [ Crash ]
+fast/dom/Document/createElement-invalid-names.html [ Crash ]
+fast/dom/Document/createElement-valid-names.html [ Crash ]
+fast/lists/w3-css3-list-styles-numeric.html [ Crash ]
+fast/parser/entities-in-xhtml.xhtml [ Crash ]
+fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Crash ]
+fast/text/midword-break-before-surrogate-pair-2.html [ Crash ]
+fast/text/regional-indicator-symobls.html [ Crash ]
+fast/text/unicode-variation-selector.html [ Crash ]
