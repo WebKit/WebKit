@@ -1,3 +1,9 @@
+2014-12-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Win] Fix test expectations after r177363 - part III
+
+        * platform/win/TestExpectations:
+
 2014-12-27  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: delete unused tests in LayoutTests/inspector-obsolete

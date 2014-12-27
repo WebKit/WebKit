@@ -387,7 +387,7 @@ transitions/change-values-during-transition.html
 
 # Sometimes times out http://webkit.org/b/48457
 fast/workers/storage/use-same-database-in-page-and-workers.html
-webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ] 
+webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure Timeout]
 
 # Times out on apple-windows-3 http://webkit.org/b/48750
 fast/frames/sandboxed-iframe-storage.html
@@ -1291,7 +1291,7 @@ fast/dom/HTMLMeterElement/meter-appearances-capacity.html
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
 fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html
 
-webkit.org/b/56167 http/tests/media/remove-while-loading.html [ Failure ]
+webkit.org/b/56167 http/tests/media/remove-while-loading.html [ Timeout ]
 
 webkit.org/b/57693 plugins/windowless_plugin_paint_test.html [ Failure ]
 
@@ -1348,7 +1348,7 @@ fast/dom/shadow
 fast/dom/HTMLTemplateElement/cycles-in-shadow.html
 
 # JSC does not support setIsolatedWorldSecurityOrigin
-webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Failure ]
+webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Timeout ]
 
 # Need to implement getFormValue().
 plugins/form-value.html [ Failure ]
@@ -1658,8 +1658,8 @@ webkit.org/b/84286 fast/block/float/016.html [ Failure ]
 webkit.org/b/84286 fast/repaint/repaint-across-writing-mode-boundary.html [ Failure ]
 
 # The following are already skipped on Mac because of a QuickTime problem
-webkit.org/b/38000 http/tests/media/video-play-stall-seek.html [ Failure ]
-webkit.org/b/38000 http/tests/media/video-play-stall.html [ Failure ]
+webkit.org/b/38000 http/tests/media/video-play-stall-seek.html [ Timeout ]
+webkit.org/b/38000 http/tests/media/video-play-stall.html [ Timeout ]
 webkit.org/b/38000 media/media-fullscreen-not-in-document.html [ Failure ]
 
 # The following may just need rebaselines:
@@ -1688,7 +1688,7 @@ fast/writing-mode/vertical-font-fallback.html [ Failure ]
 svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
 svg/dynamic-updates/SVGSVGElement-dom-requiredFeatures.html	[ ImageOnlyFailure ]
 tables/mozilla/marvin/x_col_align_justify.xml [ ImageOnlyFailure ]
-http/tests/security/referrer-policy-https-origin.html [ Failure ]
+http/tests/security/referrer-policy-https-origin.html [ Timeout ]
 
 # As usual, DRT on Windows has problems knowing how to continue a test when focus moves to a popup window, in this case the file chooser
 webkit.org/b/87469 fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Pass Failure Timeout ]
@@ -1730,7 +1730,7 @@ http/tests/security/xssAuditor/xss-filter-bypass-long-string.html
 http/tests/security/no-referrer.html [ Pass Failure ]
 http/tests/security/referrer-policy-https-always.html [ Pass Failure Timeout ]
 http/tests/security/referrer-policy-https-default.html [ Pass Failure Timeout  ]
-http/tests/security/referrer-policy-https-never.html [ Failure ]
+http/tests/security/referrer-policy-https-never.html [ Timeout ]
 http/tests/security/referrer-policy-redirect.html [ Failure ]
 
 # Flaky http/tests/cookie tests
@@ -2084,8 +2084,8 @@ webkit.org/b/117323 fast/frames/sandboxed-iframe-about-blank.html [ Failure ]
 webkit.org/b/117323 fast/frames/sandboxed-iframe-navigation-allowed.html [ Failure ]
 webkit.org/b/117323 fast/frames/sandboxed-iframe-plugins.html [ Failure ]
 webkit.org/b/117323 fast/replaced/invalid-object-with-fallback.html [ Failure ]
-webkit.org/b/117323 fast/replaced/no-focus-ring-embed.html [ Failure ]
-webkit.org/b/117323 fast/replaced/no-focus-ring-object.html [ Failure ]
+webkit.org/b/117323 fast/replaced/no-focus-ring-embed.html [ Timeout ]
+webkit.org/b/117323 fast/replaced/no-focus-ring-object.html [ Timeout ]
 webkit.org/b/117323 fast/replaced/object-with-embed-url-param.html [ Failure ]
 webkit.org/b/117323 platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
 webkit.org/b/117323 platform/win/plugins/windowless-paint-rect-coordinates.html [ Failure ]
@@ -2797,7 +2797,7 @@ tables/mozilla/other/test6.html [ Skip ]
 fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
 fast/repaint/animation-after-layer-scroll.html [ Failure ]
 fast/text/emphasis-combined-text.html [ ImageOnlyFailure ]
-http/tests/media/video-cancel-load.html [ Crash Failure ]
+http/tests/media/video-cancel-load.html [ Crash Failure Timeout]
 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 js/slow-stress/emscripten-memops.html [ Timeout ]
 
