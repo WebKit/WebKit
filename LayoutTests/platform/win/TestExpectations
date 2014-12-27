@@ -1056,7 +1056,7 @@ editing/spelling/spellcheck-paste.html
 editing/spelling/spellcheck-paste-disabled.html
 
 # Replacement text for misspelling is not given.
-webkit.org/b/77934 editing/spelling/spelling-marker-description.html [ Failure ]
+webkit.org/b/77934 editing/spelling/spelling-marker-description.html [ Timeout ]
 
 # IndexedDB is not yet enabled.
 storage/indexeddb
@@ -1922,9 +1922,9 @@ webkit.org/b/108370 editing/spelling/context-menu-suggestions-subword-selection.
 webkit.org/b/108370 editing/spelling/move-cursor-around-misspelled-word.html [ Timeout ]
 webkit.org/b/108370 editing/spelling/spelling-backward.html [ Timeout ]
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Timeout ]
-webkit.org/b/108370 editing/spelling/spelling-exactly-selected-word.html [ Failure ]
-webkit.org/b/108370 editing/spelling/spelling-with-punctuation-selection.html [ Failure ]
-webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-exactly-selected-word.html [ Timeout ]
+webkit.org/b/108370 editing/spelling/spelling-with-punctuation-selection.html [ Timeout ]
+webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ Timeout ]
 webkit.org/b/108370 editing/spelling/spellcheck-async-mutation.html [ Failure ]
 webkit.org/b/108370 editing/spelling/spellcheck-async.html [ Failure ]
 webkit.org/b/108370 editing/spelling/spellcheck-sequencenum.html [ Failure ]
@@ -1934,8 +1934,8 @@ webkit.org/b/108370 editing/spelling/spellcheck-paste-continuous-disabled.html [
 webkit.org/b/108370 editing/spelling/spelling-attribute-at-child.html [ Timeout ]
 webkit.org/b/108370 editing/spelling/spelling-attribute-change.html [ Timeout ]
 webkit.org/b/108370 editing/spelling/spelling-backspace-between-lines.html [ Timeout ]
-webkit.org/b/108370 editing/spelling/spelling-hasspellingmarker.html [ Failure ]
-webkit.org/b/108370 editing/spelling/spelling-linebreak.html [ Failure ]
+webkit.org/b/108370 editing/spelling/spelling-hasspellingmarker.html [ Timeout ]
+webkit.org/b/108370 editing/spelling/spelling-linebreak.html [ Timeout ]
 
 # Disable document.register tests, ENABLE_CUSTOM_ELEMENT disabled
 fast/dom/custom [ Skip ]
