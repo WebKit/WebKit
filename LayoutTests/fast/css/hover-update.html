@@ -1,5 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-        "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <style>
@@ -11,7 +10,7 @@
     div#b:hover { background: green; }
     span#c:hover { color: red; }
 </style>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body onload="runtest()">
 <p><b>BUG ID:</b> <a href="http://bugs.webkit.org/show_bug.cgi?id=6821">Bugzilla bug 6821</a> Fix for 5983 will not always update hover correctly.</p>
@@ -19,20 +18,22 @@
 <p>To run manually, move your mouse over the black box.  You should see a green box.  If you see any other color, the test fails.</p>
 
 <script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
 function finish()
 {
     var expectedBackgroundColor = "rgb(0, 128, 0)";
     // This test was failing on slower machines, so we give it more time to try to apply the hover state.
     var timeSinceStartedCheckingMs = Date.now() - window.startCheckingForHoverMs;
-    if (timeSinceStartedCheckingMs < 200 && getComputedStyle(document.getElementById('b')).backgroundColor != expectedBackgroundColor) {
+    if (timeSinceStartedCheckingMs < 10000 && getComputedStyle(document.getElementById('b')).backgroundColor != expectedBackgroundColor) {
         setTimeout(finish, 10);
         return;
     }
     shouldBeEqualToString("window.getComputedStyle(document.getElementById('b'), null).backgroundColor", expectedBackgroundColor);
     shouldBeEqualToString("window.getComputedStyle(document.getElementById('a'), null).backgroundColor", expectedBackgroundColor);
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    finishJSTest();
 }
 
 function hideC()
@@ -55,7 +56,6 @@ function runtest()
 
     debug('Hover color before test: ' + getComputedStyle(document.getElementById("b")).backgroundColor);
 
-    testRunner.waitUntilDone();
     var target = document.getElementById('target');
     var x = target.offsetParent.offsetLeft + target.offsetLeft + target.offsetWidth / 2;
     var y = target.offsetParent.offsetTop + target.offsetTop + target.offsetHeight / 2;

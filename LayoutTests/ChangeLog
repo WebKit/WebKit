@@ -1,3 +1,14 @@
+2014-12-27  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/css/hover-update.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=139960
+
+        Reviewed by Anders Carlsson.
+
+        * fast/css/hover-update-expected.txt:
+        * fast/css/hover-update.html:
+        Increased the timeout, and updated the test to properly use js-test harness.
+
 2014-12-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Win] Fix test expectations after r177363 - part IV
