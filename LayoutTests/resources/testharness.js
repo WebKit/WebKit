@@ -15,12 +15,13 @@ policies and contribution forms [3].
 (function ()
 {
     var debug = false;
-    // default timeout is 10 seconds, test can override if needed
+    // For WebKit, we set harness timeout to a very large value, expecting run-webkit-tests
+    // to enforce the right one.
     var settings = {
         output:false,
         harness_timeout:{
-            "normal":10000,
-            "long":60000
+            "normal":1000000,
+            "long":1000000
         },
         test_timeout:null
     };

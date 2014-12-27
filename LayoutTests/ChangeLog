@@ -1,3 +1,15 @@
+2014-12-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Disable W3C test harness timeout
+        https://bugs.webkit.org/show_bug.cgi?id=139963
+
+        Reviewed by Darin Adler.
+
+        Timeouts should depend on build style (e.g. ASan is much slower), and these don't.
+
+        * http/tests/w3c/resources/testharness.js:
+        * resources/testharness.js:
+
 2014-12-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed typo fix.
