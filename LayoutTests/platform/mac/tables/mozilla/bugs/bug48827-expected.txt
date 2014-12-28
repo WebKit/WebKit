@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 144x18
-          text run at (0,0) width 144: "A 101 pixel wide table"
+        RenderText {#text} at (0,0) size 145x18
+          text run at (0,0) width 145: "A 101 pixel wide table"
       RenderTable {TABLE} at (0,34) size 101x39
         RenderTableSection {TBODY} at (0,0) size 101x39
           RenderTableRow {TR} at (0,1) size 101x18
@@ -29,8 +29,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 4x18
                 text run at (0,0) width 4: " "
       RenderBlock {P} at (0,89) size 784x18
-        RenderText {#text} at (0,0) size 144x18
-          text run at (0,0) width 144: "A 102 pixel wide table"
+        RenderText {#text} at (0,0) size 145x18
+          text run at (0,0) width 145: "A 102 pixel wide table"
       RenderTable {TABLE} at (0,123) size 102x39
         RenderTableSection {TBODY} at (0,0) size 102x39
           RenderTableRow {TR} at (0,1) size 102x18
@@ -54,8 +54,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 4x18
                 text run at (0,0) width 4: " "
       RenderBlock {P} at (0,178) size 784x18
-        RenderText {#text} at (0,0) size 144x18
-          text run at (0,0) width 144: "A 103 pixel wide table"
+        RenderText {#text} at (0,0) size 145x18
+          text run at (0,0) width 145: "A 103 pixel wide table"
       RenderTable {TABLE} at (0,212) size 103x39
         RenderTableSection {TBODY} at (0,0) size 103x39
           RenderTableRow {TR} at (0,1) size 103x18
@@ -79,8 +79,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 4x18
                 text run at (0,0) width 4: " "
       RenderBlock {P} at (0,267) size 784x18
-        RenderText {#text} at (0,0) size 144x18
-          text run at (0,0) width 144: "A 104 pixel wide table"
+        RenderText {#text} at (0,0) size 145x18
+          text run at (0,0) width 145: "A 104 pixel wide table"
       RenderTable {TABLE} at (0,301) size 104x39
         RenderTableSection {TBODY} at (0,0) size 104x39
           RenderTableRow {TR} at (0,1) size 104x18

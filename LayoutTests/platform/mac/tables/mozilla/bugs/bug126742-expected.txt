@@ -15,10 +15,10 @@ layer at (0,0) size 800x600
             RenderTableRow {TR} at (0,68) size 784x23
               RenderTableCell {TD} at (0,70) size 784x18 [r=1 c=0 rs=1 cs=1]
                 RenderBlock {P} at (0,0) size 784x18
-                  RenderInline {FONT} at (0,0) size 34x18
-                    RenderInline {A} at (0,0) size 34x18 [color=#0000EE]
-                      RenderText {#text} at (375,0) size 34x18
-                        text run at (375,0) width 34: "Home"
+                  RenderInline {FONT} at (0,0) size 36x18
+                    RenderInline {A} at (0,0) size 36x18 [color=#0000EE]
+                      RenderText {#text} at (374,0) size 36x18
+                        text run at (374,0) width 36: "Home"
             RenderTableRow {TR} at (0,91) size 784x32
               RenderTableCell {TD} at (0,98) size 784x18 [r=2 c=0 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 120x18 [color=#0000EE]
@@ -59,9 +59,9 @@ layer at (0,0) size 800x600
                   RenderInline {FONT} at (0,0) size 68x18
                     RenderText {#text} at (358,0) size 22x18
                       text run at (358,0) width 22: "Lab"
-                    RenderInline {U} at (0,0) size 46x18
-                      RenderText {#text} at (380,0) size 46x18
-                        text run at (380,0) width 46: "oratory"
+                    RenderInline {U} at (0,0) size 47x18
+                      RenderText {#text} at (379,0) size 47x18
+                        text run at (379,0) width 47: "oratory"
             RenderTableRow {TR} at (0,283) size 784x32
               RenderTableCell {TD} at (0,290) size 784x18 [r=8 c=0 rs=1 cs=1]
                 RenderInline {A} at (0,0) size 44x18 [color=#0000EE]
@@ -83,4 +83,4 @@ layer at (0,0) size 800x600
                     RenderInline {A} at (0,0) size 82x18 [color=#0000EE]
                       RenderText {#text} at (351,0) size 82x18
                         text run at (351,0) width 46: "Office "
-                        text run at (397,0) width 36: "Hours"
+                        text run at (396,0) width 37: "Hours"

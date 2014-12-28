@@ -18,19 +18,19 @@ layer at (0,0) size 800x396
             text run at (37,71) width 399 RTL: "\x{5D4}\x{5D9}\x{5D5} \x{5E6}\x{5E4}\x{5D5}\x{5D9}\x{5D9}\x{5DD} \x{5DC}\x{5D9} \x{5D0}\x{5E8}\x{5D1}\x{5E2}\x{5EA} \x{5DB}\x{5EA}\x{5DC}\x{5D9} \x{5D7}\x{5D3}\x{5E8}\x{5D9} \x{5D4}\x{5E7}\x{5D5}\x{5D3}\x{5E8}\x{5D9}\x{5DD} \x{5D5}\x{5D4}\x{5D0}\x{5DC}\x{5DE}\x{5D9}\x{5DD} \x{5D9}\x{5D7}\x{5D3} \x{5E2}\x{5DD}"
             text run at (627,103) width 145 RTL: "\x{5D1}\x{5D3}\x{5D9}\x{5D3}\x{5D5}\x{5EA} \x{5DB}\x{5D1}\x{5D3}\x{5D4} \x{5D5}\x{5DE}\x{5E2}\x{5D9}\x{5E7}\x{5D4}"
         RenderBlock {P} at (6,166) size 772x192
-          RenderText {#text} at (40,7) size 732x50
-            text run at (40,7) width 588: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
-            text run at (628,7) width 144: "labore et dolore magna"
-            text run at (62,39) width 430: "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
-          RenderInline {SPAN} at (0,0) size 755x84 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
-            RenderText {#text} at (492,39) size 748x82
-              text run at (492,39) width 235: "laboris nisi ut aliquip ex ea commodo"
-              text run at (24,71) width 324: "consequat. Duis aute irure dolor in reprehenderit in "
-              text run at (348,71) width 424: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur"
-              text run at (37,103) width 145: "sint occaecat cupidatat "
-              text run at (182,103) width 590: "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor"
-          RenderText {#text} at (1,135) size 771x50
-            text run at (1,135) width 565: "sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore "
-            text run at (566,135) width 206: "magna aliqua. Ut enim ad minim"
-            text run at (371,167) width 4 RTL: "."
-            text run at (375,167) width 397: "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip"
+          RenderText {#text} at (21,7) size 751x50
+            text run at (21,7) width 604: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut "
+            text run at (624,7) width 148: "labore et dolore magna"
+            text run at (45,39) width 442: "aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco "
+          RenderInline {SPAN} at (0,0) size 773x84 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (486,39) size 766x82
+              text run at (486,39) width 241: "laboris nisi ut aliquip ex ea commodo"
+              text run at (6,71) width 332: "consequat. Duis aute irure dolor in reprehenderit in "
+              text run at (337,71) width 435: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur"
+              text run at (19,103) width 150: "sint occaecat cupidatat "
+              text run at (168,103) width 604: "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor"
+          RenderText {#text} at (26,135) size 746x50
+            text run at (26,135) width 582: "sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+            text run at (607,135) width 165: "magna aliqua. Ut enim ad"
+            text run at (313,167) width 5 RTL: "."
+            text run at (317,167) width 455: "minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip"

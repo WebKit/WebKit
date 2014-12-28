@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 342x18
-          text run at (0,0) width 342: "This tests that buttons don't honor table display styles. "
-        RenderBR {BR} at (342,14) size 0x0
+        RenderText {#text} at (0,0) size 351x18
+          text run at (0,0) width 351: "This tests that buttons don't honor table display styles. "
+        RenderBR {BR} at (350,14) size 1x0
       RenderButton {INPUT} at (2,20) size 87x18 [bgcolor=#C0C0C0]
         RenderBlock (anonymous) at (8,2) size 71x13
           RenderText at (0,0) size 71x13

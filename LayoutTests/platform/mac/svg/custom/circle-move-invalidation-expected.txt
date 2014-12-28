@@ -12,5 +12,5 @@ layer at (0,0) size 800x356
       RenderBlock {p} at (0,322) size 784x0
       RenderBlock {p} at (0,322) size 784x0
       RenderBlock (anonymous) at (0,322) size 784x18
-        RenderText {#text} at (0,0) size 552x18
-          text run at (0,0) width 552: "The circle should not be (partially or fully)visible at the original position after moving it."
+        RenderText {#text} at (0,0) size 569x18
+          text run at (0,0) width 569: "The circle should not be (partially or fully)visible at the original position after moving it."

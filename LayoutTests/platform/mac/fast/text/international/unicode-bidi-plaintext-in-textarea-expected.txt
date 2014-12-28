@@ -5,9 +5,9 @@ layer at (0,0) size 800x316
     RenderBody {BODY} at (8,8) size 784x300
       RenderBlock {DIV} at (0,0) size 784x300
         RenderBlock (anonymous) at (0,0) size 784x36
-          RenderText {#text} at (0,0) size 761x36
-            text run at (0,0) width 761: "In all four cases below, the exclamation mark should be on the left side of the first line and on the right side of the second"
-            text run at (0,18) width 27: "line."
+          RenderText {#text} at (0,0) size 777x36
+            text run at (0,0) width 777: "In all four cases below, the exclamation mark should be on the left side of the first line and on the right side of the second"
+            text run at (0,18) width 28: "line."
         RenderBlock {DIV} at (0,36) size 784x264
           RenderBR {BR} at (351,48) size 0x18
           RenderBR {BR} at (351,114) size 0x18

@@ -4,8 +4,8 @@ layer at (0,0) size 800x346
   RenderBlock {HTML} at (0,0) size 800x346
     RenderBody {BODY} at (8,16) size 784x310
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 288x18
-          text run at (0,0) width 288: "The four green squares should all be lined up."
+        RenderText {#text} at (0,0) size 293x18
+          text run at (0,0) width 293: "The four green squares should all be lined up."
 layer at (28,54) size 142x272
   RenderBlock {DIV} at (20,38) size 142x272 [border: (1px solid #000000)]
 layer at (39,65) size 120x120

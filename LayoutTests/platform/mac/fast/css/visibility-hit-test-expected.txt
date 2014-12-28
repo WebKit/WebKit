@@ -7,6 +7,6 @@ layer at (0,0) size 800x600
         RenderImage {IMG} at (0,0) size 300x300
       RenderText {#text} at (300,286) size 4x18
         text run at (300,286) width 4: " "
-      RenderText {#text} at (304,286) size 444x18
-        text run at (304,286) width 349: "The element at position (100, 100) should be the body. "
-        text run at (653,286) width 95: "Result: BODY"
+      RenderText {#text} at (304,286) size 449x18
+        text run at (304,286) width 354: "The element at position (100, 100) should be the body. "
+        text run at (657,286) width 96: "Result: BODY"

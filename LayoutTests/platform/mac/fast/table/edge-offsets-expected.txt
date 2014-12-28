@@ -4,21 +4,21 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 212x18
-          text run at (0,0) width 212: "This tests for a regression against "
-        RenderInline {I} at (0,0) size 778x36
-          RenderInline {A} at (0,0) size 348x18 [color=#0000EE]
-            RenderText {#text} at (212,0) size 348x18
-              text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7054"
-          RenderText {#text} at (560,0) size 778x36
-            text run at (560,0) width 4: " "
-            text run at (564,0) width 214: "Vertical scroll bars do not appear"
-            text run at (0,18) width 169: "or do not scroll completely"
-        RenderText {#text} at (169,18) size 4x18
-          text run at (169,18) width 4: "."
+        RenderText {#text} at (0,0) size 218x18
+          text run at (0,0) width 218: "This tests for a regression against "
+        RenderInline {I} at (0,0) size 742x36
+          RenderInline {A} at (0,0) size 354x18 [color=#0000EE]
+            RenderText {#text} at (217,0) size 354x18
+              text run at (217,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7054"
+          RenderText {#text} at (570,0) size 742x36
+            text run at (570,0) width 5: " "
+            text run at (574,0) width 168: "Vertical scroll bars do not"
+            text run at (0,18) width 222: "appear or do not scroll completely"
+        RenderText {#text} at (221,18) size 5x18
+          text run at (221,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 649x18
-          text run at (0,0) width 649: "The top two boxes should have horizontal scroll bars. The bottom box should have a vertical scroll bar."
+        RenderText {#text} at (0,0) size 660x18
+          text run at (0,0) width 660: "The top two boxes should have horizontal scroll bars. The bottom box should have a vertical scroll bar."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,198) size 784x18
         RenderBR {BR} at (0,0) size 0x18

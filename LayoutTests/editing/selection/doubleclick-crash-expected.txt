@@ -10,9 +10,9 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,0) size 800x75
         RenderText {#text} at (0,0) size 40x60
           text run at (0,0) width 40: "Test."
-          text run at (40,0) width 0: " "
+          text run at (39,0) width 1: " "
           text run at (0,15) width 40: "Test."
-          text run at (40,15) width 0: " "
+          text run at (39,15) width 1: " "
           text run at (0,30) width 0: " "
           text run at (0,45) width 0: " "
         RenderText {#text} at (0,60) size 0x15

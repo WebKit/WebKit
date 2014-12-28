@@ -4,12 +4,12 @@ layer at (0,0) size 800x219
   RenderBlock {html} at (0,0) size 800x219
     RenderBody {body} at (8,21) size 784x190
       RenderBlock {h1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 495x37
-          text run at (0,0) width 495: "SVG Images in Inline CSS Elements"
+        RenderText {#text} at (0,0) size 496x37
+          text run at (0,0) width 496: "SVG Images in Inline CSS Elements"
       RenderBlock {p} at (0,58) size 784x37
-        RenderText {#text} at (0,0) size 756x36
-          text run at (0,0) width 756: "The two following blocks should display side-by-side a 75x75 pixels image with a 3 pixels border overlaid on top of the"
-          text run at (0,18) width 127: "image (Bug 14051)."
+        RenderText {#text} at (0,0) size 770x36
+          text run at (0,0) width 770: "The two following blocks should display side-by-side a 75x75 pixels image with a 3 pixels border overlaid on top of the"
+          text run at (0,18) width 129: "image (Bug 14051)."
       RenderBlock (anonymous) at (0,110) size 784x80
         RenderInline {div} at (0,0) size 79x18
           RenderText {#text} at (0,0) size 0x0

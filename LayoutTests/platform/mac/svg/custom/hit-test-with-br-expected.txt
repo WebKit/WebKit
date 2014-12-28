@@ -4,9 +4,9 @@ layer at (0,0) size 800x95
   RenderBlock {html} at (0,0) size 800x95
     RenderBody {body} at (8,16) size 784x71
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 658x18
-          text run at (0,0) width 435: "A test for hit testing when an svg container is relatively positioned in "
-          text run at (435,0) width 223: "a containing block. See bug 13981."
+        RenderText {#text} at (0,0) size 671x18
+          text run at (0,0) width 445: "A test for hit testing when an svg container is relatively positioned in "
+          text run at (444,0) width 227: "a containing block. See bug 13981."
       RenderBlock (anonymous) at (0,34) size 784x37
         RenderBR {br} at (0,0) size 0x18
         RenderSVGRoot {svg} at (8,68) size 720x15

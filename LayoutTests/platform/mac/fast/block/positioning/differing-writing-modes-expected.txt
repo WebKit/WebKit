@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 356x18
-        text run at (0,0) width 356: "All of the boxes below should look identical to this one: "
-      RenderBR {BR} at (356,14) size 0x0
+      RenderText {#text} at (0,0) size 364x18
+        text run at (0,0) width 364: "All of the boxes below should look identical to this one: "
+      RenderBR {BR} at (363,14) size 1x0
       RenderText {#text} at (72,72) size 4x18
         text run at (72,72) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
-      RenderText {#text} at (0,90) size 99x18
-        text run at (0,90) width 99: "The test boxes: "
+      RenderText {#text} at (0,90) size 101x18
+        text run at (0,90) width 101: "The test boxes: "
       RenderBR {BR} at (0,0) size 0x0
       RenderText {#text} at (72,162) size 4x18
         text run at (72,162) width 4: " "

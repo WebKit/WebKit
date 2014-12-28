@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x12
-        RenderText {#text} at (0,0) size 437x12
-          text run at (0,0) width 437: "This tests rowIndex, in particular in cases where the table sections are in different orders."
+        RenderText {#text} at (0,0) size 436x12
+          text run at (0,0) width 436: "This tests rowIndex, in particular in cases where the table sections are in different orders."
       RenderBlock {P} at (0,22) size 784x12
         RenderText {#text} at (0,0) size 354x12
           text run at (0,0) width 354: "A: This table has the header and footer before the body (\"normal\" order)."

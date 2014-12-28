@@ -10,5 +10,5 @@ layer at (0,63) size 255x255
     layer at (0,0) size 235x2016
       RenderBlock {HTML} at (0,0) size 235x2016
         RenderBody {BODY} at (8,8) size 2000x2000 [bgcolor=#FFFFFF]
-          RenderText {#text} at (0,0) size 57x18
-            text run at (0,0) width 57: "scroll me"
+          RenderText {#text} at (0,0) size 60x18
+            text run at (0,0) width 60: "scroll me"

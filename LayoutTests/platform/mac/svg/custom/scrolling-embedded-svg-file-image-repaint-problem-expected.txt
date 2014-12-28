@@ -81,7 +81,7 @@ layer at (0,0) size 785x1016
                                   RenderSVGImage {image} at (291,135) size 145x144
                             RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
                               RenderSVGInlineText {#text} at (0,0) size 264x46
-                                chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"
+                                chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
                             RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
                       RenderText {#text} at (0,0) size 0x0
                     RenderTableCell {TD} at (500,149) size 496x380 [r=2 c=1 rs=1 cs=1]
@@ -101,8 +101,8 @@ layer at (0,0) size 785x1016
             text run at (384,21) width 325: "should be on top of the rectangle and the"
             text run at (0,41) width 259: "rectangle on top of the text. The "
             text run at (258,41) width 405: "test validates that groups are conceptually rendered"
-            text run at (0,61) width 182: "offscreen before being "
-            text run at (181,61) width 462: "rendered on the canvas. This is done by grouping the same"
+            text run at (0,61) width 181: "offscreen before being "
+            text run at (180,61) width 463: "rendered on the canvas. This is done by grouping the same"
             text run at (0,81) width 192: "overlapping objects and "
             text run at (191,81) width 471: "rendering the group at half opacity. The background pattern"
             text run at (0,101) width 187: "(vertical stripes) should "
@@ -112,8 +112,8 @@ layer at (0,0) size 785x1016
             text run at (0,141) width 53: "image."
         RenderBlock {P} at (0,222) size 723x81
           RenderText {#text} at (0,1) size 712x78
-            text run at (0,1) width 623: "Prerequisites: the test assumes proper handling of the fill stroke, stroke-width, "
-            text run at (622,1) width 61: "opacity,"
+            text run at (0,1) width 622: "Prerequisites: the test assumes proper handling of the fill stroke, stroke-width, "
+            text run at (621,1) width 62: "opacity,"
             text run at (0,21) width 636: "font-size rendering properties. It uses the rect, line, text and image elements, as "
             text run at (635,21) width 77: "well as all"
             text run at (0,41) width 598: "the elements required for the test template. To ensure that the text string is "

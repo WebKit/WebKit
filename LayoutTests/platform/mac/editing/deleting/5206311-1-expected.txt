@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 350x18
-          text run at (0,0) width 209: "This empties a row (the second). "
-          text run at (209,0) width 141: "It should be removed. "
-        RenderInline {B} at (0,0) size 768x36
-          RenderText {#text} at (350,0) size 768x36
-            text run at (350,0) width 418: "This demonstrates a bug: the two cells that contained the ends"
-            text run at (0,18) width 646: "of the selection aren't given a placeholder and so appear differently than the other emptied cells."
+        RenderText {#text} at (0,0) size 357x18
+          text run at (0,0) width 213: "This empties a row (the second). "
+          text run at (212,0) width 145: "It should be removed. "
+        RenderInline {B} at (0,0) size 780x36
+          RenderText {#text} at (356,0) size 780x36
+            text run at (356,0) width 424: "This demonstrates a bug: the two cells that contained the ends"
+            text run at (0,18) width 655: "of the selection aren't given a placeholder and so appear differently than the other emptied cells."
       RenderBlock {DIV} at (0,52) size 784x52
         RenderTable {TABLE} at (0,0) size 38x52 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 36x50
@@ -31,8 +31,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 8x18
                   text run at (2,2) width 8: "9"
       RenderBlock {P} at (0,120) size 784x18
-        RenderText {#text} at (0,0) size 593x18
-          text run at (0,0) width 593: "This empties a row (the second), but it still contains the selection and so shouldn't be removed."
+        RenderText {#text} at (0,0) size 607x18
+          text run at (0,0) width 607: "This empties a row (the second), but it still contains the selection and so shouldn't be removed."
       RenderBlock {DIV} at (0,154) size 784x76
         RenderTable {TABLE} at (0,0) size 46x76 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 44x74
@@ -64,13 +64,13 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 8x18
                   text run at (2,2) width 8: "9"
       RenderBlock {P} at (0,246) size 784x18
-        RenderText {#text} at (0,0) size 304x18
-          text run at (0,0) width 304: "This empties the first row, it should be removed."
+        RenderText {#text} at (0,0) size 310x18
+          text run at (0,0) width 310: "This empties the first row, it should be removed."
       RenderBlock {DIV} at (0,280) size 784x70
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderText {#text} at (0,0) size 39x18
-            text run at (0,0) width 35: "Hello"
-            text run at (35,0) width 4: " "
+          RenderText {#text} at (0,0) size 40x18
+            text run at (0,0) width 36: "Hello"
+            text run at (35,0) width 5: " "
         RenderTable {TABLE} at (0,18) size 46x52 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 44x50
             RenderTableRow {TR} at (0,2) size 44x22

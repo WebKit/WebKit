@@ -1819,21 +1819,21 @@ layer at (-3680,0) size 4480x585 backgroundClip at (0,0) size 4480x585 clip at (
             text run at (2342,0) width 304: "\x{305F}\x{3002}\x{305D}\x{306E}\x{4E8C}\x{4E09}\x{53E5}\x{306E}\x{306A}\x{304B}\x{306B}\x{3053}\x{3093}\x{306A}\x{306E}\x{304C}\x{3042}\x{308B}\x{3002}"
           RenderBR {BR} at (2342,304) size 18x0
         RenderBlock {DIV} at (2362,32) size 106x460
-          RenderText {#text} at (2,0) size 18x189
-            text run at (2,0) width 189: "\x{3000}\x{3000}We look before and after"
-          RenderBR {BR} at (2,189) size 18x0
-          RenderText {#text} at (24,0) size 18x222
-            text run at (24,0) width 222: "\x{3000}\x{3000}\x{3000}\x{3000}And pine for what is not:"
-          RenderBR {BR} at (24,222) size 18x0
-          RenderText {#text} at (46,0) size 18x170
-            text run at (46,0) width 170: "\x{3000}\x{3000}Our sincerest laughter"
-          RenderBR {BR} at (46,170) size 18x0
-          RenderText {#text} at (68,0) size 18x230
-            text run at (68,0) width 230: "\x{3000}\x{3000}\x{3000}\x{3000}With some pain is fraught;"
-          RenderBR {BR} at (68,230) size 18x0
-          RenderText {#text} at (88,0) size 18x355
-            text run at (88,0) width 355: "Our sweetest songs are those that tell of saddest thought."
-          RenderBR {BR} at (88,355) size 18x0
+          RenderText {#text} at (2,0) size 18x191
+            text run at (2,0) width 191: "\x{3000}\x{3000}We look before and after"
+          RenderBR {BR} at (2,190) size 18x1
+          RenderText {#text} at (24,0) size 18x225
+            text run at (24,0) width 225: "\x{3000}\x{3000}\x{3000}\x{3000}And pine for what is not:"
+          RenderBR {BR} at (24,224) size 18x1
+          RenderText {#text} at (46,0) size 18x174
+            text run at (46,0) width 174: "\x{3000}\x{3000}Our sincerest laughter"
+          RenderBR {BR} at (46,173) size 18x1
+          RenderText {#text} at (68,0) size 18x234
+            text run at (68,0) width 234: "\x{3000}\x{3000}\x{3000}\x{3000}With some pain is fraught;"
+          RenderBR {BR} at (68,234) size 18x0
+          RenderText {#text} at (88,0) size 18x363
+            text run at (88,0) width 363: "Our sweetest songs are those that tell of saddest thought."
+          RenderBR {BR} at (88,362) size 18x1
         RenderBlock (anonymous) at (2468,0) size 1770x492
           RenderText {#text} at (10,0) size 18x112
             text run at (10,0) width 112: "\x{300C}\x{524D}\x{3092}\x{307F}\x{3066}\x{306F}\x{3001}"

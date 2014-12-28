@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x158
+  RenderBlock {HTML} at (0,0) size 800x158
+    RenderBody {BODY} at (8,16) size 784x134
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 390x18
+          text run at (0,0) width 390: "Test passes if the bottom of the \"Filler Text\" below is aligned."
+      RenderTable {TABLE} at (0,34) size 357x100
+        RenderTableSection {TBODY} at (0,0) size 357x100
+          RenderTableRow {TR} at (0,2) size 357x96
+            RenderTableCell {TD} at (2,26) size 59x17 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 57x15
+                RenderText {#text} at (0,0) size 57x15
+                  text run at (0,0) width 57: "Filler Text"
+            RenderTableCell {TD} at (63,14) size 119x33 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 117x31
+                RenderText {#text} at (0,0) size 117x31
+                  text run at (0,0) width 117: "Filler Text"
+            RenderTableCell {TD} at (184,2) size 171x48 [r=0 c=2 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 169x46
+                RenderText {#text} at (0,0) size 169x46
+                  text run at (0,0) width 169: "Filler Text"

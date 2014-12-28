@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (9,9) size 791x591
+    RenderSVGForeignObject {foreignObject} at (10,10) size 580x380
+      RenderBlock {xhtml:div} at (0,0) size 580x18
+        RenderText {#text} at (0,0) size 78x18
+          text run at (0,0) width 78: "This is a test"
+      RenderBlock (anonymous) at (0,18) size 580x40
+        RenderInline {xhtml:a} at (0,0) size 66x18 [color=#0000EE]
+          RenderText {#text} at (0,0) size 66x18
+            text run at (0,0) width 66: "and a link."
+        RenderBR {xhtml:br} at (66,0) size 0x18
+        RenderButton {xhtml:input} at (2,20) size 16x18 [bgcolor=#C0C0C0]
+        RenderText {#text} at (0,0) size 0x0
+    RenderSVGRect {rect} at (9,9) size 582x382 [stroke={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=580.00] [height=380.00]

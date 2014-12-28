@@ -1,0 +1,51 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document toDOMRange:range from 1 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x52
+        RenderTable {TABLE} at (0,0) size 86x52 [border: (3px solid #AAAAAA)]
+          RenderTableSection {TBODY} at (3,3) size 80x46
+            RenderTableRow {TR} at (0,2) size 80x20
+              RenderTableCell {TD} at (2,2) size 27x20 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 25x18
+                  text run at (1,1) width 25: "Foo"
+              RenderTableCell {TD} at (31,2) size 47x20 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 22x18
+                  text run at (1,1) width 22: "baz"
+            RenderTableRow {TR} at (0,24) size 80x20
+              RenderTableCell {TD} at (2,24) size 27x20 [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 20x18
+                  text run at (1,1) width 20: "bar"
+              RenderTableCell {TD} at (31,24) size 47x20 [r=1 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 45x18
+                  text run at (1,1) width 45: "buffalo"
+selection start: position 0 of child 1 {TABLE} of child 0 {DIV} of body
+selection end:   position 2 of child 1 {TABLE} of child 0 {DIV} of body

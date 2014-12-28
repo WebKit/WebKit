@@ -1,0 +1,37 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 3 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 769x36
+          text run at (0,0) width 660: "This tests for a bug when creating markup for a selection that contained unrendered nodes with children. "
+          text run at (660,0) width 109: "You should see a"
+          text run at (0,18) width 248: "picture of abe followed by a select box."
+      RenderBlock {DIV} at (0,52) size 784x110
+        RenderImage {IMG} at (0,0) size 76x103
+        RenderText {#text} at (76,89) size 4x18
+          text run at (76,89) width 4: " "
+        RenderMenuList {SELECT} at (82,90) size 52x18 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 52x18
+            RenderText at (8,2) size 7x13
+              text run at (8,2) width 7: "1"
+      RenderBlock (anonymous) at (0,162) size 784x110
+        RenderImage {IMG} at (0,0) size 76x103
+        RenderText {#text} at (76,89) size 4x18
+          text run at (76,89) width 4: " "
+        RenderMenuList {SELECT} at (82,90) size 52x18 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 52x18
+            RenderText at (8,2) size 7x13
+              text run at (8,2) width 7: "1"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+caret: position 1 of child 2 {SELECT} of child 2 {DIV} of body

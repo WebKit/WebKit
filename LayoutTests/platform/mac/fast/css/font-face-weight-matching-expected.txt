@@ -4,26 +4,26 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x18
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 745x36
-          RenderInline {A} at (0,0) size 307x18 [color=#0000EE]
-            RenderText {#text} at (53,0) size 307x18
-              text run at (53,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=34147"
-          RenderText {#text} at (360,0) size 745x36
-            text run at (360,0) width 385: " If @font-face does not provide an explicit italic/bold variant,"
-            text run at (0,18) width 94: "regular is used"
-        RenderText {#text} at (94,18) size 4x18
-          text run at (94,18) width 4: "."
+        RenderText {#text} at (0,0) size 54x18
+          text run at (0,0) width 54: "Test for "
+        RenderInline {I} at (0,0) size 759x36
+          RenderInline {A} at (0,0) size 312x18 [color=#0000EE]
+            RenderText {#text} at (53,0) size 312x18
+              text run at (53,0) width 312: "https://bugs.webkit.org/show_bug.cgi?id=34147"
+          RenderText {#text} at (364,0) size 759x36
+            text run at (364,0) width 395: " If @font-face does not provide an explicit italic/bold variant,"
+            text run at (0,18) width 96: "regular is used"
+        RenderText {#text} at (95,18) size 5x18
+          text run at (95,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 328x18
-          text run at (0,0) width 328: "Checks if WebKit font matching algorithm matches "
-        RenderInline {A} at (0,0) size 166x18 [color=#0000EE]
-          RenderText {#text} at (328,0) size 166x18
-            text run at (328,0) width 166: "the latest CSS3 Fonts WD"
-        RenderText {#text} at (494,0) size 782x36
-          text run at (494,0) width 288: ". If the test passes, all 14 glyphs below should"
-          text run at (0,18) width 108: "be black squares:"
+        RenderText {#text} at (0,0) size 335x18
+          text run at (0,0) width 335: "Checks if WebKit font matching algorithm matches "
+        RenderInline {A} at (0,0) size 169x18 [color=#0000EE]
+          RenderText {#text} at (334,0) size 169x18
+            text run at (334,0) width 169: "the latest CSS3 Fonts WD"
+        RenderText {#text} at (502,0) size 750x36
+          text run at (502,0) width 248: ". If the test passes, all 14 glyphs below"
+          text run at (0,18) width 157: "should be black squares:"
       RenderBlock (anonymous) at (0,104) size 784x18
         RenderInline {SPAN} at (0,0) size 16x16
           RenderText {#text} at (0,1) size 16x16

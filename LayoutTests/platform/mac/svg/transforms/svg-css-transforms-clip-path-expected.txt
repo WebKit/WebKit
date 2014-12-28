@@ -5,8 +5,8 @@ layer at (0,0) size 800x581
     RenderBody {body} at (8,8) size 784x565
       RenderBlock {div} at (10,10) size 220x546
         RenderBlock {h2} at (0,19) size 220x29
-          RenderText {#text} at (0,0) size 154x28
-            text run at (0,0) width 154: "SVG CSS scale"
+          RenderText {#text} at (0,0) size 155x28
+            text run at (0,0) width 155: "SVG CSS scale"
         RenderBlock {h2} at (0,287) size 220x29
           RenderText {#text} at (0,0) size 105x28
             text run at (0,0) width 105: "SVG scale"
@@ -14,11 +14,11 @@ layer at (0,0) size 800x581
         text run at (240,0) width 4: " "
       RenderBlock {div} at (254,10) size 220x546
         RenderBlock {h2} at (0,19) size 220x29
-          RenderText {#text} at (0,0) size 211x28
-            text run at (0,0) width 211: "SVG CSS compound"
+          RenderText {#text} at (0,0) size 214x28
+            text run at (0,0) width 214: "SVG CSS compound"
         RenderBlock {h2} at (0,287) size 220x29
-          RenderText {#text} at (0,0) size 162x28
-            text run at (0,0) width 162: "SVG compound"
+          RenderText {#text} at (0,0) size 164x28
+            text run at (0,0) width 164: "SVG compound"
       RenderText {#text} at (0,0) size 0x0
 layer at (28,86) size 200x200
   RenderBlock (relative positioned) {div} at (10,67) size 200x201 [bgcolor=#C0C0C0] [border: (1px solid #000000)]

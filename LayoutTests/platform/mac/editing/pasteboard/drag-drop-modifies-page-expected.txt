@@ -12,11 +12,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 719x36
-          text run at (0,0) width 719: "This tests non-smartmove drag/drop. The space should be deleted on move, but not reinserted on drop, resulting in"
-          text run at (0,18) width 86: "\"worldhello\"."
+        RenderText {#text} at (0,0) size 734x36
+          text run at (0,0) width 734: "This tests non-smartmove drag/drop. The space should be deleted on move, but not reinserted on drop, resulting in"
+          text run at (0,18) width 87: "\"worldhello\"."
       RenderBlock {DIV} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 68x18
-          text run at (0,0) width 68: "worldhello"
+        RenderText {#text} at (0,0) size 70x18
+          text run at (0,0) width 70: "worldhello"
 selection start: position 5 of child 0 {#text} of child 3 {DIV} of body
 selection end:   position 10 of child 0 {#text} of child 3 {DIV} of body

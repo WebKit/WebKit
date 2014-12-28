@@ -12,5 +12,5 @@ layer at (0,0) size 800x90
                   RenderText at (8,2) size 20x13
                     text run at (8,2) width 20: "test"
       RenderBlock {P} at (0,48) size 784x18
-        RenderText {#text} at (0,0) size 447x18
-          text run at (0,0) width 447: "The select element in the table above must not spill outside of the table."
+        RenderText {#text} at (0,0) size 459x18
+          text run at (0,0) width 459: "The select element in the table above must not spill outside of the table."

@@ -4,9 +4,9 @@ layer at (0,0) size 800x544
   RenderBlock {HTML} at (0,0) size 800x544
     RenderBody {BODY} at (8,16) size 784x520
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 695x18
-          text run at (0,0) width 486: "Verify that the alignment and writing direction of each selected item matches "
-          text run at (486,0) width 209: "the one below the pop-up button."
+        RenderText {#text} at (0,0) size 709x18
+          text run at (0,0) width 497: "Verify that the alignment and writing direction of each selected item matches "
+          text run at (496,0) width 213: "the one below the pop-up button."
       RenderBlock {DIV} at (0,34) size 784x242
         RenderMenuList {SELECT} at (0,0) size 500x21 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 500x21
@@ -27,8 +27,8 @@ layer at (0,0) size 800x544
           RenderBlock (anonymous) at (0,0) size 500x21
             RenderText at (8,2) size 159x16
               text run at (8,2) width 24: "fifth"
-              text run at (31,2) width 55 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
-              text run at (85,2) width 16: "03"
+              text run at (31,2) width 54 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
+              text run at (84,2) width 17: "03"
               text run at (100,2) width 40 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
               text run at (139,2) width 28: "First"
         RenderBlock {DIV} at (0,84) size 470x36
@@ -58,8 +58,8 @@ layer at (0,0) size 800x544
             RenderText at (318,2) size 159x16
               text run at (318,2) width 32: "First "
               text run at (349,2) width 50 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
-              text run at (398,2) width 16: "03"
-              text run at (413,2) width 37 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+              text run at (398,2) width 17: "03"
+              text run at (414,2) width 36 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
               text run at (449,2) width 28: " fifth"
         RenderBlock {DIV} at (0,23) size 470x36
           RenderText {#text} at (297,10) size 163x16

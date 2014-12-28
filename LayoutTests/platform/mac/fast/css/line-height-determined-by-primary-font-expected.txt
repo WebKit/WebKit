@@ -4,9 +4,9 @@ layer at (0,0) size 800x270
   RenderBlock {HTML} at (0,0) size 800x270
     RenderBody {BODY} at (8,12) size 784x246
       RenderBlock {P} at (0,0) size 784x28
-        RenderText {#text} at (0,0) size 779x28
-          text run at (0,0) width 779: "This test verifies that line height is determined solely by a box's primary font, not by its fallback fonts. The following two lines should have a solid, unbroken red line"
-          text run at (0,14) width 58: "below them:"
+        RenderText {#text} at (0,0) size 774x28
+          text run at (0,0) width 774: "This test verifies that line height is determined solely by a box's primary font, not by its fallback fonts. The following two lines should have a solid, unbroken red"
+          text run at (0,14) width 81: "line below them:"
       RenderBlock {DIV} at (0,40) size 784x97
         RenderBlock {UL} at (0,0) size 567x97
           RenderBlock (floating) {LI} at (40,0) size 64x31 [border: none (1px solid #FF0000) none]

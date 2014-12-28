@@ -19,17 +19,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 85x18
-          text run at (0,0) width 85: "See this bug: "
-        RenderInline {A} at (0,0) size 167x18 [color=#0000EE]
-          RenderText {#text} at (85,0) size 167x18
-            text run at (85,0) width 167: "<rdar://problem/3918712>"
-        RenderText {#text} at (252,0) size 781x54
-          text run at (252,0) width 484: " \"Paste as Quotation\" in Mail just pastes (<blockquote> tag seems to be lost)."
-          text run at (736,0) width 4: " "
-          text run at (0,18) width 777: "Should see one box with blockquoted \"foo\" text, followed by another box with an \"x\" (not in a blockquote) and \"foo\" (in a"
-          text run at (777,18) width 4: " "
-          text run at (0,36) width 79: "blockquote)."
+        RenderText {#text} at (0,0) size 87x18
+          text run at (0,0) width 87: "See this bug: "
+        RenderInline {A} at (0,0) size 172x18 [color=#0000EE]
+          RenderText {#text} at (86,0) size 172x18
+            text run at (86,0) width 172: "<rdar://problem/3918712>"
+        RenderText {#text} at (257,0) size 778x54
+          text run at (257,0) width 495: " \"Paste as Quotation\" in Mail just pastes (<blockquote> tag seems to be lost)."
+          text run at (751,0) width 5: " "
+          text run at (0,18) width 774: "Should see one box with blockquoted \"foo\" text, followed by another box with an \"x\" (not in a blockquote) and \"foo\" (in"
+          text run at (773,18) width 5: " "
+          text run at (0,36) width 92: "a blockquote)."
       RenderBlock {DIV} at (0,54) size 784x24
       RenderBlock {DIV} at (0,78) size 784x104 [border: (2px solid #FF0000)]
         RenderBlock {DIV} at (14,38) size 756x28

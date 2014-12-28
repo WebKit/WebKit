@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderListItem {LI} at (0,40) size 36x544
           RenderBlock (anonymous) at (0,0) size 18x544
             RenderListMarker at (0,-20) size 18x16: "1"
-            RenderInline {I} at (0,0) size 18x76
-              RenderInline {U} at (0,0) size 18x76
-                RenderText {#text} at (0,0) size 18x76
-                  text run at (0,0) width 76: "Hello world"
+            RenderInline {I} at (0,0) size 18x77
+              RenderInline {U} at (0,0) size 18x77
+                RenderText {#text} at (0,0) size 18x77
+                  text run at (0,0) width 77: "Hello world"
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {OL} at (18,0) size 18x544
             RenderListItem {LI} at (0,40) size 18x504

@@ -8,8 +8,8 @@ layer at (0,0) size 800x422
           RenderTableSection {TBODY} at (5,5) size 312x170
             RenderTableRow {TR} at (0,0) size 312x40
               RenderTableCell {TD} at (0,0) size 312x40 [border: (5px solid #008000)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (6,6) size 35x18
-                  text run at (6,6) width 35: "Hello"
+                RenderText {#text} at (6,6) size 36x18
+                  text run at (6,6) width 36: "Hello"
             RenderTableRow {TR} at (0,40) size 312x60
               RenderTableCell {TD} at (0,40) size 312x60 [border: (15px solid #0000FF)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (16,16) size 59x18

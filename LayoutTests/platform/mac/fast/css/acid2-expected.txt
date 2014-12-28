@@ -4,8 +4,8 @@ layer at (0,0) size 800x4064
   RenderBlock {HTML} at (0,0) size 800x4064 [color=#FF0000] [bgcolor=#FFFFFF]
     RenderBody {BODY} at (0,84) size 800x2780
       RenderBlock {H2} at (72,2482) size 656x72 [color=#000080]
-        RenderText {#text} at (12,46) size 129x28
-          text run at (12,46) width 129: "Hello World!"
+        RenderText {#text} at (12,46) size 131x28
+          text run at (12,46) width 131: "Hello World!"
 layer at (36,2638) size 764x226
   RenderBlock (relative positioned) {DIV} at (36,2554) size 764x226 [border: (12px solid #00000000)]
     RenderTable {TABLE} at (12,12) size 1x0
@@ -14,8 +14,8 @@ layer at (36,2638) size 764x226
           RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (60,60) size 120x12 [bgcolor=#FF0000] [border: none (12px solid #000000) none (12px solid #000000)]
       RenderBlock {DIV} at (12,0) size 144x12
-        RenderText {#text} at (0,-1) size 90x14
-          text run at (0,-1) width 90: "                              "
+        RenderText {#text} at (0,-1) size 101x14
+          text run at (0,-1) width 101: "                              "
     RenderBlock (floating) {DIV} at (36,96) size 168x48 [border: none (12px solid #000000)]
       RenderBlock {DIV} at (12,0) size 144x48 [bgcolor=#FFFF00]
         RenderBlock {DIV} at (60,12) size 24x24 [bgcolor=#FF0000]
@@ -76,13 +76,13 @@ layer at (48,84) size 704x82
       RenderText {#text} at (0,0) size 253x28
         text run at (0,0) width 253: "Standards compliant?"
     RenderBlock {P} at (13,41) size 678x28
-      RenderInline {A} at (0,0) size 221x28 [color=#0000FF]
-        RenderText {#text} at (0,0) size 221x28
-          text run at (0,0) width 221: "Take The Acid2 Test"
-      RenderText {#text} at (221,0) size 198x28
-        text run at (221,0) width 198: " and compare it to "
-      RenderInline {A} at (0,0) size 246x28 [color=#0000FF]
-        RenderText {#text} at (419,0) size 246x28
-          text run at (419,0) width 246: "the reference rendering"
-      RenderText {#text} at (665,0) size 7x28
-        text run at (665,0) width 7: "."
+      RenderInline {A} at (0,0) size 217x28 [color=#0000FF]
+        RenderText {#text} at (0,0) size 217x28
+          text run at (0,0) width 217: "Take The Acid2 Test"
+      RenderText {#text} at (216,0) size 199x28
+        text run at (216,0) width 199: " and compare it to "
+      RenderInline {A} at (0,0) size 251x28 [color=#0000FF]
+        RenderText {#text} at (414,0) size 251x28
+          text run at (414,0) width 251: "the reference rendering"
+      RenderText {#text} at (664,0) size 8x28
+        text run at (664,0) width 8: "."

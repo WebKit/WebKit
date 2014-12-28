@@ -11,5 +11,5 @@ layer at (0,0) size 800x80
                 text run at (0,0) width 67: "Choose Files"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,38) size 784x18
-        RenderText {#text} at (0,0) size 442x18
-          text run at (0,0) width 442: "The file upload control above should have text '2 files,' not a filename."
+        RenderText {#text} at (0,0) size 449x18
+          text run at (0,0) width 449: "The file upload control above should have text '2 files,' not a filename."

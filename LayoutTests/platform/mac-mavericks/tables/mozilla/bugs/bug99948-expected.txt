@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 458x18
-          text run at (0,0) width 458: "the purple text input control must be in the same line with the grey image"
+        RenderText {#text} at (0,0) size 470x18
+          text run at (0,0) width 470: "the purple text input control must be in the same line with the grey image"
       RenderTable {TABLE} at (0,18) size 286x44
         RenderTableSection {TBODY} at (0,0) size 286x44
           RenderTableRow {TR} at (0,2) size 286x40

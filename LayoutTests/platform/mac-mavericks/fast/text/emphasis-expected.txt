@@ -4,188 +4,188 @@ layer at (0,0) size 800x562
   RenderBlock {HTML} at (0,0) size 800x562
     RenderBody {BODY} at (8,8) size 784x0
       RenderBlock (floating) {DIV} at (8,8) size 366x146 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 276x28
-          text run at (3,3) width 276: "Lorem ipsum dolor sit amet,"
-        RenderInline {SPAN} at (0,0) size 217x28
-          RenderText {#text} at (3,45) size 217x28
-            text run at (3,45) width 217: "consectetur adipiscing"
-        RenderText {#text} at (220,45) size 135x28
-          text run at (220,45) width 6: " "
-          text run at (226,45) width 129: "elit. Aliquam"
-        RenderInline {SPAN} at (0,0) size 111x28
-          RenderText {#text} at (3,73) size 111x28
-            text run at (3,73) width 111: "odio sapien"
-        RenderText {#text} at (114,73) size 338x70
-          text run at (114,73) width 12: ", "
-          text run at (126,73) width 215: "lobortis eu iaculis vel,"
-          text run at (3,115) width 211: "scelerisque nec dolor."
+        RenderText {#text} at (3,3) size 273x28
+          text run at (3,3) width 273: "Lorem ipsum dolor sit amet,"
+        RenderInline {SPAN} at (0,0) size 214x28
+          RenderText {#text} at (3,45) size 214x28
+            text run at (3,45) width 214: "consectetur adipiscing"
+        RenderText {#text} at (216,45) size 134x28
+          text run at (216,45) width 7: " "
+          text run at (222,45) width 128: "elit. Aliquam"
+        RenderInline {SPAN} at (0,0) size 110x28
+          RenderText {#text} at (3,73) size 110x28
+            text run at (3,73) width 110: "odio sapien"
+        RenderText {#text} at (112,73) size 334x70
+          text run at (112,73) width 13: ", "
+          text run at (124,73) width 213: "lobortis eu iaculis vel,"
+          text run at (3,115) width 208: "scelerisque nec dolor."
       RenderBlock (floating) {DIV} at (390,8) size 366x146 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 276x28
-          text run at (3,3) width 276: "Lorem ipsum dolor sit amet,"
-        RenderInline {SPAN} at (0,0) size 217x28
-          RenderText {#text} at (3,45) size 217x28
-            text run at (3,45) width 217: "consectetur adipiscing"
-        RenderText {#text} at (220,45) size 135x28
-          text run at (220,45) width 6: " "
-          text run at (226,45) width 129: "elit. Aliquam"
-        RenderInline {SPAN} at (0,0) size 111x28
-          RenderText {#text} at (3,73) size 111x28
-            text run at (3,73) width 111: "odio sa\x{300}pien"
-        RenderText {#text} at (114,73) size 338x70
-          text run at (114,73) width 12: ", "
-          text run at (126,73) width 215: "lobortis eu iaculis vel,"
-          text run at (3,115) width 210: "scelerisque nec dolor."
+        RenderText {#text} at (3,3) size 273x28
+          text run at (3,3) width 273: "Lorem ipsum dolor sit amet,"
+        RenderInline {SPAN} at (0,0) size 214x28
+          RenderText {#text} at (3,45) size 214x28
+            text run at (3,45) width 214: "consectetur adipiscing"
+        RenderText {#text} at (216,45) size 134x28
+          text run at (216,45) width 7: " "
+          text run at (222,45) width 128: "elit. Aliquam"
+        RenderInline {SPAN} at (0,0) size 110x28
+          RenderText {#text} at (3,73) size 110x28
+            text run at (3,73) width 110: "odio sa\x{300}pien"
+        RenderText {#text} at (112,73) size 334x70
+          text run at (112,73) width 13: ", "
+          text run at (124,73) width 213: "lobortis eu iaculis vel,"
+          text run at (3,115) width 208: "scelerisque nec dolor."
       RenderBlock (floating) {DIV} at (8,170) size 366x162 [border: (3px solid #000000)]
-        RenderText {#text} at (3,18) size 71x28
-          text run at (3,18) width 71: "Lorem "
-        RenderInline {SPAN} at (0,0) size 59x28
-          RenderText {#text} at (74,18) size 59x28
-            text run at (74,18) width 59: "ipsum"
-        RenderText {#text} at (133,18) size 6x28
-          text run at (133,18) width 6: " "
-        RenderInline {SPAN} at (0,0) size 51x28
-          RenderText {#text} at (139,18) size 51x28
-            text run at (139,18) width 51: "dolor"
-        RenderText {#text} at (190,18) size 6x28
-          text run at (190,18) width 6: " "
+        RenderText {#text} at (3,18) size 70x28
+          text run at (3,18) width 70: "Lorem "
+        RenderInline {SPAN} at (0,0) size 60x28
+          RenderText {#text} at (72,18) size 60x28
+            text run at (72,18) width 60: "ipsum"
+        RenderText {#text} at (131,18) size 7x28
+          text run at (131,18) width 7: " "
+        RenderInline {SPAN} at (0,0) size 52x28
+          RenderText {#text} at (137,18) size 52x28
+            text run at (137,18) width 52: "dolor"
+        RenderText {#text} at (188,18) size 7x28
+          text run at (188,18) width 7: " "
         RenderInline {SPAN} at (0,0) size 23x28
-          RenderText {#text} at (196,18) size 23x28
-            text run at (196,18) width 23: "sit"
-        RenderText {#text} at (219,18) size 6x28
-          text run at (219,18) width 6: " "
+          RenderText {#text} at (194,18) size 23x28
+            text run at (194,18) width 23: "sit"
+        RenderText {#text} at (216,18) size 7x28
+          text run at (216,18) width 7: " "
         RenderInline {SPAN} at (0,0) size 48x28
-          RenderText {#text} at (225,18) size 48x28
-            text run at (225,18) width 48: "amet"
-        RenderText {#text} at (273,18) size 6x28
-          text run at (273,18) width 6: ","
-        RenderInline {SPAN} at (0,0) size 111x28
-          RenderText {#text} at (3,61) size 111x28
-            text run at (3,61) width 111: "consectetur"
-        RenderText {#text} at (114,61) size 6x28
-          text run at (114,61) width 6: " "
-        RenderInline {SPAN} at (0,0) size 100x28
-          RenderText {#text} at (120,61) size 100x28
-            text run at (120,61) width 100: "adipiscing"
-        RenderText {#text} at (220,61) size 6x28
-          text run at (220,61) width 6: " "
+          RenderText {#text} at (222,18) size 48x28
+            text run at (222,18) width 48: "amet"
+        RenderText {#text} at (269,18) size 7x28
+          text run at (269,18) width 7: ","
+        RenderInline {SPAN} at (0,0) size 110x28
+          RenderText {#text} at (3,61) size 110x28
+            text run at (3,61) width 110: "consectetur"
+        RenderText {#text} at (112,61) size 7x28
+          text run at (112,61) width 7: " "
+        RenderInline {SPAN} at (0,0) size 99x28
+          RenderText {#text} at (118,61) size 99x28
+            text run at (118,61) width 99: "adipiscing"
+        RenderText {#text} at (216,61) size 7x28
+          text run at (216,61) width 7: " "
         RenderInline {SPAN} at (0,0) size 32x28
-          RenderText {#text} at (226,61) size 32x28
-            text run at (226,61) width 32: "elit"
-        RenderText {#text} at (258,61) size 12x28
-          text run at (258,61) width 12: ". "
+          RenderText {#text} at (222,61) size 32x28
+            text run at (222,61) width 32: "elit"
+        RenderText {#text} at (253,61) size 13x28
+          text run at (253,61) width 13: ". "
         RenderInline {SPAN} at (0,0) size 85x28
-          RenderText {#text} at (270,61) size 85x28
-            text run at (270,61) width 85: "Aliquam"
-        RenderText {#text} at (355,61) size 6x28
-          text run at (355,61) width 6: ","
+          RenderText {#text} at (265,61) size 85x28
+            text run at (265,61) width 85: "Aliquam"
+        RenderText {#text} at (349,61) size 7x28
+          text run at (349,61) width 7: ","
         RenderInline {SPAN} at (0,0) size 43x28
           RenderText {#text} at (3,103) size 43x28
             text run at (3,103) width 43: "odio"
-        RenderText {#text} at (46,103) size 6x28
-          text run at (46,103) width 6: " "
+        RenderText {#text} at (45,103) size 7x28
+          text run at (45,103) width 7: " "
         RenderInline {SPAN} at (0,0) size 62x28
-          RenderText {#text} at (52,103) size 62x28
-            text run at (52,103) width 62: "sapien"
-        RenderText {#text} at (114,103) size 12x28
-          text run at (114,103) width 12: ", "
-        RenderInline {SPAN} at (0,0) size 74x28
-          RenderText {#text} at (126,103) size 74x28
-            text run at (126,103) width 74: "lobortis"
-        RenderText {#text} at (200,103) size 338x56
-          text run at (200,103) width 6: " "
-          text run at (206,103) width 135: "eu iaculis vel,"
-          text run at (3,131) width 211: "scelerisque nec dolor."
+          RenderText {#text} at (51,103) size 62x28
+            text run at (51,103) width 62: "sapien"
+        RenderText {#text} at (112,103) size 13x28
+          text run at (112,103) width 13: ", "
+        RenderInline {SPAN} at (0,0) size 75x28
+          RenderText {#text} at (124,103) size 75x28
+            text run at (124,103) width 75: "lobortis"
+        RenderText {#text} at (198,103) size 334x56
+          text run at (198,103) width 7: " "
+          text run at (204,103) width 133: "eu iaculis vel,"
+          text run at (3,131) width 208: "scelerisque nec dolor."
       RenderBlock (floating) {DIV} at (390,170) size 366x162 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 71x28
-          text run at (3,3) width 71: "Lorem "
-        RenderInline {SPAN} at (0,0) size 59x28
-          RenderText {#text} at (74,3) size 59x28
-            text run at (74,3) width 59: "ipsum"
-        RenderText {#text} at (133,3) size 6x28
-          text run at (133,3) width 6: " "
-        RenderInline {SPAN} at (0,0) size 51x28
-          RenderText {#text} at (139,3) size 51x28
-            text run at (139,3) width 51: "dolor"
-        RenderText {#text} at (190,3) size 6x28
-          text run at (190,3) width 6: " "
+        RenderText {#text} at (3,3) size 70x28
+          text run at (3,3) width 70: "Lorem "
+        RenderInline {SPAN} at (0,0) size 60x28
+          RenderText {#text} at (72,3) size 60x28
+            text run at (72,3) width 60: "ipsum"
+        RenderText {#text} at (131,3) size 7x28
+          text run at (131,3) width 7: " "
+        RenderInline {SPAN} at (0,0) size 52x28
+          RenderText {#text} at (137,3) size 52x28
+            text run at (137,3) width 52: "dolor"
+        RenderText {#text} at (188,3) size 7x28
+          text run at (188,3) width 7: " "
         RenderInline {SPAN} at (0,0) size 23x28
-          RenderText {#text} at (196,3) size 23x28
-            text run at (196,3) width 23: "sit"
-        RenderText {#text} at (219,3) size 6x28
-          text run at (219,3) width 6: " "
+          RenderText {#text} at (194,3) size 23x28
+            text run at (194,3) width 23: "sit"
+        RenderText {#text} at (216,3) size 7x28
+          text run at (216,3) width 7: " "
         RenderInline {SPAN} at (0,0) size 48x28
-          RenderText {#text} at (225,3) size 48x28
-            text run at (225,3) width 48: "amet"
-        RenderText {#text} at (273,3) size 6x28
-          text run at (273,3) width 6: ","
-        RenderInline {SPAN} at (0,0) size 111x28
-          RenderText {#text} at (3,46) size 111x28
-            text run at (3,46) width 111: "consectetur"
-        RenderText {#text} at (114,46) size 6x28
-          text run at (114,46) width 6: " "
-        RenderInline {SPAN} at (0,0) size 100x28
-          RenderText {#text} at (120,46) size 100x28
-            text run at (120,46) width 100: "adipiscing"
-        RenderText {#text} at (220,46) size 6x28
-          text run at (220,46) width 6: " "
+          RenderText {#text} at (222,3) size 48x28
+            text run at (222,3) width 48: "amet"
+        RenderText {#text} at (269,3) size 7x28
+          text run at (269,3) width 7: ","
+        RenderInline {SPAN} at (0,0) size 110x28
+          RenderText {#text} at (3,46) size 110x28
+            text run at (3,46) width 110: "consectetur"
+        RenderText {#text} at (112,46) size 7x28
+          text run at (112,46) width 7: " "
+        RenderInline {SPAN} at (0,0) size 99x28
+          RenderText {#text} at (118,46) size 99x28
+            text run at (118,46) width 99: "adipiscing"
+        RenderText {#text} at (216,46) size 7x28
+          text run at (216,46) width 7: " "
         RenderInline {SPAN} at (0,0) size 32x28
-          RenderText {#text} at (226,46) size 32x28
-            text run at (226,46) width 32: "elit"
-        RenderText {#text} at (258,46) size 12x28
-          text run at (258,46) width 12: ". "
+          RenderText {#text} at (222,46) size 32x28
+            text run at (222,46) width 32: "elit"
+        RenderText {#text} at (253,46) size 13x28
+          text run at (253,46) width 13: ". "
         RenderInline {SPAN} at (0,0) size 85x28
-          RenderText {#text} at (270,46) size 85x28
-            text run at (270,46) width 85: "Aliquam"
-        RenderText {#text} at (355,46) size 6x28
-          text run at (355,46) width 6: ","
+          RenderText {#text} at (265,46) size 85x28
+            text run at (265,46) width 85: "Aliquam"
+        RenderText {#text} at (349,46) size 7x28
+          text run at (349,46) width 7: ","
         RenderInline {SPAN} at (0,0) size 43x28
           RenderText {#text} at (3,89) size 43x28
             text run at (3,89) width 43: "odio"
-        RenderText {#text} at (46,89) size 6x28
-          text run at (46,89) width 6: " "
+        RenderText {#text} at (45,89) size 7x28
+          text run at (45,89) width 7: " "
         RenderInline {SPAN} at (0,0) size 62x28
-          RenderText {#text} at (52,89) size 62x28
-            text run at (52,89) width 62: "sapien"
-        RenderText {#text} at (114,89) size 12x28
-          text run at (114,89) width 12: ", "
-        RenderInline {SPAN} at (0,0) size 74x28
-          RenderText {#text} at (126,89) size 74x28
-            text run at (126,89) width 74: "lobortis"
-        RenderText {#text} at (200,89) size 338x70
-          text run at (200,89) width 6: " "
-          text run at (206,89) width 135: "eu iaculis vel,"
-          text run at (3,131) width 211: "scelerisque nec dolor."
+          RenderText {#text} at (51,89) size 62x28
+            text run at (51,89) width 62: "sapien"
+        RenderText {#text} at (112,89) size 13x28
+          text run at (112,89) width 13: ", "
+        RenderInline {SPAN} at (0,0) size 75x28
+          RenderText {#text} at (124,89) size 75x28
+            text run at (124,89) width 75: "lobortis"
+        RenderText {#text} at (198,89) size 334x70
+          text run at (198,89) width 7: " "
+          text run at (204,89) width 133: "eu iaculis vel,"
+          text run at (3,131) width 208: "scelerisque nec dolor."
       RenderBlock (floating) {DIV} at (8,348) size 366x198 [border: (3px solid #000000)]
-        RenderText {#text} at (3,13) size 276x28
-          text run at (3,13) width 276: "Lorem ipsum dolor sit amet,"
-        RenderInline {SPAN} at (0,0) size 217x28
-          RenderText {#text} at (3,61) size 217x28
-            text run at (3,61) width 217: "consectetur adipiscing"
-        RenderText {#text} at (220,61) size 135x28
-          text run at (220,61) width 6: " "
-          text run at (226,61) width 129: "elit. Aliquam"
-        RenderInline {SPAN} at (0,0) size 111x28
-          RenderText {#text} at (3,109) size 111x28
-            text run at (3,109) width 111: "odio sapien"
-        RenderText {#text} at (114,109) size 338x76
-          text run at (114,109) width 12: ", "
-          text run at (126,109) width 215: "lobortis eu iaculis vel,"
-          text run at (3,157) width 211: "scelerisque nec dolor."
+        RenderText {#text} at (3,13) size 273x28
+          text run at (3,13) width 273: "Lorem ipsum dolor sit amet,"
+        RenderInline {SPAN} at (0,0) size 214x28
+          RenderText {#text} at (3,61) size 214x28
+            text run at (3,61) width 214: "consectetur adipiscing"
+        RenderText {#text} at (216,61) size 134x28
+          text run at (216,61) width 7: " "
+          text run at (222,61) width 128: "elit. Aliquam"
+        RenderInline {SPAN} at (0,0) size 110x28
+          RenderText {#text} at (3,109) size 110x28
+            text run at (3,109) width 110: "odio sapien"
+        RenderText {#text} at (112,109) size 334x76
+          text run at (112,109) width 13: ", "
+          text run at (124,109) width 213: "lobortis eu iaculis vel,"
+          text run at (3,157) width 208: "scelerisque nec dolor."
       RenderBlock (floating) {DIV} at (390,348) size 366x146 [border: (3px solid #000000)]
-        RenderText {#text} at (3,3) size 276x28
-          text run at (3,3) width 276: "Lorem ipsum dolor sit amet,"
-        RenderInline {SPAN} at (0,0) size 217x28
-          RenderText {#text} at (3,45) size 217x28
-            text run at (3,45) width 217: "consectetur adipiscing"
-        RenderText {#text} at (220,45) size 135x28
-          text run at (220,45) width 6: " "
-          text run at (226,45) width 129: "elit. Aliquam"
-        RenderInline {SPAN} at (0,0) size 111x28
-          RenderText {#text} at (3,73) size 111x28
-            text run at (3,73) width 111: "odio sapien"
-        RenderText {#text} at (114,73) size 338x70
-          text run at (114,73) width 12: ", "
-          text run at (126,73) width 215: "lobortis eu iaculis vel,"
-          text run at (3,115) width 211: "scelerisque nec dolor."
+        RenderText {#text} at (3,3) size 273x28
+          text run at (3,3) width 273: "Lorem ipsum dolor sit amet,"
+        RenderInline {SPAN} at (0,0) size 214x28
+          RenderText {#text} at (3,45) size 214x28
+            text run at (3,45) width 214: "consectetur adipiscing"
+        RenderText {#text} at (216,45) size 134x28
+          text run at (216,45) width 7: " "
+          text run at (222,45) width 128: "elit. Aliquam"
+        RenderInline {SPAN} at (0,0) size 110x28
+          RenderText {#text} at (3,73) size 110x28
+            text run at (3,73) width 110: "odio sapien"
+        RenderText {#text} at (112,73) size 334x70
+          text run at (112,73) width 13: ", "
+          text run at (124,73) width 213: "lobortis eu iaculis vel,"
+          text run at (3,115) width 208: "scelerisque nec dolor."
 selection start: position 10 of child 0 {#text} of child 1 {SPAN} of child 10 {DIV} of body
 selection end:   position 7 of child 0 {#text} of child 3 {SPAN} of child 10 {DIV} of body

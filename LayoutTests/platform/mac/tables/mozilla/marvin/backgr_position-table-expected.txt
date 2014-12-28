@@ -4,46 +4,46 @@ layer at (0,0) size 785x1222
   RenderBlock {HTML} at (0,0) size 785x1223
     RenderBody {BODY} at (8,17) size 769x1198 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 769x30
-        RenderText {#text} at (0,0) size 528x30
-          text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
+        RenderText {#text} at (0,0) size 515x30
+          text run at (0,0) width 515: "CSS2 Table Backgrounds Test Suite"
       RenderBlock {H2} at (0,47) size 769x24
-        RenderText {#text} at (0,0) size 324x23
-          text run at (0,0) width 324: "Part B: Background Position"
+        RenderText {#text} at (0,0) size 325x23
+          text run at (0,0) width 325: "Part B: Background Position"
       RenderBlock {H3} at (0,86) size 769x18
-        RenderText {#text} at (0,0) size 189x17
-          text run at (0,0) width 189: "Background on 'table'"
+        RenderText {#text} at (0,0) size 190x17
+          text run at (0,0) width 190: "Background on 'table'"
       RenderBlock {P} at (0,118) size 769x16
-        RenderText {#text} at (0,0) size 632x15
-          text run at (0,0) width 632: "There should be three aqua stripes just inside the top and right table borders."
+        RenderText {#text} at (0,0) size 617x15
+          text run at (0,0) width 617: "There should be three aqua stripes just inside the top and right table borders."
       RenderBlock {DL} at (0,146) size 769x91
         RenderBlock {DT} at (0,0) size 769x15
           RenderText {#text} at (0,0) size 32x15
             text run at (0,0) width 32: "next"
         RenderBlock {DD} at (40,15) size 729x15
-          RenderInline {A} at (0,0) size 416x15 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 416x15
-              text run at (0,0) width 416: "Background Position: Background on 'table-row-group'"
+          RenderInline {A} at (0,0) size 406x15 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 406x15
+              text run at (0,0) width 406: "Background Position: Background on 'table-row-group'"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DT} at (0,30) size 769x15
-          RenderText {#text} at (0,0) size 64x15
-            text run at (0,0) width 64: "previous"
+          RenderText {#text} at (0,0) size 63x15
+            text run at (0,0) width 63: "previous"
         RenderBlock {DD} at (40,45) size 729x15
-          RenderInline {A} at (0,0) size 376x15 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 376x15
-              text run at (0,0) width 376: "Background Position: Background on 'table-cell'"
+          RenderInline {A} at (0,0) size 367x15 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 367x15
+              text run at (0,0) width 367: "Background Position: Background on 'table-cell'"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DT} at (0,60) size 769x15
-          RenderText {#text} at (0,0) size 64x15
-            text run at (0,0) width 64: "contents"
+          RenderText {#text} at (0,0) size 63x15
+            text run at (0,0) width 63: "contents"
         RenderBlock {DD} at (40,75) size 729x15
-          RenderInline {A} at (0,0) size 136x15 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 136x15
-              text run at (0,0) width 136: "Table of Contents"
+          RenderInline {A} at (0,0) size 133x15 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 133x15
+              text run at (0,0) width 133: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,249) size 618x467 [color=#FFFFFF] [bgcolor=#000000] [border: (1px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 618x22
-          RenderText {#text} at (163,0) size 292x22
-            text run at (163,0) width 292: "With 'border-collapse: separate'"
+          RenderText {#text} at (165,0) size 288x22
+            text run at (165,0) width 288: "With 'border-collapse: separate'"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -101,8 +101,8 @@ layer at (0,0) size 785x1222
                 text run at (2,2) width 44: "TD P"
       RenderTable {TABLE} at (0,715) size 578x433 [color=#FFFFFF] [bgcolor=#000000] [border: (6px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 578x22
-          RenderText {#text} at (144,0) size 290x22
-            text run at (144,0) width 290: "With 'border-collapse: collapse'"
+          RenderText {#text} at (146,0) size 286x22
+            text run at (146,0) width 286: "With 'border-collapse: collapse'"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -163,5 +163,5 @@ layer at (0,0) size 785x1222
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {ADDRESS} at (0,1181) size 769x16
-        RenderText {#text} at (0,0) size 704x15
-          text run at (0,0) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"
+        RenderText {#text} at (0,0) size 687x15
+          text run at (0,0) width 687: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"

@@ -146,8 +146,8 @@ layer at (293,303) size 12x22 clip at (294,304) size 10x20
 layer at (11,331) size 172x46 clip at (12,332) size 170x44 scrollWidth 216
   RenderTableCell {TD} at (2,2) size 172x46 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (11,11) size 206x24 [border: (3px solid #000000)]
-      RenderText {#text} at (3,3) size 20x18
-        text run at (3,3) width 20: "div"
+      RenderText {#text} at (3,3) size 21x18
+        text run at (3,3) width 21: "div"
 layer at (185,331) size 120x46 clip at (186,332) size 118x44
   RenderTableCell {TD} at (176,5) size 120x40 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (11,11) size 4x18
@@ -168,8 +168,8 @@ layer at (8,422) size 300x90 clip at (9,423) size 298x88
 layer at (11,425) size 154x60 clip at (12,426) size 152x58 scrollWidth 207
   RenderTableCell {TD} at (2,2) size 154x60 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {P} at (2,18) size 206x24 [border: (3px solid #000000)]
-      RenderText {#text} at (3,3) size 27x18
-        text run at (3,3) width 27: "para"
+      RenderText {#text} at (3,3) size 28x18
+        text run at (3,3) width 28: "para"
 layer at (167,425) size 138x60 clip at (168,426) size 136x58
   RenderTableCell {TD} at (158,21) size 138x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18
@@ -185,8 +185,8 @@ layer at (167,487) size 138x22 clip at (168,488) size 136x20
 layer at (11,515) size 254x60 clip at (12,516) size 252x58
   RenderTableCell {TD} at (2,2) size 254x60 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {P} at (2,18) size 206x24 [border: (3px solid #000000)]
-      RenderText {#text} at (3,3) size 27x18
-        text run at (3,3) width 27: "para"
+      RenderText {#text} at (3,3) size 28x18
+        text run at (3,3) width 28: "para"
 layer at (267,515) size 38x60 clip at (268,516) size 36x58
   RenderTableCell {TD} at (258,21) size 38x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
     RenderText {#text} at (2,2) size 4x18

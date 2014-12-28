@@ -4,8 +4,8 @@ layer at (0,0) size 800x298
   RenderBlock {HTML} at (0,0) size 800x298
     RenderBody {BODY} at (8,16) size 784x274
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 163x18
-          text run at (0,0) width 163: "Deeply nested reflections."
+        RenderText {#text} at (0,0) size 166x18
+          text run at (0,0) width 166: "Deeply nested reflections."
 layer at (10,50) size 234x240
   RenderBlock {DIV} at (2,34) size 234x240 [border: (1px solid #000000)]
 layer at (13,53) size 228x234

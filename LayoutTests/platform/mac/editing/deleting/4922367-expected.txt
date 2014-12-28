@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 776x36
-          text run at (0,0) width 386: "This tests selecting and deleting the paragraph before a table. "
-          text run at (386,0) width 390: "You should see only a table in the editable region below, with"
-          text run at (0,18) width 139: "the caret just before it."
+        RenderText {#text} at (0,0) size 757x36
+          text run at (0,0) width 395: "This tests selecting and deleting the paragraph before a table. "
+          text run at (394,0) width 363: "You should see only a table in the editable region below,"
+          text run at (0,18) width 176: "with the caret just before it."
       RenderBlock {DIV} at (0,52) size 784x28
         RenderBlock {DIV} at (0,0) size 784x28
           RenderTable {TABLE} at (0,0) size 32x28 [border: (1px solid #BBBBBB)]

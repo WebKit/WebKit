@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 598x18
-          text run at (0,0) width 598: "The following button elements should all be rendered on the left, with their text center justified."
+        RenderText {#text} at (0,0) size 612x18
+          text run at (0,0) width 612: "The following button elements should all be rendered on the left, with their text center justified."
       RenderBlock (anonymous) at (0,34) size 784x88
         RenderButton {BUTTON} at (0,2) size 300x18 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,2) size 284x13

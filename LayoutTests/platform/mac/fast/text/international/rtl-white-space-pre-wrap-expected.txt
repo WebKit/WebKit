@@ -4,21 +4,21 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 104x18
-          text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 749x36
-          RenderInline {A} at (0,0) size 348x18 [color=#0000EE]
-            RenderText {#text} at (104,0) size 348x18
-              text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9670"
-          RenderText {#text} at (452,0) size 749x36
-            text run at (452,0) width 4: " "
-            text run at (456,0) width 293: "http://bugzilla.opendarwin.org/show_bug.cgi?"
-            text run at (0,18) width 55: "id=9670"
-        RenderText {#text} at (55,18) size 4x18
-          text run at (55,18) width 4: "."
+        RenderText {#text} at (0,0) size 108x18
+          text run at (0,0) width 108: "This is a test for "
+        RenderInline {I} at (0,0) size 762x36
+          RenderInline {A} at (0,0) size 353x18 [color=#0000EE]
+            RenderText {#text} at (107,0) size 353x18
+              text run at (107,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9670"
+          RenderText {#text} at (459,0) size 762x36
+            text run at (459,0) width 5: " "
+            text run at (463,0) width 299: "http://bugzilla.opendarwin.org/show_bug.cgi?"
+            text run at (0,18) width 56: "id=9670"
+        RenderText {#text} at (55,18) size 5x18
+          text run at (55,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 543x18
-          text run at (0,0) width 543: "All text should be aligned with the right edge of its container and should not overflow."
+        RenderText {#text} at (0,0) size 552x18
+          text run at (0,0) width 552: "All text should be aligned with the right edge of its container and should not overflow."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,96) size 191x56 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 191x56

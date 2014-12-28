@@ -4,15 +4,15 @@ layer at (0,0) size 800x544
   RenderBlock {HTML} at (0,0) size 800x544
     RenderBody {BODY} at (8,16) size 784x520
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 695x18
-          text run at (0,0) width 486: "Verify that the alignment and writing direction of each selected item matches "
-          text run at (486,0) width 209: "the one below the pop-up button."
+        RenderText {#text} at (0,0) size 709x18
+          text run at (0,0) width 497: "Verify that the alignment and writing direction of each selected item matches "
+          text run at (496,0) width 213: "the one below the pop-up button."
       RenderBlock {DIV} at (0,34) size 784x242
         RenderMenuList {SELECT} at (0,0) size 500x21 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 500x21
             RenderText at (8,2) size 162x16
-              text run at (8,2) width 32: "First "
-              text run at (39,2) width 48 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
+              text run at (8,2) width 31: "First "
+              text run at (38,2) width 49 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
               text run at (86,2) width 17: "03"
               text run at (102,2) width 38 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
               text run at (139,2) width 31: " fifth"

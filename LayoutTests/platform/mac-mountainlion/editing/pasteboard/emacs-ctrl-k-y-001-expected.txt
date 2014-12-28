@@ -1,0 +1,76 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 8 of #text > DIV > DIV > BODY > HTML > #document to 14 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 8 of #text > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 8 of #text > DIV > DIV > BODY > HTML > #document to 21 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 8 of #text > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 8 of #text > DIV > DIV > BODY > HTML > #document to 24 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldInsertText: three
+four five six
+seven eight nine replacingDOMRange:range from 8 of #text > DIV > DIV > BODY > HTML > #document to 8 of #text > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionTyped
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > DIV > DIV > BODY > HTML > #document to 8 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 14 of #text > DIV > DIV > BODY > HTML > #document to 14 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of #text > DIV > DIV > BODY > HTML > #document to 14 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 13 of #text > DIV > DIV > BODY > HTML > #document to 13 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 13 of #text > DIV > DIV > BODY > HTML > #document to 13 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 13 of #text > DIV > DIV > BODY > HTML > #document to 13 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 16 of #text > DIV > DIV > BODY > HTML > #document to 16 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 16 of #text > DIV > DIV > BODY > HTML > #document to 16 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x56
+          RenderText {#text} at (0,0) size 67x28
+            text run at (0,0) width 67: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,28) size 348x28
+            text run at (0,28) width 348: "Multiple ctrl-k presses then a ctrl-y."
+        RenderBlock {DIV} at (14,86) size 756x112
+          RenderBlock (anonymous) at (0,0) size 756x28
+            RenderText {#text} at (0,0) size 189x28
+              text run at (0,0) width 189: "Expected Results: "
+            RenderBR {BR} at (189,22) size 0x0
+          RenderBlock {DIV} at (0,28) size 756x84
+            RenderBlock (anonymous) at (0,0) size 756x28
+              RenderText {#text} at (0,0) size 132x28
+                text run at (0,0) width 132: "one two three"
+            RenderBlock {DIV} at (0,28) size 756x28
+              RenderText {#text} at (0,0) size 118x28
+                text run at (0,0) width 118: "four five six"
+            RenderBlock {DIV} at (0,56) size 756x28
+              RenderText {#text} at (0,0) size 158x28
+                text run at (0,0) width 158: "seven eight nine"
+      RenderBlock {DIV} at (0,236) size 784x96
+        RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 132x28
+            text run at (2,2) width 132: "one two three"
+        RenderBlock {DIV} at (0,32) size 784x32 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 118x28
+            text run at (2,2) width 118: "four five six"
+        RenderBlock {DIV} at (0,64) size 784x32 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 158x28
+            text run at (2,2) width 158: "seven eight nine"
+caret: position 16 of child 0 {#text} of child 3 {DIV} of child 3 {DIV} of body

@@ -5,8 +5,8 @@ layer at (0,0) size 785x2496
     RenderBody {BODY} at (8,8) size 769x2472 [bgcolor=#FFFFFF]
       RenderBlock {P} at (0,0) size 769x36
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 356x18
-            text run at (0,0) width 356: "this table should be about 6 (12 in NavQuirks) pixels tall"
+          RenderText {#text} at (0,0) size 364x18
+            text run at (0,0) width 364: "this table should be about 6 (12 in NavQuirks) pixels tall"
         RenderTable {TABLE} at (0,18) size 100x0 [bgcolor=#FFA500]
           RenderTableSection {TBODY} at (0,0) size 100x0
             RenderTableRow {TR} at (0,0) size 100x0
@@ -25,8 +25,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,52) size 769x50
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 356x18
-            text run at (0,0) width 356: "this table should be about 8 (14 in NavQuirks) pixels tall"
+          RenderText {#text} at (0,0) size 364x18
+            text run at (0,0) width 364: "this table should be about 8 (14 in NavQuirks) pixels tall"
         RenderTable {TABLE} at (0,18) size 100x14 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 98x12
             RenderTableRow {TR} at (0,0) size 98x2
@@ -45,8 +45,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,118) size 769x48
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 244x18
-            text run at (0,0) width 244: "this table should be about 12 pixels tall"
+          RenderText {#text} at (0,0) size 251x18
+            text run at (0,0) width 251: "this table should be about 12 pixels tall"
         RenderTable {TABLE} at (0,18) size 100x12 [bgcolor=#FFA500]
           RenderTableSection {TBODY} at (0,0) size 100x12
             RenderTableRow {TR} at (0,0) size 100x2
@@ -65,8 +65,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,182) size 769x50
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 244x18
-            text run at (0,0) width 244: "this table should be about 14 pixels tall"
+          RenderText {#text} at (0,0) size 251x18
+            text run at (0,0) width 251: "this table should be about 14 pixels tall"
         RenderTable {TABLE} at (0,18) size 100x14 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 98x12
             RenderTableRow {TR} at (0,0) size 98x2
@@ -85,8 +85,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,248) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 346x18
-            text run at (0,0) width 346: "this table should be about 5 (3 in Standard) pixels wide"
+          RenderText {#text} at (0,0) size 353x18
+            text run at (0,0) width 353: "this table should be about 5 (3 in Standard) pixels wide"
         RenderTable {TABLE} at (0,18) size 4x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 2x2
             RenderTableRow {TR} at (0,0) size 2x2
@@ -95,8 +95,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,304) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 346x18
-            text run at (0,0) width 346: "this table should be about 8 (4 in Standard) pixels wide"
+          RenderText {#text} at (0,0) size 353x18
+            text run at (0,0) width 353: "this table should be about 8 (4 in Standard) pixels wide"
         RenderTable {TABLE} at (0,18) size 6x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 4x2
             RenderTableRow {TR} at (0,0) size 4x2
@@ -106,8 +106,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,360) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 354x18
-            text run at (0,0) width 354: "this table should be about 20 (8 in Standard) pixels wide"
+          RenderText {#text} at (0,0) size 361x18
+            text run at (0,0) width 361: "this table should be about 20 (8 in Standard) pixels wide"
         RenderTable {TABLE} at (0,18) size 14x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 12x2
             RenderTableRow {TR} at (0,0) size 12x2
@@ -121,8 +121,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,416) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 438x18
-            text run at (0,0) width 438: "this table should be about 272 pixels wide, but can shrink to 92 pixels"
+          RenderText {#text} at (0,0) size 447x18
+            text run at (0,0) width 447: "this table should be about 272 pixels wide, but can shrink to 92 pixels"
         RenderTable {TABLE} at (0,18) size 182x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 180x2
             RenderTableRow {TR} at (0,0) size 180x2
@@ -220,8 +220,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,472) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 399x18
-            text run at (0,0) width 399: "this table should be about 8 pixels wide (nested without border)"
+          RenderText {#text} at (0,0) size 408x18
+            text run at (0,0) width 408: "this table should be about 8 pixels wide (nested without border)"
         RenderTable {TABLE} at (0,18) size 10x4 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 8x2
             RenderTableRow {TR} at (0,0) size 8x2
@@ -238,8 +238,8 @@ layer at (0,0) size 785x2496
         RenderBlock (anonymous) at (0,22) size 769x18
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,528) size 769x18
-        RenderText {#text} at (0,0) size 484x18
-          text run at (0,0) width 484: "this table should be about 122 pixels wide (nested, width=10 without border)"
+        RenderText {#text} at (0,0) size 493x18
+          text run at (0,0) width 493: "this table should be about 122 pixels wide (nested, width=10 without border)"
       RenderBlock {HR} at (0,562) size 124x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,572) size 124x4 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 122x2
@@ -264,8 +264,8 @@ layer at (0,0) size 785x2496
         RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,610) size 769x42
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 360x18
-            text run at (0,0) width 360: "this table should be about 32 pixels wide (cellpadding=1)"
+          RenderText {#text} at (0,0) size 368x18
+            text run at (0,0) width 368: "this table should be about 32 pixels wide (cellpadding=1)"
         RenderTable {TABLE} at (0,18) size 26x6 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 24x4
             RenderTableRow {TR} at (0,0) size 24x4
@@ -279,8 +279,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,668) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 323x18
-            text run at (0,0) width 323: "this table should be about 26 pixels wide (width=2)"
+          RenderText {#text} at (0,0) size 329x18
+            text run at (0,0) width 329: "this table should be about 26 pixels wide (width=2)"
         RenderTable {TABLE} at (0,18) size 26x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 24x2
             RenderTableRow {TR} at (0,0) size 24x2
@@ -294,8 +294,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,724) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 335x18
-            text run at (0,0) width 335: "this table should be about 20 pixels wide (colspan=3)"
+          RenderText {#text} at (0,0) size 342x18
+            text run at (0,0) width 342: "this table should be about 20 pixels wide (colspan=3)"
         RenderTable {TABLE} at (0,18) size 14x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 12x2
             RenderTableRow {TR} at (0,0) size 12x2
@@ -309,8 +309,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,780) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 392x18
-            text run at (0,0) width 392: "this table should be about 26 pixels wide (colspan=3 width=2)"
+          RenderText {#text} at (0,0) size 399x18
+            text run at (0,0) width 399: "this table should be about 26 pixels wide (colspan=3 width=2)"
         RenderTable {TABLE} at (0,18) size 26x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 24x2
             RenderTableRow {TR} at (0,0) size 24x2
@@ -324,8 +324,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,836) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 335x18
-            text run at (0,0) width 335: "this table should be about 26 pixels wide (colspan=4)"
+          RenderText {#text} at (0,0) size 342x18
+            text run at (0,0) width 342: "this table should be about 26 pixels wide (colspan=4)"
         RenderTable {TABLE} at (0,18) size 14x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 12x2
             RenderTableRow {TR} at (0,0) size 12x2
@@ -339,8 +339,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,892) size 769x44
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 430x18
-            text run at (0,0) width 430: "this table should be about 38 pixels wide (colspan=4, cellspacing=2)"
+          RenderText {#text} at (0,0) size 439x18
+            text run at (0,0) width 439: "this table should be about 38 pixels wide (colspan=4, cellspacing=2)"
         RenderTable {TABLE} at (0,18) size 28x8 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 26x6
             RenderTableRow {TR} at (0,2) size 26x2
@@ -354,8 +354,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,952) size 769x44
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 433x18
-            text run at (0,0) width 433: "this table should be about 38 pixels wide (colspan=4, cellpadding=2)"
+          RenderText {#text} at (0,0) size 442x18
+            text run at (0,0) width 442: "this table should be about 38 pixels wide (colspan=4, cellpadding=2)"
         RenderTable {TABLE} at (0,18) size 38x8 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 36x6
             RenderTableRow {TR} at (0,0) size 36x6
@@ -369,8 +369,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1012) size 769x46
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 433x18
-            text run at (0,0) width 433: "this table should be about 38 pixels wide (colspan=4, cellpadding=3)"
+          RenderText {#text} at (0,0) size 442x18
+            text run at (0,0) width 442: "this table should be about 38 pixels wide (colspan=4, cellpadding=3)"
         RenderTable {TABLE} at (0,18) size 50x10 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 48x8
             RenderTableRow {TR} at (0,0) size 48x8
@@ -384,8 +384,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1074) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 392x18
-            text run at (0,0) width 392: "this table should be about 26 pixels wide (colspan=4 width=2)"
+          RenderText {#text} at (0,0) size 399x18
+            text run at (0,0) width 399: "this table should be about 26 pixels wide (colspan=4 width=2)"
         RenderTable {TABLE} at (0,18) size 26x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 24x2
             RenderTableRow {TR} at (0,0) size 24x2
@@ -399,8 +399,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1130) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 393x18
-            text run at (0,0) width 393: "this table should be about 20 pixels wide (colspan=3 with BR)"
+          RenderText {#text} at (0,0) size 400x18
+            text run at (0,0) width 400: "this table should be about 20 pixels wide (colspan=3 with BR)"
         RenderTable {TABLE} at (0,18) size 14x22 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 12x20
             RenderTableRow {TR} at (0,0) size 12x20
@@ -420,8 +420,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1204) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 393x18
-            text run at (0,0) width 393: "this table should be about 20 pixels wide (colspan=3 with BR)"
+          RenderText {#text} at (0,0) size 400x18
+            text run at (0,0) width 400: "this table should be about 20 pixels wide (colspan=3 with BR)"
         RenderTable {TABLE} at (0,18) size 14x22 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 12x20
             RenderTableRow {TR} at (0,0) size 12x20
@@ -441,8 +441,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1278) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 450x18
-            text run at (0,0) width 450: "this table should be about 26 pixels wide (colspan=3 width=2 with BR)"
+          RenderText {#text} at (0,0) size 457x18
+            text run at (0,0) width 457: "this table should be about 26 pixels wide (colspan=3 width=2 with BR)"
         RenderTable {TABLE} at (0,18) size 26x22 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 24x20
             RenderTableRow {TR} at (0,0) size 24x20
@@ -462,8 +462,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1352) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 450x18
-            text run at (0,0) width 450: "this table should be about 32 pixels wide (colspan=3 width=3 with BR)"
+          RenderText {#text} at (0,0) size 457x18
+            text run at (0,0) width 457: "this table should be about 32 pixels wide (colspan=3 width=3 with BR)"
         RenderTable {TABLE} at (0,18) size 32x22 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 30x20
             RenderTableRow {TR} at (0,0) size 30x20
@@ -483,8 +483,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1426) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 393x18
-            text run at (0,0) width 393: "this table should be about 26 pixels wide (colspan=4 with BR)"
+          RenderText {#text} at (0,0) size 400x18
+            text run at (0,0) width 400: "this table should be about 26 pixels wide (colspan=4 with BR)"
         RenderTable {TABLE} at (0,18) size 14x22 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 12x20
             RenderTableRow {TR} at (0,0) size 12x20
@@ -504,8 +504,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1500) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 393x18
-            text run at (0,0) width 393: "this table should be about 32 pixels wide (colspan=5 with BR)"
+          RenderText {#text} at (0,0) size 400x18
+            text run at (0,0) width 400: "this table should be about 32 pixels wide (colspan=5 with BR)"
         RenderTable {TABLE} at (0,18) size 14x22 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 12x20
             RenderTableRow {TR} at (0,0) size 12x20
@@ -525,8 +525,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1574) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 401x18
-            text run at (0,0) width 401: "this table should be about 92 pixels wide (colspan=15 with BR)"
+          RenderText {#text} at (0,0) size 408x18
+            text run at (0,0) width 408: "this table should be about 92 pixels wide (colspan=15 with BR)"
         RenderTable {TABLE} at (0,18) size 14x22 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 12x20
             RenderTableRow {TR} at (0,0) size 12x20
@@ -546,8 +546,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1648) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 449x18
-            text run at (0,0) width 449: "this table should be about 92 pixels wide (nested, colspan=15 with BR)"
+          RenderText {#text} at (0,0) size 457x18
+            text run at (0,0) width 457: "this table should be about 92 pixels wide (nested, colspan=15 with BR)"
         RenderTable {TABLE} at (0,18) size 10x22 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 8x20
             RenderTableRow {TR} at (0,0) size 8x20
@@ -571,8 +571,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1722) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 401x18
-            text run at (0,0) width 401: "this table should be about 92 pixels wide (colspan=15 with BR)"
+          RenderText {#text} at (0,0) size 408x18
+            text run at (0,0) width 408: "this table should be about 92 pixels wide (colspan=15 with BR)"
         RenderTable {TABLE} at (0,18) size 14x22 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 12x20
             RenderTableRow {TR} at (0,0) size 12x20
@@ -592,8 +592,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1796) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 387x18
-            text run at (0,0) width 387: "this table should be about 92 pixels wide (colspan=15 with x)"
+          RenderText {#text} at (0,0) size 394x18
+            text run at (0,0) width 394: "this table should be about 92 pixels wide (colspan=15 with x)"
         RenderTable {TABLE} at (0,18) size 62x22 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 60x20
             RenderTableRow {TR} at (0,0) size 60x20
@@ -619,8 +619,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1870) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 323x18
-            text run at (0,0) width 323: "this table should be about 20 pixels wide (width=0)"
+          RenderText {#text} at (0,0) size 329x18
+            text run at (0,0) width 329: "this table should be about 20 pixels wide (width=0)"
         RenderTable {TABLE} at (0,18) size 14x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 12x2
             RenderTableRow {TR} at (0,0) size 12x2
@@ -634,8 +634,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1926) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 323x18
-            text run at (0,0) width 323: "this table should be about 20 pixels wide (width=1)"
+          RenderText {#text} at (0,0) size 329x18
+            text run at (0,0) width 329: "this table should be about 20 pixels wide (width=1)"
         RenderTable {TABLE} at (0,18) size 20x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 18x2
             RenderTableRow {TR} at (0,0) size 18x2
@@ -649,8 +649,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,1982) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 323x18
-            text run at (0,0) width 323: "this table should be about 26 pixels wide (width=2)"
+          RenderText {#text} at (0,0) size 329x18
+            text run at (0,0) width 329: "this table should be about 26 pixels wide (width=2)"
         RenderTable {TABLE} at (0,18) size 26x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 24x2
             RenderTableRow {TR} at (0,0) size 24x2
@@ -664,8 +664,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,2038) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 323x18
-            text run at (0,0) width 323: "this table should be about 32 pixels wide (width=3)"
+          RenderText {#text} at (0,0) size 329x18
+            text run at (0,0) width 329: "this table should be about 32 pixels wide (width=3)"
         RenderTable {TABLE} at (0,18) size 32x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 30x2
             RenderTableRow {TR} at (0,0) size 30x2
@@ -679,8 +679,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,2094) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 323x18
-            text run at (0,0) width 323: "this table should be about 38 pixels wide (width=4)"
+          RenderText {#text} at (0,0) size 329x18
+            text run at (0,0) width 329: "this table should be about 38 pixels wide (width=4)"
         RenderTable {TABLE} at (0,18) size 38x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 36x2
             RenderTableRow {TR} at (0,0) size 36x2
@@ -694,8 +694,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,2150) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 323x18
-            text run at (0,0) width 323: "this table should be about xx pixels wide (width=7)"
+          RenderText {#text} at (0,0) size 329x18
+            text run at (0,0) width 329: "this table should be about xx pixels wide (width=7)"
         RenderTable {TABLE} at (0,18) size 56x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 54x2
             RenderTableRow {TR} at (0,0) size 54x2
@@ -709,8 +709,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,2206) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 335x18
-            text run at (0,0) width 335: "this table should be about 38 pixels wide (width=4 x)"
+          RenderText {#text} at (0,0) size 341x18
+            text run at (0,0) width 341: "this table should be about 38 pixels wide (width=4 x)"
         RenderTable {TABLE} at (0,18) size 62x22 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 60x20
             RenderTableRow {TR} at (0,0) size 60x20
@@ -736,8 +736,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,2280) size 769x58
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 399x18
-            text run at (0,0) width 399: "this table should be about xx pixels wide (colspan=15 with dot)"
+          RenderText {#text} at (0,0) size 407x18
+            text run at (0,0) width 407: "this table should be about xx pixels wide (colspan=15 with dot)"
         RenderTable {TABLE} at (0,18) size 74x22 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 72x20
             RenderTableRow {TR} at (0,0) size 72x20
@@ -781,8 +781,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,2354) size 769x40
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 386x18
-            text run at (0,0) width 386: "this table should be about xx pixels wide (colspan=15 empty)"
+          RenderText {#text} at (0,0) size 394x18
+            text run at (0,0) width 394: "this table should be about xx pixels wide (colspan=15 empty)"
         RenderTable {TABLE} at (0,18) size 26x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 24x2
             RenderTableRow {TR} at (0,0) size 24x2
@@ -802,8 +802,8 @@ layer at (0,0) size 785x2496
           RenderBR {BR} at (0,0) size 0x18
       RenderBlock {P} at (0,2410) size 769x62
         RenderBlock (anonymous) at (0,0) size 769x18
-          RenderText {#text} at (0,0) size 443x18
-            text run at (0,0) width 443: "this table should be about xx pixels wide (colspan=15 width=1 empty)"
+          RenderText {#text} at (0,0) size 451x18
+            text run at (0,0) width 451: "this table should be about xx pixels wide (colspan=15 width=1 empty)"
         RenderTable {TABLE} at (0,18) size 38x4 [bgcolor=#FFA500] [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 36x2
             RenderTableRow {TR} at (0,0) size 36x2

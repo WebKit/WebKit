@@ -891,8 +891,6 @@ static void resetWebPreferencesToConsistentValues()
     [preferences _setMinimumZoomFontSize:0];
 #endif
 
-    [preferences setScreenFontSubstitutionEnabled:YES];
-
 #if ENABLE(MEDIA_SOURCE)
     [preferences setMediaSourceEnabled:YES];
 #endif
@@ -933,7 +931,6 @@ static void setDefaultsToConsistentValuesForTesting()
             @"hellolfworld": @"hello\nworld"
         },
 #endif
-        @"WebKitKerningAndLigaturesEnabledByDefault": @NO,
         @"AppleScrollBarVariant": @"DoubleMax",
 #if !PLATFORM(IOS)
         @"NSScrollAnimationEnabled": @NO,

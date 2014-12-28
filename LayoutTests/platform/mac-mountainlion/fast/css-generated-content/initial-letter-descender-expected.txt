@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,16) size 784x568
+      RenderBlock {DIV} at (16,0) size 400x144
+        RenderBlock (floating) at (2,3) size 48x81
+          RenderText {#text} at (0,-46) size 48x200
+            text run at (0,-46) width 48: "J"
+        RenderText {#text} at (52,36) size 399x108
+          text run at (52,36) width 337: "ust an example of first-letter. This letter should span 3"
+          text run at (52,54) width 330: "lines of text, and so it should align itself cleanly with"
+          text run at (52,72) width 347: "the cap-height of the H lining up with the cap-height of"
+          text run at (0,90) width 348: "the first line, and the baseline of the J lining up with the"
+          text run at (0,108) width 395: "baseline of the third line. The descender of the J is still avoided"
+          text run at (0,126) width 118: "by following lines."

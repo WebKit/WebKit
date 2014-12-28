@@ -4,16 +4,16 @@ layer at (0,0) size 800x182
   RenderBlock {HTML} at (0,0) size 800x182
     RenderBody {BODY} at (8,16) size 784x158
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 100x18
-          text run at (0,0) width 100: "Repaint test for "
-        RenderInline {I} at (0,0) size 124x18
-          RenderInline {A} at (0,0) size 124x18 [color=#0000EE]
-            RenderText {#text} at (100,0) size 124x18
-              text run at (100,0) width 124: "Bugzilla bug 23524"
-        RenderText {#text} at (224,0) size 751x36
-          text run at (224,0) width 4: " "
-          text run at (228,0) width 523: "Make sure that a table section doesn't stop painting when vertical alignment of cells"
-          text run at (0,18) width 136: "dynamically changes."
+        RenderText {#text} at (0,0) size 103x18
+          text run at (0,0) width 103: "Repaint test for "
+        RenderInline {I} at (0,0) size 126x18
+          RenderInline {A} at (0,0) size 126x18 [color=#0000EE]
+            RenderText {#text} at (102,0) size 126x18
+              text run at (102,0) width 126: "Bugzilla bug 23524"
+        RenderText {#text} at (227,0) size 768x36
+          text run at (227,0) width 5: " "
+          text run at (231,0) width 537: "Make sure that a table section doesn't stop painting when vertical alignment of cells"
+          text run at (0,18) width 139: "dynamically changes."
       RenderBlock {DIV} at (0,52) size 800x106
         RenderTable {TABLE} at (0,0) size 110x106
           RenderTableSection {TBODY} at (0,0) size 110x106

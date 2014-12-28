@@ -1,0 +1,36 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x56
+          RenderText {#text} at (0,0) size 67x28
+            text run at (0,0) width 67: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,28) size 642x28
+            text run at (0,28) width 642: "Non-smart delete when deleting a word selected via the keyboard."
+        RenderBlock {DIV} at (14,86) size 756x112
+          RenderText {#text} at (0,0) size 189x28
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 715x56
+            text run at (0,28) width 715: "The first word should be deleted. The space following it should remain. It"
+            text run at (0,56) width 210: "should look like this: "
+          RenderBR {BR} at (210,78) size 0x0
+          RenderText {#text} at (0,84) size 97x28
+            text run at (0,84) width 97: "\" bar baz\""
+      RenderBlock {DIV} at (0,236) size 784x32
+        RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 77x28
+            text run at (2,2) width 77: " bar baz"
+caret: position 0 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

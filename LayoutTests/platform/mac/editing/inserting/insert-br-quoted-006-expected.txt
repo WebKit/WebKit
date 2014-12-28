@@ -18,22 +18,22 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 277x28
             text run at (0,0) width 277: "Splitting Mail blockquotes."
         RenderBlock {DIV} at (0,28) size 784x82
-          RenderText {#text} at (0,0) size 189x28
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,22) size 0x0
-          RenderText {#text} at (0,28) size 371x18
-            text run at (0,28) width 371: "Two blockquotes, with an unquoted blank line in between."
-          RenderBR {BR} at (371,42) size 0x0
-          RenderText {#text} at (0,46) size 403x18
-            text run at (0,46) width 403: "The first blockquote contains two lines, the second one is blank."
-          RenderBR {BR} at (403,60) size 0x0
-          RenderText {#text} at (0,64) size 403x18
-            text run at (0,64) width 403: "The second blockquote contains two lines, the first one is blank."
-          RenderBR {BR} at (403,78) size 0x0
+          RenderText {#text} at (0,0) size 190x28
+            text run at (0,0) width 190: "Expected Results: "
+          RenderBR {BR} at (189,22) size 1x0
+          RenderText {#text} at (0,28) size 374x18
+            text run at (0,28) width 374: "Two blockquotes, with an unquoted blank line in between."
+          RenderBR {BR} at (373,42) size 1x0
+          RenderText {#text} at (0,46) size 410x18
+            text run at (0,46) width 410: "The first blockquote contains two lines, the second one is blank."
+          RenderBR {BR} at (409,60) size 1x0
+          RenderText {#text} at (0,64) size 410x18
+            text run at (0,64) width 410: "The second blockquote contains two lines, the first one is blank."
+          RenderBR {BR} at (409,78) size 1x0
       RenderBlock {DIV} at (0,110) size 784x300 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x28
-          RenderText {#text} at (0,0) size 120x28
-            text run at (0,0) width 120: "My citation:"
+          RenderText {#text} at (0,0) size 118x28
+            text run at (0,0) width 118: "My citation:"
         RenderBlock {DIV} at (14,66) size 756x196
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x60 [border: (2px solid #0000FF)]
             RenderBlock {DIV} at (2,2) size 672x28

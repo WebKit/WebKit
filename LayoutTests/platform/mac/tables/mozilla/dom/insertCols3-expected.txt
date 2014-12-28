@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 214x18
-          text run at (0,0) width 214: "The 2 tables should look the same"
+        RenderText {#text} at (0,0) size 218x18
+          text run at (0,0) width 218: "The 2 tables should look the same"
       RenderTable {TABLE} at (0,18) size 512x28 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0

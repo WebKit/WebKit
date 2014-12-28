@@ -4,8 +4,8 @@ layer at (0,0) size 800x110
   RenderBlock {html} at (0,0) size 800x110
     RenderBody {body} at (8,16) size 784x86
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 301x18
-          text run at (0,0) width 301: "TEST: Numbers should align by decimal points"
+        RenderText {#text} at (0,0) size 305x18
+          text run at (0,0) width 305: "TEST: Numbers should align by decimal points"
       RenderTable {table} at (0,34) size 194x52 [border: (1px outset #808080)]
         RenderTableSection (anonymous) at (1,1) size 192x50
           RenderTableRow {tr} at (0,2) size 192x22

@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 229x18
-          text run at (0,0) width 229: "Tests that buttons clip their contents."
+        RenderText {#text} at (0,0) size 235x18
+          text run at (0,0) width 235: "Tests that buttons clip their contents."
       RenderBlock {P} at (0,34) size 784x36
-        RenderText {#text} at (0,0) size 738x36
-          text run at (0,0) width 481: "Each button below should have a yellow border and a black dashed outline. "
-          text run at (481,0) width 257: "Contents should not overflow the yellow"
+        RenderText {#text} at (0,0) size 747x36
+          text run at (0,0) width 487: "Each button below should have a yellow border and a black dashed outline. "
+          text run at (486,0) width 261: "Contents should not overflow the yellow"
           text run at (0,18) width 45: "border."
       RenderBlock {P} at (0,86) size 784x50
         RenderButton {BUTTON} at (0,0) size 100x50 [bgcolor=#C0C0C0] [border: (2px outset #FFFF00)]

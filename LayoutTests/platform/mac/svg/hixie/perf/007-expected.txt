@@ -173,10 +173,10 @@ layer at (0,0) size 800x600
         RenderSVGEllipse {circle} at (53,393) size 14x14 [stroke={[type=SOLID] [color=#808080] [stroke width=0.20]}] [fill={[type=SOLID] [color=#002700]}] [cx=60.00] [cy=300.00] [r=6.00]
         RenderSVGText {text} at (68,297) size 19x9 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 19x9
-            chunk 1 text run 1 at (68.00,304.00) startOffset 0 endOffset 5 width 19.00: "Other"
-    RenderSVGText {text} at (10,2) size 611x9 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 611x9
-        chunk 1 text run 1 at (10.00,9.00) startOffset 0 endOffset 179 width 611.00: "Based on map data marked \x{A9} copyright iMapping Ltd. Used without permission under the auspices of Fair Use to improve interoperability. Source: http://www.wherearewe.co.nz/svg.html"
-    RenderSVGText {text} at (280,302) size 182x36 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 182x35
-        chunk 1 text run 1 at (280.00,330.00) startOffset 0 endOffset 14 width 182.00: "Test completed"
+            chunk 1 text run 1 at (68.00,304.00) startOffset 0 endOffset 5 width 18.21: "Other"
+    RenderSVGText {text} at (10,2) size 602x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 602x9
+        chunk 1 text run 1 at (10.00,9.00) startOffset 0 endOffset 179 width 601.50: "Based on map data marked \x{A9} copyright iMapping Ltd. Used without permission under the auspices of Fair Use to improve interoperability. Source: http://www.wherearewe.co.nz/svg.html"
+    RenderSVGText {text} at (280,302) size 185x36 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 185x35
+        chunk 1 text run 1 at (280.00,330.00) startOffset 0 endOffset 14 width 184.10: "Test completed"

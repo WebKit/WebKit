@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 462x18
-          text run at (0,0) width 462: "In this test you should see two identical blue squares, each 50px by 50px."
+        RenderText {#text} at (0,0) size 470x18
+          text run at (0,0) width 470: "In this test you should see two identical blue squares, each 50px by 50px."
       RenderBlock {DIV} at (0,34) size 100x50
         RenderImage {IMG} at (0,0) size 50x50
         RenderText {#text} at (0,0) size 0x0

@@ -4,57 +4,57 @@ layer at (0,0) size 785x1267
   RenderBlock {HTML} at (0,0) size 785x1268
     RenderBody {BODY} at (8,17) size 769x1243 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 769x30
-        RenderText {#text} at (0,0) size 528x30
-          text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
+        RenderText {#text} at (0,0) size 515x30
+          text run at (0,0) width 515: "CSS2 Table Backgrounds Test Suite"
       RenderBlock {H2} at (0,47) size 769x24
-        RenderText {#text} at (0,0) size 252x23
-          text run at (0,0) width 252: "Part E: Special Tests"
+        RenderText {#text} at (0,0) size 253x23
+          text run at (0,0) width 253: "Part E: Special Tests"
       RenderBlock {H3} at (0,86) size 769x18
-        RenderText {#text} at (0,0) size 108x17
-          text run at (0,0) width 108: "opacity: 0.5"
+        RenderText {#text} at (0,0) size 109x17
+          text run at (0,0) width 109: "opacity: 0.5"
       RenderBlock {UL} at (0,118) size 769x61
         RenderListItem {LI} at (40,0) size 729x15
           RenderListMarker at (-16,0) size 6x15: bullet
-          RenderText {#text} at (0,0) size 280x15
-            text run at (0,0) width 280: "The first three rows should be red."
+          RenderText {#text} at (0,0) size 274x15
+            text run at (0,0) width 274: "The first three rows should be red."
         RenderListItem {LI} at (40,15) size 729x15
           RenderListMarker at (-16,0) size 6x15: bullet
-          RenderText {#text} at (0,0) size 240x15
-            text run at (0,0) width 240: "The last row should be orange."
+          RenderText {#text} at (0,0) size 235x15
+            text run at (0,0) width 235: "The last row should be orange."
         RenderListItem {LI} at (40,30) size 729x30
           RenderListMarker at (-16,0) size 6x15: bullet
-          RenderText {#text} at (0,0) size 696x30
-            text run at (0,0) width 696: "Cell A should be purple. Cell P should also be purple, but of a shade that reflects the"
-            text run at (0,15) width 304: "underlying orange rather than the red."
+          RenderText {#text} at (0,0) size 679x30
+            text run at (0,0) width 679: "Cell A should be purple. Cell P should also be purple, but of a shade that reflects the"
+            text run at (0,15) width 297: "underlying orange rather than the red."
       RenderBlock {DL} at (0,191) size 769x91
         RenderBlock {DT} at (0,0) size 769x15
           RenderText {#text} at (0,0) size 32x15
             text run at (0,0) width 32: "next"
         RenderBlock {DD} at (40,15) size 729x15
-          RenderInline {A} at (0,0) size 256x15 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 256x15
-              text run at (0,0) width 256: "Special Tests: Fixed Backgrounds"
+          RenderInline {A} at (0,0) size 250x15 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 250x15
+              text run at (0,0) width 250: "Special Tests: Fixed Backgrounds"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DT} at (0,30) size 769x15
-          RenderText {#text} at (0,0) size 64x15
-            text run at (0,0) width 64: "previous"
+          RenderText {#text} at (0,0) size 63x15
+            text run at (0,0) width 63: "previous"
         RenderBlock {DD} at (40,45) size 729x15
-          RenderInline {A} at (0,0) size 408x15 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 408x15
-              text run at (0,0) width 408: "Background with Borders: Background on 'table-cell'"
+          RenderInline {A} at (0,0) size 398x15 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 398x15
+              text run at (0,0) width 398: "Background with Borders: Background on 'table-cell'"
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {DT} at (0,60) size 769x15
-          RenderText {#text} at (0,0) size 64x15
-            text run at (0,0) width 64: "contents"
+          RenderText {#text} at (0,0) size 63x15
+            text run at (0,0) width 63: "contents"
         RenderBlock {DD} at (40,75) size 729x15
-          RenderInline {A} at (0,0) size 136x15 [color=#FFFF00]
-            RenderText {#text} at (0,0) size 136x15
-              text run at (0,0) width 136: "Table of Contents"
+          RenderInline {A} at (0,0) size 133x15 [color=#FFFF00]
+            RenderText {#text} at (0,0) size 133x15
+              text run at (0,0) width 133: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,294) size 618x467 [color=#000000] [bgcolor=#FFFFFF] [border: (1px dotted #000000)]
         RenderBlock {CAPTION} at (0,0) size 618x22 [color=#FFFFFF]
-          RenderText {#text} at (163,0) size 292x22
-            text run at (163,0) width 292: "With 'border-collapse: separate'"
+          RenderText {#text} at (165,0) size 288x22
+            text run at (165,0) width 288: "With 'border-collapse: separate'"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -65,8 +65,8 @@ layer at (0,0) size 785x1267
         RenderTableSection {TBODY} at (1,137) size 616x206
       RenderTable {TABLE} at (0,760) size 578x433 [color=#000000] [bgcolor=#FFFFFF] [border: (6px dotted #000000)]
         RenderBlock {CAPTION} at (0,0) size 578x22 [color=#FFFFFF]
-          RenderText {#text} at (144,0) size 290x22
-            text run at (144,0) width 290: "With 'border-collapse: collapse'"
+          RenderText {#text} at (146,0) size 286x22
+            text run at (146,0) width 286: "With 'border-collapse: collapse'"
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
@@ -80,8 +80,8 @@ layer at (0,0) size 785x1267
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {ADDRESS} at (0,1226) size 769x16
-        RenderText {#text} at (0,0) size 704x15
-          text run at (0,0) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"
+        RenderText {#text} at (0,0) size 687x15
+          text run at (0,0) width 687: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"
 layer at (9,342) size 616x100
   RenderTableRow {TR} at (0,7) size 616x100 [bgcolor=#FF0000]
     RenderTableCell {TH} at (144,32) size 220x50 [border: (13px dotted #000000)] [r=0 c=1 rs=1 cs=1]

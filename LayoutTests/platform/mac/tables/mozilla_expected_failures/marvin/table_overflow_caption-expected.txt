@@ -12,8 +12,8 @@ layer at (0,0) size 800x138
         RenderTableSection {TBODY} at (1,13) size 198x108
           RenderTableRow {TR} at (0,2) size 198x104
             RenderTableCell {TD} at (2,43) size 97x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 21x18
-                text run at (2,2) width 21: "foo"
+              RenderText {#text} at (2,2) size 22x18
+                text run at (2,2) width 22: "foo"
             RenderTableCell {TD} at (101,43) size 95x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 20x18
-                text run at (2,2) width 20: "bar"
+              RenderText {#text} at (2,2) size 21x18
+                text run at (2,2) width 21: "bar"

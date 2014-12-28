@@ -23,8 +23,8 @@ layer at (34,2266) size 200x200
       text run at (71,41) width 58: "7"
 layer at (84,844) size 200x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
-    RenderText zI: -3 {#text} at (50,41) size 469x97
-      text run at (50,41) width 469: " 8 hide me"
+    RenderText zI: -3 {#text} at (50,41) size 471x97
+      text run at (50,41) width 471: " 8 hide me"
 layer at (84,2752) size 200x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText zI: -3 {#text} at (71,41) size 58x97
@@ -88,21 +88,21 @@ layer at (0,0) size 785x5270 layerType: foreground only
         RenderText {#text} at (0,0) size 294x37
           text run at (0,0) width 294: "Layered Presentation"
       RenderBlock {P} at (0,58) size 769x19
-        RenderText {#text} at (0,0) size 733x18
-          text run at (0,0) width 398: "Robert O'Callahan pointed out to me some mistakes in this test "
-          text run at (398,0) width 335: "that I have not yet had the time to examine or correct."
+        RenderText {#text} at (0,0) size 750x18
+          text run at (0,0) width 407: "Robert O'Callahan pointed out to me some mistakes in this test "
+          text run at (406,0) width 344: "that I have not yet had the time to examine or correct."
       RenderBlock {P} at (0,92) size 769x19
-        RenderText {#text} at (0,0) size 463x18
-          text run at (0,0) width 463: "In each of the following, 1 should be the top layer and 8 the bottom layer:"
+        RenderText {#text} at (0,0) size 472x18
+          text run at (0,0) width 472: "In each of the following, 1 should be the top layer and 8 the bottom layer:"
       RenderBlock {P} at (0,4578) size 769x19
-        RenderText {#text} at (0,0) size 349x18
-          text run at (0,0) width 349: "Using assumed default value of z-index (may not pass):"
+        RenderText {#text} at (0,0) size 357x18
+          text run at (0,0) width 357: "Using assumed default value of z-index (may not pass):"
 layer at (24,148) size 620x620
   RenderBlock (relative positioned) {DIV} at (16,126) size 620x621 [border: (10px solid #000000)]
 layer at (84,208) size 200x200
   RenderBlock (positioned) {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
-    RenderText {#text} at (50,41) size 469x97
-      text run at (50,41) width 469: " 8 hide me"
+    RenderText {#text} at (50,41) size 471x97
+      text run at (50,41) width 471: " 8 hide me"
 layer at (34,358) size 200x200
   RenderBlock (positioned) {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
     RenderText {#text} at (71,41) size 58x97

@@ -10,5 +10,5 @@ layer at (0,0) size 800x600
           RenderListMarker at (0,-17) size 18x7: bullet
         RenderListItem {LI} at (36,40) size 18x544
           RenderListMarker at (0,-17) size 18x7: bullet
-          RenderText {#text} at (0,0) size 18x323
-            text run at (0,0) width 323: "There should be two bullets with no text above me."
+          RenderText {#text} at (0,0) size 18x328
+            text run at (0,0) width 328: "There should be two bullets with no text above me."

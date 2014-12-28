@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576 [bgcolor=#FFFFFF]
       RenderBlock {H3} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 307x22
-          text run at (0,0) width 307: "Testcase for bug 5538 - distilled from "
-        RenderInline {A} at (0,0) size 117x22 [color=#0000EE]
-          RenderText {#text} at (307,0) size 117x22
-            text run at (307,0) width 117: "www.fool.com"
+        RenderText {#text} at (0,0) size 304x22
+          text run at (0,0) width 304: "Testcase for bug 5538 - distilled from "
+        RenderInline {A} at (0,0) size 115x22 [color=#0000EE]
+          RenderText {#text} at (303,0) size 115x22
+            text run at (303,0) width 115: "www.fool.com"
       RenderTable {TABLE} at (0,40) size 600x90
         RenderTableSection {TBODY} at (0,0) size 600x89
           RenderTableRow {TR} at (0,0) size 600x89
@@ -26,12 +26,12 @@ layer at (0,0) size 800x600
               RenderImage {IMG} at (436,0) size 55x18
       RenderBlock {P} at (0,163) size 784x162
         RenderBlock (anonymous) at (0,0) size 784x54
-          RenderText {#text} at (0,0) size 471x18
-            text run at (0,0) width 471: "When removing <A HREF=\"...\"> surrounding logo image in first row and"
-          RenderBR {BR} at (471,14) size 0x0
-          RenderText {#text} at (0,18) size 384x18
-            text run at (0,18) width 384: "removing <MAP> element in second row it looks OK to me:"
-          RenderBR {BR} at (384,32) size 0x0
+          RenderText {#text} at (0,0) size 474x18
+            text run at (0,0) width 474: "When removing <A HREF=\"...\"> surrounding logo image in first row and"
+          RenderBR {BR} at (473,14) size 1x0
+          RenderText {#text} at (0,18) size 390x18
+            text run at (0,18) width 390: "removing <MAP> element in second row it looks OK to me:"
+          RenderBR {BR} at (389,32) size 1x0
           RenderBR {BR} at (0,36) size 0x18
         RenderTable {TABLE} at (0,54) size 600x89
           RenderTableSection {TBODY} at (0,0) size 600x89

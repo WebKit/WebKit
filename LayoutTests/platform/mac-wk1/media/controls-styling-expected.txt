@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 274x18
-          text run at (0,0) width 274: "The look of the controls should not change."
+        RenderText {#text} at (0,0) size 279x18
+          text run at (0,0) width 279: "The look of the controls should not change."
       RenderBlock {DIV} at (0,34) size 784x240 [color=#0000FF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,274) size 784x240

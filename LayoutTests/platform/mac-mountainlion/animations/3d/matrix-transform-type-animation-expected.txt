@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x134
+  RenderBlock {HTML} at (0,0) size 800x134
+    RenderBody {BODY} at (8,8) size 784x118
+      RenderBlock {DIV} at (0,100) size 784x18
+        RenderText {#text} at (0,0) size 568x18
+          text run at (0,0) width 568: "PASS - \"webkitTransform.4\" property for \"box\" element at 1s saw something close to: 50"
+        RenderBR {BR} at (568,0) size 0x18
+layer at (8,8) size 784x100
+  RenderBlock (relative positioned) {DIV} at (0,0) size 784x100
+layer at (58,8) size 100x100
+  RenderBlock (positioned) {DIV} at (50,0) size 100x100 [bgcolor=#FF0000]
+layer at (8,8) size 100x100
+  RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

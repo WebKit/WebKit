@@ -4,20 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x18
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 675x18
-          RenderInline {A} at (0,0) size 301x18 [color=#0000EE]
-            RenderText {#text} at (53,0) size 301x18
-              text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=13391"
-          RenderText {#text} at (354,0) size 374x18
-            text run at (354,0) width 4: " "
-            text run at (358,0) width 370: "REGRESSION (r18819): Incomplete repaint of button text"
-        RenderText {#text} at (728,0) size 4x18
-          text run at (728,0) width 4: "."
+        RenderText {#text} at (0,0) size 54x18
+          text run at (0,0) width 54: "Test for "
+        RenderInline {I} at (0,0) size 683x18
+          RenderInline {A} at (0,0) size 305x18 [color=#0000EE]
+            RenderText {#text} at (53,0) size 305x18
+              text run at (53,0) width 305: "http://bugs.webkit.org/show_bug.cgi?id=13391"
+          RenderText {#text} at (357,0) size 379x18
+            text run at (357,0) width 5: " "
+            text run at (361,0) width 375: "REGRESSION (r18819): Incomplete repaint of button text"
+        RenderText {#text} at (735,0) size 5x18
+          text run at (735,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x18
-        RenderText {#text} at (0,0) size 513x18
-          text run at (0,0) width 513: "The popup and the button should say \x{201C}SUCCESS\x{201D} with no sign of \x{201C}FAILURE\x{201D}."
+        RenderText {#text} at (0,0) size 514x18
+          text run at (0,0) width 514: "The popup and the button should say \x{201C}SUCCESS\x{201D} with no sign of \x{201C}FAILURE\x{201D}."
       RenderMenuList {SELECT} at (0,68) size 200x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,8) size 198x14
           RenderText at (0,0) size 55x13

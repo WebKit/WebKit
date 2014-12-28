@@ -4,8 +4,8 @@ layer at (0,0) size 800x96
   RenderBlock {HTML} at (0,0) size 800x96
     RenderBody {BODY} at (8,16) size 784x72
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 363x18
-          text run at (0,0) width 363: "The following two boxes should be identical, to the pixel."
+        RenderText {#text} at (0,0) size 370x18
+          text run at (0,0) width 370: "The following two boxes should be identical, to the pixel."
       RenderBlock {OL} at (80,34) size 160x18 [color=#FFFFFF] [bgcolor=#000080]
         RenderListItem {LI} at (0,0) size 160x18
           RenderListMarker at (-20,0) size 16x18: "1"

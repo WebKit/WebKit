@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 776x36
-          text run at (0,0) width 408: "This tests smart paste of a fragment that ends in a select element. "
-          text run at (408,0) width 368: "There should be spaces added before and after the inserted"
-          text run at (0,18) width 50: "content."
+        RenderText {#text} at (0,0) size 740x36
+          text run at (0,0) width 420: "This tests smart paste of a fragment that ends in a select element. "
+          text run at (419,0) width 321: "There should be spaces added before and after the"
+          text run at (0,18) width 106: "inserted content."
       RenderBlock {DIV} at (0,52) size 784x22
         RenderMenuList {SELECT} at (2,2) size 38x18 [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 38x18

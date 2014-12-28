@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x29
-        RenderText {#text} at (0,11) size 421x18
-          text run at (0,11) width 421: "The blue borders should coincide with light blue squares, like this: "
-        RenderBlock {SPAN} at (421,0) size 25x25 [bgcolor=#ADD8E6] [border: (3px solid #0000FF7F)]
-        RenderText {#text} at (446,11) size 196x18
-          text run at (446,11) width 8: ". "
-          text run at (454,11) width 188: "There should be none of this: "
-        RenderBlock {SPAN} at (642,0) size 25x25 [bgcolor=#ADD8E6]
-        RenderText {#text} at (667,11) size 51x18
-          text run at (667,11) width 4: " "
-          text run at (671,11) width 47: "or this: "
-        RenderBlock {SPAN} at (718,0) size 25x25 [border: (3px solid #0000FF7F)]
-        RenderText {#text} at (743,11) size 4x18
-          text run at (743,11) width 4: "."
+        RenderText {#text} at (0,11) size 431x18
+          text run at (0,11) width 431: "The blue borders should coincide with light blue squares, like this: "
+        RenderBlock {SPAN} at (430,0) size 26x25 [bgcolor=#ADD8E6] [border: (3px solid #0000FF7F)]
+        RenderText {#text} at (455,11) size 200x18
+          text run at (455,11) width 9: ". "
+          text run at (463,11) width 192: "There should be none of this: "
+        RenderBlock {SPAN} at (654,0) size 26x25 [bgcolor=#ADD8E6]
+        RenderText {#text} at (679,11) size 54x18
+          text run at (679,11) width 5: " "
+          text run at (683,11) width 50: "or this: "
+        RenderBlock {SPAN} at (732,0) size 26x25 [border: (3px solid #0000FF7F)]
+        RenderText {#text} at (757,11) size 5x18
+          text run at (757,11) width 5: "."
       RenderBlock (anonymous) at (0,45) size 784x357
         RenderText {#text} at (116,99) size 4x18
           text run at (116,99) width 4: " "

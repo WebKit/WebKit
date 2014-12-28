@@ -16,14 +16,14 @@ layer at (20,20) size 644x433
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (41,214) size 568x120
         RenderInline {SPAN} at (0,0) size 168x112
-          RenderText {#text} at (204,4) size 168x112
-            text run at (204,4) width 168: "100"
-        RenderInline {SPAN} at (0,0) size 28x112
-          RenderText {#text} at (372,4) size 28x112
-            text run at (372,4) width 28: "/"
-        RenderInline {SPAN} at (0,0) size 168x112
-          RenderText {#text} at (400,4) size 168x112
-            text run at (400,4) width 168: "100"
+          RenderText {#text} at (206,4) size 168x112
+            text run at (206,4) width 168: "100"
+        RenderInline {SPAN} at (0,0) size 29x112
+          RenderText {#text} at (373,4) size 29x112
+            text run at (373,4) width 29: "/"
+        RenderInline {SPAN} at (0,0) size 167x112
+          RenderText {#text} at (401,4) size 167x112
+            text run at (401,4) width 167: "100"
       RenderBlock (anonymous) at (41,334) size 562x0
         RenderInline {MAP} at (0,0) size 0x0
           RenderIFrame {IFRAME} at (0,0) size 0x0
@@ -201,18 +201,18 @@ layer at (20,20) size 644x433
         RenderInline {MAP} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (41,334) size 582x98 [color=#808080]
-        RenderText {#text} at (0,1) size 116x17
-          text run at (0,1) width 116: "To pass the test,"
+        RenderText {#text} at (0,1) size 117x17
+          text run at (0,1) width 117: "To pass the test,"
         RenderBlock (floating) {SPAN} at (562,0) size 20x20 [bgcolor=#FFFFFF]
-        RenderText {#text} at (116,1) size 562x55
-          text run at (116,1) width 446: " a browser must use its default settings, the animation has to be"
-          text run at (0,20) width 561: "smooth, the score has to end on 100/100, and the final page has to look exactly,"
-          text run at (0,39) width 131: "pixel for pixel, like "
-        RenderInline {A} at (0,0) size 168x17 [color=#0000FF]
-          RenderText {#text} at (131,39) size 168x17
-            text run at (131,39) width 168: "this reference rendering"
-        RenderText {#text} at (299,39) size 4x17
-          text run at (299,39) width 4: "."
+        RenderText {#text} at (116,1) size 547x55
+          text run at (116,1) width 431: " a browser must use its default settings, the animation has to"
+          text run at (0,20) width 532: "be smooth, the score has to end on 100/100, and the final page has to look"
+          text run at (0,39) width 189: "exactly, pixel for pixel, like "
+        RenderInline {A} at (0,0) size 170x17 [color=#0000FF]
+          RenderText {#text} at (188,39) size 170x17
+            text run at (188,39) width 170: "this reference rendering"
+        RenderText {#text} at (357,39) size 5x17
+          text run at (357,39) width 5: "."
 layer at (131,84) size 300x150
   RenderEmbeddedObject {OBJECT} at (130,84) size 301x151
     layer at (0,0) size 300x150
@@ -223,15 +223,15 @@ layer at (131,84) size 300x150
           RenderBlock {P} at (0,0) size 284x0
 layer at (17,18) size 80x36
   RenderBlock (positioned) {A} at (17,18) size 80x36 [color=#FFFFFF]
-    RenderText {#text} at (0,0) size 71x36
+    RenderText {#text} at (0,0) size 70x36
       text run at (0,0) width 67: "YOU SHOULD"
-      text run at (0,12) width 71: "NOT SEE THIS"
+      text run at (0,12) width 70: "NOT SEE THIS"
       text run at (0,24) width 35: "AT ALL"
 layer at (638,18) size 20x20
   RenderBlock (positioned) at (638,18) size 20x20 [color=#FFFFFF] [bgcolor=#FF00FF]
     RenderText at (0,0) size 20x20
       text run at (0,0) width 20: "X"
-layer at (10,10) size 84x45
-  RenderBlock (positioned) {DIV} at (10,10) size 84x45 [color=#00000000]
-    RenderText {#text} at (0,0) size 84x44
-      text run at (0,0) width 84: "FAIL"
+layer at (10,10) size 82x45
+  RenderBlock (positioned) {DIV} at (10,10) size 83x45 [color=#00000000]
+    RenderText {#text} at (0,0) size 83x44
+      text run at (0,0) width 83: "FAIL"

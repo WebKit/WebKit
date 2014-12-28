@@ -16,19 +16,19 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x56
-          RenderText {#text} at (0,0) size 67x28
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 66x28
+            text run at (0,0) width 66: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,28) size 522x28
-            text run at (0,28) width 522: "Smart delete when deleting the second word of a line."
+          RenderText {#text} at (0,28) size 516x28
+            text run at (0,28) width 516: "Smart delete when deleting the second word of a line."
         RenderBlock {DIV} at (14,86) size 756x112
-          RenderText {#text} at (0,0) size 189x28
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,22) size 0x0
-          RenderText {#text} at (0,28) size 738x56
-            text run at (0,28) width 738: "The second word and the space before the second word should be deleted. It"
-            text run at (0,56) width 202: "should like this this: "
-          RenderBR {BR} at (202,78) size 0x0
+          RenderText {#text} at (0,0) size 190x28
+            text run at (0,0) width 190: "Expected Results: "
+          RenderBR {BR} at (189,22) size 1x0
+          RenderText {#text} at (0,28) size 732x56
+            text run at (0,28) width 732: "The second word and the space before the second word should be deleted. It"
+            text run at (0,56) width 201: "should like this this: "
+          RenderBR {BR} at (200,78) size 1x0
           RenderText {#text} at (0,84) size 72x28
             text run at (0,84) width 72: "foo baz"
       RenderBlock {DIV} at (0,236) size 784x32

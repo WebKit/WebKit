@@ -4,8 +4,8 @@ layer at (0,0) size 800x178
   RenderBlock {HTML} at (0,0) size 800x178
     RenderBody {BODY} at (8,8) size 784x162
       RenderBlock {DIV} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 595x18
-          text run at (0,0) width 595: "When the caret is scrolled out, on starting typing it must be brought to the center of the control."
+        RenderText {#text} at (0,0) size 610x18
+          text run at (0,0) width 610: "When the caret is scrolled out, on starting typing it must be brought to the center of the control."
       RenderBlock (anonymous) at (0,18) size 784x144
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

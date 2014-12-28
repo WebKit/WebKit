@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 579x18
-          text run at (0,0) width 579: "The following 4 images should be all be rendered exactly the same, aligned to the right side."
+        RenderText {#text} at (0,0) size 591x18
+          text run at (0,0) width 591: "The following 4 images should be all be rendered exactly the same, aligned to the right side."
       RenderImage {INPUT} at (767,34) size 17x19
       RenderBlock (anonymous) at (0,34) size 784x108
         RenderBR {BR} at (0,0) size 0x18

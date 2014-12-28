@@ -4,8 +4,8 @@ layer at (0,0) size 800x122
   RenderBlock {HTML} at (0,0) size 800x122
     RenderBody {BODY} at (8,16) size 784x98
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 463x18
-          text run at (0,0) width 463: "The three boxes below should have progressively thinner bottom borders."
+        RenderText {#text} at (0,0) size 471x18
+          text run at (0,0) width 471: "The three boxes below should have progressively thinner bottom borders."
       RenderTable {TABLE} at (0,34) size 66x64 [color=#000080]
         RenderTableSection {TBODY} at (0,0) size 66x64
           RenderTableRow {TR} at (0,2) size 66x60

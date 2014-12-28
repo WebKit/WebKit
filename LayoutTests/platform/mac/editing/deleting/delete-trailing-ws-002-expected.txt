@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 40x56
           RenderText {#text} at (14,14) size 32x28
             text run at (14,14) width 32: "foo"
-          RenderBR {BR} at (46,36) size 0x0
+          RenderBR {BR} at (45,36) size 1x0
           RenderText {#text} at (14,42) size 40x28
             text run at (14,42) width 40: " baz"
         RenderText {#text} at (0,0) size 0x0

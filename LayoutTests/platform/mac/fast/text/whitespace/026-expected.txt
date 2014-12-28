@@ -11,5 +11,5 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 4x18
                   text run at (0,0) width 4: "\x{B7}"
             RenderTableCell {TD} at (4,0) size 780x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 388x18
-                text run at (0,0) width 388: "There should be space between the bullet and this line of text."
+              RenderText {#text} at (0,0) size 396x18
+                text run at (0,0) width 396: "There should be space between the bullet and this line of text."

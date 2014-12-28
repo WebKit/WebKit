@@ -4,24 +4,24 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x72
-        RenderText {#text} at (0,0) size 763x54
-          text run at (0,0) width 763: "In this table (modeled after mozilla.org template) the cells in column two are requesting colspans of (2,3,2,6) respectively."
-          text run at (0,18) width 757: "Notice that they all want to span more than one column (which means, in the case of this table, all rows are requesting to"
-          text run at (0,36) width 282: "span more columns than the number of 'real' "
+        RenderText {#text} at (0,0) size 782x54
+          text run at (0,0) width 782: "In this table (modeled after mozilla.org template) the cells in column two are requesting colspans of (2,3,2,6) respectively."
+          text run at (0,18) width 773: "Notice that they all want to span more than one column (which means, in the case of this table, all rows are requesting to"
+          text run at (0,36) width 288: "span more columns than the number of 'real' "
         RenderInline {CODE} at (0,0) size 32x15
-          RenderText {#text} at (282,38) size 32x15
-            text run at (282,38) width 32: "<TD>"
-        RenderText {#text} at (314,36) size 772x36
-          text run at (314,36) width 458: " in any single rows [i.e., all rows in the top table want to span 9 cells, but"
-          text run at (0,54) width 159: "the maximum number of "
+          RenderText {#text} at (287,38) size 32x15
+            text run at (287,38) width 32: "<TD>"
+        RenderText {#text} at (318,36) size 762x36
+          text run at (318,36) width 444: " in any single rows [i.e., all rows in the top table want to span 9 cells,"
+          text run at (0,54) width 188: "but the maximum number of "
         RenderInline {CODE} at (0,0) size 32x15
-          RenderText {#text} at (159,56) size 32x15
-            text run at (159,56) width 32: "<TD>"
-        RenderText {#text} at (191,54) size 107x18
-          text run at (191,54) width 107: " in any row is 8]."
+          RenderText {#text} at (187,56) size 32x15
+            text run at (187,56) width 32: "<TD>"
+        RenderText {#text} at (218,54) size 109x18
+          text run at (218,54) width 109: " in any row is 8]."
       RenderBlock {P} at (0,88) size 784x18
-        RenderText {#text} at (0,0) size 484x18
-          text run at (0,0) width 484: "This condition leads to the 'white gap' (in builds of 5.0 for jun04 and before)."
+        RenderText {#text} at (0,0) size 493x18
+          text run at (0,0) width 493: "This condition leads to the 'white gap' (in builds of 5.0 for jun04 and before)."
       RenderTable {TABLE} at (0,122) size 784x82 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x80
           RenderTableRow {TR} at (0,0) size 782x20
@@ -104,10 +104,10 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 8x18
                 text run at (1,1) width 8: "8"
       RenderBlock {P} at (0,220) size 784x36
-        RenderText {#text} at (0,0) size 756x36
-          text run at (0,0) width 424: "This is the same table as above, but instead the cells in column two "
-          text run at (424,0) width 332: "are requesting colspans of (1,2,1,5) respectively (i.e.,"
-          text run at (0,18) width 478: "excess requests have been 'normalized' away). There is no more 'white gap'."
+        RenderText {#text} at (0,0) size 773x36
+          text run at (0,0) width 434: "This is the same table as above, but instead the cells in column two "
+          text run at (433,0) width 340: "are requesting colspans of (1,2,1,5) respectively (i.e.,"
+          text run at (0,18) width 485: "excess requests have been 'normalized' away). There is no more 'white gap'."
       RenderTable {TABLE} at (0,272) size 784x82 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x80
           RenderTableRow {TR} at (0,0) size 782x20

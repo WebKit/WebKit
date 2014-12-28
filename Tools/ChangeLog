@@ -1,3 +1,15 @@
+2014-12-27  Myles C. Maxfield  <mmaxfield@apple.com>
+        [Mac] Enable kerning, ligatures, and printer fonts 
+        https://bugs.webkit.org/show_bug.cgi?id=139970
+
+        Rubber stamped by Simon Fraser.
+
+        Flip the switch.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/mac/main.mm:
+
 2014-12-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19348208> REGRESSION (r177027): iOS builds use the wrong toolchain

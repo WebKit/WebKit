@@ -53,6 +53,6 @@ layer at (0,0) size 800x600
               text run at (0,0) width 40: "four"
           RenderListItem {LI} at (40,112) size 716x28
             RenderListMarker at (-22,0) size 9x28: bullet
-            RenderText {#text} at (0,0) size 38x28
-              text run at (0,0) width 38: "five"
+            RenderText {#text} at (0,0) size 36x28
+              text run at (0,0) width 36: "five"
 caret: position 0 of child 0 {BR} of child 5 {LI} of child 1 {UL} of child 1 {DIV} of body

@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
                       RenderBlock {P} at (1,1) size 376x36
                         RenderText {#text} at (0,0) size 4x18
                           text run at (0,0) width 4: " "
-                        RenderInline {FONT} at (0,0) size 350x36
-                          RenderText {#text} at (4,0) size 350x36
-                            text run at (4,0) width 16: "to "
-                            text run at (20,0) width 330: "Receive 50% Off Home Delivery of The New York"
+                        RenderInline {FONT} at (0,0) size 351x36
+                          RenderText {#text} at (4,0) size 351x36
+                            text run at (4,0) width 17: "to "
+                            text run at (20,0) width 331: "Receive 50% Off Home Delivery of The New York"
                             text run at (0,18) width 119: "Times Newspaper."

@@ -17,14 +17,14 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (166,2) size 296x18
                         text run at (166,2) width 296: "IceWM, The Window Manager Cool As Ice"
               RenderBlock {P} at (2,42) size 630x36
-                RenderText {#text} at (0,0) size 362x18
-                  text run at (0,0) width 362: "IceWM is a small, but powerful window manager for the "
+                RenderText {#text} at (0,0) size 369x18
+                  text run at (0,0) width 369: "IceWM is a small, but powerful window manager for the "
                 RenderInline {A} at (0,0) size 137x18 [color=#0000EE]
-                  RenderText {#text} at (362,0) size 137x18
-                    text run at (362,0) width 137: "X11 Window System"
-                RenderText {#text} at (499,0) size 616x36
-                  text run at (499,0) width 117: " whose main goals"
-                  text run at (0,18) width 111: "are the following:"
+                  RenderText {#text} at (368,0) size 137x18
+                    text run at (368,0) width 137: "X11 Window System"
+                RenderText {#text} at (504,0) size 624x36
+                  text run at (504,0) width 120: " whose main goals"
+                  text run at (0,18) width 114: "are the following:"
             RenderTableCell {TD} at (708,29) size 74x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (25,2) size 24x18
                 text run at (25,2) width 24: "yyy"

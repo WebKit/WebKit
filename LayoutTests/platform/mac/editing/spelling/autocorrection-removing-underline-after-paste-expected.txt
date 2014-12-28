@@ -64,19 +64,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 781x36
-          text run at (0,0) width 781: "This test verifies the removal of autocorrection underline upon pasting in HTML fragment that contains paragraph separator."
-          text run at (0,18) width 388: "You should see phrase 'the notational' without blue underline."
+        RenderText {#text} at (0,0) size 731x36
+          text run at (0,0) width 731: "This test verifies the removal of autocorrection underline upon pasting in HTML fragment that contains paragraph"
+          text run at (0,18) width 459: "separator. You should see phrase 'the notational' without blue underline."
       RenderBlock {P} at (0,52) size 784x54 [color=#008000]
-        RenderText {#text} at (0,0) size 775x54
-          text run at (0,0) width 775: "Note, this test can fail due to user specific spell checking data. If the user has previously dismissed 'notational' as the correct"
-          text run at (0,18) width 740: "spelling of 'notationl' several times, the spell checker will not provide 'notational' as a suggestion anymore. To fix this,"
-          text run at (0,36) width 236: "remove all files in ~/Library/Spelling."
+        RenderText {#text} at (0,0) size 773x54
+          text run at (0,0) width 746: "Note, this test can fail due to user specific spell checking data. If the user has previously dismissed 'notational' as the"
+          text run at (0,18) width 773: "correct spelling of 'notationl' several times, the spell checker will not provide 'notational' as a suggestion anymore. To fix"
+          text run at (0,36) width 274: "this, remove all files in ~/Library/Spelling."
       RenderBlock {DIV} at (0,122) size 784x112 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x56
-          RenderText {#text} at (0,0) size 171x28
-            text run at (0,0) width 171: "the notational bar"
-          RenderBR {BR} at (171,22) size 0x0
+          RenderText {#text} at (0,0) size 168x28
+            text run at (0,0) width 168: "the notational bar"
+          RenderBR {BR} at (167,22) size 1x0
           RenderInline {SPAN} at (0,0) size 0x0
           RenderText {#text} at (0,28) size 34x28
             text run at (0,28) width 34: "baz"

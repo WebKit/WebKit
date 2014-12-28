@@ -4,8 +4,8 @@ layer at (0,0) size 785x1498
   RenderBlock {HTML} at (0,0) size 785x1498
     RenderBody {BODY} at (8,8) size 769x1458
       RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 259x18
-          text run at (0,0) width 259: "All of these blocks should look the same."
+        RenderText {#text} at (0,0) size 264x18
+          text run at (0,0) width 264: "All of these blocks should look the same."
 layer at (8,58) size 320x256
   RenderBlock {DIV} at (0,50) size 320x256 [bgcolor=#00FF00]
     RenderInline {SPAN} at (0,0) size 320x64 [color=#008000]

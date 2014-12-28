@@ -22,12 +22,12 @@ layer at (0,0) size 800x600
                     RenderTableRow {TR} at (0,2) size 449x58
                       RenderTableCell {TD} at (2,2) size 445x58 [r=0 c=0 rs=1 cs=1]
                         RenderBlock {P} at (2,2) size 441x54
-                          RenderText {#text} at (0,0) size 166x18
-                            text run at (0,0) width 166: "IMPROVE YOUR SITE "
-                          RenderBR {BR} at (166,14) size 0x0
-                          RenderText {#text} at (0,18) size 435x36
-                            text run at (0,18) width 435: "In this week's Home Improvements you can find an article on how to"
-                            text run at (0,36) width 256: "spice up your page by using imagemaps."
+                          RenderText {#text} at (0,0) size 164x18
+                            text run at (0,0) width 164: "IMPROVE YOUR SITE "
+                          RenderBR {BR} at (163,14) size 1x0
+                          RenderText {#text} at (0,18) size 425x36
+                            text run at (0,18) width 425: "In this week's Home Improvements you can find an article on how"
+                            text run at (0,36) width 277: "to spice up your page by using imagemaps."
                         RenderBlock {P} at (2,72) size 441x0
                 RenderTable {TABLE} at (0,62) size 449x28
                   RenderTableSection {TBODY} at (0,0) size 449x28

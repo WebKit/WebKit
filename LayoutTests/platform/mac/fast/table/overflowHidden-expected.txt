@@ -151,80 +151,80 @@ layer at (12,752) size 304x104 clip at (13,753) size 302x102 scrollWidth 601
   RenderTableCell {TD} at (2,52) size 304x4 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (2,-18) size 300x18 [bgcolor=#00FF00]
       RenderBlock {DIV} at (0,0) size 600x18 [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 81x18
-          text run at (0,0) width 81: "Stacked Test"
+        RenderText {#text} at (0,0) size 82x18
+          text run at (0,0) width 82: "Stacked Test"
 layer at (318,858) size 304x104 clip at (319,859) size 302x102 scrollWidth 601
   RenderTableCell {TD} at (308,158) size 304x4 [bgcolor=#808080] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
     RenderBlock {DIV} at (2,-18) size 300x18 [bgcolor=#00FF00]
       RenderBlock {DIV} at (0,0) size 600x18 [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 51x18
-          text run at (0,0) width 51: "Reverse"
+        RenderText {#text} at (0,0) size 52x18
+          text run at (0,0) width 52: "Reverse"
 layer at (12,1006) size 604x104 clip at (13,1007) size 602x102
   RenderTableCell {TD} at (2,43) size 604x22 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
 layer at (8,1446) size 300x100 scrollWidth 600
   RenderTableCell {DIV} at (0,41) size 300x18 [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (0,0) size 300x18
       RenderBlock {DIV} at (0,0) size 600x18 [bgcolor=#FFA500]
-        RenderText {#text} at (0,0) size 141x18
-          text run at (0,0) width 141: "With display:table-cell"
+        RenderText {#text} at (0,0) size 146x18
+          text run at (0,0) width 146: "With display:table-cell"
 layer at (10,1720) size 605x107 clip at (13,1723) size 602x102
   RenderTableCell {TD} at (0,41) size 605x25 [bgcolor=#808080] [border: (3px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (4,4) size 600x18 [bgcolor=#FFFF00]
-      RenderText {#text} at (0,0) size 215x18
-        text run at (0,0) width 215: "Test with border-collapse:collapse"
+      RenderText {#text} at (0,0) size 219x18
+        text run at (0,0) width 219: "Test with border-collapse:collapse"
 layer at (10,1868) size 605x107 clip at (13,1871) size 602x102
   RenderTableCell {TD} at (0,41) size 605x25 [border: (3px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (4,4) size 600x18 [bgcolor=#FFFF00]
-      RenderText {#text} at (0,0) size 271x18
-        text run at (0,0) width 271: "Test with border-collapse:collapse no color"
+      RenderText {#text} at (0,0) size 276x18
+        text run at (0,0) width 276: "Test with border-collapse:collapse no color"
 layer at (12,2018) size 304x103 clip at (13,2019) size 302x86 scrollWidth 601
   RenderTableCell {TD} at (2,44) size 304x19 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (2,-18) size 300x18 [bgcolor=#00FF00]
       RenderBlock {DIV} at (0,0) size 600x18 [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 151x18
-          text run at (0,0) width 151: "Test with overflow:auto"
+        RenderText {#text} at (0,0) size 152x18
+          text run at (0,0) width 152: "Test with overflow:auto"
 layer at (12,2166) size 319x104 clip at (13,2167) size 302x87 scrollWidth 601
   RenderTableCell {TD} at (2,44) size 319x19 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (2,-18) size 300x18 [bgcolor=#00FF00]
       RenderBlock {DIV} at (0,0) size 600x18 [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 158x18
-          text run at (0,0) width 158: "Test with overflow:scroll"
+        RenderText {#text} at (0,0) size 160x18
+          text run at (0,0) width 160: "Test with overflow:scroll"
 layer at (10,2312) size 362x102 clip at (40,2342) size 302x27 scrollWidth 601
   RenderTableCell {TD} at (2,5) size 362x95 [bgcolor=#808080] [border: (30px solid #000000)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (31,31) size 300x18 [bgcolor=#00FF00]
       RenderBlock {DIV} at (0,0) size 600x18 [bgcolor=#008000]
-        RenderText {#text} at (0,0) size 151x18
-          text run at (0,0) width 151: "Test with overflow:auto"
+        RenderText {#text} at (0,0) size 152x18
+          text run at (0,0) width 152: "Test with overflow:auto"
 layer at (14,90) size 600x18
   RenderBlock (positioned) {DIV} at (14,90) size 600x18 [bgcolor=#00FFFF]
-    RenderText {#text} at (0,0) size 209x18
-      text run at (0,0) width 209: "With absolute positioning on div."
+    RenderText {#text} at (0,0) size 213x18
+      text run at (0,0) width 213: "With absolute positioning on div."
 layer at (14,203) size 600x18
   RenderBlock {DIV} at (2,2) size 600x18 [bgcolor=#00FFFF]
-    RenderText {#text} at (0,0) size 129x18
-      text run at (0,0) width 129: "With opacity on div."
+    RenderText {#text} at (0,0) size 130x18
+      text run at (0,0) width 130: "With opacity on div."
 layer at (12,308) size 604x104 clip at (13,309) size 602x102
   RenderTableCell {TD} at (2,43) size 604x22 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (2,2) size 600x18 [bgcolor=#00FFFF]
-      RenderText {#text} at (0,0) size 131x18
-        text run at (0,0) width 131: "With opacity on cell."
+      RenderText {#text} at (0,0) size 134x18
+        text run at (0,0) width 134: "With opacity on cell."
 layer at (14,1049) size 600x18
   RenderBlock (relative positioned) {DIV} at (2,2) size 600x18 [bgcolor=#FFA500]
-    RenderText {#text} at (0,0) size 203x18
-      text run at (0,0) width 203: "With relative positioning on div."
+    RenderText {#text} at (0,0) size 207x18
+      text run at (0,0) width 207: "With relative positioning on div."
 layer at (12,1154) size 604x104 clip at (13,1155) size 602x102
   RenderTableCell {TD} at (2,43) size 604x22 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (2,2) size 600x18 [bgcolor=#FFC0CB]
-      RenderText {#text} at (0,0) size 205x18
-        text run at (0,0) width 205: "With relative positioning on cell."
+      RenderText {#text} at (0,0) size 211x18
+        text run at (0,0) width 211: "With relative positioning on cell."
 layer at (112,1302) size 604x104 clip at (113,1303) size 602x102
   RenderTableCell {TD} at (2,43) size 604x22 [bgcolor=#808080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (2,2) size 600x18 [bgcolor=#FFC0CB]
-      RenderText {#text} at (0,0) size 290x18
-        text run at (0,0) width 290: "With relative positioning and an offset on cell."
+      RenderText {#text} at (0,0) size 297x18
+        text run at (0,0) width 297: "With relative positioning and an offset on cell."
 layer at (108,1582) size 300x100 scrollWidth 600
   RenderTableCell {DIV} at (0,41) size 300x18 [r=0 c=0 rs=1 cs=1]
     RenderBlock {DIV} at (0,0) size 300x18
       RenderBlock {DIV} at (0,0) size 600x18 [bgcolor=#FFA500]
-        RenderText {#text} at (0,0) size 278x18
-          text run at (0,0) width 278: "With display:table-cell + relative positioning"
+        RenderText {#text} at (0,0) size 287x18
+          text run at (0,0) width 287: "With display:table-cell + relative positioning"

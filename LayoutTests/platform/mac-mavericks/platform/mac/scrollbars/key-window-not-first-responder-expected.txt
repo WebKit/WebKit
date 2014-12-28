@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 53x18
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 742x36
-          RenderInline {A} at (0,0) size 154x18 [color=#0000EE]
-            RenderText {#text} at (53,0) size 154x18
-              text run at (53,0) width 154: "rdar://problem/6935192"
-          RenderText {#text} at (207,0) size 742x36
-            text run at (207,0) width 4: " "
-            text run at (211,0) width 500: "REGRESSION (Safari 3-Safari 4): Scroll bars in key window draw as inactive "
-            text run at (711,0) width 31: "if the"
-            text run at (0,18) width 139: "WebView is not active"
-        RenderText {#text} at (139,18) size 4x18
-          text run at (139,18) width 4: "."
+        RenderText {#text} at (0,0) size 54x18
+          text run at (0,0) width 54: "Test for "
+        RenderInline {I} at (0,0) size 750x36
+          RenderInline {A} at (0,0) size 156x18 [color=#0000EE]
+            RenderText {#text} at (53,0) size 156x18
+              text run at (53,0) width 156: "rdar://problem/6935192"
+          RenderText {#text} at (208,0) size 750x36
+            text run at (208,0) width 5: " "
+            text run at (212,0) width 506: "REGRESSION (Safari 3-Safari 4): Scroll bars in key window draw as inactive "
+            text run at (717,0) width 33: "if the"
+            text run at (0,18) width 140: "WebView is not active"
+        RenderText {#text} at (139,18) size 5x18
+          text run at (139,18) width 5: "."
       RenderBlock (anonymous) at (0,52) size 784x467
         RenderListBox {SELECT} at (2,2) size 48x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (52,40) size 4x18

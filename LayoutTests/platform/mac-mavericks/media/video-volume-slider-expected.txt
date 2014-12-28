@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 433x18
-        text run at (0,0) width 433: "Tests if the volume slider is rendererd properly. This test assumes the"
-      RenderBR {BR} at (433,14) size 0x0
-      RenderText {#text} at (0,18) size 453x18
-        text run at (0,18) width 453: "volume slider is implemented and mouse over the right bottom corner of"
-      RenderBR {BR} at (453,32) size 0x0
-      RenderText {#text} at (0,36) size 270x18
-        text run at (0,36) width 270: "video element will show the volume slider."
-      RenderBR {BR} at (270,50) size 0x0
+      RenderText {#text} at (0,0) size 443x18
+        text run at (0,0) width 443: "Tests if the volume slider is rendererd properly. This test assumes the"
+      RenderBR {BR} at (442,14) size 1x0
+      RenderText {#text} at (0,18) size 465x18
+        text run at (0,18) width 465: "volume slider is implemented and mouse over the right bottom corner of"
+      RenderBR {BR} at (464,32) size 1x0
+      RenderText {#text} at (0,36) size 276x18
+        text run at (0,36) width 276: "video element will show the volume slider."
+      RenderBR {BR} at (275,50) size 1x0
       RenderText {#text} at (0,0) size 0x0
 layer at (8,62) size 320x240
   RenderVideo {VIDEO} at (0,54) size 320x240

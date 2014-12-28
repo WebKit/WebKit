@@ -4,23 +4,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 207x18
-          text run at (0,0) width 207: "This tests for regressions against "
+        RenderText {#text} at (0,0) size 213x18
+          text run at (0,0) width 213: "This tests for regressions against "
         RenderInline {I} at (0,0) size 784x36
-          RenderInline {A} at (0,0) size 348x18 [color=#0000EE]
-            RenderText {#text} at (207,0) size 348x18
-              text run at (207,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8420"
-          RenderText {#text} at (555,0) size 784x36
-            text run at (555,0) width 4: " "
-            text run at (559,0) width 225: "iExploder(#12): Assertion failure in"
-            text run at (0,18) width 236: "RenderContainer::removeChildNode"
-        RenderText {#text} at (236,18) size 4x18
-          text run at (236,18) width 4: "."
+          RenderInline {A} at (0,0) size 354x18 [color=#0000EE]
+            RenderText {#text} at (212,0) size 354x18
+              text run at (212,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8420"
+          RenderText {#text} at (565,0) size 784x36
+            text run at (565,0) width 5: " "
+            text run at (569,0) width 215: "iExploder(#12): Assertion failure"
+            text run at (0,18) width 255: "in RenderContainer::removeChildNode"
+        RenderText {#text} at (254,18) size 5x18
+          text run at (254,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x36
-        RenderText {#text} at (0,0) size 703x36
-          text run at (0,0) width 559: "In the render tree, the button should have only one child, an anonymous block wrapping "
-          text run at (559,0) width 144: "all of the button's other"
-          text run at (0,18) width 80: "descendants."
+        RenderText {#text} at (0,0) size 716x36
+          text run at (0,0) width 568: "In the render tree, the button should have only one child, an anonymous block wrapping "
+          text run at (567,0) width 149: "all of the button's other"
+          text run at (0,18) width 82: "descendants."
       RenderBlock {HR} at (0,104) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,114) size 784x19
         RenderButton {BUTTON} at (2,2) size 16x15 [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
