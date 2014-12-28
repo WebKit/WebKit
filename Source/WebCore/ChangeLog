@@ -1,3 +1,13 @@
+2014-12-28  Dan Bernstein  <mitz@apple.com>
+
+        Don’t use AccessibilityAllInOne when building with Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=139974
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj: Added all files included by AccessibilityAllInOne.cpp
+        to the WebCore target, and removed AccessibilityAllInOne.cpp from the project.
+
 2014-12-26  Andreas Kling  <akling@apple.com>
 
         Purge PassRefPtr from Element and ElementRareData.
