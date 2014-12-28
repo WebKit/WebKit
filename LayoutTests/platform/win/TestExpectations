@@ -1762,7 +1762,7 @@ fast/forms/number/number-interactive-validation-required.html [ Skip ]
 
 # --- Media ---
 media/controls-styling.html [ Failure Crash ]
-media/media-document-audio-repaint.html [ Failure ]
+media/media-document-audio-repaint.html [ Timeout ]
 webkit.org/b/25465 media/video-zoom-controls.html [ Failure ]
 
 # Windows does not have global selection.
@@ -1778,7 +1778,7 @@ webkit.org/b/97026 editing/selection/select-from-textfield-outwards.html [ Failu
 webkit.org/b/97026 editing/spelling/grammar-edit-word.html [ Timeout ]
 webkit.org/b/97026 fast/forms/state-restore-broken-state.html [ Failure ]
 webkit.org/b/97026 media/audio-controls-rendering.html [ Failure ]
-webkit.org/b/97026 media/audio-repaint.html [ Failure ]
+webkit.org/b/97026 media/audio-repaint.html [ Timeout ]
 webkit.org/b/97026 media/controls-styling-strict.html [ Failure ]
 webkit.org/b/97026 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/97026 scrollbars/corner-resizer-window-inactive.html [ ImageOnlyFailure ]
@@ -2042,7 +2042,7 @@ webkit.org/b/116564 fast/events/remove-target-with-shadow-in-drag.html [ Pass Fa
 webkit.org/b/116564 fast/overflow/infiniteRecursionGuard.html [ Pass Failure ]
 webkit.org/b/116564 fast/text/text-combine-different-fonts.html [ Failure ]
 webkit.org/b/116564 fast/writing-mode/Kusa-Makura-background-canvas.html [ Pass Failure ]
-webkit.org/b/116564 media/click-volume-bar-not-pausing.html [ Failure ]
+webkit.org/b/116564 media/click-volume-bar-not-pausing.html [ Timeout ]
 webkit.org/b/116564 transitions/svg-text-shadow-transition.html [ Failure ]
 
 # Exclude WebSQL tests:
@@ -2814,8 +2814,8 @@ js/slow-stress/emscripten-memops.html [ Timeout ]
 
 # Skip remaining failing media tests after adding audio devices to the bots
 media/audio-only-video-intrinsic-size.html [ Timeout ]
-media/audio-play-event.html [ Failure ]
-media/context-menu-actions.html [ Failure ]
+media/audio-play-event.html [ Timeout ]
+media/context-menu-actions.html [ Timeout ]
 media/controls-after-reload.html [ Failure ]
 media/controls-strict.html [ Failure ]
 media/controls-without-preload.html [ Failure ]
@@ -2825,13 +2825,13 @@ media/encrypted-media/encrypted-media-events.html [ Failure ]
 media/encrypted-media/encrypted-media-not-loaded.html [ Failure ]
 media/encrypted-media/encrypted-media-session-lifetime.html [ Failure ]
 media/encrypted-media/encrypted-media-syntax.html [ Failure ]
-media/media-blocked-by-beforeload.html [ Failure ]
+media/media-blocked-by-beforeload.html [ Timeout ]
 media/media-can-play-flac-audio.html [ Failure ]
 media/media-can-play-ogg.html [ Failure ]
-media/media-captions.html [ Failure ]
-media/media-continues-playing-after-replace-source.html [ Failure ]
-media/media-controls-cancel-events.html [ Failure ]
-media/media-document-audio-controls-visible.html [ Failure ]
+media/media-captions.html [ Timeout ]
+media/media-continues-playing-after-replace-source.html [ Timeout ]
+media/media-controls-cancel-events.html [ Timeout ]
+media/media-document-audio-controls-visible.html [ Timeout ]
 media/media-document-audio-size.html [ Failure ]
 media/media-volume-slider-rendered-below.html [ Failure ]
 media/sources-fallback-codecs.html [ Failure ]
@@ -3071,8 +3071,4 @@ fast/text/unicode-variation-selector.html [ Crash ]
 # CONSOLE MESSAGE: line 18: ReferenceError: Can't find variable: MediaSource
 # FAIL: Timed out waiting for notifyDone to be called
 # no bug report yet
-media/media-source/media-source-canplaythrough.html [ Timeout ]
-media/media-source/media-source-append-failed.html [ Timeout ]
-media/media-source/media-source-append-buffer.html [ Timeout ]
-media/media-source/media-source-addsourcebuffer.html [ Timeout ]
-media/media-source/media-source-append-nonsync-sample-after-abort.html [ Timeout ]
+media/media-source [ Skip ]
