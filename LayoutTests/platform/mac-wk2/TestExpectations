@@ -554,3 +554,5 @@ webkit.org/b/138736 [ Mavericks+ ] http/tests/appcache/auth.html [ Skip ]
 [ Yosemite+ ] fast/events/page-visibility-transition-test.html [ Timeout ]
 
 webkit.org/b/138097 [ Yosemite ] inspector-protocol/debugger/setPauseOnExceptions-uncaught.html [ Pass Failure Timeout ]
+
+webkit.org/b/139979 [ Yosemite+ ] fast/regions/layers/region-removed-during-animation.html [ Pass ImageOnlyFailure ]
