@@ -1,3 +1,11 @@
+2014-12-28  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix.
+
+        Reverted r177781, because it appears to trigger <http://webkit.org/b/139609> on iOS.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2014-12-28  Roland Takacs  <rtakacs.u-szeged@partner.samsung.com>
 
         Set relayoutChildren to 'true' only if size change happens in Table
