@@ -108,7 +108,7 @@ static RefPtr<API::Object> transformGraph(API::Object& object, const UserData::T
             if (!element)
                 elements.uncheckedAppend(nullptr);
             else
-                elements.uncheckedAppend(transformer.transformObject(*element));
+                elements.uncheckedAppend(transformGraph(*element, transformer));
         }
 
         return API::Array::create(WTF::move(elements));
