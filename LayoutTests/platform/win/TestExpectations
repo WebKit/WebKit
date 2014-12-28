@@ -2254,7 +2254,10 @@ media/video-canvas-drawing-output.html [ Failure ]
 crypto/subtle [ Skip ]
 
 # Mock media source does not work on Windows
-media/media-source [ Failure ]
+# CONSOLE MESSAGE: line 13: TypeError: undefined is not a function (evaluating 'internals.initializeMockMediaSource()')
+# CONSOLE MESSAGE: line 18: ReferenceError: Can't find variable: MediaSource
+# FAIL: Timed out waiting for notifyDone to be called
+media/media-source [ Skip ]
 
 # isIndeterminate is not implemented in mac
 webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
@@ -3066,9 +3069,3 @@ fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Crash ]
 fast/text/midword-break-before-surrogate-pair-2.html [ Crash ]
 fast/text/regional-indicator-symobls.html [ Crash ]
 fast/text/unicode-variation-selector.html [ Crash ]
-
-# CONSOLE MESSAGE: line 13: TypeError: undefined is not a function (evaluating 'internals.initializeMockMediaSource()')
-# CONSOLE MESSAGE: line 18: ReferenceError: Can't find variable: MediaSource
-# FAIL: Timed out waiting for notifyDone to be called
-# no bug report yet
-media/media-source [ Skip ]
