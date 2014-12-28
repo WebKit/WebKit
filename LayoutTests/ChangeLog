@@ -1,5 +1,11 @@
 2014-12-28  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Win] Unreviewed gardening, mark failing tests.
+
+        * platform/win/TestExpectations:
+
+2014-12-28  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Win] Unreviewed gardening, typo fix.
 
         * platform/win/TestExpectations:

@@ -3069,3 +3069,6 @@ fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Crash ]
 fast/text/midword-break-before-surrogate-pair-2.html [ Crash ]
 fast/text/regional-indicator-symobls.html [ Crash ]
 fast/text/unicode-variation-selector.html [ Crash ]
+
+# [Win] REGRESSION(r177542 or r177613): svg/W3C tests are broken
+webkit.org/b/139972 svg/W3C-SVG-1.1 [ Failure ]
