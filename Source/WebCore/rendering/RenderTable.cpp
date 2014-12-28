@@ -431,13 +431,13 @@ void RenderTable::layout()
     // FIXME: We should do this recalc lazily in borderStart/borderEnd so that we don't have to make sure
     // to call this before we call borderStart/borderEnd to avoid getting a stale value.
     recalcBordersInRowDirection();
-        
+
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || style().isFlippedBlocksWritingMode());
 
-    setLogicalHeight(0);
-    
     LayoutUnit oldLogicalWidth = logicalWidth();
+    LayoutUnit oldLogicalHeight = logicalHeight();
+    setLogicalHeight(0);
     updateLogicalWidth();
 
     if (logicalWidth() != oldLogicalWidth) {
@@ -559,8 +559,8 @@ void RenderTable::layout()
         updateLogicalHeight();
 
     // table can be containing block of positioned elements.
-    // FIXME: Only pass true if width or height changed.
-    layoutPositionedObjects(true);
+    bool dimensionChanged = oldLogicalWidth != logicalWidth() || oldLogicalHeight != logicalHeight();
+    layoutPositionedObjects(dimensionChanged);
 
     updateLayerTransform();
 
