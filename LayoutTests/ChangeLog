@@ -1,3 +1,12 @@
+2014-12-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Update Mac test results after r177770.
+
+        Line numbers in error messages changed.
+
+        * platform/mac/http/tests/media/media-source/mediasource-addsourcebuffer-expected.txt:
+        * platform/mac/http/tests/media/media-source/mediasource-sourcebuffer-mode-expected.txt:
+
 2014-12-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Win] Unreviewed gardening, mark more failing tests.
