@@ -1,3 +1,10 @@
+2014-12-27  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix after r177765.
+
+        * Shared/mac/ObjCObjectGraph.mm:
+        (WebKit::ObjCObjectGraph::encode):
+
 2014-12-27  Anders Carlsson  <andersca@apple.com>
 
         Switch WebConnection over to sending objects with UserData

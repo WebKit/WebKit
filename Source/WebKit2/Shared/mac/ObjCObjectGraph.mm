@@ -157,7 +157,7 @@ void ObjCObjectGraph::encode(IPC::ArgumentEncoder& encoder, id object)
     case ObjCType::NSArray: {
         NSArray *array = object;
 
-        encoder << static_cast<uint64>(array.count);
+        encoder << static_cast<uint64_t>(array.count);
         for (id element in array)
             encode(encoder, element);
         break;
