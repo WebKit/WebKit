@@ -720,13 +720,9 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
 
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
         for (size_t i = 0; i != m_messagesToInjectedBundlePostedToEmptyContext.size(); ++i) {
-            std::pair<String, RefPtr<API::Object>>& message = m_messagesToInjectedBundlePostedToEmptyContext[i];
+            auto& messageNameAndBody = m_messagesToInjectedBundlePostedToEmptyContext[i];
 
-            IPC::ArgumentEncoder messageData;
-
-            messageData.encode(message.first);
-            messageData.encode(WebContextUserMessageEncoder(message.second.get(), process));
-            process->send(Messages::WebProcess::PostInjectedBundleMessage(IPC::DataReference(messageData.buffer(), messageData.bufferSize())), 0);
+            process->send(Messages::WebProcess::HandleInjectedBundleMessage(messageNameAndBody.first, UserData(process->transformObjectsToHandles(messageNameAndBody.second.get()).get())), 0);
         }
         m_messagesToInjectedBundlePostedToEmptyContext.clear();
     } else
@@ -941,11 +937,7 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
 
     for (auto& process : m_processes) {
         // FIXME: Return early if the message body contains any references to WKPageRefs/WKFrameRefs etc. since they're local to a process.
-        IPC::ArgumentEncoder messageData;
-        messageData.encode(messageName);
-        messageData.encode(WebContextUserMessageEncoder(messageBody, *process.get()));
-
-        process->send(Messages::WebProcess::PostInjectedBundleMessage(IPC::DataReference(messageData.buffer(), messageData.bufferSize())), 0);
+        process->send(Messages::WebProcess::HandleInjectedBundleMessage(messageName, UserData(process->transformObjectsToHandles(messageBody).get())), 0);
     }
 }
 

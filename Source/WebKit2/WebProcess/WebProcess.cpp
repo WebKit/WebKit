@@ -947,24 +947,13 @@ void WebProcess::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
     gcController().setJavaScriptGarbageCollectorTimerEnabled(flag);
 }
 
-void WebProcess::postInjectedBundleMessage(const IPC::DataReference& messageData)
+void WebProcess::handleInjectedBundleMessage(const String& messageName, const UserData& messageBody)
 {
     InjectedBundle* injectedBundle = WebProcess::shared().injectedBundle();
     if (!injectedBundle)
         return;
 
-    IPC::ArgumentDecoder decoder(messageData.data(), messageData.size());
-
-    String messageName;
-    if (!decoder.decode(messageName))
-        return;
-
-    RefPtr<API::Object> messageBody;
-    InjectedBundleUserMessageDecoder messageBodyDecoder(messageBody);
-    if (!decoder.decode(messageBodyDecoder))
-        return;
-
-    injectedBundle->didReceiveMessage(messageName, messageBody.get());
+    injectedBundle->didReceiveMessage(messageName, transformHandlesToObjects(messageBody.object()).get());
 }
 
 void WebProcess::setInjectedBundleParameter(const String& key, const IPC::DataReference& value)

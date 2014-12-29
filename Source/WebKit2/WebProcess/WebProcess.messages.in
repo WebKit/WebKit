@@ -74,7 +74,7 @@ messages -> WebProcess LegacyReceiver {
     SetJavaScriptGarbageCollectorTimerEnabled(bool enable)
 
     SetInjectedBundleParameter(String parameter, IPC::DataReference value);
-    PostInjectedBundleMessage(IPC::DataReference messageData);
+    HandleInjectedBundleMessage(String messageName, WebKit::UserData messageBody);
 
     ReleasePageCache()
 

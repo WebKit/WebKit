@@ -68,6 +68,7 @@ namespace WebKit {
 class DownloadManager;
 class EventDispatcher;
 class InjectedBundle;
+class UserData;
 class WebConnectionToUIProcess;
 class WebFrame;
 class WebIconDatabaseProxy;
@@ -266,7 +267,7 @@ private:
     void setEnabledServices(bool hasImageServices, bool hasSelectionServices, bool hasRichContentServices);
 #endif
 
-    void postInjectedBundleMessage(const IPC::DataReference& messageData);
+    void handleInjectedBundleMessage(const String& messageName, const UserData& messageBody);
     void setInjectedBundleParameter(const String& key, const IPC::DataReference&);
 
     // ChildProcess
