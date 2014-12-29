@@ -84,34 +84,4 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)
     return createSessionStorageNamespace(WebPage::fromCorePage(newPage)->pageID(), m_quotaInBytes);
 }
 
-void StorageNamespaceImpl::close()
-{
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-}
-
-void StorageNamespaceImpl::clearOriginForDeletion(SecurityOrigin*)
-{
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-}
-
-void StorageNamespaceImpl::clearAllOriginsForDeletion()
-{
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-}
-
-void StorageNamespaceImpl::sync()
-{
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-}
-
-void StorageNamespaceImpl::closeIdleLocalStorageDatabases()
-{
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-}
-
 } // namespace WebKit

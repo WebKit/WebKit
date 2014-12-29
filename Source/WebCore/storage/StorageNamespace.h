@@ -42,11 +42,6 @@ public:
     virtual ~StorageNamespace() { }
     virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>) = 0;
     virtual PassRefPtr<StorageNamespace> copy(Page* newPage) = 0;
-    virtual void close() = 0;
-    virtual void clearOriginForDeletion(SecurityOrigin*) = 0;
-    virtual void clearAllOriginsForDeletion() = 0;
-    virtual void sync() = 0;
-    virtual void closeIdleLocalStorageDatabases()  { }
 };
 
 } // namespace WebCore

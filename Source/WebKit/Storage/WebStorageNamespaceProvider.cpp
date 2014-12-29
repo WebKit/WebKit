@@ -58,7 +58,7 @@ void WebStorageNamespaceProvider::closeLocalStorage()
 {
     for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
         if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
-            localStorageNamespace->close();
+            static_cast<StorageNamespaceImpl*>(localStorageNamespace)->close();
     }
 }
 
@@ -66,7 +66,7 @@ void WebStorageNamespaceProvider::clearLocalStorageForAllOrigins()
 {
     for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
         if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
-            localStorageNamespace->clearAllOriginsForDeletion();
+            static_cast<StorageNamespaceImpl*>(localStorageNamespace)->clearAllOriginsForDeletion();
     }
 }
 
@@ -74,7 +74,7 @@ void WebStorageNamespaceProvider::clearLocalStorageForOrigin(SecurityOrigin* ori
 {
     for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
         if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
-            localStorageNamespace->clearOriginForDeletion(origin);
+            static_cast<StorageNamespaceImpl*>(localStorageNamespace)->clearOriginForDeletion(origin);
     }
 }
 
@@ -82,7 +82,7 @@ void WebStorageNamespaceProvider::closeIdleLocalStorageDatabases()
 {
     for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
         if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
-            localStorageNamespace->closeIdleLocalStorageDatabases();
+            static_cast<StorageNamespaceImpl*>(localStorageNamespace)->closeIdleLocalStorageDatabases();
     }
 }
 
@@ -90,7 +90,7 @@ void WebStorageNamespaceProvider::syncLocalStorage()
 {
     for (const auto& storageNamespaceProvider : storageNamespaceProviders()) {
         if (auto* localStorageNamespace = storageNamespaceProvider->optionalLocalStorageNamespace())
-            localStorageNamespace->sync();
+            static_cast<StorageNamespaceImpl*>(localStorageNamespace)->sync();
     }
 }
 

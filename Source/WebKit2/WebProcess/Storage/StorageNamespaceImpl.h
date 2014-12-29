@@ -54,11 +54,6 @@ private:
 
     virtual PassRefPtr<WebCore::StorageArea> storageArea(PassRefPtr<WebCore::SecurityOrigin>) override;
     virtual PassRefPtr<WebCore::StorageNamespace> copy(WebCore::Page*) override;
-    virtual void close() override;
-    virtual void clearOriginForDeletion(WebCore::SecurityOrigin*) override;
-    virtual void clearAllOriginsForDeletion() override;
-    virtual void sync() override;
-    virtual void closeIdleLocalStorageDatabases() override;
 
     const WebCore::StorageType m_storageType;
     const uint64_t m_storageNamespaceID;

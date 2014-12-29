@@ -43,21 +43,22 @@ public:
     WEBCORE_EXPORT static RefPtr<StorageNamespaceImpl> getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota);
     virtual ~StorageNamespaceImpl();
 
-    virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>)  override;
-    virtual PassRefPtr<StorageNamespace> copy(Page* newPage) override;
-    virtual void close() override;
+    void close();
 
     // Not removing the origin's StorageArea from m_storageAreaMap because
     // we're just deleting the underlying db file. If an item is added immediately
     // after file deletion, we want the same StorageArea to eventually trigger
     // a sync and for StorageAreaSync to recreate the backing db file.
-    virtual void clearOriginForDeletion(SecurityOrigin*) override;
-    virtual void clearAllOriginsForDeletion() override;
-    virtual void sync() override;
-    virtual void closeIdleLocalStorageDatabases() override;
+    void clearOriginForDeletion(SecurityOrigin*);
+    void clearAllOriginsForDeletion();
+    void sync();
+    void closeIdleLocalStorageDatabases();
 
 private:
     StorageNamespaceImpl(StorageType, const String& path, unsigned quota);
+
+    virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>)  override;
+    virtual PassRefPtr<StorageNamespace> copy(Page* newPage) override;
 
     typedef HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageAreaImpl>> StorageAreaMap;
     StorageAreaMap m_storageAreaMap;

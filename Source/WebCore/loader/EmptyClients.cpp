@@ -64,11 +64,6 @@ class EmptyStorageNamespaceProvider final : public StorageNamespaceProvider {
     struct EmptyStorageNamespace final : public StorageNamespace {
         virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>) override { return adoptRef(new EmptyStorageArea); }
         virtual PassRefPtr<StorageNamespace> copy(Page*) override { return adoptRef(new EmptyStorageNamespace); }
-        virtual void close() override { }
-        virtual void clearOriginForDeletion(SecurityOrigin*) override { }
-        virtual void clearAllOriginsForDeletion() override { }
-        virtual void sync() override { }
-        virtual void closeIdleLocalStorageDatabases() override { }
     };
 
     virtual RefPtr<StorageNamespace> createSessionStorageNamespace(Page&, unsigned) override
