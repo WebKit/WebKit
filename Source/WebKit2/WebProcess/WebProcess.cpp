@@ -271,7 +271,7 @@ AuthenticationManager& WebProcess::downloadsAuthenticationManager()
     return *supplement<AuthenticationManager>();
 }
 
-void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters, IPC::MessageDecoder& decoder)
+void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 {
     ASSERT(m_pageMap.isEmpty());
 
@@ -279,19 +279,14 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
     m_usesNetworkProcess = parameters.usesNetworkProcess;
 #endif
 
-    platformInitializeWebProcess(WTF::move(parameters), decoder);
+    platformInitializeWebProcess(WTF::move(parameters));
 
     WTF::setCurrentThreadIsUserInitiated();
 
     memoryPressureHandler().install();
 
-    RefPtr<API::Object> injectedBundleInitializationUserData;
-    InjectedBundleUserMessageDecoder messageDecoder(injectedBundleInitializationUserData);
-    if (!decoder.decode(messageDecoder))
-        return;
-
     if (!parameters.injectedBundlePath.isEmpty())
-        m_injectedBundle = InjectedBundle::create(parameters, injectedBundleInitializationUserData.get());
+        m_injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(parameters.initializationUserData.object()).get());
 
     WebProcessSupplementMap::const_iterator it = m_supplements.begin();
     WebProcessSupplementMap::const_iterator end = m_supplements.end();

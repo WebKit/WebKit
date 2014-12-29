@@ -210,8 +210,8 @@ private:
     virtual IPC::Connection* downloadProxyConnection() override;
     virtual AuthenticationManager& downloadsAuthenticationManager() override;
 
-    void initializeWebProcess(WebProcessCreationParameters&&, IPC::MessageDecoder&);
-    void platformInitializeWebProcess(WebProcessCreationParameters&&, IPC::MessageDecoder&);
+    void initializeWebProcess(WebProcessCreationParameters&&);
+    void platformInitializeWebProcess(WebProcessCreationParameters&&);
 
     void platformTerminate();
     void registerURLSchemeAsEmptyDocument(const String&);

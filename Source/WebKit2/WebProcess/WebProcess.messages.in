@@ -21,8 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebProcess LegacyReceiver {
-    # Initialize the WebProcess. 
-    InitializeWebProcess(struct WebKit::WebProcessCreationParameters processCreationParameters, WebKit::WebContextUserMessageEncoder initializationUserData) Variadic
+    InitializeWebProcess(struct WebKit::WebProcessCreationParameters processCreationParameters)
 
     # Create a new page.
     CreateWebPage(uint64_t newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)

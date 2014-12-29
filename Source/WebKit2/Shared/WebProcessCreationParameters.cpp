@@ -56,10 +56,15 @@ WebProcessCreationParameters::WebProcessCreationParameters()
 {
 }
 
+WebProcessCreationParameters::~WebProcessCreationParameters()
+{
+}
+
 void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
 {
     encoder << injectedBundlePath;
     encoder << injectedBundlePathExtensionHandle;
+    encoder << initializationUserData;
     encoder << applicationCacheDirectory;
     encoder << applicationCacheDirectoryExtensionHandle;
     encoder << webSQLDatabaseDirectory;
@@ -147,6 +152,8 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.injectedBundlePath))
         return false;
     if (!decoder.decode(parameters.injectedBundlePathExtensionHandle))
+        return false;
+    if (!decoder.decode(parameters.initializationUserData))
         return false;
     if (!decoder.decode(parameters.applicationCacheDirectory))
         return false;

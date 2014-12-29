@@ -29,6 +29,7 @@
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
+#include "UserData.h"
 #include <WebCore/SessionID.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -49,20 +50,23 @@ class Data;
 }
 
 namespace IPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
+class ArgumentDecoder;
+class ArgumentEncoder;
 }
 
 namespace WebKit {
 
 struct WebProcessCreationParameters {
     WebProcessCreationParameters();
+    ~WebProcessCreationParameters();
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebProcessCreationParameters&);
 
     String injectedBundlePath;
     SandboxExtension::Handle injectedBundlePathExtensionHandle;
+
+    UserData initializationUserData;
 
     String applicationCacheDirectory;    
     SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
