@@ -1,3 +1,9 @@
+2014-12-29  Sam Weinig  <sam@webkit.org>
+
+        Try to fix the iOS build.
+
+        * Shared/WebPasteboardProxy.h:
+
 2014-12-29  Anders Carlsson  <andersca@apple.com>
 
         Convert injected bundle message posting to UserData
