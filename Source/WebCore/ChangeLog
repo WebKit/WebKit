@@ -1,5 +1,11 @@
 2014-12-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, additional build fix on win port since r177786.
+
+        * platform/graphics/opengl/Extensions3DOpenGLES.h: Change a constructor from *protected* to *public*.
+
+2014-12-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, speculative build fix on win port since r177786.
 
         Apply std::unique_ptr<> and std::make_unique<> to win files as well.
