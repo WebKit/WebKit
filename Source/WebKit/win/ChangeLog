@@ -1,5 +1,12 @@
 2014-12-29  Anders Carlsson  <andersca@apple.com>
 
+        Another attempt at fixing the build.
+
+        * WebKitDLL.cpp:
+        (shutDownWebKit):
+
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the Windows build.
 
         * WebKitDLL.cpp:

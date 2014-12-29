@@ -141,7 +141,7 @@ STDAPI LocalServerDidDie()
 void shutDownWebKit()
 {
     WebCore::iconDatabase().close();
-    WebStorageNamespaceProvider:closeLocalStorage();
+    WebStorageNamespaceProvider::closeLocalStorage();
 }
 
 //FIXME: We should consider moving this to a new file for cross-project functionality
