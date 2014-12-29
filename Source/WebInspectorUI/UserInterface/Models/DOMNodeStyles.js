@@ -405,8 +405,10 @@ WebInspector.DOMNodeStyles.prototype = {
             return;
         }
 
-        function fetchedStyleSheetContent(styleSheet, content)
+        function fetchedStyleSheetContent(parameters)
         {
+            var content = parameters.content;
+
             console.assert(style.styleSheetTextRange);
             if (!style.styleSheetTextRange)
                 return;
@@ -446,7 +448,7 @@ WebInspector.DOMNodeStyles.prototype = {
         this._needsRefresh = true;
         this._ignoreNextContentDidChangeForStyleSheet = style.ownerStyleSheet;
 
-        style.ownerStyleSheet.requestContent(fetchedStyleSheetContent.bind(this));
+        style.ownerStyleSheet.requestContent().then(fetchedStyleSheetContent.bind(this));
     },
 
     changeProperty: function(property, name, value, priority)

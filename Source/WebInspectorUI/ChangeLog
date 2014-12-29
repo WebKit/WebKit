@@ -1,3 +1,63 @@
+2014-12-29  Jonathan Wells  <jonowells@apple.com>
+
+        Web Inspector: SourceCode.requestContent should return a promise
+        https://bugs.webkit.org/show_bug.cgi?id=135777
+
+        Reviewed by Brian Burg.
+
+        Change SourceCode.js to request content from the backend using Promises. Change Resource.js to use this new
+        approach when determining whether a resource load has finished. Change all calls to the older
+        SourceCode#requestContentFromBackendIfNeeded to simply use requestContent and use a catch function
+        if a content request error needs to be handled. Fix a bug where the appropriate error message for an
+        invalid resource wasn't showing in the resource content view.
+
+        * UserInterface/Controllers/AnalyzerManager.js:
+        (set WebInspector.AnalyzerManager.prototype.getAnalyzerMessagesForSourceCode.):
+        (set WebInspector.AnalyzerManager.prototype.getAnalyzerMessagesForSourceCode):
+        * UserInterface/Controllers/CSSStyleManager.js:
+        (WebInspector.CSSStyleManager.prototype._updateResourceContent.fetchedStyleSheetContent):
+        (WebInspector.CSSStyleManager.prototype._updateResourceContent.styleSheetReady):
+        * UserInterface/Models/CSSStyleSheet.js:
+        (WebInspector.CSSStyleSheet.prototype.requestContentFromBackend):
+        (WebInspector.CSSStyleSheet.prototype.canRequestContentFromBackend): Deleted.
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.changeStyleText):
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource.prototype.canRequestContent):
+        (WebInspector.Resource.prototype.requestContentFromBackend):
+        (WebInspector.Resource.prototype.markAsFinished):
+        (WebInspector.Resource.prototype.markAsFailed):
+        (WebInspector.Resource.prototype.getImageSize):
+        (WebInspector.Resource.prototype.canRequestContentFromBackend): Deleted.
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script.prototype.requestContentFromBackend):
+        (WebInspector.Script.prototype.requestScriptSyntaxTree.catch):
+        (WebInspector.Script.prototype.canRequestContentFromBackend): Deleted.
+        * UserInterface/Models/SourceCode.js:
+        (WebInspector.SourceCode):
+        (WebInspector.SourceCode.prototype.requestContent):
+        (WebInspector.SourceCode.prototype.requestContentFromBackend):
+        (WebInspector.SourceCode.prototype._processContent):
+        (WebInspector.SourceCode.prototype.canRequestContentFromBackend): Deleted.
+        (WebInspector.SourceCode.prototype.requestContentFromBackendIfNeeded): Deleted.
+        (WebInspector.SourceCode.prototype.servicePendingContentRequests): Deleted.
+        * UserInterface/Models/SourceMapResource.js:
+        (WebInspector.SourceMapResource):
+        (WebInspector.SourceMapResource.prototype.requestContentFromBackend.sourceMapResourceLoadError):
+        (WebInspector.SourceMapResource.prototype.requestContentFromBackend):
+        (WebInspector.SourceMapResource.prototype.canRequestContentFromBackend): Deleted.
+        (WebInspector.SourceMapResource.prototype.requestContentFromBackend.sourceMapResourceLoaded): Deleted.
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView):
+        (WebInspector.ResourceContentView.prototype._contentAvailable):
+        (WebInspector.ResourceContentView.prototype._contentError):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype._contentAvailable):
+        (WebInspector.SourceCodeTextEditor.prototype._populateWithInlineScriptContent.scriptContentAvailable):
+        (WebInspector.SourceCodeTextEditor.prototype._populateWithInlineScriptContent):
+        (WebInspector.SourceCodeTextEditor.prototype._populateWithScriptContent):
+
 2014-12-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19348208> REGRESSION (r177027): iOS builds use the wrong toolchain

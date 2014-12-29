@@ -27,13 +27,12 @@ WebInspector.SourceCode = function()
 {
     WebInspector.Object.call(this);
 
-    this._pendingContentRequestCallbacks = [];
-
     this._originalRevision = new WebInspector.SourceCodeRevision(this, null, false);
     this._currentRevision = this._originalRevision;
 
     this._sourceMaps = null;
     this._formatterSourceMap = null;
+    this._requestContentPromise = null;
 };
 
 WebInspector.Object.addConstructorFunctions(WebInspector.SourceCode);
@@ -41,7 +40,9 @@ WebInspector.Object.addConstructorFunctions(WebInspector.SourceCode);
 WebInspector.SourceCode.Event = {
     ContentDidChange: "source-code-content-did-change",
     SourceMapAdded: "source-code-source-map-added",
-    FormatterDidChange: "source-code-formatter-did-change"
+    FormatterDidChange: "source-code-formatter-did-change",
+    LoadingDidFinish: "source-code-loading-did-finish",
+    LoadingDidFail: "source-code-loading-did-fail"
 };
 
 WebInspector.SourceCode.prototype = {
@@ -123,20 +124,11 @@ WebInspector.SourceCode.prototype = {
         this.dispatchEventToListeners(WebInspector.SourceCode.Event.FormatterDidChange);
     },
 
-    requestContent: function(callback)
+    requestContent: function()
     {
-        console.assert(typeof callback === "function");
-        if (typeof callback !== "function")
-            return;
+        this._requestContentPromise = this._requestContentPromise || this.requestContentFromBackend().then(this._processContent.bind(this));
 
-        this._pendingContentRequestCallbacks.push(callback);
-
-        if (this._contentReceived) {
-            // Call _servicePendingContentRequests on a timeout to force callbacks to be asynchronous.
-            if (!this._servicePendingContentRequestsTimeoutIdentifier)
-                this._servicePendingContentRequestsTimeoutIdentifier = setTimeout(this.servicePendingContentRequests.bind(this), 0);
-        } else if (this.canRequestContentFromBackend())
-            this.requestContentFromBackendIfNeeded();
+        return this._requestContentPromise;
     },
 
     createSourceCodeLocation: function(lineNumber, columnNumber)
@@ -185,75 +177,20 @@ WebInspector.SourceCode.prototype = {
         this._contentReceived = false;
     },
 
-    canRequestContentFromBackend: function()
+    requestContentFromBackend: function()
     {
         // Implemented by subclasses.
         console.error("Needs to be implemented by a subclass.");
-        return false;
-    },
-
-    requestContentFromBackend: function(callback)
-    {
-        // Implemented by subclasses.
-        console.error("Needs to be implemented by a subclass.");
-    },
-
-    requestContentFromBackendIfNeeded: function()
-    {
-        console.assert(this.canRequestContentFromBackend());
-        if (!this.canRequestContentFromBackend())
-            return;
-
-        if (!this._pendingContentRequestCallbacks.length)
-            return;
-
-        if (this._contentRequestResponsePending)
-            return;
-
-        this._contentRequestResponsePending = true;
-
-        if (this.requestContentFromBackend(this._processContent.bind(this)))
-            return;
-
-        // Since requestContentFromBackend returned false, just call _processContent,
-        // which will cause the pending callbacks to get null content.
-        this._processContent();
-    },
-
-    servicePendingContentRequests: function(force)
-    {
-        if (this._servicePendingContentRequestsTimeoutIdentifier) {
-            clearTimeout(this._servicePendingContentRequestsTimeoutIdentifier);
-            delete this._servicePendingContentRequestsTimeoutIdentifier;
-        }
-
-        // Force the content requests to be sent. To do this correctly we also force
-        // _contentReceived to be true so future calls to requestContent go through.
-        if (force)
-            this._contentReceived = true;
-
-        console.assert(this._contentReceived);
-        if (!this._contentReceived)
-            return;
-
-        // Move the callbacks into a local and clear _pendingContentRequestCallbacks so
-        // callbacks that might call requestContent again will not modify the array.
-        var callbacks = this._pendingContentRequestCallbacks;
-        this._pendingContentRequestCallbacks = [];
-
-        for (var i = 0; i < callbacks.length; ++i)
-            callbacks[i](this, this.content, this.contentIsBase64Encoded);
+        return Promise.reject(new Error("Needs to be implemented by a subclass."));
     },
 
     // Private
 
-    _processContent: function(error, content, base64Encoded)
+    _processContent: function(parameters)
     {
-        if (error)
-            console.error(error);
-
-        this._contentRequestResponsePending = false;
-        this._contentReceived = true;
+        // Different backend APIs return one of `content, `body`, or `scriptSource`.
+        var content = parameters.content || parameters.body || parameters.scriptSource;
+        var base64Encoded = parameters.base64Encoded;
 
         var revision = this.revisionForRequestedContent;
 
@@ -262,7 +199,11 @@ WebInspector.SourceCode.prototype = {
         revision.contentIsBase64Encoded = base64Encoded || false;
         delete this._ignoreRevisionContentDidChangeEvent;
 
-        this.servicePendingContentRequests();
+        return Promise.resolve({
+            sourceCode: this,
+            content: content,
+            base64Encoded: base64Encoded
+        });
     }
 };
 

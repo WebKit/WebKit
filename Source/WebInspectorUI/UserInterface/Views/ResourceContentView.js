@@ -43,7 +43,7 @@ WebInspector.ResourceContentView = function(resource, styleClassName)
     this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
     // Request content last so the spinner will always be removed in case the content is immediately available.
-    resource.requestContent(this._contentAvailable.bind(this));
+    resource.requestContent().then(this._contentAvailable.bind(this)).catch(this._contentError.bind(this));
 
     if (!this.managesOwnIssues) {
         WebInspector.issueManager.addEventListener(WebInspector.IssueManager.Event.IssueWasAdded, this._issueWasAdded, this);
@@ -86,21 +86,20 @@ WebInspector.ResourceContentView.prototype = {
 
     // Private
 
-    _contentAvailable: function(resource, content, base64Encoded)
+    _contentAvailable: function(parameters)
     {
-        // Check for failed loads.
-        if (this.resource.failed) {
-            // Don't show an error message if there is already an error message showing (like one added by addIssue.)
-            if (this.element.querySelector(".message-text-view.error"))
-                return;
-
-            this.element.removeChildren();
-            this.element.appendChild(WebInspector.createMessageTextView(WebInspector.UIString("An error occurred trying to load the resource."), true));
-            return;
-        }
-
         // Content is ready to show, call the public method now.
-        this.contentAvailable(content, base64Encoded);
+        this.contentAvailable(parameters.content, parameters.base64Encoded);
+    },
+
+    _contentError: function(error)
+    {
+        // Don't show an error message if there is already an error message showing (like one added by addIssue.)
+        if (this.element.querySelector(".message-text-view.error"))
+            return;
+
+        this.element.removeChildren();
+        this.element.appendChild(WebInspector.createMessageTextView(WebInspector.UIString(error.message), true));
     },
 
     _issueWasAdded: function(event)

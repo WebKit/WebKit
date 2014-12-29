@@ -121,22 +121,15 @@ WebInspector.CSSStyleSheet.prototype = {
         CSSAgent.setStyleSheetText(this._id, this.currentRevision.content, contentDidChange.bind(this));
     },
 
-    canRequestContentFromBackend: function()
-    {
-        // We can request content if we have an id.
-        return !!this._id;
-    },
-
-    requestContentFromBackend: function(callback)
+    requestContentFromBackend: function()
     {
         if (!this._id) {
-            // There is no identifier to request content with. Return false to cause the
+            // There is no identifier to request content with. Reject the promise to cause the
             // pending callbacks to get null content.
-            return false;
+            return Promise.reject(new Error("There is no identifier to request content with."));
         }
 
-        CSSAgent.getStyleSheetText(this._id, callback);
-        return true;
+        return CSSAgent.getStyleSheetText.promise(this._id);
     },
 
     noteContentDidChange: function()

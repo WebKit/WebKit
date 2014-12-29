@@ -87,7 +87,7 @@ WebInspector.AnalyzerManager.prototype = {
                 return;
             }
 
-            function retrieveAnalyzerMessages()
+            function retrieveAnalyzerMessages(properties)
             {
                 var analyzerMessages = [];
                 var rawAnalyzerMessages = analyzer.verify(sourceCode.content, this._eslintConfig);
@@ -101,7 +101,7 @@ WebInspector.AnalyzerManager.prototype = {
                 resolve(analyzerMessages);
             }
 
-            sourceCode.requestContent(retrieveAnalyzerMessages.bind(this));
+            sourceCode.requestContent().then(retrieveAnalyzerMessages.bind(this));
         }.bind(this));
     },
 

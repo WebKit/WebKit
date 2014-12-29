@@ -70,7 +70,7 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
     else
         this._sourceCode.addEventListener(WebInspector.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
 
-    sourceCode.requestContent(this._contentAvailable.bind(this));
+    sourceCode.requestContent().then(this._contentAvailable.bind(this));
 
     // FIXME: Cmd+L shorcut doesn't actually work.
     new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.Command, "L", this.showGoToLineDialog.bind(this), this.element);
@@ -436,8 +436,12 @@ WebInspector.SourceCodeTextEditor.prototype = {
         this._contentDidPopulate();
     },
 
-    _contentAvailable: function(sourceCode, content, base64Encoded)
+    _contentAvailable: function(parameters)
     {
+        var sourceCode = parameters.sourceCode;
+        var content = parameters.content;
+        var base64Encoded = parameters.base64Encoded;
+
         console.assert(sourceCode === this._sourceCode);
         console.assert(!base64Encoded);
 
@@ -639,7 +643,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
         this._inlineScriptContentPopulated = pendingRequestCount;
 
-        function scriptContentAvailable(error, content)
+        function scriptContentAvailable(parameters)
         {
             // Return early if we are still waiting for content from other scripts.
             if (--pendingRequestCount)
@@ -689,7 +693,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
         var boundScriptContentAvailable = scriptContentAvailable.bind(this);
         for (var i = 0; i < scripts.length; ++i)
-            scripts[i].requestContent(boundScriptContentAvailable);
+            scripts[i].requestContent().then(boundScriptContentAvailable);
     },
 
     _populateWithScriptContent: function()
@@ -707,8 +711,9 @@ WebInspector.SourceCodeTextEditor.prototype = {
         console.assert(scripts[0].range.startLine === 0);
         console.assert(scripts[0].range.startColumn === 0);
 
-        function scriptContentAvailable(error, content)
+        function scriptContentAvailable(parameters)
         {
+            var content = parameters.content;
             delete this._requestingScriptContent;
 
             // Abort if the full content populated while waiting for this async callback.
@@ -723,7 +728,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
         this._requestingScriptContent = true;
 
-        scripts[0].requestContent(scriptContentAvailable.bind(this));
+        scripts[0].requestContent().then(scriptContentAvailable.bind(this));
     },
 
     _matchesSourceCodeLocation: function(sourceCodeLocation)

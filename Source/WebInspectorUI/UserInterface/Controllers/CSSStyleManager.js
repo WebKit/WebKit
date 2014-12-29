@@ -310,8 +310,11 @@ WebInspector.CSSStyleManager.prototype = {
     {
         console.assert(styleSheet);
 
-        function fetchedStyleSheetContent(styleSheet, content)
+        function fetchedStyleSheetContent(parameters)
         {
+            var styleSheet = parameters.sourceCode;
+            var content = parameters.content;
+
             delete styleSheet.__pendingChangeTimeout;
 
             console.assert(styleSheet.url);
@@ -347,7 +350,7 @@ WebInspector.CSSStyleManager.prototype = {
 
         function styleSheetReady()
         {
-            styleSheet.requestContent(fetchedStyleSheetContent.bind(this));
+            styleSheet.requestContent().then(fetchedStyleSheetContent.bind(this));
         }
 
         function applyStyleSheetChanges()

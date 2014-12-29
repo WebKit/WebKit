@@ -539,28 +539,23 @@ WebInspector.Resource.prototype = {
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
     },
 
-    canRequestContentFromBackend: function()
+    canRequestContent: function()
     {
         return this._finished;
     },
 
-    requestContentFromBackend: function(callback)
+    requestContentFromBackend: function()
     {
         // If we have the requestIdentifier we can get the actual response for this specific resource.
         // Otherwise the content will be cached resource data, which might not exist anymore.
-        if (this._requestIdentifier) {
-            NetworkAgent.getResponseBody(this._requestIdentifier, callback);
-            return true;
-        }
+        if (this._requestIdentifier)
+            return NetworkAgent.getResponseBody.promise(this._requestIdentifier);
 
-        if (this._parentFrame) {
-            PageAgent.getResourceContent(this._parentFrame.id, this._url, callback);
-            return true;
-        }
+        // There is no request identifier or frame to request content from.
+        if (this._parentFrame)
+            return PageAgent.getResourceContent.promise(this._parentFrame.id, this._url);
 
-        // There is no request identifier or frame to request content from. Return false to cause the
-        // pending callbacks to get null content.
-        return false;
+        return Promise.reject(new Error("Content request failed."));
     },
 
     increaseSize: function(dataLength, elapsedTime)
@@ -613,11 +608,11 @@ WebInspector.Resource.prototype = {
         this._finished = true;
         this._finishedOrFailedTimestamp = elapsedTime || NaN;
 
+        if (this._finishThenRequestContentPromise)
+            delete this._finishThenRequestContentPromise;
+
         this.dispatchEventToListeners(WebInspector.Resource.Event.LoadingDidFinish);
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
-
-        if (this.canRequestContentFromBackend())
-            this.requestContentFromBackendIfNeeded();
     },
 
     markAsFailed: function(canceled, elapsedTime)
@@ -630,9 +625,6 @@ WebInspector.Resource.prototype = {
 
         this.dispatchEventToListeners(WebInspector.Resource.Event.LoadingDidFail);
         this.dispatchEventToListeners(WebInspector.Resource.Event.TimestampsDidChange);
-
-        // Force the content requests to be serviced. They will get null as the content.
-        this.servicePendingContentRequests(true);
     },
 
     revertMarkAsFinished: function()
@@ -676,9 +668,28 @@ WebInspector.Resource.prototype = {
         image.addEventListener("load", imageDidLoad.bind(this), false);
 
         // Set the image source once we've obtained the base64-encoded URL for it.
-        this.requestContent(function() {
-            image.src = this.contentURL;
-        }.bind(this));
+        this.requestContent().then(function(content) {
+            image.src = content.sourceCode.contentURL;
+        });
+    },
+
+    requestContent: function()
+    {
+        if (this._finished)
+            return WebInspector.SourceCode.prototype.requestContent.call(this);
+
+        if (this._failed)
+            return Promise.reject(new Error("An error occurred trying to load the resource."));
+
+        if (!this._finishThenRequestContentPromise) {
+            var listener = new WebInspector.EventListener(this, true);
+            this._finishThenRequestContentPromise = new Promise(function (resolve, reject) {
+                this.addEventListener(WebInspector.Resource.Event.LoadingDidFinish, resolve);
+                this.addEventListener(WebInspector.Resource.Event.LoadingDidFail, reject);
+            }.bind(this)).then(WebInspector.SourceCode.prototype.requestContent.bind(this));
+        }
+
+        return this._finishThenRequestContentPromise;
     },
 
     associateWithScript: function(script)

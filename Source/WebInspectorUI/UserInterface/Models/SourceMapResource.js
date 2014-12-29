@@ -31,7 +31,6 @@ WebInspector.SourceMapResource = function(url, sourceMap)
     console.assert(sourceMap);
 
     this._sourceMap = sourceMap;
-    this._contentRequested = false;
 
     var inheritedMIMEType = this._sourceMap.originalSourceCode instanceof WebInspector.Resource ? this._sourceMap.originalSourceCode.syntheticMIMEType : null;
 
@@ -75,50 +74,53 @@ WebInspector.SourceMapResource.prototype = {
         return resourceURLComponents.path.substring(sourceMappingBasePathURLComponents.path.length, resourceURLComponents.length);
     },
 
-    canRequestContentFromBackend: function()
-    {
-        return !this._contentRequested;
-    },
-
     requestContentFromBackend: function(callback)
     {
-        this._contentRequested = true;
-
         // Revert the markAsFinished that was done in the constructor.
         this.revertMarkAsFinished();
 
         var inlineContent = this._sourceMap.sourceContent(this.url);
         if (inlineContent) {
             // Force inline content to be asynchronous to match the expected load pattern.
-            setTimeout(function() {
-                // FIXME: We don't know the MIME-type for inline content. Guess by analyzing the content?
-                sourceMapResourceLoaded.call(this, null, inlineContent, this.mimeType, 200);
-            }.bind(this));
-
-            return true;
+            // FIXME: We don't know the MIME-type for inline content. Guess by analyzing the content?
+            // Returns a promise.
+            return sourceMapResourceLoaded.call(this, null, inlineContent, this.mimeType, 200);
         }
 
-        function sourceMapResourceLoaded(error, body, mimeType, statusCode)
+        function sourceMapResourceLoadError(error, body, mimeType, statusCode)
+        {
+            this.markAsFailed();
+            return Promise.resolve({
+                error: error,
+                content: body.content,
+                mimeType: mimeType,
+                statusCode: statusCode
+            });
+        }
+
+        function sourceMapResourceLoaded(body, mimeType, statusCode)
         {
             const base64encoded = false;
 
-            if (error || statusCode >= 400) {
-                this.markAsFailed();
-                callback(error, body, base64encoded);
-                return;
-            }
+            if (statusCode >= 400)
+                return sourceMapResourceLoadError(error, body, mimeType, statusCode);
 
             // FIXME: Add support for picking the best MIME-type. Right now the file extension is the best bet.
             // The constructor set MIME-type based on the file extension and we ignore mimeType here.
 
             this.markAsFinished();
 
-            callback(null, body, base64encoded);
+            return Promise.resolve({
+                content: body.content,
+                mimeType: mimeType,
+                base64encoded: base64encoded,
+                statusCode: statusCode
+            });
         }
 
         if (!NetworkAgent.loadResource) {
             sourceMapResourceLoaded.call(this, "error: no NetworkAgent.loadResource");
-            return false;
+            return Promise.reject(new Error("No NetworkAgent.loadResource"));
         }
 
         var frameIdentifier = null;
@@ -128,9 +130,7 @@ WebInspector.SourceMapResource.prototype = {
         if (!frameIdentifier)
             frameIdentifier = WebInspector.frameResourceManager.mainFrame.id;
 
-        NetworkAgent.loadResource(frameIdentifier, this.url, sourceMapResourceLoaded.bind(this));
-
-        return true;
+        return NetworkAgent.loadResource.promise(frameIdentifier, this.url).then(sourceMapResourceLoaded.bind(this)).catch(sourceMapResourceLoadError.bind(this));
     },
 
     createSourceCodeLocation: function(lineNumber, columnNumber)
