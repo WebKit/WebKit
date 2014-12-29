@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2013 Orange
+ * Copyright (C) 2014 Sebastian Dröge <sebastian@centricular.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -39,19 +40,29 @@
 
 namespace WebCore {
 
-SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(PassRefPtr<MediaSourceClientGstreamer> client, const ContentType& contentType)
-    : m_readyState(MediaPlayer::HaveNothing)
+SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(PassRefPtr<MediaSourceClientGStreamer> client, const ContentType& contentType)
+    : m_type(contentType)
+    , m_client(client)
+    , m_readyState(MediaPlayer::HaveNothing)
 {
-    m_client = client;
-    m_type = contentType.type();
+}
+
+SourceBufferPrivateGStreamer::~SourceBufferPrivateGStreamer()
+{
+}
+
+void SourceBufferPrivateGStreamer::setClient(SourceBufferPrivateClient* client)
+{
+    m_sourceBufferPrivateClient = client;
 }
 
 void SourceBufferPrivateGStreamer::append(const unsigned char* data, unsigned length)
 {
     ASSERT(m_client);
-    m_client->didReceiveData(reinterpret_cast_ptr<const char*>(data), length, m_type);
+    ASSERT(m_sourceBufferPrivateClient);
 
-    // FIXME: call SourceBufferPrivateClient::sourceBufferPrivateAppendComplete().
+    SourceBufferPrivateClient::AppendResult result = m_client->append(this, data, length);
+    m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(this, result);
 }
 
 void SourceBufferPrivateGStreamer::abort()
@@ -60,6 +71,49 @@ void SourceBufferPrivateGStreamer::abort()
 }
 
 void SourceBufferPrivateGStreamer::removedFromMediaSource()
+{
+    m_client->removedFromMediaSource(this);
+}
+
+MediaPlayer::ReadyState SourceBufferPrivateGStreamer::readyState() const
+{
+    return m_readyState;
+}
+
+void SourceBufferPrivateGStreamer::setReadyState(MediaPlayer::ReadyState state)
+{
+    m_readyState = state;
+}
+
+// TODO: Implement these
+void SourceBufferPrivateGStreamer::flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString)
+{
+    notImplemented();
+}
+
+void SourceBufferPrivateGStreamer::enqueueSample(PassRefPtr<MediaSample>, AtomicString)
+{
+    notImplemented();
+}
+
+bool SourceBufferPrivateGStreamer::isReadyForMoreSamples(AtomicString)
+{
+    notImplemented();
+
+    return false;
+}
+
+void SourceBufferPrivateGStreamer::setActive(bool)
+{
+    notImplemented();
+}
+
+void SourceBufferPrivateGStreamer::stopAskingForMoreSamples(AtomicString)
+{
+    notImplemented();
+}
+
+void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(AtomicString)
 {
     notImplemented();
 }

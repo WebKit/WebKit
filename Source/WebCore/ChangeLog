@@ -1,3 +1,105 @@
+2014-12-29  Sebastian Dröge  <sebastian@centricular.com>
+
+        [GStreamer] Rewrite MediaSource implementation
+        https://bugs.webkit.org/show_bug.cgi?id=139441
+
+        Reviewed by Philippe Normand.
+
+        This now is a clean reimplementation around appsrc that works good
+        enough for YouTube (except for seeking), but it still does not
+        implement the complete API correctly. Further work is required on
+        top of this and the Bugzilla ticket linked above contains some
+        further work in the right direction.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::canSaveMediaData):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::totalVideoFrames):
+        (WebCore::MediaPlayerPrivateGStreamer::droppedVideoFrames):
+        (WebCore::MediaPlayerPrivateGStreamer::corruptedVideoFrames):
+        (WebCore::MediaPlayerPrivateGStreamer::totalFrameDelay):
+        (WebCore::MediaPlayerPrivateGStreamer::isMediaSource):
+        * platform/graphics/gstreamer/MediaSourceGStreamer.cpp:
+        (WebCore::MediaSourceGStreamer::MediaSourceGStreamer):
+        (WebCore::MediaSourceGStreamer::addSourceBuffer):
+        (WebCore::MediaSourceGStreamer::durationChanged):
+        (WebCore::MediaSourceGStreamer::markEndOfStream):
+        (WebCore::MediaSourceGStreamer::unmarkEndOfStream):
+        (WebCore::MediaSourceGStreamer::readyState):
+        (WebCore::MediaSourceGStreamer::setReadyState):
+        (WebCore::MediaSourceGStreamer::waitForSeekCompleted):
+        (WebCore::MediaSourceGStreamer::seekCompleted):
+        * platform/graphics/gstreamer/MediaSourceGStreamer.h:
+        * platform/graphics/gstreamer/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer):
+        (WebCore::SourceBufferPrivateGStreamer::~SourceBufferPrivateGStreamer):
+        (WebCore::SourceBufferPrivateGStreamer::setClient):
+        (WebCore::SourceBufferPrivateGStreamer::append):
+        (WebCore::SourceBufferPrivateGStreamer::removedFromMediaSource):
+        (WebCore::SourceBufferPrivateGStreamer::readyState):
+        (WebCore::SourceBufferPrivateGStreamer::setReadyState):
+        (WebCore::SourceBufferPrivateGStreamer::flushAndEnqueueNonDisplayingSamples):
+        (WebCore::SourceBufferPrivateGStreamer::enqueueSample):
+        (WebCore::SourceBufferPrivateGStreamer::isReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::setActive):
+        (WebCore::SourceBufferPrivateGStreamer::stopAskingForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples):
+        * platform/graphics/gstreamer/SourceBufferPrivateGStreamer.h:
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp:
+        (webkit_media_src_class_init):
+        (webkit_media_src_init):
+        (webKitMediaSrcFinalize):
+        (webKitMediaSrcSetProperty):
+        (webKitMediaSrcGetProperty):
+        (webKitMediaSrcDoAsyncStart):
+        (webKitMediaSrcDoAsyncDone):
+        (webKitMediaSrcChangeState):
+        (webKitMediaSrcQueryWithParent):
+        (webKitMediaSrcGetUri):
+        (webKitMediaSrcSetUri):
+        (WebCore::MediaSourceClientGStreamer::MediaSourceClientGStreamer):
+        (WebCore::MediaSourceClientGStreamer::~MediaSourceClientGStreamer):
+        (WebCore::MediaSourceClientGStreamer::addSourceBuffer):
+        (WebCore::MediaSourceClientGStreamer::durationChanged):
+        (WebCore::MediaSourceClientGStreamer::append):
+        (WebCore::MediaSourceClientGStreamer::markEndOfStream):
+        (WebCore::MediaSourceClientGStreamer::removedFromMediaSource):
+        (WTF::adoptGRef):
+        (WTF::refGPtr<WebKitMediaSrc>):
+        (WTF::derefGPtr<WebKitMediaSrc>):
+        (webKitMediaSrcAddSrc): Deleted.
+        (webKitMediaVideoSrcStop): Deleted.
+        (webKitMediaAudioSrcStop): Deleted.
+        (webKitMediaVideoSrcStart): Deleted.
+        (webKitMediaAudioSrcStart): Deleted.
+        (webKitMediaVideoSrcNeedDataMainCb): Deleted.
+        (webKitMediaAudioSrcNeedDataMainCb): Deleted.
+        (webKitMediaVideoSrcNeedDataCb): Deleted.
+        (webKitMediaAudioSrcNeedDataCb): Deleted.
+        (webKitMediaVideoSrcEnoughDataMainCb): Deleted.
+        (webKitMediaAudioSrcEnoughDataMainCb): Deleted.
+        (webKitMediaVideoSrcEnoughDataCb): Deleted.
+        (webKitMediaAudioSrcEnoughDataCb): Deleted.
+        (webKitMediaVideoSrcSeekMainCb): Deleted.
+        (webKitMediaAudioSrcSeekMainCb): Deleted.
+        (webKitMediaVideoSrcSeekDataCb): Deleted.
+        (webKitMediaAudioSrcSeekDataCb): Deleted.
+        (webKitMediaSrcSetMediaPlayer): Deleted.
+        (webKitMediaSrcSetPlayBin): Deleted.
+        (MediaSourceClientGstreamer::MediaSourceClientGstreamer): Deleted.
+        (MediaSourceClientGstreamer::~MediaSourceClientGstreamer): Deleted.
+        (MediaSourceClientGstreamer::didReceiveDuration): Deleted.
+        (MediaSourceClientGstreamer::didReceiveData): Deleted.
+        (MediaSourceClientGstreamer::didFinishLoading): Deleted.
+        (MediaSourceClientGstreamer::didFail): Deleted.
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.h:
+        Rewrite MediaSource implementation for GStreamer. The old code was
+        overly complicated and did not work at all for anything I've tested
+        it with.
+
 2014-12-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, additional build fix on win port since r177786.

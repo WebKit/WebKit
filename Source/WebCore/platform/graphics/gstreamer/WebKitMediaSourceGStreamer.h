@@ -2,6 +2,7 @@
  *  Copyright (C) 2009, 2010 Sebastian Dröge <sebastian.droege@collabora.co.uk>
  *  Copyright (C) 2013 Collabora Ltd.
  *  Copyright (C) 2013 Orange
+ *  Copyright (C) 2014 Sebastian Dröge <sebastian@centricular.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,7 +23,12 @@
 #define WebKitMediaSourceGStreamer_h
 #if ENABLE(VIDEO) && ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
+#include "GRefPtrGStreamer.h"
 #include "MediaPlayer.h"
+#include "MediaSource.h"
+#include "SourceBufferPrivate.h"
+#include "SourceBufferPrivateClient.h"
+
 #include <gst/gst.h>
 
 G_BEGIN_DECLS
@@ -48,25 +54,38 @@ struct _WebKitMediaSrcClass {
 };
 
 GType webkit_media_src_get_type(void);
-void webKitMediaSrcSetMediaPlayer(WebKitMediaSrc*, WebCore::MediaPlayer*);
-void webKitMediaSrcSetPlayBin(WebKitMediaSrc*, GstElement*);
 
 G_END_DECLS
 
-class MediaSourceClientGstreamer: public RefCounted<MediaSourceClientGstreamer> {
-    public:
-        MediaSourceClientGstreamer(WebKitMediaSrc*);
-        ~MediaSourceClientGstreamer();
-
-        void didReceiveDuration(double);
-        void didReceiveData(const char*, int, String);
-        void didFinishLoading(double);
-        void didFail();
-
-    private:
-        WebKitMediaSrc* m_src;
+namespace WTF {
+template<> GRefPtr<WebKitMediaSrc> adoptGRef(WebKitMediaSrc* ptr);
+template<> WebKitMediaSrc* refGPtr<WebKitMediaSrc>(WebKitMediaSrc* ptr);
+template<> void derefGPtr<WebKitMediaSrc>(WebKitMediaSrc* ptr);
 };
 
+namespace WebCore {
+
+class ContentType;
+
+class MediaSourceClientGStreamer: public RefCounted<MediaSourceClientGStreamer> {
+    public:
+        MediaSourceClientGStreamer(WebKitMediaSrc*);
+        virtual ~MediaSourceClientGStreamer();
+
+        // From MediaSourceGStreamer
+        MediaSourcePrivate::AddStatus addSourceBuffer(PassRefPtr<SourceBufferPrivate>, const ContentType&);
+        void durationChanged(const MediaTime&);
+        void markEndOfStream(MediaSourcePrivate::EndOfStreamStatus);
+
+        // From SourceBufferPrivateGStreamer
+        SourceBufferPrivateClient::AppendResult append(PassRefPtr<SourceBufferPrivate>, const unsigned char*, unsigned);
+        void removedFromMediaSource(PassRefPtr<SourceBufferPrivate>);
+
+    private:
+        GRefPtr<WebKitMediaSrc> m_src;
+};
+
+};
 
 #endif // USE(GSTREAMER)
 #endif

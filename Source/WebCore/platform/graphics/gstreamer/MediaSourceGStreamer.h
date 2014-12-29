@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2013 Orange
+ * Copyright (C) 2014 Sebastian Dröge <sebastian@centricular.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,25 +39,28 @@
 
 namespace WebCore {
 
+// FIXME: Should this be called MediaSourcePrivateGStreamer?
 class MediaSourceGStreamer final : public MediaSourcePrivate {
 public:
     static void open(MediaSourcePrivateClient*, WebKitMediaSrc*);
-    ~MediaSourceGStreamer();
+    virtual ~MediaSourceGStreamer();
+
+    virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&);
+    virtual void durationChanged();
+    virtual void markEndOfStream(EndOfStreamStatus);
+    virtual void unmarkEndOfStream();
+
+    virtual MediaPlayer::ReadyState readyState() const;
+    virtual void setReadyState(MediaPlayer::ReadyState);
+
+    virtual void waitForSeekCompleted();
+    virtual void seekCompleted();
 
 private:
-    // MediaSourcePrivate
-    virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
-    virtual void durationChanged() override;
-    virtual void markEndOfStream(EndOfStreamStatus) override;
-    virtual void unmarkEndOfStream() override;
-    virtual MediaPlayer::ReadyState readyState() const override { return m_readyState; }
-    virtual void setReadyState(MediaPlayer::ReadyState readyState) override { m_readyState = readyState; }
-    virtual void waitForSeekCompleted() override { }
-    virtual void seekCompleted() override { }
-
-    RefPtr<MediaSourceClientGstreamer> m_client;
-    MediaSourcePrivateClient* m_mediaSource;
     MediaSourceGStreamer(MediaSourcePrivateClient*, WebKitMediaSrc*);
+
+    RefPtr<MediaSourceClientGStreamer> m_client;
+    MediaSourcePrivateClient* m_mediaSource;
     MediaPlayer::ReadyState m_readyState;
 };
 

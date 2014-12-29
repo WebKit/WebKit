@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2013 Orange
+ * Copyright (C) 2014 Sebastian Dröge <sebastian@centricular.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,6 +35,7 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
+#include "ContentType.h"
 #include "SourceBufferPrivate.h"
 #include "WebKitMediaSourceGStreamer.h"
 
@@ -41,21 +43,29 @@ namespace WebCore {
 
 class SourceBufferPrivateGStreamer final : public SourceBufferPrivate {
 public:
-    SourceBufferPrivateGStreamer(PassRefPtr<MediaSourceClientGstreamer>, const ContentType&);
-    ~SourceBufferPrivateGStreamer() { }
+    SourceBufferPrivateGStreamer(PassRefPtr<MediaSourceClientGStreamer>, const ContentType&);
+    virtual ~SourceBufferPrivateGStreamer();
 
-    void setClient(SourceBufferPrivateClient*) { }
-    void append(const unsigned char*, unsigned);
-    void abort();
-    void removedFromMediaSource();
-    MediaPlayer::ReadyState readyState() const { return m_readyState; }
-    void setReadyState(MediaPlayer::ReadyState readyState) { m_readyState = readyState; }
-    void evictCodedFrames() { }
-    bool isFull() { return false; }
+    virtual void setClient(SourceBufferPrivateClient*);
+
+    virtual void append(const unsigned char* data, unsigned length);
+    virtual void abort();
+    virtual void removedFromMediaSource();
+
+    virtual MediaPlayer::ReadyState readyState() const;
+    virtual void setReadyState(MediaPlayer::ReadyState);
+
+    virtual void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString);
+    virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString);
+    virtual bool isReadyForMoreSamples(AtomicString);
+    virtual void setActive(bool);
+    virtual void stopAskingForMoreSamples(AtomicString);
+    virtual void notifyClientWhenReadyForMoreSamples(AtomicString);
 
 private:
-    String m_type;
-    RefPtr<MediaSourceClientGstreamer> m_client;
+    ContentType m_type;
+    RefPtr<MediaSourceClientGStreamer> m_client;
+    SourceBufferPrivateClient* m_sourceBufferPrivateClient;
     MediaPlayer::ReadyState m_readyState;
 };
 
