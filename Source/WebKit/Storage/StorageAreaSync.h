@@ -26,8 +26,8 @@
 #ifndef StorageAreaSync_h
 #define StorageAreaSync_h
 
-#include "SQLiteDatabase.h"
-#include "Timer.h"
+#include <WebCore/SQLiteDatabase.h>
+#include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
@@ -75,8 +75,8 @@ public:
 
 private:
     enum OpenDatabaseParamType {
-      CreateIfNonExistent,
-      SkipIfNonExistent
+        CreateIfNonExistent,
+        SkipIfNonExistent
     };
 
     void syncTimerFired();

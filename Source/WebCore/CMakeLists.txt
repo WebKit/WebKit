@@ -2483,16 +2483,10 @@ set(WebCore_SOURCES
     replay/UserInputBridge.cpp
 
     storage/Storage.cpp
-    storage/StorageAreaImpl.cpp
-    storage/StorageAreaSync.cpp
     storage/StorageEvent.cpp
     storage/StorageEventDispatcher.cpp
     storage/StorageMap.cpp
-    storage/StorageNamespaceImpl.cpp
     storage/StorageNamespaceProvider.cpp
-    storage/StorageSyncManager.cpp
-    storage/StorageThread.cpp
-    storage/StorageTracker.cpp
 
     style/InlineTextBoxStyle.cpp
     style/StyleFontSizeFunctions.cpp

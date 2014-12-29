@@ -1,3 +1,16 @@
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
+        Move storage code from WebCore to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=139558
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/MemoryPressureHandler.cpp:
+
 2014-12-29  Sebastian Dröge  <sebastian@centricular.com>
 
         [GStreamer] Rewrite MediaSource implementation

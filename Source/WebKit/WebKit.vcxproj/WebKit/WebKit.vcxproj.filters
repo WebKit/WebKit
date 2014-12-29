@@ -217,6 +217,24 @@
     <ClCompile Include="..\..\win\WebSerializedJSValue.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Storage\StorageAreaImpl.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Storage\StorageAreaSync.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Storage\StorageNamespaceImpl.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Storage\StorageSyncManager.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Storage\StorageThread.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Storage\StorageTracker.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Storage\WebStorageNamespaceProvider.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -536,6 +554,27 @@
     </ClInclude>
     <ClInclude Include="..\..\win\WebCoreSupport\AcceleratedCompositingContext.h">
       <Filter>WebCoreSupport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Storage\StorageAreaImpl.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Storage\StorageAreaSync.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Storage\StorageNamespaceImpl.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Storage\StorageSyncManager.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Storage\StorageThread.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Storage\StorageTracker.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Storage\StorageTrackerClient.h">
+      <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Storage\WebStorageNamespaceProvider.h">
       <Filter>Header Files</Filter>

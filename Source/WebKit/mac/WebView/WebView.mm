@@ -36,6 +36,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "DictionaryPopupInfo.h"
+#import "StorageThread.h"
 #import "WebAlternativeTextClient.h"
 #import "WebApplicationCache.h"
 #import "WebBackForwardListInternal.h"
@@ -175,7 +176,6 @@
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/Settings.h>
-#import <WebCore/StorageThread.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>

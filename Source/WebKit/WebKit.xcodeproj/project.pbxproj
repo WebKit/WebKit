@@ -33,6 +33,19 @@
 		1A60519417502A5D00BC62F5 /* HistoryPropertyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A60519017502A5D00BC62F5 /* HistoryPropertyList.h */; };
 		1A6A208D1886154600E50F5F /* WebProgressTrackerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A6A208B1886154600E50F5F /* WebProgressTrackerClient.mm */; };
 		1A6A208E1886154600E50F5F /* WebProgressTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6A208C1886154600E50F5F /* WebProgressTrackerClient.h */; };
+		1A6B31311A51F3A900422975 /* StorageAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6B31241A51F3A900422975 /* StorageAreaImpl.cpp */; };
+		1A6B31321A51F3A900422975 /* StorageAreaImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6B31251A51F3A900422975 /* StorageAreaImpl.h */; };
+		1A6B31331A51F3A900422975 /* StorageAreaSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6B31261A51F3A900422975 /* StorageAreaSync.cpp */; };
+		1A6B31341A51F3A900422975 /* StorageAreaSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6B31271A51F3A900422975 /* StorageAreaSync.h */; };
+		1A6B31351A51F3A900422975 /* StorageNamespaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6B31281A51F3A900422975 /* StorageNamespaceImpl.cpp */; };
+		1A6B31361A51F3A900422975 /* StorageNamespaceImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6B31291A51F3A900422975 /* StorageNamespaceImpl.h */; };
+		1A6B31371A51F3A900422975 /* StorageSyncManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6B312A1A51F3A900422975 /* StorageSyncManager.cpp */; };
+		1A6B31381A51F3A900422975 /* StorageSyncManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6B312B1A51F3A900422975 /* StorageSyncManager.h */; };
+		1A6B31391A51F3A900422975 /* StorageThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6B312C1A51F3A900422975 /* StorageThread.cpp */; };
+		1A6B313A1A51F3A900422975 /* StorageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6B312D1A51F3A900422975 /* StorageThread.h */; };
+		1A6B313B1A51F3A900422975 /* StorageTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6B312E1A51F3A900422975 /* StorageTracker.cpp */; };
+		1A6B313C1A51F3A900422975 /* StorageTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6B312F1A51F3A900422975 /* StorageTracker.h */; };
+		1A6B313D1A51F3A900422975 /* StorageTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6B31301A51F3A900422975 /* StorageTrackerClient.h */; };
 		1A74A28E0F4F75400082E228 /* WebTextInputWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A74A28C0F4F75400082E228 /* WebTextInputWindowController.h */; };
 		1A74A28F0F4F75400082E228 /* WebTextInputWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74A28D0F4F75400082E228 /* WebTextInputWindowController.m */; };
 		1A77B02E0EE7730500C8A1F9 /* WebPluginRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */; };
@@ -483,6 +496,19 @@
 		1A60519017502A5D00BC62F5 /* HistoryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryPropertyList.h; sourceTree = "<group>"; };
 		1A6A208B1886154600E50F5F /* WebProgressTrackerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProgressTrackerClient.mm; sourceTree = "<group>"; };
 		1A6A208C1886154600E50F5F /* WebProgressTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProgressTrackerClient.h; sourceTree = "<group>"; };
+		1A6B31241A51F3A900422975 /* StorageAreaImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageAreaImpl.cpp; path = Storage/StorageAreaImpl.cpp; sourceTree = SOURCE_ROOT; };
+		1A6B31251A51F3A900422975 /* StorageAreaImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageAreaImpl.h; path = Storage/StorageAreaImpl.h; sourceTree = SOURCE_ROOT; };
+		1A6B31261A51F3A900422975 /* StorageAreaSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageAreaSync.cpp; path = Storage/StorageAreaSync.cpp; sourceTree = SOURCE_ROOT; };
+		1A6B31271A51F3A900422975 /* StorageAreaSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageAreaSync.h; path = Storage/StorageAreaSync.h; sourceTree = SOURCE_ROOT; };
+		1A6B31281A51F3A900422975 /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageNamespaceImpl.cpp; path = Storage/StorageNamespaceImpl.cpp; sourceTree = SOURCE_ROOT; };
+		1A6B31291A51F3A900422975 /* StorageNamespaceImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageNamespaceImpl.h; path = Storage/StorageNamespaceImpl.h; sourceTree = SOURCE_ROOT; };
+		1A6B312A1A51F3A900422975 /* StorageSyncManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageSyncManager.cpp; path = Storage/StorageSyncManager.cpp; sourceTree = SOURCE_ROOT; };
+		1A6B312B1A51F3A900422975 /* StorageSyncManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageSyncManager.h; path = Storage/StorageSyncManager.h; sourceTree = SOURCE_ROOT; };
+		1A6B312C1A51F3A900422975 /* StorageThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageThread.cpp; path = Storage/StorageThread.cpp; sourceTree = SOURCE_ROOT; };
+		1A6B312D1A51F3A900422975 /* StorageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageThread.h; path = Storage/StorageThread.h; sourceTree = SOURCE_ROOT; };
+		1A6B312E1A51F3A900422975 /* StorageTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageTracker.cpp; path = Storage/StorageTracker.cpp; sourceTree = SOURCE_ROOT; };
+		1A6B312F1A51F3A900422975 /* StorageTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageTracker.h; path = Storage/StorageTracker.h; sourceTree = SOURCE_ROOT; };
+		1A6B31301A51F3A900422975 /* StorageTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageTrackerClient.h; path = Storage/StorageTrackerClient.h; sourceTree = SOURCE_ROOT; };
 		1A74A28C0F4F75400082E228 /* WebTextInputWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTextInputWindowController.h; sourceTree = "<group>"; };
 		1A74A28D0F4F75400082E228 /* WebTextInputWindowController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = WebTextInputWindowController.m; sourceTree = "<group>"; };
 		1A77B02C0EE7730500C8A1F9 /* WebPluginRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginRequest.h; sourceTree = "<group>"; };
@@ -1195,6 +1221,19 @@
 			isa = PBXGroup;
 			children = (
 				A10C1D3F18202FDC0036883A /* ios */,
+				1A6B31241A51F3A900422975 /* StorageAreaImpl.cpp */,
+				1A6B31251A51F3A900422975 /* StorageAreaImpl.h */,
+				1A6B31261A51F3A900422975 /* StorageAreaSync.cpp */,
+				1A6B31271A51F3A900422975 /* StorageAreaSync.h */,
+				1A6B31281A51F3A900422975 /* StorageNamespaceImpl.cpp */,
+				1A6B31291A51F3A900422975 /* StorageNamespaceImpl.h */,
+				1A6B312A1A51F3A900422975 /* StorageSyncManager.cpp */,
+				1A6B312B1A51F3A900422975 /* StorageSyncManager.h */,
+				1A6B312C1A51F3A900422975 /* StorageThread.cpp */,
+				1A6B312D1A51F3A900422975 /* StorageThread.h */,
+				1A6B312E1A51F3A900422975 /* StorageTracker.cpp */,
+				1A6B312F1A51F3A900422975 /* StorageTracker.h */,
+				1A6B31301A51F3A900422975 /* StorageTrackerClient.h */,
 				511F3FD10CECC88F00852565 /* WebDatabaseManager.mm */,
 				511F3FD30CECC88F00852565 /* WebDatabaseManagerClient.h */,
 				511F3FD40CECC88F00852565 /* WebDatabaseManagerClient.mm */,
@@ -1691,6 +1730,7 @@
 				939810660824BF01008DF038 /* CarbonWindowContentView.h in Headers */,
 				939810670824BF01008DF038 /* CarbonWindowFrame.h in Headers */,
 				B82958D3132707D0000D0E79 /* CorrectionPanel.h in Headers */,
+				1A6B313A1A51F3A900422975 /* StorageThread.h in Headers */,
 				1A60519417502A5D00BC62F5 /* HistoryPropertyList.h in Headers */,
 				939810680824BF01008DF038 /* HIViewAdapter.h in Headers */,
 				1A6A208E1886154600E50F5F /* WebProgressTrackerClient.h in Headers */,
@@ -1743,6 +1783,7 @@
 				939810760824BF01008DF038 /* WebDefaultUIDelegate.h in Headers */,
 				BC542C420FD7766F00D8AB5D /* WebDelegateImplementationCaching.h in Headers */,
 				598AD9201201CF0700ABAE4E /* WebDeviceOrientation.h in Headers */,
+				1A6B31381A51F3A900422975 /* StorageSyncManager.h in Headers */,
 				598AD91A1201CEC900ABAE4E /* WebDeviceOrientationClient.h in Headers */,
 				598AD9241201CF1900ABAE4E /* WebDeviceOrientationInternal.h in Headers */,
 				A17A11B1180DC84800E5498C /* WebPluginPackagePrivate.h in Headers */,
@@ -1759,6 +1800,7 @@
 				939810770824BF01008DF038 /* WebDownload.h in Headers */,
 				ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */,
 				A70936AF0B5608DC00CDB48E /* WebDragClient.h in Headers */,
+				1A6B313C1A51F3A900422975 /* StorageTracker.h in Headers */,
 				939810510824BF01008DF038 /* WebDynamicScrollBarsView.h in Headers */,
 				934C11670D8710BB00C32ABD /* WebDynamicScrollBarsViewInternal.h in Headers */,
 				9398109E0824BF01008DF038 /* WebEditingDelegate.h in Headers */,
@@ -1768,6 +1810,7 @@
 				DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */,
 				939810520824BF01008DF038 /* WebFormDelegate.h in Headers */,
 				939810640824BF01008DF038 /* WebFormDelegatePrivate.h in Headers */,
+				1A6B31341A51F3A900422975 /* StorageAreaSync.h in Headers */,
 				939810530824BF01008DF038 /* WebFrame.h in Headers */,
 				A10C1D1A18202F9C0036883A /* WebDefaultFrameLoadDelegate.h in Headers */,
 				9398109C0824BF01008DF038 /* WebFrameInternal.h in Headers */,
@@ -1796,6 +1839,7 @@
 				939810550824BF01008DF038 /* WebHTMLRepresentation.h in Headers */,
 				939810560824BF01008DF038 /* WebHTMLRepresentationPrivate.h in Headers */,
 				939810570824BF01008DF038 /* WebHTMLView.h in Headers */,
+				1A6B313D1A51F3A900422975 /* StorageTrackerClient.h in Headers */,
 				939810A10824BF01008DF038 /* WebHTMLViewInternal.h in Headers */,
 				939810580824BF01008DF038 /* WebHTMLViewPrivate.h in Headers */,
 				939810180824BF01008DF038 /* WebIconDatabase.h in Headers */,
@@ -1803,6 +1847,7 @@
 				51B2A1000ADB15D0002A9BEE /* WebIconDatabaseDelegate.h in Headers */,
 				9304B3000B02341500F7850D /* WebIconDatabaseInternal.h in Headers */,
 				939810190824BF01008DF038 /* WebIconDatabasePrivate.h in Headers */,
+				1A6B31321A51F3A900422975 /* StorageAreaImpl.h in Headers */,
 				A10C1D641820300E0036883A /* WebChromeClientIOS.h in Headers */,
 				5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */,
 				06693DDC0BFBA85200216072 /* WebInspectorClient.h in Headers */,
@@ -1889,6 +1934,7 @@
 				939810B00824BF01008DF038 /* WebPluginContainerPrivate.h in Headers */,
 				1AC7176F1A26568A002E3115 /* WebVisitedLinkStore.h in Headers */,
 				939810370824BF01008DF038 /* WebPluginController.h in Headers */,
+				1A6B31361A51F3A900422975 /* StorageNamespaceImpl.h in Headers */,
 				7C1FB3C21846E8E1001A03D8 /* WebAllowDenyPolicyListener.h in Headers */,
 				939810380824BF01008DF038 /* WebPluginDatabase.h in Headers */,
 				939810390824BF01008DF038 /* WebPluginPackage.h in Headers */,
@@ -2189,6 +2235,7 @@
 				9398110A0824BF01008DF038 /* WebDefaultUIDelegate.m in Sources */,
 				BC542C430FD7766F00D8AB5D /* WebDelegateImplementationCaching.mm in Sources */,
 				598AD9221201CF1000ABAE4E /* WebDeviceOrientation.mm in Sources */,
+				1A6B31331A51F3A900422975 /* StorageAreaSync.cpp in Sources */,
 				1A6A208D1886154600E50F5F /* WebProgressTrackerClient.mm in Sources */,
 				598AD91E1201CECF00ABAE4E /* WebDeviceOrientationClient.mm in Sources */,
 				598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */,
@@ -2221,11 +2268,13 @@
 				51494CD70C7EBDE0004178C5 /* WebIconDatabaseClient.mm in Sources */,
 				5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */,
 				06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */,
+				1A6B31311A51F3A900422975 /* StorageAreaImpl.cpp in Sources */,
 				1C7B0C660EB2464D00A28502 /* WebInspectorClientCF.cpp in Sources */,
 				B80417701217A83100466BAE /* WebInspectorFrontend.mm in Sources */,
 				A10C1D1918202F9C0036883A /* WebDefaultFormDelegate.m in Sources */,
 				939810E40824BF01008DF038 /* WebJavaScriptTextInputPanel.m in Sources */,
 				A10C1D8B1820305E0036883A /* WebPDFViewIOS.mm in Sources */,
+				1A6B31371A51F3A900422975 /* StorageSyncManager.cpp in Sources */,
 				37D1DCA91065928C0068F7EF /* WebJSPDFDoc.mm in Sources */,
 				939811170824BF01008DF038 /* WebKeyGenerator.mm in Sources */,
 				939811030824BF01008DF038 /* WebKitErrors.m in Sources */,
@@ -2262,6 +2311,7 @@
 				312E2FE614E48182007CCA18 /* WebNotification.mm in Sources */,
 				31C11A6F1476552E0049A4CC /* WebNotificationClient.mm in Sources */,
 				EDE983810BCDF5FE00FDAE28 /* WebNSArrayExtras.m in Sources */,
+				1A6B31391A51F3A900422975 /* StorageThread.cpp in Sources */,
 				A560946714D8AD2600799A8A /* WebIndicateLayer.mm in Sources */,
 				939810C60824BF01008DF038 /* WebNSControlExtras.m in Sources */,
 				939811150824BF01008DF038 /* WebNSDataExtras.m in Sources */,
@@ -2309,12 +2359,14 @@
 				936A2DE80FD2D08000D312DB /* WebTextCompletionController.mm in Sources */,
 				A10C1D3E18202FC50036883A /* WebUIKitSupport.mm in Sources */,
 				1A74A28F0F4F75400082E228 /* WebTextInputWindowController.m in Sources */,
+				1A6B31351A51F3A900422975 /* StorageNamespaceImpl.cpp in Sources */,
 				F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */,
 				A10C1D1D18202F9C0036883A /* WebDefaultResourceLoadDelegate.m in Sources */,
 				939810BE0824BF01008DF038 /* WebURLsWithTitles.m in Sources */,
 				C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */,
 				1AB1DAC118BC0232004B6A9F /* WebViewGroup.mm in Sources */,
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
+				1A6B313B1A51F3A900422975 /* StorageTracker.cpp in Sources */,
 				BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

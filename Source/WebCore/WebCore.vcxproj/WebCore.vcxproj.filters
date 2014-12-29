@@ -4686,12 +4686,6 @@
     <ClCompile Include="..\storage\Storage.cpp">
       <Filter>storage</Filter>
     </ClCompile>
-    <ClCompile Include="..\storage\StorageAreaImpl.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\storage\StorageAreaSync.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
     <ClCompile Include="..\storage\StorageEvent.cpp">
       <Filter>storage</Filter>
     </ClCompile>
@@ -4701,19 +4695,7 @@
     <ClCompile Include="..\storage\StorageMap.cpp">
       <Filter>storage</Filter>
     </ClCompile>
-    <ClCompile Include="..\storage\StorageNamespaceImpl.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
     <ClCompile Include="..\storage\StorageNamespaceProvider.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\storage\StorageSyncManager.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\storage\StorageThread.cpp">
-      <Filter>storage</Filter>
-    </ClCompile>
-    <ClCompile Include="..\storage\StorageTracker.cpp">
       <Filter>storage</Filter>
     </ClCompile>
     <ClCompile Include="..\bridge\jsc\BridgeJSC.cpp">
@@ -12417,12 +12399,6 @@
     <ClInclude Include="..\storage\StorageArea.h">
       <Filter>storage</Filter>
     </ClInclude>
-    <ClInclude Include="..\storage\StorageAreaImpl.h">
-      <Filter>storage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\storage\StorageAreaSync.h">
-      <Filter>storage</Filter>
-    </ClInclude>
     <ClInclude Include="..\storage\StorageEvent.h">
       <Filter>storage</Filter>
     </ClInclude>
@@ -12433,18 +12409,6 @@
       <Filter>storage</Filter>
     </ClInclude>
     <ClInclude Include="..\storage\StorageNamespace.h">
-      <Filter>storage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\storage\StorageNamespaceImpl.h">
-      <Filter>storage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\storage\StorageSyncManager.h">
-      <Filter>storage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\storage\StorageThread.h">
-      <Filter>storage</Filter>
-    </ClInclude>
-    <ClInclude Include="..\storage\StorageTracker.h">
       <Filter>storage</Filter>
     </ClInclude>
     <ClInclude Include="..\bridge\Bridge.h">

@@ -26,9 +26,8 @@
 #ifndef StorageAreaImpl_h
 #define StorageAreaImpl_h
 
-#include "StorageArea.h"
-#include "Timer.h"
-
+#include <WebCore/StorageArea.h>
+#include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>

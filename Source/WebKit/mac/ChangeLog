@@ -1,3 +1,14 @@
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
+        Move storage code from WebCore to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=139558
+
+        Reviewed by Darin Adler.
+
+        * Storage/WebStorageManager.mm:
+        * Storage/WebStorageTrackerClient.h:
+        * WebView/WebView.mm:
+
 2014-12-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19348208> REGRESSION (r177027): iOS builds use the wrong toolchain

@@ -36,7 +36,6 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "ScrollingThread.h"
-#include "StorageThread.h"
 #include "WorkerThread.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/FastMalloc.h>

@@ -23,17 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
 #include "StorageAreaSync.h"
 
-#include "FileSystem.h"
-#include "SQLiteDatabaseTracker.h"
-#include "SQLiteStatement.h"
-#include "SQLiteTransaction.h"
 #include "StorageAreaImpl.h"
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
-#include "SuddenTermination.h"
+#include <WebCore/FileSystem.h>
+#include <WebCore/SQLiteDatabaseTracker.h>
+#include <WebCore/SQLiteStatement.h>
+#include <WebCore/SQLiteTransaction.h>
+#include <WebCore/SuddenTermination.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -98,7 +97,7 @@ void StorageAreaSync::scheduleFinalSync()
         // syncTimerFired function.
         disableSuddenTermination();
     }
-    // FIXME: This is synchronous.  We should do it on the background process, but
+    // FIXME: This is synchronous. We should do it on the background process, but
     // we should do it safely.
     m_finalSyncScheduled = true;
     syncTimerFired();
@@ -168,7 +167,7 @@ void StorageAreaSync::syncTimerFired()
         MutexLocker locker(m_syncLock);
 
         // Do not schedule another sync if we're still trying to complete the
-        // previous one.  But, if we're shutting down, schedule it anyway.
+        // previous one. But, if we're shutting down, schedule it anyway.
         if (m_syncInProgress && !m_finalSyncScheduled) {
             ASSERT(!m_syncTimer.isActive());
             m_syncTimer.startOneShot(StorageSyncInterval);
@@ -193,7 +192,7 @@ void StorageAreaSync::syncTimerFired()
 
         if (partialSync) {
             // We can't do the fast path of simply clearing all items, so we'll need to manually
-            // remove them one by one.  Done under lock since m_itemsPendingSync is modified by
+            // remove them one by one. Done under lock since m_itemsPendingSync is modified by
             // the background thread.
             HashMap<String, String>::iterator pending_it = m_itemsPendingSync.begin();
             HashMap<String, String>::iterator pending_end = m_itemsPendingSync.end();
@@ -369,7 +368,7 @@ void StorageAreaSync::blockUntilImportComplete()
 {
     ASSERT(isMainThread());
 
-    // Fast path.  We set m_storageArea to 0 only after m_importComplete being true.
+    // Fast path. We set m_storageArea to 0 only after m_importComplete being true.
     if (!m_storageArea)
         return;
 

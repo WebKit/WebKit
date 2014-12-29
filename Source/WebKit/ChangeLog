@@ -1,3 +1,130 @@
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
+        Move storage code from WebCore to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=139558
+
+        Reviewed by Darin Adler.
+
+        * Storage/StorageAreaImpl.cpp: Renamed from Source/WebCore/storage/StorageAreaImpl.cpp.
+        (WebCore::StorageAreaImpl::~StorageAreaImpl):
+        (WebCore::StorageAreaImpl::StorageAreaImpl):
+        (WebCore::StorageAreaImpl::create):
+        (WebCore::StorageAreaImpl::copy):
+        (WebCore::StorageAreaImpl::canAccessStorage):
+        (WebCore::StorageAreaImpl::storageType):
+        (WebCore::StorageAreaImpl::length):
+        (WebCore::StorageAreaImpl::key):
+        (WebCore::StorageAreaImpl::item):
+        (WebCore::StorageAreaImpl::setItem):
+        (WebCore::StorageAreaImpl::removeItem):
+        (WebCore::StorageAreaImpl::clear):
+        (WebCore::StorageAreaImpl::contains):
+        (WebCore::StorageAreaImpl::importItems):
+        (WebCore::StorageAreaImpl::close):
+        (WebCore::StorageAreaImpl::clearForOriginDeletion):
+        (WebCore::StorageAreaImpl::sync):
+        (WebCore::StorageAreaImpl::blockUntilImportComplete):
+        (WebCore::StorageAreaImpl::memoryBytesUsedByCache):
+        (WebCore::StorageAreaImpl::incrementAccessCount):
+        (WebCore::StorageAreaImpl::decrementAccessCount):
+        (WebCore::StorageAreaImpl::closeDatabaseTimerFired):
+        (WebCore::StorageAreaImpl::closeDatabaseIfIdle):
+        (WebCore::StorageAreaImpl::dispatchStorageEvent):
+        * Storage/StorageAreaImpl.h: Renamed from Source/WebCore/storage/StorageAreaImpl.h.
+        * Storage/StorageAreaSync.cpp: Renamed from Source/WebCore/storage/StorageAreaSync.cpp.
+        (WebCore::StorageAreaSync::StorageAreaSync):
+        (WebCore::StorageAreaSync::create):
+        (WebCore::StorageAreaSync::~StorageAreaSync):
+        (WebCore::StorageAreaSync::scheduleFinalSync):
+        (WebCore::StorageAreaSync::scheduleItemForSync):
+        (WebCore::StorageAreaSync::scheduleClear):
+        (WebCore::StorageAreaSync::scheduleCloseDatabase):
+        (WebCore::StorageAreaSync::syncTimerFired):
+        (WebCore::StorageAreaSync::openDatabase):
+        (WebCore::StorageAreaSync::migrateItemTableIfNeeded):
+        (WebCore::StorageAreaSync::performImport):
+        (WebCore::StorageAreaSync::markImported):
+        (WebCore::StorageAreaSync::blockUntilImportComplete):
+        (WebCore::StorageAreaSync::sync):
+        (WebCore::StorageAreaSync::performSync):
+        (WebCore::StorageAreaSync::deleteEmptyDatabase):
+        (WebCore::StorageAreaSync::scheduleSync):
+        * Storage/StorageAreaSync.h: Renamed from Source/WebCore/storage/StorageAreaSync.h.
+        * Storage/StorageNamespaceImpl.cpp: Renamed from Source/WebCore/storage/StorageNamespaceImpl.cpp.
+        (WebCore::localStorageNamespaceMap):
+        (WebCore::StorageNamespaceImpl::createSessionStorageNamespace):
+        (WebCore::StorageNamespaceImpl::getOrCreateLocalStorageNamespace):
+        (WebCore::StorageNamespaceImpl::StorageNamespaceImpl):
+        (WebCore::StorageNamespaceImpl::~StorageNamespaceImpl):
+        (WebCore::StorageNamespaceImpl::copy):
+        (WebCore::StorageNamespaceImpl::storageArea):
+        (WebCore::StorageNamespaceImpl::close):
+        (WebCore::StorageNamespaceImpl::clearOriginForDeletion):
+        (WebCore::StorageNamespaceImpl::clearAllOriginsForDeletion):
+        (WebCore::StorageNamespaceImpl::sync):
+        (WebCore::StorageNamespaceImpl::closeIdleLocalStorageDatabases):
+        * Storage/StorageNamespaceImpl.h: Renamed from Source/WebCore/storage/StorageNamespaceImpl.h.
+        * Storage/StorageSyncManager.cpp: Renamed from Source/WebCore/storage/StorageSyncManager.cpp.
+        (WebCore::StorageSyncManager::create):
+        (WebCore::StorageSyncManager::StorageSyncManager):
+        (WebCore::StorageSyncManager::~StorageSyncManager):
+        (WebCore::StorageSyncManager::fullDatabaseFilename):
+        (WebCore::StorageSyncManager::dispatch):
+        (WebCore::StorageSyncManager::close):
+        * Storage/StorageSyncManager.h: Renamed from Source/WebCore/storage/StorageSyncManager.h.
+        * Storage/StorageThread.cpp: Renamed from Source/WebCore/storage/StorageThread.cpp.
+        (WebCore::activeStorageThreads):
+        (WebCore::StorageThread::StorageThread):
+        (WebCore::StorageThread::~StorageThread):
+        (WebCore::StorageThread::start):
+        (WebCore::StorageThread::threadEntryPointCallback):
+        (WebCore::StorageThread::threadEntryPoint):
+        (WebCore::StorageThread::dispatch):
+        (WebCore::StorageThread::terminate):
+        (WebCore::StorageThread::performTerminate):
+        (WebCore::StorageThread::releaseFastMallocFreeMemoryInAllThreads):
+        * Storage/StorageThread.h: Renamed from Source/WebCore/storage/StorageThread.h.
+        * Storage/StorageTracker.cpp: Renamed from Source/WebCore/storage/StorageTracker.cpp.
+        (WebCore::StorageTracker::initializeTracker):
+        (WebCore::StorageTracker::internalInitialize):
+        (WebCore::StorageTracker::tracker):
+        (WebCore::StorageTracker::StorageTracker):
+        (WebCore::StorageTracker::setDatabaseDirectoryPath):
+        (WebCore::StorageTracker::databaseDirectoryPath):
+        (WebCore::StorageTracker::trackerDatabasePath):
+        (WebCore::ensureDatabaseFileExists):
+        (WebCore::StorageTracker::openTrackerDatabase):
+        (WebCore::StorageTracker::importOriginIdentifiers):
+        (WebCore::StorageTracker::finishedImportingOriginIdentifiers):
+        (WebCore::StorageTracker::syncImportOriginIdentifiers):
+        (WebCore::StorageTracker::syncFileSystemAndTrackerDatabase):
+        (WebCore::StorageTracker::setOriginDetails):
+        (WebCore::StorageTracker::syncSetOriginDetails):
+        (WebCore::StorageTracker::origins):
+        (WebCore::StorageTracker::deleteAllOrigins):
+        (WebCore::truncateDatabaseFile):
+        (WebCore::StorageTracker::syncDeleteAllOrigins):
+        (WebCore::StorageTracker::deleteOriginWithIdentifier):
+        (WebCore::StorageTracker::deleteOrigin):
+        (WebCore::StorageTracker::syncDeleteOrigin):
+        (WebCore::StorageTracker::willDeleteAllOrigins):
+        (WebCore::StorageTracker::willDeleteOrigin):
+        (WebCore::StorageTracker::canDeleteOrigin):
+        (WebCore::StorageTracker::cancelDeletingOrigin):
+        (WebCore::StorageTracker::isActive):
+        (WebCore::StorageTracker::setIsActive):
+        (WebCore::StorageTracker::databasePathForOrigin):
+        (WebCore::StorageTracker::diskUsageForOrigin):
+        * Storage/StorageTracker.h: Renamed from Source/WebCore/storage/StorageTracker.h.
+        (WebCore::StorageTracker::storageDatabaseIdleInterval):
+        (WebCore::StorageTracker::setStorageDatabaseIdleInterval):
+        * Storage/StorageTrackerClient.h: Renamed from Source/WebCore/storage/StorageTrackerClient.h.
+        (WebCore::StorageTrackerClient::~StorageTrackerClient):
+        * Storage/WebStorageNamespaceProvider.cpp:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2014-12-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build fix after r177668.
