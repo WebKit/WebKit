@@ -1,5 +1,18 @@
 2014-12-29  Anders Carlsson  <andersca@apple.com>
 
+        Remove more dead code
+        https://bugs.webkit.org/show_bug.cgi?id=139998
+
+        Reviewed by Oliver Hunt.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::localStorage): Deleted.
+        (WebCore::PageGroup::transientLocalStorage): Deleted.
+        * page/PageGroup.h:
+        (WebCore::PageGroup::hasLocalStorage): Deleted.
+
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
         Remove unneeded StorageNamespace functions
         https://bugs.webkit.org/show_bug.cgi?id=139997
 

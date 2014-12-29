@@ -26,7 +26,6 @@
 #ifndef PageGroup_h
 #define PageGroup_h
 
-#include "SecurityOriginHash.h"
 #include "Supplementable.h"
 #include "UserScript.h"
 #include "UserStyleSheet.h"
@@ -64,11 +63,6 @@ namespace WebCore {
         const String& name() { return m_name; }
         unsigned identifier() { return m_identifier; }
 
-        StorageNamespace* localStorage();
-        bool hasLocalStorage() { return m_localStorage; }
-
-        StorageNamespace* transientLocalStorage(SecurityOrigin* topOrigin);
-
         GroupSettings& groupSettings() const { return *m_groupSettings; }
 
 #if ENABLE(VIDEO_TRACK)
@@ -81,8 +75,6 @@ namespace WebCore {
         HashSet<Page*> m_pages;
 
         unsigned m_identifier;
-        RefPtr<StorageNamespace> m_localStorage;
-        HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageNamespace>> m_transientLocalStorageMap;
 
         const std::unique_ptr<GroupSettings> m_groupSettings;
 

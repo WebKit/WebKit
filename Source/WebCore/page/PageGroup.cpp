@@ -109,16 +109,6 @@ void PageGroup::removePage(Page& page)
     m_pages.remove(&page);
 }
 
-StorageNamespace* PageGroup::localStorage()
-{
-    return m_localStorage.get();
-}
-
-StorageNamespace* PageGroup::transientLocalStorage(SecurityOrigin*)
-{
-    return nullptr;
-}
-
 #if ENABLE(VIDEO_TRACK)
 void PageGroup::captionPreferencesChanged()
 {
