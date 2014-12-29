@@ -1,3 +1,31 @@
+2014-12-29  Sam Weinig  <sam@webkit.org>
+
+        Move Pasteboard code out of WebProcessPool and into its own singleton class
+        https://bugs.webkit.org/show_bug.cgi?id=139987
+
+        Reviewed by Anders Carlsson.
+
+        * DerivedSources.make:
+        * Shared/WebPasteboardProxy.cpp: Added.
+        (WebKit::WebPasteboardProxy::shared):
+        (WebKit::WebPasteboardProxy::WebPasteboardProxy):
+        (WebKit::WebPasteboardProxy::addWebProcessProxy):
+        * Shared/WebPasteboardProxy.h: Added.
+        * Shared/WebPasteboardProxy.messages.in: Added.
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm: Added.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::didReceiveSyncMessage):
+        (WebKit::WebProcessPool::dummy): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessPool.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::writeItemsToPasteboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+
 2014-12-29  Anders Carlsson  <andersca@apple.com>
 
         Use UserData for bundle initialization data

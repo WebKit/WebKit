@@ -37,17 +37,18 @@
 #include "TextChecker.h"
 #include "TextCheckerState.h"
 #include "UserData.h"
-#include "WebUserContentControllerProxy.h"
 #include "WebBackForwardListItem.h"
 #include "WebInspectorProxy.h"
 #include "WebNavigationDataStore.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
+#include "WebPasteboardProxy.h"
 #include "WebPluginSiteDataManager.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxyMessages.h"
+#include "WebUserContentControllerProxy.h"
 #include <WebCore/SuddenTermination.h>
 #include <WebCore/URL.h>
 #include <stdio.h>
@@ -98,6 +99,8 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool)
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
     , m_throttler(std::make_unique<ProcessThrottler>(this))
 {
+    WebPasteboardProxy::shared().addWebProcessProxy(*this);
+
     connect();
 }
 

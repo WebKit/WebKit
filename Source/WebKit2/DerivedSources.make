@@ -129,6 +129,7 @@ MESSAGE_RECEIVERS = \
     WebPage \
     WebPageGroupProxy \
     WebPageProxy \
+    WebPasteboardProxy \
     WebProcess \
     WebProcessConnection \
     WebProcessPool \

@@ -26,40 +26,6 @@ messages -> WebProcessPool LegacyReceiver {
 
     DidGetStatistics(struct WebKit::StatisticsData statisticsData, uint64_t callbackID)
 
-#if PLATFORM(IOS)
-    WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content)
-    WriteImageToPasteboard(struct WebCore::PasteboardImage pasteboardImage)
-    WriteStringToPasteboard(String pasteboardType, String text) 
-    ReadStringFromPasteboard(uint64_t index, String pasteboardType) -> (String string)
-    ReadURLFromPasteboard(uint64_t index, String pasteboardType) -> (String string)
-    ReadBufferFromPasteboard(uint64_t index, String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
-    GetPasteboardItemsCount() -> (uint64_t itemsCount)
-#endif
-
-#if PLATFORM(COCOA)
-    # Pasteboard messages.
-    GetPasteboardTypes(String pasteboardName) -> (Vector<String> types)
-    GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType) -> (Vector<String> pathnames)
-    GetPasteboardStringForType(String pasteboardName, String pasteboardType) -> (String string)
-    GetPasteboardBufferForType(String pasteboardName, String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
-    PasteboardCopy(String fromPasteboard, String toPasteboard) -> (uint64_t changeCount)
-    GetPasteboardChangeCount(String pasteboardName) -> (uint64_t changeCount)
-    GetPasteboardUniqueName() -> (String pasteboardName)
-    GetPasteboardColor(String pasteboardName) -> (WebCore::Color color)
-    GetPasteboardURL(String pasteboardName) -> (String urlString)
-    AddPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (uint64_t changeCount)
-    SetPasteboardTypes(String pasteboardName, Vector<String> pasteboardTypes) -> (uint64_t changeCount)
-    SetPasteboardPathnamesForType(String pasteboardName, String pasteboardType, Vector<String> pathnames) -> (uint64_t changeCount)
-    SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string) -> (uint64_t changeCount)
-    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size) -> (uint64_t changeCount)
-#endif
-
-#if !PLATFORM(COCOA)
-    // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
-    // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
-    Dummy() -> (bool dummyReturn)
-#endif
-
     # Plug-in messages.
     void AddPlugInAutoStartOriginHash(String pageOrigin, uint32_t hash, WebCore::SessionID sessionID)
     void PlugInDidReceiveUserInteraction(uint32_t hash, WebCore::SessionID sessionID)

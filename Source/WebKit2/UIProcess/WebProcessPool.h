@@ -376,32 +376,6 @@ private:
     void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
 #endif
 
-#if PLATFORM(IOS)
-    void writeWebContentToPasteboard(const WebCore::PasteboardWebContent&);
-    void writeImageToPasteboard(const WebCore::PasteboardImage&);
-    void writeStringToPasteboard(const String& pasteboardType, const String&);
-    void readStringFromPasteboard(uint64_t index, const String& pasteboardType, WTF::String&);
-    void readURLFromPasteboard(uint64_t index, const String& pasteboardType, String&);
-    void readBufferFromPasteboard(uint64_t index, const String& pasteboardType, SharedMemory::Handle&, uint64_t& size);
-    void getPasteboardItemsCount(uint64_t& itemsCount);
-#endif
-#if PLATFORM(COCOA)
-    void getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes);
-    void getPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames);
-    void getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, String&);
-    void getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, SharedMemory::Handle&, uint64_t& size);
-    void pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, uint64_t& newChangeCount);
-    void getPasteboardChangeCount(const String& pasteboardName, uint64_t& changeCount);
-    void getPasteboardUniqueName(String& pasteboardName);
-    void getPasteboardColor(const String& pasteboardName, WebCore::Color&);
-    void getPasteboardURL(const String& pasteboardName, WTF::String&);
-    void addPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount);
-    void setPasteboardTypes(const String& pasteboardName, const Vector<String>& pasteboardTypes, uint64_t& newChangeCount);
-    void setPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, const Vector<String>& pathnames, uint64_t& newChangeCount);
-    void setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String&, uint64_t& newChangeCount);
-    void setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, uint64_t& newChangeCount);
-#endif
-
     void handleMessage(IPC::Connection*, const String& messageName, const UserData& messageBody);
     void handleSynchronousMessage(IPC::Connection*, const String& messageName, const UserData& messageBody, UserData& returnUserData);
 

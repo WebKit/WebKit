@@ -1053,6 +1053,11 @@
 		7C387434172F5615001BD88A /* PageBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C387433172F5615001BD88A /* PageBanner.cpp */; };
 		7C3F8C90173AF52D007B7F39 /* PluginInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */; };
 		7C3F8C91173AF52D007B7F39 /* PluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */; };
+		7C4694C31A4B4B0400AD5845 /* WebPasteboardProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4694C11A4B4B0400AD5845 /* WebPasteboardProxy.cpp */; };
+		7C4694C41A4B4B0400AD5845 /* WebPasteboardProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4694C21A4B4B0400AD5845 /* WebPasteboardProxy.h */; };
+		7C4694C91A4B4EA100AD5845 /* WebPasteboardProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4694C71A4B4EA000AD5845 /* WebPasteboardProxyMessageReceiver.cpp */; };
+		7C4694CA1A4B4EA100AD5845 /* WebPasteboardProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4694C81A4B4EA100AD5845 /* WebPasteboardProxyMessages.h */; };
+		7C4694CC1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C4694CB1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm */; };
 		7C4ED3291A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4ED3271A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h */; };
 		7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C6D37FA172F555F009D2847 /* PageBannerMac.mm */; };
 		7C6E70FB18B2DC7A00F24E2E /* WebProcessCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C6E70F918B2D4A000F24E2E /* WebProcessCocoa.mm */; };
@@ -3142,6 +3147,12 @@
 		7C387433172F5615001BD88A /* PageBanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageBanner.cpp; sourceTree = "<group>"; };
 		7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInformation.cpp; sourceTree = "<group>"; };
 		7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInformation.h; sourceTree = "<group>"; };
+		7C4694C11A4B4B0400AD5845 /* WebPasteboardProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPasteboardProxy.cpp; sourceTree = "<group>"; };
+		7C4694C21A4B4B0400AD5845 /* WebPasteboardProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPasteboardProxy.h; sourceTree = "<group>"; };
+		7C4694C51A4B4B8500AD5845 /* WebPasteboardProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPasteboardProxy.messages.in; sourceTree = "<group>"; };
+		7C4694C71A4B4EA000AD5845 /* WebPasteboardProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPasteboardProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		7C4694C81A4B4EA100AD5845 /* WebPasteboardProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPasteboardProxyMessages.h; sourceTree = "<group>"; };
+		7C4694CB1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPasteboardProxyCocoa.mm; sourceTree = "<group>"; };
 		7C4ED3261A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleCSSStyleDeclarationHandle.cpp; sourceTree = "<group>"; };
 		7C4ED3271A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleCSSStyleDeclarationHandle.h; sourceTree = "<group>"; };
 		7C6D37FA172F555F009D2847 /* PageBannerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageBannerMac.mm; sourceTree = "<group>"; };
@@ -4571,6 +4582,9 @@
 				C06C6094124C14430001682F /* WebPageCreationParameters.h */,
 				BC7B625112A43C9600D174A4 /* WebPageGroupData.cpp */,
 				BC7B625012A43C9600D174A4 /* WebPageGroupData.h */,
+				7C4694C11A4B4B0400AD5845 /* WebPasteboardProxy.cpp */,
+				7C4694C21A4B4B0400AD5845 /* WebPasteboardProxy.h */,
+				7C4694C51A4B4B8500AD5845 /* WebPasteboardProxy.messages.in */,
 				C0337DDC127A521C008FF4F4 /* WebPlatformTouchPoint.cpp */,
 				BC5744ED12638FB3006F0F12 /* WebPopupItem.cpp */,
 				BC5744EE12638FB3006F0F12 /* WebPopupItem.h */,
@@ -4683,6 +4697,7 @@
 				1AFE436318B6C081009C7A48 /* UIDelegate.mm */,
 				1AC0273E196622D600C12B75 /* WebPageProxyCocoa.mm */,
 				7CE4D2151A49148400C7F152 /* WebProcessPoolCocoa.mm */,
+				7C4694CB1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm */,
 				1A04F6171A4A3A7A00A21B6E /* WebProcessProxyCocoa.mm */,
 				1AD01BCB1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h */,
 				1AD01BCA1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm */,
@@ -6998,6 +7013,8 @@
 				C0CE729F1247E71D00BC0EC4 /* WebPageMessages.h */,
 				BCBD3912125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp */,
 				BCBD3913125BB1A800D2C29F /* WebPageProxyMessages.h */,
+				7C4694C71A4B4EA000AD5845 /* WebPasteboardProxyMessageReceiver.cpp */,
+				7C4694C81A4B4EA100AD5845 /* WebPasteboardProxyMessages.h */,
 				1A043F6712514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp */,
 				1A043F6812514D8B00FFBFB5 /* WebProcessConnectionMessages.h */,
 				BC3066BC125A442100E71278 /* WebProcessMessageReceiver.cpp */,
@@ -7358,6 +7375,7 @@
 				BC14E10A120B905E00826C0C /* InjectedBundlePageFormClient.h in Headers */,
 				CD5C66A1134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.h in Headers */,
 				BCA8C6A911E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h in Headers */,
+				7C4694CA1A4B4EA100AD5845 /* WebPasteboardProxyMessages.h in Headers */,
 				BC8147A912F64CDA007B2C32 /* InjectedBundlePagePolicyClient.h in Headers */,
 				BCA8C6B011E3C08700812FB7 /* InjectedBundlePageUIClient.h in Headers */,
 				BC33E0D112408E8600360F3F /* InjectedBundleRangeHandle.h in Headers */,
@@ -7370,6 +7388,7 @@
 				518353DF1887128B00D9FE44 /* KeyedDecoder.h in Headers */,
 				1AE00D5D182DADE100087DD7 /* KeyedEncoder.h in Headers */,
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
+				7C4694C41A4B4B0400AD5845 /* WebPasteboardProxy.h in Headers */,
 				0F0C365A18C0555800F607D7 /* LayerRepresentation.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
 				1A1DC340196346D700FF7059 /* LegacySessionStateCoding.h in Headers */,
@@ -9039,6 +9058,7 @@
 				E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */,
 				BC14E109120B905E00826C0C /* InjectedBundlePageFormClient.cpp in Sources */,
 				CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */,
+				7C4694C31A4B4B0400AD5845 /* WebPasteboardProxy.cpp in Sources */,
 				BCA8C6A811E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.cpp in Sources */,
 				BC8147AA12F64CDA007B2C32 /* InjectedBundlePagePolicyClient.cpp in Sources */,
 				659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */,
@@ -9123,6 +9143,7 @@
 				1A2161B111F37664008AD0F5 /* NPRuntimeObjectMap.cpp in Sources */,
 				1A2162B011F38971008AD0F5 /* NPRuntimeUtilities.cpp in Sources */,
 				1A2D84A4127F6AD1001EB962 /* NPVariantData.cpp in Sources */,
+				7C4694C91A4B4EA100AD5845 /* WebPasteboardProxyMessageReceiver.cpp in Sources */,
 				BC8ACA1416670D89004C1941 /* ObjCObjectGraph.mm in Sources */,
 				BC8ACA1616670D89004C1941 /* ObjCObjectGraphCoders.mm in Sources */,
 				BCCF673312C7F15C008F9C35 /* OriginAndDatabases.cpp in Sources */,
@@ -9346,6 +9367,7 @@
 				BC0E5FE612D697160012A72A /* WebGeolocationManager.cpp in Sources */,
 				BC0E606112D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp in Sources */,
 				BC54CACC12D64291005C67B0 /* WebGeolocationManagerProxy.cpp in Sources */,
+				7C4694CC1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm in Sources */,
 				BC0E618212D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp in Sources */,
 				BC0E607412D6BC200012A72A /* WebGeolocationPosition.cpp in Sources */,
 				BC1BE1F312D54DBD0004A228 /* WebGeolocationProvider.cpp in Sources */,
