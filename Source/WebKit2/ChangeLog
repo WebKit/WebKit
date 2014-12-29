@@ -1,3 +1,9 @@
+2014-12-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Speculative buildfix after r177794.
+
+        * CMakeLists.txt:
+
 2014-12-29  Sam Weinig  <sam@webkit.org>
 
         Removes some unnecessary use of LegacyReceiver

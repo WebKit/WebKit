@@ -588,6 +588,7 @@ set(WebKit2_MESSAGES_IN_FILES
     PluginProcess/WebProcessConnection.messages.in
 
     Shared/WebConnection.messages.in
+    Shared/WebPasteboardProxy.messages.in
 
     Shared/Authentication/AuthenticationManager.messages.in
 
