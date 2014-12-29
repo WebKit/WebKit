@@ -1,5 +1,18 @@
 2014-12-29  Sam Weinig  <sam@webkit.org>
 
+        Move WebPasteboardProxy from Shared to UIProcess, where it should have been all along
+        Rubber-stamped by Anders Carlsson.
+
+        * Shared/WebPasteboardProxy.cpp: Removed.
+        * Shared/WebPasteboardProxy.h: Removed.
+        * Shared/WebPasteboardProxy.messages.in: Removed.
+        * UIProcess/WebPasteboardProxy.cpp: Copied from Shared/WebPasteboardProxy.cpp.
+        * UIProcess/WebPasteboardProxy.h: Copied from Shared/WebPasteboardProxy.h.
+        * UIProcess/WebPasteboardProxy.messages.in: Copied from Shared/WebPasteboardProxy.messages.in.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2014-12-29  Sam Weinig  <sam@webkit.org>
+
         Try to fix the iOS build.
 
         * Shared/WebPasteboardProxy.h:

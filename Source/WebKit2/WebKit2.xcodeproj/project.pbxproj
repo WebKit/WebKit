@@ -1053,11 +1053,11 @@
 		7C387434172F5615001BD88A /* PageBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C387433172F5615001BD88A /* PageBanner.cpp */; };
 		7C3F8C90173AF52D007B7F39 /* PluginInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */; };
 		7C3F8C91173AF52D007B7F39 /* PluginInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */; };
-		7C4694C31A4B4B0400AD5845 /* WebPasteboardProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4694C11A4B4B0400AD5845 /* WebPasteboardProxy.cpp */; };
-		7C4694C41A4B4B0400AD5845 /* WebPasteboardProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4694C21A4B4B0400AD5845 /* WebPasteboardProxy.h */; };
 		7C4694C91A4B4EA100AD5845 /* WebPasteboardProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4694C71A4B4EA000AD5845 /* WebPasteboardProxyMessageReceiver.cpp */; };
 		7C4694CA1A4B4EA100AD5845 /* WebPasteboardProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4694C81A4B4EA100AD5845 /* WebPasteboardProxyMessages.h */; };
 		7C4694CC1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C4694CB1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm */; };
+		7C4694D01A51E36800AD5845 /* WebPasteboardProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C4694CD1A51E36800AD5845 /* WebPasteboardProxy.cpp */; };
+		7C4694D11A51E36800AD5845 /* WebPasteboardProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4694CE1A51E36800AD5845 /* WebPasteboardProxy.h */; };
 		7C4ED3291A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C4ED3271A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h */; };
 		7C6D37FC172F555F009D2847 /* PageBannerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C6D37FA172F555F009D2847 /* PageBannerMac.mm */; };
 		7C6E70FB18B2DC7A00F24E2E /* WebProcessCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C6E70F918B2D4A000F24E2E /* WebProcessCocoa.mm */; };
@@ -3147,12 +3147,12 @@
 		7C387433172F5615001BD88A /* PageBanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageBanner.cpp; sourceTree = "<group>"; };
 		7C3F8C8E173AF52D007B7F39 /* PluginInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInformation.cpp; sourceTree = "<group>"; };
 		7C3F8C8F173AF52D007B7F39 /* PluginInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInformation.h; sourceTree = "<group>"; };
-		7C4694C11A4B4B0400AD5845 /* WebPasteboardProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPasteboardProxy.cpp; sourceTree = "<group>"; };
-		7C4694C21A4B4B0400AD5845 /* WebPasteboardProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPasteboardProxy.h; sourceTree = "<group>"; };
-		7C4694C51A4B4B8500AD5845 /* WebPasteboardProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPasteboardProxy.messages.in; sourceTree = "<group>"; };
 		7C4694C71A4B4EA000AD5845 /* WebPasteboardProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPasteboardProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		7C4694C81A4B4EA100AD5845 /* WebPasteboardProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPasteboardProxyMessages.h; sourceTree = "<group>"; };
 		7C4694CB1A4B510A00AD5845 /* WebPasteboardProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPasteboardProxyCocoa.mm; sourceTree = "<group>"; };
+		7C4694CD1A51E36800AD5845 /* WebPasteboardProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPasteboardProxy.cpp; sourceTree = "<group>"; };
+		7C4694CE1A51E36800AD5845 /* WebPasteboardProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPasteboardProxy.h; sourceTree = "<group>"; };
+		7C4694CF1A51E36800AD5845 /* WebPasteboardProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPasteboardProxy.messages.in; sourceTree = "<group>"; };
 		7C4ED3261A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleCSSStyleDeclarationHandle.cpp; sourceTree = "<group>"; };
 		7C4ED3271A3119D90079BD49 /* InjectedBundleCSSStyleDeclarationHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleCSSStyleDeclarationHandle.h; sourceTree = "<group>"; };
 		7C6D37FA172F555F009D2847 /* PageBannerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PageBannerMac.mm; sourceTree = "<group>"; };
@@ -4582,9 +4582,6 @@
 				C06C6094124C14430001682F /* WebPageCreationParameters.h */,
 				BC7B625112A43C9600D174A4 /* WebPageGroupData.cpp */,
 				BC7B625012A43C9600D174A4 /* WebPageGroupData.h */,
-				7C4694C11A4B4B0400AD5845 /* WebPasteboardProxy.cpp */,
-				7C4694C21A4B4B0400AD5845 /* WebPasteboardProxy.h */,
-				7C4694C51A4B4B8500AD5845 /* WebPasteboardProxy.messages.in */,
 				C0337DDC127A521C008FF4F4 /* WebPlatformTouchPoint.cpp */,
 				BC5744ED12638FB3006F0F12 /* WebPopupItem.cpp */,
 				BC5744EE12638FB3006F0F12 /* WebPopupItem.h */,
@@ -6000,6 +5997,9 @@
 				BC111B0B112F5E4F00337BAB /* WebPageProxy.cpp */,
 				BC032DCB10F4389F0058C15A /* WebPageProxy.h */,
 				BCBD38FA125BAB9A00D2C29F /* WebPageProxy.messages.in */,
+				7C4694CD1A51E36800AD5845 /* WebPasteboardProxy.cpp */,
+				7C4694CE1A51E36800AD5845 /* WebPasteboardProxy.h */,
+				7C4694CF1A51E36800AD5845 /* WebPasteboardProxy.messages.in */,
 				BC574E611267D080006F0F12 /* WebPopupMenuProxy.h */,
 				BCD597FE112B57BE00EC8C23 /* WebPreferences.cpp */,
 				BCD597FD112B57BE00EC8C23 /* WebPreferences.h */,
@@ -7388,7 +7388,6 @@
 				518353DF1887128B00D9FE44 /* KeyedDecoder.h in Headers */,
 				1AE00D5D182DADE100087DD7 /* KeyedEncoder.h in Headers */,
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
-				7C4694C41A4B4B0400AD5845 /* WebPasteboardProxy.h in Headers */,
 				0F0C365A18C0555800F607D7 /* LayerRepresentation.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
 				1A1DC340196346D700FF7059 /* LegacySessionStateCoding.h in Headers */,
@@ -7751,6 +7750,7 @@
 				0FCB4E4818BBE044000FCFC9 /* WKActionSheet.h in Headers */,
 				0FCB4E4A18BBE044000FCFC9 /* WKActionSheetAssistant.h in Headers */,
 				C5FA1ED318E1062200B3F402 /* WKAirPlayRoutePicker.h in Headers */,
+				7C4694D11A51E36800AD5845 /* WebPasteboardProxy.h in Headers */,
 				BCDDB32D124EC2E10048D13C /* WKAPICast.h in Headers */,
 				512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */,
 				BC4075F4124FF0270068F20A /* WKArray.h in Headers */,
@@ -8962,6 +8962,7 @@
 				1A3635A91A3144A300ED6197 /* APIWebsiteDataStore.cpp in Sources */,
 				1A3635AD1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm in Sources */,
 				1A3D610513A7F03A00F95D4E /* ArgumentCoders.cpp in Sources */,
+				7C4694D01A51E36800AD5845 /* WebPasteboardProxy.cpp in Sources */,
 				1AAF0C4B12B16334008E49E2 /* ArgumentCodersCF.cpp in Sources */,
 				E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */,
 				BC032DA510F437D10058C15A /* ArgumentDecoder.cpp in Sources */,
@@ -9058,7 +9059,6 @@
 				E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */,
 				BC14E109120B905E00826C0C /* InjectedBundlePageFormClient.cpp in Sources */,
 				CD5C66A0134B9D38004FE2A8 /* InjectedBundlePageFullScreenClient.cpp in Sources */,
-				7C4694C31A4B4B0400AD5845 /* WebPasteboardProxy.cpp in Sources */,
 				BCA8C6A811E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.cpp in Sources */,
 				BC8147AA12F64CDA007B2C32 /* InjectedBundlePagePolicyClient.cpp in Sources */,
 				659C551E130006410025C0C2 /* InjectedBundlePageResourceLoadClient.cpp in Sources */,
