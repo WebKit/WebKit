@@ -652,7 +652,7 @@ void WebPageProxy::showSelectionServiceMenu(const IPC::DataReference& selectionA
     Vector<WebContextMenuItemData> items;
     ContextMenuContextData contextData(selectionAsRTFD.vector(), telephoneNumbers, isEditable);
 
-    internalShowContextMenu(point, contextData, items, ContextMenuClientEligibility::NotEligibleForClient, nullptr);
+    internalShowContextMenu(point, contextData, items, ContextMenuClientEligibility::NotEligibleForClient, UserData());
 }
 #endif
 

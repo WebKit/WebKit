@@ -1,3 +1,79 @@
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
+        Convert all variadic WebProcessProxy message over to UserData
+        https://bugs.webkit.org/show_bug.cgi?id=139990
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::didFirstLayoutForFrame):
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::WebPageProxy::didLayout):
+        (WebKit::WebPageProxy::didRemoveFrameFromHierarchy):
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame):
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame):
+        (WebKit::WebPageProxy::didDetectXSSForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseSync):
+        (WebKit::WebPageProxy::unableToImplementPolicy):
+        (WebKit::WebPageProxy::willSubmitForm):
+        (WebKit::WebPageProxy::mouseDidMoveOverElement):
+        (WebKit::WebPageProxy::didBeginTrackingPotentialLongMousePress):
+        (WebKit::WebPageProxy::didRecognizeLongMousePress):
+        (WebKit::WebPageProxy::didCancelTrackingPotentialLongMousePress):
+        (WebKit::WebPageProxy::showContextMenu):
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        (WebKit::WebPageProxy::didPerformActionMenuHitTest):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showSelectionServiceMenu):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mouseDidMoveOverElement):
+        (WebKit::WebChromeClient::didBeginTrackingPotentialLongMousePress):
+        (WebKit::WebChromeClient::didRecognizeLongMousePress):
+        (WebKit::WebChromeClient::didCancelTrackingPotentialLongMousePress):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::detachedFromParent2):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPushStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidReplaceStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPopStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::WebFrameLoaderClient::dispatchUnableToImplementPolicy):
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        (WebKit::WebFrameLoaderClient::shouldGoToHistoryItem):
+        (WebKit::WebFrameLoaderClient::didDisplayInsecureContent):
+        (WebKit::WebFrameLoaderClient::didRunInsecureContent):
+        (WebKit::WebFrameLoaderClient::didDetectXSS):
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation):
+
 2014-12-29  Sam Weinig  <sam@webkit.org>
 
         Move Pasteboard code out of WebProcessPool and into its own singleton class

@@ -157,6 +157,7 @@ class PageClient;
 class RemoteLayerTreeTransaction;
 class RemoteScrollingCoordinatorProxy;
 class StringPairVector;
+class UserData;
 class ViewSnapshot;
 class VisitedLinkProvider;
 class WebBackForwardList;
@@ -333,7 +334,7 @@ public:
     uint64_t goToBackForwardItem(WebBackForwardListItem*);
     void tryRestoreScrollPosition();
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<WebBackForwardListItem>> removed);
-    void willGoToBackForwardListItem(uint64_t itemID, IPC::MessageDecoder&);
+    void willGoToBackForwardListItem(uint64_t itemID, const UserData&);
 
     bool shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem*);
 
@@ -996,22 +997,22 @@ private:
     void didCreateMainFrame(uint64_t frameID);
     void didCreateSubframe(uint64_t frameID);
 
-    void didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& url, const String& unreachableURL, IPC::MessageDecoder&);
-    void didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const String&, IPC::MessageDecoder&);
-    void didFailProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const WebCore::ResourceError&, IPC::MessageDecoder&);
-    void didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo&, IPC::MessageDecoder&);
-    void didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navigationID, IPC::MessageDecoder&);
-    void didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID, IPC::MessageDecoder&);
-    void didFailLoadForFrame(uint64_t frameID, uint64_t navigationID, const WebCore::ResourceError&, IPC::MessageDecoder&);
-    void didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t navigationID, uint32_t sameDocumentNavigationType, const String&, IPC::MessageDecoder&);
-    void didReceiveTitleForFrame(uint64_t frameID, const String&, IPC::MessageDecoder&);
-    void didFirstLayoutForFrame(uint64_t frameID, IPC::MessageDecoder&);
-    void didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, IPC::MessageDecoder&);
-    void didLayout(uint32_t layoutMilestones, IPC::MessageDecoder&);
-    void didRemoveFrameFromHierarchy(uint64_t frameID, IPC::MessageDecoder&);
-    void didDisplayInsecureContentForFrame(uint64_t frameID, IPC::MessageDecoder&);
-    void didRunInsecureContentForFrame(uint64_t frameID, IPC::MessageDecoder&);
-    void didDetectXSSForFrame(uint64_t frameID, IPC::MessageDecoder&);
+    void didStartProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& url, const String& unreachableURL, const UserData&);
+    void didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const String&, const UserData&);
+    void didFailProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, const WebCore::ResourceError&, const UserData&);
+    void didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo&, const UserData&);
+    void didFinishDocumentLoadForFrame(uint64_t frameID, uint64_t navigationID, const UserData&);
+    void didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID, const UserData&);
+    void didFailLoadForFrame(uint64_t frameID, uint64_t navigationID, const WebCore::ResourceError&, const UserData&);
+    void didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t navigationID, uint32_t sameDocumentNavigationType, const String&, const UserData&);
+    void didReceiveTitleForFrame(uint64_t frameID, const String&, const UserData&);
+    void didFirstLayoutForFrame(uint64_t frameID, const UserData&);
+    void didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, const UserData&);
+    void didLayout(uint32_t layoutMilestones, const UserData&);
+    void didRemoveFrameFromHierarchy(uint64_t frameID, const UserData&);
+    void didDisplayInsecureContentForFrame(uint64_t frameID, const UserData&);
+    void didRunInsecureContentForFrame(uint64_t frameID, const UserData&);
+    void didDetectXSSForFrame(uint64_t frameID, const UserData&);
     void frameDidBecomeFrameSet(uint64_t frameID, bool);
     void didStartProgress();
     void didChangeProgress(double);
@@ -1020,13 +1021,13 @@ private:
 
     void didDestroyNavigation(uint64_t navigationID);
 
-    void decidePolicyForNavigationAction(uint64_t frameID, uint64_t navigationID, const NavigationActionData&, uint64_t originatingFrameID, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, uint64_t listenerID, IPC::MessageDecoder&, bool& receivedPolicyAction, uint64_t& newNavigationID, uint64_t& policyAction, uint64_t& downloadID);
-    void decidePolicyForNewWindowAction(uint64_t frameID, const NavigationActionData&, const WebCore::ResourceRequest&, const String& frameName, uint64_t listenerID, IPC::MessageDecoder&);
-    void decidePolicyForResponse(uint64_t frameID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, uint64_t listenerID, IPC::MessageDecoder&);
-    void decidePolicyForResponseSync(uint64_t frameID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, uint64_t listenerID, IPC::MessageDecoder&, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID);
-    void unableToImplementPolicy(uint64_t frameID, const WebCore::ResourceError&, IPC::MessageDecoder&);
+    void decidePolicyForNavigationAction(uint64_t frameID, uint64_t navigationID, const NavigationActionData&, uint64_t originatingFrameID, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest&, uint64_t listenerID, const UserData&, bool& receivedPolicyAction, uint64_t& newNavigationID, uint64_t& policyAction, uint64_t& downloadID);
+    void decidePolicyForNewWindowAction(uint64_t frameID, const NavigationActionData&, const WebCore::ResourceRequest&, const String& frameName, uint64_t listenerID, const UserData&);
+    void decidePolicyForResponse(uint64_t frameID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, uint64_t listenerID, const UserData&);
+    void decidePolicyForResponseSync(uint64_t frameID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, uint64_t listenerID, const UserData&, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID);
+    void unableToImplementPolicy(uint64_t frameID, const WebCore::ResourceError&, const UserData&);
 
-    void willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, const Vector<std::pair<String, String>>& textFieldValues, uint64_t listenerID, IPC::MessageDecoder&);
+    void willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, const Vector<std::pair<String, String>>& textFieldValues, uint64_t listenerID, const UserData&);
 
     // History client
     void didNavigateWithNavigationData(const WebNavigationDataStore&, uint64_t frameID);
@@ -1043,11 +1044,11 @@ private:
     void runJavaScriptPrompt(uint64_t frameID, const String&, const String&, RefPtr<Messages::WebPageProxy::RunJavaScriptPrompt::DelayedReply>);
     void shouldInterruptJavaScript(bool& result);
     void setStatusText(const String&);
-    void mouseDidMoveOverElement(const WebHitTestResult::Data& hitTestResultData, uint32_t modifiers, IPC::MessageDecoder&);
+    void mouseDidMoveOverElement(const WebHitTestResult::Data& hitTestResultData, uint32_t modifiers, const UserData&);
 
-    void didBeginTrackingPotentialLongMousePress(const WebCore::IntPoint& mouseDownPosition, const WebHitTestResult::Data& hitTestResultData, IPC::MessageDecoder&);
-    void didRecognizeLongMousePress(IPC::MessageDecoder&);
-    void didCancelTrackingPotentialLongMousePress(IPC::MessageDecoder&);
+    void didBeginTrackingPotentialLongMousePress(const WebCore::IntPoint& mouseDownPosition, const WebHitTestResult::Data& hitTestResultData, const UserData&);
+    void didRecognizeLongMousePress(const UserData&);
+    void didCancelTrackingPotentialLongMousePress(const UserData&);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& pluginURLString, const String& pluginsPageURLString, const String& frameURLString, const String& pageURLString);
@@ -1162,8 +1163,8 @@ private:
         EligibleForClient,
         NotEligibleForClient
     };
-    void showContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuContextData&, const Vector<WebContextMenuItemData>&, IPC::MessageDecoder&);
-    void internalShowContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuContextData&, const Vector<WebContextMenuItemData>&, ContextMenuClientEligibility, IPC::MessageDecoder*);
+    void showContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuContextData&, const Vector<WebContextMenuItemData>&, const UserData&);
+    void internalShowContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuContextData&, const Vector<WebContextMenuItemData>&, ContextMenuClientEligibility, const UserData&);
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
@@ -1280,7 +1281,7 @@ private:
 
     void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& geometries, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius);
 
-    void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, IPC::MessageDecoder&);
+    void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, const UserData&);
     void stopAssistingNode();
 
 #if ENABLE(INSPECTOR)
@@ -1339,7 +1340,7 @@ private:
     void viewDidEnterWindow();
 
 #if PLATFORM(MAC)
-    void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, IPC::MessageDecoder&);
+    void didPerformActionMenuHitTest(const ActionMenuHitTestResult&, bool forImmediateAction, const UserData&);
 #endif
 
     PageClient& m_pageClient;

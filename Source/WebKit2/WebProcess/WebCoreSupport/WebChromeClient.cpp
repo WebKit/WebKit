@@ -34,6 +34,7 @@
 #include "LayerTreeHost.h"
 #include "NavigationActionData.h"
 #include "PageBanner.h"
+#include "UserData.h"
 #include "WebColorChooser.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -599,7 +600,7 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
 
     // Notify the UIProcess.
     WebHitTestResult::Data webHitTestResultData(hitTestResult);
-    m_page->send(Messages::WebPageProxy::MouseDidMoveOverElement(webHitTestResultData, modifierFlags, InjectedBundleUserMessageEncoder(userData.get())));
+    m_page->send(Messages::WebPageProxy::MouseDidMoveOverElement(webHitTestResultData, modifierFlags, UserData(WebProcess::shared().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebChromeClient::didBeginTrackingPotentialLongMousePress(const IntPoint& mouseDownPosition, const HitTestResult& hitTestResult)
@@ -611,7 +612,7 @@ void WebChromeClient::didBeginTrackingPotentialLongMousePress(const IntPoint& mo
     
     // Notify the UIProcess.
     WebHitTestResult::Data webHitTestResultData(hitTestResult);
-    m_page->send(Messages::WebPageProxy::DidBeginTrackingPotentialLongMousePress(mouseDownPosition, webHitTestResultData, InjectedBundleUserMessageEncoder(userData.get())));
+    m_page->send(Messages::WebPageProxy::DidBeginTrackingPotentialLongMousePress(mouseDownPosition, webHitTestResultData, UserData(WebProcess::shared().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebChromeClient::didRecognizeLongMousePress()
@@ -622,7 +623,7 @@ void WebChromeClient::didRecognizeLongMousePress()
     m_page->injectedBundleUIClient().didRecognizeLongMousePress(m_page, userData);
 
     // Notify the UIProcess.
-    m_page->send(Messages::WebPageProxy::DidRecognizeLongMousePress(InjectedBundleUserMessageEncoder(userData.get())));
+    m_page->send(Messages::WebPageProxy::DidRecognizeLongMousePress(UserData(WebProcess::shared().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebChromeClient::didCancelTrackingPotentialLongMousePress()
@@ -633,7 +634,7 @@ void WebChromeClient::didCancelTrackingPotentialLongMousePress()
     m_page->injectedBundleUIClient().didCancelTrackingPotentialLongMousePress(m_page, userData);
 
     // Notify the UIProcess.
-    m_page->send(Messages::WebPageProxy::DidCancelTrackingPotentialLongMousePress(InjectedBundleUserMessageEncoder(userData.get())));
+    m_page->send(Messages::WebPageProxy::DidCancelTrackingPotentialLongMousePress(UserData(WebProcess::shared().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
