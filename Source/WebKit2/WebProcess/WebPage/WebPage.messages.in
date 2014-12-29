@@ -123,12 +123,12 @@ messages -> WebPage LegacyReceiver {
     TryRestoreScrollPosition()
 
     LoadURLInFrame(String url, uint64_t frameID)
-    LoadRequest(uint64_t navigationID, WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::WebContextUserMessageEncoder userData) Variadic
-    LoadData(IPC::DataReference data, String MIMEType, String encoding, String baseURL, WebKit::WebContextUserMessageEncoder userData) Variadic
-    LoadHTMLString(uint64_t navigationID, String htmlString, String baseURL, WebKit::WebContextUserMessageEncoder userData) Variadic
-    LoadAlternateHTMLString(String htmlString, String baseURL, String unreachableURL, WebKit::WebContextUserMessageEncoder userData) Variadic
-    LoadPlainTextString(String string, WebKit::WebContextUserMessageEncoder userData) Variadic
-    LoadWebArchiveData(IPC::DataReference webArchiveData, WebKit::WebContextUserMessageEncoder userData) Variadic
+    LoadRequest(uint64_t navigationID, WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle, WebKit::UserData userData)
+    LoadData(IPC::DataReference data, String MIMEType, String encoding, String baseURL, WebKit::UserData userData)
+    LoadHTMLString(uint64_t navigationID, String htmlString, String baseURL, WebKit::UserData userData)
+    LoadAlternateHTMLString(String htmlString, String baseURL, String unreachableURL, WebKit::UserData userData)
+    LoadPlainTextString(String string, WebKit::UserData userData)
+    LoadWebArchiveData(IPC::DataReference webArchiveData, WebKit::UserData userData)
     NavigateToURLWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
 
     Reload(uint64_t navigationID, bool reloadFromOrigin, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
@@ -209,7 +209,7 @@ messages -> WebPage LegacyReceiver {
     SetPageLength(double pageLength)
     SetGapBetweenPages(double gap)
 
-    PostInjectedBundleMessage(String messageName, WebKit::WebContextUserMessageEncoder messageBody) Variadic
+    PostInjectedBundleMessage(String messageName, WebKit::UserData messageBody)
 
     # Find.
     FindString(String string, uint32_t findOptions, unsigned maxMatchCount)
