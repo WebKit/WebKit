@@ -92,9 +92,9 @@ GraphicsContext::WindowsBitmap::~WindowsBitmap()
     DeleteObject(m_bitmap);
 }
 
-PassOwnPtr<GraphicsContext::WindowsBitmap> GraphicsContext::createWindowsBitmap(const IntSize& size)
+std::unique_ptr<GraphicsContext::WindowsBitmap> GraphicsContext::createWindowsBitmap(const IntSize& size)
 {
-    return adoptPtr(new WindowsBitmap(m_data->m_hdc, size));
+    return std::make_unique<WindowsBitmap>(m_data->m_hdc, size);
 }
 #endif
 

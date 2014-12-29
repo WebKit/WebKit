@@ -1,5 +1,16 @@
 2014-12-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed, speculative build fix on win port since r177786.
+
+        Apply std::unique_ptr<> and std::make_unique<> to win files as well.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::getExtensions):
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::createWindowsBitmap):
+
+2014-12-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Convert OwnPtr to std::unique_ptr in WebCore/graphics/
         https://bugs.webkit.org/show_bug.cgi?id=139971
 
