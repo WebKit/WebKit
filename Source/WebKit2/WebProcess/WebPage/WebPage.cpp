@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebPage.h"
 
+#include "APIGeometry.h"
 #include "Arguments.h"
 #include "DataReference.h"
 #include "DragControllerAction.h"
@@ -38,7 +39,6 @@
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
-#include "InjectedBundleUserMessageCoders.h"
 #include "LayerTreeHost.h"
 #include "Logging.h"
 #include "NetscapePlugin.h"

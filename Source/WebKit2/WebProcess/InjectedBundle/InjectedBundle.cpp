@@ -27,9 +27,9 @@
 #include "InjectedBundle.h"
 
 #include "APIArray.h"
+#include "APIData.h"
 #include "Arguments.h"
 #include "InjectedBundleScriptWorld.h"
-#include "InjectedBundleUserMessageCoders.h"
 #include "NotificationPermissionRequestManager.h"
 #include "SessionTracker.h"
 #include "UserData.h"
@@ -43,6 +43,7 @@
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebPage.h"
+#include "WebPageGroupProxy.h"
 #include "WebPreferencesKeys.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"

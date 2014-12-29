@@ -27,7 +27,6 @@
 #include "WebConnectionToWebProcess.h"
 
 #include "WebConnectionMessages.h"
-#include "WebContextUserMessageCoders.h"
 #include "WebProcessProxy.h"
 
 namespace WebKit {

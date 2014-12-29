@@ -1,3 +1,36 @@
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
+        Remove the old user message coder code
+        https://bugs.webkit.org/show_bug.cgi?id=139994
+
+        Reviewed by Sam Weinig.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::callMemberFunctionImpl): Deleted.
+        (IPC::callMemberFunction): Deleted.
+        (IPC::handleMessageVariadic): Deleted.
+        * Scripts/webkit/messages.py:
+        (decode_type):
+        (async_message_statement):
+        (sync_message_statement):
+        * Shared/UserMessageCoders.h: Removed.
+        * Shared/mac/ObjCObjectGraphCoders.h: Removed.
+        * Shared/mac/ObjCObjectGraphCoders.mm: Removed.
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        * UIProcess/WebContextUserMessageCoders.h: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebProcessPool.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h: Removed.
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        * WebProcess/WebProcess.cpp:
+
 2014-12-29  Sam Weinig  <sam@webkit.org>
 
         Move WebPasteboardProxy from Shared to UIProcess, where it should have been all along

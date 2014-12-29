@@ -34,7 +34,6 @@
 #include "DrawingArea.h"
 #include "EventDispatcher.h"
 #include "InjectedBundle.h"
-#include "InjectedBundleUserMessageCoders.h"
 #include "Logging.h"
 #include "PluginProcessConnectionManager.h"
 #include "SessionTracker.h"
@@ -53,7 +52,7 @@
 #include "WebMemorySampler.h"
 #include "WebOriginDataManager.h"
 #include "WebPage.h"
-#include "WebPageGroup.h"
+#include "WebPageGroupProxy.h"
 #include "WebPageGroupProxyMessages.h"
 #include "WebPlatformStrategies.h"
 #include "WebProcessCreationParameters.h"
@@ -93,6 +92,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringHash.h>
+
+#if PLATFORM(COCOA)
+#include "ObjCObjectGraph.h"
+#endif
 
 #if ENABLE(NETWORK_PROCESS)
 #if PLATFORM(COCOA)

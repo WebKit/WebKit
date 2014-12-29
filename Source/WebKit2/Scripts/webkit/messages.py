@@ -28,7 +28,6 @@ from webkit import parser
 WANTS_CONNECTION_ATTRIBUTE = 'WantsConnection'
 LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 DELAYED_ATTRIBUTE = 'Delayed'
-VARIADIC_ATTRIBUTE = 'Variadic'
 
 _license_header = """/*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
@@ -102,12 +101,7 @@ def reply_type(message):
 
 
 def decode_type(message):
-    parameters = message.parameters
-
-    if message.has_attribute(VARIADIC_ATTRIBUTE):
-        parameters = parameters[:-1]
-
-    return 'std::tuple<%s>' % ', '.join(parameter.type for parameter in parameters)
+    return 'std::tuple<%s>' % ', '.join(parameter.type for parameter in message.parameters)
 
 
 def message_to_struct_declaration(message):
@@ -269,8 +263,6 @@ def async_message_statement(receiver, message):
     dispatch_function_args = ['decoder', 'this', '&%s' % handler_function(receiver, message)]
 
     dispatch_function = 'handleMessage'
-    if message.has_attribute(VARIADIC_ATTRIBUTE):
-        dispatch_function += 'Variadic'
 
     if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
         dispatch_function_args.insert(0, 'connection')
@@ -287,8 +279,6 @@ def sync_message_statement(receiver, message):
     dispatch_function = 'handleMessage'
     if message.has_attribute(DELAYED_ATTRIBUTE):
         dispatch_function += 'Delayed'
-    if message.has_attribute(VARIADIC_ATTRIBUTE):
-        dispatch_function += 'Variadic'
 
     wants_connection = message.has_attribute(DELAYED_ATTRIBUTE) or message.has_attribute(WANTS_CONNECTION_ATTRIBUTE)
 

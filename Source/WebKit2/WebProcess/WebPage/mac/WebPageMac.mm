@@ -35,7 +35,6 @@
 #import "EditingRange.h"
 #import "EditorState.h"
 #import "InjectedBundleHitTestResult.h"
-#import "InjectedBundleUserMessageCoders.h"
 #import "PDFKitImports.h"
 #import "PageBanner.h"
 #import "PluginView.h"

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebConnectionToUIProcess.h"
 
-#include "InjectedBundleUserMessageCoders.h"
 #include "WebConnectionMessages.h"
 #include "WebProcess.h"
 
