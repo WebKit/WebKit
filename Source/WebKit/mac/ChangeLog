@@ -1,5 +1,20 @@
 2014-12-29  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of some PageGroup storage functions
+        https://bugs.webkit.org/show_bug.cgi?id=139996
+
+        Reviewed by Sam Weinig.
+
+        Call WebStorageNamespaceProvider directly instead.
+
+        * Storage/WebStorageManager.mm:
+        (-[WebStorageManager syncLocalStorage]):
+        (+[WebStorageManager closeIdleLocalStorageDatabases]):
+        * WebView/WebView.mm:
+        (+[WebView _applicationWillTerminate]):
+
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
         Move storage code from WebCore to WebKit
         https://bugs.webkit.org/show_bug.cgi?id=139558
 

@@ -56,14 +56,6 @@ namespace WebCore {
 
         WEBCORE_EXPORT static PageGroup* pageGroup(const String& groupName);
 
-        WEBCORE_EXPORT static void closeLocalStorage();
-
-        static void clearLocalStorageForAllOrigins();
-        static void clearLocalStorageForOrigin(SecurityOrigin*);
-        WEBCORE_EXPORT static void closeIdleLocalStorageDatabases();
-        // DumpRenderTree helper that triggers a StorageArea sync.
-        WEBCORE_EXPORT static void syncLocalStorage();
-
         const HashSet<Page*>& pages() const { return m_pages; }
 
         void addPage(Page&);

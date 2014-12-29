@@ -27,6 +27,7 @@
 
 #include "StorageThread.h"
 #include "StorageTrackerClient.h"
+#include "WebStorageNamespaceProvider.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SQLiteDatabaseTracker.h>
@@ -396,7 +397,7 @@ void StorageTracker::deleteAllOrigins()
         m_originSet.clear();
     }
 
-    PageGroup::clearLocalStorageForAllOrigins();
+    WebStorageNamespaceProvider::clearLocalStorageForAllOrigins();
 
     m_thread->dispatch([this] {
         syncDeleteAllOrigins();
@@ -493,7 +494,7 @@ void StorageTracker::deleteOrigin(SecurityOrigin* origin)
     // to reopen the db before the db is deleted by a StorageTracker thread.
     // In this case, reopening the db in StorageAreaSync will cancel a pending
     // StorageTracker db deletion.
-    PageGroup::clearLocalStorageForOrigin(origin);
+    WebStorageNamespaceProvider::clearLocalStorageForOrigin(origin);
 
     String originId = origin->databaseIdentifier();
     

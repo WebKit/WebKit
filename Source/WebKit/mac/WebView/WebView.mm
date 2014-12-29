@@ -4803,7 +4803,6 @@ static Vector<String> toStringVector(NSArray* patterns)
         [WebPluginDatabase closeSharedDatabase];
 
     WebStorageNamespaceProvider::closeLocalStorage();
-    PageGroup::closeLocalStorage();
 }
 #endif // !PLATFORM(IOS)
 
