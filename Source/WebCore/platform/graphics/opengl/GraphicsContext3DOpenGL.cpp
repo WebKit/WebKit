@@ -376,7 +376,7 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 Extensions3D* GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
-        m_extensions = adoptPtr(new Extensions3DOpenGL(this));
+        m_extensions = std::make_unique<Extensions3DOpenGL>(this);
     return m_extensions.get();
 }
 

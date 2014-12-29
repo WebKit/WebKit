@@ -22,7 +22,6 @@
 
 #include "GLContext.h"
 #include "GraphicsContext3D.h"
-#include <wtf/PassOwnPtr.h>
 
 #if USE(TEXTURE_MAPPER)
 #include "TextureMapperPlatformLayer.h"

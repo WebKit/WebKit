@@ -37,8 +37,6 @@
 #include "IntRect.h"
 #include "PlatformLayer.h"
 #include "TransformOperations.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/TypeCasts.h>
 
 #if ENABLE(CSS_COMPOSITING)

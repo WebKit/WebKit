@@ -32,8 +32,6 @@
 #define Texture_h
 
 #include "TilingData.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -54,11 +52,11 @@ public:
     Format format() const { return m_format; }
     const TilingData& tiles() const { return m_tiles; }
 private:
-    Texture(GraphicsContext3D*, PassOwnPtr<Vector<unsigned int>> tileTextureIds, Format format, int width, int height, int maxTextureSize);
+    Texture(GraphicsContext3D*, std::unique_ptr<Vector<unsigned>> tileTextureIds, Format, int width, int height, int maxTextureSize);
     GraphicsContext3D* m_context;
     Format m_format;
     TilingData m_tiles;
-    OwnPtr<Vector<unsigned int>> m_tileTextureIds;
+    std::unique_ptr<Vector<unsigned>> m_tileTextureIds;
 };
 
 }

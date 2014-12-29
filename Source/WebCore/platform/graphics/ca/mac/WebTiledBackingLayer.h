@@ -27,7 +27,6 @@
 #define WebTiledBackingLayer_h
 
 #import <QuartzCore/QuartzCore.h>
-#import <wtf/OwnPtr.h>
 
 namespace WebCore {
 class IntRect;

@@ -37,7 +37,6 @@
 #include "Path.h"
 #include "Pattern.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 #if USE(CG)
 typedef struct CGContext PlatformGraphicsContext;
@@ -522,7 +521,7 @@ namespace WebCore {
             DIBPixelData m_pixelData;
         };
 
-        PassOwnPtr<WindowsBitmap> createWindowsBitmap(const IntSize&);
+        std::unique_ptr<WindowsBitmap> createWindowsBitmap(const IntSize&);
         // The bitmap should be non-premultiplied.
         void drawWindowsBitmap(WindowsBitmap*, const IntPoint&);
 #endif

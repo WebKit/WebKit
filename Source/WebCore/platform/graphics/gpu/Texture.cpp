@@ -43,11 +43,11 @@
 
 namespace WebCore {
 
-Texture::Texture(GraphicsContext3D* context, PassOwnPtr<Vector<unsigned int>> tileTextureIds, Format format, int width, int height, int maxTextureSize)
+Texture::Texture(GraphicsContext3D* context, std::unique_ptr<Vector<unsigned>> tileTextureIds, Format format, int width, int height, int maxTextureSize)
     : m_context(context)
     , m_format(format)
     , m_tiles(IntSize(maxTextureSize, maxTextureSize), IntSize(width, height), true)
-    , m_tileTextureIds(tileTextureIds)
+    , m_tileTextureIds(WTF::move(tileTextureIds))
 {
 }
 
@@ -94,7 +94,7 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
         numTiles = 0;
     }
 
-    OwnPtr<Vector<unsigned int>> textureIds = adoptPtr(new Vector<unsigned int>(numTiles));
+    auto textureIds = std::make_unique<Vector<unsigned>>(numTiles);
     textureIds->fill(0, numTiles);
 
     for (int i = 0; i < numTiles; i++) {
@@ -120,7 +120,7 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
                                         tileBoundsWithBorder.height(),
                                         0, glFormat, glType);
     }
-    return adoptRef(new Texture(context, textureIds.release(), format, width, height, maxTextureSize));
+    return adoptRef(new Texture(context, WTF::move(textureIds), format, width, height, maxTextureSize));
 }
 
 template <bool swizzle>

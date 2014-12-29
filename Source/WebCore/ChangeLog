@@ -1,3 +1,46 @@
+2014-12-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Convert OwnPtr to std::unique_ptr in WebCore/graphics/
+        https://bugs.webkit.org/show_bug.cgi?id=139971
+
+        Reviewed by Darin Adler.
+
+        Use std::unique_ptr<> and std::make_unique<> instead of OwnPtr.
+
+        * platform/graphics/GlyphMetricsMap.h:
+        (WebCore::GlyphMetricsMap<T>::locatePageSlowCase):
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::getChild):
+        (WebCore::GlyphPageTreeNode::pruneCustomFontData):
+        (WebCore::GlyphPageTreeNode::pruneFontData):
+        * platform/graphics/GlyphPageTreeNode.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/GraphicsContext3DPrivate.h:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/MaskImageOperation.h:
+        * platform/graphics/ca/LayerPool.h:
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileCoverageMap.h:
+        * platform/graphics/ca/mac/WebTiledBackingLayer.h:
+        * platform/graphics/gpu/DrawingBuffer.h:
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::Texture):
+        (WebCore::Texture::create):
+        * platform/graphics/gpu/Texture.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::getExtensions):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::compileShader):
+        (WebCore::GraphicsContext3D::mappedSymbolName):
+        * platform/graphics/wayland/WaylandDisplay.cpp:
+        (WebCore::WaylandDisplay::createSharingGLContext):
+        * platform/graphics/wayland/WaylandDisplay.h:
+        * platform/graphics/wayland/WaylandSurface.cpp:
+        (WebCore::WaylandSurface::createGLContext):
+        * platform/graphics/wayland/WaylandSurface.h:
+
 2014-12-28  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix.

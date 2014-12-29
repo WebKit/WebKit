@@ -37,8 +37,6 @@
 #include "PlatformLayer.h"
 
 #include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #endif

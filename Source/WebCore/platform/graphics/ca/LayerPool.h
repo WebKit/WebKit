@@ -32,7 +32,6 @@
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 

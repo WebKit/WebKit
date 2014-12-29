@@ -84,7 +84,7 @@ private:
 
     bool m_filledPrimaryPage;
     GlyphMetricsPage m_primaryPage; // We optimize for the page that contains glyph indices 0-255.
-    OwnPtr<HashMap<int, OwnPtr<GlyphMetricsPage>>> m_pages;
+    std::unique_ptr<HashMap<int, std::unique_ptr<GlyphMetricsPage>>> m_pages;
 };
 
 template<> inline float GlyphMetricsMap<float>::unknownMetrics()
@@ -105,13 +105,12 @@ template<class T> typename GlyphMetricsMap<T>::GlyphMetricsPage* GlyphMetricsMap
         page = &m_primaryPage;
         m_filledPrimaryPage = true;
     } else {
-        if (m_pages) {
-            if ((page = m_pages->get(pageNumber)))
-                return page;
-        } else
-            m_pages = adoptPtr(new HashMap<int, OwnPtr<GlyphMetricsPage>>);
-        page = new GlyphMetricsPage;
-        m_pages->set(pageNumber, adoptPtr(page));
+        if (!m_pages)
+            m_pages = std::make_unique<HashMap<int, std::unique_ptr<GlyphMetricsPage>>>();
+        auto& pageInMap = m_pages->add(pageNumber, nullptr).iterator->value;
+        if (!pageInMap)
+            pageInMap = std::make_unique<GlyphMetricsPage>();
+        page = pageInMap.get();
     }
 
     // Fill in the whole page with the unknown glyph information.

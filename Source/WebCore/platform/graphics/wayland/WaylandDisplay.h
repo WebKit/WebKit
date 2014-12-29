@@ -31,7 +31,6 @@
 #include "WebKitGtkWaylandClientProtocol.h"
 #include <memory>
 #include <wayland-client.h>
-#include <wtf/PassOwnPtr.h>
 
 #include <wayland-egl.h>
 #include <EGL/egl.h>
@@ -51,7 +50,7 @@ public:
 
     std::unique_ptr<WaylandSurface> createSurface(const IntSize&, int widgetID);
 
-    PassOwnPtr<GLContextEGL> createSharingGLContext();
+    std::unique_ptr<GLContextEGL> createSharingGLContext();
 
 private:
     static const struct wl_registry_listener m_registryListener;

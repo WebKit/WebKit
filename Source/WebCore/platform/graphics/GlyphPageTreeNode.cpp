@@ -330,9 +330,14 @@ GlyphPageTreeNode* GlyphPageTreeNode::getChild(const FontData* fontData, unsigne
     if (GlyphPageTreeNode* foundChild = fontData ? m_children.get(fontData) : m_systemFallbackChild.get())
         return foundChild;
 
-    GlyphPageTreeNode* child = new GlyphPageTreeNode;
+    auto& child = fontData ? m_children.add(fontData, nullptr).iterator->value : m_systemFallbackChild;
+    if (child)
+        return child.get();
+    
+    child = std::make_unique<GlyphPageTreeNode>();
     child->m_parent = this;
     child->m_level = m_level + 1;
+
     if (fontData && fontData->isCustomFont()) {
         for (GlyphPageTreeNode* curr = this; curr; curr = curr->m_parent)
             curr->m_customFontCount++;
@@ -342,14 +347,14 @@ GlyphPageTreeNode* GlyphPageTreeNode::getChild(const FontData* fontData, unsigne
     child->m_pageNumber = m_pageNumber;
 #endif
     if (fontData) {
-        m_children.set(fontData, adoptPtr(child));
+        m_children.set(fontData, WTF::move(child));
         fontData->setMaxGlyphPageTreeLevel(std::max(fontData->maxGlyphPageTreeLevel(), child->m_level));
     } else {
-        m_systemFallbackChild = adoptPtr(child);
+        m_systemFallbackChild = WTF::move(child);
         child->m_isSystemFallback = true;
     }
     child->initializePage(fontData, pageNumber);
-    return child;
+    return child.get();
 }
 
 void GlyphPageTreeNode::pruneCustomFontData(const FontData* fontData)
@@ -358,7 +363,7 @@ void GlyphPageTreeNode::pruneCustomFontData(const FontData* fontData)
         return;
         
     // Prune any branch that contains this FontData.
-    if (OwnPtr<GlyphPageTreeNode> node = m_children.take(fontData)) {
+    if (auto node = m_children.take(fontData)) {
         if (unsigned customFontCount = node->m_customFontCount + 1) {
             for (GlyphPageTreeNode* curr = this; curr; curr = curr->m_parent)
                 curr->m_customFontCount -= customFontCount;
@@ -383,7 +388,7 @@ void GlyphPageTreeNode::pruneFontData(const SimpleFontData* fontData, unsigned l
         m_systemFallbackChild->m_page->removeFontDataFromSystemFallbackPage(fontData);
 
     // Prune any branch that contains this FontData.
-    if (OwnPtr<GlyphPageTreeNode> node = m_children.take(fontData)) {
+    if (auto node = m_children.take(fontData)) {
         if (unsigned customFontCount = node->m_customFontCount) {
             for (GlyphPageTreeNode* curr = this; curr; curr = curr->m_parent)
                 curr->m_customFontCount -= customFontCount;

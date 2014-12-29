@@ -66,7 +66,7 @@ void WaylandSurface::resize(const IntSize& size)
     wl_egl_window_resize(m_nativeWindow, size.width(), size.height(), 0, 0);
 }
 
-PassOwnPtr<GLContextEGL> WaylandSurface::createGLContext()
+std::unique_ptr<GLContextEGL> WaylandSurface::createGLContext()
 {
     return GLContextEGL::createWindowContext(m_nativeWindow, GLContext::sharingContext());
 }

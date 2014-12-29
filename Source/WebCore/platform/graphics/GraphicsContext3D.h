@@ -1102,14 +1102,14 @@ private:
 
     ANGLEWebKitBridge m_compiler;
 
-    OwnPtr<ShaderNameHash> nameHashMapForShaders;
+    std::unique_ptr<ShaderNameHash> nameHashMapForShaders;
 
 #if ((PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN)) && USE(OPENGL_ES_2))
     friend class Extensions3DOpenGLES;
-    OwnPtr<Extensions3DOpenGLES> m_extensions;
+    std::unique_ptr<Extensions3DOpenGLES> m_extensions;
 #else
     friend class Extensions3DOpenGL;
-    OwnPtr<Extensions3DOpenGL> m_extensions;
+    std::unique_ptr<Extensions3DOpenGL> m_extensions;
 #endif
     friend class Extensions3DOpenGLCommon;
 

@@ -37,6 +37,8 @@ namespace WebCore {
 class Extensions3DOpenGL : public Extensions3DOpenGLCommon {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    // This class only needs to be instantiated by GraphicsContext3D implementations.
+    explicit Extensions3DOpenGL(GraphicsContext3D*);
     virtual ~Extensions3DOpenGL();
 
     // Extensions3D methods.
@@ -57,10 +59,6 @@ public:
     virtual void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
 
 protected:
-    // This class only needs to be instantiated by GraphicsContext3D implementations.
-    friend class GraphicsContext3D;
-    Extensions3DOpenGL(GraphicsContext3D*);
-
     virtual bool supportsExtension(const WTF::String&);
     virtual String getExtensions();
 #if (PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN) || PLATFORM(IOS))

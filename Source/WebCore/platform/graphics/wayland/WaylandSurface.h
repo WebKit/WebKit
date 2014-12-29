@@ -29,7 +29,6 @@
 #if PLATFORM(WAYLAND)
 
 #include <wayland-client.h>
-#include <wtf/PassOwnPtr.h>
 
 #include <wayland-egl.h>
 #include <EGL/eglplatform.h>
@@ -49,7 +48,7 @@ public:
 
     void resize(const IntSize&);
 
-    PassOwnPtr<GLContextEGL> createGLContext();
+    std::unique_ptr<GLContextEGL> createGLContext();
 
     void requestFrame();
 
