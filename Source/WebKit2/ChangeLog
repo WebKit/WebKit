@@ -1,3 +1,12 @@
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the iOS build.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startAssistingNode):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::elementDidFocus):
+
 2014-12-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r177805.

@@ -34,10 +34,10 @@
 #import "EditingRange.h"
 #import "EditorState.h"
 #import "GestureTypes.h"
-#import "InjectedBundleUserMessageCoders.h"
 #import "InteractionInformationAtPosition.h"
 #import "PluginView.h"
 #import "RemoteLayerTreeDrawingArea.h"
+#import "UserData.h"
 #import "VisibleContentRectUpdateInfo.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import "WebChromeClient.h"
@@ -2272,7 +2272,7 @@ void WebPage::elementDidFocus(WebCore::Node* node)
         if (m_userIsInteracting)
             m_formClient->willBeginInputSession(this, downcast<Element>(node), WebFrame::fromCoreFrame(*node->document().frame()), userData);
 
-        send(Messages::WebPageProxy::StartAssistingNode(information, m_userIsInteracting, m_hasPendingBlurNotification, InjectedBundleUserMessageEncoder(userData.get())));
+        send(Messages::WebPageProxy::StartAssistingNode(information, m_userIsInteracting, m_hasPendingBlurNotification, UserData(WebProcess::shared().transformObjectsToHandles(userData).get())));
         m_hasPendingBlurNotification = false;
     }
 }
