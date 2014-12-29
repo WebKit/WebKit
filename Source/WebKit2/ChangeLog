@@ -1,5 +1,18 @@
 2014-12-29  Anders Carlsson  <andersca@apple.com>
 
+        Turn on transient local storage support again
+        https://bugs.webkit.org/show_bug.cgi?id=139995
+
+        Reviewed by Sam Weinig.
+
+        Using transient local storage caused weird crashes in the UI process so that change had to
+        be backed out - let's turn it on and see if it still happens.
+
+        * WebProcess/Storage/WebStorageNamespaceProvider.cpp:
+        (WebKit::WebStorageNamespaceProvider::createTransientLocalStorageNamespace):
+
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
         Remove more old coder code gunk.
 
         Rubber-stamped by Sam Weinig.
