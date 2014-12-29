@@ -29,6 +29,7 @@
 #include "resource.h"
 #include "WebKit.h"
 #include "WebKitClassFactory.h"
+#include "WebStorageNamespaceProvider.h"
 #include <WebCore/COMPtr.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/Page.h>
@@ -140,7 +141,7 @@ STDAPI LocalServerDidDie()
 void shutDownWebKit()
 {
     WebCore::iconDatabase().close();
-    WebCore::PageGroup::closeLocalStorage();
+    WebStorageNamespaceProvider:closeLocalStorage();
 }
 
 //FIXME: We should consider moving this to a new file for cross-project functionality

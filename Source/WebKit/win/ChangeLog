@@ -1,3 +1,10 @@
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Windows build.
+
+        * WebKitDLL.cpp:
+        (shutDownWebKit):
+
 2014-12-19  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Crash after failing to create GL context in accelerated compositing mode.
