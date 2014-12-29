@@ -1125,26 +1125,6 @@ bool WebProcessPool::dispatchSyncMessage(IPC::Connection* connection, IPC::Messa
     return m_messageReceiverMap.dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
-void WebProcessPool::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
-{
-    if (decoder.messageReceiverName() == Messages::WebProcessPool::messageReceiverName()) {
-        didReceiveWebProcessPoolMessage(connection, decoder);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-void WebProcessPool::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
-{
-    if (decoder.messageReceiverName() == Messages::WebProcessPool::messageReceiverName()) {
-        didReceiveSyncWebProcessPoolMessage(connection, decoder, replyEncoder);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
 void WebProcessPool::setEnhancedAccessibility(bool flag)
 {
     sendToAllProcesses(Messages::WebProcess::SetEnhancedAccessibility(flag));

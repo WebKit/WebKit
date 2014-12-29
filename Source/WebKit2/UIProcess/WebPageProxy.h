@@ -975,6 +975,7 @@ private:
     void setUserAgent(const String&);
 
     // IPC::MessageReceiver
+    // Implemented in generated WebPageProxyMessageReceiver.cpp
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
     virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
 
@@ -989,10 +990,6 @@ private:
 #if PLATFORM(GTK)
     virtual void failedToShowPopupMenu();
 #endif
-
-    // Implemented in generated WebPageProxyMessageReceiver.cpp
-    void didReceiveWebPageProxyMessage(IPC::Connection*, IPC::MessageDecoder&);
-    void didReceiveSyncWebPageProxyMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     void didCreateMainFrame(uint64_t frameID);
     void didCreateSubframe(uint64_t frameID);

@@ -51,10 +51,8 @@ protected:
     virtual RefPtr<API::Object> transformObjectsToHandles(API::Object*) = 0;
 
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
-
     // Implemented in generated WebConnectionMessageReceiver.cpp
-    void didReceiveWebConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     // Mesage handling implementation functions.
     void handleMessage(const String& messageName, const UserData& messageBody);

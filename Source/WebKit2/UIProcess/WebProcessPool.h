@@ -213,10 +213,6 @@ public:
 
     VisitedLinkProvider& visitedLinkProvider() { return *m_visitedLinkProvider; }
 
-    // MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
-    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
-
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }
 
@@ -381,9 +377,10 @@ private:
 
     void didGetStatistics(const StatisticsData&, uint64_t callbackID);
 
+    // IPC::MessageReceiver.
     // Implemented in generated WebProcessPoolMessageReceiver.cpp
-    void didReceiveWebProcessPoolMessage(IPC::Connection*, IPC::MessageDecoder&);
-    void didReceiveSyncWebProcessPoolMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
 
     static void languageChanged(void* context);
     void languageChanged();

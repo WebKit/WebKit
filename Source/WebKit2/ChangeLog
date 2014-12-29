@@ -1,3 +1,24 @@
+2014-12-29  Sam Weinig  <sam@webkit.org>
+
+        Removes some unnecessary use of LegacyReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=139992
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebConnection.cpp:
+        (WebKit::WebConnection::didReceiveMessage): Deleted.
+        * Shared/WebConnection.h:
+        * Shared/WebConnection.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::didReceiveMessage): Deleted.
+        (WebKit::WebProcessPool::didReceiveSyncMessage): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessPool.messages.in:
+        Remove unnecessary use of LegacyReceiver.
+
+        * UIProcess/WebPageProxy.h:
+        Remove declarations for functions that don't exist.
+
 2014-12-29  Anders Carlsson  <andersca@apple.com>
 
         Convert all variadic web process messages to UserData

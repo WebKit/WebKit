@@ -60,11 +60,6 @@ void WebConnection::didClose()
     m_client.didClose(this);
 }
 
-void WebConnection::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
-{
-    didReceiveWebConnectionMessage(connection, decoder);
-}
-
 void WebConnection::handleMessage(const String& messageName, const UserData& messageBody)
 {
     m_client.didReceiveMessage(this, messageName, transformHandlesToObjects(messageBody.object()).get());
