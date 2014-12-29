@@ -34,7 +34,7 @@
 
 namespace WebCore {
 class Color;
-class PasteboardWebContent;
+struct PasteboardWebContent;
 }
 
 namespace WebKit {
