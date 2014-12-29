@@ -239,6 +239,7 @@ set(WebKit2_SOURCES
     Shared/WebOpenPanelParameters.cpp
     Shared/WebPageCreationParameters.cpp
     Shared/WebPageGroupData.cpp
+    Shared/WebPasteboardProxy.cpp
     Shared/WebPlatformTouchPoint.cpp
     Shared/WebPopupItem.cpp
     Shared/WebPreferencesKeys.cpp
