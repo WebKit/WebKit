@@ -1,3 +1,20 @@
+2014-12-29  Fabien Vallée  <fvallee@connected-labs.com>
+
+        [jhBuild] cairo build error (-flto)
+        https://bugs.webkit.org/show_bug.cgi?id=139056
+
+        Reviewed by Philippe Normand.
+
+        cairo fails to link  with gcc 4.9 due to lto
+        related issue. This problem has been partially
+        addressed by cairo:
+        http://cgit.freedesktop.org/cairo/commit/?id=c3645d97ebd24c6f7ad850785d585aebc706a11c
+        use the cairo --disable-lto option and remove jhbuild
+        makeargs fixes the issue.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/cairo-1.12.8-add_disable-lto.patch: Added.
+
 2014-12-27  Myles C. Maxfield  <mmaxfield@apple.com>
         [Mac] Enable kerning, ligatures, and printer fonts 
         https://bugs.webkit.org/show_bug.cgi?id=139970

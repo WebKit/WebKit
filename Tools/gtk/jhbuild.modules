@@ -59,9 +59,9 @@
       href="http://download.savannah.gnu.org/releases/"/>
 
 
-  <autotools id="cairo" autogen-sh="configure"
-             autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes ac_cv_func_rsvg_pixbuf_from_file=no"
-             makeargs="CFLAGS=-fno-lto CXXFLAGS=-fno-lto LDFLAGS=-fno-lto">
+  <autotools id="cairo"
+             autogenargs="--enable-gl=yes --enable-egl=yes --enable-glx=yes ac_cv_func_rsvg_pixbuf_from_file=no --disable-lto"
+             makeargs="">
     <dependencies>
       <dep package="fontconfig"/>
       <dep package="pixman"/>
@@ -71,6 +71,7 @@
             repo="cairographics.org"
             hash="sha256:8fbb6fc66117ab4100bad830cb4479497e53c6f3facb98bf05c8d298554ebdd9"
             md5sum="8b3dcade859c44fb7e56fc68edfe9a45">
+      <patch file="cairo-1.12.8-add_disable-lto.patch" strip="1"/>
     </branch>
   </autotools>
 

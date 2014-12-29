@@ -1,0 +1,52 @@
+From c3645d97ebd24c6f7ad850785d585aebc706a11c Mon Sep 17 00:00:00 2001
+From: Bryce Harrington <b.harrington@samsung.com>
+Date: Tue, 8 Jul 2014 13:14:20 -0700
+Subject: configure.ac: Add a --disable-lto configure option
+
+Link-Time Optimization seems to be stable enough with gcc 4.8 and 4.9,
+but has proven to be an issue in the past for many cairo users (webkit,
+efl, ubuntu, opensuse, gentoo, arch...) who carry patches to disable it.
+
+Gentoo's patch[1] adds a --disable-lto option to leave it enabled by
+default but give users the ability to work around lto related build
+problems (c.f. fdo #77060).  Patch appears to have been authored by
+Alexandre Rostovtsev[2].
+
+1: sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/x11-libs/cairo/files/cairo-1.12.16-lto-optional.patch
+2: https://bugs.gentoo.org/show_bug.cgi?id=509552
+
+Fixes: https://bugs.freedesktop.org/show_bug.cgi?id=60852
+Signed-off-by: Bryce Harrington <b.harrington@samsung.com>
+Reviewed-by: Uli Schlachter <psychon@znc.in>
+
+diff --git a/build/configure.ac.warnings b/build/configure.ac.warnings
+index f984eb2..a72d948 100644
+--- a/build/configure.ac.warnings
++++ b/build/configure.ac.warnings
+@@ -38,13 +38,18 @@ dnl options.  Namely, the following:
+ 
+ dnl -flto working really needs a test link, not just a compile
+ 
+-safe_MAYBE_WARN="$MAYBE_WARN"
+-MAYBE_WARN="$MAYBE_WARN -flto"
+-AC_TRY_LINK([],[
++AC_ARG_ENABLE(lto,
++  AS_HELP_STRING([--disable-lto],
++                 [Do not try to use Link-Time Optimization]))
++if test "x$enable_lto" != "xno"; then
++   safe_MAYBE_WARN="$MAYBE_WARN"
++   MAYBE_WARN="$MAYBE_WARN -flto"
++   AC_TRY_LINK([],[
+ 	int main(int argc, char **argv) { return 0; }
+-],[],[
++   ],[],[
+ 	MAYBE_WARN="$safe_MAYBE_WARN"
+-])
++   ])
++fi
+ 
+ MAYBE_WARN="$MAYBE_WARN -fno-strict-aliasing -fno-common"
+ 
+-- 
+cgit v0.10.2
+
