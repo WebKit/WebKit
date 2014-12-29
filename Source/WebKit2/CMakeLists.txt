@@ -239,7 +239,6 @@ set(WebKit2_SOURCES
     Shared/WebOpenPanelParameters.cpp
     Shared/WebPageCreationParameters.cpp
     Shared/WebPageGroupData.cpp
-    Shared/WebPasteboardProxy.cpp
     Shared/WebPlatformTouchPoint.cpp
     Shared/WebPopupItem.cpp
     Shared/WebPreferencesKeys.cpp
@@ -350,6 +349,7 @@ set(WebKit2_SOURCES
     UIProcess/WebPageContextMenuClient.cpp
     UIProcess/WebPageGroup.cpp
     UIProcess/WebPageProxy.cpp
+    UIProcess/WebPasteboardProxy.cpp
     UIProcess/WebPreferences.cpp
     UIProcess/WebProcessProxy.cpp
     UIProcess/WebResourceCacheManagerProxy.cpp
@@ -589,7 +589,6 @@ set(WebKit2_MESSAGES_IN_FILES
     PluginProcess/WebProcessConnection.messages.in
 
     Shared/WebConnection.messages.in
-    Shared/WebPasteboardProxy.messages.in
 
     Shared/Authentication/AuthenticationManager.messages.in
 
@@ -611,6 +610,7 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebMediaCacheManagerProxy.messages.in
     UIProcess/WebOriginDataManagerProxy.messages.in
     UIProcess/WebPageProxy.messages.in
+    UIProcess/WebPasteboardProxy.messages.in
     UIProcess/WebProcessProxy.messages.in
     UIProcess/WebResourceCacheManagerProxy.messages.in
     UIProcess/WebVibrationProxy.messages.in
