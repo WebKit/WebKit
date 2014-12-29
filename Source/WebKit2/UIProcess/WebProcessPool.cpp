@@ -38,7 +38,6 @@
 #include "TextChecker.h"
 #include "WKContextPrivate.h"
 #include "WebApplicationCacheManagerProxy.h"
-#include "WebContextMessageKinds.h"
 #include "WebContextSupplement.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCookieManagerProxy.h"
@@ -200,7 +199,6 @@ WebProcessPool::WebProcessPool(WebProcessPoolConfiguration configuration)
     platformInitialize();
 
     addMessageReceiver(Messages::WebProcessPool::messageReceiverName(), *this);
-    addMessageReceiver(WebContextLegacyMessages::messageReceiverName(), *this);
 
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
     m_iconDatabase = WebIconDatabase::create(this);
@@ -949,18 +947,6 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
     }
 }
 
-// InjectedBundle client
-
-void WebProcessPool::didReceiveMessageFromInjectedBundle(const String& messageName, API::Object* messageBody)
-{
-    m_injectedBundleClient.didReceiveMessageFromInjectedBundle(this, messageName, messageBody);
-}
-
-void WebProcessPool::didReceiveSynchronousMessageFromInjectedBundle(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
-{
-    m_injectedBundleClient.didReceiveSynchronousMessageFromInjectedBundle(this, messageName, messageBody, returnData);
-}
-
 void WebProcessPool::populateVisitedLinks()
 {
     m_historyClient->populateVisitedLinks(*this);
@@ -1144,20 +1130,6 @@ void WebProcessPool::didReceiveMessage(IPC::Connection* connection, IPC::Message
         return;
     }
 
-    if (decoder.messageReceiverName() == WebContextLegacyMessages::messageReceiverName()
-        && decoder.messageName() == WebContextLegacyMessages::postMessageMessageName()) {
-        String messageName;
-        RefPtr<API::Object> messageBody;
-        WebContextUserMessageDecoder messageBodyDecoder(messageBody, *WebProcessProxy::fromConnection(connection));
-        if (!decoder.decode(messageName))
-            return;
-        if (!decoder.decode(messageBodyDecoder))
-            return;
-
-        didReceiveMessageFromInjectedBundle(messageName, messageBody.get());
-        return;
-    }
-
     ASSERT_NOT_REACHED();
 }
 
@@ -1165,26 +1137,6 @@ void WebProcessPool::didReceiveSyncMessage(IPC::Connection* connection, IPC::Mes
 {
     if (decoder.messageReceiverName() == Messages::WebProcessPool::messageReceiverName()) {
         didReceiveSyncWebProcessPoolMessage(connection, decoder, replyEncoder);
-        return;
-    }
-
-    if (decoder.messageReceiverName() == WebContextLegacyMessages::messageReceiverName()
-        && decoder.messageName() == WebContextLegacyMessages::postSynchronousMessageMessageName()) {
-        // FIXME: We should probably encode something in the case that the arguments do not decode correctly.
-
-        WebProcessProxy* process = WebProcessProxy::fromConnection(connection);
-
-        String messageName;
-        RefPtr<API::Object> messageBody;
-        WebContextUserMessageDecoder messageBodyDecoder(messageBody, *process);
-        if (!decoder.decode(messageName))
-            return;
-        if (!decoder.decode(messageBodyDecoder))
-            return;
-
-        RefPtr<API::Object> returnData;
-        didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody.get(), returnData);
-        replyEncoder->encode(WebContextUserMessageEncoder(returnData.get(), *process));
         return;
     }
 
@@ -1380,11 +1332,22 @@ void WebProcessPool::requestNetworkingStatistics(StatisticsRequest* request)
 #endif
 }
 
-#if !PLATFORM(COCOA)
-void WebProcessPool::dummy(bool&)
+void WebProcessPool::handleMessage(IPC::Connection* connection, const String& messageName, const WebKit::UserData& messageBody)
 {
+    if (auto* webProcessProxy = WebProcessProxy::fromConnection(connection))
+        m_injectedBundleClient.didReceiveMessageFromInjectedBundle(this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get());
 }
-#endif
+
+void WebProcessPool::handleSynchronousMessage(IPC::Connection* connection, const String& messageName, const UserData& messageBody, UserData& returnUserData)
+{
+    auto* webProcessProxy = WebProcessProxy::fromConnection(connection);
+    if (!webProcessProxy)
+        return;
+
+    RefPtr<API::Object> returnData;
+    m_injectedBundleClient.didReceiveSynchronousMessageFromInjectedBundle(this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get(), returnData);
+    returnUserData = UserData(webProcessProxy->transformObjectsToHandles(returnData.get()));
+}
 
 void WebProcessPool::didGetStatistics(const StatisticsData& statisticsData, uint64_t requestID)
 {

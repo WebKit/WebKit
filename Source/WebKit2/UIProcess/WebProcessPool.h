@@ -188,10 +188,6 @@ public:
 
     void postMessageToInjectedBundle(const String&, API::Object*);
 
-    // InjectedBundle client
-    void didReceiveMessageFromInjectedBundle(const String&, API::Object*);
-    void didReceiveSynchronousMessageFromInjectedBundle(const String&, API::Object*, RefPtr<API::Object>& returnData);
-
     void populateVisitedLinks();
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -406,11 +402,8 @@ private:
     void setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, uint64_t& newChangeCount);
 #endif
 
-#if !PLATFORM(COCOA)
-    // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
-    // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
-    void dummy(bool&);
-#endif
+    void handleMessage(IPC::Connection*, const String& messageName, const UserData& messageBody);
+    void handleSynchronousMessage(IPC::Connection*, const String& messageName, const UserData& messageBody, UserData& returnUserData);
 
     void didGetStatistics(const StatisticsData&, uint64_t callbackID);
 

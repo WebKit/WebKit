@@ -1,5 +1,53 @@
 2014-12-28  Anders Carlsson  <andersca@apple.com>
 
+        Use UserData when sending messages to the process pool
+        https://bugs.webkit.org/show_bug.cgi?id=139978
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkit/messages.py:
+        (generate_message_handler):
+        Include the connection parameter for legacy receivers as well.
+
+        * Shared/CoreIPCSupport/WebContextMessageKinds.h:
+        Remove this, it's no longer needed.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::didReceiveMessage):
+        No need to special case the postMessage message.
+
+        (WebKit::WebProcessPool::didReceiveSyncMessage):
+        No need to special case the postSynchronousMessageMessage message.
+
+        (WebKit::WebProcessPool::handleMessage):
+        Convert handles to objects and call didReceiveMessageFromInjectedBundle.
+
+        (WebKit::WebProcessPool::handleSynchronousMessage):
+        Convert handles to objects, call didReceiveSynchronousMessageFromInjectedBundle, and then
+        convert objects back to handles in the reply.
+
+        (WebKit::WebProcessPool::didReceiveMessageFromInjectedBundle): Deleted.
+        (WebKit::WebProcessPool::didReceiveSynchronousMessageFromInjectedBundle): Deleted.
+        (WebKit::WebProcessPool::dummy): Deleted.
+        * UIProcess/WebProcessPool.h:
+        Add handleMessage and handleSynchronousMessage message handlers.
+
+        * UIProcess/WebProcessPool.messages.in:
+        Add new messages.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Remove a now unused file.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        Convert objects to handles in the message body and then send the HandleMessage to the UI process.
+
+        (WebKit::InjectedBundle::postSynchronousMessage):
+        Convert objects to handles in the message body, send the HandleSynchronousMessage message to the UI process,
+        and then convert handles back to objects in the reply.
+
+2014-12-28  Anders Carlsson  <andersca@apple.com>
+
         Transform nested objects inside arrays
         https://bugs.webkit.org/show_bug.cgi?id=139976
 

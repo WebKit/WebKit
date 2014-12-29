@@ -533,7 +533,7 @@ def generate_message_handler(file):
 
     if async_messages:
         if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
-            result.append('void %s::didReceive%sMessage(IPC::Connection*, IPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
+            result.append('void %s::didReceive%sMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
         else:
             result.append('void %s::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)\n' % (receiver.name))
 
@@ -552,9 +552,7 @@ def generate_message_handler(file):
         result.append('\n')
         use_connection = True
         if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
-            if not sync_delayed_messages:
-                use_connection = False
-            result.append('void %s::didReceiveSync%sMessage(IPC::Connection*%s, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if use_connection else ''))
+            result.append('void %s::didReceiveSync%sMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name))
         else:
             result.append('void %s::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)\n' % (receiver.name))
         result.append('{\n')

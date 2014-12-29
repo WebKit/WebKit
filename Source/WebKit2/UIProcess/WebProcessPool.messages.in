@@ -21,6 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebProcessPool LegacyReceiver {
+    HandleMessage(String messageName, WebKit::UserData messageBody) WantsConnection
+    HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) WantsConnection
 
     DidGetStatistics(struct WebKit::StatisticsData statisticsData, uint64_t callbackID)
 
