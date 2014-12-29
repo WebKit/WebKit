@@ -1,5 +1,12 @@
 2014-12-29  Anders Carlsson  <andersca@apple.com>
 
+        Another iOS build fix.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::elementDidFocus):
+
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
         Turn on transient local storage support again
         https://bugs.webkit.org/show_bug.cgi?id=139995
 
