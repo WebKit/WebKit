@@ -1,5 +1,12 @@
 2014-12-29  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Speculative buildfix after r177793.
+
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
+2014-12-29  Csaba Osztrogonác  <ossy@webkit.org>
+
         Speculative buildfix after r177794.
 
         * CMakeLists.txt:
