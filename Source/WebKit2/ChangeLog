@@ -1,5 +1,15 @@
 2014-12-29  Anders Carlsson  <andersca@apple.com>
 
+        Remove more old coder code gunk.
+
+        Rubber-stamped by Sam Weinig.
+
+        * Scripts/webkit/messages.py:
+        (argument_coder_headers_for_type):
+        (handler_function): Deleted.
+
+2014-12-29  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the iOS build.
 
         * UIProcess/ios/WebPageProxyIOS.mm:

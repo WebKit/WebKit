@@ -325,8 +325,6 @@ def argument_coder_headers_for_type(type):
 
     special_cases = {
         'String': '"ArgumentCoders.h"',
-        'WebKit::InjectedBundleUserMessageEncoder': '"InjectedBundleUserMessageCoders.h"',
-        'WebKit::WebContextUserMessageEncoder': '"WebContextUserMessageCoders.h"',
         'WebKit::ScriptMessageHandlerHandle': '"WebScriptMessageHandler.h"',
     }
 
