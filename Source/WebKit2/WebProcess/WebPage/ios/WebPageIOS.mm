@@ -43,6 +43,7 @@
 #import "WebChromeClient.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebFrame.h"
+#import "WebImage.h"
 #import "WebKitSystemInterface.h"
 #import "WebKitSystemInterfaceIOS.h"
 #import "WebPageProxyMessages.h"
