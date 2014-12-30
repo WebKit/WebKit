@@ -28,8 +28,6 @@
 #define YarrPattern_h
 
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -269,12 +267,11 @@ public:
     
     PatternAlternative* addNewAlternative()
     {
-        PatternAlternative* alternative = new PatternAlternative(this);
-        m_alternatives.append(adoptPtr(alternative));
-        return alternative;
+        m_alternatives.append(std::make_unique<PatternAlternative>(this));
+        return static_cast<PatternAlternative*>(m_alternatives.last().get());
     }
 
-    Vector<OwnPtr<PatternAlternative>> m_alternatives;
+    Vector<std::unique_ptr<PatternAlternative>> m_alternatives;
     PatternAlternative* m_parent;
     unsigned m_minimumSize;
     unsigned m_callFrameSize;
@@ -339,43 +336,43 @@ struct YarrPattern {
     CharacterClass* newlineCharacterClass()
     {
         if (!newlineCached)
-            m_userCharacterClasses.append(adoptPtr(newlineCached = newlineCreate()));
+            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(newlineCached = newlineCreate()));
         return newlineCached;
     }
     CharacterClass* digitsCharacterClass()
     {
         if (!digitsCached)
-            m_userCharacterClasses.append(adoptPtr(digitsCached = digitsCreate()));
+            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(digitsCached = digitsCreate()));
         return digitsCached;
     }
     CharacterClass* spacesCharacterClass()
     {
         if (!spacesCached)
-            m_userCharacterClasses.append(adoptPtr(spacesCached = spacesCreate()));
+            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(spacesCached = spacesCreate()));
         return spacesCached;
     }
     CharacterClass* wordcharCharacterClass()
     {
         if (!wordcharCached)
-            m_userCharacterClasses.append(adoptPtr(wordcharCached = wordcharCreate()));
+            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(wordcharCached = wordcharCreate()));
         return wordcharCached;
     }
     CharacterClass* nondigitsCharacterClass()
     {
         if (!nondigitsCached)
-            m_userCharacterClasses.append(adoptPtr(nondigitsCached = nondigitsCreate()));
+            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(nondigitsCached = nondigitsCreate()));
         return nondigitsCached;
     }
     CharacterClass* nonspacesCharacterClass()
     {
         if (!nonspacesCached)
-            m_userCharacterClasses.append(adoptPtr(nonspacesCached = nonspacesCreate()));
+            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(nonspacesCached = nonspacesCreate()));
         return nonspacesCached;
     }
     CharacterClass* nonwordcharCharacterClass()
     {
         if (!nonwordcharCached)
-            m_userCharacterClasses.append(adoptPtr(nonwordcharCached = nonwordcharCreate()));
+            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(nonwordcharCached = nonwordcharCreate()));
         return nonwordcharCached;
     }
 
@@ -387,8 +384,8 @@ struct YarrPattern {
     unsigned m_numSubpatterns;
     unsigned m_maxBackReference;
     PatternDisjunction* m_body;
-    Vector<OwnPtr<PatternDisjunction>, 4> m_disjunctions;
-    Vector<OwnPtr<CharacterClass>> m_userCharacterClasses;
+    Vector<std::unique_ptr<PatternDisjunction>, 4> m_disjunctions;
+    Vector<std::unique_ptr<CharacterClass>> m_userCharacterClasses;
 
 private:
     const char* compile(const String& patternString);

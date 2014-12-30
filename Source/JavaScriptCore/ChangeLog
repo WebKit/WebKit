@@ -1,3 +1,41 @@
+2014-12-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move JavaScriptCore/yarr to std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=139621
+
+        Reviewed by Anders Carlsson.
+
+        Final clean up OwnPtr|PassOwnPtr in JavaScriptCore/yarr.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternEnd):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::opCompileParenthesesSubpattern):
+        (JSC::Yarr::YarrGenerator::opCompileParentheticalAssertion):
+        (JSC::Yarr::YarrGenerator::opCompileBody):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::charClass):
+        (JSC::Yarr::YarrPatternConstructor::YarrPatternConstructor):
+        (JSC::Yarr::YarrPatternConstructor::reset):
+        (JSC::Yarr::YarrPatternConstructor::atomPatternCharacter):
+        (JSC::Yarr::YarrPatternConstructor::atomCharacterClassEnd):
+        (JSC::Yarr::YarrPatternConstructor::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::YarrPatternConstructor::atomParentheticalAssertionBegin):
+        (JSC::Yarr::YarrPatternConstructor::copyDisjunction):
+        (JSC::Yarr::YarrPatternConstructor::checkForTerminalParentheses):
+        (JSC::Yarr::YarrPatternConstructor::optimizeDotStarWrappedExpressions):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::PatternDisjunction::addNewAlternative):
+        (JSC::Yarr::YarrPattern::newlineCharacterClass):
+        (JSC::Yarr::YarrPattern::digitsCharacterClass):
+        (JSC::Yarr::YarrPattern::spacesCharacterClass):
+        (JSC::Yarr::YarrPattern::wordcharCharacterClass):
+        (JSC::Yarr::YarrPattern::nondigitsCharacterClass):
+        (JSC::Yarr::YarrPattern::nonspacesCharacterClass):
+        (JSC::Yarr::YarrPattern::nonwordcharCharacterClass):
+
 2014-12-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19348208> REGRESSION (r177027): iOS builds use the wrong toolchain

@@ -1712,7 +1712,7 @@ public:
         unsigned subpatternId = parenthesesBegin.atom.subpatternId;
 
         unsigned numSubpatterns = lastSubpatternId - subpatternId + 1;
-        OwnPtr<ByteDisjunction> parenthesesDisjunction = adoptPtr(new ByteDisjunction(numSubpatterns, callFrameSize));
+        auto parenthesesDisjunction = std::make_unique<ByteDisjunction>(numSubpatterns, callFrameSize);
 
         unsigned firstTermInParentheses = beginTerm + 1;
         parenthesesDisjunction->terms.reserveInitialCapacity(endTerm - firstTermInParentheses + 2);
@@ -1725,7 +1725,7 @@ public:
         m_bodyDisjunction->terms.shrink(beginTerm);
 
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), capture, inputPosition));
-        m_allParenthesesInfo.append(parenthesesDisjunction.release());
+        m_allParenthesesInfo.append(WTF::move(parenthesesDisjunction));
 
         m_bodyDisjunction->terms[beginTerm].atom.quantityCount = quantityCount.unsafeGet();
         m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
@@ -1923,7 +1923,7 @@ private:
     std::unique_ptr<ByteDisjunction> m_bodyDisjunction;
     unsigned m_currentAlternativeIndex;
     Vector<ParenthesesStackEntry> m_parenthesesStack;
-    Vector<OwnPtr<ByteDisjunction>> m_allParenthesesInfo;
+    Vector<std::unique_ptr<ByteDisjunction>> m_allParenthesesInfo;
 };
 
 std::unique_ptr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocator* allocator)

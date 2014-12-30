@@ -175,16 +175,16 @@ public:
 
     }
 
-    PassOwnPtr<CharacterClass> charClass()
+    std::unique_ptr<CharacterClass> charClass()
     {
-        OwnPtr<CharacterClass> characterClass = adoptPtr(new CharacterClass);
+        auto characterClass = std::make_unique<CharacterClass>();
 
         characterClass->m_matches.swap(m_matches);
         characterClass->m_ranges.swap(m_ranges);
         characterClass->m_matchesUnicode.swap(m_matchesUnicode);
         characterClass->m_rangesUnicode.swap(m_rangesUnicode);
 
-        return characterClass.release();
+        return characterClass;
     }
 
 private:
@@ -274,10 +274,10 @@ public:
         , m_characterClassConstructor(pattern.m_ignoreCase)
         , m_invertParentheticalAssertion(false)
     {
-        OwnPtr<PatternDisjunction> body = adoptPtr(new PatternDisjunction);
+        auto body = std::make_unique<PatternDisjunction>();
         m_pattern.m_body = body.get();
         m_alternative = body->addNewAlternative();
-        m_pattern.m_disjunctions.append(body.release());
+        m_pattern.m_disjunctions.append(WTF::move(body));
     }
 
     ~YarrPatternConstructor()
@@ -289,10 +289,10 @@ public:
         m_pattern.reset();
         m_characterClassConstructor.reset();
 
-        OwnPtr<PatternDisjunction> body = adoptPtr(new PatternDisjunction);
+        auto body = std::make_unique<PatternDisjunction>();
         m_pattern.m_body = body.get();
         m_alternative = body->addNewAlternative();
-        m_pattern.m_disjunctions.append(body.release());
+        m_pattern.m_disjunctions.append(WTF::move(body));
     }
     
     void assertionBOL()
@@ -329,9 +329,9 @@ public:
         }
 
         m_characterClassConstructor.putUnicodeIgnoreCase(ch, info);
-        OwnPtr<CharacterClass> newCharacterClass = m_characterClassConstructor.charClass();
+        auto newCharacterClass = m_characterClassConstructor.charClass();
         m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), false));
-        m_pattern.m_userCharacterClasses.append(newCharacterClass.release());
+        m_pattern.m_userCharacterClasses.append(WTF::move(newCharacterClass));
     }
 
     void atomBuiltInCharacterClass(BuiltInCharacterClassID classID, bool invert)
@@ -391,9 +391,9 @@ public:
 
     void atomCharacterClassEnd()
     {
-        OwnPtr<CharacterClass> newCharacterClass = m_characterClassConstructor.charClass();
+        auto newCharacterClass = m_characterClassConstructor.charClass();
         m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), m_invertCharacterClass));
-        m_pattern.m_userCharacterClasses.append(newCharacterClass.release());
+        m_pattern.m_userCharacterClasses.append(WTF::move(newCharacterClass));
     }
 
     void atomParenthesesSubpatternBegin(bool capture = true)
@@ -402,19 +402,19 @@ public:
         if (capture)
             m_pattern.m_numSubpatterns++;
 
-        OwnPtr<PatternDisjunction> parenthesesDisjunction = adoptPtr(new PatternDisjunction(m_alternative));
+        auto parenthesesDisjunction = std::make_unique<PatternDisjunction>(m_alternative);
         m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), capture, false));
         m_alternative = parenthesesDisjunction->addNewAlternative();
-        m_pattern.m_disjunctions.append(parenthesesDisjunction.release());
+        m_pattern.m_disjunctions.append(WTF::move(parenthesesDisjunction));
     }
 
     void atomParentheticalAssertionBegin(bool invert = false)
     {
-        OwnPtr<PatternDisjunction> parenthesesDisjunction = adoptPtr(new PatternDisjunction(m_alternative));
+        auto parenthesesDisjunction = std::make_unique<PatternDisjunction>(m_alternative);
         m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParentheticalAssertion, m_pattern.m_numSubpatterns + 1, parenthesesDisjunction.get(), false, invert));
         m_alternative = parenthesesDisjunction->addNewAlternative();
         m_invertParentheticalAssertion = invert;
-        m_pattern.m_disjunctions.append(parenthesesDisjunction.release());
+        m_pattern.m_disjunctions.append(WTF::move(parenthesesDisjunction));
     }
 
     void atomParenthesesEnd()
@@ -479,12 +479,12 @@ public:
     // skip alternatives with m_startsWithBOL set true.
     PatternDisjunction* copyDisjunction(PatternDisjunction* disjunction, bool filterStartsWithBOL = false)
     {
-        OwnPtr<PatternDisjunction> newDisjunction;
+        std::unique_ptr<PatternDisjunction> newDisjunction;
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
             PatternAlternative* alternative = disjunction->m_alternatives[alt].get();
             if (!filterStartsWithBOL || !alternative->m_startsWithBOL) {
                 if (!newDisjunction) {
-                    newDisjunction = adoptPtr(new PatternDisjunction());
+                    newDisjunction = std::make_unique<PatternDisjunction>();
                     newDisjunction->m_parent = disjunction->m_parent;
                 }
                 PatternAlternative* newAlternative = newDisjunction->addNewAlternative();
@@ -498,7 +498,7 @@ public:
             return 0;
 
         PatternDisjunction* copiedDisjunction = newDisjunction.get();
-        m_pattern.m_disjunctions.append(newDisjunction.release());
+        m_pattern.m_disjunctions.append(WTF::move(newDisjunction));
         return copiedDisjunction;
     }
     
@@ -698,7 +698,7 @@ public:
         if (m_pattern.m_numSubpatterns)
             return;
 
-        Vector<OwnPtr<PatternAlternative>>& alternatives = m_pattern.m_body->m_alternatives;
+        Vector<std::unique_ptr<PatternAlternative>>& alternatives = m_pattern.m_body->m_alternatives;
         for (size_t i = 0; i < alternatives.size(); ++i) {
             Vector<PatternTerm>& terms = alternatives[i]->m_terms;
             if (terms.size()) {
@@ -768,7 +768,7 @@ public:
     // beginning and the end of the match.
     void optimizeDotStarWrappedExpressions()
     {
-        Vector<OwnPtr<PatternAlternative>>& alternatives = m_pattern.m_body->m_alternatives;
+        Vector<std::unique_ptr<PatternAlternative>>& alternatives = m_pattern.m_body->m_alternatives;
         if (alternatives.size() != 1)
             return;
 

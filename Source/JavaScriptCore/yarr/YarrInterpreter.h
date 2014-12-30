@@ -27,7 +27,6 @@
 #define YarrInterpreter_h
 
 #include "YarrPattern.h"
-#include <wtf/PassOwnPtr.h>
 
 namespace WTF {
 class BumpPointerAllocator;
@@ -336,7 +335,7 @@ public:
 struct BytecodePattern {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BytecodePattern(std::unique_ptr<ByteDisjunction> body, Vector<OwnPtr<ByteDisjunction>>& parenthesesInfoToAdopt, YarrPattern& pattern, BumpPointerAllocator* allocator)
+    BytecodePattern(std::unique_ptr<ByteDisjunction> body, Vector<std::unique_ptr<ByteDisjunction>>& parenthesesInfoToAdopt, YarrPattern& pattern, BumpPointerAllocator* allocator)
         : m_body(WTF::move(body))
         , m_ignoreCase(pattern.m_ignoreCase)
         , m_multiline(pattern.m_multiline)
@@ -365,8 +364,8 @@ public:
     CharacterClass* wordcharCharacterClass;
 
 private:
-    Vector<OwnPtr<ByteDisjunction>> m_allParenthesesInfo;
-    Vector<OwnPtr<CharacterClass>> m_userCharacterClasses;
+    Vector<std::unique_ptr<ByteDisjunction>> m_allParenthesesInfo;
+    Vector<std::unique_ptr<CharacterClass>> m_userCharacterClasses;
 };
 
 JS_EXPORT_PRIVATE std::unique_ptr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*);
