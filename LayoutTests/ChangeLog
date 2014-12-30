@@ -1,7 +1,14 @@
 2014-12-30  Gabor Rapcsanyi  <rgabor@webkit.org>
 
+        Fix bug number typo in the previous commit.
+
+        * plugins/large-plugin-crash-expected.txt:
+        * plugins/large-plugin-crash.html:
+
+2014-12-30  Gabor Rapcsanyi  <rgabor@webkit.org>
+
         Too large plugins are crashing.
-        https://bugs.webkit.org/show_bug.cgi?id=139856
+        https://bugs.webkit.org/show_bug.cgi?id=139868
 
         Reviewed by Darin Adler.
 

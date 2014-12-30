@@ -1,4 +1,4 @@
-Bug 139856: Large plugin crash.
+Bug 139868: Large plugin crash.
 
 This test PASSES if it does not CRASH.
 
