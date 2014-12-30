@@ -25,16 +25,16 @@
 namespace WebCore {
 
 Animation::Animation()
-    : m_name(initialAnimationName())
+    : m_name(initialName())
     , m_property(CSSPropertyInvalid)
     , m_mode(AnimateAll)
-    , m_iterationCount(initialAnimationIterationCount())
-    , m_delay(initialAnimationDelay())
-    , m_duration(initialAnimationDuration())
-    , m_timingFunction(initialAnimationTimingFunction())
-    , m_direction(initialAnimationDirection())
-    , m_fillMode(initialAnimationFillMode())
-    , m_playState(initialAnimationPlayState())
+    , m_iterationCount(initialIterationCount())
+    , m_delay(initialDelay())
+    , m_duration(initialDuration())
+    , m_timingFunction(initialTimingFunction())
+    , m_direction(initialDirection())
+    , m_fillMode(initialFillMode())
+    , m_playState(initialPlayState())
     , m_delaySet(false)
     , m_directionSet(false)
     , m_durationSet(false)
@@ -134,7 +134,7 @@ bool Animation::animationsMatch(const Animation* o, bool matchPlayStates) const
     return !matchPlayStates || (m_playState == o->m_playState && m_playStateSet == o->m_playStateSet);
 }
 
-const String& Animation::initialAnimationName()
+const String& Animation::initialName()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(String, initialValue, (ASCIILiteral("none")));
     return initialValue;

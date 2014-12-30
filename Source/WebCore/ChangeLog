@@ -1,3 +1,13 @@
+2014-12-29  Chris Dumez  <cdumez@apple.com>
+
+        Move animation / transition CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=139999
+
+        Reviewed by Darin Adler.
+
+        Move animation / transition CSS properties to the new StyleBuilder by
+        teaching makeprop.pl how to generate them.
+
 2014-12-29  Anders Carlsson  <andersca@apple.com>
 
         Remove more dead code

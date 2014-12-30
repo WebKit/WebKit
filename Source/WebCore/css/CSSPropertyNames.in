@@ -72,6 +72,10 @@
 // Should only with used with "VisitedLinkColorSupport". It indicates that for
 // setting the inherited value, it will not fallback to using the parent's
 // "color" property if the inherited color is invalid.
+//
+// * AnimationProperty:
+// Indicates that this CSS property is an animation / transition property.
+// It must have corresponding methods on the Animation class.
 
 
 // high-priority property names have to be listed first, to simplify the check
@@ -112,14 +116,14 @@ line-height [Inherited, Getter=specifiedLineHeight, Custom=Value]
 
 // The remaining properties are listed in alphabetical order
 animation [LegacyStyleBuilder]
-animation-delay [LegacyStyleBuilder]
-animation-direction [LegacyStyleBuilder]
-animation-duration [LegacyStyleBuilder]
-animation-fill-mode [LegacyStyleBuilder]
-animation-iteration-count [LegacyStyleBuilder]
-animation-name [LegacyStyleBuilder]
-animation-play-state [LegacyStyleBuilder]
-animation-timing-function [LegacyStyleBuilder]
+animation-delay [AnimationProperty, TypeName=double, NameForMethods=Delay]
+animation-direction [AnimationProperty, TypeName=Animation::AnimationDirection, NameForMethods=Direction]
+animation-duration [AnimationProperty, TypeName=double, NameForMethods=Duration]
+animation-fill-mode [AnimationProperty, TypeName=unsigned, NameForMethods=FillMode]
+animation-iteration-count [AnimationProperty, TypeName=double, NameForMethods=IterationCount]
+animation-name [AnimationProperty, TypeName=String, NameForMethods=Name]
+animation-play-state [AnimationProperty, TypeName=EAnimPlayState, NameForMethods=PlayState]
+animation-timing-function [AnimationProperty, TypeName=PassRefPtr<TimingFunction>, NameForMethods=TimingFunction]
 background [LegacyStyleBuilder]
 background-attachment [LegacyStyleBuilder]
 background-blend-mode [LegacyStyleBuilder]
@@ -293,14 +297,14 @@ z-index [TypeName=int, AutoFunctions]
 alt [LegacyStyleBuilder]
 -webkit-alt = alt
 -webkit-animation [LegacyStyleBuilder]
--webkit-animation-delay [LegacyStyleBuilder]
--webkit-animation-direction [LegacyStyleBuilder]
--webkit-animation-duration [LegacyStyleBuilder]
--webkit-animation-fill-mode [LegacyStyleBuilder]
--webkit-animation-iteration-count [LegacyStyleBuilder]
--webkit-animation-name [LegacyStyleBuilder]
--webkit-animation-play-state [LegacyStyleBuilder]
--webkit-animation-timing-function [LegacyStyleBuilder]
+-webkit-animation-delay [AnimationProperty, TypeName=double, NameForMethods=Delay]
+-webkit-animation-direction [AnimationProperty, TypeName=Animation::AnimationDirection, NameForMethods=Direction]
+-webkit-animation-duration [AnimationProperty, TypeName=double, NameForMethods=Duration]
+-webkit-animation-fill-mode [AnimationProperty, TypeName=unsigned, NameForMethods=FillMode]
+-webkit-animation-iteration-count [AnimationProperty, TypeName=double, NameForMethods=IterationCount]
+-webkit-animation-name [AnimationProperty, TypeName=String, NameForMethods=Name]
+-webkit-animation-play-state [AnimationProperty, TypeName=EAnimPlayState, NameForMethods=PlayState]
+-webkit-animation-timing-function [AnimationProperty, TypeName=PassRefPtr<TimingFunction>, NameForMethods=TimingFunction]
 -webkit-appearance [TypeName=ControlPart]
 -webkit-aspect-ratio [Inherited, Custom=All]
 -webkit-backface-visibility
@@ -536,10 +540,10 @@ text-emphasis-style = -webkit-text-emphasis-style
 -webkit-transform-origin-z [Converter=ComputedLength<float>]
 -webkit-transform-style [TypeName=ETransformStyle3D, NameForMethods=TransformStyle3D]
 -webkit-transition [LegacyStyleBuilder]
--webkit-transition-delay [LegacyStyleBuilder]
--webkit-transition-duration [LegacyStyleBuilder]
--webkit-transition-property [LegacyStyleBuilder]
--webkit-transition-timing-function [LegacyStyleBuilder]
+-webkit-transition-delay [AnimationProperty, TypeName=double, NameForMethods=Delay]
+-webkit-transition-duration [AnimationProperty, TypeName=double, NameForMethods=Duration]
+-webkit-transition-property [AnimationProperty, TypeName=CSSPropertyID, NameForMethods=Property]
+-webkit-transition-timing-function [AnimationProperty, TypeName=PassRefPtr<TimingFunction>, NameForMethods=TimingFunction]
 -webkit-user-drag
 -webkit-user-modify [Inherited]
 -webkit-user-select [Inherited]

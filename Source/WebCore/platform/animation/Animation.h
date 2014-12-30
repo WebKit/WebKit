@@ -175,15 +175,15 @@ private:
     bool m_isNone            : 1;
 
 public:
-    static double initialAnimationDelay() { return 0; }
-    static AnimationDirection initialAnimationDirection() { return AnimationDirectionNormal; }
-    static double initialAnimationDuration() { return 0; }
-    static unsigned initialAnimationFillMode() { return AnimationFillModeNone; }
-    static double initialAnimationIterationCount() { return 1.0; }
-    static const String& initialAnimationName();
-    static EAnimPlayState initialAnimationPlayState() { return AnimPlayStatePlaying; }
-    static CSSPropertyID initialAnimationProperty() { return CSSPropertyInvalid; }
-    static const PassRefPtr<TimingFunction> initialAnimationTimingFunction() { return CubicBezierTimingFunction::create(); }
+    static double initialDelay() { return 0; }
+    static AnimationDirection initialDirection() { return AnimationDirectionNormal; }
+    static double initialDuration() { return 0; }
+    static unsigned initialFillMode() { return AnimationFillModeNone; }
+    static double initialIterationCount() { return 1.0; }
+    static const String& initialName();
+    static EAnimPlayState initialPlayState() { return AnimPlayStatePlaying; }
+    static CSSPropertyID initialProperty() { return CSSPropertyInvalid; }
+    static const PassRefPtr<TimingFunction> initialTimingFunction() { return CubicBezierTimingFunction::create(); }
 };
 
 } // namespace WebCore

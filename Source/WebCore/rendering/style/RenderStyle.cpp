@@ -1313,18 +1313,18 @@ void RenderStyle::adjustTransitions()
     }
 }
 
-AnimationList* RenderStyle::accessAnimations()
+AnimationList& RenderStyle::ensureAnimations()
 {
     if (!rareNonInheritedData.access()->m_animations)
         rareNonInheritedData.access()->m_animations = std::make_unique<AnimationList>();
-    return rareNonInheritedData->m_animations.get();
+    return *rareNonInheritedData->m_animations;
 }
 
-AnimationList* RenderStyle::accessTransitions()
+AnimationList& RenderStyle::ensureTransitions()
 {
     if (!rareNonInheritedData.access()->m_transitions)
         rareNonInheritedData.access()->m_transitions = std::make_unique<AnimationList>();
-    return rareNonInheritedData->m_transitions.get();
+    return *rareNonInheritedData->m_transitions;
 }
 
 const Animation* RenderStyle::transitionForProperty(CSSPropertyID property) const
