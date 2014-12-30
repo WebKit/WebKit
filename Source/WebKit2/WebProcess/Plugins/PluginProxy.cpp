@@ -596,6 +596,8 @@ bool PluginProxy::updateBackingStore()
     
     if (!m_backingStore) {
         m_backingStore = ShareableBitmap::create(backingStoreSize, ShareableBitmap::SupportsAlpha);
+        if (!m_backingStore)
+            return false;
         return true;
     }
 

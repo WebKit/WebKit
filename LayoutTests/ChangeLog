@@ -1,3 +1,15 @@
+2014-12-30  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Too large plugins are crashing.
+        https://bugs.webkit.org/show_bug.cgi?id=139856
+
+        Reviewed by Darin Adler.
+
+        Add layout test to cover this crash.
+
+        * plugins/large-plugin-crash-expected.txt: Added.
+        * plugins/large-plugin-crash.html: Added.
+
 2014-12-29  Sebastian Dröge  <sebastian@centricular.com>
 
         Enable MediaSource tests for the GTK port
