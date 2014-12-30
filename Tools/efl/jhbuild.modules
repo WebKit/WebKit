@@ -287,9 +287,9 @@
   <autotools id="atk"
              autogen-sh="configure"
              autogenargs="--disable-introspection">
-    <branch module="pub/GNOME/sources/atk/2.11/atk-2.11.92.tar.xz" version="2.11.92"
+    <branch module="pub/GNOME/sources/atk/2.15/atk-2.15.2.tar.xz" version="2.15.2"
             repo="ftp.gnome.org"
-            hash="sha256:71e9880f1b704dfd98806643b8dc66a5df4fcef155cf5944184d8e8f66dac689"/>
+            hash="sha256:179d15424b8aa3a5726903f0da458de68e0585dfd9d451c6dcfcdb6b7b509cbe"/>
     <dependencies>
         <dep package="glib"/>
     </dependencies>

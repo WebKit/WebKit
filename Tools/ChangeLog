@@ -1,3 +1,14 @@
+2014-12-30  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Bump version of ATK used by jhbuild to 2.15.2
+        https://bugs.webkit.org/show_bug.cgi?id=139816
+
+        Reviewed by Gyuyoung Kim.
+
+        Bump version of ATK used by jhbuild to 2.15.2
+
+        * efl/jhbuild.modules:
+
 2014-12-29  Fabien Vallée  <fvallee@connected-labs.com>
 
         [jhBuild] cairo build error (-flto)
