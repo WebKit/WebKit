@@ -150,8 +150,7 @@ private:
 
     const unsigned m_quotaInBytes = 5 * 1024 * 1024;
 
-    // We don't hold an explicit reference to the StorageAreas; they are kept alive by the m_storageAreasByConnection map in StorageManager.
-    HashMap<RefPtr<SecurityOrigin>, StorageArea*> m_storageAreaMap;
+    HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>> m_storageAreaMap;
 };
 
 Ref<StorageManager::StorageArea> StorageManager::StorageArea::create(LocalStorageNamespace* localStorageNamespace, RefPtr<SecurityOrigin>&& securityOrigin, unsigned quotaInBytes)
