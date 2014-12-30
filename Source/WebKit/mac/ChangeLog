@@ -1,3 +1,17 @@
+2014-12-30  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Enable the compiler to check format strings specified with UI_STRING and UI_STRING_KEY
+        https://bugs.webkit.org/show_bug.cgi?id=140003
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebLocalizableStrings.h: Made UI_STRING and UI_STRING_KEY call a new helper function
+        that takes their "string" parameter as a "value" "parameter and has an attribute telling
+        the compiler that if the "value" parameter is a format string then the function returns a
+        modified version of it. The result is that if UI_STRING is used as a format string parameter
+        to some function or method, the compiler will check the format specifiers in the string
+        against the other parameters.
+
 2014-12-29  Dan Bernstein  <mitz@apple.com>
 
         Fixed the iOS build.

@@ -28,10 +28,14 @@
 
 #if __OBJC__
 @class NSBundle;
-#elif __cplusplus
+typedef NSString *WebLocalizedStringType;
+#else
+#if __cplusplus
 class NSBundle;
 #else
 typedef struct NSBundle NSBundle;
+#endif
+typedef CFStringRef WebLocalizedStringType;
 #endif
 
 typedef struct {
@@ -43,11 +47,7 @@ typedef struct {
 extern "C" {
 #endif
 
-#if __OBJC__
-NSString *WebLocalizedString(WebLocalizableStringsBundle *bundle, const char *key);
-#else
-CFStringRef WebLocalizedString(WebLocalizableStringsBundle *bundle, const char *key);
-#endif
+WebLocalizedStringType WebLocalizedString(WebLocalizableStringsBundle* bundle, const char* key);
 
 #if TARGET_OS_IPHONE
 void LoadWebLocalizedStrings(void); // The first WebLocalizedString call can take over 20ms unless this function is called beforehand.
@@ -57,18 +57,23 @@ void LoadWebLocalizedStrings(void); // The first WebLocalizedString call can tak
 }
 #endif
 
+static inline __attribute__((format_arg(3))) WebLocalizedStringType WebLocalizedStringWithValue(WebLocalizableStringsBundle* bundle, const char* key, const char* value)
+{
+    return WebLocalizedString(bundle, key);
+}
+
 #ifdef FRAMEWORK_NAME
 
 #define LOCALIZABLE_STRINGS_BUNDLE(F) LOCALIZABLE_STRINGS_BUNDLE_HELPER(F)
 #define LOCALIZABLE_STRINGS_BUNDLE_HELPER(F) F ## LocalizableStringsBundle
 extern WebLocalizableStringsBundle LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME);
 
-#define UI_STRING(string, comment) WebLocalizedString(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), string)
-#define UI_STRING_KEY(string, key, comment) WebLocalizedString(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), key)
+#define UI_STRING(string, comment) WebLocalizedStringWithValue(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), string, string)
+#define UI_STRING_KEY(string, key, comment) WebLocalizedStringWithValue(&LOCALIZABLE_STRINGS_BUNDLE(FRAMEWORK_NAME), key, string)
 
 #else
 
-#define UI_STRING(string, comment) WebLocalizedString(0, string)
-#define UI_STRING_KEY(string, key, comment) WebLocalizedString(0, key)
+#define UI_STRING(string, comment) WebLocalizedStringWithValue(0, string, string)
+#define UI_STRING_KEY(string, key, comment) WebLocalizedStringWithValue(0, key, string)
 
 #endif
