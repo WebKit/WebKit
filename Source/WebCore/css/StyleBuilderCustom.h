@@ -74,6 +74,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(TextShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitAspectRatio);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitBoxShadow);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitFontVariantLigatures);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageOutset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageRepeat);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageSlice);
@@ -1200,6 +1201,71 @@ inline void StyleBuilderCustom::applyValueColumnGap(StyleResolver& styleResolver
         styleResolver.style()->setHasNormalColumnGap();
     else
         styleResolver.style()->setColumnGap(StyleBuilderConverter::convertComputedLength<float>(styleResolver, value));
+}
+
+inline void StyleBuilderCustom::applyInitialWebkitFontVariantLigatures(StyleResolver& styleResolver)
+{
+    FontDescription fontDescription = styleResolver.fontDescription();
+
+    fontDescription.setCommonLigaturesState(FontDescription::NormalLigaturesState);
+    fontDescription.setDiscretionaryLigaturesState(FontDescription::NormalLigaturesState);
+    fontDescription.setHistoricalLigaturesState(FontDescription::NormalLigaturesState);
+
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyInheritWebkitFontVariantLigatures(StyleResolver& styleResolver)
+{
+    const FontDescription& parentFontDescription = styleResolver.parentFontDescription();
+    FontDescription fontDescription = styleResolver.fontDescription();
+
+    fontDescription.setCommonLigaturesState(parentFontDescription.commonLigaturesState());
+    fontDescription.setDiscretionaryLigaturesState(parentFontDescription.discretionaryLigaturesState());
+    fontDescription.setHistoricalLigaturesState(parentFontDescription.historicalLigaturesState());
+
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyValueWebkitFontVariantLigatures(StyleResolver& styleResolver, CSSValue& value)
+{
+    FontDescription::LigaturesState commonLigaturesState = FontDescription::NormalLigaturesState;
+    FontDescription::LigaturesState discretionaryLigaturesState = FontDescription::NormalLigaturesState;
+    FontDescription::LigaturesState historicalLigaturesState = FontDescription::NormalLigaturesState;
+
+    if (is<CSSValueList>(value)) {
+        for (auto& item : downcast<CSSValueList>(value)) {
+            switch (downcast<CSSPrimitiveValue>(item.get()).getValueID()) {
+            case CSSValueNoCommonLigatures:
+                commonLigaturesState = FontDescription::DisabledLigaturesState;
+                break;
+            case CSSValueCommonLigatures:
+                commonLigaturesState = FontDescription::EnabledLigaturesState;
+                break;
+            case CSSValueNoDiscretionaryLigatures:
+                discretionaryLigaturesState = FontDescription::DisabledLigaturesState;
+                break;
+            case CSSValueDiscretionaryLigatures:
+                discretionaryLigaturesState = FontDescription::EnabledLigaturesState;
+                break;
+            case CSSValueNoHistoricalLigatures:
+                historicalLigaturesState = FontDescription::DisabledLigaturesState;
+                break;
+            case CSSValueHistoricalLigatures:
+                historicalLigaturesState = FontDescription::EnabledLigaturesState;
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+    } else
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
+
+    FontDescription fontDescription = styleResolver.fontDescription();
+    fontDescription.setCommonLigaturesState(commonLigaturesState);
+    fontDescription.setDiscretionaryLigaturesState(discretionaryLigaturesState);
+    fontDescription.setHistoricalLigaturesState(historicalLigaturesState);
+    styleResolver.setFontDescription(fontDescription);
 }
 
 } // namespace WebCore

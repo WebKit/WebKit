@@ -93,7 +93,7 @@ text-rendering [Inherited, LegacyStyleBuilder]
 -webkit-font-feature-settings [Inherited, LegacyStyleBuilder]
 -webkit-font-kerning [Inherited, LegacyStyleBuilder]
 -webkit-font-smoothing [Inherited, LegacyStyleBuilder]
--webkit-font-variant-ligatures [Inherited, LegacyStyleBuilder]
+-webkit-font-variant-ligatures [Inherited, Custom=All]
 -webkit-locale [Inherited, Custom=Value]
 -webkit-text-orientation [Inherited, Custom=Value]
 -epub-text-orientation = -webkit-text-orientation

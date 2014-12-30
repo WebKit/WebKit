@@ -1,3 +1,25 @@
+2014-12-30  Chris Dumez  <cdumez@apple.com>
+
+        Move '-webkit-font-variant-ligature' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140007
+
+        Reviewed by Darin Adler.
+
+        Move '-webkit-font-variant-ligature' CSS property to the new StyleBuilder
+        by using custom code.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyFontVariantLigatures::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyFontVariantLigatures::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyFontVariantLigatures::applyValue): Deleted.
+        (WebCore::ApplyPropertyFontVariantLigatures::createHandler): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialWebkitFontVariantLigatures):
+        (WebCore::StyleBuilderCustom::applyInheritWebkitFontVariantLigatures):
+        (WebCore::StyleBuilderCustom::applyValueWebkitFontVariantLigatures):
+
 2014-12-29  Chris Dumez  <cdumez@apple.com>
 
         Move animation / transition CSS properties to the new StyleBuilder

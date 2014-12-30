@@ -313,86 +313,6 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
-class ApplyPropertyFontVariantLigatures {
-public:
-    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        const FontDescription& parentFontDescription = styleResolver->parentFontDescription();
-        FontDescription fontDescription = styleResolver->fontDescription();
-
-        fontDescription.setCommonLigaturesState(parentFontDescription.commonLigaturesState());
-        fontDescription.setDiscretionaryLigaturesState(parentFontDescription.discretionaryLigaturesState());
-        fontDescription.setHistoricalLigaturesState(parentFontDescription.historicalLigaturesState());
-
-        styleResolver->setFontDescription(fontDescription);
-    }
-
-    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        FontDescription fontDescription = styleResolver->fontDescription();
-
-        fontDescription.setCommonLigaturesState(FontDescription::NormalLigaturesState);
-        fontDescription.setDiscretionaryLigaturesState(FontDescription::NormalLigaturesState);
-        fontDescription.setHistoricalLigaturesState(FontDescription::NormalLigaturesState);
-
-        styleResolver->setFontDescription(fontDescription);
-    }
-
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        FontDescription::LigaturesState commonLigaturesState = FontDescription::NormalLigaturesState;
-        FontDescription::LigaturesState discretionaryLigaturesState = FontDescription::NormalLigaturesState;
-        FontDescription::LigaturesState historicalLigaturesState = FontDescription::NormalLigaturesState;
-
-        if (is<CSSValueList>(*value)) {
-            CSSValueList& valueList = downcast<CSSValueList>(*value);
-            for (size_t i = 0; i < valueList.length(); ++i) {
-                CSSValue* item = valueList.itemWithoutBoundsCheck(i);
-                if (is<CSSPrimitiveValue>(*item)) {
-                    switch (downcast<CSSPrimitiveValue>(*item).getValueID()) {
-                    case CSSValueNoCommonLigatures:
-                        commonLigaturesState = FontDescription::DisabledLigaturesState;
-                        break;
-                    case CSSValueCommonLigatures:
-                        commonLigaturesState = FontDescription::EnabledLigaturesState;
-                        break;
-                    case CSSValueNoDiscretionaryLigatures:
-                        discretionaryLigaturesState = FontDescription::DisabledLigaturesState;
-                        break;
-                    case CSSValueDiscretionaryLigatures:
-                        discretionaryLigaturesState = FontDescription::EnabledLigaturesState;
-                        break;
-                    case CSSValueNoHistoricalLigatures:
-                        historicalLigaturesState = FontDescription::DisabledLigaturesState;
-                        break;
-                    case CSSValueHistoricalLigatures:
-                        historicalLigaturesState = FontDescription::EnabledLigaturesState;
-                        break;
-                    default:
-                        ASSERT_NOT_REACHED();
-                        break;
-                    }
-                }
-            }
-        }
-#if !ASSERT_DISABLED
-        else
-            ASSERT(downcast<CSSPrimitiveValue>(*value).getValueID() == CSSValueNormal);
-#endif
-
-        FontDescription fontDescription = styleResolver->fontDescription();
-        fontDescription.setCommonLigaturesState(commonLigaturesState);
-        fontDescription.setDiscretionaryLigaturesState(discretionaryLigaturesState);
-        fontDescription.setHistoricalLigaturesState(historicalLigaturesState);
-        styleResolver->setFontDescription(fontDescription);
-    }
-
-    static PropertyHandler createHandler()
-    {
-        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
-    }
-};
-
 const DeprecatedStyleBuilder& DeprecatedStyleBuilder::sharedStyleBuilder()
 {
     static NeverDestroyed<DeprecatedStyleBuilder> styleBuilderInstance;
@@ -426,7 +346,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyWebkitBackgroundSize, CSSPropertyBackgroundSize);
     setPropertyHandler(CSSPropertyWebkitFontKerning, ApplyPropertyFont<FontDescription::Kerning, &FontDescription::kerning, &FontDescription::setKerning, FontDescription::AutoKerning>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFontSmoothing, ApplyPropertyFont<FontSmoothingMode, &FontDescription::fontSmoothing, &FontDescription::setFontSmoothing, AutoSmoothing>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitFontVariantLigatures, ApplyPropertyFontVariantLigatures::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskClip, ApplyPropertyFillLayer<EFillBox, CSSPropertyWebkitMaskClip, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isClipSet, &FillLayer::clip, &FillLayer::setClip, &FillLayer::clearClip, &FillLayer::initialFillClip, &CSSToStyleMap::mapFillClip>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskComposite, ApplyPropertyFillLayer<CompositeOperator, CSSPropertyWebkitMaskComposite, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSToStyleMap::mapFillComposite>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskOrigin, ApplyPropertyFillLayer<EFillBox, CSSPropertyWebkitMaskOrigin, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers, &FillLayer::isOriginSet, &FillLayer::origin, &FillLayer::setOrigin, &FillLayer::clearOrigin, &FillLayer::initialFillOrigin, &CSSToStyleMap::mapFillOrigin>::createHandler());
