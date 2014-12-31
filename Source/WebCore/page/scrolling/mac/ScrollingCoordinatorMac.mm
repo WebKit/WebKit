@@ -115,8 +115,13 @@ void ScrollingCoordinatorMac::commitTreeState()
 {
     ASSERT(scrollingStateTree()->hasChangedProperties());
 
-    OwnPtr<ScrollingStateTree> treeState = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
-    ScrollingThread::dispatch(bind(&ThreadedScrollingTree::commitNewTreeState, downcast<ThreadedScrollingTree>(scrollingTree()), treeState.release()));
+    RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
+    ScrollingStateTree* unprotectedTreeState = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation).release();
+
+    ScrollingThread::dispatch([threadedScrollingTree, unprotectedTreeState] {
+        std::unique_ptr<ScrollingStateTree> treeState(unprotectedTreeState);
+        threadedScrollingTree->commitNewTreeState(WTF::move(treeState));
+    });
 
     updateTiledScrollingIndicator();
 }

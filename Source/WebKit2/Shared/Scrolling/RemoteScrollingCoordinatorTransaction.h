@@ -27,8 +27,6 @@
 #define RemoteScrollingCoordinatorTransaction_h
 
 #include <WebCore/ScrollingStateTree.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace IPC {
 class ArgumentDecoder;
@@ -39,10 +37,9 @@ namespace WebKit {
 
 class RemoteScrollingCoordinatorTransaction {
 public:
-
 #if ENABLE(ASYNC_SCROLLING)
-    void setStateTreeToEncode(PassOwnPtr<WebCore::ScrollingStateTree> stateTree) { m_scrollingStateTree = stateTree; }
-    OwnPtr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
+    void setStateTreeToEncode(std::unique_ptr<WebCore::ScrollingStateTree> stateTree) { m_scrollingStateTree = WTF::move(stateTree); }
+    std::unique_ptr<WebCore::ScrollingStateTree>& scrollingStateTree() { return m_scrollingStateTree; }
 #endif // ENABLE(ASYNC_SCROLLING)
 
     void encode(IPC::ArgumentEncoder&) const;
@@ -57,7 +54,7 @@ private:
 #if ENABLE(ASYNC_SCROLLING)
     bool decode(IPC::ArgumentDecoder&);
     
-    OwnPtr<WebCore::ScrollingStateTree> m_scrollingStateTree;
+    std::unique_ptr<WebCore::ScrollingStateTree> m_scrollingStateTree;
 #endif // ENABLE(ASYNC_SCROLLING)
 };
 

@@ -32,7 +32,6 @@
 #include "PageBanner.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
-#include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
 using namespace WebKit;

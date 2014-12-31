@@ -89,10 +89,10 @@ void ThreadedScrollingTree::invalidate()
     RunLoop::main().dispatch(bind(derefScrollingCoordinator, m_scrollingCoordinator.release().leakRef()));
 }
 
-void ThreadedScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingStateTree)
+void ThreadedScrollingTree::commitNewTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
 {
     ASSERT(ScrollingThread::isCurrentThread());
-    ScrollingTree::commitNewTreeState(scrollingStateTree);
+    ScrollingTree::commitNewTreeState(WTF::move(scrollingStateTree));
 }
 
 void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)

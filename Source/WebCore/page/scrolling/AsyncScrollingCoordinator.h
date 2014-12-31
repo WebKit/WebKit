@@ -140,7 +140,7 @@ private:
 
     ScheduledScrollUpdate m_scheduledScrollUpdate;
 
-    OwnPtr<ScrollingStateTree> m_scrollingStateTree;
+    std::unique_ptr<ScrollingStateTree> m_scrollingStateTree;
     RefPtr<ScrollingTree> m_scrollingTree;
 };
 

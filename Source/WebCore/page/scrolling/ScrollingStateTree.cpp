@@ -37,11 +37,6 @@
 
 namespace WebCore {
 
-PassOwnPtr<ScrollingStateTree> ScrollingStateTree::create(AsyncScrollingCoordinator* scrollingCoordinator)
-{
-    return adoptPtr(new ScrollingStateTree(scrollingCoordinator));
-}
-
 ScrollingStateTree::ScrollingStateTree(AsyncScrollingCoordinator* scrollingCoordinator)
     : m_scrollingCoordinator(scrollingCoordinator)
     , m_hasChangedProperties(false)
@@ -156,7 +151,7 @@ void ScrollingStateTree::clear()
     m_orphanedSubframeNodes.clear();
 }
 
-PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::Type preferredLayerRepresentation)
+std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::Type preferredLayerRepresentation)
 {
     if (!m_orphanedSubframeNodes.isEmpty()) {
         // If we still have orphaned subtrees, remove them from m_stateNodeMap since they will be deleted 
@@ -167,7 +162,7 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::T
     }
 
     // This function clones and resets the current state tree, but leaves the tree structure intact.
-    OwnPtr<ScrollingStateTree> treeStateClone = ScrollingStateTree::create();
+    std::unique_ptr<ScrollingStateTree> treeStateClone = std::make_unique<ScrollingStateTree>();
     treeStateClone->setPreferredLayerRepresentation(preferredLayerRepresentation);
 
     if (m_rootStateNode)
@@ -183,7 +178,7 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentation::T
     treeStateClone->m_hasNewRootStateNode = m_hasNewRootStateNode;
     m_hasNewRootStateNode = false;
 
-    return treeStateClone.release();
+    return treeStateClone;
 }
 
 void ScrollingStateTree::addNode(ScrollingStateNode* node)

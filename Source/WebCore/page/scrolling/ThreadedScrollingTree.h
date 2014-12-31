@@ -45,7 +45,7 @@ class ThreadedScrollingTree : public ScrollingTree {
 public:
     virtual ~ThreadedScrollingTree();
 
-    virtual void commitNewTreeState(PassOwnPtr<ScrollingStateTree>) override;
+    virtual void commitNewTreeState(std::unique_ptr<ScrollingStateTree>) override;
 
     virtual void handleWheelEvent(const PlatformWheelEvent&) override;
 

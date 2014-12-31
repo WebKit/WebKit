@@ -29,8 +29,6 @@
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
 
 #include "ScrollingStateFrameScrollingNode.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
  
 namespace WebCore {
@@ -45,8 +43,7 @@ class AsyncScrollingCoordinator;
 class ScrollingStateTree {
     friend class ScrollingStateNode;
 public:
-    
-    WEBCORE_EXPORT static PassOwnPtr<ScrollingStateTree> create(AsyncScrollingCoordinator* = 0);
+    WEBCORE_EXPORT ScrollingStateTree(AsyncScrollingCoordinator* = nullptr);
     WEBCORE_EXPORT ~ScrollingStateTree();
 
     ScrollingStateFrameScrollingNode* rootStateNode() const { return m_rootStateNode.get(); }
@@ -60,7 +57,7 @@ public:
     WEBCORE_EXPORT void setRemovedNodes(HashSet<ScrollingNodeID>);
 
     // Copies the current tree state and clears the changed properties mask in the original.
-    WEBCORE_EXPORT PassOwnPtr<ScrollingStateTree> commit(LayerRepresentation::Type preferredLayerRepresentation);
+    WEBCORE_EXPORT std::unique_ptr<ScrollingStateTree> commit(LayerRepresentation::Type preferredLayerRepresentation);
 
     WEBCORE_EXPORT void setHasChangedProperties(bool = true);
     bool hasChangedProperties() const { return m_hasChangedProperties; }
@@ -77,8 +74,6 @@ public:
     void setPreferredLayerRepresentation(LayerRepresentation::Type representation) { m_preferredLayerRepresentation = representation; }
 
 private:
-    ScrollingStateTree(AsyncScrollingCoordinator*);
-
     void setRootStateNode(PassRefPtr<ScrollingStateFrameScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
     void addNode(ScrollingStateNode*);
 

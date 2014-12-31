@@ -1,3 +1,28 @@
+2014-12-31  Sam Weinig  <sam@webkit.org>
+
+        Remove the remaining uses of OwnPtr from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=140017
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.h:
+        (WebKit::RemoteScrollingCoordinatorTransaction::setStateTreeToEncode):
+        (WebKit::RemoteScrollingCoordinatorTransaction::scrollingStateTree):
+        * UIProcess/Launcher/mac/DynamicLinkerEnvironmentExtractor.mm:
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::updateScrollingTree):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        (-[WKPrintingView _askPageToComputePageRects]):
+        (-[WKPrintingView _drawPreview:]):
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm:
+
 2014-12-31  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         Fix build warnings after r177792.

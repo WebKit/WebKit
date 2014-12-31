@@ -77,9 +77,9 @@ void ScrollingTreeIOS::invalidate()
     callOnMainThread(bind(derefScrollingCoordinator, m_scrollingCoordinator.release().leakRef()));
 }
 
-void ScrollingTreeIOS::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingStateTree)
+void ScrollingTreeIOS::commitNewTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
 {
-    ScrollingTree::commitNewTreeState(scrollingStateTree);
+    ScrollingTree::commitNewTreeState(WTF::move(scrollingStateTree));
 }
 
 void ScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const FloatPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)

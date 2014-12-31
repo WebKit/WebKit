@@ -29,7 +29,6 @@
 #include "EnvironmentVariables.h"
 #include <mach-o/loader.h>
 #include <mach-o/swap.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

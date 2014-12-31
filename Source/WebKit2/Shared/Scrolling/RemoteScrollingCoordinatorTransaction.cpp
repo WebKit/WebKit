@@ -389,7 +389,7 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::ArgumentDecoder& decoder
     if (!decoder.decode(hasNewRootNode))
         return false;
     
-    m_scrollingStateTree = ScrollingStateTree::create();
+    m_scrollingStateTree = std::make_unique<ScrollingStateTree>();
 
     bool hasChangedProperties;
     if (!decoder.decode(hasChangedProperties))

@@ -68,7 +68,7 @@ public:
     bool isRubberBandInProgress();
 
     virtual void invalidate() { }
-    WEBCORE_EXPORT virtual void commitNewTreeState(PassOwnPtr<ScrollingStateTree>);
+    WEBCORE_EXPORT virtual void commitNewTreeState(std::unique_ptr<ScrollingStateTree>);
 
     void setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom);
 

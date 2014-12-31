@@ -140,7 +140,7 @@ PageClientImpl::PageClientImpl(WKView* wkView, WKWebView *webView)
     , m_webView(webView)
     , m_undoTarget(adoptNS([[WKEditorUndoTargetObjC alloc] init]))
 #if USE(DICTATION_ALTERNATIVES)
-    , m_alternativeTextUIController(adoptPtr(new AlternativeTextUIController))
+    , m_alternativeTextUIController(std::make_unique<AlternativeTextUIController>())
 #endif
 {
 #if !WK_API_ENABLED

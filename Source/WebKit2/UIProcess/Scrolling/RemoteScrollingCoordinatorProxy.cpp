@@ -82,8 +82,9 @@ void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingC
 {
     m_requestedScrollInfo = &requestedScrollInfo;
 
-    OwnPtr<ScrollingStateTree> stateTree = const_cast<RemoteScrollingCoordinatorTransaction&>(transaction).scrollingStateTree().release();
-    
+    // FIXME: There must be a better idiom for this.
+    std::unique_ptr<ScrollingStateTree> stateTree(const_cast<RemoteScrollingCoordinatorTransaction&>(transaction).scrollingStateTree().release());
+
     const RemoteLayerTreeHost* layerTreeHost = this->layerTreeHost();
     if (!layerTreeHost) {
         ASSERT_NOT_REACHED();
@@ -91,7 +92,7 @@ void RemoteScrollingCoordinatorProxy::updateScrollingTree(const RemoteScrollingC
     }
 
     connectStateNodeLayers(*stateTree, *layerTreeHost);
-    m_scrollingTree->commitNewTreeState(stateTree.release());
+    m_scrollingTree->commitNewTreeState(WTF::move(stateTree));
 
     m_requestedScrollInfo = nullptr;
 }
