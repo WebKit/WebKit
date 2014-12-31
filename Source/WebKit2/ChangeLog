@@ -1,3 +1,15 @@
+2014-12-31  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK] Suppress unused parameter warnings in ui clients
+        https://bugs.webkit.org/show_bug.cgi?id=140012
+
+        Drop the parameter name of WebKitUIClient::isPlayingAudioDidChange
+        to suppress warnings.
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+
 2014-12-31  Sam Weinig  <sam@webkit.org>
 
         Remove the remaining uses of OwnPtr from WebKit2
