@@ -1,3 +1,9 @@
+2014-12-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Update storage tracker test expectations after r177814.
+
+        * platform/mac/TestExpectations:
+
 2014-12-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Win] Unreviewed gardening, mark more timeouting tests.

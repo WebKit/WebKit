@@ -343,11 +343,11 @@ webkit.org/b/82762 fast/animation/request-animation-frame-during-modal.html
 webkit.org/b/82805 fast/canvas/webgl/framebuffer-object-attachment.html [ Failure ]
 
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html [ Pass Failure ]
-webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html [ Pass Timeout ]
+webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html [ Pass Failure ]
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html [ Pass Failure ]
-webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html [ Pass Timeout ]
+webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html [ Pass Failure ]
 webkit.org/b/57799 storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html [ Pass Failure ]
-webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html [ Pass Timeout ]
+webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html [ Pass Failure ]
 webkit.org/b/82817 storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html [ Pass Failure ]
 
 webkit.org/b/82972 plugins/keyboard-events.html [ Pass Failure ]
