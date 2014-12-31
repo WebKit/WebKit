@@ -1,5 +1,33 @@
 2014-12-30  Chris Dumez  <cdumez@apple.com>
 
+        Move font-related CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140008
+
+        Reviewed by Darin Adler.
+
+        Move font-related CSS properties to the new StyleBuilder
+        by teaching makeprop.pl how to generate them.
+
+        * css/CSSPropertyNames.in:
+        * css/DeprecatedStyleBuilder.cpp:
+        (WebCore::DeprecatedStyleBuilder::DeprecatedStyleBuilder):
+        (WebCore::ApplyPropertyFont::applyInheritValue): Deleted.
+        (WebCore::ApplyPropertyFont::applyInitialValue): Deleted.
+        (WebCore::ApplyPropertyFont::applyValue): Deleted.
+        (WebCore::ApplyPropertyFont::createHandler): Deleted.
+        * css/makeprop.pl:
+        (generateInitialValueSetter):
+        (generateInheritValueSetter):
+        (generateValueSetter):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::initialItalic):
+        (WebCore::FontDescription::initialSmallCaps):
+        (WebCore::FontDescription::initialKerning):
+        (WebCore::FontDescription::initialFontSmoothing):
+        (WebCore::FontDescription::initialTextRenderingMode):
+
+2014-12-30  Chris Dumez  <cdumez@apple.com>
+
         Move '-webkit-font-variant-ligature' CSS property to the new StyleBuilder
         https://bugs.webkit.org/show_bug.cgi?id=140007
 

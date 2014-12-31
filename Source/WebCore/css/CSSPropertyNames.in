@@ -76,6 +76,10 @@
 // * AnimationProperty:
 // Indicates that this CSS property is an animation / transition property.
 // It must have corresponding methods on the Animation class.
+//
+// * FontProperty:
+// Indicates that this CSS property is font-related. It must have corresponding
+// methods on the FontDescription class.
 
 
 // high-priority property names have to be listed first, to simplify the check
@@ -86,13 +90,13 @@ display [Custom=Inherit|Value]
 font [Inherited, LegacyStyleBuilder]
 font-family [Inherited, Custom=All]
 font-size [Inherited, LegacyStyleBuilder]
-font-style [Inherited, LegacyStyleBuilder]
-font-variant [Inherited, LegacyStyleBuilder]
+font-style [Inherited, FontProperty, TypeName=FontItalic, NameForMethods=Italic]
+font-variant [Inherited, FontProperty, TypeName=FontSmallCaps, NameForMethods=SmallCaps]
 font-weight [Inherited, Custom=All]
-text-rendering [Inherited, LegacyStyleBuilder]
+text-rendering [Inherited, FontProperty, TypeName=TextRenderingMode, NameForMethods=TextRenderingMode]
 -webkit-font-feature-settings [Inherited, LegacyStyleBuilder]
--webkit-font-kerning [Inherited, LegacyStyleBuilder]
--webkit-font-smoothing [Inherited, LegacyStyleBuilder]
+-webkit-font-kerning [Inherited, FontProperty, TypeName=FontDescription::Kerning, NameForMethods=Kerning]
+-webkit-font-smoothing [Inherited, FontProperty, TypeName=FontSmoothingMode]
 -webkit-font-variant-ligatures [Inherited, Custom=All]
 -webkit-locale [Inherited, Custom=Value]
 -webkit-text-orientation [Inherited, Custom=Value]

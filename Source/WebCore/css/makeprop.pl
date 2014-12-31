@@ -47,6 +47,7 @@ my %styleBuilderOptions = (
   AutoFunctions => 1,
   Converter => 1,
   Custom => 1,
+  FontProperty => 1,
   Getter => 1,
   Initial => 1,
   NameForMethods => 1,
@@ -562,6 +563,8 @@ sub generateInitialValueSetter {
   my $name = shift;
   my $indent = shift;
 
+  my $setter = $propertiesWithStyleBuilderOptions{$name}{"Setter"};
+  my $initial = $propertiesWithStyleBuilderOptions{$name}{"Initial"};
   my $setterContent = "";
   $setterContent .= $indent . "static void applyInitial" . $nameToId{$name} . "(StyleResolver& styleResolver)\n";
   $setterContent .= $indent . "{\n";
@@ -569,13 +572,17 @@ sub generateInitialValueSetter {
   if (exists $propertiesWithStyleBuilderOptions{$name}{"AutoFunctions"}) {
     $setterContent .= $indent . "    " . getAutoSetter($name, $style) . ";\n";
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"VisitedLinkColorSupport"}) {
-      my $initialColor = "RenderStyle::" . $propertiesWithStyleBuilderOptions{$name}{"Initial"} . "()";
+      my $initialColor = "RenderStyle::" . $initial . "()";
       $setterContent .= generateColorValueSetter($name, $initialColor, $indent . "    ");
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"AnimationProperty"}) {
     $setterContent .= generateAnimationPropertyInitialValueSetter($name, $indent . "    ");
+  } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"FontProperty"}) {
+    $setterContent .= $indent . "    FontDescription fontDescription = styleResolver.fontDescription();\n";
+    $setterContent .= $indent . "    fontDescription." . $setter . "(FontDescription::" . $initial . "());\n";
+    $setterContent .= $indent . "    styleResolver.setFontDescription(fontDescription);\n";
   } else {
-    my $setValue = $style . "->" . $propertiesWithStyleBuilderOptions{$name}{"Setter"};
-    $setterContent .= $indent . "    " . $setValue . "(RenderStyle::" . $propertiesWithStyleBuilderOptions{$name}{"Initial"} . "());\n";
+    my $setValue = $style . "->" . $setter;
+    $setterContent .= $indent . "    " . $setValue . "(RenderStyle::" . $initial . "());\n";
   }
   $setterContent .= $indent . "}\n";
 
@@ -591,7 +598,8 @@ sub generateInheritValueSetter {
   $setterContent .= $indent . "{\n";
   my $parentStyle = "styleResolver.parentStyle()";
   my $style = "styleResolver.style()";
-  my $setValue = $style . "->" . $propertiesWithStyleBuilderOptions{$name}{"Setter"};
+  my $getter = $propertiesWithStyleBuilderOptions{$name}{"Getter"};
+  my $setter = $propertiesWithStyleBuilderOptions{$name}{"Setter"};
   my $didCallSetValue = 0;
   if (exists $propertiesWithStyleBuilderOptions{$name}{"AutoFunctions"}) {
     $setterContent .= $indent . "    if (" . getAutoGetter($name, $parentStyle) . ") {\n";
@@ -599,7 +607,7 @@ sub generateInheritValueSetter {
     $setterContent .= $indent . "        return;\n";
     $setterContent .= $indent . "    }\n";
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"VisitedLinkColorSupport"}) {
-    $setterContent .= $indent . "    Color color = " . $parentStyle . "->" . $propertiesWithStyleBuilderOptions{$name}{"Getter"} . "();\n";
+    $setterContent .= $indent . "    Color color = " . $parentStyle . "->" . $getter . "();\n";
     if (!exists($propertiesWithStyleBuilderOptions{$name}{"NoDefaultColor"})) {
       $setterContent .= $indent . "    if (!color.isValid())\n";
       $setterContent .= $indent . "        color = " . $parentStyle . "->color();\n";
@@ -609,9 +617,15 @@ sub generateInheritValueSetter {
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"AnimationProperty"}) {
     $setterContent .= generateAnimationPropertyInheritValueSetter($name, $indent . "    ");
     $didCallSetValue = 1;
+  } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"FontProperty"}) {
+    $setterContent .= $indent . "    FontDescription fontDescription = styleResolver.fontDescription();\n";
+    $setterContent .= $indent . "    fontDescription." . $setter . "(styleResolver.parentFontDescription()." . $getter . "());\n";
+    $setterContent .= $indent . "    styleResolver.setFontDescription(fontDescription);\n";
+    $didCallSetValue = 1;
   }
   if (!$didCallSetValue) {
-    my $inheritedValue = $parentStyle . "->" .  $propertiesWithStyleBuilderOptions{$name}{"Getter"} . "()";
+    my $inheritedValue = $parentStyle . "->" .  $getter . "()";
+    my $setValue = $style . "->" . $setter;
     $setterContent .= $indent . "    " . $setValue . "(" . $inheritedValue . ");\n";
   }
   $setterContent .= $indent . "}\n";
@@ -633,6 +647,7 @@ sub generateValueSetter {
     $convertedValue = "static_cast<" . $propertiesWithStyleBuilderOptions{$name}{"TypeName"} . ">(downcast<CSSPrimitiveValue>(value))";
   }
 
+  my $setter = $propertiesWithStyleBuilderOptions{$name}{"Setter"};
   my $style = "styleResolver.style()";
   my $didCallSetValue = 0;
   if (exists $propertiesWithStyleBuilderOptions{$name}{"AutoFunctions"}) {
@@ -641,19 +656,24 @@ sub generateValueSetter {
     $setterContent .= $indent . "        return;\n";
     $setterContent .= $indent . "    }\n";
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"VisitedLinkColorSupport"}) {
-      $setterContent .= $indent . "    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);\n";
-      if ($name eq "color") {
-        # The "color" property supports "currentColor" value. We should add a parameter.
-        $setterContent .= handleCurrentColorValue($name, "primitiveValue", $indent . "    ");
-      }
-      $setterContent .= generateColorValueSetter($name, "primitiveValue", $indent . "    ", VALUE_IS_PRIMITIVE);
-      $didCallSetValue = 1;
+    $setterContent .= $indent . "    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);\n";
+    if ($name eq "color") {
+      # The "color" property supports "currentColor" value. We should add a parameter.
+      $setterContent .= handleCurrentColorValue($name, "primitiveValue", $indent . "    ");
+    }
+    $setterContent .= generateColorValueSetter($name, "primitiveValue", $indent . "    ", VALUE_IS_PRIMITIVE);
+    $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"AnimationProperty"}) {
-      $setterContent .= generateAnimationPropertyValueSetter($name, $indent . "    ");
-      $didCallSetValue = 1;
+    $setterContent .= generateAnimationPropertyValueSetter($name, $indent . "    ");
+    $didCallSetValue = 1;
+  } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"FontProperty"}) {
+    $setterContent .= $indent . "    FontDescription fontDescription = styleResolver.fontDescription();\n";
+    $setterContent .= $indent . "    fontDescription." . $setter . "(" . $convertedValue . ");\n";
+    $setterContent .= $indent . "    styleResolver.setFontDescription(fontDescription);\n";
+    $didCallSetValue = 1;
   }
   if (!$didCallSetValue) {
-    my $setValue = $style . "->" . $propertiesWithStyleBuilderOptions{$name}{"Setter"};
+    my $setValue = $style . "->" . $setter;
     $setterContent .= $indent . "    " . $setValue . "(" . $convertedValue . ");\n";
   }
   $setterContent .= $indent . "}\n";

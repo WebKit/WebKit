@@ -176,6 +176,13 @@ public:
     }
 #endif
 
+    // Initial values for font properties.
+    static FontItalic initialItalic() { return FontItalicOff; }
+    static FontSmallCaps initialSmallCaps() { return FontSmallCapsOff; }
+    static Kerning initialKerning() { return AutoKerning; }
+    static FontSmoothingMode initialFontSmoothing() { return AutoSmoothing; }
+    static TextRenderingMode initialTextRenderingMode() { return AutoTextRendering; }
+
 private:
     RefCountedArray<AtomicString> m_families;
     RefPtr<FontFeatureSettings> m_featureSettings;
