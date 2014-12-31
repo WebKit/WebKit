@@ -106,6 +106,10 @@
 #include "ProcessThrottler.h"
 #endif
 
+#if PLATFORM(GTK)
+#include "ArgumentCodersGtk.h"
+#endif
+
 namespace API {
 class FindClient;
 class FormClient;

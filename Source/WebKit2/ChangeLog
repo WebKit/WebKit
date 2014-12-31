@@ -1,3 +1,16 @@
+2014-12-31  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for the GTK port.
+
+        Move the ArgumentCodersGtk.h inclusion from WebPageProxy.cpp to
+        WebPageProxy.h. This makes GTK-specific IPC coders available to
+        WebPageProxyMessageReceiver, fixing a build error due to missing
+        ArgumentCoder template specializations for WebCore::DragData type
+        that is used in the GTK-specific StartDrag message.
+
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+
 2014-12-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r177824 and r177826.

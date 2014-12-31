@@ -113,10 +113,6 @@
 #include "CoordinatedLayerTreeHostProxyMessages.h"
 #endif
 
-#if PLATFORM(GTK)
-#include "ArgumentCodersGtk.h"
-#endif
-
 #if ENABLE(VIBRATION)
 #include "WebVibrationProxy.h"
 #endif
