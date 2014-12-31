@@ -1,3 +1,19 @@
+2014-12-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r177824 and r177826.
+        https://bugs.webkit.org/show_bug.cgi?id=140011
+
+        The new test crashes (Requested by ap on #webkit).
+
+        Reverted changesets:
+
+        "Too large plugins are crashing."
+        https://bugs.webkit.org/show_bug.cgi?id=139856
+        http://trac.webkit.org/changeset/177824
+
+        "Fix bug number typo in the previous commit."
+        http://trac.webkit.org/changeset/177826
+
 2014-12-30  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Too large plugins are crashing.
