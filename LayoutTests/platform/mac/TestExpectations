@@ -362,6 +362,9 @@ webkit.org/b/82979 canvas/philip/tests/2d.text.draw.align.center.html [ Pass Fai
 http/tests/security/video-cross-origin-readback.html
 http/tests/security/video-cross-origin-accessfailure.html
 
+# Random crash, like in many media tests.
+http/tests/security/video-cross-origin-accesssameorigin.html [ Pass Crash ]
+
 # Requires ENABLE(MEDIA_CAPTURE)
 fast/forms/file/file-input-capture.html
 
@@ -1386,7 +1389,6 @@ webkit.org/b/139968 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure
 webkit.org/b/139968 svg/text/svg-font-word-rounding-hacks-spaces.html [ ImageOnlyFailure ]
 webkit.org/b/139968 svg/text/tspan-outline.html [ ImageOnlyFailure ]
 webkit.org/b/139968 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
-webkit.org/b/139968 http/tests/security/video-cross-origin-accesssameorigin.html [ Crash ]
 # The following tests' expected results don't look like render tree dumps
 webkit.org/b/139968 accessibility/press-targets-center-point.html [ Failure ]
 webkit.org/b/139968 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
@@ -1499,3 +1501,11 @@ webkit.org/b/139968 [ MountainLion ] fast/layers/layer-visibility.html [ Failure
 webkit.org/b/139968 [ MountainLion ] fast/repaint/invisible-objects.html [ Failure ]
 webkit.org/b/139968 [ MountainLion ] fast/text/whitespace/028.html [ Failure ]
 webkit.org/b/139968 [ MountainLion ] platform/mac/editing/spelling/autocorrection-contraction.html [ Failure ]
+# These tests became flaky, text width gets slightly off.
+webkit.org/b/139968 [ Mavericks+ ] http/tests/misc/acid3.html [ Pass Failure ]
+webkit.org/b/139977 [ Mavericks+ ] fast/encoding/utf-16-big-endian.html [ Pass Failure ]
+webkit.org/b/139977 [ Mavericks+ ] fast/encoding/utf-16-little-endian.html [ Pass Failure ]
+webkit.org/b/139982 [ Mavericks+ ] svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
+webkit.org/b/139988 [ Mavericks+ ] fonts/sans-serif.html [ Pass Failure ]
+
+webkit.org/b/135610 fast/ruby/ruby-svg-crash.html [ Pass Failure ]

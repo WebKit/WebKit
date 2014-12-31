@@ -1,3 +1,13 @@
+2014-12-31  Alexey Proskuryakov  <ap@apple.com>
+
+        Test expectation gardening.
+
+        Add expectations for test that became flaky after enabling kerning and ligatures,
+        plus a few more that were mis-characterized.
+
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2014-12-31  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r177824 and r177826.
