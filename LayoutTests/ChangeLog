@@ -1,5 +1,16 @@
 2014-12-31  Alexey Proskuryakov  <ap@apple.com>
 
+        execDeleteCommand() does not update spellchecker sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=139862
+
+        Updated test expectation for a test that always crashes on WK1 (it was already
+        skipped on mac-wk2, efl and gtk).
+
+        * TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
+2014-12-31  Alexey Proskuryakov  <ap@apple.com>
+
         Test expectation gardening.
 
         Add expectations for test that became flaky after enabling kerning and ligatures,

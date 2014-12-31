@@ -32,6 +32,8 @@ webkit.org/b/139599 fast/images/animated-gif-body-outside-viewport.html [ Pass F
 
 webkit.org/b/139778 fullscreen/exit-full-screen-iframe.html [ Skip ]
 
+webkit.org/b/139862 editing/spelling/grammar-edit-word.html [ Skip ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
