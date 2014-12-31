@@ -489,7 +489,6 @@
 		0F15DA8A0F3AAEE70000CE47 /* AnimationControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */; };
 		0F1774801378B772009DA76A /* ScrollAnimatorIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F17747E1378B771009DA76A /* ScrollAnimatorIOS.h */; };
 		0F1774811378B772009DA76A /* ScrollAnimatorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F17747F1378B772009DA76A /* ScrollAnimatorIOS.mm */; };
-		0F29C16E1300C2E2002D794E /* AccessibilityAllInOne.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F29C16D1300C2E2002D794E /* AccessibilityAllInOne.cpp */; };
 		0F3C725E1974874B00AEDD0C /* ImageSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3C725D1974874B00AEDD0C /* ImageSource.cpp */; };
 		0F3DD44F12F5EA1B000D9190 /* ShadowBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */; };
 		0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3DD44E12F5EA1B000D9190 /* ShadowBlur.h */; };
@@ -1385,6 +1384,29 @@
 		37E3524D12450C6600BAF5D9 /* InputType.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E3524C12450C6600BAF5D9 /* InputType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37E65950163B10C200EB4574 /* SimpleFontDataIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E6594F163B10C200EB4574 /* SimpleFontDataIOS.mm */; };
 		37F567CE165358F400DDE92B /* PopupOpeningObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3772B09516535856000A49CA /* PopupOpeningObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37F57AB91A50726900876F98 /* AccessibilityARIAGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CA9D131822EC00D12F2A /* AccessibilityARIAGrid.cpp */; };
+		37F57ABA1A50726F00876F98 /* AccessibilityARIAGridCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CA9E131822EC00D12F2A /* AccessibilityARIAGridCell.cpp */; };
+		37F57ABB1A50727300876F98 /* AccessibilityARIAGridRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CA9F131822EC00D12F2A /* AccessibilityARIAGridRow.cpp */; };
+		37F57ABC1A50727700876F98 /* AccessibilityImageMapLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA0131822EC00D12F2A /* AccessibilityImageMapLink.cpp */; };
+		37F57ABD1A50727A00876F98 /* AccessibilityList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA1131822EC00D12F2A /* AccessibilityList.cpp */; };
+		37F57ABE1A50727E00876F98 /* AccessibilityListBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA2131822EC00D12F2A /* AccessibilityListBox.cpp */; };
+		37F57ABF1A50728100876F98 /* AccessibilityListBoxOption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA3131822EC00D12F2A /* AccessibilityListBoxOption.cpp */; };
+		37F57AC01A50728400876F98 /* AccessibilityMediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA4131822EC00D12F2A /* AccessibilityMediaControls.cpp */; };
+		37F57AC11A50728700876F98 /* AccessibilityNodeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2985709215CC532D006355CD /* AccessibilityNodeObject.cpp */; };
+		37F57AC21A50728B00876F98 /* AccessibilityObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA5131822EC00D12F2A /* AccessibilityObject.cpp */; };
+		37F57AC31A50728F00876F98 /* AccessibilityProgressIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A409C982116D0DDD007197BD /* AccessibilityProgressIndicator.cpp */; };
+		37F57AC41A50729300876F98 /* AccessibilityRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA6131822EC00D12F2A /* AccessibilityRenderObject.cpp */; };
+		37F57AC51A50729700876F98 /* AccessibilityScrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA7131822EC00D12F2A /* AccessibilityScrollbar.cpp */; };
+		37F57AC61A50729B00876F98 /* AccessibilityScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA8131822EC00D12F2A /* AccessibilityScrollView.cpp */; };
+		37F57AC71A5072A100876F98 /* AccessibilitySearchFieldButtons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 415B3A6917CBE172000FCCE8 /* AccessibilitySearchFieldButtons.cpp */; };
+		37F57AC81A5072BC00876F98 /* AccessibilitySlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAA9131822EC00D12F2A /* AccessibilitySlider.cpp */; };
+		37F57AC91A5072CC00876F98 /* AccessibilitySVGRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC08CF015F941FC00F1E188 /* AccessibilitySVGRoot.cpp */; };
+		37F57ACA1A5072CF00876F98 /* AccessibilityTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAA131822EC00D12F2A /* AccessibilityTable.cpp */; };
+		37F57ACB1A5072D100876F98 /* AccessibilityTableCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAB131822EC00D12F2A /* AccessibilityTableCell.cpp */; };
+		37F57ACC1A5072D500876F98 /* AccessibilityTableColumn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAC131822EC00D12F2A /* AccessibilityTableColumn.cpp */; };
+		37F57ACD1A5072D700876F98 /* AccessibilityTableHeaderContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAD131822EC00D12F2A /* AccessibilityTableHeaderContainer.cpp */; };
+		37F57ACE1A5072DA00876F98 /* AccessibilityTableRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAE131822EC00D12F2A /* AccessibilityTableRow.cpp */; };
+		37F57ACF1A5072DD00876F98 /* AXObjectCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2981CAAF131822EC00D12F2A /* AXObjectCache.cpp */; };
 		37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */; };
 		37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = 37FD4297118368460093C029 /* TreeDepthLimit.h */; };
@@ -7454,7 +7476,6 @@
 		0F15DA890F3AAEE70000CE47 /* AnimationControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationControllerPrivate.h; path = animation/AnimationControllerPrivate.h; sourceTree = "<group>"; };
 		0F17747E1378B771009DA76A /* ScrollAnimatorIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollAnimatorIOS.h; path = ios/ScrollAnimatorIOS.h; sourceTree = "<group>"; };
 		0F17747F1378B772009DA76A /* ScrollAnimatorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ScrollAnimatorIOS.mm; path = ios/ScrollAnimatorIOS.mm; sourceTree = "<group>"; };
-		0F29C16D1300C2E2002D794E /* AccessibilityAllInOne.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityAllInOne.cpp; sourceTree = "<group>"; };
 		0F3C725D1974874B00AEDD0C /* ImageSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSource.cpp; sourceTree = "<group>"; };
 		0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowBlur.cpp; sourceTree = "<group>"; };
 		0F3DD44E12F5EA1B000D9190 /* ShadowBlur.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowBlur.h; sourceTree = "<group>"; };
@@ -15372,7 +15393,6 @@
 			children = (
 				AAA728EF16D1D8BC00D3BBC6 /* ios */,
 				29A812050FBB9B5200510293 /* mac */,
-				0F29C16D1300C2E2002D794E /* AccessibilityAllInOne.cpp */,
 				2981CA9D131822EC00D12F2A /* AccessibilityARIAGrid.cpp */,
 				29A812160FBB9C1D00510293 /* AccessibilityARIAGrid.h */,
 				2981CA9E131822EC00D12F2A /* AccessibilityARIAGridCell.cpp */,
@@ -27171,14 +27191,35 @@
 			buildActionMask = 2147483647;
 			files = (
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
-				0F29C16E1300C2E2002D794E /* AccessibilityAllInOne.cpp in Sources */,
+				37F57AB91A50726900876F98 /* AccessibilityARIAGrid.cpp in Sources */,
+				37F57ABA1A50726F00876F98 /* AccessibilityARIAGridCell.cpp in Sources */,
+				37F57ABB1A50727300876F98 /* AccessibilityARIAGridRow.cpp in Sources */,
+				37F57ABC1A50727700876F98 /* AccessibilityImageMapLink.cpp in Sources */,
+				37F57ABD1A50727A00876F98 /* AccessibilityList.cpp in Sources */,
+				37F57ABE1A50727E00876F98 /* AccessibilityListBox.cpp in Sources */,
+				37F57ABF1A50728100876F98 /* AccessibilityListBoxOption.cpp in Sources */,
+				37F57AC01A50728400876F98 /* AccessibilityMediaControls.cpp in Sources */,
 				76CDD2F21103DA6600680521 /* AccessibilityMenuList.cpp in Sources */,
 				76CDD2F61103DA6600680521 /* AccessibilityMenuListOption.cpp in Sources */,
 				76CDD2F41103DA6600680521 /* AccessibilityMenuListPopup.cpp in Sources */,
 				29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */,
+				37F57AC11A50728700876F98 /* AccessibilityNodeObject.cpp in Sources */,
+				37F57AC21A50728B00876F98 /* AccessibilityObject.cpp in Sources */,
 				AAA728F616D1D8BC00D3BBC6 /* AccessibilityObjectIOS.mm in Sources */,
 				29A812480FBB9CA900510293 /* AccessibilityObjectMac.mm in Sources */,
+				37F57AC31A50728F00876F98 /* AccessibilityProgressIndicator.cpp in Sources */,
+				37F57AC41A50729300876F98 /* AccessibilityRenderObject.cpp in Sources */,
+				37F57AC91A5072CC00876F98 /* AccessibilitySVGRoot.cpp in Sources */,
+				37F57AC61A50729B00876F98 /* AccessibilityScrollView.cpp in Sources */,
+				37F57AC51A50729700876F98 /* AccessibilityScrollbar.cpp in Sources */,
+				37F57AC71A5072A100876F98 /* AccessibilitySearchFieldButtons.cpp in Sources */,
+				37F57AC81A5072BC00876F98 /* AccessibilitySlider.cpp in Sources */,
 				29D7BCF61444AF580070619C /* AccessibilitySpinButton.cpp in Sources */,
+				37F57ACA1A5072CF00876F98 /* AccessibilityTable.cpp in Sources */,
+				37F57ACB1A5072D100876F98 /* AccessibilityTableCell.cpp in Sources */,
+				37F57ACC1A5072D500876F98 /* AccessibilityTableColumn.cpp in Sources */,
+				37F57ACD1A5072D700876F98 /* AccessibilityTableHeaderContainer.cpp in Sources */,
+				37F57ACE1A5072DA00876F98 /* AccessibilityTableRow.cpp in Sources */,
 				B5D31DFA11CF610B009F22B4 /* ActiveDOMCallback.cpp in Sources */,
 				E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */,
 				84D0C4041115F1D40018AA34 /* AffineTransform.cpp in Sources */,
@@ -27258,6 +27299,7 @@
 				070363E7181A1CDC00C074A5 /* AVVideoCaptureSource.mm in Sources */,
 				F478755519983AFF0024A287 /* AxisScrollSnapAnimator.mm in Sources */,
 				F45C231D1995B73B00A6E2E3 /* AxisScrollSnapOffsets.cpp in Sources */,
+				37F57ACF1A5072DD00876F98 /* AXObjectCache.cpp in Sources */,
 				AAA728F916D1D8BC00D3BBC6 /* AXObjectCacheIOS.mm in Sources */,
 				29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */,
 				BCA8C81F11E3D36900812FB7 /* BackForwardController.cpp in Sources */,
