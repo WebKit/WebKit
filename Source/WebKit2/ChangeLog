@@ -1,3 +1,15 @@
+2014-12-31  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        Fix build warnings after r177792.
+        https://bugs.webkit.org/show_bug.cgi?id=140005.
+
+        Reviewed by Anders Carlsson.
+
+        Add UNUSED_PARAM(connection) for async messages.
+
+        * Scripts/webkit/messages.py:
+        (generate_message_handler):
+
 2014-12-31  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix for the GTK port.
