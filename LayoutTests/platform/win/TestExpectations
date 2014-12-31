@@ -1018,7 +1018,7 @@ fast/overflow/scrollbar-restored-and-then-locked.html
 # Sometimes times out on Windows
 webkit.org/b/37096 http/tests/security/xss-DENIED-iframe-src-alias.html [ Pass Timeout ]
 
-# webkit.org/b/38376 media/media-document-audio-size.html [ Failure ]
+# webkit.org/b/38376 media/media-document-audio-size.html [ Timeout ]
 
 # New canvas test suite from http://philip.html5.org/tests/canvas/suite/tests/
 webkit.org/b/128981 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
@@ -1661,7 +1661,7 @@ webkit.org/b/84286 fast/repaint/repaint-across-writing-mode-boundary.html [ Fail
 # The following are already skipped on Mac because of a QuickTime problem
 webkit.org/b/38000 http/tests/media/video-play-stall-seek.html [ Timeout ]
 webkit.org/b/38000 http/tests/media/video-play-stall.html [ Timeout ]
-webkit.org/b/38000 media/media-fullscreen-not-in-document.html [ Failure ]
+webkit.org/b/38000 media/media-fullscreen-not-in-document.html [ Timeout ]
 
 # The following may just need rebaselines:
 compositing/iframes/invisible-nested-iframe-show.html [ Failure ]
@@ -1750,7 +1750,7 @@ webkit.org/b/95806 media/video-play-empty-events.html [ Pass Failure ]
 webkit.org/b/95806 media/video-single-valid-source.html [ Pass Failure ]
 webkit.org/b/95806 media/video-source-error-no-candidate.html [ Pass Failure ]
 webkit.org/b/95806 media/video-src-remove.html [ Pass Failure ]
-webkit.org/b/95806 media/video-size-intrinsic-scale.html [ Failure ]
+webkit.org/b/95806 media/video-size-intrinsic-scale.html [ Timeout ]
 webkit.org/b/95806 media/video-source-media.html [ Pass Failure ]
 webkit.org/b/95806 media/video-source-load.html [ Pass Failure ]
 webkit.org/b/95806 media/video-source-moved.html [ Pass Failure ]
@@ -1883,7 +1883,7 @@ webkit.org/b/103043 fast/events/overflow-scroll-fake-mouse-move.html [ Skip ]
 webkit.org/b/97132 media/track/track-cue-rendering-vertical.html [ Failure ]
 
 webkit.org/b/106477 media/video-controls-captions-trackmenu-sorted.html [ Failure ]
-webkit.org/b/106477 media/video-controls-captions-trackmenu.html [ Failure ]
+webkit.org/b/106477 media/video-controls-captions-trackmenu.html [ Timeout ]
 webkit.org/b/106477 media/video-controls-captions-trackmenu-hide-on-click.html [ Failure ]
 webkit.org/b/106477 media/video-controls-captions-trackmenu-hide-on-click-outside.html [ Failure ]
 webkit.org/b/106477 media/video-controls-visible-exiting-fullscreen.html [ Failure ]
@@ -2233,7 +2233,7 @@ js/dom/random-array-gc-stress.html [ Skip ]
 # They need to be rebaselined.
 # REGRESSION(r156730): 18 media tests broken (122021)
 webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Failure ]
-webkit.org/b/122021 media/video-controls-toggling.html [ Failure ]
+webkit.org/b/122021 media/video-controls-toggling.html [ Timeout ]
 
 # The following tests also seem affected by r156730
 webkit.org/b/122166 media/track/audio-track.html [ Failure ]
@@ -2248,7 +2248,7 @@ webkit.org/b/122166 media/video-controls-visible-audio-only.html [ Failure ]
 printing/print-close-crash.html
 
 # Test introduced in r157133 fails. State of colorspace management on Windows is unclear.
-media/video-canvas-drawing-output.html [ Failure ]
+media/video-canvas-drawing-output.html [ Timeout ]
 
 # crypto.subtle is not yet enabled
 crypto/subtle [ Skip ]
@@ -2644,7 +2644,7 @@ dom/xhtml/level2/html/HTMLLabelElement02.xhtml [ Pass Failure ]
 # WAV files with AVCF:
 webkit.org/b/128943 media/audio-constructor.html [ Timeout ]
 webkit.org/b/128943 media/media-can-play-wav-audio.html [ Failure ]
-webkit.org/b/128943 media/media-load-event.html [ Failure ]
+webkit.org/b/128943 media/media-load-event.html [ Timeout ]
 webkit.org/b/128943 userscripts/user-script-audio-document.html [ Failure ]
 
 fast/repaint/block-layout-inline-children-replaced.html [ Pass Timeout ImageOnlyFailure ]
@@ -2836,9 +2836,9 @@ media/media-continues-playing-after-replace-source.html [ Timeout ]
 media/media-controls-cancel-events.html [ Timeout ]
 media/media-document-audio-controls-visible.html [ Timeout ]
 media/media-document-audio-size.html [ Failure ]
-media/media-volume-slider-rendered-below.html [ Failure ]
+media/media-volume-slider-rendered-below.html [ Timeout ]
 media/sources-fallback-codecs.html [ Failure ]
-media/track/track-datacue.html [ Failure ]
+media/track/track-datacue.html [ Timeout ]
 media/track/track-in-band-subtitles-too-large.html [ Failure ]
 media/track/track-long-word-container-sizing.html [ Failure ]
 media/video-canvas-source.html [ Failure ]
@@ -2846,9 +2846,9 @@ media/video-colorspace-yuv420.html [ Failure ]
 media/video-colorspace-yuv422.html [ Failure ]
 media/video-controls-audiotracks-trackmenu.html [ Failure ]
 media/video-controls-rendering.html [ Failure ]
-media/video-defaultmuted.html [ Failure ]
+media/video-defaultmuted.html [ Timeout ]
 media/video-display-toggle.html [ Failure ]
-media/video-does-not-loop.html [ Failure ]
+media/video-does-not-loop.html [ Timeout ]
 media/video-empty-source.html [ Skip ]
 media/video-no-audio.html [ Failure ]
 media/video-pause-immediately.html [ Failure ]
@@ -3057,6 +3057,12 @@ inspector/css/selector-specificity.html [ Timeout ]
 inspector/css/pseudo-element-matches.html [ Timeout ]
 js/dom/callback-function-with-handle-event.html [ Timeout ]
 media/audio-delete-while-step-button-clicked.html [ Timeout ]
+plugins/netscape-plugin-setwindow-size-2.html [ Timeout ]
+plugins/windowless_plugin_paint_test.html [ Timeout ]
+security/autocomplete-cleared-on-back.html [ Timeout ]
+transitions/move-after-transition.html [ Timeout ]
+userscripts/window-onerror-for-isolated-world-1.html [ Timeout ]
+userscripts/window-onerror-for-isolated-world-2.html [ Timeout ]
 
 # new crashes, need bug reports
 editing/deleting/regional-indicators.html [ Crash ]
