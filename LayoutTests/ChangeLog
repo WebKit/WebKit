@@ -1,5 +1,17 @@
 2014-12-31  Alexey Proskuryakov  <ap@apple.com>
 
+        fast/ruby/ruby-svg-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=135610
+
+        Reviewed by Darin Adler.
+
+        * fast/ruby/ruby-svg-crash.html: Streamline the test to avoid timer races. I
+        verified that it still crashes without the original fix (it gets an
+        ASSERT_WITH_SECURITY_IMPILICATIONS).
+        * platform/mac/TestExpectations: Removed the expectation.
+
+2014-12-31  Alexey Proskuryakov  <ap@apple.com>
+
         execDeleteCommand() does not update spellchecker sometimes
         https://bugs.webkit.org/show_bug.cgi?id=139862
 

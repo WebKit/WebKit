@@ -1507,5 +1507,3 @@ webkit.org/b/139977 [ Mavericks+ ] fast/encoding/utf-16-big-endian.html [ Pass F
 webkit.org/b/139977 [ Mavericks+ ] fast/encoding/utf-16-little-endian.html [ Pass Failure ]
 webkit.org/b/139982 [ Mavericks+ ] svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
 webkit.org/b/139988 [ Mavericks+ ] fonts/sans-serif.html [ Pass Failure ]
-
-webkit.org/b/135610 fast/ruby/ruby-svg-crash.html [ Pass Failure ]
