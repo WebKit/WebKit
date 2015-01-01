@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleGetInfoString</key>
-	<string>${BUNDLE_VERSION}, Copyright 2003-2014 Apple Inc.</string>
+	<string>${BUNDLE_VERSION}, Copyright 2003-2015 Apple Inc.</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.WebKit.Databases.Development</string>
 	<key>CFBundleInfoDictionaryVersion</key>

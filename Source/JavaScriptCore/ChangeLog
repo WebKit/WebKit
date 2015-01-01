@@ -1,3 +1,12 @@
+2015-01-01  Jeff Miller  <jeffm@apple.com>
+
+        Update user-visible copyright strings to include 2015
+        https://bugs.webkit.org/show_bug.cgi?id=139880
+
+        Reviewed by Darin Adler.
+
+        * Info.plist:
+
 2015-01-01  Darin Adler  <darin@apple.com>
 
         We often misspell identifier as "identifer"
