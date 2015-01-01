@@ -52,13 +52,13 @@ bool FeatureCounter::shouldUseForPage(Page* page)
 void FeatureCounter::incrementKey(Page* page, const char* const key)
 {
     UNUSED_PARAM(page);
-    UNUSED_PARAM(key);
+    ASSERT_UNUSED(key, key);
 }
 
 void FeatureCounter::setKey(Page* page, const char* const key, int64_t value)
 {
     UNUSED_PARAM(page);
-    UNUSED_PARAM(key);
+    ASSERT_UNUSED(key, key);
     UNUSED_PARAM(value);
 }
 

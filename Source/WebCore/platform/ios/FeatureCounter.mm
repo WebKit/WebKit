@@ -34,6 +34,7 @@ namespace WebCore {
 
 void FeatureCounter::incrementKey(Page* page, const char* const key)
 {
+    ASSERT(key);
     if (!shouldUseForPage(page))
         return;
 
@@ -43,6 +44,7 @@ void FeatureCounter::incrementKey(Page* page, const char* const key)
 
 void FeatureCounter::setKey(Page* page, const char* const key, int64_t value)
 {
+    ASSERT(key);
     if (!shouldUseForPage(page))
         return;
 
