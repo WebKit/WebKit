@@ -73,7 +73,7 @@ public:
     const MediaTime& duration() const { return m_duration; }
 
     const String& sourceID() const { return m_sourceID; }
-    const String& id() const { return m_identifer; }
+    const String& id() const { return m_identifier; }
     const String& originalStartTime() const { return m_originalStartTime; }
     const String& settings() const { return m_settings; }
     const String& cueText() const { return m_cueText; }
@@ -83,7 +83,7 @@ private:
     MediaTime m_duration;
 
     String m_sourceID;
-    String m_identifer;
+    String m_identifier;
     String m_originalStartTime;
     String m_settings;
     String m_cueText;

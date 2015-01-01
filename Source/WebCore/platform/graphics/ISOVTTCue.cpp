@@ -134,7 +134,7 @@ ISOWebVTTCue::ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& d
         if (boxType == vttCueSourceIDBoxType())
             m_sourceID = peekString(subBuffer.get(), ISOBox::boxHeaderSize(), boxDataSize);
         else if (boxType == vttIdBoxType())
-            m_identifer = peekString(subBuffer.get(), ISOBox::boxHeaderSize(), boxDataSize);
+            m_identifier = peekString(subBuffer.get(), ISOBox::boxHeaderSize(), boxDataSize);
         else if (boxType == vttCurrentTimeBoxType())
             m_originalStartTime = peekString(subBuffer.get(), ISOBox::boxHeaderSize(), boxDataSize);
         else if (boxType == vttSettingsBoxType())

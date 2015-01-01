@@ -46,7 +46,7 @@ PassRefPtr<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& 
 
 WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
     : m_data(data)
-    , m_pageGroup(WebCore::PageGroup::pageGroup(m_data.identifer))
+    , m_pageGroup(WebCore::PageGroup::pageGroup(m_data.identifier))
 {
     for (size_t i = 0; i < data.userStyleSheets.size(); ++i)
         addUserStyleSheet(data.userStyleSheets[i]);

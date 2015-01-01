@@ -2048,12 +2048,12 @@ sub plistPathFromBundle($)
     return "";
 }
 
-sub appIdentiferFromBundle($)
+sub appIdentifierFromBundle($)
 {
     my ($appBundle) = @_;
     my $plistPath = plistPathFromBundle($appBundle);
-    chomp(my $bundleIdentifer = `defaults read '$plistPath' CFBundleIdentifier 2> /dev/null`);
-    return $bundleIdentifer;
+    chomp(my $bundleIdentifier = `defaults read '$plistPath' CFBundleIdentifier 2> /dev/null`);
+    return $bundleIdentifier;
 }
 
 sub appDisplayNameFromBundle($)
@@ -2155,7 +2155,7 @@ sub runIOSWebKitAppInSimulator($;$)
 #   $appBundle: the path to the app bundle to launch.
 #   $simulatedDevice: the simulator device to use to run the app.
 #   $simulatorOptions: a hash reference representing optional simulator options.
-#     sessionUUID: a unique identifer to use for the iOS Simulator session. Defaults to an identifer
+#     sessionUUID: a unique identifier to use for the iOS Simulator session. Defaults to an identifier
 #                  of the form "theAwesomeUniqueSessionIdentifierForX" where X is the display name of
 #                  the specified app.
 #     applicationArguments: an array reference representing the arguments to pass to the app (defaults to \@ARGV).
@@ -2199,7 +2199,7 @@ sub installAndLaunchIOSWebKitAppInSimulator($$;$)
     my $sessionInfo = {
         applicationArguments => &$makeNSArrayFromArray($applicationArguments),
         applicationEnvironment => &$makeNSDictionaryFromHash($simulatorENVHashRef),
-        applicationIdentifier => NSString->stringWithCString_(appIdentiferFromBundle($appBundle)),
+        applicationIdentifier => NSString->stringWithCString_(appIdentifierFromBundle($appBundle)),
         applicationPath => NSString->stringWithCString_($appBundle),
         deviceUDID => NSString->stringWithCString_($simulatedDevice->{UDID}),
         sessionUUID => NSString->stringWithCString_($sessionUUID),

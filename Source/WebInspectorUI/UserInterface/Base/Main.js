@@ -970,7 +970,7 @@ WebInspector._updateNavigationSidebarForCurrentContentView = function()
     }
 
     if (!allowedNavigationSidebarPanels.length || allowedNavigationSidebarPanels.contains(selectedSidebarPanel.identifier))
-        currentContentView.__lastNavigationSidebarPanelIdentifer = selectedSidebarPanel.identifier;
+        currentContentView.__lastNavigationSidebarPanelIdentifier = selectedSidebarPanel.identifier;
 
     this._revealAndSelectRepresentedObjectInNavigationSidebar(currentContentView.representedObject);
 };
@@ -1110,12 +1110,12 @@ WebInspector._contentBrowserCurrentContentViewDidChange = function(event)
 
     var allowedNavigationSidebarPanels = currentContentView.allowedNavigationSidebarPanels;
     if (allowedNavigationSidebarPanels.length && !allowedNavigationSidebarPanels.contains(selectedSidebarPanelIdentifier)) {
-        console.assert(!currentContentView.__lastNavigationSidebarPanelIdentifer || allowedNavigationSidebarPanels.contains(currentContentView.__lastNavigationSidebarPanelIdentifer));
-        this.navigationSidebar.selectedSidebarPanel = currentContentView.__lastNavigationSidebarPanelIdentifer || allowedNavigationSidebarPanels[0];
+        console.assert(!currentContentView.__lastNavigationSidebarPanelIdentifier || allowedNavigationSidebarPanels.contains(currentContentView.__lastNavigationSidebarPanelIdentifier));
+        this.navigationSidebar.selectedSidebarPanel = currentContentView.__lastNavigationSidebarPanelIdentifier || allowedNavigationSidebarPanels[0];
     }
 
     if (!allowedNavigationSidebarPanels.length || allowedNavigationSidebarPanels.contains(selectedSidebarPanelIdentifier))
-        currentContentView.__lastNavigationSidebarPanelIdentifer = selectedSidebarPanelIdentifier;
+        currentContentView.__lastNavigationSidebarPanelIdentifier = selectedSidebarPanelIdentifier;
 
     this._revealAndSelectRepresentedObjectInNavigationSidebar(currentContentView.representedObject);
 };

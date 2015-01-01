@@ -50,7 +50,7 @@ public:
     void addPage(WebPageProxy*);
     void removePage(WebPageProxy*);
 
-    const String& identifier() const { return m_data.identifer; }
+    const String& identifier() const { return m_data.identifier; }
     uint64_t pageGroupID() const { return m_data.pageGroupID; }
 
     const WebPageGroupData& data() const { return m_data; }

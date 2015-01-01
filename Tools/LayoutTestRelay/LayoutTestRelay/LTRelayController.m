@@ -34,7 +34,7 @@
 @property (readonly, strong) NSFileHandle *standardOutput;
 @property (readonly, strong) NSFileHandle *standardError;
 @property (readonly, strong) NSString *uniqueAppPath;
-@property (readonly, strong) NSString *uniqueAppIdentifer;
+@property (readonly, strong) NSString *uniqueAppIdentifier;
 @property (readonly, strong) NSURL *uniqueAppURL;
 @property (readonly, strong) NSString *originalAppIdentifier;
 @property (readonly, strong) NSString *originalAppPath;

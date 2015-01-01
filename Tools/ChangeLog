@@ -1,3 +1,16 @@
+2015-01-01  Darin Adler  <darin@apple.com>
+
+        We often misspell identifier as "identifer"
+        https://bugs.webkit.org/show_bug.cgi?id=140025
+
+        Reviewed by Michael Saboff.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        * Scripts/webkitdirs.pm:
+        (appIdentifierFromBundle):
+        (installAndLaunchIOSWebKitAppInSimulator):
+        Fix misspellings
+
 2015-01-01  Zalan Bujtas  <zalan@apple.com>
 
         Saturated arithmetics: Incorrect float/double clamping.

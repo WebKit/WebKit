@@ -38,7 +38,7 @@ namespace JSC {
 // (specifically, this is only one property - the value 0xFFFFFFFFU as an unsigned 32-bit
 // integer) are not considered array indices and will be stored in the JSObject property map.
 //
-// All properties with a numeric identifer, representable as an unsigned integer i,
+// All properties with a numeric identifier, representable as an unsigned integer i,
 // where (i <= MAX_ARRAY_INDEX), are an array index and will be stored in either the
 // storage vector or the sparse map. An array index i will be handled in the following
 // fashion:

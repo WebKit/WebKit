@@ -100,7 +100,7 @@ private:
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     // FIXME: Currently it is safe to use 0, but this may need to change
-    // if touch identifers change in the future and can be 0.
+    // if touch identifiers change in the future and can be 0.
     static const unsigned NoIdentifier = 0;
     unsigned m_exclusiveTouchIdentifier;
     bool m_isRegisteredAsTouchEventListener;

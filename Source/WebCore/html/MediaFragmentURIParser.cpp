@@ -42,7 +42,7 @@ namespace WebCore {
 
 const int secondsPerHour = 3600;
 const int secondsPerMinute = 60;
-const unsigned nptIdentiferLength = 4; // "npt:"
+const unsigned nptIdentifierLength = 4; // "npt:"
 
 static String collectDigits(const LChar* input, unsigned length, unsigned& position)
 {
@@ -200,8 +200,8 @@ void MediaFragmentURIParser::parseTimeFragment()
 bool MediaFragmentURIParser::parseNPTFragment(const LChar* timeString, unsigned length, MediaTime& startTime, MediaTime& endTime)
 {
     unsigned offset = 0;
-    if (length >= nptIdentiferLength && timeString[0] == 'n' && timeString[1] == 'p' && timeString[2] == 't' && timeString[3] == ':')
-        offset += nptIdentiferLength;
+    if (length >= nptIdentifierLength && timeString[0] == 'n' && timeString[1] == 'p' && timeString[2] == 't' && timeString[3] == ':')
+        offset += nptIdentifierLength;
 
     if (offset == length)
         return false;

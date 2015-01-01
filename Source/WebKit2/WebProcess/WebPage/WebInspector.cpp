@@ -80,18 +80,18 @@ void WebInspector::createInspectorPage(bool underTest)
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
 
-    IPC::Connection::Identifier connectionIdentifer(listeningPort);
+    IPC::Connection::Identifier connectionIdentifier(listeningPort);
     IPC::Attachment connectionClientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
 #elif USE(UNIX_DOMAIN_SOCKETS)
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
-    IPC::Connection::Identifier connectionIdentifer(socketPair.server);
+    IPC::Connection::Identifier connectionIdentifier(socketPair.server);
     IPC::Attachment connectionClientPort(socketPair.client);
 #else
     notImplemented();
     return;
 #endif
 
-    m_frontendConnection = IPC::Connection::createServerConnection(connectionIdentifer, this, RunLoop::main());
+    m_frontendConnection = IPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
     m_frontendConnection->open();
 
     WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::CreateInspectorPage(connectionClientPort, canAttachWindow(), underTest), m_page->pageID());

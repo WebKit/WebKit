@@ -181,14 +181,14 @@ public:
         m_orAllData |= character;
     }
 
-    // FIXME: Distinguish between a missing public identifer and an empty one.
+    // FIXME: Distinguish between a missing public identifier and an empty one.
     const WTF::Vector<UChar>& publicIdentifier() const
     {
         ASSERT(m_type == DOCTYPE);
         return m_doctypeData->m_publicIdentifier;
     }
 
-    // FIXME: Distinguish between a missing system identifer and an empty one.
+    // FIXME: Distinguish between a missing system identifier and an empty one.
     const WTF::Vector<UChar>& systemIdentifier() const
     {
         ASSERT(m_type == DOCTYPE);

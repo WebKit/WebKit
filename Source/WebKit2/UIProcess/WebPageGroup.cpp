@@ -72,9 +72,9 @@ static WebPageGroupData pageGroupData(const String& identifier, bool visibleToIn
     data.pageGroupID = generatePageGroupID();
 
     if (!identifier.isEmpty())
-        data.identifer = identifier;
+        data.identifier = identifier;
     else
-        data.identifer = makeString("__uniquePageGroupID-", String::number(data.pageGroupID));
+        data.identifier = makeString("__uniquePageGroupID-", String::number(data.pageGroupID));
 
     data.visibleToInjectedBundle = visibleToInjectedBundle;
     data.visibleToHistoryClient = visibleToHistoryClient;
@@ -86,7 +86,7 @@ static WebPageGroupData pageGroupData(const String& identifier, bool visibleToIn
 // If it turns out that it's wrong, we can change it to to "WebKit2." and get rid of the globalDebugKeyPrefix from WebPreferences.
 WebPageGroup::WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient)
     : m_data(pageGroupData(identifier, visibleToInjectedBundle, visibleToHistoryClient))
-    , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifer, ".WebKit2", "WebKit2."))
+    , m_preferences(WebPreferences::createWithLegacyDefaults(m_data.identifier, ".WebKit2", "WebKit2."))
 {
     webPageGroupMap().set(m_data.pageGroupID, this);
 }

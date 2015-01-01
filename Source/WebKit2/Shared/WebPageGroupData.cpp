@@ -32,7 +32,7 @@ namespace WebKit {
 
 void WebPageGroupData::encode(IPC::ArgumentEncoder& encoder) const
 {
-    encoder << identifer;
+    encoder << identifier;
     encoder << pageGroupID;
     encoder << visibleToInjectedBundle;
     encoder << visibleToHistoryClient;
@@ -42,7 +42,7 @@ void WebPageGroupData::encode(IPC::ArgumentEncoder& encoder) const
 
 bool WebPageGroupData::decode(IPC::ArgumentDecoder& decoder, WebPageGroupData& data)
 {
-    if (!decoder.decode(data.identifer))
+    if (!decoder.decode(data.identifier))
         return false;
     if (!decoder.decode(data.pageGroupID))
         return false;

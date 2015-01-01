@@ -42,7 +42,7 @@ struct WebPageGroupData {
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, WebPageGroupData&);
 
-    String identifer;
+    String identifier;
     uint64_t pageGroupID;
     bool visibleToInjectedBundle;
     bool visibleToHistoryClient;
