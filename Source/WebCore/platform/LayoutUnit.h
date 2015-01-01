@@ -86,7 +86,7 @@ public:
     LayoutUnit(float value)
     {
 #if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
-        m_value = clampTo<float>(value * kFixedPointDenominator, static_cast<float>(INT_MIN), static_cast<float>(INT_MAX));
+        m_value = clampToInteger(value * kFixedPointDenominator);
 #else
         REPORT_OVERFLOW(isInBounds(value));
         m_value = value * kFixedPointDenominator;
@@ -95,7 +95,7 @@ public:
     LayoutUnit(double value)
     {
 #if ENABLE(SATURATED_LAYOUT_ARITHMETIC)
-        m_value = clampTo<double>(value * kFixedPointDenominator, static_cast<double>(INT_MIN), static_cast<double>(INT_MAX));
+        m_value = clampToInteger(value * kFixedPointDenominator);
 #else
         REPORT_OVERFLOW(isInBounds(value));
         m_value = value * kFixedPointDenominator;

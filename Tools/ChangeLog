@@ -1,3 +1,16 @@
+2015-01-01  Zalan Bujtas  <zalan@apple.com>
+
+        Saturated arithmetics: Incorrect float/double clamping.
+        https://bugs.webkit.org/show_bug.cgi?id=139888
+        rdar://problem/19330885
+
+        Reviewed by Simon Fraser.
+
+        Clamp float and double values correctly when applying saturated arithmetics.
+
+        * TestWebKitAPI/Tests/WebCore/LayoutUnit.cpp:
+        (TestWebKitAPI::TEST):
+
 2014-12-30  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Bump version of ATK used by jhbuild to 2.15.2

@@ -1,3 +1,18 @@
+2015-01-01  Zalan Bujtas  <zalan@apple.com>
+
+        Saturated arithmetics: Incorrect float/double clamping.
+        https://bugs.webkit.org/show_bug.cgi?id=139888
+        rdar://problem/19330885
+
+        Reviewed by Simon Fraser.
+
+        Clamp float and double values correctly when applying saturated arithmetics.
+
+        Test: LayoutUnit test for float overflow.
+
+        * platform/LayoutUnit.h:
+        (WebCore::LayoutUnit::LayoutUnit):
+
 2014-12-31  Dan Bernstein  <mitz@apple.com>
 
         Fixed the iOS build.

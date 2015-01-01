@@ -76,6 +76,10 @@ TEST(WebCoreLayoutUnit, LayoutUnitFloat)
     ASSERT_NEAR(LayoutUnit(345634.12335f).toFloat(), 345634.12335f, tolerance);
     ASSERT_NEAR(LayoutUnit(-345634.12335f).toFloat(), -345634.12335f, tolerance);
     ASSERT_NEAR(LayoutUnit(-345634).toFloat(), -345634.0f, tolerance);    
+    ASSERT_NEAR(LayoutUnit(33554432.f).toFloat(), 33554432.f, tolerance);
+    ASSERT_NEAR(LayoutUnit(-33554432.f).toFloat(), -33554432.f, tolerance);
+    ASSERT_NEAR(LayoutUnit(33554432.f).toDouble(), 33554432.f, tolerance);
+    ASSERT_NEAR(LayoutUnit(-33554432.f).toDouble(), -33554432.f, tolerance);
 }
 
 TEST(WebCoreLayoutUnit, LayoutUnitRounding)
