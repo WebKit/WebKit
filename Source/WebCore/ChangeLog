@@ -1,3 +1,10 @@
+2014-12-31  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the iOS build.
+
+        * page/scrolling/ios/ScrollingCoordinatorIOS.mm:
+        (WebCore::ScrollingCoordinatorIOS::commitTreeState):
+
 2014-12-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r177835.

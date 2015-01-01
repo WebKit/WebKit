@@ -100,7 +100,7 @@ void ScrollingCoordinatorIOS::commitTreeState()
 {
     ASSERT(scrollingStateTree()->hasChangedProperties());
 
-    OwnPtr<ScrollingStateTree> treeState = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
+    scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
     // FIXME: figure out how to commit.
 }
 
