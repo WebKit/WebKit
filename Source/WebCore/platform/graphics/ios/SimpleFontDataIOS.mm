@@ -167,11 +167,6 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
     return nullptr;
 }
 
-bool SimpleFontData::containsCharacters(const UChar*, int) const
-{
-    return false;
-}
-
 void SimpleFontData::determinePitch()
 {
     CTFontRef ctFont = m_platformData.font();

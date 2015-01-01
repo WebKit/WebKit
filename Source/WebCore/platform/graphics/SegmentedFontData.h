@@ -70,13 +70,10 @@ private:
     SegmentedFontData() { }
 
     virtual const SimpleFontData* fontDataForCharacter(UChar32) const;
-    virtual bool containsCharacters(const UChar*, int length) const;
 
     virtual bool isCustomFont() const;
     virtual bool isLoading() const;
     virtual bool isSegmented() const;
-
-    bool containsCharacter(UChar32) const;
 
     Vector<FontDataRange, 1> m_ranges;
 };

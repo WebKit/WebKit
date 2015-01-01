@@ -166,7 +166,6 @@ public:
     void setZeroGlyph(Glyph zeroGlyph) { m_zeroGlyph = zeroGlyph; }
 
     virtual const SimpleFontData* fontDataForCharacter(UChar32) const override;
-    virtual bool containsCharacters(const UChar*, int length) const override;
 
     Glyph glyphForCharacter(UChar32) const;
 

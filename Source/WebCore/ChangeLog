@@ -1,3 +1,27 @@
+2015-01-01  Antti Koivisto  <antti@apple.com>
+
+        Remove FontData::containsCharacters
+        https://bugs.webkit.org/show_bug.cgi?id=140026
+
+        Reviewed by Dan Bernstein.
+
+        This virtual function has no clients.
+
+        * platform/graphics/FontData.h:
+        * platform/graphics/SegmentedFontData.cpp:
+        (WebCore::SegmentedFontData::containsCharacter): Deleted.
+        (WebCore::SegmentedFontData::containsCharacters): Deleted.
+        * platform/graphics/SegmentedFontData.h:
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::SimpleFontData::containsCharacters): Deleted.
+        * platform/graphics/ios/SimpleFontDataIOS.mm:
+        (WebCore::SimpleFontData::containsCharacters): Deleted.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::containsCharacters): Deleted.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::containsCharacters): Deleted.
+
 2015-01-01  Darin Adler  <darin@apple.com>
 
         We often misspell identifier as "identifer"

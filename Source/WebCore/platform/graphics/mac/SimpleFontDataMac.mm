@@ -321,17 +321,6 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
 
     return 0;
 }
-#endif // !PLATFORM(IOS)
-
-#if !PLATFORM(IOS)
-bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
-{
-    NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(characters) length:length freeWhenDone:NO];
-    NSCharacterSet *set = [[m_platformData.nsFont() coveredCharacterSet] invertedSet];
-    bool result = set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
-    [string release];
-    return result;
-}
 
 void SimpleFontData::determinePitch()
 {

@@ -139,47 +139,6 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
     return SimpleFontData::create(FontPlatformData(WTF::move(hfont), scaledSize, m_platformData.syntheticBold(), m_platformData.syntheticOblique(), m_platformData.useGDI()), isCustomFont(), false);
 }
 
-bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
-{
-    // FIXME: Support custom fonts.
-    if (isCustomFont())
-        return false;
-
-    // FIXME: Microsoft documentation seems to imply that characters can be output using a given font and DC
-    // merely by testing code page intersection.  This seems suspect though.  Can't a font only partially
-    // cover a given code page?
-    IMLangFontLinkType* langFontLink = fontCache().getFontLinkInterface();
-    if (!langFontLink)
-        return false;
-
-    HWndDC dc(0);
-
-    DWORD acpCodePages;
-    if (FAILED(langFontLink->CodePageToCodePages(CP_ACP, &acpCodePages))) {
-        WTFLogAlways("SimpleFontData::containsCharacters: Unable to convert to CP_ACP code page.");
-        return false;
-    }
-
-    DWORD fontCodePages;
-    if (FAILED(langFontLink->GetFontCodePages(dc, m_platformData.hfont(), &fontCodePages))) {
-        WTFLogAlways("SimpleFontData::containsCharacters: Unable to find matching code page for specified font.");
-        return false;
-    }
-
-    DWORD actualCodePages = 0;
-    long numCharactersProcessed = 0;
-    long offset = 0;
-    while (offset < length) {
-        if (FAILED(langFontLink->GetStrCodePages(characters, length, acpCodePages, &actualCodePages, &numCharactersProcessed)))
-            return false;
-        if ((actualCodePages & fontCodePages) == 0)
-            return false;
-        offset += numCharactersProcessed;
-    }
-
-    return true;
-}
-
 void SimpleFontData::determinePitch()
 {
     if (isCustomFont()) {
