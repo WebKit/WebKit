@@ -1,3 +1,19 @@
+2015-01-01  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Fix memory leak in FeatureCounter
+        https://bugs.webkit.org/show_bug.cgi?id=140029
+        <rdar://problem/19255690>
+
+        Reviewed by Darin Adler.
+
+        Fix memory leak in FeatureCounter. The NSString for the counter key
+        was allocated but never released. The patch switches to using a
+        RetainPtr instead of a raw pointer to avoid the issue.
+
+        * platform/ios/FeatureCounter.mm:
+        (WebCore::FeatureCounter::incrementKey):
+        (WebCore::FeatureCounter::setKey):
+
 2015-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2015
