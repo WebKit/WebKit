@@ -1,3 +1,21 @@
+2015-01-01  Alexey Proskuryakov  <ap@apple.com>
+
+        http/tests/xmlhttprequest/send-on-abort.html is flaky in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=140020
+
+        Reviewed by Darin Adler.
+
+        1. XHR loads are aborted when a page load starts, not when it's committed (which
+        is a known bug in WebKit). This gave the failure timer an opportunity to fire between
+        these events. Fixed by extending the delay.
+
+        2. Starting the test while parsing had a potential for a race with loading - we
+        could run it before all data was loaded. While this probably didn't happen in
+        practice here, it's better to run navigation tests under 100% reproducible conditions,
+        like during onload.
+
+        * http/tests/xmlhttprequest/send-on-abort.html:
+
 2014-12-31  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/notifications/legacy/show.html is flaky

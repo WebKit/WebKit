@@ -10,7 +10,7 @@ if (window.testRunner) {
 function abortHandler()
 {
     xhr2 = new XMLHttpRequest;
-    setTimeout("alert('FAAAIL!')", 100);
+    setTimeout("alert('FAIL: Page load started, but didn't get committed.')", 5000);
 }
 
 function onreadystatechangeHandler()
@@ -19,10 +19,14 @@ function onreadystatechangeHandler()
         abortHandler();
 }
 
-xhr = new XMLHttpRequest;
-xhr.onabort = abortHandler;
-xhr.onreadystatechange = onreadystatechangeHandler;
-xhr.open("GET", "foo.txt", true); 
-xhr.send(null);
-location.href = "data:text/html,<script>if (window.testRunner) testRunner.notifyDone()</scr" + "ipt>PASS: No assertion failure.";
+window.onload = function()
+{
+    xhr = new XMLHttpRequest;
+    xhr.onabort = abortHandler;
+    xhr.onreadystatechange = onreadystatechangeHandler;
+    xhr.open("GET", "foo.txt", true); 
+    xhr.send(null);
+
+    location.href = "data:text/html,<script>if (window.testRunner) testRunner.notifyDone()</scr" + "ipt>PASS: No assertion failure.";
+}
 </script>
