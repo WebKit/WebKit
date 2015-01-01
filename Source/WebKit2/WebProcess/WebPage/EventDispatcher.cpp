@@ -122,13 +122,16 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
 
 #if ENABLE(ASYNC_SCROLLING)
     MutexLocker locker(m_scrollingTreesMutex);
-    if (ThreadedScrollingTree* scrollingTree = m_scrollingTrees.get(pageID)) {
+    if (RefPtr<ThreadedScrollingTree> scrollingTree = m_scrollingTrees.get(pageID)) {
         // FIXME: It's pretty horrible that we're updating the back/forward state here.
         // WebCore should always know the current state and know when it changes so the
         // scrolling tree can be notified.
         // We only need to do this at the beginning of the gesture.
-        if (platformWheelEvent.phase() == PlatformWheelEventPhaseBegan)
-            ScrollingThread::dispatch(bind(&ThreadedScrollingTree::setCanRubberBandState, scrollingTree, canRubberBandAtLeft, canRubberBandAtRight, canRubberBandAtTop, canRubberBandAtBottom));
+        if (platformWheelEvent.phase() == PlatformWheelEventPhaseBegan) {
+            ScrollingThread::dispatch([scrollingTree, canRubberBandAtLeft, canRubberBandAtRight, canRubberBandAtTop, canRubberBandAtBottom] {
+                scrollingTree->setCanRubberBandState(canRubberBandAtLeft, canRubberBandAtRight, canRubberBandAtTop, canRubberBandAtBottom);
+            });
+        }
 
         ScrollingTree::EventResult result = scrollingTree->tryToHandleWheelEvent(platformWheelEvent);
         if (result == ScrollingTree::DidHandleEvent || result == ScrollingTree::DidNotHandleEvent) {
@@ -143,7 +146,10 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
     UNUSED_PARAM(canRubberBandAtBottom);
 #endif
 
-    RunLoop::main().dispatch(bind(&EventDispatcher::dispatchWheelEvent, this, pageID, wheelEvent));
+    RefPtr<EventDispatcher> eventDispatcher(this);
+    RunLoop::main().dispatch([eventDispatcher, pageID, wheelEvent] {
+        eventDispatcher->dispatchWheelEvent(pageID, wheelEvent);
+    }); 
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -182,8 +188,12 @@ void EventDispatcher::touchEvent(uint64_t pageID, const WebKit::WebTouchEvent& t
         }
     }
 
-    if (updateListWasEmpty)
-        RunLoop::main().dispatch(bind(&EventDispatcher::dispatchTouchEvents, this));
+    if (updateListWasEmpty) {
+        RefPtr<EventDispatcher> eventDispatcher(this);
+        RunLoop::main().dispatch([eventDispatcher] {
+            eventDispatcher->dispatchTouchEvents();
+        });
+    }
 }
 
 void EventDispatcher::dispatchTouchEvents()

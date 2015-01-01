@@ -1,3 +1,16 @@
+2014-12-31  Sam Weinig  <sam@webkit.org>
+
+        Move scrolling code off of WTF::bind
+        https://bugs.webkit.org/show_bug.cgi?id=140019
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        (WebKit::EventDispatcher::touchEvent):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+
 2015-01-01  Darin Adler  <darin@apple.com>
 
         We often misspell identifier as "identifer"

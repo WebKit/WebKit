@@ -191,7 +191,11 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
 #if ENABLE(ASYNC_SCROLLING)
     if (AsyncScrollingCoordinator* scrollingCoordinator = downcast<AsyncScrollingCoordinator>(m_webPage.corePage()->scrollingCoordinator())) {
         bool scrollingPerformanceLoggingEnabled = m_webPage.scrollingPerformanceLoggingEnabled();
-        ScrollingThread::dispatch(bind(&ScrollingTree::setScrollingPerformanceLoggingEnabled, scrollingCoordinator->scrollingTree(), scrollingPerformanceLoggingEnabled));
+        
+        RefPtr<ScrollingTree> scrollingTree = scrollingCoordinator->scrollingTree();
+        ScrollingThread::dispatch([scrollingTree, scrollingPerformanceLoggingEnabled] {
+            scrollingTree->setScrollingPerformanceLoggingEnabled(scrollingPerformanceLoggingEnabled);
+        });
     }
 #endif
 

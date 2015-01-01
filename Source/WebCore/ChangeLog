@@ -1,3 +1,28 @@
+2014-12-31  Sam Weinig  <sam@webkit.org>
+
+        Move scrolling code off of WTF::bind
+        https://bugs.webkit.org/show_bug.cgi?id=140019
+
+        Reviewed by Darin Adler.
+
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::tryToHandleWheelEvent):
+        (WebCore::ThreadedScrollingTree::invalidate):
+        (WebCore::ThreadedScrollingTree::scrollingTreeNodeDidScroll):
+        (WebCore::ThreadedScrollingTree::handleWheelEventPhase):
+        (WebCore::derefScrollingCoordinator): Deleted.
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::invalidate):
+        (WebCore::ScrollingTreeIOS::scrollingTreeNodeDidScroll):
+        (WebCore::derefScrollingCoordinator): Deleted.
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::pageDestroyed):
+        (WebCore::ScrollingCoordinatorMac::handleWheelEvent):
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::releaseFastMallocFreeMemoryInAllThreads):
+
 2015-01-01  Antti Koivisto  <antti@apple.com>
 
         Remove FontData::containsCharacters

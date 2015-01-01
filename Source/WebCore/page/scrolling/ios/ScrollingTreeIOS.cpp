@@ -57,13 +57,6 @@ ScrollingTreeIOS::~ScrollingTreeIOS()
     ASSERT(!m_scrollingCoordinator);
 }
 
-static void derefScrollingCoordinator(ScrollingCoordinator* scrollingCoordinator)
-{
-    ASSERT(isMainThread());
-
-    scrollingCoordinator->deref();
-}
-
 void ScrollingTreeIOS::invalidate()
 {
     // Invalidate is dispatched by the ScrollingCoordinator class on the ScrollingThread
@@ -74,7 +67,10 @@ void ScrollingTreeIOS::invalidate()
     // Since this can potentially be the last reference to the scrolling coordinator,
     // we need to release it on the main thread since it has member variables (such as timers)
     // that expect to be destroyed from the main thread.
-    callOnMainThread(bind(derefScrollingCoordinator, m_scrollingCoordinator.release().leakRef()));
+    ScrollingCoordinator* scrollingCoordinator = m_scrollingCoordinator.release().leakRef();
+    callOnMainThread([scrollingCoordinator] {
+        scrollingCoordinator->deref();
+    });
 }
 
 void ScrollingTreeIOS::commitNewTreeState(std::unique_ptr<ScrollingStateTree> scrollingStateTree)
@@ -90,7 +86,12 @@ void ScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const 
     if (nodeID == rootNode()->scrollingNodeID())
         setMainFrameScrollPosition(scrollPosition);
 
-    callOnMainThread(bind(&AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll, m_scrollingCoordinator.get(), nodeID, scrollPosition, isHandlingProgrammaticScroll(), scrollingLayerPositionAction));
+    RefPtr<AsyncScrollingCoordinator> scrollingCoordinator = m_scrollingCoordinator;
+    bool localIsHandlingProgrammaticScroll = isHandlingProgrammaticScroll();
+
+    callOnMainThread([scrollingCoordinator, nodeID, scrollPosition, localIsHandlingProgrammaticScroll, scrollingLayerPositionAction] {
+        scrollingCoordinator->scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, isHandlingProgrammaticScroll, scrollingLayerPositionAction);
+    });
 }
 
 PassRefPtr<ScrollingTreeNode> ScrollingTreeIOS::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)

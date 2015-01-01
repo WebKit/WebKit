@@ -254,10 +254,11 @@ void WorkerThread::releaseFastMallocFreeMemoryInAllThreads()
 {
     std::lock_guard<std::mutex> lock(threadSetMutex());
 
-    for (auto* workerThread : workerThreads())
+    for (auto* workerThread : workerThreads()) {
         workerThread->runLoop().postTask([] (ScriptExecutionContext&) {
             WTF::releaseFastMallocFreeMemory();
         });
+    }
 }
 
 } // namespace WebCore
