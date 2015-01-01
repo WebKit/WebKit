@@ -46,7 +46,7 @@ namespace WebCore {
 
 ScrollingCoordinatorCoordinatedGraphics::ScrollingCoordinatorCoordinatedGraphics(Page* page)
     : ScrollingCoordinator(page)
-    , m_scrollingStateTree(ScrollingStateTree::create())
+    , m_scrollingStateTree(std::make_unique<ScrollingStateTree>())
 {
 }
 

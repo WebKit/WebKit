@@ -53,7 +53,7 @@ public:
     virtual bool requestScrollPositionUpdate(FrameView*, const IntPoint&) override;
 
 private:
-    OwnPtr<ScrollingStateTree> m_scrollingStateTree;
+    std::unique_ptr<ScrollingStateTree> m_scrollingStateTree;
 };
 
 } // namespace WebCore
