@@ -1,5 +1,31 @@
 2014-12-31  Alexey Proskuryakov  <ap@apple.com>
 
+        http/tests/notifications/legacy/show.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=140023
+
+        http/tests/notifications/window-show-on-click.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=112499
+
+        Reviewed by Darin Adler.
+
+        Remove 100 ms timeouts from notification tests. If they become broken, it will
+        be detected as timeout.
+
+        * http/tests/notifications/events-in-dictionary.html:
+        * http/tests/notifications/events.html:
+        * http/tests/notifications/legacy/double-show.html:
+        * http/tests/notifications/legacy/events.html:
+        * http/tests/notifications/legacy/request-no-callback.html:
+        * http/tests/notifications/legacy/request.html:
+        * http/tests/notifications/legacy/show.html:
+        * http/tests/notifications/legacy/window-show-on-click.html:
+        * http/tests/notifications/request.html:
+        * http/tests/notifications/window-show-on-click.html:
+
+        * platform/mac/TestExpectations: window-show-on-click.html should pass now.
+
+2014-12-31  Alexey Proskuryakov  <ap@apple.com>
+
         fast/ruby/ruby-svg-crash.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=135610
 
