@@ -43,11 +43,6 @@ Ref<Text> Text::create(Document& document, const String& data)
     return adoptRef(*new Text(document, data, CreateText));
 }
 
-Ref<Text> Text::create(ScriptExecutionContext& context, const String& data)
-{
-    return adoptRef(*new Text(downcast<Document>(context), data, CreateText));
-}
-
 Ref<Text> Text::createEditingText(Document& document, const String& data)
 {
     return adoptRef(*new Text(document, data, CreateEditingText));

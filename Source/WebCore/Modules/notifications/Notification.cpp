@@ -107,7 +107,7 @@ Ref<Notification> Notification::create(const String& title, const String& body, 
 #endif
 
 #if ENABLE(NOTIFICATIONS)
-Ref<Notification> Notification::create(ScriptExecutionContext& context, const String& title, const Dictionary& options)
+Ref<Notification> Notification::create(Document& context, const String& title, const Dictionary& options)
 {
     auto notification = adoptRef(*new Notification(context, title));
     String argument;

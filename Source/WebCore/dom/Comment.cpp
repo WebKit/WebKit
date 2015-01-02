@@ -36,11 +36,6 @@ Ref<Comment> Comment::create(Document& document, const String& text)
     return adoptRef(*new Comment(document, text));
 }
 
-Ref<Comment> Comment::create(ScriptExecutionContext& context, const String& text)
-{
-    return adoptRef(*new Comment(downcast<Document>(context), text));
-}
-
 String Comment::nodeName() const
 {
     return commentAtom.string();

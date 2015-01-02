@@ -69,7 +69,7 @@ public:
     static Ref<Notification> create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter> provider);
 #endif
 #if ENABLE(NOTIFICATIONS)
-    static Ref<Notification> create(ScriptExecutionContext&, const String& title, const Dictionary& options);
+    static Ref<Notification> create(Document&, const String& title, const Dictionary& options);
 #endif
     
     WEBCORE_EXPORT virtual ~Notification();

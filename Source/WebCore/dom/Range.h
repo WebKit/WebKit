@@ -44,18 +44,15 @@ class DocumentFragment;
 class FloatQuad;
 class Node;
 class NodeWithIndex;
+class SelectionRect;
 class Text;
 class VisiblePosition;
-#if PLATFORM(IOS)
-class SelectionRect;
-#endif
 
 class Range : public RefCounted<Range> {
 public:
     WEBCORE_EXPORT static Ref<Range> create(Document&);
     WEBCORE_EXPORT static Ref<Range> create(Document&, PassRefPtr<Node> startContainer, int startOffset, PassRefPtr<Node> endContainer, int endOffset);
     WEBCORE_EXPORT static Ref<Range> create(Document&, const Position&, const Position&);
-    WEBCORE_EXPORT static Ref<Range> create(ScriptExecutionContext&);
     WEBCORE_EXPORT static Ref<Range> create(Document&, const VisiblePosition&, const VisiblePosition&);
     WEBCORE_EXPORT ~Range();
 

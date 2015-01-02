@@ -1,5 +1,44 @@
 2015-01-02  Darin Adler  <darin@apple.com>
 
+        Pass Document instead of ScriptExecutionContext to non-worker constructors
+        https://bugs.webkit.org/show_bug.cgi?id=140040
+
+        Reviewed by Sam Weinig.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        Generate code passing the document when ConstructorCallWith=Document is used.
+        Later, we could base this on whether the constructor is exposed to workers
+        or not, instead, but for now this seems a clean way to do it.
+
+        * bindings/scripts/IDLAttributes.txt: Allow ConstructorCallWith=Document.
+
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::create):
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/Notification.idl:
+        * dom/Comment.cpp:
+        * dom/Comment.h:
+        * dom/Comment.idl:
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::nodeName): Use ASCIILiteral (just something
+        I noticed in passing).
+        * dom/DocumentFragment.h:
+        * dom/DocumentFragment.idl:
+        * dom/Range.cpp:
+        * dom/Range.h:
+        * dom/Range.idl:
+        * dom/Text.cpp:
+        * dom/Text.h:
+        * dom/Text.idl:
+        Change from ScriptExecutionContext to Document, and remove unneeded
+        overloads that were just casting. It's better to have the bindings
+        layer, which knows these are not ScriptExecutionContext, do the cast
+        than to have create functions that cast that are not in any position
+        to know the cast is safe.
+
+2015-01-02  Darin Adler  <darin@apple.com>
+
         Re-land the HTMLTreeBuilder change with the assertion fixed.
         https://bugs.webkit.org/show_bug.cgi?id=140032
 

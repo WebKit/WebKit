@@ -21,7 +21,7 @@
 // Introduced in DOM Level 2:
 [
     Constructor,
-    ConstructorCallWith=ScriptExecutionContext,
+    ConstructorCallWith=Document,
     ImplementationLacksVTable
 ] interface Range {
 

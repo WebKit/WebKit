@@ -30,7 +30,6 @@ namespace WebCore {
 class Comment final : public CharacterData {
 public:
     static Ref<Comment> create(Document&, const String&);
-    static Ref<Comment> create(ScriptExecutionContext&, const String&);
 
 private:
     Comment(Document&, const String&);

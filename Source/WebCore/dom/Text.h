@@ -29,14 +29,12 @@
 namespace WebCore {
 
 class RenderText;
-class ScriptExecutionContext;
 
 class Text : public CharacterData {
 public:
     static const unsigned defaultLengthLimit = 1 << 16;
 
     static Ref<Text> create(Document&, const String&);
-    static Ref<Text> create(ScriptExecutionContext&, const String&);
     static Ref<Text> createWithLengthLimit(Document&, const String&, unsigned positionInString, unsigned lengthLimit = defaultLengthLimit);
     static Ref<Text> createEditingText(Document&, const String&);
 
