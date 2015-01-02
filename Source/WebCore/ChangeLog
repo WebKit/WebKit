@@ -1,3 +1,10 @@
+2015-01-01  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the iOS build.
+
+        * page/scrolling/ios/ScrollingTreeIOS.cpp:
+        (WebCore::ScrollingTreeIOS::scrollingTreeNodeDidScroll):
+
 2015-01-01  Darin Adler  <darin@apple.com>
 
         Fix itearator typo

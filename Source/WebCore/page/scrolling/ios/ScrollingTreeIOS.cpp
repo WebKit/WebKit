@@ -90,7 +90,7 @@ void ScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const 
     bool localIsHandlingProgrammaticScroll = isHandlingProgrammaticScroll();
 
     callOnMainThread([scrollingCoordinator, nodeID, scrollPosition, localIsHandlingProgrammaticScroll, scrollingLayerPositionAction] {
-        scrollingCoordinator->scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, isHandlingProgrammaticScroll, scrollingLayerPositionAction);
+        scrollingCoordinator->scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, localIsHandlingProgrammaticScroll, scrollingLayerPositionAction);
     });
 }
 
