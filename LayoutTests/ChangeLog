@@ -1,3 +1,20 @@
+2015-01-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        String includes methods perform toString on searchString before toInteger on a offset
+        https://bugs.webkit.org/show_bug.cgi?id=140031
+
+        Reviewed by Darin Adler.
+
+        As per the latest ES6 draft, String.prototype.{startsWith, endsWith, includes}
+        perform toString on searchString (argument 0) before performing toInteger on offset (argument 1).
+
+        * js/script-tests/string-includes.js:
+        (searchString.toString):
+        (startOffset.valueOf):
+        (endOffset.valueOf):
+        (matchString.toString): Deleted.
+        * js/string-includes-expected.txt:
+
 2015-01-01  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/xmlhttprequest/send-on-abort.html is flaky in debug builds

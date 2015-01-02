@@ -86,29 +86,29 @@ PASS (function() { var f = String.prototype.includes; (function() { f('a'); })()
 PASS 'foo bar'.startsWith(/w+/) threw exception TypeError: Type error.
 PASS 'foo bar'.endsWith(/w+/) threw exception TypeError: Type error.
 PASS 'foo bar'.includes(/w+/) threw exception TypeError: Type error.
-PASS stringToSearchIn.startsWith(matchString, startOffset) is true
+PASS stringToSearchIn.startsWith(searchString, startOffset) is true
 PASS sideEffect == 'ABC' is true
-PASS stringToSearchIn.startsWith(matchString, startOffset) threw exception error.
+PASS stringToSearchIn.startsWith(searchString, startOffset) threw exception error.
 PASS sideEffect == '' is true
-PASS stringToSearchIn.startsWith(matchString, startOffset) threw exception error.
+PASS stringToSearchIn.startsWith(searchString, startOffset) threw exception error.
 PASS sideEffect == 'A' is true
-PASS stringToSearchIn.startsWith(matchString, startOffset) threw exception error.
+PASS stringToSearchIn.startsWith(searchString, startOffset) threw exception error.
 PASS sideEffect == 'AB' is true
-PASS stringToSearchIn.endsWith(matchString, endOffset) is true
+PASS stringToSearchIn.endsWith(searchString, endOffset) is true
 PASS sideEffect == 'ABC' is true
-PASS stringToSearchIn.endsWith(matchString, endOffset) threw exception error.
+PASS stringToSearchIn.endsWith(searchString, endOffset) threw exception error.
 PASS sideEffect == '' is true
-PASS stringToSearchIn.endsWith(matchString, endOffset) threw exception error.
+PASS stringToSearchIn.endsWith(searchString, endOffset) threw exception error.
 PASS sideEffect == 'A' is true
-PASS stringToSearchIn.endsWith(matchString, endOffset) threw exception error.
+PASS stringToSearchIn.endsWith(searchString, endOffset) threw exception error.
 PASS sideEffect == 'AB' is true
-PASS stringToSearchIn.includes(matchString, startOffset) is true
+PASS stringToSearchIn.includes(searchString, startOffset) is true
 PASS sideEffect == 'ABC' is true
-PASS stringToSearchIn.includes(matchString, startOffset) threw exception error.
+PASS stringToSearchIn.includes(searchString, startOffset) threw exception error.
 PASS sideEffect == '' is true
-PASS stringToSearchIn.includes(matchString, startOffset) threw exception error.
+PASS stringToSearchIn.includes(searchString, startOffset) threw exception error.
 PASS sideEffect == 'A' is true
-PASS stringToSearchIn.includes(matchString, startOffset) threw exception error.
+PASS stringToSearchIn.includes(searchString, startOffset) threw exception error.
 PASS sideEffect == 'AB' is true
 PASS successfullyParsed is true
 

@@ -1,3 +1,15 @@
+2015-01-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        String includes methods perform toString on searchString before toInt32 on a offset
+        https://bugs.webkit.org/show_bug.cgi?id=140031
+
+        Reviewed by Darin Adler.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncStartsWith):
+        (JSC::stringProtoFuncEndsWith):
+        (JSC::stringProtoFuncIncludes):
+
 2015-01-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Change to return std::unique_ptr<> in fooCreate()

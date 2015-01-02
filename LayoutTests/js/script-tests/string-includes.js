@@ -100,58 +100,58 @@ stringToSearchIn.toString = function() {
     sideEffect += "A";
     return this;
 }
-var startOffset = new Number(0);
-startOffset.valueOf = function() {
+var searchString = new String("foo");
+searchString.toString = function() {
     sideEffect += "B";
     return this;
 }
-var matchString = new String("foo");
-matchString.toString = function() {
+var startOffset = new Number(0);
+startOffset.valueOf = function() {
     sideEffect += "C";
     return this;
 }
 // Calling stringToSearchIn.startsWith implicitly calls stringToSearchIn.toString(),
-// startOffset.valueOf() and matchString.toString(), in that respective order.
-shouldBe("stringToSearchIn.startsWith(matchString, startOffset)", "true");
+// searchString.toString() and startOffset.valueOf(), in that respective order.
+shouldBe("stringToSearchIn.startsWith(searchString, startOffset)", "true");
 shouldBe("sideEffect == 'ABC'", "true");
 
-// If stringToSearchIn throws an exception startOffset.valueOf() and
-// matchString.toString() are not called.
+// If stringToSearchIn throws an exception searchString.toString() and
+// startOffset.valueOf() are not called.
 stringToSearchIn.toString = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.startsWith(matchString, startOffset)", "'error'");
+shouldThrow("stringToSearchIn.startsWith(searchString, startOffset)", "'error'");
 shouldBe("sideEffect == ''", "true");
 
-// If startOffset throws an exception stringToSearchIn.toString() is called but
-// matchString.toString() is not.
+// If searchString throws an exception stringToSearchIn.toString() is called but
+// startOffset.valueOf() is not.
 stringToSearchIn.toString = function() {
     sideEffect += "A";
     return this;
 }
-startOffset.valueOf = function() {
+searchString.toString = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.startsWith(matchString, startOffset)", "'error'");
+shouldThrow("stringToSearchIn.startsWith(searchString, startOffset)", "'error'");
 shouldBe("sideEffect == 'A'", "true");
 
-// If matchString.toString() throws an exception stringToSearchIn.toString() and
-// startOffset.valueOf() were called.
+// If startOffset.valueOf() throws an exception stringToSearchIn.toString() and
+// searchString.toString() were called.
 stringToSearchIn.toString = function() {
     sideEffect += "A";
     return this;
 }
-startOffset.valueOf = function() {
+searchString.toString = function() {
     sideEffect += "B";
     return this;
 }
-matchString.toString = function() {
+startOffset.valueOf = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.startsWith(matchString, startOffset)", "'error'");
+shouldThrow("stringToSearchIn.startsWith(searchString, startOffset)", "'error'");
 shouldBe("sideEffect == 'AB'", "true");
 
 // Check side effects in endsWith.
@@ -161,59 +161,59 @@ stringToSearchIn.toString = function() {
     sideEffect += "A";
     return this;
 }
-var endOffset = new Number(stringToSearchIn.length);
-endOffset.valueOf = function() {
+searchString = new String('bar');
+searchString.toString = function() {
     sideEffect += "B";
     return this;
 }
-matchString = new String('bar');
-matchString.toString = function() {
+var endOffset = new Number(stringToSearchIn.length);
+endOffset.valueOf = function() {
     sideEffect += "C";
     return this;
 }
 
 // Calling stringToSearchIn.endsWith implicitly calls stringToSearchIn.toString(),
-// endOffset.valueOf() and matchString.toString(), in that respective order.
-shouldBe("stringToSearchIn.endsWith(matchString, endOffset)", "true");
+// searchString.toString() and endOffset.valueOf(), in that respective order.
+shouldBe("stringToSearchIn.endsWith(searchString, endOffset)", "true");
 shouldBe("sideEffect == 'ABC'", "true");
 
-// If stringToSearchIn throws an exception endOffset.valueOf() and
-// matchString.toString() are not called.
+// If stringToSearchIn throws an exception searchString.toString() and
+// endOffset.valueOf() are not called.
 stringToSearchIn.toString = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.endsWith(matchString, endOffset)", "'error'");
+shouldThrow("stringToSearchIn.endsWith(searchString, endOffset)", "'error'");
 shouldBe("sideEffect == ''", "true");
 
-// If endOffset throws an exception stringToSearchIn.toString() is called but
-// matchString.toString() is not.
+// If searchString throws an exception stringToSearchIn.toString() is called but
+// endOffset.valueOf() is not.
 stringToSearchIn.toString = function() {
     sideEffect += "A";
     return this;
 }
-endOffset.valueOf = function() {
+searchString.toString = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.endsWith(matchString, endOffset)", "'error'");
+shouldThrow("stringToSearchIn.endsWith(searchString, endOffset)", "'error'");
 shouldBe("sideEffect == 'A'", "true");
 
-// If matchString.toString() throws an exception stringToSearchIn.toString() and
-// endOffset.valueOf() were called.
+// If endOffset.valueOf() throws an exception stringToSearchIn.toString() and
+// searchString.toString() were called.
 stringToSearchIn.toString = function() {
     sideEffect += "A";
     return this;
 }
-endOffset.valueOf = function() {
+searchString.toString = function() {
     sideEffect += "B";
     return this;
 }
-matchString.toString = function() {
+endOffset.valueOf = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.endsWith(matchString, endOffset)", "'error'");
+shouldThrow("stringToSearchIn.endsWith(searchString, endOffset)", "'error'");
 shouldBe("sideEffect == 'AB'", "true");
 
 // Check side effects in includes.
@@ -223,56 +223,56 @@ stringToSearchIn.toString = function() {
     sideEffect += "A";
     return this;
 }
-var startOffset = new Number(0);
-startOffset.valueOf = function() {
+searchString = new String("foo");
+searchString.toString = function() {
     sideEffect += "B";
     return this;
 }
-matchString = new String("foo");
-matchString.toString = function() {
+var startOffset = new Number(0);
+startOffset.valueOf = function() {
     sideEffect += "C";
     return this;
 }
 // Calling stringToSearchIn.includes implicitly calls stringToSearchIn.toString(),
-// startOffset.valueOf() and matchString.toString(), in that respective order.
-shouldBe("stringToSearchIn.includes(matchString, startOffset)", "true");
+// searchString.toString() and startOffset.valueOf(), in that respective order.
+shouldBe("stringToSearchIn.includes(searchString, startOffset)", "true");
 shouldBe("sideEffect == 'ABC'", "true");
 
-// If stringToSearchIn throws an exception startOffset.valueOf() and
-// matchString.toString() are not called.
+// If stringToSearchIn throws an exception searchString.toString() and
+// startOffset.valueOf() are not called.
 stringToSearchIn.toString = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.includes(matchString, startOffset)", "'error'");
+shouldThrow("stringToSearchIn.includes(searchString, startOffset)", "'error'");
 shouldBe("sideEffect == ''", "true");
 
-// If startOffset throws an exception stringToSearchIn.toString() is called but
-// matchString.toString() is not.
+// If searchString throws an exception stringToSearchIn.toString() is called but
+// startOffset.valueOf() is not.
 stringToSearchIn.toString = function() {
     sideEffect += "A";
     return this;
 }
-startOffset.valueOf = function() {
+searchString.toString = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.includes(matchString, startOffset)", "'error'");
+shouldThrow("stringToSearchIn.includes(searchString, startOffset)", "'error'");
 shouldBe("sideEffect == 'A'", "true");
 
-// If matchString.toString() throws an exception stringToSearchIn.toString() and
-// startOffset.valueOf() were called.
+// If startOffset.valueOf() throws an exception stringToSearchIn.toString() and
+// searchString.toString() were called.
 stringToSearchIn.toString = function() {
     sideEffect += "A";
     return this;
 }
-startOffset.valueOf = function() {
+searchString.toString = function() {
     sideEffect += "B";
     return this;
 }
-matchString.toString = function() {
+startOffset.valueOf = function() {
     throw "error";
 }
 sideEffect = "";
-shouldThrow("stringToSearchIn.includes(matchString, startOffset)", "'error'");
+shouldThrow("stringToSearchIn.includes(searchString, startOffset)", "'error'");
 shouldBe("sideEffect == 'AB'", "true");

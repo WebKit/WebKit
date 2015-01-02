@@ -1567,13 +1567,15 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState* exec)
     if (jsDynamicCast<RegExpObject*>(a0))
         return throwVMTypeError(exec);
 
+    String searchString = a0.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     unsigned start = std::max(0, exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    String matchString = a0.toString(exec)->value(exec);
-
-    return JSValue::encode(jsBoolean(stringToSearchIn.startsWith(matchString, start, true)));
+    return JSValue::encode(jsBoolean(stringToSearchIn.startsWith(searchString, start, true)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
@@ -1590,6 +1592,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
     if (jsDynamicCast<RegExpObject*>(a0))
         return throwVMTypeError(exec);
 
+    String searchString = a0.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     unsigned length = stringToSearchIn.length();
     JSValue a1 = exec->argument(1);
     int pos = a1.isUndefined() ? length : a1.toInt32(exec);
@@ -1597,9 +1603,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState* exec)
         return JSValue::encode(jsUndefined());
     unsigned end = std::min<unsigned>(std::max(pos, 0), length);
 
-    String matchString = a0.toString(exec)->value(exec);
-
-    return JSValue::encode(jsBoolean(stringToSearchIn.endsWith(matchString, end, true)));
+    return JSValue::encode(jsBoolean(stringToSearchIn.endsWith(searchString, end, true)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
@@ -1616,13 +1620,15 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState* exec)
     if (jsDynamicCast<RegExpObject*>(a0))
         return throwVMTypeError(exec);
 
+    String searchString = a0.toString(exec)->value(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
     unsigned start = std::max(0, exec->argument(1).toInt32(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    String matchString = a0.toString(exec)->value(exec);
-
-    return JSValue::encode(jsBoolean(stringToSearchIn.contains(matchString, true, start)));
+    return JSValue::encode(jsBoolean(stringToSearchIn.contains(searchString, true, start)));
 }
     
 } // namespace JSC
