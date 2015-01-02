@@ -282,13 +282,13 @@ public:
 // (please to be calling newlineCharacterClass() et al on your
 // friendly neighborhood YarrPattern instance to get nicely
 // cached copies).
-CharacterClass* newlineCreate();
-CharacterClass* digitsCreate();
-CharacterClass* spacesCreate();
-CharacterClass* wordcharCreate();
-CharacterClass* nondigitsCreate();
-CharacterClass* nonspacesCreate();
-CharacterClass* nonwordcharCreate();
+std::unique_ptr<CharacterClass> newlineCreate();
+std::unique_ptr<CharacterClass> digitsCreate();
+std::unique_ptr<CharacterClass> spacesCreate();
+std::unique_ptr<CharacterClass> wordcharCreate();
+std::unique_ptr<CharacterClass> nondigitsCreate();
+std::unique_ptr<CharacterClass> nonspacesCreate();
+std::unique_ptr<CharacterClass> nonwordcharCreate();
 
 struct TermChain {
     TermChain(PatternTerm term)
@@ -335,44 +335,58 @@ struct YarrPattern {
 
     CharacterClass* newlineCharacterClass()
     {
-        if (!newlineCached)
-            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(newlineCached = newlineCreate()));
+        if (!newlineCached) {
+            m_userCharacterClasses.append(newlineCreate());
+            newlineCached = m_userCharacterClasses.last().get();
+        }
         return newlineCached;
     }
     CharacterClass* digitsCharacterClass()
     {
-        if (!digitsCached)
-            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(digitsCached = digitsCreate()));
+        if (!digitsCached) {
+            m_userCharacterClasses.append(digitsCreate());
+            digitsCached = m_userCharacterClasses.last().get();
+        }
         return digitsCached;
     }
     CharacterClass* spacesCharacterClass()
     {
-        if (!spacesCached)
-            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(spacesCached = spacesCreate()));
+        if (!spacesCached) {
+            m_userCharacterClasses.append(spacesCreate());
+            spacesCached = m_userCharacterClasses.last().get();
+        }
         return spacesCached;
     }
     CharacterClass* wordcharCharacterClass()
     {
-        if (!wordcharCached)
-            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(wordcharCached = wordcharCreate()));
+        if (!wordcharCached) {
+            m_userCharacterClasses.append(wordcharCreate());
+            wordcharCached = m_userCharacterClasses.last().get();
+        }
         return wordcharCached;
     }
     CharacterClass* nondigitsCharacterClass()
     {
-        if (!nondigitsCached)
-            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(nondigitsCached = nondigitsCreate()));
+        if (!nondigitsCached) {
+            m_userCharacterClasses.append(nondigitsCreate());
+            nondigitsCached = m_userCharacterClasses.last().get();
+        }
         return nondigitsCached;
     }
     CharacterClass* nonspacesCharacterClass()
     {
-        if (!nonspacesCached)
-            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(nonspacesCached = nonspacesCreate()));
+        if (!nonspacesCached) {
+            m_userCharacterClasses.append(nonspacesCreate());
+            nonspacesCached = m_userCharacterClasses.last().get();
+        }
         return nonspacesCached;
     }
     CharacterClass* nonwordcharCharacterClass()
     {
-        if (!nonwordcharCached)
-            m_userCharacterClasses.append(std::unique_ptr<CharacterClass>(nonwordcharCached = nonwordcharCreate()));
+        if (!nonwordcharCached) {
+            m_userCharacterClasses.append(nonwordcharCreate());
+            nonwordcharCached = m_userCharacterClasses.last().get();
+        }
         return nonwordcharCached;
     }
 
