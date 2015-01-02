@@ -1,3 +1,13 @@
+2015-01-02  Chris Dumez  <cdumez@apple.com>
+
+        Move 'font-size' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140010
+
+        Reviewed by Darin Adler.
+
+        Move 'font-size' CSS property to the new StyleBuilder by using custom
+        code.
+
 2015-01-02  Darin Adler  <darin@apple.com>
 
         Pass Document instead of ScriptExecutionContext to non-worker constructors

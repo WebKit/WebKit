@@ -25,6 +25,7 @@
 #ifndef FontDescription_h
 #define FontDescription_h
 
+#include "CSSValueKeywords.h"
 #include "FontFeatureSettings.h"
 #include "FontOrientation.h"
 #include "FontRenderingMode.h"
@@ -124,6 +125,12 @@ public:
     LigaturesState discretionaryLigaturesState() const { return static_cast<LigaturesState>(m_discretionaryLigaturesState); }
     LigaturesState historicalLigaturesState() const { return static_cast<LigaturesState>(m_historicalLigaturesState); }
     unsigned keywordSize() const { return m_keywordSize; }
+    CSSValueID keywordSizeAsIdentifier() const
+    {
+        CSSValueID identifier = m_keywordSize ? static_cast<CSSValueID>(CSSValueXxSmall + m_keywordSize - 1) : CSSValueInvalid;
+        ASSERT(identifier == CSSValueInvalid || (identifier >= CSSValueXxSmall && identifier <= CSSValueWebkitXxxLarge));
+        return identifier;
+    }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
     UScriptCode script() const { return static_cast<UScriptCode>(m_script); }
@@ -153,7 +160,19 @@ public:
     void setCommonLigaturesState(LigaturesState commonLigaturesState) { m_commonLigaturesState = commonLigaturesState; }
     void setDiscretionaryLigaturesState(LigaturesState discretionaryLigaturesState) { m_discretionaryLigaturesState = discretionaryLigaturesState; }
     void setHistoricalLigaturesState(LigaturesState historicalLigaturesState) { m_historicalLigaturesState = historicalLigaturesState; }
-    void setKeywordSize(unsigned s) { m_keywordSize = s; }
+    void setKeywordSize(unsigned size)
+    {
+        ASSERT(size <= 8);
+        m_keywordSize = size;
+        ASSERT(m_keywordSize == size); // Make sure it fits in the bitfield.
+    }
+    void setKeywordSizeFromIdentifier(CSSValueID identifier)
+    {
+        ASSERT(!identifier || (identifier >= CSSValueXxSmall && identifier <= CSSValueWebkitXxxLarge));
+        static_assert(CSSValueWebkitXxxLarge - CSSValueXxSmall + 1 == 8, "Maximum keyword size should be 8.");
+        setKeywordSize(identifier ? identifier - CSSValueXxSmall + 1 : 0);
+    }
+
     void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = smoothing; }
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = rendering; }
     void setIsSpecifiedFont(bool isSpecifiedFont) { m_isSpecifiedFont = isSpecifiedFont; }

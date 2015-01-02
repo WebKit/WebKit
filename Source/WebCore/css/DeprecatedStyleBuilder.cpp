@@ -34,12 +34,9 @@
 #include "CSSValueList.h"
 #include "HTMLElement.h"
 #include "RenderStyle.h"
-#include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
-
-using namespace HTMLNames;
 
 template <typename T>
 struct FillLayerAccessorTypes {
@@ -141,148 +138,6 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
-class ApplyPropertyFontSize {
-private:
-    // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
-    // table, and failing that, will simply multiply by 1.2.
-    static float largerFontSize(float size)
-    {
-        // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale up to
-        // the next size level.
-        return size * 1.2f;
-    }
-
-    // Like the previous function, but for the keyword "smaller".
-    static float smallerFontSize(float size)
-    {
-        // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale down to
-        // the next size level.
-        return size / 1.2f;
-    }
-public:
-    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        float size = styleResolver->parentStyle()->fontDescription().specifiedSize();
-
-        if (size < 0)
-            return;
-
-        FontDescription fontDescription = styleResolver->style()->fontDescription();
-        fontDescription.setKeywordSize(styleResolver->parentStyle()->fontDescription().keywordSize());
-        styleResolver->setFontSize(fontDescription, size);
-        styleResolver->setFontDescription(fontDescription);
-        return;
-    }
-
-    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
-    {
-        FontDescription fontDescription = styleResolver->style()->fontDescription();
-        float size = Style::fontSizeForKeyword(CSSValueMedium, fontDescription.useFixedDefaultSize(), styleResolver->document());
-
-        if (size < 0)
-            return;
-
-        fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
-        styleResolver->setFontSize(fontDescription, size);
-        styleResolver->setFontDescription(fontDescription);
-        return;
-    }
-
-    static float determineRubyTextSizeMultiplier(StyleResolver* styleResolver)
-    {
-        if (styleResolver->style()->rubyPosition() != RubyPositionInterCharacter)
-            return 0.5f;
-        
-        Element* element = styleResolver->state().element();
-        if (element == nullptr)
-            return 0.25f;
-        
-        // FIXME: This hack is to ensure tone marks are the same size as
-        // the bopomofo. This code will go away if we make a special renderer
-        // for the tone marks eventually.
-        for (const Element* currElement = element->parentElement(); currElement; currElement = currElement->parentElement()) {
-            if (currElement->hasTagName(rtTag))
-                return 1.0f;
-        }
-        return 0.25f;
-    }
-    
-    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
-    {
-        if (!is<CSSPrimitiveValue>(*value))
-            return;
-
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-
-        FontDescription fontDescription = styleResolver->style()->fontDescription();
-        fontDescription.setKeywordSize(0);
-        float parentSize = 0;
-        bool parentIsAbsoluteSize = false;
-        float size = 0;
-
-        if (styleResolver->parentStyle()) {
-            parentSize = styleResolver->parentStyle()->fontDescription().specifiedSize();
-            parentIsAbsoluteSize = styleResolver->parentStyle()->fontDescription().isAbsoluteSize();
-        }
-
-        if (CSSValueID ident = primitiveValue.getValueID()) {
-            // Keywords are being used.
-            switch (ident) {
-            case CSSValueXxSmall:
-            case CSSValueXSmall:
-            case CSSValueSmall:
-            case CSSValueMedium:
-            case CSSValueLarge:
-            case CSSValueXLarge:
-            case CSSValueXxLarge:
-            case CSSValueWebkitXxxLarge:
-                size = Style::fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), styleResolver->document());
-                fontDescription.setKeywordSize(ident - CSSValueXxSmall + 1);
-                break;
-            case CSSValueLarger:
-                size = largerFontSize(parentSize);
-                break;
-            case CSSValueSmaller:
-                size = smallerFontSize(parentSize);
-                break;
-            case CSSValueWebkitRubyText: {
-                float rubyTextSizeMultiplier = determineRubyTextSizeMultiplier(styleResolver);
-                size = rubyTextSizeMultiplier * parentSize;
-                break;
-            } default:
-                return;
-            }
-
-            fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize && (ident == CSSValueLarger || ident == CSSValueSmaller || ident == CSSValueWebkitRubyText));
-        } else {
-            fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize || !(primitiveValue.isPercentage() || primitiveValue.isFontRelativeLength()));
-            if (primitiveValue.isLength()) {
-                size = primitiveValue.computeLength<float>(CSSToLengthConversionData(styleResolver->parentStyle(), styleResolver->rootElementStyle(), styleResolver->document().renderView(), 1.0f, true));
-                styleResolver->state().setFontSizeHasViewportUnits(primitiveValue.isViewportPercentageLength());
-            } else if (primitiveValue.isPercentage())
-                size = (primitiveValue.getFloatValue() * parentSize) / 100.0f;
-            else if (primitiveValue.isCalculatedPercentageWithLength()) {
-                Ref<CalculationValue> calculationValue { primitiveValue.cssCalcValue()->createCalculationValue(styleResolver->state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f)) };
-                size = calculationValue->evaluate(parentSize);
-            } else
-                return;
-        }
-
-        if (size < 0)
-            return;
-
-        // Overly large font sizes will cause crashes on some platforms (such as Windows).
-        // Cap font size here to make sure that doesn't happen.
-        size = std::min(maximumAllowedFontSize, size);
-
-        styleResolver->setFontSize(fontDescription, size);
-        styleResolver->setFontDescription(fontDescription);
-        return;
-    }
-
-    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
-};
-
 const DeprecatedStyleBuilder& DeprecatedStyleBuilder::sharedStyleBuilder()
 {
     static NeverDestroyed<DeprecatedStyleBuilder> styleBuilderInstance;
@@ -305,8 +160,6 @@ DeprecatedStyleBuilder::DeprecatedStyleBuilder()
     setPropertyHandler(CSSPropertyBackgroundRepeatX, ApplyPropertyFillLayer<EFillRepeat, CSSPropertyBackgroundRepeatX, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers, &FillLayer::isRepeatXSet, &FillLayer::repeatX, &FillLayer::setRepeatX, &FillLayer::clearRepeatX, &FillLayer::initialFillRepeatX, &CSSToStyleMap::mapFillRepeatX>::createHandler());
     setPropertyHandler(CSSPropertyBackgroundRepeatY, ApplyPropertyFillLayer<EFillRepeat, CSSPropertyBackgroundRepeatY, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers, &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSToStyleMap::mapFillRepeatY>::createHandler());
     setPropertyHandler(CSSPropertyBackgroundSize, ApplyPropertyFillLayer<FillSize, CSSPropertyBackgroundSize, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers, &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSToStyleMap::mapFillSize>::createHandler());
-    setPropertyHandler(CSSPropertyFontSize, ApplyPropertyFontSize::createHandler());
-
     setPropertyHandler(CSSPropertyWebkitBackgroundClip, CSSPropertyBackgroundClip);
     setPropertyHandler(CSSPropertyWebkitBackgroundComposite, ApplyPropertyFillLayer<CompositeOperator, CSSPropertyWebkitBackgroundComposite, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers, &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSToStyleMap::mapFillComposite>::createHandler());
     setPropertyHandler(CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundOrigin);

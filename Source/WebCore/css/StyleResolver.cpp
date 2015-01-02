@@ -3215,8 +3215,8 @@ void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, RenderStyle*
     // If the font uses a keyword size, then we refetch from the table rather than
     // multiplying by our scale factor.
     float size;
-    if (childFont.keywordSize())
-        size = Style::fontSizeForKeyword(CSSValueXxSmall + childFont.keywordSize() - 1, childFont.useFixedDefaultSize(), document());
+    if (CSSValueID sizeIdentifier = childFont.keywordSizeAsIdentifier())
+        size = Style::fontSizeForKeyword(sizeIdentifier, childFont.useFixedDefaultSize(), document());
     else {
         Settings* settings = documentSettings();
         float fixedScaleFactor = (settings && settings->defaultFixedFontSize() && settings->defaultFontSize())
@@ -3238,7 +3238,7 @@ void StyleResolver::initializeFontStyle(Settings* settings)
     fontDescription.setRenderingMode(settings->fontRenderingMode());
     fontDescription.setUsePrinterFont(document().printing() || !settings->screenFontSubstitutionEnabled());
     fontDescription.setOneFamily(standardFamily);
-    fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
+    fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
     setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueMedium, false, document()));
     m_state.style()->setLineHeight(RenderStyle::initialLineHeight());
     m_state.setLineHeightValue(0);

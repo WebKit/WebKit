@@ -1282,13 +1282,6 @@ void CSSComputedStyleDeclaration::setCssText(const String&, ExceptionCode& ec)
     ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
-static CSSValueID cssIdentifierForFontSizeKeyword(int keywordSize)
-{
-    ASSERT_ARG(keywordSize, keywordSize);
-    ASSERT_ARG(keywordSize, keywordSize <= 8);
-    return static_cast<CSSValueID>(CSSValueXxSmall + keywordSize - 1);
-}
-
 PassRefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferringKeyword() const
 {
     if (!m_node)
@@ -1300,8 +1293,8 @@ PassRefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferr
     if (!style)
         return nullptr;
 
-    if (int keywordSize = style->fontDescription().keywordSize())
-        return cssValuePool().createIdentifierValue(cssIdentifierForFontSizeKeyword(keywordSize));
+    if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier())
+        return cssValuePool().createIdentifierValue(sizeIdentifier);
 
     return zoomAdjustedPixelValue(style->fontDescription().computedPixelSize(), style.get());
 }
@@ -3241,12 +3234,12 @@ bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSS
 {
     if (propertyID == CSSPropertyFontSize && is<CSSPrimitiveValue>(*value) && m_node) {
         m_node->document().updateLayoutIgnorePendingStylesheets();
-        RenderStyle* style = m_node->computedStyle(m_pseudoElementSpecifier);
-        if (style && style->fontDescription().keywordSize()) {
-            CSSValueID sizeValue = cssIdentifierForFontSizeKeyword(style->fontDescription().keywordSize());
-            const CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-            if (primitiveValue.isValueID() && primitiveValue.getValueID() == sizeValue)
-                return true;
+        if (RenderStyle* style = m_node->computedStyle(m_pseudoElementSpecifier)) {
+            if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier()) {
+                auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+                if (primitiveValue.isValueID() && primitiveValue.getValueID() == sizeIdentifier)
+                    return true;
+            }
         }
     }
     RefPtr<CSSValue> computedValue = propertyValue(propertyID);

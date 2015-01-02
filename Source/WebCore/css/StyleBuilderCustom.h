@@ -31,7 +31,9 @@
 #include "CSSCursorImageValue.h"
 #include "CSSShadowValue.h"
 #include "CursorList.h"
+#include "ElementAncestorIterator.h"
 #include "Frame.h"
+#include "HTMLElement.h"
 #include "LocaleToScriptMapping.h"
 #include "Rect.h"
 #include "SVGElement.h"
@@ -61,6 +63,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Cursor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontFamily);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(FontSize);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontWeight);
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ImageResolution);
@@ -118,6 +121,10 @@ private:
     static void applyInheritCounter(StyleResolver&);
     template <CounterBehavior counterBehavior>
     static void applyValueCounter(StyleResolver&, CSSValue&);
+
+    static float largerFontSize(float size);
+    static float smallerFontSize(float size);
+    static float determineRubyTextSizeMultiplier(StyleResolver&);
 };
 
 inline void StyleBuilderCustom::applyValueWebkitMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value)
@@ -842,8 +849,10 @@ inline void StyleBuilderCustom::applyInitialFontFamily(StyleResolver& styleResol
     FontDescription initialDesc = FontDescription();
 
     // We need to adjust the size to account for the generic family change from monospace to non-monospace.
-    if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize())
-        styleResolver.setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueXxSmall + fontDescription.keywordSize() - 1, false, styleResolver.document()));
+    if (fontDescription.useFixedDefaultSize()) {
+        if (CSSValueID sizeIdentifier = fontDescription.keywordSizeAsIdentifier())
+            styleResolver.setFontSize(fontDescription, Style::fontSizeForKeyword(sizeIdentifier, false, styleResolver.document()));
+    }
     if (!initialDesc.firstFamily().isEmpty())
         fontDescription.setFamilies(initialDesc.families());
 
@@ -923,8 +932,10 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
         return;
     fontDescription.setFamilies(families);
 
-    if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize)
-        styleResolver.setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueXxSmall + fontDescription.keywordSize() - 1, !oldFamilyUsedFixedDefaultSize, styleResolver.document()));
+    if (fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize) {
+        if (CSSValueID sizeIdentifier = fontDescription.keywordSizeAsIdentifier())
+            styleResolver.setFontSize(fontDescription, Style::fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, styleResolver.document()));
+    }
 
     styleResolver.setFontDescription(fontDescription);
 }
@@ -1265,6 +1276,129 @@ inline void StyleBuilderCustom::applyValueWebkitFontVariantLigatures(StyleResolv
     fontDescription.setCommonLigaturesState(commonLigaturesState);
     fontDescription.setDiscretionaryLigaturesState(discretionaryLigaturesState);
     fontDescription.setHistoricalLigaturesState(historicalLigaturesState);
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyInitialFontSize(StyleResolver& styleResolver)
+{
+    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    float size = Style::fontSizeForKeyword(CSSValueMedium, fontDescription.useFixedDefaultSize(), styleResolver.document());
+
+    if (size < 0)
+        return;
+
+    fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
+    styleResolver.setFontSize(fontDescription, size);
+    styleResolver.setFontDescription(fontDescription);
+}
+
+inline void StyleBuilderCustom::applyInheritFontSize(StyleResolver& styleResolver)
+{
+    const FontDescription& parentFontDescription = styleResolver.parentStyle()->fontDescription();
+    float size = parentFontDescription.specifiedSize();
+
+    if (size < 0)
+        return;
+
+    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    fontDescription.setKeywordSize(parentFontDescription.keywordSize());
+    styleResolver.setFontSize(fontDescription, size);
+    styleResolver.setFontDescription(fontDescription);
+}
+
+// When the CSS keyword "larger" is used, this function will attempt to match within the keyword
+// table, and failing that, will simply multiply by 1.2.
+inline float StyleBuilderCustom::largerFontSize(float size)
+{
+    // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale up to
+    // the next size level.
+    return size * 1.2f;
+}
+
+// Like the previous function, but for the keyword "smaller".
+inline float StyleBuilderCustom::smallerFontSize(float size)
+{
+    // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale down to
+    // the next size level.
+    return size / 1.2f;
+}
+
+inline float StyleBuilderCustom::determineRubyTextSizeMultiplier(StyleResolver& styleResolver)
+{
+    if (styleResolver.style()->rubyPosition() != RubyPositionInterCharacter)
+        return 0.5f;
+
+    // FIXME: This hack is to ensure tone marks are the same size as
+    // the bopomofo. This code will go away if we make a special renderer
+    // for the tone marks eventually.
+    if (auto* element = styleResolver.state().element()) {
+        for (auto& ancestor : ancestorsOfType<HTMLElement>(*element)) {
+            if (ancestor.hasTagName(HTMLNames::rtTag))
+                return 1.0f;
+        }
+    }
+    return 0.25f;
+}
+
+inline void StyleBuilderCustom::applyValueFontSize(StyleResolver& styleResolver, CSSValue& value)
+{
+    FontDescription fontDescription = styleResolver.style()->fontDescription();
+    fontDescription.setKeywordSizeFromIdentifier(CSSValueInvalid);
+
+    float parentSize = 0;
+    bool parentIsAbsoluteSize = false;
+    if (auto* parentStyle = styleResolver.parentStyle()) {
+        parentSize = parentStyle->fontDescription().specifiedSize();
+        parentIsAbsoluteSize = parentStyle->fontDescription().isAbsoluteSize();
+    }
+
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    float size;
+    if (CSSValueID ident = primitiveValue.getValueID()) {
+        fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize && (ident == CSSValueLarger || ident == CSSValueSmaller || ident == CSSValueWebkitRubyText));
+
+        // Keywords are being used.
+        switch (ident) {
+        case CSSValueXxSmall:
+        case CSSValueXSmall:
+        case CSSValueSmall:
+        case CSSValueMedium:
+        case CSSValueLarge:
+        case CSSValueXLarge:
+        case CSSValueXxLarge:
+        case CSSValueWebkitXxxLarge:
+            size = Style::fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), styleResolver.document());
+            fontDescription.setKeywordSizeFromIdentifier(ident);
+            break;
+        case CSSValueLarger:
+            size = largerFontSize(parentSize);
+            break;
+        case CSSValueSmaller:
+            size = smallerFontSize(parentSize);
+            break;
+        case CSSValueWebkitRubyText:
+            size = determineRubyTextSizeMultiplier(styleResolver) * parentSize;
+            break;
+        default:
+            return;
+        }
+    } else {
+        fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize || !(primitiveValue.isPercentage() || primitiveValue.isFontRelativeLength()));
+        if (primitiveValue.isLength()) {
+            size = primitiveValue.computeLength<float>(CSSToLengthConversionData(styleResolver.parentStyle(), styleResolver.rootElementStyle(), styleResolver.document().renderView(), 1.0f, true));
+            styleResolver.state().setFontSizeHasViewportUnits(primitiveValue.isViewportPercentageLength());
+        } else if (primitiveValue.isPercentage())
+            size = (primitiveValue.getFloatValue() * parentSize) / 100.0f;
+        else if (primitiveValue.isCalculatedPercentageWithLength())
+            size = primitiveValue.cssCalcValue()->createCalculationValue(styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f))->evaluate(parentSize);
+        else
+            return;
+    }
+
+    if (size < 0)
+        return;
+
+    styleResolver.setFontSize(fontDescription, std::min(maximumAllowedFontSize, size));
     styleResolver.setFontDescription(fontDescription);
 }
 
