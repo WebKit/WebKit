@@ -35,18 +35,18 @@ namespace WebKit {
 
 class WebIDBFactoryBackend final : public WebCore::IDBFactoryBackendInterface {
 public:
-    static PassRefPtr<WebIDBFactoryBackend> create(const String& databaseDirectoryIdentifier) { return adoptRef(new WebIDBFactoryBackend(databaseDirectoryIdentifier)); }
+    static PassRefPtr<WebIDBFactoryBackend> create() { return adoptRef(new WebIDBFactoryBackend); }
 
     virtual ~WebIDBFactoryBackend();
 
-    virtual void getDatabaseNames(PassRefPtr<WebCore::IDBCallbacks>, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin, WebCore::ScriptExecutionContext*, const String& dataDir) override;
+    virtual void getDatabaseNames(PassRefPtr<WebCore::IDBCallbacks>, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin, WebCore::ScriptExecutionContext*) override;
     virtual void open(const String& name, uint64_t version, int64_t transactionId, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::IDBDatabaseCallbacks>, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin) override;
-    virtual void deleteDatabase(const String& name, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ScriptExecutionContext*, const String& dataDir) override;
+    virtual void deleteDatabase(const String& name, const WebCore::SecurityOrigin& openingOrigin, const WebCore::SecurityOrigin& mainFrameOrigin, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ScriptExecutionContext*) override;
 
     virtual void removeIDBDatabaseBackend(const String& uniqueIdentifier) override;
 
 private:
-    explicit WebIDBFactoryBackend(const String& databaseDirectoryIdentifier);
+    explicit WebIDBFactoryBackend();
 };
 
 } // namespace WebKit

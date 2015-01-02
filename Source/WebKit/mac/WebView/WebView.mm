@@ -181,6 +181,8 @@
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/UserAgent.h>
 #import <WebCore/UserContentController.h>
+#import <WebCore/UserScript.h>
+#import <WebCore/UserStyleSheet.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreView.h>
 #import <WebCore/Widget.h>

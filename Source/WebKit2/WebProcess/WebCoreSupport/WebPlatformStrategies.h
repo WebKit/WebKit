@@ -66,7 +66,7 @@ private:
     virtual WebCore::AbstractDatabaseServer* getDatabaseServer() override;
 #endif
 #if ENABLE(INDEXED_DATABASE)
-    virtual PassRefPtr<WebCore::IDBFactoryBackendInterface> createIDBFactoryBackend(const String& databaseDirectoryIdentifier) override;
+    virtual PassRefPtr<WebCore::IDBFactoryBackendInterface> createIDBFactoryBackend() override;
 #endif
 
     // WebCore::LoaderStrategy

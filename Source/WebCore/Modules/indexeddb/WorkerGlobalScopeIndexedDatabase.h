@@ -40,7 +40,7 @@ class ScriptExecutionContext;
 
 class WorkerGlobalScopeIndexedDatabase : public Supplement<ScriptExecutionContext> {
 public:
-    explicit WorkerGlobalScopeIndexedDatabase(const String& databaseDirectoryIdentifier);
+    explicit WorkerGlobalScopeIndexedDatabase();
     virtual ~WorkerGlobalScopeIndexedDatabase();
     static WorkerGlobalScopeIndexedDatabase* from(ScriptExecutionContext*);
 
@@ -50,7 +50,6 @@ private:
     IDBFactory* indexedDB();
     static const char* supplementName();
 
-    String m_databaseDirectoryIdentifier;
     RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
     RefPtr<IDBFactory> m_idbFactory;
 };

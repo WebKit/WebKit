@@ -96,6 +96,7 @@
 #include "TextResourceDecoder.h"
 #include "UserContentController.h"
 #include "UserContentURLPattern.h"
+#include "UserScript.h"
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "WebKitFontFamilyNames.h"

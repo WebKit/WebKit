@@ -5561,8 +5561,6 @@
 		C400D10918F1C8F60090D863 /* EventLoopInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C400D10818F1C8F60090D863 /* EventLoopInput.cpp */; };
 		C4CD629A18383766007EBAF1 /* FrameSnapshotting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4CD629818383766007EBAF1 /* FrameSnapshotting.cpp */; };
 		C4CD629B18383766007EBAF1 /* FrameSnapshotting.h in Headers */ = {isa = PBXBuildFile; fileRef = C4CD629918383766007EBAF1 /* FrameSnapshotting.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C50B561612119D23008B46E0 /* GroupSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C50B561412119D23008B46E0 /* GroupSettings.cpp */; };
-		C50B561712119D23008B46E0 /* GroupSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = C50B561512119D23008B46E0 /* GroupSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C50D0E830FF4272900AC2644 /* StorageNamespace.h in Headers */ = {isa = PBXBuildFile; fileRef = C50D0E810FF4272900AC2644 /* StorageNamespace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C5137CF211A58378004ADB99 /* JSDOMStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5137CF011A58378004ADB99 /* JSDOMStringList.cpp */; };
 		C5137CF311A58378004ADB99 /* JSDOMStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = C5137CF111A58378004ADB99 /* JSDOMStringList.h */; };
@@ -13022,8 +13020,6 @@
 		C400D10818F1C8F60090D863 /* EventLoopInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventLoopInput.cpp; sourceTree = "<group>"; };
 		C4CD629818383766007EBAF1 /* FrameSnapshotting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameSnapshotting.cpp; sourceTree = "<group>"; };
 		C4CD629918383766007EBAF1 /* FrameSnapshotting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameSnapshotting.h; sourceTree = "<group>"; };
-		C50B561412119D23008B46E0 /* GroupSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GroupSettings.cpp; sourceTree = "<group>"; };
-		C50B561512119D23008B46E0 /* GroupSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupSettings.h; sourceTree = "<group>"; };
 		C50D0E810FF4272900AC2644 /* StorageNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespace.h; sourceTree = "<group>"; };
 		C5137CF011A58378004ADB99 /* JSDOMStringList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringList.cpp; sourceTree = "<group>"; };
 		C5137CF111A58378004ADB99 /* JSDOMStringList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMStringList.h; sourceTree = "<group>"; };
@@ -16665,8 +16661,6 @@
 				65A21483097A3F5300B9050A /* FrameTree.h */,
 				65CBFEF70974F607001DAC25 /* FrameView.cpp */,
 				65CBFEF80974F607001DAC25 /* FrameView.h */,
-				C50B561412119D23008B46E0 /* GroupSettings.cpp */,
-				C50B561512119D23008B46E0 /* GroupSettings.h */,
 				BC94D1500C275C8B006BC617 /* History.cpp */,
 				BC94D1510C275C8B006BC617 /* History.h */,
 				BC94D1520C275C8B006BC617 /* History.idl */,
@@ -24505,7 +24499,6 @@
 				A12705C31656BD6500C2E27C /* GridPosition.h in Headers */,
 				CDF7483F18FEBCEC0006ECC0 /* GridResolvedPosition.h in Headers */,
 				A12A1050166444FD008FA311 /* GridTrackSize.h in Headers */,
-				C50B561712119D23008B46E0 /* GroupSettings.h in Headers */,
 				8482B7461198C35400BFB005 /* HashChangeEvent.h in Headers */,
 				A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */,
 				F55B3DC01251F12D003EF269 /* HiddenInputType.h in Headers */,
@@ -28004,7 +27997,6 @@
 				0FA24D79162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp in Sources */,
 				B2A015AA0AF6CD53006BCE0E /* GraphicsTypes.cpp in Sources */,
 				CDF7483E18FEBCEC0006ECC0 /* GridResolvedPosition.cpp in Sources */,
-				C50B561612119D23008B46E0 /* GroupSettings.cpp in Sources */,
 				F55B3DBF1251F12D003EF269 /* HiddenInputType.cpp in Sources */,
 				51A9D9F3195B9503001B2B5C /* HIDGamepad.cpp in Sources */,
 				5179CE36195CAC7E0019C198 /* HIDGamepadProvider.cpp in Sources */,

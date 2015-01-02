@@ -64,10 +64,9 @@ using namespace Inspector;
 
 namespace WebCore {
 
-WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, std::unique_ptr<GroupSettings> settings, WorkerThread& thread, PassRefPtr<SecurityOrigin> topOrigin)
+WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, WorkerThread& thread, PassRefPtr<SecurityOrigin> topOrigin)
     : m_url(url)
     , m_userAgent(userAgent)
-    , m_groupSettings(WTF::move(settings))
     , m_script(std::make_unique<WorkerScriptController>(this))
     , m_thread(thread)
 #if ENABLE(INSPECTOR)

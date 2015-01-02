@@ -771,9 +771,6 @@
     <ClCompile Include="..\page\FrameView.cpp">
       <Filter>page</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\GroupSettings.cpp">
-      <Filter>page</Filter>
-    </ClCompile>
     <ClCompile Include="..\page\History.cpp">
       <Filter>page</Filter>
     </ClCompile>
@@ -7780,9 +7777,6 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\FrameView.h">
-      <Filter>page</Filter>
-    </ClInclude>
-    <ClInclude Include="..\page\GroupSettings.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\History.h">

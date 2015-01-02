@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendInterface::create(const String& databaseDirectoryIdentifier)
+PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendInterface::create()
 {
-    return platformStrategies()->databaseStrategy()->createIDBFactoryBackend(databaseDirectoryIdentifier);
+    return platformStrategies()->databaseStrategy()->createIDBFactoryBackend();
 }
 
 } // namespace WebCore

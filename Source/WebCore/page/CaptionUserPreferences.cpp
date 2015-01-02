@@ -35,6 +35,8 @@
 #include "Settings.h"
 #include "TextTrackList.h"
 #include "UserContentController.h"
+#include "UserContentTypes.h"
+#include "UserStyleSheet.h"
 #include "UserStyleSheetTypes.h"
 
 namespace WebCore {

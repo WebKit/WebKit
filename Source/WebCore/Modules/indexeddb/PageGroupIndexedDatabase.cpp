@@ -28,14 +28,12 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "GroupSettings.h"
 #include "IDBFactoryBackendInterface.h"
 #include "PageGroup.h"
 
 namespace WebCore {
 
-PageGroupIndexedDatabase::PageGroupIndexedDatabase(const String& databaseDirectoryIdentifier)
-    : m_databaseDirectoryIdentifier(databaseDirectoryIdentifier)
+PageGroupIndexedDatabase::PageGroupIndexedDatabase()
 {
 }
 
@@ -52,7 +50,7 @@ PageGroupIndexedDatabase* PageGroupIndexedDatabase::from(PageGroup& group)
 {
     PageGroupIndexedDatabase* supplement = static_cast<PageGroupIndexedDatabase*>(Supplement<PageGroup>::from(&group, supplementName()));
     if (!supplement) {
-        auto newSupplement = std::make_unique<PageGroupIndexedDatabase>(group.groupSettings().indexedDBDatabasePath());
+        auto newSupplement = std::make_unique<PageGroupIndexedDatabase>();
         supplement = newSupplement.get();
         provideTo(&group, supplementName(), WTF::move(newSupplement));
     }
@@ -64,7 +62,7 @@ IDBFactoryBackendInterface* PageGroupIndexedDatabase::factoryBackend()
     // Do not add page setting based access control here since this object is shared by all pages in
     // the group and having per-page controls is misleading.
     if (!m_factoryBackend)
-        m_factoryBackend = IDBFactoryBackendInterface::create(m_databaseDirectoryIdentifier);
+        m_factoryBackend = IDBFactoryBackendInterface::create();
     return m_factoryBackend.get();
 }
 

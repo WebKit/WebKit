@@ -27,22 +27,14 @@
 #define PageGroup_h
 
 #include "Supplementable.h"
-#include "UserScript.h"
-#include "UserStyleSheet.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-    class URL;
-    class GroupSettings;
-    class IDBFactoryBackendInterface;
     class Page;
-    class SecurityOrigin;
-    class StorageNamespace;
-
 #if ENABLE(VIDEO_TRACK)
-    class CaptionPreferencesChangedListener;
     class CaptionUserPreferences;
 #endif
 
@@ -63,8 +55,6 @@ namespace WebCore {
         const String& name() { return m_name; }
         unsigned identifier() { return m_identifier; }
 
-        GroupSettings& groupSettings() const { return *m_groupSettings; }
-
 #if ENABLE(VIDEO_TRACK)
         WEBCORE_EXPORT void captionPreferencesChanged();
         WEBCORE_EXPORT CaptionUserPreferences* captionPreferences();
@@ -75,8 +65,6 @@ namespace WebCore {
         HashSet<Page*> m_pages;
 
         unsigned m_identifier;
-
-        const std::unique_ptr<GroupSettings> m_groupSettings;
 
 #if ENABLE(VIDEO_TRACK)
         std::unique_ptr<CaptionUserPreferences> m_captionPreferences;

@@ -80,7 +80,7 @@ static String combinedSecurityOriginIdentifier(const WebCore::SecurityOrigin& op
     return stringBuilder.toString();
 }
 
-WebIDBFactoryBackend::WebIDBFactoryBackend(const String&)
+WebIDBFactoryBackend::WebIDBFactoryBackend()
 {
 }
 
@@ -88,7 +88,7 @@ WebIDBFactoryBackend::~WebIDBFactoryBackend()
 {
 }
 
-void WebIDBFactoryBackend::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin, ScriptExecutionContext* context, const String&)
+void WebIDBFactoryBackend::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin, ScriptExecutionContext* context)
 {
     LOG(IDB, "WebIDBFactoryBackend::getDatabaseNames");
 
@@ -146,7 +146,7 @@ void WebIDBFactoryBackend::open(const String& databaseName, uint64_t version, in
     databaseBackend->openConnection(callbacks, databaseCallbacks, transactionId, version);
 }
 
-void WebIDBFactoryBackend::deleteDatabase(const String& databaseName, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin, PassRefPtr<IDBCallbacks> callbacks, ScriptExecutionContext*, const String&)
+void WebIDBFactoryBackend::deleteDatabase(const String& databaseName, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin, PassRefPtr<IDBCallbacks> callbacks, ScriptExecutionContext*)
 {
     ASSERT(RunLoop::isMain());
     LOG(IDB, "WebIDBFactoryBackend::deleteDatabase");

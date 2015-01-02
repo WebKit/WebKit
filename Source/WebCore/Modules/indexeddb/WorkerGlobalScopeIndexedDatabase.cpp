@@ -38,8 +38,7 @@
 
 namespace WebCore {
 
-WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase(const String& databaseDirectoryIdentifier)
-    : m_databaseDirectoryIdentifier(databaseDirectoryIdentifier)
+WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase()
 {
 }
 
@@ -56,12 +55,7 @@ WorkerGlobalScopeIndexedDatabase* WorkerGlobalScopeIndexedDatabase::from(ScriptE
 {
     WorkerGlobalScopeIndexedDatabase* supplement = static_cast<WorkerGlobalScopeIndexedDatabase*>(Supplement<ScriptExecutionContext>::from(context, supplementName()));
     if (!supplement) {
-        String databaseDirectoryIdentifier;
-        const GroupSettings* groupSettings = downcast<WorkerGlobalScope>(*context).groupSettings();
-        if (groupSettings)
-            databaseDirectoryIdentifier = groupSettings->indexedDBDatabasePath();
-
-        auto newSupplement = std::make_unique<WorkerGlobalScopeIndexedDatabase>(databaseDirectoryIdentifier);
+        auto newSupplement = std::make_unique<WorkerGlobalScopeIndexedDatabase>();
         supplement = newSupplement.get();
         provideTo(context, supplementName(), WTF::move(newSupplement));
     }
@@ -76,7 +70,7 @@ IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB(ScriptExecutionContext* 
 IDBFactory* WorkerGlobalScopeIndexedDatabase::indexedDB()
 {
     if (!m_factoryBackend)
-        m_factoryBackend = IDBFactoryBackendInterface::create(m_databaseDirectoryIdentifier);
+        m_factoryBackend = IDBFactoryBackendInterface::create();
     if (!m_idbFactory)
         m_idbFactory = IDBFactory::create(m_factoryBackend.get());
     return m_idbFactory.get();

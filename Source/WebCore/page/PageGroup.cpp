@@ -31,7 +31,6 @@
 #include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "DocumentStyleSheetCollection.h"
-#include "GroupSettings.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageCache.h"
@@ -61,13 +60,11 @@ static unsigned getUniqueIdentifier()
 PageGroup::PageGroup(const String& name)
     : m_name(name)
     , m_identifier(getUniqueIdentifier())
-    , m_groupSettings(std::make_unique<GroupSettings>())
 {
 }
 
 PageGroup::PageGroup(Page& page)
     : m_identifier(getUniqueIdentifier())
-    , m_groupSettings(std::make_unique<GroupSettings>())
 {
     addPage(page);
 }

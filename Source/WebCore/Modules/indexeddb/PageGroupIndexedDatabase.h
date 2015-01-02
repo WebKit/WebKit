@@ -38,7 +38,7 @@ class PageGroup;
 
 class PageGroupIndexedDatabase : public Supplement<PageGroup> {
 public:
-    explicit PageGroupIndexedDatabase(const String& databaseDirectoryIdentifier);
+    explicit PageGroupIndexedDatabase();
     virtual ~PageGroupIndexedDatabase();
 
     static PageGroupIndexedDatabase* from(PageGroup&);
@@ -48,7 +48,6 @@ public:
 private:
     static const char* supplementName();
 
-    String m_databaseDirectoryIdentifier;
     RefPtr<IDBFactoryBackendInterface> m_factoryBackend;
 };
 

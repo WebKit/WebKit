@@ -1,3 +1,80 @@
+2015-01-01  Sam Weinig  <sam@webkit.org>
+
+        Remove GroupSettings
+        https://bugs.webkit.org/show_bug.cgi?id=140037
+
+        Reviewed by Dan Bernstein.
+
+        Nothing sets the values in GroupSettings and nothing uses them.
+        - The indexedDBDatabasePath is accessed and sent to the IndexedDB backend,
+          but the backend then proceeds to not use it.
+
+        * CMakeLists.txt:
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::getDatabaseNames):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/IDBFactoryBackendInterface.cpp:
+        (WebCore::IDBFactoryBackendInterface::create):
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+        * Modules/indexeddb/PageGroupIndexedDatabase.cpp:
+        (WebCore::PageGroupIndexedDatabase::PageGroupIndexedDatabase):
+        (WebCore::PageGroupIndexedDatabase::from):
+        (WebCore::PageGroupIndexedDatabase::factoryBackend):
+        * Modules/indexeddb/PageGroupIndexedDatabase.h:
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp:
+        (WebCore::WorkerGlobalScopeIndexedDatabase::WorkerGlobalScopeIndexedDatabase):
+        (WebCore::WorkerGlobalScopeIndexedDatabase::from):
+        (WebCore::WorkerGlobalScopeIndexedDatabase::indexedDB):
+        * Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.h:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DocumentStyleSheetCollection.cpp:
+        * page/CaptionUserPreferences.cpp:
+        * page/Frame.cpp:
+        * page/GroupSettings.cpp: Removed.
+        * page/GroupSettings.h: Removed.
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::PageGroup):
+        * page/PageGroup.h:
+        (WebCore::PageGroup::groupSettings): Deleted.
+        * platform/DatabaseStrategy.cpp:
+        (WebCore::DatabaseStrategy::createIDBFactoryBackend):
+        * platform/DatabaseStrategy.h:
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::create):
+        (WebCore::DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::create):
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        (WebCore::DedicatedWorkerThread::createWorkerGlobalScope):
+        * workers/DedicatedWorkerThread.h:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::DefaultSharedWorkerRepository::workerScriptLoaded):
+        (WebCore::SharedWorkerProxy::groupSettings): Deleted.
+        * workers/SharedWorkerGlobalScope.cpp:
+        (WebCore::SharedWorkerGlobalScope::create):
+        (WebCore::SharedWorkerGlobalScope::SharedWorkerGlobalScope):
+        * workers/SharedWorkerGlobalScope.h:
+        * workers/SharedWorkerThread.cpp:
+        (WebCore::SharedWorkerThread::create):
+        (WebCore::SharedWorkerThread::SharedWorkerThread):
+        (WebCore::SharedWorkerThread::createWorkerGlobalScope):
+        * workers/SharedWorkerThread.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScope.h:
+        (WebCore::WorkerGlobalScope::groupSettings): Deleted.
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::WorkerThread):
+        (WebCore::WorkerThread::workerThread):
+        * workers/WorkerThread.h:
+
 2015-01-01  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the iOS build.

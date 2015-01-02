@@ -34,7 +34,6 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "GroupSettings.h"
 #include "IDBBindingUtilities.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseCallbacksImpl.h"
@@ -65,7 +64,6 @@ IDBFactory::~IDBFactory()
 {
 }
 
-namespace {
 static bool isContextValid(ScriptExecutionContext* context)
 {
     ASSERT(is<Document>(*context) || context->isWorkerGlobalScope());
@@ -74,20 +72,6 @@ static bool isContextValid(ScriptExecutionContext* context)
         return document.frame() && document.page() && (!document.page()->usesEphemeralSession() || SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing(document.securityOrigin()->protocol()));
     }
     return true;
-}
-
-static String getIndexedDBDatabasePath(ScriptExecutionContext* context)
-{
-    ASSERT(isContextValid(context));
-    if (is<Document>(*context)) {
-        Document& document = downcast<Document>(*context);
-        return document.page()->group().groupSettings().indexedDBDatabasePath();
-    }
-    const GroupSettings* groupSettings = downcast<WorkerGlobalScope>(*context).groupSettings();
-    if (groupSettings)
-        return groupSettings->indexedDBDatabasePath();
-    return String();
-}
 }
 
 PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* context, ExceptionCode& ec)
@@ -101,7 +85,7 @@ PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* cont
     }
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), 0);
-    m_backend->getDatabaseNames(request, *(context->securityOrigin()), *(context->topOrigin()), context, getIndexedDBDatabasePath(context));
+    m_backend->getDatabaseNames(request, *(context->securityOrigin()), *(context->topOrigin()), context);
     return request;
 }
 
@@ -157,7 +141,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* 
     }
 
     RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, 0, 0, 0, IndexedDB::VersionNullness::Null);
-    m_backend->deleteDatabase(name, *context->securityOrigin(), *context->topOrigin(), request, context, getIndexedDBDatabasePath(context));
+    m_backend->deleteDatabase(name, *context->securityOrigin(), *context->topOrigin(), request, context);
     return request;
 }
 

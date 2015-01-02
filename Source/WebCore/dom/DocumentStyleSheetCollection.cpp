@@ -45,6 +45,7 @@
 #include "StyleSheetList.h"
 #include "UserContentController.h"
 #include "UserContentURLPattern.h"
+#include "UserStyleSheet.h"
 
 namespace WebCore {
 

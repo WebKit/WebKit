@@ -39,10 +39,9 @@ AbstractDatabaseServer* DatabaseStrategy::getDatabaseServer()
 #endif // ENABLE(SQL_DATABASE)
 
 #if ENABLE(INDEXED_DATABASE)
-PassRefPtr<IDBFactoryBackendInterface> DatabaseStrategy::createIDBFactoryBackend(const String& databaseDirectoryIdentifier)
+PassRefPtr<IDBFactoryBackendInterface> DatabaseStrategy::createIDBFactoryBackend()
 {
     // FIXME: Need a better platform abstraction here, but this stop gap will work for now.
-    UNUSED_PARAM(databaseDirectoryIdentifier);
     return 0;
 }
 #endif // ENABLE(INDEXED_DATABASE)

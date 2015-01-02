@@ -7209,7 +7209,6 @@
     <ClCompile Include="..\page\FrameSnapshotting.cpp" />
     <ClCompile Include="..\page\FrameTree.cpp" />
     <ClCompile Include="..\page\FrameView.cpp" />
-    <ClCompile Include="..\page\GroupSettings.cpp" />
     <ClCompile Include="..\page\History.cpp" />
     <ClCompile Include="..\page\animation\ImplicitAnimation.cpp" />
     <ClCompile Include="..\page\animation\KeyframeAnimation.cpp" />
@@ -19213,7 +19212,6 @@
     <ClInclude Include="..\page\FrameSnapshotting.h" />
     <ClInclude Include="..\page\FrameTree.h" />
     <ClInclude Include="..\page\FrameView.h" />
-    <ClInclude Include="..\page\GroupSettings.h" />
     <ClInclude Include="..\page\History.h" />
     <ClInclude Include="..\page\animation\ImplicitAnimation.h" />
     <ClInclude Include="..\page\animation\KeyframeAnimation.h" />

@@ -31,7 +31,6 @@
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
 #include "WebProcess.h"
-#include <WebCore/GroupSettings.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>

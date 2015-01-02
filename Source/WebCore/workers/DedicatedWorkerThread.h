@@ -39,16 +39,16 @@ namespace WebCore {
 
     class DedicatedWorkerThread : public WorkerThread {
     public:
-        static Ref<DedicatedWorkerThread> create(const URL& scriptURL, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, const SecurityOrigin* topOrigin);
+        static Ref<DedicatedWorkerThread> create(const URL& scriptURL, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, const SecurityOrigin* topOrigin);
         WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
         virtual ~DedicatedWorkerThread();
 
     protected:
-        virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, std::unique_ptr<GroupSettings>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) override;
+        virtual Ref<WorkerGlobalScope> createWorkerGlobalScope(const URL&, const String& userAgent, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) override;
         virtual void runEventLoop() override;
 
     private:
-        DedicatedWorkerThread(const URL&, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, const SecurityOrigin* topOrigin);
+        DedicatedWorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerObjectProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, const SecurityOrigin* topOrigin);
 
         WorkerObjectProxy& m_workerObjectProxy;
     };

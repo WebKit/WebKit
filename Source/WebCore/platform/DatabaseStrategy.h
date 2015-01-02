@@ -41,7 +41,7 @@ public:
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-    WEBCORE_EXPORT virtual PassRefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend(const String& databaseDirectoryIdentifier);
+    WEBCORE_EXPORT virtual PassRefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend();
 #endif
 
 protected:
