@@ -317,15 +317,6 @@ java
 compositing/plugins/invalidate_rect.html
 plugins/windowless_plugin_paint_test.html
 
-# WebKitTestRunner needs testRunner.originsWithLocalStorage
-storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
-
 # WebKitTestRunner needs eventSender.contextClick()
 # https://bugs.webkit.org/show_bug.cgi?id=86881
 editing/selection/context-menu-text-selection.html

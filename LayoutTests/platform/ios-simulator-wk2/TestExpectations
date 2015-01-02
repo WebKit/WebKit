@@ -184,16 +184,9 @@ jquery/manipulation.html
 
 # storage tests that time out:
 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html
-storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html
 storage/domstorage/storage-close-database-on-idle.html
 
 # storage tests that fail:
-storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html [ Failure ]
 storage/websql/sql-error-codes.html [ Failure ]
 
 # ietestcenter tests that fail:

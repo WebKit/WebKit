@@ -1068,9 +1068,6 @@ http/tests/security/no-indexeddb-from-sandbox.html
 crypto/subtle/rsa-indexeddb.html
 inspector-protocol/indexeddb/basics.html
 
-# StorageTracker is not enabled.
-storage/domstorage/localstorage/storagetracker
-
 # This port doesn't support DeviceMotion or DeviceOrientation.
 fast/dom/DeviceMotion
 fast/dom/DeviceOrientation

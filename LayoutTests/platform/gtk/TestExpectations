@@ -157,9 +157,6 @@ http/tests/notifications/legacy/events.html
 http/tests/notifications/legacy/show.html
 http/tests/notifications/legacy/double-show.html
 
-# StorageTracker is not enabled.
-webkit.org/b/98933 storage/domstorage/localstorage/storagetracker [ Skip ]
-
 # Datalist is not yet enabled.
 webkit.org/b/98934 fast/forms/datalist [ Skip ]
 

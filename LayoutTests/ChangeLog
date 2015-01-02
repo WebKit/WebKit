@@ -1,3 +1,36 @@
+2015-01-02  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of storage tracker layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=140044
+
+        Reviewed by Darin Adler.
+
+        These tests are very flaky since they expect to be run in order. Furthermore, they were testing a WebKit Mac SPI
+        that is pretty hard to test reliably, due to its "design". It's not worth trying to make these tests work
+        or to rewrite them in Objective-C (which would be the right thing to do), so just get rid of them.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare-expected.txt: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-1-prepare.html: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-2-create-expected.txt: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-2-create.html: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all-expected.txt: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-3-delete-all.html: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-4-create-expected.txt: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-4-create.html: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one-expected.txt: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-6-create-expected.txt: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage-expected.txt: Removed.
+        * storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html: Removed.
+
 2015-01-02  Alexey Proskuryakov  <ap@apple.com>
 
         js/dom/Promise.html is flaky

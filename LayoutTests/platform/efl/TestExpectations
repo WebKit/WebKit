@@ -1071,9 +1071,6 @@ webkit.org/b/106507 storage/storagequota-request-quota.html
 webkit.org/b/106507 fast/workers/shared-worker-storagequota-query-usage.html
 webkit.org/b/106507 fast/workers/worker-storagequota-query-usage.html
 
-# EFL's LayoutTestController does not implement originsWithLocalStorage.
-Bug(EFL) storage/domstorage/localstorage/storagetracker
-
 # JSC does not support setIsolatedWorldSecurityOrigin.
 webkit.org/b/61540 http/tests/security/isolatedWorld/cross-origin-xhr.html [ Timeout ]
 
