@@ -1,3 +1,19 @@
+2015-01-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r177859 and r177861.
+        https://bugs.webkit.org/show_bug.cgi?id=140042
+
+        Caused many assertion failures (Requested by ap on #webkit).
+
+        Reverted changesets:
+
+        "Modernize coding style of HTMLTreeBuilder"
+        https://bugs.webkit.org/show_bug.cgi?id=140032
+        http://trac.webkit.org/changeset/177859
+
+        "Tried to fix the iOS build."
+        http://trac.webkit.org/changeset/177861
+
 2015-01-02  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the iOS build.
