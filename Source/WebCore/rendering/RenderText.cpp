@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2007, 2013-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
@@ -75,37 +75,52 @@ struct SameSizeAsRenderText : public RenderObject {
 
 COMPILE_ASSERT(sizeof(RenderText) == sizeof(SameSizeAsRenderText), RenderText_should_stay_small);
 
-class SecureTextTimer;
-typedef HashMap<RenderText*, SecureTextTimer*> SecureTextTimerMap;
-static SecureTextTimerMap* gSecureTextTimers = 0;
-
-class SecureTextTimer : public TimerBase {
+class SecureTextTimer final : private TimerBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    SecureTextTimer(RenderText* renderText)
-        : m_renderText(renderText)
-        , m_lastTypedCharacterOffset(-1)
-    {
-    }
+    explicit SecureTextTimer(RenderText&);
+    void restart(unsigned offsetAfterLastTypedCharacter);
 
-    void restartWithNewText(unsigned lastTypedCharacterOffset)
-    {
-        m_lastTypedCharacterOffset = lastTypedCharacterOffset;
-        const Settings& settings = m_renderText->frame().settings();
-        startOneShot(settings.passwordEchoDurationInSeconds());
-    }
-    void invalidate() { m_lastTypedCharacterOffset = -1; }
-    unsigned lastTypedCharacterOffset() { return m_lastTypedCharacterOffset; }
+    unsigned takeOffsetAfterLastTypedCharacter();
 
 private:
-    virtual void fired()
-    {
-        ASSERT(gSecureTextTimers->contains(m_renderText));
-        m_renderText->setText(m_renderText->text(), true /* forcing setting text as it may be masked later */);
-    }
-
-    RenderText* m_renderText;
-    int m_lastTypedCharacterOffset;
+    virtual void fired() override;
+    RenderText& m_renderer;
+    unsigned m_offsetAfterLastTypedCharacter { 0 };
 };
+
+typedef HashMap<RenderText*, std::unique_ptr<SecureTextTimer>> SecureTextTimerMap;
+
+static SecureTextTimerMap& secureTextTimers()
+{
+    static NeverDestroyed<SecureTextTimerMap> map;
+    return map.get();
+}
+
+inline SecureTextTimer::SecureTextTimer(RenderText& renderer)
+    : m_renderer(renderer)
+{
+}
+
+inline void SecureTextTimer::restart(unsigned offsetAfterLastTypedCharacter)
+{
+    m_offsetAfterLastTypedCharacter = offsetAfterLastTypedCharacter;
+    startOneShot(m_renderer.frame().settings().passwordEchoDurationInSeconds());
+}
+
+inline unsigned SecureTextTimer::takeOffsetAfterLastTypedCharacter()
+{
+    unsigned offset = m_offsetAfterLastTypedCharacter;
+    m_offsetAfterLastTypedCharacter = 0;
+    return offset;
+}
+
+void SecureTextTimer::fired()
+{
+    ASSERT(secureTextTimers().get(&m_renderer) == this);
+    m_offsetAfterLastTypedCharacter = 0;
+    m_renderer.setText(m_renderer.text(), true /* forcing setting text as it may be masked later */);
+}
 
 static HashMap<const RenderText*, String>& originalTextMap()
 {
@@ -265,8 +280,7 @@ void RenderText::removeAndDestroyTextBoxes()
 
 void RenderText::willBeDestroyed()
 {
-    if (SecureTextTimer* secureTextTimer = gSecureTextTimers ? gSecureTextTimers->take(this) : 0)
-        delete secureTextTimer;
+    secureTextTimers().remove(this);
 
     removeAndDestroyTextBoxes();
     RenderObject::willBeDestroyed();
@@ -1044,30 +1058,28 @@ void RenderText::setRenderedText(const String& text)
 
     applyTextTransform(style(), m_text, previousCharacter());
 
-    // We use the same characters here as for list markers.
-    // See the listMarkerText function in RenderListMarker.cpp.
     switch (style().textSecurity()) {
     case TSNONE:
         break;
+#if !PLATFORM(IOS)
+    // We use the same characters here as for list markers.
+    // See the listMarkerText function in RenderListMarker.cpp.
     case TSCIRCLE:
-#if PLATFORM(IOS)
-        secureText(blackCircle);
-#else
         secureText(whiteBullet);
-#endif
         break;
     case TSDISC:
-#if PLATFORM(IOS)
-        secureText(blackCircle);
-#else
         secureText(bullet);
-#endif
         break;
     case TSSQUARE:
-#if PLATFORM(IOS)
-        secureText(blackCircle);
-#else
         secureText(blackSquare);
+        break;
+#else
+    // FIXME: Why this quirk on iOS?
+    case TSCIRCLE:
+    case TSDISC:
+    case TSSQUARE:
+        secureText(blackCircle);
+        break;
 #endif
     }
 
@@ -1085,26 +1097,36 @@ void RenderText::setRenderedText(const String& text)
     }
 }
 
-void RenderText::secureText(UChar mask)
+void RenderText::secureText(UChar maskingCharacter)
 {
-    if (!textLength())
+    // This hides the text by replacing all the characters with the masking character.
+    // Offsets within the hidden text have to match offsets within the original text
+    // to handle things like carets and selection, so this won't work right if any
+    // of the characters are surrogate pairs or combining marks. Thus, this function
+    // does not attempt to handle either of those.
+
+    unsigned length = textLength();
+    if (!length)
         return;
 
-    int lastTypedCharacterOffsetToReveal = -1;
-    String revealedText;
-    SecureTextTimer* secureTextTimer = gSecureTextTimers ? gSecureTextTimers->get(this) : nullptr;
-    if (secureTextTimer && secureTextTimer->isActive()) {
-        lastTypedCharacterOffsetToReveal = secureTextTimer->lastTypedCharacterOffset();
-        if (lastTypedCharacterOffsetToReveal >= 0)
-            revealedText = m_text.substring(lastTypedCharacterOffsetToReveal, 1);
+    UChar characterToReveal = 0;
+    unsigned revealedCharactersOffset;
+
+    if (SecureTextTimer* timer = secureTextTimers().get(this)) {
+        // We take the offset out of the timer to make this one-shot. We count on this being called only once.
+        // If it's called a second time we assume the text is different and a character should not be revealed.
+        revealedCharactersOffset = timer->takeOffsetAfterLastTypedCharacter();
+        if (revealedCharactersOffset && revealedCharactersOffset <= length)
+            characterToReveal = m_text[--revealedCharactersOffset];
     }
 
-    m_text.fill(mask);
-    if (lastTypedCharacterOffsetToReveal >= 0) {
-        m_text.replace(lastTypedCharacterOffsetToReveal, 1, revealedText);
-        // m_text may be updated later before timer fires. We invalidate the lastTypedCharacterOffset to avoid inconsistency.
-        secureTextTimer->invalidate();
-    }
+    UChar* characters;
+    m_text = String::createUninitialized(length, characters);
+
+    for (unsigned i = 0; i < length; ++i)
+        characters[i] = maskingCharacter;
+    if (characterToReveal)
+        characters[revealedCharactersOffset] = characterToReveal;
 }
 
 void RenderText::setText(const String& text, bool force)
@@ -1537,17 +1559,14 @@ bool RenderText::computeCanUseSimpleFontCodePath() const
     return Font::characterRangeCodePath(characters16(), length()) == Font::Simple;
 }
 
-void RenderText::momentarilyRevealLastTypedCharacter(unsigned lastTypedCharacterOffset)
+void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter)
 {
-    if (!gSecureTextTimers)
-        gSecureTextTimers = new SecureTextTimerMap;
-
-    SecureTextTimer* secureTextTimer = gSecureTextTimers->get(this);
-    if (!secureTextTimer) {
-        secureTextTimer = new SecureTextTimer(this);
-        gSecureTextTimers->add(this, secureTextTimer);
-    }
-    secureTextTimer->restartWithNewText(lastTypedCharacterOffset);
+    if (style().textSecurity() == TSNONE)
+        return;
+    auto& secureTextTimer = secureTextTimers().add(this, nullptr).iterator->value;
+    if (!secureTextTimer)
+        secureTextTimer = std::make_unique<SecureTextTimer>(*this);
+    secureTextTimer->restart(offsetAfterLastTypedCharacter);
 }
 
 StringView RenderText::stringView(int start, int stop) const

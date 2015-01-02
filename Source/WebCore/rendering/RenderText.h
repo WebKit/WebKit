@@ -138,8 +138,7 @@ public:
 
     bool containsReversedText() const { return m_containsReversedText; }
 
-    bool isSecure() const { return style().textSecurity() != TSNONE; }
-    void momentarilyRevealLastTypedCharacter(unsigned lastTypedCharacterOffset);
+    void momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter);
 
     InlineTextBox* findNextInlineTextBox(int offset, int& pos) const { return m_lineBoxes.findNext(offset, pos); }
 

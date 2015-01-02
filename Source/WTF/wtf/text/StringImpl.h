@@ -639,9 +639,6 @@ public:
     WTF_EXPORT_STRING_API Ref<StringImpl> lower(const AtomicString& localeIdentifier);
     WTF_EXPORT_STRING_API Ref<StringImpl> upper(const AtomicString& localeIdentifier);
 
-    WTF_EXPORT_STRING_API Ref<StringImpl> fill(UChar);
-    // FIXME: Do we need fill(char) or can we just do the right thing if UChar is ASCII?
-
     Ref<StringImpl> foldCase();
 
     Ref<StringImpl> stripWhiteSpace();

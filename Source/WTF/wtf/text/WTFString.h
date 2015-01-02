@@ -306,8 +306,6 @@ public:
         return *this;
     }
 
-    void fill(UChar c) { if (m_impl) m_impl = m_impl->fill(c); }
-
     WTF_EXPORT_STRING_API void truncate(unsigned len);
     WTF_EXPORT_STRING_API void remove(unsigned pos, int len = 1);
 

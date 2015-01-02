@@ -1,5 +1,55 @@
 2015-01-01  Darin Adler  <darin@apple.com>
 
+        Rework code that hides characters in password fields to streamline a little
+        https://bugs.webkit.org/show_bug.cgi?id=140035
+
+        Reviewed by Sam Weinig.
+
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doApply): Pass the offset after the character
+        we want to reveal instead of the offset before. This is more future proof if we
+        ever want to handling surrogate pairs or combining marks, rather than hard
+        coding the likely incorrect rule of "go back by one code unit". Also got rid of
+        the isSecure check here, since RenderText can do that check inside the
+        momentarilyRevealLastTypedCharacter instead.
+
+        * rendering/RenderText.cpp: Tweaked the SecureTextTimer class: Marked it final
+        and made it derive from TimerBase privately. Made the constructor explicit and
+        made it take a reference rather than a pointer. Use initialization in the class
+        to set up the variable, and use 0 as the special value instead of -1 since we
+        now store the offset *after* the character to be revealed.
+        (WebCore::secureTextTimers): Use this function and NeverDestroyed rather than
+        a global variable gSecureTextTimers. Also use unique_ptr for the map so we
+        don't have to delete explicitly any more.
+        (WebCore::SecureTextTimer::SecureTextTimer): Moved out of the class definition
+        so the class ia a little easier to read.
+        (WebCore::SecureTextTimer::restart): Renamed since the function name doesn't
+        have to describe its argument; the function is only called in one place.
+        (WebCore::SecureTextTimer::takeOffsetAfterLastTypedCharacter): Changed name
+        and made this a one-shot that always zeroes the offset.
+        (WebCore::SecureTextTimer::fired): Moved out of line and tweaked as above.
+        (WebCore::RenderText::willBeDestroyed): Simplified now that the function
+        secureTextTimers() always returns a map and we can just remove since the
+        values in the map are unique_ptr, so take care of deletion.
+        (WebCore::RenderText::setRenderedText): Tweaked the code that calls secureText
+        to make the iOS case clearer.
+        (WebCore::RenderText::secureText): Rewrote the function. New version no
+        longer relies on a special String::fill function; it's kind of strange that
+        String had a built in concept of replacing a string with one that has the
+        same length but all with a masking character. This new approach is cleaner.
+        I had written a version that handles surrogate pairs and combining marks,
+        but then instead wrote a comment explaining why that's not needed/helpful.
+        (WebCore::RenderText::momentarilyRevealLastTypedCharacter): Added a check so
+        this does nothing if we are not securing the text. Also updated logic so that
+        this doesn't double hash any more and updated for other changes like using
+        a reference instead of a pointer.
+
+        * rendering/RenderText.h: Removed the unneeded isSecure function and updated
+        the argument name in momentarilyRevealLastTypedCharacter since it's now the
+        offset after the character, not before the character.
+
+2015-01-01  Darin Adler  <darin@apple.com>
+
         Modernize coding style of HTMLTreeBuilder
         https://bugs.webkit.org/show_bug.cgi?id=140032
 

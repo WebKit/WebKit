@@ -596,22 +596,6 @@ Ref<StringImpl> StringImpl::upper(const AtomicString& localeIdentifier)
     return newString.releaseNonNull();
 }
 
-Ref<StringImpl> StringImpl::fill(UChar character)
-{
-    if (!(character & ~0x7F)) {
-        LChar* data;
-        auto newImpl = createUninitialized(m_length, data);
-        for (unsigned i = 0; i < m_length; ++i)
-            data[i] = character;
-        return newImpl;
-    }
-    UChar* data;
-    auto newImpl = createUninitialized(m_length, data);
-    for (unsigned i = 0; i < m_length; ++i)
-        data[i] = character;
-    return newImpl;
-}
-
 Ref<StringImpl> StringImpl::foldCase()
 {
     // FIXME: Why doesn't this function have a preflight like the one in StringImpl::lower?

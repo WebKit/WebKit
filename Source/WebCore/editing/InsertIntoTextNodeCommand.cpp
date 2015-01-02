@@ -60,9 +60,8 @@ void InsertIntoTextNodeCommand::doApply()
         return;
 
     if (passwordEchoEnabled) {
-        RenderText* renderText = m_node->renderer();
-        if (renderText && renderText->isSecure())
-            renderText->momentarilyRevealLastTypedCharacter(m_offset + m_text.length() - 1);
+        if (RenderText* renderText = m_node->renderer())
+            renderText->momentarilyRevealLastTypedCharacter(m_offset + m_text.length());
     }
 
     m_node->insertData(m_offset, m_text, IGNORE_EXCEPTION);
