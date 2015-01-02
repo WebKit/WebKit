@@ -160,7 +160,7 @@ void TestInvocation::invoke()
 
     WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), beginTestMessageBody.get());
 
-    TestController::shared().runUntil(m_gotInitialResponse, TestController::ShortTimeout);
+    TestController::shared().runUntil(m_gotInitialResponse, TestController::shortTimeout);
     if (!m_gotInitialResponse) {
         m_errorMessage = "Timed out waiting for initial response from web process\n";
         m_webProcessIsUnresponsive = true;
@@ -171,13 +171,7 @@ void TestInvocation::invoke()
 
     WKPageLoadURL(TestController::shared().mainWebView()->page(), m_url.get());
 
-    TestController::shared().runUntil(m_gotFinalMessage, TestController::NoTimeout);
-
-    if (!m_gotFinalMessage) {
-        m_errorMessage = "Timed out waiting for final message from web process\n";
-        m_webProcessIsUnresponsive = true;
-        goto end;
-    }
+    TestController::shared().runUntil(m_gotFinalMessage, TestController::noTimeout);
     if (m_error)
         goto end;
 
@@ -254,7 +248,7 @@ void TestInvocation::dumpResults()
         if (PlatformWebView::windowSnapshotEnabled()) {
             m_gotRepaint = false;
             WKPageForceRepaint(TestController::shared().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
-            TestController::shared().runUntil(m_gotRepaint, TestController::ShortTimeout);
+            TestController::shared().runUntil(m_gotRepaint, TestController::shortTimeout);
             if (!m_gotRepaint) {
                 m_errorMessage = "Timed out waiting for pre-pixel dump repaint\n";
                 m_webProcessIsUnresponsive = true;

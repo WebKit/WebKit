@@ -36,9 +36,7 @@
 namespace WTR {
 
 struct Options {
-    Options(double, double);
-    double longTimeout;
-    double shortTimeout;
+    Options();
     bool useWaitToDumpWatchdogTimer;
     bool forceNoTimeout;
     bool verbose;
@@ -49,8 +47,6 @@ struct Options {
     bool shouldUseAcceleratedDrawing;
     bool shouldUseRemoteLayerTree;
     std::vector<std::string> paths;
-    double defaultLongTimeout;
-    double defaultShortTimeout;
 };
 
 class Option {

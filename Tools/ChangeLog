@@ -1,3 +1,42 @@
+2015-01-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Simplify WebKitTestRunner timeout tracking
+        https://bugs.webkit.org/show_bug.cgi?id=140036
+
+        Reviewed by Darin Adler.
+
+        The code for configuring timeouts was mostly dead, because run-webkit-tests never
+        passes the --timeout option to WebKitTestRunner.
+
+        * WebKitTestRunner/Options.h:
+        * WebKitTestRunner/Options.cpp:
+        (WTR::Options::Options):
+        (WTR::OptionsHandler::OptionsHandler):
+        (WTR::handleOptionTimeout): Deleted.
+        Removed support for --timeout. Timeouts are passed for each test individually,
+        and defaults are good enough for the rare cases where WebKitTestRunner is run
+        manually without run-webkit-tests.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::reattachPageToWebProcess):
+        (WTR::TestController::runUntil):
+        * WebKitTestRunner/TestController.h:
+        Simplified runUntil by passing the actual timeout, not an enum.
+        Increased short timeout for ASan enabled builds, as WebProcess launching takes
+        quite a while.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke): Removed dead code that handled a timeout from NoTimeout.
+
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::platformRunUntil):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformRunUntil):
+        Build fixes.
+
 2015-01-02  Anders Carlsson  <andersca@apple.com>
 
         Remove now unused storage tracker glue from DumpRenderTree

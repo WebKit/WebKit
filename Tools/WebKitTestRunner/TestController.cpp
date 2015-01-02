@@ -70,13 +70,17 @@ const unsigned TestController::viewHeight = 600;
 const unsigned TestController::w3cSVGViewWidth = 480;
 const unsigned TestController::w3cSVGViewHeight = 360;
 
-// defaultLongTimeout + defaultShortTimeout should be less than 35,
-// the default timeout value of the test harness so we can detect an
-// unresponsive web process.
-// These values are only used by ports that don't have --timeout option passed to WebKitTestRunner.
-static const double defaultLongTimeout = 25;
-static const double defaultShortTimeout = 5;
-static const double defaultNoTimeout = -1;
+#if defined(__has_feature)
+#if __has_feature(address_sanitizer)
+const double TestController::shortTimeout = 10.0;
+#else
+const double TestController::shortTimeout = 5.0;
+#endif
+#else
+const double TestController::shortTimeout = 5.0;
+#endif
+
+const double TestController::noTimeout = -1;
 
 static WKURLRef blankURL()
 {
@@ -106,9 +110,6 @@ TestController::TestController(int argc, const char* argv[])
     , m_shouldDumpPixelsForAllTests(false)
     , m_state(Initial)
     , m_doneResetting(false)
-    , m_longTimeout(defaultLongTimeout)
-    , m_shortTimeout(defaultShortTimeout)
-    , m_noTimeout(defaultNoTimeout)
     , m_useWaitToDumpWatchdogTimer(true)
     , m_forceNoTimeout(false)
     , m_didPrintWebProcessCrashedMessage(false)
@@ -337,7 +338,7 @@ void TestController::initialize(int argc, const char* argv[])
 {
     platformInitialize();
 
-    Options options(defaultLongTimeout, defaultShortTimeout);
+    Options options;
     OptionsHandler optionsHandler(options);
 
     if (argc < 2) {
@@ -347,8 +348,6 @@ void TestController::initialize(int argc, const char* argv[])
     if (!optionsHandler.parse(argc, argv))
         exit(1);
 
-    m_longTimeout = options.longTimeout;
-    m_shortTimeout = options.shortTimeout;
     m_useWaitToDumpWatchdogTimer = options.useWaitToDumpWatchdogTimer;
     m_forceNoTimeout = options.forceNoTimeout;
     m_verbose = options.verbose;
@@ -740,7 +739,7 @@ bool TestController::resetStateToConsistentValues()
     m_doneResetting = false;
 
     WKPageLoadURL(m_mainWebView->page(), blankURL());
-    runUntil(m_doneResetting, ShortTimeout);
+    runUntil(m_doneResetting, shortTimeout);
     return m_doneResetting;
 }
 
@@ -754,7 +753,7 @@ void TestController::reattachPageToWebProcess()
     // Loading a web page is the only way to reattach an existing page to a process.
     m_doneResetting = false;
     WKPageLoadURL(m_mainWebView->page(), blankURL());
-    runUntil(m_doneResetting, LongTimeout);
+    runUntil(m_doneResetting, shortTimeout);
 }
 
 void TestController::updateWebViewSizeForTest(const TestInvocation& test)
@@ -962,23 +961,10 @@ void TestController::run()
     }
 }
 
-void TestController::runUntil(bool& done, TimeoutDuration timeoutDuration)
+void TestController::runUntil(bool& done, double timeout)
 {
-    double timeout = m_noTimeout;
-    if (!m_forceNoTimeout) {
-        switch (timeoutDuration) {
-        case ShortTimeout:
-            timeout = m_shortTimeout;
-            break;
-        case LongTimeout:
-            timeout = m_longTimeout;
-            break;
-        case NoTimeout:
-        default:
-            timeout = m_noTimeout;
-            break;
-        }
-    }
+    if (m_forceNoTimeout)
+        timeout = noTimeout;
 
     platformRunUntil(done, timeout);
 }

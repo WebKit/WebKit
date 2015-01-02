@@ -31,10 +31,8 @@
 
 namespace WTR {
 
-Options::Options(double defaultLongTimeout, double defaultShortTimeout)
-    : longTimeout(defaultLongTimeout)
-    , shortTimeout(defaultShortTimeout)
-    , useWaitToDumpWatchdogTimer(true)
+Options::Options()
+    : useWaitToDumpWatchdogTimer(true)
     , forceNoTimeout(false)
     , verbose(false)
     , gcBetweenTests(false)
@@ -43,17 +41,7 @@ Options::Options(double defaultLongTimeout, double defaultShortTimeout)
     , forceComplexText(false)
     , shouldUseAcceleratedDrawing(false)
     , shouldUseRemoteLayerTree(false)
-    , defaultLongTimeout(defaultLongTimeout)
-    , defaultShortTimeout(defaultShortTimeout)
 {
-}
-
-bool handleOptionTimeout(Options& options, const char*, const char* argument)
-{
-    options.longTimeout = atoi(argument);
-    // Scale up the short timeout to match.
-    options.shortTimeout = options.defaultShortTimeout * options.longTimeout / options.defaultLongTimeout;
-    return true;
 }
 
 bool handleOptionNoTimeout(Options& options, const char*, const char*)
@@ -122,8 +110,7 @@ bool handleOptionUnmatched(Options& options, const char* option, const char*)
 OptionsHandler::OptionsHandler(Options& o)
     : options(o)
 {
-    optionList.append(Option("--timeout", "Sets long timeout to <param> and scales short timeout.", handleOptionTimeout, true));
-    optionList.append(Option("--no-timeout", "Disables timeout.", handleOptionNoTimeout));
+    optionList.append(Option("--no-timeout", "Disables waitUntilDone timeout.", handleOptionNoTimeout));
     optionList.append(Option("--no-timeout-at-all", "Disables all timeouts.", handleOptionNoTimeoutAtAll));
     optionList.append(Option("--verbose", "Turns on messages.", handleOptionVerbose));
     optionList.append(Option("--gc-between-tests", "Garbage collection between tests.", handleOptionGcBetweenTests));

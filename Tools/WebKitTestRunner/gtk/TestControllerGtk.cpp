@@ -57,7 +57,7 @@ void TestController::platformWillRunTest(const TestInvocation&)
 
 void TestController::platformRunUntil(bool&, double timeout)
 {
-    if (timeout != m_noTimeout) {
+    if (timeout > 0) {
         timeoutSource.scheduleAfterDelay("[WTR] Test timeout source", [] {
             fprintf(stderr, "FAIL: TestControllerRunLoop timed out.\n");
             gtk_main_quit();
