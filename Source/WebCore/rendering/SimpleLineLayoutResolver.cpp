@@ -160,10 +160,10 @@ Range<RunResolver::Iterator> RunResolver::rangeForRenderer(const RenderText& ren
     auto& segment = m_flowContents.segmentForRenderer(renderer);
 
     auto rangeBegin = begin();
-    for (;(*rangeBegin).start() < segment.start && rangeBegin != end(); ++rangeBegin) { }
+    for (;rangeBegin != end() && (*rangeBegin).start() < segment.start; ++rangeBegin) { }
 
     auto rangeEnd = rangeBegin;
-    for (;(*rangeEnd).end() <= segment.end && rangeEnd != end(); ++rangeEnd) { }
+    for (;rangeEnd != end() && (*rangeEnd).end() <= segment.end; ++rangeEnd) { }
 
     return Range<Iterator>(rangeBegin, rangeEnd);
 }

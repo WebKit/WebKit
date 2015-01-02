@@ -1,3 +1,14 @@
+2015-01-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't dereference end() in SimpleLineLayout::RunResolver::rangeForRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=139951
+        rdar://problem/19339881
+
+        Reviewed by Darin Adler.
+
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::rangeForRenderer):
+
 2015-01-01  Chris Dumez  <cdumez@apple.com>
 
         ASSERT that a null key is never used with FeatureCounter
