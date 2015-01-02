@@ -49,7 +49,6 @@
 #import "PixelDumpSupport.h"
 #import "PolicyDelegate.h"
 #import "ResourceLoadDelegate.h"
-#import "StorageTrackerDelegate.h"
 #import "TestRunner.h"
 #import "UIDelegate.h"
 #import "WebArchiveDumpSupport.h"
@@ -189,7 +188,6 @@ static ResourceLoadDelegate *resourceLoadDelegate;
 static HistoryDelegate *historyDelegate;
 PolicyDelegate *policyDelegate;
 DefaultPolicyDelegate *defaultPolicyDelegate;
-StorageTrackerDelegate *storageDelegate;
 #if PLATFORM(IOS)
 static ScrollViewResizerDelegate *scrollViewResizerDelegate;
 #endif
@@ -991,7 +989,6 @@ static void allocateGlobalControllers()
     resourceLoadDelegate = [[ResourceLoadDelegate alloc] init];
     policyDelegate = [[PolicyDelegate alloc] init];
     historyDelegate = [[HistoryDelegate alloc] init];
-    storageDelegate = [[StorageTrackerDelegate alloc] init];
     defaultPolicyDelegate = [[DefaultPolicyDelegate alloc] init];
 #if PLATFORM(IOS)
     scrollViewResizerDelegate = [[ScrollViewResizerDelegate alloc] init];
@@ -1013,7 +1010,6 @@ static void releaseGlobalControllers()
     releaseAndZero(&resourceLoadDelegate);
     releaseAndZero(&uiDelegate);
     releaseAndZero(&policyDelegate);
-    releaseAndZero(&storageDelegate);
 #if PLATFORM(IOS)
     releaseAndZero(&scrollViewResizerDelegate);
 #endif

@@ -35,7 +35,6 @@
 #import "MockGeolocationProvider.h"
 #import "MockWebNotificationProvider.h"
 #import "PolicyDelegate.h"
-#import "StorageTrackerDelegate.h"
 #import "UIDelegate.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
@@ -162,25 +161,6 @@ long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef url)
     return usage;
 }
 
-void TestRunner::syncLocalStorage()
-{
-    [[WebStorageManager sharedWebStorageManager] syncLocalStorage];
-}
-
-long long TestRunner::localStorageDiskUsageForOrigin(JSStringRef url)
-{
-    RetainPtr<CFStringRef> urlCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, url));
-    WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
-    long long usage = [[WebStorageManager sharedWebStorageManager] diskUsageForOrigin:origin];
-    [origin release];
-    return usage;
-}
-
-void TestRunner::observeStorageTrackerNotifications(unsigned number)
-{
-    [storageDelegate logNotifications:number controller:this];
-}
-
 void TestRunner::clearApplicationCacheForOrigin(JSStringRef url)
 {
     RetainPtr<CFStringRef> urlCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, url));
@@ -215,11 +195,6 @@ void TestRunner::clearAllDatabases()
     [[WebDatabaseManager sharedWebDatabaseManager] deleteAllDatabases];
 }
 
-void TestRunner::deleteAllLocalStorage()
-{
-    [[WebStorageManager sharedWebStorageManager] deleteAllOrigins];
-}
-
 void TestRunner::setStorageDatabaseIdleInterval(double interval)
 {
     [WebStorageManager setStorageDatabaseIdleInterval:interval];
@@ -228,20 +203,6 @@ void TestRunner::setStorageDatabaseIdleInterval(double interval)
 void TestRunner::closeIdleLocalStorageDatabases()
 {
     [WebStorageManager closeIdleLocalStorageDatabases];
-}
-
-JSValueRef TestRunner::originsWithLocalStorage(JSContextRef context)
-{
-    return originsArrayToJS(context, [[WebStorageManager sharedWebStorageManager] origins]);
-}
-
-void TestRunner::deleteLocalStorageForOrigin(JSStringRef URL)
-{
-    RetainPtr<CFStringRef> urlCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, URL));
-    
-    WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
-    [[WebStorageManager sharedWebStorageManager] deleteOrigin:origin];
-    [origin release];
 }
 
 void TestRunner::clearBackForwardList()

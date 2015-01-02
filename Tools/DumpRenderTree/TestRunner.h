@@ -333,13 +333,6 @@ public:
     // Simulate a request an embedding application could make, populating per-session credential storage.
     void authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password);
 
-    JSValueRef originsWithLocalStorage(JSContextRef);
-    void deleteAllLocalStorage();
-    void deleteLocalStorageForOrigin(JSStringRef originIdentifier);
-    long long localStorageDiskUsageForOrigin(JSStringRef originIdentifier);
-    void observeStorageTrackerNotifications(unsigned number);
-    void syncLocalStorage();
-
     void setShouldPaintBrokenImage(bool);
     bool shouldPaintBrokenImage() const { return m_shouldPaintBrokenImage; }
 

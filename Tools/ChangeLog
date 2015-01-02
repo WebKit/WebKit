@@ -1,3 +1,41 @@
+2015-01-02  Anders Carlsson  <andersca@apple.com>
+
+        Remove now unused storage tracker glue from DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=140045
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/StorageTrackerDelegate.h: Removed.
+        * DumpRenderTree/StorageTrackerDelegate.mm: Removed.
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::staticFunctions):
+        (syncLocalStorageCallback): Deleted.
+        (observeStorageTrackerNotificationsCallback): Deleted.
+        (deleteAllLocalStorageCallback): Deleted.
+        (deleteLocalStorageForOriginCallback): Deleted.
+        (localStorageDiskUsageForOriginCallback): Deleted.
+        (originsWithLocalStorageCallback): Deleted.
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allocateGlobalControllers):
+        (releaseGlobalControllers):
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::syncLocalStorage): Deleted.
+        (TestRunner::localStorageDiskUsageForOrigin): Deleted.
+        (TestRunner::observeStorageTrackerNotifications): Deleted.
+        (TestRunner::deleteAllLocalStorage): Deleted.
+        (TestRunner::originsWithLocalStorage): Deleted.
+        (TestRunner::deleteLocalStorageForOrigin): Deleted.
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::syncLocalStorage): Deleted.
+        (TestRunner::localStorageDiskUsageForOrigin): Deleted.
+        (TestRunner::observeStorageTrackerNotifications): Deleted.
+        (TestRunner::deleteAllLocalStorage): Deleted.
+        (TestRunner::originsWithLocalStorage): Deleted.
+        (TestRunner::deleteLocalStorageForOrigin): Deleted.
+
 2015-01-01  Darin Adler  <darin@apple.com>
 
         We often misspell identifier as "identifer"

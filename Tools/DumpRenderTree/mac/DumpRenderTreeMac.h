@@ -62,7 +62,6 @@ extern WebFrame* topLoadingFrame;
 extern DumpRenderTreeDraggingInfo *draggingInfo;
 extern NavigationController* gNavigationController;
 extern PolicyDelegate* policyDelegate;
-extern StorageTrackerDelegate* storageDelegate;
 extern DefaultPolicyDelegate *defaultPolicyDelegate;
 
 void setWaitToDumpWatchdog(CFRunLoopTimerRef);

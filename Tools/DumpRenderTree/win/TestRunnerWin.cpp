@@ -124,25 +124,6 @@ long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef url)
     return usage;
 }
 
-void TestRunner::syncLocalStorage()
-{
-    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
-    printf("ERROR: TestRunner::syncLocalStorage() not implemented\n");
-}
-
-long long TestRunner::localStorageDiskUsageForOrigin(JSStringRef originIdentifier)
-{
-    // FIXME: Implement to support getting local storage disk usage for an origin. (Ditto WebStorageManager)
-    printf("ERROR: TestRunner::localStorageDiskUsageForOrigin(JSStringRef) not implemented\n");
-    return 0;
-}
-
-void TestRunner::observeStorageTrackerNotifications(unsigned number)
-{
-    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
-    printf("ERROR: TestRunner::observeStorageTrackerNotifications(unsigned) not implemented\n");
-}
-
 void TestRunner::clearApplicationCacheForOrigin(JSStringRef origin)
 {
     COMPtr<IWebSecurityOrigin> securityOrigin;
@@ -180,12 +161,6 @@ void TestRunner::clearAllDatabases()
     databaseManager->deleteAllDatabases();
 }
 
-void TestRunner::deleteAllLocalStorage()
-{
-    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
-    printf("ERROR: TestRunner::deleteAllLocalStorage() not implemented\n");
-}
-
 void TestRunner::setStorageDatabaseIdleInterval(double)
 {
     // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
@@ -196,19 +171,6 @@ void TestRunner::closeIdleLocalStorageDatabases()
 {
     // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
     printf("ERROR: TestRunner::closeIdleLocalStorageDatabases(double) not implemented\n");
-}
-
-JSValueRef TestRunner::originsWithLocalStorage(JSContextRef context)
-{
-    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
-    printf("ERROR: TestRunner::originsWithLocalStorage(JSContextRef) not implemented\n");
-    return JSValueMakeUndefined(context);
-}
-
-void TestRunner::deleteLocalStorageForOrigin(JSStringRef URL)
-{
-    // FIXME: Implement. Requires non-existant (on Windows) WebStorageManager
-    printf("ERROR: TestRunner::deleteLocalStorageForOrigin(JSStringRef) not implemented\n");
 }
 
 void TestRunner::clearBackForwardList()
