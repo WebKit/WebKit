@@ -7,7 +7,6 @@
     -webkit-grid-template-rows: 100px;
     -webkit-grid-template-columns: 200px 200px;
     margin-top: 10px;
-    -webkit-grid-auto-flow: stack;
 }
 .red {
     background-color: red;
@@ -28,13 +27,13 @@
 <p>For this test to pass, there should be no red below.</p>
 
 <div class="grid">
-    <div class="sizedToGridArea green positiveZIndex"></div>
-    <div class="sizedToGridArea red"></div>
+    <div class="sizedToGridArea green positiveZIndex firstRowFirstColumn"></div>
+    <div class="sizedToGridArea red firstRowFirstColumn"></div>
 </div>
 
 <div class="grid">
-    <div class="sizedToGridArea green"></div>
-    <div class="sizedToGridArea red negativeZIndex"></div>
+    <div class="sizedToGridArea green firstRowFirstColumn"></div>
+    <div class="sizedToGridArea red negativeZIndex firstRowFirstColumn"></div>
 </div>
 
 <div class="grid">

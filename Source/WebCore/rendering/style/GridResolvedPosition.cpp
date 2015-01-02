@@ -135,14 +135,9 @@ std::unique_ptr<GridSpan> GridResolvedPosition::resolveGridPositionsFromStyle(co
 
     adjustGridPositionsFromStyle(gridContainerStyle, initialPosition, finalPosition, initialPositionSide, finalPositionSide);
 
-    if (initialPosition.shouldBeResolvedAgainstOppositePosition() && finalPosition.shouldBeResolvedAgainstOppositePosition()) {
-        // FIXME: Implement properly "stack" value in auto-placement algorithm.
-        if (gridContainerStyle.isGridAutoFlowAlgorithmStack())
-            return std::make_unique<GridSpan>(0, 0);
-
-        // We can't get our grid positions without running the auto placement algorithm.
+    // We can't get our grid positions without running the auto placement algorithm.
+    if (initialPosition.shouldBeResolvedAgainstOppositePosition() && finalPosition.shouldBeResolvedAgainstOppositePosition())
         return nullptr;
-    }
 
     if (initialPosition.shouldBeResolvedAgainstOppositePosition()) {
         // Infer the position from the final position ('auto / 1' or 'span 2 / 3' case).

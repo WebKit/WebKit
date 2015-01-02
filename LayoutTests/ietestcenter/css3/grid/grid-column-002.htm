@@ -34,15 +34,22 @@
         <meta name="flags" content="ahem invalid" />
         <meta name="assert" content="The 'grid-column' with a value of '0' is invalid and inserts the grid-item in the first column." />
         <style type="text/css">
+            #container
+            {
+                position: relative;
+                color: green;
+                font: 20px/1 ahem;
+            }
             #test
             {
-                color: green;
+                position: absolute;
+                left: 0;
+                top: 0;
                 display: -ms-grid;
                 display: -moz-grid;
                 display: -o-grid;
                 display: -webkit-grid;
                 display: grid;
-                font: 20px/1 ahem;
                 height: 3em;
                 -ms-grid-columns: auto 1fr;
                 -moz-grid-columns: auto 1fr;
@@ -74,13 +81,20 @@
                 -webkit-grid-row: 1;
                 grid-row: 1;
             }
+            #absolute {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
         </style>
     </head>
     <body>
         <p>Test passes if there is no red visible on the page.</p>
-        <div id="test">
-            <div id="griditem">XXXX</div>
-            <div>XXXXX</div>
+        <div id="container">
+            <div id="test">
+                <div id="griditem">XXXX</div>
+            </div>
+            <div id="absolute">XXXXX</div>
         </div>
     </body>
 </html>

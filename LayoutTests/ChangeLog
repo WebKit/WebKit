@@ -1,3 +1,26 @@
+2015-01-02  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Remove stack from grid-auto-flow syntax
+        https://bugs.webkit.org/show_bug.cgi?id=134842
+
+        Reviewed by Sergio Villar Senin.
+
+        Update layout tests in order to adapt the results to the new behavior.
+
+        * fast/css-grid-layout/grid-auto-flow-get-set-expected.txt:
+        * fast/css-grid-layout/grid-auto-flow-get-set.html:
+        * fast/css-grid-layout/grid-auto-flow-update.html:
+        * fast/css-grid-layout/grid-item-named-grid-area-resolution.html:
+        * fast/css-grid-layout/grid-item-z-index-change-repaint.html:
+        * fast/css-grid-layout/grid-item-z-index-stacking-context.html:
+        * fast/css-grid-layout/grid-shorthand-get-set-expected.txt:
+        * fast/css-grid-layout/grid-shorthand-get-set.html:
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-dynamic-get-set.html:
+        * fast/css-grid-layout/named-grid-lines-with-named-grid-areas-resolution.html:
+        * ietestcenter/css3/grid/grid-column-001.htm:
+        * ietestcenter/css3/grid/grid-column-002.htm:
+        * ietestcenter/css3/grid/grid-column-003.htm:
+
 2015-01-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         String includes methods perform toString on searchString before toInteger on a offset

@@ -3,8 +3,8 @@
 <head>
 <link href="resources/grid.css" rel="stylesheet">
 <style>
-#gridWithStack {
-    -webkit-grid: stack;
+#gridWithDense {
+    -webkit-grid: dense;
 }
 #gridWithTemplate {
     -webkit-grid: 15px / 10px;
@@ -15,26 +15,20 @@
 #gridWithTemplateNone {
     -webkit-grid: none / 10px;
 }
-#gridWithAutoFlowStackAndColumnsAndRows {
-    -webkit-grid: stack 10px / 20px;
+#gridWithAutoFlowDenseAndColumnsAndRows {
+    -webkit-grid: dense 10px / 20px;
 }
 #gridWithAutoFlowAndColumns {
     -webkit-grid: column 10px;
 }
-#gridWithAutoFlowStack {
-    -webkit-grid: stack 10px;
+#gridWithAutoFlowDense {
+    -webkit-grid: dense 10px;
 }
 #gridWithAutoFlowColumnDense {
     -webkit-grid: column dense 10px;
 }
 #gridWithAutoFlowDenseRow {
     -webkit-grid: dense row 10px;
-}
-#gridWithAutoFlowStackColumn {
-    -webkit-grid: stack column 10px;
-}
-#gridWithAutoFlowRowStack {
-    -webkit-grid: row stack 10px;
 }
 #gridWithAutoFlowAndColumnsAndRows {
     -webkit-grid: column 10px / 20px;
@@ -93,23 +87,18 @@
 #gridWithMisplacedDense {
     -webkit-grid: dense column dense;
 }
-#gridWithMisplacedStack {
-    -webkit-grid: stack row stack;
-}
 </style>
 <script src="../../resources/js-test.js"></script>
 </head>
 <body>
-<div class="grid" id="gridWithStack"></div>
+<div class="grid" id="gridWithDense"></div>
 <div class="grid" id="gridWithTemplate"></div>
 <div class="grid" id="gridWithTemplate1"></div>
-<div class="grid" id="gridWithAutoFlowStackAndColumnsAndRows"></div>
+<div class="grid" id="gridWithAutoFlowDenseAndColumnsAndRows"></div>
 <div class="grid" id="gridWithAutoFlowAndColumns"></div>
-<div class="grid" id="gridWithAutoFlowStack"></div>
+<div class="grid" id="gridWithAutoFlowDense"></div>
 <div class="grid" id="gridWithAutoFlowColumnDense"></div>
 <div class="grid" id="gridWithAutoFlowDenseRow"></div>
-<div class="grid" id="gridWithAutoFlowStackColumn"></div>
-<div class="grid" id="gridWithAutoFlowRowStack"></div>
 <div class="grid" id="gridWithAutoFlowAndColumnsAndRows"></div>
 <div class="grid" id="gridWithNone"></div>
 <div class="grid" id="gridWithTemplateNone"></div>
@@ -129,23 +118,20 @@
 <div class="grid" id="gridWithTemplateAndAutoFlow"></div>
 <div class="grid" id="gridWithTemplateAndMisplacedString1"></div>
 <div class="grid" id="gridWithMisplacedDense"></div>
-<div class="grid" id="gridWithMisplacedStack"></div>
 <script src="resources/grid-shorthand-parsing-utils.js"></script>
 <script>
     description("This test checks that the 'grid' shorthand is properly parsed and the longhand properties correctly assigned.");
 
     debug("Test getting the longhand values when shorthand is set through CSS.");
-    testGridDefinitionsValues(document.getElementById("gridWithStack"), "none", "none", "none", "row stack", "auto", "auto");
+    testGridDefinitionsValues(document.getElementById("gridWithDense"), "none", "none", "none", "row dense", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithTemplate"), "15px", "10px", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithTemplate1"), "none", "10px", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithTemplateNone"), "none", "10px", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowStackAndColumnsAndRows"), "none", "none", "none", "row stack", "10px", "20px");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowDenseAndColumnsAndRows"), "none", "none", "none", "row dense", "10px", "20px");
     testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndColumns"), "none", "none", "none", "column", "10px", "10px");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowStack"), "none", "none", "none", "row stack", "10px", "10px");
+    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowDense"), "none", "none", "none", "row dense", "10px", "10px");
     testGridDefinitionsValues(document.getElementById("gridWithAutoFlowColumnDense"), "none", "none", "none", "column dense", "10px", "10px");
     testGridDefinitionsValues(document.getElementById("gridWithAutoFlowDenseRow"), "none", "none", "none", "row dense", "10px", "10px");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowStackColumn"), "none", "none", "none", "column stack", "10px", "10px");
-    testGridDefinitionsValues(document.getElementById("gridWithAutoFlowRowStack"), "none", "none", "none", "row stack", "10px", "10px");
     testGridDefinitionsValues(document.getElementById("gridWithAutoFlowAndColumnsAndRows"), "none", "none", "none", "column", "10px", "20px");
 
     debug("");
@@ -157,7 +143,6 @@
     testGridDefinitionsValues(document.getElementById("gridWithMisplacedNone1"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithMisplacedNone2"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithMisplacedDense"), "none", "none", "none", "row", "auto", "auto");
-    testGridDefinitionsValues(document.getElementById("gridWithMisplacedStack"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithWrongSlash1"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithWrongSlash2"), "none", "none", "none", "row", "auto", "auto");
     testGridDefinitionsValues(document.getElementById("gridWithWrongSlash3"), "none", "none", "none", "row", "auto", "auto");

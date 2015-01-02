@@ -930,7 +930,6 @@ public:
     bool isGridAutoFlowDirectionColumn() const { return (rareNonInheritedData->m_grid->m_gridAutoFlow & InternalAutoFlowDirectionColumn); }
     bool isGridAutoFlowAlgorithmSparse() const { return (rareNonInheritedData->m_grid->m_gridAutoFlow & InternalAutoFlowAlgorithmSparse); }
     bool isGridAutoFlowAlgorithmDense() const { return (rareNonInheritedData->m_grid->m_gridAutoFlow & InternalAutoFlowAlgorithmDense); }
-    bool isGridAutoFlowAlgorithmStack() const { return (rareNonInheritedData->m_grid->m_gridAutoFlow & InternalAutoFlowAlgorithmStack); }
     const GridTrackSize& gridAutoColumns() const { return rareNonInheritedData->m_grid->m_gridAutoColumns; }
     const GridTrackSize& gridAutoRows() const { return rareNonInheritedData->m_grid->m_gridAutoRows; }
 

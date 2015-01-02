@@ -2190,8 +2190,6 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
 
             if (style->isGridAutoFlowAlgorithmDense())
                 list->append(cssValuePool().createIdentifierValue(CSSValueDense));
-            else if (style->isGridAutoFlowAlgorithmStack())
-                list->append(cssValuePool().createIdentifierValue(CSSValueStack));
 
             return list.release();
         }

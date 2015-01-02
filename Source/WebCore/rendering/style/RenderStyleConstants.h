@@ -604,25 +604,22 @@ enum LineAlign { LineAlignNone, LineAlignEdges };
 enum RubyPosition { RubyPositionBefore, RubyPositionAfter, RubyPositionInterCharacter };
 
 #if ENABLE(CSS_GRID_LAYOUT)
-static const size_t GridAutoFlowBits = 5;
+static const size_t GridAutoFlowBits = 4;
 enum InternalGridAutoFlowAlgorithm {
     InternalAutoFlowAlgorithmSparse = 0x1,
     InternalAutoFlowAlgorithmDense = 0x2,
-    InternalAutoFlowAlgorithmStack = 0x4
 };
 
 enum InternalGridAutoFlowDirection {
-    InternalAutoFlowDirectionRow = 0x8,
-    InternalAutoFlowDirectionColumn = 0x10
+    InternalAutoFlowDirectionRow = 0x4,
+    InternalAutoFlowDirectionColumn = 0x8
 };
 
 enum GridAutoFlow {
     AutoFlowRow = InternalAutoFlowAlgorithmSparse | InternalAutoFlowDirectionRow,
     AutoFlowColumn = InternalAutoFlowAlgorithmSparse | InternalAutoFlowDirectionColumn,
     AutoFlowRowDense = InternalAutoFlowAlgorithmDense | InternalAutoFlowDirectionRow,
-    AutoFlowColumnDense = InternalAutoFlowAlgorithmDense | InternalAutoFlowDirectionColumn,
-    AutoFlowStackRow = InternalAutoFlowAlgorithmStack | InternalAutoFlowDirectionRow,
-    AutoFlowStackColumn = InternalAutoFlowAlgorithmStack | InternalAutoFlowDirectionColumn
+    AutoFlowColumnDense = InternalAutoFlowAlgorithmDense | InternalAutoFlowDirectionColumn
 };
 #endif
 

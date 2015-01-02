@@ -1,3 +1,39 @@
+2015-01-02  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [CSS Grid Layout] Remove stack from grid-auto-flow syntax
+        https://bugs.webkit.org/show_bug.cgi?id=134842
+
+        Reviewed by Sergio Villar Senin.
+
+        "stack" mode for grid-auto-flow property has been removed from the grid
+        layout spec. New syntax is:
+          [ row | column ] || dense
+
+        Modified parsing in order to adapt it to the new syntax.
+
+        Also the current behavior relying on "stack" has been updated following
+        the spec. Now it won't be possible to mimic the old "none" (or "stack")
+        unless you specify manually the grid-placement properties.
+
+        No new tests needed, updated current tests to adapt them to the new
+        behavior.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue): Adapt to new syntax.
+        * css/CSSParser.cpp:
+        (WebCore::isValidGridAutoFlowId): Remove "stack" from valid ids.
+        (WebCore::CSSParser::parseGridAutoFlow): Adapt to new syntax.
+        * css/CSSValueKeywords.in: Remove "stack".
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty): Adapt to new syntax.
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::placeItemsOnGrid): Remove old "stack" code.
+        * rendering/style/GridResolvedPosition.cpp:
+        (WebCore::GridResolvedPosition::resolveGridPositionsFromStyle): If we
+        cannot resolve positions, we have to run the auto-placement algorithm.
+        * rendering/style/RenderStyle.h: Remove "stack".
+        * rendering/style/RenderStyleConstants.h: Ditto.
+
 2015-01-01  Sam Weinig  <sam@webkit.org>
 
         Remove GroupSettings

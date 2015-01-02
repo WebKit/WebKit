@@ -2762,14 +2762,14 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         GridAutoFlow autoFlow = RenderStyle::initialGridAutoFlow();
         switch (first.getValueID()) {
         case CSSValueRow:
-            if (second)
-                autoFlow = second->getValueID() == CSSValueDense ? AutoFlowRowDense : AutoFlowStackRow;
+            if (second && second->getValueID() == CSSValueDense)
+                autoFlow =  AutoFlowRowDense;
             else
                 autoFlow = AutoFlowRow;
             break;
         case CSSValueColumn:
-            if (second)
-                autoFlow = second->getValueID() == CSSValueDense ? AutoFlowColumnDense : AutoFlowStackColumn;
+            if (second && second->getValueID() == CSSValueDense)
+                autoFlow = AutoFlowColumnDense;
             else
                 autoFlow = AutoFlowColumn;
             break;

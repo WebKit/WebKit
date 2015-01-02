@@ -743,14 +743,6 @@ void RenderGrid::placeItemsOnGrid()
     ASSERT(gridRowCount() >= GridResolvedPosition::explicitGridRowCount(style()));
     ASSERT(gridColumnCount() >= GridResolvedPosition::explicitGridColumnCount(style()));
 
-    // FIXME: Implement properly "stack" value in auto-placement algorithm.
-    if (style().isGridAutoFlowAlgorithmStack()) {
-        // If we did collect some grid items, they won't be placed thus never laid out.
-        ASSERT(!autoMajorAxisAutoGridItems.size());
-        ASSERT(!specifiedMajorAxisAutoGridItems.size());
-        return;
-    }
-
     placeSpecifiedMajorAxisItemsOnGrid(specifiedMajorAxisAutoGridItems);
     placeAutoMajorAxisItemsOnGrid(autoMajorAxisAutoGridItems);
 }

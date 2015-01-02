@@ -74,6 +74,19 @@
                 -webkit-grid-row: 1;
                 grid-row: 1;
             }
+            #row1column1
+            {
+                -ms-grid-column: 1;
+                -moz-grid-column: 1;
+                -o-grid-column: 1;
+                -webkit-grid-column: 1;
+                grid-column: 1;
+                -ms-grid-row: 1;
+                -moz-grid-row: 1;
+                -o-grid-row: 1;
+                -webkit-grid-row: 1;
+                grid-row: 1;
+            }
             span
             {
                 color: red;
@@ -83,7 +96,7 @@
     <body>
         <p>Test passes if there is no red visible on the page.</p>
         <div id="test">
-            <div><span>XX</span>X<span>XX</span></div>
+            <div id="row1column1"><span>XX</span>X<span>XX</span></div>
             <div id="griditem">XX XX</div>
         </div>
     </body>

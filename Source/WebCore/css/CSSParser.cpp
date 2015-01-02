@@ -5416,12 +5416,12 @@ PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridBreadth(CSSParserValue& value)
 
 static inline bool isValidGridAutoFlowId(CSSValueID id)
 {
-    return (id == CSSValueRow || id == CSSValueColumn || id == CSSValueDense || id == CSSValueStack);
+    return (id == CSSValueRow || id == CSSValueColumn || id == CSSValueDense);
 }
 
 PassRefPtr<CSSValue> CSSParser::parseGridAutoFlow(CSSParserValueList& inputList)
 {
-    // [ row | column ] && dense? | stack && [ row | column ]?
+    // [ row | column ] || dense
     CSSParserValue* value = inputList.current();
     if (!value)
         return nullptr;
@@ -5438,9 +5438,6 @@ PassRefPtr<CSSValue> CSSParser::parseGridAutoFlow(CSSParserValueList& inputList)
     value = inputList.next();
     if (!value || !isValidGridAutoFlowId(value->id)) {
         if (firstId == CSSValueDense)
-            return nullptr;
-
-        if (firstId == CSSValueStack)
             parsedValues->append(cssValuePool().createIdentifierValue(CSSValueRow));
 
         parsedValues->append(cssValuePool().createIdentifierValue(firstId));
@@ -5451,13 +5448,12 @@ PassRefPtr<CSSValue> CSSParser::parseGridAutoFlow(CSSParserValueList& inputList)
     case CSSValueRow:
     case CSSValueColumn:
         parsedValues->append(cssValuePool().createIdentifierValue(firstId));
-        if (value->id == CSSValueDense || value->id == CSSValueStack) {
+        if (value->id == CSSValueDense) {
             parsedValues->append(cssValuePool().createIdentifierValue(value->id));
             inputList.next();
         }
         break;
     case CSSValueDense:
-    case CSSValueStack:
         if (value->id == CSSValueRow || value->id == CSSValueColumn) {
             parsedValues->append(cssValuePool().createIdentifierValue(value->id));
             inputList.next();

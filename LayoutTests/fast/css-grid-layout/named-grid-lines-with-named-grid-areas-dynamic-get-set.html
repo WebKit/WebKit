@@ -10,7 +10,7 @@ function testLayout(gridDefinitions, itemsDefinitions)
     var gridContainer = document.getElementById("gridContainer");
     var gridElement = document.createElement("div");
     gridElement.className = "grid";
-    gridElement.style.webkitGridAutoFlow = "stack";
+    gridElement.style.webkitGridAutoFlow = "dense";
 
     for (var key in gridDefinitions) {
 	if (key == "rows")
@@ -62,14 +62,14 @@ function updateRowsColumns()
     // Check grid area resolution.
     var gridAreasItems = [ { 'column': 'd', 'x': '150', 'y': '0', 'width': '200', 'height': '50' },
 			   { 'column': 'c', 'x': '0', 'y': '0', 'width': '50', 'height': '50' },
-			   { 'column': 'a', 'x': '50', 'y': '0', 'width': '300', 'height': '50' }];
+			   { 'column': 'a', 'x': '50', 'y': '50', 'width': '300', 'height': '100' }];
 
     testLayout({ 'columns': columnNoNames, 'rows': rowNoNames, 'areas': templateAreaOne }, gridAreasItems);
     testLayout({ 'areas': templateAreaOne, 'columns': columnNoNames, 'rows': rowNoNames }, gridAreasItems);
     testLayout({ 'columns': columnNoNames, 'areas': templateAreaOne, 'rows': rowNoNames }, gridAreasItems);
 
     var gridAreasItemsTwo = [ { 'column': 'd', 'x': '50', 'y': '0', 'width': '300', 'height': '50' },
-			      { 'column': 'c', 'x': '150', 'y': '0', 'width': '200', 'height': '50' },
+			      { 'column': 'c', 'x': '150', 'y': '50', 'width': '200', 'height': '100' },
 			      { 'column': 'a', 'x': '0', 'y': '0', 'width': '50', 'height': '50' }];
 
     testLayout({ 'areas': templateAreaTwo, 'areas': templateAreaOne, 'columns': columnNoNames, 'rows': rowNoNames }, gridAreasItems);
@@ -100,18 +100,18 @@ function updateRowsColumns()
     testLayout({ 'columns': columnNoNames, 'rows': rowNoNames, 'areas': templateAreaOne, 'areas': templateAreaTwo }, implicitNamesItemsTwo);
 
     // Check resolution when named lines are defined before the grid area.
-    var itemsBeforeArea = [ { 'column': 'd', 'x': '50', 'y': '0', 'width': '300', 'height': '50' },
-			    { 'row': 'c', 'x': '0', 'y': '0', 'width': '50', 'height': '150'},
-			    { 'column': 'd-start', 'x': '50', 'y': '0', 'width': '100', 'height': '50' },
+    var itemsBeforeArea = [ { 'column': 'd', 'x': '50', 'y': '150', 'width': '300', 'height': '200' },
+			    { 'row': 'c', 'x': '50', 'y': '0', 'width': '100', 'height': '150'},
+			    { 'column': 'd-start', 'x': '50', 'y': '350', 'width': '100', 'height': '0' },
 			    { 'column': 'a-start', 'row': 'd', 'x': '0', 'y': '50', 'width': '50', 'height': '300' } ];
 
     testLayout({ 'columns': columnNamedLineBeforeArea, 'rows': rowNamedLineBeforeArea, 'areas': templateAreaOne }, itemsBeforeArea);
     testLayout({ 'areas': templateAreaOne, 'columns': columnNamedLineBeforeArea, 'rows': rowNamedLineBeforeArea }, itemsBeforeArea);
     testLayout({ 'columns': columnNamedLineBeforeArea, 'areas': templateAreaOne, 'rows': rowNamedLineBeforeArea }, itemsBeforeArea);
 
-    var itemsBeforeAreaTwo = [ { 'column': 'd', 'x': '50', 'y': '0', 'width': '300', 'height': '50' },
-			       { 'row': 'c', 'x': '0', 'y': '0', 'width': '50', 'height': '350'},
-			       { 'column': 'd-start', 'x': '50', 'y': '0', 'width': '100', 'height': '50' },
+    var itemsBeforeAreaTwo = [ { 'column': 'd', 'x': '50', 'y': '350', 'width': '300', 'height': '0' },
+			       { 'row': 'c', 'x': '50', 'y': '0', 'width': '100', 'height': '350'},
+			       { 'column': 'd-start', 'x': '50', 'y': '350', 'width': '100', 'height': '0' },
 			       { 'column': 'a-start', 'row': 'd', 'x': '0', 'y': '0', 'width': '50', 'height': '150' } ];
 
     testLayout({ 'areas': templateAreaTwo, 'areas': templateAreaOne, 'columns': columnNamedLineBeforeArea, 'rows': rowNamedLineBeforeArea }, itemsBeforeArea);

@@ -7,7 +7,6 @@
     -webkit-grid-template-rows: 100px;
     -webkit-grid-template-columns: 200px;
     margin-top: 10px;
-    -webkit-grid-auto-flow: stack;
 }
 .red {
     background-color: red;
@@ -42,18 +41,18 @@ window.onload = modifyZIndexAndDisplay;
 </div>
 
 <div class="grid">
-    <div id="item1" class="sizedToGridArea green negativeZIndex"></div>
-    <div class="sizedToGridArea red"></div>
+    <div id="item1" class="sizedToGridArea green negativeZIndex firstRowFirstColumn"></div>
+    <div class="sizedToGridArea red firstRowFirstColumn"></div>
 </div>
 
 <div class="grid">
-    <div id="item2" class="sizedToGridArea green"></div>
-    <div class="sizedToGridArea red"></div>
+    <div id="item2" class="sizedToGridArea green firstRowFirstColumn"></div>
+    <div class="sizedToGridArea red firstRowFirstColumn"></div>
 </div>
 
 <div id="grid3">
-    <div class="sizedToGridArea green"></div>
-    <div id="item3" class="red negativeZIndex"></div>
+    <div class="sizedToGridArea green firstRowFirstColumn"></div>
+    <div id="item3" class="red negativeZIndex firstRowFirstColumn"></div>
 </div>
 
 </body>
