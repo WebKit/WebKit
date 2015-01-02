@@ -67,12 +67,12 @@ FlowContents::FlowContents(const RenderBlockFlow& flow)
 }
 
 template <typename CharacterType>
-static unsigned nextBreakablePosition(LazyLineBreakIterator& lineBreakItearator, const FlowContents::Segment& segment, unsigned position)
+static unsigned nextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, const FlowContents::Segment& segment, unsigned position)
 {
     const auto* characters = segment.text.characters<CharacterType>();
     unsigned segmentLength = segment.end - segment.start;
     unsigned segmentPosition = position - segment.start;
-    return nextBreakablePositionNonLoosely<CharacterType, NBSPBehavior::IgnoreNBSP>(lineBreakItearator, characters, segmentLength, segmentPosition);
+    return nextBreakablePositionNonLoosely<CharacterType, NBSPBehavior::IgnoreNBSP>(lineBreakIterator, characters, segmentLength, segmentPosition);
 }
 
 unsigned FlowContents::findNextBreakablePosition(unsigned position) const

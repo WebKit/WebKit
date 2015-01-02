@@ -1,3 +1,13 @@
+2015-01-01  Darin Adler  <darin@apple.com>
+
+        Fix itearator typo
+        https://bugs.webkit.org/show_bug.cgi?id=140027
+
+        Reviewed by Csaba Osztrogonác.
+
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::nextBreakablePosition): Spelling mistake.
+
 2015-01-01  Alexey Proskuryakov  <ap@apple.com>
 
         Don't dereference end() in SimpleLineLayout::RunResolver::rangeForRenderer
