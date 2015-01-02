@@ -92,7 +92,7 @@ HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element* cont
     , m_options(fragment.document())
     , m_token(std::make_unique<HTMLToken>())
     , m_tokenizer(std::make_unique<HTMLTokenizer>(m_options))
-    , m_treeBuilder(std::make_unique<HTMLTreeBuilder>(*this, fragment, contextElement, this->parserContentPolicy(), m_options))
+    , m_treeBuilder(std::make_unique<HTMLTreeBuilder>(*this, fragment, *contextElement, this->parserContentPolicy(), m_options))
     , m_xssAuditorDelegate(fragment.document())
     , m_endWasDelayed(false)
     , m_haveBackgroundParser(false)
@@ -118,7 +118,6 @@ void HTMLDocumentParser::detach()
 
     if (m_scriptRunner)
         m_scriptRunner->detach();
-    m_treeBuilder->detach();
     // FIXME: It seems wrong that we would have a preload scanner here.
     // Yet during fast/dom/HTMLScriptElement/script-load-events.html we do.
     m_preloadScanner = nullptr;
@@ -349,7 +348,7 @@ void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLToken& rawToken)
     if (rawToken.type() != HTMLToken::Character)
         rawToken.clear();
 
-    m_treeBuilder->constructTree(&token);
+    m_treeBuilder->constructTree(token);
 
     if (!rawToken.isUninitialized()) {
         ASSERT(rawToken.type() == HTMLToken::Character);

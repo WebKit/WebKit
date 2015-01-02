@@ -1,3 +1,137 @@
+2015-01-01  Darin Adler  <darin@apple.com>
+
+        Modernize coding style of HTMLTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140032
+
+        Reviewed by Andreas Kling.
+
+        Changes include:
+        - Use references rather than pointers.
+        - Mark data members const that are fully set up in the constructor.
+        - Remove many unneeded includes and forward declarations.
+        - Fix conditionals to be consistent and correct.
+        - Merge some multi-line constructs into a single line.
+        - Update whatwg.org URLs; not sure we should keep these, though.
+        - Cut down on use of WTF_MAKE_NONCOPYABLE since for many classes it's
+          impossible to copy anyway due to references, or harmless to copy.
+        - Made more things private.
+        - Initialize scalars in the class definition rather than each constructor.
+        - Use Ref/RefPtr instead of PassRefPtr.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser): Pass reference rather than pointer to
+        the context element.
+        (WebCore::HTMLDocumentParser::detach): Removed call to HTMLTreeBuilder::detach. This work
+        is instead done when the tree builder is destroyed.
+        (WebCore::HTMLDocumentParser::constructTreeFromHTMLToken): Pass reference rather than pointer.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::uninitializedPositionValue1): Marked this inline because it's trivial. It was
+        probably getting inlined already.
+        (WebCore::isCaptionColOrColgroupTag): Format on a single line.
+        (WebCore::isTableBodyContextTag): Ditto.
+        (WebCore::isNonAnchorFormattingTag): Ditto.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::ExternalCharacterTokenBuffer):
+        Take reference instead of pointer.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeRemaining): Use makeString helper.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::skipLeading): Tweak formatting.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::takeLeading): Both of the above.
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::makeString): Added.
+        (WebCore::HTMLTreeBuilder::isParsingTemplateContents): Moved the body of this function here,
+        since it's only used inside the class.
+        (WebCore::HTMLTreeBuilder::isParsingFragmentOrTemplateContents): Ditto.
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder): Get rid of dead code that handles a null context
+        element. The FIXME mentions a bug that is obsolete. Also reorder the data members to be a bit
+        more logical and set the new m_destructionProhibited to false at the end of the constructor,
+        to check if we accidentally destroy the tree builder while constructing it.
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext): Updated to take
+        a reference and to let m_fragment get initialized in the class definition.
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::fragment): Moved this here since it's only
+        used inside the class.
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::contextElement): Ditto.
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::contextElementStackItem): Ditto.
+        (WebCore::HTMLTreeBuilder::takeScriptToProcess): Changed return type to RefPtr instead of
+        PassRefPtr. Added code to handle m_scriptToProcess of null, since reading the code at the
+        single call site makes it clear that it's not guaranteed to be non-null! Added destruction-
+        related assertions since this is a public function.
+        (WebCore::HTMLTreeBuilder::constructTree): Updated for reference rather than pointer. Also
+        added destruction-related assertions since this is a public function.
+        (WebCore::HTMLTreeBuilder::processToken): Updated to take a reference.
+        (WebCore::HTMLTreeBuilder::processDoctypeToken): Ditto.
+        (WebCore::HTMLTreeBuilder::processFakeStartTag): Ditto. Also take an rvalue reference for
+        the vector of attributes that we will put into the token.
+        (WebCore::HTMLTreeBuilder::processFakeEndTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processFakePEndTagIfPInButtonScope): Ditto.
+        (WebCore::HTMLTreeBuilder::attributesForIsindexInput): Ditto.
+        (WebCore::HTMLTreeBuilder::processIsindexStartTagForInBody): Ditto.
+        (WebCore::isLi): Ditto.
+        (WebCore::isDdOrDt): Ditto.
+        (WebCore::HTMLTreeBuilder::processCloseWhenNestedTag): Changed loop to use reference
+        rather than pointer for never-null stackItem. Also use auto and a for loop to make the
+        loop easier to read.
+        (WebCore::createCaseMap): Tweaked formatting.
+        (WebCore::adjustAttributes): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): Use reference instead of pointer.
+        Set insertion mode directly instead of using a setInsertionMode function.
+        (WebCore::HTMLTreeBuilder::processTemplateStartTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processTemplateEndTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndOfFileForInTemplateContents): Ditto.
+        (WebCore::HTMLTreeBuilder::processColgroupEndTagForInColumnGroup): Ditto.
+        (WebCore::HTMLTreeBuilder::closeTheCell): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTag): Ditto. Tweaked assertions, so that we
+        assert what state we are in before we fall through to each case, rather than asserting
+        inside each case. The per-case assertions were sort of excessive and repetitive and
+        even a bit hard to understand.
+        (WebCore::HTMLTreeBuilder::processHtmlStartTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processBodyEndTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency): Ditto.
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTagForInTableBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTagForInRow): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processCaptionEndTagForInCaption): Ditto.
+        (WebCore::HTMLTreeBuilder::processTrEndTagForInRow): Ditto.
+        (WebCore::HTMLTreeBuilder::processTableEndTagForInTable): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTagForInTable): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processComment): Ditto.
+        (WebCore::HTMLTreeBuilder::processCharacter): Ditto.
+        (WebCore::HTMLTreeBuilder::insertPhoneNumberLink): Ditto.
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer): Ditto.
+        (WebCore::HTMLTreeBuilder::processCharacterBufferForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndOfFile): Ditto.
+        (WebCore::HTMLTreeBuilder::defaultForInitial): Ditto.
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHTML): Ditto.
+        (WebCore::HTMLTreeBuilder::defaultForBeforeHead): Ditto.
+        (WebCore::HTMLTreeBuilder::defaultForInHead): Ditto.
+        (WebCore::HTMLTreeBuilder::defaultForInHeadNoscript): Ditto.
+        (WebCore::HTMLTreeBuilder::defaultForAfterHead): Ditto.
+        (WebCore::HTMLTreeBuilder::defaultForInTableText): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead): Ditto.
+        (WebCore::HTMLTreeBuilder::processGenericRCDATAStartTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processGenericRawTextStartTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processScriptStartTag): Ditto.
+        (WebCore::HTMLTreeBuilder::adjustedCurrentStackItem): Made this return a reference.
+        (WebCore::HTMLTreeBuilder::shouldProcessTokenInForeignContent): More of the same.
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent): Ditto.
+        (WebCore::HTMLTreeBuilder::finished): Changed m_isAttached assertion to !m_destroyed.
+        Also updated the comment.
+        (WebCore::HTMLTreeBuilder::parseError): Marked this empty function inline.
+
+        * html/parser/HTMLTreeBuilder.h: Removed most includes and forward declarations.
+        Changed the phone number functions conditional to be correct. Removed a non-helpful
+        FIXME about assertions we really don't need. Removed unneeded use of the inline keyword,
+        changed types to references rather than pointer. Removed unneeded public insertionMode
+        and setInsertionMode functions. Both are things that are only done inside this class and
+        m_insertionMode can be accessed directly instead. Added a destructor that implements
+        the destruction assertions. Asserted !m_destroyed at the start of all the public functions.
+
+        * html/parser/TextDocumentParser.cpp:
+        (WebCore::TextDocumentParser::insertFakePreElement): Use reference rather than pointer.
+
 2015-01-02  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [CSS Grid Layout] Remove stack from grid-auto-flow syntax
