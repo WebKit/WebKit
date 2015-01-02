@@ -1,3 +1,9 @@
+2015-01-02  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the iOS build.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+
 2015-01-01  Darin Adler  <darin@apple.com>
 
         Rework code that hides characters in password fields to streamline a little

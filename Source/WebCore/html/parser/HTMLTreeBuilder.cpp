@@ -30,6 +30,7 @@
 #include "DocumentFragment.h"
 #include "HTMLDocument.h"
 #include "HTMLDocumentParser.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLParserIdioms.h"
