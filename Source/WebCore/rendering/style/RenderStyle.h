@@ -123,7 +123,6 @@ typedef Vector<RefPtr<RenderStyle>, 4> PseudoStyleCache;
 class RenderStyle: public RefCounted<RenderStyle> {
     friend class CSSPropertyAnimationWrapperMap; // Used by CSS animations. We can't allow them to animate based off visited colors.
     friend class ApplyStyleCommand; // Editing has to only reveal unvisited info.
-    friend class DeprecatedStyleBuilder; // Sets members directly.
     friend class EditingStyle; // Editing has to only reveal unvisited info.
     friend class ComputedStyleExtractor; // Ignores visited styles, so needs to be able to see unvisited info.
     friend class PropertyWrapperMaybeInvalidColor; // Used by CSS animations. We can't allow them to animate based off visited colors.
@@ -797,7 +796,7 @@ public:
     const Length& backgroundYPosition() const { return m_background->background().yPosition(); }
     EFillSizeType backgroundSizeType() const { return m_background->background().sizeType(); }
     const LengthSize& backgroundSizeLength() const { return m_background->background().sizeLength(); }
-    FillLayer* accessBackgroundLayers() { return &(m_background.access()->m_background); }
+    FillLayer& ensureBackgroundLayers() { return m_background.access()->m_background; }
     const FillLayer* backgroundLayers() const { return &(m_background->background()); }
 
     EFillRepeat maskRepeatX() const { return static_cast<EFillRepeat>(rareNonInheritedData->m_mask.repeatX()); }
@@ -809,7 +808,7 @@ public:
     const Length& maskYPosition() const { return rareNonInheritedData->m_mask.yPosition(); }
     EFillSizeType maskSizeType() const { return rareNonInheritedData->m_mask.sizeType(); }
     const LengthSize& maskSizeLength() const { return rareNonInheritedData->m_mask.sizeLength(); }
-    FillLayer* accessMaskLayers() { return &(rareNonInheritedData.access()->m_mask); }
+    FillLayer& ensureMaskLayers() { return rareNonInheritedData.access()->m_mask; }
     const FillLayer* maskLayers() const { return &(rareNonInheritedData->m_mask); }
     const NinePieceImage& maskBoxImage() const { return rareNonInheritedData->m_maskBoxImage; }
     StyleImage* maskBoxImageSource() const { return rareNonInheritedData->m_maskBoxImage.image(); }
@@ -1364,8 +1363,8 @@ public:
     void adjustBackgroundLayers()
     {
         if (backgroundLayers()->next()) {
-            accessBackgroundLayers()->cullEmptyLayers();
-            accessBackgroundLayers()->fillUnsetProperties();
+            ensureBackgroundLayers().cullEmptyLayers();
+            ensureBackgroundLayers().fillUnsetProperties();
         }
     }
 
@@ -1375,8 +1374,8 @@ public:
     void adjustMaskLayers()
     {
         if (maskLayers()->next()) {
-            accessMaskLayers()->cullEmptyLayers();
-            accessMaskLayers()->fillUnsetProperties();
+            ensureMaskLayers().cullEmptyLayers();
+            ensureMaskLayers().fillUnsetProperties();
         }
     }
 

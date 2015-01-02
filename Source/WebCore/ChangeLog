@@ -1,5 +1,16 @@
 2015-01-02  Chris Dumez  <cdumez@apple.com>
 
+        Kill the DeprecatedStyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140034
+
+        Reviewed by Darin Adler.
+
+        Move FillLayer properties to the new StyleBuilder and get rid of the
+        DeprecatedStyleBuilder now that all its CSS properties have been ported
+        to the new StyleBuilder.
+
+2015-01-02  Chris Dumez  <cdumez@apple.com>
+
         Move 'font-size' CSS property to the new StyleBuilder
         https://bugs.webkit.org/show_bug.cgi?id=140010
 

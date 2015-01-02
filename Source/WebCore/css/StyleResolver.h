@@ -64,7 +64,6 @@ class CSSStyleSheet;
 class CSSValue;
 class ContainerNode;
 class Document;
-class DeprecatedStyleBuilder;
 class Element;
 class Frame;
 class FrameView;
@@ -533,14 +532,11 @@ private:
     RefPtr<ViewportStyleResolver> m_viewportStyleResolver;
 #endif
 
-    const DeprecatedStyleBuilder& m_deprecatedStyleBuilder;
-
     CSSToStyleMap m_styleMap;
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 
     State m_state;
 
-    friend class DeprecatedStyleBuilder;
     friend bool operator==(const MatchedProperties&, const MatchedProperties&);
     friend bool operator!=(const MatchedProperties&, const MatchedProperties&);
     friend bool operator==(const MatchRanges&, const MatchRanges&);

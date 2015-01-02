@@ -172,7 +172,7 @@ public:
     static Length initialFillXPosition(EFillLayerType) { return Length(0.0f, Percent); }
     static Length initialFillYPosition(EFillLayerType) { return Length(0.0f, Percent); }
     static StyleImage* initialFillImage(EFillLayerType) { return 0; }
-    static EMaskSourceType initialMaskSourceType(EFillLayerType) { return MaskAlpha; }
+    static EMaskSourceType initialFillMaskSourceType(EFillLayerType) { return MaskAlpha; }
 
 private:
     friend class RenderStyle;

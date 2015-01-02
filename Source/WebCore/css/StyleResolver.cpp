@@ -65,7 +65,6 @@
 #include "Counter.h"
 #include "CounterContent.h"
 #include "CursorList.h"
-#include "DeprecatedStyleBuilder.h"
 #include "DocumentStyleSheetCollection.h"
 #include "ElementRuleCollector.h"
 #include "FilterOperation.h"
@@ -260,7 +259,6 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     , m_viewportStyleResolver(ViewportStyleResolver::create(&document))
 #endif
-    , m_deprecatedStyleBuilder(DeprecatedStyleBuilder::sharedStyleBuilder())
     , m_styleMap(this)
 {
     Element* root = m_document.documentElement();
@@ -1182,7 +1180,7 @@ void StyleResolver::adjustStyleForMaskImages()
         // Try to match the new mask objects through the list from the old style.
         // This should work perfectly and optimal when the list of masks remained
         // the same and also work correctly (but slower) when they were reordered.
-        FillLayer* newMaskLayer = newStyle->accessMaskLayers();
+        FillLayer* newMaskLayer = &newStyle->ensureMaskLayers();
         int countOldStyleMaskImages = oldStyleMaskImages.size();
         while (newMaskLayer && countOldStyleMaskImages) {
             RefPtr<MaskImageOperation> newMaskImage = newMaskLayer->maskImage();
@@ -2181,19 +2179,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     if (isInherit && !state.parentStyle()->hasExplicitlyInheritedProperties() && !CSSProperty::isInheritedProperty(id))
         state.parentStyle()->setHasExplicitlyInheritedProperties();
 
-    // Check lookup table for implementations and use when available.
-    const PropertyHandler& handler = m_deprecatedStyleBuilder.propertyHandler(id);
-    if (handler.isValid()) {
-        if (isInherit)
-            handler.applyInheritValue(id, this);
-        else if (isInitial)
-            handler.applyInitialValue(id, this);
-        else
-            handler.applyValue(id, this, value);
-        return;
-    }
-
-    // Use the new StyleBuilder.
+    // Use the StyleBuilder.
     if (StyleBuilder::applyProperty(id, *this, *value, isInitial, isInherit))
         return;
 
@@ -2814,7 +2800,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
 #endif
     
-    // These properties are aliased and DeprecatedStyleBuilder already applied the property on the prefixed version.
+    // These properties are aliased and StyleBuilder already applied the property on the prefixed version.
     case CSSPropertyAnimationDelay:
     case CSSPropertyAnimationDirection:
     case CSSPropertyAnimationDuration:
@@ -2828,7 +2814,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyTransitionProperty:
     case CSSPropertyTransitionTimingFunction:
         return;
-    // These properties are implemented in the DeprecatedStyleBuilder lookup table or in the new StyleBuilder.
+    // These properties are implemented in the StyleBuilder lookup table or in the new StyleBuilder.
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundClip:
     case CSSPropertyBackgroundColor:
@@ -3660,7 +3646,7 @@ void StyleResolver::loadPendingImages()
 
         switch (currentProperty) {
         case CSSPropertyBackgroundImage: {
-            for (FillLayer* backgroundLayer = m_state.style()->accessBackgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next()) {
+            for (FillLayer* backgroundLayer = &m_state.style()->ensureBackgroundLayers(); backgroundLayer; backgroundLayer = backgroundLayer->next()) {
                 auto* styleImage = backgroundLayer->image();
                 if (is<StylePendingImage>(styleImage))
                     backgroundLayer->setImage(loadPendingImage(downcast<StylePendingImage>(*styleImage)));
@@ -3720,7 +3706,7 @@ void StyleResolver::loadPendingImages()
             break;
         }
         case CSSPropertyWebkitMaskImage: {
-            for (FillLayer* maskLayer = m_state.style()->accessMaskLayers(); maskLayer; maskLayer = maskLayer->next()) {
+            for (FillLayer* maskLayer = &m_state.style()->ensureMaskLayers(); maskLayer; maskLayer = maskLayer->next()) {
                 RefPtr<MaskImageOperation> maskImage = maskLayer->maskImage();
                 auto* styleImage = maskImage.get() ? maskImage->image() : nullptr;
                 if (is<StylePendingImage>(styleImage))

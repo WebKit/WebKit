@@ -75,7 +75,6 @@
 #include "CSSValueList.cpp"
 #include "CSSValuePool.cpp"
 #include "DOMWindowCSS.cpp"
-#include "DeprecatedStyleBuilder.cpp"
 #include "DocumentRuleSets.cpp"
 #include "ElementRuleCollector.cpp"
 #include "InspectorCSSOMWrappers.cpp"
