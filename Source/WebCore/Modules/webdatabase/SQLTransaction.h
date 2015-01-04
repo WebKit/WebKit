@@ -36,6 +36,7 @@
 #include "SQLStatement.h"
 #include "SQLTransactionStateMachine.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -52,21 +53,16 @@ class VoidCallback;
 
 class SQLTransaction : public SQLTransactionStateMachine<SQLTransaction>, public AbstractSQLTransaction {
 public:
-    static PassRefPtr<SQLTransaction> create(Database*, PassRefPtr<SQLTransactionCallback>,
-        PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionErrorCallback>,
-        bool readOnly);
+    static Ref<SQLTransaction> create(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, bool readOnly);
 
     void performPendingCallback();
 
-    void executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments,
-        PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, ExceptionCode&);
+    void executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, RefPtr<SQLStatementCallback>&&, RefPtr<SQLStatementErrorCallback>&&, ExceptionCode&);
 
-    Database* database() { return m_database.get(); }
+    Database& database() { return m_database; }
 
 private:
-    SQLTransaction(Database*, PassRefPtr<SQLTransactionCallback>,
-        PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionErrorCallback>,
-        bool readOnly);
+    SQLTransaction(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, bool readOnly);
 
     void clearCallbackWrappers();
 
@@ -93,7 +89,7 @@ private:
 
     SQLTransactionState nextStateForTransactionError();
 
-    RefPtr<Database> m_database;
+    Ref<Database> m_database;
     RefPtr<AbstractSQLTransactionBackend> m_backend;
     SQLCallbackWrapper<SQLTransactionCallback> m_callbackWrapper;
     SQLCallbackWrapper<VoidCallback> m_successCallbackWrapper;

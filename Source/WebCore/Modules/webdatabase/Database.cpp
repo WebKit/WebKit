@@ -162,17 +162,17 @@ void Database::readTransaction(PassRefPtr<SQLTransactionCallback> callback, Pass
     runTransaction(callback, errorCallback, successCallback, true);
 }
 
-void Database::runTransaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
-    PassRefPtr<VoidCallback> successCallback, bool readOnly, const ChangeVersionData* changeVersionData)
+void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<VoidCallback>&& successCallback, bool readOnly, const ChangeVersionData* changeVersionData)
 {
-    RefPtr<SQLTransactionErrorCallback> errorCallbackProtector(errorCallback);
-    RefPtr<SQLTransaction> transaction = SQLTransaction::create(this, callback, successCallback, errorCallbackProtector, readOnly);
+    RefPtr<SQLTransaction> transaction = SQLTransaction::create(*this, WTF::move(callback), WTF::move(successCallback), errorCallback.copyRef(), readOnly);
 
-    RefPtr<SQLTransactionBackend> transactionBackend(backend()->runTransaction(transaction.release(), readOnly, changeVersionData));
-    if (!transactionBackend && errorCallbackProtector)
-        scriptExecutionContext()->postTask([errorCallbackProtector] (ScriptExecutionContext&) {
+    RefPtr<SQLTransactionBackend> transactionBackend = backend()->runTransaction(transaction.release(), readOnly, changeVersionData);
+    if (!transactionBackend && errorCallback) {
+        WTF::RefPtr<SQLTransactionErrorCallback> errorCallbackProtector = WTF::move(errorCallback);
+        scriptExecutionContext()->postTask([errorCallbackProtector](ScriptExecutionContext&) {
             errorCallbackProtector->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed").get());
         });
+    }
 }
 
 void Database::scheduleTransactionCallback(SQLTransaction* transaction)

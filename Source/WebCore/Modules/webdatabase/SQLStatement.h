@@ -49,7 +49,7 @@ class SQLTransaction;
 
 class SQLStatement : public AbstractSQLStatement {
 public:
-    SQLStatement(Database*, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>);
+    SQLStatement(Database&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>);
 
     bool performCallback(SQLTransaction*);
 

@@ -45,10 +45,9 @@
 
 namespace WebCore {
 
-SQLStatement::SQLStatement(Database* database, PassRefPtr<SQLStatementCallback> callback,
-    PassRefPtr<SQLStatementErrorCallback> errorCallback)
-    : m_statementCallbackWrapper(callback, database->scriptExecutionContext())
-    , m_statementErrorCallbackWrapper(errorCallback, database->scriptExecutionContext())
+SQLStatement::SQLStatement(Database& database, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> errorCallback)
+    : m_statementCallbackWrapper(callback, database.scriptExecutionContext())
+    , m_statementErrorCallbackWrapper(errorCallback, database.scriptExecutionContext())
 {
 }
 
