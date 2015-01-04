@@ -524,12 +524,6 @@ void DatabaseBackendBase::enableAuthorizer()
     m_databaseAuthorizer->enable();
 }
 
-void DatabaseBackendBase::setAuthorizerReadOnly()
-{
-    ASSERT(m_databaseAuthorizer);
-    m_databaseAuthorizer->setReadOnly();
-}
-
 void DatabaseBackendBase::setAuthorizerPermissions(int permissions)
 {
     ASSERT(m_databaseAuthorizer);

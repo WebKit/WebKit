@@ -1,5 +1,19 @@
 2015-01-04  Anders Carlsson  <andersca@apple.com>
 
+        Remove an unused function
+        https://bugs.webkit.org/show_bug.cgi?id=140055
+
+        Reviewed by Sam Weinig.
+
+        * Modules/webdatabase/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::setReadOnly): Deleted.
+        * Modules/webdatabase/DatabaseAuthorizer.h:
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::DatabaseBackendBase::setAuthorizerReadOnly): Deleted.
+        * Modules/webdatabase/DatabaseBackendBase.h:
+
+2015-01-04  Anders Carlsson  <andersca@apple.com>
+
         Modernize parts of the database code
         https://bugs.webkit.org/show_bug.cgi?id=140054
 
