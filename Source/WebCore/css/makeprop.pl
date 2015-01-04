@@ -45,6 +45,7 @@ my %propertiesWithStyleBuilderOptions;
 my %styleBuilderOptions = (
   AnimationProperty => 1, # Defined in Source/WebCore/css/StyleBuilderConverter.h
   AutoFunctions => 1,
+  ConditionalConverter => 1,
   Converter => 1,
   Custom => 1,
   FillLayerProperty => 1,
@@ -772,6 +773,9 @@ sub generateValueSetter {
   my $convertedValue;
   if (exists($propertiesWithStyleBuilderOptions{$name}{"Converter"})) {
     $convertedValue = "StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"Converter"} . "(styleResolver, value)";
+  } elsif (exists($propertiesWithStyleBuilderOptions{$name}{"ConditionalConverter"})) {
+    $setterContent .= $indent . "    " . $propertiesWithStyleBuilderOptions{$name}{"TypeName"} . " convertedValue;\n";
+    $convertedValue = "convertedValue";
   } else {
     $convertedValue = "static_cast<" . $propertiesWithStyleBuilderOptions{$name}{"TypeName"} . ">(downcast<CSSPrimitiveValue>(value))";
   }
@@ -806,6 +810,10 @@ sub generateValueSetter {
   }
   if (!$didCallSetValue) {
     my $setValue = $style . "->" . $setter;
+    if (exists($propertiesWithStyleBuilderOptions{$name}{"ConditionalConverter"})) {
+      $setterContent .= $indent . "    if (StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"ConditionalConverter"} . "(styleResolver, value, " . $convertedValue . "))\n";
+      $setterContent .= "    ";
+    }
     $setterContent .= $indent . "    " . $setValue . "(" . $convertedValue . ");\n";
   }
   $setterContent .= $indent . "}\n";

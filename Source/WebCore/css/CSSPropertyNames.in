@@ -44,6 +44,10 @@
 // can indicate that a Converter helper function in
 // css/StyleBuilderConverter.h should be used.
 //
+// * ConditionalConverter=XXX:
+// Similar to Converter=XXX but the converter function returns a boolean
+// to indicate if the property setter should be called or not.
+//
 // * Custom=[Initial|Value|Inherit|All]:
 // Custom=Initial option is used to indicate that the CSS property requires
 // special handling to set its initial value.
@@ -425,19 +429,19 @@ justify-content
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid [LegacyStyleBuilder]
 -webkit-grid-area [LegacyStyleBuilder]
--webkit-grid-auto-columns [LegacyStyleBuilder]
--webkit-grid-auto-rows [LegacyStyleBuilder]
--webkit-grid-column-end [LegacyStyleBuilder]
--webkit-grid-column-start [LegacyStyleBuilder]
+-webkit-grid-auto-columns [ConditionalConverter=GridTrackSize, TypeName=GridTrackSize]
+-webkit-grid-auto-rows [ConditionalConverter=GridTrackSize, TypeName=GridTrackSize]
+-webkit-grid-column-end [ConditionalConverter=GridPosition, TypeName=GridPosition, NameForMethods=GridItemColumnEnd]
+-webkit-grid-column-start [ConditionalConverter=GridPosition, TypeName=GridPosition, NameForMethods=GridItemColumnStart]
 -webkit-grid-template [LegacyStyleBuilder]
--webkit-grid-template-columns [LegacyStyleBuilder]
--webkit-grid-template-rows [LegacyStyleBuilder]
--webkit-grid-row-end [LegacyStyleBuilder]
--webkit-grid-row-start [LegacyStyleBuilder]
+-webkit-grid-template-columns [Custom=All]
+-webkit-grid-template-rows [Custom=All]
+-webkit-grid-row-end [ConditionalConverter=GridPosition, TypeName=GridPosition, NameForMethods=GridItemRowEnd]
+-webkit-grid-row-start [ConditionalConverter=GridPosition, TypeName=GridPosition, NameForMethods=GridItemRowStart]
 -webkit-grid-column [LegacyStyleBuilder]
 -webkit-grid-row [LegacyStyleBuilder]
--webkit-grid-template-areas [LegacyStyleBuilder]
--webkit-grid-auto-flow [LegacyStyleBuilder]
+-webkit-grid-template-areas [Custom=All]
+-webkit-grid-auto-flow [Converter=GridAutoFlow]
 #endif
 -webkit-hyphenate-character [Inherited, NameForMethods=HyphenationString, Converter=StringOrAuto]
 -webkit-hyphenate-limit-after [Inherited, NameForMethods=HyphenationLimitAfter, Converter=Number<short>]

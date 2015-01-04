@@ -29,6 +29,9 @@
 
 #include "BasicShapeFunctions.h"
 #include "CSSCalculationValue.h"
+#include "CSSFunctionValue.h"
+#include "CSSGridLineNamesValue.h"
+#include "CSSGridTemplateAreasValue.h"
 #include "CSSImageGeneratorValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
@@ -78,11 +81,25 @@ public:
     static LineBoxContain convertLineBoxContain(StyleResolver&, CSSValue&);
     static TextDecorationSkip convertTextDecorationSkip(StyleResolver&, CSSValue&);
     static PassRefPtr<ShapeValue> convertShapeValue(StyleResolver&, CSSValue&);
+#if ENABLE(CSS_GRID_LAYOUT)
+    static bool convertGridTrackSize(StyleResolver&, CSSValue&, GridTrackSize&);
+    static bool convertGridPosition(StyleResolver&, CSSValue&, GridPosition&);
+    static GridAutoFlow convertGridAutoFlow(StyleResolver&, CSSValue&);
+#endif // ENABLE(CSS_GRID_LAYOUT)
 
 private:
+    friend class StyleBuilderCustom;
+
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
     static TextEmphasisPosition valueToEmphasisPosition(CSSPrimitiveValue&);
     static TextDecorationSkip valueToDecorationSkip(const CSSPrimitiveValue&);
+#if ENABLE(CSS_GRID_LAYOUT)
+    static bool createGridTrackBreadth(CSSPrimitiveValue&, StyleResolver&, GridLength&);
+    static bool createGridTrackSize(CSSValue&, GridTrackSize&, StyleResolver&);
+    static bool createGridTrackList(CSSValue&, Vector<GridTrackSize>& trackSizes, NamedGridLinesMap&, OrderedNamedGridLinesMap&, StyleResolver&);
+    static bool createGridPosition(CSSValue&, GridPosition&);
+    static void createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap&, NamedGridLinesMap&, GridTrackSizingDirection);
+#endif // ENABLE(CSS_GRID_LAYOUT)
 };
 
 inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver, CSSValue& value)
@@ -637,6 +654,203 @@ inline PassRefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleReso
     return nullptr;
 }
 #endif // ENABLE(CSS_SHAPES)
+
+#if ENABLE(CSS_GRID_LAYOUT)
+bool StyleBuilderConverter::createGridTrackBreadth(CSSPrimitiveValue& primitiveValue, StyleResolver& styleResolver, GridLength& workingLength)
+{
+    if (primitiveValue.getValueID() == CSSValueWebkitMinContent) {
+        workingLength = Length(MinContent);
+        return true;
+    }
+
+    if (primitiveValue.getValueID() == CSSValueWebkitMaxContent) {
+        workingLength = Length(MaxContent);
+        return true;
+    }
+
+    if (primitiveValue.isFlex()) {
+        // Fractional unit.
+        workingLength.setFlex(primitiveValue.getDoubleValue());
+        return true;
+    }
+
+    workingLength = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(styleResolver.state().cssToLengthConversionData());
+    if (workingLength.length().isUndefined())
+        return false;
+
+    if (primitiveValue.isLength())
+        workingLength.length().setHasQuirk(primitiveValue.isQuirkValue());
+
+    return true;
+}
+
+bool StyleBuilderConverter::createGridTrackSize(CSSValue& value, GridTrackSize& trackSize, StyleResolver& styleResolver)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        GridLength workingLength;
+        if (!createGridTrackBreadth(downcast<CSSPrimitiveValue>(value), styleResolver, workingLength))
+            return false;
+
+        trackSize.setLength(workingLength);
+        return true;
+    }
+
+    CSSValueList& arguments = *downcast<CSSFunctionValue>(value).arguments();
+    ASSERT_WITH_SECURITY_IMPLICATION(arguments.length() == 2);
+
+    GridLength minTrackBreadth;
+    GridLength maxTrackBreadth;
+    if (!createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(0)), styleResolver, minTrackBreadth) || !createGridTrackBreadth(downcast<CSSPrimitiveValue>(*arguments.itemWithoutBoundsCheck(1)), styleResolver, maxTrackBreadth))
+        return false;
+
+    trackSize.setMinMax(minTrackBreadth, maxTrackBreadth);
+    return true;
+}
+
+bool StyleBuilderConverter::createGridTrackList(CSSValue& value, Vector<GridTrackSize>& trackSizes, NamedGridLinesMap& namedGridLines, OrderedNamedGridLinesMap& orderedNamedGridLines, StyleResolver& styleResolver)
+{
+    // Handle 'none'.
+    if (is<CSSPrimitiveValue>(value))
+        return downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone;
+
+    if (!is<CSSValueList>(value))
+        return false;
+
+    unsigned currentNamedGridLine = 0;
+    for (auto& currentValue : downcast<CSSValueList>(value)) {
+        if (is<CSSGridLineNamesValue>(currentValue.get())) {
+            for (auto& currentGridLineName : downcast<CSSGridLineNamesValue>(currentValue.get())) {
+                String namedGridLine = downcast<CSSPrimitiveValue>(currentGridLineName.get()).getStringValue();
+                NamedGridLinesMap::AddResult result = namedGridLines.add(namedGridLine, Vector<unsigned>());
+                result.iterator->value.append(currentNamedGridLine);
+                OrderedNamedGridLinesMap::AddResult orderedResult = orderedNamedGridLines.add(currentNamedGridLine, Vector<String>());
+                orderedResult.iterator->value.append(namedGridLine);
+            }
+            continue;
+        }
+
+        ++currentNamedGridLine;
+        GridTrackSize trackSize;
+        if (!createGridTrackSize(currentValue, trackSize, styleResolver))
+            return false;
+
+        trackSizes.append(trackSize);
+    }
+
+    // The parser should have rejected any <track-list> without any <track-size> as
+    // this is not conformant to the syntax.
+    ASSERT(!trackSizes.isEmpty());
+    return true;
+}
+
+bool StyleBuilderConverter::createGridPosition(CSSValue& value, GridPosition& position)
+{
+    // We accept the specification's grammar:
+    // auto | <custom-ident> | [ <integer> && <custom-ident>? ] | [ span && [ <integer> || <custom-ident> ] ]
+    if (is<CSSPrimitiveValue>(value)) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+        // We translate <ident> to <string> during parsing as it makes handling it simpler.
+        if (primitiveValue.isString()) {
+            position.setNamedGridArea(primitiveValue.getStringValue());
+            return true;
+        }
+
+        ASSERT(primitiveValue.getValueID() == CSSValueAuto);
+        return true;
+    }
+
+    auto& values = downcast<CSSValueList>(value);
+    ASSERT(values.length());
+
+    auto it = values.begin();
+    CSSPrimitiveValue* currentValue = &downcast<CSSPrimitiveValue>(it->get());
+    bool isSpanPosition = false;
+    if (currentValue->getValueID() == CSSValueSpan) {
+        isSpanPosition = true;
+        ++it;
+        currentValue = it != values.end() ? &downcast<CSSPrimitiveValue>(it->get()) : nullptr;
+    }
+
+    int gridLineNumber = 0;
+    if (currentValue && currentValue->isNumber()) {
+        gridLineNumber = currentValue->getIntValue();
+        ++it;
+        currentValue = it != values.end() ? &downcast<CSSPrimitiveValue>(it->get()) : nullptr;
+    }
+
+    String gridLineName;
+    if (currentValue && currentValue->isString()) {
+        gridLineName = currentValue->getStringValue();
+        ++it;
+    }
+
+    ASSERT(it == values.end());
+    if (isSpanPosition)
+        position.setSpanPosition(gridLineNumber ? gridLineNumber : 1, gridLineName);
+    else
+        position.setExplicitPosition(gridLineNumber, gridLineName);
+
+    return true;
+}
+
+void StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap& namedGridAreas, NamedGridLinesMap& namedGridLines, GridTrackSizingDirection direction)
+{
+    for (auto& area : namedGridAreas) {
+        GridSpan areaSpan = direction == ForRows ? area.value.rows : area.value.columns;
+        {
+            auto& startVector = namedGridLines.add(area.key + "-start", Vector<unsigned>()).iterator->value;
+            startVector.append(areaSpan.resolvedInitialPosition.toInt());
+            std::sort(startVector.begin(), startVector.end());
+        }
+        {
+            auto& endVector = namedGridLines.add(area.key + "-end", Vector<unsigned>()).iterator->value;
+            endVector.append(areaSpan.resolvedFinalPosition.next().toInt());
+            std::sort(endVector.begin(), endVector.end());
+        }
+    }
+}
+
+inline bool StyleBuilderConverter::convertGridTrackSize(StyleResolver& styleResolver, CSSValue& value, GridTrackSize& trackSize)
+{
+    return createGridTrackSize(value, trackSize, styleResolver);
+}
+
+inline bool StyleBuilderConverter::convertGridPosition(StyleResolver&, CSSValue& value, GridPosition& gridPosition)
+{
+    return createGridPosition(value, gridPosition);
+}
+
+inline GridAutoFlow StyleBuilderConverter::convertGridAutoFlow(StyleResolver&, CSSValue& value)
+{
+    auto& list = downcast<CSSValueList>(value);
+    if (!list.length())
+        return RenderStyle::initialGridAutoFlow();
+
+    CSSPrimitiveValue& first = downcast<CSSPrimitiveValue>(*list.item(0));
+    CSSPrimitiveValue* second = downcast<CSSPrimitiveValue>(list.item(1));
+
+    GridAutoFlow autoFlow = RenderStyle::initialGridAutoFlow();
+    switch (first.getValueID()) {
+    case CSSValueRow:
+        if (second && second->getValueID() == CSSValueDense)
+            autoFlow =  AutoFlowRowDense;
+        else
+            autoFlow = AutoFlowRow;
+        break;
+    case CSSValueColumn:
+        if (second && second->getValueID() == CSSValueDense)
+            autoFlow = AutoFlowColumnDense;
+        else
+            autoFlow = AutoFlowColumn;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return autoFlow;
+}
+#endif // ENABLE(CSS_GRID_LAYOUT)
 
 } // namespace WebCore
 

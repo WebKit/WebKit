@@ -78,6 +78,11 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitAspectRatio);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitBoxShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitFontVariantLigatures);
+#if ENABLE(CSS_GRID_LAYOUT)
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitGridTemplateAreas);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitGridTemplateColumns);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitGridTemplateRows);
+#endif // ENABLE(CSS_GRID_LAYOUT)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageOutset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageRepeat);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitMaskBoxImageSlice);
@@ -1401,6 +1406,104 @@ inline void StyleBuilderCustom::applyValueFontSize(StyleResolver& styleResolver,
     styleResolver.setFontSize(fontDescription, std::min(maximumAllowedFontSize, size));
     styleResolver.setFontDescription(fontDescription);
 }
+
+#if ENABLE(CSS_GRID_LAYOUT)
+inline void StyleBuilderCustom::applyInitialWebkitGridTemplateAreas(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setNamedGridArea(RenderStyle::initialNamedGridArea());
+    styleResolver.style()->setNamedGridAreaRowCount(RenderStyle::initialNamedGridAreaCount());
+    styleResolver.style()->setNamedGridAreaColumnCount(RenderStyle::initialNamedGridAreaCount());
+}
+
+inline void StyleBuilderCustom::applyInheritWebkitGridTemplateAreas(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setNamedGridArea(styleResolver.parentStyle()->namedGridArea());
+    styleResolver.style()->setNamedGridAreaRowCount(styleResolver.parentStyle()->namedGridAreaRowCount());
+    styleResolver.style()->setNamedGridAreaColumnCount(styleResolver.parentStyle()->namedGridAreaColumnCount());
+}
+
+inline void StyleBuilderCustom::applyValueWebkitGridTemplateAreas(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        return;
+    }
+
+    auto& gridTemplateAreasValue = downcast<CSSGridTemplateAreasValue>(value);
+    const NamedGridAreaMap& newNamedGridAreas = gridTemplateAreasValue.gridAreaMap();
+
+    NamedGridLinesMap namedGridColumnLines = styleResolver.style()->namedGridColumnLines();
+    NamedGridLinesMap namedGridRowLines = styleResolver.style()->namedGridRowLines();
+    StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(newNamedGridAreas, namedGridColumnLines, ForColumns);
+    StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(newNamedGridAreas, namedGridRowLines, ForRows);
+    styleResolver.style()->setNamedGridColumnLines(namedGridColumnLines);
+    styleResolver.style()->setNamedGridRowLines(namedGridRowLines);
+
+    styleResolver.style()->setNamedGridArea(gridTemplateAreasValue.gridAreaMap());
+    styleResolver.style()->setNamedGridAreaRowCount(gridTemplateAreasValue.rowCount());
+    styleResolver.style()->setNamedGridAreaColumnCount(gridTemplateAreasValue.columnCount());
+}
+
+inline void StyleBuilderCustom::applyInitialWebkitGridTemplateColumns(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setGridColumns(RenderStyle::initialGridColumns());
+    styleResolver.style()->setNamedGridColumnLines(RenderStyle::initialNamedGridColumnLines());
+    styleResolver.style()->setOrderedNamedGridColumnLines(RenderStyle::initialOrderedNamedGridColumnLines());
+}
+
+inline void StyleBuilderCustom::applyInheritWebkitGridTemplateColumns(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setGridColumns(styleResolver.parentStyle()->gridColumns());
+    styleResolver.style()->setNamedGridColumnLines(styleResolver.parentStyle()->namedGridColumnLines());
+    styleResolver.style()->setOrderedNamedGridColumnLines(styleResolver.parentStyle()->orderedNamedGridColumnLines());
+}
+
+inline void StyleBuilderCustom::applyValueWebkitGridTemplateColumns(StyleResolver& styleResolver, CSSValue& value)
+{
+    Vector<GridTrackSize> trackSizes;
+    NamedGridLinesMap namedGridLines;
+    OrderedNamedGridLinesMap orderedNamedGridLines;
+    if (!StyleBuilderConverter::createGridTrackList(value, trackSizes, namedGridLines, orderedNamedGridLines, styleResolver))
+        return;
+    const NamedGridAreaMap& namedGridAreas = styleResolver.style()->namedGridArea();
+    if (!namedGridAreas.isEmpty())
+        StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(namedGridAreas, namedGridLines, ForColumns);
+
+    styleResolver.style()->setGridColumns(trackSizes);
+    styleResolver.style()->setNamedGridColumnLines(namedGridLines);
+    styleResolver.style()->setOrderedNamedGridColumnLines(orderedNamedGridLines);
+}
+
+inline void StyleBuilderCustom::applyInitialWebkitGridTemplateRows(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setGridRows(RenderStyle::initialGridRows());
+    styleResolver.style()->setNamedGridRowLines(RenderStyle::initialNamedGridRowLines());
+    styleResolver.style()->setOrderedNamedGridRowLines(RenderStyle::initialOrderedNamedGridRowLines());
+}
+
+inline void StyleBuilderCustom::applyInheritWebkitGridTemplateRows(StyleResolver& styleResolver)
+{
+    styleResolver.style()->setGridRows(styleResolver.parentStyle()->gridRows());
+    styleResolver.style()->setNamedGridRowLines(styleResolver.parentStyle()->namedGridRowLines());
+    styleResolver.style()->setOrderedNamedGridRowLines(styleResolver.parentStyle()->orderedNamedGridRowLines());
+}
+
+inline void StyleBuilderCustom::applyValueWebkitGridTemplateRows(StyleResolver& styleResolver, CSSValue& value)
+{
+    Vector<GridTrackSize> trackSizes;
+    NamedGridLinesMap namedGridLines;
+    OrderedNamedGridLinesMap orderedNamedGridLines;
+    if (!StyleBuilderConverter::createGridTrackList(value, trackSizes, namedGridLines, orderedNamedGridLines, styleResolver))
+        return;
+    const NamedGridAreaMap& namedGridAreas = styleResolver.style()->namedGridArea();
+    if (!namedGridAreas.isEmpty())
+        StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(namedGridAreas, namedGridLines, ForRows);
+
+    styleResolver.style()->setGridRows(trackSizes);
+    styleResolver.style()->setNamedGridRowLines(namedGridLines);
+    styleResolver.style()->setOrderedNamedGridRowLines(orderedNamedGridLines);
+}
+#endif // ENABLE(CSS_GRID_LAYOUT)
 
 } // namespace WebCore
 

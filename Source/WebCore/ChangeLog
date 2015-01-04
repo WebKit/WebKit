@@ -1,3 +1,19 @@
+2015-01-03  Chris Dumez  <cdumez@apple.com>
+
+        Move the CSS Grid properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140051
+
+        Reviewed by Sam Weinig.
+
+        Move the CSS Grid properties from StyleResolver to the new
+        StyleBuilder.
+
+        This patch adds support for "ConditionalConverter" parameter in
+        CSSPropertyNames.in to support cases where we only want to call the
+        property setter conditionally. The converter function is then expected
+        to return a boolean to indicate if the setter should be called by the
+        StyleBuilder or not.
+
 2015-01-02  Chris Dumez  <cdumez@apple.com>
 
         Kill the DeprecatedStyleBuilder
