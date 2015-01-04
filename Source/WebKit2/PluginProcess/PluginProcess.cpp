@@ -125,14 +125,14 @@ void PluginProcess::didReceiveMessage(IPC::Connection* connection, IPC::MessageD
     didReceivePluginProcessMessage(connection, decoder);
 }
 
-void PluginProcess::didClose(IPC::Connection*)
+void PluginProcess::didClose(IPC::Connection&)
 {
     // The UI process has crashed, just go ahead and quit.
     // FIXME: If the plug-in is spinning in the main loop, we'll never get this message.
     stopRunLoop();
 }
 
-void PluginProcess::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
+void PluginProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
 }
 

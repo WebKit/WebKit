@@ -70,13 +70,13 @@ void NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection*, IPC::Mess
     ASSERT_NOT_REACHED();
 }
 
-void NetworkProcessConnection::didClose(IPC::Connection*)
+void NetworkProcessConnection::didClose(IPC::Connection&)
 {
     // The NetworkProcess probably crashed.
     WebProcess::shared().networkProcessConnectionClosed(this);
 }
 
-void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
+void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
 }
 

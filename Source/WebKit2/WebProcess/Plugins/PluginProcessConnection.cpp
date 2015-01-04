@@ -126,7 +126,7 @@ void PluginProcessConnection::didReceiveSyncMessage(IPC::Connection* connection,
     pluginProxy->didReceiveSyncPluginProxyMessage(connection, decoder, replyEncoder);
 }
 
-void PluginProcessConnection::didClose(IPC::Connection*)
+void PluginProcessConnection::didClose(IPC::Connection&)
 {
     // The plug-in process must have crashed.
     for (HashMap<uint64_t, PluginProxy*>::const_iterator::Values it = m_plugins.begin().values(), end = m_plugins.end().values(); it != end; ++it) {
@@ -136,7 +136,7 @@ void PluginProcessConnection::didClose(IPC::Connection*)
     }
 }
 
-void PluginProcessConnection::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
+void PluginProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
 }
 

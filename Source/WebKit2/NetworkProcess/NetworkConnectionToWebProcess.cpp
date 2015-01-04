@@ -95,7 +95,7 @@ void NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection* conne
     ASSERT_NOT_REACHED();
 }
 
-void NetworkConnectionToWebProcess::didClose(IPC::Connection*)
+void NetworkConnectionToWebProcess::didClose(IPC::Connection&)
 {
     // Protect ourself as we might be otherwise be deleted during this function.
     Ref<NetworkConnectionToWebProcess> protector(*this);
@@ -110,7 +110,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection*)
     NetworkProcess::shared().removeNetworkConnectionToWebProcess(this);
 }
 
-void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
+void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
 }
 

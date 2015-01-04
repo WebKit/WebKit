@@ -1,3 +1,81 @@
+2015-01-04  Anders Carlsson  <andersca@apple.com>
+
+        Clean up some of the IPC code
+        https://bugs.webkit.org/show_bug.cgi?id=140057
+
+        Reviewed by Antti Koivisto.
+
+        Use std::mutex instead of WTF::Mutex. Change a couple of pointers to references in the connection client.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::didClose):
+        (WebKit::DatabaseProcess::didReceiveInvalidMessage):
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::didClose):
+        (WebKit::DatabaseToWebProcessConnection::didReceiveInvalidMessage):
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveInvalidMessage):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::didReceiveInvalidMessage):
+        * NetworkProcess/NetworkProcess.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::connectionDidClose):
+        (IPC::Connection::sendOutgoingMessages):
+        (IPC::Connection::dispatchDidReceiveInvalidMessage):
+        (IPC::Connection::enqueueIncomingMessage):
+        (IPC::Connection::dispatchMessage):
+        (IPC::Connection::dispatchOneMessage):
+        * Platform/IPC/Connection.h:
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::didClose):
+        (WebKit::PluginProcess::didReceiveInvalidMessage):
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didClose):
+        (WebKit::WebProcessConnection::didReceiveInvalidMessage):
+        * PluginProcess/WebProcessConnection.h:
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::didClose):
+        (WebKit::DatabaseProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didClose):
+        (WebKit::PluginProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        (WebKit::WebToDatabaseProcessConnection::didClose):
+        (WebKit::WebToDatabaseProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didClose):
+        (WebKit::NetworkProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didClose):
+        (WebKit::PluginProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didClose):
+        (WebKit::WebProcess::didReceiveInvalidMessage):
+        * WebProcess/WebProcess.h:
+
 2015-01-01  Sam Weinig  <sam@webkit.org>
 
         Remove GroupSettings

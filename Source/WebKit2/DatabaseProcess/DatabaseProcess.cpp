@@ -75,7 +75,7 @@ bool DatabaseProcess::shouldTerminate()
     return true;
 }
 
-void DatabaseProcess::didClose(IPC::Connection*)
+void DatabaseProcess::didClose(IPC::Connection&)
 {
     RunLoop::current().stop();
 }
@@ -91,7 +91,7 @@ void DatabaseProcess::didReceiveMessage(IPC::Connection* connection, IPC::Messag
     }
 }
 
-void DatabaseProcess::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
+void DatabaseProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
     RunLoop::current().stop();
 }

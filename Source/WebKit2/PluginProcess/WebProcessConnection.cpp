@@ -164,7 +164,7 @@ void WebProcessConnection::didReceiveSyncMessage(IPC::Connection* connection, IP
     pluginControllerProxy->didReceiveSyncPluginControllerProxyMessage(connection, decoder, replyEncoder);
 }
 
-void WebProcessConnection::didClose(IPC::Connection*)
+void WebProcessConnection::didClose(IPC::Connection&)
 {
     // The web process crashed. Destroy all the plug-in controllers. Destroying the last plug-in controller
     // will cause the web process connection itself to be destroyed.
@@ -200,7 +200,7 @@ void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID, bool asynchr
     destroyPluginControllerProxy(pluginControllerProxy);
 }
 
-void WebProcessConnection::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
+void WebProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
     // FIXME: Implement.
 }

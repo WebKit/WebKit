@@ -61,12 +61,12 @@ void WebToDatabaseProcessConnection::didReceiveMessage(IPC::Connection* connecti
     ASSERT_NOT_REACHED();
 }
 
-void WebToDatabaseProcessConnection::didClose(IPC::Connection* connection)
+void WebToDatabaseProcessConnection::didClose(IPC::Connection& connection)
 {
     WebProcess::shared().webToDatabaseProcessConnectionClosed(this);
 }
 
-void WebToDatabaseProcessConnection::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
+void WebToDatabaseProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
 }
 

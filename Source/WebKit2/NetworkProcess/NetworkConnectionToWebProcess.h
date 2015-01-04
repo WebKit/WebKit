@@ -63,8 +63,8 @@ private:
     // IPC::Connection::Client
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
     virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
-    virtual void didClose(IPC::Connection*);
-    virtual void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName);
+    virtual void didClose(IPC::Connection&);
+    virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName);
 
     // Message handlers.
     void didReceiveNetworkConnectionToWebProcessMessage(IPC::Connection*, IPC::MessageDecoder&);

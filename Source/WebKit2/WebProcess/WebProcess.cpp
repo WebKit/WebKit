@@ -619,7 +619,7 @@ void WebProcess::didReceiveMessage(IPC::Connection* connection, IPC::MessageDeco
     }
 }
 
-void WebProcess::didClose(IPC::Connection*)
+void WebProcess::didClose(IPC::Connection&)
 {
 #ifndef NDEBUG
     m_inDidClose = true;
@@ -640,7 +640,7 @@ void WebProcess::didClose(IPC::Connection*)
     stopRunLoop();
 }
 
-void WebProcess::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
+void WebProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
     // We received an invalid message, but since this is from the UI process (which we trust),
     // we'll let it slide.

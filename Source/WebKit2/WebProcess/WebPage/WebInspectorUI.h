@@ -48,8 +48,8 @@ public:
     void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
     // IPC::Connection::Client
-    void didClose(IPC::Connection*) override { closeWindow(); }
-    void didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference) override { closeWindow(); }
+    void didClose(IPC::Connection&) override { closeWindow(); }
+    void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference) override { closeWindow(); }
 
     // Called by WebInspectorUI messages
     void establishConnection(IPC::Attachment connectionIdentifier, uint64_t inspectedPageIdentifier, bool underTest);

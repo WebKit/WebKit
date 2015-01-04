@@ -440,7 +440,7 @@ void WebProcessProxy::didReceiveSyncMessage(IPC::Connection* connection, IPC::Me
     // FIXME: Add unhandled message logging.
 }
 
-void WebProcessProxy::didClose(IPC::Connection*)
+void WebProcessProxy::didClose(IPC::Connection&)
 {
     // Protect ourselves, as the call to disconnect() below may otherwise cause us
     // to be deleted before we can finish our work.
@@ -458,7 +458,7 @@ void WebProcessProxy::didClose(IPC::Connection*)
 
 }
 
-void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection* connection, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
+void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
     WTFLogAlways("Received an invalid message \"%s.%s\" from the web process.\n", messageReceiverName.toString().data(), messageName.toString().data());
 

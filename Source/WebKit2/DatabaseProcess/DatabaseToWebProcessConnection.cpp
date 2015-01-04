@@ -81,14 +81,14 @@ void DatabaseToWebProcessConnection::didReceiveSyncMessage(IPC::Connection* conn
     ASSERT_NOT_REACHED();
 }
 
-void DatabaseToWebProcessConnection::didClose(IPC::Connection*)
+void DatabaseToWebProcessConnection::didClose(IPC::Connection&)
 {
     // The WebProcess has disconnected, close all of the connections associated with it
     while (!m_idbConnections.isEmpty())
         removeDatabaseProcessIDBConnection(m_idbConnections.begin()->key);
 }
 
-void DatabaseToWebProcessConnection::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
+void DatabaseToWebProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
 
 }

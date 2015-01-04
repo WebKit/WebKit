@@ -76,7 +76,7 @@ enum WaitForMessageFlags {
     // Use this to make waitForMessage be interrupted immediately by any incoming sync messages.
     InterruptWaitingIfSyncMessageArrives = 1 << 0,
 };
-    
+
 #define MESSAGE_CHECK_BASE(assertion, connection) do \
     if (!(assertion)) { \
         ASSERT(assertion); \
@@ -89,8 +89,8 @@ class Connection : public ThreadSafeRefCounted<Connection> {
 public:
     class Client : public MessageReceiver {
     public:
-        virtual void didClose(Connection*) = 0;
-        virtual void didReceiveInvalidMessage(Connection*, StringReference messageReceiverName, StringReference messageName) = 0;
+        virtual void didClose(Connection&) = 0;
+        virtual void didReceiveInvalidMessage(Connection&, StringReference messageReceiverName, StringReference messageName) = 0;
 
     protected:
         virtual ~Client() { }
@@ -251,11 +251,11 @@ private:
     bool m_didReceiveInvalidMessage;
 
     // Incoming messages.
-    Mutex m_incomingMessagesLock;
+    std::mutex m_incomingMessagesMutex;
     Deque<std::unique_ptr<MessageDecoder>> m_incomingMessages;
 
     // Outgoing messages.
-    Mutex m_outgoingMessagesLock;
+    std::mutex m_outgoingMessagesMutex;
     Deque<std::unique_ptr<MessageEncoder>> m_outgoingMessages;
     
     std::condition_variable m_waitForMessageCondition;

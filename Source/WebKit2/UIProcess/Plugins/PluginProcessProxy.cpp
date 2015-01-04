@@ -156,7 +156,7 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
     m_pluginProcessManager->removePluginProcessProxy(this);
 }
 
-void PluginProcessProxy::didClose(IPC::Connection*)
+void PluginProcessProxy::didClose(IPC::Connection&)
 {
 #if PLATFORM(COCOA)
     if (m_modalWindowIsShowing)
@@ -174,7 +174,7 @@ void PluginProcessProxy::didClose(IPC::Connection*)
     pluginProcessCrashedOrFailedToLaunch();
 }
 
-void PluginProcessProxy::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
+void PluginProcessProxy::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
 }
 

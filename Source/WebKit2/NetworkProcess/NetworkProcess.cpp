@@ -124,13 +124,13 @@ void NetworkProcess::didReceiveSyncMessage(IPC::Connection* connection, IPC::Mes
     messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
 }
 
-void NetworkProcess::didClose(IPC::Connection*)
+void NetworkProcess::didClose(IPC::Connection&)
 {
     // The UIProcess just exited.
     RunLoop::current().stop();
 }
 
-void NetworkProcess::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
+void NetworkProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
     RunLoop::current().stop();
 }

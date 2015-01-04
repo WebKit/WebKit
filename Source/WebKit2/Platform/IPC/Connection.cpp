@@ -376,7 +376,7 @@ bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned m
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(true);
 
     {
-        MutexLocker locker(m_outgoingMessagesLock);
+        std::lock_guard<std::mutex> lock(m_outgoingMessagesMutex);
         m_outgoingMessages.append(WTF::move(encoder));
     }
     
@@ -396,7 +396,7 @@ std::unique_ptr<MessageDecoder> Connection::waitForMessage(StringReference messa
 
     // First, check if this message is already in the incoming messages queue.
     {
-        MutexLocker locker(m_incomingMessagesLock);
+        std::lock_guard<std::mutex> lock(m_incomingMessagesMutex);
 
         for (auto it = m_incomingMessages.begin(), end = m_incomingMessages.end(); it != end; ++it) {
             std::unique_ptr<MessageDecoder>& message = *it;
@@ -724,7 +724,7 @@ void Connection::connectionDidClose()
         Client* client = connection->m_client;
         connection->m_client = nullptr;
 
-        client->didClose(connection.get());
+        client->didClose(*connection);
     });
 }
 
@@ -742,7 +742,7 @@ void Connection::sendOutgoingMessages()
         std::unique_ptr<MessageEncoder> message;
 
         {
-            MutexLocker locker(m_outgoingMessagesLock);
+            std::lock_guard<std::mutex> lock(m_outgoingMessagesMutex);
             if (m_outgoingMessages.isEmpty())
                 break;
             message = m_outgoingMessages.takeFirst();
@@ -783,7 +783,7 @@ void Connection::dispatchDidReceiveInvalidMessage(const CString& messageReceiver
     if (!m_client)
         return;
 
-    m_client->didReceiveInvalidMessage(this, StringReference(messageReceiverNameString.data(), messageReceiverNameString.length()), StringReference(messageNameString.data(), messageNameString.length()));
+    m_client->didReceiveInvalidMessage(*this, StringReference(messageReceiverNameString.data(), messageReceiverNameString.length()), StringReference(messageNameString.data(), messageNameString.length()));
 }
 
 void Connection::didFailToSendSyncMessage()
@@ -797,7 +797,7 @@ void Connection::didFailToSendSyncMessage()
 void Connection::enqueueIncomingMessage(std::unique_ptr<MessageDecoder> incomingMessage)
 {
     {
-        MutexLocker locker(m_incomingMessagesLock);
+        std::lock_guard<std::mutex> lock(m_incomingMessagesMutex);
         m_incomingMessages.append(WTF::move(incomingMessage));
     }
 
@@ -836,7 +836,7 @@ void Connection::dispatchMessage(std::unique_ptr<MessageDecoder> message)
         m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount--;
 
     if (m_didReceiveInvalidMessage && m_client)
-        m_client->didReceiveInvalidMessage(this, message->messageReceiverName(), message->messageName());
+        m_client->didReceiveInvalidMessage(*this, message->messageReceiverName(), message->messageName());
 
     m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
 }
@@ -846,7 +846,7 @@ void Connection::dispatchOneMessage()
     std::unique_ptr<MessageDecoder> message;
 
     {
-        MutexLocker locker(m_incomingMessagesLock);
+        std::lock_guard<std::mutex> lock(m_incomingMessagesMutex);
         if (m_incomingMessages.isEmpty())
             return;
 

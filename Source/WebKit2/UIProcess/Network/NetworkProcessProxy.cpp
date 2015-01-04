@@ -165,7 +165,7 @@ void NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection* connection, IPC
     ASSERT_NOT_REACHED();
 }
 
-void NetworkProcessProxy::didClose(IPC::Connection*)
+void NetworkProcessProxy::didClose(IPC::Connection&)
 {
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
@@ -174,7 +174,7 @@ void NetworkProcessProxy::didClose(IPC::Connection*)
     networkProcessCrashedOrFailedToLaunch();
 }
 
-void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference, IPC::StringReference)
+void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
 {
 }
 

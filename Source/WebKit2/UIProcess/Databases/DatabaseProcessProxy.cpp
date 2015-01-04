@@ -94,7 +94,7 @@ void DatabaseProcessProxy::getDatabaseProcessConnection(PassRefPtr<Messages::Web
     connection()->send(Messages::DatabaseProcess::CreateDatabaseToWebProcessConnection(), 0, IPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-void DatabaseProcessProxy::didClose(IPC::Connection*)
+void DatabaseProcessProxy::didClose(IPC::Connection&)
 {
     // The database process must have crashed or exited, so send any pending sync replies we might have.
     while (!m_pendingConnectionReplies.isEmpty()) {
@@ -113,7 +113,7 @@ void DatabaseProcessProxy::didClose(IPC::Connection*)
     m_processPool->databaseProcessCrashed(this);
 }
 
-void DatabaseProcessProxy::didReceiveInvalidMessage(IPC::Connection*, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
+void DatabaseProcessProxy::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
 {
 }
 
