@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,26 +41,20 @@ class FontData : public RefCounted<FontData> {
     WTF_MAKE_NONCOPYABLE(FontData); WTF_MAKE_FAST_ALLOCATED;
 public:
     FontData()
-        : m_maxGlyphPageTreeLevel(0)
     {
     }
 
     virtual ~FontData();
 
-    virtual const SimpleFontData* fontDataForCharacter(UChar32) const = 0;
+    virtual const SimpleFontData* simpleFontDataForCharacter(UChar32) const = 0;
+    virtual const SimpleFontData& simpleFontDataForFirstRange() const = 0;
     virtual bool isCustomFont() const = 0;
     virtual bool isLoading() const = 0;
     virtual bool isSegmented() const = 0;
 
-    void setMaxGlyphPageTreeLevel(unsigned level) const { m_maxGlyphPageTreeLevel = level; }
-    unsigned maxGlyphPageTreeLevel() const { return m_maxGlyphPageTreeLevel; }
-
 #ifndef NDEBUG
     virtual String description() const = 0;
 #endif
-
-private:
-    mutable unsigned m_maxGlyphPageTreeLevel;
 };
 
 } // namespace WebCore

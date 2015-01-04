@@ -27,7 +27,6 @@
 #include "Document.h"
 #include "ElementIterator.h"
 #include "Font.h"
-#include "GlyphPageTreeNode.h"
 #include "SVGGlyphElement.h"
 #include "SVGHKernElement.h"
 #include "SVGMissingGlyphElement.h"

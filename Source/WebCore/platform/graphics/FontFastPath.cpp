@@ -27,7 +27,6 @@
 #include "FontCache.h"
 #include "FontGlyphs.h"
 #include "GlyphBuffer.h"
-#include "GlyphPageTreeNode.h"
 #include "LayoutRect.h"
 #include "SimpleFontData.h"
 #include "TextRun.h"
@@ -43,12 +42,7 @@ namespace WebCore {
 
 bool Font::primaryFontHasGlyphForCharacter(UChar32 character) const
 {
-    unsigned pageNumber = (character / GlyphPage::size);
-
-    GlyphPageTreeNode* node = GlyphPageTreeNode::getRootChild(primaryFont(), pageNumber);
-    GlyphPage* page = node->page();
-
-    return page && page->fontDataForCharacter(character);
+    return primaryFont()->glyphForCharacter(character);
 }
 
 // FIXME: This function may not work if the emphasis mark uses a complex script, but none of the

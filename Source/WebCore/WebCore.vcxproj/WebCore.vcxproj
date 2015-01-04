@@ -8055,7 +8055,6 @@
     <ClCompile Include="..\platform\graphics\FontPlatformData.cpp" />
     <ClCompile Include="..\platform\graphics\GeometryUtilities.cpp" />
     <ClCompile Include="..\platform\graphics\GeneratedImage.cpp" />
-    <ClCompile Include="..\platform\graphics\GlyphPageTreeNode.cpp" />
     <ClCompile Include="..\platform\graphics\Gradient.cpp" />
     <ClCompile Include="..\platform\graphics\GradientImage.cpp" />
     <ClCompile Include="..\platform\graphics\GraphicsContext.cpp" />
@@ -19610,7 +19609,6 @@
     <ClInclude Include="..\platform\graphics\GlyphBuffer.h" />
     <ClInclude Include="..\platform\graphics\GlyphMetricsMap.h" />
     <ClInclude Include="..\platform\graphics\GlyphPage.h" />
-    <ClInclude Include="..\platform\graphics\GlyphPageTreeNode.h" />
     <ClInclude Include="..\platform\graphics\Gradient.h" />
     <ClInclude Include="..\platform\graphics\GraphicsContext.h" />
     <ClInclude Include="..\platform\graphics\GraphicsLayer.h" />

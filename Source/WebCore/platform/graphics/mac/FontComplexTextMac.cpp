@@ -140,7 +140,9 @@ const SimpleFontData* Font::fontDataForCombiningCharacterSequence(const UChar* c
 
     unsigned i = 0;
     for (const FontData* fontData = fontDataAt(0); fontData; fontData = fontDataAt(++i)) {
-        const SimpleFontData* simpleFontData = fontData->fontDataForCharacter(baseCharacter);
+        const SimpleFontData* simpleFontData = fontData->simpleFontDataForCharacter(baseCharacter);
+        if (!simpleFontData)
+            continue;
 #if PLATFORM(IOS)
         if (baseCharacter >= 0x0600 && baseCharacter <= 0x06ff && simpleFontData->shouldNotBeUsedForArabic())
             continue;

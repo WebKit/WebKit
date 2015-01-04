@@ -36,7 +36,7 @@
 #import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/GCController.h>
-#import <WebCore/GlyphPageTreeNode.h>
+#import <WebCore/GlyphPage.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IconDatabase.h>
 #import <WebCore/JSDOMWindow.h>
@@ -162,7 +162,7 @@ using namespace WebCore;
 
 + (size_t)glyphPageCount
 {
-    return GlyphPageTreeNode::treeGlyphPageCount();
+    return GlyphPage::count();
 }
 
 + (BOOL)shouldPrintExceptions

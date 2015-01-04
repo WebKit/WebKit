@@ -1,3 +1,145 @@
+2015-01-02  Antti Koivisto  <antti@apple.com>
+
+        Remove GlyphPageTree
+        https://bugs.webkit.org/show_bug.cgi?id=140015
+
+        Reviewed by Darin Adler.
+
+        GlyphPageTree is a global cache consisting of a tree of nodes that match SimpleFontData instances.
+        The tree levels correspond to font fallback lists so that higher levels fill holes (missing glyphs)
+        in the lower levels. This patch replaces it with a simpler and easier to understand caching scheme.
+        In particular the goal is to have clearer ownership relations and better control over mutability.
+
+        The new scheme looks like this:
+
+        SimpleFontData instances cache GlyphPages for themselves. These pages are immutable after construction
+        and may contain holes. This is a global cache (since SimpleFontDatas are cached globally) with the same
+        lifetime as the GlyphPageTree used to have.
+
+        FontGlyphs instances cache resolved GlyphPages for the normal font variant. These are build by traversing
+        the fallback list as necessary and collecting glyphs from SimpleFontDatas. As a common case case optimization
+        the page from the primary font is cached directly as long as it has the requested glyphs.
+        FontGlyphs are shared between sufficiently similar Font instances so this is a shared cache as well.
+
+        * CMakeLists.txt:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionFontDataCacheKey::makeFlagKey):
+
+            nonCJKGlyphOrientation matters for glyph selection too and needs to be part of the FontDescription cache key.
+
+        * platform/graphics/FontData.h:
+        (WebCore::FontData::FontData):
+        (WebCore::FontData::setMaxGlyphPageTreeLevel): Deleted.
+        (WebCore::FontData::maxGlyphPageTreeLevel): Deleted.
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::primaryFontHasGlyphForCharacter):
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::FontGlyphs):
+        (WebCore::glyphDataForCJKCharacterWithoutSyntheticItalic):
+        (WebCore::glyphDataForNonCJKCharacterWithGlyphOrientation):
+        (WebCore::FontGlyphs::glyphDataForSystemFallback):
+        (WebCore::FontGlyphs::glyphDataForVariant):
+        (WebCore::FontGlyphs::glyphDataForNormalCharacter):
+
+            Traverse the fallback list by using simple index instead of indirectly via GlyphPageTreeNode traversal.
+
+        (WebCore::pageFromFontData):
+
+            Fetch a page from the primary font and see if we can use it as-is.
+            Vertical fonts have special glyph selection and can't use this path.
+
+        (WebCore::FontGlyphs::createFlattenedGlyphPage):
+
+            Build a hole-free glyph page by pulling characters from the fallback list.
+
+        (WebCore::FontGlyphs::glyphDataForCharacter):
+        * platform/graphics/FontGlyphs.h:
+        (WebCore::FontGlyphs::primarySimpleFontData):
+        * platform/graphics/GlyphPage.h:
+        (WebCore::GlyphPage::createForMixedFontData):
+        (WebCore::GlyphPage::createCopyForMixedFontData):
+
+            Add copy version.
+
+        (WebCore::GlyphPage::createForSingleFontData):
+
+            Remove owner node field.
+
+        (WebCore::GlyphPage::~GlyphPage):
+        (WebCore::GlyphPage::count):
+        (WebCore::GlyphPage::GlyphPage):
+        (WebCore::GlyphPage::createCopiedSystemFallbackPage): Deleted.
+        (WebCore::GlyphPage::owner): Deleted.
+        * platform/graphics/GlyphPageTreeNode.cpp: Removed.
+        * platform/graphics/GlyphPageTreeNode.h: Removed.
+        * platform/graphics/SegmentedFontData.cpp:
+        (WebCore::SegmentedFontData::SegmentedFontData):
+        (WebCore::SegmentedFontData::~SegmentedFontData):
+        (WebCore::SegmentedFontData::simpleFontDataForCharacter):
+
+            Return null when there is no usable range so the client can tell the difference.
+            Rename for clarity.
+
+        (WebCore::SegmentedFontData::simpleFontDataForFirstRange):
+
+            Add a way to get the fallback font separately. This is always available.
+
+        (WebCore::SegmentedFontData::isLoading):
+        (WebCore::SegmentedFontData::fontDataForCharacter): Deleted.
+        * platform/graphics/SegmentedFontData.h:
+        (WebCore::SegmentedFontData::SegmentedFontData): Deleted.
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::initCharWidths):
+        (WebCore::SimpleFontData::platformGlyphInit):
+        (WebCore::SimpleFontData::~SimpleFontData):
+        (WebCore::SimpleFontData::simpleFontDataForCharacter):
+        (WebCore::fillGlyphPage):
+        (WebCore::createAndFillGlyphPage):
+
+            Move code for initializing glyph pages here. The code is from GlyphPageTreeNode.
+
+        (WebCore::SimpleFontData::glyphPage):
+
+            Cache glyphs for this font. These pages may have holes.
+
+        (WebCore::SimpleFontData::glyphForCharacter):
+        (WebCore::SimpleFontData::glyphDataForCharacter):
+        (WebCore::SimpleFontData::DerivedFontData::~DerivedFontData):
+
+            Since the cache is now owned by the SimpleFontData all the custom pruning can go away.
+            The glyph page cache dies along with it owner.
+
+        (WebCore::SimpleFontData::fontDataForCharacter): Deleted.
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (-[WebCascadeList objectAtIndex:]):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::fontDataForCombiningCharacterSequence):
+        * platform/graphics/mac/GlyphPageMac.cpp: Copied from Source/WebCore/platform/graphics/mac/GlyphPageTreeNodeMac.cpp.
+
+            This was already misnamed.
+
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp: Removed.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/win/GlyphPageTreeNodeCGWin.cpp:
+        * platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp:
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/mac/DragImageMac.mm:
+
+            Add missing FontCachePurgePreventer.
+
+        (WebCore::createDragImageForLink):
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::initializeFontData):
+        * svg/SVGFontElement.cpp:
+
 2015-01-04  Anders Carlsson  <andersca@apple.com>
 
         Remove an unused function

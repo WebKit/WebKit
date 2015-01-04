@@ -272,6 +272,8 @@ static void drawDoubledAtPoint(NSString *string, NSPoint textPoint, NSColor *top
 
 DragImageRef createDragImageForLink(URL& url, const String& title, FontRenderingMode)
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
+
     NSString *label = nsStringNilIfEmpty(title);
     NSURL *cocoaURL = url;
     NSString *urlString = [cocoaURL absoluteString];

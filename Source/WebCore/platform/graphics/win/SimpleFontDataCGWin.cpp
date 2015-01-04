@@ -33,7 +33,7 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
-#include "GlyphPageTreeNode.h"
+#include "GlyphPage.h"
 #include "HWndDC.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -89,8 +89,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setLineGap(fLineGap);
     m_fontMetrics.setLineSpacing(lroundf(fAscent) + lroundf(fDescent) + lroundf(fLineGap));
 
-    GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
-    Glyph xGlyph = glyphPageZero ? glyphPageZero->glyphDataForCharacter('x').glyph : 0;
+    Glyph xGlyph = glyphDataForCharacter('x').glyph;
     if (xGlyph) {
         // Measure the actual character "x", since it's possible for it to extend below the baseline, and we need the
         // reported x-height to only include the portion of the glyph that is above the baseline.

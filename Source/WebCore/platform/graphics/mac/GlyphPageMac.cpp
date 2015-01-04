@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "GlyphPageTreeNode.h"
+#include "GlyphPage.h"
 
 #include "CoreGraphicsSPI.h"
 #include "CoreTextSPI.h"
@@ -80,8 +80,9 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                 haveGlyphs = true;
             }
         }
-    } else if (!fontData->platformData().isCompositeFontReference() && ((fontData->platformData().widthVariant() == RegularWidth) ? CTFontGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)
-               : CTFontGetGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength))) {
+    } else if (!fontData->platformData().isCompositeFontReference() && ((fontData->platformData().widthVariant() == RegularWidth)
+        ? CTFontGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)
+        : CTFontGetGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength))) {
         // When buffer consists of surrogate pairs, CTFontGetVerticalGlyphsForCharacters and CTFontGetGlyphsForCharacters
         // place the glyphs at indices corresponding to the first character of each pair.
         ASSERT(!(bufferLength % length) && (bufferLength / length == 1 || bufferLength / length == 2));

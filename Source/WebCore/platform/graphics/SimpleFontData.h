@@ -1,7 +1,7 @@
 /*
  * This file is part of the internal font implementation.
  *
- * Copyright (C) 2006, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2010, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -31,6 +31,7 @@
 #include "FloatRect.h"
 #include "GlyphBuffer.h"
 #include "GlyphMetricsMap.h"
+#include "GlyphPage.h"
 #include "OpenTypeMathData.h"
 #if ENABLE(OPENTYPE_VERTICAL)
 #include "OpenTypeVerticalData.h"
@@ -165,9 +166,12 @@ public:
     Glyph zeroGlyph() const { return m_zeroGlyph; }
     void setZeroGlyph(Glyph zeroGlyph) { m_zeroGlyph = zeroGlyph; }
 
-    virtual const SimpleFontData* fontDataForCharacter(UChar32) const override;
-
+    GlyphData glyphDataForCharacter(UChar32) const;
     Glyph glyphForCharacter(UChar32) const;
+
+    RefPtr<SimpleFontData> systemFallbackFontDataForCharacter(UChar32, const FontDescription&, bool isForPlatformFont) const;
+
+    const GlyphPage* glyphPage(unsigned pageNumber) const;
 
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
@@ -226,6 +230,9 @@ private:
     PassRefPtr<SimpleFontData> createScaledFontData(const FontDescription&, float scaleFactor) const;
     PassRefPtr<SimpleFontData> platformCreateScaledFontData(const FontDescription&, float scaleFactor) const;
 
+    virtual const SimpleFontData* simpleFontDataForCharacter(UChar32) const override;
+    virtual const SimpleFontData& simpleFontDataForFirstRange() const override;
+
 #if PLATFORM(WIN)
     void initGDIFont();
     void platformCommonDestroy();
@@ -246,6 +253,8 @@ private:
     FontPlatformData m_platformData;
     std::unique_ptr<AdditionalFontData> m_fontData;
 
+    mutable RefPtr<GlyphPage> m_glyphPageZero;
+    mutable HashMap<unsigned, RefPtr<GlyphPage>> m_glyphPages;
     mutable std::unique_ptr<GlyphMetricsMap<FloatRect>> m_glyphToBoundsMap;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
 

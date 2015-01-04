@@ -40,7 +40,6 @@
 namespace WebCore {
 
 class SimpleFontData;
-class GlyphPageTreeNode;
 
 // Holds the glyph index and the corresponding SimpleFontData information for a given
 // character.
@@ -64,38 +63,38 @@ struct GlyphData {
 // starting from 0 and incrementing for each 256 glyphs.
 //
 // One page may actually include glyphs from other fonts if the characters are
-// missing in the primary font. It is owned by exactly one GlyphPageTreeNode,
-// although multiple nodes may reference it as their "page" if they are supposed
-// to be overriding the parent's node, but provide no additional information.
+// missing in the primary font.
 class GlyphPage : public RefCounted<GlyphPage> {
 public:
-    static PassRefPtr<GlyphPage> createForMixedFontData(GlyphPageTreeNode* owner)
+    static PassRefPtr<GlyphPage> createForMixedFontData()
     {
         void* slot = fastMalloc(sizeof(GlyphPage) + sizeof(SimpleFontData*) * GlyphPage::size);
-        return adoptRef(new (NotNull, slot) GlyphPage(owner));
+        return adoptRef(new (NotNull, slot) GlyphPage(nullptr));
     }
 
-    static PassRefPtr<GlyphPage> createForSingleFontData(GlyphPageTreeNode* owner, const SimpleFontData* fontData)
+    static PassRefPtr<GlyphPage> createCopyForMixedFontData(const GlyphPage& original)
     {
-        ASSERT(fontData);
-        return adoptRef(new GlyphPage(owner, fontData));
-    }
-
-    PassRefPtr<GlyphPage> createCopiedSystemFallbackPage(GlyphPageTreeNode* owner) const
-    {
-        RefPtr<GlyphPage> page = GlyphPage::createForMixedFontData(owner);
-        memcpy(page->m_glyphs, m_glyphs, sizeof(m_glyphs));
-        if (hasPerGlyphFontData())
-            memcpy(page->m_perGlyphFontData, m_perGlyphFontData, sizeof(SimpleFontData*) * GlyphPage::size);
-        else {
-            for (size_t i = 0; i < GlyphPage::size; ++i) {
-                page->m_perGlyphFontData[i] = m_glyphs[i] ? m_fontDataForAllGlyphs : 0;
-            }
-        }
+        RefPtr<GlyphPage> page = createForMixedFontData();
+        for (unsigned i = 0; i < GlyphPage::size; ++i)
+            page->setGlyphDataForIndex(i, original.glyphDataForIndex(i));
         return page.release();
     }
 
-    ~GlyphPage() { }
+    static PassRefPtr<GlyphPage> createForSingleFontData(const SimpleFontData* fontData)
+    {
+        ASSERT(fontData);
+        return adoptRef(new GlyphPage(fontData));
+    }
+
+    ~GlyphPage()
+    {
+        --s_count;
+    }
+
+    bool isImmutable() const { return m_isImmutable; }
+    void setImmutable() { m_isImmutable = true; }
+
+    static unsigned count() { return s_count; }
 
     static const size_t size = 256; // Covers Latin-1 in a single page.
     static_assert((!(0xD800 % size)) && (!(0xDC00 % size)) && (!(0xE000 % size)), "GlyphPages must never straddle code-unit length boundaries");
@@ -137,6 +136,8 @@ public:
     void setGlyphDataForIndex(unsigned index, Glyph glyph, const SimpleFontData* fontData)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < size);
+        ASSERT(!m_isImmutable);
+        
         m_glyphs[index] = glyph;
 
         // GlyphPage getters will always return a null SimpleFontData* for glyph #0 if there's no per-glyph font array.
@@ -154,20 +155,6 @@ public:
         setGlyphDataForIndex(index, glyphData.glyph, glyphData.fontData);
     }
 
-    void removeFontDataFromSystemFallbackPage(const SimpleFontData* fontData)
-    {
-        // This method should only be called on the system fallback page, which is never single-font.
-        ASSERT(hasPerGlyphFontData());
-        for (size_t i = 0; i < size; ++i) {
-            if (m_perGlyphFontData[i] == fontData) {
-                m_glyphs[i] = 0;
-                m_perGlyphFontData[i] = 0;
-            }
-        }
-    }
-
-    GlyphPageTreeNode* owner() const { return m_owner; }
-
     // Implemented by the platform.
     bool fill(unsigned offset, unsigned length, UChar* characterBuffer, unsigned bufferLength, const SimpleFontData*);
 #if PLATFORM(COCOA)
@@ -177,23 +164,25 @@ public:
 #endif
 
 private:
-    explicit GlyphPage(GlyphPageTreeNode* owner, const SimpleFontData* fontDataForAllGlyphs = 0)
+    explicit GlyphPage(const SimpleFontData* fontDataForAllGlyphs)
         : m_fontDataForAllGlyphs(fontDataForAllGlyphs)
-        , m_owner(owner)
     {
         memset(m_glyphs, 0, sizeof(m_glyphs));
         if (hasPerGlyphFontData())
             memset(m_perGlyphFontData, 0, sizeof(SimpleFontData*) * GlyphPage::size);
+        ++s_count;
     }
 
     bool hasPerGlyphFontData() const { return !m_fontDataForAllGlyphs; }
 
     const SimpleFontData* m_fontDataForAllGlyphs;
-    GlyphPageTreeNode* m_owner;
     Glyph m_glyphs[size];
 
+    bool m_isImmutable { false };
     // NOTE: This array has (GlyphPage::size) elements if m_fontDataForAllGlyphs is null.
     const SimpleFontData* m_perGlyphFontData[0];
+
+    static unsigned s_count;
 };
 
 #if COMPILER(MSVC)

@@ -31,7 +31,7 @@
 #include <JavaScriptCore/MemoryStatistics.h>
 #include <WebCore/FontCache.h>
 #include <WebCore/GCController.h>
-#include <WebCore/GlyphPageTreeNode.h>
+#include <WebCore/GlyphPage.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/PageCache.h>
@@ -239,7 +239,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::glyphPageCount(
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) GlyphPageTreeNode::treeGlyphPageCount();
+    *count = (UINT) GlyphPage::count();
     return S_OK;
 }
 

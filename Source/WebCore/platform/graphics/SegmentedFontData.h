@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,14 +67,16 @@ public:
 #endif
 
 private:
-    SegmentedFontData() { }
+    SegmentedFontData();
 
-    virtual const SimpleFontData* fontDataForCharacter(UChar32) const;
+    virtual const SimpleFontData* simpleFontDataForCharacter(UChar32) const override;
+    virtual const SimpleFontData& simpleFontDataForFirstRange() const override;
 
     virtual bool isCustomFont() const;
     virtual bool isLoading() const;
     virtual bool isSegmented() const;
 
+    RefPtr<SimpleFontData> m_nullFontData;
     Vector<FontDataRange, 1> m_ranges;
 };
 

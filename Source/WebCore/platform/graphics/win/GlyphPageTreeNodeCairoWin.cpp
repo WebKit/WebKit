@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "GlyphPageTreeNode.h"
+#include "GlyphPage.h"
 
 #include "HWndDC.h"
 #include "SimpleFontData.h"

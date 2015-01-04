@@ -82,8 +82,10 @@
     } else
         _fontDescriptors.grow(index + 1);
 
-    const WebCore::SimpleFontData* fontData = _font->fontDataAt(index)->fontDataForCharacter(_character);
-    fontDescriptor = CTFontCopyFontDescriptor(fontData->platformData().ctFont());
+    const WebCore::SimpleFontData* simpleFontData = _font->fontDataAt(index)->simpleFontDataForCharacter(_character);
+    if (!simpleFontData)
+        simpleFontData = &_font->fontDataAt(index)->simpleFontDataForFirstRange();
+    fontDescriptor = CTFontCopyFontDescriptor(simpleFontData->platformData().ctFont());
     _fontDescriptors[index] = adoptCF(fontDescriptor);
     return (id)fontDescriptor;
 }
@@ -199,7 +201,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         isSystemFallback = true;
 
         U16_GET(cp, 0, 0, length, baseCharacter);
-        fontData = m_font.fontDataAt(0)->fontDataForCharacter(baseCharacter);
+        fontData = m_font.fontDataAt(0)->simpleFontDataForCharacter(baseCharacter);
+        if (!fontData)
+            fontData = &m_font.fontDataAt(0)->simpleFontDataForFirstRange();
 
         RetainPtr<WebCascadeList> cascadeList = adoptNS([[WebCascadeList alloc] initWithFont:&m_font character:baseCharacter]);
 
@@ -254,7 +258,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                 // Begin trying to see if runFont matches any of the fonts in the fallback list.
                 unsigned i = 0;
                 for (const FontData* candidateFontData = m_font.fontDataAt(i); candidateFontData; candidateFontData = m_font.fontDataAt(++i)) {
-                    runFontData = candidateFontData->fontDataForCharacter(baseCharacter);
+                    runFontData = candidateFontData->simpleFontDataForCharacter(baseCharacter);
+                    if (!runFontData)
+                        continue;
                     RetainPtr<CFTypeRef> runFontEqualityObject = runFontData->platformData().objectForEqualityCheck();
                     if (CFEqual(runFontEqualityObject.get(), runFontEqualityObject.get()))
                         break;
