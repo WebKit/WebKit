@@ -276,10 +276,10 @@ GlyphData FontGlyphs::glyphDataForSystemFallback(UChar32 c, const FontDescriptio
 
 GlyphData FontGlyphs::glyphDataForVariant(UChar32 c, const FontDescription& description, FontDataVariant variant, unsigned fallbackLevel)
 {
-    for (; fallbackLevel <= description.familyCount(); ++fallbackLevel) {
+    for (; fallbackLevel < description.familyCount(); ++fallbackLevel) {
         auto* fontData = realizeFontDataAt(description, fallbackLevel);
         if (!fontData)
-            return glyphDataForSystemFallback(c, description, variant);
+            break;
 
         auto* simpleFontData = fontData->simpleFontDataForCharacter(c);
         GlyphData data = simpleFontData ? simpleFontData->glyphDataForCharacter(c) : GlyphData();
@@ -293,19 +293,18 @@ GlyphData FontGlyphs::glyphDataForVariant(UChar32 c, const FontDescription& desc
             return variantFontData->glyphDataForCharacter(c);
         }
     }
-    ASSERT_NOT_REACHED();
-    return GlyphData();
+
+    return glyphDataForSystemFallback(c, description, variant);
 }
 
 GlyphData FontGlyphs::glyphDataForNormalVariant(UChar32 c, const FontDescription& description)
 {
     const unsigned pageNumber = c / GlyphPage::size;
 
-    for (unsigned fallbackLevel = 0; fallbackLevel <= description.familyCount(); ++fallbackLevel) {
+    for (unsigned fallbackLevel = 0; fallbackLevel < description.familyCount(); ++fallbackLevel) {
         auto* fontData = realizeFontDataAt(description, fallbackLevel);
         if (!fontData)
-            return glyphDataForSystemFallback(c, description, NormalVariant);
-
+            break;
         auto* simpleFontData = fontData->simpleFontDataForCharacter(c);
         auto* page = simpleFontData ? simpleFontData->glyphPage(pageNumber) : nullptr;
         if (!page)
@@ -331,8 +330,7 @@ GlyphData FontGlyphs::glyphDataForNormalVariant(UChar32 c, const FontDescription
         }
     }
 
-    ASSERT_NOT_REACHED();
-    return GlyphData();
+    return glyphDataForSystemFallback(c, description, NormalVariant);
 }
 
 static RefPtr<GlyphPage> glyphPageFromFontData(unsigned pageNumber, const FontData& fontData)

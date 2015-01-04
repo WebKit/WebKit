@@ -1,3 +1,16 @@
+2015-01-04  Antti Koivisto  <antti@apple.com>
+
+        Remove GlyphPageTree
+        https://bugs.webkit.org/show_bug.cgi?id=140015
+
+        Follow-up to r177876 to fix mathml/opentype/munderover-layout-resize.html which is asserting in bots.
+
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::glyphDataForVariant):
+        (WebCore::FontGlyphs::glyphDataForNormalVariant):
+
+        Always return system fallback if no glyph is found.
+
 2015-01-04  Dan Bernstein  <mitz@apple.com>
 
         iOS build fix.
