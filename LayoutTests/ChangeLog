@@ -1,3 +1,18 @@
+2015-01-03  Michael Saboff  <msaboff@apple.com>
+
+        Crash in operationNewFunction when scrolling on Google+
+        https://bugs.webkit.org/show_bug.cgi?id=140033
+
+        Reviewed by Oliver Hunt.
+
+        New regerssion test.
+
+        * js/regress-140033-expected.txt: Added.
+        * js/regress-140033.html: Added.
+        * js/script-tests/regress-140033.js: Added.
+        (.unused):
+        (defineADeadFunction):
+
 2015-01-02  Anders Carlsson  <andersca@apple.com>
 
         Get rid of storage tracker layout tests
