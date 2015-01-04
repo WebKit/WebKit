@@ -188,7 +188,7 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Simpl
     // FIXME: Times New Roman contains Arabic glyphs, but Core Text doesn't know how to shape them. See <rdar://problem/9823975>.
     // Once we have the fix for <rdar://problem/9823975> then remove this code together with SimpleFontData::shouldNotBeUsedForArabic()
     // in <rdar://problem/12096835>.
-    if (pageNumber == 6 && shouldNotBeUsedForArabic())
+    if (pageNumber == 6 && fontData->shouldNotBeUsedForArabic())
         return nullptr;
 #endif
 

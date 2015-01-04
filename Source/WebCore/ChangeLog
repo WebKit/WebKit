@@ -1,3 +1,10 @@
+2015-01-04  Dan Bernstein  <mitz@apple.com>
+
+        iOS build fix.
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::createAndFillGlyphPage):
+
 2015-01-02  Antti Koivisto  <antti@apple.com>
 
         Remove GlyphPageTree
