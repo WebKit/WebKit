@@ -27,6 +27,7 @@
 #define MainFrame_h
 
 #include "Frame.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -54,7 +55,9 @@ public:
     ServicesOverlayController& servicesOverlayController() { return *m_servicesOverlayController; }
 #endif // ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
 
-    ScrollLatchingState* latchingState() { return m_latchingState.get(); }
+    ScrollLatchingState* latchingState();
+    void pushNewLatchingState();
+    void popLatchingState();
     void resetLatchingState();
 #endif // PLATFORM(MAC)
 
@@ -68,7 +71,7 @@ private:
     unsigned m_selfOnlyRefCount;
 
 #if PLATFORM(MAC)
-    std::unique_ptr<ScrollLatchingState> m_latchingState;
+    Vector<ScrollLatchingState> m_latchingState;
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     std::unique_ptr<ServicesOverlayController> m_servicesOverlayController;
 #endif

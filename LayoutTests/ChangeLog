@@ -1,3 +1,16 @@
+2014-12-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Cannot scroll when a non-scrollable iframe is contained inside a scrollable iframe
+        https://bugs.webkit.org/show_bug.cgi?id=139914
+        <rdar://problem/18750910>
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/fast/scrolling/scroll-nested-iframe-expected.txt: Added.
+        * platform/mac/fast/scrolling/scroll-nested-iframe.html: Added.
+        * platform/mac/fast/scrolling/resources/scroll_nested_iframe_test_inner.html: Added.
+        * platform/mac/fast/scrolling/resources/scroll_nested_iframe_test_outer.html: Added.
+
 2015-01-05  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Crash when font data pointer is null.

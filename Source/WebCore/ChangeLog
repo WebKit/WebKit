@@ -1,3 +1,50 @@
+2014-12-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Cannot scroll when a non-scrollable iframe is contained inside a scrollable iframe
+        https://bugs.webkit.org/show_bug.cgi?id=139914
+        <rdar://problem/18750910>
+
+        Reviewed by Darin Adler.
+
+        Tests: platform/mac/fast/scrolling/scroll-nested-iframe.html
+
+        The latching logic was breaking down when a non-scrollable iframe was the closest target of
+        a wheel event. EventHandler would latch to the enclosing scrollable region (in this case, the
+        non-scrollable iframe) and would eat scroll events, preventing anything from working.
+        
+        The fix is as follows:
+        1. Modify the logic to understand a stack of latched states, so that we can discared 'invalid'
+           latched states as we discover them.
+        2. Revise the latching logic so that it understands the case where the 'latched' node for wheel
+           events is in a parent frame of the current wheel event target. For example, when the mouse is over
+           an element in an unscrollable iframe that is contained within a scrollable iframe. We should
+           be latched to the scrollable iframe so events go to the right place.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent): Update to call new 'stack' versions of latch
+        state methods.
+        (WebCore::EventHandler::clearLatchedState): Ditto.
+        (WebCore::EventHandler::defaultWheelEventHandler): Ditto.
+        * page/MainFrame.cpp: Update to store a stack of latched states. Provide methods to control
+        the lifetime of the stack and its elements.
+        (WebCore::MainFrame::MainFrame):
+        (WebCore::MainFrame::latchingState):
+        (WebCore::MainFrame::pushNewLatchingState):
+        (WebCore::MainFrame::resetLatchingState):
+        (WebCore::MainFrame::popLatchingState):
+        * page/MainFrame.h:
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::latchingIsLockedToParentOfThisFrame): Added helper function.
+        (WebCore::EventHandler::platformPrepareForWheelEvents): Update to use new 'stack' style latch
+        methods. Also, if we are latched to a frame that contains the frame we are currently evaluating,
+        don't replace the current event target with the latched targets because (1) they will be processed
+        in the enclosing scope when we leave this routine, and (2) if we do change targets to the latched
+        elements we create an infinite loop.
+        (WebCore::EventHandler::platformCompleteWheelEvent): We want to mark the element as having started
+        at the scroll limit regardless of what the wheel event handler returns as its success state.
+        (WebCore::EventHandler::platformCompletePlatformWidgetWheelEvent): Revise to handle the new
+        stack-based latching methods.
+
 2015-01-05  Darin Adler  <darin@apple.com>
 
         Quick follow-up to last check-in, addressing review comments.

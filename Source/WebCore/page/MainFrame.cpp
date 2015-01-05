@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MainFrame.h"
 
+#include "Element.h"
 #include "PageConfiguration.h"
 #include "PageOverlayController.h"
 #include "ScrollLatchingState.h"
@@ -41,7 +42,6 @@ inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
     : Frame(page, nullptr, *configuration.loaderClientForMainFrame)
     , m_selfOnlyRefCount(0)
 #if PLATFORM(MAC)
-    , m_latchingState(std::make_unique<ScrollLatchingState>())
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     , m_servicesOverlayController(std::make_unique<ServicesOverlayController>(*this))
 #endif
@@ -88,13 +88,29 @@ void MainFrame::dropChildren()
 }
 
 #if PLATFORM(MAC)
+ScrollLatchingState* MainFrame::latchingState()
+{
+    if (m_latchingState.isEmpty())
+        return nullptr;
+
+    return &m_latchingState.last();
+}
+
+void MainFrame::pushNewLatchingState()
+{
+    m_latchingState.append(ScrollLatchingState());
+}
+
 void MainFrame::resetLatchingState()
 {
-    if (!m_latchingState)
-        return;
-
-    m_latchingState->clear();
+    m_latchingState.clear();
 }
+    
+void MainFrame::popLatchingState()
+{
+    m_latchingState.removeLast();
+}
+
 #endif
 
 }
