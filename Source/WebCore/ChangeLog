@@ -1,5 +1,24 @@
 2014-06-16  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: Safari crashed once in WebCore::AccessibilityObject::ariaIsHidden
+        https://bugs.webkit.org/show_bug.cgi?id=133825
+
+        Reviewed by Enrica Casucci.
+
+        Sometimes asking accessibilityIsIgnored() will cause a newObject to be detached immediately after its created. 
+        The creation function holds a reference with RefPtr as long as it lives, but when that method returns, the object goes away.
+
+        With that out of the way, I saw the same backtrace lead to updateLayoutIgnorePendingStylesheets being called while still inLayout.
+
+        I tried my best but could not create a reproducible layout test.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::updateBackingStore):
+
+2014-06-16  Chris Fleizach  <cfleizach@apple.com>
+
         AX: Crash at WebCore::AXObjectCache::textChanged
         https://bugs.webkit.org/show_bug.cgi?id=133873
 
