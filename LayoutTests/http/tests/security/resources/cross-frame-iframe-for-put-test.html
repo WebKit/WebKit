@@ -242,6 +242,8 @@
         var showModalDialogOld = window.showModalDialog;
         var stopOld = window.stop;
 
+        // The test runs on a timer and not in a load event handler because we want both
+        // window.onload and window.event to be undefined.
         setTimeout(function() {
             // Constructors
             shouldBe("window.Attr", "AttrOld");

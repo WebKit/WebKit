@@ -26,6 +26,13 @@ window.onload = function()
         testRunner.waitUntilDone();
     }
 
+    // There is code in subframe that runs some tests, and that is scheduled on a zero delay
+    // timer when the subframe loads. The timer that we schedule here will run after the one
+    // in subframe, making the order of tests predictable.
+    setTimeout(test, 0);
+}
+
+function test() {
     // FIXME: This test should use fast/window/resources/window-properties.js instead of a custom list.
     // Constructors
     setForbiddenProperty(targetWindow, "Attr");
@@ -229,14 +236,12 @@ window.onload = function()
     setForbiddenProperty(targetWindow, "showModalDialog");
     setForbiddenProperty(targetWindow, "stop");
 
-    setTimeout(function() {
-        // log(targetWindow.focus.__proto__);
-        log("MAIN WINDOW: !!-- Test ended--!!");
+    // log(targetWindow.focus.__proto__);
+    log("MAIN WINDOW: !!-- Test ended--!!");
 
-        window.stop();
+    window.stop();
 
-        if (window.testRunner)
-            testRunner.notifyDone();
-    }, 1);
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
