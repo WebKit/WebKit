@@ -1,3 +1,13 @@
+2014-11-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Crash in WebCore::Node::getFlag
+        https://bugs.webkit.org/show_bug.cgi?id=137961
+
+        Reviewed by Antti Koivisto.
+
+        * editing/execCommand/crash-137961-expected.txt: Added.
+        * editing/execCommand/crash-137961.html: Added.
+
 2014-04-25  Miyoung Shin  <myid.shin@samsung.com>
 
         Web process is crashed during dispatching touchEvent created by JS.
