@@ -1,3 +1,15 @@
+2015-01-05  Timothy Horton  <timothy_horton@apple.com>
+
+        Implicitly dismissed DD popovers don't clear immediate action state, prematurely dismissing the next DD highlight
+        https://bugs.webkit.org/show_bug.cgi?id=140088
+        <rdar://problem/19298391>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _menuItemForDataDetectedText]):
+        Instead of just tearing down the TextIndicator, clear all state.
+
 2015-01-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more URTBF after r177917.
