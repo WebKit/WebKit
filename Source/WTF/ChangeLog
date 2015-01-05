@@ -1,3 +1,15 @@
+2015-01-05  Andreas Kling  <akling@apple.com>
+
+        Purge PassRefPtr from Page.
+        <https://webkit.org/b/140089>
+
+        Reviewed by Anders Carlsson.
+
+        Make SchedulePair::create() return Ref since it never fails.
+
+        * wtf/SchedulePair.h:
+        (WTF::SchedulePair::create):
+
 2015-01-01  Darin Adler  <darin@apple.com>
 
         Rework code that hides characters in password fields to streamline a little

@@ -218,7 +218,7 @@ public:
 
     WEBCORE_EXPORT bool findString(const String&, FindOptions);
 
-    WEBCORE_EXPORT PassRefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
+    WEBCORE_EXPORT RefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
 
     WEBCORE_EXPORT unsigned countFindMatches(const String&, FindOptions, unsigned maxMatchCount);
     WEBCORE_EXPORT unsigned markAllMatchesForText(const String&, FindOptions, bool shouldHighlight, unsigned maxMatchCount);
@@ -233,8 +233,8 @@ public:
     enum { NoMatchAfterUserSelection = -1 };
     WEBCORE_EXPORT void findStringMatchingRanges(const String&, FindOptions, int maxCount, Vector<RefPtr<Range>>&, int& indexForSelection);
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT void addSchedulePair(PassRefPtr<SchedulePair>);
-    WEBCORE_EXPORT void removeSchedulePair(PassRefPtr<SchedulePair>);
+    WEBCORE_EXPORT void addSchedulePair(Ref<SchedulePair>&&);
+    WEBCORE_EXPORT void removeSchedulePair(Ref<SchedulePair>&&);
     SchedulePairHashSet* scheduledRunLoopPairs() { return m_scheduledRunLoopPairs.get(); }
 
     std::unique_ptr<SchedulePairHashSet> m_scheduledRunLoopPairs;
@@ -323,7 +323,7 @@ public:
     WEBCORE_EXPORT void invalidateStylesForLink(LinkHash);
 
     StorageNamespace* sessionStorage(bool optionalCreate = true);
-    void setSessionStorage(PassRefPtr<StorageNamespace>);
+    void setSessionStorage(RefPtr<StorageNamespace>&&);
 
     bool hasCustomHTMLTokenizerTimeDelay() const;
     double customHTMLTokenizerTimeDelay() const;

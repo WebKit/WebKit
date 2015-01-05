@@ -36,41 +36,38 @@
 
 namespace WebCore {
 
-void Page::addSchedulePair(PassRefPtr<SchedulePair> prpPair)
+void Page::addSchedulePair(Ref<SchedulePair>&& pair)
 {
-    RefPtr<SchedulePair> pair = prpPair;
-
     if (!m_scheduledRunLoopPairs)
         m_scheduledRunLoopPairs = std::make_unique<SchedulePairHashSet>();
-    m_scheduledRunLoopPairs->add(pair);
+    m_scheduledRunLoopPairs->add(pair.ptr());
 
 #if !PLATFORM(IOS)
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         if (DocumentLoader* documentLoader = frame->loader().documentLoader())
-            documentLoader->schedule(*pair);
+            documentLoader->schedule(pair);
         if (DocumentLoader* documentLoader = frame->loader().provisionalDocumentLoader())
-            documentLoader->schedule(*pair);
+            documentLoader->schedule(pair);
     }
 #endif
 
     // FIXME: make SharedTimerMac use these SchedulePairs.
 }
 
-void Page::removeSchedulePair(PassRefPtr<SchedulePair> prpPair)
+void Page::removeSchedulePair(Ref<SchedulePair>&& pair)
 {
     ASSERT(m_scheduledRunLoopPairs);
     if (!m_scheduledRunLoopPairs)
         return;
 
-    RefPtr<SchedulePair> pair = prpPair;
-    m_scheduledRunLoopPairs->remove(pair);
+    m_scheduledRunLoopPairs->remove(pair.ptr());
 
 #if !PLATFORM(IOS)
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         if (DocumentLoader* documentLoader = frame->loader().documentLoader())
-            documentLoader->unschedule(*pair);
+            documentLoader->unschedule(pair);
         if (DocumentLoader* documentLoader = frame->loader().provisionalDocumentLoader())
-            documentLoader->unschedule(*pair);
+            documentLoader->unschedule(pair);
     }
 #endif
 }

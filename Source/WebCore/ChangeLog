@@ -1,3 +1,20 @@
+2015-01-05  Andreas Kling  <akling@apple.com>
+
+        Purge PassRefPtr from Page.
+        <https://webkit.org/b/140089>
+
+        Reviewed by Anders Carlsson.
+
+        Use Ref or RefPtr instead of PassRefPtr as appropriate in WebCore::Page.
+
+        * page/Page.cpp:
+        (WebCore::Page::rangeOfString):
+        (WebCore::Page::setSessionStorage):
+        * page/Page.h:
+        * page/mac/PageMac.cpp:
+        (WebCore::Page::addSchedulePair):
+        (WebCore::Page::removeSchedulePair):
+
 2015-01-05  Chris Dumez  <cdumez@apple.com>
 
         Regression(r163928): Animated images are not resumed on window resizing
