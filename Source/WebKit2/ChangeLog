@@ -1,3 +1,15 @@
+2015-01-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        One more URTBF after r177917.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * WebProcess/Battery/WebBatteryManager.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        (WebKit::CoordinatedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+
 2015-01-05  Anders Carlsson  <andersca@apple.com>
 
         Get rid of PassRefPtr from IPC::Connection

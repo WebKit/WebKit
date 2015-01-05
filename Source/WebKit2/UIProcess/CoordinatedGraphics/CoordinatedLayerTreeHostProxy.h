@@ -59,7 +59,7 @@ protected:
     void dispatchUpdate(std::function<void()>);
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     CoordinatedDrawingAreaProxy* m_drawingAreaProxy;
     RefPtr<CoordinatedGraphicsScene> m_scene;

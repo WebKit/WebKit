@@ -600,7 +600,7 @@ void CoordinatedDrawingArea::display(UpdateInfo& updateInfo)
     m_displayTimer.stop();
 }
 
-void CoordinatedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+void CoordinatedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     if (m_layerTreeHost)
         m_layerTreeHost->didReceiveCoordinatedLayerTreeHostMessage(connection, decoder);
