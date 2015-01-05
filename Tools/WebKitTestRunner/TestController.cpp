@@ -262,7 +262,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
 
     WKPageLoaderClientV5 pageLoaderClient = {
-        { 5, clientInfo },
+        { 5, &TestController::shared() },
         0, // didStartProvisionalLoadForFrame
         0, // didReceiveServerRedirectForProvisionalLoadForFrame
         0, // didFailProvisionalLoadWithErrorForFrame
@@ -306,7 +306,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
     WKPageSetPageLoaderClient(view->page(), &pageLoaderClient.base);
 
     WKPagePolicyClientV1 pagePolicyClient = {
-        { 1, clientInfo },
+        { 1, &TestController::shared() },
         0, // decidePolicyForNavigationAction_deprecatedForUseWithV0
         0, // decidePolicyForNewWindowAction
         0, // decidePolicyForResponse_deprecatedForUseWithV0
