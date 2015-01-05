@@ -3,7 +3,20 @@
         Remove GlyphPageTree
         https://bugs.webkit.org/show_bug.cgi?id=140015
 
-        Follow-up to r177876 to fix mathml/opentype/munderover-layout-resize.html which is asserting in bots.
+        Follow-up to follow-up, fonts/font-fallback-prefers-pictographs.html is now failing.
+
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::glyphDataForVariant):
+        (WebCore::FontGlyphs::glyphDataForNormalVariant):
+
+            Make the loop again go one past the last fallback index, the pictograph special case depends on it.
+
+2015-01-04  Antti Koivisto  <antti@apple.com>
+
+        Remove GlyphPageTree
+        https://bugs.webkit.org/show_bug.cgi?id=140015
+
+        Follow-up to r177876 to fix mathml/opentype/munderover-layout-resize.html which is asserting.
 
         * platform/graphics/FontGlyphs.cpp:
         (WebCore::FontGlyphs::glyphDataForVariant):

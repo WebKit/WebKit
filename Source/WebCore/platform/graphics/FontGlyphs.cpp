@@ -276,7 +276,7 @@ GlyphData FontGlyphs::glyphDataForSystemFallback(UChar32 c, const FontDescriptio
 
 GlyphData FontGlyphs::glyphDataForVariant(UChar32 c, const FontDescription& description, FontDataVariant variant, unsigned fallbackLevel)
 {
-    for (; fallbackLevel < description.familyCount(); ++fallbackLevel) {
+    for (; fallbackLevel <= description.familyCount(); ++fallbackLevel) {
         auto* fontData = realizeFontDataAt(description, fallbackLevel);
         if (!fontData)
             break;
@@ -301,7 +301,7 @@ GlyphData FontGlyphs::glyphDataForNormalVariant(UChar32 c, const FontDescription
 {
     const unsigned pageNumber = c / GlyphPage::size;
 
-    for (unsigned fallbackLevel = 0; fallbackLevel < description.familyCount(); ++fallbackLevel) {
+    for (unsigned fallbackLevel = 0; fallbackLevel <= description.familyCount(); ++fallbackLevel) {
         auto* fontData = realizeFontDataAt(description, fallbackLevel);
         if (!fontData)
             break;
