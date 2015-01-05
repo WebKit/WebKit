@@ -88,7 +88,6 @@ void DocumentFragment::parseHTML(const String& source, Element* contextElement, 
 
 bool DocumentFragment::parseXML(const String& source, Element* contextElement, ParserContentPolicy parserContentPolicy)
 {
-    ASSERT(contextElement);
     return XMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy);
 }
 
