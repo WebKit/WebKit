@@ -84,13 +84,6 @@ private:
     void removeItem(IPC::Connection&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString);
     void clear(IPC::Connection&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString);
 
-    void createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, IPC::Connection* allowedConnection, unsigned quotaInBytes);
-    void destroySessionStorageNamespaceInternal(uint64_t storageNamespaceID);
-    void setAllowedSessionStorageNamespaceConnectionInternal(uint64_t storageNamespaceID, IPC::Connection* allowedConnection);
-    void cloneSessionStorageNamespaceInternal(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);
-
-    void invalidateConnectionInternal(IPC::Connection*);
-
     class StorageArea;
     StorageArea* findStorageArea(IPC::Connection&, uint64_t) const;
 
