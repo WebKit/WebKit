@@ -1,3 +1,30 @@
+2014-11-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Network process crash when running http/tests/appcache/fallback.html
+        https://bugs.webkit.org/show_bug.cgi?id=138740
+
+        Reviewed by Alexey Proskuryakov.
+
+        It happens because ResourceHandle::continueWillSendRequest() is
+        called with a null request. We could handle that case in the
+        ResourceHandle, but the thing is tha the behaviour is
+        not the same for async loads, or when loading in the web
+        process. In WebResourceLoader::willSendRequest(),
+        ResourceRequest::willSendRequest() is called, and cancels the load
+        if the client returns a null request. In this case, the
+        ResourceLoader is detached and WebResourceLoader::willSendRequest()
+        returns early without sending the ContinueWillSendRequest message
+        to the network process. However, for synchronous loads,
+        NetworkResourceLoader::continueWillSendRequest() is always called.
+
+        Fixes http/tests/appcache/fallback.html for GTK port when using
+        the network process.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::continueWillSendRequest): Do not
+        call ResourceHandle::continueWillSendRequest() if the client
+        request is null, since the load is going to be cancelled.
+
 2014-11-06  Alberto Garcia  <berto@igalia.com>
 
         [GTK] [Stable] webkitgtk 2.6.1 fails to load flashplugin

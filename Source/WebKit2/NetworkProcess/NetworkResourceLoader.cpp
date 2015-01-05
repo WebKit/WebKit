@@ -255,12 +255,13 @@ void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRe
     m_request = m_suggestedRequestForWillSendRequest;
     m_suggestedRequestForWillSendRequest = ResourceRequest();
 
-    m_handle->continueWillSendRequest(m_request);
-
     if (m_request.isNull()) {
         m_handle->cancel();
         didFail(m_handle.get(), cancelledError(m_request));
+        return;
     }
+
+    m_handle->continueWillSendRequest(m_request);
 }
 
 void NetworkResourceLoader::continueDidReceiveResponse()
