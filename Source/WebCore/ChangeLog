@@ -1,3 +1,10 @@
+2015-01-05  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the iOS build.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCharacterBufferForInBody):
+
 2015-01-05  Chris Dumez  <cdumez@apple.com>
 
         Get rid of some unnecessary custom StyleBuilder code

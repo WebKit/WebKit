@@ -2522,7 +2522,7 @@ void HTMLTreeBuilder::processCharacterBufferForInBody(ExternalCharacterTokenBuff
     m_tree.reconstructTheActiveFormattingElements();
     String characters = buffer.takeRemaining();
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS)
-    if (!isParsingFragment() && m_tree.isTelephoneNumberParsingEnabled() && shouldParseTelephoneNumbersInNode(*m_tree.currentNode()) && TelephoneNumberDetector::isSupported())
+    if (!isParsingFragment() && m_tree.isTelephoneNumberParsingEnabled() && shouldParseTelephoneNumbersInNode(m_tree.currentNode()) && TelephoneNumberDetector::isSupported())
         linkifyPhoneNumbers(characters);
     else
         m_tree.insertTextNode(characters);
