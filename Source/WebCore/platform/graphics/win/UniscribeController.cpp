@@ -165,7 +165,7 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
                 smallCapsBuffer[index] = forceSmallCaps ? c : newC;
         }
 
-        if (m_fallbackFonts && nextFontData != fontData && fontData != m_font.primaryFont())
+        if (m_fallbackFonts && fontData && nextFontData != fontData && fontData != m_font.primaryFont())
             m_fallbackFonts->add(fontData);
 
         if (nextFontData != fontData || nextIsSmallCaps != isSmallCaps) {
@@ -179,7 +179,7 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     
     int itemLength = m_run.rtl() ? indexOfFontTransition + 1 : length - indexOfFontTransition;
     if (itemLength) {
-        if (m_fallbackFonts && nextFontData != m_font.primaryFont())
+        if (m_fallbackFonts && nextFontData && nextFontData != m_font.primaryFont())
             m_fallbackFonts->add(nextFontData);
 
         int itemStart = m_run.rtl() ? 0 : indexOfFontTransition;
@@ -412,6 +412,10 @@ bool UniscribeController::shape(const UChar* str, int len, SCRIPT_ITEM item, con
     HFONT oldFont = 0;
     HRESULT shapeResult = E_PENDING;
     int glyphCount = 0;
+
+    if (!fontData)
+        return false;
+
     do {
         shapeResult = ScriptShape(hdc, fontData->scriptCache(), str, len, glyphs.size(), &item.a,
                                   glyphs.data(), clusters.data(), visualAttributes.data(), &glyphCount);

@@ -1,3 +1,18 @@
+2015-01-05  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Crash when font data pointer is null.
+        https://bugs.webkit.org/show_bug.cgi?id=139969
+
+        Reviewed by Darin Adler.
+
+        Added null pointer check.
+
+        Test: fonts/unicode-character-font-crash.html
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::advance):
+        (WebCore::UniscribeController::shape):
+
 2015-01-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GStreamer] Disable gst-plugin-scanner if seccomp filters are enabled

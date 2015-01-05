@@ -1,3 +1,13 @@
+2015-01-05  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Crash when font data pointer is null.
+        https://bugs.webkit.org/show_bug.cgi?id=139969
+
+        Reviewed by Darin Adler.
+
+        * fonts/unicode-character-font-crash-expected.txt: Added.
+        * fonts/unicode-character-font-crash.html: Added.
+
 2015-01-04  Alexey Proskuryakov  <ap@apple.com>
 
         fast/events/autoscroll-should-not-stop-on-keypress.html is flaky in debug builds
