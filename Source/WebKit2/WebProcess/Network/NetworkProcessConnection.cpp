@@ -45,7 +45,7 @@ namespace WebKit {
 
 NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier)
 {
-    m_connection = IPC::Connection::createClientConnection(connectionIdentifier, this, RunLoop::main());
+    m_connection = IPC::Connection::createClientConnection(connectionIdentifier, *this, RunLoop::main());
     m_connection->open();
 }
 

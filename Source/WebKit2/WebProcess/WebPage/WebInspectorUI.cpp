@@ -83,7 +83,7 @@ void WebInspectorUI::establishConnection(IPC::Attachment encodedConnectionIdenti
 
     m_page->corePage()->inspectorController().setInspectorFrontendClient(this);
 
-    m_backendConnection = IPC::Connection::createClientConnection(connectionIdentifier, this, RunLoop::main());
+    m_backendConnection = IPC::Connection::createClientConnection(connectionIdentifier, *this, RunLoop::main());
     m_backendConnection->open();
 }
 

@@ -48,7 +48,7 @@ PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager*
     , m_supportsAsynchronousPluginInitialization(supportsAsynchronousPluginInitialization)
     , m_audioHardwareActivity(WebCore::AudioHardwareActivityType::Unknown)
 {
-    m_connection = IPC::Connection::createClientConnection(connectionIdentifier, this, RunLoop::main());
+    m_connection = IPC::Connection::createClientConnection(connectionIdentifier, *this, RunLoop::main());
 
     m_npRemoteObjectMap = NPRemoteObjectMap::create(m_connection.get());
 

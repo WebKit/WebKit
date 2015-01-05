@@ -225,18 +225,18 @@ void Connection::SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMes
     dispatchMessages(&connection);
 }
 
-PassRefPtr<Connection> Connection::createServerConnection(Identifier identifier, Client* client, RunLoop& clientRunLoop)
+Ref<Connection> Connection::createServerConnection(Identifier identifier, Client& client, RunLoop& clientRunLoop)
 {
-    return adoptRef(new Connection(identifier, true, client, clientRunLoop));
+    return adoptRef(*new Connection(identifier, true, client, clientRunLoop));
 }
 
-PassRefPtr<Connection> Connection::createClientConnection(Identifier identifier, Client* client, RunLoop& clientRunLoop)
+Ref<Connection> Connection::createClientConnection(Identifier identifier, Client& client, RunLoop& clientRunLoop)
 {
-    return adoptRef(new Connection(identifier, false, client, clientRunLoop));
+    return adoptRef(*new Connection(identifier, false, client, clientRunLoop));
 }
 
-Connection::Connection(Identifier identifier, bool isServer, Client* client, RunLoop& clientRunLoop)
-    : m_client(client)
+Connection::Connection(Identifier identifier, bool isServer, Client& client, RunLoop& clientRunLoop)
+    : m_client(&client)
     , m_isServer(isServer)
     , m_syncRequestID(0)
     , m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(false)

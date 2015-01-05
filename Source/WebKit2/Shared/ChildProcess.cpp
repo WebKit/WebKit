@@ -67,7 +67,7 @@ void ChildProcess::initialize(const ChildProcessInitializationParameters& parame
     SandboxInitializationParameters sandboxParameters;
     initializeSandbox(parameters, sandboxParameters);
     
-    m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier, this, RunLoop::main());
+    m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier, *this, RunLoop::main());
     m_connection->setDidCloseOnConnectionWorkQueueCallback(didCloseOnConnectionWorkQueue);
     initializeConnection(m_connection.get());
     m_connection->open();

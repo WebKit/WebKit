@@ -91,7 +91,7 @@ void WebInspector::createInspectorPage(bool underTest)
     return;
 #endif
 
-    m_frontendConnection = IPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
+    m_frontendConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this, RunLoop::main());
     m_frontendConnection->open();
 
     WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::CreateInspectorPage(connectionClientPort, canAttachWindow(), underTest), m_page->pageID());

@@ -37,7 +37,6 @@
 #include <condition_variable>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/CString.h>
 
 #if OS(DARWIN)
@@ -140,8 +139,8 @@ public:
     static Connection::SocketPair createPlatformConnection(unsigned options = SetCloexecOnClient | SetCloexecOnServer);
 #endif
 
-    static PassRefPtr<Connection> createServerConnection(Identifier, Client*, WTF::RunLoop& clientRunLoop);
-    static PassRefPtr<Connection> createClientConnection(Identifier, Client*, WTF::RunLoop& clientRunLoop);
+    static Ref<Connection> createServerConnection(Identifier, Client&, WTF::RunLoop& clientRunLoop);
+    static Ref<Connection> createClientConnection(Identifier, Client&, WTF::RunLoop& clientRunLoop);
     ~Connection();
 
     Client* client() const { return m_client; }
@@ -195,7 +194,7 @@ public:
 #endif
 
 private:
-    Connection(Identifier, bool isServer, Client*, WTF::RunLoop& clientRunLoop);
+    Connection(Identifier, bool isServer, Client&, WTF::RunLoop& clientRunLoop);
     void platformInitialize(Identifier);
     void platformInvalidate();
     
