@@ -193,6 +193,10 @@ Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_LDADD = \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(WINMM_LIBS)
 
+if OS_DARWIN
+Programs_jsc_@WEBKITGTK_API_MAJOR_VERSION@_LDADD += -ledit
+endif
+
 EXTRA_DIST += \
 	Source/JavaScriptCore/AUTHORS \
 	Source/JavaScriptCore/ChangeLog \
