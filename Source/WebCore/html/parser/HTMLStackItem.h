@@ -39,7 +39,7 @@ namespace WebCore {
 class HTMLStackItem : public RefCounted<HTMLStackItem> {
 public:
     // Normal HTMLElementStack and HTMLFormattingElementList items.
-    static Ref<HTMLStackItem> create(Ref<Element>, AtomicHTMLToken&, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI);
+    static Ref<HTMLStackItem> create(Ref<Element>&&, AtomicHTMLToken&, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI);
 
     // Document fragment or element for parsing context.
     static Ref<HTMLStackItem> create(Element&);
@@ -61,7 +61,7 @@ public:
     bool matchesHTMLTag(const AtomicString&) const;
 
 private:
-    HTMLStackItem(Ref<Element>, AtomicHTMLToken&, const AtomicString& namespaceURI);
+    HTMLStackItem(Ref<Element>&&, AtomicHTMLToken&, const AtomicString& namespaceURI);
     explicit HTMLStackItem(Element&);
     explicit HTMLStackItem(DocumentFragment&);
 
@@ -75,7 +75,7 @@ bool isInHTMLNamespace(const HTMLStackItem&);
 bool isNumberedHeaderElement(const HTMLStackItem&);
 bool isSpecialNode(const HTMLStackItem&);
 
-inline HTMLStackItem::HTMLStackItem(Ref<Element> element, AtomicHTMLToken& token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
+inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, AtomicHTMLToken& token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
     : m_node(WTF::move(element))
     , m_namespaceURI(namespaceURI)
     , m_localName(token.name())
@@ -84,7 +84,7 @@ inline HTMLStackItem::HTMLStackItem(Ref<Element> element, AtomicHTMLToken& token
     // FIXME: We should find a way to move the attributes vector in the normal code path instead of copying it.
 }
 
-inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element> element, AtomicHTMLToken& token, const AtomicString& namespaceURI)
+inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element>&& element, AtomicHTMLToken& token, const AtomicString& namespaceURI)
 {
     return adoptRef(*new HTMLStackItem(WTF::move(element), token, namespaceURI));
 }

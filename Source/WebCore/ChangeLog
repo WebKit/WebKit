@@ -1,5 +1,13 @@
 2015-01-05  Darin Adler  <darin@apple.com>
 
+        Quick follow-up to last check-in, addressing review comments.
+
+        * html/parser/HTMLStackItem.h:
+        (WebCore::HTMLStackItem::HTMLStackItem): Use rvalue reference for incoming Ref.
+        (WebCore::HTMLStackItem::create): Ditto.
+
+2015-01-05  Darin Adler  <darin@apple.com>
+
         Modernize and streamline HTMLStackItem
         https://bugs.webkit.org/show_bug.cgi?id=140056
 
