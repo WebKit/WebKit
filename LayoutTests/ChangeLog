@@ -1,3 +1,17 @@
+2014-04-25  Miyoung Shin  <myid.shin@samsung.com>
+
+        Web process is crashed during dispatching touchEvent created by JS.
+        https://bugs.webkit.org/show_bug.cgi?id=113225
+
+        Reviewed by Benjamin Poulain.
+
+        TouchEvent created by JS should have the necessary attributes
+        of touches, targetTouches and changedTouches.
+        It should be verified weather there are touchLists before dispatching touch event.
+
+        * fast/events/touch/create-touch-event-without-touchList-expected.txt: Added.
+        * fast/events/touch/create-touch-event-without-touchList.html: Added.
+
 2014-07-08  Jeffrey Pfau  <jpfau@apple.com>
 
         Fix flaky loading tests
