@@ -6251,11 +6251,13 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/glx/GLContextGLX.cpp \
 	Source/WebCore/platform/graphics/glx/GLContextGLX.h
 endif # END USE_GLX
-else
+endif # END TARGET_X11
+
+if TARGET_WAYLAND
 webcore_sources += \
 	Source/WebCore/plugins/PluginPackageNone.cpp \
 	Source/WebCore/plugins/PluginViewNone.cpp
-endif # END TARGET_X11
+endif # END TARGET_WAYLAND
 
 if TARGET_X11_OR_WAYLAND
 platformgtk_sources += \
@@ -6273,7 +6275,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/egl/GLContextEGL.cpp \
 	Source/WebCore/platform/graphics/egl/GLContextEGL.h
 endif # END USE_EGL
-else
+endif # END TARGET_X11_OR_WAYLAND
+
 if TARGET_WIN32
 webcore_sources += \
 	Source/WebCore/platform/graphics/win/DIBPixelData.cpp \
@@ -6299,12 +6302,13 @@ webcoregtk_sources += \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp \
 	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.h \
 	Source/WebCore/plugins/win/PluginViewWin.cpp
-else
+endif # END TARGET_WIN32
+
+if TARGET_QUARTZ
 webcore_sources += \
 	Source/WebCore/plugins/PluginPackageNone.cpp \
 	Source/WebCore/plugins/PluginViewNone.cpp
-endif # END TARGET_WIN32
-endif # END TARGET_X11_OR_WAYLAND
+endif # END TARGET_QUARTZ
 
 if USE_GLES2
 webcore_sources += \

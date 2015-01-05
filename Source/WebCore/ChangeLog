@@ -1,3 +1,18 @@
+2015-01-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        webkit-gtk 2.3.3 fails on darwin/quartz due to duplicate symbols in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=126821
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.list.am: Simplify the logic for determining build
+        targets that are specific to windowing targets. Avoid nested target
+        checks and list all the additional build targets for each windowing
+        target - X11, Wayland, X11 and Wayland (i.e. the build targets that
+        are shared between the two configurations), Win32 and Quartz. This
+        avoids the current problems of building duplicate build targets on
+        Quartz, and also cleans up the list.
+
 2014-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] TLS errors should take precedence over HTTP authentication
