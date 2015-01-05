@@ -28,10 +28,6 @@
 
 namespace WebCore {
 
-void PluginPackage::determineQuirks(const String&)
-{
-}
-
 bool PluginPackage::fetchInfo()
 {
     return false;
