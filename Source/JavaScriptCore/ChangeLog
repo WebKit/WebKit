@@ -1,3 +1,10 @@
+2014-04-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, add the obvious thing that marks MakeRope as exiting since it can exit.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2014-08-18  Diego Pino Garcia  <dpino@igalia.com>
 
         Completed iterator can be revived by adding more than one new entry to the target object

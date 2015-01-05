@@ -400,6 +400,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case MakeRope: {
+        node->setCanExit(true);
         forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
         break;
     }
