@@ -1,3 +1,26 @@
+2015-01-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Fix up bmalloc's PerThread for use on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=139804
+
+        Reviewed by Anders Carlsson.
+
+        The previous implementation was a bit slow.
+
+        * bmalloc/PerThread.h:
+        (bmalloc::PerThreadStorage<Cache>::get):
+        (bmalloc::PerThreadStorage::get):
+        (bmalloc::PerThreadStorage::init): Added a catch-all cross-platform Unix
+        way to do fast per-thread access without taking a lock every time. This
+        probably works on all the platforms we care about, and it matches other
+        techniques we use elsewhere in WebKit.
+
+        (bmalloc::PerThread<T>::getFastCase): Removed the conditional from
+        this class because PerThreadStorage now encapsulates everything that
+        needs to be conditional.
+
+        (bmalloc::PerThreadStorage::initSharedKeyIfNeeded): Deleted.
+
 2014-12-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/19348208> REGRESSION (r177027): iOS builds use the wrong toolchain

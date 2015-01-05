@@ -50,17 +50,21 @@ private:
     static void destructor(void*);
 };
 
-class Cache;
+#if defined(__has_include) && __has_include(<System/pthread_machdep.h>)
 
+class Cache;
 template<typename T> struct PerThreadStorage;
 
-#if defined(__has_include) && __has_include(<System/pthread_machdep.h>)
 // For now, we only support PerThread<Cache>. We can expand to other types by
 // using more keys.
-
 template<> struct PerThreadStorage<Cache> {
     static const pthread_key_t key = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0;
-    static void* get() { return _pthread_getspecific_direct(key); }
+
+    static void* get()
+    {
+        return _pthread_getspecific_direct(key);
+    }
+
     static void init(void* object, void (*destructor)(void*))
     {
         _pthread_setspecific_direct(key, object);
@@ -71,52 +75,36 @@ template<> struct PerThreadStorage<Cache> {
 #else
 
 template<typename T> struct PerThreadStorage {
-#if BCOMPILER_SUPPORTS(CXX_THREAD_LOCAL)
-    static __thread void* object;
-#endif
-    static pthread_key_t key;
-    static std::once_flag onceFlag;
-
+    static bool s_didInitialize;
+    static pthread_key_t s_key;
+    static std::once_flag s_onceFlag;
+    
     static void* get()
     {
-#if BCOMPILER_SUPPORTS(CXX_THREAD_LOCAL)
-        return object;
-#else
-        return pthread_getspecific(key);
-#endif
+        if (!s_didInitialize)
+            return nullptr;
+        return pthread_getspecific(s_key);
     }
-
-    static void initSharedKeyIfNeeded(void (*destructor)(void*))
-    {
-        std::call_once(onceFlag, [destructor]() {
-            pthread_key_create(&key, destructor);
-        });
-    }
-
+    
     static void init(void* object, void (*destructor)(void*))
     {
-        initSharedKeyIfNeeded(destructor);
-        pthread_setspecific(key, object);
-#if BCOMPILER_SUPPORTS(CXX_THREAD_LOCAL)
-        PerThreadStorage<Cache>::object = object;
-#endif
+        std::call_once(s_onceFlag, [destructor]() {
+            pthread_key_create(&s_key, destructor);
+            s_didInitialize = true;
+        });
+        pthread_setspecific(s_key, object);
     }
 };
 
-#if BCOMPILER_SUPPORTS(CXX_THREAD_LOCAL)
-template<typename T> __thread void* PerThreadStorage<T>::object;
-#endif
-template<typename T> pthread_key_t PerThreadStorage<T>::key;
-template<typename T> std::once_flag PerThreadStorage<T>::onceFlag;
+template<typename T> bool PerThreadStorage<T>::s_didInitialize;
+template<typename T> pthread_key_t PerThreadStorage<T>::s_key;
+template<typename T> std::once_flag PerThreadStorage<T>::s_onceFlag;
 
 #endif // defined(__has_include) && __has_include(<System/pthread_machdep.h>)
 
 template<typename T>
 INLINE T* PerThread<T>::getFastCase()
 {
-#if (!defined(__has_include) || !__has_include(<System/pthread_machdep.h>)) && !BCOMPILER_SUPPORTS(CXX_THREAD_LOCAL)
-    PerThreadStorage<T>::initSharedKeyIfNeeded(destructor);
-#endif
     return static_cast<T*>(PerThreadStorage<T>::get());
 }
 
