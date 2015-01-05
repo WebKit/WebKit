@@ -37,8 +37,8 @@ class HTMLDocumentParser;
 class HTMLTreeBuilder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    HTMLTreeBuilder(const HTMLDocumentParser&, HTMLDocument&, ParserContentPolicy, const HTMLParserOptions&);
-    HTMLTreeBuilder(const HTMLDocumentParser&, DocumentFragment&, Element& contextElement, ParserContentPolicy, const HTMLParserOptions&);
+    HTMLTreeBuilder(HTMLDocumentParser&, HTMLDocument&, ParserContentPolicy, const HTMLParserOptions&);
+    HTMLTreeBuilder(HTMLDocumentParser&, DocumentFragment&, Element& contextElement, ParserContentPolicy, const HTMLParserOptions&);
     void setShouldSkipLeadingNewline(bool);
 
     ~HTMLTreeBuilder();
@@ -183,7 +183,7 @@ private:
         RefPtr<HTMLStackItem> m_contextElementStackItem;
     };
 
-    const HTMLDocumentParser& m_parser;
+    HTMLDocumentParser& m_parser;
     const HTMLParserOptions m_options;
     const FragmentParsingContext m_fragmentContext;
 

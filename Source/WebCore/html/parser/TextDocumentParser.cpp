@@ -25,7 +25,6 @@
 #include "config.h"
 #include "TextDocumentParser.h"
 
-#include "HTMLDocument.h"
 #include "HTMLTreeBuilder.h"
 
 namespace WebCore {
@@ -34,11 +33,6 @@ using namespace HTMLNames;
 
 TextDocumentParser::TextDocumentParser(HTMLDocument& document)
     : HTMLDocumentParser(document)
-    , m_haveInsertedFakePreElement(false)
-{
-}
-
-TextDocumentParser::~TextDocumentParser()
 {
 }
 
@@ -59,15 +53,15 @@ void TextDocumentParser::insertFakePreElement()
     Vector<Attribute> attributes;
     attributes.append(Attribute(styleAttr, "word-wrap: break-word; white-space: pre-wrap;"));
     AtomicHTMLToken fakePre(HTMLToken::StartTag, preTag.localName(), attributes);
-    treeBuilder()->constructTree(fakePre);
+    treeBuilder().constructTree(fakePre);
 
     // Normally we would skip the first \n after a <pre> element, but we don't
     // want to skip the first \n for text documents!
-    treeBuilder()->setShouldSkipLeadingNewline(false);
+    treeBuilder().setShouldSkipLeadingNewline(false);
 
     // Although Text Documents expose a "pre" element in their DOM, they
     // act like a <plaintext> tag, so we have to force plaintext mode.
-    forcePlaintextForTextDocument();
+    tokenizer().setState(HTMLTokenizer::PLAINTEXTState);
 
     m_haveInsertedFakePreElement = true;
 }

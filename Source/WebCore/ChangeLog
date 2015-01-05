@@ -1,3 +1,106 @@
+2015-01-04  Darin Adler  <darin@apple.com>
+
+        Modernize and tighten up HTMLDocumentParser
+        https://bugs.webkit.org/show_bug.cgi?id=140041
+
+        Reviewed by Sam Weinig.
+
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::parseHTML): Pass a reference instead of
+        a pointer for the context element.
+
+        * html/FTPDirectoryDocument.cpp: Removed unneeded includes, made more
+        things in FTPDirectoryDocumentParser private. Use Ref instead of RefPtr
+        in a could places. Initialize in class instead of in constructor.
+        (WebCore::FTPDirectoryDocumentParser::FTPDirectoryDocumentParser):
+        Less initialization here.
+        (WebCore::FTPDirectoryDocumentParser::createTDForFilename): More Ref here.
+        (WebCore::createTemplateDocumentData): Removed unneeded initialization
+        of RefPtr, which is initialized without explicitly asking for it.
+        (WebCore::FTPDirectoryDocumentParser::loadDocumentTemplate): Reworded
+        comment slightly.
+
+        * html/parser/HTMLDocumentParser.cpp: Cut down on includes.
+        (WebCore::tokenizerStateForContextElement): Fixed URL. Changed argument
+        to be a reference rather than a pointer.
+        (WebCore::HTMLDocumentParser::inPumpSession):
+        (WebCore::HTMLDocumentParser::shouldDelayEnd):
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser): Marked constructors
+        inline. Updated for data members that are now objects instead of pointers.
+        Removed explicit initialization for scalars that are now initialized in
+        the class definition.
+        (WebCore::HTMLDocumentParser::create): Moved the private creation
+        functions in here, out of the header file.
+        (WebCore::HTMLDocumentParser::~HTMLDocumentParser): Removed unused
+        m_haveBackgroundParser.
+        (WebCore::HTMLDocumentParser::prepareToStopParsing): Updated URL and
+        removed m_haveBackgroundParser reference.
+        (WebCore::HTMLDocumentParser::processingData): Removed a check of
+        m_haveBackgroundParser.
+        (WebCore::HTMLDocumentParser::resumeParsingAfterYield): Tweak comment.
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder): Added
+        a null check of the result of takeScriptToProcess, since there really
+        is no guarantee it's non-null.
+        (WebCore::HTMLDocumentParser::canTakeNextToken): Removed assertion
+        that was for m_haveBackgroundParser cases only. Rewrapped comment.
+        (WebCore::HTMLDocumentParser::contextForParsingSession): Use nullptr.
+        (WebCore::HTMLDocumentParser::pumpTokenizer): Rework comments,
+        remove assertions that no longer make sense, use auto instead of
+        repeating a long type name, update to use m_token and m_tokenizer.
+        (WebCore::HTMLDocumentParser::hasInsertionPoint): Rewrapped comment.
+        (WebCore::HTMLDocumentParser::insert): Got rid of braces around a
+        single-line if body.
+        (WebCore::HTMLDocumentParser::attemptToRunDeferredScriptsAndEnd):
+        Removed comment about incorrect m_haveBackgroundParser assertion.
+        (WebCore::HTMLDocumentParser::isExecutingScript): Use && style instead
+        of early exit for a null check.
+        (WebCore::HTMLDocumentParser::textPosition): Tightened up code a little.
+        (WebCore::HTMLDocumentParser::resumeParsingAfterScriptExecution): Added
+        a Ref to protect the parser, as is already done in every other function
+        that calls pumpTokenizerIfPossible.
+        (WebCore::HTMLDocumentParser::parseDocumentFragment): Take a reference
+        instead of a pointer. Also use auto so we get a Ref instead of a RefPtr.
+
+        * html/parser/HTMLDocumentParser.h: Removed unneeded includes.
+        Made private inheritance explicit instead of just omitting public.
+        Moved function bodies out of the class, and in some cases, out of the
+        header entirely. Return a reference from tokenizer(). Marked most
+        virtual functions final. Made DocumentFragment version of the
+        constructor private rather than protected. Made the functions
+        suspendScheduledTasks() and resumeScheduledTasks() private, since
+        they are always called through a base class. Removed the private
+        token function since it is better to get at m_token directly.
+        Removed m_haveBackgroundParser, since we don't have that any more
+        and it's always false. Also removed forcePlaintextForTextDocument
+        since the tokenizer is exposed and can be used directly to do that.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder): Made the parser non-const.
+        It could only be const before because HTMLDocumentParser::tokenizer
+        took a const parser and returned a non-const tokenizer, but that doesn't
+        really make sense.
+        (WebCore::HTMLTreeBuilder::constructTree): Removed null check for
+        tokenizer, which was never null. Updated since tokenizer is a reference.
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTag): Ditto. Also fixed and removed
+        some assertions like the ones I did recently in the rest of this file.
+        (WebCore::HTMLTreeBuilder::processGenericRCDATAStartTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processGenericRawTextStartTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processScriptStartTag): Ditto.
+
+        * html/parser/HTMLTreeBuilder.h: Made HTMLDocumentParser& non-const.
+
+        * html/parser/TextDocumentParser.cpp: Removed unneeded include and
+        unneeded explicit destructor.
+        (WebCore::TextDocumentParser::TextDocumentParser): Updated since
+        treeBuilder() returns a reference now, and set the tokenizer state
+        directly since tokenizer() is exposed.
+
+        * html/parser/TextDocumentParser.h: Moved initialization of the
+        data member here instead of the constructor. Also removed unneeded
+        explicitly defined destructor.
+
 2015-01-04  Antti Koivisto  <antti@apple.com>
 
         Remove GlyphPageTree

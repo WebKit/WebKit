@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2008, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,7 @@
 #if ENABLE(FTPDIR)
 #include "FTPDirectoryDocument.h"
 
-#include "ExceptionCodePlaceholder.h"
 #include "HTMLDocumentParser.h"
-#include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
@@ -36,10 +34,7 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "Text.h"
-#include <wtf/CurrentTime.h>
-#include <wtf/GregorianDateTime.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/CString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -53,12 +48,14 @@ public:
         return adoptRef(*new FTPDirectoryDocumentParser(document));
     }
 
+private:
     virtual void append(PassRefPtr<StringImpl>) override;
     virtual void finish() override;
 
+    // FIXME: Why do we need this?
     virtual bool isWaitingForScripts() const override { return false; }
 
-    inline void checkBuffer(int len = 10)
+    void checkBuffer(int len = 10)
     {
         if ((m_dest - m_buffer) > m_size - len) {
             // Enlarge buffer
@@ -69,8 +66,7 @@ public:
             m_size = newSize;
         }
     }
-        
-private:
+
     FTPDirectoryDocumentParser(HTMLDocument&);
 
     // The parser will attempt to load the document template specified via the preference
@@ -81,13 +77,13 @@ private:
 
     void parseAndAppendOneLine(const String&);
     void appendEntry(const String& name, const String& size, const String& date, bool isDirectory);    
-    RefPtr<Element> createTDForFilename(const String&);
+    Ref<Element> createTDForFilename(const String&);
 
     RefPtr<HTMLTableElement> m_tableElement;
 
-    bool m_skipLF;
+    bool m_skipLF { false };
     
-    int m_size;
+    int m_size { 254 };
     UChar* m_buffer;
     UChar* m_dest;
     String m_carryOver;
@@ -97,8 +93,6 @@ private:
 
 FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument& document)
     : HTMLDocumentParser(document)
-    , m_skipLF(false)
-    , m_size(254)
     , m_buffer(static_cast<UChar*>(fastMalloc(sizeof(UChar) * m_size)))
     , m_dest(m_buffer)
 {
@@ -132,7 +126,7 @@ void FTPDirectoryDocumentParser::appendEntry(const String& filename, const Strin
     rowElement->appendChild(element, IGNORE_EXCEPTION);
 }
 
-RefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)
+Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)
 {
     String fullURL = document()->baseURL().string();
     if (fullURL.endsWith('/'))
@@ -144,10 +138,10 @@ RefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& fi
     anchorElement->setAttribute(HTMLNames::hrefAttr, fullURL);
     anchorElement->appendChild(Text::create(*document(), filename), IGNORE_EXCEPTION);
 
-    RefPtr<Element> tdElement = document()->createElement(tdTag, false);
+    Ref<Element> tdElement = document()->createElement(tdTag, false);
     tdElement->appendChild(anchorElement, IGNORE_EXCEPTION);
 
-    return tdElement.release();
+    return tdElement;
 }
 
 static String processFilesizeString(const String& size, bool isDirectory)
@@ -275,7 +269,7 @@ void FTPDirectoryDocumentParser::parseAndAppendOneLine(const String& inputLine)
 
 static inline RefPtr<SharedBuffer> createTemplateDocumentData(Settings* settings)
 {
-    RefPtr<SharedBuffer> buffer = 0;
+    RefPtr<SharedBuffer> buffer;
     if (settings)
         buffer = SharedBuffer::createWithContentsOfFile(settings->ftpDirectoryTemplatePath());
     if (buffer)
@@ -286,9 +280,8 @@ static inline RefPtr<SharedBuffer> createTemplateDocumentData(Settings* settings
 bool FTPDirectoryDocumentParser::loadDocumentTemplate()
 {
     static SharedBuffer* templateDocumentData = createTemplateDocumentData(document()->settings()).release().leakRef();
-    // FIXME: Instead of storing the data, we'd rather actually parse the template data into the template Document once,
-    // store that document, then "copy" it whenever we get an FTP directory listing.  There are complexities with this 
-    // approach that make it worth putting this off.
+    // FIXME: Instead of storing the data, it would be more efficient if we could parse the template data into the
+    // template Document once, store that document, then "copy" it whenever we get an FTP directory listing.
     
     if (!templateDocumentData) {
         LOG_ERROR("Could not load templateData");

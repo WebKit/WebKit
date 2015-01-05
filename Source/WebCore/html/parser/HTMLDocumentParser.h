@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,103 +28,78 @@
 #define HTMLDocumentParser_h
 
 #include "CachedResourceClient.h"
-#include "FragmentScriptingPermission.h"
 #include "HTMLInputStream.h"
-#include "HTMLParserOptions.h"
-#include "HTMLPreloadScanner.h"
 #include "HTMLScriptRunnerHost.h"
 #include "HTMLSourceTracker.h"
-#include "HTMLToken.h"
 #include "HTMLTokenizer.h"
 #include "ScriptableDocumentParser.h"
-#include "SegmentedString.h"
 #include "XSSAuditor.h"
 #include "XSSAuditorDelegate.h"
-#include <wtf/Deque.h>
-#include <wtf/WeakPtr.h>
-#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
-class BackgroundHTMLParser;
-class CompactHTMLToken;
-class Document;
 class DocumentFragment;
 class HTMLDocument;
 class HTMLParserScheduler;
+class HTMLPreloadScanner;
 class HTMLScriptRunner;
 class HTMLTreeBuilder;
 class HTMLResourcePreloader;
-class ScriptController;
-class ScriptSourceCode;
-
 class PumpSession;
 
-class HTMLDocumentParser :  public ScriptableDocumentParser, HTMLScriptRunnerHost, CachedResourceClient {
+class HTMLDocumentParser : public ScriptableDocumentParser, private HTMLScriptRunnerHost, private CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<HTMLDocumentParser> create(HTMLDocument& document)
-    {
-        return adoptRef(*new HTMLDocumentParser(document));
-    }
+    static Ref<HTMLDocumentParser> create(HTMLDocument&);
     virtual ~HTMLDocumentParser();
 
-    // Exposed for HTMLParserScheduler
+    static void parseDocumentFragment(const String&, DocumentFragment&, Element& contextElement, ParserContentPolicy = AllowScriptingContent);
+
+    // For HTMLParserScheduler.
     void resumeParsingAfterYield();
 
-    static void parseDocumentFragment(const String&, DocumentFragment&, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
-
-    HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
-
-    virtual TextPosition textPosition() const override;
-
-    virtual void suspendScheduledTasks() override;
-    virtual void resumeScheduledTasks() override;
+    // For HTMLTreeBuilder.
+    HTMLTokenizer& tokenizer();
+    virtual TextPosition textPosition() const override final;
 
 protected:
-    virtual void insert(const SegmentedString&) override;
+    explicit HTMLDocumentParser(HTMLDocument&);
+
+    virtual void insert(const SegmentedString&) override final;
     virtual void append(PassRefPtr<StringImpl>) override;
     virtual void finish() override;
 
-    explicit HTMLDocumentParser(HTMLDocument&);
-    HTMLDocumentParser(DocumentFragment&, Element* contextElement, ParserContentPolicy);
-
-    HTMLTreeBuilder* treeBuilder() const { return m_treeBuilder.get(); }
-
-    void forcePlaintextForTextDocument();
+    HTMLTreeBuilder& treeBuilder();
 
 private:
-    static Ref<HTMLDocumentParser> create(DocumentFragment& fragment, Element* contextElement, ParserContentPolicy parserContentPolicy)
-    {
-        return adoptRef(*new HTMLDocumentParser(fragment, contextElement, parserContentPolicy));
-    }
+    HTMLDocumentParser(DocumentFragment&, Element& contextElement, ParserContentPolicy);
+    static Ref<HTMLDocumentParser> create(DocumentFragment&, Element& contextElement, ParserContentPolicy);
 
     // DocumentParser
-    virtual void detach() override;
-    virtual bool hasInsertionPoint() override;
-    virtual bool processingData() const override;
-    virtual void prepareToStopParsing() override;
-    virtual void stopParsing() override;
+    virtual void detach() override final;
+    virtual bool hasInsertionPoint() override final;
+    virtual bool processingData() const override final;
+    virtual void prepareToStopParsing() override final;
+    virtual void stopParsing() override final;
     virtual bool isWaitingForScripts() const override;
-    virtual bool isExecutingScript() const override;
-    virtual void executeScriptsWaitingForStylesheets() override;
+    virtual bool isExecutingScript() const override final;
+    virtual void executeScriptsWaitingForStylesheets() override final;
+    virtual void suspendScheduledTasks() override final;
+    virtual void resumeScheduledTasks() override final;
 
     // HTMLScriptRunnerHost
-    virtual void watchForLoad(CachedResource*) override;
-    virtual void stopWatchingForLoad(CachedResource*) override;
-    virtual HTMLInputStream& inputStream() override { return m_input; }
-    virtual bool hasPreloadScanner() const override { return m_preloadScanner.get(); }
-    virtual void appendCurrentInputStreamToPreloadScannerAndScan() override;
+    virtual void watchForLoad(CachedResource*) override final;
+    virtual void stopWatchingForLoad(CachedResource*) override final;
+    virtual HTMLInputStream& inputStream() override final;
+    virtual bool hasPreloadScanner() const override final;
+    virtual void appendCurrentInputStreamToPreloadScannerAndScan() override final;
 
     // CachedResourceClient
-    virtual void notifyFinished(CachedResource*) override;
+    virtual void notifyFinished(CachedResource*) override final;
 
     Document* contextForParsingSession();
 
-    enum SynchronousMode {
-        AllowYield,
-        ForceSynchronous,
-    };
+    enum SynchronousMode { AllowYield, ForceSynchronous };
     bool canTakeNextToken(SynchronousMode, PumpSession&);
     void pumpTokenizer(SynchronousMode);
     void pumpTokenizerIfPossible(SynchronousMode);
@@ -139,16 +115,14 @@ private:
 
     bool isParsingFragment() const;
     bool isScheduledForResume() const;
-    bool inPumpSession() const { return m_pumpSessionNestingLevel > 0; }
-    bool shouldDelayEnd() const { return inPumpSession() || isWaitingForScripts() || isScheduledForResume() || isExecutingScript(); }
-
-    HTMLToken& token() { return *m_token.get(); }
+    bool inPumpSession() const;
+    bool shouldDelayEnd() const;
 
     HTMLParserOptions m_options;
     HTMLInputStream m_input;
 
-    std::unique_ptr<HTMLToken> m_token;
-    std::unique_ptr<HTMLTokenizer> m_tokenizer;
+    HTMLToken m_token;
+    HTMLTokenizer m_tokenizer;
     std::unique_ptr<HTMLScriptRunner> m_scriptRunner;
     std::unique_ptr<HTMLTreeBuilder> m_treeBuilder;
     std::unique_ptr<HTMLPreloadScanner> m_preloadScanner;
@@ -161,10 +135,30 @@ private:
 
     std::unique_ptr<HTMLResourcePreloader> m_preloader;
 
-    bool m_endWasDelayed;
-    bool m_haveBackgroundParser;
-    unsigned m_pumpSessionNestingLevel;
+    bool m_endWasDelayed { false };
+    unsigned m_pumpSessionNestingLevel { 0 };
 };
+
+inline HTMLTokenizer& HTMLDocumentParser::tokenizer()
+{
+    return m_tokenizer;
+}
+
+inline HTMLInputStream& HTMLDocumentParser::inputStream()
+{
+    return m_input;
+}
+
+inline bool HTMLDocumentParser::hasPreloadScanner() const
+{
+    return m_preloadScanner.get();
+}
+
+inline HTMLTreeBuilder& HTMLDocumentParser::treeBuilder()
+{
+    ASSERT(m_treeBuilder);
+    return *m_treeBuilder;
+}
 
 }
 
