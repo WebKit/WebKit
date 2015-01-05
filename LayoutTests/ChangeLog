@@ -1,3 +1,16 @@
+2015-01-04  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: plugins/plugin-remove-readystatechange.html is failing on debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=126169
+
+        Reviewed by Antti Koivisto.
+
+        * plugins/plugin-remove-readystatechange.html: Move the embed so that it's not the
+        last rendered element in the test. It's only a workaround, not a real fix - if
+        anyone is interested in fixing the issue for real, please file a new bug.
+        Also, demystified the test by using readyState instead of counting readystatechange
+        events.
+
 2015-01-03  Michael Saboff  <msaboff@apple.com>
 
         Crash in operationNewFunction when scrolling on Google+
