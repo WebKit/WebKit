@@ -64,7 +64,7 @@ private:
     virtual void derefWebContextSupplement() override;
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     void startUpdating();
     void stopUpdating();
