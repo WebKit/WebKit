@@ -51,8 +51,8 @@ public:
 
     SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
-    void addListener(IPC::Connection*, uint64_t storageMapID);
-    void removeListener(IPC::Connection*, uint64_t storageMapID);
+    void addListener(IPC::Connection&, uint64_t storageMapID);
+    void removeListener(IPC::Connection&, uint64_t storageMapID);
 
     Ref<StorageArea> clone() const;
 
@@ -178,16 +178,16 @@ StorageManager::StorageArea::~StorageArea()
         m_localStorageNamespace->didDestroyStorageArea(this);
 }
 
-void StorageManager::StorageArea::addListener(IPC::Connection* connection, uint64_t storageMapID)
+void StorageManager::StorageArea::addListener(IPC::Connection& connection, uint64_t storageMapID)
 {
-    ASSERT(!m_eventListeners.contains(std::make_pair(connection, storageMapID)));
-    m_eventListeners.add(std::make_pair(connection, storageMapID));
+    ASSERT(!m_eventListeners.contains(std::make_pair(&connection, storageMapID)));
+    m_eventListeners.add(std::make_pair(&connection, storageMapID));
 }
 
-void StorageManager::StorageArea::removeListener(IPC::Connection* connection, uint64_t storageMapID)
+void StorageManager::StorageArea::removeListener(IPC::Connection& connection, uint64_t storageMapID)
 {
-    ASSERT(m_eventListeners.contains(std::make_pair(connection, storageMapID)));
-    m_eventListeners.remove(std::make_pair(connection, storageMapID));
+    ASSERT(m_eventListeners.contains(std::make_pair(&connection, storageMapID)));
+    m_eventListeners.remove(std::make_pair(&connection, storageMapID));
 }
 
 Ref<StorageManager::StorageArea> StorageManager::StorageArea::clone() const
@@ -560,7 +560,7 @@ void StorageManager::createLocalStorageMap(IPC::Connection& connection, uint64_t
     ASSERT(localStorageNamespace);
 
     RefPtr<StorageArea> storageArea = localStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
-    storageArea->addListener(&connection, storageMapID);
+    storageArea->addListener(connection, storageMapID);
 
     result.iterator->value = storageArea.release();
 }
@@ -578,7 +578,7 @@ void StorageManager::createTransientLocalStorageMap(IPC::Connection& connection,
     TransientLocalStorageNamespace* transientLocalStorageNamespace = getOrCreateTransientLocalStorageNamespace(storageNamespaceID, *topLevelOriginData.securityOrigin());
 
     auto storageArea = transientLocalStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
-    storageArea->addListener(&connection, storageMapID);
+    storageArea->addListener(connection, storageMapID);
 
     slot = WTF::move(storageArea);
 }
@@ -607,7 +607,7 @@ void StorageManager::createSessionStorageMap(IPC::Connection& connection, uint64
     ASSERT(&connection == sessionStorageNamespace->allowedConnection());
 
     auto storageArea = sessionStorageNamespace->getOrCreateStorageArea(securityOriginData.securityOrigin());
-    storageArea->addListener(&connection, storageMapID);
+    storageArea->addListener(connection, storageMapID);
 
     slot = WTF::move(storageArea);
 }
@@ -625,13 +625,13 @@ void StorageManager::destroyStorageMap(IPC::Connection& connection, uint64_t sto
         return;
     }
 
-    it->value->removeListener(&connection, storageMapID);
+    it->value->removeListener(connection, storageMapID);
     m_storageAreasByConnection.remove(connectionAndStorageMapIDPair);
 }
 
 void StorageManager::getValues(IPC::Connection& connection, uint64_t storageMapID, uint64_t storageMapSeed, HashMap<String, String>& values)
 {
-    StorageArea* storageArea = findStorageArea(&connection, storageMapID);
+    StorageArea* storageArea = findStorageArea(connection, storageMapID);
     if (!storageArea) {
         // This is a session storage area for a page that has already been closed. Ignore it.
         return;
@@ -643,7 +643,7 @@ void StorageManager::getValues(IPC::Connection& connection, uint64_t storageMapI
 
 void StorageManager::setItem(IPC::Connection& connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString)
 {
-    StorageArea* storageArea = findStorageArea(&connection, storageMapID);
+    StorageArea* storageArea = findStorageArea(connection, storageMapID);
     if (!storageArea) {
         // This is a session storage area for a page that has already been closed. Ignore it.
         return;
@@ -656,7 +656,7 @@ void StorageManager::setItem(IPC::Connection& connection, uint64_t storageMapID,
 
 void StorageManager::removeItem(IPC::Connection& connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString)
 {
-    StorageArea* storageArea = findStorageArea(&connection, storageMapID);
+    StorageArea* storageArea = findStorageArea(connection, storageMapID);
     if (!storageArea) {
         // This is a session storage area for a page that has already been closed. Ignore it.
         return;
@@ -668,7 +668,7 @@ void StorageManager::removeItem(IPC::Connection& connection, uint64_t storageMap
 
 void StorageManager::clear(IPC::Connection& connection, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString)
 {
-    StorageArea* storageArea = findStorageArea(&connection, storageMapID);
+    StorageArea* storageArea = findStorageArea(connection, storageMapID);
     if (!storageArea) {
         // This is a session storage area for a page that has already been closed. Ignore it.
         return;
@@ -720,7 +720,7 @@ void StorageManager::applicationWillTerminate()
     m_queue->dispatch([this, &semaphore] {
         Vector<std::pair<RefPtr<IPC::Connection>, uint64_t>> connectionAndStorageMapIDPairsToRemove;
         for (auto& connectionStorageAreaPair : m_storageAreasByConnection) {
-            connectionStorageAreaPair.value->removeListener(connectionStorageAreaPair.key.first.get(), connectionStorageAreaPair.key.second);
+            connectionStorageAreaPair.value->removeListener(*connectionStorageAreaPair.key.first, connectionStorageAreaPair.key.second);
             connectionAndStorageMapIDPairsToRemove.append(connectionStorageAreaPair.key);
         }
 
@@ -740,7 +740,7 @@ void StorageManager::invalidateConnectionInternal(IPC::Connection* connection)
         if (it->key.first != connection)
             continue;
 
-        it->value->removeListener(it->key.first.get(), it->key.second);
+        it->value->removeListener(*it->key.first, it->key.second);
         connectionAndStorageMapIDPairsToRemove.append(it->key);
     }
 
@@ -748,9 +748,9 @@ void StorageManager::invalidateConnectionInternal(IPC::Connection* connection)
         m_storageAreasByConnection.remove(connectionAndStorageMapIDPairsToRemove[i]);
 }
 
-StorageManager::StorageArea* StorageManager::findStorageArea(IPC::Connection* connection, uint64_t storageMapID) const
+StorageManager::StorageArea* StorageManager::findStorageArea(IPC::Connection& connection, uint64_t storageMapID) const
 {
-    std::pair<IPC::Connection*, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
+    std::pair<IPC::Connection*, uint64_t> connectionAndStorageMapIDPair(&connection, storageMapID);
 
     if (!m_storageAreasByConnection.isValidKey(connectionAndStorageMapIDPair))
         return nullptr;

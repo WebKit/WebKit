@@ -92,7 +92,7 @@ private:
     void invalidateConnectionInternal(IPC::Connection*);
 
     class StorageArea;
-    StorageArea* findStorageArea(IPC::Connection*, uint64_t) const;
+    StorageArea* findStorageArea(IPC::Connection&, uint64_t) const;
 
     class LocalStorageNamespace;
     LocalStorageNamespace* getOrCreateLocalStorageNamespace(uint64_t storageNamespaceID);
