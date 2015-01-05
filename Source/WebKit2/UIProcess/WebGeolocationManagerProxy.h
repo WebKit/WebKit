@@ -71,10 +71,10 @@ private:
     bool isUpdating() const { return !m_updateRequesters.isEmpty(); }
     bool isHighAccuracyEnabled() const { return !m_highAccuracyRequesters.isEmpty(); }
 
-    void startUpdating(IPC::Connection*);
-    void stopUpdating(IPC::Connection*);
+    void startUpdating(IPC::Connection&);
+    void stopUpdating(IPC::Connection&);
     void removeRequester(const IPC::Connection::Client*);
-    void setEnableHighAccuracy(IPC::Connection*, bool);
+    void setEnableHighAccuracy(IPC::Connection&, bool);
 
     HashSet<const IPC::Connection::Client*> m_updateRequesters;
     HashSet<const IPC::Connection::Client*> m_highAccuracyRequesters;

@@ -143,13 +143,13 @@ void WebUserContentControllerProxy::removeUserMessageHandlerForName(const String
     }
 }
 
-void WebUserContentControllerProxy::didPostMessage(IPC::Connection* connection, uint64_t pageID, uint64_t frameID, uint64_t messageHandlerID, const IPC::DataReference& dataReference)
+void WebUserContentControllerProxy::didPostMessage(IPC::Connection& connection, uint64_t pageID, uint64_t frameID, uint64_t messageHandlerID, const IPC::DataReference& dataReference)
 {
     WebPageProxy* page = WebProcessProxy::webPage(pageID);
     if (!page)
         return;
 
-    WebProcessProxy* webProcess = WebProcessProxy::fromConnection(connection);
+    WebProcessProxy* webProcess = WebProcessProxy::fromConnection(&connection);
     WebFrameProxy* frame = webProcess->webFrame(frameID);
     if (!frame)
         return;

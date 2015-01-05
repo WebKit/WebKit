@@ -372,8 +372,8 @@ private:
     void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
 #endif
 
-    void handleMessage(IPC::Connection*, const String& messageName, const UserData& messageBody);
-    void handleSynchronousMessage(IPC::Connection*, const String& messageName, const UserData& messageBody, UserData& returnUserData);
+    void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);
+    void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, UserData& returnUserData);
 
     void didGetStatistics(const StatisticsData&, uint64_t callbackID);
 

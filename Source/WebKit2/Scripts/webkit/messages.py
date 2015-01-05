@@ -265,7 +265,7 @@ def async_message_statement(receiver, message):
     dispatch_function = 'handleMessage'
 
     if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
-        dispatch_function_args.insert(0, 'connection')
+        dispatch_function_args.insert(0, '*connection')
 
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
@@ -284,7 +284,7 @@ def sync_message_statement(receiver, message):
 
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
-    result.append('        IPC::%s<Messages::%s::%s>(%sdecoder, %sreplyEncoder, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if wants_connection else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) else '*', handler_function(receiver, message)))
+    result.append('        IPC::%s<Messages::%s::%s>(%sdecoder, %sreplyEncoder, this, &%s);\n' % (dispatch_function, receiver.name, message.name, '*connection, ' if wants_connection else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) else '*', handler_function(receiver, message)))
     result.append('        return;\n')
     result.append('    }\n')
     return surround_in_condition(''.join(result), message.condition)

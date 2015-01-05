@@ -1306,15 +1306,18 @@ void WebProcessPool::requestNetworkingStatistics(StatisticsRequest* request)
 #endif
 }
 
-void WebProcessPool::handleMessage(IPC::Connection* connection, const String& messageName, const WebKit::UserData& messageBody)
+void WebProcessPool::handleMessage(IPC::Connection& connection, const String& messageName, const WebKit::UserData& messageBody)
 {
-    if (auto* webProcessProxy = WebProcessProxy::fromConnection(connection))
-        m_injectedBundleClient.didReceiveMessageFromInjectedBundle(this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get());
+    auto* webProcessProxy = WebProcessProxy::fromConnection(&connection);
+    if (!webProcessProxy)
+        return;
+
+    m_injectedBundleClient.didReceiveMessageFromInjectedBundle(this, messageName, webProcessProxy->transformHandlesToObjects(messageBody.object()).get());
 }
 
-void WebProcessPool::handleSynchronousMessage(IPC::Connection* connection, const String& messageName, const UserData& messageBody, UserData& returnUserData)
+void WebProcessPool::handleSynchronousMessage(IPC::Connection& connection, const String& messageName, const UserData& messageBody, UserData& returnUserData)
 {
-    auto* webProcessProxy = WebProcessProxy::fromConnection(connection);
+    auto* webProcessProxy = WebProcessProxy::fromConnection(&connection);
     if (!webProcessProxy)
         return;
 

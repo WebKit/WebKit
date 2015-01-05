@@ -53,13 +53,13 @@ void callMemberFunction(ArgsTuple&& args, PassRefPtr<R> delayedReply, C* object,
 // Dispatch functions with connection parameter with no reply arguments.
 
 template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex>
-void callMemberFunctionImpl(C* object, MF function, Connection* connection, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
+void callMemberFunctionImpl(C* object, MF function, Connection& connection, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
 {
     (object->*function)(connection, std::get<ArgsIndex>(args)...);
 }
 
 template<typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>
-void callMemberFunction(Connection* connection, ArgsTuple&& args, C* object, MF function)
+void callMemberFunction(Connection& connection, ArgsTuple&& args, C* object, MF function)
 {
     callMemberFunctionImpl(object, function, connection, std::forward<ArgsTuple>(args), ArgsIndicies());
 }
@@ -67,13 +67,13 @@ void callMemberFunction(Connection* connection, ArgsTuple&& args, C* object, MF 
 // Dispatch functions with connection parameter with reply arguments.
 
 template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex, typename ReplyArgsTuple, size_t... ReplyArgsIndex>
-void callMemberFunctionImpl(C* object, MF function, Connection* connection, ArgsTuple&& args, ReplyArgsTuple& replyArgs, std::index_sequence<ArgsIndex...>, std::index_sequence<ReplyArgsIndex...>)
+void callMemberFunctionImpl(C* object, MF function, Connection& connection, ArgsTuple&& args, ReplyArgsTuple& replyArgs, std::index_sequence<ArgsIndex...>, std::index_sequence<ReplyArgsIndex...>)
 {
     (object->*function)(connection, std::get<ArgsIndex>(std::forward<ArgsTuple>(args))..., std::get<ReplyArgsIndex>(replyArgs)...);
 }
 
 template <typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>, typename ReplyArgsTuple, typename ReplyArgsIndicies = std::make_index_sequence<std::tuple_size<ReplyArgsTuple>::value>>
-void callMemberFunction(Connection* connection, ArgsTuple&& args, ReplyArgsTuple& replyArgs, C* object, MF function)
+void callMemberFunction(Connection& connection, ArgsTuple&& args, ReplyArgsTuple& replyArgs, C* object, MF function)
 {
     callMemberFunctionImpl(object, function, connection, std::forward<ArgsTuple>(args), replyArgs, ArgsIndicies(), ReplyArgsIndicies());
 }
@@ -107,7 +107,7 @@ void handleMessage(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* obj
 }
 
 template<typename T, typename C, typename MF>
-void handleMessage(Connection* connection, MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
+void handleMessage(Connection& connection, MessageDecoder& decoder, MessageEncoder& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
     if (!decoder.decode(arguments)) {
@@ -121,7 +121,7 @@ void handleMessage(Connection* connection, MessageDecoder& decoder, MessageEncod
 }
 
 template<typename T, typename C, typename MF>
-void handleMessage(Connection* connection, MessageDecoder& decoder, C* object, MF function)
+void handleMessage(Connection& connection, MessageDecoder& decoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
     if (!decoder.decode(arguments)) {
@@ -132,7 +132,7 @@ void handleMessage(Connection* connection, MessageDecoder& decoder, C* object, M
 }
 
 template<typename T, typename C, typename MF>
-void handleMessageDelayed(Connection* connection, MessageDecoder& decoder, std::unique_ptr<MessageEncoder>& replyEncoder, C* object, MF function)
+void handleMessageDelayed(Connection& connection, MessageDecoder& decoder, std::unique_ptr<MessageEncoder>& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType arguments;
     if (!decoder.decode(arguments)) {
@@ -140,7 +140,7 @@ void handleMessageDelayed(Connection* connection, MessageDecoder& decoder, std::
         return;
     }
 
-    RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(connection, WTF::move(replyEncoder)));
+    RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(&connection, WTF::move(replyEncoder)));
     callMemberFunction(WTF::move(arguments), delayedReply.release(), object, function);
 }
 

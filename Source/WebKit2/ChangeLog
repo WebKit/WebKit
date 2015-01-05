@@ -1,3 +1,49 @@
+2015-01-05  Anders Carlsson  <andersca@apple.com>
+
+        Pass IPC::Connection by reference to IPC message handlers
+        https://bugs.webkit.org/show_bug.cgi?id=140082
+
+        Reviewed by Darin Adler.
+
+        * Platform/IPC/HandleMessage.h:
+        (IPC::callMemberFunctionImpl):
+        (IPC::callMemberFunction):
+        (IPC::handleMessage):
+        (IPC::handleMessageDelayed):
+        * Scripts/webkit/messages.py:
+        (async_message_statement):
+        (sync_message_statement):
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createLocalStorageMap):
+        (WebKit::StorageManager::createTransientLocalStorageMap):
+        (WebKit::StorageManager::createSessionStorageMap):
+        (WebKit::StorageManager::destroyStorageMap):
+        (WebKit::StorageManager::getValues):
+        (WebKit::StorageManager::setItem):
+        (WebKit::StorageManager::removeItem):
+        (WebKit::StorageManager::clear):
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::didPostMessage):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::startUpdating):
+        (WebKit::WebGeolocationManagerProxy::stopUpdating):
+        (WebKit::WebGeolocationManagerProxy::setEnableHighAccuracy):
+        * UIProcess/WebGeolocationManagerProxy.h:
+        * UIProcess/WebOriginDataManagerProxy.cpp:
+        (WebKit::WebOriginDataManagerProxy::didGetOrigins):
+        (WebKit::WebOriginDataManagerProxy::didDeleteEntries):
+        (WebKit::WebOriginDataManagerProxy::didDeleteAllEntries):
+        * UIProcess/WebOriginDataManagerProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::handleMessage):
+        (WebKit::WebProcessPool::handleSynchronousMessage):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::secItemRequest):
+        * UIProcess/mac/SecItemShimProxy.h:
+
 2015-01-04  Anders Carlsson  <andersca@apple.com>
 
         Clean up some of the IPC code

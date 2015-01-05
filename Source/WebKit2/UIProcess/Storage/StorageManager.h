@@ -74,15 +74,15 @@ private:
     virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>& replyEncoder) override;
 
     // Message handlers.
-    void createLocalStorageMap(IPC::Connection*, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData&);
-    void createTransientLocalStorageMap(IPC::Connection*, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& topLevelOriginData, const SecurityOriginData&);
-    void createSessionStorageMap(IPC::Connection*, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData&);
-    void destroyStorageMap(IPC::Connection*, uint64_t storageMapID);
+    void createLocalStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData&);
+    void createTransientLocalStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& topLevelOriginData, const SecurityOriginData&);
+    void createSessionStorageMap(IPC::Connection&, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData&);
+    void destroyStorageMap(IPC::Connection&, uint64_t storageMapID);
 
-    void getValues(IPC::Connection*, uint64_t storageMapID, uint64_t storageMapSeed, HashMap<String, String>& values);
-    void setItem(IPC::Connection*, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
-    void removeItem(IPC::Connection*, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString);
-    void clear(IPC::Connection*, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString);
+    void getValues(IPC::Connection&, uint64_t storageMapID, uint64_t storageMapSeed, HashMap<String, String>& values);
+    void setItem(IPC::Connection&, uint64_t storageAreaID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& value, const String& urlString);
+    void removeItem(IPC::Connection&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& key, const String& urlString);
+    void clear(IPC::Connection&, uint64_t storageMapID, uint64_t sourceStorageAreaID, uint64_t storageMapSeed, const String& urlString);
 
     void createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, IPC::Connection* allowedConnection, unsigned quotaInBytes);
     void destroySessionStorageNamespaceInternal(uint64_t storageNamespaceID);

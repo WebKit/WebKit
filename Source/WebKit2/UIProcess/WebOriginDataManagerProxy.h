@@ -67,9 +67,9 @@ public:
 private:
     explicit WebOriginDataManagerProxy(WebProcessPool*);
 
-    void didGetOrigins(IPC::Connection*, const Vector<SecurityOriginData>&, uint64_t callbackID);
-    void didDeleteEntries(IPC::Connection*, uint64_t callbackID);
-    void didDeleteAllEntries(IPC::Connection*, uint64_t callbackID);
+    void didGetOrigins(IPC::Connection&, const Vector<SecurityOriginData>&, uint64_t callbackID);
+    void didDeleteEntries(IPC::Connection&, uint64_t callbackID);
+    void didDeleteAllEntries(IPC::Connection&, uint64_t callbackID);
 
     // WebContextSupplement
     virtual void processPoolDestroyed() override;

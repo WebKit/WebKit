@@ -191,10 +191,10 @@ void WebOriginDataManagerProxy::getOrigins(WKOriginDataTypes types, std::functio
     sendMessageToAllProcessesInProcessPool<ArrayCallback, Messages::WebOriginDataManager::GetOrigins>(processPool(), callbackFunction, m_arrayCallbacks, types);
 }
 
-void WebOriginDataManagerProxy::didGetOrigins(IPC::Connection* connection, const Vector<SecurityOriginData>& originIdentifiers, uint64_t callbackID)
+void WebOriginDataManagerProxy::didGetOrigins(IPC::Connection& connection, const Vector<SecurityOriginData>& originIdentifiers, uint64_t callbackID)
 {
     RefPtr<ArrayCallback> callback = m_arrayCallbacks.take(callbackID);
-    MESSAGE_CHECK_BASE(callback, connection);
+    MESSAGE_CHECK_BASE(callback, &connection);
 
     Vector<RefPtr<API::Object>> securityOrigins;
     securityOrigins.reserveInitialCapacity(originIdentifiers.size());
@@ -220,10 +220,10 @@ void WebOriginDataManagerProxy::deleteEntriesModifiedBetweenDates(WKOriginDataTy
     sendMessageToAllProcessesInProcessPool<VoidCallback, Messages::WebOriginDataManager::DeleteEntriesModifiedBetweenDates>(processPool(), callbackFunction, m_voidCallbacks, types, startDate, endDate);
 }
 
-void WebOriginDataManagerProxy::didDeleteEntries(IPC::Connection* connection, uint64_t callbackID)
+void WebOriginDataManagerProxy::didDeleteEntries(IPC::Connection& connection, uint64_t callbackID)
 {
     RefPtr<VoidCallback> callback = m_voidCallbacks.take(callbackID);
-    MESSAGE_CHECK_BASE(callback, connection);
+    MESSAGE_CHECK_BASE(callback, &connection);
     callback->performCallback();
 }
 
@@ -232,10 +232,10 @@ void WebOriginDataManagerProxy::deleteAllEntries(WKOriginDataTypes types, std::f
     sendMessageToAllProcessesInProcessPool<VoidCallback, Messages::WebOriginDataManager::DeleteAllEntries>(processPool(), callbackFunction, m_voidCallbacks, types);
 }
 
-void WebOriginDataManagerProxy::didDeleteAllEntries(IPC::Connection* connection, uint64_t callbackID)
+void WebOriginDataManagerProxy::didDeleteAllEntries(IPC::Connection& connection, uint64_t callbackID)
 {
     RefPtr<VoidCallback> callback = m_voidCallbacks.take(callbackID);
-    MESSAGE_CHECK_BASE(callback, connection);
+    MESSAGE_CHECK_BASE(callback, &connection);
     callback->performCallback();
 }
 

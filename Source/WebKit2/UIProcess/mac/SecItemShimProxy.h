@@ -47,7 +47,7 @@ private:
     // IPC::Connection::WorkQueueMessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
-    void secItemRequest(IPC::Connection*, uint64_t requestID, const SecItemRequestData&);
+    void secItemRequest(IPC::Connection&, uint64_t requestID, const SecItemRequestData&);
 
     RefPtr<WorkQueue> m_queue;
 };
