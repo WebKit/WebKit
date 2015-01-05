@@ -1,8 +1,8 @@
+<script src="../resources/plugin.js"></script>
 <script>
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
+    runAfterPluginLoad(null, NotifyDone);
 </script>
 <p>
 This test checks that <a href="https://bugs.webkit.org/show_bug.cgi?id=50657">bug 50568</a>
@@ -13,7 +13,3 @@ attribute.
 </p>
 <!-- Embed tag with missing type="" parameter -->
 <embed id="plugin" name="plugin" src="resources/test.testnetscape" logSrc="1">
-<script>
-    if (window.testRunner)
-        testRunner.notifyDone();
-</script>

@@ -1,3 +1,41 @@
+2014-05-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Roll r168668 back in.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=132621>
+
+        Reviewed by Brent Fulgham.
+
+        * compositing/plugins/composited-plugin.html:
+        * compositing/plugins/no-backing-store.html:
+        * fast/dom/beforeload/flash-before-load.html:
+        * fast/events/beforeload-assertion-expected.txt: Added.
+        * fast/events/beforeload-assertion.html: Added.
+        * fast/events/beforeload-iframe-crash-expected.txt: Added.
+        * fast/events/beforeload-iframe-crash.html: Added.
+        * fast/events/beforeload-input-time-crash-expected.txt: Added.
+        * fast/events/beforeload-input-time-crash.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-data.html:
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html:
+        * http/tests/security/contentSecurityPolicy/object-src-no-url-allowed.html:
+        * http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html:
+        * http/tests/security/contentSecurityPolicy/object-src-none-allowed.html:
+        * http/tests/security/contentSecurityPolicy/object-src-none-blocked.html:
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-plugin-test.js:
+        (testImpl.iframe.onload):
+        (testImpl):
+        * http/tests/security/mixedContent/insecure-plugin-in-iframe.html:
+        * platform/mac/plugins/supports-carbon-event-model.html:
+        * platform/mac/plugins/testplugin-onnew-onpaint.html:
+        * plugins/get-user-agent-with-null-npp-from-npp-new.html:
+        * plugins/mouse-click-plugin-clears-selection.html:
+        * plugins/netscape-plugin-map-data-to-src.html:
+        * plugins/no-mime-with-valid-extension.html:
+        * plugins/plugin-initiate-popup-window.html:
+        * plugins/windowless_plugin_paint_test.html:
+        * resources/plugin.js: Added.
+        (runAfterPluginLoad):
+
 2014-09-17  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Cannot play Vimeo video

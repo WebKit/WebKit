@@ -83,7 +83,10 @@ PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tag
 
 RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    // Needs to load the plugin immediatedly because this function is called
+    // when JavaScript code accesses the plugin.
+    // FIXME: <rdar://16893708> Check if dispatching events here is safe.
+    document().updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasksSynchronously);
     return renderWidget(); // This will return 0 if the renderer is not a RenderWidget.
 }
 

@@ -1,3 +1,13 @@
+2014-05-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Roll r168668 back in.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=132621>
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2014-01-27  Roger Fong  <roger_fong@apple.com>
 
         [Windows] Tests crashing on Windows after r162816.

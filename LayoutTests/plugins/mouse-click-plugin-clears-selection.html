@@ -1,8 +1,9 @@
 <html>
 <head>
+<script src="../resources/plugin.js"></script>
 <script>
 
-function runTest() {
+runAfterPluginLoad(function() {
     inputElement = document.getElementById('frame');
     inputElement.focus();
     inputElement.select();
@@ -14,10 +15,10 @@ function runTest() {
         eventSender.mouseDown();
         eventSender.mouseUp();
     }
-}
+}, NotifyDone);
 </script>
 </head>
-<body onload="runTest();">
+<body>
 <embed id="plg" type="application/x-webkit-test-netscape" width="100" height="100" windowedplugin="false"></embed><br>
 <input id="frame" value="hello"/>
 <div id="output"></div>

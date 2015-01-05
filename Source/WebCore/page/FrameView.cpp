@@ -168,6 +168,7 @@ FrameView::FrameView(Frame& frame)
     , m_layoutPhase(OutsideLayout)
     , m_inSynchronousPostLayout(false)
     , m_postLayoutTasksTimer(this, &FrameView::postLayoutTimerFired)
+    , m_updateEmbeddedObjectsTimer(this, &FrameView::updateEmbeddedObjectsTimerFired)
     , m_isTransparent(false)
     , m_baseBackgroundColor(Color::white)
     , m_mediaType("screen")
@@ -256,6 +257,7 @@ void FrameView::reset()
     m_layoutCount = 0;
     m_nestedLayoutCount = 0;
     m_postLayoutTasksTimer.stop();
+    m_updateEmbeddedObjectsTimer.stop();
     m_firstLayout = true;
     m_firstLayoutCallbackPending = false;
     m_wasScrolledByUser = false;
@@ -2640,16 +2642,28 @@ bool FrameView::updateEmbeddedObjects()
     return m_embeddedObjectsToUpdate->isEmpty();
 }
 
+void FrameView::updateEmbeddedObjectsTimerFired(Timer<FrameView>*)
+{
+    RefPtr<FrameView> protect(this);
+    m_updateEmbeddedObjectsTimer.stop();
+    for (unsigned i = 0; i < maxUpdateEmbeddedObjectsIterations; i++) {
+        if (updateEmbeddedObjects())
+            break;
+    }
+}
+
 void FrameView::flushAnyPendingPostLayoutTasks()
 {
-    if (!m_postLayoutTasksTimer.isActive())
-        return;
-
-    performPostLayoutTasks();
+    if (m_postLayoutTasksTimer.isActive())
+        performPostLayoutTasks();
+    if (m_updateEmbeddedObjectsTimer.isActive())
+        updateEmbeddedObjectsTimerFired(nullptr);
 }
 
 void FrameView::performPostLayoutTasks()
 {
+    // FIXME: We should not run any JavaScript code in this function.
+
     m_postLayoutTasksTimer.stop();
 
     frame().selection().setCaretRectNeedsUpdate();
@@ -2706,10 +2720,7 @@ void FrameView::performPostLayoutTasks()
     // is called through the post layout timer.
     Ref<FrameView> protect(*this);
 
-    for (unsigned i = 0; i < maxUpdateEmbeddedObjectsIterations; i++) {
-        if (updateEmbeddedObjects())
-            break;
-    }
+    m_updateEmbeddedObjectsTimer.startOneShot(0);
 
     if (page) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())

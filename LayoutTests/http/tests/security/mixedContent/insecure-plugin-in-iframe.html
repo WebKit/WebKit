@@ -3,6 +3,11 @@
 <script>
 if (window.testRunner)
     testRunner.dumpAsText();
+
+onload = function() {
+    if (window.internals)
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(document.querySelector('iframe'));
+};
 </script>
 <p>This test loads a secure iframe that loads an insecure plugin.  We should
 get a mixed content callback because the insecure plug-in can script the secure

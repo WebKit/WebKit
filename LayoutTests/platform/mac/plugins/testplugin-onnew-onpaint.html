@@ -2,6 +2,7 @@
 
 <html>
 <head>
+    <script src="../../../resources/plugin.js"></script>
     <script type="text/javascript" charset="utf-8">
         if (window.testRunner)
             testRunner.dumpAsText();
@@ -25,6 +26,8 @@
                 didPaint = true;
             }
         }
+
+        runAfterPluginLoad(null, NotifyDone);
     </script>
 </head>
 <body>

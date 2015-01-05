@@ -1,3 +1,37 @@
+2014-05-28  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Roll r168668 back in.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=132621>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: fast/events/beforeload-assertion.html
+               fast/events/beforeload-iframe-crash.html
+               fast/events/beforeload-input-time-crash.html
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        * dom/Document.h:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::renderWidgetForJSBindings):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::renderWidgetForJSBindings):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderWidgetForJSBindings):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::updateEmbeddedObjectsTimerFired):
+        (WebCore::FrameView::flushAnyPendingPostLayoutTasks):
+        (WebCore::FrameView::performPostLayoutTasks):
+        * page/FrameView.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2014-10-06  Philip Chimento  <philip.chimento@gmail.com>
 
         webkit-gtk 2.3.3 fails on darwin/quartz due to duplicate symbols in WebCore

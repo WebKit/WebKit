@@ -1,8 +1,10 @@
 <html>
 <head>
+<script src="../resources/plugin.js"></script>
 <script>
     if (window.testRunner)
         testRunner.dumpAsText();
+    runAfterPluginLoad(null, NotifyDone);
 </script>
 <body style="margin:0px;overflow:hidden">
 <object name="testPlugin" type="application/x-webkit-test-netscape" logSrc="true" data="blah">

@@ -4,9 +4,12 @@
 </head>
 <body>
 <div id="console"></div>
+<script src="../../../resources/plugin.js"></script>
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    runAfterPluginLoad(null, NotifyDone);
 </script>
 
 <object id="plugin" onbeforeload="return false" type="application/x-shockwave-flash" data="../../../plugins/resources/simple_blank.swf"

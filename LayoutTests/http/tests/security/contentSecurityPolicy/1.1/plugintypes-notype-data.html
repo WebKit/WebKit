@@ -1,11 +1,14 @@
 <!DOCTYPE html>                                                                                                                                                                                
 <html>
 <head>
+<script src="/js-test-resources/plugin.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.dumpChildFramesAsText();
-}
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
+    }
+
+    runAfterPluginLoad(null, NotifyDone);
 </script>
 <script src="/plugins/resources/mock-plugin-logger.js"></script>
 <meta http-equiv="X-WebKit-CSP" content="plugin-types application/x-invalid-type">

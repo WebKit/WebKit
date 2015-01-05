@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="/js-test-resources/plugin.js"></script>
 <script>
-if (window.testRunner)
-  testRunner.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    runAfterPluginLoad(null, NotifyDone);
 </script>
 <meta http-equiv="Content-Security-Policy" content="object-src 'none'">
 </head>

@@ -231,6 +231,11 @@
     [RaisesException] void startTrackingRepaints();
     [RaisesException] void stopTrackingRepaints();
 
+    // |node| should be Document, HTMLIFrameElement, or unspecified.
+    // If |node| is an HTMLIFrameElement, it assumes node.contentDocument is
+    // specified without security checks. Unspecified means this document.
+    [RaisesException] void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(optional Node node);
+
     // Returns a string with information about the mouse cursor used at the specified client location.
     [RaisesException] DOMString getCurrentCursorInfo();
 

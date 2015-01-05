@@ -1,0 +1,19 @@
+<iframe></iframe><object onbeforeload="crash()">
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function crash() {
+    document.getElementsByTagName("iframe")[0].contentWindow.scrollX;
+    document.open();
+}
+
+document.body.offsetLeft;
+setTimeout(function() {
+    document.close();
+    document.body.innerHTML = 'PASS if not crashed.';
+    testRunner.notifyDone();
+}, 1);
+</script>
