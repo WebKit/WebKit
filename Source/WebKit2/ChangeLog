@@ -1,3 +1,15 @@
+2014-11-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Error in documentation of webkit_print_operation_get_page_setup()
+        https://bugs.webkit.org/show_bug.cgi?id=138868
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix copypaste error in documentation of
+        webkit_print_operation_get_page_setup().
+
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+
 2014-11-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Network process crash when running http/tests/appcache/fallback.html

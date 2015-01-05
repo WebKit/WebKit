@@ -357,7 +357,7 @@ void webkit_print_operation_set_print_settings(WebKitPrintOperation* printOperat
  * @print_operation: a #WebKitPrintOperation
  *
  * Return the current page setup of @print_operation. It returns %NULL until
- * either webkit_print_operation_set_print_settings() or webkit_print_operation_run_dialog()
+ * either webkit_print_operation_set_page_setup() or webkit_print_operation_run_dialog()
  * have been called.
  *
  * Returns: (transfer none): the current #GtkPageSetup of @print_operation.
