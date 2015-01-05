@@ -75,7 +75,7 @@ function test() {
         eventSender.mouseMoveTo(xPoint, yPoint);
         eventSender.mouseDown();
         eventSender.mouseMoveTo(xPoint, frame.offsetHeight + 100);
-        setTimeout(testAutoScroll, 1500);
+        setTimeout(testAutoScroll, 100);
         eventSender.keyDown('a');
     } else {
         debug("Test manually that scrolling does not stop if we press a key while autoscroll is happening.");
@@ -83,8 +83,12 @@ function test() {
 }
 
 function testAutoScroll() {
-    shouldBe('frame.contentDocument.body.scrollTop + frame.clientHeight', 'frame.contentDocument.body.scrollHeight');
-    finishJSTest();
+    if (frame.contentDocument.body.scrollTop + frame.clientHeight === frame.contentDocument.body.scrollHeight) {
+        shouldBe('frame.contentDocument.body.scrollTop + frame.clientHeight', 'frame.contentDocument.body.scrollHeight');
+        finishJSTest();
+        return;
+    }
+    setTimeout(testAutoScroll, 100);
 }
 
 successfullyParsed = true;

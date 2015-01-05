@@ -1,5 +1,16 @@
 2015-01-04  Alexey Proskuryakov  <ap@apple.com>
 
+        fast/events/autoscroll-should-not-stop-on-keypress.html is flaky in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=140060
+
+        Reviewed by Darin Adler.
+
+        * fast/events/autoscroll-should-not-stop-on-keypress.html: Instead of waiting a
+        fixed amount of time, check if the test succeeded every 100ms. In addition to making
+        the test more reliable on slow builds, it makes the test faster in release mode.
+
+2015-01-04  Alexey Proskuryakov  <ap@apple.com>
+
         http/tests/security/cross-frame-access-put.html is racy
         https://bugs.webkit.org/show_bug.cgi?id=140059
 
