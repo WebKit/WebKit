@@ -1,3 +1,16 @@
+2014-12-08  Doron Wloschowsky  <doron_wloschowsky@scee.net>
+
+        Webkit using Harfbuzz does not display Arabic script correctly
+        https://bugs.webkit.org/show_bug.cgi?id=136337
+
+        Reviewed by Carlos Garcia Campos.
+
+        Using reinterpret_cast to convert hb_codepoint_t* into UChar*
+        doesn't work on big endian systems.
+
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp:
+        (WebCore::harfBuzzGetGlyph):
+
 2014-04-25  Miyoung Shin  <myid.shin@samsung.com>
 
         Web process is crashed during dispatching touchEvent created by JS.

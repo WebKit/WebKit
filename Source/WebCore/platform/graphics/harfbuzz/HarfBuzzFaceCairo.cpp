@@ -112,7 +112,8 @@ static hb_bool_t harfBuzzGetGlyph(hb_font_t*, void* fontData, hb_codepoint_t uni
     if (result.isNewEntry) {
         cairo_glyph_t* glyphs = 0;
         int numGlyphs = 0;
-        CString utf8Codepoint = UTF8Encoding().encode(reinterpret_cast<UChar*>(&unicode), 1, QuestionMarksForUnencodables);
+        UChar ch = unicode;
+        CString utf8Codepoint = UTF8Encoding().encode(&ch, 1, QuestionMarksForUnencodables);
         if (cairo_scaled_font_text_to_glyphs(scaledFont, 0, 0, utf8Codepoint.data(), utf8Codepoint.length(), &glyphs, &numGlyphs, 0, 0, 0) != CAIRO_STATUS_SUCCESS)
             return false;
         if (!numGlyphs)
