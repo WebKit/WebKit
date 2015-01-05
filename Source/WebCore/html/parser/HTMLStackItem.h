@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Company 100, Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,112 +28,166 @@
 #define HTMLStackItem_h
 
 #include "AtomicHTMLToken.h"
+#include "DocumentFragment.h"
 #include "Element.h"
 #include "HTMLNames.h"
 #include "MathMLNames.h"
 #include "SVGNames.h"
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/AtomicString.h>
-
 namespace WebCore {
-
-class ContainerNode;
 
 class HTMLStackItem : public RefCounted<HTMLStackItem> {
 public:
-    enum ItemType {
-        ItemForContextElement,
-        ItemForDocumentFragmentNode
-    };
+    // Normal HTMLElementStack and HTMLFormattingElementList items.
+    static Ref<HTMLStackItem> create(Ref<Element>, AtomicHTMLToken&, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI);
 
-    // Used by document fragment node and context element.
-    static RefPtr<HTMLStackItem> create(PassRefPtr<ContainerNode> node, ItemType type)
-    {
-        return adoptRef(new HTMLStackItem(node, type));
-    }
+    // Document fragment or element for parsing context.
+    static Ref<HTMLStackItem> create(Element&);
+    static Ref<HTMLStackItem> create(DocumentFragment&);
 
-    // Used by HTMLElementStack and HTMLFormattingElementList.
-    static RefPtr<HTMLStackItem> create(PassRefPtr<ContainerNode> node, AtomicHTMLToken* token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
-    {
-        return adoptRef(new HTMLStackItem(node, token, namespaceURI));
-    }
+    bool isElement() const;
+    bool isDocumentFragment() const;
 
-    Element* element() const { return downcast<Element>(m_node.get()); }
-    ContainerNode* node() const { return m_node.get(); }
+    ContainerNode& node() const;
+    Element& element() const;
 
-    bool isDocumentFragmentNode() const { return m_isDocumentFragmentNode; }
-    bool isElementNode() const { return !m_isDocumentFragmentNode; }
+    const AtomicString& namespaceURI() const;
+    const AtomicString& localName() const;
 
-    const AtomicString& namespaceURI() const { return m_namespaceURI; }
-    const AtomicString& localName() const { return m_tokenLocalName; }
+    const Vector<Attribute>& attributes() const;
+    const Attribute* findAttribute(const QualifiedName& attributeName) const;
 
-    const Vector<Attribute>& attributes() const { ASSERT(m_tokenLocalName); return m_tokenAttributes; }
-    Attribute* getAttributeItem(const QualifiedName& attributeName)
-    {
-        ASSERT(m_tokenLocalName);
-        return findAttributeInVector(m_tokenAttributes, attributeName);
-    }
+    bool hasTagName(const QualifiedName&) const;
+    bool matchesHTMLTag(const AtomicString&) const;
 
-    bool hasLocalName(const AtomicString& name) const { return m_tokenLocalName == name; }
-    bool hasTagName(const QualifiedName& name) const { return m_tokenLocalName == name.localName() && m_namespaceURI == name.namespaceURI(); }
+private:
+    HTMLStackItem(Ref<Element>, AtomicHTMLToken&, const AtomicString& namespaceURI);
+    explicit HTMLStackItem(Element&);
+    explicit HTMLStackItem(DocumentFragment&);
 
-    bool matchesHTMLTag(const AtomicString& name) const { return m_tokenLocalName == name && m_namespaceURI == HTMLNames::xhtmlNamespaceURI; }
-    bool matchesHTMLTag(const QualifiedName& name) const { return m_tokenLocalName == name && m_namespaceURI == HTMLNames::xhtmlNamespaceURI; }
+    const Ref<ContainerNode> m_node;
+    const AtomicString m_namespaceURI;
+    const AtomicString m_localName;
+    const Vector<Attribute> m_attributes;
+};
 
-    bool causesFosterParenting()
-    {
-        return hasTagName(HTMLNames::tableTag)
-            || hasTagName(HTMLNames::tbodyTag)
-            || hasTagName(HTMLNames::tfootTag)
-            || hasTagName(HTMLNames::theadTag)
-            || hasTagName(HTMLNames::trTag);
-    }
+bool isInHTMLNamespace(const HTMLStackItem&);
+bool isNumberedHeaderElement(const HTMLStackItem&);
+bool isSpecialNode(const HTMLStackItem&);
 
-    bool isInHTMLNamespace() const
-    {
-        // A DocumentFragment takes the place of the document element when parsing
-        // fragments and should be considered in the HTML namespace.
-        return namespaceURI() == HTMLNames::xhtmlNamespaceURI
-            || isDocumentFragmentNode(); // FIXME: Does this also apply to ShadowRoot?
-    }
+inline HTMLStackItem::HTMLStackItem(Ref<Element> element, AtomicHTMLToken& token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
+    : m_node(WTF::move(element))
+    , m_namespaceURI(namespaceURI)
+    , m_localName(token.name())
+    , m_attributes(token.attributes())
+{
+    // FIXME: We should find a way to move the attributes vector in the normal code path instead of copying it.
+}
 
-    bool isNumberedHeaderElement() const
-    {
-        return hasTagName(HTMLNames::h1Tag)
-            || hasTagName(HTMLNames::h2Tag)
-            || hasTagName(HTMLNames::h3Tag)
-            || hasTagName(HTMLNames::h4Tag)
-            || hasTagName(HTMLNames::h5Tag)
-            || hasTagName(HTMLNames::h6Tag);
-    }
+inline Ref<HTMLStackItem> HTMLStackItem::create(Ref<Element> element, AtomicHTMLToken& token, const AtomicString& namespaceURI)
+{
+    return adoptRef(*new HTMLStackItem(WTF::move(element), token, namespaceURI));
+}
 
-    bool isTableBodyContextElement() const
-    {
-        return hasTagName(HTMLNames::tbodyTag)
-            || hasTagName(HTMLNames::tfootTag)
-            || hasTagName(HTMLNames::theadTag);
-    }
+inline HTMLStackItem::HTMLStackItem(Element& element)
+    : m_node(element)
+    , m_namespaceURI(element.namespaceURI())
+    , m_localName(element.localName())
+{
+}
 
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#special
-    bool isSpecialNode() const
-    {
-        if (hasTagName(MathMLNames::miTag)
-            || hasTagName(MathMLNames::moTag)
-            || hasTagName(MathMLNames::mnTag)
-            || hasTagName(MathMLNames::msTag)
-            || hasTagName(MathMLNames::mtextTag)
-            || hasTagName(MathMLNames::annotation_xmlTag)
-            || hasTagName(SVGNames::foreignObjectTag)
-            || hasTagName(SVGNames::descTag)
-            || hasTagName(SVGNames::titleTag))
-            return true;
-        if (isDocumentFragmentNode())
-            return true;
-        if (!isInHTMLNamespace())
-            return false;
-        const AtomicString& tagName = localName();
+inline Ref<HTMLStackItem> HTMLStackItem::create(Element& element)
+{
+    return adoptRef(*new HTMLStackItem(element));
+}
+
+inline HTMLStackItem::HTMLStackItem(DocumentFragment& fragment)
+    : m_node(fragment)
+{
+}
+
+inline Ref<HTMLStackItem> HTMLStackItem::create(DocumentFragment& fragment)
+{
+    return adoptRef(*new HTMLStackItem(fragment));
+}
+
+inline ContainerNode& HTMLStackItem::node() const
+{
+    return const_cast<ContainerNode&>(m_node.get());
+}
+
+inline Element& HTMLStackItem::element() const
+{
+    return downcast<Element>(node());
+}
+
+inline bool HTMLStackItem::isDocumentFragment() const
+{
+    return m_localName.isNull();
+}
+
+inline bool HTMLStackItem::isElement() const
+{
+    return !isDocumentFragment();
+}
+
+inline const AtomicString& HTMLStackItem::namespaceURI() const
+{
+    return m_namespaceURI;
+}
+
+inline const AtomicString& HTMLStackItem::localName() const
+{
+    return m_localName;
+}
+
+inline const Vector<Attribute>& HTMLStackItem::attributes() const
+{
+    ASSERT(isElement());
+    return m_attributes;
+}
+
+inline const Attribute* HTMLStackItem::findAttribute(const QualifiedName& attributeName) const
+{
+    return findAttributeInVector(const_cast<Vector<Attribute>&>(attributes()), attributeName);
+}
+
+inline bool HTMLStackItem::hasTagName(const QualifiedName& name) const
+{
+    return m_localName == name.localName() && m_namespaceURI == name.namespaceURI();
+}
+
+inline bool HTMLStackItem::matchesHTMLTag(const AtomicString& name) const
+{
+    return m_localName == name && m_namespaceURI == HTMLNames::xhtmlNamespaceURI;
+}
+
+inline bool isInHTMLNamespace(const HTMLStackItem& item)
+{
+    // A DocumentFragment takes the place of the document element when parsing
+    // fragments and thus should be treated as if it was in the HTML namespace.
+    // FIXME: Is this also needed for a ShadowRoot that might be a non-HTML element?
+    return item.namespaceURI() == HTMLNames::xhtmlNamespaceURI || item.isDocumentFragment();
+}
+
+inline bool isNumberedHeaderElement(const HTMLStackItem& item)
+{
+    return item.namespaceURI() == HTMLNames::xhtmlNamespaceURI
+        && (item.localName() == HTMLNames::h1Tag
+            || item.localName() == HTMLNames::h2Tag
+            || item.localName() == HTMLNames::h3Tag
+            || item.localName() == HTMLNames::h4Tag
+            || item.localName() == HTMLNames::h5Tag
+            || item.localName() == HTMLNames::h6Tag);
+}
+
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#special
+inline bool isSpecialNode(const HTMLStackItem& item)
+{
+    if (item.isDocumentFragment())
+        return true;
+    const AtomicString& tagName = item.localName();
+    if (item.namespaceURI() == HTMLNames::xhtmlNamespaceURI) {
         return tagName == HTMLNames::addressTag
             || tagName == HTMLNames::appletTag
             || tagName == HTMLNames::areaTag
@@ -164,7 +219,12 @@ public:
             || tagName == HTMLNames::formTag
             || tagName == HTMLNames::frameTag
             || tagName == HTMLNames::framesetTag
-            || isNumberedHeaderElement()
+            || tagName == HTMLNames::h1Tag
+            || tagName == HTMLNames::h2Tag
+            || tagName == HTMLNames::h3Tag
+            || tagName == HTMLNames::h4Tag
+            || tagName == HTMLNames::h5Tag
+            || tagName == HTMLNames::h6Tag
             || tagName == HTMLNames::headTag
             || tagName == HTMLNames::headerTag
             || tagName == HTMLNames::hgroupTag
@@ -197,52 +257,36 @@ public:
             || tagName == HTMLNames::styleTag
             || tagName == HTMLNames::summaryTag
             || tagName == HTMLNames::tableTag
-            || isTableBodyContextElement()
+            || tagName == HTMLNames::tbodyTag
             || tagName == HTMLNames::tdTag
 #if ENABLE(TEMPLATE_ELEMENT)
             || tagName == HTMLNames::templateTag
 #endif
             || tagName == HTMLNames::textareaTag
+            || tagName == HTMLNames::tfootTag
             || tagName == HTMLNames::thTag
+            || tagName == HTMLNames::theadTag
             || tagName == HTMLNames::titleTag
             || tagName == HTMLNames::trTag
             || tagName == HTMLNames::ulTag
             || tagName == HTMLNames::wbrTag
             || tagName == HTMLNames::xmpTag;
     }
-
-private:
-    HTMLStackItem(PassRefPtr<ContainerNode> node, ItemType type)
-        : m_node(node)
-    {
-        switch (type) {
-        case ItemForDocumentFragmentNode:
-            m_isDocumentFragmentNode = true;
-            break;
-        case ItemForContextElement:
-            m_tokenLocalName = m_node->localName();
-            m_namespaceURI = m_node->namespaceURI();
-            m_isDocumentFragmentNode = false;
-            break;
-        }
+    if (item.namespaceURI() == MathMLNames::mathmlNamespaceURI) {
+        return tagName == MathMLNames::annotation_xmlTag
+            || tagName == MathMLNames::miTag
+            || tagName == MathMLNames::moTag
+            || tagName == MathMLNames::mnTag
+            || tagName == MathMLNames::msTag
+            || tagName == MathMLNames::mtextTag;
     }
-
-    HTMLStackItem(PassRefPtr<ContainerNode> node, AtomicHTMLToken* token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
-        : m_node(node)
-        , m_tokenLocalName(token->name())
-        , m_tokenAttributes(token->attributes())
-        , m_namespaceURI(namespaceURI)
-        , m_isDocumentFragmentNode(false)
-    {
+    if (item.namespaceURI() == SVGNames::svgNamespaceURI) {
+        return tagName == SVGNames::descTag
+            || tagName == SVGNames::foreignObjectTag
+            || tagName == SVGNames::titleTag;
     }
-
-    RefPtr<ContainerNode> m_node;
-
-    AtomicString m_tokenLocalName;
-    Vector<Attribute> m_tokenAttributes;
-    AtomicString m_namespaceURI;
-    bool m_isDocumentFragmentNode;
-};
+    return false;
+}
 
 } // namespace WebCore
 

@@ -53,15 +53,16 @@ public:
         ElementRecord(PassRefPtr<HTMLStackItem>, std::unique_ptr<ElementRecord>);
         ~ElementRecord();
     
-        Element* element() const { return m_item->element(); }
-        ContainerNode* node() const { return m_item->node(); }
+        Element& element() const { return m_item->element(); }
+        ContainerNode& node() const { return m_item->node(); }
         const AtomicString& namespaceURI() const { return m_item->namespaceURI(); }
-        PassRefPtr<HTMLStackItem> stackItem() const { return m_item; }
+        HTMLStackItem& stackItem() const { return *m_item; }
         void replaceElement(PassRefPtr<HTMLStackItem>);
 
         bool isAbove(ElementRecord*) const;
 
         ElementRecord* next() const { return m_next.get(); }
+
     private:
         friend class HTMLElementStack;
 
@@ -76,26 +77,23 @@ public:
 
     // Inlining this function is a (small) performance win on the parsing
     // benchmark.
-    Element* top() const
+    Element& top() const
     {
-        ASSERT(m_top->element());
         return m_top->element();
     }
 
-    ContainerNode* topNode() const
+    ContainerNode& topNode() const
     {
-        ASSERT(m_top->node());
         return m_top->node();
     }
 
-    HTMLStackItem* topStackItem() const
+    HTMLStackItem& topStackItem() const
     {
-        ASSERT(m_top->stackItem());
-        return m_top->stackItem().get();
+        return m_top->stackItem();
     }
 
     HTMLStackItem* oneBelowTop() const;
-    ElementRecord* topRecord() const;
+    ElementRecord& topRecord() const;
     ElementRecord* find(Element*) const;
     ElementRecord* furthestBlockForFormattingElement(Element*) const;
     ElementRecord* topmost(const AtomicString& tagName) const;
@@ -124,8 +122,8 @@ public:
     void popHTMLBodyElement();
     void popAll();
 
-    static bool isMathMLTextIntegrationPoint(HTMLStackItem*);
-    static bool isHTMLIntegrationPoint(HTMLStackItem*);
+    static bool isMathMLTextIntegrationPoint(HTMLStackItem&);
+    static bool isHTMLIntegrationPoint(HTMLStackItem&);
 
     void remove(Element*);
     void removeHTMLHeadElement(Element*);
@@ -152,11 +150,11 @@ public:
 #if ENABLE(TEMPLATE_ELEMENT)
     bool hasTemplateInHTMLScope() const;
 #endif
-    Element* htmlElement() const;
-    Element* headElement() const;
-    Element* bodyElement() const;
-    
-    ContainerNode* rootNode() const;
+    Element& htmlElement() const;
+    Element& headElement() const;
+    Element& bodyElement() const;
+
+    ContainerNode& rootNode() const;
 
 #ifndef NDEBUG
     void show();

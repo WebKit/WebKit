@@ -61,8 +61,8 @@ public:
 
         bool isMarker() const { return !m_item; }
 
-        PassRefPtr<HTMLStackItem> stackItem() const { return m_item; }
-        Element* element() const
+        HTMLStackItem* stackItem() const { return m_item.get(); }
+        Element& element() const
         {
             // The fact that !m_item == isMarker() is an implementation detail
             // callers should check isMarker() before calling element().
@@ -72,8 +72,8 @@ public:
         void replaceElement(PassRefPtr<HTMLStackItem> item) { m_item = item; }
 
         // Needed for use with Vector.  These are super-hot and must be inline.
-        bool operator==(Element* element) const { return !m_item ? !element : m_item->element() == element; }
-        bool operator!=(Element* element) const { return !m_item ? !!element : m_item->element() != element; }
+        bool operator==(Element* element) const { return !m_item ? !element : &m_item->element() == element; }
+        bool operator!=(Element* element) const { return !m_item ? !!element : &m_item->element() != element; }
 
     private:
         RefPtr<HTMLStackItem> m_item;

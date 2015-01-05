@@ -1,3 +1,151 @@
+2015-01-05  Darin Adler  <darin@apple.com>
+
+        Modernize and streamline HTMLStackItem
+        https://bugs.webkit.org/show_bug.cgi?id=140056
+
+        Reviewed by Anders Carlsson.
+
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::create): Changed to return Ref.
+        * html/HTMLHtmlElement.h: Ditto.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::hasImpliedEndTag): Update to use reference instead of pointer.
+        (WebCore::causesFosterParenting): Moved here from HTMLStackItem.h.
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML): Update
+        for references instead of pointers.
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagInBody): Ditto.
+        (WebCore::HTMLConstructionSite::insertHTMLBodyStartTagInBody): Ditto.
+        (WebCore::HTMLConstructionSite::insertComment): Ditto.
+        (WebCore::HTMLConstructionSite::insertCommentOnHTMLHtmlElement): Ditto.
+        (WebCore::HTMLConstructionSite::insertHTMLHeadElement): Ditto.
+        (WebCore::HTMLConstructionSite::insertHTMLBodyElement): Ditto.
+        (WebCore::HTMLConstructionSite::insertHTMLFormElement): Ditto.
+        (WebCore::HTMLConstructionSite::insertHTMLElement): Ditto.
+        (WebCore::HTMLConstructionSite::insertSelfClosingHTMLElement): Ditto.
+        (WebCore::HTMLConstructionSite::insertFormattingElement): Ditto.
+        (WebCore::HTMLConstructionSite::insertScriptElement): Ditto.
+        (WebCore::HTMLConstructionSite::insertForeignElement): Ditto.
+        (WebCore::HTMLConstructionSite::insertTextNode): Ditto.
+        (WebCore::HTMLConstructionSite::reparent): Ditto.
+        (WebCore::HTMLConstructionSite::insertAlreadyParsedChild): Ditto.
+        (WebCore::HTMLConstructionSite::takeAllChildren): Ditto.
+        (WebCore::HTMLConstructionSite::ownerDocumentForCurrentNode): Ditto.
+        (WebCore::HTMLConstructionSite::createElementFromSavedToken): Ditto.
+        (WebCore::HTMLConstructionSite::indexOfFirstUnopenFormattingElement): Ditto.
+        (WebCore::HTMLConstructionSite::reconstructTheActiveFormattingElements): Ditto.
+        (WebCore::HTMLConstructionSite::generateImpliedEndTagsWithExclusion): Ditto.
+        (WebCore::HTMLConstructionSite::findFosterSite): Ditto.
+        (WebCore::HTMLConstructionSite::shouldFosterParent): Removed unneeded
+        isElementNode check, since causesFosterParenting will return false for a
+        document fragment node.
+
+        * html/parser/HTMLConstructionSite.h: Updated to use references instead of
+        pointers. Also removed the unneeded currentElementRecord function.
+
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isRootNode): Updated to use references instead of pointers.
+        (WebCore::HTMLNames::isScopeMarker): Ditto.
+        (WebCore::HTMLNames::isListItemScopeMarker): Ditto.
+        (WebCore::HTMLNames::isTableScopeMarker): Ditto.
+        (WebCore::HTMLNames::isTableBodyScopeMarker): Ditto.
+        (WebCore::HTMLNames::isTableRowScopeMarker): Ditto.
+        (WebCore::HTMLNames::isForeignContentScopeMarker): Ditto.
+        (WebCore::HTMLNames::isButtonScopeMarker): Ditto.
+        (WebCore::HTMLNames::isSelectScopeMarker): Ditto.
+        (WebCore::HTMLElementStack::ElementRecord::replaceElement): Ditto.
+        (WebCore::HTMLElementStack::hasOnlyOneElement): Ditto.
+        (WebCore::HTMLElementStack::popHTMLHeadElement): Ditto.
+        (WebCore::HTMLElementStack::popHTMLBodyElement): Ditto.
+        (WebCore::HTMLElementStack::popAll): Ditto.
+        (WebCore::HTMLElementStack::pop): Ditto.
+        (WebCore::HTMLElementStack::popUntil): Ditto.
+        (WebCore::HTMLElementStack::popUntilNumberedHeaderElementPopped): Ditto.
+        (WebCore::HTMLElementStack::isMathMLTextIntegrationPoint): Ditto. Also removed
+        unneeded isElementNode check.
+        (WebCore::HTMLElementStack::isHTMLIntegrationPoint): Ditto.
+        (WebCore::HTMLElementStack::pushRootNode): Ditto.
+        (WebCore::HTMLElementStack::pushRootNodeCommon): Ditto.
+        (WebCore::HTMLElementStack::pushHTMLHeadElement): Ditto.
+        (WebCore::HTMLElementStack::pushHTMLBodyElement): Ditto.
+        (WebCore::HTMLElementStack::insertAbove): Ditto.
+        (WebCore::HTMLElementStack::topRecord): Ditto.
+        (WebCore::HTMLElementStack::oneBelowTop): Ditto.
+        (WebCore::HTMLElementStack::removeHTMLHeadElement): Ditto.
+        (WebCore::HTMLElementStack::remove): Ditto.
+        (WebCore::HTMLElementStack::find): Ditto.
+        (WebCore::HTMLElementStack::topmost): Ditto.
+        (WebCore::inScopeCommon): Ditto.
+        (WebCore::HTMLElementStack::hasNumberedHeaderElementInScope): Ditto.
+        (WebCore::HTMLElementStack::inScope): Ditto.
+        (WebCore::HTMLElementStack::htmlElement): Ditto.
+        (WebCore::HTMLElementStack::headElement): Ditto.
+        (WebCore::HTMLElementStack::bodyElement): Ditto.
+        (WebCore::HTMLElementStack::rootNode): Ditto.
+        (WebCore::HTMLElementStack::popCommon): Ditto.
+        (WebCore::HTMLElementStack::removeNonTopCommon): Ditto.
+        (WebCore::HTMLElementStack::furthestBlockForFormattingElement): Ditto.
+        (WebCore::HTMLElementStack::show): Ditto.
+
+        * html/parser/HTMLElementStack.h: Use reference instead of pointer.
+
+        * html/parser/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::closestElementInScopeWithName): Update
+        to use references instead of pointer.
+        (WebCore::HTMLFormattingElementList::swapTo): Ditto.
+        (WebCore::HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly): Ditto.
+        (WebCore::HTMLFormattingElementList::ensureNoahsArkCondition): Ditto.
+        (WebCore::HTMLFormattingElementList::show): Ditto.
+
+        * html/parser/HTMLFormattingElementList.h: Use reference instead of pointer
+        and a raw pointer instead of a RefPtr.
+
+        * html/parser/HTMLStackItem.h: Removed unneeded includes. Got rid of "type"
+        concept and simply overload the create functions and constructors for both
+        Element and DOcumentFragment. Renamed isElementNode and isDocumentFragmentNode
+        to remove the "Node" suffix. Removed unused getAttributeItem, hasLocalName, and
+        one of the overloads of matchesHTMLTag. Moved all the policy functions such as
+        causesFosterParenting out of this class into free functions or into other
+        source files. Got rid of m_isDocumentFragmentNode boolean. Moved function
+        bodies out of the class definition. Marked all data members const since they
+        are all initialized in the constructor and never touched again. Restructured
+        the isSpecialNode function to avoid the repeated checks of the namespace.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::isParsingTemplateContents): Use reference instead of
+        pointer and free functions instead of member functions.
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder): Ditto.
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext): Ditto.
+        (WebCore::HTMLTreeBuilder::FragmentParsingContext::contextElement): Ditto.
+        (WebCore::HTMLTreeBuilder::constructTree): Ditto.
+        (WebCore::HTMLTreeBuilder::processFakePEndTagIfPInButtonScope): Ditto.
+        (WebCore::HTMLTreeBuilder::processCloseWhenNestedTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processTemplateStartTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processTemplateEndTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processColgroupEndTagForInColumnGroup): Ditto.
+        (WebCore::HTMLTreeBuilder::closeTheCell): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processHtmlStartTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processBodyEndTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency): Ditto.
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTagForInTableBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTagForInRow): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processCaptionEndTagForInCaption): Ditto.
+        (WebCore::HTMLTreeBuilder::processTrEndTagForInRow): Ditto.
+        (WebCore::HTMLTreeBuilder::processTableEndTagForInTable): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer): Ditto.
+        (WebCore::HTMLTreeBuilder::processEndOfFile): Ditto.
+        (WebCore::HTMLTreeBuilder::adjustedCurrentStackItem): Ditto.
+        (WebCore::HTMLTreeBuilder::shouldProcessTokenInForeignContent): Ditto.
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent): Ditto.
+
 2015-01-05  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Crash when font data pointer is null.

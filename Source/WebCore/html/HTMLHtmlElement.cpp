@@ -42,14 +42,14 @@ HTMLHtmlElement::HTMLHtmlElement(const QualifiedName& tagName, Document& documen
     ASSERT(hasTagName(htmlTag));
 }
 
-RefPtr<HTMLHtmlElement> HTMLHtmlElement::create(Document& document)
+Ref<HTMLHtmlElement> HTMLHtmlElement::create(Document& document)
 {
-    return adoptRef(new HTMLHtmlElement(htmlTag, document));
+    return adoptRef(*new HTMLHtmlElement(htmlTag, document));
 }
 
-RefPtr<HTMLHtmlElement> HTMLHtmlElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLHtmlElement> HTMLHtmlElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLHtmlElement(tagName, document));
+    return adoptRef(*new HTMLHtmlElement(tagName, document));
 }
 
 bool HTMLHtmlElement::isURLAttribute(const Attribute& attribute) const
