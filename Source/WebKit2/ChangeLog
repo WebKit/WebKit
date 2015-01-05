@@ -1,5 +1,16 @@
 2015-01-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r177604. rdar://problem/19312111
+
+    2014-12-19  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the build.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _setIgnoresNonWheelEvents:]):
+
+2015-01-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177601. <rdar://problem/19301470>
 
     2014-12-19  Beth Dakin  <bdakin@apple.com>
