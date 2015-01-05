@@ -102,8 +102,9 @@ PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> PluginCon
 bool PluginControllerProxy::initialize(const PluginCreationParameters& creationParameters)
 {
     ASSERT(!m_plugin);
-    
-    TemporaryChange<bool> initializing(m_isInitializing, true);
+
+    ASSERT(!m_isInitializing);
+    m_isInitializing = true; // Cannot use TemporaryChange here, because this object can be deleted before the function returns.
 
     m_plugin = NetscapePlugin::create(PluginProcess::shared().netscapePluginModule());
     if (!m_plugin) {
@@ -131,6 +132,7 @@ bool PluginControllerProxy::initialize(const PluginCreationParameters& creationP
 
     platformInitialize(creationParameters);
 
+    m_isInitializing = false;
     return true;
 }
 
