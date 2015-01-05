@@ -1,3 +1,26 @@
+2015-01-05  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of some unnecessary custom StyleBuilder code
+        https://bugs.webkit.org/show_bug.cgi?id=140058
+
+        Reviewed by Darin Adler.
+
+        Get rid of some unnecessary custom StyleBuilder code. The generator is
+        now able to generate this code just fine.
+
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::csstoLengthConversionDataWithTextZoomFactor):
+        (WebCore::StyleBuilderConverter::convertWordSpacing):
+        (WebCore::StyleBuilderConverter::convertPerspective):
+        (WebCore::StyleBuilderConverter::convertMarqueeIncrement):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::convertLineHeight):
+        (WebCore::StyleBuilderCustom::applyValueWebkitMarqueeIncrement): Deleted.
+        (WebCore::StyleBuilderCustom::csstoLengthConversionDataWithTextZoomFactor): Deleted.
+        (WebCore::StyleBuilderCustom::applyValueWordSpacing): Deleted.
+        (WebCore::StyleBuilderCustom::applyValueWebkitPerspective): Deleted.
+
 2014-12-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Cannot scroll when a non-scrollable iframe is contained inside a scrollable iframe

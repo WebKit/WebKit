@@ -102,15 +102,11 @@ public:
     static void applyValueVerticalAlign(StyleResolver&, CSSValue&);
     static void applyValueWebkitJustifySelf(StyleResolver&, CSSValue&);
     static void applyValueWebkitLocale(StyleResolver&, CSSValue&);
-    static void applyValueWebkitMarqueeIncrement(StyleResolver&, CSSValue&);
-    static void applyValueWebkitPerspective(StyleResolver&, CSSValue&);
     static void applyValueWebkitTextOrientation(StyleResolver&, CSSValue&);
     static void applyValueWebkitWritingMode(StyleResolver&, CSSValue&);
-    static void applyValueWordSpacing(StyleResolver&, CSSValue&);
 
 private:
     static void resetEffectiveZoom(StyleResolver&);
-    static CSSToLengthConversionData csstoLengthConversionDataWithTextZoomFactor(StyleResolver&);
     static bool convertLineHeight(StyleResolver&, const CSSValue&, Length&, float multiplier = 1.f);
 
     static Length mmLength(double mm);
@@ -131,30 +127,6 @@ private:
     static float smallerFontSize(float size);
     static float determineRubyTextSizeMultiplier(StyleResolver&);
 };
-
-inline void StyleBuilderCustom::applyValueWebkitMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    Length marqueeLength(Undefined);
-    switch (primitiveValue.getValueID()) {
-    case CSSValueSmall:
-        marqueeLength = Length(1, Fixed); // 1px.
-        break;
-    case CSSValueNormal:
-        marqueeLength = Length(6, Fixed); // 6px. The WinIE default.
-        break;
-    case CSSValueLarge:
-        marqueeLength = Length(36, Fixed); // 36px.
-        break;
-    case CSSValueInvalid:
-        marqueeLength = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-        break;
-    default:
-        break;
-    }
-    if (!marqueeLength.isUndefined())
-        styleResolver.style()->setMarqueeIncrement(marqueeLength);
-}
 
 inline void StyleBuilderCustom::applyValueDirection(StyleResolver& styleResolver, CSSValue& value)
 {
@@ -560,14 +532,6 @@ DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Repeat)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Slice)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Width)
 
-inline CSSToLengthConversionData StyleBuilderCustom::csstoLengthConversionDataWithTextZoomFactor(StyleResolver& styleResolver)
-{
-    if (Frame* frame = styleResolver.document().frame())
-        return styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(styleResolver.style()->effectiveZoom() * frame->textZoomFactor());
-
-    return styleResolver.state().cssToLengthConversionData();
-}
-
 inline bool StyleBuilderCustom::convertLineHeight(StyleResolver& styleResolver, const CSSValue& value, Length& length, float multiplier)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
@@ -576,7 +540,7 @@ inline bool StyleBuilderCustom::convertLineHeight(StyleResolver& styleResolver, 
         return true;
     }
     if (primitiveValue.isLength()) {
-        length = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(styleResolver));
+        length = primitiveValue.computeLength<Length>(StyleBuilderConverter::csstoLengthConversionDataWithTextZoomFactor(styleResolver));
         if (multiplier != 1.f)
             length = Length(length.value() * multiplier, Fixed);
         return true;
@@ -592,24 +556,6 @@ inline bool StyleBuilderCustom::convertLineHeight(StyleResolver& styleResolver, 
         return true;
     }
     return false;
-}
-
-inline void StyleBuilderCustom::applyValueWordSpacing(StyleResolver& styleResolver, CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-
-    Length wordSpacing;
-    if (primitiveValue.getValueID() == CSSValueNormal)
-        wordSpacing = RenderStyle::initialWordSpacing();
-    else if (primitiveValue.isLength())
-        wordSpacing = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(styleResolver));
-    else if (primitiveValue.isPercentage())
-        wordSpacing = Length(clampTo<float>(primitiveValue.getDoubleValue(), minValueForCssLength, maxValueForCssLength), Percent);
-    else if (primitiveValue.isNumber())
-        wordSpacing = Length(primitiveValue.getDoubleValue(), Fixed);
-    else
-        return;
-    styleResolver.style()->setWordSpacing(wordSpacing);
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
@@ -741,31 +687,6 @@ inline void StyleBuilderCustom::applyValueWebkitJustifySelf(StyleResolver& style
         styleResolver.style()->setJustifySelfOverflowAlignment(*pairValue->second());
     } else
         styleResolver.style()->setJustifySelf(primitiveValue);
-}
-
-inline void StyleBuilderCustom::applyValueWebkitPerspective(StyleResolver& styleResolver, CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-
-    if (primitiveValue.getValueID() == CSSValueNone) {
-        styleResolver.style()->setPerspective(0);
-        return;
-    }
-
-    float perspectiveValue;
-    if (primitiveValue.isLength())
-        perspectiveValue = primitiveValue.computeLength<float>(styleResolver.state().cssToLengthConversionData());
-    else if (primitiveValue.isNumber()) {
-        // For backward compatibility, treat valueless numbers as px.
-        Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(primitiveValue.getDoubleValue(), CSSPrimitiveValue::CSS_PX));
-        perspectiveValue = value.get().computeLength<float>(styleResolver.state().cssToLengthConversionData());
-    } else {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (perspectiveValue >= 0.0f)
-        styleResolver.style()->setPerspective(perspectiveValue);
 }
 
 template <CSSPropertyID id>

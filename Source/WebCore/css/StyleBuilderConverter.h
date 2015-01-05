@@ -37,6 +37,7 @@
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSReflectValue.h"
+#include "Frame.h"
 #include "Length.h"
 #include "Pair.h"
 #include "QuotesData.h"
@@ -86,6 +87,9 @@ public:
     static bool convertGridPosition(StyleResolver&, CSSValue&, GridPosition&);
     static GridAutoFlow convertGridAutoFlow(StyleResolver&, CSSValue&);
 #endif // ENABLE(CSS_GRID_LAYOUT)
+    static bool convertWordSpacing(StyleResolver&, CSSValue&, Length&);
+    static bool convertPerspective(StyleResolver&, CSSValue&, float&);
+    static bool convertMarqueeIncrement(StyleResolver&, CSSValue&, Length&);
 
 private:
     friend class StyleBuilderCustom;
@@ -100,6 +104,7 @@ private:
     static bool createGridPosition(CSSValue&, GridPosition&);
     static void createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap&, NamedGridLinesMap&, GridTrackSizingDirection);
 #endif // ENABLE(CSS_GRID_LAYOUT)
+    static CSSToLengthConversionData csstoLengthConversionDataWithTextZoomFactor(StyleResolver&);
 };
 
 inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver, CSSValue& value)
@@ -851,6 +856,73 @@ inline GridAutoFlow StyleBuilderConverter::convertGridAutoFlow(StyleResolver&, C
     return autoFlow;
 }
 #endif // ENABLE(CSS_GRID_LAYOUT)
+
+inline CSSToLengthConversionData StyleBuilderConverter::csstoLengthConversionDataWithTextZoomFactor(StyleResolver& styleResolver)
+{
+    if (auto* frame = styleResolver.document().frame())
+        return styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(styleResolver.style()->effectiveZoom() * frame->textZoomFactor());
+
+    return styleResolver.state().cssToLengthConversionData();
+}
+
+inline bool StyleBuilderConverter::convertWordSpacing(StyleResolver& styleResolver, CSSValue& value, Length& wordSpacing)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.getValueID() == CSSValueNormal)
+        wordSpacing = RenderStyle::initialWordSpacing();
+    else if (primitiveValue.isLength())
+        wordSpacing = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(styleResolver));
+    else if (primitiveValue.isPercentage())
+        wordSpacing = Length(clampTo<float>(primitiveValue.getDoubleValue(), minValueForCssLength, maxValueForCssLength), Percent);
+    else if (primitiveValue.isNumber())
+        wordSpacing = Length(primitiveValue.getDoubleValue(), Fixed);
+    else
+        return false;
+
+    return true;
+}
+
+inline bool StyleBuilderConverter::convertPerspective(StyleResolver& styleResolver, CSSValue& value, float& perspective)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.getValueID() == CSSValueNone) {
+        perspective = 0;
+        return true;
+    }
+
+    if (primitiveValue.isLength())
+        perspective = primitiveValue.computeLength<float>(styleResolver.state().cssToLengthConversionData());
+    else if (primitiveValue.isNumber())
+        perspective = primitiveValue.getDoubleValue() * styleResolver.state().cssToLengthConversionData().zoom();
+    else {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    return perspective >= 0;
+}
+
+inline bool StyleBuilderConverter::convertMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value, Length& marqueeLength)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    switch (primitiveValue.getValueID()) {
+    case CSSValueSmall:
+        marqueeLength = Length(1, Fixed); // 1px.
+        return true;
+    case CSSValueNormal:
+        marqueeLength = Length(6, Fixed); // 6px. The WinIE default.
+        return true;
+    case CSSValueLarge:
+        marqueeLength = Length(36, Fixed); // 36px.
+        return true;
+    case CSSValueInvalid:
+        marqueeLength = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        return !marqueeLength.isUndefined();
+    default:
+        break;
+    }
+    return false;
+}
 
 } // namespace WebCore
 
