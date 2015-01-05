@@ -1,5 +1,12 @@
 2015-01-05  Alexey Proskuryakov  <ap@apple.com>
 
+        js/dom/dfg-inline-resolve.html flakily times out
+        https://bugs.webkit.org/show_bug.cgi?id=140084
+
+        * platform/mac-wk2/TestExpectations: Added an expectation.
+
+2015-01-05  Alexey Proskuryakov  <ap@apple.com>
+
         editing/pasteboard/drag-and-drop-objectimage-contenteditable.html times out after r177883.
 
         * TestExpectations: Skip the test while Darin is working on a fix.
