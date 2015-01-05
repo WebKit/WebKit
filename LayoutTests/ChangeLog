@@ -1,5 +1,12 @@
 2015-01-05  Alexey Proskuryakov  <ap@apple.com>
 
+        After updating tests to use kerning, ligatures, and printer fonts, some tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=139968
+
+        * platform/mac/TestExpectations: Adding more flaky tests.
+
+2015-01-05  Alexey Proskuryakov  <ap@apple.com>
+
         js/dom/dfg-inline-resolve.html flakily times out
         https://bugs.webkit.org/show_bug.cgi?id=140084
 
