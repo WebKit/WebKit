@@ -3515,7 +3515,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         break;
 
     case WebEvent::Wheel: {
-        ASSERT(!m_currentlyProcessedWheelEvents.isEmpty());
+        MESSAGE_CHECK(!m_currentlyProcessedWheelEvents.isEmpty());
 
         OwnPtr<Vector<NativeWebWheelEvent>> oldestCoalescedEvent = m_currentlyProcessedWheelEvents.takeFirst();
 
@@ -3539,10 +3539,10 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::Char: {
         LOG(KeyHandling, "WebPageProxy::didReceiveEvent: %s", webKeyboardEventTypeString(type));
 
-        NativeWebKeyboardEvent event = m_keyEventQueue.first();
-        MESSAGE_CHECK(type == event.type());
+        MESSAGE_CHECK(!m_keyEventQueue.isEmpty());
+        NativeWebKeyboardEvent event = m_keyEventQueue.takeFirst();
 
-        m_keyEventQueue.removeFirst();
+        MESSAGE_CHECK(type == event.type());
 
         if (!m_keyEventQueue.isEmpty())
             m_process->send(Messages::WebPage::KeyEvent(m_keyEventQueue.first()), m_pageID);
@@ -3560,9 +3560,10 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::TouchMove:
     case WebEvent::TouchEnd:
     case WebEvent::TouchCancel: {
-        QueuedTouchEvents queuedEvents = m_touchEventQueue.first();
+        MESSAGE_CHECK(!m_touchEventQueue.isEmpty());
+        QueuedTouchEvents queuedEvents = m_touchEventQueue.takeFirst();
+
         MESSAGE_CHECK(type == queuedEvents.forwardedEvent.type());
-        m_touchEventQueue.removeFirst();
 
         m_pageClient.doneWithTouchEvent(queuedEvents.forwardedEvent, handled);
         for (size_t i = 0; i < queuedEvents.deferredTouchEvents.size(); ++i) {
