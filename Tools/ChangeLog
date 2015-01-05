@@ -1,3 +1,16 @@
+2015-01-05  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [EFL][GTK] WKPreferencesDefaults test failed after r177506 
+        https://bugs.webkit.org/show_bug.cgi?id=140077
+
+        Reviewed by Csaba Osztrogonác.
+
+        WebKit C SPI is available on EFL,GTK.
+        Changed the define order to pass the API test.
+
+        * TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-01-01  Alexey Proskuryakov  <ap@apple.com>
 
         Simplify WebKitTestRunner timeout tracking

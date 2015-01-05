@@ -44,7 +44,15 @@ TEST(WebKit2, WKPreferencesBasic)
 
 TEST(WebKit2, WKPreferencesDefaults)
 {
-#if WK_HAVE_C_SPI
+#if PLATFORM(GTK) || PLATFORM(EFL)
+    static const char* expectedStandardFontFamily = "Times";
+    static const char* expectedFixedFontFamily = "Courier New";
+    static const char* expectedSerifFontFamily = "Times";
+    static const char* expectedSansSerifFontFamily = "Helvetica";
+    static const char* expectedCursiveFontFamily = "Comic Sans MS";
+    static const char* expectedFantasyFontFamily = "Impact";
+    static const char* expectedPictographFontFamily = "Times";
+#elif WK_HAVE_C_SPI
     static const char* expectedStandardFontFamily = "Times";
     static const char* expectedFixedFontFamily = "Courier";
     static const char* expectedSerifFontFamily = "Times";
@@ -60,14 +68,6 @@ TEST(WebKit2, WKPreferencesDefaults)
     static const char* expectedCursiveFontFamily = "Snell Roundhand";
     static const char* expectedFantasyFontFamily = "Papyrus";
     static const char* expectedPictographFontFamily = "AppleColorEmoji";
-#elif PLATFORM(GTK) || PLATFORM(EFL)
-    static const char* expectedStandardFontFamily = "Times";
-    static const char* expectedFixedFontFamily = "Courier New";
-    static const char* expectedSerifFontFamily = "Times";
-    static const char* expectedSansSerifFontFamily = "Helvetica";
-    static const char* expectedCursiveFontFamily = "Comic Sans MS";
-    static const char* expectedFantasyFontFamily = "Impact";
-    static const char* expectedPictographFontFamily = "Times";
 #endif
 
     WKPreferencesRef preference = WKPreferencesCreate();
