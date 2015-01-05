@@ -6308,6 +6308,9 @@ if TARGET_QUARTZ
 webcore_sources += \
 	Source/WebCore/plugins/PluginPackageNone.cpp \
 	Source/WebCore/plugins/PluginViewNone.cpp
+platformgtk_sources += \
+	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.h \
+	Source/WebCore/platform/cairo/WidgetBackingStoreCairo.cpp
 endif # END TARGET_QUARTZ
 
 if USE_GLES2

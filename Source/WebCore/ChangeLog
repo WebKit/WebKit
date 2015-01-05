@@ -1,3 +1,14 @@
+2014-10-06  Philip Chimento  <philip.chimento@gmail.com>
+
+        webkit-gtk 2.3.3 fails on darwin/quartz due to duplicate symbols in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=126821
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.list.am: Add WidgetBackingStoreCairo to platformgtk_sources
+        for the Quartz build target, otherwise WebKitGTK aborts with an undefined
+        symbol at runtime.
+
 2015-01-05  Zan Dobersek  <zdobersek@igalia.com>
 
         webkit-gtk 2.3.3 fails on darwin/quartz due to duplicate symbols in WebCore
