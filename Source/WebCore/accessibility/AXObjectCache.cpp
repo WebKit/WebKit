@@ -394,7 +394,11 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     newObj->init();
     attachWrapper(newObj.get());
     newObj->setLastKnownIsIgnoredValue(newObj->accessibilityIsIgnored());
-
+    // Sometimes asking accessibilityIsIgnored() will cause the newObject to be deallocated, and then
+    // it will disappear when this function is finished, leading to a use-after-free.
+    if (newObj->isDetached())
+        return nullptr;
+    
     return newObj.get();
 }
 

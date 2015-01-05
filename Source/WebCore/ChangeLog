@@ -1,3 +1,21 @@
+2014-06-16  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at WebCore::AXObjectCache::textChanged
+        https://bugs.webkit.org/show_bug.cgi?id=133873
+
+        Reviewed by Enrica Casucci.
+
+        This looks like a very similar problem to 
+        https://bugs.webkit.org/show_bug.cgi?id=133825
+
+        The object is being created and deallocated almost right away because calling accessibilityIsIgnored triggers
+        a deferred layout that invalidates the associated render element.
+
+        Despite my best efforts, I could not come up with a way to reproduce this in a layout test.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+
 2014-06-09  Alexey Proskuryakov  <ap@apple.com>
 
         Properly reset UStringSearch object in SearchBuffer constructor.
