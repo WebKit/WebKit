@@ -127,7 +127,7 @@ public:
 
 private:
     // IPC::MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     void swipeSnapshotWatchdogTimerFired();
 

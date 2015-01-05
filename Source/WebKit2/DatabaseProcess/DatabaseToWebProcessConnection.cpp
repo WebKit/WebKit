@@ -52,7 +52,7 @@ DatabaseToWebProcessConnection::~DatabaseToWebProcessConnection()
 
 }
 
-void DatabaseToWebProcessConnection::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+void DatabaseToWebProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::DatabaseToWebProcessConnection::messageReceiverName()) {
         didReceiveDatabaseToWebProcessConnectionMessage(connection, decoder);
@@ -69,7 +69,7 @@ void DatabaseToWebProcessConnection::didReceiveMessage(IPC::Connection* connecti
     ASSERT_NOT_REACHED();
 }
 
-void DatabaseToWebProcessConnection::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& reply)
+void DatabaseToWebProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& reply)
 {
     if (decoder.messageReceiverName() == Messages::DatabaseProcessIDBConnection::messageReceiverName()) {
         IDBConnectionMap::iterator backendIterator = m_idbConnections.find(decoder.destinationID());

@@ -52,7 +52,7 @@ public:
 
 private:
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     ChildProcessProxy* m_childProcessProxy;
     WebProcessPool& m_processPool;

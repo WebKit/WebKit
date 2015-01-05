@@ -79,10 +79,10 @@ private:
     virtual bool shouldTerminate() override;
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
     virtual void didClose(IPC::Connection&) override;
     virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
-    void didReceiveDatabaseProcessMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveDatabaseProcessMessage(IPC::Connection&, IPC::MessageDecoder&);
 
     // Message Handlers
     void initializeDatabaseProcess(const DatabaseProcessCreationParameters&);

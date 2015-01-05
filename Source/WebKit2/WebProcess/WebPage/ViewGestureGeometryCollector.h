@@ -47,7 +47,7 @@ public:
 
 private:
     // IPC::MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     // Message handlers.
     void collectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin);

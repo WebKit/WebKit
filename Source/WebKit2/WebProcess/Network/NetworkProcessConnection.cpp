@@ -53,7 +53,7 @@ NetworkProcessConnection::~NetworkProcessConnection()
 {
 }
 
-void NetworkProcessConnection::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::WebResourceLoader::messageReceiverName()) {
         if (WebResourceLoader* webResourceLoader = WebProcess::shared().webResourceLoadScheduler().webResourceLoaderForIdentifier(decoder.destinationID()))
@@ -65,7 +65,7 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection* connection, IP
     didReceiveNetworkProcessConnectionMessage(connection, decoder);
 }
 
-void NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&)
+void NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&)
 {
     ASSERT_NOT_REACHED();
 }

@@ -371,7 +371,7 @@ template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t des
         return false;
 
     ASSERT(decoder->destinationID() == destinationID);
-    m_client->didReceiveMessage(this, *decoder);
+    m_client->didReceiveMessage(*this, *decoder);
     return true;
 }
 

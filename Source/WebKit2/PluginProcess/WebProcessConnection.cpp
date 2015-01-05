@@ -118,9 +118,9 @@ void WebProcessConnection::setGlobalException(const String& exceptionString)
     connection->sendSync(Messages::PluginProcessConnection::SetException(exceptionString), Messages::PluginProcessConnection::SetException::Reply(), 0);
 }
 
-void WebProcessConnection::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+void WebProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
-    ConnectionStack::CurrentConnectionPusher currentConnection(ConnectionStack::shared(), connection);
+    ConnectionStack::CurrentConnectionPusher currentConnection(ConnectionStack::shared(), &connection);
 
     if (decoder.messageReceiverName() == Messages::WebProcessConnection::messageReceiverName()) {
         didReceiveWebProcessConnectionMessage(connection, decoder);
@@ -140,9 +140,9 @@ void WebProcessConnection::didReceiveMessage(IPC::Connection* connection, IPC::M
     pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, decoder);
 }
 
-void WebProcessConnection::didReceiveSyncMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
+void WebProcessConnection::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
-    ConnectionStack::CurrentConnectionPusher currentConnection(ConnectionStack::shared(), connection);
+    ConnectionStack::CurrentConnectionPusher currentConnection(ConnectionStack::shared(), &connection);
 
     uint64_t destinationID = decoder.destinationID();
 

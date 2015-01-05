@@ -52,7 +52,7 @@ public:
 
 private:
     explicit WebVideoFullscreenManagerProxy(WebPageProxy&);
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     // Translate to FullscreenInterface
     void setupFullscreenWithID(uint32_t, WebCore::IntRect initialRect, float hostingDeviceScaleFactor, WebCore::HTMLMediaElement::VideoFullscreenMode, bool allowOptimizedFullscreen);

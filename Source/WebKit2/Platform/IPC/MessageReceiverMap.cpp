@@ -74,7 +74,7 @@ void MessageReceiverMap::invalidate()
     m_messageReceivers.clear();
 }
 
-bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageDecoder& decoder)
+bool MessageReceiverMap::dispatchMessage(Connection& connection, MessageDecoder& decoder)
 {
     if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
         ASSERT(!decoder.destinationID());
@@ -91,7 +91,7 @@ bool MessageReceiverMap::dispatchMessage(Connection* connection, MessageDecoder&
     return false;
 }
 
-bool MessageReceiverMap::dispatchSyncMessage(Connection* connection, MessageDecoder& decoder, std::unique_ptr<MessageEncoder>& replyEncoder)
+bool MessageReceiverMap::dispatchSyncMessage(Connection& connection, MessageDecoder& decoder, std::unique_ptr<MessageEncoder>& replyEncoder)
 {
     if (MessageReceiver* messageReceiver = m_globalMessageReceivers.get(decoder.messageReceiverName())) {
         ASSERT(!decoder.destinationID());

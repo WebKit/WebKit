@@ -49,7 +49,7 @@ private:
     explicit WebUserContentController(uint64_t identifier);
 
     // IPC::MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     void addUserScripts(const Vector<WebCore::UserScript>& userScripts);
     void removeAllUserScripts();

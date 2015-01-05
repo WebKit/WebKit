@@ -55,8 +55,8 @@ public:
     virtual ~DatabaseProcessIDBConnection();
 
     // Message handlers.
-    void didReceiveDatabaseProcessIDBConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);
-    void didReceiveSyncDatabaseProcessIDBConnectionMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    void didReceiveDatabaseProcessIDBConnectionMessage(IPC::Connection&, IPC::MessageDecoder&);
+    void didReceiveSyncDatabaseProcessIDBConnectionMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     void disconnectedFromWebProcess();
 

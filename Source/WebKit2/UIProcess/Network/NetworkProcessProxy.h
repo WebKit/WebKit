@@ -80,13 +80,13 @@ private:
     void networkProcessCrashedOrFailedToLaunch();
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
-    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    virtual void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
     virtual void didClose(IPC::Connection&) override;
     virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
 
     // Message handlers
-    void didReceiveNetworkProcessProxyMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveNetworkProcessProxyMessage(IPC::Connection&, IPC::MessageDecoder&);
     void didCreateNetworkConnectionToWebProcess(const IPC::Attachment&);
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, uint64_t challengeID);
     void didDeleteWebsiteData(uint64_t callbackID);

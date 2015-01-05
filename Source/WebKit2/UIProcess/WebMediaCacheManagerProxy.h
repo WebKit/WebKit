@@ -68,7 +68,7 @@ private:
     virtual void derefWebContextSupplement() override;
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     HashMap<uint64_t, RefPtr<ArrayCallback>> m_arrayCallbacks;
 };

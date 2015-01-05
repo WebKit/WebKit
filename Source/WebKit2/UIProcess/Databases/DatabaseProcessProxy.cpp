@@ -69,7 +69,7 @@ void DatabaseProcessProxy::connectionWillClose(IPC::Connection*)
 {
 }
 
-void DatabaseProcessProxy::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+void DatabaseProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::DatabaseProcessProxy::messageReceiverName()) {
         didReceiveDatabaseProcessProxyMessage(connection, decoder);

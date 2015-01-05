@@ -301,7 +301,7 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
     std::unique_ptr<MessageDecoder> decoder(incomingMessageDecoder);
 
     if (!decoder->isSyncMessage()) {
-        workQueueMessageReceiver->didReceiveMessage(this, *decoder);
+        workQueueMessageReceiver->didReceiveMessage(*this, *decoder);
         return;
     }
 
@@ -316,7 +316,7 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
     auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
 
     // Hand off both the decoder and encoder to the work queue message receiver.
-    workQueueMessageReceiver->didReceiveSyncMessage(this, *decoder, replyEncoder);
+    workQueueMessageReceiver->didReceiveSyncMessage(*this, *decoder, replyEncoder);
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
     ASSERT(!decoder->isInvalid());
@@ -767,7 +767,7 @@ void Connection::dispatchSyncMessage(MessageDecoder& decoder)
     auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
 
     // Hand off both the decoder and encoder to the client.
-    m_client->didReceiveSyncMessage(this, decoder, replyEncoder);
+    m_client->didReceiveSyncMessage(*this, decoder, replyEncoder);
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
     ASSERT(!decoder.isInvalid());
@@ -806,7 +806,7 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<MessageDecoder> incoming
 
 void Connection::dispatchMessage(MessageDecoder& decoder)
 {
-    m_client->didReceiveMessage(this, decoder);
+    m_client->didReceiveMessage(*this, decoder);
 }
 
 void Connection::dispatchMessage(std::unique_ptr<MessageDecoder> message)

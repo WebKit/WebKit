@@ -50,8 +50,8 @@ public:
 
     void invalidate();
 
-    bool dispatchMessage(Connection*, MessageDecoder&);
-    bool dispatchSyncMessage(Connection*, MessageDecoder&, std::unique_ptr<MessageEncoder>&);
+    bool dispatchMessage(Connection&, MessageDecoder&);
+    bool dispatchSyncMessage(Connection&, MessageDecoder&, std::unique_ptr<MessageEncoder>&);
 
 private:
     // Message receivers that don't require a destination ID.

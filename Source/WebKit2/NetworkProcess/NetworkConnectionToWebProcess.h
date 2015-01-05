@@ -61,14 +61,14 @@ private:
     NetworkConnectionToWebProcess(IPC::Connection::Identifier);
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
-    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);
+    virtual void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
     virtual void didClose(IPC::Connection&);
     virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName);
 
     // Message handlers.
-    void didReceiveNetworkConnectionToWebProcessMessage(IPC::Connection*, IPC::MessageDecoder&);
-    void didReceiveSyncNetworkConnectionToWebProcessMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    void didReceiveNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::MessageDecoder&);
+    void didReceiveSyncNetworkConnectionToWebProcessMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
     
     void scheduleResourceLoad(const NetworkResourceLoadParameters&);
     void performSynchronousLoad(const NetworkResourceLoadParameters&, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);

@@ -38,8 +38,8 @@ class MessageReceiver {
 public:
     virtual ~MessageReceiver() { }
 
-    virtual void didReceiveMessage(Connection*, MessageDecoder&) = 0;
-    virtual void didReceiveSyncMessage(Connection*, MessageDecoder&, std::unique_ptr<MessageEncoder>&)
+    virtual void didReceiveMessage(Connection&, MessageDecoder&) = 0;
+    virtual void didReceiveSyncMessage(Connection&, MessageDecoder&, std::unique_ptr<MessageEncoder>&)
     {
         ASSERT_NOT_REACHED();
     }

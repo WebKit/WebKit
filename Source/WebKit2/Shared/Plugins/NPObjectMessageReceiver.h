@@ -46,7 +46,7 @@ public:
     NPObjectMessageReceiver(NPRemoteObjectMap*, Plugin*, uint64_t npObjectID, NPObject*);
     ~NPObjectMessageReceiver();
 
-    void didReceiveSyncNPObjectMessageReceiverMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    void didReceiveSyncNPObjectMessageReceiverMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     Plugin* plugin() const { return m_plugin; }
     NPObject* npObject() const { return m_npObject; }

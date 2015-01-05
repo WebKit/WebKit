@@ -95,8 +95,8 @@ private:
     virtual bool shouldTerminate() override;
 
     // IPC::Connection::Client
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
-    virtual void didReceiveSyncMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
+    virtual void didReceiveSyncMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&) override;
     virtual void didClose(IPC::Connection&) override;
     virtual void didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName) override;
 
@@ -107,7 +107,7 @@ private:
     virtual AuthenticationManager& downloadsAuthenticationManager() override;
 
     // Message Handlers
-    void didReceiveNetworkProcessMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::MessageDecoder&);
     void initializeNetworkProcess(const NetworkProcessCreationParameters&);
     void createNetworkConnectionToWebProcess();
     void ensurePrivateBrowsingSession(WebCore::SessionID);

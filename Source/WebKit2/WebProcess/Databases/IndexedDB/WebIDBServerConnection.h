@@ -87,7 +87,7 @@ public:
     virtual void cursorIterate(WebCore::IDBCursorBackend&, const WebCore::CursorIterationOperation&, std::function<void (PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::SharedBuffer>, PassRefPtr<WebCore::IDBDatabaseError>)> completionCallback) override;
 
     // Message handlers.
-    void didReceiveWebIDBServerConnectionMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveWebIDBServerConnectionMessage(IPC::Connection&, IPC::MessageDecoder&);
 
     // IPC::MessageSender
     virtual uint64_t messageSenderDestinationID() override { return m_serverConnectionIdentifier; }

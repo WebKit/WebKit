@@ -50,7 +50,7 @@ public:
     virtual bool sendMessageToFrontend(const String& message) override;
 
     // Implemented in generated WebInspectorMessageReceiver.cpp
-    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     // IPC::Connection::Client
     void didClose(IPC::Connection&) override { close(); }

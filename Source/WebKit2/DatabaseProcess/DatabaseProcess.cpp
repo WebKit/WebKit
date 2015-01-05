@@ -80,7 +80,7 @@ void DatabaseProcess::didClose(IPC::Connection&)
     RunLoop::current().stop();
 }
 
-void DatabaseProcess::didReceiveMessage(IPC::Connection* connection, IPC::MessageDecoder& decoder)
+void DatabaseProcess::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     if (messageReceiverMap().dispatchMessage(connection, decoder))
         return;

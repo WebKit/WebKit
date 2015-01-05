@@ -1,5 +1,153 @@
 2015-01-05  Anders Carlsson  <andersca@apple.com>
 
+        Change more of the IPC code to take connections by reference
+        https://bugs.webkit.org/show_bug.cgi?id=140083
+
+        Reviewed by Andreas Kling.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::didReceiveMessage):
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseToWebProcessConnection.cpp:
+        (WebKit::DatabaseToWebProcessConnection::didReceiveMessage):
+        (WebKit::DatabaseToWebProcessConnection::didReceiveSyncMessage):
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveMessage):
+        (WebKit::NetworkProcess::didReceiveSyncMessage):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        (IPC::Connection::dispatchSyncMessage):
+        (IPC::Connection::dispatchMessage):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::waitForAndDispatchImmediately):
+        * Platform/IPC/MessageReceiver.h:
+        (IPC::MessageReceiver::didReceiveSyncMessage):
+        * Platform/IPC/MessageReceiverMap.cpp:
+        (IPC::MessageReceiverMap::dispatchMessage):
+        (IPC::MessageReceiverMap::dispatchSyncMessage):
+        * Platform/IPC/MessageReceiverMap.h:
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::didReceiveMessage):
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveMessage):
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        * PluginProcess/WebProcessConnection.h:
+        * Scripts/webkit/messages.py:
+        (async_message_statement):
+        (sync_message_statement):
+        (generate_message_handler):
+        * Shared/API/Cocoa/RemoteObjectRegistry.h:
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::dispatchMessage):
+        (WebKit::ChildProcessProxy::dispatchSyncMessage):
+        * Shared/ChildProcessProxy.h:
+        * Shared/Network/CustomProtocols/CustomProtocolManager.h:
+        * Shared/Plugins/NPObjectMessageReceiver.h:
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::didReceiveSyncMessage):
+        * Shared/Plugins/NPRemoteObjectMap.h:
+        * Shared/WebConnection.h:
+        * Shared/mac/SecItemShim.h:
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::didReceiveMessage):
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveMessage):
+        (WebKit::NetworkProcessProxy::didReceiveSyncMessage):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * UIProcess/VisitedLinkProvider.h:
+        * UIProcess/WebApplicationCacheManagerProxy.h:
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebDatabaseManagerProxy.h:
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/WebGeolocationManagerProxy.h:
+        * UIProcess/WebIconDatabase.h:
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebMediaCacheManagerProxy.h:
+        * UIProcess/WebOriginDataManagerProxy.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::dispatchMessage):
+        (WebKit::WebProcessPool::dispatchSyncMessage):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebResourceCacheManagerProxy.h:
+        * UIProcess/ios/SmartMagnificationController.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/SecItemShimProxy.h:
+        * UIProcess/mac/ViewGestureController.h:
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.h:
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.h:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.cpp:
+        (WebKit::WebToDatabaseProcessConnection::didReceiveMessage):
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::didReceiveMessage):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.h:
+        * WebProcess/MediaCache/WebMediaCacheManager.h:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        (WebKit::NetworkProcessConnection::didReceiveSyncMessage):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Notifications/WebNotificationManager.h:
+        * WebProcess/OriginData/WebOriginDataManager.h:
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didReceiveMessage):
+        (WebKit::PluginProcessConnection::didReceiveSyncMessage):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        * WebProcess/Plugins/PluginProcessConnectionManager.h:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/ResourceCache/WebResourceCacheManager.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.h:
+        * WebProcess/Storage/StorageAreaMap.h:
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/ViewGestureGeometryCollector.h:
+        * WebProcess/WebPage/ViewUpdateDispatcher.h:
+        * WebProcess/WebPage/VisitedLinkTableController.h:
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        (WebKit::WebPage::didReceiveSyncMessage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveSyncMessage):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+
+2015-01-05  Anders Carlsson  <andersca@apple.com>
+
         Pass IPC::Connection by reference to IPC message handlers
         https://bugs.webkit.org/show_bug.cgi?id=140082
 

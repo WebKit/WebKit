@@ -89,7 +89,7 @@ public:
     static size_t fileBackedResourceMinimumSize();
 #endif
     // Message handlers.
-    void didReceiveNetworkResourceLoaderMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveNetworkResourceLoaderMessage(IPC::Connection&, IPC::MessageDecoder&);
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
     static void tryGetShareableHandleFromCFURLCachedResponse(ShareableResource::Handle&, CFCachedURLResponseRef);

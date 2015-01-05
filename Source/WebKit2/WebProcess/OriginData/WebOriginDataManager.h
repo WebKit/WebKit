@@ -50,7 +50,7 @@ private:
     void deleteAllEntries(WKOriginDataTypes, uint64_t callbackID);
 
     // IPC::MessageReceiver
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     ChildProcess& m_childProcess;
     WebOriginDataManagerSupplement& m_supplement;

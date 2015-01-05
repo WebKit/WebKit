@@ -72,7 +72,7 @@ private:
     explicit WebUserContentControllerProxy();
 
     // IPC::MessageReceiver.
-    virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
+    virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
     void didPostMessage(IPC::Connection&, uint64_t pageID, uint64_t frameID, uint64_t messageHandlerID, const IPC::DataReference&);
 

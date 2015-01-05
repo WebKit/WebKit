@@ -63,8 +63,8 @@ public:
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
     void pluginProcessCrashed();
 
-    void didReceivePluginProxyMessage(IPC::Connection*, IPC::MessageDecoder&);
-    void didReceiveSyncPluginProxyMessage(IPC::Connection*, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
+    void didReceivePluginProxyMessage(IPC::Connection&, IPC::MessageDecoder&);
+    void didReceiveSyncPluginProxyMessage(IPC::Connection&, IPC::MessageDecoder&, std::unique_ptr<IPC::MessageEncoder>&);
 
     bool isBeingAsynchronouslyInitialized() const { return m_waitingOnAsynchronousInitialization; }
 

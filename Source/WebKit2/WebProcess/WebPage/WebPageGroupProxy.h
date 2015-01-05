@@ -55,7 +55,7 @@ public:
 
     WebCore::UserContentController& userContentController();
 
-    void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&);
+    void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&);
 
     void addUserStyleSheet(const WebCore::UserStyleSheet&);
     void addUserScript(const WebCore::UserScript&);
