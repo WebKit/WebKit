@@ -28,8 +28,6 @@ webkit.org/b/82747 fast/events/scroll-div-with-prevent-default-in-subframe.html 
 
 webkit.org/b/112533 media/auto-play-in-sandbox-with-allow-scripts.html [ Pass Timeout ]
 
-webkit.org/b/139599 fast/images/animated-gif-body-outside-viewport.html [ Pass Failure Timeout ]
-
 webkit.org/b/139778 fullscreen/exit-full-screen-iframe.html [ Skip ]
 
 webkit.org/b/139862 editing/spelling/grammar-edit-word.html [ Skip ]
@@ -65,6 +63,11 @@ fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
 
 # Disable snapshotting tests on WK1 only
 plugins/snapshotting
+
+# Animated image throttling behaves differently on WK1.
+fast/images/animated-gif-body-outside-viewport.html [ Skip ]
+fast/images/animated-gif-window-resizing.html [ Skip ]
+fast/images/animated-gif-zooming.html [ Skip ]
 
 # Mavericks and prior do not support contentInset
 [ MountainLion Mavericks ] platform/mac/fast/events/content-inset-hit-testing.html [ Skip ]
