@@ -1,3 +1,24 @@
+2015-01-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GStreamer] Disable gst-plugin-scanner if seccomp filters are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=140069
+
+        Reviewed by Philippe Normand.
+
+        If seccomp filters are enabled, any child processes we create are doomed
+        if they try to use a trapped syscall: the child will receive SIGSYS and
+        dump core. There appears to be no way around this.
+
+        Fortunately, the gstreamer developers had mad prescience and provided
+        us with a way to move plugin scanning in-process, so we don't need the
+        helper binary at all.
+
+        No new tests because this is covered by existing tests when seccomp
+        filters are enabled.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::initializeGStreamer):
+
 2015-01-04  Darin Adler  <darin@apple.com>
 
         * dom/DocumentFragment.cpp:
