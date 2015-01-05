@@ -1,3 +1,16 @@
+2014-07-08  Jeffrey Pfau  <jpfau@apple.com>
+
+        Fix flaky loading tests
+        https://bugs.webkit.org/show_bug.cgi?id=133696
+
+        Reviewed by Ryosuke Niwa.
+
+        In some cases, the Frame may be destroyed while the loader is
+        initializing. Make sure we don't delete it too early.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::init):
+
 2014-06-11  Jeffrey Pfau  <jpfau@apple.com>
 
         Fix flaky beforeload tests
