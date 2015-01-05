@@ -1254,6 +1254,8 @@ void FrameLoader::loadURL(const URL& newURL, const String& referrer, const Strin
     if (m_inStopAllLoaders)
         return;
 
+    Ref<Frame> protect(m_frame);
+
     RefPtr<FormState> formState = prpFormState;
     bool isFormSubmission = formState;
     
