@@ -264,6 +264,7 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _automaticallyAdjustsContentInsets;
     RetainPtr<WKActionMenuController> _actionMenuController;
     RetainPtr<WKImmediateActionController> _immediateActionController;
+    RetainPtr<NSImmediateActionGestureRecognizer> _immediateActionGestureRecognizer;
 #endif
 
 #if WK_API_ENABLED
@@ -3620,10 +3621,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     }
 
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
-        RetainPtr<NSImmediateActionGestureRecognizer> recognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
-        _data->_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:*_data->_page view:self recognizer:recognizer.get()]);
-        [recognizer setDelegate:_data->_immediateActionController.get()];
-        [self addGestureRecognizer:recognizer.get()];
+        _data->_immediateActionGestureRecognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
+        _data->_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:*_data->_page view:self recognizer:_data->_immediateActionGestureRecognizer.get()]);
+        [_data->_immediateActionGestureRecognizer setDelegate:_data->_immediateActionController.get()];
+        [self addGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
     }
 #endif
 
@@ -4097,6 +4098,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     _data->_ignoresNonWheelEvents = ignoresNonWheelEvents;
     _data->_page->setShouldDispatchFakeMouseMoveEvents(!ignoresNonWheelEvents);
+
+    if (ignoresNonWheelEvents)
+        [self removeGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
+    else
+        [self addGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
 }
 
 - (BOOL)_ignoresNonWheelEvents
