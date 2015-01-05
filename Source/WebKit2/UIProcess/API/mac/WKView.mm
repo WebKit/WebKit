@@ -4099,10 +4099,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_ignoresNonWheelEvents = ignoresNonWheelEvents;
     _data->_page->setShouldDispatchFakeMouseMoveEvents(!ignoresNonWheelEvents);
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (ignoresNonWheelEvents)
         [self removeGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
     else
         [self addGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
+#endif
 }
 
 - (BOOL)_ignoresNonWheelEvents
