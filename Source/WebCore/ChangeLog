@@ -1,3 +1,17 @@
+2014-11-11  David Kilzer  <ddkilzer@apple.com>
+
+        Protect Document in ProcessingInstruction::setXSLStyleSheet()
+        <http://webkit.org/b/138621>
+
+        Reviewed by Andreas Kling.
+
+        The patch is inspired by the following Blink revision by
+        <tasak@google.com>:
+        <https://src.chromium.org/viewvc/blink?view=rev&revision=182309>
+
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::setXSLStyleSheet):
+
 2014-12-08  Doron Wloschowsky  <doron_wloschowsky@scee.net>
 
         Webkit using Harfbuzz does not display Arabic script correctly
