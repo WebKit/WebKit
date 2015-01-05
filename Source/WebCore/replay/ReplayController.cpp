@@ -207,7 +207,7 @@ void ReplayController::switchSession(PassRefPtr<ReplaySession> session)
     m_currentPosition = ReplayPosition(0, 0);
 
     LOG(WebReplay, "%-20sSwitching sessions from %p to %p.\n", "ReplayController", m_loadedSession.get(), session.get());
-    InspectorInstrumentation::sessionLoaded(&m_page, m_loadedSession);
+    InspectorInstrumentation::sessionLoaded(m_page, m_loadedSession);
 }
 
 void ReplayController::createSegment()
@@ -223,7 +223,7 @@ void ReplayController::createSegment()
     m_loadedSegment = ReplaySessionSegment::create();
 
     LOG(WebReplay, "%-20s Created segment: %p.\n", "ReplayController", m_loadedSegment.get());
-    InspectorInstrumentation::segmentCreated(&m_page, m_loadedSegment);
+    InspectorInstrumentation::segmentCreated(m_page, m_loadedSegment);
 
     m_activeCursor = CapturingInputCursor::create(m_loadedSegment);
     m_activeCursor->appendInput<BeginSegmentSentinel>();
@@ -247,10 +247,10 @@ void ReplayController::completeSegment()
     unloadSegment(shouldSuppressNotifications);
 
     LOG(WebReplay, "%-20s Completed segment: %p.\n", "ReplayController", segment.get());
-    InspectorInstrumentation::segmentCompleted(&m_page, segment);
+    InspectorInstrumentation::segmentCompleted(m_page, segment);
 
     m_loadedSession->appendSegment(segment);
-    InspectorInstrumentation::sessionModified(&m_page, m_loadedSession);
+    InspectorInstrumentation::sessionModified(m_page, m_loadedSession);
 }
 
 void ReplayController::loadSegmentAtIndex(size_t segmentIndex)
@@ -272,7 +272,7 @@ void ReplayController::loadSegmentAtIndex(size_t segmentIndex)
     m_activeCursor = ReplayingInputCursor::create(m_loadedSegment, m_page, this);
 
     LOG(WebReplay, "%-20sLoading segment: %p.\n", "ReplayController", segment.get());
-    InspectorInstrumentation::segmentLoaded(&m_page, segment);
+    InspectorInstrumentation::segmentLoaded(m_page, segment);
 }
 
 void ReplayController::unloadSegment(bool suppressNotifications)
@@ -295,7 +295,7 @@ void ReplayController::unloadSegment(bool suppressNotifications)
     // didn't send out the corresponding segmentLoaded event at the start of capture.
     if (!suppressNotifications) {
         LOG(WebReplay, "%-20sUnloading segment: %p.\n", "ReplayController", unloadedSegment.get());
-        InspectorInstrumentation::segmentUnloaded(&m_page);
+        InspectorInstrumentation::segmentUnloaded(m_page);
     }
 }
 
@@ -308,7 +308,7 @@ void ReplayController::startCapturing()
     setForceDeterministicSettings(true);
 
     LOG(WebReplay, "%-20s Starting capture.\n", "ReplayController");
-    InspectorInstrumentation::captureStarted(&m_page);
+    InspectorInstrumentation::captureStarted(m_page);
 
     m_currentPosition = ReplayPosition(0, 0);
 
@@ -326,7 +326,7 @@ void ReplayController::stopCapturing()
     setForceDeterministicSettings(false);
 
     LOG(WebReplay, "%-20s Stopping capture.\n", "ReplayController");
-    InspectorInstrumentation::captureStopped(&m_page);
+    InspectorInstrumentation::captureStopped(m_page);
 }
 
 void ReplayController::startPlayback()
@@ -337,7 +337,7 @@ void ReplayController::startPlayback()
     setSegmentState(SegmentState::Dispatching);
 
     LOG(WebReplay, "%-20s Starting playback to position (segment: %d, input: %d).\n", "ReplayController", m_targetPosition.segmentOffset, m_targetPosition.inputOffset);
-    InspectorInstrumentation::playbackStarted(&m_page);
+    InspectorInstrumentation::playbackStarted(m_page);
 
     dispatcher().setDispatchSpeed(m_dispatchSpeed);
     dispatcher().run();
@@ -354,7 +354,7 @@ void ReplayController::pausePlayback()
     setSegmentState(SegmentState::Loaded);
 
     LOG(WebReplay, "%-20s Pausing playback at position (segment: %d, input: %d).\n", "ReplayController", m_currentPosition.segmentOffset, m_currentPosition.inputOffset);
-    InspectorInstrumentation::playbackPaused(&m_page, m_currentPosition);
+    InspectorInstrumentation::playbackPaused(m_page, m_currentPosition);
 }
 
 void ReplayController::cancelPlayback()
@@ -372,7 +372,7 @@ void ReplayController::cancelPlayback()
     unloadSegment();
     m_sessionState = SessionState::Inactive;
     setForceDeterministicSettings(false);
-    InspectorInstrumentation::playbackFinished(&m_page);
+    InspectorInstrumentation::playbackFinished(m_page);
 }
 
 void ReplayController::replayToPosition(const ReplayPosition& position, DispatchSpeed speed)
@@ -511,7 +511,7 @@ void ReplayController::willDispatchInput(const EventLoopInputBase&)
 
     m_currentPosition.inputOffset++;
 
-    InspectorInstrumentation::playbackHitPosition(&m_page, m_currentPosition);
+    InspectorInstrumentation::playbackHitPosition(m_page, m_currentPosition);
 
     if (m_currentPosition == m_targetPosition)
         pausePlayback();

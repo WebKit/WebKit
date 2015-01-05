@@ -502,7 +502,7 @@ PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL
 void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const ResourceResponse& response)
 {
 #if ENABLE(INSPECTOR)
-    DocumentLoader* loader = (handle == m_manifestHandle) ? 0 : m_frame->loader().documentLoader();
+    DocumentLoader* loader = (handle == m_manifestHandle) ? nullptr : m_frame->loader().documentLoader();
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame, m_currentResourceIdentifier, response);
     InspectorInstrumentation::didReceiveResourceResponse(cookie, m_currentResourceIdentifier, loader, response, 0);
 #endif
@@ -577,9 +577,7 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
 {
     UNUSED_PARAM(encodedDataLength);
 
-#if ENABLE(INSPECTOR)
     InspectorInstrumentation::didReceiveData(m_frame, m_currentResourceIdentifier, 0, length, 0);
-#endif
 
     if (handle == m_manifestHandle) {
         didReceiveManifestData(data, length);
@@ -594,11 +592,7 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
 
 void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double finishTime)
 {
-#if ENABLE(INSPECTOR)
     InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, finishTime);
-#else
-    UNUSED_PARAM(finishTime);
-#endif
 
     if (handle == m_manifestHandle) {
         didFinishLoadingManifest();
@@ -633,11 +627,7 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double fini
 
 void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError& error)
 {
-#if ENABLE(INSPECTOR)
     InspectorInstrumentation::didFailLoading(m_frame, m_frame->loader().documentLoader(), m_currentResourceIdentifier, error);
-#else
-    UNUSED_PARAM(error);
-#endif
 
     if (handle == m_manifestHandle) {
         // A network error is logged elsewhere, no need to log again. Also, it's normal for manifest fetching to fail when working offline.

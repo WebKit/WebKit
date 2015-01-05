@@ -117,9 +117,9 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
         return;
 
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(&m_page, source, MessageType::Log, level, message, callStack, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(m_page, source, MessageType::Log, level, message, callStack, requestIdentifier);
     else
-        InspectorInstrumentation::addMessageToConsole(&m_page, source, MessageType::Log, level, message, url, lineNumber, columnNumber, state, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(m_page, source, MessageType::Log, level, message, url, lineNumber, columnNumber, state, requestIdentifier);
 
     if (source == MessageSource::CSS)
         return;
@@ -142,7 +142,7 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
 
     String message;
     bool gotMessage = arguments->getFirstArgumentAsString(message);
-    InspectorInstrumentation::addMessageToConsole(&m_page, MessageSource::ConsoleAPI, type, level, message, exec, arguments);
+    InspectorInstrumentation::addMessageToConsole(m_page, MessageSource::ConsoleAPI, type, level, message, exec, arguments);
 
     if (m_page.usesEphemeralSession())
         return;
@@ -160,34 +160,34 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
 
 void PageConsoleClient::count(JSC::ExecState* exec, PassRefPtr<ScriptArguments> arguments)
 {
-    InspectorInstrumentation::consoleCount(&m_page, exec, arguments);
+    InspectorInstrumentation::consoleCount(m_page, exec, arguments);
 }
 
 void PageConsoleClient::profile(JSC::ExecState* exec, const String& title)
 {
-    InspectorInstrumentation::startProfiling(&m_page, exec, title);
+    InspectorInstrumentation::startProfiling(m_page, exec, title);
 }
 
 void PageConsoleClient::profileEnd(JSC::ExecState* exec, const String& title)
 {
-    if (RefPtr<JSC::Profile> profile = InspectorInstrumentation::stopProfiling(&m_page, exec, title))
+    if (RefPtr<JSC::Profile> profile = InspectorInstrumentation::stopProfiling(m_page, exec, title))
         m_profiles.append(profile.release());
 }
 
 void PageConsoleClient::time(JSC::ExecState*, const String& title)
 {
-    InspectorInstrumentation::startConsoleTiming(&m_page.mainFrame(), title);
+    InspectorInstrumentation::startConsoleTiming(m_page.mainFrame(), title);
 }
 
 void PageConsoleClient::timeEnd(JSC::ExecState* exec, const String& title)
 {
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
-    InspectorInstrumentation::stopConsoleTiming(&m_page.mainFrame(), title, callStack.release());
+    InspectorInstrumentation::stopConsoleTiming(m_page.mainFrame(), title, callStack.release());
 }
 
 void PageConsoleClient::timeStamp(JSC::ExecState*, PassRefPtr<ScriptArguments> arguments)
 {
-    InspectorInstrumentation::consoleTimeStamp(&m_page.mainFrame(), arguments);
+    InspectorInstrumentation::consoleTimeStamp(m_page.mainFrame(), arguments);
 }
 
 void PageConsoleClient::clearProfiles()

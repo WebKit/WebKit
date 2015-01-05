@@ -79,7 +79,7 @@ Ref<WebKitNamedFlow> NamedFlowCollection::ensureFlowWithName(const String& flowN
     RefPtr<WebKitNamedFlow> newFlow = WebKitNamedFlow::create(this, flowName);
     m_namedFlows.add(newFlow.get());
 
-    InspectorInstrumentation::didCreateNamedFlow(document(), newFlow.get());
+    InspectorInstrumentation::didCreateNamedFlow(document(), *newFlow);
 
     return newFlow.releaseNonNull();
 }
@@ -93,7 +93,7 @@ void NamedFlowCollection::discardNamedFlow(WebKitNamedFlow* namedFlow)
     ASSERT(namedFlow->flowState() == WebKitNamedFlow::FlowStateNull);
     ASSERT(m_namedFlows.contains(namedFlow));
 
-    InspectorInstrumentation::willRemoveNamedFlow(document(), namedFlow);
+    InspectorInstrumentation::willRemoveNamedFlow(document(), *namedFlow);
 
     m_namedFlows.remove(namedFlow);
 }

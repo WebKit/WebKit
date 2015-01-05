@@ -506,13 +506,13 @@ void RenderNamedFlowThread::registerNamedFlowContentElement(Element& contentElem
         unsigned short position = contentElement.compareDocumentPosition(element);
         if (position & Node::DOCUMENT_POSITION_FOLLOWING) {
             m_contentElements.insertBefore(element, &contentElement);
-            InspectorInstrumentation::didRegisterNamedFlowContentElement(&document(), &namedFlow(), &contentElement, element);
+            InspectorInstrumentation::didRegisterNamedFlowContentElement(document(), namedFlow(), contentElement, element);
             return;
         }
     }
 
     m_contentElements.add(&contentElement);
-    InspectorInstrumentation::didRegisterNamedFlowContentElement(&document(), &namedFlow(), &contentElement);
+    InspectorInstrumentation::didRegisterNamedFlowContentElement(document(), namedFlow(), contentElement);
 }
 
 void RenderNamedFlowThread::unregisterNamedFlowContentElement(Element& contentElement)
@@ -527,7 +527,7 @@ void RenderNamedFlowThread::unregisterNamedFlowContentElement(Element& contentEl
     if (canBeDestroyed())
         setMarkForDestruction();
 
-    InspectorInstrumentation::didUnregisterNamedFlowContentElement(&document(), &namedFlow(), &contentElement);
+    InspectorInstrumentation::didUnregisterNamedFlowContentElement(document(), namedFlow(), contentElement);
 }
 
 bool RenderNamedFlowThread::hasContentElement(Element& contentElement) const
@@ -560,7 +560,7 @@ void RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded()
         return;
 
     m_dispatchRegionOversetChangeEvent = false;
-    InspectorInstrumentation::didChangeRegionOverset(&document(), &namedFlow());
+    InspectorInstrumentation::didChangeRegionOverset(document(), namedFlow());
     
     if (!m_regionOversetChangeEventTimer.isActive() && namedFlow().hasEventListeners())
         m_regionOversetChangeEventTimer.startOneShot(0);

@@ -200,7 +200,7 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
 
 void ResourceLoadScheduler::notifyDidScheduleResourceRequest(ResourceLoader* loader)
 {
-    InspectorInstrumentation::didScheduleResourceRequest(loader->frameLoader() ? loader->frameLoader()->frame().document() : 0, loader->url());
+    InspectorInstrumentation::didScheduleResourceRequest(loader->frameLoader() ? loader->frameLoader()->frame().document() : nullptr, loader->url());
 }
 
 #if USE(QUICK_LOOK)

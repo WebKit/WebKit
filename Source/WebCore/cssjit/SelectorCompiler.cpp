@@ -2921,14 +2921,14 @@ static void setFirstChildState(Element* element)
 
 static bool elementIsActive(Element* element)
 {
-    return element->active() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassActive);
+    return element->active() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassActive);
 }
 
 static bool elementIsActiveForStyleResolution(Element* element, const SelectorChecker::CheckingContext* checkingContext)
 {
     if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle)
         element->setChildrenAffectedByActive();
-    return element->active() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassActive);
+    return element->active() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassActive);
 }
 
 void SelectorCodeGenerator::generateElementIsActive(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
@@ -3100,14 +3100,14 @@ void SelectorCodeGenerator::generateElementIsFirstChild(Assembler::JumpList& fai
 
 static bool elementIsHovered(Element* element)
 {
-    return element->hovered() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassHover);
+    return element->hovered() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassHover);
 }
 
 static bool elementIsHoveredForStyleResolution(Element* element, const SelectorChecker::CheckingContext* checkingContext)
 {
     if (checkingContext->resolvingMode == SelectorChecker::Mode::ResolvingStyle)
         element->setChildrenAffectedByHover();
-    return element->hovered() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassHover);
+    return element->hovered() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassHover);
 }
 
 void SelectorCodeGenerator::generateElementIsHovered(Assembler::JumpList& failureCases, const SelectorFragment& fragment)

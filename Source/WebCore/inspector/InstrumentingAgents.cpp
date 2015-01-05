@@ -99,17 +99,6 @@ void InstrumentingAgents::reset()
     m_inspectorWorkerAgent = nullptr;
 }
 
-InstrumentingAgents* instrumentationForPage(Page* page)
-{
-    ASSERT(isMainThread());
-    return page ? page->inspectorController().m_instrumentingAgents.get() : nullptr;
-}
-
-InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope* workerGlobalScope)
-{
-    return workerGlobalScope ? workerGlobalScope->workerInspectorController().m_instrumentingAgents.get() : nullptr;
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

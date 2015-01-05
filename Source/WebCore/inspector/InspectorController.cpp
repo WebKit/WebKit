@@ -224,17 +224,17 @@ bool InspectorController::hasInspectorFrontendClient() const
     return m_inspectorFrontendClient;
 }
 
-void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld& world)
+void InspectorController::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
 {
     if (&world != &mainThreadNormalWorld())
         return;
 
-    if (frame->isMainFrame())
+    if (frame.isMainFrame())
         m_injectedScriptManager->discardInjectedScripts();
 
     // If the page is supposed to serve as InspectorFrontend notify inspector frontend
     // client that it's cleared so that the client can expose inspector bindings.
-    if (m_inspectorFrontendClient && frame->isMainFrame())
+    if (m_inspectorFrontendClient && frame.isMainFrame())
         m_inspectorFrontendClient->windowObjectCleared();
 }
 
@@ -252,7 +252,7 @@ void InspectorController::connectFrontend(InspectorFrontendChannel* frontendChan
 
     m_agents.didCreateFrontendAndBackend(frontendChannel, m_inspectorBackendDispatcher.get());
 
-    InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
+    InspectorInstrumentation::registerInstrumentingAgents(*m_instrumentingAgents);
     InspectorInstrumentation::frontendCreated();
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -277,7 +277,7 @@ void InspectorController::disconnectFrontend(InspectorDisconnectReason reason)
     // Release overlay page resources.
     m_overlay->freePage();
     InspectorInstrumentation::frontendDeleted();
-    InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
+    InspectorInstrumentation::unregisterInstrumentingAgents(*m_instrumentingAgents);
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (!m_hasRemoteFrontend)

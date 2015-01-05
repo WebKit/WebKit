@@ -1,3 +1,422 @@
+2015-01-01  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: pass parameters to inspector instrumentation by reference where possible
+        https://bugs.webkit.org/show_bug.cgi?id=139981
+
+        Reviewed by Andreas Kling.
+
+        Clean up inspector instrumentation entry points throughout WebCore. In particular, make
+        parameters pass-by-reference if they are not nullable. Also standardize quirky parameter
+        orders and do other small cleanups in InspectorInstrumentation and at callsites.
+
+        Inspector agents still take the pertinent parameters by pointer even when they could be
+        passed by reference. This will be addressed in a follow-up change.
+
+        No new tests, no behavior changed.
+
+        * WebCore.exp.in:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+        (WebCore::SelectorChecker::matchesFocusPseudoClass):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::elementIsActive):
+        (WebCore::SelectorCompiler::elementIsActiveForStyleResolution):
+        (WebCore::SelectorCompiler::elementIsHovered):
+        (WebCore::SelectorCompiler::elementIsHoveredForStyleResolution):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent): Remove unnecessary ENABLE guard.
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeBetween):
+        (WebCore::ContainerNode::appendChild):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildNodeInsertionNotifier::notify): Remove unnecessary ENABLE guard.
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::finishedParsing): This is safe because we checked the argument.
+        * dom/Element.cpp:
+        (WebCore::Element::addShadowRoot):
+        (WebCore::Element::removeShadowRoot): This is safe because we checked the argument.
+        (WebCore::Element::willModifyAttribute): Remove unnecessary ENABLE guard.
+        (WebCore::Element::didAddAttribute):
+        (WebCore::Element::didModifyAttribute):
+        (WebCore::Element::didRemoveAttribute):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners): This is safe because the type test would fail if null.
+        * dom/NamedFlowCollection.cpp: Pass by reference since code already assumes non-null.
+        (WebCore::NamedFlowCollection::ensureFlowWithName):
+        (WebCore::NamedFlowCollection::discardNamedFlow):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::~PseudoElement):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::styleAttributeChanged):
+        (WebCore::StyledElement::inlineStyleChanged):
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        (WebCore::InspectorInstrumentation::consoleCount):
+        (WebCore::InspectorInstrumentation::startConsoleTiming):
+        (WebCore::InspectorInstrumentation::stopConsoleTiming):
+        (WebCore::InspectorInstrumentation::consoleTimeStamp):
+        (WebCore::InspectorInstrumentation::startProfiling):
+        (WebCore::InspectorInstrumentation::stopProfiling):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didClearWindowObjectInWorld):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::disconnectFrontend):
+        * inspector/InspectorController.h: Remove instrumentationForPage() in favor of using instrumentingAgentsForPage() directly.
+        * inspector/InspectorDatabaseInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didOpenDatabase):
+        * inspector/InspectorInstrumentation.cpp: Add missing s_ prefix for global s_instrumentingAgentSets. Pass the instrumenting
+        agent by reference since it was already null-checked if we reached a slow path for instrumentation.
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        (WebCore::InspectorInstrumentation::isDebuggerPausedImpl):
+        (WebCore::InspectorInstrumentation::willInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::didModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::didRemoveDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::didInvalidateStyleAttrImpl):
+        (WebCore::InspectorInstrumentation::frameWindowDiscardedImpl):
+        (WebCore::InspectorInstrumentation::mediaQueryResultChangedImpl):
+        (WebCore::InspectorInstrumentation::didPushShadowRootImpl):
+        (WebCore::InspectorInstrumentation::willPopShadowRootImpl):
+        (WebCore::InspectorInstrumentation::didCreateNamedFlowImpl):
+        (WebCore::InspectorInstrumentation::willRemoveNamedFlowImpl):
+        (WebCore::InspectorInstrumentation::didChangeRegionOversetImpl):
+        (WebCore::InspectorInstrumentation::didRegisterNamedFlowContentElementImpl):
+        (WebCore::InspectorInstrumentation::didUnregisterNamedFlowContentElementImpl):
+        (WebCore::InspectorInstrumentation::mouseDidMoveOverElementImpl):
+        (WebCore::InspectorInstrumentation::didScrollImpl):
+        (WebCore::InspectorInstrumentation::handleTouchEventImpl):
+        (WebCore::InspectorInstrumentation::handleMousePressImpl):
+        (WebCore::InspectorInstrumentation::forcePseudoStateImpl):
+        (WebCore::InspectorInstrumentation::characterDataModifiedImpl):
+        (WebCore::InspectorInstrumentation::willSendXMLHttpRequestImpl):
+        (WebCore::InspectorInstrumentation::didScheduleResourceRequestImpl):
+        (WebCore::InspectorInstrumentation::didInstallTimerImpl):
+        (WebCore::InspectorInstrumentation::didRemoveTimerImpl):
+        (WebCore::InspectorInstrumentation::willCallFunctionImpl):
+        (WebCore::InspectorInstrumentation::willDispatchXHRReadyStateChangeEventImpl):
+        (WebCore::InspectorInstrumentation::willDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::willHandleEventImpl):
+        (WebCore::InspectorInstrumentation::didHandleEventImpl): Add proper cookie guard and pass by reference.
+        (WebCore::InspectorInstrumentation::willDispatchEventOnWindowImpl):
+        (WebCore::InspectorInstrumentation::willEvaluateScriptImpl):
+        (WebCore::InspectorInstrumentation::didEvaluateScriptImpl):
+        (WebCore::InspectorInstrumentation::scriptsEnabledImpl):
+        (WebCore::InspectorInstrumentation::didCreateIsolatedContextImpl): Removed, as there are no callers from WebCore. Possible V8 artifact.
+        (WebCore::InspectorInstrumentation::willFireTimerImpl):
+        (WebCore::InspectorInstrumentation::didFireTimerImpl): Add proper cookie guard and pass by reference.
+        (WebCore::InspectorInstrumentation::didInvalidateLayoutImpl):
+        (WebCore::InspectorInstrumentation::willLayoutImpl):
+        (WebCore::InspectorInstrumentation::willDispatchXHRLoadEventImpl):
+        (WebCore::InspectorInstrumentation::willPaintImpl):
+        (WebCore::InspectorInstrumentation::didPaintImpl):
+        (WebCore::InspectorInstrumentation::willScrollLayerImpl):
+        (WebCore::InspectorInstrumentation::didScrollLayerImpl):
+        (WebCore::InspectorInstrumentation::willRecalculateStyleImpl):
+        (WebCore::InspectorInstrumentation::didRecalculateStyleImpl): Add proper cookie guard and pass by reference.
+        (WebCore::InspectorInstrumentation::didScheduleStyleRecalculationImpl):
+        (WebCore::InspectorInstrumentation::applyEmulatedMediaImpl): Pass string by reference.
+        (WebCore::InspectorInstrumentation::willSendRequestImpl):
+        (WebCore::InspectorInstrumentation::continueAfterPingLoaderImpl):
+        (WebCore::InspectorInstrumentation::markResourceAsCachedImpl):
+        (WebCore::InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl):
+        (WebCore::InspectorInstrumentation::willReceiveResourceDataImpl):
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl): Add proper cookie guard and pass by reference.
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseButCanceledImpl):
+        (WebCore::InspectorInstrumentation::continueAfterXFrameOptionsDeniedImpl):
+        (WebCore::InspectorInstrumentation::continueWithPolicyDownloadImpl):
+        (WebCore::InspectorInstrumentation::continueWithPolicyIgnoreImpl):
+        (WebCore::InspectorInstrumentation::didReceiveDataImpl):
+        (WebCore::InspectorInstrumentation::didFinishLoadingImpl):
+        (WebCore::InspectorInstrumentation::didFailLoadingImpl):
+        (WebCore::InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClientImpl):
+        (WebCore::InspectorInstrumentation::willLoadXHRImpl):
+        (WebCore::InspectorInstrumentation::didFailXHRLoadingImpl):
+        (WebCore::InspectorInstrumentation::didFinishXHRLoadingImpl):
+        (WebCore::InspectorInstrumentation::didReceiveXHRResponseImpl):
+        (WebCore::InspectorInstrumentation::willLoadXHRSynchronouslyImpl):
+        (WebCore::InspectorInstrumentation::didLoadXHRSynchronouslyImpl):
+        (WebCore::InspectorInstrumentation::scriptImportedImpl):
+        (WebCore::InspectorInstrumentation::scriptExecutionBlockedByCSPImpl):
+        (WebCore::InspectorInstrumentation::didReceiveScriptResponseImpl):
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFiredImpl): Use Frame::isMainFrame().
+        (WebCore::InspectorInstrumentation::loadEventFiredImpl): Use Frame::isMainFrame().
+        (WebCore::InspectorInstrumentation::frameDetachedFromParentImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::frameDocumentUpdatedImpl):
+        (WebCore::InspectorInstrumentation::loaderDetachedFromFrameImpl):
+        (WebCore::InspectorInstrumentation::willRunJavaScriptDialogImpl):
+        (WebCore::InspectorInstrumentation::willDestroyCachedResourceImpl): Use a range-based iterator.
+        (WebCore::InspectorInstrumentation::willWriteHTMLImpl):
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        (WebCore::InspectorInstrumentation::consoleCountImpl):
+        (WebCore::InspectorInstrumentation::startConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::consoleTimeStampImpl):
+        (WebCore::InspectorInstrumentation::startProfilingImpl):
+        (WebCore::InspectorInstrumentation::stopProfilingImpl):
+        (WebCore::InspectorInstrumentation::didOpenDatabaseImpl):
+        (WebCore::InspectorInstrumentation::didDispatchDOMStorageEventImpl):
+        (WebCore::InspectorInstrumentation::shouldPauseDedicatedWorkerOnStartImpl):
+        (WebCore::InspectorInstrumentation::didStartWorkerGlobalScopeImpl):
+        (WebCore::InspectorInstrumentation::willEvaluateWorkerScript):
+        (WebCore::InspectorInstrumentation::workerGlobalScopeTerminatedImpl):
+        (WebCore::InspectorInstrumentation::didCreateWebSocketImpl):
+        (WebCore::InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl):
+        (WebCore::InspectorInstrumentation::didCloseWebSocketImpl):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketFrameImpl):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketFrameErrorImpl):
+        (WebCore::InspectorInstrumentation::didSendWebSocketFrameImpl):
+        (WebCore::InspectorInstrumentation::sessionCreatedImpl):
+        (WebCore::InspectorInstrumentation::sessionLoadedImpl):
+        (WebCore::InspectorInstrumentation::sessionModifiedImpl):
+        (WebCore::InspectorInstrumentation::segmentCreatedImpl):
+        (WebCore::InspectorInstrumentation::segmentCompletedImpl):
+        (WebCore::InspectorInstrumentation::segmentLoadedImpl):
+        (WebCore::InspectorInstrumentation::segmentUnloadedImpl):
+        (WebCore::InspectorInstrumentation::captureStartedImpl):
+        (WebCore::InspectorInstrumentation::captureStoppedImpl):
+        (WebCore::InspectorInstrumentation::playbackStartedImpl):
+        (WebCore::InspectorInstrumentation::playbackPausedImpl):
+        (WebCore::InspectorInstrumentation::playbackHitPositionImpl):
+        (WebCore::InspectorInstrumentation::playbackFinishedImpl):
+        (WebCore::InspectorInstrumentation::networkStateChangedImpl):
+        (WebCore::InspectorInstrumentation::updateApplicationCacheStatusImpl):
+        (WebCore::InspectorInstrumentation::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorInstrumentation::cancelPauseOnNativeEvent):
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrameImpl):
+        (WebCore::InspectorInstrumentation::registerInstrumentingAgents):
+        (WebCore::InspectorInstrumentation::unregisterInstrumentingAgents):
+        (WebCore::InspectorInstrumentation::retrieveTimelineAgent):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForPage): Add by-reference version which contains the logic from instrumentationForPage().
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForRenderer):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForNonDocumentContext):
+        (WebCore::InspectorInstrumentation::layerTreeDidChangeImpl):
+        (WebCore::InspectorInstrumentation::renderLayerDestroyedImpl):
+        (WebCore::InspectorInstrumentation::pseudoElementDestroyedImpl):
+        (WebCore::InspectorInstrumentation::didCreateIsolatedContextImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorld):
+        (WebCore::InspectorInstrumentation::isDebuggerPaused):
+        (WebCore::InspectorInstrumentation::willInsertDOMNode):
+        (WebCore::InspectorInstrumentation::didInsertDOMNode):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNode):
+        (WebCore::InspectorInstrumentation::didRemoveDOMNode):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttr):
+        (WebCore::InspectorInstrumentation::didModifyDOMAttr):
+        (WebCore::InspectorInstrumentation::didRemoveDOMAttr):
+        (WebCore::InspectorInstrumentation::didInvalidateStyleAttr):
+        (WebCore::InspectorInstrumentation::frameWindowDiscarded):
+        (WebCore::InspectorInstrumentation::mediaQueryResultChanged):
+        (WebCore::InspectorInstrumentation::didPushShadowRoot):
+        (WebCore::InspectorInstrumentation::willPopShadowRoot):
+        (WebCore::InspectorInstrumentation::didCreateNamedFlow):
+        (WebCore::InspectorInstrumentation::willRemoveNamedFlow):
+        (WebCore::InspectorInstrumentation::didChangeRegionOverset):
+        (WebCore::InspectorInstrumentation::didRegisterNamedFlowContentElement):
+        (WebCore::InspectorInstrumentation::didUnregisterNamedFlowContentElement):
+        (WebCore::InspectorInstrumentation::mouseDidMoveOverElement):
+        (WebCore::InspectorInstrumentation::handleTouchEvent):
+        (WebCore::InspectorInstrumentation::handleMousePress): Take Frame by reference instead of Page by pointer.
+        (WebCore::InspectorInstrumentation::forcePseudoState):
+        (WebCore::InspectorInstrumentation::characterDataModified):
+        (WebCore::InspectorInstrumentation::willSendXMLHttpRequest):
+        (WebCore::InspectorInstrumentation::didScheduleResourceRequest):
+        (WebCore::InspectorInstrumentation::didInstallTimer):
+        (WebCore::InspectorInstrumentation::didRemoveTimer):
+        (WebCore::InspectorInstrumentation::willCallFunction):
+        (WebCore::InspectorInstrumentation::willDispatchXHRReadyStateChangeEvent):
+        (WebCore::InspectorInstrumentation::willDispatchEvent):
+        (WebCore::InspectorInstrumentation::willHandleEvent): Pass a const event reference.
+        (WebCore::InspectorInstrumentation::willDispatchEventOnWindow):
+        (WebCore::InspectorInstrumentation::willEvaluateScript):
+        (WebCore::InspectorInstrumentation::didEvaluateScript):
+        (WebCore::InspectorInstrumentation::scriptsEnabled):
+        (WebCore::InspectorInstrumentation::willFireTimer):
+        (WebCore::InspectorInstrumentation::didInvalidateLayout):
+        (WebCore::InspectorInstrumentation::willLayout):
+        (WebCore::InspectorInstrumentation::didScroll):
+        (WebCore::InspectorInstrumentation::willDispatchXHRLoadEvent):
+        (WebCore::InspectorInstrumentation::willPaint):
+        (WebCore::InspectorInstrumentation::didPaint):
+        (WebCore::InspectorInstrumentation::willScrollLayer):
+        (WebCore::InspectorInstrumentation::didScrollLayer):
+        (WebCore::InspectorInstrumentation::willRecalculateStyle):
+        (WebCore::InspectorInstrumentation::didScheduleStyleRecalculation):
+        (WebCore::InspectorInstrumentation::applyEmulatedMedia): Pass string by reference.
+        (WebCore::InspectorInstrumentation::willSendRequest):
+        (WebCore::InspectorInstrumentation::continueAfterPingLoader):
+        (WebCore::InspectorInstrumentation::markResourceAsCached):
+        (WebCore::InspectorInstrumentation::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorInstrumentation::willReceiveResourceData):
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponse):
+        (WebCore::InspectorInstrumentation::continueAfterXFrameOptionsDenied):
+        (WebCore::InspectorInstrumentation::continueWithPolicyDownload):
+        (WebCore::InspectorInstrumentation::continueWithPolicyIgnore):
+        (WebCore::InspectorInstrumentation::didReceiveData):
+        (WebCore::InspectorInstrumentation::didFinishLoading):
+        (WebCore::InspectorInstrumentation::didFailLoading):
+        (WebCore::InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient): No need to go through
+        ScriptExecutionContext interface, as it's always a Document.
+        (WebCore::InspectorInstrumentation::willLoadXHR):
+        (WebCore::InspectorInstrumentation::didFailXHRLoading):
+        (WebCore::InspectorInstrumentation::didFinishXHRLoading):
+        (WebCore::InspectorInstrumentation::didReceiveXHRResponse):
+        (WebCore::InspectorInstrumentation::willLoadXHRSynchronously):
+        (WebCore::InspectorInstrumentation::didLoadXHRSynchronously):
+        (WebCore::InspectorInstrumentation::scriptImported):
+        (WebCore::InspectorInstrumentation::scriptExecutionBlockedByCSP):
+        (WebCore::InspectorInstrumentation::didReceiveScriptResponse):
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFired):
+        (WebCore::InspectorInstrumentation::loadEventFired):
+        (WebCore::InspectorInstrumentation::frameDetachedFromParent):
+        (WebCore::InspectorInstrumentation::didCommitLoad):
+        (WebCore::InspectorInstrumentation::frameDocumentUpdated):
+        (WebCore::InspectorInstrumentation::loaderDetachedFromFrame):
+        (WebCore::InspectorInstrumentation::willRunJavaScriptDialog):
+        (WebCore::InspectorInstrumentation::willDestroyCachedResource):
+        (WebCore::InspectorInstrumentation::willWriteHTML):
+        (WebCore::InspectorInstrumentation::didDispatchDOMStorageEvent):
+        (WebCore::InspectorInstrumentation::shouldPauseDedicatedWorkerOnStart):
+        (WebCore::InspectorInstrumentation::didStartWorkerGlobalScope):
+        (WebCore::InspectorInstrumentation::workerGlobalScopeTerminated):
+        (WebCore::InspectorInstrumentation::didCreateWebSocket):
+        (WebCore::InspectorInstrumentation::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorInstrumentation::didCloseWebSocket):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketFrame):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketFrameError):
+        (WebCore::InspectorInstrumentation::didSendWebSocketFrame):
+        (WebCore::InspectorInstrumentation::sessionCreated):
+        (WebCore::InspectorInstrumentation::sessionLoaded):
+        (WebCore::InspectorInstrumentation::sessionModified):
+        (WebCore::InspectorInstrumentation::segmentCreated):
+        (WebCore::InspectorInstrumentation::segmentCompleted):
+        (WebCore::InspectorInstrumentation::segmentLoaded):
+        (WebCore::InspectorInstrumentation::segmentUnloaded):
+        (WebCore::InspectorInstrumentation::captureStarted):
+        (WebCore::InspectorInstrumentation::captureStopped):
+        (WebCore::InspectorInstrumentation::playbackStarted):
+        (WebCore::InspectorInstrumentation::playbackPaused):
+        (WebCore::InspectorInstrumentation::playbackFinished):
+        (WebCore::InspectorInstrumentation::playbackHitPosition):
+        (WebCore::InspectorInstrumentation::networkStateChanged):
+        (WebCore::InspectorInstrumentation::updateApplicationCacheStatus):
+        (WebCore::InspectorInstrumentation::didRequestAnimationFrame):
+        (WebCore::InspectorInstrumentation::didCancelAnimationFrame):
+        (WebCore::InspectorInstrumentation::willFireAnimationFrame):
+        (WebCore::InspectorInstrumentation::layerTreeDidChange):
+        (WebCore::InspectorInstrumentation::renderLayerDestroyed):
+        (WebCore::InspectorInstrumentation::pseudoElementDestroyed):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForFrame):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForDocument):
+        (WebCore::InspectorInstrumentation::didCreateIsolatedContext): Deleted.
+        * inspector/InspectorInstrumentationCookie.cpp: Take a reference, use default RefPtr constructor.
+        (WebCore::InspectorInstrumentationCookie::InspectorInstrumentationCookie):
+        * inspector/InspectorInstrumentationCookie.h: Fix misplaced ENABLE guard.
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::instrumentationForPage): Deleted.
+        (WebCore::instrumentationForWorkerGlobalScope): Deleted.
+        * inspector/InstrumentingAgents.h:
+        * inspector/WorkerInspectorController.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        (WebCore::DocumentLoader::detachFromFrame):
+        * loader/DocumentThreadableLoader.cpp: Remove unnecessary ENABLE(INSPECTOR) guards, as these inlined calls
+        are boiled away by the compiler if !ENABLE(INSPECTOR).
+        (WebCore::DocumentThreadableLoader::didReceiveData):
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::didFail):
+        (WebCore::DocumentThreadableLoader::preflightFailure):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectInWorld):
+        (WebCore::FrameLoader::dispatchDidCommitLoad):
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::notifyDidScheduleResourceRequest):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequest): Remove unnecessary ENABLE guard.
+        * loader/appcache/ApplicationCacheGroup.cpp: Remove several unnecessary ENABLE guards.
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didReceiveData):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFail):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::deleteIfPossible):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::scroll):
+        (WebCore::Chrome::runBeforeUnloadConfirmPanel):
+        (WebCore::Chrome::runJavaScriptAlert):
+        (WebCore::Chrome::runJavaScriptConfirm):
+        (WebCore::Chrome::runJavaScriptPrompt):
+        (WebCore::Chrome::mouseDidMoveOverElement):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        (WebCore::DOMWindow::dispatchEvent):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleTouchEvent): Add a guard to make it safe to pass event target by-reference.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::mediaType):
+        (WebCore::FrameView::scheduleRelayout):
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::addMessage):
+        (WebCore::PageConsoleClient::messageWithTypeAndLevel):
+        (WebCore::PageConsoleClient::count):
+        (WebCore::PageConsoleClient::profile):
+        (WebCore::PageConsoleClient::profileEnd):
+        (WebCore::PageConsoleClient::time):
+        (WebCore::PageConsoleClient::timeEnd):
+        (WebCore::PageConsoleClient::timeStamp):
+        * page/Settings.cpp:
+        (WebCore::Settings::setScriptEnabled):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerBecameNonComposited):
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::registerNamedFlowContentElement):
+        (WebCore::RenderNamedFlowThread::unregisterNamedFlowContentElement):
+        (WebCore::RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded):
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::switchSession):
+        (WebCore::ReplayController::createSegment):
+        (WebCore::ReplayController::completeSegment):
+        (WebCore::ReplayController::loadSegmentAtIndex):
+        (WebCore::ReplayController::unloadSegment):
+        (WebCore::ReplayController::startCapturing):
+        (WebCore::ReplayController::stopCapturing):
+        (WebCore::ReplayController::startPlayback):
+        (WebCore::ReplayController::pausePlayback):
+        (WebCore::ReplayController::cancelPlayback):
+        (WebCore::ReplayController::willDispatchInput):
+        * testing/Internals.cpp:
+        (WebCore::Internals::consoleMessageArgumentCounts):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+
 2015-01-05  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the iOS build.

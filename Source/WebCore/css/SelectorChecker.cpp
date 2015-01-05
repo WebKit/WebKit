@@ -888,7 +888,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                     else
                         element->setChildrenAffectedByHover();
                 }
-                if (element->hovered() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassHover))
+                if (element->hovered() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassHover))
                     return true;
             }
             break;
@@ -900,7 +900,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                     else
                         element->setChildrenAffectedByActive();
                 }
-                if (element->active() || InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassActive))
+                if (element->active() || InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassActive))
                     return true;
             }
             break;
@@ -1127,7 +1127,7 @@ static bool isFrameFocused(const Element* element)
 
 bool SelectorChecker::matchesFocusPseudoClass(const Element* element)
 {
-    if (InspectorInstrumentation::forcePseudoState(const_cast<Element*>(element), CSSSelector::PseudoClassFocus))
+    if (InspectorInstrumentation::forcePseudoState(const_cast<Element&>(*element), CSSSelector::PseudoClassFocus))
         return true;
     return element->focused() && isFrameFocused(element);
 }

@@ -774,7 +774,7 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* d
         state.style()->setIsLink(true);
         EInsideLink linkState = state.elementLinkState();
         if (linkState != NotInsideLink) {
-            bool forceVisited = InspectorInstrumentation::forcePseudoState(element, CSSSelector::PseudoClassVisited);
+            bool forceVisited = InspectorInstrumentation::forcePseudoState(*element, CSSSelector::PseudoClassVisited);
             if (forceVisited)
                 linkState = InsideVisitedLink;
         }

@@ -33,16 +33,17 @@
 
 #include <wtf/RefPtr.h>
 
+#if ENABLE(INSPECTOR)
+
 namespace WebCore {
 
 class InspectorInstrumentation;
 class InstrumentingAgents;
 
 class InspectorInstrumentationCookie {
-#if ENABLE(INSPECTOR)
 public:
     InspectorInstrumentationCookie();
-    InspectorInstrumentationCookie(InstrumentingAgents*, int);
+    InspectorInstrumentationCookie(InstrumentingAgents&, int);
     InspectorInstrumentationCookie(const InspectorInstrumentationCookie&);
     InspectorInstrumentationCookie& operator=(const InspectorInstrumentationCookie&);
     ~InspectorInstrumentationCookie();
@@ -54,9 +55,10 @@ public:
 private:
     RefPtr<InstrumentingAgents> m_instrumentingAgents;
     int m_timelineAgentId;
-#endif
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)
 
 #endif // InspectorInstrumentationCookie_h

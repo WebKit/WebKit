@@ -272,10 +272,8 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
 
         frameLoader()->notifier().willSendRequest(this, request, redirectResponse);
     }
-#if ENABLE(INSPECTOR)
     else
         InspectorInstrumentation::willSendRequest(m_frame.get(), m_identifier, m_frame->loader().documentLoader(), request, redirectResponse);
-#endif
 
     if (!redirectResponse.isNull())
         platformStrategies()->loaderStrategy()->resourceLoadScheduler()->crossOriginRedirectReceived(this, request.url());

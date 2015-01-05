@@ -77,7 +77,7 @@ public:
     virtual PassRefPtr<WTF::Stopwatch> executionStopwatch() override;
 
 private:
-    friend InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope*);
+    friend class InspectorInstrumentation;
 
     WorkerGlobalScope& m_workerGlobalScope;
     RefPtr<InstrumentingAgents> m_instrumentingAgents;

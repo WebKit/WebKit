@@ -1636,7 +1636,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
 {
     RefPtr<FrameView> protector(m_frame.view());
 
-    if (InspectorInstrumentation::handleMousePress(m_frame.page())) {
+    if (InspectorInstrumentation::handleMousePress(m_frame)) {
         invalidateClick();
         return true;
     }
@@ -3865,7 +3865,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
             Node* node = result.innerElement();
             ASSERT(node);
 
-            if (InspectorInstrumentation::handleTouchEvent(m_frame.page(), node))
+            if (node && InspectorInstrumentation::handleTouchEvent(m_frame, *node))
                 return true;
 
             Document& doc = node->document();

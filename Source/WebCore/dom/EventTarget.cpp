@@ -234,7 +234,7 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
     InspectorInstrumentationCookie willDispatchEventCookie;
     if (is<Document>(context)) {
         document = downcast<Document>(context);
-        willDispatchEventCookie = InspectorInstrumentation::willDispatchEvent(document, *event, size > 0);
+        willDispatchEventCookie = InspectorInstrumentation::willDispatchEvent(*document, *event, size > 0);
     }
 
     for (; i < size; ++i) {
@@ -249,7 +249,7 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
         if (event->immediatePropagationStopped())
             break;
 
-        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willHandleEvent(context, event);
+        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willHandleEvent(context, *event);
         // To match Mozilla, the AT_TARGET phase fires both capturing and bubbling
         // event listeners, even though that violates some versions of the DOM spec.
         registeredListener.listener->handleEvent(context, event);

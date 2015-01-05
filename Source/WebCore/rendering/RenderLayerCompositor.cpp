@@ -804,7 +804,7 @@ void RenderLayerCompositor::appendDocumentOverlayLayers(Vector<GraphicsLayer*>& 
 void RenderLayerCompositor::layerBecameNonComposited(const RenderLayer& layer)
 {
     // Inform the inspector that the given RenderLayer was destroyed.
-    InspectorInstrumentation::renderLayerDestroyed(page(), &layer);
+    InspectorInstrumentation::renderLayerDestroyed(page(), layer);
 
     ASSERT(m_compositedLayerCount > 0);
     --m_compositedLayerCount;

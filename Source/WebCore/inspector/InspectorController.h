@@ -59,6 +59,7 @@ class InspectorClient;
 class InspectorDOMAgent;
 class InspectorDOMDebuggerAgent;
 class InspectorFrontendClient;
+class InspectorInstrumentation;
 class InspectorPageAgent;
 class InspectorResourceAgent;
 class InspectorTimelineAgent;
@@ -85,7 +86,7 @@ public:
 
     WEBCORE_EXPORT void setInspectorFrontendClient(InspectorFrontendClient*);
     bool hasInspectorFrontendClient() const;
-    void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
+    void didClearWindowObjectInWorld(Frame&, DOMWrapperWorld&);
 
     WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);
 
@@ -133,7 +134,7 @@ public:
     virtual PassRefPtr<WTF::Stopwatch> executionStopwatch() override;
 
 private:
-    friend InstrumentingAgents* instrumentationForPage(Page*);
+    friend class InspectorInstrumentation;
 
     RefPtr<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;

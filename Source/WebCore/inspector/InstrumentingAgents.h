@@ -168,9 +168,6 @@ private:
     InspectorWorkerAgent* m_inspectorWorkerAgent;
 };
 
-WEBCORE_EXPORT InstrumentingAgents* instrumentationForPage(Page*);
-InstrumentingAgents* instrumentationForWorkerGlobalScope(WorkerGlobalScope*);
-
 }
 
 #endif // !defined(InstrumentingAgents_h)

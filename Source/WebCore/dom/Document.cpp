@@ -1697,7 +1697,7 @@ void Document::scheduleStyleRecalc()
     
     m_styleRecalcTimer.startOneShot(0);
 
-    InspectorInstrumentation::didScheduleStyleRecalculation(this);
+    InspectorInstrumentation::didScheduleStyleRecalculation(*this);
 }
 
 void Document::unscheduleStyleRecalc()
@@ -1750,7 +1750,7 @@ void Document::recalcStyle(Style::Change change)
 
     m_styleSheetCollection.flushPendingUpdates();
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(this);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(*this);
 
     if (m_elementSheet && m_elementSheet->contents().usesRemUnits())
         m_styleSheetCollection.setUsesRemUnit(true);
@@ -4596,7 +4596,7 @@ void Document::finishedParsing()
 
         f->loader().finishedParsing();
 
-        InspectorInstrumentation::domContentLoadedEventFired(f.get());
+        InspectorInstrumentation::domContentLoadedEventFired(*f);
     }
 
     // Schedule dropping of the DocumentSharedObjectPool. We keep it alive for a while after parsing finishes

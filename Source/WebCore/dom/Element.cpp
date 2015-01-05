@@ -1474,7 +1474,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 
     setNeedsStyleRecalc(ReconstructRenderTree);
 
-    InspectorInstrumentation::didPushShadowRoot(this, &shadowRoot);
+    InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
 }
 
 void Element::removeShadowRoot()
@@ -1482,7 +1482,7 @@ void Element::removeShadowRoot()
     RefPtr<ShadowRoot> oldRoot = shadowRoot();
     if (!oldRoot)
         return;
-    InspectorInstrumentation::willPopShadowRoot(this, oldRoot.get());
+    InspectorInstrumentation::willPopShadowRoot(*this, *oldRoot);
     document().removeFocusedNodeOfSubtree(oldRoot.get());
 
     ASSERT(!oldRoot->renderer());
@@ -2810,29 +2810,27 @@ void Element::willModifyAttribute(const QualifiedName& name, const AtomicString&
     if (std::unique_ptr<MutationObserverInterestGroup> recipients = MutationObserverInterestGroup::createForAttributesMutation(*this, name))
         recipients->enqueueMutationRecord(MutationRecord::createAttributes(*this, name, oldValue));
 
-#if ENABLE(INSPECTOR)
-    InspectorInstrumentation::willModifyDOMAttr(&document(), this, oldValue, newValue);
-#endif
+    InspectorInstrumentation::willModifyDOMAttr(document(), *this, oldValue, newValue);
 }
 
 void Element::didAddAttribute(const QualifiedName& name, const AtomicString& value)
 {
     attributeChanged(name, nullAtom, value);
-    InspectorInstrumentation::didModifyDOMAttr(&document(), this, name.localName(), value);
+    InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.localName(), value);
     dispatchSubtreeModifiedEvent();
 }
 
 void Element::didModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)
 {
     attributeChanged(name, oldValue, newValue);
-    InspectorInstrumentation::didModifyDOMAttr(&document(), this, name.localName(), newValue);
+    InspectorInstrumentation::didModifyDOMAttr(document(), *this, name.localName(), newValue);
     // Do not dispatch a DOMSubtreeModified event here; see bug 81141.
 }
 
 void Element::didRemoveAttribute(const QualifiedName& name, const AtomicString& oldValue)
 {
     attributeChanged(name, oldValue, nullAtom);
-    InspectorInstrumentation::didRemoveDOMAttr(&document(), this, name.localName());
+    InspectorInstrumentation::didRemoveDOMAttr(document(), *this, name.localName());
     dispatchSubtreeModifiedEvent();
 }
 

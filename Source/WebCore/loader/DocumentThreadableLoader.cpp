@@ -286,11 +286,7 @@ void DocumentThreadableLoader::didReceiveData(unsigned long identifier, const ch
 
     // Preflight data should be invisible to clients.
     if (m_actualRequest) {
-#if ENABLE(INSPECTOR)
         InspectorInstrumentation::didReceiveData(m_document.frame(), identifier, 0, 0, dataLength);
-#else
-        UNUSED_PARAM(identifier);
-#endif
         return;
     }
 
@@ -311,9 +307,8 @@ void DocumentThreadableLoader::notifyFinished(CachedResource* resource)
 void DocumentThreadableLoader::didFinishLoading(unsigned long identifier, double finishTime)
 {
     if (m_actualRequest) {
-#if ENABLE(INSPECTOR)
         InspectorInstrumentation::didFinishLoading(m_document.frame(), m_document.frame()->loader().documentLoader(), identifier, finishTime);
-#endif
+
         ASSERT(!m_sameOriginRequest);
         ASSERT(m_options.crossOriginRequestPolicy == UseAccessControl);
         preflightSuccess();
@@ -323,12 +318,8 @@ void DocumentThreadableLoader::didFinishLoading(unsigned long identifier, double
 
 void DocumentThreadableLoader::didFail(unsigned long identifier, const ResourceError& error)
 {
-#if ENABLE(INSPECTOR)
     if (m_actualRequest)
         InspectorInstrumentation::didFailLoading(m_document.frame(), m_document.frame()->loader().documentLoader(), identifier, error);
-#else
-    UNUSED_PARAM(identifier);
-#endif
 
     m_client->didFail(error);
 }
@@ -349,12 +340,9 @@ void DocumentThreadableLoader::preflightSuccess()
 void DocumentThreadableLoader::preflightFailure(unsigned long identifier, const String& url, const String& errorDescription)
 {
     ResourceError error(errorDomainWebKitInternal, 0, url, errorDescription);
-#if ENABLE(INSPECTOR)
     if (m_actualRequest)
         InspectorInstrumentation::didFailLoading(m_document.frame(), m_document.frame()->loader().documentLoader(), identifier, error);
-#else
-    UNUSED_PARAM(identifier);
-#endif
+
     m_actualRequest = nullptr; // Prevent didFinishLoading() from bypassing access check.
     m_client->didFailAccessControlCheck(error);
 }
@@ -388,7 +376,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 #if ENABLE(INSPECTOR)
             if (m_resource->loader()) {
                 unsigned long identifier = m_resource->loader()->identifier();
-                InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient(&m_document, identifier, m_client);
+                InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient(m_document, identifier, m_client);
             }
 #endif
             m_resource->addClient(this);
@@ -404,7 +392,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
     if (m_document.frame())
         identifier = m_document.frame()->loader().loadResourceSynchronously(request, m_options.allowCredentials(), m_options.clientCredentialPolicy(), error, response, data);
 
-    InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient(&m_document, identifier, m_client);
+    InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient(m_document, identifier, m_client);
 
     if (!error.isNull() && response.httpStatusCode() <= 0) {
         if (requestURL.isLocalFile()) {

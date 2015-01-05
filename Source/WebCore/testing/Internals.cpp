@@ -1480,7 +1480,7 @@ Vector<String> Internals::consoleMessageArgumentCounts() const
     if (!document || !document->page())
         return Vector<String>();
 
-    InstrumentingAgents* instrumentingAgents = instrumentationForPage(document->page());
+    InstrumentingAgents* instrumentingAgents = InspectorInstrumentation::instrumentingAgentsForPage(document->page());
     if (!instrumentingAgents)
         return Vector<String>();
 

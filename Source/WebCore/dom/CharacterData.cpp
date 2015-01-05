@@ -227,9 +227,8 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
             dispatchScopedEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, 0, oldData, m_data));
         dispatchSubtreeModifiedEvent();
     }
-#if ENABLE(INSPECTOR)
-    InspectorInstrumentation::characterDataModified(&document(), this);
-#endif
+
+    InspectorInstrumentation::characterDataModified(document(), *this);
 }
 
 void CharacterData::checkCharDataOperation(unsigned offset, ExceptionCode& ec)

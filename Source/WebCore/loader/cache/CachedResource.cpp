@@ -483,7 +483,7 @@ void CachedResource::decodedDataDeletionTimerFired()
 bool CachedResource::deleteIfPossible()
 {
     if (canDelete() && !inCache()) {
-        InspectorInstrumentation::willDestroyCachedResource(this);
+        InspectorInstrumentation::willDestroyCachedResource(*this);
         delete this;
         return true;
     }

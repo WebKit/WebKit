@@ -414,7 +414,7 @@ void Settings::setScriptEnabled(bool isScriptEnabled)
 #if PLATFORM(IOS)
     m_page->setNeedsRecalcStyleInAllFrames();
 #endif
-    InspectorInstrumentation::scriptsEnabled(m_page, m_isScriptEnabled);
+    InspectorInstrumentation::scriptsEnabled(*m_page, m_isScriptEnabled);
 }
 
 void Settings::setJavaEnabled(bool isJavaEnabled)
