@@ -1,5 +1,28 @@
 2015-01-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r177601. <rdar://problem/19301470>
+
+    2014-12-19  Beth Dakin  <bdakin@apple.com>
+
+            Preview popovers don't show an arrow for large links
+            https://bugs.webkit.org/show_bug.cgi?id=139842
+            -and corresponding-
+            <rdar://problem/19301470>
+
+            Reviewed by Tim Horton.
+
+            This patch addresses the case where the link is so large that there is no 
+            available space on any side once you factor in screen padding. In that case, we 
+            should give up early on not obscuring the link.
+            * UIProcess/mac/WKPreviewPopoverAnimationController.mm:
+            (-[WKPreviewPopoverAnimationController _targetSizeForPagePreview]):
+            (-[WKPreviewPopoverAnimationController _effectivePaddingWithPreviewPadding:]):
+            (-[WKPreviewPopoverAnimationController _maxSpaceAvailableOnYEdgeForOriginRect:withScreenRect:previewPadding:]):
+            (-[WKPreviewPopoverAnimationController _maxSpaceAvailableOnXEdgeForOriginRect:withScreenRect:previewPadding:]):
+            (-[WKPreviewPopoverAnimationController _preferredPopoverSizeWithPreviewPadding:forTargetSize:]):
+
+2015-01-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177600. <rdar://problem/19312111>
 
     2014-12-19  Timothy Horton  <timothy_horton@apple.com>
