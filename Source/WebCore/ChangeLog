@@ -1,5 +1,12 @@
 2015-01-05  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] One more build fix for r177937.
+
+        * plugins/PluginPackage.cpp: Provide forward declaration for local NPN_Evaluate
+        implementation to avoid linker error.
+
+2015-01-05  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed build fix after r177937.
 
         Add the missing #include and namespace declarations to get a clean build.

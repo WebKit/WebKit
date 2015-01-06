@@ -45,6 +45,8 @@
 
 namespace WebCore {
 
+static bool NPN_Evaluate(NPP instance, NPObject*, NPString*, NPVariant*);
+
 PluginPackage::~PluginPackage()
 {
     // This destructor gets called during refresh() if PluginDatabase's
