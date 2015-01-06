@@ -405,7 +405,7 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
 #endif
 
 #if !PLATFORM(COCOA)
-PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
+PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget*)
 {
     return nullptr;
 }
