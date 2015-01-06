@@ -83,8 +83,7 @@ private:
 
     static String initiatorFor(TagId);
 
-    template<typename Token>
-    void updatePredictedBaseURL(const Token&);
+    void updatePredictedBaseURL(const HTMLToken&);
 
     struct Checkpoint {
         Checkpoint(const URL& predictedBaseElementURL, bool inStyle

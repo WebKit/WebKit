@@ -177,12 +177,20 @@ private:
 
     inline void parseError();
 
-    inline void bufferCharacter(UChar character)
+    void bufferASCIICharacter(UChar character)
     {
         ASSERT(character != kEndOfFileMarker);
-        m_token->ensureIsCharacterToken();
+        ASSERT(isASCII(character));
+        m_token->appendToCharacter(static_cast<LChar>(character));
+    }
+
+    void bufferCharacter(UChar character)
+    {
+        ASSERT(character != kEndOfFileMarker);
         m_token->appendToCharacter(character);
     }
+    void bufferCharacter(char) = delete;
+    void bufferCharacter(LChar) = delete;
 
     inline bool emitAndResumeIn(SegmentedString& source, State state)
     {

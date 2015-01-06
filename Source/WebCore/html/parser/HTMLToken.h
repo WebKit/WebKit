@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,42 +28,18 @@
 #define HTMLToken_h
 
 #include "Attribute.h"
-#include "HTMLToken.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
-class DoctypeData {
-    WTF_MAKE_NONCOPYABLE(DoctypeData);
-public:
-    DoctypeData()
-        : m_hasPublicIdentifier(false)
-        , m_hasSystemIdentifier(false)
-        , m_forceQuirks(false)
-    {
-    }
-
-    // FIXME: This should use String instead of Vector<UChar>.
-    bool m_hasPublicIdentifier;
-    bool m_hasSystemIdentifier;
-    WTF::Vector<UChar> m_publicIdentifier;
-    WTF::Vector<UChar> m_systemIdentifier;
-    bool m_forceQuirks;
+struct DoctypeData {
+    bool hasPublicIdentifier { false };
+    bool hasSystemIdentifier { false };
+    Vector<UChar> publicIdentifier;
+    Vector<UChar> systemIdentifier;
+    bool forceQuirks { false };
 };
 
-static inline Attribute* findAttributeInVector(Vector<Attribute>& attributes, const QualifiedName& name)
-{
-    for (unsigned i = 0; i < attributes.size(); ++i) {
-        if (attributes.at(i).name().matches(name))
-            return &attributes.at(i);
-    }
-    return 0;
-}
-
 class HTMLToken {
-    WTF_MAKE_NONCOPYABLE(HTMLToken);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Type {
@@ -75,12 +52,10 @@ public:
         EndOfFile,
     };
 
-    class Attribute {
-    public:
-        class Range {
-        public:
-            int start;
-            int end;
+    struct Attribute {
+        struct Range {
+            unsigned start;
+            unsigned end;
         };
 
         Range nameRange;
@@ -92,360 +67,433 @@ public:
     typedef Vector<Attribute, 10> AttributeList;
     typedef Vector<UChar, 256> DataVector;
 
-    HTMLToken() { clear(); }
+    HTMLToken();
 
-    void clear()
-    {
-        m_type = Uninitialized;
-        m_range.start = 0;
-        m_range.end = 0;
-        m_baseOffset = 0;
-        m_data.clear();
-        m_orAllData = 0;
-    }
+    void clear();
 
-    bool isUninitialized() { return m_type == Uninitialized; }
-    Type type() const { return m_type; }
+    Type type() const;
 
-    void makeEndOfFile()
-    {
-        ASSERT(m_type == Uninitialized);
-        m_type = EndOfFile;
-    }
+    // Used by HTMLSourceTracker.
+    void setBaseOffset(unsigned); // Base for attribute offsets, and the end of token offset.
+    void setEndOffset(unsigned);
+    unsigned length() const;
 
-    /* Range and offset methods exposed for HTMLSourceTracker */
-    int startIndex() const { return m_range.start; }
-    int endIndex() const { return m_range.end; }
+    // EndOfFile
 
-    void setBaseOffset(int offset)
-    {
-        m_baseOffset = offset;
-    }
+    void makeEndOfFile();
 
-    void end(int endOffset)
-    {
-        m_range.end = endOffset - m_baseOffset;
-    }
+    // StartTag, EndTag, DOCTYPE.
 
-    const DataVector& data() const
-    {
-        ASSERT(m_type == Character || m_type == Comment || m_type == StartTag || m_type == EndTag);
-        return m_data;
-    }
+    const DataVector& name() const;
 
-    bool isAll8BitData() const
-    {
-        return (m_orAllData <= 0xff);
-    }
+    void appendToName(UChar);
 
-    const DataVector& name() const
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
-        return m_data;
-    }
+    // DOCTYPE.
 
-    void appendToName(UChar character)
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
-        ASSERT(character);
-        m_data.append(character);
-        m_orAllData |= character;
-    }
+    void beginDOCTYPE();
+    void beginDOCTYPE(UChar);
 
-    /* DOCTYPE Tokens */
+    void setForceQuirks();
 
-    bool forceQuirks() const
-    {
-        ASSERT(m_type == DOCTYPE);
-        return m_doctypeData->m_forceQuirks;
-    }
+    void setPublicIdentifierToEmptyString();
+    void setSystemIdentifierToEmptyString();
 
-    void setForceQuirks()
-    {
-        ASSERT(m_type == DOCTYPE);
-        m_doctypeData->m_forceQuirks = true;
-    }
+    void appendToPublicIdentifier(UChar);
+    void appendToSystemIdentifier(UChar);
 
-    void beginDOCTYPE()
-    {
-        ASSERT(m_type == Uninitialized);
-        m_type = DOCTYPE;
-        m_doctypeData = std::make_unique<DoctypeData>();
-    }
+    std::unique_ptr<DoctypeData> releaseDoctypeData();
 
-    void beginDOCTYPE(UChar character)
-    {
-        ASSERT(character);
-        beginDOCTYPE();
-        m_data.append(character);
-        m_orAllData |= character;
-    }
+    // StartTag, EndTag.
 
-    // FIXME: Distinguish between a missing public identifier and an empty one.
-    const WTF::Vector<UChar>& publicIdentifier() const
-    {
-        ASSERT(m_type == DOCTYPE);
-        return m_doctypeData->m_publicIdentifier;
-    }
+    bool selfClosing() const;
+    const AttributeList& attributes() const;
 
-    // FIXME: Distinguish between a missing system identifier and an empty one.
-    const WTF::Vector<UChar>& systemIdentifier() const
-    {
-        ASSERT(m_type == DOCTYPE);
-        return m_doctypeData->m_systemIdentifier;
-    }
+    void beginStartTag(UChar);
 
-    void setPublicIdentifierToEmptyString()
-    {
-        ASSERT(m_type == DOCTYPE);
-        m_doctypeData->m_hasPublicIdentifier = true;
-        m_doctypeData->m_publicIdentifier.clear();
-    }
+    void beginEndTag(LChar);
+    void beginEndTag(const Vector<LChar, 32>&);
 
-    void setSystemIdentifierToEmptyString()
-    {
-        ASSERT(m_type == DOCTYPE);
-        m_doctypeData->m_hasSystemIdentifier = true;
-        m_doctypeData->m_systemIdentifier.clear();
-    }
+    void addNewAttribute();
 
-    void appendToPublicIdentifier(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == DOCTYPE);
-        ASSERT(m_doctypeData->m_hasPublicIdentifier);
-        m_doctypeData->m_publicIdentifier.append(character);
-    }
+    void beginAttributeName(unsigned offset);
+    void appendToAttributeName(UChar);
+    void endAttributeName(unsigned offset);
 
-    void appendToSystemIdentifier(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == DOCTYPE);
-        ASSERT(m_doctypeData->m_hasSystemIdentifier);
-        m_doctypeData->m_systemIdentifier.append(character);
-    }
+    void beginAttributeValue(unsigned offset);
+    void appendToAttributeValue(UChar);
+    void endAttributeValue(unsigned offset);
 
-    std::unique_ptr<DoctypeData> releaseDoctypeData()
-    {
-        return WTF::move(m_doctypeData);
-    }
+    void setSelfClosing();
 
-    /* Start/End Tag Tokens */
-
-    bool selfClosing() const
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        return m_selfClosing;
-    }
-
-    void setSelfClosing()
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        m_selfClosing = true;
-    }
-
-    void beginStartTag(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == Uninitialized);
-        m_type = StartTag;
-        m_selfClosing = false;
-        m_currentAttribute = 0;
-        m_attributes.clear();
-
-        m_data.append(character);
-        m_orAllData |= character;
-    }
-
-    void beginEndTag(LChar character)
-    {
-        ASSERT(m_type == Uninitialized);
-        m_type = EndTag;
-        m_selfClosing = false;
-        m_currentAttribute = 0;
-        m_attributes.clear();
-
-        m_data.append(character);
-    }
-
-    void beginEndTag(const Vector<LChar, 32>& characters)
-    {
-        ASSERT(m_type == Uninitialized);
-        m_type = EndTag;
-        m_selfClosing = false;
-        m_currentAttribute = 0;
-        m_attributes.clear();
-
-        m_data.appendVector(characters);
-    }
-
-    void addNewAttribute()
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        m_attributes.grow(m_attributes.size() + 1);
-        m_currentAttribute = &m_attributes.last();
-#ifndef NDEBUG
-        m_currentAttribute->nameRange.start = 0;
-        m_currentAttribute->nameRange.end = 0;
-        m_currentAttribute->valueRange.start = 0;
-        m_currentAttribute->valueRange.end = 0;
-#endif
-    }
-
-    void beginAttributeName(int offset)
-    {
-        m_currentAttribute->nameRange.start = offset - m_baseOffset;
-    }
-
-    void endAttributeName(int offset)
-    {
-        int index = offset - m_baseOffset;
-        m_currentAttribute->nameRange.end = index;
-        m_currentAttribute->valueRange.start = index;
-        m_currentAttribute->valueRange.end = index;
-    }
-
-    void beginAttributeValue(int offset)
-    {
-        m_currentAttribute->valueRange.start = offset - m_baseOffset;
-#ifndef NDEBUG
-        m_currentAttribute->valueRange.end = 0;
-#endif
-    }
-
-    void endAttributeValue(int offset)
-    {
-        m_currentAttribute->valueRange.end = offset - m_baseOffset;
-    }
-
-    void appendToAttributeName(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        // FIXME: We should be able to add the following ASSERT once we fix
-        // https://bugs.webkit.org/show_bug.cgi?id=62971
-        //   ASSERT(m_currentAttribute->nameRange.start);
-        m_currentAttribute->name.append(character);
-    }
-
-    void appendToAttributeValue(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        ASSERT(m_currentAttribute->valueRange.start);
-        m_currentAttribute->value.append(character);
-    }
-
-    void appendToAttributeValue(size_t i, StringView value)
-    {
-        ASSERT(!value.isEmpty());
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        append(m_attributes[i].value, value);
-    }
-
-    const AttributeList& attributes() const
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        return m_attributes;
-    }
-
-    const Attribute* getAttributeItem(const QualifiedName& name) const
-    {
-        for (unsigned i = 0; i < m_attributes.size(); ++i) {
-            if (AtomicString(m_attributes.at(i).name) == name.localName())
-                return &m_attributes.at(i);
-        }
-        return 0;
-    }
-
+public:
     // Used by the XSSAuditor to nuke XSS-laden attributes.
-    void eraseValueOfAttribute(size_t i)
-    {
-        ASSERT(m_type == StartTag || m_type == EndTag);
-        m_attributes[i].value.clear();
-    }
+    void eraseValueOfAttribute(unsigned index);
+    void appendToAttributeValue(unsigned index, StringView value);
 
-    /* Character Tokens */
+    // Character.
 
     // Starting a character token works slightly differently than starting
     // other types of tokens because we want to save a per-character branch.
-    void ensureIsCharacterToken()
-    {
-        ASSERT(m_type == Uninitialized || m_type == Character);
-        m_type = Character;
-    }
+    // There is no beginCharacters, and appending a character sets the type.
 
-    const DataVector& characters() const
-    {
-        ASSERT(m_type == Character);
-        return m_data;
-    }
+    const DataVector& characters() const;
+    bool charactersIsAll8BitData() const;
 
-    void appendToCharacter(char character)
-    {
-        ASSERT(m_type == Character);
-        m_data.append(character);
-    }
+    void appendToCharacter(LChar);
+    void appendToCharacter(UChar);
+    void appendToCharacter(const Vector<LChar, 32>&);
 
-    void appendToCharacter(UChar character)
-    {
-        ASSERT(m_type == Character);
-        m_data.append(character);
-        m_orAllData |= character;
-    }
+    // Comment.
 
-    void appendToCharacter(const Vector<LChar, 32>& characters)
-    {
-        ASSERT(m_type == Character);
-        m_data.appendVector(characters);
-    }
+    const DataVector& comment() const;
+    bool commentIsAll8BitData() const;
 
-    /* Comment Tokens */
-
-    const DataVector& comment() const
-    {
-        ASSERT(m_type == Comment);
-        return m_data;
-    }
-
-    void beginComment()
-    {
-        ASSERT(m_type == Uninitialized);
-        m_type = Comment;
-    }
-
-    void appendToComment(UChar character)
-    {
-        ASSERT(character);
-        ASSERT(m_type == Comment);
-        m_data.append(character);
-        m_orAllData |= character;
-    }
-
-    void eraseCharacters()
-    {
-        ASSERT(m_type == Character);
-        m_data.clear();
-        m_orAllData = 0;
-    }
+    void beginComment();
+    void appendToComment(UChar);
 
 private:
     Type m_type;
-    Attribute::Range m_range; // Always starts at zero.
-    int m_baseOffset;
+
+    unsigned m_baseOffset;
+    unsigned m_length;
+
     DataVector m_data;
-    UChar m_orAllData;
+    UChar m_data8BitCheck;
 
     // For StartTag and EndTag
     bool m_selfClosing;
     AttributeList m_attributes;
-
-    // A pointer into m_attributes used during lexing.
     Attribute* m_currentAttribute;
 
     // For DOCTYPE
     std::unique_ptr<DoctypeData> m_doctypeData;
 };
+
+const HTMLToken::Attribute* findAttribute(const Vector<HTMLToken::Attribute>&, StringView name);
+
+inline HTMLToken::HTMLToken()
+{
+    clear();
+}
+
+inline void HTMLToken::clear()
+{
+    m_type = Uninitialized;
+    m_data.clear();
+    m_data8BitCheck = 0;
+
+    m_length = 0;
+    m_baseOffset = 0;
+}
+
+inline HTMLToken::Type HTMLToken::type() const
+{
+    return m_type;
+}
+
+inline void HTMLToken::makeEndOfFile()
+{
+    ASSERT(m_type == Uninitialized);
+    m_type = EndOfFile;
+}
+
+inline unsigned HTMLToken::length() const
+{
+    return m_length;
+}
+
+inline void HTMLToken::setBaseOffset(unsigned offset)
+{
+    m_baseOffset = offset;
+}
+
+inline void HTMLToken::setEndOffset(unsigned endOffset)
+{
+    m_length = endOffset - m_baseOffset;
+}
+
+inline const HTMLToken::DataVector& HTMLToken::name() const
+{
+    ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
+    return m_data;
+}
+
+inline void HTMLToken::appendToName(UChar character)
+{
+    ASSERT(m_type == StartTag || m_type == EndTag || m_type == DOCTYPE);
+    ASSERT(character);
+    m_data.append(character);
+    m_data8BitCheck |= character;
+}
+
+inline void HTMLToken::setForceQuirks()
+{
+    ASSERT(m_type == DOCTYPE);
+    m_doctypeData->forceQuirks = true;
+}
+
+inline void HTMLToken::beginDOCTYPE()
+{
+    ASSERT(m_type == Uninitialized);
+    m_type = DOCTYPE;
+    m_doctypeData = std::make_unique<DoctypeData>();
+}
+
+inline void HTMLToken::beginDOCTYPE(UChar character)
+{
+    ASSERT(character);
+    beginDOCTYPE();
+    m_data.append(character);
+    m_data8BitCheck |= character;
+}
+
+inline void HTMLToken::setPublicIdentifierToEmptyString()
+{
+    ASSERT(m_type == DOCTYPE);
+    m_doctypeData->hasPublicIdentifier = true;
+    m_doctypeData->publicIdentifier.clear();
+}
+
+inline void HTMLToken::setSystemIdentifierToEmptyString()
+{
+    ASSERT(m_type == DOCTYPE);
+    m_doctypeData->hasSystemIdentifier = true;
+    m_doctypeData->systemIdentifier.clear();
+}
+
+inline void HTMLToken::appendToPublicIdentifier(UChar character)
+{
+    ASSERT(character);
+    ASSERT(m_type == DOCTYPE);
+    ASSERT(m_doctypeData->hasPublicIdentifier);
+    m_doctypeData->publicIdentifier.append(character);
+}
+
+inline void HTMLToken::appendToSystemIdentifier(UChar character)
+{
+    ASSERT(character);
+    ASSERT(m_type == DOCTYPE);
+    ASSERT(m_doctypeData->hasSystemIdentifier);
+    m_doctypeData->systemIdentifier.append(character);
+}
+
+inline std::unique_ptr<DoctypeData> HTMLToken::releaseDoctypeData()
+{
+    return WTF::move(m_doctypeData);
+}
+
+inline bool HTMLToken::selfClosing() const
+{
+    ASSERT(m_type == StartTag || m_type == EndTag);
+    return m_selfClosing;
+}
+
+inline void HTMLToken::setSelfClosing()
+{
+    ASSERT(m_type == StartTag || m_type == EndTag);
+    m_selfClosing = true;
+}
+
+inline void HTMLToken::beginStartTag(UChar character)
+{
+    ASSERT(character);
+    ASSERT(m_type == Uninitialized);
+    m_type = StartTag;
+    m_selfClosing = false;
+    m_currentAttribute = nullptr;
+    m_attributes.clear();
+
+    m_data.append(character);
+    m_data8BitCheck = character;
+}
+
+inline void HTMLToken::beginEndTag(LChar character)
+{
+    ASSERT(m_type == Uninitialized);
+    m_type = EndTag;
+    m_selfClosing = false;
+    m_currentAttribute = nullptr;
+    m_attributes.clear();
+
+    m_data.append(character);
+}
+
+inline void HTMLToken::beginEndTag(const Vector<LChar, 32>& characters)
+{
+    ASSERT(m_type == Uninitialized);
+    m_type = EndTag;
+    m_selfClosing = false;
+    m_currentAttribute = nullptr;
+    m_attributes.clear();
+
+    m_data.appendVector(characters);
+}
+
+inline void HTMLToken::addNewAttribute()
+{
+    ASSERT(m_type == StartTag || m_type == EndTag);
+    m_attributes.grow(m_attributes.size() + 1);
+    m_currentAttribute = &m_attributes.last();
+
+#if !ASSERT_DISABLED
+    m_currentAttribute->nameRange.start = 0;
+    m_currentAttribute->nameRange.end = 0;
+    m_currentAttribute->valueRange.start = 0;
+    m_currentAttribute->valueRange.end = 0;
+#endif
+}
+
+inline void HTMLToken::beginAttributeName(unsigned offset)
+{
+    ASSERT(offset);
+    ASSERT(!m_currentAttribute->nameRange.start);
+    m_currentAttribute->nameRange.start = offset - m_baseOffset;
+}
+
+inline void HTMLToken::endAttributeName(unsigned offset)
+{
+    ASSERT(offset);
+    ASSERT(m_currentAttribute->nameRange.start);
+    ASSERT(!m_currentAttribute->nameRange.end);
+
+    unsigned adjustedOffset = offset - m_baseOffset;
+    m_currentAttribute->nameRange.end = adjustedOffset;
+
+    // FIXME: Is this intentional? Why point the value at the end of the name?
+    m_currentAttribute->valueRange.start = adjustedOffset;
+    m_currentAttribute->valueRange.end = adjustedOffset;
+}
+
+inline void HTMLToken::beginAttributeValue(unsigned offset)
+{
+    ASSERT(offset);
+    m_currentAttribute->valueRange.start = offset - m_baseOffset;
+}
+
+inline void HTMLToken::endAttributeValue(unsigned offset)
+{
+    ASSERT(offset);
+    m_currentAttribute->valueRange.end = offset - m_baseOffset;
+}
+
+inline void HTMLToken::appendToAttributeName(UChar character)
+{
+    ASSERT(character);
+    ASSERT(m_type == StartTag || m_type == EndTag);
+    ASSERT(m_currentAttribute->nameRange.start);
+    m_currentAttribute->name.append(character);
+}
+
+inline void HTMLToken::HTMLToken::appendToAttributeValue(UChar character)
+{
+    ASSERT(character);
+    ASSERT(m_type == StartTag || m_type == EndTag);
+    ASSERT(m_currentAttribute->valueRange.start);
+    m_currentAttribute->value.append(character);
+}
+
+inline void HTMLToken::HTMLToken::appendToAttributeValue(unsigned i, StringView value)
+{
+    ASSERT(!value.isEmpty());
+    ASSERT(m_type == StartTag || m_type == EndTag);
+    append(m_attributes[i].value, value);
+}
+
+inline const HTMLToken::AttributeList& HTMLToken::attributes() const
+{
+    ASSERT(m_type == StartTag || m_type == EndTag);
+    return m_attributes;
+}
+
+// Used by the XSSAuditor to nuke XSS-laden attributes.
+inline void HTMLToken::eraseValueOfAttribute(unsigned i)
+{
+    ASSERT(m_type == StartTag || m_type == EndTag);
+    ASSERT(i < m_attributes.size());
+    m_attributes[i].value.clear();
+}
+
+inline const HTMLToken::DataVector& HTMLToken::characters() const
+{
+    ASSERT(m_type == Character);
+    return m_data;
+}
+
+inline bool HTMLToken::charactersIsAll8BitData() const
+{
+    ASSERT(m_type == Character);
+    return m_data8BitCheck <= 0xFF;
+}
+
+inline void HTMLToken::appendToCharacter(LChar character)
+{
+    ASSERT(m_type == Uninitialized || m_type == Character);
+    m_type = Character;
+    m_data.append(character);
+}
+
+inline void HTMLToken::appendToCharacter(UChar character)
+{
+    ASSERT(m_type == Uninitialized || m_type == Character);
+    m_type = Character;
+    m_data.append(character);
+    m_data8BitCheck |= character;
+}
+
+inline void HTMLToken::appendToCharacter(const Vector<LChar, 32>& characters)
+{
+    ASSERT(m_type == Uninitialized || m_type == Character);
+    m_type = Character;
+    m_data.appendVector(characters);
+}
+
+inline const HTMLToken::DataVector& HTMLToken::comment() const
+{
+    ASSERT(m_type == Comment);
+    return m_data;
+}
+
+inline bool HTMLToken::commentIsAll8BitData() const
+{
+    ASSERT(m_type == Comment);
+    return m_data8BitCheck <= 0xFF;
+}
+
+inline void HTMLToken::beginComment()
+{
+    ASSERT(m_type == Uninitialized);
+    m_type = Comment;
+}
+
+inline void HTMLToken::appendToComment(UChar character)
+{
+    ASSERT(character);
+    ASSERT(m_type == Comment);
+    m_data.append(character);
+    m_data8BitCheck |= character;
+}
+
+inline bool nameMatches(const HTMLToken::Attribute& attribute, StringView name)
+{
+    unsigned size = name.length();
+    if (attribute.name.size() != size)
+        return false;
+    for (unsigned i = 0; i < size; ++i) {
+        // FIXME: The one caller that uses this probably wants to ignore letter case.
+        if (attribute.name[i] != name[i])
+            return false;
+    }
+    return true;
+}
+
+inline const HTMLToken::Attribute* findAttribute(const HTMLToken::AttributeList& attributes, StringView name)
+{
+    for (auto& attribute : attributes) {
+        if (nameMatches(attribute, name))
+            return &attribute;
+    }
+    return nullptr;
+}
 
 }
 

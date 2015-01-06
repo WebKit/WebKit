@@ -130,7 +130,7 @@ class HTMLTreeBuilder::ExternalCharacterTokenBuffer {
 public:
     explicit ExternalCharacterTokenBuffer(AtomicHTMLToken& token)
         : m_text(token.characters(), token.charactersLength())
-        , m_isAll8BitData(token.isAll8BitData())
+        , m_isAll8BitData(token.charactersIsAll8BitData())
     {
         ASSERT(!isEmpty());
     }
@@ -460,13 +460,11 @@ void HTMLTreeBuilder::processIsindexStartTagForInBody(AtomicHTMLToken& token)
         return;
     notImplemented(); // Acknowledge self-closing flag
     processFakeStartTag(formTag);
-    Attribute* actionAttribute = token.getAttributeItem(actionAttr);
-    if (actionAttribute)
+    if (Attribute* actionAttribute = findAttribute(token.attributes(), actionAttr))
         m_tree.form()->setAttribute(actionAttr, actionAttribute->value());
     processFakeStartTag(hrTag);
     processFakeStartTag(labelTag);
-    Attribute* promptAttribute = token.getAttributeItem(promptAttr);
-    if (promptAttribute)
+    if (Attribute* promptAttribute = findAttribute(token.attributes(), promptAttr))
         processFakeCharacters(promptAttribute->value());
     else
         processFakeCharacters(searchableIndexIntroduction());
@@ -777,16 +775,14 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == inputTag) {
-        Attribute* typeAttribute = token.getAttributeItem(typeAttr);
+        Attribute* typeAttribute = findAttribute(token.attributes(), typeAttr);
         m_tree.reconstructTheActiveFormattingElements();
         m_tree.insertSelfClosingHTMLElement(&token);
         if (!typeAttribute || !equalIgnoringCase(typeAttribute->value(), "hidden"))
             m_framesetOk = false;
         return;
     }
-    if (token.name() == paramTag
-        || token.name() == sourceTag
-        || token.name() == trackTag) {
+    if (token.name() == paramTag || token.name() == sourceTag || token.name() == trackTag) {
         m_tree.insertSelfClosingHTMLElement(&token);
         return;
     }
@@ -1023,7 +1019,7 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == inputTag) {
-        Attribute* typeAttribute = token.getAttributeItem(typeAttr);
+        Attribute* typeAttribute = findAttribute(token.attributes(), typeAttr);
         if (typeAttribute && equalIgnoringCase(typeAttribute->value(), "hidden")) {
             parseError(token);
             m_tree.insertSelfClosingHTMLElement(&token);
@@ -2812,6 +2808,11 @@ bool HTMLTreeBuilder::shouldProcessTokenInForeignContent(AtomicHTMLToken& token)
     return true;
 }
 
+static bool hasAttribute(AtomicHTMLToken& token, const QualifiedName& name)
+{
+    return findAttribute(token.attributes(), name);
+}
+
 void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken& token)
 {
     HTMLStackItem& adjustedCurrentNode = adjustedCurrentStackItem();
@@ -2863,7 +2864,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken& token)
             || token.name() == uTag
             || token.name() == ulTag
             || token.name() == varTag
-            || (token.name() == fontTag && (token.getAttributeItem(colorAttr) || token.getAttributeItem(faceAttr) || token.getAttributeItem(sizeAttr)))) {
+            || (token.name() == fontTag && (hasAttribute(token, colorAttr) || hasAttribute(token, faceAttr) || hasAttribute(token, sizeAttr)))) {
             parseError(token);
             m_tree.openElements().popUntilForeignContentScopeMarker();
             processStartTag(token);

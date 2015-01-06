@@ -149,7 +149,7 @@ inline const Vector<Attribute>& HTMLStackItem::attributes() const
 
 inline const Attribute* HTMLStackItem::findAttribute(const QualifiedName& attributeName) const
 {
-    return findAttributeInVector(const_cast<Vector<Attribute>&>(attributes()), attributeName);
+    return WebCore::findAttribute(const_cast<Vector<Attribute>&>(attributes()), attributeName);
 }
 
 inline bool HTMLStackItem::hasTagName(const QualifiedName& name) const

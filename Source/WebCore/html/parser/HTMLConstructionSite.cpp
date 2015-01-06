@@ -408,8 +408,9 @@ void HTMLConstructionSite::insertDoctype(AtomicHTMLToken* token)
 {
     ASSERT(token->type() == HTMLToken::DOCTYPE);
 
-    const String& publicId = StringImpl::create8BitIfPossible(token->publicIdentifier());
-    const String& systemId = StringImpl::create8BitIfPossible(token->systemIdentifier());
+    String publicId = token->publicIdentifier();
+    String systemId = token->systemIdentifier();
+
     RefPtr<DocumentType> doctype = DocumentType::create(*m_document, token->name(), publicId, systemId);
     attachLater(m_attachmentRoot, doctype.release());
 
@@ -424,9 +425,8 @@ void HTMLConstructionSite::insertDoctype(AtomicHTMLToken* token)
 
     if (token->forceQuirks())
         setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
-    else {
+    else
         setCompatibilityModeFromDoctype(token->name(), publicId, systemId);
-    }
 }
 
 void HTMLConstructionSite::insertComment(AtomicHTMLToken* token)
@@ -650,7 +650,7 @@ PassRefPtr<HTMLStackItem> HTMLConstructionSite::createElementFromSavedToken(HTML
 {
     RefPtr<Element> element;
     // NOTE: Moving from item -> token -> item copies the Attribute vector twice!
-    AtomicHTMLToken fakeToken(HTMLToken::StartTag, item->localName(), item->attributes());
+    AtomicHTMLToken fakeToken(HTMLToken::StartTag, item->localName(), Vector<Attribute>(item->attributes()));
     if (item->namespaceURI() == HTMLNames::xhtmlNamespaceURI)
         element = createHTMLElement(&fakeToken);
     else

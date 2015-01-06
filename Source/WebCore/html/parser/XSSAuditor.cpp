@@ -388,8 +388,9 @@ bool XSSAuditor::filterCharacterToken(const FilterTokenRequest& request)
 {
     ASSERT(m_scriptTagNestingLevel);
     if (isContainedInRequest(m_cachedDecodedSnippet) && isContainedInRequest(decodedSnippetForJavaScript(request))) {
-        request.token.eraseCharacters();
-        request.token.appendToCharacter(' '); // Technically, character tokens can't be empty.
+        request.token.clear();
+        LChar space = ' ';
+        request.token.appendToCharacter(space); // Technically, character tokens can't be empty.
         return true;
     }
     return false;
@@ -570,12 +571,12 @@ String XSSAuditor::decodedSnippetForName(const FilterTokenRequest& request)
 
 String XSSAuditor::decodedSnippetForAttribute(const FilterTokenRequest& request, const HTMLToken::Attribute& attribute, AttributeKind treatment)
 {
-    // The range doesn't inlcude the character which terminates the value. So,
+    // The range doesn't include the character which terminates the value. So,
     // for an input of |name="value"|, the snippet is |name="value|. For an
     // unquoted input of |name=value |, the snippet is |name=value|.
     // FIXME: We should grab one character before the name also.
-    int start = attribute.nameRange.start - request.token.startIndex();
-    int end = attribute.valueRange.end - request.token.startIndex();
+    unsigned start = attribute.nameRange.start;
+    unsigned end = attribute.valueRange.end;
     String decodedSnippet = fullyDecodeString(request.sourceTracker.sourceForToken(request.token).substring(start, end - start), m_encoding);
     decodedSnippet.truncate(kMaximumFragmentLengthTarget);
     if (treatment == SrcLikeAttribute) {

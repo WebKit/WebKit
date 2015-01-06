@@ -1,5 +1,101 @@
 2015-01-05  Darin Adler  <darin@apple.com>
 
+        Modernize and streamline HTMLToken and AtomicHTMLToken
+        https://bugs.webkit.org/show_bug.cgi?id=140046
+
+        Reviewed by Andreas Kling.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendDocumentType): Added code to properly
+        handle empty strings for systemId and publicId, rather than treating them
+        the same as missing systemId and publicId.
+
+        * html/parser/AtomicHTMLToken.h: Removed unneeded includes.
+        Moved function bodies out of the class so it's easier to see the contents of
+        the class. Renamed the isAll8BitData function to charactersIsAll8BitData
+        to make it clear that it is correct only for AtomicHTMLToken::characters.
+        Made more things private. Moved the findAttributeInVector function here
+        and renamed it to just findAttribute. Use unsigned instead of int and
+        size_t as appropriate. Changed the constructor that makes a fake one of
+        these to move the Vector of attributes in rather than copying it.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertDoctype): Moved the code to create
+        a string from here into AtomicHTMLToken.
+        (WebCore::HTMLConstructionSite::createElementFromSavedToken): Updated
+        to construct the Vector explicitly because all other call sites pass
+        ownership of the Vector in to the AtomicHTMLToken.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::pumpTokenizer): Check for an uninitialized
+        token without using a special function just for this purpose.
+        (WebCore::HTMLDocumentParser::constructTreeFromHTMLToken): Ditto.
+
+        * html/parser/HTMLParserIdioms.h: Removed the version of
+        stripLeadingAndTrailingHTMLSpaces that takes a character vector. Instead
+        the caller can make a string. Later we might want this to work with
+        a StringView, or a StringView/String combination.
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::scan): Updated to not use HTMLToken::data.
+        (WebCore::TokenPreloadScanner::updatePredictedBaseURL): Updated to not use
+        HTMLToken::getAttributeItem and to not require a special overload of the
+        stripLeadingAndTrailingHTMLSpaces function.
+
+        * html/parser/HTMLSourceTracker.cpp:
+        (WebCore::HTMLSourceTracker::end): Updated to call the token-ending
+        function by its new name, setEndOffset.
+        (WebCore::HTMLSourceTracker::sourceForToken): Updated since we no
+        longer have a startIndex function that already returns 0. Instead just
+        call length. Also use unsigned instead of size_t.
+
+        * html/parser/HTMLStackItem.h:
+        (WebCore::HTMLStackItem::getAttributeItem): Updated for name change.
+
+        * html/parser/HTMLToken.h: Removed the many unneeded includes,
+        including the self-include! Turned DoctypeData into a normal struct
+        without m_ prefixes on its member names. Turned HTMLToken::Attribute and
+        HTMLToken::Attribute::Range into normal structs. Moved function
+        bodies out of the class so it's easier to see the contents of
+        the class. Removed a few now-unneeded functions.
+
+        * html/parser/HTMLTokenizer.cpp: Removed the AtomicHTMLToken function
+        members that used to be here. None are needed any more; they are now all
+        just inlined at the call site. If we need any non-inline functions, then
+        we sould probably create an AtomicHTMLToken.cpp file instead.
+        (WebCore::HTMLTokenizer::processEntity): Use the new bufferASCIICharacter
+        function in all the cases where we know a character is ASCII to cut down
+        on the amount of 8-bit checking we have to do.
+        (WebCore::HTMLTokenizer::nextToken): Ditto.
+
+        * html/parser/HTMLTokenizer.h: Added a new bufferASCIICharacter function
+        so we don't have to do 8-bit checks on so many characters as we buffer
+        them. Also removed the call to ensureIsCharacterToken, since appendToCharacter
+        now does that. Also deleted overloads of bufferCharacter so we remember to
+        call bufferASCIICharacter instead.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::ExternalCharacterTokenBuffer):
+        Updated for change in AtomicHTMLToken function names.
+        (WebCore::HTMLTreeBuilder::processIsindexStartTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): Ditto.
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable): Ditto.
+        (WebCore::hasAttribute): Added.
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent): Use hasAtttribute.
+
+        * html/parser/TextDocumentParser.cpp:
+        (WebCore::TextDocumentParser::insertFakePreElement): Move the attributes in
+        rather than copying them in.
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterCharacterToken): Use clear so we don't have to
+        have an eraseCharacters function. Use a local variable to avoid overloading
+        ambiguity.
+        (WebCore::XSSAuditor::decodedSnippetForAttribute): Fixed a typo and the types
+        of some local variables.
+
+2015-01-05  Darin Adler  <darin@apple.com>
+
         Revert mistake in yesterday's HTMLDocumentParser refactor.
         https://bugs.webkit.org/show_bug.cgi?id=140041
 

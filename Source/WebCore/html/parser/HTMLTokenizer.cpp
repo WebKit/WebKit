@@ -42,23 +42,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// This has to go in a .cpp file, as the linker doesn't like it being included more than once.
-// We don't have an HTMLToken.cpp though, so this is the next best place.
-QualifiedName AtomicHTMLToken::nameForAttribute(const HTMLToken::Attribute& attribute) const
-{
-    return QualifiedName(nullAtom, AtomicString(attribute.name), nullAtom);
-}
-
-bool AtomicHTMLToken::usesName() const
-{
-    return m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE;
-}
-
-bool AtomicHTMLToken::usesAttributes() const
-{
-    return m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag;
-}
-
 static inline UChar toLowerCase(UChar cc)
 {
     ASSERT(isASCIIUpper(cc));
@@ -128,7 +111,7 @@ inline bool HTMLTokenizer::processEntity(SegmentedString& source)
         return false;
     if (!success) {
         ASSERT(decodedEntity.isEmpty());
-        bufferCharacter('&');
+        bufferASCIICharacter('&');
     } else {
         for (unsigned i = 0; i < decodedEntity.length(); ++i)
             bufferCharacter(decodedEntity[i]);
@@ -292,7 +275,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             HTML_RECONSUME_IN(BogusCommentState);
         } else {
             parseError();
-            bufferCharacter('<');
+            bufferASCIICharacter('<');
             HTML_RECONSUME_IN(DataState);
         }
     }
@@ -312,8 +295,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             HTML_ADVANCE_TO(DataState);
         } else if (cc == kEndOfFileMarker) {
             parseError();
-            bufferCharacter('<');
-            bufferCharacter('/');
+            bufferASCIICharacter('<');
+            bufferASCIICharacter('/');
             HTML_RECONSUME_IN(DataState);
         } else {
             parseError();
@@ -350,7 +333,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             ASSERT(m_bufferedEndTagName.isEmpty());
             HTML_ADVANCE_TO(RCDATAEndTagOpenState);
         } else {
-            bufferCharacter('<');
+            bufferASCIICharacter('<');
             HTML_RECONSUME_IN(RCDATAState);
         }
     }
@@ -366,8 +349,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             addToPossibleEndTag(static_cast<LChar>(cc));
             HTML_ADVANCE_TO(RCDATAEndTagNameState);
         } else {
-            bufferCharacter('<');
-            bufferCharacter('/');
+            bufferASCIICharacter('<');
+            bufferASCIICharacter('/');
             HTML_RECONSUME_IN(RCDATAState);
         }
     }
@@ -399,8 +382,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
                     return flushEmitAndResumeIn(source, HTMLTokenizer::DataState);
                 }
             }
-            bufferCharacter('<');
-            bufferCharacter('/');
+            bufferASCIICharacter('<');
+            bufferASCIICharacter('/');
             m_token->appendToCharacter(m_temporaryBuffer);
             m_bufferedEndTagName.clear();
             m_temporaryBuffer.clear();
@@ -415,7 +398,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             ASSERT(m_bufferedEndTagName.isEmpty());
             HTML_ADVANCE_TO(RAWTEXTEndTagOpenState);
         } else {
-            bufferCharacter('<');
+            bufferASCIICharacter('<');
             HTML_RECONSUME_IN(RAWTEXTState);
         }
     }
@@ -431,8 +414,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             addToPossibleEndTag(static_cast<LChar>(cc));
             HTML_ADVANCE_TO(RAWTEXTEndTagNameState);
         } else {
-            bufferCharacter('<');
-            bufferCharacter('/');
+            bufferASCIICharacter('<');
+            bufferASCIICharacter('/');
             HTML_RECONSUME_IN(RAWTEXTState);
         }
     }
@@ -464,8 +447,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
                     return flushEmitAndResumeIn(source, HTMLTokenizer::DataState);
                 }
             }
-            bufferCharacter('<');
-            bufferCharacter('/');
+            bufferASCIICharacter('<');
+            bufferASCIICharacter('/');
             m_token->appendToCharacter(m_temporaryBuffer);
             m_bufferedEndTagName.clear();
             m_temporaryBuffer.clear();
@@ -480,11 +463,11 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             ASSERT(m_bufferedEndTagName.isEmpty());
             HTML_ADVANCE_TO(ScriptDataEndTagOpenState);
         } else if (cc == '!') {
-            bufferCharacter('<');
-            bufferCharacter('!');
+            bufferASCIICharacter('<');
+            bufferASCIICharacter('!');
             HTML_ADVANCE_TO(ScriptDataEscapeStartState);
         } else {
-            bufferCharacter('<');
+            bufferASCIICharacter('<');
             HTML_RECONSUME_IN(ScriptDataState);
         }
     }
@@ -500,8 +483,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             addToPossibleEndTag(static_cast<LChar>(cc));
             HTML_ADVANCE_TO(ScriptDataEndTagNameState);
         } else {
-            bufferCharacter('<');
-            bufferCharacter('/');
+            bufferASCIICharacter('<');
+            bufferASCIICharacter('/');
             HTML_RECONSUME_IN(ScriptDataState);
         }
     }
@@ -533,8 +516,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
                     return flushEmitAndResumeIn(source, HTMLTokenizer::DataState);
                 }
             }
-            bufferCharacter('<');
-            bufferCharacter('/');
+            bufferASCIICharacter('<');
+            bufferASCIICharacter('/');
             m_token->appendToCharacter(m_temporaryBuffer);
             m_bufferedEndTagName.clear();
             m_temporaryBuffer.clear();
@@ -545,7 +528,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(ScriptDataEscapeStartState) {
         if (cc == '-') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('-');
             HTML_ADVANCE_TO(ScriptDataEscapeStartDashState);
         } else
             HTML_RECONSUME_IN(ScriptDataState);
@@ -554,7 +537,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(ScriptDataEscapeStartDashState) {
         if (cc == '-') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('-');
             HTML_ADVANCE_TO(ScriptDataEscapedDashDashState);
         } else
             HTML_RECONSUME_IN(ScriptDataState);
@@ -563,7 +546,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(ScriptDataEscapedState) {
         if (cc == '-') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('-');
             HTML_ADVANCE_TO(ScriptDataEscapedDashState);
         } else if (cc == '<')
             HTML_ADVANCE_TO(ScriptDataEscapedLessThanSignState);
@@ -579,7 +562,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(ScriptDataEscapedDashState) {
         if (cc == '-') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('-');
             HTML_ADVANCE_TO(ScriptDataEscapedDashDashState);
         } else if (cc == '<')
             HTML_ADVANCE_TO(ScriptDataEscapedLessThanSignState);
@@ -595,12 +578,12 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(ScriptDataEscapedDashDashState) {
         if (cc == '-') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('-');
             HTML_ADVANCE_TO(ScriptDataEscapedDashDashState);
         } else if (cc == '<')
             HTML_ADVANCE_TO(ScriptDataEscapedLessThanSignState);
         else if (cc == '>') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('>');
             HTML_ADVANCE_TO(ScriptDataState);
         } else if (cc == kEndOfFileMarker) {
             parseError();
@@ -618,19 +601,19 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             ASSERT(m_bufferedEndTagName.isEmpty());
             HTML_ADVANCE_TO(ScriptDataEscapedEndTagOpenState);
         } else if (isASCIIUpper(cc)) {
-            bufferCharacter('<');
-            bufferCharacter(cc);
+            bufferASCIICharacter('<');
+            bufferASCIICharacter(cc);
             m_temporaryBuffer.clear();
             m_temporaryBuffer.append(toLowerCase(cc));
             HTML_ADVANCE_TO(ScriptDataDoubleEscapeStartState);
         } else if (isASCIILower(cc)) {
-            bufferCharacter('<');
-            bufferCharacter(cc);
+            bufferASCIICharacter('<');
+            bufferASCIICharacter(cc);
             m_temporaryBuffer.clear();
             m_temporaryBuffer.append(static_cast<LChar>(cc));
             HTML_ADVANCE_TO(ScriptDataDoubleEscapeStartState);
         } else {
-            bufferCharacter('<');
+            bufferASCIICharacter('<');
             HTML_RECONSUME_IN(ScriptDataEscapedState);
         }
     }
@@ -646,8 +629,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             addToPossibleEndTag(static_cast<LChar>(cc));
             HTML_ADVANCE_TO(ScriptDataEscapedEndTagNameState);
         } else {
-            bufferCharacter('<');
-            bufferCharacter('/');
+            bufferASCIICharacter('<');
+            bufferASCIICharacter('/');
             HTML_RECONSUME_IN(ScriptDataEscapedState);
         }
     }
@@ -679,8 +662,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
                     return flushEmitAndResumeIn(source, HTMLTokenizer::DataState);
                 }
             }
-            bufferCharacter('<');
-            bufferCharacter('/');
+            bufferASCIICharacter('<');
+            bufferASCIICharacter('/');
             m_token->appendToCharacter(m_temporaryBuffer);
             m_bufferedEndTagName.clear();
             m_temporaryBuffer.clear();
@@ -691,17 +674,17 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(ScriptDataDoubleEscapeStartState) {
         if (isTokenizerWhitespace(cc) || cc == '/' || cc == '>') {
-            bufferCharacter(cc);
+            bufferASCIICharacter(cc);
             if (temporaryBufferIs(scriptTag.localName()))
                 HTML_ADVANCE_TO(ScriptDataDoubleEscapedState);
             else
                 HTML_ADVANCE_TO(ScriptDataEscapedState);
         } else if (isASCIIUpper(cc)) {
-            bufferCharacter(cc);
+            bufferASCIICharacter(cc);
             m_temporaryBuffer.append(toLowerCase(cc));
             HTML_ADVANCE_TO(ScriptDataDoubleEscapeStartState);
         } else if (isASCIILower(cc)) {
-            bufferCharacter(cc);
+            bufferASCIICharacter(cc);
             m_temporaryBuffer.append(static_cast<LChar>(cc));
             HTML_ADVANCE_TO(ScriptDataDoubleEscapeStartState);
         } else
@@ -711,10 +694,10 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(ScriptDataDoubleEscapedState) {
         if (cc == '-') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('-');
             HTML_ADVANCE_TO(ScriptDataDoubleEscapedDashState);
         } else if (cc == '<') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('<');
             HTML_ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
         } else if (cc == kEndOfFileMarker) {
             parseError();
@@ -728,10 +711,10 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(ScriptDataDoubleEscapedDashState) {
         if (cc == '-') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('-');
             HTML_ADVANCE_TO(ScriptDataDoubleEscapedDashDashState);
         } else if (cc == '<') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('<');
             HTML_ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
         } else if (cc == kEndOfFileMarker) {
             parseError();
@@ -745,13 +728,13 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(ScriptDataDoubleEscapedDashDashState) {
         if (cc == '-') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('-');
             HTML_ADVANCE_TO(ScriptDataDoubleEscapedDashDashState);
         } else if (cc == '<') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('<');
             HTML_ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
         } else if (cc == '>') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('>');
             HTML_ADVANCE_TO(ScriptDataState);
         } else if (cc == kEndOfFileMarker) {
             parseError();
@@ -765,7 +748,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(ScriptDataDoubleEscapedLessThanSignState) {
         if (cc == '/') {
-            bufferCharacter(cc);
+            bufferASCIICharacter('/');
             m_temporaryBuffer.clear();
             HTML_ADVANCE_TO(ScriptDataDoubleEscapeEndState);
         } else
@@ -775,17 +758,17 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 
     HTML_BEGIN_STATE(ScriptDataDoubleEscapeEndState) {
         if (isTokenizerWhitespace(cc) || cc == '/' || cc == '>') {
-            bufferCharacter(cc);
+            bufferASCIICharacter(cc);
             if (temporaryBufferIs(scriptTag.localName()))
                 HTML_ADVANCE_TO(ScriptDataEscapedState);
             else
                 HTML_ADVANCE_TO(ScriptDataDoubleEscapedState);
         } else if (isASCIIUpper(cc)) {
-            bufferCharacter(cc);
+            bufferASCIICharacter(cc);
             m_temporaryBuffer.append(toLowerCase(cc));
             HTML_ADVANCE_TO(ScriptDataDoubleEscapeEndState);
         } else if (isASCIILower(cc)) {
-            bufferCharacter(cc);
+            bufferASCIICharacter(cc);
             m_temporaryBuffer.append(static_cast<LChar>(cc));
             HTML_ADVANCE_TO(ScriptDataDoubleEscapeEndState);
         } else
@@ -1542,7 +1525,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         if (cc == ']')
             HTML_ADVANCE_TO(CDATASectionDoubleRightSquareBracketState);
         else {
-            bufferCharacter(']');
+            bufferASCIICharacter(']');
             HTML_RECONSUME_IN(CDATASectionState);
         }
     }
@@ -1551,8 +1534,8 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         if (cc == '>')
             HTML_ADVANCE_TO(DataState);
         else {
-            bufferCharacter(']');
-            bufferCharacter(']');
+            bufferASCIICharacter(']');
+            bufferASCIICharacter(']');
             HTML_RECONSUME_IN(CDATASectionState);
         }
     }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,216 +27,224 @@
 #ifndef AtomicHTMLToken_h
 #define AtomicHTMLToken_h
 
-#include "Attribute.h"
 #include "HTMLToken.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class AtomicHTMLToken {
-    WTF_MAKE_NONCOPYABLE(AtomicHTMLToken);
 public:
+    explicit AtomicHTMLToken(HTMLToken&);
+    AtomicHTMLToken(HTMLToken::Type, const AtomicString& name, Vector<Attribute>&& = Vector<Attribute>()); // Only StartTag or EndTag.
 
-    bool forceQuirks() const
-    {
-        ASSERT(m_type == HTMLToken::DOCTYPE);
-        return m_doctypeData->m_forceQuirks;
-    }
+    HTMLToken::Type type() const;
 
-    HTMLToken::Type type() const { return m_type; }
+    // StartTag, EndTag, DOCTYPE.
 
-    const AtomicString& name() const
-    {
-        ASSERT(usesName());
-        return m_name;
-    }
+    void setName(const AtomicString&);
 
-    void setName(const AtomicString& name)
-    {
-        ASSERT(usesName());
-        m_name = name;
-    }
+    const AtomicString& name() const;
 
-    bool selfClosing() const
-    {
-        ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
-        return m_selfClosing;
-    }
+    // DOCTYPE.
 
-    Attribute* getAttributeItem(const QualifiedName& attributeName)
-    {
-        ASSERT(usesAttributes());
-        return findAttributeInVector(m_attributes, attributeName);
-    }
+    bool forceQuirks() const;
+    String publicIdentifier() const;
+    String systemIdentifier() const;
 
-    Vector<Attribute>& attributes()
-    {
-        ASSERT(usesAttributes());
-        return m_attributes;
-    }
+    // StartTag, EndTag.
 
-    const Vector<Attribute>& attributes() const
-    {
-        ASSERT(usesAttributes());
-        return m_attributes;
-    }
+    Vector<Attribute>& attributes();
 
-    const UChar* characters() const
-    {
-        ASSERT(m_type == HTMLToken::Character);
-        return m_externalCharacters;
-    }
+    bool selfClosing() const;
+    const Vector<Attribute>& attributes() const;
 
-    size_t charactersLength() const
-    {
-        ASSERT(m_type == HTMLToken::Character);
-        return m_externalCharactersLength;
-    }
+    // Characters
 
-    bool isAll8BitData() const
-    {
-        return m_isAll8BitData;
-    }
+    const UChar* characters() const;
+    unsigned charactersLength() const;
+    bool charactersIsAll8BitData() const;
 
-    const String& comment() const
-    {
-        ASSERT(m_type == HTMLToken::Comment);
-        return m_data;
-    }
+    // Comment
 
-    // FIXME: Distinguish between a missing public identifier and an empty one.
-    Vector<UChar>& publicIdentifier() const
-    {
-        ASSERT(m_type == HTMLToken::DOCTYPE);
-        return m_doctypeData->m_publicIdentifier;
-    }
-
-    // FIXME: Distinguish between a missing system identifier and an empty one.
-    Vector<UChar>& systemIdentifier() const
-    {
-        ASSERT(m_type == HTMLToken::DOCTYPE);
-        return m_doctypeData->m_systemIdentifier;
-    }
-
-    explicit AtomicHTMLToken(HTMLToken& token)
-        : m_type(token.type())
-    {
-        switch (m_type) {
-        case HTMLToken::Uninitialized:
-            ASSERT_NOT_REACHED();
-            break;
-        case HTMLToken::DOCTYPE:
-            m_name = AtomicString(token.name());
-            m_doctypeData = token.releaseDoctypeData();
-            break;
-        case HTMLToken::EndOfFile:
-            break;
-        case HTMLToken::StartTag:
-        case HTMLToken::EndTag: {
-            m_selfClosing = token.selfClosing();
-            m_name = AtomicString(token.name());
-            initializeAttributes(token.attributes());
-            break;
-        }
-        case HTMLToken::Comment:
-            if (token.isAll8BitData())
-                m_data = String::make8BitFrom16BitSource(token.comment());
-            else
-                m_data = String(token.comment());
-            break;
-        case HTMLToken::Character:
-            m_externalCharacters = token.characters().data();
-            m_externalCharactersLength = token.characters().size();
-            m_isAll8BitData = token.isAll8BitData();
-            break;
-        }
-    }
-
-    explicit AtomicHTMLToken(HTMLToken::Type type)
-        : m_type(type)
-        , m_externalCharacters(0)
-        , m_externalCharactersLength(0)
-        , m_isAll8BitData(false)
-        , m_selfClosing(false)
-    {
-    }
-
-    AtomicHTMLToken(HTMLToken::Type type, const AtomicString& name, const Vector<Attribute>& attributes = Vector<Attribute>())
-        : m_type(type)
-        , m_name(name)
-        , m_externalCharacters(0)
-        , m_externalCharactersLength(0)
-        , m_isAll8BitData(false)
-        , m_selfClosing(false)
-        , m_attributes(attributes)
-    {
-        ASSERT(usesName());
-    }
+    const String& comment() const;
 
 private:
     HTMLToken::Type m_type;
 
     void initializeAttributes(const HTMLToken::AttributeList& attributes);
-    QualifiedName nameForAttribute(const HTMLToken::Attribute&) const;
 
-    bool usesName() const;
+    AtomicString m_name; // StartTag, EndTag, DOCTYPE.
 
-    bool usesAttributes() const;
+    String m_data; // Comment
 
-    // "name" for DOCTYPE, StartTag, and EndTag
-    AtomicString m_name;
+    // We don't want to copy the the characters out of the HTMLToken, so we keep a pointer to its buffer instead.
+    // This buffer is owned by the HTMLToken and causes a lifetime dependence between these objects.
+    // FIXME: Add a mechanism for "internalizing" the characters when the HTMLToken is destroyed.
+    const UChar* m_externalCharacters; // Character
+    unsigned m_externalCharactersLength; // Character
+    bool m_externalCharactersIsAll8BitData; // Character
 
-    // "data" for Comment
-    String m_data;
+    std::unique_ptr<DoctypeData> m_doctypeData; // DOCTYPE.
 
-    // "characters" for Character
-    //
-    // We don't want to copy the the characters out of the Token, so we
-    // keep a pointer to its buffer instead. This buffer is owned by the
-    // Token and causes a lifetime dependence between these objects.
-    //
-    // FIXME: Add a mechanism for "internalizing" the characters when the
-    //        HTMLToken is destructed.
-    const UChar* m_externalCharacters;
-    size_t m_externalCharactersLength;
-    bool m_isAll8BitData;
-
-    // For DOCTYPE
-    std::unique_ptr<DoctypeData> m_doctypeData;
-
-    // For StartTag and EndTag
-    bool m_selfClosing;
-
-    Vector<Attribute> m_attributes;
+    bool m_selfClosing; // StartTag, EndTag.
+    Vector<Attribute> m_attributes; // StartTag, EndTag.
 };
+
+Attribute* findAttribute(Vector<Attribute>&, const QualifiedName&);
+
+inline HTMLToken::Type AtomicHTMLToken::type() const
+{
+    return m_type;
+}
+
+inline const AtomicString& AtomicHTMLToken::name() const
+{
+    ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE);
+    return m_name;
+}
+
+inline void AtomicHTMLToken::setName(const AtomicString& name)
+{
+    ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE);
+    m_name = name;
+}
+
+inline bool AtomicHTMLToken::selfClosing() const
+{
+    ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
+    return m_selfClosing;
+}
+
+inline Vector<Attribute>& AtomicHTMLToken::attributes()
+{
+    ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
+    return m_attributes;
+}
+
+inline const Vector<Attribute>& AtomicHTMLToken::attributes() const
+{
+    ASSERT(m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag);
+    return m_attributes;
+}
+
+inline const UChar* AtomicHTMLToken::characters() const
+{
+    ASSERT(m_type == HTMLToken::Character);
+    return m_externalCharacters;
+}
+
+inline unsigned AtomicHTMLToken::charactersLength() const
+{
+    ASSERT(m_type == HTMLToken::Character);
+    return m_externalCharactersLength;
+}
+
+inline bool AtomicHTMLToken::charactersIsAll8BitData() const
+{
+    return m_externalCharactersIsAll8BitData;
+}
+
+inline const String& AtomicHTMLToken::comment() const
+{
+    ASSERT(m_type == HTMLToken::Comment);
+    return m_data;
+}
+
+inline bool AtomicHTMLToken::forceQuirks() const
+{
+    ASSERT(m_type == HTMLToken::DOCTYPE);
+    return m_doctypeData->forceQuirks;
+}
+
+inline String AtomicHTMLToken::publicIdentifier() const
+{
+    ASSERT(m_type == HTMLToken::DOCTYPE);
+    if (!m_doctypeData->hasPublicIdentifier)
+        return String();
+    return StringImpl::create8BitIfPossible(m_doctypeData->publicIdentifier);
+}
+
+inline String AtomicHTMLToken::systemIdentifier() const
+{
+    if (!m_doctypeData->hasSystemIdentifier)
+        return String();
+    return StringImpl::create8BitIfPossible(m_doctypeData->systemIdentifier);
+}
+
+inline Attribute* findAttribute(Vector<Attribute>& attributes, const QualifiedName& name)
+{
+    for (auto& attribute : attributes) {
+        if (attribute.name().matches(name))
+            return &attribute;
+    }
+    return nullptr;
+}
 
 inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList& attributes)
 {
-    size_t size = attributes.size();
+    unsigned size = attributes.size();
     if (!size)
         return;
 
-    m_attributes.clear();
     m_attributes.reserveInitialCapacity(size);
-    for (size_t i = 0; i < size; ++i) {
+    for (unsigned i = 0; i < size; ++i) {
         const HTMLToken::Attribute& attribute = attributes[i];
         if (attribute.name.isEmpty())
             continue;
 
-        // FIXME: We should be able to add the following ASSERT once we fix
-        // https://bugs.webkit.org/show_bug.cgi?id=62971
-        //   ASSERT(attribute.nameRange.start);
+        ASSERT(attribute.nameRange.start);
         ASSERT(attribute.nameRange.end);
         ASSERT(attribute.valueRange.start);
         ASSERT(attribute.valueRange.end);
 
-        AtomicString value(attribute.value);
-        const QualifiedName& name = nameForAttribute(attribute);
+        QualifiedName name(nullAtom, AtomicString(attribute.name), nullAtom);
+
         // FIXME: This is N^2 for the number of attributes.
-        if (!findAttributeInVector(m_attributes, name))
-            m_attributes.append(Attribute(name, value));
+        if (!findAttribute(m_attributes, name))
+            m_attributes.append(Attribute(name, AtomicString(attribute.value)));
     }
+}
+
+inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken& token)
+    : m_type(token.type())
+{
+    switch (m_type) {
+    case HTMLToken::Uninitialized:
+        ASSERT_NOT_REACHED();
+        return;
+    case HTMLToken::DOCTYPE:
+        m_name = AtomicString(token.name());
+        m_doctypeData = token.releaseDoctypeData();
+        return;
+    case HTMLToken::EndOfFile:
+        return;
+    case HTMLToken::StartTag:
+    case HTMLToken::EndTag:
+        m_selfClosing = token.selfClosing();
+        m_name = AtomicString(token.name());
+        initializeAttributes(token.attributes());
+        return;
+    case HTMLToken::Comment:
+        if (token.commentIsAll8BitData())
+            m_data = String::make8BitFrom16BitSource(token.comment());
+        else
+            m_data = String(token.comment());
+        return;
+    case HTMLToken::Character:
+        m_externalCharacters = token.characters().data();
+        m_externalCharactersLength = token.characters().size();
+        m_externalCharactersIsAll8BitData = token.charactersIsAll8BitData();
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+inline AtomicHTMLToken::AtomicHTMLToken(HTMLToken::Type type, const AtomicString& name, Vector<Attribute>&& attributes)
+    : m_type(type)
+    , m_name(name)
+    , m_selfClosing(false)
+    , m_attributes(WTF::move(attributes))
+{
+    ASSERT(type == HTMLToken::StartTag || type == HTMLToken::EndTag);
 }
 
 }

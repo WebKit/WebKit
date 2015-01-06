@@ -1,5 +1,16 @@
 2015-01-05  Darin Adler  <darin@apple.com>
 
+        Modernize and streamline HTMLToken and AtomicHTMLToken
+        https://bugs.webkit.org/show_bug.cgi?id=140046
+
+        Reviewed by Andreas Kling.
+
+        * resources/dump-as-markup.js:
+        (Markup._get): Add code to handle null systemId and publicId,
+        dumping them as empty strings for now.
+
+2015-01-05  Darin Adler  <darin@apple.com>
+
         * TestExpectations: Re-enabled the test I broke yesterday,
         editing/pasteboard/drag-and-drop-objectimage-contenteditable.html,
         now that it's fixed.

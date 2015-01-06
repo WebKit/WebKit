@@ -294,7 +294,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         }
 
         constructTreeFromHTMLToken(m_token);
-        ASSERT(m_token.isUninitialized());
+        ASSERT(m_token.type() == HTMLToken::Uninitialized);
     }
 
     // Ensure we haven't been totally deref'ed after pumping. Any caller of this
@@ -338,7 +338,7 @@ void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLToken& rawToken)
 
     m_treeBuilder->constructTree(token);
 
-    if (!rawToken.isUninitialized()) {
+    if (rawToken.type() != HTMLToken::Uninitialized) {
         ASSERT(rawToken.type() == HTMLToken::Character);
         rawToken.clear();
     }

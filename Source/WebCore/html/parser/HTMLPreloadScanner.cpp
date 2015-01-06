@@ -284,11 +284,11 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
     case HTMLToken::Character:
         if (!m_inStyle)
             return;
-        m_cssScanner.scan(token.data(), requests);
+        m_cssScanner.scan(token.characters(), requests);
         return;
 
     case HTMLToken::EndTag: {
-        TagId tagId = tagIdFor(token.data());
+        TagId tagId = tagIdFor(token.name());
 #if ENABLE(TEMPLATE_ELEMENT)
         if (tagId == TagId::Template) {
             if (m_templateCount)
@@ -309,7 +309,7 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
         if (m_templateCount)
             return;
 #endif
-        TagId tagId = tagIdFor(token.data());
+        TagId tagId = tagIdFor(token.name());
 #if ENABLE(TEMPLATE_ELEMENT)
         if (tagId == TagId::Template) {
             ++m_templateCount;
@@ -340,12 +340,11 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<Pr
     }
 }
 
-template<typename Token>
-void TokenPreloadScanner::updatePredictedBaseURL(const Token& token)
+void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token)
 {
     ASSERT(m_predictedBaseElementURL.isEmpty());
-    if (const typename Token::Attribute* hrefAttribute = token.getAttributeItem(hrefAttr))
-        m_predictedBaseElementURL = URL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefAttribute->value)).copy();
+    if (auto* hrefAttribute = findAttribute(token.attributes(), hrefAttr.localName().string()))
+        m_predictedBaseElementURL = URL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(StringImpl::create8BitIfPossible(hrefAttribute->value))).copy();
 }
 
 HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const URL& documentURL, float deviceScaleFactor)
