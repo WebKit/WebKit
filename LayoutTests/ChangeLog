@@ -1,3 +1,90 @@
+2015-01-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Update pixel results for some compositing tests.
+
+        * compositing/images/direct-pdf-image-expected.png:
+        * compositing/layer-creation/fixed-position-and-transform-expected.png:
+        * compositing/layer-creation/fixed-position-under-transform-expected.png:
+        * compositing/overflow/clip-content-under-overflow-controls-expected.png:
+        * platform/mac/compositing/animation/state-at-end-event-transform-layer-expected.png:
+        * platform/mac/compositing/color-matching/image-color-matching-expected.png:
+        * platform/mac/compositing/color-matching/pdf-image-match-expected.png:
+        * platform/mac/compositing/compositing-visible-descendant-expected.png:
+        * platform/mac/compositing/culling/filter-occlusion-blur-expected.png: Added.
+        * platform/mac/compositing/culling/filter-occlusion-blur-large-expected.png: Added.
+        * platform/mac/compositing/direct-image-compositing-expected.png:
+        * platform/mac/compositing/fixed-position-scroll-offset-history-restore-expected.png: Added.
+        * platform/mac/compositing/generated-content-expected.png:
+        * platform/mac/compositing/geometry/abs-position-inside-opacity-expected.png:
+        * platform/mac/compositing/geometry/clipping-foreground-expected.png:
+        * platform/mac/compositing/geometry/composited-html-size-expected.png:
+        * platform/mac/compositing/geometry/fixed-in-composited-expected.png:
+        * platform/mac/compositing/geometry/fixed-position-expected.png:
+        * platform/mac/compositing/geometry/foreground-layer-expected.png:
+        * platform/mac/compositing/geometry/layer-due-to-layer-children-deep-expected.png:
+        * platform/mac/compositing/geometry/layer-due-to-layer-children-expected.png:
+        * platform/mac/compositing/geometry/negative-text-indent-with-overflow-hidden-layer-expected.png: Added.
+        * platform/mac/compositing/geometry/outline-change-expected.png:
+        * platform/mac/compositing/geometry/partial-layout-update-expected.png:
+        * platform/mac/compositing/geometry/root-layer-update-expected.png:
+        * platform/mac/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png:
+        * platform/mac/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/mac/compositing/geometry/video-opacity-overlay-expected.png:
+        * platform/mac/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/mac/compositing/iframes/iframe-copy-on-scroll-expected.png:
+        * platform/mac/compositing/images/direct-image-background-color-expected.png:
+        * platform/mac/compositing/layers-inside-overflow-scroll-expected.png:
+        * platform/mac/compositing/masks/direct-image-mask-expected.png:
+        * platform/mac/compositing/masks/masked-ancestor-expected.png:
+        * platform/mac/compositing/masks/multiple-masks-expected.png:
+        * platform/mac/compositing/masks/simple-composited-mask-expected.png:
+        * platform/mac/compositing/overflow/ancestor-overflow-expected.png:
+        * platform/mac/compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor-expected.png: Added.
+        * platform/mac/compositing/overflow/do-not-paint-outline-into-composited-scrolling-contents-expected.png: Added.
+        * platform/mac/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/mac/compositing/overflow/nested-scrolling-expected.png: Added.
+        * platform/mac/compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor-expected.png: Added.
+        * platform/mac/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/mac/compositing/overflow/overflow-positioning-expected.png:
+        * platform/mac/compositing/overflow/overflow-scroll-expected.png:
+        * platform/mac/compositing/overflow/paint-neg-z-order-descendants-into-scrolling-contents-layer-expected.png: Added.
+        * platform/mac/compositing/overflow/parent-overflow-expected.png:
+        * platform/mac/compositing/overflow/remove-overflow-crash2-expected.png: Added.
+        * platform/mac/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/mac/compositing/overflow/scrollbar-painting-expected.png:
+        * platform/mac/compositing/plugins/composited-plugin-expected.png:
+        * platform/mac/compositing/reflections/deeply-nested-reflections-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-animated-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-mask-change-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-opacity-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-size-change-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-transition-expected.png:
+        * platform/mac/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/mac/compositing/reflections/reflection-on-composited-expected.png:
+        * platform/mac/compositing/reflections/reflection-ordering-expected.png:
+        * platform/mac/compositing/reflections/reflection-positioning-expected.png:
+        * platform/mac/compositing/reflections/reflection-positioning2-expected.png:
+        * platform/mac/compositing/reflections/simple-composited-reflections-expected.png:
+        * platform/mac/compositing/repaint/become-overlay-composited-layer-expected.png:
+        * platform/mac/compositing/repaint/composited-document-element-expected.png:
+        * platform/mac/compositing/repaint/layer-repaint-expected.png:
+        * platform/mac/compositing/repaint/layer-repaint-rects-expected.png:
+        * platform/mac/compositing/repaint/opacity-between-absolute-expected.png:
+        * platform/mac/compositing/repaint/opacity-between-absolute2-expected.png:
+        * platform/mac/compositing/repaint/repaint-on-layer-grouping-change-expected.png: Added.
+        * platform/mac/compositing/self-painting-layers-expected.png:
+        * platform/mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/mac/compositing/sibling-positioning-expected.png:
+        * platform/mac/compositing/text-on-large-layer-expected.png:
+        * platform/mac/compositing/transitions/scale-transition-no-start-expected.png:
+        * platform/mac/compositing/transitions/singular-scale-transition-expected.png:
+        * platform/mac/compositing/webgl/webgl-background-color-expected.png:
+        * platform/mac/compositing/webgl/webgl-no-alpha-expected.png:
+
 2015-01-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement ES6 String.prototype.repeat(count)
