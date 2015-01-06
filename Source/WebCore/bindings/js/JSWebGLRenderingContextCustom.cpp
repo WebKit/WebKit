@@ -280,7 +280,7 @@ JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
     }
     if (!succeed)
         return jsNull();
-    MarkedArgumentBuffer list;
+    JSC::MarkedArgumentBuffer list;
     for (size_t ii = 0; ii < shaders.size(); ++ii)
         list.append(toJS(exec, globalObject(), shaders[ii].get()));
     return constructArray(exec, 0, globalObject(), list);

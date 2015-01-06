@@ -28,14 +28,19 @@
 #include "config.h"
 #include "PluginPackage.h"
 
+#include "c_utility.h"
+#include "IdentifierRep.h"
 #include "MIMETypeRegistry.h"
 #include "NP_jsobject.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "PluginView.h"
+#include "runtime_root.h"
 #include "Timer.h"
 #include "npruntime_impl.h"
 #include <string.h>
+#include <JavaScriptCore/Completion.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -269,6 +274,12 @@ void PluginPackage::determineModuleVersionFromDescription()
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
+static void getListFromVariantArgs(JSC::ExecState* exec, const NPVariant* args, unsigned argCount, JSC::Bindings::RootObject* rootObject, JSC::MarkedArgumentBuffer& aList)
+{
+    for (unsigned i = 0; i < argCount; ++i)
+        aList.append(JSC::Bindings::convertNPVariantToValue(exec, &args[i], rootObject));
+}
+
 static bool NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
     if (o->_class == NPScriptObjectClass) {
@@ -288,24 +299,24 @@ static bool NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVa
         }
 
         // Look up the function object.
-        RootObject* rootObject = obj->rootObject;
+        JSC::Bindings::RootObject* rootObject = obj->rootObject;
         if (!rootObject || !rootObject->isValid())
             return false;
-        ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLockHolder lock(exec);
-        JSValue function = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
-        CallData callData;
-        CallType callType = getCallData(function, callData);
-        if (callType == CallTypeNone)
+        JSC::ExecState* exec = rootObject->globalObject()->globalExec();
+        JSC::JSLockHolder lock(exec);
+        JSC::JSValue function = obj->imp->get(exec, JSC::Bindings::identifierFromNPIdentifier(exec, i->string()));
+        JSC::CallData callData;
+        JSC::CallType callType = getCallData(function, callData);
+        if (callType == JSC::CallTypeNone)
             return false;
 
         // Call the function object.
-        MarkedArgumentBuffer argList;
+        JSC::MarkedArgumentBuffer argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
-        JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp, argList);
+        JSC::JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp, argList);
 
         // Convert and return the result of the function call.
-        convertValueToNPVariant(exec, resultV, result);
+        JSC::Bindings::convertValueToNPVariant(exec, resultV, result);
         exec->clearException();
         return true;
     }
@@ -317,12 +328,17 @@ static bool NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVa
     return true;
 }
 
+static inline JSC::SourceCode makeSource(const String& source, const String& url = String(), const TextPosition& startPosition = TextPosition::minimumPosition())
+{
+    return JSC::SourceCode(JSC::StringSourceProvider::create(source, url, startPosition), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
+}
+
 static bool NPN_Evaluate(NPP instance, NPObject* o, NPString* s, NPVariant* variant)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject* obj = reinterpret_cast<JavaScriptObject*>(o);
 
-        RootObject* rootObject = obj->rootObject;
+        JSC::Bindings::RootObject* rootObject = obj->rootObject;
         if (!rootObject || !rootObject->isValid())
             return false;
 
@@ -330,13 +346,13 @@ static bool NPN_Evaluate(NPP instance, NPObject* o, NPString* s, NPVariant* vari
         // PluginView, so we destroy it asynchronously.
         PluginView::keepAlive(instance);
 
-        ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLockHolder lock(exec);
-        String scriptString = convertNPStringToUTF16(s);
+        JSC::ExecState* exec = rootObject->globalObject()->globalExec();
+        JSC::JSLockHolder lock(exec);
+        String scriptString = JSC::Bindings::convertNPStringToUTF16(s);
 
-        JSValue returnValue = JSC::evaluate(rootObject->globalObject()->globalExec(), makeSource(scriptString), JSC::JSValue());
+        JSC::JSValue returnValue = JSC::evaluate(rootObject->globalObject()->globalExec(), makeSource(scriptString), JSC::JSValue());
 
-        convertValueToNPVariant(exec, returnValue, variant);
+        JSC::Bindings::convertValueToNPVariant(exec, returnValue, variant);
         exec->clearException();
         return true;
     }

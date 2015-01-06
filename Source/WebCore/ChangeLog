@@ -1,3 +1,17 @@
+2015-01-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r177937.
+
+        Add the missing #include and namespace declarations to get a clean build.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders):
+        * plugins/PluginPackage.cpp:
+        (WebCore::getListFromVariantArgs):
+        (WebCore::NPN_Invoke):
+        (WebCore::makeSource):
+        (WebCore::NPN_Evaluate):
+
 2015-01-05  Anders Carlsson  <andersca@apple.com>
 
         Remove PluginViewNone.cpp
