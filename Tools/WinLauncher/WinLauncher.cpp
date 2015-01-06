@@ -444,3 +444,32 @@ _bstr_t WinLauncher::userAgent()
 
     return userAgent;
 }
+
+typedef _com_ptr_t<_com_IIID<IWebIBActions, &__uuidof(IWebIBActions)>> IWebIBActionsPtr;
+
+void WinLauncher::resetZoom()
+{
+    IWebIBActionsPtr webActions;
+    if (FAILED(m_webView->QueryInterface(IID_IWebIBActions, reinterpret_cast<void**>(&webActions.GetInterfacePtr()))))
+        return;
+
+    webActions->resetPageZoom(nullptr);
+}
+
+void WinLauncher::zoomIn()
+{
+    IWebIBActionsPtr webActions;
+    if (FAILED(m_webView->QueryInterface(IID_IWebIBActions, reinterpret_cast<void**>(&webActions.GetInterfacePtr()))))
+        return;
+
+    webActions->zoomPageIn(nullptr);
+}
+
+void WinLauncher::zoomOut()
+{
+    IWebIBActionsPtr webActions;
+    if (FAILED(m_webView->QueryInterface(IID_IWebIBActions, reinterpret_cast<void**>(&webActions.GetInterfacePtr()))))
+        return;
+
+    webActions->zoomPageOut(nullptr);
+}

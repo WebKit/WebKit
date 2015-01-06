@@ -480,6 +480,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             else
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_USER_AGENT), hWnd, CustomUserAgent);
             break;
+        case IDM_ACTUAL_SIZE:
+            if (gWinLauncher)
+                gWinLauncher->resetZoom();
+            break;
+        case IDM_ZOOM_IN:
+            if (gWinLauncher)
+                gWinLauncher->zoomIn();
+            break;
+        case IDM_ZOOM_OUT:
+            if (gWinLauncher)
+                gWinLauncher->zoomOut();
+            break;
         default:
             return CallWindowProc(parentProc, hWnd, message, wParam, lParam);
         }

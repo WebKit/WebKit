@@ -84,6 +84,10 @@ public:
 
     PageLoadTestClient& pageLoadTestClient() { return *m_pageLoadTestClient; }
 
+    void resetZoom();
+    void zoomIn();
+    void zoomOut();
+
 private:
     std::vector<IWebHistoryItemPtr> m_historyItems;
 

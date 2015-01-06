@@ -48,6 +48,9 @@
 #define IDM_UA_FIREFOX_MAC              168
 #define IDM_UA_FIREFOX_WIN              169
 #define IDM_UA_OTHER                    170
+#define IDM_ACTUAL_SIZE                 171
+#define IDM_ZOOM_IN                     172
+#define IDM_ZOOM_OUT                    173
 #define IDC_EMPTY_URL_CACHE             1000
 #define IDC_RETURN_FREE_MEMORY          1001
 #define IDC_EMPTY_WEBCORE_CACHE         1002
@@ -107,8 +110,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        171
-#define _APS_NEXT_COMMAND_VALUE         32771
+#define _APS_NEXT_RESOURCE_VALUE        174
+#define _APS_NEXT_COMMAND_VALUE         32776
 #define _APS_NEXT_CONTROL_VALUE         1053
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
