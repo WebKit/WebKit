@@ -27,6 +27,7 @@
 #include "PageConfiguration.h"
 
 #include "BackForwardClient.h"
+#include "DatabaseProvider.h"
 #include "StorageNamespaceProvider.h"
 #include "UserContentController.h"
 #include "VisitedLinkStore.h"

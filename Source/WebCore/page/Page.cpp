@@ -29,6 +29,7 @@
 #include "ClientRectList.h"
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
+#include "DatabaseProvider.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentStyleSheetCollection.h"
@@ -203,6 +204,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 #endif
     , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
     , m_framesHandlingBeforeUnloadEvent(0)
+    , m_databaseProvider(WTF::move(pageConfiguration.databaseProvider))
     , m_storageNamespaceProvider(*WTF::move(pageConfiguration.storageNamespaceProvider))
     , m_userContentController(WTF::move(pageConfiguration.userContentController))
     , m_visitedLinkStore(*WTF::move(pageConfiguration.visitedLinkStore))

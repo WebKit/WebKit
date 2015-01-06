@@ -1,5 +1,28 @@
 2015-01-05  Anders Carlsson  <andersca@apple.com>
 
+        Introduce a per-page database provider class
+        https://bugs.webkit.org/show_bug.cgi?id=140102
+
+        Reviewed by Sam Weinig.
+
+        This class will replace DatabaseStrategy and allow for different providers per page.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DatabaseProvider.cpp: Added.
+        (WebCore::DatabaseProvider::~DatabaseProvider):
+        (WebCore::DatabaseProvider::idbFactoryBackend):
+        * page/DatabaseProvider.h: Added.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        * page/PageConfiguration.cpp:
+        * page/PageConfiguration.h:
+
+2015-01-05  Anders Carlsson  <andersca@apple.com>
+
         Add copies of NPN_Evaluate and NPN_Invoke on Windows
         https://bugs.webkit.org/show_bug.cgi?id=140103
 

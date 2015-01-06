@@ -37,6 +37,7 @@ class ChromeClient;
 #if ENABLE(CONTEXT_MENUS)
 class ContextMenuClient;
 #endif
+class DatabaseProvider;
 class DiagnosticLoggingClient;
 class DragClient;
 class EditorClient;
@@ -70,6 +71,7 @@ public:
     FrameLoaderClient* loaderClientForMainFrame;
     DiagnosticLoggingClient* diagnosticLoggingClient;
 
+    RefPtr<DatabaseProvider> databaseProvider;
     RefPtr<StorageNamespaceProvider> storageNamespaceProvider;
     RefPtr<UserContentController> userContentController;
     RefPtr<VisitedLinkStore> visitedLinkStore;

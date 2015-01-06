@@ -7185,6 +7185,7 @@
     <ClCompile Include="..\page\DOMWindow.cpp" />
     <ClCompile Include="..\page\DOMWindowExtension.cpp" />
     <ClCompile Include="..\page\DOMWindowProperty.cpp" />
+    <ClCompile Include="..\page\DatabaseProvider.cpp" />
     <ClCompile Include="..\page\DebugPageOverlays.cpp" />
     <ClCompile Include="..\page\DragController.cpp" />
     <ClCompile Include="..\page\scrolling\coordinatedgraphics\ScrollingCoordinatorCoordinatedGraphics.cpp" />
@@ -19197,6 +19198,7 @@
     <ClInclude Include="..\page\DOMWindow.h" />
     <ClInclude Include="..\page\DOMWindowExtension.h" />
     <ClInclude Include="..\page\DOMWindowProperty.h" />
+    <ClInclude Include="..\page\DatabaseProvider.h" />
     <ClInclude Include="..\page\DebugPageOverlays.h" />
     <ClInclude Include="..\page\DragActions.h" />
     <ClInclude Include="..\page\DragClient.h" />

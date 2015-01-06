@@ -67,6 +67,7 @@ class ClientRectList;
 class Color;
 class ContextMenuClient;
 class ContextMenuController;
+class DatabaseProvider;
 class DragCaretController;
 class DragClient;
 class DragController;
@@ -573,6 +574,7 @@ private:
     unsigned m_lastSpatialNavigationCandidatesCount;
     unsigned m_framesHandlingBeforeUnloadEvent;
 
+    RefPtr<DatabaseProvider> m_databaseProvider;
     Ref<StorageNamespaceProvider> m_storageNamespaceProvider;
     RefPtr<UserContentController> m_userContentController;
     Ref<VisitedLinkStore> m_visitedLinkStore;

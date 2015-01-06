@@ -1893,6 +1893,7 @@ set(WebCore_SOURCES
     page/DOMWindow.cpp
     page/DOMWindowExtension.cpp
     page/DOMWindowProperty.cpp
+    page/DatabaseProvider.cpp
     page/DebugPageOverlays.cpp
     page/DeviceController.cpp
     page/DiagnosticLoggingKeys.cpp
