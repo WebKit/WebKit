@@ -32,7 +32,7 @@ namespace WebCore {
 
 class HTMLTableColElement final : public HTMLTablePartElement {
 public:
-    static RefPtr<HTMLTableColElement> create(const QualifiedName& tagName, Document&);
+    static Ref<HTMLTableColElement> create(const QualifiedName& tagName, Document&);
 
     int span() const { return m_span; }
     void setSpan(int);

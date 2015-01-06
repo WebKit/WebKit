@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLIFrameElement final : public HTMLFrameElementBase {
 public:
-    static RefPtr<HTMLIFrameElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLIFrameElement> create(const QualifiedName&, Document&);
 
 private:
     HTMLIFrameElement(const QualifiedName&, Document&);

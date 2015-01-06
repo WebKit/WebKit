@@ -43,9 +43,9 @@ inline HTMLIFrameElement::HTMLIFrameElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(iframeTag));
 }
 
-RefPtr<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLIFrameElement(tagName, document));
+    return adoptRef(*new HTMLIFrameElement(tagName, document));
 }
 
 bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const

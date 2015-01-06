@@ -37,9 +37,9 @@ inline HTMLParamElement::HTMLParamElement(const QualifiedName& tagName, Document
     ASSERT(hasTagName(paramTag));
 }
 
-RefPtr<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLParamElement> HTMLParamElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLParamElement(tagName, document));
+    return adoptRef(*new HTMLParamElement(tagName, document));
 }
 
 String HTMLParamElement::name() const

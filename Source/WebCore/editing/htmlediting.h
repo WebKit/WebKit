@@ -204,8 +204,8 @@ PassRefPtr<HTMLElement> createBreakElement(Document&);
 PassRefPtr<HTMLElement> createOrderedListElement(Document&);
 PassRefPtr<HTMLElement> createUnorderedListElement(Document&);
 PassRefPtr<HTMLElement> createListItemElement(Document&);
-PassRefPtr<HTMLElement> createHTMLElement(Document&, const QualifiedName&);
-PassRefPtr<HTMLElement> createHTMLElement(Document&, const AtomicString&);
+Ref<HTMLElement> createHTMLElement(Document&, const QualifiedName&);
+Ref<HTMLElement> createHTMLElement(Document&, const AtomicString&);
 
 HTMLElement* enclosingList(Node*);
 HTMLElement* outermostEnclosingList(Node*, Node* rootList = 0);

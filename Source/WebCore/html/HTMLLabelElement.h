@@ -31,7 +31,7 @@ namespace WebCore {
 
 class HTMLLabelElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLLabelElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLLabelElement> create(const QualifiedName&, Document&);
 
     LabelableElement* control();
     HTMLFormElement* form() const;

@@ -46,9 +46,9 @@ inline HTMLOutputElement::HTMLOutputElement(const QualifiedName& tagName, Docume
 {
 }
 
-RefPtr<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
-    return adoptRef(new HTMLOutputElement(tagName, document, form));
+    return adoptRef(*new HTMLOutputElement(tagName, document, form));
 }
 
 const AtomicString& HTMLOutputElement::formControlType() const

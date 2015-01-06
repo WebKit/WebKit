@@ -35,9 +35,9 @@ inline HTMLBaseFontElement::HTMLBaseFontElement(const QualifiedName& tagName, Do
     ASSERT(hasTagName(basefontTag));
 }
 
-RefPtr<HTMLBaseFontElement> HTMLBaseFontElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLBaseFontElement> HTMLBaseFontElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLBaseFontElement(tagName, document));
+    return adoptRef(*new HTMLBaseFontElement(tagName, document));
 }
 
 }

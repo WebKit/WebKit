@@ -55,9 +55,9 @@ HTMLTemplateElement::~HTMLTemplateElement()
         m_content->clearHost();
 }
 
-RefPtr<HTMLTemplateElement> HTMLTemplateElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTemplateElement> HTMLTemplateElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLTemplateElement(tagName, document));
+    return adoptRef(*new HTMLTemplateElement(tagName, document));
 }
 
 DocumentFragment* HTMLTemplateElement::content() const

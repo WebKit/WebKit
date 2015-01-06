@@ -27,9 +27,9 @@ namespace WebCore {
 
 class HTMLBDIElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLBDIElement> create(const QualifiedName& name, Document& document)
+    static Ref<HTMLBDIElement> create(const QualifiedName& name, Document& document)
     {
-        return adoptRef(new HTMLBDIElement(name, document));
+        return adoptRef(*new HTMLBDIElement(name, document));
     }
 
 private:

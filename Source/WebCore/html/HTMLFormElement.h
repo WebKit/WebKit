@@ -46,8 +46,8 @@ class TextEncoding;
 
 class HTMLFormElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLFormElement> create(Document&);
-    static RefPtr<HTMLFormElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLFormElement> create(Document&);
+    static Ref<HTMLFormElement> create(const QualifiedName&, Document&);
     virtual ~HTMLFormElement();
 
     RefPtr<HTMLCollection> elements();

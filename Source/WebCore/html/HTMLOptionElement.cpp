@@ -57,14 +57,14 @@ HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document& doc
     setHasCustomStyleResolveCallbacks();
 }
 
-RefPtr<HTMLOptionElement> HTMLOptionElement::create(Document& document)
+Ref<HTMLOptionElement> HTMLOptionElement::create(Document& document)
 {
-    return adoptRef(new HTMLOptionElement(optionTag, document));
+    return adoptRef(*new HTMLOptionElement(optionTag, document));
 }
 
-RefPtr<HTMLOptionElement> HTMLOptionElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLOptionElement> HTMLOptionElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLOptionElement(tagName, document));
+    return adoptRef(*new HTMLOptionElement(tagName, document));
 }
 
 RefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document& document, const String& data, const String& value,

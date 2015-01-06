@@ -32,7 +32,7 @@ class HTMLSelectElement;
 
 class HTMLKeygenElement final : public HTMLFormControlElementWithState {
 public:
-    static RefPtr<HTMLKeygenElement> create(const QualifiedName&, Document&, HTMLFormElement*);
+    static Ref<HTMLKeygenElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
 private:
     HTMLKeygenElement(const QualifiedName&, Document&, HTMLFormElement*);

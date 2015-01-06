@@ -44,14 +44,14 @@ HTMLTableRowElement::HTMLTableRowElement(const QualifiedName& tagName, Document&
     ASSERT(hasTagName(trTag));
 }
 
-RefPtr<HTMLTableRowElement> HTMLTableRowElement::create(Document& document)
+Ref<HTMLTableRowElement> HTMLTableRowElement::create(Document& document)
 {
-    return adoptRef(new HTMLTableRowElement(trTag, document));
+    return adoptRef(*new HTMLTableRowElement(trTag, document));
 }
 
-RefPtr<HTMLTableRowElement> HTMLTableRowElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTableRowElement> HTMLTableRowElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLTableRowElement(tagName, document));
+    return adoptRef(*new HTMLTableRowElement(tagName, document));
 }
 
 int HTMLTableRowElement::rowIndex() const

@@ -57,8 +57,8 @@ enum {
 
 class HTMLAnchorElement : public HTMLElement {
 public:
-    static RefPtr<HTMLAnchorElement> create(Document&);
-    static RefPtr<HTMLAnchorElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLAnchorElement> create(Document&);
+    static Ref<HTMLAnchorElement> create(const QualifiedName&, Document&);
 
     virtual ~HTMLAnchorElement();
 

@@ -65,14 +65,14 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
         form->registerImgElement(this);
 }
 
-RefPtr<HTMLImageElement> HTMLImageElement::create(Document& document)
+Ref<HTMLImageElement> HTMLImageElement::create(Document& document)
 {
-    return adoptRef(new HTMLImageElement(imgTag, document));
+    return adoptRef(*new HTMLImageElement(imgTag, document));
 }
 
-RefPtr<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
-    return adoptRef(new HTMLImageElement(tagName, document, form));
+    return adoptRef(*new HTMLImageElement(tagName, document, form));
 }
 
 HTMLImageElement::~HTMLImageElement()
@@ -81,14 +81,14 @@ HTMLImageElement::~HTMLImageElement()
         m_form->removeImgElement(this);
 }
 
-RefPtr<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document& document, const int* optionalWidth, const int* optionalHeight)
+Ref<HTMLImageElement> HTMLImageElement::createForJSConstructor(Document& document, const int* optionalWidth, const int* optionalHeight)
 {
-    RefPtr<HTMLImageElement> image = adoptRef(new HTMLImageElement(imgTag, document));
+    Ref<HTMLImageElement> image = adoptRef(*new HTMLImageElement(imgTag, document));
     if (optionalWidth)
         image->setWidth(*optionalWidth);
     if (optionalHeight)
         image->setHeight(*optionalHeight);
-    return image.release();
+    return image;
 }
 
 bool HTMLImageElement::isPresentationAttribute(const QualifiedName& name) const

@@ -33,7 +33,7 @@ namespace WebCore {
 
 class HTMLTableSectionElement final : public HTMLTablePartElement {
 public:
-    static RefPtr<HTMLTableSectionElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTableSectionElement> create(const QualifiedName&, Document&);
 
     RefPtr<HTMLElement> insertRow(ExceptionCode& ec) { return insertRow(-1, ec); }
     RefPtr<HTMLElement> insertRow(int index, ExceptionCode&);

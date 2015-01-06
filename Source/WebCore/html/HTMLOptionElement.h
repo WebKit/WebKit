@@ -34,8 +34,8 @@ class HTMLSelectElement;
 
 class HTMLOptionElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLOptionElement> create(Document&);
-    static RefPtr<HTMLOptionElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLOptionElement> create(Document&);
+    static Ref<HTMLOptionElement> create(const QualifiedName&, Document&);
     static RefPtr<HTMLOptionElement> createForJSConstructor(Document&, const String& data, const String& value,
        bool defaultSelected, bool selected, ExceptionCode&);
 

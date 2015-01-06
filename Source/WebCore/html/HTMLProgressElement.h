@@ -33,7 +33,7 @@ public:
     static const double IndeterminatePosition;
     static const double InvalidPosition;
 
-    static RefPtr<HTMLProgressElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLProgressElement> create(const QualifiedName&, Document&);
 
     double value() const;
     void setValue(double, ExceptionCode&);

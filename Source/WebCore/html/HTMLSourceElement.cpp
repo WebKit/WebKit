@@ -46,9 +46,9 @@ inline HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(sourceTag));
 }
 
-RefPtr<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLSourceElement(tagName, document));
+    return adoptRef(*new HTMLSourceElement(tagName, document));
 }
 
 Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode& insertionPoint)

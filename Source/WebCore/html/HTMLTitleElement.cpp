@@ -44,9 +44,9 @@ inline HTMLTitleElement::HTMLTitleElement(const QualifiedName& tagName, Document
     ASSERT(hasTagName(titleTag));
 }
 
-RefPtr<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLTitleElement(tagName, document));
+    return adoptRef(*new HTMLTitleElement(tagName, document));
 }
 
 Node::InsertionNotificationRequest HTMLTitleElement::insertedInto(ContainerNode& insertionPoint)

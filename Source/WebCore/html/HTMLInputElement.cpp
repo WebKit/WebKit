@@ -129,10 +129,10 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document& docum
     setHasCustomStyleResolveCallbacks();
 }
 
-RefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
+Ref<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
 {
     bool shouldCreateShadowRootLazily = createdByParser;
-    RefPtr<HTMLInputElement> inputElement = adoptRef(new HTMLInputElement(tagName, document, form, createdByParser));
+    Ref<HTMLInputElement> inputElement = adoptRef(*new HTMLInputElement(tagName, document, form, createdByParser));
     if (!shouldCreateShadowRootLazily)
         inputElement->ensureUserAgentShadowRoot();
     return inputElement;

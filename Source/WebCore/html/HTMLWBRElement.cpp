@@ -33,9 +33,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RefPtr<HTMLWBRElement> HTMLWBRElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLWBRElement> HTMLWBRElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLWBRElement(tagName, document));
+    return adoptRef(*new HTMLWBRElement(tagName, document));
 }
 
 HTMLWBRElement::HTMLWBRElement(const QualifiedName& tagName, Document& document)

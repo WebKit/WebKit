@@ -46,9 +46,9 @@ HTMLFontElement::HTMLFontElement(const QualifiedName& tagName, Document& documen
     ASSERT(hasTagName(fontTag));
 }
 
-RefPtr<HTMLFontElement> HTMLFontElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLFontElement> HTMLFontElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLFontElement(tagName, document));
+    return adoptRef(*new HTMLFontElement(tagName, document));
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/rendering.html#fonts-and-colors

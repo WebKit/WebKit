@@ -63,14 +63,14 @@ HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document& doc
 {
 }
 
-RefPtr<HTMLAnchorElement> HTMLAnchorElement::create(Document& document)
+Ref<HTMLAnchorElement> HTMLAnchorElement::create(Document& document)
 {
-    return adoptRef(new HTMLAnchorElement(aTag, document));
+    return adoptRef(*new HTMLAnchorElement(aTag, document));
 }
 
-RefPtr<HTMLAnchorElement> HTMLAnchorElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLAnchorElement> HTMLAnchorElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLAnchorElement(tagName, document));
+    return adoptRef(*new HTMLAnchorElement(tagName, document));
 }
 
 HTMLAnchorElement::~HTMLAnchorElement()

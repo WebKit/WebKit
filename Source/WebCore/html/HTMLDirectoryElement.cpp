@@ -35,9 +35,9 @@ inline HTMLDirectoryElement::HTMLDirectoryElement(const QualifiedName& tagName, 
     ASSERT(hasTagName(dirTag));
 }
 
-RefPtr<HTMLDirectoryElement> HTMLDirectoryElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLDirectoryElement> HTMLDirectoryElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLDirectoryElement(tagName, document));
+    return adoptRef(*new HTMLDirectoryElement(tagName, document));
 }
 
 }

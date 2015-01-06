@@ -29,8 +29,8 @@ namespace WebCore {
 
 class HTMLDivElement : public HTMLElement {
 public:
-    static RefPtr<HTMLDivElement> create(Document&);
-    static RefPtr<HTMLDivElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLDivElement> create(Document&);
+    static Ref<HTMLDivElement> create(const QualifiedName&, Document&);
 
 protected:
     HTMLDivElement(const QualifiedName&, Document&);

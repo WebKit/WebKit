@@ -29,7 +29,7 @@ namespace WebCore {
 
 class HTMLHeadingElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLHeadingElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLHeadingElement> create(const QualifiedName&, Document&);
 
 private:
     HTMLHeadingElement(const QualifiedName&, Document&);

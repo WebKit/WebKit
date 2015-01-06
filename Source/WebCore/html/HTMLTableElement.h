@@ -37,8 +37,8 @@ class HTMLTableSectionElement;
 
 class HTMLTableElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLTableElement> create(Document&);
-    static RefPtr<HTMLTableElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTableElement> create(Document&);
+    static Ref<HTMLTableElement> create(const QualifiedName&, Document&);
 
     HTMLTableCaptionElement* caption() const;
     void setCaption(PassRefPtr<HTMLTableCaptionElement>, ExceptionCode&);

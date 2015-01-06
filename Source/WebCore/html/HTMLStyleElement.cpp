@@ -63,9 +63,9 @@ HTMLStyleElement::~HTMLStyleElement()
     styleLoadEventSender().cancelEvent(*this);
 }
 
-RefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
-    return adoptRef(new HTMLStyleElement(tagName, document, createdByParser));
+    return adoptRef(*new HTMLStyleElement(tagName, document, createdByParser));
 }
 
 void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

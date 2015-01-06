@@ -35,9 +35,9 @@ inline HTMLDListElement::HTMLDListElement(const QualifiedName& tagName, Document
     ASSERT(hasTagName(dlTag));
 }
 
-RefPtr<HTMLDListElement> HTMLDListElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLDListElement> HTMLDListElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLDListElement(tagName, document));
+    return adoptRef(*new HTMLDListElement(tagName, document));
 }
 
 }

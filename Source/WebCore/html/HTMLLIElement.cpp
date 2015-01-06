@@ -41,14 +41,14 @@ HTMLLIElement::HTMLLIElement(const QualifiedName& tagName, Document& document)
     setHasCustomStyleResolveCallbacks();
 }
 
-RefPtr<HTMLLIElement> HTMLLIElement::create(Document& document)
+Ref<HTMLLIElement> HTMLLIElement::create(Document& document)
 {
-    return adoptRef(new HTMLLIElement(liTag, document));
+    return adoptRef(*new HTMLLIElement(liTag, document));
 }
 
-RefPtr<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLLIElement> HTMLLIElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLLIElement(tagName, document));
+    return adoptRef(*new HTMLLIElement(tagName, document));
 }
 
 bool HTMLLIElement::isPresentationAttribute(const QualifiedName& name) const

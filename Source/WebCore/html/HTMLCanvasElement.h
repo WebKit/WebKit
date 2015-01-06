@@ -63,8 +63,8 @@ public:
 
 class HTMLCanvasElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLCanvasElement> create(Document&);
-    static RefPtr<HTMLCanvasElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLCanvasElement> create(Document&);
+    static Ref<HTMLCanvasElement> create(const QualifiedName&, Document&);
     virtual ~HTMLCanvasElement();
 
     void addObserver(CanvasObserver&);

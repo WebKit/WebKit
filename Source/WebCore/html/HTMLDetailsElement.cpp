@@ -65,7 +65,7 @@ RefPtr<DetailsContentElement> DetailsContentElement::create(Document& document)
 
 class DetailsSummaryElement final : public InsertionPoint {
 public:
-    static RefPtr<DetailsSummaryElement> create(Document&);
+    static Ref<DetailsSummaryElement> create(Document&);
 
     Element* fallbackSummary()
     {
@@ -87,19 +87,19 @@ private:
     }
 };
 
-RefPtr<DetailsSummaryElement> DetailsSummaryElement::create(Document& document)
+Ref<DetailsSummaryElement> DetailsSummaryElement::create(Document& document)
 {
     RefPtr<HTMLSummaryElement> summary = HTMLSummaryElement::create(summaryTag, document);
     summary->appendChild(Text::create(document, defaultDetailsSummaryText()), ASSERT_NO_EXCEPTION);
 
-    RefPtr<DetailsSummaryElement> detailsSummary = adoptRef(new DetailsSummaryElement(document));
+    Ref<DetailsSummaryElement> detailsSummary = adoptRef(*new DetailsSummaryElement(document));
     detailsSummary->appendChild(summary);
     return detailsSummary;
 }
 
-RefPtr<HTMLDetailsElement> HTMLDetailsElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLDetailsElement> HTMLDetailsElement::create(const QualifiedName& tagName, Document& document)
 {
-    RefPtr<HTMLDetailsElement> details = adoptRef(new HTMLDetailsElement(tagName, document));
+    Ref<HTMLDetailsElement> details = adoptRef(*new HTMLDetailsElement(tagName, document));
     details->ensureUserAgentShadowRoot();
     return details;
 }

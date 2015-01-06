@@ -42,7 +42,7 @@ class TemplateContentDocumentFragment;
 
 class HTMLTemplateElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLTemplateElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTemplateElement> create(const QualifiedName&, Document&);
     virtual ~HTMLTemplateElement();
 
     DocumentFragment* content() const;

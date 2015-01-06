@@ -39,14 +39,14 @@ inline HTMLParagraphElement::HTMLParagraphElement(const QualifiedName& tagName, 
     ASSERT(hasTagName(pTag));
 }
 
-RefPtr<HTMLParagraphElement> HTMLParagraphElement::create(Document& document)
+Ref<HTMLParagraphElement> HTMLParagraphElement::create(Document& document)
 {
-    return adoptRef(new HTMLParagraphElement(pTag, document));
+    return adoptRef(*new HTMLParagraphElement(pTag, document));
 }
 
-RefPtr<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLParagraphElement> HTMLParagraphElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLParagraphElement(tagName, document));
+    return adoptRef(*new HTMLParagraphElement(tagName, document));
 }
 
 bool HTMLParagraphElement::isPresentationAttribute(const QualifiedName& name) const

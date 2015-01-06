@@ -35,9 +35,9 @@ inline HTMLMenuElement::HTMLMenuElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(menuTag));
 }
 
-RefPtr<HTMLMenuElement> HTMLMenuElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLMenuElement> HTMLMenuElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLMenuElement(tagName, document));
+    return adoptRef(*new HTMLMenuElement(tagName, document));
 }
 
 }

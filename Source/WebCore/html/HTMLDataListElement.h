@@ -40,7 +40,7 @@ namespace WebCore {
 
 class HTMLDataListElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLDataListElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLDataListElement> create(const QualifiedName&, Document&);
 
     RefPtr<HTMLCollection> options();
 

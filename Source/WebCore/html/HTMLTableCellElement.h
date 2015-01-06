@@ -32,7 +32,7 @@ namespace WebCore {
 
 class HTMLTableCellElement final : public HTMLTablePartElement {
 public:
-    static RefPtr<HTMLTableCellElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTableCellElement> create(const QualifiedName&, Document&);
 
     int cellIndex() const;
     int colSpan() const;

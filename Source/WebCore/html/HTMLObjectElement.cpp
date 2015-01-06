@@ -76,9 +76,9 @@ inline HTMLObjectElement::~HTMLObjectElement()
 {
 }
 
-RefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
+Ref<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form, bool createdByParser)
 {
-    return adoptRef(new HTMLObjectElement(tagName, document, form, createdByParser));
+    return adoptRef(*new HTMLObjectElement(tagName, document, form, createdByParser));
 }
 
 RenderWidget* HTMLObjectElement::renderWidgetLoadingPlugin() const

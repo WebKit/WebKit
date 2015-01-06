@@ -30,9 +30,9 @@ inline HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Docu
 {
 }
 
-RefPtr<HTMLHeadingElement> HTMLHeadingElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLHeadingElement> HTMLHeadingElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLHeadingElement(tagName, document));
+    return adoptRef(*new HTMLHeadingElement(tagName, document));
 }
 
 }

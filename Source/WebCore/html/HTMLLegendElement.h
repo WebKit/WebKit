@@ -32,7 +32,7 @@ class HTMLFormControlElement;
 
 class HTMLLegendElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLLegendElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLLegendElement> create(const QualifiedName&, Document&);
 
 private:
     HTMLLegendElement(const QualifiedName&, Document&);

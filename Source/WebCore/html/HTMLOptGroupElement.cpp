@@ -43,9 +43,9 @@ inline HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Do
     ASSERT(hasTagName(optgroupTag));
 }
 
-RefPtr<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLOptGroupElement(tagName, document));
+    return adoptRef(*new HTMLOptGroupElement(tagName, document));
 }
 
 bool HTMLOptGroupElement::isDisabledFormControl() const

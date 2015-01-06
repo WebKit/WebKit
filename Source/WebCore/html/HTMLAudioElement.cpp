@@ -39,16 +39,16 @@ HTMLAudioElement::HTMLAudioElement(const QualifiedName& tagName, Document& docum
     ASSERT(hasTagName(audioTag));
 }
 
-RefPtr<HTMLAudioElement> HTMLAudioElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<HTMLAudioElement> HTMLAudioElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
-    RefPtr<HTMLAudioElement> audioElement(adoptRef(new HTMLAudioElement(tagName, document, createdByParser)));
+    Ref<HTMLAudioElement> audioElement = adoptRef(*new HTMLAudioElement(tagName, document, createdByParser));
     audioElement->suspendIfNeeded();
     return audioElement;
 }
 
-RefPtr<HTMLAudioElement> HTMLAudioElement::createForJSConstructor(Document& document, const String& src)
+Ref<HTMLAudioElement> HTMLAudioElement::createForJSConstructor(Document& document, const String& src)
 {
-    RefPtr<HTMLAudioElement> audio = adoptRef(new HTMLAudioElement(audioTag, document, false));
+    Ref<HTMLAudioElement> audio = adoptRef(*new HTMLAudioElement(audioTag, document, false));
     audio->setPreload("auto");
     if (!src.isNull()) {
         audio->setSrc(src);

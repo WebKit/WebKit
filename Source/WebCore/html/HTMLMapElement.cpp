@@ -41,14 +41,14 @@ HTMLMapElement::HTMLMapElement(const QualifiedName& tagName, Document& document)
     ASSERT(hasTagName(mapTag));
 }
 
-RefPtr<HTMLMapElement> HTMLMapElement::create(Document& document)
+Ref<HTMLMapElement> HTMLMapElement::create(Document& document)
 {
-    return adoptRef(new HTMLMapElement(mapTag, document));
+    return adoptRef(*new HTMLMapElement(mapTag, document));
 }
 
-RefPtr<HTMLMapElement> HTMLMapElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLMapElement> HTMLMapElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLMapElement(tagName, document));
+    return adoptRef(*new HTMLMapElement(tagName, document));
 }
 
 HTMLMapElement::~HTMLMapElement()

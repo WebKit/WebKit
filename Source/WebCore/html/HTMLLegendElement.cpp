@@ -40,9 +40,9 @@ inline HTMLLegendElement::HTMLLegendElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(legendTag));
 }
 
-RefPtr<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLLegendElement> HTMLLegendElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLLegendElement(tagName, document));
+    return adoptRef(*new HTMLLegendElement(tagName, document));
 }
 
 HTMLFormControlElement* HTMLLegendElement::associatedControl()

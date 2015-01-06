@@ -43,9 +43,9 @@ inline HTMLFrameElement::HTMLFrameElement(const QualifiedName& tagName, Document
     setHasCustomStyleResolveCallbacks();
 }
 
-RefPtr<HTMLFrameElement> HTMLFrameElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLFrameElement> HTMLFrameElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLFrameElement(tagName, document));
+    return adoptRef(*new HTMLFrameElement(tagName, document));
 }
 
 bool HTMLFrameElement::rendererIsNeeded(const RenderStyle&)

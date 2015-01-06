@@ -37,9 +37,9 @@ inline HTMLQuoteElement::HTMLQuoteElement(const QualifiedName& tagName, Document
     ASSERT(hasTagName(qTag) || hasTagName(blockquoteTag));
 }
 
-PassRefPtr<HTMLQuoteElement> HTMLQuoteElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLQuoteElement> HTMLQuoteElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLQuoteElement(tagName, document));
+    return adoptRef(*new HTMLQuoteElement(tagName, document));
 }
 
 bool HTMLQuoteElement::isURLAttribute(const Attribute& attribute) const

@@ -43,9 +43,9 @@ inline HTMLDataListElement::HTMLDataListElement(const QualifiedName& tagName, Do
 {
 }
 
-RefPtr<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLDataListElement(tagName, document));
+    return adoptRef(*new HTMLDataListElement(tagName, document));
 }
 
 RefPtr<HTMLCollection> HTMLDataListElement::options()

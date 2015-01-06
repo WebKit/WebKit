@@ -895,12 +895,12 @@ PassRefPtr<HTMLElement> createListItemElement(Document& document)
     return HTMLLIElement::create(document);
 }
 
-PassRefPtr<HTMLElement> createHTMLElement(Document& document, const QualifiedName& name)
+Ref<HTMLElement> createHTMLElement(Document& document, const QualifiedName& name)
 {
     return HTMLElementFactory::createElement(name, document);
 }
 
-PassRefPtr<HTMLElement> createHTMLElement(Document& document, const AtomicString& tagName)
+Ref<HTMLElement> createHTMLElement(Document& document, const AtomicString& tagName)
 {
     return createHTMLElement(document, QualifiedName(nullAtom, tagName, xhtmlNamespaceURI));
 }

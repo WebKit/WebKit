@@ -80,10 +80,10 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document& doc
     ASSERT(hasTagName(selectTag));
 }
 
-RefPtr<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
     ASSERT(tagName.matches(selectTag));
-    return adoptRef(new HTMLSelectElement(tagName, document, form));
+    return adoptRef(*new HTMLSelectElement(tagName, document, form));
 }
 
 void HTMLSelectElement::didRecalcStyle(Style::Change styleChange)

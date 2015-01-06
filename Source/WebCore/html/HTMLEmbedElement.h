@@ -29,7 +29,7 @@ namespace WebCore {
 
 class HTMLEmbedElement final : public HTMLPlugInImageElement {
 public:
-    static RefPtr<HTMLEmbedElement> create(const QualifiedName&, Document&, bool createdByParser);
+    static Ref<HTMLEmbedElement> create(const QualifiedName&, Document&, bool createdByParser);
 
 private:
     HTMLEmbedElement(const QualifiedName&, Document&, bool createdByParser);

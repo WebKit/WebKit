@@ -42,9 +42,9 @@ inline HTMLTableColElement::HTMLTableColElement(const QualifiedName& tagName, Do
 {
 }
 
-RefPtr<HTMLTableColElement> HTMLTableColElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTableColElement> HTMLTableColElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLTableColElement(tagName, document));
+    return adoptRef(*new HTMLTableColElement(tagName, document));
 }
 
 bool HTMLTableColElement::isPresentationAttribute(const QualifiedName& name) const

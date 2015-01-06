@@ -37,7 +37,7 @@ class HTMLMediaElement;
 
 class HTMLTrackElement final : public HTMLElement, public TextTrackClient {
 public:
-    static RefPtr<HTMLTrackElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTrackElement> create(const QualifiedName&, Document&);
 
     String kind();
     void setKind(const String&);

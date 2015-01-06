@@ -38,9 +38,9 @@ inline HTMLPreElement::HTMLPreElement(const QualifiedName& tagName, Document& do
 {
 }
 
-RefPtr<HTMLPreElement> HTMLPreElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLPreElement> HTMLPreElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLPreElement(tagName, document));
+    return adoptRef(*new HTMLPreElement(tagName, document));
 }
 
 bool HTMLPreElement::isPresentationAttribute(const QualifiedName& name) const

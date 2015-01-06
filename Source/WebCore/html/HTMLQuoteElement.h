@@ -31,7 +31,7 @@ namespace WebCore {
 
 class HTMLQuoteElement final : public HTMLElement {
 public:
-    static PassRefPtr<HTMLQuoteElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLQuoteElement> create(const QualifiedName&, Document&);
 
 private:
     HTMLQuoteElement(const QualifiedName&, Document&);

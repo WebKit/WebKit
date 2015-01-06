@@ -42,9 +42,9 @@ inline HTMLTableSectionElement::HTMLTableSectionElement(const QualifiedName& tag
 {
 }
 
-RefPtr<HTMLTableSectionElement> HTMLTableSectionElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTableSectionElement> HTMLTableSectionElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLTableSectionElement(tagName, document));
+    return adoptRef(*new HTMLTableSectionElement(tagName, document));
 }
 
 const StyleProperties* HTMLTableSectionElement::additionalPresentationAttributeStyle()

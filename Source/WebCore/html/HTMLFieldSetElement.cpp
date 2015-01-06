@@ -50,9 +50,9 @@ HTMLFieldSetElement::~HTMLFieldSetElement()
         document().removeDisabledFieldsetElement();
 }
 
-RefPtr<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
+Ref<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
-    return adoptRef(new HTMLFieldSetElement(tagName, document, form));
+    return adoptRef(*new HTMLFieldSetElement(tagName, document, form));
 }
 
 static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& startNode, bool isDisabled)

@@ -57,14 +57,14 @@ HTMLTableElement::HTMLTableElement(const QualifiedName& tagName, Document& docum
     ASSERT(hasTagName(tableTag));
 }
 
-RefPtr<HTMLTableElement> HTMLTableElement::create(Document& document)
+Ref<HTMLTableElement> HTMLTableElement::create(Document& document)
 {
-    return adoptRef(new HTMLTableElement(tableTag, document));
+    return adoptRef(*new HTMLTableElement(tableTag, document));
 }
 
-RefPtr<HTMLTableElement> HTMLTableElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTableElement> HTMLTableElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLTableElement(tagName, document));
+    return adoptRef(*new HTMLTableElement(tagName, document));
 }
 
 HTMLTableCaptionElement* HTMLTableElement::caption() const

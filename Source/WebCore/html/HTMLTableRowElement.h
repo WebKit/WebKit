@@ -32,8 +32,8 @@ namespace WebCore {
 
 class HTMLTableRowElement final : public HTMLTablePartElement {
 public:
-    static RefPtr<HTMLTableRowElement> create(Document&);
-    static RefPtr<HTMLTableRowElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTableRowElement> create(Document&);
+    static Ref<HTMLTableRowElement> create(const QualifiedName&, Document&);
 
     int rowIndex() const;
     void setRowIndex(int);

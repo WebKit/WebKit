@@ -39,14 +39,14 @@ HTMLBRElement::HTMLBRElement(const QualifiedName& tagName, Document& document)
     ASSERT(hasTagName(brTag));
 }
 
-RefPtr<HTMLBRElement> HTMLBRElement::create(Document& document)
+Ref<HTMLBRElement> HTMLBRElement::create(Document& document)
 {
-    return adoptRef(new HTMLBRElement(brTag, document));
+    return adoptRef(*new HTMLBRElement(brTag, document));
 }
 
-RefPtr<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLBRElement(tagName, document));
+    return adoptRef(*new HTMLBRElement(tagName, document));
 }
 
 bool HTMLBRElement::isPresentationAttribute(const QualifiedName& name) const

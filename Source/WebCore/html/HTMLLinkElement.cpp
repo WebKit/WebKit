@@ -81,9 +81,9 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(linkTag));
 }
 
-RefPtr<HTMLLinkElement> HTMLLinkElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<HTMLLinkElement> HTMLLinkElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
-    return adoptRef(new HTMLLinkElement(tagName, document, createdByParser));
+    return adoptRef(*new HTMLLinkElement(tagName, document, createdByParser));
 }
 
 HTMLLinkElement::~HTMLLinkElement()

@@ -67,9 +67,9 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace WTF;
 
-RefPtr<HTMLElement> HTMLElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLElement> HTMLElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLElement(tagName, document));
+    return adoptRef(*new HTMLElement(tagName, document));
 }
 
 String HTMLElement::nodeName() const

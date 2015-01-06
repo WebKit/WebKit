@@ -38,7 +38,7 @@ namespace WebCore {
 
 class HTMLOutputElement final : public HTMLFormControlElement {
 public:
-    static RefPtr<HTMLOutputElement> create(const QualifiedName&, Document&, HTMLFormElement*);
+    static Ref<HTMLOutputElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
     String value() const;
     void setValue(const String&);

@@ -50,9 +50,9 @@ MathMLElement::MathMLElement(const QualifiedName& tagName, Document& document)
 {
 }
     
-RefPtr<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Document& document)
+Ref<MathMLElement> MathMLElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new MathMLElement(tagName, document));
+    return adoptRef(*new MathMLElement(tagName, document));
 }
 
 bool MathMLElement::isPresentationMathML() const

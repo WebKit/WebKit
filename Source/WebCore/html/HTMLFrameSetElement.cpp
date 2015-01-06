@@ -58,9 +58,9 @@ HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document&
     setHasCustomStyleResolveCallbacks();
 }
 
-RefPtr<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLFrameSetElement(tagName, document));
+    return adoptRef(*new HTMLFrameSetElement(tagName, document));
 }
 
 bool HTMLFrameSetElement::isPresentationAttribute(const QualifiedName& name) const

@@ -32,8 +32,8 @@ class HTMLImageElement;
     
 class HTMLMapElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLMapElement> create(Document&);
-    static RefPtr<HTMLMapElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLMapElement> create(Document&);
+    static Ref<HTMLMapElement> create(const QualifiedName&, Document&);
     virtual ~HTMLMapElement();
 
     const AtomicString& getName() const { return m_name; }

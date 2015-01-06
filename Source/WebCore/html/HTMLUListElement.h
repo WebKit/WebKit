@@ -29,8 +29,8 @@ namespace WebCore {
 
 class HTMLUListElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLUListElement> create(Document&);
-    static RefPtr<HTMLUListElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLUListElement> create(Document&);
+    static Ref<HTMLUListElement> create(const QualifiedName&, Document&);
 
 private:
     HTMLUListElement(const QualifiedName&, Document&);

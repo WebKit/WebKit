@@ -71,14 +71,14 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document& documen
     ASSERT(hasTagName(formTag));
 }
 
-RefPtr<HTMLFormElement> HTMLFormElement::create(Document& document)
+Ref<HTMLFormElement> HTMLFormElement::create(Document& document)
 {
-    return adoptRef(new HTMLFormElement(formTag, document));
+    return adoptRef(*new HTMLFormElement(formTag, document));
 }
 
-RefPtr<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLFormElement(tagName, document));
+    return adoptRef(*new HTMLFormElement(tagName, document));
 }
 
 HTMLFormElement::~HTMLFormElement()

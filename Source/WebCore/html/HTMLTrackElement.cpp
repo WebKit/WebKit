@@ -64,9 +64,9 @@ HTMLTrackElement::~HTMLTrackElement()
         m_track->clearClient();
 }
 
-RefPtr<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLTrackElement(tagName, document));
+    return adoptRef(*new HTMLTrackElement(tagName, document));
 }
 
 Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(ContainerNode& insertionPoint)

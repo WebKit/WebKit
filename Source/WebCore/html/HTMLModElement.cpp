@@ -34,9 +34,9 @@ inline HTMLModElement::HTMLModElement(const QualifiedName& tagName, Document& do
 {
 }
 
-RefPtr<HTMLModElement> HTMLModElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLModElement> HTMLModElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLModElement(tagName, document));
+    return adoptRef(*new HTMLModElement(tagName, document));
 }
 
 bool HTMLModElement::isURLAttribute(const Attribute& attribute) const

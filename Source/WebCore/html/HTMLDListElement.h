@@ -29,7 +29,7 @@ namespace WebCore {
 
 class HTMLDListElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLDListElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLDListElement> create(const QualifiedName&, Document&);
 
 private:
     HTMLDListElement(const QualifiedName&, Document&);

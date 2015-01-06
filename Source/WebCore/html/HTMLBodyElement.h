@@ -32,8 +32,8 @@ class Document;
 
 class HTMLBodyElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLBodyElement> create(Document&);
-    static RefPtr<HTMLBodyElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLBodyElement> create(Document&);
+    static Ref<HTMLBodyElement> create(const QualifiedName&, Document&);
     virtual ~HTMLBodyElement();
 
     // Declared virtual in Element

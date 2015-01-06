@@ -44,9 +44,9 @@ inline HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, 
 {
 }
 
-RefPtr<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLTableCellElement> HTMLTableCellElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLTableCellElement(tagName, document));
+    return adoptRef(*new HTMLTableCellElement(tagName, document));
 }
 
 int HTMLTableCellElement::colSpan() const

@@ -32,7 +32,7 @@ class HTMLSelectElement;
 
 class HTMLOptGroupElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLOptGroupElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLOptGroupElement> create(const QualifiedName&, Document&);
 
     virtual bool isDisabledFormControl() const override;
     HTMLSelectElement* ownerSelectElement() const;

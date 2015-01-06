@@ -44,14 +44,14 @@ HTMLOListElement::HTMLOListElement(const QualifiedName& tagName, Document& docum
     ASSERT(hasTagName(olTag));
 }
 
-RefPtr<HTMLOListElement> HTMLOListElement::create(Document& document)
+Ref<HTMLOListElement> HTMLOListElement::create(Document& document)
 {
-    return adoptRef(new HTMLOListElement(olTag, document));
+    return adoptRef(*new HTMLOListElement(olTag, document));
 }
 
-RefPtr<HTMLOListElement> HTMLOListElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLOListElement> HTMLOListElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLOListElement(tagName, document));
+    return adoptRef(*new HTMLOListElement(tagName, document));
 }
 
 bool HTMLOListElement::isPresentationAttribute(const QualifiedName& name) const

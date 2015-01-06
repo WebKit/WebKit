@@ -40,7 +40,7 @@ enum TranslateAttributeMode {
 
 class HTMLElement : public StyledElement {
 public:
-    static RefPtr<HTMLElement> create(const QualifiedName& tagName, Document&);
+    static Ref<HTMLElement> create(const QualifiedName& tagName, Document&);
 
     RefPtr<HTMLCollection> children();
 

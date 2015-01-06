@@ -45,7 +45,7 @@ typedef EventSender<HTMLLinkElement> LinkEventSender;
 
 class HTMLLinkElement final : public HTMLElement, public CachedStyleSheetClient, public LinkLoaderClient {
 public:
-    static RefPtr<HTMLLinkElement> create(const QualifiedName&, Document&, bool createdByParser);
+    static Ref<HTMLLinkElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLLinkElement();
 
     URL href() const;

@@ -50,9 +50,9 @@ inline HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document
     ASSERT(hasTagName(embedTag));
 }
 
-RefPtr<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<HTMLEmbedElement> HTMLEmbedElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
-    return adoptRef(new HTMLEmbedElement(tagName, document, createdByParser));
+    return adoptRef(*new HTMLEmbedElement(tagName, document, createdByParser));
 }
 
 static inline RenderWidget* findWidgetRenderer(const Node* node)

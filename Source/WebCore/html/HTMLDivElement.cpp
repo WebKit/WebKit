@@ -38,14 +38,14 @@ HTMLDivElement::HTMLDivElement(const QualifiedName& tagName, Document& document)
     ASSERT(hasTagName(divTag));
 }
 
-RefPtr<HTMLDivElement> HTMLDivElement::create(Document& document)
+Ref<HTMLDivElement> HTMLDivElement::create(Document& document)
 {
-    return adoptRef(new HTMLDivElement(divTag, document));
+    return adoptRef(*new HTMLDivElement(divTag, document));
 }
 
-RefPtr<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLDivElement> HTMLDivElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLDivElement(tagName, document));
+    return adoptRef(*new HTMLDivElement(tagName, document));
 }
 
 bool HTMLDivElement::isPresentationAttribute(const QualifiedName& name) const

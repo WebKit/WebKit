@@ -32,7 +32,7 @@ namespace WebCore {
 
 class HTMLTableCaptionElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLTableCaptionElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLTableCaptionElement> create(const QualifiedName&, Document&);
 
 private:
     HTMLTableCaptionElement(const QualifiedName&, Document&);

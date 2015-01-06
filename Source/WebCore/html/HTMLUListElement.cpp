@@ -37,14 +37,14 @@ HTMLUListElement::HTMLUListElement(const QualifiedName& tagName, Document& docum
     ASSERT(hasTagName(ulTag));
 }
 
-RefPtr<HTMLUListElement> HTMLUListElement::create(Document& document)
+Ref<HTMLUListElement> HTMLUListElement::create(Document& document)
 {
-    return adoptRef(new HTMLUListElement(ulTag, document));
+    return adoptRef(*new HTMLUListElement(ulTag, document));
 }
 
-RefPtr<HTMLUListElement> HTMLUListElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLUListElement> HTMLUListElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLUListElement(tagName, document));
+    return adoptRef(*new HTMLUListElement(tagName, document));
 }
 
 bool HTMLUListElement::isPresentationAttribute(const QualifiedName& name) const

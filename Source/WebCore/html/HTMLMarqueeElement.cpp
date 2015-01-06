@@ -42,11 +42,11 @@ inline HTMLMarqueeElement::HTMLMarqueeElement(const QualifiedName& tagName, Docu
     ASSERT(hasTagName(marqueeTag));
 }
 
-RefPtr<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLMarqueeElement> HTMLMarqueeElement::create(const QualifiedName& tagName, Document& document)
 {
-    RefPtr<HTMLMarqueeElement> marqueeElement(adoptRef(new HTMLMarqueeElement(tagName, document)));
+    Ref<HTMLMarqueeElement> marqueeElement = adoptRef(*new HTMLMarqueeElement(tagName, document));
     marqueeElement->suspendIfNeeded();
-    return marqueeElement.release();
+    return marqueeElement;
 }
 
 int HTMLMarqueeElement::minimumDelay() const

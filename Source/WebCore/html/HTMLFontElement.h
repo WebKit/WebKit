@@ -30,7 +30,7 @@ namespace WebCore {
 
 class HTMLFontElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLFontElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLFontElement> create(const QualifiedName&, Document&);
     
     static bool cssValueFromFontSizeNumber(const String&, CSSValueID&);
 

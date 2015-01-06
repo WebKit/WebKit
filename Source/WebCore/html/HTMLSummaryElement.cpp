@@ -52,9 +52,9 @@ RefPtr<SummaryContentElement> SummaryContentElement::create(Document& document)
     return adoptRef(new SummaryContentElement(document));
 }
 
-RefPtr<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document& document)
 {
-    RefPtr<HTMLSummaryElement> summary = adoptRef(new HTMLSummaryElement(tagName, document));
+    Ref<HTMLSummaryElement> summary = adoptRef(*new HTMLSummaryElement(tagName, document));
     summary->ensureUserAgentShadowRoot();
     return summary;
 }

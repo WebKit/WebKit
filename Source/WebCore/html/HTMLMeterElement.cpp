@@ -50,9 +50,9 @@ HTMLMeterElement::~HTMLMeterElement()
 {
 }
 
-RefPtr<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLMeterElement> HTMLMeterElement::create(const QualifiedName& tagName, Document& document)
 {
-    RefPtr<HTMLMeterElement> meter = adoptRef(new HTMLMeterElement(tagName, document));
+    Ref<HTMLMeterElement> meter = adoptRef(*new HTMLMeterElement(tagName, document));
     meter->ensureUserAgentShadowRoot();
     return meter;
 }

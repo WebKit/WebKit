@@ -33,7 +33,7 @@ class VisibleSelection;
 
 class HTMLTextAreaElement final : public HTMLTextFormControlElement {
 public:
-    static RefPtr<HTMLTextAreaElement> create(const QualifiedName&, Document&, HTMLFormElement*);
+    static Ref<HTMLTextAreaElement> create(const QualifiedName&, Document&, HTMLFormElement*);
 
     int cols() const { return m_cols; }
     int rows() const { return m_rows; }

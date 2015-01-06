@@ -45,9 +45,9 @@ inline HTMLAreaElement::HTMLAreaElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(areaTag));
 }
 
-RefPtr<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLAreaElement> HTMLAreaElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new HTMLAreaElement(tagName, document));
+    return adoptRef(*new HTMLAreaElement(tagName, document));
 }
 
 void HTMLAreaElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

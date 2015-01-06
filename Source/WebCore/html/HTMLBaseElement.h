@@ -29,7 +29,7 @@ namespace WebCore {
 
 class HTMLBaseElement final : public HTMLElement {
 public:
-    static RefPtr<HTMLBaseElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLBaseElement> create(const QualifiedName&, Document&);
 
     URL href() const;
     void setHref(const AtomicString&);
