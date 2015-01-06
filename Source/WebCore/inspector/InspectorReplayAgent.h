@@ -67,9 +67,9 @@ public:
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
-    // Callbacks from InspectorInstrumentation.
+    // InspectorInstrumentation callbacks.
     void frameNavigated(DocumentLoader*);
-    void frameDetached(Frame*);
+    void frameDetached(Frame&);
     void willDispatchEvent(const Event&, Frame*);
 
     // Notifications from ReplayController.

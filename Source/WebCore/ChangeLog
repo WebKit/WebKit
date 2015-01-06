@@ -1,3 +1,142 @@
+2015-01-06  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: pass parameters to inspector agents by reference where possible
+        https://bugs.webkit.org/show_bug.cgi?id=140002
+
+        Reviewed by Andreas Kling.
+
+        Pass parameters by-reference from inspector instrumentation entry
+        points to inspector agents. If the event doesn't make sense with null
+        arguments, perform null checks before calling agent methods.
+
+        No new tests, no behavior changed.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::didCreateNamedFlow):
+        (WebCore::InspectorCSSAgent::willRemoveNamedFlow):
+        (WebCore::InspectorCSSAgent::didChangeRegionOverset):
+        (WebCore::InspectorCSSAgent::didRegisterNamedFlowContentElement):
+        (WebCore::InspectorCSSAgent::didUnregisterNamedFlowContentElement):
+        (WebCore::InspectorCSSAgent::forcePseudoState):
+        * inspector/InspectorCSSAgent.h: Reorder methods to match instrumentation.
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::handleTouchEvent):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        (WebCore::InspectorDOMAgent::willModifyDOMAttr):
+        (WebCore::InspectorDOMAgent::didModifyDOMAttr):
+        (WebCore::InspectorDOMAgent::didRemoveDOMAttr):
+        (WebCore::InspectorDOMAgent::characterDataModified):
+        (WebCore::InspectorDOMAgent::didInvalidateStyleAttr):
+        (WebCore::InspectorDOMAgent::didPushShadowRoot):
+        (WebCore::InspectorDOMAgent::willPopShadowRoot):
+        * inspector/InspectorDOMAgent.h: Reorder methods to match instrumentation.
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::didInvalidateStyleAttr):
+        (WebCore::InspectorDOMDebuggerAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::didRemoveDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::willInsertDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::willRemoveDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::willModifyDOMAttr):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        (WebCore::InspectorInstrumentation::willInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::didModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::didRemoveDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::didInvalidateStyleAttrImpl):
+        (WebCore::InspectorInstrumentation::didPushShadowRootImpl):
+        (WebCore::InspectorInstrumentation::willPopShadowRootImpl):
+        (WebCore::InspectorInstrumentation::didCreateNamedFlowImpl): Add null check.
+        (WebCore::InspectorInstrumentation::willRemoveNamedFlowImpl): Add null check.
+        (WebCore::InspectorInstrumentation::didChangeRegionOversetImpl):
+        (WebCore::InspectorInstrumentation::didRegisterNamedFlowContentElementImpl):
+        (WebCore::InspectorInstrumentation::didUnregisterNamedFlowContentElementImpl):
+        (WebCore::InspectorInstrumentation::handleTouchEventImpl):
+        (WebCore::InspectorInstrumentation::forcePseudoStateImpl):
+        (WebCore::InspectorInstrumentation::characterDataModifiedImpl):
+        (WebCore::InspectorInstrumentation::willEvaluateScriptImpl):
+        (WebCore::InspectorInstrumentation::didEvaluateScriptImpl):
+        (WebCore::InspectorInstrumentation::didInvalidateLayoutImpl):
+        (WebCore::InspectorInstrumentation::willLayoutImpl):
+        (WebCore::InspectorInstrumentation::willPaintImpl):
+        (WebCore::InspectorInstrumentation::willScrollLayerImpl):
+        (WebCore::InspectorInstrumentation::didScheduleStyleRecalculationImpl):
+        (WebCore::InspectorInstrumentation::applyEmulatedMediaImpl):
+        (WebCore::InspectorInstrumentation::willSendRequestImpl): Add null check.
+        (WebCore::InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl): Add null checks.
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponseImpl):  Add null check.
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseButCanceledImpl): Add null check.
+        (WebCore::InspectorInstrumentation::didFinishLoadingImpl): Add null check.
+        (WebCore::InspectorInstrumentation::didFailLoadingImpl): Add null check.
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFiredImpl):
+        (WebCore::InspectorInstrumentation::loadEventFiredImpl): Add null check.
+        (WebCore::InspectorInstrumentation::frameDetachedFromParentImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl): Add null checks.
+        (WebCore::InspectorInstrumentation::loaderDetachedFromFrameImpl):
+        (WebCore::InspectorInstrumentation::willDestroyCachedResourceImpl):
+        (WebCore::InspectorInstrumentation::startConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::consoleTimeStampImpl):
+        (WebCore::InspectorInstrumentation::didCreateWebSocketImpl): Add null check.
+        (WebCore::InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl): Add null check.
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl): Add null check.
+        (WebCore::InspectorInstrumentation::didCloseWebSocketImpl): Add null check.
+        (WebCore::InspectorInstrumentation::renderLayerDestroyedImpl):
+        (WebCore::InspectorInstrumentation::pseudoElementDestroyedImpl):
+        (WebCore::InspectorInstrumentation::scriptsEnabledImpl): Deleted.
+        (WebCore::InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClientImpl): Deleted.
+        (WebCore::InspectorInstrumentation::frameStartedLoadingImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willWriteHTMLImpl): Deleted.
+        (WebCore::InspectorInstrumentation::startProfilingImpl): Deleted.
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::renderLayerDestroyed):
+        (WebCore::InspectorLayerTreeAgent::pseudoElementDestroyed):
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::frameDetached):
+        (WebCore::InspectorPageAgent::loaderDetachedFromFrame):
+        (WebCore::InspectorPageAgent::applyEmulatedMedia):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::InspectorReplayAgent::frameDetached):
+        * inspector/InspectorReplayAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didFinishLoading):
+        (WebCore::InspectorResourceAgent::didFailLoading):
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorResourceAgent::willDestroyCachedResource):
+        (WebCore::InspectorResourceAgent::didScheduleStyleRecalculation):
+        (WebCore::InspectorResourceAgent::mainFrameNavigated):
+        * inspector/InspectorResourceAgent.h: Reorder methods to match instrumentation.
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didInvalidateLayout):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::willScroll):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didTimeStamp):
+        (WebCore::InspectorTimelineAgent::time):
+        (WebCore::InspectorTimelineAgent::timeEnd):
+        (WebCore::InspectorTimelineAgent::didMarkDOMContentEvent):
+        (WebCore::InspectorTimelineAgent::didMarkLoadEvent):
+        * inspector/InspectorTimelineAgent.h: Reorder methods to match instrumentation.
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::didCreateMainWorldContext):
+        (WebCore::PageRuntimeAgent::didCreateIsolatedContext): Deleted. It has no callers.
+        * inspector/PageRuntimeAgent.h:
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::frameDetached):
+        * replay/ReplayController.h:
+
 2015-01-06  Anders Carlsson  <andersca@apple.com>
 
         Remove an old workaround for an old unsupported plug-in

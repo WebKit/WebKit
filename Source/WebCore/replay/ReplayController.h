@@ -132,7 +132,7 @@ public:
 
     // InspectorReplayAgent notifications.
     void frameNavigated(DocumentLoader*);
-    void frameDetached(Frame*);
+    void frameDetached(Frame&);
     void willDispatchEvent(const Event&, Frame*);
 
     Page& page() const { return m_page; }

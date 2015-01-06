@@ -84,17 +84,16 @@ public:
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
 
-    void willSendRequest(unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
+    // InspectorInstrumentation callbacks.
+    void willRecalculateStyle();
+    void didRecalculateStyle();
+    void willSendRequest(unsigned long identifier, DocumentLoader&, ResourceRequest&, const ResourceResponse& redirectResponse);
     void markResourceAsCached(unsigned long identifier);
-    void didReceiveResponse(unsigned long identifier, DocumentLoader* laoder, const ResourceResponse&, ResourceLoader*);
+    void didReceiveResponse(unsigned long identifier, DocumentLoader& loader, const ResourceResponse&, ResourceLoader*);
     void didReceiveData(unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
-    void didFinishLoading(unsigned long identifier, DocumentLoader*, double finishTime);
-    void didFailLoading(unsigned long identifier, DocumentLoader*, const ResourceError&);
-    void didLoadResourceFromMemoryCache(DocumentLoader*, CachedResource*);
-    void mainFrameNavigated(DocumentLoader*);
-    void setInitialScriptContent(unsigned long identifier, const String& sourceString);
-    void didReceiveScriptResponse(unsigned long identifier);
-
+    void didFinishLoading(unsigned long identifier, DocumentLoader&, double finishTime);
+    void didFailLoading(unsigned long identifier, DocumentLoader&, const ResourceError&);
+    void didLoadResourceFromMemoryCache(DocumentLoader&, CachedResource&);
     void documentThreadableLoaderStartedLoadingForClient(unsigned long identifier, ThreadableLoaderClient*);
     void willLoadXHR(ThreadableLoaderClient*, const String& method, const URL&, bool async, PassRefPtr<FormData> body, const HTTPHeaderMap& headers, bool includeCrendentials);
     void didFailXHRLoading(ThreadableLoaderClient*);
@@ -102,16 +101,8 @@ public:
     void didReceiveXHRResponse(unsigned long identifier);
     void willLoadXHRSynchronously();
     void didLoadXHRSynchronously();
-
-    void willDestroyCachedResource(CachedResource*);
-
-    // FIXME: InspectorResourceAgent should now be aware of style recalculation.
-    void willRecalculateStyle();
-    void didRecalculateStyle();
-    void didScheduleStyleRecalculation(Document*);
-
-    PassRefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*);
-
+    void didReceiveScriptResponse(unsigned long identifier);
+    void willDestroyCachedResource(CachedResource&);
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const URL& requestURL);
     void willSendWebSocketHandshakeRequest(unsigned long identifier, const ResourceRequest&);
@@ -121,6 +112,13 @@ public:
     void didSendWebSocketFrame(unsigned long identifier, const WebSocketFrame&);
     void didReceiveWebSocketFrameError(unsigned long identifier, const String&);
 #endif
+
+    void mainFrameNavigated(DocumentLoader&);
+    void setInitialScriptContent(unsigned long identifier, const String& sourceString);
+
+    void didScheduleStyleRecalculation(Document&);
+
+    PassRefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*);
 
     // Called from frontend.
     virtual void enable(ErrorString&) override;

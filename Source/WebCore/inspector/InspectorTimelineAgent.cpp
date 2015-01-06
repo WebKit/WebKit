@@ -44,6 +44,7 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "JSDOMWindow.h"
+#include "MainFrame.h"
 #include "PageScriptDebugServer.h"
 #include "RenderElement.h"
 #include "RenderView.h"
@@ -274,18 +275,18 @@ void InspectorTimelineAgent::didDispatchEvent()
     didCompleteCurrentRecord(TimelineRecordType::EventDispatch);
 }
 
-void InspectorTimelineAgent::didInvalidateLayout(Frame* frame)
+void InspectorTimelineAgent::didInvalidateLayout(Frame& frame)
 {
-    appendRecord(InspectorObject::create(), TimelineRecordType::InvalidateLayout, true, frame);
+    appendRecord(InspectorObject::create(), TimelineRecordType::InvalidateLayout, true, &frame);
 }
 
-void InspectorTimelineAgent::willLayout(Frame* frame)
+void InspectorTimelineAgent::willLayout(Frame& frame)
 {
-    RenderObject* root = frame->view()->layoutRoot();
+    RenderObject* root = frame.view()->layoutRoot();
     bool partialLayout = !!root;
 
     if (!partialLayout)
-        root = frame->contentRenderer();
+        root = frame.contentRenderer();
 
     unsigned dirtyObjects = 0;
     unsigned totalObjects = 0;
@@ -294,7 +295,7 @@ void InspectorTimelineAgent::willLayout(Frame* frame)
         if (o->needsLayout())
             ++dirtyObjects;
     }
-    pushCurrentRecord(TimelineRecordFactory::createLayoutData(dirtyObjects, totalObjects, partialLayout), TimelineRecordType::Layout, true, frame);
+    pushCurrentRecord(TimelineRecordFactory::createLayoutData(dirtyObjects, totalObjects, partialLayout), TimelineRecordType::Layout, true, &frame);
 }
 
 void InspectorTimelineAgent::didLayout(RenderObject* root)
@@ -327,9 +328,9 @@ void InspectorTimelineAgent::didRecalculateStyle()
     didCompleteCurrentRecord(TimelineRecordType::RecalculateStyles);
 }
 
-void InspectorTimelineAgent::willPaint(Frame* frame)
+void InspectorTimelineAgent::willPaint(Frame& frame)
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Paint, true, frame);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Paint, true, &frame);
 }
 
 void InspectorTimelineAgent::didPaint(RenderObject* renderer, const LayoutRect& clipRect)
@@ -342,9 +343,9 @@ void InspectorTimelineAgent::didPaint(RenderObject* renderer, const LayoutRect& 
     didCompleteCurrentRecord(TimelineRecordType::Paint);
 }
 
-void InspectorTimelineAgent::willScroll(Frame* frame)
+void InspectorTimelineAgent::willScroll(Frame& frame)
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::ScrollLayer, false, frame);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::ScrollLayer, false, &frame);
 }
 
 void InspectorTimelineAgent::didScroll()
@@ -406,19 +407,19 @@ void InspectorTimelineAgent::didDispatchXHRLoadEvent()
     didCompleteCurrentRecord(TimelineRecordType::XHRLoad);
 }
 
-void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumber, Frame* frame)
+void InspectorTimelineAgent::willEvaluateScript(const String& url, int lineNumber, Frame& frame)
 {
-    pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber), TimelineRecordType::EvaluateScript, true, frame);
+    pushCurrentRecord(TimelineRecordFactory::createEvaluateScriptData(url, lineNumber), TimelineRecordType::EvaluateScript, true, &frame);
 
-    if (frame && !m_callStackDepth) {
+    if (!m_callStackDepth) {
         ++m_callStackDepth;
-        startProfiling(frame, ASCIILiteral("Timeline EvaluateScript"), m_instrumentingAgents->inspectorEnvironment().executionStopwatch());
+        startProfiling(&frame, ASCIILiteral("Timeline EvaluateScript"), m_instrumentingAgents->inspectorEnvironment().executionStopwatch());
     }
 }
 
-void InspectorTimelineAgent::didEvaluateScript(Frame* frame)
+void InspectorTimelineAgent::didEvaluateScript(Frame& frame)
 {
-    if (frame && m_callStackDepth) {
+    if (m_callStackDepth) {
         --m_callStackDepth;
         ASSERT(m_callStackDepth >= 0);
 
@@ -429,7 +430,7 @@ void InspectorTimelineAgent::didEvaluateScript(Frame* frame)
             TimelineRecordEntry& entry = m_recordStack.last();
             ASSERT(entry.type == TimelineRecordType::EvaluateScript);
 
-            RefPtr<JSC::Profile> profile = stopProfiling(frame, ASCIILiteral("Timeline EvaluateScript"));
+            RefPtr<JSC::Profile> profile = stopProfiling(&frame, ASCIILiteral("Timeline EvaluateScript"));
             if (profile)
                 TimelineRecordFactory::appendProfile(entry.data.get(), profile.release());
         }
@@ -476,31 +477,29 @@ void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, 
     appendRecord(TimelineRecordFactory::createResourceFinishData(IdentifiersFactory::requestId(identifier), didFail, finishTime * 1000), TimelineRecordType::ResourceFinish, false, frame);
 }
 
-void InspectorTimelineAgent::didTimeStamp(Frame* frame, const String& message)
+void InspectorTimelineAgent::didTimeStamp(Frame& frame, const String& message)
 {
-    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp, true, frame);
+    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp, true, &frame);
 }
 
-void InspectorTimelineAgent::time(Frame* frame, const String& message)
+void InspectorTimelineAgent::time(Frame& frame, const String& message)
 {
-    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::Time, true, frame);
+    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::Time, true, &frame);
 }
 
-void InspectorTimelineAgent::timeEnd(Frame* frame, const String& message)
+void InspectorTimelineAgent::timeEnd(Frame& frame, const String& message)
 {
-    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeEnd, true, frame);
+    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeEnd, true, &frame);
 }
 
-void InspectorTimelineAgent::didMarkDOMContentEvent(Frame* frame)
+void InspectorTimelineAgent::didMarkDOMContentEvent(Frame& frame)
 {
-    bool isMainFrame = frame && m_pageAgent && (frame == m_pageAgent->mainFrame());
-    appendRecord(TimelineRecordFactory::createMarkData(isMainFrame), TimelineRecordType::MarkDOMContent, false, frame);
+    appendRecord(TimelineRecordFactory::createMarkData(frame.isMainFrame()), TimelineRecordType::MarkDOMContent, false, &frame);
 }
 
-void InspectorTimelineAgent::didMarkLoadEvent(Frame* frame)
+void InspectorTimelineAgent::didMarkLoadEvent(Frame& frame)
 {
-    bool isMainFrame = frame && m_pageAgent && (frame == m_pageAgent->mainFrame());
-    appendRecord(TimelineRecordFactory::createMarkData(isMainFrame), TimelineRecordType::MarkLoad, false, frame);
+    appendRecord(TimelineRecordFactory::createMarkData(frame.isMainFrame()), TimelineRecordType::MarkLoad, false, &frame);
 }
 
 void InspectorTimelineAgent::didCommitLoad()

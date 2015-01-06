@@ -208,7 +208,7 @@ void InspectorReplayAgent::frameNavigated(DocumentLoader* loader)
         m_page.replayController().frameNavigated(loader);
 }
 
-void InspectorReplayAgent::frameDetached(Frame* frame)
+void InspectorReplayAgent::frameDetached(Frame& frame)
 {
     if (sessionState() != WebCore::SessionState::Inactive)
         m_page.replayController().frameDetached(frame);

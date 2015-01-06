@@ -730,9 +730,9 @@ void InspectorPageAgent::frameNavigated(DocumentLoader* loader)
     m_frontendDispatcher->frameNavigated(buildObjectForFrame(loader->frame()));
 }
 
-void InspectorPageAgent::frameDetached(Frame* frame)
+void InspectorPageAgent::frameDetached(Frame& frame)
 {
-    HashMap<Frame*, String>::iterator iterator = m_frameToIdentifier.find(frame);
+    HashMap<Frame*, String>::iterator iterator = m_frameToIdentifier.find(&frame);
     if (iterator != m_frameToIdentifier.end()) {
         m_frontendDispatcher->frameDetached(iterator->value);
         m_identifierToFrame.remove(iterator->value);
@@ -809,9 +809,9 @@ DocumentLoader* InspectorPageAgent::assertDocumentLoader(ErrorString& errorStrin
     return documentLoader;
 }
 
-void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader* loader)
+void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader& loader)
 {
-    m_loaderToIdentifier.remove(loader);
+    m_loaderToIdentifier.remove(&loader);
 }
 
 void InspectorPageAgent::frameStartedLoading(Frame& frame)
@@ -984,10 +984,10 @@ void InspectorPageAgent::setEmulatedMedia(ErrorString&, const String& media)
     }
 }
 
-void InspectorPageAgent::applyEmulatedMedia(String* media)
+void InspectorPageAgent::applyEmulatedMedia(String& media)
 {
     if (!m_emulatedMedia.isEmpty())
-        *media = m_emulatedMedia;
+        media = m_emulatedMedia;
 }
 
 void InspectorPageAgent::getCompositingBordersVisible(ErrorString&, bool* outParam)

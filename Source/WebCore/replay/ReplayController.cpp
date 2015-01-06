@@ -425,18 +425,17 @@ void ReplayController::frameNavigated(DocumentLoader* loader)
     loader->frame()->script().globalObject(mainThreadNormalWorld())->setInputCursor(m_activeCursor.get());
 }
 
-void ReplayController::frameDetached(Frame* frame)
+void ReplayController::frameDetached(Frame& frame)
 {
     ASSERT(m_sessionState != SessionState::Inactive);
-    ASSERT(frame);
 
-    if (!frame->document())
+    if (!frame.document())
         return;
 
     // If the frame's cursor isn't capturing or replaying, we should do nothing.
     // This is the case for the "outbound" frame when starting capture, or when
     // we clear the input cursor to finish or prematurely unload a segment.
-    if (frame->document()->inputCursor().isCapturing()) {
+    if (frame.document()->inputCursor().isCapturing()) {
         ASSERT(m_segmentState == SegmentState::Appending);
         completeSegment();
     }

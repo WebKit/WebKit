@@ -100,7 +100,7 @@ void PageRuntimeAgent::disable(ErrorString& errorString)
     InspectorRuntimeAgent::disable(errorString);
 }
 
-void PageRuntimeAgent::didCreateMainWorldContext(Frame* frame)
+void PageRuntimeAgent::didCreateMainWorldContext(Frame& frame)
 {
     m_mainWorldContextCreated = true;
 
@@ -108,19 +108,9 @@ void PageRuntimeAgent::didCreateMainWorldContext(Frame* frame)
         return;
 
     ASSERT(m_frontendDispatcher);
-    String frameId = m_pageAgent->frameId(frame);
-    JSC::ExecState* scriptState = mainWorldExecState(frame);
+    String frameId = m_pageAgent->frameId(&frame);
+    JSC::ExecState* scriptState = mainWorldExecState(&frame);
     notifyContextCreated(frameId, scriptState, nullptr, true);
-}
-
-void PageRuntimeAgent::didCreateIsolatedContext(Frame* frame, JSC::ExecState* scriptState, SecurityOrigin* origin)
-{
-    if (!enabled())
-        return;
-
-    ASSERT(m_frontendDispatcher);
-    String frameId = m_pageAgent->frameId(frame);
-    notifyContextCreated(frameId, scriptState, origin, false);
 }
 
 JSC::VM& PageRuntimeAgent::globalVM()

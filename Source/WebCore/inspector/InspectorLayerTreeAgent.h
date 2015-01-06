@@ -56,9 +56,10 @@ public:
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
     void reset();
 
+    // InspectorInstrumentation callbacks.
     void layerTreeDidChange();
-    void renderLayerDestroyed(const RenderLayer*);
-    void pseudoElementDestroyed(PseudoElement*);
+    void renderLayerDestroyed(const RenderLayer&);
+    void pseudoElementDestroyed(PseudoElement&);
 
     // Called from the front-end.
     virtual void enable(ErrorString&) override;

@@ -70,13 +70,13 @@ public:
     virtual void setDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
     virtual void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
 
-    // InspectorInstrumentation API
-    void willInsertDOMNode(Node* parent);
-    void didInvalidateStyleAttr(Node*);
-    void didInsertDOMNode(Node*);
-    void willRemoveDOMNode(Node*);
-    void didRemoveDOMNode(Node*);
-    void willModifyDOMAttr(Element*);
+    // InspectorInstrumentation callbacks.
+    void willInsertDOMNode(Node& parent);
+    void didInvalidateStyleAttr(Node&);
+    void didInsertDOMNode(Node&);
+    void willRemoveDOMNode(Node&);
+    void didRemoveDOMNode(Node&);
+    void willModifyDOMAttr(Element&);
     void willSendXMLHttpRequest(const String& url);
     void pauseOnNativeEventIfNeeded(bool isDOMEvent, const String& eventName, bool synchronous);
 

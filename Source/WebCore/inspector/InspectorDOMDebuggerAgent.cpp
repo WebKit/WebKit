@@ -167,31 +167,31 @@ void InspectorDOMDebuggerAgent::removeBreakpoint(ErrorString& error, const Strin
     m_eventListenerBreakpoints.remove(eventName);
 }
 
-void InspectorDOMDebuggerAgent::didInvalidateStyleAttr(Node* node)
+void InspectorDOMDebuggerAgent::didInvalidateStyleAttr(Node& node)
 {
-    if (hasBreakpoint(node, AttributeModified)) {
+    if (hasBreakpoint(&node, AttributeModified)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
-        descriptionForDOMEvent(node, AttributeModified, false, eventData.get());
+        descriptionForDOMEvent(&node, AttributeModified, false, eventData.get());
         m_debuggerAgent->breakProgram(InspectorDebuggerFrontendDispatcher::Reason::DOM, eventData.release());
     }
 }
 
-void InspectorDOMDebuggerAgent::didInsertDOMNode(Node* node)
+void InspectorDOMDebuggerAgent::didInsertDOMNode(Node& node)
 {
     if (m_domBreakpoints.size()) {
-        uint32_t mask = m_domBreakpoints.get(InspectorDOMAgent::innerParentNode(node));
+        uint32_t mask = m_domBreakpoints.get(InspectorDOMAgent::innerParentNode(&node));
         uint32_t inheritableTypesMask = (mask | (mask >> domBreakpointDerivedTypeShift)) & inheritableDOMBreakpointTypesMask;
         if (inheritableTypesMask)
-            updateSubtreeBreakpoints(node, inheritableTypesMask, true);
+            updateSubtreeBreakpoints(&node, inheritableTypesMask, true);
     }
 }
 
-void InspectorDOMDebuggerAgent::didRemoveDOMNode(Node* node)
+void InspectorDOMDebuggerAgent::didRemoveDOMNode(Node& node)
 {
     if (m_domBreakpoints.size()) {
         // Remove subtree breakpoints.
-        m_domBreakpoints.remove(node);
-        Vector<Node*> stack(1, InspectorDOMAgent::innerFirstChild(node));
+        m_domBreakpoints.remove(&node);
+        Vector<Node*> stack(1, InspectorDOMAgent::innerFirstChild(&node));
         do {
             Node* node = stack.last();
             stack.removeLast();
@@ -267,34 +267,34 @@ void InspectorDOMDebuggerAgent::removeDOMBreakpoint(ErrorString& errorString, in
     }
 }
 
-void InspectorDOMDebuggerAgent::willInsertDOMNode(Node* parent)
+void InspectorDOMDebuggerAgent::willInsertDOMNode(Node& parent)
 {
-    if (hasBreakpoint(parent, SubtreeModified)) {
+    if (hasBreakpoint(&parent, SubtreeModified)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
-        descriptionForDOMEvent(parent, SubtreeModified, true, eventData.get());
+        descriptionForDOMEvent(&parent, SubtreeModified, true, eventData.get());
         m_debuggerAgent->breakProgram(InspectorDebuggerFrontendDispatcher::Reason::DOM, eventData.release());
     }
 }
 
-void InspectorDOMDebuggerAgent::willRemoveDOMNode(Node* node)
+void InspectorDOMDebuggerAgent::willRemoveDOMNode(Node& node)
 {
-    Node* parentNode = InspectorDOMAgent::innerParentNode(node);
-    if (hasBreakpoint(node, NodeRemoved)) {
+    Node* parentNode = InspectorDOMAgent::innerParentNode(&node);
+    if (hasBreakpoint(&node, NodeRemoved)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
-        descriptionForDOMEvent(node, NodeRemoved, false, eventData.get());
+        descriptionForDOMEvent(&node, NodeRemoved, false, eventData.get());
         m_debuggerAgent->breakProgram(InspectorDebuggerFrontendDispatcher::Reason::DOM, eventData.release());
     } else if (parentNode && hasBreakpoint(parentNode, SubtreeModified)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
-        descriptionForDOMEvent(node, SubtreeModified, false, eventData.get());
+        descriptionForDOMEvent(&node, SubtreeModified, false, eventData.get());
         m_debuggerAgent->breakProgram(InspectorDebuggerFrontendDispatcher::Reason::DOM, eventData.release());
     }
 }
 
-void InspectorDOMDebuggerAgent::willModifyDOMAttr(Element* element)
+void InspectorDOMDebuggerAgent::willModifyDOMAttr(Element& element)
 {
-    if (hasBreakpoint(element, AttributeModified)) {
+    if (hasBreakpoint(&element, AttributeModified)) {
         RefPtr<InspectorObject> eventData = InspectorObject::create();
-        descriptionForDOMEvent(element, AttributeModified, false, eventData.get());
+        descriptionForDOMEvent(&element, AttributeModified, false, eventData.get());
         m_debuggerAgent->breakProgram(InspectorDebuggerFrontendDispatcher::Reason::DOM, eventData.release());
     }
 }

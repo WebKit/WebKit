@@ -120,20 +120,20 @@ public:
     virtual void handleJavaScriptDialog(ErrorString&, bool accept, const String* promptText) override;
     virtual void archive(ErrorString&, String* data) override;
 
-    // InspectorInstrumentation API
+    // InspectorInstrumentation callbacks.
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
     void domContentEventFired();
     void loadEventFired();
     void frameNavigated(DocumentLoader*);
-    void frameDetached(Frame*);
-    void loaderDetachedFromFrame(DocumentLoader*);
+    void frameDetached(Frame&);
+    void loaderDetachedFromFrame(DocumentLoader&);
     void frameStartedLoading(Frame&);
     void frameStoppedLoading(Frame&);
     void frameScheduledNavigation(Frame&, double delay);
     void frameClearedScheduledNavigation(Frame&);
     void willRunJavaScriptDialog(const String& message);
     void didRunJavaScriptDialog();
-    void applyEmulatedMedia(String*);
+    void applyEmulatedMedia(String&);
     void didPaint(RenderObject*, const LayoutRect&);
     void didLayout();
     void didScroll();

@@ -142,62 +142,49 @@ public:
     void startFromConsole(JSC::ExecState*, const String &title);
     PassRefPtr<JSC::Profile> stopFromConsole(JSC::ExecState*, const String& title);
 
-    void willCallFunction(const String& scriptName, int scriptLine, Frame*);
-    void didCallFunction(Frame*);
-
-    void willDispatchEvent(const Event&, Frame*);
-    void didDispatchEvent();
-
-    void didInvalidateLayout(Frame*);
-    void willLayout(Frame*);
-    void didLayout(RenderObject*);
-
-    void didScheduleStyleRecalculation(Frame*);
-    void willRecalculateStyle(Frame*);
-    void didRecalculateStyle();
-
-    void willPaint(Frame*);
-    void didPaint(RenderObject*, const LayoutRect&);
-
-    void willScroll(Frame*);
-    void didScroll();
-
-    void willWriteHTML(unsigned startLine, Frame*);
-    void didWriteHTML(unsigned endLine);
-
+    // InspectorInstrumentation callbacks.
+    void didScheduleResourceRequest(const String& url, Frame*);
     void didInstallTimer(int timerId, int timeout, bool singleShot, Frame*);
     void didRemoveTimer(int timerId, Frame*);
     void willFireTimer(int timerId, Frame*);
     void didFireTimer();
-
+    void willCallFunction(const String& scriptName, int scriptLine, Frame*);
+    void didCallFunction(Frame*);
     void willDispatchXHRReadyStateChangeEvent(const String&, int, Frame*);
     void didDispatchXHRReadyStateChangeEvent();
+    void willDispatchEvent(const Event&, Frame*);
+    void didDispatchEvent();
+    void willEvaluateScript(const String&, int, Frame&);
+    void didEvaluateScript(Frame&);
+    void didInvalidateLayout(Frame&);
+    void willLayout(Frame&);
+    void didLayout(RenderObject*);
+    void willScroll(Frame&);
+    void didScroll();
     void willDispatchXHRLoadEvent(const String&, Frame*);
     void didDispatchXHRLoadEvent();
-
-    void willEvaluateScript(const String&, int, Frame*);
-    void didEvaluateScript(Frame*);
-
-    void didTimeStamp(Frame*, const String&);
-    void didMarkDOMContentEvent(Frame*);
-    void didMarkLoadEvent(Frame*);
-
-    void time(Frame*, const String&);
-    void timeEnd(Frame*, const String&);
-
-    void didScheduleResourceRequest(const String& url, Frame*);
+    void willPaint(Frame&);
+    void didPaint(RenderObject*, const LayoutRect&);
+    void willRecalculateStyle(Frame*);
+    void didRecalculateStyle();
+    void didScheduleStyleRecalculation(Frame*);
+    void willWriteHTML(unsigned startLine, Frame*);
+    void didWriteHTML(unsigned endLine);
+    void didTimeStamp(Frame&, const String&);
+    void didMarkDOMContentEvent(Frame&);
+    void didMarkLoadEvent(Frame&);
     void willSendResourceRequest(unsigned long, const ResourceRequest&, Frame*);
     void willReceiveResourceResponse(unsigned long, const ResourceResponse&, Frame*);
     void didReceiveResourceResponse();
     void didFinishLoadingResource(unsigned long, bool didFail, double finishTime, Frame*);
     void willReceiveResourceData(unsigned long identifier, Frame*, int length);
     void didReceiveResourceData();
-
     void didRequestAnimationFrame(int callbackId, Frame*);
     void didCancelAnimationFrame(int callbackId, Frame*);
     void willFireAnimationFrame(int callbackId, Frame*);
     void didFireAnimationFrame();
-
+    void time(Frame&, const String&);
+    void timeEnd(Frame&, const String&);
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const URL&, const String& protocol, Frame*);
     void willSendWebSocketHandshakeRequest(unsigned long identifier, Frame*);

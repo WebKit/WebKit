@@ -97,14 +97,14 @@ void InspectorLayerTreeAgent::layerTreeDidChange()
     m_frontendDispatcher->layerTreeDidChange();
 }
 
-void InspectorLayerTreeAgent::renderLayerDestroyed(const RenderLayer* renderLayer)
+void InspectorLayerTreeAgent::renderLayerDestroyed(const RenderLayer& renderLayer)
 {
-    unbind(renderLayer);
+    unbind(&renderLayer);
 }
 
-void InspectorLayerTreeAgent::pseudoElementDestroyed(PseudoElement* pseudoElement)
+void InspectorLayerTreeAgent::pseudoElementDestroyed(PseudoElement& pseudoElement)
 {
-    unbindPseudoElement(pseudoElement);
+    unbindPseudoElement(&pseudoElement);
 }
 
 void InspectorLayerTreeAgent::layersForNode(ErrorString& errorString, int nodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>& layers)

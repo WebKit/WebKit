@@ -500,37 +500,37 @@ void InspectorCSSAgent::mediaQueryResultChanged()
         m_frontendDispatcher->mediaQueryResultChanged();
 }
 
-void InspectorCSSAgent::didCreateNamedFlow(Document* document, WebKitNamedFlow* namedFlow)
+void InspectorCSSAgent::didCreateNamedFlow(Document& document, WebKitNamedFlow& namedFlow)
 {
-    int documentNodeId = documentNodeWithRequestedFlowsId(document);
+    int documentNodeId = documentNodeWithRequestedFlowsId(&document);
     if (!documentNodeId)
         return;
 
     ErrorString unused;
-    m_frontendDispatcher->namedFlowCreated(buildObjectForNamedFlow(unused, namedFlow, documentNodeId));
+    m_frontendDispatcher->namedFlowCreated(buildObjectForNamedFlow(unused, &namedFlow, documentNodeId));
 }
 
-void InspectorCSSAgent::willRemoveNamedFlow(Document* document, WebKitNamedFlow* namedFlow)
+void InspectorCSSAgent::willRemoveNamedFlow(Document& document, WebKitNamedFlow& namedFlow)
 {
-    int documentNodeId = documentNodeWithRequestedFlowsId(document);
+    int documentNodeId = documentNodeWithRequestedFlowsId(&document);
     if (!documentNodeId)
         return;
 
     if (m_changeRegionOversetTask)
-        m_changeRegionOversetTask->unschedule(namedFlow);
+        m_changeRegionOversetTask->unschedule(&namedFlow);
 
-    m_frontendDispatcher->namedFlowRemoved(documentNodeId, namedFlow->name().string());
+    m_frontendDispatcher->namedFlowRemoved(documentNodeId, namedFlow.name().string());
 }
 
-void InspectorCSSAgent::didChangeRegionOverset(Document* document, WebKitNamedFlow* namedFlow)
+void InspectorCSSAgent::didChangeRegionOverset(Document& document, WebKitNamedFlow& namedFlow)
 {
-    int documentNodeId = documentNodeWithRequestedFlowsId(document);
+    int documentNodeId = documentNodeWithRequestedFlowsId(&document);
     if (!documentNodeId)
         return;
 
     if (!m_changeRegionOversetTask)
         m_changeRegionOversetTask = std::make_unique<ChangeRegionOversetTask>(this);
-    m_changeRegionOversetTask->scheduleFor(namedFlow, documentNodeId);
+    m_changeRegionOversetTask->scheduleFor(&namedFlow, documentNodeId);
 }
 
 void InspectorCSSAgent::regionOversetChanged(WebKitNamedFlow* namedFlow, int documentNodeId)
@@ -544,39 +544,39 @@ void InspectorCSSAgent::regionOversetChanged(WebKitNamedFlow* namedFlow, int doc
     m_frontendDispatcher->regionOversetChanged(buildObjectForNamedFlow(unused, namedFlow, documentNodeId));
 }
 
-void InspectorCSSAgent::didRegisterNamedFlowContentElement(Document* document, WebKitNamedFlow* namedFlow, Node* contentElement, Node* nextContentElement)
+void InspectorCSSAgent::didRegisterNamedFlowContentElement(Document& document, WebKitNamedFlow& namedFlow, Node& contentElement, Node* nextContentElement)
 {
-    int documentNodeId = documentNodeWithRequestedFlowsId(document);
+    int documentNodeId = documentNodeWithRequestedFlowsId(&document);
     if (!documentNodeId)
         return;
 
     ErrorString unused;
-    int contentElementNodeId = m_domAgent->pushNodeToFrontend(unused, documentNodeId, contentElement);
+    int contentElementNodeId = m_domAgent->pushNodeToFrontend(unused, documentNodeId, &contentElement);
     int nextContentElementNodeId = nextContentElement ? m_domAgent->pushNodeToFrontend(unused, documentNodeId, nextContentElement) : 0;
-    m_frontendDispatcher->registeredNamedFlowContentElement(documentNodeId, namedFlow->name().string(), contentElementNodeId, nextContentElementNodeId);
+    m_frontendDispatcher->registeredNamedFlowContentElement(documentNodeId, namedFlow.name().string(), contentElementNodeId, nextContentElementNodeId);
 }
 
-void InspectorCSSAgent::didUnregisterNamedFlowContentElement(Document* document, WebKitNamedFlow* namedFlow, Node* contentElement)
+void InspectorCSSAgent::didUnregisterNamedFlowContentElement(Document& document, WebKitNamedFlow& namedFlow, Node& contentElement)
 {
-    int documentNodeId = documentNodeWithRequestedFlowsId(document);
+    int documentNodeId = documentNodeWithRequestedFlowsId(&document);
     if (!documentNodeId)
         return;
 
     ErrorString unused;
-    int contentElementNodeId = m_domAgent->pushNodeToFrontend(unused, documentNodeId, contentElement);
+    int contentElementNodeId = m_domAgent->pushNodeToFrontend(unused, documentNodeId, &contentElement);
     if (!contentElementNodeId) {
         // We've already notified that the DOM node was removed from the DOM, so there's no need to send another event.
         return;
     }
-    m_frontendDispatcher->unregisteredNamedFlowContentElement(documentNodeId, namedFlow->name().string(), contentElementNodeId);
+    m_frontendDispatcher->unregisteredNamedFlowContentElement(documentNodeId, namedFlow.name().string(), contentElementNodeId);
 }
 
-bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoClassType pseudoClassType)
+bool InspectorCSSAgent::forcePseudoState(Element& element, CSSSelector::PseudoClassType pseudoClassType)
 {
     if (m_nodeIdToForcedPseudoState.isEmpty())
         return false;
 
-    int nodeId = m_domAgent->boundNodeId(element);
+    int nodeId = m_domAgent->boundNodeId(&element);
     if (!nodeId)
         return false;
 

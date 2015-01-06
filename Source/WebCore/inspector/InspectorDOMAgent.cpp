@@ -953,13 +953,13 @@ bool InspectorDOMAgent::handleMousePress()
     return false;
 }
 
-bool InspectorDOMAgent::handleTouchEvent(Node* node)
+bool InspectorDOMAgent::handleTouchEvent(Node& node)
 {
     if (!m_searchingForNode)
         return false;
-    if (node && m_inspectModeHighlightConfig) {
-        m_overlay->highlightNode(node, *m_inspectModeHighlightConfig);
-        inspect(node);
+    if (m_inspectModeHighlightConfig) {
+        m_overlay->highlightNode(&node, *m_inspectModeHighlightConfig);
+        inspect(&node);
         return true;
     }
     return false;
@@ -1760,15 +1760,15 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
     m_frontendDispatcher->childNodeInserted(parentId, prevId, value.release());
 }
 
-void InspectorDOMAgent::didInsertDOMNode(Node* node)
+void InspectorDOMAgent::didInsertDOMNode(Node& node)
 {
-    if (isWhitespace(node))
+    if (isWhitespace(&node))
         return;
 
     // We could be attaching existing subtree. Forget the bindings.
-    unbind(node, &m_documentNodeToIdMap);
+    unbind(&node, &m_documentNodeToIdMap);
 
-    ContainerNode* parent = node->parentNode();
+    ContainerNode* parent = node.parentNode();
     if (!parent)
         return;
 
@@ -1782,19 +1782,19 @@ void InspectorDOMAgent::didInsertDOMNode(Node* node)
         m_frontendDispatcher->childNodeCountUpdated(parentId, innerChildNodeCount(parent));
     } else {
         // Children have been requested -> return value of a new child.
-        Node* prevSibling = innerPreviousSibling(node);
+        Node* prevSibling = innerPreviousSibling(&node);
         int prevId = prevSibling ? m_documentNodeToIdMap.get(prevSibling) : 0;
-        RefPtr<Inspector::Protocol::DOM::Node> value = buildObjectForNode(node, 0, &m_documentNodeToIdMap);
+        RefPtr<Inspector::Protocol::DOM::Node> value = buildObjectForNode(&node, 0, &m_documentNodeToIdMap);
         m_frontendDispatcher->childNodeInserted(parentId, prevId, value.release());
     }
 }
 
-void InspectorDOMAgent::didRemoveDOMNode(Node* node)
+void InspectorDOMAgent::didRemoveDOMNode(Node& node)
 {
-    if (isWhitespace(node))
+    if (isWhitespace(&node))
         return;
 
-    ContainerNode* parent = node->parentNode();
+    ContainerNode* parent = node.parentNode();
 
     // If parent is not mapped yet -> ignore the event.
     if (!m_documentNodeToIdMap.contains(parent))
@@ -1807,42 +1807,42 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
         if (innerChildNodeCount(parent) == 1)
             m_frontendDispatcher->childNodeCountUpdated(parentId, 0);
     } else
-        m_frontendDispatcher->childNodeRemoved(parentId, m_documentNodeToIdMap.get(node));
-    unbind(node, &m_documentNodeToIdMap);
+        m_frontendDispatcher->childNodeRemoved(parentId, m_documentNodeToIdMap.get(&node));
+    unbind(&node, &m_documentNodeToIdMap);
 }
 
-void InspectorDOMAgent::willModifyDOMAttr(Element*, const AtomicString& oldValue, const AtomicString& newValue)
+void InspectorDOMAgent::willModifyDOMAttr(Element&, const AtomicString& oldValue, const AtomicString& newValue)
 {
     m_suppressAttributeModifiedEvent = (oldValue == newValue);
 }
 
-void InspectorDOMAgent::didModifyDOMAttr(Element* element, const AtomicString& name, const AtomicString& value)
+void InspectorDOMAgent::didModifyDOMAttr(Element& element, const AtomicString& name, const AtomicString& value)
 {
     bool shouldSuppressEvent = m_suppressAttributeModifiedEvent;
     m_suppressAttributeModifiedEvent = false;
     if (shouldSuppressEvent)
         return;
 
-    int id = boundNodeId(element);
+    int id = boundNodeId(&element);
     // If node is not mapped yet -> ignore the event.
     if (!id)
         return;
 
     if (m_domListener)
-        m_domListener->didModifyDOMAttr(element);
+        m_domListener->didModifyDOMAttr(&element);
 
     m_frontendDispatcher->attributeModified(id, name, value);
 }
 
-void InspectorDOMAgent::didRemoveDOMAttr(Element* element, const AtomicString& name)
+void InspectorDOMAgent::didRemoveDOMAttr(Element& element, const AtomicString& name)
 {
-    int id = boundNodeId(element);
+    int id = boundNodeId(&element);
     // If node is not mapped yet -> ignore the event.
     if (!id)
         return;
 
     if (m_domListener)
-        m_domListener->didModifyDOMAttr(element);
+        m_domListener->didModifyDOMAttr(&element);
 
     m_frontendDispatcher->attributeRemoved(id, name);
 }
@@ -1864,40 +1864,40 @@ void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elemen
     m_frontendDispatcher->inlineStyleInvalidated(nodeIds.release());
 }
 
-void InspectorDOMAgent::characterDataModified(CharacterData* characterData)
+void InspectorDOMAgent::characterDataModified(CharacterData& characterData)
 {
-    int id = m_documentNodeToIdMap.get(characterData);
+    int id = m_documentNodeToIdMap.get(&characterData);
     if (!id) {
         // Push text node if it is being created.
         didInsertDOMNode(characterData);
         return;
     }
-    m_frontendDispatcher->characterDataModified(id, characterData->data());
+    m_frontendDispatcher->characterDataModified(id, characterData.data());
 }
 
-void InspectorDOMAgent::didInvalidateStyleAttr(Node* node)
+void InspectorDOMAgent::didInvalidateStyleAttr(Node& node)
 {
-    int id = m_documentNodeToIdMap.get(node);
+    int id = m_documentNodeToIdMap.get(&node);
     // If node is not mapped yet -> ignore the event.
     if (!id)
         return;
 
     if (!m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask = std::make_unique<RevalidateStyleAttributeTask>(this);
-    m_revalidateStyleAttrTask->scheduleFor(downcast<Element>(node));
+    m_revalidateStyleAttrTask->scheduleFor(downcast<Element>(&node));
 }
 
-void InspectorDOMAgent::didPushShadowRoot(Element* host, ShadowRoot* root)
+void InspectorDOMAgent::didPushShadowRoot(Element& host, ShadowRoot& root)
 {
-    int hostId = m_documentNodeToIdMap.get(host);
+    int hostId = m_documentNodeToIdMap.get(&host);
     if (hostId)
-        m_frontendDispatcher->shadowRootPushed(hostId, buildObjectForNode(root, 0, &m_documentNodeToIdMap));
+        m_frontendDispatcher->shadowRootPushed(hostId, buildObjectForNode(&root, 0, &m_documentNodeToIdMap));
 }
 
-void InspectorDOMAgent::willPopShadowRoot(Element* host, ShadowRoot* root)
+void InspectorDOMAgent::willPopShadowRoot(Element& host, ShadowRoot& root)
 {
-    int hostId = m_documentNodeToIdMap.get(host);
-    int rootId = m_documentNodeToIdMap.get(root);
+    int hostId = m_documentNodeToIdMap.get(&host);
+    int rootId = m_documentNodeToIdMap.get(&root);
     if (hostId && rootId)
         m_frontendDispatcher->shadowRootPopped(hostId, rootId);
 }

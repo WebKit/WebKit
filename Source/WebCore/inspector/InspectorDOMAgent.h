@@ -156,24 +156,27 @@ public:
 
     void getEventListeners(Node*, Vector<EventListenerInfo>& listenersArray, bool includeAncestors);
 
-    // Methods called from the InspectorInstrumentation.
+
+    // InspectorInstrumentation callbacks.
+    void didInsertDOMNode(Node&);
+    void didRemoveDOMNode(Node&);
+    void willModifyDOMAttr(Element&, const AtomicString& oldValue, const AtomicString& newValue);
+    void didModifyDOMAttr(Element&, const AtomicString& name, const AtomicString& value);
+    void didRemoveDOMAttr(Element&, const AtomicString& name);
+    void characterDataModified(CharacterData&);
+    void didInvalidateStyleAttr(Node&);
+    void didPushShadowRoot(Element& host, ShadowRoot&);
+    void willPopShadowRoot(Element& host, ShadowRoot&);
+    bool handleTouchEvent(Node&);
+    void didCommitLoad(Document*);
+    void frameDocumentUpdated(Frame*);
+
+    // Callbacks that don't directly correspond to an instrumentation entry point.
     void setDocument(Document*);
     void releaseDanglingNodes();
-
     void mainFrameDOMContentLoaded();
-    void didCommitLoad(Document*);
 
-    void didInsertDOMNode(Node*);
-    void didRemoveDOMNode(Node*);
-    void willModifyDOMAttr(Element*, const AtomicString& oldValue, const AtomicString& newValue);
-    void didModifyDOMAttr(Element*, const AtomicString& name, const AtomicString& value);
-    void didRemoveDOMAttr(Element*, const AtomicString& name);
     void styleAttributeInvalidated(const Vector<Element*>& elements);
-    void characterDataModified(CharacterData*);
-    void didInvalidateStyleAttr(Node*);
-    void didPushShadowRoot(Element* host, ShadowRoot*);
-    void willPopShadowRoot(Element* host, ShadowRoot*);
-    void frameDocumentUpdated(Frame*);
 
     int pushNodeToFrontend(ErrorString&, int documentNodeId, Node*);
     Node* nodeForId(int nodeId);
@@ -185,7 +188,6 @@ public:
 
     PassRefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();
-    bool handleTouchEvent(Node*);
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
     void inspect(Node*);
     void focusNode();

@@ -94,20 +94,22 @@ public:
 
     static CSSStyleRule* asCSSStyleRule(CSSRule&);
 
-    bool forcePseudoState(Element*, CSSSelector::PseudoClassType);
     virtual void didCreateFrontendAndBackend(Inspector::InspectorFrontendChannel*, Inspector::InspectorBackendDispatcher*) override;
     virtual void willDestroyFrontendAndBackend(Inspector::InspectorDisconnectReason) override;
     virtual void discardAgent() override;
     virtual void enable(ErrorString&) override;
     virtual void disable(ErrorString&) override;
-    void reset();
-    void mediaQueryResultChanged();
-    void didCreateNamedFlow(Document*, WebKitNamedFlow*);
-    void willRemoveNamedFlow(Document*, WebKitNamedFlow*);
-    void didChangeRegionOverset(Document*, WebKitNamedFlow*);
     void regionOversetChanged(WebKitNamedFlow*, int documentNodeId);
-    void didRegisterNamedFlowContentElement(Document*, WebKitNamedFlow*, Node* contentElement, Node* nextContentElement = nullptr);
-    void didUnregisterNamedFlowContentElement(Document*, WebKitNamedFlow*, Node* contentElement);
+    void reset();
+
+    // InspectorInstrumentation callbacks.
+    void mediaQueryResultChanged();
+    void didCreateNamedFlow(Document&, WebKitNamedFlow&);
+    void willRemoveNamedFlow(Document&, WebKitNamedFlow&);
+    void didChangeRegionOverset(Document&, WebKitNamedFlow&);
+    void didRegisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement, Node* nextContentElement = nullptr);
+    void didUnregisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement);
+    bool forcePseudoState(Element&, CSSSelector::PseudoClassType);
 
     virtual void getComputedStyleForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStyleProperty>>&) override;
     virtual void getInlineStylesForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::CSS::CSSStyle>& inlineStyle, RefPtr<Inspector::Protocol::CSS::CSSStyle>& attributes) override;
