@@ -84,7 +84,7 @@ public:
     const unsigned* descendantSelectorIdentifierHashes() const { return m_descendantSelectorIdentifierHashes; }
 
 #if ENABLE(CSS_SELECTOR_JIT)
-    SelectorCompilationStatus compilationStatus() const { return m_compilationStatus; }
+    SelectorCompilationStatus compilationStatus() const { return SelectorCompilationStatus(m_compilationStatus); }
     JSC::MacroAssemblerCodeRef compiledSelectorCodeRef() const { return m_compiledSelectorCodeRef; }
     void setCompiledSelector(SelectorCompilationStatus status, JSC::MacroAssemblerCodeRef codeRef) const
     {
@@ -113,20 +113,20 @@ private:
     unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
     unsigned m_propertyWhitelistType : 2;
-    // Use plain array instead of a Vector to minimize memory overhead.
-    unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 #if ENABLE(CSS_SELECTOR_JIT)
-    mutable SelectorCompilationStatus m_compilationStatus;
+    mutable unsigned m_compilationStatus : 2; // SelectorCompilationStatus
     mutable JSC::MacroAssemblerCodeRef m_compiledSelectorCodeRef;
 #if CSS_SELECTOR_JIT_PROFILING
     mutable unsigned m_compiledSelectorUseCount;
 #endif
 #endif // ENABLE(CSS_SELECTOR_JIT)
+    // Use plain array instead of a Vector to minimize memory overhead.
+    unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 };
     
 struct SameSizeAsRuleData {
 #if ENABLE(CSS_SELECTOR_JIT)
-    unsigned compilationStatus;
+    // NOTE: The compilationStatus field fits in the bitfield.
     void* compiledSelectorPointer;
     void* codeRefPtr;
 #if CSS_SELECTOR_JIT_PROFILING

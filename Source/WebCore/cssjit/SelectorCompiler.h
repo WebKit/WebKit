@@ -61,6 +61,10 @@ public:
         : m_status(status)
     { }
 
+    explicit SelectorCompilationStatus(unsigned status)
+        : m_status(static_cast<Status>(status))
+    { }
+
     operator Status() const { return m_status; }
 
 private:
