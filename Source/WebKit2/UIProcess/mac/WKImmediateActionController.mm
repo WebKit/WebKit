@@ -29,8 +29,6 @@
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 #import "WKNSURLExtras.h"
-#import "WKPagePreviewViewController.h"
-#import "WKPreviewPopoverAnimationController.h"
 #import "WKViewInternal.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
@@ -73,8 +71,6 @@ using namespace WebKit;
 
 - (void)willDestroyView:(WKView *)view
 {
-    [_previewAnimationController close];
-
     _page = nullptr;
     _wkView = nil;
     _hitTestResult = ActionMenuHitTestResult();
@@ -98,8 +94,6 @@ using namespace WebKit;
 
 - (void)_clearImmediateActionState
 {
-    [self hidePreview];
-
     _page->clearTextIndicator();
 
     if (_currentActionContext && _hasActivatedActionContext) {
@@ -135,8 +129,7 @@ using namespace WebKit;
 
     [_wkView _dismissContentRelativeChildWindows];
 
-    _eventLocationInView = [immediateActionRecognizer locationInView:immediateActionRecognizer.view];
-    _page->performActionMenuHitTestAtLocation(_eventLocationInView, true);
+    _page->performActionMenuHitTestAtLocation([immediateActionRecognizer locationInView:immediateActionRecognizer.view], true);
 
     _state = ImmediateActionState::Pending;
     immediateActionRecognizer.animationController = nil;
@@ -226,22 +219,10 @@ using namespace WebKit;
     if (!absoluteLinkURL.isEmpty() && WebCore::protocolIsInHTTPFamily(absoluteLinkURL)) {
         _type = kWKImmediateActionLinkPreview;
 
-        BOOL shouldUseStandardQuickLookPreview = [_wkView _shouldUseStandardQuickLookPreview] && [NSMenuItem respondsToSelector:@selector(standardQuickLookMenuItem)];
-        if (shouldUseStandardQuickLookPreview) {
-            RetainPtr<NSMenuItem> previewLinkItem;
-            RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem;
-            if (shouldUseStandardQuickLookPreview) {
-                qlPreviewLinkItem = [NSMenuItem standardQuickLookMenuItem];
-                [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
-                [qlPreviewLinkItem setDelegate:self];
-            }
-            return (id<NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
-        }
-
-        if (id<NSImmediateActionAnimationController> previewController = [self _animationControllerForCustomPreview])
-            return previewController;
-        return nil;
-
+        RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem = [NSMenuItem standardQuickLookMenuItem];
+        [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
+        [qlPreviewLinkItem setDelegate:self];
+        return (id<NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
     }
 
     if (hitTestResult->isTextNode() || hitTestResult->isOverTextInsideFormControlElement()) {
@@ -275,41 +256,6 @@ using namespace WebKit;
         _immediateActionRecognizer.animationController = (id <NSImmediateActionAnimationController>)customClientAnimationController;
     else
         _immediateActionRecognizer.animationController = defaultAnimationController;
-}
-
-#pragma mark Link Preview action
-
-- (void)hidePreview
-{
-    [_previewAnimationController close];
-}
-
-- (void)setPreviewTitle:(NSString *)previewTitle
-{
-    [_previewAnimationController setPreviewTitle:previewTitle];
-}
-
-- (void)setPreviewLoading:(BOOL)loading
-{
-    [_previewAnimationController setPreviewLoading:loading];
-}
-
-- (void)setPreviewOverrideImage:(NSImage *)image
-{
-    [_previewAnimationController setPreviewOverrideImage:image];
-}
-
-- (id<NSImmediateActionAnimationController>)_animationControllerForCustomPreview
-{
-    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
-    RetainPtr<NSURL> url = [NSURL _web_URLWithWTFString:hitTestResult->absoluteLinkURL()];
-
-    if (_hitTestResult.linkTextIndicator)
-        _page->setTextIndicator(_hitTestResult.linkTextIndicator->data(), false);
-
-    _previewAnimationController = adoptNS([[WKPreviewPopoverAnimationController alloc] initWithURL:url.get() view:_wkView page:*_page originRect:hitTestResult->elementBoundingBox() eventLocationInView:_eventLocationInView]);
-
-    return _previewAnimationController.get();
 }
 
 #pragma mark QLPreviewMenuItemDelegate implementation
