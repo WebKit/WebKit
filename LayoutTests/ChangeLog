@@ -1,5 +1,65 @@
 2015-01-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Replace some pixel results that were generated on Linux with no alpha with images
+        having alpha, generated on Mac, since the canonical expected image format should have alpha.
+
+        * compositing/absolute-position-changed-in-composited-layer-expected.png:
+        * compositing/absolute-position-changed-with-composited-parent-layer-expected.png:
+        * compositing/backface-visibility/backface-visibility-image-expected.png:
+        * compositing/backface-visibility/backface-visibility-simple-expected.png:
+        * compositing/backface-visibility/backface-visibility-webgl-expected.png:
+        * compositing/checkerboard-expected.png:
+        * compositing/clip-change-expected.png: Removed.
+        * compositing/culling/clear-fixed-iframe-expected.png:
+        * compositing/culling/filter-occlusion-alpha-expected.png:
+        * compositing/culling/filter-occlusion-alpha-large-expected.png:
+        * compositing/culling/scrolled-within-boxshadow-expected.png:
+        * compositing/culling/tile-occlusion-boundaries-expected.png:
+        * compositing/culling/translated-boxshadow-expected.png:
+        * compositing/culling/unscrolled-within-boxshadow-expected.png:
+        * compositing/fixed-position-changed-in-composited-layer-expected.png:
+        * compositing/fixed-position-changed-within-composited-parent-layer-expected.png:
+        * compositing/geometry/foreground-offset-change-expected.png: Removed.
+        * compositing/iframes/fixed-position-iframe-expected.png: Removed.
+        * compositing/iframes/invisible-iframe-expected.png:
+        * compositing/iframes/invisible-nested-iframe-expected.png:
+        * compositing/iframes/nested-composited-iframe-expected.png:
+        * compositing/iframes/scroll-grandchild-iframe-expected.png: Removed.
+        * compositing/layer-creation/overlap-child-layer-expected.png:
+        * compositing/layer-creation/overlap-transformed-layer-expected.png:
+        * compositing/overflow/image-load-overflow-scrollbars-expected.png:
+        * compositing/overflow/scrollbars-with-clipped-owner-expected.png:
+        * compositing/overflow/transform-in-empty-container-expected.png:
+        * compositing/preserve-3d-toggle-expected.png:
+        * compositing/repaint/page-scale-repaint-expected.png: Removed.
+        * compositing/repaint/shrink-layer-expected.png: Removed.
+        * compositing/repaint/transform-style-change-expected.png: Removed.
+        * compositing/rtl/rtl-absolute-expected.png:
+        * compositing/rtl/rtl-absolute-overflow-expected.png:
+        * compositing/rtl/rtl-absolute-overflow-scrolled-expected.png: Removed.
+        * compositing/rtl/rtl-fixed-expected.png:
+        * compositing/rtl/rtl-fixed-overflow-expected.png:
+        * compositing/rtl/rtl-fixed-overflow-scrolled-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-absolute-expected.png:
+        * compositing/rtl/rtl-iframe-absolute-overflow-expected.png:
+        * compositing/rtl/rtl-iframe-absolute-overflow-scrolled-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-fixed-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-fixed-overflow-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-fixed-overflow-scrolled-expected.png: Removed.
+        * compositing/rtl/rtl-iframe-relative-expected.png: Removed.
+        * compositing/rtl/rtl-overflow-invalidation-expected.png: Removed.
+        * compositing/rtl/rtl-overflow-scrolling-expected.png: Removed.
+        * compositing/rtl/rtl-relative-expected.png: Removed.
+        * compositing/scrollbar-painting-expected.png:
+        * compositing/tiling/huge-layer-img-expected.png:
+        * compositing/video-page-visibility-expected.png: Removed.
+        * compositing/video/video-reflection-expected.png:
+        * compositing/visibility/visibility-composited-animation-expected.png:
+        * compositing/webgl/webgl-repaint-expected.png:
+        * platform/mac/compositing/video/video-controls-layer-creation-expected.png:
+
+2015-01-06  Simon Fraser  <simon.fraser@apple.com>
+
         Update pixel results for some compositing tests.
 
         * compositing/images/direct-pdf-image-expected.png:
