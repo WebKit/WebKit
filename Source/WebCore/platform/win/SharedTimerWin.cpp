@@ -36,10 +36,6 @@
 
 #include <mmsystem.h>
 
-#if PLATFORM(WIN)
-#include "PluginView.h"
-#endif
-
 // These aren't in winuser.h with the MSVS 2003 Platform SDK, 
 // so use default values in that case.
 #ifndef USER_TIMER_MINIMUM
@@ -80,17 +76,6 @@ enum {
 
 LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-#if PLATFORM(WIN)
-    // Windows Media Player has a modal message loop that will deliver messages
-    // to us at inappropriate times and we will crash if we handle them when
-    // they are delivered. We repost all messages so that we will get to handle
-    // them once the modal loop exits.
-    if (PluginView::isCallingPlugin()) {
-        PostMessage(hWnd, message, wParam, lParam);
-        return 0;
-    }
-#endif
-
     if (message == WM_TIMER) {
         if (wParam == sharedTimerID) {
             KillTimer(timerWindowHandle, sharedTimerID);
