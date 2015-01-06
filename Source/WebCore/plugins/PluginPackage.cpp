@@ -29,8 +29,10 @@
 #include "PluginPackage.h"
 
 #include "MIMETypeRegistry.h"
+#include "NP_jsobject.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
+#include "PluginView.h"
 #include "Timer.h"
 #include "npruntime_impl.h"
 #include <string.h>
@@ -267,6 +269,82 @@ void PluginPackage::determineModuleVersionFromDescription()
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
+static bool NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject* obj = reinterpret_cast<JavaScriptObject*>(o);
+
+        IdentifierRep* i = static_cast<IdentifierRep*>(methodName);
+        if (!i->isString())
+            return false;
+
+        // Special case the "eval" method.
+        if (methodName == _NPN_GetStringIdentifier("eval")) {
+            if (argCount != 1)
+                return false;
+            if (args[0].type != NPVariantType_String)
+                return false;
+            return NPN_Evaluate(npp, o, const_cast<NPString*>(&args[0].value.stringValue), result);
+        }
+
+        // Look up the function object.
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+        ExecState* exec = rootObject->globalObject()->globalExec();
+        JSLockHolder lock(exec);
+        JSValue function = obj->imp->get(exec, identifierFromNPIdentifier(exec, i->string()));
+        CallData callData;
+        CallType callType = getCallData(function, callData);
+        if (callType == CallTypeNone)
+            return false;
+
+        // Call the function object.
+        MarkedArgumentBuffer argList;
+        getListFromVariantArgs(exec, args, argCount, rootObject, argList);
+        JSValue resultV = JSC::call(exec, function, callType, callData, obj->imp, argList);
+
+        // Convert and return the result of the function call.
+        convertValueToNPVariant(exec, resultV, result);
+        exec->clearException();
+        return true;
+    }
+
+    if (o->_class->invoke)
+        return o->_class->invoke(o, methodName, args, argCount, result);
+
+    VOID_TO_NPVARIANT(*result);
+    return true;
+}
+
+static bool NPN_Evaluate(NPP instance, NPObject* o, NPString* s, NPVariant* variant)
+{
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject* obj = reinterpret_cast<JavaScriptObject*>(o);
+
+        RootObject* rootObject = obj->rootObject;
+        if (!rootObject || !rootObject->isValid())
+            return false;
+
+        // There is a crash in Flash when evaluating a script that destroys the
+        // PluginView, so we destroy it asynchronously.
+        PluginView::keepAlive(instance);
+
+        ExecState* exec = rootObject->globalObject()->globalExec();
+        JSLockHolder lock(exec);
+        String scriptString = convertNPStringToUTF16(s);
+
+        JSValue returnValue = JSC::evaluate(rootObject->globalObject()->globalExec(), makeSource(scriptString), JSC::JSValue());
+
+        convertValueToNPVariant(exec, returnValue, variant);
+        exec->clearException();
+        return true;
+    }
+
+    VOID_TO_NPVARIANT(*variant);
+    return false;
+}
+
 void PluginPackage::initializeBrowserFuncs()
 {
     memset(&m_browserFuncs, 0, sizeof(m_browserFuncs));
@@ -308,9 +386,9 @@ void PluginPackage::initializeBrowserFuncs()
     m_browserFuncs.createobject = _NPN_CreateObject;
     m_browserFuncs.retainobject = _NPN_RetainObject;
     m_browserFuncs.releaseobject = _NPN_ReleaseObject;
-    m_browserFuncs.invoke = _NPN_Invoke;
+    m_browserFuncs.invoke = NPN_Invoke;
     m_browserFuncs.invokeDefault = _NPN_InvokeDefault;
-    m_browserFuncs.evaluate = _NPN_Evaluate;
+    m_browserFuncs.evaluate = NPN_Evaluate;
     m_browserFuncs.getproperty = _NPN_GetProperty;
     m_browserFuncs.setproperty = _NPN_SetProperty;
     m_browserFuncs.removeproperty = _NPN_RemoveProperty;

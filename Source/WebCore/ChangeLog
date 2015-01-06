@@ -1,3 +1,18 @@
+2015-01-05  Anders Carlsson  <andersca@apple.com>
+
+        Add copies of NPN_Evaluate and NPN_Invoke on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=140103
+
+        Reviewed by Andreas Kling.
+
+        While this is unfortunate, it will allow us to get rid of PluginView.h and PluginViewNone.cpp
+        from the cross platform WebCore code and then move the plug-in code to WebKit/win (which is the only client of this plug-in implementation).
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::NPN_Invoke):
+        (WebCore::NPN_Evaluate):
+        (WebCore::PluginPackage::initializeBrowserFuncs):
+
 2015-01-05  Andreas Kling  <akling@apple.com>
 
         Purge PassRefPtr from Page.
