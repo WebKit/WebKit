@@ -43,7 +43,7 @@ static inline const SVGFontData* svgFontAndFontFaceElementForFontData(const Simp
     ASSERT(fontData->isCustomFont());
     ASSERT(fontData->isSVGFont());
 
-    const SVGFontData* svgFontData = static_cast<const SVGFontData*>(fontData->fontData());
+    auto* svgFontData = static_cast<const SVGFontData*>(fontData->svgData());
 
     fontFace = svgFontData->svgFontFaceElement();
     ASSERT(fontFace);

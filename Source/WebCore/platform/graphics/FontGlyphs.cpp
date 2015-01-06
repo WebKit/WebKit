@@ -360,7 +360,7 @@ static RefPtr<GlyphPage> glyphPageFromFontData(unsigned pageNumber, const FontDa
     return const_cast<GlyphPage*>(simpleFontData->glyphPage(pageNumber));
 }
 
-GlyphData FontGlyphs::glyphDataForCharacter( UChar32 c, const FontDescription& description, FontDataVariant variant)
+GlyphData FontGlyphs::glyphDataForCharacter(UChar32 c, const FontDescription& description, FontDataVariant variant)
 {
     ASSERT(isMainThread());
     ASSERT(variant != AutoVariant);

@@ -70,15 +70,14 @@ enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 class SimpleFontData final : public FontData {
 public:
-    class AdditionalFontData {
+    class SVGData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        virtual ~AdditionalFontData() { }
+        virtual ~SVGData() { }
 
         virtual void initializeFontData(SimpleFontData*, float fontSize) = 0;
         virtual float widthForSVGGlyph(Glyph, float fontSize) const = 0;
         virtual bool fillSVGGlyphPage(GlyphPage*, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData*) const = 0;
-        virtual bool applySVGGlyphSelection(WidthIterator&, GlyphData&, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache) const = 0;
     };
 
     // Used to create platform fonts.
@@ -88,9 +87,9 @@ public:
     }
 
     // Used to create SVG Fonts.
-    static PassRefPtr<SimpleFontData> create(std::unique_ptr<AdditionalFontData> fontData, float fontSize, bool syntheticBold, bool syntheticItalic)
+    static PassRefPtr<SimpleFontData> create(std::unique_ptr<SVGData> svgData, float fontSize, bool syntheticBold, bool syntheticItalic)
     {
-        return adoptRef(new SimpleFontData(WTF::move(fontData), fontSize, syntheticBold, syntheticItalic));
+        return adoptRef(new SimpleFontData(WTF::move(svgData), fontSize, syntheticBold, syntheticItalic));
     }
 
     virtual ~SimpleFontData();
@@ -176,8 +175,8 @@ public:
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
 
-    AdditionalFontData* fontData() const { return m_fontData.get(); }
-    bool isSVGFont() const { return m_fontData != nullptr; }
+    const SVGData* svgData() const { return m_svgData.get(); }
+    bool isSVGFont() const { return !!m_svgData; }
 
     virtual bool isCustomFont() const override { return m_isCustomFont; }
     virtual bool isLoading() const override { return m_isLoading; }
@@ -218,7 +217,7 @@ public:
 private:
     SimpleFontData(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false);
 
-    SimpleFontData(std::unique_ptr<AdditionalFontData>, float fontSize, bool syntheticBold, bool syntheticItalic);
+    SimpleFontData(std::unique_ptr<SVGData>, float fontSize, bool syntheticBold, bool syntheticItalic);
 
     void platformInit();
     void platformGlyphInit();
@@ -251,7 +250,7 @@ private:
     float m_avgCharWidth;
 
     FontPlatformData m_platformData;
-    std::unique_ptr<AdditionalFontData> m_fontData;
+    std::unique_ptr<SVGData> m_svgData;
 
     mutable RefPtr<GlyphPage> m_glyphPageZero;
     mutable HashMap<unsigned, RefPtr<GlyphPage>> m_glyphPages;
@@ -348,8 +347,8 @@ ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
     if (width != cGlyphSizeUnknown)
         return width;
 
-    if (m_fontData)
-        width = m_fontData->widthForSVGGlyph(glyph, m_platformData.size());
+    if (isSVGFont())
+        width = m_svgData->widthForSVGGlyph(glyph, m_platformData.size());
 #if ENABLE(OPENTYPE_VERTICAL)
     else if (m_verticalData)
 #if USE(CG) || USE(CAIRO)

@@ -50,7 +50,7 @@ float SVGTextLayoutEngineSpacing::calculateSVGKerning(bool isVerticalText, const
     ASSERT(fontData.isCustomFont());
     ASSERT(fontData.isSVGFont());
 
-    const SVGFontData* svgFontData = static_cast<const SVGFontData*>(fontData.fontData());
+    auto* svgFontData = static_cast<const SVGFontData*>(fontData.svgData());
     SVGFontFaceElement* svgFontFace = svgFontData->svgFontFaceElement();
     ASSERT(svgFontFace);
 

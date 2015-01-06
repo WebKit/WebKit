@@ -28,7 +28,7 @@ namespace WebCore {
 class SVGFontElement;
 class SVGFontFaceElement;
 
-class SVGFontData : public SimpleFontData::AdditionalFontData {
+class SVGFontData : public SimpleFontData::SVGData {
 public:
     explicit SVGFontData(SVGFontFaceElement*);
     virtual ~SVGFontData() { }
@@ -36,7 +36,8 @@ public:
     virtual void initializeFontData(SimpleFontData*, float fontSize) override;
     virtual float widthForSVGGlyph(Glyph, float fontSize) const override;
     virtual bool fillSVGGlyphPage(GlyphPage*, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData*) const override;
-    virtual bool applySVGGlyphSelection(WidthIterator&, GlyphData&, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache) const override;
+
+    bool applySVGGlyphSelection(WidthIterator&, GlyphData&, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache) const;
 
     SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement; }
 

@@ -76,9 +76,9 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
 #endif
 }
 
-SimpleFontData::SimpleFontData(std::unique_ptr<AdditionalFontData> fontData, float fontSize, bool syntheticBold, bool syntheticItalic)
+SimpleFontData::SimpleFontData(std::unique_ptr<SVGData> svgData, float fontSize, bool syntheticBold, bool syntheticItalic)
     : m_platformData(FontPlatformData(fontSize, syntheticBold, syntheticItalic))
-    , m_fontData(WTF::move(fontData))
+    , m_svgData(WTF::move(svgData))
     , m_treatAsFixedPitch(false)
     , m_isCustomFont(true)
     , m_isLoading(false)
@@ -93,7 +93,7 @@ SimpleFontData::SimpleFontData(std::unique_ptr<AdditionalFontData> fontData, flo
     , m_shouldNotBeUsedForArabic(false)
 #endif
 {
-    m_fontData->initializeFontData(this, fontSize);
+    m_svgData->initializeFontData(this, fontSize);
 }
 
 // Estimates of avgCharWidth and maxCharWidth for platforms that don't support accessing these values from the font.
@@ -154,7 +154,7 @@ void SimpleFontData::platformGlyphInit()
 
 SimpleFontData::~SimpleFontData()
 {
-    if (!m_fontData)
+    if (!isSVGFont())
         platformDestroy();
 }
 
@@ -171,8 +171,8 @@ const SimpleFontData& SimpleFontData::simpleFontDataForFirstRange() const
 static bool fillGlyphPage(GlyphPage& pageToFill, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
 #if ENABLE(SVG_FONTS)
-    if (SimpleFontData::AdditionalFontData* additionalFontData = fontData->fontData())
-        return additionalFontData->fillSVGGlyphPage(&pageToFill, offset, length, buffer, bufferLength, fontData);
+    if (auto* svgData = fontData->svgData())
+        return svgData->fillSVGGlyphPage(&pageToFill, offset, length, buffer, bufferLength, fontData);
 #endif
     bool hasGlyphs = pageToFill.fill(offset, length, buffer, bufferLength, fontData);
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -405,9 +405,8 @@ SimpleFontData::DerivedFontData::~DerivedFontData()
 
 PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
-    // FIXME: Support scaled fonts that used AdditionalFontData.
-    if (m_fontData)
-        return 0;
+    if (isSVGFont())
+        return nullptr;
 
     return platformCreateScaledFontData(fontDescription, scaleFactor);
 }
