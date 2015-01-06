@@ -132,7 +132,6 @@ EXPORTS
         symbolWithPointer(?directoryName@WebCore@@YA?AVString@WTF@@ABV23@@Z, ?directoryName@WebCore@@YA?AVString@WTF@@AEBV23@@Z)
         ?initializeMainThread@WTF@@YAXXZ
         ?initializeThreading@WTF@@YAXXZ
-        symbolWithPointer(?instrumentationForPage@WebCore@@YAPAVInstrumentingAgents@1@PAVPage@1@@Z, ?instrumentationForPage@WebCore@@YAPEAVInstrumentingAgents@1@PEAVPage@1@@Z)
         ?isMainThread@WTF@@YA_NXZ
         symbolWithPointer(?lock@Mutex@WTF@@QAEXXZ, ?lock@Mutex@WTF@@QEAAXXZ)
         symbolWithPointer(?signal@ThreadCondition@WTF@@QAEXXZ, ?signal@ThreadCondition@WTF@@QEAAXXZ)
@@ -207,7 +206,7 @@ EXPORTS
 #if ENABLE(INSPECTOR)
         symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QEBA?AV?$PassRefPtr@VInspectorObject@Inspector@@@WTF@@XZ)
         symbolWithPointer(?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z, ?getHighlight@InspectorController@WebCore@@QEBAXPEAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z)
-        symbolWithPointer(?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z, ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPEAVInstrumentingAgents@2@PEAVPage@2@@Z)
+        symbolWithPointer(?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@SAPAVInstrumentingAgents@2@PAVPage@2@@Z, ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@SAPEAVInstrumentingAgents@2@PEAVPage@2@@Z)
         ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
         symbolWithPointer(?isUnderTest@InspectorFrontendClientLocal@WebCore@@UAE_NXZ, ?isUnderTest@InspectorFrontendClientLocal@WebCore@@UEAA_NXZ)
         symbolWithPointer(??0InspectorFrontendClientLocal@WebCore@@QAE@PAVInspectorController@1@PAVPage@1@V?$unique_ptr@VSettings@InspectorFrontendClientLocal@WebCore@@U?$default_delete@VSettings@InspectorFrontendClientLocal@WebCore@@@std@@@std@@@Z, ??0InspectorFrontendClientLocal@WebCore@@QEAA@PEAVInspectorController@1@PEAVPage@1@V?$unique_ptr@VSettings@InspectorFrontendClientLocal@WebCore@@U?$default_delete@VSettings@InspectorFrontendClientLocal@WebCore@@@std@@@std@@@Z)
