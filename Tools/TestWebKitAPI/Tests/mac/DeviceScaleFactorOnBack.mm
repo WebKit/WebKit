@@ -72,6 +72,9 @@ void DeviceScaleFactorOnBack::initializeView(WKView *view)
 template <typename View>
 void DeviceScaleFactorOnBack::runTest(View view)
 {
+    RetainPtr<SyntheticBackingScaleFactorWindow> window1 = createWindow();
+    [[window1 contentView] addSubview:view];
+
     EXPECT_JS_EQ(view, "window.devicePixelRatio", "1");
     EXPECT_JS_EQ(view, "devicePixelRatioFromStyle()", "1");
 
@@ -80,10 +83,9 @@ void DeviceScaleFactorOnBack::runTest(View view)
     waitForLoadToFinish();
 
     // Change the scale factor
-    RetainPtr<SyntheticBackingScaleFactorWindow> window1 = createWindow();
-    [window1.get() setBackingScaleFactor:3];
-
-    [[window1.get() contentView] addSubview:view];
+    RetainPtr<SyntheticBackingScaleFactorWindow> window2 = createWindow();
+    [window2 setBackingScaleFactor:3];
+    [[window2 contentView] addSubview:view];
 
     // Navigate back to the first page
     goBack(view);

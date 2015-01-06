@@ -55,26 +55,26 @@ RetainPtr<SyntheticBackingScaleFactorWindow> DynamicDeviceScaleFactor::createWin
 template <typename View>
 void DynamicDeviceScaleFactor::runTest(View view)
 {
+    RetainPtr<SyntheticBackingScaleFactorWindow> window1 = createWindow();
+    [[window1 contentView] addSubview:view];
     EXPECT_JS_EQ(view, "window.devicePixelRatio", "1");
     EXPECT_JS_EQ(view, "devicePixelRatioFromStyle()", "1");
 
-    RetainPtr<SyntheticBackingScaleFactorWindow> window1 = createWindow();
-    [window1.get() setBackingScaleFactor:3];
+    RetainPtr<SyntheticBackingScaleFactorWindow> window2 = createWindow();
+    [window2 setBackingScaleFactor:3];
 
-    [[window1.get() contentView] addSubview:view];
+    [[window2 contentView] addSubview:view];
     EXPECT_JS_EQ(view, "window.devicePixelRatio", "3");
     EXPECT_JS_EQ(view, "devicePixelRatioFromStyle()", "3");
 
-    RetainPtr<SyntheticBackingScaleFactorWindow> window2 = createWindow();
-    [window2.get() setBackingScaleFactor:4];
+    RetainPtr<SyntheticBackingScaleFactorWindow> window3 = createWindow();
+    [window3 setBackingScaleFactor:4];
 
-    [[window2.get() contentView] addSubview:view];
+    [[window3 contentView] addSubview:view];
     EXPECT_JS_EQ(view, "window.devicePixelRatio", "4");
     EXPECT_JS_EQ(view, "devicePixelRatioFromStyle()", "4");
 
     [view removeFromSuperview];
-    EXPECT_JS_EQ(view, "window.devicePixelRatio", "1");
-    EXPECT_JS_EQ(view, "devicePixelRatioFromStyle()", "1");
 }
 
 TEST_F(DynamicDeviceScaleFactor, WebKit)
