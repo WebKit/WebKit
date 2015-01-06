@@ -2774,12 +2774,6 @@ if (ENABLE_SQL_DATABASE)
     )
 endif ()
 
-if (NOT ENABLE_NETSCAPE_PLUGIN_API)
-    list(APPEND WebCore_SOURCES
-        plugins/PluginViewNone.cpp
-    )
-endif ()
-
 list(APPEND WebCore_CSS_PROPERTY_NAMES
     ${WEBCORE_DIR}/css/SVGCSSPropertyNames.in
 )

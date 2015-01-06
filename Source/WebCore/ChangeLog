@@ -1,5 +1,19 @@
 2015-01-05  Anders Carlsson  <andersca@apple.com>
 
+        Remove PluginViewNone.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=140107
+
+        Reviewed by Andreas Kling.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformWin.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * plugins/PluginViewNone.cpp: Removed.
+
+2015-01-05  Anders Carlsson  <andersca@apple.com>
+
         Stop including PluginView.h from cross platform WebCore code
         https://bugs.webkit.org/show_bug.cgi?id=140105
 

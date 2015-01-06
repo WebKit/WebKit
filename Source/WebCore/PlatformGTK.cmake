@@ -191,8 +191,6 @@ list(APPEND WebCore_SOURCES
     platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
 
     platform/network/gtk/CredentialBackingStore.cpp
-
-    plugins/PluginViewNone.cpp
 )
 
 list(APPEND WebCorePlatformGTK_SOURCES
