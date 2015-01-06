@@ -224,6 +224,7 @@ class JSRopeString : public JSString {
 
     friend JSRopeString* jsStringBuilder(VM*);
 
+public:
     class RopeBuilder {
     public:
         RopeBuilder(VM& vm)
