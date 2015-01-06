@@ -1,3 +1,19 @@
+2015-01-06  Anders Carlsson  <andersca@apple.com>
+
+        Add a WebKit1 database provider
+        https://bugs.webkit.org/show_bug.cgi?id=140126
+
+        Reviewed by Sam Weinig.
+
+        Use a Ref instead of a RefPtr since the database provider can never be null now.
+
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        (WebCore::DOMWindowIndexedDatabase::indexedDB):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::databaseProvider):
+
 2015-01-06  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r177876): 35% regression in Parser/html5-full-render
