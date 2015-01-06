@@ -90,6 +90,7 @@ public:
     static bool convertWordSpacing(StyleResolver&, CSSValue&, Length&);
     static bool convertPerspective(StyleResolver&, CSSValue&, float&);
     static bool convertMarqueeIncrement(StyleResolver&, CSSValue&, Length&);
+    static bool convertFilterOperations(StyleResolver&, CSSValue&, FilterOperations&);
 
 private:
     friend class StyleBuilderCustom;
@@ -922,6 +923,11 @@ inline bool StyleBuilderConverter::convertMarqueeIncrement(StyleResolver& styleR
         break;
     }
     return false;
+}
+
+inline bool StyleBuilderConverter::convertFilterOperations(StyleResolver& styleResolver, CSSValue& value, FilterOperations& operations)
+{
+    return styleResolver.createFilterOperations(value, operations);
 }
 
 } // namespace WebCore

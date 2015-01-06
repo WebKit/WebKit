@@ -398,7 +398,7 @@ columns [LegacyStyleBuilder]
 mix-blend-mode [TypeName=BlendMode, NameForMethods=BlendMode]
 isolation [TypeName=Isolation]
 #endif
--webkit-filter [LegacyStyleBuilder]
+-webkit-filter [ConditionalConverter=FilterOperations, TypeName=FilterOperations]
 align-content
 -webkit-align-content = align-content
 align-items
@@ -422,7 +422,7 @@ flex-wrap
 justify-content
 -webkit-justify-content = justify-content
 #if defined(ENABLE_FILTERS_LEVEL_2) && ENABLE_FILTERS_LEVEL_2
--webkit-backdrop-filter [LegacyStyleBuilder]
+-webkit-backdrop-filter [ConditionalConverter=FilterOperations, TypeName=FilterOperations]
 #endif
 -webkit-justify-self [Custom=Value]
 -webkit-font-size-delta [LegacyStyleBuilder]

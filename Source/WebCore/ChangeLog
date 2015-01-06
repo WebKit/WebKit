@@ -1,3 +1,23 @@
+2015-01-06  Chris Dumez  <cdumez@apple.com>
+
+        Move '-webkit-filter' / '-webkit-backdrop-filter' to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140111
+
+        Reviewed by Darin Adler.
+
+        Move '-webkit-filter' / '-webkit-backdrop-filter' to the new
+        StyleBuilder.
+
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::createFilterOperations):
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFilterOperations):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/StyleResolver.h:
+
 2015-01-05  Darin Adler  <darin@apple.com>
 
         Modernize and streamline HTMLToken and AtomicHTMLToken

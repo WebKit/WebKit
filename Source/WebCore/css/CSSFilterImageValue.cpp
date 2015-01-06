@@ -139,7 +139,8 @@ void CSSFilterImageValue::filterImageChanged(const IntRect&)
 void CSSFilterImageValue::createFilterOperations(StyleResolver* resolver)
 {
     m_filterOperations.clear();
-    resolver->createFilterOperations(m_filterValue.get(), m_filterOperations);
+    if (m_filterValue)
+        resolver->createFilterOperations(*m_filterValue, m_filterOperations);
 }
 
 void CSSFilterImageValue::FilterSubimageObserverProxy::imageChanged(CachedImage*, const IntRect* rect)

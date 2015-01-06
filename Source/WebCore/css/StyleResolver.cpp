@@ -2405,24 +2405,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 
-    case CSSPropertyWebkitFilter: {
-        HANDLE_INHERIT_AND_INITIAL(filter, Filter);
-        FilterOperations operations;
-        if (createFilterOperations(value, operations))
-            state.style()->setFilter(operations);
-        return;
-    }
-
-#if ENABLE(FILTERS_LEVEL_2)
-    case CSSPropertyWebkitBackdropFilter: {
-        HANDLE_INHERIT_AND_INITIAL(backdropFilter, BackdropFilter);
-        FilterOperations operations;
-        if (createFilterOperations(value, operations))
-            state.style()->setBackdropFilter(operations);
-        return;
-    }
-#endif
-
     case CSSPropertyWebkitMaskImage: {
         Vector<RefPtr<MaskImageOperation>> operations;
         if (createMaskImageOperations(value, operations))
@@ -2761,6 +2743,10 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitGridTemplateAreas:
     case CSSPropertyWebkitGridAutoFlow:
 #endif // ENABLE(CSS_GRID_LAYOUT)
+    case CSSPropertyWebkitFilter:
+#if ENABLE(FILTERS_LEVEL_2)
+    case CSSPropertyWebkitBackdropFilter:
+#endif
         ASSERT_NOT_REACHED();
         return;
     default:
@@ -3068,25 +3054,22 @@ void StyleResolver::loadPendingSVGDocuments()
     }
 }
 
-bool StyleResolver::createFilterOperations(CSSValue* inValue, FilterOperations& outOperations)
+bool StyleResolver::createFilterOperations(CSSValue& inValue, FilterOperations& outOperations)
 {
     State& state = m_state;
     ASSERT(outOperations.isEmpty());
     
-    if (!inValue)
-        return false;
-    
-    if (is<CSSPrimitiveValue>(*inValue)) {
-        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*inValue);
+    if (is<CSSPrimitiveValue>(inValue)) {
+        CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(inValue);
         if (primitiveValue.getValueID() == CSSValueNone)
             return true;
     }
     
-    if (!is<CSSValueList>(*inValue))
+    if (!is<CSSValueList>(inValue))
         return false;
 
     FilterOperations operations;
-    for (auto& currentValue : downcast<CSSValueList>(*inValue)) {
+    for (auto& currentValue : downcast<CSSValueList>(inValue)) {
         if (!is<WebKitCSSFilterValue>(currentValue.get()))
             continue;
 
