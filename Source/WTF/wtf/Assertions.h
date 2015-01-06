@@ -213,7 +213,7 @@ extern "C" {
 
 #define ASSERT_UNUSED(variable, assertion) ((void)variable)
 
-#ifdef ADDRESS_SANITIZER
+#if ENABLE(SECURITY_ASSERTIONS)
 #define ASSERT_WITH_SECURITY_IMPLICATION(assertion) \
     (!(assertion) ? \
         (WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion), \

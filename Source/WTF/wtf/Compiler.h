@@ -136,6 +136,12 @@
 #define WTF_COMPILER_SUPPORTS_EABI 1
 #endif
 
+#if defined(__has_feature)
+#define ASAN_ENABLED __has_feature(address_sanitizer)
+#else
+#define ASAN_ENABLED false
+#endif
+
 /* ==== Compiler-independent macros for various compiler features, in alphabetical order ==== */
 
 /* ALWAYS_INLINE */

@@ -41,7 +41,7 @@
 
 namespace WTF {
 
-#if !defined(NDEBUG) || defined(ADDRESS_SANITIZER)
+#if !defined(NDEBUG) || ENABLE(SECURITY_ASSERTIONS)
 struct SameSizeAsRefCounted {
     int a;
     bool b;

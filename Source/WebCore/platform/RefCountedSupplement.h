@@ -44,7 +44,7 @@ public:
     public:
         explicit Wrapper(PassRefPtr<ThisType> wrapped) : m_wrapped(wrapped) { }
         virtual ~Wrapper() { m_wrapped->hostDestroyed();  }
-#if !ASSERT_DISABLED || defined(ADDRESS_SANITIZER)
+#if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
         virtual bool isRefCountedWrapper() const override { return true; }
 #endif
         ThisType* wrapped() const { return m_wrapped.get(); }

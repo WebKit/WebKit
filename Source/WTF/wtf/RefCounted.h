@@ -27,7 +27,7 @@
 
 namespace WTF {
 
-#if defined(NDEBUG) && !defined(ADDRESS_SANITIZER)
+#if defined(NDEBUG) && !ENABLE(SECURITY_ASSERTIONS)
 #define CHECK_REF_COUNTED_LIFECYCLE 0
 #else
 #define CHECK_REF_COUNTED_LIFECYCLE 1

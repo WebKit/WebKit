@@ -1,3 +1,19 @@
+2015-01-06  Alexey Proskuryakov  <ap@apple.com>
+
+        ADDRESS_SANITIZER macro is overloaded
+        https://bugs.webkit.org/show_bug.cgi?id=140130
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Compiler.h: Added an ASAN_ENABLED macro. The abbreviation should become well
+        known - we already use it in tools.
+
+        * wtf/Assertions.h:
+        * wtf/RefCounted.h:
+        * wtf/SizeLimits.cpp:
+        Change the conditional to ENABLE(SECURITY_ASSERTIONS). These checks will be used
+        in debug builds, and also when one explicitly passes -DENABLE_SECURITY_ASSERTIONS.
+
 2015-01-05  Andreas Kling  <akling@apple.com>
 
         Purge PassRefPtr from Page.

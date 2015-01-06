@@ -70,12 +70,8 @@ const unsigned TestController::viewHeight = 600;
 const unsigned TestController::w3cSVGViewWidth = 480;
 const unsigned TestController::w3cSVGViewHeight = 360;
 
-#if defined(__has_feature)
-#if __has_feature(address_sanitizer)
+#if ASAN_ENABLED
 const double TestController::shortTimeout = 10.0;
-#else
-const double TestController::shortTimeout = 5.0;
-#endif
 #else
 const double TestController::shortTimeout = 5.0;
 #endif
