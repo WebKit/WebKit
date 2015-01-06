@@ -41,8 +41,6 @@ using namespace WebKit;
 @interface WKPreviewPopoverAnimationController () <WKPagePreviewViewControllerDelegate, NSPopoverDelegate>
 @end
 
-static const CGFloat preferredPopoverToViewScale = 0.75;
-
 @implementation WKPreviewPopoverAnimationController
 
 + (bool)_shouldImmediatelyShowPreview
@@ -194,38 +192,17 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 
 - (NSSize)_targetSizeForPagePreview
 {
+    static const CGFloat preferredPopoverToViewScale = 0.75;
     NSRect wkViewBounds = _wkView.bounds;
     return NSMakeSize(NSWidth(wkViewBounds) * preferredPopoverToViewScale, NSHeight(wkViewBounds) * preferredPopoverToViewScale);
 }
 
-- (NSSize)_effectivePaddingWithPreviewPadding:(NSSize)previewPadding
-{
-    static const NSSize screenPadding = NSMakeSize(40, 40);
-    NSSize effectivePadding = NSMakeSize(screenPadding.width + previewPadding.width, screenPadding.height + previewPadding.height);
-    return effectivePadding;
-}
-
-- (NSSize)_maxSpaceAvailableOnYEdgeForOriginRect:(NSRect)originRect withScreenRect:(NSRect)screenRect previewPadding:(NSSize)previewPadding
-{
-    CGFloat availableSpaceAbove = NSMaxY(screenRect) - NSMaxY(originRect);
-    CGFloat availableSpaceBelow = NSMinY(originRect) - NSMinY(screenRect);
-    NSSize effectivePadding = [self _effectivePaddingWithPreviewPadding:previewPadding];
-    CGFloat maxAvailableVerticalSpace = fmax(availableSpaceAbove, availableSpaceBelow) - effectivePadding.height;
-    return NSMakeSize(screenRect.size.width - effectivePadding.height, maxAvailableVerticalSpace);
-}
-
-- (NSSize)_maxSpaceAvailableOnXEdgeForOriginRect:(NSRect)originRect withScreenRect:(NSRect)screenRect previewPadding:(NSSize)previewPadding
-{
-    CGFloat availableSpaceAtLeft = NSMinX(originRect) - NSMinX(screenRect);
-    CGFloat availableSpaceAtRight = NSMaxX(screenRect) - NSMaxX(originRect);
-    NSSize effectivePadding = [self _effectivePaddingWithPreviewPadding:previewPadding];
-    CGFloat maxAvailableHorizontalSpace = fmax(availableSpaceAtLeft, availableSpaceAtRight) - effectivePadding.width;
-    return NSMakeSize(maxAvailableHorizontalSpace, screenRect.size.height - effectivePadding.width);
-}
-
 - (NSSize)_preferredPopoverSizeWithPreviewPadding:(NSSize)previewPadding forTargetSize:(NSSize)targetSize
 {
+    static const NSSize screenPadding = NSMakeSize(40, 40);
     static const NSSize smallestPopoverSize = NSMakeSize(500, 500);
+
+    const NSSize effectivePadding = NSMakeSize(screenPadding.width + previewPadding.width, screenPadding.height + previewPadding.height);
 
     NSWindow *window = _wkView.window;
     NSRect originScreenRect = [window convertRectToScreen:[_wkView convertRect:_popoverOriginRect toView:nil]];
@@ -233,23 +210,19 @@ static bool targetSizeFitsInAvailableSpace(NSSize targetSize, NSSize availableSp
 
     NSSize largestPopoverSize = [self largestPopoverSize];
 
-    NSSize maxSpaceAvailableOnYEdge = [self _maxSpaceAvailableOnYEdgeForOriginRect:originScreenRect withScreenRect:screenFrame previewPadding:previewPadding];
+    CGFloat availableSpaceAbove = NSMaxY(screenFrame) - NSMaxY(originScreenRect);
+    CGFloat availableSpaceBelow = NSMinY(originScreenRect) - NSMinY(screenFrame);
+    CGFloat maxAvailableVerticalSpace = fmax(availableSpaceAbove, availableSpaceBelow) - effectivePadding.height;
+    NSSize maxSpaceAvailableOnYEdge = NSMakeSize(screenFrame.size.width - effectivePadding.height, maxAvailableVerticalSpace);
     if (targetSizeFitsInAvailableSpace(targetSize, maxSpaceAvailableOnYEdge) && targetSizeFitsInAvailableSpace(targetSize, largestPopoverSize))
         return targetSize;
 
-    NSSize maxSpaceAvailableOnXEdge = [self _maxSpaceAvailableOnXEdgeForOriginRect:originScreenRect withScreenRect:screenFrame previewPadding:previewPadding];
+    CGFloat availableSpaceAtLeft = NSMinX(originScreenRect) - NSMinX(screenFrame);
+    CGFloat availableSpaceAtRight = NSMaxX(screenFrame) - NSMaxX(originScreenRect);
+    CGFloat maxAvailableHorizontalSpace = fmax(availableSpaceAtLeft, availableSpaceAtRight) - effectivePadding.width;
+    NSSize maxSpaceAvailableOnXEdge = NSMakeSize(maxAvailableHorizontalSpace, screenFrame.size.height - effectivePadding.width);
     if (targetSizeFitsInAvailableSpace(targetSize, maxSpaceAvailableOnXEdge) && targetSizeFitsInAvailableSpace(targetSize, largestPopoverSize))
         return targetSize;
-
-    // If the originScreenRect is very large, then it's possible that we have negative available space once the screen padding
-    // was taken into account. If that is the case, give up not on not trying to obscure the origin URL.
-    if ((maxSpaceAvailableOnYEdge.width < 0 || maxSpaceAvailableOnYEdge.height < 0) && (maxSpaceAvailableOnXEdge.width < 0 || maxSpaceAvailableOnXEdge.height < 0)) {
-        _popoverOriginRect.origin = _eventLocationInView;
-        _popoverOriginRect.size = NSMakeSize(1, 1);
-        originScreenRect = [window convertRectToScreen:[_wkView convertRect:_popoverOriginRect toView:nil]];
-        maxSpaceAvailableOnYEdge = [self _maxSpaceAvailableOnYEdgeForOriginRect:originScreenRect withScreenRect:screenFrame previewPadding:previewPadding];
-        maxSpaceAvailableOnXEdge = [self _maxSpaceAvailableOnXEdgeForOriginRect:originScreenRect withScreenRect:screenFrame previewPadding:previewPadding];
-    }
 
     // Adjust the maximum space available if it is larger than the largest popover size.
     if (maxSpaceAvailableOnYEdge.width > largestPopoverSize.width && maxSpaceAvailableOnYEdge.height > largestPopoverSize.height)
