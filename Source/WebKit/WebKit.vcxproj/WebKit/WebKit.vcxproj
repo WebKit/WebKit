@@ -291,7 +291,6 @@
     <ClCompile Include="..\..\Storage\StorageSyncManager.cpp" />
     <ClCompile Include="..\..\Storage\StorageThread.cpp" />
     <ClCompile Include="..\..\Storage\StorageTracker.cpp" />
-    <ClCompile Include="..\..\Storage\WebDatabaseProvider.cpp" />
     <ClCompile Include="..\..\Storage\WebStorageNamespaceProvider.cpp" />
     <ClCompile Include="..\..\cf\WebCoreSupport\WebInspectorClientCF.cpp" />
     <ClCompile Include="..\..\win\AccessibleBase.cpp" />
@@ -434,7 +433,6 @@
     <ClInclude Include="..\..\Storage\StorageThread.h" />
     <ClInclude Include="..\..\Storage\StorageTracker.h" />
     <ClInclude Include="..\..\Storage\StorageTrackerClient.h" />
-    <ClInclude Include="..\..\Storage\WebDatabaseProvider.h" />
     <ClInclude Include="..\..\Storage\WebStorageNamespaceProvider.h" />
     <ClInclude Include="..\..\win\AccessibleBase.h" />
     <ClInclude Include="..\..\win\AccessibleDocument.h" />

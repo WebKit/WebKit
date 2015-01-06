@@ -1,3 +1,16 @@
+2015-01-06  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r177963.
+        https://bugs.webkit.org/show_bug.cgi?id=140136
+
+        Caused lots of crashes (Requested by smfr on #webkit).
+
+        Reverted changeset:
+
+        "Add a WebKit1 database provider"
+        https://bugs.webkit.org/show_bug.cgi?id=140126
+        http://trac.webkit.org/changeset/177963
+
 2015-01-06  Anders Carlsson  <andersca@apple.com>
 
         Add a WebKit1 database provider

@@ -235,9 +235,6 @@
     <ClCompile Include="..\..\Storage\StorageTracker.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Storage\WebDatabaseProvider.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Storage\WebStorageNamespaceProvider.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -578,9 +575,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Storage\StorageTrackerClient.h">
       <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Storage\WebDatabaseProvider.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Storage\WebStorageNamespaceProvider.h">
       <Filter>Header Files</Filter>
