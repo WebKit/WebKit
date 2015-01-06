@@ -1,5 +1,35 @@
 2015-01-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r177656. rdar://problem/19311017
+
+    2014-12-22  Timothy Horton  <timothy_horton@apple.com>
+
+            TextIndicatorWindow is larger than it needs to be, especially when not bouncing
+            https://bugs.webkit.org/show_bug.cgi?id=139876
+            <rdar://problem/19311017>
+
+            Reviewed by Sam Weinig.
+
+            * page/TextIndicator.cpp:
+            (WebCore::TextIndicator::wantsBounce):
+            (WebCore::TextIndicator::wantsContentCrossfade):
+            (WebCore::TextIndicator::wantsFadeIn):
+            * page/TextIndicator.h:
+            * page/mac/TextIndicatorWindow.mm:
+            (-[WebTextIndicatorView initWithFrame:textIndicator:margin:]):
+            (-[WebTextIndicatorView _animationDuration]):
+            (-[WebTextIndicatorView present]):
+            (WebCore::TextIndicatorWindow::setTextIndicator):
+            (-[WebTextIndicatorView _textIndicatorWantsBounce]): Deleted.
+            (-[WebTextIndicatorView _textIndicatorWantsContentCrossfade]): Deleted.
+            (-[WebTextIndicatorView _textIndicatorWantsFadeIn]): Deleted.
+            Move the various switches over TextIndicatorPresentationTransition into TextIndicator.
+            Adjust the margin; only inflate by the shadow if we're not bouncing.
+            If we are bouncing, fix the math to more tightly fit the bounce.
+            Previously we were inflating by way too much, and even when we didn't need to.
+
+2015-01-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177641. rdar://problem/19283300
 
     2014-12-22  Timothy Horton  <timothy_horton@apple.com>
