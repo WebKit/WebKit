@@ -460,7 +460,7 @@ RefPtr<SimpleFontData> SimpleFontData::systemFallbackFontDataForCharacter(UChar3
             codeUnitsLength = 2;
         }
 
-        fallbackFontData = fontCache().systemFallbackForCharacters(description, this, false, codeUnits, codeUnitsLength).get();
+        fallbackFontData = fontCache().systemFallbackForCharacters(description, this, isForPlatformFont, codeUnits, codeUnitsLength).get();
         if (fallbackFontData)
             fallbackFontData->m_isUsedInSystemFallbackCache = true;
     }
