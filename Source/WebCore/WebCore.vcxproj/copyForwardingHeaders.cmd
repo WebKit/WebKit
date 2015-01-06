@@ -19,6 +19,7 @@ xcopy /y /d "%CONFIGURATIONBUILDDIR%\obj%PlatformArchitecture%\WebCore\DerivedSo
 xcopy /y /d "%ProjectDir%..\Modules\filesystem\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\Modules\gamepad\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\Modules\geolocation\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
+xcopy /y /d "%ProjectDir%..\Modules\indexeddb\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\Modules\mediacontrols\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\Modules\mediasource\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\Modules\navigatorcontentutils\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"

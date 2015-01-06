@@ -1,3 +1,9 @@
+2015-01-06  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Windows build.
+
+        * WebCore.vcxproj/copyForwardingHeaders.cmd:
+
 2015-01-06  Chris Dumez  <cdumez@apple.com>
 
         Regression(r176212): Carousel on mbusa.com is choppy
