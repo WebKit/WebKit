@@ -33,7 +33,6 @@ static const char FeatureCounterPageCacheFailureNoDocumentLoaderKey[] = "com.app
 static const char FeatureCounterPageCacheFailureMainDocumentErrorKey[] = "com.apple.WebKit.pageCache.failure.mainDocumentError";
 static const char FeatureCounterPageCacheFailureIsErrorPageKey[] = "com.apple.WebKit.pageCache.failure.isErrorPage";
 static const char FeatureCounterPageCacheFailureHasPlugins[] = "com.apple.WebKit.pageCache.failure.hasPlugins";
-static const char FeatureCounterPageCacheFailureHTTPSNoCacheKey[] = "com.apple.WebKit.pageCache.failure.httpsNoCache";
 static const char FeatureCounterPageCacheFailureHTTPSNoStoreKey[] = "com.apple.WebKit.pageCache.failure.httpsNoStore";
 #if ENABLE(SQL_DATABASE)
 static const char FeatureCounterPageCacheFailureHasOpenDatabasesKey[] = "com.apple.WebKit.pageCache.failure.hasOpenDatabases";

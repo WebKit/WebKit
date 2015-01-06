@@ -1,5 +1,26 @@
 2015-01-05  Chris Dumez  <cdumez@apple.com>
 
+        Allow HTTPS + 'Cache-control: no-cache' pages into the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=139251
+
+        Reviewed by Darin Adler.
+
+        Allow HTTPS + 'Cache-control: no-cache' pages into the page cache as
+        IE10+ and Google Chrome do, and as allowed by RFC2616 & newer RFC7234
+        (both RFCs distinguish history mechanisms and caches).
+
+        Pages over HTTPs using 'Cache-control: no-store' still don't go into
+        the page cache for now.
+
+        Test: http/tests/navigation/https-in-page-cache.html
+
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        * platform/FeatureCounterKeys.h:
+
+2015-01-05  Chris Dumez  <cdumez@apple.com>
+
         Using calc() in repeat() for -webkit-grid-template-rows does not work
         https://bugs.webkit.org/show_bug.cgi?id=140094
 

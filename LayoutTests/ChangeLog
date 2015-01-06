@@ -1,5 +1,18 @@
 2015-01-05  Chris Dumez  <cdumez@apple.com>
 
+        Allow HTTPS + 'Cache-control: no-cache' pages into the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=139251
+
+        Reviewed by Darin Adler.
+
+        Update http/tests/navigation/https-in-page-cache.html layout test so that it
+        expects HTTPS + 'Cache-control: no-cache' pages to go into the page cache.
+
+        * http/tests/navigation/https-in-page-cache-expected.txt:
+        * http/tests/navigation/resources/https-in-page-cache-2.php:
+
+2015-01-05  Chris Dumez  <cdumez@apple.com>
+
         Using calc() in repeat() for -webkit-grid-template-rows does not work
         https://bugs.webkit.org/show_bug.cgi?id=140094
 
