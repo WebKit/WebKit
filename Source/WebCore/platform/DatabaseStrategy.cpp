@@ -27,7 +27,6 @@
 #include "DatabaseStrategy.h"
 
 #include "DatabaseServer.h"
-#include "IDBFactoryBackendInterface.h"
 
 namespace WebCore {
 
@@ -37,13 +36,5 @@ AbstractDatabaseServer* DatabaseStrategy::getDatabaseServer()
     return new DatabaseServer;
 }
 #endif // ENABLE(SQL_DATABASE)
-
-#if ENABLE(INDEXED_DATABASE)
-PassRefPtr<IDBFactoryBackendInterface> DatabaseStrategy::createIDBFactoryBackend()
-{
-    // FIXME: Need a better platform abstraction here, but this stop gap will work for now.
-    return 0;
-}
-#endif // ENABLE(INDEXED_DATABASE)
 
 } // namespace WebCore

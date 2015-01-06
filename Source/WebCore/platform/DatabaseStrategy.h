@@ -32,16 +32,11 @@
 namespace WebCore {
 
 class AbstractDatabaseServer;
-class IDBFactoryBackendInterface;
 
 class WEBCORE_EXPORT DatabaseStrategy {
 public:
 #if ENABLE(SQL_DATABASE)
     WEBCORE_EXPORT virtual AbstractDatabaseServer* getDatabaseServer();
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-    WEBCORE_EXPORT virtual PassRefPtr<IDBFactoryBackendInterface> createIDBFactoryBackend();
 #endif
 
 protected:

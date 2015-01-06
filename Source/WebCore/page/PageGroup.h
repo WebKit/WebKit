@@ -38,7 +38,7 @@ namespace WebCore {
     class CaptionUserPreferences;
 #endif
 
-    class PageGroup : public Supplementable<PageGroup> {
+    class PageGroup {
         WTF_MAKE_NONCOPYABLE(PageGroup); WTF_MAKE_FAST_ALLOCATED;
     public:
         WEBCORE_EXPORT explicit PageGroup(const String& name);

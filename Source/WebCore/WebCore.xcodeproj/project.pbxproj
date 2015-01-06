@@ -2008,7 +2008,6 @@
 		51D719D1181106E00016DC51 /* IDBEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71987181106DF0016DC51 /* IDBEventDispatcher.h */; };
 		51D719D2181106E00016DC51 /* IDBFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71988181106DF0016DC51 /* IDBFactory.cpp */; };
 		51D719D3181106E00016DC51 /* IDBFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71989181106DF0016DC51 /* IDBFactory.h */; };
-		51D719D5181106E00016DC51 /* IDBFactoryBackendInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7198B181106DF0016DC51 /* IDBFactoryBackendInterface.cpp */; };
 		51D719D6181106E00016DC51 /* IDBFactoryBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7198C181106E00016DC51 /* IDBFactoryBackendInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51D719D8181106E00016DC51 /* IDBIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D7198E181106E00016DC51 /* IDBIndex.cpp */; };
 		51D719D9181106E00016DC51 /* IDBIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7198F181106E00016DC51 /* IDBIndex.h */; };
@@ -2031,8 +2030,6 @@
 		51D719F5181106E00016DC51 /* IDBVersionChangeEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D719AB181106E00016DC51 /* IDBVersionChangeEvent.cpp */; };
 		51D719F6181106E00016DC51 /* IDBVersionChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719AC181106E00016DC51 /* IDBVersionChangeEvent.h */; };
 		51D719F8181106E00016DC51 /* IndexedDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719AE181106E00016DC51 /* IndexedDB.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51D719F9181106E00016DC51 /* PageGroupIndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D719AF181106E00016DC51 /* PageGroupIndexedDatabase.cpp */; };
-		51D719FA181106E00016DC51 /* PageGroupIndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719B0181106E00016DC51 /* PageGroupIndexedDatabase.h */; };
 		51D719FB181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D719B1181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp */; };
 		51D719FC181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719B2181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.h */; };
 		51DCE8020CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */; };
@@ -9134,7 +9131,6 @@
 		51D71988181106DF0016DC51 /* IDBFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBFactory.cpp; sourceTree = "<group>"; };
 		51D71989181106DF0016DC51 /* IDBFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactory.h; sourceTree = "<group>"; };
 		51D7198A181106DF0016DC51 /* IDBFactory.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBFactory.idl; sourceTree = "<group>"; };
-		51D7198B181106DF0016DC51 /* IDBFactoryBackendInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBFactoryBackendInterface.cpp; sourceTree = "<group>"; };
 		51D7198C181106E00016DC51 /* IDBFactoryBackendInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBFactoryBackendInterface.h; sourceTree = "<group>"; };
 		51D7198E181106E00016DC51 /* IDBIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndex.cpp; sourceTree = "<group>"; };
 		51D7198F181106E00016DC51 /* IDBIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBIndex.h; sourceTree = "<group>"; };
@@ -9164,8 +9160,6 @@
 		51D719AC181106E00016DC51 /* IDBVersionChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBVersionChangeEvent.h; sourceTree = "<group>"; };
 		51D719AD181106E00016DC51 /* IDBVersionChangeEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBVersionChangeEvent.idl; sourceTree = "<group>"; };
 		51D719AE181106E00016DC51 /* IndexedDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedDB.h; sourceTree = "<group>"; };
-		51D719AF181106E00016DC51 /* PageGroupIndexedDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroupIndexedDatabase.cpp; sourceTree = "<group>"; };
-		51D719B0181106E00016DC51 /* PageGroupIndexedDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroupIndexedDatabase.h; sourceTree = "<group>"; };
 		51D719B1181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerGlobalScopeIndexedDatabase.cpp; sourceTree = "<group>"; };
 		51D719B2181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerGlobalScopeIndexedDatabase.h; sourceTree = "<group>"; };
 		51D719B3181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerGlobalScopeIndexedDatabase.idl; sourceTree = "<group>"; };
@@ -18167,7 +18161,6 @@
 				51D71988181106DF0016DC51 /* IDBFactory.cpp */,
 				51D71989181106DF0016DC51 /* IDBFactory.h */,
 				51D7198A181106DF0016DC51 /* IDBFactory.idl */,
-				51D7198B181106DF0016DC51 /* IDBFactoryBackendInterface.cpp */,
 				51D7198C181106E00016DC51 /* IDBFactoryBackendInterface.h */,
 				5123AF1C18918AE40031CDC9 /* IDBGetResult.h */,
 				51D7198E181106E00016DC51 /* IDBIndex.cpp */,
@@ -18215,8 +18208,6 @@
 				51D719AC181106E00016DC51 /* IDBVersionChangeEvent.h */,
 				51D719AD181106E00016DC51 /* IDBVersionChangeEvent.idl */,
 				51D719AE181106E00016DC51 /* IndexedDB.h */,
-				51D719AF181106E00016DC51 /* PageGroupIndexedDatabase.cpp */,
-				51D719B0181106E00016DC51 /* PageGroupIndexedDatabase.h */,
 				51D719B1181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp */,
 				51D719B2181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.h */,
 				51D719B3181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.idl */,
@@ -25623,7 +25614,6 @@
 				A5A2AF0C1829734300DE1729 /* PageDebuggable.h in Headers */,
 				F34742DD134362F000531BC2 /* PageDebuggerAgent.h in Headers */,
 				9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */,
-				51D719FA181106E00016DC51 /* PageGroupIndexedDatabase.h in Headers */,
 				7A674BDC0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h in Headers */,
 				2D5C9D0019C7B52E00B3C5C1 /* PageOverlay.h in Headers */,
 				2D5C9D0219C7B52E00B3C5C1 /* PageOverlayController.h in Headers */,
@@ -28137,7 +28127,6 @@
 				5163117D1851242B00534647 /* IDBDatabaseMetadata.cpp in Sources */,
 				51D719D0181106E00016DC51 /* IDBEventDispatcher.cpp in Sources */,
 				51D719D2181106E00016DC51 /* IDBFactory.cpp in Sources */,
-				51D719D5181106E00016DC51 /* IDBFactoryBackendInterface.cpp in Sources */,
 				51D719D8181106E00016DC51 /* IDBIndex.cpp in Sources */,
 				51D719DB181106E00016DC51 /* IDBKey.cpp in Sources */,
 				511EC1A8188DAE7B00BA3EB6 /* IDBKeyData.cpp in Sources */,
@@ -29158,7 +29147,6 @@
 				A5A2AF0B1829734300DE1729 /* PageDebuggable.cpp in Sources */,
 				F34742DC134362F000531BC2 /* PageDebuggerAgent.cpp in Sources */,
 				9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */,
-				51D719F9181106E00016DC51 /* PageGroupIndexedDatabase.cpp in Sources */,
 				7A674BDB0F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp in Sources */,
 				1C26497C0D7E24EC00BD10F2 /* PageMac.cpp in Sources */,
 				2D5C9CFF19C7B52E00B3C5C1 /* PageOverlay.cpp in Sources */,

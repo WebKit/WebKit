@@ -399,9 +399,6 @@
     <ClCompile Include="..\Modules\indexeddb\IDBFactory.cpp">
       <Filter>Modules\indexeddb</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\indexeddb\IDBFactoryBackendInterface.cpp">
-      <Filter>Modules\indexeddb</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\IDBIndex.cpp">
       <Filter>Modules\indexeddb</Filter>
     </ClCompile>
@@ -418,9 +415,6 @@
       <Filter>Modules\indexeddb</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\IDBTransaction.cpp">
-      <Filter>Modules\indexeddb</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\indexeddb\PageGroupIndexedDatabase.cpp">
       <Filter>Modules\indexeddb</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\indexeddb\WorkerGlobalScopeIndexedDatabase.cpp">
@@ -7342,9 +7336,6 @@
       <Filter>Modules\indexeddb</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\indexeddb\IDBTransaction.h">
-      <Filter>Modules\indexeddb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\indexeddb\PageGroupIndexedDatabase.h">
       <Filter>Modules\indexeddb</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\indexeddb\WorkerGlobalScopeIndexedDatabase.h">

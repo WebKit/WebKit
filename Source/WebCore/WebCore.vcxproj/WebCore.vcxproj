@@ -6769,7 +6769,6 @@
     <ClCompile Include="..\Modules\indexeddb\IDBCursorBackend.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBDatabase.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBFactory.cpp" />
-    <ClCompile Include="..\Modules\indexeddb\IDBFactoryBackendInterface.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBIndex.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBKey.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBKeyData.cpp" />
@@ -6777,7 +6776,6 @@
     <ClCompile Include="..\Modules\indexeddb\IDBObjectStore.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBRequest.cpp" />
     <ClCompile Include="..\Modules\indexeddb\IDBTransaction.cpp" />
-    <ClCompile Include="..\Modules\indexeddb\PageGroupIndexedDatabase.cpp" />
     <ClCompile Include="..\Modules\indexeddb\WorkerGlobalScopeIndexedDatabase.cpp" />
     <ClCompile Include="..\Modules\navigatorcontentutils\NavigatorContentUtils.cpp" />
     <ClCompile Include="..\Modules\proximity\DeviceProximityController.cpp" />
@@ -19054,7 +19052,6 @@
     <ClInclude Include="..\Modules\indexeddb\IDBObjectStoreBackendImpl.h" />
     <ClInclude Include="..\Modules\indexeddb\IDBRequest.h" />
     <ClInclude Include="..\Modules\indexeddb\IDBTransaction.h" />
-    <ClInclude Include="..\Modules\indexeddb\PageGroupIndexedDatabase.h" />
     <ClInclude Include="..\Modules\indexeddb\WorkerGlobalScopeIndexedDatabase.h" />
     <ClInclude Include="..\Modules\navigatorcontentutils\NavigatorContentUtils.h" />
     <ClInclude Include="..\Modules\proximity\DeviceProximityClient.h" />

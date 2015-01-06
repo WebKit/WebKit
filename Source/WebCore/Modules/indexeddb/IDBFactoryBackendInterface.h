@@ -56,7 +56,6 @@ typedef int ExceptionCode;
 // trigger work on a background thread if necessary.
 class IDBFactoryBackendInterface : public RefCounted<IDBFactoryBackendInterface> {
 public:
-    static PassRefPtr<IDBFactoryBackendInterface> create();
     virtual ~IDBFactoryBackendInterface() { }
 
     virtual void getDatabaseNames(PassRefPtr<IDBCallbacks>, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin, ScriptExecutionContext*) = 0;

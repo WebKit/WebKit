@@ -205,17 +205,6 @@ AbstractDatabaseServer* WebPlatformStrategies::getDatabaseServer()
 }
 #endif // ENABLE(SQL_DATABASE)
 
-#if ENABLE(INDEXED_DATABASE)
-PassRefPtr<IDBFactoryBackendInterface> WebPlatformStrategies::createIDBFactoryBackend()
-{
-#if !ENABLE(DATABASE_PROCESS)
-    return DatabaseStrategy::createIDBFactoryBackend();
-#endif
-
-    return WebIDBFactoryBackend::create();
-}
-#endif // ENABLE(INDEXED_DATABASE)
-
 // LoaderStrategy
 
 #if ENABLE(NETWORK_PROCESS)

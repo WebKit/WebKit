@@ -1,5 +1,44 @@
 2015-01-06  Anders Carlsson  <andersca@apple.com>
 
+        Remove now unused IndexedDB code
+        https://bugs.webkit.org/show_bug.cgi?id=140128
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        Remove files.
+
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        Don't include PageGroupIndexedDatabase.h.
+
+        * Modules/indexeddb/IDBFactoryBackendInterface.cpp: Removed.
+        Remove this file, it just had one function calling through to the database strategy.
+
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+        Remove the create function.
+
+        * Modules/indexeddb/PageGroupIndexedDatabase.cpp: Removed.
+        * Modules/indexeddb/PageGroupIndexedDatabase.h: Removed.
+        The backend is now per page, not per page group.
+
+        * WebCore.exp.in:
+        Remove an exported symbol.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove files.
+
+        * page/PageGroup.h:
+        PageGroup is no longer supplementable.
+
+        * platform/DatabaseStrategy.cpp:
+        (WebCore::DatabaseStrategy::createIDBFactoryBackend): Deleted.
+        * platform/DatabaseStrategy.h:
+        Remove a header.
+
+2015-01-06  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the Windows build.
 
         * WebCore.vcxproj/copyForwardingHeaders.cmd:
