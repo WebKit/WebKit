@@ -52,7 +52,7 @@ public:
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
-    GlyphData glyphDataForCharacter(const FontDescription&, UChar32, bool mirror, FontDataVariant);
+    GlyphData glyphDataForCharacter(UChar32, const FontDescription&, FontDataVariant);
 
     bool isFixedPitch(const FontDescription&);
     void determinePitch(const FontDescription&);

@@ -185,10 +185,8 @@ public:
 
     const SimpleFontData& primaryFontData() const;
     const FontData* fontDataAt(unsigned) const;
-    GlyphData glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant variant = AutoVariant) const
-    {
-        return m_glyphs->glyphDataForCharacter(m_fontDescription, c, mirror, variant);
-    }
+    GlyphData glyphDataForCharacter(UChar32, bool mirror, FontDataVariant = AutoVariant) const;
+    
 #if PLATFORM(COCOA)
     const SimpleFontData* fontDataForCombiningCharacterSequence(const UChar*, size_t length, FontDataVariant) const;
 #endif

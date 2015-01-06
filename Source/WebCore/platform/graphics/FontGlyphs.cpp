@@ -360,24 +360,10 @@ static RefPtr<GlyphPage> glyphPageFromFontData(unsigned pageNumber, const FontDa
     return const_cast<GlyphPage*>(simpleFontData->glyphPage(pageNumber));
 }
 
-GlyphData FontGlyphs::glyphDataForCharacter(const FontDescription& description, UChar32 c, bool mirror, FontDataVariant variant)
+GlyphData FontGlyphs::glyphDataForCharacter( UChar32 c, const FontDescription& description, FontDataVariant variant)
 {
     ASSERT(isMainThread());
-
-    if (variant == AutoVariant) {
-        if (description.smallCaps() && !primarySimpleFontData(description).isSVGFont()) {
-            UChar32 upperC = u_toupper(c);
-            if (upperC != c) {
-                c = upperC;
-                variant = SmallCapsVariant;
-            } else
-                variant = NormalVariant;
-        } else
-            variant = NormalVariant;
-    }
-
-    if (mirror)
-        c = u_charMirror(c);
+    ASSERT(variant != AutoVariant);
 
     if (variant != NormalVariant)
         return glyphDataForVariant(c, description, variant, 0);

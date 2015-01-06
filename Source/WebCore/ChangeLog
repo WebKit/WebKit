@@ -1,3 +1,20 @@
+2015-01-06  Antti Koivisto  <antti@apple.com>
+
+        Resolve mirroring and variant in Font instead of FontGlyphs
+        https://bugs.webkit.org/show_bug.cgi?id=140079
+
+        Reviewed by Darin Adler.
+
+        Make FontGlyphs more focused. It doesn't need to know about resolving variants and mirroring.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+        * platform/graphics/Font.h:
+        (WebCore::Font::glyphDataForCharacter): Deleted.
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::glyphDataForCharacter):
+        * platform/graphics/FontGlyphs.h:
+
 2015-01-06  Shivakumar JM  <shiva.jm@samsung.com>
 
         Fix Unused parameter warning in Webcore bindings.
