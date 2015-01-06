@@ -41,6 +41,7 @@
 #include "WebContextMenuClient.h"
 #include "WebCoreTextRenderer.h"
 #include "WebDatabaseManager.h"
+#include "WebDatabaseProvider.h"
 #include "WebDocumentLoader.h"
 #include "WebDownload.h"
 #include "WebDragClient.h"
@@ -2812,6 +2813,7 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     configuration.inspectorClient = m_inspectorClient;
 #endif // ENABLE(INSPECTOR)
     configuration.loaderClientForMainFrame = new WebFrameLoaderClient;
+    configuration.databaseProvider = &WebDatabaseProvider::shared();
     configuration.storageNamespaceProvider = WebStorageNamespaceProvider::create(localStorageDatabasePath(m_preferences.get()));
     configuration.progressTrackerClient = static_cast<WebFrameLoaderClient*>(configuration.loaderClientForMainFrame);
     configuration.visitedLinkStore = &WebVisitedLinkStore::shared();
