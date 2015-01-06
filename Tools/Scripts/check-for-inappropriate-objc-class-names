@@ -94,10 +94,6 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
         "WAKScrollView" => 1,
         "WAKView" => 1,
         "WAKWindow" => 1,
-        # WebKit2
-        "UIWKRemoteView" => 1,
-        "UIWKView" => 1,
-        "UIWKViewData" => 1
     );
     my @realBadNames;
     for my $className (@badNames) {
