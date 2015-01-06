@@ -9353,19 +9353,18 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
             ValueWithCalculation argumentWithCalculation(*args.current());
             if (!validateUnit(argumentWithCalculation, FNumber | FPercent | FNonNeg, CSSStrictMode))
                 return nullptr;
-                
-            // FIXME: This does not handle calculated values.
-            double amount = argumentWithCalculation.value().fValue;
-            
+
+            auto primitiveValue = createPrimitiveNumericValue(argumentWithCalculation);
+
             // Saturate and Contrast allow values over 100%.
             if (filterType != WebKitCSSFilterValue::SaturateFilterOperation
                 && filterType != WebKitCSSFilterValue::ContrastFilterOperation) {
-                double maxAllowed = argumentWithCalculation.value().unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 100.0 : 1.0;
-                if (amount > maxAllowed)
+                double maxAllowed = primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE ? 100.0 : 1.0;
+                if (primitiveValue->getDoubleValue() > maxAllowed)
                     return nullptr;
             }
 
-            filterValue->append(cssValuePool().createValue(amount, static_cast<CSSPrimitiveValue::UnitTypes>(argumentWithCalculation.value().unit)));
+            filterValue->append(WTF::move(primitiveValue));
         }
         break;
     }

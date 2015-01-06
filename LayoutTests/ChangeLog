@@ -1,5 +1,18 @@
 2015-01-05  Chris Dumez  <cdumez@apple.com>
 
+        Using calc() for -webkit-filter does not work
+        https://bugs.webkit.org/show_bug.cgi?id=140106
+
+        Reviewed by Darin Adler.
+
+        Add a layout test to make sure using calc() for -webkit-filter CSS
+        property is working as intended.
+
+        * fast/css/webkit-filter-calc-expected.txt: Added.
+        * fast/css/webkit-filter-calc.html: Added.
+
+2015-01-05  Chris Dumez  <cdumez@apple.com>
+
         Allow HTTPS + 'Cache-control: no-cache' pages into the page cache
         https://bugs.webkit.org/show_bug.cgi?id=139251
 
