@@ -232,6 +232,8 @@ private:
     virtual const SimpleFontData* simpleFontDataForCharacter(UChar32) const override;
     virtual const SimpleFontData& simpleFontDataForFirstRange() const override;
 
+    void removeFromSystemFallbackCache();
+
 #if PLATFORM(WIN)
     void initGDIFont();
     void platformCommonDestroy();
@@ -263,6 +265,9 @@ private:
 
     bool m_isTextOrientationFallback;
     bool m_isBrokenIdeographFallback;
+
+    bool m_isUsedInSystemFallbackCache { false };
+
     mutable RefPtr<OpenTypeMathData> m_mathData;
 #if ENABLE(OPENTYPE_VERTICAL)
     RefPtr<OpenTypeVerticalData> m_verticalData;

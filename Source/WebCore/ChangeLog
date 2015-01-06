@@ -1,5 +1,23 @@
 2015-01-06  Antti Koivisto  <antti@apple.com>
 
+        REGRESSION (r177876): 35% regression in Parser/html5-full-render
+        https://bugs.webkit.org/show_bug.cgi?id=140123
+
+        Reviewed by Darin Adler.
+
+        Resolving system fallbacks is extremely slow. GlyphPageTree used to cache them globally.
+
+        This patch brings back a simple global cache for system fallbacks.
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::~SimpleFontData):
+        (WebCore::systemFallbackCache):
+        (WebCore::SimpleFontData::systemFallbackFontDataForCharacter):
+        (WebCore::SimpleFontData::removeFromSystemFallbackCache):
+        * platform/graphics/SimpleFontData.h:
+
+2015-01-06  Antti Koivisto  <antti@apple.com>
+
         Rename SimpleFontData::AdditionalFontData to SimpleFontData::SVGData
         https://bugs.webkit.org/show_bug.cgi?id=140124
 

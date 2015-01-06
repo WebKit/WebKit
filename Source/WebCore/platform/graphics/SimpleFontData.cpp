@@ -156,6 +156,8 @@ SimpleFontData::~SimpleFontData()
 {
     if (!isSVGFont())
         platformDestroy();
+
+    removeFromSystemFallbackCache();
 }
 
 const SimpleFontData* SimpleFontData::simpleFontDataForCharacter(UChar32) const
@@ -196,7 +198,7 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Simpl
     UChar buffer[GlyphPage::size * 2 + 2];
     unsigned bufferLength;
     // Fill in a buffer with the entire "page" of characters that we want to look up glyphs for.
-    if (start < 0x10000) {
+    if (U_IS_BMP(start)) {
         bufferLength = GlyphPage::size;
         for (unsigned i = 0; i < GlyphPage::size; i++)
             buffer[i] = start + i;
@@ -427,20 +429,61 @@ bool SimpleFontData::applyTransforms(GlyphBufferGlyph* glyphs, GlyphBufferAdvanc
 #endif
 }
 
-RefPtr<SimpleFontData> SimpleFontData::systemFallbackFontDataForCharacter(UChar32 c, const FontDescription& description, bool isForPlatformFont) const
+// FontDatas are not refcounted to avoid cycles.
+typedef HashMap<std::pair<UChar32, unsigned>, SimpleFontData*> CharacterFallbackMap;
+typedef HashMap<const SimpleFontData*, CharacterFallbackMap> SystemFallbackCache;
+
+static SystemFallbackCache& systemFallbackCache()
 {
-    UChar codeUnits[2];
-    int codeUnitsLength;
-    if (c <= 0xFFFF) {
-        codeUnits[0] = Font::normalizeSpaces(c);
-        codeUnitsLength = 1;
-    } else {
-        codeUnits[0] = U16_LEAD(c);
-        codeUnits[1] = U16_TRAIL(c);
-        codeUnitsLength = 2;
+    static NeverDestroyed<SystemFallbackCache> map;
+    return map.get();
+}
+
+RefPtr<SimpleFontData> SimpleFontData::systemFallbackFontDataForCharacter(UChar32 character, const FontDescription& description, bool isForPlatformFont) const
+{
+    auto fontAddResult = systemFallbackCache().add(this, CharacterFallbackMap());
+
+    auto key = std::make_pair(character, isForPlatformFont);
+    auto characterAddResult = fontAddResult.iterator->value.add(key, nullptr);
+
+    SimpleFontData*& fallbackFontData = characterAddResult.iterator->value;
+
+    if (!fallbackFontData) {
+        UChar codeUnits[2];
+        int codeUnitsLength;
+        if (U_IS_BMP(character)) {
+            codeUnits[0] = Font::normalizeSpaces(character);
+            codeUnitsLength = 1;
+        } else {
+            codeUnits[0] = U16_LEAD(character);
+            codeUnits[1] = U16_TRAIL(character);
+            codeUnitsLength = 2;
+        }
+
+        fallbackFontData = fontCache().systemFallbackForCharacters(description, this, false, codeUnits, codeUnitsLength).get();
+        if (fallbackFontData)
+            fallbackFontData->m_isUsedInSystemFallbackCache = true;
     }
 
-    return fontCache().systemFallbackForCharacters(description, this, isForPlatformFont, codeUnits, codeUnitsLength);
+    return fallbackFontData;
+}
+
+void SimpleFontData::removeFromSystemFallbackCache()
+{
+    systemFallbackCache().remove(this);
+
+    if (!m_isUsedInSystemFallbackCache)
+        return;
+
+    for (auto& characterMap : systemFallbackCache().values()) {
+        Vector<std::pair<UChar32, unsigned>, 512> toRemove;
+        for (auto& entry : characterMap) {
+            if (entry.value == this)
+                toRemove.append(entry.key);
+        }
+        for (auto& key : toRemove)
+            characterMap.remove(key);
+    }
 }
 
 } // namespace WebCore
