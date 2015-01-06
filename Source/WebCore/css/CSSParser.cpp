@@ -4731,8 +4731,7 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationTimingFunction()
         ValueWithCalculation argumentWithCalculation(*argument);
         if (!validateUnit(argumentWithCalculation, FInteger))
             return nullptr;
-        // FIXME: This doesn't handle calculated values.
-        numSteps = clampToInteger(argument->fValue);
+        numSteps = clampToInteger(parsedDouble(argumentWithCalculation));
         if (numSteps < 1)
             return nullptr;
         argument = args->next();

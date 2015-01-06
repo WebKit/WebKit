@@ -1,3 +1,19 @@
+2015-01-05  Chris Dumez  <cdumez@apple.com>
+
+        calc() cannot be used in steps() for -webkit-animation-timing-function
+        https://bugs.webkit.org/show_bug.cgi?id=140091
+
+        Reviewed by Darin Adler.
+
+        calc() could not be used in steps() for -webkit-animation-timing-function
+        CSS property because the CSS parser did not handle this case properly.
+        This patch addresses the issue.
+
+        Test: fast/css/animation-steps-calculated-value.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseAnimationTimingFunction):
+
 2015-01-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] One more build fix for r177937.

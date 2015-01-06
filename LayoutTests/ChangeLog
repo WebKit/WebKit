@@ -1,5 +1,18 @@
 2015-01-05  Chris Dumez  <cdumez@apple.com>
 
+        calc() cannot be used in steps() for -webkit-animation-timing-function
+        https://bugs.webkit.org/show_bug.cgi?id=140091
+
+        Reviewed by Darin Adler.
+
+        Add a layout test to make sure that calc() can be used in steps() for
+        -webkit-animation-timing-function CSS property.
+
+        * fast/css/animation-steps-calculated-value-expected.txt: Added.
+        * fast/css/animation-steps-calculated-value.html: Added.
+
+2015-01-05  Chris Dumez  <cdumez@apple.com>
+
         Regression(r163928): Animated images are not resumed on window resizing
         https://bugs.webkit.org/show_bug.cgi?id=139714
         <rdar://problem/18855285>

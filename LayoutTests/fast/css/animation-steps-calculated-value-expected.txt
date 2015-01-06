@@ -1,0 +1,13 @@
+Tests assigning using calculated value in steps() for -webkit-animation-timing-function works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testDiv.style['-webkit-animation-timing-function'] is ""
+testDiv.style['-webkit-animation-timing-function'] = 'steps(calc(1 + 2), end)'
+PASS testDiv.style['-webkit-animation-timing-function'] is "steps(3, end)"
+PASS window.getComputedStyle(testDiv).getPropertyValue('-webkit-animation-timing-function') is "steps(3, end)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
