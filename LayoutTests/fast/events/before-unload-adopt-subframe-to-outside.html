@@ -58,6 +58,13 @@ container.onload = function () {
         log('DONE');
     else
         log('Received ' + i + ' events but expected ' + expectedOrder.length);
+
+    // Hide the frames to work around timing dependencied in layout tree creation,
+    // see <https://bugs.webkit.org/show_bug.cgi?id=140061>.
+    var frames = document.getElementsByTagName("iframe");
+    for (var frameIndex = 0; frameIndex < frames.length; ++frameIndex)
+        frames[frameIndex].style.display = "none";        
+        
     if (window.testRunner)
         testRunner.notifyDone();
 }
