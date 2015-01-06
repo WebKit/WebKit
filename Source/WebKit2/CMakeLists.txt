@@ -452,6 +452,7 @@ set(WebKit2_SOURCES
 
     WebProcess/Cookies/WebCookieManager.cpp
 
+    WebProcess/Databases/WebDatabaseProvider.cpp
     WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp
 
     WebProcess/FileAPI/BlobRegistryProxy.cpp

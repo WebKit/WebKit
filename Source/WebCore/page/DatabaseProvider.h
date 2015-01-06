@@ -38,7 +38,7 @@ public:
     virtual ~DatabaseProvider();
 
 #if ENABLE(INDEXED_DATABASE)
-    RefPtr<IDBFactoryBackendInterface> idbFactoryBackend();
+    IDBFactoryBackendInterface* idbFactoryBackend();
 #endif
 
 private:

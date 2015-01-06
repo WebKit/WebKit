@@ -343,6 +343,8 @@
 		1AA576021496B97900A4EE06 /* EventDispatcherMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA575FF1496B7C000A4EE06 /* EventDispatcherMessageReceiver.cpp */; };
 		1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA5889011EE70400061B882 /* NetscapePluginStream.h */; };
 		1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */; };
+		1AA83F6C1A5B63FF00026EC6 /* WebDatabaseProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA83F6A1A5B63FF00026EC6 /* WebDatabaseProvider.cpp */; };
+		1AA83F6D1A5B63FF00026EC6 /* WebDatabaseProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA83F6B1A5B63FF00026EC6 /* WebDatabaseProvider.h */; };
 		1AA9BAE1184FFAC7003B6BC6 /* WeakObjCPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA9BAE0184FFAC7003B6BC6 /* WeakObjCPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AAB0379185A7C6A00EDF501 /* MessageSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AAB0377185A7C6A00EDF501 /* MessageSender.cpp */; };
 		1AAB037A185A7C6A00EDF501 /* MessageSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAB0378185A7C6A00EDF501 /* MessageSender.h */; };
@@ -2352,6 +2354,8 @@
 		1AA576001496B7C000A4EE06 /* EventDispatcherMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcherMessages.h; sourceTree = "<group>"; };
 		1AA5889011EE70400061B882 /* NetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginStream.h; sourceTree = "<group>"; };
 		1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePluginStream.cpp; sourceTree = "<group>"; };
+		1AA83F6A1A5B63FF00026EC6 /* WebDatabaseProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDatabaseProvider.cpp; sourceTree = "<group>"; };
+		1AA83F6B1A5B63FF00026EC6 /* WebDatabaseProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseProvider.h; sourceTree = "<group>"; };
 		1AA9BAE0184FFAC7003B6BC6 /* WeakObjCPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakObjCPtr.h; sourceTree = "<group>"; };
 		1AAB0377185A7C6A00EDF501 /* MessageSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageSender.cpp; sourceTree = "<group>"; };
 		1AAB0378185A7C6A00EDF501 /* MessageSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageSender.h; sourceTree = "<group>"; };
@@ -5344,6 +5348,8 @@
 			isa = PBXGroup;
 			children = (
 				511F8EDA180881660047DA96 /* IndexedDB */,
+				1AA83F6A1A5B63FF00026EC6 /* WebDatabaseProvider.cpp */,
+				1AA83F6B1A5B63FF00026EC6 /* WebDatabaseProvider.h */,
 				51032F16180F73BB00961BB7 /* WebToDatabaseProcessConnection.cpp */,
 				51032F17180F73BB00961BB7 /* WebToDatabaseProcessConnection.h */,
 			);
@@ -7840,6 +7846,7 @@
 				BCD0139B110FA420003B8A67 /* WKFrame.h in Headers */,
 				1A4D664C18A3030E00D82E21 /* WKFrameInfo.h in Headers */,
 				1A4D664E18A3031B00D82E21 /* WKFrameInfoInternal.h in Headers */,
+				1AA83F6D1A5B63FF00026EC6 /* WebDatabaseProvider.h in Headers */,
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
 				E1AEA22F14687BDB00804569 /* WKFullKeyboardAccessWatcher.h in Headers */,
 				CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */,
@@ -9619,6 +9626,7 @@
 				26F10BE919187E2E001D0E68 /* WKSyntheticClickTapGestureRecognizer.m in Sources */,
 				0FCB4E6918BBE3D9000FCFC9 /* WKTextInputWindowController.mm in Sources */,
 				BC407607124FF0270068F20A /* WKType.cpp in Sources */,
+				1AA83F6C1A5B63FF00026EC6 /* WebDatabaseProvider.cpp in Sources */,
 				7CD5EBBE1746B04C000C1C45 /* WKTypeRefWrapper.mm in Sources */,
 				BC407609124FF0270068F20A /* WKURL.cpp in Sources */,
 				BC40761B124FF0370068F20A /* WKURLCF.mm in Sources */,

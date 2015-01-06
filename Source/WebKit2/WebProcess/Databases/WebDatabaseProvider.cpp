@@ -24,25 +24,55 @@
  */
 
 #include "config.h"
-#include "DatabaseProvider.h"
+#include "WebDatabaseProvider.h"
 
-#include "IDBFactoryBackendInterface.h"
+#include "WebIDBFactoryBackend.h"
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
-namespace WebCore {
+using namespace WebCore;
 
-DatabaseProvider::~DatabaseProvider()
+namespace WebKit {
+
+static HashMap<uint64_t, WebDatabaseProvider*>& databaseProviders()
+{
+    static NeverDestroyed<HashMap<uint64_t, WebDatabaseProvider*>> databaseProviders;
+
+    return databaseProviders;
+}
+
+Ref<WebDatabaseProvider> WebDatabaseProvider::getOrCreate(uint64_t identifier)
+{
+    auto& slot = databaseProviders().add(identifier, nullptr).iterator->value;
+    if (slot)
+        return *slot;
+
+    Ref<WebDatabaseProvider> databaseProvider = adoptRef(*new WebDatabaseProvider(identifier));
+    slot = databaseProvider.ptr();
+
+    return databaseProvider;
+}
+
+WebDatabaseProvider::WebDatabaseProvider(uint64_t identifier)
+    : m_identifier(identifier)
 {
 }
 
-#if ENABLE(INDEXED_DATABASE)
-IDBFactoryBackendInterface* DatabaseProvider::idbFactoryBackend()
+WebDatabaseProvider::~WebDatabaseProvider()
 {
-    if (!m_didCreateIDBFactoryBackendInterface) {
-        m_backendInterface = createIDBFactoryBackend();
-        m_didCreateIDBFactoryBackendInterface = true;
-    }
+    ASSERT(databaseProviders().contains(m_identifier));
 
-    return m_backendInterface.get();
+    databaseProviders().remove(m_identifier);
+}
+
+#if ENABLE(INDEXED_DATABASE)
+RefPtr<WebCore::IDBFactoryBackendInterface> WebDatabaseProvider::createIDBFactoryBackend()
+{
+#if ENABLE(DATABASE_PROCESS)
+    return WebIDBFactoryBackend::create();
+#else
+    return nullptr;
+#endif
 }
 #endif
 

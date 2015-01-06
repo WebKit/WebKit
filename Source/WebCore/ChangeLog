@@ -1,3 +1,22 @@
+2015-01-05  Anders Carlsson  <andersca@apple.com>
+
+        Add a DatabaseProvider subclass in WebKit2 and use it for IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=140108
+
+        Reviewed by Darin Adler.
+
+        * Modules/indexeddb/DOMWindowIndexedDatabase.cpp:
+        (WebCore::DOMWindowIndexedDatabase::indexedDB):
+        Get the IDBFactoryBackendInterface from the database provider.
+
+        * page/DatabaseProvider.cpp:
+        (WebCore::DatabaseProvider::idbFactoryBackend):
+        Change this to return a pointer.
+
+        * page/Page.h:
+        (WebCore::Page::databaseProvider):
+        Add a getter.
+
 2015-01-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Another build fix attempt.

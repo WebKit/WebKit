@@ -23,27 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DatabaseProvider.h"
+#ifndef WebDatabaseProvider_h
+#define WebDatabaseProvider_h
 
-#include "IDBFactoryBackendInterface.h"
+#include <WebCore/DatabaseProvider.h>
 
-namespace WebCore {
+namespace WebKit {
 
-DatabaseProvider::~DatabaseProvider()
-{
-}
+class WebDatabaseProvider final : public WebCore::DatabaseProvider {
+public:
+    static Ref<WebDatabaseProvider> getOrCreate(uint64_t identifier);
+    virtual ~WebDatabaseProvider();
+
+private:
+    explicit WebDatabaseProvider(uint64_t identifier);
 
 #if ENABLE(INDEXED_DATABASE)
-IDBFactoryBackendInterface* DatabaseProvider::idbFactoryBackend()
-{
-    if (!m_didCreateIDBFactoryBackendInterface) {
-        m_backendInterface = createIDBFactoryBackend();
-        m_didCreateIDBFactoryBackendInterface = true;
-    }
-
-    return m_backendInterface.get();
-}
+    virtual RefPtr<WebCore::IDBFactoryBackendInterface> createIDBFactoryBackend() override;
 #endif
 
+    const uint64_t m_identifier;
+};
+
 }
+
+#endif // WebDatabaseProvider_h
