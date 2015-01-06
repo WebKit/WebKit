@@ -67,8 +67,7 @@ public:
     WidthCache& widthCache() { return m_widthCache; }
     const WidthCache& widthCache() const { return m_widthCache; }
 
-    const SimpleFontData* primarySimpleFontData(const FontDescription&);
-    const FontData* primaryFontData(const FontDescription& description) { return realizeFontDataAt(description, 0); }
+    const SimpleFontData& primarySimpleFontData(const FontDescription&);
     WEBCORE_EXPORT const FontData* realizeFontDataAt(const FontDescription&, unsigned index);
 
 private:
@@ -106,16 +105,16 @@ inline bool FontGlyphs::isFixedPitch(const FontDescription& description)
     return m_pitch == FixedPitch;
 };
 
-inline const SimpleFontData* FontGlyphs::primarySimpleFontData(const FontDescription& description)
+inline const SimpleFontData& FontGlyphs::primarySimpleFontData(const FontDescription& description)
 {
     ASSERT(isMainThread());
     if (!m_cachedPrimarySimpleFontData) {
-        auto* fontData = primaryFontData(description);
-        m_cachedPrimarySimpleFontData = fontData->simpleFontDataForCharacter(' ');
+        auto& fontData = *realizeFontDataAt(description, 0);
+        m_cachedPrimarySimpleFontData = fontData.simpleFontDataForCharacter(' ');
         if (!m_cachedPrimarySimpleFontData)
-            m_cachedPrimarySimpleFontData = &fontData->simpleFontDataForFirstRange();
+            m_cachedPrimarySimpleFontData = &fontData.simpleFontDataForFirstRange();
     }
-    return m_cachedPrimarySimpleFontData;
+    return *m_cachedPrimarySimpleFontData;
 }
 
 }

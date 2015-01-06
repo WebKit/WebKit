@@ -848,7 +848,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     const RenderStyle& style = renderer->style();
     
     // set basic font info
-    AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style.font().primaryFont()->getNSFont(), range);
+    AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style.font().primaryFontData().getNSFont(), range);
     
     // set basic colors
     AXAttributeStringSetColor(attrString, NSAccessibilityForegroundColorTextAttribute, nsColor(style.visitedDependentColor(CSSPropertyColor)), range);

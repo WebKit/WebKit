@@ -669,7 +669,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     auto renderer = core(self)->renderer();
     if (!renderer)
         return nil;
-    return renderer->style().font().primaryFont()->getNSFont();
+    return renderer->style().font().primaryFontData().getNSFont();
 }
 #else
 - (CTFontRef)_font
@@ -677,7 +677,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     RenderObject* renderer = core(self)->renderer();
     if (!renderer)
         return nil;
-    return renderer->style().font().primaryFont()->getCTFont();
+    return renderer->style().font().primaryFontData().getCTFont();
 }
 #endif
 

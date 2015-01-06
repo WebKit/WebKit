@@ -506,7 +506,7 @@ bool Font::fastAverageCharWidthIfAvailable(float& width) const
 {
     bool success = hasValidAverageCharWidth();
     if (success)
-        width = roundf(primaryFont()->avgCharWidth()); // FIXME: primaryFont() might not correspond to firstFamily().
+        width = roundf(primaryFontData().avgCharWidth()); // FIXME: primaryFontData() might not correspond to firstFamily().
     return success;
 }
 

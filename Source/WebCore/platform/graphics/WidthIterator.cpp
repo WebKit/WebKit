@@ -166,8 +166,8 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
     float lastRoundingWidth = m_finalRoundingWidth;
     FloatRect bounds;
 
-    const SimpleFontData* primaryFont = m_font->primaryFont();
-    const SimpleFontData* lastFontData = primaryFont;
+    const SimpleFontData& primaryFontData = m_font->primaryFontData();
+    const SimpleFontData* lastFontData = &primaryFontData;
     int lastGlyphCount = glyphBuffer ? glyphBuffer->size() : 0;
 
     UChar32 character = 0;
@@ -211,14 +211,14 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
             }
 
             lastFontData = fontData;
-            if (m_fallbackFonts && fontData != primaryFont) {
+            if (m_fallbackFonts && fontData != &primaryFontData) {
                 // FIXME: This does a little extra work that could be avoided if
                 // glyphDataForCharacter() returned whether it chose to use a small caps font.
                 if (!m_font->isSmallCaps() || character == u_toupper(character))
                     m_fallbackFonts->add(fontData);
                 else {
                     const GlyphData& uppercaseGlyphData = m_font->glyphDataForCharacter(u_toupper(character), rtl);
-                    if (uppercaseGlyphData.fontData != primaryFont)
+                    if (uppercaseGlyphData.fontData != &primaryFontData)
                         m_fallbackFonts->add(uppercaseGlyphData.fontData);
                 }
             }

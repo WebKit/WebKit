@@ -81,9 +81,9 @@ void PopupMenuMac::populate()
         PopupMenuStyle style = m_client->itemStyle(i);
         RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] init]);
         if (style.font() != Font()) {
-            NSFont *font = style.font().primaryFont()->getNSFont();
+            NSFont *font = style.font().primaryFontData().getNSFont();
             if (!font) {
-                CGFloat size = style.font().primaryFont()->platformData().size();
+                CGFloat size = style.font().primaryFontData().platformData().size();
                 font = style.font().weight() < FontWeightBold ? [NSFont systemFontOfSize:size] : [NSFont boldSystemFontOfSize:size];
             }
             [attributes setObject:font forKey:NSFontAttributeName];
@@ -148,7 +148,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
     NSMenu* menu = [m_popup menu];
     
     NSPoint location;
-    NSFont* font = m_client->menuStyle().font().primaryFont()->getNSFont();
+    NSFont* font = m_client->menuStyle().font().primaryFontData().getNSFont();
 
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -10;

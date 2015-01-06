@@ -580,7 +580,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, HTMLInputElement& 
     Font font = style.font();
     
     RenderObject* renderer = inputElement.renderer();
-    if (font.primaryFont()->isSVGFont() && !renderer)
+    if (font.primaryFontData().isSVGFont() && !renderer)
         return;
     
     FontCachePurgePreventer fontCachePurgePreventer;

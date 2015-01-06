@@ -178,10 +178,10 @@ bool canUseFor(const RenderBlockFlow& flow)
             }
         }
     }
-    if (style.font().primaryFont()->isSVGFont())
+    if (style.font().primaryFontData().isSVGFont())
         return false;
     // We assume that all lines have metrics based purely on the primary font.
-    auto& primaryFontData = *style.font().primaryFont();
+    auto& primaryFontData = style.font().primaryFontData();
     if (primaryFontData.isLoading())
         return false;
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {

@@ -1184,7 +1184,7 @@ const AtomicString& RenderStyle::hyphenString() const
     // FIXME: This should depend on locale.
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, hyphenMinusString, (&hyphenMinus, 1));
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, hyphenString, (&hyphen, 1));
-    return font().primaryFontHasGlyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
+    return font().primaryFontData().glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
 }
 
 const AtomicString& RenderStyle::textEmphasisMarkString() const

@@ -113,9 +113,9 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
         Node* nodeToRemove;
         RenderStyle* style = styleForSelectionStart(&m_frame, nodeToRemove); // sets nodeToRemove
 
-        const SimpleFontData* result = 0;
+        const SimpleFontData* result = nullptr;
         if (style)
-            result = style->font().primaryFont();
+            result = &style->font().primaryFontData();
 
         if (nodeToRemove)
             nodeToRemove->remove(ASSERT_NO_EXCEPTION);
@@ -135,10 +135,10 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
             if (!renderer)
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            const SimpleFontData* primaryFont = renderer->style().font().primaryFont();
+            const SimpleFontData& primaryFont = renderer->style().font().primaryFontData();
             if (!font)
-                font = primaryFont;
-            else if (font != primaryFont) {
+                font = &primaryFont;
+            else if (font != &primaryFont) {
                 hasMultipleFonts = true;
                 break;
             }
@@ -160,8 +160,8 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
     if (style->visitedDependentColor(CSSPropertyBackgroundColor).isValid() && style->visitedDependentColor(CSSPropertyBackgroundColor).alpha() != 0)
         [result setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
 
-    if (style->font().primaryFont()->getNSFont())
-        [result setObject:style->font().primaryFont()->getNSFont() forKey:NSFontAttributeName];
+    if (style->font().primaryFontData().getNSFont())
+        [result setObject:style->font().primaryFontData().getNSFont() forKey:NSFontAttributeName];
 
     if (style->visitedDependentColor(CSSPropertyColor).isValid() && style->visitedDependentColor(CSSPropertyColor) != Color::black)
         [result setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];

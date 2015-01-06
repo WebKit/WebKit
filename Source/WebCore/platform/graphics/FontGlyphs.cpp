@@ -75,11 +75,11 @@ void FontGlyphs::releaseFontData()
 
 void FontGlyphs::determinePitch(const FontDescription& description)
 {
-    const FontData* fontData = primaryFontData(description);
-    if (is<SimpleFontData>(*fontData))
-        m_pitch = downcast<SimpleFontData>(*fontData).pitch();
+    const FontData& fontData = *realizeFontDataAt(description, 0);
+    if (is<SimpleFontData>(fontData))
+        m_pitch = downcast<SimpleFontData>(fontData).pitch();
     else {
-        const SegmentedFontData& segmentedFontData = downcast<SegmentedFontData>(*fontData);
+        const SegmentedFontData& segmentedFontData = downcast<SegmentedFontData>(fontData);
         unsigned numRanges = segmentedFontData.numRanges();
         if (numRanges == 1)
             m_pitch = segmentedFontData.rangeAt(0).fontData()->pitch();
@@ -245,9 +245,10 @@ static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(UChar32 charact
 GlyphData FontGlyphs::glyphDataForSystemFallback(UChar32 c, const FontDescription& description, FontDataVariant variant)
 {
     // System fallback is character-dependent.
-    auto* originalFontData = primaryFontData(description)->simpleFontDataForCharacter(c);
+    auto& primaryFontData = *realizeFontDataAt(description, 0);
+    auto* originalFontData = primaryFontData.simpleFontDataForCharacter(c);
     if (!originalFontData)
-        originalFontData = &primaryFontData(description)->simpleFontDataForFirstRange();
+        originalFontData = &primaryFontData.simpleFontDataForFirstRange();
 
     RefPtr<SimpleFontData> systemFallbackFontData = originalFontData->systemFallbackFontDataForCharacter(c, description, m_isForPlatformFont);
     if (!systemFallbackFontData)
@@ -364,7 +365,7 @@ GlyphData FontGlyphs::glyphDataForCharacter(const FontDescription& description, 
     ASSERT(isMainThread());
 
     if (variant == AutoVariant) {
-        if (description.smallCaps() && !primarySimpleFontData(description)->isSVGFont()) {
+        if (description.smallCaps() && !primarySimpleFontData(description).isSVGFont()) {
             UChar32 upperC = u_toupper(c);
             if (upperC != c) {
                 c = upperC;
@@ -385,7 +386,7 @@ GlyphData FontGlyphs::glyphDataForCharacter(const FontDescription& description, 
 
     RefPtr<GlyphPage>& cachedPage = pageNumber ? m_cachedPages.add(pageNumber, nullptr).iterator->value : m_cachedPageZero;
     if (!cachedPage)
-        cachedPage = glyphPageFromFontData(pageNumber, *primaryFontData(description));
+        cachedPage = glyphPageFromFontData(pageNumber, *realizeFontDataAt(description, 0));
 
     GlyphData glyphData = cachedPage ? cachedPage->glyphDataForCharacter(c) : GlyphData();
     if (!glyphData.glyph) {

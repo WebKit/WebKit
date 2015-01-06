@@ -449,7 +449,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
 
     const RenderStyle& lineStyle = this->lineStyle();
     if (lineStyle.fontDescription().nonCJKGlyphOrientation() == NonCJKGlyphOrientationUpright
-        || lineStyle.font().primaryFont()->hasVerticalGlyphs())
+        || lineStyle.font().primaryFontData().hasVerticalGlyphs())
         return true;
 
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
@@ -460,7 +460,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
             if (downcast<InlineFlowBox>(*child).requiresIdeographicBaseline(textBoxDataMap))
                 return true;
         } else {
-            if (child->lineStyle().font().primaryFont()->hasVerticalGlyphs())
+            if (child->lineStyle().font().primaryFontData().hasVerticalGlyphs())
                 return true;
             
             const Vector<const SimpleFontData*>* usedFonts = nullptr;

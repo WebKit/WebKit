@@ -292,13 +292,13 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const S
 
 static GlyphData missingGlyphForFont(const Font& font)
 {
-    const SimpleFontData* primaryFontData = font.primaryFont();
-    if (!primaryFontData->isSVGFont())
+    const SimpleFontData& primaryFontData = font.primaryFontData();
+    if (!primaryFontData.isSVGFont())
         return GlyphData();
     SVGFontElement* fontElement;
     SVGFontFaceElement* fontFaceElement;
-    svgFontAndFontFaceElementForFontData(primaryFontData, fontFaceElement, fontElement);
-    return GlyphData(fontElement->missingGlyph(), primaryFontData);
+    svgFontAndFontFaceElementForFontData(&primaryFontData, fontFaceElement, fontElement);
+    return GlyphData(fontElement->missingGlyph(), &primaryFontData);
 }
 
 GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, WidthIterator& iterator, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache)
@@ -314,7 +314,7 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, Wi
         auto& elementRenderer = is<RenderElement>(renderer()) ? downcast<RenderElement>(renderer()) : *renderer().parent();
         if (Element* parentRendererElement = elementRenderer.element()) {
             if (is<SVGAltGlyphElement>(*parentRendererElement))
-                glyphData.fontData = font.primaryFont();
+                glyphData.fontData = &font.primaryFontData();
         }
     }
 

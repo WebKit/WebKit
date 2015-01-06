@@ -63,8 +63,7 @@ RenderMathMLRadicalOperator::RenderMathMLRadicalOperator(Document& document, Ref
 
 void RenderMathMLRadicalOperator::stretchTo(LayoutUnit heightAboveBaseline, LayoutUnit depthBelowBaseline)
 {
-    const auto& primaryFontData = style().font().primaryFont();
-    if (!primaryFontData || !primaryFontData->mathData()) {
+    if (!style().font().primaryFontData().mathData()) {
         // If we do not have an OpenType MATH font, we always make the radical depth a bit larger than the target.
         depthBelowBaseline += gRadicalBottomPointLower;
     }
@@ -84,8 +83,7 @@ void RenderMathMLRadicalOperator::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    const auto& primaryFontData = style().font().primaryFont();
-    if (primaryFontData && primaryFontData->mathData()) {
+    if (style().font().primaryFontData().mathData()) {
         RenderMathMLOperator::computePreferredLogicalWidths();
         return;
     }
@@ -98,8 +96,7 @@ void RenderMathMLRadicalOperator::computePreferredLogicalWidths()
 
 void RenderMathMLRadicalOperator::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues& computedValues) const
 {
-    const auto& primaryFontData = style().font().primaryFont();
-    if (primaryFontData && primaryFontData->mathData()) {
+    if (style().font().primaryFontData().mathData()) {
         RenderMathMLOperator::computeLogicalHeight(logicalHeight, logicalTop, computedValues);
         return;
     }
@@ -114,8 +111,7 @@ void RenderMathMLRadicalOperator::paint(PaintInfo& info, const LayoutPoint& pain
     if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE)
         return;
 
-    const auto& primaryFontData = style().font().primaryFont();
-    if (primaryFontData && primaryFontData->mathData()) {
+    if (style().font().primaryFontData().mathData()) {
         RenderMathMLOperator::paint(info, paintOffset);
         return;
     }

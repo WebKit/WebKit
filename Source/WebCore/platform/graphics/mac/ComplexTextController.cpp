@@ -494,8 +494,8 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
         size_t glyphCount = complexTextRun.glyphCount();
         unsigned g = ltr ? m_glyphInCurrentRun : glyphCount - 1 - m_glyphInCurrentRun;
         unsigned k = leftmostGlyph + g;
-        if (fallbackFonts && complexTextRun.fontData() != m_font.primaryFont())
-            fallbackFonts->add(complexTextRun.fontData());
+        if (fallbackFonts && &complexTextRun.fontData() != &m_font.primaryFontData())
+            fallbackFonts->add(&complexTextRun.fontData());
 
         // We must store the initial advance for the first glyph we are going to draw.
         // When leftmostGlyph is 0, it represents the first glyph to draw, taking into
@@ -520,7 +520,7 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
                 return;
 
             if (glyphBuffer && !m_characterInCurrentGlyph)
-                glyphBuffer->add(m_adjustedGlyphs[k], complexTextRun.fontData(), adjustedAdvance, complexTextRun.indexAt(m_glyphInCurrentRun));
+                glyphBuffer->add(m_adjustedGlyphs[k], &complexTextRun.fontData(), adjustedAdvance, complexTextRun.indexAt(m_glyphInCurrentRun));
 
             unsigned oldCharacterInCurrentGlyph = m_characterInCurrentGlyph;
             m_characterInCurrentGlyph = std::min(m_currentCharacter - complexTextRun.stringLocation(), glyphEndOffset) - glyphStartOffset;
@@ -566,9 +566,9 @@ void ComplexTextController::adjustGlyphsAndAdvances()
     for (size_t r = 0; r < runCount; ++r) {
         ComplexTextRun& complexTextRun = *m_complexTextRuns[r];
         unsigned glyphCount = complexTextRun.glyphCount();
-        const SimpleFontData* fontData = complexTextRun.fontData();
+        const SimpleFontData& fontData = complexTextRun.fontData();
 #if PLATFORM(IOS)
-        bool isEmoji = fontData->platformData().m_isEmoji;
+        bool isEmoji = fontData.platformData().m_isEmoji;
 #endif
 
         // Represent the initial advance for a text run by adjusting the advance
@@ -588,8 +588,8 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         const CGSize* advances = complexTextRun.advances();
 
         bool lastRun = r + 1 == runCount;
-        bool roundsAdvances = !m_font.isPrinterFont() && fontData->platformData().roundsGlyphAdvances();
-        float spaceWidth = fontData->spaceWidth() - fontData->syntheticBoldOffset();
+        bool roundsAdvances = !m_font.isPrinterFont() && fontData.platformData().roundsGlyphAdvances();
+        float spaceWidth = fontData.spaceWidth() - fontData.syntheticBoldOffset();
         CGFloat roundedSpaceWidth = roundCGFloat(spaceWidth);
         const UChar* cp = complexTextRun.characters();
         CGPoint glyphOrigin = CGPointZero;
@@ -616,7 +616,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 nextCh = *(m_complexTextRuns[r + 1]->characters() + m_complexTextRuns[r + 1]->indexAt(0));
 
             bool treatAsSpace = Font::treatAsSpace(ch);
-            CGGlyph glyph = treatAsSpace ? fontData->spaceGlyph() : glyphs[i];
+            CGGlyph glyph = treatAsSpace ? fontData.spaceGlyph() : glyphs[i];
             CGSize advance = treatAsSpace ? CGSizeMake(spaceWidth, advances[i].height) : advances[i];
 #if PLATFORM(IOS)
             if (isEmoji && advance.width)
@@ -624,25 +624,25 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 #endif
 
             if (ch == '\t' && m_run.allowTabs())
-                advance.width = m_font.tabWidth(*fontData, m_run.tabSize(), m_run.xPos() + m_totalWidth + widthSinceLastCommit);
+                advance.width = m_font.tabWidth(fontData, m_run.tabSize(), m_run.xPos() + m_totalWidth + widthSinceLastCommit);
             else if (Font::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
                 advance.width = 0;
-                glyph = fontData->spaceGlyph();
+                glyph = fontData.spaceGlyph();
             }
 
             float roundedAdvanceWidth = roundf(advance.width);
             if (roundsAdvances)
                 advance.width = roundedAdvanceWidth;
 
-            advance.width += fontData->syntheticBoldOffset();
+            advance.width += fontData.syntheticBoldOffset();
 
  
             // We special case spaces in two ways when applying word rounding. 
             // First, we round spaces to an adjusted width in all fonts. 
             // Second, in fixed-pitch fonts we ensure that all glyphs that 
             // match the width of the space glyph have the same width as the space glyph. 
-            if (m_run.applyWordRounding() && roundedAdvanceWidth == roundedSpaceWidth && (fontData->pitch() == FixedPitch || glyph == fontData->spaceGlyph()))
-                advance.width = fontData->adjustedSpaceWidth();
+            if (m_run.applyWordRounding() && roundedAdvanceWidth == roundedSpaceWidth && (fontData.pitch() == FixedPitch || glyph == fontData.spaceGlyph()))
+                advance.width = fontData.adjustedSpaceWidth();
 
             if (hasExtraSpacing) {
                 // If we're a glyph with an advance, go ahead and add in letter-spacing.
@@ -716,7 +716,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             m_adjustedAdvances.append(advance);
             m_adjustedGlyphs.append(glyph);
             
-            FloatRect glyphBounds = fontData->boundsForGlyph(glyph);
+            FloatRect glyphBounds = fontData.boundsForGlyph(glyph);
             glyphBounds.move(glyphOrigin.x, glyphOrigin.y);
             m_minGlyphBoundingBoxX = std::min(m_minGlyphBoundingBoxX, glyphBounds.x());
             m_maxGlyphBoundingBoxX = std::max(m_maxGlyphBoundingBoxX, glyphBounds.maxX());

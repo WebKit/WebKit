@@ -211,9 +211,9 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
         Node* nodeToRemove;
         RenderStyle* style = styleForSelectionStart(&m_frame, nodeToRemove); // sets nodeToRemove
 
-        const SimpleFontData* result = 0;
+        const SimpleFontData* result = nullptr;
         if (style)
-            result = style->font().primaryFont();
+            result = &style->font().primaryFontData();
 
         if (nodeToRemove) {
             ExceptionCode ec;
@@ -235,10 +235,10 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
             if (!renderer)
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            const SimpleFontData* primaryFont = renderer->style().font().primaryFont();
+            const SimpleFontData& primaryFont = renderer->style().font().primaryFontData();
             if (!font)
-                font = primaryFont;
-            else if (font != primaryFont) {
+                font = &primaryFont;
+            else if (font != &primaryFont) {
                 hasMultipleFonts = true;
                 break;
             }
@@ -257,7 +257,7 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
 
     NSMutableDictionary* result = [NSMutableDictionary dictionary];
     
-    CTFontRef font = style->font().primaryFont()->getCTFont();
+    CTFontRef font = style->font().primaryFontData().getCTFont();
     if (font)
         [result setObject:(id)font forKey:NSFontAttributeName];
 

@@ -208,17 +208,17 @@ void RenderMathMLRoot::updateStyle()
     LayoutUnit kernAfterDegree = -10 * style().font().size() / 18;
     m_degreeBottomRaisePercent = 0.6f;
 
-    const auto& primaryFontData = style().font().primaryFont();
-    if (primaryFontData && primaryFontData->mathData()) {
+    const auto& primaryFontData = style().font().primaryFontData();
+    if (auto* mathData = style().font().primaryFontData().mathData()) {
         // FIXME: m_verticalGap should use RadicalDisplayStyleVertical in display mode (https://bugs.webkit.org/show_bug.cgi?id=118737).
-        m_verticalGap = primaryFontData->mathData()->getMathConstant(primaryFontData, OpenTypeMathData::RadicalVerticalGap);
-        m_ruleThickness = primaryFontData->mathData()->getMathConstant(primaryFontData, OpenTypeMathData::RadicalRuleThickness);
-        m_extraAscender = primaryFontData->mathData()->getMathConstant(primaryFontData, OpenTypeMathData::RadicalExtraAscender);
+        m_verticalGap = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalVerticalGap);
+        m_ruleThickness = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalRuleThickness);
+        m_extraAscender = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalExtraAscender);
 
         if (!isRenderMathMLSquareRoot()) {
-            kernBeforeDegree = primaryFontData->mathData()->getMathConstant(primaryFontData, OpenTypeMathData::RadicalKernBeforeDegree);
-            kernAfterDegree = primaryFontData->mathData()->getMathConstant(primaryFontData, OpenTypeMathData::RadicalKernAfterDegree);
-            m_degreeBottomRaisePercent = primaryFontData->mathData()->getMathConstant(primaryFontData, OpenTypeMathData::RadicalDegreeBottomRaisePercent);
+            kernBeforeDegree = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalKernBeforeDegree);
+            kernAfterDegree = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalKernAfterDegree);
+            m_degreeBottomRaisePercent = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalDegreeBottomRaisePercent);
         }
     }
 

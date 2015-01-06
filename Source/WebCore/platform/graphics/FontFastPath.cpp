@@ -40,11 +40,6 @@ using namespace Unicode;
 
 namespace WebCore {
 
-bool Font::primaryFontHasGlyphForCharacter(UChar32 character) const
-{
-    return primaryFont()->glyphForCharacter(character);
-}
-
 // FIXME: This function may not work if the emphasis mark uses a complex script, but none of the
 // standard emphasis marks do so.
 bool Font::getEmphasisMarkGlyphData(const AtomicString& mark, GlyphData& glyphData) const

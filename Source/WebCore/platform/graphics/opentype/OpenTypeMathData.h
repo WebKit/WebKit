@@ -113,8 +113,8 @@ public:
         bool isExtender;
     };
 
-    float getMathConstant(const SimpleFontData*, MathConstant) const;
-    float getItalicCorrection(const SimpleFontData*, Glyph) const;
+    float getMathConstant(const SimpleFontData&, MathConstant) const;
+    float getItalicCorrection(const SimpleFontData&, Glyph) const;
     void getMathVariants(Glyph, bool isVertical, Vector<Glyph>& sizeVariants, Vector<AssemblyPart>& assemblyParts) const;
 
 private:

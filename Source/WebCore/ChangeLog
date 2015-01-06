@@ -1,3 +1,100 @@
+2015-01-05  Antti Koivisto  <antti@apple.com>
+
+        Font::primaryFontData() should return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=140081
+
+        Reviewed by Darin Adler.
+
+        It is not null.
+
+        Also rename primaryFont() -> primaryFontData().
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (AXAttributeStringSetStyle):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetStyle):
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _font]):
+        * editing/cocoa/HTMLConverter.mm:
+        (_font):
+        (WebCore::editingAttributedStringFromRange):
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::fontForSelection):
+        (WebCore::Editor::fontAttributesForSelectionStart):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::fontForSelection):
+        (WebCore::Editor::fontAttributesForSelectionStart):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::fastAverageCharWidthIfAvailable):
+        * platform/graphics/Font.h:
+        (WebCore::Font::fontMetrics):
+        (WebCore::Font::spaceWidth):
+        (WebCore::Font::tabWidth):
+        (WebCore::Font::primaryFontData):
+        (WebCore::Font::primaryFont): Deleted.
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::primaryFontHasGlyphForCharacter):
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::determinePitch):
+        (WebCore::FontGlyphs::glyphDataForSystemFallback):
+        (WebCore::FontGlyphs::glyphDataForCharacter):
+        * platform/graphics/FontGlyphs.h:
+        (WebCore::FontGlyphs::primaryFontData):
+        (WebCore::FontGlyphs::primarySimpleFontData):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::advance):
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/mac/ComplexTextController.h:
+        (WebCore::ComplexTextController::ComplexTextRun::create):
+        (WebCore::ComplexTextController::ComplexTextRun::fontData):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::primaryFontDataIsSystemFont):
+        * platform/graphics/opentype/OpenTypeMathData.cpp:
+        * platform/graphics/opentype/OpenTypeMathData.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::requiresIdeographicBaseline):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::constructTextRun):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustLogicalLeftOffsetForLine):
+        (WebCore::RenderBlock::adjustLogicalRightOffsetForLine):
+        (WebCore::constructTextRunInternal):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::preferredContentLogicalWidth):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::adjustInputElementButtonStyle):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::ascentAndDescentForBox):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::getGlyphAssemblyFallBack):
+        (WebCore::RenderMathMLOperator::getDisplayStyleLargeOperator):
+        (WebCore::RenderMathMLOperator::findStretchyData):
+        (WebCore::RenderMathMLOperator::trailingSpaceError):
+        * rendering/mathml/RenderMathMLRadicalOperator.cpp:
+        (WebCore::RenderMathMLRadicalOperator::stretchTo):
+        (WebCore::RenderMathMLRadicalOperator::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLRadicalOperator::computeLogicalHeight):
+        (WebCore::RenderMathMLRadicalOperator::paint):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::updateStyle):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun):
+        * rendering/svg/SVGTextLayoutEngineSpacing.cpp:
+        (WebCore::SVGTextLayoutEngineSpacing::calculateSVGKerning):
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::constructTextRun):
+        (WebCore::SVGTextMetrics::SVGTextMetrics):
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::missingGlyphForFont):
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter):
+
 2015-01-06  Shivakumar JM  <shiva.jm@samsung.com>
 
         Fix Unused parameter warning in Webcore bindings.
