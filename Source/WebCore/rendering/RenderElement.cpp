@@ -1336,15 +1336,23 @@ bool RenderElement::borderImageIsLoadedAndCanBeRendered() const
     return borderImage && borderImage->canRender(this, style().effectiveZoom()) && borderImage->isLoaded();
 }
 
-bool RenderElement::isInsideViewport(const IntRect* visibleRect) const
+bool RenderElement::mayCauseRepaintInsideViewport(const IntRect* optionalViewportRect) const
 {
     auto& frameView = view().frameView();
     if (frameView.isOffscreen())
         return false;
 
+    if (!hasOverflowClip()) {
+        // FIXME: Computing the overflow rect is expensive if any descendant has
+        // its own self-painting layer. As a result, we prefer to abort early in
+        // this case and assume it may cause us to repaint inside the viewport.
+        if (!hasLayer() || downcast<RenderLayerModelObject>(*this).layer()->firstChild())
+            return true;
+    }
+
     // Compute viewport rect if it was not provided.
-    const IntRect& viewportRect = visibleRect ? *visibleRect : frameView.windowToContents(frameView.windowClipRect());
-    return viewportRect.intersects(enclosingIntRect(absoluteClippedOverflowRect()));
+    const IntRect& visibleRect = optionalViewportRect ? *optionalViewportRect : frameView.windowToContents(frameView.windowClipRect());
+    return visibleRect.intersects(enclosingIntRect(absoluteClippedOverflowRect()));
 }
 
 static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const IntRect& visibleRect)

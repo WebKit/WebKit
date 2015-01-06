@@ -2421,9 +2421,9 @@ bool Element::shouldAppearIndeterminate() const
     return false;
 }
 
-bool Element::isInsideViewport(const IntRect* visibleRect) const
+bool Element::mayCauseRepaintInsideViewport(const IntRect* visibleRect) const
 {
-    return renderer() && renderer()->isInsideViewport(visibleRect);
+    return renderer() && renderer()->mayCauseRepaintInsideViewport(visibleRect);
 }
 
 DOMTokenList& Element::classList()

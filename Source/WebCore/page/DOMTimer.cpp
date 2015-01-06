@@ -321,7 +321,7 @@ void DOMTimer::scriptDidCauseElementRepaint(Element& element, bool changed)
         return;
     }
 
-    if (element.isInsideViewport())
+    if (element.mayCauseRepaintInsideViewport())
         DOMTimerFireState::current->setScriptMadeUserObservableChanges();
     else
         DOMTimerFireState::current->setScriptMadeNonUserObservableChangesToElement(element);
@@ -480,7 +480,7 @@ void DOMTimer::updateThrottlingStateAfterViewportChange(const IntRect& visibleRe
         if (!element || !element->inDocument())
             continue;
 
-        if (element->isInsideViewport(&visibleRect)) {
+        if (element->mayCauseRepaintInsideViewport(&visibleRect)) {
             LOG(DOMTimers, "%p - Script is changing style of an element that is now inside the viewport, unthrottling the timer.", this);
             m_throttleState = ShouldNotThrottle;
             unregisterForViewportChanges();

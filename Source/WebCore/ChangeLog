@@ -1,3 +1,42 @@
+2015-01-06  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r176212): Carousel on mbusa.com is choppy
+        https://bugs.webkit.org/show_bug.cgi?id=139543
+        <rdar://problem/19209406>
+
+        Reviewed by Antti Koivisto.
+
+        A repeating DOM timer changing the style of an element that has
+        overflowing content that is visible would get throttled in the
+        case where the overflowing content has its own layer. This is
+        because the repaint rect returned by
+        RenderObject::absoluteClippedOverflowRect() does not take into
+        consideration descendants with their own self-painting layer when
+        accounting for the overflow.
+
+        Until I can find a relatively cheap way of computing the overflow
+        in this case, this patch takes the conservative approach and
+        assumes we may repaint inside the viewport if the element does not
+        have a layer or if any of its descendants has its own layer.
+
+        This patch also renames isInsideViewport() function to
+        mayCauseRepaintInsideViewport() for clarity.
+
+        Tests: fast/dom/repeating-timer-element-overflow-hidden-throttling.html
+               fast/dom/repeating-timer-element-overflowing-child-own-layer-throttling.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::mayCauseRepaintInsideViewport):
+        (WebCore::Element::isInsideViewport): Deleted.
+        * dom/Element.h:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::scriptDidCauseElementRepaint):
+        (WebCore::DOMTimer::updateThrottlingStateAfterViewportChange):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::mayCauseRepaintInsideViewport):
+        (WebCore::RenderElement::isInsideViewport): Deleted.
+        * rendering/RenderElement.h:
+
 2015-01-06  Anders Carlsson  <andersca@apple.com>
 
         Add a WebKit1 database provider

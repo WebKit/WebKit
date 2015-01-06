@@ -2,13 +2,15 @@
 <body>
 <script src="../../resources/js-test-pre.js"></script>
 <div style="position: relative; width: 1600px; height: 2400px; background-color: green;">
-  <div id="parentDiv" style="position:absolute; left: 600px; top: 800px;"> <input id="textbox" type="text"></div>
+  <div id="parentDiv" style="position:absolute; left: 600px; top: 800px;">
+    <div id="testElement">TEST</div>
+  </div>
 </div>
 <script>
 description("Tests that a repeating timer changing the style of an element outside viewport gets unthrottled if the elements is inside the viewport after layout.");
 jsTestIsAsync = true;
 
-var testElement = document.getElementById('textbox');
+var testElement = document.getElementById('testElement');
 var iterationCount = 0;
 var wasThrottled = false;
 var wasThrottledBeforeScroll = false;
