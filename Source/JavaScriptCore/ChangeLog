@@ -1,5 +1,19 @@
 2015-01-06  Mark Lam  <mark.lam@apple.com>
 
+        Fix Use details for op_create_arguments.
+        <https://webkit.org/b/140110>
+
+        Rubber stamped by Filip Pizlo.
+
+        The previous patch was wrong about op_create_arguments not using its 1st operand.
+        It does read from it (hence, used) to check if the Arguments object has already
+        been created or not.  This patch reverts the change for op_create_arguments.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+
+2015-01-06  Mark Lam  <mark.lam@apple.com>
+
         Fix Use details for op_create_lexical_environment and op_create_arguments.
         <https://webkit.org/b/140110>
 

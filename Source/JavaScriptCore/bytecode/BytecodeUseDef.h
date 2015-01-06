@@ -40,7 +40,6 @@ void computeUsesForBytecodeOffset(
     OpcodeID opcodeID = interpreter->getOpcodeID(instruction->u.opcode);
     switch (opcodeID) {
     // No uses.
-    case op_create_arguments:
     case op_new_regexp:
     case op_new_array_buffer:
     case op_throw_static_error:
@@ -57,6 +56,7 @@ void computeUsesForBytecodeOffset(
     case op_profile_control_flow:
         return;
     case op_get_scope:
+    case op_create_arguments:
     case op_to_this:
     case op_pop_scope:
     case op_profile_will_call:
