@@ -505,11 +505,6 @@ private:
     bool classNamesAffectedByRules(const SpaceSplitString&) const;
     bool sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement*) const;
 
-    Length parseSnapCoordinate(CSSPrimitiveValue&);
-    Length parseSnapCoordinate(CSSValueList&, unsigned offset);
-    LengthSize parseSnapCoordinatePair(CSSValueList&, unsigned offset);
-    ScrollSnapPoints parseSnapPoints(CSSValue&);
-
     unsigned m_matchedPropertiesCacheAdditionsSinceLastSweep;
 
     typedef HashMap<unsigned, MatchedPropertiesCacheItem> MatchedPropertiesCache;

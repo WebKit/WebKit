@@ -1,3 +1,25 @@
+2015-01-06  Chris Dumez  <cdumez@apple.com>
+
+        Move '-webkit-scroll-snap-*' CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140112
+
+        Reviewed by Darin Adler.
+
+        Move '-webkit-scroll-snap-*' CSS properties to the new StyleBuilder.
+
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::parseSnapCoordinate):
+        (WebCore::StyleBuilderConverter::convertScrollSnapPoints):
+        (WebCore::StyleBuilderConverter::convertSnapCoordinatePair):
+        (WebCore::StyleBuilderConverter::convertScrollSnapCoordinates):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::parseSnapCoordinate): Deleted.
+        (WebCore::StyleResolver::parseSnapCoordinatePair): Deleted.
+        (WebCore::StyleResolver::parseSnapPoints): Deleted.
+        * css/StyleResolver.h:
+
 2015-01-06  Antti Koivisto  <antti@apple.com>
 
         Resolve mirroring and variant in Font instead of FontGlyphs

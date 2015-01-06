@@ -39,10 +39,12 @@
 #include "CSSReflectValue.h"
 #include "Frame.h"
 #include "Length.h"
+#include "LengthRepeat.h"
 #include "Pair.h"
 #include "QuotesData.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include "StyleScrollSnapPoints.h"
 #include "TransformFunctions.h"
 
 namespace WebCore {
@@ -82,6 +84,11 @@ public:
     static LineBoxContain convertLineBoxContain(StyleResolver&, CSSValue&);
     static TextDecorationSkip convertTextDecorationSkip(StyleResolver&, CSSValue&);
     static PassRefPtr<ShapeValue> convertShapeValue(StyleResolver&, CSSValue&);
+#if ENABLE(CSS_SCROLL_SNAP)
+    static ScrollSnapPoints convertScrollSnapPoints(StyleResolver&, CSSValue&);
+    static LengthSize convertSnapCoordinatePair(StyleResolver&, CSSValue&, size_t offset = 0);
+    static Vector<LengthSize> convertScrollSnapCoordinates(StyleResolver&, CSSValue&);
+#endif
 #if ENABLE(CSS_GRID_LAYOUT)
     static bool convertGridTrackSize(StyleResolver&, CSSValue&, GridTrackSize&);
     static bool convertGridPosition(StyleResolver&, CSSValue&, GridPosition&);
@@ -98,6 +105,9 @@ private:
     static Length convertToRadiusLength(CSSToLengthConversionData&, CSSPrimitiveValue&);
     static TextEmphasisPosition valueToEmphasisPosition(CSSPrimitiveValue&);
     static TextDecorationSkip valueToDecorationSkip(const CSSPrimitiveValue&);
+#if ENABLE(CSS_SCROLL_SNAP)
+    static Length parseSnapCoordinate(StyleResolver&, const CSSValue&);
+#endif
 #if ENABLE(CSS_GRID_LAYOUT)
     static bool createGridTrackBreadth(CSSPrimitiveValue&, StyleResolver&, GridLength&);
     static bool createGridTrackSize(CSSValue&, GridTrackSize&, StyleResolver&);
@@ -660,6 +670,57 @@ inline PassRefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleReso
     return nullptr;
 }
 #endif // ENABLE(CSS_SHAPES)
+
+#if ENABLE(CSS_SCROLL_SNAP)
+inline Length StyleBuilderConverter::parseSnapCoordinate(StyleResolver& styleResolver, const CSSValue& value)
+{
+    return downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(styleResolver.state().cssToLengthConversionData());
+}
+
+inline ScrollSnapPoints StyleBuilderConverter::convertScrollSnapPoints(StyleResolver& styleResolver, CSSValue& value)
+{
+    ScrollSnapPoints points;
+
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueElements);
+        points.usesElements = true;
+        return points;
+    }
+
+    points.hasRepeat = false;
+    for (auto& currentValue : downcast<CSSValueList>(value)) {
+        auto& itemValue = downcast<CSSPrimitiveValue>(currentValue.get());
+        if (auto* lengthRepeat = itemValue.getLengthRepeatValue()) {
+            if (auto* interval = lengthRepeat->interval()) {
+                points.repeatOffset = parseSnapCoordinate(styleResolver, *interval);
+                points.hasRepeat = true;
+                break;
+            }
+        }
+        points.offsets.append(parseSnapCoordinate(styleResolver, itemValue));
+    }
+
+    return points;
+}
+
+inline LengthSize StyleBuilderConverter::convertSnapCoordinatePair(StyleResolver& styleResolver, CSSValue& value, size_t offset)
+{
+    auto& valueList = downcast<CSSValueList>(value);
+    return LengthSize(parseSnapCoordinate(styleResolver, *valueList.item(offset)), parseSnapCoordinate(styleResolver, *valueList.item(offset + 1)));
+}
+
+inline Vector<LengthSize> StyleBuilderConverter::convertScrollSnapCoordinates(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& valueList = downcast<CSSValueList>(value);
+    ASSERT(!(valueList.length() % 2));
+    size_t pointCount = valueList.length() / 2;
+    Vector<LengthSize> coordinates;
+    coordinates.reserveInitialCapacity(pointCount);
+    for (size_t i = 0; i < pointCount; ++i)
+        coordinates.uncheckedAppend(convertSnapCoordinatePair(styleResolver, valueList, i * 2));
+    return coordinates;
+}
+#endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
 bool StyleBuilderConverter::createGridTrackBreadth(CSSPrimitiveValue& primitiveValue, StyleResolver& styleResolver, GridLength& workingLength)

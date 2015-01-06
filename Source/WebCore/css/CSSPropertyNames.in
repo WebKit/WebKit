@@ -510,11 +510,11 @@ order [TypeName=int]
 -webkit-print-color-adjust [Inherited, TypeName=PrintColorAdjust]
 -webkit-rtl-ordering [Inherited, TypeName=Order, Setter=setRTLOrdering, Initial=initialRTLOrdering]
 #if defined(ENABLE_CSS_SCROLL_SNAP)
--webkit-scroll-snap-points-x [LegacyStyleBuilder]
--webkit-scroll-snap-points-y [LegacyStyleBuilder]
--webkit-scroll-snap-type [LegacyStyleBuilder]
--webkit-scroll-snap-destination [LegacyStyleBuilder]
--webkit-scroll-snap-coordinate [LegacyStyleBuilder]
+-webkit-scroll-snap-points-x [Converter=ScrollSnapPoints]
+-webkit-scroll-snap-points-y [Converter=ScrollSnapPoints]
+-webkit-scroll-snap-type [TypeName=ScrollSnapType]
+-webkit-scroll-snap-destination [Converter=SnapCoordinatePair]
+-webkit-scroll-snap-coordinate [Converter=ScrollSnapCoordinates, NameForMethods=ScrollSnapCoordinates]
 #endif
 -webkit-text-combine [Inherited, TypeName=TextCombine]
 -epub-text-combine = -webkit-text-combine

@@ -1947,52 +1947,6 @@ bool StyleResolver::useSVGZoomRulesForLength()
     return is<SVGElement>(m_state.element()) && !(is<SVGSVGElement>(*m_state.element()) && m_state.element()->parentNode());
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
-
-Length StyleResolver::parseSnapCoordinate(CSSPrimitiveValue& value)
-{
-    return value.convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(m_state.cssToLengthConversionData());
-}
-
-Length StyleResolver::parseSnapCoordinate(CSSValueList& valueList, unsigned offset)
-{
-    return parseSnapCoordinate(downcast<CSSPrimitiveValue>(*valueList.item(offset)));
-}
-
-LengthSize StyleResolver::parseSnapCoordinatePair(CSSValueList& valueList, unsigned offset)
-{
-    return LengthSize(parseSnapCoordinate(valueList, offset), parseSnapCoordinate(valueList, offset + 1));
-}
-
-ScrollSnapPoints StyleResolver::parseSnapPoints(CSSValue& value)
-{
-    ScrollSnapPoints points;
-
-    if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueElements) {
-        points.usesElements = true;
-        return points;
-    }
-
-    points.hasRepeat = false;
-    if (is<CSSValueList>(value)) {
-        for (auto& currentValue : downcast<CSSValueList>(value)) {
-            auto& itemValue = downcast<CSSPrimitiveValue>(currentValue.get());
-            if (auto* lengthRepeat = itemValue.getLengthRepeatValue()) {
-                if (auto* interval = lengthRepeat->interval()) {
-                    points.repeatOffset = parseSnapCoordinate(*interval);
-                    points.hasRepeat = true;
-                    break;
-                }
-            }
-            points.offsets.append(parseSnapCoordinate(itemValue));
-        }
-    }
-
-    return points;
-}
-
-#endif
-
 void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 {
     ASSERT_WITH_MESSAGE(!isExpandedShorthand(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
@@ -2412,38 +2366,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 
         return;
     }
-
-#if ENABLE(CSS_SCROLL_SNAP)
-    case CSSPropertyWebkitScrollSnapType:
-        HANDLE_INHERIT_AND_INITIAL(scrollSnapType, ScrollSnapType);
-        state.style()->setScrollSnapType(*primitiveValue);
-        return;
-    case CSSPropertyWebkitScrollSnapPointsX:
-        HANDLE_INHERIT_AND_INITIAL(scrollSnapPointsX, ScrollSnapPointsX);
-        state.style()->setScrollSnapPointsX(parseSnapPoints(*value));
-        return;
-    case CSSPropertyWebkitScrollSnapPointsY:
-        HANDLE_INHERIT_AND_INITIAL(scrollSnapPointsY, ScrollSnapPointsY);
-        state.style()->setScrollSnapPointsY(parseSnapPoints(*value));
-        break;
-    case CSSPropertyWebkitScrollSnapDestination: {
-        HANDLE_INHERIT_AND_INITIAL(scrollSnapDestination, ScrollSnapDestination)
-        state.style()->setScrollSnapDestination(parseSnapCoordinatePair(downcast<CSSValueList>(*value), 0));
-        return;
-    }
-    case CSSPropertyWebkitScrollSnapCoordinate: {
-        HANDLE_INHERIT_AND_INITIAL(scrollSnapCoordinates, ScrollSnapCoordinates)
-        CSSValueList& valueList = downcast<CSSValueList>(*value);
-        ASSERT(!(valueList.length() % 2));
-        size_t pointCount = valueList.length() / 2;
-        Vector<LengthSize> coordinates;
-        coordinates.reserveInitialCapacity(pointCount);
-        for (size_t i = 0; i < pointCount; i++)
-            coordinates.append(parseSnapCoordinatePair(valueList, i * 2));
-        state.style()->setScrollSnapCoordinates(WTF::move(coordinates));
-        return;
-    }
-#endif
     
     // These properties are aliased and StyleBuilder already applied the property on the prefixed version.
     case CSSPropertyAnimationDelay:
@@ -2688,6 +2610,13 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitTextAlignLast:
     case CSSPropertyWebkitTextJustify:
 #endif // CSS3_TEXT
+#if ENABLE(CSS_SCROLL_SNAP)
+    case CSSPropertyWebkitScrollSnapType:
+    case CSSPropertyWebkitScrollSnapPointsX:
+    case CSSPropertyWebkitScrollSnapPointsY:
+    case CSSPropertyWebkitScrollSnapDestination:
+    case CSSPropertyWebkitScrollSnapCoordinate:
+#endif
     case CSSPropertyWebkitTextDecorationLine:
     case CSSPropertyWebkitTextDecorationStyle:
     case CSSPropertyWebkitTextDecorationColor:
