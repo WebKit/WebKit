@@ -1,3 +1,19 @@
+2015-01-06  Mark Lam  <mark.lam@apple.com>
+
+        Fix Use details for op_create_lexical_environment and op_create_arguments.
+        <https://webkit.org/b/140110>
+
+        Reviewed by Filip Pizlo.
+
+        The current "Use" details for op_create_lexical_environment and
+        op_create_arguments are wrong.  op_create_argument uses nothing instead of the
+        1st operand (the output local).  op_create_lexical_environment uses its 2nd
+        operand (the scope chain) instead of the 1st (the output local).
+        This patch fixes them to specify the proper uses.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+
 2015-01-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Implement ES6 String.prototype.repeat(count)
