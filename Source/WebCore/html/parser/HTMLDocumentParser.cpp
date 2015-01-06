@@ -78,11 +78,11 @@ Ref<HTMLDocumentParser> HTMLDocumentParser::create(HTMLDocument& document)
     return adoptRef(*new HTMLDocumentParser(document));
 }
 
-inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element& contextElement, ParserContentPolicy contentPolicy)
-    : ScriptableDocumentParser(fragment.document(), contentPolicy)
+inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element& contextElement, ParserContentPolicy rawPolicy)
+    : ScriptableDocumentParser(fragment.document(), rawPolicy)
     , m_options(fragment.document())
     , m_tokenizer(m_options)
-    , m_treeBuilder(std::make_unique<HTMLTreeBuilder>(*this, fragment, contextElement, contentPolicy, m_options))
+    , m_treeBuilder(std::make_unique<HTMLTreeBuilder>(*this, fragment, contextElement, parserContentPolicy(), m_options))
     , m_xssAuditorDelegate(fragment.document())
 {
     bool reportErrors = false; // For now document fragment parsing never reports errors.

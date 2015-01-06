@@ -457,5 +457,3 @@ webkit.org/b/139865 js/promises-tests/promises-tests-2-3-3.html [ Skip ]
 webkit.org/b/139840 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Pass Failure ]
 
 webkit.org/b/140043 [ Debug ] js/dom/Promise.html [ Pass Failure ]
-
-webkit.org/b/140041 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html [ Skip ]

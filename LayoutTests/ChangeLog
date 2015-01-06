@@ -1,3 +1,9 @@
+2015-01-05  Darin Adler  <darin@apple.com>
+
+        * TestExpectations: Re-enabled the test I broke yesterday,
+        editing/pasteboard/drag-and-drop-objectimage-contenteditable.html,
+        now that it's fixed.
+
 2015-01-05  Chris Dumez  <cdumez@apple.com>
 
         Using calc() for -webkit-filter does not work
