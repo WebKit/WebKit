@@ -39,7 +39,6 @@
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
-#include "PluginView.h"
 #include "ScriptSourceCode.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
@@ -408,10 +407,7 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
 #if !PLATFORM(COCOA)
 PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
 {
-    if (!widget->isPluginView())
-        return 0;
-
-    return toPluginView(widget)->bindingInstance();
+    return nullptr;
 }
 #endif
 

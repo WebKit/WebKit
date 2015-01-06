@@ -66,7 +66,7 @@
 #include "PageThrottler.h"
 #include "PlugInClient.h"
 #include "PluginData.h"
-#include "PluginView.h"
+#include "PluginViewBase.h"
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
 #include "RenderLayerCompositor.h"

@@ -79,7 +79,7 @@ namespace WebCore {
     class NavigationAction;
     class Page;
     class ProtectionSpace;
-    class PluginView;
+    class PluginViewBase;
     class PolicyChecker;
     class ResourceError;
     class ResourceHandle;
@@ -272,7 +272,7 @@ namespace WebCore {
 
         virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const URL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues) = 0;
 
-        virtual void dispatchDidFailToStartPlugin(const PluginView*) const { }
+        virtual void dispatchDidFailToStartPlugin(const PluginViewBase*) const { }
 
         virtual ObjectContentType objectContentType(const URL&, const String& mimeType, bool shouldPreferPlugInsForImages) = 0;
         virtual String overrideMediaType() const = 0;

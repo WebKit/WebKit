@@ -1,5 +1,24 @@
 2015-01-05  Anders Carlsson  <andersca@apple.com>
 
+        Stop including PluginView.h from cross platform WebCore code
+        https://bugs.webkit.org/show_bug.cgi?id=140105
+
+        Reviewed by Andreas Kling.
+
+        Instead, include PluginViewBase.h. This will allow us to move the old plug-in implementation to WebKit.
+
+        * bindings/js/ScriptController.cpp:
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Evaluate):
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::setJavaScriptPaused):
+        * loader/FrameLoaderClient.h:
+        * page/Page.cpp:
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::setJavaScriptPaused):
+
+2015-01-05  Anders Carlsson  <andersca@apple.com>
+
         Introduce a per-page database provider class
         https://bugs.webkit.org/show_bug.cgi?id=140102
 

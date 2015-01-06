@@ -77,6 +77,8 @@ public:
 
     virtual AudioHardwareActivityType audioHardwareActivity() const { return AudioHardwareActivityType::Unknown; }
 
+    virtual void setJavaScriptPaused(bool) { }
+
 protected:
     explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
 };

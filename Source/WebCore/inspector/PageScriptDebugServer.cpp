@@ -36,10 +36,9 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PluginView.h"
+#include "PluginViewBase.h"
 #include "ScriptController.h"
 #include "Timer.h"
-#include "Widget.h"
 #include <runtime/JSLock.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
@@ -192,11 +191,11 @@ void PageScriptDebugServer::setJavaScriptPaused(FrameView* view, bool paused)
     if (!view)
         return;
 
-    for (auto it = view->children().begin(), end = view->children().end(); it != end; ++it) {
-        Widget* widget = (*it).get();
-        if (!widget->isPluginView())
+    for (auto& child : view->children()) {
+        if (!is<PluginViewBase>(*child))
             continue;
-        toPluginView(widget)->setJavaScriptPaused(paused);
+
+        downcast<PluginViewBase>(*child).setJavaScriptPaused(paused);
     }
 }
 
