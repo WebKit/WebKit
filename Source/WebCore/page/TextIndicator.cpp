@@ -194,56 +194,5 @@ TextIndicator::TextIndicator(const TextIndicatorData& data)
 TextIndicator::~TextIndicator()
 {
 }
-    
-bool TextIndicator::wantsBounce() const
-{
-    switch (m_data.presentationTransition) {
-    case TextIndicatorPresentationTransition::BounceAndCrossfade:
-    case TextIndicatorPresentationTransition::Bounce:
-        return true;
-        
-    case TextIndicatorPresentationTransition::FadeIn:
-    case TextIndicatorPresentationTransition::Crossfade:
-    case TextIndicatorPresentationTransition::None:
-        return false;
-    }
-    
-    return false;
-}
-
-bool TextIndicator::wantsContentCrossfade() const
-{
-    if (!m_data.contentImageWithHighlight)
-        return false;
-    
-    switch (m_data.presentationTransition) {
-    case TextIndicatorPresentationTransition::BounceAndCrossfade:
-    case TextIndicatorPresentationTransition::Crossfade:
-        return true;
-        
-    case TextIndicatorPresentationTransition::Bounce:
-    case TextIndicatorPresentationTransition::FadeIn:
-    case TextIndicatorPresentationTransition::None:
-        return false;
-    }
-    
-    return false;
-}
-
-bool TextIndicator::wantsFadeIn() const
-{
-    switch (m_data.presentationTransition) {
-    case TextIndicatorPresentationTransition::FadeIn:
-        return true;
-        
-    case TextIndicatorPresentationTransition::Bounce:
-    case TextIndicatorPresentationTransition::BounceAndCrossfade:
-    case TextIndicatorPresentationTransition::Crossfade:
-    case TextIndicatorPresentationTransition::None:
-        return false;
-    }
-    
-    return false;
-}
 
 } // namespace WebCore

@@ -95,7 +95,7 @@ using namespace WebCore;
     self.wantsLayer = YES;
     self.layer.anchorPoint = CGPointZero;
 
-    bool wantsCrossfade = _textIndicator->wantsContentCrossfade();
+    bool wantsCrossfade = [self _textIndicatorWantsContentCrossfade];
 
     FloatSize contentsImageLogicalSize = _textIndicator->contentImage()->size();
     contentsImageLogicalSize.scale(1 / _textIndicator->contentImageScaleFactor());
@@ -240,10 +240,64 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
     return fadeInAnimation;
 }
 
+- (bool)_textIndicatorWantsBounce
+{
+    switch (_textIndicator->presentationTransition()) {
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+    case TextIndicatorPresentationTransition::Bounce:
+        return true;
+
+    case TextIndicatorPresentationTransition::FadeIn:
+    case TextIndicatorPresentationTransition::Crossfade:
+    case TextIndicatorPresentationTransition::None:
+        return false;
+    }
+
+    return false;
+}
+
+- (bool)_textIndicatorWantsContentCrossfade
+{
+    if (!_textIndicator->contentImageWithHighlight())
+        return false;
+
+    switch (_textIndicator->presentationTransition()) {
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+    case TextIndicatorPresentationTransition::Crossfade:
+        return true;
+
+    case TextIndicatorPresentationTransition::Bounce:
+    case TextIndicatorPresentationTransition::FadeIn:
+    case TextIndicatorPresentationTransition::None:
+        return false;
+    }
+
+    return false;
+}
+
+- (bool)_textIndicatorWantsFadeIn
+{
+    switch (_textIndicator->presentationTransition()) {
+    case TextIndicatorPresentationTransition::FadeIn:
+        return true;
+
+    case TextIndicatorPresentationTransition::Bounce:
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+    case TextIndicatorPresentationTransition::Crossfade:
+    case TextIndicatorPresentationTransition::None:
+        return false;
+    }
+
+    return false;
+}
+
 - (CFTimeInterval)_animationDuration
 {
-    if (_textIndicator->wantsBounce()) {
-        if (_textIndicator->wantsContentCrossfade())
+    bool wantsBounce = [self _textIndicatorWantsBounce];
+    bool wantsCrossfade = [self _textIndicatorWantsContentCrossfade];
+
+    if (wantsBounce) {
+        if (wantsCrossfade)
             return bounceWithCrossfadeAnimationDuration;
         return bounceAnimationDuration;
     }
@@ -253,9 +307,9 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
 
 - (void)present
 {
-    bool wantsBounce = _textIndicator->wantsBounce();
-    bool wantsCrossfade = _textIndicator->wantsContentCrossfade();
-    bool wantsFadeIn = _textIndicator->wantsFadeIn();
+    bool wantsBounce = [self _textIndicatorWantsBounce];
+    bool wantsCrossfade = [self _textIndicatorWantsContentCrossfade];
+    bool wantsFadeIn = [self _textIndicatorWantsFadeIn];
     CFTimeInterval animationDuration = [self _animationDuration];
 
     _hasCompletedAnimation = false;
@@ -383,13 +437,8 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     if (!m_textIndicator)
         return;
 
-    CGFloat horizontalMargin = dropShadowBlurRadius * 2 + horizontalBorder;
-    CGFloat verticalMargin = dropShadowBlurRadius * 2 + verticalBorder;
-    
-    if (m_textIndicator->wantsBounce()) {
-        horizontalMargin = std::max(horizontalMargin, contentRect.size.width * (midBounceScale - 1) + horizontalMargin);
-        verticalMargin = std::max(verticalMargin, contentRect.size.height * (midBounceScale - 1) + verticalMargin);
-    }
+    CGFloat horizontalMargin = std::max(dropShadowBlurRadius * 2 + horizontalBorder, contentRect.size.width * 2);
+    CGFloat verticalMargin = std::max(dropShadowBlurRadius * 2 + verticalBorder, contentRect.size.height * 2);
 
     contentRect = CGRectInset(contentRect, -horizontalMargin, -verticalMargin);
     NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSIntegralRect(NSRectFromCGRect(contentRect)) styleMask:NSBorderlessWindowMask];

@@ -1,3 +1,7 @@
+2015-01-06  Lucas Forschler  <lforschler@apple.com>
+
+    Rollout r177936. rdar://problem/19311017
+
 2015-01-05  Lucas Forschler  <lforschler@apple.com>
 
         Merge r177656. rdar://problem/19311017
