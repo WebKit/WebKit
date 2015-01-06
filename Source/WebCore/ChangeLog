@@ -1,3 +1,14 @@
+2015-01-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix iOS build after r177955 and r177952.
+
+        Unreviewed.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::insertPhoneNumberLink):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+
 2015-01-06  Anders Carlsson  <andersca@apple.com>
 
         Remove now unused IndexedDB code
