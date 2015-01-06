@@ -1,5 +1,47 @@
 2015-01-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r177702. rdar://problem/19333074
+
+    2014-12-23  Timothy Horton  <timothy_horton@apple.com>
+
+            Remove the custom web page preview code
+            https://bugs.webkit.org/show_bug.cgi?id=139894
+            <rdar://problem/19333074>
+
+            Reviewed by Dan Bernstein.
+
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _dismissContentRelativeChildWindows]):
+            (-[WKView _viewForPreviewingURL:initialFrameSize:]): Deleted.
+            (-[WKView _titleForPreviewOfURL:]): Deleted.
+            (-[WKView _setPreviewTitle:]): Deleted.
+            (-[WKView _setPreviewLoading:]): Deleted.
+            (-[WKView _setPreviewOverrideImage:]): Deleted.
+            (-[WKView _finishPreviewingURL:withPreviewView:]): Deleted.
+            (-[WKView _handleClickInPreviewView:URL:]): Deleted.
+            (-[WKView _shouldUseStandardQuickLookPreview]): Deleted.
+            * UIProcess/mac/WKImmediateActionController.h:
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController willDestroyView:]):
+            (-[WKImmediateActionController _clearImmediateActionState]):
+            (-[WKImmediateActionController immediateActionRecognizerWillPrepare:]):
+            (-[WKImmediateActionController _defaultAnimationController]):
+            (-[WKImmediateActionController hidePreview]): Deleted.
+            (-[WKImmediateActionController setPreviewTitle:]): Deleted.
+            (-[WKImmediateActionController setPreviewLoading:]): Deleted.
+            (-[WKImmediateActionController setPreviewOverrideImage:]): Deleted.
+            (-[WKImmediateActionController _animationControllerForCustomPreview]): Deleted.
+            * UIProcess/mac/WKPagePreviewViewController.h: Removed.
+            * UIProcess/mac/WKPagePreviewViewController.mm: Removed.
+            * UIProcess/mac/WKPreviewPopoverAnimationController.h: Removed.
+            * UIProcess/mac/WKPreviewPopoverAnimationController.mm: Removed.
+            * WebKit2.xcodeproj/project.pbxproj:
+            Remove all of the custom web page preview code. Clients that want the custom
+            preview can implement it by overriding the immediate action.
+
+2015-01-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177604. rdar://problem/19312111
 
     2014-12-19  Timothy Horton  <timothy_horton@apple.com>
