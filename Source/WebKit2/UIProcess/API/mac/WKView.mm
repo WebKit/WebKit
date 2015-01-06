@@ -259,6 +259,7 @@ struct WKViewInterpretKeyEventsParameters {
 
     BOOL _didScheduleSetTopContentInset;
     CGFloat _topContentInset;
+    CGFloat _totalHeightOfBanners;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     BOOL _automaticallyAdjustsContentInsets;
@@ -4145,6 +4146,16 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (CGFloat)_topContentInset
 {
     return _data->_topContentInset;
+}
+
+- (void)_setTotalHeightOfBanners:(CGFloat)totalHeightOfBanners
+{
+    _data->_totalHeightOfBanners = totalHeightOfBanners;
+}
+
+- (CGFloat)_totalHeightOfBanners
+{
+    return _data->_totalHeightOfBanners;
 }
 
 - (NSColor *)_pageExtendedBackgroundColor

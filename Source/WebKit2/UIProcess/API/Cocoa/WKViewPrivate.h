@@ -86,6 +86,7 @@
 @property (readwrite, setter=_setIgnoresAllEvents:) BOOL _ignoresAllEvents;
 @property (readwrite) BOOL allowsBackForwardNavigationGestures;
 @property (nonatomic, setter=_setTopContentInset:) CGFloat _topContentInset;
+@property (nonatomic, setter=_setTotalHeightOfBanners:) CGFloat _totalHeightOfBanners;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 @property (nonatomic, setter=_setAutomaticallyAdjustsContentInsets:) BOOL _automaticallyAdjustsContentInsets;
