@@ -238,7 +238,10 @@ void FindController::findString(const String& string, FindOptions options, unsig
             m_foundStringMatchIndex++;
     }
 
-    m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition(WTF::bind(&FindController::updateFindUIAfterPageScroll, this, found, string, options, maxMatchCount));
+    RefPtr<WebPage> protectedWebPage = m_webPage;
+    m_webPage->drawingArea()->dispatchAfterEnsuringUpdatedScrollPosition([protectedWebPage, found, string, options, maxMatchCount] () {
+        protectedWebPage->findController().updateFindUIAfterPageScroll(found, string, options, maxMatchCount);
+    });
 }
 
 void FindController::findStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
