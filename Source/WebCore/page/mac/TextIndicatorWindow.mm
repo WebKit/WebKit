@@ -275,7 +275,7 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
 
     [CATransaction begin];
     for (CALayer *bounceLayer in _bounceLayers.get()) {
-        if (wantsFadeIn || wantsCrossfade)
+        if (_textIndicator->wantsManualAnimation())
             bounceLayer.speed = 0;
 
         if (!wantsFadeIn)
