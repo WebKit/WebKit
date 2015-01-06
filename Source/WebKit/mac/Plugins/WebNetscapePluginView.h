@@ -60,6 +60,7 @@ typedef union PluginPort {
 
 @interface WebNetscapePluginView : WebBaseNetscapePluginView<WebPluginManualLoader, WebPluginContainerCheckController>
 {
+@package
     RefPtr<WebNetscapePluginStream> _manualStream;
     RetainPtr<CALayer> _pluginLayer;
     unsigned _dataLengthReceived;

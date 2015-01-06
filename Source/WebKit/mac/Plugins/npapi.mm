@@ -31,7 +31,6 @@
 
 #import "WebNetscapePluginView.h"
 #import "WebKitLogging.h"
-#import <WebCore/PluginMainThreadScheduler.h>
 
 using namespace WebCore;
 
@@ -173,7 +172,16 @@ void NPN_PopPopupsEnabledState(NPP instance)
 
 void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userData)
 {
-    PluginMainThreadScheduler::scheduler().scheduleCall(instance, func, userData);
+    WebNetscapePluginView *pluginView = pluginViewForInstance(instance);
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!pluginView || !pluginView->plugin) {
+            // The plug-in has already been destroyed.
+            return;
+        }
+
+        func(userData);
+    });
 }
 
 uint32_t NPN_ScheduleTimer(NPP instance, uint32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID))
