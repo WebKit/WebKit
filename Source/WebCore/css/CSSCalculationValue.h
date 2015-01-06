@@ -93,6 +93,7 @@ public:
     bool isInt() const { return m_expression->isInteger(); }
     double doubleValue() const;
     bool isNegative() const { return m_expression->doubleValue() < 0; }
+    bool isPositive() const { return m_expression->doubleValue() > 0; }
     double computeLengthPx(const CSSToLengthConversionData&) const;
 
     Ref<CalculationValue> createCalculationValue(const CSSToLengthConversionData&) const;

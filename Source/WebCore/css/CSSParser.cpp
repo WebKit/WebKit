@@ -1597,6 +1597,8 @@ bool CSSParser::validateCalculationUnit(ValueWithCalculation& valueWithCalculati
         isValid = (unitFlags & FNumber);
         if (!isValid && (unitFlags & FInteger) && calculation->isInt())
             isValid = true;
+        if (!isValid && (unitFlags & FPositiveInteger) && calculation->isInt() && calculation->isPositive())
+            isValid = true;
         if (isValid && mustBeNonNegative && calculation->isNegative())
             isValid = false;
         break;
@@ -5313,11 +5315,9 @@ bool CSSParser::parseGridTrackRepeatFunction(CSSValueList& list)
     if (!validateUnit(firstValueWithCalculation, FPositiveInteger) || !isComma(arguments->valueAt(1)))
         return false;
 
-    // FIXME: This doesn't handle calculated values.
-    ASSERT(firstValueWithCalculation.value().fValue > 0);
     // If arguments->valueAt(0)->fValue > SIZE_MAX then repetitions becomes 0 during the type casting, that's why we
     // clamp it down to kGridMaxTracks before the type casting.
-    unsigned repetitions = clampTo<unsigned>(firstValueWithCalculation.value().fValue, 0, kGridMaxTracks);
+    unsigned repetitions = clampTo<unsigned>(parsedDouble(firstValueWithCalculation), 0, kGridMaxTracks);
 
     RefPtr<CSSValueList> repeatedValues = CSSValueList::createSpaceSeparated();
     arguments->next(); // Skip the repetition count.

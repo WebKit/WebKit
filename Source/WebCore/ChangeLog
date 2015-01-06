@@ -1,5 +1,33 @@
 2015-01-05  Chris Dumez  <cdumez@apple.com>
 
+        Using calc() in repeat() for -webkit-grid-template-rows does not work
+        https://bugs.webkit.org/show_bug.cgi?id=140094
+
+        Reviewed by Darin Adler.
+
+        Using calc() in repeat() for -webkit-grid-template-rows was not working
+        because the CSS parser was not handling this case properly. This patch
+        addresses the issue.
+
+        Test: fast/css-grid-layout/grid-repeat-calc.html
+
+        * css/CSSCalculationValue.h:
+        (WebCore::CSSCalcValue::isPositive):
+        Add isPositive() method as it is needed by
+        CSSParser::validateCalculationUnit().
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validateCalculationUnit):
+        Add support for FPositiveInteger, similarly to what was done in
+        validateUnit(). This would cause us to consider calc(1 + 1) as invalid
+        if a FPositiveInteger was requested.
+
+        (WebCore::CSSParser::parseGridTrackRepeatFunction):
+        Do not access fValue directly and call parsedDouble() instead as it
+        correctly handles calculation values.
+
+2015-01-05  Chris Dumez  <cdumez@apple.com>
+
         calc() cannot be used in steps() for -webkit-animation-timing-function
         https://bugs.webkit.org/show_bug.cgi?id=140091
 
