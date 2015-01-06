@@ -384,7 +384,7 @@ inline void HTMLToken::appendToAttributeName(UChar character)
     m_currentAttribute->name.append(character);
 }
 
-inline void HTMLToken::HTMLToken::appendToAttributeValue(UChar character)
+inline void HTMLToken::appendToAttributeValue(UChar character)
 {
     ASSERT(character);
     ASSERT(m_type == StartTag || m_type == EndTag);
@@ -392,7 +392,7 @@ inline void HTMLToken::HTMLToken::appendToAttributeValue(UChar character)
     m_currentAttribute->value.append(character);
 }
 
-inline void HTMLToken::HTMLToken::appendToAttributeValue(unsigned i, StringView value)
+inline void HTMLToken::appendToAttributeValue(unsigned i, StringView value)
 {
     ASSERT(!value.isEmpty());
     ASSERT(m_type == StartTag || m_type == EndTag);

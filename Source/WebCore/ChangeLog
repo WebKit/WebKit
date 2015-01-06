@@ -1,3 +1,13 @@
+2015-01-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r177952.
+
+        Remove double class namespace in appendToAttributeValue.
+
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLToken::appendToAttributeValue): Added,
+        (WebCore::HTMLToken::HTMLToken::appendToAttributeValue): Deleted.
+
 2015-01-05  Anders Carlsson  <andersca@apple.com>
 
         Add a DatabaseProvider subclass in WebKit2 and use it for IndexedDB
