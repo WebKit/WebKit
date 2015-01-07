@@ -174,6 +174,8 @@ std::unique_ptr<Shape> Shape::createShape(const BasicShape& basicShape, const La
 
 std::unique_ptr<Shape> Shape::createRasterShape(Image* image, float threshold, const LayoutRect& imageR, const LayoutRect& marginR, WritingMode writingMode, float margin)
 {
+    ASSERT(marginR.height() >= 0);
+
     IntRect imageRect = snappedIntRect(imageR);
     IntRect marginRect = snappedIntRect(marginR);
     auto intervals = std::make_unique<RasterShapeIntervals>(marginRect.height(), -marginRect.y());

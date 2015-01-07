@@ -1,3 +1,23 @@
+2015-01-07  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Negative raster shape height leads to crash
+        https://bugs.webkit.org/show_bug.cgi?id=136087
+
+        Reviewed by Zoltan Horvath.
+
+        This patch clamps the size of the margin box rect used to compute the
+        raster shape on a float so the width and height cannot be negative.
+        This makes it safe to use that rect to determine the size of the shape
+        intervals data structure.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-negative-height-crash.html
+
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape): Add an assert to be explict about
+            the precondition.
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::getShapeImageMarginRect): Clamp the marginRect's size.
+
 2015-01-06  Sam Weinig  <sam@webkit.org>
 
         Modernize the SVGElement and MathMLElement factories

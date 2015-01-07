@@ -141,7 +141,9 @@ static LayoutRect getShapeImageMarginRect(const RenderBox& renderBox, const Layo
 {
     LayoutPoint marginBoxOrigin(-renderBox.marginLogicalLeft() - renderBox.borderAndPaddingLogicalLeft(), -renderBox.marginBefore() - renderBox.borderBefore() - renderBox.paddingBefore());
     LayoutSize marginBoxSizeDelta(renderBox.marginLogicalWidth() + renderBox.borderAndPaddingLogicalWidth(), renderBox.marginLogicalHeight() + renderBox.borderAndPaddingLogicalHeight());
-    return LayoutRect(marginBoxOrigin, referenceBoxLogicalSize + marginBoxSizeDelta);
+    LayoutSize marginRectSize(referenceBoxLogicalSize + marginBoxSizeDelta);
+    marginRectSize.clampNegativeToZero();
+    return LayoutRect(marginBoxOrigin, marginRectSize);
 }
 
 std::unique_ptr<Shape> ShapeOutsideInfo::createShapeForImage(StyleImage* styleImage, float shapeImageThreshold, WritingMode writingMode, float margin) const

@@ -1,3 +1,13 @@
+2015-01-07  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Negative raster shape height leads to crash
+        https://bugs.webkit.org/show_bug.cgi?id=136087
+
+        Reviewed by Zoltan Horvath.
+
+        * fast/shapes/shape-outside-floats/shape-outside-negative-height-crash-expected.txt: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-negative-height-crash.html: Added.
+
 2015-01-07  Chris Dumez  <cdumez@apple.com>
 
         Add layout test for animated GIFs in iframes moved in and out of the viewport using -webkit-transform
