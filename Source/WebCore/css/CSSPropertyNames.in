@@ -197,7 +197,7 @@ caption-side [Inherited]
 clear
 clip [Custom=All]
 -webkit-clip-path [Converter=ClipPath]
-content [LegacyStyleBuilder]
+content [Custom=All]
 counter-increment [Custom=All]
 counter-reset [Custom=All]
 cursor [Inherited, Custom=All]

@@ -29,7 +29,10 @@
 
 #include "CSSAspectRatioValue.h"
 #include "CSSCursorImageValue.h"
+#include "CSSGradientValue.h"
 #include "CSSShadowValue.h"
+#include "Counter.h"
+#include "CounterContent.h"
 #include "CursorList.h"
 #include "ElementAncestorIterator.h"
 #include "Frame.h"
@@ -39,6 +42,7 @@
 #include "SVGElement.h"
 #include "StyleBuilderConverter.h"
 #include "StyleFontSizeFunctions.h"
+#include "StyleGeneratedImage.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -59,6 +63,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BoxShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Clip);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ColumnGap);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(Content);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Cursor);
@@ -1161,6 +1166,97 @@ inline void StyleBuilderCustom::applyValueColumnGap(StyleResolver& styleResolver
         styleResolver.style()->setHasNormalColumnGap();
     else
         styleResolver.style()->setColumnGap(StyleBuilderConverter::convertComputedLength<float>(styleResolver, value));
+}
+
+inline void StyleBuilderCustom::applyInitialContent(StyleResolver& styleResolver)
+{
+    styleResolver.style()->clearContent();
+}
+
+inline void StyleBuilderCustom::applyInheritContent(StyleResolver&)
+{
+    // FIXME: In CSS3, it will be possible to inherit content. In CSS2 it is not. This
+    // note is a reminder that eventually "inherit" needs to be supported.
+}
+
+inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, CSSValue& value)
+{
+    bool didSet = false;
+    for (auto& item : downcast<CSSValueList>(value)) {
+        if (is<CSSImageGeneratorValue>(item.get())) {
+            if (is<CSSGradientValue>(item.get()))
+                styleResolver.style()->setContent(StyleGeneratedImage::create(*downcast<CSSGradientValue>(item.get()).gradientWithStylesResolved(&styleResolver)), didSet);
+            else
+                styleResolver.style()->setContent(StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(item.get())), didSet);
+            didSet = true;
+#if ENABLE(CSS_IMAGE_SET)
+        } else if (is<CSSImageSetValue>(item.get())) {
+            styleResolver.style()->setContent(styleResolver.setOrPendingFromValue(CSSPropertyContent, downcast<CSSImageSetValue>(item.get())), didSet);
+            didSet = true;
+#endif
+        }
+
+        if (is<CSSImageValue>(item.get())) {
+            styleResolver.style()->setContent(styleResolver.cachedOrPendingFromValue(CSSPropertyContent, downcast<CSSImageValue>(item.get())), didSet);
+            didSet = true;
+            continue;
+        }
+
+        if (!is<CSSPrimitiveValue>(item.get()))
+            continue;
+
+        auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
+        if (contentValue.isString()) {
+            styleResolver.style()->setContent(contentValue.getStringValue().impl(), didSet);
+            didSet = true;
+        } else if (contentValue.isAttr()) {
+            // FIXME: Can a namespace be specified for an attr(foo)?
+            if (styleResolver.style()->styleType() == NOPSEUDO)
+                styleResolver.style()->setUnique();
+            else
+                styleResolver.parentStyle()->setUnique();
+            QualifiedName attr(nullAtom, contentValue.getStringValue().impl(), nullAtom);
+            const AtomicString& value = styleResolver.element()->getAttribute(attr);
+            styleResolver.style()->setContent(value.isNull() ? emptyAtom : value.impl(), didSet);
+            didSet = true;
+            // Register the fact that the attribute value affects the style.
+            styleResolver.ruleSets().features().attributeCanonicalLocalNamesInRules.add(attr.localName().impl());
+            styleResolver.ruleSets().features().attributeLocalNamesInRules.add(attr.localName().impl());
+        } else if (contentValue.isCounter()) {
+            Counter* counterValue = contentValue.getCounterValue();
+            EListStyleType listStyleType = NoneListStyle;
+            CSSValueID listStyleIdent = counterValue->listStyleIdent();
+            if (listStyleIdent != CSSValueNone)
+                listStyleType = static_cast<EListStyleType>(listStyleIdent - CSSValueDisc);
+            auto counter = std::make_unique<CounterContent>(counterValue->identifier(), listStyleType, counterValue->separator());
+            styleResolver.style()->setContent(WTF::move(counter), didSet);
+            didSet = true;
+        } else {
+            switch (contentValue.getValueID()) {
+            case CSSValueOpenQuote:
+                styleResolver.style()->setContent(OPEN_QUOTE, didSet);
+                didSet = true;
+                break;
+            case CSSValueCloseQuote:
+                styleResolver.style()->setContent(CLOSE_QUOTE, didSet);
+                didSet = true;
+                break;
+            case CSSValueNoOpenQuote:
+                styleResolver.style()->setContent(NO_OPEN_QUOTE, didSet);
+                didSet = true;
+                break;
+            case CSSValueNoCloseQuote:
+                styleResolver.style()->setContent(NO_CLOSE_QUOTE, didSet);
+                didSet = true;
+                break;
+            default:
+                // normal and none do not have any effect.
+                break;
+            }
+        }
+    }
+    if (!didSet)
+        styleResolver.style()->clearContent();
 }
 
 inline void StyleBuilderCustom::applyInitialWebkitFontVariantLigatures(StyleResolver& styleResolver)

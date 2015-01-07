@@ -1981,100 +1981,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     // What follows is a list that maps the CSS properties into their corresponding front-end
     // RenderStyle values.
     switch (id) {
-    // lists
-    case CSSPropertyContent:
-        // list of string, uri, counter, attr, i
-        {
-            // FIXME: In CSS3, it will be possible to inherit content. In CSS2 it is not. This
-            // note is a reminder that eventually "inherit" needs to be supported.
-
-            if (isInitial) {
-                state.style()->clearContent();
-                return;
-            }
-
-            if (!is<CSSValueList>(*value))
-                return;
-
-            bool didSet = false;
-            for (auto& item : downcast<CSSValueList>(*value)) {
-                if (is<CSSImageGeneratorValue>(item.get())) {
-                    if (is<CSSGradientValue>(item.get()))
-                        state.style()->setContent(StyleGeneratedImage::create(*downcast<CSSGradientValue>(item.get()).gradientWithStylesResolved(this)), didSet);
-                    else
-                        state.style()->setContent(StyleGeneratedImage::create(downcast<CSSImageGeneratorValue>(item.get())), didSet);
-                    didSet = true;
-#if ENABLE(CSS_IMAGE_SET)
-                } else if (is<CSSImageSetValue>(item.get())) {
-                    state.style()->setContent(setOrPendingFromValue(CSSPropertyContent, downcast<CSSImageSetValue>(item.get())), didSet);
-                    didSet = true;
-#endif
-                }
-
-                if (is<CSSImageValue>(item.get())) {
-                    state.style()->setContent(cachedOrPendingFromValue(CSSPropertyContent, downcast<CSSImageValue>(item.get())), didSet);
-                    didSet = true;
-                    continue;
-                }
-
-                if (!is<CSSPrimitiveValue>(item.get()))
-                    continue;
-
-                auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
-
-                if (contentValue.isString()) {
-                    state.style()->setContent(contentValue.getStringValue().impl(), didSet);
-                    didSet = true;
-                } else if (contentValue.isAttr()) {
-                    // FIXME: Can a namespace be specified for an attr(foo)?
-                    if (state.style()->styleType() == NOPSEUDO)
-                        state.style()->setUnique();
-                    else
-                        state.parentStyle()->setUnique();
-                    QualifiedName attr(nullAtom, contentValue.getStringValue().impl(), nullAtom);
-                    const AtomicString& value = state.element()->getAttribute(attr);
-                    state.style()->setContent(value.isNull() ? emptyAtom : value.impl(), didSet);
-                    didSet = true;
-                    // Register the fact that the attribute value affects the style.
-                    m_ruleSets.features().attributeCanonicalLocalNamesInRules.add(attr.localName().impl());
-                    m_ruleSets.features().attributeLocalNamesInRules.add(attr.localName().impl());
-                } else if (contentValue.isCounter()) {
-                    Counter* counterValue = contentValue.getCounterValue();
-                    EListStyleType listStyleType = NoneListStyle;
-                    CSSValueID listStyleIdent = counterValue->listStyleIdent();
-                    if (listStyleIdent != CSSValueNone)
-                        listStyleType = static_cast<EListStyleType>(listStyleIdent - CSSValueDisc);
-                    auto counter = std::make_unique<CounterContent>(counterValue->identifier(), listStyleType, counterValue->separator());
-                    state.style()->setContent(WTF::move(counter), didSet);
-                    didSet = true;
-                } else {
-                    switch (contentValue.getValueID()) {
-                    case CSSValueOpenQuote:
-                        state.style()->setContent(OPEN_QUOTE, didSet);
-                        didSet = true;
-                        break;
-                    case CSSValueCloseQuote:
-                        state.style()->setContent(CLOSE_QUOTE, didSet);
-                        didSet = true;
-                        break;
-                    case CSSValueNoOpenQuote:
-                        state.style()->setContent(NO_OPEN_QUOTE, didSet);
-                        didSet = true;
-                        break;
-                    case CSSValueNoCloseQuote:
-                        state.style()->setContent(NO_CLOSE_QUOTE, didSet);
-                        didSet = true;
-                        break;
-                    default:
-                        // normal and none do not have any effect.
-                        { }
-                    }
-                }
-            }
-            if (!didSet)
-                state.style()->clearContent();
-            return;
-        }
     // Shorthand properties.
     case CSSPropertyFont:
         if (isInherit) {
@@ -2364,6 +2270,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyClear:
     case CSSPropertyClip:
     case CSSPropertyColor:
+    case CSSPropertyContent:
     case CSSPropertyCounterIncrement:
     case CSSPropertyCounterReset:
     case CSSPropertyCursor:
