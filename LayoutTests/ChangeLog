@@ -1,3 +1,20 @@
+2015-01-07  Myles C. Maxfield  <litherum@gmail.com>
+
+        Update css3/flexbox/auto-margins.html after r177774
+        https://bugs.webkit.org/show_bug.cgi?id=139975
+
+        Reviewed by Darin Adler.
+
+        This is a subpixel problem. Flexbox uses SimpleLineLayout for the entire
+        box and therefore does all its math in floating point, while the
+        -expected uses the regular renderer hierarchy and therefore fixed-point
+        math. This patch updates the test to use Ahem so that the character
+        widths divide the same way in both cases.
+
+        * css3/flexbox/auto-margins-expected.html:
+        * css3/flexbox/auto-margins.html:
+        * platform/mac/TestExpectations:
+
 2015-01-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test gardening (writing-mode).
