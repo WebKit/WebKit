@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class GraphicsLayer;
 class Region;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
@@ -77,7 +78,7 @@ public:
     TextureMapper* textureMapper() const { return rootLayer().m_textureMapper; }
     void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
 
-    void setChildren(const Vector<TextureMapperLayer*>&);
+    void setChildren(const Vector<GraphicsLayer*>&);
     void setMaskLayer(TextureMapperLayer*);
     void setReplicaLayer(TextureMapperLayer*);
     void setPosition(const FloatPoint&);
