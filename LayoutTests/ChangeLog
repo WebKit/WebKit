@@ -1,3 +1,13 @@
+2015-01-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test gardening (writing-mode).
+
+        Rebaseline some of the writing-mode tests based on current WebKit behavior.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/writing-mode/fallback-orientation-expected.txt:
+        * platform/win/fast/writing-mode/vertical-font-fallback-expected.txt:
+
 2015-01-07  Eric Carlson  <eric.carlson@apple.com>
 
         Layout Test http/tests/navigation/forward-and-cancel.html is flaky
