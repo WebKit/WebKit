@@ -105,10 +105,10 @@ static void didGetImageForMatchResult(WKPageRef page, WKImageRef image, uint32_t
     [range selectNode:target];
     NSImage *expectedImage = [range renderedImageForcingBlackText:YES];
     EXPECT_EQ(1u, expectedImage.representations.count);
-    EXPECT_TRUE([expectedImage.representations[0] isKindOfClass:[NSBitmapImageRep class]]);
+    EXPECT_TRUE([[expectedImage.representations objectAtIndex:0] isKindOfClass:[NSBitmapImageRep class]]);
 
-    NSInteger expectedWidth = ((NSBitmapImageRep *)expectedImage.representations[0]).pixelsWide;
-    NSInteger expectedHeight = ((NSBitmapImageRep *)expectedImage.representations[0]).pixelsHigh;
+    NSInteger expectedWidth = [(NSBitmapImageRep *)[expectedImage.representations objectAtIndex:0] pixelsWide];
+    NSInteger expectedHeight = [(NSBitmapImageRep *)[expectedImage.representations objectAtIndex:0] pixelsHigh];
 
     EXPECT_EQ(size.width, expectedWidth);
     EXPECT_EQ(size.height, expectedHeight);

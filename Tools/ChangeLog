@@ -1,3 +1,10 @@
+2015-01-06  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Mountain Lion build.
+
+        * TestWebKitAPI/Tests/WebKit2/FindMatches.mm:
+        (TestWebKitAPI::didGetImageForMatchResult):
+
 2015-01-06  Alexey Proskuryakov  <ap@apple.com>
 
         Debug ASan builds frequently crash in Register::jsValue under DFG::prepareOSREntry
