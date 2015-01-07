@@ -37,8 +37,8 @@ public:
     explicit GraphicsLayerTextureMapper(GraphicsLayerClient&);
     virtual ~GraphicsLayerTextureMapper();
 
-    void setScrollClient(TextureMapperLayer::ScrollingClient* client) { m_layer->setScrollClient(client); }
-    void setID(uint32_t id) { m_layer->setID(id); }
+    void setScrollClient(TextureMapperLayer::ScrollingClient* client) { m_layer.setScrollClient(client); }
+    void setID(uint32_t id) { m_layer.setID(id); }
 
     // GraphicsLayer
     virtual bool setChildren(const Vector<GraphicsLayer*>&) override;
@@ -86,7 +86,7 @@ public:
     virtual void flushCompositingState(const FloatRect&) override;
     virtual void flushCompositingStateForThisLayerOnly() override;
 
-    TextureMapperLayer* layer() const { return m_layer.get(); }
+    TextureMapperLayer& layer() { return m_layer; }
 
     void didCommitScrollOffset(const IntSize&);
     void setIsScrollable(bool);
@@ -160,7 +160,7 @@ private:
     };
     void notifyChange(ChangeMask);
 
-    std::unique_ptr<TextureMapperLayer> m_layer;
+    TextureMapperLayer m_layer;
     RefPtr<TextureMapperTiledBackingStore> m_compositedImage;
     NativeImagePtr m_compositedNativeImagePtr;
     RefPtr<TextureMapperBackingStore> m_backingStore;

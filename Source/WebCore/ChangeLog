@@ -1,3 +1,25 @@
+2015-01-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] m_layer member in GraphicsLayerTextureMapper is always non-null
+        https://bugs.webkit.org/show_bug.cgi?id=140135
+
+        Reviewed by Darin Adler.
+
+        Since the TextureMapperLayer member in the GraphicsLayerTextureMapper class
+        is always non-null, we don't need to keep it in a std::unique_ptr<>.
+
+        GraphicsLayerTextureMapper::layer() now returns a reference to the m_layer member.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly):
+        (WebCore::toTextureMapperLayerVector):
+        (WebCore::GraphicsLayerTextureMapper::commitLayerChanges):
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingState):
+        (WebCore::GraphicsLayerTextureMapper::updateBackingStoreIfNeeded):
+        (WebCore::GraphicsLayerTextureMapper::setFilters):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+
 2015-01-07  Byungseon Shin  <sun.shin@lge.com>
 
         Fix Border-radius clipping issue on a composited descendants

@@ -123,7 +123,7 @@ void LayerTreeHostGtk::initialize()
 
     m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
     static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
-    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer()->setTextureMapper(m_textureMapper.get());
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTextureMapper(m_textureMapper.get());
 
     // FIXME: Cretae page olverlay layers. https://bugs.webkit.org/show_bug.cgi?id=131433.
 
@@ -268,7 +268,7 @@ void LayerTreeHostGtk::layerFlushTimerFired()
 {
     double fireTime = monotonicallyIncreasingTime();
     flushAndRenderLayers();
-    if (m_layerFlushTimerCallback.isScheduled() || !downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer()->descendantsOrSelfHaveRunningAnimations())
+    if (m_layerFlushTimerCallback.isScheduled() || !downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().descendantsOrSelfHaveRunningAnimations())
         return;
 
     static const double targetFramerate = 1 / 60.0;
@@ -321,7 +321,7 @@ void LayerTreeHostGtk::compositeLayersToContext(CompositePurpose purpose)
     }
 
     m_textureMapper->beginPainting();
-    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer()->paint();
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().paint();
     m_textureMapper->endPainting();
 
     context->swapBuffers();

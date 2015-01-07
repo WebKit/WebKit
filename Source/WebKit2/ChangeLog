@@ -1,3 +1,18 @@
+2015-01-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] m_layer member in GraphicsLayerTextureMapper is always non-null
+        https://bugs.webkit.org/show_bug.cgi?id=140135
+
+        Reviewed by Darin Adler.
+
+        GraphicsLayerTextureMapper::layer() now returns a reference,
+        so the call sites are updated.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::initialize):
+        (WebKit::LayerTreeHostGtk::layerFlushTimerFired):
+        (WebKit::LayerTreeHostGtk::compositeLayersToContext):
+
 2015-01-06  Gwang Yoon Hwang  <yoon@igalia.com>
 
         Remove the remaining uses of OwnPtr in threaded compositor.
