@@ -104,10 +104,10 @@ class CppBackendDispatcherImplementationGenerator(Generator):
     def _generate_small_dispatcher_switch_implementation_for_domain(self, domain):
         cases = []
         cases.append('    if (method == "%s")' % domain.commands[0].command_name)
-        cases.append('        %s(callId, *message.get());' % domain.commands[0].command_name)
+        cases.append('        %s(callId, message);' % domain.commands[0].command_name)
         for command in domain.commands[1:]:
             cases.append('    else if (method == "%s")' % command.command_name)
-            cases.append('        %s(callId, *message.get());' % command.command_name)
+            cases.append('        %s(callId, message);' % command.command_name)
 
         switch_args = {
             'domainName': domain.domain_name,
@@ -178,22 +178,29 @@ class CppBackendDispatcherImplementationGenerator(Generator):
                 out_success_argument = '&%s_valueFound' % parameter.parameter_name
                 in_parameter_declarations.append('    bool %s_valueFound = false;' % parameter.parameter_name)
 
+            parameter_expression = 'in_' + parameter.parameter_name
+            if CppGenerator.should_use_references_for_type(parameter.type):
+                parameter_expression = '%s.copyRef()' % parameter_expression
+            elif parameter.is_optional:
+                parameter_expression = '&%s' % parameter_expression
+
             param_args = {
                 'parameterType': CppGenerator.cpp_type_for_stack_in_parameter(parameter),
                 'parameterName': parameter.parameter_name,
+                'parameterExpression': parameter_expression,
                 'keyedGetMethod': CppGenerator.cpp_getter_method_for_type(parameter.type),
                 'successOutParam': out_success_argument
             }
 
-            in_parameter_declarations.append('    %(parameterType)s in_%(parameterName)s = InspectorBackendDispatcher::%(keyedGetMethod)s(paramsContainerPtr, ASCIILiteral("%(parameterName)s"), %(successOutParam)s, protocolErrorsPtr);' % param_args)
+            in_parameter_declarations.append('    %(parameterType)s in_%(parameterName)s = InspectorBackendDispatcher::%(keyedGetMethod)s(paramsContainer.get(), ASCIILiteral("%(parameterName)s"), %(successOutParam)s, protocolErrors.get());' % param_args)
 
             if parameter.is_optional:
-                optional_in_parameter_string = '%(parameterName)s_valueFound ? &in_%(parameterName)s : nullptr' % param_args
+                optional_in_parameter_string = '%(parameterName)s_valueFound ? %(parameterExpression)s : nullptr' % param_args
                 alternate_dispatcher_method_parameters.append(optional_in_parameter_string)
                 method_parameters.append(optional_in_parameter_string)
             else:
-                alternate_dispatcher_method_parameters.append('in_' + parameter.parameter_name)
-                method_parameters.append('in_' + parameter.parameter_name)
+                alternate_dispatcher_method_parameters.append(parameter_expression)
+                method_parameters.append(parameter_expression)
 
         if command.is_async:
             async_args = {
@@ -204,7 +211,7 @@ class CppBackendDispatcherImplementationGenerator(Generator):
             out_parameter_assignments.append('        callback->disable();')
             out_parameter_assignments.append('        m_backendDispatcher->reportProtocolError(&callId, Inspector::InspectorBackendDispatcher::ServerError, error);')
             out_parameter_assignments.append('        return;')
-            method_parameters.append('callback')
+            method_parameters.append('callback.copyRef()')
 
         else:
             for parameter in command.return_parameters:
@@ -261,9 +268,9 @@ class CppBackendDispatcherImplementationGenerator(Generator):
         lines.append('')
 
         lines.append('    ErrorString error;')
-        lines.append('    RefPtr<InspectorObject> result = InspectorObject::create();')
+        lines.append('    Ref<InspectorObject> result = InspectorObject::create();')
         if command.is_async:
-            lines.append('    RefPtr<Inspector%(domainName)sBackendDispatcherHandler::%(callbackName)s> callback = adoptRef(new Inspector%(domainName)sBackendDispatcherHandler::%(callbackName)s(m_backendDispatcher,callId));' % command_args)
+            lines.append('    Ref<Inspector%(domainName)sBackendDispatcherHandler::%(callbackName)s> callback = adoptRef(*new Inspector%(domainName)sBackendDispatcherHandler::%(callbackName)s(m_backendDispatcher.copyRef(), callId));' % command_args)
         if len(command.return_parameters) > 0:
             lines.extend(out_parameter_declarations)
         lines.append('    m_agent->%(commandName)s(%(invocationParameters)s);' % command_args)
@@ -282,6 +289,6 @@ class CppBackendDispatcherImplementationGenerator(Generator):
             lines.append('')
 
         if not command.is_async:
-            lines.append('    m_backendDispatcher->sendResponse(callId, result.release(), error);')
+            lines.append('    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);')
         lines.append('}')
         return "\n".join(lines)

@@ -92,7 +92,7 @@ void CommandLineAPIHost::disconnect()
 #endif
 }
 
-void CommandLineAPIHost::inspectImpl(PassRefPtr<InspectorValue> object, PassRefPtr<InspectorValue> hints)
+void CommandLineAPIHost::inspectImpl(RefPtr<InspectorValue>&& object, RefPtr<InspectorValue>&& hints)
 {
     if (!m_inspectorAgent)
         return;
@@ -101,8 +101,8 @@ void CommandLineAPIHost::inspectImpl(PassRefPtr<InspectorValue> object, PassRefP
     if (!hints->asObject(hintsObject))
         return;
 
-    RefPtr<Inspector::Protocol::Runtime::RemoteObject> remoteObject = BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(object);
-    m_inspectorAgent->inspect(remoteObject.release(), hintsObject.release());
+    auto remoteObject = BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(WTF::move(object));
+    m_inspectorAgent->inspect(WTF::move(remoteObject), WTF::move(hintsObject));
 }
 
 void CommandLineAPIHost::getEventListenersImpl(Node* node, Vector<EventListenerInfo>& listenersArray)

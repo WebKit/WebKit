@@ -58,19 +58,20 @@ namespace WebCore {
 
 namespace {
 
-void reportTransactionFailed(ExecuteSQLCallback* requestCallback, SQLError* error)
+void reportTransactionFailed(ExecuteSQLCallback& requestCallback, SQLError* error)
 {
-    RefPtr<Inspector::Protocol::Database::Error> errorObject = Inspector::Protocol::Database::Error::create()
+    auto errorObject = Inspector::Protocol::Database::Error::create()
         .setMessage(error->message())
-        .setCode(error->code());
-    requestCallback->sendSuccess(nullptr, nullptr, errorObject.release());
+        .setCode(error->code())
+        .release();
+    requestCallback.sendSuccess(nullptr, nullptr, WTF::move(errorObject));
 }
 
 class StatementCallback : public SQLStatementCallback {
 public:
-    static PassRefPtr<StatementCallback> create(PassRefPtr<ExecuteSQLCallback> requestCallback)
+    static Ref<StatementCallback> create(Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(new StatementCallback(requestCallback));
+        return adoptRef(*new StatementCallback(WTF::move(requestCallback)));
     }
 
     virtual ~StatementCallback() { }
@@ -79,57 +80,60 @@ public:
     {
         SQLResultSetRowList* rowList = resultSet->rows();
 
-        RefPtr<Inspector::Protocol::Array<String>> columnNames = Inspector::Protocol::Array<String>::create();
+        auto columnNames = Inspector::Protocol::Array<String>::create();
         const Vector<String>& columns = rowList->columnNames();
         for (size_t i = 0; i < columns.size(); ++i)
             columnNames->addItem(columns[i]);
 
-        RefPtr<Inspector::Protocol::Array<InspectorValue>> values = Inspector::Protocol::Array<InspectorValue>::create();
+        auto values = Inspector::Protocol::Array<InspectorValue>::create();
         const Vector<SQLValue>& data = rowList->values();
         for (size_t i = 0; i < data.size(); ++i) {
             const SQLValue& value = rowList->values()[i];
+            RefPtr<InspectorValue> inspectorValue;
             switch (value.type()) {
-            case SQLValue::StringValue: values->addItem(InspectorString::create(value.string())); break;
-            case SQLValue::NumberValue: values->addItem(InspectorBasicValue::create(value.number())); break;
-            case SQLValue::NullValue: values->addItem(InspectorValue::null()); break;
+            case SQLValue::StringValue: inspectorValue = InspectorString::create(value.string()); break;
+            case SQLValue::NumberValue: inspectorValue = InspectorBasicValue::create(value.number()); break;
+            case SQLValue::NullValue: inspectorValue = InspectorValue::null(); break;
             }
+            
+            values->addItem(WTF::move(inspectorValue));
         }
-        m_requestCallback->sendSuccess(columnNames.release(), values.release(), nullptr);
+        m_requestCallback->sendSuccess(WTF::move(columnNames), WTF::move(values), nullptr);
         return true;
     }
 
 private:
-    StatementCallback(PassRefPtr<ExecuteSQLCallback> requestCallback)
-        : m_requestCallback(requestCallback) { }
-    RefPtr<ExecuteSQLCallback> m_requestCallback;
+    StatementCallback(Ref<ExecuteSQLCallback>&& requestCallback)
+        : m_requestCallback(WTF::move(requestCallback)) { }
+    Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
 class StatementErrorCallback : public SQLStatementErrorCallback {
 public:
-    static PassRefPtr<StatementErrorCallback> create(PassRefPtr<ExecuteSQLCallback> requestCallback)
+    static Ref<StatementErrorCallback> create(Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(new StatementErrorCallback(requestCallback));
+        return adoptRef(*new StatementErrorCallback(WTF::move(requestCallback)));
     }
 
     virtual ~StatementErrorCallback() { }
 
     virtual bool handleEvent(SQLTransaction*, SQLError* error) override
     {
-        reportTransactionFailed(m_requestCallback.get(), error);
+        reportTransactionFailed(m_requestCallback.copyRef(), error);
         return true;  
     }
 
 private:
-    StatementErrorCallback(PassRefPtr<ExecuteSQLCallback> requestCallback)
-        : m_requestCallback(requestCallback) { }
-    RefPtr<ExecuteSQLCallback> m_requestCallback;
+    StatementErrorCallback(Ref<ExecuteSQLCallback>&& requestCallback)
+        : m_requestCallback(WTF::move(requestCallback)) { }
+    Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
 class TransactionCallback : public SQLTransactionCallback {
 public:
-    static PassRefPtr<TransactionCallback> create(const String& sqlStatement, PassRefPtr<ExecuteSQLCallback> requestCallback)
+    static Ref<TransactionCallback> create(const String& sqlStatement, Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(new TransactionCallback(sqlStatement, requestCallback));
+        return adoptRef(*new TransactionCallback(sqlStatement, WTF::move(requestCallback)));
     }
 
     virtual ~TransactionCallback() { }
@@ -140,24 +144,24 @@ public:
             return true;
 
         Vector<SQLValue> sqlValues;
-        RefPtr<SQLStatementCallback> callback(StatementCallback::create(m_requestCallback.get()));
-        RefPtr<SQLStatementErrorCallback> errorCallback(StatementErrorCallback::create(m_requestCallback.get()));
-        transaction->executeSQL(m_sqlStatement, sqlValues, callback.release(), errorCallback.release(), IGNORE_EXCEPTION);
+        Ref<SQLStatementCallback> callback(StatementCallback::create(m_requestCallback.copyRef()));
+        Ref<SQLStatementErrorCallback> errorCallback(StatementErrorCallback::create(m_requestCallback.copyRef()));
+        transaction->executeSQL(m_sqlStatement, sqlValues, WTF::move(callback), WTF::move(errorCallback), IGNORE_EXCEPTION);
         return true;
     }
 private:
-    TransactionCallback(const String& sqlStatement, PassRefPtr<ExecuteSQLCallback> requestCallback)
+    TransactionCallback(const String& sqlStatement, Ref<ExecuteSQLCallback>&& requestCallback)
         : m_sqlStatement(sqlStatement)
-        , m_requestCallback(requestCallback) { }
+        , m_requestCallback(WTF::move(requestCallback)) { }
     String m_sqlStatement;
-    RefPtr<ExecuteSQLCallback> m_requestCallback;
+    Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
 class TransactionErrorCallback : public SQLTransactionErrorCallback {
 public:
-    static PassRefPtr<TransactionErrorCallback> create(PassRefPtr<ExecuteSQLCallback> requestCallback)
+    static Ref<TransactionErrorCallback> create(Ref<ExecuteSQLCallback>&& requestCallback)
     {
-        return adoptRef(new TransactionErrorCallback(requestCallback));
+        return adoptRef(*new TransactionErrorCallback(WTF::move(requestCallback)));
     }
 
     virtual ~TransactionErrorCallback() { }
@@ -168,16 +172,16 @@ public:
         return true;
     }
 private:
-    TransactionErrorCallback(PassRefPtr<ExecuteSQLCallback> requestCallback)
-        : m_requestCallback(requestCallback) { }
-    RefPtr<ExecuteSQLCallback> m_requestCallback;
+    TransactionErrorCallback(Ref<ExecuteSQLCallback>&& requestCallback)
+        : m_requestCallback(WTF::move(requestCallback)) { }
+    Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
 class TransactionSuccessCallback : public VoidCallback {
 public:
-    static PassRefPtr<TransactionSuccessCallback> create()
+    static Ref<TransactionSuccessCallback> create()
     {
-        return adoptRef(new TransactionSuccessCallback());
+        return adoptRef(*new TransactionSuccessCallback());
     }
 
     virtual ~TransactionSuccessCallback() { }
@@ -272,10 +276,8 @@ void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString& error, const Str
     }
 }
 
-void InspectorDatabaseAgent::executeSQL(ErrorString&, const String& databaseId, const String& query, PassRefPtr<ExecuteSQLCallback> prpRequestCallback)
+void InspectorDatabaseAgent::executeSQL(ErrorString&, const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&& requestCallback)
 {
-    RefPtr<ExecuteSQLCallback> requestCallback = prpRequestCallback;
-
     if (!m_enabled) {
         requestCallback->sendFailure("Database agent is not enabled");
         return;
@@ -287,10 +289,10 @@ void InspectorDatabaseAgent::executeSQL(ErrorString&, const String& databaseId, 
         return;
     }
 
-    RefPtr<SQLTransactionCallback> callback(TransactionCallback::create(query, requestCallback.get()));
-    RefPtr<SQLTransactionErrorCallback> errorCallback(TransactionErrorCallback::create(requestCallback.get()));
-    RefPtr<VoidCallback> successCallback(TransactionSuccessCallback::create());
-    database->transaction(callback.release(), errorCallback.release(), successCallback.release());
+    Ref<SQLTransactionCallback> callback(TransactionCallback::create(query, requestCallback.get()));
+    Ref<SQLTransactionErrorCallback> errorCallback(TransactionErrorCallback::create(requestCallback.get()));
+    Ref<VoidCallback> successCallback(TransactionSuccessCallback::create());
+    database->transaction(WTF::move(callback), WTF::move(errorCallback), WTF::move(successCallback));
 }
 
 String InspectorDatabaseAgent::databaseId(Database* database)

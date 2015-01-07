@@ -120,7 +120,7 @@ std::unique_ptr<Vector<size_t>> lineEndings(const String& text)
     return result;
 }
 
-static PassRefPtr<Inspector::Protocol::GenericTypes::SearchMatch> buildObjectForSearchMatch(size_t lineNumber, const String& lineContent)
+static Ref<Inspector::Protocol::GenericTypes::SearchMatch> buildObjectForSearchMatch(size_t lineNumber, const String& lineContent)
 {
     return Inspector::Protocol::GenericTypes::SearchMatch::create()
         .setLineNumber(lineNumber)
@@ -153,15 +153,17 @@ int countRegularExpressionMatches(const JSC::Yarr::RegularExpression& regex, con
     return result;
 }
 
-PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
+Ref<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex)
 {
-    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> result = Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>::create();
+    Ref<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>> result = Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>::create();
 
     JSC::Yarr::RegularExpression regex = ContentSearchUtilities::createSearchRegex(query, caseSensitive, isRegex);
     Vector<std::pair<size_t, String>> matches = getRegularExpressionMatchesByLines(regex, text);
 
-    for (const auto& match : matches)
-        result->addItem(buildObjectForSearchMatch(match.first, match.second));
+    for (const auto& match : matches) {
+        Ref<Inspector::Protocol::GenericTypes::SearchMatch> matchObject = buildObjectForSearchMatch(match.first, match.second);
+        result->addItem(WTF::move(matchObject));
+    }
 
     return result;
 }

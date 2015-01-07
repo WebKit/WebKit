@@ -41,10 +41,10 @@ namespace Inspector {
 
 class AlternateInspectorBackendDispatcher {
 public:
-    void setBackendDispatcher(PassRefPtr<InspectorBackendDispatcher> dispatcher) { m_backendDispatcher = dispatcher; }
-    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(Ref<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    const InspectorBackendDispatcher& backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    Ref<InspectorBackendDispatcher> m_backendDispatcher;
 };
 
 
@@ -127,7 +127,6 @@ private:
 
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorBackendDispatcher.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -236,7 +235,6 @@ namespace Inspector {
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -334,7 +332,6 @@ namespace Inspector {
 
 #include <inspector/InspectorProtocolTypes.h>
 #include <wtf/Assertions.h>
-#include <wtf/PassRefPtr.h>
 
 namespace Inspector {
 
@@ -384,10 +381,10 @@ public:
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr</*KeyPath*/Inspector::InspectorObject> ptr)
+        Builder(Ref</*KeyPath*/Inspector::InspectorObject>&& object)
+            : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
-            m_result = ptr;
         }
         friend class KeyPath;
     public:
@@ -399,38 +396,35 @@ public:
             return castState<TypeSet>();
         }
 
-        operator RefPtr<KeyPath>& ()
+        Ref<KeyPath> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(KeyPath) == sizeof(Inspector::InspectorObject), cannot_cast);
-            return *reinterpret_cast<RefPtr<KeyPath>*>(&m_result);
-        }
 
-        PassRefPtr<KeyPath> release()
-        {
-            return RefPtr<KeyPath>(*this).release();
+            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            return WTF::move(*reinterpret_cast<Ref<KeyPath>*>(&result));
         }
     };
 
     /*
      * Synthetic constructor:
-     * RefPtr<KeyPath> result = KeyPath::create()
-     *     .setType(...);
+     * Ref<KeyPath> result = KeyPath::create()
+     *     .setType(...)
+     *     .release();
      */
     static Builder<NoFieldsSet> create()
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
-    typedef Inspector::Protocol::StructItemTraits ItemTraits;
 
     void setString(const String& value)
     {
         InspectorObjectBase::setString(ASCIILiteral("string"), value);
     }
 
-    void setArray(PassRefPtr<Inspector::Protocol::Array<String>> value)
+    void setArray(RefPtr<Inspector::Protocol::Array<String>> value)
     {
-        InspectorObjectBase::setArray(ASCIILiteral("array"), value);
+        InspectorObjectBase::setArray(ASCIILiteral("array"), WTF::move(value));
     }
 };
 
@@ -920,7 +914,6 @@ __attribute__((visibility ("default")))
 #import "RWIProtocolEnumConversionHelpers.h"
 #import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
-#import <wtf/PassRefPtr.h>
 
 using namespace Inspector;
 

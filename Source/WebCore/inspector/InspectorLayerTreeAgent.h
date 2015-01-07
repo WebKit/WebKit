@@ -75,8 +75,8 @@ private:
     void gatherLayersUsingRenderObjectHierarchy(ErrorString&, RenderObject*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&);
     void gatherLayersUsingRenderLayerHierarchy(ErrorString&, RenderLayer*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::LayerTree::Layer>>&);
 
-    PassRefPtr<Inspector::Protocol::LayerTree::Layer> buildObjectForLayer(ErrorString&, RenderLayer*);
-    PassRefPtr<Inspector::Protocol::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);
+    Ref<Inspector::Protocol::LayerTree::Layer> buildObjectForLayer(ErrorString&, RenderLayer*);
+    Ref<Inspector::Protocol::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);
 
     int idForNode(ErrorString&, Node*);
 

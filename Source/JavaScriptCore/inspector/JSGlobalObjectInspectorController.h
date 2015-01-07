@@ -93,7 +93,7 @@ public:
     virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String&, int) override { }
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override { }
     virtual void frontendInitialized() override;
-    virtual PassRefPtr<WTF::Stopwatch> executionStopwatch() override;
+    virtual Ref<WTF::Stopwatch> executionStopwatch() override;
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     virtual AugmentableInspectorControllerClient* augmentableInspectorControllerClient() const override { return m_augmentingClient; } 
@@ -115,7 +115,7 @@ private:
     InspectorAgentRegistry m_agents;
     InspectorFrontendChannel* m_inspectorFrontendChannel;
     RefPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
-    RefPtr<WTF::Stopwatch> m_executionStopwatch;
+    Ref<WTF::Stopwatch> m_executionStopwatch;
     bool m_includeNativeCallStackWithExceptions;
     bool m_isAutomaticInspection;
 

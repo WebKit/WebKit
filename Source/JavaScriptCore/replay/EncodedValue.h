@@ -41,7 +41,7 @@ template<typename T> struct EncodingTraits;
 
 class EncodedValue final {
 public:
-    explicit EncodedValue(PassRefPtr<Inspector::InspectorValue> value)
+    explicit EncodedValue(RefPtr<Inspector::InspectorValue>&& value)
         : m_value(value) { }
 
     EncodedValue()
@@ -78,8 +78,8 @@ public:
 
     template<typename T> T convertTo();
 
-    JS_EXPORT_PRIVATE PassRefPtr<Inspector::InspectorObject> asObject();
-    JS_EXPORT_PRIVATE PassRefPtr<Inspector::InspectorArray> asArray();
+    JS_EXPORT_PRIVATE RefPtr<Inspector::InspectorObject> asObject();
+    JS_EXPORT_PRIVATE RefPtr<Inspector::InspectorArray> asArray();
 
 private:
     RefPtr<Inspector::InspectorValue> m_value;

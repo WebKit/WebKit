@@ -1,3 +1,335 @@
+
+2015-01-06  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: purge PassRefPtr from Inspector code and use Ref for typed and untyped protocol objects
+        https://bugs.webkit.org/show_bug.cgi?id=140053
+
+        Reviewed by Andreas Kling.
+
+        This patch replaces uses of PassRefPtr with uses of RefPtr&& and WTF::move() in code
+        related to Web Inspector. It also converts many uses of RefPtr to Ref where
+        references are always non-null. These two refactorings have been combined since
+        they tend to require similar changes to the code.
+
+        No new tests, no behavior changed.
+
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabase):
+        * dom/Document.cpp:
+        (WebCore::Document::logExceptionToConsole):
+        (WebCore::Document::addMessage):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::reportException):
+        * dom/ScriptExecutionContext.h:
+        * html/parser/XSSAuditorDelegate.cpp:
+        (WebCore::XSSAuditorDelegate::generateViolationReport):
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::inspectImpl):
+        * inspector/CommandLineAPIHost.h:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCache):
+        (WebCore::InspectorApplicationCacheAgent::buildArrayForApplicationCacheResources):
+        (WebCore::InspectorApplicationCacheAgent::buildObjectForApplicationCacheResource):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        (WebCore::InspectorCSSAgent::setStyleText):
+        (WebCore::InspectorCSSAgent::setPropertyText):
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::getSupportedCSSProperties):
+        (WebCore::InspectorCSSAgent::forcePseudoState):
+        (WebCore::InspectorCSSAgent::getNamedFlowCollection):
+        (WebCore::InspectorCSSAgent::detectOrigin):
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+        (WebCore::InspectorCSSAgent::buildArrayForRegions):
+        (WebCore::InspectorCSSAgent::buildObjectForNamedFlow):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        (WebCore::InspectorInstrumentation::consoleCount):
+        (WebCore::InspectorInstrumentation::stopConsoleTiming):
+        (WebCore::InspectorInstrumentation::consoleTimeStamp):
+        (WebCore::InspectorInstrumentation::stopProfiling):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::buildObjectForHighlightedNode):
+        (WebCore::InspectorController::executionStopwatch):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::parseColor):
+        (WebCore::parseConfigColor):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::performSearch):
+        (WebCore::InspectorDOMAgent::setInspectModeEnabled):
+        (WebCore::InspectorDOMAgent::highlightRect):
+        (WebCore::InspectorDOMAgent::highlightQuad):
+        (WebCore::InspectorDOMAgent::innerHighlightQuad):
+        (WebCore::InspectorDOMAgent::highlightNode):
+        (WebCore::InspectorDOMAgent::highlightFrame):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::buildArrayForElementAttributes):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        (WebCore::InspectorDOMAgent::processAccessibilityChildren):
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+        (WebCore::InspectorDOMAgent::didCommitLoad):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::styleAttributeInvalidated):
+        (WebCore::InspectorDOMAgent::resolveNode):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::didInvalidateStyleAttr):
+        (WebCore::InspectorDOMDebuggerAgent::willInsertDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::willRemoveDOMNode):
+        (WebCore::InspectorDOMDebuggerAgent::willModifyDOMAttr):
+        (WebCore::InspectorDOMDebuggerAgent::descriptionForDOMEvent):
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorDOMDebuggerAgent::willSendXMLHttpRequest):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageItems):
+        (WebCore::InspectorDOMStorageAgent::setDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::removeDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::storageId):
+        (WebCore::InspectorDOMStorageAgent::findStorageArea):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp: Use Ref for all callbacks since they are
+        not nullable.
+        (WebCore::InspectorDatabaseAgent::executeSQL):
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDatabaseInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didOpenDatabase):
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::create):
+        (WebCore::InspectorDatabaseResource::InspectorDatabaseResource):
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorDatabaseResource.h:
+        (WebCore::InspectorDatabaseResource::setDatabase):
+        * inspector/InspectorFrontendHost.h:
+        (WebCore::InspectorFrontendHost::create):
+        * inspector/InspectorIndexedDBAgent.cpp: Use Ref for all callbacks since they are
+        not nullable.
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNames):
+        (WebCore::InspectorIndexedDBAgent::requestDatabase):
+        (WebCore::InspectorIndexedDBAgent::requestData):
+        (WebCore::ClearObjectStoreListener::create):
+        (WebCore::ClearObjectStoreListener::ClearObjectStoreListener):
+        (WebCore::ClearObjectStore::create):
+        (WebCore::ClearObjectStore::ClearObjectStore):
+        (WebCore::InspectorIndexedDBAgent::clearObjectStore):
+        * inspector/InspectorIndexedDBAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willLoadXHRImpl):
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        (WebCore::InspectorInstrumentation::consoleCountImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::consoleTimeStampImpl):
+        (WebCore::InspectorInstrumentation::stopProfilingImpl):
+        (WebCore::InspectorInstrumentation::didOpenDatabaseImpl):
+        (WebCore::InspectorInstrumentation::sessionCreatedImpl):
+        (WebCore::InspectorInstrumentation::sessionLoadedImpl):
+        (WebCore::InspectorInstrumentation::sessionModifiedImpl):
+        (WebCore::InspectorInstrumentation::segmentCreatedImpl):
+        (WebCore::InspectorInstrumentation::segmentCompletedImpl):
+        (WebCore::InspectorInstrumentation::segmentLoadedImpl):
+        (WebCore::InspectorInstrumentation::willLoadXHRSynchronouslyImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didLoadXHRSynchronouslyImpl): Deleted.
+        (WebCore::InspectorInstrumentation::startProfilingImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didDispatchDOMStorageEventImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willEvaluateWorkerScript): Deleted.
+        (WebCore::InspectorInstrumentation::captureStoppedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::playbackStartedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::playbackPausedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::playbackHitPositionImpl): Deleted.
+        (WebCore::InspectorInstrumentation::playbackFinishedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::networkStateChangedImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willLoadXHR):
+        (WebCore::InspectorInstrumentation::sessionCreated):
+        (WebCore::InspectorInstrumentation::sessionLoaded):
+        (WebCore::InspectorInstrumentation::sessionModified):
+        (WebCore::InspectorInstrumentation::segmentCreated):
+        (WebCore::InspectorInstrumentation::segmentCompleted):
+        (WebCore::InspectorInstrumentation::segmentLoaded):
+        (WebCore::InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient): Deleted.
+        (WebCore::InspectorInstrumentation::didSendWebSocketFrame): Deleted.
+        * inspector/InspectorLayerTreeAgent.cpp:
+        (WebCore::InspectorLayerTreeAgent::buildObjectForLayer):
+        (WebCore::InspectorLayerTreeAgent::buildObjectForIntRect):
+        (WebCore::InspectorLayerTreeAgent::reasonsForCompositingLayer):
+        * inspector/InspectorLayerTreeAgent.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForPoint):
+        (WebCore::buildObjectForRect):
+        (WebCore::buildArrayForQuad):
+        (WebCore::buildObjectForHighlight):
+        (WebCore::buildObjectForRegionHighlight):
+        (WebCore::buildObjectForCSSRegionsHighlight):
+        (WebCore::buildObjectForSize):
+        (WebCore::buildObjectForCSSRegionContentClip):
+        (WebCore::InspectorOverlay::drawPaintRects):
+        (WebCore::buildObjectForRendererFragments):
+        (WebCore::buildObjectForShapeOutside):
+        (WebCore::buildObjectForElementInfo):
+        (WebCore::InspectorOverlay::buildObjectForHighlightedNode):
+        (WebCore::InspectorOverlay::reset):
+        (WebCore::InspectorOverlay::evaluateInOverlay):
+        * inspector/InspectorOverlay.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::createXHRTextDecoder):
+        (WebCore::buildObjectForCookie):
+        (WebCore::buildArrayForCookies):
+        (WebCore::buildObjectForSearchResult):
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::buildInspectorObjectForPosition):
+        (WebCore::buildInspectorObjectForInput):
+        (WebCore::buildInspectorObjectForSession):
+        (WebCore::buildInspectorObjectForSegment):
+        (WebCore::InspectorReplayAgent::replayToPosition):
+        (WebCore::InspectorReplayAgent::getSessionData):
+        (WebCore::InspectorReplayAgent::getSegmentData):
+        * inspector/InspectorReplayAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForHeaders):
+        (WebCore::buildObjectForTiming):
+        (WebCore::buildObjectForResourceRequest):
+        (WebCore::buildObjectForResourceResponse):
+        (WebCore::buildObjectForCachedResource):
+        (WebCore::InspectorResourceAgent::willLoadXHR):
+        (WebCore::InspectorResourceAgent::buildInitiatorObject):
+        (WebCore::InspectorResourceAgent::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketFrame):
+        (WebCore::InspectorResourceAgent::didSendWebSocketFrame):
+        (WebCore::InspectorResourceAgent::setExtraHTTPHeaders):
+        (WebCore::InspectorResourceAgent::loadResource):
+        (WebCore::InspectorResourceAgent::documentThreadableLoaderStartedLoadingForClient): Deleted.
+        (WebCore::InspectorResourceAgent::didScheduleStyleRecalculation): Deleted.
+        (WebCore::InspectorResourceAgent::disable): Deleted.
+        (WebCore::InspectorResourceAgent::setCacheDisabled): Deleted.
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (ParsedStyleSheet::ruleSourceDataAt):
+        (WebCore::buildSourceRangeObject):
+        (WebCore::buildMediaObject):
+        (WebCore::asCSSRuleList):
+        (WebCore::fillMediaListChain):
+        (WebCore::InspectorStyle::create):
+        (WebCore::InspectorStyle::InspectorStyle):
+        (WebCore::InspectorStyle::buildObjectForStyle):
+        (WebCore::InspectorStyle::buildArrayForComputedStyle):
+        (WebCore::InspectorStyle::styleWithProperties):
+        (WebCore::InspectorStyle::extractSourceData):
+        (WebCore::InspectorStyleSheet::create):
+        (WebCore::InspectorStyleSheet::InspectorStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheet):
+        (WebCore::InspectorStyleSheet::buildObjectForStyleSheetInfo):
+        (WebCore::buildObjectForSelectorHelper):
+        (WebCore::selectorsFromSource):
+        (WebCore::InspectorStyleSheet::buildObjectForSelector):
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::buildObjectForStyle):
+        (WebCore::InspectorStyleSheet::toggleProperty):
+        (WebCore::InspectorStyleSheet::inspectorStyleForId):
+        (WebCore::InspectorStyleSheet::rememberInspectorStyle):
+        (WebCore::InspectorStyleSheet::buildArrayForRuleList):
+        (WebCore::InspectorStyleSheet::collectFlatRules):
+        (WebCore::InspectorStyleSheetForInlineStyle::create):
+        (WebCore::InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle):
+        (WebCore::InspectorStyleSheetForInlineStyle::inspectorStyleForId):
+        * inspector/InspectorStyleSheet.h:
+        (WebCore::InspectorCSSId::InspectorCSSId):
+        (WebCore::InspectorCSSId::asProtocolValue):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::startFromConsole):
+        (WebCore::InspectorTimelineAgent::stopFromConsole):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::didCompleteRecordEntry):
+        (WebCore::InspectorTimelineAgent::appendRecord):
+        (WebCore::InspectorTimelineAgent::sendEvent):
+        (WebCore::InspectorTimelineAgent::createRecordEntry):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::sendMessageToWorker):
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::XHRReplayData::create):
+        (WebCore::XHRReplayData::XHRReplayData):
+        * inspector/NetworkResourcesData.h:
+        (WebCore::NetworkResourcesData::ResourceData::decoder):
+        (WebCore::NetworkResourcesData::ResourceData::setDecoder):
+        (WebCore::NetworkResourcesData::ResourceData::buffer):
+        (WebCore::NetworkResourcesData::ResourceData::setBuffer):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        (WebCore::TimelineRecordFactory::createBackgroundRecord):
+        (WebCore::TimelineRecordFactory::createGCEventData):
+        (WebCore::TimelineRecordFactory::createFunctionCallData):
+        (WebCore::TimelineRecordFactory::createConsoleProfileData):
+        (WebCore::TimelineRecordFactory::createProbeSampleData):
+        (WebCore::TimelineRecordFactory::createEventDispatchData):
+        (WebCore::TimelineRecordFactory::createGenericTimerData):
+        (WebCore::TimelineRecordFactory::createTimerInstallData):
+        (WebCore::TimelineRecordFactory::createXHRReadyStateChangeData):
+        (WebCore::TimelineRecordFactory::createXHRLoadData):
+        (WebCore::TimelineRecordFactory::createEvaluateScriptData):
+        (WebCore::TimelineRecordFactory::createTimeStampData):
+        (WebCore::TimelineRecordFactory::createScheduleResourceRequestData):
+        (WebCore::TimelineRecordFactory::createResourceSendRequestData):
+        (WebCore::TimelineRecordFactory::createResourceReceiveResponseData):
+        (WebCore::TimelineRecordFactory::createResourceFinishData):
+        (WebCore::TimelineRecordFactory::createReceiveResourceData):
+        (WebCore::TimelineRecordFactory::createLayoutData):
+        (WebCore::TimelineRecordFactory::createDecodeImageData):
+        (WebCore::TimelineRecordFactory::createResizeImageData):
+        (WebCore::TimelineRecordFactory::createMarkData):
+        (WebCore::TimelineRecordFactory::createParseHTMLData):
+        (WebCore::TimelineRecordFactory::createAnimationFrameData):
+        (WebCore::createQuad):
+        (WebCore::TimelineRecordFactory::createPaintData):
+        (WebCore::buildInspectorObject):
+        (WebCore::buildProfileInspectorObject):
+        (WebCore::TimelineRecordFactory::appendProfile):
+        * inspector/TimelineRecordFactory.h:
+        (WebCore::TimelineRecordFactory::createWebSocketCreateData):
+        (WebCore::TimelineRecordFactory::createGenericWebSocketData):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::executionStopwatch):
+        * inspector/WorkerInspectorController.h:
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::addMessage):
+        (WebCore::PageConsoleClient::messageWithTypeAndLevel):
+        (WebCore::PageConsoleClient::count):
+        (WebCore::PageConsoleClient::profileEnd):
+        (WebCore::PageConsoleClient::timeEnd):
+        (WebCore::PageConsoleClient::timeStamp):
+        * page/PageConsoleClient.h:
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::switchSession):
+        (WebCore::ReplayController::createSegment):
+        (WebCore::ReplayController::completeSegment):
+        (WebCore::ReplayController::loadSegmentAtIndex):
+        * replay/ReplayInputCreationMethods.cpp:
+        (WebCore::InitialNavigation::createFromPage):
+        * workers/SharedWorkerGlobalScope.cpp:
+        (WebCore::SharedWorkerGlobalScope::logExceptionToConsole):
+        * workers/SharedWorkerGlobalScope.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::logExceptionToConsole):
+        (WebCore::WorkerGlobalScope::addMessage):
+        (WebCore::WorkerGlobalScope::addMessageToWorkerConsole):
+        * workers/WorkerGlobalScope.h:
+
 2015-01-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::AXObjectCache::clearTextMarkerNodesInUse + 149

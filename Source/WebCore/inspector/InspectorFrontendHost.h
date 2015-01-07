@@ -45,9 +45,9 @@ class Page;
 
 class InspectorFrontendHost : public RefCounted<InspectorFrontendHost> {
 public:
-    static PassRefPtr<InspectorFrontendHost> create(InspectorFrontendClient* client, Page* frontendPage)
+    static Ref<InspectorFrontendHost> create(InspectorFrontendClient* client, Page* frontendPage)
     {
-        return adoptRef(new InspectorFrontendHost(client, frontendPage));
+        return adoptRef(*new InspectorFrontendHost(client, frontendPage));
     }
 
     WEBCORE_EXPORT ~InspectorFrontendHost();

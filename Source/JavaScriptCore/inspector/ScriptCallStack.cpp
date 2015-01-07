@@ -36,14 +36,14 @@
 
 namespace Inspector {
 
-PassRefPtr<ScriptCallStack> ScriptCallStack::create()
+Ref<ScriptCallStack> ScriptCallStack::create()
 {
-    return adoptRef(new ScriptCallStack);
+    return adoptRef(*new ScriptCallStack);
 }
 
-PassRefPtr<ScriptCallStack> ScriptCallStack::create(Vector<ScriptCallFrame>& frames)
+Ref<ScriptCallStack> ScriptCallStack::create(Vector<ScriptCallFrame>& frames)
 {
-    return adoptRef(new ScriptCallStack(frames));
+    return adoptRef(*new ScriptCallStack(frames));
 }
 
 ScriptCallStack::ScriptCallStack()
@@ -107,12 +107,12 @@ bool ScriptCallStack::isEqual(ScriptCallStack* o) const
 }
 
 #if ENABLE(INSPECTOR)
-PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>> ScriptCallStack::buildInspectorArray() const
+Ref<Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>> ScriptCallStack::buildInspectorArray() const
 {
-    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>> frames = Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>::create();
+    auto frames = Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>::create();
     for (size_t i = 0; i < m_frames.size(); i++)
         frames->addItem(m_frames.at(i).buildInspectorObject());
-    return frames;
+    return WTF::move(frames);
 }
 #endif
 

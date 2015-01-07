@@ -341,13 +341,13 @@ class Type:
         if self.mode == TypeModes.SCALAR:
             return self.type_name(qualified)
         elif self.mode == TypeModes.SHARED:
-            return "PassRefPtr<%s>" % self.type_name(qualified)
+            return "RefPtr<%s>" % self.type_name(qualified)
         else:
             return "const %s&" % self.type_name(qualified)
 
     def argument_type(self, qualified=False):
         if self.mode == TypeModes.SHARED:
-            return "PassRefPtr<%s>" % self.type_name(qualified)
+            return "RefPtr<%s>&&" % self.type_name(qualified)
         else:
             return self.storage_type()
 
@@ -939,7 +939,7 @@ class Generator:
 
     def generate_member_move_expression(self, _member):
         _type = self._model.get_type_for_member(_member)
-        if _type.mode == TypeModes.OWNED:
+        if _type.mode in [TypeModes.OWNED, TypeModes.SHARED]:
             return "WTF::move(%s)" % _member.memberName
         else:
             return _member.memberName

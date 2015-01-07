@@ -54,7 +54,7 @@ public:
     bool isEqual(const ScriptCallFrame&) const;
 
 #if ENABLE(INSPECTOR)
-    PassRefPtr<Inspector::Protocol::Console::CallFrame> buildInspectorObject() const;
+    Ref<Inspector::Protocol::Console::CallFrame> buildInspectorObject() const;
 #endif
 
 private:

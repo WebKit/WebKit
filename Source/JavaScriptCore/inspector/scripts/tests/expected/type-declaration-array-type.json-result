@@ -41,10 +41,10 @@ namespace Inspector {
 
 class AlternateInspectorBackendDispatcher {
 public:
-    void setBackendDispatcher(PassRefPtr<InspectorBackendDispatcher> dispatcher) { m_backendDispatcher = dispatcher; }
-    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(Ref<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    const InspectorBackendDispatcher& backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    Ref<InspectorBackendDispatcher> m_backendDispatcher;
 };
 
 
@@ -130,7 +130,6 @@ InspectorBackend.registerEnum("Debugger.Reason", {Died: "Died", Fainted: "Fainte
 
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorBackendDispatcher.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -239,7 +238,6 @@ namespace Inspector {
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -337,7 +335,6 @@ namespace Inspector {
 
 #include <inspector/InspectorProtocolTypes.h>
 #include <wtf/Assertions.h>
-#include <wtf/PassRefPtr.h>
 
 namespace Inspector {
 
@@ -864,7 +861,6 @@ typedef NS_ENUM(NSInteger, RWIProtocolDebuggerReason) {
 #import "RWIProtocolEnumConversionHelpers.h"
 #import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
-#import <wtf/PassRefPtr.h>
 
 using namespace Inspector;
 

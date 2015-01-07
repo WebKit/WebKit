@@ -34,7 +34,6 @@
 #if ENABLE(SQL_DATABASE) && ENABLE(INSPECTOR)
 
 #include <inspector/InspectorFrontendDispatchers.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -45,15 +44,15 @@ class Database;
 
 class InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> {
 public:
-    static PassRefPtr<InspectorDatabaseResource> create(PassRefPtr<Database> database, const String& domain, const String& name, const String& version);
+    static Ref<InspectorDatabaseResource> create(RefPtr<Database>&&, const String& domain, const String& name, const String& version);
 
     void bind(Inspector::InspectorDatabaseFrontendDispatcher*);
     Database* database() { return m_database.get(); }
-    void setDatabase(PassRefPtr<Database> database) { m_database = database; }
+    void setDatabase(RefPtr<Database>&& database) { m_database = database; }
     String id() const { return m_id; }
 
 private:
-    InspectorDatabaseResource(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
+    InspectorDatabaseResource(RefPtr<Database>&&, const String& domain, const String& name, const String& version);
 
     RefPtr<Database> m_database;
     String m_id;

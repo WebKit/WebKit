@@ -41,10 +41,10 @@ namespace Inspector {
 
 class AlternateInspectorBackendDispatcher {
 public:
-    void setBackendDispatcher(PassRefPtr<InspectorBackendDispatcher> dispatcher) { m_backendDispatcher = dispatcher; }
-    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(Ref<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    const InspectorBackendDispatcher& backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    Ref<InspectorBackendDispatcher> m_backendDispatcher;
 };
 
 
@@ -156,7 +156,6 @@ InspectorBackend.activateDomain("Network3");
 
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorBackendDispatcher.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -190,12 +189,12 @@ protected:
 
 class InspectorNetwork1BackendDispatcher final : public Inspector::InspectorSupplementalBackendDispatcher {
 public:
-    static PassRefPtr<InspectorNetwork1BackendDispatcher> create(Inspector::InspectorBackendDispatcher*, InspectorNetwork1BackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, PassRefPtr<Inspector::InspectorObject> message) override;
+    static Ref<InspectorNetwork1BackendDispatcher> create(Inspector::InspectorBackendDispatcher*, InspectorNetwork1BackendDispatcherHandler*);
+    virtual void dispatch(long callId, const String& method, Ref<Inspector::InspectorObject>&& message) override;
 private:
     void loadResource1(long callId, const Inspector::InspectorObject& message);
 private:
-    InspectorNetwork1BackendDispatcher(Inspector::InspectorBackendDispatcher*, InspectorNetwork1BackendDispatcherHandler*);
+    InspectorNetwork1BackendDispatcher(Inspector::InspectorBackendDispatcher&, InspectorNetwork1BackendDispatcherHandler*);
     InspectorNetwork1BackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
@@ -207,8 +206,8 @@ private:
 
 class InspectorNetwork3BackendDispatcher final : public Inspector::InspectorSupplementalBackendDispatcher {
 public:
-    static PassRefPtr<InspectorNetwork3BackendDispatcher> create(Inspector::InspectorBackendDispatcher*, InspectorNetwork3BackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, PassRefPtr<Inspector::InspectorObject> message) override;
+    static Ref<InspectorNetwork3BackendDispatcher> create(Inspector::InspectorBackendDispatcher*, InspectorNetwork3BackendDispatcherHandler*);
+    virtual void dispatch(long callId, const String& method, Ref<Inspector::InspectorObject>&& message) override;
 private:
     void loadResource1(long callId, const Inspector::InspectorObject& message);
     void loadResource2(long callId, const Inspector::InspectorObject& message);
@@ -218,7 +217,7 @@ private:
     void loadResource6(long callId, const Inspector::InspectorObject& message);
     void loadResource7(long callId, const Inspector::InspectorObject& message);
 private:
-    InspectorNetwork3BackendDispatcher(Inspector::InspectorBackendDispatcher*, InspectorNetwork3BackendDispatcherHandler*);
+    InspectorNetwork3BackendDispatcher(Inspector::InspectorBackendDispatcher&, InspectorNetwork3BackendDispatcherHandler*);
     InspectorNetwork3BackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
@@ -284,12 +283,12 @@ namespace Inspector {
 InspectorNetwork1BackendDispatcherHandler::~InspectorNetwork1BackendDispatcherHandler() { }
 InspectorNetwork3BackendDispatcherHandler::~InspectorNetwork3BackendDispatcherHandler() { }
 
-PassRefPtr<InspectorNetwork1BackendDispatcher> InspectorNetwork1BackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, InspectorNetwork1BackendDispatcherHandler* agent)
+Ref<InspectorNetwork1BackendDispatcher> InspectorNetwork1BackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, InspectorNetwork1BackendDispatcherHandler* agent)
 {
-    return adoptRef(new InspectorNetwork1BackendDispatcher(backendDispatcher, agent));
+    return adoptRef(*new InspectorNetwork1BackendDispatcher(*backendDispatcher, agent));
 }
 
-InspectorNetwork1BackendDispatcher::InspectorNetwork1BackendDispatcher(InspectorBackendDispatcher* backendDispatcher, InspectorNetwork1BackendDispatcherHandler* agent)
+InspectorNetwork1BackendDispatcher::InspectorNetwork1BackendDispatcher(InspectorBackendDispatcher& backendDispatcher, InspectorNetwork1BackendDispatcherHandler* agent)
     : InspectorSupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -299,12 +298,12 @@ InspectorNetwork1BackendDispatcher::InspectorNetwork1BackendDispatcher(Inspector
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network1"), this);
 }
 
-void InspectorNetwork1BackendDispatcher::dispatch(long callId, const String& method, PassRefPtr<InspectorObject> message)
+void InspectorNetwork1BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
 {
     Ref<InspectorNetwork1BackendDispatcher> protect(*this);
 
     if (method == "loadResource1")
-        loadResource1(callId, *message.get());
+        loadResource1(callId, message);
     else
         m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, makeString('\'', "Network1", '.', method, "' was not found"));
 }
@@ -319,18 +318,18 @@ void InspectorNetwork1BackendDispatcher::loadResource1(long callId, const Inspec
 #endif
 
     ErrorString error;
-    RefPtr<InspectorObject> result = InspectorObject::create();
+    Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource1(error);
 
-    m_backendDispatcher->sendResponse(callId, result.release(), error);
+    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
-PassRefPtr<InspectorNetwork3BackendDispatcher> InspectorNetwork3BackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, InspectorNetwork3BackendDispatcherHandler* agent)
+Ref<InspectorNetwork3BackendDispatcher> InspectorNetwork3BackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, InspectorNetwork3BackendDispatcherHandler* agent)
 {
-    return adoptRef(new InspectorNetwork3BackendDispatcher(backendDispatcher, agent));
+    return adoptRef(*new InspectorNetwork3BackendDispatcher(*backendDispatcher, agent));
 }
 
-InspectorNetwork3BackendDispatcher::InspectorNetwork3BackendDispatcher(InspectorBackendDispatcher* backendDispatcher, InspectorNetwork3BackendDispatcherHandler* agent)
+InspectorNetwork3BackendDispatcher::InspectorNetwork3BackendDispatcher(InspectorBackendDispatcher& backendDispatcher, InspectorNetwork3BackendDispatcherHandler* agent)
     : InspectorSupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -340,7 +339,7 @@ InspectorNetwork3BackendDispatcher::InspectorNetwork3BackendDispatcher(Inspector
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("Network3"), this);
 }
 
-void InspectorNetwork3BackendDispatcher::dispatch(long callId, const String& method, PassRefPtr<InspectorObject> message)
+void InspectorNetwork3BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
 {
     Ref<InspectorNetwork3BackendDispatcher> protect(*this);
 
@@ -371,7 +370,7 @@ void InspectorNetwork3BackendDispatcher::dispatch(long callId, const String& met
         return;
     }
 
-    ((*this).*it->value)(callId, *message.get());
+    ((*this).*it->value)(callId, message.get());
 }
 
 void InspectorNetwork3BackendDispatcher::loadResource1(long callId, const InspectorObject&)
@@ -384,10 +383,10 @@ void InspectorNetwork3BackendDispatcher::loadResource1(long callId, const Inspec
 #endif
 
     ErrorString error;
-    RefPtr<InspectorObject> result = InspectorObject::create();
+    Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource1(error);
 
-    m_backendDispatcher->sendResponse(callId, result.release(), error);
+    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
 void InspectorNetwork3BackendDispatcher::loadResource2(long callId, const InspectorObject&)
@@ -400,10 +399,10 @@ void InspectorNetwork3BackendDispatcher::loadResource2(long callId, const Inspec
 #endif
 
     ErrorString error;
-    RefPtr<InspectorObject> result = InspectorObject::create();
+    Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource2(error);
 
-    m_backendDispatcher->sendResponse(callId, result.release(), error);
+    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
 void InspectorNetwork3BackendDispatcher::loadResource3(long callId, const InspectorObject&)
@@ -416,10 +415,10 @@ void InspectorNetwork3BackendDispatcher::loadResource3(long callId, const Inspec
 #endif
 
     ErrorString error;
-    RefPtr<InspectorObject> result = InspectorObject::create();
+    Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource3(error);
 
-    m_backendDispatcher->sendResponse(callId, result.release(), error);
+    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
 void InspectorNetwork3BackendDispatcher::loadResource4(long callId, const InspectorObject&)
@@ -432,10 +431,10 @@ void InspectorNetwork3BackendDispatcher::loadResource4(long callId, const Inspec
 #endif
 
     ErrorString error;
-    RefPtr<InspectorObject> result = InspectorObject::create();
+    Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource4(error);
 
-    m_backendDispatcher->sendResponse(callId, result.release(), error);
+    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
 void InspectorNetwork3BackendDispatcher::loadResource5(long callId, const InspectorObject&)
@@ -448,10 +447,10 @@ void InspectorNetwork3BackendDispatcher::loadResource5(long callId, const Inspec
 #endif
 
     ErrorString error;
-    RefPtr<InspectorObject> result = InspectorObject::create();
+    Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource5(error);
 
-    m_backendDispatcher->sendResponse(callId, result.release(), error);
+    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
 void InspectorNetwork3BackendDispatcher::loadResource6(long callId, const InspectorObject&)
@@ -464,10 +463,10 @@ void InspectorNetwork3BackendDispatcher::loadResource6(long callId, const Inspec
 #endif
 
     ErrorString error;
-    RefPtr<InspectorObject> result = InspectorObject::create();
+    Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource6(error);
 
-    m_backendDispatcher->sendResponse(callId, result.release(), error);
+    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
 void InspectorNetwork3BackendDispatcher::loadResource7(long callId, const InspectorObject&)
@@ -480,10 +479,10 @@ void InspectorNetwork3BackendDispatcher::loadResource7(long callId, const Inspec
 #endif
 
     ErrorString error;
-    RefPtr<InspectorObject> result = InspectorObject::create();
+    Ref<InspectorObject> result = InspectorObject::create();
     m_agent->loadResource7(error);
 
-    m_backendDispatcher->sendResponse(callId, result.release(), error);
+    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
 }
 
 } // namespace Inspector
@@ -531,7 +530,6 @@ void InspectorNetwork3BackendDispatcher::loadResource7(long callId, const Inspec
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -629,7 +627,6 @@ namespace Inspector {
 
 #include <inspector/InspectorProtocolTypes.h>
 #include <wtf/Assertions.h>
-#include <wtf/PassRefPtr.h>
 
 namespace Inspector {
 
@@ -1292,7 +1289,6 @@ using namespace Inspector;
 #import "RWIProtocolEnumConversionHelpers.h"
 #import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
-#import <wtf/PassRefPtr.h>
 
 using namespace Inspector;
 

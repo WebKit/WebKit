@@ -207,7 +207,7 @@ void ReplayController::switchSession(PassRefPtr<ReplaySession> session)
     m_currentPosition = ReplayPosition(0, 0);
 
     LOG(WebReplay, "%-20sSwitching sessions from %p to %p.\n", "ReplayController", m_loadedSession.get(), session.get());
-    InspectorInstrumentation::sessionLoaded(m_page, m_loadedSession);
+    InspectorInstrumentation::sessionLoaded(m_page, m_loadedSession.copyRef());
 }
 
 void ReplayController::createSegment()
@@ -223,7 +223,7 @@ void ReplayController::createSegment()
     m_loadedSegment = ReplaySessionSegment::create();
 
     LOG(WebReplay, "%-20s Created segment: %p.\n", "ReplayController", m_loadedSegment.get());
-    InspectorInstrumentation::segmentCreated(m_page, m_loadedSegment);
+    InspectorInstrumentation::segmentCreated(m_page, m_loadedSegment.copyRef());
 
     m_activeCursor = CapturingInputCursor::create(m_loadedSegment);
     m_activeCursor->appendInput<BeginSegmentSentinel>();
@@ -247,10 +247,10 @@ void ReplayController::completeSegment()
     unloadSegment(shouldSuppressNotifications);
 
     LOG(WebReplay, "%-20s Completed segment: %p.\n", "ReplayController", segment.get());
-    InspectorInstrumentation::segmentCompleted(m_page, segment);
+    InspectorInstrumentation::segmentCompleted(m_page, segment.copyRef());
 
     m_loadedSession->appendSegment(segment);
-    InspectorInstrumentation::sessionModified(m_page, m_loadedSession);
+    InspectorInstrumentation::sessionModified(m_page, m_loadedSession.copyRef());
 }
 
 void ReplayController::loadSegmentAtIndex(size_t segmentIndex)
@@ -272,7 +272,7 @@ void ReplayController::loadSegmentAtIndex(size_t segmentIndex)
     m_activeCursor = ReplayingInputCursor::create(m_loadedSegment, m_page, this);
 
     LOG(WebReplay, "%-20sLoading segment: %p.\n", "ReplayController", segment.get());
-    InspectorInstrumentation::segmentLoaded(m_page, segment);
+    InspectorInstrumentation::segmentLoaded(m_page, segment.copyRef());
 }
 
 void ReplayController::unloadSegment(bool suppressNotifications)

@@ -35,15 +35,14 @@
 #include "ScriptProfile.h"
 #include <inspector/ScriptArguments.h>
 #include <inspector/ScriptCallStack.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-inline void InspectorInstrumentation::addMessageToConsole(Page& page, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<Inspector::ScriptCallStack> callStack, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(Page& page, MessageSource source, MessageType type, MessageLevel level, const String& message, RefPtr<Inspector::ScriptCallStack>&& callStack, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        addMessageToConsoleImpl(*instrumentingAgents, source, type, level, message, callStack, requestIdentifier);
+        addMessageToConsoleImpl(*instrumentingAgents, source, type, level, message, WTF::move(callStack), requestIdentifier);
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(source);
@@ -55,11 +54,11 @@ inline void InspectorInstrumentation::addMessageToConsole(Page& page, MessageSou
 #endif
 }
 
-inline void InspectorInstrumentation::addMessageToConsole(Page& page, MessageSource source, MessageType type, MessageLevel level, const String& message, JSC::ExecState* state, PassRefPtr<Inspector::ScriptArguments> arguments, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(Page& page, MessageSource source, MessageType type, MessageLevel level, const String& message, JSC::ExecState* state, RefPtr<Inspector::ScriptArguments>&& arguments, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        addMessageToConsoleImpl(*instrumentingAgents, source, type, level, message, state, arguments, requestIdentifier);
+        addMessageToConsoleImpl(*instrumentingAgents, source, type, level, message, state, WTF::move(arguments), requestIdentifier);
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(source);
@@ -91,11 +90,11 @@ inline void InspectorInstrumentation::addMessageToConsole(Page& page, MessageSou
 #endif
 }
 
-inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<Inspector::ScriptCallStack> callStack, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, MessageSource source, MessageType type, MessageLevel level, const String& message, RefPtr<Inspector::ScriptCallStack>&& callStack, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(workerGlobalScope))
-        addMessageToConsoleImpl(*instrumentingAgents, source, type, level, message, callStack, requestIdentifier);
+        addMessageToConsoleImpl(*instrumentingAgents, source, type, level, message, WTF::move(callStack), requestIdentifier);
 #else
     UNUSED_PARAM(workerGlobalScope);
     UNUSED_PARAM(source);
@@ -126,11 +125,11 @@ inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* wor
 #endif
 }
 
-inline void InspectorInstrumentation::consoleCount(Page& page, JSC::ExecState* state, PassRefPtr<Inspector::ScriptArguments> arguments)
+inline void InspectorInstrumentation::consoleCount(Page& page, JSC::ExecState* state, RefPtr<Inspector::ScriptArguments>&& arguments)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        consoleCountImpl(*instrumentingAgents, state, arguments);
+        consoleCountImpl(*instrumentingAgents, state, WTF::move(arguments));
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(state);
@@ -149,11 +148,11 @@ inline void InspectorInstrumentation::startConsoleTiming(Frame& frame, const Str
 #endif
 }
 
-inline void InspectorInstrumentation::stopConsoleTiming(Frame& frame, const String& title, PassRefPtr<Inspector::ScriptCallStack> stack)
+inline void InspectorInstrumentation::stopConsoleTiming(Frame& frame, const String& title, RefPtr<Inspector::ScriptCallStack>&& stack)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        stopConsoleTimingImpl(*instrumentingAgents, frame, title, stack);
+        stopConsoleTimingImpl(*instrumentingAgents, frame, title, WTF::move(stack));
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(title);
@@ -161,12 +160,12 @@ inline void InspectorInstrumentation::stopConsoleTiming(Frame& frame, const Stri
 #endif
 }
 
-inline void InspectorInstrumentation::consoleTimeStamp(Frame& frame, PassRefPtr<Inspector::ScriptArguments> arguments)
+inline void InspectorInstrumentation::consoleTimeStamp(Frame& frame, RefPtr<Inspector::ScriptArguments>&& arguments)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        consoleTimeStampImpl(*instrumentingAgents, frame, arguments);
+        consoleTimeStampImpl(*instrumentingAgents, frame, WTF::move(arguments));
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(arguments);
@@ -185,7 +184,7 @@ inline void InspectorInstrumentation::startProfiling(Page& page, JSC::ExecState*
 #endif
 }
 
-inline PassRefPtr<JSC::Profile> InspectorInstrumentation::stopProfiling(Page& page, JSC::ExecState* exec, const String &title)
+inline RefPtr<JSC::Profile> InspectorInstrumentation::stopProfiling(Page& page, JSC::ExecState* exec, const String &title)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))

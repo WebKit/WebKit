@@ -76,10 +76,10 @@ namespace Inspector {
 
 class AlternateInspectorBackendDispatcher {
 public:
-    void setBackendDispatcher(PassRefPtr<InspectorBackendDispatcher> dispatcher) { m_backendDispatcher = dispatcher; }
-    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(Ref<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
+    const InspectorBackendDispatcher& backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    Ref<InspectorBackendDispatcher> m_backendDispatcher;
 };
 """)
 
@@ -108,11 +108,11 @@ protected:
     BackendDispatcherHeaderDomainDispatcherDeclaration = (
     """${classAndExportMacro} Inspector${domainName}BackendDispatcher final : public Inspector::InspectorSupplementalBackendDispatcher {
 public:
-    static PassRefPtr<Inspector${domainName}BackendDispatcher> create(Inspector::InspectorBackendDispatcher*, Inspector${domainName}BackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, PassRefPtr<Inspector::InspectorObject> message) override;
+    static Ref<Inspector${domainName}BackendDispatcher> create(Inspector::InspectorBackendDispatcher*, Inspector${domainName}BackendDispatcherHandler*);
+    virtual void dispatch(long callId, const String& method, Ref<Inspector::InspectorObject>&& message) override;
 ${commandDeclarations}
 private:
-    Inspector${domainName}BackendDispatcher(Inspector::InspectorBackendDispatcher*, Inspector${domainName}BackendDispatcherHandler*);
+    Inspector${domainName}BackendDispatcher(Inspector::InspectorBackendDispatcher&, Inspector${domainName}BackendDispatcherHandler*);
     Inspector${domainName}BackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
@@ -125,13 +125,13 @@ private:
     BackendDispatcherHeaderAsyncCommandDeclaration = (
     """    ${classAndExportMacro} ${callbackName} : public Inspector::InspectorBackendDispatcher::CallbackBase {
     public:
-        ${callbackName}(PassRefPtr<Inspector::InspectorBackendDispatcher>, int id);
+        ${callbackName}(Ref<Inspector::InspectorBackendDispatcher>&&, int id);
         void sendSuccess(${outParameters});
     };
     virtual void ${commandName}(${inParameters}) = 0;""")
 
     BackendDispatcherImplementationSmallSwitch = (
-    """void Inspector${domainName}BackendDispatcher::dispatch(long callId, const String& method, PassRefPtr<InspectorObject> message)
+    """void Inspector${domainName}BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
 {
     Ref<Inspector${domainName}BackendDispatcher> protect(*this);
 
@@ -141,7 +141,7 @@ ${dispatchCases}
 }""")
 
     BackendDispatcherImplementationLargeSwitch = (
-"""void Inspector${domainName}BackendDispatcher::dispatch(long callId, const String& method, PassRefPtr<InspectorObject> message)
+"""void Inspector${domainName}BackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
 {
     Ref<Inspector${domainName}BackendDispatcher> protect(*this);
 
@@ -166,16 +166,16 @@ ${dispatchCases}
         return;
     }
 
-    ((*this).*it->value)(callId, *message.get());
+    ((*this).*it->value)(callId, message.get());
 }""")
 
     BackendDispatcherImplementationDomainConstructor = (
-    """PassRefPtr<Inspector${domainName}BackendDispatcher> Inspector${domainName}BackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, Inspector${domainName}BackendDispatcherHandler* agent)
+    """Ref<Inspector${domainName}BackendDispatcher> Inspector${domainName}BackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, Inspector${domainName}BackendDispatcherHandler* agent)
 {
-    return adoptRef(new Inspector${domainName}BackendDispatcher(backendDispatcher, agent));
+    return adoptRef(*new Inspector${domainName}BackendDispatcher(*backendDispatcher, agent));
 }
 
-Inspector${domainName}BackendDispatcher::Inspector${domainName}BackendDispatcher(InspectorBackendDispatcher* backendDispatcher, Inspector${domainName}BackendDispatcherHandler* agent)
+Inspector${domainName}BackendDispatcher::Inspector${domainName}BackendDispatcher(InspectorBackendDispatcher& backendDispatcher, Inspector${domainName}BackendDispatcherHandler* agent)
     : InspectorSupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -186,26 +186,25 @@ Inspector${domainName}BackendDispatcher::Inspector${domainName}BackendDispatcher
 }""")
 
     BackendDispatcherImplementationPrepareCommandArguments = (
-"""    RefPtr<InspectorArray> protocolErrors = InspectorArray::create();
-    RefPtr<InspectorObject> paramsContainer = message.getObject(ASCIILiteral("params"));
-    InspectorObject* paramsContainerPtr = paramsContainer.get();
-    InspectorArray* protocolErrorsPtr = protocolErrors.get();
+"""    auto protocolErrors = Inspector::Protocol::Array<String>::create();
+    RefPtr<InspectorObject> paramsContainer;
+    message.getObject(ASCIILiteral("params"), paramsContainer);
 ${inParameterDeclarations}
     if (protocolErrors->length()) {
         String errorMessage = String::format("Some arguments of method \'%s\' can't be processed", "${domainName}.${commandName}");
-        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::InvalidParams, errorMessage, protocolErrors.release());
+        m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::InvalidParams, errorMessage, WTF::move(protocolErrors));
         return;
     }
 """)
 
     BackendDispatcherImplementationAsyncCommand = (
-"""Inspector${domainName}BackendDispatcherHandler::${callbackName}::${callbackName}(PassRefPtr<InspectorBackendDispatcher> backendDispatcher, int id) : Inspector::InspectorBackendDispatcher::CallbackBase(backendDispatcher, id) { }
+"""Inspector${domainName}BackendDispatcherHandler::${callbackName}::${callbackName}(Ref<InspectorBackendDispatcher>&& backendDispatcher, int id) : Inspector::InspectorBackendDispatcher::CallbackBase(WTF::move(backendDispatcher), id) { }
 
 void Inspector${domainName}BackendDispatcherHandler::${callbackName}::sendSuccess(${formalParameters})
 {
-    RefPtr<InspectorObject> jsonMessage = InspectorObject::create();
+    Ref<InspectorObject> jsonMessage = InspectorObject::create();
 ${outParameterAssignments}
-    sendIfActive(jsonMessage, ErrorString());
+    sendIfActive(WTF::move(jsonMessage), ErrorString());
 }""")
 
     FrontendDispatcherDomainDispatcherDeclaration = (
@@ -228,26 +227,23 @@ private:
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr</*${objectType}*/Inspector::InspectorObject> ptr)
+        Builder(Ref</*${objectType}*/Inspector::InspectorObject>&& object)
+            : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
-            m_result = ptr;
         }
         friend class ${objectType};
     public:""")
 
     ProtocolObjectBuilderDeclarationPostlude = (
 """
-        operator RefPtr<${objectType}>& ()
+        Ref<${objectType}> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(${objectType}) == sizeof(Inspector::InspectorObject), cannot_cast);
-            return *reinterpret_cast<RefPtr<${objectType}>*>(&m_result);
-        }
 
-        PassRefPtr<${objectType}> release()
-        {
-            return RefPtr<${objectType}>(*this).release();
+            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            return WTF::move(*reinterpret_cast<Ref<${objectType}>*>(&result));
         }
     };
 
@@ -258,11 +254,10 @@ ${constructorExample}
     static Builder<NoFieldsSet> create()
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
-    }
-    typedef Inspector::Protocol::StructItemTraits ItemTraits;""")
+    }""")
 
     ProtocolObjectRuntimeCast = (
-"""PassRefPtr<${objectType}> BindingTraits<${objectType}>::runtimeCast(PassRefPtr<Inspector::InspectorValue> value)
+"""RefPtr<${objectType}> BindingTraits<${objectType}>::runtimeCast(RefPtr<Inspector::InspectorValue>&& value)
 {
     RefPtr<Inspector::InspectorObject> result;
     bool castSucceeded = value->asObject(result);

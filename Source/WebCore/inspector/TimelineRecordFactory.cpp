@@ -52,9 +52,9 @@ using namespace Inspector;
 
 namespace WebCore {
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createGenericRecord(double startTime, int maxCallStackDepth)
+Ref<InspectorObject> TimelineRecordFactory::createGenericRecord(double startTime, int maxCallStackDepth)
 {
-    RefPtr<InspectorObject> record = InspectorObject::create();
+    Ref<InspectorObject> record = InspectorObject::create();
     record->setDouble("startTime", startTime);
 
     if (maxCallStackDepth) {
@@ -62,185 +62,185 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createGenericRecord(double st
         if (stackTrace && stackTrace->size())
             record->setValue("stackTrace", stackTrace->buildInspectorArray());
     }
-    return record.release();
+    return WTF::move(record);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createBackgroundRecord(double startTime, const String& threadName)
+Ref<InspectorObject> TimelineRecordFactory::createBackgroundRecord(double startTime, const String& threadName)
 {
-    RefPtr<InspectorObject> record = InspectorObject::create();
+    Ref<InspectorObject> record = InspectorObject::create();
     record->setDouble("startTime", startTime);
     record->setString("thread", threadName);
-    return record.release();
+    return WTF::move(record);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createGCEventData(const size_t usedHeapSizeDelta)
+Ref<InspectorObject> TimelineRecordFactory::createGCEventData(const size_t usedHeapSizeDelta)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger("usedHeapSizeDelta", usedHeapSizeDelta);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createFunctionCallData(const String& scriptName, int scriptLine)
+Ref<InspectorObject> TimelineRecordFactory::createFunctionCallData(const String& scriptName, int scriptLine)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("scriptName", scriptName);
     data->setInteger("scriptLine", scriptLine);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createConsoleProfileData(const String& title)
+Ref<InspectorObject> TimelineRecordFactory::createConsoleProfileData(const String& title)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("title", title);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createProbeSampleData(const ScriptBreakpointAction& action, unsigned sampleId)
+Ref<InspectorObject> TimelineRecordFactory::createProbeSampleData(const ScriptBreakpointAction& action, unsigned sampleId)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger(ASCIILiteral("probeId"), action.identifier);
     data->setInteger(ASCIILiteral("sampleId"), sampleId);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createEventDispatchData(const Event& event)
+Ref<InspectorObject> TimelineRecordFactory::createEventDispatchData(const Event& event)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("type", event.type().string());
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createGenericTimerData(int timerId)
+Ref<InspectorObject> TimelineRecordFactory::createGenericTimerData(int timerId)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger("timerId", timerId);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createTimerInstallData(int timerId, int timeout, bool singleShot)
+Ref<InspectorObject> TimelineRecordFactory::createTimerInstallData(int timerId, int timeout, bool singleShot)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger("timerId", timerId);
     data->setInteger("timeout", timeout);
     data->setBoolean("singleShot", singleShot);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createXHRReadyStateChangeData(const String& url, int readyState)
+Ref<InspectorObject> TimelineRecordFactory::createXHRReadyStateChangeData(const String& url, int readyState)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("url", url);
     data->setInteger("readyState", readyState);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createXHRLoadData(const String& url)
+Ref<InspectorObject> TimelineRecordFactory::createXHRLoadData(const String& url)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("url", url);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createEvaluateScriptData(const String& url, double lineNumber)
+Ref<InspectorObject> TimelineRecordFactory::createEvaluateScriptData(const String& url, double lineNumber)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("url", url);
     data->setInteger("lineNumber", lineNumber);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createTimeStampData(const String& message)
+Ref<InspectorObject> TimelineRecordFactory::createTimeStampData(const String& message)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("message", message);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createScheduleResourceRequestData(const String& url)
+Ref<InspectorObject> TimelineRecordFactory::createScheduleResourceRequestData(const String& url)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("url", url);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceSendRequestData(const String& requestId, const ResourceRequest& request)
+Ref<InspectorObject> TimelineRecordFactory::createResourceSendRequestData(const String& requestId, const ResourceRequest& request)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("requestId", requestId);
     data->setString("url", request.url().string());
     data->setString("requestMethod", request.httpMethod());
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceReceiveResponseData(const String& requestId, const ResourceResponse& response)
+Ref<InspectorObject> TimelineRecordFactory::createResourceReceiveResponseData(const String& requestId, const ResourceResponse& response)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("requestId", requestId);
     data->setInteger("statusCode", response.httpStatusCode());
     data->setString("mimeType", response.mimeType());
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceFinishData(const String& requestId, bool didFail, double finishTime)
+Ref<InspectorObject> TimelineRecordFactory::createResourceFinishData(const String& requestId, bool didFail, double finishTime)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("requestId", requestId);
     data->setBoolean("didFail", didFail);
     if (finishTime)
         data->setDouble("networkTime", finishTime);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createReceiveResourceData(const String& requestId, int length)
+Ref<InspectorObject> TimelineRecordFactory::createReceiveResourceData(const String& requestId, int length)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("requestId", requestId);
     data->setInteger("encodedDataLength", length);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createLayoutData(unsigned dirtyObjects, unsigned totalObjects, bool partialLayout)
+Ref<InspectorObject> TimelineRecordFactory::createLayoutData(unsigned dirtyObjects, unsigned totalObjects, bool partialLayout)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger("dirtyObjects", dirtyObjects);
     data->setInteger("totalObjects", totalObjects);
     data->setBoolean("partialLayout", partialLayout);
-    return data.release();
+    return WTF::move(data);
 }
-    
-PassRefPtr<InspectorObject> TimelineRecordFactory::createDecodeImageData(const String& imageType)
+
+Ref<InspectorObject> TimelineRecordFactory::createDecodeImageData(const String& imageType)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setString("imageType", imageType);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResizeImageData(bool shouldCache)
+Ref<InspectorObject> TimelineRecordFactory::createResizeImageData(bool shouldCache)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setBoolean("cached", shouldCache);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createMarkData(bool isMainFrame)
+Ref<InspectorObject> TimelineRecordFactory::createMarkData(bool isMainFrame)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setBoolean("isMainFrame", isMainFrame);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createParseHTMLData(unsigned startLine)
+Ref<InspectorObject> TimelineRecordFactory::createParseHTMLData(unsigned startLine)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger("startLine", startLine);
-    return data.release();
+    return WTF::move(data);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createAnimationFrameData(int callbackId)
+Ref<InspectorObject> TimelineRecordFactory::createAnimationFrameData(int callbackId)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setInteger("id", callbackId);
-    return data.release();
+    return WTF::move(data);
 }
 
 static PassRefPtr<InspectorArray> createQuad(const FloatQuad& quad)
@@ -254,14 +254,14 @@ static PassRefPtr<InspectorArray> createQuad(const FloatQuad& quad)
     array->pushDouble(quad.p3().y());
     array->pushDouble(quad.p4().x());
     array->pushDouble(quad.p4().y());
-    return array.release();
+    return WTF::move(array);
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createPaintData(const FloatQuad& quad)
+Ref<InspectorObject> TimelineRecordFactory::createPaintData(const FloatQuad& quad)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
+    Ref<InspectorObject> data = InspectorObject::create();
     data->setArray("clip", createQuad(quad));
-    return data.release();
+    return WTF::move(data);
 }
 
 void TimelineRecordFactory::appendLayoutRoot(InspectorObject* data, const FloatQuad& quad)
@@ -269,23 +269,24 @@ void TimelineRecordFactory::appendLayoutRoot(InspectorObject* data, const FloatQ
     data->setArray("root", createQuad(quad));
 }
 
-static PassRefPtr<Protocol::Timeline::CPUProfileNodeCall> buildInspectorObject(const JSC::ProfileNode::Call& call)
+static Ref<Protocol::Timeline::CPUProfileNodeCall> buildInspectorObject(const JSC::ProfileNode::Call& call)
 {
-    RefPtr<Protocol::Timeline::CPUProfileNodeCall> result = Protocol::Timeline::CPUProfileNodeCall::create()
+    return Protocol::Timeline::CPUProfileNodeCall::create()
         .setStartTime(call.startTime())
-        .setTotalTime(call.elapsedTime());
-    return result.release();
+        .setTotalTime(call.elapsedTime())
+        .release();
 }
 
-static PassRefPtr<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const JSC::ProfileNode* node)
+static Ref<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const JSC::ProfileNode* node)
 {
-    RefPtr<Protocol::Array<Protocol::Timeline::CPUProfileNodeCall>> calls = Protocol::Array<Protocol::Timeline::CPUProfileNodeCall>::create();
+    auto calls = Protocol::Array<Protocol::Timeline::CPUProfileNodeCall>::create();
     for (const JSC::ProfileNode::Call& call : node->calls())
         calls->addItem(buildInspectorObject(call));
 
-    RefPtr<Protocol::Timeline::CPUProfileNode> result = Protocol::Timeline::CPUProfileNode::create()
+    auto result = Protocol::Timeline::CPUProfileNode::create()
         .setId(node->id())
-        .setCalls(calls.release());
+        .setCalls(WTF::move(calls))
+        .release();
 
     if (!node->functionName().isEmpty())
         result->setFunctionName(node->functionName());
@@ -297,28 +298,27 @@ static PassRefPtr<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const
     }
 
     if (!node->children().isEmpty()) {
-        RefPtr<Protocol::Array<Protocol::Timeline::CPUProfileNode>> children = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
+        auto children = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
         for (RefPtr<JSC::ProfileNode> profileNode : node->children())
             children->addItem(buildInspectorObject(profileNode.get()));
-        result->setChildren(children);
+        result->setChildren(WTF::move(children));
     }
 
-    return result.release();
+    return WTF::move(result);
 }
 
-static PassRefPtr<Protocol::Timeline::CPUProfile> buildProfileInspectorObject(const JSC::Profile* profile)
+static Ref<Protocol::Timeline::CPUProfile> buildProfileInspectorObject(const JSC::Profile* profile)
 {
-    RefPtr<Protocol::Array<Protocol::Timeline::CPUProfileNode>> rootNodes = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
+    auto rootNodes = Protocol::Array<Protocol::Timeline::CPUProfileNode>::create();
     for (RefPtr<JSC::ProfileNode> profileNode : profile->rootNode()->children())
         rootNodes->addItem(buildInspectorObject(profileNode.get()));
 
-    RefPtr<Protocol::Timeline::CPUProfile> result = Protocol::Timeline::CPUProfile::create()
-        .setRootNodes(rootNodes);
-
-    return result.release();
+    return Protocol::Timeline::CPUProfile::create()
+        .setRootNodes(WTF::move(rootNodes))
+        .release();
 }
 
-void TimelineRecordFactory::appendProfile(InspectorObject* data, PassRefPtr<JSC::Profile> profile)
+void TimelineRecordFactory::appendProfile(InspectorObject* data, RefPtr<JSC::Profile>&& profile)
 {
     data->setValue(ASCIILiteral("profile"), buildProfileInspectorObject(profile.get()));
 }

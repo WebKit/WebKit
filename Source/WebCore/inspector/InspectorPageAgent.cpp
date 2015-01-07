@@ -118,7 +118,7 @@ static bool hasTextContent(CachedResource* cachedResource)
     return type == InspectorPageAgent::DocumentResource || type == InspectorPageAgent::StylesheetResource || type == InspectorPageAgent::ScriptResource || type == InspectorPageAgent::XHRResource;
 }
 
-static PassRefPtr<TextResourceDecoder> createXHRTextDecoder(const String& mimeType, const String& textEncodingName)
+static RefPtr<TextResourceDecoder> createXHRTextDecoder(const String& mimeType, const String& textEncodingName)
 {
     RefPtr<TextResourceDecoder> decoder;
     if (!textEncodingName.isEmpty())
@@ -130,7 +130,7 @@ static PassRefPtr<TextResourceDecoder> createXHRTextDecoder(const String& mimeTy
         decoder = TextResourceDecoder::create("text/html", "UTF-8");
     else
         decoder = TextResourceDecoder::create("text/plain", "UTF-8");
-    return decoder;
+    return WTF::move(decoder);
 }
 
 bool InspectorPageAgent::cachedResourceContent(CachedResource* cachedResource, String* result, bool* base64Encoded)
@@ -420,7 +420,7 @@ void InspectorPageAgent::navigate(ErrorString&, const String& url)
     frame.loader().changeLocation(frame.document()->securityOrigin(), frame.document()->completeURL(url), "", LockHistory::No, LockBackForwardList::No);
 }
 
-static PassRefPtr<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie& cookie)
+static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie& cookie)
 {
     return Inspector::Protocol::Page::Cookie::create()
         .setName(cookie.name)
@@ -435,14 +435,14 @@ static PassRefPtr<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const 
         .release();
 }
 
-static PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>> buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
+static Ref<Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>> buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
 {
-    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>> cookies = Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>::create();
+    auto cookies = Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>::create();
 
-    for (auto& cookie : cookiesList)
+    for (const auto& cookie : cookiesList)
         cookies->addItem(buildObjectForCookie(cookie));
 
-    return cookies;
+    return WTF::move(cookies);
 }
 
 static Vector<CachedResource*> cachedResourcesForFrame(Frame* frame)
@@ -598,7 +598,7 @@ void InspectorPageAgent::searchInResource(ErrorString&, const String& frameId, c
     results = ContentSearchUtilities::searchInTextByLines(content, query, caseSensitive, isRegex);
 }
 
-static PassRefPtr<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)
+static Ref<Inspector::Protocol::Page::SearchResult> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)
 {
     return Inspector::Protocol::Page::SearchResult::create()
         .setUrl(url)
@@ -851,13 +851,13 @@ void InspectorPageAgent::didPaint(RenderObject* renderer, const LayoutRect& rect
 
     LayoutRect absoluteRect = LayoutRect(renderer->localToAbsoluteQuad(FloatRect(rect)).boundingBox());
     FrameView* view = renderer->document().view();
-    
+
     LayoutRect rootRect = absoluteRect;
     if (!view->frame().isMainFrame()) {
         IntRect rootViewRect = view->contentsToRootView(snappedIntRect(absoluteRect));
         rootRect = view->frame().mainFrame().view()->rootViewToContents(rootViewRect);
     }
-    
+
     if (m_client->overridesShowPaintRects()) {
         m_client->showPaintRect(rootRect);
         return;
@@ -898,14 +898,15 @@ void InspectorPageAgent::scriptsEnabled(bool isEnabled)
     m_frontendDispatcher->scriptsEnabled(isEnabled);
 }
 
-PassRefPtr<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
+Ref<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
 {
-    RefPtr<Inspector::Protocol::Page::Frame> frameObject = Inspector::Protocol::Page::Frame::create()
+    auto frameObject = Inspector::Protocol::Page::Frame::create()
         .setId(frameId(frame))
         .setLoaderId(loaderId(frame->loader().documentLoader()))
         .setUrl(frame->document()->url().string())
         .setMimeType(frame->loader().documentLoader()->responseMIMEType())
-        .setSecurityOrigin(frame->document()->securityOrigin()->toRawString());
+        .setSecurityOrigin(frame->document()->securityOrigin()->toRawString())
+        .release();
     if (frame->tree().parent())
         frameObject->setParentId(frameId(frame->tree().parent()));
     if (frame->ownerElement()) {
@@ -915,22 +916,24 @@ PassRefPtr<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForF
         frameObject->setName(name);
     }
 
-    return frameObject;
+    return WTF::move(frameObject);
 }
 
-PassRefPtr<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
+Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjectForFrameTree(Frame* frame)
 {
-    RefPtr<Inspector::Protocol::Page::Frame> frameObject = buildObjectForFrame(frame);
-    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::FrameResource>> subresources = Inspector::Protocol::Array<Inspector::Protocol::Page::FrameResource>::create();
-    RefPtr<Inspector::Protocol::Page::FrameResourceTree> result = Inspector::Protocol::Page::FrameResourceTree::create()
-         .setFrame(frameObject)
-         .setResources(subresources);
+    Ref<Inspector::Protocol::Page::Frame> frameObject = buildObjectForFrame(frame);
+    auto subresources = Inspector::Protocol::Array<Inspector::Protocol::Page::FrameResource>::create();
+    auto result = Inspector::Protocol::Page::FrameResourceTree::create()
+        .setFrame(WTF::move(frameObject))
+        .setResources(subresources.copyRef())
+        .release();
 
     for (auto* cachedResource : cachedResourcesForFrame(frame)) {
-        RefPtr<Inspector::Protocol::Page::FrameResource> resourceObject = Inspector::Protocol::Page::FrameResource::create()
+        auto resourceObject = Inspector::Protocol::Page::FrameResource::create()
             .setUrl(cachedResource->url())
             .setType(cachedResourceTypeJson(*cachedResource))
-            .setMimeType(cachedResource->response().mimeType());
+            .setMimeType(cachedResource->response().mimeType())
+            .release();
         if (cachedResource->wasCanceled())
             resourceObject->setCanceled(true);
         else if (cachedResource->status() == CachedResource::LoadError)
@@ -938,7 +941,7 @@ PassRefPtr<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::bui
         String sourceMappingURL = InspectorPageAgent::sourceMapURLForResource(cachedResource);
         if (!sourceMappingURL.isEmpty())
             resourceObject->setSourceMapURL(sourceMappingURL);
-        subresources->addItem(resourceObject);
+        subresources->addItem(WTF::move(resourceObject));
     }
 
     RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::FrameResourceTree>> childrenArray;
