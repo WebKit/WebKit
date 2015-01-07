@@ -172,9 +172,9 @@ void WorkerInspectorController::didCallInjectedScriptFunction(JSC::ExecState* sc
     InspectorInstrumentation::didCallFunction(cookie, scriptExecutionContext);
 }
 
-Ref<Stopwatch> WorkerInspectorController::executionStopwatch()
+PassRefPtr<Stopwatch> WorkerInspectorController::executionStopwatch()
 {
-    return m_executionStopwatch.copyRef();
+    return m_executionStopwatch;
 }
 
 } // namespace WebCore

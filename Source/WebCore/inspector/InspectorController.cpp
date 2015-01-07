@@ -330,7 +330,7 @@ void InspectorController::getHighlight(Highlight* highlight, InspectorOverlay::C
     m_overlay->getHighlight(highlight, coordinateSystem);
 }
 
-RefPtr<InspectorObject> InspectorController::buildObjectForHighlightedNode() const
+PassRefPtr<InspectorObject> InspectorController::buildObjectForHighlightedNode() const
 {
     return m_overlay->buildObjectForHighlightedNode();
 }
@@ -454,9 +454,9 @@ void InspectorController::frontendInitialized()
 #endif
 }
 
-Ref<Stopwatch> InspectorController::executionStopwatch()
+PassRefPtr<Stopwatch> InspectorController::executionStopwatch()
 {
-    return m_executionStopwatch.copyRef();
+    return m_executionStopwatch;
 }
 
 } // namespace WebCore

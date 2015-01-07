@@ -58,6 +58,7 @@ class ObjCProtocolTypesImplementationGenerator(Generator):
             '"%sEnumConversionHelpers.h"' % ObjCGenerator.OBJC_PREFIX,
             '<JavaScriptCore/InspectorValues.h>',
             '<wtf/Assertions.h>',
+            '<wtf/PassRefPtr.h>',
         ]
 
         header_args = {

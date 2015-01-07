@@ -76,7 +76,7 @@ public:
     virtual void disableEval(const String& errorMessage) = 0;
 
     bool sanitizeScriptError(String& errorMessage, int& lineNumber, int& columnNumber, String& sourceURL, CachedScript* = nullptr);
-    void reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, RefPtr<Inspector::ScriptCallStack>&&, CachedScript* = nullptr);
+    void reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, PassRefPtr<Inspector::ScriptCallStack>, CachedScript* = nullptr);
 
     void addConsoleMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) = 0;
@@ -198,9 +198,9 @@ protected:
     bool hasPendingActivity() const;
 
 private:
-    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0) = 0;
+    virtual void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<Inspector::ScriptCallStack>, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0) = 0;
     virtual EventTarget* errorEventTarget() = 0;
-    virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) = 0;
+    virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<Inspector::ScriptCallStack>) = 0;
     bool dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, CachedScript*);
 
     virtual void refScriptExecutionContext() = 0;

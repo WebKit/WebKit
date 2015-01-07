@@ -2614,9 +2614,9 @@ EventTarget* Document::errorEventTarget()
     return m_domWindow.get();
 }
 
-void Document::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack)
+void Document::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<Inspector::ScriptCallStack> callStack)
 {
-    addMessage(MessageSource::JS, MessageLevel::Error, errorMessage, sourceURL, lineNumber, columnNumber, WTF::move(callStack));
+    addMessage(MessageSource::JS, MessageLevel::Error, errorMessage, sourceURL, lineNumber, columnNumber, callStack);
 }
 
 void Document::setURL(const URL& url)
@@ -4975,7 +4975,7 @@ void Document::addConsoleMessage(MessageSource source, MessageLevel level, const
         page->console().addMessage(source, level, message, requestIdentifier, this);
 }
 
-void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
+void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<Inspector::ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask(source, level, StringCapture(message)));
@@ -4983,7 +4983,7 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
     }
 
     if (Page* page = this->page())
-        page->console().addMessage(source, level, message, sourceURL, lineNumber, columnNumber, WTF::move(callStack), state, requestIdentifier);
+        page->console().addMessage(source, level, message, sourceURL, lineNumber, columnNumber, callStack, state, requestIdentifier);
 }
 
 SecurityOrigin* Document::topOrigin() const

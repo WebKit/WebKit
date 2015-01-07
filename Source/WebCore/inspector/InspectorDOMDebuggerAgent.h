@@ -92,7 +92,7 @@ private:
     virtual void didPause() override;
     void disable();
 
-    void descriptionForDOMEvent(Node& target, int breakpointType, bool insertion, Inspector::InspectorObject& description);
+    void descriptionForDOMEvent(Node* target, int breakpointType, bool insertion, Inspector::InspectorObject* description);
     void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);
     bool hasBreakpoint(Node*, int type);
     void discardBindings();

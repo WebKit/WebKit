@@ -72,7 +72,7 @@ void InspectorAgent::enable(ErrorString&)
     m_enabled = true;
 
     if (m_pendingInspectData.first)
-        inspect(m_pendingInspectData.first.copyRef(), m_pendingInspectData.second.copyRef());
+        inspect(m_pendingInspectData.first, m_pendingInspectData.second);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
     if (m_pendingExtraDomainsData)
@@ -99,7 +99,7 @@ void InspectorAgent::initialized(ErrorString&)
     m_environment.frontendInitialized();
 }
 
-void InspectorAgent::inspect(RefPtr<Protocol::Runtime::RemoteObject>&& objectToInspect, RefPtr<InspectorObject>&& hints)
+void InspectorAgent::inspect(PassRefPtr<Protocol::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints)
 {
     if (m_enabled && m_frontendDispatcher) {
         m_frontendDispatcher->inspect(objectToInspect, hints);
@@ -130,9 +130,9 @@ void InspectorAgent::activateExtraDomain(const String& domainName)
         return;
     }
 
-    Ref<Inspector::Protocol::Array<String>> domainNames = Inspector::Protocol::Array<String>::create();
+    RefPtr<Inspector::Protocol::Array<String>> domainNames = Inspector::Protocol::Array<String>::create();
     domainNames->addItem(domainName);
-    m_frontendDispatcher->activateExtraDomains(WTF::move(domainNames));
+    m_frontendDispatcher->activateExtraDomains(domainNames.release());
 }
 
 void InspectorAgent::activateExtraDomains(const Vector<String>& extraDomains)

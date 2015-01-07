@@ -41,10 +41,10 @@ namespace Inspector {
 
 class AlternateInspectorBackendDispatcher {
 public:
-    void setBackendDispatcher(Ref<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
-    const InspectorBackendDispatcher& backendDispatcher() const { return m_backendDispatcher.get(); }
+    void setBackendDispatcher(PassRefPtr<InspectorBackendDispatcher> dispatcher) { m_backendDispatcher = dispatcher; }
+    InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
-    Ref<InspectorBackendDispatcher> m_backendDispatcher;
+    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
 };
 
 
@@ -144,6 +144,7 @@ InspectorBackend.activateDomain("EventDomain");
 
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorBackendDispatcher.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -170,12 +171,12 @@ protected:
 
 class InspectorCommandDomainBackendDispatcher final : public Inspector::InspectorSupplementalBackendDispatcher {
 public:
-    static Ref<InspectorCommandDomainBackendDispatcher> create(Inspector::InspectorBackendDispatcher*, InspectorCommandDomainBackendDispatcherHandler*);
-    virtual void dispatch(long callId, const String& method, Ref<Inspector::InspectorObject>&& message) override;
+    static PassRefPtr<InspectorCommandDomainBackendDispatcher> create(Inspector::InspectorBackendDispatcher*, InspectorCommandDomainBackendDispatcherHandler*);
+    virtual void dispatch(long callId, const String& method, PassRefPtr<Inspector::InspectorObject> message) override;
 private:
     void commandWithEnumReturnValue(long callId, const Inspector::InspectorObject& message);
 private:
-    InspectorCommandDomainBackendDispatcher(Inspector::InspectorBackendDispatcher&, InspectorCommandDomainBackendDispatcherHandler*);
+    InspectorCommandDomainBackendDispatcher(Inspector::InspectorBackendDispatcher*, InspectorCommandDomainBackendDispatcherHandler*);
     InspectorCommandDomainBackendDispatcherHandler* m_agent;
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 public:
@@ -240,12 +241,12 @@ namespace Inspector {
 
 InspectorCommandDomainBackendDispatcherHandler::~InspectorCommandDomainBackendDispatcherHandler() { }
 
-Ref<InspectorCommandDomainBackendDispatcher> InspectorCommandDomainBackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, InspectorCommandDomainBackendDispatcherHandler* agent)
+PassRefPtr<InspectorCommandDomainBackendDispatcher> InspectorCommandDomainBackendDispatcher::create(InspectorBackendDispatcher* backendDispatcher, InspectorCommandDomainBackendDispatcherHandler* agent)
 {
-    return adoptRef(*new InspectorCommandDomainBackendDispatcher(*backendDispatcher, agent));
+    return adoptRef(new InspectorCommandDomainBackendDispatcher(backendDispatcher, agent));
 }
 
-InspectorCommandDomainBackendDispatcher::InspectorCommandDomainBackendDispatcher(InspectorBackendDispatcher& backendDispatcher, InspectorCommandDomainBackendDispatcherHandler* agent)
+InspectorCommandDomainBackendDispatcher::InspectorCommandDomainBackendDispatcher(InspectorBackendDispatcher* backendDispatcher, InspectorCommandDomainBackendDispatcherHandler* agent)
     : InspectorSupplementalBackendDispatcher(backendDispatcher)
     , m_agent(agent)
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -255,12 +256,12 @@ InspectorCommandDomainBackendDispatcher::InspectorCommandDomainBackendDispatcher
     m_backendDispatcher->registerDispatcherForDomain(ASCIILiteral("CommandDomain"), this);
 }
 
-void InspectorCommandDomainBackendDispatcher::dispatch(long callId, const String& method, Ref<InspectorObject>&& message)
+void InspectorCommandDomainBackendDispatcher::dispatch(long callId, const String& method, PassRefPtr<InspectorObject> message)
 {
     Ref<InspectorCommandDomainBackendDispatcher> protect(*this);
 
     if (method == "commandWithEnumReturnValue")
-        commandWithEnumReturnValue(callId, message);
+        commandWithEnumReturnValue(callId, *message.get());
     else
         m_backendDispatcher->reportProtocolError(&callId, InspectorBackendDispatcher::MethodNotFound, makeString('\'', "CommandDomain", '.', method, "' was not found"));
 }
@@ -275,14 +276,14 @@ void InspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(long ca
 #endif
 
     ErrorString error;
-    Ref<InspectorObject> result = InspectorObject::create();
+    RefPtr<InspectorObject> result = InspectorObject::create();
     InspectorCommandDomainBackendDispatcherHandler::ReturnValue out_returnValue;
     m_agent->commandWithEnumReturnValue(error, &out_returnValue);
 
     if (!error.length())
         result->setString(ASCIILiteral("returnValue"), Inspector::Protocol::getEnumConstantValue(out_returnValue));
 
-    m_backendDispatcher->sendResponse(callId, WTF::move(result), error);
+    m_backendDispatcher->sendResponse(callId, result.release(), error);
 }
 
 } // namespace Inspector
@@ -330,6 +331,7 @@ void InspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(long ca
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -399,11 +401,11 @@ namespace Inspector {
 
 void InspectorEventDomainFrontendDispatcher::eventWithEnumParameter(Parameter parameter)
 {
-    Ref<InspectorObject> jsonMessage = InspectorObject::create();
+    RefPtr<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
-    Ref<InspectorObject> paramsObject = InspectorObject::create();
+    RefPtr<InspectorObject> paramsObject = InspectorObject::create();
     paramsObject->setString(ASCIILiteral("parameter"), Inspector::Protocol::getEnumConstantValue(parameter));
-    jsonMessage->setObject(ASCIILiteral("params"), paramsObject.copyRef());
+    jsonMessage->setObject(ASCIILiteral("params"), paramsObject);
 
     m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
@@ -452,6 +454,7 @@ void InspectorEventDomainFrontendDispatcher::eventWithEnumParameter(Parameter pa
 
 #include <inspector/InspectorProtocolTypes.h>
 #include <wtf/Assertions.h>
+#include <wtf/PassRefPtr.h>
 
 namespace Inspector {
 
@@ -810,7 +813,7 @@ void ObjCInspectorCommandDomainBackendDispatcher::commandWithEnumReturnValue(lon
     };
 
     id successCallback = ^(RWIProtocolCommandDomainCommandWithEnumReturnValueReturnValue returnValue) {
-        Ref<InspectorObject> resultObject = InspectorObject::create();
+        RefPtr<InspectorObject> resultObject = InspectorObject::create();
         resultObject->setString(ASCIILiteral("returnValue"), toProtocolString(returnValue));
         backendDispatcher()->sendResponse(callId, resultObject.release(), String());
     };
@@ -1018,9 +1021,9 @@ using namespace Inspector;
     if (!frontendChannel)
         return;
 
-    Ref<InspectorObject> jsonMessage = InspectorObject::create();
+    RefPtr<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
-    Ref<InspectorObject> paramsObject = InspectorObject::create();
+    RefPtr<InspectorObject> paramsObject = InspectorObject::create();
     paramsObject->setString(ASCIILiteral("parameter"), toProtocolString(parameter));
     jsonMessage->setObject(ASCIILiteral("params"), paramsObject);
     frontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
@@ -1142,6 +1145,7 @@ __attribute__((visibility ("default")))
 #import "RWIProtocolEnumConversionHelpers.h"
 #import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
+#import <wtf/PassRefPtr.h>
 
 using namespace Inspector;
 

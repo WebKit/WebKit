@@ -68,7 +68,7 @@ public:
     virtual void canInspectWorkers(ErrorString&, bool*) override;
     virtual void connectToWorker(ErrorString&, int workerId) override;
     virtual void disconnectFromWorker(ErrorString&, int workerId) override;
-    virtual void sendMessageToWorker(ErrorString&, int workerId, const RefPtr<Inspector::InspectorObject>&& message) override;
+    virtual void sendMessageToWorker(ErrorString&, int workerId, const RefPtr<Inspector::InspectorObject>& message) override;
     virtual void setAutoconnectToWorkers(ErrorString&, bool value) override;
 
 private:

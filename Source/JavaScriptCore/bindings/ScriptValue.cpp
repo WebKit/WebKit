@@ -98,7 +98,7 @@ bool ScriptValue::isFunction() const
 }
 
 #if ENABLE(INSPECTOR)
-static RefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSValue value, int maxDepth)
+static PassRefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSValue value, int maxDepth)
 {
     if (!value) {
         ASSERT_NOT_REACHED();
@@ -123,7 +123,7 @@ static RefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSValue
 
     if (value.isObject()) {
         if (isJSArray(value)) {
-            Ref<InspectorArray> inspectorArray = InspectorArray::create();
+            RefPtr<InspectorArray> inspectorArray = InspectorArray::create();
             JSArray* array = asArray(value);
             unsigned length = array->length();
             for (unsigned i = 0; i < length; i++) {
@@ -131,11 +131,11 @@ static RefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSValue
                 RefPtr<InspectorValue> elementValue = jsToInspectorValue(scriptState, element, maxDepth);
                 if (!elementValue)
                     return nullptr;
-                inspectorArray->pushValue(WTF::move(elementValue));
+                inspectorArray->pushValue(elementValue);
             }
-            return WTF::move(inspectorArray);
+            return inspectorArray;
         }
-        Ref<InspectorObject> inspectorObject = InspectorObject::create();
+        RefPtr<InspectorObject> inspectorObject = InspectorObject::create();
         JSObject* object = value.getObject();
         PropertyNameArray propertyNames(scriptState);
         object->methodTable()->getOwnPropertyNames(object, scriptState, propertyNames, ExcludeDontEnumProperties);
@@ -145,16 +145,16 @@ static RefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSValue
             RefPtr<InspectorValue> inspectorValue = jsToInspectorValue(scriptState, propertyValue, maxDepth);
             if (!inspectorValue)
                 return nullptr;
-            inspectorObject->setValue(name.string(), WTF::move(inspectorValue));
+            inspectorObject->setValue(name.string(), inspectorValue);
         }
-        return WTF::move(inspectorObject);
+        return inspectorObject;
     }
 
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-RefPtr<InspectorValue> ScriptValue::toInspectorValue(ExecState* scriptState) const
+PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ExecState* scriptState) const
 {
     JSLockHolder holder(scriptState);
     return jsToInspectorValue(scriptState, m_value.get(), InspectorValue::maxDepth);

@@ -307,7 +307,7 @@ PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* conte
 
     RefPtr<DatabaseContext> databaseContext = databaseContextFor(context);
     databaseContext->setHasOpenDatabases();
-    InspectorInstrumentation::didOpenDatabase(context, database.copyRef(), context->securityOrigin()->host(), name, expectedVersion);
+    InspectorInstrumentation::didOpenDatabase(context, database, context->securityOrigin()->host(), name, expectedVersion);
 
     if (backend->isNew() && creationCallback.get()) {
         LOG(StorageAPI, "Scheduling DatabaseCreationCallbackTask for database %p\n", database.get());

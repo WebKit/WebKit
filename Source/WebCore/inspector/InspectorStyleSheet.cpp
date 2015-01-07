@@ -76,7 +76,7 @@ public:
     RuleSourceDataList* sourceData() const { return m_sourceData.get(); }
     void setSourceData(std::unique_ptr<RuleSourceDataList>);
     bool hasSourceData() const { return m_sourceData != nullptr; }
-    RefPtr<WebCore::CSSRuleSourceData> ruleSourceDataAt(unsigned) const;
+    PassRefPtr<WebCore::CSSRuleSourceData> ruleSourceDataAt(unsigned) const;
 
 private:
 
@@ -125,7 +125,7 @@ void ParsedStyleSheet::setSourceData(std::unique_ptr<RuleSourceDataList> sourceD
     flattenSourceData(sourceData.get(), m_sourceData.get());
 }
 
-RefPtr<WebCore::CSSRuleSourceData> ParsedStyleSheet::ruleSourceDataAt(unsigned index) const
+PassRefPtr<WebCore::CSSRuleSourceData> ParsedStyleSheet::ruleSourceDataAt(unsigned index) const
 {
     if (!hasSourceData() || index >= m_sourceData->size())
         return nullptr;
@@ -144,7 +144,7 @@ enum MediaListSource {
     MediaListSourceImportRule
 };
 
-static RefPtr<Inspector::Protocol::CSS::SourceRange> buildSourceRangeObject(const SourceRange& range, Vector<size_t>* lineEndings)
+static PassRefPtr<Inspector::Protocol::CSS::SourceRange> buildSourceRangeObject(const SourceRange& range, Vector<size_t>* lineEndings)
 {
     if (!lineEndings)
         return nullptr;
@@ -159,7 +159,7 @@ static RefPtr<Inspector::Protocol::CSS::SourceRange> buildSourceRangeObject(cons
         .release();
 }
 
-static Ref<Inspector::Protocol::CSS::CSSMedia> buildMediaObject(const MediaList* media, MediaListSource mediaListSource, const String& sourceURL)
+static PassRefPtr<Inspector::Protocol::CSS::CSSMedia> buildMediaObject(const MediaList* media, MediaListSource mediaListSource, const String& sourceURL)
 {
     // Make certain compilers happy by initializing |source| up-front.
     Inspector::Protocol::CSS::CSSMedia::Source source = Inspector::Protocol::CSS::CSSMedia::Source::InlineSheet;
@@ -178,19 +178,18 @@ static Ref<Inspector::Protocol::CSS::CSSMedia> buildMediaObject(const MediaList*
         break;
     }
 
-    auto mediaObject = Inspector::Protocol::CSS::CSSMedia::create()
+    RefPtr<Inspector::Protocol::CSS::CSSMedia> mediaObject = Inspector::Protocol::CSS::CSSMedia::create()
         .setText(media->mediaText())
-        .setSource(source)
-        .release();
+        .setSource(source);
 
     if (!sourceURL.isEmpty()) {
         mediaObject->setSourceURL(sourceURL);
         mediaObject->setSourceLine(media->queries()->lastLine());
     }
-    return WTF::move(mediaObject);
+    return mediaObject.release();
 }
 
-static RefPtr<CSSRuleList> asCSSRuleList(CSSStyleSheet* styleSheet)
+static PassRefPtr<CSSRuleList> asCSSRuleList(CSSStyleSheet* styleSheet)
 {
     if (!styleSheet)
         return nullptr;
@@ -203,10 +202,10 @@ static RefPtr<CSSRuleList> asCSSRuleList(CSSStyleSheet* styleSheet)
             continue;
         listRules.append(item);
     }
-    return WTF::move(list);
+    return list.release();
 }
 
-static RefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
+static PassRefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
 {
     if (!rule)
         return nullptr;
@@ -223,7 +222,7 @@ static RefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
     return nullptr;
 }
 
-static void fillMediaListChain(CSSRule* rule, Array<Inspector::Protocol::CSS::CSSMedia>& mediaArray)
+static void fillMediaListChain(CSSRule* rule, Array<Inspector::Protocol::CSS::CSSMedia>* mediaArray)
 {
     MediaList* mediaList;
     CSSRule* parentRule = rule;
@@ -251,7 +250,7 @@ static void fillMediaListChain(CSSRule* rule, Array<Inspector::Protocol::CSS::CS
             sourceURL = "";
 
         if (mediaList && mediaList->length())
-            mediaArray.addItem(buildMediaObject(mediaList, isMediaRule ? MediaListSourceMediaRule : MediaListSourceImportRule, sourceURL));
+            mediaArray->addItem(buildMediaObject(mediaList, isMediaRule ? MediaListSourceMediaRule : MediaListSourceImportRule, sourceURL));
 
         if (parentRule->parentRule())
             parentRule = parentRule->parentRule();
@@ -267,7 +266,7 @@ static void fillMediaListChain(CSSRule* rule, Array<Inspector::Protocol::CSS::CS
                         sourceURL = styleSheet->contents().baseURL();
                     else
                         sourceURL = "";
-                    mediaArray.addItem(buildMediaObject(mediaList, styleSheet->ownerNode() ? MediaListSourceLinkedSheet : MediaListSourceInlineSheet, sourceURL));
+                    mediaArray->addItem(buildMediaObject(mediaList, styleSheet->ownerNode() ? MediaListSourceLinkedSheet : MediaListSourceInlineSheet, sourceURL));
                 }
                 parentRule = styleSheet->ownerRule();
                 if (parentRule)
@@ -283,12 +282,12 @@ static std::unique_ptr<CSSParser> createCSSParser(Document* document)
     return std::make_unique<CSSParser>(document ? CSSParserContext(*document) : strictCSSParserContext());
 }
 
-Ref<InspectorStyle> InspectorStyle::create(const InspectorCSSId& styleId, RefPtr<CSSStyleDeclaration>&& style, InspectorStyleSheet* parentStyleSheet)
+PassRefPtr<InspectorStyle> InspectorStyle::create(const InspectorCSSId& styleId, PassRefPtr<CSSStyleDeclaration> style, InspectorStyleSheet* parentStyleSheet)
 {
-    return adoptRef(*new InspectorStyle(styleId, WTF::move(style), parentStyleSheet));
+    return adoptRef(new InspectorStyle(styleId, style, parentStyleSheet));
 }
 
-InspectorStyle::InspectorStyle(const InspectorCSSId& styleId, RefPtr<CSSStyleDeclaration>&& style, InspectorStyleSheet* parentStyleSheet)
+InspectorStyle::InspectorStyle(const InspectorCSSId& styleId, PassRefPtr<CSSStyleDeclaration> style, InspectorStyleSheet* parentStyleSheet)
     : m_styleId(styleId)
     , m_style(style)
     , m_parentStyleSheet(parentStyleSheet)
@@ -301,9 +300,9 @@ InspectorStyle::~InspectorStyle()
 {
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::buildObjectForStyle() const
+PassRefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::buildObjectForStyle() const
 {
-    Ref<Inspector::Protocol::CSS::CSSStyle> result = styleWithProperties();
+    RefPtr<Inspector::Protocol::CSS::CSSStyle> result = styleWithProperties();
     if (!m_styleId.isEmpty())
         result->setStyleId(m_styleId.asProtocolValue<Inspector::Protocol::CSS::CSSStyleId>());
 
@@ -314,25 +313,24 @@ RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::buildObjectForStyle()
     if (sourceData)
         result->setRange(buildSourceRangeObject(sourceData->ruleBodyRange, m_parentStyleSheet->lineEndings().get()));
 
-    return WTF::move(result);
+    return result.release();
 }
 
-Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStyleProperty>> InspectorStyle::buildArrayForComputedStyle() const
+PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStyleProperty>> InspectorStyle::buildArrayForComputedStyle() const
 {
-    auto result = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStyleProperty>::create();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStyleProperty>> result = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStyleProperty>::create();
     Vector<InspectorStyleProperty> properties;
     populateAllProperties(&properties);
 
     for (Vector<InspectorStyleProperty>::iterator it = properties.begin(), itEnd = properties.end(); it != itEnd; ++it) {
         const CSSPropertySourceData& propertyEntry = it->sourceData;
-        auto entry = Inspector::Protocol::CSS::CSSComputedStyleProperty::create()
+        RefPtr<Inspector::Protocol::CSS::CSSComputedStyleProperty> entry = Inspector::Protocol::CSS::CSSComputedStyleProperty::create()
             .setName(propertyEntry.name)
-            .setValue(propertyEntry.value)
-            .release();
-        result->addItem(WTF::move(entry));
+            .setValue(propertyEntry.value);
+        result->addItem(entry.release());
     }
 
-    return WTF::move(result);
+    return result.release();
 }
 
 // This method does the following preprocessing of |propertyText| with |overwrite| == false and |index| past the last active property:
@@ -505,13 +503,13 @@ bool InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* resul
     return true;
 }
 
-Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() const
+PassRefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() const
 {
     Vector<InspectorStyleProperty> properties;
     populateAllProperties(&properties);
 
-    auto propertiesObject = Array<Inspector::Protocol::CSS::CSSProperty>::create();
-    auto shorthandEntries = Array<Inspector::Protocol::CSS::ShorthandEntry>::create();
+    RefPtr<Array<Inspector::Protocol::CSS::CSSProperty>> propertiesObject = Array<Inspector::Protocol::CSS::CSSProperty>::create();
+    RefPtr<Array<Inspector::Protocol::CSS::ShorthandEntry>> shorthandEntries = Array<Inspector::Protocol::CSS::ShorthandEntry>::create();
     HashMap<String, RefPtr<Inspector::Protocol::CSS::CSSProperty>> propertyNameToPreviousActiveProperty;
     HashSet<String> foundShorthands;
     String previousPriority;
@@ -534,10 +532,9 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
 
         RefPtr<Inspector::Protocol::CSS::CSSProperty> property = Inspector::Protocol::CSS::CSSProperty::create()
             .setName(name.lower())
-            .setValue(propertyEntry.value)
-            .release();
+            .setValue(propertyEntry.value);
 
-        propertiesObject->addItem(property.copyRef());
+        propertiesObject->addItem(property);
 
         // Default "parsedOk" == true.
         if (!propertyEntry.parsedOk)
@@ -603,11 +600,10 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
                 if (!shorthand.isEmpty()) {
                     if (!foundShorthands.contains(shorthand)) {
                         foundShorthands.add(shorthand);
-                        auto entry = Inspector::Protocol::CSS::ShorthandEntry::create()
+                        RefPtr<Inspector::Protocol::CSS::ShorthandEntry> entry = Inspector::Protocol::CSS::ShorthandEntry::create()
                             .setName(shorthand)
-                            .setValue(shorthandValue(shorthand))
-                            .release();
-                        shorthandEntries->addItem(WTF::move(entry));
+                            .setValue(shorthandValue(shorthand));
+                        shorthandEntries->addItem(entry.release());
                     }
                 }
             }
@@ -619,12 +615,12 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
     }
 
     return Inspector::Protocol::CSS::CSSStyle::create()
-        .setCssProperties(WTF::move(propertiesObject))
-        .setShorthandEntries(WTF::move(shorthandEntries))
+        .setCssProperties(propertiesObject.release())
+        .setShorthandEntries(shorthandEntries.release())
         .release();
 }
 
-RefPtr<CSSRuleSourceData> InspectorStyle::extractSourceData() const
+PassRefPtr<CSSRuleSourceData> InspectorStyle::extractSourceData() const
 {
     if (!m_parentStyleSheet || !m_parentStyleSheet->ensureParsedDataReady())
         return nullptr;
@@ -753,9 +749,9 @@ NewLineAndWhitespace& InspectorStyle::newLineAndWhitespaceDelimiters() const
     return m_format;
 }
 
-Ref<InspectorStyleSheet> InspectorStyleSheet::create(InspectorPageAgent* pageAgent, const String& id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin origin, const String& documentURL, Listener* listener)
+PassRefPtr<InspectorStyleSheet> InspectorStyleSheet::create(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin origin, const String& documentURL, Listener* listener)
 {
-    return adoptRef(*new InspectorStyleSheet(pageAgent, id, WTF::move(pageStyleSheet), origin, documentURL, listener));
+    return adoptRef(new InspectorStyleSheet(pageAgent, id, pageStyleSheet, origin, documentURL, listener));
 }
 
 // static
@@ -766,10 +762,10 @@ String InspectorStyleSheet::styleSheetURL(CSSStyleSheet* pageStyleSheet)
     return emptyString();
 }
 
-InspectorStyleSheet::InspectorStyleSheet(InspectorPageAgent* pageAgent, const String& id, RefPtr<CSSStyleSheet>&& pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin origin, const String& documentURL, Listener* listener)
+InspectorStyleSheet::InspectorStyleSheet(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<CSSStyleSheet> pageStyleSheet, Inspector::Protocol::CSS::StyleSheetOrigin origin, const String& documentURL, Listener* listener)
     : m_pageAgent(pageAgent)
     , m_id(id)
-    , m_pageStyleSheet(WTF::move(pageStyleSheet))
+    , m_pageStyleSheet(pageStyleSheet)
     , m_origin(origin)
     , m_documentURL(documentURL)
     , m_isRevalidating(false)
@@ -957,7 +953,7 @@ CSSStyleRule* InspectorStyleSheet::ruleForId(const InspectorCSSId& id) const
 
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody> InspectorStyleSheet::buildObjectForStyleSheet()
+PassRefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody> InspectorStyleSheet::buildObjectForStyleSheet()
 {
     CSSStyleSheet* styleSheet = pageStyleSheet();
     if (!styleSheet)
@@ -965,20 +961,19 @@ RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody> InspectorStyleSheet::buildOb
 
     RefPtr<CSSRuleList> cssRuleList = asCSSRuleList(styleSheet);
 
-    auto result = Inspector::Protocol::CSS::CSSStyleSheetBody::create()
+    RefPtr<Inspector::Protocol::CSS::CSSStyleSheetBody> result = Inspector::Protocol::CSS::CSSStyleSheetBody::create()
         .setStyleSheetId(id())
-        .setRules(buildArrayForRuleList(cssRuleList.get()))
-        .release();
+        .setRules(buildArrayForRuleList(cssRuleList.get()));
 
     String styleSheetText;
     bool success = getText(&styleSheetText);
     if (success)
         result->setText(styleSheetText);
 
-    return WTF::move(result);
+    return result.release();
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::buildObjectForStyleSheetInfo()
+PassRefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::buildObjectForStyleSheetInfo()
 {
     CSSStyleSheet* styleSheet = pageStyleSheet();
     if (!styleSheet)
@@ -996,31 +991,30 @@ RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::build
         .release();
 }
 
-static Ref<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String& selectorText, const CSSSelector& selector)
+static PassRefPtr<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String& selectorText, const CSSSelector& selector)
 {
-    auto inspectorSelector = Inspector::Protocol::CSS::CSSSelector::create()
-        .setText(selectorText)
-        .release();
+    RefPtr<Inspector::Protocol::CSS::CSSSelector> inspectorSelector = Inspector::Protocol::CSS::CSSSelector::create()
+        .setText(selectorText);
 
     bool ok;
     unsigned specificity = selector.staticSpecificity(ok);
 
     if (ok) {
-        auto tuple = Inspector::Protocol::Array<int>::create();
+        RefPtr<Inspector::Protocol::Array<int>> tuple = Inspector::Protocol::Array<int>::create();
         tuple->addItem(static_cast<int>((specificity & CSSSelector::idMask) >> 16));
         tuple->addItem(static_cast<int>((specificity & CSSSelector::classMask) >> 8));
         tuple->addItem(static_cast<int>(specificity & CSSSelector::elementMask));
-        inspectorSelector->setSpecificity(WTF::move(tuple));
+        inspectorSelector->setSpecificity(tuple.release());
     }
 
-    return WTF::move(inspectorSelector);
+    return inspectorSelector.release();
 }
 
-static Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> selectorsFromSource(const CSSRuleSourceData* sourceData, const String& sheetText, const CSSSelectorList& selectorList)
+static PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> selectorsFromSource(const CSSRuleSourceData* sourceData, const String& sheetText, const CSSSelectorList& selectorList)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(JSC::Yarr::RegularExpression, comment, ("/\\*[^]*?\\*/", TextCaseSensitive, JSC::Yarr::MultilineEnabled));
 
-    auto result = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>::create();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> result = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>::create();
     const SelectorRangeList& ranges = sourceData->selectorRanges;
     const CSSSelector* selector = selectorList.first();
     for (size_t i = 0, size = ranges.size(); i < size; ++i) {
@@ -1033,15 +1027,15 @@ static Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> se
 
         selector = CSSSelectorList::next(selector);
     }
-    return WTF::move(result);
+    return result.release();
 }
 
-Ref<Inspector::Protocol::CSS::CSSSelector> InspectorStyleSheet::buildObjectForSelector(const CSSSelector* selector)
+PassRefPtr<Inspector::Protocol::CSS::CSSSelector> InspectorStyleSheet::buildObjectForSelector(const CSSSelector* selector)
 {
     return buildObjectForSelectorHelper(selector->selectorText(), *selector);
 }
 
-Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForSelectorList(CSSStyleRule* rule)
+PassRefPtr<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForSelectorList(CSSStyleRule* rule)
 {
     RefPtr<CSSRuleSourceData> sourceData;
     if (ensureParsedDataReady())
@@ -1059,27 +1053,26 @@ Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForS
         for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
             selectors->addItem(buildObjectForSelector(selector));
     }
-    auto result = Inspector::Protocol::CSS::SelectorList::create()
+    RefPtr<Inspector::Protocol::CSS::SelectorList> result = Inspector::Protocol::CSS::SelectorList::create()
         .setSelectors(selectors.release())
         .setText(selectorText)
         .release();
     if (sourceData)
         result->setRange(buildSourceRangeObject(sourceData->ruleHeaderRange, lineEndings().get()));
-    return WTF::move(result);
+    return result.release();
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRule(CSSStyleRule* rule)
+PassRefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRule(CSSStyleRule* rule)
 {
     CSSStyleSheet* styleSheet = pageStyleSheet();
     if (!styleSheet)
         return nullptr;
 
-    auto result = Inspector::Protocol::CSS::CSSRule::create()
+    RefPtr<Inspector::Protocol::CSS::CSSRule> result = Inspector::Protocol::CSS::CSSRule::create()
         .setSelectorList(buildObjectForSelectorList(rule))
         .setSourceLine(rule->styleRule().sourceLine())
         .setOrigin(m_origin)
-        .setStyle(buildObjectForStyle(&rule->style()))
-        .release();
+        .setStyle(buildObjectForStyle(&rule->style()));
 
     // "sourceURL" is present only for regular rules, otherwise "origin" should be used in the frontend.
     if (m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::Regular)
@@ -1091,16 +1084,16 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRul
             result->setRuleId(id.asProtocolValue<Inspector::Protocol::CSS::CSSRuleId>());
     }
 
-    auto mediaArray = Array<Inspector::Protocol::CSS::CSSMedia>::create();
+    RefPtr<Array<Inspector::Protocol::CSS::CSSMedia>> mediaArray = Array<Inspector::Protocol::CSS::CSSMedia>::create();
 
     fillMediaListChain(rule, mediaArray.get());
     if (mediaArray->length())
-        result->setMedia(WTF::move(mediaArray));
+        result->setMedia(mediaArray.release());
 
-    return WTF::move(result);
+    return result.release();
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyleSheet::buildObjectForStyle(CSSStyleDeclaration* style)
+PassRefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyleSheet::buildObjectForStyle(CSSStyleDeclaration* style)
 {
     RefPtr<CSSRuleSourceData> sourceData;
     if (ensureParsedDataReady())
@@ -1126,7 +1119,7 @@ RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorStyleSheet::buildObjectForSt
         }
     }
 
-    return WTF::move(result);
+    return result.release();
 }
 
 bool InspectorStyleSheet::setStyleText(const InspectorCSSId& id, const String& text, String* oldText, ExceptionCode& ec)
@@ -1171,7 +1164,7 @@ bool InspectorStyleSheet::toggleProperty(const InspectorCSSId& id, unsigned prop
     bool success = inspectorStyle->toggleProperty(propertyIndex, disable, ec);
     if (success) {
         if (disable)
-            rememberInspectorStyle(inspectorStyle.copyRef());
+            rememberInspectorStyle(inspectorStyle);
         else if (!inspectorStyle->hasDisabledProperties())
             forgetInspectorStyle(inspectorStyle->cssStyle());
         fireStyleSheetChanged();
@@ -1202,7 +1195,7 @@ void InspectorStyleSheet::fireStyleSheetChanged()
         m_listener->styleSheetChanged(this);
 }
 
-RefPtr<InspectorStyle> InspectorStyleSheet::inspectorStyleForId(const InspectorCSSId& id)
+PassRefPtr<InspectorStyle> InspectorStyleSheet::inspectorStyleForId(const InspectorCSSId& id)
 {
     CSSStyleDeclaration* style = styleForId(id);
     if (!style)
@@ -1214,7 +1207,7 @@ RefPtr<InspectorStyle> InspectorStyleSheet::inspectorStyleForId(const InspectorC
     return it->value;
 }
 
-void InspectorStyleSheet::rememberInspectorStyle(RefPtr<InspectorStyle>&& inspectorStyle)
+void InspectorStyleSheet::rememberInspectorStyle(RefPtr<InspectorStyle> inspectorStyle)
 {
     m_inspectorStyles.set(inspectorStyle->cssStyle(), inspectorStyle);
 }
@@ -1424,23 +1417,23 @@ bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
     return true;
 }
 
-Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>> InspectorStyleSheet::buildArrayForRuleList(CSSRuleList* ruleList)
+PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>> InspectorStyleSheet::buildArrayForRuleList(CSSRuleList* ruleList)
 {
-    auto result = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>::create();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>> result = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>::create();
     if (!ruleList)
-        return WTF::move(result);
+        return result.release();
 
     RefPtr<CSSRuleList> refRuleList = ruleList;
     CSSStyleRuleVector rules;
-    collectFlatRules(WTF::move(refRuleList), &rules);
+    collectFlatRules(refRuleList, &rules);
 
     for (unsigned i = 0, size = rules.size(); i < size; ++i)
         result->addItem(buildObjectForRule(rules.at(i).get()));
 
-    return WTF::move(result);
+    return result.release();
 }
 
-void InspectorStyleSheet::collectFlatRules(RefPtr<CSSRuleList>&& ruleList, CSSStyleRuleVector* result)
+void InspectorStyleSheet::collectFlatRules(PassRefPtr<CSSRuleList> ruleList, CSSStyleRuleVector* result)
 {
     if (!ruleList)
         return;
@@ -1453,19 +1446,19 @@ void InspectorStyleSheet::collectFlatRules(RefPtr<CSSRuleList>&& ruleList, CSSSt
         else {
             RefPtr<CSSRuleList> childRuleList = asCSSRuleList(rule);
             if (childRuleList)
-                collectFlatRules(WTF::move(childRuleList), result);
+                collectFlatRules(childRuleList, result);
         }
     }
 }
 
-Ref<InspectorStyleSheetForInlineStyle> InspectorStyleSheetForInlineStyle::create(InspectorPageAgent* pageAgent, const String& id, RefPtr<Element>&& element, Inspector::Protocol::CSS::StyleSheetOrigin origin, Listener* listener)
+PassRefPtr<InspectorStyleSheetForInlineStyle> InspectorStyleSheetForInlineStyle::create(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<Element> element, Inspector::Protocol::CSS::StyleSheetOrigin origin, Listener* listener)
 {
-    return adoptRef(*new InspectorStyleSheetForInlineStyle(pageAgent, id, WTF::move(element), origin, listener));
+    return adoptRef(new InspectorStyleSheetForInlineStyle(pageAgent, id, element, origin, listener));
 }
 
-InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(InspectorPageAgent* pageAgent, const String& id, RefPtr<Element>&& element, Inspector::Protocol::CSS::StyleSheetOrigin origin, Listener* listener)
+InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(InspectorPageAgent* pageAgent, const String& id, PassRefPtr<Element> element, Inspector::Protocol::CSS::StyleSheetOrigin origin, Listener* listener)
     : InspectorStyleSheet(pageAgent, id, nullptr, origin, "", listener)
-    , m_element(WTF::move(element))
+    , m_element(element)
     , m_ruleSourceData(nullptr)
     , m_isStyleTextValid(false)
 {
@@ -1538,10 +1531,10 @@ bool InspectorStyleSheetForInlineStyle::ensureParsedDataReady()
     return true;
 }
 
-RefPtr<InspectorStyle> InspectorStyleSheetForInlineStyle::inspectorStyleForId(const InspectorCSSId& id)
+PassRefPtr<InspectorStyle> InspectorStyleSheetForInlineStyle::inspectorStyleForId(const InspectorCSSId& id)
 {
     ASSERT_UNUSED(id, !id.ordinal());
-    return m_inspectorStyle.copyRef();
+    return m_inspectorStyle;
 }
 
 CSSStyleDeclaration* InspectorStyleSheetForInlineStyle::inlineStyle() const

@@ -111,7 +111,7 @@ class ObjCConfigurationImplementationGenerator(Generator):
             lines.append('    id successCallback = ^{')
 
         if command.return_parameters:
-            lines.append('        Ref<InspectorObject> resultObject = InspectorObject::create();')
+            lines.append('        RefPtr<InspectorObject> resultObject = InspectorObject::create();')
 
             required_pointer_parameters = filter(lambda parameter: not parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type), command.return_parameters)
             for parameter in required_pointer_parameters:

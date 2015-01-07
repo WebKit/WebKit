@@ -51,7 +51,7 @@ class TextResourceDecoder;
 
 class XHRReplayData : public RefCounted<XHRReplayData> {
 public:
-    static Ref<XHRReplayData> create(const String &method, const URL&, bool async, RefPtr<FormData>&&, const HTTPHeaderMap& headers, bool includeCredentials);
+    static PassRefPtr<XHRReplayData> create(const String &method, const URL&, bool async, PassRefPtr<FormData>, const HTTPHeaderMap& headers, bool includeCredentials);
 
     const String& method() const { return m_method; }
     const URL& url() const { return m_url; }
@@ -60,7 +60,7 @@ public:
     const HTTPHeaderMap& headers() const { return m_headers; }
     bool includeCredentials() const { return m_includeCredentials; }
 private:
-    XHRReplayData(const String &method, const URL&, bool async, RefPtr<FormData>&&, const HTTPHeaderMap& headers, bool includeCredentials);
+    XHRReplayData(const String &method, const URL&, bool async, PassRefPtr<FormData>, const HTTPHeaderMap& headers, bool includeCredentials);
 
     String m_method;
     URL m_url;
@@ -107,11 +107,11 @@ public:
         String textEncodingName() const { return m_textEncodingName; }
         void setTextEncodingName(const String& textEncodingName) { m_textEncodingName = textEncodingName; }
 
-        RefPtr<TextResourceDecoder> decoder() const { return m_decoder.copyRef(); }
-        void setDecoder(RefPtr<TextResourceDecoder>&& decoder) { m_decoder = WTF::move(decoder); }
+        PassRefPtr<TextResourceDecoder> decoder() const { return m_decoder; }
+        void setDecoder(PassRefPtr<TextResourceDecoder> decoder) { m_decoder = decoder; }
 
-        RefPtr<SharedBuffer> buffer() const { return m_buffer.copyRef(); }
-        void setBuffer(RefPtr<SharedBuffer>&& buffer) { m_buffer = WTF::move(buffer); }
+        PassRefPtr<SharedBuffer> buffer() const { return m_buffer; }
+        void setBuffer(PassRefPtr<SharedBuffer> buffer) { m_buffer = buffer; }
 
         CachedResource* cachedResource() const { return m_cachedResource; }
         void setCachedResource(CachedResource* cachedResource) { m_cachedResource = cachedResource; }

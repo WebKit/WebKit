@@ -43,12 +43,12 @@ namespace WebCore {
 
 static int nextUnusedId = 1;
 
-Ref<InspectorDatabaseResource> InspectorDatabaseResource::create(RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
+PassRefPtr<InspectorDatabaseResource> InspectorDatabaseResource::create(PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
-    return adoptRef(*new InspectorDatabaseResource(WTF::move(database), domain, name, version));
+    return adoptRef(new InspectorDatabaseResource(database, domain, name, version));
 }
 
-InspectorDatabaseResource::InspectorDatabaseResource(RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
+InspectorDatabaseResource::InspectorDatabaseResource(PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
     : m_database(database)
     , m_id(String::number(nextUnusedId++))
     , m_domain(domain)
@@ -59,13 +59,12 @@ InspectorDatabaseResource::InspectorDatabaseResource(RefPtr<Database>&& database
 
 void InspectorDatabaseResource::bind(InspectorDatabaseFrontendDispatcher* databaseFrontendDispatcher)
 {
-    auto jsonObject = Inspector::Protocol::Database::Database::create()
+    RefPtr<Inspector::Protocol::Database::Database> jsonObject = Inspector::Protocol::Database::Database::create()
         .setId(m_id)
         .setDomain(m_domain)
         .setName(m_name)
-        .setVersion(m_version)
-        .release();
-    databaseFrontendDispatcher->addDatabase(WTF::move(jsonObject));
+        .setVersion(m_version);
+    databaseFrontendDispatcher->addDatabase(jsonObject);
 }
 
 } // namespace WebCore

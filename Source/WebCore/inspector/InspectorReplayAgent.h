@@ -95,7 +95,7 @@ public:
     virtual void startCapturing(ErrorString&) override;
     virtual void stopCapturing(ErrorString&) override;
 
-    virtual void replayToPosition(ErrorString&, const RefPtr<Inspector::InspectorObject>&&, bool shouldFastForward) override;
+    virtual void replayToPosition(ErrorString&, const RefPtr<Inspector::InspectorObject>&, bool shouldFastForward) override;
     virtual void replayToCompletion(ErrorString&, bool shouldFastForward) override;
     virtual void pausePlayback(ErrorString&) override;
     virtual void cancelPlayback(ErrorString&) override;

@@ -58,7 +58,7 @@ bool ScriptCallFrame::isEqual(const ScriptCallFrame& o) const
 }
 
 #if ENABLE(INSPECTOR)
-Ref<Inspector::Protocol::Console::CallFrame> ScriptCallFrame::buildInspectorObject() const
+PassRefPtr<Inspector::Protocol::Console::CallFrame> ScriptCallFrame::buildInspectorObject() const
 {
     return Inspector::Protocol::Console::CallFrame::create()
         .setFunctionName(m_functionName)

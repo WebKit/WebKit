@@ -27,7 +27,7 @@
 #ifndef InspectorBackendDispatcher_h
 #define InspectorBackendDispatcher_h
 
-#include "InspectorProtocolTypes.h"
+#include "InspectorValues.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -40,31 +40,30 @@ typedef String ErrorString;
 
 class InspectorSupplementalBackendDispatcher : public RefCounted<InspectorSupplementalBackendDispatcher> {
 public:
-    InspectorSupplementalBackendDispatcher(InspectorBackendDispatcher& backendDispatcher)
-        : m_backendDispatcher(backendDispatcher) { }
+    InspectorSupplementalBackendDispatcher(InspectorBackendDispatcher* backendDispatcher) : m_backendDispatcher(backendDispatcher) { }
     virtual ~InspectorSupplementalBackendDispatcher() { }
-    virtual void dispatch(long callId, const String& method, Ref<InspectorObject>&& message) = 0;
+    virtual void dispatch(long callId, const String& method, PassRefPtr<InspectorObject> message) = 0;
 protected:
-    Ref<InspectorBackendDispatcher> m_backendDispatcher;
+    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
 };
 
 class JS_EXPORT_PRIVATE InspectorBackendDispatcher : public RefCounted<InspectorBackendDispatcher> {
 public:
-    static Ref<InspectorBackendDispatcher> create(InspectorFrontendChannel*);
+    static PassRefPtr<InspectorBackendDispatcher> create(InspectorFrontendChannel*);
 
     class JS_EXPORT_PRIVATE CallbackBase : public RefCounted<CallbackBase> {
     public:
-        CallbackBase(Ref<InspectorBackendDispatcher>&&, int id);
+        CallbackBase(PassRefPtr<InspectorBackendDispatcher>, int id);
 
         bool isActive() const;
         void sendFailure(const ErrorString&);
         void disable() { m_alreadySent = true; }
 
     protected:
-        void sendIfActive(RefPtr<InspectorObject>&& partialMessage, const ErrorString& invocationError);
+        void sendIfActive(PassRefPtr<InspectorObject> partialMessage, const ErrorString& invocationError);
 
     private:
-        Ref<InspectorBackendDispatcher> m_backendDispatcher;
+        RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
         int m_id;
         bool m_alreadySent;
     };
@@ -83,17 +82,17 @@ public:
 
     void registerDispatcherForDomain(const String& domain, InspectorSupplementalBackendDispatcher*);
     void dispatch(const String& message);
-    void sendResponse(long callId, RefPtr<InspectorObject>&& result, const ErrorString& invocationError);
+    void sendResponse(long callId, PassRefPtr<InspectorObject> result, const ErrorString& invocationError);
     void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage) const;
-    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, RefPtr<Inspector::Protocol::Array<String>>&& data) const;
+    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorMessage, PassRefPtr<InspectorArray> data) const;
 
-    static int getInteger(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static double getDouble(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static String getString(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static bool getBoolean(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static RefPtr<InspectorValue> getValue(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static RefPtr<InspectorObject> getObject(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
-    static RefPtr<InspectorArray> getArray(InspectorObject*, const String& name, bool* valueFound, Inspector::Protocol::Array<String>& protocolErrors);
+    static int getInteger(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static double getDouble(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static String getString(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static bool getBoolean(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static PassRefPtr<InspectorValue> getValue(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static PassRefPtr<InspectorObject> getObject(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
+    static PassRefPtr<InspectorArray> getArray(InspectorObject*, const String& name, bool* valueFound, InspectorArray* protocolErrors);
 
 private:
     InspectorBackendDispatcher(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }

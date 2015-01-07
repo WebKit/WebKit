@@ -37,22 +37,22 @@ using namespace Inspector;
 
 namespace JSC {
 
-RefPtr<InspectorObject> EncodedValue::asObject()
+PassRefPtr<InspectorObject> EncodedValue::asObject()
 {
     RefPtr<InspectorObject> result;
     bool castSucceeded = m_value->asObject(result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
-    return result;
+    return result.release();
 }
 
-RefPtr<InspectorArray> EncodedValue::asArray()
+PassRefPtr<InspectorArray> EncodedValue::asArray()
 {
     RefPtr<InspectorArray> result;
     bool castSucceeded = m_value->asArray(result);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
 
-    return result;
+    return result.release();
 }
 
 EncodedValue EncodingTraits<Vector<char>>::encodeValue(const Vector<char>& buffer)
@@ -175,23 +175,23 @@ template<> String EncodedValue::convertTo<String>()
 template<>
 void EncodedValue::put<EncodedValue>(const String& key, const typename EncodingTraits<EncodedValue>::DecodedType& value)
 {
-    asObject()->setValue(key, value.m_value.copyRef());
+    asObject()->setValue(key, value.m_value);
 }
 
 template<>
 void EncodedValue::append<EncodedValue>(const typename EncodingTraits<EncodedValue>::DecodedType& value)
 {
-    asArray()->pushValue(value.m_value.copyRef());
+    asArray()->pushValue(value.m_value);
 }
 
 template<>
 bool EncodedValue::get<EncodedValue>(const String& key, typename EncodingTraits<EncodedValue>::DecodedType& decodedValue)
 {
-    RefPtr<Inspector::InspectorValue> value;
-    if (!asObject()->getValue(key, value))
+    RefPtr<Inspector::InspectorValue> inspectorValue(asObject()->get(key));
+    if (!inspectorValue)
         return false;
 
-    decodedValue = EncodedValue(WTF::move(value));
+    decodedValue = EncodedValue(inspectorValue);
     return true;
 }
 

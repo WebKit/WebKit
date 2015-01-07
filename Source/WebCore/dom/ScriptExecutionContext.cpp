@@ -350,25 +350,25 @@ bool ScriptExecutionContext::sanitizeScriptError(String& errorMessage, int& line
     return true;
 }
 
-void ScriptExecutionContext::reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, RefPtr<ScriptCallStack>&& callStack, CachedScript* cachedScript)
+void ScriptExecutionContext::reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack, CachedScript* cachedScript)
 {
     if (m_inDispatchErrorEvent) {
         if (!m_pendingExceptions)
             m_pendingExceptions = std::make_unique<Vector<std::unique_ptr<PendingException>>>();
-        m_pendingExceptions->append(std::make_unique<PendingException>(errorMessage, lineNumber, columnNumber, sourceURL, callStack.copyRef()));
+        m_pendingExceptions->append(std::make_unique<PendingException>(errorMessage, lineNumber, columnNumber, sourceURL, callStack));
         return;
     }
 
     // First report the original exception and only then all the nested ones.
     if (!dispatchErrorEvent(errorMessage, lineNumber, columnNumber, sourceURL, cachedScript))
-        logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, callStack.copyRef());
+        logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, callStack);
 
     if (!m_pendingExceptions)
         return;
 
     std::unique_ptr<Vector<std::unique_ptr<PendingException>>> pendingExceptions = WTF::move(m_pendingExceptions);
     for (auto& exception : *pendingExceptions)
-        logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, exception->m_callStack.copyRef());
+        logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, exception->m_callStack);
 }
 
 void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)

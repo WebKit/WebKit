@@ -47,8 +47,8 @@ class JS_EXPORT_PRIVATE ScriptCallStack : public RefCounted<ScriptCallStack> {
 public:
     static const size_t maxCallStackSizeToCapture = 200;
     
-    static Ref<ScriptCallStack> create();
-    static Ref<ScriptCallStack> create(Vector<ScriptCallFrame>&);
+    static PassRefPtr<ScriptCallStack> create();
+    static PassRefPtr<ScriptCallStack> create(Vector<ScriptCallFrame>&);
 
     ~ScriptCallStack();
 
@@ -62,7 +62,7 @@ public:
     bool isEqual(ScriptCallStack*) const;
 
 #if ENABLE(INSPECTOR)
-    Ref<Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>> buildInspectorArray() const;
+    PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>> buildInspectorArray() const;
 #endif
 
 private:

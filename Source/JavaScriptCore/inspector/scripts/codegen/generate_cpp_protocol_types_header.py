@@ -52,6 +52,7 @@ class CppProtocolTypesHeaderGenerator(Generator):
         headers = set([
             '<inspector/InspectorProtocolTypes.h>',
             '<wtf/Assertions.h>',
+            '<wtf/PassRefPtr.h>'
         ])
 
         export_macro = self.model().framework.setting('export_macro', None)
@@ -194,10 +195,9 @@ class CppProtocolTypesHeaderGenerator(Generator):
         lines.append(self._generate_builder_state_enum(type_declaration))
 
         constructor_example = []
-        constructor_example.append('     * Ref<%s> result = %s::create()' % (object_name, object_name))
+        constructor_example.append('     * RefPtr<%s> result = %s::create()' % (object_name, object_name))
         for member in required_members:
             constructor_example.append('     *     .set%s(...)' % ucfirst(member.member_name))
-        constructor_example.append('     *     .release()')
 
         builder_args = {
             'objectType': object_name,
@@ -302,8 +302,6 @@ class CppProtocolTypesHeaderGenerator(Generator):
         lines.append('    {')
         if isinstance(type_member.type, EnumType):
             lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), Inspector::Protocol::getEnumConstantValue(static_cast<int>(value)));' % setter_args)
-        elif CppGenerator.should_use_references_for_type(type_member.type):
-            lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), WTF::move(value));' % setter_args)
         else:
             lines.append('        InspectorObjectBase::%(keyedSet)s(ASCIILiteral("%(name)s"), value);' % setter_args)
         lines.append('    }')
@@ -335,7 +333,7 @@ class CppProtocolTypesHeaderGenerator(Generator):
         for argument in type_arguments:
             lines.append('template<> %s BindingTraits<%s> {' % (' '.join(struct_keywords), argument[0]))
             if argument[1]:
-                lines.append('static RefPtr<%s> runtimeCast(RefPtr<Inspector::InspectorValue>&& value);' % argument[0])
+                lines.append('static PassRefPtr<%s> runtimeCast(PassRefPtr<Inspector::InspectorValue> value);' % argument[0])
             lines.append('#if !ASSERT_DISABLED')
             lines.append('%s assertValueHasExpectedType(Inspector::InspectorValue*);' % ' '.join(function_keywords))
             lines.append('#endif // !ASSERT_DISABLED')

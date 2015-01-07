@@ -80,12 +80,12 @@ static ScriptDebugServer::PauseOnExceptionsState setPauseOnExceptionsState(Scrip
     return presentState;
 }
 
-static Ref<Inspector::Protocol::Runtime::ErrorRange> buildErrorRangeObject(const JSTokenLocation& tokenLocation)
+static PassRefPtr<Inspector::Protocol::Runtime::ErrorRange> buildErrorRangeObject(const JSTokenLocation& tokenLocation)
 {
-    return Inspector::Protocol::Runtime::ErrorRange::create()
+    RefPtr<Inspector::Protocol::Runtime::ErrorRange> result = Inspector::Protocol::Runtime::ErrorRange::create()
         .setStartOffset(tokenLocation.startOffset)
-        .setEndOffset(tokenLocation.endOffset)
-        .release();
+        .setEndOffset(tokenLocation.endOffset);
+    return result.release();
 }
 
 void InspectorRuntimeAgent::parse(ErrorString&, const String& expression, Inspector::Protocol::Runtime::SyntaxErrorType* result, Inspector::Protocol::OptOutput<String>* message, RefPtr<Inspector::Protocol::Runtime::ErrorRange>& range)
@@ -137,7 +137,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& exp
     }
 }
 
-void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>&& optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown)
+void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
@@ -147,7 +147,7 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const Strin
 
     String arguments;
     if (optionalArguments)
-        arguments = optionalArguments->toJSONString();
+        arguments = (*optionalArguments)->toJSONString();
 
     ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = ScriptDebugServer::DontPauseOnExceptions;
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
@@ -197,7 +197,7 @@ void InspectorRuntimeAgent::run(ErrorString&)
 {
 }
 
-void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& errorString, const RefPtr<Inspector::InspectorArray>&& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>& typeDescriptions)
+void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& errorString, const RefPtr<Inspector::InspectorArray>& locations, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::TypeDescription>>& typeDescriptions)
 {
     static const bool verbose = false;
     VM& vm = globalVM();
@@ -237,9 +237,8 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
         }
 
         bool isValid = typeLocation && typeSet && !typeSet->isEmpty();
-        auto description = Inspector::Protocol::Runtime::TypeDescription::create()
-            .setIsValid(isValid)
-            .release();
+        RefPtr<Inspector::Protocol::Runtime::TypeDescription> description = Inspector::Protocol::Runtime::TypeDescription::create()
+            .setIsValid(isValid);
 
         if (isValid) {
             description->setLeastCommonAncestor(typeSet->leastCommonAncestor());
@@ -248,7 +247,7 @@ void InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets(ErrorString& er
             description->setIsTruncated(typeSet->isOverflown());
         }
 
-        typeDescriptions->addItem(WTF::move(description));
+        typeDescriptions->addItem(description);
     }
 
     double end = currentTimeMS();
@@ -332,12 +331,11 @@ void InspectorRuntimeAgent::getBasicBlocks(ErrorString& errorString, const Strin
     const Vector<BasicBlockRange>& basicBlockRanges = vm.controlFlowProfiler()->getBasicBlocksForSourceID(sourceID, vm);
     basicBlocks = Inspector::Protocol::Array<Inspector::Protocol::Runtime::BasicBlock>::create();
     for (const BasicBlockRange& block : basicBlockRanges) {
-        Ref<Inspector::Protocol::Runtime::BasicBlock> location = Inspector::Protocol::Runtime::BasicBlock::create()
+        RefPtr<Inspector::Protocol::Runtime::BasicBlock> location = Inspector::Protocol::Runtime::BasicBlock::create()
             .setStartOffset(block.m_startOffset)
             .setEndOffset(block.m_endOffset)
-            .setHasExecuted(block.m_hasExecuted)
-            .release();
-        basicBlocks->addItem(WTF::move(location));
+            .setHasExecuted(block.m_hasExecuted);
+        basicBlocks->addItem(location);
     }
 }
 

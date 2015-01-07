@@ -72,7 +72,7 @@ public:
     void addProperty(RefPtr<StringImpl>);
     String stringRepresentation();
     String toJSONString() const;
-    Ref<Inspector::Protocol::Runtime::StructureDescription> inspectorRepresentation();
+    PassRefPtr<Inspector::Protocol::Runtime::StructureDescription> inspectorRepresentation();
     void setConstructorName(String name) { m_constructorName = (name.isEmpty() ? "Object" : name); }
     String constructorName() { return m_constructorName; }
     void setProto(PassRefPtr<StructureShape> shape) { m_proto = shape; }
@@ -102,11 +102,11 @@ public:
     void invalidateCache();
     String dumpTypes() const;
     String displayName() const;
-    Ref<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;
+    PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;
     String toJSONString() const;
     bool isOverflown() const { return m_isOverflown; }
     String leastCommonAncestor() const;
-    Ref<Inspector::Protocol::Runtime::TypeSet> inspectorTypeSet() const;
+    PassRefPtr<Inspector::Protocol::Runtime::TypeSet> inspectorTypeSet() const;
     bool isEmpty() const { return m_seenTypes == TypeNothing; }
     bool doesTypeConformTo(uint32_t test) const;
     uint32_t seenTypes() const { return m_seenTypes; }

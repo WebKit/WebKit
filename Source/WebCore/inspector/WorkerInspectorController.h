@@ -74,7 +74,7 @@ public:
     virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) override;
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override;
     virtual void frontendInitialized() override { }
-    virtual Ref<WTF::Stopwatch> executionStopwatch() override;
+    virtual PassRefPtr<WTF::Stopwatch> executionStopwatch() override;
 
 private:
     friend class InspectorInstrumentation;
@@ -85,7 +85,7 @@ private:
     WorkerRuntimeAgent* m_runtimeAgent;
     Inspector::InspectorAgentRegistry m_agents;
     std::unique_ptr<InspectorFrontendChannel> m_frontendChannel;
-    Ref<WTF::Stopwatch> m_executionStopwatch;
+    RefPtr<WTF::Stopwatch> m_executionStopwatch;
     RefPtr<Inspector::InspectorBackendDispatcher> m_backendDispatcher;
     Vector<InspectorInstrumentationCookie, 2> m_injectedScriptInstrumentationCookies;
 };

@@ -79,10 +79,10 @@ SharedWorkerThread& SharedWorkerGlobalScope::thread()
     return static_cast<SharedWorkerThread&>(Base::thread());
 }
 
-void SharedWorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack)
+void SharedWorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, PassRefPtr<Inspector::ScriptCallStack> callStack)
 {
-    WorkerGlobalScope::logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, callStack.copyRef());
-    addMessageToWorkerConsole(MessageSource::JS, MessageLevel::Error, errorMessage, sourceURL, lineNumber, columnNumber, callStack.copyRef());
+    WorkerGlobalScope::logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, callStack);
+    addMessageToWorkerConsole(MessageSource::JS, MessageLevel::Error, errorMessage, sourceURL, lineNumber, columnNumber, callStack);
 }
 
 } // namespace WebCore

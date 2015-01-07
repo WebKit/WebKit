@@ -224,19 +224,19 @@ private:
     void internalStop();
     double timestamp();
 
-    void sendEvent(RefPtr<Inspector::InspectorObject>&&);
-    void appendRecord(RefPtr<Inspector::InspectorObject>&& data, TimelineRecordType, bool captureCallStack, Frame*);
-    void pushCurrentRecord(RefPtr<Inspector::InspectorObject>&&, TimelineRecordType, bool captureCallStack, Frame*);
+    void sendEvent(PassRefPtr<Inspector::InspectorObject>);
+    void appendRecord(PassRefPtr<Inspector::InspectorObject> data, TimelineRecordType, bool captureCallStack, Frame*);
+    void pushCurrentRecord(PassRefPtr<Inspector::InspectorObject>, TimelineRecordType, bool captureCallStack, Frame*);
     void pushCurrentRecord(const TimelineRecordEntry& record) { m_recordStack.append(record); }
 
-    TimelineRecordEntry createRecordEntry(RefPtr<Inspector::InspectorObject>&& data, TimelineRecordType, bool captureCallStack, Frame*);
+    TimelineRecordEntry createRecordEntry(PassRefPtr<Inspector::InspectorObject> data, TimelineRecordType, bool captureCallStack, Frame*);
 
     void setFrameIdentifier(Inspector::InspectorObject* record, Frame*);
 
     void didCompleteRecordEntry(const TimelineRecordEntry&);
     void didCompleteCurrentRecord(TimelineRecordType);
 
-    void addRecordToTimeline(RefPtr<Inspector::InspectorObject>&&, TimelineRecordType);
+    void addRecordToTimeline(PassRefPtr<Inspector::InspectorObject>, TimelineRecordType);
     void clearRecordStack();
 
     void localToPageQuad(const RenderObject&, const LayoutRect&, FloatQuad*);

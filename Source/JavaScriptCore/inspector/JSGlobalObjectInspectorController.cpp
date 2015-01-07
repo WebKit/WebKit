@@ -222,9 +222,9 @@ void JSGlobalObjectInspectorController::frontendInitialized()
 #endif
 }
 
-Ref<Stopwatch> JSGlobalObjectInspectorController::executionStopwatch()
+PassRefPtr<Stopwatch> JSGlobalObjectInspectorController::executionStopwatch()
 {
-    return m_executionStopwatch.copyRef();
+    return m_executionStopwatch;
 }
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)

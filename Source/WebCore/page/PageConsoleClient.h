@@ -56,21 +56,21 @@ public:
     static void mute();
     static void unmute();
 
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& = nullptr, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
-    void addMessage(MessageSource, MessageLevel, const String& message, RefPtr<Inspector::ScriptCallStack>&&);
+    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, PassRefPtr<Inspector::ScriptCallStack> = nullptr, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
+    void addMessage(MessageSource, MessageLevel, const String& message, PassRefPtr<Inspector::ScriptCallStack>);
     void addMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0, Document* = nullptr);
 
     const ProfilesArray& profiles() const { return m_profiles; }
     void clearProfiles();
 
 protected:
-    virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&) override;
-    virtual void count(JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&) override;
+    virtual void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>) override;
+    virtual void count(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>) override;
     virtual void profile(JSC::ExecState*, const String& title) override;
     virtual void profileEnd(JSC::ExecState*, const String& title) override;
     virtual void time(JSC::ExecState*, const String& title) override;
     virtual void timeEnd(JSC::ExecState*, const String& title) override;
-    virtual void timeStamp(JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&) override;
+    virtual void timeStamp(JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>) override;
 
 private:
     Page& m_page;

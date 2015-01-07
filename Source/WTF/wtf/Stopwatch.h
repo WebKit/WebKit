@@ -33,9 +33,9 @@ namespace WTF {
 
 class Stopwatch : public RefCounted<Stopwatch> {
 public:
-    static Ref<Stopwatch> create()
+    static PassRefPtr<Stopwatch> create()
     {
-        return adoptRef(*new Stopwatch());
+        return adoptRef(new Stopwatch());
     }
 
     void reset();

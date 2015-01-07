@@ -62,9 +62,9 @@ public:
     void getProperties(ErrorString&, const String& objectId, bool ownProperties, RefPtr<Protocol::Array<Protocol::Runtime::PropertyDescriptor>>* result);
     void getInternalProperties(ErrorString&, const String& objectId, RefPtr<Protocol::Array<Protocol::Runtime::InternalPropertyDescriptor>>* result);
 
-    Ref<Protocol::Array<Protocol::Debugger::CallFrame>> wrapCallFrames(const Deprecated::ScriptValue&);
-    RefPtr<Protocol::Runtime::RemoteObject> wrapObject(const Deprecated::ScriptValue&, const String& groupName, bool generatePreview = false) const;
-    RefPtr<Protocol::Runtime::RemoteObject> wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const;
+    PassRefPtr<Protocol::Array<Protocol::Debugger::CallFrame>> wrapCallFrames(const Deprecated::ScriptValue&);
+    PassRefPtr<Protocol::Runtime::RemoteObject> wrapObject(const Deprecated::ScriptValue&, const String& groupName, bool generatePreview = false) const;
+    PassRefPtr<Protocol::Runtime::RemoteObject> wrapTable(const Deprecated::ScriptValue& table, const Deprecated::ScriptValue& columns) const;
 
     void setExceptionValue(const Deprecated::ScriptValue&);
     void clearExceptionValue();

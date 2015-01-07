@@ -122,7 +122,6 @@ class CppProtocolTypesImplementationGenerator(Generator):
         lines.append('#if !ASSERT_DISABLED')
         lines.append('void BindingTraits<%s>::assertValueHasExpectedType(Inspector::InspectorValue* value)' % (CppGenerator.cpp_protocol_type_for_type(object_declaration.type)))
         lines.append("""{
-    ASSERT_ARG(value, value);
     RefPtr<InspectorObject> object;
     bool castSucceeded = value->asObject(object);
     ASSERT_UNUSED(castSucceeded, castSucceeded);""")
@@ -170,7 +169,6 @@ class CppProtocolTypesImplementationGenerator(Generator):
         lines.append('#if !ASSERT_DISABLED')
         lines.append('void %s(Inspector::InspectorValue* value)' % CppGenerator.cpp_assertion_method_for_type_member(enum_member, object_declaration))
         lines.append('{')
-        lines.append('    ASSERT_ARG(value, value);')
         lines.append('    String result;')
         lines.append('    bool castSucceeded = value->asString(result);')
         lines.append('    ASSERT(castSucceeded);')

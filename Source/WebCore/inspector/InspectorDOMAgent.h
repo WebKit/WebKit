@@ -132,21 +132,21 @@ public:
     virtual void setNodeValue(ErrorString&, int nodeId, const String& value) override;
     virtual void getEventListenersForNode(ErrorString&, int nodeId, const WTF::String* objectGroup, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
     virtual void getAccessibilityPropertiesForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties) override;
-    virtual void performSearch(ErrorString&, const String& whitespaceTrimmedQuery, const RefPtr<Inspector::InspectorArray>&& nodeIds, String* searchId, int* resultCount) override;
+    virtual void performSearch(ErrorString&, const String& whitespaceTrimmedQuery, const RefPtr<Inspector::InspectorArray>* nodeIds, String* searchId, int* resultCount) override;
     virtual void getSearchResults(ErrorString&, const String& searchId, int fromIndex, int toIndex, RefPtr<Inspector::Protocol::Array<int>>&) override;
     virtual void discardSearchResults(ErrorString&, const String& searchId) override;
     virtual void resolveNode(ErrorString&, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) override;
     virtual void getAttributes(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::Array<String>>& result) override;
-    virtual void setInspectModeEnabled(ErrorString&, bool enabled, const RefPtr<Inspector::InspectorObject>&& highlightConfig) override;
+    virtual void setInspectModeEnabled(ErrorString&, bool enabled, const RefPtr<Inspector::InspectorObject>* highlightConfig) override;
     virtual void requestNode(ErrorString&, const String& objectId, int* nodeId) override;
     virtual void pushNodeByPathToFrontend(ErrorString&, const String& path, int* nodeId) override;
     virtual void pushNodeByBackendIdToFrontend(ErrorString&, BackendNodeId, int* nodeId) override;
     virtual void releaseBackendNodeIds(ErrorString&, const String& nodeGroup) override;
     virtual void hideHighlight(ErrorString&) override;
-    virtual void highlightRect(ErrorString&, int x, int y, int width, int height, const RefPtr<Inspector::InspectorObject>&& color, const RefPtr<Inspector::InspectorObject>&& outlineColor, const bool* usePageCoordinates) override;
-    virtual void highlightQuad(ErrorString&, const RefPtr<Inspector::InspectorArray>&& quad, const RefPtr<Inspector::InspectorObject>&& color, const RefPtr<Inspector::InspectorObject>&& outlineColor, const bool* usePageCoordinates) override;
-    virtual void highlightNode(ErrorString&, const RefPtr<Inspector::InspectorObject>&& highlightConfig, const int* nodeId, const String* objectId) override;
-    virtual void highlightFrame(ErrorString&, const String& frameId, const RefPtr<Inspector::InspectorObject>&& color, const RefPtr<Inspector::InspectorObject>&& outlineColor) override;
+    virtual void highlightRect(ErrorString&, int x, int y, int width, int height, const RefPtr<Inspector::InspectorObject>* color, const RefPtr<Inspector::InspectorObject>* outlineColor, const bool* usePageCoordinates) override;
+    virtual void highlightQuad(ErrorString&, const RefPtr<Inspector::InspectorArray>& quad, const RefPtr<Inspector::InspectorObject>* color, const RefPtr<Inspector::InspectorObject>* outlineColor, const bool* usePageCoordinates) override;
+    virtual void highlightNode(ErrorString&, const RefPtr<Inspector::InspectorObject>& highlightConfig, const int* nodeId, const String* objectId) override;
+    virtual void highlightFrame(ErrorString&, const String& frameId, const RefPtr<Inspector::InspectorObject>* color, const RefPtr<Inspector::InspectorObject>* outlineColor) override;
 
     virtual void moveTo(ErrorString&, int nodeId, int targetNodeId, const int* anchorNodeId, int* newNodeId) override;
     virtual void undo(ErrorString&) override;
@@ -186,7 +186,7 @@ public:
 
     static String documentURLString(Document*);
 
-    RefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
+    PassRefPtr<Inspector::Protocol::Runtime::RemoteObject> resolveNode(Node*, const String& objectGroup);
     bool handleMousePress();
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
     void inspect(Node*);
@@ -230,20 +230,21 @@ private:
 
     bool hasBreakpoint(Node*, int type);
     void updateSubtreeBreakpoints(Node* root, uint32_t rootMask, bool value);
+    void descriptionForDOMEvent(Node* target, int breakpointType, bool insertion, PassRefPtr<Inspector::InspectorObject> description);
 
-    Ref<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth, NodeToIdMap*);
-    Ref<Inspector::Protocol::Array<String>> buildArrayForElementAttributes(Element*);
-    Ref<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
-    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, const AtomicString& eventType, Node*, const String* objectGroupId);
-    RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
-    void processAccessibilityChildren(RefPtr<AccessibilityObject>&&, RefPtr<Inspector::Protocol::Array<int>>&&);
+    PassRefPtr<Inspector::Protocol::DOM::Node> buildObjectForNode(Node*, int depth, NodeToIdMap*);
+    PassRefPtr<Inspector::Protocol::Array<String>> buildArrayForElementAttributes(Element*);
+    PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
+    PassRefPtr<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, const AtomicString& eventType, Node*, const String* objectGroupId);
+    PassRefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
+    void processAccessibilityChildren(PassRefPtr<AccessibilityObject>, RefPtr<Inspector::Protocol::Array<int>>&);
     
     Node* nodeForPath(const String& path);
     Node* nodeForObjectId(const String& objectId);
 
     void discardBindings();
 
-    void innerHighlightQuad(std::unique_ptr<FloatQuad>, const RefPtr<Inspector::InspectorObject>&& color, const RefPtr<Inspector::InspectorObject>&& outlineColor, const bool* usePageCoordinates);
+    void innerHighlightQuad(std::unique_ptr<FloatQuad>, const RefPtr<Inspector::InspectorObject>* color, const RefPtr<Inspector::InspectorObject>* outlineColor, const bool* usePageCoordinates);
 
     InspectorPageAgent* m_pageAgent;
     Inspector::InjectedScriptManager* m_injectedScriptManager;

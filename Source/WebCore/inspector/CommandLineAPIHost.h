@@ -95,7 +95,7 @@ public:
     void addInspectedObject(std::unique_ptr<InspectableObject>);
     void clearInspectedObjects();
     InspectableObject* inspectedObject(unsigned index);
-    void inspectImpl(RefPtr<Inspector::InspectorValue>&& objectToInspect, RefPtr<Inspector::InspectorValue>&& hints);
+    void inspectImpl(PassRefPtr<Inspector::InspectorValue> objectToInspect, PassRefPtr<Inspector::InspectorValue> hints);
 
     void getEventListenersImpl(Node*, Vector<EventListenerInfo>& listenersArray);
 

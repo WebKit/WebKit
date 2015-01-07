@@ -129,7 +129,7 @@ public:
 
     void setIndicating(bool indicating);
 
-    RefPtr<Inspector::InspectorObject> buildObjectForHighlightedNode() const;
+    PassRefPtr<Inspector::InspectorObject> buildObjectForHighlightedNode() const;
 
     void freePage();
 private:
@@ -147,7 +147,7 @@ private:
     void reset(const IntSize& viewportSize, const IntSize& frameViewFullSize);
     void evaluateInOverlay(const String& method);
     void evaluateInOverlay(const String& method, const String& argument);
-    void evaluateInOverlay(const String& method, RefPtr<Inspector::InspectorValue>&& argument);
+    void evaluateInOverlay(const String& method, PassRefPtr<Inspector::InspectorValue> argument);
 
     Page& m_page;
     InspectorClient* m_client;

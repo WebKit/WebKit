@@ -42,6 +42,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
@@ -73,10 +74,10 @@ public:
     virtual void enable(ErrorString&) override;
     virtual void disable(ErrorString&) override;
     virtual void setBreakpointsActive(ErrorString&, bool active) override;
-    virtual void setBreakpointByUrl(ErrorString&, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<Inspector::InspectorObject>&& options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations) override;
-    virtual void setBreakpoint(ErrorString&, const RefPtr<Inspector::InspectorObject>&& location, const RefPtr<Inspector::InspectorObject>&& options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Debugger::Location>& actualLocation) override;
+    virtual void setBreakpointByUrl(ErrorString&, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const RefPtr<Inspector::InspectorObject>* options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::Location>>& locations) override;
+    virtual void setBreakpoint(ErrorString&, const RefPtr<Inspector::InspectorObject>& location, const RefPtr<Inspector::InspectorObject>* options, Inspector::Protocol::Debugger::BreakpointId*, RefPtr<Inspector::Protocol::Debugger::Location>& actualLocation) override;
     virtual void removeBreakpoint(ErrorString&, const String& breakpointIdentifier) override;
-    virtual void continueToLocation(ErrorString&, const RefPtr<InspectorObject>&& location) override;
+    virtual void continueToLocation(ErrorString&, const RefPtr<InspectorObject>& location) override;
     virtual void searchInContent(ErrorString&, const String& scriptID, const String& query, const bool* optionalCaseSensitive, const bool* optionalIsRegex, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::GenericTypes::SearchMatch>>&) override;
     virtual void getScriptSource(ErrorString&, const String& scriptID, String* scriptSource) override;
     virtual void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>&) override;
@@ -93,9 +94,9 @@ public:
     
     void handleConsoleAssert(const String& message);
 
-    void schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data);
+    void schedulePauseOnNextStatement(InspectorDebuggerFrontendDispatcher::Reason breakReason, PassRefPtr<InspectorObject> data);
     void cancelPauseOnNextStatement();
-    void breakProgram(InspectorDebuggerFrontendDispatcher::Reason breakReason, RefPtr<InspectorObject>&& data);
+    void breakProgram(InspectorDebuggerFrontendDispatcher::Reason breakReason, PassRefPtr<InspectorObject> data);
     void scriptExecutionBlockedByCSP(const String& directiveText);
 
     class Listener {
@@ -131,7 +132,7 @@ protected:
     void didClearGlobalObject();
 
 private:
-    Ref<Inspector::Protocol::Array<Inspector::Protocol::Debugger::CallFrame>> currentCallFrames();
+    PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Debugger::CallFrame>> currentCallFrames();
 
     virtual void didParseSource(JSC::SourceID, const Script&) override final;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) override final;
@@ -139,7 +140,7 @@ private:
     virtual void breakpointActionSound(int breakpointActionIdentifier) override;
     virtual void breakpointActionProbe(JSC::ExecState*, const ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, const Deprecated::ScriptValue& sample) override final;
 
-    RefPtr<Inspector::Protocol::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const ScriptBreakpoint&);
+    PassRefPtr<Inspector::Protocol::Debugger::Location> resolveBreakpoint(const String& breakpointIdentifier, JSC::SourceID, const ScriptBreakpoint&);
     bool assertPaused(ErrorString&);
     void clearDebuggerBreakpointState();
     void clearInspectorBreakpointState();

@@ -94,34 +94,34 @@ void InspectorDOMStorageAgent::disable(ErrorString&)
     m_enabled = false;
 }
 
-void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString& errorString, const RefPtr<InspectorObject>&& storageId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>>& items)
+void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString& errorString, const RefPtr<InspectorObject>& storageId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>>& items)
 {
     Frame* frame;
-    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId.copyRef(), frame);
+    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
         errorString = ASCIILiteral("No StorageArea for given storageId");
         return;
     }
 
-    auto storageItems = Inspector::Protocol::Array<Inspector::Protocol::Array<String>>::create();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Array<String>>> storageItems = Inspector::Protocol::Array<Inspector::Protocol::Array<String>>::create();
 
     for (unsigned i = 0; i < storageArea->length(); ++i) {
         String key = storageArea->key(i);
         String value = storageArea->item(key);
 
-        auto entry = Inspector::Protocol::Array<String>::create();
+        RefPtr<Inspector::Protocol::Array<String>> entry = Inspector::Protocol::Array<String>::create();
         entry->addItem(key);
         entry->addItem(value);
-        storageItems->addItem(WTF::move(entry));
+        storageItems->addItem(entry.release());
     }
 
-    items = WTF::move(storageItems);
+    items = storageItems.release();
 }
 
-void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const RefPtr<InspectorObject>&& storageId, const String& key, const String& value)
+void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const RefPtr<InspectorObject>& storageId, const String& key, const String& value)
 {
     Frame* frame;
-    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId.copyRef(), frame);
+    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
         errorString = ASCIILiteral("Storage not found");
         return;
@@ -133,10 +133,10 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const
         errorString = ExceptionCodeDescription(QUOTA_EXCEEDED_ERR).name;
 }
 
-void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString& errorString, const RefPtr<InspectorObject>&& storageId, const String& key)
+void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString& errorString, const RefPtr<InspectorObject>& storageId, const String& key)
 {
     Frame* frame;
-    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId.copyRef(), frame);
+    RefPtr<StorageArea> storageArea = findStorageArea(errorString, storageId, frame);
     if (!storageArea) {
         errorString = ASCIILiteral("Storage not found");
         return;
@@ -157,12 +157,11 @@ String InspectorDOMStorageAgent::storageId(Storage* storage)
     return storageId(securityOrigin.get(), isLocalStorage)->toJSONString();
 }
 
-RefPtr<Inspector::Protocol::DOMStorage::StorageId> InspectorDOMStorageAgent::storageId(SecurityOrigin* securityOrigin, bool isLocalStorage)
+PassRefPtr<Inspector::Protocol::DOMStorage::StorageId> InspectorDOMStorageAgent::storageId(SecurityOrigin* securityOrigin, bool isLocalStorage)
 {
     return Inspector::Protocol::DOMStorage::StorageId::create()
         .setSecurityOrigin(securityOrigin->toRawString())
-        .setIsLocalStorage(isLocalStorage)
-        .release();
+        .setIsLocalStorage(isLocalStorage).release();
 }
 
 void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page*)
@@ -182,7 +181,7 @@ void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, con
         m_frontendDispatcher->domStorageItemUpdated(id, key, oldValue, newValue);
 }
 
-RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& errorString, const RefPtr<InspectorObject>&& storageId, Frame*& targetFrame)
+PassRefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& errorString, const RefPtr<InspectorObject>& storageId, Frame*& targetFrame)
 {
     String securityOrigin;
     bool isLocalStorage = false;

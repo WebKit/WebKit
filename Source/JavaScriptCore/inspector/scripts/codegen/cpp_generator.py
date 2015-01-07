@@ -116,11 +116,12 @@ class CppGenerator:
         if isinstance(_type, EnumType):
             _type = _type.primitive_type  # Fall through to primitive.
 
+        sigil = '*' if parameter.is_optional else '&'
         # This handles the 'any' type and objects with defined properties.
         if isinstance(_type, ObjectType) or _type.qualified_name() is 'object':
-            return 'const RefPtr<Inspector::InspectorObject>&&'
+            return 'const RefPtr<Inspector::InspectorObject>' + sigil
         if isinstance(_type, ArrayType):
-            return 'const RefPtr<Inspector::InspectorArray>&&'
+            return 'const RefPtr<Inspector::InspectorArray>' + sigil
         if isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
             if parameter.is_optional:
@@ -143,7 +144,7 @@ class CppGenerator:
     @staticmethod
     def cpp_type_for_type_with_name(_type, type_name, is_optional):
         if isinstance(_type, (ArrayType, ObjectType)):
-            return 'RefPtr<%s>' % CppGenerator.cpp_protocol_type_for_type(_type)
+            return 'PassRefPtr<%s>' % CppGenerator.cpp_protocol_type_for_type(_type)
         if isinstance(_type, AliasedType):
             builder_type = CppGenerator.cpp_protocol_type_for_type(_type)
             if is_optional:
@@ -157,9 +158,9 @@ class CppGenerator:
         if isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
             if _type.qualified_name() in ['object']:
-                return 'RefPtr<Inspector::InspectorObject>'
+                return 'PassRefPtr<Inspector::InspectorObject>'
             elif _type.qualified_name() in ['any']:
-                return 'RefPtr<Inspector::InspectorValue>'
+                return 'PassRefPtr<Inspector::InspectorValue>'
             elif is_optional:
                 return 'const %s* const' % cpp_name
             elif _type.qualified_name() in ['string']:
@@ -211,7 +212,7 @@ class CppGenerator:
             _type = _type.primitive_type  # Fall through.
 
         if isinstance(_type, (ObjectType, ArrayType)):
-            return 'RefPtr<%s>&&' % CppGenerator.cpp_protocol_type_for_type(_type)
+            return 'PassRefPtr<%s>' % CppGenerator.cpp_protocol_type_for_type(_type)
         if isinstance(_type, PrimitiveType):
             cpp_name = CppGenerator.cpp_name_for_primitive_type(_type)
             if parameter.is_optional:
@@ -294,10 +295,6 @@ class CppGenerator:
     @staticmethod
     def should_use_wrapper_for_return_type(_type):
         return not isinstance(_type, (ArrayType, ObjectType))
-
-    @staticmethod
-    def should_use_references_for_type(_type):
-        return isinstance(_type, (ArrayType, ObjectType)) or (isinstance(_type, (PrimitiveType)) and _type.qualified_name() in ["any", "object"])
 
     @staticmethod
     def should_pass_by_copy_for_return_type(_type):

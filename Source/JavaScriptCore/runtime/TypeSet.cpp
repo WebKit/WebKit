@@ -237,17 +237,17 @@ String TypeSet::leastCommonAncestor() const
 }
 
 #if ENABLE(INSPECTOR)
-Ref<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> TypeSet::allStructureRepresentations() const
+PassRefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> TypeSet::allStructureRepresentations() const
 {
-    auto description = Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>::create();
+    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> description = Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>::create();
 
     for (size_t i = 0; i < m_structureHistory.size(); i++)
         description->addItem(m_structureHistory.at(i)->inspectorRepresentation());
 
-    return WTF::move(description);
+    return description.release();
 }
 
-Ref<Inspector::Protocol::Runtime::TypeSet> TypeSet::inspectorTypeSet() const
+PassRefPtr<Inspector::Protocol::Runtime::TypeSet> TypeSet::inspectorTypeSet() const
 {
     return Inspector::Protocol::Runtime::TypeSet::create()
         .setIsFunction((m_seenTypes & TypeFunction) != TypeNothing)
@@ -511,11 +511,11 @@ String StructureShape::toJSONString() const
 }
 
 #if ENABLE(INSPECTOR)
-Ref<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspectorRepresentation()
+PassRefPtr<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspectorRepresentation()
 {
-    auto base = Inspector::Protocol::Runtime::StructureDescription::create().release();
-    Ref<Inspector::Protocol::Runtime::StructureDescription> currentObject = base.copyRef();
-    RefPtr<StructureShape> currentShape(this);
+    RefPtr<Inspector::Protocol::Runtime::StructureDescription> base = Inspector::Protocol::Runtime::StructureDescription::create();
+    RefPtr<Inspector::Protocol::Runtime::StructureDescription> currentObject = base;
+    RefPtr<StructureShape> currentShape = this;
 
     while (currentShape) {
         auto fields = Inspector::Protocol::Array<String>::create();
@@ -525,21 +525,21 @@ Ref<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspecto
         for (auto field : currentShape->m_optionalFields)
             optionalFields->addItem(field.get());
 
-        currentObject->setFields(&fields.get());
-        currentObject->setOptionalFields(&optionalFields.get());
+        currentObject->setFields(fields);
+        currentObject->setOptionalFields(optionalFields);
         currentObject->setConstructorName(currentShape->m_constructorName);
         currentObject->setIsImprecise(currentShape->m_isInDictionaryMode);
 
         if (currentShape->m_proto) {
-            auto nextObject = Inspector::Protocol::Runtime::StructureDescription::create().release();
-            currentObject->setPrototypeStructure(&nextObject.get());
-            currentObject = WTF::move(nextObject);
+            RefPtr<Inspector::Protocol::Runtime::StructureDescription> nextObject = Inspector::Protocol::Runtime::StructureDescription::create();
+            currentObject->setPrototypeStructure(nextObject);
+            currentObject = nextObject;
         }
 
         currentShape = currentShape->m_proto;
     }
 
-    return WTF::move(base);
+    return base.release();
 }
 #endif
 

@@ -64,7 +64,7 @@ public:
     virtual void enable(ErrorString&) override;
     virtual void disable(ErrorString&) override;
     virtual void getDatabaseTableNames(ErrorString&, const String& databaseId, RefPtr<Inspector::Protocol::Array<String>>& names) override;
-    virtual void executeSQL(ErrorString&, const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&&) override;
+    virtual void executeSQL(ErrorString&, const String& databaseId, const String& query, PassRefPtr<ExecuteSQLCallback>) override;
 
     // Called from the injected script.
     String databaseId(Database*);

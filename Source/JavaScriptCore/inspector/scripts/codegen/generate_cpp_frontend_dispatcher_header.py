@@ -53,6 +53,7 @@ class CppFrontendDispatcherHeaderGenerator(Generator):
             '"InspectorProtocolObjects.h"',
             '<inspector/InspectorFrontendChannel.h>',
             '<inspector/InspectorValues.h>',
+            '<wtf/PassRefPtr.h>',
             '<wtf/text/WTFString.h>']
 
         header_args = {
