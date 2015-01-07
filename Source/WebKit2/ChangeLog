@@ -1,3 +1,16 @@
+2015-01-06  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Secondary WebKit processes get re-exec'ed twice when running under ASan
+        https://bugs.webkit.org/show_bug.cgi?id=140175
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm: (WebKit::addDYLDEnvironmentAdditions):
+        If the main process is ASanified, add the ASan dynamic library to DYLD_INSERT_LIBRARIES.
+        This avoids an extra re-exec, which is very annoying when debugging.
+        The library is linked in using @rpath, so the only reliable way to find its location
+        is by examining binary images loaded into the current process.
+
 2015-01-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] m_layer member in GraphicsLayerTextureMapper is always non-null

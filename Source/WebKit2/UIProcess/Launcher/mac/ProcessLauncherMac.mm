@@ -88,6 +88,17 @@ static void setUpTerminationNotificationHandler(pid_t pid)
     dispatch_resume(processDiedSource);
 }
 
+static const char* copyASanDynamicLibraryPath()
+{
+    uint32_t imageCount = _dyld_image_count();
+    for (uint32_t i = 0; i < imageCount; ++i) {
+        if (strstr(_dyld_get_image_name(i), "/libclang_rt.asan_"))
+            return fastStrDup(_dyld_get_image_name(i));
+    }
+
+    return 0;
+}
+
 static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& launchOptions, bool isWebKitDevelopmentBuild, EnvironmentVariables& environmentVariables)
 {
     DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], _NSGetMachExecuteHeader()->cputype);
@@ -125,6 +136,14 @@ static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& la
 
         processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
     }
+
+#if ASAN_ENABLED
+    static const char* asanLibraryPath = copyASanDynamicLibraryPath();
+    ASSERT(asanLibraryPath); // ASan runtime library was not found in the current process. This code may need to be updated if the library name has changed.
+    // ASan doesn't require this library to be inserted, but it otherwise automatically performs a re-exec, making the child process stop in a debugger on launch one extra time.
+    if (asanLibraryPath)
+        environmentVariables.appendValue("DYLD_INSERT_LIBRARIES", asanLibraryPath, ':');
+#endif
 
     // Make sure that the shim library file exists and insert it.
     if (processShimPathNSString) {
