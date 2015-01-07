@@ -1,3 +1,20 @@
+2015-01-07  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Add a vertical-rl test for shapes affecting a box that shrinks to avoid the float
+        https://bugs.webkit.org/show_bug.cgi?id=140189
+
+        Reviewed by David Hyatt.
+
+        These are just straightforward vertical writing mode versions of the
+        existing tests.
+
+        * fast/shapes/shape-outside-floats/shape-overflow-hidden-left-margin-vertical-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-overflow-hidden-left-margin-vertical.html: Added.
+        * fast/shapes/shape-outside-floats/shape-overflow-hidden-right-margin-vertical-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-overflow-hidden-right-margin-vertical.html: Added.
+        * fast/shapes/shape-outside-floats/shape-overflow-hidden-vertical-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-overflow-hidden-vertical.html: Added.
+
 2015-01-07  Myles C. Maxfield  <litherum@gmail.com>
 
         Update css3/flexbox/auto-margins.html after r177774
