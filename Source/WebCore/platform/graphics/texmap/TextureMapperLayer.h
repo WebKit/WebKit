@@ -79,6 +79,7 @@ public:
     void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
 
     void setChildren(const Vector<GraphicsLayer*>&);
+    void setChildren(const Vector<TextureMapperLayer*>&);
     void setMaskLayer(TextureMapperLayer*);
     void setReplicaLayer(TextureMapperLayer*);
     void setPosition(const FloatPoint&);

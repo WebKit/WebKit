@@ -452,6 +452,13 @@ void TextureMapperLayer::setChildren(const Vector<GraphicsLayer*>& newChildren)
         addChild(&downcast<GraphicsLayerTextureMapper>(child)->layer());
 }
 
+void TextureMapperLayer::setChildren(const Vector<TextureMapperLayer*>& newChildren)
+{
+    removeAllChildren();
+    for (auto* child : newChildren)
+        addChild(child);
+}
+
 void TextureMapperLayer::addChild(TextureMapperLayer* childLayer)
 {
     ASSERT(childLayer != this);

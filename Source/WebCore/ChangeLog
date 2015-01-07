@@ -1,5 +1,16 @@
 2015-01-07  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed fix for the CoordinatedGraphics builds after r178034.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::setChildren): Add back the setChildren()
+        variant that receives a reference to the Vector of TextureMapperLayer
+        objects. This is still used by the CoordinatedGraphics code that still
+        constructs a separate Vector object each time the layer's children change.
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
+2015-01-07  Zan Dobersek  <zdobersek@igalia.com>
+
         [TexMap] Use std::sort instead of qsort in TextureMapperLayer::sortByZOrder()
         https://bugs.webkit.org/show_bug.cgi?id=136212
 
