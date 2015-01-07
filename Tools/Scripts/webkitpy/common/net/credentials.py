@@ -89,10 +89,10 @@ class Credentials(object):
                                                    security_output)
         return [username, password]
 
-    def _run_security_tool(self, username=None):
+    def _run_security_tool(self, command, username=None):
         security_command = [
             "/usr/bin/security",
-            "find-internet-password",
+            command,
             "-g",
             "-s",
             self.host,
@@ -115,11 +115,15 @@ class Credentials(object):
         if not self._is_mac_os_x():
             return [username, None]
 
-        security_output = self._run_security_tool(username)
+        security_output = self._run_security_tool("find-internet-password", username)
+        if security_output:
+            parsed_output = self._parse_security_tool_output(security_output)
+            if any(parsed_output):
+                return parsed_output
+        security_output = self._run_security_tool("find-generic-password", username)
         if security_output:
             return self._parse_security_tool_output(security_output)
-        else:
-            return [None, None]
+        return [None, None]
 
     def _read_environ(self, key):
         environ_key = self._environ_prefix + key

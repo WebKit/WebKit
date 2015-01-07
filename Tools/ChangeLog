@@ -1,3 +1,21 @@
+2015-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make webkit-patch try harder to find keychain credentials
+        https://bugs.webkit.org/show_bug.cgi?id=140170
+
+        Reviewed by Ryosuke Niwa.
+
+        When the user manually enters a password into webkit-patch, we hand that off to the
+        Keyring Python module. However, that module creates a generic password entry instead
+        of an internet password entry. We should look for both kinds.
+
+        * Scripts/webkitpy/common/net/credentials.py:
+        (Credentials._run_security_tool):
+        (Credentials._credentials_from_keychain):
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+        (test_security_output_parse_entry_not_found):
+        (_assert_security_call):
+
 2015-01-06  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Mountain Lion build.
