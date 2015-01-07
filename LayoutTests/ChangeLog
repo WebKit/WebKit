@@ -1,3 +1,9 @@
+2015-01-07  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening after r177637.
+
+        * platform/gtk/TestExpectations: Mark new crashing/failing tests after r177637.
+
 2015-01-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
         ASSERTION FAILED: rareData->m_flowThreadContainingBlock.value() == RenderBox::locateFlowThreadContainingBlock() in WebCore::RenderBlock::locateFlowThreadContainingBlock

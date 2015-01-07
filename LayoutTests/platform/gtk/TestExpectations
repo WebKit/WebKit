@@ -619,6 +619,31 @@ webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html 
 
 webkit.org/b/139364 inspector-protocol/debugger/setBreakpoint-dfg.html [ Crash ]
 
+webkit.org/b/139905 css3/flexbox/inline-flex-crash.html [ Crash ]
+webkit.org/b/139905 editing/deleting/regional-indicators.html [ Crash ]
+webkit.org/b/139905 editing/text-iterator/rtl-first-letter-text-iterator-crash.html [ Crash ]
+webkit.org/b/139905 fast/css/line-height-determined-by-primary-font.html [ Failure ]
+webkit.org/b/139905 fast/lists/w3-css3-list-styles-numeric.html [ Crash ]
+webkit.org/b/139905 fast/ruby/bopomofo.html [ Failure ]
+webkit.org/b/139905 fast/ruby/bopomofo-letter-spacing.html [ Failure ]
+webkit.org/b/139905 fast/ruby/bopomofo-rl.html [ Failure ]
+webkit.org/b/139905 fast/text/decorations-with-text-combine.html [ Failure ]
+webkit.org/b/139905 fast/text/emphasis-combined-text.html [ Failure ]
+webkit.org/b/139905 fast/text/emphasis-vertical.html [ Failure ]
+webkit.org/b/139905 fast/text/international/khmer-selection.html [ Crash ]
+webkit.org/b/139905 fast/text/international/plane2.html [ Failure Crash ]
+webkit.org/b/139905 fast/text/justify-ideograph-complex.html [ Crash ]
+webkit.org/b/139905 fast/text/justify-ideograph-simple.html [ Failure Crash ]
+webkit.org/b/139905 fast/text/justify-ideograph-vertical.html [ Failure Crash ]
+webkit.org/b/139905 fast/text/khmer-crash.html [ Crash ]
+webkit.org/b/139905 fast/text/khmer-lao-font.html [ Crash ]
+webkit.org/b/139905 fast/text/midword-break-before-surrogate-pair-2.html [ Crash ]
+webkit.org/b/139905 fast/text/regional-indicator-symobls.html [ Crash ]
+webkit.org/b/139905 fast/text/unicode-variation-selector.html [ Crash ]
+webkit.org/b/139905 fast/url/idna2003.html [ Crash ]
+webkit.org/b/139905 js/kde/parse.html [ Crash ]
+webkit.org/b/139905 svg/custom/svg-fonts-fallback.xhtml [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
