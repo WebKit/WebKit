@@ -331,50 +331,50 @@ void InspectorOverlay::update()
     forcePaint();
 }
 
-static PassRefPtr<InspectorObject> buildObjectForPoint(const FloatPoint& point)
+static Ref<InspectorObject> buildObjectForPoint(const FloatPoint& point)
 {
-    RefPtr<InspectorObject> object = InspectorObject::create();
+    Ref<InspectorObject> object = InspectorObject::create();
     object->setDouble(ASCIILiteral("x"), point.x());
     object->setDouble(ASCIILiteral("y"), point.y());
-    return object.release();
+    return WTF::move(object);
 }
 
-static PassRefPtr<InspectorObject> buildObjectForRect(const FloatRect& rect)
+static Ref<InspectorObject> buildObjectForRect(const FloatRect& rect)
 {
-    RefPtr<InspectorObject> object = InspectorObject::create();
+    Ref<InspectorObject> object = InspectorObject::create();
     object->setDouble(ASCIILiteral("x"), rect.x());
     object->setDouble(ASCIILiteral("y"), rect.y());
     object->setDouble(ASCIILiteral("width"), rect.width());
     object->setDouble(ASCIILiteral("height"), rect.height());
-    return object.release();
+    return WTF::move(object);
 }
 
-static PassRefPtr<InspectorArray> buildArrayForQuad(const FloatQuad& quad)
+static Ref<InspectorArray> buildArrayForQuad(const FloatQuad& quad)
 {
-    RefPtr<InspectorArray> array = InspectorArray::create();
+    Ref<InspectorArray> array = InspectorArray::create();
     array->pushObject(buildObjectForPoint(quad.p1()));
     array->pushObject(buildObjectForPoint(quad.p2()));
     array->pushObject(buildObjectForPoint(quad.p3()));
     array->pushObject(buildObjectForPoint(quad.p4()));
-    return array.release();
+    return WTF::move(array);
 }
 
-static PassRefPtr<InspectorObject> buildObjectForHighlight(const Highlight& highlight)
+static Ref<InspectorObject> buildObjectForHighlight(const Highlight& highlight)
 {
-    RefPtr<InspectorObject> object = InspectorObject::create();
-    RefPtr<InspectorArray> array = InspectorArray::create();
+    Ref<InspectorObject> object = InspectorObject::create();
+    Ref<InspectorArray> array = InspectorArray::create();
     for (size_t i = 0; i < highlight.quads.size(); ++i)
         array->pushArray(buildArrayForQuad(highlight.quads[i]));
-    object->setArray("quads", array.release());
+    object->setArray("quads", WTF::move(array));
     object->setString("contentColor", highlight.contentColor.serialized());
     object->setString("contentOutlineColor", highlight.contentOutlineColor.serialized());
     object->setString("paddingColor", highlight.paddingColor.serialized());
     object->setString("borderColor", highlight.borderColor.serialized());
     object->setString("marginColor", highlight.marginColor.serialized());
-    return object.release();
+    return WTF::move(object);
 }
 
-static PassRefPtr<InspectorObject> buildObjectForRegionHighlight(FrameView* mainView, RenderRegion* region)
+static RefPtr<InspectorObject> buildObjectForRegionHighlight(FrameView* mainView, RenderRegion* region)
 {
     FrameView* containingView = region->frame().view();
     if (!containingView)
@@ -406,20 +406,20 @@ static PassRefPtr<InspectorObject> buildObjectForRegionHighlight(FrameView* main
     contentsQuadToPage(mainView, containingView, incomingRectQuad);
     contentsQuadToPage(mainView, containingView, outgoingRectQuad);
 
-    RefPtr<InspectorObject> regionObject = InspectorObject::create();
+    Ref<InspectorObject> regionObject = InspectorObject::create();
 
     regionObject->setArray("borderQuad", buildArrayForQuad(borderRectQuad));
     regionObject->setArray("incomingQuad", buildArrayForQuad(incomingRectQuad));
     regionObject->setArray("outgoingQuad", buildArrayForQuad(outgoingRectQuad));
 
-    return regionObject.release();
+    return WTF::move(regionObject);
 }
 
-static PassRefPtr<InspectorArray> buildObjectForCSSRegionsHighlight(RenderRegion* region, RenderFlowThread* flowThread)
+static Ref<InspectorArray> buildObjectForCSSRegionsHighlight(RenderRegion* region, RenderFlowThread* flowThread)
 {
     FrameView* mainFrameView = region->document().page()->mainFrame().view();
 
-    RefPtr<InspectorArray> array = InspectorArray::create();
+    Ref<InspectorArray> array = InspectorArray::create();
 
     const RenderRegionList& regionList = flowThread->renderRegionList();
     for (auto& iterRegion : regionList) {
@@ -435,18 +435,18 @@ static PassRefPtr<InspectorArray> buildObjectForCSSRegionsHighlight(RenderRegion
         array->pushObject(regionHighlightObject.release());
     }
 
-    return array.release();
+    return WTF::move(array);
 }
 
-static PassRefPtr<InspectorObject> buildObjectForSize(const IntSize& size)
+static Ref<InspectorObject> buildObjectForSize(const IntSize& size)
 {
-    RefPtr<InspectorObject> result = InspectorObject::create();
+    Ref<InspectorObject> result = InspectorObject::create();
     result->setInteger("width", size.width());
     result->setInteger("height", size.height());
-    return result.release();
+    return WTF::move(result);
 }
 
-static PassRefPtr<InspectorObject> buildObjectForCSSRegionContentClip(RenderRegion* region)
+static RefPtr<InspectorObject> buildObjectForCSSRegionContentClip(RenderRegion* region)
 {
     Frame* containingFrame = region->document().frame();
     if (!containingFrame)
@@ -466,9 +466,9 @@ static PassRefPtr<InspectorObject> buildObjectForCSSRegionContentClip(RenderRegi
     FloatQuad clipQuad = region->localToAbsoluteQuad(FloatRect(flippedRegionRect));
     contentsQuadToPage(mainView, containingView, clipQuad);
 
-    RefPtr<InspectorObject> regionObject = InspectorObject::create();
+    Ref<InspectorObject> regionObject = InspectorObject::create();
     regionObject->setArray("quad", buildArrayForQuad(clipQuad));
-    return regionObject.release();
+    return WTF::move(regionObject);
 }
 
 void InspectorOverlay::setShowingPaintRects(bool showingPaintRects)
@@ -526,11 +526,11 @@ void InspectorOverlay::updatePaintRectsTimerFired()
 
 void InspectorOverlay::drawPaintRects()
 {
-    RefPtr<InspectorArray> fragmentsArray = InspectorArray::create();
+    Ref<InspectorArray> fragmentsArray = InspectorArray::create();
     for (const auto& pair : m_paintRects)
         fragmentsArray->pushObject(buildObjectForRect(pair.second));
 
-    evaluateInOverlay(ASCIILiteral("updatePaintRects"), fragmentsArray.release());
+    evaluateInOverlay(ASCIILiteral("updatePaintRects"), WTF::move(fragmentsArray));
 }
 
 void InspectorOverlay::drawGutter()
@@ -538,9 +538,9 @@ void InspectorOverlay::drawGutter()
     evaluateInOverlay(ASCIILiteral("drawGutter"));
 }
 
-static PassRefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* renderer, const HighlightConfig& config)
+static RefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* renderer, const HighlightConfig& config)
 {
-    RefPtr<InspectorArray> fragmentsArray = InspectorArray::create();
+    Ref<InspectorArray> fragmentsArray = InspectorArray::create();
 
     RenderFlowThread* containingFlowThread = renderer->flowThreadContainingBlock();
     if (!containingFlowThread) {
@@ -562,18 +562,18 @@ static PassRefPtr<InspectorArray> buildObjectForRendererFragments(RenderObject* 
                 // Compute the highlight of the fragment inside the current region.
                 Highlight highlight;
                 buildRendererHighlight(renderer, region, config, &highlight, InspectorOverlay::CoordinateSystem::View);
-                RefPtr<InspectorObject> fragmentObject = buildObjectForHighlight(highlight);
+                Ref<InspectorObject> fragmentObject = buildObjectForHighlight(highlight);
 
                 // Compute the clipping area of the region.
                 fragmentObject->setObject("region", buildObjectForCSSRegionContentClip(region));
-                fragmentsArray->pushObject(fragmentObject.release());
+                fragmentsArray->pushObject(WTF::move(fragmentObject));
             }
             if (region == endRegion)
                 break;
         }
     }
 
-    return fragmentsArray.release();
+    return WTF::move(fragmentsArray);
 }
 
 #if ENABLE(CSS_SHAPES)
@@ -633,13 +633,13 @@ static void appendPathSegment(void* info, const PathElement* pathElement)
     }
 }
 
-static PassRefPtr<InspectorObject> buildObjectForShapeOutside(Frame* containingFrame, RenderBox* renderer)
+static RefPtr<InspectorObject> buildObjectForShapeOutside(Frame* containingFrame, RenderBox* renderer)
 {
     const ShapeOutsideInfo* shapeOutsideInfo = renderer->shapeOutsideInfo();
     if (!shapeOutsideInfo)
         return nullptr;
 
-    RefPtr<InspectorObject> shapeObject = InspectorObject::create();
+    Ref<InspectorObject> shapeObject = InspectorObject::create();
     LayoutRect shapeBounds = shapeOutsideInfo->computedShapePhysicalBoundingBox();
     FloatQuad shapeQuad = renderer->localToAbsoluteQuad(FloatRect(shapeBounds));
     contentsQuadToPage(containingFrame->page()->mainFrame().view(), containingFrame->view(), shapeQuad);
@@ -649,39 +649,39 @@ static PassRefPtr<InspectorObject> buildObjectForShapeOutside(Frame* containingF
     shapeOutsideInfo->computedShape().buildDisplayPaths(paths);
 
     if (paths.shape.length()) {
-        RefPtr<InspectorArray> shapePath = InspectorArray::create();
+        Ref<InspectorArray> shapePath = InspectorArray::create();
         PathApplyInfo info;
         info.rootView = containingFrame->page()->mainFrame().view();
         info.view = containingFrame->view();
-        info.array = shapePath.get();
+        info.array = &shapePath.get();
         info.renderer = renderer;
         info.shapeOutsideInfo = shapeOutsideInfo;
 
         paths.shape.apply(&info, &appendPathSegment);
 
-        shapeObject->setArray(ASCIILiteral("shape"), shapePath.release());
+        shapeObject->setArray(ASCIILiteral("shape"), shapePath.copyRef());
 
         if (paths.marginShape.length()) {
             shapePath = InspectorArray::create();
-            info.array = shapePath.get();
+            info.array = &shapePath.get();
 
             paths.marginShape.apply(&info, &appendPathSegment);
 
-            shapeObject->setArray(ASCIILiteral("marginShape"), shapePath.release());
+            shapeObject->setArray(ASCIILiteral("marginShape"), shapePath.copyRef());
         }
     }
 
-    return shapeObject.release();
+    return WTF::move(shapeObject);
 }
 #endif
 
-static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
+static RefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
 {
     ASSERT(node);
     if (!is<Element>(*node) || !node->document().frame())
         return nullptr;
 
-    RefPtr<InspectorObject> elementInfo = InspectorObject::create();
+    Ref<InspectorObject> elementInfo = InspectorObject::create();
 
     Element& element = downcast<Element>(*node);
     bool isXHTML = element.document().isXHTMLDocument();
@@ -746,10 +746,10 @@ static PassRefPtr<InspectorObject> buildObjectForElementInfo(Node* node)
             elementInfo->setString("role", axObject->computedRoleString());
     }
 
-    return elementInfo.release();
+    return WTF::move(elementInfo);
 }
 
-PassRefPtr<InspectorObject> InspectorOverlay::buildObjectForHighlightedNode() const
+RefPtr<InspectorObject> InspectorOverlay::buildObjectForHighlightedNode() const
 {
     if (!m_highlightNode)
         return nullptr;
@@ -763,7 +763,7 @@ PassRefPtr<InspectorObject> InspectorOverlay::buildObjectForHighlightedNode() co
     if (!highlightFragments)
         return nullptr;
 
-    RefPtr<InspectorObject> highlightObject = InspectorObject::create();
+    Ref<InspectorObject> highlightObject = InspectorObject::create();
 
     // The main view's scroll offset is shared across all quads.
     FrameView* mainView = m_page.mainFrame().view();
@@ -777,7 +777,7 @@ PassRefPtr<InspectorObject> InspectorOverlay::buildObjectForHighlightedNode() co
             highlightObject->setObject("elementInfo", elementInfo.release());
     }
         
-    return highlightObject.release();
+    return WTF::move(highlightObject);
 }
 
 void InspectorOverlay::drawNodeHighlight()
@@ -859,33 +859,33 @@ void InspectorOverlay::forcePaint()
 
 void InspectorOverlay::reset(const IntSize& viewportSize, const IntSize& frameViewFullSize)
 {
-    RefPtr<InspectorObject> resetData = InspectorObject::create();
+    Ref<InspectorObject> resetData = InspectorObject::create();
     resetData->setDouble("deviceScaleFactor", m_page.deviceScaleFactor());
     resetData->setObject("viewportSize", buildObjectForSize(viewportSize));
     resetData->setObject("frameViewFullSize", buildObjectForSize(frameViewFullSize));
-    evaluateInOverlay("reset", resetData.release());
+    evaluateInOverlay("reset", WTF::move(resetData));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method)
 {
-    RefPtr<InspectorArray> command = InspectorArray::create();
+    Ref<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
     overlayPage()->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
 }
 
 void InspectorOverlay::evaluateInOverlay(const String& method, const String& argument)
 {
-    RefPtr<InspectorArray> command = InspectorArray::create();
+    Ref<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
     command->pushString(argument);
     overlayPage()->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
 }
 
-void InspectorOverlay::evaluateInOverlay(const String& method, PassRefPtr<InspectorValue> argument)
+void InspectorOverlay::evaluateInOverlay(const String& method, RefPtr<InspectorValue>&& argument)
 {
-    RefPtr<InspectorArray> command = InspectorArray::create();
+    Ref<InspectorArray> command = InspectorArray::create();
     command->pushString(method);
-    command->pushValue(argument);
+    command->pushValue(WTF::move(argument));
     overlayPage()->mainFrame().script().evaluate(ScriptSourceCode(makeString("dispatch(", command->toJSONString(), ')')));
 }
 

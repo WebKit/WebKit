@@ -61,7 +61,7 @@ public:
     virtual void disable(ErrorString&) override;
     virtual void initialized(ErrorString&) override;
 
-    void inspect(PassRefPtr<Protocol::Runtime::RemoteObject> objectToInspect, PassRefPtr<InspectorObject> hints);
+    void inspect(RefPtr<Protocol::Runtime::RemoteObject>&& objectToInspect, RefPtr<InspectorObject>&& hints);
     void evaluateForTestInFrontend(const String& script);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)

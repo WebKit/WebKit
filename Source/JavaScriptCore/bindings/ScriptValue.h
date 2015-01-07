@@ -66,7 +66,7 @@ public:
     bool operator==(const ScriptValue& other) const { return m_value == other.m_value; }
 
 #if ENABLE(INSPECTOR)
-    PassRefPtr<Inspector::InspectorValue> toInspectorValue(JSC::ExecState*) const;
+    RefPtr<Inspector::InspectorValue> toInspectorValue(JSC::ExecState*) const;
 #endif
 
 private:

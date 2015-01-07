@@ -107,13 +107,13 @@ class CppFrontendDispatcherImplementationGenerator(Generator):
 
         lines.append('void Inspector%(domainName)sFrontendDispatcher::%(eventName)s(%(formalParameters)s)' % event_args)
         lines.append('{')
-        lines.append('    RefPtr<InspectorObject> jsonMessage = InspectorObject::create();')
+        lines.append('    Ref<InspectorObject> jsonMessage = InspectorObject::create();')
         lines.append('    jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("%(domainName)s.%(eventName)s"));' % event_args)
 
         if len(parameter_assignments) > 0:
-            lines.append('    RefPtr<InspectorObject> paramsObject = InspectorObject::create();')
+            lines.append('    Ref<InspectorObject> paramsObject = InspectorObject::create();')
             lines.extend(parameter_assignments)
-            lines.append('    jsonMessage->setObject(ASCIILiteral("params"), paramsObject);')
+            lines.append('    jsonMessage->setObject(ASCIILiteral("params"), paramsObject.copyRef());')
 
         lines.append('')
         lines.append('    m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());')

@@ -31,11 +31,12 @@
 
 #include "InspectorValues.h"
 #include <wtf/Assertions.h>
-#include <wtf/PassRefPtr.h>
 
 namespace Inspector {
 
 namespace Protocol {
+
+template<typename T> struct BindingTraits;
 
 template<typename T>
 class OptOutput {
@@ -63,126 +64,42 @@ private:
     WTF_MAKE_NONCOPYABLE(OptOutput);
 };
 
-// This class provides "Traits" type for the input type T. It is programmed using C++ template specialization
-// technique. By default it simply takes "ItemTraits" type from T, but it doesn't work with the base types.
-template<typename T>
-struct ArrayItemHelper {
-    typedef typename T::ItemTraits Traits;
-};
-
 template<typename T>
 class Array : public InspectorArrayBase {
 private:
     Array() { }
 
-    InspectorArray* openAccessors()
+    InspectorArray& openAccessors()
     {
         COMPILE_ASSERT(sizeof(InspectorArray) == sizeof(Array<T>), cannot_cast);
-        return static_cast<InspectorArray*>(static_cast<InspectorArrayBase*>(this));
+        return *static_cast<InspectorArray*>(static_cast<InspectorArrayBase*>(this));
     }
 
 public:
-    void addItem(PassRefPtr<T> value)
+    void addItem(Ref<T>&& value)
     {
-        ArrayItemHelper<T>::Traits::pushRefPtr(this->openAccessors(), value);
+        openAccessors().pushValue(&value.get());
     }
 
-    void addItem(T value)
+    void addItem(RefPtr<T>&& value)
     {
-        ArrayItemHelper<T>::Traits::pushRaw(this->openAccessors(), value);
+        openAccessors().pushValue(WTF::move(value));
+    }
+    
+    void addItem(const String& value)
+    {
+        openAccessors().pushString(value);
     }
 
-    static PassRefPtr<Array<T>> create()
+    void addItem(int value)
     {
-        return adoptRef(new Array<T>());
+        openAccessors().pushInteger(value);
     }
-};
-
-struct StructItemTraits {
-    static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorValue> value)
+    
+    static Ref<Array<T>> create()
     {
-        array->pushValue(value);
+        return adoptRef(*new Array<T>());
     }
-};
-
-template<>
-struct ArrayItemHelper<String> {
-    struct Traits {
-        static void pushRaw(InspectorArray* array, const String& value)
-        {
-            array->pushString(value);
-        }
-    };
-};
-
-template<>
-struct ArrayItemHelper<int> {
-    struct Traits {
-        static void pushRaw(InspectorArray* array, int value)
-        {
-            array->pushInteger(value);
-        }
-    };
-};
-
-template<>
-struct ArrayItemHelper<double> {
-    struct Traits {
-        static void pushRaw(InspectorArray* array, double value)
-        {
-            array->pushDouble(value);
-        }
-    };
-};
-
-template<>
-struct ArrayItemHelper<bool> {
-    struct Traits {
-        static void pushRaw(InspectorArray* array, bool value)
-        {
-            array->pushBoolean(value);
-        }
-    };
-};
-
-template<>
-struct ArrayItemHelper<InspectorValue> {
-    struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorValue> value)
-        {
-            array->pushValue(value);
-        }
-    };
-};
-
-template<>
-struct ArrayItemHelper<InspectorObject> {
-    struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorValue> value)
-        {
-            array->pushValue(value);
-        }
-    };
-};
-
-template<>
-struct ArrayItemHelper<InspectorArray> {
-    struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorArray> value)
-        {
-            array->pushArray(value);
-        }
-    };
-};
-
-template<typename T>
-struct ArrayItemHelper<Protocol::Array<T>> {
-    struct Traits {
-        static void pushRefPtr(InspectorArray* array, PassRefPtr<Protocol::Array<T>> value)
-        {
-            array->pushValue(value);
-        }
-    };
 };
 
 // Helper methods for Protocol and other Inspector types are provided by
@@ -192,8 +109,9 @@ template<typename T>
 struct BindingTraits {
     typedef T BindingType;
 
+    static void push(InspectorArray&, BindingType&);
     static InspectorValue::Type typeTag();
-    static PassRefPtr<T> runtimeCast(PassRefPtr<InspectorObject>);
+    static RefPtr<T> runtimeCast(RefPtr<InspectorObject>&&);
 #if !ASSERT_DISABLED
     static void assertValueHasExpectedType(InspectorValue*);
 #endif // !ASSERT_DISABLED
@@ -204,15 +122,16 @@ struct PrimitiveBindingTraits {
 #if !ASSERT_DISABLED
     static void assertValueHasExpectedType(InspectorValue* value)
     {
-        ASSERT(value->type() == TYPE);
+        ASSERT_ARG(value, value && value->type() == TYPE);
     }
 #endif // !ASSERT_DISABLED
 };
 
 template<typename T>
 struct BindingTraits<Protocol::Array<T>> {
-    static PassRefPtr<Array<T>> runtimeCast(PassRefPtr<InspectorValue> value)
+    static RefPtr<Array<T>> runtimeCast(RefPtr<InspectorValue>&& value)
     {
+        ASSERT_ARG(value, value);
         RefPtr<InspectorArray> array;
         bool castSucceeded = value->asArray(array);
         ASSERT_UNUSED(castSucceeded, castSucceeded);
@@ -226,6 +145,7 @@ struct BindingTraits<Protocol::Array<T>> {
 #if !ASSERT_DISABLED
     static void assertValueHasExpectedType(InspectorValue* value)
     {
+        ASSERT_ARG(value, value);
         RefPtr<InspectorArray> array;
         bool castSucceeded = value->asArray(array);
         ASSERT_UNUSED(castSucceeded, castSucceeded);

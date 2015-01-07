@@ -32,7 +32,7 @@ from string import Template
 
 from cpp_generator import CppGenerator
 from generator import Generator
-from models import Frameworks
+from models import PrimitiveType, EnumType, AliasedType, Frameworks
 from objc_generator import ObjCTypeCategory, ObjCGenerator, join_type_and_name
 from objc_generator_templates import ObjCGeneratorTemplates as ObjCTemplates
 
@@ -111,7 +111,7 @@ class ObjCConfigurationImplementationGenerator(Generator):
             lines.append('    id successCallback = ^{')
 
         if command.return_parameters:
-            lines.append('        RefPtr<InspectorObject> resultObject = InspectorObject::create();')
+            lines.append('        Ref<InspectorObject> resultObject = InspectorObject::create();')
 
             required_pointer_parameters = filter(lambda parameter: not parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type), command.return_parameters)
             for parameter in required_pointer_parameters:
@@ -133,7 +133,7 @@ class ObjCConfigurationImplementationGenerator(Generator):
                 else:
                     lines.append('        if (%s)' % var_name)
                     lines.append('            resultObject->%s(ASCIILiteral("%s"), %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
-            lines.append('        backendDispatcher()->sendResponse(callId, resultObject.release(), String());')
+            lines.append('        backendDispatcher()->sendResponse(callId, WTF::move(resultObject), String());')
         else:
             lines.append('        backendDispatcher()->sendResponse(callId, InspectorObject::create(), String());')
 
@@ -145,12 +145,22 @@ class ObjCConfigurationImplementationGenerator(Generator):
         if command.call_parameters:
             lines.append('')
 
+        def in_param_expression(param_name, parameter):
+            _type = parameter.type
+            if isinstance(_type, AliasedType):
+                _type = _type.aliased_type  # Fall through to enum or primitive.
+            if isinstance(_type, EnumType):
+                _type = _type.primitive_type  # Fall through to primitive.
+            if isinstance(_type, PrimitiveType):
+                return '*%s' % param_name if parameter.is_optional else param_name
+            return '%s.copyRef()' % param_name
+
         for parameter in command.call_parameters:
             in_param_name = 'in_%s' % parameter.parameter_name
             objc_in_param_name = 'o_%s' % in_param_name
             objc_type = ObjCGenerator.objc_type_for_param(domain, command.command_name, parameter, False)
-            in_param_optional_safe_name = '*%s' % in_param_name if parameter.is_optional else in_param_name
-            import_expression = ObjCGenerator.objc_protocol_import_expression_for_parameter(in_param_optional_safe_name, domain, command.command_name, parameter)
+            param_expression = in_param_expression(in_param_name, parameter)
+            import_expression = ObjCGenerator.objc_protocol_import_expression_for_parameter(param_expression, domain, command.command_name, parameter)
             if not parameter.is_optional:
                 lines.append('    %s = %s;' % (join_type_and_name(objc_type, objc_in_param_name), import_expression))
             else:

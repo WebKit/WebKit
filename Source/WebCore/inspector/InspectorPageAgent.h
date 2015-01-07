@@ -166,8 +166,8 @@ private:
     static bool mainResourceContent(Frame*, bool withBase64Encode, String* result);
     static bool dataContent(const char* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result);
 
-    PassRefPtr<Inspector::Protocol::Page::Frame> buildObjectForFrame(Frame*);
-    PassRefPtr<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
+    Ref<Inspector::Protocol::Page::Frame> buildObjectForFrame(Frame*);
+    Ref<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
     Page* m_page;
     InspectorClient* m_client;
     std::unique_ptr<Inspector::InspectorPageFrontendDispatcher> m_frontendDispatcher;

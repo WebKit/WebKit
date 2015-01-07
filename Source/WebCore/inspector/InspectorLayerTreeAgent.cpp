@@ -146,7 +146,7 @@ void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(ErrorString&
         gatherLayersUsingRenderLayerHierarchy(errorString, renderLayer, layers);
 }
 
-PassRefPtr<Inspector::Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(ErrorString& errorString, RenderLayer* renderLayer)
+Ref<Inspector::Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(ErrorString& errorString, RenderLayer* renderLayer)
 {
     RenderObject* renderer = &renderLayer->renderer();
     RenderLayerBacking* backing = renderLayer->backing();
@@ -166,13 +166,14 @@ PassRefPtr<Inspector::Protocol::LayerTree::Layer> InspectorLayerTreeAgent::build
         node = renderer->parent()->element();
 
     // Basic set of properties.
-    RefPtr<Inspector::Protocol::LayerTree::Layer> layerObject = Inspector::Protocol::LayerTree::Layer::create()
+    auto layerObject = Inspector::Protocol::LayerTree::Layer::create()
         .setLayerId(bind(renderLayer))
         .setNodeId(idForNode(errorString, node))
         .setBounds(buildObjectForIntRect(renderer->absoluteBoundingBoxRect()))
         .setMemory(backing->backingStoreMemoryEstimate())
         .setCompositedBounds(buildObjectForIntRect(enclosingIntRect(backing->compositedBounds())))
-        .setPaintCount(backing->graphicsLayer()->repaintCount());
+        .setPaintCount(backing->graphicsLayer()->repaintCount())
+        .release();
 
     if (node && node->shadowHost())
         layerObject->setIsInShadowTree(true);
@@ -201,7 +202,7 @@ PassRefPtr<Inspector::Protocol::LayerTree::Layer> InspectorLayerTreeAgent::build
             layerObject->setPseudoElement("first-line");
     }
 
-    return layerObject;
+    return WTF::move(layerObject);
 }
 
 int InspectorLayerTreeAgent::idForNode(ErrorString& errorString, Node* node)
@@ -218,16 +219,17 @@ int InspectorLayerTreeAgent::idForNode(ErrorString& errorString, Node* node)
     return nodeId;
 }
 
-PassRefPtr<Inspector::Protocol::LayerTree::IntRect> InspectorLayerTreeAgent::buildObjectForIntRect(const IntRect& rect)
+Ref<Inspector::Protocol::LayerTree::IntRect> InspectorLayerTreeAgent::buildObjectForIntRect(const IntRect& rect)
 {
     return Inspector::Protocol::LayerTree::IntRect::create()
         .setX(rect.x())
         .setY(rect.y())
         .setWidth(rect.width())
-        .setHeight(rect.height()).release();
+        .setHeight(rect.height())
+        .release();
 }
 
-void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString& errorString, const String& layerId, RefPtr<Inspector::Protocol::LayerTree::CompositingReasons>& compositingReasons)
+void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString& errorString, const String& layerId, RefPtr<Inspector::Protocol::LayerTree::CompositingReasons>& compositingReasonsResult)
 {
     const RenderLayer* renderLayer = m_idToLayer.get(layerId);
 
@@ -237,7 +239,7 @@ void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString& errorStrin
     }
 
     CompositingReasons reasonsBitmask = renderLayer->compositor().reasonsForCompositing(*renderLayer);
-    compositingReasons = Inspector::Protocol::LayerTree::CompositingReasons::create();
+    auto compositingReasons = Inspector::Protocol::LayerTree::CompositingReasons::create().release();
 
     if (reasonsBitmask & CompositingReason3DTransform)
         compositingReasons->setTransform3D(true);
@@ -310,6 +312,8 @@ void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString& errorStrin
 
     if (reasonsBitmask & CompositingReasonRoot)
         compositingReasons->setRoot(true);
+    
+    compositingReasonsResult = WTF::move(compositingReasons);
 }
 
 String InspectorLayerTreeAgent::bind(const RenderLayer* layer)

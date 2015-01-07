@@ -106,18 +106,18 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     addMessage(source, level, message, url, line, column, 0, JSMainThreadExecState::currentState(), requestIdentifier);
 }
 
-void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
+void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, RefPtr<ScriptCallStack>&& callStack)
 {
-    addMessage(source, level, message, String(), 0, 0, callStack, 0);
+    addMessage(source, level, message, String(), 0, 0, WTF::move(callStack), 0);
 }
 
-void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber, PassRefPtr<ScriptCallStack> callStack, JSC::ExecState* state, unsigned long requestIdentifier)
+void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (muteCount && source != MessageSource::ConsoleAPI)
         return;
 
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(m_page, source, MessageType::Log, level, message, callStack, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(m_page, source, MessageType::Log, level, message, WTF::move(callStack), requestIdentifier);
     else
         InspectorInstrumentation::addMessageToConsole(m_page, source, MessageType::Log, level, message, url, lineNumber, columnNumber, state, requestIdentifier);
 
@@ -136,13 +136,11 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
 }
 
 
-void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, PassRefPtr<Inspector::ScriptArguments> prpArguments)
+void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, RefPtr<Inspector::ScriptArguments>&& arguments)
 {
-    RefPtr<ScriptArguments> arguments = prpArguments;
-
     String message;
     bool gotMessage = arguments->getFirstArgumentAsString(message);
-    InspectorInstrumentation::addMessageToConsole(m_page, MessageSource::ConsoleAPI, type, level, message, exec, arguments);
+    InspectorInstrumentation::addMessageToConsole(m_page, MessageSource::ConsoleAPI, type, level, message, exec, WTF::move(arguments));
 
     if (m_page.usesEphemeralSession())
         return;
@@ -155,12 +153,12 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
     }
 
     if (m_page.settings().logsPageMessagesToSystemConsoleEnabled() || PageConsoleClient::shouldPrintExceptions())
-        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, arguments.release());
+        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, WTF::move(arguments));
 }
 
-void PageConsoleClient::count(JSC::ExecState* exec, PassRefPtr<ScriptArguments> arguments)
+void PageConsoleClient::count(JSC::ExecState* exec, RefPtr<ScriptArguments>&& arguments)
 {
-    InspectorInstrumentation::consoleCount(m_page, exec, arguments);
+    InspectorInstrumentation::consoleCount(m_page, exec, WTF::move(arguments));
 }
 
 void PageConsoleClient::profile(JSC::ExecState* exec, const String& title)
@@ -171,7 +169,7 @@ void PageConsoleClient::profile(JSC::ExecState* exec, const String& title)
 void PageConsoleClient::profileEnd(JSC::ExecState* exec, const String& title)
 {
     if (RefPtr<JSC::Profile> profile = InspectorInstrumentation::stopProfiling(m_page, exec, title))
-        m_profiles.append(profile.release());
+        m_profiles.append(WTF::move(profile));
 }
 
 void PageConsoleClient::time(JSC::ExecState*, const String& title)
@@ -182,12 +180,12 @@ void PageConsoleClient::time(JSC::ExecState*, const String& title)
 void PageConsoleClient::timeEnd(JSC::ExecState* exec, const String& title)
 {
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
-    InspectorInstrumentation::stopConsoleTiming(m_page.mainFrame(), title, callStack.release());
+    InspectorInstrumentation::stopConsoleTiming(m_page.mainFrame(), title, WTF::move(callStack));
 }
 
-void PageConsoleClient::timeStamp(JSC::ExecState*, PassRefPtr<ScriptArguments> arguments)
+void PageConsoleClient::timeStamp(JSC::ExecState*, RefPtr<ScriptArguments>&& arguments)
 {
-    InspectorInstrumentation::consoleTimeStamp(m_page.mainFrame(), arguments);
+    InspectorInstrumentation::consoleTimeStamp(m_page.mainFrame(), WTF::move(arguments));
 }
 
 void PageConsoleClient::clearProfiles()

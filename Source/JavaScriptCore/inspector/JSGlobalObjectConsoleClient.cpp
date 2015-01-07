@@ -75,19 +75,18 @@ JSGlobalObjectConsoleClient::JSGlobalObjectConsoleClient(InspectorConsoleAgent* 
     });
 }
 
-void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, PassRefPtr<ScriptArguments> prpArguments)
+void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, RefPtr<ScriptArguments>&& arguments)
 {
-    RefPtr<ScriptArguments> arguments = prpArguments;
 
     if (JSGlobalObjectConsoleClient::logToSystemConsole())
-        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, arguments);
+        ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, arguments.copyRef());
 
     String message;
     arguments->getFirstArgumentAsString(message);
-    m_consoleAgent->addMessageToConsole(MessageSource::ConsoleAPI, type, level, message, exec, arguments.release());
+    m_consoleAgent->addMessageToConsole(MessageSource::ConsoleAPI, type, level, message, exec, WTF::move(arguments));
 }
 
-void JSGlobalObjectConsoleClient::count(ExecState* exec, PassRefPtr<ScriptArguments> arguments)
+void JSGlobalObjectConsoleClient::count(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
 {
     m_consoleAgent->count(exec, arguments);
 }
@@ -110,10 +109,10 @@ void JSGlobalObjectConsoleClient::time(ExecState*, const String& title)
 void JSGlobalObjectConsoleClient::timeEnd(ExecState* exec, const String& title)
 {
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
-    m_consoleAgent->stopTiming(title, callStack.release());
+    m_consoleAgent->stopTiming(title, WTF::move(callStack));
 }
 
-void JSGlobalObjectConsoleClient::timeStamp(ExecState*, PassRefPtr<ScriptArguments>)
+void JSGlobalObjectConsoleClient::timeStamp(ExecState*, RefPtr<ScriptArguments>&&)
 {
     // FIXME: JSContext inspection needs a timeline.
     warnUnimplemented(ASCIILiteral("console.timeStamp"));

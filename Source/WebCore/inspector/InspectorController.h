@@ -110,7 +110,7 @@ public:
 
     void setIndicating(bool);
 
-    WEBCORE_EXPORT PassRefPtr<Inspector::InspectorObject> buildObjectForHighlightedNode() const;
+    WEBCORE_EXPORT RefPtr<Inspector::InspectorObject> buildObjectForHighlightedNode() const;
 
     bool isUnderTest() const { return m_isUnderTest; }
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
@@ -131,7 +131,7 @@ public:
     virtual void willCallInjectedScriptFunction(JSC::ExecState*, const String& scriptName, int scriptLine) override;
     virtual void didCallInjectedScriptFunction(JSC::ExecState*) override;
     virtual void frontendInitialized() override;
-    virtual PassRefPtr<WTF::Stopwatch> executionStopwatch() override;
+    virtual Ref<WTF::Stopwatch> executionStopwatch() override;
 
 private:
     friend class InspectorInstrumentation;
@@ -150,7 +150,7 @@ private:
 
     RefPtr<Inspector::InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     Inspector::InspectorFrontendChannel* m_inspectorFrontendChannel;
-    RefPtr<WTF::Stopwatch> m_executionStopwatch;
+    Ref<WTF::Stopwatch> m_executionStopwatch;
     Page& m_page;
     InspectorClient* m_inspectorClient;
     InspectorFrontendClient* m_inspectorFrontendClient;

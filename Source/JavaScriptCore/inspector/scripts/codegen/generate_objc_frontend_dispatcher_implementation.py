@@ -116,7 +116,7 @@ class ObjCFrontendDispatcherImplementationGenerator(Generator):
         if required_pointer_parameters or optional_pointer_parameters:
             lines.append('')
 
-        lines.append('    RefPtr<InspectorObject> jsonMessage = InspectorObject::create();')
+        lines.append('    Ref<InspectorObject> jsonMessage = InspectorObject::create();')
         lines.append('    jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("%s.%s"));' % (domain.domain_name, event.event_name))
         if event.event_parameters:
             lines.extend(self._generate_event_out_parameters(domain, event))
@@ -136,7 +136,7 @@ class ObjCFrontendDispatcherImplementationGenerator(Generator):
 
     def _generate_event_out_parameters(self, domain, event):
         lines = []
-        lines.append('    RefPtr<InspectorObject> paramsObject = InspectorObject::create();')
+        lines.append('    Ref<InspectorObject> paramsObject = InspectorObject::create();')
         for parameter in event.event_parameters:
             keyed_set_method = CppGenerator.cpp_setter_method_for_type(parameter.type)
             var_name = parameter.parameter_name
@@ -147,5 +147,5 @@ class ObjCFrontendDispatcherImplementationGenerator(Generator):
             else:
                 lines.append('    if (%s)' % (parameter.parameter_name))
                 lines.append('        paramsObject->%s(ASCIILiteral("%s"), %s);' % (keyed_set_method, parameter.parameter_name, export_expression))
-        lines.append('    jsonMessage->setObject(ASCIILiteral("params"), paramsObject);')
+        lines.append('    jsonMessage->setObject(ASCIILiteral("params"), paramsObject.copyRef());')
         return lines

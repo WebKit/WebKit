@@ -186,7 +186,7 @@ public:
     static void didFinishLoading(Frame*, DocumentLoader*, unsigned long identifier, double finishTime);
     static void didFailLoading(Frame*, DocumentLoader*, unsigned long identifier, const ResourceError&);
     static void documentThreadableLoaderStartedLoadingForClient(Document&, unsigned long identifier, ThreadableLoaderClient*);
-    static void willLoadXHR(ScriptExecutionContext*, ThreadableLoaderClient*, const String&, const URL&, bool, PassRefPtr<FormData>, const HTTPHeaderMap&, bool);
+    static void willLoadXHR(ScriptExecutionContext*, ThreadableLoaderClient*, const String&, const URL&, bool, RefPtr<FormData>&&, const HTTPHeaderMap&, bool);
     static void didFailXHRLoading(ScriptExecutionContext*, ThreadableLoaderClient*);
     static void didFinishXHRLoading(ScriptExecutionContext*, ThreadableLoaderClient*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber);
     static void didReceiveXHRResponse(ScriptExecutionContext*, unsigned long identifier);
@@ -213,18 +213,18 @@ public:
     static void didWriteHTML(const InspectorInstrumentationCookie&, unsigned endLine);
 
     // FIXME: Remove once we no longer generate stacks outside of Inspector.
-    static void addMessageToConsole(Page&, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<Inspector::ScriptCallStack>, unsigned long requestIdentifier = 0);
-    static void addMessageToConsole(Page&, MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(Page&, MessageSource, MessageType, MessageLevel, const String& message, RefPtr<Inspector::ScriptCallStack>&&, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(Page&, MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&, unsigned long requestIdentifier = 0);
     static void addMessageToConsole(Page&, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
 
     // FIXME: Convert to ScriptArguments to match non-worker context.
-    static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<Inspector::ScriptCallStack>, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, RefPtr<Inspector::ScriptCallStack>&&, unsigned long requestIdentifier = 0);
     static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
 
-    static void consoleCount(Page&, JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    static void consoleCount(Page&, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     static void startConsoleTiming(Frame&, const String& title);
-    static void stopConsoleTiming(Frame&, const String& title, PassRefPtr<Inspector::ScriptCallStack>);
-    static void consoleTimeStamp(Frame&, PassRefPtr<Inspector::ScriptArguments>);
+    static void stopConsoleTiming(Frame&, const String& title, RefPtr<Inspector::ScriptCallStack>&&);
+    static void consoleTimeStamp(Frame&, RefPtr<Inspector::ScriptArguments>&&);
 
     static void didRequestAnimationFrame(Document*, int callbackId);
     static void didCancelAnimationFrame(Document*, int callbackId);
@@ -232,10 +232,10 @@ public:
     static void didFireAnimationFrame(const InspectorInstrumentationCookie&);
 
     static void startProfiling(Page&, JSC::ExecState*, const String& title);
-    static PassRefPtr<JSC::Profile> stopProfiling(Page&, JSC::ExecState*, const String& title);
+    static RefPtr<JSC::Profile> stopProfiling(Page&, JSC::ExecState*, const String& title);
 
 #if ENABLE(SQL_DATABASE)
-    static void didOpenDatabase(ScriptExecutionContext*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
+    static void didOpenDatabase(ScriptExecutionContext*, RefPtr<Database>&&, const String& domain, const String& name, const String& version);
 #endif
 
     static void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
@@ -246,13 +246,13 @@ public:
     static void willEvaluateWorkerScript(WorkerGlobalScope*, int workerThreadStartMode);
 
 #if ENABLE(WEB_REPLAY)
-    static void sessionCreated(Page&, PassRefPtr<ReplaySession>);
-    static void sessionLoaded(Page&, PassRefPtr<ReplaySession>);
-    static void sessionModified(Page&, PassRefPtr<ReplaySession>);
+    static void sessionCreated(Page&, RefPtr<ReplaySession>&&);
+    static void sessionLoaded(Page&, RefPtr<ReplaySession>&&);
+    static void sessionModified(Page&, RefPtr<ReplaySession>&&);
 
-    static void segmentCreated(Page&, PassRefPtr<ReplaySessionSegment>);
-    static void segmentCompleted(Page&, PassRefPtr<ReplaySessionSegment>);
-    static void segmentLoaded(Page&, PassRefPtr<ReplaySessionSegment>);
+    static void segmentCreated(Page&, RefPtr<ReplaySessionSegment>&&);
+    static void segmentCompleted(Page&, RefPtr<ReplaySessionSegment>&&);
+    static void segmentLoaded(Page&, RefPtr<ReplaySessionSegment>&&);
     static void segmentUnloaded(Page&);
 
     static void captureStarted(Page&);
@@ -386,7 +386,7 @@ private:
     static void didFinishLoadingImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, double finishTime);
     static void didFailLoadingImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, const ResourceError&);
     static void documentThreadableLoaderStartedLoadingForClientImpl(InstrumentingAgents&, unsigned long identifier, ThreadableLoaderClient*);
-    static void willLoadXHRImpl(InstrumentingAgents&, ThreadableLoaderClient*, const String&, const URL&, bool, PassRefPtr<FormData>, const HTTPHeaderMap&, bool);
+    static void willLoadXHRImpl(InstrumentingAgents&, ThreadableLoaderClient*, const String&, const URL&, bool, RefPtr<FormData>&&, const HTTPHeaderMap&, bool);
     static void didFailXHRLoadingImpl(InstrumentingAgents&, ThreadableLoaderClient*);
     static void didFinishXHRLoadingImpl(InstrumentingAgents&, ThreadableLoaderClient*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber, unsigned sendColumnNumber);
     static void didReceiveXHRResponseImpl(InstrumentingAgents&, unsigned long identifier);
@@ -412,16 +412,16 @@ private:
     static InspectorInstrumentationCookie willWriteHTMLImpl(InstrumentingAgents&, unsigned startLine, Frame*);
     static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned endLine);
 
-    static void addMessageToConsoleImpl(InstrumentingAgents&, MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>, unsigned long requestIdentifier);
+    static void addMessageToConsoleImpl(InstrumentingAgents&, MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&, unsigned long requestIdentifier);
     static void addMessageToConsoleImpl(InstrumentingAgents&, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState*, unsigned long requestIdentifier);
 
     // FIXME: Remove once we no longer generate stacks outside of Inspector.
-    static void addMessageToConsoleImpl(InstrumentingAgents&, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<Inspector::ScriptCallStack>, unsigned long requestIdentifier);
+    static void addMessageToConsoleImpl(InstrumentingAgents&, MessageSource, MessageType, MessageLevel, const String& message, RefPtr<Inspector::ScriptCallStack>&&, unsigned long requestIdentifier);
 
-    static void consoleCountImpl(InstrumentingAgents&, JSC::ExecState*, PassRefPtr<Inspector::ScriptArguments>);
+    static void consoleCountImpl(InstrumentingAgents&, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     static void startConsoleTimingImpl(InstrumentingAgents&, Frame&, const String& title);
-    static void stopConsoleTimingImpl(InstrumentingAgents&, Frame&, const String& title, PassRefPtr<Inspector::ScriptCallStack>);
-    static void consoleTimeStampImpl(InstrumentingAgents&, Frame&, PassRefPtr<Inspector::ScriptArguments>);
+    static void stopConsoleTimingImpl(InstrumentingAgents&, Frame&, const String& title, RefPtr<Inspector::ScriptCallStack>&&);
+    static void consoleTimeStampImpl(InstrumentingAgents&, Frame&, RefPtr<Inspector::ScriptArguments>&&);
 
     static void didRequestAnimationFrameImpl(InstrumentingAgents&, int callbackId, Frame*);
     static void didCancelAnimationFrameImpl(InstrumentingAgents&, int callbackId, Frame*);
@@ -429,10 +429,10 @@ private:
     static void didFireAnimationFrameImpl(const InspectorInstrumentationCookie&);
 
     static void startProfilingImpl(InstrumentingAgents&, JSC::ExecState*, const String& title);
-    static PassRefPtr<JSC::Profile> stopProfilingImpl(InstrumentingAgents&, JSC::ExecState*, const String& title);
+    static RefPtr<JSC::Profile> stopProfilingImpl(InstrumentingAgents&, JSC::ExecState*, const String& title);
 
 #if ENABLE(SQL_DATABASE)
-    static void didOpenDatabaseImpl(InstrumentingAgents&, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
+    static void didOpenDatabaseImpl(InstrumentingAgents&, RefPtr<Database>&&, const String& domain, const String& name, const String& version);
 #endif
 
     static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
@@ -442,13 +442,13 @@ private:
     static void workerGlobalScopeTerminatedImpl(InstrumentingAgents&, WorkerGlobalScopeProxy*);
 
 #if ENABLE(WEB_REPLAY)
-    static void sessionCreatedImpl(InstrumentingAgents&, PassRefPtr<ReplaySession>);
-    static void sessionLoadedImpl(InstrumentingAgents&, PassRefPtr<ReplaySession>);
-    static void sessionModifiedImpl(InstrumentingAgents&, PassRefPtr<ReplaySession>);
+    static void sessionCreatedImpl(InstrumentingAgents&, RefPtr<ReplaySession>&&);
+    static void sessionLoadedImpl(InstrumentingAgents&, RefPtr<ReplaySession>&&);
+    static void sessionModifiedImpl(InstrumentingAgents&, RefPtr<ReplaySession>&&);
 
-    static void segmentCreatedImpl(InstrumentingAgents&, PassRefPtr<ReplaySessionSegment>);
-    static void segmentCompletedImpl(InstrumentingAgents&, PassRefPtr<ReplaySessionSegment>);
-    static void segmentLoadedImpl(InstrumentingAgents&, PassRefPtr<ReplaySessionSegment>);
+    static void segmentCreatedImpl(InstrumentingAgents&, RefPtr<ReplaySessionSegment>&&);
+    static void segmentCompletedImpl(InstrumentingAgents&, RefPtr<ReplaySessionSegment>&&);
+    static void segmentLoadedImpl(InstrumentingAgents&, RefPtr<ReplaySessionSegment>&&);
     static void segmentUnloadedImpl(InstrumentingAgents&);
 
     static void captureStartedImpl(InstrumentingAgents&);
@@ -1386,11 +1386,11 @@ inline void InspectorInstrumentation::documentThreadableLoaderStartedLoadingForC
 #endif
 }
 
-inline void InspectorInstrumentation::willLoadXHR(ScriptExecutionContext* context, ThreadableLoaderClient* client, const String& method, const URL& url, bool async, PassRefPtr<FormData> formData, const HTTPHeaderMap& headers, bool includeCredentials)
+inline void InspectorInstrumentation::willLoadXHR(ScriptExecutionContext* context, ThreadableLoaderClient* client, const String& method, const URL& url, bool async, RefPtr<FormData>&& formData, const HTTPHeaderMap& headers, bool includeCredentials)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        willLoadXHRImpl(*instrumentingAgents, client, method, url, async, formData, headers, includeCredentials);
+        willLoadXHRImpl(*instrumentingAgents, client, method, url, async, WTF::move(formData), headers, includeCredentials);
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(client);
@@ -1796,72 +1796,72 @@ inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, 
 #endif
 
 #if ENABLE(WEB_REPLAY)
-inline void InspectorInstrumentation::sessionCreated(Page& page, PassRefPtr<ReplaySession> session)
+inline void InspectorInstrumentation::sessionCreated(Page& page, RefPtr<ReplaySession>&& session)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        sessionCreatedImpl(*instrumentingAgents, session);
+        sessionCreatedImpl(*instrumentingAgents, WTF::move(session));
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(session);
 #endif
 }
 
-inline void InspectorInstrumentation::sessionLoaded(Page& page, PassRefPtr<ReplaySession> session)
+inline void InspectorInstrumentation::sessionLoaded(Page& page, RefPtr<ReplaySession>&& session)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        sessionLoadedImpl(*instrumentingAgents, session);
+        sessionLoadedImpl(*instrumentingAgents, WTF::move(session));
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(session);
 #endif
 }
 
-inline void InspectorInstrumentation::sessionModified(Page& page, PassRefPtr<ReplaySession> session)
+inline void InspectorInstrumentation::sessionModified(Page& page, RefPtr<ReplaySession>&& session)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        sessionModifiedImpl(*instrumentingAgents, session);
+        sessionModifiedImpl(*instrumentingAgents, WTF::move(session));
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(session);
 #endif
 }
 
-inline void InspectorInstrumentation::segmentCreated(Page& page, PassRefPtr<ReplaySessionSegment> segment)
+inline void InspectorInstrumentation::segmentCreated(Page& page, RefPtr<ReplaySessionSegment>&& segment)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        segmentCreatedImpl(*instrumentingAgents, segment);
+        segmentCreatedImpl(*instrumentingAgents, WTF::move(segment));
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(segment);
 #endif
 }
 
-inline void InspectorInstrumentation::segmentCompleted(Page& page, PassRefPtr<ReplaySessionSegment> segment)
+inline void InspectorInstrumentation::segmentCompleted(Page& page, RefPtr<ReplaySessionSegment>&& segment)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        segmentCompletedImpl(*instrumentingAgents, segment);
+        segmentCompletedImpl(*instrumentingAgents, WTF::move(segment));
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(segment);
 #endif
 }
 
-inline void InspectorInstrumentation::segmentLoaded(Page& page, PassRefPtr<ReplaySessionSegment> segment)
+inline void InspectorInstrumentation::segmentLoaded(Page& page, RefPtr<ReplaySessionSegment>&& segment)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        segmentLoadedImpl(*instrumentingAgents, segment);
+        segmentLoadedImpl(*instrumentingAgents, WTF::move(segment));
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(segment);

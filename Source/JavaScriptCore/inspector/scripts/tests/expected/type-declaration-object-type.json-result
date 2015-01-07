@@ -41,7 +41,7 @@ namespace Inspector {
 
 class AlternateInspectorBackendDispatcher {
 public:
-    void setBackendDispatcher(PassRefPtr<InspectorBackendDispatcher> dispatcher) { m_backendDispatcher = dispatcher; }
+    void setBackendDispatcher(RefPtr<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
     InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
@@ -127,7 +127,6 @@ private:
 
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorBackendDispatcher.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -236,7 +235,6 @@ namespace Inspector {
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -334,7 +332,6 @@ namespace Inspector {
 
 #include <inspector/InspectorProtocolTypes.h>
 #include <wtf/Assertions.h>
-#include <wtf/PassRefPtr.h>
 
 namespace Inspector {
 
@@ -387,10 +384,10 @@ public:
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr</*Error*/Inspector::InspectorObject> ptr)
+        Builder(Ref</*Error*/Inspector::InspectorObject>&& object)
+            : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
-            m_result = ptr;
         }
         friend class Error;
     public:
@@ -409,30 +406,27 @@ public:
             return castState<CodeSet>();
         }
 
-        operator RefPtr<Error>& ()
+        Ref<Error> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(Error) == sizeof(Inspector::InspectorObject), cannot_cast);
-            return *reinterpret_cast<RefPtr<Error>*>(&m_result);
-        }
 
-        PassRefPtr<Error> release()
-        {
-            return RefPtr<Error>(*this).release();
+            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            return WTF::move(*reinterpret_cast<Ref<Error>*>(&result));
         }
     };
 
     /*
      * Synthetic constructor:
-     * RefPtr<Error> result = Error::create()
+     * Ref<Error> result = Error::create()
      *     .setMessage(...)
-     *     .setCode(...);
+     *     .setCode(...)
+     *     .release();
      */
     static Builder<NoFieldsSet> create()
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
-    typedef Inspector::Protocol::StructItemTraits ItemTraits;
 };
 
 class OptionalParameterBundle : public Inspector::InspectorObjectBase {
@@ -452,40 +446,37 @@ public:
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr</*OptionalParameterBundle*/Inspector::InspectorObject> ptr)
+        Builder(Ref</*OptionalParameterBundle*/Inspector::InspectorObject>&& object)
+            : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
-            m_result = ptr;
         }
         friend class OptionalParameterBundle;
     public:
 
-        operator RefPtr<OptionalParameterBundle>& ()
+        Ref<OptionalParameterBundle> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(OptionalParameterBundle) == sizeof(Inspector::InspectorObject), cannot_cast);
-            return *reinterpret_cast<RefPtr<OptionalParameterBundle>*>(&m_result);
-        }
 
-        PassRefPtr<OptionalParameterBundle> release()
-        {
-            return RefPtr<OptionalParameterBundle>(*this).release();
+            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            return WTF::move(*reinterpret_cast<Ref<OptionalParameterBundle>*>(&result));
         }
     };
 
     /*
      * Synthetic constructor:
-     * RefPtr<OptionalParameterBundle> result = OptionalParameterBundle::create();
+     * Ref<OptionalParameterBundle> result = OptionalParameterBundle::create()
+     *     .release();
      */
     static Builder<NoFieldsSet> create()
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
-    typedef Inspector::Protocol::StructItemTraits ItemTraits;
 
-    void setColumnNames(PassRefPtr<Inspector::Protocol::Array<String>> value)
+    void setColumnNames(RefPtr<Inspector::Protocol::Array<String>> value)
     {
-        InspectorObjectBase::setArray(ASCIILiteral("columnNames"), value);
+        InspectorObjectBase::setArray(ASCIILiteral("columnNames"), WTF::move(value));
     }
 
     void setNotes(const String& value)
@@ -498,19 +489,19 @@ public:
         InspectorObjectBase::setDouble(ASCIILiteral("timestamp"), value);
     }
 
-    void setValues(PassRefPtr<Inspector::InspectorObject> value)
+    void setValues(RefPtr<Inspector::InspectorObject> value)
     {
-        InspectorObjectBase::setObject(ASCIILiteral("values"), value);
+        InspectorObjectBase::setObject(ASCIILiteral("values"), WTF::move(value));
     }
 
-    void setPayload(PassRefPtr<Inspector::InspectorValue> value)
+    void setPayload(RefPtr<Inspector::InspectorValue> value)
     {
-        InspectorObjectBase::setValue(ASCIILiteral("payload"), value);
+        InspectorObjectBase::setValue(ASCIILiteral("payload"), WTF::move(value));
     }
 
-    void setError(PassRefPtr<Inspector::Protocol::Database::Error> value)
+    void setError(RefPtr<Inspector::Protocol::Database::Error> value)
     {
-        InspectorObjectBase::setObject(ASCIILiteral("error"), value);
+        InspectorObjectBase::setObject(ASCIILiteral("error"), WTF::move(value));
     }
 };
 
@@ -537,15 +528,15 @@ public:
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr</*ParameterBundle*/Inspector::InspectorObject> ptr)
+        Builder(Ref</*ParameterBundle*/Inspector::InspectorObject>&& object)
+            : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
-            m_result = ptr;
         }
         friend class ParameterBundle;
     public:
 
-        Builder<STATE | ColumnNamesSet>& setColumnNames(PassRefPtr<Inspector::Protocol::Array<String>> value)
+        Builder<STATE | ColumnNamesSet>& setColumnNames(RefPtr<Inspector::Protocol::Array<String>> value)
         {
             COMPILE_ASSERT(!(STATE & ColumnNamesSet), property_columnNames_already_set);
             m_result->setArray(ASCIILiteral("columnNames"), value);
@@ -566,55 +557,52 @@ public:
             return castState<TimestampSet>();
         }
 
-        Builder<STATE | ValuesSet>& setValues(PassRefPtr<Inspector::InspectorObject> value)
+        Builder<STATE | ValuesSet>& setValues(RefPtr<Inspector::InspectorObject> value)
         {
             COMPILE_ASSERT(!(STATE & ValuesSet), property_values_already_set);
             m_result->setObject(ASCIILiteral("values"), value);
             return castState<ValuesSet>();
         }
 
-        Builder<STATE | PayloadSet>& setPayload(PassRefPtr<Inspector::InspectorValue> value)
+        Builder<STATE | PayloadSet>& setPayload(RefPtr<Inspector::InspectorValue> value)
         {
             COMPILE_ASSERT(!(STATE & PayloadSet), property_payload_already_set);
             m_result->setValue(ASCIILiteral("payload"), value);
             return castState<PayloadSet>();
         }
 
-        Builder<STATE | ErrorSet>& setError(PassRefPtr<Inspector::Protocol::Database::Error> value)
+        Builder<STATE | ErrorSet>& setError(RefPtr<Inspector::Protocol::Database::Error> value)
         {
             COMPILE_ASSERT(!(STATE & ErrorSet), property_error_already_set);
             m_result->setObject(ASCIILiteral("error"), value);
             return castState<ErrorSet>();
         }
 
-        operator RefPtr<ParameterBundle>& ()
+        Ref<ParameterBundle> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(ParameterBundle) == sizeof(Inspector::InspectorObject), cannot_cast);
-            return *reinterpret_cast<RefPtr<ParameterBundle>*>(&m_result);
-        }
 
-        PassRefPtr<ParameterBundle> release()
-        {
-            return RefPtr<ParameterBundle>(*this).release();
+            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            return WTF::move(*reinterpret_cast<Ref<ParameterBundle>*>(&result));
         }
     };
 
     /*
      * Synthetic constructor:
-     * RefPtr<ParameterBundle> result = ParameterBundle::create()
+     * Ref<ParameterBundle> result = ParameterBundle::create()
      *     .setColumnNames(...)
      *     .setNotes(...)
      *     .setTimestamp(...)
      *     .setValues(...)
      *     .setPayload(...)
-     *     .setError(...);
+     *     .setError(...)
+     *     .release();
      */
     static Builder<NoFieldsSet> create()
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
-    typedef Inspector::Protocol::StructItemTraits ItemTraits;
 };
 
 /* Conflicted names may cause generated getters/setters to clash with built-in InspectorObject methods. */
@@ -640,10 +628,10 @@ public:
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr</*ObjectWithPropertyNameConflicts*/Inspector::InspectorObject> ptr)
+        Builder(Ref</*ObjectWithPropertyNameConflicts*/Inspector::InspectorObject>&& object)
+            : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
-            m_result = ptr;
         }
         friend class ObjectWithPropertyNameConflicts;
     public:
@@ -683,33 +671,30 @@ public:
             return castState<ObjectSet>();
         }
 
-        operator RefPtr<ObjectWithPropertyNameConflicts>& ()
+        Ref<ObjectWithPropertyNameConflicts> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(ObjectWithPropertyNameConflicts) == sizeof(Inspector::InspectorObject), cannot_cast);
-            return *reinterpret_cast<RefPtr<ObjectWithPropertyNameConflicts>*>(&m_result);
-        }
 
-        PassRefPtr<ObjectWithPropertyNameConflicts> release()
-        {
-            return RefPtr<ObjectWithPropertyNameConflicts>(*this).release();
+            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            return WTF::move(*reinterpret_cast<Ref<ObjectWithPropertyNameConflicts>*>(&result));
         }
     };
 
     /*
      * Synthetic constructor:
-     * RefPtr<ObjectWithPropertyNameConflicts> result = ObjectWithPropertyNameConflicts::create()
+     * Ref<ObjectWithPropertyNameConflicts> result = ObjectWithPropertyNameConflicts::create()
      *     .setInteger(...)
      *     .setArray(...)
      *     .setString(...)
      *     .setValue(...)
-     *     .setObject(...);
+     *     .setObject(...)
+     *     .release();
      */
     static Builder<NoFieldsSet> create()
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
-    typedef Inspector::Protocol::StructItemTraits ItemTraits;
 };
 
 } // Database
@@ -738,15 +723,15 @@ public:
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr</*ParameterBundle*/Inspector::InspectorObject> ptr)
+        Builder(Ref</*ParameterBundle*/Inspector::InspectorObject>&& object)
+            : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
-            m_result = ptr;
         }
         friend class ParameterBundle;
     public:
 
-        Builder<STATE | ColumnNamesSet>& setColumnNames(PassRefPtr<Inspector::Protocol::Array<String>> value)
+        Builder<STATE | ColumnNamesSet>& setColumnNames(RefPtr<Inspector::Protocol::Array<String>> value)
         {
             COMPILE_ASSERT(!(STATE & ColumnNamesSet), property_columnNames_already_set);
             m_result->setArray(ASCIILiteral("columnNames"), value);
@@ -767,55 +752,52 @@ public:
             return castState<TimestampSet>();
         }
 
-        Builder<STATE | ValuesSet>& setValues(PassRefPtr<Inspector::InspectorObject> value)
+        Builder<STATE | ValuesSet>& setValues(RefPtr<Inspector::InspectorObject> value)
         {
             COMPILE_ASSERT(!(STATE & ValuesSet), property_values_already_set);
             m_result->setObject(ASCIILiteral("values"), value);
             return castState<ValuesSet>();
         }
 
-        Builder<STATE | PayloadSet>& setPayload(PassRefPtr<Inspector::InspectorValue> value)
+        Builder<STATE | PayloadSet>& setPayload(RefPtr<Inspector::InspectorValue> value)
         {
             COMPILE_ASSERT(!(STATE & PayloadSet), property_payload_already_set);
             m_result->setValue(ASCIILiteral("payload"), value);
             return castState<PayloadSet>();
         }
 
-        Builder<STATE | ErrorSet>& setError(PassRefPtr<Inspector::Protocol::Database::Error> value)
+        Builder<STATE | ErrorSet>& setError(RefPtr<Inspector::Protocol::Database::Error> value)
         {
             COMPILE_ASSERT(!(STATE & ErrorSet), property_error_already_set);
             m_result->setObject(ASCIILiteral("error"), value);
             return castState<ErrorSet>();
         }
 
-        operator RefPtr<ParameterBundle>& ()
+        Ref<ParameterBundle> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(ParameterBundle) == sizeof(Inspector::InspectorObject), cannot_cast);
-            return *reinterpret_cast<RefPtr<ParameterBundle>*>(&m_result);
-        }
 
-        PassRefPtr<ParameterBundle> release()
-        {
-            return RefPtr<ParameterBundle>(*this).release();
+            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            return WTF::move(*reinterpret_cast<Ref<ParameterBundle>*>(&result));
         }
     };
 
     /*
      * Synthetic constructor:
-     * RefPtr<ParameterBundle> result = ParameterBundle::create()
+     * Ref<ParameterBundle> result = ParameterBundle::create()
      *     .setColumnNames(...)
      *     .setNotes(...)
      *     .setTimestamp(...)
      *     .setValues(...)
      *     .setPayload(...)
-     *     .setError(...);
+     *     .setError(...)
+     *     .release();
      */
     static Builder<NoFieldsSet> create()
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
-    typedef Inspector::Protocol::StructItemTraits ItemTraits;
 };
 
 } // Test
@@ -1331,7 +1313,6 @@ __attribute__((visibility ("default")))
 #import "RWIProtocolEnumConversionHelpers.h"
 #import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
-#import <wtf/PassRefPtr.h>
 
 using namespace Inspector;
 

@@ -55,74 +55,74 @@ namespace WebCore {
 
     class TimelineRecordFactory {
     public:
-        static PassRefPtr<Inspector::InspectorObject> createGenericRecord(double startTime, int maxCallStackDepth);
-        static PassRefPtr<Inspector::InspectorObject> createBackgroundRecord(double startTime, const String& thread);
+        static Ref<Inspector::InspectorObject> createGenericRecord(double startTime, int maxCallStackDepth);
+        static Ref<Inspector::InspectorObject> createBackgroundRecord(double startTime, const String& thread);
 
-        static PassRefPtr<Inspector::InspectorObject> createGCEventData(const size_t usedHeapSizeDelta);
+        static Ref<Inspector::InspectorObject> createGCEventData(const size_t usedHeapSizeDelta);
 
-        static PassRefPtr<Inspector::InspectorObject> createFunctionCallData(const String& scriptName, int scriptLine);
-        static PassRefPtr<Inspector::InspectorObject> createConsoleProfileData(const String& title);
+        static Ref<Inspector::InspectorObject> createFunctionCallData(const String& scriptName, int scriptLine);
+        static Ref<Inspector::InspectorObject> createConsoleProfileData(const String& title);
 
-        static PassRefPtr<Inspector::InspectorObject> createProbeSampleData(const Inspector::ScriptBreakpointAction&, unsigned sampleId);
+        static Ref<Inspector::InspectorObject> createProbeSampleData(const Inspector::ScriptBreakpointAction&, unsigned sampleId);
 
-        static PassRefPtr<Inspector::InspectorObject> createEventDispatchData(const Event&);
+        static Ref<Inspector::InspectorObject> createEventDispatchData(const Event&);
 
-        static PassRefPtr<Inspector::InspectorObject> createGenericTimerData(int timerId);
+        static Ref<Inspector::InspectorObject> createGenericTimerData(int timerId);
 
-        static PassRefPtr<Inspector::InspectorObject> createTimerInstallData(int timerId, int timeout, bool singleShot);
+        static Ref<Inspector::InspectorObject> createTimerInstallData(int timerId, int timeout, bool singleShot);
 
-        static PassRefPtr<Inspector::InspectorObject> createXHRReadyStateChangeData(const String& url, int readyState);
+        static Ref<Inspector::InspectorObject> createXHRReadyStateChangeData(const String& url, int readyState);
 
-        static PassRefPtr<Inspector::InspectorObject> createXHRLoadData(const String& url);
+        static Ref<Inspector::InspectorObject> createXHRLoadData(const String& url);
 
-        static PassRefPtr<Inspector::InspectorObject> createEvaluateScriptData(const String&, double lineNumber);
+        static Ref<Inspector::InspectorObject> createEvaluateScriptData(const String&, double lineNumber);
 
-        static PassRefPtr<Inspector::InspectorObject> createTimeStampData(const String&);
+        static Ref<Inspector::InspectorObject> createTimeStampData(const String&);
 
-        static PassRefPtr<Inspector::InspectorObject> createResourceSendRequestData(const String& requestId, const ResourceRequest&);
+        static Ref<Inspector::InspectorObject> createResourceSendRequestData(const String& requestId, const ResourceRequest&);
 
-        static PassRefPtr<Inspector::InspectorObject> createScheduleResourceRequestData(const String&);
+        static Ref<Inspector::InspectorObject> createScheduleResourceRequestData(const String&);
 
-        static PassRefPtr<Inspector::InspectorObject> createResourceReceiveResponseData(const String& requestId, const ResourceResponse&);
+        static Ref<Inspector::InspectorObject> createResourceReceiveResponseData(const String& requestId, const ResourceResponse&);
 
-        static PassRefPtr<Inspector::InspectorObject> createReceiveResourceData(const String& requestId, int length);
+        static Ref<Inspector::InspectorObject> createReceiveResourceData(const String& requestId, int length);
 
-        static PassRefPtr<Inspector::InspectorObject> createResourceFinishData(const String& requestId, bool didFail, double finishTime);
+        static Ref<Inspector::InspectorObject> createResourceFinishData(const String& requestId, bool didFail, double finishTime);
 
-        static PassRefPtr<Inspector::InspectorObject> createLayoutData(unsigned dirtyObjects, unsigned totalObjects, bool partialLayout);
+        static Ref<Inspector::InspectorObject> createLayoutData(unsigned dirtyObjects, unsigned totalObjects, bool partialLayout);
 
-        static PassRefPtr<Inspector::InspectorObject> createDecodeImageData(const String& imageType);
+        static Ref<Inspector::InspectorObject> createDecodeImageData(const String& imageType);
 
-        static PassRefPtr<Inspector::InspectorObject> createResizeImageData(bool shouldCache);
+        static Ref<Inspector::InspectorObject> createResizeImageData(bool shouldCache);
 
-        static PassRefPtr<Inspector::InspectorObject> createMarkData(bool isMainFrame);
+        static Ref<Inspector::InspectorObject> createMarkData(bool isMainFrame);
 
-        static PassRefPtr<Inspector::InspectorObject> createParseHTMLData(unsigned startLine);
+        static Ref<Inspector::InspectorObject> createParseHTMLData(unsigned startLine);
 
-        static PassRefPtr<Inspector::InspectorObject> createAnimationFrameData(int callbackId);
+        static Ref<Inspector::InspectorObject> createAnimationFrameData(int callbackId);
 
-        static PassRefPtr<Inspector::InspectorObject> createPaintData(const FloatQuad&);
+        static Ref<Inspector::InspectorObject> createPaintData(const FloatQuad&);
 
         static void appendLayoutRoot(Inspector::InspectorObject* data, const FloatQuad&);
 
-        static void appendProfile(Inspector::InspectorObject*, PassRefPtr<JSC::Profile>);
+        static void appendProfile(Inspector::InspectorObject*, RefPtr<JSC::Profile>&&);
 
 #if ENABLE(WEB_SOCKETS)
-        static inline PassRefPtr<Inspector::InspectorObject> createWebSocketCreateData(unsigned long identifier, const URL& url, const String& protocol)
+        static inline Ref<Inspector::InspectorObject> createWebSocketCreateData(unsigned long identifier, const URL& url, const String& protocol)
         {
-            RefPtr<Inspector::InspectorObject> data = Inspector::InspectorObject::create();
+            Ref<Inspector::InspectorObject> data = Inspector::InspectorObject::create();
             data->setInteger("identifier", identifier);
             data->setString("url", url.string());
             if (!protocol.isNull())
                 data->setString("webSocketProtocol", protocol);
-            return data.release();
+            return WTF::move(data);
         }
 
-        static inline PassRefPtr<Inspector::InspectorObject> createGenericWebSocketData(unsigned long identifier)
+        static inline Ref<Inspector::InspectorObject> createGenericWebSocketData(unsigned long identifier)
         {
-            RefPtr<Inspector::InspectorObject> data = Inspector::InspectorObject::create();
+            Ref<Inspector::InspectorObject> data = Inspector::InspectorObject::create();
             data->setInteger("identifier", identifier);
-            return data.release();
+            return WTF::move(data);
         }
 #endif
     private:

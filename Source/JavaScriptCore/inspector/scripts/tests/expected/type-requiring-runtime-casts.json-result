@@ -41,7 +41,7 @@ namespace Inspector {
 
 class AlternateInspectorBackendDispatcher {
 public:
-    void setBackendDispatcher(PassRefPtr<InspectorBackendDispatcher> dispatcher) { m_backendDispatcher = dispatcher; }
+    void setBackendDispatcher(RefPtr<InspectorBackendDispatcher>&& dispatcher) { m_backendDispatcher = WTF::move(dispatcher); }
     InspectorBackendDispatcher* backendDispatcher() const { return m_backendDispatcher.get(); }
 private:
     RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
@@ -131,7 +131,6 @@ InspectorBackend.registerEnum("Test.CastedAnimals", {Ducks: "Ducks", Hens: "Hens
 
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorBackendDispatcher.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -240,7 +239,6 @@ namespace Inspector {
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -338,7 +336,6 @@ namespace Inspector {
 
 #include <inspector/InspectorProtocolTypes.h>
 #include <wtf/Assertions.h>
-#include <wtf/PassRefPtr.h>
 
 namespace Inspector {
 
@@ -396,10 +393,10 @@ public:
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr</*TypeNeedingCast*/Inspector::InspectorObject> ptr)
+        Builder(Ref</*TypeNeedingCast*/Inspector::InspectorObject>&& object)
+            : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
-            m_result = ptr;
         }
         friend class TypeNeedingCast;
     public:
@@ -432,40 +429,37 @@ public:
             return castState<IdSet>();
         }
 
-        Builder<STATE | TreeSet>& setTree(PassRefPtr<Inspector::Protocol::Test::RecursiveObject1> value)
+        Builder<STATE | TreeSet>& setTree(RefPtr<Inspector::Protocol::Test::RecursiveObject1> value)
         {
             COMPILE_ASSERT(!(STATE & TreeSet), property_tree_already_set);
             m_result->setObject(ASCIILiteral("tree"), value);
             return castState<TreeSet>();
         }
 
-        operator RefPtr<TypeNeedingCast>& ()
+        Ref<TypeNeedingCast> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(TypeNeedingCast) == sizeof(Inspector::InspectorObject), cannot_cast);
-            return *reinterpret_cast<RefPtr<TypeNeedingCast>*>(&m_result);
-        }
 
-        PassRefPtr<TypeNeedingCast> release()
-        {
-            return RefPtr<TypeNeedingCast>(*this).release();
+            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            return WTF::move(*reinterpret_cast<Ref<TypeNeedingCast>*>(&result));
         }
     };
 
     /*
      * Synthetic constructor:
-     * RefPtr<TypeNeedingCast> result = TypeNeedingCast::create()
+     * Ref<TypeNeedingCast> result = TypeNeedingCast::create()
      *     .setString(...)
      *     .setNumber(...)
      *     .setAnimals(...)
      *     .setId(...)
-     *     .setTree(...);
+     *     .setTree(...)
+     *     .release();
      */
     static Builder<NoFieldsSet> create()
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
-    typedef Inspector::Protocol::StructItemTraits ItemTraits;
 };
 
 /*  */
@@ -499,40 +493,37 @@ public:
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr</*RecursiveObject1*/Inspector::InspectorObject> ptr)
+        Builder(Ref</*RecursiveObject1*/Inspector::InspectorObject>&& object)
+            : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
-            m_result = ptr;
         }
         friend class RecursiveObject1;
     public:
 
-        operator RefPtr<RecursiveObject1>& ()
+        Ref<RecursiveObject1> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(RecursiveObject1) == sizeof(Inspector::InspectorObject), cannot_cast);
-            return *reinterpret_cast<RefPtr<RecursiveObject1>*>(&m_result);
-        }
 
-        PassRefPtr<RecursiveObject1> release()
-        {
-            return RefPtr<RecursiveObject1>(*this).release();
+            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            return WTF::move(*reinterpret_cast<Ref<RecursiveObject1>*>(&result));
         }
     };
 
     /*
      * Synthetic constructor:
-     * RefPtr<RecursiveObject1> result = RecursiveObject1::create();
+     * Ref<RecursiveObject1> result = RecursiveObject1::create()
+     *     .release();
      */
     static Builder<NoFieldsSet> create()
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
-    typedef Inspector::Protocol::StructItemTraits ItemTraits;
 
-    void setObj(PassRefPtr<Inspector::Protocol::Test::RecursiveObject2> value)
+    void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject2> value)
     {
-        InspectorObjectBase::setObject(ASCIILiteral("obj"), value);
+        InspectorObjectBase::setObject(ASCIILiteral("obj"), WTF::move(value));
     }
 };
 
@@ -553,40 +544,37 @@ public:
             return *reinterpret_cast<Builder<STATE | STEP>*>(this);
         }
 
-        Builder(PassRefPtr</*RecursiveObject2*/Inspector::InspectorObject> ptr)
+        Builder(Ref</*RecursiveObject2*/Inspector::InspectorObject>&& object)
+            : m_result(WTF::move(object))
         {
             COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
-            m_result = ptr;
         }
         friend class RecursiveObject2;
     public:
 
-        operator RefPtr<RecursiveObject2>& ()
+        Ref<RecursiveObject2> release()
         {
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(RecursiveObject2) == sizeof(Inspector::InspectorObject), cannot_cast);
-            return *reinterpret_cast<RefPtr<RecursiveObject2>*>(&m_result);
-        }
 
-        PassRefPtr<RecursiveObject2> release()
-        {
-            return RefPtr<RecursiveObject2>(*this).release();
+            Ref<Inspector::InspectorObject> result = m_result.releaseNonNull();
+            return WTF::move(*reinterpret_cast<Ref<RecursiveObject2>*>(&result));
         }
     };
 
     /*
      * Synthetic constructor:
-     * RefPtr<RecursiveObject2> result = RecursiveObject2::create();
+     * Ref<RecursiveObject2> result = RecursiveObject2::create()
+     *     .release();
      */
     static Builder<NoFieldsSet> create()
     {
         return Builder<NoFieldsSet>(Inspector::InspectorObject::create());
     }
-    typedef Inspector::Protocol::StructItemTraits ItemTraits;
 
-    void setObj(PassRefPtr<Inspector::Protocol::Test::RecursiveObject1> value)
+    void setObj(RefPtr<Inspector::Protocol::Test::RecursiveObject1> value)
     {
-        InspectorObjectBase::setObject(ASCIILiteral("obj"), value);
+        InspectorObjectBase::setObject(ASCIILiteral("obj"), WTF::move(value));
     }
 };
 
@@ -598,7 +586,7 @@ static void assertValueHasExpectedType(Inspector::InspectorValue*);
 #endif // !ASSERT_DISABLED
 };
 template<> struct BindingTraits<Inspector::Protocol::Test::TypeNeedingCast> {
-static PassRefPtr<Inspector::Protocol::Test::TypeNeedingCast> runtimeCast(PassRefPtr<Inspector::InspectorValue> value);
+static RefPtr<Inspector::Protocol::Test::TypeNeedingCast> runtimeCast(RefPtr<Inspector::InspectorValue>&& value);
 #if !ASSERT_DISABLED
 static void assertValueHasExpectedType(Inspector::InspectorValue*);
 #endif // !ASSERT_DISABLED
@@ -684,6 +672,7 @@ String getEnumConstantValue(int code) {
 #if !ASSERT_DISABLED
 void BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpectedType(Inspector::InspectorValue* value)
 {
+    ASSERT_ARG(value, value);
     String result;
     bool castSucceeded = value->asString(result);
     ASSERT(castSucceeded);
@@ -694,6 +683,7 @@ void BindingTraits<Inspector::Protocol::Test::CastedAnimals>::assertValueHasExpe
 #if !ASSERT_DISABLED
 void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasExpectedType(Inspector::InspectorValue* value)
 {
+    ASSERT_ARG(value, value);
     RefPtr<InspectorObject> object;
     bool castSucceeded = value->asObject(object);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
@@ -729,7 +719,7 @@ void BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::assertValueHasEx
 }
 #endif // !ASSERT_DISABLED
 
-PassRefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::runtimeCast(PassRefPtr<Inspector::InspectorValue> value)
+RefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::Protocol::Test::TypeNeedingCast>::runtimeCast(RefPtr<Inspector::InspectorValue>&& value)
 {
     RefPtr<Inspector::InspectorObject> result;
     bool castSucceeded = value->asObject(result);
@@ -745,6 +735,7 @@ PassRefPtr<Inspector::Protocol::Test::TypeNeedingCast> BindingTraits<Inspector::
 #if !ASSERT_DISABLED
 void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasExpectedType(Inspector::InspectorValue* value)
 {
+    ASSERT_ARG(value, value);
     RefPtr<InspectorObject> object;
     bool castSucceeded = value->asObject(object);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
@@ -765,6 +756,7 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject1>::assertValueHasE
 #if !ASSERT_DISABLED
 void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasExpectedType(Inspector::InspectorValue* value)
 {
+    ASSERT_ARG(value, value);
     RefPtr<InspectorObject> object;
     bool castSucceeded = value->asObject(object);
     ASSERT_UNUSED(castSucceeded, castSucceeded);
@@ -1256,7 +1248,6 @@ __attribute__((visibility ("default")))
 #import "RWIProtocolEnumConversionHelpers.h"
 #import <JavaScriptCore/InspectorValues.h>
 #import <wtf/Assertions.h>
-#import <wtf/PassRefPtr.h>
 
 using namespace Inspector;
 

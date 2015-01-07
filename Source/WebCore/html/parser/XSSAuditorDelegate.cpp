@@ -82,12 +82,12 @@ PassRefPtr<FormData> XSSAuditorDelegate::generateViolationReport(const XSSInfo& 
             httpBody = formData->flattenToString();
     }
 
-    RefPtr<InspectorObject> reportDetails = InspectorObject::create();
+    Ref<InspectorObject> reportDetails = InspectorObject::create();
     reportDetails->setString("request-url", xssInfo.m_originalURL);
     reportDetails->setString("request-body", httpBody);
 
-    RefPtr<InspectorObject> reportObject = InspectorObject::create();
-    reportObject->setObject("xss-report", reportDetails.release());
+    Ref<InspectorObject> reportObject = InspectorObject::create();
+    reportObject->setObject("xss-report", WTF::move(reportDetails));
 
     return FormData::create(reportObject->toJSONString().utf8().data());
 }

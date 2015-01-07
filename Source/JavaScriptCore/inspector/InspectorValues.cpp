@@ -347,7 +347,7 @@ bool decodeString(const UChar* start, const UChar* end, String& output)
     return true;
 }
 
-PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UChar** valueTokenEnd, int depth)
+RefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, const UChar** valueTokenEnd, int depth)
 {
     if (depth > stackLimit)
         return nullptr;
@@ -385,14 +385,14 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
         break;
     }
     case ARRAY_BEGIN: {
-        RefPtr<InspectorArray> array = InspectorArray::create();
+        Ref<InspectorArray> array = InspectorArray::create();
         start = tokenEnd;
         token = parseToken(start, end, &tokenStart, &tokenEnd);
         while (token != ARRAY_END) {
             RefPtr<InspectorValue> arrayNode = buildValue(start, end, &tokenEnd, depth + 1);
             if (!arrayNode)
                 return nullptr;
-            array->pushValue(arrayNode);
+            array->pushValue(WTF::move(arrayNode));
 
             // After a list value, we expect a comma or the end of the list.
             start = tokenEnd;
@@ -409,11 +409,11 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
         }
         if (token != ARRAY_END)
             return nullptr;
-        result = array.release();
+        result = WTF::move(array);
         break;
     }
     case OBJECT_BEGIN: {
-        RefPtr<InspectorObject> object = InspectorObject::create();
+        Ref<InspectorObject> object = InspectorObject::create();
         start = tokenEnd;
         token = parseToken(start, end, &tokenStart, &tokenEnd);
         while (token != OBJECT_END) {
@@ -432,7 +432,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
             RefPtr<InspectorValue> value = buildValue(start, end, &tokenEnd, depth + 1);
             if (!value)
                 return nullptr;
-            object->setValue(key, value);
+            object->setValue(key, WTF::move(value));
             start = tokenEnd;
 
             // After a key/value pair, we expect a comma or the end of the
@@ -450,7 +450,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
         }
         if (token != OBJECT_END)
             return nullptr;
-        result = object.release();
+        result = WTF::move(object);
         break;
     }
 
@@ -739,8 +739,8 @@ InspectorObject* InspectorObjectBase::openAccessors()
 
 bool InspectorObjectBase::getBoolean(const String& name, bool& output) const
 {
-    RefPtr<InspectorValue> value = get(name);
-    if (!value)
+    RefPtr<InspectorValue> value;
+    if (!getValue(name, value))
         return false;
 
     return value->asBoolean(output);
@@ -748,40 +748,39 @@ bool InspectorObjectBase::getBoolean(const String& name, bool& output) const
 
 bool InspectorObjectBase::getString(const String& name, String& output) const
 {
-    RefPtr<InspectorValue> value = get(name);
-    if (!value)
+    RefPtr<InspectorValue> value;
+    if (!getValue(name, value))
         return false;
+
     return value->asString(output);
 }
 
-PassRefPtr<InspectorObject> InspectorObjectBase::getObject(const String& name) const
+bool InspectorObjectBase::getObject(const String& name, RefPtr<InspectorObject>& output) const
 {
-    PassRefPtr<InspectorValue> value = get(name);
-    if (!value)
-        return nullptr;
+    RefPtr<InspectorValue> value;
+    if (!getValue(name, value))
+        return false;
 
-    RefPtr<InspectorObject> result;
-    value->asObject(result);
-    return result.release();
+    return value->asObject(output);
 }
 
-PassRefPtr<InspectorArray> InspectorObjectBase::getArray(const String& name) const
+bool InspectorObjectBase::getArray(const String& name, RefPtr<InspectorArray>& output) const
 {
-    PassRefPtr<InspectorValue> value = get(name);
-    if (!value)
-        return nullptr;
+    RefPtr<InspectorValue> value;
+    if (!getValue(name, value))
+        return false;
 
-    RefPtr<InspectorArray> result;
-    value->asArray(result);
-    return result.release();
+    return value->asArray(output);
 }
 
-PassRefPtr<InspectorValue> InspectorObjectBase::get(const String& name) const
+bool InspectorObjectBase::getValue(const String& name, RefPtr<InspectorValue>& output) const
 {
-    Dictionary::const_iterator it = m_data.find(name);
-    if (it == m_data.end())
-        return nullptr;
-    return it->value;
+    Dictionary::const_iterator findResult = m_data.find(name);
+    if (findResult == m_data.end())
+        return false;
+
+    output = findResult->value;
+    return true;
 }
 
 void InspectorObjectBase::remove(const String& name)
@@ -799,13 +798,13 @@ void InspectorObjectBase::writeJSON(StringBuilder& output) const
 {
     output.append('{');
     for (size_t i = 0; i < m_order.size(); ++i) {
-        Dictionary::const_iterator it = m_data.find(m_order[i]);
-        ASSERT(it != m_data.end());
+        auto findResult = m_data.find(m_order[i]);
+        ASSERT(findResult != m_data.end());
         if (i)
             output.append(',');
-        doubleQuoteString(it->key, output);
+        doubleQuoteString(findResult->key, output);
         output.append(':');
-        it->value->writeJSON(output);
+        findResult->value->writeJSON(output);
     }
     output.append('}');
 }
@@ -845,50 +844,50 @@ InspectorArrayBase::InspectorArrayBase()
 {
 }
 
-PassRefPtr<InspectorValue> InspectorArrayBase::get(size_t index)
+RefPtr<InspectorValue> InspectorArrayBase::get(size_t index)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(index < m_data.size());
     return m_data[index];
 }
 
-PassRefPtr<InspectorObject> InspectorObject::create()
+Ref<InspectorObject> InspectorObject::create()
 {
-    return adoptRef(new InspectorObject);
+    return adoptRef(*new InspectorObject);
 }
 
-PassRefPtr<InspectorArray> InspectorArray::create()
+Ref<InspectorArray> InspectorArray::create()
 {
-    return adoptRef(new InspectorArray);
+    return adoptRef(*new InspectorArray);
 }
 
-PassRefPtr<InspectorValue> InspectorValue::null()
+Ref<InspectorValue> InspectorValue::null()
 {
-    return adoptRef(new InspectorValue);
+    return adoptRef(*new InspectorValue);
 }
 
-PassRefPtr<InspectorString> InspectorString::create(const String& value)
+Ref<InspectorString> InspectorString::create(const String& value)
 {
-    return adoptRef(new InspectorString(value));
+    return adoptRef(*new InspectorString(value));
 }
 
-PassRefPtr<InspectorString> InspectorString::create(const char* value)
+Ref<InspectorString> InspectorString::create(const char* value)
 {
-    return adoptRef(new InspectorString(value));
+    return adoptRef(*new InspectorString(value));
 }
 
-PassRefPtr<InspectorBasicValue> InspectorBasicValue::create(bool value)
+Ref<InspectorBasicValue> InspectorBasicValue::create(bool value)
 {
-    return adoptRef(new InspectorBasicValue(value));
+    return adoptRef(*new InspectorBasicValue(value));
 }
 
-PassRefPtr<InspectorBasicValue> InspectorBasicValue::create(int value)
+Ref<InspectorBasicValue> InspectorBasicValue::create(int value)
 {
-    return adoptRef(new InspectorBasicValue(value));
+    return adoptRef(*new InspectorBasicValue(value));
 }
 
-PassRefPtr<InspectorBasicValue> InspectorBasicValue::create(double value)
+Ref<InspectorBasicValue> InspectorBasicValue::create(double value)
 {
-    return adoptRef(new InspectorBasicValue(value));
+    return adoptRef(*new InspectorBasicValue(value));
 }
 
 } // namespace Inspector

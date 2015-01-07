@@ -52,7 +52,6 @@ class CppBackendDispatcherHeaderGenerator(Generator):
         headers = [
             '"InspectorProtocolObjects.h"',
             '<inspector/InspectorBackendDispatcher.h>',
-            '<wtf/PassRefPtr.h>',
             '<wtf/text/WTFString.h>']
 
         typedefs = [('String', 'ErrorString')]
@@ -157,7 +156,7 @@ class CppBackendDispatcherHeaderGenerator(Generator):
         in_parameters = ['ErrorString&']
         for _parameter in command.call_parameters:
             in_parameters.append("%s in_%s" % (CppGenerator.cpp_type_for_unchecked_formal_in_parameter(_parameter), _parameter.parameter_name))
-        in_parameters.append("PassRefPtr<%s> callback" % callbackName)
+        in_parameters.append("Ref<%s>&& callback" % callbackName)
 
         out_parameters = []
         for _parameter in command.return_parameters:

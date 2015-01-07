@@ -95,7 +95,7 @@ public:
     void didFailLoading(unsigned long identifier, DocumentLoader&, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader&, CachedResource&);
     void documentThreadableLoaderStartedLoadingForClient(unsigned long identifier, ThreadableLoaderClient*);
-    void willLoadXHR(ThreadableLoaderClient*, const String& method, const URL&, bool async, PassRefPtr<FormData> body, const HTTPHeaderMap& headers, bool includeCrendentials);
+    void willLoadXHR(ThreadableLoaderClient*, const String& method, const URL&, bool async, RefPtr<FormData>&& body, const HTTPHeaderMap& headers, bool includeCrendentials);
     void didFailXHRLoading(ThreadableLoaderClient*);
     void didFinishXHRLoading(ThreadableLoaderClient*, unsigned long identifier, const String& sourceString);
     void didReceiveXHRResponse(unsigned long identifier);
@@ -118,12 +118,12 @@ public:
 
     void didScheduleStyleRecalculation(Document&);
 
-    PassRefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*);
+    RefPtr<Inspector::Protocol::Network::Initiator> buildInitiatorObject(Document*);
 
     // Called from frontend.
     virtual void enable(ErrorString&) override;
     virtual void disable(ErrorString&) override;
-    virtual void setExtraHTTPHeaders(ErrorString&, const RefPtr<Inspector::InspectorObject>&) override;
+    virtual void setExtraHTTPHeaders(ErrorString&, const RefPtr<Inspector::InspectorObject>&&) override;
     virtual void getResponseBody(ErrorString&, const String& requestId, String* content, bool* base64Encoded) override;
     virtual void replayXHR(ErrorString&, const String& requestId) override;
     virtual void canClearBrowserCache(ErrorString&, bool*) override;
@@ -131,7 +131,7 @@ public:
     virtual void canClearBrowserCookies(ErrorString&, bool*) override;
     virtual void clearBrowserCookies(ErrorString&) override;
     virtual void setCacheDisabled(ErrorString&, bool cacheDisabled) override;
-    virtual void loadResource(ErrorString&, const String& frameId, const String& url, PassRefPtr<LoadResourceCallback>) override;
+    virtual void loadResource(ErrorString&, const String& frameId, const String& url, Ref<LoadResourceCallback>&&) override;
 
 private:
     void enable();
