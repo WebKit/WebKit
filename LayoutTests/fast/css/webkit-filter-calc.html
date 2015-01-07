@@ -12,6 +12,10 @@ evalAndLog("testDiv.style['-webkit-filter'] = 'saturate(calc(10% * 2))'");
 shouldBeEqualToString("testDiv.style['-webkit-filter']", "saturate(calc(20%))");
 shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "saturate(0.2)");
 
+evalAndLog("testDiv.style['-webkit-filter'] = 'brightness(calc(10% * 2))'");
+shouldBeEqualToString("testDiv.style['-webkit-filter']", "brightness(calc(20%))");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('-webkit-filter')", "brightness(0.2)");
+
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

@@ -9378,8 +9378,7 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
             if (!validateUnit(argumentWithCalculation, FNumber | FPercent, CSSStrictMode))
                 return nullptr;
 
-            // FIXME: This doesn't handle calculated values.
-            filterValue->append(cssValuePool().createValue(argumentWithCalculation.value().fValue, static_cast<CSSPrimitiveValue::UnitTypes>(argumentWithCalculation.value().unit)));
+            filterValue->append(createPrimitiveNumericValue(argumentWithCalculation));
         }
         break;
     }
