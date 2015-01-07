@@ -48,7 +48,9 @@ double computeCurrentAge(const ResourceResponse&, double responseTimestamp);
 double computeFreshnessLifetimeForHTTPFamily(const ResourceResponse&, double responseTimestamp);
 void updateResponseHeadersAfterRevalidation(ResourceResponse&, const ResourceResponse& validatingResponse);
 void updateRedirectChainStatus(RedirectChainCacheStatus&, const ResourceResponse&);
-bool redirectChainAllowsReuse(RedirectChainCacheStatus);
+
+enum ReuseExpiredRedirectionOrNot { DoNotReuseExpiredRedirection, ReuseExpiredRedirection };
+bool redirectChainAllowsReuse(RedirectChainCacheStatus, ReuseExpiredRedirectionOrNot);
 
 }
 

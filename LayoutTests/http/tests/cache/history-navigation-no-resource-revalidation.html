@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<body onLoad="runTest()">
+    <script src="/js-test-resources/js-test-pre.js"></script>
+    <script>
+    description("Test that we don't attempt to revalidate the cached main resource on history navigation");
+    jsTestIsAsync = true;
+
+    if (window.testRunner)
+        testRunner.setCanOpenWindows();
+
+    // Values to check.
+    var originalRandomNumber = 0;
+    var backLoadRandomNumber = 0;
+    var refreshRandomNumber  = 0;
+    var nextLoadRandomNumber = 0;
+
+    // Window we will be controlling.
+    var target;
+
+    // Pass messages between windows to control the navigation types.
+    var pre = document.getElementById('console');
+    window.addEventListener('message', function(event) {
+
+        // First time, record the first number, and tell the target window to trigger a back navigation.
+        if (!originalRandomNumber) {
+            originalRandomNumber = event.data;
+            target.postMessage('go-forward-and-back', '*');
+            return;
+        }
+
+        // Second time, record the second number. It should be identical. Also tell the target window to reload.
+        if (!backLoadRandomNumber) {
+            backLoadRandomNumber = event.data;
+            var wasCached = (backLoadRandomNumber === originalRandomNumber);
+            if (wasCached)
+                testPassed('no-cache subresource was cached and used for a back navigation');
+            else
+                testFailed('no-cache subresource should have been cached and used in a back navigation');
+
+            target.postMessage('reload', '*');
+            return;
+        }
+
+        // Third time, record the third number. It should not match. Also tell the target window to navigate forward.
+        if (!refreshRandomNumber) {
+            refreshRandomNumber = event.data;
+            var wasCached = (refreshRandomNumber === originalRandomNumber);
+            if (wasCached)
+                testFailed('no-cache subresource should have been refetched with a reload');
+            else
+                testPassed('no-cache subresource was refetched with a reload');
+
+            target.postMessage('next', '*');
+            return;
+        }
+
+        // Fourth time, record the fourth number. It should not match any numbers so far.
+        if (!nextLoadRandomNumber) {
+            nextLoadRandomNumber = event.data;
+            var wasCached = (nextLoadRandomNumber === originalRandomNumber || nextLoadRandomNumber === refreshRandomNumber);
+            if (wasCached)
+                testFailed('no-cache subresource should have been refetched with a normal navigation');
+            else
+                testPassed('no-cache subresource was refetched with a normal navigation');
+        }
+
+        // Test completed.
+        target.close();
+        finishJSTest();
+
+    }, false);
+
+    function runTest() {
+        // Open the target window and it will begin to send us messages.
+        target = window.open('https://127.0.0.1:8443/cache/resources/no-cache-main-resource.php');
+    }
+    </script>
+    <script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

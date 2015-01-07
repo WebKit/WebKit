@@ -135,7 +135,7 @@ void updateRedirectChainStatus(RedirectChainCacheStatus& redirectChainCacheStatu
     redirectChainCacheStatus.endOfValidity = std::min(redirectChainCacheStatus.endOfValidity, endOfValidity);
 }
 
-bool redirectChainAllowsReuse(RedirectChainCacheStatus redirectChainCacheStatus)
+bool redirectChainAllowsReuse(RedirectChainCacheStatus redirectChainCacheStatus, ReuseExpiredRedirectionOrNot reuseExpiredRedirection)
 {
     switch (redirectChainCacheStatus.status) {
     case RedirectChainCacheStatus::NoRedirection:
@@ -143,7 +143,7 @@ bool redirectChainAllowsReuse(RedirectChainCacheStatus redirectChainCacheStatus)
     case RedirectChainCacheStatus::NotCachedRedirection:
         return false;
     case RedirectChainCacheStatus::CachedRedirection:
-        return currentTime() <= redirectChainCacheStatus.endOfValidity;
+        return reuseExpiredRedirection || currentTime() <= redirectChainCacheStatus.endOfValidity;
     }
     ASSERT_NOT_REACHED();
     return false;

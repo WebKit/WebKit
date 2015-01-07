@@ -715,9 +715,9 @@ bool CachedResource::mustRevalidateDueToCacheHeaders(const CachedResourceLoader&
     return false;
 }
 
-bool CachedResource::redirectChainAllowsReuse() const
+bool CachedResource::redirectChainAllowsReuse(ReuseExpiredRedirectionOrNot reuseExpiredRedirection) const
 {
-    return WebCore::redirectChainAllowsReuse(m_redirectChainCacheStatus);
+    return WebCore::redirectChainAllowsReuse(m_redirectChainCacheStatus, reuseExpiredRedirection);
 }
 
 unsigned CachedResource::overheadSize() const

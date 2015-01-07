@@ -1,8 +1,12 @@
-<h1></h1>
-<script src="random.cgi"></script>
-<script>
-// Random.cgi will include a global "randomNumber".
-// Always send this back to our opener.
+<?php
+header("Cache-control: no-cache, max-age=0");
+header("Last-Modified: Thu, 01 Jan 1970 00:00:00 GMT");
+header('Content-Type: text/html');
+
+print "<script>\n";
+print "var randomNumber = " . rand() . ";\n";
+?>
+
 opener.postMessage(randomNumber, '*');
 
 // Our opener will tell us to perform various loads.
@@ -22,7 +26,7 @@ window.addEventListener('message', function(event) {
 
     // Normal navigation, next.
     if (event.data === 'next') {
-        window.location = 'no-store-resource-next.html';
+        window.location = 'no-cache-main-resource-next.php';
         return;
     }
 

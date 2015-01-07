@@ -1,3 +1,65 @@
+2015-01-06  Chris Dumez  <cdumez@apple.com>
+
+        Do not attempt to revalidate cached main resource on back/forward navigation
+        https://bugs.webkit.org/show_bug.cgi?id=139263
+
+        Reviewed by Darin Adler.
+
+        Do not attempt to revalidate cached main resource on back/forward
+        navigation, as allowed by RFC2616 & newer RFC7234 which distinguish
+        history mechanisms and caches, stating:
+
+           The freshness model (Section 4.2) does not necessarily apply to
+           history mechanisms.  That is, a history mechanism can display a
+           previous representation even if it has expired.
+
+        Previously, we would bypass revalidation on back/forward navigation
+        only for sub-resources. This patch extends this policy to the main
+        resource as well.
+
+        This behavior is also consistent with IE10+ and Chrome. It makes it more
+        likely we return cached content to the user on back/forward navigation
+        and avoids making network requests in this case.
+
+        Test: http/tests/cache/history-navigation-no-resource-revalidation.html
+
+        * loader/cache/CacheValidation.cpp:
+        (WebCore::redirectChainAllowsReuse):
+        * loader/cache/CacheValidation.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::redirectChainAllowsReuse):
+        Add a "ReuseExpiredRedirectionOrNot" flag argument because in the case
+        of an HistoryBuffer navigation, we don't mind reuse an expired
+        redirection. However, we still need to make sure that the redirection
+        is actually cached before reusing it.
+
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        - Do the redirectChainAllowsReuse() check *before* checking if the cache
+          policy is CachePolicyHistoryBuffer. This is needed because
+          redirectChainAllowsReuse() will return false if the redirection is not
+          cached. Loading from the cache in this case will cause us to load the
+          wrong resource (the one before the redirection). This case is covered
+          by http/tests/navigation/redirect-on-reload-updates-history-item.html.
+        - Do not use the cached main resource if it has "cache-control: no-store",
+          even if it is a history navigation (cachePolicy is
+          CachePolicyHistoryBuffer). This maintains the previous behavior, and
+          some layout tests rely on this. We now have to be explicit about it
+          because cachePolicy() can now return CachePolicyHistoryBuffer for the
+          main resource (not just sub-resources). This difference in behavior
+          on history navigation for the main resource and sub-resources is not
+          great. However, I chose to maintain this pre-existing behavior in this
+          patch to do one behavior change at a time. We can harmonize this later.
+
+        Previously, the order was not an issue because the main resource was
+        always revalidated on back/forward navigation.
+
+        (WebCore::CachedResourceLoader::cachePolicy):
+        Return CachePolicyHistoryBuffer for the main resource in case of
+        history navigation, instead of CachePolicyVerify so that we don't
+        attempt to revalidate.
+
 2015-01-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r177988.

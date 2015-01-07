@@ -620,22 +620,27 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // Alwaus use preloads.
     if (existingResource->isPreloaded())
         return Use;
-    
-    // CachePolicyHistoryBuffer uses the cache no matter what.
-    if (cachePolicy(type) == CachePolicyHistoryBuffer)
-        return Use;
+
+    // Validate the redirect chain.
+    bool cachePolicyIsHistoryBuffer = cachePolicy(type) == CachePolicyHistoryBuffer;
+    if (!existingResource->redirectChainAllowsReuse(cachePolicyIsHistoryBuffer ? ReuseExpiredRedirection : DoNotReuseExpiredRedirection)) {
+        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to not cached or expired redirections.");
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUnusedReasonRedirectChainKey);
+        return Reload;
+    }
+
+    // CachePolicyHistoryBuffer uses the cache except if this is a main resource with "cache-control: no-store".
+    if (cachePolicyIsHistoryBuffer) {
+        // FIXME: Ignoring "cache-control: no-cache" for sub-resources on history navigation but not the main
+        // resource is inconsistent. We should probably harmonize this.
+        if (!existingResource->response().cacheControlContainsNoStore() || type != CachedResource::MainResource)
+            return Use;
+    }
 
     // Don't reuse resources with Cache-control: no-store.
     if (existingResource->response().cacheControlContainsNoStore()) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to Cache-control: no-store.");
         FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUnusedReasonNoStoreKey);
-        return Reload;
-    }
-
-    // Validate the redirect chain
-    if (!existingResource->redirectChainAllowsReuse()) {
-        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to not cached or expired redirections.");
-        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUnusedReasonRedirectChainKey);
         return Reload;
     }
 
@@ -759,9 +764,18 @@ CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type) const
     if (type != CachedResource::MainResource)
         return frame()->loader().subresourceCachePolicy();
     
-    if (frame()->loader().loadType() == FrameLoadType::ReloadFromOrigin || frame()->loader().loadType() == FrameLoadType::Reload)
+    switch (frame()->loader().loadType()) {
+    case FrameLoadType::ReloadFromOrigin:
+    case FrameLoadType::Reload:
         return CachePolicyReload;
-    return CachePolicyVerify;
+    case FrameLoadType::Back:
+    case FrameLoadType::Forward:
+    case FrameLoadType::IndexedBackForward:
+        // Do not revalidate cached main resource on back/forward navigation.
+        return CachePolicyHistoryBuffer;
+    default:
+        return CachePolicyVerify;
+    }
 }
 
 void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
