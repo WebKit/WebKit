@@ -2219,23 +2219,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
         return;
-#if ENABLE(IOS_TEXT_AUTOSIZING)
-    case CSSPropertyWebkitTextSizeAdjust: {
-        HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
-        if (!primitiveValue)
-            return;
-
-        if (primitiveValue->getValueID() == CSSValueAuto)
-            state.style()->setTextSizeAdjust(TextSizeAdjustment(AutoTextSizeAdjustment));
-        else if (primitiveValue->getValueID() == CSSValueNone)
-            state.style()->setTextSizeAdjust(TextSizeAdjustment(NoTextSizeAdjustment));
-        else
-            state.style()->setTextSizeAdjust(TextSizeAdjustment(primitiveValue->getFloatValue()));
-
-        state.setFontDirty(true);
-        return;
-    }
-#endif
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSSPropertyWebkitDashboardRegion:
     {
@@ -2439,6 +2422,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyImageRendering:
 #if ENABLE(CSS_IMAGE_RESOLUTION)
     case CSSPropertyImageResolution:
+#endif
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    case CSSPropertyWebkitTextSizeAdjust:
 #endif
     case CSSPropertyLeft:
     case CSSPropertyLetterSpacing:

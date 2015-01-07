@@ -103,6 +103,9 @@ public:
     static void applyValueWebkitJustifySelf(StyleResolver&, CSSValue&);
     static void applyValueWebkitLocale(StyleResolver&, CSSValue&);
     static void applyValueWebkitTextOrientation(StyleResolver&, CSSValue&);
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+    static void applyValueWebkitTextSizeAdjust(StyleResolver&, CSSValue&);
+#endif
     static void applyValueWebkitWritingMode(StyleResolver&, CSSValue&);
 
 private:
@@ -677,6 +680,21 @@ inline void StyleBuilderCustom::applyValueWebkitTextOrientation(StyleResolver& s
 {
     styleResolver.setTextOrientation(downcast<CSSPrimitiveValue>(value));
 }
+
+#if ENABLE(IOS_TEXT_AUTOSIZING)
+inline void StyleBuilderCustom::applyValueWebkitTextSizeAdjust(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.getValueID() == CSSValueAuto)
+        styleResolver.style()->setTextSizeAdjust(TextSizeAdjustment(AutoTextSizeAdjustment));
+    else if (primitiveValue.getValueID() == CSSValueNone)
+        styleResolver.style()->setTextSizeAdjust(TextSizeAdjustment(NoTextSizeAdjustment));
+    else
+        styleResolver.style()->setTextSizeAdjust(TextSizeAdjustment(primitiveValue.getFloatValue()));
+
+    styleResolver.state().setFontDirty(true);
+}
+#endif
 
 inline void StyleBuilderCustom::applyValueWebkitJustifySelf(StyleResolver& styleResolver, CSSValue& value)
 {

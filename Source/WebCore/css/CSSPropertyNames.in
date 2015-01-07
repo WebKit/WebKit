@@ -110,7 +110,7 @@ text-rendering [Inherited, FontProperty, TypeName=TextRenderingMode, NameForMeth
 -webkit-text-orientation [Inherited, Custom=Value]
 -epub-text-orientation = -webkit-text-orientation
 #if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING
--webkit-text-size-adjust [Inherited, LegacyStyleBuilder]
+-webkit-text-size-adjust [Inherited, Custom=Value]
 #endif
 -webkit-writing-mode [Inherited, Custom=Value]
 -epub-writing-mode = -webkit-writing-mode
