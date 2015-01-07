@@ -139,6 +139,7 @@ public:
     ScrollingNodeID scrollingNodeIDForChildren() const { return m_scrollingNodeID ? m_scrollingNodeID : m_viewportConstrainedNodeID; }
 
     bool hasMaskLayer() const { return m_maskLayer != 0; }
+    bool hasChildClippingMaskLayer() const { return m_childClippingMaskLayer != nullptr; }
 
     GraphicsLayer* parentForSublayers() const;
     GraphicsLayer* childForSuperlayers() const;
@@ -268,6 +269,7 @@ private:
     bool requiresScrollCornerLayer() const;
     bool updateScrollingLayers(bool scrollingLayers);
     void updateDrawsContent(bool isSimpleContainer);
+    void updateChildClippingStrategy(bool needsDescendentsClippingLayer);
     
     void updateRootLayerConfiguration();
 
@@ -335,6 +337,7 @@ private:
     std::unique_ptr<GraphicsLayer> m_backgroundLayer; // Only used in cases where we need to draw the background separately.
     std::unique_ptr<GraphicsLayer> m_childContainmentLayer; // Only used if we have clipping on a stacking context with compositing children, or if the layer has a tile cache.
     std::unique_ptr<GraphicsLayer> m_maskLayer; // Only used if we have a mask.
+    std::unique_ptr<GraphicsLayer> m_childClippingMaskLayer; // Only used if we have to clip child layers or accelerated contents with border radius or clip-path.
 
     std::unique_ptr<GraphicsLayer> m_layerForHorizontalScrollbar;
     std::unique_ptr<GraphicsLayer> m_layerForVerticalScrollbar;

@@ -49,7 +49,8 @@ enum PaintPhase {
     PaintPhaseSelection,
     PaintPhaseCollapsedTableBorders,
     PaintPhaseTextClip,
-    PaintPhaseMask
+    PaintPhaseMask,
+    PaintPhaseClippingMask
 };
 
 enum PaintBehaviorFlags {

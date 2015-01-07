@@ -2027,6 +2027,38 @@ void GraphicsLayerCA::updateContentsColorLayer()
     }
 }
 
+bool GraphicsLayerCA::applyClippingBorder(const FloatRoundedRect& roundedRect)
+{
+    if (roundedRect.radii().isUniformCornerRadius()) {
+        m_layer->setMask(nullptr);
+        m_layer->setMasksToBounds(true);
+        m_layer->setCornerRadius(roundedRect.radii().topLeft().width());
+    } else {
+        if (!m_shapeMaskLayer) {
+            m_shapeMaskLayer = createPlatformCALayer(PlatformCALayer::LayerTypeShapeLayer, this);
+            m_shapeMaskLayer->setAnchorPoint(FloatPoint3D());
+        }
+
+        m_shapeMaskLayer->setPosition(FloatPoint());
+        m_shapeMaskLayer->setBounds(m_layer->bounds());
+    
+        m_layer->setCornerRadius(0);
+        m_layer->setMask(m_shapeMaskLayer.get());
+
+        FloatRoundedRect offsetClippingRoundedRect(m_layer->bounds(), roundedRect.radii());
+        m_shapeMaskLayer->setShapeRoundedRect(offsetClippingRoundedRect);
+    }
+
+    return true;
+}
+
+void GraphicsLayerCA::clearClippingBorder()
+{
+    m_layer->setCornerRadius(0);
+    m_layer->setMasksToBounds(false);
+    m_layer->setMask(nullptr);
+}
+
 // The clipping strategy depends on whether the rounded rect has equal corner radii.
 void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect& roundedRect)
 {

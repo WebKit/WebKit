@@ -147,6 +147,7 @@ RenderLayerBacking::~RenderLayerBacking()
     updateForegroundLayer(false);
     updateBackgroundLayer(false);
     updateMaskLayer(false);
+    updateChildClippingStrategy(false);
     updateScrollingLayers(false);
     detachFromScrollingCoordinator();
     destroyGraphicsLayers();
@@ -348,6 +349,7 @@ void RenderLayerBacking::destroyGraphicsLayers()
     m_backgroundLayer = nullptr;
     m_childContainmentLayer = nullptr;
     m_maskLayer = nullptr;
+    m_childClippingMaskLayer = nullptr;
 
     m_scrollingLayer = nullptr;
     m_scrollingContentsLayer = nullptr;
@@ -568,6 +570,8 @@ bool RenderLayerBacking::updateConfiguration()
     }
 
     updateMaskLayer(renderer().hasMask());
+
+    updateChildClippingStrategy(needsDescendentsClippingLayer);
 
     if (m_owningLayer.hasReflection()) {
         if (m_owningLayer.reflectionLayer()->backing()) {
@@ -814,6 +818,12 @@ void RenderLayerBacking::updateGeometry()
         clipLayer->setPosition(FloatPoint(clippingBox.location() - localCompositingBounds.location()));
         clipLayer->setSize(clippingBox.size());
         clipLayer->setOffsetFromRenderer(toFloatSize(clippingBox.location()));
+
+        if (m_childClippingMaskLayer && !m_scrollingLayer) {
+            m_childClippingMaskLayer->setSize(clipLayer->size());
+            m_childClippingMaskLayer->setPosition(FloatPoint());
+            m_childClippingMaskLayer->setOffsetFromRenderer(clipLayer->offsetFromRenderer());
+        }
     }
     
     if (m_maskLayer) {
@@ -941,6 +951,12 @@ void RenderLayerBacking::updateGeometry()
 
         FloatSize oldScrollingLayerOffset = m_scrollingLayer->offsetFromRenderer();
         m_scrollingLayer->setOffsetFromRenderer(-toFloatSize(paddingBox.location()));
+
+        if (m_childClippingMaskLayer) {
+            m_childClippingMaskLayer->setPosition(m_scrollingLayer->position());
+            m_childClippingMaskLayer->setSize(m_scrollingLayer->size());
+            m_childClippingMaskLayer->setOffsetFromRenderer(toFloatSize(paddingBox.location()));
+        }
 
         bool paddingBoxOffsetChanged = oldScrollingLayerOffset != m_scrollingLayer->offsetFromRenderer();
 
@@ -1412,6 +1428,37 @@ void RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
 
     if (layerChanged)
         m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
+}
+
+void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendentsClippingLayer)
+{
+    if (hasClippingLayer() && needsDescendentsClippingLayer) {
+        if (is<RenderBox>(renderer())) {
+            LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
+            FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+            contentsClippingRect.move(contentOffsetInCompostingLayer());
+            if (clippingLayer()->applyClippingBorder(contentsClippingRect)) {
+                if (m_childClippingMaskLayer) 
+                    m_childClippingMaskLayer = nullptr;
+                return;
+            }
+        }
+
+        if (!m_childClippingMaskLayer) {
+            m_childClippingMaskLayer = createGraphicsLayer("Child Clipping Mask Layer");
+            m_childClippingMaskLayer->setDrawsContent(true);
+            m_childClippingMaskLayer->setPaintingPhase(GraphicsLayerPaintChildClippingMask);
+            clippingLayer()->setMaskLayer(m_childClippingMaskLayer.get());
+        }
+    } else {
+        if (m_childClippingMaskLayer) {
+            m_childClippingMaskLayer = nullptr;
+            if (hasClippingLayer())
+                clippingLayer()->setMaskLayer(nullptr);
+        } else 
+            if (hasClippingLayer())
+                clippingLayer()->clearClippingBorder();
+    }
 }
 
 bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
@@ -2065,6 +2112,9 @@ void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer
     if (m_maskLayer && m_maskLayer->drawsContent())
         m_maskLayer->setNeedsDisplay();
 
+    if (m_childClippingMaskLayer && m_childClippingMaskLayer->drawsContent())
+        m_childClippingMaskLayer->setNeedsDisplay();
+
     if (m_scrollingContentsLayer && m_scrollingContentsLayer->drawsContent())
         m_scrollingContentsLayer->setNeedsDisplay();
 }
@@ -2104,6 +2154,12 @@ void RenderLayerBacking::setContentsNeedDisplayInRect(const LayoutRect& r, Graph
         m_maskLayer->setNeedsDisplayInRect(layerDirtyRect, shouldClip);
     }
 
+    if (m_childClippingMaskLayer && m_childClippingMaskLayer->drawsContent()) {
+        FloatRect layerDirtyRect = r;
+        layerDirtyRect.move(-m_childClippingMaskLayer->offsetFromRenderer());
+        m_childClippingMaskLayer->setNeedsDisplayInRect(layerDirtyRect);
+    }
+
     if (m_scrollingContentsLayer && m_scrollingContentsLayer->drawsContent()) {
         FloatRect layerDirtyRect = pixelSnappedRectForPainting;
         layerDirtyRect.move(-m_scrollingContentsLayer->offsetFromRenderer() + m_devicePixelFractionFromRenderer);
@@ -2138,6 +2194,8 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         paintFlags |= RenderLayer::PaintLayerPaintingCompositingForegroundPhase;
     if (paintingPhase & GraphicsLayerPaintMask)
         paintFlags |= RenderLayer::PaintLayerPaintingCompositingMaskPhase;
+    if (paintingPhase & GraphicsLayerPaintChildClippingMask)
+        paintFlags |= RenderLayer::PaintLayerPaintingChildClippingMaskPhase;
     if (paintingPhase & GraphicsLayerPaintOverflowContents)
         paintFlags |= RenderLayer::PaintLayerPaintingOverflowContents;
     if (paintingPhase & GraphicsLayerPaintCompositedScroll)
@@ -2202,6 +2260,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         || graphicsLayer == m_foregroundLayer.get()
         || graphicsLayer == m_backgroundLayer.get()
         || graphicsLayer == m_maskLayer.get()
+        || graphicsLayer == m_childClippingMaskLayer.get()
         || graphicsLayer == m_scrollingContentsLayer.get()) {
         InspectorInstrumentation::willPaint(&renderer());
 
@@ -2578,6 +2637,8 @@ double RenderLayerBacking::backingStoreMemoryEstimate() const
         backingMemory += m_backgroundLayer->backingStoreMemoryEstimate();
     if (m_maskLayer)
         backingMemory += m_maskLayer->backingStoreMemoryEstimate();
+    if (m_childClippingMaskLayer)
+        backingMemory += m_childClippingMaskLayer->backingStoreMemoryEstimate();
 
     if (m_scrollingContentsLayer)
         backingMemory += m_scrollingContentsLayer->backingStoreMemoryEstimate();

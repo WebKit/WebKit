@@ -173,6 +173,9 @@ protected:
 private:
     virtual bool isGraphicsLayerCA() const override { return true; }
 
+    virtual bool applyClippingBorder(const FloatRoundedRect&) override;
+    virtual void clearClippingBorder() override;
+
     WEBCORE_EXPORT virtual void willBeDestroyed() override;
 
     // PlatformCALayerClient overrides

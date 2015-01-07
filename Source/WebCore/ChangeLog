@@ -1,3 +1,63 @@
+2015-01-07  Byungseon Shin  <sun.shin@lge.com>
+
+        Fix Border-radius clipping issue on a composited descendants
+        https://bugs.webkit.org/show_bug.cgi?id=138551
+
+        Reviewed by Simon Fraser.
+
+        Fix clipping compositing descendants of an accelerated layer having
+        border radius and clip overflow issue by using layer corner-radius
+        or a CAShapeLayer mask on Mac, and setting up a separate mask layer
+        on the childContainmentLayer on other platforms.
+
+        This patch is extracted from following Blink revisions:
+        <http://src.chromium.org/viewvc/blink?view=revision&revision=162463>
+        <http://src.chromium.org/viewvc/blink?view=revision&revision=158258>
+        by <rosca@adobe.com>
+
+        Clip accelerated descendants of an accelerated layer having border radius and clip overflow.
+        Large canvas does not honor containing div's border radius.
+
+        and <http://src.chromium.org/viewvc/blink?view=revision&revision=160578>
+        by <junov@chromium.org>
+
+        Fix for CSS clip-path with accelerated 2D canvas.
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::applyClippingBorder):
+        (WebCore::GraphicsLayer::clearClippingBorder):
+        (WebCore::GraphicsLayer::needsClippingMaskLayer):
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::applyClippingBorder):
+        (WebCore::GraphicsLayerCA::clearClippingBorder):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/PaintPhase.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintClippingMask):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintChildClippingMaskForFragments):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        (WebCore::RenderLayerBacking::destroyGraphicsLayers):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::updateChildClippingStrategy):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplay):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        (WebCore::RenderLayerBacking::paintContents):
+        (WebCore::RenderLayerBacking::backingStoreMemoryEstimate):
+        * rendering/RenderLayerBacking.h:
+
 2015-01-06  Antti Koivisto  <antti@apple.com>
 
         Use HashMap instead of CFDictionary for composite font reference map

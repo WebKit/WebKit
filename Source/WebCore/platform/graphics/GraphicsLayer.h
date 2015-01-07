@@ -368,6 +368,9 @@ public:
     FloatRoundedRect contentsClippingRect() const { return m_contentsClippingRect; }
     virtual void setContentsClippingRect(const FloatRoundedRect& roundedRect) { m_contentsClippingRect = roundedRect; }
 
+    virtual bool applyClippingBorder(const FloatRoundedRect&) { return false; }
+    virtual void clearClippingBorder() { return; }
+
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
     static String animationNameForTransition(AnimatedPropertyID);
     
@@ -497,6 +500,8 @@ public:
     virtual bool isGraphicsLayerCA() const { return false; }
     virtual bool isGraphicsLayerCARemote() const { return false; }
     virtual bool isGraphicsLayerTextureMapper() const { return false; }
+
+    virtual bool needsClippingMaskLayer() { return true; };
 
 protected:
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.
