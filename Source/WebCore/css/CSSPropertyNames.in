@@ -306,7 +306,7 @@ word-break [Inherited]
 word-spacing [Inherited, ConditionalConverter=WordSpacing, TypeName=Length]
 word-wrap [Inherited=EOverflowWrap, NameForMethods=OverflowWrap]
 z-index [TypeName=int, AutoFunctions]
-alt [LegacyStyleBuilder]
+alt [NameForMethods=ContentAltText, Custom=Value]
 -webkit-alt = alt
 -webkit-animation [LegacyStyleBuilder]
 -webkit-animation-delay [AnimationProperty, TypeName=double, NameForMethods=Delay]

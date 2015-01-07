@@ -2075,39 +2075,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                 state.style()->clearContent();
             return;
         }
-    case CSSPropertyAlt:
-        {
-            if (isInherit) {
-                state.style()->setContentAltText(state.parentStyle()->contentAltText());
-                return;
-            }
-            if (isInitial) {
-                state.style()->setContentAltText(emptyAtom);
-                return;
-            }
-            ASSERT(primitiveValue);
-            bool didSet = false;
-            if (primitiveValue->isString()) {
-                state.style()->setContentAltText(primitiveValue->getStringValue().impl());
-                didSet = true;
-            } else if (primitiveValue->isAttr()) {
-                // FIXME: Can a namespace be specified for an attr(foo)?
-                if (state.style()->styleType() == NOPSEUDO)
-                    state.style()->setUnique();
-                else
-                    state.parentStyle()->setUnique();
-                QualifiedName attr(nullAtom, primitiveValue->getStringValue().impl(), nullAtom);
-                const AtomicString& value = state.element()->getAttribute(attr);
-                state.style()->setContentAltText(value.isNull() ? emptyAtom : value.impl());
-                didSet = true;
-                // Register the fact that the attribute value affects the style.
-                m_ruleSets.features().attributeCanonicalLocalNamesInRules.add(attr.localName().impl());
-                m_ruleSets.features().attributeLocalNamesInRules.add(attr.localName().impl());
-            }
-            if (!didSet)
-                state.style()->setContentAltText(emptyAtom);
-            return;
-        }
     // Shorthand properties.
     case CSSPropertyFont:
         if (isInherit) {
@@ -2662,6 +2629,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 #if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
 #endif
+    case CSSPropertyAlt:
         ASSERT_NOT_REACHED();
         return;
     default:

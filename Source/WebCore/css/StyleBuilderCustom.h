@@ -107,6 +107,7 @@ public:
     static void applyValueWebkitTextSizeAdjust(StyleResolver&, CSSValue&);
 #endif
     static void applyValueWebkitWritingMode(StyleResolver&, CSSValue&);
+    static void applyValueAlt(StyleResolver&, CSSValue&);
 
 private:
     static void resetEffectiveZoom(StyleResolver&);
@@ -1443,6 +1444,29 @@ inline void StyleBuilderCustom::applyValueWebkitGridTemplateRows(StyleResolver& 
     styleResolver.style()->setOrderedNamedGridRowLines(orderedNamedGridLines);
 }
 #endif // ENABLE(CSS_GRID_LAYOUT)
+
+void StyleBuilderCustom::applyValueAlt(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.isString())
+        styleResolver.style()->setContentAltText(primitiveValue.getStringValue());
+    else if (primitiveValue.isAttr()) {
+        // FIXME: Can a namespace be specified for an attr(foo)?
+        if (styleResolver.style()->styleType() == NOPSEUDO)
+            styleResolver.style()->setUnique();
+        else
+            styleResolver.parentStyle()->setUnique();
+
+        QualifiedName attr(nullAtom, primitiveValue.getStringValue(), nullAtom);
+        const AtomicString& value = styleResolver.element()->getAttribute(attr);
+        styleResolver.style()->setContentAltText(value.isNull() ? emptyAtom : value);
+
+        // Register the fact that the attribute value affects the style.
+        styleResolver.ruleSets().features().attributeCanonicalLocalNamesInRules.add(attr.localName().impl());
+        styleResolver.ruleSets().features().attributeLocalNamesInRules.add(attr.localName().impl());
+    } else
+        styleResolver.style()->setContentAltText(emptyAtom);
+}
 
 } // namespace WebCore
 
