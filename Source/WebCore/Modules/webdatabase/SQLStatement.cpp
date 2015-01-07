@@ -31,10 +31,11 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "AbstractDatabaseServer.h"
-#include "AbstractSQLStatementBackend.h"
 #include "Database.h"
 #include "DatabaseManager.h"
 #include "Logging.h"
+#include "SQLError.h"
+#include "SQLStatementBackend.h"
 #include "SQLStatementCallback.h"
 #include "SQLStatementErrorCallback.h"
 #include "SQLTransaction.h"
@@ -51,7 +52,7 @@ SQLStatement::SQLStatement(Database& database, PassRefPtr<SQLStatementCallback> 
 {
 }
 
-void SQLStatement::setBackend(AbstractSQLStatementBackend* backend)
+void SQLStatement::setBackend(SQLStatementBackend* backend)
 {
     m_backend = backend;
 }

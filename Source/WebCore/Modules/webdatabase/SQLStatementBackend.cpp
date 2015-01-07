@@ -34,6 +34,7 @@
 #include "DatabaseBackend.h"
 #include "Logging.h"
 #include "SQLError.h"
+#include "SQLResultSet.h"
 #include "SQLValue.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
@@ -90,6 +91,10 @@ SQLStatementBackend::SQLStatementBackend(std::unique_ptr<AbstractSQLStatement> f
     , m_permissions(permissions)
 {
     m_frontend->setBackend(this);
+}
+
+SQLStatementBackend::~SQLStatementBackend()
+{
 }
 
 AbstractSQLStatement* SQLStatementBackend::frontend()

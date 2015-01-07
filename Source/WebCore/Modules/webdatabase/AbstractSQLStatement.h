@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-class AbstractSQLStatementBackend;
+class SQLStatementBackend;
 
 class AbstractSQLStatement {
 public:
     virtual ~AbstractSQLStatement() { }
 
-    virtual void setBackend(AbstractSQLStatementBackend*) = 0;
+    virtual void setBackend(SQLStatementBackend*) = 0;
 
     virtual bool hasCallback() = 0;
     virtual bool hasErrorCallback() = 0;

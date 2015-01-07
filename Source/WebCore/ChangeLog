@@ -1,3 +1,24 @@
+2015-01-07  Anders Carlsson  <andersca@apple.com>
+
+        Remove AbstractSQLStatementBackend
+        https://bugs.webkit.org/show_bug.cgi?id=140222
+
+        Reviewed by Sam Weinig.
+
+        We're unlikely to fully take advantage of the SQL implementation being abstract anyway, so let's just simplify the code instead.
+
+        * Modules/webdatabase/AbstractSQLStatement.h:
+        * Modules/webdatabase/AbstractSQLStatementBackend.h: Removed.
+        * Modules/webdatabase/SQLStatement.cpp:
+        (WebCore::SQLStatement::setBackend):
+        * Modules/webdatabase/SQLStatement.h:
+        * Modules/webdatabase/SQLStatementBackend.cpp:
+        (WebCore::SQLStatementBackend::~SQLStatementBackend):
+        * Modules/webdatabase/SQLStatementBackend.h:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2015-01-07  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: purge PassRefPtr from Inspector code and use Ref for typed and untyped protocol objects

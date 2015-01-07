@@ -30,7 +30,6 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractSQLStatementBackend.h"
 #include "SQLValue.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
@@ -41,12 +40,14 @@ namespace WebCore {
 class AbstractSQLStatement;
 class DatabaseBackend;
 class SQLError;
+class SQLResultSet;
 class SQLTransactionBackend;
 
-class SQLStatementBackend : public AbstractSQLStatementBackend {
+class SQLStatementBackend : public ThreadSafeRefCounted<SQLStatementBackend> {
 public:
     static PassRefPtr<SQLStatementBackend> create(std::unique_ptr<AbstractSQLStatement>,
         const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions);
+    virtual ~SQLStatementBackend();
 
     bool execute(DatabaseBackend*);
     bool lastExecutionFailedDueToQuota() const;
@@ -58,8 +59,8 @@ public:
     void setVersionMismatchedError();
 
     AbstractSQLStatement* frontend();
-    virtual PassRefPtr<SQLError> sqlError() const;
-    virtual PassRefPtr<SQLResultSet> sqlResultSet() const;
+    PassRefPtr<SQLError> sqlError() const;
+    PassRefPtr<SQLResultSet> sqlResultSet() const;
 
 private:
     SQLStatementBackend(std::unique_ptr<AbstractSQLStatement>, const String& statement,

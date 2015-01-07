@@ -7410,9 +7410,6 @@
     <ClInclude Include="..\Modules\webdatabase\AbstractSQLStatement.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\webdatabase\AbstractSQLStatementBackend.h">
-      <Filter>Modules\webdatabase</Filter>
-    </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\ChangeVersionData.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
