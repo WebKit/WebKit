@@ -25,65 +25,18 @@
 
 WebInspector.TypeTokenAnnotator = function(sourceCodeTextEditor, script)
 {
-    WebInspector.Object.call(this);
-
-    console.assert(sourceCodeTextEditor && sourceCodeTextEditor instanceof WebInspector.SourceCodeTextEditor, sourceCodeTextEditor);
-    console.assert(script, script);
+    WebInspector.Annotator.call(this, sourceCodeTextEditor);
 
     this._script = script;
-    this._sourceCodeTextEditor = sourceCodeTextEditor;
     this._typeTokenNodes = [];
     this._typeTokenBookmarks = [];
-    this._timeoutIdentifier = null;
-    this._isActive = false;
 };
 
 WebInspector.TypeTokenAnnotator.prototype = {
     constructor: WebInspector.TypeTokenAnnotator,
-    __proto__: WebInspector.Object.prototype,
+    __proto__: WebInspector.Annotator.prototype,
 
     // Public
-
-    get isActive()
-    {
-        return this._isActive;
-    },
-
-    get sourceCodeTextEditor()
-    {
-        return this._sourceCodeTextEditor;
-    },
-
-    pause: function()
-    {
-        this._clearTimeoutIfNeeded();
-        this._isActive = false;
-    },
-
-    resume: function()
-    {
-        this._clearTimeoutIfNeeded();
-        this._isActive = true;
-        this._insertAnnotations();
-    },
-
-    refresh: function()
-    {
-        console.assert(this._isActive);
-        if (!this._isActive)
-            return;
-
-        this._clearTimeoutIfNeeded();
-        this._insertAnnotations();
-    },
-
-    reset: function()
-    {
-        this._clearTimeoutIfNeeded();
-        this._isActive = true;
-        this._clearTypeTokens();
-        this._insertAnnotations();
-    },
 
     toggleTypeAnnotations: function()
     {
@@ -98,9 +51,9 @@ WebInspector.TypeTokenAnnotator.prototype = {
         return this._isActive;
     },
 
-    // Private
+    // Protected
 
-    _insertAnnotations: function()
+    insertAnnotations: function()
     {
         if (!this._isActive)
             return;
@@ -111,7 +64,7 @@ WebInspector.TypeTokenAnnotator.prototype = {
             this._script.requestScriptSyntaxTree(function(syntaxTree) {
                 // After requesting the tree, we still might get a null tree from a parse error.
                 if (syntaxTree)
-                    this._insertAnnotations();
+                    this.insertAnnotations();
             }.bind(this));
 
             return;
@@ -120,7 +73,7 @@ WebInspector.TypeTokenAnnotator.prototype = {
         if (!scriptSyntaxTree.parsedSuccessfully)
             return;
 
-        var {startOffset, endOffset} = this._sourceCodeTextEditor.visibleRangeOffsets();
+        var {startOffset, endOffset} = this.sourceCodeTextEditor.visibleRangeOffsets();
 
         var startTime = Date.now();
         var allNodesInRange = scriptSyntaxTree.filterByRange(startOffset, endOffset);
@@ -137,10 +90,17 @@ WebInspector.TypeTokenAnnotator.prototype = {
 
             this._timeoutIdentifier = setTimeout(function timeoutUpdate() {
                 this._timeoutIdentifier = null;
-                this._insertAnnotations();
+                this.insertAnnotations();
             }.bind(this), timeoutTime);
         }.bind(this));
     },
+
+    clearAnnotations: function()
+    {
+        this._clearTypeTokens();
+    },
+
+    // Private
 
     _insertTypeTokensForEachNode: function(node)
     {
@@ -175,15 +135,15 @@ WebInspector.TypeTokenAnnotator.prototype = {
 
     _insertToken: function(originalOffset, node, shouldTranslateOffsetToAfterParameterList, typeTokenTitleType, functionOrVariableName)
     {
-        var tokenPosition = this._sourceCodeTextEditor.originalOffsetToCurrentPosition(originalOffset);
-        var currentOffset = this._sourceCodeTextEditor.currentPositionToCurrentOffset(tokenPosition);
-        var sourceString = this._sourceCodeTextEditor.string;
+        var tokenPosition = this.sourceCodeTextEditor.originalOffsetToCurrentPosition(originalOffset);
+        var currentOffset = this.sourceCodeTextEditor.currentPositionToCurrentOffset(tokenPosition);
+        var sourceString = this.sourceCodeTextEditor.string;
 
         if (shouldTranslateOffsetToAfterParameterList) {
             // Translate the position to the closing parenthesis of the function arguments:
             // translate from: [type-token] function foo() {} => to: function foo() [type-token] {}
             currentOffset = this._translateToOffsetAfterFunctionParameterList(node, currentOffset, sourceString);
-            tokenPosition = this._sourceCodeTextEditor.currentOffsetToCurrentPosition(currentOffset);
+            tokenPosition = this.sourceCodeTextEditor.currentOffsetToCurrentPosition(currentOffset);
         }
 
         // Note: bookmarks render to the left of the character they're being displayed next to.
@@ -192,7 +152,7 @@ WebInspector.TypeTokenAnnotator.prototype = {
         var shouldHaveLeftMargin = currentOffset !== 0 && !isSpaceRegexp.test(sourceString[currentOffset - 1]);
         var shouldHaveRightMargin = !isSpaceRegexp.test(sourceString[currentOffset]);
         var typeToken = new WebInspector.TypeTokenView(this, shouldHaveRightMargin, shouldHaveLeftMargin, typeTokenTitleType, functionOrVariableName);
-        var bookmark = this._sourceCodeTextEditor.setInlineWidget(tokenPosition, typeToken.element);
+        var bookmark = this.sourceCodeTextEditor.setInlineWidget(tokenPosition, typeToken.element);
         node.attachments.__typeToken = typeToken;
         this._typeTokenNodes.push(node);
         this._typeTokenBookmarks.push(bookmark);
@@ -271,13 +231,5 @@ WebInspector.TypeTokenAnnotator.prototype = {
 
         this._typeTokenNodes = [];
         this._typeTokenBookmarks = [];
-    },
-
-    _clearTimeoutIfNeeded: function()
-    {
-        if (this._timeoutIdentifier) {
-            clearTimeout(this._timeoutIdentifier);
-            this._timeoutIdentifier = null;
-        }
     }
 };

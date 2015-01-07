@@ -36,8 +36,8 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
 
     WebInspector.TextEditor.call(this, null, null, this);
 
-    this._typeTokenAnnotator = null;
     this._typeTokenScrollHandler = null;
+    this._annotatorManager = new WebInspector.AnnotatorManager;
 
     // FIXME: Currently this just jumps between resources and related source map resources. It doesn't "jump to symbol" yet.
     this._updateTokenTrackingControllerState();
@@ -90,6 +90,8 @@ WebInspector.SourceCodeTextEditor.DurationToUpdateTypeTokensAfterScrolling = 100
 
 WebInspector.SourceCodeTextEditor.AutoFormatMinimumLineLength = 500;
 
+WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey = "TypeTokenAnnotatorKey";
+
 WebInspector.SourceCodeTextEditor.Event = {
     ContentWillPopulate: "source-code-text-editor-content-will-populate",
     ContentDidPopulate: "source-code-text-editor-content-did-populate"
@@ -109,8 +111,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     {
         WebInspector.TextEditor.prototype.shown.call(this);
 
-        if (this._typeTokenAnnotator)
-            this._typeTokenAnnotator.resume();
+        this._annotatorManager.resumeAll();
     },
 
     hidden: function()
@@ -123,8 +124,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         
         this._dismissEditingController(true);
 
-        if (this._typeTokenAnnotator)
-            this._typeTokenAnnotator.pause();
+        this._annotatorManager.pauseAll();
     },
 
     close: function()
@@ -166,7 +166,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
     canShowTypeAnnotations: function()
     {
-        return !!this._typeTokenAnnotator;
+        return !!this._annotatorManager.getAnnotator(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey);
     },
 
     customPerformSearch: function(query)
@@ -255,14 +255,20 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
         for (var range of newRanges)
             this._updateEditableMarkers(range);
+
+        this._annotatorManager.clearAll();
+        this._annotatorManager.removeAllAnnotators();
+        if (this._typeTokenScrollHandler)
+            this._disableScrollEventsForTypeTokenAnnotator();
     },
 
     toggleTypeAnnotations: function()
     {
-        if (!this._typeTokenAnnotator)
+        var typeTokenAnnotator = this._annotatorManager.getAnnotator(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey);
+        if (!typeTokenAnnotator)
             return false;
 
-        var isActivated = this._typeTokenAnnotator.toggleTypeAnnotations();
+        var isActivated = typeTokenAnnotator.toggleTypeAnnotations();
         if (isActivated) {
             RuntimeAgent.enableTypeProfiler();
             this._enableScrollEventsForTypeTokenAnnotator();
@@ -302,8 +308,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
     {
         WebInspector.TextEditor.prototype.prettyPrint.call(this, pretty);
 
-        if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive)
-            this._typeTokenAnnotator.reset();
+        this._annotatorManager.resetAllIfActive();
     },
 
     // Private
@@ -1047,16 +1052,14 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _debuggerDidPause: function(event)
     {
         this._updateTokenTrackingControllerState();
-        if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive)
-            this._typeTokenAnnotator.refresh();
+        this._annotatorManager.refreshAllIfActive();
     },
 
     _debuggerDidResume: function(event)
     {
         this._updateTokenTrackingControllerState();
         this._dismissPopover();
-        if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive)
-            this._typeTokenAnnotator.refresh();
+        this._annotatorManager.refreshAllIfActive();
     },
 
     _sourceCodeSourceMapAdded: function(event)
@@ -1072,7 +1075,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         var mode = WebInspector.CodeMirrorTokenTrackingController.Mode.None;
         if (WebInspector.debuggerManager.paused)
             mode = WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptExpression;
-        else if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive)
+        else if (this._annotatorManager.isAnnotatorActive(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey))
             mode = WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptTypeInformation;
         else if (this._hasColorMarkers())
             mode = WebInspector.CodeMirrorTokenTrackingController.Mode.MarkedTokens;
@@ -1526,24 +1529,31 @@ WebInspector.SourceCodeTextEditor.prototype = {
         delete this._editingController;
     },
 
-    _makeTypeTokenAnnotator: function()
+    _getAssociatedScript: function()
     {
-        if (!RuntimeAgent.getRuntimeTypesForVariablesAtOffsets)
-            return;
-
         var script = null;
         // FIXME: This needs to me modified to work with HTML files with inline script tags.
         if (this._sourceCode instanceof WebInspector.Script)
             script = this._sourceCode;
         else if (this._sourceCode instanceof WebInspector.Resource && this._sourceCode.type === WebInspector.Resource.Type.Script && this._sourceCode.scripts.length)
             script = this._sourceCode.scripts[0];
+        return script;
+    },
 
+    _makeTypeTokenAnnotator: function()
+    {
+        if (!RuntimeAgent.getRuntimeTypesForVariablesAtOffsets)
+            return;
+
+        var script = this._getAssociatedScript();
         if (!script)
             return;
 
-        this._typeTokenAnnotator = new WebInspector.TypeTokenAnnotator(this, script);
+        var typeTokenAnnotator = new WebInspector.TypeTokenAnnotator(this, script);
+        this._annotatorManager.addAnnotator(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey, typeTokenAnnotator);
+
         if (WebInspector.showJavaScriptTypeInformationSetting.value) {
-            this._typeTokenAnnotator.reset();
+            typeTokenAnnotator.reset();
             this._enableScrollEventsForTypeTokenAnnotator();
         }
     },
@@ -1565,8 +1575,8 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
     _makeTypeTokenScrollEventHandler: function()
     {
-        var typeTokenAnnotator = this._typeTokenAnnotator;
         var timeoutIdentifier = null;
+        var typeTokenAnnotator = this._annotatorManager.getAnnotator(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey);
         function scrollHandler()
         {
             if (timeoutIdentifier)
@@ -1576,11 +1586,16 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
             timeoutIdentifier = setTimeout(function() {
                 timeoutIdentifier = null;
-                typeTokenAnnotator.resume();
-            }, WebInspector.SourceCodeTextEditor.DurationToUpdateTypeTokensAfterScrolling);
+                var typeTokenAnnotator = this._annotatorManager.getAnnotator(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey);
+                // There is a small chance that we disabled the type token annotator and the scroll handler 
+                // during the DurationToUpdateTypeTokensAfterScrolling time delay, so we must ensure that this
+                // is not null.
+                if (typeTokenAnnotator)
+                    typeTokenAnnotator.resume();
+            }.bind(this), WebInspector.SourceCodeTextEditor.DurationToUpdateTypeTokensAfterScrolling);
         }
 
-        return scrollHandler;
+        return scrollHandler.bind(this);
     }
 };
 
