@@ -1,3 +1,24 @@
+2015-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r178028): iOS build broken due to unused parameters in GlyphPage::mayUseMixedFontDataWhenFilling()
+
+        Fixes the following build errors:
+
+            WebCore/platform/graphics/mac/GlyphPageMac.cpp:58:61: error: unused parameter 'buffer' [-Werror,-Wunused-parameter]
+            bool GlyphPage::mayUseMixedFontDataWhenFilling(const UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+                                                                        ^
+            WebCore/platform/graphics/mac/GlyphPageMac.cpp:58:78: error: unused parameter 'bufferLength' [-Werror,-Wunused-parameter]
+            bool GlyphPage::mayUseMixedFontDataWhenFilling(const UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+                                                                                         ^
+            WebCore/platform/graphics/mac/GlyphPageMac.cpp:58:114: error: unused parameter 'fontData' [-Werror,-Wunused-parameter]
+            bool GlyphPage::mayUseMixedFontDataWhenFilling(const UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+                                                                                                                             ^
+            3 errors generated.
+
+        * platform/graphics/mac/GlyphPageMac.cpp:
+        (WebCore::GlyphPage::mayUseMixedFontDataWhenFilling): Add
+        UNUSED_PARAM() as needed.
+
 2015-01-07  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Content does not wrap with overflow: hidden and reference box different from margin-box
