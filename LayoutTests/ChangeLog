@@ -1,3 +1,10 @@
+2015-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Layout Test http/tests/navigation/forward-and-cancel.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=140217
+
+        * platform/mac-wk2/TestExpectations: Mark it as flaky.
+
 2015-01-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test gardening.
