@@ -1,3 +1,22 @@
+2015-01-07  Beth Dakin  <bdakin@apple.com>
+
+        Adopt delegate callbacks so that standardQuickLookMenuItem does not obscure the 
+        link
+        https://bugs.webkit.org/show_bug.cgi?id=140206
+        -and corresponding-
+        rdar://problem/19300492
+
+        Reviewed by Tim Horton.
+
+        Providing and item frame will ensure that the original link is not obscured.
+        * WebView/WebImmediateActionController.mm:
+        (elementBoundingBoxInWindowCoordinatesFromNode):
+        (-[WebImmediateActionController menuItem:itemFrameForPoint:]):
+
+        For now use a max size that is smaller than the WebView, with the screen’s aspect 
+        ratio, and scaled down.
+        (-[WebImmediateActionController menuItem:maxSizeForPoint:]):
+
 2015-01-07  Anders Carlsson  <andersca@apple.com>
 
         Give simple HTML documents a database provider
