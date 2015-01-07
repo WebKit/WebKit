@@ -1,3 +1,19 @@
+2015-01-06  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Masking][CSS Shapes] Large corner radii use with inset() clip-path are not properly constrained
+        https://bugs.webkit.org/show_bug.cgi?id=140127
+
+        Reviewed by Darin Adler.
+
+        Constrain large corner radii for inset() clip-path in the same way
+        that border-radii are constrained.
+
+        Test: fast/masking/clip-path-inset-large-radii.html
+
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShapeInset::path): Add radii constraint. Also reformat
+            code a little to shut the style bot up.
+
 2015-01-06  Chris Dumez  <cdumez@apple.com>
 
         Only throttle DOM timers if they change CSS properties that cannot cause non-descendant elements to become visible

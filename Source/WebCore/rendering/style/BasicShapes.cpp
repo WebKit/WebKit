@@ -231,19 +231,15 @@ void BasicShapeInset::path(Path& path, const FloatRect& boundingBox)
     ASSERT(path.isEmpty());
     float left = floatValueForLength(m_left, boundingBox.width());
     float top = floatValueForLength(m_top, boundingBox.height());
-    FloatRoundedRect r = FloatRoundedRect(
-        FloatRect(
-            left + boundingBox.x(),
-            top + boundingBox.y(),
-            std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width()), 0),
-            std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height()), 0)
-        ),
-        floatSizeForLengthSize(m_topLeftRadius, boundingBox),
+    auto rect = FloatRect(left + boundingBox.x(), top + boundingBox.y(),
+        std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width()), 0),
+        std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height()), 0));
+    auto radii = FloatRoundedRect::Radii(floatSizeForLengthSize(m_topLeftRadius, boundingBox),
         floatSizeForLengthSize(m_topRightRadius, boundingBox),
         floatSizeForLengthSize(m_bottomLeftRadius, boundingBox),
-        floatSizeForLengthSize(m_bottomRightRadius, boundingBox)
-    );
-    path.addRoundedRect(r);
+        floatSizeForLengthSize(m_bottomRightRadius, boundingBox));
+    radii.scale(calcBorderRadiiConstraintScaleFor(rect, radii));
+    path.addRoundedRect(FloatRoundedRect(rect, radii));
 }
 
 Ref<BasicShape> BasicShapeInset::blend(const BasicShape& other, double progress) const
