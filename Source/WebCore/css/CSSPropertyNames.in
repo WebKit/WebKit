@@ -482,7 +482,7 @@ justify-content
 -webkit-mask-box-image-width [Custom=All]
 -webkit-mask-clip [FillLayerProperty, TypeName=EFillBox, NameForMethods=Clip]
 -webkit-mask-composite [FillLayerProperty, TypeName=CompositeOperator, NameForMethods=Composite]
--webkit-mask-image [LegacyStyleBuilder]
+-webkit-mask-image [Custom=Initial|Inherit, ConditionalConverter=MaskImageOperations, TypeName=Vector<RefPtr<MaskImageOperation>>]
 -webkit-mask-origin [FillLayerProperty, TypeName=EFillBox, NameForMethods=Origin]
 -webkit-mask-position [LegacyStyleBuilder]
 -webkit-mask-position-x [FillLayerProperty, TypeName=Length, NameForMethods=XPosition]

@@ -90,6 +90,10 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(WebkitTextEmphasisStyle);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Zoom);
 
+    // Custom handling of initial + inherit value setting only.
+    static void applyInitialWebkitMaskImage(StyleResolver&) { }
+    static void applyInheritWebkitMaskImage(StyleResolver&) { }
+
     // Custom handling of inherit + value setting only.
     static void applyInheritDisplay(StyleResolver&);
     static void applyValueDisplay(StyleResolver&, CSSValue&);

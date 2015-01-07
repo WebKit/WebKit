@@ -2308,16 +2308,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         setFontDescription(fontDescription);
         return;
     }
-
-    case CSSPropertyWebkitMaskImage: {
-        Vector<RefPtr<MaskImageOperation>> operations;
-        if (createMaskImageOperations(value, operations))
-            state.style()->setMaskImage(operations);
-
-        return;
-    }
     
     // These properties are aliased and StyleBuilder already applied the property on the prefixed version.
+    case CSSPropertyWebkitMaskImage:
     case CSSPropertyAnimationDelay:
     case CSSPropertyAnimationDirection:
     case CSSPropertyAnimationDuration:
@@ -3070,63 +3063,6 @@ bool StyleResolver::createFilterOperations(CSSValue& inValue, FilterOperations& 
     }
 
     outOperations = operations;
-    return true;
-}
-
-bool StyleResolver::createMaskImageOperations(CSSValue* inValue, Vector<RefPtr<MaskImageOperation>>& outOperations)
-{
-    ASSERT(outOperations.isEmpty());
-    if (!inValue)
-        return false;
-
-    RefPtr<WebKitCSSResourceValue> maskImageValue;
-    RefPtr<CSSValueList> maskImagesList;
-    CSSValueList::iterator listIterator;
-    if (is<WebKitCSSResourceValue>(*inValue))
-        maskImageValue = downcast<WebKitCSSResourceValue>(inValue);
-    else if (is<CSSValueList>(*inValue)) {
-        maskImagesList = downcast<CSSValueList>(inValue);
-        listIterator = maskImagesList->begin();
-        if (listIterator != maskImagesList->end())
-            maskImageValue = &downcast<WebKitCSSResourceValue>(listIterator->get());
-    }
-
-    while (maskImageValue.get()) {
-        RefPtr<CSSValue> maskInnerValue = maskImageValue->innerValue();
-        RefPtr<MaskImageOperation> newMaskImage;
-
-        if (is<CSSPrimitiveValue>(maskInnerValue.get())) {
-            RefPtr<CSSPrimitiveValue> primitiveValue = downcast<CSSPrimitiveValue>(maskInnerValue.get());
-            if (primitiveValue->isValueID() && primitiveValue->getValueID() == CSSValueNone)
-                newMaskImage = MaskImageOperation::create();
-            else {
-                String cssUrl = primitiveValue->getStringValue();
-                URL url = m_state.document().completeURL(cssUrl);
-                
-                bool isExternalDocument = (SVGURIReference::isExternalURIReference(cssUrl, m_state.document()));
-                newMaskImage = MaskImageOperation::create(maskImageValue, cssUrl, url.fragmentIdentifier(), isExternalDocument, m_state.document().cachedResourceLoader());
-                if (isExternalDocument)
-                    m_state.maskImagesWithPendingSVGDocuments().append(newMaskImage);
-            }
-        } else {
-            RefPtr<StyleImage> image = styleImage(CSSPropertyWebkitMaskImage, *maskInnerValue);
-            if (image.get())
-                newMaskImage = MaskImageOperation::create(image);
-        }
-
-        // If we didn't get a valid value, use None so we keep the correct number and order of masks.
-        if (!newMaskImage.get())
-            newMaskImage = MaskImageOperation::create();
-
-        outOperations.append(newMaskImage);
-
-        if (maskImagesList.get()) {
-            listIterator++;
-            maskImageValue = (listIterator != maskImagesList->end() ? &downcast<WebKitCSSResourceValue>(listIterator->get()) : nullptr);
-        } else
-            maskImageValue = nullptr;
-    }
-
     return true;
 }
 

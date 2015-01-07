@@ -42,10 +42,12 @@
 #include "LengthRepeat.h"
 #include "Pair.h"
 #include "QuotesData.h"
+#include "SVGURIReference.h"
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
 #include "TransformFunctions.h"
+#include "WebKitCSSResourceValue.h"
 
 namespace WebCore {
 
@@ -98,6 +100,7 @@ public:
     static bool convertPerspective(StyleResolver&, CSSValue&, float&);
     static bool convertMarqueeIncrement(StyleResolver&, CSSValue&, Length&);
     static bool convertFilterOperations(StyleResolver&, CSSValue&, FilterOperations&);
+    static bool convertMaskImageOperations(StyleResolver&, CSSValue&, Vector<RefPtr<MaskImageOperation>>&);
 
 private:
     friend class StyleBuilderCustom;
@@ -989,6 +992,58 @@ inline bool StyleBuilderConverter::convertMarqueeIncrement(StyleResolver& styleR
 inline bool StyleBuilderConverter::convertFilterOperations(StyleResolver& styleResolver, CSSValue& value, FilterOperations& operations)
 {
     return styleResolver.createFilterOperations(value, operations);
+}
+
+inline bool StyleBuilderConverter::convertMaskImageOperations(StyleResolver& styleResolver, CSSValue& value, Vector<RefPtr<MaskImageOperation>>& operations)
+{
+    RefPtr<WebKitCSSResourceValue> maskImageValue;
+    RefPtr<CSSValueList> maskImagesList;
+    CSSValueList::iterator listIterator;
+    if (is<WebKitCSSResourceValue>(value))
+        maskImageValue = &downcast<WebKitCSSResourceValue>(value);
+    else if (is<CSSValueList>(value)) {
+        maskImagesList = &downcast<CSSValueList>(value);
+        listIterator = maskImagesList->begin();
+        if (listIterator != maskImagesList->end())
+            maskImageValue = &downcast<WebKitCSSResourceValue>(listIterator->get());
+    }
+
+    while (maskImageValue.get()) {
+        RefPtr<CSSValue> maskInnerValue = maskImageValue->innerValue();
+
+        RefPtr<MaskImageOperation> newMaskImage;
+        if (is<CSSPrimitiveValue>(maskInnerValue.get())) {
+            RefPtr<CSSPrimitiveValue> primitiveValue = downcast<CSSPrimitiveValue>(maskInnerValue.get());
+            if (primitiveValue->isValueID() && primitiveValue->getValueID() == CSSValueNone)
+                newMaskImage = MaskImageOperation::create();
+            else {
+                String cssUrl = primitiveValue->getStringValue();
+                URL url = styleResolver.document().completeURL(cssUrl);
+
+                bool isExternalDocument = SVGURIReference::isExternalURIReference(cssUrl, styleResolver.document());
+                newMaskImage = MaskImageOperation::create(maskImageValue, cssUrl, url.fragmentIdentifier(), isExternalDocument, styleResolver.document().cachedResourceLoader());
+                if (isExternalDocument)
+                    styleResolver.state().maskImagesWithPendingSVGDocuments().append(newMaskImage);
+            }
+        } else {
+            if (RefPtr<StyleImage> image = styleResolver.styleImage(CSSPropertyWebkitMaskImage, *maskInnerValue))
+                newMaskImage = MaskImageOperation::create(image);
+        }
+
+        // If we didn't get a valid value, use None so we keep the correct number and order of masks.
+        if (!newMaskImage)
+            newMaskImage = MaskImageOperation::create();
+
+        operations.append(newMaskImage);
+
+        if (maskImagesList) {
+            ++listIterator;
+            maskImageValue = listIterator != maskImagesList->end() ? &downcast<WebKitCSSResourceValue>(listIterator->get()) : nullptr;
+        } else
+            maskImageValue = nullptr;
+    }
+
+    return true;
 }
 
 } // namespace WebCore

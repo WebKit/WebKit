@@ -237,7 +237,6 @@ public:
     void clearCachedPropertiesAffectedByViewportUnits();
 
     bool createFilterOperations(CSSValue& inValue, FilterOperations& outOperations);
-    bool createMaskImageOperations(CSSValue* inValue, Vector<RefPtr<MaskImageOperation>>& outOperations);
     void loadPendingSVGDocuments();
 
     void loadPendingResources();
