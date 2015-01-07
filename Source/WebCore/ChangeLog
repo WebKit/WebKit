@@ -1,3 +1,19 @@
+2015-01-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TexMap] Use std::sort instead of qsort in TextureMapperLayer::sortByZOrder()
+        https://bugs.webkit.org/show_bug.cgi?id=136212
+
+        Reviewed by Darin Adler.
+
+        Use std::sort() instead of qsort() to sort the TextureMapperLayer objects
+        by their z-order. A lambda expression can be used to compare the m_centerZ 
+        member variables of any two TextureMapperLayers.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::sortByZOrder):
+        (WebCore::TextureMapperLayer::compareGraphicsLayersZValue): Deleted.
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
 2015-01-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] Avoid constructing Vector when setting new children of TextureMapperLayer

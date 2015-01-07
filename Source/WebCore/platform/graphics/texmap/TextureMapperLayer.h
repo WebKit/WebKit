@@ -139,7 +139,6 @@ private:
     }
     void computeTransformsRecursive();
 
-    static int compareGraphicsLayersZValue(const void* a, const void* b);
     static void sortByZOrder(Vector<TextureMapperLayer* >& array);
 
     PassRefPtr<BitmapTexture> texture() { return m_backingStore ? m_backingStore->texture() : 0; }
