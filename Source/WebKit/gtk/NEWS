@@ -1,4 +1,16 @@
 =================
+WebKitGTK+  2.4.8
+=================
+
+  - Fix SSL connection issues with some websites after the POODLE vulnerability fix.
+  - Fix a crash when loading flash plugins.
+  - Fix build on GNU Hurd
+  - Fix build on OS X.
+  - Fix documentation of webkit_print_operation_get_page_setup().
+  - Security fixes: CVE-2014-1344, CVE-2014-1384, CVE-2014-1385, CVE-2014-1386,
+    CVE-2014-1387, CVE-2014-1388, CVE-2014-1389, CVE-2014-1390.
+
+=================
 WebKitGTK+  2.4.7
 =================
 
