@@ -1,3 +1,17 @@
+2015-01-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] WindowCloseTimer is an ActiveDOMObject and must call suspendIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=140184
+        <rdar://problem/19399740>
+
+        Reviewed by Jer Noble.
+
+        This bug was found in fast/loader/stateobjects/popstate-fires-with-page-cache.html
+
+        * WebView.cpp:
+        (WindowCloseTimer::create): Modify to ensure a call to suspendIfNeeded is made
+        during the creation process.
+
 2015-01-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [TexMap] m_layer member in GraphicsLayerTextureMapper is always non-null

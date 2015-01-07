@@ -1291,7 +1291,9 @@ WindowCloseTimer* WindowCloseTimer::create(WebView* webView)
     if (!document)
         return nullptr;
 
-    return new WindowCloseTimer(*document, webView);
+    auto closeTimer = new WindowCloseTimer(*document, webView);
+    closeTimer->suspendIfNeeded();
+    return closeTimer;
 }
 
 WindowCloseTimer::WindowCloseTimer(ScriptExecutionContext& context, WebView* webView)
