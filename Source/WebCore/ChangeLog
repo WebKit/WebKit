@@ -1,3 +1,16 @@
+2015-01-07  Anders Carlsson  <andersca@apple.com>
+
+        Annotate properties that start with "new" so they'll work under ARC
+        https://bugs.webkit.org/show_bug.cgi?id=140215
+
+        Reviewed by Geoffrey Garen.
+
+        When encountering attributes that start with "new", also generate an additional getter method declaration that
+        has an NS_RETURNS_NOT_RETAINED annotation so ARC will know not to overrelease the property value.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateHeader):
+
 2015-01-07  Beth Dakin  <bdakin@apple.com>
 
         Adopt delegate callbacks so that standardQuickLookMenuItem does not obscure the 

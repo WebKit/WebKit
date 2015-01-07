@@ -895,9 +895,19 @@ sub GenerateHeader
             }
 
             if (!IsCoreFoundationType($attributeType)) {
+                # FIXME: We should probably also check that the property type is an Objective-C type.
+                my $needsReturnsRetainedAnnotation = $attributeName =~ /new([A-Z].*)?/;
+
                 $property .= $declarationSuffix;
                 push(@headerAttributes, $property) if $public;
                 push(@privateHeaderAttributes, $property) unless $public;
+                if ($needsReturnsRetainedAnnotation) {
+                    # - GETTER
+                    my $getter = "- (" . $attributeType . ")" . $attributeName . " NS_RETURNS_NOT_RETAINED" . $declarationSuffix;
+                    push(@headerAttributes, $getter) if $public;
+                    push(@privateHeaderAttributes, $getter) unless $public;
+                }
+
             } elsif (ConditionalIsEnabled(%definesRef, $attribute->signature->extendedAttributes->{"Conditional"})) {
                 # - GETTER
                 my $getter = "- (" . $attributeType . ")" . $attributeName . $declarationSuffix;
