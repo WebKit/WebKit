@@ -750,7 +750,7 @@ _llint_op_create_arguments:
     bineq TagOffset[cfr, t0, 8], EmptyValueTag, .opCreateArgumentsDone
     callSlowPath(_slow_path_create_arguments)
 .opCreateArgumentsDone:
-    dispatch(2)
+    dispatch(3)
 
 
 _llint_op_create_this:

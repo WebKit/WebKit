@@ -636,7 +636,7 @@ _llint_op_create_arguments:
     bqneq [cfr, t0, 8], ValueEmpty, .opCreateArgumentsDone
     callSlowPath(_slow_path_create_arguments)
 .opCreateArgumentsDone:
-    dispatch(2)
+    dispatch(3)
 
 
 _llint_op_create_this:

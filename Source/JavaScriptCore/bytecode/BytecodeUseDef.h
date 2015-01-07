@@ -56,7 +56,6 @@ void computeUsesForBytecodeOffset(
     case op_profile_control_flow:
         return;
     case op_get_scope:
-    case op_create_arguments:
     case op_to_this:
     case op_pop_scope:
     case op_profile_will_call:
@@ -74,6 +73,7 @@ void computeUsesForBytecodeOffset(
         functor(codeBlock, instruction, opcodeID, instruction[1].u.operand);
         return;
     }
+    case op_create_arguments:
     case op_new_func:
     case op_ret_object_or_this:
     case op_jlesseq:

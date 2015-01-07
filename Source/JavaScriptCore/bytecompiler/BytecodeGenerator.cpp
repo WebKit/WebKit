@@ -282,6 +282,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         if (shouldCreateArgumentsEagerly() || shouldTearOffArgumentsEagerly()) {
             emitOpcode(op_create_arguments);
             instructions().append(argumentsRegister->index());
+            ASSERT(!m_codeBlock->hasActivationRegister() || m_codeBlock->activationRegister().isValid());
+            instructions().append(m_codeBlock->hasActivationRegister() ? m_codeBlock->activationRegister().offset() : addConstantValue(JSValue())->index());
+
             if (m_codeBlock->hasActivationRegister()) {
                 RegisterID* argumentsRegister = &registerFor(m_codeBlock->argumentsRegister().offset());
                 initializeCapturedVariable(argumentsRegister, propertyNames().arguments, argumentsRegister);
@@ -1772,6 +1775,8 @@ void BytecodeGenerator::createArgumentsIfNecessary()
     emitOpcode(op_create_arguments);
     instructions().append(m_codeBlock->argumentsRegister().offset());
     ASSERT(!hasWatchableVariable(m_codeBlock->argumentsRegister().offset()));
+    ASSERT(!m_codeBlock->hasActivationRegister() || m_codeBlock->activationRegister().isValid());
+    instructions().append(m_codeBlock->hasActivationRegister() ? m_codeBlock->activationRegister().offset() : addConstantValue(JSValue())->index());
 }
 
 RegisterID* BytecodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, CallArguments& callArguments, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)

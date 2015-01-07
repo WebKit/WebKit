@@ -8,7 +8,7 @@
             { "name" : "op_get_scope", "length" : 2 },
             { "name" : "op_touch_entry", "length" : 1 },
             { "name" : "op_init_lazy_reg", "length" : 2 },
-            { "name" : "op_create_arguments", "length" : 2 },
+            { "name" : "op_create_arguments", "length" : 3 },
             { "name" : "op_create_this", "length" : 4 },
             { "name" : "op_get_callee", "length" : 3 },
             { "name" : "op_to_this", "length" : 4 },
