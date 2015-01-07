@@ -991,21 +991,6 @@ END
 
 $smartPointerType<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createElement(const QualifiedName& name, Document& document$formElementArgumentForDefinition, bool createdByParser)
 {
-END
-    ;
-
-    if ($parameters{namespace} ne "HTML" and $parameters{namespace} ne "SVG") {
-        print F <<END
-#if ENABLE(DASHBOARD_SUPPORT)
-    Settings* settings = document.settings();
-    if (settings && settings->usesDashboardBackwardCompatibilityMode())
-        return 0;
-#endif
-END
-        ;
-    }
-
-    print F <<END
     static NeverDestroyed<HashMap<AtomicStringImpl*, $parameters{namespace}ConstructorFunction>> functions;
     if (functions.get().isEmpty())
         populate$parameters{namespace}FactoryMap(functions);
