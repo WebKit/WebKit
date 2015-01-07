@@ -72,7 +72,8 @@
     -webkit-text-stroke-color: rgba(255, 0, 0, 0.6);
 }
 
-.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property:matches(.implicit, .not-inherited) {
+.computed .css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.implicit,
+.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.not-inherited {
     opacity: 0.5;
 }
 

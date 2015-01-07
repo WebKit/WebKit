@@ -1,5 +1,22 @@
 2015-01-06  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Do not style implicit CSS properties in the Style Rules section
+        https://bugs.webkit.org/show_bug.cgi?id=140161
+
+        Reviewed by Timothy Hatcher.
+
+        Previously, implicit properties being transparent in the Rules section
+        was confusing and not useful. Lets simplify what transparency means:
+
+            - Rules:  transparency means a non-inheritable property in an inherited rule
+            - Computed: transparency means an implicit value
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.not-inherited):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property:matches(.implicit, .not-inherited)): Deleted.
+
+2015-01-06  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Uncaught Exception when dismissing Go To Line dialog
         https://bugs.webkit.org/show_bug.cgi?id=139663
 
