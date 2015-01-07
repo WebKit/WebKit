@@ -59,7 +59,7 @@ namespace WebCore {
         void updateThrottlingStateAfterViewportChange(const IntRect& visibleRect);
 
         static void scriptDidInteractWithPlugin(HTMLPlugInElement&);
-        static void scriptDidCauseElementRepaint(Element&, bool changed = true);
+        static void scriptDidCauseElementRepaint(Element&, bool mayRepaintNonDescendants = false);
 
     private:
         DOMTimer(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, int interval, bool singleShot);

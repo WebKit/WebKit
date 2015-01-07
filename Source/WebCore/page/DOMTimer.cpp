@@ -310,18 +310,12 @@ void DOMTimer::scriptDidInteractWithPlugin(HTMLPlugInElement& pluginElement)
         DOMTimerFireState::current->setScriptMadeNonUserObservableChanges();
 }
 
-void DOMTimer::scriptDidCauseElementRepaint(Element& element, bool changed)
+void DOMTimer::scriptDidCauseElementRepaint(Element& element, bool mayRepaintNonDescendants)
 {
     if (!DOMTimerFireState::current)
         return;
 
-    if (!changed) {
-        // The script set a CSS property on the Element but it did not cause any change.
-        DOMTimerFireState::current->setScriptMadeNonUserObservableChanges();
-        return;
-    }
-
-    if (element.mayCauseRepaintInsideViewport())
+    if (mayRepaintNonDescendants || element.mayCauseRepaintInsideViewport())
         DOMTimerFireState::current->setScriptMadeUserObservableChanges();
     else
         DOMTimerFireState::current->setScriptMadeNonUserObservableChangesToElement(element);
