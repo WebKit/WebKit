@@ -2,6 +2,7 @@
 
         Annotate properties that start with "new" so they'll work under ARC
         https://bugs.webkit.org/show_bug.cgi?id=140215
+        rdar://problem/19399153
 
         Reviewed by Geoffrey Garen.
 
