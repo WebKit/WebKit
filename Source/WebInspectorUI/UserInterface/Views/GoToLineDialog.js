@@ -44,6 +44,8 @@ WebInspector.GoToLineDialog = function()
     this._input.addEventListener("blur", this);
     this._clearIcon.addEventListener("mousedown", this);
     this._clearIcon.addEventListener("click", this);
+
+    this._dismissing = false;
 };
 
 WebInspector.GoToLineDialog.StyleClassName = "go-to-line-dialog";
@@ -65,14 +67,21 @@ WebInspector.GoToLineDialog.prototype = {
 
     dismiss: function()
     {
+        if (this._dismissing)
+            return;
+
         var parent = this._element.parentNode;
         if (!parent)
             return;
+
+        this._dismissing = true;
 
         parent.removeChild(this._element);
 
         if (this.delegate && typeof this.delegate.goToLineDialogWasDismissed === "function")
             this.delegate.goToLineDialogWasDismissed(this);
+
+        this._dismissing = false;
     },
 
     // Protected

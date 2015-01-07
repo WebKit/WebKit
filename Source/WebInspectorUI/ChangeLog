@@ -1,3 +1,18 @@
+2015-01-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught Exception when dismissing Go To Line dialog
+        https://bugs.webkit.org/show_bug.cgi?id=139663
+
+        Reviewed by Timothy Hatcher.
+
+        Calling removeChild would trigger the blur event handler and do a
+        nested call of dismiss(), re-entering and removing while in the middle
+        of removing. Avoid re-entrancy to avoid the exception.
+
+        * UserInterface/Views/GoToLineDialog.js:
+        (WebInspector.GoToLineDialog):
+        (WebInspector.GoToLineDialog.prototype.dismiss):
+
 2015-01-01  Darin Adler  <darin@apple.com>
 
         We often misspell identifier as "identifer"
