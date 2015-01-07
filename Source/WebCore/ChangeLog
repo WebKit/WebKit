@@ -1,3 +1,25 @@
+2015-01-07  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] Content does not wrap with overflow: hidden and reference box different from margin-box
+        https://bugs.webkit.org/show_bug.cgi?id=138139
+
+        Reviewed by David Hyatt.
+
+        To determine how much an box needs to shink to avoid a float, the code
+        was only taking into account the first line of the box. This doesn't
+        work when the float has a shape, as it can make it seem like there is
+        more space on the line than there actually is. This patch changes the
+        calculations to take into account the entire height of the box that
+        needs to be shrunk, and thus computes the correct amount of space
+        available.
+
+        Test: fast/shapes/shape-outside-floats/shape-overflow-hidden-left-margin.html
+              fast/shapes/shape-outside-floats/shape-overflow-hidden-right-margin.html
+              fast/shapes/shape-outside-floats/shape-overflow-hidden.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::shrinkLogicalWidthToAvoidFloats):
+
 2015-01-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r178039.
