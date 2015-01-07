@@ -1,3 +1,13 @@
+2015-01-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test gardening.
+
+        Provide a correct baseline for the one failing XSL test.
+
+        * platform/win/TestExpectations: Clean up the XSL declarations.
+        * platform/win/fast/xsl: Added.
+        * platform/win/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt: Added.
+
 2015-01-07  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Negative raster shape height leads to crash

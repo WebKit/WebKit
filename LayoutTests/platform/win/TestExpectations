@@ -1952,8 +1952,7 @@ fast/text/international/bold-bengali.html [ Pass Failure ]
 fast/text/international/complex-character-based-fallback.html [ Pass ImageOnlyFailure Failure ]
 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure Failure ]
 
-fast/xsl/sort-locale.xml [ Failure ]
-fast/xsl/xslt-missing-namespace-in-xslt.xml [ Failure ]
+webkit.org/b/140211 fast/xsl/sort-locale.xml [ Failure ]
 http
 media/W3C
 plugins
