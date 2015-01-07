@@ -1999,14 +1999,6 @@
             "MPozdnyakov"
          ]
       },
-      "Myles C. Maxfield" : {
-         "emails" : [
-            "mmaxfield@apple.com"
-         ],
-         "nicks" : [
-            "litherum"
-         ]
-      },
       "Nadav Rotem" : {
          "emails" : [
             "nrotem@apple.com"
@@ -4370,6 +4362,15 @@
          "expertise" : "CSS Regions, CSS Exclusions",
          "nicks" : [
             "mihnea"
+         ]
+      },
+      "Myles C. Maxfield" : {
+         "emails" : [
+            "mmaxfield@apple.com"
+         ],
+         "expertise" : "Text layout and rendering",
+         "nicks" : [
+            "litherum"
          ]
       },
       "Nate Chapin" : {

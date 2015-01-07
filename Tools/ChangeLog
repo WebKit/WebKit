@@ -1,5 +1,14 @@
 2015-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Myles C. Maxfield is a reviewer now
+        https://bugs.webkit.org/show_bug.cgi?id=140196
+
+        Reviewed by Dean Jackson.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2015-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Make webkit-patch try harder to find keychain credentials
         https://bugs.webkit.org/show_bug.cgi?id=140170
 
