@@ -1,3 +1,20 @@
+2015-01-07  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        ASSERTION FAILED: rareData->m_flowThreadContainingBlock.value() == RenderBox::locateFlowThreadContainingBlock() in WebCore::RenderBlock::locateFlowThreadContainingBlock
+        https://bugs.webkit.org/show_bug.cgi?id=139390
+
+        Reviewed by Andrei Bucur.
+
+        When a block level element is inserted into an inline element, the inline element is split
+        in order to make sure that all the inline element children are properly wrapped inside
+        anonymous block elements. If the inline element is inside a pagination context, we have
+        to invalidate the cached flow thread containing block for the split inline element and its descendants.
+
+        Test: fast/multicol/newmulticol/block-split-inline-in-multicol.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitInlines):
+
 2015-01-06  Chris Dumez  <cdumez@apple.com>
 
         Move 'content' CSS property to the new StyleBuilder

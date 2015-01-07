@@ -417,6 +417,9 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
         ++splitDepth;
     }
 
+    // Clear the flow thread containing blocks cached during the detached state insertions.
+    cloneInline->invalidateFlowThreadContainingBlockIncludingDescendants();
+
     // Now we are at the block level. We need to put the clone into the toBlock.
     toBlock->insertChildInternal(cloneInline.leakPtr(), nullptr, NotifyChildren);
 
