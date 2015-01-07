@@ -1,3 +1,14 @@
+2015-01-07  Anders Carlsson  <andersca@apple.com>
+
+        Give simple HTML documents a database provider
+        https://bugs.webkit.org/show_bug.cgi?id=140192
+        rdar://problem/19398825
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
 2015-01-06  Anders Carlsson  <andersca@apple.com>
 
         Reimplement NPN_PluginThreadAsyncCall without using PluginMainThreadScheduler
