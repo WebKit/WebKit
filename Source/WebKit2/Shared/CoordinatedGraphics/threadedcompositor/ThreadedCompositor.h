@@ -102,7 +102,7 @@ private:
     RefPtr<CoordinatedGraphicsScene> m_scene;
     std::unique_ptr<SimpleViewportController> m_viewportController;
 
-    OwnPtr<WebCore::GLContext> m_context;
+    std::unique_ptr<WebCore::GLContext> m_context;
 
     WebCore::IntSize m_viewportSize;
     uint64_t m_nativeSurfaceHandle;

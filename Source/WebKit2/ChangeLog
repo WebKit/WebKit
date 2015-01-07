@@ -1,3 +1,14 @@
+2015-01-06  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        Remove the remaining uses of OwnPtr in threaded compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=140172
+
+        Reviewed by Sam Weinig.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::runCompositingThread):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
 2015-01-06  Timothy Horton  <timothy_horton@apple.com>
 
         View state change callbacks are sometimes dropped on the floor

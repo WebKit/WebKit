@@ -305,7 +305,7 @@ void ThreadedCompositor::runCompositingThread()
     {
         MutexLocker locker(m_terminateRunLoopConditionMutex);
         m_compositingRunLoop = nullptr;
-        m_context.clear();
+        m_context = nullptr;
         m_terminateRunLoopCondition.signal();
     }
 
