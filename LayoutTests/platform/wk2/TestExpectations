@@ -258,7 +258,8 @@ fast/frames/location-redirect-user-gesture.html
 fast/frames/meta-refresh-user-gesture.html
 
 # WebKitTestRunner needs testRunner.setUseDashboardCompatibilityMode
-platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html
+platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html [ Skip ]
+mathml/mathml-in-dashboard.html [ Skip ]
 
 # WebKitTestRunner needs testRunner.addURLToRedirect
 http/tests/loading/cross-origin-XHR-willLoadRequest.html

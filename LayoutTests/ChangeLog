@@ -1,3 +1,10 @@
+2015-01-06  Alexey Proskuryakov  <ap@apple.com>
+
+        mathml/mathml-in-dashboard.html fails on WebKit2 testers.
+
+        * platform/wk2/TestExpectations: Skip the test, setUseDashboardCompatibilityMode
+        is not implemented in WebKitTestRunner.
+
 2015-01-06  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Masking][CSS Shapes] Large corner radii use with inset() clip-path are not properly constrained
