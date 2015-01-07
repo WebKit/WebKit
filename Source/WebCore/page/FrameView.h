@@ -244,6 +244,7 @@ public:
     WEBCORE_EXPORT virtual IntPoint maximumScrollPosition() const override;
     void delayedScrollEventTimerFired();
 
+    void viewportContentsChanged();
     void resumeVisibleImageAnimationsIncludingSubframes();
 
     // This is different than visibleContentRect() in that it ignores negative (or overly positive)
