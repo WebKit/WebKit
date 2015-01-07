@@ -1,3 +1,10 @@
+2015-01-07  Eric Carlson  <eric.carlson@apple.com>
+
+        mathml/mathml-in-dashboard.html results are different on mac-mountainlion.
+
+        * platform/mac-mountainlion/mathml/mathml-in-dashboard-expected.png: Added.
+        * platform/mac-mountainlion/mathml/mathml-in-dashboard-expected.txt: Added.
+
 2015-01-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::AXObjectCache::clearTextMarkerNodesInUse + 149
