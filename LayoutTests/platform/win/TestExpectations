@@ -341,9 +341,6 @@ http/tests/misc/frame-default-enc-same-domain.html
 # https://bugs.webkit.org/show_bug.cgi?id=131748 (Is this still broken on Windows?)
 svg/custom/stroke-width-click.svg
 
-# Assertion failure in FrameLoader::loadWithDocumentLoader <https://bugs.webkit.org/show_bug.cgi?id=23921>
-fast/loader/frame-creation-removal.html
-
 # New results needed after r43759, see <https://bugs.webkit.org/show_bug.cgi?id=25816>
 fast/text/international/danda-space.html
 fast/text/international/thai-baht-space.html
@@ -449,9 +446,6 @@ animations/play-state-paused.html
 
 # Times out http://webkit.org/b/63806
 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
-
-# Asserts in FrameLoader::loadWithDocumentLoader http://webkit.org/b/63807
-fast/loader/create-frame-in-DOMContentLoaded.html
 
 # Times out <rdar://problem/9304941>
 http/tests/multipart/invalid-image-data-standalone.html
@@ -770,7 +764,7 @@ fast/text/international/combining-marks-position.html [ Failure ]
 webkit.org/b/24810 fast/text/international/hindi-spacing.html [ Failure ]
 fast/text/international/text-combine-image-test.html [ Failure ]
 fast/text/orientation-sideways.html [ Pass Failure ]
-fast/text/unicode-variation-selector.html [ Pass Failure Crash]
+fast/text/unicode-variation-selector.html [ Pass Failure Crash ]
 webkit.org/b/24810 http/tests/misc/window-dot-stop.html [ Failure ]
 webkit.org/b/24810 http/tests/xmlhttprequest/abort-should-cancel-load.html [ Pass Failure ]
 webkit.org/b/24810 http/tests/xmlhttprequest/access-control-basic-non-simple-deny-cached.html [ Pass Failure ]
@@ -779,7 +773,7 @@ webkit.org/b/24810 http/tests/xmlhttprequest/redirect-cross-origin-post-sync.htm
 webkit.org/b/24810 http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html [ Pass Failure ]
 webkit.org/b/24810 http/tests/xmlhttprequest/redirect-cross-origin-sync.html [ Pass Failure ]
 webkit.org/b/24810 plugins/netscape-destroy-plugin-script-objects.html [ Failure ]
-webkit.org/b/24810 plugins/netscape-plugin-setwindow-size-2.html [ Failure ]
+webkit.org/b/24810 plugins/netscape-plugin-setwindow-size-2.html [ Failure Timeout ]
 webkit.org/b/24810 security/block-test.html [ Failure ]
 webkit.org/b/24810 svg/hixie/viewbox/preserveAspectRatio/001.xml [ Failure ]
 webkit.org/b/24810 tables/mozilla/core/bloomberg.html [ Failure ]
@@ -942,9 +936,6 @@ fast/css/non-standard-checkbox-size.html
 
 # Needs to pass cookies to the media player
 webkit.org/b/33954 http/tests/media/video-cookie.html
-
-# Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
-fast/loader/crash-copying-backforwardlist.html
 
 webkit.org/b/34447 http/tests/media/video-referer.html [ Failure ]
 
@@ -1291,7 +1282,7 @@ fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html
 
 webkit.org/b/56167 http/tests/media/remove-while-loading.html [ Timeout ]
 
-webkit.org/b/57693 plugins/windowless_plugin_paint_test.html [ Failure ]
+webkit.org/b/57693 plugins/windowless_plugin_paint_test.html [ Failure Timeout ]
 
 # Quota API is not supported.
 storage/storageinfo-missing-arguments.html
@@ -1326,7 +1317,7 @@ webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 # Skip all webgl tests on Windows for now since they don't seem to work consistently
 webgl [ Skip ]
 fast/images/webgl-teximage2d.html [ Skip ]
-fast/canvas/webgl [ Skip ]
+[ Release ] fast/canvas/webgl [ Skip ]
 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
@@ -1502,9 +1493,6 @@ webkit.org/b/87431 plugins/destroy-during-npp-new-object-with-fallback-content.h
 # Asserts on debug builds
 webkit.org/b/86176 [ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ Crash ]
 
-# Asserts/crashes in PluginView::didFinishLoading
-[ Debug ] fast/loader/reload-zero-byte-plugin.html [ Crash ]
-
 # JavaScript Experiments are not enabled on Windows
 webkit.org/b/87858 js/names.html
 
@@ -1583,7 +1571,6 @@ fast/harness/results.html
 fast/images/support-broken-image-delegate.html
 js/dom/stack-trace.html
 fast/layers/video-layer.html
-fast/loader/javascript-url-iframe-remove-on-navigate.html
 fast/dom/MutationObserver/inline-event-listener.html
 fast/profiler/dead-time.html
 fast/profiler/stop-profiling-after-setTimeout.html
@@ -1842,7 +1829,7 @@ webkit.org/b/100349 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-wor
 
 # Feature introduced in r132708 is chromium only
 animations/3d/change-transform-in-end-event.html [ Failure ]
-transitions/move-after-transition.html [ Failure ]
+transitions/move-after-transition.html [ Failure Timeout ]
 compositing/text-on-large-layer.html [ Failure ]
 compositing/iframes/fixed-position-iframe.html [ Failure ]
 compositing/tiling/huge-layer-add-remove-child.html [ Failure ]
@@ -2002,9 +1989,6 @@ webkit.org/b/112766 media/media-higher-prio-audio-stream.html [ Skip ]
 # Snapshotted plugins not enabled on WK1
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
 
-# dumpCreateView method not implemented on Windows
-fast/loader/url-selected-user-gesture.html [ Skip ]
-
 # Don't run ogv and mkv tests on mac
 media/track/in-band [ WontFix ]
 media/track/video [ WontFix ]
@@ -2020,7 +2004,7 @@ editing/secure-input [ Failure ]
 
 # Disable crashing tests, being investigated under https://bugs.webkit.org/show_bug.cgi?id=116562
 webkit.org/b/116562 [ Debug ] js/dom/callback-function-with-handle-event.html [ Crash ]
-js/dom/callback-function-with-handle-event.html [ Failure ]
+[ Release ] js/dom/callback-function-with-handle-event.html [ Failure ]
 webkit.org/b/116562 loader/go-back-cached-main-resource.html [ Crash ]
 
 # Test failures being investigated under https://bugs.webkit.org/show_bug.cgi?id=116564
@@ -2162,7 +2146,6 @@ webkit.org/b/121509 fast/workers/worker-document-leak.html	[ Skip ]
 #Also webkit.org/b/117326 fast/workers/worker-document-leak.html [ Skip ]
 webkit.org/b/121509 fast/workers/worker-lifecycle.html	[ Skip ]
 #Also webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
-webkit.org/b/121509 fast/loader/image-in-page-cache.html	[ Skip ]
 webkit.org/b/121509 fast/events/page-visibility-iframe-delete-test.html	[ Skip ]
 webkit.org/b/121509 fast/events/wheelevent-mousewheel-interaction.html	[ Skip ]
 webkit.org/b/121509 fast/events/message-port-context-destroyed.html	[ Skip ]
@@ -2291,7 +2274,6 @@ webkit.org/b/128855 fast/regions/overflow/overflow-region-transform.html [ Image
 webkit.org/b/128855 fast/regions/selection/selecting-text-including-region.html [ ImageOnlyFailure ] 
 
 # Some region tests fail:
-webkit.org/b/128855 fast/regions/subtree-with-vert-rl.html [ Pass Crash ] 
 webkit.org/b/128855 fast/regions/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ] 
 webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-lr.html [ Failure ] 
 webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-rl.html [ Failure ] 
@@ -2300,12 +2282,10 @@ webkit.org/b/128855 fast/regions/selection/position-for-point-vert-lr.html [ Fai
 webkit.org/b/128855 fast/regions/selection/position-for-point-vert-rl.html [ Failure ] 
 webkit.org/b/128855 fast/regions/selection/position-for-point.html [ Failure ]
 webkit.org/b/128855 fast/regions/selection/selection-direction.html [ Pass Failure ]
-webkit.org/b/128855 fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Failure ]
-webkit.org/b/128855 fast/regions/generated-content/firstletter-inside-flowthread.html [ Crash ]
+webkit.org/b/128855 fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Crash Failure Timeout ]
 webkit.org/b/128855 fast/regions/repaint/repaint-absolute-pushed-to-next-region.html [ Failure ]
 
 # A few are flaky:
-webkit.org/b/128855 fast/regions/absolute-pos-elem-in-region.html [ Pass Failure ] 
 webkit.org/b/128855 fast/regions/clip-to-padding-box-vertical-lr.html [ Pass Failure ] 
 webkit.org/b/128855 fast/regions/content-flowed-into-regions-dynamically-removed.html [ Pass ImageOnlyFailure ]
 webkit.org/b/128855 fast/regions/flows-dependency-dynamic-remove.html [ Pass Failure ] 
@@ -2313,17 +2293,10 @@ webkit.org/b/128855 fast/regions/hit-test-float.html [ Pass Timeout ]
 webkit.org/b/128855 fast/regions/hover-and-js-in-visual-overflow.html [ Pass Timeout ImageOnlyFailure Failure ]
 webkit.org/b/128855 fast/regions/hover-single-flow-from-other.html [ Pass ImageOnlyFailure ]
 webkit.org/b/128855 fast/regions/overflow/overflow-scrollable-3.html [ Pass Timeout ]
-webkit.org/b/128855 fast/regions/auto-size/autoheight-firstregion-breakalways.html [ Pass Failure Timeout ] 
-webkit.org/b/128855 fast/regions/auto-size/autoheight-abspos-region.html [ Pass Failure ] 
-webkit.org/b/128855 fast/regions/auto-size/autoheight-flexbox.html [ Pass Failure ] 
-webkit.org/b/128855 fast/regions/auto-size/autoheight-minheight-region.html [ Pass Timeout ] 
-webkit.org/b/128855 fast/regions/counters/extract-list-items-014.html [ Pass Failure ] 
 webkit.org/b/128855 fast/regions/cssom/offsetLeft-offsetTop-inlines-region-in-element.html [ Pass Failure ]
 webkit.org/b/128855 fast/regions/cssom/webkit-named-flow-event.html [ Pass Timeout ]
 webkit.org/b/128855 fast/regions/region-styling/region-style-block-background-color.html [ Pass Timeout ]
 webkit.org/b/128855 fast/regions/region-styling/region-style-inline-background-color.html [ Pass Failure ] 
-webkit.org/b/128855 fast/regions/region-styling/region-style-not-supported-properties.html [ Pass Failure Timeout ] 
-webkit.org/b/128855 fast/regions/region-styling/region-style-in-columns.html [ Pass Timeout Failure ] 
 webkit.org/b/128855 fast/regions/repaint/line-flow-with-floats-in-regions.html [ Pass ImageOnlyFailure Failure ]
 
 # More flakes:
@@ -2546,12 +2519,9 @@ fast/loader/url-parse-1.html [ Pass Failure ]
 fast/media/update-media-query-css-parser.html [ Pass Timeout ]
 fast/multicol/negativeColumnWidth.html [ Pass Timeout ]
 fast/parser/xhtml-close-while-parsing.xhtml [ Pass Timeout ]
-fast/regions/positioning/fixed-pos-elem-in-region.html [ Pass Timeout ]
 fast/regions/hover-single-flow-into-none.html [ Pass Timeout ]
 fast/regions/intrinsic-sized-regions.html [ Pass Timeout ]
-fast/regions/positioning/positioned-objects-inline-static-in-regions.html [ Pass Timeout ]
 fast/regions/overflow/overflow-scrollable-unsplittable-fragment.html [ Pass Timeout ]
-fast/regions/auto-size/autoheight-floatright-region.html [ Pass Timeout ]
 fast/regions/auto-size/autoheight-vertical-rl.html [ Pass Timeout ]
 fast/replaced/object-with-non-empty-classid-triggers-fallback.html [ Pass Timeout ]
 fast/replaced/percent-height-in-anonymous-block.html [ Pass Timeout ]
@@ -2587,7 +2557,7 @@ ietestcenter/css3/multicolumn/column-width-applies-to-010.htm [ ImageOnlyFailure
 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
-ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
+[ Release ] ietestcenter/css3/valuesandunits/units-000.htm [ ImageOnlyFailure ]
 ietestcenter/Javascript [ Pass Failure Timeout ]
 [ Release ] inspector-protocol/layers/layers-reflected-content.html [ Pass Timeout ]
 [ Release ] inspector-protocol/debugger/setBreakpoint-actions.html [ Pass Timeout ]
@@ -2725,7 +2695,7 @@ fast/frames/flattening/frameset-flattening-simple.html [ Failure ]
 fast/forms/select/listbox-click-on-scrollbar.html [ Failure ]
 fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure ]
 fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFailure ]
-fast/forms/textfield-lastchange-was-useredit.html [ Crash ]
+[ Release ] fast/forms/textfield-lastchange-was-useredit.html [ Crash ]
 
 # A handful of CSS tests failing on Windows that we are skipping to get the bots green
 css3/viewport-percentage-lengths/viewport-percentage-lengths-anonymous-block.html [ Timeout ]
@@ -2785,20 +2755,17 @@ inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
 fast/overflow/overflow-height-float-not-removed-crash2.html [ Crash Pass ]
 fast/overflow/overflow-height-float-not-removed-crash.html [ Crash Pass ]
 fast/dom/SelectorAPI/dumpNodeList-almost-strict.html [ Crash Pass ]
-fast/regions/subtree-with-vert-lr.html [ Crash Pass ]
 fast/regions/writing-mode/changing-writing-mode.html [ Crash Pass ]
 mathml/presentation/style-changed.html [ Crash Pass ]
-fast/regions/overflow/overflow-3dtransformed-region.html [ Crash Failure ]
 fast/dom/HTMLTableElement/colSpan.html	[ ImageOnlyFailure ]
 svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr.html [ Skip ]
 svg/custom/object-sizing-explicit-width.xhtml [ ImageOnlyFailure Timeout ]
 svg/dom/SVGPathSegList-xml-dom-synchronization.xhtml [ ImageOnlyFailure Timeout ]
 userscripts/user-script-plugin-document.html [ Crash Failure ]
 tables/mozilla/other/test6.html [ Skip ]
-fast/regions/inline-block-inside-anonymous-overflow.html [ ImageOnlyFailure ]
 fast/repaint/animation-after-layer-scroll.html [ Failure ]
 fast/text/emphasis-combined-text.html [ ImageOnlyFailure ]
-http/tests/media/video-cancel-load.html [ Crash Failure Timeout ]
+[ Release ] http/tests/media/video-cancel-load.html [ Crash Failure Timeout ]
 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 js/slow-stress/emscripten-memops.html [ Timeout ]
 
@@ -2819,12 +2786,7 @@ media/context-menu-actions.html [ Timeout ]
 media/controls-after-reload.html [ Failure ]
 media/controls-strict.html [ Failure ]
 media/controls-without-preload.html [ Failure ]
-media/encrypted-media/encrypted-media-can-play-type-webm.html [ WontFix ]
-media/encrypted-media/encrypted-media-can-play-type.html [ Failure ]
-media/encrypted-media/encrypted-media-events.html [ Failure ]
-media/encrypted-media/encrypted-media-not-loaded.html [ Failure ]
 media/encrypted-media/encrypted-media-session-lifetime.html [ Failure ]
-media/encrypted-media/encrypted-media-syntax.html [ Failure ]
 media/media-blocked-by-beforeload.html [ Timeout ]
 media/media-can-play-flac-audio.html [ Failure ]
 media/media-can-play-ogg.html [ Failure ]
@@ -3052,12 +3014,9 @@ http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_conn
 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_iframe_self_navigation.html [ Timeout ]
 inspector/css/selector-specificity.html [ Timeout ]
 inspector/css/pseudo-element-matches.html [ Timeout ]
-js/dom/callback-function-with-handle-event.html [ Timeout ]
+[ Debug ] js/dom/callback-function-with-handle-event.html [ Timeout ]
 media/audio-delete-while-step-button-clicked.html [ Timeout ]
-plugins/netscape-plugin-setwindow-size-2.html [ Timeout ]
-plugins/windowless_plugin_paint_test.html [ Timeout ]
 security/autocomplete-cleared-on-back.html [ Timeout ]
-transitions/move-after-transition.html [ Timeout ]
 userscripts/window-onerror-for-isolated-world-1.html [ Timeout ]
 userscripts/window-onerror-for-isolated-world-2.html [ Timeout ]
 
@@ -3072,7 +3031,6 @@ fast/dom/Document/createElement-invalid-names.html [ Crash ]
 fast/dom/Document/createElement-valid-names.html [ Crash ]
 fast/lists/w3-css3-list-styles-numeric.html [ Crash ]
 fast/parser/entities-in-xhtml.xhtml [ Crash ]
-fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Crash ]
 fast/text/midword-break-before-surrogate-pair-2.html [ Crash ]
 fast/text/regional-indicator-symobls.html [ Crash ]
 inspector-protocol/debugger/setBreakpoint-dfg.html [ Crash ]
@@ -3083,11 +3041,12 @@ mathml/presentation/mo-invisible.html [ Crash ]
 webkit.org/b/139972 svg/W3C-SVG-1.1 [ Failure ]
 
 # [Win] REGRESSION: fast/regions reference tests are failing with minor pixel differences
-# https://bugs.webkit.org/show_bug.cgi?id=139973
+# https://bugs.webkit.org/show_bug.cgi?id=139973. Many are also flaky, which was documented
+# under https://bugs.webkit.org/show_bug.cgi?id=128855.
 fast/regions/absolute-in-relative-overflow.html [ ImageOnlyFailure ]
-fast/regions/absolute-pos-elem-in-region.html [ ImageOnlyFailure ]
+webkit.org/b/139973 fast/regions/absolute-pos-elem-in-region.html [ ImageOnlyFailure Failure ]
 fast/regions/animation-element-in-region-flowed-to-other-thread.html [ ImageOnlyFailure ]
-fast/regions/auto-size/autoheight-abspos-region.html [ ImageOnlyFailure ]
+webkit.org/b/139973 fast/regions/auto-size/autoheight-abspos-region.html [ ImageOnlyFailure Failure ]
 fast/regions/auto-size/autoheight-allregions-nobreaks.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autoheight-allregions.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autoheight-break-after.html [ ImageOnlyFailure ]
@@ -3095,16 +3054,16 @@ fast/regions/auto-size/autoheight-breakafteralways-maxheight.html [ ImageOnlyFai
 fast/regions/auto-size/autoheight-breakbeforealways.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autoheight-definedheight-changenotdetected.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autoheight-dynamic-update.html [ ImageOnlyFailure ]
-fast/regions/auto-size/autoheight-firstregion-breakalways.html [ ImageOnlyFailure ]
-fast/regions/auto-size/autoheight-flexbox.html [ ImageOnlyFailure ]
-fast/regions/auto-size/autoheight-floatright-region.html [ ImageOnlyFailure ]
+webkit.org/b/139973 fast/regions/auto-size/autoheight-firstregion-breakalways.html [ ImageOnlyFailure Failure Timeout ]
+webkit.org/b/139973 fast/regions/auto-size/autoheight-flexbox.html [ ImageOnlyFailure Failure ]
+webkit.org/b/139973 fast/regions/auto-size/autoheight-floatright-region.html [ ImageOnlyFailure Timeout ]
 fast/regions/auto-size/autoheight-horizontal-bt.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autoheight-inlineblock-normalflow-region.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autoheight-lastregion-overflowauto-breaksignored.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autoheight-lastregion-overflowauto.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autoheight-maxheight-region.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autoheight-middleregion.html [ ImageOnlyFailure ]
-fast/regions/auto-size/autoheight-minheight-region.html [ ImageOnlyFailure ]
+webkit.org/b/139973 fast/regions/auto-size/autoheight-minheight-region.html [ ImageOnlyFailure Timeout ]
 fast/regions/auto-size/autoheight-normalflow-region.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autoheight-region-valid-from-invalid.html [ ImageOnlyFailure ]
 fast/regions/auto-size/autoheight-secondregion-breakoutside.html [ ImageOnlyFailure ]
@@ -3144,7 +3103,7 @@ fast/regions/counters/extract-list-items-010.html [ ImageOnlyFailure ]
 fast/regions/counters/extract-list-items-011.html [ ImageOnlyFailure ]
 fast/regions/counters/extract-list-items-012.html [ ImageOnlyFailure ]
 fast/regions/counters/extract-list-items-013.html [ ImageOnlyFailure ]
-fast/regions/counters/extract-list-items-014.html [ ImageOnlyFailure ]
+fast/regions/counters/extract-list-items-014.html [ ImageOnlyFailure Failure ]
 fast/regions/counters/extract-list-items-015.html [ ImageOnlyFailure ]
 fast/regions/counters/extract-numbered-paragraphs-divs-001.html [ ImageOnlyFailure ]
 fast/regions/counters/extract-numbered-paragraphs-divs-002.html [ ImageOnlyFailure ]
@@ -3152,6 +3111,7 @@ fast/regions/counters/extract-numbered-paragraphs.html [ ImageOnlyFailure ]
 fast/regions/counters/extract-numbered-spans-display-only-some.html [ ImageOnlyFailure ]
 fast/regions/counters/extract-ordered-lists-in-regions-001.html [ ImageOnlyFailure ]
 fast/regions/counters/extract-ordered-lists-in-regions-002.html [ ImageOnlyFailure ]
+fast/regions/counters/extract-ordered-lists-in-regions-003.html [ ImageOnlyFailure ]
 fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-001.html [ ImageOnlyFailure ]
 fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-002.html [ ImageOnlyFailure ]
 fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-003.html [ ImageOnlyFailure ]
@@ -3169,7 +3129,8 @@ fast/regions/fragmentation-after-monolithic-overflow.html [ ImageOnlyFailure ]
 fast/regions/frame-view-overflow-scroll.html [ ImageOnlyFailure ]
 fast/regions/generated-content/firstletter-inside-flowthread.html [ ImageOnlyFailure ]
 fast/regions/hidpi-region-with-auto-margin-on-subpixel-position.html [ ImageOnlyFailure ]
-fast/regions/hover-content-inside-iframe-in-region.html [ ImageOnlyFailure ]
+[ Debug ] fast/regions/hover-content-inside-iframe-in-region.html [ Crash ]
+[ Release ] fast/regions/hover-content-inside-iframe-in-region.html [ ImageOnlyFailure ]
 fast/regions/hover-in-second-region.html [ ImageOnlyFailure ]
 fast/regions/hover-overflow-hidden.html [ ImageOnlyFailure ]
 fast/regions/inline-block-flowed-in-regions.html [ ImageOnlyFailure ]
@@ -3205,7 +3166,7 @@ fast/regions/positioning/fixed-inside-fixed-in-named-flow.html [ ImageOnlyFailur
 fast/regions/positioning/fixed-inside-named-flow-zIndex.html [ ImageOnlyFailure ]
 fast/regions/positioning/fixed-pos-content-fragmented.html [ ImageOnlyFailure ]
 fast/regions/positioning/fixed-pos-elem-in-namedflow-noregions.html [ ImageOnlyFailure ]
-fast/regions/positioning/fixed-pos-elem-in-region.html [ ImageOnlyFailure ]
+webkit.org/b/139973 fast/regions/positioning/fixed-pos-elem-in-region.html [ ImageOnlyFailure Timeout ]
 fast/regions/positioning/fixed-pos-region-overflow-content.html [ ImageOnlyFailure ]
 fast/regions/positioning/positioned-objects-block-static-in-regions.html [ ImageOnlyFailure ]
 fast/regions/positioning/positioned-objects-block-static-in-rtl-regions.html [ ImageOnlyFailure ]
@@ -3214,7 +3175,7 @@ fast/regions/positioning/positioned-objects-block-static-spanning-regions.html [
 fast/regions/positioning/positioned-objects-clipped-spanning-regions.html [ ImageOnlyFailure ]
 fast/regions/positioning/positioned-objects-in-regions.html [ ImageOnlyFailure ]
 fast/regions/positioning/positioned-objects-in-rtl-regions.html [ ImageOnlyFailure ]
-fast/regions/positioning/positioned-objects-inline-static-in-regions.html [ ImageOnlyFailure ]
+webkit.org/b/139973 fast/regions/positioning/positioned-objects-inline-static-in-regions.html [ ImageOnlyFailure Timeout ]
 fast/regions/positioning/positioned-objects-inline-static-in-rtl-regions.html [ ImageOnlyFailure ]
 fast/regions/positioning/positioned-objects-inline-static-spanning-regions-rtl.html [ ImageOnlyFailure ]
 fast/regions/positioning/positioned-objects-inline-static-spanning-regions.html [ ImageOnlyFailure ]
@@ -3225,8 +3186,8 @@ fast/regions/region-as-bfc-avoids-float.html [ ImageOnlyFailure ]
 fast/regions/region-border-radius-overflow-clip.html [ ImageOnlyFailure ]
 fast/regions/region-clipping.html [ ImageOnlyFailure ]
 fast/regions/region-padding-overflow-hidden.html [ ImageOnlyFailure ]
-fast/regions/region-styling/region-style-in-columns.html [ ImageOnlyFailure ]
-fast/regions/region-styling/region-style-not-supported-properties.html [ ImageOnlyFailure ]
+webkit.org/b/139973 fast/regions/region-styling/region-style-in-columns.html [ ImageOnlyFailure Failure Timeout ]
+webkit.org/b/139973 fast/regions/region-styling/region-style-not-supported-properties.html [ ImageOnlyFailure Failure Timeout ]
 fast/regions/region-styling/region-style-rule-position.html [ ImageOnlyFailure ]
 fast/regions/region-styling/region-withstyling-valid-from-invalid.html [ ImageOnlyFailure ]
 fast/regions/region-visual-overflow-transform.html [ ImageOnlyFailure ]
@@ -3254,8 +3215,10 @@ fast/regions/shape-outside-floats/regions-shape-outside-region-polygon-floats.ht
 fast/regions/static-in-relative-overflow.html [ ImageOnlyFailure ]
 fast/regions/sticky-border-overflow.html [ ImageOnlyFailure ]
 fast/regions/subtree-with-horiz-bt.html [ ImageOnlyFailure ]
-fast/regions/subtree-with-vert-lr.html [ ImageOnlyFailure ]
-fast/regions/subtree-with-vert-rl.html [ ImageOnlyFailure ]
+webkit.org/b/139973 [ Debug ] fast/regions/subtree-with-vert-lr.html [ Crash ]
+webkit.org/b/139973 [ Release ] fast/regions/subtree-with-vert-lr.html [ ImageOnlyFailure ]
+webkit.org/b/139973 [ Debug ] fast/regions/subtree-with-vert-rl.html [ Crash ]
+webkit.org/b/139973 [ Release ] fast/regions/subtree-with-vert-rl.html [ ImageOnlyFailure ]
 fast/regions/table-cell-as-region.html [ ImageOnlyFailure ]
 fast/regions/top-overflow-out-of-second-region.html [ ImageOnlyFailure ]
 fast/regions/unsplittable-nested-region.html [ ImageOnlyFailure ]

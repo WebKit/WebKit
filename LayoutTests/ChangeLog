@@ -1,3 +1,9 @@
+2015-01-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Test gardening. Clean up lint errors on Windows file.
+
+        * platform/win/TestExpectations:
+
 2015-01-07  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Content does not wrap with overflow: hidden and reference box different from margin-box
