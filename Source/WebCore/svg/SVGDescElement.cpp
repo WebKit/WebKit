@@ -31,9 +31,9 @@ inline SVGDescElement::SVGDescElement(const QualifiedName& tagName, Document& do
     ASSERT(hasTagName(SVGNames::descTag));
 }
 
-PassRefPtr<SVGDescElement> SVGDescElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGDescElement> SVGDescElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGDescElement(tagName, document));
+    return adoptRef(*new SVGDescElement(tagName, document));
 }
 
 String SVGDescElement::description() const

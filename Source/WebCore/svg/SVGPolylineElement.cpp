@@ -31,9 +31,9 @@ inline SVGPolylineElement::SVGPolylineElement(const QualifiedName& tagName, Docu
     ASSERT(hasTagName(SVGNames::polylineTag));
 }
 
-PassRefPtr<SVGPolylineElement> SVGPolylineElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGPolylineElement> SVGPolylineElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGPolylineElement(tagName, document));
+    return adoptRef(*new SVGPolylineElement(tagName, document));
 }
 
 }

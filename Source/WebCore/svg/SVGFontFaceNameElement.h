@@ -29,7 +29,7 @@ class CSSFontFaceSrcValue;
 
 class SVGFontFaceNameElement final : public SVGElement {
 public:
-    static PassRefPtr<SVGFontFaceNameElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFontFaceNameElement> create(const QualifiedName&, Document&);
     
     Ref<CSSFontFaceSrcValue> srcValue() const;
 

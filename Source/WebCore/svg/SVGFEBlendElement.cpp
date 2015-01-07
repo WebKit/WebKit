@@ -51,9 +51,9 @@ inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Docume
     registerAnimatedPropertiesForSVGFEBlendElement();
 }
 
-PassRefPtr<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFEBlendElement(tagName, document));
+    return adoptRef(*new SVGFEBlendElement(tagName, document));
 }
 
 bool SVGFEBlendElement::isSupportedAttribute(const QualifiedName& attrName)

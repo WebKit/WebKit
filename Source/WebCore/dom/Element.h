@@ -59,7 +59,7 @@ enum SpellcheckAttributeState {
 
 class Element : public ContainerNode {
 public:
-    static RefPtr<Element> create(const QualifiedName&, Document&);
+    static Ref<Element> create(const QualifiedName&, Document&);
     virtual ~Element();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);

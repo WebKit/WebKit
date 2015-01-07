@@ -77,9 +77,9 @@ inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document
     registerAnimatedPropertiesForSVGFilterElement();
 }
 
-PassRefPtr<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFilterElement(tagName, document));
+    return adoptRef(*new SVGFilterElement(tagName, document));
 }
 
 const AtomicString& SVGFilterElement::filterResXIdentifier()

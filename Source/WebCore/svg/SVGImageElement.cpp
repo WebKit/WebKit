@@ -67,9 +67,9 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document& 
     registerAnimatedPropertiesForSVGImageElement();
 }
 
-PassRefPtr<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGImageElement(tagName, document));
+    return adoptRef(*new SVGImageElement(tagName, document));
 }
 
 bool SVGImageElement::isSupportedAttribute(const QualifiedName& attrName)

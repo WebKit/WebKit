@@ -49,9 +49,9 @@ inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Docu
     registerAnimatedPropertiesForSVGFEOffsetElement();
 }
 
-PassRefPtr<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFEOffsetElement(tagName, document));
+    return adoptRef(*new SVGFEOffsetElement(tagName, document));
 }
 
 bool SVGFEOffsetElement::isSupportedAttribute(const QualifiedName& attrName)

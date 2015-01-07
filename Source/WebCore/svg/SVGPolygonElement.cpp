@@ -31,9 +31,9 @@ inline SVGPolygonElement::SVGPolygonElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(SVGNames::polygonTag));
 }
 
-PassRefPtr<SVGPolygonElement> SVGPolygonElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGPolygonElement> SVGPolygonElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGPolygonElement(tagName, document));
+    return adoptRef(*new SVGPolygonElement(tagName, document));
 }
 
 }

@@ -36,9 +36,9 @@ inline SVGHKernElement::SVGHKernElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(SVGNames::hkernTag));
 }
 
-PassRefPtr<SVGHKernElement> SVGHKernElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGHKernElement> SVGHKernElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGHKernElement(tagName, document));
+    return adoptRef(*new SVGHKernElement(tagName, document));
 }
 
 Node::InsertionNotificationRequest SVGHKernElement::insertedInto(ContainerNode& rootParent)

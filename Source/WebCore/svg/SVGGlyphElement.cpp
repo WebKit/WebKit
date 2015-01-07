@@ -39,9 +39,9 @@ inline SVGGlyphElement::SVGGlyphElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(SVGNames::glyphTag));
 }
 
-PassRefPtr<SVGGlyphElement> SVGGlyphElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGGlyphElement> SVGGlyphElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGGlyphElement(tagName, document));
+    return adoptRef(*new SVGGlyphElement(tagName, document));
 }
 
 void SVGGlyphElement::invalidateGlyphCache()

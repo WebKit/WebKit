@@ -40,7 +40,7 @@ class SVGUseElement final : public SVGGraphicsElement,
                             public SVGURIReference,
                             public CachedSVGDocumentClient {
 public:
-    static PassRefPtr<SVGUseElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
+    static Ref<SVGUseElement> create(const QualifiedName&, Document&, bool wasInsertedByParser);
     virtual ~SVGUseElement();
 
     SVGElementInstance* instanceRoot();

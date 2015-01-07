@@ -32,9 +32,9 @@ inline SVGTitleElement::SVGTitleElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(SVGNames::titleTag));
 }
 
-PassRefPtr<SVGTitleElement> SVGTitleElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGTitleElement> SVGTitleElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGTitleElement(tagName, document));
+    return adoptRef(*new SVGTitleElement(tagName, document));
 }
 
 Node::InsertionNotificationRequest SVGTitleElement::insertedInto(ContainerNode& rootParent)

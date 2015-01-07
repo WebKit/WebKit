@@ -69,9 +69,9 @@ inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document& document
     registerAnimatedPropertiesForSVGAElement();
 }
 
-PassRefPtr<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGAElement(tagName, document));
+    return adoptRef(*new SVGAElement(tagName, document));
 }
 
 String SVGAElement::title() const

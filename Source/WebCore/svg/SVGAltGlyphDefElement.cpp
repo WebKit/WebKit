@@ -35,9 +35,9 @@ inline SVGAltGlyphDefElement::SVGAltGlyphDefElement(const QualifiedName& tagName
     ASSERT(hasTagName(SVGNames::altGlyphDefTag));
 }
 
-PassRefPtr<SVGAltGlyphDefElement> SVGAltGlyphDefElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGAltGlyphDefElement> SVGAltGlyphDefElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGAltGlyphDefElement(tagName, document));
+    return adoptRef(*new SVGAltGlyphDefElement(tagName, document));
 }
 
 bool SVGAltGlyphDefElement::hasValidGlyphElements(Vector<String>& glyphNames) const

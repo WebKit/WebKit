@@ -34,7 +34,7 @@ class RenderObject;
 class SVGClipPathElement final : public SVGGraphicsElement,
                                  public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGClipPathElement> create(const QualifiedName&, Document&);
+    static Ref<SVGClipPathElement> create(const QualifiedName&, Document&);
 
 private:
     SVGClipPathElement(const QualifiedName&, Document&);

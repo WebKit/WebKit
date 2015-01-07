@@ -31,9 +31,9 @@ inline SVGFEDistantLightElement::SVGFEDistantLightElement(const QualifiedName& t
     ASSERT(hasTagName(SVGNames::feDistantLightTag));
 }
 
-PassRefPtr<SVGFEDistantLightElement> SVGFEDistantLightElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEDistantLightElement> SVGFEDistantLightElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFEDistantLightElement(tagName, document));
+    return adoptRef(*new SVGFEDistantLightElement(tagName, document));
 }
 
 PassRefPtr<LightSource> SVGFEDistantLightElement::lightSource() const

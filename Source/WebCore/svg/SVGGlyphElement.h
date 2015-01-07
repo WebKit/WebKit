@@ -32,7 +32,7 @@ class SVGFontData;
 
 class SVGGlyphElement final : public SVGElement {
 public:
-    static PassRefPtr<SVGGlyphElement> create(const QualifiedName&, Document&);
+    static Ref<SVGGlyphElement> create(const QualifiedName&, Document&);
 
     SVGGlyph buildGlyphIdentifier() const;
 

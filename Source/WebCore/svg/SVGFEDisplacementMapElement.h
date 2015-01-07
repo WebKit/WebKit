@@ -66,7 +66,7 @@ struct SVGPropertyTraits<ChannelSelectorType> {
 
 class SVGFEDisplacementMapElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEDisplacementMapElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEDisplacementMapElement> create(const QualifiedName&, Document&);
 
     static ChannelSelectorType stringToChannel(const String&);
     

@@ -34,11 +34,10 @@ inline SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(SVGNames::feFloodTag));
 }
 
-PassRefPtr<SVGFEFloodElement> SVGFEFloodElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEFloodElement> SVGFEFloodElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFEFloodElement(tagName, document));
+    return adoptRef(*new SVGFEFloodElement(tagName, document));
 }
-
 
 bool SVGFEFloodElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
 {

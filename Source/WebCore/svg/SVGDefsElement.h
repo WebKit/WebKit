@@ -30,7 +30,7 @@ namespace WebCore {
 class SVGDefsElement final : public SVGGraphicsElement,
                              public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGDefsElement> create(const QualifiedName&, Document&);
+    static Ref<SVGDefsElement> create(const QualifiedName&, Document&);
 
 private:
     SVGDefsElement(const QualifiedName&, Document&);

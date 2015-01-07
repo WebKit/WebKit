@@ -29,7 +29,7 @@ class AffineTransform;
             
 class SVGAnimateMotionElement final : public SVGAnimationElement {
 public:
-    static PassRefPtr<SVGAnimateMotionElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAnimateMotionElement> create(const QualifiedName&, Document&);
     void updateAnimationPath();
 
 private:

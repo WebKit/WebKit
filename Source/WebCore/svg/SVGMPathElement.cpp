@@ -46,9 +46,9 @@ inline SVGMPathElement::SVGMPathElement(const QualifiedName& tagName, Document& 
     registerAnimatedPropertiesForSVGMPathElement();
 }
 
-PassRefPtr<SVGMPathElement> SVGMPathElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGMPathElement> SVGMPathElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGMPathElement(tagName, document));
+    return adoptRef(*new SVGMPathElement(tagName, document));
 }
 
 SVGMPathElement::~SVGMPathElement()

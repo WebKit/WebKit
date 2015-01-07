@@ -32,9 +32,9 @@ inline SVGSetElement::SVGSetElement(const QualifiedName& tagName, Document& docu
     ASSERT(hasTagName(SVGNames::setTag));
 }
 
-PassRefPtr<SVGSetElement> SVGSetElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGSetElement> SVGSetElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGSetElement(tagName, document));
+    return adoptRef(*new SVGSetElement(tagName, document));
 }
 
 void SVGSetElement::updateAnimationMode()

@@ -28,7 +28,7 @@ namespace WebCore {
 
 class SVGVKernElement final : public SVGElement {
 public:
-    static PassRefPtr<SVGVKernElement> create(const QualifiedName&, Document&);
+    static Ref<SVGVKernElement> create(const QualifiedName&, Document&);
 
     bool buildVerticalKerningPair(SVGKerningPair& kerningPair) const;
 

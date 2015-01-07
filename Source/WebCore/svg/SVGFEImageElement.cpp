@@ -58,9 +58,9 @@ inline SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Docume
     registerAnimatedPropertiesForSVGFEImageElement();
 }
 
-PassRefPtr<SVGFEImageElement> SVGFEImageElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEImageElement> SVGFEImageElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFEImageElement(tagName, document));
+    return adoptRef(*new SVGFEImageElement(tagName, document));
 }
 
 SVGFEImageElement::~SVGFEImageElement()

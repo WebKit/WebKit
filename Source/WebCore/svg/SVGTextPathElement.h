@@ -109,7 +109,7 @@ public:
         TEXTPATH_SPACINGTYPE_EXACT = SVGTextPathSpacingExact
     };
 
-    static PassRefPtr<SVGTextPathElement> create(const QualifiedName&, Document&);
+    static Ref<SVGTextPathElement> create(const QualifiedName&, Document&);
 
 protected:
     virtual void didNotifySubtreeInsertions(ContainerNode*) override;

@@ -37,7 +37,7 @@ class SVGMaskElement final : public SVGElement,
                              public SVGTests,
                              public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGMaskElement> create(const QualifiedName&, Document&);
+    static Ref<SVGMaskElement> create(const QualifiedName&, Document&);
 
     void addClientRenderLayer(RenderLayer*);
     void removeClientRenderLayer(RenderLayer*);

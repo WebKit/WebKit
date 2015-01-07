@@ -34,7 +34,7 @@ class SVGAnimatedProperty;
 
 class SVGAnimateElement final : public SVGAnimateElementBase {
 public:
-    static PassRefPtr<SVGAnimateElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAnimateElement> create(const QualifiedName&, Document&);
 
 private:
     SVGAnimateElement(const QualifiedName&, Document&);

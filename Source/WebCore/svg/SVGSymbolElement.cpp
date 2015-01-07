@@ -48,9 +48,9 @@ inline SVGSymbolElement::SVGSymbolElement(const QualifiedName& tagName, Document
     registerAnimatedPropertiesForSVGSymbolElement();
 }
 
-PassRefPtr<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGSymbolElement> SVGSymbolElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGSymbolElement(tagName, document));
+    return adoptRef(*new SVGSymbolElement(tagName, document));
 }
 
 bool SVGSymbolElement::isSupportedAttribute(const QualifiedName& attrName)

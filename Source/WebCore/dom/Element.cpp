@@ -139,9 +139,9 @@ static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const Qualif
     return nullptr;
 }
 
-RefPtr<Element> Element::create(const QualifiedName& tagName, Document& document)
+Ref<Element> Element::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new Element(tagName, document, CreateElement));
+    return adoptRef(*new Element(tagName, document, CreateElement));
 }
 
 Element::Element(const QualifiedName& tagName, Document& document, ConstructionType type)

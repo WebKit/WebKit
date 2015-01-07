@@ -95,12 +95,12 @@ inline SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document& docu
     registerAnimatedPropertiesForSVGUseElement();
 }
 
-PassRefPtr<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document& document, bool wasInsertedByParser)
+Ref<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document& document, bool wasInsertedByParser)
 {
     // Always build a #shadow-root for SVGUseElement.
-    RefPtr<SVGUseElement> use = adoptRef(new SVGUseElement(tagName, document, wasInsertedByParser));
+    Ref<SVGUseElement> use = adoptRef(*new SVGUseElement(tagName, document, wasInsertedByParser));
     use->ensureUserAgentShadowRoot();
-    return use.release();
+    return use;
 }
 
 SVGUseElement::~SVGUseElement()

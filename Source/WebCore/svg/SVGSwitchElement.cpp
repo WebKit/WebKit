@@ -42,9 +42,9 @@ inline SVGSwitchElement::SVGSwitchElement(const QualifiedName& tagName, Document
     registerAnimatedPropertiesForSVGSwitchElement();
 }
 
-PassRefPtr<SVGSwitchElement> SVGSwitchElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGSwitchElement> SVGSwitchElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGSwitchElement(tagName, document));
+    return adoptRef(*new SVGSwitchElement(tagName, document));
 }
 
 bool SVGSwitchElement::childShouldCreateRenderer(const Node& child) const

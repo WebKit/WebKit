@@ -29,7 +29,7 @@ namespace WebCore {
 
 class SVGHKernElement final : public SVGElement {
 public:
-    static PassRefPtr<SVGHKernElement> create(const QualifiedName&, Document&);
+    static Ref<SVGHKernElement> create(const QualifiedName&, Document&);
 
     bool buildHorizontalKerningPair(SVGKerningPair& kerningPair) const;
 

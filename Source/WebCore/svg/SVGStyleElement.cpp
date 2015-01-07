@@ -46,9 +46,9 @@ SVGStyleElement::~SVGStyleElement()
     m_styleSheetOwner.clearDocumentData(document(), *this);
 }
 
-PassRefPtr<SVGStyleElement> SVGStyleElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
+Ref<SVGStyleElement> SVGStyleElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
 {
-    return adoptRef(new SVGStyleElement(tagName, document, createdByParser));
+    return adoptRef(*new SVGStyleElement(tagName, document, createdByParser));
 }
 
 bool SVGStyleElement::disabled() const

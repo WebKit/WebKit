@@ -31,7 +31,7 @@ class CSSFontFaceSrcValue;
 
 class SVGFontFaceUriElement final : public SVGElement, public CachedFontClient {
 public:
-    static PassRefPtr<SVGFontFaceUriElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFontFaceUriElement> create(const QualifiedName&, Document&);
 
     virtual ~SVGFontFaceUriElement();
 

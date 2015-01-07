@@ -63,9 +63,9 @@ inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const Qualifie
     registerAnimatedPropertiesForSVGFESpecularLightingElement();
 }
 
-PassRefPtr<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFESpecularLightingElement(tagName, document));
+    return adoptRef(*new SVGFESpecularLightingElement(tagName, document));
 }
 
 const AtomicString& SVGFESpecularLightingElement::kernelUnitLengthXIdentifier()

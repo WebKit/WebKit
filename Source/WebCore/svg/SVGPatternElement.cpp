@@ -86,9 +86,9 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
     registerAnimatedPropertiesForSVGPatternElement();
 }
 
-PassRefPtr<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGPatternElement(tagName, document));
+    return adoptRef(*new SVGPatternElement(tagName, document));
 }
 
 bool SVGPatternElement::isSupportedAttribute(const QualifiedName& attrName)

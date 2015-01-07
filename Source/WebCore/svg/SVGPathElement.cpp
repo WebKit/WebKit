@@ -91,9 +91,9 @@ inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& do
     registerAnimatedPropertiesForSVGPathElement();
 }
 
-RefPtr<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGPathElement(tagName, document));
+    return adoptRef(*new SVGPathElement(tagName, document));
 }
 
 float SVGPathElement::getTotalLength()

@@ -71,9 +71,9 @@ inline SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& t
     registerAnimatedPropertiesForSVGRadialGradientElement();
 }
 
-PassRefPtr<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGRadialGradientElement> SVGRadialGradientElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGRadialGradientElement(tagName, document));
+    return adoptRef(*new SVGRadialGradientElement(tagName, document));
 }
 
 bool SVGRadialGradientElement::isSupportedAttribute(const QualifiedName& attrName)

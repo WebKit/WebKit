@@ -55,7 +55,7 @@ class SVGPathSegListPropertyTearOff;
 class SVGPathElement final : public SVGGraphicsElement,
                              public SVGExternalResourcesRequired {
 public:
-    static RefPtr<SVGPathElement> create(const QualifiedName&, Document&);
+    static Ref<SVGPathElement> create(const QualifiedName&, Document&);
     
     float getTotalLength();
     SVGPoint getPointAtLength(float distance);

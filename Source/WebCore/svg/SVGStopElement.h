@@ -28,7 +28,7 @@ namespace WebCore {
 
 class SVGStopElement final : public SVGElement {
 public:
-    static PassRefPtr<SVGStopElement> create(const QualifiedName&, Document&);
+    static Ref<SVGStopElement> create(const QualifiedName&, Document&);
 
     Color stopColorIncludingOpacity() const;
 

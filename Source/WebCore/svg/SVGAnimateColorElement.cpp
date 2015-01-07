@@ -32,9 +32,9 @@ inline SVGAnimateColorElement::SVGAnimateColorElement(const QualifiedName& tagNa
     ASSERT(hasTagName(SVGNames::animateColorTag));
 }
 
-PassRefPtr<SVGAnimateColorElement> SVGAnimateColorElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGAnimateColorElement> SVGAnimateColorElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGAnimateColorElement(tagName, document));
+    return adoptRef(*new SVGAnimateColorElement(tagName, document));
 }
 
 static bool attributeValueIsCurrentColor(const String& value)

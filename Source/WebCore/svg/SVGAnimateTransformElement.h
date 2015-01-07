@@ -32,7 +32,7 @@ class AffineTransform;
 
 class SVGAnimateTransformElement final : public SVGAnimateElementBase {
 public:
-    static PassRefPtr<SVGAnimateTransformElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAnimateTransformElement> create(const QualifiedName&, Document&);
 
     SVGTransform::SVGTransformType transformType() const { return m_type; }
 

@@ -32,7 +32,7 @@ class StyleRuleFontFace;
 
 class SVGFontFaceElement final : public SVGElement {
 public:
-    static PassRefPtr<SVGFontFaceElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFontFaceElement> create(const QualifiedName&, Document&);
 
     unsigned unitsPerEm() const;
     int xHeight() const;

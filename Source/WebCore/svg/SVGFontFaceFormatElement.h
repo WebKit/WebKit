@@ -27,7 +27,7 @@ namespace WebCore {
 
 class SVGFontFaceFormatElement final : public SVGElement {
 public:
-    static PassRefPtr<SVGFontFaceFormatElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFontFaceFormatElement> create(const QualifiedName&, Document&);
 
 private:
     SVGFontFaceFormatElement(const QualifiedName&, Document&);

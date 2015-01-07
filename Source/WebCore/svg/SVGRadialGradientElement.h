@@ -31,7 +31,7 @@ struct RadialGradientAttributes;
 
 class SVGRadialGradientElement final : public SVGGradientElement {
 public:
-    static PassRefPtr<SVGRadialGradientElement> create(const QualifiedName&, Document&);
+    static Ref<SVGRadialGradientElement> create(const QualifiedName&, Document&);
 
     bool collectGradientAttributes(RadialGradientAttributes&);
 

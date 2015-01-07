@@ -50,9 +50,9 @@ inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tag
     registerAnimatedPropertiesForSVGFEColorMatrixElement();
 }
 
-PassRefPtr<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFEColorMatrixElement(tagName, document));
+    return adoptRef(*new SVGFEColorMatrixElement(tagName, document));
 }
 
 bool SVGFEColorMatrixElement::isSupportedAttribute(const QualifiedName& attrName)

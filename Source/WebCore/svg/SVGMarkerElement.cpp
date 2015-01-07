@@ -86,9 +86,9 @@ inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document
     registerAnimatedPropertiesForSVGMarkerElement();
 }
 
-PassRefPtr<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGMarkerElement(tagName, document));
+    return adoptRef(*new SVGMarkerElement(tagName, document));
 }
 
 const AtomicString& SVGMarkerElement::orientTypeIdentifier()

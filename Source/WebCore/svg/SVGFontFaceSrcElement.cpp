@@ -40,9 +40,9 @@ inline SVGFontFaceSrcElement::SVGFontFaceSrcElement(const QualifiedName& tagName
     ASSERT(hasTagName(font_face_srcTag));
 }
 
-PassRefPtr<SVGFontFaceSrcElement> SVGFontFaceSrcElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFontFaceSrcElement> SVGFontFaceSrcElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFontFaceSrcElement(tagName, document));
+    return adoptRef(*new SVGFontFaceSrcElement(tagName, document));
 }
 
 PassRefPtr<CSSValueList> SVGFontFaceSrcElement::srcValue() const

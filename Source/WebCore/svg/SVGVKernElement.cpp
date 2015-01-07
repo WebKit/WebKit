@@ -35,9 +35,9 @@ inline SVGVKernElement::SVGVKernElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(SVGNames::vkernTag));
 }
 
-PassRefPtr<SVGVKernElement> SVGVKernElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGVKernElement> SVGVKernElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGVKernElement(tagName, document));
+    return adoptRef(*new SVGVKernElement(tagName, document));
 }
 
 Node::InsertionNotificationRequest SVGVKernElement::insertedInto(ContainerNode& rootParent)

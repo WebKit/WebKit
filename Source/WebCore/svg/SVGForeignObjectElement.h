@@ -32,7 +32,7 @@ namespace WebCore {
 class SVGForeignObjectElement final : public SVGGraphicsElement,
                                       public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGForeignObjectElement> create(const QualifiedName&, Document&);
+    static Ref<SVGForeignObjectElement> create(const QualifiedName&, Document&);
 
 private:
     SVGForeignObjectElement(const QualifiedName&, Document&);

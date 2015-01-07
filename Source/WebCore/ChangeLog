@@ -1,3 +1,25 @@
+2015-01-06  Sam Weinig  <sam@webkit.org>
+
+        Modernize the SVGElement and MathMLElement factories
+        https://bugs.webkit.org/show_bug.cgi?id=140163
+
+        Reviewed by Dan Bernstein.
+
+        * dom/Element.cpp:
+        (WebCore::Element::create):
+        * dom/Element.h:
+        Change to return a Ref rather than a RefPtr.
+
+        * dom/make_names.pl:
+        (printConstructorSignature):
+        (printFactoryCppFile):
+        (printFactoryHeaderFile):
+        Change to unconditionally use Ref as the return type for element factories
+        now that HTML is not special cased.
+
+        * SVG and MathML element files elided *
+        Changed all SVG and MathML element's create functions to return a Ref.
+
 2015-01-07  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r178028): iOS build broken due to unused parameters in GlyphPage::mayUseMixedFontDataWhenFilling()

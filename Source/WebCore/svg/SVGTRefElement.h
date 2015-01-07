@@ -31,7 +31,7 @@ class SVGTRefTargetEventListener;
 class SVGTRefElement final : public SVGTextPositioningElement,
                              public SVGURIReference {
 public:
-    static PassRefPtr<SVGTRefElement> create(const QualifiedName&, Document&);
+    static Ref<SVGTRefElement> create(const QualifiedName&, Document&);
 
 protected:
     virtual void didNotifySubtreeInsertions(ContainerNode*) override;

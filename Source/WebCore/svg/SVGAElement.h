@@ -33,7 +33,7 @@ class SVGAElement final : public SVGGraphicsElement,
                           public SVGURIReference,
                           public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGAElement> create(const QualifiedName&, Document&);
+    static Ref<SVGAElement> create(const QualifiedName&, Document&);
 
 private:
     SVGAElement(const QualifiedName&, Document&);

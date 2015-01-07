@@ -58,9 +58,9 @@ inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagNa
     registerAnimatedPropertiesForSVGFEDropShadowElement();
 }
 
-PassRefPtr<SVGFEDropShadowElement> SVGFEDropShadowElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEDropShadowElement> SVGFEDropShadowElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFEDropShadowElement(tagName, document));
+    return adoptRef(*new SVGFEDropShadowElement(tagName, document));
 }
 
 const AtomicString& SVGFEDropShadowElement::stdDeviationXIdentifier()

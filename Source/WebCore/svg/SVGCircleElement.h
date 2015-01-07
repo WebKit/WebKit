@@ -31,7 +31,7 @@ namespace WebCore {
 class SVGCircleElement final : public SVGGraphicsElement,
                                public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGCircleElement> create(const QualifiedName&, Document&);
+    static Ref<SVGCircleElement> create(const QualifiedName&, Document&);
 
 private:
     SVGCircleElement(const QualifiedName&, Document&);

@@ -72,9 +72,9 @@ inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document& do
     registerAnimatedPropertiesForSVGMaskElement();
 }
 
-PassRefPtr<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGMaskElement(tagName, document));
+    return adoptRef(*new SVGMaskElement(tagName, document));
 }
 
 bool SVGMaskElement::isSupportedAttribute(const QualifiedName& attrName)

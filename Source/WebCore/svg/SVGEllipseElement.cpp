@@ -60,9 +60,9 @@ inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Docume
     registerAnimatedPropertiesForSVGEllipseElement();
 }    
 
-PassRefPtr<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGEllipseElement(tagName, document));
+    return adoptRef(*new SVGEllipseElement(tagName, document));
 }
 
 bool SVGEllipseElement::isSupportedAttribute(const QualifiedName& attrName)

@@ -31,7 +31,7 @@ namespace WebCore {
 
 class SVGFEGaussianBlurElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEGaussianBlurElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEGaussianBlurElement> create(const QualifiedName&, Document&);
 
     void setStdDeviation(float stdDeviationX, float stdDeviationY);
 

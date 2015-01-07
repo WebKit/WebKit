@@ -31,9 +31,9 @@ inline SVGFEFuncRElement::SVGFEFuncRElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(SVGNames::feFuncRTag));
 }
 
-PassRefPtr<SVGFEFuncRElement> SVGFEFuncRElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEFuncRElement> SVGFEFuncRElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFEFuncRElement(tagName, document));
+    return adoptRef(*new SVGFEFuncRElement(tagName, document));
 }
 
 }

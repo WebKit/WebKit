@@ -66,9 +66,9 @@ inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& do
     registerAnimatedPropertiesForSVGRectElement();
 }
 
-PassRefPtr<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGRectElement(tagName, document));
+    return adoptRef(*new SVGRectElement(tagName, document));
 }
 
 bool SVGRectElement::isSupportedAttribute(const QualifiedName& attrName)

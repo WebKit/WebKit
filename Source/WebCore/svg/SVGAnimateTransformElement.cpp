@@ -37,9 +37,9 @@ inline SVGAnimateTransformElement::SVGAnimateTransformElement(const QualifiedNam
     ASSERT(hasTagName(SVGNames::animateTransformTag));
 }
 
-PassRefPtr<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGAnimateTransformElement(tagName, document));
+    return adoptRef(*new SVGAnimateTransformElement(tagName, document));
 }
 
 bool SVGAnimateTransformElement::hasValidAttributeType()

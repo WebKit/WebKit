@@ -50,9 +50,9 @@ inline SVGGlyphRefElement::SVGGlyphRefElement(const QualifiedName& tagName, Docu
     registerAnimatedPropertiesForSVGGlyphRefElement();
 }
 
-PassRefPtr<SVGGlyphRefElement> SVGGlyphRefElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGGlyphRefElement> SVGGlyphRefElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGGlyphRefElement(tagName, document));
+    return adoptRef(*new SVGGlyphRefElement(tagName, document));
 }
 
 bool SVGGlyphRefElement::hasValidGlyphElement(String& glyphName) const

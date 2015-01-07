@@ -67,7 +67,7 @@ class SVGMissingGlyphElement;
 class SVGFontElement final : public SVGElement
                            , public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGFontElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFontElement> create(const QualifiedName&, Document&);
 
     void invalidateGlyphCache();
     void collectGlyphsForString(const String&, Vector<SVGGlyph>&);

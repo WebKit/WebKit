@@ -55,9 +55,9 @@ inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Docu
     registerAnimatedPropertiesForSVGTextPathElement();
 }
 
-PassRefPtr<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGTextPathElement(tagName, document));
+    return adoptRef(*new SVGTextPathElement(tagName, document));
 }
 
 SVGTextPathElement::~SVGTextPathElement()

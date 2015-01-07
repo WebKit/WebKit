@@ -75,7 +75,7 @@ struct SVGPropertyTraits<CompositeOperationType> {
 
 class SVGFECompositeElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFECompositeElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFECompositeElement> create(const QualifiedName&, Document&);
 
 private:
     SVGFECompositeElement(const QualifiedName&, Document&);

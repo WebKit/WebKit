@@ -35,7 +35,7 @@ class SVGImageElement final : public SVGGraphicsElement,
                               public SVGExternalResourcesRequired,
                               public SVGURIReference {
 public:
-    static PassRefPtr<SVGImageElement> create(const QualifiedName&, Document&);
+    static Ref<SVGImageElement> create(const QualifiedName&, Document&);
 
 private:
     SVGImageElement(const QualifiedName&, Document&);

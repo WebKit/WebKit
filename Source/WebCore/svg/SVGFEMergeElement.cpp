@@ -35,9 +35,9 @@ inline SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Docume
     ASSERT(hasTagName(SVGNames::feMergeTag));
 }
 
-PassRefPtr<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFEMergeElement(tagName, document));
+    return adoptRef(*new SVGFEMergeElement(tagName, document));
 }
 
 PassRefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

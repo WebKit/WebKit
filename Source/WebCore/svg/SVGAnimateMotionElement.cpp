@@ -53,9 +53,9 @@ inline SVGAnimateMotionElement::SVGAnimateMotionElement(const QualifiedName& tag
     ASSERT(hasTagName(animateMotionTag));
 }
 
-PassRefPtr<SVGAnimateMotionElement> SVGAnimateMotionElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGAnimateMotionElement> SVGAnimateMotionElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGAnimateMotionElement(tagName, document));
+    return adoptRef(*new SVGAnimateMotionElement(tagName, document));
 }
 
 bool SVGAnimateMotionElement::hasValidAttributeType()

@@ -65,7 +65,7 @@ struct SVGPropertyTraits<EdgeModeType> {
 
 class SVGFEConvolveMatrixElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEConvolveMatrixElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEConvolveMatrixElement> create(const QualifiedName&, Document&);
 
     void setOrder(float orderX, float orderY);
     void setKernelUnitLength(float kernelUnitLengthX, float kernelUnitLengthY);

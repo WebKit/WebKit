@@ -51,9 +51,9 @@ inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document& do
     registerAnimatedPropertiesForSVGViewElement();
 }
 
-PassRefPtr<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGViewElement(tagName, document));
+    return adoptRef(*new SVGViewElement(tagName, document));
 }
 
 bool SVGViewElement::isSupportedAttribute(const QualifiedName& attrName)

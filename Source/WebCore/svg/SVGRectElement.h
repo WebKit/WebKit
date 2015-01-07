@@ -32,7 +32,7 @@ namespace WebCore {
 class SVGRectElement final : public SVGGraphicsElement,
                              public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGRectElement> create(const QualifiedName&, Document&);
+    static Ref<SVGRectElement> create(const QualifiedName&, Document&);
 
 private:
     SVGRectElement(const QualifiedName&, Document&);

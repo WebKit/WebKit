@@ -49,9 +49,9 @@ inline SVGFEComponentTransferElement::SVGFEComponentTransferElement(const Qualif
     registerAnimatedPropertiesForSVGFEComponentTransferElement();
 }
 
-PassRefPtr<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFEComponentTransferElement(tagName, document));
+    return adoptRef(*new SVGFEComponentTransferElement(tagName, document));
 }
 
 bool SVGFEComponentTransferElement::isSupportedAttribute(const QualifiedName& attrName)

@@ -59,9 +59,9 @@ inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document& do
     registerAnimatedPropertiesForSVGLineElement();
 }
 
-PassRefPtr<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGLineElement(tagName, document));
+    return adoptRef(*new SVGLineElement(tagName, document));
 }
 
 bool SVGLineElement::isSupportedAttribute(const QualifiedName& attrName)

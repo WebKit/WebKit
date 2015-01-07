@@ -37,9 +37,9 @@ inline SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document& do
     ASSERT(hasTagName(SVGNames::textTag));
 }
 
-PassRefPtr<SVGTextElement> SVGTextElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGTextElement> SVGTextElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGTextElement(tagName, document));
+    return adoptRef(*new SVGTextElement(tagName, document));
 }
 
 // We override SVGGraphics::animatedLocalTransform() so that the transform-origin

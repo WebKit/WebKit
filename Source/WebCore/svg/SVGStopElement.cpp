@@ -48,9 +48,9 @@ inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document& do
     registerAnimatedPropertiesForSVGStopElement();
 }
 
-PassRefPtr<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGStopElement(tagName, document));
+    return adoptRef(*new SVGStopElement(tagName, document));
 }
 
 bool SVGStopElement::isSupportedAttribute(const QualifiedName& attrName)

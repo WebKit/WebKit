@@ -65,9 +65,9 @@ inline SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& t
     registerAnimatedPropertiesForSVGLinearGradientElement();
 }
 
-PassRefPtr<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGLinearGradientElement(tagName, document));
+    return adoptRef(*new SVGLinearGradientElement(tagName, document));
 }
 
 bool SVGLinearGradientElement::isSupportedAttribute(const QualifiedName& attrName)

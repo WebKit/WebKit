@@ -27,7 +27,7 @@ namespace WebCore {
 
 class SVGTSpanElement final : public SVGTextPositioningElement {
 public:
-    static PassRefPtr<SVGTSpanElement> create(const QualifiedName&, Document&);
+    static Ref<SVGTSpanElement> create(const QualifiedName&, Document&);
 
 private:
     SVGTSpanElement(const QualifiedName&, Document&);

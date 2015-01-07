@@ -54,9 +54,9 @@ inline SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedN
     registerAnimatedPropertiesForSVGFEDisplacementMapElement();
 }
 
-PassRefPtr<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFEDisplacementMapElement(tagName, document));
+    return adoptRef(*new SVGFEDisplacementMapElement(tagName, document));
 }
 
 bool SVGFEDisplacementMapElement::isSupportedAttribute(const QualifiedName& attrName)

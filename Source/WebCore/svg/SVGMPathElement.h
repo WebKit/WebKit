@@ -35,7 +35,7 @@ class SVGMPathElement final : public SVGElement,
                               public SVGURIReference,
                               public SVGExternalResourcesRequired {
 public:
-    static PassRefPtr<SVGMPathElement> create(const QualifiedName&, Document&);
+    static Ref<SVGMPathElement> create(const QualifiedName&, Document&);
 
     virtual ~SVGMPathElement();
 

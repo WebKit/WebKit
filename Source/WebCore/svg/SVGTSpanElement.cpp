@@ -33,9 +33,9 @@ inline SVGTSpanElement::SVGTSpanElement(const QualifiedName& tagName, Document& 
     ASSERT(hasTagName(SVGNames::tspanTag));
 }
 
-PassRefPtr<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGTSpanElement> SVGTSpanElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGTSpanElement(tagName, document));
+    return adoptRef(*new SVGTSpanElement(tagName, document));
 }
 
 RenderPtr<RenderElement> SVGTSpanElement::createElementRenderer(Ref<RenderStyle>&& style)

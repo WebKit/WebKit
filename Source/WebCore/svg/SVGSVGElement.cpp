@@ -95,9 +95,9 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& docu
     document.registerForPageCacheSuspensionCallbacks(this);
 }
 
-PassRefPtr<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGSVGElement(tagName, document));
+    return adoptRef(*new SVGSVGElement(tagName, document));
 }
 
 SVGSVGElement::~SVGSVGElement()

@@ -58,9 +58,9 @@ inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName
     registerAnimatedPropertiesForSVGFECompositeElement();
 }
 
-PassRefPtr<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFECompositeElement(tagName, document));
+    return adoptRef(*new SVGFECompositeElement(tagName, document));
 }
 
 bool SVGFECompositeElement::isSupportedAttribute(const QualifiedName& attrName)

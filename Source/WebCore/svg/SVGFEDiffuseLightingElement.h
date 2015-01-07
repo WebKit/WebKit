@@ -32,7 +32,7 @@ class SVGColor;
 
 class SVGFEDiffuseLightingElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEDiffuseLightingElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEDiffuseLightingElement> create(const QualifiedName&, Document&);
     void lightElementAttributeChanged(const SVGFELightElement*, const QualifiedName&);
 
 private:

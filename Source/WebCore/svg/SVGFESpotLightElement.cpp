@@ -31,9 +31,9 @@ inline SVGFESpotLightElement::SVGFESpotLightElement(const QualifiedName& tagName
     ASSERT(hasTagName(SVGNames::feSpotLightTag));
 }
 
-PassRefPtr<SVGFESpotLightElement> SVGFESpotLightElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFESpotLightElement> SVGFESpotLightElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFESpotLightElement(tagName, document));
+    return adoptRef(*new SVGFESpotLightElement(tagName, document));
 }
 
 PassRefPtr<LightSource> SVGFESpotLightElement::lightSource() const

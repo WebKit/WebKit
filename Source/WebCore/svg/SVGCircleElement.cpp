@@ -59,9 +59,9 @@ inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document
     registerAnimatedPropertiesForSVGCircleElement();
 }
 
-PassRefPtr<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGCircleElement(tagName, document));
+    return adoptRef(*new SVGCircleElement(tagName, document));
 }
 
 bool SVGCircleElement::isSupportedAttribute(const QualifiedName& attrName)

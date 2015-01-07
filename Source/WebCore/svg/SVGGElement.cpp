@@ -45,9 +45,9 @@ SVGGElement::SVGGElement(const QualifiedName& tagName, Document& document)
     registerAnimatedPropertiesForSVGGElement();
 }
 
-PassRefPtr<SVGGElement> SVGGElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGGElement> SVGGElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGGElement(tagName, document));
+    return adoptRef(*new SVGGElement(tagName, document));
 }
 
 bool SVGGElement::isSupportedAttribute(const QualifiedName& attrName)

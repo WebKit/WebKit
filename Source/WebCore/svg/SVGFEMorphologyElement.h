@@ -58,7 +58,7 @@ struct SVGPropertyTraits<MorphologyOperatorType> {
 
 class SVGFEMorphologyElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
-    static PassRefPtr<SVGFEMorphologyElement> create(const QualifiedName&, Document&);
+    static Ref<SVGFEMorphologyElement> create(const QualifiedName&, Document&);
 
     void setRadius(float radiusX, float radiusY);
 

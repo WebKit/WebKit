@@ -57,9 +57,9 @@ inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagNa
     registerAnimatedPropertiesForSVGFETurbulenceElement();
 }
 
-PassRefPtr<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& tagName, Document& document)
+Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(new SVGFETurbulenceElement(tagName, document));
+    return adoptRef(*new SVGFETurbulenceElement(tagName, document));
 }
 
 const AtomicString& SVGFETurbulenceElement::baseFrequencyXIdentifier()
