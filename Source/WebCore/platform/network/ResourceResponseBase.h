@@ -109,12 +109,6 @@ public:
     double expires() const;
     WEBCORE_EXPORT double lastModified() const;
 
-    unsigned connectionID() const;
-    void setConnectionID(unsigned);
-
-    bool connectionReused() const;
-    void setConnectionReused(bool);
-
     enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation };
     WEBCORE_EXPORT Source source() const;
     WEBCORE_EXPORT void setSource(Source);
@@ -164,7 +158,6 @@ protected:
     mutable CertificateInfo m_certificateInfo;
 
     int m_httpStatusCode;
-    unsigned m_connectionID;
 
 private:
     mutable double m_cacheControlMaxAge;
@@ -174,8 +167,6 @@ private:
     mutable double m_lastModified;
 
 public:
-    bool m_connectionReused : 1;
-
     bool m_isNull : 1;
     
 private:
@@ -215,7 +206,6 @@ void ResourceResponseBase::encode(Encoder& encoder) const
     encoder << m_httpHeaderFields;
     encoder << m_resourceLoadTiming;
     encoder << m_httpStatusCode;
-    encoder << m_connectionID;
     encoder << m_includesCertificateInfo;
     if (m_includesCertificateInfo)
         encoder << m_certificateInfo;
@@ -251,8 +241,6 @@ bool ResourceResponseBase::decode(Decoder& decoder, ResourceResponseBase& respon
     if (!decoder.decode(response.m_resourceLoadTiming))
         return false;
     if (!decoder.decode(response.m_httpStatusCode))
-        return false;
-    if (!decoder.decode(response.m_connectionID))
         return false;
     if (!decoder.decode(response.m_includesCertificateInfo))
         return false;

@@ -79,7 +79,6 @@ private:
     AtomicString m_initiatorType;
     ResourceLoadTiming m_timing;
     double m_finishTime;
-    bool m_didReuseConnection;
     bool m_shouldReportDetails;
     RefPtr<Document> m_requestingDocument;
 };

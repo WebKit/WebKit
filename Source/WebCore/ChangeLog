@@ -1,5 +1,35 @@
 2015-01-06  Chris Dumez  <cdumez@apple.com>
 
+        Drop ResourceResponseBase::connectionID and connectionReused members
+        https://bugs.webkit.org/show_bug.cgi?id=140158
+
+        Reviewed by Sam Weinig.
+
+        Drop ResourceResponseBase::connectionID and connectionReused members.
+        Those were needed by the Chromium port but are no longer used.
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForResourceResponse):
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming):
+        (WebCore::PerformanceResourceTiming::connectStart):
+        (WebCore::PerformanceResourceTiming::connectEnd):
+        * page/PerformanceResourceTiming.h:
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::connectStart):
+        (WebCore::PerformanceTiming::connectEnd):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::ResourceResponseBase):
+        (WebCore::ResourceResponseBase::connectionReused): Deleted.
+        (WebCore::ResourceResponseBase::setConnectionReused): Deleted.
+        (WebCore::ResourceResponseBase::connectionID): Deleted.
+        (WebCore::ResourceResponseBase::setConnectionID): Deleted.
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::encode):
+        (WebCore::ResourceResponseBase::decode):
+
+2015-01-06  Chris Dumez  <cdumez@apple.com>
+
         Move the 'alt' CSS property to the new StyleBuilder
         https://bugs.webkit.org/show_bug.cgi?id=140129
 

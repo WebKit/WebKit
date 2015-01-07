@@ -237,9 +237,7 @@ static PassRefPtr<Inspector::Protocol::Network::Response> buildObjectForResource
         .setStatus(status)
         .setStatusText(response.httpStatusText())
         .setHeaders(headers)
-        .setMimeType(response.mimeType())
-        .setConnectionReused(response.connectionReused())
-        .setConnectionId(response.connectionID());
+        .setMimeType(response.mimeType());
 
     responseObject->setFromDiskCache(response.source() == ResourceResponse::Source::DiskCache || response.source() == ResourceResponse::Source::DiskCacheAfterValidation);
     responseObject->setTiming(buildObjectForTiming(response.resourceLoadTiming(), loader));

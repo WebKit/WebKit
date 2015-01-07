@@ -80,7 +80,6 @@ PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiat
     , m_initiatorType(initiatorType)
     , m_timing(response.resourceLoadTiming())
     , m_finishTime(finishTime)
-    , m_didReuseConnection(response.connectionReused())
     , m_shouldReportDetails(passesTimingAllowCheck(response, requestingDocument))
     , m_requestingDocument(requestingDocument)
 {
@@ -144,7 +143,7 @@ double PerformanceResourceTiming::connectStart() const
         return 0.0;
 
     // connectStart will be -1 when a network request is not made.
-    if (m_timing.connectStart < 0 || m_didReuseConnection)
+    if (m_timing.connectStart < 0)
         return domainLookupEnd();
 
     // connectStart includes any DNS time, so we may need to trim that off.
@@ -161,7 +160,7 @@ double PerformanceResourceTiming::connectEnd() const
         return 0.0;
 
     // connectStart will be -1 when a network request is not made.
-    if (m_timing.connectEnd < 0 || m_didReuseConnection)
+    if (m_timing.connectEnd < 0)
         return connectStart();
 
     return resourceTimeToDocumentMilliseconds(m_timing.connectEnd);

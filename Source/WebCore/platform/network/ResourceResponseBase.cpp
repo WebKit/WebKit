@@ -48,13 +48,11 @@ ResourceResponseBase::ResourceResponseBase()
     : m_expectedContentLength(0)
     , m_includesCertificateInfo(false)
     , m_httpStatusCode(0)
-    , m_connectionID(0)
     , m_cacheControlMaxAge(0)
     , m_age(0)
     , m_date(0)
     , m_expires(0)
     , m_lastModified(0)
-    , m_connectionReused(false)
     , m_isNull(true)
     , m_haveParsedCacheControlHeader(false)
     , m_haveParsedAgeHeader(false)
@@ -75,13 +73,11 @@ ResourceResponseBase::ResourceResponseBase(const URL& url, const String& mimeTyp
     , m_textEncodingName(textEncodingName)
     , m_includesCertificateInfo(true) // Empty but valid for synthetic responses.
     , m_httpStatusCode(0)
-    , m_connectionID(0)
     , m_cacheControlMaxAge(0)
     , m_age(0)
     , m_date(0)
     , m_expires(0)
     , m_lastModified(0)
-    , m_connectionReused(false)
     , m_isNull(false)
     , m_haveParsedCacheControlHeader(false)
     , m_haveParsedAgeHeader(false)
@@ -527,34 +523,6 @@ ResourceResponseBase::Source ResourceResponseBase::source() const
 void ResourceResponseBase::setSource(Source source)
 {
     m_source = source;
-}
-
-bool ResourceResponseBase::connectionReused() const
-{
-    lazyInit(AllFields);
-
-    return m_connectionReused;
-}
-
-void ResourceResponseBase::setConnectionReused(bool connectionReused)
-{
-    lazyInit(AllFields);
-
-    m_connectionReused = connectionReused;
-}
-
-unsigned ResourceResponseBase::connectionID() const
-{
-    lazyInit(AllFields);
-
-    return m_connectionID;
-}
-
-void ResourceResponseBase::setConnectionID(unsigned connectionID)
-{
-    lazyInit(AllFields);
-
-    m_connectionID = connectionID;
 }
 
 void ResourceResponseBase::lazyInit(InitLevel initLevel) const
