@@ -85,35 +85,27 @@ static NSString *webFallbackFontFamily(void)
     return webFallbackFontFamily;
 }
 
-const SimpleFontData* SimpleFontData::getCompositeFontReferenceFontData(NSFont *key) const
+const SimpleFontData* SimpleFontData::compositeFontReferenceFontData(NSFont *key) const
 {
-    if (key && !CFEqual(adoptCF(CTFontCopyPostScriptName(CTFontRef(key))).get(), CFSTR("LastResort"))) {
-        if (!m_derivedFontData)
-            m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
-        if (!m_derivedFontData->compositeFontReferences)
-            m_derivedFontData->compositeFontReferences = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, NULL));
-        else {
-            const SimpleFontData* found = static_cast<const SimpleFontData*>(CFDictionaryGetValue(m_derivedFontData->compositeFontReferences.get(), static_cast<const void *>(key)));
-            if (found)
-                return found;
-        }
-        if (CFMutableDictionaryRef dictionary = m_derivedFontData->compositeFontReferences.get()) {
-            bool isUsingPrinterFont = platformData().isPrinterFont();
-            NSFont *substituteFont = isUsingPrinterFont ? [key printerFont] : [key screenFont];
+    if (!key || CFEqual(adoptCF(CTFontCopyPostScriptName(CTFontRef(key))).get(), CFSTR("LastResort")))
+        return nullptr;
 
-            CTFontSymbolicTraits traits = CTFontGetSymbolicTraits((CTFontRef)substituteFont);
-            bool syntheticBold = platformData().syntheticBold() && !(traits & kCTFontBoldTrait);
-            bool syntheticOblique = platformData().syntheticOblique() && !(traits & kCTFontItalicTrait);
+    if (!m_derivedFontData)
+        m_derivedFontData = std::make_unique<DerivedFontData>(isCustomFont());
 
-            FontPlatformData substitutePlatform(substituteFont, platformData().size(), isUsingPrinterFont, syntheticBold, syntheticOblique, platformData().orientation(), platformData().widthVariant());
-            if (RefPtr<SimpleFontData> value = adoptRef(new SimpleFontData(substitutePlatform, isCustomFont()))) {
-                SimpleFontData* valuePtr = value.get();
-                CFDictionaryAddValue(dictionary, key, value.release().leakRef());
-                return valuePtr;
-            }
-        }
+    auto addResult = m_derivedFontData->compositeFontReferences.add(key, nullptr);
+    if (addResult.isNewEntry) {
+        bool isUsingPrinterFont = platformData().isPrinterFont();
+        NSFont *substituteFont = isUsingPrinterFont ? [key printerFont] : [key screenFont];
+
+        CTFontSymbolicTraits traits = CTFontGetSymbolicTraits((CTFontRef)substituteFont);
+        bool syntheticBold = platformData().syntheticBold() && !(traits & kCTFontBoldTrait);
+        bool syntheticOblique = platformData().syntheticOblique() && !(traits & kCTFontItalicTrait);
+
+        FontPlatformData substitutePlatform(substituteFont, platformData().size(), isUsingPrinterFont, syntheticBold, syntheticOblique, platformData().orientation(), platformData().widthVariant());
+        addResult.iterator->value = SimpleFontData::create(substitutePlatform, isCustomFont());
     }
-    return 0;
+    return addResult.iterator->value.get();
 }
 
 void SimpleFontData::platformInit()

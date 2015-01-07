@@ -1,3 +1,25 @@
+2015-01-06  Antti Koivisto  <antti@apple.com>
+
+        Use HashMap instead of CFDictionary for composite font reference map
+        https://bugs.webkit.org/show_bug.cgi?id=140150
+
+        Reviewed by Geoff Garen.
+
+        Use WebKit types. Also use USE(APPKIT) consistently for this feature.
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::DerivedFontData::~DerivedFontData):
+
+            The whole desctructor gets handled implicitly.
+
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/mac/GlyphPageMac.cpp:
+        (WebCore::GlyphPage::mayUseMixedFontDataWhenFilling):
+        (WebCore::GlyphPage::fill):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::compositeFontReferenceFontData):
+        (WebCore::SimpleFontData::getCompositeFontReferenceFontData): Deleted.
+
 2015-01-07  Mihnea Ovidenie  <mihnea@adobe.com>
 
         ASSERTION FAILED: rareData->m_flowThreadContainingBlock.value() == RenderBox::locateFlowThreadContainingBlock() in WebCore::RenderBlock::locateFlowThreadContainingBlock

@@ -187,7 +187,7 @@ public:
 #endif
 
 #if USE(APPKIT)
-    const SimpleFontData* getCompositeFontReferenceFontData(NSFont *key) const;
+    const SimpleFontData* compositeFontReferenceFontData(NSFont *key) const;
     NSFont* getNSFont() const { return m_platformData.nsFont(); }
 #endif
 
@@ -295,8 +295,8 @@ private:
         RefPtr<SimpleFontData> verticalRightOrientation;
         RefPtr<SimpleFontData> uprightOrientation;
         RefPtr<SimpleFontData> nonSyntheticItalic;
-#if PLATFORM(COCOA)
-        mutable RetainPtr<CFMutableDictionaryRef> compositeFontReferences;
+#if USE(APPKIT)
+        HashMap<NSFont*, RefPtr<SimpleFontData>> compositeFontReferences;
 #endif
     };
 

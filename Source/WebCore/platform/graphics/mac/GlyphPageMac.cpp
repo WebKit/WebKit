@@ -57,8 +57,12 @@ static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const 
 
 bool GlyphPage::mayUseMixedFontDataWhenFilling(const UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
-    // FIXME: This could be smarter if the logic currently in GlyphPage::fill() got to make the decision about what kind of GlyphPage to construct.
+#if USE(APPKIT)
+    // FIXME: This is only really needed for composite font references.
     return shouldUseCoreText(buffer, bufferLength, fontData);
+#else
+    return false;
+#endif
 }
 
 bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
@@ -154,9 +158,9 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                             haveGlyphs = true;
                         }
                     }
-#if !PLATFORM(IOS)
+#if USE(APPKIT)
                 } else {
-                    const SimpleFontData* runSimple = fontData->getCompositeFontReferenceFontData((NSFont *)runFont);
+                    const SimpleFontData* runSimple = fontData->compositeFontReferenceFontData((NSFont *)runFont);
                     if (runSimple) {
                         for (CFIndex i = 0; i < glyphCount; ++i) {
                             if (stringIndices[i] >= static_cast<CFIndex>(bufferLength)) {
@@ -169,7 +173,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                             }
                         }
                     }
-#endif // !PLATFORM(IOS)
+#endif
                 }
             }
         }
