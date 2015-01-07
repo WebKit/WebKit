@@ -21,12 +21,11 @@
 
         window.setTimeout(function() {
             // Change the contents to green.
-            image.src =  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAADElEQVR4nGNg+M8AAAICAQB7CYF4AAAAAElFTkSuQmCC"
-            if (window.testRunner) {
-                window.setTimeout(function() {
+            image.addEventListener('load', function() {
+                if (window.testRunner)
                     testRunner.notifyDone();
-                }, 0);
-            }
+            }, false);
+            image.src =  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAADElEQVR4nGNg+M8AAAICAQB7CYF4AAAAAElFTkSuQmCC"
         }, 0);
     }
 

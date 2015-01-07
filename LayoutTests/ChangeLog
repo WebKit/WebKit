@@ -1,5 +1,13 @@
 2015-01-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix this test to wait for the load event before dumping. Expected image
+        changes.
+
+        * compositing/images/content-image-change.html:
+        * platform/mac/compositing/images/content-image-change-expected.png:
+
+2015-01-06  Simon Fraser  <simon.fraser@apple.com>
+
         Some composting reflections tests are broken
         https://bugs.webkit.org/show_bug.cgi?id=139889
 
