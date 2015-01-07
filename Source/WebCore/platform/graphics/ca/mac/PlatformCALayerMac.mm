@@ -856,6 +856,9 @@ bool PlatformCALayerMac::requiresCustomAppearanceUpdateOnBoundsChange() const
 
 void PlatformCALayerMac::updateCustomAppearance(GraphicsLayer::CustomAppearance appearance)
 {
+    if (m_customAppearance == appearance)
+        return;
+
     m_customAppearance = appearance;
 
 #if ENABLE(RUBBER_BANDING)
@@ -890,7 +893,7 @@ void PlatformCALayerMac::updateCustomBehavior(GraphicsLayer::CustomBehavior cust
 TiledBacking* PlatformCALayerMac::tiledBacking()
 {
     if (!usesTiledBackingLayer())
-        return 0;
+        return nullptr;
 
     WebTiledBackingLayer *tiledBackingLayer = static_cast<WebTiledBackingLayer *>(m_layer.get());
     return [tiledBackingLayer tiledBacking];

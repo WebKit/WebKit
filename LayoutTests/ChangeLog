@@ -1,5 +1,20 @@
 2015-01-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Some composting reflections tests are broken
+        https://bugs.webkit.org/show_bug.cgi?id=139889
+
+        Reviewed by Tim Horton.
+        
+        New image baselines.
+
+        * platform/mac/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/mac/compositing/reflections/compositing-change-inside-reflection-expected.png:
+        * platform/mac/compositing/reflections/masked-reflection-on-composited-expected.png:
+        * platform/mac/compositing/reflections/reflection-opacity-expected.png:
+        * platform/mac/compositing/reflections/transform-inside-reflection-expected.png:
+
+2015-01-06  Simon Fraser  <simon.fraser@apple.com>
+
         Replace some pixel results that were generated on Linux with no alpha with images
         having alpha, generated on Mac, since the canonical expected image format should have alpha.
 

@@ -388,7 +388,7 @@ void GraphicsLayerCA::setName(const String& name)
     if (!m_layer->isPlatformCALayerRemote())
         caLayerDescription = String::format("CALayer(%p) ", m_layer->platformLayer());
 
-    String longName = caLayerDescription + String::format("GraphicsLayer(%p) ", this) + name;
+    String longName = caLayerDescription + String::format("GraphicsLayer(%p, %llu) ", this, primaryLayerID()) + name;
     GraphicsLayer::setName(longName);
     noteLayerPropertyChanged(NameChanged);
 }
@@ -3143,7 +3143,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
         m_uncommittedChanges |= VisibleRectChanged;
 
 #ifndef NDEBUG
-    String name = String::format("%sCALayer(%p) GraphicsLayer(%p) ", (m_layer->layerType() == PlatformCALayer::LayerTypeWebTiledLayer) ? "Tiled " : "", m_layer->platformLayer(), this) + m_name;
+    String name = String::format("%sCALayer(%p) GraphicsLayer(%p, %llu) ", (m_layer->layerType() == PlatformCALayer::LayerTypeWebTiledLayer) ? "Tiled " : "", m_layer->platformLayer(), this, primaryLayerID()) + m_name;
     m_layer->setName(name);
 #endif
 
@@ -3185,7 +3185,7 @@ void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer)
 PassRefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, PlatformCALayer *sourceLayer, LayerMap* clones, CloneLevel cloneLevel)
 {
     if (!sourceLayer)
-        return 0;
+        return nullptr;
 
     RefPtr<PlatformCALayer> resultLayer;
 

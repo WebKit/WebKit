@@ -1,3 +1,25 @@
+2015-01-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Some composting reflections tests are broken
+        https://bugs.webkit.org/show_bug.cgi?id=139889
+
+        Reviewed by Tim Horton.
+        
+        When creating layer clones for reflections, we'd clobber the layer background
+        color via resetting the custom appearance on the clone. Fix by having
+        PlatformCALayerMac::updateCustomAppearance() only do work when the appearance changes.
+        
+        Some other drive-by nullptr changes, and include layer IDs in debug layer names.
+
+        Covered by existing pixel tests.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setName):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayerMac::updateCustomAppearance):
+        (PlatformCALayerMac::tiledBacking):
+
 2015-01-04  Sam Weinig  <sam@webkit.org>
 
         Modernize the HTMLElement factory
