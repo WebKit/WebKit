@@ -88,6 +88,7 @@ static void setUpTerminationNotificationHandler(pid_t pid)
     dispatch_resume(processDiedSource);
 }
 
+#if ASAN_ENABLED
 static const char* copyASanDynamicLibraryPath()
 {
     uint32_t imageCount = _dyld_image_count();
@@ -98,6 +99,7 @@ static const char* copyASanDynamicLibraryPath()
 
     return 0;
 }
+#endif
 
 static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& launchOptions, bool isWebKitDevelopmentBuild, EnvironmentVariables& environmentVariables)
 {

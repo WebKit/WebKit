@@ -1,3 +1,9 @@
+2015-01-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Release build fix.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+
 2015-01-06  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Secondary WebKit processes get re-exec'ed twice when running under ASan
