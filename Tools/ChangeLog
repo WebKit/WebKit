@@ -1,3 +1,11 @@
+2015-01-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test change to improve run reproducibility
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.default_child_processes): Run a single DRT instance to help
+        identify failures caused by earlier test runs.
+
 2015-01-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Myles C. Maxfield is a reviewer now
