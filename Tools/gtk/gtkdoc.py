@@ -141,7 +141,6 @@ class GTKDoc(object):
         self._write_version_xml()
         self._run_gtkdoc_scan()
         self._run_gtkdoc_scangobj()
-        self._run_gtkdoc_mktmpl()
         self._run_gtkdoc_mkdb()
 
         if not html:
@@ -337,10 +336,6 @@ class GTKDoc(object):
             self.logger.debug('RUN=%s', env['RUN'])
         self._run_command(['gtkdoc-scangobj', '--module=%s' % self.module_name],
                           env=env, cwd=self.output_dir)
-
-    def _run_gtkdoc_mktmpl(self):
-        args = ['gtkdoc-mktmpl', '--module=%s' % self.module_name]
-        self._run_command(args, cwd=self.output_dir)
 
     def _run_gtkdoc_mkdb(self):
         sgml_file = os.path.join(self.output_dir, self.main_sgml_file)
