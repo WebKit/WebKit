@@ -1,3 +1,15 @@
+2015-01-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Do not create rulesMap entries for rules without identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=140237
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype._parseRulePayload):
+        We were accidentally converting a null into a string with a loose string
+        concatenation. Only do this if the mapKey is not-null.
+
 2015-01-07  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: Abstract common functions from TypeTokenAnnotator into a parent class and introduce an AnnotatorManager

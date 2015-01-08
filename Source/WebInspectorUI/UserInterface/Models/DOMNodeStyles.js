@@ -791,10 +791,10 @@ WebInspector.DOMNodeStyles.prototype = {
                 occurrence = ++ruleOccurrences[mapKey];
             else
                 ruleOccurrences[mapKey] = occurrence;
-        }
 
-        // Append the occurrence number to the map key for lookup in the rules map.
-        mapKey += ":" + occurrence;
+            // Append the occurrence number to the map key for lookup in the rules map.
+            mapKey += ":" + occurrence;
+        }
 
         var rule = null;
 
