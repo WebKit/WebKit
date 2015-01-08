@@ -117,6 +117,9 @@ class ObjCProtocolTypesImplementationGenerator(Generator):
             for member in required_pointer_members:
                 var_name = ObjCGenerator.identifier_to_objc_identifier(member.member_name)
                 lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(%s, @"%s");' % (var_name, var_name))
+                objc_array_class = ObjCGenerator.objc_class_for_array_type(member.type)
+                if objc_array_class and objc_array_class.startswith(ObjCGenerator.OBJC_PREFIX):
+                    lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY(%s, [%s class]);' % (var_name, objc_array_class))
             lines.append('')
 
         for member in required_members:
@@ -136,6 +139,9 @@ class ObjCProtocolTypesImplementationGenerator(Generator):
         lines = []
         lines.append('- (void)set%s:(%s)%s' % (ucfirst(var_name), objc_type, var_name))
         lines.append('{')
+        objc_array_class = ObjCGenerator.objc_class_for_array_type(member.type)
+        if objc_array_class and objc_array_class.startswith(ObjCGenerator.OBJC_PREFIX):
+            lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY(%s, [%s class]);' % (var_name, objc_array_class))
         lines.append('    [super %s:%s forKey:@"%s"];' % (setter_method, conversion_expression, member.member_name))
         lines.append('}')
         return '\n'.join(lines)

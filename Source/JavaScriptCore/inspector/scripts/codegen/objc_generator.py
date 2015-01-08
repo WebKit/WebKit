@@ -279,6 +279,14 @@ class ObjCGenerator:
         return None
 
     @staticmethod
+    def objc_class_for_array_type(_type):
+        if isinstance(_type, AliasedType):
+            _type = _type.aliased_type
+        if isinstance(_type, ArrayType):
+            return ObjCGenerator.objc_class_for_type(_type.element_type)
+        return None
+
+    @staticmethod
     def objc_accessor_type_for_member(member):
         return ObjCGenerator.objc_accessor_type_for_member_internal(member.type)
 

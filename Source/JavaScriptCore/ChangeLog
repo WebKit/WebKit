@@ -1,3 +1,25 @@
+2015-01-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Type check NSArray's in ObjC Interfaces have the right object types
+        https://bugs.webkit.org/show_bug.cgi?id=140209
+
+        Reviewed by Timothy Hatcher.
+
+        Check the types of objects in NSArrays for all interfaces (commands, events, types)
+        when the user can set an array of objects. Previously we were only type checking
+        they were RWIJSONObjects, now we add an explicit check for the exact object type.
+
+        * inspector/scripts/codegen/generate_objc_backend_dispatcher_implementation.py:
+        (ObjCConfigurationImplementationGenerator._generate_success_block_for_command):
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event):
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator._generate_init_method_for_required_members):
+        (ObjCProtocolTypesImplementationGenerator._generate_setter_for_member):
+        * inspector/scripts/codegen/objc_generator.py:
+        (ObjCGenerator.objc_class_for_array_type):
+        (ObjCGenerator):
+
 2015-01-07  Mark Lam  <mark.lam@apple.com>
 
         Add the lexicalEnvironment as an operand to op_get_argument_by_val.

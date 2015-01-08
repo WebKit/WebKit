@@ -107,11 +107,17 @@ class ObjCFrontendDispatcherImplementationGenerator(Generator):
         for parameter in required_pointer_parameters:
             var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
             lines.append('    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(%s, @"%s");' % (var_name, var_name))
+            objc_array_class = ObjCGenerator.objc_class_for_array_type(parameter.type)
+            if objc_array_class and objc_array_class.startswith(ObjCGenerator.OBJC_PREFIX):
+                lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_ARRAY(%s, [%s class]);' % (var_name, objc_array_class))
 
         optional_pointer_parameters = filter(lambda parameter: parameter.is_optional and ObjCGenerator.is_type_objc_pointer_type(parameter.type), event.event_parameters)
         for parameter in optional_pointer_parameters:
             var_name = ObjCGenerator.identifier_to_objc_identifier(parameter.parameter_name)
             lines.append('    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(%s, @"%s");' % (var_name, var_name))
+            objc_array_class = ObjCGenerator.objc_class_for_array_type(parameter.type)
+            if objc_array_class and objc_array_class.startswith(ObjCGenerator.OBJC_PREFIX):
+                lines.append('    THROW_EXCEPTION_FOR_BAD_TYPE_IN_OPTIONAL_ARRAY(%s, [%s class]);' % (var_name, objc_array_class))
 
         if required_pointer_parameters or optional_pointer_parameters:
             lines.append('')
