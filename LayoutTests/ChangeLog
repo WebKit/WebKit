@@ -1,3 +1,34 @@
+2015-01-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Rebaseline windows fast/text tests.
+
+        Most of these work properly, but have different DRT output because the font rendering
+        on Windows is different than Mac.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/text/atsui-pointoffset-calls-cg-expected.txt: Added.
+        * platform/win/fast/text/bidi-embedding-pop-and-push-same-expected.txt: Added.
+        * platform/win/fast/text/cg-vs-atsui-expected.txt: Added.
+        * platform/win/fast/text/complex-text-opacity-expected.txt: Added.
+        * platform/win/fast/text/international/001-expected.txt: Added.
+        * platform/win/fast/text/international/bidi-linebreak-001-expected.txt: Added.
+        * platform/win/fast/text/international/bidi-linebreak-002-expected.txt: Added.
+        * platform/win/fast/text/international/bidi-linebreak-003-expected.txt: Added.
+        * platform/win/fast/text/international/bidi-listbox-atsui-expected.txt: Added.
+        * platform/win/fast/text/international/bidi-listbox-expected.txt: Added.
+        * platform/win/fast/text/international/bidi-menulist-expected.txt:
+        * platform/win/fast/text/international/danda-space-expected.txt: Added.
+        * platform/win/fast/text/international/float-as-only-child-of-isolate-crash-expected.png: Removed.
+        * platform/win/fast/text/international/float-as-only-child-of-isolate-crash-expected.txt: Removed.
+        * platform/win/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Added.
+        * platform/win/fast/text/international/synthesized-italic-vertical-latin-expected.txt: Added.
+        * platform/win/fast/text/international/thai-baht-space-expected.txt: Added.
+        * platform/win/fast/text/shaping: Added.
+        * platform/win/fast/text/shaping/shaping-script-order-expected.txt: Added.
+        * platform/win/fast/text/shaping/shaping-selection-rect-expected.txt: Added.
+        * platform/win/fast/text/updateNewFont-expected.txt: Added.
+        * platform/win/fast/text/vertical-rl-rtl-linebreak-expected.txt: Added.
+
 2015-01-07  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         ASSERTION FAILED: !lengthOrPercentageValue.isUndefined() in WebCore::ApplyPropertyTextIndent::applyValue

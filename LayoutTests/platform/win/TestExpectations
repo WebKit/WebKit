@@ -88,26 +88,26 @@ webkit.org/b/125754 js/dom/global-constructors-attributes.html [ Failure ]
 
 # <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results:
 #                          - Mac OS X and Windows do not have an Arabic font in common
-#fast/text/international/bidi-AN-after-L.html
-#fast/text/international/bidi-AN-after-empty-run.html
-#fast/text/international/bidi-CS-after-AN.html
-#fast/text/international/bidi-neutral-run.html
-#fast/text/international/bidi-neutral-directionality-paragraph-start.html
+fast/text/international/bidi-AN-after-L.html
+fast/text/international/bidi-AN-after-empty-run.html
+fast/text/international/bidi-CS-after-AN.html
+fast/text/international/bidi-neutral-run.html
+fast/text/international/bidi-neutral-directionality-paragraph-start.html
 svg/W3C-SVG-1.1/fonts-glyph-02-t.svg
 svg/W3C-SVG-1.1/text-intro-05-t.svg
 svg/text/text-intro-05-t.svg
 #                           - Mac OS X and Windows do not have a CJK font in common
 fast/encoding/denormalised-voiced-japanese-chars.html
-#fast/text/international/002.html
-#fast/text/international/003.html
-#fast/text/international/wrap-CJK-001.html
+fast/text/international/002.html
+fast/text/international/003.html
+fast/text/international/wrap-CJK-001.html
 svg/W3C-SVG-1.1/text-fonts-01-t.svg
 svg/text/text-fonts-01-t.svg
 #                           - Windows does not have Geneva
 svg/W3C-SVG-1.1/interact-cursor-01-f.svg
 #                           - Mac OS X and Windows do not have a Thai font in common
-#fast/text/atsui-multiple-renderers.html
-#fast/text/international/thai-line-breaks.html
+fast/text/atsui-multiple-renderers.html
+fast/text/international/thai-line-breaks.html
 #                           - Mac OS X and Windows do not have a Georgian font in common
 css2.1/t1202-counter-09-b.html
 css2.1/t1202-counters-09-b.html
@@ -119,11 +119,7 @@ fast/css/text-overflow-ellipsis.html
 fast/css/text-overflow-ellipsis-bidi.html
 fast/css/text-overflow-ellipsis-strict.html
 
-# <rdar://problem/5720592> Width of certain complex text is off by one
-#fast/text/atsui-pointtooffset-calls-cg.html
-#fast/text/cg-vs-atsui.html
-#fast/text/atsui-spacing-features.html
-
+fast/text/atsui-pointtooffset-calls-cg.html [ Pass Failure ]
 webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure Pass ]
 
 # <rdar://problem/5718773> Support a minimum antialiased font size
@@ -169,9 +165,6 @@ fast/events/keydown-1.html
 
 # No support for key event location in EventSender.
 fast/events/keydown-numpad-keys.html
-
-# New test added for https://bugs.webkit.org/show_bug.cgi?id=98452 needs platform specific results
-#fast/text/vertical-rl-rtl-linebreak.html [ Failure ]
 
 # The eqqivalent of option-tab doesn not exist in Boomer <rdar://problem/5137230>
 fast/events/frame-tab-focus.html
@@ -340,10 +333,6 @@ http/tests/misc/frame-default-enc-same-domain.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=131748 (Is this still broken on Windows?)
 svg/custom/stroke-width-click.svg
-
-# New results needed after r43759, see <https://bugs.webkit.org/show_bug.cgi?id=25816>
-#fast/text/international/danda-space.html
-#fast/text/international/thai-baht-space.html
 
 # Sensitive to load timing or PHP behavior (https://bugs.webkit.org/show_bug.cgi?id=44873)
 http/tests/css/css-image-loading.html
@@ -744,25 +733,13 @@ webkit.org/b/24810 fast/loader/main-document-url-for-non-http-loads.html [ Failu
 webkit.org/b/24810 fast/loader/stop-provisional-loads.html [ Failure ]
 webkit.org/b/24810 fast/replaced/border-radius-clip.html [ Failure ]
 webkit.org/b/24810 fast/replaced/replaced-breaking.html [ Failure ]
-#webkit.org/b/24810 fast/text/bidi-embedding-pop-and-push-same.html [ Failure ]
-#webkit.org/b/24810 fast/text/complex-text-opacity.html [ Failure ]
-#webkit.org/b/24810 fast/text/drawBidiText.html [ Failure Timeout ]
+webkit.org/b/24810 fast/text/drawBidiText.html [ Failure Timeout ]
 fast/text/emphasis-vertical.html [ Pass Failure ]
 fast/text/emphasis.html [ Pass Failure ]
 fast/text/fallback-traits-fixup.html [ Pass Failure ]
-#fast/text/hyphenate-first-word.html [ Failure ]
-#fast/text/hyphenate-limit-before-after.html [ Failure ]
-#fast/text/hyphenate-limit-lines.html [ Failure ]
-#fast/text/hyphenate-locale.html [ Failure ]
-#webkit.org/b/24810 fast/text/updateNewFont.html [ Failure ]
-#webkit.org/b/24810 fast/text/international/bidi-linebreak-001.html [ Failure ]
-#webkit.org/b/24810 fast/text/international/bidi-linebreak-002.html [ Failure ]
-#webkit.org/b/24810 fast/text/international/bidi-linebreak-003.html [ Failure ]
-#webkit.org/b/24810 fast/text/international/bidi-listbox-atsui.html [ Failure ]
-#webkit.org/b/24810 fast/text/international/bidi-listbox.html [ Failure ]
-#fast/text/international/combining-marks-position.html [ Failure ]
-#webkit.org/b/24810 fast/text/international/hindi-spacing.html [ Failure ]
-#fast/text/international/text-combine-image-test.html [ Failure ]
+fast/text/international/combining-marks-position.html [ Failure ]
+webkit.org/b/24810 fast/text/international/hindi-spacing.html [ Failure ]
+fast/text/international/text-combine-image-test.html [ Failure ]
 fast/text/orientation-sideways.html [ Pass Failure ]
 fast/text/unicode-variation-selector.html [ Pass Failure Crash ]
 webkit.org/b/24810 http/tests/misc/window-dot-stop.html [ Failure ]
@@ -802,9 +779,8 @@ webkit.org/b/24810 plugins/npruntime/npruntime.html [ Failure Timeout ]
 ################################################################################
 
 # Failures following r42379
-#fast/text/international/001.html [ Failure ]
-#fast/text/international/hindi-whitespace.html [ Failure ]
-#fast/text/international/khmer-selection.html [ Failure ]
+fast/text/international/hindi-whitespace.html [ Failure ]
+fast/text/international/khmer-selection.html [ Failure ]
 
 # transitions/zero-duration-with-non-zero-delay-end.html sometimes fails on Windows
 webkit.org/b/25188 transitions/zero-duration-with-non-zero-delay-end.html [ Pass Failure ]
@@ -977,8 +953,7 @@ webkit.org/b/36002 fast/repaint/table-overflow-scroll-in-overflow-scroll-scrolle
 webkit.org/b/36002 scrollbars/scrollevent-iframe-no-scrolling-wheel.html
 webkit.org/b/36002 scrollbars/scroll-rtl-or-bt-layer.html
 
-# Windows port doesn't yet support rendering of non-BMP characters even though there's a font available.
-#fast/text/international/plane2.html
+webkit.org/b/140231 fast/text/international/plane2.html [ Failure ]
 
 # Requires testRunner.setMediaType() and implementation
 fast/media/print-restores-previous-mediatype.html
@@ -1080,8 +1055,15 @@ http/tests/misc/prefetch-purpose.html
 printing/page-rule-selection.html
 
 # Hyphenation is not implemented yet.
-#fast/text/hyphenate-character.html
-#fast/text/hyphens.html
+webkit.org/b/140234 fast/text/hyphenate-character.html [ Failure ]
+webkit.org/b/140234 fast/text/hyphens.html [ Failure ]
+webkit.org/b/140234 fast/text/hyphenate-first-word.html [ Failure ]
+webkit.org/b/140234 fast/text/hyphenate-limit-before-after.html [ Failure ]
+webkit.org/b/140234 fast/text/hyphenate-limit-lines.html [ Failure ]
+webkit.org/b/140234 fast/text/hyphenate-locale.html [ Failure ]
+webkit.org/b/140234 fast/text/midword-break-before-surrogate-pair.html [ Failure ]
+webkit.org/b/140234 fast/text/midword-break-before-surrogate-pair-2.html [ Failure ]
+webkit.org/b/140234 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
 
 # DRT doesn't support showModalDialog https://bugs.webkit.org/show_bug.cgi?id=53675
 fast/events/show-modal-dialog-onblur-onfocus.html
@@ -1891,7 +1873,6 @@ compositing/iframes/overlapped-iframe-iframe.html [ Failure ]
 compositing/tiling/tiled-layer-resize.html [ Failure ]
 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 fast/events/ime-composition-events-001.html [ Failure ]
-#fast/text/international/float-as-only-child-of-isolate-crash.html [ Failure ]
 svg/css/shadow-changes.svg [ Failure ]
 # End temporary skips
 
@@ -1944,7 +1925,7 @@ webkit.org/b/113106 media/track/track-prefer-captions.html [ Skip ]
 webkit.org/b/112492 media/track/track-user-preferences.html [ Skip ]
 
 #These tests are flaky:
-#fast/text/international/bidi-menulist.html [ Failure ]
+fast/text/international/bidi-menulist.html [ Pass Failure ]
 fast/text/international/bidi-mirror-he-ar.html [ Pass Failure ]
 fast/text/international/bold-bengali.html [ Pass Failure ]
 fast/text/international/complex-character-based-fallback.html [ Pass ImageOnlyFailure Failure ]
@@ -2018,10 +1999,12 @@ webkit.org/b/116564 fast/dom/Window/window-resize.html [ Pass Failure ]
 webkit.org/b/116564 fast/events/clientXY-in-zoom-and-scroll.html [ Pass Failure ]
 webkit.org/b/116564 fast/events/remove-target-with-shadow-in-drag.html [ Pass Failure ]
 webkit.org/b/116564 fast/overflow/infiniteRecursionGuard.html [ Pass Failure ]
-#webkit.org/b/116564 fast/text/text-combine-different-fonts.html [ Failure ]
 webkit.org/b/116564 fast/writing-mode/Kusa-Makura-background-canvas.html [ Pass Failure ]
 webkit.org/b/116564 media/click-volume-bar-not-pausing.html [ Timeout ]
 webkit.org/b/116564 transitions/svg-text-shadow-transition.html [ Failure ]
+
+# Windows doesn't seem to have some of these fonts:
+webkit.org/b/116564 fast/text/text-combine-different-fonts.html [ Failure ]
 
 # Exclude WebSQL tests:
 webkit.org/b/116559 storage/websql [ Skip ]
@@ -2068,9 +2051,6 @@ webkit.org/b/117323 fast/replaced/no-focus-ring-object.html [ Timeout ]
 webkit.org/b/117323 fast/replaced/object-with-embed-url-param.html [ Failure ]
 webkit.org/b/117323 platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
 webkit.org/b/117323 platform/win/plugins/windowless-paint-rect-coordinates.html [ Failure ]
-
-# Synthesized italics not supported
-#fast/text/international/synthesized-italic-vertical-latin.html [ Skip ]
 
 # -webkit-user-select:all not supported
 webkit.org/b/118740 editing/selection/user-select-all-image-with-single-click.html [ Failure ]
@@ -2706,7 +2686,6 @@ fast/replaced/width100percent-button.html [ Skip ]
 fast/replaced/width100percent-radio.html [ Skip ]
 fast/selectors/querySelector-window-inactive.html [ Skip ]
 fast/selectors/read-only-read-write-input-basics.html [ Skip ]
-#fast/text/content-following-inline-isolate-with-collapsed-whitespace.html [ Skip ]
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Skip ]
 inspector-protocol/layers/layers-blending-compositing-reasons.html [ Skip ]
 inspector/test-harness-trivially-works.html [ Skip ]
@@ -2733,7 +2712,7 @@ fast/canvas/draw-focus-if-needed-with-path.html [ Skip ]
 fast/canvas/draw-focus-if-needed.html [ Skip ]
 fast/forms/checkbox-appearance-change-by-checked.html [ Skip ]
 fast/frames/lots-of-objects.html [ Skip ]
-#fast/text/indic.html [ Skip ]
+fast/text/indic.html [ Skip ]
 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Skip ]
 ietestcenter/Javascript/12.10-2-2.html [ Skip ]
 js/dom/non-object-proto.html [ Skip ]
@@ -2744,7 +2723,7 @@ fast/css/parsing-invalid-block-recovery.html [ Crash ]
 fast/borders/bidi-002.html [ Failure ]
 fast/borders/bidi-009a.html [ Failure ]
 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Timeout ]
-#fast/text/khmer-lao-font.html [ Failure ]
+fast/text/khmer-lao-font.html [ Failure ]
 mathml/opentype/opentype-stretchy-horizontal.html [ Failure Crash ]
 inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
 fast/overflow/overflow-height-float-not-removed-crash2.html [ Crash Pass ]
@@ -2832,7 +2811,7 @@ fast/parser/open-comment-in-textarea.html [ Failure ]
 fast/table/003.html [ Failure ]
 fast/table/colspanMinWidth-vertical.html [ Failure ]
 fast/table/colspanMinWidth.html [ Failure ]
-#fast/text/international/unicode-bidi-plaintext-in-textarea.html [ Failure ]
+fast/text/international/unicode-bidi-plaintext-in-textarea.html [ Failure ]
 tables/mozilla/bugs/bug103533.html [ Failure ]
 tables/mozilla/bugs/bug12384.html [ Failure ]
 tables/mozilla/bugs/bug26178.html [ Failure ]
@@ -2934,7 +2913,7 @@ fast/scrolling/scroll-select-list.html [ Failure ]
 fast/regions/overflow/overflow-in-variable-width-regions-inline.html
 fast/parser/bad-xml-slash.html [ Failure ]
 svg/custom/foreign-object-skew.svg [ Failure ]
-#fast/text/backslash-to-yen-sign-euc.html [ Failure ]
+fast/text/backslash-to-yen-sign-euc.html [ Failure ]
 
 # Borders render too dark sometimes.
 webkit.org/b/138041 fast/text/international/rtl-white-space-pre-wrap.html [ Failure ]
@@ -3026,8 +3005,6 @@ fast/dom/Document/createElement-invalid-names.html [ Crash ]
 fast/dom/Document/createElement-valid-names.html [ Crash ]
 fast/lists/w3-css3-list-styles-numeric.html [ Crash ]
 fast/parser/entities-in-xhtml.xhtml [ Crash ]
-#fast/text/midword-break-before-surrogate-pair-2.html [ Crash ]
-#fast/text/regional-indicator-symobls.html [ Crash ]
 inspector-protocol/debugger/setBreakpoint-dfg.html [ Crash ]
 mathml/opentype/munderover-layout-resize.html [ Crash ]
 mathml/presentation/mo-invisible.html [ Crash ]
