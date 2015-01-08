@@ -12,8 +12,10 @@
     }
     </style>
     <script type="text/javascript" charset="utf-8">
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText(true);
+            testRunner.waitUntilDone();
+        }
 
         function testOnLoad()
         {
@@ -27,9 +29,14 @@
             context.fillStyle = "red";
             context.fillRect(50, 50, 200, 200);
             img.src = canvas.toDataURL();
-
-            if (window.testRunner)
+        }
+        
+        function onImageLoad()
+        {
+            if (window.testRunner) {
                 document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
         }
 
         window.addEventListener('load', testOnLoad, false);
@@ -41,7 +48,7 @@
         There should be a red box within the yellow box.
         This tests that we can support very large composited image layers.
       -->
-        <img id="container">
+        <img onload="onImageLoad()" id="container">
         <pre id="layers">Layer tree appears here in DRT.</pre>
   </body>
 </html>

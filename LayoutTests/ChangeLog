@@ -1,3 +1,32 @@
+2015-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Two tests, which include data uri images, need to be changed and rebaselined since the expected results are incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=140199.
+
+        Reviewed by Simon Fraser.
+
+        * compositing/tiling/huge-layer-img-expected.txt:
+        * compositing/tiling/huge-layer-img.html:
+        * platform/mac/compositing/tiling/huge-layer-img-expected.txt:
+        This test draws a huge image on a canvas and then gets the data uri from the canvas and
+        set it as the source of an <img> tag. We need to rebaseline the expected results since
+        the original ones were incorrect. The test was getting the layer tree too early. Before
+        the image data was loaded, a tiled layer was created. After the image data is loaded, we
+        could have figured out that the image is a simple one and we could have removed the tiling.
+        The fix is to change the test to delay capturing the layer tree only after making sure
+        that the image data is loaded.
+        
+        * fast/forms/basic-buttons.html:
+        * platform/mac-mountainlion/fast/forms/basic-buttons-expected.txt:
+        * platform/mac/fast/forms/basic-buttons-expected.png:
+        * platform/mac/fast/forms/basic-buttons-expected.txt:
+        This test includes a data uri image just to not include a file for the image by itself. 
+        We need to rebaseline the expected results since the original ones were incorrect. The
+        test was assuming that after the <img> tag is added to the HTML body, the image size can
+        be retrieved immediately. Because this assumption is incorrect in general, we were getting
+        empty sizes for all the the data uri images. The fix is to change the test such that it
+        prints the sizes of the images only after making sure that all the images are loaded.
+
 2015-01-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Rebaseline windows fast/text tests.
