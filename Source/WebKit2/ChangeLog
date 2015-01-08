@@ -1,3 +1,62 @@
+2015-01-08  Sam Weinig  <sam@webkit.org>
+
+        Make WKNavigation bridged to API::Navigation
+        https://bugs.webkit.org/show_bug.cgi?id=140272
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/APIObject.h:
+        Add Navigation.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        Bridge to WKNavigation.
+
+        * UIProcess/API/APINavigation.cpp: Added.
+        (API::Navigation::Navigation):
+        (API::Navigation::~Navigation):
+        * UIProcess/API/APINavigation.h: Added.
+        (API::Navigation::create):
+        (API::Navigation::request):
+        Add initial implementation.
+
+        * UIProcess/API/Cocoa/WKNavigation.mm:
+        (-[WKNavigation dealloc]):
+        (-[WKNavigation _request]):
+        (-[WKNavigation _apiObject]):
+        * UIProcess/API/Cocoa/WKNavigationInternal.h:
+        (API::wrapper):
+        Implement bridging to API::Navigation and get the request from the underlying object.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadRequest:]):
+        (-[WKWebView loadFileURL:allowingReadAccessToURL:]):
+        (-[WKWebView loadData:MIMEType:characterEncodingName:baseURL:]):
+        (-[WKWebView goToBackForwardListItem:]):
+        (-[WKWebView goBack]):
+        (-[WKWebView goForward]):
+        (-[WKWebView reload]):
+        (-[WKWebView reloadFromOrigin]):
+        (-[WKWebView _restoreSessionState:andNavigate:]):
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::createLoadRequestNavigation):
+        (WebKit::NavigationState::createBackForwardNavigation):
+        (WebKit::NavigationState::createReloadNavigation):
+        (WebKit::NavigationState::createLoadDataNavigation):
+        (WebKit::NavigationState::LoaderClient::didStartProvisionalLoadForFrame):
+        (WebKit::NavigationState::LoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::NavigationState::LoaderClient::didCommitLoadForFrame):
+        (WebKit::NavigationState::LoaderClient::didFinishDocumentLoadForFrame):
+        (WebKit::NavigationState::LoaderClient::didFinishLoadForFrame):
+        (WebKit::NavigationState::LoaderClient::didFailLoadWithErrorForFrame):
+        (WebKit::NavigationState::LoaderClient::didSameDocumentNavigationForFrame):
+        Switch to storing API::Navigations.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add the new files.
+
 2015-01-08  Dean Jackson  <dino@apple.com>
 
         Text not drawn or white-on-white for "Close Page"/"Go Back" button on safe browsing warning page

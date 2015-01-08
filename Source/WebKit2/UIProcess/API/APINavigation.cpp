@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKNavigationPrivate.h"
-
-#if WK_API_ENABLED
-
-#import "APINavigation.h"
-#import "WKObject.h"
+#include "config.h"
+#include "APINavigation.h"
 
 namespace API {
 
-inline WKNavigation *wrapper(API::Navigation& navigation)
+Navigation::Navigation()
 {
-    ASSERT([navigation.wrapper() isKindOfClass:[WKNavigation class]]);
-
-    return (WKNavigation *)navigation.wrapper();
 }
 
+Navigation::Navigation(const WebCore::ResourceRequest& request)
+    : m_request(request)
+{
 }
 
-@interface WKNavigation () <WKObject>
-@end
+Navigation::~Navigation()
+{
+}
 
-#endif
+} // namespace WebKit

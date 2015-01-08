@@ -38,10 +38,13 @@
 #import "ProcessThrottler.h"
 #import "WeakObjCPtr.h"
 
-@class WKNavigation;
 @class WKWebView;
 @protocol WKHistoryDelegatePrivate;
 @protocol WKNavigationDelegate;
+
+namespace API {
+class Navigation;
+}
 
 namespace WebKit {
 
@@ -63,10 +66,10 @@ public:
     RetainPtr<id <WKHistoryDelegatePrivate> > historyDelegate();
     void setHistoryDelegate(id <WKHistoryDelegatePrivate>);
 
-    RetainPtr<WKNavigation> createBackForwardNavigation(uint64_t navigationID, const WebBackForwardListItem&);
-    RetainPtr<WKNavigation> createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *);
-    RetainPtr<WKNavigation> createReloadNavigation(uint64_t navigationID);
-    RetainPtr<WKNavigation> createLoadDataNavigation(uint64_t navigationID);
+    Ref<API::Navigation> createBackForwardNavigation(uint64_t navigationID, const WebBackForwardListItem&);
+    Ref<API::Navigation> createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *);
+    Ref<API::Navigation> createReloadNavigation(uint64_t navigationID);
+    Ref<API::Navigation> createLoadDataNavigation(uint64_t navigationID);
 
     // Called by the page client.
     void navigationGestureDidBegin();
@@ -174,7 +177,7 @@ private:
 #endif
     } m_navigationDelegateMethods;
 
-    HashMap<uint64_t, RetainPtr<WKNavigation>> m_navigations;
+    HashMap<uint64_t, RefPtr<API::Navigation>> m_navigations;
 
     WeakObjCPtr<id <WKHistoryDelegatePrivate> > m_historyDelegate;
     struct {
