@@ -1,3 +1,15 @@
+2015-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        The ASCII decoding for non ASCII character is incorrect if this character comes after going through the fast decoding code path and before the end of the text by less than a machine word size of characters.
+        https://bugs.webkit.org/show_bug.cgi?id=140173.
+
+        Reviewed by Darin Adler.
+
+        * fast/encoding/char-after-fast-path-ascii-decoding-expected.txt: Added.
+        * fast/encoding/char-after-fast-path-ascii-decoding.html: Added.
+        Ensures when an non ASCII character comes after a machine word, whose bytes are all
+        ASCII characters, is decoded correctly.
+
 2015-01-07  Shivakumar JM  <shiva.jm@samsung.com>
 
         HTMLSelectElement and HTMLOptionsCollection add() method should support index as second argument.

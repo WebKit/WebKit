@@ -1,3 +1,20 @@
+2015-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        The ASCII decoding for non ASCII character is incorrect if this character comes after going through the fast decoding code path and before the end of the text by less than a machine word size of characters.
+        https://bugs.webkit.org/show_bug.cgi?id=140173.
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/encoding/char-after-fast-path-ascii-decoding.html.
+
+        * platform/text/TextCodecLatin1.cpp:
+        (WebCore::TextCodecLatin1::decode):
+        This function has a bug when it goes through the fast decoding code path. After copying
+        one or more all ASCII MachineWords from source to the destination, the following byte
+        is copied as is from the source to the destination even if it is non ASCII byte. This
+        causes the decoded bytes to be incorrect. The fix is to ensure that the current byte
+        is still ASCII after exiting the fast decoding code path.
+ 
 2015-01-07  Shivakumar JM  <shiva.jm@samsung.com>
 
         HTMLSelectElement and HTMLOptionsCollection add() method should support index as second argument.

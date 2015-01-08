@@ -146,6 +146,10 @@ String TextCodecLatin1::decode(const char* bytes, size_t length, bool, bool, boo
 
                 if (source == end)
                     break;
+
+                // *source may not be ASCII anymore if source moves inside the loop of the fast code path
+                if (!isASCII(*source))
+                    goto useLookupTable;
             }
             *destination = *source;
         } else {
@@ -197,6 +201,10 @@ upConvertTo16Bit:
                 
                 if (source == end)
                     break;
+
+                // *source may not be ASCII anymore if source moves inside the loop of the fast code path
+                if (!isASCII(*source))
+                    goto useLookupTable16;
             }
             *destination16 = *source;
         } else {
