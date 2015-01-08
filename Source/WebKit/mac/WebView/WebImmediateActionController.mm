@@ -44,6 +44,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NSMenuSPI.h>
@@ -259,6 +260,48 @@ using namespace WebCore;
 - (void)menuItemDidClose:(NSMenuItem *)menuItem
 {
     [self _clearImmediateActionState];
+}
+
+static IntRect elementBoundingBoxInWindowCoordinatesFromNode(Node* node)
+{
+    if (!node)
+        return IntRect();
+
+    Frame* frame = node->document().frame();
+    if (!frame)
+        return IntRect();
+
+    FrameView* view = frame->view();
+    if (!view)
+        return IntRect();
+
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return IntRect();
+
+    return view->contentsToWindow(renderer->absoluteBoundingBoxRect());
+}
+
+- (NSRect)menuItem:(NSMenuItem *)menuItem itemFrameForPoint:(NSPoint)point
+{
+    if (!_webView)
+        return NSZeroRect;
+
+    Node* node = _hitTestResult.innerNode();
+    if (!node)
+        return NSZeroRect;
+
+    return elementBoundingBoxInWindowCoordinatesFromNode(node);
+}
+
+- (NSSize)menuItem:(NSMenuItem *)menuItem maxSizeForPoint:(NSPoint)point
+{
+    if (!_webView)
+        return NSZeroSize;
+
+    NSSize screenSize = _webView.window.screen.frame.size;
+    FloatRect largestRect = largestRectWithAspectRatioInsideRect(screenSize.width / screenSize.height, _webView.bounds);
+    return NSMakeSize(largestRect.width() * 0.75, largestRect.height() * 0.75);
 }
 
 #pragma mark Data Detectors actions

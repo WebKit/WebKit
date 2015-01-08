@@ -35,6 +35,7 @@
 #import "WebPageProxyMessages.h"
 #import "WebProcessProxy.h"
 #import <WebCore/DataDetectorsSPI.h>
+#import <WebCore/GeometryUtilities.h>
 #import <WebCore/LookupSPI.h>
 #import <WebCore/NSMenuSPI.h>
 #import <WebCore/NSPopoverSPI.h>
@@ -285,6 +286,25 @@ using namespace WebKit;
 - (void)menuItemDidClose:(NSMenuItem *)menuItem
 {
     [self _clearImmediateActionState];
+}
+
+- (NSRect)menuItem:(NSMenuItem *)menuItem itemFrameForPoint:(NSPoint)point
+{
+    if (!_wkView)
+        return NSZeroRect;
+
+    RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
+    return [_wkView convertRect:hitTestResult->elementBoundingBox() toView:nil];
+}
+
+- (NSSize)menuItem:(NSMenuItem *)menuItem maxSizeForPoint:(NSPoint)point
+{
+    if (!_wkView)
+        return NSZeroSize;
+
+    NSSize screenSize = _wkView.window.screen.frame.size;
+    FloatRect largestRect = largestRectWithAspectRatioInsideRect(screenSize.width / screenSize.height, _wkView.bounds);
+    return NSMakeSize(largestRect.width() * 0.75, largestRect.height() * 0.75);
 }
 
 #pragma mark Data Detectors actions

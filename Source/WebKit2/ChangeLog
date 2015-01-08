@@ -1,5 +1,27 @@
 2015-01-07  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r178056. rdar://problem/19300492
+
+    2015-01-07  Beth Dakin  <bdakin@apple.com>
+
+            Adopt delegate callbacks so that standardQuickLookMenuItem does not obscure the 
+            link
+            https://bugs.webkit.org/show_bug.cgi?id=140206
+            -and corresponding-
+            rdar://problem/19300492
+
+            Reviewed by Tim Horton.
+
+            Providing and item frame will ensure that the original link is not obscured.
+            * UIProcess/mac/WKImmediateActionController.mm:
+            (-[WKImmediateActionController menuItem:itemFrameForPoint:]):
+
+            For now use a max size that is smaller than the WKView, with the screen’s aspect 
+            ratio, and scaled down.
+            (-[WKImmediateActionController menuItem:maxSizeForPoint:]):
+
+2015-01-07  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r178003. rdar://problem/19255417
 
     2015-01-06  Timothy Horton  <timothy_horton@apple.com>
