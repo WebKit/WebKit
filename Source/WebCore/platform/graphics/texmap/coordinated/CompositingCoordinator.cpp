@@ -316,7 +316,7 @@ void CompositingCoordinator::setVisibleContentsRect(const FloatRect& rect, const
     }
 
     FrameView* view = m_page->mainFrame().view();
-    if (view->useFixedLayout()) {
+    if (view->useFixedLayout() && contentsRectDidChange) {
         // Round the rect instead of enclosing it to make sure that its size stays
         // the same while panning. This can have nasty effects on layout.
         view->setFixedVisibleContentRect(roundedIntRect(rect));
