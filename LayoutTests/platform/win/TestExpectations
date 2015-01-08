@@ -158,7 +158,7 @@ fast/events/drag-image-filename.html
 editing/pasteboard/drag-files-to-editable-element.html
 
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
-fast/events/attempt-scroll-with-no-scrollbars.html
+fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 
 # Emacs bindings are used in LayoutTests which fail on boomer. <rdar://problem/5137352>
 fast/events/keydown-1.html
@@ -522,8 +522,17 @@ accessibility/aria-link-supports-press.html
 accessibility/label-element-press.html
 accessibility/press-works-on-control-types.html
 
-# Accessibility tests without results or with Mac-specific results.
+# Accessibility tests for notifications that don't exist or aren't needed on Mac OS X (or Windows)
 accessibility/aria-checkbox-sends-notification.html
+accessibility/children-changed-sends-notification.html
+
+# isIndeterminate is not implemented in mac
+webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
+
+# ariaControlsElementAtIndex is not implemented in mac or win
+webkit.org/b/127908 accessibility/aria-controls.html [ Skip ]
+
+# Accessibility tests without results or with Mac-specific results.
 accessibility/aria-checkbox-text.html
 accessibility/aria-combobox.html
 accessibility/aria-controls-with-tabs.html
@@ -624,7 +633,6 @@ accessibility/text-role-with-aria-hidden-inside.html
 accessibility/aria-disabled-propagated-to-children.html
 accessibility/aria-labelledby-overrides-aria-labeledby.html
 accessibility/aria-mappings.html
-accessibility/aria-controls.html
 accessibility/aria-flowto.html
 accessibility/img-fallsback-to-title.html
 accessibility/svg-group-element-with-title.html
@@ -641,7 +649,6 @@ accessibility/list-detection.html
 accessibility/table-with-hidden-head-section.html
 accessibility/file-upload-button-stringvalue.html
 accessibility/range-alter-by-percent.html
-accessibility/children-changed-sends-notification.html
 accessibility/listitem-title.html
 accessibility/heading-title-includes-links.html
 accessibility/aria-help.html
@@ -664,10 +671,10 @@ webkit.org/b/87425 [ Debug ] platform/win/accessibility/detached-object-notifica
 # Test times out
 webkit.org/b/95405 platform/win/accessibility/single-select-children.html [ Skip ]
 
-#AX role needs to be updated on Windows, many test cases involve AX role crash or fail
+# AX role needs to be updated on Windows, many test cases involve AX role crash or fail
 accessibility/svg-bounds.html
 accessibility/html-html-element-is-ignored.html
-accessibility/loading-iframe-updates-axtree.html
+webkit.org/b/126066 accessibility/loading-iframe-updates-axtree.html
 webkit.org/b/108249 accessibility/corresponding-control-deleted-crash.html
 
 # Missing AX features:
@@ -990,7 +997,6 @@ webkit.org/b/37096 http/tests/security/xss-DENIED-iframe-src-alias.html [ Pass T
 webkit.org/b/128981 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
 webkit.org/b/128981 canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
 webkit.org/b/128981 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
-webkit.org/b/128981 canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Failure ]
 webkit.org/b/128981 canvas/philip/tests/2d.gradient.radial.cone.front.html [ Failure ]
 webkit.org/b/128981 canvas/philip/tests/2d.gradient.radial.cone.top.html [ Failure ]
 webkit.org/b/128981 canvas/philip/tests/2d.gradient.radial.inside2.html [ Failure ]
@@ -1080,14 +1086,6 @@ webkit.org/b/54662 fast/forms/number/number-appearance-rtl.html [ Failure ]
 webkit.org/b/54662 fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Failure ]
 webkit.org/b/54662 fast/forms/number/number-appearance-spinbutton-layer.html [ Failure ]
 webkit.org/b/54662 fast/forms/number/number-appearance-spinbutton-visibility.html [ Pass Failure ]
-webkit.org/b/54662 fast/forms/number/number-spinbutton-change-and-input-events.html [ Failure ]
-webkit.org/b/54662 fast/forms/number/number-large-padding.html [ Failure ]
-webkit.org/b/54662 fast/forms/number/number-size.html [ Failure ]
-webkit.org/b/54662 fast/forms/number/number-spinbutton-capturing.html [ Failure ]
-webkit.org/b/54662 fast/forms/number/number-spinbutton-click-in-iframe.html [ Failure ]
-webkit.org/b/54662 fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html [ Failure ]
-webkit.org/b/54662 fast/forms/number/number-spinbutton-state.html [ Failure ]
-webkit.org/b/54662 fast/forms/number/number-spinbutton-in-multi-column.html [ Failure ]
 
 # Datalist is not yet enabled.
 fast/forms/datalist
@@ -1754,7 +1752,6 @@ webkit.org/b/97026 svg/text/bidi-text-query.svg [ Failure ]
 webkit.org/b/97026 svg/text/bidi-tspans.svg [ Failure ]
 webkit.org/b/97026 svg/text/non-bmp-positioning-lists.svg [ Failure ]
 webkit.org/b/97026 svg/W3C-SVG-1.1/paths-data-03-f.svg	[ Failure ]
-webkit.org/b/97026 svg/as-image/svg-intrinsic-size-rectangular-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/97026 svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]
 webkit.org/b/97026 svg/custom/composited-svg-with-opacity.html [ ImageOnlyFailure ]
 webkit.org/b/97026 svg/custom/remove-subtree-including-use-with-child-textpath-that-references-earlier-path.html [ Failure ]
@@ -2039,7 +2036,7 @@ webkit.org/b/117322 svg/animations/mozilla/animateMotion-mpath-targetChange-1.sv
 webkit.org/b/117322 svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
 
 # Text Test Failures
-webkit.org/b/117323 animations/animation-delay-changed.html [ Failure ]
+webkit.org/b/117323 animations/animation-delay-changed.html [ Pass Failure Timeout ]
 webkit.org/b/117323 editing/inserting/insert-3907422-fix.html [ Failure ]
 webkit.org/b/117323 fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml [ Pass Failure ]
 webkit.org/b/117323 fast/frames/sandboxed-iframe-about-blank.html [ Failure ]
@@ -2194,7 +2191,6 @@ webkit.org/b/122021 media/video-controls-toggling.html [ Timeout ]
 webkit.org/b/122166 media/track/audio-track.html [ Failure ]
 webkit.org/b/122166 media/track/video-track.html [ Failure ]
 webkit.org/b/122166 media/audio-controls-do-not-fade-out.html [ Timeout ]
-webkit.org/b/122166 media/controls-right-click-on-timebar.html [ Timeout Failure ]
 webkit.org/b/122166 media/media-controls-invalid-url.html [ Failure ]
 webkit.org/b/122166 media/media-volume-slider-rendered-normal.html [ Failure ]
 webkit.org/b/122166 media/video-controls-visible-audio-only.html [ Failure ]
@@ -2213,9 +2209,6 @@ crypto/subtle [ Skip ]
 # CONSOLE MESSAGE: line 18: ReferenceError: Can't find variable: MediaSource
 # FAIL: Timed out waiting for notifyDone to be called
 media/media-source [ Skip ]
-
-# isIndeterminate is not implemented in mac
-webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
 
 # Subpixel: incorrect caret position
 webkit.org/b/126283 editing/selection/mixed-editability-10.html [ Failure ]
@@ -2397,6 +2390,7 @@ fast/ruby/rubyDOM-insert-rt-block-1.html [ Pass Timeout ]
 fast/scrolling/scrollable-area-overflow-auto-visibility-override.html [ Pass Failure ]
 fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-right.html [ Pass Timeout ]
 fast/shapes/shape-outside-floats/shape-outside-image-fit-002.html [ Pass ImageOnlyFailure ]
+fast/shapes/shape-outside-floats/shape-outside-floats-layout-after-initial-layout-pass.html [ ImageOnlyFailure ]
 fast/shapes/parsing/parsing-shape-outside.html [ Pass Failure ]
 fast/table/033.html [ Pass Failure ]
 fast/table/border-collapsing/cached-change-tbody-border-width.html [ Pass Failure ]
@@ -2658,12 +2652,6 @@ webkit.org/b/137157 inspector/page/main-frame-resource.html [ Timeout ]
 webkit.org/b/137157 inspector/protocol-promise-result.html [ Timeout ]
 
 # A handful of flattening tests failing on Windows that we are skipping to get the bots green
-fast/frames/flattening/frameset-flattening-advanced.html [ Failure ]
-fast/frames/flattening/frameset-flattening-grid.html [ Failure ]
-fast/frames/flattening/frameset-flattening-subframesets.html [ Failure ]
-fast/frames/flattening/iframe-flattening-fixed-height.html [ Failure ]
-fast/frames/flattening/iframe-flattening-offscreen.html [ Failure ]
-fast/frames/flattening/iframe-flattening-out-of-view.html [ Failure ]
 fast/frames/flattening/frameset-flattening-simple.html [ Failure ]
 
 # A handful of forms tests failing on Windows that we are skipping to get the bots green
@@ -2719,7 +2707,6 @@ js/dom/non-object-proto.html [ Skip ]
 storage/domstorage/sessionstorage/delete-removal.html [ Skip ]
 tables/mozilla/bugs/bug133756-1.html [ Skip ]
 fast/forms/week/week-input-type.html [ Crash Failure ]
-fast/css/parsing-invalid-block-recovery.html [ Crash ]
 fast/borders/bidi-002.html [ Failure ]
 fast/borders/bidi-009a.html [ Failure ]
 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Timeout ]
@@ -2733,15 +2720,13 @@ fast/regions/writing-mode/changing-writing-mode.html [ Crash Pass ]
 mathml/presentation/style-changed.html [ Crash Pass ]
 fast/dom/HTMLTableElement/colSpan.html	[ ImageOnlyFailure ]
 svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr.html [ Skip ]
-svg/custom/object-sizing-explicit-width.xhtml [ ImageOnlyFailure Timeout ]
-svg/dom/SVGPathSegList-xml-dom-synchronization.xhtml [ ImageOnlyFailure Timeout ]
+svg/dom/SVGPathSegList-xml-dom-synchronization.xhtml [ Pass Timeout ]
 userscripts/user-script-plugin-document.html [ Crash Failure ]
 tables/mozilla/other/test6.html [ Skip ]
-fast/repaint/animation-after-layer-scroll.html [ Failure ]
 fast/text/emphasis-combined-text.html [ ImageOnlyFailure ]
 [ Release ] http/tests/media/video-cancel-load.html [ Crash Failure Timeout ]
 fast/repaint/obscured-background-no-repaint.html [ Failure ]
-js/slow-stress/emscripten-memops.html [ Timeout ]
+js/slow-stress/emscripten-memops.html [ Pass Timeout ]
 
 # Skip tests that fail only in Debug mode 
 [ Debug ] compositing [ Skip ]
@@ -2760,7 +2745,6 @@ media/context-menu-actions.html [ Timeout ]
 media/controls-after-reload.html [ Failure ]
 media/controls-strict.html [ Failure ]
 media/controls-without-preload.html [ Failure ]
-media/encrypted-media/encrypted-media-session-lifetime.html [ Failure ]
 media/media-blocked-by-beforeload.html [ Timeout ]
 media/media-can-play-flac-audio.html [ Failure ]
 media/media-can-play-ogg.html [ Failure ]
@@ -2824,13 +2808,11 @@ tables/mozilla/bugs/bug51037.html [ Failure ]
 tables/mozilla/bugs/bug55545.html [ Failure ]
 tables/mozilla/bugs/bug92647-2.html [ Failure ]
 tables/mozilla/bugs/bug99948.html [ Failure ]
-tables/mozilla/marvin/backgr_simple-table-column.html [ ImageOnlyFailure Timeout ]
 tables/mozilla/other/move_row.html [ Failure ]
 tables/mozilla_expected_failures/bugs/bug1725.html [ Failure ]
 tables/mozilla_expected_failures/bugs/bug2479-5.html [ Failure ]
 tables/mozilla_expected_failures/bugs/bug45621.html [ Failure ]
 tables/mozilla_expected_failures/bugs/bug58402-2.html [ Failure ]
-transitions/3d/interrupted-transition.html [ Failure ]
 fast/selectors/064.html [ Failure ]
 fast/replaced/width100percent-textfield.html [ Failure ]
 fast/replaced/width100percent-textarea.html [ Failure ]
@@ -2848,7 +2830,6 @@ fast/overflow/scroll-nested-positioned-layer-in-overflow.html [ Failure ]
 fast/overflow/scrollRevealButton.html [ Failure ]
 fast/repaint/control-clip.html [ Failure ]
 svg/custom/inline-svg-in-xhtml.xml [ Failure ]
-fast/table/mozilla-bug10296-vertical-align-2.html [ Timeout ImageOnlyFailure ]
 
 # <select> elements are not rendering properly
 webkit.org/b/137962 editing/pasteboard/4641033.html [ Failure ]
@@ -2877,7 +2858,6 @@ webkit.org/b/137962 fast/forms/select-baseline.html [ Failure ]
 webkit.org/b/137962 fast/forms/select-change-listbox-to-popup.html [ Failure ]
 webkit.org/b/137962 fast/forms/select-dirty-parent-pref-widths.html [ Failure ]
 webkit.org/b/137962 fast/forms/select-selected.html [ Failure ]
-webkit.org/b/137962 fast/forms/select-style.html [ Failure ]
 webkit.org/b/137962 fast/forms/select/optgroup-rendering.html [ Failure ]
 webkit.org/b/137962 fast/invalid/014.html [ Failure ]
 webkit.org/b/137962 fast/parser/document-write-option.html [ Failure ]
@@ -2907,9 +2887,8 @@ webkit.org/b/137963 fast/forms/input-text-double-click.html [ Failure ]
 webkit.org/b/137963 fast/forms/tabbing-input-iframe.html [ Failure ]
 
 # Handful of harder to classify miscellaneous failures on the Windows bots after removing SafariTheme
-fast/dom/HTMLProgressElement/progress-element.html [ Failure ]
 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
-fast/scrolling/scroll-select-list.html [ Failure ]
+fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 fast/regions/overflow/overflow-in-variable-width-regions-inline.html
 fast/parser/bad-xml-slash.html [ Failure ]
 svg/custom/foreign-object-skew.svg [ Failure ]
@@ -2924,7 +2903,7 @@ webkit.org/b/138041 fast/multicol/client-rects-spanners-complex.html [ Failure ]
 webkit.org/b/138041 fast/multicol/client-rects-spanners.html [ Failure ]
 webkit.org/b/138041 fast/multicol/client-rects.html [ Failure ]
 webkit.org/b/138041 fast/multicol/newmulticol/client-rects.html [ Failure ] 
-webkit.org/b/138041 editing/selection/block-cursor-overtype-mode-end-of-line.html [ Failure ]
+webkit.org/b/138041 editing/selection/block-cursor-overtype-mode-end-of-line.html [ Pass Timeout ]
 
 # Background renders too dark sometimes.
 webkit.org/b/138042 fast/repaint/search-field-cancel.html [ Failure ]
@@ -2932,12 +2911,6 @@ webkit.org/b/138042 fast/repaint/subtree-root-skipped.html [ Failure ]
 webkit.org/b/138042 fast/repaint/button-spurious-layout-hint.html [ Failure ]
 webkit.org/b/138042 fast/repaint/renderer-destruction-by-invalidateSelection-crash.html [ Failure ]
 webkit.org/b/138042 fast/repaint/backgroundSizeRepaint.html
-
-# A bunch of JS dates fail after r175078
-webkit.org/b/138020 js/date-parse-comments-test.html [ Failure ]
-webkit.org/b/138020 js/date-parse-test.html [ Failure ]
-webkit.org/b/138020 js/date-set-to-nan.html [ Failure ]
-webkit.org/b/138020 js/dom/date-big-setmonth.html [ Failure ]
 
 webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Failure ]
 webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.cone.top.html [ Failure ]
@@ -2948,7 +2921,7 @@ webkit.org/b/138862 imported/w3c/canvas/2d.line.cap.closed.html [ Failure ]
 webkit.org/b/138862 imported/w3c/canvas/2d.path.arcTo.collinear.2.html [ Failure ]
 webkit.org/b/138862 imported/w3c/canvas/2d.path.arcTo.collinear.3.html [ Failure ]
 webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.blur.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.off.1.html [ Failure Timeout ]
+webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.off.1.html [ Pass Timeout ]
 webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.x.html [ Failure ]
 webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.y.html [ Failure ]
 
@@ -2971,8 +2944,6 @@ fast/history/saves-state-after-fragment-nav.html [ Timeout ]
 fast/loader/child-frame-add-after-back-forward.html [ Timeout ]
 fast/loader/form-state-restore-with-frames.html [ Timeout ]
 fast/loader/stateobjects/pushstate-clears-forward-history.html [ Timeout ]
-fast/media/mq-color-index-01.html [ Timeout ]
-fast/media/mq-simple-neg-query-02.html [ Timeout ]
 http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Timeout ]
 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Timeout ]
 http/tests/security/mixedContent/insecure-iframe-in-main-frame.html [ Timeout ]
@@ -2995,15 +2966,6 @@ userscripts/window-onerror-for-isolated-world-1.html [ Timeout ]
 userscripts/window-onerror-for-isolated-world-2.html [ Timeout ]
 
 # new crashes, need bug reports
-editing/deleting/regional-indicators.html [ Crash ]
-editing/selection/extend-selection-home-end.html [ Crash ]
-editing/selection/home-end.html [ Crash ]
-editing/selection/move-by-word-visually-single-space-one-element.html [ Crash ]
-editing/selection/regional-indicators.html [ Crash ]
-editing/text-iterator/rtl-first-letter-text-iterator-crash.html [ Crash ]
-fast/dom/Document/createElement-invalid-names.html [ Crash ]
-fast/dom/Document/createElement-valid-names.html [ Crash ]
-fast/lists/w3-css3-list-styles-numeric.html [ Crash ]
 fast/parser/entities-in-xhtml.xhtml [ Crash ]
 inspector-protocol/debugger/setBreakpoint-dfg.html [ Crash ]
 mathml/opentype/munderover-layout-resize.html [ Crash ]
@@ -3201,3 +3163,71 @@ fast/regions/webkit-flow-renderer-nested.html [ ImageOnlyFailure ]
 fast/regions/webkit-flow-renderer.html [ ImageOnlyFailure ]
 fast/regions/writing-mode/invalid-first-region-with-writing-mode-2.html [ ImageOnlyFailure ]
 fast/regions/writing-mode/invalid-first-region-with-writing-mode.html [ ImageOnlyFailure ]
+
+webkit.org/b/140249 fast/css/fontloader-svg-select.svg [ Failure ]
+fast/inline/out-of-flow-positioned-render-replaced-box-moves.html [ ImageOnlyFailure ]
+webkit.org/b/140250 fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html [ Failure ]
+webkit.org/b/140250 fast/loader/stateobjects/document-destroyed-navigate-back.html [ Failure ]
+webkit.org/b/140250 fast/loader/stateobjects/replacestate-in-iframe.html [ Failure ]
+
+# SVG Blur is not working on Windows
+webkit.org/b/140254 imported/mozilla/svg/blend-color-burn.svg [ ImageOnlyFailure ]
+webkit.org/b/140254 imported/mozilla/svg/blend-color-dodge.svg [ ImageOnlyFailure ]
+webkit.org/b/140254 imported/mozilla/svg/blend-darken.svg [ ImageOnlyFailure ]
+webkit.org/b/140254 imported/mozilla/svg/blend-difference.svg [ ImageOnlyFailure ]
+webkit.org/b/140254 imported/mozilla/svg/blend-exclusion.svg [ ImageOnlyFailure ]
+webkit.org/b/140254 imported/mozilla/svg/blend-lighten.svg [ ImageOnlyFailure ]
+webkit.org/b/140254 imported/mozilla/svg/blend-multiply.svg [ ImageOnlyFailure ]
+webkit.org/b/140254 imported/mozilla/svg/blend-overlay.svg [ ImageOnlyFailure ]
+webkit.org/b/140254 imported/mozilla/svg/blend-screen.svg [ ImageOnlyFailure ]
+
+# Several SVG tests fail due to improper screen size in DRT
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/color-prop-05-t.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/coords-dom-01-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/coords-dom-02-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/coords-dom-03-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/coords-dom-04-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/coords-units-03-b.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/filters-felem-01-b.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/filters-image-03-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/filters-image-05-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/painting-marker-05-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/painting-marker-06-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/painting-marker-07-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/paths-dom-02-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/pservers-grad-20-b.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/pservers-pattern-04-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/struct-use-11-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/struct-use-14-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/styling-css-04-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/text-tref-03-b.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/types-dom-02-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/types-dom-03-b.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/types-dom-04-b.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/types-dom-05-b.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/types-dom-06-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1-SE/types-dom-07-f.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1/animate-elem-64-t.svg [ Failure ]
+webkit.org/b/140256 svg/W3C-SVG-1.1/animate-elem-65-t.svg [ Failure ]
+
+# Missing glyph symbol is not rendered properly
+webkit.org/b/140257 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
+
+# Userscripts stuff is not working
+webkit.org/b/140258 userscripts/document-element-available-at-start.html
+webkit.org/b/140258 userscripts/mixed-case-stylesheet.html
+webkit.org/b/140258 userscripts/script-not-run-for-fragments.html
+webkit.org/b/140258 userscripts/script-run-at-end.html
+webkit.org/b/140258 userscripts/script-run-at-start.html
+webkit.org/b/140258 userscripts/simple-stylesheet.html
+webkit.org/b/140258 userscripts/user-script-all-frames.html
+webkit.org/b/140258 userscripts/user-script-image-document.html
+webkit.org/b/140258 userscripts/user-style-all-frames.html
+webkit.org/b/140258 userscripts/user-stylesheet-invalidate.html

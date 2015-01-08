@@ -1,3 +1,26 @@
+2015-01-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed Win gardening to get bots green.
+
+        Provide new baselines for a number of tests, and add new expectations for a number of bugs I've filed
+        documenting failures on the Windows platform.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/win/fast/forms/textfield-overflow-by-value-update-expected.txt:
+        * platform/win/fast/regions: Added.
+        * platform/win/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt: Added.
+        * platform/win/fast/regions/region-dynamic-after-before-expected.txt: Added.
+        * platform/win/fast/regions/region-generated-content-before-after-expected.txt: Added.
+        * platform/win/fast/regions/repaint: Added.
+        * platform/win/fast/regions/repaint/region-painting-invalidation-expected.txt: Added.
+        * platform/win/fast/regions/text-region-split-small-pagination-expected.txt: Added.
+        * platform/win/fast/text/international/danda-space-expected.txt:
+        * platform/win/fast/text/international/thai-baht-space-expected.txt:
+        * platform/win/media/audio-constructor-preload-expected.txt: Added.
+        * platform/win/media/encrypted-media: Added.
+        * platform/win/media/encrypted-media/encrypted-media-can-play-type-expected.txt: Added.
+
 2015-01-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening after r178115.
