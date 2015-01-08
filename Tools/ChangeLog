@@ -1,5 +1,12 @@
 2015-01-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        Reorder my list of email addresses, keeping the Bugzilla address at the
+        top since Bugzilla and other webkitpy scripts rely on that ordering.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2015-01-08  Zan Dobersek  <zdobersek@igalia.com>
+
         Moving myself to the reviewers section and updating
         the list of my email addresses.
 
