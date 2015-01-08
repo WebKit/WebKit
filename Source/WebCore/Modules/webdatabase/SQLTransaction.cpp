@@ -182,8 +182,7 @@ SQLTransactionState SQLTransaction::deliverStatementCallback()
     // Otherwise, continue to loop through the statement queue
     m_executeSqlAllowed = true;
 
-    AbstractSQLStatement* currentAbstractStatement = m_backend->currentStatement();
-    SQLStatement* currentStatement = static_cast<SQLStatement*>(currentAbstractStatement);
+    SQLStatement* currentStatement = m_backend->currentStatement();
     ASSERT(currentStatement);
 
     bool result = currentStatement->performCallback(this);

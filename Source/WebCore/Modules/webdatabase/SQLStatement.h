@@ -30,7 +30,6 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractSQLStatement.h"
 #include "SQLCallbackWrapper.h"
 #include "SQLResultSet.h"
 #include "SQLValue.h"
@@ -47,16 +46,16 @@ class SQLStatementCallback;
 class SQLStatementErrorCallback;
 class SQLTransaction;
 
-class SQLStatement : public AbstractSQLStatement {
+class SQLStatement {
 public:
     SQLStatement(Database&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>);
 
     bool performCallback(SQLTransaction*);
 
-    virtual void setBackend(SQLStatementBackend*);
+    void setBackend(SQLStatementBackend*);
 
-    virtual bool hasCallback();
-    virtual bool hasErrorCallback();
+    bool hasCallback();
+    bool hasErrorCallback();
 
 private:
     // The SQLStatementBackend owns the SQLStatement. Hence, the backend is

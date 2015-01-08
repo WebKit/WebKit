@@ -19076,7 +19076,6 @@
     <ClInclude Include="..\Modules\notifications\WorkerGlobalScopeNotifications.h" />
     <ClInclude Include="..\Modules\plugins\PluginReplacement.h" />
     <ClInclude Include="..\Modules\webdatabase\AbstractDatabaseServer.h" />
-    <ClInclude Include="..\Modules\webdatabase\AbstractSQLStatement.h" />
     <ClInclude Include="..\Modules\webdatabase\ChangeVersionData.h" />
     <ClInclude Include="..\Modules\webdatabase\ChangeVersionWrapper.h" />
     <ClInclude Include="..\Modules\webdatabase\Database.h" />

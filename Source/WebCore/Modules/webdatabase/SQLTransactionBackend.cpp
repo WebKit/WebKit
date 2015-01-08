@@ -43,6 +43,9 @@
 #include "OriginLock.h"
 #include "SQLError.h"
 #include "SQLStatementBackend.h"
+#include "SQLStatementCallback.h"
+#include "SQLStatementErrorCallback.h"
+#include "SQLTransaction.h"
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
 #include "SQLValue.h"
@@ -426,7 +429,7 @@ void SQLTransactionBackend::doCleanup()
     m_wrapper = 0;
 }
 
-AbstractSQLStatement* SQLTransactionBackend::currentStatement()
+SQLStatement* SQLTransactionBackend::currentStatement()
 {
     return m_currentStatementBackend->frontend();
 }
@@ -526,8 +529,7 @@ bool SQLTransactionBackend::shouldPerformWhilePaused() const
 }
 #endif
 
-void SQLTransactionBackend::executeSQL(std::unique_ptr<AbstractSQLStatement> statement,
-    const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions)
+void SQLTransactionBackend::executeSQL(std::unique_ptr<SQLStatement> statement, const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions)
 {
     RefPtr<SQLStatementBackend> statementBackend;
     statementBackend = SQLStatementBackend::create(WTF::move(statement), sqlStatement, arguments, permissions);

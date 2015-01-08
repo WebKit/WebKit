@@ -28,7 +28,6 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractSQLStatement.h"
 #include "SQLError.h"
 #include "SQLTransactionState.h"
 #include "SQLValue.h"
@@ -39,6 +38,8 @@
 
 namespace WebCore {
 
+class SQLStatement;
+
 class AbstractSQLTransactionBackend : public ThreadSafeRefCounted<AbstractSQLTransactionBackend> {
 public:
     virtual ~AbstractSQLTransactionBackend() { }
@@ -46,10 +47,10 @@ public:
     virtual void requestTransitToState(SQLTransactionState) = 0;
 
     virtual PassRefPtr<SQLError> transactionError() = 0;
-    virtual AbstractSQLStatement* currentStatement() = 0;
+    virtual SQLStatement* currentStatement() = 0;
     virtual void setShouldRetryCurrentStatement(bool) = 0;
 
-    virtual void executeSQL(std::unique_ptr<AbstractSQLStatement>, const String& statement,
+    virtual void executeSQL(std::unique_ptr<SQLStatement>, const String& statement,
         const Vector<SQLValue>& arguments, int permissions) = 0;
 
 };

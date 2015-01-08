@@ -30,7 +30,6 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractSQLStatement.h"
 #include "AbstractSQLTransactionBackend.h"
 #include "DatabaseBasicTypes.h"
 #include "SQLTransactionStateMachine.h"
@@ -84,9 +83,9 @@ private:
     // APIs called from the frontend published via AbstractSQLTransactionBackend:
     virtual void requestTransitToState(SQLTransactionState) override;
     virtual PassRefPtr<SQLError> transactionError() override;
-    virtual AbstractSQLStatement* currentStatement() override;
+    virtual SQLStatement* currentStatement() override;
     virtual void setShouldRetryCurrentStatement(bool) override;
-    virtual void executeSQL(std::unique_ptr<AbstractSQLStatement>, const String& statement,
+    virtual void executeSQL(std::unique_ptr<SQLStatement>, const String& statement,
         const Vector<SQLValue>& arguments, int permissions) override;
 
     void doCleanup();

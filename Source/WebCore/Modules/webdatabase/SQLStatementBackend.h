@@ -37,15 +37,15 @@
 
 namespace WebCore {
 
-class AbstractSQLStatement;
 class DatabaseBackend;
 class SQLError;
 class SQLResultSet;
+class SQLStatement;
 class SQLTransactionBackend;
 
 class SQLStatementBackend : public ThreadSafeRefCounted<SQLStatementBackend> {
 public:
-    static PassRefPtr<SQLStatementBackend> create(std::unique_ptr<AbstractSQLStatement>,
+    static PassRefPtr<SQLStatementBackend> create(std::unique_ptr<SQLStatement>,
         const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions);
     virtual ~SQLStatementBackend();
 
@@ -58,18 +58,18 @@ public:
     void setDatabaseDeletedError();
     void setVersionMismatchedError();
 
-    AbstractSQLStatement* frontend();
+    SQLStatement* frontend();
     PassRefPtr<SQLError> sqlError() const;
     PassRefPtr<SQLResultSet> sqlResultSet() const;
 
 private:
-    SQLStatementBackend(std::unique_ptr<AbstractSQLStatement>, const String& statement,
+    SQLStatementBackend(std::unique_ptr<SQLStatement>, const String& statement,
         const Vector<SQLValue>& arguments, int permissions);
 
     void setFailureDueToQuota();
     void clearFailureDueToQuota();
 
-    std::unique_ptr<AbstractSQLStatement> m_frontend;
+    std::unique_ptr<SQLStatement> m_frontend;
     String m_statement;
     Vector<SQLValue> m_arguments;
     bool m_hasCallback;

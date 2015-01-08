@@ -6666,7 +6666,6 @@
 		FE36FD1816C7826500F887C1 /* SQLTransactionState.h in Headers */ = {isa = PBXBuildFile; fileRef = FE36FD1416C7826400F887C1 /* SQLTransactionState.h */; };
 		FE456F181677D74E005EDDF9 /* DatabaseManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE456F161677D74E005EDDF9 /* DatabaseManager.cpp */; };
 		FE456F191677D74E005EDDF9 /* DatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FE456F171677D74E005EDDF9 /* DatabaseManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE4AADEE16D2C37400026FFC /* AbstractSQLStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4AADEC16D2C37400026FFC /* AbstractSQLStatement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6938B61045D67E008EABB6 /* EventHandlerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */; };
 		FE699871192087E7006936BD /* FloatingPointEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE69986F192087E7006936BD /* FloatingPointEnvironment.cpp */; };
 		FE699872192087E7006936BD /* FloatingPointEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = FE699870192087E7006936BD /* FloatingPointEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14268,7 +14267,6 @@
 		FE36FD1416C7826400F887C1 /* SQLTransactionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLTransactionState.h; sourceTree = "<group>"; };
 		FE456F161677D74E005EDDF9 /* DatabaseManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseManager.cpp; sourceTree = "<group>"; };
 		FE456F171677D74E005EDDF9 /* DatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseManager.h; sourceTree = "<group>"; };
-		FE4AADEC16D2C37400026FFC /* AbstractSQLStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSQLStatement.h; sourceTree = "<group>"; };
 		FE6938B51045D67E008EABB6 /* EventHandlerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventHandlerIOS.mm; sourceTree = "<group>"; };
 		FE69986F192087E7006936BD /* FloatingPointEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FloatingPointEnvironment.cpp; path = ios/wak/FloatingPointEnvironment.cpp; sourceTree = "<group>"; };
 		FE699870192087E7006936BD /* FloatingPointEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FloatingPointEnvironment.h; path = ios/wak/FloatingPointEnvironment.h; sourceTree = "<group>"; };
@@ -18293,7 +18291,6 @@
 			isa = PBXGroup;
 			children = (
 				FE115FA9167988CD00249134 /* AbstractDatabaseServer.h */,
-				FE4AADEC16D2C37400026FFC /* AbstractSQLStatement.h */,
 				1A40CDD01A5DF74700E9D4DB /* AbstractSQLTransaction.h */,
 				1A40CDD11A5DF76200E9D4DB /* AbstractSQLTransactionBackend.h */,
 				FE36FD1116C7826400F887C1 /* ChangeVersionData.h */,
@@ -23393,7 +23390,6 @@
 			files = (
 				A172182619DE183F00464D17 /* _UIHighlightViewSPI.h in Headers */,
 				FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */,
-				FE4AADEE16D2C37400026FFC /* AbstractSQLStatement.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
 				29A812330FBB9C1D00510293 /* AccessibilityARIAGridRow.h in Headers */,
