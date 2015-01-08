@@ -1,5 +1,14 @@
 2015-01-07  Chris Dumez  <cdumez@apple.com>
 
+        Move 'font' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140181
+
+        Reviewed by Darin Adler.
+
+        Move 'font' CSS property to the new StyleBuilder.
+
+2015-01-07  Chris Dumez  <cdumez@apple.com>
+
         Move '-webkit-dashboard-region' CSS property to the new StyleBuilder
         https://bugs.webkit.org/show_bug.cgi?id=140204
 

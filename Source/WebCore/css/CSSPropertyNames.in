@@ -95,7 +95,7 @@
 color [Inherited, VisitedLinkColorSupport, NoDefaultColor]
 direction [Inherited, Custom=Value]
 display [Custom=Inherit|Value]
-font [Inherited, LegacyStyleBuilder]
+font [Inherited, Custom=All]
 font-family [Inherited, Custom=All]
 font-size [Inherited, Custom=All]
 font-style [Inherited, FontProperty, TypeName=FontItalic, NameForMethods=Italic]

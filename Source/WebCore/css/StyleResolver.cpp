@@ -1975,60 +1975,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     // RenderStyle values.
     switch (id) {
     // Shorthand properties.
-    case CSSPropertyFont:
-        if (isInherit) {
-            FontDescription fontDescription = state.parentStyle()->fontDescription();
-            state.style()->setLineHeight(state.parentStyle()->specifiedLineHeight());
-            state.setLineHeightValue(0);
-            setFontDescription(fontDescription);
-        } else if (isInitial) {
-            Settings* settings = documentSettings();
-            ASSERT(settings); // If we're doing style resolution, this document should always be in a frame and thus have settings
-            if (!settings)
-                return;
-            initializeFontStyle(settings);
-        } else if (primitiveValue) {
-            state.style()->setLineHeight(RenderStyle::initialLineHeight());
-            state.setLineHeightValue(0);
-
-            FontDescription fontDescription;
-            RenderTheme::defaultTheme()->systemFont(primitiveValue->getValueID(), fontDescription);
-
-            // Double-check and see if the theme did anything. If not, don't bother updating the font.
-            if (fontDescription.isAbsoluteSize()) {
-                // Make sure the rendering mode and printer font settings are updated.
-                Settings* settings = documentSettings();
-                ASSERT(settings); // If we're doing style resolution, this document should always be in a frame and thus have settings
-                if (!settings)
-                    return;
-                fontDescription.setRenderingMode(settings->fontRenderingMode());
-                fontDescription.setUsePrinterFont(document().printing() || !settings->screenFontSubstitutionEnabled());
-
-                // Handle the zoom factor.
-                fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(fontDescription.specifiedSize(), fontDescription.isAbsoluteSize(), useSVGZoomRules(), state.style(), document()));
-                setFontDescription(fontDescription);
-            }
-        } else if (is<CSSFontValue>(*value)) {
-            CSSFontValue& font = downcast<CSSFontValue>(*value);
-            if (!font.style || !font.variant || !font.weight
-                || !font.size || !font.lineHeight || !font.family)
-                return;
-            applyProperty(CSSPropertyFontStyle, font.style.get());
-            applyProperty(CSSPropertyFontVariant, font.variant.get());
-            applyProperty(CSSPropertyFontWeight, font.weight.get());
-            // The previous properties can dirty our font but they don't try to read the font's
-            // properties back, which is safe. However if font-size is using the 'ex' unit, it will
-            // need query the dirtied font's x-height to get the computed size. To be safe in this
-            // case, let's just update the font now.
-            updateFont();
-            applyProperty(CSSPropertyFontSize, font.size.get());
-
-            state.setLineHeightValue(font.lineHeight.get());
-
-            applyProperty(CSSPropertyFontFamily, font.family.get());
-        }
-        return;
-
     case CSSPropertyAnimation:
     case CSSPropertyBackground:
     case CSSPropertyBackgroundPosition:
@@ -2227,6 +2173,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyDisplay:
     case CSSPropertyEmptyCells:
     case CSSPropertyFloat:
+    case CSSPropertyFont:
     case CSSPropertyFontSize:
     case CSSPropertyFontStyle:
     case CSSPropertyFontVariant:
