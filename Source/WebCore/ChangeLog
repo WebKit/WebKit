@@ -1,3 +1,17 @@
+2015-01-07  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: Editing Inline Styles Not Working
+        https://bugs.webkit.org/show_bug.cgi?id=140239
+
+        Reviewed by Joseph Pecoraro.
+
+        Fix a regression introduced in r178060, where we no longer set
+        m_ordinal in InspectorCSSId. The original refactoring should have
+        passed m_ordinal. Fix this and introduce a sensible default value.
+
+        * inspector/InspectorStyleSheet.h:
+        (WebCore::InspectorCSSId::InspectorCSSId):
+
 2015-01-07  Chris Dumez  <cdumez@apple.com>
 
         Assert should never be reached hit in WebCore::CSSCalcPrimitiveValue::doubleValue

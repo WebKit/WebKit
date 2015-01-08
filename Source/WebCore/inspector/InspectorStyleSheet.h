@@ -58,19 +58,15 @@ typedef String ErrorString;
 
 class InspectorCSSId {
 public:
-    InspectorCSSId()
-        : m_ordinal(0)
-    {
-    }
+    InspectorCSSId() { }
 
     explicit InspectorCSSId(const RefPtr<Inspector::InspectorObject>&& value)
     {
-        if (!value->getString("styleSheetId", m_styleSheetId))
+        if (!value->getString(ASCIILiteral("styleSheetId"), m_styleSheetId))
             return;
 
-        int ordinalValue;
-        if (!value->getInteger("ordinal", ordinalValue))
-            m_styleSheetId = "";
+        if (!value->getInteger(ASCIILiteral("ordinal"), m_ordinal))
+            m_styleSheetId = String();
     }
 
     InspectorCSSId(const String& styleSheetId, unsigned ordinal)
@@ -99,7 +95,7 @@ public:
 
 private:
     String m_styleSheetId;
-    unsigned m_ordinal;
+    unsigned m_ordinal = {0};
 };
 
 struct InspectorStyleProperty {
