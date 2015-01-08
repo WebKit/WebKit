@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,16 +20,40 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
 
-#import "UIKitSPI.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-@interface DumpRenderTreeBrowserView : UIWebBrowserView {
-    BOOL _scrollingUsesUIWebScrollView;
-}
+#import <AssertionServices/BKSProcessAssertion.h>
 
-@property (nonatomic, assign) BOOL scrollingUsesUIWebScrollView;
+#else
 
+enum {
+    BKSProcessAssertionNone = 0,
+    BKSProcessAssertionPreventTaskSuspend  = 1 << 0,
+    BKSProcessAssertionPreventTaskThrottleDown = 1 << 1,
+    BKSProcessAssertionAllowIdleSleep = 1 << 2,
+    BKSProcessAssertionWantsForegroundResourcePriority = 1 << 3,
+    BKSProcessAssertionAllowSuspendOnSleep = 1 << 4,
+};
+typedef uint32_t BKSProcessAssertionFlags;
+
+enum {
+    BKSProcessAssertionReasonExtension = 13,
+};
+typedef uint32_t BKSProcessAssertionReason;
+
+typedef void(^BKSProcessAssertionAcquisitionHandler)(BOOL acquired);
+
+@interface BKSProcessAssertion : NSObject
 @end
+
+@interface BKSProcessAssertion (Details)
+- (id)initWithPID:(pid_t)pid flags:(BKSProcessAssertionFlags)flags reason:(BKSProcessAssertionReason)reason name:(NSString *)name withHandler:(BKSProcessAssertionAcquisitionHandler)handler;
+@property (nonatomic, assign) BKSProcessAssertionFlags flags;
+@end
+
+#endif

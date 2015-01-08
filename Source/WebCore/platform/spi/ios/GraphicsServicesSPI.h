@@ -23,13 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#ifndef GraphicsServicesSPI_h
+#define GraphicsServicesSPI_h
 
-#import "UIKitSPI.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-@interface WKSyntheticClickTapGestureRecognizer : UITapGestureRecognizer
-- (void)setGestureRecognizedTarget:(id)target action:(SEL)action;
-- (void)setResetTarget:(id)target action:(SEL)action;
-@end
+#import <GraphicsServices/GraphicsServices.h>
 
 #endif
+
+WTF_EXTERN_C_BEGIN
+
+void GSInitialize(void);
+uint64_t GSCurrentEventTimestamp(void);
+
+WTF_EXTERN_C_END
+
+#endif // GraphicsServicesSPI_h

@@ -29,20 +29,16 @@
 #if PLATFORM(IOS)
 
 #import "APIUIClient.h"
+#import "TCCSPI.h"
+#import "UIKitSPI.h"
 #import "WKActionSheet.h"
 #import "WKContentViewInteraction.h"
 #import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKElementActionInternal.h"
-#import <DataDetectorsUI/DDAction.h>
-#import <DataDetectorsUI/DDDetectionController.h>
 #import <SafariServices/SSReadingList.h>
-#import <TCC/TCC.h>
-#import <UIKit/UIAlertController_Private.h>
 #import <UIKit/UIView.h>
-#import <UIKit/UIViewController_Private.h>
-#import <UIKit/UIWindow_Private.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreNSURLExtras.h>
@@ -54,14 +50,6 @@ SOFT_LINK_CLASS(SafariServices, SSReadingList)
 SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
 SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
 SOFT_LINK_CONSTANT(TCC, kTCCServicePhotos, CFStringRef)
-
-SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
-SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)
-
-// FIXME: This will be removed as soon as <rdar://problem/16346913> is fixed.
-@interface DDDetectionController (WKDDActionPrivate)
-- (NSArray *)actionsForAnchor:(id)anchor url:(NSURL *)targetURL forFrame:(id)frame;
-@end
 
 using namespace WebKit;
 

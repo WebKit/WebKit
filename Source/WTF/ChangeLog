@@ -1,3 +1,19 @@
+2015-01-07  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WebKit2 build with public iOS SDK and more build fixes for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=137371
+
+        Reviewed by David Kilzer.
+
+        Move EXTERN_C_BEGIN and EXTERN_C_END macros from file WebKit2/config.h to here and
+        rename them to WTF_EXTERN_C_BEGIN and WTF_EXTERN_C_END, respectively, so that we
+        can make use of these macros in SPI wrapper headers (e.g. UIKitSPI.h).
+
+        I'll look to transition existing code to WTF_EXTERN_C_BEGIN/WTF_EXTERN_C_END and
+        remove EXTERN_C in a subsequent commit(s).
+
+        * wtf/Compiler.h:
+
 2015-01-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r178068.

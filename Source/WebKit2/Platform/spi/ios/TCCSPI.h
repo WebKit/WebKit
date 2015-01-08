@@ -23,13 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if USE(APPLE_INTERNAL_SDK)
 
-#import "UIKitSPI.h"
+#import <TCC/TCC.h>
 
-@interface WKSyntheticClickTapGestureRecognizer : UITapGestureRecognizer
-- (void)setGestureRecognizedTarget:(id)target action:(SEL)action;
-- (void)setResetTarget:(id)target action:(SEL)action;
-@end
+#else
+
+typedef enum {
+    kTCCAccessPreflightDenied = 1,
+} TCCAccessPreflightResult;
 
 #endif

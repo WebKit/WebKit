@@ -31,6 +31,7 @@
 #import "APIArray.h"
 #import "APIData.h"
 #import "APIString.h"
+#import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
 #import "WKData.h"
 #import "WKStringCF.h"
@@ -41,11 +42,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import <CoreMedia/CoreMedia.h>
 #import <MobileCoreServices/MobileCoreServices.h>
-#import <UIKit/UIApplication_Private.h>
-#import <UIKit/UIImagePickerController_Private.h>
-#import <UIKit/UIImage_Private.h>
-#import <UIKit/UIViewController_Private.h>
-#import <UIKit/UIWindow_Private.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SoftLinking.h>
 #import <WebKit/WebNSFileManagerExtras.h>

@@ -31,8 +31,8 @@
 #import "StringUtilities.h"
 #import "WKBase.h"
 #import "WebProcess.h"
+#import <WebCore/ServersSPI.h>
 #import <mach/mach_error.h>
-#import <servers/bootstrap.h>
 #import <spawn.h>
 #import <stdio.h>
 #import <wtf/RetainPtr.h>
@@ -41,17 +41,15 @@
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
-#import <GraphicsServices/GraphicsServices.h>
+#import <WebCore/GraphicsServicesSPI.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
-#endif // PLATFORM(IOS)
+#endif
 
 #if USE(APPKIT)
 @interface NSApplication (WebNSApplicationDetails)
 -(void)_installAutoreleasePoolsOnCurrentThreadIfNecessary;
 @end
 #endif
-
-extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
 
 using namespace WebCore;
 
@@ -97,10 +95,14 @@ public:
         mach_port_insert_right(mach_task_self(), publishedService, publishedService, MACH_MSG_TYPE_MAKE_SEND);
         // Make it possible to look up.
         String serviceName = String::format("com.apple.WebKit.WebProcess-%d", getpid());
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         if (kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.utf8().data()), publishedService, 0)) {
             WTFLogAlways("Failed to register service name \"%s\". %s (%x)\n", serviceName.utf8().data(), mach_error_string(kr), kr);
             return false;
         }
+#pragma clang diagnostic pop
 
         CString command = clientExecutable.utf8();
         const char* args[] = { command.data(), 0 };

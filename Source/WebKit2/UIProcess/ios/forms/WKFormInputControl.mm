@@ -28,16 +28,13 @@
 
 #if PLATFORM(IOS)
 
+#import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIBarButtonItem.h>
-#import <UIKit/UIBarButtonItem_Private.h>
 #import <UIKit/UIDatePicker.h>
-#import <UIKit/UIDatePicker_Private.h>
-#import <UIKit/UIDevice_Private.h>
-#import <UIKit/UIKeyboard_Private.h>
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/RetainPtr.h>
 

@@ -23,13 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#import <Foundation/Foundation.h>
 
-#import "UIKitSPI.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-@interface WKSyntheticClickTapGestureRecognizer : UITapGestureRecognizer
-- (void)setGestureRecognizedTarget:(id)target action:(SEL)action;
-- (void)setResetTarget:(id)target action:(SEL)action;
+// FIXME: We conditionally enclose the ManagedConfiguration headers in an extern "C" linkage
+// block to make them suitable for C++ use.
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#import <ManagedConfiguration/MCFeatures.h>
+#import <ManagedConfiguration/MCProfileConnection.h>
+
+#ifdef __cplusplus
+}
+#endif
+
+#else
+
+typedef enum MCRestrictedBoolType {
+    MCRestrictedBoolExplicitNo = 1 << 1,
+} MCRestrictedBoolType;
+
+@interface MCProfileConnection : NSObject
+@end
+
+@interface MCProfileConnection (Details)
++ (MCProfileConnection *)sharedConnection;
+- (MCRestrictedBoolType)effectiveBoolValueForSetting:(NSString *)feature;
 @end
 
 #endif
+
+WTF_EXTERN_C_BEGIN
+
+extern NSString * const MCFeatureDefinitionLookupAllowed;
+
+WTF_EXTERN_C_END
+
+SOFT_LINK_PRIVATE_FRAMEWORK(ManagedConfiguration);
+SOFT_LINK_CLASS(ManagedConfiguration, MCProfileConnection);
+SOFT_LINK_CONSTANT(ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSString *)
+
+#define MCFeatureDefinitionLookupAllowed getMCFeatureDefinitionLookupAllowed()

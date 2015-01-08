@@ -23,25 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPLE_INTERNAL_SDK)
+#ifndef ServersSPI_h
+#define ServersSPI_h
 
-#import <UIKit/_UIHighlightView.h>
+#include <mach/message.h>
+
+#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+
+#include <servers/bootstrap.h>
 
 #else
 
-#import <UIKit/UIView.h>
-
-@class UIColor;
-
-@interface _UIHighlightView : UIView
-@end
-
-@interface _UIHighlightView (Private)
-- (void)setColor:(UIColor *)color;
-- (void)setCornerRadius:(CGFloat)cornerRadius;
-- (void)setCornerRadii:(NSArray *)cornerRadii;
-- (void)setFrames:(NSArray *)frames boundaryRect:(CGRect)boundaryRect;
-- (void)setQuads:(NSArray *)quads boundaryRect:(CGRect)boundaryRect;
-@end
+typedef char name_t[128];
 
 #endif
+
+#if USE(APPLE_INTERNAL_SDK)
+
+#include <bootstrap_priv.h>
+
+#endif
+
+WTF_EXTERN_C_BEGIN
+
+kern_return_t bootstrap_look_up(mach_port_t, const name_t serviceName, mach_port_t *);
+kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t flags);
+
+WTF_EXTERN_C_END
+
+#endif // ServersSPI_h

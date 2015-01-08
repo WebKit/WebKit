@@ -23,13 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#import <UIKit/UIKit.h>
+#import <WebCore/SoftLinking.h>
 
-#import "UIKitSPI.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-@interface WKSyntheticClickTapGestureRecognizer : UITapGestureRecognizer
-- (void)setGestureRecognizedTarget:(id)target action:(SEL)action;
-- (void)setResetTarget:(id)target action:(SEL)action;
+#import <DataDetectorsUI/DDAction.h>
+#import <DataDetectorsUI/DDDetectionController.h>
+
+#else
+
+@interface DDAction : NSObject
+@end
+
+@interface DDAction (Details)
+- (BOOL)hasUserInterface;
+- (NSString *)localizedName;
+@property (readonly) NSString *actionUTI;
+@end
+
+@protocol DDDetectionControllerInteractionDelegate <NSObject>
+@end
+
+@interface DDDetectionController : NSObject <UIActionSheetDelegate>
+@end
+
+@interface DDDetectionController (Details)
++ (DDDetectionController *)sharedController;
++ (NSArray *)tapAndHoldSchemes;
+- (void)performAction:(DDAction *)action fromAlertController:(UIAlertController *)alertController interactionDelegate:(id <DDDetectionControllerInteractionDelegate>)interactionDelegate;
 @end
 
 #endif
+
+@interface DDDetectionController (DetailsToBeRemoved)
+// FIXME: This will be removed as soon as <rdar://problem/16346913> is fixed.
+- (NSArray *)actionsForAnchor:(id)anchor url:(NSURL *)targetURL forFrame:(id)frame;
+@end
+
+SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsUI)
+SOFT_LINK_CLASS(DataDetectorsUI, DDDetectionController)

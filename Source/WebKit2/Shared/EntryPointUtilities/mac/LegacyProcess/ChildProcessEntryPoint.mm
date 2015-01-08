@@ -26,8 +26,8 @@
 #import "config.h"
 #import "ChildProcessEntryPoint.h"
 
+#import <WebCore/ServersSPI.h>
 #import <mach/mach_error.h>
-#import <servers/bootstrap.h>
 #import <stdio.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>

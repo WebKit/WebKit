@@ -28,7 +28,7 @@
 
 #if PLATFORM(IOS)
 
-#import <AssertionServices/BKSProcessAssertion.h>
+#import "BKSProcessAssertionSPI.h"
 #import <UIKit/UIApplication.h>
 
 #if !PLATFORM(IOS_SIMULATOR)

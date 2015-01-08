@@ -28,10 +28,7 @@
 
 #if PLATFORM(IOS)
 
-#import <UIKit/UIGeometry_Private.h>
-#import <UIKit/UIKit.h>
-#import <UIKit/UIView_Private.h>
-#import <UIKit/_UIBackdropView_Private.h>
+#import "UIKitSPI.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>

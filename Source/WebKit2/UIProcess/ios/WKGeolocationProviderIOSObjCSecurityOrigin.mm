@@ -28,8 +28,8 @@
 
 #if PLATFORM(IOS)
 
+#import "UIKitSPI.h"
 #import <Foundation/NSURL.h>
-#import <UIKit/UIWebGeolocationPolicyDecider.h>
 #import <UIKit/UIWindow.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/RetainPtr.h>

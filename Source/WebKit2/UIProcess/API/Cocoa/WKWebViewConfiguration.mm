@@ -38,7 +38,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
-#import <UIKit/UIDevice_Private.h>
+#import "UIKitSPI.h"
 #endif
 
 template<typename T> class LazyInitialized {
