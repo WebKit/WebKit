@@ -676,17 +676,14 @@ static inline bool checkObjectCoercible(JSValue thisValue)
 }
 
 template <typename CharacterType>
-static inline JSValue repeatSmallString(ExecState* exec, const String& string, unsigned repeatCount)
+static inline JSValue repeatCharacter(ExecState* exec, CharacterType character, unsigned repeatCount)
 {
-    ASSERT(string.length() == 1);
-    unsigned totalLength = repeatCount;
     CharacterType* buffer = nullptr;
-    CharacterType character = string.characters<CharacterType>()[0];
-    RefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
+    RefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(repeatCount, buffer);
     if (!impl)
         return throwOutOfMemoryError(exec);
 
-    std::fill_n(buffer, totalLength, character);
+    std::fill_n(buffer, repeatCount, character);
 
     return jsString(exec, impl.release());
 }
@@ -724,9 +721,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncRepeat(ExecState* exec)
     // allocating a sequential buffer and fill with the repeated string for efficiency.
     if (string->length() == 1) {
         String repeatedString = string->value(exec);
-        if (repeatedString.is8Bit())
-            return JSValue::encode(repeatSmallString<LChar>(exec, repeatedString, repeatCount));
-        return JSValue::encode(repeatSmallString<UChar>(exec, repeatedString, repeatCount));
+        UChar character = repeatedString.at(0);
+        if (!(character & ~0xff))
+            return JSValue::encode(repeatCharacter(exec, static_cast<LChar>(character), repeatCount));
+        return JSValue::encode(repeatCharacter(exec, character, repeatCount));
     }
 
     JSRopeString::RopeBuilder ropeBuilder(vm);

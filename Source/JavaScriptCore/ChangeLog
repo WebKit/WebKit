@@ -1,3 +1,18 @@
+2015-01-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Investigate the character type of repeated string instead of checking is8Bit flag
+        https://bugs.webkit.org/show_bug.cgi?id=140139
+
+        Reviewed by Darin Adler.
+
+        Instead of checking is8Bit flag of the repeated string, investigate
+        the actual value of the repeated character since i8Bit flag give a false negative case.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::repeatCharacter):
+        (JSC::stringProtoFuncRepeat):
+        (JSC::repeatSmallString): Deleted.
+
 2015-01-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ObjC Generate types from the GenericTypes domain
