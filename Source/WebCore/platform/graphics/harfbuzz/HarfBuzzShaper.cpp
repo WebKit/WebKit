@@ -410,6 +410,8 @@ bool HarfBuzzShaper::collectHarfBuzzRuns()
     do {
         const UChar* currentCharacterPosition = iterator.characters();
         const SimpleFontData* currentFontData = nextFontData;
+        if (!currentFontData)
+            currentFontData = &m_font->primaryFontData();
         UScriptCode currentScript = nextScript;
 
         for (iterator.advance(clusterLength); iterator.consume(character, clusterLength); iterator.advance(clusterLength)) {

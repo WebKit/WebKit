@@ -1,3 +1,13 @@
+2015-01-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r177637) [HarfBuzz][GTK][EFL] It made 3 performance tests crash and +24 layout tests crashes/failures
+        https://bugs.webkit.org/show_bug.cgi?id=139905
+
+        Reviewed by Antti Koivisto.
+
+        * platform/gtk/TestExpectations: Remove crashing/failing tests
+        that should pass now.
+
 2015-01-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Borders inside box-decoration-break: clone after a br do not contribute to line breaking
