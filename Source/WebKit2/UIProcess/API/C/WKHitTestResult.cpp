@@ -71,3 +71,8 @@ bool WKHitTestResultIsContentEditable(WKHitTestResultRef hitTestResultRef)
 {
     return toImpl(hitTestResultRef)->isContentEditable();
 }
+
+WKRect WKHitTestResultGetElementBoundingBox(WKHitTestResultRef hitTestResultRef)
+{
+    return toAPI(toImpl(hitTestResultRef)->elementBoundingBox());
+}
