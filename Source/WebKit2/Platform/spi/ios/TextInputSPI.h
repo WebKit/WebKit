@@ -23,13 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#import <Foundation/Foundation.h>
 
-#import "UIKitSPI.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-@interface WKSyntheticClickTapGestureRecognizer : UITapGestureRecognizer
-- (void)setGestureRecognizedTarget:(id)target action:(SEL)action;
-- (void)setResetTarget:(id)target action:(SEL)action;
+#import <TextInput/TI_NSStringExtras.h>
+
+#else
+
+@interface NSString (TextInputDetails)
+- (BOOL)_containsCJScripts;
+- (BOOL)_containsCJScriptsOnly;
 @end
 
 #endif

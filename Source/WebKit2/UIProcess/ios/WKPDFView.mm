@@ -29,18 +29,14 @@
 #if PLATFORM(IOS)
 
 #import "APIUIClient.h"
+#import "CorePDFSPI.h"
 #import "SessionState.h"
+#import "UIKitSPI.h"
 #import "WKPDFPageNumberIndicator.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
-#import <CorePDF/UIPDFDocument.h>
-#import <CorePDF/UIPDFLinkAnnotation.h>
-#import <CorePDF/UIPDFPage.h>
-#import <CorePDF/UIPDFPageView.h>
 #import <MobileCoreServices/UTCoreTypes.h>
-#import <UIKit/UIScrollView_Private.h>
 #import <WebCore/FloatRect.h>
-#import <WebCore/_UIHighlightViewSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 

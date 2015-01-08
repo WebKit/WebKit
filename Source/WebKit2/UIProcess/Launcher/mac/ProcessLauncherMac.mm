@@ -28,12 +28,12 @@
 
 #import "DynamicLinkerEnvironmentExtractor.h"
 #import "EnvironmentVariables.h"
+#import <WebCore/ServersSPI.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <crt_externs.h>
 #import <mach-o/dyld.h>
 #import <mach/machine.h>
-#import <servers/bootstrap.h>
 #import <spawn.h>
 #import <sys/param.h>
 #import <sys/stat.h>

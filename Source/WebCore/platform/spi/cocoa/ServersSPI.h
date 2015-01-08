@@ -23,13 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#ifndef ServersSPI_h
+#define ServersSPI_h
 
-#import "UIKitSPI.h"
+#include <mach/message.h>
 
-@interface WKSyntheticClickTapGestureRecognizer : UITapGestureRecognizer
-- (void)setGestureRecognizedTarget:(id)target action:(SEL)action;
-- (void)setResetTarget:(id)target action:(SEL)action;
-@end
+#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+
+#include <servers/bootstrap.h>
+
+#else
+
+typedef char name_t[128];
 
 #endif
+
+#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
+
+#include <bootstrap_priv.h>
+
+#endif
+
+WTF_EXTERN_C_BEGIN
+
+kern_return_t bootstrap_look_up(mach_port_t, const name_t serviceName, mach_port_t *);
+kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
+
+WTF_EXTERN_C_END
+
+#endif // ServersSPI_h

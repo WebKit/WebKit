@@ -36,18 +36,6 @@
 #include <wtf/ExportMacros.h>
 
 #ifdef __cplusplus
-#ifndef EXTERN_C_BEGIN
-#define EXTERN_C_BEGIN extern "C" {
-#endif
-#ifndef EXTERN_C_END
-#define EXTERN_C_END }
-#endif
-#else
-#define EXTERN_C_BEGIN
-#define EXTERN_C_END
-#endif
-
-#ifdef __cplusplus
 
 // These undefs match up with defines in WebKit2Prefix.h for Mac OS X.
 // Helps us catch if anyone uses new or delete by accident in code and doesn't include "config.h".

@@ -32,9 +32,9 @@
 #import <wtf/RunLoop.h>
 
 #if PLATFORM(IOS)
-#import <GraphicsServices/GraphicsServices.h>
+#import <WebCore/GraphicsServicesSPI.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
-#endif // PLATFORM(IOS)
+#endif
 
 using namespace WebCore;
 using namespace WebKit;

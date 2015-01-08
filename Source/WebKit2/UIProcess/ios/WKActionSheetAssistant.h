@@ -25,9 +25,9 @@
 
 #if PLATFORM(IOS)
 
+#import "DataDetectorsUISPI.h"
 #import "GestureTypes.h"
 #import "WKActionSheet.h"
-#import <DataDetectorsUI/DDDetectionController.h>
 #import <UIKit/UIPopoverController.h>
 #import <wtf/RetainPtr.h>
 

@@ -86,15 +86,13 @@
 #import "ProcessThrottler.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
+#import "UIKitSPI.h"
 #import "WKPDFView.h"
 #import "WKScrollView.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebPageMessages.h"
 #import "WebVideoFullscreenManagerProxy.h"
 #import <UIKit/UIApplication.h>
-#import <UIKit/UIDevice_Private.h>
-#import <UIKit/UIPeripheralHost_Private.h>
-#import <UIKit/UIWindow_Private.h>
 #import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/InspectorOverlay.h>
 #import <WebCore/QuartzCoreSPI.h>

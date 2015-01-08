@@ -26,10 +26,10 @@
 #if PLATFORM(IOS)
 
 #import "AssistedNodeInformation.h"
+#import "UIKitSPI.h"
 #import "WKFormPeripheral.h"
 #import "WKFormPopover.h"
 #import <UIKit/UIPickerView.h>
-#import <UIKit/UIPickerView_Private.h>
 
 CGFloat adjustedFontSize(CGFloat textWidth, UIFont *, CGFloat initialFontSize, const Vector<WebKit::OptionItem>& items);
 

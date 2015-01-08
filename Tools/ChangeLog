@@ -1,3 +1,21 @@
+2015-01-07  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make WebKit2 build with public iOS SDK and more build fixes for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=137371
+
+        Reviewed by David Kilzer.
+
+        Use SPI wrapper headers instead of directly referencing private SPI headers.
+
+        * DumpRenderTree/ios/DumpRenderTreeBrowserView.h:
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: Append directory Source/WebKit2/Platform/spi/ios
+        to the list of header search directories so that we can include header UIKitSPI.h.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.h:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+
 2015-01-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test change to improve run reproducibility

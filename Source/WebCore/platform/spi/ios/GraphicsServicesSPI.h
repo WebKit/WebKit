@@ -23,25 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef GraphicsServicesSPI_h
+#define GraphicsServicesSPI_h
+
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <UIKit/_UIHighlightView.h>
-
-#else
-
-#import <UIKit/UIView.h>
-
-@class UIColor;
-
-@interface _UIHighlightView : UIView
-@end
-
-@interface _UIHighlightView (Private)
-- (void)setColor:(UIColor *)color;
-- (void)setCornerRadius:(CGFloat)cornerRadius;
-- (void)setCornerRadii:(NSArray *)cornerRadii;
-- (void)setFrames:(NSArray *)frames boundaryRect:(CGRect)boundaryRect;
-- (void)setQuads:(NSArray *)quads boundaryRect:(CGRect)boundaryRect;
-@end
+#import <GraphicsServices/GraphicsServices.h>
 
 #endif
+
+WTF_EXTERN_C_BEGIN
+
+void GSInitialize(void);
+uint64_t GSCurrentEventTimestamp(void);
+
+WTF_EXTERN_C_END
+
+#endif // GraphicsServicesSPI_h

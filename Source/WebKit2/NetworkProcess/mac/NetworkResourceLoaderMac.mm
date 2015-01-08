@@ -104,7 +104,7 @@ void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCac
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (m_bytesReceived >= fileBackedResourceMinimumSize())
         NetworkDiskCacheMonitor::monitorFileBackingStoreCreation([nsResponse _CFCachedURLResponse], this);
 #endif

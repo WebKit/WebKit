@@ -31,14 +31,12 @@
 
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeWindow.h"
+#import "UIKitSPI.h"
 
 #define COMMON_DIGEST_FOR_OPENSSL
 #import <CommonCrypto/CommonDigest.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <QuartzCore/QuartzCore.h>
-#import <UIKit/UIKit.h>
-#import <UIKit/UIView_Private.h>
-#import <UIKit/UIWebBrowserView.h>
 #import <WebKit/WebCoreThread.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
