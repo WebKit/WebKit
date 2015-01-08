@@ -309,7 +309,7 @@ RefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescript
     return fontData.release();
 }
 
-PassRef<SimpleFontData> FontCache::fontDataFromDescriptionAndLogFont(const FontDescription& fontDescription, const LOGFONT& font, AtomicString& outFontFamilyName)
+RefPtr<SimpleFontData> FontCache::fontDataFromDescriptionAndLogFont(const FontDescription& fontDescription, const LOGFONT& font, AtomicString& outFontFamilyName)
 {
     AtomicString familyName = String(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
     RefPtr<SimpleFontData> fontData = fontForFamily(fontDescription, familyName);
@@ -318,7 +318,7 @@ PassRef<SimpleFontData> FontCache::fontDataFromDescriptionAndLogFont(const FontD
     return fontData;
 }
 
-Ref<SimpleFontData> FontCache:lastResortFallbackFont(const FontDescription& fontDescription)
+Ref<SimpleFontData> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, fallbackFontName, ());
     if (!fallbackFontName.isEmpty())

@@ -145,7 +145,7 @@ public:
     WEBCORE_EXPORT void purgeInactiveFontData(int count = INT_MAX);
 
 #if PLATFORM(WIN)
-    PassRef<SimpleFontData> fontDataFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, AtomicString& outFontFamilyName);
+    RefPtr<SimpleFontData> fontDataFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, AtomicString& outFontFamilyName);
 #endif
 
 #if ENABLE(OPENTYPE_VERTICAL)

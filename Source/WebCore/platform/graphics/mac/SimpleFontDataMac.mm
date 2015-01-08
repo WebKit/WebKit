@@ -262,6 +262,10 @@ void SimpleFontData::platformCharWidthInit()
 }
 #endif // USE(APPKIT)
 
+void SimpleFontData::platformDestroy()
+{
+}
+
 #if !PLATFORM(IOS)
 PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {

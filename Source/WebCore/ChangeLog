@@ -1,3 +1,16 @@
+2015-01-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Build fix after r178133.
+
+        * platform/graphics/FontCache.h: Correct declaration of fontDataFromDescriptionAndLogFont
+        * platform/graphics/SimpleFontData.h: We still need 'platformDestroy'
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformDestroy): Add stub back to prevent build break.
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::fontDataFromDescriptionAndLogFont): Correct signature.
+        (WebCore::FontCache::lastResortFallbackFont): Correct '::' syntax.
+        (WebCore::FontCache:lastResortFallbackFont): Deleted.
+
 2015-01-08  Antti Koivisto  <antti@apple.com>
 
         Remove the concept of "retained" font
