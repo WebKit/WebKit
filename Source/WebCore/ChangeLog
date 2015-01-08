@@ -1,3 +1,9 @@
+2015-01-07  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * Modules/webdatabase/SQLStatementBackend.cpp:
+
 2015-01-07  Daniel Bates  <dabates@apple.com>
 
         [iOS] Make WebKit2 build with public iOS SDK and more build fixes for DRT

@@ -35,6 +35,8 @@
 #include "SQLError.h"
 #include "SQLResultSet.h"
 #include "SQLStatement.h"
+#include "SQLStatementCallback.h"
+#include "SQLStatementErrorCallback.h"
 #include "SQLValue.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
