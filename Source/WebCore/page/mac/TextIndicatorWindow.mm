@@ -49,15 +49,15 @@ const CGFloat dropShadowOffsetX = 0;
 const CGFloat dropShadowOffsetY = 1;
 const CGFloat dropShadowBlurRadius = 1.5;
 #else
-const CGFloat midBounceScale = 1.2;
+const CGFloat midBounceScale = 1.25;
 const CGFloat horizontalBorder = 2;
 const CGFloat verticalBorder = 1;
 const CGFloat borderWidth = 0;
 const CGFloat cornerRadius = 0;
 const CGFloat dropShadowOffsetX = 0;
-const CGFloat dropShadowOffsetY = 5;
-const CGFloat dropShadowBlurRadius = 12;
-const CGFloat rimShadowBlurRadius = 2;
+const CGFloat dropShadowOffsetY = 1;
+const CGFloat dropShadowBlurRadius = 2;
+const CGFloat rimShadowBlurRadius = 1;
 #endif
 
 NSString *textLayerKey = @"TextLayer";
@@ -108,7 +108,7 @@ using namespace WebCore;
     RetainPtr<NSMutableArray> bounceLayers = adoptNS([[NSMutableArray alloc] init]);
 
     RetainPtr<CGColorRef> highlightColor = [NSColor colorWithDeviceRed:1 green:1 blue:0 alpha:1].CGColor;
-    RetainPtr<CGColorRef> rimShadowColor = [NSColor colorWithDeviceWhite:0 alpha:0.15].CGColor;
+    RetainPtr<CGColorRef> rimShadowColor = [NSColor colorWithDeviceWhite:0 alpha:0.35].CGColor;
     RetainPtr<CGColorRef> dropShadowColor = [NSColor colorWithDeviceWhite:0 alpha:0.2].CGColor;
 
     RetainPtr<CGColorRef> borderColor = [NSColor colorWithDeviceRed:.96 green:.90 blue:0 alpha:1].CGColor;
