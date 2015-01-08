@@ -101,6 +101,15 @@ public:
     static bool convertMarqueeIncrement(StyleResolver&, CSSValue&, Length&);
     static bool convertFilterOperations(StyleResolver&, CSSValue&, FilterOperations&);
     static bool convertMaskImageOperations(StyleResolver&, CSSValue&, Vector<RefPtr<MaskImageOperation>>&);
+#if PLATFORM(IOS)
+    static bool convertTouchCallout(StyleResolver&, CSSValue&);
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    static Color convertTapHighlightColor(StyleResolver&, CSSValue&);
+#endif
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+    static bool convertOverflowScrolling(StyleResolver&, CSSValue&);
+#endif
 
 private:
     friend class StyleBuilderCustom;
@@ -1045,6 +1054,27 @@ inline bool StyleBuilderConverter::convertMaskImageOperations(StyleResolver& sty
 
     return true;
 }
+
+#if PLATFORM(IOS)
+inline bool StyleBuilderConverter::convertTouchCallout(StyleResolver&, CSSValue& value)
+{
+    return !equalIgnoringCase(downcast<CSSPrimitiveValue>(value).getStringValue(), "none");
+}
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+inline Color StyleBuilderConverter::convertTapHighlightColor(StyleResolver& styleResolver, CSSValue& value)
+{
+    return styleResolver.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value));
+}
+#endif
+
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+inline bool StyleBuilderConverter::convertOverflowScrolling(StyleResolver&, CSSValue& value)
+{
+    return downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueTouch;
+}
+#endif
 
 } // namespace WebCore
 

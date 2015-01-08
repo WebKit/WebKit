@@ -108,7 +108,7 @@ PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleR
 {
     bool derived = false;
     for (auto& stop : m_stops) {
-        if (!stop.isMidpoint && styleResolver->colorFromPrimitiveValueIsDerivedFromElement(stop.m_color.get())) {
+        if (!stop.isMidpoint && styleResolver->colorFromPrimitiveValueIsDerivedFromElement(*stop.m_color)) {
             stop.m_colorIsDerivedFromElement = true;
             derived = true;
             break;
@@ -129,7 +129,7 @@ PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleR
 
     for (auto& stop : result->m_stops) {
         if (!stop.isMidpoint)
-            stop.m_resolvedColor = styleResolver->colorFromPrimitiveValue(stop.m_color.get());
+            stop.m_resolvedColor = styleResolver->colorFromPrimitiveValue(*stop.m_color);
     }
 
     return result.release();

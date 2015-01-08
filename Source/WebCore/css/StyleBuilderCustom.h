@@ -794,7 +794,7 @@ inline void StyleBuilderCustom::applyTextOrBoxShadowValue(StyleResolver& styleRe
         ShadowStyle shadowStyle = shadowValue.style && shadowValue.style->getValueID() == CSSValueInset ? Inset : Normal;
         Color color;
         if (shadowValue.color)
-            color = styleResolver.colorFromPrimitiveValue(shadowValue.color.get());
+            color = styleResolver.colorFromPrimitiveValue(*shadowValue.color);
         else
             color = styleResolver.style()->color();
         auto shadowData = std::make_unique<ShadowData>(IntPoint(x, y), blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);

@@ -2031,36 +2031,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
         return;
-#if PLATFORM(IOS)
-    case CSSPropertyWebkitTouchCallout: {
-        HANDLE_INHERIT_AND_INITIAL(touchCalloutEnabled, TouchCalloutEnabled);
-        if (!primitiveValue)
-            break;
-
-        state.style()->setTouchCalloutEnabled(primitiveValue->getStringValue().lower() != "none");
-        return;
-    }
-#endif
-#if ENABLE(TOUCH_EVENTS)
-    case CSSPropertyWebkitTapHighlightColor: {
-        HANDLE_INHERIT_AND_INITIAL(tapHighlightColor, TapHighlightColor);
-        if (!primitiveValue)
-            break;
-
-        Color col = colorFromPrimitiveValue(primitiveValue);
-        state.style()->setTapHighlightColor(col);
-        return;
-    }
-#endif
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
-    case CSSPropertyWebkitOverflowScrolling: {
-        HANDLE_INHERIT_AND_INITIAL(useTouchOverflowScrolling, UseTouchOverflowScrolling);
-        if (!primitiveValue)
-            break;
-        state.style()->setUseTouchOverflowScrolling(primitiveValue->getValueID() == CSSValueTouch);
-        return;
-    }
-#endif
     case CSSPropertyInvalid:
         return;
     case CSSPropertyFontStretch:
@@ -2294,6 +2264,15 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyColumnWidth:
 #if ENABLE(CURSOR_VISIBILITY)
     case CSSPropertyWebkitCursorVisibility:
+#endif
+#if PLATFORM(IOS)
+    case CSSPropertyWebkitTouchCallout:
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    case CSSPropertyWebkitTapHighlightColor:
+#endif
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+    case CSSPropertyWebkitOverflowScrolling:
 #endif
     case CSSPropertyAlignContent:
     case CSSPropertyAlignItems:
@@ -2617,9 +2596,9 @@ static Color colorForCSSValue(CSSValueID cssValueId)
     return RenderTheme::defaultTheme()->systemColor(cssValueId);
 }
 
-bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(CSSPrimitiveValue* value)
+bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(CSSPrimitiveValue& value)
 {
-    int ident = value->getValueID();
+    int ident = value.getValueID();
     switch (ident) {
     case CSSValueWebkitText:
     case CSSValueWebkitLink:
@@ -2631,13 +2610,13 @@ bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(CSSPrimitiveValu
     }
 }
 
-Color StyleResolver::colorFromPrimitiveValue(CSSPrimitiveValue* value, bool forVisitedLink) const
+Color StyleResolver::colorFromPrimitiveValue(CSSPrimitiveValue& value, bool forVisitedLink) const
 {
-    if (value->isRGBColor())
-        return Color(value->getRGBA32Value());
+    if (value.isRGBColor())
+        return Color(value.getRGBA32Value());
 
     const State& state = m_state;
-    CSSValueID ident = value->getValueID();
+    CSSValueID ident = value.getValueID();
     switch (ident) {
     case 0:
         return Color();
@@ -2856,7 +2835,7 @@ bool StyleResolver::createFilterOperations(CSSValue& inValue, FilterOperations& 
             int blur = item.blur ? item.blur->computeLength<int>(state.cssToLengthConversionData()) : 0;
             Color color;
             if (item.color)
-                color = colorFromPrimitiveValue(item.color.get());
+                color = colorFromPrimitiveValue(*item.color);
 
             operations.operations().append(DropShadowFilterOperation::create(location, blur, color.isValid() ? color : Color::transparent));
             break;

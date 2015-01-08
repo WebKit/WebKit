@@ -1,3 +1,29 @@
+2015-01-07  Chris Dumez  <cdumez@apple.com>
+
+        Move -webkit-tap-highlight-color / -webkit-overflow-scrolling / -webkit-touch-callout to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140219
+
+        Reviewed by Darin Adler.
+
+        Move -webkit-tap-highlight-color / -webkit-overflow-scrolling /
+        -webkit-touch-callout to the new StyleBuilder.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::gradientWithStylesResolved):
+        * css/CSSPropertyNames.in:
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertTouchCallout):
+        (WebCore::StyleBuilderConverter::convertTapHighlightColor):
+        (WebCore::StyleBuilderConverter::convertOverflowScrolling):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::colorFromPrimitiveValueIsDerivedFromElement):
+        (WebCore::StyleResolver::colorFromPrimitiveValue):
+        (WebCore::StyleResolver::createFilterOperations):
+        * css/StyleResolver.h:
+
 2015-01-07  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: Editing Inline Styles Not Working

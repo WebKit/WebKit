@@ -579,14 +579,14 @@ orientation [LegacyStyleBuilder]
 user-zoom [LegacyStyleBuilder]
 #endif
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
--webkit-tap-highlight-color [Inherited, LegacyStyleBuilder]
+-webkit-tap-highlight-color [Inherited, Converter=TapHighlightColor]
 #endif
 #if defined(ENABLE_DASHBOARD_SUPPORT) && ENABLE_DASHBOARD_SUPPORT
 -webkit-dashboard-region [NameForMethods=DashboardRegions, Custom=Value]
 #endif
 #if defined(ENABLE_ACCELERATED_OVERFLOW_SCROLLING) && ENABLE_ACCELERATED_OVERFLOW_SCROLLING
--webkit-overflow-scrolling [Inherited, LegacyStyleBuilder]
+-webkit-overflow-scrolling [Inherited, NameForMethods=UseTouchOverflowScrolling, Converter=OverflowScrolling]
 #endif
 #if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
--webkit-touch-callout [Inherited, LegacyStyleBuilder]
+-webkit-touch-callout [Inherited, NameForMethods=TouchCalloutEnabled, Converter=TouchCallout]
 #endif
