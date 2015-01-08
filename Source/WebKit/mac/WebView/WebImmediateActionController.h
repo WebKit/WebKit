@@ -33,11 +33,6 @@
 @class DDActionContext;
 @class WebView;
 
-namespace WebCore {
-class Range;
-class TextIndicator;
-}
-
 @interface WebImmediateActionController : NSObject <NSImmediateActionGestureRecognizerDelegate> {
 @private
     WebView *_webView;
@@ -46,8 +41,6 @@ class TextIndicator;
     NSImmediateActionGestureRecognizer *_immediateActionRecognizer;
 
     RetainPtr<DDActionContext> _currentActionContext;
-    RefPtr<WebCore::Range> _currentDetectedDataRange;
-    RefPtr<WebCore::TextIndicator> _currentDetectedDataTextIndicator;
     BOOL _isShowingTextIndicator;
     BOOL _hasActivatedActionContext;
 }

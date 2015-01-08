@@ -219,6 +219,9 @@ using namespace WebKit;
     if (!absoluteLinkURL.isEmpty() && WebCore::protocolIsInHTTPFamily(absoluteLinkURL)) {
         _type = kWKImmediateActionLinkPreview;
 
+        if (TextIndicator *textIndicator = _hitTestResult.linkTextIndicator.get())
+            _page->setTextIndicator(textIndicator->data(), false);
+
         RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem = [NSMenuItem standardQuickLookMenuItem];
         [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
         [qlPreviewLinkItem setDelegate:self];
@@ -277,6 +280,11 @@ using namespace WebKit;
 - (NSRectEdge)menuItem:(NSMenuItem *)menuItem preferredEdgeForPoint:(NSPoint)point
 {
     return NSMaxYEdge;
+}
+
+- (void)menuItemDidClose:(NSMenuItem *)menuItem
+{
+    [self _clearImmediateActionState];
 }
 
 #pragma mark Data Detectors actions
