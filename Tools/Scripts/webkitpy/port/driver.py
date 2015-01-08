@@ -388,7 +388,7 @@ class Driver(object):
                 self._port.sample_process(child_process_name, child_process_pid)
             self.error_from_test += error_line
             return True
-        return False
+        return self.has_crashed()
 
     def _command_from_driver_input(self, driver_input):
         # FIXME: performance tests pass in full URLs instead of test names.

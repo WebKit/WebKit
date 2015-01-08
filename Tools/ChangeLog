@@ -1,5 +1,20 @@
 2015-01-08  Alexey Proskuryakov  <ap@apple.com>
 
+        Follow-up to:  When WebProcess is slow to respond to IPC, that's mistakenly reported as crash
+        https://bugs.webkit.org/show_bug.cgi?id=140218
+
+        * Scripts/webkitpy/port/driver.py: (Driver._check_for_driver_crash_or_unresponsiveness):
+        Undone an accidental change - check for self.has_crashed() again. This code path
+        is for ports that don't have a signal handler printing #CRASHED when main process
+        crashes.
+
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_check_for_driver_crash.assert_crash):
+        (DriverTest.test_check_for_driver_crash):
+        Updated the tests, all changes are expected.
+
+2015-01-08  Alexey Proskuryakov  <ap@apple.com>
+
         When WebProcess is slow to respond to IPC, that's mistakenly reported as crash
         https://bugs.webkit.org/show_bug.cgi?id=140218
 
