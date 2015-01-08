@@ -1,3 +1,15 @@
+2015-01-07  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        ASSERTION FAILED: !lengthOrPercentageValue.isUndefined() in WebCore::ApplyPropertyTextIndent::applyValue
+        https://bugs.webkit.org/show_bug.cgi?id=130341
+
+        Reviewed by Chris Dumez.
+
+        Replace ASSERT() with 'if' statement because 'ex' unit length in <title> is not defined.
+
+        * fast/css3-text/css3-text-indent/text-indent-crash-in-title-expected.txt: Added.
+        * fast/css3-text/css3-text-indent/text-indent-crash-in-title.html: Added.
+
 2015-01-07  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] Add a vertical-rl test for shapes affecting a box that shrinks to avoid the float

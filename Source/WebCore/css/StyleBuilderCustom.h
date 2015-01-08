@@ -433,7 +433,9 @@ inline void StyleBuilderCustom::applyValueTextIndent(StyleResolver& styleResolve
 #endif
     }
 
-    ASSERT(!lengthOrPercentageValue.isUndefined());
+    if (lengthOrPercentageValue.isUndefined())
+        return;
+
     styleResolver.style()->setTextIndent(lengthOrPercentageValue);
 #if ENABLE(CSS3_TEXT)
     styleResolver.style()->setTextIndentLine(textIndentLineValue);
