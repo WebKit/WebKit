@@ -1,3 +1,14 @@
+2015-01-08  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [EFL] Clean typos in tests expectations after r177492.
+        https://bugs.webkit.org/show_bug.cgi?id=140242.
+
+        Reviewed by Csaba Osztrogonác.
+
+        There were few missing spaces, which made expectations not correctly recognized as tokens.
+
+        * platform/efl/TestExpectations:
+
 2015-01-07  Chris Dumez  <cdumez@apple.com>
 
         Assert should never be reached hit in WebCore::CSSCalcPrimitiveValue::doubleValue

@@ -458,7 +458,7 @@ webkit.org/b/92726 fast/dom/NavigatorContentUtils/register-protocol-handler.html
 webkit.org/b/92726 fast/dom/NavigatorContentUtils/unregister-protocol-handler.html [ Crash ]
 
 # Crashes on plugin test, also blocked by 108077
-webkit.org/b/98747 plugins/document-open.html [ Crash Failure Timeout]
+webkit.org/b/98747 plugins/document-open.html [ Crash Failure Timeout ]
 
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Timeout ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Timeout ]
@@ -473,7 +473,7 @@ webkit.org/b/105870 webaudio/audionode-channel-rules.html [ Pass Crash ]
 
 # Media regressions after updating to gstreamer 1.0.
 webkit.org/b/104809 media/video-src.html [ Crash Pass ]
-webkit.org/b/104809 media/video-src-blob.html [ Crash Failure Timeout]
+webkit.org/b/104809 media/video-src-blob.html [ Crash Failure Timeout ]
 webkit.org/b/104809 media/video-src-change.html [ Crash Pass Failure ]
 webkit.org/b/104809 media/remove-from-document.html [ Crash Pass Failure ]
 webkit.org/b/104809 media/video-timeupdate-during-playback.html [ Crash Pass Failure ]
@@ -1682,7 +1682,7 @@ webkit.org/b/103130 css3/device-adapt/opera/orientation-001.xhtml [ Failure ]
 webkit.org/b/99438 editing/selection/mixed-editability-10.html [ Missing Failure ]
 
 # NPN_ReloadPlugins is not implemented.
-webkit.org/b/98744 plugins/reloadplugins-and-pages.html [ Timeout]
+webkit.org/b/98744 plugins/reloadplugins-and-pages.html [ Timeout ]
 
 # Plugin test timeout.
 webkit.org/b/98743 plugins/evaluate-js-after-removing-plugin-element.html [ Failure ]
