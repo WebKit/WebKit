@@ -21,7 +21,7 @@
 #ifndef CoordinatedLayerTreeHostProxy_h
 #define CoordinatedLayerTreeHostProxy_h
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 
 #include "CoordinatedGraphicsArgumentCoders.h"
 #include "CoordinatedGraphicsScene.h"
@@ -69,6 +69,6 @@ protected:
 
 } // namespace WebKit
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 
 #endif // CoordinatedLayerTreeHostProxy_h

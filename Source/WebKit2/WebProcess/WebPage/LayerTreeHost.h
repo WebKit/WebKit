@@ -43,6 +43,9 @@ class IntRect;
 class IntSize;
 class GraphicsLayer;
 class GraphicsLayerFactory;
+#if USE(COORDINATED_GRAPHICS_THREADED)
+class ViewportAttributes;
+#endif
 }
 
 namespace WebKit {
@@ -76,8 +79,14 @@ public:
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return 0; }
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     virtual void didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection&, IPC::MessageDecoder&) = 0;
+#endif
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    virtual void setNativeSurfaceHandleForCompositing(uint64_t) = 0;
+    virtual void viewportSizeChanged(const WebCore::IntSize&) = 0;
+    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) = 0;
 #endif
 
 #if USE(COORDINATED_GRAPHICS) && ENABLE(REQUEST_ANIMATION_FRAME)

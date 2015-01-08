@@ -35,7 +35,7 @@ enum DrawingAreaType {
 #endif
     DrawingAreaTypeRemoteLayerTree,
 #else
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     DrawingAreaTypeCoordinated
 #else
     DrawingAreaTypeImpl,

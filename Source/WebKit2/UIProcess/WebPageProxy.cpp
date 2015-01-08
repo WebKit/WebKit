@@ -109,7 +109,7 @@
 #include "RemoteScrollingCoordinatorProxy.h"
 #endif
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 #include "CoordinatedLayerTreeHostProxyMessages.h"
 #endif
 
@@ -1372,7 +1372,7 @@ void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction&)
 }
 #endif
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 void WebPageProxy::commitPageTransitionViewport()
 {
     if (!isValid())
@@ -3280,7 +3280,7 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t f
     shouldClose = m_uiClient->runBeforeUnloadConfirmPanel(this, message, frame);
 }
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 void WebPageProxy::pageDidRequestScroll(const IntPoint& point)
 {
     m_pageClient.pageDidRequestScroll(point);
@@ -3396,7 +3396,7 @@ void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
     m_pageClient.handleDownloadRequest(download);
 }
 
-#if PLATFORM(EFL)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 void WebPageProxy::didChangeContentSize(const IntSize& size)
 {
     m_pageClient.didChangeContentSize(size);

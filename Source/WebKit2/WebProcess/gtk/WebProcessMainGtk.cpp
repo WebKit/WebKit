@@ -34,6 +34,10 @@
 #include <libintl.h>
 #include <libsoup/soup.h>
 
+#if PLATFORM(X11)
+#include <X11/Xlib.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -47,6 +51,9 @@ public:
             sleep(30);
 #endif
 
+#if USE(COORDINATED_GRAPHICS_THREADED) && PLATFORM(X11)
+        XInitThreads();
+#endif
         gtk_init(nullptr, nullptr);
 
         bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);

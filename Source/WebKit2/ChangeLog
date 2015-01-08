@@ -1,3 +1,75 @@
+2015-01-07  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK][ThreadedCompositor] Add support for threaded compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=118265
+
+        Reviewed by Martin Robinson.
+
+        This patch introduces a threaded compositor for WebKitGTK+.
+        It is disabled as a default because it is a initial implementation.
+        The threaded compositor can be enabled using --threaded-compositor
+        option at compile time.
+
+        No new tests, this is an experimental feature.
+
+        * PlatformGTK.cmake:
+        Adds CoodinatedGraphics and threaded compositor related classes to
+        support threaded compositor
+
+        * Shared/DrawingAreaInfo.h:
+        Use DrawingAreaImpl for threaded compositor
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (_WebKitSettingsPrivate::_WebKitSettingsPrivate):
+        Modified to use forceCompositingMode when the threaded compositor used.
+        If we does not set this mode here, it cannot draw the root content layer.
+
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp: Added.
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.h: Added.
+        (WebKit::ThreadedCoordinatedLayerTreeHost::rootLayer):
+        Implements ThreadedCoordinatedLayerTreeHost to use the threaded
+        compositor. It is basically similar with CoordinatedLayerTreeHost but it uses ThreadedCompositor instead of IPC.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        (WebKit::DrawingArea::DrawingArea):
+        * WebProcess/WebPage/DrawingArea.h:
+        COORDINATED_GRAPHICS_MULTIPROCESS is introduced to classify IPC specific codes
+        from Coordinated Graphics.
+        And COORDINATED_GRAPHICS_THREADED is used to guard the threaded
+        compositor specific codes.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        Modified to use forceCompositingMode when the threaded compositor used.
+        If we does not set this mode here, it will crash because of PageOverlay.
+        (WebKit::DrawingAreaImpl::mainFrameContentSizeChanged):
+        (WebKit::DrawingAreaImpl::updateBackingStoreState):
+        Modified to handle contents / viewport size changes for threaded compositor.
+        (WebKit::DrawingAreaImpl::attachViewOverlayGraphicsLayer):
+        Added to support Overlay layer in the threaded compositor.
+        (WebKit::DrawingAreaImpl::setNativeSurfaceHandleForCompositing):
+        Push the surface handle for compositing to the threaded compositor.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h: Use COORDINATED_GRAPIHCS_THREADED to guard the threaded compositor related codes.
+        * WebProcess/WebPage/LayerTreeHost.cpp: Ditto.
+        * WebProcess/WebPage/LayerTreeHost.h: Ditto.
+        * WebProcess/WebPage/WebPage.cpp: Ditto.
+        * WebProcess/WebPage/WebPage.h: Ditto.
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+            Modified to call XInitThreads to use thread-safe xlib.
+
 2015-01-07  Daniel Bates  <dabates@apple.com>
 
         [iOS] Make WebKit2 build with public iOS SDK and more build fixes for DRT

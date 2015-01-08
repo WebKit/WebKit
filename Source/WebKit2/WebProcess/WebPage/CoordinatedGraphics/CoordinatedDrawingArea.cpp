@@ -600,11 +600,13 @@ void CoordinatedDrawingArea::display(UpdateInfo& updateInfo)
     m_displayTimer.stop();
 }
 
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 void CoordinatedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     if (m_layerTreeHost)
         m_layerTreeHost->didReceiveCoordinatedLayerTreeHostMessage(connection, decoder);
 }
+#endif
 
 void CoordinatedDrawingArea::attachViewOverlayGraphicsLayer(WebCore::Frame* frame, WebCore::GraphicsLayer* viewOverlayRootLayer)
 {

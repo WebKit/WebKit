@@ -35,8 +35,13 @@
 #include "WebPreferencesKeys.h"
 #include "WebProcess.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+#include "ThreadedCoordinatedLayerTreeHost.h"
+#endif
 
 using namespace WebCore;
 
@@ -63,6 +68,11 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage& webPage, const WebPageCreationParamete
     , m_displayTimer(RunLoop::main(), this, &DrawingAreaImpl::displayTimerFired)
     , m_exitCompositingTimer(RunLoop::main(), this, &DrawingAreaImpl::exitAcceleratedCompositingMode)
 {
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    webPage.corePage()->settings().setForceCompositingMode(true);
+#endif
+
     if (webPage.corePage()->settings().acceleratedDrawingEnabled() || webPage.corePage()->settings().forceCompositingMode())
         m_alwaysUseCompositing = true;
 
@@ -220,6 +230,16 @@ void DrawingAreaImpl::setPaintingEnabled(bool paintingEnabled)
     m_isPaintingEnabled = paintingEnabled;
 }
 
+void DrawingAreaImpl::mainFrameContentSizeChanged(const WebCore::IntSize& newSize)
+{
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    if (m_layerTreeHost)
+        m_layerTreeHost->sizeDidChange(newSize);
+#else
+    UNUSED_PARAM(newSize);
+#endif
+}
+
 void DrawingAreaImpl::updatePreferences(const WebPreferencesStore& store)
 {
     m_webPage.corePage()->settings().setForceCompositingMode(store.getBoolValueForKey(WebPreferencesKey::forceCompositingModeKey()));
@@ -322,7 +342,11 @@ void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImme
         m_webPage.scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
 
         if (m_layerTreeHost) {
+#if USE(COORDINATED_GRAPHICS_THREADED)
+            m_layerTreeHost->viewportSizeChanged(m_webPage.size());
+#else
             m_layerTreeHost->sizeDidChange(m_webPage.size());
+#endif
         } else
             m_dirtyRegion = m_webPage.bounds();
     } else {
@@ -643,10 +667,32 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     m_displayTimer.stop();
 }
 
+void DrawingAreaImpl::attachViewOverlayGraphicsLayer(WebCore::Frame* frame, WebCore::GraphicsLayer* viewOverlayRootLayer)
+{
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    if (!frame->isMainFrame())
+        return;
+
+    if (!m_layerTreeHost)
+        return;
+
+    ThreadedCoordinatedLayerTreeHost* coordinatedLayerTreeHost = static_cast<ThreadedCoordinatedLayerTreeHost*>(m_layerTreeHost.get());
+    coordinatedLayerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);
+#else
+    UNUSED_PARAM(frame);
+    UNUSED_PARAM(viewOverlayRootLayer);
+#endif
+}
+
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
 void DrawingAreaImpl::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     m_nativeSurfaceHandleForCompositing = handle;
+
+#if USE(COORDINATED_GRAPHICS_THREADED)
+    if (m_layerTreeHost)
+        m_layerTreeHost->setNativeSurfaceHandleForCompositing(handle);
+#endif
 }
 #endif
 

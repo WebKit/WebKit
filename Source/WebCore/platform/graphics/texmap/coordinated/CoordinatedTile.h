@@ -26,7 +26,7 @@
 #ifndef CoordinatedTile_h
 #define CoordinatedTile_h
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "CoordinatedSurface.h"
 #include "IntRect.h"
@@ -91,6 +91,6 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(TILED_BACKING_STORE)
+#endif // USE(COORDINATED_GRAPHICS)
 
 #endif // CoordinatedTile_h

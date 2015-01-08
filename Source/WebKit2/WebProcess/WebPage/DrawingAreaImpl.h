@@ -60,12 +60,15 @@ private:
     virtual bool forceRepaintAsync(uint64_t callbackID);
 
     virtual void setPaintingEnabled(bool);
+    virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
     virtual void updatePreferences(const WebPreferencesStore&) override;
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
     virtual void scheduleCompositingLayerFlush() override;
     virtual void scheduleCompositingLayerFlushImmediately() override;
+
+    virtual void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
     virtual void setNativeSurfaceHandleForCompositing(uint64_t) override;

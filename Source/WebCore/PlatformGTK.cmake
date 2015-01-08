@@ -374,6 +374,31 @@ if (ENABLE_TEXTURE_MAPPER)
     )
 endif ()
 
+if (ENABLE_THREADED_COMPOSITOR)
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/page/scrolling/coordinatedgraphics"
+        "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
+        "${WEBCORE_DIR}/platform/graphics/texmap/threadedcompositor"
+    )
+    list(APPEND WebCore_SOURCES
+        page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
+        page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
+        page/scrolling/coordinatedgraphics/ScrollingStateScrollingNodeCoordinatedGraphics.cpp
+        page/scrolling/ScrollingStateStickyNode.cpp
+        page/scrolling/ScrollingThread.cpp
+        page/scrolling/ScrollingTreeNode.cpp
+        page/scrolling/ScrollingTreeScrollingNode.cpp
+        platform/graphics/TiledBackingStore.cpp
+        platform/graphics/texmap/coordinated/AreaAllocator.cpp
+        platform/graphics/texmap/coordinated/CompositingCoordinator.cpp
+        platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
+        platform/graphics/texmap/coordinated/CoordinatedImageBacking.cpp
+        platform/graphics/texmap/coordinated/CoordinatedSurface.cpp
+        platform/graphics/texmap/coordinated/CoordinatedTile.cpp
+        platform/graphics/texmap/coordinated/UpdateAtlas.cpp
+    )
+endif ()
+
 if (WTF_USE_EGL)
     list(APPEND WebCore_LIBRARIES
         ${EGL_LIBRARY}

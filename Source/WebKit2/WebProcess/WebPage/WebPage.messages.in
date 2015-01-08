@@ -315,7 +315,7 @@ messages -> WebPage LegacyReceiver {
     SetThemePath(String themePath)
 #endif
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     CommitPageTransitionViewport()
 #endif
 
@@ -381,7 +381,7 @@ messages -> WebPage LegacyReceiver {
     SetComposition(String compositionString, Vector<WebCore::CompositionUnderline> underlines, uint64_t cursorPosition)
     CancelComposition()
 #endif
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     FindZoomableAreaForPoint(WebCore::IntPoint point, WebCore::IntSize area)
 #endif
 

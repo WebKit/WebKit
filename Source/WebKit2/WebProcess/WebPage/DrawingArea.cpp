@@ -39,7 +39,7 @@
 #include "RemoteLayerTreeDrawingArea.h"
 #include "TiledCoreAnimationDrawingArea.h"
 #else
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
 #include "CoordinatedDrawingArea.h"
 #else
 #include "DrawingAreaImpl.h"
@@ -61,7 +61,7 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPage
     case DrawingAreaTypeRemoteLayerTree:
         return std::make_unique<RemoteLayerTreeDrawingArea>(webPage, parameters);
 #else
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     case DrawingAreaTypeCoordinated:
         return std::make_unique<CoordinatedDrawingArea>(webPage, parameters);
 #else
@@ -77,6 +77,9 @@ std::unique_ptr<DrawingArea> DrawingArea::create(WebPage& webPage, const WebPage
 DrawingArea::DrawingArea(DrawingAreaType type, WebPage& webPage)
     : m_type(type)
     , m_webPage(webPage)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)
+    , m_nativeSurfaceHandleForCompositing(0)
+#endif
 {
     WebProcess::shared().addMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_webPage.pageID(), *this);
 }

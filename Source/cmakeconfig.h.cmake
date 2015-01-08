@@ -139,7 +139,6 @@
 #cmakedefine01 ENABLE_XSLT
 #cmakedefine01 USE_SYSTEM_MALLOC
 #cmakedefine01 WTF_USE_GEOCLUE2
-#cmakedefine01 WTF_USE_TILED_BACKING_STORE
 #cmakedefine01 HAVE_LLVM
 #cmakedefine01 HAVE_GTK_UNIX_PRINTING
 #cmakedefine01 WTF_CPU_ARM64_CORTEXA53

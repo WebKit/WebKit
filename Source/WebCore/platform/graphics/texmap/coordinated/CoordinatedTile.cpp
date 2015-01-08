@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CoordinatedTile.h"
 
-#if USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
@@ -141,4 +141,4 @@ void CoordinatedTileBackend::paintCheckerPattern(GraphicsContext*, const FloatRe
 
 } // namespace WebCore
 
-#endif // USE(TILED_BACKING_STORE)
+#endif // USE(COORDINATED_GRAPHICS)

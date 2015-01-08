@@ -1,3 +1,20 @@
+2015-01-07  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK][ThreadedCompositor] Add support for threaded compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=118265
+
+        Reviewed by Martin Robinson.
+
+        Added the ENABLE_THREADED_COMPOSITOR feature flag to the cmake and
+        autotools build systems. The feature is disabled by default.
+        And remove deprecated the WTF_USE_TILED_BACKING_STORE feature flag
+        from the feature flags.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2014-12-23  Alexey Proskuryakov  <ap@apple.com>
 
         Simplify building with ASan
