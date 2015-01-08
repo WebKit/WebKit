@@ -617,12 +617,10 @@ SLOW_PATH_DECL(slow_path_to_index_string)
     RETURN(jsString(exec, Identifier::from(exec, OP(2).jsValue().asUInt32()).string()));
 }
 
-SLOW_PATH_DECL(slow_path_profile_type)
+SLOW_PATH_DECL(slow_path_profile_type_clear_log)
 {
     BEGIN();
-    TypeLocation* location = pc[2].u.location;
-    JSValue val = OP_C(1).jsValue();
-    vm.typeProfilerLog()->recordTypeInformationForLocation(val, location);
+    vm.typeProfilerLog()->processLogEntries(ASCIILiteral("LLInt log full."));
     END();
 }
 

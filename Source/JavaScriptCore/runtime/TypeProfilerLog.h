@@ -42,7 +42,9 @@ class TypeProfilerLog {
 
 public:
     struct LogEntry {
-        public:
+    public:
+        friend class LLIntOffsetsExtractor;
+
         JSValue value;
         TypeLocation* location; 
         StructureID structureID;
@@ -61,19 +63,6 @@ public:
 
     ~TypeProfilerLog();
 
-    ALWAYS_INLINE void recordTypeInformationForLocation(JSValue value, TypeLocation* location)
-    {
-        ASSERT(m_logStartPtr);
-
-        m_currentLogEntryPtr->location = location;
-        m_currentLogEntryPtr->value = value;
-        m_currentLogEntryPtr->structureID = (value.isCell() ? value.asCell()->structureID() : 0);
-    
-        m_currentLogEntryPtr += 1;
-        if (UNLIKELY(m_currentLogEntryPtr == m_logEndPtr))
-            processLogEntries(ASCIILiteral("Log Full"));
-    }
-
     JS_EXPORT_PRIVATE void processLogEntries(String);
     LogEntry* logEndPtr() const { return m_logEndPtr; }
 
@@ -81,6 +70,8 @@ public:
     static ptrdiff_t currentLogEntryOffset() { return OBJECT_OFFSETOF(TypeProfilerLog, m_currentLogEntryPtr); }
 
 private:
+    friend class LLIntOffsetsExtractor;
+
     void initializeLog();
 
     unsigned m_logSize;

@@ -49,6 +49,8 @@
 #include "ProtoCallFrame.h"
 #include "Structure.h"
 #include "StructureChain.h"
+#include "TypeProfiler.h"
+#include "TypeProfilerLog.h"
 #include "VMEntryRecord.h"
 #include "ValueProfile.h"
 #include <wtf/text/StringImpl.h>
