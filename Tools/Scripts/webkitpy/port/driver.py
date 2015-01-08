@@ -139,10 +139,6 @@ class Driver(object):
 
         self._driver_timed_out = False
 
-        # WebKitTestRunner can report back subprocesses that became unresponsive
-        # This could mean they crashed.
-        self._subprocess_was_unresponsive = False
-
         # stderr reading is scoped on a per-test (not per-block) basis, so we store the accumulated
         # stderr output, as well as if we've seen #EOF on this driver instance.
         # FIXME: We should probably remove _read_first_block and _read_optional_image_block and
@@ -213,9 +209,6 @@ class Driver(object):
             if not crash_log:
                 pid_str = str(self._crashed_pid) if self._crashed_pid else "unknown pid"
                 crash_log = 'No crash log found for %s:%s.\n' % (self._crashed_process_name, pid_str)
-                # If we were unresponsive append a message informing there may not have been a crash.
-                if self._subprocess_was_unresponsive:
-                    crash_log += 'Process failed to become responsive before timing out.\n'
 
                 # Print stdout and stderr to the placeholder crash log; we want as much context as possible.
                 if self.error_from_test:
@@ -372,27 +365,30 @@ class Driver(object):
         if out_line == "FAIL: Timed out waiting for notifyDone to be called\n":
             self._driver_timed_out = True
 
-    def _check_for_driver_crash(self, error_line):
+    def _check_for_driver_crash_or_unresponsiveness(self, error_line):
         if error_line == "#CRASHED\n":
             self._crashed_process_name = self._server_process.name()
             self._crashed_pid = self._server_process.pid()
-        elif (error_line.startswith("#CRASHED - ")
-            or error_line.startswith("#PROCESS UNRESPONSIVE - ")):
-            # WebKitTestRunner/LayoutTestRelay uses this to report that the subprocess (e.g. WebProcess) crashed.
-            match = re.match('#(?:CRASHED|PROCESS UNRESPONSIVE) - (\S+)', error_line)
+            return True
+        elif error_line.startswith("#CRASHED - "):
+            match = re.match('#CRASHED - (\S+)', error_line)
             self._crashed_process_name = match.group(1) if match else 'WebProcess'
             match = re.search('pid (\d+)', error_line)
-            pid = int(match.group(1)) if match else None
-            self._crashed_pid = pid
-            # FIXME: delete this after we're sure this code is working :)
-            _log.debug('%s crash, pid = %s, error_line = %s' % (self._crashed_process_name, str(pid), error_line))
-            if error_line.startswith("#PROCESS UNRESPONSIVE - "):
-                self._subprocess_was_unresponsive = True
-                self._port.sample_process(self._crashed_process_name, self._crashed_pid)
-                # We want to show this since it's not a regular crash and probably we don't have a crash log.
-                self.error_from_test += error_line
+            self._crashed_pid = int(match.group(1)) if match else None
+            _log.debug('%s crash, pid = %s' % (self._crashed_process_name, str(self._crashed_pid)))
             return True
-        return self.has_crashed()
+        elif error_line.startswith("#PROCESS UNRESPONSIVE - "):
+            match = re.match('#PROCESS UNRESPONSIVE - (\S+)', error_line)
+            child_process_name = match.group(1) if match else 'WebProcess'
+            match = re.search('pid (\d+)', error_line)
+            child_process_pid = int(match.group(1)) if match else None
+            _log.debug('%s is unresponsive, pid = %s' % (child_process_name, str(child_process_pid)))
+            self._driver_timed_out = True
+            if child_process_pid:
+                self._port.sample_process(child_process_name, child_process_pid)
+            self.error_from_test += error_line
+            return True
+        return False
 
     def _command_from_driver_input(self, driver_input):
         # FIXME: performance tests pass in full URLs instead of test names.
@@ -499,7 +495,7 @@ class Driver(object):
                     block.content = self._server_process.read_stdout(deadline, block._content_length)
 
             if err_line:
-                if self._check_for_driver_crash(err_line):
+                if self._check_for_driver_crash_or_unresponsiveness(err_line):
                     break
                 self.error_from_test += err_line
 

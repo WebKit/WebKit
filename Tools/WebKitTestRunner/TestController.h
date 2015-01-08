@@ -104,6 +104,8 @@ public:
     void terminateWebContentProcess();
     void reattachPageToWebProcess();
 
+    static const char* webProcessName();
+
     WorkQueueManager& workQueueManager() { return m_workQueueManager; }
 
     void setHandlesAuthenticationChallenges(bool value) { m_handlesAuthenticationChallenges = value; }

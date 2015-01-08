@@ -752,6 +752,18 @@ void TestController::reattachPageToWebProcess()
     runUntil(m_doneResetting, shortTimeout);
 }
 
+const char* TestController::webProcessName()
+{
+    // FIXME: Find a way to not hardcode the process name.
+#if PLATFORM(IOS)
+    return  "com.apple.WebKit.WebContent";
+#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080
+    return "com.apple.WebKit.WebContent.Development";
+#else
+    return "WebProcess";
+#endif
+}
+
 void TestController::updateWebViewSizeForTest(const TestInvocation& test)
 {
     bool isSVGW3CTest = strstr(test.pathOrURL(), "svg/W3C-SVG-1.1") || strstr(test.pathOrURL(), "svg\\W3C-SVG-1.1");
@@ -1371,17 +1383,9 @@ void TestController::processDidCrash()
     if (!m_didPrintWebProcessCrashedMessage) {
 #if PLATFORM(COCOA)
         pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
-        // FIXME: Find a way to not hardcode the process name.
-#if PLATFORM(IOS)
-        const char* processName = "com.apple.WebKit.WebContent";
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080
-        const char* processName = "com.apple.WebKit.WebContent.Development";
+        fprintf(stderr, "#CRASHED - %s (pid %ld)\n", webProcessName(), static_cast<long>(pid));
 #else
-        const char* processName = "WebProcess";
-#endif
-        fprintf(stderr, "#CRASHED - %s (pid %ld)\n", processName, static_cast<long>(pid));
-#else
-        fputs("#CRASHED - WebProcess\n", stderr);
+        fprintf(stderr, "#CRASHED - %s\n", webProcessName());
 #endif
         fflush(stderr);
         m_didPrintWebProcessCrashedMessage = true;

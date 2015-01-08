@@ -201,14 +201,12 @@ void TestInvocation::dumpWebProcessUnresponsiveness()
 
 void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
 {
-    const char* errorMessageToStderr = 0;
+    char errorMessageToStderr[1024];
 #if PLATFORM(COCOA)
-    char buffer[64];
     pid_t pid = WKPageGetProcessIdentifier(TestController::shared().mainWebView()->page());
-    sprintf(buffer, "#PROCESS UNRESPONSIVE - WebProcess (pid %ld)\n", static_cast<long>(pid));
-    errorMessageToStderr = buffer;
+    sprintf(errorMessageToStderr, "#PROCESS UNRESPONSIVE - %s (pid %ld)\n", TestController::webProcessName(), static_cast<long>(pid));
 #else
-    errorMessageToStderr = "#PROCESS UNRESPONSIVE - WebProcess";
+    sprintf(errorMessageToStderr, "#PROCESS UNRESPONSIVE - %s", TestController::webProcessName());
 #endif
 
     dump(errorMessage, errorMessageToStderr, true);
