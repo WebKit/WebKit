@@ -32,10 +32,10 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
-#import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import <WebCore/FloatRect.h>
+#import <UIKit/UIScrollView_Private.h>
 #endif
 
 #if PLATFORM(IOS)

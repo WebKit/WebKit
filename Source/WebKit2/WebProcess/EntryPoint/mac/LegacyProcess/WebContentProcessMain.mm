@@ -31,8 +31,8 @@
 #import "StringUtilities.h"
 #import "WKBase.h"
 #import "WebProcess.h"
-#import <WebCore/ServersSPI.h>
 #import <mach/mach_error.h>
+#import <servers/bootstrap.h>
 #import <spawn.h>
 #import <stdio.h>
 #import <wtf/RetainPtr.h>
@@ -41,9 +41,9 @@
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
-#import <WebCore/GraphicsServicesSPI.h>
+#import <GraphicsServices/GraphicsServices.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
-#endif
+#endif // PLATFORM(IOS)
 
 #if USE(APPKIT)
 @interface NSApplication (WebNSApplicationDetails)

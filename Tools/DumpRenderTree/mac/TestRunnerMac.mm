@@ -81,7 +81,7 @@
 #endif
 
 #if PLATFORM(IOS)
-#import "UIKitSPI.h"
+#import <UIKit/UIWebBrowserView.h>
 #import <WebKit/WebCoreThread.h>
 #import <WebKit/WebCoreThreadMessage.h>
 #import <WebKit/WebDOMOperationsPrivate.h>

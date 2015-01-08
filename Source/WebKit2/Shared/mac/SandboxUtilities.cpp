@@ -27,7 +27,6 @@
 #include "SandboxUtilities.h"
 
 #include <array>
-#include <sys/param.h>
 #include <wtf/text/WTFString.h>
 
 #if __has_include(<sandbox/private.h>)

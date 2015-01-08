@@ -28,7 +28,8 @@
 
 #if PLATFORM(IOS)
 
-#import "UIKitSPI.h"
+#import <UIKit/UIAlertController_Private.h>
+#import <UIKit/UIWindow_Private.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WKActionSheet {

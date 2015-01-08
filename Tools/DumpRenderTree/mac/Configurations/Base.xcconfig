@@ -26,7 +26,7 @@
 CLANG_CXX_LANGUAGE_STANDARD = gnu++0x;
 CLANG_CXX_LIBRARY = libc++;
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
-HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport ForwardingHeaders $(HEADER_SEARCH_PATHS_$(PLATFORM_NAME)) $(SRCROOT)/../../Source/JavaScriptCore/icu $(SRCROOT)/../../Source/WebKit2/Platform/spi/ios;
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport ForwardingHeaders $(HEADER_SEARCH_PATHS_$(PLATFORM_NAME)) $(SRCROOT)/../../Source/JavaScriptCore/icu;
 HEADER_SEARCH_PATHS_iphoneos = $(SDKROOT)/usr/local/include $(SDKROOT)/usr/local/include/WebCoreTestSupport;
 HEADER_SEARCH_PATHS_iphonesimulator = $(HEADER_SEARCH_PATHS_iphoneos);
 HEADER_SEARCH_PATHS_macosx = mac/InternalHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport;

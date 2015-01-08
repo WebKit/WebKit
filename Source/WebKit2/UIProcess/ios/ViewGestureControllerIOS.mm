@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS)
 
-#import "UIKitSPI.h"
 #import "ViewGestureControllerMessages.h"
 #import "ViewGestureGeometryCollectorMessages.h"
 #import "ViewSnapshotStore.h"
@@ -40,6 +39,10 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <UIKit/UIScreenEdgePanGestureRecognizer.h>
+#import <UIKit/UIViewControllerTransitioning_Private.h>
+#import <UIKit/UIWebTouchEventsGestureRecognizer.h>
+#import <UIKit/_UINavigationInteractiveTransition.h>
+#import <UIKit/_UINavigationParallaxTransition.h>
 #import <WebCore/IOSurface.h>
 #import <WebCore/QuartzCoreSPI.h>
 #import <wtf/NeverDestroyed.h>

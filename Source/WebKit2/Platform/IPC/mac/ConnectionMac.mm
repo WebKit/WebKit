@@ -33,7 +33,6 @@
 #include <WebCore/AXObjectCache.h>
 #include <mach/mach_error.h>
 #include <mach/vm_map.h>
-#include <sys/mman.h>
 #include <wtf/RunLoop.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 

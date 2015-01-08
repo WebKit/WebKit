@@ -24,7 +24,7 @@
  */
 
 
-#import "UIKitSPI.h"
+#import <UIKit/UIWebBrowserView.h>
 
 @interface DumpRenderTreeBrowserView : UIWebBrowserView {
     BOOL _scrollingUsesUIWebScrollView;

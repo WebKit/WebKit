@@ -3763,6 +3763,7 @@
 		A14832CD187F682E00DA63A6 /* WebCoreThreadSafe.h in Headers */ = {isa = PBXBuildFile; fileRef = A148329F187F508700DA63A6 /* WebCoreThreadSafe.h */; };
 		A14832CE187F683400DA63A6 /* WebCoreThreadSystemInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A14832A0187F508700DA63A6 /* WebCoreThreadSystemInterface.cpp */; };
 		A14832CF187F684700DA63A6 /* WebCoreThreadSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = A14832A1187F508700DA63A6 /* WebCoreThreadSystemInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A172182619DE183F00464D17 /* _UIHighlightViewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A172182519DE183F00464D17 /* _UIHighlightViewSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
 		A17C81230F2A5CF7005DAAEB /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */; };
 		A1C797181883DD82000F5E1F /* DOMGestureEvent.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCDD1880F901003EEDBB /* DOMGestureEvent.h */; };
@@ -5797,8 +5798,6 @@
 		CE7B2DB61586ABAD0098B3FA /* TextAlternativeWithRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */; };
 		CE8245F019B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE95208A1811B475007A5392 /* WebSafeIncrementalSweeperIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C4CB1D161A131200D214DA /* WebSafeIncrementalSweeperIOS.h */; };
-		CEC337AD1A46071F009B8523 /* ServersSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CEC337AC1A46071F009B8523 /* ServersSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CEC337AF1A46086D009B8523 /* GraphicsServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CEC337AE1A46086D009B8523 /* GraphicsServicesSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CECADFC6153778FF00E37068 /* DictationAlternative.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFC2153778FF00E37068 /* DictationAlternative.cpp */; };
 		CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */ = {isa = PBXBuildFile; fileRef = CECADFC3153778FF00E37068 /* DictationAlternative.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CECADFC8153778FF00E37068 /* DictationCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CECADFC4153778FF00E37068 /* DictationCommand.cpp */; };
@@ -10969,6 +10968,7 @@
 		A14832A9187F508700DA63A6 /* WKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKView.h; path = ios/wak/WKView.h; sourceTree = "<group>"; };
 		A14832AA187F508700DA63A6 /* WKView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKView.mm; path = ios/wak/WKView.mm; sourceTree = "<group>"; };
 		A14832AB187F508700DA63A6 /* WKViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKViewPrivate.h; path = ios/wak/WKViewPrivate.h; sourceTree = "<group>"; };
+		A172182519DE183F00464D17 /* _UIHighlightViewSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _UIHighlightViewSPI.h; path = ios/_UIHighlightViewSPI.h; sourceTree = "<group>"; };
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
 		A17C81210F2A5CF7005DAAEB /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; };
 		A1C7971C1883E51F000F5E1F /* DOMHTMLTextAreaElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLTextAreaElementPrivate.h; sourceTree = "<group>"; };
@@ -13307,8 +13307,6 @@
 		CE7B2DB11586ABAD0098B3FA /* TextAlternativeWithRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextAlternativeWithRange.h; sourceTree = "<group>"; };
 		CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextAlternativeWithRange.mm; sourceTree = "<group>"; };
 		CE8245EF19B671BA00AC0122 /* CFNetworkConnectionCacheSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNetworkConnectionCacheSPI.h; sourceTree = "<group>"; };
-		CEC337AC1A46071F009B8523 /* ServersSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServersSPI.h; sourceTree = "<group>"; };
-		CEC337AE1A46086D009B8523 /* GraphicsServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphicsServicesSPI.h; path = ios/GraphicsServicesSPI.h; sourceTree = "<group>"; };
 		CECADFC2153778FF00E37068 /* DictationAlternative.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationAlternative.cpp; sourceTree = "<group>"; };
 		CECADFC3153778FF00E37068 /* DictationAlternative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictationAlternative.h; sourceTree = "<group>"; };
 		CECADFC4153778FF00E37068 /* DictationCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationCommand.cpp; sourceTree = "<group>"; };
@@ -16267,7 +16265,6 @@
 				CE1252541A1BEC0E00864480 /* NSURLDownloadSPI.h */,
 				653EF83819A043AE0052202C /* NSURLFileTypeMappingsSPI.h */,
 				CE12523C1A1676CD00864480 /* QuartzCoreSPI.h */,
-				CEC337AC1A46071F009B8523 /* ServersSPI.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -18530,9 +18527,9 @@
 		A172182419DE182B00464D17 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				A172182519DE183F00464D17 /* _UIHighlightViewSPI.h */,
 				CE12523E1A16AE1200864480 /* AVKitSPI.h */,
 				CE1252421A16C01A00864480 /* CoreUISPI.h */,
-				CEC337AE1A46086D009B8523 /* GraphicsServicesSPI.h */,
 				CE1252481A16C3BC00864480 /* MobileGestaltSPI.h */,
 				CE1252401A16B1B600864480 /* MediaPlayerSPI.h */,
 				CE1252381A166FA000864480 /* QuickLookSPI.h */,
@@ -23391,6 +23388,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A172182619DE183F00464D17 /* _UIHighlightViewSPI.h in Headers */,
 				FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
@@ -24471,7 +24469,6 @@
 				0F580B0E0F12A2690051D689 /* GraphicsLayerClient.h in Headers */,
 				1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */,
 				0FA24D7A162DF91900A3F4C0 /* GraphicsLayerUpdater.h in Headers */,
-				CEC337AF1A46086D009B8523 /* GraphicsServicesSPI.h in Headers */,
 				B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */,
 				77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */,
 				CD3E251C18046B0600E27F56 /* GridCoordinate.h in Headers */,
@@ -26063,7 +26060,6 @@
 				077AF14018F4AE400001ED61 /* SerializedPlatformRepresentation.h in Headers */,
 				077AF14318F4B1BB0001ED61 /* SerializedPlatformRepresentationMac.h in Headers */,
 				A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */,
-				CEC337AD1A46071F009B8523 /* ServersSPI.h in Headers */,
 				2D93AEE319DF5641002A86C3 /* ServicesOverlayController.h in Headers */,
 				756B2CE118B7101600FECFAA /* SessionID.h in Headers */,
 				93309E10099E64920056E581 /* SetNodeAttributeCommand.h in Headers */,

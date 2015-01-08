@@ -25,7 +25,7 @@
 
 #if PLATFORM(IOS)
 
-#import "UIKitSPI.h"
+#import <UIKit/UIWebScrollView.h>
 
 @class WKWebView;
 

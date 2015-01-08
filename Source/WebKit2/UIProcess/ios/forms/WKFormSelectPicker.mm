@@ -28,11 +28,15 @@
 
 #if PLATFORM(IOS)
 
-#import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WKFormPopover.h"
 #import "WebPageProxy.h"
+#import <CoreFoundation/CFUniChar.h>
+#import <UIKit/UIApplication_Private.h>
+#import <UIKit/UIDevice_Private.h>
+#import <UIKit/UIKeyboard_Private.h>
+#import <UIKit/UIPickerContentView_Private.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;

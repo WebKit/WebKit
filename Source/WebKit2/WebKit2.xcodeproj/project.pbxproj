@@ -1612,17 +1612,10 @@
 		CDCA85C8132ABA4E00E961DF /* WKFullScreenWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */; };
 		CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */; };
 		CDE6E2D319F731C400BA9688 /* WebOriginDataManagerSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE6E2D219F731C400BA9688 /* WebOriginDataManagerSupplement.h */; };
-		CE1A0BD21A48E6C60054EF74 /* BKSProcessAssertionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BCC1A48E6C60054EF74 /* BKSProcessAssertionSPI.h */; };
-		CE1A0BD31A48E6C60054EF74 /* CorePDFSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BCD1A48E6C60054EF74 /* CorePDFSPI.h */; };
-		CE1A0BD41A48E6C60054EF74 /* DataDetectorsUISPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BCE1A48E6C60054EF74 /* DataDetectorsUISPI.h */; };
-		CE1A0BD51A48E6C60054EF74 /* ManagedConfigurationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BCF1A48E6C60054EF74 /* ManagedConfigurationSPI.h */; };
-		CE1A0BD61A48E6C60054EF74 /* TCCSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */; };
-		CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */; };
 		CEDA12E2152CD1AE00D9E08D /* WebAlternativeTextClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */; };
 		CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */; };
 		CEDBA84719FDA00A006866A5 /* WebSQLiteDatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEDBA84519FDA00A006866A5 /* WebSQLiteDatabaseTracker.cpp */; };
 		CEDBA84819FDA00A006866A5 /* WebSQLiteDatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDBA84619FDA00A006866A5 /* WebSQLiteDatabaseTracker.h */; };
-		CEE4AE2B1A5DCF430002F49B /* UIKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */; };
 		D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */; };
 		D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484311FF4B6500032B39 /* WebPopupMenu.h */; };
 		D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */; };
@@ -3755,17 +3748,10 @@
 		CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullScreenWindowController.h; sourceTree = "<group>"; };
 		CDCA85D4132AC2B300E961DF /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		CDE6E2D219F731C400BA9688 /* WebOriginDataManagerSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebOriginDataManagerSupplement.h; path = OriginData/WebOriginDataManagerSupplement.h; sourceTree = "<group>"; };
-		CE1A0BCC1A48E6C60054EF74 /* BKSProcessAssertionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BKSProcessAssertionSPI.h; sourceTree = "<group>"; };
-		CE1A0BCD1A48E6C60054EF74 /* CorePDFSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorePDFSPI.h; sourceTree = "<group>"; };
-		CE1A0BCE1A48E6C60054EF74 /* DataDetectorsUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsUISPI.h; sourceTree = "<group>"; };
-		CE1A0BCF1A48E6C60054EF74 /* ManagedConfigurationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedConfigurationSPI.h; sourceTree = "<group>"; };
-		CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCCSPI.h; sourceTree = "<group>"; };
-		CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputSPI.h; sourceTree = "<group>"; };
 		CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAlternativeTextClient.h; sourceTree = "<group>"; };
 		CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAlternativeTextClient.cpp; sourceTree = "<group>"; };
 		CEDBA84519FDA00A006866A5 /* WebSQLiteDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSQLiteDatabaseTracker.cpp; sourceTree = "<group>"; };
 		CEDBA84619FDA00A006866A5 /* WebSQLiteDatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSQLiteDatabaseTracker.h; sourceTree = "<group>"; };
-		CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPopupMenu.cpp; sourceTree = "<group>"; };
 		D3B9484311FF4B6500032B39 /* WebPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupMenu.h; sourceTree = "<group>"; };
 		D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSearchPopupMenu.cpp; sourceTree = "<group>"; };
@@ -6405,7 +6391,6 @@
 				3709504218A88CDE0087AE5D /* foundation */,
 				1AE00D6818327C1200087DD7 /* IPC */,
 				1A7E814E1152D2240003695B /* mac */,
-				CE1A0BCA1A48E6C60054EF74 /* spi */,
 				51B15A7D138439B200321AD8 /* unix */,
 				51A7F2F4125BF8D4008AEB1D /* Logging.cpp */,
 				51A7F2F2125BF820008AEB1D /* Logging.h */,
@@ -7104,28 +7089,6 @@
 			path = FullScreen/mac;
 			sourceTree = "<group>";
 		};
-		CE1A0BCA1A48E6C60054EF74 /* spi */ = {
-			isa = PBXGroup;
-			children = (
-				CE1A0BCB1A48E6C60054EF74 /* ios */,
-			);
-			path = spi;
-			sourceTree = "<group>";
-		};
-		CE1A0BCB1A48E6C60054EF74 /* ios */ = {
-			isa = PBXGroup;
-			children = (
-				CE1A0BCC1A48E6C60054EF74 /* BKSProcessAssertionSPI.h */,
-				CE1A0BCD1A48E6C60054EF74 /* CorePDFSPI.h */,
-				CE1A0BCE1A48E6C60054EF74 /* DataDetectorsUISPI.h */,
-				CE1A0BCF1A48E6C60054EF74 /* ManagedConfigurationSPI.h */,
-				CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */,
-				CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */,
-				CEE4AE2A1A5DCF430002F49B /* UIKitSPI.h */,
-			);
-			path = ios;
-			sourceTree = "<group>";
-		};
 		E170876D16D6CA7200F99226 /* FileAPI */ = {
 			isa = PBXGroup;
 			children = (
@@ -7325,7 +7288,6 @@
 				518E8EF916B2091C00E91429 /* AuthenticationManager.h in Headers */,
 				512F58A312A883AD00629530 /* AuthenticationManagerMessages.h in Headers */,
 				7CD102DA1866770600ED429D /* AutoCorrectionCallback.h in Headers */,
-				CE1A0BD21A48E6C60054EF74 /* BKSProcessAssertionSPI.h in Headers */,
 				E164A2F2191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h in Headers */,
 				E170876C16D6CA6900F99226 /* BlobRegistryProxy.h in Headers */,
 				4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */,
@@ -7342,7 +7304,6 @@
 				5136183E163126DA00A99DDE /* ConnectionStack.h in Headers */,
 				5106D7C418BDBE73000AB166 /* ContextMenuContextData.h in Headers */,
 				CDC3830C17212282008A2FC3 /* CookieStorageShimLibrary.h in Headers */,
-				CE1A0BD31A48E6C60054EF74 /* CorePDFSPI.h in Headers */,
 				B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */,
 				2989A414167D184B004F96D2 /* CustomProtocolManager.h in Headers */,
 				2984F589164BA095004BC0C6 /* CustomProtocolManagerMessages.h in Headers */,
@@ -7354,7 +7315,6 @@
 				517DD5BF180DA7D30081660B /* DatabaseProcessProxy.h in Headers */,
 				512A976A180E09B80039A149 /* DatabaseProcessProxyMessages.h in Headers */,
 				51032F1E180F791700961BB7 /* DatabaseToWebProcessConnectionMessages.h in Headers */,
-				CE1A0BD41A48E6C60054EF74 /* DataDetectorsUISPI.h in Headers */,
 				1AC75380183BE50F0072CB15 /* DataReference.h in Headers */,
 				BCE81D99131AE02100241910 /* DictionaryPopupInfo.h in Headers */,
 				518E8F0816B2093700E91429 /* Download.h in Headers */,
@@ -7427,7 +7387,6 @@
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
 				BCC56F791159957D001CCAF9 /* MachPort.h in Headers */,
 				1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */,
-				CE1A0BD51A48E6C60054EF74 /* ManagedConfigurationSPI.h in Headers */,
 				51933DEF1965EB31008AC3EA /* MenuUtilities.h in Headers */,
 				1A232903162C867300D82F7A /* MessageDecoder.h in Headers */,
 				1A2328FF162C866A00D82F7A /* MessageEncoder.h in Headers */,
@@ -7578,15 +7537,12 @@
 				1AB31A9716BC688100F6DBC9 /* StorageManagerMessages.h in Headers */,
 				1AE00D6C18327C1200087DD7 /* StringReference.h in Headers */,
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
-				CE1A0BD61A48E6C60054EF74 /* TCCSPI.h in Headers */,
 				1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */,
 				1QQ417CB12C00CCA002BE67B /* TextCheckerCompletion.h in Headers */,
 				1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */,
-				CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */,
 				1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */,
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
 				1AFE436618B6C081009C7A48 /* UIDelegate.h in Headers */,
-				CEE4AE2B1A5DCF430002F49B /* UIKitSPI.h in Headers */,
 				515E7730184015800007203F /* UniqueIDBDatabase.h in Headers */,
 				51654F00184EF34A007DC837 /* UniqueIDBDatabaseBackingStore.h in Headers */,
 				51654EFE184EF33F007DC837 /* UniqueIDBDatabaseBackingStoreSQLite.h in Headers */,

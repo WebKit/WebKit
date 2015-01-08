@@ -25,7 +25,7 @@
 
 #if PLATFORM(IOS)
 
-#import "UIKitSPI.h"
+#import <UIKit/UITapGestureRecognizer_Private.h>
 
 @interface WKSyntheticClickTapGestureRecognizer : UITapGestureRecognizer
 - (void)setGestureRecognizedTarget:(id)target action:(SEL)action;

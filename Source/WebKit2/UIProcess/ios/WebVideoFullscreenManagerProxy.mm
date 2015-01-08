@@ -29,7 +29,6 @@
 #if PLATFORM(IOS)
 
 #import "RemoteLayerTreeDrawingAreaProxy.h"
-#import "UIKitSPI.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "WebVideoFullscreenManagerMessages.h"
@@ -37,6 +36,15 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/TimeRanges.h>
 #import <WebKitSystemInterface.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <UIKit/UIWindow_Private.h>
+#else
+#import <UIKit/UIWindow.h>
+@interface UIWindow (Details)
++ (mach_port_t)_synchronizeDrawingAcrossProcesses;
+@end
+#endif
 
 using namespace WebCore;
 

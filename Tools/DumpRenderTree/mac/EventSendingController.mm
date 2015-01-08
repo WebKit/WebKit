@@ -41,11 +41,11 @@
 #import <WebKit/WebViewPrivate.h>
 
 #if !PLATFORM(IOS)
-#import <Carbon/Carbon.h> // for GetCurrentEventTime()
+#import <Carbon/Carbon.h>                           // for GetCurrentEventTime()
 #endif
 
 #if PLATFORM(IOS)
-#import <WebCore/GraphicsServicesSPI.h> // for GSCurrentEventTimestamp()
+#import <GraphicsServices/GraphicsServices.h>       // for GSCurrentEventTimestamp()
 #import <WebKit/KeyEventCodesIOS.h>
 #import <WebKit/WAKWindow.h>
 #import <WebKit/WebEvent.h>

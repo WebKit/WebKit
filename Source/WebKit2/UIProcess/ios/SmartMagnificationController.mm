@@ -36,11 +36,12 @@
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <UIKit/UIKit.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 
-#import "UIKitSPI.h"
+#import <UIKit/UIKit_Private.h>
 
 #pragma clang diagnostic pop
 

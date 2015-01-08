@@ -34,7 +34,6 @@
 #import "InteractionInformationAtPosition.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NavigationState.h"
-#import "UIKitSPI.h"
 #import "ViewSnapshotStore.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
@@ -47,12 +46,20 @@
 #import "WebEditCommandProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKDownloadInternal.h"
+#import <UIKit/UIImagePickerController_Private.h>
+#import <UIKit/UIWebTouchEventsGestureRecognizer.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_webView->_page->process().connection())
+
+@interface UIView (IPI)
+- (UIScrollView *)_scroller;
+- (CGPoint)accessibilityConvertPointFromSceneReferenceCoordinates:(CGPoint)point;
+- (CGRect)accessibilityConvertRectToSceneReferenceCoordinates:(CGRect)rect;
+@end
 
 using namespace WebCore;
 using namespace WebKit;

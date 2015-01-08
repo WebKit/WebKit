@@ -31,7 +31,8 @@
 #if !PLATFORM(IOS)
 #import <AppKit/AppKit.h>
 #else
-#import "UIKitSPI.h"
+#import <UIKit/UIKit.h>
+#import <UIKit/UIWebBrowserView.h>
 #import <WebKit/WAKWindow.h>
 #endif
 

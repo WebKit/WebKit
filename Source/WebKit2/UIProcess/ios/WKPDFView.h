@@ -25,9 +25,10 @@
 
 #if PLATFORM(IOS)
 
-#import "CorePDFSPI.h"
 #import "WKActionSheetAssistant.h"
 #import "WKWebViewContentProvider.h"
+#import <CorePDF/UIPDFAnnotationController.h>
+#import <CorePDF/UIPDFPageView.h>
 #import <UIKit/UIView.h>
 
 @interface WKPDFView : UIView <WKWebViewContentProvider, UIPDFPageViewDelegate, UIPDFAnnotationControllerDelegate, WKActionSheetAssistantDelegate>

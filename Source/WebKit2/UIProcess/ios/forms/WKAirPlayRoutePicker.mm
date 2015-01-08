@@ -28,10 +28,11 @@
 
 #if PLATFORM(IOS)
 
-#import "UIKitSPI.h"
 #import "WKContentView.h"
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
+#import <UIKit/UIApplication_Private.h>
+#import <UIKit/UIWindow_Private.h>
 #import <WebCore/MediaPlayerSPI.h>
 #import <WebCore/SoftLinking.h>
 #import <wtf/RetainPtr.h>

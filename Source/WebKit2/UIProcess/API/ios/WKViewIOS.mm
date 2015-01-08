@@ -29,7 +29,6 @@
 #if PLATFORM(IOS)
 
 #import "RemoteLayerTreeTransaction.h"
-#import "UIKitSPI.h"
 #import "ViewGestureController.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextGroupPrivate.h"
@@ -38,7 +37,11 @@
 #import "WKScrollView.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
+#import <UIKit/UIImage_Private.h>
+#import <UIKit/UIPeripheralHost_Private.h>
 #import <UIKit/UIScreen.h>
+#import <UIKit/UIScrollView_Private.h>
+#import <UIKit/UIWindow_Private.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;

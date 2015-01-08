@@ -168,17 +168,8 @@
 #define CONSTEXPR
 #endif
 
-/* WTF_EXTERN_C_{BEGIN, END} */
+/* EXTERN_C */
 
-#ifdef __cplusplus
-#define WTF_EXTERN_C_BEGIN extern "C" {
-#define WTF_EXTERN_C_END }
-#else
-#define WTF_EXTERN_C_BEGIN
-#define WTF_EXTERN_C_END
-#endif
-
-// FIXME: Remove this once we have transitioned to WTF_EXTERN_C_BEGIN/WTF_EXTERN_C_END.
 #ifdef __cplusplus
 #define EXTERN_C extern "C"
 #else
