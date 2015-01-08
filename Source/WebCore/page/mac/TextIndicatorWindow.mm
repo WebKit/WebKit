@@ -79,6 +79,7 @@ using namespace WebCore;
 - (void)hideWithCompletionHandler:(void(^)(void))completionHandler;
 
 - (void)setAnimationProgress:(float)progress;
+- (BOOL)hasCompletedAnimation;
 
 @end
 
@@ -251,6 +252,11 @@ static RetainPtr<CABasicAnimation> createFadeInAnimation(CFTimeInterval duration
     return fadeInAnimationDuration;
 }
 
+- (BOOL)hasCompletedAnimation
+{
+    return _hasCompletedAnimation;
+}
+
 - (void)present
 {
     bool wantsBounce = _textIndicator->wantsBounce();
@@ -347,16 +353,9 @@ TextIndicatorWindow::TextIndicatorWindow(NSView *targetView)
 
 TextIndicatorWindow::~TextIndicatorWindow()
 {
-    switch (m_textIndicator->presentationTransition()) {
-    case TextIndicatorPresentationTransition::Crossfade:
-    case TextIndicatorPresentationTransition::FadeIn:
+    if (m_textIndicator->wantsManualAnimation() && [m_textIndicatorView hasCompletedAnimation]) {
         startFadeOut();
         return;
-
-    case TextIndicatorPresentationTransition::Bounce:
-    case TextIndicatorPresentationTransition::BounceAndCrossfade:
-    case TextIndicatorPresentationTransition::None:
-        break;
     }
 
     closeWindow();
