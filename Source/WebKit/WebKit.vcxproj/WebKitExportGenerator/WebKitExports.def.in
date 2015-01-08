@@ -409,7 +409,6 @@ EXPORTS
         symbolWithPointer(?numberOfActiveAnimations@AnimationController@WebCore@@QBEIPAVDocument@2@@Z, ?numberOfActiveAnimations@AnimationController@WebCore@@QEBAIPEAVDocument@2@@Z)
         symbolWithPointer(?minDOMTimerInterval@Settings@WebCore@@QAENXZ, ?minDOMTimerInterval@Settings@WebCore@@QEAANXZ)
         symbolWithPointer(?setMinDOMTimerInterval@Settings@WebCore@@QAEXN@Z, ?setMinDOMTimerInterval@Settings@WebCore@@QEAAXN@Z)
-        symbolWithPointer(?setApplicationChromeMode@Settings@WebCore@@QAEX_N@Z, ?setApplicationChromeMode@Settings@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setDOMPasteAllowed@Settings@WebCore@@QAEX_N@Z, ?setDOMPasteAllowed@Settings@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setTextAreasAreResizable@Settings@WebCore@@QAEX_N@Z, ?setTextAreasAreResizable@Settings@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?setShowRepaintCounter@Settings@WebCore@@QAEX_N@Z, ?setShowRepaintCounter@Settings@WebCore@@QEAAX_N@Z)
