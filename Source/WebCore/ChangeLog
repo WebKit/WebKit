@@ -1,3 +1,20 @@
+2015-01-08  Chris Dumez  <cdumez@apple.com>
+
+        Unfriend StyleResolver and StyleBuilderCustom
+        https://bugs.webkit.org/show_bug.cgi?id=140247
+
+        Reviewed by Darin Adler.
+
+        Stop marking StyleBuilderCustom as a friend of StyleResolver by
+        refactoring the code a bit.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueFont):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyFont):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::documentSettings):
+
 2015-01-08  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [CoordinatedGraphics] Update fixedVisibleContentRect only it is actually changed
