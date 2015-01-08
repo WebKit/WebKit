@@ -324,7 +324,7 @@ void InspectorDatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<In
         paramsObject->setString(ASCIILiteral("screenColor"), *screenColor);
     if (printColor)
         paramsObject->setString(ASCIILiteral("printColor"), *printColor);
-    jsonMessage->setObject(ASCIILiteral("params"), paramsObject.copyRef());
+    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
 
     m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
@@ -342,7 +342,7 @@ void InspectorDatabaseFrontendDispatcher::didExecuteNoOptionalParameters(RefPtr<
     paramsObject->setObject(ASCIILiteral("sqlError"), sqlError);
     paramsObject->setString(ASCIILiteral("screenColor"), screenColor);
     paramsObject->setString(ASCIILiteral("printColor"), printColor);
-    jsonMessage->setObject(ASCIILiteral("params"), paramsObject.copyRef());
+    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
 
     m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
@@ -901,7 +901,7 @@ using namespace Inspector;
         paramsObject->setString(ASCIILiteral("screenColor"), (*screenColor));
     if (printColor)
         paramsObject->setString(ASCIILiteral("printColor"), (*printColor));
-    jsonMessage->setObject(ASCIILiteral("params"), paramsObject.copyRef());
+    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
     frontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
 
@@ -930,7 +930,7 @@ using namespace Inspector;
     paramsObject->setObject(ASCIILiteral("sqlError"), [sqlError toInspectorObject]);
     paramsObject->setString(ASCIILiteral("screenColor"), screenColor);
     paramsObject->setString(ASCIILiteral("printColor"), printColor);
-    jsonMessage->setObject(ASCIILiteral("params"), paramsObject.copyRef());
+    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
     frontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
 

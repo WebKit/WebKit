@@ -1,3 +1,17 @@
+2015-01-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unnecessary copyRef for paramsObject in generated dispatchers
+        https://bugs.webkit.org/show_bug.cgi?id=140228
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_implementation.py:
+        (CppFrontendDispatcherImplementationGenerator._generate_dispatcher_implementation_for_event):
+        * inspector/scripts/codegen/generate_objc_frontend_dispatcher_implementation.py:
+        (ObjCFrontendDispatcherImplementationGenerator._generate_event_out_parameters):
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+
 2015-01-07  Saam Barati  <saambarati1@gmail.com>
 
         interpret op_profile_type in the LLInt instead of unconditionally calling into the slow path

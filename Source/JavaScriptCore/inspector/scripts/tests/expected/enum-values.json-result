@@ -403,7 +403,7 @@ void InspectorEventDomainFrontendDispatcher::eventWithEnumParameter(Parameter pa
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
     Ref<InspectorObject> paramsObject = InspectorObject::create();
     paramsObject->setString(ASCIILiteral("parameter"), Inspector::Protocol::getEnumConstantValue(parameter));
-    jsonMessage->setObject(ASCIILiteral("params"), paramsObject.copyRef());
+    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
 
     m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
@@ -1022,7 +1022,7 @@ using namespace Inspector;
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("EventDomain.eventWithEnumParameter"));
     Ref<InspectorObject> paramsObject = InspectorObject::create();
     paramsObject->setString(ASCIILiteral("parameter"), toProtocolString(parameter));
-    jsonMessage->setObject(ASCIILiteral("params"), paramsObject.copyRef());
+    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
     frontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
 

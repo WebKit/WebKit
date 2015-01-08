@@ -113,7 +113,7 @@ class CppFrontendDispatcherImplementationGenerator(Generator):
         if len(parameter_assignments) > 0:
             lines.append('    Ref<InspectorObject> paramsObject = InspectorObject::create();')
             lines.extend(parameter_assignments)
-            lines.append('    jsonMessage->setObject(ASCIILiteral("params"), paramsObject.copyRef());')
+            lines.append('    jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));')
 
         lines.append('')
         lines.append('    m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());')
