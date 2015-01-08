@@ -262,18 +262,6 @@ void SimpleFontData::platformCharWidthInit()
 }
 #endif // USE(APPKIT)
 
-void SimpleFontData::platformDestroy()
-{
-    if (!isCustomFont() && m_derivedFontData) {
-        // These come from the cache.
-        if (m_derivedFontData->smallCaps)
-            fontCache().releaseFontData(m_derivedFontData->smallCaps.get());
-
-        if (m_derivedFontData->emphasisMark)
-            fontCache().releaseFontData(m_derivedFontData->emphasisMark.get());
-    }
-}
-
 #if !PLATFORM(IOS)
 PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
@@ -304,8 +292,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
         scaledFontData.m_syntheticBold = (fontTraits & NSBoldFontMask) && !(scaledFontTraits & NSBoldFontMask);
         scaledFontData.m_syntheticOblique = (fontTraits & NSItalicFontMask) && !(scaledFontTraits & NSItalicFontMask);
 
-        // SimpleFontData::platformDestroy() takes care of not deleting the cached font data twice.
-        return fontCache().getCachedFontData(&scaledFontData);
+        return fontCache().fontForPlatformData(scaledFontData);
     }
     END_BLOCK_OBJC_EXCEPTIONS;
 

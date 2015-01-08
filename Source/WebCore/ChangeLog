@@ -1,3 +1,67 @@
+2015-01-08  Antti Koivisto  <antti@apple.com>
+
+        Remove the concept of "retained" font
+        https://bugs.webkit.org/show_bug.cgi?id=140246
+
+        Reviewed by Darin Adler.
+
+        FontCache currently maintains a secondary refcount for SimpleFontDatas. This is used to decide whether
+        a font is considered inactive and is eligible for purging. This is confusing and complex.
+
+        The new scheme in this patch considers fonts in font cache inactive if their refcount is 1 (they are
+        owned by the cache only). This simplifies the code and gives similar behavior. Types that "retained" the
+        font this way always also ref it.
+
+        We also avoid unnecessarily removing fonts that wouldn't get deleted from the cache.
+
+        Also modernized some names and code.
+
+        * WebCore.exp.in:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::getFontData):
+        (WebCore::CSSFontSelector::getFallbackFontData):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::fontPlatformDataCache):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::cachedFonts):
+        (WebCore::FontCache::fontForFamily):
+        (WebCore::FontCache::fontDataForPlatformData):
+        (WebCore::FontCache::purgeInactiveFontDataIfNeeded):
+        (WebCore::FontCache::purgeInactiveFontData):
+        (WebCore::FontCache::fontDataCount):
+        (WebCore::FontCache::inactiveFontDataCount):
+        (WebCore::FontCache::fontForFamilyAtIndex):
+        (WebCore::FontCache::invalidate):
+        (WebCore::FontCache::getCachedFontData): Deleted.
+        (WebCore::FontCache::getNonRetainedLastResortFallbackFont): Deleted.
+        (WebCore::FontCache::releaseFontData): Deleted.
+        (WebCore::FontCache::getFontData): Deleted.
+        * platform/graphics/FontCache.h:
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::FontGlyphs):
+        (WebCore::FontGlyphs::~FontGlyphs):
+        (WebCore::FontGlyphs::realizeFontDataAt):
+        (WebCore::FontGlyphs::releaseFontData): Deleted.
+        * platform/graphics/FontGlyphs.h:
+        (WebCore::FontGlyphs::~FontGlyphs): Deleted.
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::~SimpleFontData):
+        * platform/graphics/SimpleFontData.h:
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::SimpleFontData::platformDestroy): Deleted.
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        (WebCore::FontCache::similarFontPlatformData):
+        (WebCore::FontCache::lastResortFallbackFont):
+        (WebCore::FontCache::getLastResortFallbackFont): Deleted.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformCreateScaledFontData):
+        (WebCore::SimpleFontData::platformDestroy): Deleted.
+
 2015-01-08  Anders Carlsson  <andersca@apple.com>
 
         Remove AbstractSQLTransaction

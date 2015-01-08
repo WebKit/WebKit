@@ -478,7 +478,7 @@ PassRefPtr<FontData> CSSFontSelector::getFontData(const FontDescription& fontDes
     if (!face) {
         if (!resolveGenericFamilyFirst)
             familyForLookup = resolveGenericFamily(m_document, fontDescription, familyName);
-        return fontCache().getCachedFontData(fontDescription, familyForLookup);
+        return fontCache().fontForFamily(fontDescription, familyForLookup);
     }
 
     return face->getFontData(fontDescription);
@@ -634,7 +634,7 @@ PassRefPtr<FontData> CSSFontSelector::getFallbackFontData(const FontDescription&
     if (!settings || !settings->fontFallbackPrefersPictographs())
         return 0;
 
-    return fontCache().getCachedFontData(fontDescription, settings->pictographFontFamily());
+    return fontCache().fontForFamily(fontDescription, settings->pictographFontFamily());
 }
 
 }

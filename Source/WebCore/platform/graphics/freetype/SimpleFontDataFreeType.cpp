@@ -101,10 +101,6 @@ void SimpleFontData::platformCharWidthInit()
     initCharWidths();
 }
 
-void SimpleFontData::platformDestroy()
-{
-}
-
 PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
     ASSERT(m_platformData.scaledFont());

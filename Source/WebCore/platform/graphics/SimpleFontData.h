@@ -81,15 +81,15 @@ public:
     };
 
     // Used to create platform fonts.
-    static PassRefPtr<SimpleFontData> create(const FontPlatformData& platformData, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false)
+    static Ref<SimpleFontData> create(const FontPlatformData& platformData, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false)
     {
-        return adoptRef(new SimpleFontData(platformData, isCustomFont, isLoading, isTextOrientationFallback));
+        return adoptRef(*new SimpleFontData(platformData, isCustomFont, isLoading, isTextOrientationFallback));
     }
 
     // Used to create SVG Fonts.
-    static PassRefPtr<SimpleFontData> create(std::unique_ptr<SVGData> svgData, float fontSize, bool syntheticBold, bool syntheticItalic)
+    static Ref<SimpleFontData> create(std::unique_ptr<SVGData> svgData, float fontSize, bool syntheticBold, bool syntheticItalic)
     {
-        return adoptRef(new SimpleFontData(WTF::move(svgData), fontSize, syntheticBold, syntheticItalic));
+        return adoptRef(*new SimpleFontData(WTF::move(svgData), fontSize, syntheticBold, syntheticItalic));
     }
 
     virtual ~SimpleFontData();
@@ -222,7 +222,6 @@ private:
     void platformInit();
     void platformGlyphInit();
     void platformCharWidthInit();
-    void platformDestroy();
 
     void initCharWidths();
 

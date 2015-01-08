@@ -161,7 +161,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
         scaledFontData.m_syntheticBold = (fontTraits & kCTFontBoldTrait) && !(scaledFontTraits & kCTFontTraitBold);
         scaledFontData.m_syntheticOblique = (fontTraits & kCTFontItalicTrait) && !(scaledFontTraits & kCTFontTraitItalic);
 
-        return fontCache().getCachedFontData(&scaledFontData);
+        return fontCache().fontForPlatformData(scaledFontData);
     }
 
     return nullptr;

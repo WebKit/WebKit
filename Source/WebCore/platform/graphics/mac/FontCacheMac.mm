@@ -337,7 +337,7 @@ static bool shouldAutoActivateFontIfNeeded(const AtomicString& family)
     return knownFamilies.get().add(family).isNewEntry;
 }
 
-PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool isPlatformFont, const UChar* characters, int length)
+RefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool isPlatformFont, const UChar* characters, int length)
 {
     UChar32 character;
     U16_GET(characters, 0, 0, length, character);
@@ -402,7 +402,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
         !isPlatformFont && (traits & NSFontItalicTrait) && !(substituteFontTraits & NSFontItalicTrait),
         platformData.m_orientation);
 
-    return getCachedFontData(&alternateFont, DoNotRetain);
+    return fontForPlatformData(alternateFont);
 }
 
 PassRefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescription& description)
@@ -419,27 +419,27 @@ PassRefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescript
         DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro", AtomicString::ConstructFromLiteral));
         for (int j = 0; j < 3 && !simpleFontData; ++j)
             if (family.contains(*matchWords[j], false))
-                simpleFontData = getCachedFontData(description, geezaStr);
+                simpleFontData = fontForFamily(description, geezaStr);
     }
     return simpleFontData.release();
 }
 
-PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
+Ref<SimpleFontData> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, timesStr, ("Times", AtomicString::ConstructFromLiteral));
 
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    RefPtr<SimpleFontData> simpleFontData = getCachedFontData(fontDescription, timesStr, false, shouldRetain);
+    RefPtr<SimpleFontData> simpleFontData = fontForFamily(fontDescription, timesStr, false);
     if (simpleFontData)
-        return simpleFontData.release();
+        return *simpleFontData;
 
     // The Times fallback will almost always work, but in the highly unusual case where
     // the user doesn't have it, we fall back on Lucida Grande because that's
     // guaranteed to be there, according to Nathan Taylor. This is good enough
     // to avoid a crash at least.
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, lucidaGrandeStr, ("Lucida Grande", AtomicString::ConstructFromLiteral));
-    return getCachedFontData(fontDescription, lucidaGrandeStr, false, shouldRetain);
+    return *fontForFamily(fontDescription, lucidaGrandeStr, false);
 }
 
 void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)

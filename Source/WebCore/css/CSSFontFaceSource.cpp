@@ -109,7 +109,7 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
     ) {
         // We're local. Just return a SimpleFontData from the normal cache.
         // We don't want to check alternate font family names here, so pass true as the checkingAlternateName parameter.
-        return fontCache().getCachedFontData(fontDescription, m_string, true);
+        return fontCache().fontForFamily(fontDescription, m_string, true);
     }
 
     // See if we have a mapping in our FontData cache.
@@ -144,10 +144,9 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
         // and the loader may invoke arbitrary delegate or event handler code.
         fontSelector->beginLoadingFontSoon(m_font.get());
 
-        // This temporary font is not retained and should not be returned.
-        FontCachePurgePreventer fontCachePurgePreventer;
-        SimpleFontData* temporaryFont = fontCache().getNonRetainedLastResortFallbackFont(fontDescription);
-        fontData = SimpleFontData::create(temporaryFont->platformData(), true, true);
+        Ref<SimpleFontData> placeholderFont = fontCache().lastResortFallbackFont(fontDescription);
+        Ref<SimpleFontData> placeholderFontCopyInLoadingState = SimpleFontData::create(placeholderFont->platformData(), true, true);
+        return WTF::move(placeholderFontCopyInLoadingState);
     }
 
     return fontData.release();

@@ -59,18 +59,11 @@ FontGlyphs::FontGlyphs(const FontPlatformData& platformData)
     , m_loadingCustomFonts(false)
     , m_isForPlatformFont(true)
 {
-    RefPtr<FontData> fontData = fontCache().getCachedFontData(&platformData);
-    m_realizedFontData.append(fontData.release());
+    m_realizedFontData.append(fontCache().fontForPlatformData(platformData));
 }
 
-void FontGlyphs::releaseFontData()
+FontGlyphs::~FontGlyphs()
 {
-    unsigned numFonts = m_realizedFontData.size();
-    for (unsigned i = 0; i < numFonts; ++i) {
-        if (m_realizedFontData[i]->isCustomFont())
-            continue;
-        fontCache().releaseFontData(downcast<SimpleFontData>(m_realizedFontData[i].get()));
-    }
 }
 
 void FontGlyphs::determinePitch(const FontDescription& description)
@@ -113,10 +106,10 @@ const FontData* FontGlyphs::realizeFontDataAt(const FontDescription& description
 
     // Ask the font cache for the font data.
     // We are obtaining this font for the first time. We keep track of the families we've looked at before
-    // in |m_familyIndex|, so that we never scan the same spot in the list twice. getFontData will adjust our
+    // in |m_familyIndex|, so that we never scan the same spot in the list twice. fontForFamilyAtIndex will adjust our
     // |m_familyIndex| as it scans for the right font to make.
     ASSERT(fontCache().generation() == m_generation);
-    RefPtr<FontData> result = fontCache().getFontData(description, m_familyIndex, m_fontSelector.get());
+    RefPtr<FontData> result = fontCache().fontForFamilyAtIndex(description, m_familyIndex, m_fontSelector.get());
     if (result) {
         m_realizedFontData.append(result);
         if (result->isLoading())

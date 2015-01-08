@@ -154,9 +154,6 @@ void SimpleFontData::platformGlyphInit()
 
 SimpleFontData::~SimpleFontData()
 {
-    if (!isSVGFont())
-        platformDestroy();
-
     removeFromSystemFallbackCache();
 }
 

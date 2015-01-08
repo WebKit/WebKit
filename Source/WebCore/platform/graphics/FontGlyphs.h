@@ -48,7 +48,7 @@ public:
     static Ref<FontGlyphs> create(PassRefPtr<FontSelector> fontSelector) { return adoptRef(*new FontGlyphs(fontSelector)); }
     static Ref<FontGlyphs> createForPlatformFont(const FontPlatformData& platformData) { return adoptRef(*new FontGlyphs(platformData)); }
 
-    ~FontGlyphs() { releaseFontData(); }
+    ~FontGlyphs();
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
@@ -77,8 +77,6 @@ private:
     GlyphData glyphDataForSystemFallback(UChar32, const FontDescription&, FontDataVariant);
     GlyphData glyphDataForNormalVariant(UChar32, const FontDescription&);
     GlyphData glyphDataForVariant(UChar32, const FontDescription&, FontDataVariant, unsigned fallbackLevel);
-
-    WEBCORE_EXPORT void releaseFontData();
     
     Vector<RefPtr<FontData>, 1> m_realizedFontData;
 

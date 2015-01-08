@@ -81,7 +81,7 @@ FcPattern* findBestFontGivenFallbacks(const FontPlatformData& fontData, FcPatter
     return FcFontSetMatch(0, sets, 1, pattern, &fontConfigResult);
 }
 
-PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool, const UChar* characters, int length)
+RefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool, const UChar* characters, int length)
 {
     RefPtr<FcPattern> pattern = adoptRef(createFontConfigPatternForCharacters(characters, length));
     const FontPlatformData& fontData = originalFontData->platformData();
@@ -89,7 +89,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
     RefPtr<FcPattern> fallbackPattern = adoptRef(findBestFontGivenFallbacks(fontData, pattern.get()));
     if (fallbackPattern) {
         FontPlatformData alternateFontData(fallbackPattern.get(), description);
-        return getCachedFontData(&alternateFontData, DoNotRetain);
+        return fontForPlatformData(alternateFontData);
     }
 
     FcResult fontConfigResult;
@@ -97,15 +97,15 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
     if (!resultPattern)
         return 0;
     FontPlatformData alternateFontData(resultPattern.get(), description);
-    return getCachedFontData(&alternateFontData, DoNotRetain);
+    return fontForPlatformData(alternateFontData);
 }
 
-PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
+Ref<SimpleFontData> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     // We want to return a fallback font here, otherwise the logic preventing FontConfig
     // matches for non-fallback fonts might return 0. See isFallbackFontAllowed.
     static AtomicString timesStr("serif");
-    return getCachedFontData(fontDescription, timesStr, false, shouldRetain);
+    return *fontForFamily(fontDescription, timesStr, false);
 }
 
 void FontCache::getTraitsInFamily(const AtomicString&, Vector<unsigned>&)

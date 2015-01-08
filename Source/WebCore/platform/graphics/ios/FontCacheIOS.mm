@@ -94,7 +94,7 @@ PassRefPtr<SimpleFontData> FontCache::getSystemFontFallbackForCharacters(const F
     FontPlatformData alternateFont(substituteFont.get(), platformData.size(), platformData.isPrinterFont(), syntheticBold, syntheticOblique, platformData.m_orientation);
     alternateFont.m_isEmoji = CTFontIsAppleColorEmoji(substituteFont.get());
 
-    return getCachedFontData(&alternateFont, DoNotRetain);
+    return fontForPlatformData(alternateFont);
 }
 
 enum class LanguageSpecificFont {
@@ -194,12 +194,16 @@ static LanguageSpecificFont languageSpecificFallbackFont(UChar32 c)
     return LanguageSpecificFont::None;
 }
 
-PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool, const UChar* characters, int length)
+RefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool, const UChar* characters, int length)
 {
     // Unlike OS X, our fallback font on iPhone is Arial Unicode, which doesn't have some apple-specific glyphs like F8FF.
     // Fall back to the Apple Fallback font in this case.
-    if (length > 0 && requiresCustomFallbackFont(*characters))
-        return getCachedFontData(getCustomFallbackFont(*characters, description), DoNotRetain);
+    if (length > 0 && requiresCustomFallbackFont(*characters)) {
+        auto* fallback = getCustomFallbackFont(*characters, description);
+        if (!fallback)
+            return nullptr;
+        return fontForPlatformData(*fallback);
+    }
 
     UChar32 c = *characters;
     if (length > 1 && U16_IS_LEAD(c) && U16_IS_TRAIL(characters[1]))
@@ -294,7 +298,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
             }
         }
 
-        simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? *cjkBold[preferredCJKFont] : *cjkPlain[preferredCJKFont], false, DoNotRetain);
+        simpleFontData = fontForFamily(description, isFontWeightBold(description.weight()) ? *cjkBold[preferredCJKFont] : *cjkPlain[preferredCJKFont], false);
         bool useSecondaryFont = true;
         if (simpleFontData) {
             CGGlyph glyphs[2];
@@ -306,31 +310,31 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
         }
 
         if (useSecondaryFont)
-            simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? *cjkBold[secondaryCJKFont] : *cjkPlain[secondaryCJKFont], false, DoNotRetain);
+            simpleFontData = fontForFamily(description, isFontWeightBold(description.weight()) ? *cjkBold[secondaryCJKFont] : *cjkPlain[secondaryCJKFont], false);
         break;
     }
     case LanguageSpecificFont::Korean: {
         static NeverDestroyed<AtomicString> koreanPlain("AppleSDGothicNeo-Medium", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> koreanBold("AppleSDGothicNeo-Bold", AtomicString::ConstructFromLiteral);
-        simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? koreanBold : koreanPlain, false, DoNotRetain);
+        simpleFontData = fontForFamily(description, isFontWeightBold(description.weight()) ? koreanBold : koreanPlain, false);
         break;
     }
     case LanguageSpecificFont::Cyrillic: {
         static NeverDestroyed<AtomicString> cyrillicPlain("HelveticaNeue", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> cyrillicBold("HelveticaNeue-Bold", AtomicString::ConstructFromLiteral);
-        simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? cyrillicBold : cyrillicPlain, false, DoNotRetain);
+        simpleFontData = fontForFamily(description, isFontWeightBold(description.weight()) ? cyrillicBold : cyrillicPlain, false);
         break;
     }
     case LanguageSpecificFont::Arabic: {
         static NeverDestroyed<AtomicString> arabicPlain("GeezaPro", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> arabicBold("GeezaPro-Bold", AtomicString::ConstructFromLiteral);
-        simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? arabicBold : arabicPlain, false, DoNotRetain);
+        simpleFontData = fontForFamily(description, isFontWeightBold(description.weight()) ? arabicBold : arabicPlain, false);
         break;
     }
     case LanguageSpecificFont::Hebrew: {
         static NeverDestroyed<AtomicString> hebrewPlain("ArialHebrew", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> hebrewBold("ArialHebrew-Bold", AtomicString::ConstructFromLiteral);
-        simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? hebrewBold : hebrewPlain, false, DoNotRetain);
+        simpleFontData = fontForFamily(description, isFontWeightBold(description.weight()) ? hebrewBold : hebrewPlain, false);
         break;
     }
     case LanguageSpecificFont::Indic: {
@@ -386,36 +390,36 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
         if (indicPageOrderIndex < (sizeof(indicUnicodePageFonts) / sizeof(AtomicString*))) {
             AtomicString* indicFontString = isFontWeightBold(description.weight()) ? indicUnicodePageFontsBold[indicPageOrderIndex] : indicUnicodePageFonts[indicPageOrderIndex];
             if (indicFontString)
-                simpleFontData = getCachedFontData(description, *indicFontString, false, DoNotRetain);
+                simpleFontData = fontForFamily(description, *indicFontString, false);
         }
         break;
     }
     case LanguageSpecificFont::Thai: {
         static NeverDestroyed<AtomicString> thaiPlain("Thonburi", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> thaiBold("Thonburi-Bold", AtomicString::ConstructFromLiteral);
-        simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? thaiBold : thaiPlain, false, DoNotRetain);
+        simpleFontData = fontForFamily(description, isFontWeightBold(description.weight()) ? thaiBold : thaiPlain, false);
         break;
     }
     case LanguageSpecificFont::Tibetan: {
         static NeverDestroyed<AtomicString> tibetanPlain("Kailasa", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> tibetanBold("Kailasa-Bold", AtomicString::ConstructFromLiteral);
-        simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? tibetanBold : tibetanPlain, false, DoNotRetain);
+        simpleFontData = fontForFamily(description, isFontWeightBold(description.weight()) ? tibetanBold : tibetanPlain, false);
         break;
     }
     case LanguageSpecificFont::CanadianAboriginalSyllabic: {
         static NeverDestroyed<AtomicString> casPlain("EuphemiaUCAS", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> casBold("EuphemiaUCAS-Bold", AtomicString::ConstructFromLiteral);
-        simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? casBold : casPlain, false, DoNotRetain);
+        simpleFontData = fontForFamily(description, isFontWeightBold(description.weight()) ? casBold : casPlain, false);
         break;
     }
     case LanguageSpecificFont::Khmer: {
         static NeverDestroyed<AtomicString> khmer("KhmerSangamMN", AtomicString::ConstructFromLiteral);
-        simpleFontData = getCachedFontData(description, khmer, false, DoNotRetain);
+        simpleFontData = fontForFamily(description, khmer, false);
         break;
     }
     case LanguageSpecificFont::Lao: {
         static NeverDestroyed<AtomicString> lao("LaoSangamMN", AtomicString::ConstructFromLiteral);
-        simpleFontData = getCachedFontData(description, lao, false, DoNotRetain);
+        simpleFontData = fontForFamily(description, lao, false);
         break;
     }
     default: {
@@ -426,11 +430,11 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
                 useEmojiFont = CFCharacterSetIsLongCharacterMember(appleColorEmojiCharacterSet(), c);
         }
         if (useEmojiFont)
-            simpleFontData = getCachedFontData(description, appleColorEmoji, false, DoNotRetain);
+            simpleFontData = fontForFamily(description, appleColorEmoji, false);
         else {
             RetainPtr<CTFontRef> fallbackFont = adoptCF(CTFontCreateForCharacters(originalFontData->getCTFont(), characters, length, nullptr));
             if (RetainPtr<CFStringRef> foundFontName = adoptCF(CTFontCopyPostScriptName(fallbackFont.get())))
-                simpleFontData = getCachedFontData(description, foundFontName.get(), false, DoNotRetain);
+                simpleFontData = fontForFamily(description, foundFontName.get(), false);
         }
         break;
     }
@@ -439,7 +443,7 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
     if (simpleFontData)
         return simpleFontData.release();
 
-    return getNonRetainedLastResortFallbackFont(description);
+    return lastResortFallbackFont(description);
 }
 
 PassRefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescription& description)
@@ -457,7 +461,7 @@ PassRefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescript
         static NeverDestroyed<AtomicString> menlo("menlo", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> courier("courier", AtomicString::ConstructFromLiteral);
         if (equalIgnoringCase(family, monaco) || equalIgnoringCase(family, menlo)) {
-            simpleFontData = getCachedFontData(description, courier);
+            simpleFontData = fontForFamily(description, courier);
             continue;
         }
 
@@ -465,7 +469,7 @@ PassRefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescript
         static NeverDestroyed<AtomicString> lucidaGrande("lucida grande", AtomicString::ConstructFromLiteral);
         static NeverDestroyed<AtomicString> verdana("verdana", AtomicString::ConstructFromLiteral);
         if (equalIgnoringCase(family, lucidaGrande)) {
-            simpleFontData = getCachedFontData(description, verdana);
+            simpleFontData = fontForFamily(description, verdana);
             continue;
         }
 
@@ -477,16 +481,16 @@ PassRefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescript
         static NeverDestroyed<AtomicString> geezaBold("GeezaPro-Bold", AtomicString::ConstructFromLiteral);
         for (int j = 0; j < 3 && !simpleFontData; ++j)
             if (family.contains(*matchWords[j], false))
-                simpleFontData = getCachedFontData(description, isFontWeightBold(description.weight()) ? geezaBold : geezaPlain);
+                simpleFontData = fontForFamily(description, isFontWeightBold(description.weight()) ? geezaBold : geezaPlain);
     }
 
     return simpleFontData.release();
 }
 
-PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
+Ref<SimpleFontData> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     static NeverDestroyed<AtomicString> fallbackFontFamily(".PhoneFallback", AtomicString::ConstructFromLiteral);
-    return getCachedFontData(fontDescription, fallbackFontFamily, false, shouldRetain);
+    return *fontForFamily(fontDescription, fallbackFontFamily, false);
 }
 
 FontPlatformData* FontCache::getCustomFallbackFont(const UInt32 c, const FontDescription& description)
