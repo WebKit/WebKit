@@ -562,9 +562,6 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([(NSDictionary *)dictionaryPopupInfo.options.get() mutableCopy]);
 
     if (canLoadLUTermOptionDisableSearchTermIndicator() && dictionaryPopupInfo.textIndicator.contentImage) {
-        // Run the animations serially because attaching another subwindow breaks the bounce animation.
-        // We could consider making the bounce NSAnimationNonblockingThreaded instead, which seems
-        // to work, but need to consider all of the implications.
         [m_wkView _setTextIndicator:TextIndicator::create(dictionaryPopupInfo.textIndicator) fadeOut:NO];
         [mutableOptions setObject:@YES forKey:getLUTermOptionDisableSearchTermIndicator()];
         [getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.string.get() atLocation:textBaselineOrigin options:mutableOptions.get()];

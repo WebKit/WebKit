@@ -46,8 +46,12 @@ class Range;
 
 enum class TextIndicatorPresentationTransition {
     None,
+
+    // These animations drive themselves.
     Bounce,
     BounceAndCrossfade,
+
+    // These animations need to be driven manually via TextIndicatorWindow::setAnimationProgress.
     FadeIn,
     Crossfade
 };
@@ -85,6 +89,7 @@ public:
     bool wantsBounce() const;
     bool wantsContentCrossfade() const;
     bool wantsFadeIn() const;
+    bool wantsManualAnimation() const;
 
 private:
     TextIndicator(const TextIndicatorData&);
