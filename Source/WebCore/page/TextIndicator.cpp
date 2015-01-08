@@ -207,7 +207,8 @@ bool TextIndicator::wantsBounce() const
     case TextIndicatorPresentationTransition::None:
         return false;
     }
-    
+
+    ASSERT_NOT_REACHED();
     return false;
 }
 
@@ -226,7 +227,8 @@ bool TextIndicator::wantsContentCrossfade() const
     case TextIndicatorPresentationTransition::None:
         return false;
     }
-    
+
+    ASSERT_NOT_REACHED();
     return false;
 }
 
@@ -242,7 +244,25 @@ bool TextIndicator::wantsFadeIn() const
     case TextIndicatorPresentationTransition::None:
         return false;
     }
-    
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool TextIndicator::wantsManualAnimation() const
+{
+    switch (m_data.presentationTransition) {
+    case TextIndicatorPresentationTransition::FadeIn:
+    case TextIndicatorPresentationTransition::Crossfade:
+        return true;
+
+    case TextIndicatorPresentationTransition::Bounce:
+    case TextIndicatorPresentationTransition::BounceAndCrossfade:
+    case TextIndicatorPresentationTransition::None:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
     return false;
 }
 

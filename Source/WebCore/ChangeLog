@@ -1,5 +1,31 @@
 2015-01-07  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177970. rdar://problem/19383425
+
+    2015-01-06  Timothy Horton  <timothy_horton@apple.com>
+
+            Make explicit which TextIndicator animations are driven manually, and which run automatically
+            https://bugs.webkit.org/show_bug.cgi?id=140113
+            <rdar://problem/19383425>
+
+            Reviewed by Darin Adler.
+
+            * page/TextIndicator.cpp:
+            (WebCore::TextIndicator::wantsManualAnimation):
+            Add wantsManualAnimation(). The old transitions (Bounce and BounceAndCrossfade)
+            run automatically, and the new ones (FadeIn and Crossfade) are driven manually.
+
+            * page/TextIndicator.h:
+            Add a comment explaining which animations are manual and which are not.
+
+            * page/mac/TextIndicatorWindow.mm:
+            (-[WebTextIndicatorView present]):
+            Make use of wantsManualAnimation(). The previous (wantsFadeIn || wantsCrossfade)
+            was wrong, because it was true for BounceAndCrossfade, and would cause
+            BounceAndCrossfade animations (which aren't driven manually) to stall at progress=0.
+
+2015-01-07  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177705. rdar://problem/19333076
 
     2014-12-23  Timothy Horton  <timothy_horton@apple.com>
