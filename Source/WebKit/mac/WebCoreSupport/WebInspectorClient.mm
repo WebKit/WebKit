@@ -395,7 +395,6 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
     WebPreferences *preferences = [[WebPreferences alloc] init];
     [preferences setAllowsAnimatedImages:YES];
-    [preferences setApplicationChromeModeEnabled:YES];
     [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setAutosaves:NO];
     [preferences setDefaultFixedFontSize:11];

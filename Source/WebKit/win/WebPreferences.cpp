@@ -264,7 +264,6 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitCacheModelPreferenceKey), cacheModelRef.get());
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitAuthorAndUserStylesEnabledPreferenceKey), kCFBooleanTrue);
-    CFDictionaryAddValue(defaults, CFSTR(WebKitApplicationChromeModePreferenceKey), kCFBooleanFalse);
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitOfflineWebApplicationCacheEnabledPreferenceKey), kCFBooleanFalse);
 
@@ -1472,15 +1471,13 @@ HRESULT STDMETHODCALLTYPE WebPreferences::authorAndUserStylesEnabled(BOOL* enabl
     return S_OK;
 }
 
-HRESULT WebPreferences::inApplicationChromeMode(BOOL* enabled)
+HRESULT WebPreferences::inApplicationChromeMode(BOOL*)
 {
-    *enabled = boolValueForKey(WebKitApplicationChromeModePreferenceKey);
     return S_OK;
 }
-    
-HRESULT WebPreferences::setApplicationChromeMode(BOOL enabled)
+
+HRESULT WebPreferences::setApplicationChromeMode(BOOL)
 {
-    setBoolValue(WebKitApplicationChromeModePreferenceKey, enabled);
     return S_OK;
 }
 

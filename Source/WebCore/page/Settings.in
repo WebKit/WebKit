@@ -155,7 +155,6 @@ fixedPositionCreatesStackingContext initial=defaultFixedPositionCreatesStackingC
 syncXHRInDocumentsEnabled initial=true
 cookieEnabled initial=true
 mediaEnabled initial=true
-applicationChromeMode initial=false
 DOMPasteAllowed initial=false
 
 # When enabled, window.blur() does not change focus, and

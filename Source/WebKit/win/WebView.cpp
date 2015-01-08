@@ -4951,11 +4951,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         settings.setAuthorAndUserStylesEnabled(enabled);
     }
 
-    hr = prefsPrivate->inApplicationChromeMode(&enabled);
-    if (FAILED(hr))
-        return hr;
-    settings.setApplicationChromeMode(enabled);
-
     hr = prefsPrivate->offlineWebApplicationCacheEnabled(&enabled);
     if (FAILED(hr))
         return hr;

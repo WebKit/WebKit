@@ -475,7 +475,6 @@ public:
         [NSNumber numberWithBool:NO],   WebKitDeveloperExtrasEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitJavaScriptExperimentsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitApplicationChromeModeEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDOMTimersThrottlingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitLocalFileContentSniffingEnabledPreferenceKey,
@@ -1216,14 +1215,14 @@ public:
     [self _setBoolValue:flag forKey:WebKitAuthorAndUserStylesEnabledPreferenceKey];
 }
 
+// FIXME: applicationChromeMode is no longer needed by ToT, but is still used in Safari 8.
 - (BOOL)applicationChromeModeEnabled
 {
-    return [self _boolValueForKey:WebKitApplicationChromeModeEnabledPreferenceKey];
+    return NO;
 }
 
 - (void)setApplicationChromeModeEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitApplicationChromeModeEnabledPreferenceKey];
 }
 
 - (BOOL)domTimersThrottlingEnabled

@@ -874,9 +874,6 @@ bool RenderTheme::isDefault(const RenderObject& o) const
     if (!isActive(o))
         return false;
 
-    if (!o.frame().settings().applicationChromeMode())
-        return false;
-    
     return o.style().appearance() == DefaultButtonPart;
 }
 

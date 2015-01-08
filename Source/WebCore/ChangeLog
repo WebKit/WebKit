@@ -1,3 +1,23 @@
+2015-01-08  Dean Jackson  <dino@apple.com>
+
+        Text not drawn or white-on-white for "Close Page"/"Go Back" button on safe browsing warning page
+        https://bugs.webkit.org/show_bug.cgi?id=140232
+        <rdar://problem/19371010>
+
+        Reviewed by Anders Carlsson.
+
+        We need to support default button styling even when application chrome
+        mode is not enabled (it was a bit weird that this was exposed as a Setting
+        anyway). We should render as a default button whenever content sets
+        the proprietary -webkit-appearance. This means we don't need the
+        applicationChromeMode setting.
+
+        For normal Web content there should be no change in behavior.
+
+        * page/Settings.in: Remove applicationChromeMode
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isDefault): Don't test for the setting.
+
 2015-01-08  Chris Dumez  <cdumez@apple.com>
 
         Unfriend StyleResolver and StyleBuilderCustom

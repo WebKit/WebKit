@@ -109,7 +109,6 @@ private:
 #endif
 
         pageGroup->preferences().setAllowFileAccessFromFileURLs(true);
-        pageGroup->preferences().setApplicationChromeModeEnabled(true);
 
         return pageGroup.release();
     }

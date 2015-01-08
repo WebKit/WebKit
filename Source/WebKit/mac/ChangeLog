@@ -1,3 +1,24 @@
+2015-01-08  Dean Jackson  <dino@apple.com>
+
+        Text not drawn or white-on-white for "Close Page"/"Go Back" button on safe browsing warning page
+        https://bugs.webkit.org/show_bug.cgi?id=140232
+        <rdar://problem/19371010>
+
+        Reviewed by Anders Carlsson.
+
+        Remove the applicationChromeMode setting, but leave stubs in to make
+        sure existing binaries don't break.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController init]):
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences applicationChromeModeEnabled]):
+        (-[WebPreferences setApplicationChromeModeEnabled:]):
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2015-01-07  Daniel Bates  <dabates@apple.com>
 
         [iOS] Make WebKit2 build with public iOS SDK and more build fixes for DRT
