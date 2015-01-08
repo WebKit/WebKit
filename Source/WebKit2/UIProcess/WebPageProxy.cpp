@@ -1207,7 +1207,7 @@ void WebPageProxy::dispatchViewStateChange()
     if (m_viewWasEverInWindow && (changed & ViewState::IsInWindow) && isInWindow())
         m_viewStateChangeWantsSynchronousReply = true;
 
-    if (changed || m_viewStateChangeWantsSynchronousReply)
+    if (changed || m_viewStateChangeWantsSynchronousReply || !m_nextViewStateChangeCallbacks.isEmpty())
         m_process->send(Messages::WebPage::SetViewState(m_viewState, m_viewStateChangeWantsSynchronousReply, m_nextViewStateChangeCallbacks), m_pageID);
 
     m_nextViewStateChangeCallbacks.clear();
