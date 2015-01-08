@@ -1,3 +1,13 @@
+2015-01-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening after r178115.
+
+        * platform/gtk/TestExpectations: Update expected failures.
+        * platform/gtk/fast/ruby/bopomofo-expected.png: Added. Add image baseline as expected (generated before r177637).
+        * platform/gtk/fast/ruby/bopomofo-letter-spacing-expected.png: Added. Add image baseline as expected (generated before r177637).
+        * platform/gtk/fast/ruby/bopomofo-rl-expected.png: Added. Add image baseline as expected (generated before r177637).
+        * platform/gtk/fast/text/khmer-lao-font-expected.png: Added. Add image baseline as expected (generated before r177637).
+
 2015-01-08  Alexey Proskuryakov  <ap@apple.com>
 
         Two tests, which include data uri images, need to be changed and rebaselined since the expected results are incorrect

@@ -2329,6 +2329,23 @@ webkit.org/b/139492 fast/text/space-width.html [ ImageOnlyFailure ]
 
 webkit.org/b/139493 fast/text/narrow-non-breaking-space.html [ ImageOnlyFailure ]
 
+# Missing glyph symbol is not rendered properly.
+webkit.org/b/140252 fast/css/line-height-determined-by-primary-font.html [ Failure ]
+webkit.org/b/140252 fast/ruby/bopomofo-letter-spacing.html [ Failure ]
+webkit.org/b/140252 fast/ruby/bopomofo-rl.html [ Failure ]
+webkit.org/b/140252 fast/ruby/bopomofo.html [ Failure ]
+webkit.org/b/140252 fast/text/decorations-with-text-combine.html [ Failure ]
+webkit.org/b/140252 fast/text/emphasis-combined-text.html [ Failure ]
+webkit.org/b/140252 fast/text/emphasis-vertical.html [ Failure ]
+webkit.org/b/140252 fast/text/international/khmer-selection.html [ Failure ]
+webkit.org/b/140252 fast/text/international/plane2.html [ Failure ]
+webkit.org/b/140252 fast/text/justify-ideograph-complex.html [ Failure ]
+webkit.org/b/140252 fast/text/justify-ideograph-simple.html [ Failure ]
+webkit.org/b/140252 fast/text/justify-ideograph-vertical.html [ Failure ]
+webkit.org/b/140252 fast/text/khmer-lao-font.html [ Failure ]
+webkit.org/b/140252 fast/text/midword-break-before-surrogate-pair-2.html [ Failure ]
+webkit.org/b/140252 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
