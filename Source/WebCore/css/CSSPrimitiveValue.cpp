@@ -536,7 +536,7 @@ void CSSPrimitiveValue::cleanup()
 
 double CSSPrimitiveValue::computeDegrees()
 {
-    switch (m_primitiveUnitType) {
+    switch (primitiveType()) {
     case CSS_DEG:
         return getDoubleValue();
     case CSS_RAD:

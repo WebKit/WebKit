@@ -1,5 +1,34 @@
 2015-01-07  Chris Dumez  <cdumez@apple.com>
 
+        Assert should never be reached hit in WebCore::CSSCalcPrimitiveValue::doubleValue
+        https://bugs.webkit.org/show_bug.cgi?id=140180
+
+        Reviewed by Darin Adler.
+
+        Add support for using floating-point angles with 'turn' unit, as per the
+        specification:
+        http://dev.w3.org/csswg/css-values-3/#angles
+
+        Previously, we only supported integer values for the 'turn' unit even
+        though other angle units (e.g. 'deg') handle floating-point values just
+        fine. Trying to use a floating-point value with 'turn' unit would cause
+        us to hit an assertion in CSSCalcPrimitiveValue::doubleValue().
+
+        Also fix the support for angles in calc().
+        CSSPrimitiveValue::computeDegrees() was accessing m_primitiveUnitType
+        member directly, which would be incorrect in the case of calculated
+        values. This patch switches to calling CSSPrimitiveValue::primitiveType()
+        which handles calculated values.
+
+        Test: fast/css/turn-angle-double.html
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::hasDoubleValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeDegrees):
+
+2015-01-07  Chris Dumez  <cdumez@apple.com>
+
         Move 'font' CSS property to the new StyleBuilder
         https://bugs.webkit.org/show_bug.cgi?id=140181
 

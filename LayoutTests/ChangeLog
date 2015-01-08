@@ -1,3 +1,17 @@
+2015-01-07  Chris Dumez  <cdumez@apple.com>
+
+        Assert should never be reached hit in WebCore::CSSCalcPrimitiveValue::doubleValue
+        https://bugs.webkit.org/show_bug.cgi?id=140180
+
+        Reviewed by Darin Adler.
+
+        Add a layout test to make sure that using float-point angles with 'turn' unit
+        does not crash and behaves as intended. Also cover the case where calc() is
+        used.
+
+        * fast/css/turn-angle-double-expected.txt: Added.
+        * fast/css/turn-angle-double.html: Added.
+
 2015-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The ASCII decoding for non ASCII character is incorrect if this character comes after going through the fast decoding code path and before the end of the text by less than a machine word size of characters.
