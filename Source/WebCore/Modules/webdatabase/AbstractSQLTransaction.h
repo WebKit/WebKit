@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class AbstractSQLTransactionBackend;
+class SQLTransactionBackend;
 
 class AbstractSQLTransaction : public ThreadSafeRefCounted<AbstractSQLTransaction> {
 public:
@@ -45,7 +45,7 @@ public:
     virtual bool hasCallback() const = 0;
     virtual bool hasSuccessCallback() const = 0;
     virtual bool hasErrorCallback() const = 0;
-    virtual void setBackend(AbstractSQLTransactionBackend*) = 0;
+    virtual void setBackend(SQLTransactionBackend*) = 0;
 };
 
 } // namespace WebCore

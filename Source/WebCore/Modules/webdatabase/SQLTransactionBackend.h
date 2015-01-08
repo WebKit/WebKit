@@ -30,12 +30,12 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractSQLTransactionBackend.h"
 #include "DatabaseBasicTypes.h"
 #include "SQLTransactionStateMachine.h"
 #include <memory>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/ThreadingPrimitives.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -45,6 +45,7 @@ class DatabaseBackend;
 class OriginLock;
 class SQLError;
 class SQLiteTransaction;
+class SQLStatement;
 class SQLStatementBackend;
 class SQLTransactionBackend;
 class SQLValue;
@@ -58,7 +59,7 @@ public:
     virtual void handleCommitFailedAfterPostflight(SQLTransactionBackend*) = 0;
 };
 
-class SQLTransactionBackend : public SQLTransactionStateMachine<SQLTransactionBackend>, public AbstractSQLTransactionBackend {
+class SQLTransactionBackend : public ThreadSafeRefCounted<SQLTransactionBackend>, public SQLTransactionStateMachine<SQLTransactionBackend> {
 public:
     static PassRefPtr<SQLTransactionBackend> create(DatabaseBackend*,
         PassRefPtr<AbstractSQLTransaction>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
@@ -76,17 +77,16 @@ public:
     bool isReadOnly() { return m_readOnly; }
     void notifyDatabaseThreadIsShuttingDown();
 
+    // APIs called from the frontend published via SQLTransactionBackend:
+    void requestTransitToState(SQLTransactionState);
+    PassRefPtr<SQLError> transactionError();
+    SQLStatement* currentStatement();
+    void setShouldRetryCurrentStatement(bool);
+    void executeSQL(std::unique_ptr<SQLStatement>, const String& statement, const Vector<SQLValue>& arguments, int permissions);
+    
 private:
     SQLTransactionBackend(DatabaseBackend*, PassRefPtr<AbstractSQLTransaction>,
         PassRefPtr<SQLTransactionWrapper>, bool readOnly);
-
-    // APIs called from the frontend published via AbstractSQLTransactionBackend:
-    virtual void requestTransitToState(SQLTransactionState) override;
-    virtual PassRefPtr<SQLError> transactionError() override;
-    virtual SQLStatement* currentStatement() override;
-    virtual void setShouldRetryCurrentStatement(bool) override;
-    virtual void executeSQL(std::unique_ptr<SQLStatement>, const String& statement,
-        const Vector<SQLValue>& arguments, int permissions) override;
 
     void doCleanup();
 

@@ -7698,7 +7698,6 @@
 		1A3763691A2E68BB009A7EE2 /* StorageNamespaceProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceProvider.cpp; sourceTree = "<group>"; };
 		1A37636A1A2E68BB009A7EE2 /* StorageNamespaceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceProvider.h; sourceTree = "<group>"; };
 		1A40CDD01A5DF74700E9D4DB /* AbstractSQLTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSQLTransaction.h; sourceTree = "<group>"; };
-		1A40CDD11A5DF76200E9D4DB /* AbstractSQLTransactionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractSQLTransactionBackend.h; sourceTree = "<group>"; };
 		1A494BBB0A122DCD00FDAFC1 /* HTMLElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLElement.idl; sourceTree = "<group>"; };
 		1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElement.cpp; sourceTree = "<group>"; };
 		1A494BF90A122F4400FDAFC1 /* JSHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLElement.h; sourceTree = "<group>"; };
@@ -18295,7 +18294,6 @@
 			children = (
 				FE115FA9167988CD00249134 /* AbstractDatabaseServer.h */,
 				1A40CDD01A5DF74700E9D4DB /* AbstractSQLTransaction.h */,
-				1A40CDD11A5DF76200E9D4DB /* AbstractSQLTransactionBackend.h */,
 				FE36FD1116C7826400F887C1 /* ChangeVersionData.h */,
 				97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */,
 				97BC69D91505F076001B74AC /* ChangeVersionWrapper.h */,

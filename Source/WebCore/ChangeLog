@@ -1,3 +1,19 @@
+2015-01-08  Anders Carlsson  <andersca@apple.com>
+
+        Remove AbstractSQLTransactionBackend
+        https://bugs.webkit.org/show_bug.cgi?id=140227
+
+        Reviewed by Darin Adler.
+
+        * Modules/webdatabase/AbstractSQLTransaction.h:
+        * Modules/webdatabase/AbstractSQLTransactionBackend.h: Removed.
+        * Modules/webdatabase/SQLStatementBackend.cpp:
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::setBackend):
+        * Modules/webdatabase/SQLTransaction.h:
+        * Modules/webdatabase/SQLTransactionBackend.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2015-01-08  Darin Adler  <darin@apple.com>
 
         ASSERTION FAILED: character != kEndOfFileMarker in WebCore::HTMLTokenizer::bufferCharacter

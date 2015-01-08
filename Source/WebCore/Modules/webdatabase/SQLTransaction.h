@@ -41,11 +41,11 @@
 
 namespace WebCore {
 
-class AbstractSQLTransactionBackend;
 class Database;
 class SQLError;
 class SQLStatementCallback;
 class SQLStatementErrorCallback;
+class SQLTransactionBackend;
 class SQLTransactionCallback;
 class SQLTransactionErrorCallback;
 class SQLValue;
@@ -71,7 +71,7 @@ private:
     virtual bool hasCallback() const override;
     virtual bool hasSuccessCallback() const override;
     virtual bool hasErrorCallback() const override;
-    virtual void setBackend(AbstractSQLTransactionBackend*) override;
+    virtual void setBackend(SQLTransactionBackend*) override;
 
     // State Machine functions:
     virtual StateFunction stateFunctionFor(SQLTransactionState) override;
@@ -90,7 +90,7 @@ private:
     SQLTransactionState nextStateForTransactionError();
 
     Ref<Database> m_database;
-    RefPtr<AbstractSQLTransactionBackend> m_backend;
+    RefPtr<SQLTransactionBackend> m_backend;
     SQLCallbackWrapper<SQLTransactionCallback> m_callbackWrapper;
     SQLCallbackWrapper<VoidCallback> m_successCallbackWrapper;
     SQLCallbackWrapper<SQLTransactionErrorCallback> m_errorCallbackWrapper;
