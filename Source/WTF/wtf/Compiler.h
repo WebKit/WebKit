@@ -178,7 +178,7 @@
 #define WTF_EXTERN_C_END
 #endif
 
-// FIXME: Remove this once we have transitioned to WTF_EXTERN_C_BEGIN/WTF_EXTERN_C_END.
+/* FIXME: Remove this once we have transitioned to WTF_EXTERN_C_BEGIN/WTF_EXTERN_C_END. */
 #ifdef __cplusplus
 #define EXTERN_C extern "C"
 #else
