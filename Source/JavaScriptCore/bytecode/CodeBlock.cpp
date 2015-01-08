@@ -1116,8 +1116,9 @@ void CodeBlock::dumpBytecode(
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int r2 = (++it)->u.operand;
+            int r3 = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "get_argument_by_val");
-            out.printf("%s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data());
+            out.printf("%s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data());
             ++it;
             dumpValueProfiling(out, it, hasPrintedProfiling);
             break;

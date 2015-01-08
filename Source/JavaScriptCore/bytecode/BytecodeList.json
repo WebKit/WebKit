@@ -69,7 +69,7 @@
             { "name" : "op_put_by_id_transition_normal_out_of_line", "length" : 9 },
             { "name" : "op_del_by_id", "length" : 4 },
             { "name" : "op_get_by_val", "length" : 6 },
-            { "name" : "op_get_argument_by_val", "length" : 6 },
+            { "name" : "op_get_argument_by_val", "length" : 7 },
             { "name" : "op_put_by_val", "length" : 5 },
             { "name" : "op_put_by_val_direct", "length" : 5 },
             { "name" : "op_del_by_val", "length" : 4 },

@@ -1620,12 +1620,12 @@ _llint_op_get_argument_by_val:
     loadi ThisArgumentOffset + PayloadOffset[cfr, t2, 8], t1
     storei t0, TagOffset[cfr, t3, 8]
     storei t1, PayloadOffset[cfr, t3, 8]
-    valueProfile(t0, t1, 20, t2)
-    dispatch(6)
+    valueProfile(t0, t1, 24, t2)
+    dispatch(7)
 
 .opGetArgumentByValSlow:
     callSlowPath(_llint_slow_path_get_argument_by_val)
-    dispatch(6)
+    dispatch(7)
 
 
 macro contiguousPutByVal(storeCallback)

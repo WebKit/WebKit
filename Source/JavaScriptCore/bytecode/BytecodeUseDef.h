@@ -153,7 +153,6 @@ void computeUsesForBytecodeOffset(
     case op_has_indexed_property:
     case op_next_enumerator_pname:
     case op_get_by_val:
-    case op_get_argument_by_val:
     case op_in:
     case op_instanceof:
     case op_check_has_instance:
@@ -182,6 +181,7 @@ void computeUsesForBytecodeOffset(
         return;
     }
     case op_has_structure_property:
+    case op_get_argument_by_val:
     case op_get_generic_property_enumerator:
     case op_construct_varargs:
     case op_call_varargs: {

@@ -1475,15 +1475,15 @@ _llint_op_get_argument_by_val:
     loadi ArgumentCount + PayloadOffset[cfr], t1
     biaeq t2, t1, .opGetArgumentByValSlow
     loadisFromInstruction(1, t3)
-    loadpFromInstruction(5, t1)
+    loadpFromInstruction(6, t1)
     loadq ThisArgumentOffset[cfr, t2, 8], t0
     storeq t0, [cfr, t3, 8]
-    valueProfile(t0, 5, t1)
-    dispatch(6)
+    valueProfile(t0, 6, t1)
+    dispatch(7)
 
 .opGetArgumentByValSlow:
     callSlowPath(_llint_slow_path_get_argument_by_val)
-    dispatch(6)
+    dispatch(7)
 
 
 macro contiguousPutByVal(storeCallback)

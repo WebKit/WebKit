@@ -1525,6 +1525,8 @@ RegisterID* BytecodeGenerator::emitGetArgumentByVal(RegisterID* dst, RegisterID*
     ASSERT(base->virtualRegister() == m_codeBlock->argumentsRegister());
     instructions().append(base->index());
     instructions().append(property->index());
+    ASSERT(!m_codeBlock->hasActivationRegister() || m_codeBlock->activationRegister().isValid());
+    instructions().append(m_codeBlock->hasActivationRegister() ? m_codeBlock->activationRegister().offset() : addConstantValue(JSValue())->index());
     instructions().append(arrayProfile);
     instructions().append(profile);
     return dst;
