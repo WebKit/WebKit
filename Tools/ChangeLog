@@ -1,3 +1,10 @@
+2015-01-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        Moving myself to the reviewers section and updating
+        the list of my email addresses.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-01-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Build gtk-doc without gtkdoc-mktmpl

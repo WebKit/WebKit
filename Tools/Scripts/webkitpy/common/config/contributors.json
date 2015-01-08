@@ -2843,15 +2843,6 @@
          "nicks" : [
             "bzsolt"
          ]
-      },
-      "\u017dan Dober\u0161ek" : {
-         "emails" : [
-            "zandobersek@gmail.com",
-            "zdobersek@igalia.com"
-         ],
-         "nicks" : [
-            "zdobersek"
-         ]
       }
    },
    "Contributors" : {
@@ -4744,6 +4735,16 @@
          "expertise" : "CSS Shapes, Line layout, Custom Allocation Framework, PerformanceTests, QtWebKit",
          "nicks" : [
             "zoltan"
+         ]
+      },
+      "\u017dan Dober\u0161ek" : {
+         "emails" : [
+            "zandobersek@gmail.com",
+            "zan@falconsigh.net",
+            "zdobersek@igalia.com"
+         ],
+         "nicks" : [
+            "zdobersek"
          ]
       }
    }
