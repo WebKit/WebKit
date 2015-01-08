@@ -1,5 +1,21 @@
 2015-01-07  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177754. rdar://problem/19343307
+
+    2014-12-26  Conrad Shultz  <conrad_shultz@apple.com>
+
+            Safari build crashes when "zooming into"/choosing a tab from tab view
+            https://bugs.webkit.org/show_bug.cgi?id=139934
+
+            Reviewed by Dan Bernstein.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _setIgnoresNonWheelEvents:]):
+            Trying to add a nil gesture recognizer raises an exception. Stop assuming that a
+            gesture recognizer is non-nil.
+
+2015-01-07  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177705. rdar://problem/19333076
 
     2014-12-23  Timothy Horton  <timothy_horton@apple.com>

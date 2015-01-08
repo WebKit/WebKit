@@ -4102,8 +4102,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (ignoresNonWheelEvents)
         [self removeGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
-    else
-        [self addGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
+    else if (NSGestureRecognizer *immediateActionRecognizer = _data->_immediateActionGestureRecognizer.get())
+        [self addGestureRecognizer:immediateActionRecognizer];
 #endif
 }
 
