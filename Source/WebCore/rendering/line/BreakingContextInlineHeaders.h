@@ -32,6 +32,7 @@
 #include "RenderCombineText.h"
 #include "RenderCounter.h"
 #include "RenderInline.h"
+#include "RenderLineBreak.h"
 #include "RenderListMarker.h"
 #include "RenderRubyRun.h"
 #include "RenderSVGInlineText.h"
@@ -269,15 +270,23 @@ inline LayoutUnit borderPaddingMarginEnd(const RenderInline& child)
 
 inline bool shouldAddBorderPaddingMargin(RenderObject* child)
 {
+    if (!child)
+        return true;
     // When deciding whether we're at the edge of an inline, adjacent collapsed whitespace is the same as no sibling at all.
-    return !child || (is<RenderText>(*child) && !downcast<RenderText>(*child).textLength());
+    if (is<RenderText>(*child) && !downcast<RenderText>(*child).textLength())
+        return true;
+#if ENABLE(CSS_BOX_DECORATION_BREAK)
+    if (is<RenderLineBreak>(*child) && child->parent()->style().boxDecorationBreak() == DCLONE)
+        return true;
+#endif
+    return false;
 }
 
 inline RenderObject* previousInFlowSibling(RenderObject* child)
 {
-    child = child->previousSibling();
-    while (child && child->isOutOfFlowPositioned())
+    do {
         child = child->previousSibling();
+    } while (child && child->isOutOfFlowPositioned());
     return child;
 }
 

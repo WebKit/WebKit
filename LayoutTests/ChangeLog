@@ -1,3 +1,14 @@
+2015-01-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Borders inside box-decoration-break: clone after a br do not contribute to line breaking
+        https://bugs.webkit.org/show_bug.cgi?id=140238
+
+        Reviewed by Darin Adler.
+
+        * fast/box-decoration-break/box-decoration-break-clone-line-break-expected.html: Added.
+        * fast/box-decoration-break/box-decoration-break-clone-line-break.html: Added.
+        * platform/mac/TestExpectations:
+
 2015-01-08  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [EFL] Clean typos in tests expectations after r177492.

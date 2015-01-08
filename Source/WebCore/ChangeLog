@@ -1,3 +1,20 @@
+2015-01-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Borders inside box-decoration-break: clone after a br do not contribute to line breaking
+        https://bugs.webkit.org/show_bug.cgi?id=140238
+
+        Reviewed by Darin Adler.
+
+        When we iterate through renderers for line breaking, we determine which of the renderers
+        is responsible for inserting its parent's border width. However, this determination didn't
+        take a <br> and box-decoration-break: clone into account.
+
+        Test: fast/box-decoration-break/box-decoration-break-clone-line-break.html
+
+        * rendering/line/BreakingContextInlineHeaders.h:
+        (WebCore::shouldAddBorderPaddingMargin):
+        (WebCore::previousInFlowSibling): Clean up to use a do / while block.
+
 2015-01-08  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Seperate updateBackingStore from flushCompositingState.
