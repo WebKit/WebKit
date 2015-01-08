@@ -860,7 +860,7 @@ void TestRunner::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
 
 void TestRunner::clearPersistentUserStyleSheet()
 {
-    ::setPersistentUserStyleSheetLocation(0);
+    ::setPersistentUserStyleSheetLocation(nullptr);
 }
 
 void TestRunner::setWindowIsKey(bool flag)

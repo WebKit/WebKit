@@ -1,3 +1,19 @@
+2015-01-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] DumpRenderTree is always using 800x600 size, even if tests need other size.
+        https://bugs.webkit.org/show_bug.cgi?id=140256
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues): Drive-by fix of a buffer overrun found while
+        running with heap validation checks.
+        (sizeWebViewForCurrentTest): Check both path separators ('/' and '\\') when checking for
+        the "svg\\W3C-SVG-1.1" test directory.
+        (removeFontFallbackIfPresent): Use nullptr instead of 0.
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::clearPersistentUserStyleSheet): Ditto.
+
 2015-01-08  Alexey Proskuryakov  <ap@apple.com>
 
         Follow-up to:  When WebProcess is slow to respond to IPC, that's mistakenly reported as crash

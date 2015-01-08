@@ -823,9 +823,10 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate->setFrameFlatteningEnabled(FALSE);
     // Set spatial navigation enabled: NO
     if (persistentUserStyleSheetLocation) {
-        Vector<wchar_t> urlCharacters(CFStringGetLength(persistentUserStyleSheetLocation.get()));
-        CFStringGetCharacters(persistentUserStyleSheetLocation.get(), CFRangeMake(0, CFStringGetLength(persistentUserStyleSheetLocation.get())), (UniChar *)urlCharacters.data());
-        _bstr_t url(urlCharacters.data());
+        size_t stringLength = CFStringGetLength(persistentUserStyleSheetLocation.get());
+        Vector<UniChar> urlCharacters(stringLength + 1, 0);
+        CFStringGetCharacters(persistentUserStyleSheetLocation.get(), CFRangeMake(0, stringLength), urlCharacters.data());
+        _bstr_t url(reinterpret_cast<wchar_t*>(urlCharacters.data()));
         preferences->setUserStyleSheetLocation(url);
         preferences->setUserStyleSheetEnabled(TRUE);
     } else
@@ -926,7 +927,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
 
 static void sizeWebViewForCurrentTest()
 {
-    bool isSVGW3CTest = (::gTestRunner->testURL().find("svg\\W3C-SVG-1.1") != string::npos);
+    bool isSVGW3CTest = (::gTestRunner->testURL().find("svg\\W3C-SVG-1.1") != string::npos)
+        || (::gTestRunner->testURL().find("svg/W3C-SVG-1.1") != string::npos);
     unsigned width = isSVGW3CTest ? TestRunner::w3cSVGViewWidth : TestRunner::viewWidth;
     unsigned height = isSVGW3CTest ? TestRunner::w3cSVGViewHeight : TestRunner::viewHeight;
 
@@ -999,7 +1001,7 @@ static void removeFontFallbackIfPresent(const String& fontFallbackPath)
     if (!::PathFileExistsW(fontFallback.charactersWithNullTermination().data()))
         return;
 
-    ::setPersistentUserStyleSheetLocation(0);
+    ::setPersistentUserStyleSheetLocation(nullptr);
 }
 
 

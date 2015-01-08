@@ -1,3 +1,12 @@
+2015-01-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] DumpRenderTree always using 800x600 size even if test needs other size
+        https://bugs.webkit.org/show_bug.cgi?id=140256
+
+        Reviewed by Anders Carlsson.
+
+        * platform/win/TestExpectations: Take out the skips now that this works properly.
+
 2015-01-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Pause Reason Improvements (Breakpoint, Debugger Statement, Pause on Next Statement)
