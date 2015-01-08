@@ -482,8 +482,7 @@ String getEnumConstantValue(int code) {
 #include <JavaScriptCore/InspectorAlternateBackendDispatchers.h>
 #include <wtf/RetainPtr.h>
 
-@protocol RWIProtocolDebuggerDomainHandler;
-@protocol RWIProtocolRuntimeDomainHandler;
+
 
 namespace Inspector {
 

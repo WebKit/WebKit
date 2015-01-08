@@ -755,7 +755,6 @@ String getEnumConstantValue(int code) {
 #include <wtf/RetainPtr.h>
 
 @protocol RWIProtocolNetwork1DomainHandler;
-@protocol RWIProtocolNetwork2DomainHandler;
 @protocol RWIProtocolNetwork3DomainHandler;
 
 namespace Inspector {

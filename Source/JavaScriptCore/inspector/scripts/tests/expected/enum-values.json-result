@@ -598,9 +598,7 @@ String getEnumConstantValue(int code) {
 #include <JavaScriptCore/InspectorAlternateBackendDispatchers.h>
 #include <wtf/RetainPtr.h>
 
-@protocol RWIProtocolTypeDomainDomainHandler;
 @protocol RWIProtocolCommandDomainDomainHandler;
-@protocol RWIProtocolEventDomainDomainHandler;
 
 namespace Inspector {
 

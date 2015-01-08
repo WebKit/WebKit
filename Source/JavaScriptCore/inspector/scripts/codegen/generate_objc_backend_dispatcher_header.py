@@ -70,13 +70,10 @@ class ObjCBackendDispatcherHeaderGenerator(Generator):
         return '\n\n'.join(sections)
 
     def _generate_objc_forward_declarations(self):
-        lines = ['@protocol %s%sDomainHandler;' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name) for domain in self.domains_to_generate()]
-        return '\n'.join(lines)
-
-    def _generate_objc_forward_declarations_for_domains(self, domains):
         lines = []
-        for domain in domains:
-            lines.append('@class %s%sDomainHandler;' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name))
+        for domain in self.domains_to_generate():
+            if domain.commands:
+                lines.append('@protocol %s%sDomainHandler;' % (ObjCGenerator.OBJC_PREFIX, domain.domain_name))
         return '\n'.join(lines)
 
     def _generate_objc_handler_declarations_for_domain(self, domain):

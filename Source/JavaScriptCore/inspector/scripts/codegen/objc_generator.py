@@ -100,7 +100,7 @@ class ObjCGenerator:
 
     # Generate ObjC types, command handlers, and event dispatchers for a subset of domains.
 
-    DOMAINS_TO_GENERATE = ['CSS', 'DOM', 'DOMStorage', 'Network', 'Page']
+    DOMAINS_TO_GENERATE = ['CSS', 'DOM', 'DOMStorage', 'Network', 'Page', 'GenericTypes']
 
     @staticmethod
     def should_generate_domain_types_filter(model):

@@ -816,7 +816,7 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasE
 #include <JavaScriptCore/InspectorAlternateBackendDispatchers.h>
 #include <wtf/RetainPtr.h>
 
-@protocol RWIProtocolTestDomainHandler;
+
 
 namespace Inspector {
 
