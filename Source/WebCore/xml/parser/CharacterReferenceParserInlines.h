@@ -65,6 +65,8 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
     };
     EntityState entityState = Initial;
     UChar32 result = 0;
+    bool overflow = false;
+    const UChar32 highestValidCharacter = 0x10FFFF;
     StringBuilder consumedCharacters;
     
     while (!source.isEmpty()) {
@@ -128,15 +130,17 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
                 result = result * 16 + 10 + cc - 'A';
             else if (cc == ';') {
                 source.advanceAndASSERT(cc);
-                decodedCharacter.append(ParserFunctions::legalEntityFor(result));
+                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
                 return true;
             } else if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.append(ParserFunctions::legalEntityFor(result));
+                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
                 return true;
             } else {
                 unconsumeCharacters(source, consumedCharacters);
                 return false;
             }
+            if (result > highestValidCharacter)
+                overflow = true;
             break;
         }
         case Decimal: {
@@ -144,15 +148,17 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
                 result = result * 10 + cc - '0';
             else if (cc == ';') {
                 source.advanceAndASSERT(cc);
-                decodedCharacter.append(ParserFunctions::legalEntityFor(result));
+                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
                 return true;
             } else if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.append(ParserFunctions::legalEntityFor(result));
+                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
                 return true;
             } else {
                 unconsumeCharacters(source, consumedCharacters);
                 return false;
             }
+            if (result > highestValidCharacter)
+                overflow = true;
             break;
         }
         case Named: {

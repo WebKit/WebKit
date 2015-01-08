@@ -1,3 +1,24 @@
+2015-01-08  Darin Adler  <darin@apple.com>
+
+        ASSERTION FAILED: character != kEndOfFileMarker in WebCore::HTMLTokenizer::bufferCharacter
+        https://bugs.webkit.org/show_bug.cgi?id=140179
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/parser/numeric-entities.html
+
+        * html/parser/HTMLEntityParser.cpp:
+        (WebCore::HTMLEntityParser::legalEntityFor): Merged adjustEntity logic in here.
+        Since the type UChar32 is a signed integer, need to check for <= 0, not just 0.
+        This <= change alone would have fixed the bug.
+
+        * xml/parser/CharacterReferenceParserInlines.h:
+        (WebCore::consumeCharacterReference): Added overflow checking when parsing hex
+        and decimal character references. This change alone would also have fixed the
+        bug, but in addition it makes overflow cases reliably generate replacement
+        characters rather than ignoring the overflow and producing seemingly random
+        characters. Test cases cover the original reported bug and other overflow cases.
+
 2015-01-08  Dean Jackson  <dino@apple.com>
 
         Text not drawn or white-on-white for "Close Page"/"Go Back" button on safe browsing warning page

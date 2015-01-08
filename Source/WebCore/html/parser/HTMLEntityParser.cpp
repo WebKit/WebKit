@@ -51,21 +51,13 @@ static inline bool isAlphaNumeric(UChar cc)
 
 class HTMLEntityParser {
 public:
-    inline static UChar adjustEntity(UChar32 value)
+    static UChar32 legalEntityFor(UChar32 value)
     {
-        if ((value & ~0x1F) != 0x0080)
+        if (value <= 0 || value > 0x10FFFF || (value >= 0xD800 && value <= 0xDFFF))
+            return 0xFFFD;
+        if ((value & ~0x1F) != 0x80)
             return value;
         return windowsLatin1ExtensionArray[value - 0x80];
-    }
-
-    inline static UChar32 legalEntityFor(UChar32 value)
-    {
-        // FIXME: A number of specific entity values generate parse errors.
-        if (!value || value > 0x10FFFF || (value >= 0xD800 && value <= 0xDFFF))
-            return 0xFFFD;
-        if (U_IS_BMP(value))
-            return adjustEntity(value);
-        return value;
     }
 
     inline static bool acceptMalformed() { return true; }

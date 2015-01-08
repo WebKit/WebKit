@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function testEntity(entity)
+{
+    var element = document.createElement("div")
+    element.innerHTML = entity;
+    var string = element.firstChild.data;
+    var result = "";
+    for (var i = 0; i < string.length; ++i) {
+        if (result.length)
+            result += ", "
+        result += "0x" + string.charCodeAt(i).toString(16).toUpperCase();
+    }
+    return result;
+}
+
+shouldBeEqualToString("testEntity('&#x0;')", "0xFFFD");
+shouldBeEqualToString("testEntity('&#x10000;')", "0xD800, 0xDC00");
+shouldBeEqualToString("testEntity('&#x10FFFF;')", "0xDBFF, 0xDFFF");
+shouldBeEqualToString("testEntity('&#x110000;')", "0xFFFD");
+shouldBeEqualToString("testEntity('&#xFFFFFF;')", "0xFFFD");
+shouldBeEqualToString("testEntity('&#xFFFFFFF;')", "0xFFFD");
+shouldBeEqualToString("testEntity('&#xFFFFFFFF;')", "0xFFFD");
+shouldBeEqualToString("testEntity('&#xFFFFFFFFF;')", "0xFFFD");
+shouldBeEqualToString("testEntity('&#xA0A103A0;')", "0xFFFD");
+
+shouldBeEqualToString("testEntity('&#x10000;')", "0xD800, 0xDC00");
+shouldBeEqualToString("testEntity('&#x1000010000;')", "0xFFFD");
+
+shouldBeEqualToString("testEntity('&#1;')", "0x1");
+shouldBeEqualToString("testEntity('&#11;')", "0xB");
+shouldBeEqualToString("testEntity('&#111;')", "0x6F");
+shouldBeEqualToString("testEntity('&#1111;')", "0x457");
+shouldBeEqualToString("testEntity('&#11111;')", "0x2B67");
+shouldBeEqualToString("testEntity('&#111111;')", "0xD82C, 0xDE07");
+shouldBeEqualToString("testEntity('&#1111111;')", "0xDBFD, 0xDC47");
+shouldBeEqualToString("testEntity('&#11111111;')", "0xFFFD");
+shouldBeEqualToString("testEntity('&#111111111;')", "0xFFFD");
+shouldBeEqualToString("testEntity('&#1111111111;')", "0xFFFD");
+shouldBeEqualToString("testEntity('&#11111111111;')", "0xFFFD");
+
+shouldBeEqualToString("testEntity('&#x1;')", "0x1");
+shouldBeEqualToString("testEntity('&#x9;')", "0x9");
+shouldBeEqualToString("testEntity('&#xA;')", "0xA");
+shouldBeEqualToString("testEntity('&#xB;')", "0xB");
+shouldBeEqualToString("testEntity('&#xC;')", "0xC");
+shouldBeEqualToString("testEntity('&#xD;')", "0xD");
+shouldBeEqualToString("testEntity('&#x7F;')", "0x7F");
+shouldBeEqualToString("testEntity('&#x81;')", "0x81");
+shouldBeEqualToString("testEntity('&#x8D;')", "0x8D");
+shouldBeEqualToString("testEntity('&#x8F;')", "0x8F");
+shouldBeEqualToString("testEntity('&#x90;')", "0x90");
+shouldBeEqualToString("testEntity('&#x9D;')", "0x9D");
+
+shouldBeEqualToString("testEntity('&#x80;')", "0x20AC");
+shouldBeEqualToString("testEntity('&#x82;')", "0x201A");
+shouldBeEqualToString("testEntity('&#x83;')", "0x192");
+shouldBeEqualToString("testEntity('&#x84;')", "0x201E");
+shouldBeEqualToString("testEntity('&#x85;')", "0x2026");
+shouldBeEqualToString("testEntity('&#x86;')", "0x2020");
+shouldBeEqualToString("testEntity('&#x87;')", "0x2021");
+shouldBeEqualToString("testEntity('&#x88;')", "0x2C6");
+shouldBeEqualToString("testEntity('&#x89;')", "0x2030");
+shouldBeEqualToString("testEntity('&#x8A;')", "0x160");
+shouldBeEqualToString("testEntity('&#x8B;')", "0x2039");
+shouldBeEqualToString("testEntity('&#x8C;')", "0x152");
+shouldBeEqualToString("testEntity('&#x8E;')", "0x17D");
+shouldBeEqualToString("testEntity('&#x91;')", "0x2018");
+shouldBeEqualToString("testEntity('&#x92;')", "0x2019");
+shouldBeEqualToString("testEntity('&#x93;')", "0x201C");
+shouldBeEqualToString("testEntity('&#x94;')", "0x201D");
+shouldBeEqualToString("testEntity('&#x95;')", "0x2022");
+shouldBeEqualToString("testEntity('&#x96;')", "0x2013");
+shouldBeEqualToString("testEntity('&#x97;')", "0x2014");
+shouldBeEqualToString("testEntity('&#x98;')", "0x2DC");
+shouldBeEqualToString("testEntity('&#x99;')", "0x2122");
+shouldBeEqualToString("testEntity('&#x9A;')", "0x161");
+shouldBeEqualToString("testEntity('&#x9B;')", "0x203A");
+shouldBeEqualToString("testEntity('&#x9C;')", "0x153");
+shouldBeEqualToString("testEntity('&#x9E;')", "0x17E");
+shouldBeEqualToString("testEntity('&#x9F;')", "0x178");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</head>
+<body>
+</body>
+</html>
