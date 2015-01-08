@@ -617,9 +617,7 @@ ThemeData RenderThemeWin::getThemeData(const RenderObject& o, ControlSubPart sub
         case MenulistButtonPart: {
             const bool isVistaOrLater = (windowsVersion() >= WindowsVista);
             result.m_part = isVistaOrLater ? CP_DROPDOWNBUTTONRIGHT : CP_DROPDOWNBUTTON;
-            if (isVistaOrLater && o.frame().settings().applicationChromeMode()) {
-                // The "readonly" look we use in application chrome mode
-                // only uses a "normal" look for the drop down button.
+            if (isVistaOrLater) {
                 result.m_state = TS_NORMAL;
             } else
                 result.m_state = determineState(o);
@@ -782,10 +780,7 @@ bool RenderThemeWin::paintMenuList(const RenderObject& renderer, const PaintInfo
     int part;
     if (haveTheme && (windowsVersion() >= WindowsVista)) {
         theme = menuListTheme();
-        if (renderer.frame().settings().applicationChromeMode())
-            part = CP_READONLY;
-        else
-            part = CP_BORDER;
+        part = CP_READONLY;
     } else {
         theme = textFieldTheme();
         part = TFP_TEXTFIELD;
