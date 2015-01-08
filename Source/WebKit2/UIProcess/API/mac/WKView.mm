@@ -4333,58 +4333,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
         [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [_data->_immediateActionController hidePreview];
-#endif
-
     [self _setTextIndicator:nullptr fadeOut:NO];
 
     static_cast<PageClient&>(*_data->_pageClient).dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
-}
-
-- (NSView *)_viewForPreviewingURL:(NSURL *)url initialFrameSize:(NSSize)initialFrameSize
-{
-    return nil;
-}
-
-- (NSString *)_titleForPreviewOfURL:(NSURL *)url
-{
-    return nil;
-}
-
-- (void)_setPreviewTitle:(NSString *)previewTitle
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [_data->_immediateActionController setPreviewTitle:previewTitle];
-#endif
-}
-
-- (void)_setPreviewLoading:(BOOL)loading
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [_data->_immediateActionController setPreviewLoading:loading];
-#endif
-}
-
-- (void)_setPreviewOverrideImage:(NSImage *)image
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    [_data->_immediateActionController setPreviewOverrideImage:image];
-#endif
-}
-
-- (void)_finishPreviewingURL:(NSURL *)url withPreviewView:(NSView *)previewView
-{
-}
-
-- (void)_handleClickInPreviewView:(NSView *)previewView URL:(NSURL *)url
-{
-    [[NSWorkspace sharedWorkspace] openURL:url];
-}
-
-- (BOOL)_shouldUseStandardQuickLookPreview
-{
-    return YES;
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
