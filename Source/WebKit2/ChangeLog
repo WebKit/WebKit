@@ -2,6 +2,15 @@
 
         Text not drawn or white-on-white for "Close Page"/"Go Back" button on safe browsing warning page
         https://bugs.webkit.org/show_bug.cgi?id=140232
+
+        Unreviewed followup to try to get the Mavericks Safari to build.
+
+        * Shared/WebPreferencesDefinitions.h: Add the application chrome mode definition.
+
+2015-01-08  Dean Jackson  <dino@apple.com>
+
+        Text not drawn or white-on-white for "Close Page"/"Go Back" button on safe browsing warning page
+        https://bugs.webkit.org/show_bug.cgi?id=140232
         <rdar://problem/19371010>
 
         Reviewed by Anders Carlsson.
