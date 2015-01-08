@@ -30,15 +30,20 @@
 
 #include "ChangeVersionData.h"
 #include "ChangeVersionWrapper.h"
+#include "Database.h"
 #include "DatabaseBackendContext.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
 #include "Logging.h"
+#include "SQLError.h"
 #include "SQLTransaction.h"
 #include "SQLTransactionBackend.h"
+#include "SQLTransactionCallback.h"
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
+#include "SQLTransactionErrorCallback.h"
+#include "VoidCallback.h"
 
 namespace WebCore {
 

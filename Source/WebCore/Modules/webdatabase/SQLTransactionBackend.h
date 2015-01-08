@@ -40,13 +40,13 @@
 
 namespace WebCore {
 
-class AbstractSQLTransaction;
 class DatabaseBackend;
 class OriginLock;
 class SQLError;
 class SQLiteTransaction;
 class SQLStatement;
 class SQLStatementBackend;
+class SQLTransaction;
 class SQLTransactionBackend;
 class SQLValue;
 
@@ -61,8 +61,7 @@ public:
 
 class SQLTransactionBackend : public ThreadSafeRefCounted<SQLTransactionBackend>, public SQLTransactionStateMachine<SQLTransactionBackend> {
 public:
-    static PassRefPtr<SQLTransactionBackend> create(DatabaseBackend*,
-        PassRefPtr<AbstractSQLTransaction>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
+    static PassRefPtr<SQLTransactionBackend> create(DatabaseBackend*, PassRefPtr<SQLTransaction>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
 
     virtual ~SQLTransactionBackend();
 
@@ -85,8 +84,7 @@ public:
     void executeSQL(std::unique_ptr<SQLStatement>, const String& statement, const Vector<SQLValue>& arguments, int permissions);
     
 private:
-    SQLTransactionBackend(DatabaseBackend*, PassRefPtr<AbstractSQLTransaction>,
-        PassRefPtr<SQLTransactionWrapper>, bool readOnly);
+    SQLTransactionBackend(DatabaseBackend*, PassRefPtr<SQLTransaction>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
 
     void doCleanup();
 
@@ -116,7 +114,7 @@ private:
     void acquireOriginLock();
     void releaseOriginLockIfNeeded();
 
-    RefPtr<AbstractSQLTransaction> m_frontend; // Has a reference cycle, and will break in doCleanup().
+    RefPtr<SQLTransaction> m_frontend; // Has a reference cycle, and will break in doCleanup().
     RefPtr<SQLStatementBackend> m_currentStatementBackend;
 
     RefPtr<DatabaseBackend> m_database;

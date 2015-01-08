@@ -31,7 +31,6 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AbstractSQLTransaction.h"
 #include "SQLCallbackWrapper.h"
 #include "SQLStatement.h"
 #include "SQLTransactionStateMachine.h"
@@ -51,9 +50,10 @@ class SQLTransactionErrorCallback;
 class SQLValue;
 class VoidCallback;
 
-class SQLTransaction : public SQLTransactionStateMachine<SQLTransaction>, public AbstractSQLTransaction {
+class SQLTransaction : public ThreadSafeRefCounted<SQLTransaction>, public SQLTransactionStateMachine<SQLTransaction> {
 public:
     static Ref<SQLTransaction> create(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, bool readOnly);
+    ~SQLTransaction();
 
     void performPendingCallback();
 
@@ -61,17 +61,17 @@ public:
 
     Database& database() { return m_database; }
 
+    // APIs called from the backend published via SQLTransaction:
+    void requestTransitToState(SQLTransactionState);
+    bool hasCallback() const;
+    bool hasSuccessCallback() const;
+    bool hasErrorCallback() const;
+    void setBackend(SQLTransactionBackend*);
+
 private:
     SQLTransaction(Ref<Database>&&, RefPtr<SQLTransactionCallback>&&, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&&, bool readOnly);
 
     void clearCallbackWrappers();
-
-    // APIs called from the backend published via AbstractSQLTransaction:
-    virtual void requestTransitToState(SQLTransactionState) override;
-    virtual bool hasCallback() const override;
-    virtual bool hasSuccessCallback() const override;
-    virtual bool hasErrorCallback() const override;
-    virtual void setBackend(SQLTransactionBackend*) override;
 
     // State Machine functions:
     virtual StateFunction stateFunctionFor(SQLTransactionState) override;

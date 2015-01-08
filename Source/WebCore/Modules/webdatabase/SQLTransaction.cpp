@@ -64,6 +64,10 @@ SQLTransaction::SQLTransaction(Ref<Database>&& database, RefPtr<SQLTransactionCa
 {
 }
 
+SQLTransaction::~SQLTransaction()
+{
+}
+
 bool SQLTransaction::hasCallback() const
 {
     return m_callbackWrapper.hasCallback();
