@@ -300,7 +300,11 @@ bool LayerTreeHostGtk::flushPendingLayerChanges()
     for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it)
         it->value->flushCompositingStateForThisLayerOnly();
 
-    return m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes();
+    if (!m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes())
+        return false;
+
+    downcast<GraphicsLayerTextureMapper>(*m_rootLayer).updateBackingStoreIncludingSubLayers();
+    return true;
 }
 
 void LayerTreeHostGtk::compositeLayersToContext(CompositePurpose purpose)

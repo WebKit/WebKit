@@ -368,7 +368,6 @@ void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
     prepareBackingStoreIfNeeded();
     commitLayerChanges();
     m_layer.syncAnimations();
-    updateBackingStoreIfNeeded();
 }
 
 void GraphicsLayerTextureMapper::prepareBackingStoreIfNeeded()
@@ -510,6 +509,21 @@ void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect& rect)
         replicaLayer()->flushCompositingState(rect);
     for (auto* child : children())
         child->flushCompositingState(rect);
+}
+
+void GraphicsLayerTextureMapper::updateBackingStoreIncludingSubLayers()
+{
+    if (!m_layer.textureMapper())
+        return;
+
+    updateBackingStoreIfNeeded();
+
+    if (maskLayer())
+        downcast<GraphicsLayerTextureMapper>(*maskLayer()).updateBackingStoreIfNeeded();
+    if (replicaLayer())
+        downcast<GraphicsLayerTextureMapper>(*replicaLayer()).updateBackingStoreIfNeeded();
+    for (auto* child : children())
+        downcast<GraphicsLayerTextureMapper>(*child).updateBackingStoreIncludingSubLayers();
 }
 
 void GraphicsLayerTextureMapper::updateBackingStoreIfNeeded()

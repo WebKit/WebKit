@@ -1,3 +1,33 @@
+2015-01-08  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Seperate updateBackingStore from flushCompositingState.
+        https://bugs.webkit.org/show_bug.cgi?id=136887
+
+        Reviewed by Žan Doberšek.
+
+        When LayerTreeHostGtk flushes pending layer changes, it updates backing
+        stores using same loop. This makes requesting layer flush during
+        flushing in certain condition which causes a assertion failure.
+
+        Animated GIF's animations are drived by the painting cycle,
+        GraphicsLayerTextureMapper::updateBackingStoreIfNeeded would request
+        scheduleLayerFlush during flushing layers, if animated GIF needs to
+        advance its frame immediately. It doesn't mean the advanced frame should
+        be painted in this painting phase. This frame advancing happens after
+        painting a current frame to the backing store. It means the advanced
+        frame should be painted ASAP without using its frame timer.
+
+        This patch seperates updateBackingStore from flushCompositingState
+        to avoid above behavior.
+
+        No new tests. The bug is timing-dependent.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly):
+        (WebCore::toGraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::updateBackingStoreIncludingSubLayers):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+
 2015-01-07  Chris Dumez  <cdumez@apple.com>
 
         Move -webkit-tap-highlight-color / -webkit-overflow-scrolling / -webkit-touch-callout to the new StyleBuilder
