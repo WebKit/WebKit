@@ -1,5 +1,47 @@
 2015-01-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Pause Reason Improvements (Breakpoint, Debugger Statement, Pause on Next Statement)
+        https://bugs.webkit.org/show_bug.cgi?id=138991
+
+        Reviewed by Timothy Hatcher.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::pauseIfNeeded):
+        (JSC::Debugger::didReachBreakpoint):
+        When actually pausing, if we hit a breakpoint ensure the reason
+        is PausedForBreakpoint, otherwise use the current reason.
+
+        * debugger/Debugger.h:
+        Make pause reason and pausing breakpoint ID public.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::buildAssertPauseReason):
+        (Inspector::buildCSPViolationPauseReason):
+        (Inspector::InspectorDebuggerAgent::buildBreakpointPauseReason):
+        (Inspector::InspectorDebuggerAgent::buildExceptionPauseReason):
+        (Inspector::InspectorDebuggerAgent::handleConsoleAssert):
+        (Inspector::buildObjectForBreakpointCookie):
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::InspectorDebuggerAgent::removeBreakpoint):
+        (Inspector::InspectorDebuggerAgent::resolveBreakpoint):
+        (Inspector::InspectorDebuggerAgent::pause):
+        (Inspector::InspectorDebuggerAgent::scriptExecutionBlockedByCSP):
+        (Inspector::InspectorDebuggerAgent::currentCallFrames):
+        (Inspector::InspectorDebuggerAgent::clearDebuggerBreakpointState):
+        Clean up creation of pause reason objects and other cleanup
+        of PassRefPtr use and InjectedScript use.
+
+        (Inspector::InspectorDebuggerAgent::didPause):
+        Clean up so that we first check for an Exception, and then fall
+        back to including a Pause Reason derived from the Debugger.
+
+        * inspector/protocol/Debugger.json:
+        Add new DebuggerStatement, Breakpoint, and PauseOnNextStatement reasons.
+
+2015-01-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Type check NSArray's in ObjC Interfaces have the right object types
         https://bugs.webkit.org/show_bug.cgi?id=140209
 

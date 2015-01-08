@@ -83,6 +83,20 @@ public:
     PauseOnExceptionsState pauseOnExceptionsState() const { return m_pauseOnExceptionsState; }
     void setPauseOnExceptionsState(PauseOnExceptionsState);
 
+    enum ReasonForPause {
+        NotPaused,
+        PausedForException,
+        PausedAtStatement,
+        PausedAfterCall,
+        PausedBeforeReturn,
+        PausedAtStartOfProgram,
+        PausedAtEndOfProgram,
+        PausedForBreakpoint,
+        PausedForDebuggerStatement,
+    };
+    ReasonForPause reasonForPause() const { return m_reasonForPause; }
+    BreakpointID pausingBreakpointID() const { return m_pausingBreakpointID; }
+
     void setPauseOnNextStatement(bool);
     void breakProgram();
     void continueProgram();
@@ -111,20 +125,6 @@ protected:
     virtual bool needPauseHandling(JSGlobalObject*) { return false; }
     virtual void handleBreakpointHit(JSGlobalObject*, const Breakpoint&) { }
     virtual void handleExceptionInBreakpointCondition(ExecState*, JSValue exception) const { UNUSED_PARAM(exception); }
-
-    enum ReasonForPause {
-        NotPaused,
-        PausedForException,
-        PausedAtStatement,
-        PausedAfterCall,
-        PausedBeforeReturn,
-        PausedAtStartOfProgram,
-        PausedAtEndOfProgram,
-        PausedForBreakpoint
-    };
-
-    ReasonForPause reasonForPause() const { return m_reasonForPause; }
-
     virtual void handlePause(JSGlobalObject*, ReasonForPause) { }
     virtual void notifyDoneProcessingDebuggerEvents() { }
 
@@ -205,6 +205,7 @@ private:
     SourceID m_lastExecutedSourceID;
 
     BreakpointID m_topBreakpointID;
+    BreakpointID m_pausingBreakpointID;
     BreakpointIDToBreakpointMap m_breakpointIDToBreakpoint;
     SourceIDToBreakpointsMap m_sourceIDToBreakpoints;
 

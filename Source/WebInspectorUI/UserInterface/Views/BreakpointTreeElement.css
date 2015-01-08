@@ -50,6 +50,10 @@
     content: url(../Images/Exception.svg);
 }
 
+.breakpoint-paused-icon .icon {
+    content: url(../Images/PausedBreakpoint.svg);
+}
+
 /* When animating a layer on top of a tree element's icon, move the main
 icon to the icon element's background so animations are layered on top. */
 .breakpoint-generic-line-icon .icon {

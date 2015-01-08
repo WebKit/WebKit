@@ -132,6 +132,12 @@ WebInspector.BreakpointTreeElement.prototype = {
             this._removeProbeSet(this._probeSet);
     },
 
+    removeStatusImage: function()
+    {
+        this._statusImageElement.remove();
+        this._statusImageElement = null;
+    },
+
     // Private
 
     _updateTitles: function()
@@ -159,6 +165,9 @@ WebInspector.BreakpointTreeElement.prototype = {
 
     _updateStatus: function()
     {
+        if (!this._statusImageElement)
+            return;
+
         if (this._breakpoint.disabled)
             this._statusImageElement.classList.add(WebInspector.BreakpointTreeElement.StatusImageDisabledStyleClassName);
         else

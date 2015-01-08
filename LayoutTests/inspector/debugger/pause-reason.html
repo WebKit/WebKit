@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script type="text/javascript" src="./resources/pause-reasons.js"></script>
+<script>
+// We expect uncaught exceptions, so avoid logs for them.
+window.onerror = function(){};
+
+function test()
+{
+    var pauses = 0;
+    var index = 0;
+    var testCases = [
+        { expression: "setTimeout(triggerException, 0)" },
+        { expression: "setTimeout(triggerDebuggerStatement, 0)" },
+        { expression: "setTimeout(triggerAssert, 0)" },
+        { expression: "setTimeout(triggerBreakpoint, 0)" },
+        { expression: "setTimeout(function() { 1+1 }, 0)", setup: function() { WebInspector.debuggerManager.pause(); } },
+    ];
+
+    function nextTestCase()
+    {
+        var test = testCases[index++];
+        if (!test) {
+            InspectorTest.completeTest();
+            return;
+        }
+
+        if (test.setup)
+            test.setup();
+
+        InspectorTest.evaluateInPage(test.expression);
+    }
+
+    function sanitizePauseData(data)
+    {
+        // Sanitize RemoteObjects to just output the description.
+        if (data.description)
+            return {description: data.description};
+
+        // Sanitize BreakpointIdentifier path.
+        if (data.breakpointId)
+            return {breakpointId: data.breakpointId.substring(data.breakpointId.indexOf("pause-reasons.js"))};
+
+        return data;
+    }
+
+    WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
+        var scriptObject = event.data.script;
+        if (!/pause-reasons\.js$/.test(scriptObject.url))
+            return;
+
+        var sourceCodeLocation = scriptObject.createSourceCodeLocation(3, 0);
+        var breakpoint = new WebInspector.Breakpoint(sourceCodeLocation);
+        WebInspector.debuggerManager.addBreakpoint(breakpoint);
+
+        nextTestCase();
+    });
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, function(event) {
+        InspectorTest.log("PAUSE #" + (++pauses));
+        InspectorTest.log("  REASON: " + WebInspector.debuggerManager.pauseReason);
+        if (WebInspector.debuggerManager.pauseData)
+            InspectorTest.log("  DATA: " + JSON.stringify(sanitizePauseData(WebInspector.debuggerManager.pauseData)));
+        else
+            InspectorTest.log("  NO DATA");
+
+        WebInspector.debuggerManager.resume();
+    });
+
+    WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {
+        InspectorTest.log("RESUMED");
+        InspectorTest.log("");
+
+        nextTestCase();
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that pausing in different ways triggers different pause reasons.</p>
+</body>
+</html>

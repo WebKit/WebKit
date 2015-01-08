@@ -123,7 +123,7 @@ protected:
 
     virtual void enable();
     virtual void disable(bool skipRecompile);
-    virtual void didPause(JSC::ExecState*, const Deprecated::ScriptValue& callFrames, const Deprecated::ScriptValue& exception) override;
+    virtual void didPause(JSC::ExecState*, const Deprecated::ScriptValue& callFrames, const Deprecated::ScriptValue& exceptionOrCaughtValue) override;
     virtual void didContinue() override;
 
     virtual String sourceMapURLForScript(const Script&);
@@ -131,7 +131,7 @@ protected:
     void didClearGlobalObject();
 
 private:
-    Ref<Inspector::Protocol::Array<Inspector::Protocol::Debugger::CallFrame>> currentCallFrames();
+    Ref<Inspector::Protocol::Array<Inspector::Protocol::Debugger::CallFrame>> currentCallFrames(InjectedScript);
 
     virtual void didParseSource(JSC::SourceID, const Script&) override final;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) override final;
@@ -146,11 +146,15 @@ private:
     void clearBreakDetails();
     void clearExceptionValue();
 
+    RefPtr<InspectorObject> buildBreakpointPauseReason(JSC::BreakpointID);
+    RefPtr<InspectorObject> buildExceptionPauseReason(const Deprecated::ScriptValue& exception, const InjectedScript&);
+
     bool breakpointActionsFromProtocol(ErrorString&, RefPtr<InspectorArray>& actions, BreakpointActions* result);
 
     typedef HashMap<JSC::SourceID, Script> ScriptsMap;
     typedef HashMap<String, Vector<JSC::BreakpointID>> BreakpointIdentifierToDebugServerBreakpointIDsMap;
     typedef HashMap<String, RefPtr<InspectorObject>> BreakpointIdentifierToBreakpointMap;
+    typedef HashMap<JSC::BreakpointID, String> DebugServerBreakpointIDToBreakpointIdentifier;
 
     InjectedScriptManager* m_injectedScriptManager;
     std::unique_ptr<InspectorDebuggerFrontendDispatcher> m_frontendDispatcher;
@@ -161,6 +165,7 @@ private:
     ScriptsMap m_scripts;
     BreakpointIdentifierToDebugServerBreakpointIDsMap m_breakpointIdentifierToDebugServerBreakpointIDs;
     BreakpointIdentifierToBreakpointMap m_javaScriptBreakpoints;
+    DebugServerBreakpointIDToBreakpointIdentifier m_debuggerBreakpointIdentifierToInspectorBreakpointIdentifier;
     JSC::BreakpointID m_continueToLocationBreakpointID;
     InspectorDebuggerFrontendDispatcher::Reason m_breakReason;
     RefPtr<InspectorObject> m_breakAuxData;

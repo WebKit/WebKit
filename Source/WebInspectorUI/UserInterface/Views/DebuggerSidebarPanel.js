@@ -132,15 +132,20 @@ WebInspector.DebuggerSidebarPanel = function()
     var callStackGroup = new WebInspector.DetailsSectionGroup([this._callStackRow]);
     this._callStackSection = new WebInspector.DetailsSection("call-stack", WebInspector.UIString("Call Stack"), [callStackGroup]);
 
-    this._pauseReasonRow = new WebInspector.DetailsSectionTextRow;
-    this._pauseReasonGroup = new WebInspector.DetailsSectionGroup([this._pauseReasonRow]);
-    this._pauseReasonSection = new WebInspector.DetailsSection("paused-reason", null, [this._pauseReasonGroup]);
+    this._pauseReasonTreeOutline = null;
+
+    this._pauseReasonLinkContainerElement = document.createElement("span");
+    this._pauseReasonTextRow = new WebInspector.DetailsSectionTextRow;
+    this._pauseReasonGroup = new WebInspector.DetailsSectionGroup([this._pauseReasonTextRow]);
+    this._pauseReasonSection = new WebInspector.DetailsSection("paused-reason", null, [this._pauseReasonGroup], this._pauseReasonLinkContainerElement);
+    this._pauseReasonSection.title = WebInspector.UIString("Pause Reason");
 
     WebInspector.Breakpoint.addEventListener(WebInspector.Breakpoint.Event.DisplayLocationDidChange, this._breakpointDisplayLocationDidChange, this);
 };
 
 WebInspector.DebuggerSidebarPanel.OffsetSectionsStyleClassName = "offset-sections";
 WebInspector.DebuggerSidebarPanel.ExceptionIconStyleClassName = "breakpoint-exception-icon";
+WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName = "breakpoint-paused-icon";
 
 WebInspector.DebuggerSidebarPanel.SelectedAllExceptionsCookieKey = "debugger-sidebar-panel-all-exceptions-breakpoint";
 WebInspector.DebuggerSidebarPanel.SelectedAllUncaughtExceptionsCookieKey = "debugger-sidebar-panel-all-uncaught-exceptions-breakpoint";
@@ -152,7 +157,9 @@ WebInspector.DebuggerSidebarPanel.prototype = {
 
     get hasSelectedElement()
     {
-        return !!this._breakpointsContentTreeOutline.selectedTreeElement || !!this._callStackContentTreeOutline.selectedTreeElement;
+        return !!this._breakpointsContentTreeOutline.selectedTreeElement
+            || !!this._callStackContentTreeOutline.selectedTreeElement
+            || (this._pauseReasonTreeOutline && !!this._pauseReasonTreeOutline.selectedTreeElement);
     },
 
     showDefaultContentView: function()
@@ -351,6 +358,12 @@ WebInspector.DebuggerSidebarPanel.prototype = {
     {
         var breakpoint = event.data.breakpoint;
 
+        if (this._pauseReasonTreeOutline) {
+            var pauseReasonBreakpointTreeElement = this._pauseReasonTreeOutline.getCachedTreeElement(breakpoint);
+            if (pauseReasonBreakpointTreeElement)
+                pauseReasonBreakpointTreeElement.removeStatusImage();
+        }
+
         var breakpointTreeElement = this._breakpointsContentTreeOutline.getCachedTreeElement(breakpoint);
         console.assert(breakpointTreeElement);
         if (!breakpointTreeElement)
@@ -523,8 +536,24 @@ WebInspector.DebuggerSidebarPanel.prototype = {
     {
         function deselectCallStackContentTreeElements()
         {
-            // Deselect any tree element in the call stack content tree outline to prevent two selections in the sidebar.
             var selectedTreeElement = this._callStackContentTreeOutline.selectedTreeElement;
+            if (selectedTreeElement)
+                selectedTreeElement.deselect();
+        }
+
+        function deselectBreakpointContentTreeElements()
+        {
+            var selectedTreeElement = this._breakpointsContentTreeOutline.selectedTreeElement;
+            if (selectedTreeElement)
+                selectedTreeElement.deselect();
+        }
+
+        function deselectPauseReasonContentTreeElements()
+        {
+            if (!this._pauseReasonTreeOutline)
+                return;
+
+            var selectedTreeElement = this._pauseReasonTreeOutline.selectedTreeElement;
             if (selectedTreeElement)
                 selectedTreeElement.deselect();
         }
@@ -534,15 +563,15 @@ WebInspector.DebuggerSidebarPanel.prototype = {
             if (!treeElement.children.length)
                 return;
             deselectCallStackContentTreeElements.call(this);
+            deselectPauseReasonContentTreeElements.call(this);
             WebInspector.resourceSidebarPanel.showSourceCode(treeElement.representedObject);
             return;
         }
 
         if (treeElement instanceof WebInspector.CallFrameTreeElement) {
-            // Deselect any tree element in the breakpoints content tree outline to prevent two selections in the sidebar.
-            var selectedTreeElement = this._breakpointsContentTreeOutline.selectedTreeElement;
-            if (selectedTreeElement)
-                selectedTreeElement.deselect();
+            // Deselect any tree element in the breakpoint / pause reason content tree outlines to prevent two selections in the sidebar.
+            deselectBreakpointContentTreeElements.call(this);
+            deselectPauseReasonContentTreeElements.call(this);
 
             var callFrame = treeElement.callFrame;
             WebInspector.debuggerManager.activeCallFrame = callFrame;
@@ -553,7 +582,19 @@ WebInspector.DebuggerSidebarPanel.prototype = {
         if (!(treeElement instanceof WebInspector.BreakpointTreeElement))
             return;
 
+        // Deselect any other tree elements to prevent two selections in the sidebar.
         deselectCallStackContentTreeElements.call(this);
+
+        if (treeElement.treeOutline === this._pauseReasonTreeOutline)
+            deselectBreakpointContentTreeElements.call(this);
+        else
+            deselectPauseReasonContentTreeElements.call(this);
+
+        var breakpoint = treeElement.breakpoint;
+        if (treeElement.treeOutline === this._pauseReasonTreeOutline) {
+            WebInspector.resourceSidebarPanel.showSourceCodeLocation(breakpoint.sourceCodeLocation);
+            return;
+        }
 
         if (!treeElement.parent.representedObject)
             return;
@@ -562,7 +603,6 @@ WebInspector.DebuggerSidebarPanel.prototype = {
         if (!(treeElement.parent.representedObject instanceof WebInspector.SourceCode))
             return;
 
-        var breakpoint = treeElement.breakpoint;
         WebInspector.resourceSidebarPanel.showSourceCodeLocation(breakpoint.sourceCodeLocation);
     },
 
@@ -595,26 +635,42 @@ WebInspector.DebuggerSidebarPanel.prototype = {
 
     _updatePauseReason: function()
     {
+        this._pauseReasonTreeOutline = null;
+
+        this._updatePauseReasonGotoArrow();
+        return this._updatePauseReasonSection();
+    },
+
+    _updatePauseReasonSection: function()
+    {
         var pauseData = WebInspector.debuggerManager.pauseData;
         
         switch (WebInspector.debuggerManager.pauseReason) {
-        case WebInspector.DebuggerManager.PauseReason.Exception:
-            console.assert(pauseData, "Expected data with an exception, but found none.");
-            if (pauseData) {
-                // FIXME: We should improve the appearance of thrown objects. This works well for exception strings.
-                var data = WebInspector.RemoteObject.fromPayload(pauseData);
-                this._pauseReasonRow.text = data.description;
-                this._pauseReasonSection.title = WebInspector.UIString("Exception");
-                return true;
-            }
-            break;
-
         case WebInspector.DebuggerManager.PauseReason.Assertion:
+            // FIXME: We should include the assertion condition string.
             console.assert(pauseData, "Expected data with an assertion, but found none.");
             if (pauseData && pauseData.message) {
-                // FIXME: We should include the assertion condition string.
-                this._pauseReasonRow.text = pauseData.message;
-                this._pauseReasonSection.title = WebInspector.UIString("Assertion");
+                this._pauseReasonTextRow.text = WebInspector.UIString("Assertion with message: %s").format(pauseData.message);
+                return true;
+            }            
+
+            this._pauseReasonTextRow.text = WebInspector.UIString("Assertion Failed");
+            this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
+            return true;
+
+        case WebInspector.DebuggerManager.PauseReason.Breakpoint:
+            console.assert(pauseData, "Expected breakpoint identifier, but found none.");
+            if (pauseData && pauseData.breakpointId) {
+                var breakpoint = WebInspector.debuggerManager.breakpointForIdentifier(pauseData.breakpointId);
+                var breakpointTreeOutline = this.createContentTreeOutline(true, true);
+                breakpointTreeOutline.onselect = this._treeElementSelected.bind(this);
+                var breakpointTreeElement = new WebInspector.BreakpointTreeElement(breakpoint, WebInspector.DebuggerSidebarPanel.PausedBreakpointIconStyleClassName, WebInspector.UIString("Triggered Breakpoint"));
+                var breakpointDetailsSection = new WebInspector.DetailsSectionRow;
+                breakpointTreeOutline.appendChild(breakpointTreeElement);
+                breakpointDetailsSection.element.appendChild(breakpointTreeOutline.element);
+
+                this._pauseReasonGroup.rows = [breakpointDetailsSection];
+                this._pauseReasonTreeOutline = breakpointTreeOutline;
                 return true;
             }
             break;
@@ -623,11 +679,32 @@ WebInspector.DebuggerSidebarPanel.prototype = {
             console.assert(pauseData, "Expected data with a CSP Violation, but found none.");
             if (pauseData) {
                 // COMPATIBILITY (iOS 8): 'directive' was 'directiveText'.
-                this._pauseReasonRow.text = pauseData.directive || pauseData.directiveText;
-                this._pauseReasonSection.title = WebInspector.UIString("Content Security Policy Violation");
+                this._pauseReasonTextRow.text = WebInspector.UIString("Content Security Policy violation of directive: %s").format(pauseData.directive || pauseData.directiveText);
+                this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
                 return true;
             }
             break;
+
+        case WebInspector.DebuggerManager.PauseReason.DebuggerStatement:
+            this._pauseReasonTextRow.text = WebInspector.UIString("Debugger Statement");
+            this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
+            return true;
+
+        case WebInspector.DebuggerManager.PauseReason.Exception:
+            console.assert(pauseData, "Expected data with an exception, but found none.");
+            if (pauseData) {
+                // FIXME: We should improve the appearance of thrown objects. This works well for exception strings.
+                var data = WebInspector.RemoteObject.fromPayload(pauseData);
+                this._pauseReasonTextRow.text = WebInspector.UIString("Exception with thrown value: %s").format(data.description);
+                this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
+                return true;
+            }
+            break;
+
+        case WebInspector.DebuggerManager.PauseReason.PauseOnNextStatement:
+            this._pauseReasonTextRow.text = WebInspector.UIString("Immediate Pause Requested");
+            this._pauseReasonGroup.rows = [this._pauseReasonTextRow];
+            return true;
 
         case WebInspector.DebuggerManager.PauseReason.Other:
             console.error("Paused for unknown reason. We should always have a reason.");
@@ -635,6 +712,22 @@ WebInspector.DebuggerSidebarPanel.prototype = {
         }
 
         return false;
+    },
+
+    _updatePauseReasonGotoArrow: function()
+    {
+        this._pauseReasonLinkContainerElement.removeChildren();
+
+        var activeCallFrame = WebInspector.debuggerManager.activeCallFrame;
+        if (!activeCallFrame)
+            return;
+
+        var sourceCodeLocation = activeCallFrame.sourceCodeLocation;
+        if (!sourceCodeLocation)
+            return;
+
+        var linkElement = WebInspector.createSourceCodeLocationLink(sourceCodeLocation, false, true);
+        this._pauseReasonLinkContainerElement.appendChild(linkElement);
     }
 };
 

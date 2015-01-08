@@ -96,9 +96,12 @@ WebInspector.DebuggerManager.Event = {
 };
 
 WebInspector.DebuggerManager.PauseReason = {
-    Exception: "exception",
     Assertion: "assertion",
+    Breakpoint: "breakpoint",
     CSPViolation: "CSP-violation",
+    DebuggerStatement: "debugger-statement",
+    Exception: "exception",
+    PauseOnNextStatement: "pause-on-next-statement",
     Other: "other",
 }
 
@@ -306,6 +309,11 @@ WebInspector.DebuggerManager.prototype = {
         }
 
         return [];
+    },
+
+    breakpointForIdentifier: function(id)
+    {
+        return this._breakpointIdMap[id];
     },
 
     scriptForIdentifier: function(id)
@@ -614,12 +622,18 @@ WebInspector.DebuggerManager.prototype = {
     {
         // FIXME: Handle other backend pause seasons.
         switch (payload) {
-        case DebuggerAgent.PausedReason.Exception:
-            return WebInspector.DebuggerManager.PauseReason.Exception;
         case DebuggerAgent.PausedReason.Assert:
             return WebInspector.DebuggerManager.PauseReason.Assertion;
+        case DebuggerAgent.PausedReason.Breakpoint:
+            return WebInspector.DebuggerManager.PauseReason.Breakpoint;
         case DebuggerAgent.PausedReason.CSPViolation:
             return WebInspector.DebuggerManager.PauseReason.CSPViolation;
+        case DebuggerAgent.PausedReason.DebuggerStatement:
+            return WebInspector.DebuggerManager.PauseReason.DebuggerStatement;
+        case DebuggerAgent.PausedReason.Exception:
+            return WebInspector.DebuggerManager.PauseReason.Exception;
+        case DebuggerAgent.PausedReason.PauseOnNextStatement:
+            return WebInspector.DebuggerManager.PauseReason.PauseOnNextStatement;
         default:
             return WebInspector.DebuggerManager.PauseReason.Other;
         }

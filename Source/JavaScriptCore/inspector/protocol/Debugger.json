@@ -106,6 +106,14 @@
             ]
         },
         {
+            "id": "BreakpointPauseReason",
+            "description": "The pause reason auxiliary data when paused because of hitting a breakpoint.",
+            "type": "object",
+            "properties": [
+                { "name": "breakpointId", "type": "string", "description": "The identifier of the breakpoint causing the pause." }
+            ]
+        },
+        {
             "id": "CSPViolationPauseReason",
             "description": "The pause reason auxiliary data when paused because of a Content Security Policy directive.",
             "type": "object",
@@ -299,7 +307,7 @@
             "name": "paused",
             "parameters": [
                 { "name": "callFrames", "type": "array", "items": { "$ref": "CallFrame" }, "description": "Call stack the virtual machine stopped on." },
-                { "name": "reason", "type": "string", "enum": [ "XHR", "DOM", "EventListener", "exception", "assert", "CSPViolation", "other" ], "description": "Pause reason." },
+                { "name": "reason", "type": "string", "enum": ["XHR", "DOM", "EventListener", "exception", "assert", "CSPViolation", "DebuggerStatement", "Breakpoint", "PauseOnNextStatement", "other"], "description": "Pause reason." },
                 { "name": "data", "type": "object", "optional": true, "description": "Object containing break-specific auxiliary properties." }
             ],
             "description": "Fired when the virtual machine stopped on breakpoint or exception or any other stop criteria."

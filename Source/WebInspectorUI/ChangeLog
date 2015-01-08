@@ -1,5 +1,52 @@
 2015-01-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Pause Reason Improvements (Breakpoint, Debugger Statement, Pause on Next Statement)
+        https://bugs.webkit.org/show_bug.cgi?id=138991
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New UI strings for Pause Reasons.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.prototype.breakpointForIdentifier):
+        Provide a way to get the breakpoint with an identifier.
+
+        * UserInterface/Images/PausedBreakpoint.svg: Added.
+        * UserInterface/Images/gtk/PausedBreakpoint.svg: Added.
+        Copy PseudoElement.svg icon and give it a new name.
+
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (.breakpoint-paused-icon .icon):
+        New icon for a breakpoint causing a pause.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement.prototype.removeStatusImage):
+        (WebInspector.BreakpointTreeElement.prototype._updateStatus):
+        Give API to remove the breakpoint status icon from a BreakpointTreeElement.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel):
+        (WebInspector.DebuggerSidebarPanel.prototype.get hasSelectedElement):
+        (WebInspector.DebuggerSidebarPanel.prototype.deselectBreakpointContentTreeElements):
+        (WebInspector.DebuggerSidebarPanel.prototype.deselectPauseReasonContentTreeElements):
+        (WebInspector.DebuggerSidebarPanel.prototype._treeElementSelected):
+        Give DebuggerSidebarPanel an optional pause reason tree outline. When available
+        include it in the pattern of ensuring a single exclusive selection.
+
+        (WebInspector.DebuggerSidebarPanel.prototype._breakpointRemoved):
+        When a breakpoint is removed, check if we should update the pause reason tree outline.
+
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReason):
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        Update Pause Reason section contents depending on the reason.
+
+        (WebInspector.DebuggerSidebarPanel.prototype._updatePauseReasonGotoArrow):
+        Always try to include a goto arrow to jump to the original pause location
+        if it is available at the time of pausing.
+
+2015-01-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Expected UserAgent styles to be crossed-out if overridden
         https://bugs.webkit.org/show_bug.cgi?id=140154
 
