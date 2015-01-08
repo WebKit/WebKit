@@ -1527,13 +1527,6 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(Element* ele
 
 // -------------------------------------------------------------------------------------
 
-#if ENABLE(DASHBOARD_SUPPORT)
-static Length convertToIntLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
-{
-    return primitiveValue ? primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(conversionData) : Length(Undefined);
-}
-#endif
-
 static Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
 {
     return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData) : Length(Undefined);
@@ -2092,50 +2085,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
         return;
-#if ENABLE(DASHBOARD_SUPPORT)
-    case CSSPropertyWebkitDashboardRegion:
-    {
-        HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)
-        if (!primitiveValue)
-            return;
-
-        if (primitiveValue->getValueID() == CSSValueNone) {
-            state.style()->setDashboardRegions(RenderStyle::noneDashboardRegions());
-            return;
-        }
-
-        DashboardRegion* region = primitiveValue->getDashboardRegionValue();
-        if (!region)
-            return;
-
-        DashboardRegion* first = region;
-        while (region) {
-            Length top = convertToIntLength(region->top(), state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-            Length right = convertToIntLength(region->right(), state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-            Length bottom = convertToIntLength(region->bottom(), state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-            Length left = convertToIntLength(region->left(), state.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-
-            if (top.isUndefined())
-                top = Length();
-            if (right.isUndefined())
-                right = Length();
-            if (bottom.isUndefined())
-                bottom = Length();
-            if (left.isUndefined())
-                left = Length();
-
-            if (region->m_isCircle)
-                state.style()->setDashboardRegion(StyleDashboardRegion::Circle, region->m_label, top, right, bottom, left, region == first ? false : true);
-            else if (region->m_isRectangle)
-                state.style()->setDashboardRegion(StyleDashboardRegion::Rectangle, region->m_label, top, right, bottom, left, region == first ? false : true);
-            region = region->m_next.get();
-        }
-
-        state.document().setHasAnnotatedRegions(true);
-
-        return;
-    }
-#endif
 #if PLATFORM(IOS)
     case CSSPropertyWebkitTouchCallout: {
         HANDLE_INHERIT_AND_INITIAL(touchCalloutEnabled, TouchCalloutEnabled);
@@ -2292,6 +2241,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 #endif
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     case CSSPropertyWebkitTextSizeAdjust:
+#endif
+#if ENABLE(DASHBOARD_SUPPORT)
+    case CSSPropertyWebkitDashboardRegion:
 #endif
     case CSSPropertyLeft:
     case CSSPropertyLetterSpacing:

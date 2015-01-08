@@ -582,7 +582,7 @@ user-zoom [LegacyStyleBuilder]
 -webkit-tap-highlight-color [Inherited, LegacyStyleBuilder]
 #endif
 #if defined(ENABLE_DASHBOARD_SUPPORT) && ENABLE_DASHBOARD_SUPPORT
--webkit-dashboard-region [LegacyStyleBuilder]
+-webkit-dashboard-region [NameForMethods=DashboardRegions, Custom=Value]
 #endif
 #if defined(ENABLE_ACCELERATED_OVERFLOW_SCROLLING) && ENABLE_ACCELERATED_OVERFLOW_SCROLLING
 -webkit-overflow-scrolling [Inherited, LegacyStyleBuilder]

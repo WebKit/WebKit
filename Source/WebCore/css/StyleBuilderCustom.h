@@ -34,6 +34,7 @@
 #include "Counter.h"
 #include "CounterContent.h"
 #include "CursorList.h"
+#include "DashboardRegion.h"
 #include "ElementAncestorIterator.h"
 #include "Frame.h"
 #include "HTMLElement.h"
@@ -109,6 +110,9 @@ public:
     static void applyValueLineHeight(StyleResolver&, CSSValue&);
 #endif
     static void applyValueVerticalAlign(StyleResolver&, CSSValue&);
+#if ENABLE(DASHBOARD_SUPPORT)
+    static void applyValueWebkitDashboardRegion(StyleResolver&, CSSValue&);
+#endif
     static void applyValueWebkitJustifySelf(StyleResolver&, CSSValue&);
     static void applyValueWebkitLocale(StyleResolver&, CSSValue&);
     static void applyValueWebkitTextOrientation(StyleResolver&, CSSValue&);
@@ -284,6 +288,51 @@ inline void StyleBuilderCustom::applyValueVerticalAlign(StyleResolver& styleReso
     else
         styleResolver.style()->setVerticalAlignLength(primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData()));
 }
+
+#if ENABLE(DASHBOARD_SUPPORT)
+static Length convertToIntLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
+{
+    return primitiveValue ? primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(conversionData) : Length(Undefined);
+}
+
+inline void StyleBuilderCustom::applyValueWebkitDashboardRegion(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.getValueID() == CSSValueNone) {
+        styleResolver.style()->setDashboardRegions(RenderStyle::noneDashboardRegions());
+        return;
+    }
+
+    DashboardRegion* region = primitiveValue.getDashboardRegionValue();
+    if (!region)
+        return;
+
+    DashboardRegion* first = region;
+    while (region) {
+        Length top = convertToIntLength(region->top(), styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        Length right = convertToIntLength(region->right(), styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        Length bottom = convertToIntLength(region->bottom(), styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        Length left = convertToIntLength(region->left(), styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+
+        if (top.isUndefined())
+            top = Length();
+        if (right.isUndefined())
+            right = Length();
+        if (bottom.isUndefined())
+            bottom = Length();
+        if (left.isUndefined())
+            left = Length();
+
+        if (region->m_isCircle)
+            styleResolver.style()->setDashboardRegion(StyleDashboardRegion::Circle, region->m_label, top, right, bottom, left, region == first ? false : true);
+        else if (region->m_isRectangle)
+            styleResolver.style()->setDashboardRegion(StyleDashboardRegion::Rectangle, region->m_label, top, right, bottom, left, region == first ? false : true);
+        region = region->m_next.get();
+    }
+
+    styleResolver.document().setHasAnnotatedRegions(true);
+}
+#endif // ENABLE(DASHBOARD_SUPPORT)
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
 inline void StyleBuilderCustom::applyInheritImageResolution(StyleResolver& styleResolver)

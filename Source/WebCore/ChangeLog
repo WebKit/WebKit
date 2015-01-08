@@ -1,3 +1,20 @@
+2015-01-07  Chris Dumez  <cdumez@apple.com>
+
+        Move '-webkit-dashboard-region' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140204
+
+        Reviewed by Darin Adler.
+
+        Move '-webkit-dashboard-region' CSS property to the new StyleBuilder.
+
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderCustom.h:
+        (WebCore::convertToIntLength):
+        (WebCore::StyleBuilderCustom::applyValueWebkitDashboardRegion):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::convertToIntLength): Deleted.
+
 2015-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The ASCII decoding for non ASCII character is incorrect if this character comes after going through the fast decoding code path and before the end of the text by less than a machine word size of characters.
