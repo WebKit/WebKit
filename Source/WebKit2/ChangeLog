@@ -1,5 +1,32 @@
 2015-01-08  Gwang Yoon Hwang  <yoon@igalia.com>
 
+        [ThreadedCompositor] Update active animations without interrupting the main-thread
+        https://bugs.webkit.org/show_bug.cgi?id=140245
+
+        Reviewed by Martin Robinson.
+
+        In the Threaded Compositor, CoordinatedGraphicsScene can directly
+        request updateViewport to the compositing thread if it has any active
+        animation.
+
+        To keep current behavior of CoordinatedGraphics, this patch modifies
+        CoordinatedGraphicsScene to remember the constructed thread as a
+        clientRunLoop, and dispatch updateViewport calls to clientRunLoop.
+
+        No new tests. No change in functionality.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::dispatchOnClientRunLoop):
+        (WebKit::CoordinatedGraphicsScene::CoordinatedGraphicsScene):
+        (WebKit::CoordinatedGraphicsScene::paintToCurrentGLContext):
+        (WebKit::CoordinatedGraphicsScene::updateViewport):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::ThreadedCompositor):
+        (WebKit::ThreadedCompositor::runCompositingThread):
+
+2015-01-08  Gwang Yoon Hwang  <yoon@igalia.com>
+
         [GTK] Seperate updateBackingStore from flushCompositingState.
         https://bugs.webkit.org/show_bug.cgi?id=136887
 

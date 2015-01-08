@@ -43,6 +43,14 @@ void CoordinatedGraphicsScene::dispatchOnMainThread(std::function<void()> functi
         callOnMainThread(WTF::move(function));
 }
 
+void CoordinatedGraphicsScene::dispatchOnClientRunLoop(std::function<void()> function)
+{
+    if (&m_clientRunLoop == &RunLoop::current())
+        function();
+    else
+        m_clientRunLoop.dispatch(WTF::move(function));
+}
+
 static bool layerShouldHaveBackingStore(TextureMapperLayer* layer)
 {
     return layer->drawsContent() && layer->contentsAreVisible() && !layer->size().isEmpty();
@@ -53,6 +61,7 @@ CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClien
     , m_isActive(false)
     , m_rootLayerID(InvalidCoordinatedLayerID)
     , m_viewBackgroundColor(Color::white)
+    , m_clientRunLoop(RunLoop::current())
 {
 }
 
@@ -103,7 +112,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
 
     if (currentRootLayer->descendantsOrSelfHaveRunningAnimations()) {
         RefPtr<CoordinatedGraphicsScene> protector(this);
-        dispatchOnMainThread([=] {
+        dispatchOnClientRunLoop([=] {
             protector->updateViewport();
         });
     }
@@ -138,7 +147,7 @@ void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* p
 
 void CoordinatedGraphicsScene::updateViewport()
 {
-    ASSERT(isMainThread());
+    ASSERT(&m_clientRunLoop == &RunLoop::current());
     if (m_client)
         m_client->updateViewport();
 }
