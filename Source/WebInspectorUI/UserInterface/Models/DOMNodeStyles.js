@@ -596,6 +596,7 @@ WebInspector.DOMNodeStyles.prototype = {
             enabled = false;
             break;
         case "style":
+            // FIXME: Is this still needed? This includes UserAgent styles and HTML attribute styles.
             anonymous = true;
             break;
         }
@@ -650,6 +651,9 @@ WebInspector.DOMNodeStyles.prototype = {
 
         var id = payload.styleId;
         var mapKey = id ? id.styleSheetId + ":" + id.ordinal : null;
+
+        if (type == WebInspector.CSSStyleDeclaration.Type.Attribute)
+            mapKey = node.id + ":attribute";
 
         var styleDeclaration = rule ? rule.style : null;
         var styleDeclarations = [];
@@ -980,7 +984,7 @@ WebInspector.DOMNodeStyles.prototype = {
 
             for (var j = 0; j < properties.length; ++j) {
                 var property = properties[j];
-                if (!property.enabled || property.anonymous || !property.valid) {
+                if (!property.enabled || !property.valid) {
                     property.overridden = false;
                     continue;
                 }
