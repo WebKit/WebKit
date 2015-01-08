@@ -218,7 +218,7 @@ int HTMLSelectElement::activeSelectionEndListIndex() const
     return lastSelectedListIndex();
 }
 
-void HTMLSelectElement::add(HTMLElement* element, HTMLElement* before, ExceptionCode& ec)
+void HTMLSelectElement::add(HTMLElement* element, HTMLElement* beforeElement, ExceptionCode& ec)
 {
     if (!element || !(is<HTMLOptionElement>(*element) || element->hasTagName(hrTag) || is<HTMLOptGroupElement>(*element)))
         return;
@@ -226,8 +226,13 @@ void HTMLSelectElement::add(HTMLElement* element, HTMLElement* before, Exception
     // Make sure the element is ref'd and deref'd so we don't leak it.
     Ref<HTMLElement> protectNewChild(*element);
 
-    insertBefore(element, before, ec);
+    insertBefore(element, beforeElement, ec);
     updateValidity();
+}
+
+void HTMLSelectElement::add(HTMLElement* element, int beforeIndex, ExceptionCode& ec)
+{
+    add(element, item(beforeIndex), ec);
 }
 
 void HTMLSelectElement::removeByIndex(int optionIndex)

@@ -1,3 +1,28 @@
+2015-01-07  Shivakumar JM  <shiva.jm@samsung.com>
+
+        HTMLSelectElement and HTMLOptionsCollection add() method should support index as second argument.
+        https://bugs.webkit.org/show_bug.cgi?id=139179
+
+        Reviewed by Darin Adler.
+
+        HTMLSelectElement and HTMLOptionsCollection add() method should support index as second argument as per specification
+        http://www.w3.org/html/wg/drafts/html/master/forms.html#the-select-element.
+        Also this matches the behavior of Chrome and FireFox.
+
+        Tests: fast/dom/HTMLSelectElement/add.html
+               fast/dom/HTMLSelectElement/options-collection-add.html
+
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::add): Deleted.
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::add):
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::add):
+        * html/HTMLSelectElement.h:
+        * html/HTMLSelectElement.idl:
+
 2015-01-07  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK][ThreadedCompositor] Add support for threaded compositor.

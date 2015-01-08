@@ -36,33 +36,14 @@ Ref<HTMLOptionsCollection> HTMLOptionsCollection::create(HTMLSelectElement& sele
     return adoptRef(*new HTMLOptionsCollection(select));
 }
 
-void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, ExceptionCode& ec)
+void HTMLOptionsCollection::add(HTMLElement* element, HTMLElement* beforeElement, ExceptionCode& ec)
 {
-    add(element, length(), ec);
+    selectElement().add(element, beforeElement, ec);
 }
 
-void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, int index, ExceptionCode& ec)
+void HTMLOptionsCollection::add(HTMLElement* element, int beforeIndex, ExceptionCode& ec)
 {
-    HTMLOptionElement* newOption = element.get();
-
-    if (!newOption) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
-
-    if (index < -1) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
-
-    ec = 0;
-
-    if (index == -1 || unsigned(index) >= length())
-        selectElement().add(newOption, nullptr, ec);
-    else
-        selectElement().add(newOption, downcast<HTMLOptionElement>(item(index)), ec);
-
-    ASSERT(!ec);
+    add(element, downcast<HTMLElement>(item(beforeIndex)), ec);
 }
 
 void HTMLOptionsCollection::remove(int index)

@@ -41,9 +41,9 @@
 #endif
     getter Node item(unsigned long index);
     Node namedItem([Default=Undefined] optional DOMString name);
-    [ObjCLegacyUnnamedParameters, RaisesException] void add([Default=Undefined] optional HTMLElement element,
-                            [Default=Undefined] optional HTMLElement before);
+    [ObjCLegacyUnnamedParameters, RaisesException] void add(HTMLElement element, [Default=Undefined] optional HTMLElement? before);
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    [RaisesException] void add(HTMLElement element, [Default=Undefined] optional long index);
     // In JavaScript, we support both option index and option object parameters.
     // As of this writing this cannot be auto-generated.
     [Custom] void remove(/* indexOrOption */);

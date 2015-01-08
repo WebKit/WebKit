@@ -1,3 +1,21 @@
+2015-01-07  Shivakumar JM  <shiva.jm@samsung.com>
+
+        HTMLSelectElement and HTMLOptionsCollection add() method should support index as second argument.
+        https://bugs.webkit.org/show_bug.cgi?id=139179
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLSelectElement/add-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/add.html: Added.
+        * fast/dom/HTMLSelectElement/options-collection-add-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/options-collection-add.html: Added.
+        * fast/dom/HTMLSelectElement/select-add-optgroup-expected.txt:
+        * fast/dom/HTMLSelectElement/select-add-optgroup.html:
+        * fast/dom/incompatible-operations-expected.txt:
+        * fast/dom/incompatible-operations.html:
+        * js/dom/script-tests/select-options-add.js:
+        * js/dom/select-options-add-expected.txt:
+
 2015-01-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Two tests, which include data uri images, need to be changed and rebaselined since the expected results are incorrect.

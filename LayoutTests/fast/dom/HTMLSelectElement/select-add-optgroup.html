@@ -8,7 +8,6 @@
 description('Test select.add() with optgroup');
 	
 var mySelect;
-var selectedOptions;
 	
 function resetSelection() {
     mySelect = document.createElement('select');
@@ -18,153 +17,59 @@ function resetSelection() {
 }
 
 function deepCopy() {
-    var copy=[];
-    for(var i=0;i<mySelect.options.length; ++i)
+    var copy = [];
+    for(var i = 0; i < mySelect.options.length; ++i)
         copy.push(mySelect.options[i].value);
     return copy.join(",");
 }
 
-resetSelection();
-var option1 = document.createElement("option");
-option1.text = "X1";
-option1.value = "Y1";
-mySelect.add(option1);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y1');
+function createOption(value) {
+    return new Option(value + "X", value, false, false);
+}
 
-var option2 = document.createElement("option");
-option2.text = "X2";
-option2.value = "Y2";
-mySelect.add(option2, option1);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y2,Y1');
+function createGroup(value1, value2) {
+    var group = document.createElement('optgroup');
+    group.appendChild(new Option(value1 + "X", value1, false, false));
+    group.appendChild(new Option(value2 + "Y", value2, false, false));
+    return group;
+}
 
-var option3 = document.createElement("option");
-option3.text = "X3";
-option3.value = "Y3";
-mySelect.add(option3, option2);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y3,Y2,Y1');
+function testAdd1(element) {
+    resetSelection();
+    mySelect.add(element);
+    return deepCopy();
+}
 
-var option4 = document.createElement("option");
-option4.text = "X4";
-option4.value = "Y4";
-mySelect.add(option4, mySelect.options[3]);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y4,Y3,Y2,Y1');
+function testAdd2(newelement, element) {
+    mySelect.add(newelement, element);
+    return deepCopy();
+}
 
-resetSelection();	
-var group1 = document.createElement('optgroup');
-group1.appendChild(new Option('X', 'X', false, false));
-group1.appendChild(new Option('Y', 'Y', false, false));
-mySelect.add(group1);
-shouldBeEqualToString('deepCopy()', '0,1,2,X,Y');
-
-resetSelection();	
-var group2 = document.createElement('optgroup');
-group2.appendChild(new Option('X', 'X', false, false));
-group2.appendChild(new Option('Y', 'Y', false, false));
-mySelect.add(group2,mySelect.options[2]);
-shouldBeEqualToString('deepCopy()', '0,1,X,Y,2');
-
-var group3 = document.createElement('optgroup');
-group3.appendChild(new Option('X', 'X', false, false));
-group3.appendChild(new Option('Y', 'Y', false, false));
-mySelect.add(group3,group2);
-shouldBeEqualToString('deepCopy()', '0,1,X,Y,X,Y,2');
+function testAdd3(newelement, index) {	
+    resetSelection();
+    mySelect.add(newelement, index);
+    return deepCopy();
+}
 
 resetSelection();
-mySelect.add(new Option("X", "Y", false, false), null);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
+debug('list elements are = ' + deepCopy());
+shouldBeEqualToString('testAdd3(createGroup("Y1", "Y2"), null)', '0,1,2,Y1,Y2');
+shouldBeEqualToString('testAdd3(createGroup("Y3", "Y4"), 0)', 'Y3,Y4,0,1,2');
+shouldBeEqualToString('testAdd3(createGroup("Y5", "Y6"), 2)', '0,1,Y5,Y6,2');
+shouldBeEqualToString('testAdd1(createGroup("Y7", "Y8"))', '0,1,2,Y7,Y8');
+shouldBeEqualToString('testAdd1(createOption("Y9"))', '0,1,2,Y9');
 resetSelection();
-mySelect.add(new Option("X", "Y", false, false));
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
+debug('list elements are = ' + deepCopy());
+shouldBeEqualToString('testAdd2(createOption("Y10"), mySelect.options[2])', '0,1,Y10,2');
+shouldBeEqualToString('testAdd2(createOption("Y11"), mySelect.options[1])', '0,Y11,1,Y10,2');
 resetSelection();
-mySelect.add(new Option("X", "Y", false, false), 0);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
+debug('list elements are = ' + deepCopy());
+shouldBeEqualToString('testAdd2(createGroup("Y12", "Y13"), mySelect.options[1])', '0,Y12,Y13,1,2');
+shouldBeEqualToString('testAdd2(createGroup("Y14", "Y15"), mySelect.options[3])', '0,Y12,Y13,Y14,Y15,1,2');
 resetSelection();
-mySelect.add(new Option("X", "Y", false, false), 1);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
+debug('list elements are = ' + deepCopy());
+shouldThrow('testAdd2(createOption("Y16"), createOption("Y17"))');
 
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), 2);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), 100);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), -100);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), "2");
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), "1");
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), "0");
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), 2147483647);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), 2147483648);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), -2147483647);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), -2147483648);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), -2147483649);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), true);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), false);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), undefined);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), Infinity);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), -Infinity);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), "foo");
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-mySelect.add(new Option("X", "Y", false, false), NaN);
-shouldBeEqualToString('deepCopy()', '0,1,2,Y');
-
-resetSelection();
-shouldBeUndefined('mySelect.add("foo")');
-shouldBeUndefined('mySelect.add("foo", 0)');
-shouldBeUndefined('mySelect.add(undefined)');
-shouldBeUndefined('mySelect.add(undefined, 0)');
-shouldBeUndefined('mySelect.add(null)');
-shouldBeUndefined('mySelect.add(null, 0)');
-	
 </script>
 </body>
 </html>

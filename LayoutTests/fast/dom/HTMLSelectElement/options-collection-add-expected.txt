@@ -1,0 +1,58 @@
+Test select.options.add() with optgroup and with index parameter
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+list elements are = 0,1,2
+PASS testAdd3(createGroup("Y1", "Y2"), null) is "0,1,2,Y1,Y2"
+PASS testAdd3(createGroup("Y3", "Y4"), 0) is "Y3,Y4,0,1,2"
+PASS testAdd3(createGroup("Y5", "Y6"), 2) is "0,1,Y5,Y6,2"
+PASS testAdd1(createGroup("Y7", "Y8")) is "0,1,2,Y7,Y8"
+PASS testAdd1(createOption("Y9")) is "0,1,2,Y9"
+list elements are = 0,1,2
+PASS testAdd2(createOption("Y10"), mySelect.options[2]) is "0,1,Y10,2"
+PASS testAdd2(createOption("Y11"), mySelect.options[1]) is "0,Y11,1,Y10,2"
+list elements are = 0,1,2
+PASS testAdd2(createGroup("Y12", "Y13"), mySelect.options[1]) is "0,Y12,Y13,1,2"
+PASS testAdd2(createGroup("Y14", "Y15"), mySelect.options[3]) is "0,Y12,Y13,Y14,Y15,1,2"
+list elements are = 0,1,2
+PASS testAdd2(createOption("Y16"), createOption("Y17")) threw exception Error: NotFoundError: DOM Exception 8.
+list elements are = 0,1,2
+PASS testAdd1(createOption("Y1")) is "0,1,2,Y1"
+PASS testAdd3(createOption("Y2"), null) is "0,1,2,Y2"
+PASS testAdd3(createOption("Y3"), 0) is "Y3,0,1,2"
+PASS testAdd3(createOption("Y4"), 1) is "0,Y4,1,2"
+PASS testAdd3(createOption("Y5"), 2) is "0,1,Y5,2"
+PASS testAdd3(createOption("Y6"), 3) is "0,1,2,Y6"
+PASS testAdd3(createOption("Y7"), 100) is "0,1,2,Y7"
+PASS testAdd3(createOption("Y8"), -100) is "0,1,2,Y8"
+PASS testAdd3(createOption("Y9"), "0") is "Y9,0,1,2"
+PASS testAdd3(createOption("Y10"), "1") is "0,Y10,1,2"
+PASS testAdd3(createOption("Y11"), "2") is "0,1,Y11,2"
+PASS testAdd3(createOption("Y12"), true) is "0,Y12,1,2"
+PASS testAdd3(createOption("Y13"), false) is "Y13,0,1,2"
+PASS testAdd3(createOption("Y14"), 2147483647) is "0,1,2,Y14"
+PASS testAdd3(createOption("Y15"), 2147483648) is "0,1,2,Y15"
+PASS testAdd3(createOption("Y16"), -2147483647) is "0,1,2,Y16"
+PASS testAdd3(createOption("Y17"), -2147483648) is "0,1,2,Y17"
+PASS testAdd3(createOption("Y18"), -2147483649) is "0,1,2,Y18"
+PASS testAdd3(createOption("Y19"), Infinity) is "Y19,0,1,2"
+PASS testAdd3(createOption("Y20"), -Infinity) is "Y20,0,1,2"
+PASS testAdd3(createOption("Y21"), "foo") is "Y21,0,1,2"
+PASS testAdd3(createOption("Y22"), NaN) is "Y22,0,1,2"
+PASS testAdd3(createOption("Y23"), undefined) is "Y23,0,1,2"
+PASS testAdd3(createOption("Y24"), -2) is "0,1,2,Y24"
+PASS testAdd4(createOption("Y25"), 0, 1) threw exception TypeError: Type error.
+PASS testAdd4(createOption("Y25"), mySelect.options[0], 1) threw exception TypeError: Type error.
+list elements are = 0,1,2
+PASS mySelect.options.add("foo") threw exception TypeError: Type error.
+PASS mySelect.options.add("foo", 0) threw exception TypeError: Type error.
+PASS mySelect.options.add(undefined) threw exception TypeError: Type error.
+PASS mySelect.options.add(undefined, 0) threw exception TypeError: Type error.
+PASS mySelect.options.add(null, 0) threw exception TypeError: Type error.
+PASS mySelect.options.add(null) threw exception TypeError: Type error.
+PASS mySelect.options.add() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description('Test select.add() with index parameter');
+	
+var mySelect;
+
+function resetSelection() {
+    mySelect = document.createElement('select');
+    mySelect.appendChild(new Option("0", "0", false, false));
+    mySelect.appendChild(new Option("1", "1", false, false));
+    mySelect.appendChild(new Option("2", "2", false, false));
+}
+
+function deepCopy() {
+    var copy = [];
+    for(var i = 0; i < mySelect.options.length; ++i)
+        copy.push(mySelect.options[i].value);
+    return copy.join(",");
+}
+	
+function createOption(value) {
+    return new Option(value + "X", value, false, false);
+}
+
+function testAdd1(element) {
+    resetSelection();
+    mySelect.add(element);
+    return deepCopy();
+}
+
+function testAdd3(newelement, index) {
+    resetSelection();
+    mySelect.add(newelement, index);
+    return deepCopy();
+}
+
+function testAdd4(newelement, element, index) {
+    resetSelection();
+    mySelect.add(newelement, element, index);
+    return deepCopy();
+}
+
+resetSelection();
+debug('list elements are = ' + deepCopy());
+shouldBeEqualToString('testAdd1(createOption("Y1"))', '0,1,2,Y1');
+shouldBeEqualToString('testAdd3(createOption("Y2"), null)', '0,1,2,Y2');
+shouldBeEqualToString('testAdd3(createOption("Y3"), 0)', 'Y3,0,1,2');
+shouldBeEqualToString('testAdd3(createOption("Y4"), 1)', '0,Y4,1,2');
+shouldBeEqualToString('testAdd3(createOption("Y5"), 2)', '0,1,Y5,2');
+shouldBeEqualToString('testAdd3(createOption("Y6"), 3)', '0,1,2,Y6');
+shouldBeEqualToString('testAdd3(createOption("Y7"), 100)', '0,1,2,Y7');
+shouldBeEqualToString('testAdd3(createOption("Y8"), -100)', '0,1,2,Y8');
+shouldBeEqualToString('testAdd3(createOption("Y9"), "0")', 'Y9,0,1,2');
+shouldBeEqualToString('testAdd3(createOption("Y10"), "1")', '0,Y10,1,2');
+shouldBeEqualToString('testAdd3(createOption("Y11"), "2")', '0,1,Y11,2');
+shouldBeEqualToString('testAdd3(createOption("Y12"), true)', '0,Y12,1,2');
+shouldBeEqualToString('testAdd3(createOption("Y13"), false)', 'Y13,0,1,2');
+shouldBeEqualToString('testAdd3(createOption("Y14"), 2147483647)', '0,1,2,Y14');
+shouldBeEqualToString('testAdd3(createOption("Y15"), 2147483648)', '0,1,2,Y15');
+shouldBeEqualToString('testAdd3(createOption("Y16"), -2147483647)', '0,1,2,Y16');
+shouldBeEqualToString('testAdd3(createOption("Y17"), -2147483648)', '0,1,2,Y17');
+shouldBeEqualToString('testAdd3(createOption("Y18"), -2147483649)', '0,1,2,Y18');
+shouldBeEqualToString('testAdd3(createOption("Y19"), Infinity)', 'Y19,0,1,2');
+shouldBeEqualToString('testAdd3(createOption("Y20"), -Infinity)', 'Y20,0,1,2');
+shouldBeEqualToString('testAdd3(createOption("Y21"), "foo")', 'Y21,0,1,2');
+shouldBeEqualToString('testAdd3(createOption("Y22"), NaN)', 'Y22,0,1,2');
+shouldBeEqualToString('testAdd3(createOption("Y23"), undefined)', 'Y23,0,1,2');
+shouldBeEqualToString('testAdd3(createOption("Y24"), -2)','0,1,2,Y24');
+shouldThrow('testAdd4(createOption("Y25"), 0, 1)');
+shouldThrow('testAdd4(createOption("Y25"), mySelect.options[0], 1)');
+resetSelection();
+debug('list elements are = ' + deepCopy());
+shouldThrow('mySelect.add("foo")');
+shouldThrow('mySelect.add("foo", 0)');
+shouldThrow('mySelect.add(undefined)');
+shouldThrow('mySelect.add(undefined, 0)');
+shouldThrow('mySelect.add(null, 0)');
+shouldThrow('mySelect.add(null)');
+shouldThrow('mySelect.add()');
+	
+</script>
+</body>
+</html>

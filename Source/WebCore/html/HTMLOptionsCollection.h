@@ -40,8 +40,8 @@ public:
     HTMLSelectElement& selectElement() { return downcast<HTMLSelectElement>(ownerNode()); }
     const HTMLSelectElement& selectElement() const { return downcast<HTMLSelectElement>(ownerNode()); }
 
-    void add(PassRefPtr<HTMLOptionElement>, ExceptionCode&);
-    void add(PassRefPtr<HTMLOptionElement>, int index, ExceptionCode&);
+    void add(HTMLElement*, HTMLElement* beforeElement, ExceptionCode&);
+    void add(HTMLElement*, int beforeIndex, ExceptionCode&);
     void remove(int index);
     void remove(HTMLOptionElement*);
 

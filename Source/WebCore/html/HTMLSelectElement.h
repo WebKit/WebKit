@@ -57,6 +57,7 @@ public:
     bool usesMenuList() const;
 
     void add(HTMLElement*, HTMLElement* beforeElement, ExceptionCode&);
+    void add(HTMLElement*, int beforeIndex, ExceptionCode&);
 
     using Node::remove;
     // Should be remove(int) but it conflicts with Node::remove(ExceptionCode&).

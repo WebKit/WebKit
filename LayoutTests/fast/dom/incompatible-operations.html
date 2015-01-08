@@ -40,11 +40,11 @@ shouldBeFalse("aNode.isSameNode(void 0)");
 shouldBe("aNode.lookupPrefix(aDOMImplementation)", "null");
 shouldBe("aNode.lookupPrefix(void 0)", "null");
 shouldBeTrue("aNode.cloneNode(aDOMImplementation) instanceof HTMLDivElement");
-shouldBeUndefined("aSelect.add(aDOMImplementation, aDOMImplementation)");
-shouldBeUndefined("aSelect.add(aDOMImplementation, anOption)");
+shouldThrow("aSelect.add(aDOMImplementation, aDOMImplementation)");
+shouldThrow("aSelect.add(aDOMImplementation, anOption)");
 shouldBeUndefined("aSelect.add(anOption, aDOMImplementation)");
-shouldBeUndefined("aSelect.add(void 0, void 0)");
-shouldBeUndefined("aSelect.add(void 0, anOption)");
+shouldThrow("aSelect.add(void 0, void 0)");
+shouldThrow("aSelect.add(void 0, anOption)");
 shouldBeUndefined("aSelect.add(anOption, void 0)");
 </script>
 <script src="../../resources/js-test-post.js"></script>

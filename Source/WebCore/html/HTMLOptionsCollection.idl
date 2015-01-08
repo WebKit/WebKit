@@ -28,8 +28,12 @@
 
     Node namedItem([Default=Undefined] optional DOMString name);
 
-    [Custom, RaisesException] void add([Default=Undefined] optional HTMLOptionElement option, 
-                      optional unsigned long index);
+#if (!defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C) && (!defined(LANGUAGE_GOBJECT) || !LANGUAGE_GOBJECT)
+    [RaisesException] void add(HTMLElement element, [Default=Undefined] optional HTMLElement? before);
+    [RaisesException] void add(HTMLElement element, [Default=Undefined] optional long index);
+#else
+    [RaisesException] void add(HTMLOptionElement option, unsigned long index);
+#endif
     [Custom] void remove([Default=Undefined] optional unsigned long index);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
