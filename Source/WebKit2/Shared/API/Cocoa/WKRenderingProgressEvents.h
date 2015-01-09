@@ -30,6 +30,7 @@
 typedef NS_OPTIONS(NSUInteger, WKRenderingProgressEvents)
 {
     WKRenderingProgressEventFirstLayout = 1 << 0,
+    WKRenderingProgressEventFirstVisuallyNonEmptyLayout = 1 << 1,
     WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
 };
 

@@ -29,6 +29,7 @@
 
 typedef NS_OPTIONS(NSUInteger, _WKRenderingProgressEvents) {
     _WKRenderingProgressEventFirstLayout = 1 << 0,
+    _WKRenderingProgressEventFirstVisuallyNonEmptyLayout = 1 << 1,
     _WKRenderingProgressEventFirstPaintWithSignificantArea = 1 << 2,
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 

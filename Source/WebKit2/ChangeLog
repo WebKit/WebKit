@@ -1,3 +1,25 @@
+2015-01-09  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r177163.
+
+    2014-12-11  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+            WebKit2 should expose FirstVisuallyNonEmptyLayout rendering milestone.
+            https://bugs.webkit.org/show_bug.cgi?id=139514
+
+            Expose DidFirstVisuallyNonEmptyLayout so that WebKit2 client can listen to visually non-empty layout rendering event.
+
+            Reviewed by Dan Bernstein.
+
+            * Shared/API/Cocoa/WKRenderingProgressEvents.h: Add WKRenderingProgressEventFirstVisuallyNonEmptyLayout to WKRenderingProgressEvents.
+            * Shared/API/Cocoa/WKRenderingProgressEventsInternal.h: Also map kWKDidFirstVisuallyNonEmptyLayout to WKRenderingProgressEventFirstVisuallyNonEmptyLayout.
+            (renderingProgressEvents):
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (layoutMilestones): Map _WKRenderingProgressEventFirstVisuallyNonEmptyLayout to WebCore::DidFirstVisuallyNonEmptyLayout.
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            * UIProcess/Cocoa/NavigationState.mm: Add _WKRenderingProgressEventFirstVisuallyNonEmptyLayout to _WKRenderingProgressEventFirstLayout.
+            (WebKit::renderingProgressEvents): Map WebCore::DidFirstVisuallyNonEmptyLayout to _WKRenderingProgressEventFirstVisuallyNonEmptyLayout.
+
 2015-01-08  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r173450.
