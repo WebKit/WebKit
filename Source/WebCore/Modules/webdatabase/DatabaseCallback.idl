@@ -30,5 +30,4 @@
     Conditional=SQL_DATABASE,
 ] callback interface DatabaseCallback {
     boolean handleEvent(Database database);
-    boolean handleEvent(DatabaseSync database);
 };

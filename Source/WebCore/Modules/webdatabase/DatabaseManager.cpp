@@ -33,11 +33,9 @@
 #include "DatabaseBackend.h"
 #include "DatabaseBackendBase.h"
 #include "DatabaseBackendContext.h"
-#include "DatabaseBackendSync.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
 #include "DatabaseStrategy.h"
-#include "DatabaseSync.h"
 #include "DatabaseTask.h"
 #include "ExceptionCode.h"
 #include "InspectorDatabaseInstrumentation.h"
@@ -314,31 +312,6 @@ PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* conte
         database->m_scriptExecutionContext->postTask([creationCallback, database] (ScriptExecutionContext&) {
             creationCallback->handleEvent(database.get());
         });
-    }
-
-    ASSERT(database);
-    return database.release();
-}
-
-PassRefPtr<DatabaseSync> DatabaseManager::openDatabaseSync(ScriptExecutionContext* context,
-    const String& name, const String& expectedVersion, const String& displayName,
-    unsigned long estimatedSize, PassRefPtr<DatabaseCallback> creationCallback, DatabaseError& error)
-{
-    ASSERT(context->isContextThread());
-    ASSERT(error == DatabaseError::None);
-
-    bool setVersionInNewDatabase = !creationCallback;
-    String errorMessage;
-    RefPtr<DatabaseBackendBase> backend = openDatabaseBackend(context, DatabaseType::Sync, name,
-        expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
-    if (!backend)
-        return 0;
-
-    RefPtr<DatabaseSync> database = DatabaseSync::create(context, backend);
-
-    if (backend->isNew() && creationCallback.get()) {
-        LOG(StorageAPI, "Invoking the creation callback for database %p\n", database.get());
-        creationCallback->handleEvent(database.get());
     }
 
     ASSERT(database);

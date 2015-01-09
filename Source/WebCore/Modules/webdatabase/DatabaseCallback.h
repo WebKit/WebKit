@@ -44,7 +44,6 @@ class DatabaseCallback : public ThreadSafeRefCounted<DatabaseCallback> {
 public:
     virtual ~DatabaseCallback() { }
     virtual bool handleEvent(Database*) = 0;
-    virtual bool handleEvent(DatabaseSync*) = 0;
 };
 
 }

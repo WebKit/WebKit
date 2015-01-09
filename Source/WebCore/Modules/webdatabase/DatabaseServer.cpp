@@ -31,8 +31,6 @@
 #include "Database.h"
 #include "DatabaseBackend.h"
 #include "DatabaseBackendContext.h"
-#include "DatabaseBackendSync.h"
-#include "DatabaseSync.h"
 #include "DatabaseTracker.h"
 
 namespace WebCore {
@@ -148,7 +146,8 @@ PassRefPtr<DatabaseBackendBase> DatabaseServer::createDatabase(RefPtr<DatabaseBa
         database = adoptRef(new Database(backendContext, name, expectedVersion, displayName, estimatedSize));
         break;
     case DatabaseType::Sync:
-        database = adoptRef(new DatabaseSync(backendContext, name, expectedVersion, displayName, estimatedSize));
+        // FIXME: Remove this case.
+        ASSERT_NOT_REACHED();
     }
 
     if (!database->openAndVerifyVersion(setVersionInNewDatabase, error, errorMessage))

@@ -1,3 +1,38 @@
+2015-01-09  Anders Carlsson  <andersca@apple.com>
+
+        Remove more sync database code
+        https://bugs.webkit.org/show_bug.cgi?id=140318
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webdatabase/DatabaseBackendSync.cpp: Removed.
+        * Modules/webdatabase/DatabaseBackendSync.h: Removed.
+        * Modules/webdatabase/DatabaseCallback.h:
+        * Modules/webdatabase/DatabaseCallback.idl:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabaseSync): Deleted.
+        * Modules/webdatabase/DatabaseManager.h:
+        * Modules/webdatabase/DatabaseServer.cpp:
+        (WebCore::DatabaseServer::createDatabase):
+        * Modules/webdatabase/DatabaseSync.cpp: Removed.
+        * Modules/webdatabase/DatabaseSync.h: Removed.
+        * Modules/webdatabase/DatabaseSync.idl: Removed.
+        * Modules/webdatabase/SQLStatementSync.cpp: Removed.
+        * Modules/webdatabase/SQLStatementSync.h: Removed.
+        * Modules/webdatabase/SQLTransactionBackendSync.cpp: Removed.
+        * Modules/webdatabase/SQLTransactionBackendSync.h: Removed.
+        * Modules/webdatabase/SQLTransactionSync.cpp: Removed.
+        * Modules/webdatabase/SQLTransactionSync.h: Removed.
+        * Modules/webdatabase/SQLTransactionSync.idl: Removed.
+        * Modules/webdatabase/SQLTransactionSyncCallback.h: Removed.
+        * Modules/webdatabase/SQLTransactionSyncCallback.idl: Removed.
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSQLTransactionSyncCustom.cpp: Removed.
+
 2015-01-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove or use TimelineAgent Resource related event types
