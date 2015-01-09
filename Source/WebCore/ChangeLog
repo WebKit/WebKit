@@ -1,3 +1,10 @@
+2015-01-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative buildfix after r178154.
+
+        * xml/parser/CharacterReferenceParserInlines.h:
+        (WebCore::consumeCharacterReference): Remove unused overflow variable.
+
 2015-01-08  Darin Adler  <darin@apple.com>
 
         Remove strange CharacterData::dataImpl function

@@ -59,7 +59,6 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
         Named
     } state = Initial;
     UChar32 result = 0;
-    bool overflow = false;
     const UChar32 highestValidCharacter = 0x10FFFF;
     StringBuilder consumedCharacters;
     
@@ -115,8 +114,6 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
         Hex:
             if (isASCIIHexDigit(character)) {
                 result = result * 16 + toASCIIHexValue(character);
-                if (result > highestValidCharacter)
-                    overflow = true;
                 break;
             }
             if (character == ';') {
@@ -135,8 +132,6 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
             if (isASCIIDigit(character)) {
                 // FIXME: What about overflow?
                 result = result * 10 + character - '0';
-                if (result > highestValidCharacter)
-                    overflow = true;
                 break;
             }
             if (character == ';') {
