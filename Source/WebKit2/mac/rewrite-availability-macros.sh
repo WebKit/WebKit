@@ -38,9 +38,6 @@ function rewrite_headers () {
     if [[ $PLATFORM_NAME == "iphonesimulator" || $PLATFORM_NAME == "iphoneos" ]]; then
         IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET/\./_}
         OSX_VERSION="NA"
-
-        # FIXME: Remove this once <rdar://problem/18343823> has been fixed.
-        IOS_VERSION="NA"
     elif [[ $PLATFORM_NAME == "macosx" ]]; then
         OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET/\./_}
         IOS_VERSION="NA"
