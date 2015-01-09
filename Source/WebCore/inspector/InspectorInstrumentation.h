@@ -137,7 +137,6 @@ public:
     static bool forcePseudoState(Element&, CSSSelector::PseudoClassType);
 
     static void willSendXMLHttpRequest(ScriptExecutionContext*, const String& url);
-    static void didScheduleResourceRequest(Document*, const String& url);
     static void didInstallTimer(ScriptExecutionContext*, int timerId, int timeout, bool singleShot);
     static void didRemoveTimer(ScriptExecutionContext*, int timerId);
 
@@ -175,9 +174,7 @@ public:
     static void continueAfterPingLoader(Frame&, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCached(Page&, unsigned long identifier);
     static void didLoadResourceFromMemoryCache(Page&, DocumentLoader*, CachedResource*);
-    static InspectorInstrumentationCookie willReceiveResourceData(Frame*, unsigned long identifier, int length);
-    static void didReceiveResourceData(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willReceiveResourceResponse(Frame*, unsigned long identifier, const ResourceResponse&);
+    static InspectorInstrumentationCookie willReceiveResourceResponse(Frame*);
     static void didReceiveResourceResponse(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
     static void continueAfterXFrameOptionsDenied(Frame*, DocumentLoader&, unsigned long identifier, const ResourceResponse&);
     static void continueWithPolicyDownload(Frame*, DocumentLoader&, unsigned long identifier, const ResourceResponse&);
@@ -336,7 +333,6 @@ private:
     static bool forcePseudoStateImpl(InstrumentingAgents&, Element&, CSSSelector::PseudoClassType);
 
     static void willSendXMLHttpRequestImpl(InstrumentingAgents&, const String& url);
-    static void didScheduleResourceRequestImpl(InstrumentingAgents&, const String& url, Frame*);
     static void didInstallTimerImpl(InstrumentingAgents&, int timerId, int timeout, bool singleShot, ScriptExecutionContext*);
     static void didRemoveTimerImpl(InstrumentingAgents&, int timerId, ScriptExecutionContext*);
 
@@ -374,9 +370,7 @@ private:
     static void continueAfterPingLoaderImpl(InstrumentingAgents&, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse&);
     static void markResourceAsCachedImpl(InstrumentingAgents&, unsigned long identifier);
     static void didLoadResourceFromMemoryCacheImpl(InstrumentingAgents&, DocumentLoader*, CachedResource*);
-    static InspectorInstrumentationCookie willReceiveResourceDataImpl(InstrumentingAgents&, Frame*, unsigned long identifier, int length);
-    static void didReceiveResourceDataImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InstrumentingAgents&, Frame*, unsigned long identifier, const ResourceResponse&);
+    static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InstrumentingAgents&);
     static void didReceiveResourceResponseImpl(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
     static void didReceiveResourceResponseButCanceledImpl(Frame*, DocumentLoader&, unsigned long identifier, const ResourceResponse&);
     static void continueAfterXFrameOptionsDeniedImpl(Frame*, DocumentLoader&, unsigned long identifier, const ResourceResponse&);
@@ -801,18 +795,6 @@ inline void InspectorInstrumentation::willSendXMLHttpRequest(ScriptExecutionCont
         willSendXMLHttpRequestImpl(*instrumentingAgents, url);
 #else
     UNUSED_PARAM(context);
-    UNUSED_PARAM(url);
-#endif
-}
-
-inline void InspectorInstrumentation::didScheduleResourceRequest(Document* document, const String& url)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didScheduleResourceRequestImpl(*instrumentingAgents, url, document->frame());
-#else
-    UNUSED_PARAM(document);
     UNUSED_PARAM(url);
 #endif
 }
@@ -1242,36 +1224,11 @@ inline void InspectorInstrumentation::didLoadResourceFromMemoryCache(Page& page,
 #endif
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceData(Frame* frame, unsigned long identifier, int length)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willReceiveResourceDataImpl(*instrumentingAgents, frame, identifier, length);
-#else
-    UNUSED_PARAM(frame);
-    UNUSED_PARAM(identifier);
-    UNUSED_PARAM(length);
-#endif
-    return InspectorInstrumentationCookie();
-}
-
-inline void InspectorInstrumentation::didReceiveResourceData(const InspectorInstrumentationCookie& cookie)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.isValid())
-        didReceiveResourceDataImpl(cookie);
-#else
-    UNUSED_PARAM(cookie);
-#endif
-}
-
-inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResponse(Frame* frame, unsigned long identifier, const ResourceResponse& response)
+inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResponse(Frame* frame)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willReceiveResourceResponseImpl(*instrumentingAgents, frame, identifier, response);
+        return willReceiveResourceResponseImpl(*instrumentingAgents);
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(identifier);

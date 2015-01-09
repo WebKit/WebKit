@@ -191,16 +191,9 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
     }
 #endif
 
-    notifyDidScheduleResourceRequest(resourceLoader);
-
     // Handle asynchronously so early low priority requests don't
     // get scheduled before later high priority ones.
     scheduleServePendingRequests();
-}
-
-void ResourceLoadScheduler::notifyDidScheduleResourceRequest(ResourceLoader* loader)
-{
-    InspectorInstrumentation::didScheduleResourceRequest(loader->frameLoader() ? loader->frameLoader()->frame().document() : nullptr, loader->url());
 }
 
 #if USE(QUICK_LOOK)

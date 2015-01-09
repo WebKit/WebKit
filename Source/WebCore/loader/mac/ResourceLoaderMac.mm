@@ -98,11 +98,7 @@ void ResourceLoader::didReceiveDataArray(ResourceHandle*, CFArrayRef dataArray)
         dataLength += CFDataGetLength(data);
     }
 
-    // FIXME: didReceiveData() passes encoded data length to InspectorInstrumentation, but it is not available here.
-    // This probably results in incorrect size being displayed in Web Inspector.
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceData(m_frame.get(), identifier(), dataLength);
     didReceiveDataArray(dataArray);
-    InspectorInstrumentation::didReceiveResourceData(cookie);
 }
 
 #endif

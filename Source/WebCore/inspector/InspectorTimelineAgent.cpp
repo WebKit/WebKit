@@ -439,44 +439,6 @@ void InspectorTimelineAgent::didEvaluateScript(Frame& frame)
     didCompleteCurrentRecord(TimelineRecordType::EvaluateScript);
 }
 
-void InspectorTimelineAgent::didScheduleResourceRequest(const String& url, Frame* frame)
-{
-    appendRecord(TimelineRecordFactory::createScheduleResourceRequestData(url), TimelineRecordType::ScheduleResourceRequest, true, frame);
-}
-
-void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, const ResourceRequest& request, Frame* frame)
-{
-    String requestId = IdentifiersFactory::requestId(identifier);
-    appendRecord(TimelineRecordFactory::createResourceSendRequestData(requestId, request), TimelineRecordType::ResourceSendRequest, true, frame);
-}
-
-void InspectorTimelineAgent::willReceiveResourceData(unsigned long identifier, Frame* frame, int length)
-{
-    String requestId = IdentifiersFactory::requestId(identifier);
-    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(requestId, length), TimelineRecordType::ResourceReceivedData, false, frame);
-}
-
-void InspectorTimelineAgent::didReceiveResourceData()
-{
-    didCompleteCurrentRecord(TimelineRecordType::ResourceReceivedData);
-}
-
-void InspectorTimelineAgent::willReceiveResourceResponse(unsigned long identifier, const ResourceResponse& response, Frame* frame)
-{
-    String requestId = IdentifiersFactory::requestId(identifier);
-    pushCurrentRecord(TimelineRecordFactory::createResourceReceiveResponseData(requestId, response), TimelineRecordType::ResourceReceiveResponse, false, frame);
-}
-
-void InspectorTimelineAgent::didReceiveResourceResponse()
-{
-    didCompleteCurrentRecord(TimelineRecordType::ResourceReceiveResponse);
-}
-
-void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, bool didFail, double finishTime, Frame* frame)
-{
-    appendRecord(TimelineRecordFactory::createResourceFinishData(IdentifiersFactory::requestId(identifier), didFail, finishTime * 1000), TimelineRecordType::ResourceFinish, false, frame);
-}
-
 void InspectorTimelineAgent::didTimeStamp(Frame& frame, const String& message)
 {
     appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp, true, &frame);
@@ -603,17 +565,6 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
         return Inspector::Protocol::Timeline::EventType::Time;
     case TimelineRecordType::TimeEnd:
         return Inspector::Protocol::Timeline::EventType::TimeEnd;
-
-    case TimelineRecordType::ScheduleResourceRequest:
-        return Inspector::Protocol::Timeline::EventType::ScheduleResourceRequest;
-    case TimelineRecordType::ResourceSendRequest:
-        return Inspector::Protocol::Timeline::EventType::ResourceSendRequest;
-    case TimelineRecordType::ResourceReceiveResponse:
-        return Inspector::Protocol::Timeline::EventType::ResourceReceiveResponse;
-    case TimelineRecordType::ResourceReceivedData:
-        return Inspector::Protocol::Timeline::EventType::ResourceReceivedData;
-    case TimelineRecordType::ResourceFinish:
-        return Inspector::Protocol::Timeline::EventType::ResourceFinish;
 
     case TimelineRecordType::XHRReadyStateChange:
         return Inspector::Protocol::Timeline::EventType::XHRReadyStateChange;

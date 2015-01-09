@@ -156,49 +156,6 @@ Ref<InspectorObject> TimelineRecordFactory::createTimeStampData(const String& me
     return WTF::move(data);
 }
 
-Ref<InspectorObject> TimelineRecordFactory::createScheduleResourceRequestData(const String& url)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setString("url", url);
-    return WTF::move(data);
-}
-
-Ref<InspectorObject> TimelineRecordFactory::createResourceSendRequestData(const String& requestId, const ResourceRequest& request)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setString("requestId", requestId);
-    data->setString("url", request.url().string());
-    data->setString("requestMethod", request.httpMethod());
-    return WTF::move(data);
-}
-
-Ref<InspectorObject> TimelineRecordFactory::createResourceReceiveResponseData(const String& requestId, const ResourceResponse& response)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setString("requestId", requestId);
-    data->setInteger("statusCode", response.httpStatusCode());
-    data->setString("mimeType", response.mimeType());
-    return WTF::move(data);
-}
-
-Ref<InspectorObject> TimelineRecordFactory::createResourceFinishData(const String& requestId, bool didFail, double finishTime)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setString("requestId", requestId);
-    data->setBoolean("didFail", didFail);
-    if (finishTime)
-        data->setDouble("networkTime", finishTime);
-    return WTF::move(data);
-}
-
-Ref<InspectorObject> TimelineRecordFactory::createReceiveResourceData(const String& requestId, int length)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setString("requestId", requestId);
-    data->setInteger("encodedDataLength", length);
-    return WTF::move(data);
-}
-
 Ref<InspectorObject> TimelineRecordFactory::createLayoutData(unsigned dirtyObjects, unsigned totalObjects, bool partialLayout)
 {
     Ref<InspectorObject> data = InspectorObject::create();

@@ -188,8 +188,6 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Cach
     }
     
     m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
-    
-    notifyDidScheduleResourceRequest(resourceLoader);
 }
 
 void WebResourceLoadScheduler::scheduleInternallyFailedLoad(WebCore::ResourceLoader* resourceLoader)

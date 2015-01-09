@@ -91,12 +91,6 @@ enum class TimelineRecordType {
     Time,
     TimeEnd,
 
-    ScheduleResourceRequest,
-    ResourceSendRequest,
-    ResourceReceiveResponse,
-    ResourceReceivedData,
-    ResourceFinish,
-
     XHRReadyStateChange,
     XHRLoad,
 
@@ -143,7 +137,6 @@ public:
     PassRefPtr<JSC::Profile> stopFromConsole(JSC::ExecState*, const String& title);
 
     // InspectorInstrumentation callbacks.
-    void didScheduleResourceRequest(const String& url, Frame*);
     void didInstallTimer(int timerId, int timeout, bool singleShot, Frame*);
     void didRemoveTimer(int timerId, Frame*);
     void willFireTimer(int timerId, Frame*);
@@ -173,12 +166,6 @@ public:
     void didTimeStamp(Frame&, const String&);
     void didMarkDOMContentEvent(Frame&);
     void didMarkLoadEvent(Frame&);
-    void willSendResourceRequest(unsigned long, const ResourceRequest&, Frame*);
-    void willReceiveResourceResponse(unsigned long, const ResourceResponse&, Frame*);
-    void didReceiveResourceResponse();
-    void didFinishLoadingResource(unsigned long, bool didFail, double finishTime, Frame*);
-    void willReceiveResourceData(unsigned long identifier, Frame*, int length);
-    void didReceiveResourceData();
     void didRequestAnimationFrame(int callbackId, Frame*);
     void didCancelAnimationFrame(int callbackId, Frame*);
     void willFireAnimationFrame(int callbackId, Frame*);

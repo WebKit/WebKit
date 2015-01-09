@@ -290,12 +290,6 @@ void InspectorInstrumentation::willSendXMLHttpRequestImpl(InstrumentingAgents& i
         domDebuggerAgent->willSendXMLHttpRequest(url);
 }
 
-void InspectorInstrumentation::didScheduleResourceRequestImpl(InstrumentingAgents& instrumentingAgents, const String& url, Frame* frame)
-{
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
-        timelineAgent->didScheduleResourceRequest(url, frame);
-}
-
 void InspectorInstrumentation::didInstallTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, int timeout, bool singleShot, ScriptExecutionContext* context)
 {
     pauseOnNativeEventIfNeeded(instrumentingAgents, false, setTimerEventName, true);
@@ -555,8 +549,6 @@ void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrume
     if (!loader)
         return;
 
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
-        timelineAgent->willSendResourceRequest(identifier, request, loader->frame());
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
         resourceAgent->willSendRequest(identifier, *loader, request, redirectResponse);
 }
@@ -584,31 +576,9 @@ void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingA
         resourceAgent->didLoadResourceFromMemoryCache(*loader, *cachedResource);
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceDataImpl(InstrumentingAgents& instrumentingAgents, Frame* frame, unsigned long identifier, int length)
+InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResponseImpl(InstrumentingAgents& instrumentingAgents)
 {
-    int timelineAgentId = 0;
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent()) {
-        timelineAgent->willReceiveResourceData(identifier, frame, length);
-        timelineAgentId = timelineAgent->id();
-    }
-    return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
-}
-
-void InspectorInstrumentation::didReceiveResourceDataImpl(const InspectorInstrumentationCookie& cookie)
-{
-    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
-        timelineAgent->didReceiveResourceData();
-}
-
-InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResponseImpl(InstrumentingAgents& instrumentingAgents, Frame* frame, unsigned long identifier, const ResourceResponse& response)
-{
-    int timelineAgentId = 0;
-    InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent();
-    if (timelineAgent && frame) {
-        timelineAgent->willReceiveResourceResponse(identifier, response, frame);
-        timelineAgentId = timelineAgent->id();
-    }
-    return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
+    return InspectorInstrumentationCookie(instrumentingAgents, 0);
 }
 
 void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorInstrumentationCookie& cookie, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
@@ -621,8 +591,6 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorIns
 
     InstrumentingAgents& instrumentingAgents = *cookie.instrumentingAgents();
 
-    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
-        timelineAgent->didReceiveResourceResponse();
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
         resourceAgent->didReceiveResponse(identifier, *loader, response, resourceLoader);
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
@@ -634,7 +602,7 @@ void InspectorInstrumentation::didReceiveResourceResponseButCanceledImpl(Frame* 
     if (!frame)
         return;
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(frame, identifier, r);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(frame);
     InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, &loader, r, nullptr);
 }
 
@@ -664,8 +632,6 @@ void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents& instrum
     if (!loader)
         return;
 
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
-        timelineAgent->didFinishLoadingResource(identifier, false, finishTime, loader->frame());
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
         resourceAgent->didFinishLoading(identifier, *loader, finishTime);
 }
@@ -675,8 +641,6 @@ void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumen
     if (!loader)
         return;
 
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
-        timelineAgent->didFinishLoadingResource(identifier, true, 0, loader->frame());
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents.inspectorResourceAgent())
         resourceAgent->didFailLoading(identifier, *loader, error);
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())

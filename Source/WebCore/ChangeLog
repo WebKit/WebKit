@@ -1,3 +1,62 @@
+2015-01-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove or use TimelineAgent Resource related event types
+        https://bugs.webkit.org/show_bug.cgi?id=140155
+
+        Reviewed by Timothy Hatcher.
+
+        Remove unused timeline events. The frontend was ignoring these events
+        and was often already getting nearly identical data from the Network domain.
+
+        * WebCore.exp.in:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willSendRequestImpl):
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseButCanceledImpl):
+        (WebCore::InspectorInstrumentation::didFinishLoadingImpl):
+        (WebCore::InspectorInstrumentation::didFailLoadingImpl):
+        (WebCore::InspectorInstrumentation::didScheduleResourceRequestImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willReceiveResourceDataImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didReceiveResourceDataImpl): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponse):
+        (WebCore::InspectorInstrumentation::didScheduleResourceRequest): Deleted.
+        (WebCore::InspectorInstrumentation::willReceiveResourceData): Deleted.
+        (WebCore::InspectorInstrumentation::didReceiveResourceData): Deleted.
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::toProtocol):
+        (WebCore::InspectorTimelineAgent::didScheduleResourceRequest): Deleted.
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest): Deleted.
+        (WebCore::InspectorTimelineAgent::willReceiveResourceData): Deleted.
+        (WebCore::InspectorTimelineAgent::didReceiveResourceData): Deleted.
+        (WebCore::InspectorTimelineAgent::willReceiveResourceResponse): Deleted.
+        (WebCore::InspectorTimelineAgent::didReceiveResourceResponse): Deleted.
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource): Deleted.
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createScheduleResourceRequestData): Deleted.
+        (WebCore::TimelineRecordFactory::createResourceSendRequestData): Deleted.
+        (WebCore::TimelineRecordFactory::createResourceReceiveResponseData): Deleted.
+        (WebCore::TimelineRecordFactory::createResourceFinishData): Deleted.
+        (WebCore::TimelineRecordFactory::createReceiveResourceData): Deleted.
+        * inspector/TimelineRecordFactory.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveResponse):
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::scheduleLoad):
+        (WebCore::ResourceLoadScheduler::notifyDidScheduleResourceRequest): Deleted.
+        * loader/ResourceLoadScheduler.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveData):
+        (WebCore::ResourceLoader::didReceiveBuffer):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::didReceiveDataArray):
+
 2015-01-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Update r177745, one of the review comments was not integrated

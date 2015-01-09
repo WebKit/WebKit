@@ -503,7 +503,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
 {
 #if ENABLE(INSPECTOR)
     DocumentLoader* loader = (handle == m_manifestHandle) ? nullptr : m_frame->loader().documentLoader();
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame, m_currentResourceIdentifier, response);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame);
     InspectorInstrumentation::didReceiveResourceResponse(cookie, m_currentResourceIdentifier, loader, response, 0);
 #endif
 

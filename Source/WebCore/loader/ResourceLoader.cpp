@@ -489,16 +489,12 @@ void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse&
 
 void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, unsigned length, int encodedDataLength)
 {
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceData(m_frame.get(), identifier(), encodedDataLength);
     didReceiveData(data, length, encodedDataLength, DataPayloadBytes);
-    InspectorInstrumentation::didReceiveResourceData(cookie);
 }
 
 void ResourceLoader::didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int encodedDataLength)
 {
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceData(m_frame.get(), identifier(), encodedDataLength);
     didReceiveBuffer(buffer, encodedDataLength, DataPayloadBytes);
-    InspectorInstrumentation::didReceiveResourceData(cookie);
 }
 
 void ResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
