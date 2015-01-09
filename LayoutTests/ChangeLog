@@ -1,5 +1,12 @@
 2015-01-09  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed test gardening.
+
+        * platform/win/TestExpectations: Unskip fast/canvas/canvas-path-addPath.html now
+        that it doesn't crash anymore.
+
+2015-01-09  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Temporarily disable all media tests.
 
         * platform/win/TestExpectations:

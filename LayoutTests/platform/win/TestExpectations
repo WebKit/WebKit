@@ -2600,9 +2600,6 @@ webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 #http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 #media/track/track-datacue-value.html [ Skip ]
 
-# CRASHES
-fast/canvas/canvas-path-addPath.html [ Crash ]
-
 # Missing references on Windows
 webkit.org/b/130322 mathml/opentype/large-operators.html [ Failure ]
 webkit.org/b/130322 mathml/opentype/opentype-stretchy.html [ Failure ]
