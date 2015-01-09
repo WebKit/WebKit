@@ -1,5 +1,43 @@
 2015-01-08  Mark Lam  <mark.lam@apple.com>
 
+        Argument object created by "Function dot arguments" should use a clone of the argument values.
+        <https://webkit.org/b/140093>
+
+        Reviewed by Geoffrey Garen.
+
+        After the change in <https://webkit.org/b/139827>, the dfg-tear-off-arguments-not-activation.js
+        test will crash.  The relevant code which manifests the issue is as follows:
+
+            function bar() {
+                return foo.arguments;
+            }
+
+            function foo(p) {
+                var x = 42;
+                if (p)
+                    return (function() { return x; });
+                else
+                    return bar();
+            }
+
+        In this case, foo() has no knowledge of bar() needing its LexicalEnvironment and
+        has dead code eliminated the SetLocal that stores it into its designated local.
+        In bar(), the factory for the Arguments object (for creating foo.arguments) tries
+        to read foo's LexicalEnvironment from its designated lexicalEnvironment local,
+        but instead, finds it to be uninitialized.  This results in a null pointer access
+        which causes a crash.
+
+        This can be resolved by having bar() instantiate a clone of the Arguments object
+        instead, and populate its elements with values fetched directly from foo's frame.
+        There's no need to reference foo's LexicalEnvironment (whether present or not).
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::createArguments):
+        * runtime/Arguments.h:
+        (JSC::Arguments::finishCreation):
+
+2015-01-08  Mark Lam  <mark.lam@apple.com>
+
         Make the LLINT and Baseline JIT's op_create_arguments and op_get_argument_by_val use their lexicalEnvironment operand.
         <https://webkit.org/b/140236>
 

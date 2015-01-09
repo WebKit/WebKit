@@ -260,7 +260,7 @@ Arguments* StackVisitor::Frame::createArguments()
     Arguments* arguments;
     ArgumentsMode mode;
     if (Options::enableFunctionDotArguments())
-        mode = NormalArgumentsCreationMode;
+        mode = ClonedArgumentsCreationMode;
     else
         mode = FakeArgumentValuesCreationMode;
 #if ENABLE(DFG_JIT)

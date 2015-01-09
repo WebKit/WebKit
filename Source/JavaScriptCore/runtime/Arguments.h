@@ -37,6 +37,7 @@ namespace JSC {
 
 enum ArgumentsMode {
     NormalArgumentsCreationMode,
+    ClonedArgumentsCreationMode,
     FakeArgumentValuesCreationMode
 };
 
@@ -310,6 +311,13 @@ inline void Arguments::finishCreation(CallFrame* callFrame, JSLexicalEnvironment
         break;
     }
         
+    case ClonedArgumentsCreationMode: {
+        m_numArguments = callFrame->argumentCount();
+        m_registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers());
+        tearOff(callFrame);
+        break;
+    }
+        
     case FakeArgumentValuesCreationMode: {
         m_numArguments = 0;
         m_registers = nullptr;
@@ -347,6 +355,20 @@ inline void Arguments::finishCreation(CallFrame* callFrame, InlineCallFrame* inl
         // declared parameters, so we need to tear off immediately.
         if (m_isStrictMode || !callee->jsExecutable()->parameterCount())
             tearOff(callFrame, inlineCallFrame);
+        break;
+    }
+        
+    case ClonedArgumentsCreationMode: {
+        m_numArguments = inlineCallFrame->arguments.size() - 1;
+        if (m_numArguments) {
+            int offsetForArgumentOne = inlineCallFrame->arguments[1].virtualRegister().offset();
+            m_registers = reinterpret_cast<WriteBarrierBase<Unknown>*>(callFrame->registers()) + offsetForArgumentOne - virtualRegisterForArgument(1).offset();
+        } else
+            m_registers = 0;
+        
+        ASSERT(!jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->symbolTable(inlineCallFrame->specializationKind())->slowArguments());
+        
+        tearOff(callFrame, inlineCallFrame);
         break;
     }
         
