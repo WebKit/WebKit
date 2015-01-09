@@ -39,11 +39,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(SQL_DATABASE)
-#include "DatabaseManager.h"
-#include "DatabaseTask.h"
-#endif
-
 #if PLATFORM(IOS)
 #include "FloatingPointEnvironment.h"
 #include "WebCoreThread.h"
@@ -202,31 +197,15 @@ void WorkerThread::stop()
     if (m_workerGlobalScope) {
         m_workerGlobalScope->script()->scheduleExecutionTermination();
 
-#if ENABLE(SQL_DATABASE)
-        DatabaseManager::manager().interruptAllDatabasesForContext(m_workerGlobalScope.get());
-#endif
         m_runLoop.postTaskAndTerminate({ ScriptExecutionContext::Task::CleanupTask, [] (ScriptExecutionContext& context ) {
             WorkerGlobalScope& workerGlobalScope = downcast<WorkerGlobalScope>(context);
 
-#if ENABLE(SQL_DATABASE)
-            // FIXME: Should we stop the databases as part of stopActiveDOMObjects() below?
-            DatabaseTaskSynchronizer cleanupSync;
-            DatabaseManager::manager().stopDatabases(&workerGlobalScope, &cleanupSync);
-#endif
-
             workerGlobalScope.stopActiveDOMObjects();
-
             workerGlobalScope.notifyObserversOfStop();
 
             // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
             // which become dangling once Heap is destroyed.
             workerGlobalScope.removeAllEventListeners();
-
-#if ENABLE(SQL_DATABASE)
-            // We wait for the database thread to clean up all its stuff so that we
-            // can do more stringent leak checks as we exit.
-            cleanupSync.waitForTaskCompletion();
-#endif
 
             // Stick a shutdown command at the end of the queue, so that we deal
             // with all the cleanup tasks the databases post first.
