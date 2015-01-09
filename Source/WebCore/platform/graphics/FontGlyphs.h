@@ -40,8 +40,6 @@ class FontDescription;
 class FontPlatformData;
 class FontSelector;
 
-const int cAllFamiliesScanned = -1;
-
 class FontGlyphs : public RefCounted<FontGlyphs> {
     WTF_MAKE_NONCOPYABLE(FontGlyphs);
 public:
@@ -57,7 +55,7 @@ public:
     bool isFixedPitch(const FontDescription&);
     void determinePitch(const FontDescription&);
 
-    bool loadingCustomFonts() const { return m_loadingCustomFonts; }
+    bool isLoadingCustomFonts() const;
 
     FontSelector* fontSelector() { return m_fontSelector.get(); }
     // FIXME: It should be possible to combine fontSelectorVersion and generation.
@@ -76,9 +74,9 @@ private:
 
     GlyphData glyphDataForSystemFallback(UChar32, const FontDescription&, FontDataVariant);
     GlyphData glyphDataForNormalVariant(UChar32, const FontDescription&);
-    GlyphData glyphDataForVariant(UChar32, const FontDescription&, FontDataVariant, unsigned fallbackLevel);
-    
-    Vector<RefPtr<FontData>, 1> m_realizedFontData;
+    GlyphData glyphDataForVariant(UChar32, const FontDescription&, FontDataVariant, unsigned fallbackIndex);
+
+    Vector<Ref<FontData>, 1> m_realizedFontData;
 
     RefPtr<GlyphPage> m_cachedPageZero;
     HashMap<int, RefPtr<GlyphPage>> m_cachedPages;
@@ -89,11 +87,10 @@ private:
     RefPtr<FontSelector> m_fontSelector;
     WidthCache m_widthCache;
     unsigned m_fontSelectorVersion;
-    int m_familyIndex;
     unsigned short m_generation;
-    unsigned m_pitch : 3; // Pitch
-    unsigned m_loadingCustomFonts : 1;
-    unsigned m_isForPlatformFont : 1;
+    unsigned m_lastRealizedFamilyIndex { 0 };
+    Pitch m_pitch { UnknownPitch };
+    bool m_isForPlatformFont { false };
 };
 
 inline bool FontGlyphs::isFixedPitch(const FontDescription& description)

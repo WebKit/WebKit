@@ -490,48 +490,6 @@ size_t FontCache::inactiveFontDataCount()
     return count;
 }
 
-RefPtr<FontData> FontCache::fontForFamilyAtIndex(const FontDescription& description, int& familyIndex, FontSelector* fontSelector)
-{
-    ASSERT(familyIndex != cAllFamiliesScanned);
-    RefPtr<FontData> result;
-
-    bool isFirst = !familyIndex;
-    int familyCount = description.familyCount();
-    for (;familyIndex < familyCount && !result; ++familyIndex) {
-        const AtomicString& family = description.familyAt(familyIndex);
-        if (family.isEmpty())
-            continue;
-        if (fontSelector)
-            result = fontSelector->getFontData(description, family);
-        if (!result)
-            result = fontForFamily(description, family);
-    }
-    if (familyIndex == familyCount)
-        familyIndex = cAllFamiliesScanned;
-
-#if PLATFORM(COCOA)
-    if (!result) {
-        // We didn't find a font. Try to find a similar font using our own specific knowledge about our platform.
-        // For example on OS X, we know to map any families containing the words Arabic, Pashto, or Urdu to the
-        // Geeza Pro font.
-        result = similarFontPlatformData(description);
-    }
-#endif
-
-    if (!result && isFirst) {
-        // If it's the primary font that we couldn't find, we try the following. In all other cases, we will
-        // just use per-character system fallback.
-        if (fontSelector) {
-            // Try the user's preferred standard font.
-            if (RefPtr<FontData> data = fontSelector->getFontData(description, standardFamily))
-                return data.release();
-        }
-        // Still no result.  Hand back our last resort fallback font.
-        result = lastResortFallbackFont(description);
-    }
-    return result.release();
-}
-
 static HashSet<FontSelector*>* gClients;
 
 void FontCache::addClient(FontSelector* client)
@@ -580,5 +538,12 @@ void FontCache::invalidate()
 
     purgeInactiveFontData();
 }
+
+#if !PLATFORM(COCOA)
+RefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescription&)
+{
+    return nullptr;
+}
+#endif
 
 } // namespace WebCore

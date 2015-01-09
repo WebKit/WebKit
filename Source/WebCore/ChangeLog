@@ -1,3 +1,56 @@
+2015-01-09  Antti Koivisto  <antti@apple.com>
+
+        FontCache should only deal with SimpleFontData
+        https://bugs.webkit.org/show_bug.cgi?id=140293
+
+        Reviewed by Andreas Kling.
+
+        FontCache::fontForFamilyAtIndex hands out FontData objects and calls to FontSelector. That sort
+        of code does not belong to the cache layer. Move the functionality up to FontGlyphs.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::operator==):
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawEmphasisMarks):
+        (WebCore::Font::isLoadingCustomFonts):
+        * platform/graphics/Font.h:
+        (WebCore::Font::loadingCustomFonts): Deleted.
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::similarFontPlatformData):
+
+            Generic null implementation to reduce #ifs.
+
+        (WebCore::FontCache::fontForFamilyAtIndex): Deleted.
+        * platform/graphics/FontCache.h:
+
+            Unfriend FontGlyphs.
+
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::FontGlyphs):
+        (WebCore::FontGlyphs::isLoadingCustomFonts):
+
+            We can figure thus out cheaply without caching a bit.
+
+        (WebCore::realizeNextFamily):
+        (WebCore::FontGlyphs::realizeFontDataAt):
+
+            Reorganize a bit to make the logic clearer.
+            Get rid of the strange cAllFamiliesScanned constant.
+
+        (WebCore::FontGlyphs::glyphDataForVariant):
+        (WebCore::FontGlyphs::glyphDataForNormalVariant):
+
+            Loop until null, that always works.
+
+        * platform/graphics/FontGlyphs.h:
+        (WebCore::FontGlyphs::loadingCustomFonts): Deleted.
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::FontCache::similarFontPlatformData):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::similarFontPlatformData):
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::dashesForIntersectionsWithRect):
+
 2015-01-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r177925): It broke the !ENABLE(INSPECTOR) build

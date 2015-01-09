@@ -446,7 +446,7 @@ RefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescript
     return lastResortFallbackFont(description);
 }
 
-PassRefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescription& description)
+RefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescription& description)
 {
     // Attempt to find an appropriate font using a match based on the presence of keywords in
     // the requested names. For example, we'll match any name that contains "Arabic" to Geeza Pro.

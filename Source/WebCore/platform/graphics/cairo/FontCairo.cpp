@@ -292,7 +292,7 @@ void CairoGlyphToPathTranslator::advance()
 
 DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
 {
-    if (loadingCustomFonts())
+    if (isLoadingCustomFonts())
         return DashArray();
 
     GlyphBuffer glyphBuffer;

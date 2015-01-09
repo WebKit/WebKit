@@ -289,10 +289,7 @@ public:
     FontGlyphs* glyphs() const { return m_glyphs.get(); }
 
 private:
-    bool loadingCustomFonts() const
-    {
-        return m_glyphs && m_glyphs->loadingCustomFonts();
-    }
+    bool isLoadingCustomFonts() const;
 
     TypesettingFeatures computeTypesettingFeatures() const
     {

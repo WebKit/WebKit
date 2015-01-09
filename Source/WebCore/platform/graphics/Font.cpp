@@ -182,9 +182,7 @@ Font& Font::operator=(const Font& other)
 
 bool Font::operator==(const Font& other) const
 {
-    // Our FontData don't have to be checked, since checking the font description will be fine.
-    // FIXME: This does not work if the font was made with the FontPlatformData constructor.
-    if (loadingCustomFonts() || other.loadingCustomFonts())
+    if (isLoadingCustomFonts() || other.isLoadingCustomFonts())
         return false;
 
     if (m_fontDescription != other.m_fontDescription || m_letterSpacing != other.m_letterSpacing || m_wordSpacing != other.m_wordSpacing)
@@ -337,7 +335,7 @@ float Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPo
     // Don't draw anything while we are using custom fonts that are in the process of loading,
     // except if the 'force' argument is set to true (in which case it will use a fallback
     // font).
-    if (loadingCustomFonts() && customFontNotReadyAction == DoNotPaintIfFontNotReady)
+    if (isLoadingCustomFonts() && customFontNotReadyAction == DoNotPaintIfFontNotReady)
         return 0;
 
     to = (to == -1 ? run.length() : to);
@@ -355,7 +353,7 @@ float Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPo
 
 void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
 {
-    if (loadingCustomFonts())
+    if (isLoadingCustomFonts())
         return;
 
     if (to < 0)
@@ -1082,6 +1080,11 @@ bool Font::canReceiveTextEmphasis(UChar32 c)
         return false;
 
     return true;
+}
+
+bool Font::isLoadingCustomFonts() const
+{
+    return m_glyphs && m_glyphs->isLoadingCustomFonts();
 }
     
 GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const GlyphBuffer& glyphBuffer, int index)
