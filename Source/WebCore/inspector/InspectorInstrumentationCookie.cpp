@@ -31,8 +31,6 @@
 #include "config.h"
 #include "InspectorInstrumentationCookie.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "InstrumentingAgents.h"
 
 namespace WebCore {
@@ -69,5 +67,3 @@ InspectorInstrumentationCookie::~InspectorInstrumentationCookie()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

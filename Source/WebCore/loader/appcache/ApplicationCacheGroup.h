@@ -189,10 +189,7 @@ private:
     
     RefPtr<ResourceHandle> m_currentHandle;
     RefPtr<ApplicationCacheResource> m_currentResource;
-
-#if ENABLE(INSPECTOR)
     unsigned long m_currentResourceIdentifier;
-#endif
 
     RefPtr<ApplicationCacheResource> m_manifestResource;
     RefPtr<ResourceHandle> m_manifestHandle;

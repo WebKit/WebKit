@@ -33,8 +33,6 @@
 
 #include <wtf/RefPtr.h>
 
-#if ENABLE(INSPECTOR)
-
 namespace WebCore {
 
 class InspectorInstrumentation;
@@ -58,7 +56,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // InspectorInstrumentationCookie_h

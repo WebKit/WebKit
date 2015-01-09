@@ -1,3 +1,12 @@
+2015-01-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r177925): It broke the !ENABLE(INSPECTOR) build
+        https://bugs.webkit.org/show_bug.cgi?id=140098
+
+        Reviewed by Brian Burg.
+
+        * inspector/InspectorBackendDispatcher.h: Missing ENABLE(INSPECTOR) guard added.
+
 2015-01-08  Mark Lam  <mark.lam@apple.com>
 
         Argument object created by "Function dot arguments" should use a clone of the argument values.
