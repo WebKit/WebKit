@@ -1,3 +1,12 @@
+2015-01-08  Darin Adler  <darin@apple.com>
+
+        Modernize and streamline HTMLTokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=140166
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Forward.h: Removed PassRef, added OrdinalNumber and TextPosition.
+
 2015-01-08  Benjamin Poulain  <benjamin@webkit.org>
 
         [WK2] Start a prototype for declarative site specific extensions

@@ -566,7 +566,7 @@ bool XSSAuditor::eraseAttributeIfInjected(const FilterTokenRequest& request, con
 String XSSAuditor::decodedSnippetForName(const FilterTokenRequest& request)
 {
     // Grab a fixed number of characters equal to the length of the token's name plus one (to account for the "<").
-    return fullyDecodeString(request.sourceTracker.sourceForToken(request.token), m_encoding).substring(0, request.token.name().size() + 1);
+    return fullyDecodeString(request.sourceTracker.source(request.token), m_encoding).substring(0, request.token.name().size() + 1);
 }
 
 String XSSAuditor::decodedSnippetForAttribute(const FilterTokenRequest& request, const HTMLToken::Attribute& attribute, AttributeKind treatment)
@@ -575,9 +575,9 @@ String XSSAuditor::decodedSnippetForAttribute(const FilterTokenRequest& request,
     // for an input of |name="value"|, the snippet is |name="value|. For an
     // unquoted input of |name=value |, the snippet is |name=value|.
     // FIXME: We should grab one character before the name also.
-    unsigned start = attribute.nameRange.start;
-    unsigned end = attribute.valueRange.end;
-    String decodedSnippet = fullyDecodeString(request.sourceTracker.sourceForToken(request.token).substring(start, end - start), m_encoding);
+    unsigned start = attribute.startOffset;
+    unsigned end = attribute.endOffset;
+    String decodedSnippet = fullyDecodeString(request.sourceTracker.source(request.token, start, end), m_encoding);
     decodedSnippet.truncate(kMaximumFragmentLengthTarget);
     if (treatment == SrcLikeAttribute) {
         int slashCount = 0;
@@ -630,7 +630,7 @@ String XSSAuditor::decodedSnippetForAttribute(const FilterTokenRequest& request,
 
 String XSSAuditor::decodedSnippetForJavaScript(const FilterTokenRequest& request)
 {
-    String string = request.sourceTracker.sourceForToken(request.token);
+    String string = request.sourceTracker.source(request.token);
     size_t startPosition = 0;
     size_t endPosition = string.length();
     size_t foundPosition = notFound;
@@ -735,14 +735,6 @@ bool XSSAuditor::isLikelySafeResource(const String& url)
 
     URL resourceURL(m_documentURL, url);
     return (m_documentURL.host() == resourceURL.host() && resourceURL.query().isEmpty());
-}
-
-bool XSSAuditor::isSafeToSendToAnotherThread() const
-{
-    return m_documentURL.isSafeToSendToAnotherThread()
-        && m_decodedURL.isSafeToSendToAnotherThread()
-        && m_decodedHTTPBody.isSafeToSendToAnotherThread()
-        && m_cachedDecodedSnippet.isSafeToSendToAnotherThread();
 }
 
 } // namespace WebCore

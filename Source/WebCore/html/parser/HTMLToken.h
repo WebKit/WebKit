@@ -53,15 +53,12 @@ public:
     };
 
     struct Attribute {
-        struct Range {
-            unsigned start;
-            unsigned end;
-        };
-
-        Range nameRange;
-        Range valueRange;
         Vector<UChar, 32> name;
         Vector<UChar, 32> value;
+
+        // Used by HTMLSourceTracker.
+        unsigned startOffset;
+        unsigned endOffset;
     };
 
     typedef Vector<Attribute, 10> AttributeList;
@@ -72,11 +69,6 @@ public:
     void clear();
 
     Type type() const;
-
-    // Used by HTMLSourceTracker.
-    void setBaseOffset(unsigned); // Base for attribute offsets, and the end of token offset.
-    void setEndOffset(unsigned);
-    unsigned length() const;
 
     // EndOfFile
 
@@ -113,15 +105,10 @@ public:
     void beginEndTag(LChar);
     void beginEndTag(const Vector<LChar, 32>&);
 
-    void addNewAttribute();
-
-    void beginAttributeName(unsigned offset);
+    void beginAttribute(unsigned offset);
     void appendToAttributeName(UChar);
-    void endAttributeName(unsigned offset);
-
-    void beginAttributeValue(unsigned offset);
     void appendToAttributeValue(UChar);
-    void endAttributeValue(unsigned offset);
+    void endAttribute(unsigned offset);
 
     void setSelfClosing();
 
@@ -154,9 +141,6 @@ public:
 private:
     Type m_type;
 
-    unsigned m_baseOffset;
-    unsigned m_length;
-
     DataVector m_data;
     UChar m_data8BitCheck;
 
@@ -172,8 +156,9 @@ private:
 const HTMLToken::Attribute* findAttribute(const Vector<HTMLToken::Attribute>&, StringView name);
 
 inline HTMLToken::HTMLToken()
+    : m_type(Uninitialized)
+    , m_data8BitCheck(0)
 {
-    clear();
 }
 
 inline void HTMLToken::clear()
@@ -181,9 +166,6 @@ inline void HTMLToken::clear()
     m_type = Uninitialized;
     m_data.clear();
     m_data8BitCheck = 0;
-
-    m_length = 0;
-    m_baseOffset = 0;
 }
 
 inline HTMLToken::Type HTMLToken::type() const
@@ -195,21 +177,6 @@ inline void HTMLToken::makeEndOfFile()
 {
     ASSERT(m_type == Uninitialized);
     m_type = EndOfFile;
-}
-
-inline unsigned HTMLToken::length() const
-{
-    return m_length;
-}
-
-inline void HTMLToken::setBaseOffset(unsigned offset)
-{
-    m_baseOffset = offset;
-}
-
-inline void HTMLToken::setEndOffset(unsigned endOffset)
-{
-    m_length = endOffset - m_baseOffset;
 }
 
 inline const HTMLToken::DataVector& HTMLToken::name() const
@@ -300,8 +267,11 @@ inline void HTMLToken::beginStartTag(UChar character)
     ASSERT(m_type == Uninitialized);
     m_type = StartTag;
     m_selfClosing = false;
-    m_currentAttribute = nullptr;
     m_attributes.clear();
+
+#if !ASSERT_DISABLED
+    m_currentAttribute = nullptr;
+#endif
 
     m_data.append(character);
     m_data8BitCheck = character;
@@ -312,8 +282,11 @@ inline void HTMLToken::beginEndTag(LChar character)
     ASSERT(m_type == Uninitialized);
     m_type = EndTag;
     m_selfClosing = false;
-    m_currentAttribute = nullptr;
     m_attributes.clear();
+
+#if !ASSERT_DISABLED
+    m_currentAttribute = nullptr;
+#endif
 
     m_data.append(character);
 }
@@ -323,64 +296,41 @@ inline void HTMLToken::beginEndTag(const Vector<LChar, 32>& characters)
     ASSERT(m_type == Uninitialized);
     m_type = EndTag;
     m_selfClosing = false;
-    m_currentAttribute = nullptr;
     m_attributes.clear();
+
+#if !ASSERT_DISABLED
+    m_currentAttribute = nullptr;
+#endif
 
     m_data.appendVector(characters);
 }
 
-inline void HTMLToken::addNewAttribute()
+inline void HTMLToken::beginAttribute(unsigned offset)
 {
     ASSERT(m_type == StartTag || m_type == EndTag);
+    ASSERT(offset);
+
     m_attributes.grow(m_attributes.size() + 1);
     m_currentAttribute = &m_attributes.last();
 
+    m_currentAttribute->startOffset = offset;
+}
+
+inline void HTMLToken::endAttribute(unsigned offset)
+{
+    ASSERT(offset);
+    ASSERT(m_currentAttribute);
+    m_currentAttribute->endOffset = offset;
 #if !ASSERT_DISABLED
-    m_currentAttribute->nameRange.start = 0;
-    m_currentAttribute->nameRange.end = 0;
-    m_currentAttribute->valueRange.start = 0;
-    m_currentAttribute->valueRange.end = 0;
+    m_currentAttribute = nullptr;
 #endif
-}
-
-inline void HTMLToken::beginAttributeName(unsigned offset)
-{
-    ASSERT(offset);
-    ASSERT(!m_currentAttribute->nameRange.start);
-    m_currentAttribute->nameRange.start = offset - m_baseOffset;
-}
-
-inline void HTMLToken::endAttributeName(unsigned offset)
-{
-    ASSERT(offset);
-    ASSERT(m_currentAttribute->nameRange.start);
-    ASSERT(!m_currentAttribute->nameRange.end);
-
-    unsigned adjustedOffset = offset - m_baseOffset;
-    m_currentAttribute->nameRange.end = adjustedOffset;
-
-    // FIXME: Is this intentional? Why point the value at the end of the name?
-    m_currentAttribute->valueRange.start = adjustedOffset;
-    m_currentAttribute->valueRange.end = adjustedOffset;
-}
-
-inline void HTMLToken::beginAttributeValue(unsigned offset)
-{
-    ASSERT(offset);
-    m_currentAttribute->valueRange.start = offset - m_baseOffset;
-}
-
-inline void HTMLToken::endAttributeValue(unsigned offset)
-{
-    ASSERT(offset);
-    m_currentAttribute->valueRange.end = offset - m_baseOffset;
 }
 
 inline void HTMLToken::appendToAttributeName(UChar character)
 {
     ASSERT(character);
     ASSERT(m_type == StartTag || m_type == EndTag);
-    ASSERT(m_currentAttribute->nameRange.start);
+    ASSERT(m_currentAttribute);
     m_currentAttribute->name.append(character);
 }
 
@@ -388,7 +338,7 @@ inline void HTMLToken::appendToAttributeValue(UChar character)
 {
     ASSERT(character);
     ASSERT(m_type == StartTag || m_type == EndTag);
-    ASSERT(m_currentAttribute->valueRange.start);
+    ASSERT(m_currentAttribute);
     m_currentAttribute->value.append(character);
 }
 

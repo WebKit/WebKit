@@ -61,7 +61,6 @@ public:
     void initForFragment();
 
     std::unique_ptr<XSSInfo> filterToken(const FilterTokenRequest&);
-    bool isSafeToSendToAnotherThread() const;
 
 private:
     static const size_t kMaximumFragmentLengthTarget = 100;

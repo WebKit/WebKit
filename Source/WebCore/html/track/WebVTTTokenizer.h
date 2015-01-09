@@ -40,19 +40,15 @@
 namespace WebCore {
 
 class WebVTTTokenizer {
-    WTF_MAKE_NONCOPYABLE(WebVTTTokenizer);
 public:
     explicit WebVTTTokenizer(const String&);
-
     bool nextToken(WebVTTToken&);
 
-    inline bool shouldSkipNullCharacters() const { return true; }
+    static bool neverSkipNullCharacters() { return false; }
 
 private:
     SegmentedString m_input;
-
-    // ://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
-    InputStreamPreprocessor<WebVTTTokenizer> m_inputStreamPreprocessor;
+    InputStreamPreprocessor<WebVTTTokenizer> m_preprocessor;
 };
 
 }

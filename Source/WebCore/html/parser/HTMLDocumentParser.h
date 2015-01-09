@@ -103,7 +103,7 @@ private:
     bool canTakeNextToken(SynchronousMode, PumpSession&);
     void pumpTokenizer(SynchronousMode);
     void pumpTokenizerIfPossible(SynchronousMode);
-    void constructTreeFromHTMLToken(HTMLToken&);
+    void constructTreeFromHTMLToken(HTMLTokenizer::TokenPtr&);
 
     void runScriptsForPausedTreeBuilder();
     void resumeParsingAfterScriptExecution();
@@ -121,7 +121,6 @@ private:
     HTMLParserOptions m_options;
     HTMLInputStream m_input;
 
-    HTMLToken m_token;
     HTMLTokenizer m_tokenizer;
     std::unique_ptr<HTMLScriptRunner> m_scriptRunner;
     std::unique_ptr<HTMLTreeBuilder> m_treeBuilder;

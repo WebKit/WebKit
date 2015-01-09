@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2015 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
  *
@@ -30,64 +30,61 @@
 
 #include "SegmentedString.h"
 
-namespace WebCore {
-
-inline bool isTokenizerWhitespace(UChar cc)
-{
-    return cc == ' ' || cc == '\x0A' || cc == '\x09' || cc == '\x0C';
-}
-
-inline void advanceStringAndASSERTIgnoringCase(SegmentedString& source, const char* expectedCharacters)
-{
-    while (*expectedCharacters)
-        source.advanceAndASSERTIgnoringCase(*expectedCharacters++);
-}
-
-inline void advanceStringAndASSERT(SegmentedString& source, const char* expectedCharacters)
-{
-    while (*expectedCharacters)
-        source.advanceAndASSERT(*expectedCharacters++);
-}
-
 #if COMPILER(MSVC)
-// We need to disable the "unreachable code" warning because we want to assert
-// that some code points aren't reached in the state machine.
+// Disable the "unreachable code" warning so we can compile the ASSERT_NOT_REACHED in the END_STATE macro.
 #pragma warning(disable: 4702)
 #endif
 
-#define BEGIN_STATE(prefix, stateName) case prefix::stateName: stateName:
-#define END_STATE() ASSERT_NOT_REACHED(); break;
+namespace WebCore {
 
-// We use this macro when the HTML5 spec says "reconsume the current input
-// character in the <mumble> state."
-#define RECONSUME_IN(prefix, stateName)                                    \
-    do {                                                                   \
-        m_state = prefix::stateName;                                       \
-        goto stateName;                                                    \
+inline bool isTokenizerWhitespace(UChar character)
+{
+    return character == ' ' || character == '\x0A' || character == '\x09' || character == '\x0C';
+}
+
+#define BEGIN_STATE(stateName)                                  \
+    case stateName:                                             \
+    stateName: {                                                \
+        const auto currentState = stateName;                    \
+        UNUSED_PARAM(currentState);
+
+#define END_STATE()                                             \
+        ASSERT_NOT_REACHED();                                   \
+        break;                                                  \
+    }
+
+#define RETURN_IN_CURRENT_STATE(expression)                     \
+    do {                                                        \
+        m_state = currentState;                                 \
+        return expression;                                      \
     } while (false)
 
-// We use this macro when the HTML5 spec says "consume the next input
-// character ... and switch to the <mumble> state."
-#define ADVANCE_TO(prefix, stateName)                                      \
-    do {                                                                   \
-        m_state = prefix::stateName;                                       \
-        if (!m_inputStreamPreprocessor.advance(source))                    \
-            return haveBufferedCharacterToken();                           \
-        cc = m_inputStreamPreprocessor.nextInputCharacter();               \
-        goto stateName;                                                    \
+// We use this macro when the HTML spec says "reconsume the current input character in the <mumble> state."
+#define RECONSUME_IN(newState)                                  \
+    do {                                                        \
+        goto newState;                                          \
     } while (false)
 
-// Sometimes there's more complicated logic in the spec that separates when
-// we consume the next input character and when we switch to a particular
-// state. We handle those cases by advancing the source directly and using
-// this macro to switch to the indicated state.
-#define SWITCH_TO(prefix, stateName)                                       \
-    do {                                                                   \
-        m_state = prefix::stateName;                                       \
-        if (source.isEmpty() || !m_inputStreamPreprocessor.peek(source))   \
-            return haveBufferedCharacterToken();                           \
-        cc = m_inputStreamPreprocessor.nextInputCharacter();               \
-        goto stateName;                                                    \
+// We use this macro when the HTML spec says "consume the next input character ... and switch to the <mumble> state."
+#define ADVANCE_TO(newState)                                    \
+    do {                                                        \
+        if (!m_preprocessor.advance(source, isNullCharacterSkippingState(newState))) { \
+            m_state = newState;                                 \
+            return haveBufferedCharacterToken();                \
+        }                                                       \
+        character = m_preprocessor.nextInputCharacter();        \
+        goto newState;                                          \
+    } while (false)
+
+// For more complex cases, caller consumes the characters first and then uses this macro.
+#define SWITCH_TO(newState)                                     \
+    do {                                                        \
+        if (!m_preprocessor.peek(source, isNullCharacterSkippingState(newState))) { \
+            m_state = newState;                                 \
+            return haveBufferedCharacterToken();                \
+        }                                                       \
+        character = m_preprocessor.nextInputCharacter();        \
+        goto newState;                                          \
     } while (false)
 
 }

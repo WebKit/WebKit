@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+    Copyright (C) 2004-2008, 2015 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -22,8 +22,6 @@
 
 #include <wtf/Deque.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/TextPosition.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -170,16 +168,14 @@ public:
     }
 
     SegmentedString(const SegmentedString&);
-
-    const SegmentedString& operator=(const SegmentedString&);
+    SegmentedString& operator=(const SegmentedString&);
 
     void clear();
     void close();
 
     void append(const SegmentedString&);
-    void prepend(const SegmentedString&);
+    void pushBack(const SegmentedString&);
 
-    bool excludeLineNumbers() const { return m_currentString.excludeLineNumbers(); }
     void setExcludeLineNumbers();
 
     void push(UChar c)
@@ -199,14 +195,9 @@ public:
 
     bool isClosed() const { return m_closed; }
 
-    enum LookAheadResult {
-        DidNotMatch,
-        DidMatch,
-        NotEnoughCharacters,
-    };
-
-    LookAheadResult lookAhead(const String& string) { return lookAheadInline(string, true); }
-    LookAheadResult lookAheadIgnoringCase(const String& string) { return lookAheadInline(string, false); }
+    enum AdvancePastResult { DidNotMatch, DidMatch, NotEnoughCharacters };
+    template<unsigned length> AdvancePastResult advancePast(const char (&literal)[length]) { return advancePast(literal, length - 1, true); }
+    template<unsigned length> AdvancePastResult advancePastIgnoringCase(const char (&literal)[length]) { return advancePast(literal, length - 1, false); }
 
     void advance()
     {
@@ -226,7 +217,7 @@ public:
         (this->*m_advanceFunc)();
     }
 
-    inline void advanceAndUpdateLineNumber()
+    void advanceAndUpdateLineNumber()
     {
         if (m_fastPathFlags & Use8BitAdvance) {
             ASSERT(!m_pushedChar1);
@@ -253,18 +244,6 @@ public:
         (this->*m_advanceAndUpdateLineNumberFunc)();
     }
 
-    void advanceAndASSERT(UChar expectedCharacter)
-    {
-        ASSERT_UNUSED(expectedCharacter, currentChar() == expectedCharacter);
-        advance();
-    }
-
-    void advanceAndASSERTIgnoringCase(UChar expectedCharacter)
-    {
-        ASSERT_UNUSED(expectedCharacter, u_foldCase(currentChar(), U_FOLD_CASE_DEFAULT) == u_foldCase(expectedCharacter, U_FOLD_CASE_DEFAULT));
-        advance();
-    }
-
     void advancePastNonNewline()
     {
         ASSERT(currentChar() != '\n');
@@ -286,12 +265,6 @@ public:
         advanceAndUpdateLineNumberSlowCase();
     }
 
-    // Writes the consumed characters into consumedCharacters, which must
-    // have space for at least |count| characters.
-    void advance(unsigned count, UChar* consumedCharacters);
-
-    bool escaped() const { return m_pushedChar1; }
-
     int numberOfCharactersConsumed() const
     {
         int numberOfPushedCharacters = 0;
@@ -307,12 +280,12 @@ public:
 
     UChar currentChar() const { return m_currentChar; }    
 
-    // The method is moderately slow, comparing to currentLine method.
     OrdinalNumber currentColumn() const;
     OrdinalNumber currentLine() const;
-    // Sets value of line/column variables. Column is specified indirectly by a parameter columnAftreProlog
+
+    // Sets value of line/column variables. Column is specified indirectly by a parameter columnAfterProlog
     // which is a value of column that we should get after a prolog (first prologLength characters) has been consumed.
-    void setCurrentPosition(OrdinalNumber line, OrdinalNumber columnAftreProlog, int prologLength);
+    void setCurrentPosition(OrdinalNumber line, OrdinalNumber columnAfterProlog, int prologLength);
 
 private:
     enum FastPathFlags {
@@ -322,7 +295,7 @@ private:
     };
 
     void append(const SegmentedSubstring&);
-    void prepend(const SegmentedSubstring&);
+    void pushBack(const SegmentedSubstring&);
 
     void advance8();
     void advance16();
@@ -374,31 +347,12 @@ private:
         updateSlowCaseFunctionPointers();
     }
 
-    inline LookAheadResult lookAheadInline(const String& string, bool caseSensitive)
-    {
-        if (!m_pushedChar1 && string.length() <= static_cast<unsigned>(m_currentString.m_length)) {
-            String currentSubstring = m_currentString.currentSubString(string.length());
-            if (currentSubstring.startsWith(string, caseSensitive))
-                return DidMatch;
-            return DidNotMatch;
-        }
-        return lookAheadSlowCase(string, caseSensitive);
-    }
-    
-    LookAheadResult lookAheadSlowCase(const String& string, bool caseSensitive)
-    {
-        unsigned count = string.length();
-        if (count > length())
-            return NotEnoughCharacters;
-        UChar* consumedCharacters;
-        String consumedString = String::createUninitialized(count, consumedCharacters);
-        advance(count, consumedCharacters);
-        LookAheadResult result = DidNotMatch;
-        if (consumedString.startsWith(string, caseSensitive))
-            result = DidMatch;
-        prepend(SegmentedString(consumedString));
-        return result;
-    }
+    // Writes consumed characters into consumedCharacters, which must have space for at least |count| characters.
+    void advancePastNonNewlines(unsigned count);
+    void advancePastNonNewlines(unsigned count, UChar* consumedCharacters);
+
+    AdvancePastResult advancePast(const char* literal, unsigned length, bool caseSensitive);
+    AdvancePastResult advancePastSlowCase(const char* literal, bool caseSensitive);
 
     bool isComposite() const { return !m_substrings.isEmpty(); }
 
@@ -416,6 +370,27 @@ private:
     void (SegmentedString::*m_advanceFunc)();
     void (SegmentedString::*m_advanceAndUpdateLineNumberFunc)();
 };
+
+inline void SegmentedString::advancePastNonNewlines(unsigned count)
+{
+    for (unsigned i = 0; i < count; ++i)
+        advancePastNonNewline();
+}
+
+inline SegmentedString::AdvancePastResult SegmentedString::advancePast(const char* literal, unsigned length, bool caseSensitive)
+{
+    ASSERT(strlen(literal) == length);
+    ASSERT(!strchr(literal, '\n'));
+    if (!m_pushedChar1) {
+        if (length <= static_cast<unsigned>(m_currentString.m_length)) {
+            if (!m_currentString.currentSubString(length).startsWith(literal, caseSensitive))
+                return DidNotMatch;
+            advancePastNonNewlines(length);
+            return DidMatch;
+        }
+    }
+    return advancePastSlowCase(literal, caseSensitive);
+}
 
 }
 

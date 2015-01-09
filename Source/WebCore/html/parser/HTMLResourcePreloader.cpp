@@ -35,15 +35,6 @@
 
 namespace WebCore {
 
-bool PreloadRequest::isSafeToSendToAnotherThread() const
-{
-    return m_initiator.isSafeToSendToAnotherThread()
-        && m_charset.isSafeToSendToAnotherThread()
-        && m_resourceURL.isSafeToSendToAnotherThread()
-        && m_mediaAttribute.isSafeToSendToAnotherThread()
-        && m_baseURL.isSafeToSendToAnotherThread();
-}
-
 URL PreloadRequest::completeURL(Document& document)
 {
     return document.completeURL(m_resourceURL, m_baseURL.isEmpty() ? document.url() : m_baseURL);

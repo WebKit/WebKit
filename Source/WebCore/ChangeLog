@@ -1,3 +1,224 @@
+2015-01-08  Darin Adler  <darin@apple.com>
+
+        Modernize and streamline HTMLTokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=140166
+
+        Reviewed by Sam Weinig.
+
+        * html/parser/AtomicHTMLToken.h:
+        (WebCore::AtomicHTMLToken::initializeAttributes): Removed unneeded assertions
+        based on fields I removed.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser): Change to use updateStateFor
+        to set the initial state when parsing a fragment, since it implements the same
+        rule taht the tokenizerStateForContextElement function did.
+        (WebCore::HTMLDocumentParser::pumpTokenizer): Updated to use the revised
+        interfaces for HTMLSourceTracker and HTMLTokenizer.
+        (WebCore::HTMLDocumentParser::constructTreeFromHTMLToken): Changed to take a
+        TokenPtr instead of an HTMLToken, so we can clear out the TokenPtr earlier
+        for non-character tokens, and let them get cleared later for character tokens.
+        (WebCore::HTMLDocumentParser::insert): Pass references.
+        (WebCore::HTMLDocumentParser::append): Ditto.
+        (WebCore::HTMLDocumentParser::appendCurrentInputStreamToPreloadScannerAndScan): Ditto.
+
+        * html/parser/HTMLDocumentParser.h: Updated argument type for constructTreeFromHTMLToken
+        and removed now-unneeded m_token data members.
+
+        * html/parser/HTMLEntityParser.cpp: Removed unneeded uses of the inline keyword.
+        (WebCore::HTMLEntityParser::consumeNamedEntity): Replaced two uses of
+        advanceAndASSERT with just plain advance; there's really no need to assert the
+        character is the one we just got out of the string.
+
+        * html/parser/HTMLInputStream.h: Moved the include of TextPosition.h here from
+        its old location since this class has two data members that are OrdinalNumber.
+
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::HTMLMetaCharsetParser): Removed most of the
+        initialization, since it's now done by defaults.
+        (WebCore::extractCharset): Rewrote this to be a non-member function, and to
+        use a for loop, and to handle quote marks in a simpler way. Also changed it
+        to return a StringView so we don't have to allocate a new string.
+        (WebCore::HTMLMetaCharsetParser::processMeta): Use a modern for loop, and
+        also take a token argument since it's no longer a data member.
+        (WebCore::HTMLMetaCharsetParser::encodingFromMetaAttributes): Use a modern for
+        loop, StringView instead of string, and don't bother naming the local enum.
+        (WebCore::HTMLMetaCharsetParser::checkForMetaCharset): Updated for the new
+        way of getting tokens from the tokenizer.
+
+        * html/parser/HTMLMetaCharsetParser.h: Got rid of some data members and
+        tightened up the formatting a little. Don't bother allocating the tokenizer
+        on the heap.
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::TokenPreloadScanner): Removed unneeded
+        initialization.
+        (WebCore::HTMLPreloadScanner::HTMLPreloadScanner): Ditto.
+        (WebCore::HTMLPreloadScanner::scan): Changed to take a reference.
+
+        * html/parser/HTMLPreloadScanner.h: Removed unneeded includes, typedefs,
+        and forward declarations. Removed explicit declaration of the destructor,
+        since the default one works. Removed unused createCheckpoint and rewindTo
+        functions. Gave initial values for various data members. Marked the device
+        scale factor const beacuse it's set in the constructor and never changed.
+        Also removed the unneeded isSafeToSendToAnotherThread.
+
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::PreloadRequest::isSafeToSendToAnotherThread): Deleted.
+
+        * html/parser/HTMLResourcePreloader.h:
+        (WebCore::PreloadRequest::PreloadRequest): Removed unneeded calls to
+        isolatedCopy. Also removed isSafeToSendToAnotherThread.
+
+        * html/parser/HTMLSourceTracker.cpp:
+        (WebCore::HTMLSourceTracker::startToken): Renamed. Changed to keep state
+         in the source tracker itself, not the token.
+        (WebCore::HTMLSourceTracker::endToken): Ditto.
+        (WebCore::HTMLSourceTracker::source): Renamed. Changed to use the state
+        from the source tracker.
+
+        * html/parser/HTMLSourceTracker.h: Removed unneeded include of HTMLToken.h.
+        Renamed functions, removed now-unneeded comment.
+
+        * html/parser/HTMLToken.h: Cut down on the fields used by the source tracker.
+        It only needs to know the start and end of each attribute, not each part of
+        each attribute. Removed setBaseOffset, setEndOffset, length, addNewAttribute,
+        beginAttributeName, endAttributeName, beginAttributeValue, endAttributeValue,
+        m_baseOffset and m_length. Added beginAttribute and endAttribute.
+        (WebCore::HTMLToken::clear): No need to zero m_length or m_baseOffset any more.
+        (WebCore::HTMLToken::length): Deleted.
+        (WebCore::HTMLToken::setBaseOffset): Deleted.
+        (WebCore::HTMLToken::setEndOffset): Deleted.
+        (WebCore::HTMLToken::beginStartTag): Only null out m_currentAttribute if we
+        are compiling in assertions.
+        (WebCore::HTMLToken::beginEndTag): Ditto.
+        (WebCore::HTMLToken::addNewAttribute): Deleted.
+        (WebCore::HTMLToken::beginAttribute): Moved the code from addNewAttribute in
+        here and set the start offset.
+        (WebCore::HTMLToken::beginAttributeName): Deleted.
+        (WebCore::HTMLToken::endAttributeName): Deleted.
+        (WebCore::HTMLToken::beginAttributeValue): Deleted.
+        (WebCore::HTMLToken::endAttributeValue): Deleted.
+
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLToken::endAttribute): Added. Sets the end offset.
+        (WebCore::HTMLToken::appendToAttributeName): Updated assertion.
+        (WebCore::HTMLToken::appendToAttributeValue): Ditto.
+        (WebCore::convertASCIIAlphaToLower): Renamed from toLowerCase and changed
+        so it's legal to call on lower case letters too.
+        (WebCore::vectorEqualsString): Changed to take a string literal rather than
+        a WTF::String.
+        (WebCore::HTMLTokenizer::inEndTagBufferingState): Made this a member function.
+        (WebCore::HTMLTokenizer::HTMLTokenizer): Updated for data member changes.
+        (WebCore::HTMLTokenizer::bufferASCIICharacter): Added. Optimized version of
+        bufferCharacter for the common case where we know the character is ASCII.
+        (WebCore::HTMLTokenizer::bufferCharacter): Moved this function here from the
+        header since it's only used inside the class.
+        (WebCore::HTMLTokenizer::emitAndResumeInDataState): Moved this here, renamed
+        it and removed the state argument.
+        (WebCore::HTMLTokenizer::emitAndReconsumeInDataState): Ditto.
+        (WebCore::HTMLTokenizer::emitEndOfFile): More of the same.
+        (WebCore::HTMLTokenizer::saveEndTagNameIfNeeded): Ditto.
+        (WebCore::HTMLTokenizer::haveBufferedCharacterToken): Ditto.
+        (WebCore::HTMLTokenizer::flushBufferedEndTag): Updated since m_token is now
+        the actual token, not just a pointer.
+        (WebCore::HTMLTokenizer::flushEmitAndResumeInDataState): Renamed this and
+        removed the state argument.
+        (WebCore::HTMLTokenizer::processToken): This function, formerly nextToken,
+        is now the internal function used by nextToken. Updated its contents to use
+        simpler macros, changed code to set m_state when returning, rather than
+        constantly setting it when cycling through states, switched style to use
+        early return/goto rather than lots of else statements, took out unneeded
+        braces now that BEGIN/END_STATE handles the braces, collapsed upper and
+        lower case letter handling in many states, changed lookAhead call sites to
+        use the new advancePast function instead.
+        (WebCore::HTMLTokenizer::updateStateFor): Set m_state directly instead of
+        calling a setstate function.
+        (WebCore::HTMLTokenizer::appendToTemporaryBuffer): Moved here from header.
+        (WebCore::HTMLTokenizer::temporaryBufferIs): Changed argument type to
+        a literal instead of a WTF::String.
+        (WebCore::HTMLTokenizer::appendToPossibleEndTag): Renamed and changed type
+        to be a UChar instead of LChar, although all characters will be ASCII.
+        (WebCore::HTMLTokenizer::isAppropriateEndTag): Marked const, and changed
+        type from size_t to unsigned.
+
+        * html/parser/HTMLTokenizer.h: Changed interface of nextToken so it returns
+        a TokenPtr so code doesn't have to understand special rules about when to
+        work with an HTMLToken and when to clear it. Made most functions private,
+        and made the State enum private as well. Replaced the state and setState
+        functions with more specific functions for the few states we need to deal
+        with outside the class. Moved function bodies outside the class definition
+        so it's easier to read the class definition.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody): Updated to use the
+        new set state functions instead of setState.
+        (WebCore::HTMLTreeBuilder::processEndTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processGenericRCDATAStartTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processGenericRawTextStartTag): Ditto.
+        (WebCore::HTMLTreeBuilder::processScriptStartTag): Ditto.
+
+        * html/parser/InputStreamPreprocessor.h: Marked the constructor explicit,
+        and mde it take a reference rather than a pointer.
+
+        * html/parser/TextDocumentParser.cpp:
+        (WebCore::TextDocumentParser::insertFakePreElement): Updated to use the
+        new set state functions instead of setState.
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::decodedSnippetForName): Updated for name change.
+        (WebCore::XSSAuditor::decodedSnippetForAttribute): Updated for changes to
+        attribute range tracking.
+        (WebCore::XSSAuditor::decodedSnippetForJavaScript): Updated for name change.
+        (WebCore::XSSAuditor::isSafeToSendToAnotherThread): Deleted.
+
+        * html/parser/XSSAuditor.h: Deleted isSafeToSendToAnotherThread.
+
+        * html/track/WebVTTTokenizer.cpp: Removed the local state variable from
+        WEBVTT_ADVANCE_TO; there is no need for it.
+        (WebCore::WebVTTTokenizer::WebVTTTokenizer): Use a reference instead of a
+        pointer for the preprocessor.
+        (WebCore::WebVTTTokenizer::nextToken): Ditto. Also removed the state local
+        variable and the switch statement, replacing with labels instead since we
+        go between states with goto.
+
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::operator=): Changed the return type to be non-const
+        to match normal C++ design rules.
+        (WebCore::SegmentedString::pushBack): Renamed from prepend since this is not a
+        general purpose prepend function. Also fixed assertions to not use the strangely
+        named "escaped" function, since we are deleting it.
+        (WebCore::SegmentedString::append): Ditto.
+        (WebCore::SegmentedString::advancePastNonNewlines): Renamed from advance, since
+        the function only works for non-newlines.
+        (WebCore::SegmentedString::currentColumn): Got rid of unneeded local variable.
+        (WebCore::SegmentedString::advancePastSlowCase): Moved here from header and
+        renamed. This function now consumes the characters if they match.
+
+        * platform/text/SegmentedString.h: Made the changes mentioned above.
+        (WebCore::SegmentedString::excludeLineNumbers): Deleted.
+        (WebCore::SegmentedString::advancePast): Renamed from lookAhead. Also changed
+        behavior so the characters are consumed.
+        (WebCore::SegmentedString::advancePastIgnoringCase): Ditto.
+        (WebCore::SegmentedString::advanceAndASSERT): Deleted.
+        (WebCore::SegmentedString::advanceAndASSERTIgnoringCase): Deleted.
+        (WebCore::SegmentedString::escaped): Deleted.
+
+        * xml/parser/CharacterReferenceParserInlines.h:
+        (WebCore::isHexDigit): Deleted.
+        (WebCore::unconsumeCharacters): Updated for name change.
+        (WebCore::consumeCharacterReference): Removed unneeded name for local enum,
+        renamed local variable "cc" to character. Changed code to use helpers like
+        isASCIIAlpha and toASCIIHexValue. Removed unneeded use of advanceAndASSERT,
+        since we don't really need to assert the character we just extracted.
+
+        * xml/parser/MarkupTokenizerInlines.h:
+        (WebCore::isTokenizerWhitespace): Renamed argument to character.
+        (WebCore::advanceStringAndASSERTIgnoringCase): Deleted.
+        (WebCore::advanceStringAndASSERT): Deleted.
+        Changed all the macro implementations so they set m_state only when
+        returning from the function and just use goto inside the state machine.
+
 2015-01-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Build fix after r178151

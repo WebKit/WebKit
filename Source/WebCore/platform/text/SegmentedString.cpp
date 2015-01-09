@@ -20,6 +20,8 @@
 #include "config.h"
 #include "SegmentedString.h"
 
+#include <wtf/text/TextPosition.h>
+
 namespace WebCore {
 
 SegmentedString::SegmentedString(const SegmentedString& other)
@@ -44,7 +46,7 @@ SegmentedString::SegmentedString(const SegmentedString& other)
         m_currentChar = m_currentString.m_length ? m_currentString.getCurrentChar() : 0;
 }
 
-const SegmentedString& SegmentedString::operator=(const SegmentedString& other)
+SegmentedString& SegmentedString::operator=(const SegmentedString& other)
 {
     m_pushedChar1 = other.m_pushedChar1;
     m_pushedChar2 = other.m_pushedChar2;
@@ -130,14 +132,14 @@ void SegmentedString::append(const SegmentedSubstring& s)
     m_empty = false;
 }
 
-void SegmentedString::prepend(const SegmentedSubstring& s)
+void SegmentedString::pushBack(const SegmentedSubstring& s)
 {
-    ASSERT(!escaped());
+    ASSERT(!m_pushedChar1);
     ASSERT(!s.numberOfCharactersConsumed());
     if (!s.m_length)
         return;
 
-    // FIXME: We're assuming that the prepend were originally consumed by
+    // FIXME: We're assuming that the characters were originally consumed by
     //        this SegmentedString.  We're also ASSERTing that s is a fresh
     //        SegmentedSubstring.  These assumptions are sufficient for our
     //        current use, but we might need to handle the more elaborate
@@ -166,7 +168,7 @@ void SegmentedString::close()
 void SegmentedString::append(const SegmentedString& s)
 {
     ASSERT(!m_closed);
-    ASSERT(!s.escaped());
+    ASSERT(!s.m_pushedChar1);
     append(s.m_currentString);
     if (s.isComposite()) {
         Deque<SegmentedSubstring>::const_iterator it = s.m_substrings.begin();
@@ -177,17 +179,17 @@ void SegmentedString::append(const SegmentedString& s)
     m_currentChar = m_pushedChar1 ? m_pushedChar1 : (m_currentString.m_length ? m_currentString.getCurrentChar() : 0);
 }
 
-void SegmentedString::prepend(const SegmentedString& s)
+void SegmentedString::pushBack(const SegmentedString& s)
 {
-    ASSERT(!escaped());
-    ASSERT(!s.escaped());
+    ASSERT(!m_pushedChar1);
+    ASSERT(!s.m_pushedChar1);
     if (s.isComposite()) {
         Deque<SegmentedSubstring>::const_reverse_iterator it = s.m_substrings.rbegin();
         Deque<SegmentedSubstring>::const_reverse_iterator e = s.m_substrings.rend();
         for (; it != e; ++it)
-            prepend(*it);
+            pushBack(*it);
     }
-    prepend(s.m_currentString);
+    pushBack(s.m_currentString);
     m_currentChar = m_pushedChar1 ? m_pushedChar1 : (m_currentString.m_length ? m_currentString.getCurrentChar() : 0);
 }
 
@@ -228,12 +230,12 @@ String SegmentedString::toString() const
     return result.toString();
 }
 
-void SegmentedString::advance(unsigned count, UChar* consumedCharacters)
+void SegmentedString::advancePastNonNewlines(unsigned count, UChar* consumedCharacters)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(count <= length());
     for (unsigned i = 0; i < count; ++i) {
         consumedCharacters[i] = currentChar();
-        advance();
+        advancePastNonNewline();
     }
 }
 
@@ -353,14 +355,27 @@ OrdinalNumber SegmentedString::currentLine() const
 
 OrdinalNumber SegmentedString::currentColumn() const
 {
-    int zeroBasedColumn = numberOfCharactersConsumed() - m_numberOfCharactersConsumedPriorToCurrentLine;
-    return OrdinalNumber::fromZeroBasedInt(zeroBasedColumn);
+    return OrdinalNumber::fromZeroBasedInt(numberOfCharactersConsumed() - m_numberOfCharactersConsumedPriorToCurrentLine);
 }
 
 void SegmentedString::setCurrentPosition(OrdinalNumber line, OrdinalNumber columnAftreProlog, int prologLength)
 {
     m_currentLine = line.zeroBasedInt();
     m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed() + prologLength - columnAftreProlog.zeroBasedInt();
+}
+
+SegmentedString::AdvancePastResult SegmentedString::advancePastSlowCase(const char* literal, bool caseSensitive)
+{
+    unsigned length = strlen(literal);
+    if (length > this->length())
+        return NotEnoughCharacters;
+    UChar* consumedCharacters;
+    String consumedString = String::createUninitialized(length, consumedCharacters);
+    advancePastNonNewlines(length, consumedCharacters);
+    if (consumedString.startsWith(literal, caseSensitive))
+        return DidMatch;
+    pushBack(SegmentedString(consumedString));
+    return DidNotMatch;
 }
 
 }
