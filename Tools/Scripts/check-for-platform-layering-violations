@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2015 Igalia S.L.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+import os, sys
+from webkitpy.common.host import Host
+
+PLATFORM_GENERATED_HEADERS = ("HTTPHeaderNames.h")
+
+def get_platform_headers(platform_dir):
+    platform_headers = ["config.h"]
+    for root, dirs, files in os.walk(platform_dir):
+        for file_name in files:
+            if file_name.endswith(".h"):
+                platform_headers.append(file_name)
+
+    return platform_headers
+
+def check_source_file(source_file, checkout_root, platform_headers):
+    failures_found = 0
+    line_count = 0
+    f = open(source_file, 'r')
+    for line in f.readlines():
+        line_count += 1
+        if line[0] != '#':
+            continue
+
+        tokens = line.split(' ')
+        if tokens[0] not in ('#include', '#import'):
+            continue
+
+        header = tokens[1]
+        if header[0] != '"':
+            continue
+
+        header = header[1:header.rfind('"')]
+        if not header.endswith('.h'):
+            continue
+
+        if header not in platform_headers and header not in PLATFORM_GENERATED_HEADERS:
+            print "ERROR: %s:%d %s" % (source_file[len(checkout_root) + 1:], line_count, line.strip('\n'))
+            failures_found += 1
+
+    f.close()
+
+    return failures_found
+
+host = Host()
+host.initialize_scm()
+checkout_root = host.scm().checkout_root
+platform_dir = os.path.join(checkout_root, "Source", "WebCore", "platform")
+platform_headers = get_platform_headers(platform_dir)
+
+layering_violations_count = 0
+for root, dirs, files in os.walk(platform_dir):
+    for file_name in files:
+        if os.path.splitext(file_name)[1] in ('.cpp', '.mm'):
+            layering_violations_count += check_source_file(os.path.join(root, file_name), checkout_root, platform_headers)
+
+if layering_violations_count:
+    print "Total: %d layering violations found in %s" % (layering_violations_count, platform_dir[len(checkout_root) + 1:])
+    sys.exit(1)
+
+sys.exit(0)

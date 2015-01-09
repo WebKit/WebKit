@@ -1,3 +1,17 @@
+2015-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add a script to check for platform layering violations
+        https://bugs.webkit.org/show_bug.cgi?id=140248
+
+        Reviewed by Darin Adler.
+
+        It prints all the cases where files inside platform include
+        headers that are not in platform directory.
+
+        * Scripts/check-for-platform-layering-violations: Added.
+        (get_platform_headers):
+        (check_source_file):
+
 2015-01-08  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac WK2] Test snapshots are 1600x1200 on Retina devices
