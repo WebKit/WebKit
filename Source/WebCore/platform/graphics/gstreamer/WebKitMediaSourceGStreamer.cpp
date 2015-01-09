@@ -337,11 +337,10 @@ MediaSourcePrivate::AddStatus MediaSourceClientGStreamer::addSourceBuffer(PassRe
 
     gst_bin_add(GST_BIN(m_src.get()), source->src);
     GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(source->src, "src"));
-    GRefPtr<GstPad> ghostPad = adoptGRef(gst_ghost_pad_new_from_template(padName.get(), pad.get(),
-        gst_static_pad_template_get(&srcTemplate)));
-    gst_pad_set_query_function(ghostPad.get(), webKitMediaSrcQueryWithParent);
-    gst_pad_set_active(ghostPad.get(), TRUE);
-    gst_element_add_pad(GST_ELEMENT(m_src.get()), ghostPad.leakRef());
+    GstPad* ghostPad = gst_ghost_pad_new_from_template(padName.get(), pad.get(), gst_static_pad_template_get(&srcTemplate));
+    gst_pad_set_query_function(ghostPad, webKitMediaSrcQueryWithParent);
+    gst_pad_set_active(ghostPad, TRUE);
+    gst_element_add_pad(GST_ELEMENT(m_src.get()), ghostPad);
 
     gst_element_sync_state_with_parent(source->src);
 

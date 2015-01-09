@@ -1,3 +1,15 @@
+2015-01-06  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][MSE] ASSERT in MediaSourceClientGStreamer::addSourceBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=140119
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp:
+        (WebCore::MediaSourceClientGStreamer::addSourceBuffer): Use a raw
+        pointer for the ghost pad, its reference is then taken once attached
+        to the parent element.
+
 2015-01-09  Zan Dobersek  <zdobersek@igalia.com>
 
         After r178166, ANGLE's EGL/GLES/GLES2 headers are included before the
