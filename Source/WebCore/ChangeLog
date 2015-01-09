@@ -1,3 +1,21 @@
+2015-01-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Layout Test fast/canvas/canvas-path-addPath.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=140303
+        <rdar://problem/19428865>
+
+        Reviewed by Simon Fraser.
+
+        Although the code clearly states that CG doesn't allow adding a path to itself,
+        and branches to handle this case, it simply uses the branch to try adding the
+        path to itself (ignoring the copy it just made)!
+
+        Fix this copy/paste bug so that we use the copy and avoid violating the CG 
+        API contract.
+
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::addPath): Fix path used.
+
 2015-01-09  Andreas Kling  <akling@apple.com>
 
         [Cocoa] Make decoded image data purgeable ASAP.

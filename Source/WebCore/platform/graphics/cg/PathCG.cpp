@@ -325,7 +325,7 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
         return;
     }
     CGPathRef pathCopy = CGPathCreateCopy(path.platformPath());
-    CGPathAddPath(ensurePlatformPath(), &transformCG, path.platformPath());
+    CGPathAddPath(ensurePlatformPath(), &transformCG, pathCopy);
     CGPathRelease(pathCopy);
 }
 
