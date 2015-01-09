@@ -1,5 +1,27 @@
 2015-01-09  Bem Jones-Bey  <bjonesbe@adobe.com>
 
+        Simplify LineWidth::wrapNextToShapeOutside()
+        https://bugs.webkit.org/show_bug.cgi?id=140304
+
+        Reviewed by Zoltan Horvath.
+
+        This function used to manually check to see if the entire height of
+        the line would have enough space next to the float. However, the code
+        to compute the offsets will do this automatically (and probably a lot
+        faster), if the line height is passed in. This patch does just that.
+
+        No new tests, no behavior change.
+
+        * rendering/line/LineWidth.cpp:
+        (WebCore::availableWidthAtOffset): Remove now unused override, allow
+            passing in lineHeight.
+        (WebCore::LineWidth::wrapNextToShapeOutside): Pass the lineHeight
+            when computing the available width, so we don't need to check
+            isWholeLineFit anymore.
+        (WebCore::isWholeLineFit): Deleted.
+
+2015-01-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
         [CSS Shapes] content inside second shape area when two floats interact
         https://bugs.webkit.org/show_bug.cgi?id=137702
 

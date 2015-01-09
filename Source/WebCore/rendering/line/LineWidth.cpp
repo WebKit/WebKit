@@ -141,18 +141,11 @@ void LineWidth::applyOverhang(RenderRubyRun* rubyRun, RenderObject* startRendere
     m_overhangWidth += startOverhang + endOverhang;
 }
 
-inline static float availableWidthAtOffset(const RenderBlockFlow& block, const LayoutUnit& offset, bool shouldIndentText, float& newLineLeft, float& newLineRight)
+inline static float availableWidthAtOffset(const RenderBlockFlow& block, const LayoutUnit& offset, bool shouldIndentText, float& newLineLeft, float& newLineRight, const LayoutUnit& lineHeight = 0)
 {
-    newLineLeft = block.logicalLeftOffsetForLine(offset, shouldIndentText);
-    newLineRight = block.logicalRightOffsetForLine(offset, shouldIndentText);
+    newLineLeft = block.logicalLeftOffsetForLine(offset, shouldIndentText, lineHeight);
+    newLineRight = block.logicalRightOffsetForLine(offset, shouldIndentText, lineHeight);
     return std::max(0.0f, newLineRight - newLineLeft);
-}
-
-inline static float availableWidthAtOffset(const RenderBlockFlow& block, const LayoutUnit& offset, bool shouldIndentText)
-{
-    float newLineLeft = 0;
-    float newLineRight = 0;
-    return availableWidthAtOffset(block, offset, shouldIndentText, newLineLeft, newLineRight);
 }
 
 void LineWidth::updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWidth, float newLineLeft, float newLineRight)
@@ -167,16 +160,6 @@ void LineWidth::updateLineDimension(LayoutUnit newLineTop, LayoutUnit newLineWid
 }
 
 #if ENABLE(CSS_SHAPES)
-inline static bool isWholeLineFit(const RenderBlockFlow& block, const LayoutUnit& lineTop, LayoutUnit lineHeight, float uncommittedWidth, bool shouldIndentText)
-{
-    for (LayoutUnit lineBottom = lineTop; lineBottom <= lineTop + lineHeight; ++lineBottom) {
-        LayoutUnit availableWidthAtBottom = availableWidthAtOffset(block, lineBottom, shouldIndentText);
-        if (availableWidthAtBottom < uncommittedWidth)
-            return false;
-    }
-    return true;
-}
-
 void LineWidth::wrapNextToShapeOutside(bool isFirstLine)
 {
     LayoutUnit lineHeight = m_block.lineHeight(isFirstLine, m_block.isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
@@ -188,8 +171,8 @@ void LineWidth::wrapNextToShapeOutside(bool isFirstLine)
     float newLineLeft = m_left;
     float newLineRight = m_right;
     while (true) {
-        newLineWidth = availableWidthAtOffset(m_block, newLineTop, shouldIndentText(), newLineLeft, newLineRight);
-        if (newLineWidth >= m_uncommittedWidth && isWholeLineFit(m_block, newLineTop, lineHeight, m_uncommittedWidth, shouldIndentText()))
+        newLineWidth = availableWidthAtOffset(m_block, newLineTop, shouldIndentText(), newLineLeft, newLineRight, lineHeight);
+        if (newLineWidth >= m_uncommittedWidth)
             break;
 
         if (newLineTop >= floatLogicalBottom)
