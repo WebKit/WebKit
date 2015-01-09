@@ -142,12 +142,12 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
 RenderLayerBacking::~RenderLayerBacking()
 {
     updateAncestorClippingLayer(false);
+    updateChildClippingStrategy(false);
     updateDescendantClippingLayer(false);
     updateOverflowControlsLayers(false, false, false);
     updateForegroundLayer(false);
     updateBackgroundLayer(false);
     updateMaskLayer(false);
-    updateChildClippingStrategy(false);
     updateScrollingLayers(false);
     detachFromScrollingCoordinator();
     destroyGraphicsLayers();

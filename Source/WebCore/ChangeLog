@@ -1,3 +1,18 @@
+2015-01-09  Byungseon Shin  <sun.shin@lge.com>
+
+        [EFL] Fix crash introduced in r178029
+        https://bugs.webkit.org/show_bug.cgi?id=140289
+
+        Reviewed by Martin Robinson.
+
+        Clearing childClippingMaskLayer of CoordinatedGraphics should be called
+        before clearing childClippingLayer.
+
+        No new tests, covered by existing tests.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+
 2015-01-08  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Cannot paste an image URL in a plain text field in a page.
