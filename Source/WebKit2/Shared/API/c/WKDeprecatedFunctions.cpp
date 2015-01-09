@@ -50,9 +50,6 @@ WK_EXPORT void WKDictionaryRemoveItem(WKMutableDictionaryRef dictionary, WKStrin
 WK_EXPORT void WKPreferencesSetRegionBasedColumnsEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetRegionBasedColumnsEnabled(WKPreferencesRef);
 
-WK_EXPORT void WKPreferencesSetApplicationChromeModeEnabled(WKPreferencesRef, bool);
-WK_EXPORT bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef);
-
 WK_EXPORT void WKPreferencesSetMultithreadedWebGLEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetMultithreadedWebGLEnabled(WKPreferencesRef);
 
@@ -105,15 +102,6 @@ void WKPreferencesSetMultithreadedWebGLEnabled(WKPreferencesRef, bool)
 }
 
 bool WKPreferencesGetMultithreadedWebGLEnabled(WKPreferencesRef)
-{
-    return false;
-}
-
-void WKPreferencesSetApplicationChromeModeEnabled(WKPreferencesRef, bool)
-{
-}
-
-bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef)
 {
     return false;
 }

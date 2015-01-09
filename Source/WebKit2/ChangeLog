@@ -62,6 +62,24 @@
         Text not drawn or white-on-white for "Close Page"/"Go Back" button on safe browsing warning page
         https://bugs.webkit.org/show_bug.cgi?id=140232
 
+        Yet another attempt to get the Safari 7/8 build to work. I've moved the
+        stubs back into a place where they can be seen (both definition and implementation).
+        I also removed the previous workaround.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKPreferencesSetApplicationChromeModeEnabled): Deleted.
+        (WKPreferencesGetApplicationChromeModeEnabled): Deleted.
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetApplicationChromeModeEnabled):
+        (WKPreferencesGetApplicationChromeModeEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+
+2015-01-08  Dean Jackson  <dino@apple.com>
+
+        Text not drawn or white-on-white for "Close Page"/"Go Back" button on safe browsing warning page
+        https://bugs.webkit.org/show_bug.cgi?id=140232
+
         Unreviewed followup to try to get the Mavericks Safari to build.
 
         * Shared/WebPreferencesDefinitions.h: Add the application chrome mode definition.

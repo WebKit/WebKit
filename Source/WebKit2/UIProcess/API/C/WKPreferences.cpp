@@ -787,6 +787,17 @@ bool WKPreferencesGetWebAudioEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->webAudioEnabled();
 }
 
+void WKPreferencesSetApplicationChromeModeEnabled(WKPreferencesRef, bool)
+{
+    // FIXME: Remove once WebKit nightlies don't need to support Safari 8.
+}
+
+bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef)
+{
+    // FIXME: Remove once WebKit nightlies don't need to support Safari 8.
+    return false;
+}
+
 void WKPreferencesSetInspectorUsesWebKitUserInterface(WKPreferencesRef, bool)
 {
     // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
