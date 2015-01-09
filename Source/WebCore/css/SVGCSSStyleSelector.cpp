@@ -100,6 +100,8 @@ static Color colorFromSVGColorCSSValue(SVGColor* svgColor, const Color& fgColor)
     return color;
 }
 
+// FIXME: This method should go away once all SVG CSS properties have been
+// ported to the new generated StyleBuilder.
 void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
 {
     ASSERT(value);
@@ -120,15 +122,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
     switch (id)
     {
         // ident only properties
-        case CSSPropertyAlignmentBaseline:
-        {
-            HANDLE_INHERIT_AND_INITIAL(alignmentBaseline, AlignmentBaseline)
-            if (!primitiveValue)
-                break;
-
-            svgStyle.setAlignmentBaseline(*primitiveValue);
-            break;
-        }
         case CSSPropertyBaselineShift:
         {
             HANDLE_INHERIT_AND_INITIAL(baselineShift, BaselineShift);
@@ -163,44 +156,9 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 svgStyle.setKerning(SVGLength::fromCSSPrimitiveValue(primitiveValue));
             break;
         }
-        case CSSPropertyDominantBaseline:
-        {
-            HANDLE_INHERIT_AND_INITIAL(dominantBaseline, DominantBaseline)
-            if (primitiveValue)
-                svgStyle.setDominantBaseline(*primitiveValue);
-            break;
-        }
-        case CSSPropertyColorInterpolation:
-        {
-            HANDLE_INHERIT_AND_INITIAL(colorInterpolation, ColorInterpolation)
-            if (primitiveValue)
-                svgStyle.setColorInterpolation(*primitiveValue);
-            break;
-        }
-        case CSSPropertyColorInterpolationFilters:
-        {
-            HANDLE_INHERIT_AND_INITIAL(colorInterpolationFilters, ColorInterpolationFilters)
-            if (primitiveValue)
-                svgStyle.setColorInterpolationFilters(*primitiveValue);
-            break;
-        }
         case CSSPropertyColorProfile:
         {
             // Not implemented.
-            break;
-        }
-        case CSSPropertyColorRendering:
-        {
-            HANDLE_INHERIT_AND_INITIAL(colorRendering, ColorRendering)
-            if (primitiveValue)
-                svgStyle.setColorRendering(*primitiveValue);
-            break;
-        }
-        case CSSPropertyClipRule:
-        {
-            HANDLE_INHERIT_AND_INITIAL(clipRule, ClipRule)
-            if (primitiveValue)
-                svgStyle.setClipRule(*primitiveValue);
             break;
         }
         case CSSPropertyPaintOrder: {
@@ -231,27 +189,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 paintOrder = PaintOrderNormal;
             }
             svgStyle.setPaintOrder(static_cast<PaintOrder>(paintOrder));
-            break;
-        }
-        case CSSPropertyFillRule:
-        {
-            HANDLE_INHERIT_AND_INITIAL(fillRule, FillRule)
-            if (primitiveValue)
-                svgStyle.setFillRule(*primitiveValue);
-            break;
-        }
-        case CSSPropertyStrokeLinejoin:
-        {
-            HANDLE_INHERIT_AND_INITIAL(joinStyle, JoinStyle)
-            if (primitiveValue)
-                svgStyle.setJoinStyle(*primitiveValue);
-            break;
-        }
-        case CSSPropertyShapeRendering:
-        {
-            HANDLE_INHERIT_AND_INITIAL(shapeRendering, ShapeRendering)
-            if (primitiveValue)
-                svgStyle.setShapeRendering(*primitiveValue);
             break;
         }
         // end of ident only properties
@@ -409,13 +346,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             svgStyle.setMarkerEndResource(SVGURIReference::fragmentIdentifierFromIRIString(s, state.document()));
             break;
         }
-        case CSSPropertyStrokeLinecap:
-        {
-            HANDLE_INHERIT_AND_INITIAL(capStyle, CapStyle)
-            if (primitiveValue)
-                svgStyle.setCapStyle(*primitiveValue);
-            break;
-        }
         case CSSPropertyStrokeMiterlimit:
         {
             HANDLE_INHERIT_AND_INITIAL(strokeMiterLimit, StrokeMiterLimit)
@@ -472,20 +402,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 s = primitiveValue->getStringValue();
 
             svgStyle.setClipperResource(SVGURIReference::fragmentIdentifierFromIRIString(s, state.document()));
-            break;
-        }
-        case CSSPropertyTextAnchor:
-        {
-            HANDLE_INHERIT_AND_INITIAL(textAnchor, TextAnchor)
-            if (primitiveValue)
-                svgStyle.setTextAnchor(*primitiveValue);
-            break;
-        }
-        case CSSPropertyWritingMode:
-        {
-            HANDLE_INHERIT_AND_INITIAL(writingMode, WritingMode)
-            if (primitiveValue)
-                svgStyle.setWritingMode(*primitiveValue);
             break;
         }
         case CSSPropertyStopColor:
@@ -596,30 +512,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             auto shadowData = std::make_unique<ShadowData>(location, blur, 0, Normal, false, color.isValid() ? color : Color::transparent);
             svgStyle.setShadow(WTF::move(shadowData));
             return;
-        }
-        case CSSPropertyVectorEffect: {
-            HANDLE_INHERIT_AND_INITIAL(vectorEffect, VectorEffect)
-            if (!primitiveValue)
-                break;
-
-            svgStyle.setVectorEffect(*primitiveValue);
-            break;
-        }
-        case CSSPropertyBufferedRendering: {
-            HANDLE_INHERIT_AND_INITIAL(bufferedRendering, BufferedRendering)
-            if (!primitiveValue)
-                break;
-
-            svgStyle.setBufferedRendering(*primitiveValue);
-            break;
-        }
-        case CSSPropertyMaskType: {
-            HANDLE_INHERIT_AND_INITIAL(maskType, MaskType)
-            if (!primitiveValue)
-                break;
-
-            svgStyle.setMaskType(*primitiveValue);
-            break;
         }
         default:
             // If you crash here, it's because you added a css property and are not handling it

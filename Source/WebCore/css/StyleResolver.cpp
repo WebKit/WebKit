@@ -168,6 +168,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(CSSPropertyLineHeight + 1);
+
 class StyleResolver::CascadedProperties {
 public:
     CascadedProperties(TextDirection, WritingMode);
@@ -842,7 +844,7 @@ Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle
         applyProperty(CSSPropertyLineHeight, state.lineHeightValue());
 
     // Now do rest of the properties.
-    applyCascadedProperties(cascade, CSSPropertyAnimation, lastCSSProperty);
+    applyCascadedProperties(cascade, firstLowPriorityProperty, lastCSSProperty);
 
     // If our font got dirtied by one of the non-essential font props,
     // go ahead and update it a second time.
@@ -1012,7 +1014,7 @@ Ref<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     if (m_state.lineHeightValue())
         applyProperty(CSSPropertyLineHeight, m_state.lineHeightValue());
 
-    applyCascadedProperties(cascade, CSSPropertyAnimation, lastCSSProperty);
+    applyCascadedProperties(cascade, firstLowPriorityProperty, lastCSSProperty);
 
     cascade.applyDeferredProperties(*this);
 
@@ -1765,7 +1767,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
     
         updateFont();
-        applyCascadedProperties(cascade, CSSPropertyAnimation, lastCSSProperty);
+        applyCascadedProperties(cascade, firstLowPriorityProperty, lastCSSProperty);
 
         state.cacheBorderAndBackground();
     }
@@ -1803,7 +1805,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
     // Apply properties that no other properties depend on.
-    applyCascadedProperties(cascade, CSSPropertyAnimation, lastCSSProperty);
+    applyCascadedProperties(cascade, firstLowPriorityProperty, lastCSSProperty);
 
     // Finally, some properties must be applied in the order they were parsed.
     // There are some CSS properties that affect the same RenderStyle values,

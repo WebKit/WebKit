@@ -2762,9 +2762,6 @@ if (ENABLE_ENCRYPTED_MEDIA OR ENABLE_ENCRYPTED_MEDIA_V2)
     )
 endif ()
 
-list(APPEND WebCore_CSS_PROPERTY_NAMES
-    ${WEBCORE_DIR}/css/SVGCSSPropertyNames.in
-)
 list(APPEND WebCore_CSS_VALUE_KEYWORDS
     ${WEBCORE_DIR}/css/SVGCSSValueKeywords.in
 )

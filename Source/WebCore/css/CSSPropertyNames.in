@@ -61,6 +61,10 @@
 // Custom=All. Alternatively, several '|'-separated options can be passed:
 // e.g. 'Custom=Inherit|Value".
 //
+// * SVG:
+// Indicates that this is an SVG CSS property and that the corresponding
+// methods are on SVGRenderStyle instead of RenderStyle.
+//
 // * AutoFunctions:
 // Indicates that this CSS property requires handling of "auto" and has
 // corresponding hasAutoXXX() / setHasAutoXXX() methods on RenderStyle.
@@ -127,6 +131,7 @@ line-height [Inherited, Getter=specifiedLineHeight, Custom=Value]
 -webkit-ruby-position [Inherited, TypeName=RubyPosition]
 
 // The remaining properties are listed in alphabetical order
+alignment-baseline [SVG]
 animation [LegacyStyleBuilder]
 animation-delay [AnimationProperty, TypeName=double, NameForMethods=Delay]
 animation-direction [AnimationProperty, TypeName=Animation::AnimationDirection, NameForMethods=Direction]
@@ -150,6 +155,7 @@ background-repeat [LegacyStyleBuilder]
 background-repeat-x [FillLayerProperty, TypeName=EFillRepeat, NameForMethods=RepeatX]
 background-repeat-y [FillLayerProperty, TypeName=EFillRepeat, NameForMethods=RepeatY]
 background-size [FillLayerProperty, TypeName=EFillSize, NameForMethods=Size]
+baseline-shift [LegacyStyleBuilder, SVG]
 border [LegacyStyleBuilder]
 border-bottom [LegacyStyleBuilder]
 border-bottom-color [VisitedLinkColorSupport, Initial=invalidColor]
@@ -190,6 +196,7 @@ border-width [LegacyStyleBuilder]
 bottom [Initial=initialOffset, Converter=LengthOrAuto]
 box-shadow [Custom=All]
 box-sizing
+buffered-rendering [SVG]
 // -webkit-box-sizing worked in Safari 4 and earlier.
 -webkit-box-sizing = box-sizing
 caption-side [Inherited]
@@ -197,6 +204,12 @@ caption-side [Inherited]
 clear
 clip [Custom=All]
 -webkit-clip-path [Converter=ClipPath]
+clip-path [LegacyStyleBuilder, SVG]
+clip-rule [Inherited, SVG, TypeName=WindRule]
+color-interpolation [Inherited, SVG]
+color-interpolation-filters [Inherited, SVG, TypeName=EColorInterpolation]
+color-profile [LegacyStyleBuilder, SVG]
+color-rendering [Inherited, SVG]
 content [Custom=All]
 counter-increment [Custom=All]
 counter-reset [Custom=All]
@@ -204,9 +217,21 @@ cursor [Inherited, Custom=All]
 #if defined(ENABLE_CURSOR_VISIBILITY) && ENABLE_CURSOR_VISIBILITY
 -webkit-cursor-visibility [Inherited, TypeName=CursorVisibility]
 #endif
+cx [Initial=initialZeroLength, Converter=Length]
+cy [Initial=initialZeroLength, Converter=Length]
+dominant-baseline [SVG]
 empty-cells [Inherited, TypeName=EEmptyCell]
+enable-background [LegacyStyleBuilder, SVG]
+fill [Inherited, LegacyStyleBuilder, SVG]
+fill-opacity [Inherited, LegacyStyleBuilder, SVG]
+fill-rule [Inherited, SVG, TypeName=WindRule]
+filter [LegacyStyleBuilder, SVG]
 float [TypeName=EFloat, NameForMethods=Floating]
+flood-color [LegacyStyleBuilder, SVG]
+flood-opacity [LegacyStyleBuilder, SVG]
 font-stretch [LegacyStyleBuilder]
+glyph-orientation-horizontal [Inherited, LegacyStyleBuilder, SVG]
+glyph-orientation-vertical [Inherited, LegacyStyleBuilder, SVG]
 height [Initial=initialSize, Converter=LengthSizing]
 #if defined(ENABLE_CSS_IMAGE_ORIENTATION) && ENABLE_CSS_IMAGE_ORIENTATION
 image-orientation [Inherited, TypeName=ImageOrientationEnum]
@@ -215,8 +240,10 @@ image-rendering [Inherited]
 #if defined(ENABLE_CSS_IMAGE_RESOLUTION) && ENABLE_CSS_IMAGE_RESOLUTION
 image-resolution [Inherited, Custom=All]
 #endif
+kerning [Inherited, LegacyStyleBuilder, SVG]
 left [Initial=initialOffset, Converter=LengthOrAuto]
 letter-spacing [Inherited, Converter=Spacing]
+lighting-color [LegacyStyleBuilder, SVG]
 list-style [Inherited, LegacyStyleBuilder]
 list-style-image [Inherited, Converter=StyleImage<CSSPropertyListStyleImage>]
 list-style-position [Inherited]
@@ -226,6 +253,12 @@ margin-bottom [Initial=initialMargin, Converter=LengthOrAuto]
 margin-left [Initial=initialMargin, Converter=LengthOrAuto]
 margin-right [Initial=initialMargin, Converter=LengthOrAuto]
 margin-top [Initial=initialMargin, Converter=LengthOrAuto]
+marker [Inherited, LegacyStyleBuilder, SVG]
+marker-end [Inherited, LegacyStyleBuilder, SVG]
+marker-mid [Inherited, LegacyStyleBuilder, SVG]
+marker-start [Inherited, LegacyStyleBuilder, SVG]
+mask [LegacyStyleBuilder, SVG]
+mask-type [SVG]
 max-height [Initial=initialMaxSize, Converter=LengthMaxSizing]
 max-width [Initial=initialMaxSize, Converter=LengthMaxSizing]
 min-height [Initial=initialMinSize, Converter=LengthSizing]
@@ -258,14 +291,29 @@ paint-order [LegacyStyleBuilder]
 pointer-events [Inherited]
 position
 quotes [Inherited, Converter=Quotes]
+r [Initial=initialZeroLength, Converter=Length]
 resize [Inherited, Converter=Resize]
 right [Initial=initialOffset, Converter=LengthOrAuto]
+rx [Initial=initialZeroLength, Converter=Length]
+ry [Initial=initialZeroLength, Converter=Length]
+shape-rendering [Inherited, SVG]
 size [Custom=All]
 src [LegacyStyleBuilder]
+stop-color [LegacyStyleBuilder, SVG]
+stop-opacity [LegacyStyleBuilder, SVG]
+stroke [Inherited, LegacyStyleBuilder, SVG]
+stroke-dasharray [Inherited, LegacyStyleBuilder, SVG]
+stroke-dashoffset [Inherited, NameForMethods=StrokeDashOffset, Initial=initialZeroLength, Converter=Length]
+stroke-linecap [Inherited, SVG, NameForMethods=CapStyle, TypeName=LineCap]
+stroke-linejoin [Inherited, SVG, NameForMethods=JoinStyle, TypeName=LineJoin]
+stroke-miterlimit [Inherited, LegacyStyleBuilder, SVG]
+stroke-opacity [Inherited, LegacyStyleBuilder, SVG]
+stroke-width [Inherited, Initial=initialOneLength, Converter=Length]
 speak [Inherited]
 table-layout
 tab-size [Inherited, TypeName=unsigned]
 text-align [Inherited, Converter=TextAlign]
+text-anchor [Inherited, SVG]
 text-decoration [Converter=TextDecoration]
 text-indent [Inherited, Custom=All]
 text-line-through [LegacyStyleBuilder]
@@ -296,6 +344,7 @@ transition-timing-function [LegacyStyleBuilder]
 
 unicode-bidi
 unicode-range [LegacyStyleBuilder]
+vector-effect [SVG]
 vertical-align [Custom=Value]
 visibility [Inherited]
 white-space [Inherited]
@@ -305,6 +354,9 @@ word-break [Inherited]
 -epub-word-break = word-break
 word-spacing [Inherited, ConditionalConverter=WordSpacing, TypeName=Length]
 word-wrap [Inherited=EOverflowWrap, NameForMethods=OverflowWrap]
+writing-mode [Inherited, SVG, TypeName=SVGWritingMode]
+x [Initial=initialZeroLength, Converter=Length]
+y [Initial=initialZeroLength, Converter=Length]
 z-index [TypeName=int, AutoFunctions]
 alt [NameForMethods=ContentAltText, Custom=Value]
 -webkit-alt = alt
@@ -516,6 +568,7 @@ order [TypeName=int]
 -webkit-scroll-snap-destination [Converter=SnapCoordinatePair]
 -webkit-scroll-snap-coordinate [Converter=ScrollSnapCoordinates, NameForMethods=ScrollSnapCoordinates]
 #endif
+-webkit-svg-shadow [LegacyStyleBuilder, SVG]
 -webkit-text-combine [Inherited, TypeName=TextCombine]
 -epub-text-combine = -webkit-text-combine
 #if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT

@@ -1,3 +1,37 @@
+2015-01-09  Chris Dumez  <cdumez@apple.com>
+
+        Add support for SVG CSS Properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140277
+
+        Reviewed by Andreas Kling.
+
+        Update the new StyleBuilder generator to add support for SVG CSS
+        Properties whose methods are on SVGRenderStyle instead of RenderStyle.
+
+        A new "SVG" parameter is now supported by makeprop.pl to correctly
+        generate such properties.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPropertyNames.in:
+        * css/SVGCSSPropertyNames.in: Removed.
+        Merged SVG CSS properties into CSSPropertyNames.in. I personally don't
+        think having a separate file for SVG CSS properties is really helpful.
+
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        Drop legacy StyleBuilder code for several SVG properties and generate
+        them instead. Those are trivial and do not require any custom code or
+        converter.
+
+        * css/StyleResolver.cpp:
+        Update the id of the first low-priority property.
+
+        * css/makeprop.pl:
+        Add support for SVG CSS Properties whose methods are on SVGRenderStyle
+        instead of RenderStyle.
+
 2015-01-08  Anders Carlsson  <andersca@apple.com>
 
         Start removing Web Database support from workers
