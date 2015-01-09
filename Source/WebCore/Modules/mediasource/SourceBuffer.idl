@@ -52,6 +52,14 @@
     // Applies an offset to media segment timestamps.
     [SetterRaisesException] attribute unrestricted double timestampOffset;
 
+    // Track support
+    [Conditional=VIDEO_TRACK] readonly attribute AudioTrackList audioTracks;
+    [Conditional=VIDEO_TRACK] readonly attribute VideoTrackList videoTracks;
+    [Conditional=VIDEO_TRACK] readonly attribute TextTrackList textTracks;
+
+    [SetterRaisesException] attribute unrestricted double appendWindowStart;
+    [SetterRaisesException] attribute unrestricted double appendWindowEnd;
+
     // Append segment data.
     [RaisesException] void appendBuffer(ArrayBuffer data);
     [RaisesException] void appendBuffer(ArrayBufferView data);
@@ -59,10 +67,5 @@
     // Abort the current segment append sequence.
     [RaisesException] void abort();
     [RaisesException] void remove(unrestricted double start, unrestricted double end);
-    
-    // Track support
-    [Conditional=VIDEO_TRACK] readonly attribute AudioTrackList audioTracks;
-    [Conditional=VIDEO_TRACK] readonly attribute VideoTrackList videoTracks;
-    [Conditional=VIDEO_TRACK] readonly attribute TextTrackList textTracks;
 };
 

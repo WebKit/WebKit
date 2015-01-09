@@ -1,3 +1,16 @@
+2015-01-09  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Implement Append Window support.
+        https://bugs.webkit.org/show_bug.cgi?id=139861
+
+        Reviewed by Jer Noble.
+
+        Added test which checks whether correct samples from contiguous range of samples are added
+        when manipulating appendWindow.
+
+        * media/media-source/media-source-append-buffer-with-append-window-expected.txt: Added.
+        * media/media-source/media-source-append-buffer-with-append-window.html: Added.
+
 2015-01-08  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: !valueWithCalculation.calculation() in WebCore::CSSParser::validateCalculationUnit

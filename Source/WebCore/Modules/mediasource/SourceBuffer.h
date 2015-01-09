@@ -74,6 +74,18 @@ public:
     const RefPtr<TimeRanges>& buffered() const;
     double timestampOffset() const;
     void setTimestampOffset(double, ExceptionCode&);
+
+#if ENABLE(VIDEO_TRACK)
+    VideoTrackList* videoTracks();
+    AudioTrackList* audioTracks();
+    TextTrackList* textTracks();
+#endif
+
+    double appendWindowStart() const;
+    void setAppendWindowStart(double, ExceptionCode&);
+    double appendWindowEnd() const;
+    void setAppendWindowEnd(double, ExceptionCode&);
+
     void appendBuffer(PassRefPtr<ArrayBuffer> data, ExceptionCode&);
     void appendBuffer(PassRefPtr<ArrayBufferView> data, ExceptionCode&);
     void abort(ExceptionCode&);
@@ -83,12 +95,6 @@ public:
     void abortIfUpdating();
     void removedFromMediaSource();
     void seekToTime(const MediaTime&);
-
-#if ENABLE(VIDEO_TRACK)
-    VideoTrackList* videoTracks();
-    AudioTrackList* audioTracks();
-    TextTrackList* textTracks();
-#endif
 
     bool hasCurrentTime() const;
     bool hasFutureTime() const;
@@ -204,6 +210,9 @@ private:
     Vector<AtomicString> m_textCodecs;
 
     MediaTime m_timestampOffset;
+    MediaTime m_appendWindowStart;
+    MediaTime m_appendWindowEnd;
+
     MediaTime m_groupStartTimestamp;
     MediaTime m_groupEndTimestamp;
 

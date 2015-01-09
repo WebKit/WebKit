@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+<script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var mediaSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        mediaSegment = concatenateSamples([
+            makeAInit(0, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)])
+            , makeASample(0,  0,  1, 1, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(1,  1,  1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(2,  2,  1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(3,  3,  1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(4,  4,  1, 1, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(5,  5,  1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(6,  6,  1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(7,  7,  1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(8,  8,  1, 1, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(9,  9,  1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(10, 10, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(11, 11, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(12, 12, 1, 1, SAMPLE_FLAG.SYNC, 0)
+            , makeASample(13, 13, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(14, 14, 1, 1, SAMPLE_FLAG.NONE, 0)
+            , makeASample(15, 15, 1, 1, SAMPLE_FLAG.NONE, 0)
+        ]);
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen, false, true);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        testExpected('sourceBuffer.appendWindowStart', 0);
+        testExpected('sourceBuffer.appendWindowEnd', Number.POSITIVE_INFINITY);
+
+
+        run('sourceBuffer.appendWindowEnd   = 7.5');
+        run('sourceBuffer.appendWindowStart = 3.5');
+
+        waitForEventOn(sourceBuffer, 'updateend', updateEnd1, false, true);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+    }
+
+    function updateEnd1() {
+        testExpected('sourceBuffer.buffered.start(0)', 4);
+        testExpected('sourceBuffer.buffered.end(0)'  , 7.5, "<"); // because of microsecond added to buffered we don't use equality here
+        run('sourceBuffer.appendWindowStart = 0');
+
+        waitForEventOn(sourceBuffer, 'updateend', updateEnd2, false, true);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+    }
+
+    function updateEnd2() {
+        testExpected('sourceBuffer.buffered.length', 1);
+        testExpected('sourceBuffer.buffered.start(0)', 0);
+        testExpected('sourceBuffer.buffered.end(0)'  , 7.5, "<");
+
+        run('sourceBuffer.appendWindowEnd   = 14.5');
+        run('sourceBuffer.appendWindowStart = 11');
+
+        waitForEventOn(sourceBuffer, 'updateend', updateEnd3, false, true);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+    }
+
+    function updateEnd3() {
+        testExpected('sourceBuffer.buffered.length', 2);
+        testExpected('sourceBuffer.buffered.start(1)', 12);
+        testExpected('sourceBuffer.buffered.end(1)'  , 14.5, "<");
+        endTest();
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

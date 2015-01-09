@@ -1,3 +1,26 @@
+2015-01-09  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Implement Append Window support.
+        https://bugs.webkit.org/show_bug.cgi?id=139861
+
+        Reviewed by Jer Noble.
+
+        Implement Append Windows support for SourceBuffer as per spec.
+        Also change order in idl to match spec order.
+
+        Test: media/media-source/media-source-append-buffer-with-append-window.html
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::SourceBuffer):
+        (WebCore::SourceBuffer::appendWindowStart):
+        (WebCore::SourceBuffer::setAppendWindowStart):
+        (WebCore::SourceBuffer::appendWindowEnd):
+        (WebCore::SourceBuffer::setAppendWindowEnd):
+        (WebCore::SourceBuffer::abort):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBuffer.idl:
+
 2015-01-09  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash at -[WebAccessibilityObjectWrapperBase accessibilityTitle] + 31

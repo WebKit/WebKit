@@ -123,6 +123,8 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_asyncEventQueue(*this)
     , m_mode(segmentsKeyword())
     , m_appendBufferTimer(*this, &SourceBuffer::appendBufferTimerFired)
+    , m_appendWindowStart(MediaTime::zeroTime())
+    , m_appendWindowEnd(MediaTime::positiveInfiniteTime())
     , m_groupStartTimestamp(MediaTime::invalidTime())
     , m_groupEndTimestamp(MediaTime::zeroTime())
     , m_buffered(TimeRanges::create())
@@ -211,6 +213,64 @@ void SourceBuffer::setTimestampOffset(double offset, ExceptionCode& ec)
     m_timestampOffset = newTimestampOffset;
 }
 
+double SourceBuffer::appendWindowStart() const
+{
+    return m_appendWindowStart.toDouble();
+};
+
+void SourceBuffer::setAppendWindowStart(double newValue, ExceptionCode& ec)
+{
+    // Section 3.1 appendWindowStart attribute setter steps.
+    // http://www.w3.org/TR/media-source/#widl-SourceBuffer-appendWindowStart
+    // 1. If this object has been removed from the sourceBuffers attribute of the parent media source,
+    //    then throw an INVALID_STATE_ERR exception and abort these steps.
+    // 2. If the updating attribute equals true, then throw an INVALID_STATE_ERR exception and abort these steps.
+    if (isRemoved() || m_updating) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    // 3. If the new value is less than 0 or greater than or equal to appendWindowEnd then
+    //    throw an INVALID_ACCESS_ERR exception and abort these steps.
+    if (newValue < 0 || newValue >= m_appendWindowEnd.toDouble()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    // 4. Update the attribute to the new value.
+    m_appendWindowStart = MediaTime::createWithDouble(newValue);
+}
+
+double SourceBuffer::appendWindowEnd() const
+{
+    return m_appendWindowEnd.toDouble();
+};
+
+void SourceBuffer::setAppendWindowEnd(double newValue, ExceptionCode& ec)
+{
+    // Section 3.1 appendWindowEnd attribute setter steps.
+    // http://www.w3.org/TR/media-source/#widl-SourceBuffer-appendWindowEnd
+    // 1. If this object has been removed from the sourceBuffers attribute of the parent media source,
+    //    then throw an INVALID_STATE_ERR exception and abort these steps.
+    // 2. If the updating attribute equals true, then throw an INVALID_STATE_ERR exception and abort these steps.
+    if (isRemoved() || m_updating) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    // 3. If the new value equals NaN, then throw an INVALID_ACCESS_ERR and abort these steps.
+    // 4. If the new value is less than or equal to appendWindowStart then throw an INVALID_ACCESS_ERR exception
+    //    and abort these steps.
+    if (std::isnan(newValue) || newValue <= m_appendWindowStart.toDouble()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    // 5.. Update the attribute to the new value.
+    m_appendWindowEnd = MediaTime::createWithDouble(newValue);
+}
+
+
 void SourceBuffer::appendBuffer(PassRefPtr<ArrayBuffer> data, ExceptionCode& ec)
 {
     // Section 3.2 appendBuffer()
@@ -283,7 +343,11 @@ void SourceBuffer::abort(ExceptionCode& ec)
     // 4. Run the reset parser state algorithm.
     resetParserState();
 
-    // FIXME(229408) Add steps 5-6 update appendWindowStart & appendWindowEnd.
+    // 5. Set appendWindowStart to the presentation start time.
+    m_appendWindowStart = MediaTime::zeroTime();
+
+    // 6. Set appendWindowEnd to positive Infinity.
+    m_appendWindowEnd = MediaTime::positiveInfiniteTime();
 }
 
 void SourceBuffer::remove(double start, double end, ExceptionCode& ec)
@@ -1324,7 +1388,12 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         // 1.9 If frame end timestamp is greater than appendWindowEnd, then set the need random access
         // point flag to true, drop the coded frame, and jump to the top of the loop to start processing
         // the next coded frame.
-        // FIXME: implement append windows
+        if (presentationTimestamp < m_appendWindowStart || frameEndTimestamp > m_appendWindowEnd) {
+            trackBuffer.needRandomAccessFlag = true;
+            didDropSample();
+            return;
+        }
+
 
         // 1.10 If the decode timestamp is less than the presentation start time, then run the end of stream
         // algorithm with the error parameter set to "decode", and abort these steps.
