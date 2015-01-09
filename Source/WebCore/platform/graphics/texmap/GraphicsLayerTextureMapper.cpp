@@ -21,9 +21,9 @@
 #include "GraphicsLayerTextureMapper.h"
 
 #include "GraphicsContext.h"
-#include "GraphicsLayerAnimation.h"
 #include "GraphicsLayerFactory.h"
 #include "ImageBuffer.h"
+#include "TextureMapperAnimation.h"
 #include <wtf/CurrentTime.h>
 
 #if USE(TEXTURE_MAPPER)
@@ -571,7 +571,7 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
         listsMatch = validateTransformOperations(valueList, hasBigRotation) >= 0;
 
     const double currentTime = monotonicallyIncreasingTime();
-    m_animations.add(GraphicsLayerAnimation(keyframesName, valueList, boxSize, anim, currentTime - timeOffset, listsMatch));
+    m_animations.add(TextureMapperAnimation(keyframesName, valueList, boxSize, anim, currentTime - timeOffset, listsMatch));
     // m_animationStartTime is the time of the first real frame of animation, now or delayed by a negative offset.
     if (timeOffset > 0)
         m_animationStartTime = currentTime;
@@ -582,7 +582,7 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
     return true;
 }
 
-void GraphicsLayerTextureMapper::setAnimations(const GraphicsLayerAnimations& animations)
+void GraphicsLayerTextureMapper::setAnimations(const TextureMapperAnimations& animations)
 {
     m_animations = animations;
     notifyChange(AnimationChange);

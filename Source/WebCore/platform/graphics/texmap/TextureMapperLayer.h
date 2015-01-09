@@ -24,9 +24,9 @@
 
 #include "FilterOperations.h"
 #include "FloatRect.h"
-#include "GraphicsLayerAnimation.h"
 #include "GraphicsLayerTransform.h"
 #include "TextureMapper.h"
+#include "TextureMapperAnimation.h"
 #include "TextureMapperBackingStore.h"
 
 namespace WebCore {
@@ -36,7 +36,7 @@ class Region;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 
-class TextureMapperLayer : public GraphicsLayerAnimation::Client {
+class TextureMapperLayer : public TextureMapperAnimation::Client {
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -114,7 +114,7 @@ public:
     bool isShowingRepaintCounter() const { return m_state.showRepaintCounter; }
     void setRepaintCount(int);
     void setContentsLayer(TextureMapperPlatformLayer*);
-    void setAnimations(const GraphicsLayerAnimations&);
+    void setAnimations(const TextureMapperAnimations&);
     void setFixedToViewport(bool);
     bool fixedToViewport() const { return m_fixedToViewport; }
     void setBackingStore(PassRefPtr<TextureMapperBackingStore>);
@@ -165,7 +165,7 @@ private:
     void applyMask(const TextureMapperPaintOptions&);
     void computePatternTransformIfNeeded();
 
-    // GraphicsLayerAnimation::Client
+    // TextureMapperAnimation::Client
     virtual void setAnimatedTransform(const TransformationMatrix&) override;
     virtual void setAnimatedOpacity(float) override;
     virtual void setAnimatedFilters(const FilterOperations&) override;
@@ -249,7 +249,7 @@ private:
 
     State m_state;
     TextureMapper* m_textureMapper;
-    GraphicsLayerAnimations m_animations;
+    TextureMapperAnimations m_animations;
     FloatSize m_scrollPositionDelta;
     bool m_fixedToViewport;
     uint32_t m_id;

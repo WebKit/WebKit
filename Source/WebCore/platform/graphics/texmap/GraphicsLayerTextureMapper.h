@@ -101,7 +101,7 @@ public:
     float debugBorderWidth() const { return m_debugBorderWidth; }
     void setRepaintCount(int);
 
-    void setAnimations(const GraphicsLayerAnimations&);
+    void setAnimations(const TextureMapperAnimations&);
 
 private:
     // GraphicsLayer
@@ -177,7 +177,7 @@ private:
 
     TextureMapperPlatformLayer* m_contentsLayer;
     FloatRect m_needsDisplayRect;
-    GraphicsLayerAnimations m_animations;
+    TextureMapperAnimations m_animations;
     double m_animationStartTime;
 
     IntSize m_committedScrollOffset;

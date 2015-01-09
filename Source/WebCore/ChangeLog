@@ -1,3 +1,33 @@
+2015-01-09  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        Rename GraphicsLayerAnimation to TextureMapperAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=140296
+
+        Reviewed by Martin Robinson.
+
+        GraphicsLayerAnimation is only used by TextureMapper and CoordinatedGraphics.
+        This should be placed in the platform/graphics/texmap.
+        And this patch also changes its name to TextureMapperAnimation to remove ambiguity.
+
+        No new tests because this is a simply refactoring.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        (WebCore::GraphicsLayerTextureMapper::setAnimations):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * platform/graphics/texmap/TextureMapperAnimation.cpp: Renamed from Source/WebCore/platform/graphics/GraphicsLayerAnimation.cpp.
+        * platform/graphics/texmap/TextureMapperAnimation.h: Renamed from Source/WebCore/platform/graphics/GraphicsLayerAnimation.h.
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::setAnimations):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::addAnimation):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h:
+
 2015-01-09  Antti Koivisto  <antti@apple.com>
 
         FontCache should only deal with SimpleFontData

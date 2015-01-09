@@ -36,7 +36,6 @@
 #include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatPoint3D.h>
-#include <WebCore/GraphicsLayerAnimation.h>
 #include <WebCore/IdentityTransformOperation.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/Length.h>
@@ -47,6 +46,7 @@
 #include <WebCore/ScaleTransformOperation.h>
 #include <WebCore/SkewTransformOperation.h>
 #include <WebCore/SurfaceUpdateInfo.h>
+#include <WebCore/TextureMapperAnimation.h>
 #include <WebCore/TimingFunction.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/TranslateTransformOperation.h>
@@ -418,7 +418,7 @@ bool decodeTimingFunction(ArgumentDecoder& decoder, RefPtr<TimingFunction>& timi
     return false;
 }
 
-void ArgumentCoder<GraphicsLayerAnimation>::encode(ArgumentEncoder& encoder, const GraphicsLayerAnimation& animation)
+void ArgumentCoder<TextureMapperAnimation>::encode(ArgumentEncoder& encoder, const TextureMapperAnimation& animation)
 {
     encoder << animation.name();
     encoder << animation.boxSize();
@@ -457,11 +457,11 @@ void ArgumentCoder<GraphicsLayerAnimation>::encode(ArgumentEncoder& encoder, con
     }
 }
 
-bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder& decoder, GraphicsLayerAnimation& animation)
+bool ArgumentCoder<TextureMapperAnimation>::decode(ArgumentDecoder& decoder, TextureMapperAnimation& animation)
 {
     String name;
     IntSize boxSize;
-    GraphicsLayerAnimation::AnimationState state;
+    TextureMapperAnimation::AnimationState state;
     double startTime;
     double pauseTime;
     bool listsMatch;
@@ -546,18 +546,18 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder& decoder, Gra
         }
     }
 
-    animation = GraphicsLayerAnimation(name, keyframes, boxSize, animationObject.get(), startTime, listsMatch);
+    animation = TextureMapperAnimation(name, keyframes, boxSize, animationObject.get(), startTime, listsMatch);
     animation.setState(state, pauseTime);
 
     return true;
 }
 
-void ArgumentCoder<GraphicsLayerAnimations>::encode(ArgumentEncoder& encoder, const GraphicsLayerAnimations& animations)
+void ArgumentCoder<TextureMapperAnimations>::encode(ArgumentEncoder& encoder, const TextureMapperAnimations& animations)
 {
     encoder << animations.animations();
 }
 
-bool ArgumentCoder<GraphicsLayerAnimations>::decode(ArgumentDecoder& decoder, GraphicsLayerAnimations& animations)
+bool ArgumentCoder<TextureMapperAnimations>::decode(ArgumentDecoder& decoder, TextureMapperAnimations& animations)
 {
     return decoder.decode(animations.animations());
 }

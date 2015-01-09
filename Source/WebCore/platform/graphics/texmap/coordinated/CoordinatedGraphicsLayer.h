@@ -26,10 +26,10 @@
 #include "CoordinatedTile.h"
 #include "FloatPoint3D.h"
 #include "GraphicsLayer.h"
-#include "GraphicsLayerAnimation.h"
 #include "GraphicsLayerTransform.h"
 #include "Image.h"
 #include "IntSize.h"
+#include "TextureMapperAnimation.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
 #include "TransformationMatrix.h"
@@ -42,7 +42,7 @@
 
 namespace WebCore {
 class CoordinatedGraphicsLayer;
-class GraphicsLayerAnimations;
+class TextureMapperAnimations;
 class ScrollableArea;
 
 class CoordinatedGraphicsLayerClient {
@@ -244,7 +244,7 @@ private:
     GraphicsSurfaceToken m_platformLayerToken;
 #endif
     Timer m_animationStartedTimer;
-    GraphicsLayerAnimations m_animations;
+    TextureMapperAnimations m_animations;
     double m_lastAnimationStartTime;
 
     ScrollableArea* m_scrollableArea;

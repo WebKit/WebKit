@@ -7481,7 +7481,6 @@
     <ClCompile Include="..\platform\graphics\gpu\TilingData.cpp" />
     <ClCompile Include="..\platform\graphics\FormatConverter.cpp" />
     <ClCompile Include="..\platform\graphics\GraphicsContext3D.cpp" />
-    <ClCompile Include="..\platform\graphics\GraphicsLayerAnimation.cpp" />
     <ClCompile Include="..\platform\graphics\GraphicsLayerTransform.cpp" />
     <ClCompile Include="..\platform\graphics\gstreamer\AudioTrackPrivateGStreamer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -7632,6 +7631,7 @@
     <ClCompile Include="..\platform\graphics\texmap\coordinated\UpdateAtlas.cpp" />
     <ClCompile Include="..\platform\graphics\texmap\GraphicsLayerTextureMapper.cpp" />
     <ClCompile Include="..\platform\graphics\texmap\TextureMapper.cpp" />
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapperAnimation.cpp" />
     <ClCompile Include="..\platform\graphics\texmap\TextureMapperBackingStore.cpp" />
     <ClCompile Include="..\platform\graphics\texmap\TextureMapperFPSCounter.cpp" />
     <ClCompile Include="..\platform\graphics\texmap\TextureMapperGL.cpp" />
@@ -19418,7 +19418,6 @@
     <ClInclude Include="..\platform\graphics\gpu\TilingData.h" />
     <ClInclude Include="..\platform\graphics\FormatConverter.h" />
     <ClInclude Include="..\platform\graphics\GraphicsContext3D.h" />
-    <ClInclude Include="..\platform\graphics\GraphicsLayerAnimation.h" />
     <ClInclude Include="..\platform\graphics\GraphicsLayerFactory.h" />
     <ClInclude Include="..\platform\graphics\GraphicsLayerTransform.h" />
     <ClInclude Include="..\platform\graphics\gstreamer\AudioTrackPrivateGStreamer.h" />
@@ -19455,6 +19454,7 @@
     <ClInclude Include="..\platform\graphics\texmap\coordinated\UpdateAtlas.h" />
     <ClInclude Include="..\platform\graphics\texmap\GraphicsLayerTextureMapper.h" />
     <ClInclude Include="..\platform\graphics\texmap\TextureMapper.h" />
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperAnimation.h" />
     <ClInclude Include="..\platform\graphics\texmap\TextureMapperBackingStore.h" />
     <ClInclude Include="..\platform\graphics\texmap\TextureMapperFPSCounter.h" />
     <ClInclude Include="..\platform\graphics\texmap\TextureMapperGL.h" />

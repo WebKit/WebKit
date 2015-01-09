@@ -6811,6 +6811,9 @@
     <ClCompile Include="..\platform\graphics\texmap\TextureMapper.cpp">
       <Filter>platform\graphics\texmap</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\graphics\texmap\TextureMapperAnimation.cpp">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\texmap\TextureMapperBackingStore.cpp">
       <Filter>platform\graphics\texmap</Filter>
     </ClCompile>
@@ -6867,9 +6870,6 @@
     </ClCompile>
     <ClCompile Include="..\page\scrolling\coordinatedgraphics\ScrollingStateScrollingNodeCoordinatedGraphics.cpp">
       <Filter>page\scrolling\coordinatedgraphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\GraphicsLayerAnimation.cpp">
-      <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\GraphicsLayerTransform.cpp">
       <Filter>platform\graphics</Filter>
@@ -14747,6 +14747,9 @@
     <ClInclude Include="..\platform\graphics\texmap\TextureMapper.h">
       <Filter>platform\graphics\texmap</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\graphics\texmap\TextureMapperAnimation.h">
+      <Filter>platform\graphics\texmap</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\graphics\texmap\TextureMapperBackingStore.h">
       <Filter>platform\graphics\texmap</Filter>
     </ClInclude>
@@ -14806,9 +14809,6 @@
     </ClInclude>
     <ClInclude Include="..\page\scrolling\coordinatedgraphics\ScrollingCoordinatorCoordinatedGraphics.h">
       <Filter>page\scrolling\coordinatedgraphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\GraphicsLayerAnimation.h">
-      <Filter>platform\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\GraphicsLayerFactory.h">
       <Filter>platform\graphics</Filter>

@@ -18,8 +18,7 @@
  */
 
 #include "config.h"
-
-#include "GraphicsLayerAnimation.h"
+#include "TextureMapperAnimation.h"
 
 #include "LayoutSize.h"
 #include "UnitBezier.h"
@@ -210,7 +209,7 @@ static const TimingFunction* timingFunctionForAnimationValue(const AnimationValu
     return CubicBezierTimingFunction::defaultTimingFunction();
 }
 
-GraphicsLayerAnimation::GraphicsLayerAnimation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const Animation* animation, double startTime, bool listsMatch)
+TextureMapperAnimation::TextureMapperAnimation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const Animation* animation, double startTime, bool listsMatch)
     : m_keyframes(keyframes)
     , m_boxSize(boxSize)
     , m_animation(Animation::create(*animation))
@@ -224,7 +223,7 @@ GraphicsLayerAnimation::GraphicsLayerAnimation(const String& name, const Keyfram
 {
 }
 
-void GraphicsLayerAnimation::applyInternal(Client* client, const AnimationValue& from, const AnimationValue& to, float progress)
+void TextureMapperAnimation::applyInternal(Client* client, const AnimationValue& from, const AnimationValue& to, float progress)
 {
     switch (m_keyframes.property()) {
     case AnimatedPropertyOpacity:
@@ -241,7 +240,7 @@ void GraphicsLayerAnimation::applyInternal(Client* client, const AnimationValue&
     }
 }
 
-bool GraphicsLayerAnimation::isActive() const
+bool TextureMapperAnimation::isActive() const
 {
     if (state() != StoppedState)
         return true;
@@ -249,7 +248,7 @@ bool GraphicsLayerAnimation::isActive() const
     return m_animation->fillsForwards();
 }
 
-bool GraphicsLayerAnimations::hasActiveAnimationsOfType(AnimatedPropertyID type) const
+bool TextureMapperAnimations::hasActiveAnimationsOfType(AnimatedPropertyID type) const
 {
     for (size_t i = 0; i < m_animations.size(); ++i) {
         if (m_animations[i].isActive() && m_animations[i].property() == type)
@@ -258,17 +257,17 @@ bool GraphicsLayerAnimations::hasActiveAnimationsOfType(AnimatedPropertyID type)
     return false;
 }
 
-bool GraphicsLayerAnimations::hasRunningAnimations() const
+bool TextureMapperAnimations::hasRunningAnimations() const
 {
     for (size_t i = 0; i < m_animations.size(); ++i) {
-        if (m_animations[i].state() == GraphicsLayerAnimation::PlayingState)
+        if (m_animations[i].state() == TextureMapperAnimation::PlayingState)
             return true;
     }
 
     return false;
 }
 
-void GraphicsLayerAnimation::apply(Client* client)
+void TextureMapperAnimation::apply(Client* client)
 {
     if (!isActive())
         return;
@@ -312,7 +311,7 @@ void GraphicsLayerAnimation::apply(Client* client)
     }
 }
 
-double GraphicsLayerAnimation::computeTotalRunningTime()
+double TextureMapperAnimation::computeTotalRunningTime()
 {
     if (state() == PausedState)
         return m_pauseTime;
@@ -323,20 +322,20 @@ double GraphicsLayerAnimation::computeTotalRunningTime()
     return m_totalRunningTime;
 }
 
-void GraphicsLayerAnimation::pause(double time)
+void TextureMapperAnimation::pause(double time)
 {
     setState(PausedState);
     m_pauseTime = time;
 }
 
-void GraphicsLayerAnimation::resume()
+void TextureMapperAnimation::resume()
 {
     setState(PlayingState);
     m_totalRunningTime = m_pauseTime;
     m_lastRefreshedTime = monotonicallyIncreasingTime();
 }
 
-void GraphicsLayerAnimations::add(const GraphicsLayerAnimation& animation)
+void TextureMapperAnimations::add(const TextureMapperAnimation& animation)
 {
     // Remove the old state if we are resuming a paused animation.
     remove(animation.name(), animation.property());
@@ -344,7 +343,7 @@ void GraphicsLayerAnimations::add(const GraphicsLayerAnimation& animation)
     m_animations.append(animation);
 }
 
-void GraphicsLayerAnimations::pause(const String& name, double offset)
+void TextureMapperAnimations::pause(const String& name, double offset)
 {
     for (size_t i = 0; i < m_animations.size(); ++i) {
         if (m_animations[i].name() == name)
@@ -352,19 +351,19 @@ void GraphicsLayerAnimations::pause(const String& name, double offset)
     }
 }
 
-void GraphicsLayerAnimations::suspend(double offset)
+void TextureMapperAnimations::suspend(double offset)
 {
     for (size_t i = 0; i < m_animations.size(); ++i)
         m_animations[i].pause(offset);
 }
 
-void GraphicsLayerAnimations::resume()
+void TextureMapperAnimations::resume()
 {
     for (size_t i = 0; i < m_animations.size(); ++i)
         m_animations[i].resume();
 }
 
-void GraphicsLayerAnimations::remove(const String& name)
+void TextureMapperAnimations::remove(const String& name)
 {
     for (int i = m_animations.size() - 1; i >= 0; --i) {
         if (m_animations[i].name() == name)
@@ -372,7 +371,7 @@ void GraphicsLayerAnimations::remove(const String& name)
     }
 }
 
-void GraphicsLayerAnimations::remove(const String& name, AnimatedPropertyID property)
+void TextureMapperAnimations::remove(const String& name, AnimatedPropertyID property)
 {
     for (int i = m_animations.size() - 1; i >= 0; --i) {
         if (m_animations[i].name() == name && m_animations[i].property() == property)
@@ -380,15 +379,15 @@ void GraphicsLayerAnimations::remove(const String& name, AnimatedPropertyID prop
     }
 }
 
-void GraphicsLayerAnimations::apply(GraphicsLayerAnimation::Client* client)
+void TextureMapperAnimations::apply(TextureMapperAnimation::Client* client)
 {
     for (size_t i = 0; i < m_animations.size(); ++i)
         m_animations[i].apply(client);
 }
 
-GraphicsLayerAnimations GraphicsLayerAnimations::getActiveAnimations() const
+TextureMapperAnimations TextureMapperAnimations::getActiveAnimations() const
 {
-    GraphicsLayerAnimations active;
+    TextureMapperAnimations active;
     for (size_t i = 0; i < m_animations.size(); ++i) {
         if (m_animations[i].isActive())
             active.add(m_animations[i]);

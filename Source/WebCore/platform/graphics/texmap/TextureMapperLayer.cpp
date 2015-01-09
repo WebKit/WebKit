@@ -622,7 +622,7 @@ void TextureMapperLayer::setContentsLayer(TextureMapperPlatformLayer* platformLa
     m_contentsLayer = platformLayer;
 }
 
-void TextureMapperLayer::setAnimations(const GraphicsLayerAnimations& animations)
+void TextureMapperLayer::setAnimations(const TextureMapperAnimations& animations)
 {
     m_animations = animations;
 }

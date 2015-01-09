@@ -26,7 +26,6 @@
 #include <WebCore/CoordinatedSurface.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
-#include <WebCore/GraphicsLayerAnimation.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/TextureMapper.h>

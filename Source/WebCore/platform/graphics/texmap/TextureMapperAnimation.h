@@ -17,8 +17,8 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef GraphicsLayerAnimation_h
-#define GraphicsLayerAnimation_h
+#ifndef TextureMapperAnimation_h
+#define TextureMapperAnimation_h
 
 #include "GraphicsLayer.h"
 #include "TransformationMatrix.h"
@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class GraphicsLayerAnimation {
+class TextureMapperAnimation {
 public:
     enum AnimationState { PlayingState, PausedState, StoppedState };
     class Client {
@@ -37,10 +37,10 @@ public:
         virtual void setAnimatedFilters(const FilterOperations&) = 0;
     };
 
-    GraphicsLayerAnimation()
+    TextureMapperAnimation()
         : m_keyframes(AnimatedPropertyInvalid)
     { }
-    GraphicsLayerAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation*, double, bool);
+    TextureMapperAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation*, double, bool);
     void apply(Client*);
     void pause(double);
     void resume();
@@ -75,31 +75,31 @@ private:
     AnimationState m_state;
 };
 
-class GraphicsLayerAnimations {
+class TextureMapperAnimations {
 public:
-    GraphicsLayerAnimations() { }
+    TextureMapperAnimations() { }
 
-    void add(const GraphicsLayerAnimation&);
+    void add(const TextureMapperAnimation&);
     void remove(const String& name);
     void remove(const String& name, AnimatedPropertyID);
     void pause(const String&, double);
     void suspend(double);
     void resume();
-    void apply(GraphicsLayerAnimation::Client*);
+    void apply(TextureMapperAnimation::Client*);
     bool isEmpty() const { return m_animations.isEmpty(); }
     size_t size() const { return m_animations.size(); }
-    const Vector<GraphicsLayerAnimation>& animations() const { return m_animations; }
-    Vector<GraphicsLayerAnimation>& animations() { return m_animations; }
+    const Vector<TextureMapperAnimation>& animations() const { return m_animations; }
+    Vector<TextureMapperAnimation>& animations() { return m_animations; }
 
     bool hasRunningAnimations() const;
     bool hasActiveAnimationsOfType(AnimatedPropertyID type) const;
 
-    GraphicsLayerAnimations getActiveAnimations() const;
+    TextureMapperAnimations getActiveAnimations() const;
 
 private:
-    Vector<GraphicsLayerAnimation> m_animations;
+    Vector<TextureMapperAnimation> m_animations;
 };
 
 }
 
-#endif // GraphicsLayerAnimation_h
+#endif // TextureMapperAnimation_h

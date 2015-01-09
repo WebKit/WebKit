@@ -1,3 +1,25 @@
+2015-01-09  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        Rename GraphicsLayerAnimation to TextureMapperAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=140296
+
+        Reviewed by Martin Robinson.
+
+        GraphicsLayerAnimation is changed to TextureMapperAnimation
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextureMapperAnimation>::encode):
+        (IPC::ArgumentCoder<TextureMapperAnimation>::decode):
+        (IPC::ArgumentCoder<TextureMapperAnimations>::encode):
+        (IPC::ArgumentCoder<TextureMapperAnimations>::decode):
+        (IPC::ArgumentCoder<GraphicsLayerAnimation>::encode): Deleted.
+        (IPC::ArgumentCoder<GraphicsLayerAnimation>::decode): Deleted.
+        (IPC::ArgumentCoder<GraphicsLayerAnimations>::encode): Deleted.
+        (IPC::ArgumentCoder<GraphicsLayerAnimations>::decode): Deleted.
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+
 2015-01-08  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Cannot paste an image URL in a plain text field in a page.

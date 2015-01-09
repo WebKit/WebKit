@@ -352,7 +352,7 @@ def headers_for_type(type):
         'String': ['<wtf/text/WTFString.h>'],
         'WebCore::CompositionUnderline': ['<WebCore/Editor.h>'],
         'WebCore::GrammarDetail': ['<WebCore/TextCheckerClient.h>'],
-        'WebCore::GraphicsLayerAnimations': ['<WebCore/GraphicsLayerAnimation.h>'],
+        'WebCore::TextureMapperAnimations': ['<WebCore/TextureMapperAnimation.h>'],
         'WebCore::KeyframeValueList': ['<WebCore/GraphicsLayer.h>'],
         'WebCore::KeypressCommand': ['<WebCore/KeyboardEvent.h>'],
         'WebCore::FileChooserSettings': ['<WebCore/FileChooser.h>'],

@@ -2079,7 +2079,6 @@ set(WebCore_SOURCES
     platform/graphics/GradientImage.cpp
     platform/graphics/GraphicsContext.cpp
     platform/graphics/GraphicsLayer.cpp
-    platform/graphics/GraphicsLayerAnimation.cpp
     platform/graphics/GraphicsLayerTransform.cpp
     platform/graphics/GraphicsLayerUpdater.cpp
     platform/graphics/GraphicsTypes.cpp
@@ -2141,6 +2140,7 @@ set(WebCore_SOURCES
     platform/graphics/opentype/OpenTypeMathData.cpp
 
     platform/graphics/texmap/TextureMapper.cpp
+    platform/graphics/texmap/TextureMapperAnimation.cpp
     platform/graphics/texmap/TextureMapperBackingStore.cpp
     platform/graphics/texmap/TextureMapperFPSCounter.cpp
     platform/graphics/texmap/TextureMapperImageBuffer.cpp
