@@ -93,6 +93,10 @@ messages -> WebProcess LegacyReceiver {
     SetEnabledServices(bool hasImageServices, bool hasSelectionServices, bool hasRichContentServices)
 #endif
 
+#if ENABLE(CONTENT_EXTENSIONS)
+    LoadContentExtension(String identifier, String serializedRules)
+#endif
+
     ProcessWillSuspend()
     CancelProcessWillSuspend()
 }

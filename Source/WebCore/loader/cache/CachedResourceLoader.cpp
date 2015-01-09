@@ -63,6 +63,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "ContentExtensionsInterface.h"
+#endif
+
 #if ENABLE(VIDEO_TRACK)
 #include "CachedTextTrack.h"
 #endif
@@ -452,6 +456,11 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
 
     if (!canRequest(type, url, request.options(), request.forPreload()))
         return 0;
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (ContentExtensions::shouldBlockURL(url))
+        return nullptr;
+#endif
 
     if (memoryCache().disabled()) {
         DocumentResourceMap::iterator it = m_documentResources.find(url.string());

@@ -1,0 +1,133 @@
+/*
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "DFA.h"
+
+#if ENABLE(CONTENT_EXTENSIONS)
+
+#include <wtf/DataLog.h>
+
+namespace WebCore {
+
+namespace ContentExtensions {
+
+DFA::DFA()
+    : m_root(0)
+{
+}
+
+DFA::DFA(Vector<DFANode>&& nodes, unsigned rootIndex)
+    : m_nodes(WTF::move(nodes))
+    , m_root(rootIndex)
+{
+    ASSERT(rootIndex < nodes.size());
+}
+
+DFA::DFA(const DFA& dfa)
+    : m_nodes(dfa.m_nodes)
+    , m_root(dfa.m_root)
+{
+}
+
+DFA& DFA::operator=(const DFA& dfa)
+{
+    m_nodes = dfa.m_nodes;
+    m_root = dfa.m_root;
+    return *this;
+}
+
+unsigned DFA::nextState(unsigned currentState, char character, bool& ok) const
+{
+    ASSERT(currentState < m_nodes.size());
+
+    const DFANode& node = m_nodes[currentState];
+    auto nextNode = node.transitions.find(character);
+    if (nextNode == node.transitions.end()) {
+        ok = false;
+        return 0;
+    }
+    ok = true;
+    return nextNode->value;
+}
+
+Vector<uint64_t> DFA::actions(unsigned currentState) const
+{
+    ASSERT(currentState < m_nodes.size());
+    return m_nodes[currentState].actions;
+}
+
+#ifndef NDEBUG
+void DFA::debugPrintDot() const
+{
+    dataLogF("digraph DFA_Transitions {\n");
+    dataLogF("    rankdir=LR;\n");
+    dataLogF("    node [shape=circle];\n");
+    dataLogF("    {\n");
+    for (unsigned i = 0; i < m_nodes.size(); ++i) {
+        dataLogF("         %d [label=<Node %d", i, i);
+        const Vector<uint64_t>& actions = m_nodes[i].actions;
+        if (!actions.isEmpty()) {
+            dataLogF("<BR/>Actions: ");
+            for (unsigned actionIndex = 0; actionIndex < actions.size(); ++actionIndex) {
+                if (actionIndex)
+                    dataLogF(", ");
+                dataLogF("%llu", actions[actionIndex]);
+            }
+        }
+
+        Vector<unsigned> correspondingDFANodes = m_nodes[i].correspondingDFANodes;
+        ASSERT(!correspondingDFANodes.isEmpty());
+        dataLogF("<BR/>NFA Nodes: ");
+        for (unsigned correspondingDFANodeIndex = 0; correspondingDFANodeIndex < correspondingDFANodes.size(); ++correspondingDFANodeIndex) {
+            if (correspondingDFANodeIndex)
+                dataLogF(", ");
+            dataLogF("%d", correspondingDFANodes[correspondingDFANodeIndex]);
+        }
+
+        dataLogF(">]");
+
+        if (!actions.isEmpty())
+            dataLogF(" [shape=doublecircle]");
+
+        dataLogF(";\n");
+    }
+    dataLogF("    }\n");
+
+    dataLogF("    {\n");
+    for (unsigned i = 0; i < m_nodes.size(); ++i) {
+        for (const auto& slot : m_nodes[i].transitions)
+            dataLogF("        %d -> %d [label=\"%c\"];\n", i, slot.value, slot.key);
+    }
+    dataLogF("    }\n");
+    dataLogF("}\n");
+}
+#endif
+
+} // namespace ContentExtensions
+
+} // namespace WebCore
+
+#endif // ENABLE(CONTENT_EXTENSIONS)

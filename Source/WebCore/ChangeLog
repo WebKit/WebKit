@@ -1,3 +1,82 @@
+2015-01-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        [WK2] Start a prototype for declarative site specific extensions
+        https://bugs.webkit.org/show_bug.cgi?id=140160
+
+        Reviewed by Andreas Kling.
+
+        Currently, clients have various ways to execute custom code for certain URLs.
+        Each of those mechanism implies messaging the UIProcess, executing some code
+        calling back to the WebProcess, then actually load the resource.
+        All this back and forth introduces delays before we actually load resources.
+
+        Since the set of actions is done per site is actually simple and limited,
+        it may be possible to do everything in WebCore and shortcut the defered loading.
+
+        This patch provides the starting point for this idea. The "rules" (currently just blocking)
+        are be passed to WebCore in a JSON format. In WebCore, we create a state
+        machine to match the rules and we execute the action when the state machine tells
+        us to.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * contentextensions/ContentExtensionRule.cpp: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        (WebCore::ContentExtensions::ContentExtensionRule::ContentExtensionRule):
+        * contentextensions/ContentExtensionRule.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        (WebCore::ContentExtensions::ContentExtensionRule::trigger):
+        (WebCore::ContentExtensions::ContentExtensionRule::action):
+        * contentextensions/ContentExtensionsBackend.cpp: Added.
+        (WebCore::ContentExtensions::ContentExtensionsBackend::sharedInstance):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::setRuleList):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::removeRuleList):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::shouldBlockURL):
+        * contentextensions/ContentExtensionsBackend.h: Added.
+        * contentextensions/ContentExtensionsInterface.cpp: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        (WebCore::ContentExtensions::shouldBlockURL):
+        * contentextensions/ContentExtensionsInterface.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        * contentextensions/ContentExtensionsManager.cpp: Added.
+        (WebCore::ContentExtensions::ExtensionsManager::loadTrigger):
+        (WebCore::ContentExtensions::ExtensionsManager::loadAction):
+        (WebCore::ContentExtensions::ExtensionsManager::loadRule):
+        (WebCore::ContentExtensions::ExtensionsManager::loadExtension):
+        * contentextensions/ContentExtensionsManager.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        * contentextensions/DFA.cpp: Added.
+        (WebCore::ContentExtensions::DFA::DFA):
+        (WebCore::ContentExtensions::DFA::operator=):
+        (WebCore::ContentExtensions::DFA::nextState):
+        (WebCore::ContentExtensions::DFA::actions):
+        (WebCore::ContentExtensions::DFA::debugPrintDot):
+        * contentextensions/DFA.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        (WebCore::ContentExtensions::DFA::root):
+        * contentextensions/DFANode.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        * contentextensions/NFA.cpp: Added.
+        (WebCore::ContentExtensions::NFA::NFA):
+        (WebCore::ContentExtensions::NFA::createNode):
+        (WebCore::ContentExtensions::NFA::addTransition):
+        (WebCore::ContentExtensions::NFA::addEpsilonTransition):
+        (WebCore::ContentExtensions::NFA::setFinal):
+        (WebCore::ContentExtensions::NFA::debugPrintDot):
+        * contentextensions/NFA.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        (WebCore::ContentExtensions::NFA::root):
+        * contentextensions/NFANode.cpp: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        (WebCore::ContentExtensions::NFANode::NFANode):
+        * contentextensions/NFANode.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        * contentextensions/NFAToDFA.cpp: Added.
+        (WebCore::ContentExtensions::epsilonClosure):
+        (WebCore::ContentExtensions::setTransitionsExcludingEpsilon):
+        (WebCore::ContentExtensions::HashableNodeIdSet::HashableNodeIdSet):
+        (WebCore::ContentExtensions::HashableNodeIdSet::operator=):
+        (WebCore::ContentExtensions::HashableNodeIdSet::isEmptyValue):
+        (WebCore::ContentExtensions::HashableNodeIdSet::isDeletedValue):
+        (WebCore::ContentExtensions::HashableNodeIdSet::nodeIdSet):
+        (WebCore::ContentExtensions::HashableNodeIdSetHash::hash):
+        (WebCore::ContentExtensions::HashableNodeIdSetHash::equal):
+        (WebCore::ContentExtensions::addDFAState):
+        (WebCore::ContentExtensions::NFAToDFA::convert):
+        * contentextensions/NFAToDFA.h: Copied from Source/WebKit2/UIProcess/API/Cocoa/WKProcessPoolPrivate.h.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+
 2015-01-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Make better use of the stack when compiling selectors

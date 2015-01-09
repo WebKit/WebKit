@@ -58,6 +58,10 @@
 #define ENABLE_ASYNC_SCROLLING 1
 #endif
 
+#if !defined(ENABLE_CONTENT_EXTENSIONS)
+#define ENABLE_CONTENT_EXTENSIONS 1
+#endif
+
 #if !defined(ENABLE_CONTEXT_MENUS)
 #define ENABLE_CONTEXT_MENUS 0
 #endif
@@ -166,6 +170,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 /* --------- Apple MAC port (not IOS) --------- */
 #if PLATFORM(MAC)
+
+#if !defined(ENABLE_CONTENT_EXTENSIONS)
+#define ENABLE_CONTENT_EXTENSIONS 1
+#endif
 
 #if !defined(ENABLE_CSS_IMAGE_SET)
 #define ENABLE_CSS_IMAGE_SET 1
@@ -327,6 +335,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_CHANNEL_MESSAGING)
 #define ENABLE_CHANNEL_MESSAGING 1
+#endif
+
+#if !defined(ENABLE_CONTENT_EXTENSIONS)
+#define ENABLE_CONTENT_EXTENSIONS 0
 #endif
 
 #if !defined(ENABLE_CONTEXT_MENUS)

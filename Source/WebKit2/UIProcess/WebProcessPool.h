@@ -357,6 +357,10 @@ public:
         return m_processSuppressionDisabledForPageCounter.token<ProcessSuppressionDisabledTokenType>();
     }
 
+#if ENABLE(CONTENT_EXTENSIONS)
+    void loadContentExtension(const String& identifier, const String& serializedRules);
+#endif
+
 private:
     void platformInitialize();
 
@@ -539,6 +543,10 @@ private:
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_bundleParameters;
     ProcessSuppressionDisabledToken m_pluginProcessManagerProcessSuppressionDisabledToken;
+#endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    HashMap<String, String> m_encodedContentExtensions;
 #endif
 };
 

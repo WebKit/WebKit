@@ -43,6 +43,9 @@
 - (id)_objectForBundleParameter:(NSString *)parameter;
 - (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter;
 
+// FIXME: move the API to a better place.
+- (void)_loadContentExtensionWithIdentifier:(NSString *)identifier serializedRules:(NSString *)serializedRules successCompletionHandler:(void (^)(NSDictionary *info))successCompletionHandler errorCompletionHandler:(void (^)(NSError *error))errorCompletionHandler;
+
 @property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
 
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL;
