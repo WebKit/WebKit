@@ -465,7 +465,7 @@ void updateTextRendererAfterContentChange(Text& textNode, unsigned offsetOfRepla
     resolveTextNode(textNode, renderTreePosition);
 
     if (hadRenderer && textNode.renderer())
-        textNode.renderer()->setTextWithOffset(textNode.dataImpl(), offsetOfReplacedData, lengthOfReplacedData);
+        textNode.renderer()->setTextWithOffset(textNode.data(), offsetOfReplacedData, lengthOfReplacedData);
 }
 
 static void attachChildren(ContainerNode& current, RenderStyle& inheritedStyle, RenderTreePosition& renderTreePosition)

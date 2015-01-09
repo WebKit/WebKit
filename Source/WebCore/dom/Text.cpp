@@ -80,7 +80,7 @@ RefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
         document().textNodeSplit(this);
 
     if (renderer())
-        renderer()->setTextWithOffset(dataImpl(), 0, oldStr.length());
+        renderer()->setTextWithOffset(data(), 0, oldStr.length());
 
     return WTF::move(newText);
 }
@@ -185,12 +185,12 @@ static bool isSVGText(Text* text)
 RenderPtr<RenderText> Text::createTextRenderer(const RenderStyle& style)
 {
     if (isSVGText(this) || isSVGShadowText(this))
-        return createRenderer<RenderSVGInlineText>(*this, dataImpl());
+        return createRenderer<RenderSVGInlineText>(*this, data());
 
     if (style.hasTextCombine())
-        return createRenderer<RenderCombineText>(*this, dataImpl());
+        return createRenderer<RenderCombineText>(*this, data());
 
-    return createRenderer<RenderText>(*this, dataImpl());
+    return createRenderer<RenderText>(*this, data());
 }
 
 bool Text::childTypeAllowed(NodeType) const

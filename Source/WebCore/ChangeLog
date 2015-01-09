@@ -1,3 +1,27 @@
+2015-01-08  Darin Adler  <darin@apple.com>
+
+        Remove strange CharacterData::dataImpl function
+        https://bugs.webkit.org/show_bug.cgi?id=140115
+
+        Reviewed by Anders Carlsson.
+
+        Every call site could just use the data function instead.
+
+        * dom/CharacterData.h:
+        (WebCore::CharacterData::dataImpl): Deleted.
+
+        * dom/Text.cpp:
+        (WebCore::Text::splitText): Use data instead of dataImpl.
+        (WebCore::Text::createTextRenderer): Ditto.
+
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::RenderCombineText): Updated to take
+        const String&. We missed this class when RenderText changed.
+        * rendering/RenderCombineText.h: Ditto.
+
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::updateTextRendererAfterContentChange): Use data.
+
 2015-01-08  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: !valueWithCalculation.calculation() in WebCore::CSSParser::validateCalculationUnit

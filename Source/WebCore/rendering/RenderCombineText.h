@@ -30,7 +30,7 @@ namespace WebCore {
 
 class RenderCombineText final : public RenderText {
 public:
-    RenderCombineText(Text&, PassRefPtr<StringImpl>);
+    RenderCombineText(Text&, const String&);
 
     Text& textNode() const { return downcast<Text>(nodeForNonAnonymous()); }
 

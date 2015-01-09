@@ -43,8 +43,6 @@ public:
 
     bool containsOnlyWhitespace() const;
 
-    StringImpl* dataImpl() { return m_data.impl(); }
-
     // Like appendData, but optimized for the parser (e.g., no mutation events).
     // Returns how much could be added before length limit was met.
     unsigned parserAppendData(const String& string, unsigned offset, unsigned lengthLimit);
