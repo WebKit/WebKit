@@ -1,3 +1,22 @@
+2015-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        api/report-commit should authenticate with a slave name and password
+        https://bugs.webkit.org/show_bug.cgi?id=140308
+
+        Reviewed by Benjamin Poulain.
+
+        Use a slave name and a password to authenticate new commit reports.
+
+        * public/api/report-commits.php:
+        (main):
+        * public/include/json-header.php:
+        (verify_slave): Renamed and repurposed from verify_builder in report-commits.php. Now authenticates with
+        a slave name and a password instead of a builder name and a password.
+        * tests/api-report-commits.js: Updated tests.
+        * tools/pull-svn.py:
+        (main): Renamed variables.
+        (submit_commits): Submits slaveName and slavePassword instead of builderName and builderPassword.
+
 2014-12-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should support authentication via a slave password

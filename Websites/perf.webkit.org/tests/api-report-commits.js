@@ -1,11 +1,11 @@
 describe("/api/report-commits/", function () {
     var emptyReport = {
-        "builderName": "someBuilder",
-        "builderPassword": "somePassword",
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
     };
     var subversionCommit = {
-        "builderName": "someBuilder",
-        "builderPassword": "somePassword",
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
         "commits": [
             {
                 "repository": "WebKit",
@@ -17,8 +17,8 @@ describe("/api/report-commits/", function () {
         ],
     };
     var subversionInvalidCommit = {
-        "builderName": "someBuilder",
-        "builderPassword": "somePassword",
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
         "commits": [
             {
                 "repository": "WebKit",
@@ -30,8 +30,8 @@ describe("/api/report-commits/", function () {
         ],
     };
     var subversionTwoCommits = {
-        "builderName": "someBuilder",
-        "builderPassword": "somePassword",
+        "slaveName": "someSlave",
+        "slavePassword": "somePassword",
         "commits": [
             {
                 "repository": "WebKit",
@@ -51,20 +51,20 @@ describe("/api/report-commits/", function () {
         ]
     }
 
-    function addBuilder(report, callback) {
-        queryAndFetchAll('INSERT INTO builders (builder_name, builder_password_hash) values ($1, $2)',
-            [report.builderName, sha256(report.builderPassword)], callback);
+    function addSlave(report, callback) {
+        queryAndFetchAll('INSERT INTO build_slaves (slave_name, slave_password_hash) values ($1, $2)',
+            [report.slaveName, sha256(report.slavePassword)], callback);
     }
 
-    it("should reject error when builder name is missing", function () {
+    it("should reject error when slave name is missing", function () {
         postJSON('/api/report-commits/', {}, function (response) {
             assert.equal(response.statusCode, 200);
-            assert.equal(JSON.parse(response.responseText)['status'], 'MissingBuilderName');
+            assert.equal(JSON.parse(response.responseText)['status'], 'MissingSlaveName');
             notifyDone();
         });
     });
 
-    it("should reject when there are no builders", function () {
+    it("should reject when there are no slaves", function () {
         postJSON('/api/report-commits/', emptyReport, function (response) {
             assert.equal(response.statusCode, 200);
             assert.notEqual(JSON.parse(response.responseText)['status'], 'OK');
@@ -77,7 +77,7 @@ describe("/api/report-commits/", function () {
     });
 
     it("should accept an empty report", function () {
-        addBuilder(emptyReport, function () {
+        addSlave(emptyReport, function () {
             postJSON('/api/report-commits/', emptyReport, function (response) {
                 assert.equal(response.statusCode, 200);
                 assert.equal(JSON.parse(response.responseText)['status'], 'OK');
@@ -87,7 +87,7 @@ describe("/api/report-commits/", function () {
     });
 
     it("should add a missing repository", function () {
-        addBuilder(subversionCommit, function () {
+        addSlave(subversionCommit, function () {
             postJSON('/api/report-commits/', subversionCommit, function (response) {
                 assert.equal(response.statusCode, 200);
                 assert.equal(JSON.parse(response.responseText)['status'], 'OK');
@@ -100,8 +100,8 @@ describe("/api/report-commits/", function () {
         });
     });
 
-    it("should store a commit from a valid builder", function () {
-        addBuilder(subversionCommit, function () {
+    it("should store a commit from a valid slave", function () {
+        addSlave(subversionCommit, function () {
             postJSON('/api/report-commits/', subversionCommit, function (response) {
                 assert.equal(response.statusCode, 200);
                 assert.equal(JSON.parse(response.responseText)['status'], 'OK');
@@ -120,7 +120,7 @@ describe("/api/report-commits/", function () {
     });
 
     it("should reject an invalid revision number", function () {
-        addBuilder(subversionCommit, function () {
+        addSlave(subversionCommit, function () {
             subversionCommit
             postJSON('/api/report-commits/', subversionInvalidCommit, function (response) {
                 assert.equal(response.statusCode, 200);
@@ -133,8 +133,8 @@ describe("/api/report-commits/", function () {
         });
     });
 
-    it("should store two commits from a valid builder", function () {
-        addBuilder(subversionTwoCommits, function () {
+    it("should store two commits from a valid slave", function () {
+        addSlave(subversionTwoCommits, function () {
             postJSON('/api/report-commits/', subversionTwoCommits, function (response) {
                 assert.equal(response.statusCode, 200);
                 assert.equal(JSON.parse(response.responseText)['status'], 'OK');
@@ -166,7 +166,7 @@ describe("/api/report-commits/", function () {
                 [repositoryId, reportedData['revision'], reportedData['time']], function (existingCommits) {
                 var commitId = existingCommits[0]['commit_id'];
                 assert.equal(existingCommits[0]['commit_message'], null);
-                addBuilder(subversionCommit, function () {
+                addSlave(subversionCommit, function () {
                     postJSON('/api/report-commits/', subversionCommit, function (response) {
                         assert.equal(response.statusCode, 200);
                         assert.equal(JSON.parse(response.responseText)['status'], 'OK');
@@ -193,7 +193,7 @@ describe("/api/report-commits/", function () {
                 reportedData = subversionTwoCommits.commits[0];
                 queryAndFetchAll('INSERT INTO commits (commit_repository, commit_revision, commit_time) VALUES ($1, $2, $3) RETURNING *',
                     [repositoryId, reportedData['revision'], reportedData['time']], function () {
-                        addBuilder(subversionCommit, function () {
+                        addSlave(subversionCommit, function () {
                             postJSON('/api/report-commits/', subversionCommit, function (response) {
                                 assert.equal(response.statusCode, 200);
                                 assert.equal(JSON.parse(response.responseText)['status'], 'OK');
@@ -218,7 +218,7 @@ describe("/api/report-commits/", function () {
         queryAndFetchAll('INSERT INTO repositories (repository_id, repository_name) VALUES (1, \'WebKit\')', [], function () {
             var author = subversionCommit.commits[0]['author'];
             queryAndFetchAll('INSERT INTO committers (committer_repository, committer_account) VALUES (1, $1)', [author['account']], function () {
-                addBuilder(subversionCommit, function () {
+                addSlave(subversionCommit, function () {
                     postJSON('/api/report-commits/', subversionCommit, function (response) {
                         assert.equal(response.statusCode, 200);
                         assert.equal(JSON.parse(response.responseText)['status'], 'OK');

@@ -111,4 +111,18 @@ function verify_token($token) {
     return $expected_token && $token == $expected_token && $_COOKIE['CSRFExpiration'] > time();
 }
 
+function verify_slave($db, $params) {
+    array_key_exists('slaveName', $params) or exit_with_error('MissingSlaveName');
+    array_key_exists('slavePassword', $params) or exit_with_error('MissingSlavePassword');
+
+    $slave_info = array(
+        'name' => $params['slaveName'],
+        'password_hash' => hash('sha256', $params['slavePassword'])
+    );
+
+    $matched_slave = $db->select_first_row('build_slaves', 'slave', $slave_info);
+    if (!$matched_slave)
+        exit_with_error('SlaveNotFound', array('name' => $slave_info['name']));
+}
+
 ?>

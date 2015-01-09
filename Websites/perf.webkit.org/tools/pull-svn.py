@@ -12,13 +12,13 @@ from xml.dom.minidom import parseString as parseXmlString
 
 def main(argv):
     if len(argv) < 7:
-        sys.exit('Usage: pull-svn <repository-name> <repository-URL> <dashboard-URL> <builder-name> <builder-password> <seconds-to-sleep> [<account-to-name-helper>]')
+        sys.exit('Usage: pull-svn <repository-name> <repository-URL> <dashboard-URL> <slave-name> <slave-password> <seconds-to-sleep> [<account-to-name-helper>]')
 
     repository_name = argv[1]
     repository_url = argv[2]
     dashboard_url = argv[3]
-    builder_name = argv[4]
-    builder_password = argv[5]
+    slave_name = argv[4]
+    slave_password = argv[5]
     seconds_to_sleep = float(argv[6])
     account_to_name_helper = argv[7] if len(argv) > 7 else None
 
@@ -42,7 +42,7 @@ def main(argv):
         if not commit or len(pending_commits_to_send) >= 10:
             if pending_commits_to_send:
                 print "Submitting the above commits to %s..." % dashboard_url
-                submit_commits(pending_commits_to_send, dashboard_url, builder_name, builder_password)
+                submit_commits(pending_commits_to_send, dashboard_url, slave_name, slave_password)
                 print "Successfully submitted."
             pending_commits_to_send = []
             time.sleep(seconds_to_sleep)
@@ -136,11 +136,11 @@ def resolve_author_name_from_account(helper, account):
     return output.strip()
 
 
-def submit_commits(commits, dashboard_url, builder_name, builder_password):
+def submit_commits(commits, dashboard_url, slave_name, slave_password):
     try:
         payload = json.dumps({
-            'builderName': builder_name,
-            'builderPassword': builder_password,
+            'slaveName': slave_name,
+            'slavePassword': slave_password,
             'commits': commits,
         })
         request = urllib2.Request(dashboard_url + '/api/report-commits')
