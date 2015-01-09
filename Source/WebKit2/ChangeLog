@@ -1,5 +1,19 @@
 2015-01-09  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173975.
+
+    2014-09-25  Anders Carlsson  <andersca@apple.com>
+
+            Expand WK_MAC_TBA and WK_IOS_TBA to the current deployment target version (or NA).
+            https://bugs.webkit.org/show_bug.cgi?id=137127
+            Part of rdar://problem/17761459.
+
+            Reviewed by Dan Bernstein.
+
+            * mac/rewrite-availability-macros.sh:
+
+2015-01-09  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r177163.
 
     2014-12-11  Yongjun Zhang  <yongjun_zhang@apple.com>
