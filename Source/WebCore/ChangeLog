@@ -1,5 +1,11 @@
 2015-01-09  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * bindings/js/JSBindingsAllInOne.cpp:
+
+2015-01-09  Anders Carlsson  <andersca@apple.com>
+
         Remove more worker database code
         https://bugs.webkit.org/show_bug.cgi?id=140320
 
