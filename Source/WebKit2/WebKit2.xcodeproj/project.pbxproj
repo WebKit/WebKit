@@ -1077,8 +1077,6 @@
 		7CB16FF41724BA30007A0A95 /* com.oracle.java.JavaAppletPlugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE71724B9B5007A0A95 /* com.oracle.java.JavaAppletPlugin.sb */; };
 		7CC99A3618EF7CBC0048C8B4 /* WKScriptMessageInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC99A3518EF7CBC0048C8B4 /* WKScriptMessageInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD102DA1866770600ED429D /* AutoCorrectionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD102D91866770600ED429D /* AutoCorrectionCallback.h */; };
-		7CD3A4821A5D02FA009623B8 /* APINavigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD3A4801A5D02FA009623B8 /* APINavigation.cpp */; };
-		7CD3A4831A5D02FA009623B8 /* APINavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD3A4811A5D02FA009623B8 /* APINavigation.h */; };
 		7CD5EBB81746A15B000C1C45 /* WKObjCTypeWrapperRef.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7CD5EBB61746A15B000C1C45 /* WKObjCTypeWrapperRef.mm */; };
 		7CD5EBB91746A15B000C1C45 /* WKObjCTypeWrapperRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD5EBB71746A15B000C1C45 /* WKObjCTypeWrapperRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD5EBBB1746A83E000C1C45 /* WKBaseMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD5EBBA1746A83E000C1C45 /* WKBaseMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3179,8 +3177,6 @@
 		7CB16FE71724B9B5007A0A95 /* com.oracle.java.JavaAppletPlugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.oracle.java.JavaAppletPlugin.sb; sourceTree = "<group>"; };
 		7CC99A3518EF7CBC0048C8B4 /* WKScriptMessageInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKScriptMessageInternal.h; sourceTree = "<group>"; };
 		7CD102D91866770600ED429D /* AutoCorrectionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoCorrectionCallback.h; sourceTree = "<group>"; };
-		7CD3A4801A5D02FA009623B8 /* APINavigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APINavigation.cpp; sourceTree = "<group>"; };
-		7CD3A4811A5D02FA009623B8 /* APINavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APINavigation.h; sourceTree = "<group>"; };
 		7CD5EBB61746A15B000C1C45 /* WKObjCTypeWrapperRef.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKObjCTypeWrapperRef.mm; sourceTree = "<group>"; };
 		7CD5EBB71746A15B000C1C45 /* WKObjCTypeWrapperRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKObjCTypeWrapperRef.h; sourceTree = "<group>"; };
 		7CD5EBBA1746A83E000C1C45 /* WKBaseMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBaseMac.h; sourceTree = "<group>"; };
@@ -6049,8 +6045,6 @@
 				1A4D664718A2D91A00D82E21 /* APIUIClient.h */,
 				1A3635A71A3144A300ED6197 /* APIWebsiteDataStore.cpp */,
 				1A3635A81A3144A300ED6197 /* APIWebsiteDataStore.h */,
-				7CD3A4801A5D02FA009623B8 /* APINavigation.cpp */,
-				7CD3A4811A5D02FA009623B8 /* APINavigation.h */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -7323,7 +7317,6 @@
 				C59C4A5918B81174007BDCB6 /* AssistedNodeInformation.h in Headers */,
 				515E7728183DD6F60007203F /* AsyncRequest.h in Headers */,
 				51BA24441858EE3000EA2811 /* AsyncTask.h in Headers */,
-				7CD3A4831A5D02FA009623B8 /* APINavigation.h in Headers */,
 				BCEE966D112FAF57006BCC24 /* Attachment.h in Headers */,
 				E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */,
 				512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */,
@@ -9129,7 +9122,6 @@
 				C0E3AA7A1209E83000A49D01 /* ModuleCF.cpp in Sources */,
 				2DA9449E1884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm in Sources */,
 				C02BFF1E1251502E009CCBEA /* NativeWebKeyboardEventMac.mm in Sources */,
-				7CD3A4821A5D02FA009623B8 /* APINavigation.cpp in Sources */,
 				31EA25D2134F78C0005B1452 /* NativeWebMouseEventMac.mm in Sources */,
 				2DA9449F1884E4F000ED86DB /* NativeWebTouchEventIOS.mm in Sources */,
 				DF58C6361371ACA000F9A37C /* NativeWebWheelEventMac.mm in Sources */,

@@ -118,7 +118,6 @@ public:
         Inspector,
         KeyValueStorageManager,
         MediaCacheManager,
-        Navigation,
         NavigationData,
         Notification,
         NotificationManager,

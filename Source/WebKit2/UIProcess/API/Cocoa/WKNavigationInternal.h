@@ -27,21 +27,13 @@
 
 #if WK_API_ENABLED
 
-#import "APINavigation.h"
-#import "WKObject.h"
+#import <wtf/RetainPtr.h>
 
-namespace API {
-
-inline WKNavigation *wrapper(API::Navigation& navigation)
-{
-    ASSERT([navigation.wrapper() isKindOfClass:[WKNavigation class]]);
-
-    return (WKNavigation *)navigation.wrapper();
+@interface WKNavigation () {
+@package
+    RetainPtr<NSURLRequest> _request;
 }
 
-}
-
-@interface WKNavigation () <WKObject>
 @end
 
 #endif

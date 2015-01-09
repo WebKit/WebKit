@@ -42,7 +42,6 @@
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLRequest.h"
 #import "WKNavigationDataInternal.h"
-#import "WKNavigationInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import "WKWebProcessPlugInFrameInternal.h"
@@ -127,10 +126,6 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::FrameHandle:
         wrapper = [_WKFrameHandle alloc];
-        break;
-
-    case Type::Navigation:
-        wrapper = [WKNavigation alloc];
         break;
 
     case Type::NavigationData:

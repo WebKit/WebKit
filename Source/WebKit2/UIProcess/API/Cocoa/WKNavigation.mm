@@ -26,32 +26,17 @@
 #import "config.h"
 #import "WKNavigationInternal.h"
 
-#import "APINavigation.h"
+#import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
 
-@implementation WKNavigation {
-    API::ObjectStorage<API::Navigation> _navigation;
-}
-
-- (void)dealloc
-{
-    _navigation->~Navigation();
-
-    [super dealloc];
-}
+@implementation WKNavigation
 
 - (NSURLRequest *)_request
 {
-    return _navigation->request().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
+    return _request.get();
 }
 
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_navigation;
-}
 
 @end
 
