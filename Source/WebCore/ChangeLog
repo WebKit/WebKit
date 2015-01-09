@@ -1,3 +1,9 @@
+2015-01-09  Anders Carlsson  <andersca@apple.com>
+
+        Another Windows build fix.
+
+        * DerivedSources.cpp:
+
 2015-01-09  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Support additional text styles.
