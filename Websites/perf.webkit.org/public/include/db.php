@@ -40,6 +40,8 @@ if (config('debug')) {
 } else
     error_reporting(E_ERROR);
 
+date_default_timezone_set('UTC');
+
 class Database
 {
     private $connection = false;

@@ -58,7 +58,6 @@ function fetch_build_requests_for_group($db, $test_group_id) {
         WHERE request_build = build_id AND request_group = $1 ORDER BY request_order', array($test_group_id));
 }
 
-date_default_timezone_set('UTC');
 function format_test_group($group_row) {
     return array(
         'id' => $group_row['testgroup_id'],

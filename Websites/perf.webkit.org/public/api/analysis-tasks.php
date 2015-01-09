@@ -60,7 +60,6 @@ function fetch_and_push_bugs_to_tasks($db, &$tasks) {
     return $bugs;
 }
 
-date_default_timezone_set('UTC');
 function format_task($task_row) {
     return array(
         'id' => $task_row['task_id'],

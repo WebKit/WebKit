@@ -1,5 +1,24 @@
 2015-01-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Cache-control should be set only on api/runs
+        https://bugs.webkit.org/show_bug.cgi?id=140312
+
+        Reviewed by Andreas Kling.
+
+        Some JSON APIs such as api/analysis-tasks can't be cached even for a short period of time (e.g. a few minutes)
+        since they can be modified by the user on demand. Since only api/runs.php takes a long time to generate JSONs,
+        just set cache-control there instead of json-header.php which is used by other JSON APIs.
+
+        Also set date_default_timezone_set in db.php since we never use non-UTC timezone in our scripts.
+
+        * public/api/analysis-tasks.php:
+        * public/api/runs.php: Set the cache control headers.
+        * public/api/test-groups.php:
+        * public/include/db.php: Set the default timezone to UTC.
+        * public/include/json-header.php: Don't set the cache control headers.
+
+2015-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         api/report-commit should authenticate with a slave name and password
         https://bugs.webkit.org/show_bug.cgi?id=140308
 
