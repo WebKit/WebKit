@@ -1,0 +1,34 @@
+Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?showinfo=0
+Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?showinfo=0
+Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?showinfo=0
+Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US&showinfo=0
+Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US&showinfo=0
+Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US&showinfo=0
+Test embed youtube plugin without height or width attribute. < rdar://problem/12134474>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS getComputedStyle(embedNoHeight).height is "150px"
+PASS getComputedStyle(embedNoWidth).width is "300px"
+PASS getComputedStyle(embedNoWidthHeight).width is "300px"
+PASS getComputedStyle(embedNoWidthHeight).height is "150px"
+PASS getComputedStyle(objectNoHeight).height is "150px"
+PASS getComputedStyle(objectNoWidth).width is "300px"
+PASS getComputedStyle(objectNoWidthHeight).width is "300px"
+PASS getComputedStyle(objectNoWidthHeight).height is "150px"
+Embed without height:
+
+Embed without width:
+
+Embed without width or height:
+
+Object without height:
+
+Object without width:
+
+Object without height or width:
+

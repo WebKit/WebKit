@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=0.783673465, minimum-scale=0.783673465, maximum-scale=0.783673465">
+  <style type="text/css" media="screen">
+    #main {
+      width: 900px;
+      overflow: hidden;
+      border: 1px solid black;
+    }
+    
+    #hero {
+      position: relative;
+      width: 800px;
+      height: 754px;
+      margin: 0 auto;
+      background-color: #DDD;
+    }
+    
+    .bottom-shadow {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 140px;
+      width: 800px;
+      background-color: rgba(255, 255, 255, 0.5);
+      -webkit-transform: translateZ(0);
+    }
+    
+    .content {
+      position: relative;
+      width: 800px;
+      height: 100px;
+      margin-top: -125px;
+      background-color: gray;
+    }
+    
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      // testRunner.waitUntilDone();
+    }
+    function dumpLayers()
+    {
+      if (window.testRunner)
+        document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+    }
+    window.addEventListener('load', dumpLayers, false);
+  </script>
+</head>
+<body>
+
+  <div id="main">
+    <header id="hero">
+      <div class="bottom-shadow"></div>
+    </header>
+    <div class="content"></div>
+  </div>
+<pre id="layers">Layers go here in DRT</pre>
+</body>
+</html>

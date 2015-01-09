@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+</script>
+</head>
+<body>
+<p>&lt;<a href="rdar://problem/6628098">rdar://problem/6628098</a>&gt; Assertion failure calling clearTimeout() with zero or a negative number</p>
+<p>PASS</p>
+<script>
+clearTimeout(-1);
+clearTimeout(0);
+clearTimeout(1);
+</script>
+</body>
+</html>

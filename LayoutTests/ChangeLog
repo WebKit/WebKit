@@ -1,3 +1,24 @@
+2015-01-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add iOS-specific tests and consolidate iOS-specific accessibility tests
+
+        Copied iOS-specific tests from directory LayoutTests/platform/ios-sim-deprecated/iphone
+        to LayoutTests/platform/ios-simulator/ios and fixed references to external JavaScript
+        scripts and external style sheets. Moved iOS-specific tests in directories LayoutTests/platform/ios-sim/accessibility
+        and LayoutTests/platform/ios-simulator/ios-accessibility into LayoutTests/platform/ios-simulator/ios/accessibility.
+
+        I will remove directory LayoutTests/platform/ios-sim-deprecated, including
+        LayoutTests/platform/ios-sim-deprecated/iphone, in a subsequent commit.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/ios/accessibility/press-fires-touch-events-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios-accessibility/press-fires-touch-events-expected.txt.
+        * platform/ios-simulator/ios/accessibility/press-fires-touch-events.html: Renamed from LayoutTests/platform/ios-simulator/ios-accessibility/press-fires-touch-events.html.
+        * platform/ios-simulator/ios/accessibility/set-value-expected.txt: Copied from LayoutTests/platform/ios-sim/accessibility/set-value-expected.txt.
+        * platform/ios-simulator/ios/accessibility/set-value.html: Renamed from LayoutTests/platform/ios-sim/accessibility/set-value.html.
+        * platform/ios-simulator/ios/compositing/overlap-page-scale-expected.txt: Added.
+        [...]
+
 2015-01-09  Andreas Kling  <akling@apple.com>
 
         Mark css3/background/background-repeat-space-content.html as ImgaeOnlyFailure

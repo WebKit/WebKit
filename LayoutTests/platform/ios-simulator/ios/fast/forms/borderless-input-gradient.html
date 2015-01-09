@@ -1,0 +1,29 @@
+<!--
+  Each set consists of a regular field, with its normal
+  border and styling, followed by a top borderless or
+  transparent border versions of the same field. On iOS
+  we expect these fields to not draw their theme'd gradient.
+-->
+
+<style>
+input, textarea { background: green; }
+</style>
+
+<input><br>
+<input style="border:none;"><br>
+<input style="border:0;"><br>
+<input style="border-top-width:0;"><br>
+<input style="border-top-color:transparent;"><br>
+
+
+<input type="search"><br>
+<input type="search" style="border:none;"><br>
+<input type="search" style="border:0;"><br>
+<input type="search" style="border-top-width:0;"><br>
+<input type="search" style="border-top-color:transparent;"><br>
+
+<textarea></textarea><br>
+<textarea style="border:none;"></textarea><br>
+<textarea style="border:0;"></textarea><br>
+<textarea style="border-top-width:0;"></textarea><br>
+<textarea style="border-top-color:transparent;"></textarea><br>

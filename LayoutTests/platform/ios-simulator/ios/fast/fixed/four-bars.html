@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style type="text/css" media="screen">
+      .content {
+        background-color: silver;
+        height: 200px;
+        margin: 5px;
+      }
+      
+      .fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        margin: 10px;
+        height: 50px;
+        background-color: rgba(0, 128, 0, 0.8);
+        border: 2px solid black;
+        -webkit-box-shadow: 0 0 20px black;
+      }
+      
+      .top, .bottom {
+        width: 96%;
+      }
+
+      .left {
+        top: 200px;
+        left: 10px;
+        width: 150px;
+        height: 300px;
+      }
+
+      .right {
+        top: 200px;
+        left: auto;
+        right: 10px;
+        width: 150px;
+        height: 300px;
+      }
+      
+      .bottom {
+        top: auto;
+        bottom: 10px;
+      }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+      if (window.testRunner)
+        testRunner.waitUntilDone();
+      function doTest()
+      {
+        window.setTimeout(function() {
+          window.scrollTo(50, 200);
+          if (window.testRunner)
+            testRunner.notifyDone();
+        }, 0);
+      }
+      window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+  <div class="content"></div>
+
+
+<div class="fixed top">
+  This is the top bar.
+</div>
+<div class="fixed left">
+  This is the left bar.
+</div>
+<div class="fixed right">
+  This is the right bar.
+</div>
+<div class="fixed bottom">
+  This is the bottom bar.
+</div>
+
+</body>
+</html>

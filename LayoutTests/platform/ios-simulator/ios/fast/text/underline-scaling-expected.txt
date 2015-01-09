@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x284
+  RenderBlock {HTML} at (0,0) size 800x284
+    RenderBody {BODY} at (8,8) size 784x268
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 132x20
+          text run at (0,0) width 132: "font-size is default"
+      RenderBlock {P} at (0,20) size 784x10
+        RenderText {#text} at (0,0) size 55x10
+          text run at (0,0) width 55: "font-size is 8px"
+      RenderBlock {P} at (0,30) size 784x15
+        RenderText {#text} at (0,0) size 89x15
+          text run at (0,0) width 89: "font-size is 12px"
+      RenderBlock {P} at (0,45) size 784x20
+        RenderText {#text} at (0,0) size 118x20
+          text run at (0,0) width 118: "font-size is 16px"
+      RenderBlock {P} at (0,65) size 784x25
+        RenderText {#text} at (0,0) size 148x25
+          text run at (0,0) width 148: "font-size is 20px"
+      RenderBlock {P} at (0,90) size 784x29
+        RenderText {#text} at (0,0) size 177x29
+          text run at (0,0) width 177: "font-size is 24px"
+      RenderBlock {P} at (0,119) size 784x39
+        RenderText {#text} at (0,0) size 236x39
+          text run at (0,0) width 236: "font-size is 32px"
+      RenderBlock {P} at (0,158) size 784x49
+        RenderText {#text} at (0,0) size 295x49
+          text run at (0,0) width 295: "font-size is 40px"
+      RenderBlock {P} at (0,207) size 784x61
+        RenderText {#text} at (0,0) size 369x61
+          text run at (0,0) width 369: "font-size is 50px"

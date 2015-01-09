@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 22: TypeError: undefined is not a function (evaluating 'eventSender.clearTouchPoints()')
+Tests that touch events are dispatched to the DOMWindow even if no other elements have touch event listeners.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

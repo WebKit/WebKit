@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css">
+    body {
+      height: 2000px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    function finishTest()
+    {
+      window.setTimeout(function() {
+        window.scrollTo(0, 50);
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }, 10);
+    }
+    window.addEventListener('load', finishTest, false);
+  </script>
+</head>
+<body>
+If you got here without crashing, the test passed.
+</body>
+</html>

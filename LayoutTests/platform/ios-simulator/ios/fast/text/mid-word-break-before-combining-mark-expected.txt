@@ -1,0 +1,9 @@
+layer at (0,0) size 320x240
+  RenderView at (0,0) size 320x240
+layer at (0,0) size 320x240
+  RenderBlock {HTML} at (0,0) size 320x240
+    RenderBody {BODY} at (8,8) size 304x224
+      RenderBlock {DIV} at (0,0) size 100x48
+        RenderText {#text} at (0,0) size 84x47
+          text run at (0,0) width 84: "0\x{20E3}1\x{20E3}2\x{20E3}3\x{20E3}"
+          text run at (0,24) width 84: "4\x{20E3}5\x{20E3}6\x{20E3}7\x{20E3}"

@@ -1,0 +1,21 @@
+This tests mouse event coordinates unscaled.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+mousedown
+PASS eventOrTouch.pageX is 125
+PASS eventOrTouch.pageY is 175
+PASS eventOrTouch.clientX is 125
+PASS eventOrTouch.clientY is 175
+mouseup
+PASS eventOrTouch.pageX is 175
+PASS eventOrTouch.pageY is 125
+PASS eventOrTouch.clientX is 175
+PASS eventOrTouch.clientY is 125
+click
+PASS eventOrTouch.pageX is 175
+PASS eventOrTouch.pageY is 125
+PASS eventOrTouch.clientX is 175
+PASS eventOrTouch.clientY is 125
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

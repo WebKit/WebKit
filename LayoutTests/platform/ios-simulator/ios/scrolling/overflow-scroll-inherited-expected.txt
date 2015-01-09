@@ -1,0 +1,5 @@
+test1 -webkit-overflow-scrolling: touch
+test2 -webkit-overflow-scrolling: auto
+test3 -webkit-overflow-scrolling: touch
+test4 -webkit-overflow-scrolling: touch
+

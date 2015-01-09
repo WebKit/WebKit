@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+  <title>Removed Document Fragment Touch Target</title>
+  <style>
+  body {
+      margin: 0;
+      padding: 0;
+  }
+
+  .container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 50px;
+      height: 50px;
+      border: 1px solid green;
+  }
+
+  .target {
+      width: 40px;
+      height: 40px;
+      background-color: red;
+  }
+
+  #results {
+    position: absolute;
+    top: 100px;
+  }
+  </style>
+  <script src="misc-touch-helpers.js"></script>
+  <script>
+
+    var seenTouch = false;
+
+    // While this isn't a particularly nice approach to the solution,
+    // it is a direct copy from the original bug report.
+    function createElementsFromString(input) {
+        var div = document.createElement("div");
+        div.innerHTML = input;
+        var children = div.children;
+        var fragment = document.createDocumentFragment();
+        for (var i = 0, length = children.length; i < length; i++) {
+            fragment.appendChild(children[0])
+        }
+        return fragment.firstChild;
+    }
+
+    function targetTouched(event) {
+        logTouch(event);
+        if (!seenTouch) {
+            seenTouch = true;
+            debug("Now remove the element from its parent and attempt to touch it again. This touch should not register.");
+            var target = document.querySelector(".target");
+            target.parentNode.removeChild(target);
+            tapSoon(20, 20);
+            // Wait 50ms to see if the touch was registered. If it was, then we'll be exiting below.
+            setTimeout(function () {
+                debug("PASSED. We did not see a second touch.");
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 50);
+        } else {
+            debug("FAILED. We saw a second touch.");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    }
+
+    function init() {
+        var target = createElementsFromString("<div class='target'>This is the <strong>touch target</strong>.</div>");
+        target.addEventListener("touchstart", targetTouched, false);
+        var container = document.querySelector(".container");
+        container.appendChild(target);
+        debug("Should see a single touch at 20,20");
+        tapSoon(20, 20);
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.addEventListener("load", init, false);
+</script>
+</head>
+<body>
+  <div class="container">
+  </div>
+  <div id="results">
+  </div>
+</body>
+</html>

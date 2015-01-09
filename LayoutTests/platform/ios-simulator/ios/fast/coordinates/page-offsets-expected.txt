@@ -1,0 +1,21 @@
+This tests "scroll" offsets when unscaled, scaled, and panned.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+unscaled
+PASS window.scrollX is 0
+PASS window.pageXOffset is 0
+PASS document.body.scrollLeft is 0
+PASS window.scrollY is 0
+PASS window.pageYOffset is 0
+PASS document.body.scrollTop is 0
+
+scaled and panned
+PASS window.scrollX is 10
+PASS window.pageXOffset is 10
+PASS document.body.scrollLeft is 10
+PASS window.scrollY is 10
+PASS window.pageYOffset is 10
+PASS document.body.scrollTop is 10
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,34 @@
+Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?showinfo=0
+Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?showinfo=0
+Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US&showinfo=0
+Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?version=3&hl=en_US&showinfo=0
+Blocked access to external URL http://www.youtube.com/embed/N0gb9v4LI4o?showinfo=0
+Test transforming youtube flash plugin to youtube iFrame based player. < rdar://problem/11201356>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS normalEmbed.tagName is "EMBED"
+PASS elinkEmbed.tagName is "EMBED"
+PASS objectEmbed.tagName is "EMBED"
+PASS objectNoEmbed.tagName is "OBJECT"
+PASS document.querySelectorAll("iframe").length is 1
+PASS internals.shadowPseudoId(normalEmbedShadowRoot.firstChild) is "-apple-youtube-shadow-iframe"
+PASS normalEmbedShadowRoot.firstChild.firstChild.tagName is "IFRAME"
+PASS internals.shadowPseudoId(objectEmbedShadowRoot.firstChild) is "-apple-youtube-shadow-iframe"
+PASS objectEmbedShadowRoot.firstChild.firstChild.tagName is "IFRAME"
+PASS internals.shadowPseudoId(objectNoEmbedShadowRoot.firstChild) is "-apple-youtube-shadow-iframe"
+PASS objectNoEmbedShadowRoot.firstChild.firstChild.tagName is "IFRAME"
+Normal Embed:
+
+E-link Embed:
+
+Object with embed:
+
+Object without embed:
+
+Embed inside iframe:
+

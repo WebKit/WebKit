@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            height: 2500px;
+        }
+
+        .box {
+          height: 100px;
+          width: 100px;
+        }
+
+        .outer {
+            position: fixed;
+            left: 10px;
+            top: 10px;
+            width: 100px;
+            height: 100px;
+            outline: 2px solid black;
+        }
+
+        .wrapper {
+          position: absolute;
+          background-color: green;
+        }
+        
+        .indicator {
+          margin-left: 10px;
+          margin-top: 210px;
+          background-color: red;
+        }
+    </style>
+    <script>
+      if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+      }
+
+      function doScroll()
+      {
+        window.setTimeout(function() {
+          window.scrollTo(0, 200);
+          if (window.testRunner) {
+            document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
+            testRunner.notifyDone();
+          }
+        }, 10);
+      }
+      
+      window.addEventListener('load', doScroll, false);
+    </script>
+</head>
+<body>
+  <!-- The green box should obscure the red box -->
+  <pre id="results"></pre>
+  <div class="indicator box"></div>
+  <div class="outer box">
+    <div class="wrapper box">
+    </div>
+  </div>
+</body>
+</html>
