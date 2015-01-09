@@ -1,3 +1,43 @@
+2015-01-08  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: !valueWithCalculation.calculation() in WebCore::CSSParser::validateCalculationUnit
+        https://bugs.webkit.org/show_bug.cgi?id=140251
+
+        Reviewed by Darin Adler.
+
+        Using a calculated value for text-shadow's blur-radius was hitting an
+        assertion in CSSParser::validateCalculationUnit() because validUnit()
+        is called twice, first with 'FLength' unit, then more stricly with
+        'FLength|FNonNeg' if parsing the blur-radius as it cannot be negative
+        as per the specification:
+        - http://dev.w3.org/csswg/css-text-decor-3/#text-shadow-property
+        - http://dev.w3.org/csswg/css-backgrounds-3/#shadow
+
+        On the second call, the ValueWithCalculation's m_calculation member
+        was already initialized and the code did not handle this. This patch
+        updates validateCalculationUnit() to teach it to reuse the previously
+        parsed calculation in this case. All it needs to do is to update the
+        existing CSSCalcValue's range to allow negative values or not.
+
+        When writing the layout test for this, I also noticed that the CSS
+        parser was not rejecting negative calculated values for blur-radius
+        (only negative non-calculated ones). This is because
+        validateCalculationUnit() was ignoring FNonNeg if the calculated
+        value is a Length. This patch also addresses the issue.
+
+        Test: fast/css/text-shadow-calc-value.html
+
+        * css/CSSCalculationValue.h:
+        (WebCore::CSSCalcValue::setPermittedValueRange):
+        Add a setter to update the CSSCalculationValue's permitted value range
+        so that the CSS parser does not need to fully reparse the calculation
+        only to update the permitted value range.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validateCalculationUnit):
+        - Teach the code to reuse the previously parsed calculation value.
+        - Do the FNonNeg check for Length calculations as well.
+
 2015-01-08  Darin Adler  <darin@apple.com>
 
         Modernize and streamline HTMLTokenizer

@@ -1586,10 +1586,17 @@ bool CSSParser::validateCalculationUnit(ValueWithCalculation& valueWithCalculati
 {
     bool mustBeNonNegative = unitFlags & FNonNeg;
 
-    ASSERT(!valueWithCalculation.calculation());
-    RefPtr<CSSCalcValue> calculation = parseCalculation(valueWithCalculation, mustBeNonNegative ? CalculationRangeNonNegative : CalculationRangeAll);
-    if (!calculation)
-        return false;
+    RefPtr<CSSCalcValue> calculation;
+    if (valueWithCalculation.calculation()) {
+        // The calculation value was already parsed so we reuse it. However, we may need to update its range.
+        calculation = valueWithCalculation.calculation();
+        calculation->setPermittedValueRange(mustBeNonNegative ? CalculationRangeNonNegative : CalculationRangeAll);
+    } else {
+        valueWithCalculation.setCalculation(parseCalculation(valueWithCalculation, mustBeNonNegative ? CalculationRangeNonNegative : CalculationRangeAll));
+        calculation = valueWithCalculation.calculation();
+        if (!calculation)
+            return false;
+    }
 
     bool isValid = false;
     switch (calculation->category()) {
@@ -1604,6 +1611,8 @@ bool CSSParser::validateCalculationUnit(ValueWithCalculation& valueWithCalculati
         break;
     case CalcLength:
         isValid = (unitFlags & FLength);
+        if (isValid && mustBeNonNegative && calculation->isNegative())
+            isValid = false;
         break;
     case CalcPercent:
         isValid = (unitFlags & FPercent);
@@ -1628,8 +1637,7 @@ bool CSSParser::validateCalculationUnit(ValueWithCalculation& valueWithCalculati
     case CalcOther:
         break;
     }
-    if (isValid)
-        valueWithCalculation.setCalculation(WTF::move(calculation));
+
     return isValid;
 }
 

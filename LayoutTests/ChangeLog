@@ -1,3 +1,20 @@
+2015-01-08  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: !valueWithCalculation.calculation() in WebCore::CSSParser::validateCalculationUnit
+        https://bugs.webkit.org/show_bug.cgi?id=140251
+
+        Reviewed by Darin Adler.
+
+        Add a layout test to check that using calculated values for
+        'text-shadow' CSS doesn't crash and works as intended. Also check
+        that the CSS parser is correctly validating the blur-radius, which
+        is supposed to be non-negative, as per the specification:
+        - http://dev.w3.org/csswg/css-text-decor-3/#text-shadow-property
+        - http://dev.w3.org/csswg/css-backgrounds-3/#shadow
+
+        * fast/css/text-shadow-calc-value-expected.txt: Added.
+        * fast/css/text-shadow-calc-value.html: Added.
+
 2015-01-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Make better use of the stack when compiling selectors

@@ -97,6 +97,7 @@ public:
     double computeLengthPx(const CSSToLengthConversionData&) const;
 
     Ref<CalculationValue> createCalculationValue(const CSSToLengthConversionData&) const;
+    void setPermittedValueRange(CalculationPermittedValueRange);
 
     String customCSSText() const;
     bool equals(const CSSCalcValue&) const;
@@ -107,7 +108,7 @@ private:
     double clampToPermittedRange(double) const;
 
     const Ref<CSSCalcExpressionNode> m_expression;
-    const bool m_shouldClampToNonNegative;
+    bool m_shouldClampToNonNegative;
 };
 
 inline CSSCalcValue::CSSCalcValue(Ref<CSSCalcExpressionNode>&& expression, bool shouldClampToNonNegative)
@@ -121,6 +122,11 @@ inline Ref<CalculationValue> CSSCalcValue::createCalculationValue(const CSSToLen
 {
     return CalculationValue::create(m_expression->createCalcExpression(conversionData),
         m_shouldClampToNonNegative ? CalculationRangeNonNegative : CalculationRangeAll);
+}
+
+inline void CSSCalcValue::setPermittedValueRange(CalculationPermittedValueRange range)
+{
+    m_shouldClampToNonNegative = range != CalculationRangeAll;
 }
 
 } // namespace WebCore
