@@ -1424,7 +1424,6 @@ webkit.org/b/139968 [ Mavericks+ ] fast/frames/frame-scrolling-attribute.html [ 
 webkit.org/b/139968 [ Mavericks+ ] fast/repaint/line-flow-with-floats-9.html [ Failure ]
 webkit.org/b/139968 [ Mavericks+ ] fast/repaint/selection-rl.html [ Failure ]
 webkit.org/b/139968 [ Mavericks+ ] fast/text/atsui-pointtooffset-calls-cg.html [ Failure ]
-webkit.org/b/139968 [ Mavericks+ ] fast/text/atsui-rtl-override-selection.html [ Failure ]
 webkit.org/b/139968 [ Mavericks+ ] fast/text/international/vertical-text-metrics-test.html [ Failure ]
 webkit.org/b/139968 [ Mavericks+ ] http/tests/navigation/javascriptlink-frames.html [ Failure ]
 webkit.org/b/139968 [ Mavericks+ ] svg/W3C-SVG-1.1/masking-path-04-b.svg [ Failure ]
@@ -1488,6 +1487,8 @@ webkit.org/b/139968 [ MountainLion ] fast/layers/layer-visibility.html [ Failure
 webkit.org/b/139968 [ MountainLion ] fast/repaint/invisible-objects.html [ Failure ]
 webkit.org/b/139968 [ MountainLion ] fast/text/whitespace/028.html [ Failure ]
 webkit.org/b/139968 [ MountainLion ] platform/mac/editing/spelling/autocorrection-contraction.html [ Failure ]
+# Fails on Mountain Lion and Yosemite on bots.
+webkit.org/b/139968 fast/text/atsui-rtl-override-selection.html [ Failure ]
 # These tests became flaky, text width gets slightly off.
 webkit.org/b/139968 [ Mavericks+ ] http/tests/misc/acid3.html [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] tables/mozilla/bugs/bug10633.html [ Pass Failure ]
