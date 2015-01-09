@@ -28,19 +28,39 @@
 #define HTMLPreloadScanner_h
 
 #include "CSSPreloadScanner.h"
-#include "HTMLTokenizer.h"
+#include "HTMLToken.h"
 #include "SegmentedString.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+typedef size_t TokenPreloadScannerCheckpoint;
+
+class HTMLParserOptions;
+class HTMLTokenizer;
+class SegmentedString;
+class Frame;
+
 class TokenPreloadScanner {
-    WTF_MAKE_NONCOPYABLE(TokenPreloadScanner);
+    WTF_MAKE_NONCOPYABLE(TokenPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor = 1.0);
+    ~TokenPreloadScanner();
 
-    void scan(const HTMLToken&, PreloadRequestStream&, Document&);
+    void scan(const HTMLToken&, PreloadRequestStream& requests, Document&);
 
     void setPredictedBaseElementURL(const URL& url) { m_predictedBaseElementURL = url; }
+
+    // A TokenPreloadScannerCheckpoint is valid until the next call to rewindTo,
+    // at which point all outstanding checkpoints are invalidated.
+    TokenPreloadScannerCheckpoint createCheckpoint();
+    void rewindTo(TokenPreloadScannerCheckpoint);
+
+    bool isSafeToSendToAnotherThread()
+    {
+        return m_documentURL.isSafeToSendToAnotherThread()
+            && m_predictedBaseElementURL.isSafeToSendToAnotherThread();
+    }
 
 private:
     enum class TagId {
@@ -65,29 +85,54 @@ private:
 
     void updatePredictedBaseURL(const HTMLToken&);
 
+    struct Checkpoint {
+        Checkpoint(const URL& predictedBaseElementURL, bool inStyle
+#if ENABLE(TEMPLATE_ELEMENT)
+            , size_t templateCount
+#endif
+            )
+            : predictedBaseElementURL(predictedBaseElementURL)
+            , inStyle(inStyle)
+#if ENABLE(TEMPLATE_ELEMENT)
+            , templateCount(templateCount)
+#endif
+        {
+        }
+
+        URL predictedBaseElementURL;
+        bool inStyle;
+#if ENABLE(TEMPLATE_ELEMENT)
+        size_t templateCount;
+#endif
+    };
+
     CSSPreloadScanner m_cssScanner;
     const URL m_documentURL;
-    const float m_deviceScaleFactor { 1 };
-
     URL m_predictedBaseElementURL;
-    bool m_inStyle { false };
+    bool m_inStyle;
+    float m_deviceScaleFactor;
+
 #if ENABLE(TEMPLATE_ELEMENT)
-    unsigned m_templateCount { 0 };
+    size_t m_templateCount;
 #endif
+
+    Vector<Checkpoint> m_checkpoints;
 };
 
 class HTMLPreloadScanner {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(HTMLPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
     HTMLPreloadScanner(const HTMLParserOptions&, const URL& documentURL, float deviceScaleFactor = 1.0);
+    ~HTMLPreloadScanner();
 
     void appendToEnd(const SegmentedString&);
-    void scan(HTMLResourcePreloader&, Document&);
+    void scan(HTMLResourcePreloader*, Document&);
 
 private:
     TokenPreloadScanner m_scanner;
     SegmentedString m_source;
-    HTMLTokenizer m_tokenizer;
+    HTMLToken m_token;
+    std::unique_ptr<HTMLTokenizer> m_tokenizer;
 };
 
 }

@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2010 Google Inc. All Rights Reserved.
- * Copyright (C) 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,26 +28,41 @@
 
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLTokenizer.h"
+#include "TextCodec.h"
 #include "TextEncodingRegistry.h"
+
+using namespace WTF;
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
 HTMLMetaCharsetParser::HTMLMetaCharsetParser()
-    : m_codec(newTextCodec(Latin1Encoding()))
+    : m_tokenizer(std::make_unique<HTMLTokenizer>(HTMLParserOptions()))
+    , m_assumedCodec(newTextCodec(Latin1Encoding()))
+    , m_inHeadSection(true)
+    , m_doneChecking(false)
 {
 }
 
-static StringView extractCharset(const String& value)
+HTMLMetaCharsetParser::~HTMLMetaCharsetParser()
 {
+}
+
+static const char charsetString[] = "charset";
+static const size_t charsetLength = sizeof("charset") - 1;
+
+String HTMLMetaCharsetParser::extractCharset(const String& value)
+{
+    size_t pos = 0;
     unsigned length = value.length();
-    for (size_t pos = 0; pos < length; ) {
-        pos = value.find("charset", pos, false);
+
+    while (pos < length) {
+        pos = value.find(charsetString, pos, false);
         if (pos == notFound)
             break;
 
-        static const size_t charsetLength = sizeof("charset") - 1;
         pos += charsetLength;
 
         // Skip whitespace.
@@ -63,10 +77,12 @@ static StringView extractCharset(const String& value)
         while (pos < length && value[pos] <= ' ')
             ++pos;
 
-        UChar quoteMark = 0;
-        if (pos < length && (value[pos] == '"' || value[pos] == '\''))
-            quoteMark = value[pos++];
-
+        char quoteMark = 0;
+        if (pos < length && (value[pos] == '"' || value[pos] == '\'')) {
+            quoteMark = static_cast<char>(value[pos++]);
+            ASSERT(!(quoteMark & 0x80));
+        }
+            
         if (pos == length)
             break;
 
@@ -77,17 +93,19 @@ static StringView extractCharset(const String& value)
         if (quoteMark && (end == length))
             break; // Close quote not found.
 
-        return StringView(value).substring(pos, end - pos);
+        return value.substring(pos, end - pos);
     }
-    return StringView();
+
+    return "";
 }
 
-bool HTMLMetaCharsetParser::processMeta(HTMLToken& token)
+bool HTMLMetaCharsetParser::processMeta()
 {
+    const HTMLToken::AttributeList& tokenAttributes = m_token.attributes();
     AttributeList attributes;
-    for (auto& attribute : token.attributes()) {
-        String attributeName = StringImpl::create8BitIfPossible(attribute.name);
-        String attributeValue = StringImpl::create8BitIfPossible(attribute.value);
+    for (HTMLToken::AttributeList::const_iterator iter = tokenAttributes.begin(); iter != tokenAttributes.end(); ++iter) {
+        String attributeName = StringImpl::create8BitIfPossible(iter->name);
+        String attributeValue = StringImpl::create8BitIfPossible(iter->value);
         attributes.append(std::make_pair(attributeName, attributeValue));
     }
 
@@ -98,12 +116,12 @@ bool HTMLMetaCharsetParser::processMeta(HTMLToken& token)
 TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const AttributeList& attributes)
 {
     bool gotPragma = false;
-    enum { None, Charset, Pragma } mode = None;
-    StringView charset;
+    Mode mode = None;
+    String charset;
 
-    for (auto& attribute : attributes) {
-        const String& attributeName = attribute.first;
-        const String& attributeValue = attribute.second;
+    for (AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter) {
+        const AtomicString& attributeName = iter->first;
+        const String& attributeValue = iter->second;
 
         if (attributeName == http_equivAttr) {
             if (equalIgnoringCase(attributeValue, "content-type"))
@@ -121,10 +139,12 @@ TextEncoding HTMLMetaCharsetParser::encodingFromMetaAttributes(const AttributeLi
     }
 
     if (mode == Charset || (mode == Pragma && gotPragma))
-        return TextEncoding(stripLeadingAndTrailingHTMLSpaces(charset.toStringWithoutCopying()));
+        return TextEncoding(stripLeadingAndTrailingHTMLSpaces(charset));
 
     return TextEncoding();
 }
+
+static const int bytesToCheckUnconditionally = 1024; // That many input bytes will be checked for meta charset even if <head> section is over.
 
 bool HTMLMetaCharsetParser::checkForMetaCharset(const char* data, size_t length)
 {
@@ -136,32 +156,30 @@ bool HTMLMetaCharsetParser::checkForMetaCharset(const char* data, size_t length)
     // We still don't have an encoding, and are in the head.
     // The following tags are allowed in <head>:
     // SCRIPT|STYLE|META|LINK|OBJECT|TITLE|BASE
-    //
+
     // We stop scanning when a tag that is not permitted in <head>
     // is seen, rather when </head> is seen, because that more closely
     // matches behavior in other browsers; more details in
     // <http://bugs.webkit.org/show_bug.cgi?id=3590>.
-    //
+
     // Additionally, we ignore things that looks like tags in <title>, <script>
     // and <noscript>; see <http://bugs.webkit.org/show_bug.cgi?id=4560>,
     // <http://bugs.webkit.org/show_bug.cgi?id=12165> and
     // <http://bugs.webkit.org/show_bug.cgi?id=12389>.
-    //
+
     // Since many sites have charset declarations after <body> or other tags
     // that are disallowed in <head>, we don't bail out until we've checked at
     // least bytesToCheckUnconditionally bytes of input.
 
-    static const int bytesToCheckUnconditionally = 1024;
+    m_input.append(SegmentedString(m_assumedCodec->decode(data, length)));
 
-    m_input.append(SegmentedString(m_codec->decode(data, length)));
-
-    while (auto token = m_tokenizer.nextToken(m_input)) {
-        bool isEnd = token->type() == HTMLToken::EndTag;
-        if (isEnd || token->type() == HTMLToken::StartTag) {
-            AtomicString tagName(token->name());
-            if (!isEnd) {
-                m_tokenizer.updateStateFor(tagName);
-                if (tagName == metaTag && processMeta(*token)) {
+    while (m_tokenizer->nextToken(m_input, m_token)) {
+        bool end = m_token.type() == HTMLToken::EndTag;
+        if (end || m_token.type() == HTMLToken::StartTag) {
+            AtomicString tagName(m_token.name());
+            if (!end) {
+                m_tokenizer->updateStateFor(tagName);
+                if (tagName == metaTag && processMeta()) {
                     m_doneChecking = true;
                     return true;
                 }
@@ -171,8 +189,7 @@ bool HTMLMetaCharsetParser::checkForMetaCharset(const char* data, size_t length)
                 && tagName != styleTag && tagName != linkTag
                 && tagName != metaTag && tagName != objectTag
                 && tagName != titleTag && tagName != baseTag
-                && (isEnd || tagName != htmlTag)
-                && (isEnd || tagName != headTag)) {
+                && (end || tagName != htmlTag) && (end || tagName != headTag)) {
                 m_inHeadSection = false;
             }
         }
@@ -181,6 +198,8 @@ bool HTMLMetaCharsetParser::checkForMetaCharset(const char* data, size_t length)
             m_doneChecking = true;
             return true;
         }
+
+        m_token.clear();
     }
 
     return false;

@@ -61,7 +61,7 @@ void TextDocumentParser::insertFakePreElement()
 
     // Although Text Documents expose a "pre" element in their DOM, they
     // act like a <plaintext> tag, so we have to force plaintext mode.
-    tokenizer().setPLAINTEXTState();
+    tokenizer().setState(HTMLTokenizer::PLAINTEXTState);
 
     m_haveInsertedFakePreElement = true;
 }

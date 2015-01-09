@@ -60,9 +60,9 @@ public:
         return windowsLatin1ExtensionArray[value - 0x80];
     }
 
-    static bool acceptMalformed() { return true; }
+    inline static bool acceptMalformed() { return true; }
 
-    static bool consumeNamedEntity(SegmentedString& source, StringBuilder& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter, UChar& cc)
+    inline static bool consumeNamedEntity(SegmentedString& source, StringBuilder& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter, UChar& cc)
     {
         StringBuilder consumedCharacters;
         HTMLEntitySearch entitySearch;
@@ -72,7 +72,7 @@ public:
             if (!entitySearch.isEntityPrefix())
                 break;
             consumedCharacters.append(cc);
-            source.advance();
+            source.advanceAndASSERT(cc);
         }
         notEnoughCharacters = source.isEmpty();
         if (notEnoughCharacters) {
@@ -97,7 +97,7 @@ public:
                 cc = source.currentChar();
                 ASSERT_UNUSED(reference, cc == *reference++);
                 consumedCharacters.append(cc);
-                source.advance();
+                source.advanceAndASSERT(cc);
                 ASSERT(!source.isEmpty());
             }
             cc = source.currentChar();

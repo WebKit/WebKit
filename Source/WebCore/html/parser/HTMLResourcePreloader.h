@@ -35,13 +35,15 @@ class PreloadRequest {
 public:
     PreloadRequest(const String& initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
         : m_initiator(initiator)
-        , m_resourceURL(resourceURL)
+        , m_resourceURL(resourceURL.isolatedCopy())
         , m_baseURL(baseURL.copy())
         , m_resourceType(resourceType)
-        , m_mediaAttribute(mediaAttribute)
+        , m_mediaAttribute(mediaAttribute.isolatedCopy())
         , m_crossOriginModeAllowsCookies(false)
     {
     }
+
+    bool isSafeToSendToAnotherThread() const;
 
     CachedResourceRequest resourceRequest(Document&);
 

@@ -28,7 +28,6 @@
 
 #include "InputStreamPreprocessor.h"
 #include "SegmentedString.h"
-#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 

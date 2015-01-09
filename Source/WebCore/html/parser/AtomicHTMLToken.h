@@ -191,6 +191,11 @@ inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList
         if (attribute.name.isEmpty())
             continue;
 
+        ASSERT(attribute.nameRange.start);
+        ASSERT(attribute.nameRange.end);
+        ASSERT(attribute.valueRange.start);
+        ASSERT(attribute.valueRange.end);
+
         QualifiedName name(nullAtom, AtomicString(attribute.name), nullAtom);
 
         // FIXME: This is N^2 for the number of attributes.

@@ -40,7 +40,7 @@ template <typename Tokenizer>
 class InputStreamPreprocessor {
     WTF_MAKE_NONCOPYABLE(InputStreamPreprocessor);
 public:
-    explicit InputStreamPreprocessor(Tokenizer& tokenizer)
+    InputStreamPreprocessor(Tokenizer* tokenizer)
         : m_tokenizer(tokenizer)
     {
         reset();
@@ -51,11 +51,8 @@ public:
     // Returns whether we succeeded in peeking at the next character.
     // The only way we can fail to peek is if there are no more
     // characters in |source| (after collapsing \r\n, etc).
-    ALWAYS_INLINE bool peek(SegmentedString& source, bool skipNullCharacters = false)
+    ALWAYS_INLINE bool peek(SegmentedString& source)
     {
-        if (source.isEmpty())
-            return false;
-
         m_nextInputCharacter = source.currentChar();
 
         // Every branch in this function is expensive, so we have a
@@ -67,14 +64,16 @@ public:
             m_skipNextNewLine = false;
             return true;
         }
-        return processNextInputCharacter(source, skipNullCharacters);
+        return processNextInputCharacter(source);
     }
 
     // Returns whether there are more characters in |source| after advancing.
-    ALWAYS_INLINE bool advance(SegmentedString& source, bool skipNullCharacters = false)
+    ALWAYS_INLINE bool advance(SegmentedString& source)
     {
         source.advanceAndUpdateLineNumber();
-        return peek(source, skipNullCharacters);
+        if (source.isEmpty())
+            return false;
+        return peek(source);
     }
 
     bool skipNextNewLine() const { return m_skipNextNewLine; }
@@ -86,7 +85,7 @@ public:
     }
 
 private:
-    bool processNextInputCharacter(SegmentedString& source, bool skipNullCharacters)
+    bool processNextInputCharacter(SegmentedString& source)
     {
     ProcessAgain:
         ASSERT(m_nextInputCharacter == source.currentChar());
@@ -108,7 +107,7 @@ private:
             // by the replacement character. We suspect this is a problem with the spec as doing
             // that filtering breaks surrogate pair handling and causes us not to match Minefield.
             if (m_nextInputCharacter == '\0' && !shouldTreatNullAsEndOfFileMarker(source)) {
-                if (skipNullCharacters && !m_tokenizer.neverSkipNullCharacters()) {
+                if (m_tokenizer->shouldSkipNullCharacters()) {
                     source.advancePastNonNewline();
                     if (source.isEmpty())
                         return false;
@@ -126,7 +125,7 @@ private:
         return source.isClosed() && source.length() == 1;
     }
 
-    Tokenizer& m_tokenizer;
+    Tokenizer* m_tokenizer;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#next-input-character
     UChar m_nextInputCharacter;

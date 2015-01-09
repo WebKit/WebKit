@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2010 Adam Barth. All Rights Reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +25,6 @@
 
 #include "config.h"
 #include "HTMLSourceTracker.h"
-
 #include "HTMLTokenizer.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -36,41 +34,36 @@ HTMLSourceTracker::HTMLSourceTracker()
 {
 }
 
-void HTMLSourceTracker::startToken(SegmentedString& currentInput, HTMLTokenizer& tokenizer)
+void HTMLSourceTracker::start(SegmentedString& currentInput, HTMLTokenizer* tokenizer, HTMLToken& token)
 {
-    if (!m_started) {
-        if (tokenizer.numberOfBufferedCharacters())
-            m_previousSource = tokenizer.bufferedCharacters();
-        else
-            m_previousSource.clear();
-        m_started = true;
+    if (token.type() == HTMLToken::Uninitialized) {
+        m_previousSource.clear();
+        if (tokenizer->numberOfBufferedCharacters())
+            m_previousSource = tokenizer->bufferedCharacters();
     } else
         m_previousSource.append(m_currentSource);
 
     m_currentSource = currentInput;
-    m_tokenStart = m_currentSource.numberOfCharactersConsumed() - m_previousSource.length();
+    token.setBaseOffset(m_currentSource.numberOfCharactersConsumed() - m_previousSource.length());
 }
 
-void HTMLSourceTracker::endToken(SegmentedString& currentInput, HTMLTokenizer& tokenizer)
+void HTMLSourceTracker::end(SegmentedString& currentInput, HTMLTokenizer* tokenizer, HTMLToken& token)
 {
-    ASSERT(m_started);
-    m_started = false;
-
-    m_tokenEnd = currentInput.numberOfCharactersConsumed() - tokenizer.numberOfBufferedCharacters();
     m_cachedSourceForToken = String();
+
+    // FIXME: This work should really be done by the HTMLTokenizer.
+    token.setEndOffset(currentInput.numberOfCharactersConsumed() - tokenizer->numberOfBufferedCharacters());
 }
 
-String HTMLSourceTracker::source(const HTMLToken& token)
+String HTMLSourceTracker::sourceForToken(const HTMLToken& token)
 {
-    ASSERT(!m_started);
-
     if (token.type() == HTMLToken::EndOfFile)
         return String(); // Hides the null character we use to mark the end of file.
 
     if (!m_cachedSourceForToken.isEmpty())
         return m_cachedSourceForToken;
 
-    unsigned length = m_tokenEnd - m_tokenStart;
+    unsigned length = token.length();
 
     StringBuilder source;
     source.reserveCapacity(length);
@@ -88,11 +81,6 @@ String HTMLSourceTracker::source(const HTMLToken& token)
 
     m_cachedSourceForToken = source.toString();
     return m_cachedSourceForToken;
-}
-
-String HTMLSourceTracker::source(const HTMLToken& token, unsigned attributeStart, unsigned attributeEnd)
-{
-    return source(token).substring(attributeStart - m_tokenStart, attributeEnd - attributeStart);
 }
 
 }

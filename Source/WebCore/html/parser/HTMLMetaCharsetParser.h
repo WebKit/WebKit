@@ -26,36 +26,49 @@
 #ifndef HTMLMetaCharsetParser_h
 #define HTMLMetaCharsetParser_h
 
-#include "HTMLTokenizer.h"
+#include "HTMLToken.h"
 #include "SegmentedString.h"
 #include "TextEncoding.h"
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
+class HTMLTokenizer;
 class TextCodec;
 
 class HTMLMetaCharsetParser {
     WTF_MAKE_NONCOPYABLE(HTMLMetaCharsetParser); WTF_MAKE_FAST_ALLOCATED;
 public:
     HTMLMetaCharsetParser();
+    ~HTMLMetaCharsetParser();
 
     // Returns true if done checking, regardless whether an encoding is found.
     bool checkForMetaCharset(const char*, size_t);
 
     const TextEncoding& encoding() { return m_encoding; }
 
-    // The returned encoding might not be valid.
     typedef Vector<std::pair<String, String>> AttributeList;
-    static TextEncoding encodingFromMetaAttributes(const AttributeList&);
+    // The returned encoding might not be valid.
+    static TextEncoding encodingFromMetaAttributes(const AttributeList&
+);
 
 private:
-    bool processMeta(HTMLToken&);
+    bool processMeta();
+    static String extractCharset(const String&);
 
-    HTMLTokenizer m_tokenizer;
-    const std::unique_ptr<TextCodec> m_codec;
+    enum Mode {
+        None,
+        Charset,
+        Pragma,
+    };
+
+    std::unique_ptr<HTMLTokenizer> m_tokenizer;
+    std::unique_ptr<TextCodec> m_assumedCodec;
     SegmentedString m_input;
-    bool m_inHeadSection { true };
-    bool m_doneChecking { false };
+    HTMLToken m_token;
+    bool m_inHeadSection;
+
+    bool m_doneChecking;
     TextEncoding m_encoding;
 };
 
