@@ -780,8 +780,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     // iOS doesn't distinguish between a title and description field,
     // so concatentation will yield the best result.
-    NSString *axTitle = [self accessibilityTitle];
-    NSString *axDescription = [self accessibilityDescription];
+    NSString *axTitle = [self baseAccessibilityTitle];
+    NSString *axDescription = [self baseAccessibilityDescription];
     NSString *landmarkDescription = [self ariaLandmarkRoleDescription];
     
     NSMutableString *result = [NSMutableString string];
@@ -1011,7 +1011,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    return [self accessibilityHelpText];
+    return [self baseAccessibilityHelpText];
 }
 
 - (NSURL *)accessibilityURL

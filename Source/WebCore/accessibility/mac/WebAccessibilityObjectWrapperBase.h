@@ -48,9 +48,10 @@ class VisiblePosition;
 - (WebCore::AccessibilityObject*)accessibilityObject;
 - (BOOL)updateObjectBackingStore;
 
-- (NSString *)accessibilityTitle;
-- (NSString *)accessibilityDescription;
-- (NSString *)accessibilityHelpText;
+// These are pre-fixed with base so that AppKit does not end up calling into these directly (bypassing safety checks).
+- (NSString *)baseAccessibilityTitle;
+- (NSString *)baseAccessibilityDescription;
+- (NSString *)baseAccessibilityHelpText;
 
 - (NSString *)ariaLandmarkRoleDescription;
 

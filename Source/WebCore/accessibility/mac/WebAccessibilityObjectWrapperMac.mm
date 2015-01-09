@@ -2417,7 +2417,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (m_object->isMeter())
             return [NSString string];
         
-        return [self accessibilityTitle];
+        return [self baseAccessibilityTitle];
     }
     
     if ([attributeName isEqualToString: NSAccessibilityDescriptionAttribute]) {
@@ -2425,7 +2425,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityDescriptionAttribute])
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityDescriptionAttribute];
         }
-        return [self accessibilityDescription];
+        return [self baseAccessibilityDescription];
     }
     
     if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
@@ -2490,7 +2490,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSNumber numberWithFloat:m_object->maxValueForRange()];
     
     if ([attributeName isEqualToString: NSAccessibilityHelpAttribute])
-        return [self accessibilityHelpText];
+        return [self baseAccessibilityHelpText];
     
     if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute])
         return [NSNumber numberWithBool: m_object->isFocused()];
@@ -2794,7 +2794,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if ([attributeName isEqualToString:NSAccessibilityValueDescriptionAttribute]) {
         if (m_object->isMeter())
-            return [self accessibilityTitle];
+            return [self baseAccessibilityTitle];
         
         return m_object->valueDescription();
     }

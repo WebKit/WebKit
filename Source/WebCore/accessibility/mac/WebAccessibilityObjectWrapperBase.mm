@@ -147,7 +147,7 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
 
 // This should be the "visible" text that's actually on the screen if possible.
 // If there's alternative text, that can override the title.
-- (NSString *)accessibilityTitle
+- (NSString *)baseAccessibilityTitle
 {
     // Static text objects should not have a title. Its content is communicated in its AXValue.
     if (m_object->roleValue() == StaticTextRole)
@@ -180,7 +180,7 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
     return [NSString string];
 }
 
-- (NSString *)accessibilityDescription
+- (NSString *)baseAccessibilityDescription
 {
     // Static text objects should not have a description. Its content is communicated in its AXValue.
     // One exception is the media control labels that have a value and a description. Those are set programatically.
@@ -212,7 +212,7 @@ static NSArray *convertMathPairsToNSArray(const AccessibilityObject::Accessibili
     return [NSString string];
 }
 
-- (NSString *)accessibilityHelpText
+- (NSString *)baseAccessibilityHelpText
 {
     Vector<AccessibilityText> textOrder;
     m_object->accessibilityText(textOrder);

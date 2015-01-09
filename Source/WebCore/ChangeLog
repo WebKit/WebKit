@@ -1,3 +1,31 @@
+2015-01-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash at -[WebAccessibilityObjectWrapperBase accessibilityTitle] + 31
+        https://bugs.webkit.org/show_bug.cgi?id=140286
+
+        Reviewed by Mario Sanchez Prada.
+
+        This is crashing because AppKit is checking if certain method names like "accessibilityTitle" exist,
+        and then it bypasses accessibilityAttributeValue: to call directly into those methods.
+
+        That bypasses are safety checks. I think a safe way to avoid this is rename our methods.
+
+        No new tests, problem only occurs when triggered through AppKit.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityLabel]):
+        (-[WebAccessibilityObjectWrapper accessibilityHint]):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilityTitle]):
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilityDescription]):
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilityHelpText]):
+        (-[WebAccessibilityObjectWrapperBase accessibilityTitle]): Deleted.
+        (-[WebAccessibilityObjectWrapperBase accessibilityDescription]): Deleted.
+        (-[WebAccessibilityObjectWrapperBase accessibilityHelpText]): Deleted.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2015-01-06  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][MSE] ASSERT in MediaSourceClientGStreamer::addSourceBuffer
