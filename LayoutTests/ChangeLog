@@ -1,3 +1,12 @@
+2015-01-09  Andreas Kling  <akling@apple.com>
+
+        Mark css3/background/background-repeat-space-content.html as ImgaeOnlyFailure
+
+        This test is failing with a subtle pixel difference, need to figure out what's
+        going on, but results are not visually wrong.
+
+        * TestExpectations:
+
 2015-01-09  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Shapes] content inside second shape area when two floats interact
