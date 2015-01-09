@@ -1,3 +1,11 @@
+2015-01-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Update r177745, one of the review comments was not integrated
+
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesLangPseudoClass):
+        I cq+ before Dhi could make an update and this was left out.
+
 2015-01-09  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix error handling of ContentExtensionsManager when the top level input is unusable
