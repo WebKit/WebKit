@@ -154,6 +154,12 @@ JSLexicalEnvironment* CallFrame::lexicalEnvironment() const
     return registers()[activationRegister.offset()].Register::lexicalEnvironment();
 }
 
+JSLexicalEnvironment* CallFrame::lexicalEnvironmentOrNullptr() const
+{
+    CodeBlock* codeBlock = this->codeBlock();
+    return codeBlock->needsActivation() ? lexicalEnvironment() : nullptr;
+}
+    
 void CallFrame::setActivation(JSLexicalEnvironment* lexicalEnvironment)
 {
     CodeBlock* codeBlock = this->codeBlock();

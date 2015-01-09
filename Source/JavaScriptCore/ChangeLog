@@ -1,3 +1,61 @@
+2015-01-08  Mark Lam  <mark.lam@apple.com>
+
+        Make the LLINT and Baseline JIT's op_create_arguments and op_get_argument_by_val use their lexicalEnvironment operand.
+        <https://webkit.org/b/140236>
+
+        Reviewed by Geoffrey Garen.
+
+        Will change the DFG to use the operand on a subsequent pass.  For now,
+        the DFG uses a temporary thunk (operationCreateArgumentsForDFG()) to
+        retain the old behavior of getting the lexicalEnviroment from the
+        ExecState.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitGetArgumentByVal):
+        (JSC::BytecodeGenerator::createArgumentsIfNecessary):
+        - When the lexicalEnvironment is not available, pass the invalid VirtualRegister
+          instead of an empty JSValue as the lexicalEnvironment operand.
+
+        * dfg/DFGOperations.cpp:
+        - Use the lexicalEnvironment from the ExecState for now.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        - Use the operationCreateArgumentsForDFG() thunk for now.
+
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::lexicalEnvironmentOrNullptr):
+        * interpreter/CallFrame.h:
+        - Added this convenience function to return either the
+          lexicalEnvironment or a nullptr so that we don't need to do a
+          conditional check on codeBlock->needsActivation() at multiple sites.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::createArguments):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Arguments.h:
+        (JSC::Arguments::create):
+        (JSC::Arguments::finishCreation):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::argumentsGetter):
+
 2015-01-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Pause Reason Improvements (Breakpoint, Debugger Statement, Pause on Next Statement)

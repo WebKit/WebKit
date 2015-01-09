@@ -681,6 +681,8 @@ namespace JSC {
         
         MacroAssembler::Call callOperation(C_JITOperation_E);
         MacroAssembler::Call callOperation(C_JITOperation_EO, GPRReg);
+        MacroAssembler::Call callOperation(C_JITOperation_EL, GPRReg);
+        MacroAssembler::Call callOperation(C_JITOperation_EL, TrustedImmPtr);
         MacroAssembler::Call callOperation(C_JITOperation_ESt, Structure*);
         MacroAssembler::Call callOperation(C_JITOperation_EZ, int32_t);
         MacroAssembler::Call callOperation(F_JITOperation_EJZZ, GPRReg, int32_t, int32_t);

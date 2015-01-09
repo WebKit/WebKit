@@ -208,7 +208,7 @@ EncodedJSValue JSLexicalEnvironment::argumentsGetter(ExecState*, JSObject* slotB
         return JSValue::encode(arguments);
     int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister).offset();
 
-    JSValue arguments = JSValue(Arguments::create(callFrame->vm(), callFrame));
+    JSValue arguments = JSValue(Arguments::create(callFrame->vm(), callFrame, lexicalEnvironment));
     callFrame->uncheckedR(argumentsRegister.offset()) = arguments;
     callFrame->uncheckedR(realArgumentsRegister) = arguments;
     

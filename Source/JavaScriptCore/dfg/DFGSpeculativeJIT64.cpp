@@ -4287,7 +4287,7 @@ void SpeculativeJIT::compile(Node* node)
             || !executable->parameterCount()) {
             JITCompiler::Jump notCreated = m_jit.branchTest64(JITCompiler::Zero, resultGPR);
             addSlowPathGenerator(
-                slowPathCall(notCreated, this, operationCreateArguments, resultGPR));
+                slowPathCall(notCreated, this, operationCreateArgumentsForDFG, resultGPR));
             cellResult(resultGPR, node);
             break;
         }
@@ -4297,7 +4297,7 @@ void SpeculativeJIT::compile(Node* node)
         MacroAssembler::JumpList slowPaths;
         emitAllocateArguments(resultGPR, scratchGPR1, scratchGPR2, slowPaths);
         addSlowPathGenerator(
-            slowPathCall(slowPaths, this, operationCreateArguments, resultGPR));
+            slowPathCall(slowPaths, this, operationCreateArgumentsForDFG, resultGPR));
 
         alreadyCreated.link(&m_jit);
         cellResult(resultGPR, node);

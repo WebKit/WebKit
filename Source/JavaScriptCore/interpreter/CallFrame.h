@@ -53,6 +53,7 @@ namespace JSC  {
 
         bool hasActivation() const;
         JSLexicalEnvironment* lexicalEnvironment() const;
+        JSLexicalEnvironment* lexicalEnvironmentOrNullptr() const;
         JSValue uncheckedActivation() const;
 
         // Global object in which execution began.

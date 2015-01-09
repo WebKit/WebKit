@@ -689,10 +689,15 @@ void JIT::emit_op_get_scope(Instruction* currentInstruction)
 void JIT::emit_op_create_arguments(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
+    int lexicalEnvironment = currentInstruction[2].u.operand;
 
     Jump argsCreated = branchTest64(NonZero, Address(callFrameRegister, sizeof(Register) * dst));
 
-    callOperation(operationCreateArguments);
+    if (VirtualRegister(lexicalEnvironment).isValid()) {
+        emitGetVirtualRegister(lexicalEnvironment, regT0);
+        callOperation(operationCreateArguments, regT0);
+    } else
+        callOperation(operationCreateArguments, TrustedImmPtr(nullptr));
     emitStoreCell(dst, returnValueGPR);
     emitStoreCell(unmodifiedArgumentsRegister(VirtualRegister(dst)), returnValueGPR);
 
@@ -956,13 +961,18 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     int dst = currentInstruction[1].u.operand;
     int arguments = currentInstruction[2].u.operand;
     int property = currentInstruction[3].u.operand;
+    int lexicalEnvironment = currentInstruction[4].u.operand;
     
     linkSlowCase(iter);
     Jump skipArgumentsCreation = jump();
     
     linkSlowCase(iter);
     linkSlowCase(iter);
-    callOperation(operationCreateArguments);
+    if (VirtualRegister(lexicalEnvironment).isValid()) {
+        emitGetVirtualRegister(lexicalEnvironment, regT0);
+        callOperation(operationCreateArguments, regT0);
+    } else
+        callOperation(operationCreateArguments, TrustedImmPtr(nullptr));
     emitStoreCell(arguments, returnValueGPR);
     emitStoreCell(unmodifiedArgumentsRegister(VirtualRegister(arguments)), returnValueGPR);
     

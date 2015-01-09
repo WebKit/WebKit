@@ -796,8 +796,10 @@ EncodedJSValue JIT_OPERATION operationGetArgumentByVal(ExecState* exec, int32_t 
     
     // If there are no arguments, and we're accessing out of bounds, then we have to create the
     // arguments in case someone has installed a getter on a numeric property.
-    if (!argumentsValue)
-        exec->uncheckedR(argumentsRegister) = argumentsValue = Arguments::create(exec->vm(), exec);
+    if (!argumentsValue) {
+        JSLexicalEnvironment* lexicalEnvironment = exec->lexicalEnvironmentOrNullptr();
+        exec->uncheckedR(argumentsRegister) = argumentsValue = Arguments::create(exec->vm(), exec, lexicalEnvironment);
+    }
     
     return JSValue::encode(argumentsValue.get(exec, index));
 }

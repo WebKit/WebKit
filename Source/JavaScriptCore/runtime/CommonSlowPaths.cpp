@@ -221,7 +221,10 @@ SLOW_PATH_DECL(slow_path_get_callee)
 SLOW_PATH_DECL(slow_path_create_arguments)
 {
     BEGIN();
-    JSValue arguments = JSValue(Arguments::create(vm, exec));
+    int lexicalEnvironmentReg = pc[2].u.operand;
+    JSLexicalEnvironment* lexicalEnvironment = VirtualRegister(lexicalEnvironmentReg).isValid() ?
+        exec->uncheckedR(lexicalEnvironmentReg).lexicalEnvironment() : nullptr;
+    JSValue arguments = JSValue(Arguments::create(vm, exec, lexicalEnvironment));
     CHECK_EXCEPTION();
     exec->uncheckedR(pc[1].u.operand) = arguments;
     exec->uncheckedR(unmodifiedArgumentsRegister(VirtualRegister(pc[1].u.operand)).offset()) = arguments;

@@ -216,6 +216,18 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(C_JITOperation_EJscZ opera
     return appendCallWithExceptionCheck(operation);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(C_JITOperation_EL operation, GPRReg arg1)
+{
+    setupArgumentsWithExecState(arg1);
+    return appendCallWithExceptionCheck(operation);
+}
+    
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(C_JITOperation_EL operation, TrustedImmPtr arg1)
+{
+    setupArgumentsWithExecState(arg1);
+    return appendCallWithExceptionCheck(operation);
+}
+    
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(C_JITOperation_EO operation, GPRReg arg)
 {
     setupArgumentsWithExecState(arg);

@@ -762,7 +762,11 @@ LLINT_SLOW_PATH_DECL(slow_path_get_argument_by_val)
     LLINT_BEGIN();
     JSValue arguments = LLINT_OP(2).jsValue();
     if (!arguments) {
-        arguments = Arguments::create(vm, exec);
+        int lexicalEnvironmentReg = pc[4].u.operand;
+        JSLexicalEnvironment* lexicalEnvironment = VirtualRegister(lexicalEnvironmentReg).isValid() ?
+            exec->uncheckedR(lexicalEnvironmentReg).lexicalEnvironment() : nullptr;
+        arguments = JSValue(Arguments::create(vm, exec, lexicalEnvironment));
+
         LLINT_CHECK_EXCEPTION();
         LLINT_OP(2) = arguments;
         exec->uncheckedR(unmodifiedArgumentsRegister(VirtualRegister(pc[2].u.operand)).offset()) = arguments;
