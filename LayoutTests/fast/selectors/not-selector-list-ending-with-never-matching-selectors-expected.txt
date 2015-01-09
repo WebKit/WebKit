@@ -1,0 +1,49 @@
+Test :not() with a selector list ending with selector that can never match.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing "testcase:not(.bar, :not(*))"
+PASS document.querySelectorAll('#test-root testcase:not(.bar, :not(*))').length is 2
+PASS document.querySelectorAll('#test-root testcase:not(.bar, :not(*))')[0].id is "testcase2"
+PASS document.querySelectorAll('#test-root testcase:not(.bar, :not(*))')[1].id is "testcase3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "testcase:not(.bazoo, *:not(*))"
+PASS document.querySelectorAll('#test-root testcase:not(.bazoo, *:not(*))').length is 2
+PASS document.querySelectorAll('#test-root testcase:not(.bazoo, *:not(*))')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:not(.bazoo, *:not(*))')[1].id is "testcase3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "testcase:not(.baz, #foo#bar)"
+PASS document.querySelectorAll('#test-root testcase:not(.baz, #foo#bar)').length is 2
+PASS document.querySelectorAll('#test-root testcase:not(.baz, #foo#bar)')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:not(.baz, #foo#bar)')[1].id is "testcase2"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
+
+Testing "testcase:not(.bar, #foo#bar, :not(*), *:not(*), foo:not(*))"
+PASS document.querySelectorAll('#test-root testcase:not(.bar, #foo#bar, :not(*), *:not(*), foo:not(*))').length is 2
+PASS document.querySelectorAll('#test-root testcase:not(.bar, #foo#bar, :not(*), *:not(*), foo:not(*))')[0].id is "testcase2"
+PASS document.querySelectorAll('#test-root testcase:not(.bar, #foo#bar, :not(*), *:not(*), foo:not(*))')[1].id is "testcase3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+
+Testing "testcase:not(.bazoo, #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))"
+PASS document.querySelectorAll('#test-root testcase:not(.bazoo, #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))').length is 2
+PASS document.querySelectorAll('#test-root testcase:not(.bazoo, #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))')[0].id is "testcase1"
+PASS document.querySelectorAll('#test-root testcase:not(.bazoo, #foo#bar, :not(*), *:not(*), foo:not(*), #foo#bar, :not(*), *:not(*), foo:not(*))')[1].id is "testcase3"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

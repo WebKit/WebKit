@@ -1,3 +1,53 @@
+2015-01-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        Make better use of the stack when compiling selectors
+        https://bugs.webkit.org/show_bug.cgi?id=139615
+        rdar://problem/19226482
+
+        Reviewed by Andreas Kling.
+
+        Selectors used to be only on one level. To avoid memory allocations, we were allocating
+        a lot of stack upfront and we were using that to create all the intermediary objects
+        used by the code generator.
+
+        Then, selectors became multilevel. We now support arbitrary nesting of selector lists.
+
+        We did not adapt any of the structures and the creation of the intermediary object is recursive.
+        This resulted in over 1k of stack allocation at every level, quickly accumulating to unreasonable
+        numbers.
+
+        This patch fixes this problem by making each stack frame of the recursion much lighter.
+        We no longer allocate the big objects (SelectorFragment and SelectorFragmentList) on the stack.
+
+        In each case where we would have used a Stack allocated SelectorFragment or SelectorFragmentList,
+        we now allocate the memory directly into the target vector.
+
+        In the cases where the object should not be on the vector, we simply remove it. Those are uncommon
+        cases so that should not be too bad.
+
+        Tests: fast/selectors/matches-selector-list-ending-with-never-matching-selectors.html
+               fast/selectors/not-selector-list-ending-with-never-matching-selectors.html
+               fast/selectors/nth-child-of-selector-list-ending-with-never-matching-selectors.html
+               fast/selectors/nth-last-child-of-selector-list-ending-with-never-matching-selectors.html
+
+        * cssjit/SelectorCompiler.cpp:
+        SelectorFragmentList is also used for nested lists. Keeping 32 SelectorFragment preallocated
+        for each nested list is way too big.
+
+        (WebCore::SelectorCompiler::addPseudoClassType):
+        There are three cases of nested selector lists supported by the compiler: :matches(), :not()
+        and :nth-child(). For those 3 cases, use the target vector memory instead of the stack.
+
+        (WebCore::SelectorCompiler::constructFragmentsInternal):
+        (WebCore::SelectorCompiler::constructFragments):
+        Make sure we do not modify the input list on failure since it may be reused.
+
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatchesSelectorList):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatchesMatchesPseudoClass):
+        I changed the handling of :nth-child(An+B of selectorList) to not generate empty filters.
+        With that we can generalize the assertion to generateElementMatchesSelectorList() and simplify
+        the flow of selector lists a bit.
+
 2015-01-08  Chris Dumez  <cdumez@apple.com>
 
         Move '-webkit-font-feature-settings' CSS property to the new StyleBuilder

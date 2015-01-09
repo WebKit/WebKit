@@ -214,7 +214,7 @@ struct SelectorFragment {
     bool onlyMatchesLinksInQuirksMode;
 };
 
-class SelectorFragmentList : public Vector<SelectorFragment, 32> {
+class SelectorFragmentList : public Vector<SelectorFragment, 4> {
 public:
     unsigned registerRequirements = std::numeric_limits<unsigned>::max();
     unsigned stackRequirements = std::numeric_limits<unsigned>::max();
@@ -639,15 +639,19 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                 unsigned firstFragmentListSpecificity = 0;
                 bool firstFragmentListSpecificitySet = false;
 
+                SelectorFragmentList* selectorFragments = nullptr;
                 for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
-                    SelectorFragmentList selectorFragments;
+                    if (!selectorFragments) {
+                        nthChildOfSelectorInfo.selectorList.append(SelectorFragmentList());
+                        selectorFragments = &nthChildOfSelectorInfo.selectorList.last();
+                    }
+
                     VisitedMode ignoreVisitedMode = VisitedMode::None;
-                    FunctionType functionType = constructFragments(subselector, selectorContext, selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
+                    FunctionType functionType = constructFragments(subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
                     ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
                     switch (functionType) {
                     case FunctionType::SimpleSelectorChecker:
                     case FunctionType::SelectorCheckerWithCheckingContext:
-                        nthChildOfSelectorInfo.selectorList.append(selectorFragments);
                         break;
                     case FunctionType::CannotMatchAnything:
                         continue;
@@ -657,15 +661,25 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
                     if (firstFragmentListSpecificitySet) {
                         // The CSS JIT does not handle dynamic specificity yet.
-                        if (selectorContext == SelectorContext::RuleCollector && selectorFragments.staticSpecificity != firstFragmentListSpecificity)
+                        if (selectorContext == SelectorContext::RuleCollector && selectorFragments->staticSpecificity != firstFragmentListSpecificity)
                             return FunctionType::CannotCompile;
                     } else {
                         firstFragmentListSpecificitySet = true;
-                        firstFragmentListSpecificity = selectorFragments.staticSpecificity;
+                        firstFragmentListSpecificity = selectorFragments->staticSpecificity;
                     }
 
                     globalFunctionType = mostRestrictiveFunctionType(globalFunctionType, functionType);
+                    selectorFragments = nullptr;
                 }
+
+                // If there is still a SelectorFragmentList open, the last Fragment(s) cannot match anything,
+                // we have one FragmentList too many in our selector list.
+                if (selectorFragments)
+                    nthChildOfSelectorInfo.selectorList.removeLast();
+
+                if (nthChildOfSelectorInfo.selectorList.isEmpty())
+                    return FunctionType::CannotMatchAnything;
+
                 internalSpecificity = firstFragmentListSpecificity;
                 fragment.nthChildOfFilters.append(nthChildOfSelectorInfo);
                 return globalFunctionType;
@@ -685,10 +699,15 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                 return FunctionType::CannotMatchAnything;
 
             FunctionType functionType = FunctionType::SimpleSelectorChecker;
+            SelectorFragmentList* selectorFragments = nullptr;
             for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
-                SelectorFragmentList selectorFragments;
+                if (!selectorFragments) {
+                    fragment.notFilters.append(SelectorFragmentList());
+                    selectorFragments = &fragment.notFilters.last();
+                }
+
                 VisitedMode ignoreVisitedMode = VisitedMode::None;
-                FunctionType localFunctionType = constructFragments(subselector, selectorContext, selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
+                FunctionType localFunctionType = constructFragments(subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, PseudoElementMatchingBehavior::NeverMatch);
                 ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
 
                 // Since this is not pseudo class filter, CannotMatchAnything implies this filter always passes.
@@ -699,8 +718,13 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                     return FunctionType::CannotCompile;
 
                 functionType = mostRestrictiveFunctionType(functionType, localFunctionType);
-                fragment.notFilters.append(selectorFragments);
+                selectorFragments = nullptr;
             }
+
+            // If there is still a SelectorFragmentList open, the last Fragment(s) cannot match anything,
+            // we have one FragmentList too many in our selector list.
+            if (selectorFragments)
+                fragment.notFilters.removeLast();
 
             return functionType;
         }
@@ -774,10 +798,15 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
             FunctionType functionType = FunctionType::SimpleSelectorChecker;
             unsigned firstFragmentListSpecificity = 0;
             bool firstFragmentListSpecificitySet = false;
+            SelectorFragmentList* selectorFragments = nullptr;
             for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
-                SelectorFragmentList selectorFragments;
+                if (!selectorFragments) {
+                    matchesList.append(SelectorFragmentList());
+                    selectorFragments = &matchesList.last();
+                }
+
                 VisitedMode ignoreVisitedMode = VisitedMode::None;
-                FunctionType localFunctionType = constructFragments(subselector, selectorContext, selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, pseudoElementMatchingBehavior);
+                FunctionType localFunctionType = constructFragments(subselector, selectorContext, *selectorFragments, FragmentsLevel::InFunctionalPseudoType, positionInRootFragments, visitedMatchEnabled, ignoreVisitedMode, pseudoElementMatchingBehavior);
                 ASSERT_WITH_MESSAGE(ignoreVisitedMode == VisitedMode::None, ":visited is disabled in the functional pseudo classes");
 
                 // Since this fragment never matches against the element, don't insert it to matchesList.
@@ -788,21 +817,26 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
                     return FunctionType::CannotCompile;
 
                 // FIXME: Currently pseudo elements inside :matches are supported in non-JIT code.
-                if (selectorFragments.first().pseudoElementSelector)
+                if (selectorFragments->first().pseudoElementSelector)
                     return FunctionType::CannotCompile;
 
                 if (firstFragmentListSpecificitySet) {
                     // The CSS JIT does not handle dynamic specificity yet.
-                    if (selectorContext == SelectorContext::RuleCollector && selectorFragments.staticSpecificity != firstFragmentListSpecificity)
+                    if (selectorContext == SelectorContext::RuleCollector && selectorFragments->staticSpecificity != firstFragmentListSpecificity)
                         return FunctionType::CannotCompile;
                 } else {
                     firstFragmentListSpecificitySet = true;
-                    firstFragmentListSpecificity = selectorFragments.staticSpecificity;
+                    firstFragmentListSpecificity = selectorFragments->staticSpecificity;
                 }
 
                 functionType = mostRestrictiveFunctionType(functionType, localFunctionType);
-                matchesList.append(selectorFragments);
+                selectorFragments = nullptr;
             }
+
+            // If there is still a SelectorFragmentList open, the last Fragment(s) cannot match anything,
+            // we have one FragmentList too many in our selector list.
+            if (selectorFragments)
+                matchesList.removeLast();
 
             // Since all selector list in :matches() cannot match anything, the whole :matches() filter cannot match anything.
             if (matchesList.isEmpty())
@@ -857,61 +891,66 @@ static bool isScrollbarPseudoElement(CSSSelector::PseudoElementType type)
     return type >= CSSSelector::PseudoElementScrollbar && type <= CSSSelector::PseudoElementScrollbarTrackPiece;
 }
 
-static FunctionType constructFragments(const CSSSelector* rootSelector, SelectorContext selectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel fragmentLevel, FragmentPositionInRootFragments positionInRootFragments, bool visitedMatchEnabled, VisitedMode& visitedMode, PseudoElementMatchingBehavior pseudoElementMatchingBehavior)
+static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, SelectorContext selectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel fragmentLevel, FragmentPositionInRootFragments positionInRootFragments, bool visitedMatchEnabled, VisitedMode& visitedMode, PseudoElementMatchingBehavior pseudoElementMatchingBehavior)
 {
-    SelectorFragment fragment;
     FragmentRelation relationToPreviousFragment = FragmentRelation::Rightmost;
     FunctionType functionType = FunctionType::SimpleSelectorChecker;
+    SelectorFragment* fragment = nullptr;
     unsigned specificity = 0;
     for (const CSSSelector* selector = rootSelector; selector; selector = selector->tagHistory()) {
+        if (!fragment) {
+            selectorFragments.append(SelectorFragment());
+            fragment = &selectorFragments.last();
+        }
+
         specificity = CSSSelector::addSpecificities(specificity, selector->simpleSelectorSpecificity());
 
         // A selector is invalid if something follows a pseudo-element.
         // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
         // to follow the pseudo elements.
-        if (fragment.pseudoElementSelector && !isScrollbarPseudoElement(fragment.pseudoElementSelector->pseudoElementType()))
+        if (fragment->pseudoElementSelector && !isScrollbarPseudoElement(fragment->pseudoElementSelector->pseudoElementType()))
             return FunctionType::CannotMatchAnything;
 
         switch (selector->match()) {
         case CSSSelector::Tag:
-            ASSERT(!fragment.tagName);
-            fragment.tagName = &(selector->tagQName());
-            if (*fragment.tagName != anyQName())
-                fragment.onlyMatchesLinksInQuirksMode = false;
+            ASSERT(!fragment->tagName);
+            fragment->tagName = &(selector->tagQName());
+            if (*fragment->tagName != anyQName())
+                fragment->onlyMatchesLinksInQuirksMode = false;
             break;
         case CSSSelector::Id: {
             const AtomicString& id = selector->value();
-            if (fragment.id) {
-                if (id != *fragment.id)
+            if (fragment->id) {
+                if (id != *fragment->id)
                     return FunctionType::CannotMatchAnything;
             } else
-                fragment.id = &(selector->value());
-            fragment.onlyMatchesLinksInQuirksMode = false;
+                fragment->id = &(selector->value());
+            fragment->onlyMatchesLinksInQuirksMode = false;
             break;
         }
         case CSSSelector::Class:
-            fragment.classNames.append(selector->value().impl());
-            fragment.onlyMatchesLinksInQuirksMode = false;
+            fragment->classNames.append(selector->value().impl());
+            fragment->onlyMatchesLinksInQuirksMode = false;
             break;
         case CSSSelector::PseudoClass: {
             FragmentPositionInRootFragments subPosition = positionInRootFragments;
             if (relationToPreviousFragment != FragmentRelation::Rightmost)
                 subPosition = FragmentPositionInRootFragments::NotRightmost;
-            if (fragment.pseudoElementSelector && isScrollbarPseudoElement(fragment.pseudoElementSelector->pseudoElementType()))
-                functionType = mostRestrictiveFunctionType(functionType, addScrollbarPseudoClassType(*selector, fragment));
+            if (fragment->pseudoElementSelector && isScrollbarPseudoElement(fragment->pseudoElementSelector->pseudoElementType()))
+                functionType = mostRestrictiveFunctionType(functionType, addScrollbarPseudoClassType(*selector, *fragment));
             else {
                 unsigned internalSpecificity = 0;
-                functionType = mostRestrictiveFunctionType(functionType, addPseudoClassType(*selector, fragment, internalSpecificity, selectorContext, fragmentLevel, subPosition, visitedMatchEnabled, visitedMode, pseudoElementMatchingBehavior));
+                functionType = mostRestrictiveFunctionType(functionType, addPseudoClassType(*selector, *fragment, internalSpecificity, selectorContext, fragmentLevel, subPosition, visitedMatchEnabled, visitedMode, pseudoElementMatchingBehavior));
                 specificity = CSSSelector::addSpecificities(specificity, internalSpecificity);
             }
             if (!pseudoClassOnlyMatchesLinksInQuirksMode(*selector))
-                fragment.onlyMatchesLinksInQuirksMode = false;
+                fragment->onlyMatchesLinksInQuirksMode = false;
             if (functionType == FunctionType::CannotCompile || functionType == FunctionType::CannotMatchAnything)
                 return functionType;
             break;
         }
         case CSSSelector::PseudoElement: {
-            fragment.onlyMatchesLinksInQuirksMode = false;
+            fragment->onlyMatchesLinksInQuirksMode = false;
 
             // In the QuerySelector context, PseudoElement selectors always fail.
             if (selectorContext == SelectorContext::QuerySelector)
@@ -928,8 +967,8 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
             case CSSSelector::PseudoElementScrollbarThumb:
             case CSSSelector::PseudoElementScrollbarTrack:
             case CSSSelector::PseudoElementScrollbarTrackPiece:
-                ASSERT(!fragment.pseudoElementSelector);
-                fragment.pseudoElementSelector = selector;
+                ASSERT(!fragment->pseudoElementSelector);
+                fragment->pseudoElementSelector = selector;
                 break;
             case CSSSelector::PseudoElementUnknown:
                 ASSERT_NOT_REACHED();
@@ -958,16 +997,16 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
             FALLTHROUGH;
         case CSSSelector::Exact:
         case CSSSelector::Hyphen:
-            fragment.onlyMatchesLinksInQuirksMode = false;
-            fragment.attributes.append(AttributeMatchingInfo(selector, HTMLDocument::isCaseSensitiveAttribute(selector->attribute())));
+            fragment->onlyMatchesLinksInQuirksMode = false;
+            fragment->attributes.append(AttributeMatchingInfo(selector, HTMLDocument::isCaseSensitiveAttribute(selector->attribute())));
             break;
 
         case CSSSelector::Set:
-            fragment.onlyMatchesLinksInQuirksMode = false;
-            fragment.attributes.append(AttributeMatchingInfo(selector, true));
+            fragment->onlyMatchesLinksInQuirksMode = false;
+            fragment->attributes.append(AttributeMatchingInfo(selector, true));
             break;
         case CSSSelector::PagePseudoClass:
-            fragment.onlyMatchesLinksInQuirksMode = false;
+            fragment->onlyMatchesLinksInQuirksMode = false;
             // Pseudo page class are only relevant for style resolution, they are ignored for matching.
             break;
         case CSSSelector::Unknown:
@@ -995,19 +1034,31 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
         // Virtual pseudo element is only effective in the rightmost fragment.
         pseudoElementMatchingBehavior = PseudoElementMatchingBehavior::NeverMatch;
 
-        fragment.relationToLeftFragment = fragmentRelationForSelectorRelation(relation);
-        fragment.relationToRightFragment = relationToPreviousFragment;
-        fragment.positionInRootFragments = positionInRootFragments;
-        relationToPreviousFragment = fragment.relationToLeftFragment;
+        fragment->relationToLeftFragment = fragmentRelationForSelectorRelation(relation);
+        fragment->relationToRightFragment = relationToPreviousFragment;
+        fragment->positionInRootFragments = positionInRootFragments;
+        relationToPreviousFragment = fragment->relationToLeftFragment;
 
         if (fragmentLevel != FragmentsLevel::Root)
-            fragment.onlyMatchesLinksInQuirksMode = false;
-        selectorFragments.append(fragment);
-        fragment = SelectorFragment();
+            fragment->onlyMatchesLinksInQuirksMode = false;
+
+        fragment = nullptr;
     }
+
+    ASSERT(!fragment);
 
     selectorFragments.staticSpecificity = specificity;
 
+    return functionType;
+}
+
+static FunctionType constructFragments(const CSSSelector* rootSelector, SelectorContext selectorContext, SelectorFragmentList& selectorFragments, FragmentsLevel fragmentLevel, FragmentPositionInRootFragments positionInRootFragments, bool visitedMatchEnabled, VisitedMode& visitedMode, PseudoElementMatchingBehavior pseudoElementMatchingBehavior)
+{
+    ASSERT(selectorFragments.isEmpty());
+
+    FunctionType functionType = constructFragmentsInternal(rootSelector, selectorContext, selectorFragments, fragmentLevel, positionInRootFragments, visitedMatchEnabled, visitedMode, pseudoElementMatchingBehavior);
+    if (functionType != FunctionType::SimpleSelectorChecker && functionType != FunctionType::SelectorCheckerWithCheckingContext)
+        selectorFragments.clear();
     return functionType;
 }
 
@@ -1803,6 +1854,8 @@ void SelectorCodeGenerator::generateSelectorCheckerExcludingPseudoElements(Assem
 
 void SelectorCodeGenerator::generateElementMatchesSelectorList(Assembler::JumpList& failingCases, Assembler::RegisterID elementToMatch, const SelectorList& selectorList)
 {
+    ASSERT(!selectorList.isEmpty());
+
     RegisterVector registersToSave;
 
     // The contract is that existing registers are preserved. Two special cases are elementToMatch and elementAddressRegister
@@ -3590,10 +3643,8 @@ void SelectorCodeGenerator::generateElementMatchesAnyPseudoClass(Assembler::Jump
 
 void SelectorCodeGenerator::generateElementMatchesMatchesPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment& fragment)
 {
-    for (const SelectorList& matchesList : fragment.matchesFilters) {
-        ASSERT(!matchesList.isEmpty());
+    for (const SelectorList& matchesList : fragment.matchesFilters)
         generateElementMatchesSelectorList(failureCases, elementAddressRegister, matchesList);
-    }
 }
 
 void SelectorCodeGenerator::generateElementHasPseudoElement(Assembler::JumpList&, const SelectorFragment& fragment)
