@@ -32,8 +32,8 @@
 #include "TextEncodingDetector.h"
 
 #include "TextEncoding.h"
-#include "unicode/ucnv.h"
-#include "unicode/ucsdet.h"
+#include <unicode/ucnv.h>
+#include <unicode/ucsdet.h>
 
 namespace WebCore {
 

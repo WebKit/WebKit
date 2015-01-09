@@ -34,7 +34,7 @@
 #include "Font.h"
 #include "HarfBuzzFace.h"
 #include "SurrogatePairAwareTextIterator.h"
-#include "hb-icu.h"
+#include <hb-icu.h>
 #include <unicode/normlzr.h>
 #include <unicode/uchar.h>
 #include <wtf/MathExtras.h>

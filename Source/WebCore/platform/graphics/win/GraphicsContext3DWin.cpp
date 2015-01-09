@@ -33,9 +33,9 @@
 #include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(WIN)
-#include "GLSLANG/ShaderLang.h"
+#include <GLSLANG/ShaderLang.h>
 #else
-#include "ShaderLang.h"
+#include <ANGLE/ShaderLang.h>
 #endif
 
 #if USE(OPENGL_ES_2)

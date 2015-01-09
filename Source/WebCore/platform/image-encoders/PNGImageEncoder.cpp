@@ -34,7 +34,7 @@
 #include "PNGImageEncoder.h"
 
 #include "IntSize.h"
-#include "png.h"
+#include <png.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

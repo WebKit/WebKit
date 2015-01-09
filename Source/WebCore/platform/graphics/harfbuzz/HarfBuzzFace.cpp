@@ -32,8 +32,8 @@
 #include "HarfBuzzFace.h"
 
 #include "FontPlatformData.h"
-#include "hb-ot.h"
-#include "hb.h"
+#include <hb-ot.h>
+#include <hb.h>
 
 namespace WebCore {
 

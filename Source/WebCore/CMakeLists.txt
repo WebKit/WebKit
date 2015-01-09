@@ -2954,6 +2954,7 @@ list(APPEND WebCore_LIBRARIES
 if (WTF_USE_3D_GRAPHICS)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${THIRDPARTY_DIR}/ANGLE/src"
+        "${THIRDPARTY_DIR}/ANGLE/include/"
         "${THIRDPARTY_DIR}/ANGLE/include/KHR"
         "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
         "${WEBCORE_DIR}/platform/graphics/gpu"

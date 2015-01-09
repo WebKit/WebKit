@@ -35,8 +35,6 @@
 #include "RoundedRect.h"
 #include "TextRun.h"
 
-#include "stdio.h"
-
 namespace WebCore {
 
 class TextRunIterator {

@@ -42,10 +42,10 @@
 
 extern "C" {
 #if USE(ICCJPEG)
-#include "iccjpeg.h"
+#include <iccjpeg.h>
 #endif
 #if USE(QCMSLIB)
-#include "qcms.h"
+#include <qcms.h>
 #endif
 #include <setjmp.h>
 }

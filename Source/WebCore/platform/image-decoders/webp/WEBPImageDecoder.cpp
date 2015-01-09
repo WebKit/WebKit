@@ -32,8 +32,8 @@
 #if USE(WEBP)
 
 #ifdef QCMS_WEBP_COLOR_CORRECTION
-#include "qcms.h"
-#include "webp/demux.h"
+#include <qcms.h>
+#include <webp/demux.h>
 #else
 #undef ICCP_FLAG
 #define ICCP_FLAG 0

@@ -41,11 +41,11 @@
 #include "PNGImageDecoder.h"
 
 #include "Color.h"
-#include "png.h"
+#include <png.h>
 #include <wtf/StdLibExtras.h>
 
 #if USE(QCMSLIB)
-#include "qcms.h"
+#include <qcms.h>
 #endif
 
 #if defined(PNG_LIBPNG_VER_MAJOR) && defined(PNG_LIBPNG_VER_MINOR) && (PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 4))

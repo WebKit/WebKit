@@ -1,3 +1,26 @@
+2015-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Use angle-bracket form to include external headers in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=140288
+
+        Reviewed by Žan Doberšek.
+
+        * CMakeLists.txt:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        * platform/graphics/harfbuzz/HarfBuzzFace.cpp:
+        * platform/graphics/harfbuzz/HarfBuzzFaceCoreText.cpp:
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        * platform/graphics/win/GraphicsContext3DWin.cpp:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        * platform/image-encoders/JPEGImageEncoder.cpp:
+        * platform/image-encoders/PNGImageEncoder.cpp:
+        * platform/text/TextEncodingDetectorICU.cpp:
+
 2015-01-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more unreviewed speculative buildfix after r178154.
