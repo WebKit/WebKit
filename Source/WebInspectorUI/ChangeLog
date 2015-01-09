@@ -1,3 +1,19 @@
+2015-01-09  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: REGRESSION: Navigation sidebar can show blank next to the Console view
+        https://bugs.webkit.org/show_bug.cgi?id=140291
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded): Don't restore collapsed false if selectedSidebarPanel is null.
+        (WebInspector._sidebarCollapsedStateDidChange): Support a _ignoreNavigationSidebarPanelCollapsedEvent flag
+        to avoid setting _navigationSidebarCollapsedSetting.
+        (WebInspector._navigationSidebarPanelSelected): Force collapsed if selectedSidebarPanel is null.
+        (WebInspector._contentBrowserCurrentContentViewDidChange): Set _ignoreNavigationSidebarPanelCollapsedEvent
+        when forcing the collapsed state to avoid setting _navigationSidebarCollapsedSetting and calling
+        _updateContentViewForCurrentNavigationSidebar.
+
 2015-01-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: REGRESSION Showing debugger sidebar shouldn't change selected JS file

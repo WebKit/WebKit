@@ -341,7 +341,7 @@ WebInspector.contentLoaded = function()
 
     // Set collapsed after loading the pending frontend commands are dispatched so only the final
     // selected sidebar panel gets shown and has a say in what content view gets shown.
-    this.navigationSidebar.collapsed = this._navigationSidebarCollapsedSetting.value;
+    this.navigationSidebar.collapsed = this.navigationSidebar.selectedSidebarPanel ? this._navigationSidebarCollapsedSetting.value : true;
 
     // If InspectorFrontendAPI didn't show a content view, then try to restore the last saved view state.
     if (!this.contentBrowser.currentContentView && !this.ignoreLastContentCookie)
@@ -886,8 +886,10 @@ WebInspector._updateDockNavigationItems = function()
 WebInspector._sidebarCollapsedStateDidChange = function(event)
 {
     if (event.target === this.navigationSidebar) {
-        this._navigationSidebarCollapsedSetting.value = this.navigationSidebar.collapsed;
-        this._updateContentViewForCurrentNavigationSidebar();
+        if (!this._ignoreNavigationSidebarPanelCollapsedEvent) {
+            this._navigationSidebarCollapsedSetting.value = this.navigationSidebar.collapsed;
+            this._updateContentViewForCurrentNavigationSidebar();
+        }
     } else if (event.target === this.detailsSidebar) {
         if (!this._ignoreDetailsSidebarPanelCollapsedEvent)
             this._detailsSidebarCollapsedSetting.value = this.detailsSidebar.collapsed;
@@ -964,7 +966,20 @@ WebInspector._updateContentViewForCurrentNavigationSidebar = function()
 
 WebInspector._navigationSidebarPanelSelected = function(event)
 {
-    if (!this.navigationSidebar.selectedSidebarPanel || this._ignoreNavigationSidebarPanelSelectedEvent)
+    if (this._ignoreNavigationSidebarPanelSelectedEvent)
+        return;
+
+    if (!this.navigationSidebar.selectedSidebarPanel) {
+        this._ignoreNavigationSidebarPanelCollapsedEvent = true;
+        this.navigationSidebar.collapsed = true;
+        delete this._ignoreNavigationSidebarPanelCollapsedEvent;
+        return;
+    }
+
+    // Restore the sidebar if was forced collapsed earlier because of no selectedSidebarPanel.
+    this.navigationSidebar.collapsed = this._navigationSidebarCollapsedSetting.value;
+
+    if (this.navigationSidebar.collapsed)
         return;
 
     this._updateContentViewForCurrentNavigationSidebar();
@@ -1101,15 +1116,22 @@ WebInspector._contentBrowserCurrentContentViewDidChange = function(event)
         if (allowedNavigationSidebarPanels.length && !allowedNavigationSidebarPanels.contains(selectedSidebarPanelIdentifier)) {
             console.assert(!currentContentView.__lastNavigationSidebarPanelIdentifier || allowedNavigationSidebarPanels.contains(currentContentView.__lastNavigationSidebarPanelIdentifier));
             this.navigationSidebar.selectedSidebarPanel = currentContentView.__lastNavigationSidebarPanelIdentifier || allowedNavigationSidebarPanels[0];
+            console.assert(this.navigationSidebar.selectedSidebarPanel);
         }
 
         if (this._wasShowingNavigationSidebarBeforeForcedCollapsed) {
+            this._ignoreNavigationSidebarPanelCollapsedEvent = true;
             this.navigationSidebar.collapsed = false;
+            delete this._ignoreNavigationSidebarPanelCollapsedEvent;
+
             delete this._wasShowingNavigationSidebarBeforeForcedCollapsed;
         }
     } else if (!allowedNavigationSidebarPanels && !this.navigationSidebar.collapsed) {
         this._wasShowingNavigationSidebarBeforeForcedCollapsed = true;
+
+        this._ignoreNavigationSidebarPanelCollapsedEvent = true;
         this.navigationSidebar.collapsed = true;
+        delete this._ignoreNavigationSidebarPanelCollapsedEvent;
     }
 
     if (allowedNavigationSidebarPanels && !this.navigationSidebar.collapsed)
