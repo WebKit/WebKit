@@ -1,3 +1,13 @@
+2015-01-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] content inside second shape area when two floats interact
+        https://bugs.webkit.org/show_bug.cgi?id=137702
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/shapes/shape-outside-floats/shape-outside-text-overlap-float-expected.html: Added.
+        * fast/shapes/shape-outside-floats/shape-outside-text-overlap-float.html: Added.
+
 2015-01-09  Chris Dumez  <cdumez@apple.com>
 
         Allow HTTPS + 'Cache-control: no-store' sub-frames into the page cache

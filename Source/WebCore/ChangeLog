@@ -1,3 +1,21 @@
+2015-01-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Shapes] content inside second shape area when two floats interact
+        https://bugs.webkit.org/show_bug.cgi?id=137702
+
+        Reviewed by Zalan Bujtas.
+
+        If a float has a shape-outside, we cannot assume that it has a uniform
+        width for the height of the float, so we cannot use simple line
+        layout.
+
+        Test: fast/shapes/shape-outside-floats/shape-outside-text-overlap-float.html
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseFor): Don't use simple line layout
+            if we have shape-outside. Also, rename floatRenderer to
+            floatingObject, since the variable doesn't contain a renderer.
+
 2015-01-09  Chris Dumez  <cdumez@apple.com>
 
         Allow HTTPS + 'Cache-control: no-store' sub-frames into the page cache

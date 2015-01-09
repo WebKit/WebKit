@@ -170,9 +170,15 @@ bool canUseFor(const RenderBlockFlow& flow)
         for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
             minimumWidthNeeded = std::min(minimumWidthNeeded, textRenderer.minLogicalWidth());
 
-            for (auto& floatRenderer : *flow.floatingObjectSet()) {
-                ASSERT(floatRenderer);
-                float availableWidth = flow.availableLogicalWidthForLine(floatRenderer->y(), false);
+            for (auto& floatingObject : *flow.floatingObjectSet()) {
+                ASSERT(floatingObject);
+#if ENABLE(CSS_SHAPES)
+                // if a float has a shape, we cannot tell if content will need to be shifted until after we lay it out,
+                // since the amount of space is not uniform for the height of the float.
+                if (floatingObject->renderer().shapeOutsideInfo())
+                    return false;
+#endif
+                float availableWidth = flow.availableLogicalWidthForLine(floatingObject->y(), false);
                 if (availableWidth < minimumWidthNeeded)
                     return false;
             }

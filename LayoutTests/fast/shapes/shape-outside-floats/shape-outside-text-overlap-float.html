@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<style>
+    #container {
+      font: 10px/1 Ahem;
+      width: 40px;
+    }
+
+    #left, #right {
+      width: 20px;
+      height: 20px;
+      background-color: green;
+    }
+
+    #left {
+      float: left;
+      -webkit-shape-outside: polygon(0 0, 100% 100%, 0 100%);
+      -webkit-clip-path: polygon(0 0, 100% 100%, 0 100%);
+    }
+
+    #right {
+      float: right;
+      -webkit-shape-outside: polygon(100% 0, 100% 100%, 0 100%);
+      -webkit-clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    }
+</style>
+<body>
+    <p>The black rectangles should not overlap the green trianges.</p>
+    <div id="container">
+        <div id="left"></div>
+        <div id="right"></div>
+        <p>xx xx</p>
+    </div>
+</body>
