@@ -59,7 +59,6 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
         Named
     } state = Initial;
     UChar32 result = 0;
-    const UChar32 highestValidCharacter = 0x10FFFF;
     StringBuilder consumedCharacters;
     
     while (!source.isEmpty()) {

@@ -1,3 +1,10 @@
+2015-01-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        One more unreviewed speculative buildfix after r178154.
+
+        * xml/parser/CharacterReferenceParserInlines.h:
+        (WebCore::consumeCharacterReference): Remove highestValidCharacter too, it became unused after r178163.
+
 2015-01-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed speculative buildfix after r178154.
