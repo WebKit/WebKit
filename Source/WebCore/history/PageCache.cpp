@@ -135,7 +135,7 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureHasPlugins);
         rejectReasons |= 1 << HasPlugins;
     }
-    if (frame->document()->url().protocolIs("https") && frame->loader().documentLoader()->response().cacheControlContainsNoStore()) {
+    if (frame->isMainFrame() && frame->document()->url().protocolIs("https") && frame->loader().documentLoader()->response().cacheControlContainsNoStore()) {
         PCLOG("   -Frame is HTTPS, and cache control prohibits storing");
         FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureHTTPSNoStoreKey);
         rejectReasons |= 1 << IsHttpsAndCacheControlled;
@@ -315,7 +315,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         // Do not cache error pages (these can be recognized as pages with substitute data or unreachable URLs).
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
         && (!frameLoader.subframeLoader().containsPlugins() || frame->page()->settings().pageCacheSupportsPlugins())
-        && !(document->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore())
+        && !(frame->isMainFrame() && document->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore())
 #if ENABLE(SQL_DATABASE)
         && !DatabaseManager::manager().hasOpenDatabases(document)
 #endif

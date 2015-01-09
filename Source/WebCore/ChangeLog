@@ -1,3 +1,28 @@
+2015-01-09  Chris Dumez  <cdumez@apple.com>
+
+        Allow HTTPS + 'Cache-control: no-store' sub-frames into the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=140302
+
+        Reviewed by Andreas Kling.
+
+        Allow HTTPS + 'Cache-control: no-store' sub-frames into the page cache.
+        We already restore 'no-store' sub-resources on history navigation from
+        the memory cache so there is no reason for our page cache policy to be
+        more restrictive.
+
+        We should align our memory cache / history navigation policy with our
+        page cache policy.
+
+        For now, 'no-store' main resources are not restored from either cache
+        (memory cache / page cache) on history navigation though. This behavior
+        does not change.
+
+        Test: http/tests/navigation/https-no-store-subframe-in-page-cache.html
+
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+
 2015-01-09  Anders Carlsson  <andersca@apple.com>
 
         Try to trigger a rebuild of generated JS bindings.

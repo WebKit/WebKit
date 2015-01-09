@@ -1,3 +1,19 @@
+2015-01-09  Chris Dumez  <cdumez@apple.com>
+
+        Allow HTTPS + 'Cache-control: no-store' sub-frames into the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=140302
+
+        Reviewed by Andreas Kling.
+
+        Add a layout test to make sure a page is restored from the page cache
+        on history navigation, even though its has an HTTPS sub-frame with
+        "cache-control: no-cache".
+
+        * http/tests/navigation/https-no-store-subframe-in-page-cache-expected.txt: Added.
+        * http/tests/navigation/https-no-store-subframe-in-page-cache.html: Added.
+        * http/tests/navigation/resources/https-no-store-subframe-in-page-cache.html: Added.
+        * http/tests/navigation/resources/no-store-frame.php: Added.
+
 2015-01-08  Anders Carlsson  <andersca@apple.com>
 
         Start removing Web Database support from workers

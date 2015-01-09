@@ -1,0 +1,27 @@
+<iframe src="no-store-frame.php"></iframe>
+
+<script>
+window.onpageshow = function(evt)
+{
+    if (!evt.persisted)
+        return;
+
+    alert("PASS: The page was restored from the page cache. Good job!");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.onload = function()
+{
+    if (window.sessionStorage.https_in_page_cache_started) {
+        alert("FAIL: The page was reloaded on back. It should NOT have been.");
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    alert("This page is https and has has a subframe with the no-store cache-control directive. It should go in to the page cache.");
+    window.sessionStorage.https_in_page_cache_started = true;
+    setTimeout('window.location = "go-back.html"', 0);
+}
+</script>
