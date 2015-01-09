@@ -1,5 +1,20 @@
 2015-01-08  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Phantom breakpoint appears on empty line after reload of minified file with a breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=140276
+
+        Reviewed by Timothy Hatcher.
+
+        Styles being set on lines (e.g. breakpoint styles) before content loaded can
+        carry forward with the empty line. It is safe for us to just remove all
+        the styles from the intial empty line before we load the initial content.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.set string.update):
+        (WebInspector.TextEditor.prototype.set string):
+
+2015-01-08  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Pause Reason Improvements (Breakpoint, Debugger Statement, Pause on Next Statement)
         https://bugs.webkit.org/show_bug.cgi?id=138991
 

@@ -110,6 +110,10 @@ WebInspector.TextEditor.prototype = {
     {
         function update()
         {
+            // Clear any styles that may have been set on the empty line before content loaded.
+            if (this._initialStringNotSet)
+                this._codeMirror.removeLineClass(0, "wrap");
+
             this._codeMirror.setValue(newString);
 
             if (this._initialStringNotSet) {
