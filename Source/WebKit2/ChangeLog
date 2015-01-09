@@ -1,3 +1,11 @@
+2015-01-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Fix the WebKit2 build with the public SDK
+
+        Forward declare class WebView.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2015-01-09  Sam Weinig  <sam@webkit.org>
 
         Make WKNavigation bridged to API::Navigation (Take 2)

@@ -625,6 +625,8 @@ typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
 @interface UIWebBrowserView : UIWebDocumentView
 @end
 
+@class WebView;
+
 @interface UIWebBrowserView (Details)
 - (WebView *)webView;
 - (void)sendScrollEventIfNecessaryWasUserScroll:(BOOL)userScroll;
