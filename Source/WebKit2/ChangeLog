@@ -1,5 +1,20 @@
 2015-01-09  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176441.
+
+    2014-11-20  Dan Bernstein  <mitz@apple.com>
+
+            Build fix.
+
+            * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+            (-[WKAirPlayRoutePicker showAirPlayPickerIPad:fromRect:]): Cast the return value of
+            [getMPAudioVideoRoutingPopoverControllerClass() alloc] to resolve ambiguity about which
+            -initWithType: we are calling.
+            (-[WKAirPlayRoutePicker showAirPlayPickerIPhone:]): Cast to resolve ambiguity.
+            (-[WKAirPlayRoutePicker show:fromRect:]): Cast for consistency.
+
+2015-01-09  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r174742.
 
     2014-10-15  Dan Bernstein  <mitz@apple.com>

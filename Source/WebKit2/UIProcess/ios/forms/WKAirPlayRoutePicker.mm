@@ -116,7 +116,7 @@ using namespace WebKit;
     if (_popoverController)
         return;
 
-    _popoverController = adoptNS([[getMPAudioVideoRoutingPopoverControllerClass() alloc] initWithType:itemType]);
+    _popoverController = adoptNS([(MPAudioVideoRoutingPopoverController *)[getMPAudioVideoRoutingPopoverControllerClass() alloc] initWithType:itemType]);
     [_popoverController setDelegate:self];
 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -131,7 +131,7 @@ using namespace WebKit;
     if (_actionSheet)
         return;
 
-    _actionSheet = adoptNS([[getMPAudioVideoRoutingActionSheetClass() alloc] initWithType:itemType]);
+    _actionSheet = adoptNS([(MPAudioVideoRoutingActionSheet *)[getMPAudioVideoRoutingActionSheetClass() alloc] initWithType:itemType]);
 
     [_actionSheet
         showWithValidInterfaceOrientationMaskBlock:^UIInterfaceOrientationMask {
@@ -146,7 +146,7 @@ using namespace WebKit;
 
 - (void)show:(BOOL)hasVideo fromRect:(CGRect)elementRect
 {
-    _routingController = adoptNS([[getMPAVRoutingControllerClass() alloc] initWithName:@"WebKit2 - HTML media element showing AirPlay route picker"]);
+    _routingController = adoptNS([(MPAVRoutingController *)[getMPAVRoutingControllerClass() alloc] initWithName:@"WebKit2 - HTML media element showing AirPlay route picker"]);
     [_routingController setDiscoveryMode:MPRouteDiscoveryModeDetailed];
 
     MPAVItemType itemType = hasVideo ? MPAVItemTypeVideo : MPAVItemTypeAudio;
