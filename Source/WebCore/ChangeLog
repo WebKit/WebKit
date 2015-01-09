@@ -1,3 +1,21 @@
+2015-01-08  Anders Carlsson  <andersca@apple.com>
+
+        Start removing Web Database support from workers
+        https://bugs.webkit.org/show_bug.cgi?id=140271
+
+        Reviewed by Sam Weinig.
+
+        Remove WorkerGlobalScopeWebDatabase which is the entry point for web database in workers.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webdatabase/WorkerGlobalScopeWebDatabase.cpp: Removed.
+        * Modules/webdatabase/WorkerGlobalScopeWebDatabase.h: Removed.
+        * Modules/webdatabase/WorkerGlobalScopeWebDatabase.idl: Removed.
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2015-01-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Layout Test fast/canvas/canvas-path-addPath.html is failing

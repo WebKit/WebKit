@@ -209,7 +209,6 @@ NON_SVG_BINDING_IDLS = \
     $(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
     $(WebCore)/Modules/webdatabase/SQLTransactionSync.idl \
     $(WebCore)/Modules/webdatabase/SQLTransactionSyncCallback.idl \
-    $(WebCore)/Modules/webdatabase/WorkerGlobalScopeWebDatabase.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
     $(WebCore)/crypto/CryptoKey.idl \

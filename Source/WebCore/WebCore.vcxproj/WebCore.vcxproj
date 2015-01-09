@@ -6824,7 +6824,6 @@
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionCoordinator.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionStateMachine.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionSync.cpp" />
-    <ClCompile Include="..\Modules\webdatabase\WorkerGlobalScopeWebDatabase.cpp" />
     <ClCompile Include="..\Modules\websockets\ThreadableWebSocketChannel.cpp" />
     <ClCompile Include="..\Modules\websockets\ThreadableWebSocketChannelClientWrapper.cpp" />
     <ClCompile Include="..\Modules\websockets\WebSocket.cpp" />
@@ -19118,7 +19117,6 @@
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionStateMachine.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionSync.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionSyncCallback.h" />
-    <ClInclude Include="..\Modules\webdatabase\WorkerGlobalScopeWebDatabase.h" />
     <ClInclude Include="..\Modules\websockets\CloseEvent.h" />
     <ClInclude Include="..\Modules\websockets\ThreadableWebSocketChannel.h" />
     <ClInclude Include="..\Modules\websockets\ThreadableWebSocketChannelClientWrapper.h" />

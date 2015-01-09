@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: line 7: DATABASE_ERR: DOM SQL Exception 1: The operation failed for some reason related to the database.
-CONSOLE MESSAGE: line 11: UNKNOWN_ERR: DOM SQL Exception 0: The operation failed for reasons unrelated to the database.
-This test makes sure that all sync database operations are immediately interrupted when the worker needs to terminate.
-PASS: database operations interrupted.
-

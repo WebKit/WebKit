@@ -2762,16 +2762,6 @@ if (ENABLE_ENCRYPTED_MEDIA OR ENABLE_ENCRYPTED_MEDIA_V2)
     )
 endif ()
 
-if (ENABLE_SQL_DATABASE)
-    list(APPEND WebCore_SOURCES
-        Modules/webdatabase/WorkerGlobalScopeWebDatabase.cpp
-    )
-
-    list(APPEND WebCore_IDL_FILES
-        Modules/webdatabase/WorkerGlobalScopeWebDatabase.idl
-    )
-endif ()
-
 list(APPEND WebCore_CSS_PROPERTY_NAMES
     ${WEBCORE_DIR}/css/SVGCSSPropertyNames.in
 )

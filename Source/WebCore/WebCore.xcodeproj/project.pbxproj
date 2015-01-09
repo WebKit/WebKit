@@ -4169,8 +4169,6 @@
 		A8CB413E0E8633FD0032C4F0 /* DashArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CB41020E85B8A50032C4F0 /* DashArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8CCBB48151F831600AB7CE9 /* DOMWindowWebDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CCBB46151F831600AB7CE9 /* DOMWindowWebDatabase.cpp */; };
 		A8CCBB49151F831600AB7CE9 /* DOMWindowWebDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CCBB47151F831600AB7CE9 /* DOMWindowWebDatabase.h */; };
-		A8CCBB4C151F833B00AB7CE9 /* WorkerGlobalScopeWebDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CCBB4A151F833B00AB7CE9 /* WorkerGlobalScopeWebDatabase.cpp */; };
-		A8CCBB4D151F833B00AB7CE9 /* WorkerGlobalScopeWebDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CCBB4B151F833B00AB7CE9 /* WorkerGlobalScopeWebDatabase.h */; };
 		A8CFF04D0A154F09000A4234 /* FixedTableLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */; };
 		A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF0490A154F09000A4234 /* AutoTableLayout.h */; };
 		A8CFF04F0A154F09000A4234 /* FixedTableLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */; };
@@ -11424,10 +11422,7 @@
 		A8CB41020E85B8A50032C4F0 /* DashArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DashArray.h; sourceTree = "<group>"; };
 		A8CCBB46151F831600AB7CE9 /* DOMWindowWebDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowWebDatabase.cpp; sourceTree = "<group>"; };
 		A8CCBB47151F831600AB7CE9 /* DOMWindowWebDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowWebDatabase.h; sourceTree = "<group>"; };
-		A8CCBB4A151F833B00AB7CE9 /* WorkerGlobalScopeWebDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerGlobalScopeWebDatabase.cpp; sourceTree = "<group>"; };
-		A8CCBB4B151F833B00AB7CE9 /* WorkerGlobalScopeWebDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerGlobalScopeWebDatabase.h; sourceTree = "<group>"; };
 		A8CCBB4E151F835A00AB7CE9 /* DOMWindowWebDatabase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindowWebDatabase.idl; sourceTree = "<group>"; };
-		A8CCBB4F151F837500AB7CE9 /* WorkerGlobalScopeWebDatabase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WorkerGlobalScopeWebDatabase.idl; sourceTree = "<group>"; };
 		A8CFF0480A154F09000A4234 /* FixedTableLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FixedTableLayout.cpp; sourceTree = "<group>"; };
 		A8CFF0490A154F09000A4234 /* AutoTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AutoTableLayout.h; sourceTree = "<group>"; };
 		A8CFF04A0A154F09000A4234 /* FixedTableLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FixedTableLayout.h; sourceTree = "<group>"; };
@@ -18440,9 +18435,6 @@
 				97BC6A1A1505F081001B74AC /* SQLTransactionSync.idl */,
 				97BC6A1B1505F081001B74AC /* SQLTransactionSyncCallback.h */,
 				97BC6A1C1505F081001B74AC /* SQLTransactionSyncCallback.idl */,
-				A8CCBB4A151F833B00AB7CE9 /* WorkerGlobalScopeWebDatabase.cpp */,
-				A8CCBB4B151F833B00AB7CE9 /* WorkerGlobalScopeWebDatabase.h */,
-				A8CCBB4F151F837500AB7CE9 /* WorkerGlobalScopeWebDatabase.idl */,
 			);
 			path = webdatabase;
 			sourceTree = "<group>";
@@ -26866,7 +26858,6 @@
 				51D719FC181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.h in Headers */,
 				97F8E666151D4A4E00D2D181 /* WorkerGlobalScopeNotifications.h in Headers */,
 				2E43464B0F546A8200B0F1BA /* WorkerGlobalScopeProxy.h in Headers */,
-				A8CCBB4D151F833B00AB7CE9 /* WorkerGlobalScopeWebDatabase.h in Headers */,
 				F36E07A51358A8BE00AACBC9 /* WorkerInspectorController.h in Headers */,
 				18F831B80FD48C7800D8C56B /* WorkerLoaderProxy.h in Headers */,
 				2E43464D0F546A8200B0F1BA /* WorkerLocation.h in Headers */,
@@ -30163,7 +30154,6 @@
 				2E4346480F546A8200B0F1BA /* WorkerGlobalScope.cpp in Sources */,
 				51D719FB181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp in Sources */,
 				97F8E665151D4A4B00D2D181 /* WorkerGlobalScopeNotifications.cpp in Sources */,
-				A8CCBB4C151F833B00AB7CE9 /* WorkerGlobalScopeWebDatabase.cpp in Sources */,
 				F36E07A41358A8BE00AACBC9 /* WorkerInspectorController.cpp in Sources */,
 				2E43464C0F546A8200B0F1BA /* WorkerLocation.cpp in Sources */,
 				2E43464F0F546A8200B0F1BA /* WorkerMessagingProxy.cpp in Sources */,

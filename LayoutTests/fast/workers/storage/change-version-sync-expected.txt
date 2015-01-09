@@ -1,3 +1,0 @@
-Test that version updates in sync databases work correctly.
-PASS: db.version is 3 as expected.
-

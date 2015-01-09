@@ -1,3 +1,92 @@
+2015-01-08  Anders Carlsson  <andersca@apple.com>
+
+        Start removing Web Database support from workers
+        https://bugs.webkit.org/show_bug.cgi?id=140271
+
+        Reviewed by Sam Weinig.
+
+        Remove Web Database worker tests.
+
+        * fast/workers/storage/change-version-handle-reuse-sync-expected.txt: Removed.
+        * fast/workers/storage/change-version-handle-reuse-sync.html: Removed.
+        * fast/workers/storage/change-version-handle-reuse-worker-expected.txt: Removed.
+        * fast/workers/storage/change-version-handle-reuse-worker.html: Removed.
+        * fast/workers/storage/change-version-sync-expected.txt: Removed.
+        * fast/workers/storage/change-version-sync.html: Removed.
+        * fast/workers/storage/empty-statement-sync-expected.txt: Removed.
+        * fast/workers/storage/empty-statement-sync.html: Removed.
+        * fast/workers/storage/execute-sql-args-sync-expected.txt: Removed.
+        * fast/workers/storage/execute-sql-args-sync.html: Removed.
+        * fast/workers/storage/execute-sql-args-worker-expected.txt: Removed.
+        * fast/workers/storage/execute-sql-args-worker.html: Removed.
+        * fast/workers/storage/executesql-accepts-only-one-statement-sync-expected.txt: Removed.
+        * fast/workers/storage/executesql-accepts-only-one-statement-sync.html: Removed.
+        * fast/workers/storage/interrupt-database-expected.txt: Removed.
+        * fast/workers/storage/interrupt-database-sync-expected.txt: Removed.
+        * fast/workers/storage/interrupt-database-sync.html-disabled: Removed.
+        * fast/workers/storage/interrupt-database.html: Removed.
+        * fast/workers/storage/multiple-databases-garbage-collection-expected.txt: Removed.
+        * fast/workers/storage/multiple-databases-garbage-collection.html: Removed.
+        * fast/workers/storage/multiple-transactions-expected.txt: Removed.
+        * fast/workers/storage/multiple-transactions-on-different-handles-expected.txt: Removed.
+        * fast/workers/storage/multiple-transactions-on-different-handles-sync-expected.txt: Removed.
+        * fast/workers/storage/multiple-transactions-on-different-handles-sync.html: Removed.
+        * fast/workers/storage/multiple-transactions-on-different-handles.html: Removed.
+        * fast/workers/storage/multiple-transactions.html: Removed.
+        * fast/workers/storage/open-database-creation-callback-sync-expected.txt: Removed.
+        * fast/workers/storage/open-database-creation-callback-sync.html: Removed.
+        * fast/workers/storage/open-database-empty-version-sync-expected.txt: Removed.
+        * fast/workers/storage/open-database-empty-version-sync.html: Removed.
+        * fast/workers/storage/open-database-inputs-sync-expected.txt: Removed.
+        * fast/workers/storage/open-database-inputs-sync.html: Removed.
+        * fast/workers/storage/open-database-set-empty-version-sync-expected.txt: Removed.
+        * fast/workers/storage/open-database-set-empty-version-sync.html: Removed.
+        * fast/workers/storage/open-database-while-transaction-in-progress-expected.txt: Removed.
+        * fast/workers/storage/open-database-while-transaction-in-progress-sync-expected.txt: Removed.
+        * fast/workers/storage/open-database-while-transaction-in-progress-sync.html: Removed.
+        * fast/workers/storage/open-database-while-transaction-in-progress.html: Removed.
+        * fast/workers/storage/read-and-write-transactions-dont-run-together-expected.txt: Removed.
+        * fast/workers/storage/read-and-write-transactions-dont-run-together.html: Removed.
+        * fast/workers/storage/resources/change-version-handle-reuse-sync.js: Removed.
+        * fast/workers/storage/resources/change-version-sync-1.js: Removed.
+        * fast/workers/storage/resources/change-version-sync-2.js: Removed.
+        * fast/workers/storage/resources/database-worker-controller.js: Removed.
+        * fast/workers/storage/resources/database-worker.js: Removed.
+        * fast/workers/storage/resources/empty-statement-sync.js: Removed.
+        * fast/workers/storage/resources/execute-sql-args-sync.js: Removed.
+        * fast/workers/storage/resources/executesql-accepts-only-one-statement-sync.js: Removed.
+        * fast/workers/storage/resources/interrupt-database-sync.js: Removed.
+        * fast/workers/storage/resources/interrupt-database.js: Removed.
+        * fast/workers/storage/resources/multiple-transactions-on-different-handles-sync.js: Removed.
+        * fast/workers/storage/resources/multiple-transactions-sync.js: Removed.
+        * fast/workers/storage/resources/open-database-creation-callback-sync.js: Removed.
+        * fast/workers/storage/resources/open-database-empty-version-sync.js: Removed.
+        * fast/workers/storage/resources/open-database-inputs-sync.js: Removed.
+        * fast/workers/storage/resources/open-database-set-empty-version-sync.js: Removed.
+        * fast/workers/storage/resources/open-database-while-transaction-in-progress-sync.js: Removed.
+        * fast/workers/storage/resources/sql-data-types-sync.js: Removed.
+        * fast/workers/storage/resources/sql-exception-codes-sync.js: Removed.
+        * fast/workers/storage/resources/test-authorizer-sync.js: Removed.
+        * fast/workers/storage/resources/test-inputs-common.js: Removed.
+        * fast/workers/storage/resources/transaction-in-transaction-sync.js: Removed.
+        * fast/workers/storage/resources/use-same-database-in-page-and-workers.js: Removed.
+        * fast/workers/storage/sql-data-types-sync-expected.txt: Removed.
+        * fast/workers/storage/sql-data-types-sync.html: Removed.
+        * fast/workers/storage/sql-exception-codes-sync-expected.txt: Removed.
+        * fast/workers/storage/sql-exception-codes-sync.html: Removed.
+        * fast/workers/storage/test-authorizer-expected.txt: Removed.
+        * fast/workers/storage/test-authorizer-sync-expected.txt: Removed.
+        * fast/workers/storage/test-authorizer-sync.html: Removed.
+        * fast/workers/storage/test-authorizer.html: Removed.
+        * fast/workers/storage/transaction-in-transaction-sync-expected.txt: Removed.
+        * fast/workers/storage/transaction-in-transaction-sync.html: Removed.
+        * fast/workers/storage/use-same-database-in-page-and-workers-expected.txt: Removed.
+        * fast/workers/storage/use-same-database-in-page-and-workers.html: Removed.
+        * http/tests/security/cross-origin-worker-websql-allowed-expected.txt: Removed.
+        * http/tests/security/cross-origin-worker-websql-allowed.html: Removed.
+        * http/tests/security/cross-origin-worker-websql-expected.txt: Removed.
+        * http/tests/security/cross-origin-worker-websql.html: Removed.
+
 2015-01-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test gardening.

@@ -549,9 +549,6 @@
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionSync.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\webdatabase\WorkerGlobalScopeWebDatabase.cpp">
-      <Filter>Modules\webdatabase</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\websockets\ThreadableWebSocketChannel.cpp">
       <Filter>Modules\websockets</Filter>
     </ClCompile>
@@ -7531,9 +7528,6 @@
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionSyncCallback.h">
-      <Filter>Modules\webdatabase</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\webdatabase\WorkerGlobalScopeWebDatabase.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\websockets\CloseEvent.h">
