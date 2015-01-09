@@ -1,3 +1,10 @@
+2015-01-09  Eric Carlson  <eric.carlson@apple.com>
+
+        After updating tests to use kerning, ligatures, and printer fonts, some tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=139968
+
+        * platform/mac/TestExpectations: Add more flaky tests.
+
 2015-01-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Add iOS-specific tests and consolidate iOS-specific accessibility tests

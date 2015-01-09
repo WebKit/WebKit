@@ -1516,3 +1516,5 @@ webkit.org/b/139968 [ Mavericks+ ] svg/W3C-SVG-1.1-SE/text-intro-05-t.svg [ Pass
 webkit.org/b/139968 [ Mavericks+ ] svg/W3C-SVG-1.1/text-intro-05-t.svg [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] svg/text/text-intro-05-t.svg [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] tables/mozilla/bugs/bug2479-2.html [ Pass Failure ]
+webkit.org/b/139968 [ Mavericks+ ] media/controls-after-reload.html [ Pass Failure ]
+webkit.org/b/139968 [ Mavericks+ ] media/controls-without-preload.html [ Pass Failure ]
