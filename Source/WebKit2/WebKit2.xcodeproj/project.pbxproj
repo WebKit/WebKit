@@ -759,6 +759,7 @@
 		37A5E01418BBF93F000A081E /* _WKActivatedElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A5E01218BBF937000A081E /* _WKActivatedElementInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37A64E5518F38E3C00EB30F1 /* _WKFormDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A64E5418F38E3C00EB30F1 /* _WKFormDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37A64E5718F38F4600EB30F1 /* _WKFormInputSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37B5045219EEF31300CE2CF8 /* WKErrorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 37B5045119EEF31300CE2CF8 /* WKErrorPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37BEC4DD1948FC6A008B4286 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		37BEC4E019491486008B4286 /* CompletionHandlerCallChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */; };
 		37BEC4E119491486008B4286 /* CompletionHandlerCallChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 37BEC4DF19491486008B4286 /* CompletionHandlerCallChecker.h */; };
@@ -2775,6 +2776,7 @@
 		37A5E01218BBF937000A081E /* _WKActivatedElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKActivatedElementInfo.h; sourceTree = "<group>"; };
 		37A64E5418F38E3C00EB30F1 /* _WKFormDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFormDelegate.h; sourceTree = "<group>"; };
 		37A64E5618F38F4600EB30F1 /* _WKFormInputSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFormInputSession.h; sourceTree = "<group>"; };
+		37B5045119EEF31300CE2CF8 /* WKErrorPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKErrorPrivate.h; sourceTree = "<group>"; };
 		37BEC4DE19491486008B4286 /* CompletionHandlerCallChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CompletionHandlerCallChecker.mm; sourceTree = "<group>"; };
 		37BEC4DF19491486008B4286 /* CompletionHandlerCallChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionHandlerCallChecker.h; sourceTree = "<group>"; };
 		37BF2F041947DEB400723C48 /* WKNSURLRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSURLRequest.h; sourceTree = "<group>"; };
@@ -5038,6 +5040,7 @@
 				37C4C08418149C5B003688B9 /* WKBackForwardListItem.mm */,
 				37C4C08818149F23003688B9 /* WKBackForwardListItemInternal.h */,
 				1AF4592D19464B2000F9D4A2 /* WKError.h */,
+				37B5045119EEF31300CE2CF8 /* WKErrorPrivate.h */,
 				1AF4592C19464B2000F9D4A2 /* WKError.mm */,
 				1A2D252A194688FD004537B0 /* WKErrorInternal.h */,
 				1A4D664A18A3030E00D82E21 /* WKFrameInfo.h */,
@@ -7315,6 +7318,7 @@
 				7C3F8C91173AF52D007B7F39 /* PluginInformation.h in Headers */,
 				1AEFCC1211D01F96008219D3 /* PluginInfoStore.h in Headers */,
 				1A3D610213A7CC2A00F95D4E /* PluginModuleInfo.h in Headers */,
+				37B5045219EEF31300CE2CF8 /* WKErrorPrivate.h in Headers */,
 				1A043976124D034800FFBFB5 /* PluginProcess.h in Headers */,
 				1AC5FFC2174BFD1B0001483D /* PluginProcessAttributes.h in Headers */,
 				1A0EC906124C0AB8007EF4A5 /* PluginProcessConnection.h in Headers */,

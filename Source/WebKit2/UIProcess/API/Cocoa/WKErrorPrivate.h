@@ -23,13 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKErrorPrivate.h"
+#import <WebKit/WKError.h>
 
 #if WK_API_ENABLED
 
-#import <wtf/RetainPtr.h>
-#import "GenericCallback.h"
+WK_EXTERN NSString * const _WKLegacyErrorDomain WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-RetainPtr<NSError> createNSError(WKErrorCode);
+typedef NS_ENUM(NSInteger, _WKLegacyErrorCode) {
+    _WKLegacyErrorPlugInWillHandleLoad = 204,
+} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 #endif
