@@ -1119,6 +1119,9 @@ void RenderThemeIOS::systemFont(CSSValueID valueID, FontDescription& fontDescrip
     static NeverDestroyed<FontDescription> shortFootnoteFont;
     static NeverDestroyed<FontDescription> shortCaption1Font;
     static NeverDestroyed<FontDescription> tallBodyFont;
+    static NeverDestroyed<FontDescription> title1Font;
+    static NeverDestroyed<FontDescription> title2Font;
+    static NeverDestroyed<FontDescription> title3Font;
 
     static CFStringRef userTextSize = contentSizeCategory();
 
@@ -1153,6 +1156,24 @@ void RenderThemeIOS::systemFont(CSSValueID valueID, FontDescription& fontDescrip
         cachedDesc = &bodyFont.get();
         textStyle = kCTUIFontTextStyleBody;
         if (!bodyFont.get().isAbsoluteSize())
+            fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
+        break;
+    case CSSValueAppleSystemTitle1:
+        cachedDesc = &title1Font.get();
+        textStyle = kCTUIFontTextStyleTitle1;
+        if (!title1Font.get().isAbsoluteSize())
+            fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
+        break;
+    case CSSValueAppleSystemTitle2:
+        cachedDesc = &title2Font.get();
+        textStyle = kCTUIFontTextStyleTitle2;
+        if (!title2Font.get().isAbsoluteSize())
+            fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
+        break;
+    case CSSValueAppleSystemTitle3:
+        cachedDesc = &title3Font.get();
+        textStyle = kCTUIFontTextStyleTitle3;
+        if (!title3Font.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
     case CSSValueAppleSystemSubheadline:

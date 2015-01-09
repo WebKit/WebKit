@@ -45,6 +45,9 @@ small-caption
 -apple-system-short-footnote
 -apple-system-short-caption1
 -apple-system-tall-body
+-apple-system-title1
+-apple-system-title2
+-apple-system-title3
 #endif
 
 // This has to go after the -apple-system versions.

@@ -1,3 +1,16 @@
+2015-01-09  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Support additional text styles.
+        https://bugs.webkit.org/show_bug.cgi?id=140310
+        rdar://problem/18568864
+
+        Reviewed by Joseph Pecoraro.
+
+        Updates the existing test to include the new text styles.
+
+        * platform/ios-simulator/ios/fast/text/opticalFontWithTextStyle-expected.txt:
+        * platform/ios-simulator/ios/fast/text/opticalFontWithTextStyle.html:
+
 2015-01-09  Eric Carlson  <eric.carlson@apple.com>
 
         After updating tests to use kerning, ligatures, and printer fonts, some tests fail

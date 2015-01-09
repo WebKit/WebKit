@@ -1,3 +1,15 @@
+2015-01-09  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Support additional text styles.
+        https://bugs.webkit.org/show_bug.cgi?id=140310
+        rdar://problem/18568864
+
+        Reviewed by Joseph Pecoraro.
+
+        Add support for three new text styles.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2015-01-09  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: REGRESSION: Navigation sidebar can show blank next to the Console view

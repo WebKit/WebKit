@@ -1,3 +1,17 @@
+2015-01-09  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Support additional text styles.
+        https://bugs.webkit.org/show_bug.cgi?id=140310
+        rdar://problem/18568864
+
+        Reviewed by Joseph Pecoraro.
+
+        Add support for three new text styles.
+
+        * css/CSSValueKeywords.in:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemFont):
+
 2015-01-09  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.
