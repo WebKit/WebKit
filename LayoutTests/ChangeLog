@@ -1,3 +1,15 @@
+2015-01-09  Chris Dumez  <cdumez@apple.com>
+
+        plugins/crash-restoring-plugin-page-from-page-cache.html and plugins/netscape-plugin-page-cache-works.html timing out on Intel Debug WebKit2 testers
+        https://bugs.webkit.org/show_bug.cgi?id=81392
+
+        Reviewed by Alexey Proskuryakov.
+
+        Unskip those 2 plugins / page cache tests as they seem to be passing on
+        WK2 nowadays.
+
+        * platform/wk2/TestExpectations:
+
 2015-01-09  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Support additional text styles.
