@@ -1,3 +1,13 @@
+2015-01-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Further twek the results for kerning and ligature related failures:
+        1. Added Mavericks+ to all expectations, because Mountain Kion is fine.
+        2. Changed some expectations from [ Failure ] to [ Pass Failure ] to silence annoying
+        "unexpectedly passed" output. We need to do more of this.
+        3. Added a few tests that failed locally.
+
+        * platform/mac/TestExpectations:
+
 2015-01-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] DumpRenderTree always using 800x600 size even if test needs other size
