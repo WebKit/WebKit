@@ -1,3 +1,9 @@
+2015-01-09  Anders Carlsson  <andersca@apple.com>
+
+        Try to trigger a rebuild of generated JS bindings.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2015-01-09  Chris Dumez  <cdumez@apple.com>
 
         Add support for SVG CSS Properties to the new StyleBuilder
