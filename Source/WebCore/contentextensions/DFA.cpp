@@ -73,7 +73,7 @@ unsigned DFA::nextState(unsigned currentState, char character, bool& ok) const
     return nextNode->value;
 }
 
-Vector<uint64_t> DFA::actions(unsigned currentState) const
+const Vector<uint64_t>& DFA::actions(unsigned currentState) const
 {
     ASSERT(currentState < m_nodes.size());
     return m_nodes[currentState].actions;
