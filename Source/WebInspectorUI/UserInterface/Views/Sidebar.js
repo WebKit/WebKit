@@ -106,7 +106,7 @@ WebInspector.Sidebar.prototype = {
 
         if (this._selectedSidebarPanel === sidebarPanel) {
             var index = this._sidebarPanels.indexOf(sidebarPanel);
-            this.selectedSidebarPanel = this._sidebarPanels[index - 1] || this._sidebarPanels[index + 1];
+            this.selectedSidebarPanel = this._sidebarPanels[index - 1] || this._sidebarPanels[index + 1] || null;
         }
 
         this._sidebarPanels.remove(sidebarPanel);

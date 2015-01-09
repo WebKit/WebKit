@@ -107,6 +107,11 @@ WebInspector.LogContentView.prototype = {
     constructor: WebInspector.LogContentView,
 
     // Public
+    get allowedNavigationSidebarPanels()
+    {
+        // Don't show any sidebars when the Console is opened.
+        return null;
+    },
 
     get navigationItems()
     {

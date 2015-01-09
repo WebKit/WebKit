@@ -59,6 +59,22 @@ WebInspector.ResourceClusterContentView.prototype = {
 
     // Public
 
+    get allowedNavigationSidebarPanels()
+    {
+        console.assert(this._resource);
+
+        switch (this._resource.type) {
+        case WebInspector.Resource.Type.Document: // HTML documents may have inline scripts.
+        case WebInspector.Resource.Type.Script:
+            return [];
+        default:
+            return [
+                WebInspector.resourceSidebarPanel.identifier,
+                WebInspector.timelineSidebarPanel.identifier
+            ];
+        }
+    },
+
     get resource()
     {
         return this._resource;

@@ -591,17 +591,19 @@ WebInspector.showSplitConsole = function()
     this._showingSplitConsoleSetting.value = true;
 
     if (this.splitContentBrowser.currentContentView !== this.consoleContentView) {
+        var wasShowingFullConsole = this.isShowingConsoleView();
+
         // Be sure to close any existing log view in the main content browser before showing it in the
         // split content browser. We can only show a content view in one browser at a time.
         this.contentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.LogContentView);
         this.splitContentBrowser.showContentView(this.consoleContentView);
+
+        if (wasShowingFullConsole && !this.contentBrowser.currentContentView)
+            this.resourceSidebarPanel.showDefaultContentView();
     } else {
         // This causes the view to know it was shown and focus the prompt.
         this.splitContentBrowser.contentViewContainer.shown();
     }
-
-    if (this._wasShowingNavigationSidebarBeforeFullHeightConsole)
-        this.navigationSidebar.collapsed = false;
 
     this.quickConsole.consoleLogVisibilityChanged(true);
 };
@@ -633,18 +635,6 @@ WebInspector.showFullHeightConsole = function(scope)
     this.consoleContentView.scopeBar.item(scope).selected = true;
 
     if (!this.contentBrowser.currentContentView || this.contentBrowser.currentContentView !== this.consoleContentView) {
-        this._wasShowingNavigationSidebarBeforeFullHeightConsole = !this.navigationSidebar.collapsed;
-
-        // Collapse the sidebar before showing the console view, so the check for the collapsed state in
-        // _revealAndSelectRepresentedObjectInNavigationSidebar returns early and does not deselect any
-        // tree elements in the current sidebar.
-        this.navigationSidebar.collapsed = true;
-
-        // If this is before the content has finished loading update the collapsed value setting
-        // ourselves so that we don't uncollapse the navigation sidebar when it is loaded.
-        if (!this._contentLoaded)
-            this._navigationSidebarCollapsedSetting.value = true;
-
         // Be sure to close any existing log view in the split content browser before showing it in the
         // main content browser. We can only show a content view in one browser at a time.
         this.splitContentBrowser.contentViewContainer.closeAllContentViewsOfPrototype(WebInspector.LogContentView);
@@ -672,14 +662,8 @@ WebInspector.toggleConsoleView = function()
     if (this.isShowingConsoleView()) {
         if (this.contentBrowser.canGoBack())
             this.contentBrowser.goBack();
-        else {
-            if (!this.navigationSidebar.selectedSidebarPanel)
-                this.navigationSidebar.selectedSidebarPanel = this.resourceSidebarPanel;
+        else
             this.resourceSidebarPanel.showDefaultContentView();
-        }
-
-        if (this._wasShowingNavigationSidebarBeforeFullHeightConsole)
-            this.navigationSidebar.collapsed = false;
     } else
         this.showFullHeightConsole();
 };
@@ -903,7 +887,7 @@ WebInspector._sidebarCollapsedStateDidChange = function(event)
 {
     if (event.target === this.navigationSidebar) {
         this._navigationSidebarCollapsedSetting.value = this.navigationSidebar.collapsed;
-        this._updateNavigationSidebarForCurrentContentView();
+        this._updateContentViewForCurrentNavigationSidebar();
     } else if (event.target === this.detailsSidebar) {
         if (!this._ignoreDetailsSidebarPanelCollapsedEvent)
             this._detailsSidebarCollapsedSetting.value = this.detailsSidebar.collapsed;
@@ -941,12 +925,9 @@ WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar = function(rep
         treeElement.revealAndSelect(true, false, false, true);
     else if (selectedSidebarPanel.contentTreeOutline.selectedTreeElement)
         selectedSidebarPanel.contentTreeOutline.selectedTreeElement.deselect(true);
-
-    if (!selectedSidebarPanel.hasSelectedElement)
-        selectedSidebarPanel.showDefaultContentView();
 };
 
-WebInspector._updateNavigationSidebarForCurrentContentView = function()
+WebInspector._updateContentViewForCurrentNavigationSidebar = function()
 {
     if (this.navigationSidebar.collapsed)
         return;
@@ -962,26 +943,31 @@ WebInspector._updateNavigationSidebarForCurrentContentView = function()
     // Ensure the navigation sidebar panel is allowed by the current content view, if not ask the sidebar panel
     // to show the content view for the current selection.
     var allowedNavigationSidebarPanels = currentContentView.allowedNavigationSidebarPanels;
-    if (allowedNavigationSidebarPanels.length && !allowedNavigationSidebarPanels.contains(selectedSidebarPanel.identifier)) {
-        selectedSidebarPanel.showContentViewForCurrentSelection();
-
-        // Fetch the current content view again, since it likely changed.
-        currentContentView = this.contentBrowser.currentContentView;
+    if (allowedNavigationSidebarPanels && (!allowedNavigationSidebarPanels.length || allowedNavigationSidebarPanels.contains(selectedSidebarPanel.identifier))) {
+        this._revealAndSelectRepresentedObjectInNavigationSidebar(currentContentView.representedObject);
+        return;
     }
 
-    if (!allowedNavigationSidebarPanels.length || allowedNavigationSidebarPanels.contains(selectedSidebarPanel.identifier))
-        currentContentView.__lastNavigationSidebarPanelIdentifier = selectedSidebarPanel.identifier;
+    var backForwardList = WebInspector.contentBrowser.contentViewContainer.backForwardList;
+    var index = backForwardList.length;
+    while (index--) {
+        var contentView = backForwardList[index].contentView;
+        var allowedNavigationSidebarPanels = contentView.allowedNavigationSidebarPanels;
+        if (allowedNavigationSidebarPanels && (!allowedNavigationSidebarPanels.length || allowedNavigationSidebarPanels.contains(selectedSidebarPanel.identifier))) {
+            WebInspector.contentBrowser.showContentView(contentView);
+            return;
+        }
+    }
 
-    this._revealAndSelectRepresentedObjectInNavigationSidebar(currentContentView.representedObject);
+    selectedSidebarPanel.showDefaultContentView();
 };
 
 WebInspector._navigationSidebarPanelSelected = function(event)
 {
-    var selectedSidebarPanel = this.navigationSidebar.selectedSidebarPanel;
-    if (!selectedSidebarPanel)
+    if (!this.navigationSidebar.selectedSidebarPanel || this._ignoreNavigationSidebarPanelSelectedEvent)
         return;
 
-    this._updateNavigationSidebarForCurrentContentView();
+    this._updateContentViewForCurrentNavigationSidebar();
 };
 
 WebInspector._domNodeWasInspected = function(event)
@@ -1104,20 +1090,34 @@ WebInspector._contentBrowserCurrentContentViewDidChange = function(event)
     if (!selectedSidebarPanel)
         return;
 
+    this._ignoreNavigationSidebarPanelSelectedEvent = true;
+
     // Ensure the navigation sidebar panel is allowed by the current content view, if not change the navigation sidebar panel
     // to the last navigation sidebar panel used with the content view or the first one allowed.
     var selectedSidebarPanelIdentifier = selectedSidebarPanel.identifier;
-
     var allowedNavigationSidebarPanels = currentContentView.allowedNavigationSidebarPanels;
-    if (allowedNavigationSidebarPanels.length && !allowedNavigationSidebarPanels.contains(selectedSidebarPanelIdentifier)) {
-        console.assert(!currentContentView.__lastNavigationSidebarPanelIdentifier || allowedNavigationSidebarPanels.contains(currentContentView.__lastNavigationSidebarPanelIdentifier));
-        this.navigationSidebar.selectedSidebarPanel = currentContentView.__lastNavigationSidebarPanelIdentifier || allowedNavigationSidebarPanels[0];
+
+    if (allowedNavigationSidebarPanels) {
+        if (allowedNavigationSidebarPanels.length && !allowedNavigationSidebarPanels.contains(selectedSidebarPanelIdentifier)) {
+            console.assert(!currentContentView.__lastNavigationSidebarPanelIdentifier || allowedNavigationSidebarPanels.contains(currentContentView.__lastNavigationSidebarPanelIdentifier));
+            this.navigationSidebar.selectedSidebarPanel = currentContentView.__lastNavigationSidebarPanelIdentifier || allowedNavigationSidebarPanels[0];
+        }
+
+        if (this._wasShowingNavigationSidebarBeforeForcedCollapsed) {
+            this.navigationSidebar.collapsed = false;
+            delete this._wasShowingNavigationSidebarBeforeForcedCollapsed;
+        }
+    } else if (!allowedNavigationSidebarPanels && !this.navigationSidebar.collapsed) {
+        this._wasShowingNavigationSidebarBeforeForcedCollapsed = true;
+        this.navigationSidebar.collapsed = true;
     }
 
-    if (!allowedNavigationSidebarPanels.length || allowedNavigationSidebarPanels.contains(selectedSidebarPanelIdentifier))
-        currentContentView.__lastNavigationSidebarPanelIdentifier = selectedSidebarPanelIdentifier;
+    if (allowedNavigationSidebarPanels && !this.navigationSidebar.collapsed)
+        currentContentView.__lastNavigationSidebarPanelIdentifier = this.navigationSidebar.selectedSidebarPanel.identifier;
 
     this._revealAndSelectRepresentedObjectInNavigationSidebar(currentContentView.representedObject);
+
+    delete this._ignoreNavigationSidebarPanelSelectedEvent;
 };
 
 WebInspector._contentBrowserRepresentedObjectsDidChange = function(event)

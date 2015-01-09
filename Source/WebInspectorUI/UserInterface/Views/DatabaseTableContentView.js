@@ -39,6 +39,11 @@ WebInspector.DatabaseTableContentView.prototype = {
 
     // Public
 
+    get allowedNavigationSidebarPanels()
+    {
+        return [WebInspector.resourceSidebarPanel.identifier];
+    },
+
     update: function()
     {
         this.representedObject.database.executeSQL("SELECT * FROM \"" + this._escapeTableName(this.representedObject.name) + "\"", this._queryFinished.bind(this), this._queryError.bind(this));

@@ -1,3 +1,50 @@
+2015-01-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: REGRESSION Showing debugger sidebar shouldn't change selected JS file
+        https://bugs.webkit.org/show_bug.cgi?id=139526
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._revealAndSelectRepresentedObjectInNavigationSidebar):
+        When switching to Debugger, show last selected JS or HTML resource.
+
+        (WebInspector.showSplitConsole):
+        (WebInspector.showFullHeightConsole):
+        (WebInspector.toggleConsoleView):
+        (WebInspector._sidebarCollapsedStateDidChange):
+        (WebInspector._updateContentViewForCurrentNavigationSidebar):
+        (WebInspector._navigationSidebarPanelSelected):
+        (WebInspector._contentBrowserCurrentContentViewDidChange):
+        (WebInspector._updateNavigationSidebarForCurrentContentView): Deleted.
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WebInspector.ApplicationCacheFrameContentView.prototype.get allowedNavigationSidebarPanels):
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WebInspector.CookieStorageContentView.prototype.get allowedNavigationSidebarPanels):
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WebInspector.DOMStorageContentView.prototype.get allowedNavigationSidebarPanels):
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WebInspector.DOMTreeContentView.prototype.get allowedNavigationSidebarPanels):
+        * UserInterface/Views/DatabaseContentView.js:
+        (WebInspector.DatabaseContentView.prototype.get allowedNavigationSidebarPanels):
+        * UserInterface/Views/DatabaseTableContentView.js:
+        (WebInspector.DatabaseTableContentView.prototype.get allowedNavigationSidebarPanels):
+        * UserInterface/Views/FontResourceContentView.js:
+        (WebInspector.FontResourceContentView.prototype.get allowedNavigationSidebarPanels):
+        * UserInterface/Views/FrameDOMTreeContentView.js:
+        (WebInspector.FrameDOMTreeContentView.prototype.get allowedNavigationSidebarPanels):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.get allowedNavigationSidebarPanels):
+        * UserInterface/Views/ResourceClusterContentView.js:
+        (WebInspector.ResourceClusterContentView.prototype.get allowedNavigationSidebarPanels):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel.prototype.showDefaultContentView):
+        (WebInspector.ResourceSidebarPanel.prototype.showMainFrame):
+        * UserInterface/Views/Sidebar.js:
+        (WebInspector.Sidebar.prototype.removeSidebarPanel):
+        * UserInterface/Views/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype.get allowedNavigationSidebarPanels):
+
 2015-01-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Phantom breakpoint appears on empty line after reload of minified file with a breakpoint

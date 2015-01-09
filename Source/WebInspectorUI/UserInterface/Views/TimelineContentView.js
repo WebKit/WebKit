@@ -134,7 +134,7 @@ WebInspector.TimelineContentView.prototype = {
 
     get allowedNavigationSidebarPanels()
     {
-        return ["timeline"];
+        return [WebInspector.timelineSidebarPanel.identifier];
     },
 
     get supportsSplitContentBrowser()

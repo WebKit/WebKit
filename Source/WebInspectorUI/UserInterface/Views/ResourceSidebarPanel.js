@@ -105,7 +105,7 @@ WebInspector.ResourceSidebarPanel.prototype = {
     showDefaultContentView: function()
     {
         if (WebInspector.frameResourceManager.mainFrame) {
-            this.showMainFrameSourceCode();
+            this.showMainFrame();
             return;
         }
 
@@ -117,6 +117,11 @@ WebInspector.ResourceSidebarPanel.prototype = {
     get contentTreeOutlineToAutoPrune()
     {
         return this._searchContentTreeOutline;
+    },
+
+    showMainFrame: function(nodeToSelect, preventFocusChange)
+    {
+        WebInspector.contentBrowser.showContentViewForRepresentedObject(WebInspector.frameResourceManager.mainFrame);
     },
 
     showMainFrameDOMTree: function(nodeToSelect, preventFocusChange)

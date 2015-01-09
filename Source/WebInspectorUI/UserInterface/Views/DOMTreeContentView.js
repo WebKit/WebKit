@@ -78,6 +78,11 @@ WebInspector.DOMTreeContentView.prototype = {
 
     // Public
 
+    get allowedNavigationSidebarPanels()
+    {
+        return [WebInspector.resourceSidebarPanel.identifier];
+    },
+
     get navigationItems()
     {
         return [this._showsShadowDOMButtonNavigationItem, this._compositingBordersButtonNavigationItem, this._paintFlashingButtonNavigationItem];
