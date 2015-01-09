@@ -1,3 +1,24 @@
+2015-01-09  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix error handling of ContentExtensionsManager when the top level input is unusable
+        https://bugs.webkit.org/show_bug.cgi?id=140284
+
+        Reviewed by Andreas Kling.
+
+        There are a couple of ways the WebProcess would crash if the input
+        is really really bad:
+        -If the JSON is unreadable, we can have an exception or decodedRules can be null.
+        -On any of the error, we cannot return immediately or we will skip vm.clear().
+
+        This patch adds a branch to fix the first issue.
+
+        For the second issue, a new function, loadEncodedRules(), encapsulate all the early
+        returns to make sure we execute the end of loadExtension().
+
+        * contentextensions/ContentExtensionsManager.cpp:
+        (WebCore::ContentExtensions::ExtensionsManager::loadEncodedRules):
+        (WebCore::ContentExtensions::ExtensionsManager::loadExtension):
+
 2015-01-09  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         Simplify LineWidth::wrapNextToShapeOutside()
