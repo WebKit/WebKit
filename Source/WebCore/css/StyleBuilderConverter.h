@@ -29,6 +29,7 @@
 
 #include "BasicShapeFunctions.h"
 #include "CSSCalculationValue.h"
+#include "CSSFontFeatureValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
@@ -110,6 +111,7 @@ public:
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     static bool convertOverflowScrolling(StyleResolver&, CSSValue&);
 #endif
+    static RefPtr<FontFeatureSettings> convertFontFeatureSettings(StyleResolver&, CSSValue&);
 
 private:
     friend class StyleBuilderCustom;
@@ -1053,6 +1055,21 @@ inline bool StyleBuilderConverter::convertMaskImageOperations(StyleResolver& sty
     }
 
     return true;
+}
+
+inline RefPtr<FontFeatureSettings> StyleBuilderConverter::convertFontFeatureSettings(StyleResolver&, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
+        return nullptr;
+    }
+
+    RefPtr<FontFeatureSettings> settings = FontFeatureSettings::create();
+    for (auto& item : downcast<CSSValueList>(value)) {
+        auto& feature = downcast<CSSFontFeatureValue>(item.get());
+        settings->append(FontFeature(feature.tag(), feature.value()));
+    }
+    return WTF::move(settings);
 }
 
 #if PLATFORM(IOS)

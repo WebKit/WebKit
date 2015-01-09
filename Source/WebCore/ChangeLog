@@ -1,3 +1,25 @@
+2015-01-08  Chris Dumez  <cdumez@apple.com>
+
+        Move '-webkit-font-feature-settings' CSS property to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140267
+
+        Reviewed by Andreas Kling.
+
+        Move '-webkit-font-feature-settings' CSS property to the new
+        StyleBuilder.
+
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontFeatureSettings):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialWebkitFontFeatureSettings):
+        (WebCore::StyleBuilderCustom::applyInheritWebkitFontFeatureSettings):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontDescription::makeNormalFeatureSettings): Deleted.
+        * platform/graphics/FontDescription.h:
+
 2015-01-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build fix after r178133.

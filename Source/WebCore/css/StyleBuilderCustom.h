@@ -102,6 +102,8 @@ public:
     // Custom handling of initial + inherit value setting only.
     static void applyInitialWebkitMaskImage(StyleResolver&) { }
     static void applyInheritWebkitMaskImage(StyleResolver&) { }
+    static void applyInitialWebkitFontFeatureSettings(StyleResolver&) { }
+    static void applyInheritWebkitFontFeatureSettings(StyleResolver&) { }
 
     // Custom handling of inherit + value setting only.
     static void applyInheritDisplay(StyleResolver&);

@@ -1988,8 +1988,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     if (StyleBuilder::applyProperty(id, *this, *value, isInitial, isInherit))
         return;
 
-    CSSPrimitiveValue* primitiveValue = is<CSSPrimitiveValue>(*value) ? downcast<CSSPrimitiveValue>(value) : nullptr;
-
     // What follows is a list that maps the CSS properties into their corresponding front-end
     // RenderStyle values.
     switch (id) {
@@ -2072,32 +2070,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitFontSizeDelta:
     case CSSPropertyWebkitTextDecorationsInEffect:
         return;
-
-    // CSS Fonts Module Level 3
-    case CSSPropertyWebkitFontFeatureSettings: {
-        if (primitiveValue && primitiveValue->getValueID() == CSSValueNormal) {
-            setFontDescription(state.style()->fontDescription().makeNormalFeatureSettings());
-            return;
-        }
-
-        if (!is<CSSValueList>(*value))
-            return;
-
-        FontDescription fontDescription = state.style()->fontDescription();
-        CSSValueList& list = downcast<CSSValueList>(*value);
-        RefPtr<FontFeatureSettings> settings = FontFeatureSettings::create();
-        int length = list.length();
-        for (int i = 0; i < length; ++i) {
-            CSSValue* item = list.itemWithoutBoundsCheck(i);
-            if (!is<CSSFontFeatureValue>(*item))
-                continue;
-            CSSFontFeatureValue& feature = downcast<CSSFontFeatureValue>(*item);
-            settings->append(FontFeature(feature.tag(), feature.value()));
-        }
-        fontDescription.setFeatureSettings(settings.release());
-        setFontDescription(fontDescription);
-        return;
-    }
     
     // These properties are aliased and StyleBuilder already applied the property on the prefixed version.
     case CSSPropertyWebkitMaskImage:
@@ -2167,6 +2139,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyFontStyle:
     case CSSPropertyFontVariant:
     case CSSPropertyFontWeight:
+    case CSSPropertyWebkitFontFeatureSettings:
     case CSSPropertyHeight:
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     case CSSPropertyImageOrientation:

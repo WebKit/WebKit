@@ -94,13 +94,6 @@ FontTraitsMask FontDescription::traitsMask() const
     
 }
 
-FontDescription FontDescription::makeNormalFeatureSettings() const
-{
-    FontDescription normalDescription(*this);
-    normalDescription.setFeatureSettings(0);
-    return normalDescription;
-}
-
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 bool FontDescription::familiesEqualForTextAutoSizing(const FontDescription& other) const
 {
