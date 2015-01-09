@@ -23,9 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "BPlatform.h"
 #include "Environment.h"
 #include <cstdlib>
 #include <cstring>
+#if BOS(DARWIN)
+#include <mach-o/dyld.h>
+#endif
 
 namespace bmalloc {
 
@@ -69,6 +73,20 @@ static bool isLibgmallocEnabled()
     return true;
 }
 
+static bool isASanEnabled()
+{
+#if BOS(DARWIN)
+    uint32_t imageCount = _dyld_image_count();
+    for (uint32_t i = 0; i < imageCount; ++i) {
+        if (strstr(_dyld_get_image_name(i), "/libclang_rt.asan_"))
+            return true;
+    }
+    return false;
+#else
+    return false;
+#endif
+}
+
 Environment::Environment()
     : m_isBmallocEnabled(computeIsBmallocEnabled())
 {
@@ -79,6 +97,8 @@ bool Environment::computeIsBmallocEnabled()
     if (isMallocEnvironmentVariableSet())
         return false;
     if (isLibgmallocEnabled())
+        return false;
+    if (isASanEnabled())
         return false;
     return true;
 }

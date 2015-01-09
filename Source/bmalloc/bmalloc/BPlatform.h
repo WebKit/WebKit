@@ -31,6 +31,7 @@
 #endif
 
 #define BPLATFORM(PLATFORM) (defined BPLATFORM_##PLATFORM && BPLATFORM_##PLATFORM)
+#define BOS(OS) (defined BOS_##OS && BOS_##OS)
 
 #if ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED) \
     || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE) \
@@ -38,7 +39,8 @@
 #define BPLATFORM_IOS 1
 #endif
 
-#define BCOMPILER_SUPPORTS(COMPILER_FEATURE) (defined BCOMPILER_SUPPORTS_##COMPILER_FEATURE && BCOMPILER_SUPPORTS_##COMPILER_FEATURE)
-#define BCOMPILER_SUPPORTS_CXX_THREAD_LOCAL (defined(__has_feature) && __has_feature(cxx_thread_local))
+#ifdef __APPLE__
+#define BOS_DARWIN 1
+#endif
 
 #endif // BPlatform_h
