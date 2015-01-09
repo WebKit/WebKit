@@ -40,6 +40,7 @@ struct InteractionInformationAtPosition {
         : nodeAtPositionIsAssistedNode(false)
         , isSelectable(false)
         , isNearMarkedText(false)
+        , touchCalloutEnabled(true)
     {
     }
 
@@ -47,6 +48,7 @@ struct InteractionInformationAtPosition {
     bool nodeAtPositionIsAssistedNode;
     bool isSelectable;
     bool isNearMarkedText;
+    bool touchCalloutEnabled;
     String clickableElementName;
     String url;
     String title;
