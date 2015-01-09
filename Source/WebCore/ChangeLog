@@ -1,3 +1,16 @@
+2015-01-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        After r178166, ANGLE's EGL/GLES/GLES2 headers are included before the
+        system-default headers because the Source/ThirdParty/ANGLE/include
+        directory is searched through. This shouldn't be the case for ports
+        which want to use system-default headers and are searching for them
+        explicitly. To avoid that, OPENGL_INCLUDE_DIR or OPENGLES2_INCLUDE_DIR
+        should be added to WebCore_INCLUDE_DIRECTORIES before ANGLE directories.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * CMakeLists.txt:
+
 2015-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Use angle-bracket form to include external headers in WebCore

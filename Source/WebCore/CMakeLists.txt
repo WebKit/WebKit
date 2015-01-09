@@ -2952,13 +2952,8 @@ list(APPEND WebCore_LIBRARIES
 )
 
 if (WTF_USE_3D_GRAPHICS)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
-        "${THIRDPARTY_DIR}/ANGLE/src"
-        "${THIRDPARTY_DIR}/ANGLE/include/"
-        "${THIRDPARTY_DIR}/ANGLE/include/KHR"
-        "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
-        "${WEBCORE_DIR}/platform/graphics/gpu"
-    )
+    # For platforms that want to use system-provided OpenGL (ES) headers,
+    # these include directories need to be added before the ANGLE directories.
     if (OPENGL_FOUND)
         list(APPEND WebCore_INCLUDE_DIRECTORIES
             ${OPENGL_INCLUDE_DIR}
@@ -2974,6 +2969,14 @@ if (WTF_USE_3D_GRAPHICS)
             ${OPENGLES2_LIBRARIES}
         )
     endif ()
+
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        "${THIRDPARTY_DIR}/ANGLE/src"
+        "${THIRDPARTY_DIR}/ANGLE/include/"
+        "${THIRDPARTY_DIR}/ANGLE/include/KHR"
+        "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
+        "${WEBCORE_DIR}/platform/graphics/gpu"
+    )
 
     list(APPEND ANGLESupport_SOURCES
         ${THIRDPARTY_DIR}/ANGLE/src/common/blocklayout.cpp
