@@ -1,3 +1,17 @@
+2015-01-09  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Make DumpRenderTree build with public SDK
+        https://bugs.webkit.org/show_bug.cgi?id=140311
+
+        Reviewed by Sam Weinig.
+
+        Use CGRound() instead of the obsolete macro function _ROUNDF_ (defined in
+        header UIKit/UIMath.h), and std::max() instead of the macro function MAX.
+        Additionally, remove unused header CoreGraphics/CGFontDB.h.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (-[ScrollViewResizerDelegate view:didSetFrame:oldFrame:asResultOfZoom:]):
+
 2015-01-09  Alexey Proskuryakov  <ap@apple.com>
 
         platform/mac-wk2/tiled-drawing/tiled-drawing-scroll-position-page-cache-restoration.html fails on Retina machines
