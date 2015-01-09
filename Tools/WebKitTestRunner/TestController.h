@@ -136,7 +136,7 @@ private:
     void initializeTestPluginDirectory();
 
     void updateWebViewSizeForTest(const TestInvocation&);
-    void updateWindowScaleForTest(const TestInvocation&);
+    void updateWindowScaleForTest(PlatformWebView*, const TestInvocation&);
     void updateLayoutTypeForTest(const TestInvocation&);
 
     void decidePolicyForGeolocationPermissionRequestIfPossible();

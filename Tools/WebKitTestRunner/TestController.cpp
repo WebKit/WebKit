@@ -314,6 +314,8 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
 
     view->didInitializeClients();
 
+    TestController::shared().updateWindowScaleForTest(view, *TestController::shared().m_currentInvocation);
+
     WKRetain(newPage);
     return newPage;
 }
@@ -778,11 +780,11 @@ void TestController::updateWebViewSizeForTest(const TestInvocation& test)
     mainWebView()->resizeTo(width, height);
 }
 
-void TestController::updateWindowScaleForTest(const TestInvocation& test)
+void TestController::updateWindowScaleForTest(PlatformWebView* view, const TestInvocation& test)
 {
     WTF::String localPathOrUrl = String(test.pathOrURL());
     bool needsHighDPIWindow = localPathOrUrl.findIgnoringCase("/hidpi-") != notFound;
-    mainWebView()->changeWindowScaleIfNeeded(needsHighDPIWindow ? 2 : 1);
+    view->changeWindowScaleIfNeeded(needsHighDPIWindow ? 2 : 1);
 }
 
 // FIXME: move into relevant platformConfigureViewForTest()?
@@ -825,7 +827,7 @@ void TestController::platformResetPreferencesToConsistentValues()
 void TestController::configureViewForTest(const TestInvocation& test)
 {
     updateWebViewSizeForTest(test);
-    updateWindowScaleForTest(test);
+    updateWindowScaleForTest(mainWebView(), test);
     updateLayoutTypeForTest(test);
 
     platformConfigureViewForTest(test);
