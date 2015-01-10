@@ -144,18 +144,16 @@ sub runTestsBySuite(\@$)
         $anyFailures ||= $failed;
     }
     
-    if ($verbose) {
-        if (@testsFailed) {
-            print "Tests that failed:\n";
-            for my $test (@testsFailed) {
-                print "  $test\n";
-            }
+    if (@testsFailed) {
+        print "\nTests that failed:\n";
+        for my $test (@testsFailed) {
+            print "  $test\n";
         }
-        if (@testsTimedOut) {
-            print "Tests that timed out:\n";
-            for my $test (@testsTimedOut) {
-                print "  $test\n";
-            }
+    }
+    if (@testsTimedOut) {
+        print "\nTests that timed out:\n";
+        for my $test (@testsTimedOut) {
+            print "  $test\n";
         }
     }
     return $anyFailures;

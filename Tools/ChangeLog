@@ -1,3 +1,14 @@
+2015-01-09  Sam Weinig  <sam@webkit.org>
+
+        TestWebKitAPI should print out the lists that fail at the end
+        https://bugs.webkit.org/show_bug.cgi?id=140329
+
+        Reviewed by Tim Horton.
+
+        * Scripts/run-api-tests:
+        (runTestsBySuite):
+        Print out failures and timeouts in all modes, not just verbose.
+
 2015-01-07  Geoffrey Garen  <ggaren@apple.com>
 
         Make bmalloc work with ASan
