@@ -35,6 +35,10 @@ endif
 
 export DSYMUTIL_NUM_THREADS = $(shell sysctl -n hw.activecpu)
 
+# Run xcodebuild with the same PATH with which the Xcode IDE runs, to mitigate unnecessary rebuilds due to PATH differences.
+# See <rdar://problem/16466196>.
+export PATH = $(shell getconf PATH)
+
 all: set_asan_configuration
 	( $(SET_COLOR_DIAGNOSTICS_ARG); xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} )
 

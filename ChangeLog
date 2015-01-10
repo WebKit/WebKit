@@ -1,3 +1,13 @@
+2015-01-10  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode, iOS] Files are recompiled when alternating between using make and the Xcode IDE
+        https://bugs.webkit.org/show_bug.cgi?id=140339
+
+        Reviewed by Mark Rowe.
+
+        * Makefile.shared: Run xcodebuild with the same PATH with which the Xcode IDE runs. This
+        prevents unnecessary rebuilding due to PATH differences.
+
 2015-01-07  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK][ThreadedCompositor] Add support for threaded compositor.
