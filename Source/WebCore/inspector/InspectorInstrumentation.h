@@ -1231,8 +1231,6 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResou
         return willReceiveResourceResponseImpl(*instrumentingAgents);
 #else
     UNUSED_PARAM(frame);
-    UNUSED_PARAM(identifier);
-    UNUSED_PARAM(response);
 #endif
     return InspectorInstrumentationCookie();
 }

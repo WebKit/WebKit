@@ -1,3 +1,10 @@
+2015-01-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix for !ENABLE(INSPECTOR) builds after r178201.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponse):
+
 2015-01-10  Chris Dumez  <cdumez@apple.com>
 
         Move 'kerning' / 'paint-order' / 'stroke-dasharray' SVG CSS properties to the new StyleBuilder
