@@ -1,3 +1,18 @@
+2015-01-10  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Accelerated compositing has stopped working.
+        https://bugs.webkit.org/show_bug.cgi?id=140334
+
+        Reviewed by Brent Fulgham.
+
+        The method GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
+        is not updating the backingstore anymore, we need to call the new method
+        GraphicsLayerTextureMapper::updateBackingStoreIncludingSubLayers().
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::flushPendingLayerChanges):
+        (AcceleratedCompositingContext::flushAndRenderLayers):
+
 2015-01-09  Anders Carlsson  <andersca@apple.com>
 
         Get rid of the database strategy
