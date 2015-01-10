@@ -1,3 +1,9 @@
+2015-01-09  Sam Weinig  <sam@webkit.org>
+
+        Try to fix the GTK and EFL builds.
+
+        * CMakeLists.txt:
+
 2015-01-09  Anders Carlsson  <andersca@apple.com>
 
         Get rid of the database strategy
