@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: line 1: Paused at line: 0, column: 79
+CONSOLE MESSAGE: line 1: column test 1
+CONSOLE MESSAGE: line 1: Paused at line: 6, column: 21
+CONSOLE MESSAGE: line 7: column test 2
+CONSOLE MESSAGE: line 1: Paused at line: 15, column: 8
+CONSOLE MESSAGE: line 16: column test 3
+CONSOLE MESSAGE: line 1: Paused at line: 5, column: 8
+CONSOLE MESSAGE: line 6: column test 4
+CONSOLE MESSAGE: line 1: Paused at line: 11, column: 79
+CONSOLE MESSAGE: line 12: column test 5
+Testing that breakpoints can be set at various line / column combinations.
+
+Hit breakpoint at line: 0, column: 79
+Hit breakpoint at line: 6, column: 21
+Hit breakpoint at line: 15, column: 8
+Hit breakpoint at line: 5, column: 8
+Hit breakpoint at line: 11, column: 79
+Tests done
+

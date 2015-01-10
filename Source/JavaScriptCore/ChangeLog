@@ -1,3 +1,35 @@
+2015-01-09  Michael Saboff  <msaboff@apple.com>
+
+        Breakpoint doesn't fire in this HTML5 game
+        https://bugs.webkit.org/show_bug.cgi?id=140269
+
+        Reviewed by Mark Lam.
+
+        When parsing a single line cached function, use the lineStartOffset of the
+        location where we found the cached function instead of the cached lineStartOffset.
+        The cache location's lineStartOffset has not been adjusted for any possible
+        containing functions.
+
+        This change is not needed for multi-line cached functions.  Consider the
+        single line source:
+
+        function outer(){function inner1(){doStuff();}; (function inner2() {doMoreStuff()})()}
+
+        The first parser pass, we parse and cache inner1() and inner2() with a lineStartOffset
+        of 0.  Later when we parse outer() and find inner1() in the cache, SourceCode start
+        character is at outer()'s outermost open brace.  That is what we should use for
+        lineStartOffset for inner1().  When done parsing inner1() we set the parsing token
+        to the saved location for inner1(), including the lineStartOffset of 0.  We need
+        to use the value of lineStartOffset before we started parsing inner1().  That is
+        what the fix does.  When we parse inner2() the lineStartOffset will be correct.
+
+        For a multi-line function, the close brace is guaranteed to be on a different line
+        than the open brace.  Hence, its lineStartOffset will not change with the change of
+        the SourceCode start character
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+
 2015-01-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught Exception in ProbeManager deleting breakpoint

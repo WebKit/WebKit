@@ -1324,6 +1324,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         unsigned bodyEndColumn = endColumnIsOnStartLine ?
             endLocation.startOffset - m_token.m_data.lineStartOffset :
             endLocation.startOffset - endLocation.lineStartOffset;
+        unsigned currentLineStartOffset = m_token.m_location.lineStartOffset;
 
         body = context.createFunctionBody(startLocation, endLocation, bodyStartColumn, bodyEndColumn, cachedInfo->strictMode);
         
@@ -1334,6 +1335,8 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
 
         context.setFunctionNameStart(body, functionNameStart);
         m_token = cachedInfo->closeBraceToken();
+        if (endColumnIsOnStartLine)
+            m_token.m_location.lineStartOffset = currentLineStartOffset;
 
         m_lexer->setOffset(m_token.m_location.endOffset, m_token.m_location.lineStartOffset);
         m_lexer->setLineNumber(m_token.m_location.line);
