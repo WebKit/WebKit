@@ -169,6 +169,8 @@ void MapData::replaceAndPackBackingStore(Entry* destination, int32_t newCapacity
     // Fixup for the hashmaps
     for (auto ptr = m_valueKeyedTable.begin(); ptr != m_valueKeyedTable.end(); ++ptr)
         ptr->value = m_entries[ptr->value].value.get().asInt32();
+    for (auto ptr = m_cellKeyedTable.begin(); ptr != m_cellKeyedTable.end(); ++ptr)
+        ptr->value = m_entries[ptr->value].value.get().asInt32();
     for (auto ptr = m_stringKeyedTable.begin(); ptr != m_stringKeyedTable.end(); ++ptr)
         ptr->value = m_entries[ptr->value].value.get().asInt32();
 
