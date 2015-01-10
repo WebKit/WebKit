@@ -1,3 +1,10 @@
+2015-01-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Build fix after r178219.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Remove PaintHooks.asm references in project file.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+
 2015-01-09  Andreas Kling  <akling@apple.com>
 
         Log which ActiveDOMObject(s) can't be suspended for PageCache.

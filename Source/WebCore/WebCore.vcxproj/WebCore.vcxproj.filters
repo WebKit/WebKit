@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="DerivedSources">
@@ -246,9 +246,6 @@
     </Filter>
     <Filter Include="plugins">
       <UniqueIdentifier>{d4cb7e8c-e901-4797-94cd-f6b1b9dfe2aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="plugins\win">
-      <UniqueIdentifier>{baf9b8fe-d8aa-40fc-a4eb-ab038b66959d}</UniqueIdentifier>
     </Filter>
     <Filter Include="rendering\svg\animation">
       <UniqueIdentifier>{8fe48833-bab8-4dd8-9a63-635b7a413b29}</UniqueIdentifier>
@@ -1324,9 +1321,6 @@
       <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\FloatQuad.cpp">
-      <Filter>platform\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\GlyphPageTreeNode.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\Gradient.cpp">
@@ -8367,9 +8361,6 @@
     <ClInclude Include="..\platform\graphics\GlyphPage.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\GlyphPageTreeNode.h">
-      <Filter>platform\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\Gradient.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
@@ -11517,9 +11508,6 @@
     <ClInclude Include="..\plugins\PluginMainThreadScheduler.h">
       <Filter>plugins</Filter>
     </ClInclude>
-    <ClInclude Include="..\plugins\PluginStrategy.h">
-      <Filter>plugins</Filter>
-    </ClInclude>
     <ClInclude Include="..\svg\ColorDistance.h">
       <Filter>rendering\svg</Filter>
     </ClInclude>
@@ -12925,9 +12913,6 @@
     </ClInclude>
     <ClInclude Include="..\html\parser\HTMLResourcePreloader.h">
       <Filter>html\parser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\graphics\SVGImageForContainer.h">
-      <Filter>rendering\svg\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\rendering\HitTestLocation.h">
       <Filter>rendering</Filter>
@@ -15128,6 +15113,9 @@
     <ClInclude Include="..\html\canvas\EXTBlendMinMax.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
+    <ClInclude Include="..\Modules\webdatabase\DatabaseBackendSync.h" />
+    <ClInclude Include="..\Modules\webdatabase\SQLStatementSync.h" />
+    <ClInclude Include="..\Modules\webdatabase\SQLTransactionBackendSync.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">
@@ -15334,9 +15322,6 @@
     </CustomBuildStep>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="..\plugins\win\PaintHooks.asm">
-      <Filter>plugins\win</Filter>
-    </MASM>
     <MASM Include="..\platform\win\makesafeseh.asm">
       <Filter>platform\win</Filter>
     </MASM>

@@ -17,6 +17,9 @@
     <Filter Include="Generated">
       <UniqueIdentifier>{1a00610c-29e3-4979-a7a2-ef6c92c4bb71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Plugins">
+      <UniqueIdentifier>{01204b84-5447-4679-b6af-3b7414bf9b06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\win\WebCoreSupport\EmbeddedWidget.cpp">
@@ -217,36 +220,6 @@
     <ClCompile Include="..\..\win\WebSerializedJSValue.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\win\Plugins\npapi.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\win\Plugins\PluginDatabase.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\win\Plugins\PluginDebug.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\win\Plugins\PluginPackage.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\win\Plugins\PluginStream.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\win\Plugins\PluginView.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\win\Plugins\PluginDatabaseWin.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\win\Plugins\PluginMessageThrottlerWin.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\win\Plugins\PluginPackageWin.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\win\Plugins\PluginViewWin.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Storage\StorageAreaImpl.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -326,6 +299,36 @@
     <ClCompile Include="..\..\win\WebCoreSupport\WebVisitedLinkStore.cpp" />
     <ClCompile Include="..\..\win\WebApplicationCache.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginDatabase.cpp">
+      <Filter>Sources\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginDatabaseWin.cpp">
+      <Filter>Sources\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginDebug.cpp">
+      <Filter>Sources\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginMessageThrottlerWin.cpp">
+      <Filter>Sources\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginPackage.cpp">
+      <Filter>Sources\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginPackageWin.cpp">
+      <Filter>Sources\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginStream.cpp">
+      <Filter>Sources\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginView.cpp">
+      <Filter>Sources\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginViewWin.cpp">
+      <Filter>Sources\Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\npapi.cpp">
+      <Filter>Sources\Plugins</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -642,6 +645,9 @@
     <ClInclude Include="..\..\win\WebApplicationCache.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\win\Plugins\PluginStrategy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="WebKitPostBuild.cmd" />
@@ -731,5 +737,10 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\mac\Configurations\Version.xcconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\plugins\win\PaintHooks.asm">
+      <Filter>Sources\Plugins</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
