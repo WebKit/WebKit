@@ -144,46 +144,9 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 }
             } else {
                 svgStyle.setBaselineShift(BS_LENGTH);
-                svgStyle.setBaselineShiftValue(SVGLength::fromCSSPrimitiveValue(primitiveValue));
+                svgStyle.setBaselineShiftValue(SVGLength::fromCSSPrimitiveValue(*primitiveValue));
             }
 
-            break;
-        }
-        case CSSPropertyKerning:
-        {
-            HANDLE_INHERIT_AND_INITIAL(kerning, Kerning);
-            if (primitiveValue)
-                svgStyle.setKerning(SVGLength::fromCSSPrimitiveValue(primitiveValue));
-            break;
-        }
-        case CSSPropertyPaintOrder: {
-            HANDLE_INHERIT_AND_INITIAL(paintOrder, PaintOrder)
-            // 'normal' is the only primitiveValue
-            if (primitiveValue)
-                svgStyle.setPaintOrder(PaintOrderNormal);
-            if (!is<CSSValueList>(*value))
-                break;
-            CSSValueList& orderTypeList = downcast<CSSValueList>(*value);
-
-            // Serialization happened during parsing. No additional checking needed.
-            unsigned length = orderTypeList.length();
-            primitiveValue = downcast<CSSPrimitiveValue>(orderTypeList.itemWithoutBoundsCheck(0));
-            PaintOrder paintOrder;
-            switch (primitiveValue->getValueID()) {
-            case CSSValueFill:
-                paintOrder = length > 1 ? PaintOrderFillMarkers : PaintOrderFill;
-                break;
-            case CSSValueStroke:
-                paintOrder = length > 1 ? PaintOrderStrokeMarkers : PaintOrderStroke;
-                break;
-            case CSSValueMarkers:
-                paintOrder = length > 1 ? PaintOrderMarkersStroke : PaintOrderMarkers;
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-                paintOrder = PaintOrderNormal;
-            }
-            svgStyle.setPaintOrder(static_cast<PaintOrder>(paintOrder));
             break;
         }
         // end of ident only properties
@@ -219,30 +182,6 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 SVGPaint& svgPaint = downcast<SVGPaint>(*value);
                 svgStyle.setStrokePaint(svgPaint.paintType(), colorFromSVGColorCSSValue(&svgPaint, state.style()->color()), svgPaint.uri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
             }
-            break;
-        }
-        case CSSPropertyStrokeDasharray:
-        {
-            HANDLE_INHERIT_AND_INITIAL(strokeDashArray, StrokeDashArray)
-            if (!is<CSSValueList>(*value)) {
-                svgStyle.setStrokeDashArray(SVGRenderStyle::initialStrokeDashArray());
-                break;
-            }
-
-            CSSValueList& dashes = downcast<CSSValueList>(*value);
-
-            Vector<SVGLength> array;
-            size_t length = dashes.length();
-            for (size_t i = 0; i < length; ++i) {
-                CSSValue* currValue = dashes.itemWithoutBoundsCheck(i);
-                if (!is<CSSPrimitiveValue>(*currValue))
-                    continue;
-
-                CSSPrimitiveValue* dash = downcast<CSSPrimitiveValue>(dashes.itemWithoutBoundsCheck(i));
-                array.append(SVGLength::fromCSSPrimitiveValue(dash));
-            }
-
-            svgStyle.setStrokeDashArray(array);
             break;
         }
         case CSSPropertyFillOpacity:

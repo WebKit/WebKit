@@ -281,12 +281,10 @@ void SVGLength::convertToSpecifiedUnits(unsigned short type, const SVGLengthCont
     m_unit = originalUnitAndType;
 }
 
-SVGLength SVGLength::fromCSSPrimitiveValue(CSSPrimitiveValue* value)
+SVGLength SVGLength::fromCSSPrimitiveValue(CSSPrimitiveValue& value)
 {
-    ASSERT(value);
-
     SVGLengthType svgType;
-    switch (value->primitiveType()) {
+    switch (value.primitiveType()) {
     case CSSPrimitiveValue::CSS_NUMBER:
         svgType = LengthTypeNumber;
         break;
@@ -328,7 +326,7 @@ SVGLength SVGLength::fromCSSPrimitiveValue(CSSPrimitiveValue* value)
 
     ExceptionCode ec = 0;
     SVGLength length;
-    length.newValueSpecifiedUnits(svgType, value->getFloatValue(), ec);
+    length.newValueSpecifiedUnits(svgType, value.getFloatValue(), ec);
     if (ec)    
         return SVGLength();
 
