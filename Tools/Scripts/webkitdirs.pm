@@ -887,7 +887,11 @@ sub commandExists($)
 {
     my $command = shift;
     my $devnull = File::Spec->devnull();
-    return `$command --version 2> $devnull`;
+
+    if (isAnyWindows()) {
+        return exitStatus(system("where /q $command >$devnull 2>&1")) == 0;
+    }
+    return exitStatus(system("which $command >$devnull 2>&1")) == 0;
 }
 
 sub checkForArgumentAndRemoveFromARGV($)
@@ -1765,14 +1769,12 @@ sub removeCMakeCache(@)
 sub canUseNinja(@)
 {
     # Test both ninja and ninja-build. Fedora uses ninja-build and has patched CMake to also call ninja-build.
-    system('which ninja > /dev/null || which ninja-build > /dev/null');
-    return $? == 0;
+    return commandExists("ninja") || commandExists("ninja-build");
 }
 
 sub canUseEclipse(@)
 {
-    system('which eclipse > /dev/null');
-    return $? == 0;
+    return commandExists("eclipse");
 }
 
 sub cmakeGeneratedBuildfile(@)

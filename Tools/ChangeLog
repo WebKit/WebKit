@@ -1,3 +1,17 @@
+2015-01-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        build-webkit: silence output of 'which'
+        https://bugs.webkit.org/show_bug.cgi?id=140278
+
+        Reviewed by Daniel Bates.
+
+        Use a more elegent test for the existance of ninja and eclipse.
+
+        * Scripts/webkitdirs.pm:
+        (commandExists): Don't assume the command supports --version
+        (canUseNinja): Use commandExists()
+        (canUseEclipse): Use commandExists()
+
 2015-01-09  Sam Weinig  <sam@webkit.org>
 
         Update the output format for run-api-tests
