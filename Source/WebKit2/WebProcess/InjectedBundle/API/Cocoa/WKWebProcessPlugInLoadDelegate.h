@@ -24,7 +24,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WKRenderingProgressEvents.h>
 #import <WebKit/_WKRenderingProgressEvents.h>
 #import <WebKit/_WKSameDocumentNavigationType.h>
 

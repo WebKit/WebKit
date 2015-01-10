@@ -1,3 +1,14 @@
+2015-01-09  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Remove deprecated WKRenderingProgressEvents
+        https://bugs.webkit.org/show_bug.cgi?id=140325
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/API/Cocoa/WKRenderingProgressEvents.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h:
+
 2015-01-09  Sam Weinig  <sam@webkit.org>
 
         Move Navigation creation out of the Cocoa layer and down into the WebPageProxy level
