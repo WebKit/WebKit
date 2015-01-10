@@ -1,3 +1,31 @@
+2015-01-10  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [ThreadedCompositor] Prevent excessive rendering call.
+        https://bugs.webkit.org/show_bug.cgi?id=140297
+
+        Reviewed by Žan Doberšek.
+
+        Not to waste CPU time on waiting V-Sync interval, the update timer of
+        compositing thread should be throttled.
+
+        In case of updating scene state, this update timer should be called as
+        soon as possible. However, when CoordinatedGraphicsScene requests update
+        viewport to advance the animations, this call should be scheduled for
+        a next frame.
+
+        No new tests. No change in functionality.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::CompositingRunLoop::CompositingRunLoop):
+        (WebKit::CompositingRunLoop::setUpdateTimer):
+        (WebKit::CompositingRunLoop::updateTimerFired):
+        (WebKit::ThreadedCompositor::setNeedsDisplay):
+        (WebKit::ThreadedCompositor::updateViewport):
+        (WebKit::ThreadedCompositor::scheduleDisplayImmediately):
+        (WebKit::ThreadedCompositor::didChangeVisibleRect):
+        (WebKit::ThreadedCompositor::scheduleDisplayIfNeeded): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
 2015-01-09  Sam Weinig  <sam@webkit.org>
 
         Try to fix the GTK and EFL builds.

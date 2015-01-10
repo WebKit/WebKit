@@ -47,10 +47,16 @@ class CompositingRunLoop {
     WTF_MAKE_NONCOPYABLE(CompositingRunLoop);
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    enum UpdateTiming {
+        Immediate,
+        WaitUntilNextFrame,
+    };
+
     CompositingRunLoop(std::function<void()> updateFunction)
         : m_runLoop(RunLoop::current())
         , m_updateTimer(m_runLoop, this, &CompositingRunLoop::updateTimerFired)
         , m_updateFunction(WTF::move(updateFunction))
+        , m_lastUpdateTime(0)
     {
     }
 
@@ -64,12 +70,17 @@ public:
         m_runLoop.dispatch(WTF::move(function));
     }
 
-    void setUpdateTimer(double interval = 0)
+    void setUpdateTimer(UpdateTiming timing = Immediate)
     {
         if (m_updateTimer.isActive())
             return;
 
-        m_updateTimer.startOneShot(interval);
+        const static double targetFPS = 60;
+        double nextUpdateTime = 0;
+        if (timing == WaitUntilNextFrame)
+            nextUpdateTime = std::max((1 / targetFPS) - (monotonicallyIncreasingTime() - m_lastUpdateTime), 0.0);
+
+        m_updateTimer.startOneShot(nextUpdateTime);
     }
 
     void stopUpdateTimer()
@@ -88,11 +99,14 @@ private:
     void updateTimerFired()
     {
         m_updateFunction();
+        m_lastUpdateTime = monotonicallyIncreasingTime();
     }
 
     RunLoop& m_runLoop;
     RunLoop::Timer<CompositingRunLoop> m_updateTimer;
     std::function<void()> m_updateFunction;
+
+    double m_lastUpdateTime;
 };
 
 PassRefPtr<ThreadedCompositor> ThreadedCompositor::create(Client* client)
@@ -116,7 +130,7 @@ void ThreadedCompositor::setNeedsDisplay()
 {
     RefPtr<ThreadedCompositor> protector(this);
     callOnCompositingThread([=] {
-        protector->scheduleDisplayIfNeeded();
+        protector->scheduleDisplayImmediately();
     });
 }
 
@@ -182,7 +196,7 @@ void ThreadedCompositor::renderNextFrame()
 
 void ThreadedCompositor::updateViewport()
 {
-    setNeedsDisplay();
+    m_compositingRunLoop->setUpdateTimer(CompositingRunLoop::WaitUntilNextFrame);
 }
 
 void ThreadedCompositor::commitScrollOffset(uint32_t layerID, const IntSize& offset)
@@ -220,9 +234,9 @@ GLContext* ThreadedCompositor::glContext()
     return m_context.get();
 }
 
-void ThreadedCompositor::scheduleDisplayIfNeeded(double interval)
+void ThreadedCompositor::scheduleDisplayImmediately()
 {
-    m_compositingRunLoop->setUpdateTimer(interval);
+    m_compositingRunLoop->setUpdateTimer(CompositingRunLoop::Immediate);
 }
 
 void ThreadedCompositor::didChangeVisibleRect()
@@ -233,7 +247,7 @@ void ThreadedCompositor::didChangeVisibleRect()
         m_client->setVisibleContentsRect(visibleRect, FloatPoint::zero(), scale);
     });
 
-    setNeedsDisplay();
+    scheduleDisplayImmediately();
 }
 
 void ThreadedCompositor::renderLayerTree()

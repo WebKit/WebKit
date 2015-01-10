@@ -85,7 +85,7 @@ private:
     virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) override;
 
     void renderLayerTree();
-    void scheduleDisplayIfNeeded(double interval = 0);
+    void scheduleDisplayImmediately();
     virtual void didChangeVisibleRect() override;
 
     bool ensureGLContext();
