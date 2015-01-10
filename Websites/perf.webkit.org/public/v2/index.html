@@ -485,25 +485,26 @@
                     </table>
                 </div>
             </section>
-
             {{#each testGroups}}
                 <section class="analysis-group">
                     <table>
                         <caption>{{name}}</caption>
                         <thead>
                             <tr>
+                                <td>Order</td>
                                 <td>Configuration</td>
+                                <td>Status</td>
                                 <td>Build</td>
-                                <td>Build Time</td>
                                 <td>{{../metric.fullName}}</td>
                             </tr>
                         </thead>
                         <tbody>
                             {{#each buildRequests}}
                                 <tr>
-                                    <td>{{id}}</td>
-                                    <td>{{buildNumber}}</td>
-                                    <td>{{buildTime}}</td>
+                                    <td>{{orderLabel}}</td>
+                                    <td>{{config}}</td>
+                                    <td>{{#if url}}{{#link-to url}}{{statusLabel}}{{/link-to}}{{else}}{{statusLabel}}{{/if}}</td>
+                                    <td>{{build}}</td>
                                     <td>{{mean}}</td>
                                 </tr>
                             {{/each}}
@@ -512,9 +513,10 @@
                 </section>
             {{/each}}
 
-            <form class="analysis-group">
+            {{#if roots}}
+            <form method="POST" {{action "createTestGroup" newTestGroupName repetitionCount on="submit"}} class="analysis-group">
                 <table>
-                    <caption><input name="name" placeholder="Test group name" required></caption>
+                    <caption>{{input name="name" value=newTestGroupName placeholder="Test group name" required=true type="text"}}</caption>
                     <thead>
                         <tr>
                             <th>Root</th>
@@ -535,7 +537,7 @@
                             <tr>
                                 <th>{{name}}</th>
                                 {{#each sets}}
-                                    <td>{{view Ember.Select name=name content=revisions
+                                    <td>{{view Ember.Select name=name content=revisions disabled=true
                                         optionValuePath="content.value" optionLabelPath="content.label"
                                         selection=selection}}</td>
                                 {{/each}}
@@ -546,14 +548,7 @@
                         <tr>
                             <th>Number of runs</th>
                             <td colspan=2>
-                                <select>
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                    <option>6</option>
-                                </select>
+                                {{view Ember.Select content=possibleRepetitionCounts value=repetitionCount}}
                             </td>
                         </tr>
                     </tbody>
@@ -561,6 +556,7 @@
 
                 <button type="submit">Start A/B testing</button>
             </form>
+            {{/if}}
         {{/if}}
     </script>
 

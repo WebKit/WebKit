@@ -39,7 +39,7 @@ function fetch_runs_for_config($db, $config) {
             FROM builds
                 LEFT OUTER JOIN build_commits ON commit_build = build_id
                 LEFT OUTER JOIN commits ON build_commit = commit_id, test_runs
-            WHERE run_build = build_id AND run_config = $1
+            WHERE run_build = build_id AND run_config = $1 AND NOT EXISTS (SELECT * FROM build_requests WHERE request_build = build_id)
             GROUP BY build_id, run_id', array($config['config_id']));
 
     $formatted_runs = array();

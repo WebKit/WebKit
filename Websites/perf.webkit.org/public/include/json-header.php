@@ -1,6 +1,7 @@
 <?php
 
 require_once('db.php');
+require_once('test-path-resolver.php');
 
 header('Content-type: application/json');
 
@@ -120,6 +121,38 @@ function verify_slave($db, $params) {
     $matched_slave = $db->select_first_row('build_slaves', 'slave', $slave_info);
     if (!$matched_slave)
         exit_with_error('SlaveNotFound', array('name' => $slave_info['name']));
+}
+
+function find_triggerable_for_task($db, $task_id) {
+    $task_id = intval($task_id);
+
+    $test_rows = $db->query_and_fetch_all('SELECT metric_test AS "test", task_platform as "platform"
+        FROM analysis_tasks JOIN test_metrics ON task_metric = metric_id WHERE task_id = $1', array($task_id));
+    if (!$test_rows)
+        return NULL;
+    $target_test_id = $test_rows[0]['test'];
+    $platform_id = $test_rows[0]['platform'];
+
+    $path_resolver = new TestPathResolver($db);
+    $test_ids = $path_resolver->ancestors_for_test($target_test_id);
+
+    $results = $db->query_and_fetch_all('SELECT trigconfig_triggerable AS "triggerable", trigconfig_test AS "test"
+        FROM triggerable_configurations WHERE trigconfig_platform = $1 AND trigconfig_test = ANY($2)',
+        array($platform_id, '{' . implode(', ', $test_ids) . '}'));
+    if (!$results)
+        return NULL;
+
+    $test_to_triggerable = array();
+    foreach ($results as $row)
+        $test_to_triggerable[$row['test']] = $row['triggerable'];
+
+    foreach ($test_ids as $test_id) {
+        $triggerable = array_get($test_to_triggerable, $test_id);
+        if ($triggerable)
+            return array('id' => $triggerable, 'test' => $test_id, 'platform' => $platform_id);
+    }
+
+    return NULL;
 }
 
 ?>

@@ -64,7 +64,7 @@ class Database
     }
 
     private function prefixed_column_names($columns, $prefix = NULL) {
-        if (!$prefix)
+        if (!$prefix || !$columns)
             return join(', ', $columns);
         return $prefix . '_' . join(', ' . $prefix . '_', $columns);
     }
@@ -96,24 +96,29 @@ class Database
         $column_names = $this->prefixed_column_names($column_names, $prefix);
         $placeholders = join(', ', $placeholders);
 
+        $value_query = $column_names ? "($column_names) VALUES ($placeholders)" : ' VALUES (default)';
         if ($returning) {
             $returning_column_name = $this->prefixed_name($returning, $prefix);
-            $rows = $this->query_and_fetch_all("INSERT INTO $table ($column_names) VALUES ($placeholders) RETURNING $returning_column_name", $values);
+            $rows = $this->query_and_fetch_all("INSERT INTO $table $value_query RETURNING $returning_column_name", $values);
             return $rows ? $rows[0][$returning_column_name] : NULL;
         }
 
-        return $this->query_and_get_affected_rows("INSERT INTO $table ($column_names) VALUES ($placeholders)", $values) == 1;
+        return $this->query_and_get_affected_rows("INSERT INTO $table $value_query", $values) == 1;
     }
 
     function select_or_insert_row($table, $prefix, $select_params, $insert_params = NULL, $returning = 'id') {
-        return $this->_select_update_or_insert_row($table, $prefix, $select_params, $insert_params, $returning, FALSE);
+        return $this->_select_update_or_insert_row($table, $prefix, $select_params, $insert_params, $returning, FALSE, TRUE);
     }
 
     function update_or_insert_row($table, $prefix, $select_params, $insert_params = NULL, $returning = 'id') {
-        return $this->_select_update_or_insert_row($table, $prefix, $select_params, $insert_params, $returning, TRUE);
+        return $this->_select_update_or_insert_row($table, $prefix, $select_params, $insert_params, $returning, TRUE, TRUE);
     }
 
-    private function _select_update_or_insert_row($table, $prefix, $select_params, $insert_params, $returning, $should_update) {
+    function update_row($table, $prefix, $select_params, $update_params, $returning = 'id') {
+        return $this->_select_update_or_insert_row($table, $prefix, $select_params, $update_params, $returning, TRUE, FALSE);
+    }
+
+    private function _select_update_or_insert_row($table, $prefix, $select_params, $insert_params, $returning, $should_update, $should_insert) {
         $values = array();
 
         $select_placeholders = array();
@@ -141,7 +146,7 @@ class Database
             $rows = $this->query_and_fetch_all("UPDATE $table SET ($insert_column_names) = ($insert_placeholders)
                 WHERE ($select_column_names) = ($select_placeholders) RETURNING $returning_column_name", $values);
         }
-        if (!$rows) {
+        if (!$rows && $should_insert) {
             $rows = $this->query_and_fetch_all("INSERT INTO $table ($insert_column_names) SELECT $insert_placeholders
                 WHERE NOT EXISTS ($query) RETURNING $returning_column_name", $values);            
         }
@@ -171,6 +176,8 @@ class Database
         $values = array();
         $column_names = $this->prefixed_column_names($this->prepare_params($params, $placeholders, $values), $prefix);
         $placeholders = join(', ', $placeholders);
+        if (!$column_names && !$placeholders)
+            $column_names = $placeholders = '1';
         $query = "SELECT * FROM $table WHERE ($column_names) = ($placeholders)";
         if ($order_by) {
             assert(ctype_alnum_underscore($order_by));

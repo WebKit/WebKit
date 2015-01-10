@@ -32,6 +32,22 @@ if ($action == 'dashboard') {
 } else if ($action == 'update') {
     if (!update_field('tests', 'test', 'url'))
         notice('Invalid parameters');
+} else if ($action == 'update-triggerable') {
+    $test_id = intval($_POST['test']);
+    $platform_id = intval($_POST['platform']);
+
+    $triggerable_id = array_get($_POST, 'triggerable');
+    if ($triggerable_id) {
+        $triggerable_id = intval($triggerable_id);
+        $association = array('test' => $test_id, 'platform' => $platform_id, 'triggerable' => $triggerable_id);
+        if (!$db->insert_row('triggerable_configurations', 'trigconfig', $association, NULL)) {
+            $suceeded = FALSE;
+            notice("Failed to associate triggerable $triggerable_id with test $test_id on platform $platform_id.");
+        }
+    } else {
+        $db->query_and_get_affected_rows('DELETE FROM triggerable_configurations WHERE trigrepo_test = $1 AND trigrepo_platform = $2',
+            array($test_id, $platform_id));
+    }
 } else if ($action == 'add') {
     if (array_key_exists('test_id', $_POST) && array_key_exists('metric_name', $_POST)) {
         $id = intval($_POST['test_id']);
@@ -58,6 +74,7 @@ if ($db) {
         foreach ($aggregators_table as $aggregator_row)
             $aggregators[$aggregator_row['aggregator_id']] = $aggregator_row['aggregator_name'];
     }
+    $build_triggerable_table = $db->fetch_table('build_triggerables', 'triggerable_name') or array();
 
     $test_name_resolver = new TestNameResolver($db);
     if ($test_name_resolver->tests()) {
@@ -78,7 +95,7 @@ if ($db) {
 ?>
 <table>
 <thead>
-    <tr><td>Test ID</td><td>Full Name</td><td>Parent ID</td><td>URL</td>
+    <tr><td>Test ID</td><td>Full Name</td><td>Parent ID</td><td>URL</td><td>Triggerables</td>
         <td>Metric ID</td><td>Metric Name</td><td>Aggregator</td><td>Dashboard</td>
 </thead>
 <tbody>
@@ -103,6 +120,37 @@ if ($db) {
 
             $test_url = htmlspecialchars($test['test_url']);
 
+            $triggerable_platforms = $db->query_and_fetch_all('SELECT * FROM platforms LEFT OUTER JOIN triggerable_configurations
+                ON trigconfig_platform = platform_id AND trigconfig_test = $1 ORDER BY platform_name', array($test_id));
+            $triggerables = '';
+            foreach ($triggerable_platforms as $platform_row) {
+                if (!$test_name_resolver->test_exists_on_platform($test_id, $platform_row['platform_id']))
+                    continue;
+
+                $triggerables .= <<< END
+<form method="POST">
+    <input type="hidden" name="test" value="$test_id">
+    <input type="hidden" name="platform" value="{$platform_row['platform_id']}">
+    <input type="hidden" name="action" value="update-triggerable">
+    <label>
+        {$platform_row['platform_name']}
+        <select name="triggerable" onchange="this.form.submit();">
+            <option value="">None</option>
+END;
+                $selected_triggerable = array_get($platform_row, 'trigrepo_triggerable');
+                foreach ($build_triggerable_table as $triggerable_row) {
+                    $triggerable_id = $triggerable_row['triggerable_id'];
+                    $selected = $triggerable_id == $selected_triggerable ? ' selected' : '';
+                    $triggerables .= "<option value=\"$triggerable_id\"$selected>{$triggerable_row['triggerable_name']}</option>";
+                }
+                $triggerables .= <<< END
+        </select>
+    </label>
+</form>
+<br>
+END;
+            }
+
             echo <<<EOF
     <tbody class="$tbody_class">
     <tr>
@@ -112,7 +160,8 @@ if ($db) {
         <td rowspan="$row_count">
         <form method="POST"><input type="hidden" name="id" value="$test_id">
         <input type="hidden" name="action" value="update">
-        <input type="url" name="url" value="$test_url" size="80"></form></td>
+        <input type="url" name="url" value="$test_url" size="30"></form></td>
+        <td rowspan="$row_count">$triggerables</td>
 EOF;
 
             if ($test_metrics) {
@@ -169,8 +218,8 @@ EOF;
         <label>Name<select name="metric_name">
 EOF;
 
-                foreach ($child_metrics as $metric_name) {
-                    $metric_name = htmlspecialchars($metric_name);
+                foreach ($child_metrics as $metric) {
+                    $metric_name = htmlspecialchars($metric['metric_name']);
                     echo "
             <option>$metric_name</option>";
                 }

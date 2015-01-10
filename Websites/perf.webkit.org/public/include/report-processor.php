@@ -88,7 +88,9 @@ class ReportProcessor {
         if (!$platform_id)
             $this->exit_with_error('FailedToInsertPlatform', array('name' => $report['platform']));
 
-        $build_id = $this->resolve_build_id($build_data, array_get($report, 'revisions', array()));
+        // FIXME: Deprecate and unsupport "jobId".
+        $build_id = $this->resolve_build_id($build_data, array_get($report, 'revisions', array()),
+            array_get($report, 'jobId') or array_get($report, 'buildRequest'));
 
         $this->runs->commit($platform_id, $build_id);
     }
@@ -111,7 +113,7 @@ class ReportProcessor {
             $this->exit_with_error('FailedToStoreRunReport');
     }
 
-    private function resolve_build_id($build_data, $revisions) {
+    private function resolve_build_id($build_data, $revisions, $build_request_id) {
         // FIXME: This code has a race condition. See <rdar://problem/15876303>.
         $results = $this->db->query_and_fetch_all("SELECT build_id, build_slave FROM builds
             WHERE build_builder = $1 AND build_number = $2 AND build_time <= $3 AND build_time + interval '1 day' > $3",
@@ -125,6 +127,13 @@ class ReportProcessor {
             $build_id = $this->db->insert_row('builds', 'build', $build_data);
         if (!$build_id)
             $this->exit_with_error('FailedToInsertBuild', $build_data);
+
+        if ($build_request_id) {
+            if ($db->update_row('build_requests', 'request', array('id' => $build_request_id), array('status' => 'completed', 'build' => $build_id))
+                != $build_request_id)
+                $this->exit_with_error('FailedToUpdateBuildRequest', array('buildRequest' => $build_request_id, 'build' => $build_id));
+        }
+
 
         foreach ($revisions as $repository_name => $revision_data) {
             $repository_id = $this->db->select_or_insert_row('repositories', 'repository', array('name' => $repository_name));

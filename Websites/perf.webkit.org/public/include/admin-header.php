@@ -19,6 +19,7 @@ require_once('manifest.php');
     <li><a href="/admin/aggregators">Aggregators</a></li>
     <li><a href="/admin/builders">Builders</a></li>
     <li><a href="/admin/build-slaves">Slaves</a></li>
+    <li><a href="/admin/triggerables">Triggerables</a></li>
     <li><a href="/admin/repositories">Repositories</a></li>
     <li><a href="/admin/bug-trackers">Bug Trackers</a></li>
 </ul>

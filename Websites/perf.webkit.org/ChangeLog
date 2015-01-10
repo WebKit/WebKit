@@ -1,5 +1,176 @@
 2015-01-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard should have the ability to post A/B testing builds
+        https://bugs.webkit.org/show_bug.cgi?id=140317
+
+        Rubber-stamped by Simon Fraser.
+
+        This patch adds the support for triggering A/B testing from the perf dashboard.
+
+        We add a few new tables to the database. "build_triggerables", which represents a set of builders
+        that accept A/B testing. "triggerable_repositories" associates each "triggerable" with a fixed set
+        of repositories for which an arbitrary revision can be specified for A/B testing.
+        "triggerable_configurations" specifies a triggerable available on a given test on a given platform.
+        "roots" table which specifies the revision used in a given root set in each repository.
+
+        * init-database.sql: Added "build_triggerables", "triggerable_repositories",
+        "triggerable_configurations", and "roots" tables. Added references to "build_triggerables",
+        "platforms", and "tests" tables as well as columns to store status, status url, and creation time
+        to build_requests table. Also made each test group's name unique in a given analysis task as it
+        would be confusing to have multiple test groups of the same name.
+
+        * public/admin/tests.php: Added the UI and the code to associate a test with a triggerable.
+
+        * public/admin/triggerables.php: Added. Manages the list of triggerables as well as repositories
+        for which a specific revision can be set in an A/B testing on a given triggerable.
+
+        * public/api/build-requests.php: Added. Returns the list of open build requests on a specified
+        triggerable. Also updates the status' and the status urls of specified build requests when
+        buildRequestUpdates is provided in the raw POST data.
+        (main):
+
+        * public/api/runs.php:
+        (fetch_runs_for_config): Don't include results associated with a build request, meaning they are
+        results of an A/B testing.
+
+        * public/api/test-groups.php:
+        (main): Use the newly added BuildRequestsFetcher. Also merged fetch_test_groups_for_task back.
+
+        * public/api/triggerables.php: Added.
+        (main): Returns a list of triggerables or a triggerable associated with a given analysis task.
+
+        * public/include/admin-header.php:
+
+        * public/include/build-requests-fetcher.php: Added. Extracted from public/api/test-groups.php.
+        (BuildRequestsFetcher): This class abstracts the process of fetching a list of builds requests
+        and root sets used in those requests.D
+        (BuildRequestsFetcher::__construct):
+        (BuildRequestsFetcher::fetch_for_task):
+        (BuildRequestsFetcher::fetch_for_group):
+        (BuildRequestsFetcher::fetch_incomplete_requests_for_triggerable):
+        (BuildRequestsFetcher::has_results):
+        (BuildRequestsFetcher::results):
+        (BuildRequestsFetcher::results_with_resolved_ids):
+        (BuildRequestsFetcher::results_internal):
+        (BuildRequestsFetcher::root_sets):
+        (BuildRequestsFetcher::fetch_roots_for_set):
+
+        * public/include/db.php:
+        (Database::prefixed_column_names): Don't return "$prefix_" when there are no columns.
+        (Database::insert_row): Support taking an empty array for values. This is useful in "root_sets"
+        table since it only has the primary key, id, column.
+        (Database::select_or_insert_row):
+        (Database::update_or_insert_row):
+        (Database::update_row): Added.
+        (Database::_select_update_or_insert_row): Takes an extra argument specifying whether a new row
+        should be inserted when no row matches the specified criteria. This is used while updating
+        build_requests' status and url in public/api/build-requests.php since we shouldn't be inserting
+        new build requests in that API.
+        (Database::select_rows): Also use "1 == 1" in the select query when the query criteria is empty.
+        This is used in public/api/triggerables.php when no analysis task is specified.
+
+        * public/include/json-header.php:
+        (find_triggerable_for_task): Added. Finds a triggerable available on a given test. We return the
+        triggerable associated with the closest ancestor of the test. Since issuing a new query for each
+        ancestor test is expensive, we retrieve triggerable for all ancestor tests at once and manually
+        find the closest ancestor with a triggerable.
+
+        * public/include/report-processor.php:
+        (ReportProcessor::process):
+        (ReportProcessor::resolve_build_id): Associate a build request with the newly created build
+        if jobId or buildRequest is specified.
+
+        * public/include/test-name-resolver.php:
+        (TestNameResolver::map_metrics_to_tests): Store the entire metric row instead of its name so that
+        test_exists_on_platform can use it. The last diff in public/admin/tests.php adopts this change.
+        (TestNameResolver::test_exists_on_platform): Added. Returns true iff the test has ever run on
+        a given platform.
+
+        * public/include/test-path-resolver.php: Added.
+        (TestPathResolver): This class abstracts the ancestor chains of a test. It retrieves the entire
+        "tests" table to do this since there could be arbitrary number of ancestors for a given test.
+        This class is a lot more lightweight than TestNameResolver, which retrieves a whole bunch of tables
+        in order to compute full test metric names.
+        (TestPathResolver::__construct):
+        (TestPathResolver::ancestors_for_test): Returns the ordered list of ancestors from the closest to
+        the highest (a test without a parent).
+        (TestPathResolver::path_for_test): Returns a test "path", the ordered list of test names from
+        the highest ancestor to the test itself.
+        (TestPathResolver::ensure_id_to_test_map): Fetches "tests" table to construct id_to_test_map.
+
+        * public/privileged-api/create-test-group.php: Added. An API to create A/B testing groups.
+        (main):
+        (commit_sets_from_root_sets): Given a dictionary of repository names to a pair of revisions
+        for sets A and B respectively, returns a pair of arrays, each of which contains the corresponding
+        set of "commits" for sets A and B respectively. e.g. {"WebKit": [1, 2], "Safari": [3, 4]} will
+        result in [[WebKit commit at r1, Safari commit at r3], [WebKit commit at r2, Safari commit at r4]].
+
+        * public/v2/analysis.js:
+        (App.AnalysisTask.testGroups): Takes arguments so that set('testGroups') will invalidate the cache.
+        (App.AnalysisTask.triggerable): Added. Retrieves the triggerable associated with the task lazily.
+        (App.TestGroup.rootSets): Added. Returns the list of root set ids used in this A/B testing group.
+        (App.TestGroup.create): Added. Creates a new A/B testing group.
+        (App.Triggerable): Added.
+        (App.TriggerableAdapter): Added.
+        (App.TriggerableAdapter.buildURL): Added.
+        (App.BuildRequest.testGroup): Renamed from group.
+        (App.BuildRequest.orderLabel): Added. One-based index to be used in labels.
+        (App.BuildRequest.config): Added. Returns either 'A' or 'B' depending on the configuration used
+        in this build request.
+        (App.BuildRequest.status): Added.
+        (App.BuildRequest.statusLabel): Added. Returns a human friendly label for the current status.
+        (App.BuildRequest): Removed buildNumber, buildBuilder, as well as buildTime as they're unused.
+
+        * public/v2/app.js:
+        (App.AnalysisTaskController.testGroups): Added.
+        (App.AnalysisTaskController.possibleRepetitionCounts): Added.
+        (App.AnalysisTaskController.updateRoots): Renamed from roots. This is also no longer a property
+        but an observer that updates "roots" property. Filter out the repositories that are not accepted
+        by the associated triggerable as they will be ignored.
+        (App.AnalysisTaskController.actions.createTestGroup): Added.
+
+        * public/v2/index.html: Updated the UI, and added a form element to trigger createTestGroup action.
+
+        * tools/sync-with-buildbot.py: Added. This scripts posts new builds on buildbot and reports back
+        the status of those builds to the perf dashboard. A similar script can be written to support
+        other continuous builds systems.
+        (main): Fetches the list of pending builds as well as currently running or completed builds from
+        a buildbot, and report new statuses of builds requests to the perf dashboard. It will then schedule
+        a single new build on each builder with no pending builds, and marks the set of open build requests
+        that have been scheduled to run on the buildbot but not found in the first step as stale.
+        (load_config): Loads a JSON that contains the configurations for each builder. e.g.
+        [
+            {
+                "platform": "mac-mavericks",
+                "test": ["Parser", "html5-full-render.html"],
+                "builder": "Trunk Syrah Production Perf AB Tests",
+                "arguments": {
+                    "forcescheduler": "force-mac-mavericks-release-perf",
+                    "webkit_revision": "$WebKit",
+                    "jobid": "$buildRequest"
+                }
+            }
+        ]
+
+        (find_request_updates): Return a list of build request status updates to make based on the pending
+        builds as well as in-progress and completed builds on each builder on the buildbot. When a build is
+        completed, we use the special status "failedIfNotCompleted" which results in "failed" status only
+        if the build request had not been completed. This is necessary because a failed build will not
+        report its failed-ness back to the perf dashboard in some cases; e.g. lost slave or svn up failure.
+        (update_and_fetch_build_requests): Submit the build request status updates and retrieve the list
+        of open requests the perf dashboard has.
+        (find_stale_request_updates): Compute the list of build requests that have been scheduled on the
+        buildbot but not found in find_request_updates. These build requests are lost. e.g. a master reboot
+        or human canceling a build may trigger such a state.
+        (schedule_request): Schedules a build with the arguments specified in the configuration JSON after
+        replacing repository names with their revisions and buildRequest with the build request id.
+        (config_for_request): Finds a builder for the test and the platform of a build request.
+        (fetch_json): Fetches a JSON from the specified URL, optionally with BasicAuth.
+        (property_value_from_build): Returns the value of a specific property in a buildbot build.
+        (request_id_from_build): Returns the build request id of a given buildbot build if there is one.
+
+2015-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Cache-control should be set only on api/runs
         https://bugs.webkit.org/show_bug.cgi?id=140312
 

@@ -76,7 +76,7 @@ class TestNameResolver {
                 array_set_default($this->test_id_to_child_metrics, $parent_id, array());
                 $parent_metrics = &$this->test_id_to_child_metrics[$parent_id];
                 if (!in_array($metric_row['metric_name'], $parent_metrics))
-                    array_push($parent_metrics, $metric_row['metric_name']);
+                    array_push($parent_metrics, $metric_row);
             }
         }
         return $test_to_metrics;
@@ -128,6 +128,18 @@ class TestNameResolver {
     function configurations_for_metric_and_platform($metric_id, $platform_id) {
         $metric_configurations = array_get($this->metric_to_configurations, $metric_id, array());
         return array_get($metric_configurations, $platform_id);
+    }
+
+    function test_exists_on_platform($test_id, $platform_id) {
+        foreach ($this->metrics_for_test_id($test_id) as $metric) {
+            if ($this->configurations_for_metric_and_platform($metric['metric_id'], $platform_id))
+                return TRUE;
+        }
+        foreach ($this->child_metrics_for_test_id($test_id) as $metric) {
+            if ($this->configurations_for_metric_and_platform($metric['metric_id'], $platform_id))
+                return TRUE;
+        }
+        return FALSE;
     }
 }
 

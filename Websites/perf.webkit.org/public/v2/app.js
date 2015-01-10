@@ -783,9 +783,11 @@ App.AnalysisTaskController = Ember.Controller.extend({
     label: Ember.computed.alias('model.name'),
     platform: Ember.computed.alias('model.platform'),
     metric: Ember.computed.alias('model.metric'),
+    testGroups: Ember.computed.alias('model.testGroups'),
     testSets: [],
     roots: [],
     bugTrackers: [],
+    possibleRepetitionCounts: [1, 2, 3, 4, 5, 6],
     _taskUpdated: function ()
     {
         var model = this.get('model');
@@ -878,11 +880,11 @@ App.AnalysisTaskController = Ember.Controller.extend({
         });
 
     }.observes('testSets.@each.selection'),
-    roots: function ()
+    updateRoots: function ()
     {
         var analysisPoints = this.get('analysisPoints');
         if (!analysisPoints)
-            return [];
+            return;
         var repositoryToRevisions = {};
         analysisPoints.forEach(function (point, pointIndex) {
             var revisions = point.measurement.formattedRevisions();
@@ -897,23 +899,28 @@ App.AnalysisTaskController = Ember.Controller.extend({
             }
         });
 
-        var roots = [];
-        for (var repositoryName in repositoryToRevisions) {
-            var revisions = [{value: ' ', label: 'None'}].concat(repositoryToRevisions[repositoryName]);
-            roots.push(Ember.Object.create({
-                name: repositoryName,
-                sets: [
-                    Ember.Object.create({name: 'A[' + repositoryName + ']',
-                        revisions: revisions,
-                        selection: revisions[1]}),
-                    Ember.Object.create({name: 'B[' + repositoryName + ']',
-                        revisions: revisions,
-                        selection: revisions[revisions.length - 1]}),
-                ],
+        var self = this;
+        this.get('model').get('triggerable').then(function (triggerable) {
+            if (!triggerable)
+                return;
+
+            self.set('roots', triggerable.get('acceptedRepositories').map(function (repository) {
+                var repositoryName = repository.get('id');
+                var revisions = [{value: ' ', label: 'None'}].concat(repositoryToRevisions[repositoryName]);
+                return Ember.Object.create({
+                    name: repositoryName,
+                    sets: [
+                        Ember.Object.create({name: 'A[' + repositoryName + ']',
+                            revisions: revisions,
+                            selection: revisions[1]}),
+                        Ember.Object.create({name: 'B[' + repositoryName + ']',
+                            revisions: revisions,
+                            selection: revisions[revisions.length - 1]}),
+                    ],
+                });
             }));
-        }
-        return roots;
-    }.property('analysisPoints'),
+        });
+    }.observes('analysisPoints'),
     actions: {
         associateBug: function (bugTracker, bugNumber)
         {
@@ -924,6 +931,16 @@ App.AnalysisTaskController = Ember.Controller.extend({
                 }, function (error) {
                     alert('Failed to associate the bug: ' + error);
                 });
-        }
+        },
+        createTestGroup: function (name, repetitionCount)
+        {
+            var roots = {};
+            this.get('roots').map(function (root) {
+                roots[root.get('name')] = root.get('sets').map(function (item) { return item.get('selection').value; });
+            });
+            App.TestGroup.create(this.get('model'), name, roots, repetitionCount).then(function () {
+                
+            });
+        },
     },
 });

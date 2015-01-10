@@ -17,10 +17,15 @@ DROP TABLE reports CASCADE;
 DROP TABLE tracker_repositories CASCADE;
 DROP TABLE bug_trackers CASCADE;
 DROP TABLE analysis_tasks CASCADE;
+DROP TABLE build_triggerables CASCADE;
+DROP TABLE triggerable_configurations CASCADE;
+DROP TABLE triggerable_repositories CASCADE;
 DROP TABLE bugs CASCADE;
 DROP TABLE analysis_test_groups CASCADE;
 DROP TABLE root_sets CASCADE;
+DROP TABLE roots CASCADE;
 DROP TABLE build_requests CASCADE;
+DROP TYPE build_request_status_type CASCADE;
 
 
 CREATE TABLE platforms (
@@ -171,21 +176,50 @@ CREATE TABLE bugs (
     bug_number integer NOT NULL,
     CONSTRAINT bug_task_and_tracker_must_be_unique UNIQUE(bug_task, bug_tracker));
 
+CREATE TABLE build_triggerables (
+    triggerable_id serial PRIMARY KEY,
+    triggerable_name varchar(64) NOT NULL UNIQUE);
+
+CREATE TABLE triggerable_repositories (
+    trigrepo_triggerable integer REFERENCES build_triggerables NOT NULL,
+    trigrepo_repository integer REFERENCES repositories NOT NULL,
+    trigrepo_sub_roots boolean NOT NULL DEFAULT FALSE);
+
+CREATE TABLE triggerable_configurations (
+    trigconfig_test integer REFERENCES tests NOT NULL,
+    trigconfig_platform integer REFERENCES platforms NOT NULL,
+    trigconfig_triggerable integer REFERENCES build_triggerables NOT NULL,
+    CONSTRAINT triggerable_must_be_unique_for_test_and_platform UNIQUE(trigconfig_test, trigconfig_platform));
+
 CREATE TABLE analysis_test_groups (
     testgroup_id serial PRIMARY KEY,
     testgroup_task integer REFERENCES analysis_tasks NOT NULL,
     testgroup_name varchar(256),
-    testgroup_author varchar(256) NOT NULL,
-    testgroup_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'));
+    testgroup_author varchar(256),
+    testgroup_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+    CONSTRAINT testgroup_name_must_be_unique_for_each_task UNIQUE(testgroup_task, testgroup_name));
 CREATE INDEX testgroup_task_index ON analysis_test_groups(testgroup_task);
 
 CREATE TABLE root_sets (
     rootset_id serial PRIMARY KEY);
 
+CREATE TABLE roots (
+    root_set integer REFERENCES root_sets NOT NULL,
+    root_commit integer REFERENCES commits NOT NULL);
+
+CREATE TYPE build_request_status_type as ENUM ('pending', 'scheduled', 'running', 'failed', 'completed');
 CREATE TABLE build_requests (
     request_id serial PRIMARY KEY,
+    request_triggerable integer REFERENCES build_triggerables NOT NULL,
+    request_platform integer REFERENCES platforms NOT NULL,
+    request_test integer REFERENCES tests NOT NULL,
     request_group integer REFERENCES analysis_test_groups NOT NULL,
     request_order integer NOT NULL,
     request_root_set integer REFERENCES root_sets NOT NULL,
+    request_status build_request_status_type NOT NULL DEFAULT 'pending',
+    request_url varchar(1024),
     request_build integer REFERENCES builds,
+    request_created_at timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
     CONSTRAINT build_request_order_must_be_unique_in_group UNIQUE(request_group, request_order));
+CREATE INDEX build_request_triggerable ON build_requests(request_triggerable);    
+CREATE INDEX build_request_build ON build_requests(request_build);
