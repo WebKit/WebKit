@@ -66,11 +66,6 @@ public:
     RetainPtr<id <WKHistoryDelegatePrivate> > historyDelegate();
     void setHistoryDelegate(id <WKHistoryDelegatePrivate>);
 
-    Ref<API::Navigation> createBackForwardNavigation(uint64_t navigationID, const WebBackForwardListItem&);
-    Ref<API::Navigation> createLoadRequestNavigation(uint64_t navigationID, NSURLRequest *);
-    Ref<API::Navigation> createReloadNavigation(uint64_t navigationID);
-    Ref<API::Navigation> createLoadDataNavigation(uint64_t navigationID);
-
     // Called by the page client.
     void navigationGestureDidBegin();
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&);
@@ -176,8 +171,6 @@ private:
         bool webViewDidFinishLoadForQuickLookDocumentInMainFrame : 1;
 #endif
     } m_navigationDelegateMethods;
-
-    HashMap<uint64_t, RefPtr<API::Navigation>> m_navigations;
 
     WeakObjCPtr<id <WKHistoryDelegatePrivate> > m_historyDelegate;
     struct {

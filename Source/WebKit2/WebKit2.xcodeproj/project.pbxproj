@@ -1076,6 +1076,8 @@
 		7CB16FF31724BA2F007A0A95 /* com.microsoft.SilverlightPlugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE61724B9B5007A0A95 /* com.microsoft.SilverlightPlugin.sb */; };
 		7CB16FF41724BA30007A0A95 /* com.oracle.java.JavaAppletPlugin.sb in Copy Plug-in Sandbox Profiles */ = {isa = PBXBuildFile; fileRef = 7CB16FE71724B9B5007A0A95 /* com.oracle.java.JavaAppletPlugin.sb */; };
 		7CC99A3618EF7CBC0048C8B4 /* WKScriptMessageInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC99A3518EF7CBC0048C8B4 /* WKScriptMessageInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7CCCC8FA1A5F50FD008FB0DA /* WebNavigationState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CCCC8F81A5F50FD008FB0DA /* WebNavigationState.cpp */; };
+		7CCCC8FB1A5F50FD008FB0DA /* WebNavigationState.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CCCC8F91A5F50FD008FB0DA /* WebNavigationState.h */; };
 		7CD102DA1866770600ED429D /* AutoCorrectionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD102D91866770600ED429D /* AutoCorrectionCallback.h */; };
 		7CD3A4821A5D02FA009623B8 /* APINavigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD3A4801A5D02FA009623B8 /* APINavigation.cpp */; };
 		7CD3A4831A5D02FA009623B8 /* APINavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD3A4811A5D02FA009623B8 /* APINavigation.h */; };
@@ -3178,6 +3180,8 @@
 		7CB16FE61724B9B5007A0A95 /* com.microsoft.SilverlightPlugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.microsoft.SilverlightPlugin.sb; sourceTree = "<group>"; };
 		7CB16FE71724B9B5007A0A95 /* com.oracle.java.JavaAppletPlugin.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.oracle.java.JavaAppletPlugin.sb; sourceTree = "<group>"; };
 		7CC99A3518EF7CBC0048C8B4 /* WKScriptMessageInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKScriptMessageInternal.h; sourceTree = "<group>"; };
+		7CCCC8F81A5F50FD008FB0DA /* WebNavigationState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNavigationState.cpp; sourceTree = "<group>"; };
+		7CCCC8F91A5F50FD008FB0DA /* WebNavigationState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNavigationState.h; sourceTree = "<group>"; };
 		7CD102D91866770600ED429D /* AutoCorrectionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoCorrectionCallback.h; sourceTree = "<group>"; };
 		7CD3A4801A5D02FA009623B8 /* APINavigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APINavigation.cpp; sourceTree = "<group>"; };
 		7CD3A4811A5D02FA009623B8 /* APINavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APINavigation.h; sourceTree = "<group>"; };
@@ -5997,6 +6001,8 @@
 				33D3A3B71339606200709BE4 /* WebMediaCacheManagerProxy.cpp */,
 				33D3A3B81339606200709BE4 /* WebMediaCacheManagerProxy.h */,
 				33D3A3B91339606200709BE4 /* WebMediaCacheManagerProxy.messages.in */,
+				7CCCC8F81A5F50FD008FB0DA /* WebNavigationState.cpp */,
+				7CCCC8F91A5F50FD008FB0DA /* WebNavigationState.h */,
 				BC1DFEA312B31F87005DF730 /* WebOpenPanelResultListenerProxy.cpp */,
 				BC1DFEA212B31F87005DF730 /* WebOpenPanelResultListenerProxy.h */,
 				755422BE18062BE40046F6A8 /* WebOriginDataManagerProxy.cpp */,
@@ -7934,6 +7940,7 @@
 				1AA20D5118AD50E0005D1ED4 /* WKNavigationDelegatePrivate.h in Headers */,
 				1ABC3DF11899C6B6004F0626 /* WKNavigationInternal.h in Headers */,
 				1ACC87BA1981C341003D1AF4 /* WKNavigationPrivate.h in Headers */,
+				7CCCC8FB1A5F50FD008FB0DA /* WebNavigationState.h in Headers */,
 				1A1B0EB618A424950038481A /* WKNavigationResponse.h in Headers */,
 				1A1B0EB818A424CD0038481A /* WKNavigationResponseInternal.h in Headers */,
 				1AA13212191D5924009C1489 /* WKNavigationResponsePrivate.h in Headers */,
@@ -9496,6 +9503,7 @@
 				BC111B11112F5E4F00337BAB /* WebProcessProxy.cpp in Sources */,
 				2DA944B01884E9BA00ED86DB /* WebProcessProxyIOS.mm in Sources */,
 				51D130581382F10500351EDD /* WebProcessProxyMac.mm in Sources */,
+				7CCCC8FA1A5F50FD008FB0DA /* WebNavigationState.cpp in Sources */,
 				7CE4D2161A49148400C7F152 /* WebProcessPoolCocoa.mm in Sources */,
 				BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */,
 				1A1E093318861D3800D2DC49 /* WebProgressTrackerClient.cpp in Sources */,

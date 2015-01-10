@@ -33,6 +33,7 @@
 #include "APIGeometry.h"
 #include "APILegacyContextHistoryClient.h"
 #include "APILoaderClient.h"
+#include "APINavigation.h"
 #include "APIPolicyClient.h"
 #include "APISecurityOrigin.h"
 #include "APIUIClient.h"
@@ -74,6 +75,7 @@
 #include "WebImage.h"
 #include "WebInspectorProxy.h"
 #include "WebInspectorProxyMessages.h"
+#include "WebNavigationState.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebOpenPanelParameters.h"
 #include "WebOpenPanelResultListenerProxy.h"
@@ -262,6 +264,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_formClient(std::make_unique<API::FormClient>())
     , m_uiClient(std::make_unique<API::UIClient>())
     , m_findClient(std::make_unique<API::FindClient>())
+    , m_navigationState(std::make_unique<WebNavigationState>())
     , m_process(process)
     , m_pageGroup(*configuration.pageGroup)
     , m_preferences(*configuration.preferences)
@@ -593,10 +596,29 @@ void WebPageProxy::reattachToWebProcess()
     m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 }
 
-uint64_t WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
+RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessForReload()
 {
     if (m_isClosed)
-        return 0;
+        return nullptr;
+    
+    ASSERT(!isValid());
+    reattachToWebProcess();
+
+    if (!m_backForwardList->currentItem())
+        return nullptr;
+
+    auto navigation = m_navigationState->createReloadNavigation();
+
+    m_process->send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), m_backForwardList->currentItem()->itemID()), m_pageID);
+    m_process->responsivenessTimer()->start();
+
+    return WTF::move(navigation);
+}
+
+RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
+{
+    if (m_isClosed)
+        return nullptr;
 
     if (item && item != m_backForwardList->currentItem())
         m_backForwardList->goToItem(item);
@@ -605,14 +627,14 @@ uint64_t WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item
     reattachToWebProcess();
 
     if (!item)
-        return 0;
+        return nullptr;
 
-    uint64_t navigationID = generateNavigationID();
+    auto navigation = m_navigationState->createBackForwardNavigation();
 
-    m_process->send(Messages::WebPage::GoToBackForwardItem(navigationID, item->itemID()), m_pageID);
+    m_process->send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), item->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
 
-    return navigationID;
+    return WTF::move(navigation);
 }
 
 void WebPageProxy::setSessionID(SessionID sessionID)
@@ -722,12 +744,12 @@ bool WebPageProxy::maybeInitializeSandboxExtensionHandle(const URL& url, Sandbox
     return true;
 }
 
-uint64_t WebPageProxy::loadRequest(const ResourceRequest& request, API::Object* userData)
+RefPtr<API::Navigation> WebPageProxy::loadRequest(const ResourceRequest& request, API::Object* userData)
 {
     if (m_isClosed)
-        return 0;
+        return nullptr;
 
-    uint64_t navigationID = generateNavigationID();
+    auto navigation = m_navigationState->createLoadRequestNavigation(request);
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -740,23 +762,23 @@ uint64_t WebPageProxy::loadRequest(const ResourceRequest& request, API::Object* 
     bool createdExtension = maybeInitializeSandboxExtensionHandle(request.url(), sandboxExtensionHandle);
     if (createdExtension)
         m_process->willAcquireUniversalFileReadSandboxExtension();
-    m_process->send(Messages::WebPage::LoadRequest(navigationID, request, sandboxExtensionHandle, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
+    m_process->send(Messages::WebPage::LoadRequest(navigation->navigationID(), request, sandboxExtensionHandle, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
     m_process->responsivenessTimer()->start();
 
-    return navigationID;
+    return WTF::move(navigation);
 }
 
-uint64_t WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString, API::Object* userData)
+RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, const String& resourceDirectoryURLString, API::Object* userData)
 {
     if (m_isClosed)
-        return 0;
+        return nullptr;
 
     if (!isValid())
         reattachToWebProcess();
 
     URL fileURL = URL(URL(), fileURLString);
     if (!fileURL.isLocalFile())
-        return 0;
+        return nullptr;
 
     URL resourceDirectoryURL;
     if (resourceDirectoryURLString.isNull())
@@ -764,10 +786,10 @@ uint64_t WebPageProxy::loadFile(const String& fileURLString, const String& resou
     else {
         resourceDirectoryURL = URL(URL(), resourceDirectoryURLString);
         if (!resourceDirectoryURL.isLocalFile())
-            return 0;
+            return nullptr;
     }
 
-    uint64_t navigationID = generateNavigationID();
+    auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(fileURL));
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -778,18 +800,18 @@ uint64_t WebPageProxy::loadFile(const String& fileURLString, const String& resou
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::createHandle(resourceDirectoryPath, SandboxExtension::ReadOnly, sandboxExtensionHandle);
     m_process->assumeReadAccessToBaseURL(resourceDirectoryURL);
-    m_process->send(Messages::WebPage::LoadRequest(navigationID, fileURL, sandboxExtensionHandle, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
+    m_process->send(Messages::WebPage::LoadRequest(navigation->navigationID(), fileURL, sandboxExtensionHandle, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
     m_process->responsivenessTimer()->start();
 
-    return navigationID;
+    return WTF::move(navigation);
 }
 
-uint64_t WebPageProxy::loadData(API::Data* data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData)
+RefPtr<API::Navigation> WebPageProxy::loadData(API::Data* data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData)
 {
     if (m_isClosed)
-        return 0;
+        return nullptr;
 
-    uint64_t navigationID = generateNavigationID();
+    auto navigation = m_navigationState->createLoadDataNavigation();
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -802,16 +824,16 @@ uint64_t WebPageProxy::loadData(API::Data* data, const String& MIMEType, const S
     m_process->send(Messages::WebPage::LoadData(data->dataReference(), MIMEType, encoding, baseURL, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
     m_process->responsivenessTimer()->start();
 
-    return navigationID;
+    return WTF::move(navigation);
 }
 
 // FIXME: Get rid of loadHTMLString and just use loadData instead.
-uint64_t WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData)
+RefPtr<API::Navigation> WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData)
 {
     if (m_isClosed)
-        return 0;
+        return nullptr;
 
-    uint64_t navigationID = generateNavigationID();
+    auto navigation = m_navigationState->createLoadDataNavigation();
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -821,10 +843,10 @@ uint64_t WebPageProxy::loadHTMLString(const String& htmlString, const String& ba
         reattachToWebProcess();
 
     m_process->assumeReadAccessToBaseURL(baseURL);
-    m_process->send(Messages::WebPage::LoadHTMLString(navigationID, htmlString, baseURL, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
+    m_process->send(Messages::WebPage::LoadHTMLString(navigation->navigationID(), htmlString, baseURL, UserData(process().transformObjectsToHandles(userData).get())), m_pageID);
     m_process->responsivenessTimer()->start();
 
-    return navigationID;
+    return WTF::move(navigation);
 }
 
 void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, API::Object* userData)
@@ -892,7 +914,7 @@ void WebPageProxy::stopLoading()
     m_process->responsivenessTimer()->start();
 }
 
-uint64_t WebPageProxy::reload(bool reloadFromOrigin)
+RefPtr<API::Navigation> WebPageProxy::reload(bool reloadFromOrigin)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
 
@@ -908,14 +930,14 @@ uint64_t WebPageProxy::reload(bool reloadFromOrigin)
     }
 
     if (!isValid())
-        return reattachToWebProcessWithItem(m_backForwardList->currentItem());
+        return reattachToWebProcessForReload();
+    
+    auto navigation = m_navigationState->createReloadNavigation();
 
-    uint64_t navigationID = generateNavigationID();
-
-    m_process->send(Messages::WebPage::Reload(navigationID, reloadFromOrigin, sandboxExtensionHandle), m_pageID);
+    m_process->send(Messages::WebPage::Reload(navigation->navigationID(), reloadFromOrigin, sandboxExtensionHandle), m_pageID);
     m_process->responsivenessTimer()->start();
 
-    return navigationID;
+    return WTF::move(navigation);
 }
 
 void WebPageProxy::recordNavigationSnapshot()
@@ -936,11 +958,11 @@ void WebPageProxy::recordNavigationSnapshot(WebBackForwardListItem& item)
 #endif
 }
 
-uint64_t WebPageProxy::goForward()
+RefPtr<API::Navigation> WebPageProxy::goForward()
 {
     WebBackForwardListItem* forwardItem = m_backForwardList->forwardItem();
     if (!forwardItem)
-        return 0;
+        return nullptr;
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -949,19 +971,21 @@ uint64_t WebPageProxy::goForward()
     if (!isValid())
         return reattachToWebProcessWithItem(forwardItem);
 
-    uint64_t navigationID = m_backForwardList->currentItem()->itemIsInSameDocument(*forwardItem) ? 0 : generateNavigationID();
+    RefPtr<API::Navigation> navigation;
+    if (!m_backForwardList->currentItem()->itemIsInSameDocument(*forwardItem))
+        navigation = m_navigationState->createBackForwardNavigation();
 
-    m_process->send(Messages::WebPage::GoForward(navigationID, forwardItem->itemID()), m_pageID);
+    m_process->send(Messages::WebPage::GoForward(navigation ? navigation->navigationID() : 0, forwardItem->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
 
-    return navigationID;
+    return navigation;
 }
 
-uint64_t WebPageProxy::goBack()
+RefPtr<API::Navigation> WebPageProxy::goBack()
 {
     WebBackForwardListItem* backItem = m_backForwardList->backItem();
     if (!backItem)
-        return 0;
+        return nullptr;
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -970,15 +994,17 @@ uint64_t WebPageProxy::goBack()
     if (!isValid())
         return reattachToWebProcessWithItem(backItem);
 
-    uint64_t navigationID = m_backForwardList->currentItem()->itemIsInSameDocument(*backItem) ? 0 : generateNavigationID();
+    RefPtr<API::Navigation> navigation;
+    if (!m_backForwardList->currentItem()->itemIsInSameDocument(*backItem))
+        navigation = m_navigationState->createBackForwardNavigation();
 
-    m_process->send(Messages::WebPage::GoBack(navigationID, backItem->itemID()), m_pageID);
+    m_process->send(Messages::WebPage::GoBack(navigation ? navigation->navigationID() : 0, backItem->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
 
-    return navigationID;
+    return navigation;
 }
 
-uint64_t WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
+RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
 {
     if (!isValid())
         return reattachToWebProcessWithItem(item);
@@ -987,12 +1013,14 @@ uint64_t WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
 
     m_pageLoadState.setPendingAPIRequestURL(transaction, item->url());
 
-    uint64_t navigationID = m_backForwardList->currentItem()->itemIsInSameDocument(*item) ? 0 : generateNavigationID();
+    RefPtr<API::Navigation> navigation;
+    if (!m_backForwardList->currentItem()->itemIsInSameDocument(*item))
+        navigation = m_navigationState->createBackForwardNavigation();
 
-    m_process->send(Messages::WebPage::GoToBackForwardItem(navigationID, item->itemID()), m_pageID);
+    m_process->send(Messages::WebPage::GoToBackForwardItem(navigation ? navigation->navigationID() : 0, item->itemID()), m_pageID);
     m_process->responsivenessTimer()->start();
 
-    return navigationID;
+    return navigation;
 }
 
 void WebPageProxy::tryRestoreScrollPosition()
@@ -1630,11 +1658,6 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
         m_process->send(Messages::WebPage::KeyEvent(event), m_pageID);
 }
 
-uint64_t WebPageProxy::generateNavigationID()
-{
-    return ++m_navigationID;
-}
-
 WebPreferencesStore WebPageProxy::preferencesStore() const
 {
     if (m_configurationPreferenceValues.isEmpty())
@@ -1805,7 +1828,7 @@ void WebPageProxy::centerSelectionInVisibleArea()
     m_process->send(Messages::WebPage::CenterSelectionInVisibleArea(), m_pageID);
 }
 
-void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* frame, uint64_t listenerID, uint64_t navigationID)
+void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* frame, uint64_t listenerID, API::Navigation* navigation)
 {
     if (!isValid())
         return;
@@ -1843,7 +1866,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
         return;
     }
     
-    m_process->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action, navigationID, downloadID), m_pageID);
+    m_process->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action, navigation ? navigation->navigationID() : 0, downloadID), m_pageID);
 }
 
 void WebPageProxy::setUserAgent(const String& userAgent)
@@ -1954,7 +1977,7 @@ SessionState WebPageProxy::sessionState(const std::function<bool (WebBackForward
     return sessionState;
 }
 
-uint64_t WebPageProxy::restoreFromSessionState(SessionState sessionState, bool navigate)
+RefPtr<API::Navigation> WebPageProxy::restoreFromSessionState(SessionState sessionState, bool navigate)
 {
     m_sessionRestorationRenderTreeSize = 0;
     m_hitRenderTreeSizeThreshold = false;
@@ -1986,7 +2009,7 @@ uint64_t WebPageProxy::restoreFromSessionState(SessionState sessionState, bool n
         }
     }
 
-    return 0;
+    return nullptr;
 }
 
 bool WebPageProxy::supportsTextZoom() const
@@ -2863,8 +2886,9 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint64_t na
     
     RefPtr<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
     if (!navigationID && frame->isMainFrame()) {
-        newNavigationID = generateNavigationID();
-        listener->setNavigationID(newNavigationID);
+        auto navigation = m_navigationState->createLoadRequestNavigation(request);
+        newNavigationID = navigation->navigationID();
+        listener->setNavigation(WTF::move(navigation));
     }
 
 #if ENABLE(CONTENT_FILTERING)

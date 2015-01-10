@@ -30,28 +30,35 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Ref.h>
 
+namespace WebKit {
+class WebNavigationState;
+}
+
 namespace API {
 
 class Navigation : public ObjectImpl<Object::Type::Navigation> {
 public:
-    static Ref<Navigation> create()
+    static Ref<Navigation> create(WebKit::WebNavigationState& state)
     {
-        return adoptRef(*new Navigation);
+        return adoptRef(*new Navigation(state));
     }
 
-    static Ref<Navigation> create(const WebCore::ResourceRequest& request)
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, const WebCore::ResourceRequest& request)
     {
-        return adoptRef(*new Navigation(request));
+        return adoptRef(*new Navigation(state, request));
     }
 
     virtual ~Navigation();
 
+    uint64_t navigationID() const { return m_navigationID; }
+
     const WebCore::ResourceRequest& request() const { return m_request; }
 
 private:
-    explicit Navigation();
-    explicit Navigation(const WebCore::ResourceRequest&);
+    explicit Navigation(WebKit::WebNavigationState&);
+    explicit Navigation(WebKit::WebNavigationState&, const WebCore::ResourceRequest&);
 
+    uint64_t m_navigationID;
     WebCore::ResourceRequest m_request;
 };
 

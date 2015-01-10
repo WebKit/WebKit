@@ -26,14 +26,18 @@
 #include "config.h"
 #include "APINavigation.h"
 
+#include "WebNavigationState.h"
+
 namespace API {
 
-Navigation::Navigation()
+Navigation::Navigation(WebKit::WebNavigationState& state)
+    : m_navigationID(state.generateNavigationID())
 {
 }
 
-Navigation::Navigation(const WebCore::ResourceRequest& request)
-    : m_request(request)
+Navigation::Navigation(WebKit::WebNavigationState& state, const WebCore::ResourceRequest& request)
+    : m_navigationID(state.generateNavigationID())
+    , m_request(request)
 {
 }
 

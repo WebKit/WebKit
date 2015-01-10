@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFrameListenerProxy_h
-#define WebFrameListenerProxy_h
+#ifndef WebNavigationState_h
+#define WebNavigationState_h
 
-#include "APINavigation.h"
-#include "APIObject.h"
-#include <WebCore/FrameLoaderTypes.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/HashMap.h>
 #include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
+
+namespace API {
+class Navigation;
+}
+
+namespace WebCore {
+class ResourceRequest;
+}
 
 namespace WebKit {
 
-class WebFrameProxy;
+class WebPageProxy;
+class WebBackForwardListItem;
 
-class WebFrameListenerProxy : public API::Object {
+class WebNavigationState {
 public:
-    virtual ~WebFrameListenerProxy();
+    explicit WebNavigationState();
+    ~WebNavigationState();
 
-    void invalidate();
-    uint64_t listenerID() const { return m_listenerID; }
+    Ref<API::Navigation> createBackForwardNavigation();
+    Ref<API::Navigation> createLoadRequestNavigation(const WebCore::ResourceRequest&);
+    Ref<API::Navigation> createReloadNavigation();
+    Ref<API::Navigation> createLoadDataNavigation();
 
-    API::Navigation* navigation() { return m_navigation.get(); }
-    void setNavigation(Ref<API::Navigation>&& navigation) { m_navigation = WTF::move(navigation); }
+    API::Navigation& navigation(uint64_t navigationID);
+    Ref<API::Navigation> takeNavigation(uint64_t navigationID);
+    void didDestroyNavigation(uint64_t navigationID);
+    void clearAllNavigations();
 
-protected:
-    WebFrameListenerProxy(WebFrameProxy*, uint64_t listenerID);
-
-    void receivedPolicyDecision(WebCore::PolicyAction);
+    uint64_t generateNavigationID()
+    {
+        return ++m_navigationID;
+    }
 
 private:
-    RefPtr<WebFrameProxy> m_frame;
-    uint64_t m_listenerID;
-    RefPtr<API::Navigation> m_navigation;
+    HashMap<uint64_t, RefPtr<API::Navigation>> m_navigations;
+    uint64_t m_navigationID { 0 };
 };
 
 } // namespace WebKit
 
-#endif // WebFrameListenerProxy_h
+#endif // WebNavigationState_h

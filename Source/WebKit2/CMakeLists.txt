@@ -343,6 +343,7 @@ set(WebKit2_SOURCES
     UIProcess/WebIconDatabaseClient.cpp
     UIProcess/WebInspectorProxy.cpp
     UIProcess/WebKeyValueStorageManager.cpp
+    UIProcess/WebNavigationState.cpp
     UIProcess/WebMediaCacheManagerProxy.cpp
     UIProcess/WebOpenPanelResultListenerProxy.cpp
     UIProcess/WebOriginDataManagerProxy.cpp
