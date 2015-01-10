@@ -88,6 +88,12 @@ extern const CFStringRef kCTUIFontTextStyleCaption2;
 extern const CFStringRef kCTFontDescriptorTextStyleEmphasized;
 #endif
 
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED > 80200
+extern const CFStringRef kCTUIFontTextStyleTitle1;
+extern const CFStringRef kCTUIFontTextStyleTitle2;
+extern const CFStringRef kCTUIFontTextStyleTitle3;
+#endif
+
 CTFontRef CTFontCreatePhysicalFontForCharactersWithLanguage(CTFontRef, const UTF16Char* characters, CFIndex length, CFStringRef language, CFIndex* coveredLength);
 bool CTFontIsAppleColorEmoji(CTFontRef);
 bool CTFontDescriptorIsSystemUIFont(CTFontDescriptorRef);

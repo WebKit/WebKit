@@ -1119,9 +1119,11 @@ void RenderThemeIOS::systemFont(CSSValueID valueID, FontDescription& fontDescrip
     static NeverDestroyed<FontDescription> shortFootnoteFont;
     static NeverDestroyed<FontDescription> shortCaption1Font;
     static NeverDestroyed<FontDescription> tallBodyFont;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED > 80200
     static NeverDestroyed<FontDescription> title1Font;
     static NeverDestroyed<FontDescription> title2Font;
     static NeverDestroyed<FontDescription> title3Font;
+#endif
 
     static CFStringRef userTextSize = contentSizeCategory();
 
@@ -1158,6 +1160,7 @@ void RenderThemeIOS::systemFont(CSSValueID valueID, FontDescription& fontDescrip
         if (!bodyFont.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
+#if __IPHONE_OS_VERSION_MIN_REQUIRED > 80200
     case CSSValueAppleSystemTitle1:
         cachedDesc = &title1Font.get();
         textStyle = kCTUIFontTextStyleTitle1;
@@ -1176,6 +1179,7 @@ void RenderThemeIOS::systemFont(CSSValueID valueID, FontDescription& fontDescrip
         if (!title3Font.get().isAbsoluteSize())
             fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(textStyle, userTextSize, 0));
         break;
+#endif
     case CSSValueAppleSystemSubheadline:
         cachedDesc = &subheadlineFont.get();
         textStyle = kCTUIFontTextStyleSubhead;
