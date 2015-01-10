@@ -1,3 +1,13 @@
+2015-01-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Make bmalloc work with ASan
+        https://bugs.webkit.org/show_bug.cgi?id=140194
+
+        Reviewed by Mark Lam.
+
+        * asan/asan.xcconfig: No need to disable FastMalloc; bmalloc supports
+        ASan automatically (by forwarding to system malloc at runtime).
+
 2015-01-09  Daniel Bates  <dabates@apple.com>
 
         [iOS] Make DumpRenderTree build with public SDK
