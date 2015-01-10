@@ -90,11 +90,6 @@ CookiesStrategy* WebPlatformStrategies::createCookiesStrategy()
     return this;
 }
 
-DatabaseStrategy* WebPlatformStrategies::createDatabaseStrategy()
-{
-    return this;
-}
-
 LoaderStrategy* WebPlatformStrategies::createLoaderStrategy()
 {
     return this;
@@ -195,15 +190,6 @@ void WebPlatformStrategies::deleteCookie(const NetworkStorageSession& session, c
 
     WebCore::deleteCookie(session, url, cookieName);
 }
-
-// DatabaseStrategy
-
-#if ENABLE(SQL_DATABASE)
-AbstractDatabaseServer* WebPlatformStrategies::getDatabaseServer()
-{
-    return DatabaseStrategy::getDatabaseServer();
-}
-#endif // ENABLE(SQL_DATABASE)
 
 // LoaderStrategy
 

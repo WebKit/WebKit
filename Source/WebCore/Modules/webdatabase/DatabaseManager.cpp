@@ -35,7 +35,7 @@
 #include "DatabaseBackendContext.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
-#include "DatabaseStrategy.h"
+#include "DatabaseServer.h"
 #include "DatabaseTask.h"
 #include "ExceptionCode.h"
 #include "InspectorDatabaseInstrumentation.h"
@@ -47,8 +47,7 @@
 
 namespace WebCore {
 
-DatabaseManager::ProposedDatabase::ProposedDatabase(DatabaseManager& manager,
-    SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)
+DatabaseManager::ProposedDatabase::ProposedDatabase(DatabaseManager& manager, SecurityOrigin* origin, const String& name, const String& displayName, unsigned long estimatedSize)
     : m_manager(manager)
     , m_origin(origin->isolatedCopy())
     , m_details(name.isolatedCopy(), displayName.isolatedCopy(), estimatedSize, 0, 0, 0)
@@ -73,7 +72,7 @@ DatabaseManager& DatabaseManager::manager()
 }
 
 DatabaseManager::DatabaseManager()
-    : m_server(platformStrategies()->databaseStrategy()->getDatabaseServer())
+    : m_server(new DatabaseServer)
     , m_client(0)
     , m_databaseIsAvailable(true)
 #if !ASSERT_DISABLED

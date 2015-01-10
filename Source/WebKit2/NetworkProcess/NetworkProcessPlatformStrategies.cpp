@@ -44,11 +44,6 @@ CookiesStrategy* NetworkProcessPlatformStrategies::createCookiesStrategy()
     return 0;
 }
 
-DatabaseStrategy* NetworkProcessPlatformStrategies::createDatabaseStrategy()
-{
-    return 0;
-}
-
 LoaderStrategy* NetworkProcessPlatformStrategies::createLoaderStrategy()
 {
     return this;

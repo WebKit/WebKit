@@ -52,11 +52,6 @@ CookiesStrategy* WebPlatformStrategies::createCookiesStrategy()
     return this;
 }
 
-DatabaseStrategy* WebPlatformStrategies::createDatabaseStrategy()
-{
-    return this;
-}
-
 LoaderStrategy* WebPlatformStrategies::createLoaderStrategy()
 {
     return this;

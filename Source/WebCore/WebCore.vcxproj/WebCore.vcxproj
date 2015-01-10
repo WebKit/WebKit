@@ -7361,7 +7361,6 @@
     <ClCompile Include="..\platform\ContextMenuItem.cpp" />
     <ClCompile Include="..\platform\CrossThreadCopier.cpp" />
     <ClCompile Include="..\platform\Cursor.cpp" />
-    <ClCompile Include="..\platform\DatabaseStrategy.cpp" />
     <ClCompile Include="..\platform\DateComponents.cpp" />
     <ClCompile Include="..\platform\Decimal.cpp" />
     <ClCompile Include="..\platform\DisplaySleepDisabler.cpp" />
@@ -19302,7 +19301,6 @@
     <ClInclude Include="..\platform\CookiesStrategy.h" />
     <ClInclude Include="..\platform\CrossThreadCopier.h" />
     <ClInclude Include="..\platform\Cursor.h" />
-    <ClInclude Include="..\platform\DatabaseStrategy.h" />
     <ClInclude Include="..\platform\DateComponents.h" />
     <ClInclude Include="..\platform\Decimal.h" />
     <ClInclude Include="..\platform\DisplaySleepDisabler.h" />

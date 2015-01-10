@@ -27,7 +27,6 @@
 #define WebPlatformStrategies_h
 
 #include <WebCore/CookiesStrategy.h>
-#include <WebCore/DatabaseStrategy.h>
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
@@ -37,7 +36,7 @@
 
 namespace WebKit {
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::LoaderStrategy, private WebCore::PasteboardStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy {
     friend class NeverDestroyed<WebPlatformStrategies>;
 public:
     static void initialize();
@@ -47,7 +46,6 @@ private:
     
     // WebCore::PlatformStrategies
     virtual WebCore::CookiesStrategy* createCookiesStrategy() override;
-    virtual WebCore::DatabaseStrategy* createDatabaseStrategy() override;
     virtual WebCore::LoaderStrategy* createLoaderStrategy() override;
     virtual WebCore::PasteboardStrategy* createPasteboardStrategy() override;
     virtual WebCore::PluginStrategy* createPluginStrategy() override;
@@ -60,11 +58,6 @@ private:
     virtual String cookieRequestHeaderFieldValue(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&) override;
     virtual bool getRawCookies(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&) override;
     virtual void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::URL&, const String&) override;
-
-    // WebCore::DatabaseStrategy
-#if ENABLE(SQL_DATABASE)
-    virtual WebCore::AbstractDatabaseServer* getDatabaseServer() override;
-#endif
 
     // WebCore::LoaderStrategy
 #if ENABLE(NETWORK_PROCESS)

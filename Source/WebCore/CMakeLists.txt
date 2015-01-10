@@ -1961,7 +1961,6 @@ set(WebCore_SOURCES
     platform/ContextMenu.cpp
     platform/ContextMenuItem.cpp
     platform/CrossThreadCopier.cpp
-    platform/DatabaseStrategy.cpp
     platform/DateComponents.cpp
     platform/Decimal.cpp
     platform/DisplaySleepDisabler.cpp

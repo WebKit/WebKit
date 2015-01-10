@@ -1,3 +1,18 @@
+2015-01-09  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of the database strategy
+        https://bugs.webkit.org/show_bug.cgi?id=140322
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp:
+        (WebKit::NetworkProcessPlatformStrategies::createDatabaseStrategy): Deleted.
+        * NetworkProcess/NetworkProcessPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createDatabaseStrategy): Deleted.
+        (WebKit::WebPlatformStrategies::getDatabaseServer): Deleted.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2015-01-09  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Remove deprecated WKRenderingProgressEvents

@@ -1068,9 +1068,6 @@
     <ClCompile Include="..\platform\Cursor.cpp">
       <Filter>platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\DatabaseStrategy.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\DateComponents.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -8053,9 +8050,6 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\Cursor.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\DatabaseStrategy.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\DateComponents.h">

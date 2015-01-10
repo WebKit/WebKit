@@ -27,13 +27,12 @@
 #define WebPlatformStrategies_h
 
 #include <WebCore/CookiesStrategy.h>
-#include <WebCore/DatabaseStrategy.h>
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
 #include <WebCore/SharedWorkerStrategy.h>
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::DatabaseStrategy, private WebCore::LoaderStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::LoaderStrategy, private WebCore::PluginStrategy, private WebCore::SharedWorkerStrategy {
 public:
     static void initialize();
     
@@ -42,7 +41,6 @@ private:
     
     // WebCore::PlatformStrategies
     virtual WebCore::CookiesStrategy* createCookiesStrategy();
-    virtual WebCore::DatabaseStrategy* createDatabaseStrategy();
     virtual WebCore::LoaderStrategy* createLoaderStrategy();
     virtual WebCore::PasteboardStrategy* createPasteboardStrategy();
     virtual WebCore::PluginStrategy* createPluginStrategy();
@@ -55,9 +53,6 @@ private:
     virtual String cookieRequestHeaderFieldValue(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&);
     virtual bool getRawCookies(const WebCore::NetworkStorageSession&, const WebCore::URL& firstParty, const WebCore::URL&, Vector<WebCore::Cookie>&);
     virtual void deleteCookie(const WebCore::NetworkStorageSession&, const WebCore::URL&, const String&);
-
-    // WebCore::DatabaseStrategy
-    // - Using default implementation.
 
     // WebCore::PluginStrategy
     virtual void refreshPlugins();
