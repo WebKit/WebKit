@@ -57,6 +57,8 @@ public:
 private:
     RTCSessionDescriptionRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCSessionDescriptionCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>);
 
+    virtual const char* activeDOMObjectName() const override { return "RTCSessionDescriptionRequestImpl"; }
+
     void clear();
 
     RefPtr<RTCSessionDescriptionCallback> m_successCallback;

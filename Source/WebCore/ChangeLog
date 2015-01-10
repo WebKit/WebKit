@@ -1,3 +1,52 @@
+2015-01-09  Andreas Kling  <akling@apple.com>
+
+        Log which ActiveDOMObject(s) can't be suspended for PageCache.
+        <https://webkit.org/b/139697>
+
+        Reviewed by Chris Dumez.
+
+        Give ActiveDOMObject a pure virtual activeDOMObjectName() so we can
+        find their names.
+
+        Dump the names of all the ActiveDOMObjects that fail to suspend when
+        we're trying to put a page into PageCache.
+
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/geolocation/Geolocation.h:
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/RTCDTMFSender.h:
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCSessionDescriptionRequestImpl.h:
+        * Modules/mediastream/RTCStatsRequestImpl.h:
+        * Modules/mediastream/RTCVoidRequestImpl.h:
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/NotificationCenter.h:
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/websockets/WebSocket.h:
+        * WebCore.exp.in:
+        * css/FontLoader.h:
+        * dom/ActiveDOMObject.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::canSuspendActiveDOMObjects):
+        * dom/ScriptExecutionContext.h:
+        * fileapi/FileReader.h:
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLMediaElement.h:
+        * html/PublicURLManager.h:
+        * html/canvas/WebGLRenderingContext.h:
+        * page/EventSource.h:
+        * page/SuspendableTimer.h:
+        * workers/AbstractWorker.h:
+        * xml/XMLHttpRequest.h:
+
 2015-01-09  Anders Carlsson  <andersca@apple.com>
 
         Get rid of the database strategy

@@ -118,6 +118,8 @@ public:
 protected:
     explicit MediaSource(ScriptExecutionContext&);
 
+    virtual const char* activeDOMObjectName() const override { return "MediaSource"; }
+
     void onReadyStateChange(const AtomicString& oldState, const AtomicString& newState);
     Vector<PlatformTimeRanges> activeRanges() const;
 

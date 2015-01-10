@@ -113,6 +113,7 @@ private:
 
     // ActiveDOMObject
     virtual void stop() override;
+    virtual const char* activeDOMObjectName() const override { return "IDBDatabase"; }
 
     // EventTarget
     virtual void refEventTarget() override final { ref(); }

@@ -75,6 +75,7 @@ private:
 
     // ActiveDOMObject
     virtual void stop() override;
+    virtual const char* activeDOMObjectName() const override { return "NotificationCenter"; }
 
     class NotificationRequestCallback : public RefCounted<NotificationRequestCallback> {
     public:

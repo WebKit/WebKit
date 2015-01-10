@@ -134,6 +134,8 @@ protected:
 private:
     SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource*);
 
+    virtual const char* activeDOMObjectName() const override { return "SourceBuffer"; }
+
     // SourceBufferPrivateClient
     virtual void sourceBufferPrivateDidEndStream(SourceBufferPrivate*, const WTF::AtomicString&) override;
     virtual void sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivate*, const InitializationSegment&) override;

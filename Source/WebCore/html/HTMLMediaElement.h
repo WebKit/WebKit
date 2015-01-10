@@ -516,6 +516,7 @@ private:
     virtual void willStopBeingFullscreenElement() override;
 
     // ActiveDOMObject functions.
+    virtual const char* activeDOMObjectName() const override { return "HTMLMediaElement"; }
     virtual bool canSuspend() const override;
     virtual void suspend(ReasonForSuspension) override;
     virtual void resume() override;

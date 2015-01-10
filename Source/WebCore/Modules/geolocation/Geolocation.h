@@ -169,6 +169,8 @@ private:
     bool haveSuitableCachedPosition(PositionOptions*);
     void makeCachedPositionCallbacks();
 
+    virtual const char* activeDOMObjectName() const override { return "Geolocation"; }
+
     GeoNotifierSet m_oneShots;
     Watchers m_watchers;
     GeoNotifierSet m_pendingForPermissionNotifiers;

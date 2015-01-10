@@ -71,6 +71,8 @@ public:
 private:
     RTCDTMFSender(ScriptExecutionContext*, PassRefPtr<MediaStreamTrack>, std::unique_ptr<RTCDTMFSenderHandler>);
 
+    virtual const char* activeDOMObjectName() const override { return "RTCDTMFSender"; }
+
     void scheduleDispatchEvent(PassRefPtr<Event>);
     void scheduledEventTimerFired();
 

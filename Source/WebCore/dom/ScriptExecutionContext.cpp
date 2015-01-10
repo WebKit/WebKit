@@ -177,7 +177,7 @@ void ScriptExecutionContext::didLoadResourceSynchronously(const ResourceRequest&
 {
 }
 
-bool ScriptExecutionContext::canSuspendActiveDOMObjects()
+bool ScriptExecutionContext::canSuspendActiveDOMObjects(Vector<ActiveDOMObject*>* unsuspendableObjects)
 {
     checkConsistency();
 
@@ -195,7 +195,10 @@ bool ScriptExecutionContext::canSuspendActiveDOMObjects()
     for (auto* activeDOMObject : m_activeDOMObjects) {
         if (!activeDOMObject->canSuspend()) {
             canSuspend = false;
-            break;
+            if (unsuspendableObjects)
+                unsuspendableObjects->append(activeDOMObject);
+            else
+                break;
         }
     }
 

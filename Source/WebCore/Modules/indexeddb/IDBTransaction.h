@@ -128,6 +128,7 @@ private:
     // ActiveDOMObject
     virtual bool canSuspend() const override;
     virtual void stop() override;
+    virtual const char* activeDOMObjectName() const override { return "IDBTransaction"; }
 
     // EventTarget
     virtual void refEventTarget() override { ref(); }

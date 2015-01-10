@@ -56,6 +56,8 @@ public:
 private:
     RTCVoidRequestImpl(ScriptExecutionContext*, PassRefPtr<VoidCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>);
 
+    virtual const char* activeDOMObjectName() const override { return "RTCVoidRequestImpl"; }
+
     void clear();
 
     RefPtr<VoidCallback> m_successCallback;

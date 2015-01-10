@@ -86,7 +86,8 @@ public:
     PublicURLManager& publicURLManager();
 
     // Active objects are not garbage collected even if inaccessible, e.g. because their activity may result in callbacks being invoked.
-    WEBCORE_EXPORT bool canSuspendActiveDOMObjects();
+    bool canSuspendActiveDOMObjects(Vector<ActiveDOMObject*>* unsuspendableObjects = nullptr);
+
     // Active objects can be asked to suspend even if canSuspendActiveDOMObjects() returns 'false' -
     // step-by-step JS debugging is one example.
     virtual void suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension);

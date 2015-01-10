@@ -355,6 +355,7 @@ private:
     // ActiveDOMObject
     virtual bool hasPendingActivity() const override;
     virtual void stop() override;
+    virtual const char* activeDOMObjectName() const override { return "WebGLRenderingContext"; }
 
     void addSharedObject(WebGLSharedObject*);
     void addContextObject(WebGLContextObject*);

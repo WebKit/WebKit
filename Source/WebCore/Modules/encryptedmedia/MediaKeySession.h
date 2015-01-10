@@ -112,6 +112,8 @@ protected:
 private:
     virtual void refEventTarget() override { ref(); }
     virtual void derefEventTarget() override { deref(); }
+
+    virtual const char* activeDOMObjectName() const override { return "MediaKeySession"; }
 };
 
 }

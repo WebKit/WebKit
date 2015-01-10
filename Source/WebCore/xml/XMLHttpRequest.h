@@ -169,6 +169,7 @@ private:
     virtual void suspend(ReasonForSuspension) override;
     virtual void resume() override;
     virtual void stop() override;
+    virtual const char* activeDOMObjectName() const override { return "XMLHttpRequest"; }
 
     virtual void refEventTarget() override { ref(); }
     virtual void derefEventTarget() override { deref(); }

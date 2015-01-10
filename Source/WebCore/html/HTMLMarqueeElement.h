@@ -60,6 +60,7 @@ private:
     virtual bool canSuspend() const override;
     virtual void suspend(ReasonForSuspension) override;
     virtual void resume() override;
+    virtual const char* activeDOMObjectName() const override { return "HTMLMarqueeElement"; }
 
     RenderMarquee* renderMarquee() const;
 };

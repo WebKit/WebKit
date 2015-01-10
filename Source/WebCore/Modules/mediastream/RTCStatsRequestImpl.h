@@ -57,6 +57,8 @@ public:
 private:
     RTCStatsRequestImpl(ScriptExecutionContext*, PassRefPtr<RTCStatsCallback>, PassRefPtr<RTCPeerConnectionErrorCallback>, PassRefPtr<MediaStreamTrackPrivate>);
 
+    virtual const char* activeDOMObjectName() const override { return "RTCStatsRequestImpl"; }
+
     void clear();
 
     RefPtr<RTCStatsCallback> m_successCallback;

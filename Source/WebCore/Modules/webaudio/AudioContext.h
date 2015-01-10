@@ -264,6 +264,8 @@ protected:
     static bool isSampleRateRangeGood(float sampleRate);
     
 private:
+    virtual const char* activeDOMObjectName() const override { return "AudioContext"; }
+
     void constructCommon();
 
     void lazyInitialize();

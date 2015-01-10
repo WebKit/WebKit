@@ -92,6 +92,7 @@ private:
     virtual void didFailRedirectCheck() override;
 
     virtual void stop() override;
+    virtual const char* activeDOMObjectName() const override { return "EventSource"; }
 
     void connect();
     void networkRequestEnded();

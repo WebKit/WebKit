@@ -53,6 +53,7 @@ public:
     // ActiveDOMObject interface.
     virtual void stop() override;
 private:
+    virtual const char* activeDOMObjectName() const override { return "PublicURLManager"; }
     
     typedef HashSet<String> URLSet;
     typedef HashMap<URLRegistry*, URLSet > RegistryURLMap;

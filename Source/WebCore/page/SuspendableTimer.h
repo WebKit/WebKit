@@ -63,6 +63,7 @@ private:
     virtual bool canSuspend() const final override;
     virtual void suspend(ReasonForSuspension) final override;
     virtual void resume() final override;
+    virtual const char* activeDOMObjectName() const override { return "SuspendableTimer"; }
 
     bool m_suspended;
 

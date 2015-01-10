@@ -65,6 +65,8 @@ namespace WebCore {
     private:
         virtual void refEventTarget() override final { ref(); }
         virtual void derefEventTarget() override final { deref(); }
+
+        virtual const char* activeDOMObjectName() const override { return "AbstractWorker"; }
     };
 
 } // namespace WebCore

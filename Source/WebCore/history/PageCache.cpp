@@ -174,8 +174,14 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureDocumentLoaderStoppingKey);
         rejectReasons |= 1 << IsStopping;
     }
-    if (!frame->document()->canSuspendActiveDOMObjects()) {
+
+    Vector<ActiveDOMObject*> unsuspendableObjects;
+    if (!frame->document()->canSuspendActiveDOMObjects(&unsuspendableObjects)) {
         PCLOG("   -The document cannot suspend its active DOM Objects");
+        for (auto* activeDOMObject : unsuspendableObjects) {
+            PCLOG("    - Unsuspendable: ", activeDOMObject->activeDOMObjectName());
+            UNUSED_PARAM(activeDOMObject);
+        }
         FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureCannotSuspendActiveDOMObjectsKey);
         rejectReasons |= 1 << CannotSuspendActiveDOMObjects;
     }

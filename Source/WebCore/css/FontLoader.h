@@ -95,6 +95,8 @@ private:
     virtual EventTargetData* eventTargetData() override;
     virtual EventTargetData& ensureEventTargetData() override;
 
+    virtual const char* activeDOMObjectName() const override { return "FontLoader"; }
+
     void pendingEventsTimerFired() { firePendingEvents(); }
     void scheduleEvent(PassRefPtr<Event>);
     void firePendingEvents();

@@ -75,6 +75,8 @@ private:
     virtual void refEventTarget() override { ref(); }
     virtual void derefEventTarget() override { deref(); }
 
+    virtual const char* activeDOMObjectName() const override { return "BatteryManager"; }
+
     BatteryController* m_batteryController;
     EventTargetData m_eventTargetData;
     RefPtr<BatteryStatus> m_batteryStatus;
