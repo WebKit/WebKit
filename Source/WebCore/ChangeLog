@@ -1,3 +1,26 @@
+2015-01-09  Andreas Kling  <akling@apple.com>
+
+        CTTE: GeolocationController always has a client.
+        <https://webkit.org/b/140330>
+
+        Reviewed by Anders Carlsson.
+
+        Change GeolocationController::m_client to be a reference and remove
+        a whole bunch of unnecessary null checks.
+
+        * Modules/geolocation/GeolocationController.cpp:
+        (WebCore::GeolocationController::GeolocationController):
+        (WebCore::GeolocationController::~GeolocationController):
+        (WebCore::GeolocationController::addObserver):
+        (WebCore::GeolocationController::removeObserver):
+        (WebCore::GeolocationController::requestPermission):
+        (WebCore::GeolocationController::cancelPermissionRequest):
+        (WebCore::GeolocationController::lastPosition):
+        (WebCore::GeolocationController::viewStateDidChange):
+        (WebCore::provideGeolocationTo):
+        * Modules/geolocation/GeolocationController.h:
+        (WebCore::GeolocationController::client):
+
 2015-01-09  Zalan Bujtas  <zalan@apple.com>
 
         Calling clearSelection on a detached RenderObject leads to segfault.

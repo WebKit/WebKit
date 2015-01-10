@@ -45,7 +45,7 @@ class Page;
 class GeolocationController : public Supplement<Page>, private ViewStateChangeObserver {
     WTF_MAKE_NONCOPYABLE(GeolocationController);
 public:
-    explicit GeolocationController(Page&, GeolocationClient*);
+    GeolocationController(Page&, GeolocationClient&);
     ~GeolocationController();
 
     void addObserver(Geolocation*, bool enableHighAccuracy);
@@ -59,14 +59,14 @@ public:
 
     GeolocationPosition* lastPosition();
 
-    GeolocationClient* client() { return m_client; }
+    GeolocationClient& client() { return m_client; }
 
     WEBCORE_EXPORT static const char* supplementName();
     static GeolocationController* from(Page* page) { return static_cast<GeolocationController*>(Supplement<Page>::from(page, supplementName())); }
 
 private:
     Page& m_page;
-    GeolocationClient* m_client;
+    GeolocationClient& m_client;
 
     virtual void viewStateDidChange(ViewState::Flags oldViewState, ViewState::Flags newViewState) override;
 
