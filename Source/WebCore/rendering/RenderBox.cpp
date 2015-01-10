@@ -1840,6 +1840,8 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 #endif
 
     RenderBlock* cb = containingBlock();
+    if (!cb)
+        return LayoutUnit();
     return cb->availableLogicalWidth();
 }
 
@@ -1851,6 +1853,8 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForContent(AvailableLogicalHei
 #endif
 
     RenderBlock* cb = containingBlock();
+    if (!cb)
+        return LayoutUnit();
     return cb->availableLogicalHeight(heightType);
 }
 
