@@ -37,8 +37,8 @@ use VCSUtils;
 sub buildTestTool();
 sub dumpTestsBySuite(\@);
 sub listAllTests();
-sub runTest($$$);
-sub runTestsBySuite(\@$);
+sub runTest($$);
+sub runTestsBySuite(\@);
 sub prepareEnvironmentForRunningTestTool();
 sub testToolPath();
 
@@ -50,6 +50,7 @@ my $timeout = 10;
 
 my $showHelp = 0;
 my $verbose = 0;
+my $showLeaks = 0;
 my $dumpTests = 0;
 my $build = 1;
 my $root;
@@ -65,6 +66,7 @@ Usage: $programName [options] [suite or test prefixes]
   -d|--dump-tests       Dump the names of testcases without running them
   --[no-]build          Build (or do not build) unit tests prior to running (default: $buildDefault)
   --root=               Path to the pre-built root containing TestWebKitAPI
+  --show-leaks          Show leaks in the output
 @{[ sharedCommandLineOptionsUsage(indent => 2, switchWidth => 21) ]}
 Examples
 
@@ -80,6 +82,7 @@ my $getOptionsResult = GetOptions(
     sharedCommandLineOptions(),
     'help' => \$showHelp,
     'verbose|v' => \$verbose,
+    'show-leaks' => \$showLeaks,
     'dump|d' => \$dumpTests,
     'build!' => \$build,
     'root=s' => \$root
@@ -105,7 +108,7 @@ if ($dumpTests) {
     exit 0;
 }
 
-exit runTestsBySuite(@testsToRun, $verbose);
+exit runTestsBySuite(@testsToRun);
 
 sub isSupportedPlatform()
 {
@@ -129,21 +132,14 @@ sub dumpTestsBySuite(\@)
     print "------------------\n";
 }
 
-sub runTestsBySuite(\@$)
+sub runTestsBySuite(\@)
 {
-    my ($tests, $verbose) = @_;
-    my $anyFailures = 0;
-    my $lastSuite = "";
+    my ($tests) = @_;
     for my $suiteAndTest (sort @$tests) {
         my ($suite, $test) = split(/\./, $suiteAndTest);
-        if ($lastSuite ne $suite) {
-            $lastSuite = $suite;
-            print "Suite: $suite\n" unless $verbose;
-        }
-        my $failed = runTest($suite, $test, $verbose);
-        $anyFailures ||= $failed;
+        runTest($suite, $test);
     }
-    
+
     if (@testsFailed) {
         print "\nTests that failed:\n";
         for my $test (@testsFailed) {
@@ -156,17 +152,16 @@ sub runTestsBySuite(\@$)
             print "  $test\n";
         }
     }
-    return $anyFailures;
+
+    return @testsFailed > 0 || @testsTimedOut > 0;
 }
 
-sub runTest($$$)
+sub runTest($$)
 {
-    my ($suite, $testName, $verbose) = @_;
+    my ($suite, $testName) = @_;
     my $test = $suite . "." . $testName;
 
     my $gtestArg = "--gtest_filter=" . $test;
-
-    print "    Test: $testName -> " unless $verbose;
 
     my $result = 0;
     my $timedOut = 0;
@@ -178,14 +173,13 @@ sub runTest($$$)
 
     local *DEVNULL;
     my ($childIn, $childOut, $childErr);
-    if ($verbose) {
-        $childOut = ">&STDERR";
-        $childErr = ">&STDERR";
+    if ($verbose || $showLeaks) {
+        $childErr = 0;
     } else {
         open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
-        $childOut = ">&DEVNULL";
         $childErr = ">&DEVNULL";
     }
+
 
     my $pid;
     my @commonArguments = (testToolPath(), $gtestArg, @ARGV);
@@ -197,10 +191,6 @@ sub runTest($$$)
         $pid = open3($childIn, $childOut, $childErr, @commonArguments) or die "Failed to run test: $test.";
     }
 
-    close($childIn);
-    close($childOut);
-    close($childErr);
-    close(DEVNULL) unless ($verbose);
     eval {
         local $SIG{ALRM} = sub { die "alarm\n" };
         alarm $timeout;
@@ -214,18 +204,23 @@ sub runTest($$$)
         $timedOut = 1;
     }
 
+    my @testOutput = <$childOut>;
+    @testOutput = grep { !/^LEAK:/ } @testOutput unless $showLeaks;
+    map { s/\*\*PASS\*\*/possiblyColored("bold green", "PASS")/eg } @testOutput;
+    map { s/\*\*FAIL\*\*/possiblyColored("bold red", "FAIL")/eg } @testOutput;
+    print STDOUT @testOutput;
+
+    close($childIn);
+    close($childOut);
+    close($childErr) unless ($verbose || $showLeaks);
+    close(DEVNULL) unless ($verbose || $showLeaks);
+
     if ($result) {
         push @testsFailed, $test;
     }
     if ($timedOut) {
         push @testsTimedOut, $test;
-        print possiblyColored("bold yellow", "Timeout"), "\n";
-    } elsif (!$verbose) {
-        if ($result) {
-            print possiblyColored("bold red", "Failed"), "\n";
-        } else {
-            print possiblyColored("bold green", "Passed"), "\n";
-        }
+        print possiblyColored("bold yellow", "TIMEOUT"), " $test\n";
     }
 
     return $timedOut || $result;

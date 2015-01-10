@@ -30,6 +30,30 @@
 
 namespace TestWebKitAPI {
 
+class Printer : public ::testing::EmptyTestEventListener {
+    virtual void OnTestPartResult(const ::testing::TestPartResult& test_part_result)
+    {
+        if (!test_part_result.failed())
+            return;
+
+        std::stringstream stream;
+        stream << "\n" << test_part_result.file_name() << ":" << test_part_result.line_number() << "\n" << test_part_result.summary() << "\n\n";
+        failures += stream.str();
+    }
+
+    virtual void OnTestEnd(const ::testing::TestInfo& test_info)
+    {
+        if (test_info.result()->Passed())
+            std::cout << "**PASS** " << test_info.test_case_name() << "." << test_info.name() << "\n";
+        else
+            std::cout << "**FAIL** " << test_info.test_case_name() << "." << test_info.name() << "\n" << failures;
+
+        failures = std::string();
+    }
+    
+    std::string failures;
+};
+
 TestsController& TestsController::shared()
 {
     static NeverDestroyed<TestsController> shared;
@@ -48,6 +72,11 @@ TestsController::TestsController()
 bool TestsController::run(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
+
+    ::testing::TestEventListeners& listeners = ::testing::UnitTest::GetInstance()->listeners();
+    delete listeners.Release(listeners.default_result_printer());
+    listeners.Append(new Printer);
+
     return !RUN_ALL_TESTS();
 }
 

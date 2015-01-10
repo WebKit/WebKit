@@ -1,5 +1,32 @@
 2015-01-09  Sam Weinig  <sam@webkit.org>
 
+        Update the output format for run-api-tests
+        https://bugs.webkit.org/show_bug.cgi?id=140332
+
+        Reviewed by Dan Bernstein.
+
+        Changes the output format for run-api-tests be a bit simpler (no longer 
+        indented based on suite, as we were not really using suite very well) but
+        also include details in the case of failure.
+
+        Changes verbose mode to no longer spew out the gtest default printer output,
+        as the custom printer now includes the failure information.
+
+        * Scripts/run-api-tests:
+        (runTestsBySuite):
+        (runTest):
+        Augment the custom gtest printer by replacing the tokens "**PASS**" and "**FAIL**"
+        with colorized variants and strip out leaks spew (the leaks can be added back using
+        the new --show-leaks argument).
+
+        * TestWebKitAPI/TestsController.cpp:
+        (TestWebKitAPI::Printer::OnTestPartResult):
+        (TestWebKitAPI::Printer::OnTestEnd):
+        (TestWebKitAPI::TestsController::run):
+        Implement a custom result printer that just prints out the information we want.
+
+2015-01-09  Sam Weinig  <sam@webkit.org>
+
         TestWebKitAPI should print out the lists that fail at the end
         https://bugs.webkit.org/show_bug.cgi?id=140329
 
