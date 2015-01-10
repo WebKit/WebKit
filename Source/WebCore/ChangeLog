@@ -1,3 +1,32 @@
+2015-01-09  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of legacy StyleBuilder switch in StyleResolver.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=140315
+
+        Reviewed by Sam Weinig.
+
+        Get rid of legacy StyleBuilder switch in StyleResolver.cpp now that most
+        properties have been ported to the new generated StyleBuilder in previous
+        patches. The properties that remained in this switch were shorthand
+        properties or other properties that do not require any handling in the
+        StyleBuilder.
+
+        To achieve this, this patch introduces 2 parameters in
+        CSSPropertyNames.in:
+        - SkipBuilder: Indicates that no StyleBuilder code should be generated
+          for this property.
+        - Shorthand: Indicates that this is a shorthand property, which therefore
+          does not use the StyleBuilder. makeprop.pl will merely generate
+          assertions for such properties, to validate that this is a shorthand
+          property and that the StyleBuilder code is never reached.
+
+        * css/CSSPropertyNames.in:
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * css/makeprop.pl:
+
 2015-01-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build fix after r178219.
