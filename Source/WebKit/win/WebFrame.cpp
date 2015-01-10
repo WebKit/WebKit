@@ -32,6 +32,8 @@
 #include "DOMCoreClasses.h"
 #include "HTMLFrameOwnerElement.h"
 #include "MarshallingHelpers.h"
+#include "PluginDatabase.h"
+#include "PluginView.h"
 #include "WebActionPropertyBag.h"
 #include "WebChromeClient.h"
 #include "WebDataSource.h"
@@ -85,8 +87,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PluginData.h>
-#include <WebCore/PluginDatabase.h>
-#include <WebCore/PluginView.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/ResourceHandle.h>

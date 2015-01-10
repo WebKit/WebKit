@@ -26,10 +26,10 @@
 #ifndef EmbeddedWidget_h
 #define EmbeddedWidget_h
 
+#include "PluginView.h"
 #include "WebKit.h"
 #include <WebCore/COMPtr.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/PluginView.h>
 
 namespace WebCore {
 class HTMLPlugInElement;

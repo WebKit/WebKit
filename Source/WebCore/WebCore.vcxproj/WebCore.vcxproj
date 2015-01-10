@@ -17704,18 +17704,8 @@
     <ClCompile Include="..\plugins\DOMMimeTypeArray.cpp" />
     <ClCompile Include="..\plugins\DOMPlugin.cpp" />
     <ClCompile Include="..\plugins\DOMPluginArray.cpp" />
-    <ClCompile Include="..\plugins\npapi.cpp" />
     <ClCompile Include="..\plugins\PluginData.cpp" />
-    <ClCompile Include="..\plugins\PluginDatabase.cpp" />
-    <ClCompile Include="..\plugins\PluginDebug.cpp" />
     <ClCompile Include="..\plugins\PluginMainThreadScheduler.cpp" />
-    <ClCompile Include="..\plugins\PluginPackage.cpp" />
-    <ClCompile Include="..\plugins\PluginStream.cpp" />
-    <ClCompile Include="..\plugins\PluginView.cpp" />
-    <ClCompile Include="..\plugins\win\PluginDatabaseWin.cpp" />
-    <ClCompile Include="..\plugins\win\PluginMessageThrottlerWin.cpp" />
-    <ClCompile Include="..\plugins\win\PluginPackageWin.cpp" />
-    <ClCompile Include="..\plugins\win\PluginViewWin.cpp" />
     <ClCompile Include="..\svg\SVGAllInOne.cpp" />
     <ClCompile Include="..\svg\SVGFontFaceElement.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -20972,15 +20962,7 @@
     <ClInclude Include="..\plugins\npfunctions.h" />
     <ClInclude Include="..\plugins\npruntime.h" />
     <ClInclude Include="..\plugins\PluginData.h" />
-    <ClInclude Include="..\plugins\PluginDatabase.h" />
-    <ClInclude Include="..\plugins\PluginDebug.h" />
     <ClInclude Include="..\plugins\PluginMainThreadScheduler.h" />
-    <ClInclude Include="..\plugins\PluginPackage.h" />
-    <ClInclude Include="..\plugins\PluginQuirkSet.h" />
-    <ClInclude Include="..\plugins\PluginStrategy.h" />
-    <ClInclude Include="..\plugins\PluginStream.h" />
-    <ClInclude Include="..\plugins\PluginView.h" />
-    <ClInclude Include="..\plugins\win\PluginMessageThrottlerWin.h" />
     <ClInclude Include="..\svg\ColorDistance.h" />
     <ClInclude Include="..\svg\SVGAElement.h" />
     <ClInclude Include="..\svg\SVGAltGlyphDefElement.h" />

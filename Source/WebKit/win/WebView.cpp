@@ -32,6 +32,8 @@
 #include "DOMCoreClasses.h"
 #include "FullscreenVideoController.h"
 #include "MarshallingHelpers.h"
+#include "PluginDatabase.h"
+#include "PluginView.h"
 #include "ResourceLoadScheduler.h"
 #include "SoftLinking.h"
 #include "SubframeLoader.h"
@@ -127,8 +129,6 @@
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/PluginData.h>
-#include <WebCore/PluginDatabase.h>
-#include <WebCore/PluginView.h>
 #include <WebCore/PopupMenu.h>
 #include <WebCore/PopupMenuWin.h>
 #include <WebCore/ProgressTracker.h>

@@ -28,19 +28,19 @@
 #include "config.h"
 #include "PluginPackage.h"
 
-#include "c_utility.h"
-#include "IdentifierRep.h"
-#include "MIMETypeRegistry.h"
-#include "NP_jsobject.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "PluginView.h"
-#include "runtime_root.h"
-#include "Timer.h"
-#include "npruntime_impl.h"
-#include <string.h>
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <WebCore/IdentifierRep.h>
+#include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/NP_jsobject.h>
+#include <WebCore/Timer.h>
+#include <WebCore/c_utility.h>
+#include <WebCore/npruntime_impl.h>
+#include <WebCore/runtime_root.h>
+#include <string.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

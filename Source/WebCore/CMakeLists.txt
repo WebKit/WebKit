@@ -2231,9 +2231,7 @@ set(WebCore_SOURCES
     plugins/DOMPlugin.cpp
     plugins/DOMPluginArray.cpp
     plugins/PluginData.cpp
-    plugins/PluginDebug.cpp
     plugins/PluginMainThreadScheduler.cpp
-    plugins/PluginStream.cpp
 
     rendering/AutoTableLayout.cpp
     rendering/BidiRun.cpp

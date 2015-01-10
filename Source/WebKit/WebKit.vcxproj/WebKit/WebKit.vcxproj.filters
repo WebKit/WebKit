@@ -217,6 +217,36 @@
     <ClCompile Include="..\..\win\WebSerializedJSValue.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\npapi.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginDatabase.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginDebug.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginPackage.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginStream.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginView.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginDatabaseWin.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginMessageThrottlerWin.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginPackageWin.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginViewWin.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Storage\StorageAreaImpl.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -557,6 +587,27 @@
     </ClInclude>
     <ClInclude Include="..\..\win\WebCoreSupport\AcceleratedCompositingContext.h">
       <Filter>WebCoreSupport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\Plugins\PluginDatabase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\Plugins\PluginDebug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\Plugins\PluginPackage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\Plugins\PluginQuirkSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\Plugins\PluginStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\Plugins\PluginView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\Plugins\PluginMessageThrottlerWin.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Storage\StorageAreaImpl.h">
       <Filter>Sources</Filter>

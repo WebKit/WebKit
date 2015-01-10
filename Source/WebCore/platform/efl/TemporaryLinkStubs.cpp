@@ -36,7 +36,6 @@
 #include "FrameView.h"
 #include "URL.h"
 #include "NotImplemented.h"
-#include "PluginView.h"
 #include "ScrollbarTheme.h"
 #include "SharedBuffer.h"
 

@@ -4542,41 +4542,11 @@
     <ClCompile Include="..\plugins\DOMPluginArray.cpp">
       <Filter>plugins</Filter>
     </ClCompile>
-    <ClCompile Include="..\plugins\npapi.cpp">
-      <Filter>plugins</Filter>
-    </ClCompile>
     <ClCompile Include="..\plugins\PluginData.cpp">
-      <Filter>plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\plugins\PluginDatabase.cpp">
-      <Filter>plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\plugins\PluginDebug.cpp">
       <Filter>plugins</Filter>
     </ClCompile>
     <ClCompile Include="..\plugins\PluginMainThreadScheduler.cpp">
       <Filter>plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\plugins\PluginPackage.cpp">
-      <Filter>plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\plugins\PluginStream.cpp">
-      <Filter>plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\plugins\PluginView.cpp">
-      <Filter>plugins</Filter>
-    </ClCompile>
-    <ClCompile Include="..\plugins\win\PluginDatabaseWin.cpp">
-      <Filter>plugins\win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\plugins\win\PluginMessageThrottlerWin.cpp">
-      <Filter>plugins\win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\plugins\win\PluginPackageWin.cpp">
-      <Filter>plugins\win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\plugins\win\PluginViewWin.cpp">
-      <Filter>plugins\win</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\SVGAllInOne.cpp">
       <Filter>rendering\svg</Filter>
@@ -11550,32 +11520,11 @@
     <ClInclude Include="..\plugins\PluginData.h">
       <Filter>plugins</Filter>
     </ClInclude>
-    <ClInclude Include="..\plugins\PluginDatabase.h">
-      <Filter>plugins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\plugins\PluginDebug.h">
-      <Filter>plugins</Filter>
-    </ClInclude>
     <ClInclude Include="..\plugins\PluginMainThreadScheduler.h">
-      <Filter>plugins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\plugins\PluginPackage.h">
-      <Filter>plugins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\plugins\PluginQuirkSet.h">
       <Filter>plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\plugins\PluginStrategy.h">
       <Filter>plugins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\plugins\PluginStream.h">
-      <Filter>plugins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\plugins\PluginView.h">
-      <Filter>plugins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\plugins\win\PluginMessageThrottlerWin.h">
-      <Filter>plugins\win</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\ColorDistance.h">
       <Filter>rendering\svg</Filter>

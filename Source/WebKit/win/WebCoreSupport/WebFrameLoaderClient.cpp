@@ -35,6 +35,9 @@
 #include "EmbeddedWidget.h"
 #include "MarshallingHelpers.h"
 #include "NotImplemented.h"
+#include "PluginDatabase.h"
+#include "PluginPackage.h"
+#include "PluginView.h"
 #include "WebActionPropertyBag.h"
 #include "WebCachedFramePlatformData.h"
 #include "WebChromeClient.h"
@@ -73,9 +76,6 @@
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/Page.h>
-#include <WebCore/PluginDatabase.h>
-#include <WebCore/PluginPackage.h>
-#include <WebCore/PluginView.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/RenderWidget.h>
 #include <WebCore/ResourceHandle.h>

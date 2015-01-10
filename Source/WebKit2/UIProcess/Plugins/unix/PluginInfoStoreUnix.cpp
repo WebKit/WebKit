@@ -32,7 +32,6 @@
 #include "PluginInfoStore.h"
 
 #include "NetscapePluginModule.h"
-#include "PluginDatabase.h"
 #include <WebCore/FileSystem.h>
 
 #if PLATFORM(GTK)
