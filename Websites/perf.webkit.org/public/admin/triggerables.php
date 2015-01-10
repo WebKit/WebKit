@@ -5,15 +5,13 @@ require('../include/admin-header.php');
 if ($db) {
 
     if ($action == 'add') {
-        if ($db->insert_row('build_triggerables', 'triggerable', array('name' => $_POST['name'], 'location' => $_POST['location']))) {
+        if ($db->insert_row('build_triggerables', 'triggerable', array('name' => $_POST['name']))) {
             notice('Inserted the new triggerable.');
             regenerate_manifest();
         } else
             notice('Could not add the triggerable.');
     } else if ($action == 'update') {
         if (update_field('build_triggerables', 'triggerable', 'name'))
-            regenerate_manifest();
-        else if (update_field('build_triggerables', 'triggerable', 'location'))
             regenerate_manifest();
         else
             notice('Invalid parameters.');

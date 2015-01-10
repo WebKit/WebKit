@@ -1,3 +1,9 @@
+2015-01-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix. Removed the stale code.
+
+        * public/admin/triggerables.php:
+
 2015-01-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard should have the ability to post A/B testing builds
