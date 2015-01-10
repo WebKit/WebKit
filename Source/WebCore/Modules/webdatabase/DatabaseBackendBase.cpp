@@ -206,8 +206,7 @@ String DatabaseBackendBase::databaseDebugName() const
 }
 #endif
 
-DatabaseBackendBase::DatabaseBackendBase(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name,
-    const String& expectedVersion, const String& displayName, unsigned long estimatedSize, DatabaseType databaseType)
+DatabaseBackendBase::DatabaseBackendBase(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : m_databaseContext(databaseContext)
     , m_name(name.isolatedCopy())
     , m_expectedVersion(expectedVersion.isolatedCopy())
@@ -215,7 +214,6 @@ DatabaseBackendBase::DatabaseBackendBase(PassRefPtr<DatabaseBackendContext> data
     , m_estimatedSize(estimatedSize)
     , m_opened(false)
     , m_new(false)
-    , m_isSyncDatabase(databaseType == DatabaseType::Sync)
 {
     m_contextThreadSecurityOrigin = m_databaseContext->securityOrigin()->isolatedCopy();
 

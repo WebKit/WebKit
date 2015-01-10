@@ -1,3 +1,27 @@
+2015-01-09  Anders Carlsson  <andersca@apple.com>
+
+        Remove more sync database code
+        https://bugs.webkit.org/show_bug.cgi?id=140328
+
+        Reviewed by Sam Weinig.
+
+        * Modules/webdatabase/AbstractDatabaseServer.h:
+        * Modules/webdatabase/DatabaseBackend.cpp:
+        (WebCore::DatabaseBackend::DatabaseBackend):
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::DatabaseBackendBase::DatabaseBackendBase):
+        * Modules/webdatabase/DatabaseBackendBase.h:
+        (WebCore::DatabaseBackendBase::isSyncDatabase): Deleted.
+        * Modules/webdatabase/DatabaseBasicTypes.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabaseBackend):
+        (WebCore::DatabaseManager::openDatabase):
+        * Modules/webdatabase/DatabaseManager.h:
+        * Modules/webdatabase/DatabaseServer.cpp:
+        (WebCore::DatabaseServer::openDatabase):
+        (WebCore::DatabaseServer::createDatabase):
+        * Modules/webdatabase/DatabaseServer.h:
+
 2015-01-09  Daniel Bates  <dabates@apple.com>
 
         Fix the iOS build after <http://trac.webkit.org/changeset/178213>

@@ -56,7 +56,6 @@ public:
 
     bool opened() const { return m_opened; }
     bool isNew() const { return m_new; }
-    bool isSyncDatabase() const { return m_isSyncDatabase; }
 
     virtual SecurityOrigin* securityOrigin() const;
     virtual String stringIdentifier() const;
@@ -93,8 +92,7 @@ protected:
     friend class SQLTransactionBackend;
     friend class SQLTransactionBackendSync;
 
-    DatabaseBackendBase(PassRefPtr<DatabaseBackendContext>, const String& name, const String& expectedVersion,
-        const String& displayName, unsigned long estimatedSize, DatabaseType);
+    DatabaseBackendBase(PassRefPtr<DatabaseBackendContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
 
     void closeDatabase();
 
@@ -130,7 +128,6 @@ private:
     DatabaseGuid m_guid;
     bool m_opened;
     bool m_new;
-    const bool m_isSyncDatabase;
 
     SQLiteDatabase m_sqliteDatabase;
 
