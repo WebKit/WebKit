@@ -1,3 +1,10 @@
+2015-01-11  Alexey Proskuryakov  <ap@apple.com>
+
+        editing/spelling/grammar-paste.html is flaky in debug after r177682
+        https://bugs.webkit.org/show_bug.cgi?id=139903
+
+        * TestExpectations: The test if flaky on release bots too, updating expectations.
+
 2015-01-09  Michael Saboff  <msaboff@apple.com>
 
         Breakpoint doesn't fire in this HTML5 game
