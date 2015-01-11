@@ -27,7 +27,16 @@
 // Only export our hook for initializing LLVM and returning the API struct.
 OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-exported_symbol -Wl,_initializeAndGetJSCLLVMAPI -Wl,-all_load;
 
-LLVM_LIBS_iphoneos = -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMTableGen -lLLVMInstrumentation -lLLVMIRReader -lLLVMBitReader -lLLVMAsmParser -lLLVMARM64Disassembler -lLLVMARM64CodeGen -lLLVMARM64AsmParser -lLLVMARM64Desc -lLLVMARM64Info -lLLVMARM64AsmPrinter -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMDebugInfo -lLLVMOption -lLLVMInterpreter -lLLVMJIT -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMMCDisassembler -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport -lprotobuf;
+LLVM_LIBS_ios = -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMTableGen -lLLVMInstrumentation -lLLVMIRReader -lLLVMBitReader -lLLVMAsmParser -lLLVMARM64Disassembler -lLLVMARM64CodeGen -lLLVMARM64AsmParser -lLLVMARM64Desc -lLLVMARM64Info -lLLVMARM64AsmPrinter -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMMCParser -lLLVMDebugInfo -lLLVMOption -lLLVMInterpreter -lLLVMJIT -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMMCDisassembler -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport -lprotobuf
+
+#include "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/AspenLLVM.xcconfig"
+
+// In general, we prefer to not append libraries this way because it may interfere with the required
+// ordering of library linkage (as determined by their dependencies on other libraries).  In this
+// case, we'll make this a one time exception to work around the fact that there are pre-existing
+// versions of AspenLLVM.xcconfig that overrides LLVM_LIBS_ios but is missing -lLLVMMCDisassembler.
+LLVM_LIBS_iphoneos = $(LLVM_LIBS_ios) -lLLVMMCDisassembler
+
 LLVM_LIBS_macosx = -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMIRReader -lLLVMAsmParser -lLLVMMCDisassembler -lLLVMMCParser -lLLVMInstrumentation -lLLVMBitReader -lLLVMInterpreter -lLLVMipo -lLLVMVectorize -lLLVMLinker -lLLVMBitWriter -lLLVMMCJIT -lLLVMJIT -lLLVMCodeGen -lLLVMObjCARCOpts -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMRuntimeDyld -lLLVMExecutionEngine -lLLVMTarget -lLLVMMC -lLLVMObject -lLLVMCore -lLLVMSupport;
 
 LLVM_LIBRARY_PATHS = $(LLVM_LIBRARY_PATHS_$(PLATFORM_NAME))

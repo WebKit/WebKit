@@ -1,3 +1,18 @@
+2015-01-11  Mark Lam  <mark.lam@apple.com>
+
+        Update WebKit branch to build with newer LLVM.
+        <https://webkit.org/b/140341>
+
+        Reviewed by Filip Pizlo.
+
+        * Configurations/LLVMForJSC.xcconfig:
+        - Add the ability to pick up LLVM_LIBS_iphoneos from AspenLLVM.xcconfig.
+        * llvm/LLVMAPIFunctions.h:
+        - Removed some erroneous and unused APIs.
+        * llvm/library/LLVMExports.cpp:
+        (initializeAndGetJSCLLVMAPI):
+        - Removed an unneeded option that is also not supported by the new LLVM.
+
 2014-12-10  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r176803.

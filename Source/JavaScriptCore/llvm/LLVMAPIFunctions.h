@@ -543,9 +543,7 @@
     macro(char *, GetTargetMachineFeatureString, (LLVMTargetMachineRef T)) \
     macro(LLVMTargetDataRef, GetTargetMachineData, (LLVMTargetMachineRef T)) \
     macro(LLVMBool, TargetMachineEmitToFile, (LLVMTargetMachineRef T, LLVMModuleRef M, char *Filename, LLVMCodeGenFileType codegen, char **ErrorMessage)) \
-    macro(void, LinkInJIT, (void)) \
     macro(void, LinkInMCJIT, (void)) \
-    macro(void, LinkInInterpreter, (void)) \
     macro(LLVMGenericValueRef, CreateGenericValueOfInt, (LLVMTypeRef Ty, unsigned long long N, LLVMBool IsSigned)) \
     macro(LLVMGenericValueRef, CreateGenericValueOfPointer, (void *P)) \
     macro(LLVMGenericValueRef, CreateGenericValueOfFloat, (LLVMTypeRef Ty, double N)) \
