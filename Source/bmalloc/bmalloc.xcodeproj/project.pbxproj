@@ -392,7 +392,6 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0600;
-				ORGANIZATIONNAME = "Geoffrey Garen";
 			};
 			buildConfigurationList = 145F683A179DC45F00D65598 /* Build configuration list for PBXProject "bmalloc" */;
 			compatibilityVersion = "Xcode 3.2";

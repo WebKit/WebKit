@@ -1,3 +1,11 @@
+2015-01-11  Dan Bernstein  <mitz@apple.com>
+
+        Geoff is organized, but he is not an organization.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * bmalloc.xcodeproj/project.pbxproj: Removed the ORGANIZATIONNAME project attribute.
+
 2015-01-07  Geoffrey Garen  <ggaren@apple.com>
 
         Make bmalloc work with ASan
