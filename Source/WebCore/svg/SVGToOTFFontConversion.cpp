@@ -40,7 +40,8 @@
 
 namespace WebCore {
 
-static inline void append32(Vector<char>& result, uint32_t value)
+template <typename V>
+static inline void append32(V& result, uint32_t value)
 {
     result.append(value >> 24);
     result.append(value >> 16);
@@ -161,6 +162,11 @@ private:
         m_result.append(value);
     }
 
+    void grow(size_t delta)
+    {
+        m_result.grow(m_result.size() + delta);
+    }
+
     void overwrite32(unsigned location, uint32_t value)
     {
         ASSERT(m_result.size() >= location + 4);
@@ -201,6 +207,7 @@ private:
     void appendCFFTable();
     void appendVORGTable();
 
+    void appendLigatureGlyphs();
     static bool compareCodepointsLexicographically(const GlyphData&, const GlyphData&);
 
     void appendValidCFFString(const String&);
@@ -214,12 +221,17 @@ private:
     template<typename T> size_t appendKERNSubtable(bool (T::*buildKerningPair)(SVGKerningPair&) const, uint16_t coverage);
     size_t finishAppendingKERNSubtable(Vector<KerningData>, uint16_t coverage);
 
+    void appendLigatureSubtable(size_t subtableRecordLocation);
     void appendArabicReplacementSubtable(size_t subtableRecordLocation, const char arabicForm[]);
+    void appendScriptSubtable(unsigned featureCount);
+    Vector<Glyph, 1> glyphsForCodepoint(UChar32) const;
+    Glyph firstGlyph(const Vector<Glyph, 1>&, UChar32) const;
 
     Vector<GlyphData> m_glyphs;
     HashMap<String, Glyph> m_glyphNameToIndexMap; // SVG 1.1: "It is recommended that glyph names be unique within a font."
     HashMap<String, Vector<Glyph, 1>> m_codepointsToIndicesMap;
     Vector<char> m_result;
+    Vector<char, 17> m_emptyGlyphCharString;
     FloatRect m_boundingBox;
     const SVGFontElement& m_fontElement;
     const SVGFontFaceElement* m_fontFaceElement;
@@ -229,6 +241,7 @@ private:
     float m_advanceHeightMax;
     float m_minRightSideBearing;
     unsigned m_unitsPerEm;
+    unsigned m_featureCountGSUB;
     int m_tablesAppendedCount;
     char m_weight;
     bool m_italic;
@@ -273,18 +286,18 @@ void SVGToOTFFontConverter::appendCMAPTable()
     UChar32 previousCodepoint = std::numeric_limits<UChar32>::max();
     for (size_t i = 0; i < m_glyphs.size(); ++i) {
         auto& glyph = m_glyphs[i];
-        unsigned codepointSize = 0;
         UChar32 codepoint;
-        if (glyph.codepoints.isNull())
+        auto codePoints = StringView(glyph.codepoints).codePoints();
+        auto iterator = codePoints.begin();
+        if (iterator == codePoints.end())
             codepoint = 0;
-        else if (glyph.codepoints.is8Bit())
-            codepoint = glyph.codepoints[codepointSize++];
-        else
-            U16_NEXT(glyph.codepoints.characters16(), codepointSize, glyph.codepoints.length(), codepoint);
-
-        // Don't map ligatures here.
-        if (glyph.codepoints.length() > codepointSize || codepoint == previousCodepoint)
-            continue;
+        else {
+            codepoint = *iterator;
+            ++iterator;
+            // Don't map ligatures here.
+            if (iterator != codePoints.end() || codepoint == previousCodepoint)
+                continue;
+        }
 
         append32(codepoint); // startCharCode
         append32(codepoint); // endCharCode
@@ -614,6 +627,100 @@ void SVGToOTFFontConverter::appendCFFTable()
         m_result.appendVector(glyph.charString);
 }
 
+Glyph SVGToOTFFontConverter::firstGlyph(const Vector<Glyph, 1>& v, UChar32 codepoint) const
+{
+#if ASSERT_DISABLED
+    UNUSED_PARAM(codepoint);
+#endif
+    ASSERT(!v.isEmpty());
+    if (v.isEmpty())
+        return 0;
+#if !ASSERT_DISABLED
+    auto codePoints = StringView(m_glyphs[v[0]].codepoints).codePoints();
+    auto codePointsIterator = codePoints.begin();
+    ASSERT(codePointsIterator != codePoints.end());
+    ASSERT(codepoint = *codePointsIterator);
+#endif
+    return v[0];
+}
+
+void SVGToOTFFontConverter::appendLigatureSubtable(size_t subtableRecordLocation)
+{
+    typedef std::pair<Vector<Glyph, 3>, Glyph> LigaturePair;
+    Vector<LigaturePair> ligaturePairs;
+    for (Glyph glyphIndex = 0; glyphIndex < m_glyphs.size(); ++glyphIndex) {
+        ligaturePairs.append(LigaturePair(Vector<Glyph, 3>(), glyphIndex));
+        Vector<Glyph, 3>& ligatureGlyphs = ligaturePairs.last().first;
+        auto codePoints = StringView(m_glyphs[glyphIndex].codepoints).codePoints();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=138592 This needs to be done in codepoint space, not glyph space
+        for (auto codePoint : codePoints)
+            ligatureGlyphs.append(firstGlyph(glyphsForCodepoint(codePoint), codePoint));
+        if (ligatureGlyphs.size() < 2)
+            ligaturePairs.removeLast();
+    }
+    if (ligaturePairs.size() > std::numeric_limits<uint16_t>::max())
+        ligaturePairs.clear();
+    std::sort(ligaturePairs.begin(), ligaturePairs.end(), [](LigaturePair& lhs, LigaturePair& rhs) {
+        return lhs.first[0] < rhs.first[0];
+    });
+    Vector<size_t> overlappingFirstGlyphSegmentLengths;
+    if (!ligaturePairs.isEmpty()) {
+        Glyph previousFirstGlyph = ligaturePairs[0].first[0];
+        size_t segmentStart = 0;
+        for (size_t i = 0; i < ligaturePairs.size(); ++i) {
+            auto& ligaturePair = ligaturePairs[i];
+            if (ligaturePair.first[0] != previousFirstGlyph) {
+                overlappingFirstGlyphSegmentLengths.append(i - segmentStart);
+                segmentStart = i;
+                previousFirstGlyph = ligaturePairs[0].first[0];
+            }
+        }
+        overlappingFirstGlyphSegmentLengths.append(ligaturePairs.size() - segmentStart);
+    }
+
+    overwrite16(subtableRecordLocation + 6, m_result.size() - subtableRecordLocation);
+    auto subtableLocation = m_result.size();
+    append16(1); // Format 1
+    append16(0); // Placeholder for offset to coverage table, relative to beginning of substitution table
+    append16(ligaturePairs.size()); // Number of LigatureSet tables
+    grow(overlappingFirstGlyphSegmentLengths.size() * 2); // Placeholder for offset to LigatureSet table
+
+    Vector<size_t> ligatureSetTableLocations;
+    for (size_t i = 0; i < overlappingFirstGlyphSegmentLengths.size(); ++i) {
+        overwrite16(subtableLocation + 6 + 2 * i, m_result.size() - subtableLocation);
+        ligatureSetTableLocations.append(m_result.size());
+        append16(overlappingFirstGlyphSegmentLengths[i]); // LigatureCount
+        grow(overlappingFirstGlyphSegmentLengths[i] * 2); // Placeholder for offset to Ligature table
+    }
+    ASSERT(ligatureSetTableLocations.size() == overlappingFirstGlyphSegmentLengths.size());
+
+    size_t ligaturePairIndex = 0;
+    for (size_t i = 0; i < overlappingFirstGlyphSegmentLengths.size(); ++i) {
+        for (size_t j = 0; j < overlappingFirstGlyphSegmentLengths[i]; ++j) {
+            overwrite16(ligatureSetTableLocations[i] + 2 + 2 * j, m_result.size() - ligatureSetTableLocations[i]);
+            auto& ligaturePair = ligaturePairs[ligaturePairIndex];
+            append16(ligaturePair.second);
+            append16(ligaturePair.first.size());
+            for (size_t k = 1; k < ligaturePair.first.size(); ++k)
+                append16(ligaturePair.first[k]);
+            ++ligaturePairIndex;
+        }
+    }
+    ASSERT(ligaturePairIndex == ligaturePairs.size());
+
+    // Coverage table
+    overwrite16(subtableLocation + 2, m_result.size() - subtableLocation);
+    append16(1); // CoverageFormat
+    append16(ligatureSetTableLocations.size()); // GlyphCount
+    ligaturePairIndex = 0;
+    for (auto segmentLength : overlappingFirstGlyphSegmentLengths) {
+        auto& ligaturePair = ligaturePairs[ligaturePairIndex];
+        ASSERT(ligaturePair.first.size() > 1);
+        append16(ligaturePair.first[0]);
+        ligaturePairIndex += segmentLength;
+    }
+}
+
 void SVGToOTFFontConverter::appendArabicReplacementSubtable(size_t subtableRecordLocation, const char arabicForm[])
 {
     Vector<std::pair<Glyph, Glyph>> arabicFinalReplacements;
@@ -642,6 +749,21 @@ void SVGToOTFFontConverter::appendArabicReplacementSubtable(size_t subtableRecor
         append16(pair.first);
 }
 
+void SVGToOTFFontConverter::appendScriptSubtable(unsigned featureCount)
+{
+    auto dfltScriptTableLocation = m_result.size();
+    append16(0); // Placeholder for offset of default language system table, relative to beginning of Script table
+    append16(0); // Number of following language system tables
+
+    // LangSys table
+    overwrite16(dfltScriptTableLocation, m_result.size() - dfltScriptTableLocation);
+    append16(0); // LookupOrder "= NULL ... reserved"
+    append16(0xFFFF); // No features are required
+    append16(featureCount); // Number of FeatureIndex values
+    for (uint16_t i = 0; i < featureCount; ++i)
+        append16(m_featureCountGSUB++); // Features indices
+}
+
 void SVGToOTFFontConverter::appendGSUBTable()
 {
     auto tableLocation = m_result.size();
@@ -655,22 +777,18 @@ void SVGToOTFFontConverter::appendGSUBTable()
 
     // ScriptList
     auto scriptListLocation = m_result.size();
-    append16(1); // Number of ScriptRecords
+    append16(2); // Number of ScriptRecords
+    append32BitCode("DFLT");
+    append16(0); // Placeholder for offset of Script table, relative to beginning of ScriptList
     append32BitCode("arab");
-    append16(m_result.size() + 2 - scriptListLocation); // Offset of Script table, relative to beginning of ScriptList
+    append16(0); // Placeholder for offset of Script table, relative to beginning of ScriptList
 
-    auto scriptTableLocation = m_result.size();
-    auto sizeOfEmptyScriptTable = 4;
-    append16(sizeOfEmptyScriptTable); // Offset of default language system table, relative to beginning of Script table
-    append16(0); // Number of following language system tables
-    ASSERT_UNUSED(scriptTableLocation, scriptTableLocation + sizeOfEmptyScriptTable == m_result.size());
+    overwrite16(scriptListLocation + 6, m_result.size() - scriptListLocation);
+    appendScriptSubtable(1);
+    overwrite16(scriptListLocation + 12, m_result.size() - scriptListLocation);
+    appendScriptSubtable(4);
 
-    append16(0); // LookupOrder "= NULL ... reserved"
-    append16(0); // First feature is required
-    uint16_t featureCount = 4;
-    append16(4); // FeatureCount
-    for (uint16_t i = 0; i < featureCount; ++i)
-        append16(i); // Index of our feature into the FeatureList
+    unsigned featureCount = 5;
 
     // FeatureList
     toFeatureList.populate();
@@ -678,14 +796,16 @@ void SVGToOTFFontConverter::appendGSUBTable()
     size_t featureListSize = 2 + 6 * featureCount;
     size_t featureTableSize = 6;
     append16(featureCount); // FeatureCount
-    append32BitCode("fina");
+    append32BitCode("liga");
     append16(featureListSize + featureTableSize * 0); // Offset of feature table, relative to beginning of FeatureList table
-    append32BitCode("medi");
+    append32BitCode("fina");
     append16(featureListSize + featureTableSize * 1); // Offset of feature table, relative to beginning of FeatureList table
-    append32BitCode("init");
+    append32BitCode("medi");
     append16(featureListSize + featureTableSize * 2); // Offset of feature table, relative to beginning of FeatureList table
-    append32BitCode("rlig");
+    append32BitCode("init");
     append16(featureListSize + featureTableSize * 3); // Offset of feature table, relative to beginning of FeatureList table
+    append32BitCode("rlig");
+    append16(featureListSize + featureTableSize * 4); // Offset of feature table, relative to beginning of FeatureList table
     ASSERT_UNUSED(featureListLocation, featureListLocation + featureListSize == m_result.size());
 
     for (unsigned i = 0; i < featureCount; ++i) {
@@ -706,18 +826,29 @@ void SVGToOTFFontConverter::appendGSUBTable()
     for (unsigned i = 0; i < featureCount; ++i) {
         subtableRecordLocations[i] = m_result.size();
         overwrite16(lookupListLocation + 2 + 2 * i, m_result.size() - lookupListLocation);
-        append16(i == 3 ? 3 : 1); // Type 1: "Replace one glyph with one glyph" / Type 3: "Replace one glyph with one of many glyphs"
+        switch (i) {
+        case 4:
+            append16(3); // Type 3: "Replace one glyph with one of many glyphs"
+            break;
+        case 0:
+            append16(4); // Type 4: "Replace multiple glyphs with one glyph"
+            break;
+        default:
+            append16(1); // Type 1: "Replace one glyph with one glyph"
+            break;
+        }
         append16(0); // LookupFlag
         append16(1); // SubTableCount
         append16(0); // Placeholder for offset to subtable, relative to beginning of Lookup table
     }
 
-    appendArabicReplacementSubtable(subtableRecordLocations[0], "terminal");
-    appendArabicReplacementSubtable(subtableRecordLocations[1], "medial");
-    appendArabicReplacementSubtable(subtableRecordLocations[2], "initial");
+    appendLigatureSubtable(subtableRecordLocations[0]);
+    appendArabicReplacementSubtable(subtableRecordLocations[1], "terminal");
+    appendArabicReplacementSubtable(subtableRecordLocations[2], "medial");
+    appendArabicReplacementSubtable(subtableRecordLocations[3], "initial");
 
     // Manually append empty "rlig" subtable
-    overwrite16(subtableRecordLocations[3] + 6, m_result.size() - subtableRecordLocations[3]);
+    overwrite16(subtableRecordLocations[4] + 6, m_result.size() - subtableRecordLocations[4]);
     append16(1); // Format 1
     append16(6); // offset to coverage table, relative to beginning of substitution table
     append16(0); // AlternateSetCount
@@ -778,18 +909,26 @@ void SVGToOTFFontConverter::appendVMTXTable()
     }
 }
 
+static String codepointToString(UChar32 codepoint)
+{
+    UChar buffer[2];
+    uint8_t length = 0;
+    UBool error = false;
+    U16_APPEND(buffer, length, 2, codepoint, error);
+    return error ? String() : String(buffer, length);
+}
+
+Vector<Glyph, 1> SVGToOTFFontConverter::glyphsForCodepoint(UChar32 codepoint) const
+{
+    return m_codepointsToIndicesMap.get(codepointToString(codepoint));
+}
+
 void SVGToOTFFontConverter::addCodepointRanges(const UnicodeRanges& unicodeRanges, HashSet<Glyph>& glyphSet) const
 {
     for (auto& unicodeRange : unicodeRanges) {
         for (auto codepoint = unicodeRange.first; codepoint <= unicodeRange.second; ++codepoint) {
-            UChar buffer[2];
-            uint8_t length = 0;
-            UBool error = false;
-            U16_APPEND(buffer, length, 2, codepoint, error);
-            if (!error) {
-                for (auto index : m_codepointsToIndicesMap.get(String(buffer, length)))
-                    glyphSet.add(index);
-            }
+            for (auto index : glyphsForCodepoint(codepoint))
+                glyphSet.add(index);
         }
     }
 }
@@ -892,7 +1031,8 @@ void SVGToOTFFontConverter::appendKERNTable()
         m_result.append(0);
 }
 
-static void writeCFFEncodedNumber(Vector<char>& vector, float number)
+template <typename V>
+static void writeCFFEncodedNumber(V& vector, float number)
 {
     vector.append(0xFF);
     append32(vector, number * 0x10000);
@@ -944,7 +1084,7 @@ private:
 
     virtual void moveTo(const FloatPoint& targetPoint, bool closed, PathCoordinateMode mode) override
     {
-        if (closed && m_cffData.size())
+        if (closed && !m_cffData.isEmpty())
             closePath();
 
         FloatPoint destination = mode == AbsoluteCoordinates ? targetPoint : m_current + targetPoint;
@@ -1058,34 +1198,70 @@ void SVGToOTFFontConverter::processGlyphElement(const SVGElement& glyphOrMissing
     m_glyphs.append(GlyphData(WTF::move(path), glyphElement, horizontalAdvance, verticalAdvance, m_boundingBox, codepoints));
 }
 
+void SVGToOTFFontConverter::appendLigatureGlyphs()
+{
+    HashSet<UChar32> ligatureCodepoints;
+    HashSet<UChar32> nonLigatureCodepoints;
+    for (auto& glyph : m_glyphs) {
+        auto codePoints = StringView(glyph.codepoints).codePoints();
+        auto codePointsIterator = codePoints.begin();
+        if (codePointsIterator == codePoints.end())
+            continue;
+        UChar32 codepoint = *codePointsIterator;
+        ++codePointsIterator;
+        if (codePointsIterator == codePoints.end())
+            nonLigatureCodepoints.add(codepoint);
+        else {
+            ligatureCodepoints.add(codepoint);
+            for (; codePointsIterator != codePoints.end(); ++codePointsIterator)
+                ligatureCodepoints.add(*codePointsIterator);
+        }
+    }
+
+    for (auto codepoint : nonLigatureCodepoints)
+        ligatureCodepoints.remove(codepoint);
+    for (auto codepoint : ligatureCodepoints) {
+        auto codepoints = codepointToString(codepoint);
+        if (!codepoints.isNull())
+            m_glyphs.append(GlyphData(Vector<char, 17>(m_emptyGlyphCharString), nullptr, m_unitsPerEm, m_unitsPerEm, FloatRect(), codepoints));
+    }
+}
+
 bool SVGToOTFFontConverter::compareCodepointsLexicographically(const GlyphData& data1, const GlyphData& data2)
 {
-    unsigned i1 = 0;
-    unsigned i2 = 0;
+    auto codePoints1 = StringView(data1.codepoints).codePoints();
+    auto codePoints2 = StringView(data2.codepoints).codePoints();
+    auto iterator1 = codePoints1.begin();
+    auto iterator2 = codePoints2.begin();
     unsigned length1 = data1.codepoints.length();
     unsigned length2 = data2.codepoints.length();
-    while (i1 < length1 && i2 < length2) {
+    while (iterator1 != codePoints1.end() && iterator2 != codePoints2.end()) {
         UChar32 codepoint1, codepoint2;
-        if (data1.codepoints.is8Bit())
-            codepoint1 = data1.codepoints[i1++];
-        else
-            U16_NEXT(data1.codepoints.characters16(), i1, length1, codepoint1);
-
-        if (data2.codepoints.is8Bit())
-            codepoint2 = data2.codepoints[i2++];
-        else
-            U16_NEXT(data2.codepoints.characters16(), i2, length2, codepoint2);
+        codepoint1 = *iterator1;
+        codepoint2 = *iterator2;
 
         if (codepoint1 < codepoint2)
             return true;
         if (codepoint1 > codepoint2)
             return false;
+
+        ++iterator1;
+        ++iterator2;
     }
 
     if (length1 == length2 && data1.glyphElement
         && equalIgnoringCase(data1.glyphElement->fastGetAttribute(SVGNames::arabic_formAttr), "isolated"))
         return true;
     return length1 < length2;
+}
+
+static void populateEmptyGlyphCharString(Vector<char, 17>& o, unsigned unitsPerEm)
+{
+    writeCFFEncodedNumber(o, unitsPerEm);
+    writeCFFEncodedNumber(o, 0);
+    writeCFFEncodedNumber(o, 0);
+    o.append(rMoveTo);
+    o.append(endChar);
 }
 
 SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
@@ -1096,10 +1272,12 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     , m_advanceHeightMax(0)
     , m_minRightSideBearing(std::numeric_limits<float>::max())
     , m_unitsPerEm(0)
+    , m_featureCountGSUB(0)
     , m_tablesAppendedCount(0)
     , m_weight(5)
     , m_italic(false)
 {
+
     float defaultHorizontalAdvance = m_fontFaceElement ? m_fontFaceElement->horizontalAdvanceX() : 0;
     float defaultVerticalAdvance = m_fontFaceElement ? m_fontFaceElement->verticalAdvanceY() : 0;
     bool initialGlyph = true;
@@ -1107,23 +1285,20 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
     if (m_fontFaceElement)
         m_unitsPerEm = m_fontFaceElement->unitsPerEm();
 
+    populateEmptyGlyphCharString(m_emptyGlyphCharString, m_unitsPerEm);
+
     if (m_missingGlyphElement)
         processGlyphElement(*m_missingGlyphElement, nullptr, defaultHorizontalAdvance, defaultVerticalAdvance, String(), initialGlyph);
-    else {
-        Vector<char> notdefCharString;
-        writeCFFEncodedNumber(notdefCharString, m_unitsPerEm);
-        writeCFFEncodedNumber(notdefCharString, 0);
-        writeCFFEncodedNumber(notdefCharString, 0);
-        notdefCharString.append(rMoveTo);
-        notdefCharString.append(endChar);
-        m_glyphs.append(GlyphData(WTF::move(notdefCharString), nullptr, m_unitsPerEm, m_unitsPerEm, FloatRect(), String()));
-    }
+    else
+        m_glyphs.append(GlyphData(Vector<char, 17>(m_emptyGlyphCharString), nullptr, m_unitsPerEm, m_unitsPerEm, FloatRect(), String()));
 
     for (auto& glyphElement : childrenOfType<SVGGlyphElement>(m_fontElement)) {
         auto& unicodeAttribute = glyphElement.fastGetAttribute(SVGNames::unicodeAttr);
         if (!unicodeAttribute.isEmpty()) // If we can never actually trigger this glyph, ignore it completely
             processGlyphElement(glyphElement, &glyphElement, defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, initialGlyph);
     }
+
+    appendLigatureGlyphs();
 
     if (m_glyphs.size() > std::numeric_limits<Glyph>::max()) {
         m_glyphs.clear();
