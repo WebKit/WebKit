@@ -1,3 +1,13 @@
+2015-01-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Fix typo in testate.c error messages
+        https://bugs.webkit.org/show_bug.cgi?id=140305
+
+        Reviewed by Geoffrey Garen.
+
+        * API/tests/testapi.c:
+        (main): "... script did not timed out ..." -> "... script did not time out ..."
+
 2015-01-09  Michael Saboff  <msaboff@apple.com>
 
         Breakpoint doesn't fire in this HTML5 game

@@ -1905,7 +1905,7 @@ int main(int argc, char* argv[])
             printf("PASS: script timed out as expected.\n");
         else {
             if (!((endTime - startTime) < .150f))
-                printf("FAIL: script did not timed out as expected.\n");
+                printf("FAIL: script did not time out as expected.\n");
             if (!shouldTerminateCallbackWasCalled)
                 printf("FAIL: script timeout callback was not called.\n");
             failed = true;
@@ -1932,7 +1932,7 @@ int main(int argc, char* argv[])
 
         if (((endTime - startTime) >= .150f) || !shouldTerminateCallbackWasCalled) {
             if (!((endTime - startTime) < .150f))
-                printf("FAIL: script did not timed out as expected.\n");
+                printf("FAIL: script did not time out as expected.\n");
             if (!shouldTerminateCallbackWasCalled)
                 printf("FAIL: script timeout callback was not called.\n");
             failed = true;
@@ -1962,7 +1962,7 @@ int main(int argc, char* argv[])
             printf("PASS: script timed out as expected when no callback is specified.\n");
         else {
             if (!((endTime - startTime) < .150f))
-                printf("FAIL: script did not timed out as expected when no callback is specified.\n");
+                printf("FAIL: script did not time out as expected when no callback is specified.\n");
             failed = true;
         }
 
