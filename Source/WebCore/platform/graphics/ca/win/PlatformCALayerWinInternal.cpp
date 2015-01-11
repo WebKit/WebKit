@@ -28,7 +28,6 @@
 #include "PlatformCALayerWinInternal.h"
 
 #include "Font.h"
-#include "FontCache.h"
 #include "GraphicsContext.h"
 #include "PlatformCALayer.h"
 #include "TextRun.h"
@@ -131,8 +130,6 @@ void PlatformCALayerWinInternal::displayCallback(CACFLayerRef caLayer, CGContext
 #endif
 
     if (owner()->owner()->platformCALayerShowRepaintCounter(owner())) {
-        FontCachePurgePreventer fontCachePurgePreventer;
-
         String text = String::number(owner()->owner()->platformCALayerIncrementRepaintCount(owner()));
 
         CGContextSaveGState(context);

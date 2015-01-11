@@ -24,7 +24,6 @@
 #include "Font.h"
 
 #include "FloatRect.h"
-#include "FontCache.h"
 #include "FontGlyphs.h"
 #include "GlyphBuffer.h"
 #include "LayoutRect.h"
@@ -69,8 +68,6 @@ bool Font::getEmphasisMarkGlyphData(const AtomicString& mark, GlyphData& glyphDa
 
 int Font::emphasisMarkAscent(const AtomicString& mark) const
 {
-    FontCachePurgePreventer purgePreventer;
-    
     GlyphData markGlyphData;
     if (!getEmphasisMarkGlyphData(mark, markGlyphData))
         return 0;
@@ -85,8 +82,6 @@ int Font::emphasisMarkAscent(const AtomicString& mark) const
 
 int Font::emphasisMarkDescent(const AtomicString& mark) const
 {
-    FontCachePurgePreventer purgePreventer;
-    
     GlyphData markGlyphData;
     if (!getEmphasisMarkGlyphData(mark, markGlyphData))
         return 0;
@@ -101,8 +96,6 @@ int Font::emphasisMarkDescent(const AtomicString& mark) const
 
 int Font::emphasisMarkHeight(const AtomicString& mark) const
 {
-    FontCachePurgePreventer purgePreventer;
-
     GlyphData markGlyphData;
     if (!getEmphasisMarkGlyphData(mark, markGlyphData))
         return 0;
@@ -240,8 +233,6 @@ inline static float offsetToMiddleOfGlyphAtIndex(const GlyphBuffer& glyphBuffer,
 
 void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const GlyphBuffer& glyphBuffer, const AtomicString& mark, const FloatPoint& point) const
 {
-    FontCachePurgePreventer purgePreventer;
-    
     GlyphData markGlyphData;
     if (!getEmphasisMarkGlyphData(mark, markGlyphData))
         return;

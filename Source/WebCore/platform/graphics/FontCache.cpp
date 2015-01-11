@@ -93,7 +93,7 @@ FontCache& fontCache()
 }
 
 FontCache::FontCache()
-    : m_purgePreventCount(0)
+    : m_purgeTimer(*this, &FontCache::purgeTimerFired)
 {
 }
 
@@ -372,7 +372,7 @@ static FontDataCache& cachedFonts()
 const int cMaxInactiveFontData = 120;
 const int cTargetInactiveFontData = 100;
 #else
-const int cMaxInactiveFontData = 225;
+const int cMaxInactiveFontData = 5;
 const int cTargetInactiveFontData = 200;
 #endif
 
@@ -381,6 +381,9 @@ const int cTargetUnderMemoryPressureInactiveFontData = 30;
 
 RefPtr<SimpleFontData> FontCache::fontForFamily(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName)
 {
+    if (!m_purgeTimer.isActive())
+        m_purgeTimer.startOneShot(std::chrono::milliseconds::zero());
+
     FontPlatformData* platformData = getCachedFontPlatformData(fontDescription, family, checkingAlternateName);
     if (!platformData)
         return nullptr;
@@ -401,6 +404,11 @@ Ref<SimpleFontData> FontCache::fontForPlatformData(const FontPlatformData& platf
     return *addResult.iterator->value;
 }
 
+void FontCache::purgeTimerFired()
+{
+    purgeInactiveFontDataIfNeeded();
+}
+
 void FontCache::purgeInactiveFontDataIfNeeded()
 {
     bool underMemoryPressure = memoryPressureHandler().isUnderMemoryPressure();
@@ -419,9 +427,6 @@ void FontCache::purgeInactiveFontDataIfNeeded()
 void FontCache::purgeInactiveFontData(int purgeCount)
 {
     pruneUnreferencedEntriesFromFontGlyphsCache();
-
-    if (m_purgePreventCount)
-        return;
 
 #if PLATFORM(IOS)
     FontLocker fontLocker;

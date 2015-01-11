@@ -583,7 +583,6 @@ static void adjustInputElementButtonStyle(RenderStyle& style, HTMLInputElement& 
     if (font.primaryFontData().isSVGFont() && !renderer)
         return;
     
-    FontCachePurgePreventer fontCachePurgePreventer;
     float maximumWidth = localizedDateCache().maximumWidthForDateType(dateType, font, RenderThemeMeasureTextClient(font, *renderer, style));
 
     ASSERT(maximumWidth >= 0);

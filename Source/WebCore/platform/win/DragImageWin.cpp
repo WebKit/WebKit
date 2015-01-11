@@ -28,7 +28,6 @@
 
 #include "FloatRoundedRect.h"
 #include "Font.h"
-#include "FontCache.h"
 #include "FontDescription.h"
 #include "FontSelector.h"
 #include "GraphicsContext.h"
@@ -126,7 +125,6 @@ DragImageRef createDragImageForLink(URL& url, const String& inLabel, FontRenderi
 
     const Font* labelFont;
     const Font* urlFont;
-    FontCachePurgePreventer fontCachePurgePreventer;
 
     if (fontRenderingMode == AlternateRenderingMode) {
         static const Font alternateRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, AlternateRenderingMode);

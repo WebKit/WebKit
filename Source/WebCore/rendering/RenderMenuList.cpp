@@ -29,7 +29,6 @@
 #include "AccessibilityMenuList.h"
 #include "CSSFontSelector.h"
 #include "Chrome.h"
-#include "FontCache.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
@@ -209,7 +208,6 @@ void RenderMenuList::updateOptionsWidth()
     float maxOptionWidth = 0;
     const Vector<HTMLElement*>& listItems = selectElement().listItems();
     int size = listItems.size();    
-    FontCachePurgePreventer fontCachePurgePreventer;
 
     for (int i = 0; i < size; ++i) {
         HTMLElement* element = listItems[i];

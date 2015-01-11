@@ -36,7 +36,6 @@
 #include "DocumentEventQueue.h"
 #include "EventHandler.h"
 #include "FocusController.h"
-#include "FontCache.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -105,8 +104,6 @@ HTMLSelectElement& RenderListBox::selectElement() const
 
 void RenderListBox::updateFromElement()
 {
-    FontCachePurgePreventer fontCachePurgePreventer;
-
     if (m_optionsChanged) {
         const Vector<HTMLElement*>& listItems = selectElement().listItems();
         int size = numItems();
@@ -372,8 +369,6 @@ static LayoutSize itemOffsetForAlignment(TextRun textRun, RenderStyle* itemStyle
 
 void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)
 {
-    FontCachePurgePreventer fontCachePurgePreventer;
-
     const Vector<HTMLElement*>& listItems = selectElement().listItems();
     HTMLElement* listItemElement = listItems[listIndex];
 

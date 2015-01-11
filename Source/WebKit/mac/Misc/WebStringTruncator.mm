@@ -30,7 +30,6 @@
 
 #import "WebSystemInterface.h"
 #import <WebCore/Font.h>
-#import <WebCore/FontCache.h>
 #import <WebCore/FontPlatformData.h>
 #import <WebCore/StringTruncator.h>
 #import <runtime/InitializeThreading.h>
@@ -60,25 +59,21 @@ static WebCore::Font& fontFromNSFont(NSFont *font)
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth
 {
     static NeverDestroyed<RetainPtr<NSFont>> menuFont = [NSFont menuFontOfSize:0];
-    WebCore::FontCachePurgePreventer fontCachePurgePreventer;
     return WebCore::StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(menuFont.get().get()));
 }
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
 {
-    WebCore::FontCachePurgePreventer fontCachePurgePreventer;
     return WebCore::StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(font));
 }
 
 + (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
 {
-    WebCore::FontCachePurgePreventer fontCachePurgePreventer;
     return WebCore::StringTruncator::rightTruncate(string, maxWidth, fontFromNSFont(font));
 }
 
 + (float)widthOfString:(NSString *)string font:(NSFont *)font
 {
-    WebCore::FontCachePurgePreventer fontCachePurgePreventer;
     return WebCore::StringTruncator::width(string, fontFromNSFont(font));
 }
 

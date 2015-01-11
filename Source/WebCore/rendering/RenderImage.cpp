@@ -192,8 +192,6 @@ bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
 
     // we have an alt and the user meant it (its not a text we invented)
     if (!m_altText.isEmpty()) {
-        FontCachePurgePreventer fontCachePurgePreventer;
-
         const Font& font = style().font();
         IntSize paddedTextSize(paddingWidth + std::min(ceilf(font.width(RenderBlock::constructTextRun(this, font, m_altText, style()))), maxAltTextWidth), paddingHeight + std::min(font.fontMetrics().height(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(paddedTextSize);

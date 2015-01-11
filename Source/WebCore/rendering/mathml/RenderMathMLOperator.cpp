@@ -32,7 +32,6 @@
 
 #include "RenderMathMLOperator.h"
 
-#include "FontCache.h"
 #include "FontSelector.h"
 #include "MathMLNames.h"
 #include "PaintInfo.h"
@@ -1659,8 +1658,6 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::findStretchyData(UChar 
 
 void RenderMathMLOperator::updateStyle()
 {
-    FontCachePurgePreventer fontCachePurgePreventer;
-
     ASSERT(firstChild());
     if (!firstChild())
         return;

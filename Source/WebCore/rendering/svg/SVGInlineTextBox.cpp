@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGInlineTextBox.h"
 
-#include "FontCache.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -113,8 +112,6 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
 {
     ASSERT_WITH_SECURITY_IMPLICATION(startPosition < endPosition);
     ASSERT(style);
-
-    FontCachePurgePreventer fontCachePurgePreventer;
 
     float scalingFactor = renderer().scalingFactor();
     ASSERT(scalingFactor);

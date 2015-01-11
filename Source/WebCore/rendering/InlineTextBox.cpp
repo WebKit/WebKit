@@ -30,7 +30,6 @@
 #include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "EllipsisBox.h"
-#include "FontCache.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
@@ -263,8 +262,6 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
     
     if (sPos > ePos)
         return LayoutRect();
-
-    FontCachePurgePreventer fontCachePurgePreventer;
 
     LayoutUnit selectionTop = this->selectionTop();
     LayoutUnit selectionHeight = this->selectionHeight();
@@ -1331,8 +1328,6 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
     if (lineOffset - logicalLeft() < 0)
         return isLeftToRightDirection() ? 0 : len();
 
-    FontCachePurgePreventer fontCachePurgePreventer;
-
     const RenderStyle& lineStyle = this->lineStyle();
     const Font& font = fontToUse(lineStyle, renderer());
     return font.offsetForPosition(constructTextRun(lineStyle, font), lineOffset - logicalLeft(), includePartialGlyphs);
@@ -1345,8 +1340,6 @@ float InlineTextBox::positionForOffset(int offset) const
 
     if (isLineBreak())
         return logicalLeft();
-
-    FontCachePurgePreventer fontCachePurgePreventer;
 
     const RenderStyle& lineStyle = this->lineStyle();
     const Font& font = fontToUse(lineStyle, renderer());

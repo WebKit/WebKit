@@ -42,7 +42,6 @@
 #include "DOMPath.h"
 #include "ExceptionCodePlaceholder.h"
 #include "FloatQuad.h"
-#include "FontCache.h"
 #include "GraphicsContext.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
@@ -2257,8 +2256,6 @@ static void normalizeSpaces(String& text)
 
 PassRefPtr<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
 {
-    FontCachePurgePreventer fontCachePurgePreventer;
-
     RefPtr<TextMetrics> metrics = TextMetrics::create();
 
     String normalizedText = text;
@@ -2289,8 +2286,6 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     gradient = c->fillGradient();
     if (fill && gradient && gradient->isZeroSize())
         return;
-
-    FontCachePurgePreventer fontCachePurgePreventer;
 
     const Font& font = accessFont();
     const FontMetrics& fontMetrics = font.fontMetrics();

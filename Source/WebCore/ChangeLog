@@ -1,3 +1,77 @@
+2015-01-11  Antti Koivisto  <antti@apple.com>
+
+        Remove FontCachePurgePreventer
+        https://bugs.webkit.org/show_bug.cgi?id=139628
+
+        Reviewed by Anders Carlsson.
+
+        This stack type is bug prone and invasive. A missing FontCachePurgePreventer in a code that touches fonts is always
+        a hard-to-detect bug and there are many places that need it. Instead purge the font cache on top of the runloop.
+
+        The purge timer could in principle fire in a nested runloop. However we should never have unreferenced
+        SimpleFontData objects in the stack in such case (GlyphData objects don't currently ref the font) because those
+        only occur during layout and painting. Layout and painting can't trigger a nested runloops as there would be
+        bigger problems.
+
+        Purging may also be triggered synchronously by a memory notification. That case won't have any GlyphDatas in the stack either.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::measureText):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::paintContents):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::FontCache):
+        (WebCore::FontCache::fontForFamily):
+        (WebCore::FontCache::purgeTimerFired):
+        (WebCore::FontCache::purgeInactiveFontData):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::disablePurging): Deleted.
+        (WebCore::FontCache::enablePurging): Deleted.
+        (WebCore::FontCachePurgePreventer::FontCachePurgePreventer): Deleted.
+        (WebCore::FontCachePurgePreventer::~FontCachePurgePreventer): Deleted.
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::emphasisMarkAscent):
+        (WebCore::Font::emphasisMarkDescent):
+        (WebCore::Font::emphasisMarkHeight):
+        (WebCore::Font::drawEmphasisMarks):
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::displayCallback):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::widthWithFont):
+        (WebCore::drawAtPoint):
+        (WebCore::createDragImageForLink):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::createDragImageForLink):
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::doDrawTextAtPoint):
+        (WebCore::WebCoreTextFloatWidth):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::localSelectionRect):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setImageSizeForAltText):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::updateOptionsWidth):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::adjustInputElementButtonStyle):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::updateStyle):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::subtreeChildWasAdded):
+        (WebCore::RenderSVGText::subtreeStyleDidChange):
+        (WebCore::RenderSVGText::subtreeTextDidChange):
+        (WebCore::RenderSVGText::removeChild):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::selectionRectForTextFragment):
+
 2015-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Implement ligatures

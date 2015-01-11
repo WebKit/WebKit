@@ -28,7 +28,6 @@
 #include "RenderSVGText.h"
 
 #include "FloatQuad.h"
-#include "FontCache.h"
 #include "GraphicsContext.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -170,9 +169,6 @@ void RenderSVGText::subtreeChildWasAdded(RenderObject* child)
     if (!shouldHandleSubtreeMutations() || documentBeingDestroyed())
         return;
 
-    // Always protect the cache before clearing text positioning elements when the cache will subsequently be rebuilt.
-    FontCachePurgePreventer fontCachePurgePreventer;
-
     // The positioning elements cache doesn't include the new 'child' yet. Clear the
     // cache, as the next buildLayoutAttributesForTextRenderer() call rebuilds it.
     m_layoutAttributesBuilder.clearTextPositioningElements();
@@ -295,7 +291,6 @@ void RenderSVGText::subtreeStyleDidChange(RenderSVGInlineText* text)
 
     // Only update the metrics cache, but not the text positioning element cache
     // nor the layout attributes cached in the leaf #text renderers.
-    FontCachePurgePreventer fontCachePurgePreventer;
     for (RenderObject* descendant = text; descendant; descendant = descendant->nextInPreOrder(text)) {
         if (is<RenderSVGInlineText>(*descendant))
             m_layoutAttributesBuilder.rebuildMetricsForTextRenderer(downcast<RenderSVGInlineText>(*descendant));
@@ -316,9 +311,6 @@ void RenderSVGText::subtreeTextDidChange(RenderSVGInlineText* text)
         ASSERT(!text->everHadLayout());
         return;
     }
-
-    // Always protect the cache before clearing text positioning elements when the cache will subsequently be rebuilt.
-    FontCachePurgePreventer fontCachePurgePreventer;
 
     // The positioning elements cache depends on the size of each text renderer in the
     // subtree. If this changes, clear the cache. It's going to be rebuilt below.
@@ -544,7 +536,6 @@ void RenderSVGText::removeChild(RenderObject& child)
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
 
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
-    FontCachePurgePreventer fontCachePurgePreventer;
     subtreeChildWillBeRemoved(&child, affectedAttributes);
     RenderSVGBlock::removeChild(child);
     subtreeChildWasRemoved(affectedAttributes);

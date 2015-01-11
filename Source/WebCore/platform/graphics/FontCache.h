@@ -31,6 +31,7 @@
 #define FontCache_h
 
 #include "FontDescription.h"
+#include "Timer.h"
 #include <limits.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -103,7 +104,6 @@ struct FontDescriptionFontDataCacheKey {
 };
 
 class FontCache {
-    friend class FontCachePurgePreventer;
     friend class WTF::NeverDestroyed<FontCache>;
 
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
@@ -163,15 +163,9 @@ private:
     FontCache();
     ~FontCache();
 
-    void disablePurging() { m_purgePreventCount++; }
-    void enablePurging()
-    {
-        ASSERT(m_purgePreventCount);
-        if (!--m_purgePreventCount)
-            purgeInactiveFontDataIfNeeded();
-    }
+    void purgeTimerFired();
 
-    void WEBCORE_EXPORT purgeInactiveFontDataIfNeeded();
+    void purgeInactiveFontDataIfNeeded();
 
     // FIXME: This method should eventually be removed.
     FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);
@@ -183,8 +177,7 @@ private:
 #endif
     std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family);
 
-    // Don't purge if this count is > 0;
-    int m_purgePreventCount;
+    Timer m_purgeTimer;
 
 #if PLATFORM(COCOA)
     friend class ComplexTextController;
@@ -194,12 +187,6 @@ private:
 
 // Get the global fontCache.
 WEBCORE_EXPORT FontCache& fontCache();
-
-class FontCachePurgePreventer {
-public:
-    FontCachePurgePreventer() { fontCache().disablePurging(); }
-    ~FontCachePurgePreventer() { fontCache().enablePurging(); }
-};
 
 }
 
