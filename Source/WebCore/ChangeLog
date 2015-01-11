@@ -1,3 +1,29 @@
+2015-01-11  Chris Dumez  <cdumez@apple.com>
+
+        Move more SVG CSS properties to the new StyleBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=140340
+
+        Reviewed by Antti Koivisto.
+
+        Move more SVG CSS properties to the new StyleBuilder by introducing
+        the necessary converters in StyleBuilderConverter.
+
+        * css/CSSPropertyNames.in:
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+        (WebCore::roundToNearestGlyphOrientationAngle): Deleted.
+        (WebCore::angleToGlyphOrientation): Deleted.
+        (WebCore::colorFromSVGColorCSSValue): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertNumber):
+        (WebCore::StyleBuilderConverter::convertNumberOrAuto):
+        (WebCore::StyleBuilderConverter::convertOpacity):
+        (WebCore::StyleBuilderConverter::convertSVGURIReference):
+        (WebCore::StyleBuilderConverter::convertSVGColor):
+        (WebCore::StyleBuilderConverter::convertGlyphOrientation):
+        (WebCore::StyleBuilderConverter::convertGlyphOrientationOrAuto):
+        * rendering/style/RenderStyle.h:
+
 2015-01-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix for !ENABLE(INSPECTOR) builds after r178201.

@@ -65,6 +65,7 @@ public:
     static LengthSize convertRadius(StyleResolver&, CSSValue&);
     static TextDecoration convertTextDecoration(StyleResolver&, CSSValue&);
     template <typename T> static T convertNumber(StyleResolver&, CSSValue&);
+    template <typename T> static T convertNumberOrAuto(StyleResolver&, CSSValue&);
     static short convertWebkitHyphenateLimitLines(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static NinePieceImage convertBorderImage(StyleResolver&, CSSValue&);
     template <CSSPropertyID property> static NinePieceImage convertBorderMask(StyleResolver&, CSSValue&);
@@ -116,6 +117,11 @@ public:
     static Vector<SVGLength> convertSVGLengthVector(StyleResolver&, CSSValue&);
     static Vector<SVGLength> convertStrokeDashArray(StyleResolver&, CSSValue&);
     static PaintOrder convertPaintOrder(StyleResolver&, CSSValue&);
+    static float convertOpacity(StyleResolver&, CSSValue&);
+    static String convertSVGURIReference(StyleResolver&, CSSValue&);
+    static Color convertSVGColor(StyleResolver&, CSSValue&);
+    static EGlyphOrientation convertGlyphOrientation(StyleResolver&, CSSValue&);
+    static EGlyphOrientation convertGlyphOrientationOrAuto(StyleResolver&, CSSValue&);
 
 private:
     friend class StyleBuilderCustom;
@@ -286,10 +292,15 @@ inline TextDecoration StyleBuilderConverter::convertTextDecoration(StyleResolver
 template <typename T>
 inline T StyleBuilderConverter::convertNumber(StyleResolver&, CSSValue& value)
 {
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueAuto)
+    return downcast<CSSPrimitiveValue>(value).getValue<T>(CSSPrimitiveValue::CSS_NUMBER);
+}
+
+template <typename T>
+inline T StyleBuilderConverter::convertNumberOrAuto(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
         return -1;
-    return primitiveValue.getValue<T>(CSSPrimitiveValue::CSS_NUMBER);
+    return convertNumber<T>(styleResolver, value);
 }
 
 inline short StyleBuilderConverter::convertWebkitHyphenateLimitLines(StyleResolver&, CSSValue& value)
@@ -741,7 +752,7 @@ inline Vector<LengthSize> StyleBuilderConverter::convertScrollSnapCoordinates(St
 #endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
-bool StyleBuilderConverter::createGridTrackBreadth(CSSPrimitiveValue& primitiveValue, StyleResolver& styleResolver, GridLength& workingLength)
+inline bool StyleBuilderConverter::createGridTrackBreadth(CSSPrimitiveValue& primitiveValue, StyleResolver& styleResolver, GridLength& workingLength)
 {
     if (primitiveValue.getValueID() == CSSValueWebkitMinContent) {
         workingLength = Length(MinContent);
@@ -769,7 +780,7 @@ bool StyleBuilderConverter::createGridTrackBreadth(CSSPrimitiveValue& primitiveV
     return true;
 }
 
-bool StyleBuilderConverter::createGridTrackSize(CSSValue& value, GridTrackSize& trackSize, StyleResolver& styleResolver)
+inline bool StyleBuilderConverter::createGridTrackSize(CSSValue& value, GridTrackSize& trackSize, StyleResolver& styleResolver)
 {
     if (is<CSSPrimitiveValue>(value)) {
         GridLength workingLength;
@@ -792,7 +803,7 @@ bool StyleBuilderConverter::createGridTrackSize(CSSValue& value, GridTrackSize& 
     return true;
 }
 
-bool StyleBuilderConverter::createGridTrackList(CSSValue& value, Vector<GridTrackSize>& trackSizes, NamedGridLinesMap& namedGridLines, OrderedNamedGridLinesMap& orderedNamedGridLines, StyleResolver& styleResolver)
+inline bool StyleBuilderConverter::createGridTrackList(CSSValue& value, Vector<GridTrackSize>& trackSizes, NamedGridLinesMap& namedGridLines, OrderedNamedGridLinesMap& orderedNamedGridLines, StyleResolver& styleResolver)
 {
     // Handle 'none'.
     if (is<CSSPrimitiveValue>(value))
@@ -828,7 +839,7 @@ bool StyleBuilderConverter::createGridTrackList(CSSValue& value, Vector<GridTrac
     return true;
 }
 
-bool StyleBuilderConverter::createGridPosition(CSSValue& value, GridPosition& position)
+inline bool StyleBuilderConverter::createGridPosition(CSSValue& value, GridPosition& position)
 {
     // We accept the specification's grammar:
     // auto | <custom-ident> | [ <integer> && <custom-ident>? ] | [ span && [ <integer> || <custom-ident> ] ]
@@ -878,7 +889,7 @@ bool StyleBuilderConverter::createGridPosition(CSSValue& value, GridPosition& po
     return true;
 }
 
-void StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap& namedGridAreas, NamedGridLinesMap& namedGridLines, GridTrackSizingDirection direction)
+inline void StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(const NamedGridAreaMap& namedGridAreas, NamedGridLinesMap& namedGridLines, GridTrackSizingDirection direction)
 {
     for (auto& area : namedGridAreas) {
         GridSpan areaSpan = direction == ForRows ? area.value.rows : area.value.columns;
@@ -1143,6 +1154,50 @@ inline PaintOrder StyleBuilderConverter::convertPaintOrder(StyleResolver&, CSSVa
         ASSERT_NOT_REACHED();
         return PaintOrderNormal;
     }
+}
+
+inline float StyleBuilderConverter::convertOpacity(StyleResolver&, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    float opacity = primitiveValue.getFloatValue();
+    if (primitiveValue.isPercentage())
+        opacity /= 100.0f;
+    return opacity;
+}
+
+inline String StyleBuilderConverter::convertSVGURIReference(StyleResolver& styleResolver, CSSValue& value)
+{
+    String s;
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.isURI())
+        s = primitiveValue.getStringValue();
+
+    return SVGURIReference::fragmentIdentifierFromIRIString(s, styleResolver.document());
+}
+
+inline Color StyleBuilderConverter::convertSVGColor(StyleResolver& styleResolver, CSSValue& value)
+{
+    auto& svgColor = downcast<SVGColor>(value);
+    return svgColor.colorType() == SVGColor::SVG_COLORTYPE_CURRENTCOLOR ? styleResolver.style()->color() : svgColor.color();
+}
+
+inline EGlyphOrientation StyleBuilderConverter::convertGlyphOrientation(StyleResolver&, CSSValue& value)
+{
+    float angle = fabsf(fmodf(downcast<CSSPrimitiveValue>(value).getFloatValue(), 360.0f));
+    if (angle <= 45.0f || angle > 315.0f)
+        return GO_0DEG;
+    if (angle > 45.0f && angle <= 135.0f)
+        return GO_90DEG;
+    if (angle > 135.0f && angle <= 225.0f)
+        return GO_180DEG;
+    return GO_270DEG;
+}
+
+inline EGlyphOrientation StyleBuilderConverter::convertGlyphOrientationOrAuto(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
+        return GO_AUTO;
+    return convertGlyphOrientation(styleResolver, value);
 }
 
 } // namespace WebCore

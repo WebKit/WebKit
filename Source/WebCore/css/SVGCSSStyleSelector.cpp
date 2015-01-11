@@ -41,6 +41,7 @@
 #include "SVGRenderStyle.h"
 #include "SVGRenderStyleDefs.h"
 #include "SVGURIReference.h"
+#include "StyleBuilderConverter.h"
 #include <stdlib.h>
 #include <wtf/MathExtras.h>
 
@@ -59,46 +60,6 @@ if (isInitial) { \
 }
 
 namespace WebCore {
-
-static float roundToNearestGlyphOrientationAngle(float angle)
-{
-    angle = fabsf(fmodf(angle, 360.0f));
-
-    if (angle <= 45.0f || angle > 315.0f)
-        return 0.0f;
-    else if (angle > 45.0f && angle <= 135.0f)
-        return 90.0f;
-    else if (angle > 135.0f && angle <= 225.0f)
-        return 180.0f;
-
-    return 270.0f;
-}
-
-static int angleToGlyphOrientation(float angle)
-{
-    angle = roundToNearestGlyphOrientationAngle(angle);
-
-    if (angle == 0.0f)
-        return GO_0DEG;
-    else if (angle == 90.0f)
-        return GO_90DEG;
-    else if (angle == 180.0f)
-        return GO_180DEG;
-    else if (angle == 270.0f)
-        return GO_270DEG;
-
-    return -1;
-}
-
-static Color colorFromSVGColorCSSValue(SVGColor* svgColor, const Color& fgColor)
-{
-    Color color;
-    if (svgColor->colorType() == SVGColor::SVG_COLORTYPE_CURRENTCOLOR)
-        color = fgColor;
-    else
-        color = svgColor->color();
-    return color;
-}
 
 // FIXME: This method should go away once all SVG CSS properties have been
 // ported to the new generated StyleBuilder.
@@ -163,7 +124,7 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             }
             if (is<SVGPaint>(*value)) {
                 SVGPaint& svgPaint = downcast<SVGPaint>(*value);
-                svgStyle.setFillPaint(svgPaint.paintType(), colorFromSVGColorCSSValue(&svgPaint, state.style()->color()), svgPaint.uri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
+                svgStyle.setFillPaint(svgPaint.paintType(), StyleBuilderConverter::convertSVGColor(*this, svgPaint), svgPaint.uri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
             }
             break;
         }
@@ -180,232 +141,8 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             }
             if (is<SVGPaint>(*value)) {
                 SVGPaint& svgPaint = downcast<SVGPaint>(*value);
-                svgStyle.setStrokePaint(svgPaint.paintType(), colorFromSVGColorCSSValue(&svgPaint, state.style()->color()), svgPaint.uri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
+                svgStyle.setStrokePaint(svgPaint.paintType(), StyleBuilderConverter::convertSVGColor(*this, svgPaint), svgPaint.uri(), applyPropertyToRegularStyle(), applyPropertyToVisitedLinkStyle());
             }
-            break;
-        }
-        case CSSPropertyFillOpacity:
-        {
-            HANDLE_INHERIT_AND_INITIAL(fillOpacity, FillOpacity)
-            if (!primitiveValue)
-                return;
-
-            float f = 0.0f;
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-                f = primitiveValue->getFloatValue() / 100.0f;
-            else if (type == CSSPrimitiveValue::CSS_NUMBER)
-                f = primitiveValue->getFloatValue();
-            else
-                return;
-
-            svgStyle.setFillOpacity(f);
-            break;
-        }
-        case CSSPropertyStrokeOpacity:
-        {
-            HANDLE_INHERIT_AND_INITIAL(strokeOpacity, StrokeOpacity)
-            if (!primitiveValue)
-                return;
-
-            float f = 0.0f;
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-                f = primitiveValue->getFloatValue() / 100.0f;
-            else if (type == CSSPrimitiveValue::CSS_NUMBER)
-                f = primitiveValue->getFloatValue();
-            else
-                return;
-
-            svgStyle.setStrokeOpacity(f);
-            break;
-        }
-        case CSSPropertyStopOpacity:
-        {
-            HANDLE_INHERIT_AND_INITIAL(stopOpacity, StopOpacity)
-            if (!primitiveValue)
-                return;
-
-            float f = 0.0f;
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-                f = primitiveValue->getFloatValue() / 100.0f;
-            else if (type == CSSPrimitiveValue::CSS_NUMBER)
-                f = primitiveValue->getFloatValue();
-            else
-                return;
-
-            svgStyle.setStopOpacity(f);
-            break;
-        }
-        case CSSPropertyMarkerStart:
-        {
-            HANDLE_INHERIT_AND_INITIAL(markerStartResource, MarkerStartResource)
-            if (!primitiveValue)
-                return;
-
-            String s;
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue();
-
-            svgStyle.setMarkerStartResource(SVGURIReference::fragmentIdentifierFromIRIString(s, state.document()));
-            break;
-        }
-        case CSSPropertyMarkerMid:
-        {
-            HANDLE_INHERIT_AND_INITIAL(markerMidResource, MarkerMidResource)
-            if (!primitiveValue)
-                return;
-
-            String s;
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue();
-
-            svgStyle.setMarkerMidResource(SVGURIReference::fragmentIdentifierFromIRIString(s, state.document()));
-            break;
-        }
-        case CSSPropertyMarkerEnd:
-        {
-            HANDLE_INHERIT_AND_INITIAL(markerEndResource, MarkerEndResource)
-            if (!primitiveValue)
-                return;
-
-            String s;
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue();
-
-            svgStyle.setMarkerEndResource(SVGURIReference::fragmentIdentifierFromIRIString(s, state.document()));
-            break;
-        }
-        case CSSPropertyStrokeMiterlimit:
-        {
-            HANDLE_INHERIT_AND_INITIAL(strokeMiterLimit, StrokeMiterLimit)
-            if (!primitiveValue)
-                return;
-
-            float f = 0.0f;
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_NUMBER)
-                f = primitiveValue->getFloatValue();
-            else
-                return;
-
-            svgStyle.setStrokeMiterLimit(f);
-            break;
-        }
-        case CSSPropertyFilter:
-        {
-            HANDLE_INHERIT_AND_INITIAL(filterResource, FilterResource)
-            if (!primitiveValue)
-                return;
-
-            String s;
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue();
-
-            svgStyle.setFilterResource(SVGURIReference::fragmentIdentifierFromIRIString(s, state.document()));
-            break;
-        }
-        case CSSPropertyMask:
-        {
-            HANDLE_INHERIT_AND_INITIAL(maskerResource, MaskerResource)
-            if (!primitiveValue)
-                return;
-
-            String s;
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue();
-
-            svgStyle.setMaskerResource(SVGURIReference::fragmentIdentifierFromIRIString(s, state.document()));
-            break;
-        }
-        case CSSPropertyClipPath:
-        {
-            HANDLE_INHERIT_AND_INITIAL(clipperResource, ClipperResource)
-            if (!primitiveValue)
-                return;
-
-            String s;
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue();
-
-            svgStyle.setClipperResource(SVGURIReference::fragmentIdentifierFromIRIString(s, state.document()));
-            break;
-        }
-        case CSSPropertyStopColor:
-        {
-            HANDLE_INHERIT_AND_INITIAL(stopColor, StopColor);
-            if (is<SVGColor>(*value))
-                svgStyle.setStopColor(colorFromSVGColorCSSValue(downcast<SVGColor>(value), state.style()->color()));
-            break;
-        }
-       case CSSPropertyLightingColor:
-        {
-            HANDLE_INHERIT_AND_INITIAL(lightingColor, LightingColor);
-            if (is<SVGColor>(*value))
-                svgStyle.setLightingColor(colorFromSVGColorCSSValue(downcast<SVGColor>(value), state.style()->color()));
-            break;
-        }
-        case CSSPropertyFloodOpacity:
-        {
-            HANDLE_INHERIT_AND_INITIAL(floodOpacity, FloodOpacity)
-            if (!primitiveValue)
-                return;
-
-            float f = 0.0f;
-            int type = primitiveValue->primitiveType();
-            if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-                f = primitiveValue->getFloatValue() / 100.0f;
-            else if (type == CSSPrimitiveValue::CSS_NUMBER)
-                f = primitiveValue->getFloatValue();
-            else
-                return;
-
-            svgStyle.setFloodOpacity(f);
-            break;
-        }
-        case CSSPropertyFloodColor:
-        {
-            HANDLE_INHERIT_AND_INITIAL(floodColor, FloodColor);
-            if (is<SVGColor>(*value))
-                svgStyle.setFloodColor(colorFromSVGColorCSSValue(downcast<SVGColor>(value), state.style()->color()));
-            break;
-        }
-        case CSSPropertyGlyphOrientationHorizontal:
-        {
-            HANDLE_INHERIT_AND_INITIAL(glyphOrientationHorizontal, GlyphOrientationHorizontal)
-            if (!primitiveValue)
-                return;
-
-            if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_DEG) {
-                int orientation = angleToGlyphOrientation(primitiveValue->getFloatValue());
-                ASSERT(orientation != -1);
-
-                svgStyle.setGlyphOrientationHorizontal((EGlyphOrientation) orientation);
-            }
-
-            break;
-        }
-        case CSSPropertyGlyphOrientationVertical:
-        {
-            HANDLE_INHERIT_AND_INITIAL(glyphOrientationVertical, GlyphOrientationVertical)
-            if (!primitiveValue)
-                return;
-
-            if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_DEG) {
-                int orientation = angleToGlyphOrientation(primitiveValue->getFloatValue());
-                ASSERT(orientation != -1);
-
-                svgStyle.setGlyphOrientationVertical((EGlyphOrientation) orientation);
-            } else if (primitiveValue->getValueID() == CSSValueAuto)
-                svgStyle.setGlyphOrientationVertical(GO_AUTO);
-
             break;
         }
         case CSSPropertyWebkitSvgShadow: {
