@@ -1,3 +1,13 @@
+2014-11-25  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] gstmpegts is not initialized
+        https://bugs.webkit.org/show_bug.cgi?id=139039
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::initializeGStreamer): Initialize the gstmpegts library.
+
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'transition-delay' CSS property to a calculated value
