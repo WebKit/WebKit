@@ -1795,8 +1795,26 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case Identity: {
-        // CSE should always eliminate this.
-        DFG_CRASH(m_jit.graph(), node, "Unexpected Identity node");
+        speculate(node, node->child1());
+        switch (node->child1().useKind()) {
+        case DoubleRepUse:
+        case DoubleRepRealUse:
+        case DoubleRepMachineIntUse: {
+            SpeculateDoubleOperand op(this, node->child1());
+            doubleResult(op.fpr(), node);
+            break;
+        }
+        case Int52RepUse: {
+            SpeculateInt52Operand op(this, node->child1());
+            int52Result(op.gpr(), node);
+            break;
+        }
+        default: {
+            JSValueOperand op(this, node->child1());
+            jsValueResult(op.gpr(), node);
+            break;
+        }
+        } // switch
         break;
     }
 
