@@ -2054,7 +2054,7 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
             lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + curr->logicalBottom();
             lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, curr->logicalBottom(), cache);
             lastLogicalRight = logicalRightSelectionOffset(rootBlock, curr->logicalBottom(), cache);
-        } else if (childState != SelectionNone) {
+        } else if (childState != SelectionNone && curr->isRenderBlock()) {
             // We must be a block that has some selected object inside it.  Go ahead and recur.
             result.unite(toRenderBlock(curr)->selectionGaps(rootBlock, rootBlockPhysicalPosition, LayoutSize(offsetFromRootBlock.width() + curr->x(), offsetFromRootBlock.height() + curr->y()), 
                 lastLogicalTop, lastLogicalLeft, lastLogicalRight, childCache, paintInfo));
