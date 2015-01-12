@@ -587,6 +587,15 @@ static gboolean webKitWebSrcQueryWithParent(GstPad* pad, GstObject* parent, GstQ
         result = TRUE;
         break;
     }
+    case GST_QUERY_SCHEDULING: {
+        GstSchedulingFlags flags;
+        int minSize, maxSize, align;
+
+        gst_query_parse_scheduling(query, &flags, &minSize, &maxSize, &align);
+        gst_query_set_scheduling(query, static_cast<GstSchedulingFlags>(flags | GST_SCHEDULING_FLAG_BANDWIDTH_LIMITED), minSize, maxSize, align);
+        result = TRUE;
+        break;
+    }
     default: {
         GRefPtr<GstPad> target = adoptGRef(gst_ghost_pad_get_target(GST_GHOST_PAD_CAST(pad)));
 
