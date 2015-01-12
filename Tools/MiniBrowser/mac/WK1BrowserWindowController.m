@@ -33,7 +33,7 @@
 #import <WebKit/WebPreferenceKeysPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
-@interface WK1BrowserWindowController ()
+@interface WK1BrowserWindowController () <WebFrameLoadDelegate, WebPolicyDelegate, WebResourceLoadDelegate, WebUIDelegate>
 @end
 
 @implementation WK1BrowserWindowController

@@ -100,7 +100,7 @@ using namespace WebCore;
 
 @end
 
-@interface WebInspectorWindowController : NSWindowController <NSWindowDelegate> {
+@interface WebInspectorWindowController : NSWindowController <NSWindowDelegate, WebPolicyDelegate, WebUIDelegate> {
 @private
     RetainPtr<WebView> _inspectedWebView;
     RetainPtr<NSButton> _dockButton;

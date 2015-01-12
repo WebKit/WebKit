@@ -29,7 +29,7 @@
 #import <WebKit/DOMPrivate.h>
 #import <wtf/RetainPtr.h>
 
-@interface RenderedImageFromDOMNodeFrameLoadDelegate : NSObject {
+@interface RenderedImageFromDOMNodeFrameLoadDelegate : NSObject <WebFrameLoadDelegate> {
 }
 @end
 

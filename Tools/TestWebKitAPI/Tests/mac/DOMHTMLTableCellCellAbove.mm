@@ -31,7 +31,7 @@
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
-@interface HTMLTableCellElementCellAboveTest : NSObject
+@interface HTMLTableCellElementCellAboveTest : NSObject <WebFrameLoadDelegate>
 @end
 
 static bool didFinishLoad;

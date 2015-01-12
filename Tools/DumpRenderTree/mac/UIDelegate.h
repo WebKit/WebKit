@@ -32,7 +32,9 @@
 #import <WebKit/WAKView.h>
 #endif
 
-@interface UIDelegate : NSObject {
+#import <WebKit/WebUIDelegate.h>
+
+@interface UIDelegate : NSObject <WebUIDelegate> {
 @private
     NSPoint windowOrigin;
     NSMutableSet *m_pendingGeolocationPermissionListeners;

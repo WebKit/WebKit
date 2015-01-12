@@ -55,6 +55,7 @@
 #import <WebKit/WebDeviceOrientation.h>
 #import <WebKit/WebDeviceOrientationProviderMock.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebGeolocationPosition.h>
 #import <WebKit/WebHTMLRepresentation.h>
@@ -250,7 +251,7 @@ void TestRunner::keepWebHistory()
 
 int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
-    return [[[mainFrame webView] UIDelegate] numberOfPendingGeolocationPermissionRequests];
+    return [(UIDelegate *)[[mainFrame webView] UIDelegate] numberOfPendingGeolocationPermissionRequests];
 }
 
 size_t TestRunner::webHistoryItemCount()
@@ -434,7 +435,7 @@ void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
 void TestRunner::setGeolocationPermission(bool allow)
 {
     setGeolocationPermissionCommon(allow);
-    [[[mainFrame webView] UIDelegate] didSetMockGeolocationPermission];
+    [(UIDelegate *)[[mainFrame webView] UIDelegate] didSetMockGeolocationPermission];
 }
 
 void TestRunner::setIconDatabaseEnabled(bool iconDatabaseEnabled)
@@ -823,7 +824,7 @@ void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef glo
     [mainFrame _stringByEvaluatingJavaScriptFromString:scriptNS withGlobalObject:globalObject inScriptWorld:world];
 }
 
-@interface APITestDelegate : NSObject
+@interface APITestDelegate : NSObject <WebFrameLoadDelegate>
 {
     bool* m_condition;
 }

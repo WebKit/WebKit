@@ -28,7 +28,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <wtf/RetainPtr.h>
 
-@interface ElementAtPointFrameLoadDelegate : NSObject
+@interface ElementAtPointFrameLoadDelegate : NSObject <WebFrameLoadDelegate>
 @end
 
 static bool didFinishLoad;

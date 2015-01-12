@@ -28,7 +28,7 @@
 #import <WebKit/WebCache.h>
 #import <wtf/RetainPtr.h>
 
-@interface MemoryCacheDisableTestResourceLoadDelegate : NSObject {
+@interface MemoryCacheDisableTestResourceLoadDelegate : NSObject <WebResourceLoadDelegate> {
 }
 @end
 

@@ -27,13 +27,14 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKitLegacy/WebPolicyDelegate.h>
 
 /*!
     @class WebDefaultPolicyDelegate
     @discussion WebDefaultPolicyDelegate will be used as a WebView's
     default policy delegate.  It can be subclassed to modify policies. 
 */
-@interface WebDefaultPolicyDelegate : NSObject
+@interface WebDefaultPolicyDelegate : NSObject <WebPolicyDelegate>
 + (WebDefaultPolicyDelegate *)sharedPolicyDelegate;
 @end
 

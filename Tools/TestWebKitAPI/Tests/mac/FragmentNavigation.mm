@@ -30,7 +30,7 @@
 
 static bool testFinished;
 
-@interface WebKit1FragmentNavigationTestDelegate : NSObject {
+@interface WebKit1FragmentNavigationTestDelegate : NSObject <WebFrameLoadDelegate, WebPolicyDelegate, WebUIDelegate> {
     unsigned _stage;
 }
 

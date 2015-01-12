@@ -31,7 +31,7 @@
 #import <WebKit/DOM.h>
 #import <WebKit/WebViewPrivate.h>
 
-@interface SetDocumentURITest : NSObject {
+@interface SetDocumentURITest : NSObject <WebFrameLoadDelegate> {
 }
 @end
 

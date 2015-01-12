@@ -1,3 +1,22 @@
+2015-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Make delegates conform to formal delegate protocols
+        https://bugs.webkit.org/show_bug.cgi?id=140370
+
+        Reviewed by Dan Bernstein.
+
+        * DefaultDelegates/WebDefaultPolicyDelegate.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        Add protocols to the interface declarations.
+
+        * WebView/WebActionMenuController.mm:
+        (-[WebActionMenuController prepareForMenu:withEvent:]):
+        (-[WebActionMenuController _defaultMenuItemsForDataDetectedText]):
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _updateImmediateActionItem]):
+        (-[WebImmediateActionController _menuItemForDataDetectedText]):
+        Cast to id when trying to invoke delegate methods that aren't on WebUIDelegate.
+
 2015-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow targetting the SVG->OTF font converter with ENABLE(SVG_OTF_CONVERTER)

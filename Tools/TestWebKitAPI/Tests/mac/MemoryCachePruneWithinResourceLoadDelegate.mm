@@ -27,7 +27,7 @@
 #import "PlatformUtilities.h"
 #import <wtf/RetainPtr.h>
 
-@interface MemoryCachePruneTestResourceLoadDelegate : NSObject {
+@interface MemoryCachePruneTestResourceLoadDelegate : NSObject <WebResourceLoadDelegate> {
 @public
     NSWindow *_window;
 }

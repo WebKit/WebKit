@@ -135,7 +135,7 @@ using namespace WebCore;
 
     // Allow clients to customize the menu items.
     if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:actionMenuItemsForHitTestResult:withType:defaultActionMenuItems:)])
-        menuItems = [[_webView UIDelegate] _webView:_webView actionMenuItemsForHitTestResult:hitTestResult withType:_type defaultActionMenuItems:menuItems];
+        menuItems = [(id)[_webView UIDelegate] _webView:_webView actionMenuItemsForHitTestResult:hitTestResult withType:_type defaultActionMenuItems:menuItems];
 
     for (NSMenuItem *item in menuItems)
         [actionMenu addItem:item];
@@ -532,7 +532,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         RetainPtr<WebElementDictionary> hitTestDictionary = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:_hitTestResult]);
 
         DOMRange *customDataDetectorsRange;
-        actionContext = [[_webView UIDelegate] _webView:_webView actionContextForHitTestResult:hitTestDictionary.get() range:&customDataDetectorsRange];
+        actionContext = [(id)[_webView UIDelegate] _webView:_webView actionContextForHitTestResult:hitTestDictionary.get() range:&customDataDetectorsRange];
 
         if (actionContext && customDataDetectorsRange)
             detectedDataRange = core(customDataDetectorsRange);

@@ -37,7 +37,7 @@ static NSURL *testURL()
     return url.get();
 }
 
-@interface WebKit1TestDelegate : NSObject
+@interface WebKit1TestDelegate : NSObject <WebFrameLoadDelegate, WebUIDelegate>
 
 + (WebKit1TestDelegate *)shared;
 

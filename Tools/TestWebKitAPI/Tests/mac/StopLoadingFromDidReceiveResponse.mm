@@ -28,7 +28,7 @@
 #import <WebKit/WebCache.h>
 #import <wtf/RetainPtr.h>
 
-@interface StopLoadingFromDidReceiveResponse : NSObject {
+@interface StopLoadingFromDidReceiveResponse : NSObject <WebResourceLoadDelegate> {
 }
 @end
 

@@ -35,7 +35,7 @@
 #import <wtf/RetainPtr.h>
 
 
-@interface ContextMenuCanCopyURLDelegate : NSObject {
+@interface ContextMenuCanCopyURLDelegate : NSObject <WebFrameLoadDelegate> {
 }
 @end
 

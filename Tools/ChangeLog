@@ -1,3 +1,14 @@
+2015-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Make delegates conform to formal delegate protocols
+        https://bugs.webkit.org/show_bug.cgi?id=140370
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::numberOfPendingGeolocationPermissionRequests):
+        (TestRunner::setGeolocationPermission):
+
 2015-01-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         build-webkit: silence output of 'which'

@@ -27,7 +27,7 @@
 #import "PlatformUtilities.h"
 #import <wtf/RetainPtr.h>
 
-@interface CancelLoadFromResourceLoadDelegate : NSObject {
+@interface CancelLoadFromResourceLoadDelegate : NSObject <WebResourceLoadDelegate> {
     size_t resourceCount;
 }
 
@@ -47,7 +47,7 @@
 
 static bool didFinishLoad = false;
 
-@interface CancelLoadFromResourceLoadDelegateFrameLoadDelegate : NSObject
+@interface CancelLoadFromResourceLoadDelegateFrameLoadDelegate : NSObject <WebFrameLoadDelegate>
 @end
 
 @implementation CancelLoadFromResourceLoadDelegateFrameLoadDelegate

@@ -33,7 +33,7 @@
 #import <JavaScriptCore/JSValueRef.h>
 #import <wtf/RetainPtr.h>
 
-@interface JSWrapperForNodeFrameLoadDelegate : NSObject {
+@interface JSWrapperForNodeFrameLoadDelegate : NSObject <WebFrameLoadDelegate> {
 }
 @end
 

@@ -28,7 +28,7 @@
 #import <wtf/AutodrainedPool.h>
 #import <wtf/RetainPtr.h>
 
-@interface StopLoadingFromDidFinishLoadingDelegate : NSObject {
+@interface StopLoadingFromDidFinishLoadingDelegate : NSObject <WebResourceLoadDelegate> {
 }
 @end
 

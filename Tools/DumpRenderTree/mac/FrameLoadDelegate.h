@@ -27,11 +27,12 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WebFrameLoadDelegate.h>
 
 class AccessibilityController;
 class GCController;
 
-@interface FrameLoadDelegate : NSObject
+@interface FrameLoadDelegate : NSObject <WebFrameLoadDelegate>
 {
     AccessibilityController* accessibilityController;
     GCController* gcController;

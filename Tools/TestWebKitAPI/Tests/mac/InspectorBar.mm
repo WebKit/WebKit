@@ -27,7 +27,7 @@
 #import "PlatformUtilities.h"
 #import <wtf/RetainPtr.h>
 
-@interface InspectorBarController : NSObject {
+@interface InspectorBarController : NSObject <WebFrameLoadDelegate> {
 }
 @end
 

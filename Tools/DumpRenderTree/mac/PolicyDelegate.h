@@ -27,10 +27,11 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WebPolicyDelegate.h>
 
 class TestRunner;
 
-@interface PolicyDelegate : NSObject {
+@interface PolicyDelegate : NSObject <WebPolicyDelegate> {
     BOOL permissiveDelegate;
     TestRunner* controllerToNotifyDone;
 }

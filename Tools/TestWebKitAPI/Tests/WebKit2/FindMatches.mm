@@ -34,7 +34,7 @@
 #include <WebKit/WKImage.h>
 #import <wtf/RetainPtr.h>
 
-@interface FindMatchesWK1FrameLoadDelegate : NSObject {
+@interface FindMatchesWK1FrameLoadDelegate : NSObject <WebFrameLoadDelegate> {
 }
 @end
 

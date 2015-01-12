@@ -29,7 +29,7 @@
 
 static bool testFinished = false;
 
-@interface TestDelegate : NSObject
+@interface TestDelegate : NSObject <WebPolicyDelegate, WebUIDelegate>
 
 + (TestDelegate *)shared;
 

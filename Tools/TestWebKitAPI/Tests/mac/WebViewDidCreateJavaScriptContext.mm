@@ -66,7 +66,7 @@ static bool didInsertMyCustomProperty = true;
 }
 @end
 
-@interface DidCreateJavaScriptContextFrameLoadDelegate : NSObject
+@interface DidCreateJavaScriptContextFrameLoadDelegate : NSObject <WebFrameLoadDelegate>
 @end
 
 @implementation DidCreateJavaScriptContextFrameLoadDelegate

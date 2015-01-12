@@ -31,7 +31,7 @@
 #import <WebKit/DOM.h>
 #import <WebKit/WebViewPrivate.h>
 
-@interface SimplifyMarkupTest : NSObject {
+@interface SimplifyMarkupTest : NSObject <WebFrameLoadDelegate> {
 }
 @end
 

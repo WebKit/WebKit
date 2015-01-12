@@ -39,7 +39,7 @@ static bool didGetPageSignalToContinue = false;
 
 // WebKit1 WebUIDelegate
 
-@interface PageVisibilityStateDelegate : NSObject
+@interface PageVisibilityStateDelegate : NSObject <WebUIDelegate>
 @end
 
 @implementation PageVisibilityStateDelegate

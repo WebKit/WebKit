@@ -31,7 +31,7 @@
 
 static bool didFinishLoad;
 
-@interface WindowlessWebViewWithMediaFrameLoadDelegate : NSObject
+@interface WindowlessWebViewWithMediaFrameLoadDelegate : NSObject <WebFrameLoadDelegate>
 @end
 
 @implementation WindowlessWebViewWithMediaFrameLoadDelegate

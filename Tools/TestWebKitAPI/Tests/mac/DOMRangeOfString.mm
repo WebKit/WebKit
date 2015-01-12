@@ -29,7 +29,7 @@
 #import <WebKit/DOM.h>
 #import <wtf/RetainPtr.h>
 
-@interface DOMRangeOfStringFrameLoadDelegate : NSObject {
+@interface DOMRangeOfStringFrameLoadDelegate : NSObject <WebFrameLoadDelegate> {
 }
 @end
 

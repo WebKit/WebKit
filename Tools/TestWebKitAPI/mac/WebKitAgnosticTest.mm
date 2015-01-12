@@ -30,7 +30,7 @@
 #include <WebKit/WKViewPrivate.h>
 #include <wtf/RetainPtr.h>
 
-@interface FrameLoadDelegate : NSObject {
+@interface FrameLoadDelegate : NSObject <WebFrameLoadDelegate> {
     bool* _didFinishLoad;
 }
 

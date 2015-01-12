@@ -34,7 +34,7 @@
 static bool gotDashboardRegions;
 static NSDictionary *regions;
 
-@interface DeviceScaleFactorInDashboardRegionsUIDelegate : NSObject {
+@interface DeviceScaleFactorInDashboardRegionsUIDelegate : NSObject <WebUIDelegate> {
 }
 @end
 

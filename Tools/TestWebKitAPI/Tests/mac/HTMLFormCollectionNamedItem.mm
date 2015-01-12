@@ -32,7 +32,7 @@
 #import <WebKit/DOM.h>
 #import <WebKit/WebViewPrivate.h>
 
-@interface HTMLFormCollectionNamedItemTest : NSObject {
+@interface HTMLFormCollectionNamedItemTest : NSObject <WebFrameLoadDelegate> {
 }
 @end
 

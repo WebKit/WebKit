@@ -27,8 +27,9 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WebResourceLoadDelegate.h>
 
-@interface ResourceLoadDelegate : NSObject {
+@interface ResourceLoadDelegate : NSObject <WebResourceLoadDelegate> {
 }
 
 @end

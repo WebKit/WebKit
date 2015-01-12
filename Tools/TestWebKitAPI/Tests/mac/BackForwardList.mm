@@ -30,7 +30,7 @@
 
 #include <WebKit/WebBackForwardList.h>
 
-@interface BackForwardListTest : NSObject {
+@interface BackForwardListTest : NSObject <WebFrameLoadDelegate> {
 }
 @end
 

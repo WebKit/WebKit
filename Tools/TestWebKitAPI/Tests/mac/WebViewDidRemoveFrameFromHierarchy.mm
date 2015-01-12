@@ -28,7 +28,7 @@
 #import <WebKit/WebFrameLoadDelegatePrivate.h>
 #import <wtf/RetainPtr.h>
 
-@interface DidRemoveFrameFromHierarchyFrameLoadDelegate : NSObject
+@interface DidRemoveFrameFromHierarchyFrameLoadDelegate : NSObject <WebFrameLoadDelegate>
 @end
 
 static bool didFinishLoad;
