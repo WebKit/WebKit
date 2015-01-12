@@ -1,3 +1,22 @@
+2014-11-21  Chris Dumez  <cdumez@apple.com>
+
+        Crash when setting 'font' CSS property to 'calc(2 * 3)'
+        https://bugs.webkit.org/show_bug.cgi?id=138933
+
+        Reviewed by Darin Adler.
+
+        The CSS Parser was not handling calculated values when parsing the font
+        weight. This would lead us to hit an assertion when parsing a font
+        property whose weight is set to a calculated value.
+
+        This patch updates parseFontWeight() to properly handle calculated
+        values.
+
+        Test: fast/css/font-calculated-value.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontWeight):
+
 2014-11-20  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (174986): CSS clip property is ignored when border-radius is present.

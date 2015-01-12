@@ -6430,7 +6430,7 @@ bool CSSParser::parseFontWeight(bool important)
         return true;
     }
     if (validUnit(value, FInteger | FNonNeg, CSSQuirksMode)) {
-        int weight = static_cast<int>(value->fValue);
+        int weight = static_cast<int>(parsedDouble(value, ReleaseParsedCalcValue));
         if (!(weight % 100) && weight >= 100 && weight <= 900) {
             addProperty(CSSPropertyFontWeight, cssValuePool().createIdentifierValue(createFontWeightValueKeyword(weight)), important);
             return true;

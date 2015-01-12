@@ -1,3 +1,17 @@
+2014-11-21  Chris Dumez  <cdumez@apple.com>
+
+        Crash when setting 'font' CSS property to 'calc(2 * 3)'
+        https://bugs.webkit.org/show_bug.cgi?id=138933
+
+        Reviewed by Darin Adler.
+
+        Add a layout test to cover the case where the 'font' CSS property is
+        set to a value whose weight is a calculated value, to make sure it
+        does not crash and behaves as intended.
+
+        * fast/css/font-calculated-value-expected.txt: Added.
+        * fast/css/font-calculated-value.html: Added.
+
 2014-11-20  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (174986): CSS clip property is ignored when border-radius is present.
