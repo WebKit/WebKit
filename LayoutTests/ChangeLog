@@ -1,3 +1,22 @@
+2014-12-01  Zalan Bujtas  <zalan@apple.com>
+
+        Twitter avatar moves when hovering/unhovering the "follow" button.
+        https://bugs.webkit.org/show_bug.cgi?id=139147
+        rdar://problem/19096508
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that the out of flow positioned render boxes (RenderReplaced) do not
+        get repositioned when their inline box wrappers move.
+        Ideally, out of flow positioned renderers do not have inline wrappers by the time we start
+        placing inline boxes, but in certain case (optimized code path for descendantsHaveSameLineHeightAndBaseline()),
+        they are still part of the inline box tree.
+        This patch prevents those renderer boxes from getting positioned as part of the inline box placement.
+        They will get removed later at RenderBlockFlow::computeBlockDirectionPositionsForLine().
+
+        * fast/inline/out-of-flow-positioned-render-replaced-box-moves-expected.html: Added.
+        * fast/inline/out-of-flow-positioned-render-replaced-box-moves.html: Added.
+
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'transition-delay' CSS property to a calculated value

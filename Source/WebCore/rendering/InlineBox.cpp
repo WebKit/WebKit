@@ -176,6 +176,9 @@ void InlineBox::adjustPosition(float dx, float dy)
 {
     m_topLeft.move(dx, dy);
 
+    if (m_renderer.isOutOfFlowPositioned())
+        return;
+
     if (m_renderer.isReplaced())
         toRenderBox(renderer()).move(dx, dy);
 }
