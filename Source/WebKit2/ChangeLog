@@ -1,3 +1,16 @@
+2014-11-29  Anders Carlsson  <andersca@apple.com>
+
+        Crash when calling WKPageClose on the originated page from within createNewPage callback
+        https://bugs.webkit.org/show_bug.cgi?id=139099
+        <rdar://problem/19052564>
+
+        Reviewed by Sam Weinig.
+
+        Null check the namespace ID.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::cloneSessionStorageNamespaceInternal):
+
 2014-11-25  Ting-Wei Lan  <lantw44@gmail.com>
 
         [GTK] Use LD_LIBRARY_PATH to make g-ir-scanner use the newly-built

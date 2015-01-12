@@ -1,0 +1,16 @@
+<html>
+<script>
+function runTest()
+{
+    if (document.location.search === "?opened-window") {
+        alert(window.sessionStorage['storageKey'])
+        return;
+    }
+
+    window.sessionStorage['storageKey'] = 'value';
+    window.open("close-from-within-create-page.html?opened-window");
+}
+</script>
+<body onload="runTest()">
+</body>
+</html>
