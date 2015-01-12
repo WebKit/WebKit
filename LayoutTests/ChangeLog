@@ -1,3 +1,13 @@
+2014-11-18  Philippe Normand  <pnormand@igalia.com>
+
+        start/stop method for AudioBufferSourceNodes and OscillatorNodes can take no args
+        https://bugs.webkit.org/show_bug.cgi?id=138739
+
+        Reviewed by Darin Adler.
+
+        * webaudio/dom-exceptions-expected.txt: Added.
+        * webaudio/dom-exceptions.html: Added.
+
 2014-11-18  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Crash getting the orientation of a MenuListOption after the MenuList was removed from the document
