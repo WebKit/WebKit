@@ -1,3 +1,15 @@
+2014-11-24  Alberto Garcia  <berto@igalia.com>
+
+        Webkit2 doesnt build on powerpc 32 bits
+        https://bugs.webkit.org/show_bug.cgi?id=130837
+
+        Reviewed by Carlos Garcia Campos.
+
+        Check if libatomic is needed in order to use std::atomic, and add
+        it to the list of WebKit2 libraries.
+
+        * PlatformGTK.cmake:
+
 2014-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.4 release.
