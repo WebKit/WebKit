@@ -1,3 +1,17 @@
+2015-01-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r178266.
+        https://bugs.webkit.org/show_bug.cgi?id=140363
+
+        Broke a JSC test (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "Local JSArray* "keys" in objectConstructorKeys() is not
+        marked during garbage collection"
+        https://bugs.webkit.org/show_bug.cgi?id=140348
+        http://trac.webkit.org/changeset/178266
+
 2015-01-12  Michael Saboff  <msaboff@apple.com>
 
         Local JSArray* "keys" in objectConstructorKeys() is not marked during garbage collection

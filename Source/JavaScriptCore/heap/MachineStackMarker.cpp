@@ -221,11 +221,10 @@ void MachineThreads::removeCurrentThread()
 #define REGISTER_BUFFER_ALIGNMENT
 #endif
 
-void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
+void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackCurrent)
 {
     // setjmp forces volatile registers onto the stack
     jmp_buf registers REGISTER_BUFFER_ALIGNMENT;
-
 #if COMPILER(MSVC)
 #pragma warning(push)
 #pragma warning(disable: 4611)
@@ -239,9 +238,7 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
     void* registersEnd = reinterpret_cast<void*>(roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(&registers + 1)));
     conservativeRoots.add(registersBegin, registersEnd, jitStubRoutines, codeBlocks);
 
-    // We need to mark the stack top in this function so that callee saves are either already on the stack,
-    // or will be saved in registers.
-    void* stackBegin = &registers;
+    void* stackBegin = stackCurrent;
     void* stackEnd = wtfThreadData().stack().origin();
     conservativeRoots.add(stackBegin, stackEnd, jitStubRoutines, codeBlocks);
 }
@@ -448,9 +445,9 @@ void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots,
     freePlatformThreadRegisters(regs);
 }
 
-void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
+void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackCurrent)
 {
-    gatherFromCurrentThread(conservativeRoots, jitStubRoutines, codeBlocks);
+    gatherFromCurrentThread(conservativeRoots, jitStubRoutines, codeBlocks, stackCurrent);
 
     if (m_threadSpecific) {
         PlatformThread currentPlatformThread = getCurrentPlatformThread();
