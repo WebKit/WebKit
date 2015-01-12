@@ -43,9 +43,9 @@
 
 namespace WebCore {
 
+class Database;
 class DatabaseAuthorizer;
 class DatabaseBackendContext;
-class DatabaseBase;
 class SecurityOrigin;
 
 class DatabaseBackendBase : public ThreadSafeRefCounted<DatabaseBackendBase> {
@@ -83,7 +83,7 @@ public:
     virtual void closeImmediately() = 0;
 
     DatabaseBackendContext* databaseContext() const { return m_databaseContext.get(); }
-    void setFrontend(DatabaseBase* frontend) { m_frontend = frontend; }
+    void setFrontend(Database* frontend) { m_frontend = frontend; }
 
 protected:
     friend class ChangeVersionWrapper;
@@ -122,7 +122,7 @@ protected:
     unsigned long m_estimatedSize;
     String m_filename;
 
-    DatabaseBase* m_frontend;
+    Database* m_frontend;
 
 private:
     DatabaseGuid m_guid;

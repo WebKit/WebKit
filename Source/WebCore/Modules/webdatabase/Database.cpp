@@ -71,10 +71,9 @@ PassRefPtr<Database> Database::create(ScriptExecutionContext*, PassRefPtr<Databa
     return static_cast<Database*>(backend.get());
 }
 
-Database::Database(PassRefPtr<DatabaseBackendContext> databaseContext,
-    const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
-    : DatabaseBase(databaseContext->scriptExecutionContext())
-    , DatabaseBackend(databaseContext, name, expectedVersion, displayName, estimatedSize)
+Database::Database(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
+    : DatabaseBackend(databaseContext.get(), name, expectedVersion, displayName, estimatedSize)
+    , m_scriptExecutionContext(databaseContext->scriptExecutionContext())
     , m_databaseContext(DatabaseBackend::databaseContext()->frontend())
     , m_deleted(false)
 {
@@ -169,7 +168,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
     RefPtr<SQLTransactionBackend> transactionBackend = backend()->runTransaction(transaction.release(), readOnly, changeVersionData);
     if (!transactionBackend && errorCallback) {
         WTF::RefPtr<SQLTransactionErrorCallback> errorCallbackProtector = WTF::move(errorCallback);
-        scriptExecutionContext()->postTask([errorCallbackProtector](ScriptExecutionContext&) {
+        m_scriptExecutionContext->postTask([errorCallbackProtector](ScriptExecutionContext&) {
             errorCallbackProtector->handleEvent(SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed").get());
         });
     }
@@ -210,6 +209,11 @@ Vector<String> Database::performGetTableNames()
     }
 
     return tableNames;
+}
+
+void Database::logErrorMessage(const String& message)
+{
+    m_scriptExecutionContext->addConsoleMessage(MessageSource::Storage, MessageLevel::Error, message);
 }
 
 Vector<String> Database::tableNames()

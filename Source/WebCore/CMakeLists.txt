@@ -951,7 +951,6 @@ set(WebCore_SOURCES
     Modules/webdatabase/DatabaseBackend.cpp
     Modules/webdatabase/DatabaseBackendBase.cpp
     Modules/webdatabase/DatabaseBackendContext.cpp
-    Modules/webdatabase/DatabaseBase.cpp
     Modules/webdatabase/DatabaseContext.cpp
     Modules/webdatabase/DatabaseManager.cpp
     Modules/webdatabase/DatabaseServer.cpp

@@ -6685,8 +6685,6 @@
 		FE9E89FC16E2DC0500A908F8 /* OriginLock.h in Headers */ = {isa = PBXBuildFile; fileRef = FE9E89FA16E2DC0400A908F8 /* OriginLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEAF6654167970320062D0C5 /* DatabaseServer.h in Headers */ = {isa = PBXBuildFile; fileRef = FEAF6653167970070062D0C5 /* DatabaseServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEB26D28167A8F2A00FDD26B /* DatabaseServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEB26D27167A8F2A00FDD26B /* DatabaseServer.cpp */; };
-		FEBC5F3116BD0CC300659BD3 /* DatabaseBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEBC5F2F16BD0CC300659BD3 /* DatabaseBase.cpp */; };
-		FEBC5F3216BD0CC300659BD3 /* DatabaseBase.h in Headers */ = {isa = PBXBuildFile; fileRef = FEBC5F3016BD0CC300659BD3 /* DatabaseBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED13D2A0CEA91DF00D89466 /* DOMUIKitExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = FED13D260CEA91DF00D89466 /* DOMUIKitExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FED13D2B0CEA91DF00D89466 /* DOMUIKitExtensions.mm in Sources */ = {isa = PBXBuildFile; fileRef = FED13D270CEA91DF00D89466 /* DOMUIKitExtensions.mm */; };
 		FED13D3A0CEA934600D89466 /* EditorIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = FED13D390CEA934600D89466 /* EditorIOS.mm */; };
@@ -14274,8 +14272,6 @@
 		FE9E89FA16E2DC0400A908F8 /* OriginLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginLock.h; sourceTree = "<group>"; };
 		FEAF6653167970070062D0C5 /* DatabaseServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseServer.h; sourceTree = "<group>"; };
 		FEB26D27167A8F2A00FDD26B /* DatabaseServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseServer.cpp; sourceTree = "<group>"; };
-		FEBC5F2F16BD0CC300659BD3 /* DatabaseBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseBase.cpp; sourceTree = "<group>"; };
-		FEBC5F3016BD0CC300659BD3 /* DatabaseBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseBase.h; sourceTree = "<group>"; };
 		FED13D260CEA91DF00D89466 /* DOMUIKitExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMUIKitExtensions.h; sourceTree = "<group>"; };
 		FED13D270CEA91DF00D89466 /* DOMUIKitExtensions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMUIKitExtensions.mm; sourceTree = "<group>"; };
 		FED13D390CEA934600D89466 /* EditorIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorIOS.mm; sourceTree = "<group>"; };
@@ -18314,8 +18310,6 @@
 				97BC69D71505F076001B74AC /* DatabaseBackendBase.h */,
 				FE6F6AAD169E057500FC30A2 /* DatabaseBackendContext.cpp */,
 				FE6F6AAE169E057500FC30A2 /* DatabaseBackendContext.h */,
-				FEBC5F2F16BD0CC300659BD3 /* DatabaseBase.cpp */,
-				FEBC5F3016BD0CC300659BD3 /* DatabaseBase.h */,
 				FE3371A0167C11D400EDB752 /* DatabaseBasicTypes.h */,
 				97BC69E31505F081001B74AC /* DatabaseCallback.h */,
 				97BC69E41505F081001B74AC /* DatabaseCallback.idl */,
@@ -23798,7 +23792,6 @@
 				FE16CFD4169D1DED00D3A0C7 /* DatabaseBackend.h in Headers */,
 				97BC69DB1505F076001B74AC /* DatabaseBackendBase.h in Headers */,
 				FE6F6AB0169E057500FC30A2 /* DatabaseBackendContext.h in Headers */,
-				FEBC5F3216BD0CC300659BD3 /* DatabaseBase.h in Headers */,
 				FE3371A2167C11D400EDB752 /* DatabaseBasicTypes.h in Headers */,
 				97BC6A251505F081001B74AC /* DatabaseCallback.h in Headers */,
 				97BC6A281505F081001B74AC /* DatabaseContext.h in Headers */,
@@ -27502,7 +27495,6 @@
 				FE16CFD3169D1DED00D3A0C7 /* DatabaseBackend.cpp in Sources */,
 				97BC69DA1505F076001B74AC /* DatabaseBackendBase.cpp in Sources */,
 				FE6F6AAF169E057500FC30A2 /* DatabaseBackendContext.cpp in Sources */,
-				FEBC5F3116BD0CC300659BD3 /* DatabaseBase.cpp in Sources */,
 				97BC6A271505F081001B74AC /* DatabaseContext.cpp in Sources */,
 				FE456F181677D74E005EDDF9 /* DatabaseManager.cpp in Sources */,
 				FEB26D28167A8F2A00FDD26B /* DatabaseServer.cpp in Sources */,

@@ -32,9 +32,9 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "Database.h"
 #include "DatabaseAuthorizer.h"
 #include "DatabaseBackendContext.h"
-#include "DatabaseBase.h"
 #include "DatabaseContext.h"
 #include "DatabaseManager.h"
 #include "DatabaseTracker.h"

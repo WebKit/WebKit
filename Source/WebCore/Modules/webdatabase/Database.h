@@ -32,7 +32,6 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseBackend.h"
-#include "DatabaseBase.h"
 #include "DatabaseBasicTypes.h"
 #include "DatabaseError.h"
 #include <wtf/text/WTFString.h>
@@ -42,6 +41,7 @@ namespace WebCore {
 class ChangeVersionData;
 class DatabaseCallback;
 class DatabaseContext;
+class ScriptExecutionContext;
 class SecurityOrigin;
 class SQLTransaction;
 class SQLTransactionBackend;
@@ -49,7 +49,7 @@ class SQLTransactionCallback;
 class SQLTransactionErrorCallback;
 class VoidCallback;
 
-class Database : public DatabaseBase, public DatabaseBackend {
+class Database : public DatabaseBackend {
 public:
     virtual ~Database();
 
@@ -63,6 +63,9 @@ public:
     // Internal engine support
     static Database* from(DatabaseBackend*);
     DatabaseContext* databaseContext() const { return m_databaseContext.get(); }
+
+    ScriptExecutionContext* scriptExecutionContext() { return m_scriptExecutionContext.get(); }
+    void logErrorMessage(const String& message);
 
     Vector<String> tableNames();
 
@@ -85,6 +88,7 @@ private:
 
     Vector<String> performGetTableNames();
 
+    RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
     RefPtr<SecurityOrigin> m_databaseThreadSecurityOrigin;
     RefPtr<DatabaseContext> m_databaseContext;
 

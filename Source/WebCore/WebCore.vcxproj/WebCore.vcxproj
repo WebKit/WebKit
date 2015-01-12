@@ -6772,7 +6772,6 @@
     <ClCompile Include="..\Modules\webdatabase\DatabaseBackend.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseBackendBase.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseBackendContext.cpp" />
-    <ClCompile Include="..\Modules\webdatabase\DatabaseBase.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseContext.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseManager.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseServer.cpp" />
@@ -19022,7 +19021,6 @@
     <ClInclude Include="..\Modules\webdatabase\DatabaseBackendBase.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseBackendContext.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseBackendSync.h" />
-    <ClInclude Include="..\Modules\webdatabase\DatabaseBase.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseBasicTypes.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseCallback.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseContext.h" />
