@@ -54,12 +54,10 @@ public:
     static Ref<Geolocation> create(ScriptExecutionContext*);
     WEBCORE_EXPORT ~Geolocation();
 
-#if PLATFORM(IOS)
     virtual bool canSuspend() const override;
     virtual void suspend(ReasonForSuspension) override;
     virtual void resume() override;
     WEBCORE_EXPORT void resetAllGeolocationPermission();
-#endif // PLATFORM(IOS)
     Document* document() const;
     WEBCORE_EXPORT Frame* frame() const;
 
@@ -182,7 +180,6 @@ private:
         Yes,
         No
     } m_allowGeolocation;
-#if PLATFORM(IOS)
     bool m_isSuspended;
     bool m_resetOnResume;
     bool m_hasChangedPosition;
@@ -190,7 +187,6 @@ private:
 
     void resumeTimerFired();
     Timer m_resumeTimer;
-#endif // PLATFORM(IOS)
 
     GeoNotifierSet m_requestsAwaitingCachedPosition;
 };

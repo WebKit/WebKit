@@ -1,3 +1,25 @@
+2015-01-12  Andreas Kling  <akling@apple.com>
+
+        Geolocation objects shouldn't prevent page caching.
+        <https://webkit.org/b/140369>
+
+        Reviewed by Joseph Pecoraro.
+
+        Enable the code for suspend/resume of Geolocation objects on all platforms
+        instead of just iOS. This allows pages using geolocation to use page cache
+        instead of reloading on back/forward navigation.
+
+        Test: fast/history/page-cache-geolocation.html
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::Geolocation):
+        (WebCore::Geolocation::resetAllGeolocationPermission):
+        (WebCore::Geolocation::stop):
+        (WebCore::Geolocation::setIsAllowed):
+        (WebCore::Geolocation::positionChanged):
+        (WebCore::Geolocation::setError):
+        * Modules/geolocation/Geolocation.h:
+
 2015-01-12  Chris Dumez  <cdumez@apple.com>
 
         Log navigation types using DiagnosticLoggingClient

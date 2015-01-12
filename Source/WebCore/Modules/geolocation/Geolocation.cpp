@@ -235,11 +235,9 @@ Ref<Geolocation> Geolocation::create(ScriptExecutionContext* context)
 Geolocation::Geolocation(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
     , m_allowGeolocation(Unknown)
-#if PLATFORM(IOS)
     , m_isSuspended(false)
     , m_hasChangedPosition(false)
     , m_resumeTimer(*this, &Geolocation::resumeTimerFired)
-#endif
 {
 }
 
@@ -263,7 +261,6 @@ Page* Geolocation::page() const
     return document() ? document()->page() : nullptr;
 }
 
-#if PLATFORM(IOS)
 bool Geolocation::canSuspend() const
 {
     return !hasListeners();
@@ -378,7 +375,6 @@ void Geolocation::resetAllGeolocationPermission()
     for (size_t i = 0; i < watcherCopy.size(); ++i)
         startRequest(watcherCopy[i].get());
 }
-#endif // PLATFORM(IOS)
 
 void Geolocation::stop()
 {
@@ -389,10 +385,8 @@ void Geolocation::stop()
     m_allowGeolocation = Unknown;
     cancelAllRequests();
     stopUpdating();
-#if PLATFORM(IOS)
     m_hasChangedPosition = false;
     m_errorWaitingForResume = nullptr;
-#endif // PLATFORM(IOS)
     m_pendingForPermissionNotifiers.clear();
 }
 
@@ -555,10 +549,8 @@ void Geolocation::setIsAllowed(bool allowed)
     // position.
     m_allowGeolocation = allowed ? Yes : No;
     
-#if PLATFORM(IOS)
     if (m_isSuspended)
         return;
-#endif
 
     // Permission request was made during the startRequest process
     if (!m_pendingForPermissionNotifiers.isEmpty()) {
@@ -572,10 +564,8 @@ void Geolocation::setIsAllowed(bool allowed)
         error->setIsFatal(true);
         handleError(error.get());
         m_requestsAwaitingCachedPosition.clear();
-#if PLATFORM(IOS)
         m_hasChangedPosition = false;
         m_errorWaitingForResume = nullptr;
-#endif
 
         return;
     }
@@ -756,24 +746,20 @@ void Geolocation::positionChanged()
     // Stop all currently running timers.
     stopTimers();
 
-#if PLATFORM(IOS)
     if (m_isSuspended) {
         m_hasChangedPosition = true;
         return;
     }
-#endif
 
     makeSuccessCallbacks();
 }
 
 void Geolocation::setError(GeolocationError* error)
 {
-#if PLATFORM(IOS)
     if (m_isSuspended) {
         m_errorWaitingForResume = createPositionError(error);
         return;
     }
-#endif
     RefPtr<PositionError> positionError = createPositionError(error);
     handleError(positionError.get());
 }

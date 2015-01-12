@@ -1,3 +1,25 @@
+2015-01-12  Andreas Kling  <akling@apple.com>
+
+        Geolocation objects shouldn't prevent page caching.
+        <https://webkit.org/b/140369>
+
+        Reviewed by Joseph Pecoraro.
+
+        Take the existing test for this and make it not-specific-to-iOS.
+        Also remove a test whose only purpose was confirming that we don't cache these pages.
+
+        * fast/dom/Geolocation/no-page-cache-expected.txt: Removed.
+        * fast/dom/Geolocation/no-page-cache.html: Removed.
+        * fast/dom/Geolocation/script-tests/no-page-cache.js: Removed.
+        * fast/history/page-cache-geolocation-expected.txt: Renamed from LayoutTests/platform/ios-simulator/ios/fast/history/page-cache-geolocation-expected.txt.
+        * fast/history/page-cache-geolocation.html: Renamed from LayoutTests/platform/ios-simulator/ios/fast/history/script-tests/page-cache-geolocation.js.
+        * fast/history/resources/page-cache-helper.html: Added.
+        * platform/ios-sim-deprecated/iphone/fast/history/page-cache-geolocation-expected.txt: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/history/page-cache-geolocation.html: Removed.
+        * platform/ios-sim-deprecated/iphone/fast/history/script-tests/page-cache-geolocation.js: Removed.
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/ios/fast/history/page-cache-geolocation.html: Removed.
+
 2015-01-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Make fast/css/first-letter-skip-out-of-flow.html a ref-test

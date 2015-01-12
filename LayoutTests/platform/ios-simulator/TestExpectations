@@ -2401,7 +2401,6 @@ fast/dom/DeviceOrientation/no-page-cache.html
 fast/dom/DeviceOrientation/no-synchronous-events.html
 fast/dom/DeviceOrientation/null-values.html
 fast/dom/DeviceOrientation/updates.html
-fast/dom/Geolocation/no-page-cache.html
 fast/dom/HTMLLinkElement/link-and-subresource-test-nonexistent.html
 fast/dom/HTMLLinkElement/link-and-subresource-test.html
 fast/dom/HTMLLinkElement/prefetch-onerror.html
