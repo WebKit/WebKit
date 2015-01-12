@@ -49,7 +49,7 @@ public:
 
 private:
     Element* m_current;
-    Vector<Element*, 16, UnsafeVectorOverflow> m_ancestorSiblingStack;
+    Vector<Element*, 16> m_ancestorSiblingStack;
 
 #if !ASSERT_DISABLED
     ElementIteratorAssertions m_assertions;

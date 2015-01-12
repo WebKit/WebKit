@@ -1,3 +1,19 @@
+2015-01-11  Andreas Kling  <akling@apple.com>
+
+        Enable Vector bounds checking for ElementDescendantIterator.
+        <https://webkit.org/b/140346>
+
+        Reviewed by Sam Weinig.
+
+        I had originally disabled Vector bounds checking for
+        ElementDescendantIterator's internal ancestor stack, but upon
+        re-running performance benchmarks, it appears to have little-to-no
+        measurable benefit.
+
+        This change adds back the bounds checking.
+
+        * dom/ElementDescendantIterator.h:
+
 2015-01-11  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy SVGCSSStyleSelector.cpp
