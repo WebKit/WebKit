@@ -94,7 +94,7 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
 
 bool CachedFont::ensureCustomFontData(bool, const AtomicString&)
 {
-    return ensureCustomFontData(RefPtr<SharedBuffer>(m_data));
+    return ensureCustomFontData(m_data.copyRef());
 }
 
 bool CachedFont::ensureCustomFontData(RefPtr<SharedBuffer>&& data)

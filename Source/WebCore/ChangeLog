@@ -1,5 +1,15 @@
 2015-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Addressing post-review comment after r178292
+        https://bugs.webkit.org/show_bug.cgi?id=136769
+
+        Unreviewed.
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::ensureCustomFontData):
+
+2015-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Allow targetting the SVG->OTF font converter with ENABLE(SVG_OTF_CONVERTER)
         https://bugs.webkit.org/show_bug.cgi?id=136769
 
