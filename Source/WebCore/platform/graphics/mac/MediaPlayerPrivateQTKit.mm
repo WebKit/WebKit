@@ -792,11 +792,6 @@ void MediaPlayerPrivateQTKit::setRate(float rate)
         [m_qtMovie.get() setRate:rate];
 }
 
-double MediaPlayerPrivateQTKit::rate() const
-{
-    return m_qtMovie ? [m_qtMovie rate] : 0;
-}
-
 void MediaPlayerPrivateQTKit::setPreservesPitch(bool preservesPitch)
 {
     LOG(Media, "MediaPlayerPrivateQTKit::setPreservesPitch(%p) - preservesPitch %d", this, (int)preservesPitch);

@@ -262,9 +262,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_seekTimer(*this, &HTMLMediaElement::seekTimerFired)
     , m_playedTimeRanges()
     , m_asyncEventQueue(*this)
-    , m_requestedPlaybackRate(1)
-    , m_reportedPlaybackRate(1)
-    , m_defaultPlaybackRate(1)
+    , m_playbackRate(1.0f)
+    , m_defaultPlaybackRate(1.0f)
     , m_webkitPreservesPitch(true)
     , m_networkState(NETWORK_EMPTY)
     , m_readyState(HAVE_NOTHING)
@@ -2654,17 +2653,12 @@ void HTMLMediaElement::setDefaultPlaybackRate(double rate)
 
 double HTMLMediaElement::effectivePlaybackRate() const
 {
-    return m_mediaController ? m_mediaController->playbackRate() : m_reportedPlaybackRate;
-}
-
-double HTMLMediaElement::requestedPlaybackRate() const
-{
-    return m_mediaController ? m_mediaController->playbackRate() : m_requestedPlaybackRate;
+    return m_mediaController ? m_mediaController->playbackRate() : m_playbackRate;
 }
 
 double HTMLMediaElement::playbackRate() const
 {
-    return m_requestedPlaybackRate;
+    return m_playbackRate;
 }
 
 void HTMLMediaElement::setPlaybackRate(double rate)
@@ -2674,8 +2668,8 @@ void HTMLMediaElement::setPlaybackRate(double rate)
     if (m_player && potentiallyPlaying() && m_player->rate() != rate && !m_mediaController)
         m_player->setRate(rate);
 
-    if (m_requestedPlaybackRate != rate) {
-        m_reportedPlaybackRate = m_requestedPlaybackRate = rate;
+    if (m_playbackRate != rate) {
+        m_playbackRate = rate;
         invalidateCachedTime();
         scheduleEvent(eventNames().ratechangeEvent);
     }
@@ -2683,9 +2677,9 @@ void HTMLMediaElement::setPlaybackRate(double rate)
 
 void HTMLMediaElement::updatePlaybackRate()
 {
-    double requestedRate = requestedPlaybackRate();
-    if (m_player && potentiallyPlaying() && m_player->rate() != requestedRate)
-        m_player->setRate(requestedRate);
+    double effectiveRate = effectivePlaybackRate();
+    if (m_player && potentiallyPlaying() && m_player->rate() != effectiveRate)
+        m_player->setRate(effectiveRate);
 }
 
 bool HTMLMediaElement::webkitPreservesPitch() const
@@ -2710,7 +2704,7 @@ bool HTMLMediaElement::ended() const
     // 4.8.10.8 Playing the media resource
     // The ended attribute must return true if the media element has ended 
     // playback and the direction of playback is forwards, and false otherwise.
-    return endedPlayback() && requestedPlaybackRate() > 0;
+    return endedPlayback() && effectivePlaybackRate() > 0;
 }
 
 bool HTMLMediaElement::autoplay() const
@@ -3147,7 +3141,7 @@ void HTMLMediaElement::playbackProgressTimerFired()
 {
     ASSERT(m_player);
 
-    if (m_fragmentEndTime.isValid() && currentMediaTime() >= m_fragmentEndTime && requestedPlaybackRate() > 0) {
+    if (m_fragmentEndTime.isValid() && currentMediaTime() >= m_fragmentEndTime && effectivePlaybackRate() > 0) {
         m_fragmentEndTime = MediaTime::invalidTime();
         if (!m_mediaController && !m_paused) {
             // changes paused to true and fires a simple event named pause at the media element.
@@ -4201,14 +4195,13 @@ void HTMLMediaElement::mediaPlayerDurationChanged(MediaPlayer* player)
 
 void HTMLMediaElement::mediaPlayerRateChanged(MediaPlayer*)
 {
+    LOG(Media, "HTMLMediaElement::mediaPlayerRateChanged(%p)", this);
+
     beginProcessingMediaPlayerCallback();
 
     // Stash the rate in case the one we tried to set isn't what the engine is
     // using (eg. it can't handle the rate we set)
-    m_reportedPlaybackRate = m_player->rate();
-
-    LOG(Media, "HTMLMediaElement::mediaPlayerRateChanged(%p) - rate: %lf", this, m_reportedPlaybackRate);
-
+    m_playbackRate = m_player->rate();
     if (m_playing)
         invalidateCachedTime();
 
@@ -4440,12 +4433,12 @@ bool HTMLMediaElement::endedPlayback() const
     // of playback is forwards, Either the media element does not have a loop attribute specified,
     // or the media element has a current media controller.
     MediaTime now = currentMediaTime();
-    if (requestedPlaybackRate() > 0)
+    if (effectivePlaybackRate() > 0)
         return dur > MediaTime::zeroTime() && now >= dur && (!loop() || m_mediaController);
 
     // or the current playback position is the earliest possible position and the direction 
     // of playback is backwards
-    if (requestedPlaybackRate() < 0)
+    if (effectivePlaybackRate() < 0)
         return now <= MediaTime::zeroTime();
 
     return false;
@@ -4546,7 +4539,7 @@ void HTMLMediaElement::updatePlayState()
 
             // Set rate, muted before calling play in case they were set before the media engine was setup.
             // The media engine should just stash the rate and muted values since it isn't already playing.
-            m_player->setRate(requestedPlaybackRate());
+            m_player->setRate(effectivePlaybackRate());
             m_player->setMuted(effectiveMuted());
 
             if (m_firstTimePlaying) {
@@ -5795,11 +5788,6 @@ void HTMLMediaElement::mediaPlayerEngineFailedToLoad() const
 
     String engine = m_player->engineDescription();
     diagnosticLoggingClient->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::engineFailedToLoadKey(), engine, String::number(m_player->platformErrorCode()));
-}
-
-double HTMLMediaElement::mediaPlayerRequestedPlaybackRate() const
-{
-    return potentiallyPlaying() ? requestedPlaybackRate() : 0;
 }
 
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()

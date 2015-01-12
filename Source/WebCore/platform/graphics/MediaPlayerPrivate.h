@@ -102,7 +102,6 @@ public:
 
     virtual void setRate(float) { }
     virtual void setRateDouble(double rate) { setRate(rate); }
-    virtual double rate() const { return 0; }
 
     virtual void setPreservesPitch(bool) { }
 

@@ -312,6 +312,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient& client)
     , m_currentMediaEngine(0)
     , m_preload(Auto)
     , m_visible(false)
+    , m_rate(1.0f)
     , m_volume(1.0f)
     , m_muted(false)
     , m_preservesPitch(true)
@@ -678,17 +679,13 @@ void MediaPlayer::setClosedCaptionsVisible(bool closedCaptionsVisible)
 
 double MediaPlayer::rate() const
 {
-    return m_private->rate();
+    return m_rate;
 }
 
 void MediaPlayer::setRate(double rate)
 {
+    m_rate = rate;
     m_private->setRateDouble(rate);
-}
-
-double MediaPlayer::requestedRate() const
-{
-    return m_client.mediaPlayerRequestedPlaybackRate();
 }
 
 bool MediaPlayer::preservesPitch() const

@@ -104,7 +104,6 @@ private:
     virtual void seek(const MediaTime&) override;
     
     void setRate(float);
-    virtual double rate() const override;
     void setVolume(float);
     void setPreservesPitch(bool);
 

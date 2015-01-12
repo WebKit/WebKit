@@ -1,3 +1,17 @@
+2015-01-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r178281.
+        https://bugs.webkit.org/show_bug.cgi?id=140366
+
+        Broke many media tests (Requested by ap on #webkit).
+
+        Reverted changeset:
+
+        "defaultPlaybackRate not respected when set before source is
+        loaded"
+        https://bugs.webkit.org/show_bug.cgi?id=140282
+        http://trac.webkit.org/changeset/178281
+
 2015-01-12  Jer Noble  <jer.noble@apple.com>
 
         defaultPlaybackRate not respected when set before source is loaded

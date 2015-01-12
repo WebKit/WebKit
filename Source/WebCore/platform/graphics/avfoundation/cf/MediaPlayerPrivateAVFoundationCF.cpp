@@ -643,24 +643,24 @@ void MediaPlayerPrivateAVFoundationCF::setClosedCaptionsVisible(bool closedCapti
     AVCFPlayerSetClosedCaptionDisplayEnabled(avPlayer(m_avfWrapper), closedCaptionsVisible);
 }
 
-void MediaPlayerPrivateAVFoundationCF::setRate(float rate)
+void MediaPlayerPrivateAVFoundationCF::updateRate()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundationCF::setRate(%p) - rate: %f", this, rate);
+    LOG(Media, "MediaPlayerPrivateAVFoundationCF::updateRate(%p)", this);
     if (!metaDataAvailable() || !avPlayer(m_avfWrapper))
         return;
 
     setDelayCallbacks(true);
-    AVCFPlayerSetRate(avPlayer(m_avfWrapper), rate);
+    AVCFPlayerSetRate(avPlayer(m_avfWrapper), requestedRate());
     setDelayCallbacks(false);
 }
 
-double MediaPlayerPrivateAVFoundationCF::rate() const
+float MediaPlayerPrivateAVFoundationCF::rate() const
 {
     if (!metaDataAvailable() || !avPlayer(m_avfWrapper))
         return 0;
 
     setDelayCallbacks(true);
-    double currentRate = AVCFPlayerGetRate(avPlayer(m_avfWrapper));
+    float currentRate = AVCFPlayerGetRate(avPlayer(m_avfWrapper));
     setDelayCallbacks(false);
 
     return currentRate;

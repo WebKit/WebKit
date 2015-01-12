@@ -532,7 +532,6 @@ private:
     void setNetworkState(MediaPlayer::NetworkState);
 
     double effectivePlaybackRate() const;
-    double requestedPlaybackRate() const;
 
     virtual void mediaPlayerNetworkStateChanged(MediaPlayer*) override;
     virtual void mediaPlayerReadyStateChanged(MediaPlayer*) override;
@@ -606,8 +605,6 @@ private:
 
     virtual bool mediaPlayerIsInMediaDocument() const override final;
     virtual void mediaPlayerEngineFailedToLoad() const override final;
-
-    virtual double mediaPlayerRequestedPlaybackRate() const override final;
 
     void loadTimerFired();
     void progressEventTimerFired();
@@ -748,8 +745,7 @@ private:
     RefPtr<TimeRanges> m_playedTimeRanges;
     GenericEventQueue m_asyncEventQueue;
 
-    double m_requestedPlaybackRate;
-    double m_reportedPlaybackRate;
+    double m_playbackRate;
     double m_defaultPlaybackRate;
     bool m_webkitPreservesPitch;
     NetworkState m_networkState;
