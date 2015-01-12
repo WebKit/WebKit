@@ -935,8 +935,8 @@ inline bool BreakingContext::canBreakAtThisPosition()
     if (m_current.renderer()->isRenderInline() && isEmptyInline(toRenderInline(*m_current.renderer())))
         return false;
 
-    // Avoid breaking before empty inlines.
-    if (m_nextObject && m_nextObject->isRenderInline() && isEmptyInline(toRenderInline(*m_nextObject)))
+    // Avoid breaking before empty inlines (as long as the current object isn't replaced).
+    if (!m_current.renderer()->isReplaced() && m_nextObject && m_nextObject->isRenderInline() && isEmptyInline(toRenderInline(*m_nextObject)))
         return false;
 
     // Return early if we autowrap and the current character is a space as we will always want to break at such a position.

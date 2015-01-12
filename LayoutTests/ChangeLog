@@ -1,3 +1,13 @@
+2014-11-18  David Hyatt  <hyatt@apple.com>
+
+        REGRESSION(r152313): Inline-block element doesn't wrap properly
+        https://bugs.webkit.org/show_bug.cgi?id=138846 - <rdar://problem/18838703>
+
+        Reviewed by Simon Fraser.
+
+        * fast/inline-block/inline-block-empty-spans-expected.html: Added.
+        * fast/inline-block/inline-block-empty-spans.html: Added.
+
 2014-11-18  Myles C. Maxfield  <litherum@gmail.com>
 
         Multicolumn layout with negative line spacing and orphans causes pieces of letters to be shown at the bottom of columns
