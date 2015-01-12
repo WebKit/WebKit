@@ -93,5 +93,10 @@ String DiagnosticLoggingKeys::engineFailedToLoadKey()
     return WTF::ASCIILiteral("engineFailedToLoad");
 }
 
+WTF::String DiagnosticLoggingKeys::navigationKey()
+{
+    return WTF::ASCIILiteral("navigation");
+}
+
 }
 

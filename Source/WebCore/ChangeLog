@@ -1,3 +1,22 @@
+2015-01-12  Chris Dumez  <cdumez@apple.com>
+
+        Log navigation types using DiagnosticLoggingClient
+        https://bugs.webkit.org/show_bug.cgi?id=140323
+
+        Reviewed by Darin Adler.
+
+        Log navigation types using DiagnosticLoggingClient to help us understand
+        what types of navigations are common and give us an estimate on the
+        total number of navigations.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::logNavigation):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::logNavigationWithFeatureCounter): Deleted.
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::navigationKey):
+        * page/DiagnosticLoggingKeys.h:
+
 2015-01-12  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: ASSERT under WebCore::InspectorResourceAgent::loadResource

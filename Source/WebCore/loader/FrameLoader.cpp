@@ -1377,37 +1377,50 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
     loadWithDocumentLoader(newDocumentLoader, type, 0, AllowNavigationToInvalidURL::Yes);
 }
 
-static void logNavigationWithFeatureCounter(Page* page, FrameLoadType type)
+static void logNavigation(MainFrame& frame, FrameLoadType type)
 {
-    const char* key;
+    const char* featureCounterKey;
+    String navigationDescription;
     switch (type) {
     case FrameLoadType::Standard:
-        key = FeatureCounterNavigationStandardKey;
+        featureCounterKey = FeatureCounterNavigationStandardKey;
+        navigationDescription = ASCIILiteral("standard");
         break;
     case FrameLoadType::Back:
-        key = FeatureCounterNavigationBackKey;
+        featureCounterKey = FeatureCounterNavigationBackKey;
+        navigationDescription = ASCIILiteral("back");
         break;
     case FrameLoadType::Forward:
-        key = FeatureCounterNavigationForwardKey;
+        featureCounterKey = FeatureCounterNavigationForwardKey;
+        navigationDescription = ASCIILiteral("forward");
         break;
     case FrameLoadType::IndexedBackForward:
-        key = FeatureCounterNavigationIndexedBackForwardKey;
+        featureCounterKey = FeatureCounterNavigationIndexedBackForwardKey;
+        navigationDescription = ASCIILiteral("indexedBackForward");
         break;
     case FrameLoadType::Reload:
-        key = FeatureCounterNavigationReloadKey;
+        featureCounterKey = FeatureCounterNavigationReloadKey;
+        navigationDescription = ASCIILiteral("reload");
         break;
     case FrameLoadType::Same:
-        key = FeatureCounterNavigationSameKey;
+        featureCounterKey = FeatureCounterNavigationSameKey;
+        navigationDescription = ASCIILiteral("same");
         break;
     case FrameLoadType::ReloadFromOrigin:
-        key = FeatureCounterNavigationReloadFromOriginKey;
+        featureCounterKey = FeatureCounterNavigationReloadFromOriginKey;
+        navigationDescription = ASCIILiteral("reloadFromOrigin");
         break;
     case FrameLoadType::Replace:
     case FrameLoadType::RedirectWithLockedBackForwardList:
         // Not logging those for now.
         return;
     }
-    FEATURE_COUNTER_INCREMENT_KEY(page, key);
+    if (frame.settings().diagnosticLoggingEnabled()) {
+        if (auto* client = frame.diagnosticLoggingClient())
+            client->logDiagnosticMessage(DiagnosticLoggingKeys::navigationKey(), navigationDescription);
+    }
+    // FIXME: Remove once DiagnosticLoggingClient works on iOS.
+    FEATURE_COUNTER_INCREMENT_KEY(frame.page(), featureCounterKey);
 }
 
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, PassRefPtr<FormState> prpFormState, AllowNavigationToInvalidURL allowNavigationToInvalidURL)
@@ -1430,7 +1443,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     // Log main frame navigation types.
     if (m_frame.isMainFrame())
-        logNavigationWithFeatureCounter(m_frame.page(), type);
+        logNavigation(static_cast<MainFrame&>(m_frame), type);
 
     policyChecker().setLoadType(type);
     RefPtr<FormState> formState = prpFormState;

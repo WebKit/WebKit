@@ -43,6 +43,7 @@ public:
     static String pageContainsAtLeastOneMediaEngineKey();
     static String pageLoadedKey();
     static String engineFailedToLoadKey();
+    static String navigationKey();
 
     // Success keys.
     static String passKey();
