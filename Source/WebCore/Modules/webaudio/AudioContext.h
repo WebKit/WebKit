@@ -87,11 +87,6 @@ public:
     
     bool isOfflineContext() { return m_isOfflineContext; }
 
-    // Returns true when initialize() was called AND all asynchronous initialization has completed.
-    bool isRunnable() const;
-
-    HRTFDatabaseLoader* hrtfDatabaseLoader() const { return m_hrtfDatabaseLoader.get(); }
-
     // Document notification
     virtual void stop() override;
 
@@ -343,9 +338,6 @@ private:
     
     // Only accessed in the audio thread.
     Vector<AudioNode*> m_deferredFinishDerefList;
-    
-    // HRTF Database loader
-    RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;
 
     // EventTarget
     virtual void refEventTarget() override { ref(); }

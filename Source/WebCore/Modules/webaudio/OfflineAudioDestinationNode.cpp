@@ -101,7 +101,12 @@ void OfflineAudioDestinationNode::offlineRender()
     ASSERT(m_renderBus.get());
     if (!m_renderBus.get())
         return;
-    
+
+    bool isAudioContextInitialized = context()->isInitialized();
+    ASSERT(isAudioContextInitialized);
+    if (!isAudioContextInitialized)
+        return;
+
     bool channelsMatch = m_renderBus->numberOfChannels() == m_renderTarget->numberOfChannels();
     ASSERT(channelsMatch);
     if (!channelsMatch)
@@ -111,15 +116,6 @@ void OfflineAudioDestinationNode::offlineRender()
     ASSERT(isRenderBusAllocated);
     if (!isRenderBusAllocated)
         return;
-        
-    // Synchronize with HRTFDatabaseLoader.
-    // The database must be loaded before we can proceed.
-    HRTFDatabaseLoader* loader = context()->hrtfDatabaseLoader();
-    ASSERT(loader);
-    if (!loader)
-        return;
-    
-    loader->waitForLoaderThreadCompletion();
         
     // Break up the render target into smaller "render quantize" sized pieces.
     // Render until we're finished.
