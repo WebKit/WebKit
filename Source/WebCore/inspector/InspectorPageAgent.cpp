@@ -501,7 +501,7 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<Inspector::Protocol::Ar
     // always return the same true/false value.
     bool rawCookiesImplemented = false;
 
-    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext(mainFrame())) {
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
         Document* document = frame->document();
 
         for (auto& url : allResourcesURLsForFrame(frame)) {
@@ -533,7 +533,7 @@ void InspectorPageAgent::getCookies(ErrorString&, RefPtr<Inspector::Protocol::Ar
 void InspectorPageAgent::deleteCookie(ErrorString&, const String& cookieName, const String& url)
 {
     URL parsedURL(ParsedURLString, url);
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext(&m_page->mainFrame()))
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext())
         WebCore::deleteCookie(frame->document(), parsedURL, cookieName);
 }
 
@@ -615,7 +615,7 @@ void InspectorPageAgent::searchInResources(ErrorString&, const String& text, con
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
     JSC::Yarr::RegularExpression regex = ContentSearchUtilities::createSearchRegex(text, caseSensitive, isRegex);
 
-    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext(&m_page->mainFrame())) {
+    for (Frame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         String content;
 
         for (auto* cachedResource : cachedResourcesForFrame(frame)) {

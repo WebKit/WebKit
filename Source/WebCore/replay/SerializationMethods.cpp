@@ -82,8 +82,7 @@ uint32_t frameIndexFromFrame(const Frame* targetFrame)
     ASSERT(targetFrame);
 
     uint32_t currentIndex = 0;
-    const Frame* mainFrame = &targetFrame->tree().top();
-    for (const Frame* frame = mainFrame; frame; ++currentIndex, frame = frame->tree().traverseNext(mainFrame)) {
+    for (const Frame* frame = &targetFrame->tree().top(); frame; ++currentIndex, frame = frame->tree().traverseNext()) {
         if (frame == targetFrame)
             return currentIndex;
     }
@@ -103,10 +102,9 @@ Frame* frameFromFrameIndex(Page* page, uint32_t frameIndex)
     ASSERT(page);
     ASSERT(frameIndex >= 0);
 
-    MainFrame* mainFrame = &page->mainFrame();
-    Frame* frame = mainFrame;
+    Frame* frame = &page->mainFrame();
     uint32_t currentIndex = 0;
-    for (; currentIndex < frameIndex && frame; ++currentIndex, frame = frame->tree().traverseNext(mainFrame)) { }
+    for (; currentIndex < frameIndex && frame; ++currentIndex, frame = frame->tree().traverseNext()) { }
 
     return frame;
 }

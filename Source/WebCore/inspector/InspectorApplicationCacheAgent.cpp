@@ -98,8 +98,7 @@ void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr
 {
     result = Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::FrameWithManifest>::create();
 
-    Frame* mainFrame = m_pageAgent->mainFrame();
-    for (Frame* frame = mainFrame; frame; frame = frame->tree().traverseNext(mainFrame)) {
+    for (Frame* frame = m_pageAgent->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         DocumentLoader* documentLoader = frame->loader().documentLoader();
         if (!documentLoader)
             continue;

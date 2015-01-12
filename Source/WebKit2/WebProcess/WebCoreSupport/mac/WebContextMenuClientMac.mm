@@ -79,7 +79,7 @@ void WebContextMenuClient::searchWithSpotlight()
     Frame& mainFrame = m_page->corePage()->mainFrame();
     
     Frame* selectionFrame = &mainFrame;
-    for (; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext(&mainFrame)) {
+    for (; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext()) {
         if (selectionFrame->selection().isRange())
             break;
     }

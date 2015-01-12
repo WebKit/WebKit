@@ -1,3 +1,23 @@
+2015-01-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Clean up FrameTree::traverseNext() traversals of main frames
+        https://bugs.webkit.org/show_bug.cgi?id=140338
+
+        Reviewed by Andreas Kling.
+
+        There's no reason to pass the main frame as the stayWithin parameter
+        to FrameTree::traverseNext() when traversing over that same main frame.
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::deleteCookie):
+        (WebCore::InspectorPageAgent::searchInResources):
+        * replay/SerializationMethods.cpp:
+        (WebCore::frameIndexFromFrame):
+        (WebCore::frameFromFrameIndex):
+
 2015-01-12  Timothy Horton  <timothy_horton@apple.com>
 
         Multi-rect TextIndicators are vertically flipped in WebKit1
