@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-class DatabaseBackend;
+class Database;
 class DatabaseTask;
 class DatabaseTaskSynchronizer;
 class Document;
@@ -58,10 +58,10 @@ public:
 
     void scheduleTask(std::unique_ptr<DatabaseTask>);
     void scheduleImmediateTask(std::unique_ptr<DatabaseTask>); // This just adds the task to the front of the queue - the caller needs to be extremely careful not to create deadlocks when waiting for completion.
-    void unscheduleDatabaseTasks(DatabaseBackend*);
+    void unscheduleDatabaseTasks(Database*);
 
-    void recordDatabaseOpen(DatabaseBackend*);
-    void recordDatabaseClosed(DatabaseBackend*);
+    void recordDatabaseOpen(Database*);
+    void recordDatabaseClosed(Database*);
     ThreadIdentifier getThreadID() { return m_threadID; }
 
     SQLTransactionClient* transactionClient() { return m_transactionClient.get(); }
@@ -90,7 +90,7 @@ private:
 #endif
 
     // This set keeps track of the open databases that have been used on this thread.
-    typedef HashSet<RefPtr<DatabaseBackend>> DatabaseSet;
+    typedef HashSet<RefPtr<Database>> DatabaseSet;
     DatabaseSet m_openDatabaseSet;
 
     std::unique_ptr<SQLTransactionClient> m_transactionClient;

@@ -32,6 +32,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "ChangeVersionData.h"
+#include "ChangeVersionWrapper.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
 #include "DatabaseManager.h"
@@ -94,6 +95,128 @@ Database::~Database()
             RefPtr<ScriptExecutionContext> scriptExecutionContext(passedContext);
         }});
     }
+}
+
+bool Database::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+{
+    DatabaseTaskSynchronizer synchronizer;
+    if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
+        return false;
+
+    bool success = false;
+    auto task = DatabaseOpenTask::create(this, setVersionInNewDatabase, &synchronizer, error, errorMessage, success);
+    databaseContext()->databaseThread()->scheduleImmediateTask(WTF::move(task));
+    synchronizer.waitForTaskCompletion();
+
+    return success;
+}
+
+void Database::close()
+{
+    ASSERT(databaseContext()->databaseThread());
+    ASSERT(currentThread() == databaseContext()->databaseThread()->getThreadID());
+
+    {
+        MutexLocker locker(m_transactionInProgressMutex);
+
+        // Clean up transactions that have not been scheduled yet:
+        // Transaction phase 1 cleanup. See comment on "What happens if a
+        // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
+        RefPtr<SQLTransactionBackend> transaction;
+        while (!m_transactionQueue.isEmpty()) {
+            transaction = m_transactionQueue.takeFirst();
+            transaction->notifyDatabaseThreadIsShuttingDown();
+        }
+
+        m_isTransactionQueueEnabled = false;
+        m_transactionInProgress = false;
+    }
+
+    closeDatabase();
+
+    // DatabaseThread keeps databases alive by referencing them in its
+    // m_openDatabaseSet. DatabaseThread::recordDatabaseClose() will remove
+    // this database from that set (which effectively deref's it). We hold on
+    // to it with a local pointer here for a liitle longer, so that we can
+    // unschedule any DatabaseTasks that refer to it before the database gets
+    // deleted.
+    Ref<DatabaseBackend> protect(*this);
+    databaseContext()->databaseThread()->recordDatabaseClosed(this);
+    databaseContext()->databaseThread()->unscheduleDatabaseTasks(this);
+}
+
+bool Database::performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+{
+    if (DatabaseBackendBase::performOpenAndVerify(setVersionInNewDatabase, error, errorMessage)) {
+        if (databaseContext()->databaseThread())
+            databaseContext()->databaseThread()->recordDatabaseOpen(this);
+
+        return true;
+    }
+
+    return false;
+}
+
+void Database::scheduleTransaction()
+{
+    ASSERT(!m_transactionInProgressMutex.tryLock()); // Locked by caller.
+    RefPtr<SQLTransactionBackend> transaction;
+
+    if (m_isTransactionQueueEnabled && !m_transactionQueue.isEmpty())
+        transaction = m_transactionQueue.takeFirst();
+
+    if (transaction && databaseContext()->databaseThread()) {
+        auto task = DatabaseTransactionTask::create(transaction);
+        LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
+        m_transactionInProgress = true;
+        databaseContext()->databaseThread()->scheduleTask(WTF::move(task));
+    } else
+        m_transactionInProgress = false;
+}
+
+PassRefPtr<SQLTransactionBackend> Database::runTransaction(PassRefPtr<SQLTransaction> transaction, bool readOnly, const ChangeVersionData* data)
+{
+    MutexLocker locker(m_transactionInProgressMutex);
+    if (!m_isTransactionQueueEnabled)
+        return 0;
+
+    RefPtr<SQLTransactionWrapper> wrapper;
+    if (data)
+        wrapper = ChangeVersionWrapper::create(data->oldVersion(), data->newVersion());
+
+    RefPtr<SQLTransactionBackend> transactionBackend = SQLTransactionBackend::create(this, transaction, wrapper, readOnly);
+    m_transactionQueue.append(transactionBackend);
+    if (!m_transactionInProgress)
+        scheduleTransaction();
+
+    return transactionBackend;
+}
+
+void Database::scheduleTransactionStep(SQLTransactionBackend* transaction)
+{
+    if (!databaseContext()->databaseThread())
+        return;
+
+    auto task = DatabaseTransactionTask::create(transaction);
+    LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
+    databaseContext()->databaseThread()->scheduleTask(WTF::move(task));
+}
+
+void Database::inProgressTransactionCompleted()
+{
+    MutexLocker locker(m_transactionInProgressMutex);
+    m_transactionInProgress = false;
+    scheduleTransaction();
+}
+
+SQLTransactionClient* Database::transactionClient() const
+{
+    return databaseContext()->databaseThread()->transactionClient();
+}
+
+SQLTransactionCoordinator* Database::transactionCoordinator() const
+{
+    return databaseContext()->databaseThread()->transactionCoordinator();
 }
 
 Database* Database::from(DatabaseBackend* backend)
@@ -164,7 +287,7 @@ void Database::runTransaction(RefPtr<SQLTransactionCallback>&& callback, RefPtr<
 {
     RefPtr<SQLTransaction> transaction = SQLTransaction::create(*this, WTF::move(callback), WTF::move(successCallback), errorCallback.copyRef(), readOnly);
 
-    RefPtr<SQLTransactionBackend> transactionBackend = backend()->runTransaction(transaction.release(), readOnly, changeVersionData);
+    RefPtr<SQLTransactionBackend> transactionBackend = runTransaction(transaction.release(), readOnly, changeVersionData);
     if (!transactionBackend && errorCallback) {
         WTF::RefPtr<SQLTransactionErrorCallback> errorCallbackProtector = WTF::move(errorCallback);
         m_scriptExecutionContext->postTask([errorCallbackProtector](ScriptExecutionContext&) {

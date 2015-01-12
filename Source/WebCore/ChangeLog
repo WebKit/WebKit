@@ -1,3 +1,44 @@
+2015-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Move DatabaseBackend functions back to Database
+        https://bugs.webkit.org/show_bug.cgi?id=140368
+
+        Reviewed by Sam Weinig.
+
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::openAndVerifyVersion):
+        (WebCore::Database::close):
+        (WebCore::Database::performOpenAndVerify):
+        (WebCore::Database::scheduleTransaction):
+        (WebCore::Database::runTransaction):
+        (WebCore::Database::scheduleTransactionStep):
+        (WebCore::Database::inProgressTransactionCompleted):
+        (WebCore::Database::transactionClient):
+        (WebCore::Database::transactionCoordinator):
+        * Modules/webdatabase/Database.h:
+        * Modules/webdatabase/DatabaseBackend.cpp:
+        (WebCore::DatabaseBackend::openAndVerifyVersion): Deleted.
+        (WebCore::DatabaseBackend::performOpenAndVerify): Deleted.
+        (WebCore::DatabaseBackend::close): Deleted.
+        (WebCore::DatabaseBackend::runTransaction): Deleted.
+        (WebCore::DatabaseBackend::inProgressTransactionCompleted): Deleted.
+        (WebCore::DatabaseBackend::scheduleTransaction): Deleted.
+        (WebCore::DatabaseBackend::scheduleTransactionStep): Deleted.
+        (WebCore::DatabaseBackend::transactionClient): Deleted.
+        (WebCore::DatabaseBackend::transactionCoordinator): Deleted.
+        * Modules/webdatabase/DatabaseBackend.h:
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::recordDatabaseOpen):
+        (WebCore::DatabaseThread::recordDatabaseClosed):
+        (WebCore::SameDatabasePredicate::SameDatabasePredicate):
+        (WebCore::DatabaseThread::unscheduleDatabaseTasks):
+        * Modules/webdatabase/DatabaseThread.h:
+        * Modules/webdatabase/SQLTransactionBackend.cpp:
+        (WebCore::SQLTransactionBackend::create):
+        (WebCore::SQLTransactionBackend::SQLTransactionBackend):
+        * Modules/webdatabase/SQLTransactionBackend.h:
+        (WebCore::SQLTransactionBackend::database):
+
 2015-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Addressing post-review comment after r178292

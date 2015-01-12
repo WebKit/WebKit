@@ -227,7 +227,7 @@ void DatabaseThread::databaseThread()
         cleanupSync->taskCompleted();
 }
 
-void DatabaseThread::recordDatabaseOpen(DatabaseBackend* database)
+void DatabaseThread::recordDatabaseOpen(Database* database)
 {
     ASSERT(currentThread() == m_threadID);
     ASSERT(database);
@@ -235,7 +235,7 @@ void DatabaseThread::recordDatabaseOpen(DatabaseBackend* database)
     m_openDatabaseSet.add(database);
 }
 
-void DatabaseThread::recordDatabaseClosed(DatabaseBackend* database)
+void DatabaseThread::recordDatabaseClosed(Database* database)
 {
     ASSERT(currentThread() == m_threadID);
     ASSERT(database);
@@ -257,13 +257,13 @@ void DatabaseThread::scheduleImmediateTask(std::unique_ptr<DatabaseTask> task)
 
 class SameDatabasePredicate {
 public:
-    SameDatabasePredicate(const DatabaseBackend* database) : m_database(database) { }
+    SameDatabasePredicate(const Database* database) : m_database(database) { }
     bool operator()(const DatabaseTask& task) const { return task.database() == m_database; }
 private:
-    const DatabaseBackend* m_database;
+    const Database* m_database;
 };
 
-void DatabaseThread::unscheduleDatabaseTasks(DatabaseBackend* database)
+void DatabaseThread::unscheduleDatabaseTasks(Database* database)
 {
     // Note that the thread loop is running, so some tasks for the database
     // may still be executed. This is unavoidable.

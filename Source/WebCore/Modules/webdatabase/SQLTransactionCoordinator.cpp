@@ -34,7 +34,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "DatabaseBackend.h"
+#include "Database.h"
 #include "SQLTransactionBackend.h"
 #include "SecurityOrigin.h"
 #include <wtf/Deque.h>
@@ -46,7 +46,7 @@ namespace WebCore {
 
 static String getDatabaseIdentifier(SQLTransactionBackend* transaction)
 {
-    DatabaseBackend* database = transaction->database();
+    Database* database = transaction->database();
     ASSERT(database);
     return database->securityOrigin()->databaseIdentifier();
 }

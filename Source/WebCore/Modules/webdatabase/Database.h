@@ -49,9 +49,19 @@ class SQLTransactionCallback;
 class SQLTransactionErrorCallback;
 class VoidCallback;
 
-class Database : public DatabaseBackend {
+class Database final : public DatabaseBackend {
 public:
     virtual ~Database();
+
+    virtual bool openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
+    void close();
+
+    PassRefPtr<SQLTransactionBackend> runTransaction(PassRefPtr<SQLTransaction>, bool readOnly, const ChangeVersionData*);
+    void scheduleTransactionStep(SQLTransactionBackend*);
+    void inProgressTransactionCompleted();
+
+    SQLTransactionClient* transactionClient() const;
+    SQLTransactionCoordinator* transactionCoordinator() const;
 
     // Direct support for the DOM API
     virtual String version() const;
@@ -83,6 +93,10 @@ private:
 
     PassRefPtr<DatabaseBackend> backend();
     static PassRefPtr<Database> create(ScriptExecutionContext*, PassRefPtr<DatabaseBackendBase>);
+
+    virtual bool performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
+
+    void scheduleTransaction();
 
     void runTransaction(RefPtr<SQLTransactionCallback>&&, RefPtr<SQLTransactionErrorCallback>&&, RefPtr<VoidCallback>&& successCallback, bool readOnly, const ChangeVersionData* = nullptr);
 
