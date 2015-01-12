@@ -1,3 +1,28 @@
+2014-12-02  Matthew Mirman  <mmirman@apple.com>
+
+        Fixes inline cache fast path accessing nonexistant getters.
+        <rdar://problem/18416918>
+        https://bugs.webkit.org/show_bug.cgi?id=136961
+
+        Reviewed by Filip Pizlo.
+
+        Fixes a bug in inline caching where getters would have been able to 
+        modify the property they are getting during 
+        building the inline cache and then accessing that 
+        property through the inline cache site causing a recursive 
+        inline cache building and allowing the fast path of the cache to 
+        try to load a getter for the property that no longer exists.
+                
+        * jit/JITOperations.cpp: Switched use of get to getPropertySlot.
+        * runtime/JSCJSValue.h: 
+        added getPropertySlot for when you don't want to perform the get quite yet but want 
+        to fill out the slot.
+        * runtime/JSCJSValueInlines.h: Added implementation for getPropertySlot
+        (JSC::JSValue::get): changed to simply call getPropertySlot
+        (JSC::JSValue::getPropertySlot): added.
+        * tests/stress/recursive_property_redefine_during_inline_caching.js: Added test case for bug.
+        (test):
+        
 2014-12-01  Michael Saboff  <msaboff@apple.com>
 
         Crash (integer overflow) beneath ByteCodeParser::handleGetById typing in search field on weather.com

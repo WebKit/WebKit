@@ -682,19 +682,23 @@ ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, PropertyName propertyName) c
 
 ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, PropertyName propertyName, PropertySlot& slot) const
 {
+    return getPropertySlot(exec, propertyName, slot) ? 
+        slot.getValue(exec, propertyName) : jsUndefined();
+}
+
+ALWAYS_INLINE bool JSValue::getPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot) const
+{
     // If this is a primitive, we'll need to synthesize the prototype -
     // and if it's a string there are special properties to check first.
     JSObject* object;
     if (UNLIKELY(!isObject())) {
         if (isCell() && asString(*this)->getStringPropertySlot(exec, propertyName, slot))
-            return slot.getValue(exec, propertyName);
+            return true;
         object = synthesizePrototype(exec);
     } else
         object = asObject(asCell());
     
-    if (object->getPropertySlot(exec, propertyName, slot))
-        return slot.getValue(exec, propertyName);
-    return jsUndefined();
+    return object->getPropertySlot(exec, propertyName, slot);
 }
 
 ALWAYS_INLINE JSValue JSValue::get(ExecState* exec, unsigned propertyName) const

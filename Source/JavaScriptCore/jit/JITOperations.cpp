@@ -147,12 +147,12 @@ EncodedJSValue JIT_OPERATION operationGetByIdBuildList(ExecState* exec, Structur
 
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue);
-    JSValue result = baseValue.get(exec, ident, slot);
-
+    bool hasResult = baseValue.getPropertySlot(exec, ident, slot);
+    
     if (accessType == static_cast<AccessType>(stubInfo->accessType))
         buildGetByIDList(exec, baseValue, ident, slot, *stubInfo);
 
-    return JSValue::encode(result);
+    return JSValue::encode(hasResult? slot.getValue(exec, ident) : jsUndefined());
 }
 
 EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, StringImpl* uid)
@@ -160,18 +160,15 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, Structure
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     Identifier ident = uid->isEmptyUnique() ? Identifier::from(PrivateName(uid)) : Identifier(vm, uid);
-    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
 
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(exec, ident, slot);
     
-    if (accessType == static_cast<AccessType>(stubInfo->accessType)) {
-        if (stubInfo->seen)
-            repatchGetByID(exec, baseValue, ident, slot, *stubInfo);
-        else
-            stubInfo->seen = true;
-    }
+    if (stubInfo->seen)
+        repatchGetByID(exec, baseValue, ident, slot, *stubInfo);
+    else
+        stubInfo->seen = true;
 
     return JSValue::encode(result);
 }
