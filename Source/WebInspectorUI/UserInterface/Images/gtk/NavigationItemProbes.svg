@@ -8,13 +8,13 @@
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    version="1.1"
-   width="180"
-   height="180"
-   id="svg3007">
+   width="16"
+   height="16"
+   id="svg3012">
   <defs
-     id="defs3009" />
+     id="defs3014" />
   <metadata
-     id="metadata3012">
+     id="metadata3017">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -43,15 +43,10 @@
     </rdf:RDF>
   </metadata>
   <g
-     transform="translate(0,164)"
      id="layer1">
     <path
-       d="M 104.29398,-30.414694 40.768342,-13.856383 23.893555,-76.833906 56.642851,-133.55736 c 3.548502,-6.14618 8.599168,-8.12874 14.58506,-4.67278 l 62.569339,36.12444 c 5.72475,3.305185 6.66472,9.046216 3.24604,14.967553 z"
-       id="path6268"
-       style="color:#000000;fill:none;stroke:#000000;stroke-width:7.16157818;stroke-opacity:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
-    <path
-       d="M 121.37106,-24.637721 57.845421,-8.0794055 40.970635,-71.056927 73.71993,-127.78038 c 3.548502,-6.14619 8.599167,-8.12874 14.585059,-4.67279 l 62.569341,36.124447 c 5.72475,3.305187 6.66472,9.046217 3.24604,14.967553 z"
-       id="path6268-3"
-       style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:7.16157818;stroke-opacity:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+       d="M 2.625,3 C 2.1781915,3 1.774916,3.136064 1.46875,3.40625 1.162584,3.676436 1,4.07826 1,4.53125 l 0,7.9375 C 1,12.929491 1.160496,13.354416 1.46875,13.625 1.777004,13.895584 2.1720865,14 2.625,14 L 9.84375,14 10,14 10.125,13.90625 15.1875,8.8125 15.46875,8.53125 15.1875,8.28125 10.125,3.125 10,3 9.84375,3 2.625,3 z m 7.75,2 c 0.314452,0 0.5625,0.2832032 0.5625,0.625 0,0.4238277 -0.417969,0.75 -0.9375,0.75 l -0.125,0 c -0.082032,-0.013672 -0.146485,0 -0.1875,0 -0.6152332,0 -1.4160166,0.7441421 -2.25,2.125 0.5878899,1.4902331 0.7050781,1.734375 0.9375,2.0625 0.2871091,0.382812 0.5605476,0.5625 0.875,0.5625 0.2460933,0 0.425782,-0.06641 0.78125,-0.3125 l 0.3125,0.25 c -0.5332026,0.533203 -1.2382818,0.875 -1.8125,0.875 -0.4921873,0 -0.9355472,-0.232422 -1.25,-0.65625 -0.2187498,-0.273437 -0.2851568,-0.445313 -0.75,-1.59375 l -0.3125,-0.75 C 4.9746107,11.124998 4.0859365,12 3.15625,12 2.7734379,12 2.5,11.71875 2.5,11.28125 c 0,-0.396484 0.291016,-0.6875 0.6875,-0.6875 0.027344,0 0.1484377,0.01758 0.3125,0.03125 0.068359,0.01367 0.132813,0 0.1875,0 0.7656242,0 1.4375009,-0.6367205 2.3125,-2.25 L 5.65625,7.46875 C 5.1914068,6.2382826 5.0410146,6.080078 4.125,5.875 L 4.1875,5.46875 C 4.9121086,5.3867189 5.2734381,5.3515626 5.875,5.1875 l 0.34375,0 L 7.1875,8 C 8.4589832,6.0039084 9.527344,5 10.375,5 z"
+       id="path6268-0"
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" />
   </g>
 </svg>

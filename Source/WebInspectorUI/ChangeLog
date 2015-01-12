@@ -1,3 +1,15 @@
+2014-11-27  Andres Gomez  <agomez@igalia.com>
+
+        Web Inspector: Update NavigationItemProbes icon for the GTK+ port
+        https://bugs.webkit.org/show_bug.cgi?id=139074
+
+        Reviewed by Carlos Garcia Campos.
+
+        NavigationItemProbes was updated for the Mac port and we are now
+        having a similar ideogram in GTK+.
+
+        * UserInterface/Images/gtk/NavigationItemProbes.svg: Updated.
+
 2014-11-13  Andres Gomez  <agomez@igalia.com>
 
         Web Inspector: Replace PDF icon with SVG version
