@@ -32,7 +32,6 @@
 #include "Database.h"
 #include "DatabaseBackend.h"
 #include "DatabaseBackendBase.h"
-#include "DatabaseBackendContext.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
 #include "DatabaseServer.h"
@@ -215,9 +214,8 @@ PassRefPtr<DatabaseBackendBase> DatabaseManager::openDatabaseBackend(ScriptExecu
     ASSERT(error == DatabaseError::None);
 
     RefPtr<DatabaseContext> databaseContext = databaseContextFor(context);
-    RefPtr<DatabaseBackendContext> backendContext = databaseContext->backend();
 
-    RefPtr<DatabaseBackendBase> backend = m_server->openDatabase(backendContext, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
+    RefPtr<DatabaseBackendBase> backend = m_server->openDatabase(databaseContext, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
 
     if (!backend) {
         ASSERT(error != DatabaseError::None);
@@ -243,7 +241,7 @@ PassRefPtr<DatabaseBackendBase> DatabaseManager::openDatabaseBackend(ScriptExecu
             }
             error = DatabaseError::None;
 
-            backend = m_server->openDatabase(backendContext, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage, AbstractDatabaseServer::RetryOpenDatabase);
+            backend = m_server->openDatabase(databaseContext, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage, AbstractDatabaseServer::RetryOpenDatabase);
             break;
 
         default:
@@ -407,7 +405,7 @@ void DatabaseManager::interruptAllDatabasesForContext(ScriptExecutionContext* co
 {
     RefPtr<DatabaseContext> databaseContext = existingDatabaseContextFor(context);
     if (databaseContext)
-        m_server->interruptAllDatabasesForContext(databaseContext->backend().get());
+        m_server->interruptAllDatabasesForContext(databaseContext.get());
 }
 
 void DatabaseManager::logErrorMessage(ScriptExecutionContext* context, const String& message)

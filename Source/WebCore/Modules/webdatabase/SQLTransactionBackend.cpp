@@ -34,7 +34,7 @@
 #include "Database.h" // FIXME: Should only be used in the frontend.
 #include "DatabaseAuthorizer.h"
 #include "DatabaseBackend.h"
-#include "DatabaseBackendContext.h"
+#include "DatabaseContext.h"
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
 #include "ExceptionCode.h"

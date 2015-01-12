@@ -32,7 +32,6 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "ChangeVersionData.h"
-#include "DatabaseBackendContext.h"
 #include "DatabaseCallback.h"
 #include "DatabaseContext.h"
 #include "DatabaseManager.h"
@@ -71,10 +70,10 @@ PassRefPtr<Database> Database::create(ScriptExecutionContext*, PassRefPtr<Databa
     return static_cast<Database*>(backend.get());
 }
 
-Database::Database(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
+Database::Database(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : DatabaseBackend(databaseContext.get(), name, expectedVersion, displayName, estimatedSize)
     , m_scriptExecutionContext(databaseContext->scriptExecutionContext())
-    , m_databaseContext(DatabaseBackend::databaseContext()->frontend())
+    , m_databaseContext(databaseContext)
     , m_deleted(false)
 {
     m_databaseThreadSecurityOrigin = m_contextThreadSecurityOrigin->isolatedCopy();

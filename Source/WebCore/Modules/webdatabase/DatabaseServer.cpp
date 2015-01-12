@@ -30,7 +30,7 @@
 
 #include "Database.h"
 #include "DatabaseBackend.h"
-#include "DatabaseBackendContext.h"
+#include "DatabaseContext.h"
 #include "DatabaseTracker.h"
 
 namespace WebCore {
@@ -110,12 +110,12 @@ bool DatabaseServer::deleteDatabase(SecurityOrigin* origin, const String& name)
     return DatabaseTracker::tracker().deleteDatabase(origin, name);
 }
 
-void DatabaseServer::interruptAllDatabasesForContext(const DatabaseBackendContext* context)
+void DatabaseServer::interruptAllDatabasesForContext(const DatabaseContext* context)
 {
     DatabaseTracker::tracker().interruptAllDatabasesForContext(context);
 }
 
-PassRefPtr<DatabaseBackendBase> DatabaseServer::openDatabase(RefPtr<DatabaseBackendContext>& backendContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError &error, String& errorMessage,
+PassRefPtr<DatabaseBackendBase> DatabaseServer::openDatabase(RefPtr<DatabaseContext>& backendContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError &error, String& errorMessage,
     OpenAttempt attempt)
 {
     RefPtr<DatabaseBackendBase> database;
@@ -134,7 +134,7 @@ PassRefPtr<DatabaseBackendBase> DatabaseServer::openDatabase(RefPtr<DatabaseBack
     return database.release();
 }
 
-PassRefPtr<DatabaseBackendBase> DatabaseServer::createDatabase(RefPtr<DatabaseBackendContext>& backendContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+PassRefPtr<DatabaseBackendBase> DatabaseServer::createDatabase(RefPtr<DatabaseContext>& backendContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
     RefPtr<DatabaseBackendBase> database = adoptRef(new Database(backendContext, name, expectedVersion, displayName, estimatedSize));
 

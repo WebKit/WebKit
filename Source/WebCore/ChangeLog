@@ -1,3 +1,48 @@
+2015-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Merge DatabaseBackendContext into DatabaseContext
+        https://bugs.webkit.org/show_bug.cgi?id=140365
+
+        Reviewed by Antti Koivisto.
+
+        * CMakeLists.txt:
+        * Modules/webdatabase/AbstractDatabaseServer.h:
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::Database):
+        * Modules/webdatabase/Database.h:
+        * Modules/webdatabase/DatabaseBackend.cpp:
+        (WebCore::DatabaseBackend::DatabaseBackend):
+        * Modules/webdatabase/DatabaseBackend.h:
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::DatabaseBackendBase::DatabaseBackendBase):
+        * Modules/webdatabase/DatabaseBackendBase.h:
+        (WebCore::DatabaseBackendBase::databaseContext):
+        * Modules/webdatabase/DatabaseBackendContext.cpp: Removed.
+        * Modules/webdatabase/DatabaseBackendContext.h: Removed.
+        * Modules/webdatabase/DatabaseContext.cpp:
+        (WebCore::DatabaseContext::securityOrigin):
+        (WebCore::DatabaseContext::isContextThread):
+        (WebCore::DatabaseContext::backend): Deleted.
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabaseBackend):
+        (WebCore::DatabaseManager::interruptAllDatabasesForContext):
+        * Modules/webdatabase/DatabaseServer.cpp:
+        (WebCore::DatabaseServer::interruptAllDatabasesForContext):
+        (WebCore::DatabaseServer::openDatabase):
+        (WebCore::DatabaseServer::createDatabase):
+        * Modules/webdatabase/DatabaseServer.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::canEstablishDatabase):
+        (WebCore::DatabaseTracker::retryCanEstablishDatabase):
+        (WebCore::DatabaseTracker::interruptAllDatabasesForContext):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * Modules/webdatabase/SQLTransactionBackend.cpp:
+        * Modules/webdatabase/SQLTransactionClient.cpp:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2015-01-12  Jer Noble  <jer.noble@apple.com>
 
         defaultPlaybackRate not respected when set before source is loaded

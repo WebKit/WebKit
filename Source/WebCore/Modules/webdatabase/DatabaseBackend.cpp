@@ -31,7 +31,7 @@
 #include "ChangeVersionData.h"
 #include "ChangeVersionWrapper.h"
 #include "Database.h"
-#include "DatabaseBackendContext.h"
+#include "DatabaseContext.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
+DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : DatabaseBackendBase(databaseContext, name, expectedVersion, displayName, estimatedSize)
     , m_transactionInProgress(false)
     , m_isTransactionQueueEnabled(true)

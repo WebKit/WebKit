@@ -45,7 +45,7 @@ public:
 
     virtual String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist);
 
-    virtual PassRefPtr<DatabaseBackendBase> openDatabase(RefPtr<DatabaseBackendContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt);
+    virtual PassRefPtr<DatabaseBackendBase> openDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt);
 
     virtual bool hasEntryForOrigin(SecurityOrigin*);
     virtual void origins(Vector<RefPtr<SecurityOrigin>>& result);
@@ -61,10 +61,10 @@ public:
     virtual bool deleteOrigin(SecurityOrigin*);
     virtual bool deleteDatabase(SecurityOrigin*, const String& name);
 
-    virtual void interruptAllDatabasesForContext(const DatabaseBackendContext*);
+    virtual void interruptAllDatabasesForContext(const DatabaseContext*);
 
 protected:
-    virtual PassRefPtr<DatabaseBackendBase> createDatabase(RefPtr<DatabaseBackendContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
+    virtual PassRefPtr<DatabaseBackendBase> createDatabase(RefPtr<DatabaseContext>&, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
 };
 
 } // namespace WebCore
