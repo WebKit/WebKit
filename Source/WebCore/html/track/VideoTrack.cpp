@@ -217,7 +217,8 @@ void VideoTrack::setLanguage(const AtomicString& language)
 
     // 4. Queue a task to fire a simple event named change at the VideoTrackList object referenced by
     // the videoTracks attribute on the HTMLMediaElement.
-    mediaElement()->videoTracks()->scheduleChangeEvent();
+    if (mediaElement()->videoTracks())
+        mediaElement()->videoTracks()->scheduleChangeEvent();
 }
 #endif
 
