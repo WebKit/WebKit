@@ -3674,13 +3674,13 @@ static bool inContainingBlockChain(RenderLayer* startLayer, RenderLayer* endLaye
 
 void RenderLayer::clipToRect(const LayerPaintingInfo& paintingInfo, GraphicsContext* context, const ClipRect& clipRect, BorderRadiusClippingRule rule)
 {
+    float deviceScaleFactor = renderer().document().deviceScaleFactor();
+
     bool needsClipping = clipRect.rect() != paintingInfo.paintDirtyRect;
     if (needsClipping || clipRect.affectedByRadius())
         context->save();
 
-    float deviceScaleFactor = renderer().document().deviceScaleFactor();
-    bool layerHasBorderRadius = renderer().style().hasBorderRadius();
-    if (needsClipping && !layerHasBorderRadius) {
+    if (needsClipping) {
         LayoutRect adjustedClipRect = clipRect.rect();
         adjustedClipRect.move(paintingInfo.subpixelAccumulation);
         context->clip(snapRectToDevicePixels(adjustedClipRect, deviceScaleFactor));

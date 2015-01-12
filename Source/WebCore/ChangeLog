@@ -1,3 +1,20 @@
+2014-11-20  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (174986): CSS clip property is ignored when border-radius is present.
+        https://bugs.webkit.org/show_bug.cgi?id=138935
+        rdar://problem/18965984
+
+        Reviewed by Simon Fraser.
+
+        Revert back to r163382 and fix bug 127729 properly. Save the graphics context when paint and clip rects are
+        the same, but the clip rect has radius.
+        Each iteration on ::clipRect() from r163382 onwards just introduced yet another regression.
+
+        Test: fast/clip/css-clip-does-not-work-when-border-radius-is-present.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::clipToRect):
+
 2014-11-20  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r172854): Web Viewer in FileMaker does not render a Base64 encoded animated-GIF
