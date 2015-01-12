@@ -44,7 +44,10 @@ typedef NS_ENUM(NSInteger, WebViewInsertAction) {
     WebViewInsertActionDropped,
 };
 
-@interface NSObject (WebViewEditingDelegate)
+@protocol WebEditingDelegate <NSObject>
+
+@optional
+
 - (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range;
 - (BOOL)webView:(WebView *)webView shouldEndEditingInDOMRange:(DOMRange *)range;
 - (BOOL)webView:(WebView *)webView shouldInsertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;

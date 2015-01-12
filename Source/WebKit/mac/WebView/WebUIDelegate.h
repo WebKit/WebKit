@@ -160,7 +160,9 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
     other aspects of web pages. These methods are used to open new
     windows and control aspects of existing windows.
 */
-@interface NSObject (WebUIDelegate)
+@protocol WebUIDelegate <NSObject>
+
+@optional
 
 /*!
     @method webView:createWebViewWithRequest:

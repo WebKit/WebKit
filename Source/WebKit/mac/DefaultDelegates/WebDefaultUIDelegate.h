@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "WebUIDelegate.h"
 
-@interface WebDefaultUIDelegate : NSObject
+@interface WebDefaultUIDelegate : NSObject <WebUIDelegate>
 {
 #if !PLATFORM(IOS)
     IBOutlet NSMenu *defaultMenu;
