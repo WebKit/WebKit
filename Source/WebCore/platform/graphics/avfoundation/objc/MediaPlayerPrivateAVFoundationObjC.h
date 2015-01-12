@@ -177,8 +177,8 @@ private:
     virtual long assetErrorCode() const;
 
     virtual void checkPlayability();
-    virtual void updateRate();
-    virtual float rate() const;
+    virtual void setRateDouble(double) override;
+    virtual double rate() const;
     virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance);
     virtual unsigned long long totalBytes() const;
     virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const;

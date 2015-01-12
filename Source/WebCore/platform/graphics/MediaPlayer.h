@@ -262,6 +262,8 @@ public:
 
     virtual bool mediaPlayerIsInMediaDocument() const { return false; }
     virtual void mediaPlayerEngineFailedToLoad() const { }
+
+    virtual double mediaPlayerRequestedPlaybackRate() const { return 0; }
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -364,6 +366,7 @@ public:
 
     double rate() const;
     void setRate(double);
+    double requestedRate() const;
 
     bool preservesPitch() const;
     void setPreservesPitch(bool);
@@ -595,7 +598,6 @@ private:
     IntSize m_size;
     Preload m_preload;
     bool m_visible;
-    double m_rate;
     double m_volume;
     bool m_muted;
     bool m_preservesPitch;

@@ -171,7 +171,6 @@ protected:
     virtual void seek(const MediaTime&) override;
     virtual void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override;
     virtual bool seeking() const override;
-    virtual void setRate(float) override;
     virtual bool paused() const override;
     virtual void setVolume(float) = 0;
     virtual bool hasClosedCaptions() const override { return m_cachedHasCaptions; }
@@ -232,8 +231,6 @@ protected:
     virtual void platformPlay() = 0;
     virtual void platformPause() = 0;
     virtual void checkPlayability() = 0;
-    virtual void updateRate() = 0;
-    virtual float rate() const = 0;
     virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) = 0;
     virtual unsigned long long totalBytes() const = 0;
     virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const = 0;
@@ -277,7 +274,7 @@ protected:
     MediaRenderingMode preferredRenderingMode() const;
 
     bool metaDataAvailable() const { return m_readyState >= MediaPlayer::HaveMetadata; }
-    float requestedRate() const { return m_requestedRate; }
+    double requestedRate() const;
     MediaTime maxTimeLoaded() const;
     bool isReadyForVideoSetup() const;
     virtual void setUpVideoRendering();
@@ -331,7 +328,6 @@ private:
     mutable MediaTime m_cachedDuration;
     MediaTime m_reportedDuration;
     mutable MediaTime m_maxTimeLoadedAtLastDidLoadingProgress;
-    float m_requestedRate;
     mutable int m_delayCallbacks;
     int m_delayCharacteristicsChangedNotification;
     bool m_mainThreadCallPending;

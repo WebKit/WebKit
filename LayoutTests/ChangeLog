@@ -1,3 +1,13 @@
+2015-01-12  Jer Noble  <jer.noble@apple.com>
+
+        defaultPlaybackRate not respected when set before source is loaded
+        https://bugs.webkit.org/show_bug.cgi?id=140282
+
+        Reviewed by Eric Carlson.
+
+        * media/video-defaultplaybackrate-before-load-expected.txt: Added.
+        * media/video-defaultplaybackrate-before-load.html: Added.
+
 2015-01-12  Andrzej Badowski  <a.badowski@samsung.com>
 
         AX: [ATK] Whether to show the title attribute, if there is a label with the attribute for?

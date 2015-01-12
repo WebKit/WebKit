@@ -90,8 +90,8 @@ private:
     virtual MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const;
 
     virtual void checkPlayability();
-    virtual void updateRate();
-    virtual float rate() const;
+    virtual void setRate(float) override;
+    virtual double rate() const override;
     virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance);
     virtual unsigned long long totalBytes() const;
     virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const;

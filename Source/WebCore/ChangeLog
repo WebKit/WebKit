@@ -1,3 +1,68 @@
+2015-01-12  Jer Noble  <jer.noble@apple.com>
+
+        defaultPlaybackRate not respected when set before source is loaded
+        https://bugs.webkit.org/show_bug.cgi?id=140282
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-defaultplaybackrate-before-load.html
+
+        When the HTMLMediaElement is notified that the media player's rate has changed, it asks
+        for the rate from MediaPlayer. However, MediaPlayer never requests the playback rate
+        from the underlying MediaPlayerPrivate; it just returns the last rate which was set, or
+        1 if no rate was set. HTMLMediaElement then sets its playbackRate to the returned
+        value. So the end result is that the value from defaultPlaybackRate is overwritten by
+        the default value of 1 in MediaPlayer.
+
+        Rather than caching the requested rate in MediaPlayer, cache the value reported by
+        MediaPlayer inside HTMLMediaElement. And instead of returning the reported playback
+        rate from HTMLMediaElement.playbackRate, just return the last value set. The reported
+        value is still used for estimating the current time during playback.
+
+        Add MediaPlayerPrivate interface method to return the current playback rate.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_reportedPlaybackRate.
+        (WebCore::HTMLMediaElement::effectivePlaybackRate): Return m_reportedPlaybackRate.
+        (WebCore::HTMLMediaElement::requestedPlaybackRate): Return m_playbackRate.
+        (WebCore::HTMLMediaElement::updatePlaybackRate): Use requestedPlaybackRate() instead
+            of effectivePlaybackRate();
+        (WebCore::HTMLMediaElement::ended): Ditto.
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired): Ditto.
+        (WebCore::HTMLMediaElement::endedPlayback): Ditto.
+        (WebCore::HTMLMediaElement::updatePlayState): Ditto.
+        (WebCore::HTMLMediaElement::mediaPlayerRateChanged): Set m_reportedPlaybackRate.
+        (WebCore::HTMLMediaElement::mediaPlayerRequestedPlaybackRate): Return
+            requestedPlaybackRate() if playing and 0 if not.
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::MediaPlayer): Removed m_rate.
+        (WebCore::MediaPlayer::rate): Pass to MediaPlayerPrivate.
+        (WebCore::MediaPlayer::setRate): Do not cache the rate.
+        (WebCore::MediaPlayer::requestedRate): Added; ask HTMLMediaElement.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerRequestedPlaybackRate): Added.
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::rate): Added.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+            Do not cache the requested rate.
+        (WebCore::MediaPlayerPrivateAVFoundation::requestedRate): Pass to MediaPlayer.
+        (WebCore::MediaPlayerPrivateAVFoundation::setRate): Deleted.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::requestedRate): Deleted.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::setRate): Renamed from updateRate.
+        (WebCore::MediaPlayerPrivateAVFoundationCF::rate): Fetch the rate from the player.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setRateDouble): Renamed from updateRate.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::rate): Fetch the rate from the player.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::rate): Fetch the rate from the QTMovie.
+
 2015-01-11  Anders Carlsson  <andersca@apple.com>
 
         Merge DatabaseBase into Database

@@ -1253,15 +1253,16 @@ void MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible(bool closedCap
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible(%p) - set to %s", this, boolString(closedCaptionsVisible));
 }
 
-void MediaPlayerPrivateAVFoundationObjC::updateRate()
+void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
+
 {
     setDelayCallbacks(true);
-    m_cachedRate = requestedRate();
-    [m_avPlayer.get() setRate:requestedRate()];
+    m_cachedRate = rate;
+    [m_avPlayer.get() setRate:rate];
     setDelayCallbacks(false);
 }
 
-float MediaPlayerPrivateAVFoundationObjC::rate() const
+double MediaPlayerPrivateAVFoundationObjC::rate() const
 {
     if (!metaDataAvailable())
         return 0;
