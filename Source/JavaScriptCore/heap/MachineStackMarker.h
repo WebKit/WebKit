@@ -39,13 +39,13 @@ namespace JSC {
         MachineThreads(Heap*);
         ~MachineThreads();
 
-        void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackCurrent);
+        void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&);
 
         JS_EXPORT_PRIVATE void makeUsableFromMultipleThreads();
         JS_EXPORT_PRIVATE void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
 
     private:
-        void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, void* stackCurrent);
+        void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&);
 
         class Thread;
 

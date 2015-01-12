@@ -1,3 +1,26 @@
+2015-01-12  Michael Saboff  <msaboff@apple.com>
+
+        Local JSArray* "keys" in objectConstructorKeys() is not marked during garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=140348
+
+        Reviewed by Mark Lam.
+
+        Move the address of the local variable that is used to demarcate the top of the stack for 
+        conservative roots down to MachineThreads::gatherFromCurrentThread() since it also gets
+        the register values using setjmp().  That way we don't lose any callee save register
+        contents between Heap::markRoots(), where it was set, and gatherFromCurrentThread().
+        If we lose any JSObject* that are only in callee save registers, they will be GC'ed
+        erroneously.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::gatherStackRoots):
+        * heap/Heap.h:
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::gatherFromCurrentThread):
+        (JSC::MachineThreads::gatherConservativeRoots):
+        * heap/MachineStackMarker.h:
+
 2015-01-11  Eric Carlson  <eric.carlson@apple.com>
 
         Fix typo in testate.c error messages
