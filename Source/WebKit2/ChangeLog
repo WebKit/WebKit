@@ -1,3 +1,14 @@
+2015-01-11  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [CoordinatedGraphics] Suspend or resume when visibility is changed
+        https://bugs.webkit.org/show_bug.cgi?id=140285
+
+        Reviewed by Gyuyoung Kim.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.cpp: Copied the logic from TiledCoreAnimationDrawingArea.
+        (WebKit::CoordinatedDrawingArea::viewStateDidChange):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedDrawingArea.h:
+
 2015-01-10  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [ThreadedCompositor] Prevent excessive rendering call.

@@ -608,6 +608,16 @@ void CoordinatedDrawingArea::didReceiveCoordinatedLayerTreeHostMessage(IPC::Conn
 }
 #endif
 
+void CoordinatedDrawingArea::viewStateDidChange(ViewState::Flags changed, bool, const Vector<uint64_t>&)
+{
+    if (changed & ViewState::IsVisible) {
+        if (m_webPage.isVisible())
+            resumePainting();
+        else
+            suspendPainting();
+    }
+}
+
 void CoordinatedDrawingArea::attachViewOverlayGraphicsLayer(WebCore::Frame* frame, WebCore::GraphicsLayer* viewOverlayRootLayer)
 {
     if (!frame->isMainFrame())
