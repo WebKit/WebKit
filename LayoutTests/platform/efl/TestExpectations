@@ -604,7 +604,6 @@ Bug(EFL) js/dom/create-lots-of-workers.html [ Crash Failure Pass ]
 Bug(EFL) media/track/track-element-load-event.html [ Crash Failure Pass ]
 
 webkit.org/b/85603 fast/forms/textarea-placeholder-set-attribute.html [ Failure ImageOnlyFailure Pass ]
-webkit.org/b/59801 fast/workers/storage/use-same-database-in-page-and-workers.html [ Failure Pass ]
 webkit.org/b/86078 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure Pass ]
 webkit.org/b/86079 http/tests/misc/link-rel-icon-beforeload.html [ Failure Pass ]
 webkit.org/b/86082 security/block-test.html [ Failure Pass ]

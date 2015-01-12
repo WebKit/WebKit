@@ -459,8 +459,6 @@ http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
 
 # Flaky tests (slow)
-fast/workers/storage/interrupt-database.html
-fast/workers/storage/use-same-database-in-page-and-workers.html
 http/tests/cache/subresource-expiration-1.html
 http/tests/cache/subresource-expiration-2.html
 
@@ -521,12 +519,6 @@ transitions/min-max-width-height-transitions.html
 transitions/text-indent-transition.html
 
 # These storage tests fail in WebKit2 on the bot, but not running locally
-fast/workers/storage/executesql-accepts-only-one-statement-sync.html
-fast/workers/storage/change-version-handle-reuse-sync.html
-fast/workers/storage/multiple-databases-garbage-collection.html
-fast/workers/storage/open-database-creation-callback-sync.html
-fast/workers/storage/open-database-inputs-sync.html
-fast/workers/storage/sql-exception-codes-sync.html
 storage/websql/multiple-databases-garbage-collection.html
 
 # Crashes the WebProcess
