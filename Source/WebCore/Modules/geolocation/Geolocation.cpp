@@ -287,7 +287,7 @@ void Geolocation::suspend(ReasonForSuspension reason)
 
 void Geolocation::resume()
 {
-#if PLATFORM(IOS)
+#if USE(WEB_THREAD)
     ASSERT(WebThreadIsLockedOrDisabled());
 #endif
     ActiveDOMObject::resume();

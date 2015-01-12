@@ -1,5 +1,16 @@
 2015-01-12  Andreas Kling  <akling@apple.com>
 
+        Guard web thread stuff with USE(WEB_THREAD) instead of PLATFORM(IOS).
+
+        Dan pointed out that we should guard WebThreadIsLockedOrDisabled() with
+        USE(WEB_THREAD) to communicate our ambitions to someday have an iOS
+        build of WebKit that doesn't need any of that.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::resume):
+
+2015-01-12  Andreas Kling  <akling@apple.com>
+
         Fix build for non-iOS platforms. :|
 
         * Modules/geolocation/Geolocation.cpp:
