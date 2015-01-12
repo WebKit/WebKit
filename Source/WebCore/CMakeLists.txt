@@ -1262,7 +1262,6 @@ set(WebCore_SOURCES
     css/RuleSet.cpp
     css/SVGCSSComputedStyleDeclaration.cpp
     css/SVGCSSParser.cpp
-    css/SVGCSSStyleSelector.cpp
     css/SelectorChecker.cpp
     css/SelectorFilter.cpp
     css/SourceSizeList.cpp

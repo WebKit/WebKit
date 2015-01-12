@@ -4596,7 +4596,6 @@
 		B2227AF60D00BF220071B782 /* SVGZoomAndPan.h in Headers */ = {isa = PBXBuildFile; fileRef = B22279600D00BF210071B782 /* SVGZoomAndPan.h */; };
 		B2227B050D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2227B000D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp */; };
 		B2227B060D00BFF10071B782 /* SVGCSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2227B010D00BFF10071B782 /* SVGCSSParser.cpp */; };
-		B2227B080D00BFF10071B782 /* SVGCSSStyleSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2227B030D00BFF10071B782 /* SVGCSSStyleSelector.cpp */; };
 		B222F6980AB771950022EFAD /* JSSVGAngle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222F6960AB771950022EFAD /* JSSVGAngle.cpp */; };
 		B222F6990AB771950022EFAD /* JSSVGAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = B222F6970AB771950022EFAD /* JSSVGAngle.h */; };
 		B222F69C0AB771B80022EFAD /* JSSVGElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B222F69A0AB771B80022EFAD /* JSSVGElement.cpp */; };
@@ -11984,7 +11983,6 @@
 		B22279610D00BF210071B782 /* SVGZoomAndPan.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGZoomAndPan.idl; sourceTree = "<group>"; };
 		B2227B000D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCSSComputedStyleDeclaration.cpp; sourceTree = "<group>"; };
 		B2227B010D00BFF10071B782 /* SVGCSSParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCSSParser.cpp; sourceTree = "<group>"; };
-		B2227B030D00BFF10071B782 /* SVGCSSStyleSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCSSStyleSelector.cpp; sourceTree = "<group>"; };
 		B2227B040D00BFF10071B782 /* SVGCSSValueKeywords.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGCSSValueKeywords.in; sourceTree = "<group>"; };
 		B222F6960AB771950022EFAD /* JSSVGAngle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAngle.cpp; sourceTree = "<group>"; };
 		B222F6970AB771950022EFAD /* JSSVGAngle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAngle.h; sourceTree = "<group>"; };
@@ -22269,7 +22267,6 @@
 				93CA4CA209DF93FA00DF8677 /* svg.css */,
 				B2227B000D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp */,
 				B2227B010D00BFF10071B782 /* SVGCSSParser.cpp */,
-				B2227B030D00BFF10071B782 /* SVGCSSStyleSelector.cpp */,
 				B2227B040D00BFF10071B782 /* SVGCSSValueKeywords.in */,
 				FB484F4A171F821E00040755 /* TransformFunctions.cpp */,
 				FB484F4B171F821E00040755 /* TransformFunctions.h */,
@@ -29655,7 +29652,6 @@
 				B22279A40D00BF220071B782 /* SVGComponentTransferFunctionElement.cpp in Sources */,
 				B2227B050D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp in Sources */,
 				B2227B060D00BFF10071B782 /* SVGCSSParser.cpp in Sources */,
-				B2227B080D00BFF10071B782 /* SVGCSSStyleSelector.cpp in Sources */,
 				B22279A70D00BF220071B782 /* SVGCursorElement.cpp in Sources */,
 				B22279AD0D00BF220071B782 /* SVGDefsElement.cpp in Sources */,
 				B22279B00D00BF220071B782 /* SVGDescElement.cpp in Sources */,

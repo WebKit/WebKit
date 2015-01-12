@@ -36,7 +36,7 @@ class StyleResolver;
 
 class StyleBuilder {
 public:
-    static bool applyProperty(CSSPropertyID, StyleResolver&, CSSValue&, bool isInitial, bool isInherit);
+    static void applyProperty(CSSPropertyID, StyleResolver&, CSSValue&, bool isInitial, bool isInherit);
 };
 
 } // namespace WebCore

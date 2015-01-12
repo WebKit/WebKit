@@ -8,11 +8,6 @@
 // http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
 //
 // StyleBuilder options:
-// * LegacyStyleBuilder:
-// Indicates to makeprop.pl that this property should not be generated
-// in the new StyleBuilder.cpp. This option is temporary until all
-// CSS properties are generated.
-//
 // * TypeName:
 // Overrides the type of the setter method argument on RenderStyle. By
 // default, 'E' + PropertyId is used (e.g. EBorderCollapse). This option
@@ -162,7 +157,7 @@ background-repeat [Shorthand]
 background-repeat-x [FillLayerProperty, TypeName=EFillRepeat, NameForMethods=RepeatX]
 background-repeat-y [FillLayerProperty, TypeName=EFillRepeat, NameForMethods=RepeatY]
 background-size [FillLayerProperty, TypeName=EFillSize, NameForMethods=Size]
-baseline-shift [LegacyStyleBuilder, SVG]
+baseline-shift [SVG, Custom=Value]
 border [Shorthand]
 border-bottom [Shorthand]
 border-bottom-color [VisitedLinkColorSupport, Initial=invalidColor]
@@ -229,7 +224,7 @@ cy [Initial=initialZeroLength, Converter=Length]
 dominant-baseline [SVG]
 empty-cells [Inherited, TypeName=EEmptyCell]
 enable-background [SkipBuilder]
-fill [Inherited, LegacyStyleBuilder, SVG]
+fill [Inherited, SVG, Custom=All]
 fill-opacity [Inherited, SVG, Converter=Opacity]
 fill-rule [Inherited, SVG, TypeName=WindRule]
 filter [SVG, Converter=SVGURIReference, NameForMethods=FilterResource]
@@ -260,7 +255,7 @@ margin-bottom [Initial=initialMargin, Converter=LengthOrAuto]
 margin-left [Initial=initialMargin, Converter=LengthOrAuto]
 margin-right [Initial=initialMargin, Converter=LengthOrAuto]
 margin-top [Initial=initialMargin, Converter=LengthOrAuto]
-marker [Inherited, LegacyStyleBuilder, SVG]
+marker [Inherited, Shorthand]
 marker-end [Inherited, SVG, Converter=SVGURIReference, NameForMethods=MarkerEndResource]
 marker-mid [Inherited, SVG, Converter=SVGURIReference, NameForMethods=MarkerMidResource]
 marker-start [Inherited, SVG, Converter=SVGURIReference, NameForMethods=MarkerStartResource]
@@ -308,7 +303,7 @@ size [Custom=All]
 src [SkipBuilder]
 stop-color [SVG, Converter=SVGColor]
 stop-opacity [SVG, Converter=Opacity]
-stroke [Inherited, LegacyStyleBuilder, SVG]
+stroke [Inherited, SVG, Custom=All]
 stroke-dasharray [Inherited, SVG, Converter=StrokeDashArray, NameForMethods=StrokeDashArray]
 stroke-dashoffset [Inherited, NameForMethods=StrokeDashOffset, Initial=initialZeroLength, Converter=Length]
 stroke-linecap [Inherited, SVG, NameForMethods=CapStyle, TypeName=LineCap]
@@ -575,7 +570,7 @@ order [TypeName=int]
 -webkit-scroll-snap-destination [Converter=SnapCoordinatePair]
 -webkit-scroll-snap-coordinate [Converter=ScrollSnapCoordinates, NameForMethods=ScrollSnapCoordinates]
 #endif
--webkit-svg-shadow [LegacyStyleBuilder, SVG]
+-webkit-svg-shadow [SVG, Custom=All]
 -webkit-text-combine [Inherited, TypeName=TextCombine]
 -epub-text-combine = -webkit-text-combine
 #if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT

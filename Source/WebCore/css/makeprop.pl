@@ -87,21 +87,12 @@ foreach (@NAMES) {
     push @aliases, $_;
   } else {
     $nameIsInherited{$_} = 0;
-    my $isUsingLegacyStyleBuilder = 0;
     $propertiesWithStyleBuilderOptions{$_} = {};
     foreach my $option (@options) {
       my ($optionName, $optionValue) = split(/=/, $option);
       if ($optionName eq "Inherited") {
         $nameIsInherited{$_} = 1;
-      } elsif ($optionName eq "LegacyStyleBuilder") {
-        # FIXME: This is temporary. Eventually, all properties will use the new
-        # style builder and this option will go away.
-        $isUsingLegacyStyleBuilder = 1;
-        delete $propertiesWithStyleBuilderOptions{$_};
       } elsif ($styleBuilderOptions{$optionName}) {
-        # FIXME: Temporary until all SVG properties have been ported to the new StyleBuilder.
-        next if ($optionName eq "SVG" && $isUsingLegacyStyleBuilder);
-        die "\"" . $optionName . "\" option was used with \"LegacyStyleBuilder\" option for " . $_ . " property." if $isUsingLegacyStyleBuilder;
         $propertiesWithStyleBuilderOptions{$_}{$optionName} = $optionValue;
       } else {
         die "Unrecognized \"" . $optionName . "\" option for " . $_ . " property.";
@@ -446,9 +437,6 @@ sub getFillLayerMapfunction {
 
 
 foreach my $name (@names) {
-  # Skip properties still using the legacy style builder.
-  next unless exists($propertiesWithStyleBuilderOptions{$name});
-
   my $nameForMethods = getNameForMethods($name);
   $nameForMethods =~ s/Webkit//g;
   if (exists($propertiesWithStyleBuilderOptions{$name}{"NameForMethods"})) {
@@ -858,9 +846,6 @@ public:
 EOF
 
 foreach my $name (@names) {
-  # Skip properties still using the legacy style builder.
-  next unless exists($propertiesWithStyleBuilderOptions{$name});
-
   # Skip Shorthand properties and properties that do not use the StyleBuilder.
   next if (exists $propertiesWithStyleBuilderOptions{$name}{"Shorthand"});
   next if (exists $propertiesWithStyleBuilderOptions{$name}{"SkipBuilder"});
@@ -880,17 +865,14 @@ foreach my $name (@names) {
 print STYLEBUILDER << "EOF";
 };
 
-bool StyleBuilder::applyProperty(CSSPropertyID property, StyleResolver& styleResolver, CSSValue& value, bool isInitial, bool isInherit)
+void StyleBuilder::applyProperty(CSSPropertyID property, StyleResolver& styleResolver, CSSValue& value, bool isInitial, bool isInherit)
 {
     switch (property) {
     case CSSPropertyInvalid:
-        return true;
+        break;
 EOF
 
 foreach my $name (@names) {
-  # Skip properties still using the legacy style builder.
-  next unless exists($propertiesWithStyleBuilderOptions{$name});
-
   print STYLEBUILDER "    case CSSProperty" . $nameToId{$name} . ":\n";
   if (exists $propertiesWithStyleBuilderOptions{$name}{"Shorthand"}) {
     print STYLEBUILDER "        ASSERT(isExpandedShorthand(property));\n";
@@ -903,12 +885,10 @@ foreach my $name (@names) {
     print STYLEBUILDER "        else\n";
     print STYLEBUILDER "            " . getScopeForFunction($name, "Value") . "::applyValue" . $nameToId{$name} . "(styleResolver, value);\n";
   }
-  print STYLEBUILDER "        return true;\n";
+  print STYLEBUILDER "        break;\n";
 }
 
 print STYLEBUILDER << "EOF";
-        default:
-            return false;
     };
 }
 

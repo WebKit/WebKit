@@ -1987,11 +1987,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         state.parentStyle()->setHasExplicitlyInheritedProperties();
 
     // Use the generated StyleBuilder.
-    if (StyleBuilder::applyProperty(id, *this, *value, isInitial, isInherit))
-        return;
-
-    // Try the SVG properties that haven't been ported to the new StyleBuilder yet.
-    applySVGProperty(id, value);
+    StyleBuilder::applyProperty(id, *this, *value, isInitial, isInherit);
 }
 
 PassRefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValue& value)

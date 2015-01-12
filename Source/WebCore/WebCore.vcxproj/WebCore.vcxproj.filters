@@ -2304,9 +2304,6 @@
     <ClCompile Include="..\css\SVGCSSParser.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\css\SVGCSSStyleSelector.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="..\css\TransformFunctions.cpp">
       <Filter>css</Filter>
     </ClCompile>

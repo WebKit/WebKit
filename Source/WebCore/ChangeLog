@@ -1,3 +1,45 @@
+2015-01-11  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy SVGCSSStyleSelector.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=140342
+
+        Reviewed by Antti Koivisto.
+
+        Drop legacy SVGCSSStyleSelector.cpp by porting the remaining SVG CSS
+        properties to the generated StyleBuilder. This patch also removes
+        support for the "LegacyStyleBuilder" option in CSSPropertyNames.in
+        as all properties have now been ported over.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        Drop SVGCSSStyleSelector.cpp file as it was removed.
+
+        * css/CSSPropertyNames.in:
+        * css/SVGCSSStyleSelector.cpp: Removed.
+        * css/StyleBuilder.h:
+        StyleBuilder::applyProperty() no longer need to return a boolean as
+        it now handles ALL CSS properties.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueBaselineShift):
+        (WebCore::StyleBuilderCustom::applyInitialFill):
+        (WebCore::StyleBuilderCustom::applyInheritFill):
+        (WebCore::StyleBuilderCustom::applyValueFill):
+        (WebCore::StyleBuilderCustom::applyInitialStroke):
+        (WebCore::StyleBuilderCustom::applyInheritStroke):
+        (WebCore::StyleBuilderCustom::applyValueStroke):
+        (WebCore::StyleBuilderCustom::applyInitialWebkitSvgShadow):
+        (WebCore::StyleBuilderCustom::applyInheritWebkitSvgShadow):
+        (WebCore::StyleBuilderCustom::applyValueWebkitSvgShadow):
+        Move 'fill', 'stroke' and '-webkit-svg-shadow' to the new
+        StyleBuilder.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * css/makeprop.pl:
+
 2015-01-11  Antti Koivisto  <antti@apple.com>
 
         Remove FontCachePurgePreventer

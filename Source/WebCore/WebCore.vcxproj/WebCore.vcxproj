@@ -9879,7 +9879,6 @@
     <ClCompile Include="..\css\StyleSheetList.cpp" />
     <ClCompile Include="..\css\SVGCSSComputedStyleDeclaration.cpp" />
     <ClCompile Include="..\css\SVGCSSParser.cpp" />
-    <ClCompile Include="..\css\SVGCSSStyleSelector.cpp" />
     <ClCompile Include="..\css\TransformFunctions.cpp" />
     <ClCompile Include="..\css\ViewportStyleResolver.cpp" />
     <ClCompile Include="..\css\WebKitCSSFilterValue.cpp" />
