@@ -1,3 +1,15 @@
+2014-11-28  Philippe Normand  <pnormand@igalia.com>
+
+        [CMake] Build failure against GStreamer git master
+        https://bugs.webkit.org/show_bug.cgi?id=138872
+
+        Reviewed by Csaba Osztrogon.
+
+        * Source/cmake/FindGStreamer.cmake: Simplified the
+        FIND_GSTREAMER_COMPONENT macro. Trust pkg-config for include
+        headers lookup, there's no need to do this manually. Also
+        explicitely check the version specified in GStreamer_FIND_VERSION.
+
 2014-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.4 release.
