@@ -97,10 +97,12 @@ typedef struct CGSRegionObject* CGRegionRef;
 #ifdef CGFLOAT_IS_DOUBLE
 #define CGRound(value) round((value))
 #define CGFloor(value) floor((value))
+#define CGCeiling(value) ceil((value))
 #define CGFAbs(value) fabs((value))
 #else
 #define CGRound(value) roundf((value))
 #define CGFloor(value) floorf((value))
+#define CGCeiling(value) ceilf((value))
 #define CGFAbs(value) fabsf((value))
 #endif
 

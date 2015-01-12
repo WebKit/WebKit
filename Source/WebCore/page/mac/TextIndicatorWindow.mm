@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "CoreGraphicsSPI.h"
 #import "GraphicsContext.h"
 #import "QuartzCoreSPI.h"
 #import "TextIndicator.h"
@@ -388,6 +389,9 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
         horizontalMargin = std::max(horizontalMargin, textBoundingRectInScreenCoordinates.size.width * (midBounceScale - 1) + horizontalMargin);
         verticalMargin = std::max(verticalMargin, textBoundingRectInScreenCoordinates.size.height * (midBounceScale - 1) + verticalMargin);
     }
+
+    horizontalMargin = CGCeiling(horizontalMargin);
+    verticalMargin = CGCeiling(verticalMargin);
 
     CGRect contentRect = CGRectInset(textBoundingRectInScreenCoordinates, -horizontalMargin, -verticalMargin);
     NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSIntegralRect(NSRectFromCGRect(contentRect)) styleMask:NSBorderlessWindowMask];
