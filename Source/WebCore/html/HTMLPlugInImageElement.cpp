@@ -334,6 +334,9 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
 
     m_snapshotImage = image;
 
+    if (!renderer())
+        return;
+
     if (renderer()->isSnapshottedPlugIn()) {
         toRenderSnapshottedPlugIn(renderer())->updateSnapshot(image);
         return;
