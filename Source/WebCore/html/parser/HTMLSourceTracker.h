@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Adam Barth. All Rights Reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +27,11 @@
 #ifndef HTMLSourceTracker_h
 #define HTMLSourceTracker_h
 
-#include "HTMLToken.h"
 #include "SegmentedString.h"
 
 namespace WebCore {
 
+class HTMLToken;
 class HTMLTokenizer;
 
 class HTMLSourceTracker {
@@ -38,15 +39,18 @@ class HTMLSourceTracker {
 public:
     HTMLSourceTracker();
 
-    // FIXME: Once we move "end" into HTMLTokenizer, rename "start" to
-    // something that makes it obvious that this method can be called multiple
-    // times.
-    void start(SegmentedString&, HTMLTokenizer*, HTMLToken&);
-    void end(SegmentedString&, HTMLTokenizer*, HTMLToken&);
+    void startToken(SegmentedString&, HTMLTokenizer&);
+    void endToken(SegmentedString&, HTMLTokenizer&);
 
-    String sourceForToken(const HTMLToken&);
+    String source(const HTMLToken&);
+    String source(const HTMLToken&, unsigned attributeStart, unsigned attributeEnd);
 
 private:
+    bool m_started { false };
+
+    unsigned m_tokenStart;
+    unsigned m_tokenEnd;
+
     SegmentedString m_previousSource;
     SegmentedString m_currentSource;
 

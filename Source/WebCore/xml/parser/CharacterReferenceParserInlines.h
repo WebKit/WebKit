@@ -31,20 +31,9 @@
 
 namespace WebCore {
 
-inline bool isHexDigit(UChar cc)
-{
-    return (cc >= '0' && cc <= '9') || (cc >= 'a' && cc <= 'f') || (cc >= 'A' && cc <= 'F');
-}
-
 inline void unconsumeCharacters(SegmentedString& source, const StringBuilder& consumedCharacters)
 {
-    if (consumedCharacters.length() == 1)
-        source.push(consumedCharacters[0]);
-    else if (consumedCharacters.length() == 2) {
-        source.push(consumedCharacters[0]);
-        source.push(consumedCharacters[1]);
-    } else
-        source.prepend(SegmentedString(consumedCharacters.toStringPreserveCapacity()));
+    source.pushBack(SegmentedString(consumedCharacters.toStringPreserveCapacity()));
 }
 
 template <typename ParserFunctions>
@@ -54,7 +43,7 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
     ASSERT(!notEnoughCharacters);
     ASSERT(decodedCharacter.isEmpty());
     
-    enum EntityState {
+    enum {
         Initial,
         Number,
         MaybeHexLowerCaseX,
@@ -62,111 +51,102 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
         Hex,
         Decimal,
         Named
-    };
-    EntityState entityState = Initial;
+    } state = Initial;
     UChar32 result = 0;
     bool overflow = false;
     const UChar32 highestValidCharacter = 0x10FFFF;
     StringBuilder consumedCharacters;
     
     while (!source.isEmpty()) {
-        UChar cc = source.currentChar();
-        switch (entityState) {
-        case Initial: {
-            if (cc == '\x09' || cc == '\x0A' || cc == '\x0C' || cc == ' ' || cc == '<' || cc == '&')
+        UChar character = source.currentChar();
+        switch (state) {
+        case Initial:
+            if (character == '\x09' || character == '\x0A' || character == '\x0C' || character == ' ' || character == '<' || character == '&')
                 return false;
-            if (additionalAllowedCharacter && cc == additionalAllowedCharacter)
+            if (additionalAllowedCharacter && character == additionalAllowedCharacter)
                 return false;
-            if (cc == '#') {
-                entityState = Number;
+            if (character == '#') {
+                state = Number;
                 break;
             }
-            if ((cc >= 'a' && cc <= 'z') || (cc >= 'A' && cc <= 'Z')) {
-                entityState = Named;
-                continue;
+            if (isASCIIAlpha(character)) {
+                state = Named;
+                goto Named;
             }
             return false;
-        }
-        case Number: {
-            if (cc == 'x') {
-                entityState = MaybeHexLowerCaseX;
+        case Number:
+            if (character == 'x') {
+                state = MaybeHexLowerCaseX;
                 break;
             }
-            if (cc == 'X') {
-                entityState = MaybeHexUpperCaseX;
+            if (character == 'X') {
+                state = MaybeHexUpperCaseX;
                 break;
             }
-            if (cc >= '0' && cc <= '9') {
-                entityState = Decimal;
-                continue;
+            if (isASCIIDigit(character)) {
+                state = Decimal;
+                goto Decimal;
             }
-            source.push('#');
+            source.pushBack(SegmentedString(ASCIILiteral("#")));
             return false;
-        }
-        case MaybeHexLowerCaseX: {
-            if (isHexDigit(cc)) {
-                entityState = Hex;
-                continue;
+        case MaybeHexLowerCaseX:
+            if (isASCIIHexDigit(character)) {
+                state = Hex;
+                goto Hex;
             }
-            source.push('#');
-            source.push('x');
+            source.pushBack(SegmentedString(ASCIILiteral("#x")));
             return false;
-        }
-        case MaybeHexUpperCaseX: {
-            if (isHexDigit(cc)) {
-                entityState = Hex;
-                continue;
+        case MaybeHexUpperCaseX:
+            if (isASCIIHexDigit(character)) {
+                state = Hex;
+                goto Hex;
             }
-            source.push('#');
-            source.push('X');
+            source.pushBack(SegmentedString(ASCIILiteral("#X")));
             return false;
-        }
-        case Hex: {
-            if (cc >= '0' && cc <= '9')
-                result = result * 16 + cc - '0';
-            else if (cc >= 'a' && cc <= 'f')
-                result = result * 16 + 10 + cc - 'a';
-            else if (cc >= 'A' && cc <= 'F')
-                result = result * 16 + 10 + cc - 'A';
-            else if (cc == ';') {
-                source.advanceAndASSERT(cc);
-                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
-                return true;
-            } else if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
-                return true;
-            } else {
-                unconsumeCharacters(source, consumedCharacters);
-                return false;
+        case Hex:
+        Hex:
+            if (isASCIIHexDigit(character)) {
+                result = result * 16 + toASCIIHexValue(character);
+                if (result > highestValidCharacter)
+                    overflow = true;
+                break;
             }
-            if (result > highestValidCharacter)
-                overflow = true;
-            break;
-        }
-        case Decimal: {
-            if (cc >= '0' && cc <= '9')
-                result = result * 10 + cc - '0';
-            else if (cc == ';') {
-                source.advanceAndASSERT(cc);
+            if (character == ';') {
+                source.advance();
                 decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
                 return true;
-            } else if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
-                return true;
-            } else {
-                unconsumeCharacters(source, consumedCharacters);
-                return false;
             }
-            if (result > highestValidCharacter)
-                overflow = true;
-            break;
+            if (ParserFunctions::acceptMalformed()) {
+                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
+                return true;
+            }
+            unconsumeCharacters(source, consumedCharacters);
+            return false;
+        case Decimal:
+        Decimal:
+            if (isASCIIDigit(character)) {
+                result = result * 10 + character - '0';
+                if (result > highestValidCharacter)
+                    overflow = true;
+                break;
+            }
+            if (character == ';') {
+                source.advance();
+                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
+                return true;
+            }
+            if (ParserFunctions::acceptMalformed()) {
+                decodedCharacter.append(ParserFunctions::legalEntityFor(overflow ? 0 : result));
+                return true;
+            }
+            unconsumeCharacters(source, consumedCharacters);
+            return false;
+        case Named:
+        Named:
+            return ParserFunctions::consumeNamedEntity(source, decodedCharacter, notEnoughCharacters, additionalAllowedCharacter, character);
         }
-        case Named: {
-            return ParserFunctions::consumeNamedEntity(source, decodedCharacter, notEnoughCharacters, additionalAllowedCharacter, cc);
-        }
-        }
-        consumedCharacters.append(cc);
-        source.advanceAndASSERT(cc);
+        consumedCharacters.append(character);
+        source.advance();
     }
     ASSERT(source.isEmpty());
     notEnoughCharacters = true;

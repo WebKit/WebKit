@@ -39,28 +39,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// This is a direct transcription of step 4 from:
-// https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
-static HTMLTokenizer::State tokenizerStateForContextElement(Element& contextElement, bool reportErrors, const HTMLParserOptions& options)
-{
-    const QualifiedName& contextTag = contextElement.tagQName();
-
-    if (contextTag.matches(titleTag) || contextTag.matches(textareaTag))
-        return HTMLTokenizer::RCDATAState;
-    if (contextTag.matches(styleTag)
-        || contextTag.matches(xmpTag)
-        || contextTag.matches(iframeTag)
-        || (contextTag.matches(noembedTag) && options.pluginsEnabled)
-        || (contextTag.matches(noscriptTag) && options.scriptEnabled)
-        || contextTag.matches(noframesTag))
-        return reportErrors ? HTMLTokenizer::RAWTEXTState : HTMLTokenizer::PLAINTEXTState;
-    if (contextTag.matches(scriptTag))
-        return reportErrors ? HTMLTokenizer::ScriptDataState : HTMLTokenizer::PLAINTEXTState;
-    if (contextTag.matches(plaintextTag))
-        return HTMLTokenizer::PLAINTEXTState;
-    return HTMLTokenizer::DataState;
-}
-
 HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document)
     : ScriptableDocumentParser(document)
     , m_options(document)
@@ -85,8 +63,9 @@ inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Elemen
     , m_treeBuilder(std::make_unique<HTMLTreeBuilder>(*this, fragment, contextElement, parserContentPolicy(), m_options))
     , m_xssAuditorDelegate(fragment.document())
 {
-    bool reportErrors = false; // For now document fragment parsing never reports errors.
-    m_tokenizer.setState(tokenizerStateForContextElement(contextElement, reportErrors, m_options));
+    // https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
+    if (contextElement.isHTMLElement())
+        m_tokenizer.updateStateFor(contextElement.tagQName().localName());
     m_xssAuditor.initForFragment();
 }
 
@@ -279,22 +258,22 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
     while (canTakeNextToken(mode, session) && !session.needsYield) {
         if (!isParsingFragment())
-            m_sourceTracker.start(m_input.current(), &m_tokenizer, m_token);
+            m_sourceTracker.startToken(m_input.current(), m_tokenizer);
 
-        if (!m_tokenizer.nextToken(m_input.current(), m_token))
+        auto token = m_tokenizer.nextToken(m_input.current());
+        if (!token)
             break;
 
         if (!isParsingFragment()) {
-            m_sourceTracker.end(m_input.current(), &m_tokenizer, m_token);
+            m_sourceTracker.endToken(m_input.current(), m_tokenizer);
 
             // We do not XSS filter innerHTML, which means we (intentionally) fail
             // http/tests/security/xssAuditor/dom-write-innerHTML.html
-            if (auto xssInfo = m_xssAuditor.filterToken(FilterTokenRequest(m_token, m_sourceTracker, m_tokenizer.shouldAllowCDATA())))
+            if (auto xssInfo = m_xssAuditor.filterToken(FilterTokenRequest(*token, m_sourceTracker, m_tokenizer.shouldAllowCDATA())))
                 m_xssAuditorDelegate.didBlockScript(*xssInfo);
         }
 
-        constructTreeFromHTMLToken(m_token);
-        ASSERT(m_token.type() == HTMLToken::Uninitialized);
+        constructTreeFromHTMLToken(token);
     }
 
     // Ensure we haven't been totally deref'ed after pumping. Any caller of this
@@ -308,20 +287,20 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         m_parserScheduler->scheduleForResume();
 
     if (isWaitingForScripts()) {
-        ASSERT(m_tokenizer.state() == HTMLTokenizer::DataState);
+        ASSERT(m_tokenizer.isInDataState());
         if (!m_preloadScanner) {
             m_preloadScanner = std::make_unique<HTMLPreloadScanner>(m_options, document()->url(), document()->deviceScaleFactor());
             m_preloadScanner->appendToEnd(m_input.current());
         }
-        m_preloadScanner->scan(m_preloader.get(), *document());
+        m_preloadScanner->scan(*m_preloader, *document());
     }
 
     InspectorInstrumentation::didWriteHTML(cookie, m_input.current().currentLine().zeroBasedInt());
 }
 
-void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLToken& rawToken)
+void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLTokenizer::TokenPtr& rawToken)
 {
-    AtomicHTMLToken token(rawToken);
+    AtomicHTMLToken token(*rawToken);
 
     // We clear the rawToken in case constructTreeFromAtomicToken
     // synchronously re-enters the parser. We don't clear the token immedately
@@ -333,15 +312,13 @@ void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLToken& rawToken)
     // FIXME: Stop clearing the rawToken once we start running the parser off
     // the main thread or once we stop allowing synchronous JavaScript
     // execution from parseAttribute.
-    if (rawToken.type() != HTMLToken::Character)
-        rawToken.clear();
-
-    m_treeBuilder->constructTree(token);
-
-    if (rawToken.type() != HTMLToken::Uninitialized) {
-        ASSERT(rawToken.type() == HTMLToken::Character);
+    if (rawToken->type() != HTMLToken::Character) {
+        // Clearing the TokenPtr makes sure we don't clear the HTMLToken a second time
+        // later when the TokenPtr is destroyed.
         rawToken.clear();
     }
+
+    m_treeBuilder->constructTree(token);
 }
 
 bool HTMLDocumentParser::hasInsertionPoint()
@@ -373,7 +350,7 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
         if (!m_insertionPreloadScanner)
             m_insertionPreloadScanner = std::make_unique<HTMLPreloadScanner>(m_options, document()->url(), document()->deviceScaleFactor());
         m_insertionPreloadScanner->appendToEnd(source);
-        m_insertionPreloadScanner->scan(m_preloader.get(), *document());
+        m_insertionPreloadScanner->scan(*m_preloader, *document());
     }
 
     endIfDelayed();
@@ -398,7 +375,7 @@ void HTMLDocumentParser::append(PassRefPtr<StringImpl> inputSource)
         } else {
             m_preloadScanner->appendToEnd(source);
             if (isWaitingForScripts())
-                m_preloadScanner->scan(m_preloader.get(), *document());
+                m_preloadScanner->scan(*m_preloader, *document());
         }
     }
 
@@ -533,7 +510,7 @@ void HTMLDocumentParser::appendCurrentInputStreamToPreloadScannerAndScan()
 {
     ASSERT(m_preloadScanner);
     m_preloadScanner->appendToEnd(m_input.current());
-    m_preloadScanner->scan(m_preloader.get(), *document());
+    m_preloadScanner->scan(*m_preloader, *document());
 }
 
 void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)

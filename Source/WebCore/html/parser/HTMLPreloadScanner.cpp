@@ -242,40 +242,8 @@ private:
 
 TokenPreloadScanner::TokenPreloadScanner(const URL& documentURL, float deviceScaleFactor)
     : m_documentURL(documentURL)
-    , m_inStyle(false)
     , m_deviceScaleFactor(deviceScaleFactor)
-#if ENABLE(TEMPLATE_ELEMENT)
-    , m_templateCount(0)
-#endif
 {
-}
-
-TokenPreloadScanner::~TokenPreloadScanner()
-{
-}
-
-TokenPreloadScannerCheckpoint TokenPreloadScanner::createCheckpoint()
-{
-    TokenPreloadScannerCheckpoint checkpoint = m_checkpoints.size();
-    m_checkpoints.append(Checkpoint(m_predictedBaseElementURL, m_inStyle
-#if ENABLE(TEMPLATE_ELEMENT)
-                                    , m_templateCount
-#endif
-                                    ));
-    return checkpoint;
-}
-
-void TokenPreloadScanner::rewindTo(TokenPreloadScannerCheckpoint checkpointIndex)
-{
-    ASSERT(checkpointIndex < m_checkpoints.size()); // If this ASSERT fires, checkpointIndex is invalid.
-    const Checkpoint& checkpoint = m_checkpoints[checkpointIndex];
-    m_predictedBaseElementURL = checkpoint.predictedBaseElementURL;
-    m_inStyle = checkpoint.inStyle;
-#if ENABLE(TEMPLATE_ELEMENT)
-    m_templateCount = checkpoint.templateCount;
-#endif
-    m_cssScanner.reset();
-    m_checkpoints.clear();
 }
 
 void TokenPreloadScanner::scan(const HTMLToken& token, Vector<std::unique_ptr<PreloadRequest>>& requests, Document& document)
@@ -349,11 +317,7 @@ void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token)
 
 HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const URL& documentURL, float deviceScaleFactor)
     : m_scanner(documentURL, deviceScaleFactor)
-    , m_tokenizer(std::make_unique<HTMLTokenizer>(options))
-{
-}
-
-HTMLPreloadScanner::~HTMLPreloadScanner()
+    , m_tokenizer(options)
 {
 }
 
@@ -362,7 +326,7 @@ void HTMLPreloadScanner::appendToEnd(const SegmentedString& source)
     m_source.append(source);
 }
 
-void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, Document& document)
+void HTMLPreloadScanner::scan(HTMLResourcePreloader& preloader, Document& document)
 {
     ASSERT(isMainThread()); // HTMLTokenizer::updateStateFor only works on the main thread.
 
@@ -374,14 +338,13 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, Document& docume
 
     PreloadRequestStream requests;
 
-    while (m_tokenizer->nextToken(m_source, m_token)) {
-        if (m_token.type() == HTMLToken::StartTag)
-            m_tokenizer->updateStateFor(AtomicString(m_token.name()));
-        m_scanner.scan(m_token, requests, document);
-        m_token.clear();
+    while (auto token = m_tokenizer.nextToken(m_source)) {
+        if (token->type() == HTMLToken::StartTag)
+            m_tokenizer.updateStateFor(AtomicString(token->name()));
+        m_scanner.scan(*token, requests, document);
     }
 
-    preloader->preload(WTF::move(requests));
+    preloader.preload(WTF::move(requests));
 }
 
 }
