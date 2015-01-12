@@ -1,3 +1,16 @@
+2014-12-01  Michael Saboff  <msaboff@apple.com>
+
+        Crash (integer overflow) beneath ByteCodeParser::handleGetById typing in search field on weather.com
+        https://bugs.webkit.org/show_bug.cgi?id=139165
+
+        Reviewed by Oliver Hunt.
+
+        If we don't have any getById or putById variants, emit non-cached versions of these operations.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+
 2014-11-21  Michael Saboff  <msaboff@apple.com>
 
         r176455: ASSERT(!m_vector.isEmpty()) in IntendedStructureChain.cpp(143)
