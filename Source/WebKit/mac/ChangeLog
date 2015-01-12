@@ -1,5 +1,14 @@
 2015-01-12  Anders Carlsson  <andersca@apple.com>
 
+        Make WebResourceDelegate a formal protocol as well
+        https://bugs.webkit.org/show_bug.cgi?id=140364
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebResourceLoadDelegate.h:
+
+2015-01-12  Anders Carlsson  <andersca@apple.com>
+
         Delegates should be formal protocols
         https://bugs.webkit.org/show_bug.cgi?id=140360
         rdar://problem/17380856
