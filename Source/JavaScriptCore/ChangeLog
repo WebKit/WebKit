@@ -1,3 +1,15 @@
+2014-11-21  Michael Saboff  <msaboff@apple.com>
+
+        r176455: ASSERT(!m_vector.isEmpty()) in IntendedStructureChain.cpp(143)
+        https://bugs.webkit.org/show_bug.cgi?id=139000
+
+        Reviewed by Darin Adler.
+
+        Check that the chainCount is non-zero before using a StructureChain.
+
+        * bytecode/ComplexGetStatus.cpp:
+        (JSC::ComplexGetStatus::computeFor):
+
 2014-11-19  Mark Lam  <mark.lam@apple.com>
 
         WTFCrashWithSecurityImplication under SpeculativeJIT::compile() when loading a page from theblaze.com.
