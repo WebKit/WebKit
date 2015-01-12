@@ -1449,8 +1449,6 @@ webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
 # New accessibility test added in r149155 is failing. Has been moved to the mac port in r155603.
 webkit.org/b/115659 accessibility/meter-element.html [ Missing ]
 
-webkit.org/b/121593 accessibility/radio-button-title-label.html [ Failure ]
-
 # Fail to generate proper pixel results - let's wait with rebaselining.
 webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Failure Pass ]
 webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ Failure Pass ]

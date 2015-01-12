@@ -30,7 +30,10 @@
             // 1) Even though a checkbox has a title attribute, the title ui element should still be exposed.
             var radio1 = accessibilityController.accessibleElementById("r1");
             var titleUIElement = radio1.titleUIElement();
-            shouldBe("radio1.title", "'AXTitle: '");
+            if (accessibilityController.platformName == "atk")
+                shouldBe("radio1.title", "'AXTitle: LABEL'");
+            else
+                shouldBe("radio1.title", "'AXTitle: '");
             shouldBeTrue("titleUIElement.isEqual(accessibilityController.accessibleElementById('label1'))");
 
             // 2) aria-labeledby should override the native label semantics and return a title for the radio button, instead of a title ui element.
