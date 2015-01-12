@@ -1,3 +1,28 @@
+2014-11-16  Chris Dumez  <cdumez@apple.com>
+
+        Crash when setting 'order' CSS property to a calculated value
+        https://bugs.webkit.org/show_bug.cgi?id=138780
+
+        Reviewed by Darin Adler.
+
+        CSS Calculated values were not handled by the CSS parser for 'order'
+        CSS property. As a result, using calculated values wouldn't work in
+        release builds and would hit an assertion in debug builds.
+
+        This patch updates the CSS parser to directly convert the
+        CSS Calculated value into a simple integer CSSPrimitiveValue for
+        'order' property. We could have marked CSS Calculated values as
+        valid in the CSS Parser instead but this would have brought issues:
+        - The calculated value needs to be adjusted to INT_MIN + 2 if it is less
+          than that. This would force us to calculate the expression anyway.
+        - The StyleBuilder would need updating to properly handle CSS Calculated
+          values for 'order'.
+
+        Test: fast/css/order-calculated-value.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+
 2014-11-21  Chris Dumez  <cdumez@apple.com>
 
         Crash when setting 'font' CSS property to 'calc(2 * 3)'

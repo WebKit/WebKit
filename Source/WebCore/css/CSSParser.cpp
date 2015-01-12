@@ -2505,7 +2505,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyOrder:
         if (validUnit(value, FInteger, CSSStrictMode)) {
             // We restrict the smallest value to int min + 2 because we use int min and int min + 1 as special values in a hash set.
-            parsedValue = cssValuePool().createValue(std::max<double>(std::numeric_limits<int>::min() + 2, value->fValue), static_cast<CSSPrimitiveValue::UnitTypes>(value->unit));
+            double result = std::max<double>(std::numeric_limits<int>::min() + 2, parsedDouble(value, ReleaseParsedCalcValue));
+            parsedValue = cssValuePool().createValue(result, CSSPrimitiveValue::CSS_NUMBER);
             m_valueList->next();
         }
         break;
