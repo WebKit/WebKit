@@ -1,3 +1,14 @@
+2015-01-12  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: ASSERT under WebCore::InspectorResourceAgent::loadResource
+        https://bugs.webkit.org/show_bug.cgi?id=140367
+
+        Reviewed by Andreas Kling.
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::loadResource): use copyRef() instead of move(),
+        since we check the callback after giving it to the loader client.
+
 2015-01-12  Anders Carlsson  <andersca@apple.com>
 
         Move DatabaseBackend functions back to Database

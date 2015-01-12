@@ -770,7 +770,7 @@ void InspectorResourceAgent::loadResource(ErrorString& errorString, const String
     options.crossOriginRequestPolicy = AllowCrossOriginRequests;
 
     // InspectorThreadableLoaderClient deletes itself when the load completes.
-    InspectorThreadableLoaderClient* inspectorThreadableLoaderClient = new InspectorThreadableLoaderClient(WTF::move(callback));
+    InspectorThreadableLoaderClient* inspectorThreadableLoaderClient = new InspectorThreadableLoaderClient(callback.copyRef());
 
     RefPtr<DocumentThreadableLoader> loader = DocumentThreadableLoader::create(*document, *inspectorThreadableLoaderClient, request, options);
     if (!loader) {
