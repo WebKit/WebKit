@@ -1,3 +1,21 @@
+2015-01-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Make fast/css/first-letter-skip-out-of-flow.html a ref-test
+        https://bugs.webkit.org/show_bug.cgi?id=140324
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/first-letter-skip-out-of-flow-expected.html: Added.
+        * platform/efl/fast/css/first-letter-skip-out-of-flow-expected.png: Removed.
+        * platform/efl/fast/css/first-letter-skip-out-of-flow-expected.txt: Removed.
+        * platform/gtk/fast/css/first-letter-skip-out-of-flow-expected.png: Removed.
+        * platform/gtk/fast/css/first-letter-skip-out-of-flow-expected.txt: Removed.
+        * platform/ios-sim-deprecated/fast/css/first-letter-skip-out-of-flow-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/css/first-letter-skip-out-of-flow-expected.txt: Removed.
+        * platform/mac-mountainlion/fast/css/first-letter-skip-out-of-flow-expected.txt: Removed.
+        * platform/mac/fast/css/first-letter-skip-out-of-flow-expected.png: Removed.
+        * platform/mac/fast/css/first-letter-skip-out-of-flow-expected.txt: Removed.
+
 2015-01-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r178281.
