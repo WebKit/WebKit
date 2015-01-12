@@ -1,3 +1,17 @@
+2014-11-25  Ting-Wei Lan  <lantw44@gmail.com>
+
+        [GTK] Use LD_LIBRARY_PATH to make g-ir-scanner use the newly-built
+        version of libraries when running the temporary executable
+        https://bugs.webkit.org/show_bug.cgi?id=138833
+
+        Reviewed by Carlos Garcia Campos.
+
+        This patch modifies LD_LIBRARY_PATH to make sure the dynamic linker
+        find the correct version of libraries when running the temporary
+        executable to generate the .gir file.
+
+        * PlatformGTK.cmake:
+
 2014-11-24  Alberto Garcia  <berto@igalia.com>
 
         Webkit2 doesnt build on powerpc 32 bits
