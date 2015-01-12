@@ -3152,7 +3152,7 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
     ASSERT(frame().view() == this);
 
     if (paintsEntireContents())
-        return IntRect(IntPoint(), totalContentsSize());
+        return contentsToWindow(IntRect(IntPoint(), totalContentsSize()));
 
     // Set our clip rect to be our contents.
     IntRect clipRect;
