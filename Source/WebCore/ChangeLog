@@ -1,3 +1,32 @@
+2015-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow targetting the SVG->OTF font converter with ENABLE(SVG_OTF_CONVERTER)
+        https://bugs.webkit.org/show_bug.cgi?id=136769
+
+        Reviewed by Antti Koivisto.
+
+        If ENABLE(SVG_OTF_CONVERTER) is defined, use the converter. It can be defined at the same
+        time as ENABLE(SVG_FONTS) but, if so, the SVG font code will be dead code.
+
+        No new tests because the define is off by default. Tests will come soon, I promise.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData): When creating a font, if the ENABLE is on,
+        do the transcode and take the non-SVG path.
+        (WebCore::CSSFontFaceSource::ensureFontData): Pass extra arguments to
+        CachedFont::ensureCustomFontData()
+        * css/CSSFontFaceSource.h: For the case of in-document SVG fonts, keep the transcoded
+        bytes around.
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::ensureCustomFontData): For out-of-document SVG fonts, do the
+        transcode if the ENABLE is on, then treat as if the font is any old webfont.
+        (WebCore::CachedFont::getSVGFontById): This function looks up the relevant <font>
+        element. Modify it to take a pointer to a (possibly external) document within which
+        to search.
+        * loader/cache/CachedFont.h: Extra arguments to CachedFont::ensureCustomFontData()
+        and CachedFont::getSVGFontById()
+
 2015-01-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Clean up FrameTree::traverseNext() traversals of main frames

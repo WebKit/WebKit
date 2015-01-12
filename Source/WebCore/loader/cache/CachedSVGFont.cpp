@@ -39,6 +39,10 @@
 #include "TextResourceDecoder.h"
 #include "TypedElementDescendantIterator.h"
 
+#if ENABLE(SVG_OTF_CONVERTER)
+#include "SVGToOTFFontConversion.h"
+#endif
+
 namespace WebCore {
 
 CachedSVGFont::CachedSVGFont(const ResourceRequest& resourceRequest, SessionID sessionID)
@@ -49,7 +53,9 @@ CachedSVGFont::CachedSVGFont(const ResourceRequest& resourceRequest, SessionID s
 
 PassRefPtr<SimpleFontData> CachedSVGFont::getFontData(const FontDescription& fontDescription, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG)
 {
+#if !ENABLE(SVG_OTF_CONVERTER)
     if (!externalSVG)
+#endif
         return CachedFont::getFontData(fontDescription, remoteURI, syntheticBold, syntheticItalic, externalSVG);
 
     if (SVGFontFaceElement* firstFontFace = this->firstFontFace(remoteURI))
@@ -64,10 +70,10 @@ FontPlatformData CachedSVGFont::platformDataFromCustomData(float size, bool bold
     return CachedFont::platformDataFromCustomData(size, bold, italic, orientation, widthVariant, renderingMode);
 }
 
-bool CachedSVGFont::ensureCustomFontData(bool externalSVG)
+bool CachedSVGFont::ensureCustomFontData(bool externalSVG, const AtomicString& remoteURI)
 {
     if (!externalSVG)
-        return CachedFont::ensureCustomFontData(externalSVG);
+        return CachedFont::ensureCustomFontData(externalSVG, remoteURI);
 
     if (!m_externalSVGDocument && !errorOccurred() && !isLoading() && m_data) {
         m_externalSVGDocument = SVGDocument::create(nullptr, URL());
@@ -75,6 +81,13 @@ bool CachedSVGFont::ensureCustomFontData(bool externalSVG)
         m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->data(), m_data->size()));
         if (decoder->sawError())
             m_externalSVGDocument = nullptr;
+#if ENABLE(SVG_OTF_CONVERTER)
+        firstFontFace(remoteURI); // Sets m_externalSVGFontElement
+        if (m_externalSVGFontElement) {
+            Vector<char> convertedFont = convertSVGToOTFFont(*m_externalSVGFontElement);
+            return CachedFont::ensureCustomFontData(SharedBuffer::adoptVector(convertedFont));
+        }
+#endif
     }
     return m_externalSVGDocument;
 }

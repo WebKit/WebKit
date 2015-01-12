@@ -50,12 +50,14 @@ public:
     void beginLoadIfNeeded(CachedResourceLoader* dl);
     virtual bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
-    virtual bool ensureCustomFontData(bool externalSVG);
+    virtual bool ensureCustomFontData(bool externalSVG, const AtomicString& remoteURI);
 
     virtual PassRefPtr<SimpleFontData> getFontData(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG);
 
 protected:
     FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);
+
+    bool ensureCustomFontData(RefPtr<SharedBuffer>&& data);
 
 private:
     virtual void checkNotify() override;

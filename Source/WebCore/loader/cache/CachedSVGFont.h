@@ -38,7 +38,7 @@ class CachedSVGFont final : public CachedFont {
 public:
     CachedSVGFont(const ResourceRequest&, SessionID);
 
-    virtual bool ensureCustomFontData(bool externalSVG) override;
+    virtual bool ensureCustomFontData(bool externalSVG, const AtomicString& remoteURI) override;
     
     virtual PassRefPtr<SimpleFontData> getFontData(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG) override;
 

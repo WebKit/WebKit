@@ -1137,7 +1137,7 @@ Vector<char> SVGToOTFFontConverter::transcodeGlyphPaths(float width, const SVGEl
     Vector<char> result;
 
     auto& dAttribute = glyphOrMissingGlyphElement.fastGetAttribute(SVGNames::dAttr);
-    if (dAttribute.isNull()) {
+    if (dAttribute.isEmpty()) {
         writeCFFEncodedNumber(result, width);
         writeCFFEncodedNumber(result, 0);
         writeCFFEncodedNumber(result, 0);

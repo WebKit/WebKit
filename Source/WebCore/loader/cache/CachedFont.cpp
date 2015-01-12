@@ -40,10 +40,6 @@
 #include "WOFFFileFormat.h"
 #include <wtf/Vector.h>
 
-#if ENABLE(SVG_OTF_CONVERTER)
-#include "SVGToOTFFontConversion.h"
-#endif
-
 #if ENABLE(SVG_FONTS)
 #include "NodeList.h"
 #include "SVGDocument.h"
@@ -96,26 +92,28 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
     }
 }
 
-bool CachedFont::ensureCustomFontData(bool)
+bool CachedFont::ensureCustomFontData(bool, const AtomicString&)
 {
-    if (!m_fontData && !errorOccurred() && !isLoading() && m_data) {
-        RefPtr<SharedBuffer> buffer = m_data;
-        bool fontIsWOFF = false;
+    return ensureCustomFontData(RefPtr<SharedBuffer>(m_data));
+}
+
+bool CachedFont::ensureCustomFontData(RefPtr<SharedBuffer>&& data)
+{
+    if (!m_fontData && !errorOccurred() && !isLoading() && data) {
+        RefPtr<SharedBuffer> buffer = data;
 
 #if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090) && (!PLATFORM(IOS) || __IPHONE_OS_VERSION_MIN_REQUIRED < 80000)
         if (isWOFF(buffer.get())) {
             Vector<char> convertedFont;
             if (!convertWOFFToSfnt(buffer.get(), convertedFont))
                 buffer = nullptr;
-            else {
+            else
                 buffer = SharedBuffer::adoptVector(convertedFont);
-                fontIsWOFF = true;
-            }
         }
 #endif
 
         m_fontData = buffer ? createFontCustomPlatformData(*buffer) : nullptr;
-        m_hasCreatedFontDataWrappingResource = m_fontData && !fontIsWOFF;
+        m_hasCreatedFontDataWrappingResource = m_fontData && (buffer == m_data);
         if (!m_fontData)
             setStatus(DecodeError);
     }

@@ -36,6 +36,11 @@
 #include "FontDescription.h"
 #include "SimpleFontData.h"
 
+#if ENABLE(SVG_OTF_CONVERTER)
+#include "FontCustomPlatformData.h"
+#include "SVGToOTFFontConversion.h"
+#endif
+
 #if ENABLE(SVG_FONTS)
 #include "CachedSVGFont.h"
 #include "FontCustomPlatformData.h"
@@ -128,15 +133,30 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
 #if ENABLE(SVG_FONTS)
             hasExternalSVGFont = m_hasExternalSVGFont;
 #endif
-            if (!m_font->ensureCustomFontData(hasExternalSVGFont))
+            if (!m_font->ensureCustomFontData(hasExternalSVGFont, m_string))
                 return nullptr;
 
             fontData = m_font->getFontData(fontDescription, m_string, syntheticBold, syntheticItalic, hasExternalSVGFont);
         } else {
 #if ENABLE(SVG_FONTS)
             // In-Document SVG Fonts
-            if (m_svgFontFaceElement)
+            if (m_svgFontFaceElement) {
+#if ENABLE(SVG_OTF_CONVERTER)
+                if (!m_svgFontFaceElement->parentNode() || !is<SVGFontElement>(m_svgFontFaceElement->parentNode()))
+                    return nullptr;
+                SVGFontElement& fontElement = downcast<SVGFontElement>(*m_svgFontFaceElement->parentNode());
+                // FIXME: Re-run this when script modifies the element or any of its descendents
+                // FIXME: We might have already converted this font. Make existing conversions discoverable.
+                Vector<char> otfFont = convertSVGToOTFFont(fontElement);
+                m_generatedOTFBuffer = SharedBuffer::adoptVector(otfFont);
+                if (!m_generatedOTFBuffer)
+                    return nullptr;
+                std::unique_ptr<FontCustomPlatformData> customPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer);
+                fontData = SimpleFontData::create(customPlatformData->fontPlatformData(static_cast<int>(fontDescription.computedPixelSize()), syntheticBold, syntheticItalic, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false);
+#else
                 fontData = SimpleFontData::create(std::make_unique<SVGFontData>(m_svgFontFaceElement.get()), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
+#endif
+            }
 #endif
         }
     } else {
@@ -164,7 +184,7 @@ bool CSSFontFaceSource::ensureFontData()
 {
     if (!m_font)
         return false;
-    return m_font->ensureCustomFontData(m_hasExternalSVGFont);
+    return m_font->ensureCustomFontData(m_hasExternalSVGFont, m_string);
 }
 #endif
 

@@ -83,7 +83,11 @@ private:
     CSSFontFace* m_face; // Our owning font face.
     HashMap<unsigned, RefPtr<SimpleFontData>> m_fontDataTable; // The hash key is composed of size synthetic styles.
 
-#if ENABLE(SVG_FONTS)
+#if ENABLE(SVG_OTF_CONVERTER)
+    RefPtr<SharedBuffer> m_generatedOTFBuffer;
+#endif
+
+#if ENABLE(SVG_FONTS) || ENABLE(SVG_OTF_CONVERTER)
     RefPtr<SVGFontFaceElement> m_svgFontFaceElement;
     bool m_hasExternalSVGFont;
 #endif

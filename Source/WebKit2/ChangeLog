@@ -1,3 +1,12 @@
+2015-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Allow targetting the SVG->OTF font converter with ENABLE(SVG_OTF_CONVERTER)
+        https://bugs.webkit.org/show_bug.cgi?id=136769
+
+        Reviewed by Antti Koivisto.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-01-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Clean up FrameTree::traverseNext() traversals of main frames
