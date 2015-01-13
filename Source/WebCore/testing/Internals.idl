@@ -31,6 +31,9 @@
     [RaisesException] boolean nodeNeedsStyleRecalc(Node node);
     DOMString description(any value);
 
+    // Animated image pausing testing.
+    [RaisesException] boolean hasPausedImageAnimations(Element element);
+
     [RaisesException] DOMString elementRenderTreeAsText(Element element);
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
