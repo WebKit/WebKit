@@ -1,3 +1,18 @@
+2014-12-16  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r163928): Animated GIFs are not resumed when translated into view using -webkit-transform
+        https://bugs.webkit.org/show_bug.cgi?id=139672
+        <rdar://problem/19260797>
+
+        Reviewed by Antti Koivisto.
+
+        Add a layout test to verity that animated images are properly paused /
+        resumed when translated in and out of view using '-webkit-transform'
+        CSS property.
+
+        * fast/images/animated-gif-webkit-transform-expected.txt: Added.
+        * fast/images/animated-gif-webkit-transform.html: Added.
+
 2014-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r160182): Fragment parser doesn't close a form element with a close tag
