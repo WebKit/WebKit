@@ -2825,6 +2825,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)_processDidExit
 {
+    [self _notifyInputContextAboutDiscardedComposition];
+
     if (_data->_layerHostingView)
         [self _setAcceleratedCompositingModeRootLayer:nil];
 

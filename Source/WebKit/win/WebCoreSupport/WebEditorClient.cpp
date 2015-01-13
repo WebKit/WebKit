@@ -220,6 +220,11 @@ void WebEditorClient::respondToChangedSelection(Frame*)
     notifyCenter->postNotificationName(webViewDidChangeSelectionNotificationName, static_cast<IWebView*>(m_webView), 0);
 }
 
+void WebEditorClient::discardedComposition(Frame*)
+{
+    notImplemented();
+}
+
 void WebEditorClient::didEndEditing()
 {
     notImplemented();

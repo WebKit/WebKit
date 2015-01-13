@@ -4462,6 +4462,11 @@ void WebPageProxy::resetStateAfterProcessExited()
     m_isValid = false;
     m_isPageSuspended = false;
 
+    m_editorState = EditorState();
+#if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
+    m_temporarilyClosedComposition = false;
+#endif
+
     if (m_mainFrame) {
         m_urlAtProcessExit = m_mainFrame->url();
         m_loadStateAtProcessExit = m_mainFrame->frameLoadState().m_state;
@@ -4486,12 +4491,6 @@ void WebPageProxy::resetStateAfterProcessExited()
 
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     m_touchEventQueue.clear();
-#endif
-
-    // FIXME: Reset m_editorState.
-    // FIXME: Notify input methods about abandoned composition.
-#if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
-    m_temporarilyClosedComposition = false;
 #endif
 
 #if PLATFORM(MAC)

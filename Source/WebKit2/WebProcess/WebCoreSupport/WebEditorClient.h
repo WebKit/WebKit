@@ -64,6 +64,7 @@ private:
     virtual void didBeginEditing() override;
     virtual void respondToChangedContents() override;
     virtual void respondToChangedSelection(WebCore::Frame*) override;
+    virtual void discardedComposition(WebCore::Frame*) override;
     virtual void didEndEditing() override;
     virtual void willWriteSelectionToPasteboard(WebCore::Range*) override;
     virtual void didWriteSelectionToPasteboard() override;

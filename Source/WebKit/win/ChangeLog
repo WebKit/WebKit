@@ -1,3 +1,17 @@
+2014-12-11  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (Async Text Input): Text input method state is not reset when reloading a page
+        https://bugs.webkit.org/show_bug.cgi?id=139504
+        rdar://problem/19034674
+
+        Reviewed by Enrica Casucci.
+
+        Stub out new client calls, this patch doesn't attempt to make any changes on Windows.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorClient::discardedComposition):
+        * WebCoreSupport/WebEditorClient.h:
+
 2014-09-06  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: convert DockSide to an enum class

@@ -1165,7 +1165,11 @@ Editor::~Editor()
 
 void Editor::clear()
 {
-    m_compositionNode = 0;
+    if (m_compositionNode) {
+        m_compositionNode = nullptr;
+        if (EditorClient* client = this->client())
+            client->discardedComposition(&m_frame);
+    }
     m_customCompositionUnderlines.clear();
     m_shouldStyleWithCSS = false;
     m_defaultParagraphSeparator = EditorParagraphSeparatorIsDiv;

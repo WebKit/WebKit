@@ -1,3 +1,17 @@
+2014-12-11  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (Async Text Input): Text input method state is not reset when reloading a page
+        https://bugs.webkit.org/show_bug.cgi?id=139504
+        rdar://problem/19034674
+
+        Reviewed by Enrica Casucci.
+
+        Stub out new client calls, this patch does not attempt to make any changes on WebKit1.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::discardedComposition):
+
 2014-09-19  Dean Jackson  <dino@apple.com>
 
         Multithreaded WebGL is a bad idea - remove it
