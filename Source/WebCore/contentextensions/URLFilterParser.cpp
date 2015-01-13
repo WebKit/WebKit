@@ -67,7 +67,7 @@ public:
 
     void atomPatternCharacter(UChar character)
     {
-        if (isASCII(character)) {
+        if (!isASCII(character)) {
             fail(ASCIILiteral("Only ASCII characters are supported in pattern."));
             return;
         }

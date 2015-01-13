@@ -1,5 +1,12 @@
 2015-01-12  Benjamin Poulain  <benjamin@webkit.org>
 
+        Fix a typo in r178313
+
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::GraphBuilder::atomPatternCharacter):
+
+2015-01-12  Benjamin Poulain  <benjamin@webkit.org>
+
         Add basic pattern matching support to the url filters
         https://bugs.webkit.org/show_bug.cgi?id=140283
 
