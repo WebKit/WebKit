@@ -1,3 +1,17 @@
+2015-01-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Renamed minimum to size in SegregatedFreeList
+        https://bugs.webkit.org/show_bug.cgi?id=140406
+
+        Reviewed by Sam Weinig.
+
+        In preparation for supporting aligned allocation.
+
+        * bmalloc/SegregatedFreeList.cpp:
+        (bmalloc::SegregatedFreeList::takeGreedy):
+        (bmalloc::SegregatedFreeList::take): Every size passed to malloc is
+        really just a minimum. Let's not imply that this value is special.
+
 2015-01-11  Dan Bernstein  <mitz@apple.com>
 
         Geoff is organized, but he is not an organization.
