@@ -461,6 +461,9 @@ private:
     if (boundsChanged) {
         FloatRect fixedPositionRect = _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), [[_webView scrollView] zoomScale]);
         [self updateFixedClippingView:fixedPositionRect];
+
+        // We need to push the new content bounds to the webview to update fixed position rects.
+        [_webView _updateVisibleContentRects];
     }
     
     [self _updateChangedSelection];

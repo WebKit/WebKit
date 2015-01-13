@@ -1,3 +1,34 @@
+2015-01-12  Martin Hock  <mhock@apple.com>
+
+        [iOS][WK2] Push content bounds on layer tree commit to prevent drawing stale fixed position rects
+        https://bugs.webkit.org/show_bug.cgi?id=140264
+        <rdar://problem/18873545>
+
+        Reviewed by Benjamin Poulain.
+
+        When a resize occurs, we need to push the new content bounds to the web
+        process or stale fixed position rects may draw incorrectly.
+
+        As an example, suppose that WKWebView in UIProcess performs
+        _frameOrBoundsChanged with new view bounds.
+        Meanwhile, we'll switch to WebContentProcess and perform layout.
+        Switching back to UIProcess, _frameOrBoundsChanged calls WKWebView
+        _updateVisibleContentRects.
+        _updateVisibleContentRects calls WKContentView didUpdateVisibleRect with
+        the new bounds.
+        didUpdateVisibleRects in turn calls WebPageProxyIOS
+        computeCustomFixedPositionRect.
+        computeCustomFixedPositionRect asks for the content bounds from
+        PageClientImplIOS contentsSize which queries WKContentView's bounds
+        size. But those bounds are stale because the layer tree commit hasn't
+        occurred yet.
+
+        By informing the WKWebView of the updated content size on layer tree
+        commit, we ensure that the fixed position rects will be drawn correctly.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _didCommitLayerTree:]): Push new content bounds to the web process.
+
 2015-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Allow targetting the SVG->OTF font converter with ENABLE(SVG_OTF_CONVERTER)
