@@ -54,95 +54,79 @@ public:
 
     Optional(const T& value)
         : m_isEngaged(true)
-        , m_value(value)
     {
+        new (NotNull, &m_value) T(value);
     }
 
     Optional(const Optional& other)
         : m_isEngaged(other.m_isEngaged)
     {
         if (m_isEngaged)
-            new (NotNull, std::addressof(m_value)) T(other.m_value);
+            new (NotNull, &m_value) T(*other.asPtr());
     }
 
     Optional(Optional&& other)
         : m_isEngaged(other.m_isEngaged)
     {
         if (m_isEngaged)
-            new (NotNull, std::addressof(m_value)) T(WTF::move(other.m_value));
+            new (NotNull, &m_value) T(WTF::move(*other.asPtr()));
     }
 
     Optional(T&& value)
         : m_isEngaged(true)
-        , m_value(WTF::move(value))
     {
+        new (NotNull, &m_value) T(WTF::move(value));
     }
 
     template<typename... Args>
     Optional(InPlaceTag, Args&&... args)
         : m_isEngaged(true)
-        , m_value(std::forward<Args>(args)...)
     {
+        new (NotNull, &m_value) T(std::forward<Args>(args)...);
     }
 
     ~Optional()
     {
-        if (m_isEngaged)
-            m_value.~T();
+        destroy();
     }
 
     Optional& operator=(NulloptTag)
     {
-        if (m_isEngaged) {
-            m_value.~T();
-            m_isEngaged = false;
-        }
+        destroy();
         return *this;
     }
 
     Optional& operator=(const Optional& other)
     {
-        if (m_isEngaged == other.m_isEngaged) {
-            if (m_isEngaged)
-                m_value = other.m_value;
+        if (this == &other)
             return *this;
+
+        destroy();
+        if (other.m_isEngaged) {
+            new (NotNull, &m_value) T(*other.asPtr());
+            m_isEngaged = true;
         }
-
-        if (m_isEngaged)
-            m_value.~T();
-        else
-            new (NotNull, std::addressof(m_value)) T(other.m_value);
-        m_isEngaged = other.m_isEngaged;
-
         return *this;
     }
 
     Optional& operator=(Optional&& other)
     {
-        if (m_isEngaged == other.m_isEngaged) {
-            if (m_isEngaged)
-                m_value = WTF::move(other.m_value);
+        if (this == &other)
             return *this;
+
+        destroy();
+        if (other.m_isEngaged) {
+            new (NotNull, &m_value) T(WTF::move(*other.asPtr()));
+            m_isEngaged = true;
         }
-
-        if (m_isEngaged)
-            m_value.~T();
-        else
-            new (NotNull, std::addressof(m_value)) T(WTF::move(other.m_value));
-        m_isEngaged = other.m_isEngaged;
-
         return *this;
     }
 
     template<typename U>
     Optional& operator=(U&& u)
     {
-        if (m_isEngaged) {
-            m_value = std::forward<U>(u);
-            return *this;
-        }
-
-        new (NotNull, std::addressof(m_value)) T(std::forward<U>(u));
+        destroy();
+        new (NotNull, &m_value) T(std::forward<U>(u));
         m_isEngaged = true;
         return *this;
     }
@@ -152,29 +136,37 @@ public:
     T& value()
     {
         ASSERT(m_isEngaged);
-        return m_value;
+        return *asPtr();
     }
 
     const T& value() const
     {
         ASSERT(m_isEngaged);
-        return m_value;
+        return *asPtr();
     }
 
     template<typename U>
     T valueOr(U&& value) const
     {
         if (m_isEngaged)
-            return m_value;
+            return *asPtr();
 
         return std::forward<U>(value);
     }
 
 private:
+    const T* asPtr() const { return reinterpret_cast<const T*>(&m_value); }
+    T* asPtr() { return reinterpret_cast<T*>(&m_value); }
+    void destroy()
+    {
+        if (m_isEngaged) {
+            asPtr()->~T();
+            m_isEngaged = false;
+        }
+    }
+
     bool m_isEngaged;
-    union {
-        T m_value;
-    };
+    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_value;
 };
 
 } // namespace WTF

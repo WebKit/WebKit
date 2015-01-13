@@ -1,3 +1,21 @@
+2015-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Make WTF::Optional work with msvc 2013
+        https://bugs.webkit.org/show_bug.cgi?id=140401
+
+        Reviewed by Anders Carlsson.
+
+        Update the WTF::Optional implementation to use std::aligned_memory and
+        placement new instead of an unrestricted union because msvc 2013 still
+        doesn't support unrestricted unions.
+
+        This change is a pre-requirement to fix Bug 140347 as this change uses
+        WTF::Optional with types that have non-trivial copy constructors.
+
+        This change is covered by the existing Optional WTF test.
+
+        * wtf/Optional.h:
+
 2015-01-11  Sam Weinig  <sam@webkit.org>
 
         Remove support for SharedWorkers
