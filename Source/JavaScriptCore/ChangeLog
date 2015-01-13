@@ -1,3 +1,18 @@
+2014-12-04  Oliver Hunt  <oliver@apple.com>
+
+        Serialization of MapData object provides unsafe access to internal types
+        https://bugs.webkit.org/show_bug.cgi?id=138653
+
+        Reviewed by Geoffrey Garen.
+
+        Converting these ASSERTs into RELEASE_ASSERTs, as it is now obvious
+        that despite trying hard to be safe in all cases it's simply to easy
+        to use an iterator in an unsafe state.
+
+        * runtime/MapData.h:
+        (JSC::MapData::const_iterator::key):
+        (JSC::MapData::const_iterator::value):
+
 2014-12-02  Matthew Mirman  <mmirman@apple.com>
 
         Fixes inline cache fast path accessing nonexistant getters.
