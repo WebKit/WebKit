@@ -14,14 +14,16 @@ function loadedFirstPart()
         /* width of abe.png */
         if (img.offsetWidth == 76)
             testRunner.notifyDone();
-        if (++count > 20)
+        if (++count > 100) // Wait up to 10 seconds in failure case.
             testRunner.notifyDone();
     }, 100);
 }
 </script>
 </head>
 <body>
-<!-- The last image is repeated due to a WebCore side bug that causes last part to not render. -->
-<img id=test src="resources/multipart.php?interval=0.1&img1=green-100x100.png&img2=abe.png&img3=abe.png" onload="loadedFirstPart()">
-</body>
+<!--
+    The last image is repeated due to https://bugs.webkit.org/show_bug.cgi?id=36536, which causes last part to not render. 
+    It's repeated three times because otherwise the test didn't pass in 10.8, for an unknown mysterious reason.
+-->
+<img id=test src="resources/multipart.php?interval=0.1&img1=green-100x100.png&img2=abe.png&img3=abe.png&img4=abe.png" onload="loadedFirstPart()">
 </html>
