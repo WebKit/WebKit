@@ -32,7 +32,6 @@
 namespace WebCore {
 
     class JSDedicatedWorkerGlobalScope;
-    class JSSharedWorkerGlobalScope;
     class JSWorkerGlobalScope;
     class WorkerGlobalScope;
 
@@ -76,10 +75,6 @@ namespace WebCore {
 
     JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSC::JSValue);
     JSWorkerGlobalScope* toJSWorkerGlobalScope(JSC::JSValue);
-
-#if ENABLE(SHARED_WORKERS)
-    JSSharedWorkerGlobalScope* toJSSharedWorkerGlobalScope(JSC::JSValue);
-#endif
 
 } // namespace WebCore
 

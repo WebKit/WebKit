@@ -162,10 +162,6 @@
 #include <wtf/text/StringBuffer.h>
 #include <yarr/RegularExpression.h>
 
-#if ENABLE(SHARED_WORKERS)
-#include "SharedWorkerRepository.h"
-#endif
-
 #if ENABLE(XSLT)
 #include "XSLTProcessor.h"
 #endif
@@ -2110,10 +2106,6 @@ void Document::prepareForDestruction()
 #endif
 
     commonTeardown();
-
-#if ENABLE(SHARED_WORKERS)
-    SharedWorkerRepository::documentDetached(this);
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
     if (m_touchEventTargets && m_touchEventTargets->size() && parentDocument())

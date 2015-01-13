@@ -37,10 +37,6 @@
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/Microtask.h>
 
-#if ENABLE(SHARED_WORKERS)
-#include "JSSharedWorkerGlobalScope.h"
-#endif
-
 using namespace JSC;
 
 namespace WebCore {
@@ -136,28 +132,10 @@ JSDedicatedWorkerGlobalScope* toJSDedicatedWorkerGlobalScope(JSValue value)
     return 0;
 }
 
-#if ENABLE(SHARED_WORKERS)
-JSSharedWorkerGlobalScope* toJSSharedWorkerGlobalScope(JSValue value)
-{
-    if (!value.isObject())
-        return 0;
-    const ClassInfo* classInfo = asObject(value)->classInfo();
-    if (classInfo == JSSharedWorkerGlobalScope::info())
-        return jsCast<JSSharedWorkerGlobalScope*>(asObject(value));
-    if (classInfo == JSProxy::info())
-        return jsDynamicCast<JSSharedWorkerGlobalScope*>(jsCast<JSProxy*>(asObject(value))->target());
-    return 0;
-}
-#endif
 
 JSWorkerGlobalScope* toJSWorkerGlobalScope(JSValue value)
 {
-    JSWorkerGlobalScope* context = toJSDedicatedWorkerGlobalScope(value);
-#if ENABLE(SHARED_WORKERS)
-    if (!context)
-        context = toJSSharedWorkerGlobalScope(value);
-#endif
-    return context;
+    return toJSDedicatedWorkerGlobalScope(value);
 }
 
 } // namespace WebCore

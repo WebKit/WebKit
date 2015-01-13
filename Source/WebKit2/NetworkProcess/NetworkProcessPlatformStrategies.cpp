@@ -59,11 +59,6 @@ PluginStrategy* NetworkProcessPlatformStrategies::createPluginStrategy()
     return 0;
 }
 
-SharedWorkerStrategy* NetworkProcessPlatformStrategies::createSharedWorkerStrategy()
-{
-    return 0;
-}
-
 ResourceLoadScheduler* NetworkProcessPlatformStrategies::resourceLoadScheduler()
 {
     ASSERT_NOT_REACHED();

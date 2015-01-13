@@ -54,12 +54,6 @@
 #endif
 #endif
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-#define ENABLE_SHARED_WORKER_PROCESS 1
-#endif
-
-#else
-#define ENABLE_SHARED_WORKER_PROCESS 1
 #endif
 
 #if !(defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080)

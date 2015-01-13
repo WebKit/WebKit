@@ -1733,11 +1733,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'Selection').hasOwnProperty('get') 
 PASS Object.getOwnPropertyDescriptor(global, 'Selection').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Selection').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Selection').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'SharedWorker').value is SharedWorker
-PASS Object.getOwnPropertyDescriptor(global, 'SharedWorker').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SharedWorker').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SharedWorker').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'SharedWorker').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisEvent').value is SpeechSynthesisEvent
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisEvent').hasOwnProperty('set') is false

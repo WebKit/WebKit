@@ -48,7 +48,6 @@
 #include "MemoryPressureHandler.h"
 #include "Page.h"
 #include "Settings.h"
-#include "SharedWorkerRepository.h"
 #include "SubframeLoader.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/TemporaryChange.h>
@@ -84,7 +83,7 @@ enum ReasonFrameCannotBeInPageCache {
     HasPlugins,
     IsHttpsAndCacheControlled,
     HasDatabaseHandles,
-    HasSharedWorkers,
+    HasSharedWorkers, // FIXME: Remove.
     NoHistoryItem,
     QuickRedirectComing,
     IsLoadingInAPISense,
@@ -145,13 +144,6 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         PCLOG("   -Frame has open database handles");
         FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureHasOpenDatabasesKey);
         rejectReasons |= 1 << HasDatabaseHandles;
-    }
-#endif
-#if ENABLE(SHARED_WORKERS)
-    if (SharedWorkerRepository::hasSharedWorkers(frame->document())) {
-        PCLOG("   -Frame has associated SharedWorkers");
-        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureHasSharedWorkersKey);
-        rejectReasons |= 1 << HasSharedWorkers;
     }
 #endif
     if (!frame->loader().history().currentItem()) {
@@ -324,9 +316,6 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         && !(frame->isMainFrame() && document->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore())
 #if ENABLE(SQL_DATABASE)
         && !DatabaseManager::manager().hasOpenDatabases(document)
-#endif
-#if ENABLE(SHARED_WORKERS)
-        && !SharedWorkerRepository::hasSharedWorkers(document)
 #endif
         && frameLoader.history().currentItem()
         && !frameLoader.quickRedirectComing()

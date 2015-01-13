@@ -18,7 +18,6 @@ PASS Int16Array() threw exception TypeError: Int16ArrayConstructor is not a func
 PASS Int32Array() threw exception TypeError: Int32ArrayConstructor is not a function (evaluating 'Int32Array()').
 PASS Int8Array() threw exception TypeError: Int8ArrayConstructor is not a function (evaluating 'Int8Array()').
 PASS MessageChannel() threw exception TypeError: MessageChannelConstructor is not a function (evaluating 'MessageChannel()').
-PASS SharedWorker() threw exception TypeError: SharedWorkerConstructor is not a function (evaluating 'SharedWorker()').
 PASS Uint16Array() threw exception TypeError: Uint16ArrayConstructor is not a function (evaluating 'Uint16Array()').
 PASS Uint32Array() threw exception TypeError: Uint32ArrayConstructor is not a function (evaluating 'Uint32Array()').
 PASS Uint8Array() threw exception TypeError: Uint8ArrayConstructor is not a function (evaluating 'Uint8Array()').

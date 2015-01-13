@@ -2,7 +2,6 @@ Calling bindings constructors as function should throw an exception and not caus
 
 PASS: EventSource
 PASS: MessageChannel
-PASS: SharedWorker
 PASS: WebGLArrayBuffer
 PASS: WebKitCSSMatrix
 PASS: WebKitPoint

@@ -11,7 +11,6 @@ PASS Audio() threw exception TypeError: AudioConstructor is not a function (eval
 PASS Image() threw exception TypeError: ImageConstructor is not a function (evaluating 'Image()').
 PASS Option() threw exception TypeError: OptionConstructor is not a function (evaluating 'Option()').
 PASS MessageChannel() threw exception TypeError: MessageChannelConstructor is not a function (evaluating 'MessageChannel()').
-PASS SharedWorker() threw exception TypeError: SharedWorkerConstructor is not a function (evaluating 'SharedWorker()').
 PASS WebKitCSSMatrix() threw exception TypeError: WebKitCSSMatrixConstructor is not a function (evaluating 'WebKitCSSMatrix()').
 PASS WebKitPoint() threw exception TypeError: WebKitPointConstructor is not a function (evaluating 'WebKitPoint()').
 PASS WebSocket() threw exception TypeError: WebSocketConstructor is not a function (evaluating 'WebSocket()').

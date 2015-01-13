@@ -1,5 +1,0 @@
-Test simple shared worker construction case.
-
-PASS: Received ping message
-DONE
-

@@ -299,8 +299,6 @@
 #include "JSScreen.cpp"
 #include "JSScriptProfile.cpp"
 #include "JSScriptProfileNode.cpp"
-#include "JSSharedWorker.cpp"
-#include "JSSharedWorkerGlobalScope.cpp"
 #include "JSSQLError.cpp"
 #include "JSSQLException.cpp"
 #include "JSSQLResultSet.cpp"

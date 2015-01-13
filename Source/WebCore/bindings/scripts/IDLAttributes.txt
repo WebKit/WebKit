@@ -62,7 +62,7 @@ EventTarget
 ForwardDeclareInHeader
 GenerateIsReachable=|Impl|ImplWebGLRenderingContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot
 GetterRaisesException
-GlobalContext=DOMWindow|WorkerGlobalScope|SharedWorkerGlobalScope|DedicatedWorkerGlobalScope
+GlobalContext=DOMWindow|WorkerGlobalScope|DedicatedWorkerGlobalScope
 Immutable
 ImplementationLacksVTable
 ImplementationNamespace=*

@@ -32,7 +32,6 @@ class CookiesStrategy;
 class LoaderStrategy;
 class PasteboardStrategy;
 class PluginStrategy;
-class SharedWorkerStrategy;
 
 class PlatformStrategies {
 public:
@@ -64,20 +63,12 @@ public:
         return m_pluginStrategy;
     }
 
-    SharedWorkerStrategy* sharedWorkerStrategy()
-    {
-        if (!m_sharedWorkerStrategy)
-            m_sharedWorkerStrategy = createSharedWorkerStrategy();
-        return m_sharedWorkerStrategy;
-    }
-
 protected:
     PlatformStrategies()
         : m_cookiesStrategy(nullptr)
         , m_loaderStrategy(nullptr)
         , m_pasteboardStrategy(nullptr)
         , m_pluginStrategy(nullptr)
-        , m_sharedWorkerStrategy(nullptr)
     {
     }
 
@@ -90,13 +81,11 @@ private:
     virtual LoaderStrategy* createLoaderStrategy() = 0;
     virtual PasteboardStrategy* createPasteboardStrategy() = 0;
     virtual PluginStrategy* createPluginStrategy() = 0;
-    virtual SharedWorkerStrategy* createSharedWorkerStrategy() = 0;
 
     CookiesStrategy* m_cookiesStrategy;
     LoaderStrategy* m_loaderStrategy;
     PasteboardStrategy* m_pasteboardStrategy;
     PluginStrategy* m_pluginStrategy;
-    SharedWorkerStrategy* m_sharedWorkerStrategy;
 };
 
 PlatformStrategies* platformStrategies();

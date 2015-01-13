@@ -105,11 +105,6 @@ PluginStrategy* WebPlatformStrategies::createPluginStrategy()
     return this;
 }
 
-SharedWorkerStrategy* WebPlatformStrategies::createSharedWorkerStrategy()
-{
-    return this;
-}
-
 // CookiesStrategy
 
 String WebPlatformStrategies::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
@@ -275,14 +270,6 @@ void WebPlatformStrategies::getPluginInfo(const WebCore::Page* page, Vector<WebC
     UNUSED_PARAM(page);
     UNUSED_PARAM(plugins);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-}
-
-// SharedWorkerStrategy
-
-bool WebPlatformStrategies::isAvailable() const
-{
-    // Shared workers do not work across multiple processes, and using network process is tied to multiple secondary process model. 
-    return !WebProcess::shared().usesNetworkProcess();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

@@ -35,11 +35,6 @@
 #include "Location.h"
 #include "ScheduledAction.h"
 #include "Settings.h"
-#include "SharedWorkerRepository.h"
-
-#if ENABLE(SHARED_WORKERS)
-#include "JSSharedWorker.h"
-#endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include "JSTouchConstructorIOS.h"

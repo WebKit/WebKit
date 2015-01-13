@@ -1,3 +1,154 @@
+2015-01-11  Sam Weinig  <sam@webkit.org>
+
+        Remove support for SharedWorkers
+        https://bugs.webkit.org/show_bug.cgi?id=140344
+
+        Reviewed by Anders Carlsson.
+
+        Remove shared worker specific tests and update others to remove references to shared workers.
+
+        * fast/constructors/constructor-as-function-crash-expected.txt:
+        * fast/constructors/constructor-as-function-crash.html:
+        * fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * fast/dom/call-a-constructor-as-a-function.html:
+        * fast/workers/resources/create-shared-worker-frame.html: Removed.
+        * fast/workers/resources/shared-worker-common.js: Removed.
+        * fast/workers/resources/shared-worker-count-connections.js: Removed.
+        * fast/workers/resources/shared-worker-create-common.js: Removed.
+        * fast/workers/resources/shared-worker-exception.js: Removed.
+        * fast/workers/resources/shared-worker-iframe.html: Removed.
+        * fast/workers/resources/shared-worker-lifecycle.js: Removed.
+        * fast/workers/resources/shared-worker-name.js: Removed.
+        * fast/workers/resources/shared-worker-script-error.js: Removed.
+        * fast/workers/shared-worker-constructor-expected.txt: Removed.
+        * fast/workers/shared-worker-constructor.html: Removed.
+        * fast/workers/shared-worker-context-gc-expected.txt: Removed.
+        * fast/workers/shared-worker-context-gc.html: Removed.
+        * fast/workers/shared-worker-event-listener-expected.txt: Removed.
+        * fast/workers/shared-worker-event-listener.html: Removed.
+        * fast/workers/shared-worker-exception-expected.txt: Removed.
+        * fast/workers/shared-worker-exception.html: Removed.
+        * fast/workers/shared-worker-frame-lifecycle-expected.txt: Removed.
+        * fast/workers/shared-worker-frame-lifecycle.html: Removed.
+        * fast/workers/shared-worker-gc-expected.txt: Removed.
+        * fast/workers/shared-worker-gc.html: Removed.
+        * fast/workers/shared-worker-in-iframe-expected.txt: Removed.
+        * fast/workers/shared-worker-in-iframe.html: Removed.
+        * fast/workers/shared-worker-lifecycle-expected.txt: Removed.
+        * fast/workers/shared-worker-lifecycle.html: Removed.
+        * fast/workers/shared-worker-load-error-expected.txt: Removed.
+        * fast/workers/shared-worker-load-error.html: Removed.
+        * fast/workers/shared-worker-location-expected.txt: Removed.
+        * fast/workers/shared-worker-location.html: Removed.
+        * fast/workers/shared-worker-messageevent-source-expected.txt: Removed.
+        * fast/workers/shared-worker-messageevent-source.html: Removed.
+        * fast/workers/shared-worker-name-expected.txt: Removed.
+        * fast/workers/shared-worker-name.html: Removed.
+        * fast/workers/shared-worker-navigator-expected.txt: Removed.
+        * fast/workers/shared-worker-navigator.html: Removed.
+        * fast/workers/shared-worker-replace-global-constructor-expected.txt: Removed.
+        * fast/workers/shared-worker-replace-global-constructor.html: Removed.
+        * fast/workers/shared-worker-replace-self-expected.txt: Removed.
+        * fast/workers/shared-worker-replace-self.html: Removed.
+        * fast/workers/shared-worker-script-error-expected.txt: Removed.
+        * fast/workers/shared-worker-script-error.html: Removed.
+        * fast/workers/shared-worker-shared-expected.txt: Removed.
+        * fast/workers/shared-worker-shared.html: Removed.
+        * fast/workers/shared-worker-simple-expected.txt: Removed.
+        * fast/workers/shared-worker-simple.html: Removed.
+        * fast/workers/shared-worker-storagequota-query-usage-expected.txt: Removed.
+        * fast/workers/shared-worker-storagequota-query-usage.html: Removed.
+        * fast/workers/worker-crash-with-invalid-location-expected.txt:
+        * fast/workers/worker-crash-with-invalid-location.html:
+        * http/tests/resources/js-test-pre.js:
+        (startWorker):
+        (.worker.port.onmessage): Deleted.
+        (.self.onconnect.workerPort.onmessage): Deleted.
+        (.self.onconnect): Deleted.
+        * http/tests/security/contentSecurityPolicy/resources/shared-worker-make-xhr.js: Removed.
+        * http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html: Removed.
+        * http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html: Removed.
+        * http/tests/security/cross-origin-shared-worker-allowed-expected.txt: Removed.
+        * http/tests/security/cross-origin-shared-worker-allowed.html: Removed.
+        * http/tests/security/cross-origin-shared-worker-expected.txt: Removed.
+        * http/tests/security/cross-origin-shared-worker.html: Removed.
+        * http/tests/security/resources/cross-origin-iframe-for-shared-worker.html: Removed.
+        * http/tests/security/resources/iframe-for-storage-blocking-changed-shared-worker.html: Removed.
+        * http/tests/security/resources/shared-worker.js: Removed.
+        * http/tests/security/same-origin-shared-worker-blocked-expected.txt: Removed.
+        * http/tests/security/same-origin-shared-worker-blocked.html: Removed.
+        * http/tests/security/storage-blocking-loosened-shared-worker-expected.txt: Removed.
+        * http/tests/security/storage-blocking-loosened-shared-worker.html: Removed.
+        * http/tests/security/storage-blocking-strengthened-shared-worker-expected.txt: Removed.
+        * http/tests/security/storage-blocking-strengthened-shared-worker.html: Removed.
+        * http/tests/websocket/tests/hybi/workers/close-in-shared-worker-expected.txt: Removed.
+        * http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html: Removed.
+        * http/tests/websocket/tests/hybi/workers/shared-worker-simple-expected.txt: Removed.
+        * http/tests/websocket/tests/hybi/workers/shared-worker-simple.html: Removed.
+        * http/tests/workers/shared-worker-importScripts-expected.txt: Removed.
+        * http/tests/workers/shared-worker-importScripts.html: Removed.
+        * http/tests/workers/shared-worker-invalid-url-expected.txt: Removed.
+        * http/tests/workers/shared-worker-invalid-url.html: Removed.
+        * http/tests/workers/shared-worker-redirect-expected.txt: Removed.
+        * http/tests/workers/shared-worker-redirect.html: Removed.
+        * http/tests/xmlhttprequest/workers/resources/shared-worker-create.js: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple-expected.txt: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-close-expected.txt: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-close.html: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-methods-async.html: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-methods-expected.txt: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-methods.html: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-referer-expected.txt: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-referer.html: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found-expected.txt: Removed.
+        * http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html: Removed.
+        * js/dom/constructor-length.html:
+        * js/dom/global-constructors-attributes-expected.txt:
+        * js/dom/global-constructors-attributes-shared-worker-expected.txt: Removed.
+        * js/dom/global-constructors-attributes-shared-worker.html: Removed.
+        * platform/efl/http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt: Removed.
+        * platform/efl/http/tests/xmlhttprequest/workers/shared-worker-methods-expected.txt: Removed.
+        * platform/efl/js/dom/constructor-length-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-shared-worker-expected.txt: Removed.
+        * platform/gtk/http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt: Removed.
+        * platform/gtk/http/tests/xmlhttprequest/workers/shared-worker-methods-expected.txt: Removed.
+        * platform/gtk/js/dom/constructor-length-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/ios-sim-deprecated/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/ios-sim-deprecated/fast/js/constructor-length-expected.txt:
+        * platform/ios-sim-deprecated/fast/js/global-constructors-expected.txt:
+        * platform/ios-sim-deprecated/fast/workers/shared-worker-storagequota-query-usage-expected.txt: Removed.
+        * platform/ios-sim-deprecated/http/tests/security/cross-origin-shared-worker-allowed-expected.txt: Removed.
+        * platform/ios-sim-deprecated/http/tests/security/cross-origin-shared-worker-expected.txt: Removed.
+        * platform/ios-sim-deprecated/js/dom/global-constructors-attributes-expected.txt:
+        * platform/ios-sim-deprecated/storage/indexeddb/basics-shared-workers-expected.txt: Removed.
+        * platform/ios-simulator/js/dom/constructor-length-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mountainlion/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/js/dom/constructor-length-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-shared-worker-expected.txt: Removed.
+        * resources/js-test-pre.js:
+        (startWorker):
+        (.worker.port.onmessage): Deleted.
+        (.self.onconnect.workerPort.onmessage): Deleted.
+        (.self.onconnect): Deleted.
+        * resources/js-test.js:
+        (startWorker):
+        (.worker.port.onmessage): Deleted.
+        (.self.onconnect.workerPort.onmessage): Deleted.
+        (.self.onconnect): Deleted.
+        * storage/indexeddb/basics-shared-workers-expected.txt: Removed.
+        * storage/indexeddb/basics-shared-workers.html: Removed.
+
 2015-01-12  Andreas Kling  <akling@apple.com>
 
         Geolocation objects shouldn't prevent page caching.

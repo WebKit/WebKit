@@ -117,7 +117,6 @@ my (
     $resourceTimingSupport,
     $scriptedSpeechSupport,
     $seccompFiltersSupport,
-    $sharedWorkersSupport,
     $sqlDatabaseSupport,
     $styleScopedSupport,
     $subtleCrypto,
@@ -361,9 +360,6 @@ my @features = (
 
     { option => "scripted-speech", desc => "Toggle Scripted Speech support",
       define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
-
-    { option => "shared-workers", desc => "Toggle Shared Workers support",
-      define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk() || isEfl()), value => \$sharedWorkersSupport },
 
     { option => "sql-database", desc => "Toggle SQL Database support",
       define => "ENABLE_SQL_DATABASE", default => 1, value => \$sqlDatabaseSupport },

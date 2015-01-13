@@ -59,7 +59,6 @@ namespace WebCore {
 
         virtual ScriptExecutionContext* scriptExecutionContext() const override final { return const_cast<WorkerGlobalScope*>(this); }
 
-        virtual bool isSharedWorkerGlobalScope() const { return false; }
         virtual bool isDedicatedWorkerGlobalScope() const { return false; }
 
         virtual const URL& url() const override final { return m_url; }

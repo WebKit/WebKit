@@ -104,10 +104,6 @@ public:
     bool timeRangesEnabled() const;
 #endif
 
-#if ENABLE(SHARED_WORKERS)
-    bool sharedWorkerEnabled() const;
-#endif
-
 #if ENABLE(WEB_SOCKETS)
     bool webSocketEnabled() const;
 #endif

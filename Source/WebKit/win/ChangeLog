@@ -1,3 +1,14 @@
+2015-01-11  Sam Weinig  <sam@webkit.org>
+
+        Remove support for SharedWorkers
+        https://bugs.webkit.org/show_bug.cgi?id=140344
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::createSharedWorkerStrategy): Deleted.
+        * WebCoreSupport/WebPlatformStrategies.h:
+
 2015-01-10  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Accelerated compositing has stopped working.

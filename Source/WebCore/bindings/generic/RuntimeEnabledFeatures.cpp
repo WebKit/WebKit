@@ -34,7 +34,6 @@
 
 #include "DatabaseManager.h"
 #include "MediaPlayer.h"
-#include "SharedWorkerRepository.h"
 #include "WebSocket.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -156,13 +155,6 @@ bool RuntimeEnabledFeatures::mediaErrorEnabled() const
 bool RuntimeEnabledFeatures::timeRangesEnabled() const
 {
     return MediaPlayer::isAvailable();
-}
-#endif
-
-#if ENABLE(SHARED_WORKERS)
-bool RuntimeEnabledFeatures::sharedWorkerEnabled() const
-{
-    return SharedWorkerRepository::isAvailable();
 }
 #endif
 

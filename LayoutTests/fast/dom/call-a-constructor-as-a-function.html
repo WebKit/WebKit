@@ -6,7 +6,7 @@
 
 description("This tests if TypeError is thrown or not when we call a constructor as a normal function.");
 
-var test_constructors = ["AudioContext", "FormData", "EventSource", "FileReader", "Audio", "Image", "Option", "MessageChannel", "SharedWorker", "WebKitCSSMatrix", "WebKitPoint", "WebSocket", "Worker", "XMLHttpRequest", "XSLTProcessor"];
+var test_constructors = ["AudioContext", "FormData", "EventSource", "FileReader", "Audio", "Image", "Option", "MessageChannel", "WebKitCSSMatrix", "WebKitPoint", "WebSocket", "Worker", "XMLHttpRequest", "XSLTProcessor"];
 
 test_constructors.forEach(function (constructor) {
     if (eval("window." + constructor))

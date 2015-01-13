@@ -653,10 +653,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_SATURATED_LAYOUT_ARITHMETIC 1
 #endif
 
-#if !defined(ENABLE_SHARED_WORKERS)
-#define ENABLE_SHARED_WORKERS 0
-#endif
-
 #if !defined(ENABLE_SMOOTH_SCROLLING)
 #define ENABLE_SMOOTH_SCROLLING 0
 #endif

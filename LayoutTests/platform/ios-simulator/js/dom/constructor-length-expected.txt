@@ -36,7 +36,6 @@ FAIL PeerConnection.length should be 2. Threw exception ReferenceError: Can't fi
 PASS PopStateEvent.length is 1
 PASS ProgressEvent.length is 1
 FAIL ShadowRoot.length should be 1. Threw exception ReferenceError: Can't find variable: ShadowRoot
-PASS SharedWorker.length is 1
 PASS StorageEvent.length is 1
 PASS TextTrackCue.length is 3
 PASS TrackEvent.length is 1
