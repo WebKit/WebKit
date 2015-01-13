@@ -102,6 +102,7 @@ public:
 
     NetworkConnectionToWebProcess* connectionToWebProcess() const { return m_connection.get(); }
     WebCore::SessionID sessionID() const { return m_parameters.sessionID; }
+    ResourceLoadIdentifier identifier() const { return m_parameters.identifier; }
 
     struct SynchronousLoadData;
 

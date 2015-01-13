@@ -131,9 +131,6 @@ void NetworkResourceLoader::start()
     if (m_defersLoading)
         return;
 
-    // Explicit ref() balanced by a deref() in NetworkResourceLoader::cleanup()
-    ref();
-
     m_networkingContext = RemoteNetworkingContext::create(sessionID(), m_parameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     consumeSandboxExtensions();
@@ -170,12 +167,10 @@ void NetworkResourceLoader::cleanup()
 
     NetworkProcess::shared().networkResourceLoadScheduler().removeLoader(this);
 
-    if (m_handle) {
-        // Explicit deref() balanced by a ref() in NetworkResourceLoader::start()
-        // This might cause the NetworkResourceLoader to be destroyed and therefore we do it last.
-        m_handle = 0;
-        deref();
-    }
+    m_handle = nullptr;
+
+    // This will cause NetworkResourceLoader to be destroyed and therefore we do it last.
+    m_connection->didCleanupResourceLoader(*this);
 }
 
 void NetworkResourceLoader::didConvertHandleToDownload()

@@ -1,3 +1,45 @@
+2014-12-04  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r173468): Cannot step in WebInspector
+        https://bugs.webkit.org/show_bug.cgi?id=139260
+
+        Reviewed by Alexey Proskuryakov.
+
+        Inspector defers all loads and starts a nested runloop when it hits a breakpoint. When continuing it undefers the loads.
+        If the script execution was triggered from the didFinishLoading callback of the main resource then the main resource would
+        already be in the finished state in the network process side and setDefersLoading(false) message would end up restarting its load.
+        Since loads are not meant to restart the generated callbacks would assert or crash the web process when handled in the next
+        nested inspector runloop.
+
+        Fix by taking care that cleaned up NetworkResourceLoaders are always removed from the loader map of
+        the NetworkConnectionToWebProcess and so can't end up handling late messages.
+
+        No test, this requires JS debugger to trigger.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didCleanupResourceLoader):
+
+            This is now the only way to remove resource loaders.
+            It is called from NetworkResourceLoader::cleanup only.
+
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::removeLoadIdentifier):
+
+            Calling abort  removes the resource loader (since it calls cleanup) so no need to do it explicitly anymore.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+
+            We are guaranteed to be reffed by NetworkConnectionToWebProcess until cleanup so the explicit ref/deref can be removed.
+
+        (WebKit::NetworkResourceLoader::cleanup):
+
+            Call to NetworkConnectionToWebProcess::didCleanupResourceLoader to make the loader unreachable.
+
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::identifier):
+
 2014-11-29  Anders Carlsson  <andersca@apple.com>
 
         Crash when calling WKPageClose on the originated page from within createNewPage callback

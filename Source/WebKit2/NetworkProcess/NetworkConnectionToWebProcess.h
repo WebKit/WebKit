@@ -55,6 +55,8 @@ public:
 
     bool isSerialLoadingEnabled() const { return m_serialLoadingEnabled; }
 
+    void didCleanupResourceLoader(NetworkResourceLoader&);
+
 private:
     NetworkConnectionToWebProcess(IPC::Connection::Identifier);
 
