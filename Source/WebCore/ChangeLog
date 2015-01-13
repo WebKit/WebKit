@@ -1,3 +1,87 @@
+2015-01-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add basic pattern matching support to the url filters
+        https://bugs.webkit.org/show_bug.cgi?id=140283
+
+        Reviewed by Andreas Kling.
+
+        This patch adds some basic generic pattern support for the url filters
+        of ContentExtensions.
+
+        Instead of writting a new parser, I re-used Gavin's parser for JavaScript
+        RegExp.
+
+        This patch only implements the very basic stuffs: transition on any character
+        and repetition.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::setRuleList):
+        Use the new parser.
+
+        * contentextensions/DFA.cpp:
+        (WebCore::ContentExtensions::DFA::DFA):
+        (WebCore::ContentExtensions::printRange):
+        (WebCore::ContentExtensions::printTransition):
+        (WebCore::ContentExtensions::DFA::debugPrintDot):
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::printRange):
+        (WebCore::ContentExtensions::printTransition):
+        (WebCore::ContentExtensions::NFA::debugPrintDot):
+        The graphs generated with the extended patterns are vastly more complicated
+        than the old prefix matcher.
+        I changed the debug output to have a single link between any two nodes
+        instead of one per transition. This makes the graph a little more manageable.
+
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::addTransition):
+        (WebCore::ContentExtensions::NFA::addEpsilonTransition):
+        (WebCore::ContentExtensions::NFA::graphSize):
+        (WebCore::ContentExtensions::NFA::restoreToGraphSize):
+        * contentextensions/NFA.h:
+        * contentextensions/NFANode.h:
+        (WebCore::ContentExtensions::epsilonClosure):
+        The new parser can generate transitions back to the root node of index zero.
+        All the hash structures had to be updated to support this kind of key.
+
+        * contentextensions/NFAToDFA.cpp:
+        (WebCore::ContentExtensions::HashableNodeIdSetHash::hash):
+        Two tiny improvements:
+        -Don't hash zero to zero, it causes more conflicts that needed.
+        -The hash operation must use a commutative operation, otherwise the order
+         of elements can affect the hash, which is undesired for a set.
+        I'll improve this further later.
+
+        (WebCore::ContentExtensions::NFAToDFA::convert):
+
+        * contentextensions/URLFilterParser.cpp: Added.
+        (WebCore::ContentExtensions::GraphBuilder::GraphBuilder):
+        (WebCore::ContentExtensions::GraphBuilder::m_lastAtom):
+        (WebCore::ContentExtensions::GraphBuilder::finalize):
+        (WebCore::ContentExtensions::GraphBuilder::errorMessage):
+        (WebCore::ContentExtensions::GraphBuilder::atomPatternCharacter):
+        (WebCore::ContentExtensions::GraphBuilder::atomBuiltInCharacterClass):
+        (WebCore::ContentExtensions::GraphBuilder::quantifyAtom):
+        (WebCore::ContentExtensions::GraphBuilder::atomBackReference):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassAtom):
+        (WebCore::ContentExtensions::GraphBuilder::assertionBOL):
+        (WebCore::ContentExtensions::GraphBuilder::assertionEOL):
+        (WebCore::ContentExtensions::GraphBuilder::assertionWordBoundary):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassBegin):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassRange):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassBuiltIn):
+        (WebCore::ContentExtensions::GraphBuilder::atomCharacterClassEnd):
+        (WebCore::ContentExtensions::GraphBuilder::atomParenthesesSubpatternBegin):
+        (WebCore::ContentExtensions::GraphBuilder::atomParentheticalAssertionBegin):
+        (WebCore::ContentExtensions::GraphBuilder::atomParenthesesEnd):
+        (WebCore::ContentExtensions::GraphBuilder::disjunction):
+        (WebCore::ContentExtensions::GraphBuilder::hasError):
+        (WebCore::ContentExtensions::GraphBuilder::fail):
+        (WebCore::ContentExtensions::URLFilterParser::parse):
+        * contentextensions/URLFilterParser.h:
+        (WebCore::ContentExtensions::URLFilterParser::hasError):
+        (WebCore::ContentExtensions::URLFilterParser::errorMessage):
+
 2015-01-11  Sam Weinig  <sam@webkit.org>
 
         Remove support for SharedWorkers

@@ -31,7 +31,10 @@
 #include "NFA.h"
 #include "NFAToDFA.h"
 #include "URL.h"
+#include "URLFilterParser.h"
+#include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -55,21 +58,18 @@ void ContentExtensionsBackend::setRuleList(const String& identifier, const Vecto
     }
 
     NFA nfa;
-    unsigned rootNode = nfa.root();
     for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
         const ContentExtensionRule& contentExtensionRule = ruleList[ruleIndex];
         const ContentExtensionRule::Trigger& trigger = contentExtensionRule.trigger();
         ASSERT(trigger.urlFilter.length());
 
-        unsigned lastNode = rootNode;
+        URLFilterParser urlFilterParser;
+        urlFilterParser.parse(trigger.urlFilter, ruleIndex, nfa);
 
-        for (unsigned i = 0; i < trigger.urlFilter.length(); ++i) {
-            unsigned newNode = nfa.createNode(ruleIndex);
-            nfa.addTransition(lastNode, newNode, trigger.urlFilter[i]);
-            lastNode = newNode;
+        if (urlFilterParser.hasError()) {
+            dataLogF("Error while parsing %s: %s", trigger.urlFilter.utf8().data(), urlFilterParser.errorMessage().utf8().data());
+            continue;
         }
-
-        nfa.setFinal(lastNode);
     }
 
     // FIXME: never add a DFA that only matches the empty set.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NFA_h
-#define NFA_h
+#ifndef URLFilterParser_h
+#define URLFilterParser_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "NFANode.h"
-#include <limits>
-#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 namespace ContentExtensions {
 
-class NFAToDFA;
+class NFA;
 
-// The NFA provides a way to build a NFA graph with characters or epsilon as transitions.
-// The nodes are accessed through an identifier.
-class NFA {
+class URLFilterParser {
 public:
-    NFA();
-    unsigned root() const { return m_root; }
-    unsigned createNode(uint64_t ruleId = std::numeric_limits<uint64_t>::max());
+    void parse(const String& pattern, uint64_t patternId, NFA&);
 
-    void addTransition(unsigned from, unsigned to, char character);
-    void addEpsilonTransition(unsigned from, unsigned to);
-    void setFinal(unsigned node);
-
-    unsigned graphSize() const;
-    void restoreToGraphSize(unsigned);
-
-#ifndef NDEBUG
-    void debugPrintDot() const;
-#endif
+    bool hasError() const { return !m_errorMessage.isNull(); }
+    String errorMessage() const { return m_errorMessage; }
 
 private:
-    friend class NFAToDFA;
+    struct BoundedSubGraph {
+        unsigned start;
+        unsigned end;
+    };
 
-    static const unsigned epsilonTransitionCharacter = 256;
-
-    Vector<NFANode> m_nodes;
-    unsigned m_root;
+    String m_errorMessage;
 };
 
-}
+} // namespace ContentExtensions
 
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-#endif // NFA_h
+#endif // URLFilterParser_h

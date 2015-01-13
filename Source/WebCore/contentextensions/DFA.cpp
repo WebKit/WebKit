@@ -43,7 +43,7 @@ DFA::DFA(Vector<DFANode>&& nodes, unsigned rootIndex)
     : m_nodes(WTF::move(nodes))
     , m_root(rootIndex)
 {
-    ASSERT(rootIndex < nodes.size());
+    ASSERT(rootIndex < m_nodes.size());
 }
 
 DFA::DFA(const DFA& dfa)
@@ -80,6 +80,62 @@ const Vector<uint64_t>& DFA::actions(unsigned currentState) const
 }
 
 #ifndef NDEBUG
+static void printRange(bool firstRange, char rangeStart, char rangeEnd)
+{
+    if (!firstRange)
+        dataLogF(", ");
+    if (rangeStart == rangeEnd) {
+        if (rangeStart == '"' || rangeStart == '\\')
+            dataLogF("\\%c", rangeStart);
+        else if (rangeStart >= '!' && rangeStart <= '~')
+            dataLogF("%c", rangeStart);
+        else
+            dataLogF("\\\\%d", rangeStart);
+    } else
+        dataLogF("\\\\%d-\\\\%d", rangeStart, rangeEnd);
+}
+
+static void printTransition(unsigned sourceNode, const HashMap<uint16_t, unsigned>& transitions)
+{
+    if (transitions.isEmpty())
+        return;
+
+    HashMap<unsigned, Vector<uint16_t>, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsPerTarget;
+
+    // First, we build the list of transitions coming to each target node.
+    for (const auto& transition : transitions) {
+        unsigned target = transition.value;
+        transitionsPerTarget.add(target, Vector<uint16_t>());
+
+        transitionsPerTarget.find(target)->value.append(transition.key);
+    }
+
+    // Then we go over each one an display the ranges one by one.
+    for (const auto& transitionPerTarget : transitionsPerTarget) {
+        dataLogF("        %d -> %d [label=\"", sourceNode, transitionPerTarget.key);
+
+        Vector<uint16_t> incommingCharacters = transitionPerTarget.value;
+        std::sort(incommingCharacters.begin(), incommingCharacters.end());
+
+        char rangeStart = incommingCharacters.first();
+        char rangeEnd = rangeStart;
+        bool first = true;
+        for (unsigned sortedTransitionIndex = 1; sortedTransitionIndex < incommingCharacters.size(); ++sortedTransitionIndex) {
+            char nextChar = incommingCharacters[sortedTransitionIndex];
+            if (nextChar == rangeEnd+1) {
+                rangeEnd = nextChar;
+                continue;
+            }
+            printRange(first, rangeStart, rangeEnd);
+            rangeStart = rangeEnd = nextChar;
+            first = false;
+        }
+        printRange(first, rangeStart, rangeEnd);
+
+        dataLogF("\"];\n");
+    }
+}
+
 void DFA::debugPrintDot() const
 {
     dataLogF("digraph DFA_Transitions {\n");
@@ -117,10 +173,9 @@ void DFA::debugPrintDot() const
     dataLogF("    }\n");
 
     dataLogF("    {\n");
-    for (unsigned i = 0; i < m_nodes.size(); ++i) {
-        for (const auto& slot : m_nodes[i].transitions)
-            dataLogF("        %d -> %d [label=\"%c\"];\n", i, slot.value, slot.key);
-    }
+    for (unsigned i = 0; i < m_nodes.size(); ++i)
+        printTransition(i, m_nodes[i].transitions);
+
     dataLogF("    }\n");
     dataLogF("}\n");
 }

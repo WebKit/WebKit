@@ -1,3 +1,13 @@
+2015-01-12  Benjamin Poulain  <benjamin@webkit.org>
+
+        Add basic pattern matching support to the url filters
+        https://bugs.webkit.org/show_bug.cgi?id=140283
+
+        Reviewed by Andreas Kling.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Make YarrParser.h private in order to use it from WebCore.
+
 2015-01-12  Geoffrey Garen  <ggaren@apple.com>
 
         Out of bounds read in IdentifierArena::makeIdentifier

@@ -58,7 +58,7 @@ static NodeIdSet epsilonClosure(const NodeIdSet& nodeSet, const Vector<NFANode>&
             const NFANode& node = graph[nodeId];
             auto epsilonTransitionSlot = node.transitions.find(epsilonTransitionCharacter);
             if (epsilonTransitionSlot != node.transitions.end()) {
-                const HashSet<unsigned>& targets = epsilonTransitionSlot->value;
+                const HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>& targets = epsilonTransitionSlot->value;
                 for (unsigned targetNodeId : targets) {
                     if (!outputNodeSet.contains(targetNodeId))
                         nextGenerationDiscoveredNodes.add(targetNodeId);
@@ -148,9 +148,9 @@ private:
 struct HashableNodeIdSetHash {
     static unsigned hash(const HashableNodeIdSet& p)
     {
-        unsigned hash = 0;
+        unsigned hash = 4207445155;
         for (unsigned nodeId : p.nodeIdSet())
-            hash ^= DefaultHash<unsigned>::Hash::hash(nodeId);
+            hash += DefaultHash<unsigned>::Hash::hash(nodeId);
         return hash;
     }
 
@@ -212,7 +212,7 @@ DFA NFAToDFA::convert(const NFA& nfa)
     do {
         HashableNodeIdSet stateSet = unprocessedStateSets.takeAny();
 
-        ASSERT(!processedStateSets.contains(stateSet));
+        ASSERT(!processedStateSets.contains(stateSet.nodeIdSet()));
         processedStateSets.add(stateSet.nodeIdSet());
 
         unsigned dfaNodeId = nfaToDFANodeMap.get(stateSet);

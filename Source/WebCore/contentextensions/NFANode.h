@@ -40,7 +40,7 @@ class NFANode {
 public:
     NFANode(uint64_t ruleId);
 
-    HashMap<uint16_t, HashSet<unsigned>> transitions;
+    HashMap<uint16_t, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>> transitions;
     bool isFinal;
     const uint64_t ruleId;
 };

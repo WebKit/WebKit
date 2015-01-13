@@ -1027,6 +1027,8 @@
 		267725FF1A5B3AD9003C24DD /* DFANode.h in Headers */ = {isa = PBXBuildFile; fileRef = 267725F91A5B3AD9003C24DD /* DFANode.h */; };
 		267726001A5B3AD9003C24DD /* NFAToDFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 267725FA1A5B3AD9003C24DD /* NFAToDFA.cpp */; };
 		267726011A5B3AD9003C24DD /* NFAToDFA.h in Headers */ = {isa = PBXBuildFile; fileRef = 267725FB1A5B3AD9003C24DD /* NFAToDFA.h */; };
+		267726041A5DF6F2003C24DD /* URLFilterParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 267726021A5DF6F2003C24DD /* URLFilterParser.cpp */; };
+		267726051A5DF6F2003C24DD /* URLFilterParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 267726031A5DF6F2003C24DD /* URLFilterParser.h */; };
 		269239961505E1AA009E57FC /* JSIDBVersionChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 269239921505E1AA009E57FC /* JSIDBVersionChangeEvent.h */; };
 		269397211A4A412F00E8349D /* NFANode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2693971F1A4A412F00E8349D /* NFANode.cpp */; };
 		269397221A4A412F00E8349D /* NFANode.h in Headers */ = {isa = PBXBuildFile; fileRef = 269397201A4A412F00E8349D /* NFANode.h */; };
@@ -8023,6 +8025,8 @@
 		267725F91A5B3AD9003C24DD /* DFANode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFANode.h; sourceTree = "<group>"; };
 		267725FA1A5B3AD9003C24DD /* NFAToDFA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NFAToDFA.cpp; sourceTree = "<group>"; };
 		267725FB1A5B3AD9003C24DD /* NFAToDFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NFAToDFA.h; sourceTree = "<group>"; };
+		267726021A5DF6F2003C24DD /* URLFilterParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLFilterParser.cpp; sourceTree = "<group>"; };
+		267726031A5DF6F2003C24DD /* URLFilterParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLFilterParser.h; sourceTree = "<group>"; };
 		269239911505E1AA009E57FC /* JSIDBVersionChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBVersionChangeEvent.cpp; sourceTree = "<group>"; };
 		269239921505E1AA009E57FC /* JSIDBVersionChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBVersionChangeEvent.h; sourceTree = "<group>"; };
 		2693971F1A4A412F00E8349D /* NFANode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NFANode.cpp; sourceTree = "<group>"; };
@@ -15332,6 +15336,8 @@
 				269397201A4A412F00E8349D /* NFANode.h */,
 				267725FA1A5B3AD9003C24DD /* NFAToDFA.cpp */,
 				267725FB1A5B3AD9003C24DD /* NFAToDFA.h */,
+				267726021A5DF6F2003C24DD /* URLFilterParser.cpp */,
+				267726031A5DF6F2003C24DD /* URLFilterParser.h */,
 			);
 			path = contentextensions;
 			sourceTree = "<group>";
@@ -23990,6 +23996,7 @@
 				85992EBE0AA5069500AC0785 /* DOMHTMLLinkElement.h in Headers */,
 				85E711B80AC5D5350053270F /* DOMHTMLLinkElementInternal.h in Headers */,
 				85ECBEF30AA7626900544F0B /* DOMHTMLMapElement.h in Headers */,
+				267726051A5DF6F2003C24DD /* URLFilterParser.h in Headers */,
 				85E711B90AC5D5350053270F /* DOMHTMLMapElementInternal.h in Headers */,
 				BC51579F0C03BBD3008BB0EE /* DOMHTMLMarqueeElement.h in Headers */,
 				BC5156EA0C03B741008BB0EE /* DOMHTMLMarqueeElementInternal.h in Headers */,
@@ -28733,6 +28740,7 @@
 				07B5A2DB1464320A00A81ECE /* JSTextTrackList.cpp in Sources */,
 				07B5A30D14687D7100A81ECE /* JSTextTrackListCustom.cpp in Sources */,
 				E446141A0CD6826900FADA75 /* JSTimeRanges.cpp in Sources */,
+				267726041A5DF6F2003C24DD /* URLFilterParser.cpp in Sources */,
 				0FDA7C16188322EB00C954B5 /* JSTouch.cpp in Sources */,
 				0FDA7C18188322EB00C954B5 /* JSTouchEvent.cpp in Sources */,
 				0FDA7C1A188322EB00C954B5 /* JSTouchList.cpp in Sources */,

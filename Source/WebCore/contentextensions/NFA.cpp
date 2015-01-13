@@ -53,7 +53,7 @@ void NFA::addTransition(unsigned from, unsigned to, char character)
     ASSERT(to < m_nodes.size());
     ASSERT(character);
 
-    auto addResult = m_nodes[from].transitions.add(character, HashSet<unsigned>());
+    auto addResult = m_nodes[from].transitions.add(character, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>());
     addResult.iterator->value.add(to);
 }
 
@@ -62,7 +62,7 @@ void NFA::addEpsilonTransition(unsigned from, unsigned to)
     ASSERT(from < m_nodes.size());
     ASSERT(to < m_nodes.size());
 
-    auto addResult = m_nodes[from].transitions.add(epsilonTransitionCharacter, HashSet<unsigned>());
+    auto addResult = m_nodes[from].transitions.add(epsilonTransitionCharacter, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>());
     addResult.iterator->value.add(to);
 }
 
@@ -72,7 +72,79 @@ void NFA::setFinal(unsigned node)
     m_nodes[node].isFinal = true;
 }
 
+unsigned NFA::graphSize() const
+{
+    return m_nodes.size();
+}
+
+void NFA::restoreToGraphSize(unsigned size)
+{
+    ASSERT(size > 1);
+    ASSERT(size <= graphSize());
+
+    m_nodes.shrink(size);
+}
+
 #ifndef NDEBUG
+
+static void printRange(bool firstRange, uint16_t rangeStart, uint16_t rangeEnd, uint16_t epsilonTransitionCharacter)
+{
+    if (!firstRange)
+        dataLogF(", ");
+    if (rangeStart == rangeEnd) {
+        if (rangeStart == epsilonTransitionCharacter)
+            dataLogF("ɛ");
+        else if (rangeStart == '"' || rangeStart == '\\')
+            dataLogF("\\%c", rangeStart);
+        else if (rangeStart >= '!' && rangeStart <= '~')
+            dataLogF("%c", rangeStart);
+        else
+            dataLogF("\\\\%d", rangeStart);
+    } else {
+        if (rangeStart == 1 && rangeEnd == 127)
+            dataLogF("[any input]");
+        else
+            dataLogF("\\\\%d-\\\\%d", rangeStart, rangeEnd);
+    }
+}
+
+static void printTransition(unsigned sourceNode, const HashMap<uint16_t, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>>& transitions, uint16_t epsilonTransitionCharacter)
+{
+    HashMap<unsigned, HashSet<uint16_t>, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsPerTarget;
+
+    for (const auto& transition : transitions) {
+        for (unsigned targetNode : transition.value) {
+            transitionsPerTarget.add(targetNode, HashSet<uint16_t>());
+            transitionsPerTarget.find(targetNode)->value.add(transition.key);
+        }
+    }
+
+    for (const auto& transitionPerTarget : transitionsPerTarget) {
+        dataLogF("        %d -> %d [label=\"", sourceNode, transitionPerTarget.key);
+
+        Vector<uint16_t> incommingCharacters;
+        copyToVector(transitionPerTarget.value, incommingCharacters);
+        std::sort(incommingCharacters.begin(), incommingCharacters.end());
+
+        uint16_t rangeStart = incommingCharacters.first();
+        uint16_t rangeEnd = rangeStart;
+        bool first = true;
+        for (unsigned sortedTransitionIndex = 1; sortedTransitionIndex < incommingCharacters.size(); ++sortedTransitionIndex) {
+            uint16_t nextChar = incommingCharacters[sortedTransitionIndex];
+            if (nextChar == rangeEnd+1) {
+                rangeEnd = nextChar;
+                continue;
+            }
+            printRange(first, rangeStart, rangeEnd, epsilonTransitionCharacter);
+            rangeStart = rangeEnd = nextChar;
+            first = false;
+        }
+        printRange(first, rangeStart, rangeEnd, epsilonTransitionCharacter);
+
+        dataLogF("\"];\n");
+    }
+}
+
 void NFA::debugPrintDot() const
 {
     dataLogF("digraph NFA_Transitions {\n");
@@ -93,16 +165,8 @@ void NFA::debugPrintDot() const
     dataLogF("    }\n");
 
     dataLogF("    {\n");
-    for (unsigned i = 0; i < m_nodes.size(); ++i) {
-        for (const auto& slot : m_nodes[i].transitions) {
-            for (unsigned nextState : slot.value) {
-                if (slot.key == epsilonTransitionCharacter)
-                    dataLogF("        %d -> %d [label=\"ɛ\"];\n", i, nextState);
-                else
-                    dataLogF("        %d -> %d [label=\"%c\"];\n", i, nextState, slot.key);
-            }
-        }
-    }
+    for (unsigned i = 0; i < m_nodes.size(); ++i)
+        printTransition(i, m_nodes[i].transitions, epsilonTransitionCharacter);
     dataLogF("    }\n");
     dataLogF("}\n");
 }
