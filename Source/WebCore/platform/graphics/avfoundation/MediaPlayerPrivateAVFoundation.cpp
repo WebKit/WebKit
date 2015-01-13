@@ -60,7 +60,6 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_cachedDuration(MediaTime::invalidTime())
     , m_reportedDuration(MediaTime::invalidTime())
     , m_maxTimeLoadedAtLastDidLoadingProgress(MediaTime::invalidTime())
-    , m_requestedRate(1)
     , m_delayCallbacks(0)
     , m_delayCharacteristicsChangedNotification(0)
     , m_mainThreadCallPending(false)
@@ -290,14 +289,6 @@ void MediaPlayerPrivateAVFoundation::seekWithTolerance(const MediaTime& mediaTim
     seekToTime(time, negativeTolerance, positiveTolerance);
 }
 
-void MediaPlayerPrivateAVFoundation::setRate(float rate)
-{
-    LOG(Media, "MediaPlayerPrivateAVFoundation::setRate(%p) - seting to %f", this, rate);
-    m_requestedRate = rate;
-
-    updateRate();
-}
-
 bool MediaPlayerPrivateAVFoundation::paused() const
 {
     if (!metaDataAvailable())
@@ -417,6 +408,11 @@ MediaTime MediaPlayerPrivateAVFoundation::minMediaTimeSeekable() const
 
     LOG(Media, "MediaPlayerPrivateAVFoundation::minTimeSeekable(%p) - returning %s", this, toString(m_cachedMinTimeSeekable).utf8().data());
     return m_cachedMinTimeSeekable;
+}
+
+double MediaPlayerPrivateAVFoundation::requestedRate() const
+{
+    return m_player->requestedRate();
 }
 
 MediaTime MediaPlayerPrivateAVFoundation::maxTimeLoaded() const

@@ -1,3 +1,13 @@
+2015-01-13  Jer Noble  <jer.noble@apple.com>
+
+        defaultPlaybackRate not respected when set before source is loaded
+        https://bugs.webkit.org/show_bug.cgi?id=140282
+
+        Reviewed by Eric Carlson.
+
+        * media/video-defaultplaybackrate-before-load-expected.txt: Added.
+        * media/video-defaultplaybackrate-before-load.html: Added.
+
 2015-01-13  Andreas Kling  <akling@apple.com>
 
         Element::normalizeAttributes() needs to handle arbitrary JS executing between loop iterations.
