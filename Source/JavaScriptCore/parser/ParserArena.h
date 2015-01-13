@@ -26,6 +26,7 @@
 #ifndef ParserArena_h
 #define ParserArena_h
 
+#include "CommonIdentifiers.h"
 #include "Identifier.h"
 #include <array>
 #include <wtf/SegmentedVector.h>
@@ -69,6 +70,8 @@ namespace JSC {
     template <typename T>
     ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(VM* vm, const T* characters, size_t length)
     {
+        if (!length)
+            return vm->propertyNames->emptyIdentifier;
         if (characters[0] >= MaximumCachableCharacter) {
             m_identifiers.append(Identifier(vm, characters, length));
             return m_identifiers.last();
@@ -90,6 +93,8 @@ namespace JSC {
 
     ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifierLCharFromUChar(VM* vm, const UChar* characters, size_t length)
     {
+        if (!length)
+            return vm->propertyNames->emptyIdentifier;
         if (characters[0] >= MaximumCachableCharacter) {
             m_identifiers.append(Identifier::createLCharFromUChar(vm, characters, length));
             return m_identifiers.last();
