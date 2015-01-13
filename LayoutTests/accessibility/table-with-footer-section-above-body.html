@@ -47,20 +47,32 @@
      
         var table = accessibilityController.accessibleElementById("table1");
         var testCell = table.cellForColumnAndRow(0, 1);
-        debug("Table1 cell content at {0, 1}: " + testCell.childAtIndex(0).stringValue);
+        if (accessibilityController.platformName != "atk")
+            debug("Table1 cell content at {0, 1}: " + testCell.childAtIndex(0).stringValue);
+        else
+            debug("Table1 cell content at {0, 1}: " + testCell.stringValue);
         debug("Table1 cell range at {0, 1}: " + testCell.rowIndexRange());
 
         testCell = table.cellForColumnAndRow(0, 2);
-        debug("Table1 cell content at {0, 2}: " + testCell.childAtIndex(0).stringValue);
+        if (accessibilityController.platformName != "atk")
+            debug("Table1 cell content at {0, 2}: " + testCell.childAtIndex(0).stringValue);
+        else
+            debug("Table1 cell content at {0, 2}: " + testCell.stringValue);
         debug("Table1 cell range at {0, 2}: " + testCell.rowIndexRange());
 
         table = accessibilityController.accessibleElementById("table2");
         testCell = table.cellForColumnAndRow(0, 1);
-        debug("Table2 cell content at {0, 1}: " + testCell.childAtIndex(0).stringValue);
+        if (accessibilityController.platformName != "atk")
+            debug("Table2 cell content at {0, 1}: " + testCell.childAtIndex(0).stringValue);
+        else
+            debug("Table2 cell content at {0, 1}: " + testCell.stringValue);
         debug("Table2 cell range at {0, 1}: " + testCell.rowIndexRange());
 
         testCell = table.cellForColumnAndRow(0, 2);
-        debug("Table2 cell content at {0, 2}: " + testCell.childAtIndex(0).stringValue);
+        if (accessibilityController.platformName != "atk")
+            debug("Table2 cell content at {0, 2}: " + testCell.childAtIndex(0).stringValue);
+        else
+            debug("Table2 cell content at {0, 2}: " + testCell.stringValue);
         debug("Table2 cell range at {0, 2}: " + testCell.rowIndexRange());
 
         document.getElementById("content").style.visibility = "hidden";

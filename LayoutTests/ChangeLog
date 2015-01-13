@@ -1,3 +1,20 @@
+2015-01-13  Andrzej Badowski  <a.badowski@samsung.com>
+
+        AX: [ATK] Mark accessibility/table-with-footer-section-above-body.html as a suitable test for EFL and GTK
+        https://bugs.webkit.org/show_bug.cgi?id=140355
+
+        Reviewed by Chris Fleizach.
+
+        The test shows the text contents of an AccessibilityTableCell object using tableCell.childAtIndex(0).stringValue.
+        In the case of ATK childAtIndex(0) returns a non-empty object, but it is not the ATK_OBJECT,
+        so the stringValue produces an empty string.
+        To avoid this, the cell text content is obtained by direct reading of stringValue of TableCell.
+
+        * accessibility/table-with-footer-section-above-body.html:
+           This test is also suitable for EFL and GTK port.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2015-01-13  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [EFL] Fix test expectations after r178310.

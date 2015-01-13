@@ -2181,8 +2181,6 @@ webkit.org/b/132235 fast/shapes/shape-outside-floats/shape-outside-floats-shape-
 
 webkit.org/b/132253 media/volume-bar-empty-when-muted.html [ Failure ]
 
-webkit.org/b/132909 accessibility/table-with-footer-section-above-body.html [ Failure ]
-
 webkit.org/b/132910 editing/pasteboard/drag-drop-paragraph-crasher.html [ Failure ]
 
 webkit.org/b/132914 http/tests/security/drag-drop-local-file.html [ Failure ]

@@ -1991,7 +1991,6 @@ webkit.org/b/133484 accessibility/content-editable-set-inner-text-generates-axva
 
 # Failing at least from 2014-05-01, but cause unknown
 webkit.org/b/133507 accessibility/media-element.html [ Failure ]
-webkit.org/b/133509 accessibility/table-with-footer-section-above-body.html [ Failure ]
 
 webkit.org/b/130187 accessibility/aria-hidden-false-works-in-subtrees.html [ Missing ]
 
