@@ -134,6 +134,7 @@ public:
         Preferences,
         Session,
         TextChecker,
+        UserContentController,
         UserMediaPermissionRequest,
         Vibration,
         ViewportAttributes,

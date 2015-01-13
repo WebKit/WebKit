@@ -42,11 +42,6 @@ static uint64_t generateIdentifier()
     return ++identifier;
 }
 
-PassRefPtr<WebUserContentControllerProxy> WebUserContentControllerProxy::create()
-{
-    return adoptRef(new WebUserContentControllerProxy);
-}
-
 WebUserContentControllerProxy::WebUserContentControllerProxy()
     : m_identifier(generateIdentifier())
 {

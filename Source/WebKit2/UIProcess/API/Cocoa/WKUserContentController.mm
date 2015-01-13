@@ -50,10 +50,17 @@
     if (!(self = [super init]))
         return nil;
 
-    _userContentControllerProxy = WebKit::WebUserContentControllerProxy::create();
+    API::Object::constructInWrapper<WebKit::WebUserContentControllerProxy>(self);
     _userScripts = adoptNS([[NSMutableArray alloc] init]);
 
     return self;
+}
+
+- (void)dealloc
+{
+    _userContentControllerProxy->~WebUserContentControllerProxy();
+
+    [super dealloc];
 }
 
 - (NSArray *)userScripts
@@ -133,6 +140,13 @@ private:
 - (void)removeScriptMessageHandlerForName:(NSString *)name
 {
     _userContentControllerProxy->removeUserMessageHandlerForName(name);
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_userContentControllerProxy;
 }
 
 @end

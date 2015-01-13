@@ -26,6 +26,7 @@
 #ifndef WebUserContentControllerProxy_h
 #define WebUserContentControllerProxy_h
 
+#include "APIObject.h"
 #include "MessageReceiver.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -48,9 +49,9 @@ namespace WebKit {
 class WebProcessProxy;
 class WebScriptMessageHandler;
 
-class WebUserContentControllerProxy : public RefCounted<WebUserContentControllerProxy>, private IPC::MessageReceiver {
+class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, private IPC::MessageReceiver {
 public:
-    static PassRefPtr<WebUserContentControllerProxy> create();
+    explicit WebUserContentControllerProxy();
     ~WebUserContentControllerProxy();
 
     uint64_t identifier() const { return m_identifier; }
@@ -69,8 +70,6 @@ public:
     void removeUserMessageHandlerForName(const String&);
 
 private:
-    explicit WebUserContentControllerProxy();
-
     // IPC::MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
