@@ -1,3 +1,16 @@
+2015-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Apple] Squelch stderr log regarding negative stroke thickness
+        https://bugs.webkit.org/show_bug.cgi?id=140372
+        <rdar://problem/19426485>
+
+        Reviewed by Eric Carlson.
+
+        No new tests because there is no visible behavior change.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformStrokeThickness):
+
 2015-01-12  Timothy Horton  <timothy_horton@apple.com>
 
         Get rid of unnecessary reimplementations of CGFloor/Ceiling

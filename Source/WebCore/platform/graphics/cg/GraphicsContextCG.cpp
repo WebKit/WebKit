@@ -1457,7 +1457,7 @@ void GraphicsContext::setPlatformStrokeThickness(float thickness)
 {
     if (paintingDisabled())
         return;
-    CGContextSetLineWidth(platformContext(), thickness);
+    CGContextSetLineWidth(platformContext(), std::max(thickness, 0.f));
 }
 
 void GraphicsContext::setPlatformFillColor(const Color& color, ColorSpace colorSpace)
