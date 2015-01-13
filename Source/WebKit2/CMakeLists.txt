@@ -295,9 +295,9 @@ set(WebKit2_SOURCES
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
     Shared/Plugins/Netscape/PluginInformation.cpp
 
-    UIProcess/APINavigationData.cpp
-    UIProcess/APIProcessPoolConfiguration.cpp
-    UIProcess/APISession.cpp
+    UIProcess/API/APINavigationData.cpp
+    UIProcess/API/APIProcessPoolConfiguration.cpp
+    UIProcess/API/APISession.cpp
     UIProcess/BackingStore.cpp
     UIProcess/DrawingAreaProxy.cpp
     UIProcess/FrameLoadState.cpp

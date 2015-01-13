@@ -1,3 +1,9 @@
+2015-01-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Unreviewed build fix after r178309.
+
+        * CMakeLists.txt: Rename moved files at r178309.
+
 2015-01-11  Sam Weinig  <sam@webkit.org>
 
         Remove support for SharedWorkers
