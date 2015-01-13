@@ -1,3 +1,15 @@
+2014-12-12  Matthew Mirman  <mmirman@apple.com>
+
+        shiftCountWithArrayStorage should exit to slow path if the object has a sparse map.
+        https://bugs.webkit.org/show_bug.cgi?id=139598
+        <rdar://problem/18779367>
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCountWithArrayStorage): Added check for object having a sparse map.
+        * tests/stress/sparse_splice.js: Added.
+
 2014-12-10  Matthew Mirman  <mmirman@apple.com>
 
         Fixes operationPutByIds such that they check that the put didn't

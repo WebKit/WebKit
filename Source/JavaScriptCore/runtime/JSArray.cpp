@@ -676,7 +676,7 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
     // If the array contains holes or is otherwise in an abnormal state,
     // use the generic algorithm in ArrayPrototype.
     if ((storage->hasHoles() && this->structure(vm)->holesMustForwardToPrototype(vm)) 
-        || inSparseIndexingMode() 
+        || hasSparseMap() 
         || shouldUseSlowPut(indexingType())) {
         return false;
     }
