@@ -36,6 +36,7 @@ include_directories(${CMAKE_BINARY_DIR}
     ${WEBKIT2_DIR}/Shared/API/c
     ${WEBKIT2_DIR}/Shared/Plugins
     ${WEBKIT2_DIR}/UIProcess
+    ${WEBKIT2_DIR}/UIProcess/API
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/c
     ${WTF_DIR}
