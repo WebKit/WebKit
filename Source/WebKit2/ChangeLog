@@ -1,3 +1,17 @@
+2015-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Move a couple of API files to UIProcess/API.
+
+        Rubber-stamped by Tim Horton.
+
+        * UIProcess/API/APINavigationData.cpp: Renamed from Source/WebKit2/UIProcess/APINavigationData.cpp.
+        * UIProcess/API/APINavigationData.h: Renamed from Source/WebKit2/UIProcess/APINavigationData.h.
+        * UIProcess/API/APIProcessPoolConfiguration.cpp: Renamed from Source/WebKit2/UIProcess/APIProcessPoolConfiguration.cpp.
+        * UIProcess/API/APIProcessPoolConfiguration.h: Renamed from Source/WebKit2/UIProcess/APIProcessPoolConfiguration.h.
+        * UIProcess/API/APISession.cpp: Renamed from Source/WebKit2/UIProcess/APISession.cpp.
+        * UIProcess/API/APISession.h: Renamed from Source/WebKit2/UIProcess/APISession.h.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-01-12  Martin Hock  <mhock@apple.com>
 
         [iOS][WK2] Push content bounds on layer tree commit to prevent drawing stale fixed position rects
