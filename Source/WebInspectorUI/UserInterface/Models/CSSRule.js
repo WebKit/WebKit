@@ -188,6 +188,14 @@ WebInspector.CSSRule.prototype = {
         return this._mediaList;
     },
 
+    isEqualTo: function(rule)
+    {
+        if (!rule)
+            return false;
+
+        return Object.shallowEqual(this._id, rule.id);
+    },
+
     // Protected
 
     get nodeStyles()
