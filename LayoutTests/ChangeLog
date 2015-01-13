@@ -1,3 +1,14 @@
+2014-12-10  Antti Koivisto  <antti@apple.com>
+
+        Crash when creating CSSCalcBinaryOperation
+        https://bugs.webkit.org/show_bug.cgi?id=134886
+        rdar://problem/17663561
+
+        Reviewed by Chris Dumez.
+
+        * fast/css/calc-binary-operation-crash-expected.txt: Added.
+        * fast/css/calc-binary-operation-crash.html: Added.
+
 2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Scrolling to anchor tags does nothing in vertical-rl writing mode
