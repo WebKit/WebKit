@@ -30,18 +30,12 @@
 
 #import "ExceptionCodePlaceholder.h"
 #import "FloatConversion.h"
+#import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCoreSystemInterface.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;
-
-static inline CGFloat webkit_CGFloor(CGFloat value)
-{
-    if (sizeof(value) == sizeof(float))
-        return floorf(value);
-    return floor(value);
-}
 
 @interface WebVideoFullscreenHUDWindowController (Private) <NSWindowDelegate>
 
@@ -330,7 +324,7 @@ static NSTextField *createTimeTextField(NSRect frame)
 
     NSView *contentView = [window contentView];
 
-    CGFloat center = webkit_CGFloor((windowWidth - playButtonWidth) / 2);
+    CGFloat center = CGFloor((windowWidth - playButtonWidth) / 2);
     _playButton = (NSButton *)createControlWithMediaUIControlType(wkMediaUIControlPlayPauseButton, NSMakeRect(center, windowHeight - playButtonTopMargin - playButtonHeight, playButtonWidth, playButtonHeight));
     ASSERT([_playButton isKindOfClass:[NSButton class]]);
     [_playButton setTarget:self];
@@ -353,7 +347,7 @@ static NSTextField *createTimeTextField(NSRect frame)
     [volumeDownButton release];
 
     left += volumeButtonWidth;
-    _volumeSlider = createControlWithMediaUIControlType(wkMediaUIControlSlider, NSMakeRect(left, volumeControlsBottom + webkit_CGFloor((volumeButtonHeight - volumeSliderHeight) / 2), volumeSliderWidth, volumeSliderHeight));
+    _volumeSlider = createControlWithMediaUIControlType(wkMediaUIControlSlider, NSMakeRect(left, volumeControlsBottom + CGFloor((volumeButtonHeight - volumeSliderHeight) / 2), volumeSliderWidth, volumeSliderHeight));
     [_volumeSlider setValue:[NSNumber numberWithDouble:[self maxVolume]] forKey:@"maxValue"];
     [_volumeSlider setTarget:self];
     [_volumeSlider setAction:@selector(volumeChanged:)];
@@ -370,7 +364,7 @@ static NSTextField *createTimeTextField(NSRect frame)
 
     [_timeline setTarget:self];
     [_timeline setAction:@selector(timelinePositionChanged:)];
-    [_timeline setFrame:NSMakeRect(webkit_CGFloor((windowWidth - timelineWidth) / 2), timelineBottomMargin, timelineWidth, timelineHeight)];
+    [_timeline setFrame:NSMakeRect(CGFloor((windowWidth - timelineWidth) / 2), timelineBottomMargin, timelineWidth, timelineHeight)];
     [contentView addSubview:_timeline];
 
     _elapsedTimeText = createTimeTextField(NSMakeRect(timeTextFieldHorizontalMargin, timelineBottomMargin, timeTextFieldWidth, timeTextFieldHeight));

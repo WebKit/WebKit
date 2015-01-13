@@ -1,5 +1,21 @@
 2015-01-12  Timothy Horton  <timothy_horton@apple.com>
 
+        Get rid of unnecessary reimplementations of CGFloor/Ceiling
+        https://bugs.webkit.org/show_bug.cgi?id=140375
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/DragImageMac.mm:
+        (WebCore::widthWithFont):
+        (WebCore::drawAtPoint):
+        (WebCore::webkit_CGCeiling): Deleted.
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]):
+        (webkit_CGFloor): Deleted.
+        Delete unnecessary code, use the real CGFloor/Ceiling instead.
+
+2015-01-12  Timothy Horton  <timothy_horton@apple.com>
+
         REGRESSION (r177656): Text in find-in-page yellow bouncy rectangle is not crisp
         https://bugs.webkit.org/show_bug.cgi?id=140373
         <rdar://problem/19447156>

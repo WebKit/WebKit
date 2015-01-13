@@ -28,6 +28,7 @@
 
 #if ENABLE(DRAG_SUPPORT)
 #import "BitmapImage.h"
+#import "CoreGraphicsSPI.h"
 #import "Font.h"
 #import "FontDescription.h"
 #import "FontSelector.h"
@@ -199,13 +200,6 @@ static float widthWithFont(NSString *string, NSFont *font)
     
     return [string sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;
 }
-
-static inline CGFloat webkit_CGCeiling(CGFloat value)
-{
-    if (sizeof(value) == sizeof(float))
-        return ceilf(value);
-    return static_cast<CGFloat>(ceil(value));
-}
     
 static void drawAtPoint(NSString *string, NSPoint point, NSFont *font, NSColor *textColor)
 {
@@ -219,7 +213,7 @@ static void drawAtPoint(NSString *string, NSPoint point, NSFont *font, NSColor *
         // It's probably incorrect for high DPI.
         // If you change this, be sure to test all the text drawn this way in Safari, including
         // the status bar, bookmarks bar, tab bar, and activity window.
-        point.y = webkit_CGCeiling(point.y);
+        point.y = CGCeiling(point.y);
         
         NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
         CGContextRef cgContext = static_cast<CGContextRef>([nsContext graphicsPort]);
