@@ -1,3 +1,16 @@
+2014-12-09  Alberto Garcia  <berto@igalia.com>
+
+        Undefined Symbol build error "_objc_registerThreadWithCollector" when building WebKit GTK Mac OS X on Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=58737
+
+        Reviewed by Darin Adler.
+
+        Replace OS(MAC_OS_X) with PLATFORM(MAC) to prevent using
+        osx-specific code in WebKitGTK+ builds.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeCurrentThreadInternal):
+
 2014-11-05  Chris Dumez  <cdumez@apple.com>
 
         Assertion hit DOMTimer::updateTimerIntervalIfNecessary()
