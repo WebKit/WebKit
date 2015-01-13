@@ -198,8 +198,13 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
 
     if (isSynchronous())
         m_synchronousLoadData->response = response;
-    else
+    else {
+        // For multipart/x-mixed-replace didReceiveResponseAsync gets called multiple times and buffering would require special handling.
+        if (response.isMultipart())
+            m_bufferedData = nullptr;
+
         sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponse(response, m_parameters.isMainResource));
+    }
 
     // m_handle will be null if the request got aborted above.
     if (!m_handle)

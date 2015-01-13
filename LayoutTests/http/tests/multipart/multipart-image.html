@@ -1,0 +1,27 @@
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function loadedFirstPart()
+{
+    if (!window.testRunner)
+        return;
+    var count = 0;
+    setInterval(function() {
+        var img = document.getElementById("test");
+        /* width of abe.png */
+        if (img.offsetWidth == 76)
+            testRunner.notifyDone();
+        if (++count > 20)
+            testRunner.notifyDone();
+    }, 100);
+}
+</script>
+</head>
+<body>
+<!-- The last image is repeated due to a WebCore side bug that causes last part to not render. -->
+<img id=test src="resources/multipart.php?interval=0.1&img1=green-100x100.png&img2=abe.png&img3=abe.png" onload="loadedFirstPart()">
+</body>
+</html>

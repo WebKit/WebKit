@@ -1,3 +1,15 @@
+2014-12-05  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (173394): Support for webcam is broken
+        https://bugs.webkit.org/show_bug.cgi?id=139313
+
+        Reviewed by Alexey Proskuryakov.
+
+        We had no coverage for actually rendering multipart content.
+
+        * http/tests/multipart/multipart-image-expected.html: Added.
+        * http/tests/multipart/multipart-image.html: Added.
+
 2014-12-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Directional single quotation marks are not rotated in vertical text
