@@ -497,6 +497,9 @@ WebInspector.NavigationSidebarPanel.prototype = {
 
     _updateFilter: function()
     {
+        var selectedTreeElement = this._contentTreeOutline.selectedTreeElement;
+        var selectionWasHidden = selectedTreeElement && selectedTreeElement.hidden;
+
         var filters = this._filterBar.filters;
         this._textFilterRegex = simpleGlobStringToRegExp(filters.text, "i");
         this._filtersSetting.value = filters;
@@ -514,6 +517,13 @@ WebInspector.NavigationSidebarPanel.prototype = {
 
         this._checkForEmptyFilterResults();
         this._updateContentOverflowShadowVisibility();
+
+        // Filter may have hidden the selected resource in the timeline view, which should now notify its listeners.
+        if (selectedTreeElement && selectedTreeElement.hidden !== selectionWasHidden) {
+            var currentContentView = WebInspector.contentBrowser.currentContentView;
+            if (currentContentView instanceof WebInspector.TimelineContentView && typeof currentContentView.currentTimelineView.filterUpdated === "function")
+                currentContentView.currentTimelineView.filterUpdated();
+        }
     },
 
     _treeElementAddedOrChanged: function(treeElement)

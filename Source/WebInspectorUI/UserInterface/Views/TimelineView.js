@@ -217,6 +217,11 @@ WebInspector.TimelineView.prototype = {
         this.updateLayout();
     },
 
+    filterUpdated: function()
+    {
+        this.dispatchEventToListeners(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange);
+    },
+
     // Protected
 
     treeElementPathComponentSelected: function(event)

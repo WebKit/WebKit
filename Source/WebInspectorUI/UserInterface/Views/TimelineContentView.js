@@ -362,6 +362,8 @@ WebInspector.TimelineContentView.prototype = {
         this._timelineOverview.currentTime = currentTime;
         this._currentTimelineView.currentTime = currentTime;
 
+        WebInspector.timelineSidebarPanel.updateFilter();
+
         // Force a layout now since we are already in an animation frame and don't need to delay it until the next.
         this._timelineOverview.updateLayoutIfNeeded();
         this._currentTimelineView.updateLayoutIfNeeded();

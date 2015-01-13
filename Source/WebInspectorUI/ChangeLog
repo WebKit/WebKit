@@ -1,3 +1,31 @@
+2015-01-12  Jonathan Wells  <jonowells@apple.com>
+
+        Web Inspector: Timeline: when Network Requests view is selected, in progress requests are absent.
+        https://bugs.webkit.org/show_bug.cgi?id=140090
+
+        Reviewed by Timothy Hatcher.
+
+        TimelineContentView#_updateTimes() changed to call WebInspector.timelineSidebarPanel.updateFilter() in addition
+        to updating the layout of the current timeline view. TimelineSidebarPanel.updateFilter() now responsible for
+        updating filtered resources in a TimelineView.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WebInspector.NavigationSidebarPanel.prototype._updateFilter):
+        Now handles updating the UI associated with filtering of navigation sidebar tree elements.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WebInspector.OverviewTimelineView.prototype.updateLayout):
+        No longer handles updating other UI along with the navigation sidebar tree elements. That is now handled by
+        WebInspector.TimelineView.prototype.filterUpdated.
+        (WebInspector.OverviewTimelineView.prototype._compareTreeElementsByDetails): Drive-by fix. Missing vars.
+
+        * UserInterface/Views/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype._updateTimes): Add call to updateFilter().
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.filterUpdated):
+        Function added to dispatch a SelectionPathComponentsDidChange event.
+
 2015-01-09  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Support additional text styles.

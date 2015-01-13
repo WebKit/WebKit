@@ -112,17 +112,6 @@ WebInspector.OverviewTimelineView.prototype = {
             }
         }
 
-        if (this.currentTime !== oldCurrentTime) {
-            var selectedTreeElement = this.navigationSidebarTreeOutline.selectedTreeElement;
-            var selectionWasHidden = selectedTreeElement && selectedTreeElement.hidden;
-
-            // Check the filters again since the current time change might have revealed this node. Start and end time changes are handled by TimelineContentView.
-            WebInspector.timelineSidebarPanel.updateFilter();
-
-            if (selectedTreeElement && selectedTreeElement.hidden !== selectionWasHidden)
-                this.dispatchEventToListeners(WebInspector.TimelineView.Event.SelectionPathComponentsDidChange);
-        }
-
         this._timelineRuler.updateLayout();
 
         this._processPendingRepresentedObjects();
@@ -175,8 +164,8 @@ WebInspector.OverviewTimelineView.prototype = {
             return 1;
 
         if (a instanceof WebInspector.SourceCodeTimelineTreeElement && b instanceof WebInspector.SourceCodeTimelineTreeElement) {
-            aTimeline = a.sourceCodeTimeline;
-            bTimeline = b.sourceCodeTimeline;
+            var aTimeline = a.sourceCodeTimeline;
+            var bTimeline = b.sourceCodeTimeline;
 
             if (!aTimeline.sourceCodeLocation && !bTimeline.sourceCodeLocation) {
                 if (aTimeline.recordType !== bTimeline.recordType)
