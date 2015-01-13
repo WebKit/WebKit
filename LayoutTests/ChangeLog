@@ -1,3 +1,16 @@
+2014-12-08  Mark Lam  <mark.lam@apple.com>
+
+        CFA wrongly assumes that a speculation for SlowPutArrayStorageShape disallows ArrayStorageShape arrays.
+        <https://webkit.org/b/139327>
+
+        Reviewed by Michael Saboff.
+
+        * js/dfg-slow-put-array-storage-spec-should-allow-fast-array-storage-expected.txt: Added.
+        * js/dfg-slow-put-array-storage-spec-should-allow-fast-array-storage.html: Added.
+        * js/script-tests/dfg-slow-put-array-storage-spec-should-allow-fast-array-storage.js: Added.
+        (foo):
+        (test):
+
 2014-12-07  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Soup][Curl] HTTP header values should be treated as latin1, not UTF-8
