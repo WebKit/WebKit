@@ -465,12 +465,22 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
 
     RefPtr<API::Object> userData;
 
-    uint64_t navigationID = static_cast<WebDocumentLoader*>(m_frame->coreFrame()->loader().provisionalDocumentLoader())->navigationID();
-
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didFailProvisionalLoadWithErrorForFrame(webPage, m_frame, error, userData);
 
     webPage->sandboxExtensionTracker().didFailProvisionalLoad(m_frame);
+
+    // FIXME: This is gross. This is necessary because if the client calls WKBundlePageStopLoading() from within the didFailProvisionalLoadWithErrorForFrame
+    // injected bundle client call, that will cause the provisional DocumentLoader to be disconnected from the Frame, and didDistroyNavigation message
+    // to be sent to the UIProcess (and the destruction of the DocumentLoader). If that happens, and we had captured the navigationID before injected bundle 
+    // client call, the DidFailProvisionalLoadForFrame would send a navigationID of a destroyed Navigation, and the UIProcess would not be able to find it
+    // in its table.
+    //
+    // A better solution to this problem would be find a clean way to postpone the disconnection of the DocumentLoader from the Frame until
+    // the entire FrameLoaderClient function was complete.
+    uint64_t navigationID = 0;
+    if (auto documentLoader = m_frame->coreFrame()->loader().provisionalDocumentLoader())
+        navigationID = static_cast<WebDocumentLoader*>(documentLoader)->navigationID();
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), navigationID, error, UserData(WebProcess::shared().transformObjectsToHandles(userData.get()).get())));

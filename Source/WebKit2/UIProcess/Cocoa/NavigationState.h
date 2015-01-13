@@ -93,30 +93,29 @@ private:
         ~LoaderClient();
 
     private:
-        virtual void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, API::Object*) override;
-        virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) override;
-        virtual void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, const WebCore::ResourceError&, API::Object*) override;
-        virtual void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, API::Object*) override;
-        virtual void didFinishDocumentLoadForFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, uint64_t navigationID, API::Object*) override;
-        virtual void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, API::Object*) override;
-        virtual void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, const WebCore::ResourceError&, API::Object*) override;
-        virtual void didSameDocumentNavigationForFrame(WebPageProxy*, WebFrameProxy*, uint64_t navigationID, SameDocumentNavigationType, API::Object*) override;
-        virtual void didDestroyNavigation(WebKit::WebPageProxy*, uint64_t navigationID) override;
-        virtual void didLayout(WebKit::WebPageProxy*, WebCore::LayoutMilestones, API::Object*) override;
-        virtual bool canAuthenticateAgainstProtectionSpaceInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebProtectionSpace*) override;
-        virtual void didReceiveAuthenticationChallengeInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::AuthenticationChallengeProxy*) override;
-        virtual void processDidCrash(WebKit::WebPageProxy*) override;
-        virtual PassRefPtr<API::Data> webCryptoMasterKey(WebKit::WebPageProxy&) override;
+        virtual void didStartProvisionalLoadForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, API::Object*) override;
+        virtual void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, API::Object*) override;
+        virtual void didFailProvisionalLoadWithErrorForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
+        virtual void didCommitLoadForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, API::Object*) override;
+        virtual void didFinishDocumentLoadForFrame(WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, API::Object*) override;
+        virtual void didFinishLoadForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, API::Object*) override;
+        virtual void didFailLoadWithErrorForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
+        virtual void didSameDocumentNavigationForFrame(WebPageProxy&, WebFrameProxy&, API::Navigation*, SameDocumentNavigationType, API::Object*) override;
+        virtual void didLayout(WebPageProxy&, WebCore::LayoutMilestones, API::Object*) override;
+        virtual bool canAuthenticateAgainstProtectionSpaceInFrame(WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebProtectionSpace*) override;
+        virtual void didReceiveAuthenticationChallengeInFrame(WebPageProxy&, WebKit::WebFrameProxy&, WebKit::AuthenticationChallengeProxy*) override;
+        virtual void processDidCrash(WebPageProxy&) override;
+        virtual PassRefPtr<API::Data> webCryptoMasterKey(WebPageProxy&) override;
 
 #if USE(QUICK_LOOK)
         virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) override;
         virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebKit::QuickLookDocumentData&) override;
 #endif
 
-        virtual void didNavigateWithNavigationData(WebKit::WebPageProxy&, const WebKit::WebNavigationDataStore&, WebKit::WebFrameProxy&) override;
-        virtual void didPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) override;
-        virtual void didPerformServerRedirect(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) override;
-        virtual void didUpdateHistoryTitle(WebKit::WebPageProxy&, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy&) override;
+        virtual void didNavigateWithNavigationData(WebPageProxy&, const WebNavigationDataStore&, WebFrameProxy&) override;
+        virtual void didPerformClientRedirect(WebPageProxy&, const WTF::String&, const WTF::String&, WebFrameProxy&) override;
+        virtual void didPerformServerRedirect(WebPageProxy&, const WTF::String&, const WTF::String&, WebFrameProxy&) override;
+        virtual void didUpdateHistoryTitle(WebPageProxy&, const WTF::String&, const WTF::String&, WebFrameProxy&) override;
 
         NavigationState& m_navigationState;
     };

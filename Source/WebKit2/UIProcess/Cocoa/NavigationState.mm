@@ -361,9 +361,9 @@ NavigationState::LoaderClient::~LoaderClient()
 {
 }
 
-void NavigationState::LoaderClient::didStartProvisionalLoadForFrame(WebPageProxy* page, WebFrameProxy* webFrameProxy, uint64_t navigationID, API::Object*)
+void NavigationState::LoaderClient::didStartProvisionalLoadForFrame(WebPageProxy& page, WebFrameProxy& webFrameProxy, API::Navigation* navigation, API::Object*)
 {
-    if (!webFrameProxy->isMainFrame())
+    if (!webFrameProxy.isMainFrame())
         return;
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidStartProvisionalNavigation)
@@ -373,17 +373,17 @@ void NavigationState::LoaderClient::didStartProvisionalLoadForFrame(WebPageProxy
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = wrapper(page->navigationState().navigation(navigationID));
+    // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the page cache.
+    WKNavigation *wkNavigation = nil;
+    if (navigation)
+        wkNavigation = wrapper(*navigation);
 
-    [navigationDelegate webView:m_navigationState.m_webView didStartProvisionalNavigation:navigation];
+    [navigationDelegate webView:m_navigationState.m_webView didStartProvisionalNavigation:wkNavigation];
 }
 
-void NavigationState::LoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame(WebKit::WebPageProxy* page, WebKit::WebFrameProxy* webFrameProxy, uint64_t navigationID, API::Object*)
+void NavigationState::LoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy& page, WebKit::WebFrameProxy& webFrameProxy, API::Navigation* navigation, API::Object*)
 {
-    if (!webFrameProxy->isMainFrame())
+    if (!webFrameProxy.isMainFrame())
         return;
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidReceiveServerRedirectForProvisionalNavigation)
@@ -393,12 +393,12 @@ void NavigationState::LoaderClient::didReceiveServerRedirectForProvisionalLoadFo
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = wrapper(page->navigationState().navigation(navigationID));
+    // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the page cache.
+    WKNavigation *wkNavigation = nil;
+    if (navigation)
+        wkNavigation = wrapper(*navigation);
 
-    [navigationDelegate webView:m_navigationState.m_webView didReceiveServerRedirectForProvisionalNavigation:navigation];
+    [navigationDelegate webView:m_navigationState.m_webView didReceiveServerRedirectForProvisionalNavigation:wkNavigation];
 }
 
 static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, WebFrameProxy& webFrameProxy, NSError *originalError)
@@ -415,24 +415,24 @@ static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, W
     return adoptNS([[NSError alloc] initWithDomain:originalError.domain code:originalError.code userInfo:userInfo.get()]);
 }
 
-void NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame(WebPageProxy* page, WebFrameProxy* webFrameProxy, uint64_t navigationID, const WebCore::ResourceError& error, API::Object*)
+void NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame(WebPageProxy& page, WebFrameProxy& webFrameProxy, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object*)
 {
-    if (!webFrameProxy->isMainFrame()) {
+    if (!webFrameProxy.isMainFrame()) {
         if (!m_navigationState.m_navigationDelegateMethods.webViewNavigationDidFailProvisionalLoadInSubframeWithError)
             return;
 
         auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
-        auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, *webFrameProxy, error);
+        auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, webFrameProxy, error);
         // FIXME: Get the main frame's current navigation.
-        [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView navigation:nil didFailProvisionalLoadInSubframe:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*webFrameProxy]).get() withError:errorWithRecoveryAttempter.get()];
+        [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView navigation:nil didFailProvisionalLoadInSubframe:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:webFrameProxy]).get() withError:errorWithRecoveryAttempter.get()];
 
         return;
     }
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
-    RetainPtr<WKNavigation> navigation;
-    if (navigationID)
-        navigation = wrapper(page->navigationState().takeNavigation(navigationID).get());
+    // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the page cache.
+    RetainPtr<WKNavigation> wkNavigation;
+    if (navigation)
+        wkNavigation = wrapper(*navigation);
     
     // FIXME: Set the error on the navigation object.
 
@@ -443,13 +443,13 @@ void NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame(WebP
     if (!navigationDelegate)
         return;
 
-    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, *webFrameProxy, error);
-    [navigationDelegate webView:m_navigationState.m_webView didFailProvisionalNavigation:navigation.get() withError:errorWithRecoveryAttempter.get()];
+    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, webFrameProxy, error);
+    [navigationDelegate webView:m_navigationState.m_webView didFailProvisionalNavigation:wkNavigation.get() withError:errorWithRecoveryAttempter.get()];
 }
 
-void NavigationState::LoaderClient::didCommitLoadForFrame(WebPageProxy* page, WebFrameProxy* webFrameProxy, uint64_t navigationID, API::Object*)
+void NavigationState::LoaderClient::didCommitLoadForFrame(WebPageProxy& page, WebFrameProxy& webFrameProxy, API::Navigation* navigation, API::Object*)
 {
-    if (!webFrameProxy->isMainFrame())
+    if (!webFrameProxy.isMainFrame())
         return;
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidCommitNavigation)
@@ -459,17 +459,17 @@ void NavigationState::LoaderClient::didCommitLoadForFrame(WebPageProxy* page, We
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = wrapper(page->navigationState().navigation(navigationID));
+    // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the page cache.
+    WKNavigation *wkNavigation = nil;
+    if (navigation)
+        wkNavigation = wrapper(*navigation);
 
-    [navigationDelegate webView:m_navigationState.m_webView didCommitNavigation:navigation];
+    [navigationDelegate webView:m_navigationState.m_webView didCommitNavigation:wkNavigation];
 }
 
-void NavigationState::LoaderClient::didFinishDocumentLoadForFrame(WebPageProxy* page, WebFrameProxy* webFrameProxy, uint64_t navigationID, API::Object*)
+void NavigationState::LoaderClient::didFinishDocumentLoadForFrame(WebPageProxy& page, WebFrameProxy& webFrameProxy, API::Navigation* navigation, API::Object*)
 {
-    if (!webFrameProxy->isMainFrame())
+    if (!webFrameProxy.isMainFrame())
         return;
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewNavigationDidFinishDocumentLoad)
@@ -479,17 +479,17 @@ void NavigationState::LoaderClient::didFinishDocumentLoadForFrame(WebPageProxy* 
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = wrapper(page->navigationState().navigation(navigationID));
+    // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the page cache.
+    WKNavigation *wkNavigation = nil;
+    if (navigation)
+        wkNavigation = wrapper(*navigation);
 
-    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView navigationDidFinishDocumentLoad:navigation];
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView navigationDidFinishDocumentLoad:wkNavigation];
 }
 
-void NavigationState::LoaderClient::didFinishLoadForFrame(WebPageProxy* page, WebFrameProxy* webFrameProxy, uint64_t navigationID, API::Object*)
+void NavigationState::LoaderClient::didFinishLoadForFrame(WebPageProxy& page, WebFrameProxy& webFrameProxy, API::Navigation* navigation, API::Object*)
 {
-    if (!webFrameProxy->isMainFrame())
+    if (!webFrameProxy.isMainFrame())
         return;
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidFinishNavigation)
@@ -499,17 +499,17 @@ void NavigationState::LoaderClient::didFinishLoadForFrame(WebPageProxy* page, We
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = wrapper(page->navigationState().navigation(navigationID));
+    // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the page cache.
+    WKNavigation *wkNavigation = nil;
+    if (navigation)
+        wkNavigation = wrapper(*navigation);
 
-    [navigationDelegate webView:m_navigationState.m_webView didFinishNavigation:navigation];
+    [navigationDelegate webView:m_navigationState.m_webView didFinishNavigation:wkNavigation];
 }
 
-void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy* page, WebFrameProxy* webFrameProxy, uint64_t navigationID, const WebCore::ResourceError& error, API::Object* userData)
+void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy& page, WebFrameProxy& webFrameProxy, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userData)
 {
-    if (!webFrameProxy->isMainFrame())
+    if (!webFrameProxy.isMainFrame())
         return;
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidFailNavigationWithError)
@@ -519,18 +519,18 @@ void NavigationState::LoaderClient::didFailLoadWithErrorForFrame(WebPageProxy* p
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = wrapper(page->navigationState().navigation(navigationID));
+    // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the page cache.
+    WKNavigation *wkNavigation = nil;
+    if (navigation)
+        wkNavigation = wrapper(*navigation);
 
-    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, *webFrameProxy, error);
-    [navigationDelegate webView:m_navigationState.m_webView didFailNavigation:navigation withError:errorWithRecoveryAttempter.get()];
+    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, webFrameProxy, error);
+    [navigationDelegate webView:m_navigationState.m_webView didFailNavigation:wkNavigation withError:errorWithRecoveryAttempter.get()];
 }
 
-void NavigationState::LoaderClient::didSameDocumentNavigationForFrame(WebPageProxy* page, WebFrameProxy* webFrameProxy, uint64_t navigationID, SameDocumentNavigationType navigationType, API::Object*)
+void NavigationState::LoaderClient::didSameDocumentNavigationForFrame(WebPageProxy&, WebFrameProxy& webFrameProxy, API::Navigation* navigation, SameDocumentNavigationType navigationType, API::Object*)
 {
-    if (!webFrameProxy->isMainFrame())
+    if (!webFrameProxy.isMainFrame())
         return;
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewNavigationDidSameDocumentNavigation)
@@ -541,19 +541,14 @@ void NavigationState::LoaderClient::didSameDocumentNavigationForFrame(WebPagePro
         return;
 
     // FIXME: We should assert that navigationID is not zero here, but it's currently zero for some navigations through the page cache.
-    WKNavigation *navigation = nil;
-    if (navigationID)
-        navigation = wrapper(page->navigationState().navigation(navigationID));
+    WKNavigation *wkNavigation = nil;
+    if (navigation)
+        wkNavigation = wrapper(*navigation);
 
-    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView navigation:navigation didSameDocumentNavigation:toWKSameDocumentNavigationType(navigationType)];
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView navigation:wkNavigation didSameDocumentNavigation:toWKSameDocumentNavigationType(navigationType)];
 }
 
-void NavigationState::LoaderClient::didDestroyNavigation(WebPageProxy* page, uint64_t navigationID)
-{
-    page->navigationState().didDestroyNavigation(navigationID);
-}
-
-void NavigationState::LoaderClient::didLayout(WebKit::WebPageProxy*, WebCore::LayoutMilestones layoutMilestones, API::Object*)
+void NavigationState::LoaderClient::didLayout(WebKit::WebPageProxy&, WebCore::LayoutMilestones layoutMilestones, API::Object*)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewRenderingProgressDidChange)
         return;
@@ -565,7 +560,7 @@ void NavigationState::LoaderClient::didLayout(WebKit::WebPageProxy*, WebCore::La
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView renderingProgressDidChange:renderingProgressEvents(layoutMilestones)];
 }
 
-bool NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebProtectionSpace* protectionSpace)
+bool NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebProtectionSpace* protectionSpace)
 {
     if (m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler)
         return true;
@@ -580,7 +575,7 @@ bool NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame
     return [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView canAuthenticateAgainstProtectionSpace:protectionSpace->protectionSpace().nsSpace()];
 }
 
-void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy* authenticationChallenge)
+void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(WebPageProxy&, WebFrameProxy&, AuthenticationChallengeProxy* authenticationChallenge)
 {
 #if !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler) {
@@ -637,10 +632,8 @@ void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(Web
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView didReceiveAuthenticationChallenge:wrapper(*authenticationChallenge)];
 }
 
-void NavigationState::LoaderClient::processDidCrash(WebKit::WebPageProxy* page)
+void NavigationState::LoaderClient::processDidCrash(WebKit::WebPageProxy& page)
 {
-    page->navigationState().clearAllNavigations();
-
     if (!m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash)
         return;
 
