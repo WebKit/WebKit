@@ -1,3 +1,15 @@
+2014-12-04  Alberto Garcia  <berto@igalia.com>
+
+        can not find cairo-gl.h when build webkit with gtk on ubuntu 14.04
+        https://bugs.webkit.org/show_bug.cgi?id=136576
+
+        Reviewed by Carlos Garcia Campos.
+
+        CMake should complain if Accelerated 2D Canvas is explicitly
+        enabled but cairo-gl is not found.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2014-11-28  Philippe Normand  <pnormand@igalia.com>
 
         [CMake] Build failure against GStreamer git master
