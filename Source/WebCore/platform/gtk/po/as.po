@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
-"POT-Creation-Date: 2014-09-16 22:59+0000\n"
-"PO-Revision-Date: 2014-09-18 11:19+0530\n"
+"POT-Creation-Date: 2014-09-30 23:16+0000\n"
+"PO-Revision-Date: 2014-10-07 19:18+0530\n"
 "Last-Translator: Nilamdyuti Goswami <ngoswami@redhat.com>\n"
 "Language-Team: Assamese <kde-i18n-doc@kde.org>\n"
 "Language: as_IN\n"
@@ -670,7 +670,6 @@ msgid "Allow Overwrite"
 msgstr "অভাৰৰাইটৰ অনুমতি দিয়ক"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:215
-#| msgid "Whether the window can be resized."
 msgid "Whether the destination may be overwritten"
 msgstr "গন্তব্যক অভাৰৰাইট কৰিব পাৰি নে"
 
@@ -1343,21 +1342,31 @@ msgstr "HTTP হেডাৰসমূহ"
 msgid "The The HTTP headers of the response"
 msgstr "প্ৰতিক্ৰিয়াৰ HTTP হেডাৰসমূহ"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:122
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:127
 msgid "Inspected URI"
 msgstr "নিৰীক্ষণ কৰা URl"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:123
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:128
 msgid "The URI that is currently being inspected"
 msgstr "URl যাক বৰ্তমানে নিৰীক্ষণ কৰা হৈছে"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:134
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:139
 msgid "Attached Height"
 msgstr "সংলগ্ন উচ্চতা"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:135
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:140
 msgid "The height that the inspector view should have when it is attached"
 msgstr "সংলগ্ন হওতে নীৰিক্ষক দৰ্শনৰ থাকিব লগিয়া উচ্চতা"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:157
+msgid "Can Attach"
+msgstr "সংলঘ্ন কৰিব পাৰি"
+
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+msgid ""
+"Whether the inspector can be attached to the same window that contains the "
+"inspected view"
+msgstr "নিৰীক্ষিত দৰ্শন অন্তৰ্ভুক্ত কৰা উইন্ডোলৈ নিৰীক্ষকক সংলঘ্ন কৰিব পাৰি নে"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
 msgid "The current active URI of the resource"
@@ -1447,11 +1456,11 @@ msgstr "দৰ্শন সমলৰ জুম স্তৰ"
 msgid "Whether the view is loading a page"
 msgstr "দৰ্শনে এটা পৃষ্ঠা ল'ড কৰি আছে নে"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2725
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2724
 msgid "An exception was raised in JavaScript"
 msgstr "JavaScript ত এটা ব্যতিক্ৰম দাঙি ধৰা হৈছিল"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3174
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3173
 msgid "There was an error creating the snapshot"
 msgstr "স্নেপশ্বট সৃষ্টি কৰোতে এটা ত্ৰুটি হৈছিল"
 
