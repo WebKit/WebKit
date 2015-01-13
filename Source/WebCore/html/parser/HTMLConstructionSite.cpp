@@ -459,12 +459,10 @@ void HTMLConstructionSite::insertHTMLFormElement(AtomicHTMLToken* token, bool is
 {
     RefPtr<Element> element = createHTMLElement(token);
     ASSERT(isHTMLFormElement(element.get()));
-    RefPtr<HTMLFormElement> form = static_pointer_cast<HTMLFormElement>(element.release());
-    if (!insideTemplateElement())
-        m_form = form;
-    form->setDemoted(isDemoted);
-    attachLater(currentNode(), form);
-    m_openElements.push(HTMLStackItem::create(form.release(), token));
+    m_form = static_pointer_cast<HTMLFormElement>(element.release());
+    m_form->setDemoted(isDemoted);
+    attachLater(currentNode(), m_form);
+    m_openElements.push(HTMLStackItem::create(m_form, token));
 }
 
 void HTMLConstructionSite::insertHTMLElement(AtomicHTMLToken* token)
@@ -622,11 +620,6 @@ inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
         return toHTMLTemplateElement(currentElement())->content()->document();
 #endif
     return currentNode()->document();
-}
-
-inline bool HTMLConstructionSite::insideTemplateElement()
-{
-    return !ownerDocumentForCurrentNode().frame();
 }
 
 PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken* token)

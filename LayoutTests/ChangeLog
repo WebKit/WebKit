@@ -1,3 +1,15 @@
+2014-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r160182): Fragment parser doesn't close a form element with a close tag
+        https://bugs.webkit.org/show_bug.cgi?id=139561
+
+        Reviewed by Darin Adler.
+
+        Added a regression test.
+
+        * fast/dom/dom-parse-close-form-expected.txt: Added.
+        * fast/dom/dom-parse-close-form.html: Added.
+
 2014-12-10  Dean Jackson  <dino@apple.com>
 
         InstancedArray crashes attempting to draw out of bounds
