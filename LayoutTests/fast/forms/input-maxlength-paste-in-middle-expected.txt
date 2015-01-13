@@ -1,0 +1,14 @@
+This test attempts to paste text in the middle of a text field with maxlength.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.value is "abc"
+PASS input.getAttribute("maxlength") is "3"
+input.selectionStart = 1
+input.selectionEnd = 2
+PASS document.execCommand("insertText", false, "123"); input.value is "a1c"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

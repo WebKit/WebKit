@@ -370,7 +370,10 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* 
     unsigned selectionLength = 0;
     if (element().focused()) {
         ASSERT(enclosingTextFormControl(element().document().frame()->selection().selection().start()) == &element());
-        selectionLength = numGraphemeClusters(innerText.substring(element().selectionStart(), element().selectionEnd()));
+        int selectionStart = element().selectionStart();
+        ASSERT(selectionStart <= element().selectionEnd());
+        int selectionCodeUnitCount = element().selectionEnd() - selectionStart;
+        selectionLength = selectionCodeUnitCount ? numGraphemeClusters(innerText.substring(selectionStart, selectionCodeUnitCount)) : 0;
     }
     ASSERT(oldLength >= selectionLength);
 

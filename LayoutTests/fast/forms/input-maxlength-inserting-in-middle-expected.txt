@@ -1,0 +1,12 @@
+This test attempts to insert a character in the middle of a text field with maxlength.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.value is "abc"
+PASS input.getAttribute("maxlength") is "3"
+PASS input.value is "abc"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
