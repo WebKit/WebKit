@@ -1,3 +1,21 @@
+2015-01-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Missed images and missed new lines in the expected results of the imported w3c canvas layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=140409.
+
+        Reviewed by Dean Jackson.
+
+        Fix some failures in the imported W3C canvas tests. These failures were happening because
+        of missing images or missing new lines at the end of the expected results.
+
+        * canvas/2d.pattern.paint.repeat.basic-expected.txt:
+        * canvas/2d.pattern.paint.repeat.outside-expected.txt:
+        * canvas/2d.pattern.paint.repeatx.basic-expected.txt:
+        * canvas/2d.pattern.paint.repeaty.basic-expected.txt:
+        * canvas/resources/background.png: Added.
+        * canvas/resources/green-16x16.png: Added.
+        * common/canvas-tests.css:
+
 2014-11-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Import w3c tests for canvas

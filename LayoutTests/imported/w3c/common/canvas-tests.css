@@ -70,13 +70,13 @@ canvas {
     display: none;
     visibility: hidden;
     border: 2px #f0f solid;
-    background: url(../images/background.png);
+    background: url(../resources/background.png);
 }
 
 img.expected {
     display: none;
     border: 2px #f0f solid;
-    background: url(../images/background.png);
+    background: url(../resources/background.png);
 }
 
 iframe {

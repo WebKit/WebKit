@@ -1,3 +1,15 @@
+2015-01-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Missed images and missed new lines in the expected results of the imported w3c canvas layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=140409.
+
+        Reviewed by Dean Jackson.
+        
+        Fix some failures in the imported W3C canvas tests. These failures were happening because
+        of missing images or missing new lines at the end of the expected results.
+
+        * TestExpectations:
+
 2015-01-13  Dean Jackson  <dino@apple.com>
 
         Filters aren't applied to elements in columns after the first
