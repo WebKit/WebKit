@@ -1,5 +1,16 @@
 2015-01-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        TestWebKitWebContext depends on British English spellcheck dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=140403
+
+        Reviewed by Martin Robinson.
+
+        Install all English hunspell dictionaries on Fedora and Arch.
+
+        * gtk/install-dependencies:
+
+2015-01-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] install-dependencies should grok dnf
         https://bugs.webkit.org/show_bug.cgi?id=140396
 

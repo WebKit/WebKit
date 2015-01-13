@@ -227,6 +227,8 @@ function installDependenciesWithPacman {
     packages="$packages \
         apache \
         curl \
+        hunspell \
+        hunspell-en \
         php-apache \
         libgpg-error \
         pulseaudio \
@@ -326,6 +328,7 @@ function installFedoraDependencies {
     $1 install \
         curl \
         dbus-x11 \
+        hunspell-en \
         httpd \
         libgpg-error-devel \
         mod_bw \
