@@ -1432,7 +1432,7 @@ void RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
 void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendentsClippingLayer)
 {
     if (hasClippingLayer() && needsDescendentsClippingLayer) {
-        if (is<RenderBox>(renderer())) {
+        if (is<RenderBox>(renderer()) && (renderer().style().clipPath() || renderer().style().hasBorderRadius())) {
             LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
             FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
             contentsClippingRect.move(contentOffsetInCompostingLayer());
@@ -1441,13 +1441,13 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendentsClippi
                     m_childClippingMaskLayer = nullptr;
                 return;
             }
-        }
 
-        if (!m_childClippingMaskLayer) {
-            m_childClippingMaskLayer = createGraphicsLayer("Child Clipping Mask Layer");
-            m_childClippingMaskLayer->setDrawsContent(true);
-            m_childClippingMaskLayer->setPaintingPhase(GraphicsLayerPaintChildClippingMask);
-            clippingLayer()->setMaskLayer(m_childClippingMaskLayer.get());
+            if (!m_childClippingMaskLayer) {
+                m_childClippingMaskLayer = createGraphicsLayer("Child Clipping Mask Layer");
+                m_childClippingMaskLayer->setDrawsContent(true);
+                m_childClippingMaskLayer->setPaintingPhase(GraphicsLayerPaintChildClippingMask);
+                clippingLayer()->setMaskLayer(m_childClippingMaskLayer.get());
+            }
         }
     } else {
         if (m_childClippingMaskLayer) {
