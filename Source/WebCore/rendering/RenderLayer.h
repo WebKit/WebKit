@@ -986,6 +986,7 @@ private:
     bool setupFontSubpixelQuantization(GraphicsContext*, bool& didQuantizeFonts);
     bool setupClipPath(GraphicsContext*, const LayerPaintingInfo&, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
 
+    bool hasFilterThatIsPainting(GraphicsContext*, PaintLayerFlags) const;
     std::unique_ptr<FilterEffectRendererHelper> setupFilters(GraphicsContext*, LayerPaintingInfo&, PaintLayerFlags, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed);
     GraphicsContext* applyFilters(FilterEffectRendererHelper*, GraphicsContext* originalContext, LayerPaintingInfo&, LayerFragments&);
 
