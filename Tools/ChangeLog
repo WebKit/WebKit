@@ -1,3 +1,16 @@
+2014-12-09  Alberto Garcia  <berto@igalia.com>
+
+        convertToUTF8String converts null string to empty string
+        https://bugs.webkit.org/show_bug.cgi?id=133904
+
+        Reviewed by Carlos Garcia Campos.
+
+        Test that trying to get the value of a non-existent attribute
+        returns 0 instead of an empty string.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeTest.cpp:
+        (WebKitDOMNodeTest::testInsertion):
+
 2014-11-29  Anders Carlsson  <andersca@apple.com>
 
         Crash when calling WKPageClose on the originated page from within createNewPage callback

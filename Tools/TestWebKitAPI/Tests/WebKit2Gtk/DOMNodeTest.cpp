@@ -108,6 +108,9 @@ private:
         // Body shouldn't have any children at this point.
         g_assert(!webkit_dom_node_has_child_nodes(WEBKIT_DOM_NODE(body)));
 
+        // The value of a non-existent attribute should be null, not an empty string
+        g_assert(!webkit_dom_html_body_element_get_background(WEBKIT_DOM_HTML_BODY_ELEMENT(body)));
+
         // Insert one P element.
         WebKitDOMElement* p = webkit_dom_document_create_element(document, "P", 0);
         g_assert(WEBKIT_DOM_IS_HTML_ELEMENT(p));

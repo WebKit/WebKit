@@ -29,11 +29,14 @@
 
 gchar* convertToUTF8String(WTF::String const& s)
 {
+    if (s.isNull())
+        return 0;
+
     return g_strdup(s.utf8().data());
 }
 
 gchar* convertToUTF8String(WebCore::URL const& s)
 {
-    return g_strdup(s.string().utf8().data());
+    return convertToUTF8String(s.string());
 }
 
