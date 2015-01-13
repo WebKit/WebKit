@@ -1,3 +1,21 @@
+2014-12-09  Ting-Wei Lan  <lantw44@gmail.com>
+
+        [GTK] LDFLAGS is ignored when running g-ir-scanner
+        https://bugs.webkit.org/show_bug.cgi?id=138832
+
+        Reviewed by Carlos Garcia Campos.
+
+        GTK+ requires libintl on FreeBSD because there is no gettext
+        implementation in FreeBSD libc. In order to link to libintl, which is
+        not located in the default search path of the linker, we need to add
+        the required path via the linker command line. However, LDFLAGS is
+        ignored when running g-ir-scanner starting from r167873, so we have
+        to manually pick required flags from CMAKE_SHARED_LINKER_FLAGS and
+        put them in correct order to prevent g-ir-scanner from linking to
+        the installed version of libraries.
+
+        * PlatformGTK.cmake:
+
 2014-12-05  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (173394): Support for webcam is broken

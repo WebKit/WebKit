@@ -742,6 +742,10 @@ else ()
     )
 endif ()
 
+# Add required -L flags from ${CMAKE_SHARED_LINKER_FLAGS} for g-ir-scanner
+string(REGEX MATCHALL "-L[^ ]*"
+    INTROSPECTION_ADDITIONAL_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS})
+
 add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
     DEPENDS WebKit2
@@ -762,6 +766,7 @@ add_custom_command(
         --library=webkit2gtk-${WEBKITGTK_API_VERSION}
         --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
         -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+        ${INTROSPECTION_ADDITIONAL_LINKER_FLAGS}
         --no-libtool
         --pkg=gobject-2.0
         --pkg=gtk+-3.0
@@ -801,6 +806,7 @@ add_custom_command(
         --library=webkit2gtk-${WEBKITGTK_API_VERSION}
         --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
         -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+        ${INTROSPECTION_ADDITIONAL_LINKER_FLAGS}
         --no-libtool
         --pkg=gobject-2.0
         --pkg=gtk+-3.0
