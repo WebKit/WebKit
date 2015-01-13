@@ -158,6 +158,7 @@ bool FormDataElement::decode(Decoder& decoder, FormDataElement& result)
             return false;
         if (!decoder.decode(result.m_shouldGenerateFile))
             return false;
+        result.m_ownsGeneratedFile = false;
         if (!decoder.decode(result.m_fileStart))
             return false;
         if (!decoder.decode(result.m_fileLength))
