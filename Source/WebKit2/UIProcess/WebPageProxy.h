@@ -61,6 +61,7 @@
 #include <WebCore/AlternativeTextClient.h> // FIXME: Needed by WebPageProxyMessages.h for DICTATION_ALTERNATIVES.
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenuProxy.h"
+#include "WebProcessLifetimeTracker.h"
 #include <WebCore/Color.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/HitTestResult.h>
@@ -1369,6 +1370,9 @@ private:
     Ref<WebProcessProxy> m_process;
     Ref<WebPageGroup> m_pageGroup;
     Ref<WebPreferences> m_preferences;
+
+    WebProcessLifetimeTracker m_webProcessLifetimeTracker { *this };
+
     const RefPtr<WebUserContentControllerProxy> m_userContentController;
     Ref<VisitedLinkProvider> m_visitedLinkProvider;
     Ref<WebsiteDataStore> m_websiteDataStore;

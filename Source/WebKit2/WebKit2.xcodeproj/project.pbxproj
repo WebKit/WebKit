@@ -484,6 +484,10 @@
 		1AF4CEF018BC481800BC2D34 /* VisitedLinkTableController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF4CEEE18BC481800BC2D34 /* VisitedLinkTableController.h */; };
 		1AFA3AC818E61C61003CCBAE /* WKUserContentController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AFA3AC618E61C61003CCBAE /* WKUserContentController.mm */; };
 		1AFA3AC918E61C61003CCBAE /* WKUserContentController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFA3AC718E61C61003CCBAE /* WKUserContentController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AFA4B8B1A65A1D0006C4AB4 /* WebProcessLifetimeTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFA4B891A65A1D0006C4AB4 /* WebProcessLifetimeTracker.cpp */; };
+		1AFA4B8C1A65A1D0006C4AB4 /* WebProcessLifetimeTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFA4B8A1A65A1D0006C4AB4 /* WebProcessLifetimeTracker.h */; };
+		1AFA4B8F1A65A9E2006C4AB4 /* WebProcessLifetimeObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFA4B8D1A65A9E2006C4AB4 /* WebProcessLifetimeObserver.cpp */; };
+		1AFA4B901A65A9E2006C4AB4 /* WebProcessLifetimeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFA4B8E1A65A9E2006C4AB4 /* WebProcessLifetimeObserver.h */; };
 		1AFDD3151891B54000153970 /* APIPolicyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFDD3141891B54000153970 /* APIPolicyClient.h */; };
 		1AFDD3171891C94700153970 /* WKPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFDD3161891C94700153970 /* WKPreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AFDD3191891CA1200153970 /* WKPreferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AFDD3181891CA1200153970 /* WKPreferences.mm */; };
@@ -2515,6 +2519,10 @@
 		1AF4CEEE18BC481800BC2D34 /* VisitedLinkTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkTableController.h; sourceTree = "<group>"; };
 		1AFA3AC618E61C61003CCBAE /* WKUserContentController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKUserContentController.mm; sourceTree = "<group>"; };
 		1AFA3AC718E61C61003CCBAE /* WKUserContentController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentController.h; sourceTree = "<group>"; };
+		1AFA4B891A65A1D0006C4AB4 /* WebProcessLifetimeTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessLifetimeTracker.cpp; sourceTree = "<group>"; };
+		1AFA4B8A1A65A1D0006C4AB4 /* WebProcessLifetimeTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessLifetimeTracker.h; sourceTree = "<group>"; };
+		1AFA4B8D1A65A9E2006C4AB4 /* WebProcessLifetimeObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessLifetimeObserver.cpp; sourceTree = "<group>"; };
+		1AFA4B8E1A65A9E2006C4AB4 /* WebProcessLifetimeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessLifetimeObserver.h; sourceTree = "<group>"; };
 		1AFDD3141891B54000153970 /* APIPolicyClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIPolicyClient.h; sourceTree = "<group>"; };
 		1AFDD3161891C94700153970 /* WKPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferences.h; sourceTree = "<group>"; };
 		1AFDD3181891CA1200153970 /* WKPreferences.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPreferences.mm; sourceTree = "<group>"; };
@@ -6004,6 +6012,10 @@
 				BC574E611267D080006F0F12 /* WebPopupMenuProxy.h */,
 				BCD597FE112B57BE00EC8C23 /* WebPreferences.cpp */,
 				BCD597FD112B57BE00EC8C23 /* WebPreferences.h */,
+				1AFA4B8D1A65A9E2006C4AB4 /* WebProcessLifetimeObserver.cpp */,
+				1AFA4B8E1A65A9E2006C4AB4 /* WebProcessLifetimeObserver.h */,
+				1AFA4B891A65A1D0006C4AB4 /* WebProcessLifetimeTracker.cpp */,
+				1AFA4B8A1A65A1D0006C4AB4 /* WebProcessLifetimeTracker.h */,
 				7CE4D2171A4914A300C7F152 /* WebProcessPool.cpp */,
 				7CE4D2181A4914A300C7F152 /* WebProcessPool.h */,
 				7CE4D2191A4914A300C7F152 /* WebProcessPool.messages.in */,
@@ -7715,6 +7727,7 @@
 				31A2EC4B148997C200810D71 /* WebNotificationManagerProxy.h in Headers */,
 				31A2EC4E148997C200810D71 /* WebNotificationProvider.h in Headers */,
 				BC857FB512B830E600EDEB2E /* WebOpenPanelParameters.h in Headers */,
+				1AFA4B901A65A9E2006C4AB4 /* WebProcessLifetimeObserver.h in Headers */,
 				BC857F8512B82D0B00EDEB2E /* WebOpenPanelResultListener.h in Headers */,
 				BC1DFEA412B31F87005DF730 /* WebOpenPanelResultListenerProxy.h in Headers */,
 				755422CC180773CE0046F6A8 /* WebOriginDataManager.h in Headers */,
@@ -7914,6 +7927,7 @@
 				1C8E293912761E5B00BC7BD0 /* WKInspector.h in Headers */,
 				0F3C725B196F604E00AEDD0C /* WKInspectorHighlightView.h in Headers */,
 				A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */,
+				1AFA4B8C1A65A1D0006C4AB4 /* WebProcessLifetimeTracker.h in Headers */,
 				6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */,
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,
 				33D3A3B61339600B00709BE4 /* WKMediaCacheManager.h in Headers */,
@@ -9039,6 +9053,7 @@
 				515E772B184008B90007203F /* DatabaseProcessCreationParameters.cpp in Sources */,
 				51D0D431183B34130097041D /* DatabaseProcessIDBConnection.cpp in Sources */,
 				51D0D436183B353D0097041D /* DatabaseProcessIDBConnectionMessageReceiver.cpp in Sources */,
+				1AFA4B8F1A65A9E2006C4AB4 /* WebProcessLifetimeObserver.cpp in Sources */,
 				E115C714190F89E400ECC516 /* DatabaseProcessIOS.mm in Sources */,
 				51E35202180F5D1E00E53BE9 /* DatabaseProcessMac.mm in Sources */,
 				51E35205180F5D4F00E53BE9 /* DatabaseProcessMain.mm in Sources */,
@@ -9660,6 +9675,7 @@
 				512F58FB12A88A5400629530 /* WKProtectionSpace.cpp in Sources */,
 				1AD01BCC1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm in Sources */,
 				1A9E329A1822E1CC00F5D04C /* WKRemoteObject.mm in Sources */,
+				1AFA4B8B1A65A1D0006C4AB4 /* WebProcessLifetimeTracker.cpp in Sources */,
 				1A9E329E1822FEDD00F5D04C /* WKRemoteObjectCoder.mm in Sources */,
 				37948408150C4B9700E52CE9 /* WKRenderLayer.cpp in Sources */,
 				37608822150414F700FC82C7 /* WKRenderObject.cpp in Sources */,
