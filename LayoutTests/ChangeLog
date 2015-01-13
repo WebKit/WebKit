@@ -1,3 +1,15 @@
+2014-12-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Directional single quotation marks are not rotated in vertical text
+        https://bugs.webkit.org/show_bug.cgi?id=138526
+
+        Compare vertical and horizontal renderings.
+
+        Reviewed by Darin Adler.
+
+        * fast/text/vertical-quotation-marks-expected.html: Added.
+        * fast/text/vertical-quotation-marks.html: Added.
+
 2014-12-04  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Groove/inset/outset borders show solid if the color is black

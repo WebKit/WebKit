@@ -1,3 +1,18 @@
+2014-12-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Directional single quotation marks are not rotated in vertical text
+        https://bugs.webkit.org/show_bug.cgi?id=138526
+
+        Reviewed by Darin Adler.
+
+        In vertical text, directional single quotation marks are not rotated along with
+        the rest of the letters.
+
+        Test: fast/text/vertical-quotation-marks.html
+
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::shouldIgnoreRotation):
+
 2014-12-05  Zalan Bujtas  <zalan@apple.com>
 
         Issue repaint at setUnavailablePluginIndicatorIsHidden() only when embedded object's indicator status changes.
