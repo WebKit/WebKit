@@ -1,3 +1,15 @@
+2015-01-13  Beth Dakin  <bdakin@apple.com>
+
+        Should disable immediate actions for iTunes
+        https://bugs.webkit.org/show_bug.cgi?id=140405
+        -and corresponding-
+        rdar://problem/19461358
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _updateImmediateActionItem]):
+
 2015-01-11  Sam Weinig  <sam@webkit.org>
 
         Remove support for SharedWorkers
