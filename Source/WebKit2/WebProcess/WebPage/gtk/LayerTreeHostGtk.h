@@ -103,7 +103,7 @@ private:
     PageOverlayLayerMap m_pageOverlayLayers;
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
     OwnPtr<WebCore::GLContext> m_context;
-    double m_lastFlushTime;
+    double m_lastImmediateFlushTime;
     bool m_layerFlushSchedulingEnabled;
     GMainLoopSource m_layerFlushTimerCallback;
 };

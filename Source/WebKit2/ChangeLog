@@ -1,3 +1,37 @@
+2014-12-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Timers might never be fired during animations
+        https://bugs.webkit.org/show_bug.cgi?id=139062
+
+        Reviewed by Martin Robinson.
+
+        This can happen in old/slow machines where the time to render
+        layers might take more than 0.016. Since the layer flush timer is
+        using a higher priority than WebCore timers, when scheduling all
+        (or several) layer flushes immediately, no other sources with
+        lower priority are dispatched in the main loop. We could detect if
+        we are scheduling layer flushes immediately for too long (100ms)
+        and schedule the next flush after a delay to ensure other sources
+        with lower priority have a chance to be dispatched. Also use a
+        lower priority, GDK_PRIORITY_EVENTS is too high, so we use
+        GDK_PRIORITY_REDRAW - 1 to ensure it's higher than WebCore timers.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::LayerTreeHostGtk): Rename
+        m_lastFlushTime as m_lastImmediateFlushTime.
+        (WebKit::LayerTreeHostGtk::layerFlushTimerFired): Save the
+        fireTime before calling flushAndRenderLayers() and compute the
+        next flush delay based on the elapsed time using monotonically
+        increasing time instead of current time. Use the target delay
+        as next flush delay if we have scheduled flushes immediately for
+        more than 100ms.
+        (WebKit::LayerTreeHostGtk::flushAndRenderLayers): Do not save the
+        layer flush time here, it's done in layerFlushTimerFired() so that
+        we don't need to keep it as a member.
+        (WebKit::LayerTreeHostGtk::scheduleLayerFlush): Use global
+        layerFlushTimerPriority.
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+
 2014-12-09  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Crash when answering notification permission request after navigating
