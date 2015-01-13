@@ -1954,6 +1954,9 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
 Node* InspectorDOMAgent::nodeForObjectId(const String& objectId)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    if (injectedScript.hasNoValue())
+        return nullptr;
+
     Deprecated::ScriptValue value = injectedScript.findObjectById(objectId);
     return InspectorDOMAgent::scriptValueAsNode(value);
 }
