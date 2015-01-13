@@ -79,9 +79,6 @@ public:
     bool hadDeletes();
     void resetAuthorizer();
 
-    virtual void markAsDeletedAndClose() = 0;
-    virtual void closeImmediately() = 0;
-
     DatabaseContext* databaseContext() const { return m_databaseContext.get(); }
     void setFrontend(Database* frontend) { m_frontend = frontend; }
 
@@ -96,7 +93,6 @@ protected:
 
     void closeDatabase();
 
-    virtual bool openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage) = 0;
     virtual bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, DatabaseError&, String& errorMessage);
 
     bool getVersionFromDatabase(String& version, bool shouldCacheVersion = true);

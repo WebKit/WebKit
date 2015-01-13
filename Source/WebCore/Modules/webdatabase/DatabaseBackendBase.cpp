@@ -256,7 +256,7 @@ void DatabaseBackendBase::closeDatabase()
     m_sqliteDatabase.close();
     m_opened = false;
     // See comment at the top this file regarding calling removeOpenDatabase().
-    DatabaseTracker::tracker().removeOpenDatabase(this);
+    DatabaseTracker::tracker().removeOpenDatabase(static_cast<Database*>(this));
     {
         std::lock_guard<std::mutex> locker(guidMutex());
 
@@ -289,7 +289,7 @@ public:
     }
     ~DoneCreatingDatabaseOnExitCaller()
     {
-        DatabaseTracker::tracker().doneCreatingDatabase(m_database);
+        DatabaseTracker::tracker().doneCreatingDatabase(static_cast<Database*>(m_database));
     }
 
     void setOpenSucceeded() { m_openSucceeded = true; }
@@ -397,7 +397,7 @@ bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabas
     m_sqliteDatabase.setAuthorizer(m_databaseAuthorizer);
 
     // See comment at the top this file regarding calling addOpenDatabase().
-    DatabaseTracker::tracker().addOpenDatabase(this);
+    DatabaseTracker::tracker().addOpenDatabase(static_cast<Database*>(this));
     m_opened = true;
 
     // Declare success:
@@ -559,7 +559,7 @@ void DatabaseBackendBase::resetAuthorizer()
 
 unsigned long long DatabaseBackendBase::maximumSize() const
 {
-    return DatabaseTracker::tracker().getMaxSizeForDatabase(this);
+    return DatabaseTracker::tracker().getMaxSizeForDatabase(static_cast<const Database*>(this));
 }
 
 void DatabaseBackendBase::incrementalVacuumIfNeeded()

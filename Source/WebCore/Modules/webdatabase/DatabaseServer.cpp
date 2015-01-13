@@ -136,7 +136,7 @@ PassRefPtr<DatabaseBackendBase> DatabaseServer::openDatabase(RefPtr<DatabaseCont
 
 PassRefPtr<DatabaseBackendBase> DatabaseServer::createDatabase(RefPtr<DatabaseContext>& backendContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
-    RefPtr<DatabaseBackendBase> database = adoptRef(new Database(backendContext, name, expectedVersion, displayName, estimatedSize));
+    RefPtr<Database> database = adoptRef(new Database(backendContext, name, expectedVersion, displayName, estimatedSize));
 
     if (!database->openAndVerifyVersion(setVersionInNewDatabase, error, errorMessage))
         return 0;

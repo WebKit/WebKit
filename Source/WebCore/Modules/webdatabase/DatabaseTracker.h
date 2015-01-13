@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-class DatabaseBackendBase;
+class Database;
 class DatabaseContext;
 class DatabaseManagerClient;
 class OriginLock;
@@ -67,11 +67,11 @@ public:
     void setDatabaseDetails(SecurityOrigin*, const String& name, const String& displayName, unsigned long estimatedSize);
     String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist = true);
 
-    void addOpenDatabase(DatabaseBackendBase*);
-    void removeOpenDatabase(DatabaseBackendBase*);
-    void getOpenDatabases(SecurityOrigin*, const String& name, HashSet<RefPtr<DatabaseBackendBase>>* databases);
+    void addOpenDatabase(Database*);
+    void removeOpenDatabase(Database*);
+    void getOpenDatabases(SecurityOrigin*, const String& name, HashSet<RefPtr<Database>>* databases);
 
-    unsigned long long getMaxSizeForDatabase(const DatabaseBackendBase*);
+    unsigned long long getMaxSizeForDatabase(const Database*);
 
     void interruptAllDatabasesForContext(const DatabaseContext*);
 
@@ -120,7 +120,7 @@ public:
 
     bool hasEntryForOrigin(SecurityOrigin*);
 
-    void doneCreatingDatabase(DatabaseBackendBase*);
+    void doneCreatingDatabase(Database*);
 
 private:
     bool hasEntryForOriginNoLock(SecurityOrigin* origin);
@@ -146,7 +146,7 @@ private:
 
     void deleteOriginLockFor(SecurityOrigin*);
 
-    typedef HashSet<DatabaseBackendBase*> DatabaseSet;
+    typedef HashSet<Database*> DatabaseSet;
     typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
     typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*> DatabaseOriginMap;
 

@@ -1,3 +1,29 @@
+2015-01-13  Anders Carlsson  <andersca@apple.com>
+
+        Remove pure virtual functions from DatabaseBackendBase
+        https://bugs.webkit.org/show_bug.cgi?id=140402
+
+        Reviewed by Sam Weinig.
+
+        Also change DatabaseBackendBase to Database in a couple of places.
+
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        (WebCore::DatabaseBackendBase::closeDatabase):
+        (WebCore::DoneCreatingDatabaseOnExitCaller::~DoneCreatingDatabaseOnExitCaller):
+        (WebCore::DatabaseBackendBase::performOpenAndVerify):
+        (WebCore::DatabaseBackendBase::maximumSize):
+        * Modules/webdatabase/DatabaseBackendBase.h:
+        * Modules/webdatabase/DatabaseServer.cpp:
+        (WebCore::DatabaseServer::createDatabase):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::getMaxSizeForDatabase):
+        (WebCore::DatabaseTracker::doneCreatingDatabase):
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+        (WebCore::DatabaseTracker::getOpenDatabases):
+        (WebCore::DatabaseTracker::deleteDatabaseFile):
+        * Modules/webdatabase/DatabaseTracker.h:
+
 2015-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused ResizeImage and DecodeImageData timeline events

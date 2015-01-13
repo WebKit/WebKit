@@ -278,7 +278,7 @@ bool DatabaseTracker::hasEntryForDatabase(SecurityOrigin* origin, const String& 
     return statement.step() == SQLResultRow;
 }
 
-unsigned long long DatabaseTracker::getMaxSizeForDatabase(const DatabaseBackendBase* database)
+unsigned long long DatabaseTracker::getMaxSizeForDatabase(const Database* database)
 {
     // The maximum size for a database is the full quota for its origin, minus the current usage within the origin,
     // plus the current usage of the given database
@@ -543,13 +543,13 @@ void DatabaseTracker::setDatabaseDetails(SecurityOrigin* origin, const String& n
         m_client->dispatchDidModifyDatabase(origin, name);
 }
 
-void DatabaseTracker::doneCreatingDatabase(DatabaseBackendBase* database)
+void DatabaseTracker::doneCreatingDatabase(Database* database)
 {
     MutexLocker lockDatabase(m_databaseGuard);
     doneCreatingDatabase(database->securityOrigin(), database->stringIdentifier());
 }
 
-void DatabaseTracker::addOpenDatabase(DatabaseBackendBase* database)
+void DatabaseTracker::addOpenDatabase(Database* database)
 {
     if (!database)
         return;
@@ -579,7 +579,7 @@ void DatabaseTracker::addOpenDatabase(DatabaseBackendBase* database)
     }
 }
 
-void DatabaseTracker::removeOpenDatabase(DatabaseBackendBase* database)
+void DatabaseTracker::removeOpenDatabase(Database* database)
 {
     if (!database)
         return;
@@ -623,7 +623,7 @@ void DatabaseTracker::removeOpenDatabase(DatabaseBackendBase* database)
     }
 }
 
-void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<DatabaseBackendBase>>* databases)
+void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<Database>>* databases)
 {
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     if (!m_openDatabaseMap)
@@ -1105,7 +1105,7 @@ bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& n
     }
 #endif
 
-    Vector<RefPtr<DatabaseBackendBase>> deletedDatabases;
+    Vector<RefPtr<Database>> deletedDatabases;
 
     // Make sure not to hold the any locks when calling
     // Database::markAsDeletedAndClose(), since that can cause a deadlock
