@@ -343,8 +343,10 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
 
 void RenderEmbeddedObject::setUnavailablePluginIndicatorIsHidden(bool hidden)
 {
-    m_isUnavailablePluginIndicatorHidden = hidden;
+    if (m_isUnavailablePluginIndicatorHidden == hidden)
+        return;
 
+    m_isUnavailablePluginIndicatorHidden = hidden;
     repaint();
 }
 

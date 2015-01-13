@@ -1,3 +1,15 @@
+2014-12-05  Zalan Bujtas  <zalan@apple.com>
+
+        Issue repaint at setUnavailablePluginIndicatorIsHidden() only when embedded object's indicator status changes.
+        https://bugs.webkit.org/show_bug.cgi?id=139311
+
+        Reviewed by Tim Horton.
+
+        Not testable.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::setUnavailablePluginIndicatorIsHidden):
+
 2014-12-04  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Groove/inset/outset borders show solid if the color is black
