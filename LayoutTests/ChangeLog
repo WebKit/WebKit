@@ -1,3 +1,16 @@
+2015-01-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        DFG can call PutByValDirect for generic arrays
+        https://bugs.webkit.org/show_bug.cgi?id=140389
+
+        Reviewed by Geoffrey Garen.
+
+        * js/dfg-put-by-val-direct-to-generic-array-expected.txt: Added.
+        * js/dfg-put-by-val-direct-to-generic-array.html: Added.
+        * js/script-tests/dfg-put-by-val-direct-to-generic-array.js: Added.
+        (foo1):
+        (foo2):
+
 2015-01-13  Jer Noble  <jer.noble@apple.com>
 
         defaultPlaybackRate not respected when set before source is loaded

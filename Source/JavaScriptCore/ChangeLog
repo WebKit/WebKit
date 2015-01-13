@@ -1,3 +1,25 @@
+2015-01-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        DFG can call PutByValDirect for generic arrays
+        https://bugs.webkit.org/show_bug.cgi?id=140389
+
+        Reviewed by Geoffrey Garen.
+
+        Computed properties in object initializers (ES6) use the put_by_val_direct operation.
+        However, current DFG asserts that put_by_val_direct is not used for the generic array,
+        the assertion failure is raised.
+        This patch allow DFG to use put_by_val_direct to generic arrays.
+
+        And fix the DFG put_by_val_direct implementation for string properties.
+        At first, put_by_val_direct is inteded to be used for spread elements.
+        So the property keys were limited to numbers (indexes).
+        But now, it's also used for computed properties in object initializers.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2015-01-13  Geoffrey Garen  <ggaren@apple.com>
 
         Out of bounds access in BytecodeGenerator::emitGetById under DotAccessorNode::emitBytecode

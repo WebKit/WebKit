@@ -126,7 +126,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
         PutPropertySlot slot(baseValue, strict);
         if (direct) {
             RELEASE_ASSERT(baseValue.isObject());
-            asObject(baseValue)->putDirect(*vm, jsCast<NameInstance*>(property.asCell())->privateName(), value, slot);
+            asObject(baseValue)->putDirect(*vm, ident, value, slot);
         } else
             baseValue.put(exec, ident, value, slot);
     }

@@ -2563,7 +2563,7 @@ void SpeculativeJIT::compile(Node* node)
             DFG_CRASH(m_jit.graph(), node, "Bad array mode type");
             break;
         case Array::Generic: {
-            DFG_ASSERT(m_jit.graph(), node, node->op() == PutByVal);
+            DFG_ASSERT(m_jit.graph(), node, node->op() == PutByVal || node->op() == PutByValDirect);
             
             JSValueOperand arg1(this, child1);
             JSValueOperand arg2(this, child2);
