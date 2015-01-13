@@ -1,3 +1,36 @@
+2014-12-04  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r173188): Text inserted when trying to delete a word from the Twitter message box.
+        <https://webkit.org/b/139076>
+
+        Reviewed by Geoffrey Garen.
+
+        The StringImpl* -> Weak<JSString> cache used by the DOM bindings
+        had a bug where the key could become a stale pointer if the cached
+        JSString had its internal StringImpl atomicized.
+
+        If a new StringImpl was then later constructed at the exact same
+        address as the stale key, before the Weak<JSString> got booted out
+        of the string cache, we'd now have a situation where asking the
+        string cache for that key would return the old JSString.
+
+        Solve this by not allowing JSString::toExistingAtomicString() to
+        change the JSString's internal StringImpl unless it's resolving a
+        rope string. (The StringImpl nullity determines rope state.)
+
+        This means that calling toExistingAtomicString() may now have to
+        query the AtomicString table on each call rather than just once.
+        All clients of this API would be forced to do this regardless,
+        since they return value will be used to key into containers with
+        AtomicStringImpl* keys.
+
+        No test because this relies on malloc putting two StringImpls
+        at the same address at different points in time and we have no
+        mechanism to reliably test that.
+
+        * runtime/JSString.h:
+        (JSC::JSString::toExistingAtomicString):
+
 2014-12-04  Oliver Hunt  <oliver@apple.com>
 
         Serialization of MapData object provides unsafe access to internal types
