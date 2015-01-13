@@ -319,6 +319,8 @@ set(WebKit2_SOURCES
     UIProcess/WebBatteryProvider.cpp
     UIProcess/WebColorPicker.cpp
     UIProcess/WebConnectionToWebProcess.cpp
+    UIProcess/WebProcessLifetimeObserver.cpp
+    UIProcess/WebProcessLifetimeTracker.cpp
     UIProcess/WebProcessPool.cpp
     UIProcess/WebContextClient.cpp
     UIProcess/WebContextConnectionClient.cpp

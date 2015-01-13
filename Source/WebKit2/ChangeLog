@@ -1,3 +1,9 @@
+2015-01-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Unreviewed build fix after r178366.
+
+        * CMakeLists.txt: Add new files added by r178366.
+
 2015-01-13  Sam Weinig  <sam@webkit.org>
 
         Move more of the Navigation infrastructure down to WebPageProxy
