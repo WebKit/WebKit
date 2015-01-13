@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebProcessLifetimeTracker.h"
 
+#include "WebProcessProxy.h"
+
 namespace WebKit {
 
 WebProcessLifetimeTracker::WebProcessLifetimeTracker(WebPageProxy& webPageProxy)
@@ -50,6 +52,25 @@ void WebProcessLifetimeTracker::removeObserver(WebProcessLifetimeObserver& obser
     ASSERT(m_observers.contains(&observer));
 
     m_observers.remove(&observer);
+}
+
+void WebProcessLifetimeTracker::connectionWillOpen()
+{
+    ASSERT(m_webPageProxy.process().state() == WebProcessProxy::State::Running);
+
+    // FIXME: Notify the observers.
+}
+
+void WebProcessLifetimeTracker::connectionWillClose()
+{
+    ASSERT(m_webPageProxy.process().state() == WebProcessProxy::State::Running);
+
+    // FIXME: Notify the observers.
+}
+
+void WebProcessLifetimeTracker::pageWasInvalidated()
+{
+    // FIXME: Notify the observers if the process is currently running.
 }
 
 }

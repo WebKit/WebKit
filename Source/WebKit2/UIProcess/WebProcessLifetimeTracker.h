@@ -41,6 +41,11 @@ public:
     void addObserver(WebProcessLifetimeObserver&);
     void removeObserver(WebProcessLifetimeObserver&);
 
+    void connectionWillOpen();
+    void connectionWillClose();
+
+    void pageWasInvalidated();
+
 private:
     WebPageProxy& m_webPageProxy;
 

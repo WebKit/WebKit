@@ -715,6 +715,8 @@ void WebPageProxy::close()
     m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
 
     m_websiteDataStore->removeWebPage(*this);
+
+    m_webProcessLifetimeTracker.pageWasInvalidated();
 }
 
 bool WebPageProxy::tryClose()
@@ -3199,6 +3201,7 @@ void WebPageProxy::connectionWillOpen(IPC::Connection* connection)
 {
     ASSERT(connection == m_process->connection());
 
+    m_webProcessLifetimeTracker.connectionWillOpen();
     m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, connection);
 }
 
@@ -3206,6 +3209,7 @@ void WebPageProxy::connectionWillClose(IPC::Connection* connection)
 {
     ASSERT_UNUSED(connection, connection == m_process->connection());
 
+    m_webProcessLifetimeTracker.connectionWillClose();
     m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);
 }
 
