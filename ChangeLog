@@ -1,3 +1,15 @@
+2014-12-09  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        REGRESSION(r155906): Page content disappears on Tuaw article after loading
+        https://bugs.webkit.org/show_bug.cgi?id=138100
+
+        Reviewed by Simon Fraser.
+
+        DRT causes an extra paint which makes it impossible to test this with
+        an automated test.
+
+        * ManualTests/float-layer-not-painting.html: Added.
+
 2014-12-04  Alberto Garcia  <berto@igalia.com>
 
         can not find cairo-gl.h when build webkit with gtk on ubuntu 14.04
