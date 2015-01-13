@@ -209,11 +209,11 @@ void MemoryPressureHandler::ReliefLogger::platformLog()
 
     ssize_t memoryDiff = currentMemory - m_initialMemory;
     if (memoryDiff < 0)
-        LOG(MemoryPressure, "Pressure relief: %s: -dirty %ld bytes (from %ld to %ld)", m_logString, (memoryDiff * -1), m_initialMemory, currentMemory);
+        LOG(MemoryPressure, "Pressure relief: %s: -dirty %lu bytes (from %lu to %lu)", m_logString, static_cast<unsigned long>(memoryDiff * -1), static_cast<unsigned long>(m_initialMemory), static_cast<unsigned long>(currentMemory));
     else if (memoryDiff > 0)
-        LOG(MemoryPressure, "Pressure relief: %s: +dirty %ld bytes (from %ld to %ld)", m_logString, memoryDiff, m_initialMemory, currentMemory);
+        LOG(MemoryPressure, "Pressure relief: %s: +dirty %lu bytes (from %lu to %lu)", m_logString, static_cast<unsigned long>(memoryDiff), static_cast<unsigned long>(m_initialMemory), static_cast<unsigned long>(currentMemory));
     else
-        LOG(MemoryPressure, "Pressure relief: %s: =dirty (at %ld bytes)", m_logString, currentMemory);
+        LOG(MemoryPressure, "Pressure relief: %s: =dirty (at %lu bytes)", m_logString, static_cast<unsigned long>(currentMemory));
 }
 
 size_t MemoryPressureHandler::ReliefLogger::platformMemoryUsage()

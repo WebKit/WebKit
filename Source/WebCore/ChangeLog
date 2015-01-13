@@ -1,3 +1,15 @@
+2015-01-13  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Fix Debug Build Error in Webcore module.
+        https://bugs.webkit.org/show_bug.cgi?id=140383
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests because there is no visible behavior change.
+
+        * platform/linux/MemoryPressureHandlerLinux.cpp:
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformLog):
+
 2015-01-12  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix a typo in r178313
