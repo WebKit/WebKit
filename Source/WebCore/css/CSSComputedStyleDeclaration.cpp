@@ -1663,7 +1663,6 @@ static inline PassRefPtr<RenderStyle> computeRenderStyleForProperty(Node* styled
     RenderObject* renderer = styledNode->renderer();
 
     if (renderer && renderer->isComposited() && AnimationController::supportsAcceleratedAnimationOfProperty(propertyID)) {
-        AnimationUpdateBlock animationUpdateBlock(&renderer->animation());
         RefPtr<RenderStyle> style = renderer->animation().getAnimatedStyleForRenderer(toRenderElement(*renderer));
         if (pseudoElementSpecifier && !styledNode->isPseudoElement()) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
