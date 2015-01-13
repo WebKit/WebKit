@@ -1,5 +1,24 @@
 2015-01-13  Geoffrey Garen  <ggaren@apple.com>
 
+        Consider alignment when allocating from a SegregatedFreeList
+        https://bugs.webkit.org/show_bug.cgi?id=140408
+
+        Reviewed by Sam Weinig.
+
+        In preparation for supporting aligned allocation.
+
+        No performance change.
+
+        Since this is just one extra branch in an already expensive function,
+        I decided not to duplicate the function just to avoid the branch in
+        the un-aligned case.
+
+        * bmalloc/SegregatedFreeList.cpp:
+        (bmalloc::SegregatedFreeList::take):
+        * bmalloc/SegregatedFreeList.h:
+
+2015-01-13  Geoffrey Garen  <ggaren@apple.com>
+
         Renamed minimum to size in SegregatedFreeList
         https://bugs.webkit.org/show_bug.cgi?id=140406
 

@@ -81,10 +81,10 @@ Range SegregatedFreeList::takeGreedy(List& list, size_t size)
     return Range();
 }
 
-Range SegregatedFreeList::take(size_t size)
+Range SegregatedFreeList::take(size_t size, size_t alignmentMask)
 {
     for (auto* list = &select(size); list != m_lists.end(); ++list) {
-        Range range = take(*list, size);
+        Range range = take(*list, size, alignmentMask);
         if (!range)
             continue;
 
@@ -104,7 +104,7 @@ INLINE auto SegregatedFreeList::select(size_t size) -> List&
     return m_lists[result];
 }
 
-INLINE Range SegregatedFreeList::take(List& list, size_t size)
+INLINE Range SegregatedFreeList::take(List& list, size_t size, size_t alignmentMask)
 {
     Range first;
     size_t end = list.size() > segregatedFreeListSearchDepth ? list.size() - segregatedFreeListSearchDepth : 0;
@@ -120,6 +120,9 @@ INLINE Range SegregatedFreeList::take(List& list, size_t size)
         }
 
         if (range.size() < size)
+            continue;
+
+        if (test(range.begin(), alignmentMask))
             continue;
 
         if (!!first && first < range)
