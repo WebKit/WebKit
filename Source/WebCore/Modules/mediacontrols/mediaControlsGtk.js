@@ -72,8 +72,11 @@ ControllerGtk.prototype = {
     {
     },
 
-    updateTime: function()
+    updateTime: function(forceUpdate)
     {
+        if (!forceUpdate && this.controlsAreHidden())
+            return;
+
         var currentTime = this.video.currentTime;
         var duration = this.video.duration;
 
