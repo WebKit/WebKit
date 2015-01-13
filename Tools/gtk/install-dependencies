@@ -22,10 +22,17 @@ function checkInstaller {
         exit 0
     fi
 
-    # yum - Fedora
+    # yum - Fedora 21 and below
     yum --version &> /dev/null
     if [ $? -eq 0 ]; then
-        installDependenciesWithYum
+        installFedoraDependencies yum
+        exit 0
+    fi
+
+    # dnf - Fedora 22 and above
+    dnf --version &> /dev/null
+    if [ $? -eq 0 ]; then
+        installFedoraDependencies dnf
         exit 0
     fi
 
@@ -272,9 +279,9 @@ function installDependenciesWithPacman {
     echo "https://wiki.archlinux.org/index.php/Python#Dealing_with_version_problem_in_build_scripts"
 }
 
-function installDependenciesWithYum {
+function installFedoraDependencies {
     # These are dependencies necessary for building WebKitGTK+.
-    yum install \
+    $1 install \
         atk-devel \
         autoconf \
         automake \
@@ -316,7 +323,7 @@ function installDependenciesWithYum {
         sqlite-devel
 
     # These are dependencies necessary for running tests.
-    yum install \
+    $1 install \
         curl \
         dbus-x11 \
         httpd \
@@ -333,7 +340,7 @@ function installDependenciesWithYum {
         xorg-x11-server-Xvfb
 
     # These are dependencies necessary for building the jhbuild.
-    yum install \
+    $1 install \
         docbook-utils \
         docbook-utils-pdf \
         git \
@@ -358,7 +365,7 @@ function installDependenciesWithYum {
         xorg-x11-xtrans-devel
 
     # These are dependencies necessary for using webkit-patch
-    yum install \
+    $1 install \
         git-svn \
         subversion
 }

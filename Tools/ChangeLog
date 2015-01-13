@@ -1,3 +1,14 @@
+2015-01-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] install-dependencies should grok dnf
+        https://bugs.webkit.org/show_bug.cgi?id=140396
+
+        Reviewed by Martin Robinson.
+
+        Fedora: install dependencies with dnf if yum is not installed.
+
+        * gtk/install-dependencies:
+
 2015-01-12  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [EFL][GTK] Fix build after r178309  
