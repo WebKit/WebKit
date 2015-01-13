@@ -1,3 +1,14 @@
+2014-12-04  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Groove/inset/outset borders show solid if the color is black
+        https://bugs.webkit.org/show_bug.cgi?id=58608
+
+        Reviewed by Simon Fraser.
+
+        * fast/borders/mixed-border-style2.html: Added.
+        * platform/mac-mavericks/fast/borders/mixed-border-style2-expected.png: Added.
+        * platform/mac-mavericks/fast/borders/mixed-border-style2-expected.txt: Added.
+
 2014-12-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         List markers in RTL languages do not draw the first character.

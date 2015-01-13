@@ -907,14 +907,8 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1
             break;
         }
         case INSET:
-            // FIXME: Maybe we should lighten the colors on one side like Firefox.
-            // https://bugs.webkit.org/show_bug.cgi?id=58608
-            if (side == BSTop || side == BSLeft)
-                color = color.dark();
-            FALLTHROUGH;
         case OUTSET:
-            if (borderStyle == OUTSET && (side == BSBottom || side == BSRight))
-                color = color.dark();
+            calculateBorderStyleColor(borderStyle, side, color);
             FALLTHROUGH;
         case SOLID: {
             StrokeStyle oldStrokeStyle = graphicsContext->strokeStyle();
@@ -2603,6 +2597,25 @@ RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const
 {
     RenderBlock* containingBlock = this->containingBlock();
     return containingBlock ? containingBlock->flowThreadContainingBlock() : nullptr;
+}
+
+void RenderObject::calculateBorderStyleColor(const EBorderStyle& style, const BoxSide& side, Color& color)
+{
+    // This values were derived empirically.
+    const RGBA32 baseDarkColor = 0xFF202020;
+    const RGBA32 baseLightColor = 0xFFEBEBEB;
+    enum Operation { Darken, Lighten };
+
+    Operation operation = (side == BSTop || side == BSLeft) == (style == INSET) ? Darken : Lighten;
+
+    // Here we will darken the border decoration color when needed. This will yield a similar behavior as in FF.
+    if (operation == Darken) {
+        if (differenceSquared(color, Color::black) > differenceSquared(baseDarkColor, Color::black))
+            color = color.dark();
+    } else {
+        if (differenceSquared(color, Color::white) > differenceSquared(baseLightColor, Color::white))
+            color = color.light();
+    }
 }
 
 } // namespace WebCore

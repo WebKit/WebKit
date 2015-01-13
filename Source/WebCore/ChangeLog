@@ -1,3 +1,20 @@
+2014-12-04  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Groove/inset/outset borders show solid if the color is black
+        https://bugs.webkit.org/show_bug.cgi?id=58608
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/borders/mixed-border-style2.html
+
+        This patch will lighten/darken the border side colors, handling
+        border decoration in a similar way as Firefox does.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        (WebCore::RenderObject::calculateBorderStyleColor):
+        * rendering/RenderObject.h:
+
 2014-12-04  Oliver Hunt  <oliver@apple.com>
 
         Serialization of MapData object provides unsafe access to internal types
