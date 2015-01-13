@@ -271,7 +271,7 @@ private:
     void stopAllocation();
 
     void markRoots(double gcStartTime);
-    void gatherStackRoots(ConservativeRoots&, void** dummy);
+    void gatherStackRoots(ConservativeRoots&, void** dummy, MachineThreads::RegisterState& registers);
     void gatherJSStackRoots(ConservativeRoots&);
     void gatherScratchBufferRoots(ConservativeRoots&);
     void clearLivenessData();
