@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<div name="testDiv" id="testDiv"></div>
+<script>
+description("This test passes if it does not crash.");
+ 
+var testDiv = document.getElementById("testDiv");
+testDiv.attributes[0].appendChild(new Text("test"));
+testDiv.cloneNode(false);
+gc();
+testDiv.normalize();
+</script>
