@@ -86,7 +86,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static String accessibleNameForNode(Node*);
+static String accessibleNameForNode(Node* node, Node* labelledbyNode = nullptr);
 
 AccessibilityNodeObject::AccessibilityNodeObject(Node* node)
     : AccessibilityObject()
@@ -1661,6 +1661,8 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
 
     StringBuilder builder;
     for (AccessibilityObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (mode.ignoredChildNode && child->node() == mode.ignoredChildNode)
+            continue;
         
         bool shouldDeriveNameFromAuthor = (mode.childrenInclusion == AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren && !child->accessibleNameDerivesFromContent());
         if (shouldDeriveNameFromAuthor) {
@@ -1837,7 +1839,7 @@ void AccessibilityNodeObject::colorValue(int& r, int& g, int& b) const
 
 // This function implements the ARIA accessible name as described by the Mozilla                                        
 // ARIA Implementer's Guide.                                                                                            
-static String accessibleNameForNode(Node* node)
+static String accessibleNameForNode(Node* node, Node* labelledbyNode)
 {
     ASSERT(node);
     if (!node || !node->isElementNode())
@@ -1867,7 +1869,7 @@ static String accessibleNameForNode(Node* node)
     String text;
     if (axObject) {
         if (axObject->accessibleNameDerivesFromContent())
-            text = axObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren, true));
+            text = axObject->textUnderElement(AccessibilityTextUnderElementMode(AccessibilityTextUnderElementMode::TextUnderElementModeIncludeNameFromContentsChildren, true, labelledbyNode));
     } else
         text = element->innerText();
 
@@ -1886,7 +1888,7 @@ String AccessibilityNodeObject::accessibilityDescriptionForElements(Vector<Eleme
     StringBuilder builder;
     unsigned size = elements.size();
     for (unsigned i = 0; i < size; ++i)
-        appendNameToStringBuilder(builder, accessibleNameForNode(elements[i]));
+        appendNameToStringBuilder(builder, accessibleNameForNode(elements[i], node()));
     return builder.toString();
 }
 

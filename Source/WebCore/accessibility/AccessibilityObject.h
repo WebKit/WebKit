@@ -253,11 +253,13 @@ struct AccessibilityTextUnderElementMode {
     
     ChildrenInclusion childrenInclusion;
     bool includeFocusableContent;
+    Node* ignoredChildNode;
     
-    AccessibilityTextUnderElementMode(ChildrenInclusion c = TextUnderElementModeSkipIgnoredChildren, bool i = false)
-    : childrenInclusion(c)
-    , includeFocusableContent(i)
-    { }
+    AccessibilityTextUnderElementMode(ChildrenInclusion c = TextUnderElementModeSkipIgnoredChildren, bool i = false, Node* ignored = nullptr)
+        : childrenInclusion(c)
+        , includeFocusableContent(i)
+        , ignoredChildNode(ignored)
+        { }
 };
     
 enum AccessibilityOrientation {
