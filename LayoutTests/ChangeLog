@@ -1,3 +1,20 @@
+2014-12-09  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Crash when answering notification permission request after navigating
+        https://bugs.webkit.org/show_bug.cgi?id=139429
+        <rdar://problem/18921122>
+
+        Reviewed by Andreas Kling.
+
+        Add layout test to cover the case where the notification permission is
+        requesting before navigating to a new URL and answered after the page
+        is navigated away.
+
+        * http/tests/notifications/legacy/notification-request-permission-then-navigate-expected.txt: Added.
+        * http/tests/notifications/legacy/notification-request-permission-then-navigate.html: Added.
+        * http/tests/notifications/legacy/resources/notify-opener-done.html: Added.
+        * http/tests/notifications/legacy/resources/request-permission-then-navigate.html: Added.
+
 2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Inline elements whose parents have small line-height are laid out too low
