@@ -1,3 +1,100 @@
+2015-01-13  Antti Koivisto  <antti@apple.com>
+
+        Devirtualize FontData
+        https://bugs.webkit.org/show_bug.cgi?id=140390
+
+        Reviewed by Andreas Kling.
+
+        This patch removes the FontData base class and turns SegmentedFontData into a non-virtual FontRanges type.
+
+        SimpleFontData remains as is (without the base) and it can be renamed later to something more sensible.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        (WebCore::CSSFontSelector::fallbackFontDataAt):
+        (WebCore::CSSFontSelector::getFontData): Deleted.
+        (WebCore::CSSFontSelector::getFallbackFontData): Deleted.
+        * css/CSSFontSelector.h:
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::pruneTable):
+        (WebCore::appendFontDataWithInvalidUnicodeRangeIfLoading):
+        (WebCore::CSSSegmentedFontFace::fontRanges):
+        (WebCore::CSSSegmentedFontFace::loadFont):
+        (WebCore::CSSSegmentedFontFace::getFontData): Deleted.
+        * css/CSSSegmentedFontFace.h:
+        * platform/graphics/Font.h:
+        (WebCore::Font::fallbackRangesAt):
+        (WebCore::Font::fontDataAt): Deleted.
+        * platform/graphics/FontData.cpp: Removed.
+        * platform/graphics/FontData.h: Removed.
+        * platform/graphics/FontGlyphs.cpp:
+        (WebCore::FontGlyphs::FontGlyphs):
+        (WebCore::FontGlyphs::determinePitch):
+        (WebCore::FontGlyphs::isLoadingCustomFonts):
+        (WebCore::realizeNextFallback):
+        (WebCore::FontGlyphs::realizeFallbackRangesAt):
+        (WebCore::FontGlyphs::glyphDataForSystemFallback):
+        (WebCore::FontGlyphs::glyphDataForVariant):
+        (WebCore::FontGlyphs::glyphDataForNormalVariant):
+        (WebCore::glyphPageFromFontRanges):
+        (WebCore::FontGlyphs::glyphDataForCharacter):
+        (WebCore::realizeNextFamily): Deleted.
+        (WebCore::FontGlyphs::realizeFontDataAt): Deleted.
+        (WebCore::glyphPageFromFontData): Deleted.
+        * platform/graphics/FontGlyphs.h:
+        (WebCore::FontGlyphs::primarySimpleFontData):
+        * platform/graphics/FontRanges.cpp: Copied from Source/WebCore/platform/graphics/SegmentedFontData.cpp.
+        (WebCore::FontRanges::FontRanges):
+        (WebCore::FontRanges::~FontRanges):
+        (WebCore::FontRanges::fontDataForCharacter):
+        (WebCore::FontRanges::fontDataForFirstRange):
+        (WebCore::FontRanges::isLoading):
+        (WebCore::SegmentedFontData::SegmentedFontData): Deleted.
+        (WebCore::SegmentedFontData::~SegmentedFontData): Deleted.
+        (WebCore::SegmentedFontData::simpleFontDataForCharacter): Deleted.
+        (WebCore::SegmentedFontData::simpleFontDataForFirstRange): Deleted.
+        (WebCore::SegmentedFontData::isCustomFont): Deleted.
+        (WebCore::SegmentedFontData::isLoading): Deleted.
+        (WebCore::SegmentedFontData::isSegmented): Deleted.
+        (WebCore::SegmentedFontData::description): Deleted.
+        * platform/graphics/FontRanges.h: Copied from Source/WebCore/platform/graphics/SegmentedFontData.h.
+        (WebCore::FontRanges::Range::Range):
+        (WebCore::FontRanges::Range::from):
+        (WebCore::FontRanges::Range::to):
+        (WebCore::FontRanges::Range::fontData):
+        (WebCore::FontRanges::isEmpty):
+        (WebCore::FontRanges::appendRange):
+        (WebCore::FontRanges::size):
+        (WebCore::FontRanges::rangeAt):
+        (WebCore::FontDataRange::FontDataRange): Deleted.
+        (WebCore::FontDataRange::from): Deleted.
+        (WebCore::FontDataRange::to): Deleted.
+        (WebCore::FontDataRange::fontData): Deleted.
+        (WebCore::SegmentedFontData::create): Deleted.
+        (WebCore::SegmentedFontData::appendRange): Deleted.
+        (WebCore::SegmentedFontData::numRanges): Deleted.
+        (WebCore::SegmentedFontData::rangeAt): Deleted.
+        (isType): Deleted.
+        * platform/graphics/FontSelector.h:
+        * platform/graphics/SegmentedFontData.cpp: Removed.
+        * platform/graphics/SegmentedFontData.h: Removed.
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::simpleFontDataForCharacter): Deleted.
+        (WebCore::SimpleFontData::simpleFontDataForFirstRange): Deleted.
+        (WebCore::SimpleFontData::isSegmented): Deleted.
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::isCustomFont):
+        (WebCore::SimpleFontData::isLoading):
+        (isType): Deleted.
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (-[WebCascadeList initWithFont:character:]):
+        (-[WebCascadeList objectAtIndex:]):
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::fontDataForCombiningCharacterSequence):
+
 2015-01-13  Dean Jackson  <dino@apple.com>
 
         Filters aren't applied to elements in columns after the first

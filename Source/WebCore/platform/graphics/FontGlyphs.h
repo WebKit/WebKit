@@ -21,6 +21,7 @@
 #ifndef FontGlyphs_h
 #define FontGlyphs_h
 
+#include "FontRanges.h"
 #include "FontSelector.h"
 #include "GlyphPage.h"
 #include "SimpleFontData.h"
@@ -66,7 +67,7 @@ public:
     const WidthCache& widthCache() const { return m_widthCache; }
 
     const SimpleFontData& primarySimpleFontData(const FontDescription&);
-    WEBCORE_EXPORT const FontData* realizeFontDataAt(const FontDescription&, unsigned index);
+    WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontDescription&, unsigned fallbackIndex);
 
 private:
     FontGlyphs(PassRefPtr<FontSelector>);
@@ -76,7 +77,8 @@ private:
     GlyphData glyphDataForNormalVariant(UChar32, const FontDescription&);
     GlyphData glyphDataForVariant(UChar32, const FontDescription&, FontDataVariant, unsigned fallbackIndex);
 
-    Vector<Ref<FontData>, 1> m_realizedFontData;
+    Vector<FontRanges, 1> m_realizedFallbackRanges;
+    unsigned m_lastRealizedFallbackIndex { 0 };
 
     RefPtr<GlyphPage> m_cachedPageZero;
     HashMap<int, RefPtr<GlyphPage>> m_cachedPages;
@@ -85,10 +87,11 @@ private:
 
     const SimpleFontData* m_cachedPrimarySimpleFontData;
     RefPtr<FontSelector> m_fontSelector;
+
     WidthCache m_widthCache;
+
     unsigned m_fontSelectorVersion;
     unsigned short m_generation;
-    unsigned m_lastRealizedFamilyIndex { 0 };
     Pitch m_pitch { UnknownPitch };
     bool m_isForPlatformFont { false };
 };
@@ -104,10 +107,10 @@ inline const SimpleFontData& FontGlyphs::primarySimpleFontData(const FontDescrip
 {
     ASSERT(isMainThread());
     if (!m_cachedPrimarySimpleFontData) {
-        auto& fontData = *realizeFontDataAt(description, 0);
-        m_cachedPrimarySimpleFontData = fontData.simpleFontDataForCharacter(' ');
+        auto& primaryRanges = realizeFallbackRangesAt(description, 0);
+        m_cachedPrimarySimpleFontData = primaryRanges.fontDataForCharacter(' ');
         if (!m_cachedPrimarySimpleFontData)
-            m_cachedPrimarySimpleFontData = &fontData.simpleFontDataForFirstRange();
+            m_cachedPrimarySimpleFontData = &primaryRanges.fontDataForFirstRange();
     }
     return *m_cachedPrimarySimpleFontData;
 }

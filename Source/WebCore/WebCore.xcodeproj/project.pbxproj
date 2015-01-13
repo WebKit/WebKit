@@ -1352,10 +1352,8 @@
 		371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */; };
 		371E65CC13661EDC00BEEDB0 /* PageSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 371E65CB13661EDC00BEEDB0 /* PageSerializer.h */; };
 		371E65CE13661EED00BEEDB0 /* PageSerializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371E65CD13661EED00BEEDB0 /* PageSerializer.cpp */; };
-		371F4F400D25B9AF00ECE0D5 /* FontData.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F4F3E0D25B9AF00ECE0D5 /* FontData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		371F4F410D25B9AF00ECE0D5 /* FontData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F4F3F0D25B9AF00ECE0D5 /* FontData.cpp */; };
-		371F4FFC0D25E7F300ECE0D5 /* SegmentedFontData.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F4FFA0D25E7F300ECE0D5 /* SegmentedFontData.h */; };
-		371F4FFD0D25E7F300ECE0D5 /* SegmentedFontData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F4FFB0D25E7F300ECE0D5 /* SegmentedFontData.cpp */; };
+		371F4FFC0D25E7F300ECE0D5 /* FontRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F4FFA0D25E7F300ECE0D5 /* FontRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		371F4FFD0D25E7F300ECE0D5 /* FontRanges.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F4FFB0D25E7F300ECE0D5 /* FontRanges.cpp */; };
 		371F51A10D262FA000ECE0D5 /* CSSSegmentedFontFace.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F519F0D262FA000ECE0D5 /* CSSSegmentedFontFace.h */; };
 		371F51A20D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F51A00D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp */; };
 		371F53E90D2704F900ECE0D5 /* CSSUnicodeRangeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F53E70D2704F900ECE0D5 /* CSSUnicodeRangeValue.h */; };
@@ -8390,10 +8388,8 @@
 		371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HyphenationCF.cpp; sourceTree = "<group>"; };
 		371E65CB13661EDC00BEEDB0 /* PageSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageSerializer.h; sourceTree = "<group>"; };
 		371E65CD13661EED00BEEDB0 /* PageSerializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageSerializer.cpp; sourceTree = "<group>"; };
-		371F4F3E0D25B9AF00ECE0D5 /* FontData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontData.h; sourceTree = "<group>"; };
-		371F4F3F0D25B9AF00ECE0D5 /* FontData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontData.cpp; sourceTree = "<group>"; };
-		371F4FFA0D25E7F300ECE0D5 /* SegmentedFontData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SegmentedFontData.h; sourceTree = "<group>"; };
-		371F4FFB0D25E7F300ECE0D5 /* SegmentedFontData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SegmentedFontData.cpp; sourceTree = "<group>"; };
+		371F4FFA0D25E7F300ECE0D5 /* FontRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontRanges.h; sourceTree = "<group>"; };
+		371F4FFB0D25E7F300ECE0D5 /* FontRanges.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontRanges.cpp; sourceTree = "<group>"; };
 		371F519F0D262FA000ECE0D5 /* CSSSegmentedFontFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSSegmentedFontFace.h; sourceTree = "<group>"; };
 		371F51A00D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSegmentedFontFace.cpp; sourceTree = "<group>"; };
 		371F53E70D2704F900ECE0D5 /* CSSUnicodeRangeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSUnicodeRangeValue.h; sourceTree = "<group>"; };
@@ -20439,8 +20435,6 @@
 				BCB92D4E1293550B00C8387F /* FontBaseline.h */,
 				B2C3DA510D006CD600EF6F26 /* FontCache.cpp */,
 				B2C3DA520D006CD600EF6F26 /* FontCache.h */,
-				371F4F3F0D25B9AF00ECE0D5 /* FontData.cpp */,
-				371F4F3E0D25B9AF00ECE0D5 /* FontData.h */,
 				37ACCE620DA2AA960089E602 /* FontDescription.cpp */,
 				B2C3DA550D006CD600EF6F26 /* FontDescription.h */,
 				72626E010EF022FE00A07E20 /* FontFastPath.cpp */,
@@ -20543,8 +20537,8 @@
 				BCAB418013E356E800D8AAF3 /* Region.h */,
 				A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */,
 				A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */,
-				371F4FFB0D25E7F300ECE0D5 /* SegmentedFontData.cpp */,
-				371F4FFA0D25E7F300ECE0D5 /* SegmentedFontData.h */,
+				371F4FFB0D25E7F300ECE0D5 /* FontRanges.cpp */,
+				371F4FFA0D25E7F300ECE0D5 /* FontRanges.h */,
 				0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */,
 				0F3DD44E12F5EA1B000D9190 /* ShadowBlur.h */,
 				B2C3DA530D006CD600EF6F26 /* SimpleFontData.cpp */,
@@ -24309,7 +24303,6 @@
 				BCB92D4F1293550B00C8387F /* FontBaseline.h in Headers */,
 				B2C3DA630D006CD600EF6F26 /* FontCache.h in Headers */,
 				B2AFFC7E0D00A5C10030074D /* FontCustomPlatformData.h in Headers */,
-				371F4F400D25B9AF00ECE0D5 /* FontData.h in Headers */,
 				B2C3DA660D006CD600EF6F26 /* FontDescription.h in Headers */,
 				4A6E9FC813C17D570046A7F8 /* FontFeatureSettings.h in Headers */,
 				B2C3DA680D006CD600EF6F26 /* FontGlyphs.h in Headers */,
@@ -25960,7 +25953,7 @@
 				BCD0E0FC0E972C3500265DEA /* SecurityOriginHash.h in Headers */,
 				974D2DA5146A535D00D51F8B /* SecurityPolicy.h in Headers */,
 				2D5BC42716F882EE007048D0 /* SecurityPolicyViolationEvent.h in Headers */,
-				371F4FFC0D25E7F300ECE0D5 /* SegmentedFontData.h in Headers */,
+				371F4FFC0D25E7F300ECE0D5 /* FontRanges.h in Headers */,
 				99CC0B5E18BE984A006CEBCC /* SegmentedInputStorage.h in Headers */,
 				B2C3DA2F0D006C1D00EF6F26 /* SegmentedString.h in Headers */,
 				BEA807C90F714A0300524199 /* SelectionRect.h in Headers */,
@@ -27813,7 +27806,6 @@
 				B2AFFC7C0D00A5C10030074D /* FontCacheMac.mm in Sources */,
 				37C2360B1097EDED00EF9F72 /* FontComplexTextMac.cpp in Sources */,
 				B2AFFC7D0D00A5C10030074D /* FontCustomPlatformData.cpp in Sources */,
-				371F4F410D25B9AF00ECE0D5 /* FontData.cpp in Sources */,
 				37ACCF690DA414E70089E602 /* FontDescription.cpp in Sources */,
 				72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */,
 				4A6E9FC713C17D570046A7F8 /* FontFeatureSettings.cpp in Sources */,
@@ -29391,7 +29383,7 @@
 				976F36EA14686225005E93B4 /* SecurityContext.cpp in Sources */,
 				BCD0E0FA0E972C3500265DEA /* SecurityOrigin.cpp in Sources */,
 				974D2DA4146A535D00D51F8B /* SecurityPolicy.cpp in Sources */,
-				371F4FFD0D25E7F300ECE0D5 /* SegmentedFontData.cpp in Sources */,
+				371F4FFD0D25E7F300ECE0D5 /* FontRanges.cpp in Sources */,
 				99CC0B5D18BE984A006CEBCC /* SegmentedInputStorage.cpp in Sources */,
 				B2C3DA2E0D006C1D00EF6F26 /* SegmentedString.cpp in Sources */,
 				BEA807C80F714A0300524199 /* SelectionRect.cpp in Sources */,

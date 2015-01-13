@@ -468,7 +468,7 @@ static inline bool compareFontFaces(CSSFontFace* first, CSSFontFace* second)
     return false;
 }
 
-PassRefPtr<FontData> CSSFontSelector::getFontData(const FontDescription& fontDescription, const AtomicString& familyName)
+FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescription, const AtomicString& familyName)
 {
     // FIXME: The spec (and Firefox) says user specified generic families (sans-serif etc.) should be resolved before the @font-face lookup too.
     bool resolveGenericFamilyFirst = familyName == standardFamily;
@@ -478,10 +478,10 @@ PassRefPtr<FontData> CSSFontSelector::getFontData(const FontDescription& fontDes
     if (!face) {
         if (!resolveGenericFamilyFirst)
             familyForLookup = resolveGenericFamily(m_document, fontDescription, familyName);
-        return fontCache().fontForFamily(fontDescription, familyForLookup);
+        return FontRanges(fontCache().fontForFamily(fontDescription, familyForLookup));
     }
 
-    return face->getFontData(fontDescription);
+    return face->fontRanges(fontDescription);
 }
 
 CSSSegmentedFontFace* CSSFontSelector::getFontFace(const FontDescription& fontDescription, const AtomicString& family)
@@ -623,7 +623,7 @@ size_t CSSFontSelector::fallbackFontDataCount()
     return 0;
 }
 
-PassRefPtr<FontData> CSSFontSelector::getFallbackFontData(const FontDescription& fontDescription, size_t index)
+PassRefPtr<SimpleFontData> CSSFontSelector::fallbackFontDataAt(const FontDescription& fontDescription, size_t index)
 {
     ASSERT_UNUSED(index, !index);
 

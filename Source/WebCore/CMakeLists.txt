@@ -2051,12 +2051,12 @@ set(WebCore_SOURCES
     platform/graphics/FloatSize.cpp
     platform/graphics/Font.cpp
     platform/graphics/FontCache.cpp
-    platform/graphics/FontData.cpp
     platform/graphics/FontDescription.cpp
     platform/graphics/FontFastPath.cpp
     platform/graphics/FontFeatureSettings.cpp
     platform/graphics/FontGenericFamilies.cpp
     platform/graphics/FontGlyphs.cpp
+    platform/graphics/FontRanges.cpp
     platform/graphics/GeneratedImage.cpp
     platform/graphics/GeometryUtilities.cpp
     platform/graphics/Gradient.cpp
@@ -2084,7 +2084,6 @@ set(WebCore_SOURCES
     platform/graphics/Region.cpp
     platform/graphics/RoundedRect.cpp
     platform/graphics/SVGGlyph.cpp
-    platform/graphics/SegmentedFontData.cpp
     platform/graphics/ShadowBlur.cpp
     platform/graphics/SimpleFontData.cpp
     platform/graphics/StringTruncator.cpp

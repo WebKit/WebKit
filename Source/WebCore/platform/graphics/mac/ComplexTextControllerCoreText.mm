@@ -62,7 +62,7 @@
 
     // By the time a WebCascadeList is used, the Font has already been asked to realize all of its
     // FontData, so this loop does not hit the FontCache.
-    while (_font->fontDataAt(_count))
+    while (!_font->fallbackRangesAt(_count).isNull())
         _count++;
 
     return self;
@@ -82,9 +82,9 @@
     } else
         _fontDescriptors.grow(index + 1);
 
-    const WebCore::SimpleFontData* simpleFontData = _font->fontDataAt(index)->simpleFontDataForCharacter(_character);
+    const WebCore::SimpleFontData* simpleFontData = _font->fallbackRangesAt(index).fontDataForCharacter(_character);
     if (!simpleFontData)
-        simpleFontData = &_font->fontDataAt(index)->simpleFontDataForFirstRange();
+        simpleFontData = &_font->fallbackRangesAt(index).fontDataForFirstRange();
     fontDescriptor = CTFontCopyFontDescriptor(simpleFontData->platformData().ctFont());
     _fontDescriptors[index] = adoptCF(fontDescriptor);
     return (id)fontDescriptor;
@@ -201,9 +201,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
         isSystemFallback = true;
 
         U16_GET(cp, 0, 0, length, baseCharacter);
-        fontData = m_font.fontDataAt(0)->simpleFontDataForCharacter(baseCharacter);
+        fontData = m_font.fallbackRangesAt(0).fontDataForCharacter(baseCharacter);
         if (!fontData)
-            fontData = &m_font.fontDataAt(0)->simpleFontDataForFirstRange();
+            fontData = &m_font.fallbackRangesAt(0).fontDataForFirstRange();
 
         RetainPtr<WebCascadeList> cascadeList = adoptNS([[WebCascadeList alloc] initWithFont:&m_font character:baseCharacter]);
 
@@ -256,9 +256,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
             RetainPtr<CFTypeRef> runFontEqualityObject = FontPlatformData::objectForEqualityCheck(runFont);
             if (!CFEqual(runFontEqualityObject.get(), fontData->platformData().objectForEqualityCheck().get())) {
                 // Begin trying to see if runFont matches any of the fonts in the fallback list.
-                unsigned i = 0;
-                for (const FontData* candidateFontData = m_font.fontDataAt(i); candidateFontData; candidateFontData = m_font.fontDataAt(++i)) {
-                    runFontData = candidateFontData->simpleFontDataForCharacter(baseCharacter);
+
+                for (unsigned i = 0; !m_font.fallbackRangesAt(i).isNull(); ++i) {
+                    runFontData = m_font.fallbackRangesAt(i).fontDataForCharacter(baseCharacter);
                     if (!runFontData)
                         continue;
                     RetainPtr<CFTypeRef> runFontEqualityObject = runFontData->platformData().objectForEqualityCheck();

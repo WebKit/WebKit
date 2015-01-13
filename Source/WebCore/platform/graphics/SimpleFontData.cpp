@@ -157,16 +157,6 @@ SimpleFontData::~SimpleFontData()
     removeFromSystemFallbackCache();
 }
 
-const SimpleFontData* SimpleFontData::simpleFontDataForCharacter(UChar32) const
-{
-    return this;
-}
-
-const SimpleFontData& SimpleFontData::simpleFontDataForFirstRange() const
-{
-    return *this;
-}
-
 static bool fillGlyphPage(GlyphPage& pageToFill, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
 #if ENABLE(SVG_FONTS)
@@ -286,11 +276,6 @@ GlyphData SimpleFontData::glyphDataForCharacter(UChar32 character) const
     if (!page)
         return GlyphData();
     return page->glyphDataForCharacter(character);
-}
-
-bool SimpleFontData::isSegmented() const
-{
-    return false;
 }
 
 PassRefPtr<SimpleFontData> SimpleFontData::verticalRightOrientationFontData() const

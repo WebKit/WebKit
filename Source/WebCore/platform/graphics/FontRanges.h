@@ -23,63 +23,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "SegmentedFontData.h"
+#ifndef FontRanges_h
+#define FontRanges_h
 
 #include "SimpleFontData.h"
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/TypeCasts.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-SegmentedFontData::SegmentedFontData()
-{
-    
+class FontRanges {
+public:
+    struct Range {
+        Range(UChar32 from, UChar32 to, Ref<SimpleFontData>&& fontData)
+            : m_from(from)
+            , m_to(to)
+            , m_fontData(WTF::move(fontData))
+        {
+        }
+
+        UChar32 from() const { return m_from; }
+        UChar32 to() const { return m_to; }
+        const SimpleFontData& fontData() const { return *m_fontData; }
+
+    private:
+        UChar32 m_from;
+        UChar32 m_to;
+        RefPtr<SimpleFontData> m_fontData;
+    };
+
+    FontRanges();
+    explicit FontRanges(RefPtr<SimpleFontData>&&);
+    ~FontRanges();
+
+    bool isNull() const { return m_ranges.isEmpty(); }
+
+    void appendRange(const Range& range) { m_ranges.append(range); }
+    unsigned size() const { return m_ranges.size(); }
+    const Range& rangeAt(unsigned i) const { return m_ranges[i]; }
+
+    const SimpleFontData* fontDataForCharacter(UChar32) const;
+    const SimpleFontData& fontDataForFirstRange() const;
+    bool isLoading() const;
+
+private:
+    Vector<Range, 1> m_ranges;
+};
+
 }
 
-SegmentedFontData::~SegmentedFontData()
-{
-}
-
-const SimpleFontData* SegmentedFontData::simpleFontDataForCharacter(UChar32 c) const
-{
-    for (auto& range : m_ranges) {
-        if (range.from() <= c && c <= range.to())
-            return range.fontData().get();
-    }
-    return nullptr;
-}
-
-const SimpleFontData& SegmentedFontData::simpleFontDataForFirstRange() const
-{
-    return *m_ranges[0].fontData();
-}
-
-bool SegmentedFontData::isCustomFont() const
-{
-    // All segmented fonts are custom fonts.
-    return true;
-}
-
-bool SegmentedFontData::isLoading() const
-{
-    for (auto& range : m_ranges) {
-        if (range.fontData()->isLoading())
-            return true;
-    }
-    return false;
-}
-
-bool SegmentedFontData::isSegmented() const
-{
-    return true;
-}
-
-#ifndef NDEBUG
-String SegmentedFontData::description() const
-{
-    return "[segmented font]";
-}
 #endif
-
-} // namespace WebCore

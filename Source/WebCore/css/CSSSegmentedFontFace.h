@@ -26,6 +26,7 @@
 #ifndef CSSSegmentedFontFace_h
 #define CSSSegmentedFontFace_h
 
+#include "FontRanges.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -35,9 +36,7 @@ namespace WebCore {
 
 class CSSFontFace;
 class CSSFontSelector;
-class FontData;
 class FontDescription;
-class SegmentedFontData;
 
 class CSSSegmentedFontFace : public RefCounted<CSSSegmentedFontFace> {
 public:
@@ -50,7 +49,7 @@ public:
 
     void appendFontFace(PassRefPtr<CSSFontFace>);
 
-    PassRefPtr<FontData> getFontData(const FontDescription&);
+    FontRanges fontRanges(const FontDescription&);
 
 #if ENABLE(FONT_LOAD_EVENTS)
     class LoadFontCallback : public RefCounted<LoadFontCallback> {
@@ -74,7 +73,7 @@ private:
 #endif
 
     CSSFontSelector* m_fontSelector;
-    HashMap<unsigned, RefPtr<SegmentedFontData>> m_fontDataTable;
+    HashMap<unsigned, FontRanges> m_descriptionToRangesMap;
     Vector<RefPtr<CSSFontFace>, 1> m_fontFaces;
 #if ENABLE(FONT_LOAD_EVENTS)
     Vector<RefPtr<LoadFontCallback>> m_callbacks;

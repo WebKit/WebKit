@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef FontData_h
-#define FontData_h
+#include "config.h"
+#include "FontRanges.h"
 
-#include <unicode/utypes.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include "SimpleFontData.h"
+#include <wtf/Assertions.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class SimpleFontData;
+FontRanges::FontRanges()
+{
+}
 
-class FontData : public RefCounted<FontData> {
-    WTF_MAKE_NONCOPYABLE(FontData); WTF_MAKE_FAST_ALLOCATED;
-public:
-    FontData()
-    {
+FontRanges::FontRanges(RefPtr<SimpleFontData>&& fontData)
+{
+    if (fontData)
+        m_ranges.append(Range { 0, 0x7FFFFFFF, fontData.releaseNonNull() });
+}
+
+FontRanges::~FontRanges()
+{
+}
+
+const SimpleFontData* FontRanges::fontDataForCharacter(UChar32 c) const
+{
+    for (auto& range : m_ranges) {
+        if (range.from() <= c && c <= range.to())
+            return &range.fontData();
     }
+    return nullptr;
+}
 
-    virtual ~FontData();
+const SimpleFontData& FontRanges::fontDataForFirstRange() const
+{
+    return m_ranges[0].fontData();
+}
 
-    virtual const SimpleFontData* simpleFontDataForCharacter(UChar32) const = 0;
-    virtual const SimpleFontData& simpleFontDataForFirstRange() const = 0;
-    virtual bool isCustomFont() const = 0;
-    virtual bool isLoading() const = 0;
-    virtual bool isSegmented() const = 0;
-
-#ifndef NDEBUG
-    virtual String description() const = 0;
-#endif
-};
+bool FontRanges::isLoading() const
+{
+    for (auto& range : m_ranges) {
+        if (range.fontData().isLoading())
+            return true;
+    }
+    return false;
+}
 
 } // namespace WebCore
-
-#endif // FontData_h

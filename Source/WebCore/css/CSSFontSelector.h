@@ -58,9 +58,9 @@ public:
     virtual unsigned version() const override { return m_version; }
     virtual unsigned uniqueId() const override { return m_uniqueId; }
 
-    virtual PassRefPtr<FontData> getFontData(const FontDescription&, const AtomicString&) override;
+    virtual FontRanges fontRangesForFamily(const FontDescription&, const AtomicString&) override;
     virtual size_t fallbackFontDataCount() override;
-    virtual PassRefPtr<FontData> getFallbackFontData(const FontDescription&, size_t) override;
+    virtual PassRefPtr<SimpleFontData> fallbackFontDataAt(const FontDescription&, size_t) override;
     CSSSegmentedFontFace* getFontFace(const FontDescription&, const AtomicString& family);
 
     virtual bool resolvesFamilyFor(const FontDescription&) const override;
