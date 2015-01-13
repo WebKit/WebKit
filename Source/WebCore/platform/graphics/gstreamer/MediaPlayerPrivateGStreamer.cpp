@@ -1677,6 +1677,7 @@ static HashSet<String> mimeTypeCache()
         "application/vnd.rn-realmedia",
         "application/x-3gp",
         "application/x-pn-realaudio",
+        "application/x-mpegurl",
         "audio/3gpp",
         "audio/aac",
         "audio/flac",
