@@ -140,6 +140,9 @@ extern NSString *WebActionOriginalURLKey; // NSURL
 @protocol WebPolicyDelegate <NSObject>
 
 @optional
+@end
+
+@interface NSObject (WebPolicyDelegate)
 
 /*!
    @method webView:decidePolicyForNavigationAction:request:frame:decisionListener:

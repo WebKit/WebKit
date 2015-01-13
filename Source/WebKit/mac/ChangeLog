@@ -1,3 +1,16 @@
+2015-01-13  Anders Carlsson  <andersca@apple.com>
+
+        Temporarily reintroduce the informal delegate protocols
+        https://bugs.webkit.org/show_bug.cgi?id=140416
+
+        Reviewed by Dan Bernstein.
+
+        * WebView/WebEditingDelegate.h:
+        * WebView/WebFrameLoadDelegate.h:
+        * WebView/WebPolicyDelegate.h:
+        * WebView/WebResourceLoadDelegate.h:
+        * WebView/WebUIDelegate.h:
+
 2015-01-13  Beth Dakin  <bdakin@apple.com>
 
         Should disable immediate actions for iTunes

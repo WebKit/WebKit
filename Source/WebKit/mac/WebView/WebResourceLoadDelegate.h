@@ -46,6 +46,9 @@
 @protocol WebResourceLoadDelegate <NSObject>
 
 @optional
+@end
+
+@interface NSObject (WebResourceLoadDelegate)
 
 /*!
     @method webView:identifierForInitialRequest:fromDataSource:
