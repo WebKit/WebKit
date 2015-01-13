@@ -1,0 +1,4 @@
+
+PASS non ascii response header value 
+PASS non ascii statusText 
+

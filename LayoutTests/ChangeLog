@@ -1,3 +1,22 @@
+2014-12-07  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Soup][Curl] HTTP header values should be treated as latin1, not UTF-8
+        https://bugs.webkit.org/show_bug.cgi?id=128739
+
+        Reviewed by Martin Robinson.
+        
+        Tests that non ascii header & reason phrase values are correctly retrieved by the web application.
+        headers.php script sends a response that includes non ascii header value.
+        not-ascii-status.php sends a response that includes non ascii reason phrase.
+        Removed specific gtk/efl expectations as now aligned with regular expectation.
+
+        * http/tests/xmlhttprequest/resources/headers.php: Added.
+        * http/tests/xmlhttprequest/resources/not-ascii-status.php: Added.
+        * http/tests/xmlhttprequest/response-special-characters-expected.txt: Added.
+        * http/tests/xmlhttprequest/response-special-characters.html: Added.
+        * platform/efl/http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii-expected.txt: Removed.
+        * platform/gtk/http/tests/security/contentSecurityPolicy/source-list-parsing-nonascii-expected.txt: Removed.
+
 2014-12-05  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (173394): Support for webcam is broken
