@@ -538,8 +538,6 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
         return Inspector::Protocol::Timeline::EventType::Paint;
     case TimelineRecordType::ScrollLayer:
         return Inspector::Protocol::Timeline::EventType::ScrollLayer;
-    case TimelineRecordType::ResizeImage:
-        return Inspector::Protocol::Timeline::EventType::ResizeImage;
 
     case TimelineRecordType::ParseHTML:
         return Inspector::Protocol::Timeline::EventType::ParseHTML;

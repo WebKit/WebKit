@@ -165,20 +165,6 @@ Ref<InspectorObject> TimelineRecordFactory::createLayoutData(unsigned dirtyObjec
     return WTF::move(data);
 }
 
-Ref<InspectorObject> TimelineRecordFactory::createDecodeImageData(const String& imageType)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setString("imageType", imageType);
-    return WTF::move(data);
-}
-
-Ref<InspectorObject> TimelineRecordFactory::createResizeImageData(bool shouldCache)
-{
-    Ref<InspectorObject> data = InspectorObject::create();
-    data->setBoolean("cached", shouldCache);
-    return WTF::move(data);
-}
-
 Ref<InspectorObject> TimelineRecordFactory::createMarkData(bool isMainFrame)
 {
     Ref<InspectorObject> data = InspectorObject::create();

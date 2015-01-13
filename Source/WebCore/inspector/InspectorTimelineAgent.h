@@ -74,7 +74,6 @@ enum class TimelineRecordType {
     Layout,
     Paint,
     ScrollLayer,
-    ResizeImage,
 
     ParseHTML,
 
