@@ -1,3 +1,25 @@
+2014-12-10  Zalan Bujtas  <zalan@apple.com>
+
+        Continuously repainting large parts of Huffington Post.
+        https://bugs.webkit.org/show_bug.cgi?id=139468
+
+        Reviewed by Antti Koivisto.
+
+        This patch eliminates redundant repaint requests for inlines when neither the parent
+        block flow nor any of the inline children are dirty.
+        Previously,
+        1. simple line layout always recalculated inline content positions regardless of whether
+        the content needed relayout at all; as a result, it always triggered full repaint.
+        2. inline tree layout ignored the needslayout flag on the last line and treated it dirty
+        (unless it broke cleanly (<div>foo<br></div>)).
+        This was an ancient workaround for an editing/insert use case, but it seems not to be the case anymore.
+
+        * fast/repaint/implicitly-positioned-block-repaint-complex-line-layout-expected.txt: Added.
+        * fast/repaint/implicitly-positioned-block-repaint-complex-line-layout.html: Added.
+        * fast/repaint/implicitly-positioned-block-repaint-simple-line-layout-expected.txt: Added.
+        * fast/repaint/implicitly-positioned-block-repaint-simple-line-layout.html: Added.
+        * platform/mac/fast/line-grid/line-align-right-edges-expected.txt:
+
 2014-12-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r164329): Input fields are not honoring the maxlength attribute

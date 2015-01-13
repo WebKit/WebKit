@@ -540,7 +540,7 @@ private:
     void adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
 
     void layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
-    void layoutSimpleLines(LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+    void layoutSimpleLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
     virtual std::unique_ptr<RootInlineBox> createRootInlineBox(); // Subclassed by RenderSVGText.
     InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, InlineBox* childBox);

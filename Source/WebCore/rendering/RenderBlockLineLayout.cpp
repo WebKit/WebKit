@@ -1570,13 +1570,7 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
                     // that has been deleted, so treat it as dirty too.
                     curr = prevRootBox;
             }
-        } else {
-            // No dirty lines were found.
-            // If the last line didn't break cleanly, treat it as dirty.
-            if (lastRootBox() && !lastRootBox()->endsWithBreak())
-                curr = lastRootBox();
         }
-
         // If we have no dirty lines, then last is just the last root box.
         last = curr ? curr->prevRootBox() : lastRootBox();
     }

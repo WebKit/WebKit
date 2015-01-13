@@ -644,8 +644,7 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
         m_lineLayoutPath = SimpleLineLayout::canUseFor(*this) ? SimpleLinesPath : LineBoxesPath;
 
     if (m_lineLayoutPath == SimpleLinesPath) {
-        deleteLineBoxesBeforeSimpleLineLayout();
-        layoutSimpleLines(repaintLogicalTop, repaintLogicalBottom);
+        layoutSimpleLines(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         return;
     }
 
@@ -3477,18 +3476,19 @@ void RenderBlockFlow::invalidateLineLayoutPath()
     ASSERT_NOT_REACHED();
 }
 
-void RenderBlockFlow::layoutSimpleLines(LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
+void RenderBlockFlow::layoutSimpleLines(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
+    bool needsLayout = selfNeedsLayout() || relayoutChildren || !m_simpleLineLayout;
+    if (needsLayout) {
+        deleteLineBoxesBeforeSimpleLineLayout();
+        m_simpleLineLayout = SimpleLineLayout::create(*this);
+    }
     ASSERT(!m_lineBoxes.firstLineBox());
-
-    m_simpleLineLayout = SimpleLineLayout::create(*this);
 
     LayoutUnit lineLayoutHeight = SimpleLineLayout::computeFlowHeight(*this, *m_simpleLineLayout);
     LayoutUnit lineLayoutTop = borderAndPaddingBefore();
-
     repaintLogicalTop = lineLayoutTop;
-    repaintLogicalBottom = lineLayoutTop + lineLayoutHeight;
-
+    repaintLogicalBottom = needsLayout ? repaintLogicalTop + lineLayoutHeight : repaintLogicalTop;
     setLogicalHeight(lineLayoutTop + lineLayoutHeight + borderAndPaddingAfter());
 }
 
