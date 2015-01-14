@@ -50,7 +50,6 @@ MockMediaSourcePrivate::MockMediaSourcePrivate(MockMediaPlayerMediaSource* paren
     , m_totalVideoFrames(0)
     , m_droppedVideoFrames(0)
     , m_corruptedVideoFrames(0)
-    , m_totalFrameDelay(0)
 {
 }
 
@@ -87,7 +86,7 @@ void MockMediaSourcePrivate::removeSourceBuffer(SourceBufferPrivate* buffer)
     m_sourceBuffers.remove(pos);
 }
 
-double MockMediaSourcePrivate::duration()
+MediaTime MockMediaSourcePrivate::duration()
 {
     return m_client->duration();
 }
@@ -99,7 +98,7 @@ std::unique_ptr<PlatformTimeRanges> MockMediaSourcePrivate::buffered()
 
 void MockMediaSourcePrivate::durationChanged()
 {
-    m_player->updateDuration(MediaTime::createWithDouble(duration()));
+    m_player->updateDuration(duration());
 }
 
 void MockMediaSourcePrivate::markEndOfStream(EndOfStreamStatus status)

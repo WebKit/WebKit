@@ -110,11 +110,11 @@ void InbandGenericTextTrack::updateCueFromCueData(TextTrackCueGeneric* cue, Gene
 {
     cue->willChange();
 
-    cue->setStartTime(cueData->startTime(), IGNORE_EXCEPTION);
-    double endTime = cueData->endTime();
-    if (std::isinf(endTime) && mediaElement())
-        endTime = mediaElement()->duration();
-    cue->setEndTime(endTime, IGNORE_EXCEPTION);
+    cue->setStartTime(cueData->startTime());
+    MediaTime endTime = cueData->endTime();
+    if (endTime.isPositiveInfinite() && mediaElement())
+        endTime = mediaElement()->durationMediaTime();
+    cue->setEndTime(endTime);
     cue->setText(cueData->content());
     cue->setId(cueData->id());
     cue->setBaseFontSizeRelativeToVideoHeight(cueData->baseFontSize());
@@ -156,11 +156,11 @@ void InbandGenericTextTrack::addGenericCue(InbandTextTrackPrivate* trackPrivate,
     RefPtr<TextTrackCueGeneric> cue = TextTrackCueGeneric::create(*scriptExecutionContext(), cueData->startTime(), cueData->endTime(), cueData->content());
     updateCueFromCueData(cue.get(), cueData.get());
     if (hasCue(cue.get(), TextTrackCue::IgnoreDuration)) {
-        LOG(Media, "InbandGenericTextTrack::addGenericCue ignoring already added cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime(), cueData->endTime(), cueData->content().utf8().data());
+        LOG(Media, "InbandGenericTextTrack::addGenericCue ignoring already added cue: start=%s, end=%s, content=\"%s\"\n", toString(cueData->startTime()).utf8().data(), toString(cueData->endTime()).utf8().data(), cueData->content().utf8().data());
         return;
     }
 
-    LOG(Media, "InbandGenericTextTrack::addGenericCue added cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime(), cueData->endTime(), cueData->content().utf8().data());
+    LOG(Media, "InbandGenericTextTrack::addGenericCue added cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime().toDouble(), cueData->endTime().toDouble(), cueData->content().utf8().data());
 
     if (cueData->status() != GenericCueData::Complete)
         m_cueMap.add(cueData.get(), cue.get());
@@ -184,10 +184,10 @@ void InbandGenericTextTrack::removeGenericCue(InbandTextTrackPrivate*, GenericCu
 {
     RefPtr<TextTrackCueGeneric> cue = m_cueMap.find(cueData);
     if (cue) {
-        LOG(Media, "InbandGenericTextTrack::removeGenericCue removing cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime(), cueData->endTime(), cueData->content().utf8().data());
+        LOG(Media, "InbandGenericTextTrack::removeGenericCue removing cue: start=%s, end=%s, content=\"%s\"\n",  toString(cueData->startTime()).utf8().data(), toString(cueData->endTime()).utf8().data(), cueData->content().utf8().data());
         removeCue(cue.get(), IGNORE_EXCEPTION);
     } else {
-        LOG(Media, "InbandGenericTextTrack::removeGenericCue UNABLE to find cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime(), cueData->endTime(), cueData->content().utf8().data());
+        LOG(Media, "InbandGenericTextTrack::removeGenericCue UNABLE to find cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime().toDouble(), cueData->endTime().toDouble(), cueData->content().utf8().data());
         m_cueMap.remove(cueData);
     }
 }

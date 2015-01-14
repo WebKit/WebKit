@@ -32,7 +32,7 @@
 #import "Logging.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
-#import "MediaTimeMac.h"
+#import "MediaTimeAVFoundation.h"
 #import "PlatformClockCM.h"
 #import "SoftLinking.h"
 #import "WebCoreSystemInterface.h"
@@ -377,9 +377,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setVisible(bool)
     // No-op.
 }
 
-double MediaPlayerPrivateMediaSourceAVFObjC::durationDouble() const
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::durationMediaTime() const
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->duration().toDouble() : 0;
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->duration() : MediaTime::zeroTime();
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
@@ -392,27 +392,22 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
     return synchronizerTime;
 }
 
-double MediaPlayerPrivateMediaSourceAVFObjC::currentTimeDouble() const
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::startTime() const
 {
-    return currentMediaTime().toDouble();
+    return MediaTime::zeroTime();
 }
 
-double MediaPlayerPrivateMediaSourceAVFObjC::startTimeDouble() const
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::initialTime() const
 {
-    return 0;
+    return MediaTime::zeroTime();
 }
 
-double MediaPlayerPrivateMediaSourceAVFObjC::initialTime() const
-{
-    return 0;
-}
-
-void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(double time, double negativeThreshold, double positiveThreshold)
+void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(const MediaTime& time, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
 {
     LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(%p) - time(%s), negativeThreshold(%s), positiveThreshold(%s)", this, toString(time).utf8().data(), toString(negativeThreshold).utf8().data(), toString(positiveThreshold).utf8().data());
     m_seeking = true;
     auto weakThis = createWeakPtr();
-    m_pendingSeek = std::make_unique<PendingSeek>(MediaTime::createWithDouble(time), MediaTime::createWithDouble(negativeThreshold), MediaTime::createWithDouble(positiveThreshold));
+    m_pendingSeek = std::make_unique<PendingSeek>(time, negativeThreshold, positiveThreshold);
 
     if (m_seekTimer.isActive())
         m_seekTimer.stop();
@@ -435,7 +430,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     if (!m_mediaSourcePrivate)
         return;
 
-    if (pendingSeek->negativeThreshold == MediaTime::zeroTime() && pendingSeek->positiveThreshold == MediaTime::zeroTime())
+    if (!pendingSeek->negativeThreshold && !pendingSeek->positiveThreshold)
         m_lastSeekTime = pendingSeek->targetTime;
     else
         m_lastSeekTime = m_mediaSourcePrivate->fastSeekTimeForMediaTime(pendingSeek->targetTime, pendingSeek->positiveThreshold, pendingSeek->negativeThreshold);
@@ -490,17 +485,17 @@ MediaPlayer::ReadyState MediaPlayerPrivateMediaSourceAVFObjC::readyState() const
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::seekable() const
 {
-    return PlatformTimeRanges::create(MediaTime::createWithDouble(minTimeSeekable()), MediaTime::createWithDouble(maxTimeSeekableDouble()));
+    return PlatformTimeRanges::create(minMediaTimeSeekable(), maxMediaTimeSeekable());
 }
 
-double MediaPlayerPrivateMediaSourceAVFObjC::maxTimeSeekableDouble() const
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::maxMediaTimeSeekable() const
 {
-    return durationDouble();
+    return durationMediaTime();
 }
 
-double MediaPlayerPrivateMediaSourceAVFObjC::minTimeSeekable() const
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::minMediaTimeSeekable() const
 {
-    return startTimeDouble();
+    return startTime();
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
@@ -590,9 +585,9 @@ unsigned long MediaPlayerPrivateMediaSourceAVFObjC::corruptedVideoFrames()
     return [[m_sampleBufferDisplayLayer videoPerformanceMetrics] numberOfCorruptedVideoFrames];
 }
 
-double MediaPlayerPrivateMediaSourceAVFObjC::totalFrameDelay()
+MediaTime MediaPlayerPrivateMediaSourceAVFObjC::totalFrameDelay()
 {
-    return [[m_sampleBufferDisplayLayer videoPerformanceMetrics] totalFrameDelay];
+    return MediaTime::createWithDouble([[m_sampleBufferDisplayLayer videoPerformanceMetrics] totalFrameDelay]);
 }
 
 #pragma mark -

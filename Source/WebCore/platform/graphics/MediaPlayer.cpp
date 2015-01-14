@@ -517,34 +517,34 @@ void MediaPlayer::setCDMSession(CDMSession* session)
 }
 #endif
     
-double MediaPlayer::duration() const
+MediaTime MediaPlayer::duration() const
 {
-    return m_private->durationDouble();
+    return m_private->durationMediaTime();
 }
 
-double MediaPlayer::startTime() const
+MediaTime MediaPlayer::startTime() const
 {
-    return m_private->startTimeDouble();
+    return m_private->startTime();
 }
 
-double MediaPlayer::initialTime() const
+MediaTime MediaPlayer::initialTime() const
 {
     return m_private->initialTime();
 }
 
-double MediaPlayer::currentTime() const
+MediaTime MediaPlayer::currentTime() const
 {
-    return m_private->currentTimeDouble();
+    return m_private->currentMediaTime();
 }
 
-void MediaPlayer::seekWithTolerance(double time, double negativeTolerance, double positiveTolerance)
+void MediaPlayer::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
 {
     m_private->seekWithTolerance(time, negativeTolerance, positiveTolerance);
 }
 
-void MediaPlayer::seek(double time)
+void MediaPlayer::seek(const MediaTime& time)
 {
-    m_private->seekDouble(time);
+    m_private->seek(time);
 }
 
 bool MediaPlayer::paused() const
@@ -722,14 +722,14 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayer::seekable()
     return m_private->seekable();
 }
 
-double MediaPlayer::maxTimeSeekable()
+MediaTime MediaPlayer::maxTimeSeekable()
 {
-    return m_private->maxTimeSeekableDouble();
+    return m_private->maxMediaTimeSeekable();
 }
 
-double MediaPlayer::minTimeSeekable()
+MediaTime MediaPlayer::minTimeSeekable()
 {
-    return m_private->minTimeSeekable();
+    return m_private->minMediaTimeSeekable();
 }
 
 bool MediaPlayer::didLoadingProgress()
@@ -950,9 +950,9 @@ MediaPlayer::MovieLoadType MediaPlayer::movieLoadType() const
     return m_private->movieLoadType();
 }
 
-double MediaPlayer::mediaTimeForTimeValue(double timeValue) const
+MediaTime MediaPlayer::mediaTimeForTimeValue(const MediaTime& timeValue) const
 {
-    return m_private->mediaTimeForTimeValueDouble(timeValue);
+    return m_private->mediaTimeForTimeValue(timeValue);
 }
 
 double MediaPlayer::maximumDurationToCacheMediaTime() const
@@ -1379,10 +1379,10 @@ unsigned long MediaPlayer::corruptedVideoFrames()
     return m_private->corruptedVideoFrames();
 }
 
-double MediaPlayer::totalFrameDelay()
+MediaTime MediaPlayer::totalFrameDelay()
 {
     if (!m_private)
-        return 0;
+        return MediaTime::zeroTime();
 
     return m_private->totalFrameDelay();
 }

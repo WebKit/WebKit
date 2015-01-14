@@ -269,10 +269,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_readyStateMaximum(HAVE_NOTHING)
     , m_volume(1.0f)
     , m_volumeInitialized(false)
-    , m_lastSeekTime(0)
     , m_previousProgressTime(std::numeric_limits<double>::max())
     , m_clockTimeAtLastUpdateEvent(0)
-    , m_lastTimeUpdateEventMovieTime(std::numeric_limits<double>::max())
+    , m_lastTimeUpdateEventMovieTime(MediaTime::positiveInfiniteTime())
     , m_loadState(WaitingForSource)
 #if PLATFORM(IOS)
     , m_videoFullscreenGravity(MediaPlayer::VideoGravityResizeAspect)
@@ -283,11 +282,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if ENABLE(MEDIA_SOURCE)
     , m_droppedVideoFrames(0)
 #endif
-    , m_cachedTime(MediaPlayer::invalidTime())
     , m_clockTimeAtLastCachedTimeUpdate(0)
     , m_minimumClockTimeToUpdateCachedTime(0)
-    , m_fragmentStartTime(MediaPlayer::invalidTime())
-    , m_fragmentEndTime(MediaPlayer::invalidTime())
     , m_pendingActionFlags(0)
     , m_actionAfterScan(Nothing)
     , m_scanType(Scan)
@@ -323,7 +319,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_tracksAreReady(true)
     , m_haveVisibleTextTrack(false)
     , m_processingPreferenceChange(false)
-    , m_lastTextTrackUpdateTime(-1)
+    , m_lastTextTrackUpdateTime(MediaTime(-1, 1))
     , m_captionDisplayMode(CaptionUserPreferences::Automatic)
     , m_audioTracks(0)
     , m_textTracks(0)
@@ -975,7 +971,7 @@ void HTMLMediaElement::prepareForLoad()
         updateMediaController();
 #if ENABLE(VIDEO_TRACK)
         if (RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
-            updateActiveTextTrackCues(0);
+            updateActiveTextTrackCues(MediaTime::zeroTime());
 #endif
     }
 
@@ -1000,7 +996,7 @@ void HTMLMediaElement::prepareForLoad()
 
     // FIXME: Investigate whether these can be moved into m_networkState != NETWORK_EMPTY block above
     // so they are closer to the relevant spec steps.
-    m_lastSeekTime = 0;
+    m_lastSeekTime = MediaTime::zeroTime();
 
     // The spec doesn't say to block the load event until we actually run the asynchronous section
     // algorithm, but do it now because we won't start that until after the timer fires and the 
@@ -1273,13 +1269,12 @@ static bool trackIndexCompare(TextTrack* a,
     return a->trackIndex() - b->trackIndex() < 0;
 }
 
-static bool eventTimeCueCompare(const std::pair<double, TextTrackCue*>& a,
-                                const std::pair<double, TextTrackCue*>& b)
+static bool eventTimeCueCompare(const std::pair<MediaTime, TextTrackCue*>& a, const std::pair<MediaTime, TextTrackCue*>& b)
 {
     // 12 - Sort the tasks in events in ascending time order (tasks with earlier
     // times first).
     if (a.first != b.first)
-        return a.first - b.first < 0;
+        return a.first - b.first < MediaTime::zeroTime();
 
     // If the cues belong to different text tracks, it doesn't make sense to
     // compare the two tracks by the relative cue order, so return the relative
@@ -1299,7 +1294,7 @@ static bool compareCueInterval(const CueInterval& one, const CueInterval& two)
 };
 
 
-void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
+void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
 {
     // 4.8.10.8 Playing the media resource
 
@@ -1337,7 +1332,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
     // 3 - Let last time be the current playback position at the time this
     // algorithm was last run for this media element, if this is not the first
     // time it has run.
-    double lastTime = m_lastTextTrackUpdateTime;
+    MediaTime lastTime = m_lastTextTrackUpdateTime;
 
     // 4 - If the current playback position has, since the last time this
     // algorithm was run, only changed through its usual monotonic increase
@@ -1345,13 +1340,13 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
     // cues whose start times are greater than or equal to last time and whose
     // end times are less than or equal to the current playback position.
     // Otherwise, let missed cues be an empty list.
-    if (lastTime >= 0 && m_lastSeekTime < movieTime) {
+    if (lastTime >= MediaTime::zeroTime() && m_lastSeekTime < movieTime) {
         CueList potentiallySkippedCues =
             m_cueTree.allOverlaps(m_cueTree.createInterval(lastTime, movieTime));
 
         for (size_t i = 0; i < potentiallySkippedCues.size(); ++i) {
-            double cueStartTime = potentiallySkippedCues[i].low();
-            double cueEndTime = potentiallySkippedCues[i].high();
+            MediaTime cueStartTime = potentiallySkippedCues[i].low();
+            MediaTime cueEndTime = potentiallySkippedCues[i].high();
 
             // Consider cues that may have been missed since the last seek time.
             if (cueStartTime > std::max(m_lastSeekTime, lastTime) && cueEndTime < movieTime)
@@ -1419,7 +1414,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
     // 8 - Let events be a list of tasks, initially empty. Each task in this
     // list will be associated with a text track, a text track cue, and a time,
     // which are used to sort the list before the tasks are queued.
-    Vector<std::pair<double, TextTrackCue*>> eventTasks;
+    Vector<std::pair<MediaTime, TextTrackCue*>> eventTasks;
 
     // 8 - Let affected tracks be a list of text tracks, initially empty.
     Vector<TextTrack*> affectedTracks;
@@ -1427,7 +1422,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
     for (size_t i = 0; i < missedCuesSize; ++i) {
         // 9 - For each text track cue in missed cues, prepare an event named enter
         // for the TextTrackCue object with the text track cue start time.
-        eventTasks.append(std::make_pair(missedCues[i].data()->startTime(),
+        eventTasks.append(std::make_pair(missedCues[i].data()->startMediaTime(),
                                          missedCues[i].data()));
 
         // 10 - For each text track [...] in missed cues, prepare an event
@@ -1439,9 +1434,8 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
         // checked when these tasks are actually queued below. This doesn't
         // affect sorting events before dispatch either, because the exit
         // event has the same time as the enter event.
-        if (missedCues[i].data()->startTime() < missedCues[i].data()->endTime())
-            eventTasks.append(std::make_pair(missedCues[i].data()->endTime(),
-                                             missedCues[i].data()));
+        if (missedCues[i].data()->startMediaTime() < missedCues[i].data()->endMediaTime())
+            eventTasks.append(std::make_pair(missedCues[i].data()->endMediaTime(), missedCues[i].data()));
     }
 
     for (size_t i = 0; i < previousCuesSize; ++i) {
@@ -1449,7 +1443,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
         // track cue active flag set prepare an event named exit for the
         // TextTrackCue object with the text track cue end time.
         if (!currentCues.contains(previousCues[i]))
-            eventTasks.append(std::make_pair(previousCues[i].data()->endTime(),
+            eventTasks.append(std::make_pair(previousCues[i].data()->endMediaTime(),
                                              previousCues[i].data()));
     }
 
@@ -1458,7 +1452,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
         // text track cue active flag set, prepare an event named enter for the
         // TextTrackCue object with the text track cue start time.
         if (!previousCues.contains(currentCues[i]))
-            eventTasks.append(std::make_pair(currentCues[i].data()->startTime(),
+            eventTasks.append(std::make_pair(currentCues[i].data()->startMediaTime(),
                                              currentCues[i].data()));
     }
 
@@ -1486,7 +1480,7 @@ void HTMLMediaElement::updateActiveTextTrackCues(double movieTime)
             event->setTarget(eventTasks[i].second);
             m_asyncEventQueue.enqueueEvent(event.release());
         } else {
-            if (eventTasks[i].first == eventTasks[i].second->startTime())
+            if (eventTasks[i].first == eventTasks[i].second->startMediaTime())
                 event = Event::create(eventNames().enterEvent, false, false);
             else
                 event = Event::create(eventNames().exitEvent, false, false);
@@ -1639,7 +1633,7 @@ void HTMLMediaElement::endIgnoringTrackDisplayUpdateRequests()
     ASSERT(m_ignoreTrackDisplayUpdate);
     --m_ignoreTrackDisplayUpdate;
     if (!m_ignoreTrackDisplayUpdate && m_inActiveDocument)
-        updateActiveTextTrackCues(currentTime());
+        updateActiveTextTrackCues(currentMediaTime());
 }
 
 void HTMLMediaElement::textTrackAddCues(TextTrack* track, const TextTrackCueList* cues) 
@@ -1659,28 +1653,31 @@ void HTMLMediaElement::textTrackRemoveCues(TextTrack*, const TextTrackCueList* c
         textTrackRemoveCue(cues->item(i)->track(), cues->item(i));
 }
 
-void HTMLMediaElement::textTrackAddCue(TextTrack* track, PassRefPtr<TextTrackCue> cue)
+void HTMLMediaElement::textTrackAddCue(TextTrack* track, PassRefPtr<TextTrackCue> prpCue)
 {
     if (track->mode() == TextTrack::disabledKeyword())
         return;
 
+    RefPtr<TextTrackCue> cue = prpCue;
+
     // Negative duration cues need be treated in the interval tree as
     // zero-length cues.
-    double endTime = std::max(cue->startTime(), cue->endTime());
+    MediaTime endTime = std::max(cue->startMediaTime(), cue->endMediaTime());
 
-    CueInterval interval = m_cueTree.createInterval(cue->startTime(), endTime, cue.get());
+    CueInterval interval = m_cueTree.createInterval(cue->startMediaTime(), endTime, cue.get());
     if (!m_cueTree.contains(interval))
         m_cueTree.add(interval);
-    updateActiveTextTrackCues(currentTime());
+    updateActiveTextTrackCues(currentMediaTime());
 }
 
-void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue> cue)
+void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue> prpCue)
 {
+    RefPtr<TextTrackCue> cue = prpCue;
     // Negative duration cues need to be treated in the interval tree as
     // zero-length cues.
-    double endTime = std::max(cue->startTime(), cue->endTime());
+    MediaTime endTime = std::max(cue->startMediaTime(), cue->endMediaTime());
 
-    CueInterval interval = m_cueTree.createInterval(cue->startTime(), endTime, cue.get());
+    CueInterval interval = m_cueTree.createInterval(cue->startMediaTime(), endTime, cue.get());
     m_cueTree.remove(interval);
 
 #if ENABLE(WEBVTT_REGIONS)
@@ -1699,7 +1696,7 @@ void HTMLMediaElement::textTrackRemoveCue(TextTrack*, PassRefPtr<TextTrackCue> c
 
     if (cue->isRenderable())
         toVTTCue(cue.get())->removeDisplayTree();
-    updateActiveTextTrackCues(currentTime());
+    updateActiveTextTrackCues(currentMediaTime());
 
 #if ENABLE(WEBVTT_REGIONS)
     if (cue->isRenderable())
@@ -2128,7 +2125,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     updateMediaController();
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
-        updateActiveTextTrackCues(currentTime());
+        updateActiveTextTrackCues(currentMediaTime());
 #endif
 }
 
@@ -2281,7 +2278,7 @@ void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>&)
 void HTMLMediaElement::rewind(double timeDelta)
 {
     LOG(Media, "HTMLMediaElement::rewind(%f)", timeDelta);
-    setCurrentTime(std::max(currentTime() - timeDelta, minTimeSeekable()));
+    setCurrentTime(std::max(currentMediaTime() - MediaTime::createWithDouble(timeDelta), minTimeSeekable()));
 }
 
 void HTMLMediaElement::returnToRealtime()
@@ -2290,12 +2287,12 @@ void HTMLMediaElement::returnToRealtime()
     setCurrentTime(maxTimeSeekable());
 }
 
-void HTMLMediaElement::addPlayedRange(double start, double end)
+void HTMLMediaElement::addPlayedRange(const MediaTime& start, const MediaTime& end)
 {
-    LOG(Media, "HTMLMediaElement::addPlayedRange(%f, %f)", start, end);
+    LOG(Media, "HTMLMediaElement::addPlayedRange(%s, %s)", toString(start).utf8().data(), toString(end).utf8().data());
     if (!m_playedTimeRanges)
         m_playedTimeRanges = TimeRanges::create();
-    m_playedTimeRanges->add(start, end);
+    m_playedTimeRanges->ranges().add(start, end);
 }  
 
 bool HTMLMediaElement::supportsScanning() const
@@ -2314,7 +2311,12 @@ void HTMLMediaElement::prepareToPlay()
 
 void HTMLMediaElement::fastSeek(double time)
 {
-    LOG(Media, "HTMLMediaElement::fastSeek(%f)", time);
+    fastSeek(MediaTime::createWithDouble(time));
+}
+
+void HTMLMediaElement::fastSeek(const MediaTime& time)
+{
+    LOG(Media, "HTMLMediaElement::fastSeek(%s)", toString(time).utf8().data());
     // 4.7.10.9 Seeking
     // 9. If the approximate-for-speed flag is set, adjust the new playback position to a value that will
     // allow for playback to resume promptly. If new playback position before this step is before current
@@ -2322,28 +2324,29 @@ void HTMLMediaElement::fastSeek(double time)
     // position. Similarly, if the new playback position before this step is after current playback position,
     // then the adjusted new playback position must also be after the current playback position.
     refreshCachedTime();
-    double delta = time - currentTime();
-    double negativeTolerance = delta >= 0 ? delta : std::numeric_limits<double>::infinity();
-    double positiveTolerance = delta < 0 ? -delta : std::numeric_limits<double>::infinity();
+    MediaTime delta = time - currentMediaTime();
+    MediaTime negativeTolerance = delta >= MediaTime::zeroTime() ? delta : MediaTime::positiveInfiniteTime();
+    MediaTime positiveTolerance = delta < MediaTime::zeroTime() ? -delta : MediaTime::positiveInfiniteTime();
 
     seekWithTolerance(time, negativeTolerance, positiveTolerance, true);
 }
 
-void HTMLMediaElement::seek(double time)
+void HTMLMediaElement::seek(const MediaTime& time)
 {
-    LOG(Media, "HTMLMediaElement::seek(%f)", time);
-    seekWithTolerance(time, 0, 0, true);
+    LOG(Media, "HTMLMediaElement::seek(%s)", toString(time).utf8().data());
+    seekWithTolerance(time, MediaTime::zeroTime(), MediaTime::zeroTime(), true);
 }
 
-void HTMLMediaElement::seekInternal(double time)
+void HTMLMediaElement::seekInternal(const MediaTime& time)
 {
-    LOG(Media, "HTMLMediaElement::seekInternal(%f)", time);
-    seekWithTolerance(time, 0, 0, false);
+    LOG(Media, "HTMLMediaElement::seekInternal(%s)", toString(time).utf8().data());
+    seekWithTolerance(time, MediaTime::zeroTime(), MediaTime::zeroTime(), false);
 }
 
-void HTMLMediaElement::seekWithTolerance(double time, double negativeTolerance, double positiveTolerance, bool fromDOM)
+void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, bool fromDOM)
 {
     // 4.8.10.9 Seeking
+    MediaTime time = inTime;
 
     // 1 - Set the media element's show poster flag to false.
     setDisplayMode(Video);
@@ -2358,7 +2361,7 @@ void HTMLMediaElement::seekWithTolerance(double time, double negativeTolerance, 
 
     // Get the current time before setting m_seeking, m_lastSeekTime is returned once it is set.
     refreshCachedTime();
-    double now = currentTime();
+    MediaTime now = currentMediaTime();
 
     // 3 - If the element's seeking IDL attribute is true, then another instance of this algorithm is
     // already running. Abort that other instance of the algorithm without waiting for the step that
@@ -2394,18 +2397,18 @@ void HTMLMediaElement::seekTimerFired(Timer<HTMLMediaElement>&)
     }
 
     ASSERT(m_pendingSeek);
-    double now = m_pendingSeek->now;
-    double time = m_pendingSeek->targetTime;
-    double negativeTolerance = m_pendingSeek->negativeTolerance;
-    double positiveTolerance = m_pendingSeek->positiveTolerance;
+    MediaTime now = m_pendingSeek->now;
+    MediaTime time = m_pendingSeek->targetTime;
+    MediaTime negativeTolerance = m_pendingSeek->negativeTolerance;
+    MediaTime positiveTolerance = m_pendingSeek->positiveTolerance;
     m_pendingSeek = nullptr;
 
     // 6 - If the new playback position is later than the end of the media resource, then let it be the end 
     // of the media resource instead.
-    time = std::min(time, duration());
+    time = std::min(time, durationMediaTime());
 
     // 7 - If the new playback position is less than the earliest possible position, let it be that position instead.
-    double earliestTime = m_player->startTime();
+    MediaTime earliestTime = m_player->startTime();
     time = std::max(time, earliestTime);
 
     // Ask the media engine for the time value in the movie's time scale before comparing with current time. This
@@ -2414,9 +2417,9 @@ void HTMLMediaElement::seekTimerFired(Timer<HTMLMediaElement>&)
     // not generate a timechanged callback. This means m_seeking will never be cleared and we will never 
     // fire a 'seeked' event.
 #if !LOG_DISABLED
-    double mediaTime = m_player->mediaTimeForTimeValue(time);
+    MediaTime mediaTime = m_player->mediaTimeForTimeValue(time);
     if (time != mediaTime)
-        LOG(Media, "HTMLMediaElement::seekTimerFired(%f) - media timeline equivalent is %f", time, mediaTime);
+        LOG(Media, "HTMLMediaElement::seekTimerFired(%s) - media timeline equivalent is %s", toString(time).utf8().data(), toString(mediaTime).utf8().data());
 #endif
     time = m_player->mediaTimeForTimeValue(time);
 
@@ -2447,7 +2450,7 @@ void HTMLMediaElement::seekTimerFired(Timer<HTMLMediaElement>&)
         m_seeking = false;
         return;
     }
-    time = seekableRanges->nearest(time);
+    time = seekableRanges->ranges().nearest(time);
 
     m_sentEndEvent = false;
     m_lastSeekTime = time;
@@ -2509,7 +2512,7 @@ bool HTMLMediaElement::seeking() const
 void HTMLMediaElement::refreshCachedTime() const
 {
     m_cachedTime = m_player->currentTime();
-    if (!m_cachedTime) { 
+    if (!m_cachedTime) {
         // Do not use m_cachedTime until the media engine returns a non-zero value because we can't 
         // estimate current time until playback actually begins. 
         invalidateCachedTime(); 
@@ -2522,7 +2525,7 @@ void HTMLMediaElement::refreshCachedTime() const
 void HTMLMediaElement::invalidateCachedTime() const
 {
 #if !LOG_DISABLED
-    if (m_cachedTime != MediaPlayer::invalidTime())
+    if (m_cachedTime.isValid())
         LOG(Media, "HTMLMediaElement::invalidateCachedTime");
 #endif
 
@@ -2532,29 +2535,34 @@ void HTMLMediaElement::invalidateCachedTime() const
     static const double minimumTimePlayingBeforeCacheSnapshot = 0.5;
 
     m_minimumClockTimeToUpdateCachedTime = monotonicallyIncreasingTime() + minimumTimePlayingBeforeCacheSnapshot;
-    m_cachedTime = MediaPlayer::invalidTime();
+    m_cachedTime = MediaTime::invalidTime();
 }
 
 // playback state
 double HTMLMediaElement::currentTime() const
 {
+    return currentMediaTime().toDouble();
+}
+
+MediaTime HTMLMediaElement::currentMediaTime() const
+{
 #if LOG_CACHED_TIME_WARNINGS
-    static const double minCachedDeltaForWarning = 0.01;
+    static const MediaTime minCachedDeltaForWarning = MediaTime::create(1, 100);
 #endif
 
     if (!m_player)
-        return 0;
+        return MediaTime::zeroTime();
 
     if (m_seeking) {
-        LOG(Media, "HTMLMediaElement::currentTime - seeking, returning %f", m_lastSeekTime);
+        LOG(Media, "HTMLMediaElement::currentTime - seeking, returning %s", toString(m_lastSeekTime).utf8().data());
         return m_lastSeekTime;
     }
 
-    if (m_cachedTime != MediaPlayer::invalidTime() && m_paused) {
+    if (m_cachedTime.isValid() && m_paused) {
 #if LOG_CACHED_TIME_WARNINGS
-        double delta = m_cachedTime - m_player->currentTime();
+        MediaTime delta = m_cachedTime - m_player->currentTime();
         if (delta > minCachedDeltaForWarning)
-            LOG(Media, "HTMLMediaElement::currentTime - WARNING, cached time is %f seconds off of media time when paused", delta);
+            LOG(Media, "HTMLMediaElement::currentTime - WARNING, cached time is %s seconds off of media time when paused", toString(delta).utf8().data());
 #endif
         return m_cachedTime;
     }
@@ -2563,15 +2571,15 @@ double HTMLMediaElement::currentTime() const
     double now = monotonicallyIncreasingTime();
     double maximumDurationToCacheMediaTime = m_player->maximumDurationToCacheMediaTime();
 
-    if (maximumDurationToCacheMediaTime && m_cachedTime != MediaPlayer::invalidTime() && !m_paused && now > m_minimumClockTimeToUpdateCachedTime) {
+    if (maximumDurationToCacheMediaTime && m_cachedTime.isValid() && !m_paused && now > m_minimumClockTimeToUpdateCachedTime) {
         double clockDelta = now - m_clockTimeAtLastCachedTimeUpdate;
 
         // Not too soon, use the cached time only if it hasn't expired.
         if (clockDelta < maximumDurationToCacheMediaTime) {
-            double adjustedCacheTime = m_cachedTime + (effectivePlaybackRate() * clockDelta);
+            MediaTime adjustedCacheTime = m_cachedTime + MediaTime::createWithDouble(effectivePlaybackRate() * clockDelta);
 
 #if LOG_CACHED_TIME_WARNINGS
-            double delta = adjustedCacheTime - m_player->currentTime();
+            MediaTime delta = adjustedCacheTime - m_player->currentTime();
             if (delta > minCachedDeltaForWarning)
                 LOG(Media, "HTMLMediaElement::currentTime - WARNING, cached time is %f seconds off of media time when playing", delta);
 #endif
@@ -2582,20 +2590,25 @@ double HTMLMediaElement::currentTime() const
 #if LOG_CACHED_TIME_WARNINGS
     if (maximumDurationToCacheMediaTime && now > m_minimumClockTimeToUpdateCachedTime && m_cachedTime != MediaPlayer::invalidTime()) {
         double clockDelta = now - m_clockTimeAtLastCachedTimeUpdate;
-        double delta = m_cachedTime + (effectivePlaybackRate() * clockDelta) - m_player->currentTime();
-        LOG(Media, "HTMLMediaElement::currentTime - cached time was %f seconds off of media time when it expired", delta);
+        MediaTime delta = m_cachedTime + MediaTime::createWithDouble(effectivePlaybackRate() * clockDelta) - m_player->currentTime();
+        LOG(Media, "HTMLMediaElement::currentTime - cached time was %s seconds off of media time when it expired", toString(delta).utf8().data());
     }
 #endif
 
     refreshCachedTime();
 
-    if (m_cachedTime == MediaPlayer::invalidTime())
-        return 0;
+    if (m_cachedTime.isInvalid())
+        return MediaTime::zeroTime();
     
     return m_cachedTime;
 }
 
 void HTMLMediaElement::setCurrentTime(double time)
+{
+    setCurrentTime(MediaTime::createWithDouble(time));
+}
+
+void HTMLMediaElement::setCurrentTime(const MediaTime& time)
 {
     if (m_mediaController)
         return;
@@ -2612,15 +2625,20 @@ void HTMLMediaElement::setCurrentTime(double time, ExceptionCode& ec)
         return;
     }
 
-    seek(time);
+    seek(MediaTime::createWithDouble(time));
 }
 
 double HTMLMediaElement::duration() const
 {
+    return durationMediaTime().toDouble();
+}
+
+MediaTime HTMLMediaElement::durationMediaTime() const
+{
     if (m_player && m_readyState >= HAVE_METADATA)
         return m_player->duration();
 
-    return std::numeric_limits<double>::quiet_NaN();
+    return MediaTime::invalidTime();
 }
 
 bool HTMLMediaElement::paused() const
@@ -2766,7 +2784,7 @@ void HTMLMediaElement::playInternal()
         scheduleDelayedAction(LoadMediaResource);
 
     if (endedPlayback())
-        seekInternal(0);
+        seekInternal(MediaTime::zeroTime());
 
     if (m_mediaController)
         m_mediaController->bringElementUpToSpeed(this);
@@ -3141,8 +3159,8 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>&)
 {
     ASSERT(m_player);
 
-    if (m_fragmentEndTime != MediaPlayer::invalidTime() && currentTime() >= m_fragmentEndTime && effectivePlaybackRate() > 0) {
-        m_fragmentEndTime = MediaPlayer::invalidTime();
+    if (m_fragmentEndTime.isValid() && currentMediaTime() >= m_fragmentEndTime && effectivePlaybackRate() > 0) {
+        m_fragmentEndTime = MediaTime::invalidTime();
         if (!m_mediaController && !m_paused) {
             // changes paused to true and fires a simple event named pause at the media element.
             pauseInternal();
@@ -3159,7 +3177,7 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>&)
 
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
-        updateActiveTextTrackCues(currentTime());
+        updateActiveTextTrackCues(currentMediaTime());
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -3179,7 +3197,7 @@ void HTMLMediaElement::scheduleTimeupdateEvent(bool periodicEvent)
 
     // Some media engines make multiple "time changed" callbacks at the same time, but we only want one
     // event at a given time so filter here
-    double movieTime = currentTime();
+    MediaTime movieTime = currentMediaTime();
     if (movieTime != m_lastTimeUpdateEventMovieTime) {
         scheduleEvent(eventNames().timeupdateEvent);
         m_clockTimeAtLastUpdateEvent = now;
@@ -3196,9 +3214,9 @@ double HTMLMediaElement::percentLoaded() const
 {
     if (!m_player)
         return 0;
-    double duration = m_player->duration();
+    MediaTime duration = m_player->duration();
 
-    if (!duration || std::isinf(duration))
+    if (!duration || duration.isPositiveInfinite() || duration.isNegativeInfinite())
         return 0;
 
     MediaTime buffered = MediaTime::zeroTime();
@@ -3209,7 +3227,7 @@ double HTMLMediaElement::percentLoaded() const
         MediaTime end = timeRanges->end(i, ignored);
         buffered += end - start;
     }
-    return buffered.toDouble() / duration;
+    return buffered.toDouble() / duration.toDouble();
 }
 
 #if ENABLE(VIDEO_TRACK)
@@ -4088,7 +4106,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
 
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
-        updateActiveTextTrackCues(currentTime());
+        updateActiveTextTrackCues(currentMediaTime());
 #endif
 
     beginProcessingMediaPlayerCallback();
@@ -4105,20 +4123,20 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
     else
         scheduleTimeupdateEvent(false);
 
-    double now = currentTime();
-    double dur = duration();
+    MediaTime now = currentMediaTime();
+    MediaTime dur = durationMediaTime();
     double playbackRate = effectivePlaybackRate();
     
     // When the current playback position reaches the end of the media resource then the user agent must follow these steps:
-    if (!std::isnan(dur) && dur) {
+    if (dur.isValid() && dur) {
         // If the media element has a loop attribute specified and does not have a current media controller,
         if (loop() && !m_mediaController && playbackRate > 0) {
             m_sentEndEvent = false;
             // then seek to the earliest possible position of the media resource and abort these steps when the direction of
             // playback is forwards,
             if (now >= dur)
-                seekInternal(0);
-        } else if ((now <= 0 && playbackRate < 0) || (now >= dur && playbackRate > 0)) {
+                seekInternal(MediaTime::zeroTime());
+        } else if ((now <= MediaTime::zeroTime() && playbackRate < 0) || (now >= dur && playbackRate > 0)) {
             // If the media element does not have a current media controller, and the media element
             // has still ended playback and paused is false,
             if (!m_mediaController && !m_paused) {
@@ -4185,8 +4203,8 @@ void HTMLMediaElement::mediaPlayerDurationChanged(MediaPlayer* player)
     scheduleEvent(eventNames().durationchangeEvent);
     mediaPlayerCharacteristicChanged(player);
 
-    double now = currentTime();
-    double dur = duration();
+    MediaTime now = currentMediaTime();
+    MediaTime dur = durationMediaTime();
     if (now > dur)
         seekInternal(dur);
 
@@ -4363,7 +4381,7 @@ PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const
 PassRefPtr<TimeRanges> HTMLMediaElement::played()
 {
     if (m_playing) {
-        double time = currentTime();
+        MediaTime time = currentMediaTime();
         if (time > m_lastSeekTime)
             addPlayedRange(m_lastSeekTime, time);
     }
@@ -4415,8 +4433,8 @@ bool HTMLMediaElement::couldPlayIfEnoughData() const
 
 bool HTMLMediaElement::endedPlayback() const
 {
-    double dur = duration();
-    if (!m_player || std::isnan(dur))
+    MediaTime dur = durationMediaTime();
+    if (!m_player || !dur.isValid())
         return false;
 
     // 4.8.10.8 Playing the media resource
@@ -4429,14 +4447,14 @@ bool HTMLMediaElement::endedPlayback() const
     // and the current playback position is the end of the media resource and the direction
     // of playback is forwards, Either the media element does not have a loop attribute specified,
     // or the media element has a current media controller.
-    double now = currentTime();
+    MediaTime now = currentMediaTime();
     if (effectivePlaybackRate() > 0)
-        return dur > 0 && now >= dur && (!loop() || m_mediaController);
+        return dur > MediaTime::zeroTime() && now >= dur && (!loop() || m_mediaController);
 
     // or the current playback position is the earliest possible position and the direction 
     // of playback is backwards
     if (effectivePlaybackRate() < 0)
-        return now <= 0;
+        return now <= MediaTime::zeroTime();
 
     return false;
 }
@@ -4460,14 +4478,14 @@ bool HTMLMediaElement::pausedForUserInteraction() const
     return false;
 }
 
-double HTMLMediaElement::minTimeSeekable() const
+MediaTime HTMLMediaElement::minTimeSeekable() const
 {
-    return m_player ? m_player->minTimeSeekable() : 0;
+    return m_player ? m_player->minTimeSeekable() : MediaTime::zeroTime();
 }
 
-double HTMLMediaElement::maxTimeSeekable() const
+MediaTime HTMLMediaElement::maxTimeSeekable() const
 {
-    return m_player ? m_player->maxTimeSeekable() : 0;
+    return m_player ? m_player->maxTimeSeekable() : MediaTime::zeroTime();
 }
     
 void HTMLMediaElement::updateVolume()
@@ -4559,7 +4577,7 @@ void HTMLMediaElement::updatePlayState()
 
         m_playbackProgressTimer.stop();
         m_playing = false;
-        double time = currentTime();
+        MediaTime time = currentMediaTime();
         if (time > m_lastSeekTime)
             addPlayedRange(m_lastSeekTime, time);
 
@@ -4643,7 +4661,7 @@ void HTMLMediaElement::userCancelledLoad()
     updateMediaController();
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled())
-        updateActiveTextTrackCues(0);
+        updateActiveTextTrackCues(MediaTime::zeroTime());
 #endif
 }
 
@@ -5255,7 +5273,7 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
     }
 
     if (checkType == CheckTextTrackVisibility && m_haveVisibleTextTrack == haveVisibleTextTrack) {
-        updateActiveTextTrackCues(currentTime());
+        updateActiveTextTrackCues(currentMediaTime());
         return;
     }
 
@@ -5279,7 +5297,7 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
     
     if (RuntimeEnabledFeatures::sharedFeatures().webkitVideoTrackEnabled()) {
         updateTextTrackDisplay();
-        updateActiveTextTrackCues(currentTime());
+        updateActiveTextTrackCues(currentMediaTime());
     }
 }
 
@@ -5491,31 +5509,31 @@ bool HTMLMediaElement::isBlockedOnMediaController() const
 void HTMLMediaElement::prepareMediaFragmentURI()
 {
     MediaFragmentURIParser fragmentParser(m_currentSrc);
-    double dur = duration();
+    MediaTime dur = durationMediaTime();
     
-    double start = fragmentParser.startTime();
-    if (start != MediaFragmentURIParser::invalidTimeValue() && start > 0) {
+    MediaTime start = fragmentParser.startTime();
+    if (start.isValid() && start > MediaTime::zeroTime()) {
         m_fragmentStartTime = start;
         if (m_fragmentStartTime > dur)
             m_fragmentStartTime = dur;
     } else
-        m_fragmentStartTime = MediaPlayer::invalidTime();
+        m_fragmentStartTime = MediaTime::invalidTime();
     
-    double end = fragmentParser.endTime();
-    if (end != MediaFragmentURIParser::invalidTimeValue() && end > 0 && end > m_fragmentStartTime) {
+    MediaTime end = fragmentParser.endTime();
+    if (end.isValid() && end > MediaTime::zeroTime() && (!m_fragmentStartTime.isValid() || end > m_fragmentStartTime)) {
         m_fragmentEndTime = end;
         if (m_fragmentEndTime > dur)
             m_fragmentEndTime = dur;
     } else
-        m_fragmentEndTime = MediaPlayer::invalidTime();
+        m_fragmentEndTime = MediaTime::invalidTime();
     
-    if (m_fragmentStartTime != MediaPlayer::invalidTime() && m_readyState < HAVE_FUTURE_DATA)
+    if (m_fragmentStartTime.isValid() && m_readyState < HAVE_FUTURE_DATA)
         prepareToPlay();
 }
 
 void HTMLMediaElement::applyMediaFragmentURI()
 {
-    if (m_fragmentStartTime != MediaPlayer::invalidTime()) {
+    if (m_fragmentStartTime.isValid()) {
         m_sentEndEvent = false;
         seek(m_fragmentStartTime);
     }
@@ -5778,7 +5796,7 @@ RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
         m_droppedVideoFrames + m_player->totalVideoFrames(),
         m_droppedVideoFrames + m_player->droppedVideoFrames(),
         m_player->corruptedVideoFrames(),
-        m_player->totalFrameDelay());
+        m_player->totalFrameDelay().toDouble());
 }
 #endif
 

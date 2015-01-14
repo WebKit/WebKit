@@ -88,7 +88,7 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState* exec)
         if (UNLIKELY(exec->hadException()))
             return JSValue::encode(jsUndefined());
 
-        object = DataCue::create(*context, startTime, endTime, data, type, ec);
+        object = DataCue::create(*context, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), data, type, ec);
         if (ec) {
             setDOMException(exec, ec);
             return JSValue::encode(JSValue());
@@ -100,7 +100,7 @@ EncodedJSValue JSC_HOST_CALL constructJSDataCue(ExecState* exec)
 #if !ENABLE(DATACUE_VALUE)
     return JSValue::encode(jsUndefined());
 #else
-    object = DataCue::create(*context, startTime, endTime, valueArgument, type);
+    object = DataCue::create(*context, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), valueArgument, type);
     return JSValue::encode(asObject(toJS(exec, castedThis->globalObject(), object.get())));
 #endif
 }

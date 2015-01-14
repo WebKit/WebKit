@@ -76,7 +76,7 @@ public:
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
     RetainPtr<AVPlayerItem> playerItem() const { return m_avPlayerItem; }
-    void processCue(NSArray *, NSArray *, double);
+    void processCue(NSArray *, NSArray *, const MediaTime&);
     void flushCues();
 #endif
     
@@ -103,9 +103,9 @@ public:
     void tracksDidChange(RetainPtr<NSArray>);
     void hasEnabledAudioDidChange(bool);
     void presentationSizeDidChange(FloatSize);
-    void durationDidChange(double);
+    void durationDidChange(const MediaTime&);
     void rateDidChange(double);
-    void metadataDidArrive(RetainPtr<NSArray>, double);
+    void metadataDidArrive(RetainPtr<NSArray>, const MediaTime&);
     void firstFrameAvailableDidChange(bool);
     void trackEnabledDidChange(bool);
     void canPlayFastReverseDidChange(bool);
@@ -146,7 +146,7 @@ private:
     virtual void platformSetVisible(bool);
     virtual void platformPlay();
     virtual void platformPause();
-    virtual double currentTimeDouble() const override;
+    virtual MediaTime currentMediaTime() const override;
     virtual void setVolume(float);
     virtual void setClosedCaptionsVisible(bool);
     virtual void paint(GraphicsContext*, const IntRect&);
@@ -163,7 +163,7 @@ private:
 #endif
 
     virtual bool supportsAcceleratedRendering() const { return true; }
-    virtual float mediaTimeForTimeValue(float) const;
+    virtual MediaTime mediaTimeForTimeValue(const MediaTime&) const;
     virtual double maximumDurationToCacheMediaTime() const { return 5; }
 
     virtual void createAVPlayer();
@@ -176,13 +176,13 @@ private:
     virtual void checkPlayability();
     virtual void updateRate();
     virtual float rate() const;
-    virtual void seekToTime(double time, double negativeTolerance, double positiveTolerance);
+    virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance);
     virtual unsigned long long totalBytes() const;
     virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const;
-    virtual double platformMinTimeSeekable() const;
-    virtual double platformMaxTimeSeekable() const;
-    virtual double platformDuration() const;
-    virtual float platformMaxTimeLoaded() const;
+    virtual MediaTime platformMinTimeSeekable() const;
+    virtual MediaTime platformMaxTimeSeekable() const;
+    virtual MediaTime platformDuration() const;
+    virtual MediaTime platformMaxTimeLoaded() const;
     virtual void beginLoadingMetadata();
     virtual void sizeChanged();
 
@@ -331,7 +331,7 @@ private:
     RetainPtr<NSArray> m_cachedTracks;
     RetainPtr<NSArray> m_currentMetaData;
     FloatSize m_cachedPresentationSize;
-    double m_cachedDuration;
+    MediaTime m_cachedDuration;
     double m_cachedRate;
     mutable long long m_cachedTotalBytes;
     unsigned m_pendingStatusChanges;

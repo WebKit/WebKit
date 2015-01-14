@@ -75,6 +75,7 @@ public:
     void appendBuffer(PassRefPtr<ArrayBufferView> data, ExceptionCode&);
     void abort(ExceptionCode&);
     void remove(double start, double end, ExceptionCode&);
+    void remove(const MediaTime&, const MediaTime&, ExceptionCode&);
 
     void abortIfUpdating();
     void removedFromMediaSource();
