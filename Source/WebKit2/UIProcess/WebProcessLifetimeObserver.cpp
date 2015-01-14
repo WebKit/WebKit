@@ -61,4 +61,13 @@ void WebProcessLifetimeObserver::removeWebPage(WebPageProxy& webPageProxy)
         webProcessDidCloseConnection(process, *process.connection());
 }
 
+WTF::IteratorRange<HashCountedSet<WebProcessProxy*>::const_iterator::Keys> WebProcessLifetimeObserver::processes() const
+{
+    ASSERT(std::all_of(m_processes.begin().keys(), m_processes.end().keys(), [](WebProcessProxy* process) {
+        return process->state() == WebProcessProxy::State::Running;
+    }));
+
+    return makeIteratorRange(m_processes.begin().keys(), m_processes.end().keys());
+}
+
 }

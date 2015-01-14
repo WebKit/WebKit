@@ -27,6 +27,7 @@
 #define WebProcessLifetimeObserver_h
 
 #include <wtf/HashCountedSet.h>
+#include <wtf/IteratorRange.h>
 
 namespace IPC {
 class Connection;
@@ -44,6 +45,8 @@ public:
 
     void addWebPage(WebPageProxy&);
     void removeWebPage(WebPageProxy&);
+
+    WTF::IteratorRange<HashCountedSet<WebProcessProxy*>::const_iterator::Keys> processes() const;
 
 private:
     virtual void webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&) { }

@@ -47,9 +47,6 @@ public:
 
     uint64_t identifier() const { return m_identifier; }
 
-    void addProcess(WebProcessProxy&);
-    void removeProcess(WebProcessProxy&);
-
     void addVisitedLinkHash(WebCore::LinkHash);
     void removeAll();
 
@@ -70,9 +67,7 @@ private:
     void resizeTable(unsigned newTableSize);
     void sendTable(WebProcessProxy&);
 
-    HashSet<WebProcessProxy*> m_processes;
-
-    uint64_t m_identifier;
+    const uint64_t m_identifier;
 
     unsigned m_keyCount;
     unsigned m_tableSize;
