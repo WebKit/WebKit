@@ -1,3 +1,18 @@
+2015-01-14  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Implement per TrackBuffer buffered.
+        https://bugs.webkit.org/show_bug.cgi?id=139813.
+
+        Reviewed by Jer Noble.
+
+        Added tests which checks how buffered behaves for two trackBuffers in single SourceBuffer
+        after appends, and with MediaSource readyState switching to ended and back to open.
+
+        * media/media-source/media-source-multiple-trackBuffers-buffered-expected.txt: Added.
+        * media/media-source/media-source-multiple-trackBuffers-buffered-in-ended-state-expected.txt: Added.
+        * media/media-source/media-source-multiple-trackBuffers-buffered-in-ended-state.html: Added.
+        * media/media-source/media-source-multiple-trackBuffers-buffered.html: Added.
+
 2015-01-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r178432.

@@ -1,3 +1,33 @@
+2015-01-14  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Implement per TrackBuffer buffered.
+        https://bugs.webkit.org/show_bug.cgi?id=139813.
+
+        Reviewed by Jer Noble.
+
+        Added implementation of SourceBuffer buffered() algorithm as per specification,
+        and caching mechanism called when samples are added, removed, or MediaSource
+        readyState is changed.
+
+        Tests: media/media-source/media-source-multiple-trackBuffers-buffered-in-ended-state.html
+               media/media-source/media-source-multiple-trackBuffers-buffered.html
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::setReadyState):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::TrackBuffer::TrackBuffer):
+        (WebCore::SourceBuffer::SourceBuffer):
+        (WebCore::SourceBuffer::buffered):
+        (WebCore::SourceBuffer::invalidateBuffered):
+        (WebCore::SourceBuffer::recalculateBuffered):
+        (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete):
+        (WebCore::SourceBuffer::removeCodedFrames):
+        (WebCore::SourceBuffer::evictCodedFrames):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+        (WebCore::SourceBuffer::bufferedAccountingForEndOfStream):
+        (WebCore::SourceBuffer::hasCurrentTime):
+        * Modules/mediasource/SourceBuffer.h:
+
 2015-01-14  Benjamin Poulain  <benjamin@webkit.org>
 
         Do not create new set for every sub-operation when converting a NFA to DFA

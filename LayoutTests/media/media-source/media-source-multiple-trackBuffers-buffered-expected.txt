@@ -1,0 +1,21 @@
+
+RUN(video.src = URL.createObjectURL(source))
+RUN(sourceBuffer.appendBuffer(init);)
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '0') OK
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0).toFixed(3) == '3') OK
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.end(0).toFixed(3) == '6') OK
+RUN(sourceBuffer.remove(0, 2.5))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer.buffered.start(0).toFixed(3) == '3') OK
+END OF TEST
+
