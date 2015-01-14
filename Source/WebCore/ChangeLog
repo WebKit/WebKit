@@ -1,5 +1,15 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r173337. <rdar://problem/19424143>
+
+    2014-09-05  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed GTK build fix; include StringPrintStream to pull in toString().
+
+            * html/HTMLMediaElement.h:
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r173318. <rdar://problem/19424143>
 
     2014-06-06  Jer Noble  <jer.noble@apple.com>
