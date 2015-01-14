@@ -1,3 +1,50 @@
+2015-01-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r154769): Wrong <title> taken as a tooltip for SVG element.
+        https://bugs.webkit.org/show_bug.cgi?id=139690.
+
+        Reviewed by Daniel Bates.
+
+        Before r154769, we were calling Traversal<SVGTitleElement>::firstWithin(), which returns
+        the first immediate SVGTitleElement child. In r154769, Traversal<SVGTitleElement>::firstWithin()
+        was replaced by descendantsOfType<SVGTitleElement> which returns all descendants SVGTitleElements.
+        Then we were returning the first element of these descendants, which may not be an immediate
+        child of the element, as the title of the SVGElement. This was the reason of this bug. The
+        fix is to use childrenOfType<SVGTitleElement>() instead, which returns the immediate SVGTitleElement
+        children of an SVGElement.
+
+        Also we were not following exactly the specs for the rootmost SVG element's title value.
+        According to the W3C specs, for stand-alone SVG documents only, the rootmost SVG element
+        should not return a title. But we were not returning a title for the rootmost SVG element
+        always. The fix is to return a empty title for the rootmost SVG element only if topDocument()
+        of the element isSVGDocument().
+        
+        NOTE: The main SVG specs http://www.w3.org/TR/SVG/interact.html#hit-testing (W3C Recommendation
+        16 August 2011) and http://www.w3.org/TR/SVG/struct.html#DescriptionAndTitleElements (W3C
+        Recommendation 16 August 2011) do not say how the tooltip of an SVG element is calculated. But
+        the SVG tiny specs http://www.w3.org/TR/SVGTiny12/struct.html#uiTitleDescBehavior (W3C
+        Recommendation 22 December 2008) however explains well the tooltip calculation for the embedded
+        and the stand-alone SVG cases. And it seems this what we should rely on.
+
+        Test: svg/hittest/svg-standalone-tooltip.svg
+              svg/hittest/svg-embedded-tooltip.html
+
+        * WebCore.exp.in:
+        * rendering/HitTestResult.h:
+        Make HitTestResult::setInnerNode be WEBCORE_EXPORT
+        
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::title):
+        Replace descendantsOfType<SVGTitleElement>() by childrenOfType<SVGTitleElement>().
+        Fix the title value of the rootmost SVG element.
+        
+        * testing/Internals.cpp:
+        (WebCore::Internals::toolTipFromElement):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add a new internal function toolTipFromElement() which returns the tooltip text for a
+        given element.
+
 2015-01-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Buildfix after r178434

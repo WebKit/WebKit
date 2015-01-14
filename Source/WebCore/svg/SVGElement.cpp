@@ -954,9 +954,10 @@ bool SVGElement::filterOutAnimatableAttribute(const QualifiedName&) const
 
 String SVGElement::title() const
 {
-    // According to spec, we should not return titles when hovering over root <svg> elements (those
-    // <title> elements are the title of the document, not a tooltip) so we instantly return.
-    if (isOutermostSVGSVGElement())
+    // According to spec, for stand-alone SVG documents we should not return a title when
+    // hovering over the rootmost SVG element (the first <title> element is the title of
+    // the document, not a tooltip) so we instantly return.
+    if (isOutermostSVGSVGElement() && document().topDocument().isSVGDocument())
         return String();
 
     // Walk up the tree, to find out whether we're inside a <use> shadow tree, to find the right title.
@@ -978,7 +979,7 @@ String SVGElement::title() const
 
     // If we aren't an instance in a <use> or the <use> title was not found, then find the first
     // <title> child of this element.
-    auto firstTitle = descendantsOfType<SVGTitleElement>(*this).first();
+    auto firstTitle = childrenOfType<SVGTitleElement>(*this).first();
     return firstTitle ? const_cast<SVGTitleElement*>(firstTitle)->innerText() : String();
 }
 

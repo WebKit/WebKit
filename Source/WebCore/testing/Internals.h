@@ -290,6 +290,8 @@ public:
 
     String markerTextForListItem(Element*, ExceptionCode&);
 
+    String toolTipFromElement(Element*, ExceptionCode&) const;
+
     void forceReload(bool endToEnd);
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)

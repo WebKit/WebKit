@@ -2099,6 +2099,18 @@ String Internals::markerTextForListItem(Element* element, ExceptionCode& ec)
     return WebCore::markerTextForListItem(element);
 }
 
+String Internals::toolTipFromElement(Element* element, ExceptionCode& ec) const
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+    HitTestResult result;
+    result.setInnerNode(element);
+    TextDirection dir;
+    return result.title(dir);
+}
+
 String Internals::getImageSourceURL(Element* element, ExceptionCode& ec)
 {
     if (!element) {

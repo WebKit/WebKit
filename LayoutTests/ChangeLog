@@ -1,3 +1,30 @@
+2015-01-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r154769): Wrong <title> taken as a tooltip for SVG element.
+        https://bugs.webkit.org/show_bug.cgi?id=139690.
+
+        Reviewed by Daniel Bates.
+
+        * svg/hittest/resources: Added.
+        * svg/hittest/resources/svg-tooltip.svg: Added.
+        Shared resources to be used by the tests.
+
+        * svg/hittest/resources/svg-tooltip.js: Added.
+        This code mimics the C++ tooltip calculation and compares its result with what the C++
+        code returns.
+        
+        * svg/hittest/svg-embedded-tooltip-expected.txt: Added.
+        * svg/hittest/svg-embedded-tooltip.html: Added.
+        This test ensures that the tooltip text for SVG elements is calculated correctly when
+        the SVG is embedded in an HTML either through inline <svg> tag or through an <embed>
+        tag. In both cases, the rootmost SVG element should return the SVG document title.
+        
+        * svg/hittest/svg-standalone-tooltip-expected.txt: Added.
+        * svg/hittest/svg-standalone-tooltip.svg: Added.
+        This test ensures that for stand-alone SVG documents, the tooltip text for SVG elements
+        is calculated correctly. In this case, the rootmost SVG element should not return a
+        title since the SVG document title will be displayed in the browser chrome.
+
 2015-01-14  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [MSE] Implement per TrackBuffer buffered.

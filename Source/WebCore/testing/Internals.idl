@@ -256,6 +256,8 @@ enum PageOverlayType {
 
     [RaisesException] DOMString markerTextForListItem(Element element);
 
+    [RaisesException] DOMString toolTipFromElement(Element element);
+
     SerializedScriptValue deserializeBuffer(ArrayBuffer buffer);
     ArrayBuffer serializeObject(SerializedScriptValue obj);
 

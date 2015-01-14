@@ -86,7 +86,7 @@ public:
 
     const HitTestLocation& hitTestLocation() const { return m_hitTestLocation; }
 
-    void setInnerNode(Node*);
+    WEBCORE_EXPORT void setInnerNode(Node*);
     void setInnerNonSharedNode(Node*);
     void setURLElement(Element*);
     void setScrollbar(Scrollbar*);
