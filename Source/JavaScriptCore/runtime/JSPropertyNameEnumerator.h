@@ -146,7 +146,7 @@ inline JSPropertyNameEnumerator* genericPropertyNameEnumerator(ExecState* exec, 
     else
         base->methodTable(vm)->getPropertyNames(base, exec, propertyNames, ExcludeDontEnumProperties);
     
-    normalizePrototypeChain(exec, base);
+    normalizePrototypeChain(exec, structure);
 
     JSPropertyNameEnumerator* enumerator = JSPropertyNameEnumerator::create(vm, base->structure(vm), propertyNames);
     enumerator->setCachedPrototypeChain(vm, structure->prototypeChain(exec));

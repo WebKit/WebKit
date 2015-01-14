@@ -665,7 +665,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                     // below may GC.
                     pc[0].u.opcode = LLInt::getOpcode(op_put_by_id);
 
-                    if (normalizePrototypeChain(exec, baseCell) != InvalidPrototypeChain) {
+                    if (normalizePrototypeChain(exec, structure) != InvalidPrototypeChain) {
                         ASSERT(structure->previousID()->isObject());
                         pc[4].u.structure.set(
                             vm, codeBlock->ownerExecutable(), structure->previousID());

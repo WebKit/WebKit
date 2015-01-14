@@ -1,80 +1,40 @@
-2015-01-14  Commit Queue  <commit-queue@webkit.org>
+2015-01-14  Matthew Mirman  <mmirman@apple.com>
 
-        Unreviewed, rolling out r178432.
-        https://bugs.webkit.org/show_bug.cgi?id=140460
+        Fixes operationPutByIdOptimizes such that they check that the put didn't
+        change the structure of the object who's property access is being
+        cached.  Also removes uses of the new base value from the cache generation code.
+        https://bugs.webkit.org/show_bug.cgi?id=139500
 
-        Caused 20 JSC Test Failures (Requested by JoePeck on #webkit).
+        Reviewed by Filip Pizlo.
 
-        Reverted changeset:
-
-        "REGRESSION (r174226): Header on huffingtonpost.com is too
-        large"
-        https://bugs.webkit.org/show_bug.cgi?id=140306
-        http://trac.webkit.org/changeset/178432
-
-2015-01-14  Brian J. Burg  <burg@cs.washington.edu>
-
-        Web Inspector: Stopwatch ASSERT when continuing inspector
-        https://bugs.webkit.org/show_bug.cgi?id=138360
-
-        Reviewed by Timothy Hatcher.
-
-        We were unconditionally resuming the stopwatch even if we never
-        paused it in the first place. Maintain a flag for whether the
-        stopwatch was paused when the debugger last paused.
-
-        * inspector/agents/InspectorDebuggerAgent.cpp:
-        (Inspector::InspectorDebuggerAgent::didPause):
-        (Inspector::InspectorDebuggerAgent::didContinue):
-        * inspector/agents/InspectorDebuggerAgent.h:
-
-2015-01-14  Michael Saboff  <msaboff@apple.com>
-
-        REGRESSION (r174226): Header on huffingtonpost.com is too large
-        https://bugs.webkit.org/show_bug.cgi?id=140306
-
-        Reviewed by Geoffrey Garen.
-
-        BytecodeGenerator::willResolveToArguments() is used to check to see if we can use the
-        arguments register or whether we need to resolve "arguments".  If the arguments have
-        been captured, then they are stored in the lexical environment and the arguments
-        register is not used.
-        Changed BytecodeGenerator::willResolveToArguments() to also check to see if the arguments
-        register is captured.  Renamed the function to willResolveToArgumentsRegister() to
-        better indicate what we are checking.
-
-        * bytecompiler/BytecodeGenerator.cpp:
-        (JSC::BytecodeGenerator::willResolveToArgumentsRegister):
-        (JSC::BytecodeGenerator::uncheckedLocalArgumentsRegister):
-        (JSC::BytecodeGenerator::emitCall):
-        (JSC::BytecodeGenerator::emitConstruct):
-        (JSC::BytecodeGenerator::emitEnumeration):
-        (JSC::BytecodeGenerator::willResolveToArguments): Deleted.
-        * bytecompiler/BytecodeGenerator.h:
-        * bytecompiler/NodesCodegen.cpp:
-        (JSC::BracketAccessorNode::emitBytecode):
-        (JSC::DotAccessorNode::emitBytecode):
-        (JSC::getArgumentByVal):
-        (JSC::ApplyFunctionCallDotNode::emitBytecode):
-        (JSC::ArrayPatternNode::emitDirectBinding):
-
-2015-01-14  Michael Saboff  <msaboff@apple.com>
-
-        JavaScript identifier incorrectly parsed if the prefix before an escape sequence is a keyword
-        https://bugs.webkit.org/show_bug.cgi?id=140420
-
-        Reviewed by Oliver Hunt.
-
-        Added new function isIdentPartIncludingEscape() that performs the original
-        isIdentPart() followed by a check for a valid unicode escape.  If there is a 
-        unicode escape, its resolved value is checked with isIdentPart().
-
-        * KeywordLookupGenerator.py:
-        (Trie.printSubTreeAsC):
-        (Trie.printAsC):
-        * parser/Lexer.cpp:
-        (JSC::isUnicodeEscapeIdentPart):
-        (JSC::isIdentPartIncludingEscape):
+        * jit/JITOperations.cpp:
+        (JSC::operationPutByIdStrictOptimize): saved the structure before the put.
+        (JSC::operationPutByIdNonStrictOptimize): ditto.
+        (JSC::operationPutByIdDirectStrictOptimize): ditto.
+        (JSC::operationPutByIdDirectNonStrictOptimize): ditto.
+        * jit/Repatch.cpp:
+        (JSC::generateByIdStub):
+        (JSC::tryCacheGetByID):
+        (JSC::tryBuildGetByIDList):
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStubAndGetOldStructure): Added.
+        (JSC::tryCachePutByID):
+        (JSC::repatchPutByID):
+        (JSC::tryBuildPutByIdList):
+        (JSC::tryRepatchIn):
+        (JSC::emitPutTransitionStub): Deleted.
+        * jit/Repatch.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::genericPropertyNameEnumerator):
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChainForChainAccess): restructured to not use the base value.
+        (JSC::normalizePrototypeChain): restructured to not use the base value.
+        * tests/mozilla/mozilla-tests.yaml:
+        * tests/stress/proto-setter.js: Added.
+        * tests/stress/put-by-id-build-list-order-recurse.js: Added.
+        Added test that fails without this patch.
 
 2015-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
