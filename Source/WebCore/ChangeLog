@@ -1,5 +1,25 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r172651. <rdar://problem/19424141>
+
+    2014-08-15  Jer Noble  <jer.noble@apple.com>
+
+            [EME][Mac] Adopt AVStreamSession.
+            https://bugs.webkit.org/show_bug.cgi?id=135983
+
+            Reviewed by Eric Carlson.
+
+            Add AVStreamDataParsers to a new AVStreamSession instance, and expire that session when asked to release
+            the session's keys.
+
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (WebCore::CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC):
+            (WebCore::CDMSessionMediaSourceAVFObjC::releaseKeys):
+            (WebCore::CDMSessionMediaSourceAVFObjC::update):
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r171215. <rdar://problem/19424110>
 
     2014-07-17  Jer Noble  <jer.noble@apple.com>

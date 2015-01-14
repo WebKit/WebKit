@@ -42,13 +42,22 @@
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVStreamDataParser);
-#define AVAssetResourceLoadingRequest getAVStreamDataParser()
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamSession);
 
 @interface AVStreamDataParser : NSObject
 - (void)processContentKeyResponseData:(NSData *)contentKeyResponseData forTrackID:(CMPersistentTrackID)trackID;
 - (void)processContentKeyResponseError:(NSError *)error forTrackID:(CMPersistentTrackID)trackID;
 - (void)renewExpiringContentKeyResponseDataForTrackID:(CMPersistentTrackID)trackID;
 - (NSData *)streamingContentKeyRequestDataForApp:(NSData *)appIdentifier contentIdentifier:(NSData *)contentIdentifier trackID:(CMPersistentTrackID)trackID options:(NSDictionary *)options error:(NSError **)outError;
+@end
+
+@interface AVStreamSession : NSObject
+- (instancetype)initWithAppIdentifier:(NSData *)appIdentifier;
+- (void)addStreamDataParser:(AVStreamDataParser *)streamDataParser;
+- (void)removeStreamDataParser:(AVStreamDataParser *)streamDataParser;
+- (void)expire;
++ (NSArray *)pendingExpiredSessionReportsWithAppIdentifier:(NSData *)appIdentifier;
++ (void)removePendingExpiredSessionReports:(NSArray *)expiredSessionReports withAppIdentifier:(NSData *)appIdentifier;
 @end
 
 namespace WebCore {
@@ -64,6 +73,10 @@ CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC(SourceBufferPrivateAV
 
 CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC()
 {
+    if (m_streamSession) {
+        [m_streamSession removeStreamDataParser:m_parent->parser()];
+        m_streamSession = nil;
+    }
     m_parent->unregisterForErrorNotifications(this);
     m_client = nullptr;
 }
@@ -90,7 +103,10 @@ PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyRequest(const St
 
 void CDMSessionMediaSourceAVFObjC::releaseKeys()
 {
-    LOG(Media, "CDMSessionMediaSourceAVFObjC::releaseKeys(%p)", this);
+    if (m_streamSession) {
+        LOG(Media, "CDMSessionMediaSourceAVFObjC::releaseKeys(%p) - expiring stream session", this);
+        [m_streamSession expire];
+    }
 }
 
 static bool isEqual(Uint8Array* data, const char* literal)
@@ -120,6 +136,12 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
 
     if (shouldGenerateKeyRequest) {
         RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
+        if (getAVStreamSessionClass()) {
+            m_streamSession = adoptNS([[getAVStreamSessionClass() alloc] initWithAppIdentifier:certificateData.get()]);
+            [m_streamSession addStreamDataParser:m_parent->parser()];
+            LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - created stream session %p", this, m_streamSession.get());
+        }
+
         RetainPtr<NSData> initData = adoptNS([[NSData alloc] initWithBytes:m_initData->data() length:m_initData->length()]);
 
         NSError* error = nil;
