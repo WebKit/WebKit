@@ -993,7 +993,7 @@ inline Optional<float> StyleBuilderConverter::convertPerspective(StyleResolver& 
     else
         ASSERT_NOT_REACHED();
 
-    return perspective < 0 ? Nullopt : perspective;
+    return perspective < 0 ? Optional<float>(Nullopt) : Optional<float>(perspective);
 }
 
 inline Optional<Length> StyleBuilderConverter::convertMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value)

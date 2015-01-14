@@ -1,3 +1,13 @@
+2015-01-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Buildfix after r178434
+        https://bugs.webkit.org/show_bug.cgi?id=140467
+
+        Reviewed by Chris Dumez.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertPerspective):
+
 2015-01-14  Benjamin Poulain  <bpoulain@apple.com>
 
         Build fix for NFAToDFA on ARM
