@@ -8,11 +8,6 @@
 // http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
 //
 // StyleBuilder options:
-// * TypeName:
-// Overrides the type of the setter method argument on RenderStyle. By
-// default, 'E' + PropertyId is used (e.g. EBorderCollapse). This option
-// is not needed if the "Converter" option is used.
-//
 // * Initial:
 // Overrides the method name on RenderStyle to get the initial value for
 // the property. By default, initial' + PropertyId is used (e.g.
@@ -35,12 +30,12 @@
 //
 // * Converter=XXX:
 // If converting the input CSSValue into the setter method argument type
-// is not trivial (i.e. casting to TypeName does not suffice), then you
-// can indicate that a Converter helper function in
-// css/StyleBuilderConverter.h should be used.
+// is not trivial (i.e. the CSSPrimitiveValue cannot be implicitly converted
+// to the expected type), then you can indicate that a Converter helper
+// function in css/StyleBuilderConverter.h should be used.
 //
 // * ConditionalConverter=XXX:
-// Similar to Converter=XXX but the converter function returns a boolean
+// Similar to Converter=XXX but the converter function returns a WTF::Optional<>
 // to indicate if the property setter should be called or not.
 //
 // * Custom=[Initial|Value|Inherit|All]:
@@ -104,13 +99,13 @@ display [Custom=Inherit|Value]
 font [Inherited, Custom=All]
 font-family [Inherited, Custom=All]
 font-size [Inherited, Custom=All]
-font-style [Inherited, FontProperty, TypeName=FontItalic, NameForMethods=Italic]
-font-variant [Inherited, FontProperty, TypeName=FontSmallCaps, NameForMethods=SmallCaps]
+font-style [Inherited, FontProperty, NameForMethods=Italic]
+font-variant [Inherited, FontProperty, NameForMethods=SmallCaps]
 font-weight [Inherited, Custom=All]
-text-rendering [Inherited, FontProperty, TypeName=TextRenderingMode, NameForMethods=TextRenderingMode]
+text-rendering [Inherited, FontProperty, NameForMethods=TextRenderingMode]
 -webkit-font-feature-settings [Inherited, FontProperty, Custom=Initial|Inherit, Converter=FontFeatureSettings, NameForMethods=FeatureSettings]
--webkit-font-kerning [Inherited, FontProperty, TypeName=FontDescription::Kerning, NameForMethods=Kerning]
--webkit-font-smoothing [Inherited, FontProperty, TypeName=FontSmoothingMode]
+-webkit-font-kerning [Inherited, FontProperty, NameForMethods=Kerning]
+-webkit-font-smoothing [Inherited, FontProperty]
 -webkit-font-variant-ligatures [Inherited, Custom=All]
 -webkit-locale [Inherited, Custom=Value]
 -webkit-text-orientation [Inherited, Custom=Value]
@@ -130,33 +125,33 @@ line-height [Inherited, Getter=specifiedLineHeight, Custom=Value]
 #endif
 
 // Keep this in between the highest priority props and the lower ones.
--webkit-ruby-position [Inherited, TypeName=RubyPosition]
+-webkit-ruby-position [Inherited]
 
 // The remaining properties are listed in alphabetical order
 alignment-baseline [SVG]
 animation [Shorthand]
-animation-delay [AnimationProperty, TypeName=double, NameForMethods=Delay]
-animation-direction [AnimationProperty, TypeName=Animation::AnimationDirection, NameForMethods=Direction]
-animation-duration [AnimationProperty, TypeName=double, NameForMethods=Duration]
-animation-fill-mode [AnimationProperty, TypeName=unsigned, NameForMethods=FillMode]
-animation-iteration-count [AnimationProperty, TypeName=double, NameForMethods=IterationCount]
-animation-name [AnimationProperty, TypeName=String, NameForMethods=Name]
-animation-play-state [AnimationProperty, TypeName=EAnimPlayState, NameForMethods=PlayState]
-animation-timing-function [AnimationProperty, TypeName=PassRefPtr<TimingFunction>, NameForMethods=TimingFunction]
+animation-delay [AnimationProperty, NameForMethods=Delay]
+animation-direction [AnimationProperty, NameForMethods=Direction]
+animation-duration [AnimationProperty, NameForMethods=Duration]
+animation-fill-mode [AnimationProperty, NameForMethods=FillMode]
+animation-iteration-count [AnimationProperty, NameForMethods=IterationCount]
+animation-name [AnimationProperty, NameForMethods=Name]
+animation-play-state [AnimationProperty, NameForMethods=PlayState]
+animation-timing-function [AnimationProperty, NameForMethods=TimingFunction]
 background [Shorthand]
-background-attachment [FillLayerProperty, TypeName=EFillAttachment, NameForMethods=Attachment]
-background-blend-mode [FillLayerProperty, TypeName=BlendMode, NameForMethods=BlendMode]
-background-clip [FillLayerProperty, TypeName=EFillBox, NameForMethods=Clip]
+background-attachment [FillLayerProperty, NameForMethods=Attachment]
+background-blend-mode [FillLayerProperty, NameForMethods=BlendMode]
+background-clip [FillLayerProperty, NameForMethods=Clip]
 background-color [VisitedLinkColorSupport, Initial=invalidColor, NoDefaultColor]
-background-image [FillLayerProperty, TypeName=StyleImage*, NameForMethods=Image]
-background-origin [FillLayerProperty, TypeName=EFillBox, NameForMethods=Origin]
+background-image [FillLayerProperty, NameForMethods=Image]
+background-origin [FillLayerProperty, NameForMethods=Origin]
 background-position [Shorthand]
-background-position-x [FillLayerProperty, TypeName=Length, NameForMethods=XPosition]
-background-position-y [FillLayerProperty, TypeName=Length, NameForMethods=YPosition]
+background-position-x [FillLayerProperty, NameForMethods=XPosition]
+background-position-y [FillLayerProperty, NameForMethods=YPosition]
 background-repeat [Shorthand]
-background-repeat-x [FillLayerProperty, TypeName=EFillRepeat, NameForMethods=RepeatX]
-background-repeat-y [FillLayerProperty, TypeName=EFillRepeat, NameForMethods=RepeatY]
-background-size [FillLayerProperty, TypeName=EFillSize, NameForMethods=Size]
+background-repeat-x [FillLayerProperty, NameForMethods=RepeatX]
+background-repeat-y [FillLayerProperty, NameForMethods=RepeatY]
+background-size [FillLayerProperty, NameForMethods=Size]
 baseline-shift [SVG, Custom=Value]
 border [Shorthand]
 border-bottom [Shorthand]
@@ -165,7 +160,7 @@ border-bottom-left-radius [Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-bottom-left-radius = border-bottom-left-radius
 border-bottom-right-radius [Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-bottom-right-radius = border-bottom-right-radius
-border-bottom-style [TypeName=EBorderStyle, Initial=initialBorderStyle]
+border-bottom-style [Initial=initialBorderStyle]
 border-bottom-width [Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-collapse [Inherited]
 border-color [Shorthand]
@@ -177,12 +172,12 @@ border-image-source [Converter=StyleImage<CSSPropertyBorderImageSource>]
 border-image-width [Custom=All]
 border-left [Shorthand]
 border-left-color [VisitedLinkColorSupport, Initial=invalidColor]
-border-left-style [TypeName=EBorderStyle, Initial=initialBorderStyle]
+border-left-style [Initial=initialBorderStyle]
 border-left-width [Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-radius [Shorthand]
 border-right [Shorthand]
 border-right-color [VisitedLinkColorSupport, Initial=invalidColor]
-border-right-style [TypeName=EBorderStyle, Initial=initialBorderStyle]
+border-right-style [Initial=initialBorderStyle]
 border-right-width [Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-spacing [Inherited, Shorthand]
 border-style [Shorthand]
@@ -192,7 +187,7 @@ border-top-left-radius [Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-top-left-radius = border-top-left-radius
 border-top-right-radius [Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-top-right-radius = border-top-right-radius
-border-top-style [TypeName=EBorderStyle, Initial=initialBorderStyle]
+border-top-style [Initial=initialBorderStyle]
 border-top-width [Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-width [Shorthand]
 bottom [Initial=initialOffset, Converter=LengthOrAuto]
@@ -207,9 +202,9 @@ clear
 clip [Custom=All]
 -webkit-clip-path [Converter=ClipPath]
 clip-path [SVG, Converter=SVGURIReference, NameForMethods=ClipperResource]
-clip-rule [Inherited, SVG, TypeName=WindRule]
+clip-rule [Inherited, SVG]
 color-interpolation [Inherited, SVG]
-color-interpolation-filters [Inherited, SVG, TypeName=EColorInterpolation]
+color-interpolation-filters [Inherited, SVG]
 color-profile [SkipBuilder]
 color-rendering [Inherited, SVG]
 content [Custom=All]
@@ -217,18 +212,18 @@ counter-increment [Custom=All]
 counter-reset [Custom=All]
 cursor [Inherited, Custom=All]
 #if defined(ENABLE_CURSOR_VISIBILITY) && ENABLE_CURSOR_VISIBILITY
--webkit-cursor-visibility [Inherited, TypeName=CursorVisibility]
+-webkit-cursor-visibility [Inherited]
 #endif
 cx [Initial=initialZeroLength, Converter=Length]
 cy [Initial=initialZeroLength, Converter=Length]
 dominant-baseline [SVG]
-empty-cells [Inherited, TypeName=EEmptyCell]
+empty-cells [Inherited]
 enable-background [SkipBuilder]
 fill [Inherited, SVG, Custom=All]
 fill-opacity [Inherited, SVG, Converter=Opacity]
-fill-rule [Inherited, SVG, TypeName=WindRule]
+fill-rule [Inherited, SVG]
 filter [SVG, Converter=SVGURIReference, NameForMethods=FilterResource]
-float [TypeName=EFloat, NameForMethods=Floating]
+float [NameForMethods=Floating]
 flood-color [SVG, Converter=SVGColor]
 flood-opacity [SVG, Converter=Opacity]
 font-stretch [SkipBuilder]
@@ -236,7 +231,7 @@ glyph-orientation-horizontal [Inherited, SVG, Converter=GlyphOrientation]
 glyph-orientation-vertical [Inherited, SVG, Converter=GlyphOrientationOrAuto]
 height [Initial=initialSize, Converter=LengthSizing]
 #if defined(ENABLE_CSS_IMAGE_ORIENTATION) && ENABLE_CSS_IMAGE_ORIENTATION
-image-orientation [Inherited, TypeName=ImageOrientationEnum]
+image-orientation [Inherited]
 #endif
 image-rendering [Inherited]
 #if defined(ENABLE_CSS_IMAGE_RESOLUTION) && ENABLE_CSS_IMAGE_RESOLUTION
@@ -265,12 +260,12 @@ max-height [Initial=initialMaxSize, Converter=LengthMaxSizing]
 max-width [Initial=initialMaxSize, Converter=LengthMaxSizing]
 min-height [Initial=initialMinSize, Converter=LengthSizing]
 min-width [Initial=initialMinSize, Converter=LengthSizing]
-object-fit [TypeName=ObjectFit]
-opacity [TypeName=float]
+object-fit
+opacity
 // Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,
 // and may be in use on some websites and widgets.
 -webkit-opacity = opacity
-orphans [Inherited, TypeName=short, AutoFunctions]
+orphans [Inherited, AutoFunctions]
 outline [Shorthand]
 outline-color [VisitedLinkColorSupport, Initial=invalidColor]
 outline-offset [Converter=ComputedLength<int>]
@@ -278,17 +273,17 @@ outline-style [Custom=All]
 outline-width [Converter=LineWidth<unsigned short>]
 overflow [Shorthand]
 overflow-wrap
-overflow-x [TypeName=EOverflow]
-overflow-y [TypeName=EOverflow]
+overflow-x
+overflow-y
 padding [Shorthand]
 padding-bottom [Initial=initialPadding, Converter=Length]
 padding-left [Initial=initialPadding, Converter=Length]
 padding-right [Initial=initialPadding, Converter=Length]
 padding-top [Initial=initialPadding, Converter=Length]
 page [SkipBuilder]
-page-break-after [TypeName=EPageBreak, Initial=initialPageBreak]
-page-break-before [TypeName=EPageBreak, Initial=initialPageBreak]
-page-break-inside [TypeName=EPageBreak, Initial=initialPageBreak]
+page-break-after [Initial=initialPageBreak]
+page-break-before [Initial=initialPageBreak]
+page-break-inside [Initial=initialPageBreak]
 paint-order [SVG, Converter=PaintOrder]
 pointer-events [Inherited]
 position
@@ -306,14 +301,14 @@ stop-opacity [SVG, Converter=Opacity]
 stroke [Inherited, SVG, Custom=All]
 stroke-dasharray [Inherited, SVG, Converter=StrokeDashArray, NameForMethods=StrokeDashArray]
 stroke-dashoffset [Inherited, NameForMethods=StrokeDashOffset, Initial=initialZeroLength, Converter=Length]
-stroke-linecap [Inherited, SVG, NameForMethods=CapStyle, TypeName=LineCap]
-stroke-linejoin [Inherited, SVG, NameForMethods=JoinStyle, TypeName=LineJoin]
+stroke-linecap [Inherited, SVG, NameForMethods=CapStyle]
+stroke-linejoin [Inherited, SVG, NameForMethods=JoinStyle]
 stroke-miterlimit [Inherited, SVG, Converter=Number<float>, NameForMethods=StrokeMiterLimit]
 stroke-opacity [Inherited, SVG, Converter=Opacity]
 stroke-width [Inherited, Initial=initialOneLength, Converter=Length]
 speak [Inherited]
 table-layout
-tab-size [Inherited, TypeName=unsigned]
+tab-size [Inherited]
 text-align [Inherited, Converter=TextAlign]
 text-anchor [Inherited, SVG]
 text-decoration [Converter=TextDecoration]
@@ -323,7 +318,7 @@ text-line-through-color [SkipBuilder]
 text-line-through-mode [SkipBuilder]
 text-line-through-style [SkipBuilder]
 text-line-through-width [SkipBuilder]
-text-overflow [TypeName=TextOverflow]
+text-overflow
 text-overline [SkipBuilder]
 text-overline-color [SkipBuilder]
 text-overline-mode [SkipBuilder]
@@ -350,37 +345,37 @@ vector-effect [SVG]
 vertical-align [Custom=Value]
 visibility [Inherited]
 white-space [Inherited]
-widows [Inherited, TypeName=short, AutoFunctions]
+widows [Inherited, AutoFunctions]
 width [Initial=initialSize, Converter=LengthSizing]
 word-break [Inherited]
 -epub-word-break = word-break
-word-spacing [Inherited, ConditionalConverter=WordSpacing, TypeName=Length]
+word-spacing [Inherited, ConditionalConverter=WordSpacing]
 word-wrap [Inherited=EOverflowWrap, NameForMethods=OverflowWrap]
-writing-mode [Inherited, SVG, TypeName=SVGWritingMode]
+writing-mode [Inherited, SVG]
 x [Initial=initialZeroLength, Converter=Length]
 y [Initial=initialZeroLength, Converter=Length]
-z-index [TypeName=int, AutoFunctions]
+z-index [AutoFunctions]
 alt [NameForMethods=ContentAltText, Custom=Value]
 -webkit-alt = alt
 -webkit-animation [Shorthand]
--webkit-animation-delay [AnimationProperty, TypeName=double, NameForMethods=Delay]
--webkit-animation-direction [AnimationProperty, TypeName=Animation::AnimationDirection, NameForMethods=Direction]
--webkit-animation-duration [AnimationProperty, TypeName=double, NameForMethods=Duration]
--webkit-animation-fill-mode [AnimationProperty, TypeName=unsigned, NameForMethods=FillMode]
--webkit-animation-iteration-count [AnimationProperty, TypeName=double, NameForMethods=IterationCount]
--webkit-animation-name [AnimationProperty, TypeName=String, NameForMethods=Name]
--webkit-animation-play-state [AnimationProperty, TypeName=EAnimPlayState, NameForMethods=PlayState]
--webkit-animation-timing-function [AnimationProperty, TypeName=PassRefPtr<TimingFunction>, NameForMethods=TimingFunction]
--webkit-appearance [TypeName=ControlPart]
+-webkit-animation-delay [AnimationProperty, NameForMethods=Delay]
+-webkit-animation-direction [AnimationProperty, NameForMethods=Direction]
+-webkit-animation-duration [AnimationProperty, NameForMethods=Duration]
+-webkit-animation-fill-mode [AnimationProperty, NameForMethods=FillMode]
+-webkit-animation-iteration-count [AnimationProperty, NameForMethods=IterationCount]
+-webkit-animation-name [AnimationProperty, NameForMethods=Name]
+-webkit-animation-play-state [AnimationProperty, NameForMethods=PlayState]
+-webkit-animation-timing-function [AnimationProperty, NameForMethods=TimingFunction]
+-webkit-appearance
 -webkit-aspect-ratio [Inherited, Custom=All]
 -webkit-backface-visibility
--webkit-background-clip [FillLayerProperty, TypeName=EFillBox, NameForMethods=Clip]
--webkit-background-composite [FillLayerProperty, TypeName=CompositeOperator, NameForMethods=Composite]
--webkit-background-origin [FillLayerProperty, TypeName=EFillBox, NameForMethods=Origin]
+-webkit-background-clip [FillLayerProperty, NameForMethods=Clip]
+-webkit-background-composite [FillLayerProperty, NameForMethods=Composite]
+-webkit-background-origin [FillLayerProperty, NameForMethods=Origin]
 // -webkit-background-size differs from background-size only in the interpretation of
 // a single value: -webkit-background-size: l; is equivalent to background-size: l l;
 // whereas background-size: l; is equivalent to background-size: l auto;
--webkit-background-size [FillLayerProperty, TypeName=EFillSize, NameForMethods=Size]
+-webkit-background-size [FillLayerProperty, NameForMethods=Size]
 -webkit-border-after [Shorthand]
 -webkit-border-after-color [SkipBuilder]
 -webkit-border-after-style [SkipBuilder]
@@ -405,12 +400,12 @@ alt [NameForMethods=ContentAltText, Custom=Value]
 -webkit-border-start-style [SkipBuilder]
 -webkit-border-start-width [SkipBuilder]
 -webkit-border-vertical-spacing [Inherited, NameForMethods=VerticalBorderSpacing, Converter=ComputedLength<short>]
--webkit-box-align [TypeName=EBoxAlignment]
+-webkit-box-align
 -webkit-box-direction [Inherited]
--webkit-box-flex [TypeName=float]
--webkit-box-flex-group [TypeName=unsigned]
+-webkit-box-flex
+-webkit-box-flex-group
 -webkit-box-lines
--webkit-box-ordinal-group [TypeName=unsigned]
+-webkit-box-ordinal-group
 -webkit-box-orient
 -webkit-box-pack
 -webkit-box-reflect [Converter=Reflection]
@@ -418,30 +413,30 @@ alt [NameForMethods=ContentAltText, Custom=Value]
 // Let -webkit-box-shadow blur radius be w_r and box-shadow blur radius be b_r. For
 // w_r > 8px, b_r = 8 + 4 * sqrt((w_r - 8) / 2).
 -webkit-box-shadow [Custom=All]
--webkit-color-correction [Inherited, TypeName=ColorSpace, NameForMethods=ColorSpace]
--webkit-column-axis [TypeName=ColumnAxis]
--webkit-column-break-after [TypeName=EPageBreak, Initial=initialPageBreak]
--webkit-column-break-before [TypeName=EPageBreak, Initial=initialPageBreak]
--webkit-column-break-inside [TypeName=EPageBreak, Initial=initialPageBreak]
-column-count [TypeName=unsigned short, AutoFunctions]
+-webkit-color-correction [Inherited, NameForMethods=ColorSpace]
+-webkit-column-axis
+-webkit-column-break-after [Initial=initialPageBreak]
+-webkit-column-break-before [Initial=initialPageBreak]
+-webkit-column-break-inside [Initial=initialPageBreak]
+column-count [AutoFunctions]
 -webkit-column-count = column-count
-column-fill [TypeName=ColumnFill]
+column-fill
 -webkit-column-fill = column-fill
 column-gap [Custom=All]
 -webkit-column-gap = column-gap
-column-progression [TypeName=ColumnProgression]
+column-progression
 -webkit-column-progression = column-progression
 column-rule [Shorthand]
 -webkit-column-rule = column-rule
 column-rule-color [VisitedLinkColorSupport, Initial=invalidColor]
 -webkit-column-rule-color = column-rule-color
-column-rule-style [TypeName=EBorderStyle, Initial=initialBorderStyle]
+column-rule-style [Initial=initialBorderStyle]
 -webkit-column-rule-style = column-rule-style
 column-rule-width [Converter=LineWidth<unsigned short>]
 -webkit-column-rule-width = column-rule-width
-column-span [TypeName=ColumnSpan]
+column-span
 -webkit-column-span = column-span
-column-width [TypeName=float, AutoFunctions, Converter=ComputedLength<float>]
+column-width [AutoFunctions, Converter=ComputedLength<float>]
 -webkit-column-width = column-width
 columns [Shorthand]
 -webkit-columns = columns
@@ -449,15 +444,15 @@ columns [Shorthand]
 -webkit-box-decoration-break
 #endif
 #if defined(ENABLE_CSS_COMPOSITING) && ENABLE_CSS_COMPOSITING
-mix-blend-mode [TypeName=BlendMode, NameForMethods=BlendMode]
-isolation [TypeName=Isolation]
+mix-blend-mode [NameForMethods=BlendMode]
+isolation
 #endif
--webkit-filter [ConditionalConverter=FilterOperations, TypeName=FilterOperations]
+-webkit-filter [ConditionalConverter=FilterOperations]
 align-content
 -webkit-align-content = align-content
 align-items
 -webkit-align-items = align-items
-align-self [TypeName=EAlignItems]
+align-self
 -webkit-align-self = align-self
 flex [Shorthand]
 -webkit-flex = flex
@@ -467,31 +462,31 @@ flex-direction
 -webkit-flex-direction = flex-direction
 flex-flow [Shorthand]
 -webkit-flex-flow = flex-flow
-flex-grow [TypeName=float]
+flex-grow
 -webkit-flex-grow = flex-grow
-flex-shrink [TypeName=float]
+flex-shrink
 -webkit-flex-shrink = flex-shrink
 flex-wrap
 -webkit-flex-wrap = flex-wrap
 justify-content
 -webkit-justify-content = justify-content
 #if defined(ENABLE_FILTERS_LEVEL_2) && ENABLE_FILTERS_LEVEL_2
--webkit-backdrop-filter [ConditionalConverter=FilterOperations, TypeName=FilterOperations]
+-webkit-backdrop-filter [ConditionalConverter=FilterOperations]
 #endif
 -webkit-justify-self [Custom=Value]
 -webkit-font-size-delta [SkipBuilder]
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 -webkit-grid [Shorthand]
 -webkit-grid-area [Shorthand]
--webkit-grid-auto-columns [ConditionalConverter=GridTrackSize, TypeName=GridTrackSize]
--webkit-grid-auto-rows [ConditionalConverter=GridTrackSize, TypeName=GridTrackSize]
--webkit-grid-column-end [ConditionalConverter=GridPosition, TypeName=GridPosition, NameForMethods=GridItemColumnEnd]
--webkit-grid-column-start [ConditionalConverter=GridPosition, TypeName=GridPosition, NameForMethods=GridItemColumnStart]
+-webkit-grid-auto-columns [ConditionalConverter=GridTrackSize]
+-webkit-grid-auto-rows [ConditionalConverter=GridTrackSize]
+-webkit-grid-column-end [ConditionalConverter=GridPosition, NameForMethods=GridItemColumnEnd]
+-webkit-grid-column-start [ConditionalConverter=GridPosition, NameForMethods=GridItemColumnStart]
 -webkit-grid-template [Shorthand]
 -webkit-grid-template-columns [Custom=All]
 -webkit-grid-template-rows [Custom=All]
--webkit-grid-row-end [ConditionalConverter=GridPosition, TypeName=GridPosition, NameForMethods=GridItemRowEnd]
--webkit-grid-row-start [ConditionalConverter=GridPosition, TypeName=GridPosition, NameForMethods=GridItemRowStart]
+-webkit-grid-row-end [ConditionalConverter=GridPosition, NameForMethods=GridItemRowEnd]
+-webkit-grid-row-start [ConditionalConverter=GridPosition, NameForMethods=GridItemRowStart]
 -webkit-grid-column [Shorthand]
 -webkit-grid-row [Shorthand]
 -webkit-grid-template-areas [Custom=All]
@@ -501,21 +496,21 @@ justify-content
 -webkit-hyphenate-limit-after [Inherited, NameForMethods=HyphenationLimitAfter, Converter=NumberOrAuto<short>]
 -webkit-hyphenate-limit-before [Inherited, NameForMethods=HyphenationLimitBefore, Converter=NumberOrAuto<short>]
 -webkit-hyphenate-limit-lines [Inherited, NameForMethods=HyphenationLimitLines, Converter=WebkitHyphenateLimitLines]
--webkit-hyphens [Inherited, TypeName=Hyphens]
+-webkit-hyphens [Inherited]
 -epub-hyphens = -webkit-hyphens
 -webkit-initial-letter [Converter=InitialLetter]
 -webkit-line-box-contain [Inherited, Converter=LineBoxContain]
--webkit-line-align [Inherited, TypeName=LineAlign]
--webkit-line-break [Inherited, TypeName=LineBreak]
--webkit-line-clamp [TypeName=LineClampValue]
+-webkit-line-align [Inherited]
+-webkit-line-break [Inherited]
+-webkit-line-clamp
 -webkit-line-grid [Inherited, Converter=StringOrNone]
--webkit-line-snap [Inherited, TypeName=LineSnap]
+-webkit-line-snap [Inherited]
 -webkit-logical-width [SkipBuilder]
 -webkit-logical-height [SkipBuilder]
--webkit-margin-after-collapse [TypeName=EMarginCollapse]
--webkit-margin-before-collapse [TypeName=EMarginCollapse]
--webkit-margin-bottom-collapse [TypeName=EMarginCollapse, NameForMethods=MarginAfterCollapse]
--webkit-margin-top-collapse [TypeName=EMarginCollapse, NameForMethods=MarginBeforeCollapse]
+-webkit-margin-after-collapse
+-webkit-margin-before-collapse
+-webkit-margin-bottom-collapse [NameForMethods=MarginAfterCollapse]
+-webkit-margin-top-collapse [NameForMethods=MarginBeforeCollapse]
 -webkit-margin-collapse [Shorthand]
 -webkit-margin-after [SkipBuilder]
 -webkit-margin-before [SkipBuilder]
@@ -523,10 +518,10 @@ justify-content
 -webkit-margin-start [SkipBuilder]
 -webkit-marquee [Shorthand]
 -webkit-marquee-direction
--webkit-marquee-increment [ConditionalConverter=MarqueeIncrement, TypeName=Length]
+-webkit-marquee-increment [ConditionalConverter=MarqueeIncrement]
 -webkit-marquee-repetition [NameForMethods=MarqueeLoopCount, Converter=MarqueeRepetition]
 -webkit-marquee-speed [Converter=MarqueeSpeed]
--webkit-marquee-style [TypeName=EMarqueeBehavior, NameForMethods=MarqueeBehavior]
+-webkit-marquee-style [NameForMethods=MarqueeBehavior]
 -webkit-mask [Shorthand]
 -webkit-mask-box-image [Initial=initialNinePieceImage, Converter=BorderMask<CSSPropertyWebkitMaskBoxImage>]
 -webkit-mask-box-image-outset [Custom=All]
@@ -534,52 +529,52 @@ justify-content
 -webkit-mask-box-image-slice [Custom=All]
 -webkit-mask-box-image-source [Converter=StyleImage<CSSPropertyWebkitMaskBoxImageSource>]
 -webkit-mask-box-image-width [Custom=All]
--webkit-mask-clip [FillLayerProperty, TypeName=EFillBox, NameForMethods=Clip]
--webkit-mask-composite [FillLayerProperty, TypeName=CompositeOperator, NameForMethods=Composite]
--webkit-mask-image [Custom=Initial|Inherit, ConditionalConverter=MaskImageOperations, TypeName=Vector<RefPtr<MaskImageOperation>>]
--webkit-mask-origin [FillLayerProperty, TypeName=EFillBox, NameForMethods=Origin]
+-webkit-mask-clip [FillLayerProperty, NameForMethods=Clip]
+-webkit-mask-composite [FillLayerProperty, NameForMethods=Composite]
+-webkit-mask-image [Custom=Initial|Inherit, Converter=MaskImageOperations]
+-webkit-mask-origin [FillLayerProperty, NameForMethods=Origin]
 -webkit-mask-position [Shorthand]
--webkit-mask-position-x [FillLayerProperty, TypeName=Length, NameForMethods=XPosition]
--webkit-mask-position-y [FillLayerProperty, TypeName=Length, NameForMethods=YPosition]
+-webkit-mask-position-x [FillLayerProperty, NameForMethods=XPosition]
+-webkit-mask-position-y [FillLayerProperty, NameForMethods=YPosition]
 -webkit-mask-repeat [Shorthand]
--webkit-mask-repeat-x [FillLayerProperty, TypeName=EFillRepeat, NameForMethods=RepeatX]
--webkit-mask-repeat-y [FillLayerProperty, TypeName=EFillRepeat, NameForMethods=RepeatY]
--webkit-mask-size [FillLayerProperty, TypeName=FillSize, NameForMethods=Size]
--webkit-mask-source-type [FillLayerProperty, TypeName=EMaskSourceType, NameForMethods=MaskSourceType]
+-webkit-mask-repeat-x [FillLayerProperty, NameForMethods=RepeatX]
+-webkit-mask-repeat-y [FillLayerProperty, NameForMethods=RepeatY]
+-webkit-mask-size [FillLayerProperty, NameForMethods=Size]
+-webkit-mask-source-type [FillLayerProperty, NameForMethods=MaskSourceType]
 -webkit-max-logical-width [SkipBuilder]
 -webkit-max-logical-height [SkipBuilder]
 -webkit-min-logical-width [SkipBuilder]
 -webkit-min-logical-height [SkipBuilder]
--webkit-nbsp-mode [Inherited, TypeName=ENBSPMode, Setter=setNBSPMode, Initial=initialNBSPMode]
-order [TypeName=int]
+-webkit-nbsp-mode [Inherited, Setter=setNBSPMode, Initial=initialNBSPMode]
+order
 -webkit-order = order
 -webkit-padding-after [SkipBuilder]
 -webkit-padding-before [SkipBuilder]
 -webkit-padding-end [SkipBuilder]
 -webkit-padding-start [SkipBuilder]
--webkit-perspective [ConditionalConverter=Perspective, TypeName=float]
+-webkit-perspective [ConditionalConverter=Perspective]
 -webkit-perspective-origin [Shorthand]
 -webkit-perspective-origin-x [Converter=Length]
 -webkit-perspective-origin-y [Converter=Length]
--webkit-print-color-adjust [Inherited, TypeName=PrintColorAdjust]
--webkit-rtl-ordering [Inherited, TypeName=Order, Setter=setRTLOrdering, Initial=initialRTLOrdering]
+-webkit-print-color-adjust [Inherited]
+-webkit-rtl-ordering [Inherited, Setter=setRTLOrdering, Initial=initialRTLOrdering]
 #if defined(ENABLE_CSS_SCROLL_SNAP)
 -webkit-scroll-snap-points-x [Converter=ScrollSnapPoints]
 -webkit-scroll-snap-points-y [Converter=ScrollSnapPoints]
--webkit-scroll-snap-type [TypeName=ScrollSnapType]
+-webkit-scroll-snap-type
 -webkit-scroll-snap-destination [Converter=SnapCoordinatePair]
 -webkit-scroll-snap-coordinate [Converter=ScrollSnapCoordinates, NameForMethods=ScrollSnapCoordinates]
 #endif
 -webkit-svg-shadow [SVG, Custom=All]
--webkit-text-combine [Inherited, TypeName=TextCombine]
+-webkit-text-combine [Inherited]
 -epub-text-combine = -webkit-text-combine
 #if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT
--webkit-text-align-last [Inherited, TypeName=TextAlignLast]
--webkit-text-justify [Inherited, TypeName=TextJustify]
+-webkit-text-align-last [Inherited]
+-webkit-text-justify [Inherited]
 #endif
 -webkit-text-decoration [SkipBuilder]
 -webkit-text-decoration-line [NameForMethods=TextDecoration, Converter=TextDecoration]
--webkit-text-decoration-style [TypeName=TextDecorationStyle]
+-webkit-text-decoration-style
 -webkit-text-decoration-color [VisitedLinkColorSupport, Initial=invalidColor]
 -webkit-text-decoration-skip [Inherited, Converter=TextDecorationSkip]
 -webkit-text-underline-position [Inherited, Converter=TextUnderlinePosition]
@@ -605,22 +600,22 @@ text-emphasis-style = -webkit-text-emphasis-style
 -webkit-transform-origin-x [Converter=Length]
 -webkit-transform-origin-y [Converter=Length]
 -webkit-transform-origin-z [Converter=ComputedLength<float>]
--webkit-transform-style [TypeName=ETransformStyle3D, NameForMethods=TransformStyle3D]
+-webkit-transform-style [NameForMethods=TransformStyle3D]
 -webkit-transition [Shorthand]
--webkit-transition-delay [AnimationProperty, TypeName=double, NameForMethods=Delay]
--webkit-transition-duration [AnimationProperty, TypeName=double, NameForMethods=Duration]
--webkit-transition-property [AnimationProperty, TypeName=CSSPropertyID, NameForMethods=Property]
--webkit-transition-timing-function [AnimationProperty, TypeName=PassRefPtr<TimingFunction>, NameForMethods=TimingFunction]
+-webkit-transition-delay [AnimationProperty, NameForMethods=Delay]
+-webkit-transition-duration [AnimationProperty, NameForMethods=Duration]
+-webkit-transition-property [AnimationProperty, NameForMethods=Property]
+-webkit-transition-timing-function [AnimationProperty, NameForMethods=TimingFunction]
 -webkit-user-drag
 -webkit-user-modify [Inherited]
 -webkit-user-select [Inherited]
 #if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
 -webkit-flow-into [NameForMethods=FlowThread, Converter=StringOrNone]
 -webkit-flow-from [NameForMethods=RegionThread, Converter=StringOrNone]
--webkit-region-fragment [TypeName=RegionFragment]
--webkit-region-break-after [TypeName=EPageBreak, Initial=initialPageBreak]
--webkit-region-break-before [TypeName=EPageBreak, Initial=initialPageBreak]
--webkit-region-break-inside [TypeName=EPageBreak, Initial=initialPageBreak]
+-webkit-region-fragment
+-webkit-region-break-after [Initial=initialPageBreak]
+-webkit-region-break-before [Initial=initialPageBreak]
+-webkit-region-break-inside [Initial=initialPageBreak]
 #endif
 #if defined(ENABLE_CSS_SHAPES) && ENABLE_CSS_SHAPES
 -webkit-shape-outside [Converter=ShapeValue]

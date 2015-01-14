@@ -49,6 +49,7 @@
 #include "StyleScrollSnapPoints.h"
 #include "TransformFunctions.h"
 #include "WebKitCSSResourceValue.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -94,15 +95,15 @@ public:
     static Vector<LengthSize> convertScrollSnapCoordinates(StyleResolver&, CSSValue&);
 #endif
 #if ENABLE(CSS_GRID_LAYOUT)
-    static bool convertGridTrackSize(StyleResolver&, CSSValue&, GridTrackSize&);
-    static bool convertGridPosition(StyleResolver&, CSSValue&, GridPosition&);
+    static Optional<GridTrackSize> convertGridTrackSize(StyleResolver&, CSSValue&);
+    static Optional<GridPosition> convertGridPosition(StyleResolver&, CSSValue&);
     static GridAutoFlow convertGridAutoFlow(StyleResolver&, CSSValue&);
 #endif // ENABLE(CSS_GRID_LAYOUT)
-    static bool convertWordSpacing(StyleResolver&, CSSValue&, Length&);
-    static bool convertPerspective(StyleResolver&, CSSValue&, float&);
-    static bool convertMarqueeIncrement(StyleResolver&, CSSValue&, Length&);
-    static bool convertFilterOperations(StyleResolver&, CSSValue&, FilterOperations&);
-    static bool convertMaskImageOperations(StyleResolver&, CSSValue&, Vector<RefPtr<MaskImageOperation>>&);
+    static Optional<Length> convertWordSpacing(StyleResolver&, CSSValue&);
+    static Optional<float> convertPerspective(StyleResolver&, CSSValue&);
+    static Optional<Length> convertMarqueeIncrement(StyleResolver&, CSSValue&);
+    static Optional<FilterOperations> convertFilterOperations(StyleResolver&, CSSValue&);
+    static Vector<RefPtr<MaskImageOperation>> convertMaskImageOperations(StyleResolver&, CSSValue&);
 #if PLATFORM(IOS)
     static bool convertTouchCallout(StyleResolver&, CSSValue&);
 #endif
@@ -906,14 +907,20 @@ inline void StyleBuilderConverter::createImplicitNamedGridLinesFromGridArea(cons
     }
 }
 
-inline bool StyleBuilderConverter::convertGridTrackSize(StyleResolver& styleResolver, CSSValue& value, GridTrackSize& trackSize)
+inline Optional<GridTrackSize> StyleBuilderConverter::convertGridTrackSize(StyleResolver& styleResolver, CSSValue& value)
 {
-    return createGridTrackSize(value, trackSize, styleResolver);
+    GridTrackSize trackSize;
+    if (createGridTrackSize(value, trackSize, styleResolver))
+        return trackSize;
+    return Nullopt;
 }
 
-inline bool StyleBuilderConverter::convertGridPosition(StyleResolver&, CSSValue& value, GridPosition& gridPosition)
+inline Optional<GridPosition> StyleBuilderConverter::convertGridPosition(StyleResolver&, CSSValue& value)
 {
-    return createGridPosition(value, gridPosition);
+    GridPosition gridPosition;
+    if (createGridPosition(value, gridPosition))
+        return gridPosition;
+    return Nullopt;
 }
 
 inline GridAutoFlow StyleBuilderConverter::convertGridAutoFlow(StyleResolver&, CSSValue& value)
@@ -956,8 +963,9 @@ inline CSSToLengthConversionData StyleBuilderConverter::csstoLengthConversionDat
     return styleResolver.state().cssToLengthConversionData();
 }
 
-inline bool StyleBuilderConverter::convertWordSpacing(StyleResolver& styleResolver, CSSValue& value, Length& wordSpacing)
+inline Optional<Length> StyleBuilderConverter::convertWordSpacing(StyleResolver& styleResolver, CSSValue& value)
 {
+    Optional<Length> wordSpacing;
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.getValueID() == CSSValueNormal)
         wordSpacing = RenderStyle::initialWordSpacing();
@@ -967,61 +975,64 @@ inline bool StyleBuilderConverter::convertWordSpacing(StyleResolver& styleResolv
         wordSpacing = Length(clampTo<float>(primitiveValue.getDoubleValue(), minValueForCssLength, maxValueForCssLength), Percent);
     else if (primitiveValue.isNumber())
         wordSpacing = Length(primitiveValue.getDoubleValue(), Fixed);
-    else
-        return false;
 
-    return true;
+    return wordSpacing;
 }
 
-inline bool StyleBuilderConverter::convertPerspective(StyleResolver& styleResolver, CSSValue& value, float& perspective)
+inline Optional<float> StyleBuilderConverter::convertPerspective(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueNone) {
-        perspective = 0;
-        return true;
-    }
+    if (primitiveValue.getValueID() == CSSValueNone)
+        return 0.f;
 
+    float perspective = -1;
     if (primitiveValue.isLength())
         perspective = primitiveValue.computeLength<float>(styleResolver.state().cssToLengthConversionData());
     else if (primitiveValue.isNumber())
         perspective = primitiveValue.getDoubleValue() * styleResolver.state().cssToLengthConversionData().zoom();
-    else {
+    else
         ASSERT_NOT_REACHED();
-        return false;
-    }
 
-    return perspective >= 0;
+    return perspective < 0 ? Nullopt : perspective;
 }
 
-inline bool StyleBuilderConverter::convertMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value, Length& marqueeLength)
+inline Optional<Length> StyleBuilderConverter::convertMarqueeIncrement(StyleResolver& styleResolver, CSSValue& value)
 {
+    Optional<Length> marqueeLength;
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     switch (primitiveValue.getValueID()) {
     case CSSValueSmall:
         marqueeLength = Length(1, Fixed); // 1px.
-        return true;
+        break;
     case CSSValueNormal:
         marqueeLength = Length(6, Fixed); // 6px. The WinIE default.
-        return true;
+        break;
     case CSSValueLarge:
         marqueeLength = Length(36, Fixed); // 36px.
-        return true;
-    case CSSValueInvalid:
-        marqueeLength = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
-        return !marqueeLength.isUndefined();
+        break;
+    case CSSValueInvalid: {
+        Length length = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
+        if (!length.isUndefined())
+            marqueeLength = length;
+        break;
+    }
     default:
         break;
     }
-    return false;
+    return marqueeLength;
 }
 
-inline bool StyleBuilderConverter::convertFilterOperations(StyleResolver& styleResolver, CSSValue& value, FilterOperations& operations)
+inline Optional<FilterOperations> StyleBuilderConverter::convertFilterOperations(StyleResolver& styleResolver, CSSValue& value)
 {
-    return styleResolver.createFilterOperations(value, operations);
+    FilterOperations operations;
+    if (styleResolver.createFilterOperations(value, operations))
+        return operations;
+    return Nullopt;
 }
 
-inline bool StyleBuilderConverter::convertMaskImageOperations(StyleResolver& styleResolver, CSSValue& value, Vector<RefPtr<MaskImageOperation>>& operations)
+inline Vector<RefPtr<MaskImageOperation>> StyleBuilderConverter::convertMaskImageOperations(StyleResolver& styleResolver, CSSValue& value)
 {
+    Vector<RefPtr<MaskImageOperation>> operations;
     RefPtr<WebKitCSSResourceValue> maskImageValue;
     RefPtr<CSSValueList> maskImagesList;
     CSSValueList::iterator listIterator;
@@ -1069,7 +1080,7 @@ inline bool StyleBuilderConverter::convertMaskImageOperations(StyleResolver& sty
             maskImageValue = nullptr;
     }
 
-    return true;
+    return operations;
 }
 
 inline RefPtr<FontFeatureSettings> StyleBuilderConverter::convertFontFeatureSettings(StyleResolver&, CSSValue& value)

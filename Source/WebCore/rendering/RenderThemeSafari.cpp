@@ -246,7 +246,7 @@ void RenderThemeSafari::systemFont(CSSValueID valueID, FontDescription& fontDesc
         cachedDesc->setOneFamily("Lucida Grande");
         cachedDesc->setSpecifiedSize(fontSize);
         cachedDesc->setWeight(FontWeightNormal);
-        cachedDesc->setItalic(false);
+        cachedDesc->setItalic(FontItalicOff);
     }
     fontDescription = *cachedDesc;
 }

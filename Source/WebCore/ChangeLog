@@ -1,3 +1,66 @@
+2015-01-14  Chris Dumez  <cdumez@apple.com>
+
+        Make 'TypeName' parameter unnecessary in CSSPropertyNames.in
+        https://bugs.webkit.org/show_bug.cgi?id=140347
+
+        Reviewed by Darin Adler.
+
+        Make 'TypeName' parameter unnecessary in CSSPropertyNames.in by:
+        - Removing the static_cast to the destination type in the generated
+          StyleBuilder code and let compiler implicitly convert the
+          CSSPrimitiveValue to the setter's argument type.
+        - Updating conditional converters to return a WTF::Optional<>
+          instead of returning a boolean and having an output argument
+          passed by reference. This way, we can use "auto" in the generated
+          StyleBuilder code to deduce the return type.
+
+        * css/CSSPropertyNames.in:
+        Drop TypeName parameter from all properties as it is no longer needed.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertGridTrackSize):
+        (WebCore::StyleBuilderConverter::convertGridPosition):
+        (WebCore::StyleBuilderConverter::convertWordSpacing):
+        (WebCore::StyleBuilderConverter::convertPerspective):
+        (WebCore::StyleBuilderConverter::convertMarqueeIncrement):
+        (WebCore::StyleBuilderConverter::convertFilterOperations):
+        (WebCore::StyleBuilderConverter::convertMaskImageOperations):
+        Update conditional converters to return an Optional<>.
+
+        * css/makeprop.pl:
+        (generateValueSetter):
+        Drop support for TypeName, stop using static_cast to destination
+        type and update the generated code now that the conditional
+        converters return an Optional.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::systemFont):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::setIsItalic):
+        (WebCore::FontDescription::setIsSmallCaps):
+        (WebCore::FontDescription::setItalic): Deleted.
+        (WebCore::FontDescription::setSmallCaps): Deleted.
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::systemFont):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemFont):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemFont):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::systemFont):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::fillFontDescription):
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::updateStyle):
+        Now that we call the RenderStyle setters with a CSSPrimitiveValue
+        and let it be implicitly converted to the right type, instead of
+        doing an explicit static_cast, two setters on FontDescription
+        were ambiguous: setItalic() / setSmallCaps(). Rename the overloads
+        taking a boolean in argument to setIsItalic() / setIsSmallCaps()
+        to resolve the ambiguity.
+
 2015-01-14  Jer Noble  <jer.noble@apple.com>
 
         Null-deref crash when seeking immediately before looping.

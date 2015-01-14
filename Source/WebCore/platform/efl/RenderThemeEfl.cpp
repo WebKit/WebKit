@@ -992,7 +992,7 @@ void RenderThemeEfl::systemFont(CSSValueID, FontDescription& fontDescription) co
     fontDescription.setSpecifiedSize(defaultFontSize);
     fontDescription.setIsAbsoluteSize(true);
     fontDescription.setWeight(FontWeightNormal);
-    fontDescription.setItalic(false);
+    fontDescription.setItalic(FontItalicOff);
 }
 
 void RenderThemeEfl::adjustProgressBarStyle(StyleResolver&, RenderStyle& style, Element*) const

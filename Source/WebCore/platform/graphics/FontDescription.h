@@ -148,9 +148,9 @@ public:
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setSpecifiedSize(float s) { m_specifiedSize = clampToFloat(s); }
     void setItalic(FontItalic i) { m_italic = i; }
-    void setItalic(bool i) { setItalic(i ? FontItalicOn : FontItalicOff); }
+    void setIsItalic(bool i) { setItalic(i ? FontItalicOn : FontItalicOff); }
     void setSmallCaps(FontSmallCaps c) { m_smallCaps = c; }
-    void setSmallCaps(bool c) { setSmallCaps(c ? FontSmallCapsOn : FontSmallCapsOff); }
+    void setIsSmallCaps(bool c) { setSmallCaps(c ? FontSmallCapsOn : FontSmallCapsOff); }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setWeight(FontWeight w) { m_weight = w; }
     void setUsePrinterFont(bool p) { m_usePrinterFont = p; }

@@ -393,7 +393,7 @@ void RenderThemeMac::systemFont(CSSValueID cssValueId, FontDescription& fontDesc
         cachedDesc->setOneFamily([font webCoreFamilyName]);
         cachedDesc->setSpecifiedSize([font pointSize]);
         cachedDesc->setWeight(toFontWeight([fontManager weightOfFont:font]));
-        cachedDesc->setItalic([fontManager traitsOfFont:font] & NSItalicFontMask);
+        cachedDesc->setIsItalic([fontManager traitsOfFont:font] & NSItalicFontMask);
     }
     fontDescription = *cachedDesc;
 }

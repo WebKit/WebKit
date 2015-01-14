@@ -1,3 +1,16 @@
+2015-01-14  Chris Dumez  <cdumez@apple.com>
+
+        Make 'TypeName' parameter unnecessary in CSSPropertyNames.in
+        https://bugs.webkit.org/show_bug.cgi?id=140347
+
+        Reviewed by Darin Adler.
+
+        Call FontDescription::setIsItalic() instead of setItalic() as the
+        call site passes a boolean.
+
+        * WebKitGraphics.cpp:
+        (makeFont):
+
 2015-01-11  Sam Weinig  <sam@webkit.org>
 
         Remove support for SharedWorkers

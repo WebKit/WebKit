@@ -56,7 +56,7 @@ static Font makeFont(const WebFontDescription& description)
     f.setOneFamily(fontFamilyString);
     f.setSpecifiedSize(description.size);
     f.setComputedSize(description.size);
-    f.setItalic(description.italic);
+    f.setIsItalic(description.italic);
     f.setWeight(description.bold ? FontWeightBold : FontWeightNormal);
     f.setIsAbsoluteSize(true);
 

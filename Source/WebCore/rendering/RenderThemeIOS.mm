@@ -1257,7 +1257,7 @@ void RenderThemeIOS::systemFont(CSSValueID valueID, FontDescription& fontDescrip
         cachedDesc->setOneFamily(textStyle);
         cachedDesc->setSpecifiedSize(CTFontGetSize(font.get()));
         cachedDesc->setWeight(fromCTFontWeight(FontCache::weightOfCTFont(font.get())));
-        cachedDesc->setItalic(0);
+        cachedDesc->setItalic(FontItalicOff);
     }
     fontDescription = *cachedDesc;
 }

@@ -90,7 +90,7 @@ void RenderMathMLToken::updateStyle()
         FontDescription fontDescription(newStyle.get().fontDescription());
         FontSelector* fontSelector = newStyle.get().font().fontSelector();
         if (!m_containsElement && element().textContent().stripWhiteSpace().simplifyWhiteSpace().length() == 1 && !tokenElement.hasAttribute(mathvariantAttr))
-            fontDescription.setItalic(true);
+            fontDescription.setItalic(FontItalicOn);
         if (newStyle.get().setFontDescription(fontDescription))
             newStyle.get().font().update(fontSelector);
     }

@@ -58,7 +58,6 @@ my %styleBuilderOptions = (
   Shorthand => 1,
   SkipBuilder => 1,
   Setter => 1,
-  TypeName => 1,
   VisitedLinkColorSupport => 1,
 );
 my %nameToId;
@@ -443,9 +442,6 @@ foreach my $name (@names) {
     $nameForMethods = $propertiesWithStyleBuilderOptions{$name}{"NameForMethods"};
   }
 
-  if (!exists($propertiesWithStyleBuilderOptions{$name}{"TypeName"})) {
-    $propertiesWithStyleBuilderOptions{$name}{"TypeName"} = "E" . $nameForMethods;
-  }
   if (!exists($propertiesWithStyleBuilderOptions{$name}{"Getter"})) {
     $propertiesWithStyleBuilderOptions{$name}{"Getter"} = lcfirst($nameForMethods);
   }
@@ -778,10 +774,10 @@ sub generateValueSetter {
   if (exists($propertiesWithStyleBuilderOptions{$name}{"Converter"})) {
     $convertedValue = "StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"Converter"} . "(styleResolver, value)";
   } elsif (exists($propertiesWithStyleBuilderOptions{$name}{"ConditionalConverter"})) {
-    $setterContent .= $indent . "    " . $propertiesWithStyleBuilderOptions{$name}{"TypeName"} . " convertedValue;\n";
-    $convertedValue = "convertedValue";
+    $setterContent .= $indent . "    auto convertedValue = StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"ConditionalConverter"} . "(styleResolver, value);\n";
+    $convertedValue = "convertedValue.value()";
   } else {
-    $convertedValue = "static_cast<" . $propertiesWithStyleBuilderOptions{$name}{"TypeName"} . ">(downcast<CSSPrimitiveValue>(value))";
+    $convertedValue = "downcast<CSSPrimitiveValue>(value)";
   }
 
   my $setter = $propertiesWithStyleBuilderOptions{$name}{"Setter"};
@@ -814,7 +810,7 @@ sub generateValueSetter {
   }
   if (!$didCallSetValue) {
     if (exists($propertiesWithStyleBuilderOptions{$name}{"ConditionalConverter"})) {
-      $setterContent .= $indent . "    if (StyleBuilderConverter::convert" . $propertiesWithStyleBuilderOptions{$name}{"ConditionalConverter"} . "(styleResolver, value, " . $convertedValue . "))\n";
+      $setterContent .= $indent . "    if (convertedValue)\n";
       $setterContent .= "    ";
     }
     $setterContent .= $indent . "    " . generateSetValueStatement($name, $convertedValue) . ";\n";
