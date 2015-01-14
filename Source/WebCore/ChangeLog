@@ -1,5 +1,76 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r173197. <rdar://problem/19424142>
+
+    2014-09-02  Jer Noble  <jer.noble@apple.com>
+
+            [EME][Mac] Refactor CDMPrivateMediaSourceAVFObjC to allow sessions to be created without being attached to an AVStreamDataParser.
+            https://bugs.webkit.org/show_bug.cgi?id=136016
+
+            Reviewed by Eric Carlson.
+
+            The CDMPrivateMediaPlayer class will delegate creation of CDMSession instances to the current MediaPlayer. This
+            of course requires the MediaKeys object owning the CDM to be attached to a HTMLMediaElement, and specifically to
+            one with a valid src attribute or source node which has sucessfully begun loading. For certain CDM operations,
+            it would be better if a given MediaKeys could create a session without actually being connected to a
+            HTMLMediaElement (yet).
+
+            To facilitate this for CDMSessionPrivateMediaSourceAVFObjC, add a new class, CDMPrivateMediaSourceAVFObjC, which
+            is the primary factory for CDMSessionPrivateMediaSOurceAVFObjC. Disclaim responsibility for creating these sessions
+            in MediaPlayerPrivateMediaSourceAVFObjC by not passing the "supportsKeySystem" method when registering itself.
+
+            Add methods to CDMSessionPrivateMediaSourceAVFObjC to allow SourceBuffers to be added and removed from the session,
+            to support adding the session to the HTMLMediaElement after the session has been created.
+
+            Since MediaPlayerPrivate instance and  CDMSession instances must be able to communicate with one another, add a type()
+            enum and virtual method to allow CDMSession instnaces to be distinguisted from (and casted to) one another.
+
+            * Modules/encryptedmedia/CDM.cpp:
+            (WebCore::installedCDMFactories): Register CDMPrivateMediaSourceAVFObjC.
+            (WebCore::CDM::createSession): Notify the MediaPlayer of the new CDMSession.
+            * Modules/encryptedmedia/MediaKeySession.h:
+            * Modules/encryptedmedia/MediaKeys.cpp:
+            (WebCore::MediaKeys::setMediaElement): Notify the HTMLMediaElement of any existing sessions.
+            * WebCore.xcodeproj/project.pbxproj:
+            * platform/graphics/CDMSession.h:
+            (WebCore::CDMSession::type): Added.
+            * platform/graphics/MediaPlayer.cpp:
+            (WebCore::MediaPlayer::setCDMSession): Pass through to the MediaPlayerPrivate.
+            * platform/graphics/MediaPlayer.h:
+            * platform/graphics/MediaPlayerPrivate.h:
+            (WebCore::MediaPlayerPrivateInterface::setCDMSession): Added. Default no-op.
+            * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.h: Added.
+            (WebCore::CDMPrivateMediaSourceAVFObjC::CDMPrivateMediaSourceAVFObjC): Simple constructor.
+            (WebCore::CDMPrivateMediaSourceAVFObjC::~CDMPrivateMediaSourceAVFObjC): Simple destructor.
+            (WebCore::CDMPrivateMediaSourceAVFObjC::create): Simple factory.
+            (WebCore::CDMPrivateMediaSourceAVFObjC::cdm): Simple accessor.
+            * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm: 
+            (WebCore::CDMPrivateMediaSourceAVFObjC::supportsKeySystem): Moved from MediaPlayerPrivateMediaSourceAVFObjC.
+            (WebCore::CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType): Ditto.
+            (WebCore::CDMPrivateMediaSourceAVFObjC::supportsMIMEType): Ditto.
+            (WebCore::CDMPrivateMediaSourceAVFObjC::createSession): Returns new CDMSessionMediaSourceAVFObjC.
+            * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+            (WebCore::CDMSessionAVFoundationObjC::type): Added.
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+            (WebCore::CDMSessionMediaSourceAVFObjC::type): Added.
+            (WebCore::toCDMSessionMediaSourceAVFObjC): Throw assertion if type() is not correct.
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (WebCore::CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC): Removed m_parent ivar.
+            (WebCore::CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC): Ditto.
+            (WebCore::CDMSessionMediaSourceAVFObjC::update): Determing which SourceBuffer is protected.
+            (WebCore::CDMSessionMediaSourceAVFObjC::addSourceBuffer): Added.
+            (WebCore::CDMSessionMediaSourceAVFObjC::removeSourceBuffer): Added.
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine): Remove supportsKeyType parameter.
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType): Remove keyType check.
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession): Tell the CDMSession about outstanding SourceBuffers.
+            * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r172651. <rdar://problem/19424141>
 
     2014-08-15  Jer Noble  <jer.noble@apple.com>

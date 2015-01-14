@@ -52,11 +52,18 @@ public:
     virtual void sendError(MediaKeyErrorCode, unsigned long systemCode) = 0;
 };
 
+enum CDMSessionType {
+    CDMSessionTypeUnknown,
+    CDMSessionTypeAVFoundationObjC,
+    CDMSessionTypeMediaSourceAVFObjC,
+};
+
 class CDMSession {
 public:
     CDMSession() { }
     virtual ~CDMSession() { }
 
+    virtual CDMSessionType type() { return CDMSessionTypeUnknown; }
     virtual void setClient(CDMSessionClient*) = 0;
     virtual const String& sessionId() const = 0;
     virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) = 0;

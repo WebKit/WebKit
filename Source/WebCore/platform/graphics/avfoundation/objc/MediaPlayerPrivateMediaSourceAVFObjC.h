@@ -43,6 +43,7 @@ typedef struct OpaqueCMTimebase* CMTimebaseRef;
 
 namespace WebCore {
 
+class CDMSessionMediaSourceAVFObjC;
 class PlatformClockCM;
 class MediaSourcePrivateAVFObjC;
 
@@ -52,6 +53,12 @@ public:
     virtual ~MediaPlayerPrivateMediaSourceAVFObjC();
 
     static void registerMediaEngine(MediaEngineRegistrar);
+
+    // MediaPlayer Factory Methods
+    static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
+    static bool isAvailable();
+    static void getSupportedTypes(HashSet<String>& types);
+    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     void addDisplayLayer(AVSampleBufferDisplayLayer*);
     void removeDisplayLayer(AVSampleBufferDisplayLayer*);
@@ -75,7 +82,7 @@ public:
     void sizeChanged();
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    virtual std::unique_ptr<CDMSession> createSession(const String&);
+    virtual void setCDMSession(CDMSession*) override;
     void keyNeeded(Uint8Array*);
 #endif
 
@@ -161,13 +168,6 @@ private:
     bool shouldBePlaying() const;
     void seekTimerFired(Timer<MediaPlayerPrivateMediaSourceAVFObjC>&);
 
-    // MediaPlayer Factory Methods
-    static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
-    static bool isAvailable();
-    static void getSupportedTypes(HashSet<String>& types);
-    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
-    static bool supportsKeySystem(const String& keySystem, const String& mimeType);
-
     friend class MediaSourcePrivateAVFObjC;
 
     struct PendingSeek {
@@ -193,6 +193,7 @@ private:
     RetainPtr<id> m_timeJumpedObserver;
     RetainPtr<id> m_durationObserver;
     Timer<MediaPlayerPrivateMediaSourceAVFObjC> m_seekTimer;
+    CDMSessionMediaSourceAVFObjC* m_session;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;
     MediaTime m_lastSeekTime;
