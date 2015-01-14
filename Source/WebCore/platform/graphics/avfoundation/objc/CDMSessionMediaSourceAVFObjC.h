@@ -33,6 +33,8 @@
 
 #if ENABLE(ENCRYPTED_MEDIA_V2) && ENABLE(MEDIA_SOURCE)
 
+OBJC_CLASS AVStreamSession;
+
 namespace WebCore {
 
 class CDMSessionMediaSourceAVFObjC : public CDMSession, public SourceBufferPrivateAVFObjCErrorClient {
@@ -52,6 +54,7 @@ public:
 protected:
     RefPtr<SourceBufferPrivateAVFObjC> m_parent;
     CDMSessionClient* m_client;
+    RetainPtr<AVStreamSession> m_streamSession;
     RefPtr<Uint8Array> m_initData;
     RefPtr<Uint8Array> m_certificate;
     String m_sessionId;
