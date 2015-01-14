@@ -1,3 +1,11 @@
+2015-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed GTK build fix after r178375.
+
+        WebPageProxy is now a reference instead of a pointer.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+
 2015-01-13  Anders Carlsson  <andersca@apple.com>
 
         Fill in more of WebProcessLifetimeTracker

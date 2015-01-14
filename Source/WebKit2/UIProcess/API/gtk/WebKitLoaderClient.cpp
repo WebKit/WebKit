@@ -41,21 +41,21 @@ public:
     }
 
 private:
-    void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy* frame, uint64_t /* navigationID */, API::Object* /* userData */) override
+    void didStartProvisionalLoadForFrame(WebPageProxy&, WebFrameProxy* frame, uint64_t /* navigationID */, API::Object* /* userData */) override
     {
         if (!frame->isMainFrame())
             return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_STARTED);
     }
 
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy* frame, uint64_t /* navigationID */, API::Object* /* userData */) override
+    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy&, WebFrameProxy* frame, uint64_t /* navigationID */, API::Object* /* userData */) override
     {
         if (!frame->isMainFrame())
             return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_REDIRECTED);
     }
 
-    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy* frame, uint64_t /* navigationID */, const ResourceError& resourceError, API::Object* /* userData */) override
+    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy&, WebFrameProxy* frame, uint64_t /* navigationID */, const ResourceError& resourceError, API::Object* /* userData */) override
     {
         if (!frame->isMainFrame())
             return;
@@ -68,21 +68,21 @@ private:
             webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_STARTED, resourceError.failingURL().utf8().data(), error.get());
     }
 
-    void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy* frame, uint64_t /* navigationID */, API::Object* /* userData */) override
+    void didCommitLoadForFrame(WebPageProxy&, WebFrameProxy* frame, uint64_t /* navigationID */, API::Object* /* userData */) override
     {
         if (!frame->isMainFrame())
             return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_COMMITTED);
     }
 
-    void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy* frame, uint64_t /* navigationID */, API::Object* /* userData */) override
+    void didFinishLoadForFrame(WebPageProxy&, WebFrameProxy* frame, uint64_t /* navigationID */, API::Object* /* userData */) override
     {
         if (!frame->isMainFrame())
             return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_FINISHED);
     }
 
-    void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy* frame, uint64_t /* navigationID */, const ResourceError& resourceError, API::Object* /* userData */) override
+    void didFailLoadWithErrorForFrame(WebPageProxy&, WebFrameProxy* frame, uint64_t /* navigationID */, const ResourceError& resourceError, API::Object* /* userData */) override
     {
         if (!frame->isMainFrame())
             return;
@@ -91,27 +91,27 @@ private:
         webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_COMMITTED, resourceError.failingURL().utf8().data(), error.get());
     }
 
-    void didDisplayInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, API::Object* /* userData */) override
+    void didDisplayInsecureContentForFrame(WebPageProxy&, WebFrameProxy*, API::Object* /* userData */) override
     {
         webkitWebViewInsecureContentDetected(m_webView, WEBKIT_INSECURE_CONTENT_DISPLAYED);
     }
 
-    void didRunInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, API::Object* /* userData */) override
+    void didRunInsecureContentForFrame(WebPageProxy&, WebFrameProxy*, API::Object* /* userData */) override
     {
         webkitWebViewInsecureContentDetected(m_webView, WEBKIT_INSECURE_CONTENT_RUN);
     }
 
-    void didChangeBackForwardList(WebPageProxy*, WebBackForwardListItem* addedItem, Vector<RefPtr<WebBackForwardListItem>> removedItems) override
+    void didChangeBackForwardList(WebPageProxy&, WebBackForwardListItem* addedItem, Vector<RefPtr<WebBackForwardListItem>> removedItems) override
     {
         webkitBackForwardListChanged(webkit_web_view_get_back_forward_list(m_webView), addedItem, removedItems);
     }
 
-    void didReceiveAuthenticationChallengeInFrame(WebPageProxy*, WebFrameProxy*, AuthenticationChallengeProxy* authenticationChallenge) override
+    void didReceiveAuthenticationChallengeInFrame(WebPageProxy&, WebFrameProxy*, AuthenticationChallengeProxy* authenticationChallenge) override
     {
         webkitWebViewHandleAuthenticationChallenge(m_webView, authenticationChallenge);
     }
 
-    void processDidCrash(WebPageProxy*) override
+    void processDidCrash(WebPageProxy&) override
     {
         webkitWebViewWebProcessCrashed(m_webView);
     }
