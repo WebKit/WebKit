@@ -1,3 +1,15 @@
+2015-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Only throttle DOM timers if they change CSS properties that cannot cause non-descendant elements to become visible
+        https://bugs.webkit.org/show_bug.cgi?id=140142
+
+        Reviewed by Daniel Bates.
+
+        Fix layout test introduced in r178014. I forgot to remove a
+        setTimeout() call.
+
+        * fast/dom/timer-height-change-no-throttling.html:
+
 2015-01-13  Roger Fong  <roger_fong@apple.com>
 
         [Unreviewed] Skip webgl tests for temporarily.

@@ -28,7 +28,6 @@ function timerCallback()
     shouldBeFalse("internals.isTimerThrottled(timeoutId)");
     clearInterval(timeoutId);
     finishJSTest();
-    setTimeout(scrollElementIntoView, 0);
   }
 }
 
