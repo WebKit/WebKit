@@ -1,5 +1,12 @@
 2015-01-14  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed build fix for DebugSuffix target.
+
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Correct build flags for DebugSuffix
+        target to match Release and Debug builds.
+
+2015-01-14  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Build fix after r178255.
 
         Correct path to PaintHooks.asm. This causes a build failure if you perform a
