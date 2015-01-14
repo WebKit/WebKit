@@ -1,5 +1,21 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r173520. <rdar://problem/19424149>
+
+    2014-09-11  Jer Noble  <jer.noble@apple.com>
+
+            [EME] REGRESSION(??): test media/encrypted-media/encrypted-media-v2-syntax.html is failing
+            https://bugs.webkit.org/show_bug.cgi?id=136723
+
+            Reviewed by Eric Carlson.
+
+            Update a comment to point to the implemented Working Draft 18 Feburary 2014 version of the spec.
+
+            * Modules/encryptedmedia/MediaKeys.cpp:
+            (WebCore::MediaKeys::createSession):
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r173454. <rdar://problem/19424147>
 
     2014-09-09  Jer Noble  <jer.noble@apple.com>
