@@ -859,6 +859,11 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
     updatePlaybackRate();
 }
 
+double MediaPlayerPrivateGStreamer::rate() const
+{
+    return m_playbackRate;
+}
+
 void MediaPlayerPrivateGStreamer::setPreservesPitch(bool preservesPitch)
 {
     m_preservesPitch = preservesPitch;

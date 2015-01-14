@@ -89,6 +89,7 @@ public:
     void seek(float);
 
     void setRate(float);
+    double rate() const override;
     void setPreservesPitch(bool);
 
     void setPreload(MediaPlayer::Preload);
