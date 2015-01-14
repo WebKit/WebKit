@@ -1,3 +1,10 @@
+2015-01-13  Roger Fong  <roger_fong@apple.com>
+
+        [Unreviewed] Skip webgl tests for temporarily.
+        https://bugs.webkit.org/show_bug.cgi?id=140423
+
+        * platform/mac/TestExpectations:
+
 2015-01-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Missed images and missed new lines in the expected results of the imported w3c canvas layout tests.
