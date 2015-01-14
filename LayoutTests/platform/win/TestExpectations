@@ -928,6 +928,7 @@ fast/css/non-standard-checkbox-size.html
 #webkit.org/b/34447 http/tests/media/video-referer.html [ Failure ]
 
 fast/frames/flattening/scrolling-in-object.html [ Pass ImageOnlyFailure Failure Timeout ]
+webkit.org/b/140444 [ Debug ] fast/frames/flattening/iframe-flattening-simple.html [ Crash ]
 fast/text-autosizing/narrow-iframe-flattened.html [ ImageOnlyFailure ]
 
 # Accept header is handled by the browser
