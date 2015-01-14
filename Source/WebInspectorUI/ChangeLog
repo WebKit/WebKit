@@ -1,5 +1,16 @@
 2015-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: TextEditor doesn't update when resizing console, white space instead of content
+        https://bugs.webkit.org/show_bug.cgi?id=140240
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector._consoleResizerMouseDown.dockedResizerDrag):
+        Dispatch the event that signals the console has changed size.
+
+2015-01-13  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: I do not expect to see the same rule multiple times in styles sidebar
         https://bugs.webkit.org/show_bug.cgi?id=138185
 

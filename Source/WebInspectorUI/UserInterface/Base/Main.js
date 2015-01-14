@@ -1282,6 +1282,8 @@ WebInspector._consoleResizerMouseDown = function(event)
         this._splitConsoleHeightSetting.value = height;
 
         this._updateSplitConsoleHeight(height);
+
+        this.quickConsole.dispatchEventToListeners(WebInspector.QuickConsole.Event.DidResize);
     }
 
     function dockedResizerDragEnd(event)
