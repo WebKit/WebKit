@@ -59,7 +59,12 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext* context, MediaKeys* key
 
 MediaKeySession::~MediaKeySession()
 {
-    close();
+    if (m_session) {
+        m_session->setClient(nullptr);
+        m_session = nullptr;
+    }
+
+    m_asyncEventQueue.cancelAllEvents();
 }
 
 void MediaKeySession::setError(MediaKeyError* error)
@@ -69,12 +74,8 @@ void MediaKeySession::setError(MediaKeyError* error)
 
 void MediaKeySession::close()
 {
-    if (m_session) {
+    if (m_session)
         m_session->releaseKeys();
-        m_session->setClient(nullptr);
-    }
-    m_session = nullptr;
-    m_asyncEventQueue.cancelAllEvents();
 }
 
 const String& MediaKeySession::sessionId() const
