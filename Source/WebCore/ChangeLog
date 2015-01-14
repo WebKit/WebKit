@@ -1,5 +1,46 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r174460. <rdar://problem/19424153>
+
+    2014-10-07  Jer Noble  <jer.noble@apple.com>
+
+            [EME][Mac] Update CDMSessionMediaSourceAVFObjC to match new API provided by AVStreamSession
+            https://bugs.webkit.org/show_bug.cgi?id=137469
+
+            Reviewed by Brent Fulgham.
+
+            Update our forward declaration to match the API provided by AVStreamSession.
+            AVStreamSession now takes an error: parameter in its initialiazer. It also provides the
+            sessionIdentifier used by the CDM, which CDMSessionMediaSourceAVFObjC will use as the
+            value of sessionId. Having this identifier allows us to fire a
+            secure-proof-of-key-release message after the client calls MediaKeySession.close().
+            Because this call will now generate messages, which have to be responded to in order
+            to remove those proofs from storage, do not clear the CDMSession from MediaKeySession
+            after calling close().
+
+            * Modules/encryptedmedia/MediaKeySession.cpp:
+            (WebCore::MediaKeySession::~MediaKeySession):
+            (WebCore::MediaKeySession::close):
+            (WebCore::MediaKeySession::setError): Deleted.
+            (WebCore::MediaKeySession::sessionId): Deleted.
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+            (WebCore::CDMSessionMediaSourceAVFObjC::setSessionId):
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (-[CDMSessionMediaSourceAVFObjCListener initWithParent:]):
+            (-[CDMSessionMediaSourceAVFObjCObserver dealloc]):
+            (-[CDMSessionMediaSourceAVFObjCObserver beginObserving:]):
+            (-[CDMSessionMediaSourceAVFObjCObserver stopObserving:]):
+            (-[CDMSessionMediaSourceAVFObjCObserver invalidate]):
+            (-[CDMSessionMediaSourceAVFObjCListener observeValueForKeyPath:ofObject:change:context:]):
+            (WebCore::CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC):
+            (WebCore::CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC):
+            (WebCore::CDMSessionMediaSourceAVFObjC::releaseKeys):
+            (WebCore::CDMSessionMediaSourceAVFObjC::update):
+            (WebCore::CDMSessionMediaSourceAVFObjC::addSourceBuffer):
+            (WebCore::CDMSessionMediaSourceAVFObjC::removeSourceBuffer):
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r173791. <rdar://problem/19424150>
 
     2014-09-19  Jer Noble  <jer.noble@apple.com>
