@@ -243,6 +243,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setStandalone(standalone);
 }
 
+- (BOOL)_diagnosticLoggingEnabled
+{
+    return _preferences->diagnosticLoggingEnabled();
+}
+
+- (void)_setDiagnosticLoggingEnabled:(BOOL)diagnosticLoggingEnabled
+{
+    _preferences->setDiagnosticLoggingEnabled(diagnosticLoggingEnabled);
+}
+
 @end
 
 #endif // WK_API_ENABLED

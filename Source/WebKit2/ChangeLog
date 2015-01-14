@@ -1,3 +1,18 @@
+2015-01-14  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Add private API to toggle diagnostic logging setting
+        https://bugs.webkit.org/show_bug.cgi?id=140464
+
+        Reviewed by Dan Bernstein.
+
+        Add private API to toggle diagnostic logging setting for iOS.
+        Previously, there was only a WK2 private C API for this.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _diagnosticLoggingEnabled]):
+        (-[WKPreferences _setDiagnosticLoggingEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2015-01-14  Anders Carlsson  <andersca@apple.com>
 
         Switch VisitedLinkProvider over to WebProcessLifetimeObserver

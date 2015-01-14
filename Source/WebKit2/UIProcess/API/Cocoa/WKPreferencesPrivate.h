@@ -58,6 +58,8 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
 
 @property (nonatomic, setter=_setStandalone:, getter=_isStandalone) BOOL _standalone WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
+@property (nonatomic, setter=_setDiagnosticLoggingEnabled:) BOOL _diagnosticLoggingEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 // FIXME: This should be configured on the WKWebsiteDataStore.
 // FIXME: This property should not have the verb "is" in it.
 @property (nonatomic, setter=_setOfflineApplicationCacheIsEnabled:) BOOL _offlineApplicationCacheIsEnabled;
