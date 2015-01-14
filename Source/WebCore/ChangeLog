@@ -1,5 +1,11 @@
 2015-01-13  Roger Fong  <roger_fong@apple.com>
 
+        [Unreviewed] Speculative test fix after r178390.
+
+        * html/canvas/WebGL1RenderingContext.idl:
+
+2015-01-13  Roger Fong  <roger_fong@apple.com>
+
         [Unreviewed] Windows build fix after r178390.
 
         * DerivedSources.cpp:

@@ -27,5 +27,5 @@
     Conditional=WEBGL,
     JSCustomMarkFunction,
     DoNotCheckConstants,
-] interface WebGL1RenderingContext : WebGLRenderingContextBase {
+] interface WebGLRenderingContext : WebGLRenderingContextBase {
 };
