@@ -506,6 +506,8 @@ static void webkitWebViewBaseConstructed(GObject* object)
 #if USE(TEXTURE_MAPPER_GL)
 static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* webViewBase, DrawingAreaProxyImpl* drawingArea, cairo_t* cr, GdkRectangle* clipRect)
 {
+    ASSERT(drawingArea);
+
     if (!drawingArea->isInAcceleratedCompositingMode())
         return false;
 
@@ -515,6 +517,8 @@ static bool webkitWebViewRenderAcceleratedCompositingResults(WebKitWebViewBase* 
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->redirectedWindow)
         return false;
+
+    priv->redirectedWindow->resize(drawingArea->size());
 
     if (cairo_surface_t* surface = priv->redirectedWindow->surface()) {
         cairo_rectangle(cr, clipRect->x, clipRect->y, clipRect->width, clipRect->height);
@@ -618,13 +622,15 @@ static void resizeWebKitWebViewBaseFromAllocation(WebKitWebViewBase* webViewBase
         gtk_widget_size_allocate(priv->authenticationDialog, &childAllocation);
     }
 
+    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
+
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
-    if (sizeChanged && webViewBase->priv->redirectedWindow)
-        webViewBase->priv->redirectedWindow->resize(viewRect.size());
+    if (sizeChanged && priv->redirectedWindow && drawingArea && drawingArea->isInAcceleratedCompositingMode())
+        priv->redirectedWindow->resize(viewRect.size());
 #endif
 
-    if (priv->pageProxy->drawingArea())
-        priv->pageProxy->drawingArea()->setSize(viewRect.size(), IntSize(), IntSize());
+    if (drawingArea)
+        drawingArea->setSize(viewRect.size(), IntSize(), IntSize());
 
 #if !GTK_CHECK_VERSION(3, 13, 4)
     webkitWebViewBaseNotifyResizerSize(webViewBase);

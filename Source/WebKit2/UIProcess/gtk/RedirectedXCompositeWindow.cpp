@@ -212,6 +212,9 @@ RedirectedXCompositeWindow::~RedirectedXCompositeWindow()
 
 void RedirectedXCompositeWindow::resize(const IntSize& size)
 {
+    if (size == m_size)
+        return;
+
     XResizeWindow(m_display, m_window, size.width(), size.height());
     XFlush(m_display);
 
