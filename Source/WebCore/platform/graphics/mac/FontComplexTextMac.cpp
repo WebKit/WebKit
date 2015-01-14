@@ -138,7 +138,7 @@ const SimpleFontData* Font::fontDataForCombiningCharacterSequence(const UChar* c
 
     bool triedBaseCharacterFontData = false;
 
-    for (unsigned i = 0; !fallbackRangesAt(i).isEmpty(); ++i) {
+    for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
         const SimpleFontData* simpleFontData = fallbackRangesAt(i).fontDataForCharacter(baseCharacter);
         if (!simpleFontData)
             continue;

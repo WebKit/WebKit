@@ -1,3 +1,12 @@
+2015-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix Mac build after r178388
+
+        FontRanges::isEmpty() -> FontRanges::isNull().
+
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::fontDataForCombiningCharacterSequence):
+
 2015-01-13  Antti Koivisto  <antti@apple.com>
 
         Devirtualize FontData
