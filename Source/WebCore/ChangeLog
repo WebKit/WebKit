@@ -1,3 +1,39 @@
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
+        Merged r171215. <rdar://problem/19424110>
+
+    2014-07-17  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] Re-enqueue after a removeCodedFrames() only if the removed frames overlap what may have possibly been enqueued but undisplayed.
+            https://bugs.webkit.org/show_bug.cgi?id=135039
+
+            Reviewed by Eric Carlson.
+
+            When a client calls removeCodedFrames(), we must re-enqueue those ranges if the removed samples overlap with
+            enqueued but possibly un-displayed samples. Otherwise, replacement samples may lead to decode errors as those
+            new samples dependencies are not met. But if we re-enqueue too frequently, this may cause subtle but noticible
+            display timing glitches, so only re-enqueue when removeCodedFrames have a possiblity of removing enqueued, but
+            not yet displayed samples.
+
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::removeCodedFrames):
+
+    2014-07-17  David Kilzer  <ddkilzer@apple.com>
+
+            SECTORDER_FLAGS should be defined in target's xcconfig file, not Base.xcconfig
+            <http://webkit.org/b/135006>
+
+            Reviewed by Darin Adler.
+
+            * Configurations/Base.xcconfig: Move SECTORDER_FLAGS to
+            WebCore.xcconfig.
+            * Configurations/DebugRelease.xcconfig: Remove empty
+            SECTORDER_FLAGS definition.
+            * Configurations/WebCoreTestShim.xcconfig: Ditto.
+            * Configurations/WebCoreTestSupport.xcconfig: Ditto.
+            * Configurations/WebCore.xcconfig: Use $(CONFIGURATION) so
+            SECTORDER_FLAGS is only set on Production builds.
+
 2015-01-07  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r178065. rdar://problem/19317526

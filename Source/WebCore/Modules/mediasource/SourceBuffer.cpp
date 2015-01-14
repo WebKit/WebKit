@@ -644,6 +644,13 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
                 trackBuffer.needsReenqueueing = true;
         }
 
+        // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
+        // not yet displayed samples.
+        PlatformTimeRanges possiblyEnqueuedRanges(currentMediaTime, trackBuffer.lastEnqueuedPresentationTime);
+        possiblyEnqueuedRanges.intersectWith(erasedRanges->ranges());
+        if (possiblyEnqueuedRanges.length())
+            trackBuffer.needsReenqueueing = true;
+
         erasedRanges->invert();
         m_buffered->intersectWith(*erasedRanges);
 
