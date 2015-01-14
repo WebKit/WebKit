@@ -33,8 +33,13 @@
 #include "CDMSession.h"
 #include "MediaKeyError.h"
 #include "MediaKeys.h"
+#include "MediaPlayer.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(MAC) && ENABLE(MEDIA_SOURCE)
+#include "CDMPrivateMediaSourceAVFObjC.h"
+#endif
 
 namespace WebCore {
 
@@ -62,6 +67,10 @@ static Vector<CDMFactory*>& installedCDMFactories()
 
         // FIXME: initialize specific UA CDMs. http://webkit.org/b/109318, http://webkit.org/b/109320
         cdms.get().append(new CDMFactory(CDMPrivateMediaPlayer::create, CDMPrivateMediaPlayer::supportsKeySystem, CDMPrivateMediaPlayer::supportsKeySystemAndMimeType));
+
+#if PLATFORM(MAC) && ENABLE(MEDIA_SOURCE)
+        cdms.get().append(new CDMFactory(CDMPrivateMediaSourceAVFObjC::create, CDMPrivateMediaSourceAVFObjC::supportsKeySystem, CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType));
+#endif
     }
 
     return cdms;
@@ -120,7 +129,10 @@ bool CDM::supportsMIMEType(const String& mimeType) const
 
 std::unique_ptr<CDMSession> CDM::createSession()
 {
-    return m_private->createSession();
+    std::unique_ptr<CDMSession> session = m_private->createSession();
+    if (mediaPlayer())
+        mediaPlayer()->setCDMSession(session.get());
+    return session;
 }
 
 MediaPlayer* CDM::mediaPlayer() const

@@ -144,7 +144,13 @@ bool MediaKeys::isTypeSupported(const String& keySystem, const String& mimeType)
 
 void MediaKeys::setMediaElement(HTMLMediaElement* element)
 {
+    if (m_mediaElement)
+        m_mediaElement->player()->setCDMSession(nullptr);
+
     m_mediaElement = element;
+
+    if (m_mediaElement && !m_sessions.isEmpty())
+        m_mediaElement->player()->setCDMSession(m_sessions.last()->session());
 }
 
 MediaPlayer* MediaKeys::cdmMediaPlayer(const CDM*) const

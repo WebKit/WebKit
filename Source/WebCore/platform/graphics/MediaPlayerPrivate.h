@@ -222,6 +222,7 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     virtual std::unique_ptr<CDMSession> createSession(const String&) { return nullptr; }
+    virtual void setCDMSession(CDMSession*) { }
 #endif
 
 #if ENABLE(VIDEO_TRACK)

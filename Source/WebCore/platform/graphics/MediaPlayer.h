@@ -359,6 +359,7 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     std::unique_ptr<CDMSession> createSession(const String& keySystem);
+    void setCDMSession(CDMSession*);
 #endif
 
     bool paused() const;
