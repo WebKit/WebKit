@@ -32,7 +32,7 @@
 #import "ScrollView.h"
 #import "WebCoreSystemInterface.h"
 #import <Carbon/Carbon.h>
-#include <wtf/StdLibExtras.h>
+#import <wtf/StdLibExtras.h>
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 @interface NSButtonCell(Details)
@@ -342,9 +342,9 @@ static void configureToggleButton(NSCell* cell, ControlPart buttonType, const Co
     updateStates(cell, states, isStateChange);
 }
     
-static NSButtonCell *createToggleButtonCell(ControlPart buttonType)
+static RetainPtr<NSButtonCell> createToggleButtonCell(ControlPart buttonType)
 {
-    NSButtonCell *toggleButtonCell = [[NSButtonCell alloc] init];
+    RetainPtr<NSButtonCell> toggleButtonCell = adoptNS([[NSButtonCell alloc] init]);
     
     if (buttonType == CheckboxPart) {
         [toggleButtonCell setButtonType:NSSwitchButton];
@@ -361,9 +361,7 @@ static NSButtonCell *createToggleButtonCell(ControlPart buttonType)
     
 static NSButtonCell *sharedRadioCell(const ControlStates* states, const IntSize& zoomedSize, float zoomFactor)
 {
-    static NSButtonCell *radioCell;
-    if (!radioCell)
-        radioCell = createToggleButtonCell(RadioPart);
+    static NSButtonCell *radioCell = createToggleButtonCell(RadioPart).leakRef();
 
     configureToggleButton(radioCell, RadioPart, states, zoomedSize, zoomFactor, false);
     return radioCell;
@@ -371,9 +369,7 @@ static NSButtonCell *sharedRadioCell(const ControlStates* states, const IntSize&
     
 static NSButtonCell *sharedCheckboxCell(const ControlStates* states, const IntSize& zoomedSize, float zoomFactor)
 {
-    static NSButtonCell *checkboxCell;
-    if (!checkboxCell)
-        checkboxCell = createToggleButtonCell(CheckboxPart);
+    static NSButtonCell *checkboxCell = createToggleButtonCell(CheckboxPart).leakRef();
 
     configureToggleButton(checkboxCell, CheckboxPart, states, zoomedSize, zoomFactor, false);
     return checkboxCell;
@@ -389,13 +385,13 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    NSButtonCell *toggleButtonCell = static_cast<NSButtonCell*>(controlStates->platformControl());
+    RetainPtr<NSButtonCell> toggleButtonCell = static_cast<NSButtonCell *>(controlStates->platformControl());
     IntSize zoomedRectSize = IntSize(zoomedRect.size());
 
     if (controlStates->isDirty()) {
         if (!toggleButtonCell)
             toggleButtonCell = createToggleButtonCell(buttonType);
-        configureToggleButton(toggleButtonCell, buttonType, controlStates, zoomedRectSize, zoomFactor, true);
+        configureToggleButton(toggleButtonCell.get(), buttonType, controlStates, zoomedRectSize, zoomFactor, true);
     } else {
         if (!toggleButtonCell) {
             if (buttonType == CheckboxPart)
@@ -405,7 +401,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
                 toggleButtonCell = sharedRadioCell(controlStates, zoomedRectSize, zoomFactor);
             }
         }
-        configureToggleButton(toggleButtonCell, buttonType, controlStates, zoomedRectSize, zoomFactor, false);
+        configureToggleButton(toggleButtonCell.get(), buttonType, controlStates, zoomedRectSize, zoomFactor, false);
     }
     controlStates->setDirty(false);
 
@@ -449,7 +445,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
 #endif
 
     if (!isAnimating && (controlStates->states() & ControlStates::FocusState))
-        needsRepaint = drawCellFocusRing(toggleButtonCell, inflatedRect, view);
+        needsRepaint = drawCellFocusRing(toggleButtonCell.get(), inflatedRect, view);
     [toggleButtonCell setControlView:nil];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
@@ -457,7 +453,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates* controlStat
 #endif
     controlStates->setNeedsRepaint(needsRepaint);
     if (needsRepaint)
-        controlStates->setPlatformControl(toggleButtonCell);
+        controlStates->setPlatformControl(toggleButtonCell.get());
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
