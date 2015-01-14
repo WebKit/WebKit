@@ -460,40 +460,43 @@ static TextFragment splitFragmentToFitLine(TextFragment& fragmentToSplit, float 
 
 static TextFragment nextFragment(unsigned previousFragmentEnd, const FlowContents& flowContents, float xPosition)
 {
-    // A fragment can have
+    // A fragment can either be
     // 1. new line character when preserveNewline is on (not considered as whitespace) or
     // 2. whitespace (collasped, non-collapsed multi or single) or
     // 3. non-whitespace characters.
-    const auto& style = flowContents.style();
     TextFragment fragment;
-    fragment.isLineBreak = flowContents.isLineBreak(previousFragmentEnd);
-    unsigned spaceCount = 0;
-    unsigned whitespaceEnd = previousFragmentEnd;
-    if (!fragment.isLineBreak)
-        whitespaceEnd = flowContents.findNextNonWhitespacePosition(previousFragmentEnd, spaceCount);
-    fragment.isWhitespaceOnly = previousFragmentEnd < whitespaceEnd;
     fragment.start = previousFragmentEnd;
-    if (fragment.isWhitespaceOnly)
-        fragment.end = whitespaceEnd;
-    else if (fragment.isLineBreak)
+    if (flowContents.isLineBreak(fragment.start)) {
+        fragment.isLineBreak = true;
         fragment.end = fragment.start + 1;
-    else
-        fragment.end = flowContents.findNextBreakablePosition(previousFragmentEnd + 1);
-    bool multiple = fragment.start + 1 < fragment.end;
-    fragment.isCollapsedWhitespace = multiple && fragment.isWhitespaceOnly && style.collapseWhitespace;
-    // Non-collapsed whitespace or just plain words when "break word on overflow" is on can wrap.
-    fragment.isBreakable = multiple && ((fragment.isWhitespaceOnly && !fragment.isCollapsedWhitespace) || (!fragment.isWhitespaceOnly && style.breakWordOnOverflow));
+        return fragment;
+    }
 
-    // Compute fragment width or just use the pre-computed whitespace widths.
-    unsigned fragmentLength = fragment.end - fragment.start;
-    if (fragment.isCollapsedWhitespace)
-        fragment.width = style.spaceWidth;
-    else if (fragment.isLineBreak)
-        fragment.width = 0; // Newline character's width is 0.
-    else if (fragmentLength == spaceCount) // Space only.
-        fragment.width = style.spaceWidth * spaceCount;
-    else
-        fragment.width = flowContents.textWidth(fragment.start, fragment.end, xPosition);
+    const auto& style = flowContents.style();
+    unsigned spaceCount = 0;
+    unsigned whitespaceEnd = flowContents.findNextNonWhitespacePosition(fragment.start, spaceCount);
+    ASSERT(fragment.start <= whitespaceEnd);
+    if (fragment.start != whitespaceEnd) {
+        fragment.isWhitespaceOnly = true;
+        fragment.end = whitespaceEnd;
+        bool multipleWhitespace = fragment.start + 1 < fragment.end;
+        fragment.isCollapsedWhitespace = multipleWhitespace && style.collapseWhitespace;
+        fragment.isBreakable = !fragment.isCollapsedWhitespace && multipleWhitespace;
+        if (fragment.isCollapsedWhitespace)
+            fragment.width = style.spaceWidth;
+        else {
+            unsigned fragmentLength = fragment.end - fragment.start;
+            if (fragmentLength == spaceCount)
+                fragment.width = fragmentLength * style.spaceWidth;
+            else
+                fragment.width = flowContents.textWidth(fragment.start, fragment.end, xPosition);
+        }
+        return fragment;
+    }
+
+    fragment.isBreakable = style.breakWordOnOverflow;
+    fragment.end = flowContents.findNextBreakablePosition(fragment.start + 1);
+    fragment.width = flowContents.textWidth(fragment.start, fragment.end, xPosition);
     return fragment;
 }
 

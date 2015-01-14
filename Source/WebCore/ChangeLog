@@ -1,3 +1,17 @@
+2015-01-13  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Refactor SimpleLineLayout::nextFragment().
+        https://bugs.webkit.org/show_bug.cgi?id=140407
+
+        Reviewed by Andreas Kling.
+
+        Simplify the code by using content specific branches with early returns.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::nextFragment):
+
 2015-01-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed iOS build fix after r178390.
