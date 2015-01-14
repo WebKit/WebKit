@@ -1,3 +1,14 @@
+2015-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed iOS build fix after r178390.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        m_type is undeclared.
+
+        * html/canvas/WebGLContextGroup.h:
+        Fix bad include.
+
 2015-01-13  Roger Fong  <roger_fong@apple.com>
 
         WebGL2: Support webgl2 context creation.

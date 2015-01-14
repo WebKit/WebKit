@@ -26,7 +26,7 @@
 #ifndef WebGLContextGroup_h
 #define WebGLContextGroup_h
 
-#include <WebGLRenderingContextBase.h>
+#include "WebGLRenderingContextBase.h"
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
