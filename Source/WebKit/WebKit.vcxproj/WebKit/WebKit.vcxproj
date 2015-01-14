@@ -609,7 +609,7 @@
     <ResourceCompile Include="..\..\win\WebKit.resources\WebKit.rc" />
   </ItemGroup>
   <ItemGroup> 
-    <MASM Include="..\plugins\win\PaintHooks.asm">
+    <MASM Include="..\..\win\Plugins\PaintHooks.asm">
  	  <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild> 
  	  <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild> 
  	  <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild> 

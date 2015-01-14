@@ -739,7 +739,7 @@
     <CustomBuild Include="..\..\mac\Configurations\Version.xcconfig" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="..\plugins\win\PaintHooks.asm">
+    <MASM Include="..\..\win\Plugins\PaintHooks.asm">
       <Filter>Sources\Plugins</Filter>
     </MASM>
   </ItemGroup>

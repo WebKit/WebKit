@@ -1,3 +1,13 @@
+2015-01-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Build fix after r178255.
+
+        Correct path to PaintHooks.asm. This causes a build failure if you perform a
+        clean build from a new subversion checkout.
+
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters:
+
 2015-01-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build fix after r178219.
