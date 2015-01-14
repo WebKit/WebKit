@@ -1,6 +1,6 @@
 <style>
 section {
-    height: 200px;
+    height: 400px;
     width: 300px;
     position: relative;
 }
@@ -10,16 +10,24 @@ p {
     margin: 0;
 }
 
-.filtered {
+.parent {
     position: absolute;
     left: 150px;
     top: 0;
     width: 150px;
+}
+
+.filtered {
     background: white;
     -webkit-filter: invert();
 }
+
 </style>
 <section>
 <p class="break-after">Hello</p>
-<p class="filtered">World</p>
+<div class="parent">
+    <p>Normal</p>
+    <p class="filtered">World</p>
+    <p>Normal</p>
+</div>
 </section>

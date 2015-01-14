@@ -16,6 +16,24 @@
         https://bugs.webkit.org/show_bug.cgi?id=140331
         <rdar://problem/19313858>
 
+        Unreviewed followup after discussion with Simon Fraser.
+
+        Add a new test that exercises nested blocks inside columns. Also
+        use valid properties in my existing tests :)
+
+        * fast/multicol/clip-in-columns-expected.html:
+        * fast/multicol/clip-in-columns.html:
+        * fast/multicol/filter-in-columns-expected.html:
+        * fast/multicol/filter-in-columns.html:
+        * fast/multicol/nested-filter-in-columns-expected.html: Copied from LayoutTests/fast/multicol/filter-in-columns-expected.html.
+        * fast/multicol/nested-filter-in-columns.html: Copied from LayoutTests/fast/multicol/filter-in-columns.html.
+
+2015-01-13  Dean Jackson  <dino@apple.com>
+
+        Filters aren't applied to elements in columns after the first
+        https://bugs.webkit.org/show_bug.cgi?id=140331
+        <rdar://problem/19313858>
+
         Reviewed by Simon Fraser.
 
         Tests for filters and clipping on a column other

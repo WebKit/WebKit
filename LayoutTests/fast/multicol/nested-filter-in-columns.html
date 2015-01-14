@@ -1,8 +1,8 @@
 <style>
 section {
-    columns: 2;
+    column-count: 2;
     column-gap: 0;
-    height: 200px;
+    height: 400px;
     width: 300px;
 }
 
@@ -15,13 +15,16 @@ p {
     -webkit-column-break-after: always;
 }
 
-.clipped {
-    background: blue;
-    color: white;
-    -webkit-clip-path: polygon(5px 5px, 60px 5px, 60px 20px, 5px 20px);
+.filtered {
+    background: white;
+    -webkit-filter: invert();
 }
 </style>
 <section>
 <p class="break-after">Hello</p>
-<p class="clipped">World</p>
+<div class="parent">
+    <p>Normal</p>
+    <p class="filtered">World</p>
+    <p>Normal</p>
+</div>
 </section>
