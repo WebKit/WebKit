@@ -1,3 +1,25 @@
+2015-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Add willOpen and didClose member functions to WebProcessLifetimeObserver
+        https://bugs.webkit.org/show_bug.cgi?id=140449
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::addVisitedLinkHash):
+        (WebKit::VisitedLinkProvider::webProcessWillOpenConnection):
+        (WebKit::VisitedLinkProvider::webProcessDidCloseConnection):
+        * UIProcess/VisitedLinkProvider.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        * UIProcess/WebProcessLifetimeObserver.cpp:
+        (WebKit::WebProcessLifetimeObserver::addWebPage):
+        (WebKit::WebProcessLifetimeObserver::removeWebPage):
+        * UIProcess/WebProcessLifetimeObserver.h:
+        (WebKit::WebProcessLifetimeObserver::webProcessWillOpenConnection):
+        (WebKit::WebProcessLifetimeObserver::webProcessDidCloseConnection):
+
 2015-01-14  Dan Bernstein  <mitz@apple.com>
 
         Added availability annotations to some modern Cocoa SPI.

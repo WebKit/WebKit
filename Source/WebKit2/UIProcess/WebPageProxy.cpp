@@ -380,6 +380,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_viewStateChangeWantsSynchronousReply(false)
     , m_isPlayingAudio(false)
 {
+    m_webProcessLifetimeTracker.addObserver(m_visitedLinkProvider);
+
     m_websiteDataStore->addWebPage(*this);
 
     if (m_process->state() == WebProcessProxy::State::Running) {
@@ -708,6 +710,8 @@ void WebPageProxy::close()
     m_contextMenuClient.initialize(0);
 #endif
 
+    m_webProcessLifetimeTracker.pageWasInvalidated();
+
     m_process->send(Messages::WebPage::Close(), m_pageID);
     m_process->removeWebPage(m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
@@ -715,8 +719,6 @@ void WebPageProxy::close()
     m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
 
     m_websiteDataStore->removeWebPage(*this);
-
-    m_webProcessLifetimeTracker.pageWasInvalidated();
 }
 
 bool WebPageProxy::tryClose()

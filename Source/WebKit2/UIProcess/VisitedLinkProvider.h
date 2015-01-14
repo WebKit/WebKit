@@ -59,6 +59,10 @@ private:
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
+    // WebProcessLifetimeObserver
+    virtual void webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&) override;
+    virtual void webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&) override;
+
     void addVisitedLinkHashFromPage(uint64_t pageID, WebCore::LinkHash);
 
     void pendingVisitedLinksTimerFired();

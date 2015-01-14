@@ -26,6 +26,12 @@
 #ifndef WebProcessLifetimeObserver_h
 #define WebProcessLifetimeObserver_h
 
+#include <wtf/HashCountedSet.h>
+
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -40,6 +46,10 @@ public:
     void removeWebPage(WebPageProxy&);
 
 private:
+    virtual void webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&) { }
+    virtual void webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&) { }
+
+    HashCountedSet<WebProcessProxy*> m_processes;
 };
 
 }

@@ -41,12 +41,24 @@ WebProcessLifetimeObserver::~WebProcessLifetimeObserver()
 
 void WebProcessLifetimeObserver::addWebPage(WebPageProxy& webPageProxy)
 {
-    ASSERT(webPageProxy.process().state() == WebProcessProxy::State::Running);
+    auto& process = webPageProxy.process();
+
+    ASSERT(process.state() == WebProcessProxy::State::Running);
+
+    if (m_processes.add(&process).isNewEntry)
+        webProcessWillOpenConnection(process, *process.connection());
 }
 
 void WebProcessLifetimeObserver::removeWebPage(WebPageProxy& webPageProxy)
 {
-    ASSERT(webPageProxy.isClosed() || webPageProxy.process().state() != WebProcessProxy::State::Running);
+    auto& process = webPageProxy.process();
+
+    // FIXME: This should assert that the page is either closed or that the process is no longer running,
+    // but we have to make sure that removeWebPage is called after the connection has been removed in that case.
+    ASSERT(m_processes.contains(&process));
+
+    if (m_processes.remove(&process))
+        webProcessDidCloseConnection(process, *process.connection());
 }
 
 }
