@@ -757,6 +757,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioRenderer(AVSampleBufferAud
     m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::characteristicsChanged()
+{
+    m_player->characteristicChanged();
+}
+
 }
 
 #endif
