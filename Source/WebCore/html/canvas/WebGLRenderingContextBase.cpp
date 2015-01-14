@@ -450,7 +450,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     
     if (isPendingPolicyResolution) {
         LOG(WebGL, "Create a WebGL context that looks real, but will require a policy resolution if used.");
-        std::unique_ptr<WebGLRenderingContextBase> renderingContext = nil;
+        std::unique_ptr<WebGLRenderingContextBase> renderingContext = nullptr;
         if (type == "experimental-webgl2")
             renderingContext = std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, attributes));
         else
@@ -469,7 +469,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(HTM
     if (extensions->supports("GL_EXT_debug_marker"))
         extensions->pushGroupMarkerEXT("WebGLRenderingContext");
     
-    std::unique_ptr<WebGLRenderingContextBase> renderingContext = nil;
+    std::unique_ptr<WebGLRenderingContextBase> renderingContext = nullptr;
     if (type == "experimental-webgl2")
         renderingContext = std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, context, attributes));
     else

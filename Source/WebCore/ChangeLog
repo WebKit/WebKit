@@ -1,3 +1,14 @@
+2015-01-13  Roger Fong  <roger_fong@apple.com>
+
+        [Unreviewed] Windows build fix after r178390.
+
+        * DerivedSources.cpp:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+
 2015-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         NSButtonCell leak allocated under WebCore::paintToggleButton
