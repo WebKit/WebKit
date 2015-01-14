@@ -48,7 +48,7 @@ struct RefLogger {
 };
 
 struct DerivedRefLogger : RefLogger {
-    DerivedRefLogger(const char* name) : RefLogger(name) { }
+    DerivedRefLogger(const char* name) : RefLogger(name) { log().str(""); }
 };
 
 }

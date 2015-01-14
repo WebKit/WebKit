@@ -1,3 +1,15 @@
+2015-01-13  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Fix TestWTF failed in TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=140333
+
+        Reviewed by Sam Weinig.
+
+        Clear the std::ostringstream before starting test.
+
+        * TestWebKitAPI/Tests/WTF/RefLogger.h:
+        (TestWebKitAPI::DerivedRefLogger::DerivedRefLogger):
+
 2015-01-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         TestWebKitWebContext depends on British English spellcheck dictionary
