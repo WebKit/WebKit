@@ -1,3 +1,16 @@
+2015-01-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Layout Test fast/css/crash-on-custom-cursor-when-loading.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=140425
+
+        Reviewed by Anders Carlsson.
+
+        * platform/win/CursorWin.cpp:
+        (WebCore::createSharedCursor): Return nullptr when operating system
+        cannot support the requested icon specification.
+        (WebCore::Cursor::ensurePlatformCursor): Check for 'createSharedCursor'
+        returning nullptr, and fall back to the default icon construction.
+
 2015-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r178367): [GStreamer] Several media tests time out after r178367

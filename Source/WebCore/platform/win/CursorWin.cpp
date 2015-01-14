@@ -53,8 +53,9 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
     HWndDC dc(0);
     auto workingDC = adoptGDIObject(::CreateCompatibleDC(dc));
     if (doAlpha) {
-        auto hCursor = adoptGDIObject(::CreateDIBSection(dc, (BITMAPINFO *)&cursorImage, DIB_RGB_COLORS, 0, 0, 0));
-        ASSERT(hCursor);
+        auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, nullptr, 0, 0));
+        if (!hCursor)
+            return nullptr;
 
         img->getHBITMAP(hCursor.get()); 
         HBITMAP hOldBitmap = (HBITMAP)SelectObject(workingDC.get(), hCursor.get());
@@ -78,8 +79,10 @@ static PassRefPtr<SharedCursor> createSharedCursor(Image* img, const IntPoint& h
         // to create the mask manually
         auto andMaskDC = adoptGDIObject(::CreateCompatibleDC(dc));
         auto xorMaskDC = adoptGDIObject(::CreateCompatibleDC(dc));
-        auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, 0, 0, 0));
-        ASSERT(hCursor);
+        auto hCursor = adoptGDIObject(::CreateDIBSection(dc, &cursorImage, DIB_RGB_COLORS, nullptr, 0, 0));
+        if (!hCursor)
+            return nullptr;
+
         img->getHBITMAP(hCursor.get()); 
         BITMAP cursor;
         GetObject(hCursor.get(), sizeof(BITMAP), &cursor);
@@ -250,6 +253,8 @@ void Cursor::ensurePlatformCursor() const
         break;
     case Cursor::Custom:
         m_platformCursor = createSharedCursor(m_image.get(), m_hotSpot);
+        if (!m_platformCursor)
+            m_platformCursor = loadSharedCursor(0, IDC_ARROW);
         break;
     default:
         ASSERT_NOT_REACHED();
