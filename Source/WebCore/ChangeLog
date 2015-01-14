@@ -1,5 +1,32 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r173791. <rdar://problem/19424150>
+
+    2014-09-19  Jer Noble  <jer.noble@apple.com>
+
+            [EME][Mac] Support secure proof of key release in the com.apple.fps.2_0 keysystem.
+            https://bugs.webkit.org/show_bug.cgi?id=136898
+
+            Reviewed by Eric Carlson.
+
+            Add support for proof of key release to the CDM by supporting a new "mime" type called
+            "keyrelease". When a session of type "keyrelease" is created, the initData is the server
+            certificate, the keyMessage contains the first stored proof of key release if present,
+            and closing the session will remove that proof from storage.
+
+            * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+            (WebCore::CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType):
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (WebCore::CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC):
+            (WebCore::CDMSessionMediaSourceAVFObjC::generateKeyRequest):
+            (WebCore::CDMSessionMediaSourceAVFObjC::releaseKeys):
+            (WebCore::sessionStorageDirectory):
+            (WebCore::CDMSessionMediaSourceAVFObjC::update):
+            (WebCore::CDMSessionMediaSourceAVFObjC::generateKeyReleaseMessage):
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r173520. <rdar://problem/19424149>
 
     2014-09-11  Jer Noble  <jer.noble@apple.com>
