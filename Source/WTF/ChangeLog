@@ -1,3 +1,9 @@
+2015-01-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r163330.
+
+        * wtf/Platform.h: Use C style comment.
+
 2015-01-14  Marc Juul  <juul@sudomesh.org>
 
         C++ style comment was preventing compile if CPU(ARM_NEON)
