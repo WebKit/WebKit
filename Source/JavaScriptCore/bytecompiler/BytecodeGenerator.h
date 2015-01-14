@@ -277,7 +277,7 @@ namespace JSC {
 
         void setIsNumericCompareFunction(bool isNumericCompareFunction);
 
-        bool willResolveToArgumentsRegister(const Identifier&);
+        bool willResolveToArguments(const Identifier&);
 
         bool hasSafeLocalArgumentsRegister() { return m_localArgumentsRegister; }
         RegisterID* uncheckedLocalArgumentsRegister();

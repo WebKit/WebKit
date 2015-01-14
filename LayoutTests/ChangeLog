@@ -1,3 +1,17 @@
+2015-01-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r178432.
+        https://bugs.webkit.org/show_bug.cgi?id=140460
+
+        Caused 20 JSC Test Failures (Requested by JoePeck on #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION (r174226): Header on huffingtonpost.com is too
+        large"
+        https://bugs.webkit.org/show_bug.cgi?id=140306
+        http://trac.webkit.org/changeset/178432
+
 2015-01-14  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r174226): Header on huffingtonpost.com is too large
