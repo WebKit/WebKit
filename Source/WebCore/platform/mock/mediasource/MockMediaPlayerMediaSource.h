@@ -71,18 +71,18 @@ private:
     virtual bool seeking() const override;
     virtual bool paused() const override;
     virtual MediaPlayer::NetworkState networkState() const override;
-    virtual double maxTimeSeekableDouble() const override;
+    virtual MediaTime maxMediaTimeSeekable() const override;
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
     virtual bool didLoadingProgress() const override;
     virtual void setSize(const IntSize&) override;
     virtual void paint(GraphicsContext*, const IntRect&) override;
-    virtual double currentTimeDouble() const override;
-    virtual double durationDouble() const override;
-    virtual void seekWithTolerance(double time, double, double) override;
+    virtual MediaTime currentMediaTime() const override;
+    virtual MediaTime durationMediaTime() const override;
+    virtual void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override;
     virtual unsigned long totalVideoFrames() override;
     virtual unsigned long droppedVideoFrames() override;
     virtual unsigned long corruptedVideoFrames() override;
-    virtual double totalFrameDelay() override;
+    virtual MediaTime totalFrameDelay() override;
 
     MediaPlayer* m_player;
     RefPtr<MockMediaSourcePrivate> m_mediaSourcePrivate;

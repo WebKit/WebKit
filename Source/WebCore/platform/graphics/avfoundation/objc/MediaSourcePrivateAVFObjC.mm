@@ -94,7 +94,7 @@ void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate* buffer)
 
 MediaTime MediaSourcePrivateAVFObjC::duration()
 {
-    return MediaTime::createWithDouble(m_client->duration());
+    return m_client->duration();
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaSourcePrivateAVFObjC::buffered()

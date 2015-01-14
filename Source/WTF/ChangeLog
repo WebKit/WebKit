@@ -1,3 +1,21 @@
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
+        Merged r173318. <rdar://problem/19424143>
+
+    2014-06-06  Jer Noble  <jer.noble@apple.com>
+
+            Refactoring: make MediaTime the primary time type for audiovisual times.
+            https://bugs.webkit.org/show_bug.cgi?id=133579
+
+            Reviewed by Eric Carlson.
+
+            Add a unary minus operator, and add unimplemented private casting operators, to make
+            unintentional double->MediaTime and MediaTime->double casts hard errors.
+
+            * wtf/MediaTime.cpp:
+            (WTF::MediaTime::operator-):
+            * wtf/MediaTime.h:
+
 2014-10-29  Lucas Forschler  <lforschler@apple.com>
 
         Merge parts of 172749 for rdar://problem/18757166

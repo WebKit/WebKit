@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/MathExtras.h>
+#include <wtf/MediaTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TriState.h>
 
@@ -468,6 +469,11 @@ ALWAYS_INLINE JSValue jsNumber(double d)
 {
     ASSERT(JSValue(d).isNumber());
     return JSValue(d);
+}
+
+ALWAYS_INLINE JSValue jsNumber(MediaTime t)
+{
+    return jsNumber(t.toDouble());
 }
 
 ALWAYS_INLINE JSValue jsNumber(char i)

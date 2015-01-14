@@ -50,12 +50,12 @@ public:
 private:
     InbandDataTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
-    virtual void addDataCue(InbandTextTrackPrivate*, double start, double end, const void*, unsigned) override;
+    virtual void addDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, const void*, unsigned) override;
 
 #if ENABLE(DATACUE_VALUE)
-    virtual void addDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>, const String&) override;
-    virtual void updateDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>) override;
-    virtual void removeDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>) override;
+    virtual void addDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>, const String&) override;
+    virtual void updateDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>) override;
+    virtual void removeDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>) override;
     virtual void removeCue(TextTrackCue*, ExceptionCode&) override;
 
     HashMap<RefPtr<SerializedPlatformRepresentation>, RefPtr<DataCue>> m_incompleteCueMap;

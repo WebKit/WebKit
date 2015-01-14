@@ -171,7 +171,7 @@ void MediaController::setCurrentTime(double time)
     
     // Seek each slaved media element to the new playback position relative to the media element timeline.
     for (size_t index = 0; index < m_mediaElements.size(); ++index)
-        m_mediaElements[index]->seek(time);
+        m_mediaElements[index]->seek(MediaTime::createWithDouble(time));
 
     scheduleTimeupdateEvent();
 }
@@ -479,7 +479,7 @@ void MediaController::bringElementUpToSpeed(HTMLMediaElement* element)
     // When the user agent is to bring a media element up to speed with its new media controller,
     // it must seek that media element to the MediaController's media controller position relative
     // to the media element's timeline.
-    element->seekInternal(currentTime());
+    element->seekInternal(MediaTime::createWithDouble(currentTime()));
 }
 
 bool MediaController::isBlocked() const

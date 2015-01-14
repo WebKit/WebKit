@@ -69,12 +69,12 @@ private:
     virtual void languageChanged(TrackPrivateBase*, const AtomicString&) override;
     virtual void willRemove(TrackPrivateBase*) override;
 
-    virtual void addDataCue(InbandTextTrackPrivate*, double, double, const void*, unsigned) override { ASSERT_NOT_REACHED(); }
+    virtual void addDataCue(InbandTextTrackPrivate*, const MediaTime&, const MediaTime&, const void*, unsigned) override { ASSERT_NOT_REACHED(); }
 
 #if ENABLE(DATACUE_VALUE)
-    virtual void addDataCue(InbandTextTrackPrivate*, double, double, PassRefPtr<SerializedPlatformRepresentation>, const String&) override { ASSERT_NOT_REACHED(); }
-    virtual void updateDataCue(InbandTextTrackPrivate*, double, double, PassRefPtr<SerializedPlatformRepresentation>) override  { ASSERT_NOT_REACHED(); }
-    virtual void removeDataCue(InbandTextTrackPrivate*, double, double, PassRefPtr<SerializedPlatformRepresentation>) override  { ASSERT_NOT_REACHED(); }
+    virtual void addDataCue(InbandTextTrackPrivate*, const MediaTime&, const MediaTime&, PassRefPtr<SerializedPlatformRepresentation>, const String&) override { ASSERT_NOT_REACHED(); }
+    virtual void updateDataCue(InbandTextTrackPrivate*, const MediaTime&, const MediaTime&, PassRefPtr<SerializedPlatformRepresentation>) override  { ASSERT_NOT_REACHED(); }
+    virtual void removeDataCue(InbandTextTrackPrivate*, const MediaTime&, const MediaTime&, PassRefPtr<SerializedPlatformRepresentation>) override  { ASSERT_NOT_REACHED(); }
 #endif
 
     virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) override { ASSERT_NOT_REACHED(); }
@@ -85,7 +85,7 @@ private:
     virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const char*, unsigned) override { ASSERT_NOT_REACHED(); }
     virtual void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) override { ASSERT_NOT_REACHED(); }
 
-    virtual double startTimeVariance() const;
+    virtual MediaTime startTimeVariance() const;
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     virtual InbandTextTrackPrivate* privateTrack() override { return m_private.get(); }

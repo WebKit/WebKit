@@ -47,7 +47,7 @@ public:
     virtual AtomicString inBandMetadataTrackDispatchType() const override { return m_inBandMetadataTrackDispatchType; }
     void setInBandMetadataTrackDispatchType(const AtomicString& value) { m_inBandMetadataTrackDispatchType = value; }
 
-    void addDataCue(double start, double end, const void* data, unsigned length)
+    void addDataCue(const MediaTime& start, const MediaTime& end, const void* data, unsigned length)
     {
         ASSERT(cueFormat() == Data);
         client()->addDataCue(this, start, end, data, length);

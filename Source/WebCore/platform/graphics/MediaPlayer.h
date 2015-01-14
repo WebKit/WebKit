@@ -366,14 +366,13 @@ public:
     bool seeking() const;
 
     static double invalidTime() { return -1.0;}
-    double duration() const;
-    double currentTime() const;
-    void seek(double time);
-    void seekWithTolerance(double time, double negativeTolerance, double positiveTolerance);
+    MediaTime duration() const;
+    MediaTime currentTime() const;
+    void seek(const MediaTime&);
+    void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance);
 
-    double startTime() const;
-
-    double initialTime() const;
+    MediaTime startTime() const;
+    MediaTime initialTime() const;
 
     double rate() const;
     void setRate(double);
@@ -383,8 +382,8 @@ public:
 
     std::unique_ptr<PlatformTimeRanges> buffered();
     std::unique_ptr<PlatformTimeRanges> seekable();
-    double minTimeSeekable();
-    double maxTimeSeekable();
+    MediaTime minTimeSeekable();
+    MediaTime maxTimeSeekable();
 
     bool didLoadingProgress();
 
@@ -506,7 +505,7 @@ public:
 
     bool didPassCORSAccessCheck() const;
 
-    double mediaTimeForTimeValue(double) const;
+    MediaTime mediaTimeForTimeValue(const MediaTime&) const;
 
     double maximumDurationToCacheMediaTime() const;
 
@@ -587,7 +586,7 @@ public:
     unsigned long totalVideoFrames();
     unsigned long droppedVideoFrames();
     unsigned long corruptedVideoFrames();
-    double totalFrameDelay();
+    MediaTime totalFrameDelay();
 #endif
 
     bool shouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&);

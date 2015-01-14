@@ -1485,3 +1485,6 @@ webkit.org/b/135160 media/track/track-long-word-container-sizing.html [ Pass Fai
 platform/mac/accessibility/select-text.html [ Failure ]
 fast/text/systemFont.html [ Failure ]
 fast/text/vertical-no-sideways.html [ Failure ]
+
+webkit.org/b/136532 [ MountainLion ] media/audio-data-url.html [ Failure ]
+webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Failure ]

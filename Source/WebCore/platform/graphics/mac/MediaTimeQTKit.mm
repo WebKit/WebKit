@@ -23,43 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OutOfBandTextTrackPrivateAVF_h
-#define OutOfBandTextTrackPrivateAVF_h
+#include "config.h"
+#include "MediaTimeQTKit.h"
 
-#if ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS)) && ENABLE(AVF_CAPTIONS)
+#if PLATFORM(MAC)
 
-#include "InbandTextTrackPrivateAVF.h"
+#import "SoftLinking.h"
+#import <QTKit/QTTime.h>
 
-OBJC_CLASS AVMediaSelectionOption;
+SOFT_LINK_FRAMEWORK(QTKit);
+SOFT_LINK_CONSTANT(QTKit, QTIndefiniteTime, QTTime);
+SOFT_LINK_CONSTANT(QTKit, QTZeroTime, QTTime);
+SOFT_LINK(QTKit, QTTimeCompare, NSComparisonResult, (QTTime time, QTTime otherTime), (time, otherTime));
+SOFT_LINK(QTKit, QTMakeTime, QTTime, (long long timeValue, long timeScale), (timeValue, timeScale));
 
 namespace WebCore {
-    
-class OutOfBandTextTrackPrivateAVF : public InbandTextTrackPrivateAVF {
-public:
-    static PassRefPtr<OutOfBandTextTrackPrivateAVF> create(AVFInbandTrackParent* player,  AVMediaSelectionOption* selection)
-    {
-        return adoptRef(new OutOfBandTextTrackPrivateAVF(player, selection));
-    }
-    
-    virtual void processCue(CFArrayRef, CFArrayRef, const MediaTime&) override { }
-    virtual void resetCueValues() override { }
-    
-    virtual Category textTrackCategory() const override { return OutOfBand; }
-    
-    AVMediaSelectionOption* mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
-    
-protected:
-    OutOfBandTextTrackPrivateAVF(AVFInbandTrackParent* player, AVMediaSelectionOption* selection)
-        : InbandTextTrackPrivateAVF(player, InbandTextTrackPrivate::Generic)
-        , m_mediaSelectionOption(selection)
-    {
-    }
-    
-    RetainPtr<AVMediaSelectionOption> m_mediaSelectionOption;
-};
-    
+
+MediaTime toMediaTime(const QTTime& qtTime)
+{
+    if (qtTime.flags & kQTTimeIsIndefinite)
+        return MediaTime::indefiniteTime();
+    return MediaTime(qtTime.timeValue, qtTime.timeScale);
+}
+
+QTTime toQTTime(const MediaTime& mediaTime)
+{
+    if (mediaTime.isIndefinite() || mediaTime.isInvalid())
+        return getQTIndefiniteTime();
+    if (!mediaTime)
+        return getQTZeroTime();
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    return QTMakeTime(mediaTime.timeValue(), mediaTime.timeScale());
+#pragma clang diagnostic pop
+}
+
 }
 
 #endif
-
-#endif // OutOfBandTextTrackPrivateAVF_h
