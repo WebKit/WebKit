@@ -31,16 +31,16 @@
 
 #include "WebGLContextGroup.h"
 #include "WebGLFramebuffer.h"
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-PassRefPtr<WebGLTexture> WebGLTexture::create(WebGLRenderingContextBase* ctx)
+PassRefPtr<WebGLTexture> WebGLTexture::create(WebGLRenderingContext* ctx)
 {
     return adoptRef(new WebGLTexture(ctx));
 }
 
-WebGLTexture::WebGLTexture(WebGLRenderingContextBase* ctx)
+WebGLTexture::WebGLTexture(WebGLRenderingContext* ctx)
     : WebGLSharedObject(ctx)
     , m_target(0)
     , m_minFilter(GraphicsContext3D::NEAREST_MIPMAP_LINEAR)

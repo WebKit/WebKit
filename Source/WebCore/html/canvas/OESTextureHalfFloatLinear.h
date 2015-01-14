@@ -32,7 +32,7 @@ namespace WebCore {
 
 class OESTextureHalfFloatLinear final : public WebGLExtension {
 public:
-    OESTextureHalfFloatLinear(WebGLRenderingContextBase*);
+    OESTextureHalfFloatLinear(WebGLRenderingContext*);
     virtual ~OESTextureHalfFloatLinear();
 
     virtual ExtensionName getName() const override;

@@ -32,10 +32,10 @@ namespace WebCore {
 
 class WebGLCompressedTexturePVRTC final : public WebGLExtension {
 public:
-    explicit WebGLCompressedTexturePVRTC(WebGLRenderingContextBase*);
+    explicit WebGLCompressedTexturePVRTC(WebGLRenderingContext*);
     virtual ~WebGLCompressedTexturePVRTC();
 
-    static bool supported(WebGLRenderingContextBase*);
+    static bool supported(WebGLRenderingContext*);
     virtual ExtensionName getName() const override;
 };
 

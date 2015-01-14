@@ -30,16 +30,16 @@
 #include "WebGLShader.h"
 
 #include "WebGLContextGroup.h"
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-PassRefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContextBase* ctx, GC3Denum type)
+PassRefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContext* ctx, GC3Denum type)
 {
     return adoptRef(new WebGLShader(ctx, type));
 }
 
-WebGLShader::WebGLShader(WebGLRenderingContextBase* ctx, GC3Denum type)
+WebGLShader::WebGLShader(WebGLRenderingContext* ctx, GC3Denum type)
     : WebGLSharedObject(ctx)
     , m_type(type)
     , m_source("")

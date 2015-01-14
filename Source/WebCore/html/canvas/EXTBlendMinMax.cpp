@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-EXTBlendMinMax::EXTBlendMinMax(WebGLRenderingContextBase* context)
+EXTBlendMinMax::EXTBlendMinMax(WebGLRenderingContext* context)
     : WebGLExtension(context)
 {
 }

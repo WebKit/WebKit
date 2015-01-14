@@ -30,16 +30,16 @@
 #include "WebGLVertexArrayObjectOES.h"
 
 #include "Extensions3D.h"
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-PassRefPtr<WebGLVertexArrayObjectOES> WebGLVertexArrayObjectOES::create(WebGLRenderingContextBase* ctx, VaoType type)
+PassRefPtr<WebGLVertexArrayObjectOES> WebGLVertexArrayObjectOES::create(WebGLRenderingContext* ctx, VaoType type)
 {
     return adoptRef(new WebGLVertexArrayObjectOES(ctx, type));
 }
 
-WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES(WebGLRenderingContextBase* ctx, VaoType type)
+WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES(WebGLRenderingContext* ctx, VaoType type)
     : WebGLContextObject(ctx)
     , m_type(type)
     , m_hasEverBeenBound(false)

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-EXTShaderTextureLOD::EXTShaderTextureLOD(WebGLRenderingContextBase* context)
+EXTShaderTextureLOD::EXTShaderTextureLOD(WebGLRenderingContext* context)
     : WebGLExtension(context)
 {
 }

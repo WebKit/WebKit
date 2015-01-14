@@ -30,7 +30,7 @@
 #include "WebGLContextGroup.h"
 
 #include "GraphicsContext3D.h"
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
 #include "WebGLSharedObject.h"
 
 namespace WebCore {
@@ -53,16 +53,16 @@ WebGLContextGroup::~WebGLContextGroup()
 GraphicsContext3D* WebGLContextGroup::getAGraphicsContext3D()
 {
     ASSERT(!m_contexts.isEmpty());
-    HashSet<WebGLRenderingContextBase*>::iterator it = m_contexts.begin();
+    HashSet<WebGLRenderingContext*>::iterator it = m_contexts.begin();
     return (*it)->graphicsContext3D();
 }
 
-void WebGLContextGroup::addContext(WebGLRenderingContextBase* context)
+void WebGLContextGroup::addContext(WebGLRenderingContext* context)
 {
     m_contexts.add(context);
 }
 
-void WebGLContextGroup::removeContext(WebGLRenderingContextBase* context)
+void WebGLContextGroup::removeContext(WebGLRenderingContext* context)
 {
     // We must call detachAndRemoveAllObjects before removing the last context.
     if (m_contexts.size() == 1 && m_contexts.contains(context))
@@ -89,9 +89,9 @@ void WebGLContextGroup::detachAndRemoveAllObjects()
     }
 }
 
-void WebGLContextGroup::loseContextGroup(WebGLRenderingContextBase::LostContextMode mode)
+void WebGLContextGroup::loseContextGroup(WebGLRenderingContext::LostContextMode mode)
 {
-    for (HashSet<WebGLRenderingContextBase*>::iterator it = m_contexts.begin(); it != m_contexts.end(); ++it)
+    for (HashSet<WebGLRenderingContext*>::iterator it = m_contexts.begin(); it != m_contexts.end(); ++it)
         (*it)->loseContextImpl(mode);
 
     detachAndRemoveAllObjects();

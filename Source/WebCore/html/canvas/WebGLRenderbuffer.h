@@ -37,7 +37,7 @@ class WebGLRenderbuffer final : public WebGLSharedObject {
 public:
     virtual ~WebGLRenderbuffer();
 
-    static PassRefPtr<WebGLRenderbuffer> create(WebGLRenderingContextBase*);
+    static PassRefPtr<WebGLRenderbuffer> create(WebGLRenderingContext*);
 
     void setInternalFormat(GC3Denum internalformat)
     {
@@ -65,7 +65,7 @@ public:
     void setHasEverBeenBound() { m_hasEverBeenBound = true; }
 
 protected:
-    WebGLRenderbuffer(WebGLRenderingContextBase*);
+    WebGLRenderbuffer(WebGLRenderingContext*);
 
     virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 

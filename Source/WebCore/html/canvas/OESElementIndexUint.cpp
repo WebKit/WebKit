@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-OESElementIndexUint::OESElementIndexUint(WebGLRenderingContextBase* context)
+OESElementIndexUint::OESElementIndexUint(WebGLRenderingContext* context)
     : WebGLExtension(context)
 {
 }

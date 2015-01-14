@@ -37,7 +37,7 @@ public:
         UNMASKED_RENDERER_WEBGL = 0x9246
     };
 
-    explicit WebGLDebugRendererInfo(WebGLRenderingContextBase*);
+    explicit WebGLDebugRendererInfo(WebGLRenderingContext*);
     virtual ~WebGLDebugRendererInfo();
 
     virtual ExtensionName getName() const override;

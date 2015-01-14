@@ -1518,7 +1518,3 @@ webkit.org/b/139968 [ Mavericks+ ] svg/text/text-intro-05-t.svg [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] tables/mozilla/bugs/bug2479-2.html [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] media/controls-after-reload.html [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] media/controls-without-preload.html [ Pass Failure ]
-
-# https://bugs.webkit.org/show_bug.cgi?id=140423
-webgl [ Skip ]
-fast/canvas/webgl [ Skip ]

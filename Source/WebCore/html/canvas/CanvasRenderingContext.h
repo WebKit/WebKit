@@ -52,9 +52,7 @@ public:
     HTMLCanvasElement* canvas() const { return m_canvas; }
 
     virtual bool is2d() const { return false; }
-    virtual bool isWebGL1() const { return false; }
-    virtual bool isWebGL2() const { return false; }
-    bool is3d() const { return isWebGL1() || isWebGL1(); }
+    virtual bool is3d() const { return false; }
     virtual bool isAccelerated() const { return false; }
 
     virtual void paintRenderingResultsToCanvas() {}

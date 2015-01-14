@@ -32,7 +32,7 @@ namespace WebCore {
 
 class OESElementIndexUint final : public WebGLExtension {
 public:
-    explicit OESElementIndexUint(WebGLRenderingContextBase*);
+    explicit OESElementIndexUint(WebGLRenderingContext*);
     virtual ~OESElementIndexUint();
 
     virtual ExtensionName getName() const override;

@@ -34,10 +34,10 @@ class WebGLTexture;
 
 class WebGLCompressedTextureS3TC final : public WebGLExtension {
 public:
-    explicit WebGLCompressedTextureS3TC(WebGLRenderingContextBase*);
+    explicit WebGLCompressedTextureS3TC(WebGLRenderingContext*);
     virtual ~WebGLCompressedTextureS3TC();
 
-    static bool supported(WebGLRenderingContextBase*);
+    static bool supported(WebGLRenderingContext*);
 
     virtual ExtensionName getName() const override;
 };

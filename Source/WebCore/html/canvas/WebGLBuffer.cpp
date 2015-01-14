@@ -30,16 +30,16 @@
 #include "WebGLBuffer.h"
 
 #include "WebGLContextGroup.h"
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-PassRefPtr<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContextBase* ctx)
+PassRefPtr<WebGLBuffer> WebGLBuffer::create(WebGLRenderingContext* ctx)
 {
     return adoptRef(new WebGLBuffer(ctx));
 }
 
-WebGLBuffer::WebGLBuffer(WebGLRenderingContextBase* ctx)
+WebGLBuffer::WebGLBuffer(WebGLRenderingContext* ctx)
     : WebGLSharedObject(ctx)
     , m_target(0)
     , m_byteLength(0)

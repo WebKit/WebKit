@@ -29,11 +29,11 @@
 
 #include "WebGLDebugRendererInfo.h"
 
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-WebGLDebugRendererInfo::WebGLDebugRendererInfo(WebGLRenderingContextBase* context)
+WebGLDebugRendererInfo::WebGLDebugRendererInfo(WebGLRenderingContext* context)
     : WebGLExtension(context)
 {
 }

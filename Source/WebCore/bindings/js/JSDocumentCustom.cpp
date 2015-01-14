@@ -37,7 +37,7 @@
 #include <wtf/GetPtr.h>
 
 #if ENABLE(WEBGL)
-#include "JSWebGLRenderingContextBase.h"
+#include "JSWebGLRenderingContext.h"
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WebGLDepthTexture::WebGLDepthTexture(WebGLRenderingContextBase* context)
+WebGLDepthTexture::WebGLDepthTexture(WebGLRenderingContext* context)
     : WebGLExtension(context)
 {
 }

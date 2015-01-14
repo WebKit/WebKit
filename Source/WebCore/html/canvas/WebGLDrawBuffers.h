@@ -32,17 +32,17 @@ namespace WebCore {
 
 class WebGLDrawBuffers final : public WebGLExtension {
 public:
-    explicit WebGLDrawBuffers(WebGLRenderingContextBase*);
+    explicit WebGLDrawBuffers(WebGLRenderingContext*);
     virtual ~WebGLDrawBuffers();
 
-    static bool supported(WebGLRenderingContextBase*);
+    static bool supported(WebGLRenderingContext*);
 
     virtual ExtensionName getName() const override;
 
     void drawBuffersWEBGL(const Vector<GC3Denum>& buffers);
 
 private:
-    static bool satisfiesWebGLRequirements(WebGLRenderingContextBase*);
+    static bool satisfiesWebGLRequirements(WebGLRenderingContext*);
 };
 
 } // namespace WebCore

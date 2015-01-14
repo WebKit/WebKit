@@ -32,7 +32,7 @@ namespace WebCore {
 
 class WebGLDepthTexture final : public WebGLExtension {
 public:
-    explicit WebGLDepthTexture(WebGLRenderingContextBase*);
+    explicit WebGLDepthTexture(WebGLRenderingContext*);
     virtual ~WebGLDepthTexture();
 
     static bool supported(GraphicsContext3D*);

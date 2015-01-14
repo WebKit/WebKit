@@ -26,7 +26,7 @@
 #ifndef WebGLContextGroup_h
 #define WebGLContextGroup_h
 
-#include "WebGLRenderingContextBase.h"
+#include <WebGLRenderingContext.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -36,7 +36,7 @@ namespace WebCore {
 class GraphicsContext3D;
 class WebGLExtension;
 class WebGLSharedObject;
-class WebGLRenderingContextBase;
+class WebGLRenderingContext;
 
 typedef int ExceptionCode;
 
@@ -45,15 +45,15 @@ public:
     static PassRefPtr<WebGLContextGroup> create();
     ~WebGLContextGroup();
 
-    void addContext(WebGLRenderingContextBase*);
-    void removeContext(WebGLRenderingContextBase*);
+    void addContext(WebGLRenderingContext*);
+    void removeContext(WebGLRenderingContext*);
 
     void addObject(WebGLSharedObject*);
     void removeObject(WebGLSharedObject*);
 
     GraphicsContext3D* getAGraphicsContext3D();
 
-    void loseContextGroup(WebGLRenderingContextBase::LostContextMode);
+    void loseContextGroup(WebGLRenderingContext::LostContextMode);
 
   private:
     friend class WebGLObject;
@@ -62,7 +62,7 @@ public:
 
     void detachAndRemoveAllObjects();
 
-    HashSet<WebGLRenderingContextBase*> m_contexts;
+    HashSet<WebGLRenderingContext*> m_contexts;
     HashSet<WebGLSharedObject*> m_groupObjects;
 };
 

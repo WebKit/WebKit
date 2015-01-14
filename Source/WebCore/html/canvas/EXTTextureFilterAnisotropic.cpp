@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-EXTTextureFilterAnisotropic::EXTTextureFilterAnisotropic(WebGLRenderingContextBase* context)
+EXTTextureFilterAnisotropic::EXTTextureFilterAnisotropic(WebGLRenderingContext* context)
     : WebGLExtension(context)
 {
 }

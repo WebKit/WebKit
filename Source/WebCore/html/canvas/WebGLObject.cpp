@@ -34,11 +34,11 @@
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
 #include "WebGLLoseContext.h"
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-WebGLObject::WebGLObject(WebGLRenderingContextBase*)
+WebGLObject::WebGLObject(WebGLRenderingContext*)
     : m_object(0)
     , m_attachmentCount(0)
     , m_deleted(false)

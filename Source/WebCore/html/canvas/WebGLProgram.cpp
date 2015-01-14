@@ -30,16 +30,16 @@
 #include "WebGLProgram.h"
 
 #include "WebGLContextGroup.h"
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-PassRefPtr<WebGLProgram> WebGLProgram::create(WebGLRenderingContextBase* ctx)
+PassRefPtr<WebGLProgram> WebGLProgram::create(WebGLRenderingContext* ctx)
 {
     return adoptRef(new WebGLProgram(ctx));
 }
 
-WebGLProgram::WebGLProgram(WebGLRenderingContextBase* ctx)
+WebGLProgram::WebGLProgram(WebGLRenderingContext* ctx)
     : WebGLSharedObject(ctx)
     , m_linkStatus(false)
     , m_linkCount(0)

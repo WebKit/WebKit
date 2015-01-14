@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-WebGLCompressedTextureATC::WebGLCompressedTextureATC(WebGLRenderingContextBase* context)
+WebGLCompressedTextureATC::WebGLCompressedTextureATC(WebGLRenderingContext* context)
     : WebGLExtension(context)
 {
     context->addCompressedTextureFormat(Extensions3D::COMPRESSED_ATC_RGB_AMD);
@@ -50,7 +50,7 @@ WebGLExtension::ExtensionName WebGLCompressedTextureATC::getName() const
     return WebGLCompressedTextureATCName;
 }
 
-bool WebGLCompressedTextureATC::supported(WebGLRenderingContextBase* context)
+bool WebGLCompressedTextureATC::supported(WebGLRenderingContext* context)
 {
     Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
     return extensions->supports("GL_AMD_compressed_ATC_texture");

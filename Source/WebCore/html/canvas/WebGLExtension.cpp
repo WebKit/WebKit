@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-WebGLExtension::WebGLExtension(WebGLRenderingContextBase* context)
+WebGLExtension::WebGLExtension(WebGLRenderingContext* context)
     : m_context(context)
 {
 }

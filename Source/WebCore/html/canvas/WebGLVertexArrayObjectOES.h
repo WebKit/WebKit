@@ -42,7 +42,7 @@ public:
     
     virtual ~WebGLVertexArrayObjectOES();
 
-    static PassRefPtr<WebGLVertexArrayObjectOES> create(WebGLRenderingContextBase*, VaoType);
+    static PassRefPtr<WebGLVertexArrayObjectOES> create(WebGLRenderingContext*, VaoType);
     
     // Cached values for vertex attrib range checks
     struct VertexAttribState {
@@ -89,7 +89,7 @@ public:
     void setVertexAttribDivisor(GC3Duint index, GC3Duint divisor);
 
 private:
-    WebGLVertexArrayObjectOES(WebGLRenderingContextBase*, VaoType);
+    WebGLVertexArrayObjectOES(WebGLRenderingContext*, VaoType);
 
     virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
     

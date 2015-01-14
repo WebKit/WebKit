@@ -44,7 +44,7 @@ public:
 
     virtual ~WebGLTexture();
 
-    static PassRefPtr<WebGLTexture> create(WebGLRenderingContextBase*);
+    static PassRefPtr<WebGLTexture> create(WebGLRenderingContext*);
 
     void setTarget(GC3Denum target, GC3Dint maxLevel);
     void setParameteri(GC3Denum pname, GC3Dint param);
@@ -82,7 +82,7 @@ public:
     static GC3Dint computeLevelCount(GC3Dsizei width, GC3Dsizei height);
 
 private:
-    WebGLTexture(WebGLRenderingContextBase*);
+    WebGLTexture(WebGLRenderingContext*);
 
     virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 

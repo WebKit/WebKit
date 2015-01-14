@@ -32,7 +32,7 @@
 #include "Extensions3D.h"
 #include "WebGLContextGroup.h"
 #include "WebGLDrawBuffers.h"
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
@@ -269,12 +269,12 @@ WebGLFramebuffer::WebGLAttachment::~WebGLAttachment()
 {
 }
 
-PassRefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContextBase* ctx)
+PassRefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContext* ctx)
 {
     return adoptRef(new WebGLFramebuffer(ctx));
 }
 
-WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContextBase* ctx)
+WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContext* ctx)
     : WebGLContextObject(ctx)
     , m_hasEverBeenBound(false)
 {

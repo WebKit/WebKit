@@ -32,7 +32,7 @@ namespace WebCore {
 
 class OESStandardDerivatives final : public WebGLExtension {
 public:
-    explicit OESStandardDerivatives(WebGLRenderingContextBase*);
+    explicit OESStandardDerivatives(WebGLRenderingContext*);
     virtual ~OESStandardDerivatives();
 
     virtual ExtensionName getName() const override;

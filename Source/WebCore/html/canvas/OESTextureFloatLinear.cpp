@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-OESTextureFloatLinear::OESTextureFloatLinear(WebGLRenderingContextBase* context)
+OESTextureFloatLinear::OESTextureFloatLinear(WebGLRenderingContext* context)
     : WebGLExtension(context)
 {
 }

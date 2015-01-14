@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-WebGLDrawBuffers::WebGLDrawBuffers(WebGLRenderingContextBase* context)
+WebGLDrawBuffers::WebGLDrawBuffers(WebGLRenderingContext* context)
     : WebGLExtension(context)
 {
 }
@@ -48,14 +48,14 @@ WebGLExtension::ExtensionName WebGLDrawBuffers::getName() const
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101000)
 
-bool WebGLDrawBuffers::supported(WebGLRenderingContextBase*)
+bool WebGLDrawBuffers::supported(WebGLRenderingContext*)
 {
     return false;
 }
 
 #else
 
-bool WebGLDrawBuffers::supported(WebGLRenderingContextBase* context)
+bool WebGLDrawBuffers::supported(WebGLRenderingContext* context)
 {
     Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
     return extensions->supports("GL_EXT_draw_buffers")
@@ -99,7 +99,7 @@ void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GC3Denum>& buffers)
 }
 
 // static
-bool WebGLDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContextBase* webglContext)
+bool WebGLDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContext* webglContext)
 {
     GraphicsContext3D* context = webglContext->graphicsContext3D();
 

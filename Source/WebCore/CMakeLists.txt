@@ -540,8 +540,6 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/OESTextureHalfFloat.idl
     html/canvas/OESTextureHalfFloatLinear.idl
     html/canvas/OESVertexArrayObject.idl
-    html/canvas/WebGL1RenderingContext.idl
-    html/canvas/WebGL2RenderingContext.idl
     html/canvas/WebGLActiveInfo.idl
     html/canvas/WebGLBuffer.idl
     html/canvas/WebGLCompressedTextureATC.idl
@@ -557,7 +555,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/WebGLLoseContext.idl
     html/canvas/WebGLProgram.idl
     html/canvas/WebGLRenderbuffer.idl
-    html/canvas/WebGLRenderingContextBase.idl
+    html/canvas/WebGLRenderingContext.idl
     html/canvas/WebGLShader.idl
     html/canvas/WebGLShaderPrecisionFormat.idl
     html/canvas/WebGLTexture.idl
@@ -1147,9 +1145,7 @@ set(WebCore_SOURCES
     bindings/js/JSTreeWalkerCustom.cpp
     bindings/js/JSVideoTrackCustom.cpp
     bindings/js/JSVideoTrackListCustom.cpp
-    bindings/js/JSWebGL1RenderingContextCustom.cpp
-    bindings/js/JSWebGL2RenderingContextCustom.cpp
-    bindings/js/JSWebGLRenderingContextBaseCustom.cpp
+    bindings/js/JSWebGLRenderingContextCustom.cpp
     bindings/js/JSWebKitPointCustom.cpp
     bindings/js/JSWorkerCustom.cpp
     bindings/js/JSWorkerGlobalScopeBase.cpp
@@ -1215,8 +1211,6 @@ set(WebCore_SOURCES
     css/CSSImportRule.cpp
     css/CSSInheritedValue.cpp
     css/CSSInitialValue.cpp
-    css/CSSKeyframeRule.cpp
-    css/CSSKeyframesRule.cpp
     css/CSSLineBoxContainValue.cpp
     css/CSSMediaRule.cpp
     css/CSSOMUtils.cpp
@@ -1280,6 +1274,8 @@ set(WebCore_SOURCES
     css/ViewportStyleResolver.cpp
     css/WebKitCSSFilterValue.cpp
     css/WebKitCSSResourceValue.cpp
+    css/CSSKeyframeRule.cpp
+    css/CSSKeyframesRule.cpp
     css/WebKitCSSMatrix.cpp
     css/WebKitCSSRegionRule.cpp
     css/WebKitCSSTransformValue.cpp
@@ -1673,8 +1669,6 @@ set(WebCore_SOURCES
     html/canvas/OESTextureHalfFloat.cpp
     html/canvas/OESTextureHalfFloatLinear.cpp
     html/canvas/OESVertexArrayObject.cpp
-    html/canvas/WebGL1RenderingContext.cpp
-    html/canvas/WebGL2RenderingContext.cpp
     html/canvas/WebGLBuffer.cpp
     html/canvas/WebGLCompressedTextureATC.cpp
     html/canvas/WebGLCompressedTexturePVRTC.cpp
@@ -1694,7 +1688,7 @@ set(WebCore_SOURCES
     html/canvas/WebGLObject.cpp
     html/canvas/WebGLProgram.cpp
     html/canvas/WebGLRenderbuffer.cpp
-    html/canvas/WebGLRenderingContextBase.cpp
+    html/canvas/WebGLRenderingContext.cpp
     html/canvas/WebGLShader.cpp
     html/canvas/WebGLShaderPrecisionFormat.cpp
     html/canvas/WebGLSharedObject.cpp
@@ -2772,8 +2766,6 @@ if (ENABLE_WEBGL)
         html/canvas/OESTextureHalfFloat.cpp
         html/canvas/OESTextureHalfFloatLinear.cpp
         html/canvas/OESVertexArrayObject.cpp
-        html/canvas/WebGL1RenderingContext.cpp
-        html/canvas/WebGL2RenderingContext.cpp
         html/canvas/WebGLBuffer.cpp
         html/canvas/WebGLCompressedTextureATC.cpp
         html/canvas/WebGLCompressedTexturePVRTC.cpp
@@ -2793,7 +2785,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLObject.cpp
         html/canvas/WebGLProgram.cpp
         html/canvas/WebGLRenderbuffer.cpp
-        html/canvas/WebGLRenderingContextBase.cpp
+        html/canvas/WebGLRenderingContext.cpp
         html/canvas/WebGLShader.cpp
         html/canvas/WebGLShaderPrecisionFormat.cpp
         html/canvas/WebGLSharedObject.cpp
@@ -2815,8 +2807,6 @@ if (ENABLE_WEBGL)
         html/canvas/OESTextureHalfFloat.idl
         html/canvas/OESTextureHalfFloatLinear.idl
         html/canvas/OESVertexArrayObject.idl
-        html/canvas/WebGL1RenderingContext.idl
-        html/canvas/WebGL2RenderingContext.idl
         html/canvas/WebGLActiveInfo.idl
         html/canvas/WebGLBuffer.idl
         html/canvas/WebGLCompressedTextureATC.idl
@@ -2832,7 +2822,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLLoseContext.idl
         html/canvas/WebGLProgram.idl
         html/canvas/WebGLRenderbuffer.idl
-        html/canvas/WebGLRenderingContextBase.idl
+        html/canvas/WebGLRenderingContext.idl
         html/canvas/WebGLShader.idl
         html/canvas/WebGLShaderPrecisionFormat.idl
         html/canvas/WebGLTexture.idl

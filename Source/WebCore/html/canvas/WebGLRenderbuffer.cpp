@@ -30,11 +30,11 @@
 #include "WebGLRenderbuffer.h"
 
 #include "WebGLContextGroup.h"
-#include "WebGLRenderingContextBase.h"
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-PassRefPtr<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContextBase* ctx)
+PassRefPtr<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContext* ctx)
 {
     return adoptRef(new WebGLRenderbuffer(ctx));
 }
@@ -44,7 +44,7 @@ WebGLRenderbuffer::~WebGLRenderbuffer()
     deleteObject(0);
 }
 
-WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase* ctx)
+WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContext* ctx)
     : WebGLSharedObject(ctx)
     , m_internalFormat(GraphicsContext3D::RGBA4)
     , m_initialized(false)

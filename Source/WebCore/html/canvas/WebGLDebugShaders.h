@@ -36,7 +36,7 @@ typedef int ExceptionCode;
 
 class WebGLDebugShaders final : public WebGLExtension {
 public:
-    explicit WebGLDebugShaders(WebGLRenderingContextBase*);
+    explicit WebGLDebugShaders(WebGLRenderingContext*);
     virtual ~WebGLDebugShaders();
 
     virtual ExtensionName getName() const override;
