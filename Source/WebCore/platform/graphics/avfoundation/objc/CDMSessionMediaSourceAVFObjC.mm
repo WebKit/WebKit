@@ -49,10 +49,11 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamSession);
 - (void)processContentKeyResponseError:(NSError *)error forTrackID:(CMPersistentTrackID)trackID;
 - (void)renewExpiringContentKeyResponseDataForTrackID:(CMPersistentTrackID)trackID;
 - (NSData *)streamingContentKeyRequestDataForApp:(NSData *)appIdentifier contentIdentifier:(NSData *)contentIdentifier trackID:(CMPersistentTrackID)trackID options:(NSDictionary *)options error:(NSError **)outError;
+- (NSData *)sessionIdentifier;
 @end
 
 @interface AVStreamSession : NSObject
-- (instancetype)initWithAppIdentifier:(NSData *)appIdentifier storageDirectoryAtURL:(NSURL *)storageURL;
+- (instancetype)initWithAppIdentifier:(NSData *)appIdentifier storageDirectoryAtURL:(NSURL *)storageURL error:(NSError **)outError;
 - (void)addStreamDataParser:(AVStreamDataParser *)streamDataParser;
 - (void)removeStreamDataParser:(AVStreamDataParser *)streamDataParser;
 - (void)expire;
@@ -60,22 +61,89 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamSession);
 + (void)removePendingExpiredSessionReports:(NSArray *)expiredSessionReports withAppIdentifier:(NSData *)appIdentifier;
 @end
 
+@interface CDMSessionMediaSourceAVFObjCObserver : NSObject {
+    WebCore::CDMSessionMediaSourceAVFObjC *m_parent;
+    HashSet<RetainPtr<AVStreamDataParser>> m_parsers;
+}
+@end
+
+@implementation CDMSessionMediaSourceAVFObjCObserver
+- (id)initWithParent:(WebCore::CDMSessionMediaSourceAVFObjC *)parent
+{
+    if ((self = [super init]))
+        m_parent = parent;
+    return self;
+}
+
+- (void)dealloc
+{
+    [self invalidate];
+    [super dealloc];
+}
+
+- (void)beginObserving:(AVStreamDataParser *)parser
+{
+    ASSERT(!m_parsers.contains(parser));
+    m_parsers.add(parser);
+    [parser addObserver:self forKeyPath:@"sessionIdentifier" options:(NSKeyValueObservingOptionNew|NSKeyValueObservingOptionInitial) context:nullptr];
+}
+
+- (void)stopObserving:(AVStreamDataParser *)parser
+{
+    ASSERT(m_parsers.contains(parser));
+    m_parsers.remove(parser);
+    [parser removeObserver:self forKeyPath:@"sessionIdentifier" context:nullptr];
+}
+
+- (void)invalidate
+{
+    m_parent = nullptr;
+    for (auto& parser : m_parsers)
+        [parser removeObserver:self forKeyPath:@"sessionIdentifier" context:nullptr];
+    m_parsers.clear();
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void*)context
+{
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(change);
+    UNUSED_PARAM(context);
+
+    if ([keyPath isEqual:@"sessionIdentifier"]) {
+        NSData* identifier = [change valueForKey:NSKeyValueChangeNewKey];
+        if ([identifier isKindOfClass:[NSNull class]])
+            return;
+
+        RetainPtr<NSString> sessionIdentifierString = adoptNS([[NSString alloc] initWithData:identifier encoding:(NSUTF8StringEncoding)]);
+        if (m_parent)
+            m_parent->setSessionId(sessionIdentifierString.get());
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+@end
+
 namespace WebCore {
 
 CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC()
     : m_client(nullptr)
-    , m_sessionId(createCanonicalUUIDString())
+    , m_dataParserObserver(adoptNS([[CDMSessionMediaSourceAVFObjCObserver alloc] initWithParent:this]))
     , m_mode(Normal)
 {
 }
 
 CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC()
 {
-    if (m_streamSession) {
-        for (auto& sourceBuffer : m_sourceBuffers)
+    for (auto& sourceBuffer : m_sourceBuffers) {
+        if (m_streamSession)
             [m_streamSession removeStreamDataParser:sourceBuffer->parser()];
-        m_streamSession = nil;
+
+        [sourceBuffer->parser() removeObserver:m_dataParserObserver.get() forKeyPath:@"sessionIdentifier" context:nullptr];
     }
+
+    m_streamSession = nil;
+    [m_dataParserObserver invalidate];
 }
 
 PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode)
@@ -105,15 +173,20 @@ PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyRequest(const St
 
 void CDMSessionMediaSourceAVFObjC::releaseKeys()
 {
-    if (m_mode == KeyRelease) {
-        RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
-        [getAVStreamSessionClass() removePendingExpiredSessionReports:@[m_expiredSession.get()] withAppIdentifier:certificateData.get()];
-        return;
-    }
-
     if (m_streamSession) {
         LOG(Media, "CDMSessionMediaSourceAVFObjC::releaseKeys(%p) - expiring stream session", this);
         [m_streamSession expire];
+
+        RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
+        NSArray* expiredSessions = [getAVStreamSessionClass() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get()];
+        for (NSData* expiredSessionData in expiredSessions) {
+            NSDictionary *expiredSession = [NSPropertyListSerialization propertyListWithData:expiredSessionData options:kCFPropertyListImmutable format:nullptr error:nullptr];
+            if ([expiredSession objectForKey:m_sessionId]) {
+                m_expiredSession = expiredSessionData;
+                m_client->sendMessage(Uint8Array::create(static_cast<const uint8_t*>([m_expiredSession bytes]), [m_expiredSession length]).get(), emptyString());
+                break;
+            }
+        }
     }
 }
 
@@ -161,6 +234,17 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
         m_certificate = key;
     }
 
+    if (isEqual(key, "acknowledged")) {
+        if (!m_expiredSession) {
+            errorCode = MediaPlayer::InvalidPlayerState;
+            return false;
+        }
+
+        RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
+        [getAVStreamSessionClass() removePendingExpiredSessionReports:@[m_expiredSession.get()] withAppIdentifier:certificateData.get()];
+        m_expiredSession = nullptr;
+    }
+
     RefPtr<SourceBufferPrivateAVFObjC> protectedSourceBuffer;
     for (auto& sourceBuffer : m_sourceBuffers) {
         if (sourceBuffer->protectedTrackID() != -1) {
@@ -171,8 +255,8 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
 
     if (shouldGenerateKeyRequest) {
         RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
-        if (getAVStreamSessionClass()) {
-            m_streamSession = adoptNS([[getAVStreamSessionClass() alloc] initWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:sessionStorageDirectory()]]);
+        if (getAVStreamSessionClass() && [getAVStreamSessionClass() instancesRespondToSelector:@selector(initWithAppIdentifier:storageDirectoryAtURL:error:)]) {
+            m_streamSession = adoptNS([[getAVStreamSessionClass() alloc] initWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:sessionStorageDirectory()] error:nil]);
             for (auto& sourceBuffer : m_sourceBuffers)
                 [m_streamSession addStreamDataParser:sourceBuffer->parser()];
             LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - created stream session %p", this, m_streamSession.get());
@@ -188,6 +272,9 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
 
         NSError* error = nil;
         RetainPtr<NSData> request = [protectedSourceBuffer->parser() streamingContentKeyRequestDataForApp:certificateData.get() contentIdentifier:initData.get() trackID:protectedSourceBuffer->protectedTrackID() options:nil error:&error];
+
+        if (![protectedSourceBuffer->parser() respondsToSelector:@selector(sessionIdentifier)])
+            m_sessionId = createCanonicalUUIDString();
 
         if (error) {
             LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - error:%@", this, [error description]);
@@ -207,6 +294,7 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
     systemCode = 0;
     RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:key->data() length:key->length()]);
     [protectedSourceBuffer->parser() processContentKeyResponseData:keyData.get() forTrackID:protectedSourceBuffer->protectedTrackID()];
+
     return true;
 }
 
@@ -236,6 +324,8 @@ void CDMSessionMediaSourceAVFObjC::addSourceBuffer(SourceBufferPrivateAVFObjC* s
 
     if (m_streamSession)
         [m_streamSession addStreamDataParser:sourceBuffer->parser()];
+
+    [m_dataParserObserver beginObserving:sourceBuffer->parser()];
 }
 
 void CDMSessionMediaSourceAVFObjC::removeSourceBuffer(SourceBufferPrivateAVFObjC* sourceBuffer)
@@ -248,6 +338,8 @@ void CDMSessionMediaSourceAVFObjC::removeSourceBuffer(SourceBufferPrivateAVFObjC
 
     sourceBuffer->unregisterForErrorNotifications(this);
     m_sourceBuffers.remove(m_sourceBuffers.find(sourceBuffer));
+
+    [m_dataParserObserver stopObserving:sourceBuffer->parser()];
 }
 
 PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyReleaseMessage(unsigned short& errorCode, unsigned long& systemCode)
