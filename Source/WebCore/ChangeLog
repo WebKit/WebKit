@@ -1,5 +1,60 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r171316. <rdar://problem/19424112>
+
+    2014-07-21  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] YouTube video decode error when variant-switching
+            https://bugs.webkit.org/show_bug.cgi?id=135128
+
+            Reviewed by Brent Fulgham.
+
+            Test: media/media-source/media-source-overlapping-decodetime.html
+
+            When variant-switching, the situation can arise where an existing sample with a presentation
+            timestamp of N and a decode timestamp of M, and a new sample with a presentation timestamp > N
+            and the same decode timestamp of M, will keep the new sample from being added to the SampleMap.
+            This can result in a decode error when samples depending on that new, missing sample are enqueued.
+
+            The MSE spec is silent on the issue of overlapping decode timestamps. However, it guarantees that
+            presentation timestamps are non-overlapping. So instead of using just the decode timestamp as a key
+            for storing the samples in decode order, use both the decode timestamp and the presentation timestamp.
+            That ensures that samples with different presentation times but equal decode times are both inserted
+            into the decode queue, and in the correct order.
+
+            * Modules/mediasource/SampleMap.cpp:
+            (WebCore::SampleIsRandomAccess::operator()): Update the parameter type to match the new KeyType.
+            (WebCore::SampleMap::addSample): Pass both decodeTime and presentationTime as the key to decodeOrder.
+            (WebCore::SampleMap::removeSample): Ditto.
+            (WebCore::DecodeOrderSampleMap::findSampleWithDecodeKey): Renamed from findSampleWithDecodeTime.
+            (WebCore::DecodeOrderSampleMap::reverseFindSampleWithDecodeKey): renamed from reverseFindSampleWithDecodeTime.
+            (WebCore::DecodeOrderSampleMap::findSyncSamplePriorToPresentationTime): Use renamed version of above.
+            (WebCore::DecodeOrderSampleMap::findSyncSampleAfterPresentationTime): Ditto.
+            (WebCore::DecodeOrderSampleMap::findDependentSamples): Ditto.
+            (WebCore::DecodeOrderSampleMap::findSampleWithDecodeTime): Deleted.
+            (WebCore::DecodeOrderSampleMap::reverseFindSampleWithDecodeTime): Deleted.
+            * Modules/mediasource/SampleMap.h:
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::removeCodedFrames): Ditto.
+            (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample): Ditto.
+            (WebCore::SourceBuffer::reenqueueMediaForTime): Ditto.
+
+    2014-07-21  Andy Estes  <aestes@apple.com>
+
+            [iOS] Handle QuickLook ResourceLoaders in the web process
+            https://bugs.webkit.org/show_bug.cgi?id=135113
+
+            Reviewed by David Kilzer.
+
+            No new tests. QuickLook is not testable from WebKit.
+
+            * WebCore.exp.in:
+            * loader/ResourceLoadScheduler.cpp:
+            (WebCore::ResourceLoadScheduler::maybeLoadQuickLookResource): Start loading the ResourceLoader if it is for a QuickLook resource.
+            * loader/ResourceLoadScheduler.h:
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r171215. <rdar://problem/19424110>
 
     2014-07-17  Jer Noble  <jer.noble@apple.com>
