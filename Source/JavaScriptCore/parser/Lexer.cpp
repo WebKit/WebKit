@@ -681,6 +681,36 @@ static ALWAYS_INLINE bool isIdentPart(UChar c)
     return isLatin1(c) ? isIdentPart(static_cast<LChar>(c)) : isNonLatin1IdentPart(c);
 }
 
+template <typename T>
+bool isUnicodeEscapeIdentPart(const T* code)
+{
+    T char1 = code[0];
+    T char2 = code[1];
+    T char3 = code[2];
+    T char4 = code[3];
+    
+    if (!isASCIIHexDigit(char1) || !isASCIIHexDigit(char2) || !isASCIIHexDigit(char3) || !isASCIIHexDigit(char4))
+        return false;
+    
+    return isIdentPart(Lexer<T>::convertUnicode(char1, char2, char3, char4));
+}
+
+static ALWAYS_INLINE bool isIdentPartIncludingEscape(const LChar* code, const LChar* codeEnd)
+{
+    if (isIdentPart(*code))
+        return true;
+
+    return (*code == '\\' && ((codeEnd - code) >= 6) && code[1] == 'u' && isUnicodeEscapeIdentPart(code+2));
+}
+
+static ALWAYS_INLINE bool isIdentPartIncludingEscape(const UChar* code, const UChar* codeEnd)
+{
+    if (isIdentPart(*code))
+        return true;
+    
+    return (*code == '\\' && ((codeEnd - code) >= 6) && code[1] == 'u' && isUnicodeEscapeIdentPart(code+2));
+}
+
 static inline LChar singleEscape(int c)
 {
     if (c < 128) {

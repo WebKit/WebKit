@@ -1,3 +1,18 @@
+2015-01-14  Michael Saboff  <msaboff@apple.com>
+
+        JavaScript identifier incorrectly parsed if the prefix before an escape sequence is a keyword
+        https://bugs.webkit.org/show_bug.cgi?id=140420
+
+        Reviewed by Oliver Hunt.
+
+        New regression test.
+
+        * js/regress-140420-expected.txt: Added.
+        * js/regress-140420.html: Added.
+        * js/script-tests/regress-140420.js: Added.
+        (with):
+        (this):
+
 2015-01-14  Jer Noble  <jer.noble@apple.com>
 
         Null-deref crash when seeking immediately before looping.
