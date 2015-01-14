@@ -812,7 +812,7 @@ void MediaSource::onReadyStateChange(const AtomicString& oldState, const AtomicS
 
 Vector<PlatformTimeRanges> MediaSource::activeRanges() const
 {
-    Vector<PlatformTimeRanges> activeRanges(m_activeSourceBuffers->length());
+    Vector<PlatformTimeRanges> activeRanges;
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         activeRanges.append(sourceBuffer->buffered()->ranges());
     return activeRanges;

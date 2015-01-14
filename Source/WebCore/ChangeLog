@@ -1,5 +1,30 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r173439. <rdar://problem/19424146>
+
+    2014-09-09  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] media/media-source tests broken after r173318
+            https://bugs.webkit.org/show_bug.cgi?id=136675
+
+            Reviewed by Eric Carlson.
+
+            Fixes the following tests:
+                http/tests/media/media-source/mediasource-play.html
+                http/tests/media/media-source/mediasource-remove.html
+                media/media-source/media-source-monitor-source-buffers.html
+                media/media-source/media-source-overlapping-append-buffered.html   
+
+            In r173318, a for loop was converted to a C++11 loop, but in so doing, left
+            pre-initialized, empty values in the beginning of returned Vector, which caused
+            the calling algorithm to miscalculate the amount of data buffered by the media
+            source.
+
+            * Modules/mediasource/MediaSource.cpp:
+            (WebCore::MediaSource::activeRanges):
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r173337. <rdar://problem/19424143>
 
     2014-09-05  Jer Noble  <jer.noble@apple.com>
