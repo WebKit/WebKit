@@ -34,7 +34,7 @@ using namespace WebKit;
 
 struct _WebKitUserContentManagerPrivate {
     _WebKitUserContentManagerPrivate()
-        : userContentController(WebUserContentControllerProxy::create())
+        : userContentController(adoptRef(new WebUserContentControllerProxy))
     {
     }
 
