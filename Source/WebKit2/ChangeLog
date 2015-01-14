@@ -1,3 +1,13 @@
+2015-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed iOS build fix after r178375.
+
+        LoaderClient::didLayout() now takes a reference to the WebPageProxy
+        instead of a pointer.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCommitLayerTree):
+
 2015-01-13  Sam Weinig  <sam@webkit.org>
 
         Convert WebUserContentControllerProxy to an API::Object bridged to WKUserContentController
