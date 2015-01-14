@@ -1,3 +1,35 @@
+2015-01-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] run-webkit-tests --ios hangs trying to launch iOS Simulator with unavailable runtime
+        https://bugs.webkit.org/show_bug.cgi?id=140301
+        <rdar://problem/19389266>
+
+        Reviewed by Jon Honeycutt.
+
+        Fixes an issue where run-webkit-tests --ios will hang when trying to launch iOS Simulator
+        with an unavailable runtime.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options): Modified to access property Simulator.latest_available_runtime,
+        which was formerly called Simulator.latest_runtime. Additionally, raise an exception if the
+        specified runtime cannot be used because it is unavailable.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.testing_device): Modified to call Simulator.lookup_or_create_device(),
+        which was formerly named testing_device.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.create): Modified to lookup created device by the UDID returned by simctl, which is
+        more robust than looking up the simulator device by name and runtime. This approach also
+        avoids returning the wrong device due to <rdar://problem/19444383> (simctl list shows
+        unavailable runtimes under the same iOS heading it would use to show it as available).
+        (Simulator.find_device_by_udid): Added.
+        (Simulator.device): Added optional parameter should_ignore_unavailable_devices (defaults
+        to False) to ignore devices that are unavailable (say, because their runtime is unavailable).
+        (Simulator.available_runtimes): Added.
+        (Simulator.latest_available_runtime): Renamed; formerly named latest_runtime. Take advantage
+        of the reverse=True argument to sorted() to sort the list of available runtimes such that the
+        first element of the sorted list is the runtime with the highest version number.
+        (Simulator.lookup_or_create_device): Renamed; formerly named testing_device.
+
 2015-01-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove WK2 Windows cruft

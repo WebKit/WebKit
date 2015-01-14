@@ -260,7 +260,7 @@ class IOSSimulatorPort(Port):
 
         device_type = self.get_option('device_type')
         runtime = self.get_option('runtime')
-        self._testing_device = simulator.Simulator().testing_device(device_type, runtime)
+        self._testing_device = simulator.Simulator().lookup_or_create_device(device_type.name + ' WebKit Tester', device_type, runtime)
         return self.testing_device
 
     def simulator_path(self, udid):

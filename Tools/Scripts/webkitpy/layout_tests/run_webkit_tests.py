@@ -391,9 +391,11 @@ def _set_up_derived_options(port, options):
     if options.platform == 'ios-simulator':
         from webkitpy import xcode
         if options.runtime is None:
-            options.runtime = xcode.simulator.Simulator().latest_runtime
+            options.runtime = xcode.simulator.Simulator().latest_available_runtime
         else:
             options.runtime = xcode.simulator.Runtime.from_identifier(options.runtime)
+            if not options.runtime.available:
+                raise Exception('The iOS Simulator runtime with identifier "{identifier}" cannot be used because it is unavailable.'.format(identifier=options.runtime.identifier))
         if options.device_type is None:
             iphone5 = xcode.simulator.DeviceType.from_name('iPhone 5')
             iphone5s = xcode.simulator.DeviceType.from_name('iPhone 5s')

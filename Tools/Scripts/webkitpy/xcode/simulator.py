@@ -177,17 +177,15 @@ class Device(object):
         :rtype: Device
         """
         sim = Simulator()
-        subprocess.check_call(['xcrun', 'simctl', 'create', name, device_type.identifier, runtime.identifier])
-
-        device = None
-        while device is None:
+        device_udid = subprocess.check_output(['xcrun', 'simctl', 'create', name, device_type.identifier, runtime.identifier]).rstrip()
+        assert(device_udid)
+        while True:
             sim.refresh()
-            device = sim.device(name, runtime)
-            if device is None or device.state == 'Creating':
+            device = sim.find_device_by_udid(device_udid)
+            if not device or device.state == 'Creating':
                 time.sleep(2)
-            else:
-                break
-        return device
+                continue
+            return device
 
     def __eq__(self, other):
         return self.udid == other.udid
@@ -338,7 +336,20 @@ class Simulator(object):
             return runtime
         return None
 
-    def device(self, name=None, runtime=None):
+    def find_device_by_udid(self, udid):
+        """
+        :param udid: The UDID of the device to find.
+        :type udid: str
+        :return: The `Device` with the specified UDID.
+        :rtype: Device
+        """
+        for device in self.devices:
+            if device.udid == udid:
+                return device
+        return None
+
+    # FIXME: We should find an existing device with respect to its name, device type and runtime.
+    def device(self, name=None, runtime=None, should_ignore_unavailable_devices=False):
         """
         :param name: The name of the desired device.
         :type name: str
@@ -351,12 +362,22 @@ class Simulator(object):
             raise TypeError('Must supply name and/or runtime.')
 
         for device in self.devices:
+            if should_ignore_unavailable_devices and not device.available:
+                continue
             if name and device.name != name:
                 continue
             if runtime and device.runtime != runtime:
                 continue
             return device
         return None
+
+    @property
+    def available_runtimes(self):
+        """
+        :return: An iterator of all available runtimes.
+        :rtype: iter
+        """
+        return itertools.ifilter(lambda runtime: runtime.available, self.runtimes)
 
     @property
     def devices(self):
@@ -367,18 +388,24 @@ class Simulator(object):
         return itertools.chain(*[runtime.devices for runtime in self.runtimes])
 
     @property
-    def latest_runtime(self):
+    def latest_available_runtime(self):
         """
         :return: Returns a Runtime object with the highest version.
         :rtype: Runtime or None
         """
         if not self.runtimes:
             return None
-        return sorted(self.runtimes, key=lambda runtime: runtime.version)[-1]
+        return sorted(self.available_runtimes, key=lambda runtime: runtime.version, reverse=True)[0]
 
-    def testing_device(self, device_type, runtime):
+    def lookup_or_create_device(self, name, device_type, runtime):
         """
-        Get an iOS Simulator device for testing.
+        Returns an available iOS Simulator device for testing.
+
+        This function will create a new simulator device with the specified name,
+        device type and runtime if one does not already exist.
+
+        :param name: The name of the simulator device to lookup or create.
+        :type name: str
         :param device_type: The CoreSimulator device type.
         :type device_type: DeviceType
         :param runtime: The CoreSimulator runtime.
@@ -386,9 +413,13 @@ class Simulator(object):
         :return: A dictionary describing the device.
         :rtype: Device
         """
-        # Check to see if the testing device already exists
-        name = device_type.name + ' WebKit Tester'
-        return self.device(name=name, runtime=runtime) or Device.create(name, device_type, runtime)
+        assert(runtime.available)
+        testing_device = self.device(name=name, runtime=runtime, should_ignore_unavailable_devices=True)
+        if testing_device:
+            return testing_device
+        testing_device = Device.create(name, device_type, runtime)
+        assert(testing_device.available)
+        return testing_device
 
     def __repr__(self):
         return '<iOS Simulator: {num_runtimes} runtimes, {num_device_types} device types>'.format(
