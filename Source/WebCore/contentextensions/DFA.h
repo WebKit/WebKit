@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "ContentExtensionsDebugging.h"
 #include "DFANode.h"
 #include <wtf/Vector.h>
 
@@ -50,7 +51,7 @@ public:
     unsigned nextState(unsigned currentState, char character, bool& ok) const;
     const Vector<uint64_t>& actions(unsigned currentState) const;
 
-#ifndef NDEBUG
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     void debugPrintDot() const;
 #endif
 

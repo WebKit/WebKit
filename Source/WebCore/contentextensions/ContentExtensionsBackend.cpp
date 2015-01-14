@@ -28,10 +28,12 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "ContentExtensionsDebugging.h"
 #include "NFA.h"
 #include "NFAToDFA.h"
 #include "URL.h"
 #include "URLFilterParser.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
@@ -57,6 +59,10 @@ void ContentExtensionsBackend::setRuleList(const String& identifier, const Vecto
         return;
     }
 
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+    double nfaBuildTimeStart = monotonicallyIncreasingTime();
+#endif
+
     NFA nfa;
     for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
         const ContentExtensionRule& contentExtensionRule = ruleList[ruleIndex];
@@ -72,8 +78,32 @@ void ContentExtensionsBackend::setRuleList(const String& identifier, const Vecto
         }
     }
 
-    // FIXME: never add a DFA that only matches the empty set.
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+    double nfaBuildTimeEnd = monotonicallyIncreasingTime();
+    dataLogF("    Time spent building the NFA: %f\n", (nfaBuildTimeEnd - nfaBuildTimeStart));
+#endif
+
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
+    nfa.debugPrintDot();
+#endif
+
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+    double dfaBuildTimeStart = monotonicallyIncreasingTime();
+#endif
+
     CompiledContentExtension compiledContentExtension = { NFAToDFA::convert(nfa), ruleList };
+
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+    double dfaBuildTimeEnd = monotonicallyIncreasingTime();
+    dataLogF("    Time spent building the DFA: %f\n", (dfaBuildTimeEnd - dfaBuildTimeStart));
+#endif
+
+    // FIXME: never add a DFA that only matches the empty set.
+
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
+    compiledContentExtension.dfa.debugPrintDot();
+#endif
+
     m_ruleLists.set(identifier, compiledContentExtension);
 }
 

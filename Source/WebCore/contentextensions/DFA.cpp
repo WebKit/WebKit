@@ -79,7 +79,7 @@ const Vector<uint64_t>& DFA::actions(unsigned currentState) const
     return m_nodes[currentState].actions;
 }
 
-#ifndef NDEBUG
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
 static void printRange(bool firstRange, char rangeStart, char rangeEnd)
 {
     if (!firstRange)

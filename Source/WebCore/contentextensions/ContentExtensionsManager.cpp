@@ -30,12 +30,14 @@
 
 #include "ContentExtensionRule.h"
 #include "ContentExtensionsBackend.h"
+#include "ContentExtensionsDebugging.h"
 #include <JavaScriptCore/IdentifierInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/VM.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;
@@ -154,6 +156,9 @@ static Vector<ContentExtensionRule> loadEncodedRules(ExecState& exec, const Stri
 
 void loadExtension(const String& identifier, const String& rules)
 {
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+    double loadExtensionStartTime = monotonicallyIncreasingTime();
+#endif
     RefPtr<VM> vm = VM::create();
 
     JSLockHolder locker(vm.get());
@@ -168,6 +173,11 @@ void loadExtension(const String& identifier, const String& rules)
         WTFLogAlways("Empty extension.");
         return;
     }
+
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+    double loadExtensionEndTime = monotonicallyIncreasingTime();
+    dataLogF("Time spent loading extension %s: %f\n", identifier.utf8().data(), (loadExtensionEndTime - loadExtensionStartTime));
+#endif
 
     ContentExtensionsBackend::sharedInstance().setRuleList(identifier, ruleList);
 }

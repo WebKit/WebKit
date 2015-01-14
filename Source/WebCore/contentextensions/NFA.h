@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "ContentExtensionsDebugging.h"
 #include "NFANode.h"
 #include <limits>
 #include <wtf/Vector.h>
@@ -53,7 +54,7 @@ public:
     unsigned graphSize() const;
     void restoreToGraphSize(unsigned);
 
-#ifndef NDEBUG
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     void debugPrintDot() const;
 #endif
 

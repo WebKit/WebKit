@@ -23,35 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DFANode_h
-#define DFANode_h
+#ifndef ContentExtensionsDebugging_h
+#define ContentExtensionsDebugging_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "ContentExtensionsDebugging.h"
-#include <wtf/HashMap.h>
-#include <wtf/Vector.h>
+#define CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING 0
 
-namespace WebCore {
-
-namespace ContentExtensions {
-
-// A DFANode abstract the transition table out of a DFA state. If a state is accepting, the DFANode also have
-// the actions for that state.
-class DFANode {
-public:
-    HashMap<uint16_t, unsigned> transitions;
-    Vector<uint64_t> actions;
-
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    Vector<unsigned> correspondingDFANodes;
-#endif
-};
-
-}
-
-} // namespace WebCore
+#define CONTENT_EXTENSIONS_PERFORMANCE_REPORTING 0
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-#endif // DFANode_h
+#endif // ContentExtensionsDebugging_h

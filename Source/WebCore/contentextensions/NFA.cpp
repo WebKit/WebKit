@@ -85,7 +85,7 @@ void NFA::restoreToGraphSize(unsigned size)
     m_nodes.shrink(size);
 }
 
-#ifndef NDEBUG
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
 
 static void printRange(bool firstRange, uint16_t rangeStart, uint16_t rangeEnd, uint16_t epsilonTransitionCharacter)
 {

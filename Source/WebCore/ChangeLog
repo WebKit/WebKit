@@ -1,3 +1,80 @@
+2015-01-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        Do not create new set for every sub-operation when converting a NFA to DFA
+        https://bugs.webkit.org/show_bug.cgi?id=140380
+
+        Reviewed by Andreas Kling.
+
+        This is the first step toward making the NFA-to-DFA conversion more scalable: instead
+        of creating new sets for each step of the algorithm, we use two kinds of sets
+        and never do any copy.
+
+        The first new tool to do that is UniqueNodeIdSetImpl. It represents a set of NFA state corresponding to a DFA
+        state. It is unique per DFA state.
+
+        HashableNodeIdSet is a helper tool storing a UniqueNodeIdSetImpl.
+
+        The creation of new sets now goes like this:
+        1) Get a NodeIdSet for each possible transition.
+        2) For each transition:
+           2a) Extend the NodeIdSet in place with its epsilon closure.
+           2b) Get the UniqueNodeIdSetImpl corresponding to the new set we discovered.
+           2c) If the UniqueNodeIdSetImpl is new, queue it for processing.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * contentextensions/ContentExtensionsDebugging.h: Copied from Source/WebCore/contentextensions/DFANode.h.
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::setRuleList):
+        * contentextensions/ContentExtensionsManager.cpp:
+        (WebCore::ContentExtensions::ExtensionsManager::loadExtension):
+        Added some logging to inspect more easily what the clients are sending.
+
+        * contentextensions/DFA.cpp:
+        * contentextensions/DFA.h:
+        * contentextensions/DFANode.h:
+        * contentextensions/NFA.cpp:
+        * contentextensions/NFA.h:
+        * contentextensions/NFAToDFA.cpp:
+
+        (WebCore::ContentExtensions::epsilonClosure):
+        Instead of returning a new HashSet, extend the input HashSet.
+
+        (WebCore::ContentExtensions::UniqueNodeIdSetImpl::buffer):
+        (WebCore::ContentExtensions::UniqueNodeIdSet::UniqueNodeIdSet):
+        (WebCore::ContentExtensions::UniqueNodeIdSet::operator=):
+        (WebCore::ContentExtensions::UniqueNodeIdSet::~UniqueNodeIdSet):
+        (WebCore::ContentExtensions::UniqueNodeIdSet::operator==):
+        (WebCore::ContentExtensions::UniqueNodeIdSet::impl):
+        (WebCore::ContentExtensions::UniqueNodeIdSet::hash):
+        (WebCore::ContentExtensions::UniqueNodeIdSet::isEmptyValue):
+        (WebCore::ContentExtensions::UniqueNodeIdSet::isDeletedValue):
+        (WebCore::ContentExtensions::UniqueNodeIdSetHash::hash):
+        (WebCore::ContentExtensions::UniqueNodeIdSetHash::equal):
+        UniqueNodeIdSetImpl is a compact representation of a NodeIdSet corresponding to a DFA node.
+
+        It is never built directly, it is only built on demand through NodeIdSetToUniqueNodeIdSetTranslator
+        from a NodeIdSet.
+
+        (WebCore::ContentExtensions::NodeIdSetToUniqueNodeIdSetSource::NodeIdSetToUniqueNodeIdSetSource):
+        (WebCore::ContentExtensions::NodeIdSetToUniqueNodeIdSetTranslator::hash):
+        (WebCore::ContentExtensions::NodeIdSetToUniqueNodeIdSetTranslator::equal):
+        (WebCore::ContentExtensions::NodeIdSetToUniqueNodeIdSetTranslator::translate):
+        (WebCore::ContentExtensions::SetTransitionsExcludingEpsilon::operator[]):
+        (WebCore::ContentExtensions::SetTransitionsExcludingEpsilon::size):
+        (WebCore::ContentExtensions::SetTransitionsExcludingEpsilon::begin):
+        (WebCore::ContentExtensions::SetTransitionsExcludingEpsilon::end):
+        (WebCore::ContentExtensions::populateTransitionsExcludingEpsilon):
+        (WebCore::ContentExtensions::NFAToDFA::convert):
+        (WebCore::ContentExtensions::setTransitionsExcludingEpsilon): Deleted.
+        (WebCore::ContentExtensions::HashableNodeIdSet::HashableNodeIdSet): Deleted.
+        (WebCore::ContentExtensions::HashableNodeIdSet::operator=): Deleted.
+        (WebCore::ContentExtensions::HashableNodeIdSet::isEmptyValue): Deleted.
+        (WebCore::ContentExtensions::HashableNodeIdSet::isDeletedValue): Deleted.
+        (WebCore::ContentExtensions::HashableNodeIdSet::nodeIdSet): Deleted.
+        (WebCore::ContentExtensions::HashableNodeIdSetHash::hash): Deleted.
+        (WebCore::ContentExtensions::HashableNodeIdSetHash::equal): Deleted.
+        (WebCore::ContentExtensions::addDFAState): Deleted.
+
 2015-01-14  Chris Dumez  <cdumez@apple.com>
 
         Make 'TypeName' parameter unnecessary in CSSPropertyNames.in

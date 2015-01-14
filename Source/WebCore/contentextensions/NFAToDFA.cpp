@@ -28,8 +28,10 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "ContentExtensionsDebugging.h"
 #include "DFANode.h"
 #include "NFA.h"
+#include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
@@ -37,208 +39,295 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
+// FIXME: set a better initial size.
+// FIXME: include the hash inside NodeIdSet.
 typedef HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> NodeIdSet;
 
-static NodeIdSet epsilonClosure(const NodeIdSet& nodeSet, const Vector<NFANode>& graph, unsigned epsilonTransitionCharacter)
+static inline void epsilonClosure(NodeIdSet& nodeSet, const Vector<NFANode>& graph, unsigned epsilonTransitionCharacter)
 {
     ASSERT(!nodeSet.isEmpty());
     ASSERT(!graph.isEmpty());
 
-    // We go breadth-first first into our graph following all the epsilon transition. At each generation,
-    // discoveredNodes contains all the new nodes we have discovered by following a single epsilon transition
-    // out of the previous set of nodes.
-    NodeIdSet outputNodeSet = nodeSet;
-    NodeIdSet discoveredNodes = nodeSet;
+    // FIXME: fine a good inline size for unprocessedNodes.
+    Vector<unsigned> unprocessedNodes;
+    copyToVector(nodeSet, unprocessedNodes);
+
     do {
-        outputNodeSet.add(discoveredNodes.begin(), discoveredNodes.end());
-
-        NodeIdSet nextGenerationDiscoveredNodes;
-
-        for (unsigned nodeId : discoveredNodes) {
-            const NFANode& node = graph[nodeId];
-            auto epsilonTransitionSlot = node.transitions.find(epsilonTransitionCharacter);
-            if (epsilonTransitionSlot != node.transitions.end()) {
-                const HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>& targets = epsilonTransitionSlot->value;
-                for (unsigned targetNodeId : targets) {
-                    if (!outputNodeSet.contains(targetNodeId))
-                        nextGenerationDiscoveredNodes.add(targetNodeId);
-                }
+        unsigned unprocessedNodeId = unprocessedNodes.takeLast();
+        const NFANode& node = graph[unprocessedNodeId];
+        auto epsilonTransitionSlot = node.transitions.find(epsilonTransitionCharacter);
+        if (epsilonTransitionSlot != node.transitions.end()) {
+            for (unsigned targetNodeId : epsilonTransitionSlot->value) {
+                auto addResult = nodeSet.add(targetNodeId);
+                if (addResult.isNewEntry)
+                    unprocessedNodes.append(targetNodeId);
             }
         }
-
-        discoveredNodes = nextGenerationDiscoveredNodes;
-    } while (!discoveredNodes.isEmpty());
-
-    ASSERT(!outputNodeSet.isEmpty());
-    return outputNodeSet;
+    } while (!unprocessedNodes.isEmpty());
 }
 
-typedef HashMap<uint16_t, NodeIdSet, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> SetTransitionsExcludingEpsilon;
-
-static SetTransitionsExcludingEpsilon setTransitionsExcludingEpsilon(const NodeIdSet& nodeSet, const Vector<NFANode>& graph, unsigned epsilonTransitionCharacter)
-{
-    ASSERT(!nodeSet.isEmpty());
-    ASSERT(!graph.isEmpty());
-
-    SetTransitionsExcludingEpsilon outputSetTransitionsExcludingEpsilon;
-
-    for (unsigned nodeId : nodeSet) {
-        const NFANode& node = graph[nodeId];
-        for (const auto& transitionSlot : node.transitions) {
-            if (transitionSlot.key != epsilonTransitionCharacter) {
-                auto existingTransition = outputSetTransitionsExcludingEpsilon.find(transitionSlot.key);
-                if (existingTransition != outputSetTransitionsExcludingEpsilon.end())
-                    existingTransition->value.add(transitionSlot.value.begin(), transitionSlot.value.end());
-                else {
-                    NodeIdSet newSet;
-                    newSet.add(transitionSlot.value.begin(), transitionSlot.value.end());
-                    outputSetTransitionsExcludingEpsilon.add(transitionSlot.key, newSet);
-                }
-            }
-        }
+struct UniqueNodeIdSetImpl {
+    unsigned* buffer()
+    {
+        return m_buffer;
     }
 
-    return outputSetTransitionsExcludingEpsilon;
-}
+    const unsigned* buffer() const
+    {
+        return m_buffer;
+    }
 
-class HashableNodeIdSet {
+    unsigned m_size;
+    unsigned m_hash;
+    unsigned m_dfaNodeId;
+private:
+    unsigned m_buffer[1];
+};
+
+class UniqueNodeIdSet {
 public:
+    UniqueNodeIdSet() { }
     enum EmptyValueTag { EmptyValue };
     enum DeletedValueTag { DeletedValue };
 
-    HashableNodeIdSet(EmptyValueTag) { }
-    HashableNodeIdSet(DeletedValueTag)
-        : m_isDeleted(true)
+    UniqueNodeIdSet(EmptyValueTag) { }
+    UniqueNodeIdSet(DeletedValueTag)
+        : m_uniqueNodeIdSetBuffer(reinterpret_cast_ptr<UniqueNodeIdSetImpl*>(-1))
     {
     }
 
-    HashableNodeIdSet(const NodeIdSet& nodeIdSet)
-        : m_nodeIdSet(nodeIdSet)
+    UniqueNodeIdSet(const NodeIdSet& nodeIdSet, unsigned hash, unsigned dfaNodeId)
     {
-        ASSERT(!nodeIdSet.isEmpty());
+        ASSERT(nodeIdSet.size());
+
+        unsigned size = nodeIdSet.size();
+        size_t byteSize = sizeof(UniqueNodeIdSetImpl) + (size - 1) * sizeof(unsigned);
+        m_uniqueNodeIdSetBuffer = static_cast<UniqueNodeIdSetImpl*>(fastMalloc(byteSize));
+
+        m_uniqueNodeIdSetBuffer->m_size = size;
+        m_uniqueNodeIdSetBuffer->m_hash = hash;
+        m_uniqueNodeIdSetBuffer->m_dfaNodeId = dfaNodeId;
+
+        unsigned* buffer = m_uniqueNodeIdSetBuffer->buffer();
+        for (unsigned nodeId : nodeIdSet) {
+            *buffer = nodeId;
+            ++buffer;
+        }
     }
 
-    HashableNodeIdSet(HashableNodeIdSet&& other)
-        : m_nodeIdSet(other.m_nodeIdSet)
-        , m_isDeleted(other.m_isDeleted)
+    UniqueNodeIdSet(UniqueNodeIdSet&& other)
+        : m_uniqueNodeIdSetBuffer(other.m_uniqueNodeIdSetBuffer)
     {
-        other.m_nodeIdSet.clear();
-        other.m_isDeleted = false;
+        other.m_uniqueNodeIdSetBuffer = nullptr;
     }
 
-    HashableNodeIdSet& operator=(HashableNodeIdSet&& other)
+    UniqueNodeIdSet& operator=(UniqueNodeIdSet&& other)
     {
-        m_nodeIdSet = other.m_nodeIdSet;
-        other.m_nodeIdSet.clear();
-        m_isDeleted = other.m_isDeleted;
-        other.m_isDeleted = false;
+        m_uniqueNodeIdSetBuffer = other.m_uniqueNodeIdSetBuffer;
+        other.m_uniqueNodeIdSetBuffer = nullptr;
         return *this;
     }
 
-    bool isEmptyValue() const { return m_nodeIdSet.isEmpty(); }
-    bool isDeletedValue() const { return m_isDeleted; }
+    ~UniqueNodeIdSet()
+    {
+        fastFree(m_uniqueNodeIdSetBuffer);
+    }
 
-    NodeIdSet nodeIdSet() const { return m_nodeIdSet; }
+    bool operator==(const UniqueNodeIdSet& other) const
+    {
+        return m_uniqueNodeIdSetBuffer == other.m_uniqueNodeIdSetBuffer;
+    }
+
+    bool operator==(const NodeIdSet& other) const
+    {
+        if (m_uniqueNodeIdSetBuffer->m_size != static_cast<unsigned>(other.size()))
+            return false;
+        unsigned* buffer = m_uniqueNodeIdSetBuffer->buffer();
+        for (unsigned i = 0; i < m_uniqueNodeIdSetBuffer->m_size; ++i) {
+            if (!other.contains(buffer[i]))
+                return false;
+        }
+        return true;
+    }
+
+    UniqueNodeIdSetImpl* impl() const { return m_uniqueNodeIdSetBuffer; }
+
+    unsigned hash() const { return m_uniqueNodeIdSetBuffer->m_hash; }
+    bool isEmptyValue() const { return !m_uniqueNodeIdSetBuffer; }
+    bool isDeletedValue() const { return m_uniqueNodeIdSetBuffer == reinterpret_cast_ptr<UniqueNodeIdSetImpl*>(-1); }
 
 private:
-    NodeIdSet m_nodeIdSet;
-    bool m_isDeleted = false;
+    UniqueNodeIdSetImpl* m_uniqueNodeIdSetBuffer = nullptr;
 };
 
-struct HashableNodeIdSetHash {
-    static unsigned hash(const HashableNodeIdSet& p)
+struct UniqueNodeIdSetHash {
+    static unsigned hash(const UniqueNodeIdSet& p)
     {
+        return p.hash();
+    }
+
+    static bool equal(const UniqueNodeIdSet& a, const UniqueNodeIdSet& b)
+    {
+        return a == b;
+    }
+    // It would be fine to compare empty or deleted here, but not for the HashTranslator.
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
+struct UniqueNodeIdSetHashHashTraits : public WTF::CustomHashTraits<UniqueNodeIdSet> {
+    static const bool emptyValueIsZero = true;
+
+    // FIXME: Get a good size.
+    static const int minimumTableSize = 128;
+};
+
+typedef HashSet<std::unique_ptr<UniqueNodeIdSet>, UniqueNodeIdSetHash, UniqueNodeIdSetHashHashTraits> UniqueNodeIdSetTable;
+
+struct NodeIdSetToUniqueNodeIdSetSource {
+    NodeIdSetToUniqueNodeIdSetSource(Vector<DFANode>& dfaGraph, const Vector<NFANode>& nfaGraph, const NodeIdSet& nodeIdSet)
+        : dfaGraph(dfaGraph)
+        , nfaGraph(nfaGraph)
+        , nodeIdSet(nodeIdSet)
+    {
+        // The hashing operation must be independant of the nodeId.
         unsigned hash = 4207445155;
-        for (unsigned nodeId : p.nodeIdSet())
-            hash += DefaultHash<unsigned>::Hash::hash(nodeId);
-        return hash;
+        for (unsigned nodeId : nodeIdSet)
+            hash += nodeId;
+        this->hash = DefaultHash<unsigned>::Hash::hash(hash);
     }
-
-    static bool equal(const HashableNodeIdSet& a, const HashableNodeIdSet& b)
-    {
-        return a.nodeIdSet() == b.nodeIdSet() && a.isDeletedValue() == b.isDeletedValue();
-    }
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    Vector<DFANode>& dfaGraph;
+    const Vector<NFANode>& nfaGraph;
+    const NodeIdSet& nodeIdSet;
+    unsigned hash;
 };
 
-struct HashableNodeIdSetHashTraits : public WTF::CustomHashTraits<HashableNodeIdSet> { };
-
-typedef HashMap<HashableNodeIdSet, unsigned, HashableNodeIdSetHash, HashableNodeIdSetHashTraits> NFAToDFANodeMap;
-
-static unsigned addDFAState(Vector<DFANode>& dfaGraph, NFAToDFANodeMap& nfaToDFANodeMap, const Vector<NFANode>& nfaGraph, NodeIdSet nfaNodes, unsigned epsilonTransitionCharacter)
-{
-    ASSERT(!nfaToDFANodeMap.contains(nfaNodes));
-    ASSERT_UNUSED(epsilonTransitionCharacter, epsilonClosure(nfaNodes, nfaGraph, epsilonTransitionCharacter) ==  nfaNodes);
-
-    DFANode newDFANode;
-
-    HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> actions;
-    for (unsigned nfaNodeId : nfaNodes) {
-        const NFANode& nfaNode = nfaGraph[nfaNodeId];
-        if (nfaNode.isFinal)
-            actions.add(nfaNode.ruleId);
-#ifndef NDEBUG
-        newDFANode.correspondingDFANodes.append(nfaNodeId);
-#endif
+struct NodeIdSetToUniqueNodeIdSetTranslator {
+    static unsigned hash(const NodeIdSetToUniqueNodeIdSetSource& source)
+    {
+        return source.hash;
     }
 
-    for (uint64_t action : actions)
-        newDFANode.actions.append(action);
+    static inline bool equal(const UniqueNodeIdSet& a, const NodeIdSetToUniqueNodeIdSetSource& b)
+    {
+        return a == b.nodeIdSet;
+    }
 
-    unsigned dfaNodeId = dfaGraph.size();
-    dfaGraph.append(newDFANode);
-    nfaToDFANodeMap.add(nfaNodes, dfaNodeId);
-    return dfaNodeId;
+    static void translate(UniqueNodeIdSet& location, const NodeIdSetToUniqueNodeIdSetSource& source, unsigned hash)
+    {
+        DFANode newDFANode;
+
+        HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> actions;
+        for (unsigned nfaNodeId : source.nodeIdSet) {
+            const NFANode& nfaNode = source.nfaGraph[nfaNodeId];
+            if (nfaNode.isFinal)
+                actions.add(nfaNode.ruleId);
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
+            newDFANode.correspondingDFANodes.append(nfaNodeId);
+#endif
+        }
+        copyToVector(actions, newDFANode.actions);
+
+        unsigned dfaNodeId = source.dfaGraph.size();
+        source.dfaGraph.append(newDFANode);
+        new (NotNull, &location) UniqueNodeIdSet(source.nodeIdSet, hash, dfaNodeId);
+
+        ASSERT(location.impl());
+    }
+};
+
+class SetTransitionsExcludingEpsilon {
+public:
+    NodeIdSet& operator[](unsigned index)
+    {
+        ASSERT(index < size());
+        return m_targets[index];
+    }
+
+    unsigned size() const
+    {
+        return WTF_ARRAY_LENGTH(m_targets);
+    }
+
+    NodeIdSet* begin()
+    {
+        return m_targets;
+    }
+
+    NodeIdSet* end()
+    {
+        return m_targets + size();
+    }
+
+private:
+    NodeIdSet m_targets[128];
+};
+
+static inline void populateTransitionsExcludingEpsilon(SetTransitionsExcludingEpsilon& setTransitionsExcludingEpsilon, const UniqueNodeIdSetImpl& sourceNodeSet, const Vector<NFANode>& graph, unsigned epsilonTransitionCharacter)
+{
+    ASSERT(!graph.isEmpty());
+#if !ASSERT_DISABLED
+    for (const NodeIdSet& set : setTransitionsExcludingEpsilon)
+        ASSERT(set.isEmpty());
+#endif
+
+    const unsigned* buffer = sourceNodeSet.buffer();
+    for (unsigned i = 0; i < sourceNodeSet.m_size; ++i) {
+        unsigned nodeId = buffer[i];
+        const NFANode& node = graph[nodeId];
+        for (const auto& transitionSlot : node.transitions) {
+            if (transitionSlot.key != epsilonTransitionCharacter)
+                setTransitionsExcludingEpsilon[transitionSlot.key].add(transitionSlot.value.begin(), transitionSlot.value.end());
+        }
+    }
 }
-
-typedef HashSet<HashableNodeIdSet, HashableNodeIdSetHash, HashableNodeIdSetHashTraits> SetOfNodeSet;
 
 DFA NFAToDFA::convert(const NFA& nfa)
 {
     Vector<DFANode> dfaGraph;
-    NFAToDFANodeMap nfaToDFANodeMap;
-
-    SetOfNodeSet processedStateSets;
-    SetOfNodeSet unprocessedStateSets;
 
     const Vector<NFANode>& nfaGraph = nfa.m_nodes;
 
     NodeIdSet initialSet({ nfa.root() });
-    NodeIdSet closedInitialSet = epsilonClosure(initialSet, nfaGraph, NFA::epsilonTransitionCharacter);
+    epsilonClosure(initialSet, nfaGraph, NFA::epsilonTransitionCharacter);
 
-    addDFAState(dfaGraph, nfaToDFANodeMap, nfaGraph, closedInitialSet, NFA::epsilonTransitionCharacter);
-    unprocessedStateSets.add(closedInitialSet);
+    UniqueNodeIdSetTable uniqueNodeIdSetTable;
+
+    NodeIdSetToUniqueNodeIdSetSource initialNodeIdSetToUniqueNodeIdSetSource(dfaGraph, nfaGraph, initialSet);
+    auto addResult = uniqueNodeIdSetTable.add<NodeIdSetToUniqueNodeIdSetTranslator>(initialNodeIdSetToUniqueNodeIdSetSource);
+
+    Vector<UniqueNodeIdSetImpl*> unprocessedNodes;
+    unprocessedNodes.append(addResult.iterator->impl());
+
+    SetTransitionsExcludingEpsilon transitionsFromClosedSet;
 
     do {
-        HashableNodeIdSet stateSet = unprocessedStateSets.takeAny();
+        UniqueNodeIdSetImpl* uniqueNodeIdSetImpl = unprocessedNodes.takeLast();
 
-        ASSERT(!processedStateSets.contains(stateSet.nodeIdSet()));
-        processedStateSets.add(stateSet.nodeIdSet());
+        unsigned dfaNodeId = uniqueNodeIdSetImpl->m_dfaNodeId;
+        populateTransitionsExcludingEpsilon(transitionsFromClosedSet, *uniqueNodeIdSetImpl, nfaGraph, NFA::epsilonTransitionCharacter);
 
-        unsigned dfaNodeId = nfaToDFANodeMap.get(stateSet);
+        // FIXME: there should not be any transition on key 0.
+        for (unsigned key = 0; key < transitionsFromClosedSet.size(); ++key) {
+            NodeIdSet& targetNodeSet = transitionsFromClosedSet[key];
 
-        SetTransitionsExcludingEpsilon transitionsFromClosedSet = setTransitionsExcludingEpsilon(stateSet.nodeIdSet(), nfaGraph, NFA::epsilonTransitionCharacter);
-        for (const auto& transitionSlot : transitionsFromClosedSet) {
-            NodeIdSet closedTargetNodeSet = epsilonClosure(transitionSlot.value, nfaGraph, NFA::epsilonTransitionCharacter);
-            unsigned newDFANodeId;
+            if (targetNodeSet.isEmpty())
+                continue;
 
-            const auto& existingNFAToDFAAssociation = nfaToDFANodeMap.find(closedTargetNodeSet);
-            if (existingNFAToDFAAssociation != nfaToDFANodeMap.end())
-                newDFANodeId = existingNFAToDFAAssociation->value;
-            else
-                newDFANodeId = addDFAState(dfaGraph, nfaToDFANodeMap, nfaGraph, closedTargetNodeSet, NFA::epsilonTransitionCharacter);
+            epsilonClosure(targetNodeSet, nfaGraph, NFA::epsilonTransitionCharacter);
 
-            ASSERT(newDFANodeId < dfaGraph.size());
+            NodeIdSetToUniqueNodeIdSetSource nodeIdSetToUniqueNodeIdSetSource(dfaGraph, nfaGraph, targetNodeSet);
+            auto uniqueNodeIdAddResult = uniqueNodeIdSetTable.add<NodeIdSetToUniqueNodeIdSetTranslator>(nodeIdSetToUniqueNodeIdSetSource);
 
-            const auto addResult = dfaGraph[dfaNodeId].transitions.set(transitionSlot.key, newDFANodeId);
+            unsigned targetNodeId = uniqueNodeIdAddResult.iterator->impl()->m_dfaNodeId;
+            const auto addResult = dfaGraph[dfaNodeId].transitions.add(key, targetNodeId);
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
-            if (!processedStateSets.contains(closedTargetNodeSet))
-                unprocessedStateSets.add(closedTargetNodeSet);
-        }
-    } while (!unprocessedStateSets.isEmpty());
+            if (uniqueNodeIdAddResult.isNewEntry)
+                unprocessedNodes.append(uniqueNodeIdAddResult.iterator->impl());
 
-    ASSERT(processedStateSets.size() == nfaToDFANodeMap.size());
+            targetNodeSet.clear();
+        }
+    } while (!unprocessedNodes.isEmpty());
 
     return DFA(WTF::move(dfaGraph), 0);
 }
