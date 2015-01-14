@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessLifetimeTracker.h"
 
+#include "WebProcessLifetimeObserver.h"
 #include "WebProcessProxy.h"
 
 namespace WebKit {
@@ -33,7 +34,6 @@ namespace WebKit {
 WebProcessLifetimeTracker::WebProcessLifetimeTracker(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
 {
-    (void)m_webPageProxy;
 }
 
 WebProcessLifetimeTracker::~WebProcessLifetimeTracker()
@@ -45,6 +45,9 @@ void WebProcessLifetimeTracker::addObserver(WebProcessLifetimeObserver& observer
     ASSERT(!m_observers.contains(&observer));
 
     m_observers.add(&observer);
+
+    if (processIsRunning())
+        observer.addWebPage(m_webPageProxy);
 }
 
 void WebProcessLifetimeTracker::removeObserver(WebProcessLifetimeObserver& observer)
@@ -56,21 +59,32 @@ void WebProcessLifetimeTracker::removeObserver(WebProcessLifetimeObserver& obser
 
 void WebProcessLifetimeTracker::connectionWillOpen()
 {
-    ASSERT(m_webPageProxy.process().state() == WebProcessProxy::State::Running);
+    ASSERT(processIsRunning());
 
-    // FIXME: Notify the observers.
+    for (auto& observer : m_observers)
+        observer->addWebPage(m_webPageProxy);
 }
 
 void WebProcessLifetimeTracker::connectionWillClose()
 {
-    ASSERT(m_webPageProxy.process().state() == WebProcessProxy::State::Running);
+    ASSERT(processIsRunning());
 
-    // FIXME: Notify the observers.
+    for (auto& observer : m_observers)
+        observer->removeWebPage(m_webPageProxy);
 }
 
 void WebProcessLifetimeTracker::pageWasInvalidated()
 {
-    // FIXME: Notify the observers if the process is currently running.
+    if (!processIsRunning())
+        return;
+
+    for (auto& observer : m_observers)
+        observer->removeWebPage(m_webPageProxy);
+}
+
+bool WebProcessLifetimeTracker::processIsRunning()
+{
+    return m_webPageProxy.process().state() == WebProcessProxy::State::Running;
 }
 
 }

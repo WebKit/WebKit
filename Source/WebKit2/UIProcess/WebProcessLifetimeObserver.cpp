@@ -25,3 +25,28 @@
 
 #include "config.h"
 #include "WebProcessLifetimeObserver.h"
+
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
+
+namespace WebKit {
+
+WebProcessLifetimeObserver::WebProcessLifetimeObserver()
+{
+}
+
+WebProcessLifetimeObserver::~WebProcessLifetimeObserver()
+{
+}
+
+void WebProcessLifetimeObserver::addWebPage(WebPageProxy& webPageProxy)
+{
+    ASSERT(webPageProxy.process().state() == WebProcessProxy::State::Running);
+}
+
+void WebProcessLifetimeObserver::removeWebPage(WebPageProxy& webPageProxy)
+{
+    ASSERT(webPageProxy.isClosed() || webPageProxy.process().state() != WebProcessProxy::State::Running);
+}
+
+}

@@ -28,11 +28,20 @@
 
 namespace WebKit {
 
+class WebPageProxy;
+class WebProcessProxy;
+
 class WebProcessLifetimeObserver {
-    // FIXME: Fill this in.
+public:
+    WebProcessLifetimeObserver();
+    virtual ~WebProcessLifetimeObserver();
+
+    void addWebPage(WebPageProxy&);
+    void removeWebPage(WebPageProxy&);
+
+private:
 };
 
 }
-
 
 #endif // WebProcessLifetimeObserver_h

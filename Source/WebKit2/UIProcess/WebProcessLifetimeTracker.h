@@ -47,6 +47,8 @@ public:
     void pageWasInvalidated();
 
 private:
+    bool processIsRunning();
+
     WebPageProxy& m_webPageProxy;
 
     HashSet<WebProcessLifetimeObserver*> m_observers;
