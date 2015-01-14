@@ -1,3 +1,20 @@
+2015-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not schedule a redraw for the redirected XComposite window when not in accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=140354
+
+        Reviewed by Martin Robinson.
+
+        The RedirectedXCompositeWindow uses XDamage to be notified when
+        the XWindow has been modified. Since the redirected window is
+        created unconditionally we always receive a XDamage notify when
+        the window is mapped, and we schedule a redraw in the web view
+        even when the web view is not in accelerated compositing mode.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize): Only call gtk_widget_queue_draw() when
+        in accelerated compositing mode.
+
 2015-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not resize the redirected XComposite window when not in accelerated compositing mode

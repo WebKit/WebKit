@@ -311,20 +311,24 @@ static void webkitWebViewBaseSetToplevelOnScreenWindow(WebKitWebViewBase* webVie
 
 static void webkitWebViewBaseRealize(GtkWidget* widget)
 {
+    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
+    WebKitWebViewBasePrivate* priv = webView->priv;
+
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (GDK_IS_X11_DISPLAY(display)) {
-        WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
         priv->redirectedWindow = RedirectedXCompositeWindow::create(
             gtk_widget_get_parent_window(widget),
-            [widget] {
-                gtk_widget_queue_draw(widget);
+            [webView] {
+                DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(webView->priv->pageProxy->drawingArea());
+                if (drawingArea && drawingArea->isInAcceleratedCompositingMode())
+                    gtk_widget_queue_draw(GTK_WIDGET(webView));
             });
         if (priv->redirectedWindow) {
             DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
             drawingArea->setNativeSurfaceHandleForCompositing(priv->redirectedWindow->windowID());
         }
-        webkitWebViewBaseUpdatePreferences(WEBKIT_WEB_VIEW_BASE(widget));
+        webkitWebViewBaseUpdatePreferences(webView);
     }
 #endif
 
@@ -364,8 +368,7 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
 
     gtk_style_context_set_background(gtk_widget_get_style_context(widget), window);
 
-    WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
-    gtk_im_context_set_client_window(webView->priv->inputMethodFilter.context(), window);
+    gtk_im_context_set_client_window(priv->inputMethodFilter.context(), window);
 
     GtkWidget* toplevel = gtk_widget_get_toplevel(widget);
     if (widgetIsOnscreenToplevelWindow(toplevel))
