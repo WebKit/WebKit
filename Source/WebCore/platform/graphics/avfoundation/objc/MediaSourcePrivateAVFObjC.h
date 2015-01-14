@@ -55,6 +55,7 @@ public:
     virtual ~MediaSourcePrivateAVFObjC();
 
     MediaPlayerPrivateMediaSourceAVFObjC* player() const { return m_player; }
+    const Vector<RefPtr<SourceBufferPrivateAVFObjC>>& sourceBuffers() const { return m_sourceBuffers; }
     const Vector<SourceBufferPrivateAVFObjC*>& activeSourceBuffers() const { return m_activeSourceBuffers; }
 
     virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
@@ -75,10 +76,6 @@ public:
     void seekToTime(const MediaTime&);
     MediaTime fastSeekTimeForMediaTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
     IntSize naturalSize() const;
-
-#if ENABLE(ENCRYPTED_MEDIA_V2)
-    std::unique_ptr<CDMSession> createSession(const String&);
-#endif
 
 private:
     MediaSourcePrivateAVFObjC(MediaPlayerPrivateMediaSourceAVFObjC*, MediaSourcePrivateClient*);

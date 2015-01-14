@@ -23,42 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDMSessionAVFoundationObjC_h
-#define CDMSessionAVFoundationObjC_h
+#ifndef CDMPrivateMediaSourceAVFObjC_h
+#define CDMPrivateMediaSourceAVFObjC_h
 
-#include "CDMSession.h"
-#include <wtf/PassOwnPtr.h>
-#include <wtf/RetainPtr.h>
+#if ENABLE(ENCRYPTED_MEDIA_V2) && ENABLE(MEDIA_SOURCE)
 
-#if ENABLE(ENCRYPTED_MEDIA_V2) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-
-OBJC_CLASS AVAssetResourceLoadingRequest;
+#include "CDMPrivate.h"
 
 namespace WebCore {
 
-class MediaPlayerPrivateAVFoundationObjC;
+class CDM;
 
-class CDMSessionAVFoundationObjC : public CDMSession {
+class CDMPrivateMediaSourceAVFObjC : public CDMPrivateInterface {
 public:
-    CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent);
-    virtual ~CDMSessionAVFoundationObjC() { }
+    explicit CDMPrivateMediaSourceAVFObjC(CDM* cdm)
+        : m_cdm(cdm)
+    { }
+    virtual ~CDMPrivateMediaSourceAVFObjC() { }
 
-    virtual CDMSessionType type() { return CDMSessionTypeAVFoundationObjC; }
-    virtual void setClient(CDMSessionClient* client) override { m_client = client; }
-    virtual const String& sessionId() const override { return m_sessionId; }
-    virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) override;
-    virtual void releaseKeys() override;
-    virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) override;
+    static std::unique_ptr<CDMPrivateInterface> create(CDM* cdm) { return std::make_unique<CDMPrivateMediaSourceAVFObjC>(cdm); }
+    static bool supportsKeySystem(const String&);
+    static bool supportsKeySystemAndMimeType(const String& keySystem, const String& mimeType);
+
+    virtual bool supportsMIMEType(const String& mimeType) override;
+    virtual std::unique_ptr<CDMSession> createSession() override;
+
+    CDM* cdm() const { return m_cdm; }
 
 protected:
-    MediaPlayerPrivateAVFoundationObjC* m_parent;
-    CDMSessionClient* m_client;
-    String m_sessionId;
-    RetainPtr<AVAssetResourceLoadingRequest> m_request;
+    CDM* m_cdm;
 };
 
 }
 
-#endif
+#endif // ENABLE(ENCRYPTED_MEDIA_V2) && ENABLE(MEDIA_SOURCE)
 
-#endif // CDMSessionAVFoundationObjC_h
+#endif // CDMPrivateMediaSourceAVFObjC_h

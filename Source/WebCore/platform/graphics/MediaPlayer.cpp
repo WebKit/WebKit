@@ -510,6 +510,11 @@ std::unique_ptr<CDMSession> MediaPlayer::createSession(const String& keySystem)
 {
     return m_private->createSession(keySystem);
 }
+
+void MediaPlayer::setCDMSession(CDMSession* session)
+{
+    m_private->setCDMSession(session);
+}
 #endif
     
 double MediaPlayer::duration() const
