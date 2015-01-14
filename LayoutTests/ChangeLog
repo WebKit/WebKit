@@ -1,3 +1,9 @@
+2015-01-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test gardening.
+
+        * platform/win/TestExpectations: Add Debug Crash documentation now that Bug 140425 has been filed.
+
 2015-01-13  Chris Dumez  <cdumez@apple.com>
 
         Only throttle DOM timers if they change CSS properties that cannot cause non-descendant elements to become visible

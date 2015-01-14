@@ -3200,3 +3200,5 @@ webkit.org/b/140258 userscripts/user-script-all-frames.html
 webkit.org/b/140258 userscripts/user-script-image-document.html
 webkit.org/b/140258 userscripts/user-style-all-frames.html
 webkit.org/b/140258 userscripts/user-stylesheet-invalidate.html
+
+webkit.org/b/140425 [ Debug ] fast/css/crash-on-custom-cursor-when-loading.html [ Crash ]
