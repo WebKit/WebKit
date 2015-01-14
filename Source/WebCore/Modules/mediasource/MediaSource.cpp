@@ -361,7 +361,7 @@ void MediaSource::setDurationInternal(const MediaTime& duration)
 
     // 4. If the new duration is less than old duration, then call remove(new duration, old duration)
     // on all objects in sourceBuffers.
-    if (!oldDuration.isValid() && duration < oldDuration) {
+    if (oldDuration.isValid() && duration < oldDuration) {
         for (auto& sourceBuffer : *m_sourceBuffers)
             sourceBuffer->remove(duration, oldDuration, IGNORE_EXCEPTION);
     }

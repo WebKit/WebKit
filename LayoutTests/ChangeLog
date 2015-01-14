@@ -1,5 +1,18 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r173454. <rdar://problem/19424147>
+
+    2014-09-09  Jer Noble  <jer.noble@apple.com>
+
+            [MSE] http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html failing after r173318
+            https://bugs.webkit.org/show_bug.cgi?id=136676
+
+            Reviewed by Eric Carlson.
+
+            * platform/mac/TestExpectations:
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r173318. <rdar://problem/19424143>
 
     2014-06-10  Jer Noble  <jer.noble@apple.com>
