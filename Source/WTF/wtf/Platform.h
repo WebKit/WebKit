@@ -315,7 +315,7 @@
 #endif
 
 #if CPU(ARM_NEON)
-// All NEON intrinsics usage can be disabled by this macro.
+/* All NEON intrinsics usage can be disabled by this macro. */
 #define HAVE_ARM_NEON_INTRINSICS 1
 #endif
 
