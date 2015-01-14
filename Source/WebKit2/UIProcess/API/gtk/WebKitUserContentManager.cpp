@@ -34,11 +34,11 @@ using namespace WebKit;
 
 struct _WebKitUserContentManagerPrivate {
     _WebKitUserContentManagerPrivate()
-        : userContentController(std::make_unique<WebUserContentControllerProxy>())
+        : userContentController(WebUserContentControllerProxy::create())
     {
     }
 
-    std::unique_ptr<WebUserContentControllerProxy> userContentController;
+    RefPtr<WebUserContentControllerProxy> userContentController;
 };
 
 /**

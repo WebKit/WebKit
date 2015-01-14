@@ -1,3 +1,15 @@
+2015-01-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r178412.
+        https://bugs.webkit.org/show_bug.cgi?id=140433
+
+        Wrong fix (Requested by KaL on #webkit).
+
+        Reverted changeset:
+
+        "Unreviewed GTK build fix after r178385."
+        http://trac.webkit.org/changeset/178412
+
 2015-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not schedule a redraw for the redirected XComposite window when not in accelerated compositing mode
