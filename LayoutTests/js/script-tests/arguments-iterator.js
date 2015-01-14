@@ -76,9 +76,23 @@ testReifiedArguments("a", "b");
 testReifiedArguments({})
 
 
-function testOverwrittenArguments() {
+function testEmptyArrayArguments() {
+    arguments = [];
+    for (arg of arguments) {
+        fail("nothing to iterate");
+        return false;
+    }
+
+    return true;
+}
+
+shouldBeTrue("testEmptyArrayArguments('a')");
+shouldBeTrue("testEmptyArrayArguments()");
+
+
+function testArrayArguments() {
     var i = 0;
-    arguments = "foobar";
+    arguments = [1, 2, 3];
     for (arg of arguments) {
         realArg = arguments[i++];
         shouldBeTrue("arg === realArg");
@@ -88,31 +102,7 @@ function testOverwrittenArguments() {
     shouldBe("actualArgumentsLength", "iteratedArgumentsLength");
 }
 
-
-testOverwrittenArguments();
-testOverwrittenArguments("a");
-testOverwrittenArguments("a", "b");
-testOverwrittenArguments({})
-
-
-
-function testNullArguments() {
-    var i = 0;
-    arguments = null;
-    for (arg of arguments) {
-        fail("nothing to iterate");
-    }
-}
-
-shouldThrow("testNullArguments()");
-function testNonArrayLikeArguments() {
-    var i = 0;
-    arguments = {};
-    for (arg of arguments) {
-        fail("nothing to iterate");
-        return false;
-    }
-    return true;
-}
-shouldBeTrue("testNonArrayLikeArguments()");
-
+testArrayArguments();
+testArrayArguments("a");
+testArrayArguments("a", "b");
+testArrayArguments({});

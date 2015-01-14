@@ -563,7 +563,7 @@ void BytecodeGenerator::addParameter(const Identifier& ident, int parameterIndex
     m_codeBlock->addParameter();
 }
 
-bool BytecodeGenerator::willResolveToArguments(const Identifier& ident)
+bool BytecodeGenerator::willResolveToArgumentsRegister(const Identifier& ident)
 {
     if (ident != propertyNames().arguments)
         return false;
@@ -575,6 +575,9 @@ bool BytecodeGenerator::willResolveToArguments(const Identifier& ident)
     if (entry.isNull())
         return false;
 
+    if (m_localArgumentsRegister && isCaptured(m_localArgumentsRegister->index()))
+        return false;
+
     if (m_codeBlock->usesArguments() && m_codeType == FunctionCode && m_localArgumentsRegister)
         return true;
     
@@ -583,7 +586,7 @@ bool BytecodeGenerator::willResolveToArguments(const Identifier& ident)
 
 RegisterID* BytecodeGenerator::uncheckedLocalArgumentsRegister()
 {
-    ASSERT(willResolveToArguments(propertyNames().arguments));
+    ASSERT(willResolveToArgumentsRegister(propertyNames().arguments));
     ASSERT(m_localArgumentsRegister);
     return m_localArgumentsRegister;
 }
@@ -1874,7 +1877,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
             RELEASE_ASSERT(!n->m_next);
             auto expression = static_cast<SpreadExpressionNode*>(n->m_expr)->expression();
             RefPtr<RegisterID> argumentRegister;
-            if (expression->isResolveNode() && willResolveToArguments(static_cast<ResolveNode*>(expression)->identifier()) && !symbolTable().slowArguments())
+            if (expression->isResolveNode() && willResolveToArgumentsRegister(static_cast<ResolveNode*>(expression)->identifier()) && !symbolTable().slowArguments())
                 argumentRegister = uncheckedLocalArgumentsRegister();
             else
                 argumentRegister = expression->emitBytecode(*this, callArguments.argumentRegister(0));
@@ -2016,7 +2019,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
             RELEASE_ASSERT(!n->m_next);
             auto expression = static_cast<SpreadExpressionNode*>(n->m_expr)->expression();
             RefPtr<RegisterID> argumentRegister;
-            if (expression->isResolveNode() && willResolveToArguments(static_cast<ResolveNode*>(expression)->identifier()) && !symbolTable().slowArguments())
+            if (expression->isResolveNode() && willResolveToArgumentsRegister(static_cast<ResolveNode*>(expression)->identifier()) && !symbolTable().slowArguments())
                 argumentRegister = uncheckedLocalArgumentsRegister();
             else
                 argumentRegister = expression->emitBytecode(*this, callArguments.argumentRegister(0));
@@ -2594,7 +2597,7 @@ void BytecodeGenerator::emitReadOnlyExceptionIfNeeded()
 void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const std::function<void(BytecodeGenerator&, RegisterID*)>& callBack)
 {
     if (subjectNode->isResolveNode()
-        && willResolveToArguments(static_cast<ResolveNode*>(subjectNode)->identifier())
+        && willResolveToArgumentsRegister(static_cast<ResolveNode*>(subjectNode)->identifier())
         && !symbolTable().slowArguments()) {
         RefPtr<RegisterID> index = emitLoad(newTemporary(), jsNumber(0));
 

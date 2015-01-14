@@ -382,7 +382,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (m_base->isResolveNode() 
-        && generator.willResolveToArguments(static_cast<ResolveNode*>(m_base)->identifier())
+        && generator.willResolveToArgumentsRegister(static_cast<ResolveNode*>(m_base)->identifier())
         && !generator.symbolTable().slowArguments()) {
         RefPtr<RegisterID> property = generator.emitNode(m_subscript);
         generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
@@ -418,7 +418,7 @@ RegisterID* DotAccessorNode::emitBytecode(BytecodeGenerator& generator, Register
         if (!m_base->isResolveNode())
             goto nonArgumentsPath;
         ResolveNode* resolveNode = static_cast<ResolveNode*>(m_base);
-        if (!generator.willResolveToArguments(resolveNode->identifier()))
+        if (!generator.willResolveToArgumentsRegister(resolveNode->identifier()))
             goto nonArgumentsPath;
         generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
         return generator.emitGetArgumentsLength(generator.finalDestination(dst), generator.uncheckedLocalArgumentsRegister());
@@ -599,7 +599,7 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
 static RegisterID* getArgumentByVal(BytecodeGenerator& generator, ExpressionNode* base, RegisterID* property, RegisterID* dst, JSTextPosition divot, JSTextPosition divotStart, JSTextPosition divotEnd)
 {
     if (base->isResolveNode()
-        && generator.willResolveToArguments(static_cast<ResolveNode*>(base)->identifier())
+        && generator.willResolveToArgumentsRegister(static_cast<ResolveNode*>(base)->identifier())
         && !generator.symbolTable().slowArguments()) {
         generator.emitExpressionInfo(divot, divotStart, divotEnd);
         return generator.emitGetArgumentByVal(generator.finalDestination(dst), generator.uncheckedLocalArgumentsRegister(), property);
@@ -757,7 +757,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
         RefPtr<RegisterID> thisRegister = generator.emitNode(m_args->m_listNode->m_expr);
         RefPtr<RegisterID> argsRegister;
         ArgumentListNode* args = m_args->m_listNode->m_next;
-        if (args->m_expr->isResolveNode() && generator.willResolveToArguments(static_cast<ResolveNode*>(args->m_expr)->identifier()) && !generator.symbolTable().slowArguments())
+        if (args->m_expr->isResolveNode() && generator.willResolveToArgumentsRegister(static_cast<ResolveNode*>(args->m_expr)->identifier()) && !generator.symbolTable().slowArguments())
             argsRegister = generator.uncheckedLocalArgumentsRegister();
         else
             argsRegister = generator.emitNode(args->m_expr);
@@ -2776,7 +2776,7 @@ void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) 
 RegisterID* ArrayPatternNode::emitDirectBinding(BytecodeGenerator& generator, RegisterID* dst, ExpressionNode* rhs)
 {
     if (rhs->isResolveNode()
-        && generator.willResolveToArguments(static_cast<ResolveNode*>(rhs)->identifier())
+        && generator.willResolveToArgumentsRegister(static_cast<ResolveNode*>(rhs)->identifier())
         && generator.hasSafeLocalArgumentsRegister()&& !generator.symbolTable().slowArguments()) {
         for (size_t i = 0; i < m_targetPatterns.size(); i++) {
             auto target = m_targetPatterns[i];

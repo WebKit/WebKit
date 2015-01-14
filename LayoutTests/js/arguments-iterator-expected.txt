@@ -36,16 +36,8 @@ PASS arg === realArg is true
 PASS actualArgumentsLength is iteratedArgumentsLength
 PASS arg === realArg is true
 PASS actualArgumentsLength is iteratedArgumentsLength
-PASS arg === realArg is true
-PASS arg === realArg is true
-PASS arg === realArg is true
-PASS arg === realArg is true
-PASS arg === realArg is true
-PASS arg === realArg is true
-PASS actualArgumentsLength is iteratedArgumentsLength
-PASS arg === realArg is true
-PASS arg === realArg is true
-PASS arg === realArg is true
+PASS testEmptyArrayArguments('a') is true
+PASS testEmptyArrayArguments() is true
 PASS arg === realArg is true
 PASS arg === realArg is true
 PASS arg === realArg is true
@@ -53,6 +45,7 @@ PASS actualArgumentsLength is iteratedArgumentsLength
 PASS arg === realArg is true
 PASS arg === realArg is true
 PASS arg === realArg is true
+PASS actualArgumentsLength is iteratedArgumentsLength
 PASS arg === realArg is true
 PASS arg === realArg is true
 PASS arg === realArg is true
@@ -60,12 +53,7 @@ PASS actualArgumentsLength is iteratedArgumentsLength
 PASS arg === realArg is true
 PASS arg === realArg is true
 PASS arg === realArg is true
-PASS arg === realArg is true
-PASS arg === realArg is true
-PASS arg === realArg is true
 PASS actualArgumentsLength is iteratedArgumentsLength
-PASS testNullArguments() threw exception TypeError: null is not an object (evaluating 'fail("nothing to iterate")').
-PASS testNonArrayLikeArguments() is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
