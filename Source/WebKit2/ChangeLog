@@ -1,3 +1,12 @@
+2015-01-14  Dan Bernstein  <mitz@apple.com>
+
+        Added availability annotations to some modern Cocoa SPI.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+
 2015-01-14  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [GTK] Fix build after r178385

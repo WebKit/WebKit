@@ -54,7 +54,7 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
 @property (nonatomic, setter=_setVisibleDebugOverlayRegions:) _WKDebugOverlayRegions _visibleDebugOverlayRegions WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 @property (nonatomic, setter=_setSimpleLineLayoutDebugBordersEnabled:) BOOL _simpleLineLayoutDebugBordersEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-@property (nonatomic, setter=_setDeveloperExtrasEnabled:) BOOL _developerExtrasEnabled;
+@property (nonatomic, setter=_setDeveloperExtrasEnabled:) BOOL _developerExtrasEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 @property (nonatomic, setter=_setStandalone:, getter=_isStandalone) BOOL _standalone WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
