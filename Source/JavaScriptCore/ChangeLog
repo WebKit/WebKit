@@ -1,5 +1,12 @@
 2015-01-14  Matthew Mirman  <mmirman@apple.com>
 
+        Removed accidental commit of "invalid_array.js" 
+        http://trac.webkit.org/changeset/178439
+
+        * tests/stress/invalid_array.js: Removed.
+
+2015-01-14  Matthew Mirman  <mmirman@apple.com>
+
         Fixes operationPutByIdOptimizes such that they check that the put didn't
         change the structure of the object who's property access is being
         cached.  Also removes uses of the new base value from the cache generation code.
