@@ -52,7 +52,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamSession);
 @end
 
 @interface AVStreamSession : NSObject
-- (instancetype)initWithAppIdentifier:(NSData *)appIdentifier;
+- (instancetype)initWithAppIdentifier:(NSData *)appIdentifier storageDirectoryAtURL:(NSURL *)storageURL;
 - (void)addStreamDataParser:(AVStreamDataParser *)streamDataParser;
 - (void)removeStreamDataParser:(AVStreamDataParser *)streamDataParser;
 - (void)expire;
@@ -65,6 +65,7 @@ namespace WebCore {
 CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC()
     : m_client(nullptr)
     , m_sessionId(createCanonicalUUIDString())
+    , m_mode(Normal)
 {
 }
 
@@ -90,6 +91,11 @@ PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyRequest(const St
 
     m_initData = initData;
 
+    if (equalIgnoringCase(mimeType, "keyrelease")) {
+        m_mode = KeyRelease;
+        return generateKeyReleaseMessage(errorCode, systemCode);
+    }
+
     String certificateString(ASCIILiteral("certificate"));
     RefPtr<Uint8Array> array = Uint8Array::create(certificateString.length());
     for (unsigned i = 0, length = certificateString.length(); i < length; ++i)
@@ -99,6 +105,12 @@ PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyRequest(const St
 
 void CDMSessionMediaSourceAVFObjC::releaseKeys()
 {
+    if (m_mode == KeyRelease) {
+        RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
+        [getAVStreamSessionClass() removePendingExpiredSessionReports:@[m_expiredSession.get()] withAppIdentifier:certificateData.get()];
+        return;
+    }
+
     if (m_streamSession) {
         LOG(Media, "CDMSessionMediaSourceAVFObjC::releaseKeys(%p) - expiring stream session", this);
         [m_streamSession expire];
@@ -121,8 +133,27 @@ static bool isEqual(Uint8Array* data, const char* literal)
     return !literal[length];
 }
 
+static const String& sessionStorageDirectory()
+{
+    static NeverDestroyed<String> sessionDirectoryPath;
+
+    if (sessionDirectoryPath.get().isEmpty()) {
+        char cacheDirectoryPath[PATH_MAX];
+        if (!confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectoryPath, PATH_MAX))
+            return WTF::emptyString();
+
+        sessionDirectoryPath.get().append(String(cacheDirectoryPath, strlen(cacheDirectoryPath)));
+        sessionDirectoryPath.get().append(ASCIILiteral("AVStreamSession/"));
+    }
+
+    return sessionDirectoryPath.get();
+}
+
 bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode)
 {
+    if (m_mode == KeyRelease)
+        return false;
+
     bool shouldGenerateKeyRequest = !m_certificate || isEqual(key, "renew");
     if (!m_certificate) {
         LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - certificate data", this);
@@ -141,7 +172,7 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
     if (shouldGenerateKeyRequest) {
         RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
         if (getAVStreamSessionClass()) {
-            m_streamSession = adoptNS([[getAVStreamSessionClass() alloc] initWithAppIdentifier:certificateData.get()]);
+            m_streamSession = adoptNS([[getAVStreamSessionClass() alloc] initWithAppIdentifier:certificateData.get() storageDirectoryAtURL:[NSURL fileURLWithPath:sessionStorageDirectory()]]);
             for (auto& sourceBuffer : m_sourceBuffers)
                 [m_streamSession addStreamDataParser:sourceBuffer->parser()];
             LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - created stream session %p", this, m_streamSession.get());
@@ -217,6 +248,24 @@ void CDMSessionMediaSourceAVFObjC::removeSourceBuffer(SourceBufferPrivateAVFObjC
 
     sourceBuffer->unregisterForErrorNotifications(this);
     m_sourceBuffers.remove(m_sourceBuffers.find(sourceBuffer));
+}
+
+PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyReleaseMessage(unsigned short& errorCode, unsigned long& systemCode)
+{
+    ASSERT(m_mode == KeyRelease);
+    m_certificate = m_initData;
+    RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
+
+    NSArray* expiredSessions = [getAVStreamSessionClass() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get()];
+    if (![expiredSessions count]) {
+        errorCode = MediaPlayer::KeySystemNotSupported;
+        return nullptr;
+    }
+
+    errorCode = 0;
+    systemCode = 0;
+    m_expiredSession = [expiredSessions firstObject];
+    return Uint8Array::create(static_cast<const uint8_t*>([m_expiredSession bytes]), [m_expiredSession length]);
 }
 
 }

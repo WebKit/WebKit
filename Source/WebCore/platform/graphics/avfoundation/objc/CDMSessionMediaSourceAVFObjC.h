@@ -56,12 +56,16 @@ public:
     void removeSourceBuffer(SourceBufferPrivateAVFObjC*);
 
 protected:
+    PassRefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, unsigned long& systemCode);
+
     Vector<RefPtr<SourceBufferPrivateAVFObjC>> m_sourceBuffers;
     CDMSessionClient* m_client;
     RetainPtr<AVStreamSession> m_streamSession;
     RefPtr<Uint8Array> m_initData;
     RefPtr<Uint8Array> m_certificate;
+    RetainPtr<NSData> m_expiredSession;
     String m_sessionId;
+    enum { Normal, KeyRelease } m_mode;
 };
 
 inline CDMSessionMediaSourceAVFObjC* toCDMSessionMediaSourceAVFObjC(CDMSession* session)
