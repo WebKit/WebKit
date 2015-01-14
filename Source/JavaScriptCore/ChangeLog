@@ -1,3 +1,19 @@
+2015-01-14  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: Stopwatch ASSERT when continuing inspector
+        https://bugs.webkit.org/show_bug.cgi?id=138360
+
+        Reviewed by Timothy Hatcher.
+
+        We were unconditionally resuming the stopwatch even if we never
+        paused it in the first place. Maintain a flag for whether the
+        stopwatch was paused when the debugger last paused.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::didPause):
+        (Inspector::InspectorDebuggerAgent::didContinue):
+        * inspector/agents/InspectorDebuggerAgent.h:
+
 2015-01-14  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r174226): Header on huffingtonpost.com is too large

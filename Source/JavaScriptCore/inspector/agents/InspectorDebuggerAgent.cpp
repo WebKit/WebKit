@@ -715,8 +715,10 @@ void InspectorDebuggerAgent::didPause(JSC::ExecState* scriptState, const Depreca
         m_listener->didPause();
 
     RefPtr<Stopwatch> stopwatch = m_injectedScriptManager->inspectorEnvironment().executionStopwatch();
-    if (stopwatch && stopwatch->isActive())
+    if (stopwatch && stopwatch->isActive()) {
         stopwatch->stop();
+        m_didPauseStopwatch = true;
+    }
 }
 
 void InspectorDebuggerAgent::breakpointActionSound(int breakpointActionIdentifier)
@@ -741,10 +743,14 @@ void InspectorDebuggerAgent::breakpointActionProbe(JSC::ExecState* scriptState, 
 
 void InspectorDebuggerAgent::didContinue()
 {
+    if (m_didPauseStopwatch) {
+        m_didPauseStopwatch = false;
+        m_injectedScriptManager->inspectorEnvironment().executionStopwatch()->start();
+    }
+
     m_pausedScriptState = nullptr;
     m_currentCallStack = Deprecated::ScriptValue();
     m_injectedScriptManager->releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
-    m_injectedScriptManager->inspectorEnvironment().executionStopwatch()->start();
     clearBreakDetails();
     clearExceptionValue();
 
