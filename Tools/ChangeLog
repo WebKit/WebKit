@@ -1,3 +1,14 @@
+2015-01-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove WK2 Windows cruft
+        https://bugs.webkit.org/show_bug.cgi?id=140440
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/InjectedBundle/win/ActivateFonts.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/win/InjectedBundleWin.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerWin.cpp: Removed.
+
 2015-01-13  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Fix TestWTF failed in TestWebKitAPI
