@@ -31,14 +31,14 @@
 
 namespace WebCore {
 
-class WebGLRenderingContext;
+class WebGLRenderingContextBase;
 class WebGLVertexArrayObjectOES;
 
 typedef int ExceptionCode;
 
 class OESVertexArrayObject final : public WebGLExtension {
 public:
-    OESVertexArrayObject(WebGLRenderingContext*);
+    OESVertexArrayObject(WebGLRenderingContextBase*);
     virtual ~OESVertexArrayObject();
 
     virtual ExtensionName getName() const override;

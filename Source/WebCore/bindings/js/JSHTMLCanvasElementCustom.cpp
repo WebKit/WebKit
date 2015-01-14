@@ -35,7 +35,7 @@
 
 #if ENABLE(WEBGL)
 #include "JSDictionary.h"
-#include "JSWebGLRenderingContext.h"
+#include "JSWebGLRenderingContextBase.h"
 #include "WebGLContextAttributes.h"
 #endif
 

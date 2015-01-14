@@ -52,9 +52,10 @@
 #include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
 
-#if ENABLE(WEBGL)    
+#if ENABLE(WEBGL)
+#include "WebGL1RenderingContext.h"
+#include "WebGL2RenderingContext.h"
 #include "WebGLContextAttributes.h"
-#include "WebGLRenderingContext.h"
 #endif
 
 namespace WebCore {
@@ -212,7 +213,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
             if (m_context && !m_context->is3d())
                 return nullptr;
             if (!m_context) {
-                m_context = WebGLRenderingContext::create(this, static_cast<WebGLContextAttributes*>(attrs));
+                m_context = WebGLRenderingContextBase::create(this, static_cast<WebGLContextAttributes*>(attrs), type);
+                
                 if (m_context) {
                     // Need to make sure a RenderLayer and compositing layer get created for the Canvas
                     setNeedsStyleRecalc(SyntheticStyleChange);
@@ -255,7 +257,7 @@ bool HTMLCanvasElement::is2dType(const String& type)
 bool HTMLCanvasElement::is3dType(const String& type)
 {
     // Retain support for the legacy "webkit-3d" name.
-    return type == "webgl" || type == "experimental-webgl" || type == "webkit-3d";
+    return type == "webgl" || type == "experimental-webgl" || type == "webkit-3d" || type == "experimental-webgl2";
 }
 #endif
 
@@ -327,7 +329,7 @@ void HTMLCanvasElement::reset()
 
 #if ENABLE(WEBGL)
     if (is3D() && oldSize != size())
-        static_cast<WebGLRenderingContext*>(m_context.get())->reshape(width(), height());
+        static_cast<WebGLRenderingContextBase*>(m_context.get())->reshape(width(), height());
 #endif
 
     if (auto renderer = this->renderer()) {
@@ -394,7 +396,7 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const LayoutRect& r, boo
 
 #if ENABLE(WEBGL)    
     if (is3D())
-        static_cast<WebGLRenderingContext*>(m_context.get())->markLayerComposited();
+        static_cast<WebGLRenderingContextBase*>(m_context.get())->markLayerComposited();
 #endif
 }
 
@@ -475,7 +477,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
     if (!is3D())
         return nullptr;
 
-    WebGLRenderingContext* ctx = static_cast<WebGLRenderingContext*>(m_context.get());
+    WebGLRenderingContextBase* ctx = static_cast<WebGLRenderingContextBase*>(m_context.get());
 
     return ctx->paintRenderingResultsToImageData();
 #else

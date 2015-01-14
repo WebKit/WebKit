@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-ANGLEInstancedArrays::ANGLEInstancedArrays(WebGLRenderingContext* context)
+ANGLEInstancedArrays::ANGLEInstancedArrays(WebGLRenderingContextBase* context)
     : WebGLExtension(context)
 {
 }
@@ -48,7 +48,7 @@ WebGLExtension::ExtensionName ANGLEInstancedArrays::getName() const
     return ANGLEInstancedArraysName;
 }
 
-bool ANGLEInstancedArrays::supported(WebGLRenderingContext* context)
+bool ANGLEInstancedArrays::supported(WebGLRenderingContextBase* context)
 {
 #if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     UNUSED_PARAM(context);

@@ -29,11 +29,11 @@
 
 #include "WebGLContextObject.h"
 
-#include "WebGLRenderingContext.h"
+#include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
 
-WebGLContextObject::WebGLContextObject(WebGLRenderingContext* context)
+WebGLContextObject::WebGLContextObject(WebGLRenderingContextBase* context)
     : WebGLObject(context)
     , m_context(context)
 {

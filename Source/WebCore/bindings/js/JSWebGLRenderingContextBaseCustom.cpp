@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,7 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
-
-#include "JSWebGLRenderingContext.h"
+#include "JSWebGLRenderingContextBase.h"
 
 #include "ANGLEInstancedArrays.h"
 #include "EXTBlendMinMax.h"
@@ -92,7 +91,7 @@
 #include "WebGLGetInfo.h"
 #include "WebGLLoseContext.h"
 #include "WebGLProgram.h"
-#include "WebGLRenderingContext.h"
+#include "WebGLRenderingContextBase.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <runtime/Error.h>
 #include <runtime/JSTypedArrays.h>
@@ -108,7 +107,7 @@
 using namespace JSC;
 
 namespace WebCore {
-
+    
 static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebGLGetInfo& info)
 {
     switch (info.getType()) {
@@ -139,8 +138,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
         return toJS(exec, globalObject, info.getWebGLFramebuffer());
     case WebGLGetInfo::kTypeWebGLIntArray:
         return toJS(exec, globalObject, info.getWebGLIntArray());
-    // FIXME: implement WebGLObjectArray
-    // case WebGLGetInfo::kTypeWebGLObjectArray:
+        // FIXME: implement WebGLObjectArray
+        // case WebGLGetInfo::kTypeWebGLObjectArray:
     case WebGLGetInfo::kTypeWebGLProgram:
         return toJS(exec, globalObject, info.getWebGLProgram());
     case WebGLGetInfo::kTypeWebGLRenderbuffer:
@@ -163,13 +162,13 @@ enum ObjectType {
     kBuffer, kRenderbuffer, kTexture, kVertexAttrib
 };
 
-static JSValue getObjectParameter(JSWebGLRenderingContext* obj, ExecState* exec, ObjectType objectType)
+static JSValue getObjectParameter(JSWebGLRenderingContextBase* obj, ExecState* exec, ObjectType objectType)
 {
     if (exec->argumentCount() != 2)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
-
+    
     ExceptionCode ec = 0;
-    WebGLRenderingContext& context = obj->impl();
+    WebGLRenderingContextBase& context = obj->impl();
     unsigned target = exec->uncheckedArgument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
@@ -258,17 +257,17 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
     return jsNull();
 }
 
-void JSWebGLRenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
+void JSWebGLRenderingContextBase::visitAdditionalChildren(SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(&impl());
 }
 
-JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getAttachedShaders(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
-    WebGLRenderingContext& context = impl();
+    WebGLRenderingContextBase& context = impl();
     WebGLProgram* program = JSWebGLProgram::toWrapped(exec->uncheckedArgument(0));
     if (!program && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
@@ -286,12 +285,12 @@ JSValue JSWebGLRenderingContext::getAttachedShaders(ExecState* exec)
     return constructArray(exec, 0, globalObject(), list);
 }
 
-JSValue JSWebGLRenderingContext::getExtension(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getExtension(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
-
-    WebGLRenderingContext& context = impl();
+    
+    WebGLRenderingContextBase& context = impl();
     const String name = exec->uncheckedArgument(0).toString(exec)->value(exec);
     if (exec->hadException())
         return jsUndefined();
@@ -299,18 +298,18 @@ JSValue JSWebGLRenderingContext::getExtension(ExecState* exec)
     return toJS(exec, globalObject(), extension);
 }
 
-JSValue JSWebGLRenderingContext::getBufferParameter(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getBufferParameter(ExecState* exec)
 {
     return getObjectParameter(this, exec, kBuffer);
 }
 
-JSValue JSWebGLRenderingContext::getFramebufferAttachmentParameter(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getFramebufferAttachmentParameter(ExecState* exec)
 {
     if (exec->argumentCount() != 3)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
-
+    
     ExceptionCode ec = 0;
-    WebGLRenderingContext& context = impl();
+    WebGLRenderingContextBase& context = impl();
     unsigned target = exec->uncheckedArgument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
@@ -328,13 +327,13 @@ JSValue JSWebGLRenderingContext::getFramebufferAttachmentParameter(ExecState* ex
     return toJS(exec, globalObject(), info);
 }
 
-JSValue JSWebGLRenderingContext::getParameter(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getParameter(ExecState* exec)
 {
     if (exec->argumentCount() != 1)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
-
+    
     ExceptionCode ec = 0;
-    WebGLRenderingContext& context = impl();
+    WebGLRenderingContextBase& context = impl();
     unsigned pname = exec->uncheckedArgument(0).toInt32(exec);
     if (exec->hadException())
         return jsUndefined();
@@ -346,13 +345,13 @@ JSValue JSWebGLRenderingContext::getParameter(ExecState* exec)
     return toJS(exec, globalObject(), info);
 }
 
-JSValue JSWebGLRenderingContext::getProgramParameter(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getProgramParameter(ExecState* exec)
 {
     if (exec->argumentCount() != 2)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
-
+    
     ExceptionCode ec = 0;
-    WebGLRenderingContext& context = impl();
+    WebGLRenderingContextBase& context = impl();
     WebGLProgram* program = JSWebGLProgram::toWrapped(exec->uncheckedArgument(0));
     if (!program && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
@@ -367,18 +366,18 @@ JSValue JSWebGLRenderingContext::getProgramParameter(ExecState* exec)
     return toJS(exec, globalObject(), info);
 }
 
-JSValue JSWebGLRenderingContext::getRenderbufferParameter(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getRenderbufferParameter(ExecState* exec)
 {
     return getObjectParameter(this, exec, kRenderbuffer);
 }
 
-JSValue JSWebGLRenderingContext::getShaderParameter(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getShaderParameter(ExecState* exec)
 {
     if (exec->argumentCount() != 2)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
-
+    
     ExceptionCode ec = 0;
-    WebGLRenderingContext& context = impl();
+    WebGLRenderingContextBase& context = impl();
     if (!exec->uncheckedArgument(0).isUndefinedOrNull() && !exec->uncheckedArgument(0).inherits(JSWebGLShader::info()))
         return throwTypeError(exec);
     WebGLShader* shader = JSWebGLShader::toWrapped(exec->uncheckedArgument(0));
@@ -393,9 +392,9 @@ JSValue JSWebGLRenderingContext::getShaderParameter(ExecState* exec)
     return toJS(exec, globalObject(), info);
 }
 
-JSValue JSWebGLRenderingContext::getSupportedExtensions(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getSupportedExtensions(ExecState* exec)
 {
-    WebGLRenderingContext& context = impl();
+    WebGLRenderingContextBase& context = impl();
     if (context.isContextLost())
         return jsNull();
     Vector<String> value = context.getSupportedExtensions();
@@ -405,18 +404,18 @@ JSValue JSWebGLRenderingContext::getSupportedExtensions(ExecState* exec)
     return constructArray(exec, 0, globalObject(), list);
 }
 
-JSValue JSWebGLRenderingContext::getTexParameter(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getTexParameter(ExecState* exec)
 {
     return getObjectParameter(this, exec, kTexture);
 }
 
-JSValue JSWebGLRenderingContext::getUniform(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getUniform(ExecState* exec)
 {
     if (exec->argumentCount() != 2)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
-
+    
     ExceptionCode ec = 0;
-    WebGLRenderingContext& context = impl();
+    WebGLRenderingContextBase& context = impl();
     WebGLProgram* program = JSWebGLProgram::toWrapped(exec->uncheckedArgument(0));
     if (!program && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
@@ -431,7 +430,7 @@ JSValue JSWebGLRenderingContext::getUniform(ExecState* exec)
     return toJS(exec, globalObject(), info);
 }
 
-JSValue JSWebGLRenderingContext::getVertexAttrib(ExecState* exec)
+JSValue JSWebGLRenderingContextBase::getVertexAttrib(ExecState* exec)
 {
     return getObjectParameter(this, exec, kVertexAttrib);
 }
@@ -441,21 +440,21 @@ bool toVector(JSC::ExecState* exec, JSC::JSValue value, Vector<T, inlineCapacity
 {
     if (!value.isObject())
         return false;
-
+    
     JSC::JSObject* object = asObject(value);
     int32_t length = object->get(exec, exec->vm().propertyNames->length).toInt32(exec);
-
+    
     if (!vector.tryReserveCapacity(length))
         return false;
     vector.resize(length);
-
+    
     for (int32_t i = 0; i < length; ++i) {
         JSC::JSValue v = object->get(exec, i);
         if (exec->hadException())
             return false;
         vector[i] = static_cast<T>(v.toNumber(exec));
     }
-
+    
     return true;
 }
 
@@ -481,7 +480,7 @@ static bool functionForUniform(DataFunctionToCall f)
     return false;
 }
 
-static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, WebGLRenderingContext& context)
+static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, WebGLRenderingContextBase& context)
 {
     if (exec->argumentCount() != 2)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
@@ -495,14 +494,14 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, We
             return throwTypeError(exec);
     } else
         index = exec->uncheckedArgument(0).toInt32(exec);
-
+    
     if (exec->hadException())
         return jsUndefined();
-        
+    
     RefPtr<Float32Array> webGLArray = toFloat32Array(exec->uncheckedArgument(1));
     if (exec->hadException())    
         return jsUndefined();
-        
+    
     ExceptionCode ec = 0;
     if (webGLArray) {
         switch (f) {
@@ -535,11 +534,11 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, We
         setDOMException(exec, ec);
         return jsUndefined();
     }
-
+    
     Vector<float, 64> array;
     if (!toVector(exec, exec->uncheckedArgument(1), array))
         return throwTypeError(exec);
-
+    
     switch (f) {
     case f_uniform1v:
         context.uniform1fv(location, array.data(), array.size(), ec);
@@ -571,17 +570,17 @@ static JSC::JSValue dataFunctionf(DataFunctionToCall f, JSC::ExecState* exec, We
     return jsUndefined();
 }
 
-static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, WebGLRenderingContext& context)
+static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, WebGLRenderingContextBase& context)
 {
     if (exec->argumentCount() != 2)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
-
+    
     WebGLUniformLocation* location = JSWebGLUniformLocation::toWrapped(exec->uncheckedArgument(0));
     if (!location && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
-  
+    
     RefPtr<Int32Array> webGLArray = toInt32Array(exec->uncheckedArgument(1));
-
+    
     ExceptionCode ec = 0;
     if (webGLArray) {
         switch (f) {
@@ -604,12 +603,12 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, We
         setDOMException(exec, ec);
         return jsUndefined();
     }
-
-
+    
+    
     Vector<int, 64> array;
     if (!toVector(exec, exec->uncheckedArgument(1), array))
         return throwTypeError(exec);
-
+    
     switch (f) {
     case f_uniform1v:
         context.uniform1iv(location, array.data(), array.size(), ec);
@@ -631,21 +630,21 @@ static JSC::JSValue dataFunctioni(DataFunctionToCall f, JSC::ExecState* exec, We
     return jsUndefined();
 }
 
-static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecState* exec, WebGLRenderingContext& context)
+static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecState* exec, WebGLRenderingContextBase& context)
 {
     if (exec->argumentCount() != 3)
         return exec->vm().throwException(exec, createNotEnoughArgumentsError(exec));
-
+    
     WebGLUniformLocation* location = JSWebGLUniformLocation::toWrapped(exec->uncheckedArgument(0));
     if (!location && !exec->uncheckedArgument(0).isUndefinedOrNull())
         return throwTypeError(exec);
-
+    
     bool transpose = exec->uncheckedArgument(1).toBoolean(exec);
     if (exec->hadException())    
         return jsUndefined();
-        
+    
     RefPtr<Float32Array> webGLArray = toFloat32Array(exec->uncheckedArgument(2));
-        
+    
     ExceptionCode ec = 0;
     if (webGLArray) {
         switch (f) {
@@ -663,11 +662,11 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
         setDOMException(exec, ec);
         return jsUndefined();
     }
-
+    
     Vector<float, 64> array;
     if (!toVector(exec, exec->uncheckedArgument(2), array))
         return throwTypeError(exec);
-
+    
     switch (f) {
     case f_uniformMatrix2fv:
         context.uniformMatrix2fv(location, transpose, array.data(), array.size(), ec);
@@ -679,82 +678,82 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
         context.uniformMatrix4fv(location, transpose, array.data(), array.size(), ec);
         break;
     }
-
+    
     setDOMException(exec, ec);
     return jsUndefined();
 }
 
-JSC::JSValue JSWebGLRenderingContext::uniform1fv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::uniform1fv(JSC::ExecState* exec)
 {
     return dataFunctionf(f_uniform1v, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::uniform1iv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::uniform1iv(JSC::ExecState* exec)
 {
     return dataFunctioni(f_uniform1v, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::uniform2fv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::uniform2fv(JSC::ExecState* exec)
 {
     return dataFunctionf(f_uniform2v, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::uniform2iv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::uniform2iv(JSC::ExecState* exec)
 {
     return dataFunctioni(f_uniform2v, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::uniform3fv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::uniform3fv(JSC::ExecState* exec)
 {
     return dataFunctionf(f_uniform3v, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::uniform3iv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::uniform3iv(JSC::ExecState* exec)
 {
     return dataFunctioni(f_uniform3v, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::uniform4fv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::uniform4fv(JSC::ExecState* exec)
 {
     return dataFunctionf(f_uniform4v, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::uniform4iv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::uniform4iv(JSC::ExecState* exec)
 {
     return dataFunctioni(f_uniform4v, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::uniformMatrix2fv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::uniformMatrix2fv(JSC::ExecState* exec)
 {
     return dataFunctionMatrix(f_uniformMatrix2fv, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::uniformMatrix3fv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::uniformMatrix3fv(JSC::ExecState* exec)
 {
     return dataFunctionMatrix(f_uniformMatrix3fv, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::uniformMatrix4fv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::uniformMatrix4fv(JSC::ExecState* exec)
 {
     return dataFunctionMatrix(f_uniformMatrix4fv, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::vertexAttrib1fv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::vertexAttrib1fv(JSC::ExecState* exec)
 {
     return dataFunctionf(f_vertexAttrib1v, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::vertexAttrib2fv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::vertexAttrib2fv(JSC::ExecState* exec)
 {
     return dataFunctionf(f_vertexAttrib2v, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::vertexAttrib3fv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::vertexAttrib3fv(JSC::ExecState* exec)
 {
     return dataFunctionf(f_vertexAttrib3v, exec, impl());
 }
 
-JSC::JSValue JSWebGLRenderingContext::vertexAttrib4fv(JSC::ExecState* exec)
+JSC::JSValue JSWebGLRenderingContextBase::vertexAttrib4fv(JSC::ExecState* exec)
 {
     return dataFunctionf(f_vertexAttrib4v, exec, impl());
 }

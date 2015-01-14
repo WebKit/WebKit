@@ -30,11 +30,11 @@
 
 namespace WebCore {
 
-class WebGLRenderingContext;
+class WebGLRenderingContextBase;
 
 class WebGLLoseContext final : public WebGLExtension {
 public:
-    explicit WebGLLoseContext(WebGLRenderingContext*);
+    explicit WebGLLoseContext(WebGLRenderingContextBase*);
     virtual ~WebGLLoseContext();
 
     virtual ExtensionName getName() const override;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,41 +26,17 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
+#include "JSWebGL1RenderingContext.h"
 
-#include "WebGLRenderbuffer.h"
-
-#include "WebGLContextGroup.h"
-#include "WebGLRenderingContextBase.h"
+using namespace JSC;
 
 namespace WebCore {
 
-PassRefPtr<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContextBase* ctx)
+void JSWebGL1RenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {
-    return adoptRef(new WebGLRenderbuffer(ctx));
+    visitor.addOpaqueRoot(&impl());
 }
 
-WebGLRenderbuffer::~WebGLRenderbuffer()
-{
-    deleteObject(0);
-}
-
-WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase* ctx)
-    : WebGLSharedObject(ctx)
-    , m_internalFormat(GraphicsContext3D::RGBA4)
-    , m_initialized(false)
-    , m_width(0)
-    , m_height(0)
-    , m_isValid(true)
-    , m_hasEverBeenBound(false)
-{
-    setObject(ctx->graphicsContext3D()->createRenderbuffer());
-}
-
-void WebGLRenderbuffer::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
-{
-    context3d->deleteRenderbuffer(object);
-}
-
-}
+} // namespace WebCore
 
 #endif // ENABLE(WEBGL)

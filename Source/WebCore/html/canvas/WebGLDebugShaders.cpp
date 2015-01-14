@@ -30,12 +30,12 @@
 #include "WebGLDebugShaders.h"
 
 #include "Extensions3D.h"
-#include "WebGLRenderingContext.h"
+#include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
 
 namespace WebCore {
 
-WebGLDebugShaders::WebGLDebugShaders(WebGLRenderingContext* context)
+WebGLDebugShaders::WebGLDebugShaders(WebGLRenderingContextBase* context)
     : WebGLExtension(context)
 {
 }

@@ -30,11 +30,11 @@
 #include "WebGLCompressedTexturePVRTC.h"
 
 #include "Extensions3D.h"
-#include "WebGLRenderingContext.h"
+#include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
 
-WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC(WebGLRenderingContext* context)
+WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC(WebGLRenderingContextBase* context)
     : WebGLExtension(context)
 {
     context->addCompressedTextureFormat(Extensions3D::COMPRESSED_RGB_PVRTC_4BPPV1_IMG);
@@ -52,7 +52,7 @@ WebGLExtension::ExtensionName WebGLCompressedTexturePVRTC::getName() const
     return WebGLCompressedTexturePVRTCName;
 }
 
-bool WebGLCompressedTexturePVRTC::supported(WebGLRenderingContext* context)
+bool WebGLCompressedTexturePVRTC::supported(WebGLRenderingContextBase* context)
 {
     Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
     return extensions->supports("GL_IMG_texture_compression_pvrtc");

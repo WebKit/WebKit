@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,10 @@
 #include "JSNode.h"
 
 #if ENABLE(WEBGL)
-#include "JSWebGLRenderingContext.h"
-#include "WebGLRenderingContext.h"
+#include "JSWebGL1RenderingContext.h"
+#include "JSWebGL2RenderingContext.h"
+#include "WebGL1RenderingContext.h"
+#include "WebGL2RenderingContext.h"
 #endif
 
 using namespace JSC;
@@ -51,8 +53,10 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, CanvasRender
         return jsNull();
 
 #if ENABLE(WEBGL)
-    if (object->is3d())
-        return wrap<JSWebGLRenderingContext>(globalObject, static_cast<WebGLRenderingContext*>(object));
+    if (object->isWebGL1())
+        return wrap<JSWebGL1RenderingContext>(globalObject, static_cast<WebGL1RenderingContext*>(object));
+    if (object->isWebGL2())
+        return wrap<JSWebGL2RenderingContext>(globalObject, static_cast<WebGL2RenderingContext*>(object));
 #endif
     ASSERT_WITH_SECURITY_IMPLICATION(object->is2d());
     return wrap<JSCanvasRenderingContext2D>(globalObject, static_cast<CanvasRenderingContext2D*>(object));

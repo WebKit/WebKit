@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,47 +20,23 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WebGL2RenderingContext_h
+#define WebGL2RenderingContext_h
 
-#if ENABLE(WEBGL)
-
-#include "WebGLRenderbuffer.h"
-
-#include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
 
-PassRefPtr<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContextBase* ctx)
-{
-    return adoptRef(new WebGLRenderbuffer(ctx));
-}
+class WebGL2RenderingContext final : public WebGLRenderingContextBase {
+public:
+    WebGL2RenderingContext(HTMLCanvasElement*, GraphicsContext3D::Attributes);
+    WebGL2RenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
+    virtual bool isWebGL2() const { return true; }
+};
 
-WebGLRenderbuffer::~WebGLRenderbuffer()
-{
-    deleteObject(0);
-}
+} // namespace WebCore
 
-WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase* ctx)
-    : WebGLSharedObject(ctx)
-    , m_internalFormat(GraphicsContext3D::RGBA4)
-    , m_initialized(false)
-    , m_width(0)
-    , m_height(0)
-    , m_isValid(true)
-    , m_hasEverBeenBound(false)
-{
-    setObject(ctx->graphicsContext3D()->createRenderbuffer());
-}
-
-void WebGLRenderbuffer::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObject object)
-{
-    context3d->deleteRenderbuffer(object);
-}
-
-}
-
-#endif // ENABLE(WEBGL)
+#endif

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-OESStandardDerivatives::OESStandardDerivatives(WebGLRenderingContext* context)
+OESStandardDerivatives::OESStandardDerivatives(WebGLRenderingContextBase* context)
     : WebGLExtension(context)
 {
 }

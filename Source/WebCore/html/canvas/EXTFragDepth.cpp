@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-EXTFragDepth::EXTFragDepth(WebGLRenderingContext* context)
+EXTFragDepth::EXTFragDepth(WebGLRenderingContextBase* context)
     : WebGLExtension(context)
 {
 }

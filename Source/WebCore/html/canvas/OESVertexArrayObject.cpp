@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContext* context)
+OESVertexArrayObject::OESVertexArrayObject(WebGLRenderingContextBase* context)
     : WebGLExtension(context)
 {
 }

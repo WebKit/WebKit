@@ -1725,8 +1725,8 @@
 		49C7B9DA1042D32F0009D447 /* WebGLRenderbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9BA1042D32F0009D447 /* WebGLRenderbuffer.h */; };
 		49C7B9DC1042D32F0009D447 /* CanvasRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9BC1042D32F0009D447 /* CanvasRenderingContext.cpp */; };
 		49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9BD1042D32F0009D447 /* CanvasRenderingContext.h */; };
-		49C7B9DF1042D32F0009D447 /* WebGLRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9BF1042D32F0009D447 /* WebGLRenderingContext.cpp */; };
-		49C7B9E01042D32F0009D447 /* WebGLRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C01042D32F0009D447 /* WebGLRenderingContext.h */; };
+		49C7B9DF1042D32F0009D447 /* WebGL1RenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9BF1042D32F0009D447 /* WebGL1RenderingContext.cpp */; };
+		49C7B9E01042D32F0009D447 /* WebGL1RenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C01042D32F0009D447 /* WebGL1RenderingContext.h */; };
 		49C7B9E21042D32F0009D447 /* WebGLShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9C21042D32F0009D447 /* WebGLShader.cpp */; };
 		49C7B9E31042D32F0009D447 /* WebGLShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9C31042D32F0009D447 /* WebGLShader.h */; };
 		49C7B9E51042D32F0009D447 /* WebGLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9C51042D32F0009D447 /* WebGLTexture.cpp */; };
@@ -1766,10 +1766,10 @@
 		49EED1431051969400099FAB /* JSCanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EED13D1051969400099FAB /* JSCanvasRenderingContext.h */; };
 		49EED1441051969400099FAB /* JSCanvasRenderingContext2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED13E1051969400099FAB /* JSCanvasRenderingContext2D.cpp */; };
 		49EED1451051969400099FAB /* JSCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EED13F1051969400099FAB /* JSCanvasRenderingContext2D.h */; };
-		49EED1461051969400099FAB /* JSWebGLRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED1401051969400099FAB /* JSWebGLRenderingContext.cpp */; };
-		49EED1471051969400099FAB /* JSWebGLRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EED1411051969400099FAB /* JSWebGLRenderingContext.h */; };
+		49EED1461051969400099FAB /* JSWebGL1RenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED1401051969400099FAB /* JSWebGL1RenderingContext.cpp */; };
+		49EED1471051969400099FAB /* JSWebGL1RenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EED1411051969400099FAB /* JSWebGL1RenderingContext.h */; };
 		49EED14E1051971A00099FAB /* JSCanvasRenderingContext2DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */; };
-		49EED14F1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */; };
+		49EED14F1051971A00099FAB /* JSWebGL1RenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14C1051971A00099FAB /* JSWebGL1RenderingContextCustom.cpp */; };
 		49EED1501051971A00099FAB /* JSCanvasRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */; };
 		49FC7A501444AF5F00A5D864 /* DisplayRefreshMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FC7A4F1444AF5F00A5D864 /* DisplayRefreshMonitor.cpp */; };
 		49FFBF1D11C8550E006A7118 /* GraphicsContext3DMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */; };
@@ -5838,6 +5838,12 @@
 		D359D793129CA3C00006E5D2 /* DOMHTMLDetailsElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = D359D790129CA3C00006E5D2 /* DOMHTMLDetailsElementInternal.h */; };
 		D359D8BE129CA55C0006E5D2 /* JSHTMLDetailsElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D359D8BC129CA55C0006E5D2 /* JSHTMLDetailsElement.cpp */; };
 		D359D8BF129CA55C0006E5D2 /* JSHTMLDetailsElement.h in Headers */ = {isa = PBXBuildFile; fileRef = D359D8BD129CA55C0006E5D2 /* JSHTMLDetailsElement.h */; };
+		D39C72D71A5C8B0B00AED89C /* WebGLRenderingContextBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D39C72D51A5C8B0B00AED89C /* WebGLRenderingContextBase.cpp */; };
+		D39C72D81A5C8B0B00AED89C /* WebGLRenderingContextBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D39C72D61A5C8B0B00AED89C /* WebGLRenderingContextBase.h */; };
+		D39C72DD1A5C8C8E00AED89C /* WebGL2RenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D39C72DB1A5C8C8E00AED89C /* WebGL2RenderingContext.cpp */; };
+		D39C72DE1A5C8C8E00AED89C /* WebGL2RenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = D39C72DC1A5C8C8E00AED89C /* WebGL2RenderingContext.h */; };
+		D39C72E41A5C93AF00AED89C /* JSWebGL2RenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D39C72E31A5C93AF00AED89C /* JSWebGL2RenderingContextCustom.cpp */; };
+		D39C72E61A5C940B00AED89C /* JSWebGLRenderingContextBaseCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D39C72E51A5C940B00AED89C /* JSWebGLRenderingContextBaseCustom.cpp */; };
 		D3A94A38122DABAC00A37BBC /* MediaQueryList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3A94A31122DABAC00A37BBC /* MediaQueryList.cpp */; };
 		D3A94A39122DABAC00A37BBC /* MediaQueryList.h in Headers */ = {isa = PBXBuildFile; fileRef = D3A94A32122DABAC00A37BBC /* MediaQueryList.h */; };
 		D3A94A3B122DABAC00A37BBC /* MediaQueryListListener.h in Headers */ = {isa = PBXBuildFile; fileRef = D3A94A34122DABAC00A37BBC /* MediaQueryListListener.h */; };
@@ -5847,6 +5853,10 @@
 		D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = D3AA10F2123A98AA0092152B /* MediaQueryMatcher.h */; };
 		D3D4E972130C7CFE007BA540 /* HTMLSummaryElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3D4E970130C7CFE007BA540 /* HTMLSummaryElement.cpp */; };
 		D3D4E973130C7CFE007BA540 /* HTMLSummaryElement.h in Headers */ = {isa = PBXBuildFile; fileRef = D3D4E971130C7CFE007BA540 /* HTMLSummaryElement.h */; };
+		D3E14BB51A5DCF4B0097A6E9 /* JSWebGL2RenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3E14BB31A5DCF4B0097A6E9 /* JSWebGL2RenderingContext.cpp */; };
+		D3E14BB61A5DCF4B0097A6E9 /* JSWebGL2RenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = D3E14BB41A5DCF4B0097A6E9 /* JSWebGL2RenderingContext.h */; };
+		D3E14BB91A5DCF7B0097A6E9 /* JSWebGLRenderingContextBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3E14BB71A5DCF7B0097A6E9 /* JSWebGLRenderingContextBase.cpp */; };
+		D3E14BBA1A5DCF7B0097A6E9 /* JSWebGLRenderingContextBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D3E14BB81A5DCF7B0097A6E9 /* JSWebGLRenderingContextBase.h */; };
 		D619A307144E00BE004BC302 /* ChildListMutationScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D619A305144E00BE004BC302 /* ChildListMutationScope.cpp */; };
 		D619A308144E00BE004BC302 /* ChildListMutationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = D619A306144E00BE004BC302 /* ChildListMutationScope.h */; };
 		D6489D25166FFCF1007C031B /* JSHTMLTemplateElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6489D23166FFCF1007C031B /* JSHTMLTemplateElement.cpp */; };
@@ -8792,9 +8802,9 @@
 		49C7B9BC1042D32F0009D447 /* CanvasRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasRenderingContext.cpp; path = canvas/CanvasRenderingContext.cpp; sourceTree = "<group>"; };
 		49C7B9BD1042D32F0009D447 /* CanvasRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasRenderingContext.h; path = canvas/CanvasRenderingContext.h; sourceTree = "<group>"; };
 		49C7B9BE1042D32F0009D447 /* CanvasRenderingContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CanvasRenderingContext.idl; path = canvas/CanvasRenderingContext.idl; sourceTree = "<group>"; };
-		49C7B9BF1042D32F0009D447 /* WebGLRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLRenderingContext.cpp; path = canvas/WebGLRenderingContext.cpp; sourceTree = "<group>"; };
-		49C7B9C01042D32F0009D447 /* WebGLRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLRenderingContext.h; path = canvas/WebGLRenderingContext.h; sourceTree = "<group>"; };
-		49C7B9C11042D32F0009D447 /* WebGLRenderingContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLRenderingContext.idl; path = canvas/WebGLRenderingContext.idl; sourceTree = "<group>"; };
+		49C7B9BF1042D32F0009D447 /* WebGL1RenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGL1RenderingContext.cpp; path = canvas/WebGL1RenderingContext.cpp; sourceTree = "<group>"; };
+		49C7B9C01042D32F0009D447 /* WebGL1RenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGL1RenderingContext.h; path = canvas/WebGL1RenderingContext.h; sourceTree = "<group>"; };
+		49C7B9C11042D32F0009D447 /* WebGL1RenderingContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGL1RenderingContext.idl; path = canvas/WebGL1RenderingContext.idl; sourceTree = "<group>"; };
 		49C7B9C21042D32F0009D447 /* WebGLShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLShader.cpp; path = canvas/WebGLShader.cpp; sourceTree = "<group>"; };
 		49C7B9C31042D32F0009D447 /* WebGLShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLShader.h; path = canvas/WebGLShader.h; sourceTree = "<group>"; };
 		49C7B9C41042D32F0009D447 /* WebGLShader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLShader.idl; path = canvas/WebGLShader.idl; sourceTree = "<group>"; };
@@ -8836,10 +8846,10 @@
 		49EED13D1051969400099FAB /* JSCanvasRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext.h; sourceTree = "<group>"; };
 		49EED13E1051969400099FAB /* JSCanvasRenderingContext2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2D.cpp; sourceTree = "<group>"; };
 		49EED13F1051969400099FAB /* JSCanvasRenderingContext2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext2D.h; sourceTree = "<group>"; };
-		49EED1401051969400099FAB /* JSWebGLRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLRenderingContext.cpp; sourceTree = "<group>"; };
-		49EED1411051969400099FAB /* JSWebGLRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLRenderingContext.h; sourceTree = "<group>"; };
+		49EED1401051969400099FAB /* JSWebGL1RenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGL1RenderingContext.cpp; sourceTree = "<group>"; };
+		49EED1411051969400099FAB /* JSWebGL1RenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGL1RenderingContext.h; sourceTree = "<group>"; };
 		49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
-		49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLRenderingContextCustom.cpp; sourceTree = "<group>"; };
+		49EED14C1051971A00099FAB /* JSWebGL1RenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGL1RenderingContextCustom.cpp; sourceTree = "<group>"; };
 		49EED14D1051971A00099FAB /* JSCanvasRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContextCustom.cpp; sourceTree = "<group>"; };
 		49FC7A4F1444AF5F00A5D864 /* DisplayRefreshMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitor.cpp; sourceTree = "<group>"; };
 		49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContext3DMac.mm; sourceTree = "<group>"; };
@@ -13316,6 +13326,12 @@
 		D359D790129CA3C00006E5D2 /* DOMHTMLDetailsElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLDetailsElementInternal.h; sourceTree = "<group>"; };
 		D359D8BC129CA55C0006E5D2 /* JSHTMLDetailsElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLDetailsElement.cpp; sourceTree = "<group>"; };
 		D359D8BD129CA55C0006E5D2 /* JSHTMLDetailsElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLDetailsElement.h; sourceTree = "<group>"; };
+		D39C72D51A5C8B0B00AED89C /* WebGLRenderingContextBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLRenderingContextBase.cpp; path = canvas/WebGLRenderingContextBase.cpp; sourceTree = "<group>"; };
+		D39C72D61A5C8B0B00AED89C /* WebGLRenderingContextBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLRenderingContextBase.h; path = canvas/WebGLRenderingContextBase.h; sourceTree = "<group>"; };
+		D39C72DB1A5C8C8E00AED89C /* WebGL2RenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGL2RenderingContext.cpp; path = canvas/WebGL2RenderingContext.cpp; sourceTree = "<group>"; };
+		D39C72DC1A5C8C8E00AED89C /* WebGL2RenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGL2RenderingContext.h; path = canvas/WebGL2RenderingContext.h; sourceTree = "<group>"; };
+		D39C72E31A5C93AF00AED89C /* JSWebGL2RenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGL2RenderingContextCustom.cpp; sourceTree = "<group>"; };
+		D39C72E51A5C940B00AED89C /* JSWebGLRenderingContextBaseCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLRenderingContextBaseCustom.cpp; sourceTree = "<group>"; };
 		D3A94A31122DABAC00A37BBC /* MediaQueryList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryList.cpp; sourceTree = "<group>"; };
 		D3A94A32122DABAC00A37BBC /* MediaQueryList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryList.h; sourceTree = "<group>"; };
 		D3A94A33122DABAC00A37BBC /* MediaQueryList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaQueryList.idl; sourceTree = "<group>"; };
@@ -13327,6 +13343,12 @@
 		D3AA10F2123A98AA0092152B /* MediaQueryMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryMatcher.h; sourceTree = "<group>"; };
 		D3D4E970130C7CFE007BA540 /* HTMLSummaryElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLSummaryElement.cpp; sourceTree = "<group>"; };
 		D3D4E971130C7CFE007BA540 /* HTMLSummaryElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSummaryElement.h; sourceTree = "<group>"; };
+		D3E14BB31A5DCF4B0097A6E9 /* JSWebGL2RenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGL2RenderingContext.cpp; sourceTree = "<group>"; };
+		D3E14BB41A5DCF4B0097A6E9 /* JSWebGL2RenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGL2RenderingContext.h; sourceTree = "<group>"; };
+		D3E14BB71A5DCF7B0097A6E9 /* JSWebGLRenderingContextBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLRenderingContextBase.cpp; sourceTree = "<group>"; };
+		D3E14BB81A5DCF7B0097A6E9 /* JSWebGLRenderingContextBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLRenderingContextBase.h; sourceTree = "<group>"; };
+		D3E14BBB1A5DE8F50097A6E9 /* WebGL2RenderingContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGL2RenderingContext.idl; path = canvas/WebGL2RenderingContext.idl; sourceTree = "<group>"; };
+		D3E14BBC1A5DE8F50097A6E9 /* WebGLRenderingContextBase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLRenderingContextBase.idl; path = canvas/WebGLRenderingContextBase.idl; sourceTree = "<group>"; };
 		D619A305144E00BE004BC302 /* ChildListMutationScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildListMutationScope.cpp; sourceTree = "<group>"; };
 		D619A306144E00BE004BC302 /* ChildListMutationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildListMutationScope.h; sourceTree = "<group>"; };
 		D6489D23166FFCF1007C031B /* JSHTMLTemplateElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTemplateElement.cpp; sourceTree = "<group>"; };
@@ -15832,9 +15854,15 @@
 				49C7B9B91042D32F0009D447 /* WebGLRenderbuffer.cpp */,
 				49C7B9BA1042D32F0009D447 /* WebGLRenderbuffer.h */,
 				49C7B9BB1042D32F0009D447 /* WebGLRenderbuffer.idl */,
-				49C7B9BF1042D32F0009D447 /* WebGLRenderingContext.cpp */,
-				49C7B9C01042D32F0009D447 /* WebGLRenderingContext.h */,
-				49C7B9C11042D32F0009D447 /* WebGLRenderingContext.idl */,
+				49C7B9BF1042D32F0009D447 /* WebGL1RenderingContext.cpp */,
+				49C7B9C01042D32F0009D447 /* WebGL1RenderingContext.h */,
+				49C7B9C11042D32F0009D447 /* WebGL1RenderingContext.idl */,
+				D39C72DB1A5C8C8E00AED89C /* WebGL2RenderingContext.cpp */,
+				D39C72DC1A5C8C8E00AED89C /* WebGL2RenderingContext.h */,
+				D3E14BBB1A5DE8F50097A6E9 /* WebGL2RenderingContext.idl */,
+				D39C72D51A5C8B0B00AED89C /* WebGLRenderingContextBase.cpp */,
+				D39C72D61A5C8B0B00AED89C /* WebGLRenderingContextBase.h */,
+				D3E14BBC1A5DE8F50097A6E9 /* WebGLRenderingContextBase.idl */,
 				49C7B9C21042D32F0009D447 /* WebGLShader.cpp */,
 				49C7B9C31042D32F0009D447 /* WebGLShader.h */,
 				49C7B9C41042D32F0009D447 /* WebGLShader.idl */,
@@ -18903,8 +18931,12 @@
 				49C7B9891042D2D30009D447 /* JSWebGLProgram.h */,
 				49C7B98A1042D2D30009D447 /* JSWebGLRenderbuffer.cpp */,
 				49C7B98B1042D2D30009D447 /* JSWebGLRenderbuffer.h */,
-				49EED1401051969400099FAB /* JSWebGLRenderingContext.cpp */,
-				49EED1411051969400099FAB /* JSWebGLRenderingContext.h */,
+				D3E14BB71A5DCF7B0097A6E9 /* JSWebGLRenderingContextBase.cpp */,
+				D3E14BB81A5DCF7B0097A6E9 /* JSWebGLRenderingContextBase.h */,
+				49EED1401051969400099FAB /* JSWebGL1RenderingContext.cpp */,
+				49EED1411051969400099FAB /* JSWebGL1RenderingContext.h */,
+				D3E14BB31A5DCF4B0097A6E9 /* JSWebGL2RenderingContext.cpp */,
+				D3E14BB41A5DCF4B0097A6E9 /* JSWebGL2RenderingContext.h */,
 				49C7B98F1042D2D30009D447 /* JSWebGLShader.cpp */,
 				49C7B9901042D2D30009D447 /* JSWebGLShader.h */,
 				A07D3353152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp */,
@@ -20999,7 +21031,9 @@
 				7C73FB17191EF808007DE061 /* JSUserMessageHandlersNamespaceCustom.cpp */,
 				BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */,
 				BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */,
-				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
+				D39C72E51A5C940B00AED89C /* JSWebGLRenderingContextBaseCustom.cpp */,
+				49EED14C1051971A00099FAB /* JSWebGL1RenderingContextCustom.cpp */,
+				D39C72E31A5C93AF00AED89C /* JSWebGL2RenderingContextCustom.cpp */,
 				BC275B7811C5D1C300C9206C /* JSWebKitPointCustom.cpp */,
 				E1CA5CBB0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp */,
 				E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */,
@@ -25211,7 +25245,7 @@
 				93F1D5C112D5335600832BEC /* JSWebGLLoseContext.h in Headers */,
 				49C7B99C1042D2D30009D447 /* JSWebGLProgram.h in Headers */,
 				49C7B99E1042D2D30009D447 /* JSWebGLRenderbuffer.h in Headers */,
-				49EED1471051969400099FAB /* JSWebGLRenderingContext.h in Headers */,
+				49EED1471051969400099FAB /* JSWebGL1RenderingContext.h in Headers */,
 				49C7B9A31042D2D30009D447 /* JSWebGLShader.h in Headers */,
 				A07D3356152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h in Headers */,
 				49C7B9A51042D2D30009D447 /* JSWebGLTexture.h in Headers */,
@@ -25449,6 +25483,7 @@
 				14115B5209F84B7100CA4FC1 /* Node.h in Headers */,
 				854FE7310A2297BE0058D7AD /* NodeFilter.h in Headers */,
 				854FE7330A2297BE0058D7AD /* NodeFilterCondition.h in Headers */,
+				D3E14BB61A5DCF4B0097A6E9 /* JSWebGL2RenderingContext.h in Headers */,
 				854FE7350A2297BE0058D7AD /* NodeIterator.h in Headers */,
 				A818721B0977D3C0005826D9 /* NodeList.h in Headers */,
 				63189AE30E83A33300012E41 /* NodeRareData.h in Headers */,
@@ -25679,6 +25714,7 @@
 				E43A023B17EB370A004CDD25 /* RenderElement.h in Headers */,
 				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
 				A8EA73C40A1900E300A8EF5F /* RenderFieldset.h in Headers */,
+				D3E14BBA1A5DCF7B0097A6E9 /* JSWebGLRenderingContextBase.h in Headers */,
 				066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */,
 				53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */,
 				508CCA4F13CF106B003151F3 /* RenderFlowThread.h in Headers */,
@@ -25949,6 +25985,7 @@
 				AB7170890B3118080017123E /* SearchPopupMenu.h in Headers */,
 				93F1E1EC1A40FDDC00348D13 /* NSPopoverSPI.h in Headers */,
 				976F36EB14686225005E93B4 /* SecurityContext.h in Headers */,
+				D39C72D81A5C8B0B00AED89C /* WebGLRenderingContextBase.h in Headers */,
 				BCD0E0FB0E972C3500265DEA /* SecurityOrigin.h in Headers */,
 				BCD0E0FC0E972C3500265DEA /* SecurityOriginHash.h in Headers */,
 				974D2DA5146A535D00D51F8B /* SecurityPolicy.h in Headers */,
@@ -26624,7 +26661,7 @@
 				49C7B9D51042D32F0009D447 /* WebGLObject.h in Headers */,
 				49C7B9D71042D32F0009D447 /* WebGLProgram.h in Headers */,
 				49C7B9DA1042D32F0009D447 /* WebGLRenderbuffer.h in Headers */,
-				49C7B9E01042D32F0009D447 /* WebGLRenderingContext.h in Headers */,
+				49C7B9E01042D32F0009D447 /* WebGL1RenderingContext.h in Headers */,
 				49C7B9E31042D32F0009D447 /* WebGLShader.h in Headers */,
 				A07D3358152B632D001B6393 /* WebGLShaderPrecisionFormat.h in Headers */,
 				01D3CF8714BD0A3000FE9970 /* WebGLSharedObject.h in Headers */,
@@ -26693,6 +26730,7 @@
 				A14832C1187F657A00DA63A6 /* WKTypes.h in Headers */,
 				A14832C3187F65DF00DA63A6 /* WKUtilities.h in Headers */,
 				A14832C4187F663C00DA63A6 /* WKView.h in Headers */,
+				D39C72DE1A5C8C8E00AED89C /* WebGL2RenderingContext.h in Headers */,
 				A14832C6187F668F00DA63A6 /* WKViewPrivate.h in Headers */,
 				379919971200DDF400EA041C /* WOFFFileFormat.h in Headers */,
 				2E4346460F546A8200B0F1BA /* Worker.h in Headers */,
@@ -27686,6 +27724,7 @@
 				BC53DA481143134D000D817E /* DOMWrapperWorld.cpp in Sources */,
 				1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */,
 				85E9E0A20AB3A0C700069CD0 /* DOMXPathExpression.mm in Sources */,
+				D39C72D71A5C8B0B00AED89C /* WebGLRenderingContextBase.cpp in Sources */,
 				85E9E0A60AB3A0C700069CD0 /* DOMXPathResult.mm in Sources */,
 				FD1762E3176686EA00D836A8 /* DownSampler.cpp in Sources */,
 				A7CA595E0B27BD9E00FA021D /* DragController.cpp in Sources */,
@@ -28735,6 +28774,7 @@
 				267726041A5DF6F2003C24DD /* URLFilterParser.cpp in Sources */,
 				0FDA7C16188322EB00C954B5 /* JSTouch.cpp in Sources */,
 				0FDA7C18188322EB00C954B5 /* JSTouchEvent.cpp in Sources */,
+				D39C72E61A5C940B00AED89C /* JSWebGLRenderingContextBaseCustom.cpp in Sources */,
 				0FDA7C1A188322EB00C954B5 /* JSTouchList.cpp in Sources */,
 				070334E9145A1F36008D8D45 /* JSTrackCustom.cpp in Sources */,
 				07846342145B151A00A58DF1 /* JSTrackEvent.cpp in Sources */,
@@ -28774,8 +28814,8 @@
 				93F1D5C012D5335600832BEC /* JSWebGLLoseContext.cpp in Sources */,
 				49C7B99B1042D2D30009D447 /* JSWebGLProgram.cpp in Sources */,
 				49C7B99D1042D2D30009D447 /* JSWebGLRenderbuffer.cpp in Sources */,
-				49EED1461051969400099FAB /* JSWebGLRenderingContext.cpp in Sources */,
-				49EED14F1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp in Sources */,
+				49EED1461051969400099FAB /* JSWebGL1RenderingContext.cpp in Sources */,
+				49EED14F1051971A00099FAB /* JSWebGL1RenderingContextCustom.cpp in Sources */,
 				49C7B9A21042D2D30009D447 /* JSWebGLShader.cpp in Sources */,
 				A07D3355152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp in Sources */,
 				49C7B9A41042D2D30009D447 /* JSWebGLTexture.cpp in Sources */,
@@ -28937,6 +28977,7 @@
 				078E090317D14CEE00420AA1 /* MediaStreamTrackEvent.cpp in Sources */,
 				07FFDE68181AED420072D409 /* MediaStreamTrackPrivate.cpp in Sources */,
 				076306D217E1478D005A7C4E /* MediaStreamTrackSourcesRequest.cpp in Sources */,
+				D3E14BB51A5DCF4B0097A6E9 /* JSWebGL2RenderingContext.cpp in Sources */,
 				CD641EBF1819B36000EE4C41 /* MediaTimeAVFoundation.cpp in Sources */,
 				CD60C0C6193E87C7003C656B /* MediaTimeQTKit.mm in Sources */,
 				0705853A17FE0770005F2BCB /* MediaTrackConstraint.cpp in Sources */,
@@ -29431,6 +29472,7 @@
 				4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */,
 				E4AFD00B0DAF335400F5F55C /* SMILTime.cpp in Sources */,
 				E4AFD00D0DAF335500F5F55C /* SMILTimeContainer.cpp in Sources */,
+				D39C72E41A5C93AF00AED89C /* JSWebGL2RenderingContextCustom.cpp in Sources */,
 				510D4A33103165EE0049EA54 /* SocketStreamErrorBase.cpp in Sources */,
 				510D4A36103165EE0049EA54 /* SocketStreamHandleBase.cpp in Sources */,
 				51ABAE1F103C1913008C5260 /* SocketStreamHandleCFNet.cpp in Sources */,
@@ -29719,6 +29761,7 @@
 				6550B6A5099DF0270090D781 /* Text.cpp in Sources */,
 				CE7B2DB61586ABAD0098B3FA /* TextAlternativeWithRange.mm in Sources */,
 				0F54DCE51881051D003EEDBB /* TextAutoSizing.cpp in Sources */,
+				D3E14BB91A5DCF7B0097A6E9 /* JSWebGLRenderingContextBase.cpp in Sources */,
 				372C00C4129611F1005C9575 /* TextBoundaries.cpp in Sources */,
 				B2AFFC970D00A5DF0030074D /* TextBoundaries.mm in Sources */,
 				BCD8A5F015F56F2C0098D071 /* TextBreakIterator.cpp in Sources */,
@@ -29912,7 +29955,7 @@
 				49C7B9D41042D32F0009D447 /* WebGLObject.cpp in Sources */,
 				49C7B9D61042D32F0009D447 /* WebGLProgram.cpp in Sources */,
 				49C7B9D91042D32F0009D447 /* WebGLRenderbuffer.cpp in Sources */,
-				49C7B9DF1042D32F0009D447 /* WebGLRenderingContext.cpp in Sources */,
+				49C7B9DF1042D32F0009D447 /* WebGL1RenderingContext.cpp in Sources */,
 				49C7B9E21042D32F0009D447 /* WebGLShader.cpp in Sources */,
 				A08CF154152B77B3009C5775 /* WebGLShaderPrecisionFormat.cpp in Sources */,
 				01D3CF8614BD0A3000FE9970 /* WebGLSharedObject.cpp in Sources */,
@@ -29962,6 +30005,7 @@
 				93EC44A1188F4BB800661DF1 /* WheelEventDeltaTracker.cpp in Sources */,
 				9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */,
 				E453904D0EAFD637003695C8 /* WidgetIOS.mm in Sources */,
+				D39C72DD1A5C8C8E00AED89C /* WebGL2RenderingContext.cpp in Sources */,
 				9380F47809A11ACC001FDB34 /* WidgetMac.mm in Sources */,
 				939B02EE0EA2DBC400C54570 /* WidthIterator.cpp in Sources */,
 				BC8243E80D0CFD7500460C8F /* WindowFeatures.cpp in Sources */,
