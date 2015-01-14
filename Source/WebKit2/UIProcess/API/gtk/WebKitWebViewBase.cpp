@@ -315,11 +315,8 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     GdkDisplay* display = gdk_display_manager_get_default_display(gdk_display_manager_get());
     if (GDK_IS_X11_DISPLAY(display)) {
         WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
-        GdkWindow* parentWindow = gtk_widget_get_parent_window(widget);
         priv->redirectedWindow = RedirectedXCompositeWindow::create(
-            GDK_DISPLAY_XDISPLAY(display),
-            parentWindow ? GDK_WINDOW_XID(parentWindow) : 0,
-            IntSize(1, 1),
+            gtk_widget_get_parent_window(widget),
             [widget] {
                 gtk_widget_queue_draw(widget);
             });

@@ -1,3 +1,23 @@
+2015-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r177075): Flickering when the WebView is realized
+        https://bugs.webkit.org/show_bug.cgi?id=140352
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize): Pass the parent GdkWindow to the
+        RedirectedXCompositeWindow constructor.
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp:
+        (WebKit::supportsXDamageAndXComposite): Get the display from the
+        given GdkWindow.
+        (WebKit::RedirectedXCompositeWindow::create): Receive a GdkWindow
+        instead of the Display and sise that is always 1x1.
+        (WebKit::RedirectedXCompositeWindow::RedirectedXCompositeWindow):
+        Use the passed in GdkWindow to get the Display, Visual and Depth
+        instead of using the window as parent and reparent afterwards.
+        * UIProcess/gtk/RedirectedXCompositeWindow.h:
+
 2015-01-14  Gwang Yoon Hwang  <yoon@igalia.com>
 
         Unreviewed GTK build fix after r178385.

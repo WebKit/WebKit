@@ -98,7 +98,7 @@ static XDamageNotifier& xDamageNotifier()
     return notifier;
 }
 
-static bool supportsXDamageAndXComposite(Display* display)
+static bool supportsXDamageAndXComposite(GdkWindow* window)
 {
     static bool initialized = false;
     static bool hasExtensions = false;
@@ -107,6 +107,7 @@ static bool supportsXDamageAndXComposite(Display* display)
         return hasExtensions;
 
     initialized = true;
+    Display* display = GDK_DISPLAY_XDISPLAY(gdk_window_get_display(window));
 
     int errorBase;
     if (!XDamageQueryExtension(display, &XDamageNotifier::s_damageEventBase, &errorBase))
@@ -126,64 +127,72 @@ static bool supportsXDamageAndXComposite(Display* display)
     return true;
 }
 
-std::unique_ptr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(Display* display, Window parent, const IntSize& size, std::function<void()> damageNotify)
+std::unique_ptr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(GdkWindow* parentWindow, std::function<void()> damageNotify)
 {
-    return supportsXDamageAndXComposite(display) ? std::unique_ptr<RedirectedXCompositeWindow>(new RedirectedXCompositeWindow(display, parent, size, damageNotify)) : nullptr;
+    ASSERT(GDK_IS_WINDOW(parentWindow));
+    return supportsXDamageAndXComposite(parentWindow) ? std::unique_ptr<RedirectedXCompositeWindow>(new RedirectedXCompositeWindow(parentWindow, damageNotify)) : nullptr;
 }
 
-RedirectedXCompositeWindow::RedirectedXCompositeWindow(Display* display, Window parent, const IntSize& size, std::function<void()> damageNotify)
-    : m_display(display)
-    , m_size(size)
+RedirectedXCompositeWindow::RedirectedXCompositeWindow(GdkWindow* parentWindow, std::function<void()> damageNotify)
+    : m_display(GDK_DISPLAY_XDISPLAY(gdk_window_get_display(parentWindow)))
+    , m_size(1, 1)
     , m_window(0)
     , m_parentWindow(0)
     , m_pixmap(0)
     , m_damage(0)
     , m_needsNewPixmapAfterResize(false)
 {
-    Screen* screen = DefaultScreenOfDisplay(display);
+    Screen* screen = DefaultScreenOfDisplay(m_display);
+
+    GdkVisual* visual = gdk_window_get_visual(parentWindow);
+    Colormap colormap = XCreateColormap(m_display, RootWindowOfScreen(screen), GDK_VISUAL_XVISUAL(visual), AllocNone);
 
     // This is based on code from Chromium: src/content/common/gpu/image_transport_surface_linux.cc
     XSetWindowAttributes windowAttributes;
     windowAttributes.override_redirect = True;
-    m_parentWindow = XCreateWindow(display,
-        parent ? parent : RootWindowOfScreen(screen),
+    windowAttributes.colormap = colormap;
+
+    // CWBorderPixel must be present when the depth doesn't match the parent's one.
+    // See http://cgit.freedesktop.org/xorg/xserver/tree/dix/window.c?id=xorg-server-1.16.0#n703.
+    windowAttributes.border_pixel = 0;
+
+    m_parentWindow = XCreateWindow(m_display,
+        RootWindowOfScreen(screen),
         WidthOfScreen(screen) + 1, 0, 1, 1,
         0,
-        CopyFromParent,
+        gdk_visual_get_depth(visual),
         InputOutput,
-        CopyFromParent,
-        CWOverrideRedirect,
+        GDK_VISUAL_XVISUAL(visual),
+        CWOverrideRedirect | CWColormap | CWBorderPixel,
         &windowAttributes);
-    XMapWindow(display, m_parentWindow);
-
-    // The top parent is only necessary to copy from parent the visual and depth at creation time.
-    if (parent)
-        XReparentWindow(display, m_parentWindow, RootWindowOfScreen(screen), WidthOfScreen(screen) + 1, 0);
+    XMapWindow(m_display, m_parentWindow);
 
     windowAttributes.event_mask = StructureNotifyMask;
     windowAttributes.override_redirect = False;
-    m_window = XCreateWindow(display,
+    m_window = XCreateWindow(m_display,
         m_parentWindow,
-        0, 0, size.width(), size.height(),
+        0, 0, m_size.width(), m_size.height(),
         0,
         CopyFromParent,
         InputOutput,
         CopyFromParent,
         CWEventMask,
         &windowAttributes);
-    XMapWindow(display, m_window);
+    XMapWindow(m_display, m_window);
+
+    XFreeColormap(m_display, colormap);
 
     xDamageNotifier().add(m_window, WTF::move(damageNotify));
 
     while (1) {
         XEvent event;
-        XWindowEvent(display, m_window, StructureNotifyMask, &event);
+        XWindowEvent(m_display, m_window, StructureNotifyMask, &event);
         if (event.type == MapNotify && event.xmap.window == m_window)
             break;
     }
-    XSelectInput(display, m_window, NoEventMask);
-    XCompositeRedirectWindow(display, m_window, CompositeRedirectManual);
-    m_damage = XDamageCreate(display, m_window, XDamageReportNonEmpty);
+    XSelectInput(m_display, m_window, NoEventMask);
+    XCompositeRedirectWindow(m_display, m_window, CompositeRedirectManual);
+    m_damage = XDamageCreate(m_display, m_window, XDamageReportNonEmpty);
 }
 
 RedirectedXCompositeWindow::~RedirectedXCompositeWindow()

@@ -31,18 +31,17 @@
 
 #include <WebCore/IntSize.h>
 #include <WebCore/RefPtrCairo.h>
+#include <X11/Xlib.h>
 #include <functional>
 
-typedef struct _XDisplay Display;
+typedef struct _GdkWindow GdkWindow;
 typedef unsigned long Damage;
-typedef unsigned long Pixmap;
-typedef unsigned long Window;
 
 namespace WebKit {
 
 class RedirectedXCompositeWindow {
 public:
-    static std::unique_ptr<RedirectedXCompositeWindow> create(Display*, Window parent, const WebCore::IntSize&, std::function<void()> damageNotify);
+    static std::unique_ptr<RedirectedXCompositeWindow> create(GdkWindow*, std::function<void()> damageNotify);
     ~RedirectedXCompositeWindow();
 
     Window windowID() const { return m_window; }
@@ -50,7 +49,7 @@ public:
     cairo_surface_t* surface();
 
 private:
-    RedirectedXCompositeWindow(Display*, Window parent, const WebCore::IntSize&, std::function<void()> damageNotify);
+    RedirectedXCompositeWindow(GdkWindow*, std::function<void()> damageNotify);
     void cleanupPixmapAndPixmapSurface();
 
     Display* m_display;
