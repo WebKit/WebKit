@@ -1,3 +1,12 @@
+2015-01-14  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        Unreviewed GTK build fix after r178385.
+
+        WebUserContentControllerProxy is not RefCounted anymore.
+
+        * UIProcess/API/gtk/WebKitUserContentManager.cpp:
+        (_WebKitUserContentManagerPrivate::_WebKitUserContentManagerPrivate):
+
 2015-01-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed GTK build fix after r178375.
