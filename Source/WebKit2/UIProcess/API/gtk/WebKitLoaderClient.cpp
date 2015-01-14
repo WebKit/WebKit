@@ -41,21 +41,21 @@ public:
     }
 
 private:
-    void didStartProvisionalLoadForFrame(WebPageProxy&, WebFrameProxy& frame, uint64_t /* navigationID */, API::Object* /* userData */) override
+    void didStartProvisionalLoadForFrame(WebPageProxy&, WebFrameProxy& frame, API::Navigation*, API::Object* /* userData */) override
     {
         if (!frame.isMainFrame())
             return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_STARTED);
     }
 
-    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy&, WebFrameProxy& frame, uint64_t /* navigationID */, API::Object* /* userData */) override
+    void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy&, WebFrameProxy& frame, API::Navigation*, API::Object* /* userData */) override
     {
         if (!frame.isMainFrame())
             return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_REDIRECTED);
     }
 
-    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy&, WebFrameProxy& frame, uint64_t /* navigationID */, const ResourceError& resourceError, API::Object* /* userData */) override
+    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy&, WebFrameProxy& frame, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
     {
         if (!frame.isMainFrame())
             return;
@@ -68,21 +68,21 @@ private:
             webkitWebViewLoadFailed(m_webView, WEBKIT_LOAD_STARTED, resourceError.failingURL().utf8().data(), error.get());
     }
 
-    void didCommitLoadForFrame(WebPageProxy&, WebFrameProxy& frame, uint64_t /* navigationID */, API::Object* /* userData */) override
+    void didCommitLoadForFrame(WebPageProxy&, WebFrameProxy& frame, API::Navigation*, API::Object* /* userData */) override
     {
         if (!frame.isMainFrame())
             return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_COMMITTED);
     }
 
-    void didFinishLoadForFrame(WebPageProxy&, WebFrameProxy& frame, uint64_t /* navigationID */, API::Object* /* userData */) override
+    void didFinishLoadForFrame(WebPageProxy&, WebFrameProxy& frame, API::Navigation*, API::Object* /* userData */) override
     {
         if (!frame.isMainFrame())
             return;
         webkitWebViewLoadChanged(m_webView, WEBKIT_LOAD_FINISHED);
     }
 
-    void didFailLoadWithErrorForFrame(WebPageProxy&, WebFrameProxy& frame, uint64_t /* navigationID */, const ResourceError& resourceError, API::Object* /* userData */) override
+    void didFailLoadWithErrorForFrame(WebPageProxy&, WebFrameProxy& frame, API::Navigation*, const ResourceError& resourceError, API::Object* /* userData */) override
     {
         if (!frame.isMainFrame())
             return;

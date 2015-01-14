@@ -2,6 +2,14 @@
 
         Unreviewed GTK build fix after r178375.
 
+        uint64_t navigationID -> API::Navigation*.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+
+2015-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed GTK build fix after r178375.
+
         WebFrameProxy is now a reference instead of a pointer.
 
         * UIProcess/API/gtk/WebKitLoaderClient.cpp:
