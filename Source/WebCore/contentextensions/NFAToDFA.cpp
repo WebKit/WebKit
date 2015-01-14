@@ -92,7 +92,7 @@ public:
 
     UniqueNodeIdSet(EmptyValueTag) { }
     UniqueNodeIdSet(DeletedValueTag)
-        : m_uniqueNodeIdSetBuffer(reinterpret_cast_ptr<UniqueNodeIdSetImpl*>(-1))
+        : m_uniqueNodeIdSetBuffer(reinterpret_cast<UniqueNodeIdSetImpl*>(-1))
     {
     }
 
@@ -154,7 +154,7 @@ public:
 
     unsigned hash() const { return m_uniqueNodeIdSetBuffer->m_hash; }
     bool isEmptyValue() const { return !m_uniqueNodeIdSetBuffer; }
-    bool isDeletedValue() const { return m_uniqueNodeIdSetBuffer == reinterpret_cast_ptr<UniqueNodeIdSetImpl*>(-1); }
+    bool isDeletedValue() const { return m_uniqueNodeIdSetBuffer == reinterpret_cast<UniqueNodeIdSetImpl*>(-1); }
 
 private:
     UniqueNodeIdSetImpl* m_uniqueNodeIdSetBuffer = nullptr;

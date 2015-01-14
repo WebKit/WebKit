@@ -1,3 +1,11 @@
+2015-01-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        Build fix for NFAToDFA on ARM
+
+        * contentextensions/NFAToDFA.cpp:
+        (WebCore::ContentExtensions::UniqueNodeIdSet::UniqueNodeIdSet):
+        (WebCore::ContentExtensions::UniqueNodeIdSet::isDeletedValue):
+
 2015-01-14  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [MSE] Implement per TrackBuffer buffered.
