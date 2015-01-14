@@ -33,10 +33,10 @@ class EmojiFallbackFontSelector : public WebCore::FontSelector {
 public:
     static PassRefPtr<EmojiFallbackFontSelector> create() { return adoptRef(new EmojiFallbackFontSelector()); }
     virtual ~EmojiFallbackFontSelector() override { }
-    virtual PassRefPtr<WebCore::FontData> getFontData(const WebCore::FontDescription&, const AtomicString& familyName) override { ASSERT_NOT_REACHED(); return 0; }
+    virtual WebCore::FontRanges fontRangesForFamily(const WebCore::FontDescription&, const AtomicString&) override { ASSERT_NOT_REACHED(); return WebCore::FontRanges(); }
     virtual bool resolvesFamilyFor(const WebCore::FontDescription&) const override { ASSERT_NOT_REACHED(); return false; }
     virtual size_t fallbackFontDataCount() override { return 1; };
-    virtual PassRefPtr<WebCore::FontData> getFallbackFontData(const WebCore::FontDescription&, size_t) override;
+    virtual PassRefPtr<WebCore::SimpleFontData> fallbackFontDataAt(const WebCore::FontDescription&, size_t) override;
 
     virtual void registerForInvalidationCallbacks(WebCore::FontSelectorClient*) override { }
     virtual void unregisterForInvalidationCallbacks(WebCore::FontSelectorClient*) override { }

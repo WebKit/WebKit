@@ -1,3 +1,14 @@
+2015-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed iOS build fix after r178375
+
+        Match FontSelector API changes.
+
+        * Misc/EmojiFallbackFontSelector.cpp:
+        (EmojiFallbackFontSelector::fallbackFontDataAt):
+        (EmojiFallbackFontSelector::getFallbackFontData): Deleted.
+        * Misc/EmojiFallbackFontSelector.h:
+
 2014-12-07  Dan Bernstein  <mitz@apple.com>
 
         Introduce and deploy a function that allocates and returns an instance of a soft-linked class
