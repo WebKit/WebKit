@@ -84,7 +84,7 @@ class TextTrackList;
 class VideoTrackList;
 class VideoTrackPrivate;
 
-typedef PODIntervalTree<double, TextTrackCue*> CueIntervalTree;
+typedef PODIntervalTree<MediaTime, TextTrackCue*> CueIntervalTree;
 typedef CueIntervalTree::IntervalType CueInterval;
 typedef Vector<CueInterval> CueList;
 #endif
@@ -177,6 +177,13 @@ public:
     virtual void setDefaultPlaybackRate(double) override;
     virtual double playbackRate() const override;
     virtual void setPlaybackRate(double) override;
+
+// MediaTime versions of playback state
+    MediaTime currentMediaTime() const;
+    void setCurrentTime(const MediaTime&);
+    MediaTime durationMediaTime() const;
+    void fastSeek(const MediaTime&);
+
     void updatePlaybackRate();
     bool webkitPreservesPitch() const;
     void setWebkitPreservesPitch(bool);
@@ -587,12 +594,12 @@ private:
     void startProgressEventTimer();
     void stopPeriodicTimers();
 
-    void seek(double time);
-    void seekInternal(double time);
-    void seekWithTolerance(double time, double negativeTolerance, double positiveTolerance, bool fromDOM);
+    void seek(const MediaTime&);
+    void seekInternal(const MediaTime&);
+    void seekWithTolerance(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance, bool fromDOM);
     void finishSeek();
     void checkIfSeekNeeded();
-    void addPlayedRange(double start, double end);
+    void addPlayedRange(const MediaTime& start, const MediaTime& end);
     
     void scheduleTimeupdateEvent(bool periodicEvent);
     void scheduleEvent(const AtomicString& eventName);
@@ -613,7 +620,7 @@ private:
     URL selectNextSourceChild(ContentType*, String* keySystem, InvalidURLAction);
 
 #if ENABLE(VIDEO_TRACK)
-    void updateActiveTextTrackCues(double);
+    void updateActiveTextTrackCues(const MediaTime&);
     HTMLTrackElement* showingTrackWithSameKind(HTMLTrackElement*) const;
 
     enum ReconfigureMode {
@@ -644,8 +651,8 @@ private:
     bool pausedForUserInteraction() const;
     bool couldPlayIfEnoughData() const;
 
-    double minTimeSeekable() const;
-    double maxTimeSeekable() const;
+    MediaTime minTimeSeekable() const;
+    MediaTime maxTimeSeekable() const;
 
 #if PLATFORM(IOS)
     bool parseMediaPlayerAttribute(const QualifiedName&, const AtomicString&);
@@ -725,23 +732,23 @@ private:
     RefPtr<MediaError> m_error;
 
     struct PendingSeek {
-        PendingSeek(double now, double targetTime, double negativeTolerance, double positiveTolerance)
+        PendingSeek(const MediaTime& now, const MediaTime& targetTime, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
             : now(now)
             , targetTime(targetTime)
             , negativeTolerance(negativeTolerance)
             , positiveTolerance(positiveTolerance)
         {
         }
-        double now;
-        double targetTime;
-        double negativeTolerance;
-        double positiveTolerance;
+        MediaTime now;
+        MediaTime targetTime;
+        MediaTime negativeTolerance;
+        MediaTime positiveTolerance;
     };
     std::unique_ptr<PendingSeek> m_pendingSeek;
 
     double m_volume;
     bool m_volumeInitialized;
-    double m_lastSeekTime;
+    MediaTime m_lastSeekTime;
     
     unsigned m_previousProgress;
     double m_previousProgressTime;
@@ -750,7 +757,7 @@ private:
     double m_clockTimeAtLastUpdateEvent;
 
     // The last time a timeupdate event was sent in movie time.
-    double m_lastTimeUpdateEventMovieTime;
+    MediaTime m_lastTimeUpdateEventMovieTime;
     
     // Loading state.
     enum LoadState { WaitingForSource, LoadingFromSrcAttr, LoadingFromSourceElement };
@@ -779,12 +786,12 @@ private:
     unsigned long m_droppedVideoFrames;
 #endif
 
-    mutable double m_cachedTime;
+    mutable MediaTime m_cachedTime;
     mutable double m_clockTimeAtLastCachedTimeUpdate;
     mutable double m_minimumClockTimeToUpdateCachedTime;
 
-    double m_fragmentStartTime;
-    double m_fragmentEndTime;
+    MediaTime m_fragmentStartTime;
+    MediaTime m_fragmentEndTime;
 
     typedef unsigned PendingActionFlags;
     PendingActionFlags m_pendingActionFlags;
@@ -843,7 +850,7 @@ private:
     bool m_processingPreferenceChange : 1;
 
     String m_subtitleTrackLanguage;
-    float m_lastTextTrackUpdateTime;
+    MediaTime m_lastTextTrackUpdateTime;
 
     CaptionUserPreferences::CaptionDisplayMode m_captionDisplayMode;
 
@@ -906,7 +913,7 @@ struct ValueToString<TextTrackCue*> {
         String text;
         if (cue->isRenderable())
             text = toVTTCue(cue)->text();
-        return String::format("%p id=%s interval=%f-->%f cue=%s)", cue, cue->id().utf8().data(), cue->startTime(), cue->endTime(), text.utf8().data());
+        return String::format("%p id=%s interval=%s-->%s cue=%s)", cue, cue->id().utf8().data(), toString(cue->startTime()).utf8().data(), toString(cue->endTime()).utf8().data(), text.utf8().data());
     }
 };
 #endif
@@ -918,6 +925,16 @@ inline bool isHTMLMediaElement(const Node& node) { return node.isElementNode() &
 template <> inline bool isElementOfType<const HTMLMediaElement>(const Element& element) { return element.isMediaElement(); }
 
 NODE_TYPE_CASTS(HTMLMediaElement)
+
+#ifndef NDEBUG
+template<>
+struct ValueToString<MediaTime> {
+    static String string(const MediaTime& time)
+    {
+        return toString(time);
+    }
+};
+#endif
 
 } //namespace
 

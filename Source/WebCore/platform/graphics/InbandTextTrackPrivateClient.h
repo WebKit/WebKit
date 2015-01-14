@@ -28,6 +28,7 @@
 
 #include "Color.h"
 #include "TrackPrivateBase.h"
+#include <wtf/MediaTime.h>
 
 #if ENABLE(DATACUE_VALUE)
 #include "SerializedPlatformRepresentation.h"
@@ -46,11 +47,11 @@ public:
     static PassRefPtr<GenericCueData> create() { return adoptRef(new GenericCueData()); }
     virtual ~GenericCueData() { }
 
-    double startTime() const { return m_startTime; }
-    void setStartTime(double startTime) { m_startTime = startTime; }
+    MediaTime startTime() const { return m_startTime; }
+    void setStartTime(const MediaTime& startTime) { m_startTime = startTime; }
 
-    double endTime() const { return m_endTime; }
-    void setEndTime(double endTime) { m_endTime = endTime; }
+    MediaTime endTime() const { return m_endTime; }
+    void setEndTime(const MediaTime& endTime) { m_endTime = endTime; }
 
     String id() const { return m_id; }
     void setId(String id) { m_id = id; }
@@ -106,9 +107,7 @@ public:
 
 private:
     GenericCueData()
-        : m_startTime(0)
-        , m_endTime(0)
-        , m_line(-1)
+        : m_line(-1)
         , m_position(-1)
         , m_size(-1)
         , m_align(None)
@@ -118,8 +117,8 @@ private:
     {
     }
 
-    double m_startTime;
-    double m_endTime;
+    MediaTime m_startTime;
+    MediaTime m_endTime;
     String m_id;
     String m_content;
     double m_line;
@@ -169,12 +168,12 @@ class InbandTextTrackPrivateClient : public TrackPrivateBaseClient {
 public:
     virtual ~InbandTextTrackPrivateClient() { }
 
-    virtual void addDataCue(InbandTextTrackPrivate*, double start, double end, const void*, unsigned) = 0;
+    virtual void addDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, const void*, unsigned) = 0;
 
 #if ENABLE(DATACUE_VALUE)
-    virtual void addDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>, const String&) = 0;
-    virtual void updateDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>) = 0;
-    virtual void removeDataCue(InbandTextTrackPrivate*, double start, double end, PassRefPtr<SerializedPlatformRepresentation>) = 0;
+    virtual void addDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>, const String&) = 0;
+    virtual void updateDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>) = 0;
+    virtual void removeDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>) = 0;
 #endif
 
     virtual void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) = 0;

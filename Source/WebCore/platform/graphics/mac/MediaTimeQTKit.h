@@ -23,43 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OutOfBandTextTrackPrivateAVF_h
-#define OutOfBandTextTrackPrivateAVF_h
+#ifndef MediaTimeQTKit_h
+#define MediaTimeQTKit_h
 
-#if ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS)) && ENABLE(AVF_CAPTIONS)
+#if PLATFORM(MAC)
 
-#include "InbandTextTrackPrivateAVF.h"
-
-OBJC_CLASS AVMediaSelectionOption;
+#include <QTKit/QTTime.h>
+#include <wtf/MediaTime.h>
 
 namespace WebCore {
-    
-class OutOfBandTextTrackPrivateAVF : public InbandTextTrackPrivateAVF {
-public:
-    static PassRefPtr<OutOfBandTextTrackPrivateAVF> create(AVFInbandTrackParent* player,  AVMediaSelectionOption* selection)
-    {
-        return adoptRef(new OutOfBandTextTrackPrivateAVF(player, selection));
-    }
-    
-    virtual void processCue(CFArrayRef, CFArrayRef, const MediaTime&) override { }
-    virtual void resetCueValues() override { }
-    
-    virtual Category textTrackCategory() const override { return OutOfBand; }
-    
-    AVMediaSelectionOption* mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
-    
-protected:
-    OutOfBandTextTrackPrivateAVF(AVFInbandTrackParent* player, AVMediaSelectionOption* selection)
-        : InbandTextTrackPrivateAVF(player, InbandTextTrackPrivate::Generic)
-        , m_mediaSelectionOption(selection)
-    {
-    }
-    
-    RetainPtr<AVMediaSelectionOption> m_mediaSelectionOption;
-};
+
+QTTime toQTTime(const MediaTime&);
+MediaTime toMediaTime(const QTTime&);
     
 }
 
 #endif
 
-#endif // OutOfBandTextTrackPrivateAVF_h
+#endif // MediaTimeQTKit_h

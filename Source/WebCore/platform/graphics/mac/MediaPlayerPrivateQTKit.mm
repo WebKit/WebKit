@@ -38,6 +38,7 @@
 #import "URL.h"
 #import "Logging.h"
 #import "MIMETypeRegistry.h"
+#import "MediaTimeQTKit.h"
 #import "PlatformLayer.h"
 #import "PlatformTimeRanges.h"
 #import "SecurityOrigin.h"
@@ -95,6 +96,12 @@ SOFT_LINK_POINTER(QTKit, QTMovieApertureModeAttribute, NSString *)
 
 SOFT_LINK_POINTER_OPTIONAL(QTKit, QTSecurityPolicyNoLocalToRemoteSiteAttribute, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(QTKit, QTSecurityPolicyNoRemoteToLocalSiteAttribute, NSString *)
+
+@interface QTMovie(WebKitExtras)
+- (QTTime)maxTimeLoaded;
+- (NSArray *)availableRanges;
+- (NSArray *)loadedRanges;
+@end
 
 #define QTMovie getQTMovieClass()
 #define QTMovieView getQTMovieViewClass()
@@ -191,7 +198,7 @@ void MediaPlayerPrivateQTKit::registerMediaEngine(MediaEngineRegistrar registrar
 MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
     : m_player(player)
     , m_objcObserver(adoptNS([[WebCoreMovieObserver alloc] initWithCallback:this]))
-    , m_seekTo(-1)
+    , m_seekTo(MediaTime::invalidTime())
     , m_seekTimer(this, &MediaPlayerPrivateQTKit::seekTimerFired)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
@@ -199,9 +206,9 @@ MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
     , m_scaleFactor(1, 1)
     , m_enabledTrackCount(0)
     , m_totalTrackCount(0)
-    , m_reportedDuration(-1)
-    , m_cachedDuration(-1)
-    , m_timeToRestore(-1)
+    , m_reportedDuration(MediaTime::invalidTime())
+    , m_cachedDuration(MediaTime::invalidTime())
+    , m_timeToRestore(MediaTime::invalidTime())
     , m_preload(MediaPlayer::Auto)
     , m_startedPlaying(false)
     , m_isStreaming(false)
@@ -210,7 +217,6 @@ MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit(MediaPlayer* player)
     , m_videoFrameHasDrawn(false)
     , m_isAllowedToRender(false)
     , m_privateBrowsing(false)
-    , m_maxTimeLoadedAtLastDidLoadingProgress(0)
 #if DRAW_FRAME_RATE
     , m_frameCountWhilePlaying(0)
     , m_timeStartedPlaying(0)
@@ -610,14 +616,6 @@ bool MediaPlayerPrivateQTKit::hasSetUpVideoRendering() const
         || m_qtVideoRenderer;
 }
 
-QTTime MediaPlayerPrivateQTKit::createQTTime(float time) const
-{
-    if (!metaDataAvailable())
-        return QTMakeTime(0, 600);
-    long timeScale = [[m_qtMovie.get() attributeForKey:QTMovieTimeScaleAttribute] longValue];
-    return QTMakeTime(lroundf(time * timeScale), timeScale);
-}
-
 void MediaPlayerPrivateQTKit::resumeLoad()
 {
     if (!m_movieURL.isNull())
@@ -713,31 +711,32 @@ void MediaPlayerPrivateQTKit::pause()
     [m_objcObserver.get() setDelayCallbacks:NO];
 }
 
-float MediaPlayerPrivateQTKit::duration() const
+MediaTime MediaPlayerPrivateQTKit::durationMediaTime() const
 {
     if (!metaDataAvailable())
-        return 0;
+        return MediaTime::zeroTime();
 
-    if (m_cachedDuration != MediaPlayer::invalidTime())
+    if (m_cachedDuration.isValid())
         return m_cachedDuration;
 
     QTTime time = [m_qtMovie.get() duration];
     if (time.flags == kQTTimeIsIndefinite)
-        return std::numeric_limits<float>::infinity();
-    return static_cast<float>(time.timeValue) / time.timeScale;
+        return MediaTime::positiveInfiniteTime();
+    return toMediaTime(time);
 }
 
-float MediaPlayerPrivateQTKit::currentTime() const
+MediaTime MediaPlayerPrivateQTKit::currentMediaTime() const
 {
     if (!metaDataAvailable())
-        return 0;
+        return MediaTime::zeroTime();
     QTTime time = [m_qtMovie.get() currentTime];
-    return static_cast<float>(time.timeValue) / time.timeScale;
+    return toMediaTime(time);
 }
 
-void MediaPlayerPrivateQTKit::seek(float time)
+void MediaPlayerPrivateQTKit::seek(const MediaTime& inTime)
 {
-    LOG(Media, "MediaPlayerPrivateQTKit::seek(%p) - time %f", this, time);
+    MediaTime time = inTime;
+    LOG(Media, "MediaPlayerPrivateQTKit::seek(%p) - time %s", this, toString(time).utf8().data());
     // Nothing to do if we are already in the middle of a seek to the same time.
     if (time == m_seekTo)
         return;
@@ -747,11 +746,11 @@ void MediaPlayerPrivateQTKit::seek(float time)
     if (!metaDataAvailable())
         return;
     
-    if (time > duration())
-        time = duration();
+    if (time > durationMediaTime())
+        time = durationMediaTime();
 
     m_seekTo = time;
-    if (maxTimeSeekable() >= m_seekTo)
+    if (maxMediaTimeSeekable() >= m_seekTo)
         doSeek();
     else 
         m_seekTimer.start(0, 0.5f);
@@ -759,7 +758,7 @@ void MediaPlayerPrivateQTKit::seek(float time)
 
 void MediaPlayerPrivateQTKit::doSeek() 
 {
-    QTTime qttime = createQTTime(m_seekTo);
+    QTTime qttime = toQTTime(m_seekTo);
     // setCurrentTime generates several event callbacks, update afterwards
     [m_objcObserver.get() setDelayCallbacks:YES];
     float oldRate = [m_qtMovie.get() rate];
@@ -769,8 +768,8 @@ void MediaPlayerPrivateQTKit::doSeek()
     [m_qtMovie.get() setCurrentTime:qttime];
 
     // restore playback only if not at end, otherwise QTMovie will loop
-    float timeAfterSeek = currentTime();
-    if (oldRate && timeAfterSeek < duration())
+    MediaTime timeAfterSeek = currentMediaTime();
+    if (oldRate && timeAfterSeek < durationMediaTime())
         [m_qtMovie.get() setRate:oldRate];
 
     cancelSeek();
@@ -780,20 +779,20 @@ void MediaPlayerPrivateQTKit::doSeek()
 void MediaPlayerPrivateQTKit::cancelSeek()
 {
     LOG(Media, "MediaPlayerPrivateQTKit::cancelSeek(%p)", this);
-    m_seekTo = -1;
+    m_seekTo = MediaTime::invalidTime();
     m_seekTimer.stop();
 }
 
 void MediaPlayerPrivateQTKit::seekTimerFired(Timer<MediaPlayerPrivateQTKit>&)
 {        
-    if (!metaDataAvailable()|| !seeking() || currentTime() == m_seekTo) {
+    if (!metaDataAvailable() || !seeking() || currentMediaTime() == m_seekTo) {
         cancelSeek();
         updateStates();
         m_player->timeChanged(); 
         return;
     } 
 
-    if (maxTimeSeekable() >= m_seekTo)
+    if (maxMediaTimeSeekable() >= m_seekTo)
         doSeek();
     else {
         MediaPlayer::NetworkState state = networkState();
@@ -816,7 +815,7 @@ bool MediaPlayerPrivateQTKit::seeking() const
 {
     if (!metaDataAvailable())
         return false;
-    return m_seekTo >= 0;
+    return m_seekTo >= MediaTime::zeroTime();
 }
 
 IntSize MediaPlayerPrivateQTKit::naturalSize() const
@@ -912,7 +911,7 @@ void MediaPlayerPrivateQTKit::setPreservesPitch(bool preservesPitch)
     RetainPtr<NSDictionary> movieAttributes = adoptNS([[m_qtMovie.get() movieAttributes] mutableCopy]);
     ASSERT(movieAttributes);
     [movieAttributes.get() setValue:[NSNumber numberWithBool:preservesPitch] forKey:QTMovieRateChangesPreservePitchAttribute];
-    m_timeToRestore = currentTime();
+    m_timeToRestore = currentMediaTime();
 
     createQTMovie([movieAttributes.get() valueForKey:QTMovieURLAttribute], movieAttributes.get());
 }
@@ -920,36 +919,60 @@ void MediaPlayerPrivateQTKit::setPreservesPitch(bool preservesPitch)
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateQTKit::buffered() const
 {
     auto timeRanges = PlatformTimeRanges::create();
-    float loaded = maxTimeLoaded();
-    if (loaded > 0)
-        timeRanges->add(MediaTime::zeroTime(), MediaTime::createWithDouble(loaded));
+    MediaTime loaded = maxMediaTimeLoaded();
+    if (loaded > MediaTime::zeroTime())
+        timeRanges->add(MediaTime::zeroTime(), loaded);
     return timeRanges;
 }
 
-float MediaPlayerPrivateQTKit::maxTimeSeekable() const
+static MediaTime maxValueForTimeRanges(NSArray *ranges)
 {
-    if (!metaDataAvailable())
-        return 0;
+    if (!ranges)
+        return MediaTime::zeroTime();
 
-    // infinite duration means live stream
-    if (std::isinf(duration()))
-        return 0;
+    MediaTime max;
+    for (NSValue *value in ranges) {
+        QTTimeRange range = [value QTTimeRangeValue];
+        if (!range.time.timeScale || !range.duration.timeScale)
+            continue;
 
-    return wkQTMovieMaxTimeSeekable(m_qtMovie.get());
+        MediaTime time = toMediaTime(range.time);
+        MediaTime duration = toMediaTime(range.duration);
+        if (time.isValid() && duration.isValid())
+            max = std::max(max, time + duration);
+    }
+
+    return max;
 }
 
-float MediaPlayerPrivateQTKit::maxTimeLoaded() const
+MediaTime MediaPlayerPrivateQTKit::maxMediaTimeSeekable() const
 {
     if (!metaDataAvailable())
-        return 0;
-    return wkQTMovieMaxTimeLoaded(m_qtMovie.get()); 
+        return MediaTime::zeroTime();
+
+    // infinite duration means live stream
+    if (durationMediaTime().isPositiveInfinite())
+        return MediaTime::zeroTime();
+
+    NSArray* seekableRanges = [m_qtMovie availableRanges];
+
+    return maxValueForTimeRanges(seekableRanges);
+}
+
+MediaTime MediaPlayerPrivateQTKit::maxMediaTimeLoaded() const
+{
+    if (!metaDataAvailable())
+        return MediaTime::zeroTime();
+    if ([m_qtMovie respondsToSelector:@selector(loadedRanges)])
+        return maxValueForTimeRanges([m_qtMovie loadedRanges]);
+    return toMediaTime([m_qtMovie maxTimeLoaded]);
 }
 
 bool MediaPlayerPrivateQTKit::didLoadingProgress() const
 {
     if (!duration() || !totalBytes())
         return false;
-    float currentMaxTimeLoaded = maxTimeLoaded();
+    MediaTime currentMaxTimeLoaded = maxMediaTimeLoaded();
     bool didLoadingProgress = currentMaxTimeLoaded != m_maxTimeLoadedAtLastDidLoadingProgress;
     m_maxTimeLoadedAtLastDidLoadingProgress = currentMaxTimeLoaded;
     return didLoadingProgress;
@@ -1049,9 +1072,9 @@ void MediaPlayerPrivateQTKit::updateStates()
     }
     
     // If this movie is reloading and we mean to restore the current time/rate, this might be the right time to do it.
-    if (loadState >= QTMovieLoadStateLoaded && oldNetworkState < MediaPlayer::Loaded && m_timeToRestore != MediaPlayer::invalidTime()) {
-        QTTime qttime = createQTTime(m_timeToRestore);
-        m_timeToRestore = MediaPlayer::invalidTime();
+    if (loadState >= QTMovieLoadStateLoaded && oldNetworkState < MediaPlayer::Loaded && m_timeToRestore.isValid()) {
+        QTTime qttime = toQTTime(m_timeToRestore);
+        m_timeToRestore = MediaTime::invalidTime();
             
         // Disable event callbacks from setCurrentTime for restoring time in a recreated video
         [m_objcObserver.get() setDelayCallbacks:YES];
@@ -1065,7 +1088,7 @@ void MediaPlayerPrivateQTKit::updateStates()
     // Note: QT indicates that we are fully loaded with QTMovieLoadStateComplete.
     // However newer versions of QT do not, so we check maxTimeLoaded against duration.
     if (!completelyLoaded && !m_isStreaming && metaDataAvailable())
-        completelyLoaded = maxTimeLoaded() == duration();
+        completelyLoaded = maxMediaTimeLoaded() == durationMediaTime();
 
     if (completelyLoaded) {
         // "Loaded" is reserved for fully buffered movies, never the case when streaming
@@ -1076,7 +1099,7 @@ void MediaPlayerPrivateQTKit::updateStates()
         m_networkState = MediaPlayer::Loading;
     } else if (loadState >= QTMovieLoadStatePlayable) {
         // FIXME: This might not work correctly in streaming case, <rdar://problem/5693967>
-        m_readyState = currentTime() < maxTimeLoaded() ? MediaPlayer::HaveFutureData : MediaPlayer::HaveCurrentData;
+        m_readyState = currentMediaTime() < maxMediaTimeLoaded() ? MediaPlayer::HaveFutureData : MediaPlayer::HaveCurrentData;
         m_networkState = MediaPlayer::Loading;
     } else if (loadState >= QTMovieLoadStateLoaded) {
         m_readyState = MediaPlayer::HaveMetadata;
@@ -1094,7 +1117,7 @@ void MediaPlayerPrivateQTKit::updateStates()
             return;
         }
 
-        float loaded = maxTimeLoaded();
+        MediaTime loaded = maxMediaTimeLoaded();
         if (!loaded)
             m_readyState = MediaPlayer::HaveNothing;
 
@@ -1102,7 +1125,7 @@ void MediaPlayerPrivateQTKit::updateStates()
             m_networkState = MediaPlayer::FormatError;
         else {
             // FIXME: We should differentiate between load/network errors and decode errors <rdar://problem/5605692>
-            if (loaded > 0)
+            if (loaded > MediaTime::zeroTime())
                 m_networkState = MediaPlayer::DecodeError;
             else
                 m_readyState = MediaPlayer::HaveNothing;
@@ -1126,9 +1149,9 @@ void MediaPlayerPrivateQTKit::updateStates()
         m_player->readyStateChanged();
 
     if (loadState >= QTMovieLoadStateLoaded) {
-        float dur = duration();
+        MediaTime dur = durationMediaTime();
         if (dur != m_reportedDuration) {
-            if (m_reportedDuration != MediaPlayer::invalidTime())
+            if (m_reportedDuration.isValid())
                 m_player->durationChanged();
             m_reportedDuration = dur;
         }
@@ -1179,10 +1202,10 @@ void MediaPlayerPrivateQTKit::timeChanged()
     // It may not be possible to seek to a specific time in a streamed movie. When seeking in a 
     // stream QuickTime sets the movie time to closest time possible and posts a timechanged 
     // notification. Update m_seekTo so we can detect when the seek completes.
-    if (m_seekTo != -1)
-        m_seekTo = currentTime();
+    if (!m_seekTo.isValid())
+        m_seekTo = currentMediaTime();
 
-    m_timeToRestore = MediaPlayer::invalidTime();
+    m_timeToRestore = MediaTime::invalidTime();
     updateStates();
     m_player->timeChanged();
 }
@@ -1202,8 +1225,8 @@ void MediaPlayerPrivateQTKit::didEnd()
     // are at the end. Do this because QuickTime sometimes reports one time for duration and stops
     // playback at another time, which causes problems in HTMLMediaElement. QTKit's 'ended' event 
     // fires when playing in reverse so don't update duration when at time zero!
-    float now = currentTime();
-    if (now > 0)
+    MediaTime now = currentMediaTime();
+    if (now > MediaTime::zeroTime())
         m_cachedDuration = now;
 
     updateStates();
@@ -1645,15 +1668,6 @@ void MediaPlayerPrivateQTKit::setPreload(MediaPlayer::Preload preload)
         resumeLoad();
     else if (m_preload == MediaPlayer::Auto)
         [m_qtMovie.get() setAttribute:[NSNumber numberWithBool:NO] forKey:@"QTMovieLimitReadAheadAttribute"];
-}
-
-float MediaPlayerPrivateQTKit::mediaTimeForTimeValue(float timeValue) const
-{
-    if (!metaDataAvailable())
-        return timeValue;
-
-    QTTime qttime = createQTTime(timeValue);
-    return static_cast<float>(qttime.timeValue) / qttime.timeScale;
 }
 
 void MediaPlayerPrivateQTKit::setPrivateBrowsingMode(bool privateBrowsing)

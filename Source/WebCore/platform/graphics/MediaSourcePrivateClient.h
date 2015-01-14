@@ -40,7 +40,7 @@ public:
     virtual ~MediaSourcePrivateClient() { }
 
     virtual void setPrivateAndOpen(PassRef<MediaSourcePrivate>) = 0;
-    virtual double duration() const = 0;
+    virtual MediaTime duration() const = 0;
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const = 0;
     virtual void seekToTime(const MediaTime&) = 0;
 };

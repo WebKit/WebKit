@@ -76,7 +76,7 @@ PassRefPtr<MediaSource> MediaSource::create(ScriptExecutionContext& context)
 MediaSource::MediaSource(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_mediaElement(0)
-    , m_duration(std::numeric_limits<double>::quiet_NaN())
+    , m_duration(MediaTime::invalidTime())
     , m_pendingSeekTime(MediaTime::invalidTime())
     , m_readyState(closedKeyword())
     , m_asyncEventQueue(*this)
@@ -128,58 +128,56 @@ void MediaSource::removedFromRegistry()
     unsetPendingActivity(this);
 }
 
-double MediaSource::duration() const
+MediaTime MediaSource::duration() const
 {
     return m_duration;
 }
 
-double MediaSource::currentTime() const
+MediaTime MediaSource::currentTime() const
 {
-    return m_mediaElement ? m_mediaElement->currentTime() : 0;
+    return m_mediaElement ? m_mediaElement->currentMediaTime() : MediaTime::zeroTime();
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 {
     // Implements MediaSource algorithm for HTMLMediaElement.buffered.
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#htmlmediaelement-extensions
-    Vector<RefPtr<TimeRanges>> ranges = activeRanges();
+    Vector<PlatformTimeRanges> activeRanges = this->activeRanges();
 
     // 1. If activeSourceBuffers.length equals 0 then return an empty TimeRanges object and abort these steps.
-    if (ranges.isEmpty())
+    if (activeRanges.isEmpty())
         return PlatformTimeRanges::create();
 
     // 2. Let active ranges be the ranges returned by buffered for each SourceBuffer object in activeSourceBuffers.
     // 3. Let highest end time be the largest range end time in the active ranges.
-    double highestEndTime = -1;
-    for (size_t i = 0; i < ranges.size(); ++i) {
-        unsigned length = ranges[i]->length();
+    MediaTime highestEndTime = MediaTime::zeroTime();
+    for (auto& ranges : activeRanges) {
+        unsigned length = ranges.length();
         if (length)
-            highestEndTime = std::max(highestEndTime, ranges[i]->end(length - 1, ASSERT_NO_EXCEPTION));
+            highestEndTime = std::max(highestEndTime, ranges.end(length - 1));
     }
 
     // Return an empty range if all ranges are empty.
-    if (highestEndTime < 0)
+    if (!highestEndTime)
         return PlatformTimeRanges::create();
 
     // 4. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
-    RefPtr<TimeRanges> intersectionRanges = TimeRanges::create(0, highestEndTime);
+    PlatformTimeRanges intersectionRanges(MediaTime::zeroTime(), highestEndTime);
 
     // 5. For each SourceBuffer object in activeSourceBuffers run the following steps:
     bool ended = readyState() == endedKeyword();
-    for (size_t i = 0; i < ranges.size(); ++i) {
+    for (auto& sourceRanges : activeRanges) {
         // 5.1 Let source ranges equal the ranges returned by the buffered attribute on the current SourceBuffer.
-        TimeRanges* sourceRanges = ranges[i].get();
-
         // 5.2 If readyState is "ended", then set the end time on the last range in source ranges to highest end time.
-        if (ended && sourceRanges->length())
-            sourceRanges->add(sourceRanges->start(sourceRanges->length() - 1, ASSERT_NO_EXCEPTION), highestEndTime);
+        if (ended && sourceRanges.length())
+            sourceRanges.add(sourceRanges.start(sourceRanges.length() - 1), highestEndTime);
 
         // 5.3 Let new intersection ranges equal the the intersection between the intersection ranges and the source ranges.
         // 5.4 Replace the ranges in intersection ranges with the new intersection ranges.
-        intersectionRanges->intersectWith(*sourceRanges);
+        intersectionRanges.intersectWith(sourceRanges);
     }
 
-    return PlatformTimeRanges::create(intersectionRanges->ranges());
+    return PlatformTimeRanges::create(intersectionRanges);
 }
 
 void MediaSource::seekToTime(const MediaTime& time)
@@ -343,10 +341,10 @@ void MediaSource::setDuration(double duration, ExceptionCode& ec)
     }
 
     // 4. Run the duration change algorithm with new duration set to the value being assigned to this attribute.
-    setDurationInternal(duration);
+    setDurationInternal(MediaTime::createWithDouble(duration));
 }
 
-void MediaSource::setDurationInternal(double duration)
+void MediaSource::setDurationInternal(const MediaTime& duration)
 {
     // Duration Change Algorithm
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#duration-change-algorithm
@@ -356,14 +354,14 @@ void MediaSource::setDurationInternal(double duration)
         return;
 
     // 2. Set old duration to the current value of duration.
-    double oldDuration = m_duration;
+    MediaTime oldDuration = m_duration;
 
     // 3. Update duration to new duration.
     m_duration = duration;
 
     // 4. If the new duration is less than old duration, then call remove(new duration, old duration)
     // on all objects in sourceBuffers.
-    if (!isnan(oldDuration) && duration < oldDuration) {
+    if (!oldDuration.isValid() && duration < oldDuration) {
         for (auto& sourceBuffer : *m_sourceBuffers)
             sourceBuffer->remove(duration, oldDuration, IGNORE_EXCEPTION);
     }
@@ -376,7 +374,7 @@ void MediaSource::setDurationInternal(double duration)
     // NOTE: Assume UA is able to partially render audio frames.
 
     // 6. Update the media controller duration to new duration and run the HTMLMediaElement duration change algorithm.
-    LOG(MediaSource, "MediaSource::setDurationInternal(%p) - duration(%g)", this, duration);
+    LOG(MediaSource, "MediaSource::setDurationInternal(%p) - duration(%g)", this, duration.toDouble());
     m_private->durationChanged();
 }
 
@@ -390,7 +388,7 @@ void MediaSource::setReadyState(const AtomicString& state)
     if (state == closedKeyword()) {
         m_private.clear();
         m_mediaElement = 0;
-        m_duration = std::numeric_limits<double>::quiet_NaN();
+        m_duration = MediaTime::invalidTime();
     }
 
     if (oldState == state)
@@ -444,10 +442,10 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
         // ↳ If error is not set, is null, or is an empty string
         // 1. Run the duration change algorithm with new duration set to the highest end time reported by
         // the buffered attribute across all SourceBuffer objects in sourceBuffers.
-        double maxEndTime = 0;
+        MediaTime maxEndTime;
         for (auto& sourceBuffer : *m_sourceBuffers) {
             if (auto length = sourceBuffer->buffered()->length())
-                maxEndTime = std::max(sourceBuffer->buffered()->end(length - 1, IGNORE_EXCEPTION), maxEndTime);
+                maxEndTime = std::max(sourceBuffer->buffered()->ranges().end(length - 1), maxEndTime);
         }
         setDurationInternal(maxEndTime);
 
@@ -812,12 +810,11 @@ void MediaSource::onReadyStateChange(const AtomicString& oldState, const AtomicS
     scheduleEvent(eventNames().sourcecloseEvent);
 }
 
-Vector<RefPtr<TimeRanges>> MediaSource::activeRanges() const
+Vector<PlatformTimeRanges> MediaSource::activeRanges() const
 {
-    Vector<RefPtr<TimeRanges>> activeRanges(m_activeSourceBuffers->length());
-    for (size_t i = 0, length = m_activeSourceBuffers->length(); i < length; ++i)
-        activeRanges[i] = m_activeSourceBuffers->item(i)->buffered(ASSERT_NO_EXCEPTION);
-
+    Vector<PlatformTimeRanges> activeRanges(m_activeSourceBuffers->length());
+    for (auto& sourceBuffer : *m_activeSourceBuffers)
+        activeRanges.append(sourceBuffer->buffered()->ranges());
     return activeRanges;
 }
 

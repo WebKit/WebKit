@@ -1,5 +1,301 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r173318. <rdar://problem/19424143>
+
+    2014-06-06  Jer Noble  <jer.noble@apple.com>
+
+            Refactoring: make MediaTime the primary time type for audiovisual times.
+            https://bugs.webkit.org/show_bug.cgi?id=133579
+
+            Reviewed by Eric Carlson.
+
+            In order to limit the number of floating-point rounding errors for media systems which
+            can make use of rational time objects.
+
+            Add some convenience methods to convert between QTTime and MediaTime.
+            * platform/graphics/mac/MediaTimeQTKit.h: Added.
+            * platform/graphics/mac/MediaTimeQTKit.mm: Added.
+            (WebCore::toMediaTime):
+            (WebCore::toQTTime):
+
+            Rename MediaTimeMac -> MediaTimeAVFoundation:
+            * platform/graphics/avfoundation/MediaTimeAVFoundation.cpp: Renamed from Source/WebCore/platform/mac/MediaTimeMac.cpp.
+            (WebCore::toMediaTime):
+            (WebCore::toCMTime):
+            * platform/graphics/avfoundation/MediaTimeAVFoundation.h: Renamed from Source/WebCore/platform/mac/MediaTimeMac.h.
+
+            Use MediaTime instead of double:
+            * Modules/mediasource/MediaSource.cpp:
+            (WebCore::MediaSource::duration):
+            (WebCore::MediaSource::currentTime):
+            (WebCore::MediaSource::buffered):
+            (WebCore::MediaSource::setDuration):
+            (WebCore::MediaSource::activeRanges):
+            * Modules/mediasource/MediaSource.h:
+            * Modules/mediasource/SourceBuffer.cpp:
+            (WebCore::SourceBuffer::remove):
+            (WebCore::SourceBuffer::removeCodedFrames):
+            (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment):
+            (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+            (WebCore::SourceBuffer::hasCurrentTime):
+            (WebCore::SourceBuffer::hasFutureTime):
+            (WebCore::SourceBuffer::canPlayThrough):
+            * WebCore.xcodeproj/project.pbxproj:
+            * bindings/js/JSDataCueCustom.cpp:
+            (WebCore::JSDataCueConstructor::constructJSDataCue):
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::HTMLMediaElement):
+            (WebCore::HTMLMediaElement::parseAttribute):
+            * html/HTMLMediaElement.h:
+            (WebCore::ValueToString<MediaTime>::string):
+            * html/MediaFragmentURIParser.cpp:
+            (WebCore::MediaFragmentURIParser::MediaFragmentURIParser):
+            (WebCore::MediaFragmentURIParser::startTime):
+            (WebCore::MediaFragmentURIParser::endTime):
+            (WebCore::MediaFragmentURIParser::parseTimeFragment):
+            (WebCore::MediaFragmentURIParser::parseNPTFragment):
+            (WebCore::MediaFragmentURIParser::parseNPTTime):
+            (WebCore::MediaFragmentURIParser::invalidTimeValue): Deleted.
+            * html/MediaFragmentURIParser.h:
+            * html/TimeRanges.h:
+            (WebCore::TimeRanges::ranges):
+            * html/track/DataCue.cpp:
+            (WebCore::DataCue::DataCue):
+            * html/track/DataCue.h:
+            (WebCore::DataCue::create):
+            * html/track/InbandDataTextTrack.cpp:
+            (WebCore::InbandDataTextTrack::addDataCue):
+            (WebCore::InbandDataTextTrack::updateDataCue):
+            (WebCore::InbandDataTextTrack::removeDataCue):
+            * html/track/InbandDataTextTrack.h:
+            * html/track/InbandGenericTextTrack.cpp:
+            (WebCore::InbandGenericTextTrack::updateCueFromCueData):
+            (WebCore::InbandGenericTextTrack::addGenericCue):
+            (WebCore::InbandGenericTextTrack::removeGenericCue):
+            * html/track/InbandTextTrack.cpp:
+            (WebCore::InbandTextTrack::startTimeVariance):
+            * html/track/InbandTextTrack.h:
+            * html/track/InbandWebVTTTextTrack.cpp:
+            (WebCore::InbandWebVTTTextTrack::newCuesParsed):
+            * html/track/TextTrack.cpp:
+            (WebCore::TextTrack::addCue):
+            (WebCore::TextTrack::hasCue):
+            * html/track/TextTrack.h:
+            (WebCore::TextTrack::startTimeVariance):
+            * html/track/TextTrackCue.cpp:
+            (WebCore::TextTrackCue::create):
+            (WebCore::TextTrackCue::TextTrackCue):
+            (WebCore::TextTrackCue::setStartTime):
+            (WebCore::TextTrackCue::setEndTime):
+            (WebCore::TextTrackCue::hasEquivalentStartTime):
+            * html/track/TextTrackCue.h:
+            (WebCore::TextTrackCue::startTime):
+            (WebCore::TextTrackCue::endTime):
+            * html/track/TextTrackCueGeneric.cpp:
+            (WebCore::TextTrackCueGeneric::TextTrackCueGeneric):
+            * html/track/TextTrackCueGeneric.h:
+            * html/track/TextTrackCueList.cpp:
+            (WebCore::TextTrackCueList::add):
+            * html/track/VTTCue.cpp:
+            (WebCore::VTTCue::VTTCue):
+            (WebCore::VTTCue::markFutureAndPastNodes):
+            (WebCore::VTTCue::updateDisplayTree):
+            * html/track/VTTCue.h:
+            (WebCore::VTTCue::create):
+            * html/track/WebVTTParser.cpp:
+            (WebCore::WebVTTParser::WebVTTParser):
+            (WebCore::WebVTTParser::resetCueValues):
+            (WebCore::WebVTTParser::collectTimeStamp):
+            (WebCore::WebVTTTreeBuilder::constructTreeFromToken):
+            * html/track/WebVTTParser.h:
+            (WebCore::WebVTTCueData::startTime):
+            (WebCore::WebVTTCueData::setStartTime):
+            (WebCore::WebVTTCueData::endTime):
+            (WebCore::WebVTTCueData::setEndTime):
+            (WebCore::WebVTTCueData::WebVTTCueData): Deleted.
+            * platform/graphics/InbandTextTrackPrivateClient.h:
+            (WebCore::GenericCueData::startTime):
+            (WebCore::GenericCueData::setStartTime):
+            (WebCore::GenericCueData::endTime):
+            (WebCore::GenericCueData::setEndTime):
+            (WebCore::GenericCueData::GenericCueData):
+            * platform/graphics/MediaPlayer.cpp:
+            (WebCore::MediaPlayer::duration):
+            (WebCore::MediaPlayer::startTime):
+            (WebCore::MediaPlayer::initialTime):
+            (WebCore::MediaPlayer::currentTime):
+            (WebCore::MediaPlayer::seekWithTolerance):
+            (WebCore::MediaPlayer::seek):
+            (WebCore::MediaPlayer::maxTimeSeekable):
+            (WebCore::MediaPlayer::minTimeSeekable):
+            (WebCore::MediaPlayer::mediaTimeForTimeValue):
+            (WebCore::MediaPlayer::totalFrameDelay):
+            * platform/graphics/MediaPlayer.h:
+            * platform/graphics/MediaPlayerPrivate.h:
+            (WebCore::MediaPlayerPrivateInterface::durationMediaTime):
+            (WebCore::MediaPlayerPrivateInterface::currentMediaTime):
+            (WebCore::MediaPlayerPrivateInterface::seek):
+            (WebCore::MediaPlayerPrivateInterface::seekWithTolerance):
+            (WebCore::MediaPlayerPrivateInterface::startTime):
+            (WebCore::MediaPlayerPrivateInterface::initialTime):
+            (WebCore::MediaPlayerPrivateInterface::seekable):
+            (WebCore::MediaPlayerPrivateInterface::maxMediaTimeSeekable):
+            (WebCore::MediaPlayerPrivateInterface::minMediaTimeSeekable):
+            (WebCore::MediaPlayerPrivateInterface::mediaTimeForTimeValue):
+            (WebCore::MediaPlayerPrivateInterface::totalFrameDelay):
+            (WebCore::MediaPlayerPrivateInterface::startTimeDouble): Deleted.
+            (WebCore::MediaPlayerPrivateInterface::maxTimeSeekableDouble): Deleted.
+            (WebCore::MediaPlayerPrivateInterface::mediaTimeForTimeValueDouble): Deleted.
+            * platform/graphics/MediaSourcePrivateClient.h:
+            * platform/graphics/TrackPrivateBase.h:
+            (WebCore::TrackPrivateBase::startTimeVariance):
+            * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp:
+            (WebCore::InbandMetadataTextTrackPrivateAVF::InbandMetadataTextTrackPrivateAVF):
+            (WebCore::InbandMetadataTextTrackPrivateAVF::addDataCue):
+            (WebCore::InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes):
+            (WebCore::InbandMetadataTextTrackPrivateAVF::flushPartialCues):
+            * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.h:
+            (WebCore::IncompleteMetaDataCue::IncompleteMetaDataCue):
+            (WebCore::IncompleteMetaDataCue::startTime):
+            * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+            (WebCore::InbandTextTrackPrivateAVF::processCue):
+            (WebCore::InbandTextTrackPrivateAVF::resetCueValues):
+            * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+            (WebCore::MediaPlayerPrivateAVFoundation::durationMediaTime):
+            (WebCore::MediaPlayerPrivateAVFoundation::seek):
+            (WebCore::MediaPlayerPrivateAVFoundation::seekWithTolerance):
+            (WebCore::MediaPlayerPrivateAVFoundation::maxMediaTimeSeekable):
+            (WebCore::MediaPlayerPrivateAVFoundation::minMediaTimeSeekable):
+            (WebCore::MediaPlayerPrivateAVFoundation::maxTimeLoaded):
+            (WebCore::MediaPlayerPrivateAVFoundation::didLoadingProgress):
+            (WebCore::MediaPlayerPrivateAVFoundation::updateStates):
+            (WebCore::MediaPlayerPrivateAVFoundation::loadedTimeRangesChanged):
+            (WebCore::MediaPlayerPrivateAVFoundation::seekableTimeRangesChanged):
+            (WebCore::MediaPlayerPrivateAVFoundation::timeChanged):
+            (WebCore::MediaPlayerPrivateAVFoundation::didEnd):
+            (WebCore::MediaPlayerPrivateAVFoundation::invalidateCachedDuration):
+            (WebCore::MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification):
+            (WebCore::MediaPlayerPrivateAVFoundation::extraMemoryCost):
+            (WebCore::MediaPlayerPrivateAVFoundation::duration): Deleted.
+            (WebCore::MediaPlayerPrivateAVFoundation::maxTimeSeekableDouble): Deleted.
+            (WebCore::MediaPlayerPrivateAVFoundation::minTimeSeekable): Deleted.
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+            (WebCore::MediaPlayerPrivateAVFoundation::Notification::Notification):
+            (WebCore::MediaPlayerPrivateAVFoundation::Notification::time):
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundationCF::platformDuration):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::currentTime):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::seekToTime):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::platformDuration):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::currentTime):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::seekToTime):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::platformMinTimeSeekable):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::platformMaxTimeSeekable):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::platformMaxTimeLoaded):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::mediaTimeForTimeValue): Deleted.
+            (WebCore::AVFWrapper::seekToTime): Deleted.
+            (WebCore::LegibleOutputData::LegibleOutputData): Deleted.
+            (WebCore::AVFWrapper::createImageForTimeInRect): Deleted.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::platformMinTimeSeekable):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::platformMaxTimeSeekable):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::platformMaxTimeLoaded):
+            (WebCore::MediaPlayerPrivateAVFoundationCF::mediaTimeForTimeValue): Deleted.
+            (WebCore::AVFWrapper::seekToTime): Deleted.
+            (WebCore::LegibleOutputData::LegibleOutputData): Deleted.
+            (WebCore::AVFWrapper::createImageForTimeInRect): Deleted.
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::platformDuration):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::currentMediaTime):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMinTimeSeekable):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::processCue):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::durationDidChange):
+            (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+            (-[WebCoreAVFMovieObserver legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:]):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::currentTime): Deleted.
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationMediaTime):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::startTime):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::initialTime):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekable):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::maxMediaTimeSeekable):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::minMediaTimeSeekable):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::totalFrameDelay):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationDouble): Deleted.
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::currentTimeDouble): Deleted.
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::startTimeDouble): Deleted.
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::maxTimeSeekableDouble): Deleted.
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::minTimeSeekable): Deleted.
+            * platform/graphics/avfoundation/objc/OutOfBandTextTrackPrivateAVF.h:
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            * platform/graphics/gstreamer/InbandMetadataTextTrackPrivateGStreamer.h:
+            (WebCore::InbandMetadataTextTrackPrivateGStreamer::addDataCue):
+            * platform/graphics/gstreamer/InbandMetadataTextTrackPrivateGStreamer.h:
+            (WebCore::InbandMetadataTextTrackPrivateGStreamer::addDataCue):
+            * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+            (WebCore::MediaPlayerPrivateGStreamer::processMpegTsSection):
+            (WebCore::MediaPlayerPrivateGStreamer::processTableOfContentsEntry):
+            (WebCore::MediaPlayerPrivateGStreamer::processMpegTsSection):
+            (WebCore::MediaPlayerPrivateGStreamer::processTableOfContentsEntry):
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+            (WebCore::maxValueForTimeRanges):
+            (WebCore::MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit):
+            (WebCore::MediaPlayerPrivateQTKit::durationMediaTime):
+            (WebCore::MediaPlayerPrivateQTKit::currentMediaTime):
+            (WebCore::MediaPlayerPrivateQTKit::seek):
+            (WebCore::MediaPlayerPrivateQTKit::doSeek):
+            (WebCore::MediaPlayerPrivateQTKit::cancelSeek):
+            (WebCore::MediaPlayerPrivateQTKit::seekTimerFired):
+            (WebCore::MediaPlayerPrivateQTKit::seeking):
+            (WebCore::MediaPlayerPrivateQTKit::setPreservesPitch):
+            (WebCore::MediaPlayerPrivateQTKit::buffered):
+            (WebCore::MediaPlayerPrivateQTKit::maxMediaTimeSeekable):
+            (WebCore::MediaPlayerPrivateQTKit::maxMediaTimeLoaded):
+            (WebCore::MediaPlayerPrivateQTKit::didLoadingProgress):
+            (WebCore::MediaPlayerPrivateQTKit::updateStates):
+            (WebCore::MediaPlayerPrivateQTKit::timeChanged):
+            (WebCore::MediaPlayerPrivateQTKit::didEnd):
+            (WebCore::MediaPlayerPrivateQTKit::maxMediaTimeSeekable):
+            (WebCore::MediaPlayerPrivateQTKit::maxMediaTimeLoaded):
+            (WebCore::MediaPlayerPrivateQTKit::createQTTime): Deleted.
+            (WebCore::MediaPlayerPrivateQTKit::duration): Deleted.
+            (WebCore::MediaPlayerPrivateQTKit::currentTime): Deleted.
+            (WebCore::MediaPlayerPrivateQTKit::maxTimeSeekable): Deleted.
+            (WebCore::MediaPlayerPrivateQTKit::maxTimeLoaded): Deleted.
+            (WebCore::MediaPlayerPrivateQTKit::mediaTimeForTimeValue): Deleted.
+            * platform/mac/PlatformClockCM.mm:
+            * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+            (WebCore::MockMediaPlayerMediaSource::maxMediaTimeSeekable):
+            (WebCore::MockMediaPlayerMediaSource::currentMediaTime):
+            (WebCore::MockMediaPlayerMediaSource::durationMediaTime):
+            (WebCore::MockMediaPlayerMediaSource::seekWithTolerance):
+            (WebCore::MockMediaPlayerMediaSource::totalFrameDelay):
+            (WebCore::MockMediaPlayerMediaSource::maxTimeSeekableDouble): Deleted.
+            (WebCore::MockMediaPlayerMediaSource::currentTimeDouble): Deleted.
+            (WebCore::MockMediaPlayerMediaSource::durationDouble): Deleted.
+            * platform/mock/mediasource/MockMediaPlayerMediaSource.h:
+            * platform/mock/mediasource/MockMediaSourcePrivate.cpp:
+            (WebCore::MockMediaSourcePrivate::MockMediaSourcePrivate):
+            * platform/mock/mediasource/MockMediaSourcePrivate.h:
+            * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+            (WebCore::MockSourceBufferPrivate::enqueueSample):
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r173197. <rdar://problem/19424142>
 
     2014-09-02  Jer Noble  <jer.noble@apple.com>

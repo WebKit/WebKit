@@ -1,3 +1,24 @@
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
+        Merged r173318. <rdar://problem/19424143>
+
+    2014-06-10  Jer Noble  <jer.noble@apple.com>
+
+            Refactoring: make MediaTime the primary time type for audiovisual times.
+            https://bugs.webkit.org/show_bug.cgi?id=133579
+
+            Reviewed by Eric Carlson.
+
+            Update the http/media tests to use byte-ranges, and update our byte-range CGI script
+            to return correct headers. Remove the platform expected results for media/video-seek-past-end-paused.html
+            now that we pass.
+
+            * http/tests/media/reload-after-dialog.html:
+            * http/tests/media/video-error-abort.html:
+            * http/tests/media/video-throttled-load.cgi:
+            * platform/mac/media/video-seek-past-end-paused-expected.txt: Removed.
+            * platform/mac/TestExpectations:
+
 2014-12-16  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r176399. rdar://problem/19267545

@@ -241,12 +241,17 @@ void SourceBuffer::abort(ExceptionCode& ec)
 
 void SourceBuffer::remove(double start, double end, ExceptionCode& ec)
 {
-    LOG(MediaSource, "SourceBuffer::remove(%p) - start(%lf), end(%lf)", this, start, end);
+    remove(MediaTime::createWithDouble(start), MediaTime::createWithDouble(end), ec);
+}
+
+void SourceBuffer::remove(const MediaTime& start, const MediaTime& end, ExceptionCode& ec)
+{
+    LOG(MediaSource, "SourceBuffer::remove(%p) - start(%lf), end(%lf)", this, start.toDouble(), end.toDouble());
 
     // Section 3.2 remove() method steps.
     // 1. If start is negative or greater than duration, then throw an InvalidAccessError exception and abort these steps.
     // 2. If end is less than or equal to start, then throw an InvalidAccessError exception and abort these steps.
-    if (start < 0 || (m_source && (std::isnan(m_source->duration()) || start > m_source->duration())) || end <= start) {
+    if (start < MediaTime::zeroTime() || (m_source && (!m_source->duration().isValid() || start > m_source->duration())) || end <= start) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
@@ -271,8 +276,8 @@ void SourceBuffer::remove(double start, double end, ExceptionCode& ec)
     scheduleEvent(eventNames().updatestartEvent);
 
     // 8. Return control to the caller and run the rest of the steps asynchronously.
-    m_pendingRemoveStart = MediaTime::createWithDouble(start);
-    m_pendingRemoveEnd = MediaTime::createWithDouble(end);
+    m_pendingRemoveStart = start;
+    m_pendingRemoveEnd = end;
     m_removeTimer.startOneShot(0);
 }
 
@@ -512,7 +517,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
     if (m_source)
         m_source->monitorSourceBuffers();
 
-    MediaTime currentMediaTime = MediaTime::createWithDouble(m_source->currentTime());
+    MediaTime currentMediaTime = m_source->currentTime();
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.value;
         const AtomicString& trackID = trackBufferPair.key;
@@ -599,8 +604,8 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#sourcebuffer-coded-frame-removal
 
     // 1. Let start be the starting presentation timestamp for the removal range.
-    MediaTime durationMediaTime = MediaTime::createWithDouble(m_source->duration());
-    MediaTime currentMediaTime = MediaTime::createWithDouble(m_source->currentTime());
+    MediaTime durationMediaTime = m_source->duration();
+    MediaTime currentMediaTime = m_source->currentTime();
 
     // 2. Let end be the end presentation timestamp for the removal range.
     // 3. For each track buffer in this source buffer, run the following steps:
@@ -713,11 +718,11 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
     // NOTE: begin by removing data from the beginning of the buffered ranges, 30 seconds at
     // a time, up to 30 seconds before currentTime.
     MediaTime thirtySeconds = MediaTime(30, 1);
-    MediaTime currentTime = MediaTime::createWithDouble(m_source->currentTime());
+    MediaTime currentTime = m_source->currentTime();
     MediaTime maximumRangeEnd = currentTime - thirtySeconds;
 
 #if !LOG_DISABLED
-    LOG(MediaSource, "SourceBuffer::evictCodedFrames(%p) - currentTime = %lf, require %zu bytes, maximum buffer size is %zu", this, m_source->currentTime(), extraMemoryCost() + newDataSize, maximumBufferSize);
+    LOG(MediaSource, "SourceBuffer::evictCodedFrames(%p) - currentTime = %lf, require %zu bytes, maximum buffer size is %zu", this, m_source->currentTime().toDouble(), extraMemoryCost() + newDataSize, maximumBufferSize);
     size_t initialBufferedSize = extraMemoryCost();
 #endif
 
@@ -753,7 +758,7 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
 
     MediaTime minimumRangeStart = currentTime + thirtySeconds;
 
-    rangeEnd = MediaTime::createWithDouble(m_source->duration());
+    rangeEnd = m_source->duration();
     rangeStart = rangeEnd - thirtySeconds;
     while (rangeStart > minimumRangeStart) {
 
@@ -864,13 +869,13 @@ void SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBuff
     // 3.5.7 Initialization Segment Received
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-init-segment-received
     // 1. Update the duration attribute if it currently equals NaN:
-    if (std::isnan(m_source->duration())) {
+    if (m_source->duration().isInvalid()) {
         // ↳ If the initialization segment contains a duration:
         //   Run the duration change algorithm with new duration set to the duration in the initialization segment.
         // ↳ Otherwise:
         //   Run the duration change algorithm with new duration set to positive Infinity.
         MediaTime newDuration = segment.duration.isValid() ? segment.duration : MediaTime::positiveInfiniteTime();
-        m_source->setDurationInternal(newDuration.toDouble());
+        m_source->setDurationInternal(newDuration);
     }
 
     // 2. If the initialization segment has no audio, video, or text tracks, then run the end of stream
@@ -1182,7 +1187,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         // FIXME: add support for "sequence" mode
 
         // 1.5 If timestampOffset is not 0, then run the following steps:
-        if (m_timestampOffset != MediaTime::zeroTime()) {
+        if (m_timestampOffset) {
             // 1.5.1 Add timestampOffset to the presentation timestamp.
             presentationTimestamp += m_timestampOffset;
 
@@ -1359,7 +1364,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
 
             // Only force the TrackBuffer to re-enqueue if the removed ranges overlap with enqueued and possibly
             // not yet displayed samples.
-            MediaTime currentMediaTime = MediaTime::createWithDouble(m_source->currentTime());
+            MediaTime currentMediaTime = m_source->currentTime();
             if (currentMediaTime < trackBuffer.lastEnqueuedPresentationTime) {
                 PlatformTimeRanges possiblyEnqueuedRanges(currentMediaTime, trackBuffer.lastEnqueuedPresentationTime);
                 possiblyEnqueuedRanges.intersectWith(erasedRanges->ranges());
@@ -1368,7 +1373,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             }
 
             erasedRanges->invert();
-            m_buffered->intersectWith(*erasedRanges.get());
+            m_buffered->intersectWith(*erasedRanges);
         }
 
         // 1.17 If spliced audio frame is set:
@@ -1413,8 +1418,8 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
 
     // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
     // duration set to the maximum of the current duration and the highest end timestamp reported by HTMLMediaElement.buffered.
-    if (highestPresentationEndTimestamp().toDouble() > m_source->duration())
-        m_source->setDurationInternal(highestPresentationEndTimestamp().toDouble());
+    if (highestPresentationEndTimestamp() > m_source->duration())
+        m_source->setDurationInternal(highestPresentationEndTimestamp());
 }
 
 bool SourceBuffer::hasAudio() const
@@ -1667,7 +1672,7 @@ std::unique_ptr<PlatformTimeRanges> SourceBuffer::bufferedAccountingForEndOfStre
     std::unique_ptr<PlatformTimeRanges> virtualRanges = PlatformTimeRanges::create(m_buffered->ranges());
     if (m_source->isEnded()) {
         MediaTime start = virtualRanges->maximumBufferedTime();
-        MediaTime end = MediaTime::createWithDouble(m_source->duration());
+        MediaTime end = m_source->duration();
         if (start <= end)
             virtualRanges->add(start, end);
     }
@@ -1679,8 +1684,8 @@ bool SourceBuffer::hasCurrentTime() const
     if (isRemoved() || !m_buffered->length())
         return false;
 
-    MediaTime currentTime = MediaTime::createWithDouble(m_source->currentTime());
-    MediaTime duration = MediaTime::createWithDouble(m_source->duration());
+    MediaTime currentTime = m_source->currentTime();
+    MediaTime duration = m_source->duration();
     if (currentTime >= duration)
         return true;
 
@@ -1697,8 +1702,8 @@ bool SourceBuffer::hasFutureTime() const
     if (!ranges->length())
         return false;
 
-    MediaTime currentTime = MediaTime::createWithDouble(m_source->currentTime());
-    MediaTime duration = MediaTime::createWithDouble(m_source->duration());
+    MediaTime currentTime = m_source->currentTime();
+    MediaTime duration = m_source->duration();
     if (currentTime >= duration)
         return true;
 
@@ -1730,8 +1735,8 @@ bool SourceBuffer::canPlayThrough()
         return true;
 
     // Add up all the time yet to be buffered.
-    MediaTime currentTime = MediaTime::createWithDouble(m_source->currentTime());
-    MediaTime duration = MediaTime::createWithDouble(m_source->duration());
+    MediaTime currentTime = m_source->currentTime();
+    MediaTime duration = m_source->duration();
 
     std::unique_ptr<PlatformTimeRanges> unbufferedRanges = bufferedAccountingForEndOfStream();
     unbufferedRanges->invert();

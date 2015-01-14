@@ -60,6 +60,7 @@ public:
     double totalDuration() const;
 
     const PlatformTimeRanges& ranges() const { return m_ranges; }
+    PlatformTimeRanges& ranges() { return m_ranges; }
 
 private:
     explicit TimeRanges();

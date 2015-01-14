@@ -8530,6 +8530,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\avfoundation\MediaPlayerPrivateAVFoundation.cpp" />
+    <ClCompile Include="..\platform\graphics\avfoundation\MediaTimeAVFoundation.cpp" />
     <ClCompile Include="..\platform\graphics\avfoundation\cf\MediaPlayerPrivateAVFoundationCF.cpp" />
     <ClCompile Include="..\platform\network\AuthenticationChallengeBase.cpp" />
     <ClCompile Include="..\platform\network\BlobData.cpp" />
@@ -19759,6 +19760,7 @@
     <ClInclude Include="..\platform\graphics\ca\win\PlatformCALayerWinInternal.h" />
     <ClInclude Include="..\platform\graphics\ca\win\WKCACFViewLayerTreeHost.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\MediaPlayerPrivateAVFoundation.h" />
+    <ClInclude Include="..\platform\graphics\avfoundation\MediaTimeAVFoundation.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\cf\AVFoundationCFSoftLinking.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\cf\CoreMediaSoftLinking.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\cf\MediaPlayerPrivateAVFoundationCF.h" />

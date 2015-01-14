@@ -36,6 +36,7 @@
 
 #include "EventTarget.h"
 #include "HTMLElement.h"
+#include <wtf/MediaTime.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -45,6 +46,7 @@ class TextTrack;
 class TextTrackCue : public RefCounted<TextTrackCue>, public EventTargetWithInlineData {
 public:
     static PassRefPtr<TextTrackCue> create(ScriptExecutionContext&, double start, double end, const String& content);
+    static PassRefPtr<TextTrackCue> create(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);
 
     static const AtomicString& cueShadowPseudoId()
     {
@@ -60,10 +62,14 @@ public:
     const String& id() const { return m_id; }
     void setId(const String&);
 
-    double startTime() const { return m_startTime; }
+    MediaTime startMediaTime() const { return m_startTime; }
+    double startTime() const { return startMediaTime().toDouble(); }
+    void setStartTime(const MediaTime&);
     void setStartTime(double, ExceptionCode&);
 
-    double endTime() const { return m_endTime; }
+    MediaTime endMediaTime() const { return m_endTime; }
+    double endTime() const { return endMediaTime().toDouble(); }
+    void setEndTime(const MediaTime&);
     void setEndTime(double, ExceptionCode&);
 
     bool pauseOnExit() const { return m_pauseOnExit; }
@@ -112,7 +118,7 @@ public:
     using RefCounted<TextTrackCue>::deref;
 
 protected:
-    TextTrackCue(ScriptExecutionContext&, double start, double end);
+    TextTrackCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end);
 
     Document& ownerDocument() { return toDocument(m_scriptExecutionContext); }
 
@@ -122,8 +128,8 @@ private:
     virtual void derefEventTarget() override final { deref(); }
 
     String m_id;
-    double m_startTime;
-    double m_endTime;
+    MediaTime m_startTime;
+    MediaTime m_endTime;
     int m_cueIndex;
     int m_processingCueChanges;
 

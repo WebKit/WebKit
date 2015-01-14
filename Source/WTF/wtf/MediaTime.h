@@ -67,6 +67,7 @@ public:
     MediaTime& operator-=(const MediaTime& rhs) { return *this = *this - rhs; }
     MediaTime operator+(const MediaTime& rhs) const;
     MediaTime operator-(const MediaTime& rhs) const;
+    MediaTime operator-() const;
     MediaTime operator*(int32_t) const;
     bool operator<(const MediaTime& rhs) const;
     bool operator>(const MediaTime& rhs) const;
@@ -74,6 +75,8 @@ public:
     bool operator==(const MediaTime& rhs) const;
     bool operator>=(const MediaTime& rhs) const;
     bool operator<=(const MediaTime& rhs) const;
+    bool operator!() const;
+    explicit operator bool() const;
 
     typedef enum {
         LessThan = -1,
@@ -100,6 +103,12 @@ public:
     const int32_t& timeScale() const { return m_timeScale; }
 
     void dump(PrintStream& out) const;
+
+    // Make the following casts errors:
+    operator double() const = delete;
+    MediaTime(double) = delete;
+    operator int() const = delete;
+    MediaTime(int) = delete;
 
     friend WTF_EXPORT_PRIVATE MediaTime abs(const MediaTime& rhs);
 private:

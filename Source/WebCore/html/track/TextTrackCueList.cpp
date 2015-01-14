@@ -77,8 +77,8 @@ TextTrackCueList* TextTrackCueList::activeCues()
 
 bool TextTrackCueList::add(PassRefPtr<TextTrackCue> cue)
 {
-    ASSERT(cue->startTime() >= 0);
-    ASSERT(cue->endTime() >= 0);
+    ASSERT(cue->startMediaTime() >= MediaTime::zeroTime());
+    ASSERT(cue->endMediaTime() >= MediaTime::zeroTime());
 
     return add(cue, 0, m_list.size());
 }

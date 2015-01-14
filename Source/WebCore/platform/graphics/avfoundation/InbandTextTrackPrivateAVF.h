@@ -55,7 +55,7 @@ public:
     bool hasBeenReported() const { return m_hasBeenReported; }
     void setHasBeenReported(bool reported) { m_hasBeenReported = reported; }
 
-    virtual void processCue(CFArrayRef attributedStrings, CFArrayRef nativeSamples, double);
+    virtual void processCue(CFArrayRef attributedStrings, CFArrayRef nativeSamples, const MediaTime&);
     virtual void resetCueValues();
 
     void beginSeeking();
@@ -68,19 +68,19 @@ public:
         InBand
     };
     virtual Category textTrackCategory() const = 0;
-
-    virtual double startTimeVariance() const override { return 0.25; }
-
+    
+    virtual MediaTime startTimeVariance() const override { return MediaTime(1, 4); }
+    
 protected:
     InbandTextTrackPrivateAVF(AVFInbandTrackParent*, CueFormat);
 
     void processCueAttributes(CFAttributedStringRef, GenericCueData&);
-    void processAttributedStrings(CFArrayRef, double);
-    void processNativeSamples(CFArrayRef, double);
+    void processAttributedStrings(CFArrayRef, const MediaTime&);
+    void processNativeSamples(CFArrayRef, const MediaTime&);
     void removeCompletedCues();
 
-    double m_currentCueStartTime;
-    double m_currentCueEndTime;
+    MediaTime m_currentCueStartTime;
+    MediaTime m_currentCueEndTime;
 
     Vector<RefPtr<GenericCueData>> m_cues;
     AVFInbandTrackParent* m_owner;

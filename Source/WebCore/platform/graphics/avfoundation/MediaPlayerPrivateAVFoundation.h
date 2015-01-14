@@ -53,7 +53,7 @@ public:
     virtual void rateChanged();
     virtual void loadedTimeRangesChanged();
     virtual void seekableTimeRangesChanged();
-    virtual void timeChanged(double);
+    virtual void timeChanged(const MediaTime&);
     virtual void seekCompleted(bool);
     virtual void didEnd();
     virtual void contentsNeedsDisplay() { }
@@ -96,12 +96,11 @@ public:
         
         Notification()
             : m_type(None)
-            , m_time(0)
             , m_finished(false)
         {
         }
 
-        Notification(Type type, double time)
+        Notification(Type type, const MediaTime& time)
             : m_type(type)
             , m_time(time)
             , m_finished(false)
@@ -110,14 +109,12 @@ public:
         
         Notification(Type type, bool finished)
             : m_type(type)
-            , m_time(0)
             , m_finished(finished)
         {
         }
 
         Notification(std::function<void ()> function)
             : m_type(FunctionType)
-            , m_time(0)
             , m_finished(false)
             , m_function(function)
         {
@@ -125,19 +122,19 @@ public:
         
         Type type() { return m_type; }
         bool isValid() { return m_type != None; }
-        double time() { return m_time; }
+        MediaTime time() { return m_time; }
         bool finished() { return m_finished; }
         std::function<void ()>& function() { return m_function; }
         
     private:
         Type m_type;
-        double m_time;
+        MediaTime m_time;
         bool m_finished;
         std::function<void ()> m_function;
     };
 
     void scheduleMainThreadNotification(Notification);
-    void scheduleMainThreadNotification(Notification::Type, double time = 0);
+    void scheduleMainThreadNotification(Notification::Type, const MediaTime& = MediaTime::zeroTime());
     void scheduleMainThreadNotification(Notification::Type, bool completed);
     void dispatchNotification();
     void clearMainThreadPendingFlag();
@@ -169,12 +166,10 @@ protected:
     virtual bool hasVideo() const override { return m_cachedHasVideo; }
     virtual bool hasAudio() const override { return m_cachedHasAudio; }
     virtual void setVisible(bool) override;
-    virtual float duration() const override;
-    virtual double durationDouble() const override;
-    virtual float currentTime() const override;
-    virtual double currentTimeDouble() const = 0;
-    virtual void seek(float) override;
-    virtual void seekWithTolerance(double, double, double) override;
+    virtual MediaTime durationMediaTime() const override;
+    virtual MediaTime currentMediaTime() const = 0;
+    virtual void seek(const MediaTime&) override;
+    virtual void seekWithTolerance(const MediaTime&, const MediaTime&, const MediaTime&) override;
     virtual bool seeking() const override;
     virtual void setRate(float) override;
     virtual bool paused() const override;
@@ -183,8 +178,8 @@ protected:
     virtual void setClosedCaptionsVisible(bool) = 0;
     virtual MediaPlayer::NetworkState networkState() const override { return m_networkState; }
     virtual MediaPlayer::ReadyState readyState() const override { return m_readyState; }
-    virtual double maxTimeSeekableDouble() const override;
-    virtual double minTimeSeekable() const override;
+    virtual MediaTime maxMediaTimeSeekable() const override;
+    virtual MediaTime minMediaTimeSeekable() const override;
     virtual std::unique_ptr<PlatformTimeRanges> buffered() const override;
     virtual bool didLoadingProgress() const override;
     virtual void setSize(const IntSize&) override;
@@ -200,7 +195,6 @@ protected:
 
     virtual MediaPlayer::MovieLoadType movieLoadType() const;
     virtual void prepareForRendering();
-    virtual float mediaTimeForTimeValue(float) const = 0;
 
     virtual bool supportsFullscreen() const;
     virtual bool supportsScanning() const { return true; }
@@ -239,13 +233,13 @@ protected:
     virtual void checkPlayability() = 0;
     virtual void updateRate() = 0;
     virtual float rate() const = 0;
-    virtual void seekToTime(double time, double negativeTolerance, double positiveTolerance) = 0;
+    virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) = 0;
     virtual unsigned long long totalBytes() const = 0;
     virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const = 0;
-    virtual double platformMaxTimeSeekable() const = 0;
-    virtual double platformMinTimeSeekable() const = 0;
-    virtual float platformMaxTimeLoaded() const = 0;
-    virtual double platformDuration() const = 0;
+    virtual MediaTime platformMaxTimeSeekable() const = 0;
+    virtual MediaTime platformMinTimeSeekable() const = 0;
+    virtual MediaTime platformMaxTimeLoaded() const = 0;
+    virtual MediaTime platformDuration() const = 0;
 
     virtual void beginLoadingMetadata() = 0;
     virtual void tracksChanged() = 0;
@@ -283,7 +277,7 @@ protected:
 
     bool metaDataAvailable() const { return m_readyState >= MediaPlayer::HaveMetadata; }
     float requestedRate() const { return m_requestedRate; }
-    float maxTimeLoaded() const;
+    MediaTime maxTimeLoaded() const;
     bool isReadyForVideoSetup() const;
     virtual void setUpVideoRendering();
     virtual void tearDownVideoRendering();
@@ -331,12 +325,12 @@ private:
     MediaPlayer::Preload m_preload;
 
     IntSize m_cachedNaturalSize;
-    mutable float m_cachedMaxTimeLoaded;
-    mutable double m_cachedMaxTimeSeekable;
-    mutable double m_cachedMinTimeSeekable;
-    mutable double m_cachedDuration;
-    float m_reportedDuration;
-    mutable float m_maxTimeLoadedAtLastDidLoadingProgress;
+    mutable MediaTime m_cachedMaxTimeLoaded;
+    mutable MediaTime m_cachedMaxTimeSeekable;
+    mutable MediaTime m_cachedMinTimeSeekable;
+    mutable MediaTime m_cachedDuration;
+    MediaTime m_reportedDuration;
+    mutable MediaTime m_maxTimeLoadedAtLastDidLoadingProgress;
     float m_requestedRate;
     mutable int m_delayCallbacks;
     int m_delayCharacteristicsChangedNotification;
