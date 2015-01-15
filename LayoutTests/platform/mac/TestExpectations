@@ -1244,15 +1244,6 @@ webkit.org/b/138806 [ Yosemite+ ] media/track/track-in-band-cues-added-once.html
 # This test times out.
 [ Yosemite+ ] media/media-source/media-source-seek-complete.html [ Timeout ]
 
-# FIXME: Needs bugzilla (<rdar://problem/17748495>)
-# Some of these failures already have individual bugs, others are covered by this one.
-[ Yosemite ] compositing/backgrounds/fixed-background-on-descendant.html [ Pass ImageOnlyFailure ]
-[ Yosemite ] compositing/iframes/become-overlapped-iframe.html [ Pass Failure ]
-[ Yosemite ] compositing/masks/solid-color-masked.html [ Pass ImageOnlyFailure ]
-[ Yosemite ] fast/canvas/canvas-overflow-hidden-animation.html [ Pass ImageOnlyFailure ]
-[ Yosemite ] fast/layers/wrong-clipping-semi-transparent-compositing-layer-on-subpixel-position.html [ Pass ImageOnlyFailure ]
-[ Yosemite+ ] fast/repaint/fixed-move-after-keyboard-scroll.html [ Pass Failure ]
-
 # These tests used to only fail with WK2, but on Yosemite, they also fail with WK1.
 webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-blur.html [ ImageOnlyFailure ]
 webkit.org/b/132766 [ Yosemite ] fast/hidpi/filters-hue-rotate.html [ ImageOnlyFailure ]
