@@ -64,6 +64,13 @@ public:
         boundingBox.intersect(rect);
     }
     
+    void intersect(const ClipRect& clipRect)
+    {
+        backgroundRect.intersect(clipRect);
+        foregroundRect.intersect(clipRect);
+        outlineRect.intersect(clipRect);
+    }
+
     bool shouldPaintContent = false;
     bool hasBoundingBox = false;
     LayoutRect layerBounds;

@@ -1,5 +1,19 @@
 2015-01-15  Zalan Bujtas  <zalan@apple.com>
 
+        LayerFragment should be able to intersect with ClipRect.
+        https://bugs.webkit.org/show_bug.cgi?id=140498
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/LayerFragment.h:
+        (WebCore::LayerFragment::intersect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::collectFragments):
+
+2015-01-15  Zalan Bujtas  <zalan@apple.com>
+
         Move ClipRects and ClipRectsCache classes to RenderLayer.cpp.
         https://bugs.webkit.org/show_bug.cgi?id=140461
 
