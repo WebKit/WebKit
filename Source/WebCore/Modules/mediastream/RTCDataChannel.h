@@ -89,7 +89,7 @@ private:
     RTCDataChannel(ScriptExecutionContext*, std::unique_ptr<RTCDataChannelHandler>);
 
     void scheduleDispatchEvent(PassRefPtr<Event>);
-    void scheduledEventTimerFired(Timer<RTCDataChannel>*);
+    void scheduledEventTimerFired(Timer*);
 
     // EventTarget
     virtual void refEventTarget() override { ref(); }
@@ -114,7 +114,7 @@ private:
     };
     BinaryType m_binaryType;
 
-    Timer<RTCDataChannel> m_scheduledEventTimer;
+    Timer m_scheduledEventTimer;
     Vector<RefPtr<Event>> m_scheduledEvents;
 };
 

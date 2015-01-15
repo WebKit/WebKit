@@ -201,7 +201,7 @@ void CoordinatedLayerTreeHost::performScheduledLayerFlush()
     }
 }
 
-void CoordinatedLayerTreeHost::layerFlushTimerFired(Timer<CoordinatedLayerTreeHost>*)
+void CoordinatedLayerTreeHost::layerFlushTimerFired(Timer*)
 {
     performScheduledLayerFlush();
 }

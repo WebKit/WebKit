@@ -107,13 +107,13 @@ void ValidationMessage::setMessage(const String& message)
     ASSERT(!message.isEmpty());
     m_message = message;
     if (!m_bubble)
-        m_timer = std::make_unique<Timer<ValidationMessage>>(this, &ValidationMessage::buildBubbleTree);
+        m_timer = std::make_unique<Timer>(this, &ValidationMessage::buildBubbleTree);
     else
-        m_timer = std::make_unique<Timer<ValidationMessage>>(this, &ValidationMessage::setMessageDOMAndStartTimer);
+        m_timer = std::make_unique<Timer>(this, &ValidationMessage::setMessageDOMAndStartTimer);
     m_timer->startOneShot(0);
 }
 
-void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
+void ValidationMessage::setMessageDOMAndStartTimer(Timer*)
 {
     ASSERT(!validationMessageClient());
     ASSERT(m_messageHeading);
@@ -136,7 +136,7 @@ void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
     if (magnification <= 0)
         m_timer = nullptr;
     else {
-        m_timer = std::make_unique<Timer<ValidationMessage>>(this, &ValidationMessage::deleteBubbleTree);
+        m_timer = std::make_unique<Timer>(this, &ValidationMessage::deleteBubbleTree);
         m_timer->startOneShot(std::max(5.0, static_cast<double>(m_message.length()) * magnification / 1000));
     }
 }
@@ -165,7 +165,7 @@ static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble
     bubble->setInlineStyleProperty(CSSPropertyLeft, bubbleX, CSSPrimitiveValue::CSS_PX);
 }
 
-void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
+void ValidationMessage::buildBubbleTree(Timer*)
 {
     ASSERT(!validationMessageClient());
     ShadowRoot& shadowRoot = m_element->ensureUserAgentShadowRoot();
@@ -216,7 +216,7 @@ void ValidationMessage::requestToHideMessage()
     }
 
     // We must not modify the DOM tree in this context by the same reason as setMessage().
-    m_timer = std::make_unique<Timer<ValidationMessage>>(this, &ValidationMessage::deleteBubbleTree);
+    m_timer = std::make_unique<Timer>(this, &ValidationMessage::deleteBubbleTree);
     m_timer->startOneShot(0);
 }
 
@@ -227,7 +227,7 @@ bool ValidationMessage::shadowTreeContains(const Node& node) const
     return &m_bubble->treeScope() == &node.treeScope();
 }
 
-void ValidationMessage::deleteBubbleTree(Timer<ValidationMessage>*)
+void ValidationMessage::deleteBubbleTree(Timer*)
 {
     ASSERT(!validationMessageClient());
     if (m_bubble) {

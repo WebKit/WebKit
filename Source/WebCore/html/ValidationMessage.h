@@ -60,13 +60,13 @@ public:
 private:
     ValidationMessageClient* validationMessageClient() const;
     void setMessage(const String&);
-    void setMessageDOMAndStartTimer(Timer<ValidationMessage>* = 0);
-    void buildBubbleTree(Timer<ValidationMessage>*);
-    void deleteBubbleTree(Timer<ValidationMessage>* = 0);
+    void setMessageDOMAndStartTimer(Timer* = 0);
+    void buildBubbleTree(Timer*);
+    void deleteBubbleTree(Timer* = 0);
 
     HTMLFormControlElement* m_element;
     String m_message;
-    std::unique_ptr<Timer<ValidationMessage>> m_timer;
+    std::unique_ptr<Timer> m_timer;
     RefPtr<HTMLElement> m_bubble;
     RefPtr<HTMLElement> m_messageHeading;
     RefPtr<HTMLElement> m_messageBody;

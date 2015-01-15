@@ -120,14 +120,14 @@ private:
     bool advanceFocusDirectionallyInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*);
     void findFocusCandidateInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);
 
-    void focusRepaintTimerFired(Timer<FocusController>&);
+    void focusRepaintTimerFired(Timer&);
 
     Page& m_page;
     RefPtr<Frame> m_focusedFrame;
     bool m_isChangingFocusedFrame;
     ViewState::Flags m_viewState;
 
-    Timer<FocusController> m_focusRepaintTimer;
+    Timer m_focusRepaintTimer;
     double m_focusSetTime;
 };
 

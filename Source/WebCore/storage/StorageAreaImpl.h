@@ -77,7 +77,7 @@ private:
     explicit StorageAreaImpl(StorageAreaImpl*);
 
     void blockUntilImportComplete() const;
-    void closeDatabaseTimerFired(Timer<StorageAreaImpl>*);
+    void closeDatabaseTimerFired(Timer*);
 
     void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
 
@@ -92,7 +92,7 @@ private:
     bool m_isShutdown;
 #endif
     unsigned m_accessCount;
-    Timer<StorageAreaImpl> m_closeDatabaseTimer;
+    Timer m_closeDatabaseTimer;
 };
 
 } // namespace WebCore

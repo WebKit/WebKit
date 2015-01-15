@@ -232,7 +232,7 @@ void PageOverlay::startFadeAnimation()
     m_fadeAnimationTimer.startRepeating(1 / fadeAnimationFrameRate);
 }
 
-void PageOverlay::fadeAnimationTimerFired(Timer<PageOverlay>&)
+void PageOverlay::fadeAnimationTimerFired(Timer&)
 {
     float animationProgress = (currentTime() - m_fadeAnimationStartTime) / m_fadeAnimationDuration;
 

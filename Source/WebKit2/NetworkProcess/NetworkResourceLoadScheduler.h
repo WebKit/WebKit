@@ -76,7 +76,7 @@ private:
     HostRecord* hostForURL(const WebCore::URL&, CreateHostPolicy = FindOnly);
     
     void scheduleServePendingRequests();
-    void requestTimerFired(WebCore::Timer<NetworkResourceLoadScheduler>*);
+    void requestTimerFired(WebCore::Timer*);
 
     void platformInitializeMaximumHTTPConnectionCountPerHost();
 
@@ -93,7 +93,7 @@ private:
 
     bool m_isSerialLoadingEnabled;
 
-    WebCore::Timer<NetworkResourceLoadScheduler> m_requestTimer;
+    WebCore::Timer m_requestTimer;
     
     Mutex m_loadersToRemoveMutex;
     Vector<RefPtr<NetworkResourceLoader>> m_loadersToRemove;

@@ -61,13 +61,13 @@ private:
     virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const override;
     virtual float decorationWidth() const override;
 
-    void searchEventTimerFired(Timer<SearchInputType>*);
+    void searchEventTimerFired(Timer*);
     bool searchEventsShouldBeDispatched() const;
     void startSearchEventTimer();
 
     HTMLElement* m_resultsButton;
     HTMLElement* m_cancelButton;
-    Timer<SearchInputType> m_searchEventTimer;
+    Timer m_searchEventTimer;
 };
 
 } // namespace WebCore

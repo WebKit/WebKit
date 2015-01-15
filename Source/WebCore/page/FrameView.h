@@ -104,7 +104,7 @@ public:
 
     void layout(bool allowSubtree = true);
     bool didFirstLayout() const;
-    void layoutTimerFired(Timer<FrameView>&);
+    void layoutTimerFired(Timer&);
     void scheduleRelayout();
     void scheduleRelayoutOfSubtree(RenderElement&);
     void unscheduleRelayout();
@@ -239,7 +239,7 @@ public:
     virtual bool isRubberBandInProgress() const override;
     virtual IntPoint minimumScrollPosition() const override;
     virtual IntPoint maximumScrollPosition() const override;
-    void delayedScrollEventTimerFired(Timer<FrameView>&);
+    void delayedScrollEventTimerFired(Timer&);
 
     void resumeVisibleImageAnimationsIncludingSubframes();
 
@@ -301,7 +301,7 @@ public:
 
     void restoreScrollbar();
 
-    void postLayoutTimerFired(Timer<FrameView>&);
+    void postLayoutTimerFired(Timer&);
 
     bool wasScrolledByUser() const;
     void setWasScrolledByUser(bool);
@@ -592,9 +592,9 @@ private:
     virtual void notifyPageThatContentAreaWillPaint() const override;
 
     void enableSpeculativeTilingIfNeeded();
-    void speculativeTilingEnableTimerFired(Timer<FrameView>&);
+    void speculativeTilingEnableTimerFired(Timer&);
 
-    void updateEmbeddedObjectsTimerFired(Timer<FrameView>*);
+    void updateEmbeddedObjectsTimerFired(Timer*);
     bool updateEmbeddedObjects();
     void updateEmbeddedObject(RenderEmbeddedObject&);
     void scrollToAnchor();
@@ -638,7 +638,7 @@ private:
     bool m_isOverlapped;
     bool m_contentIsOpaque;
 
-    Timer<FrameView> m_layoutTimer;
+    Timer m_layoutTimer;
     bool m_delayedLayout;
     RenderElement* m_layoutRoot;
 
@@ -647,8 +647,8 @@ private:
     bool m_inSynchronousPostLayout;
     int m_layoutCount;
     unsigned m_nestedLayoutCount;
-    Timer<FrameView> m_postLayoutTasksTimer;
-    Timer<FrameView> m_updateEmbeddedObjectsTimer;
+    Timer m_postLayoutTasksTimer;
+    Timer m_updateEmbeddedObjectsTimer;
     bool m_firstLayoutCallbackPending;
 
     bool m_firstLayout;
@@ -670,7 +670,7 @@ private:
     bool m_wasScrolledByUser;
     bool m_inProgrammaticScroll;
     bool m_safeToPropagateScrollToParent;
-    Timer<FrameView> m_delayedScrollEventTimer;
+    Timer m_delayedScrollEventTimer;
 
     double m_lastPaintTime;
 
@@ -699,7 +699,7 @@ private:
     RenderPtr<RenderScrollbarPart> m_scrollCorner;
 
     bool m_speculativeTilingEnabled;
-    Timer<FrameView> m_speculativeTilingEnableTimer;
+    Timer m_speculativeTilingEnableTimer;
 
 #if PLATFORM(IOS)
     bool m_useCustomFixedPositionLayoutRect;

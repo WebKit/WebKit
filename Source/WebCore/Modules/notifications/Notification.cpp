@@ -84,7 +84,7 @@ Notification::Notification(ScriptExecutionContext& context, const String& title)
     : ActiveDOMObject(&context)
     , m_title(title)
     , m_state(Idle)
-    , m_taskTimer(std::make_unique<Timer<Notification>>(this, &Notification::taskTimerFired))
+    , m_taskTimer(std::make_unique<Timer>(this, &Notification::taskTimerFired))
 {
     m_notificationCenter = DOMWindowNotifications::webkitNotifications(toDocument(context).domWindow());
     
@@ -201,7 +201,7 @@ void Notification::dispatchErrorEvent()
 }
 
 #if ENABLE(NOTIFICATIONS)
-void Notification::taskTimerFired(Timer<Notification>& timer)
+void Notification::taskTimerFired(Timer& timer)
 {
     ASSERT(scriptExecutionContext()->isDocument());
     ASSERT_UNUSED(timer, &timer == m_taskTimer.get());

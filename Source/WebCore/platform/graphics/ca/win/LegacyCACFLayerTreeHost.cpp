@@ -224,7 +224,7 @@ void LegacyCACFLayerTreeHost::resize()
     }
 }
 
-void LegacyCACFLayerTreeHost::renderTimerFired(Timer<LegacyCACFLayerTreeHost>*)
+void LegacyCACFLayerTreeHost::renderTimerFired(Timer*)
 {
     paint();
 }

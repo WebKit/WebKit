@@ -437,7 +437,7 @@ std::chrono::milliseconds ServicesOverlayController::remainingTimeUntilHighlight
     return std::chrono::duration_cast<std::chrono::milliseconds>(remainingDelay);
 }
 
-void ServicesOverlayController::determineActiveHighlightTimerFired(Timer<ServicesOverlayController>&)
+void ServicesOverlayController::determineActiveHighlightTimerFired(Timer&)
 {
     bool mouseIsOverButton;
     determineActiveHighlight(mouseIsOverButton);

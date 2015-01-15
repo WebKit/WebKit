@@ -449,7 +449,7 @@ bool WebSocketChannel::processBuffer()
     return processFrame();
 }
 
-void WebSocketChannel::resumeTimerFired(Timer<WebSocketChannel>* timer)
+void WebSocketChannel::resumeTimerFired(Timer* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_resumeTimer);
 
@@ -491,7 +491,7 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
         m_client->didStartClosingHandshake();
 }
 
-void WebSocketChannel::closingTimerFired(Timer<WebSocketChannel>* timer)
+void WebSocketChannel::closingTimerFired(Timer* timer)
 {
     LOG(Network, "WebSocketChannel %p closingTimerFired()", this);
     ASSERT_UNUSED(timer, &m_closingTimer == timer);

@@ -158,7 +158,7 @@ private:
     void finishLoadingIcon();
 
 #if ENABLE(NOTIFICATIONS)
-    void taskTimerFired(Timer<Notification>&);
+    void taskTimerFired(Timer&);
 #endif
 
     // Text notifications.
@@ -180,7 +180,7 @@ private:
     RefPtr<NotificationCenter> m_notificationCenter;
 
 #if ENABLE(NOTIFICATIONS)
-    std::unique_ptr<Timer<Notification>> m_taskTimer;
+    std::unique_ptr<Timer> m_taskTimer;
 #endif
 };
 

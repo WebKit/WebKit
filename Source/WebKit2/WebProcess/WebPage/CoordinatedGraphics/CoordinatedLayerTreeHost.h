@@ -85,7 +85,7 @@ private:
     void purgeBackingStores();
     void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
 
-    void layerFlushTimerFired(WebCore::Timer<CoordinatedLayerTreeHost>*);
+    void layerFlushTimerFired(WebCore::Timer*);
 
     // CompositingCoordinator::Client
     virtual void didFlushRootLayer(const WebCore::FloatRect& visibleContentRect) override;
@@ -102,7 +102,7 @@ private:
 
     LayerTreeContext m_layerTreeContext;
 
-    WebCore::Timer<CoordinatedLayerTreeHost> m_layerFlushTimer;
+    WebCore::Timer m_layerFlushTimer;
     bool m_layerFlushSchedulingEnabled;
     uint64_t m_forceRepaintAsyncCallbackID;
 };

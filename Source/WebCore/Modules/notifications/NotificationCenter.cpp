@@ -129,7 +129,7 @@ void NotificationCenter::NotificationRequestCallback::startTimer()
     m_timer.startOneShot(0);
 }
 
-void NotificationCenter::NotificationRequestCallback::timerFired(Timer<NotificationCenter::NotificationRequestCallback>&)
+void NotificationCenter::NotificationRequestCallback::timerFired(Timer&)
 {
     if (m_callback)
         m_callback->handleEvent();

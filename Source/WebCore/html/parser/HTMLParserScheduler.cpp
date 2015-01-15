@@ -101,7 +101,7 @@ HTMLParserScheduler::~HTMLParserScheduler()
     m_continueNextChunkTimer.stop();
 }
 
-void HTMLParserScheduler::continueNextChunkTimerFired(Timer<HTMLParserScheduler>& timer)
+void HTMLParserScheduler::continueNextChunkTimerFired(Timer& timer)
 {
     ASSERT(!m_suspended);
     ASSERT_UNUSED(timer, &timer == &m_continueNextChunkTimer);

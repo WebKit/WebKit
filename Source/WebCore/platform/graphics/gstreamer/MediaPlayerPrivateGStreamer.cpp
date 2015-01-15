@@ -1146,7 +1146,7 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
 }
 #endif
 
-void MediaPlayerPrivateGStreamer::fillTimerFired(Timer<MediaPlayerPrivateGStreamer>*)
+void MediaPlayerPrivateGStreamer::fillTimerFired(Timer*)
 {
     GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
 

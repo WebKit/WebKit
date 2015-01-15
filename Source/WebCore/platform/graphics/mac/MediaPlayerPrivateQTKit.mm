@@ -783,7 +783,7 @@ void MediaPlayerPrivateQTKit::cancelSeek()
     m_seekTimer.stop();
 }
 
-void MediaPlayerPrivateQTKit::seekTimerFired(Timer<MediaPlayerPrivateQTKit>&)
+void MediaPlayerPrivateQTKit::seekTimerFired(Timer&)
 {        
     if (!metaDataAvailable() || !seeking() || currentMediaTime() == m_seekTo) {
         cancelSeek();

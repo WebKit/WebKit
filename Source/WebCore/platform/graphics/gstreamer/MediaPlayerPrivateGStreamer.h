@@ -87,7 +87,7 @@ public:
     void setPreservesPitch(bool);
 
     void setPreload(MediaPlayer::Preload);
-    void fillTimerFired(Timer<MediaPlayerPrivateGStreamer>*);
+    void fillTimerFired(Timer*);
 
     std::unique_ptr<PlatformTimeRanges> buffered() const;
     float maxTimeSeekable() const;
@@ -193,7 +193,7 @@ private:
     bool m_errorOccured;
     mutable gfloat m_mediaDuration;
     bool m_downloadFinished;
-    Timer<MediaPlayerPrivateGStreamer> m_fillTimer;
+    Timer m_fillTimer;
     float m_maxTimeLoaded;
     int m_bufferingPercentage;
     MediaPlayer::Preload m_preload;

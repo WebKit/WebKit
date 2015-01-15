@@ -62,7 +62,7 @@ void DeviceOrientationClientMock::setOrientation(PassRefPtr<DeviceOrientationDat
         m_timer.startOneShot(0);
 }
 
-void DeviceOrientationClientMock::timerFired(Timer<DeviceOrientationClientMock>& timer)
+void DeviceOrientationClientMock::timerFired(Timer& timer)
 {
     ASSERT_UNUSED(timer, &timer == &m_timer);
     m_timer.stop();

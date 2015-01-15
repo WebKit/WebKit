@@ -875,7 +875,7 @@ void CachedResource::CachedResourceCallback::cancel()
         m_callbackTimer.stop();
 }
 
-void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCallback>&)
+void CachedResource::CachedResourceCallback::timerFired(Timer&)
 {
     m_resource->didAddClient(m_client);
 }

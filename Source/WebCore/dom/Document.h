@@ -764,8 +764,8 @@ public:
     void unscheduleStyleRecalc();
     bool hasPendingStyleRecalc() const;
     bool hasPendingForcedStyleRecalc() const;
-    void styleRecalcTimerFired(Timer<Document>&);
-    void optimizedStyleSheetUpdateTimerFired(Timer<Document>&);
+    void styleRecalcTimerFired(Timer&);
+    void optimizedStyleSheetUpdateTimerFired(Timer&);
 
     void registerNodeListForInvalidation(LiveNodeList&);
     void unregisterNodeListForInvalidation(LiveNodeList&);
@@ -1136,7 +1136,7 @@ public:
     RenderFullScreen* fullScreenRenderer() const { return m_fullScreenRenderer; }
     void fullScreenRendererDestroyed();
     
-    void fullScreenChangeDelayTimerFired(Timer<Document>&);
+    void fullScreenChangeDelayTimerFired(Timer&);
     bool fullScreenIsAllowedForElement(Element*) const;
     void fullScreenElementRemoved();
     void removeFullScreenElementOfSubtree(Node*, bool amongChildrenOnly = false);
@@ -1324,16 +1324,16 @@ private:
     virtual double timerAlignmentInterval() const override;
 
     void updateTitle(const StringWithDirection&);
-    void updateFocusAppearanceTimerFired(Timer<Document>&);
+    void updateFocusAppearanceTimerFired(Timer&);
     void updateBaseURL();
 
     void buildAccessKeyMap(TreeScope* root);
 
     void createStyleResolver();
 
-    void loadEventDelayTimerFired(Timer<Document>&);
+    void loadEventDelayTimerFired(Timer&);
 
-    void pendingTasksTimerFired(Timer<Document>&);
+    void pendingTasksTimerFired(Timer&);
 
     template <typename CharacterType>
     void displayBufferModifiedByEncodingInternal(CharacterType*, unsigned) const;
@@ -1352,18 +1352,18 @@ private:
 
     void setVisualUpdatesAllowed(ReadyState);
     void setVisualUpdatesAllowed(bool);
-    void visualUpdatesSuppressionTimerFired(Timer<Document>&);
+    void visualUpdatesSuppressionTimerFired(Timer&);
 
     void addListenerType(ListenerType listenerType) { m_listenerTypes |= listenerType; }
 
-    void didAssociateFormControlsTimerFired(Timer<Document>&);
+    void didAssociateFormControlsTimerFired(Timer&);
 
     // DOM Cookies caching.
     const String& cachedDOMCookies() const { return m_cachedDOMCookies; }
     void setCachedDOMCookies(const String&);
     bool isDOMCookieCacheValid() const { return m_cookieCacheExpiryTimer.isActive(); }
     void invalidateDOMCookieCache();
-    void domCookieCacheExpiryTimerFired(Timer<Document>&);
+    void domCookieCacheExpiryTimerFired(Timer&);
     void didLoadResourceSynchronously(const ResourceRequest&) override final;
 
     unsigned m_referencingNodeCount;
@@ -1453,8 +1453,8 @@ private:
     ReadyState m_readyState;
     bool m_bParsing;
 
-    Timer<Document> m_optimizedStyleSheetUpdateTimer;
-    Timer<Document> m_styleRecalcTimer;
+    Timer m_optimizedStyleSheetUpdateTimer;
+    Timer m_styleRecalcTimer;
     bool m_pendingStyleRecalcShouldForce;
     bool m_inStyleRecalc;
     bool m_closeAfterStyleRecalc;
@@ -1477,7 +1477,7 @@ private:
     std::unique_ptr<AXObjectCache> m_axObjectCache;
     const std::unique_ptr<DocumentMarkerController> m_markers;
     
-    Timer<Document> m_updateFocusAppearanceTimer;
+    Timer m_updateFocusAppearanceTimer;
 
     Element* m_cssTarget;
 
@@ -1576,7 +1576,7 @@ private:
     RefPtr<Element> m_fullScreenElement;
     Vector<RefPtr<Element>> m_fullScreenElementStack;
     RenderFullScreen* m_fullScreenRenderer;
-    Timer<Document> m_fullScreenChangeDelayTimer;
+    Timer m_fullScreenChangeDelayTimer;
     Deque<RefPtr<Node>> m_fullScreenChangeEventTargetQueue;
     Deque<RefPtr<Node>> m_fullScreenErrorEventTargetQueue;
     bool m_isAnimatingFullScreen;
@@ -1585,7 +1585,7 @@ private:
 #endif
 
     int m_loadEventDelayCount;
-    Timer<Document> m_loadEventDelayTimer;
+    Timer m_loadEventDelayTimer;
 
     ViewportArguments m_viewportArguments;
 
@@ -1641,7 +1641,7 @@ private:
     bool m_isTelephoneNumberParsingAllowed;
 #endif
 
-    Timer<Document> m_pendingTasksTimer;
+    Timer m_pendingTasksTimer;
     Vector<Task> m_pendingTasks;
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
@@ -1664,7 +1664,7 @@ private:
     bool m_scheduledTasksAreSuspended;
     
     bool m_visualUpdatesAllowed;
-    Timer<Document> m_visualUpdatesSuppressionTimer;
+    Timer m_visualUpdatesSuppressionTimer;
 
     RefPtr<NamedFlowCollection> m_namedFlows;
 
@@ -1672,8 +1672,8 @@ private:
     RefPtr<DOMSecurityPolicy> m_domSecurityPolicy;
 #endif
 
-    void sharedObjectPoolClearTimerFired(Timer<Document>&);
-    Timer<Document> m_sharedObjectPoolClearTimer;
+    void sharedObjectPoolClearTimerFired(Timer&);
+    Timer m_sharedObjectPoolClearTimer;
 
     std::unique_ptr<DocumentSharedObjectPool> m_sharedObjectPool;
 
@@ -1697,8 +1697,8 @@ private:
     RefPtr<JSC::InputCursor> m_inputCursor;
 #endif
 
-    Timer<Document> m_didAssociateFormControlsTimer;
-    Timer<Document> m_cookieCacheExpiryTimer;
+    Timer m_didAssociateFormControlsTimer;
+    Timer m_cookieCacheExpiryTimer;
     String m_cachedDOMCookies;
     HashSet<RefPtr<Element>> m_associatedFormControls;
     unsigned m_disabledFieldsetElementsCount;

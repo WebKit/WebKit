@@ -54,7 +54,7 @@ public:
 private:
     StorageAreaSync(PassRefPtr<StorageSyncManager>, PassRefPtr<StorageAreaImpl>, const String& databaseIdentifier);
 
-    Timer<StorageAreaSync> m_syncTimer;
+    Timer m_syncTimer;
     HashMap<String, String> m_changedItems;
     bool m_itemsCleared;
 
@@ -79,7 +79,7 @@ private:
       SkipIfNonExistent
     };
 
-    void syncTimerFired(Timer<StorageAreaSync>*);
+    void syncTimerFired(Timer*);
     void openDatabase(OpenDatabaseParamType openingStrategy);
     void sync(bool clearItems, const HashMap<String, String>& items);
 

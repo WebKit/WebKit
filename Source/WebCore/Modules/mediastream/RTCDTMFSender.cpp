@@ -142,7 +142,7 @@ void RTCDTMFSender::scheduleDispatchEvent(PassRefPtr<Event> event)
         m_scheduledEventTimer.startOneShot(0);
 }
 
-void RTCDTMFSender::scheduledEventTimerFired(Timer<RTCDTMFSender>*)
+void RTCDTMFSender::scheduledEventTimerFired(Timer*)
 {
     if (m_stopped)
         return;

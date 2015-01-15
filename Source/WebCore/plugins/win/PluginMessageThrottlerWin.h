@@ -52,7 +52,7 @@ namespace WebCore {
 
     private:
         void processQueuedMessage();
-        void messageThrottleTimerFired(Timer<PluginMessageThrottlerWin>*);
+        void messageThrottleTimerFired(Timer*);
         PluginMessage* allocateMessage();
         bool isInlineMessage(PluginMessage* message);
         void freeMessage(PluginMessage* message);
@@ -65,7 +65,7 @@ namespace WebCore {
         PluginMessage m_inlineMessages[NumInlineMessages];
         PluginMessage* m_freeInlineMessages;
 
-        Timer<PluginMessageThrottlerWin> m_messageThrottleTimer;
+        Timer m_messageThrottleTimer;
         double m_lastMessageTime;
     };
 

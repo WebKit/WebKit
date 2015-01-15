@@ -295,13 +295,13 @@ namespace WebCore {
         bool hitTestResultAtViewportLocation(const FloatPoint& viewportLocation, HitTestResult&, IntPoint& center);
         Node* qualifyingNodeAtViewportLocation(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation, NodeQualifier, bool shouldApproximate);
 
-        void overflowAutoScrollTimerFired(Timer<Frame>*);
+        void overflowAutoScrollTimerFired(Timer*);
         void startOverflowAutoScroll(const IntPoint&);
         int checkOverflowScroll(OverflowScrollAction);
 
         void setTimersPausedInternal(bool);
 
-        Timer<Frame> m_overflowAutoScrollTimer;
+        Timer m_overflowAutoScrollTimer;
         float m_overflowAutoScrollDelta;
         IntPoint m_overflowAutoScrollPos;
         ViewportArguments m_viewportArguments;

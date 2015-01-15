@@ -348,7 +348,7 @@ StyleResolver::~StyleResolver()
 #endif
 }
 
-void StyleResolver::sweepMatchedPropertiesCache(Timer<StyleResolver>*)
+void StyleResolver::sweepMatchedPropertiesCache(Timer*)
 {
     // Look for cache entries containing a style declaration with a single ref and remove them.
     // This may happen when an element attribute mutation causes it to generate a new inlineStyle()

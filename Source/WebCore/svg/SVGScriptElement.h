@@ -72,7 +72,7 @@ private:
     virtual void setHaveFiredLoadEvent(bool haveFiredLoadEvent) override { ScriptElement::setHaveFiredLoadEvent(haveFiredLoadEvent); }
     virtual bool isParserInserted() const override { return ScriptElement::isParserInserted(); }
     virtual bool haveFiredLoadEvent() const override { return ScriptElement::haveFiredLoadEvent(); }
-    virtual Timer<SVGElement>* svgLoadEventTimer() override { return &m_svgLoadEventTimer; }
+    virtual Timer* svgLoadEventTimer() override { return &m_svgLoadEventTimer; }
 
 #ifndef NDEBUG
     virtual bool filterOutAnimatableAttribute(const QualifiedName&) const override;
@@ -83,7 +83,7 @@ private:
         DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
     END_DECLARE_ANIMATED_PROPERTIES
 
-    Timer<SVGElement> m_svgLoadEventTimer;
+    Timer m_svgLoadEventTimer;
 };
 
 NODE_TYPE_CASTS(SVGScriptElement)

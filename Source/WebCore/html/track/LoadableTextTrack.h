@@ -69,10 +69,10 @@ private:
 
     LoadableTextTrack(HTMLTrackElement*, const String& kind, const String& label, const String& language);
 
-    void loadTimerFired(Timer<LoadableTextTrack>&);
+    void loadTimerFired(Timer&);
 
     HTMLTrackElement* m_trackElement;
-    Timer<LoadableTextTrack> m_loadTimer;
+    Timer m_loadTimer;
     std::unique_ptr<TextTrackLoader> m_loader;
     URL m_url;
     bool m_isDefault;

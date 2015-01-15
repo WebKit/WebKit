@@ -70,10 +70,10 @@ public:
 
 private:
     void asyncUpdateController();
-    void controllerTimerFired(Timer<GeolocationClientMock>*);
+    void controllerTimerFired(Timer*);
 
     void asyncUpdatePermission();
-    void permissionTimerFired(Timer<GeolocationClientMock>*);
+    void permissionTimerFired(Timer*);
 
     void clearError();
 
@@ -81,8 +81,8 @@ private:
     RefPtr<GeolocationPosition> m_lastPosition;
     bool m_hasError;
     String m_errorMessage;
-    Timer<GeolocationClientMock> m_controllerTimer;
-    Timer<GeolocationClientMock> m_permissionTimer;
+    Timer m_controllerTimer;
+    Timer m_permissionTimer;
     bool m_isActive;
 
     enum PermissionState {

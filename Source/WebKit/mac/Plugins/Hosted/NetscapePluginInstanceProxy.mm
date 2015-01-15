@@ -735,7 +735,7 @@ void NetscapePluginInstanceProxy::evaluateJavaScript(PluginRequest* pluginReques
     }
 }
 
-void NetscapePluginInstanceProxy::requestTimerFired(Timer<NetscapePluginInstanceProxy>*)
+void NetscapePluginInstanceProxy::requestTimerFired(Timer*)
 {
     ASSERT(!m_pluginRequests.isEmpty());
     ASSERT(m_pluginView);

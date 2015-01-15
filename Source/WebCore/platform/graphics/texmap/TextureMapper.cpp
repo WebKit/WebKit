@@ -54,10 +54,10 @@ public:
 
 private:
     void scheduleReleaseUnusedTextures();
-    void releaseUnusedTexturesTimerFired(Timer<BitmapTexturePool>*);
+    void releaseUnusedTexturesTimerFired(Timer*);
 
     Vector<BitmapTexturePoolEntry> m_textures;
-    Timer<BitmapTexturePool> m_releaseUnusedTexturesTimer;
+    Timer m_releaseUnusedTexturesTimer;
 
     static const double s_releaseUnusedSecondsTolerance;
     static const double s_releaseUnusedTexturesTimerInterval;
@@ -78,7 +78,7 @@ void BitmapTexturePool::scheduleReleaseUnusedTextures()
     m_releaseUnusedTexturesTimer.startOneShot(s_releaseUnusedTexturesTimerInterval);
 }
 
-void BitmapTexturePool::releaseUnusedTexturesTimerFired(Timer<BitmapTexturePool>*)
+void BitmapTexturePool::releaseUnusedTexturesTimerFired(Timer*)
 {
     if (m_textures.isEmpty())
         return;

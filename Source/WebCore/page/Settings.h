@@ -314,8 +314,8 @@ private:
 
     double m_timeWithoutMouseMovementBeforeHidingControls;
 
-    Timer<Settings> m_setImageLoadingSettingsTimer;
-    void imageLoadingSettingsTimerFired(Timer<Settings>*);
+    Timer m_setImageLoadingSettingsTimer;
+    void imageLoadingSettingsTimerFired(Timer*);
 
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     bool m_hiddenPageDOMTimerThrottlingEnabled : 1;

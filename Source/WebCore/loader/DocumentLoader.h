@@ -314,14 +314,14 @@ namespace WebCore {
 #if HAVE(RUNLOOP_TIMER)
         typedef RunLoopTimer<DocumentLoader> DocumentLoaderTimer;
 #else
-        typedef Timer<DocumentLoader> DocumentLoaderTimer;
+        typedef Timer DocumentLoaderTimer;
 #endif
         void handleSubstituteDataLoadSoon();
         void handleSubstituteDataLoadNow(DocumentLoaderTimer*);
         void startDataLoadTimer();
 
         void deliverSubstituteResourcesAfterDelay();
-        void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>&);
+        void substituteResourceDeliveryTimerFired(Timer&);
 
         void clearMainResource();
 
@@ -387,7 +387,7 @@ namespace WebCore {
         
         typedef HashMap<RefPtr<ResourceLoader>, RefPtr<SubstituteResource>> SubstituteResourceMap;
         SubstituteResourceMap m_pendingSubstituteResources;
-        Timer<DocumentLoader> m_substituteResourceDeliveryTimer;
+        Timer m_substituteResourceDeliveryTimer;
 
         OwnPtr<ArchiveResourceCollection> m_archiveResourceCollection;
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)

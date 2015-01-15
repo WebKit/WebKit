@@ -168,7 +168,7 @@ private:
     void ensureLayer();
     void destroyLayer();
     bool shouldBePlaying() const;
-    void seekTimerFired(Timer<MediaPlayerPrivateMediaSourceAVFObjC>&);
+    void seekTimerFired(Timer&);
 
     friend class MediaSourcePrivateAVFObjC;
 
@@ -195,7 +195,7 @@ private:
     RetainPtr<id> m_timeJumpedObserver;
     RetainPtr<id> m_durationObserver;
     RetainPtr<AVStreamSession> m_streamSession;
-    Timer<MediaPlayerPrivateMediaSourceAVFObjC> m_seekTimer;
+    Timer m_seekTimer;
     CDMSessionMediaSourceAVFObjC* m_session;
     MediaPlayer::NetworkState m_networkState;
     MediaPlayer::ReadyState m_readyState;

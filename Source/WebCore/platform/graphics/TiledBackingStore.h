@@ -84,8 +84,8 @@ private:
     void startTileBufferUpdateTimer();
     void startBackingStoreUpdateTimer(double = 0);
 
-    void tileBufferUpdateTimerFired(Timer<TiledBackingStore>*);
-    void backingStoreUpdateTimerFired(Timer<TiledBackingStore>*);
+    void tileBufferUpdateTimerFired(Timer*);
+    void backingStoreUpdateTimerFired(Timer*);
 
     void createTiles();
     void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
@@ -117,8 +117,8 @@ private:
     typedef HashMap<Tile::Coordinate, RefPtr<Tile> > TileMap;
     TileMap m_tiles;
 
-    Timer<TiledBackingStore> m_tileBufferUpdateTimer;
-    Timer<TiledBackingStore> m_backingStoreUpdateTimer;
+    Timer m_tileBufferUpdateTimer;
+    Timer m_backingStoreUpdateTimer;
 
     IntSize m_tileSize;
     float m_coverAreaMultiplier;

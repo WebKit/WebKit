@@ -52,7 +52,7 @@ CaptionUserPreferences::~CaptionUserPreferences()
 {
 }
 
-void CaptionUserPreferences::timerFired(Timer<CaptionUserPreferences>&)
+void CaptionUserPreferences::timerFired(Timer&)
 {
     captionPreferencesChanged();
 }

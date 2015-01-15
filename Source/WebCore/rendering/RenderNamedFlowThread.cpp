@@ -561,7 +561,7 @@ void RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded()
         m_regionOversetChangeEventTimer.startOneShot(0);
 }
 
-void RenderNamedFlowThread::regionOversetChangeEventTimerFired(Timer<RenderNamedFlowThread>&)
+void RenderNamedFlowThread::regionOversetChangeEventTimerFired(Timer&)
 {
     namedFlow().dispatchRegionOversetChangeEvent();
 }

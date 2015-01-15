@@ -333,7 +333,7 @@ private:
     void addToOverlapMap(OverlapMap&, RenderLayer&, IntRect& layerBounds, bool& boundsComputed);
     void addToOverlapMapRecursive(OverlapMap&, RenderLayer&, RenderLayer* ancestorLayer = nullptr);
 
-    void updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>&);
+    void updateCompositingLayersTimerFired(Timer&);
 
     // Returns true if any layer's compositing changed
     void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, OverlapMap*, struct CompositingState&, bool& layersChanged, bool& descendantHas3DTransform);
@@ -451,9 +451,9 @@ private:
     bool isThrottlingLayerFlushes() const;
     void startInitialLayerFlushTimerIfNeeded();
     void startLayerFlushTimerIfNeeded();
-    void layerFlushTimerFired(Timer<RenderLayerCompositor>&);
+    void layerFlushTimerFired(Timer&);
 
-    void paintRelatedMilestonesTimerFired(Timer<RenderLayerCompositor>&);
+    void paintRelatedMilestonesTimerFired(Timer&);
 
 #if !LOG_DISABLED
     const char* logReasonsForCompositing(const RenderLayer&);
@@ -465,7 +465,7 @@ private:
 private:
     RenderView& m_renderView;
     std::unique_ptr<GraphicsLayer> m_rootContentLayer;
-    Timer<RenderLayerCompositor> m_updateCompositingLayersTimer;
+    Timer m_updateCompositingLayersTimer;
 
     bool m_hasAcceleratedCompositing;
     ChromeClient::CompositingTriggerFlags m_compositingTriggers;
@@ -522,12 +522,12 @@ private:
 
     std::unique_ptr<GraphicsLayerUpdater> m_layerUpdater; // Updates tiled layer visible area periodically while animations are running.
 
-    Timer<RenderLayerCompositor> m_layerFlushTimer;
+    Timer m_layerFlushTimer;
     bool m_layerFlushThrottlingEnabled;
     bool m_layerFlushThrottlingTemporarilyDisabledForInteraction;
     bool m_hasPendingLayerFlush;
 
-    Timer<RenderLayerCompositor> m_paintRelatedMilestonesTimer;
+    Timer m_paintRelatedMilestonesTimer;
 
 #if !LOG_DISABLED
     int m_rootLayerUpdateCount;

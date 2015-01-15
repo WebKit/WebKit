@@ -214,7 +214,7 @@ void SMILTimeContainer::startTimer(SMILTime fireTime, SMILTime minimumDelay)
     m_timer.startOneShot(delay.value());
 }
 
-void SMILTimeContainer::timerFired(Timer<SMILTimeContainer>*)
+void SMILTimeContainer::timerFired(Timer*)
 {
     ASSERT(m_beginTime);
     ASSERT(!m_pauseTime);

@@ -646,12 +646,12 @@ void SVGElement::sendSVGLoadEventIfPossibleAsynchronously()
     svgLoadEventTimer()->startOneShot(0);
 }
 
-void SVGElement::svgLoadEventTimerFired(Timer<SVGElement>*)
+void SVGElement::svgLoadEventTimerFired(Timer*)
 {
     sendSVGLoadEventIfPossible();
 }
 
-Timer<SVGElement>* SVGElement::svgLoadEventTimer()
+Timer* SVGElement::svgLoadEventTimer()
 {
     ASSERT_NOT_REACHED();
     return 0;

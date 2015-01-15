@@ -54,11 +54,11 @@ public:
     void setOrientation(PassRefPtr<DeviceOrientationData>);
 
 private:
-    void timerFired(Timer<DeviceOrientationClientMock>&);
+    void timerFired(Timer&);
 
     RefPtr<DeviceOrientationData> m_orientation;
     DeviceOrientationController* m_controller;
-    Timer<DeviceOrientationClientMock> m_timer;
+    Timer m_timer;
     bool m_isUpdating;
 };
 

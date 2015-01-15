@@ -200,7 +200,7 @@ void HTMLTrackElement::scheduleLoad()
     m_loadTimer.startOneShot(0);
 }
 
-void HTMLTrackElement::loadTimerFired(Timer<HTMLTrackElement>&)
+void HTMLTrackElement::loadTimerFired(Timer&)
 {
     if (!fastHasAttribute(srcAttr))
         return;

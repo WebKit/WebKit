@@ -169,7 +169,7 @@ private:
     void createTilesInActiveGrid(SynchronousTileCreationMode);
     void scheduleLayerFlushForPendingRepaint();
 
-    void tileCreationTimerFired(Timer<LegacyTileCache>*);
+    void tileCreationTimerFired(Timer*);
 
     void drawReplacementImage(LegacyTileLayer*, CGContextRef, CGImageRef);
     void drawWindowContent(LegacyTileLayer*, CGContextRef, CGRect dirtyRect);
@@ -200,7 +200,7 @@ private:
     OwnPtr<LegacyTileGrid> m_zoomedOutTileGrid;
     OwnPtr<LegacyTileGrid> m_zoomedInTileGrid;
 
-    Timer<LegacyTileCache> m_tileCreationTimer;
+    Timer m_tileCreationTimer;
 
     Vector<IntRect> m_savedDisplayRects;
 

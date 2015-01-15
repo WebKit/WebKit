@@ -855,7 +855,7 @@ void IconDatabase::scheduleOrDeferSyncTimer()
     });
 }
 
-void IconDatabase::syncTimerFired(Timer<IconDatabase>&)
+void IconDatabase::syncTimerFired(Timer&)
 {
     ASSERT_NOT_SYNC_THREAD();
     wakeSyncThread();

@@ -133,7 +133,7 @@ void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
     dispatchEvent(event);
 }
 
-void XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents(Timer<XMLHttpRequestProgressEventThrottle>* timer)
+void XMLHttpRequestProgressEventThrottle::dispatchDeferredEvents(Timer* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_dispatchDeferredEventsTimer);
     ASSERT(m_deferEvents);

@@ -159,7 +159,7 @@ private:
     virtual float zoomedOutContentsScale() const override;
 
 
-    void tileRevalidationTimerFired(Timer<TileController>*);
+    void tileRevalidationTimerFired(Timer*);
 
     void setNeedsRevalidateTiles();
 
@@ -177,7 +177,7 @@ private:
     FloatRect m_visibleRectAtLastRevalidate;
     IntRect m_boundsAtLastRevalidate;
 
-    Timer<TileController> m_tileRevalidationTimer;
+    Timer m_tileRevalidationTimer;
 
     float m_zoomedOutContentsScale;
     float m_deviceScaleFactor;

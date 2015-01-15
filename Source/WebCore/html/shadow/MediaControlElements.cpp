@@ -154,7 +154,7 @@ void MediaControlPanelElement::stopTimer()
         m_transitionTimer.stop();
 }
 
-void MediaControlPanelElement::transitionTimerFired(Timer<MediaControlPanelElement>&)
+void MediaControlPanelElement::transitionTimerFired(Timer&)
 {
     if (!m_opaque)
         hide();
@@ -1405,7 +1405,7 @@ void MediaControlTextTrackContainerElement::updateActiveCuesFontSize()
 
 }
 
-void MediaControlTextTrackContainerElement::updateTimerFired(Timer<MediaControlTextTrackContainerElement>&)
+void MediaControlTextTrackContainerElement::updateTimerFired(Timer&)
 {
     if (!document().page())
         return;

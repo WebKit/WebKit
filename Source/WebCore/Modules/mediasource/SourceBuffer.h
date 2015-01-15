@@ -160,7 +160,7 @@ private:
     void scheduleEvent(const AtomicString& eventName);
 
     void appendBufferInternal(unsigned char*, unsigned, ExceptionCode&);
-    void appendBufferTimerFired(Timer<SourceBuffer>&);
+    void appendBufferTimerFired(Timer&);
 
     void setActive(bool);
 
@@ -174,7 +174,7 @@ private:
 
     void monitorBufferingRate();
 
-    void removeTimerFired(Timer<SourceBuffer>*);
+    void removeTimerFired(Timer*);
     void removeCodedFrames(const MediaTime& start, const MediaTime& end);
 
     size_t extraMemoryCost() const;
@@ -192,7 +192,7 @@ private:
     AtomicString m_mode;
 
     Vector<unsigned char> m_pendingAppendData;
-    Timer<SourceBuffer> m_appendBufferTimer;
+    Timer m_appendBufferTimer;
 
     RefPtr<VideoTrackList> m_videoTracks;
     RefPtr<AudioTrackList> m_audioTracks;
@@ -220,7 +220,7 @@ private:
 
     MediaTime m_pendingRemoveStart;
     MediaTime m_pendingRemoveEnd;
-    Timer<SourceBuffer> m_removeTimer;
+    Timer m_removeTimer;
 
     bool m_updating;
     bool m_receivedFirstInitializationSegment;

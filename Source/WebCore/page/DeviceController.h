@@ -56,12 +56,12 @@ public:
     virtual PassRefPtr<Event> getLastEvent() { return 0; }
 
 protected:
-    void fireDeviceEvent(Timer<DeviceController>&);
+    void fireDeviceEvent(Timer&);
 
     HashCountedSet<RefPtr<DOMWindow>> m_listeners;
     HashCountedSet<RefPtr<DOMWindow>> m_lastEventListeners;
     DeviceClient* m_client;
-    Timer<DeviceController> m_timer;
+    Timer m_timer;
 };
 
 } // namespace WebCore

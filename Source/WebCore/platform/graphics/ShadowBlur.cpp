@@ -130,7 +130,7 @@ public:
     static ScratchBuffer& shared();
 
 private:
-    void timerFired(Timer<ScratchBuffer>*)
+    void timerFired(Timer*)
     {
         clearScratchBuffer();
     }
@@ -143,7 +143,7 @@ private:
     }
 
     std::unique_ptr<ImageBuffer> m_imageBuffer;
-    Timer<ScratchBuffer> m_purgeTimer;
+    Timer m_purgeTimer;
     
     FloatRect m_lastInsetBounds;
     FloatRect m_lastShadowRect;
