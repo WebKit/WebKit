@@ -1,5 +1,19 @@
 2015-01-14  Anders Carlsson  <andersca@apple.com>
 
+        Add per page connection callbacks to the lifetime observer
+        https://bugs.webkit.org/show_bug.cgi?id=140475
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/WebProcessLifetimeObserver.cpp:
+        (WebKit::WebProcessLifetimeObserver::addWebPage):
+        (WebKit::WebProcessLifetimeObserver::removeWebPage):
+        * UIProcess/WebProcessLifetimeObserver.h:
+        (WebKit::WebProcessLifetimeObserver::webPageWillOpenConnection):
+        (WebKit::WebProcessLifetimeObserver::webPageDidCloseConnection):
+
+2015-01-14  Anders Carlsson  <andersca@apple.com>
+
         Make WebsiteDataStore a WebProcessLifetimeObserver
         https://bugs.webkit.org/show_bug.cgi?id=140472
 
