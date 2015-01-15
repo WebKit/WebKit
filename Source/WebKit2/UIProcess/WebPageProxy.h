@@ -411,6 +411,8 @@ public:
     
     bool maintainsInactiveSelection() const { return m_maintainsInactiveSelection; }
     void setMaintainsInactiveSelection(bool);
+    void setEditable(bool);
+    bool isEditable() const { return m_isEditable; }
 
 #if PLATFORM(IOS)
     void executeEditCommand(const String& commandName, std::function<void (CallbackBase::Error)>);
@@ -1446,6 +1448,7 @@ private:
     String m_toolTip;
 
     EditorState m_editorState;
+    bool m_isEditable;
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
     bool m_temporarilyClosedComposition; // Editor state changed from hasComposition to !hasComposition, but that was only with shouldIgnoreCompositionSelectionChange yet.
 #endif

@@ -66,6 +66,7 @@ struct WebPageCreationParameters {
 
     bool drawsBackground;
     bool drawsTransparentBackground;
+    bool isEditable;
 
     WebCore::Color underlayColor;
 

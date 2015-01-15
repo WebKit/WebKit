@@ -179,6 +179,7 @@ messages -> WebPage LegacyReceiver {
     Close()
     TryClose()
 
+    SetEditable(bool editable)
     ValidateCommand(String name, uint64_t callbackID)
     ExecuteEditCommand(String name)
 

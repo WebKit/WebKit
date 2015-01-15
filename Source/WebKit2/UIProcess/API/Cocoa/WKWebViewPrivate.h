@@ -82,6 +82,8 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 
 @property (nonatomic, readonly) pid_t _webProcessIdentifier;
 
+@property (nonatomic, getter=_isEditable, setter=_setEditable:) BOOL _editable;
+
 // FIXME: Remove these once nobody is using them.
 @property (nonatomic, readonly) NSData *_sessionStateData;
 - (void)_restoreFromSessionStateData:(NSData *)sessionStateData;

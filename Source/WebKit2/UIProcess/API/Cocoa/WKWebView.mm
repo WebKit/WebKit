@@ -1605,6 +1605,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 @implementation WKWebView (WKPrivate)
 
+- (BOOL)_isEditable
+{
+    return _page->isEditable();
+}
+
+- (void)_setEditable:(BOOL)editable
+{
+    _page->setEditable(editable);
+}
+
 - (_WKRemoteObjectRegistry *)_remoteObjectRegistry
 {
     if (!_remoteObjectRegistry) {

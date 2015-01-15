@@ -921,6 +921,19 @@ void WebPage::executeEditingCommand(const String& commandName, const String& arg
     frame.editor().command(commandName).execute(argument);
 }
 
+void WebPage::setEditable(bool editable)
+{
+    m_page->setEditable(editable);
+    m_page->setTabKeyCyclesThroughElements(!editable);
+    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    if (editable) {
+        frame.editor().applyEditingStyleToBodyElement();
+        // If the page is made editable and the selection is empty, set it to something.
+        if (frame.selection().isNone())
+            frame.selection().setSelectionFromNone();
+    }
+}
+
 bool WebPage::isEditingCommandEnabled(const String& commandName)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();

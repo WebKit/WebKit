@@ -291,6 +291,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
     , m_temporarilyClosedComposition(false)
 #endif
+    , m_isEditable(false)
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
     , m_pageScaleFactor(1)
@@ -1392,6 +1393,17 @@ void WebPageProxy::executeEditCommand(const String& commandName)
         ++m_pendingLearnOrIgnoreWordMessageCount;
 
     m_process->send(Messages::WebPage::ExecuteEditCommand(commandName), m_pageID);
+}
+
+void WebPageProxy::setEditable(bool editable)
+{
+    if (editable == m_isEditable)
+        return;
+    if (!isValid())
+        return;
+
+    m_isEditable = editable;
+    m_process->send(Messages::WebPage::SetEditable(editable), m_pageID);
 }
 
 #if !PLATFORM(IOS)
@@ -4616,6 +4628,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.store = preferencesStore();
     parameters.pageGroupData = m_pageGroup->data();
     parameters.drawsBackground = m_drawsBackground;
+    parameters.isEditable = m_isEditable;
     parameters.drawsTransparentBackground = m_drawsTransparentBackground;
     parameters.underlayColor = m_underlayColor;
     parameters.useFixedLayout = m_useFixedLayout;

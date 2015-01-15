@@ -1,3 +1,33 @@
+2015-01-15  Enrica Casucci  <enrica@apple.com>
+
+        [WK2] Add support for fully editable WKWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=140515
+
+        Reviewed by Anders Carlsson.
+
+        WKWebView has now a new property (_editable) to control
+        the editability of the entire content.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isEditable]):
+        (-[WKWebView _setEditable:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setEditable):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isEditable):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setEditable):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-01-15  Anders Carlsson  <andersca@apple.com>
 
         Clearing the website data store should clear local storage

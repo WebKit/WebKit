@@ -743,11 +743,9 @@ individual methods here with Mac-specific code.
 
 Editing-related methods still unimplemented that are implemented in WebKit1:
 
-- (void)capitalizeWord:(id)sender;
 - (void)changeFont:(id)sender;
 - (void)complete:(id)sender;
 - (void)copyFont:(id)sender;
-- (void)lowercaseWord:(id)sender;
 - (void)makeBaseWritingDirectionLeftToRight:(id)sender;
 - (void)makeBaseWritingDirectionNatural:(id)sender;
 - (void)makeBaseWritingDirectionRightToLeft:(id)sender;
@@ -755,7 +753,6 @@ Editing-related methods still unimplemented that are implemented in WebKit1:
 - (void)scrollLineDown:(id)sender;
 - (void)scrollLineUp:(id)sender;
 - (void)showGuessPanel:(id)sender;
-- (void)uppercaseWord:(id)sender;
 
 Some other editing-related methods still unimplemented:
 
