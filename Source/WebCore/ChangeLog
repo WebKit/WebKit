@@ -1,3 +1,15 @@
+2015-01-15  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r178133): Membuster regressed ~4%
+        https://bugs.webkit.org/show_bug.cgi?id=140495
+
+        Reviewed by Andreas Kling.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::purgeInactiveFontData):
+
+            Fonts may ref other fonts. Keep clearing until there are no changes.
+
 2015-01-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.

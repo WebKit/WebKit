@@ -432,16 +432,21 @@ void FontCache::purgeInactiveFontData(int purgeCount)
     FontLocker fontLocker;
 #endif
 
-    Vector<RefPtr<SimpleFontData>, 20> fontsToDelete;
-    for (auto& font : cachedFonts().values()) {
-        if (!font->hasOneRef())
-            continue;
-        fontsToDelete.append(WTF::move(font));
-        if (!--purgeCount)
+    while (purgeCount) {
+        Vector<RefPtr<SimpleFontData>, 20> fontsToDelete;
+        for (auto& font : cachedFonts().values()) {
+            if (!font->hasOneRef())
+                continue;
+            fontsToDelete.append(WTF::move(font));
+            if (!--purgeCount)
+                break;
+        }
+        // Fonts may ref other fonts so we loop until there are no changes.
+        if (fontsToDelete.isEmpty())
             break;
-    }
-    for (auto& font : fontsToDelete)
-        cachedFonts().remove(font->platformData());
+        for (auto& font : fontsToDelete)
+            cachedFonts().remove(font->platformData());
+    };
 
     Vector<FontPlatformDataCacheKey> keysToRemove;
     keysToRemove.reserveInitialCapacity(fontPlatformDataCache().size());
