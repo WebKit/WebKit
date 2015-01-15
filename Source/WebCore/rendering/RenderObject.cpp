@@ -1383,16 +1383,42 @@ void RenderObject::showLineTreeForThis() const
     downcast<RenderBlockFlow>(*this).showLineTreeAndMark(nullptr, 2);
 }
 
+static const RenderFlowThread* flowThreadContainingBlockFromRenderer(const RenderObject* renderer)
+{
+    if (!renderer)
+        return nullptr;
+
+    if (renderer->flowThreadState() == RenderObject::NotInsideFlowThread)
+        return nullptr;
+
+    if (is<RenderFlowThread>(*renderer))
+        return downcast<RenderFlowThread>(renderer);
+
+    if (is<RenderBlock>(*renderer))
+        return downcast<RenderBlock>(*renderer).cachedFlowThreadContainingBlock();
+
+    return nullptr;
+}
+
 void RenderObject::showRegionsInformation() const
 {
-    if (RenderFlowThread* flowThread = flowThreadContainingBlock()) {
-        if (is<RenderBox>(*this)) {
-            RenderRegion* startRegion = nullptr;
-            RenderRegion* endRegion = nullptr;
-            flowThread->getRegionRangeForBox(downcast<RenderBox>(this), startRegion, endRegion);
-            fprintf(stderr, " [Rs:%p Re:%p]", startRegion, endRegion);
-        }
+    const RenderFlowThread* ftcb = flowThreadContainingBlockFromRenderer(this);
+
+    if (!ftcb) {
+        // Only the boxes have region range information.
+        // Try to get the flow thread containing block information
+        // from the containing block of this box.
+        if (is<RenderBox>(*this))
+            ftcb = flowThreadContainingBlockFromRenderer(containingBlock());
     }
+
+    if (!ftcb)
+        return;
+
+    RenderRegion* startRegion = nullptr;
+    RenderRegion* endRegion = nullptr;
+    ftcb->getRegionRangeForBox(downcast<RenderBox>(this), startRegion, endRegion);
+    fprintf(stderr, " [Rs:%p Re:%p]", startRegion, endRegion);
 }
 
 void RenderObject::showRenderObject(bool mark, int depth) const
