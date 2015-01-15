@@ -132,16 +132,8 @@ using namespace WebCore;
     [self performHitTestAtPoint:locationInDocumentView];
     [self _updateImmediateActionItem];
 
-    if (!_immediateActionRecognizer.animationController) {
+    if (!_immediateActionRecognizer.animationController)
         [self _cancelImmediateAction];
-        return;
-    }
-
-    if (_currentActionContext) {
-        _hasActivatedActionContext = YES;
-        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
-            [self _cancelImmediateAction];
-    }
 }
 
 - (void)immediateActionRecognizerWillBeginAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
@@ -149,7 +141,11 @@ using namespace WebCore;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    // FIXME: Add support for the types of functionality provided in Action menu's menuNeedsUpdate.
+    if (_currentActionContext) {
+        _hasActivatedActionContext = YES;
+        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
+            [self _cancelImmediateAction];
+    }
 }
 
 - (void)immediateActionRecognizerDidUpdateAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
