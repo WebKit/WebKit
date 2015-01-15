@@ -1,3 +1,20 @@
+2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r175828. rdar://problem/19424171
+
+    2014-11-10  Jer Noble  <jer.noble@apple.com>
+
+            [EME][Mac] Add a systemCode to distinguish when no expired sessions were found in response to a "keyrelease" message.
+            https://bugs.webkit.org/show_bug.cgi?id=138199
+
+            Reviewed by Eric Carlson.
+
+            Clients may want to be able to distinguish between cases where expired session data is not supported, and when
+            those data are supported, but none are found.
+
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (WebCore::CDMSessionMediaSourceAVFObjC::generateKeyReleaseMessage):
+
 2015-01-15  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r178378. rdar://problem/19274499

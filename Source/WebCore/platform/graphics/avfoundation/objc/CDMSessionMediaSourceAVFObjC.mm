@@ -324,9 +324,14 @@ PassRefPtr<Uint8Array> CDMSessionMediaSourceAVFObjC::generateKeyReleaseMessage(u
 
     NSArray* expiredSessions = [getAVStreamSessionClass() pendingExpiredSessionReportsWithAppIdentifier:certificateData.get()];
     if (![expiredSessions count]) {
+        LOG(Media, "CDMSessionMediaSourceAVFObjC::generateKeyReleaseMessage(%p) - no expired sessions found", this);
+
         errorCode = MediaPlayer::KeySystemNotSupported;
+        systemCode = '!mor';
         return nullptr;
     }
+
+    LOG(Media, "CDMSessionMediaSourceAVFObjC::generateKeyReleaseMessage(%p) - found %d expired sessions", this, [expiredSessions count]);
 
     errorCode = 0;
     systemCode = 0;
