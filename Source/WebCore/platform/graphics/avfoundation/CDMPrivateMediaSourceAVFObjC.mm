@@ -69,6 +69,9 @@ bool CDMPrivateMediaSourceAVFObjC::supportsKeySystemAndMimeType(const String& ke
 
 bool CDMPrivateMediaSourceAVFObjC::supportsMIMEType(const String& mimeType)
 {
+    if (mimeType == "keyrelease")
+        return true;
+
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;
     parameters.type = mimeType;
