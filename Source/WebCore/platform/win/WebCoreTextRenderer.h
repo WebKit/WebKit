@@ -31,12 +31,12 @@
 namespace WebCore {
 
     class Color;
-    class Font;
+    class FontCascade;
     class GraphicsContext;
     class IntPoint;
 
-    void WebCoreDrawDoubledTextAtPoint(GraphicsContext&, const String&, const IntPoint&, const Font&, const Color& topColor, const Color& bottomColor, int underlinedIndex = -1);
-    float WebCoreTextFloatWidth(const String&, const Font&);
+    void WebCoreDrawDoubledTextAtPoint(GraphicsContext&, const String&, const IntPoint&, const FontCascade&, const Color& topColor, const Color& bottomColor, int underlinedIndex = -1);
+    float WebCoreTextFloatWidth(const String&, const FontCascade&);
 
     void WebCoreSetShouldUseFontSmoothing(bool);
     bool WebCoreShouldUseFontSmoothing();

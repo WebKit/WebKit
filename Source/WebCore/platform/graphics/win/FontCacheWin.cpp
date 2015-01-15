@@ -33,6 +33,7 @@
 #include "SimpleFontData.h"
 #include <mlang.h>
 #include <windows.h>
+#include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>

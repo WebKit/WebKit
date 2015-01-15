@@ -127,13 +127,13 @@ DragImageRef createDragImageForLink(URL& url, const String& inLabel, FontRenderi
     const FontCascade* urlFont;
 
     if (fontRenderingMode == AlternateRenderingMode) {
-        static const Font alternateRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, AlternateRenderingMode);
-        static const Font alternateRenderingModeURLFont = dragLabelFont(DragLinkUrlFontSize, false, AlternateRenderingMode);
+        static const FontCascade alternateRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, AlternateRenderingMode);
+        static const FontCascade alternateRenderingModeURLFont = dragLabelFont(DragLinkUrlFontSize, false, AlternateRenderingMode);
         labelFont = &alternateRenderingModeLabelFont;
         urlFont = &alternateRenderingModeURLFont;
     } else {
-        static const Font normalRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, NormalRenderingMode);
-        static const Font normalRenderingModeURLFont = dragLabelFont(DragLinkUrlFontSize, false, NormalRenderingMode);
+        static const FontCascade normalRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, NormalRenderingMode);
+        static const FontCascade normalRenderingModeURLFont = dragLabelFont(DragLinkUrlFontSize, false, NormalRenderingMode);
         labelFont = &normalRenderingModeLabelFont;
         urlFont = &normalRenderingModeURLFont;
     }

@@ -1,3 +1,11 @@
+2015-01-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        * platform/win/DragImageWin.cpp:
+        * platform/win/WebCoreTextRenderer.h:
+
 2015-01-15  Antti Koivisto  <antti@apple.com>
 
         Try to fix windows build.
