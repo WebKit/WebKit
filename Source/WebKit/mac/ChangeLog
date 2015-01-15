@@ -1,5 +1,21 @@
 2015-01-15  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r178290. rdar://problem/19441243
+
+    2015-01-12  Timothy Horton  <timothy_horton@apple.com>
+
+            Multi-rect TextIndicators are vertically flipped in WebKit1
+            https://bugs.webkit.org/show_bug.cgi?id=140350
+            <rdar://problem/19441243>
+
+            Reviewed by Beth Dakin.
+
+            * WebView/WebView.mm:
+            (-[WebView _setTextIndicator:fadeOut:]):
+            Convert the textBoundingRect from root view to screen coordinates.
+
+2015-01-15  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r178126. rdar://problem/19412705
 
     2015-01-08  Timothy Horton  <timothy_horton@apple.com>
