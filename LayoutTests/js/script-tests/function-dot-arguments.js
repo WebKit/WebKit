@@ -206,6 +206,533 @@ function tearOffTest2()
 }
 shouldBeTrue("tearOffTest2(true)[0]");
 
+
+// Some utility functions/
+function arrayify(args) {
+    if (typeof args != "object")
+        return args;
+    if (typeof args.length == "undefined" || typeof args.callee == "undefined")
+        return args;
+    return Array.prototype.slice.call(args);
+}
+
+function indirectCall(callee)
+{
+    return callee();
+}
+
+// Test reading from caller.arguments from an inner function.
+function tearOffTest3(a, b, c, d)
+{
+    a = 10;
+    function inner()
+    {
+        return tearOffTest3.arguments;
+    }
+
+    return arrayify(inner());
+}
+shouldBe("tearOffTest3(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest3a(a, b, c, d)
+{
+    var x = 42;
+    a = 10;
+    function inner()
+    {
+        return tearOffTest3a.arguments;
+    }
+
+    if (d) {
+        // Force a lexicalEnvironment to be created in the outer function.
+        return function() { return x; }
+    } else {
+        return arrayify(inner());
+    }
+}
+shouldBe("tearOffTest3a(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest3b(a, b, c, d)
+{
+    a = 10;
+    function inner()
+    {
+        var capture = a; // Capture an arg from the outer function.
+        return tearOffTest3b.arguments;
+    }
+
+    return arrayify(inner());
+}
+shouldBe("tearOffTest3b(1, 2, 3, false)", "[1, 2, 3, false]");
+
+
+function tearOffTest3c(a, b, c, d)
+{
+    a = 10;
+    function inner()
+    {
+        var capture = a; // Capture an arg from the outer function.
+        return tearOffTest3c.arguments;
+    }
+
+    return arrayify(indirectCall(inner));
+}
+shouldBe("tearOffTest3c(1, 2, 3, false)", "[1, 2, 3, false]");
+
+
+// Test reading from caller.arguments from an external function.
+function tearOffTest4External()
+{
+    return tearOffTest4.arguments;
+}
+function tearOffTest4(a, b, c, d)
+{
+    a = 10;
+    return arrayify(tearOffTest4External());
+}
+shouldBe("tearOffTest4(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest4aExternal()
+{
+    return tearOffTest4a.arguments;
+}
+function tearOffTest4a(a, b, c, d)
+{
+    var x = 42;
+    a = 10;
+
+    if (d) {
+        // Force a lexicalEnvironment to be created in the outer function.
+        return function() { return x; }
+    } else {
+        return arrayify(tearOffTest4aExternal());
+    }
+}
+shouldBe("tearOffTest4a(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest4bExternal()
+{
+    return tearOffTest4b.arguments;
+}
+function tearOffTest4b(a, b, c, d)
+{
+    a = 10;
+    function inner()
+    {
+        var capture = a; // Capture an arg from the outer function.
+        return capture;
+    }
+
+    return arrayify(tearOffTest4bExternal());
+}
+shouldBe("tearOffTest4b(1, 2, 3, false)", "[1, 2, 3, false]");
+
+
+function tearOffTest4cExternal()
+{
+    return tearOffTest4c.arguments;
+}
+function tearOffTest4c(a, b, c, d)
+{
+    a = 10;
+    function inner()
+    {
+        var capture = a; // Capture an arg from the outer function.
+        return tearOffTest4c.arguments;
+    }
+
+    return arrayify(indirectCall(tearOffTest4cExternal));
+}
+shouldBe("tearOffTest4c(1, 2, 3, false)", "[1, 2, 3, false]");
+
+
+// Test reading from caller.arguments which have Deleted slow data from an inner function.
+function tearOffTest5(a, b, c, d)
+{
+    a = 10;
+    delete arguments[0];
+    function inner()
+    {
+        return tearOffTest5.arguments;
+    }
+
+    return arrayify(inner());
+}
+shouldBe("tearOffTest5(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest5a(a, b, c, d)
+{
+    var x = 42;
+    a = 10;
+    delete arguments[0];
+    function inner()
+    {
+        return tearOffTest5a.arguments;
+    }
+
+    if (d) {
+        // Force a lexicalEnvironment to be created in the outer function.
+        return function() { return x; }
+    } else {
+        return arrayify(inner());
+    }
+}
+shouldBe("tearOffTest5a(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest5b(a, b, c, d)
+{
+    a = 10;
+    delete arguments[0];
+    function inner()
+    {
+        var capture = a; // Capture an arg from the outer function.
+        return tearOffTest5b.arguments;
+    }
+
+    return arrayify(inner());
+}
+shouldBe("tearOffTest5b(1, 2, 3, false)", "[1, 2, 3, false]");
+
+
+function tearOffTest5c(a, b, c, d)
+{
+    a = 10;
+    delete arguments[0];
+    function inner()
+    {
+        var capture = a; // Capture an arg from the outer function.
+        return tearOffTest5c.arguments;
+    }
+
+    return arrayify(indirectCall(inner));
+}
+shouldBe("tearOffTest5c(1, 2, 3, false)", "[1, 2, 3, false]");
+
+
+// Test reading from caller.arguments which have Deleted slow data from an external function.
+function tearOffTest6External()
+{
+    return tearOffTest6.arguments;
+}
+function tearOffTest6(a, b, c, d)
+{
+    a = 10;
+    delete arguments[0];
+    return arrayify(tearOffTest6External());
+}
+shouldBe("tearOffTest6(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest6aExternal()
+{
+    return tearOffTest6a.arguments;
+}
+function tearOffTest6a(a, b, c, d)
+{
+    var x = 42;
+    a = 10;
+    delete arguments[0];
+
+    if (d) {
+        // Force a lexicalEnvironment to be created in the outer function.
+        return function() { return x; }
+    } else {
+        return arrayify(tearOffTest6aExternal());
+    }
+}
+shouldBe("tearOffTest6a(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest6bExternal()
+{
+    return tearOffTest6b.arguments;
+}
+function tearOffTest6b(a, b, c, d)
+{
+    a = 10;
+    delete arguments[0];
+    function inner()
+    {
+        var capture = a; // Capture an arg from the outer function.
+        return capture;
+    }
+
+    return arrayify(tearOffTest6bExternal());
+}
+shouldBe("tearOffTest6b(1, 2, 3, false)", "[1, 2, 3, false]");
+
+
+function tearOffTest6cExternal()
+{
+    return tearOffTest6c.arguments;
+}
+function tearOffTest6c(a, b, c, d)
+{
+    a = 10;
+    delete arguments[0];
+    function inner()
+    {
+        var capture = a; // Capture an arg from the outer function.
+        return tearOffTest6c.arguments;
+    }
+
+    return arrayify(indirectCall(tearOffTest6cExternal));
+}
+shouldBe("tearOffTest6c(1, 2, 3, false)", "[1, 2, 3, false]");
+
+
+// Test writing to caller.arguments from an inner function.
+function tearOffTest7(a, b, c, d)
+{
+    a = 10;
+    (function inner() {
+        tearOffTest7.arguments[0] = 100;
+    })();
+
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest7(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest7a(a, b, c, d)
+{
+    var x = 42;
+    a = 10;
+
+    if (d) {
+        // Force a lexicalEnvironment to be created in the outer function.
+        return function() { return x; }
+    } else {
+        (function inner() {
+            tearOffTest7a.arguments[0] = 100;
+        }) ();
+
+        return arrayify(arguments);
+    }
+}
+shouldBe("tearOffTest7a(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest7b(a, b, c, d)
+{
+    a = 10;
+    (function inner() {
+        var capture = a; // Capture an arg from the outer function.
+        tearOffTest7b.arguments[0] = 100;
+    })();
+
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest7b(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest7c(a, b, c, d)
+{
+    a = 10;
+    function inner() {
+        var capture = a; // Capture an arg from the outer function.
+        tearOffTest7c.arguments[0] = 100;
+    }
+    indirectCall(inner);
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest7c(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+// Test writing to caller.arguments from an external function.
+function tearOffTest8External() {
+    tearOffTest8.arguments[0] = 100;
+}
+function tearOffTest8(a, b, c, d)
+{
+    a = 10;
+    tearOffTest8External();
+
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest8(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest8aExternal() {
+    tearOffTest8a.arguments[0] = 100;
+}
+function tearOffTest8a(a, b, c, d)
+{
+    var x = 42;
+    a = 10;
+
+    if (d) {
+        // Force a lexicalEnvironment to be created in the outer function.
+        return function() { return x; }
+    } else {
+        tearOffTest8aExternal();
+        return arrayify(arguments);
+    }
+}
+shouldBe("tearOffTest8a(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest8bExternal() {
+    tearOffTest8b.arguments[0] = 100;
+}
+function tearOffTest8b(a, b, c, d)
+{
+    a = 10;
+    function inner() {
+        var capture = a; // Capture an arg from the outer function.
+    }
+    tearOffTest8bExternal();
+
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest8b(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+function tearOffTest8cExternal() {
+    tearOffTest8c.arguments[0] = 100;
+}
+function tearOffTest8c(a, b, c, d)
+{
+    a = 10;
+    function inner() {
+        var capture = a; // Capture an arg from the outer function.
+    }
+    indirectCall(tearOffTest8cExternal);
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest8c(1, 2, 3, false)", "[10, 2, 3, false]");
+
+
+// Test deleting an arg in caller.arguments from an inner function.
+function tearOffTest9(a, b, c, d)
+{
+    a = 10;
+    delete arguments[0];
+    (function inner() {
+        delete tearOffTest9.arguments[1];
+    })();
+
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest9(1, 2, 3, false)", "[undefined, 2, 3, false]");
+
+
+function tearOffTest9a(a, b, c, d)
+{
+    var x = 42;
+    delete arguments[0];
+
+    if (d) {
+        // Force a lexicalEnvironment to be created in the outer function.
+        return function() { return x; }
+    } else {
+        (function inner() {
+            delete tearOffTest9a.arguments[1];
+        }) ();
+
+        return arrayify(arguments);
+    }
+}
+shouldBe("tearOffTest9a(1, 2, 3, false)", "[undefined, 2, 3, false]");
+
+
+function tearOffTest9b(a, b, c, d)
+{
+    delete arguments[0];
+    (function inner() {
+        var capture = a; // Capture an arg from the outer function.
+        delete tearOffTest9b.arguments[1];
+    })();
+
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest9b(1, 2, 3, false)", "[undefined, 2, 3, false]");
+
+
+function tearOffTest9c(a, b, c, d)
+{
+    delete arguments[0];
+    function inner() {
+        var capture = a; // Capture an arg from the outer function.
+        delete tearOffTest9c.arguments[1];
+    }
+    indirectCall(inner);
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest9c(1, 2, 3, false)", "[undefined, 2, 3, false]");
+
+
+// Test deleting a arg in caller.arguments from an external function.
+
+function tearOffTest10External() {
+    delete tearOffTest10.arguments[1];
+}
+function tearOffTest10(a, b, c, d)
+{
+    delete arguments[0];
+    tearOffTest10External();
+
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest10(1, 2, 3, false)", "[undefined, 2, 3, false]");
+
+
+function tearOffTest10aExternal() {
+    delete tearOffTest10a.arguments[1];
+}
+function tearOffTest10a(a, b, c, d)
+{
+    var x = 42;
+    delete arguments[0];
+
+    if (d) {
+        // Force a lexicalEnvironment to be created in the outer function.
+        return function() { return x; }
+    } else {
+        tearOffTest10aExternal();
+        return arrayify(arguments);
+    }
+}
+shouldBe("tearOffTest10a(1, 2, 3, false)", "[undefined, 2, 3, false]");
+
+
+function tearOffTest10bExternal() {
+    delete tearOffTest10b.arguments[1];
+}
+function tearOffTest10b(a, b, c, d)
+{
+    delete arguments[0];
+    function inner() {
+        var capture = a; // Capture an arg from the outer function.
+    }
+    tearOffTest10bExternal();
+
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest10b(1, 2, 3, false)", "[undefined, 2, 3, false]");
+
+
+function tearOffTest10cExternal() {
+    delete tearOffTest10c.arguments[1];
+}
+function tearOffTest10c(a, b, c, d)
+{
+    delete arguments[0];
+    function inner() {
+        var capture = a; // Capture an arg from the outer function.
+    }
+    indirectCall(tearOffTest10cExternal);
+    return arrayify(arguments);
+}
+shouldBe("tearOffTest10c(1, 2, 3, false)", "[undefined, 2, 3, false]");
+
+
 function lexicalArgumentsLiveRead1(a, b, c)
 {
     var o = arguments;

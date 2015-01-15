@@ -1,3 +1,24 @@
+2015-01-15  Mark Lam  <mark.lam@apple.com>
+
+        [Part 2] Argument object created by "Function dot arguments" should use a clone of argument values.
+        <https://webkit.org/b/140093>
+
+        Reviewed by Geoffrey Garen.
+
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::createArguments):
+        - We should not fetching the lexicalEnvironment here.  The reason we've
+          introduced the ClonedArgumentsCreationMode is because the lexicalEnvironment
+          may not be available to us at this point.  Instead, we'll just pass a nullptr.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOffForCloning):
+        * runtime/Arguments.h:
+        (JSC::Arguments::finishCreation):
+        - Use the new tearOffForCloning() to tear off arguments right out of the values
+          passed on the stack.  tearOff() is not appropriate for this purpose because
+          it takes slowArgumentsData into account.
+
 2015-01-14  Matthew Mirman  <mmirman@apple.com>
 
         Removed accidental commit of "invalid_array.js" 

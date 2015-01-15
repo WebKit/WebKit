@@ -1,3 +1,55 @@
+2015-01-15  Mark Lam  <mark.lam@apple.com>
+
+        [Part 2] Argument object created by "Function dot arguments" should use a clone of argument values.
+        <https://webkit.org/b/140093>
+
+        Reviewed by Geoffrey Garen.
+
+        * js/function-dot-arguments-expected.txt:
+        * js/script-tests/function-dot-arguments.js:
+        (arrayify):
+        (indirectCall):
+        (.inner):
+        (tearOffTest3):
+        (tearOffTest3b):
+        (tearOffTest3c):
+        (tearOffTest4External):
+        (tearOffTest4):
+        (tearOffTest4aExternal):
+        (tearOffTest4bExternal):
+        (tearOffTest4b):
+        (tearOffTest4cExternal):
+        (tearOffTest4c):
+        (tearOffTest5):
+        (tearOffTest5b):
+        (tearOffTest5c):
+        (tearOffTest6External):
+        (tearOffTest6):
+        (tearOffTest6aExternal):
+        (tearOffTest6bExternal):
+        (tearOffTest6b):
+        (tearOffTest6cExternal):
+        (tearOffTest6c):
+        (tearOffTest7):
+        (tearOffTest7b):
+        (tearOffTest7c):
+        (tearOffTest8External):
+        (tearOffTest8):
+        (tearOffTest8aExternal):
+        (tearOffTest8bExternal):
+        (tearOffTest8b):
+        (tearOffTest8cExternal):
+        (tearOffTest8c):
+        (tearOffTest9b):
+        (tearOffTest9c):
+        (tearOffTest10External):
+        (tearOffTest10):
+        (tearOffTest10aExternal):
+        (tearOffTest10bExternal):
+        (tearOffTest10b):
+        (tearOffTest10cExternal):
+        (tearOffTest10c):
+
 2015-01-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

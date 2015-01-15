@@ -272,7 +272,7 @@ Arguments* StackVisitor::Frame::createArguments()
     } else 
 #endif
     {
-        JSLexicalEnvironment* lexicalEnvironment = physicalFrame->lexicalEnvironmentOrNullptr();
+        JSLexicalEnvironment* lexicalEnvironment = nullptr;
         arguments = Arguments::create(vm, physicalFrame, lexicalEnvironment, mode);
         arguments->tearOff(physicalFrame);
     }

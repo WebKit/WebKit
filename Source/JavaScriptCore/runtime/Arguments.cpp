@@ -383,6 +383,40 @@ void Arguments::tearOff(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
     }
 }
     
+void Arguments::tearOffForCloning(CallFrame* callFrame)
+{
+    ASSERT(!isTornOff());
+    
+    if (!m_numArguments)
+        return;
+    
+    // Must be called for the same call frame from which it was created.
+    ASSERT(bitwise_cast<WriteBarrier<Unknown>*>(callFrame) == m_registers);
+    
+    m_registers = &registerArray() - CallFrame::offsetFor(1) - 1;
+    
+    ASSERT(!m_slowArgumentData);
+    for (size_t i = 0; i < m_numArguments; ++i)
+        m_registers[CallFrame::argumentOffset(i)].set(callFrame->vm(), this, callFrame->argument(i));
+}
+    
+void Arguments::tearOffForCloning(CallFrame* callFrame, InlineCallFrame* inlineCallFrame)
+{
+    RELEASE_ASSERT(!inlineCallFrame->baselineCodeBlock()->needsActivation());
+    ASSERT(!isTornOff());
+    
+    if (!m_numArguments)
+        return;
+    
+    m_registers = &registerArray() - CallFrame::offsetFor(1) - 1;
+    
+    ASSERT(!m_slowArgumentData);
+    for (size_t i = 0; i < m_numArguments; ++i) {
+        ValueRecovery& recovery = inlineCallFrame->arguments[i + 1];
+        m_registers[CallFrame::argumentOffset(i)].set(callFrame->vm(), this, recovery.recover(callFrame));
+    }
+}
+
 EncodedJSValue JSC_HOST_CALL argumentsFuncIterator(ExecState* exec)
 {
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
