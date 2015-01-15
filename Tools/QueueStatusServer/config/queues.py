@@ -34,6 +34,7 @@ all_queue_names = [
     "commit-queue",
     "style-queue",
     "gtk-wk2-ews",
+    "ios-ews",
     "mac-ews",
     "mac-wk2-ews",
     "win-ews",

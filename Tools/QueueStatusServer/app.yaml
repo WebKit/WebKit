@@ -1,5 +1,5 @@
 application: webkit-queues
-version: 175488 # SVN revision of last major change
+version: 178455 # SVN revision of last major change
 runtime: python
 api_version: 1
 
