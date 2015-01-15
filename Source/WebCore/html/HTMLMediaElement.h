@@ -544,6 +544,7 @@ private:
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) override;
+    virtual String mediaPlayerMediaKeysStorageDirectory() const override;
 #endif
 
 #if ENABLE(IOS_AIRPLAY)

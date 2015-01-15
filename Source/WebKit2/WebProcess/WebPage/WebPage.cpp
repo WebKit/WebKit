@@ -80,6 +80,7 @@
 #include "WebInspector.h"
 #include "WebInspectorClient.h"
 #include "WebInspectorMessages.h"
+#include "WebMediaKeyStorageManager.h"
 #include "WebNotificationClient.h"
 #include "WebOpenPanelResultListener.h"
 #include "WebPageCreationParameters.h"
@@ -475,6 +476,12 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     for (auto& mimeType : parameters.mimeTypesWithCustomContentProviders)
         m_mimeTypesWithCustomContentProviders.add(mimeType);
+
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    if (WebMediaKeyStorageManager* manager = WebProcess::shared().supplement<WebMediaKeyStorageManager>())
+        m_page->settings().setMediaKeysStorageDirectory(manager->mediaKeyStorageDirectory());
+#endif
 }
 
 void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)

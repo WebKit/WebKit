@@ -1,5 +1,34 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r175400. <rdar://problem/19424166>
+
+    2014-10-30  Jer Noble  <jer.noble@apple.com>
+
+            [EME] Add Setting for accessing storage location for MediaKeys data
+            https://bugs.webkit.org/show_bug.cgi?id=138147
+
+            Reviewed by Brady Eidson.
+
+            Allow MediaPlayerPrivateAVFoundationObjC to query for the MediaKeys storage directory
+            by piping that request down from WebKit and WebKit2 into Settings.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::mediaKeysStorageDirectory): Get the location from Settings and
+                append the current origin.
+            * html/HTMLMediaElement.h:
+            * page/Settings.h:
+            (WebCore::Settings::setMediaKeysStorageDirectory): Simple setter.
+            (WebCore::Settings::mediaKeysStorageDirectory): Simple accessor.
+            * platform/graphics/MediaPlayer.cpp:
+            (WebCore::MediaPlayer::mediaKeysStorageDirectory): Pass through to m_client.
+            * platform/graphics/MediaPlayer.h:
+            (WebCore::MediaPlayerClient::mediaPlayerMediaKeysStorageDirectory): Default implementation.
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::streamSession): Fetch the location from MediaPlayer.
+            (WebCore::sessionStorageDirectory): Deleted.
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r175333. <rdar://problem/19424165>
 
     2014-10-29  Jer Noble  <jer.noble@apple.com>

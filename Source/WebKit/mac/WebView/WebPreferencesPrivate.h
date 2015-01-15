@@ -438,6 +438,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setGamepadsEnabled:(BOOL)flag;
 - (BOOL)gamepadsEnabled;
 
+- (void)setMediaKeysStorageDirectory:(NSString *)directory;
+- (NSString *)mediaKeysStorageDirectory;
+
 #if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000
 - (void)_setAllowCompositingLayerVisualDegradation:(BOOL)flag;
 #endif
