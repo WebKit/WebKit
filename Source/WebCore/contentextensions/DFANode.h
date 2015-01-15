@@ -44,7 +44,7 @@ public:
     Vector<uint64_t> actions;
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    Vector<unsigned> correspondingDFANodes;
+    Vector<unsigned> correspondingNFANodes;
 #endif
 };
 

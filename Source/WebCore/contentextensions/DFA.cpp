@@ -154,13 +154,13 @@ void DFA::debugPrintDot() const
             }
         }
 
-        Vector<unsigned> correspondingDFANodes = m_nodes[i].correspondingDFANodes;
-        ASSERT(!correspondingDFANodes.isEmpty());
+        Vector<unsigned> correspondingNFANodes = m_nodes[i].correspondingNFANodes;
+        ASSERT(!correspondingNFANodes.isEmpty());
         dataLogF("<BR/>NFA Nodes: ");
-        for (unsigned correspondingDFANodeIndex = 0; correspondingDFANodeIndex < correspondingDFANodes.size(); ++correspondingDFANodeIndex) {
+        for (unsigned correspondingDFANodeIndex = 0; correspondingDFANodeIndex < correspondingNFANodes.size(); ++correspondingDFANodeIndex) {
             if (correspondingDFANodeIndex)
                 dataLogF(", ");
-            dataLogF("%d", correspondingDFANodes[correspondingDFANodeIndex]);
+            dataLogF("%d", correspondingNFANodes[correspondingDFANodeIndex]);
         }
 
         dataLogF(">]");

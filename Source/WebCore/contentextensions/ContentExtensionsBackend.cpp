@@ -64,16 +64,16 @@ void ContentExtensionsBackend::setRuleList(const String& identifier, const Vecto
 #endif
 
     NFA nfa;
+    URLFilterParser urlFilterParser(nfa);
     for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
         const ContentExtensionRule& contentExtensionRule = ruleList[ruleIndex];
         const ContentExtensionRule::Trigger& trigger = contentExtensionRule.trigger();
         ASSERT(trigger.urlFilter.length());
 
-        URLFilterParser urlFilterParser;
-        urlFilterParser.parse(trigger.urlFilter, ruleIndex, nfa);
+        String error = urlFilterParser.addPattern(trigger.urlFilter, ruleIndex);
 
-        if (urlFilterParser.hasError()) {
-            dataLogF("Error while parsing %s: %s", trigger.urlFilter.utf8().data(), urlFilterParser.errorMessage().utf8().data());
+        if (!error.isNull()) {
+            dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), error.utf8().data());
             continue;
         }
     }

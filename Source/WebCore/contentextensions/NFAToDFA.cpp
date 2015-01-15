@@ -219,10 +219,9 @@ struct NodeIdSetToUniqueNodeIdSetTranslator {
         HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> actions;
         for (unsigned nfaNodeId : source.nodeIdSet) {
             const NFANode& nfaNode = source.nfaGraph[nfaNodeId];
-            if (nfaNode.isFinal)
-                actions.add(nfaNode.ruleId);
+            actions.add(nfaNode.finalRuleIds.begin(), nfaNode.finalRuleIds.end());
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-            newDFANode.correspondingDFANodes.append(nfaNodeId);
+            newDFANode.correspondingNFANodes.append(nfaNodeId);
 #endif
         }
         copyToVector(actions, newDFANode.actions);

@@ -1031,7 +1031,6 @@
 		267726041A5DF6F2003C24DD /* URLFilterParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 267726021A5DF6F2003C24DD /* URLFilterParser.cpp */; };
 		267726051A5DF6F2003C24DD /* URLFilterParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 267726031A5DF6F2003C24DD /* URLFilterParser.h */; };
 		269239961505E1AA009E57FC /* JSIDBVersionChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 269239921505E1AA009E57FC /* JSIDBVersionChangeEvent.h */; };
-		269397211A4A412F00E8349D /* NFANode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2693971F1A4A412F00E8349D /* NFANode.cpp */; };
 		269397221A4A412F00E8349D /* NFANode.h in Headers */ = {isa = PBXBuildFile; fileRef = 269397201A4A412F00E8349D /* NFANode.h */; };
 		269397241A4A5B6400E8349D /* NFA.h in Headers */ = {isa = PBXBuildFile; fileRef = 269397231A4A5B6400E8349D /* NFA.h */; };
 		269397261A4A5FBD00E8349D /* NFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 269397251A4A5FBD00E8349D /* NFA.cpp */; };
@@ -8032,7 +8031,6 @@
 		267726031A5DF6F2003C24DD /* URLFilterParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLFilterParser.h; sourceTree = "<group>"; };
 		269239911505E1AA009E57FC /* JSIDBVersionChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBVersionChangeEvent.cpp; sourceTree = "<group>"; };
 		269239921505E1AA009E57FC /* JSIDBVersionChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBVersionChangeEvent.h; sourceTree = "<group>"; };
-		2693971F1A4A412F00E8349D /* NFANode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NFANode.cpp; sourceTree = "<group>"; };
 		269397201A4A412F00E8349D /* NFANode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NFANode.h; sourceTree = "<group>"; };
 		269397231A4A5B6400E8349D /* NFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NFA.h; sourceTree = "<group>"; };
 		269397251A4A5FBD00E8349D /* NFA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NFA.cpp; sourceTree = "<group>"; };
@@ -15337,7 +15335,6 @@
 				267725F91A5B3AD9003C24DD /* DFANode.h */,
 				269397251A4A5FBD00E8349D /* NFA.cpp */,
 				269397231A4A5B6400E8349D /* NFA.h */,
-				2693971F1A4A412F00E8349D /* NFANode.cpp */,
 				269397201A4A412F00E8349D /* NFANode.h */,
 				267725FA1A5B3AD9003C24DD /* NFAToDFA.cpp */,
 				267725FB1A5B3AD9003C24DD /* NFAToDFA.h */,
@@ -29687,7 +29684,6 @@
 				B2227A960D00BF220071B782 /* SVGPreserveAspectRatio.cpp in Sources */,
 				B543B85717EB758F003BE93A /* SVGPropertyInfo.cpp in Sources */,
 				B2227A990D00BF220071B782 /* SVGRadialGradientElement.cpp in Sources */,
-				269397211A4A412F00E8349D /* NFANode.cpp in Sources */,
 				B2227A9D0D00BF220071B782 /* SVGRectElement.cpp in Sources */,
 				BC2274780E8366E200E7F975 /* SVGRenderStyle.cpp in Sources */,
 				BC22747A0E8366E200E7F975 /* SVGRenderStyleDefs.cpp in Sources */,

@@ -1,3 +1,71 @@
+2015-01-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        When building the NFA of the global disjunction, share the prefix subgraph of existing subpatterns
+        https://bugs.webkit.org/show_bug.cgi?id=140465
+
+        Reviewed by Andreas Kling.
+
+        This patch updates the parser to produce smaller graphs when multiple patterns
+        of the rule list share a common prefix.
+
+        Previously, GraphBuilder would generate subgraph in place of each parsed
+        atom. We now only create subgraph if an atom does not appear in the prefix tree.
+
+        We accumulate the parsing information into small uint16_t named TrivialAtom.
+        When generating the subgraph for an new atom, we first check if the prefix tree already
+        has a corresponding subgraph for that atom. If it does, we do not generate anything and we extend the existing
+        graph. If there is no existing prefix, we create the subgraph and extend the prefix tree.
+
+        Sharing prefix subtrees slows down the subtree generation a bit but the resulting graph is much
+        simpler for many kind of inputs.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::setRuleList):
+        The URLFilterParser now maintains states (the prefix tree) between patterns.
+
+        * contentextensions/DFA.cpp:
+        (WebCore::ContentExtensions::DFA::debugPrintDot):
+        * contentextensions/DFANode.h:
+        Fix a typo :)
+
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::createNode):
+        (WebCore::ContentExtensions::NFA::setFinal):
+        (WebCore::ContentExtensions::NFA::restoreToGraphSize):
+        (WebCore::ContentExtensions::NFA::addRuleId):
+        (WebCore::ContentExtensions::NFA::debugPrintDot):
+        * contentextensions/NFA.h:
+        (WebCore::ContentExtensions::NFA::addRuleId):
+        * contentextensions/NFANode.cpp: Removed.
+        * contentextensions/NFANode.h:
+        NFA nodes from two patterns are now "merged" by construction, thus we need
+        to keep track of multiple rules per node.
+
+        * contentextensions/NFAToDFA.cpp:
+        (WebCore::ContentExtensions::NodeIdSetToUniqueNodeIdSetTranslator::translate):
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::trivialAtomFromAsciiCharacter):
+        (WebCore::ContentExtensions::quantifyTrivialAtom):
+        (WebCore::ContentExtensions::trivialAtomForNewlineClassIDBuiltin):
+        (WebCore::ContentExtensions::GraphBuilder::GraphBuilder):
+        (WebCore::ContentExtensions::GraphBuilder::m_LastPrefixTreeEntry):
+        (WebCore::ContentExtensions::GraphBuilder::finalize):
+        (WebCore::ContentExtensions::GraphBuilder::atomPatternCharacter):
+        (WebCore::ContentExtensions::GraphBuilder::atomBuiltInCharacterClass):
+        (WebCore::ContentExtensions::GraphBuilder::quantifyAtom):
+        (WebCore::ContentExtensions::GraphBuilder::fail):
+        (WebCore::ContentExtensions::GraphBuilder::generateTransition):
+        (WebCore::ContentExtensions::GraphBuilder::sinkTrivialAtom):
+        (WebCore::ContentExtensions::GraphBuilder::sinkPendingAtomIfNecessary):
+        (WebCore::ContentExtensions::URLFilterParser::URLFilterParser):
+        (WebCore::ContentExtensions::URLFilterParser::addPattern):
+        (WebCore::ContentExtensions::GraphBuilder::m_lastAtom): Deleted.
+        (WebCore::ContentExtensions::URLFilterParser::parse): Deleted.
+        * contentextensions/URLFilterParser.h:
+        (WebCore::ContentExtensions::URLFilterParser::hasError): Deleted.
+        (WebCore::ContentExtensions::URLFilterParser::errorMessage): Deleted.
+
 2015-01-14  Alexey Proskuryakov  <ap@apple.com>
 
         Web Inspector and regular console use different source code locations for messages

@@ -28,8 +28,10 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "ContentExtensionsDebugging.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -38,11 +40,12 @@ namespace ContentExtensions {
 // A NFANode abstract the transition table out of a NFA state.
 class NFANode {
 public:
-    NFANode(uint64_t ruleId);
-
     HashMap<uint16_t, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>> transitions;
-    bool isFinal;
-    const uint64_t ruleId;
+
+    Vector<uint64_t> finalRuleIds;
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
+    Vector<uint64_t> ruleIds;
+#endif
 };
 
 }

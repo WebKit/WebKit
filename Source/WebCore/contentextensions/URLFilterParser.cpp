@@ -35,6 +35,35 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
+const uint16_t hasNonCharacterMask = 0x0080;
+const uint16_t characterMask = 0x0007F;
+const uint16_t newlineClassIDBuiltinMask = 0x100;
+
+static TrivialAtom trivialAtomFromASCIICharacter(char character)
+{
+    ASSERT(isASCII(character));
+
+    return static_cast<uint16_t>(character);
+}
+
+enum class TrivialAtomQuantifier : uint16_t {
+    ZeroOrOne = 0x1000,
+    ZeroToMany = 0x2000,
+    OneToMany = 0x4000
+};
+
+static void quantifyTrivialAtom(TrivialAtom& trivialAtom, TrivialAtomQuantifier quantifier)
+{
+    ASSERT(trivialAtom & (hasNonCharacterMask | characterMask));
+    ASSERT(!(trivialAtom & 0xf000));
+    trivialAtom |= static_cast<uint16_t>(quantifier);
+}
+
+static TrivialAtom trivialAtomForNewlineClassIDBuiltin()
+{
+    return hasNonCharacterMask | newlineClassIDBuiltinMask;
+}
+
 class GraphBuilder {
 private:
     struct BoundedSubGraph {
@@ -42,11 +71,11 @@ private:
         unsigned end;
     };
 public:
-    GraphBuilder(NFA& nfa, uint64_t patternId)
+    GraphBuilder(NFA& nfa, PrefixTreeEntry& prefixTreeRoot, uint64_t patternId)
         : m_nfa(nfa)
         , m_patternId(patternId)
         , m_activeGroup({ nfa.root(), nfa.root() })
-        , m_lastAtom(m_activeGroup)
+        , m_lastPrefixTreeEntry(&prefixTreeRoot)
     {
     }
 
@@ -54,8 +83,11 @@ public:
     {
         if (hasError())
             return;
+
+        sinkPendingAtomIfNecessary();
+
         if (m_activeGroup.start != m_activeGroup.end)
-            m_nfa.setFinal(m_activeGroup.end);
+            m_nfa.setFinal(m_activeGroup.end, m_patternId);
         else
             fail(ASCIILiteral("The pattern cannot match anything."));
     }
@@ -75,12 +107,13 @@ public:
         if (hasError())
             return;
 
+        sinkPendingAtomIfNecessary();
+
+        char asciiChararacter = static_cast<char>(character);
         m_hasValidAtom = true;
-        unsigned newEnd = m_nfa.createNode(m_patternId);
-        m_nfa.addTransition(m_lastAtom.end, newEnd, static_cast<char>(character));
-        m_lastAtom.start = m_lastAtom.end;
-        m_lastAtom.end = newEnd;
-        m_activeGroup.end = m_lastAtom.end;
+
+        ASSERT(m_lastPrefixTreeEntry);
+        m_pendingTrivialAtom = trivialAtomFromASCIICharacter(asciiChararacter);
     }
 
     void atomBuiltInCharacterClass(JSC::Yarr::BuiltInCharacterClassID builtInCharacterClassID, bool inverted)
@@ -89,14 +122,9 @@ public:
             return;
 
         if (builtInCharacterClassID == JSC::Yarr::NewlineClassID && inverted) {
-            // FIXME: handle new line properly.
             m_hasValidAtom = true;
-            unsigned newEnd = m_nfa.createNode(m_patternId);
-            for (unsigned i = 1; i < 128; ++i)
-                m_nfa.addTransition(m_lastAtom.end, newEnd, i);
-            m_lastAtom.start = m_lastAtom.end;
-            m_lastAtom.end = newEnd;
-            m_activeGroup.end = m_lastAtom.end;
+            ASSERT(m_lastPrefixTreeEntry);
+            m_pendingTrivialAtom = trivialAtomForNewlineClassIDBuiltin();
         } else
             fail(ASCIILiteral("Character class is not supported."));
     }
@@ -112,13 +140,13 @@ public:
             return;
         }
 
+        ASSERT(m_lastPrefixTreeEntry);
         if (!minimum && maximum == 1)
-            m_nfa.addEpsilonTransition(m_lastAtom.start, m_lastAtom.end);
-        else if (!minimum && maximum == JSC::Yarr::quantifyInfinite) {
-            m_nfa.addEpsilonTransition(m_lastAtom.start, m_lastAtom.end);
-            m_nfa.addEpsilonTransition(m_lastAtom.end, m_lastAtom.start);
-        } else if (minimum == 1 && maximum == JSC::Yarr::quantifyInfinite)
-            m_nfa.addEpsilonTransition(m_lastAtom.end, m_lastAtom.start);
+            quantifyTrivialAtom(m_pendingTrivialAtom, TrivialAtomQuantifier::ZeroOrOne);
+        else if (!minimum && maximum == JSC::Yarr::quantifyInfinite)
+            quantifyTrivialAtom(m_pendingTrivialAtom, TrivialAtomQuantifier::ZeroToMany);
+        else if (minimum == 1 && maximum == JSC::Yarr::quantifyInfinite)
+            quantifyTrivialAtom(m_pendingTrivialAtom, TrivialAtomQuantifier::OneToMany);
         else
             fail(ASCIILiteral("Arbitrary atom repetitions are not supported."));
     }
@@ -189,7 +217,6 @@ public:
         fail(ASCIILiteral("Disjunctions are not supported yet."));
     }
 
-
 private:
     bool hasError() const
     {
@@ -200,7 +227,106 @@ private:
     {
         if (hasError())
             return;
+
+        if (m_newPrefixSubtreeRoot)
+            m_newPrefixSubtreeRoot->nextPattern.remove(m_newPrefixStaringPoint);
+
         m_errorMessage = errorMessage;
+    }
+
+    void generateTransition(TrivialAtom trivialAtom, unsigned source, unsigned target)
+    {
+        if (trivialAtom & hasNonCharacterMask) {
+            ASSERT(trivialAtom & newlineClassIDBuiltinMask);
+            for (unsigned i = 1; i < 128; ++i)
+                m_nfa.addTransition(source, target, i);
+        } else
+            m_nfa.addTransition(source, target, static_cast<char>(trivialAtom & characterMask));
+    }
+
+    BoundedSubGraph sinkTrivialAtom(TrivialAtom trivialAtom, unsigned start)
+    {
+        if (trivialAtom & static_cast<uint16_t>(TrivialAtomQuantifier::ZeroOrOne)) {
+            unsigned newEnd = m_nfa.createNode();
+            m_nfa.addRuleId(newEnd, m_patternId);
+            generateTransition(trivialAtom, start, newEnd);
+            m_nfa.addEpsilonTransition(start, newEnd);
+            return { start, newEnd };
+        }
+
+        if (trivialAtom & static_cast<uint16_t>(TrivialAtomQuantifier::ZeroToMany)) {
+            unsigned repeatStart = m_nfa.createNode();
+            m_nfa.addRuleId(repeatStart, m_patternId);
+            unsigned repeatEnd = m_nfa.createNode();
+            m_nfa.addRuleId(repeatEnd, m_patternId);
+
+            generateTransition(trivialAtom, repeatStart, repeatEnd);
+            m_nfa.addEpsilonTransition(repeatEnd, repeatStart);
+
+            m_nfa.addEpsilonTransition(start, repeatStart);
+
+            unsigned kleenEnd = m_nfa.createNode();
+            m_nfa.addRuleId(kleenEnd, m_patternId);
+            m_nfa.addEpsilonTransition(repeatEnd, kleenEnd);
+            m_nfa.addEpsilonTransition(start, kleenEnd);
+            return { start, kleenEnd };
+        }
+
+        if (trivialAtom & static_cast<uint16_t>(TrivialAtomQuantifier::OneToMany)) {
+            unsigned repeatStart = m_nfa.createNode();
+            m_nfa.addRuleId(repeatStart, m_patternId);
+            unsigned repeatEnd = m_nfa.createNode();
+            m_nfa.addRuleId(repeatEnd, m_patternId);
+
+            generateTransition(trivialAtom, repeatStart, repeatEnd);
+            m_nfa.addEpsilonTransition(repeatEnd, repeatStart);
+
+            m_nfa.addEpsilonTransition(start, repeatStart);
+
+            unsigned afterRepeat = m_nfa.createNode();
+            m_nfa.addRuleId(afterRepeat, m_patternId);
+            m_nfa.addEpsilonTransition(repeatEnd, afterRepeat);
+            return { start, afterRepeat };
+        }
+
+        unsigned newEnd = m_nfa.createNode();
+        m_nfa.addRuleId(newEnd, m_patternId);
+        generateTransition(trivialAtom, start, newEnd);
+        return { start, newEnd };
+    }
+
+    void sinkPendingAtomIfNecessary()
+    {
+        ASSERT(m_lastPrefixTreeEntry);
+
+        if (!m_hasValidAtom)
+            return;
+
+        ASSERT(m_pendingTrivialAtom);
+
+        auto nextEntry = m_lastPrefixTreeEntry->nextPattern.find(m_pendingTrivialAtom);
+        if (nextEntry != m_lastPrefixTreeEntry->nextPattern.end()) {
+            m_lastPrefixTreeEntry = nextEntry->value.get();
+            m_nfa.addRuleId(m_lastPrefixTreeEntry->nfaNode, m_patternId);
+        } else {
+            std::unique_ptr<PrefixTreeEntry> nextPrefixTreeEntry = std::make_unique<PrefixTreeEntry>();
+
+            BoundedSubGraph newSubGraph = sinkTrivialAtom(m_pendingTrivialAtom, m_lastPrefixTreeEntry->nfaNode);
+            nextPrefixTreeEntry->nfaNode = newSubGraph.end;
+
+            auto addResult = m_lastPrefixTreeEntry->nextPattern.set(m_pendingTrivialAtom, WTF::move(nextPrefixTreeEntry));
+            ASSERT(addResult.isNewEntry);
+
+            m_newPrefixSubtreeRoot = m_lastPrefixTreeEntry;
+            m_newPrefixStaringPoint = m_pendingTrivialAtom;
+
+            m_lastPrefixTreeEntry = addResult.iterator->value.get();
+        }
+        ASSERT(m_lastPrefixTreeEntry);
+
+        m_activeGroup.end = m_lastPrefixTreeEntry->nfaNode;
+        m_pendingTrivialAtom = 0;
+        m_hasValidAtom = false;
     }
 
     NFA& m_nfa;
@@ -208,35 +334,47 @@ private:
 
     BoundedSubGraph m_activeGroup;
 
+    PrefixTreeEntry* m_lastPrefixTreeEntry;
     bool m_hasValidAtom = false;
-    BoundedSubGraph m_lastAtom;
+    TrivialAtom m_pendingTrivialAtom = 0;
+
+    PrefixTreeEntry* m_newPrefixSubtreeRoot = nullptr;
+    TrivialAtom m_newPrefixStaringPoint = 0;
 
     String m_errorMessage;
 };
 
-void URLFilterParser::parse(const String& pattern, uint64_t patternId, NFA& nfa)
+URLFilterParser::URLFilterParser(NFA& nfa)
+    : m_nfa(nfa)
+{
+    m_prefixTreeRoot.nfaNode = nfa.root();
+}
+
+String URLFilterParser::addPattern(const String& pattern, uint64_t patternId)
 {
     if (!pattern.containsOnlyASCII())
-        m_errorMessage = ASCIILiteral("URLFilterParser only supports ASCII patterns.");
+        return ASCIILiteral("URLFilterParser only supports ASCII patterns.");
     ASSERT(!pattern.isEmpty());
 
     if (pattern.isEmpty())
-        return;
+        return ASCIILiteral("Empty pattern.");
 
-    unsigned oldSize = nfa.graphSize();
+    unsigned oldSize = m_nfa.graphSize();
 
-    GraphBuilder graphBuilder(nfa, patternId);
-    const char* error = JSC::Yarr::parse(graphBuilder, pattern, 0);
-    if (error)
-        m_errorMessage = String(error);
-    else
+    String error;
+
+    GraphBuilder graphBuilder(m_nfa, m_prefixTreeRoot, patternId);
+    error = String(JSC::Yarr::parse(graphBuilder, pattern, 0));
+    if (error.isNull())
         graphBuilder.finalize();
 
-    if (!error)
-        m_errorMessage = graphBuilder.errorMessage();
+    if (error.isNull())
+        error = graphBuilder.errorMessage();
 
-    if (hasError())
-        nfa.restoreToGraphSize(oldSize);
+    if (!error.isNull())
+        m_nfa.restoreToGraphSize(oldSize);
+
+    return error;
 }
 
 } // namespace ContentExtensions

@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -36,20 +37,22 @@ namespace ContentExtensions {
 
 class NFA;
 
+typedef uint16_t TrivialAtom;
+
+struct PrefixTreeEntry {
+    unsigned nfaNode;
+    HashMap<TrivialAtom, std::unique_ptr<PrefixTreeEntry>> nextPattern;
+};
+
+
 class URLFilterParser {
 public:
-    void parse(const String& pattern, uint64_t patternId, NFA&);
-
-    bool hasError() const { return !m_errorMessage.isNull(); }
-    String errorMessage() const { return m_errorMessage; }
+    explicit URLFilterParser(NFA&);
+    String addPattern(const String& pattern, uint64_t patternId);
 
 private:
-    struct BoundedSubGraph {
-        unsigned start;
-        unsigned end;
-    };
-
-    String m_errorMessage;
+    NFA& m_nfa;
+    PrefixTreeEntry m_prefixTreeRoot;
 };
 
 } // namespace ContentExtensions

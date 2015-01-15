@@ -30,7 +30,6 @@
 
 #include "ContentExtensionsDebugging.h"
 #include "NFANode.h"
-#include <limits>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -45,17 +44,21 @@ class NFA {
 public:
     NFA();
     unsigned root() const { return m_root; }
-    unsigned createNode(uint64_t ruleId = std::numeric_limits<uint64_t>::max());
+    unsigned createNode();
 
     void addTransition(unsigned from, unsigned to, char character);
     void addEpsilonTransition(unsigned from, unsigned to);
-    void setFinal(unsigned node);
+    void setFinal(unsigned node, uint64_t ruleId);
 
     unsigned graphSize() const;
     void restoreToGraphSize(unsigned);
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
+    void addRuleId(unsigned node, uint64_t ruleId);
+
     void debugPrintDot() const;
+#else
+    void addRuleId(unsigned, uint64_t) { }
 #endif
 
 private:
