@@ -1,5 +1,21 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r175332. <rdar://problem/19424161>
+
+    2014-10-29  Jer Noble  <jer.noble@apple.com>
+
+            [EME] MediaKeySession resources persist across page reloads
+            https://bugs.webkit.org/show_bug.cgi?id=138176
+
+            Reviewed by Eric Carlson.
+
+            MediaKeySession is an ActiveDOMObject, so when told to stop() by our execution context,
+            close() the session, releasing all our resources.
+
+            * Modules/encryptedmedia/MediaKeySession.h:
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r175331. <rdar://problem/19424160>
 
     2014-10-29  Jer Noble  <jer.noble@apple.com>

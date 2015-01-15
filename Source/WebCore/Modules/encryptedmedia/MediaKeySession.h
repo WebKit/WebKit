@@ -73,6 +73,7 @@ public:
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const override { return (m_keys && !isClosed()) || m_asyncEventQueue.hasPendingEvents(); }
+    virtual void stop() override { close(); }
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyadded);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitkeyerror);
