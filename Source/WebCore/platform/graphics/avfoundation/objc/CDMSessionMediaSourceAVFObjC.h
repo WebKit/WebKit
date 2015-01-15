@@ -53,6 +53,8 @@ public:
     virtual void layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *);
     virtual void rendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *);
 
+    void setStreamSession(AVStreamSession *);
+
     void addSourceBuffer(SourceBufferPrivateAVFObjC*);
     void removeSourceBuffer(SourceBufferPrivateAVFObjC*);
 

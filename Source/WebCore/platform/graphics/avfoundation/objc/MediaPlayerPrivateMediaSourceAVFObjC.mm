@@ -57,6 +57,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferAudioRenderer)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferDisplayLayer)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferRenderSynchronizer)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamDataParser)
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamSession);
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVVideoPerformanceMetrics)
 
 typedef struct opaqueCMNotificationCenter *CMNotificationCenterRef;
@@ -654,6 +655,13 @@ void MediaPlayerPrivateMediaSourceAVFObjC::sizeChanged()
 }
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
+AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
+{
+    if (!m_streamSession)
+        m_streamSession = adoptNS([[getAVStreamSessionClass() alloc] init]);
+    return m_streamSession.get();
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(CDMSession* session)
 {
     if (m_session) {
@@ -665,6 +673,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(CDMSession* session)
     m_session = toCDMSessionMediaSourceAVFObjC(session);
 
     if (m_session) {
+        m_session->setStreamSession(m_streamSession.get());
         for (auto& sourceBuffer : m_mediaSourcePrivate->sourceBuffers())
             m_session->addSourceBuffer(sourceBuffer.get());
     }

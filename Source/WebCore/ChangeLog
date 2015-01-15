@@ -1,5 +1,60 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r175000. <rdar://problem/19424156>
+
+    2014-10-21  Jer Noble  <jer.noble@apple.com>
+
+            [EME][Mac] Update to match new AVStreamSession API and requirements.
+            https://bugs.webkit.org/show_bug.cgi?id=137923
+
+            Reviewed by Eric Carlson.
+
+            The session identifier has moved from AVStreamDataParser to -[AVStreamSession contentProtectionSessionIdentifier]
+            and the property is no longer KVObservable. A new notification key has been added in place of KVO.
+
+            Additionally, the requirements for using AVStreamDataParser with AVStreamSession have changed. It is now
+            required that AVStreamDataParsers be added to an AVStreamSession before the 
+            -streamSession:didProvideContentKeyRequestInitializationData:forTrackID delegate method is called. A
+            -streamParserWillProvideContentKeyRequestInitializationData:forTrackID delegate has been added, and
+            an AVStreamSession must be created and the AVStreamDataParser added to it during the scope of that delegate
+            method.
+
+            To facilitate this, the MediaPlayerPrivateMediaSourceAVFObjC object will lazily create and own a AVStreamSession
+            object when requested. The SourceBufferPrivateAVFObjC object will listen for the -willProvide delegate call
+            and will add its AVStreamDataParser to that AVStreamSession when called.
+
+            The CDMSessionMediaSourceAVFObjC object is no longer responsible for creating the AVStreamSession, and because
+            the session identifier has moved from many AVStreamDataParsers to a single AVStreamSession, the
+            CDMSessionMediaSourceAVFObjCObserver class can become much simpler, as it only has to observe a single object.
+
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (-[CDMSessionMediaSourceAVFObjCObserver dealloc]): Deleted.
+            (-[CDMSessionMediaSourceAVFObjCObserver beginObserving:]): Deleted.
+            (-[CDMSessionMediaSourceAVFObjCObserver stopObserving:]): Deleted.
+            (-[CDMSessionMediaSourceAVFObjCObserver invalidate]): Deleted.
+            (-[CDMSessionMediaSourceAVFObjCObserver observeValueForKeyPath:ofObject:change:context:]): Deleted.
+            (-[CDMSessionMediaSourceAVFObjCObserver contentProtectionSessionIdentifierChanged:]): Added.
+            (WebCore::CDMSessionMediaSourceAVFObjC::~CDMSessionMediaSourceAVFObjC): Call setStreamSession(nullptr).
+            (WebCore::CDMSessionMediaSourceAVFObjC::releaseKeys): The sessionId is now a value in the dictionary, not the key.
+            (WebCore::CDMSessionMediaSourceAVFObjC::update): No longer create an AVStreamSession.
+            (WebCore::CDMSessionMediaSourceAVFObjC::setStreamSession): Add and remove observers as appropriate.
+            (WebCore::CDMSessionMediaSourceAVFObjC::addSourceBuffer): No longer add or remove parsers from AVStreamSessions.
+            (WebCore::CDMSessionMediaSourceAVFObjC::removeSourceBuffer): Ditto.
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::hasStreamSession): Simple getter.
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::streamSession): Lazy initializing getter.
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession): Call setStreamSession().
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            (-[WebAVStreamDataParserListener streamParserWillProvideContentKeyRequestInitializationData:forTrackID:]): Synchronously pass to SourceBufferPrivateAVFObjC.
+            (WebCore::SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID): Add the parser to an AVStreamSession.
+            (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID): Check the trackId.
+            * platform/mac/SoftLinking.h:
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r174823. <rdar://problem/19424155>
 
     2014-10-16  Jer Noble  <jer.noble@apple.com>
