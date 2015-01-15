@@ -176,6 +176,19 @@ static bool isEqual(Uint8Array* data, const char* literal)
     return !literal[length];
 }
 
+static NSInteger systemCodeForError(NSError *error)
+{
+    NSInteger code = [error code];
+    if (code != AVErrorUnknown)
+        return code;
+
+    NSError* underlyingError = [error valueForKey:NSUnderlyingErrorKey];
+    if (!underlyingError || ![underlyingError isKindOfClass:[NSError class]])
+        return code;
+    
+    return [underlyingError code];
+}
+
 bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode)
 {
     bool shouldGenerateKeyRequest = !m_certificate || isEqual(key, "renew");
@@ -243,7 +256,7 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
         if (error) {
             LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - error:%@", this, [error description]);
             errorCode = MediaPlayer::InvalidPlayerState;
-            systemCode = [error code];
+            systemCode = abs(systemCodeForError(error));
             return false;
         }
 
@@ -260,19 +273,6 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
     [protectedSourceBuffer->parser() processContentKeyResponseData:keyData.get() forTrackID:protectedSourceBuffer->protectedTrackID()];
 
     return true;
-}
-
-static NSInteger systemCodeForError(NSError *error)
-{
-    NSInteger code = [error code];
-    if (code != AVErrorUnknown)
-        return code;
-
-    NSError* underlyingError = [error valueForKey:NSUnderlyingErrorKey];
-    if (!underlyingError || ![underlyingError isKindOfClass:[NSError class]])
-        return code;
-
-    return [underlyingError code];
 }
 
 void CDMSessionMediaSourceAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer *, NSError *error)
