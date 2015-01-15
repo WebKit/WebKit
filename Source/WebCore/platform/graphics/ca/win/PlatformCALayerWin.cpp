@@ -28,7 +28,7 @@
 #include "PlatformCALayerWin.h"
 
 #include "AbstractCACFLayerTreeHost.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "PlatformCAAnimationWin.h"
 #include "PlatformCALayerWinInternal.h"

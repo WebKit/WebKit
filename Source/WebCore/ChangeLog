@@ -1,3 +1,33 @@
+2015-01-15  Antti Koivisto  <antti@apple.com>
+
+        Try to fix windows build.
+
+        * platform/graphics/Font.cpp: Copied from Source/WebCore/platform/graphics/SimpleFontData.cpp.
+        * platform/graphics/Font.h: Copied from Source/WebCore/platform/graphics/SimpleFontData.h.
+        * platform/graphics/FontCascadeFastPath.cpp: Copied from Source/WebCore/platform/graphics/FontFastPath.cpp.
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::displayCallback):
+        * platform/graphics/ios/FontIOS.mm: Copied from Source/WebCore/platform/graphics/ios/SimpleFontDataIOS.mm.
+        * platform/graphics/mac/FontCascadeComplexTextMac.cpp: Copied from Source/WebCore/platform/graphics/mac/FontComplexTextMac.cpp.
+        * platform/graphics/mac/FontCascadeMac.mm: Copied from Source/WebCore/platform/graphics/mac/FontMac.mm.
+        * platform/graphics/mac/FontCoreText.cpp: Copied from Source/WebCore/platform/graphics/mac/SimpleFontDataCoreText.cpp.
+        * platform/graphics/mac/FontMac.mm: Replaced with Source/WebCore/platform/graphics/mac/SimpleFontDataMac.mm.
+        * platform/win/DragImageWin.cpp:
+        (WebCore::dragLabelFont):
+        (WebCore::createDragImageForLink):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::calculatePositionAndSize):
+        (WebCore::PopupMenuWin::paint):
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::doDrawTextAtPoint):
+        (WebCore::WebCoreDrawDoubledTextAtPoint):
+        (WebCore::WebCoreTextFloatWidth):
+        (WebCore::WebCoreSetAlwaysUsesComplexTextCodePath):
+        (WebCore::WebCoreAlwaysUsesComplexTextCodePath):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::setFontFromControlSize):
+
 2015-01-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         http/tests/misc/acid3.html is flakey on Mavericks
