@@ -53,7 +53,6 @@ SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVStreamSessionContentProtectionSessio
 @end
 
 @interface AVStreamSession : NSObject
-- (BOOL)setStorageDirectoryAtURL:(NSURL *)storageURL appIdentifier:(NSData *)appIdentifier error:(NSError **)outError;
 - (void)addStreamDataParser:(AVStreamDataParser *)streamDataParser;
 - (void)removeStreamDataParser:(AVStreamDataParser *)streamDataParser;
 - (void)expire;
@@ -173,22 +172,6 @@ static bool isEqual(Uint8Array* data, const char* literal)
     return !literal[length];
 }
 
-static const String& sessionStorageDirectory()
-{
-    static NeverDestroyed<String> sessionDirectoryPath;
-
-    if (sessionDirectoryPath.get().isEmpty()) {
-        char cacheDirectoryPath[PATH_MAX];
-        if (!confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectoryPath, PATH_MAX))
-            return WTF::emptyString();
-
-        sessionDirectoryPath.get().append(String(cacheDirectoryPath, strlen(cacheDirectoryPath)));
-        sessionDirectoryPath.get().append(ASCIILiteral("AVStreamSession/"));
-    }
-
-    return sessionDirectoryPath.get();
-}
-
 bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode)
 {
     if (m_mode == KeyRelease)
@@ -225,12 +208,6 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
 
     if (shouldGenerateKeyRequest) {
         RetainPtr<NSData> certificateData = adoptNS([[NSData alloc] initWithBytes:m_certificate->data() length:m_certificate->length()]);
-        if (m_streamSession && [m_streamSession respondsToSelector:@selector(setStorageDirectoryAtURL:storageURL:appIdentifier:error:)]) {
-            [m_streamSession setStorageDirectoryAtURL:[NSURL fileURLWithPath:sessionStorageDirectory()] appIdentifier:certificateData.get() error:nil];
-            for (auto& sourceBuffer : m_sourceBuffers)
-                [m_streamSession addStreamDataParser:sourceBuffer->parser()];
-            LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - created stream session %p", this, m_streamSession.get());
-        }
 
         if (m_sourceBuffers.isEmpty())
             return true;
