@@ -2238,6 +2238,23 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
     return true;
 }
 
+String HTMLMediaElement::mediaPlayerMediaKeysStorageDirectory() const
+{
+    Settings* settings = document().settings();
+    if (!settings)
+        return emptyString();
+
+    String storageDirectory = settings->mediaKeysStorageDirectory();
+    if (storageDirectory.isEmpty())
+        return emptyString();
+
+    SecurityOrigin* origin = document().securityOrigin();
+    if (!origin)
+        return emptyString();
+
+    return pathByAppendingComponent(storageDirectory, origin->databaseIdentifier());
+}
+
 void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys)
 {
     if (m_mediaKeys == mediaKeys)

@@ -591,6 +591,9 @@ public:
         [NSNumber numberWithBool:NO], WebKitServiceControlsEnabledPreferenceKey,
 #endif
         [NSNumber numberWithBool:NO], WebKitEnableInheritURIQueryComponentPreferenceKey,
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+        @"~/Library/WebKit/MediaKeys", WebKitMediaKeysStorageDirectoryKey,
+#endif
         nil];
 
 #if !PLATFORM(IOS)
@@ -2541,6 +2544,16 @@ static bool needsScreenFontsEnabledQuirk()
 - (void)setShouldConvertPositionStyleOnCopy:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitShouldConvertPositionStyleOnCopyPreferenceKey];
+}
+
+- (NSString *)mediaKeysStorageDirectory
+{
+    return [[self _stringValueForKey:WebKitMediaKeysStorageDirectoryKey] stringByStandardizingPath];
+}
+
+- (void)setMediaKeysStorageDirectory:(NSString *)directory
+{
+    [self _setStringValue:directory forKey:WebKitMediaKeysStorageDirectoryKey];
 }
 
 @end
