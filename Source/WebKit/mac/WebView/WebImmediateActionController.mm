@@ -51,6 +51,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
 #import <objc/objc-class.h>
@@ -223,7 +224,8 @@ using namespace WebCore;
         customClientAnimationController = [[_webView UIDelegate] _webView:_webView immediateActionAnimationControllerForHitTestResult:webHitTestResult.get() withType:_type];
     }
 
-    if (customClientAnimationController == [NSNull null]) {
+    // FIXME: We should not permanently disable this for iTunes. rdar://problem/19461358
+    if (customClientAnimationController == [NSNull null] || applicationIsITunes()) {
         [self _cancelImmediateAction];
         return;
     }
