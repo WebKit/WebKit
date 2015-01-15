@@ -1,3 +1,16 @@
+2015-01-15  Chris Dumez  <cdumez@apple.com>
+
+        Intermittent WebCore build failures - CSSPropertyNames.gperf: No keywords in input file! calling gperf failed: 256 at WebCore/css/makeprop.pl line 901
+        https://bugs.webkit.org/show_bug.cgi?id=140521
+
+        Reviewed by Alexey Proskuryakov.
+
+        Close the CSSPropertyNames.gperf file before calling gperf on it
+        to make sure the content we wrote was flushed. This was causing
+        intermittent build failures.
+
+        * css/makeprop.pl:
+
 2015-01-15  Zalan Bujtas  <zalan@apple.com>
 
         LayerFragment should be able to intersect with ClipRect.
