@@ -126,7 +126,6 @@ public:
     bool shouldGenerateTimestamps() const { return m_shouldGenerateTimestamps; }
     void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
 
-    void invalidateBuffered();
 protected:
     // EventTarget interface
     virtual void refEventTarget() override { ref(); }
@@ -186,7 +185,6 @@ private:
 
     void removeTimerFired();
     void removeCodedFrames(const MediaTime& start, const MediaTime& end);
-    void recalculateBuffered() const;
 
     size_t extraMemoryCost() const;
     void reportExtraMemoryCost();
@@ -221,7 +219,7 @@ private:
     MediaTime m_groupEndTimestamp;
 
     HashMap<AtomicString, TrackBuffer> m_trackBufferMap;
-    mutable RefPtr<TimeRanges> m_buffered;
+    RefPtr<TimeRanges> m_buffered;
 
     enum AppendStateType { WaitingForSegment, ParsingInitSegment, ParsingMediaSegment };
     AppendStateType m_appendState;
@@ -241,7 +239,6 @@ private:
     bool m_active;
     bool m_bufferFull;
     bool m_shouldGenerateTimestamps;
-    mutable bool m_shouldRecalculateBuffered;
 };
 
 } // namespace WebCore

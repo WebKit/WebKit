@@ -89,7 +89,6 @@ struct SourceBuffer::TrackBuffer {
     MediaTime highestPresentationTimestamp;
     MediaTime lastEnqueuedPresentationTime;
     MediaTime lastEnqueuedDecodeEndTime;
-    RefPtr<TimeRanges> m_buffered;
     bool needRandomAccessFlag;
     bool enabled;
     bool needsReenqueueing;
@@ -103,7 +102,6 @@ struct SourceBuffer::TrackBuffer {
         , highestPresentationTimestamp(MediaTime::invalidTime())
         , lastEnqueuedPresentationTime(MediaTime::invalidTime())
         , lastEnqueuedDecodeEndTime(MediaTime::invalidTime())
-        , m_buffered(TimeRanges::create())
         , needRandomAccessFlag(true)
         , enabled(false)
         , needsReenqueueing(false)
@@ -143,7 +141,6 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_active(false)
     , m_bufferFull(false)
     , m_shouldGenerateTimestamps(false)
-    , m_shouldRecalculateBuffered(false)
 {
     ASSERT(m_source);
 
@@ -168,66 +165,13 @@ PassRefPtr<TimeRanges> SourceBuffer::buffered(ExceptionCode& ec) const
         return nullptr;
     }
 
-    // Note: Steps 2-4 are handled by recalculateBuffered
-    if (m_shouldRecalculateBuffered)
-        recalculateBuffered();
-
-    // 5. Return the intersection ranges.
+    // 2. Return a new static normalized TimeRanges object for the media segments buffered.
     return m_buffered->copy();
 }
 
 const RefPtr<TimeRanges>& SourceBuffer::buffered() const
 {
-    if (m_shouldRecalculateBuffered)
-        recalculateBuffered();
-
     return m_buffered;
-}
-
-void SourceBuffer::invalidateBuffered()
-{
-    m_shouldRecalculateBuffered = true;
-    // FIXME: for caching buffered in MediaSource should add here :
-    // m_source->invalidateBuffered();
-}
-
-void SourceBuffer::recalculateBuffered() const
-{
-    // Section 3.1 buffered attribute steps.
-    m_shouldRecalculateBuffered = false;
-
-    // 2. Let highest end time be the largest track buffer ranges end time across all the track buffers managed by this SourceBuffer object.
-    MediaTime highestEndTime = MediaTime::zeroTime();
-    for (auto& trackBuffer : m_trackBufferMap.values()) {
-        PlatformTimeRanges& trackRanges = trackBuffer.m_buffered->ranges();
-
-        if (trackRanges.length())
-            highestEndTime = std::max(highestEndTime, trackRanges.maximumBufferedTime());
-    }
-
-    // Return an empty range if all ranges are empty.
-    if (!highestEndTime) {
-        m_buffered = TimeRanges::create();
-        return;
-    }
-
-    // 3. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
-    PlatformTimeRanges intersectionRanges(MediaTime::zeroTime(), highestEndTime);
-
-    // 4. For each track buffer managed by this SourceBuffer, run the following steps:
-    bool ended = m_source->readyState() == MediaSource::endedKeyword();
-    for (auto& trackBuffer : m_trackBufferMap.values()) {
-        // 4.1 Let track ranges equal the track buffer ranges for the current track buffer.
-        PlatformTimeRanges trackRanges = trackBuffer.m_buffered->ranges();
-        // 4.2 If readyState is "ended", then set the end time on the last range in track ranges to highest end time.
-        if (ended)
-            trackRanges.add(trackRanges.maximumBufferedTime(), highestEndTime);
-        // 4.3 Let new intersection ranges equal the intersection between the intersection ranges and the track ranges.
-        // 4.4 Replace the ranges in intersection ranges with the new intersection ranges.
-        intersectionRanges.intersectWith(trackRanges);
-    }
-
-    m_buffered = TimeRanges::create(intersectionRanges);
 }
 
 double SourceBuffer::timestampOffset() const
@@ -668,8 +612,6 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
 
     // 7. Need more data: Return control to the calling algorithm.
 
-    invalidateBuffered();
-
     // NOTE: return to Section 3.5.5
     // 2.If the segment parser loop algorithm in the previous step was aborted, then abort this algorithm.
     if (result != AppendSucceeded)
@@ -703,7 +645,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(SourceBufferPrivate*, Appen
     if (extraMemoryCost() > this->maximumBufferSize())
         m_bufferFull = true;
 
-    LOG(Media, "SourceBuffer::sourceBufferPrivateAppendComplete(%p) - buffered = %s", this, toString(buffered()->ranges()).utf8().data());
+    LOG(Media, "SourceBuffer::sourceBufferPrivateAppendComplete(%p) - buffered = %s", this, toString(m_buffered->ranges()).utf8().data());
 }
 
 void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(SourceBufferPrivate*, int error)
@@ -826,7 +768,7 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
         }
 
         erasedRanges->invert();
-        trackBuffer.m_buffered->intersectWith(*erasedRanges);
+        m_buffered->intersectWith(*erasedRanges);
 
         // 3.4 If this object is in activeSourceBuffers, the current playback position is greater than or equal to start
         // and less than the remove end timestamp, and HTMLMediaElement.readyState is greater than HAVE_METADATA, then set
@@ -835,11 +777,10 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
             m_private->setReadyState(MediaPlayer::HaveMetadata);
     }
 
-    invalidateBuffered();
     // 4. If buffer full flag equals true and this object is ready to accept more bytes, then set the buffer full flag to false.
     // No-op
 
-    LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(buffered()->ranges()).utf8().data());
+    LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(m_buffered->ranges()).utf8().data());
 }
 
 void SourceBuffer::removeTimerFired()
@@ -919,9 +860,9 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
     // If there still isn't enough free space and there buffers in time ranges after the current range (ie. there is a gap after
     // the current buffered range), delete 30 seconds at a time from duration back to the current time range or 30 seconds after
     // currenTime whichever we hit first.
-    auto bufferedRegion = buffered()->ranges();
-    size_t currentTimeRange = bufferedRegion.find(currentTime);
-    if (currentTimeRange == notFound || currentTimeRange == bufferedRegion.length() - 1) {
+    auto buffered = m_buffered->ranges();
+    size_t currentTimeRange = buffered.find(currentTime);
+    if (currentTimeRange == notFound || currentTimeRange == buffered.length() - 1) {
         LOG(MediaSource, "SourceBuffer::evictCodedFrames(%p) - evicted %zu bytes but FAILED to free enough", this, initialBufferedSize - extraMemoryCost());
         return;
     }
@@ -933,13 +874,13 @@ void SourceBuffer::evictCodedFrames(size_t newDataSize)
     while (rangeStart > minimumRangeStart) {
 
         // Do not evict data from the time range that contains currentTime.
-        size_t startTimeRange = bufferedRegion.find(rangeStart);
+        size_t startTimeRange = buffered.find(rangeStart);
         if (startTimeRange == currentTimeRange) {
-            size_t endTimeRange = bufferedRegion.find(rangeEnd);
+            size_t endTimeRange = buffered.find(rangeEnd);
             if (endTimeRange == currentTimeRange)
                 break;
 
-            rangeEnd = bufferedRegion.start(endTimeRange);
+            rangeEnd = buffered.start(endTimeRange);
         }
 
         // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
@@ -1539,14 +1480,14 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
                 // NOTE: Searching from the end of the trackBuffer will be vastly more efficient if the search range is
                 // near the end of the buffered range. Use a linear-backwards search if the search range is within one
                 // frame duration of the end:
-                if (!trackBuffer.m_buffered)
+                if (!m_buffered)
                     break;
 
-                unsigned bufferedLength = trackBuffer.m_buffered->ranges().length();
+                unsigned bufferedLength = m_buffered->ranges().length();
                 if (!bufferedLength)
                     break;
 
-                MediaTime highestBufferedTime = trackBuffer.m_buffered->ranges().maximumBufferedTime();
+                MediaTime highestBufferedTime = m_buffered->ranges().maximumBufferedTime();
 
                 PresentationOrderSampleMap::iterator_range range;
                 if (highestBufferedTime - trackBuffer.highestPresentationTimestamp < trackBuffer.lastFrameDuration)
@@ -1585,7 +1526,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             }
 
             erasedRanges->invert();
-            trackBuffer.m_buffered->intersectWith(*erasedRanges);
+            m_buffered->intersectWith(*erasedRanges);
         }
 
         // 1.17 If spliced audio frame is set:
@@ -1624,7 +1565,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         if (m_shouldGenerateTimestamps)
             m_timestampOffset = frameEndTimestamp;
 
-        trackBuffer.m_buffered->add(presentationTimestamp.toDouble(), (presentationTimestamp + frameDuration + microsecond).toDouble());
+        m_buffered->add(presentationTimestamp.toDouble(), (presentationTimestamp + frameDuration + microsecond).toDouble());
         m_bufferedSinceLastMonitor += frameDuration.toDouble();
 
         break;
@@ -1885,7 +1826,7 @@ void SourceBuffer::monitorBufferingRate()
 std::unique_ptr<PlatformTimeRanges> SourceBuffer::bufferedAccountingForEndOfStream() const
 {
     // FIXME: Revisit this method once the spec bug <https://www.w3.org/Bugs/Public/show_bug.cgi?id=26436> is resolved.
-    std::unique_ptr<PlatformTimeRanges> virtualRanges = PlatformTimeRanges::create(buffered()->ranges());
+    std::unique_ptr<PlatformTimeRanges> virtualRanges = PlatformTimeRanges::create(m_buffered->ranges());
     if (m_source->isEnded()) {
         MediaTime start = virtualRanges->maximumBufferedTime();
         MediaTime end = m_source->duration();
@@ -1897,7 +1838,7 @@ std::unique_ptr<PlatformTimeRanges> SourceBuffer::bufferedAccountingForEndOfStre
 
 bool SourceBuffer::hasCurrentTime() const
 {
-    if (isRemoved() || !buffered()->length())
+    if (isRemoved() || !m_buffered->length())
         return false;
 
     MediaTime currentTime = m_source->currentTime();

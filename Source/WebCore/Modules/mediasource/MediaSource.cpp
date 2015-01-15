@@ -405,9 +405,6 @@ void MediaSource::setReadyState(const AtomicString& state)
     m_readyState = state;
 
     onReadyStateChange(oldState, state);
-
-    for (auto& sourceBuffer : *m_sourceBuffers)
-        sourceBuffer->invalidateBuffered();
 }
 
 static bool SourceBufferIsUpdating(RefPtr<SourceBuffer>& sourceBuffer)
