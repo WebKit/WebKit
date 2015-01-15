@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderTreeAsText.h"
 
+#include "ClipRect.h"
 #include "Document.h"
 #include "FlowThreadController.h"
 #include "Frame.h"

@@ -27,6 +27,7 @@
 #ifndef RenderMultiColumnSet_h
 #define RenderMultiColumnSet_h
 
+#include "LayerFragment.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderRegionSet.h"
 #include <wtf/Vector.h>

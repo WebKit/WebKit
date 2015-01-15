@@ -30,7 +30,7 @@
 #ifndef RenderFlowThread_h
 #define RenderFlowThread_h
 
-
+#include "LayerFragment.h"
 #include "RenderBlockFlow.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/ListHashSet.h>
@@ -39,8 +39,6 @@
 namespace WebCore {
 
 class CurrentRenderRegionMaintainer;
-struct LayerFragment;
-typedef Vector<LayerFragment, 1> LayerFragments;
 class RenderFlowThread;
 class RenderNamedFlowFragment;
 class RenderStyle;

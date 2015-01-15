@@ -6667,6 +6667,9 @@
     <ClCompile Include="..\rendering\FloatingObjects.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\ClipRect.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\RenderBlockFlow.cpp">
       <Filter>rendering</Filter>
     </ClCompile>

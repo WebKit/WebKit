@@ -44,7 +44,9 @@
 #ifndef RenderLayer_h
 #define RenderLayer_h
 
+#include "ClipRect.h"
 #include "GraphicsLayer.h"
+#include "LayerFragment.h"
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderPtr.h"
@@ -80,60 +82,6 @@ enum RepaintStatus {
     NeedsFullRepaint,
     NeedsFullRepaintForPositionedMovementLayout
 };
-
-class ClipRect {
-public:
-    ClipRect()
-        : m_affectedByRadius(false)
-    {
-    }
-    
-    ClipRect(const LayoutRect& rect)
-        : m_rect(rect)
-        , m_affectedByRadius(false)
-    {
-    }
-    
-    const LayoutRect& rect() const { return m_rect; }
-    void setRect(const LayoutRect& rect) { m_rect = rect; }
-
-    bool affectedByRadius() const { return m_affectedByRadius; }
-    void setAffectedByRadius(bool affectedByRadius) { m_affectedByRadius = affectedByRadius; }
-
-    bool operator==(const ClipRect& other) const { return rect() == other.rect() && affectedByRadius() == other.affectedByRadius(); }
-    bool operator!=(const ClipRect& other) const { return rect() != other.rect() || affectedByRadius() != other.affectedByRadius(); }
-    bool operator!=(const LayoutRect& otherRect) const { return rect() != otherRect; }
-
-    void intersect(const LayoutRect& other) { m_rect.intersect(other); }
-    void intersect(const ClipRect& other)
-    {
-        m_rect.intersect(other.rect());
-        if (other.affectedByRadius())
-            m_affectedByRadius = true;
-    }
-    void move(LayoutUnit x, LayoutUnit y) { m_rect.move(x, y); }
-    void move(const LayoutSize& size) { m_rect.move(size); }
-    void moveBy(const LayoutPoint& point) { m_rect.moveBy(point); }
-
-    bool isEmpty() const { return m_rect.isEmpty(); }
-    bool intersects(const LayoutRect& rect) const { return m_rect.intersects(rect); }
-    bool intersects(const HitTestLocation&) const;
-
-    void inflateX(LayoutUnit dx) { m_rect.inflateX(dx); }
-    void inflateY(LayoutUnit dy) { m_rect.inflateY(dy); }
-    void inflate(LayoutUnit d) { inflateX(d); inflateY(d); }
-
-private:
-    LayoutRect m_rect;
-    bool m_affectedByRadius;
-};
-
-inline ClipRect intersection(const ClipRect& a, const ClipRect& b)
-{
-    ClipRect c = a;
-    c.intersect(b);
-    return c;
-}
 
 class ClipRects {
     WTF_MAKE_FAST_ALLOCATED;
@@ -275,61 +223,6 @@ private:
 
     RefPtr<ClipRects> m_clipRects[NumCachedClipRectsTypes * 2];
 };
-
-struct LayerFragment {
-public:
-    LayerFragment()
-        : shouldPaintContent(false)
-        , hasBoundingBox(false)
-    { }
-
-    void setRects(const LayoutRect& bounds, const ClipRect& background, const ClipRect& foreground, const ClipRect& outline, const LayoutRect* bbox)
-    {
-        layerBounds = bounds;
-        backgroundRect = background;
-        foregroundRect = foreground;
-        outlineRect = outline;
-        if (bbox) {
-            boundingBox = *bbox;
-            hasBoundingBox = true;
-        }
-    }
-    
-    void moveBy(const LayoutPoint& offset)
-    {
-        layerBounds.moveBy(offset);
-        backgroundRect.moveBy(offset);
-        foregroundRect.moveBy(offset);
-        outlineRect.moveBy(offset);
-        paginationClip.moveBy(offset);
-        boundingBox.moveBy(offset);
-    }
-    
-    void intersect(const LayoutRect& rect)
-    {
-        backgroundRect.intersect(rect);
-        foregroundRect.intersect(rect);
-        outlineRect.intersect(rect);
-        boundingBox.intersect(rect);
-    }
-    
-    bool shouldPaintContent;
-    bool hasBoundingBox;
-    LayoutRect layerBounds;
-    ClipRect backgroundRect;
-    ClipRect foregroundRect;
-    ClipRect outlineRect;
-    LayoutRect boundingBox;
-    
-    // Unique to paginated fragments. The physical translation to apply to shift the layer when painting/hit-testing.
-    LayoutSize paginationOffset;
-    
-    // Also unique to paginated fragments. An additional clip that applies to the layer. It is in layer-local
-    // (physical) coordinates.
-    LayoutRect paginationClip;
-};
-
-typedef Vector<LayerFragment, 1> LayerFragments;
 
 class RenderLayer final : public ScrollableArea {
     WTF_MAKE_FAST_ALLOCATED;

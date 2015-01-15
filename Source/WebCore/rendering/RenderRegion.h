@@ -30,15 +30,13 @@
 #ifndef RenderRegion_h
 #define RenderRegion_h
 
+#include "LayerFragment.h"
 #include "RenderBlockFlow.h"
 #include "StyleInheritedData.h"
 #include "VisiblePosition.h"
 #include <memory>
 
 namespace WebCore {
-
-struct LayerFragment;
-typedef Vector<LayerFragment, 1> LayerFragments;
 
 class Element;
 class RenderBox;

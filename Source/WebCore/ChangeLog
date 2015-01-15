@@ -1,3 +1,66 @@
+2015-01-14  Zalan Bujtas  <zalan@apple.com>
+
+        Move LayoutFragment and ClipRect to their own files.
+        https://bugs.webkit.org/show_bug.cgi?id=140457
+
+        Reviewed by Simon Fraser.
+
+        Move these classes to their own files to to make RenderLayer.h less heavy.
+
+        No change in functionality.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/ClipRect.cpp: Added.
+        (WebCore::ClipRect::intersects):
+        * rendering/ClipRect.h: Added.
+        (WebCore::ClipRect::ClipRect):
+        (WebCore::ClipRect::rect):
+        (WebCore::ClipRect::setRect):
+        (WebCore::ClipRect::affectedByRadius):
+        (WebCore::ClipRect::setAffectedByRadius):
+        (WebCore::ClipRect::operator==):
+        (WebCore::ClipRect::operator!=):
+        (WebCore::ClipRect::intersect):
+        (WebCore::ClipRect::move):
+        (WebCore::ClipRect::moveBy):
+        (WebCore::ClipRect::isEmpty):
+        (WebCore::ClipRect::intersects):
+        (WebCore::ClipRect::inflateX):
+        (WebCore::ClipRect::inflateY):
+        (WebCore::ClipRect::inflate):
+        (WebCore::intersection):
+        * rendering/LayerFragment.h: Added.
+        (WebCore::LayerFragment::setRects):
+        (WebCore::LayerFragment::moveBy):
+        (WebCore::LayerFragment::intersect):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::ClipRect::intersects): Deleted.
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRect::ClipRect): Deleted.
+        (WebCore::ClipRect::rect): Deleted.
+        (WebCore::ClipRect::setRect): Deleted.
+        (WebCore::ClipRect::affectedByRadius): Deleted.
+        (WebCore::ClipRect::setAffectedByRadius): Deleted.
+        (WebCore::ClipRect::operator==): Deleted.
+        (WebCore::ClipRect::operator!=): Deleted.
+        (WebCore::ClipRect::intersect): Deleted.
+        (WebCore::ClipRect::move): Deleted.
+        (WebCore::ClipRect::moveBy): Deleted.
+        (WebCore::ClipRect::isEmpty): Deleted.
+        (WebCore::ClipRect::intersects): Deleted.
+        (WebCore::ClipRect::inflateX): Deleted.
+        (WebCore::ClipRect::inflateY): Deleted.
+        (WebCore::ClipRect::inflate): Deleted.
+        (WebCore::intersection): Deleted.
+        (WebCore::LayerFragment::LayerFragment): Deleted.
+        (WebCore::LayerFragment::setRects): Deleted.
+        (WebCore::LayerFragment::moveBy): Deleted.
+        (WebCore::LayerFragment::intersect): Deleted.
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderRegion.h:
+        * rendering/RenderTreeAsText.cpp:
+
 2015-01-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r178438.
