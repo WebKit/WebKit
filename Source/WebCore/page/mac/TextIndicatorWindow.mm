@@ -116,7 +116,7 @@ using namespace WebCore;
     RetainPtr<CGColorRef> gradientDarkColor = [NSColor colorWithDeviceRed:.929 green:.8 blue:0 alpha:1].CGColor;
     RetainPtr<CGColorRef> gradientLightColor = [NSColor colorWithDeviceRed:.949 green:.937 blue:0 alpha:1].CGColor;
 
-    for (auto& textRect : _textIndicator->textRectsInBoundingRectCoordinates()) {
+    for (const auto& textRect : _textIndicator->textRectsInBoundingRectCoordinates()) {
         FloatRect bounceLayerRect = textRect;
         bounceLayerRect.move(_margin.width, _margin.height);
         bounceLayerRect.inflateX(horizontalBorder);
@@ -176,7 +176,7 @@ using namespace WebCore;
         [textLayer setContents:(id)contentsImage.get()];
 
         FloatRect imageRect = textRect;
-        imageRect.move(_textIndicator->textBoundingRectInWindowCoordinates().location() - _textIndicator->selectionRectInWindowCoordinates().location());
+        imageRect.move(_textIndicator->textBoundingRectInRootViewCoordinates().location() - _textIndicator->selectionRectInRootViewCoordinates().location());
         [textLayer setContentsRect:CGRectMake(imageRect.x() / contentsImageLogicalSize.width(), imageRect.y() / contentsImageLogicalSize.height(), imageRect.width() / contentsImageLogicalSize.width(), imageRect.height() / contentsImageLogicalSize.height())];
         [textLayer setContentsGravity:kCAGravityCenter];
         [textLayer setContentsScale:_textIndicator->contentImageScaleFactor()];
@@ -369,14 +369,13 @@ void TextIndicatorWindow::setAnimationProgress(float progress)
     [m_textIndicatorView setAnimationProgress:progress];
 }
 
-void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, CGRect contentRect, bool fadeOut)
+void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicator, CGRect textBoundingRectInScreenCoordinates, bool fadeOut)
 {
     if (m_textIndicator == textIndicator)
         return;
 
     m_textIndicator = textIndicator;
 
-    // Get rid of the old window.
     closeWindow();
 
     if (!m_textIndicator)
@@ -386,11 +385,11 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
     CGFloat verticalMargin = dropShadowBlurRadius * 2 + verticalBorder;
     
     if (m_textIndicator->wantsBounce()) {
-        horizontalMargin = std::max(horizontalMargin, contentRect.size.width * (midBounceScale - 1) + horizontalMargin);
-        verticalMargin = std::max(verticalMargin, contentRect.size.height * (midBounceScale - 1) + verticalMargin);
+        horizontalMargin = std::max(horizontalMargin, textBoundingRectInScreenCoordinates.size.width * (midBounceScale - 1) + horizontalMargin);
+        verticalMargin = std::max(verticalMargin, textBoundingRectInScreenCoordinates.size.height * (midBounceScale - 1) + verticalMargin);
     }
 
-    contentRect = CGRectInset(contentRect, -horizontalMargin, -verticalMargin);
+    CGRect contentRect = CGRectInset(textBoundingRectInScreenCoordinates, -horizontalMargin, -verticalMargin);
     NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSIntegralRect(NSRectFromCGRect(contentRect)) styleMask:NSBorderlessWindowMask];
     m_textIndicatorWindow = adoptNS([[NSWindow alloc] initWithContentRect:windowContentRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
 
