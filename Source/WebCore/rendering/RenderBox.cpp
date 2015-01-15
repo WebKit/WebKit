@@ -1400,6 +1400,8 @@ static bool isCandidateForOpaquenessTest(const RenderBox& childBox)
             return false;
         if (childLayer->hasTransform() || childLayer->isTransparent() || childLayer->hasFilter())
             return false;
+        if (!childBox.scrolledContentOffset().isZero())
+            return false;
     }
     return true;
 }

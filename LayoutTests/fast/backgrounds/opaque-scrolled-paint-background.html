@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #indicator {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            height: 200px;
+            background-color: red;
+        }
+        
+        .container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .solid-background {
+            position: relative;
+            float: left;
+            width: 200px;
+            height: 200px;
+            background-color: green;
+            z-index: 0;
+        }
+        
+        #scrollable {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .opaque {
+            background-color: gray;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .non-opaque {
+            background-color: transparent;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script>
+        window.addEventListener('load', function() {
+            document.getElementById('scrollable').scrollTop = 200;
+        }, false);
+    </script>
+</head>
+<body>
+
+<div id="indicator"></div>
+
+<div class="container">
+    <div class="solid-background">
+        <div id="scrollable">
+            <div class="opaque">
+            </div>
+            <div class="non-opaque">
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
