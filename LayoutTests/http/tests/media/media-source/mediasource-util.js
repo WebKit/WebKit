@@ -28,18 +28,18 @@
         },
         {
             url: 'mp4/test.mp4',
-            type: 'video/mp4; codecs="mp4a.40.2, avc1.4D401E"',
+            type: 'video/mp4; codecs="mp4a.40.2,avc1.4d400d"',
             duration: 6.0424,
             init: { offset: 0, size: 1279 },
             media: [
-                {  offset: 1406, size: 23863, timecode: 0 },
-                {  offset: 25270, size: 25435, timecode: 0.797 },
-                {  offset: 50705, size: 24796, timecode: 1.594 },
-                {  offset: 75501, size: 25167, timecode: 2.390 },
-                {  offset: 100668, size: 22976, timecode: 3.187 },
-                {  offset: 123644, size: 25030, timecode: 3.984},
-                {  offset: 148674, size: 24929, timecode: 4.781 },
-                {  offset: 173603, size: 19271, timecode: 5.578 },
+                {  offset: 1407, size: 23863, timecode: 0 },
+                {  offset: 25270, size: 25435, timecode: 0.7968 },
+                {  offset: 50705, size: 24796, timecode: 1.5936 },
+                {  offset: 75501, size: 25167, timecode: 2.3904 },
+                {  offset: 100668, size: 22976, timecode: 3.1872 },
+                {  offset: 123644, size: 25030, timecode: 3.984 },
+                {  offset: 148674, size: 24929, timecode: 4.7808 },
+                {  offset: 173603, size: 19271, timecode: 5.5776 },
             ],
         }
     ];

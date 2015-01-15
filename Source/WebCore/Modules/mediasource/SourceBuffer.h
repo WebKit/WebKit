@@ -63,6 +63,9 @@ class SourceBuffer final : public RefCounted<SourceBuffer>, public ActiveDOMObje
 public:
     static PassRef<SourceBuffer> create(PassRef<SourceBufferPrivate>, MediaSource*);
 
+    static const AtomicString& segmentsKeyword();
+    static const AtomicString& sequenceKeyword();
+
     virtual ~SourceBuffer();
 
     // SourceBuffer.idl methods
@@ -79,7 +82,6 @@ public:
 
     void abortIfUpdating();
     void removedFromMediaSource();
-    const MediaTime& highestPresentationEndTimestamp() const { return m_highestPresentationEndTimestamp; }
     void seekToTime(const MediaTime&);
 
 #if ENABLE(VIDEO_TRACK)
@@ -111,6 +113,12 @@ public:
     struct TrackBuffer;
 
     Document& document() const;
+
+    const AtomicString& mode() const { return m_mode; }
+    void setMode(const AtomicString&, ExceptionCode&);
+
+    bool shouldGenerateTimestamps() const { return m_shouldGenerateTimestamps; }
+    void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
 
 protected:
     // EventTarget interface
@@ -181,6 +189,7 @@ private:
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;
     GenericEventQueue m_asyncEventQueue;
+    AtomicString m_mode;
 
     Vector<unsigned char> m_pendingAppendData;
     Timer<SourceBuffer> m_appendBufferTimer;
@@ -194,7 +203,8 @@ private:
     Vector<AtomicString> m_textCodecs;
 
     MediaTime m_timestampOffset;
-    MediaTime m_highestPresentationEndTimestamp;
+    MediaTime m_groupStartTimestamp;
+    MediaTime m_groupEndTimestamp;
 
     HashMap<AtomicString, TrackBuffer> m_trackBufferMap;
     RefPtr<TimeRanges> m_buffered;
@@ -216,6 +226,7 @@ private:
     bool m_receivedFirstInitializationSegment;
     bool m_active;
     bool m_bufferFull;
+    bool m_shouldGenerateTimestamps;
 };
 
 } // namespace WebCore
