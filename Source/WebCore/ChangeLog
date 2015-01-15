@@ -1,5 +1,115 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r174823. <rdar://problem/19424155>
+
+    2014-10-16  Jer Noble  <jer.noble@apple.com>
+
+            [Mac] Represent AVMediaSelectionOptions as AudioTracks
+            https://bugs.webkit.org/show_bug.cgi?id=137474
+
+            Reviewed by Brent Fulgham.
+
+            Test: http/tests/media/hls/hls-audio-tracks.html
+
+            Support selecting audio "tracks" in HLS streams by exposing AVMediaSelectionOptions
+            as entries in the video's AudioTrackList.
+
+            AVMediaSessionGroups and AVPlayerItems don't have KVO or notifications to track when options
+            are selected and deselected, so wrap AVMediaSessionGroup and AVMediaSessionOption in C++
+            wrappers. Each AVMediaSelectionGroup can have only one AVMediaSelectionOption selected at a
+            time, so the wrapper will take care of answering which AVMediaSelectionOption is currently
+            selected, as without KVO notifications, asking the AVMediaSelectionGroup directly is
+            inconsistent. Because setting the selected option multiple times in the same run-loop can
+            cause flakiness, coalesce calls to setSelectedOption() by setting a one-shot timer to do
+            the actual selection in the next run-loop.
+
+            * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.h: Added.
+            (WebCore::MediaSelectionOptionAVFObjC::avMediaSelectionOption):
+            (WebCore::MediaSelectionOptionAVFObjC::clearGroup): Clear backpointer to group from option.
+            (WebCore::MediaSelectionGroupAVFObjC::selectedOption): Simple accessor.
+            (WebCore::MediaSelectionGroupAVFObjC::options):  Simple accessor.
+            (WebCore::MediaSelectionGroupAVFObjC::avMediaSelectionGroup): Simple accessor.
+            * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm: Added.
+            (WebCore::MediaSelectionOptionAVFObjC::create): Simple factory method.
+            (WebCore::MediaSelectionOptionAVFObjC::MediaSelectionOptionAVFObjC): Simple constructor.
+            (WebCore::MediaSelectionOptionAVFObjC::setSelected): Pass through to MediaSelectionGroupAVFObjC.
+            (WebCore::MediaSelectionOptionAVFObjC::selected): Ditto.
+            (WebCore::MediaSelectionOptionAVFObjC::index): Return index of this object in the group's object.
+            (WebCore::MediaSelectionGroupAVFObjC::create):
+            (WebCore::MediaSelectionGroupAVFObjC::MediaSelectionGroupAVFObjC):
+            (WebCore::MediaSelectionGroupAVFObjC::~MediaSelectionGroupAVFObjC):
+            (WebCore::MediaSelectionGroupAVFObjC::updateOptions): Discover added or removed options.
+            (WebCore::MediaSelectionGroupAVFObjC::setSelectedOption): Set a one shot timer to coalesce multiple calls.
+            (WebCore::MediaSelectionGroupAVFObjC::selectionTimerFired): Set the selected AVSelectionOption.
+
+            Modify AVTrackPrivateAVFObjCImpl to support both AVPlayerItemTracks and these new
+            MediaSelectionOptionAVFObjC objects.
+
+            * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.h:
+            (WebCore::AVTrackPrivateAVFObjCImpl::mediaSelectionOption): Simple accessor.
+            * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+            (WebCore::AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl):  Simple constructor.
+            (WebCore::AVTrackPrivateAVFObjCImpl::~AVTrackPrivateAVFObjCImpl): Simple destructor.
+            (WebCore::AVTrackPrivateAVFObjCImpl::enabled): Use MediaSelectionOptionAVFObjC, if present.
+            (WebCore::AVTrackPrivateAVFObjCImpl::setEnabled): Ditto.
+            (WebCore::AVTrackPrivateAVFObjCImpl::audioKind): Ditto.
+            (WebCore::AVTrackPrivateAVFObjCImpl::videoKind): Ditto.
+            (WebCore::AVTrackPrivateAVFObjCImpl::index): Ditto.
+            (WebCore::AVTrackPrivateAVFObjCImpl::id): Ditto.
+            (WebCore::AVTrackPrivateAVFObjCImpl::label): Ditto.
+            (WebCore::AVTrackPrivateAVFObjCImpl::language): Ditto.
+            (WebCore::AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption): Ditto.
+            (WebCore::AVTrackPrivateAVFObjCImpl::trackID): Ditto.
+
+            Allow AudioTrackPrivateAVFObjC and VideoTrackPrivateAVFObjC to be created with
+            a MediaSelectionOptionAVFObjC.
+
+            * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.h:
+            (WebCore::AudioTrackPrivateAVFObjC::create): Takes a MediaSelectionOptionAVFObjC.
+            * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm:
+            (WebCore::AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC): Simple constructor.
+            (WebCore::AudioTrackPrivateAVFObjC::setMediaSelectionOption): Create a new AVTrackPrivateAVFObjCImpl.
+            (WebCore::AudioTrackPrivateAVFObjC::mediaSelectionOption): Simple accessor.
+            * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp:
+            (WebCore::VideoTrackPrivateAVFObjC::VideoTrackPrivateAVFObjC): Simple constructor.
+            (WebCore::VideoTrackPrivateAVFObjC::setMediaSelectonOption): Create a new AVTrackPrivateAVFObjCImpl.
+            (WebCore::VideoTrackPrivateAVFObjC::mediaSelectionOption): Simple accessor.
+            * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.h:
+
+            Because IDs are not necessarily unique across AVPlayerItemTracks and AVMediaSelectionOptions,
+            use the index of the track or option instead of it's self-declared ID for ordering for the
+            trackIndex.
+
+            * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm:
+            (WebCore::AudioTrackPrivateAVFObjC::resetPropertiesFromTrack):
+            * platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm:
+            (WebCore::VideoTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack):
+
+            Rather than making allowing the AVPlayerItem to automatically select the "best"
+            AVMediaSelectionOption, select the automatic options when creating the AVPlayerItem
+            and thereafter allow the users manual selections "stick".
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::ensureAVPlayer):
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::ensureAVPlayerItem):
+
+            Determine whether any MediaSelectionOptionsAVFObjC have been added or removed and send trackChange events accordingly.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::determineChangedTracksFromNewTracksAndOldItems): Added.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::updateAudioTracks): Search for updated selection options.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoTracks): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForAudibleMedia): Return selection group, if available.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForVisualMedia): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksDidChange): Filter out AVPlayerItemTracks without
+                AVAssetTracks, as these will be represented by MediaSelectionGroupObjCs instead.
+            
+            Add new files to project.
+            * WebCore.xcodeproj/project.pbxproj:
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r174402. <rdar://problem/19478358>
 
     2014-10-07  Jer Noble  <jer.noble@apple.com>
