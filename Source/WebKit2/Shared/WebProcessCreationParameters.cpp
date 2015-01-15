@@ -73,6 +73,8 @@ void WebProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) const
     encoder << containerTemporaryDirectoryExtensionHandle;
     encoder << hstsDatabasePathExtensionHandle;
 #endif
+    encoder << mediaKeyStorageDirectory;
+    encoder << mediaKeyStorageDirectoryExtensionHandle;
     encoder << shouldUseTestingNetworkSession;
     encoder << urlSchemesRegistererdAsEmptyDocument;
     encoder << urlSchemesRegisteredAsSecure;
@@ -175,6 +177,10 @@ bool WebProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, WebProc
     if (!decoder.decode(parameters.hstsDatabasePathExtensionHandle))
         return false;
 #endif
+    if (!decoder.decode(parameters.mediaKeyStorageDirectory))
+        return false;
+    if (!decoder.decode(parameters.mediaKeyStorageDirectoryExtensionHandle))
+        return false;
     if (!decoder.decode(parameters.shouldUseTestingNetworkSession))
         return false;
     if (!decoder.decode(parameters.urlSchemesRegistererdAsEmptyDocument))

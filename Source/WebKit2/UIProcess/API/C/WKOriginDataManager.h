@@ -41,6 +41,7 @@ enum {
     kWKPluginDataOriginData = 1 << 5,
     kWKResourceCacheOriginData = 1 << 6,
     kWKWebSQLDatabaseOriginData = 1 << 7,
+    kWKMediaKeyStorageOriginData = 1 << 8,
 
     kWKAllOriginData = 0xFFFFFFFF
 };

@@ -75,3 +75,13 @@ void WKContextConfigurationSetWebSQLDatabaseDirectory(WKContextConfigurationRef 
 {
     toImpl(configuration)->setWebSQLDatabaseDirectory(toImpl(webSQLDatabaseDirectory)->string());
 }
+
+WKStringRef WKContextConfigurationCopyMediaKeysStorageDirectory(WKContextConfigurationRef configuration)
+{
+    return toCopiedAPI(toImpl(configuration)->mediaKeysStorageDirectory());
+}
+
+void WKContextConfigurationSetMediaKeysStorageDirectory(WKContextConfigurationRef configuration, WKStringRef mediaKeysStorageDirectory)
+{
+    toImpl(configuration)->setMediaKeysStorageDirectory(toImpl(mediaKeysStorageDirectory)->string());
+}
