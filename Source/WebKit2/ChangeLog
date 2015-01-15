@@ -1,3 +1,9 @@
+2015-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.6.5 release.
+
+        * gtk/NEWS: dd release notes for 2.6.5.
+
 2015-01-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Do not schedule a redraw for the redirected XComposite window when not in accelerated compositing mode

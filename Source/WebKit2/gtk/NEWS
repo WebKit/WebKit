@@ -1,4 +1,27 @@
 =================
+WebKitGTK+  2.6.5
+=================
+
+What's new in WebKitGTK+ 2.6.5?
+
+  - Fix issue that caused some text to be inserted when trying to delete
+    a word from the Twitter message box.
+  - GObject DOM bindings API now correctly returns NULL intead of empty strings
+    to be able to differentiate between not present and present but empty.
+  - Do not resize the accelerating compositing window to the web size until
+    accelerated compositing mode is activated.
+  - Use latin1 instead of UTF-8 for HTTP header values.
+  - Add SCHEDULING query support to HTTP media source element.
+  - Add application/x-mpegurl and video/flv to the list of supported mimetypes.
+  - Update NavigationItemProbes inspector icon.
+  - Fix the build with recent GStreamer.
+  - Fix the build on FreeBSD.
+  - Fix build on OS X.
+  - Fix the build on powerpc 32 bits.
+  - Fixed several crashes in WebCore and JavaScriptCore.
+  - Translation updates: Assamese.
+
+=================
 WebKitGTK+  2.6.4
 =================
 
