@@ -241,7 +241,9 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
 void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    const_cast<RenderGrid*>(this)->placeItemsOnGrid();
+    bool wasPopulated = gridWasPopulated();
+    if (!wasPopulated)
+        const_cast<RenderGrid*>(this)->placeItemsOnGrid();
 
     GridSizingData sizingData(gridColumnCount(), gridRowCount());
     LayoutUnit availableLogicalSpace = 0;
@@ -258,7 +260,8 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         // FIXME: This should add in the scrollbarWidth (e.g. see RenderFlexibleBox).
     }
 
-    const_cast<RenderGrid*>(this)->clearGrid();
+    if (!wasPopulated)
+        const_cast<RenderGrid*>(this)->clearGrid();
 }
 
 void RenderGrid::computePreferredLogicalWidths()
