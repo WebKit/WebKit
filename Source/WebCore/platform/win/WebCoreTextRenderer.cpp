@@ -25,7 +25,7 @@
 #include "config.h"
 #include "WebCoreTextRenderer.h"
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "FontDescription.h"
 #include "GraphicsContext.h"
 #include "StringTruncator.h"
@@ -45,7 +45,7 @@ static bool isOneLeftToRightRun(const TextRun& run)
     return true;
 }
 
-static void doDrawTextAtPoint(GraphicsContext& context, const String& text, const IntPoint& point, const Font& font, const Color& color, int underlinedIndex)
+static void doDrawTextAtPoint(GraphicsContext& context, const String& text, const IntPoint& point, const FontCascade& font, const Color& color, int underlinedIndex)
 {
     TextRun run(text);
 
@@ -76,7 +76,7 @@ static void doDrawTextAtPoint(GraphicsContext& context, const String& text, cons
     }
 }
 
-void WebCoreDrawDoubledTextAtPoint(GraphicsContext& context, const String& text, const IntPoint& point, const Font& font, const Color& topColor, const Color& bottomColor, int underlinedIndex)
+void WebCoreDrawDoubledTextAtPoint(GraphicsContext& context, const String& text, const IntPoint& point, const FontCascade& font, const Color& topColor, const Color& bottomColor, int underlinedIndex)
 {
     context.save();
 
@@ -89,7 +89,7 @@ void WebCoreDrawDoubledTextAtPoint(GraphicsContext& context, const String& text,
     context.restore();
 }
 
-float WebCoreTextFloatWidth(const String& text, const Font& font)
+float WebCoreTextFloatWidth(const String& text, const FontCascade& font)
 {
     return StringTruncator::width(text, font, StringTruncator::EnableRoundingHacks);
 }
@@ -106,12 +106,12 @@ bool WebCoreShouldUseFontSmoothing()
 
 void WebCoreSetAlwaysUsesComplexTextCodePath(bool complex)
 {
-    Font::setCodePath(complex ? Font::Complex : Font::Auto);
+    Font::setCodePath(complex ? FontCascade::Complex : FontCascade::Auto);
 }
 
 bool WebCoreAlwaysUsesComplexTextCodePath()
 {
-    return Font::codePath() == Font::Complex;
+    return Font::codePath() == FontCascade::Complex;
 }
 
 } // namespace WebCore

@@ -1,5 +1,27 @@
 2015-01-15  Antti Koivisto  <antti@apple.com>
 
+        Try to fix windows build.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::displayCallback):
+        * platform/win/DragImageWin.cpp:
+        (WebCore::dragLabelFont):
+        (WebCore::createDragImageForLink):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::calculatePositionAndSize):
+        (WebCore::PopupMenuWin::paint):
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::doDrawTextAtPoint):
+        (WebCore::WebCoreDrawDoubledTextAtPoint):
+        (WebCore::WebCoreTextFloatWidth):
+        (WebCore::WebCoreSetAlwaysUsesComplexTextCodePath):
+        (WebCore::WebCoreAlwaysUsesComplexTextCodePath):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::setFontFromControlSize):
+
+2015-01-15  Antti Koivisto  <antti@apple.com>
+
         Unreviewed, rolling out r178518.
 
         Didn't mean to commit some of this
