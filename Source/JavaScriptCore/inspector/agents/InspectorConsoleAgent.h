@@ -71,9 +71,7 @@ public:
     bool enabled() const { return m_enabled; }
     void reset();
 
-    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, PassRefPtr<ScriptArguments>, unsigned long requestIdentifier = 0);
-    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
-    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
+    void addMessageToConsole(std::unique_ptr<ConsoleMessage>);
 
     Vector<unsigned> consoleMessageArgumentCounts() const;
 

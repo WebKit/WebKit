@@ -28,6 +28,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "ConsoleMessage.h"
 #include "InjectedScriptManager.h"
 #include "InspectorConsoleAgent.h"
 #include "JSGlobalObject.h"
@@ -69,7 +70,7 @@ InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString& e
 
 void JSGlobalObjectDebuggerAgent::breakpointActionLog(JSC::ExecState* exec, const String& message)
 {
-    m_consoleAgent->addMessageToConsole(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(exec, ScriptCallStack::maxCallStackSizeToCapture), 0);
+    m_consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(exec, ScriptCallStack::maxCallStackSizeToCapture), 0));
 }
 
 } // namespace Inspector

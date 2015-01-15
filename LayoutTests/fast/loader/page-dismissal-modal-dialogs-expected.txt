@@ -1,16 +1,16 @@
 frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
-CONSOLE MESSAGE: Use of window.alert is not allowed during beforeunload event dispatch.
-CONSOLE MESSAGE: Use of window.confirm is not allowed during beforeunload event dispatch.
-CONSOLE MESSAGE: Use of window.prompt is not allowed during beforeunload event dispatch.
-CONSOLE MESSAGE: Use of window.alert is not allowed during beforeunload event dispatch.
-CONSOLE MESSAGE: Use of window.confirm is not allowed during beforeunload event dispatch.
-CONSOLE MESSAGE: Use of window.prompt is not allowed during beforeunload event dispatch.
-CONSOLE MESSAGE: Use of window.alert is not allowed during beforeunload event dispatch.
-CONSOLE MESSAGE: Use of window.confirm is not allowed during beforeunload event dispatch.
-CONSOLE MESSAGE: Use of window.prompt is not allowed during beforeunload event dispatch.
-CONSOLE MESSAGE: Use of window.alert is not allowed during beforeunload event dispatch.
-CONSOLE MESSAGE: Use of window.confirm is not allowed during beforeunload event dispatch.
-CONSOLE MESSAGE: Use of window.prompt is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 8: Use of window.alert is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 9: Use of window.confirm is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 10: Use of window.prompt is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 8: Use of window.alert is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 9: Use of window.confirm is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 10: Use of window.prompt is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 8: Use of window.alert is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 9: Use of window.confirm is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 10: Use of window.prompt is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 8: Use of window.alert is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 9: Use of window.confirm is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: line 10: Use of window.prompt is not allowed during beforeunload event dispatch.
 ALERT: mainFrame pagehide PASS
 CONFIRM: mainFrame pagehide PASS
 PROMPT: mainFrame pagehide PASS, default text: PASS

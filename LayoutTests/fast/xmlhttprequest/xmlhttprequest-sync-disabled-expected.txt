@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Synchronous XMLHttpRequests are disabled for this page.
+CONSOLE MESSAGE: line 1: Synchronous XMLHttpRequests are disabled for this page.
 This tests that synchronous XMLHttpRequests fail when they are disabled for documents.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

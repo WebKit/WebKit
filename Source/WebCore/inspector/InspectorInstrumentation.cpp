@@ -69,6 +69,7 @@
 #include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
 #include "XMLHttpRequest.h"
+#include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptArguments.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/agents/InspectorDebuggerAgent.h>
@@ -879,37 +880,18 @@ static bool isConsoleAssertMessage(MessageSource source, MessageType type)
     return source == MessageSource::ConsoleAPI && type == MessageType::Assert;
 }
 
-// FIXME: Drop this once we no longer generate stacks outside of Inspector.
-void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, RefPtr<ScriptCallStack>&& callStack, unsigned long requestIdentifier)
+void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& instrumentingAgents, std::unique_ptr<ConsoleMessage> message)
 {
-    if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
-        consoleAgent->addMessageToConsole(source, type, level, message, callStack, requestIdentifier);
-    // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent()) {
-        if (isConsoleAssertMessage(source, type))
-            debuggerAgent->handleConsoleAssert(message);
-    }
-}
+    MessageSource source = message->source();
+    MessageType type = message->type();
+    String messageText = message->message();
 
-void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, JSC::ExecState* state, RefPtr<ScriptArguments>&& arguments, unsigned long requestIdentifier)
-{
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
-        consoleAgent->addMessageToConsole(source, type, level, message, state, arguments, requestIdentifier);
+        consoleAgent->addMessageToConsole(WTF::move(message));
     // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
     if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent()) {
         if (isConsoleAssertMessage(source, type))
-            debuggerAgent->handleConsoleAssert(message);
-    }
-}
-
-void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
-{
-    if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
-        consoleAgent->addMessageToConsole(source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier);
-    // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents.inspectorDebuggerAgent()) {
-        if (isConsoleAssertMessage(source, type))
-            debuggerAgent->handleConsoleAssert(message);
+            debuggerAgent->handleConsoleAssert(messageText);
     }
 }
 

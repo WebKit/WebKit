@@ -57,6 +57,7 @@ class ScriptObject;
 }
 
 namespace Inspector {
+class ConsoleMessage;
 class ScriptArguments;
 class ScriptCallStack;
 }
@@ -209,14 +210,10 @@ public:
     static InspectorInstrumentationCookie willWriteHTML(Document*, unsigned startLine);
     static void didWriteHTML(const InspectorInstrumentationCookie&, unsigned endLine);
 
-    // FIXME: Remove once we no longer generate stacks outside of Inspector.
-    static void addMessageToConsole(Page&, MessageSource, MessageType, MessageLevel, const String& message, RefPtr<Inspector::ScriptCallStack>&&, unsigned long requestIdentifier = 0);
-    static void addMessageToConsole(Page&, MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&, unsigned long requestIdentifier = 0);
-    static void addMessageToConsole(Page&, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(Page&, std::unique_ptr<Inspector::ConsoleMessage>);
 
     // FIXME: Convert to ScriptArguments to match non-worker context.
-    static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, RefPtr<Inspector::ScriptCallStack>&&, unsigned long requestIdentifier = 0);
-    static void addMessageToConsole(WorkerGlobalScope*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
+    static void addMessageToConsole(WorkerGlobalScope*, std::unique_ptr<Inspector::ConsoleMessage>);
 
     static void consoleCount(Page&, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     static void startConsoleTiming(Frame&, const String& title);
@@ -406,11 +403,7 @@ private:
     static InspectorInstrumentationCookie willWriteHTMLImpl(InstrumentingAgents&, unsigned startLine, Frame*);
     static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned endLine);
 
-    static void addMessageToConsoleImpl(InstrumentingAgents&, MessageSource, MessageType, MessageLevel, const String& message, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&, unsigned long requestIdentifier);
-    static void addMessageToConsoleImpl(InstrumentingAgents&, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState*, unsigned long requestIdentifier);
-
-    // FIXME: Remove once we no longer generate stacks outside of Inspector.
-    static void addMessageToConsoleImpl(InstrumentingAgents&, MessageSource, MessageType, MessageLevel, const String& message, RefPtr<Inspector::ScriptCallStack>&&, unsigned long requestIdentifier);
+    static void addMessageToConsoleImpl(InstrumentingAgents&, std::unique_ptr<Inspector::ConsoleMessage>);
 
     static void consoleCountImpl(InstrumentingAgents&, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     static void startConsoleTimingImpl(InstrumentingAgents&, Frame&, const String& title);

@@ -1,11 +1,11 @@
-CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="auto"
-CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="  100"
-CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="100   "
-CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="100   px"
-CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="100px;"
-CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="100px !important"
-CONSOLE MESSAGE: Error: Invalid value for <rect> attribute height="{ 100px }"
-CONSOLE MESSAGE: Error: Invalid negative value for <rect> attribute height="-100px"
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="auto"
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="  100"
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="100   "
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="100   px"
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="100px;"
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="100px !important"
+CONSOLE MESSAGE: line 17: Error: Invalid value for <rect> attribute height="{ 100px }"
+CONSOLE MESSAGE: line 17: Error: Invalid negative value for <rect> attribute height="-100px"
 Test that 'with' presentation attribute is parsed with CSS presentation rules.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

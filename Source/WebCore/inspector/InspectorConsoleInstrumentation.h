@@ -38,90 +38,25 @@
 
 namespace WebCore {
 
-inline void InspectorInstrumentation::addMessageToConsole(Page& page, MessageSource source, MessageType type, MessageLevel level, const String& message, RefPtr<Inspector::ScriptCallStack>&& callStack, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(Page& page, std::unique_ptr<Inspector::ConsoleMessage> message)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        addMessageToConsoleImpl(*instrumentingAgents, source, type, level, message, WTF::move(callStack), requestIdentifier);
+        addMessageToConsoleImpl(*instrumentingAgents, WTF::move(message));
 #else
     UNUSED_PARAM(page);
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(level);
     UNUSED_PARAM(message);
-    UNUSED_PARAM(callStack);
-    UNUSED_PARAM(requestIdentifier);
 #endif
 }
 
-inline void InspectorInstrumentation::addMessageToConsole(Page& page, MessageSource source, MessageType type, MessageLevel level, const String& message, JSC::ExecState* state, RefPtr<Inspector::ScriptArguments>&& arguments, unsigned long requestIdentifier)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        addMessageToConsoleImpl(*instrumentingAgents, source, type, level, message, state, WTF::move(arguments), requestIdentifier);
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(message);
-    UNUSED_PARAM(state);
-    UNUSED_PARAM(arguments);
-    UNUSED_PARAM(requestIdentifier);
-#endif
-}
-
-inline void InspectorInstrumentation::addMessageToConsole(Page& page, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        addMessageToConsoleImpl(*instrumentingAgents, source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier);
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(message);
-    UNUSED_PARAM(scriptID);
-    UNUSED_PARAM(lineNumber);
-    UNUSED_PARAM(state);
-    UNUSED_PARAM(requestIdentifier);
-    UNUSED_PARAM(columnNumber);
-#endif
-}
-
-inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, MessageSource source, MessageType type, MessageLevel level, const String& message, RefPtr<Inspector::ScriptCallStack>&& callStack, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, std::unique_ptr<Inspector::ConsoleMessage> message)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(workerGlobalScope))
-        addMessageToConsoleImpl(*instrumentingAgents, source, type, level, message, WTF::move(callStack), requestIdentifier);
+        addMessageToConsoleImpl(*instrumentingAgents, WTF::move(message));
 #else
     UNUSED_PARAM(workerGlobalScope);
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(level);
     UNUSED_PARAM(message);
-    UNUSED_PARAM(callStack);
-    UNUSED_PARAM(requestIdentifier);
-#endif
-}
-
-inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptID, unsigned lineNumber, unsigned columnNumber, JSC::ExecState* state, unsigned long requestIdentifier)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(workerGlobalScope))
-        addMessageToConsoleImpl(*instrumentingAgents, source, type, level, message, scriptID, lineNumber, columnNumber, state, requestIdentifier);
-#else
-    UNUSED_PARAM(workerGlobalScope);
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(message);
-    UNUSED_PARAM(scriptID);
-    UNUSED_PARAM(lineNumber);
-    UNUSED_PARAM(columnNumber);
-    UNUSED_PARAM(state);
-    UNUSED_PARAM(requestIdentifier);
 #endif
 }
 

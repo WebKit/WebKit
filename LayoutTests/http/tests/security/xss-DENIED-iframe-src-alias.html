@@ -5,6 +5,7 @@ window.onload = function()
 {
     if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function alertMsg(msg) { 
@@ -76,24 +77,32 @@ window.onload = function()
         }
     ];
 
+    var testIndex = 0;
+
     function makeOnloadHandler (idx, tgtFrame) {
         return function() {
             tgtFrame.onload = null;
             try {
                 aliasTests[idx](tgtFrame);
             } catch (e) {}
+            if (testIndex < aliasTests.length)
+                nextTest();
+            else if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
 
-    for (var i = 0; i < aliasTests.length; i++) {
-        aFrame = document.createElement('iframe');
+    function nextTest() {
+        var aFrame = document.createElement('iframe');
         aFrame.src = 'http://localhost:8080/security/resources/innocent-victim.html';
-        aFrame.onload = makeOnloadHandler(i, aFrame);
+        aFrame.onload = makeOnloadHandler(testIndex++, aFrame);
         aFrame.width = 700;
         aFrame.height = 40;
         document.body.appendChild(aFrame);
         document.body.appendChild(document.createElement('br'));
     }
+    
+    nextTest();
 }
 
 </script>

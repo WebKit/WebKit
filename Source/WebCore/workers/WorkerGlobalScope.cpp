@@ -53,6 +53,7 @@
 #include "WorkerThreadableLoader.h"
 #include "XMLHttpRequestException.h"
 #include <bindings/ScriptValue.h>
+#include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptCallStack.h>
 #include <wtf/RefPtr.h>
 
@@ -241,13 +242,18 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
     addMessageToWorkerConsole(source, level, message, sourceURL, lineNumber, columnNumber, WTF::move(callStack), state, requestIdentifier);
 }
 
-void WorkerGlobalScope::addMessageToWorkerConsole(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
+void WorkerGlobalScope::addMessageToWorkerConsole(MessageSource source, MessageLevel level, const String& messageText, const String& suggestedURL, unsigned suggestedLineNumber, unsigned suggestedColumnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     ASSERT(isContextThread());
+
+    std::unique_ptr<Inspector::ConsoleMessage> message;
+
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(this, source, MessageType::Log, level, message, WTF::move(callStack), requestIdentifier);
+        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, WTF::move(callStack), requestIdentifier);
     else
-        InspectorInstrumentation::addMessageToConsole(this, source, MessageType::Log, level, message, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
+        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, state, requestIdentifier);
+
+    InspectorInstrumentation::addMessageToConsole(this, WTF::move(message));
 }
 
 bool WorkerGlobalScope::isContextThread() const

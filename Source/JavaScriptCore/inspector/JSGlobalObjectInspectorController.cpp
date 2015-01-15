@@ -29,6 +29,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "Completion.h"
+#include "ConsoleMessage.h"
 #include "ErrorHandlingScope.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
@@ -196,7 +197,7 @@ void JSGlobalObjectInspectorController::reportAPIException(ExecState* exec, JSVa
             ConsoleClient::printConsoleMessage(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, String(), 0, 0);
     }
 
-    m_consoleAgent->addMessageToConsole(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, callStack);
+    m_consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, callStack));
 }
 
 ConsoleClient* JSGlobalObjectInspectorController::consoleClient() const

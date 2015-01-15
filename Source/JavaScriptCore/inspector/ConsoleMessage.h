@@ -64,6 +64,9 @@ public:
     const String& message() const { return m_message; }
     MessageType type() const { return m_type; }
     JSC::ExecState* scriptState() const;
+    const String& url() const { return m_url; }
+    unsigned line() const { return m_line; }
+    unsigned column() const { return m_column; }
 
     void incrementCount() { ++m_repeatCount; }
 

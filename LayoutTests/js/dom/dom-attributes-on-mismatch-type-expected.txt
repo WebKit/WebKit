@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: Deprecated attempt to access property 'href' on a non-HTMLAnchorElement object.
-CONSOLE MESSAGE: Deprecated attempt to access property 'href' on a non-HTMLAnchorElement object.
+CONSOLE MESSAGE: line 526: Deprecated attempt to access property 'href' on a non-HTMLAnchorElement object.
+CONSOLE MESSAGE: line 526: Deprecated attempt to access property 'href' on a non-HTMLAnchorElement object.
 Make sure DOM attributes handle different types of |this| properly
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

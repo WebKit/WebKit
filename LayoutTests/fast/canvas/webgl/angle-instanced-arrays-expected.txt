@@ -1,17 +1,17 @@
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: getVertexAttrib: invalid parameter name
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: vertexAttribDivisor: index out of range
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawArraysInstanced: primcount < 0
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawArraysInstanced: first or count < 0
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: drawArraysInstanced: attempt to access out of bounds arrays
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawArraysInstanced: invalid draw mode
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawArraysInstanced: invalid draw mode
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawArraysInstanced: invalid draw mode
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawElementsInstanced: primcount < 0
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: drawElementsInstanced: count or offset < 0
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: drawElementsInstanced: attempt to access out of bounds arrays
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawElementsInstanced: invalid draw mode
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawElementsInstanced: invalid draw mode
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: drawElementsInstanced: invalid draw mode
+CONSOLE MESSAGE: line 125: WebGL: INVALID_ENUM: getVertexAttrib: invalid parameter name
+CONSOLE MESSAGE: line 146: WebGL: INVALID_VALUE: vertexAttribDivisor: index out of range
+CONSOLE MESSAGE: line 213: WebGL: INVALID_VALUE: drawArraysInstanced: primcount < 0
+CONSOLE MESSAGE: line 216: WebGL: INVALID_VALUE: drawArraysInstanced: first or count < 0
+CONSOLE MESSAGE: line 220: WebGL: INVALID_OPERATION: drawArraysInstanced: attempt to access out of bounds arrays
+CONSOLE MESSAGE: line 233: WebGL: INVALID_ENUM: drawArraysInstanced: invalid draw mode
+CONSOLE MESSAGE: line 235: WebGL: INVALID_ENUM: drawArraysInstanced: invalid draw mode
+CONSOLE MESSAGE: line 237: WebGL: INVALID_ENUM: drawArraysInstanced: invalid draw mode
+CONSOLE MESSAGE: line 251: WebGL: INVALID_VALUE: drawElementsInstanced: primcount < 0
+CONSOLE MESSAGE: line 254: WebGL: INVALID_VALUE: drawElementsInstanced: count or offset < 0
+CONSOLE MESSAGE: line 258: WebGL: INVALID_OPERATION: drawElementsInstanced: attempt to access out of bounds arrays
+CONSOLE MESSAGE: line 274: WebGL: INVALID_ENUM: drawElementsInstanced: invalid draw mode
+CONSOLE MESSAGE: line 276: WebGL: INVALID_ENUM: drawElementsInstanced: invalid draw mode
+CONSOLE MESSAGE: line 278: WebGL: INVALID_ENUM: drawElementsInstanced: invalid draw mode
 This test verifies the functionality of the ANGLE_instanced_arrays extension, if it is available.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,19 +1,19 @@
-CONSOLE MESSAGE: WebGL: INVALID_ENUM: texImage2D: invalid texture type
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_ENUM: texImage2D: invalid texture type
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
+CONSOLE MESSAGE: line 192: WebGL: INVALID_OPERATION: texImage2D: type HALF_FLOAT_OES but ArrayBufferView is not NULL
 This test verifies the functionality of OES_texture_half_float with null/non-null ArrayBufferView
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

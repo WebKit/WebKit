@@ -41,6 +41,7 @@
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include <bindings/ScriptValue.h>
+#include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptArguments.h>
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
@@ -111,15 +112,23 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     addMessage(source, level, message, String(), 0, 0, WTF::move(callStack), 0);
 }
 
-void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
+void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& suggestedURL, unsigned suggestedLineNumber, unsigned suggestedColumnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
 {
     if (muteCount && source != MessageSource::ConsoleAPI)
         return;
 
+    std::unique_ptr<Inspector::ConsoleMessage> message;
+
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(m_page, source, MessageType::Log, level, message, WTF::move(callStack), requestIdentifier);
+        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, WTF::move(callStack), requestIdentifier);
     else
-        InspectorInstrumentation::addMessageToConsole(m_page, source, MessageType::Log, level, message, url, lineNumber, columnNumber, state, requestIdentifier);
+        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, state, requestIdentifier);
+
+    String url = message->url();
+    unsigned lineNumber = message->line();
+    unsigned columnNumber = message->column();
+
+    InspectorInstrumentation::addMessageToConsole(m_page, WTF::move(message));
 
     if (source == MessageSource::CSS)
         return;
@@ -127,31 +136,35 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     if (m_page.usesEphemeralSession())
         return;
 
-    m_page.chrome().client().addMessageToConsole(source, level, message, lineNumber, columnNumber, url);
+    m_page.chrome().client().addMessageToConsole(source, level, messageText, lineNumber, columnNumber, url);
 
     if (!m_page.settings().logsPageMessagesToSystemConsoleEnabled() && !shouldPrintExceptions())
         return;
 
-    ConsoleClient::printConsoleMessage(MessageSource::ConsoleAPI, MessageType::Log, level, message, url, lineNumber, columnNumber);
+    ConsoleClient::printConsoleMessage(MessageSource::ConsoleAPI, MessageType::Log, level, messageText, url, lineNumber, columnNumber);
 }
 
 
 void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, RefPtr<Inspector::ScriptArguments>&& arguments)
 {
-    String message;
-    bool gotMessage = arguments->getFirstArgumentAsString(message);
-    InspectorInstrumentation::addMessageToConsole(m_page, MessageSource::ConsoleAPI, type, level, message, exec, WTF::move(arguments));
+    String messageText;
+    bool gotMessage = arguments->getFirstArgumentAsString(messageText);
+
+    auto message = std::make_unique<Inspector::ConsoleMessage>(MessageSource::ConsoleAPI, type, level, messageText, WTF::move(arguments), exec);
+
+    String url = message->url();
+    unsigned lineNumber = message->line();
+    unsigned columnNumber = message->column();
+
+    InspectorInstrumentation::addMessageToConsole(m_page, WTF::move(message));
 
     if (m_page.usesEphemeralSession())
         return;
 
-    if (gotMessage) {
-        size_t stackSize = type == MessageType::Trace ? ScriptCallStack::maxCallStackSizeToCapture : 1;
-        RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, stackSize));
-        const ScriptCallFrame& lastCaller = callStack->at(0);
-        m_page.chrome().client().addMessageToConsole(MessageSource::ConsoleAPI, type, level, message, lastCaller.lineNumber(), lastCaller.columnNumber(), lastCaller.sourceURL());
-    }
+    if (gotMessage)
+        m_page.chrome().client().addMessageToConsole(MessageSource::ConsoleAPI, type, level, messageText, lineNumber, columnNumber, url);
 
+    // FIXME: This doesn't work, we already moved out of arguments variable (regressed in <http://trac.webkit.org/changeset/178060>).
     if (m_page.settings().logsPageMessagesToSystemConsoleEnabled() || PageConsoleClient::shouldPrintExceptions())
         ConsoleClient::printConsoleMessageWithArguments(MessageSource::ConsoleAPI, type, level, exec, WTF::move(arguments));
 }

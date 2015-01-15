@@ -28,6 +28,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "ConsoleMessage.h"
 #include "InspectorConsoleAgent.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
@@ -83,7 +84,7 @@ void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, Mess
 
     String message;
     arguments->getFirstArgumentAsString(message);
-    m_consoleAgent->addMessageToConsole(MessageSource::ConsoleAPI, type, level, message, exec, WTF::move(arguments));
+    m_consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTF::move(arguments), exec));
 }
 
 void JSGlobalObjectConsoleClient::count(ExecState* exec, RefPtr<ScriptArguments>&& arguments)
@@ -121,7 +122,7 @@ void JSGlobalObjectConsoleClient::timeStamp(ExecState*, RefPtr<ScriptArguments>&
 void JSGlobalObjectConsoleClient::warnUnimplemented(const String& method)
 {
     String message = method + " is currently ignored in JavaScript context inspection.";
-    m_consoleAgent->addMessageToConsole(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Warning, message, nullptr, nullptr);
+    m_consoleAgent->addMessageToConsole(std::make_unique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Log, MessageLevel::Warning, message, nullptr, nullptr));
 }
 
 } // namespace Inspector
