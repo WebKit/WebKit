@@ -1,5 +1,12 @@
 2015-01-14  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed build fix after r178459 and r178462.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add some
+        missing exports needed by the test infrastructure.
+
+2015-01-14  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed build fix for DebugSuffix target.
 
         * WebKit.vcxproj/WebKit/WebKit.vcxproj: Correct build flags for DebugSuffix
