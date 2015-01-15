@@ -8655,8 +8655,9 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     if (!_private->textIndicatorWindow)
         _private->textIndicatorWindow = std::make_unique<TextIndicatorWindow>(self);
 
-    NSRect contentRect = [self.window convertRectToScreen:textIndicator->textBoundingRectInWindowCoordinates()];
-    _private->textIndicatorWindow->setTextIndicator(textIndicator, NSRectToCGRect(contentRect), fadeOut);
+    NSRect textBoundingRectInWindowCoordinates = [self convertRect:[self _convertRectFromRootView:textIndicator->textBoundingRectInRootViewCoordinates()] toView:nil];
+    NSRect textBoundingRectInScreenCoordinates = [self.window convertRectToScreen:textBoundingRectInWindowCoordinates];
+    _private->textIndicatorWindow->setTextIndicator(textIndicator, NSRectToCGRect(textBoundingRectInScreenCoordinates), fadeOut);
 }
 
 - (void)_clearTextIndicator
