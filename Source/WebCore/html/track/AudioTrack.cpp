@@ -147,7 +147,10 @@ size_t AudioTrack::inbandTrackIndex()
 void AudioTrack::enabledChanged(AudioTrackPrivate* trackPrivate, bool enabled)
 {
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
-    setEnabled(enabled);
+    m_enabled = enabled;
+
+    if (m_client)
+        m_client->audioTrackEnabledChanged(this);
 }
 
 void AudioTrack::idChanged(TrackPrivateBase* trackPrivate, const AtomicString& id)

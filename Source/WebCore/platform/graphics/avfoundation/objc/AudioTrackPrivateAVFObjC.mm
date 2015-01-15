@@ -43,6 +43,7 @@ void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
     // AVPlayerItemTrack
     AudioTrackPrivateAVF::setEnabled(m_impl->enabled());
 
+    setTrackIndex(m_impl->trackID());
     setKind(m_impl->audioKind());
     setId(m_impl->id());
     setLabel(m_impl->label());
