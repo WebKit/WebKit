@@ -116,9 +116,6 @@ public:
     // Custom handling of value setting only.
     static void applyValueBaselineShift(StyleResolver&, CSSValue&);
     static void applyValueDirection(StyleResolver&, CSSValue&);
-#if !ENABLE(IOS_TEXT_AUTOSIZING)
-    static void applyValueLineHeight(StyleResolver&, CSSValue&);
-#endif
     static void applyValueVerticalAlign(StyleResolver&, CSSValue&);
 #if ENABLE(DASHBOARD_SUPPORT)
     static void applyValueWebkitDashboardRegion(StyleResolver&, CSSValue&);
@@ -134,7 +131,6 @@ public:
 
 private:
     static void resetEffectiveZoom(StyleResolver&);
-    static bool convertLineHeight(StyleResolver&, const CSSValue&, Length&, float multiplier = 1.f);
 
     static Length mmLength(double mm);
     static Length inchLength(double inch);
@@ -606,32 +602,6 @@ DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Repeat)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Slice)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(WebkitMaskBoxImage, Width)
 
-inline bool StyleBuilderCustom::convertLineHeight(StyleResolver& styleResolver, const CSSValue& value, Length& length, float multiplier)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueNormal) {
-        length = RenderStyle::initialLineHeight();
-        return true;
-    }
-    if (primitiveValue.isLength()) {
-        length = primitiveValue.computeLength<Length>(StyleBuilderConverter::csstoLengthConversionDataWithTextZoomFactor(styleResolver));
-        if (multiplier != 1.f)
-            length = Length(length.value() * multiplier, Fixed);
-        return true;
-    }
-    if (primitiveValue.isPercentage()) {
-        // FIXME: percentage should not be restricted to an integer here.
-        length = Length((styleResolver.style()->computedFontSize() * primitiveValue.getIntValue()) / 100, Fixed);
-        return true;
-    }
-    if (primitiveValue.isNumber()) {
-        // FIXME: number and percentage values should produce the same type of Length (ie. Fixed or Percent).
-        length = Length(primitiveValue.getDoubleValue() * multiplier * 100.0, Percent);
-        return true;
-    }
-    return false;
-}
-
 #if ENABLE(IOS_TEXT_AUTOSIZING)
 
 inline void StyleBuilderCustom::applyInheritLineHeight(StyleResolver& styleResolver)
@@ -648,24 +618,13 @@ inline void StyleBuilderCustom::applyInitialLineHeight(StyleResolver& styleResol
 
 inline void StyleBuilderCustom::applyValueLineHeight(StyleResolver& styleResolver, CSSValue& value)
 {
-    Length lineHeight;
     float multiplier = styleResolver.style()->textSizeAdjust().isPercentage() ? styleResolver.style()->textSizeAdjust().multiplier() : 1.f;
-    if (!convertLineHeight(styleResolver, value, lineHeight, multiplier))
+    Optional<Length> lineHeight = StyleBuilderConverter::convertLineHeight(styleResolver, value, multiplier);
+    if (!lineHeight)
         return;
 
-    styleResolver.style()->setLineHeight(lineHeight);
-    styleResolver.style()->setSpecifiedLineHeight(lineHeight);
-}
-
-#else
-
-inline void StyleBuilderCustom::applyValueLineHeight(StyleResolver& styleResolver, CSSValue& value)
-{
-    Length lineHeight;
-    if (!convertLineHeight(styleResolver, value, lineHeight))
-        return;
-
-    styleResolver.style()->setLineHeight(lineHeight);
+    styleResolver.style()->setLineHeight(lineHeight.value());
+    styleResolver.style()->setSpecifiedLineHeight(lineHeight.value());
 }
 
 #endif

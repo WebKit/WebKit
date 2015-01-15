@@ -123,6 +123,7 @@ public:
     static Color convertSVGColor(StyleResolver&, CSSValue&);
     static EGlyphOrientation convertGlyphOrientation(StyleResolver&, CSSValue&);
     static EGlyphOrientation convertGlyphOrientationOrAuto(StyleResolver&, CSSValue&);
+    static Optional<Length> convertLineHeight(StyleResolver&, CSSValue&, float multiplier = 1.f);
 
 private:
     friend class StyleBuilderCustom;
@@ -1209,6 +1210,29 @@ inline EGlyphOrientation StyleBuilderConverter::convertGlyphOrientationOrAuto(St
     if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
         return GO_AUTO;
     return convertGlyphOrientation(styleResolver, value);
+}
+
+inline Optional<Length> StyleBuilderConverter::convertLineHeight(StyleResolver& styleResolver, CSSValue& value, float multiplier)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (primitiveValue.getValueID() == CSSValueNormal)
+        return RenderStyle::initialLineHeight();
+
+    if (primitiveValue.isLength()) {
+        Length length = primitiveValue.computeLength<Length>(StyleBuilderConverter::csstoLengthConversionDataWithTextZoomFactor(styleResolver));
+        if (multiplier != 1.f)
+            length = Length(length.value() * multiplier, Fixed);
+        return length;
+    }
+    if (primitiveValue.isPercentage()) {
+        // FIXME: percentage should not be restricted to an integer here.
+        return Length((styleResolver.style()->computedFontSize() * primitiveValue.getIntValue()) / 100, Fixed);
+    }
+    if (primitiveValue.isNumber()) {
+        // FIXME: number and percentage values should produce the same type of Length (ie. Fixed or Percent).
+        return Length(primitiveValue.getDoubleValue() * multiplier * 100.0, Percent);
+    }
+    return Nullopt;
 }
 
 } // namespace WebCore

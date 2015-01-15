@@ -121,7 +121,7 @@ zoom [Custom=All]
 #if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING
 line-height [Inherited, Custom=All]
 #else
-line-height [Inherited, Getter=specifiedLineHeight, Custom=Value]
+line-height [Inherited, Getter=specifiedLineHeight, ConditionalConverter=LineHeight]
 #endif
 
 // Keep this in between the highest priority props and the lower ones.

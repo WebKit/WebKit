@@ -1,3 +1,20 @@
+2015-01-15  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of custom StyleBuilder code for 'line-height' CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=140462
+
+        Reviewed by Antti Koivisto.
+
+        Get rid of custom StyleBuilder code for 'line-height' CSS property by
+        using a conditional converter.
+
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertLineHeight):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueLineHeight):
+        (WebCore::StyleBuilderCustom::convertLineHeight): Deleted.
+
 2015-01-15  Antti Koivisto  <antti@apple.com>
 
         Rename Font to FontCascade
