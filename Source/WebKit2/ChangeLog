@@ -1,3 +1,12 @@
+2015-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r178464.
+
+        * UIProcess/API/gtk/WebKitUserContent.cpp:
+        (_WebKitUserScript::_WebKitUserScript):
+        (webkitUserScriptGetUserScript):
+        * UIProcess/API/gtk/WebKitUserContentPrivate.h:
+
 2015-01-14  Sam Weinig  <sam@webkit.org>
 
         Convert WKUserScript to be an API::Object bridged object

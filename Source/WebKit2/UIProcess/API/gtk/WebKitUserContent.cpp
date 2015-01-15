@@ -175,16 +175,16 @@ const UserStyleSheet& webkitUserStyleSheetGetUserStyleSheet(WebKitUserStyleSheet
 
 struct _WebKitUserScript {
     _WebKitUserScript(const gchar* source, WebKitUserContentInjectedFrames injectedFrames, WebKitUserScriptInjectionTime injectionTime, const gchar* const* whitelist, const gchar* const* blacklist)
-        : userScript(std::make_unique<UserScript>(
+        : userScript(adoptRef(new API::UserScript(UserScript {
             String::fromUTF8(source), URL { },
             toStringVector(whitelist), toStringVector(blacklist),
             toUserScriptInjectionTime(injectionTime),
-            toUserContentInjectedFrames(injectedFrames)))
+            toUserContentInjectedFrames(injectedFrames) })))
         , referenceCount(1)
     {
     }
 
-    std::unique_ptr<UserScript> userScript;
+    RefPtr<API::UserScript> userScript;
     int referenceCount;
 };
 
@@ -254,7 +254,7 @@ WebKitUserScript* webkit_user_script_new(const gchar* source, WebKitUserContentI
     return userScript;
 }
 
-const UserScript& webkitUserScriptGetUserScript(WebKitUserScript* userScript)
+API::UserScript& webkitUserScriptGetUserScript(WebKitUserScript* userScript)
 {
     return *userScript->userScript;
 }
