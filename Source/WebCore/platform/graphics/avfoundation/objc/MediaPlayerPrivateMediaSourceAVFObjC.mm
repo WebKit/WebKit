@@ -116,6 +116,13 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimebaseNotification_EffectiveRateChanged, CFSt
 - (void)removeTimeObserver:(id)observer;
 @end
 
+#pragma mark - 
+#pragma mark AVStreamSession
+
+@interface AVStreamSession : NSObject
+- (instancetype)initWithStorageDirectoryAtURL:(NSURL *)storageDirectory;
+@end
+
 namespace WebCore {
 
 #pragma mark -
@@ -655,10 +662,29 @@ void MediaPlayerPrivateMediaSourceAVFObjC::sizeChanged()
 }
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
+static const String& sessionStorageDirectory()
+{
+    static NeverDestroyed<String> sessionDirectoryPath;
+
+    if (sessionDirectoryPath.get().isEmpty()) {
+        char cacheDirectoryPath[PATH_MAX];
+        if (!confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectoryPath, PATH_MAX))
+            return WTF::emptyString();
+
+        sessionDirectoryPath.get().append(String(cacheDirectoryPath, strlen(cacheDirectoryPath)));
+        sessionDirectoryPath.get().append(ASCIILiteral("AVStreamSession/"));
+    }
+    
+    return sessionDirectoryPath.get();
+}
+
 AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
 {
+    if (!getAVStreamSessionClass() || ![getAVStreamSessionClass() instancesRespondToSelector:@selector(initWithStorageDirectoryAtURL:)])
+        return nil;
+
     if (!m_streamSession)
-        m_streamSession = adoptNS([[getAVStreamSessionClass() alloc] init]);
+        m_streamSession = adoptNS([[getAVStreamSessionClass() alloc] initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:sessionStorageDirectory()]]);
     return m_streamSession.get();
 }
 
