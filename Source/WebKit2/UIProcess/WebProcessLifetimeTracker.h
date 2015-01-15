@@ -39,7 +39,6 @@ public:
     ~WebProcessLifetimeTracker();
 
     void addObserver(WebProcessLifetimeObserver&);
-    void removeObserver(WebProcessLifetimeObserver&);
 
     void connectionWillOpen();
     void connectionWillClose();
