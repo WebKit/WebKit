@@ -1092,7 +1092,9 @@ GdkEvent* webkitWebViewBaseTakeContextMenuEvent(WebKitWebViewBase* webkitWebView
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
 void redirectedWindowDamagedCallback(void* data)
 {
-    gtk_widget_queue_draw(GTK_WIDGET(data));
+    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(WEBKIT_WEB_VIEW_BASE(data)->priv->pageProxy->drawingArea());
+    if (drawingArea && drawingArea->isInAcceleratedCompositingMode())
+        gtk_widget_queue_draw(GTK_WIDGET(data));
 }
 #endif
 
