@@ -1,5 +1,70 @@
 2015-01-15  Anders Carlsson  <andersca@apple.com>
 
+        Give WebsiteDataStore a StorageManager
+        https://bugs.webkit.org/show_bug.cgi?id=140505
+
+        Reviewed by Andreas Kling.
+
+        The process pool storage manager is still around but is only used for clearing data. It will be removed
+        completely in an upcoming commit.
+
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        Set up the local storage directory.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (websiteDataDirectoryURL):
+        Export this so it can be called from APIWebsiteDataStoreCocoa.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createNewPage):
+        Call WebsiteDataStore::cloneSessionData instead.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::websiteDataStore):
+        Add getter.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::websiteDataStoreConfiguration):
+        Update this to take a WebProcessPoolConfiguration object and assign the local storage directory.
+
+        (WebKit::WebProcessPool::WebProcessPool):
+        Pass the configuration to websiteDataStoreConfiguration.
+
+        (WebKit::WebProcessPool::processWillOpenConnection):
+        (WebKit::WebProcessPool::processWillCloseConnection):
+        Remove storage manager calls.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::WebsiteDataStore):
+        When creating a persistent data store, also create a storage manager.
+
+        (WebKit::WebsiteDataStore::cloneSessionData):
+        Clone the session storage namespace.
+
+        (WebKit::WebsiteDataStore::webPageWasAdded):
+        Create a session storage namespace for this page.
+
+        (WebKit::WebsiteDataStore::webPageWasRemoved):
+        Destroy the session storage namespace.
+
+        (WebKit::WebsiteDataStore::webProcessWillOpenConnection):
+        Tell the storage manager about the new process connection.
+
+        (WebKit::WebsiteDataStore::webPageWillOpenConnection):
+        Set the allowed connection.
+
+        (WebKit::WebsiteDataStore::webPageDidCloseConnection):
+        Clear the allowed connection.
+
+        (WebKit::WebsiteDataStore::webProcessDidCloseConnection):
+        Tell the storage manager that the process connection has been closed.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        Add new members.
+
+2015-01-15  Anders Carlsson  <andersca@apple.com>
+
         More work on the lifetime observer
         https://bugs.webkit.org/show_bug.cgi?id=140500
 

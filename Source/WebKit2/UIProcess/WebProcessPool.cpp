@@ -150,11 +150,12 @@ const Vector<WebProcessPool*>& WebProcessPool::allProcessPools()
     return processPools();
 }
 
-static WebsiteDataStore::Configuration websiteDataStoreConfiguration()
+static WebsiteDataStore::Configuration websiteDataStoreConfiguration(const WebProcessPoolConfiguration& processPoolConfiguration)
 {
     WebsiteDataStore::Configuration configuration;
 
-    // FIXME: Fill in the configuration.
+    configuration.localStorageDirectory = processPoolConfiguration.localStorageDirectory;
+
     return configuration;
 }
 
@@ -175,7 +176,7 @@ WebProcessPool::WebProcessPool(WebProcessPoolConfiguration configuration)
     , m_cacheModel(CacheModelDocumentViewer)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
-    , m_websiteDataStore(WebsiteDataStore::create(websiteDataStoreConfiguration()))
+    , m_websiteDataStore(WebsiteDataStore::create(websiteDataStoreConfiguration(configuration)))
     , m_storageManager(StorageManager::create(configuration.localStorageDirectory))
 #if USE(SOUP)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
@@ -777,12 +778,10 @@ bool WebProcessPool::shouldTerminate(WebProcessProxy* process)
 
 void WebProcessPool::processWillOpenConnection(WebProcessProxy* process)
 {
-    m_storageManager->processWillOpenConnection(process);
 }
 
 void WebProcessPool::processWillCloseConnection(WebProcessProxy* process)
 {
-    m_storageManager->processWillCloseConnection(process);
 }
 
 void WebProcessPool::applicationWillTerminate()

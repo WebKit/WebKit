@@ -33,14 +33,17 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
+class StorageManager;
 class WebPageProxy;
 
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver {
 public:
     struct Configuration {
+        String localStorageDirectory;
     };
     static RefPtr<WebsiteDataStore> createNonPersistent();
     static RefPtr<WebsiteDataStore> create(Configuration);
@@ -51,14 +54,26 @@ public:
     bool isNonPersistent() const { return m_sessionID.isEphemeral(); }
     WebCore::SessionID sessionID() const { return m_sessionID; }
 
+    static void cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage);
+
     void removeData(WebsiteDataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
 
 private:
     explicit WebsiteDataStore(WebCore::SessionID);
     explicit WebsiteDataStore(Configuration);
 
-    uint64_t m_identifier;
-    WebCore::SessionID m_sessionID;
+    // WebProcessLifetimeObserver.
+    virtual void webPageWasAdded(WebPageProxy&) override;
+    virtual void webPageWasRemoved(WebPageProxy&) override;
+    virtual void webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&) override;
+    virtual void webPageWillOpenConnection(WebPageProxy&, IPC::Connection&) override;
+    virtual void webPageDidCloseConnection(WebPageProxy&, IPC::Connection&) override;
+    virtual void webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&) override;
+
+    const uint64_t m_identifier;
+    const WebCore::SessionID m_sessionID;
+
+    const RefPtr<StorageManager> m_storageManager;
 };
 
 }

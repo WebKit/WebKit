@@ -26,12 +26,17 @@
 #include "config.h"
 #include "APIWebsiteDataStore.h"
 
+// FIXME: This function is currently in WKProcessPool. It should be moved to this file instead.
+NSURL *websiteDataDirectoryURL(NSString *directoryName);
+
 namespace API {
 
 WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
 {
     // FIXME: Fill everything in.
     WebKit::WebsiteDataStore::Configuration configuration;
+
+    configuration.localStorageDirectory = websiteDataDirectoryURL(@"LocalStorage").absoluteURL.path.fileSystemRepresentation;
 
     return configuration;
 }

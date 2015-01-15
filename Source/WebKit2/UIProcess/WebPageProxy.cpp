@@ -3093,7 +3093,8 @@ void WebPageProxy::createNewPage(uint64_t frameID, const ResourceRequest& reques
 
     newPageID = newPage->pageID();
     newPageParameters = newPage->creationParameters();
-    process().processPool().storageManager().cloneSessionStorageNamespace(m_pageID, newPage->pageID());
+
+    WebsiteDataStore::cloneSessionData(*this, *newPage);
 }
     
 void WebPageProxy::showPage()

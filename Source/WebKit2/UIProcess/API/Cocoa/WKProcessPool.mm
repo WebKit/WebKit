@@ -49,6 +49,9 @@
 #import "WKGeolocationProviderIOS.h"
 #endif
 
+// FIXME: Move this from WKProcessPool to APIWebsiteDataStoreCocoa.
+NSURL *websiteDataDirectoryURL(NSString *directoryName);
+
 @implementation WKProcessPool {
     WebKit::WeakObjCPtr<id <_WKDownloadDelegate>> _downloadDelegate;
 
@@ -113,7 +116,7 @@
     return [url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES];
 }
 
-static NSURL *websiteDataDirectoryURL(NSString *directoryName)
+NSURL *websiteDataDirectoryURL(NSString *directoryName)
 {
     static dispatch_once_t onceToken;
     static NSURL *websiteDataURL;

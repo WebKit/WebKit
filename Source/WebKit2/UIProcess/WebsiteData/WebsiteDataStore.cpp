@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebsiteDataStore.h"
 
+#include "StorageManager.h"
 #include "WebProcessPool.h"
 #include <wtf/RunLoop.h>
 
@@ -56,9 +57,10 @@ RefPtr<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration)
     return adoptRef(new WebsiteDataStore(WTF::move(configuration)));
 }
 
-WebsiteDataStore::WebsiteDataStore(Configuration)
+WebsiteDataStore::WebsiteDataStore(Configuration configuration)
     : m_identifier(generateIdentifier())
     , m_sessionID(WebCore::SessionID::defaultSessionID())
+    , m_storageManager(StorageManager::create(WTF::move(configuration.localStorageDirectory)))
 {
 }
 
@@ -70,6 +72,21 @@ WebsiteDataStore::WebsiteDataStore(WebCore::SessionID sessionID)
 
 WebsiteDataStore::~WebsiteDataStore()
 {
+}
+
+void WebsiteDataStore::cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage)
+{
+    auto& sourceDataStore = sourcePage.websiteDataStore();
+    auto& newDataStore = newPage.websiteDataStore();
+
+    // FIXME: Handle this.
+    if (&sourceDataStore != &newDataStore)
+        return;
+
+    if (!sourceDataStore.m_storageManager)
+        return;
+
+    sourceDataStore.m_storageManager->cloneSessionStorageNamespace(sourcePage.pageID(), newPage.pageID());
 }
 
 enum class ProcessAccessType {
@@ -158,6 +175,42 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
+}
+
+void WebsiteDataStore::webPageWasAdded(WebPageProxy& webPageProxy)
+{
+    if (m_storageManager)
+        m_storageManager->createSessionStorageNamespace(webPageProxy.pageID(), std::numeric_limits<unsigned>::max());
+}
+
+void WebsiteDataStore::webPageWasRemoved(WebPageProxy& webPageProxy)
+{
+    if (m_storageManager)
+        m_storageManager->destroySessionStorageNamespace(webPageProxy.pageID());
+}
+
+void WebsiteDataStore::webProcessWillOpenConnection(WebProcessProxy& webProcessProxy, IPC::Connection&)
+{
+    if (m_storageManager)
+        m_storageManager->processWillOpenConnection(&webProcessProxy);
+}
+
+void WebsiteDataStore::webPageWillOpenConnection(WebPageProxy& webPageProxy, IPC::Connection& connection)
+{
+    if (m_storageManager)
+        m_storageManager->setAllowedSessionStorageNamespaceConnection(webPageProxy.pageID(), &connection);
+}
+
+void WebsiteDataStore::webPageDidCloseConnection(WebPageProxy& webPageProxy, IPC::Connection&)
+{
+    if (m_storageManager)
+        m_storageManager->setAllowedSessionStorageNamespaceConnection(webPageProxy.pageID(), nullptr);
+}
+
+void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessProxy, IPC::Connection&)
+{
+    if (m_storageManager)
+        m_storageManager->processWillCloseConnection(&webProcessProxy);
 }
 
 }

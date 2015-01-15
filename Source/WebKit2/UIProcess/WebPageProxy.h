@@ -270,6 +270,8 @@ public:
 
     WebNavigationState& navigationState() { return *m_navigationState.get(); }
 
+    WebsiteDataStore& websiteDataStore() { return m_websiteDataStore; }
+
 #if ENABLE(ASYNC_SCROLLING)
     RemoteScrollingCoordinatorProxy* scrollingCoordinatorProxy() const { return m_scrollingCoordinatorProxy.get(); }
 #endif
