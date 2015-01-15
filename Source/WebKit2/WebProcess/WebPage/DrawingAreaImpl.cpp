@@ -688,6 +688,7 @@ void DrawingAreaImpl::attachViewOverlayGraphicsLayer(WebCore::Frame* frame, WebC
 void DrawingAreaImpl::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     m_nativeSurfaceHandleForCompositing = handle;
+    m_webPage.corePage()->settings().setAcceleratedCompositingEnabled(true);
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
     if (m_layerTreeHost)

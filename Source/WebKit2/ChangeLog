@@ -1,3 +1,48 @@
+2015-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r177075): [GTK] Creating a second web view disables accelerated compositing in existing web view
+        https://bugs.webkit.org/show_bug.cgi?id=140494
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The problem is that r177075 moved the creation of the redirected
+        XComposite window to realize method, but leaving the call to
+        webkitWebViewBaseUpdatePreferences() in both places Realize() and
+        CreateWebPage(). webkitWebViewBaseUpdatePreferences() only updates
+        the accelerating compositing setting nowadays, depending on
+        whether the redirected XComposited window could be created or not
+        (something that depends on whether XRender, XComposite and XDamage
+        extensions are available in the current display). So, when the
+        first web view is created, webkitWebViewBaseUpdatePreferences() is
+        called first from CreateWebPage(), and always disabling
+        accelerated compositing because the redirected window hasn't been
+        created yet, and then from Realize() right after the redirected
+        window is created so that accelerated compositing is enabled. When
+        the second web view is created the same happens, but since
+        settings are shared among web views, the first call to
+        webkitWebViewBaseUpdatePreferences() from CreateWebPage() disables
+        accelerated compositing and the web page exists accelerated
+        compositing mode and never enters it again unless the page is
+        reloaded. I guess the web page should enter accelerated
+        compositing mode again when the setting is enabled again from
+        Realize(), but since the setting is global and doesn't depend on
+        every web view, we should never disable it once it has been
+        enabled in any case.
+        Since we want to enable accelerated compositing mode when the
+        redirected XComposite window has been successfully created, we can
+        use the SetNativeSurfaceHandleForCompositing message to enable the
+        setting and remove webkitWebViewBaseUpdatePreferences().
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewUpdateSettings):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize):
+        (webkitWebViewBaseCreateWebPage):
+        (webkitWebViewBaseUpdatePreferences): Deleted.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setNativeSurfaceHandleForCompositing):
+
 2015-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r178464.

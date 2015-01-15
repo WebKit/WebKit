@@ -328,7 +328,6 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
             DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
             drawingArea->setNativeSurfaceHandleForCompositing(priv->redirectedWindow->windowID());
         }
-        webkitWebViewBaseUpdatePreferences(webView);
     }
 #endif
 
@@ -1105,19 +1104,6 @@ WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase* webkitWebViewBase)
     return webkitWebViewBase->priv->pageProxy.get();
 }
 
-void webkitWebViewBaseUpdatePreferences(WebKitWebViewBase* webkitWebViewBase)
-{
-    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-
-#if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11)
-    bool acceleratedCompositingEnabled = priv->redirectedWindow ? true : false;
-#else
-    bool acceleratedCompositingEnabled = false;
-#endif
-
-    priv->pageProxy->preferences().setAcceleratedCompositingEnabled(acceleratedCompositingEnabled);
-}
-
 #if HAVE(GTK_SCALE_FACTOR)
 static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 {
@@ -1144,8 +1130,6 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebPro
     priv->pageProxy->setIntrinsicDeviceScaleFactor(gtk_widget_get_scale_factor(GTK_WIDGET(webkitWebViewBase)));
     g_signal_connect(webkitWebViewBase, "notify::scale-factor", G_CALLBACK(deviceScaleFactorChanged), nullptr);
 #endif
-
-    webkitWebViewBaseUpdatePreferences(webkitWebViewBase);
 }
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char* tooltip)
