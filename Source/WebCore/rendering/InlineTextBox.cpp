@@ -245,14 +245,14 @@ RenderObject::SelectionState InlineTextBox::selectionState()
     return state;
 }
 
-static const Font& fontToUse(const RenderStyle& style, const RenderText& renderer)
+static const FontCascade& fontToUse(const RenderStyle& style, const RenderText& renderer)
 {
     if (style.hasTextCombine() && is<RenderCombineText>(renderer)) {
         const auto& textCombineRenderer = downcast<RenderCombineText>(renderer);
         if (textCombineRenderer.isCombined())
             return textCombineRenderer.textCombineFont();
     }
-    return style.font();
+    return style.fontCascade();
 }
 
 LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
@@ -266,7 +266,7 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos) const
     LayoutUnit selectionTop = this->selectionTop();
     LayoutUnit selectionHeight = this->selectionHeight();
     const RenderStyle& lineStyle = this->lineStyle();
-    const Font& font = fontToUse(lineStyle, renderer());
+    const FontCascade& font = fontToUse(lineStyle, renderer());
 
     String hyphenatedStringBuffer;
     bool respectHyphen = ePos == m_len && hasHyphen();
@@ -539,7 +539,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         selectionPaintStyle = textPaintStyle;
 
     // Set our font.
-    const Font& font = fontToUse(lineStyle, renderer());
+    const FontCascade& font = fontToUse(lineStyle, renderer());
     // 1. Paint backgrounds behind text if needed. Examples of such backgrounds include selection
     // and composition underlines.
     if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
@@ -678,7 +678,7 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
     ePos = std::min(endPos - m_start, (int)m_len);
 }
 
-void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, Color textColor)
+void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, Color textColor)
 {
 #if ENABLE(TEXT_SELECTION)
     if (context.paintingDisabled())
@@ -737,7 +737,7 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
 #endif
 }
 
-void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, int startPos, int endPos)
+void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, int startPos, int endPos)
 {
     int offset = m_start;
     int sPos = std::max(startPos - offset, 0);
@@ -1058,7 +1058,7 @@ static GraphicsContext::DocumentMarkerLineStyle lineStyleForMarkerType(DocumentM
     }
 }
 
-void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, RenderedDocumentMarker& marker, const RenderStyle& style, const Font& font, bool grammar)
+void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, RenderedDocumentMarker& marker, const RenderStyle& style, const FontCascade& font, bool grammar)
 {
     // Never print spelling/grammar markers (5327887)
     if (renderer().document().printing())
@@ -1128,7 +1128,7 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
     context.drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkerType(marker.type()));
 }
 
-void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPoint& boxOrigin, RenderedDocumentMarker& marker, const RenderStyle& style, const Font& font)
+void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPoint& boxOrigin, RenderedDocumentMarker& marker, const RenderStyle& style, const FontCascade& font)
 {
     LayoutUnit selectionHeight = this->selectionHeight();
 
@@ -1159,7 +1159,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPo
     }
 }
 
-void InlineTextBox::computeRectForReplacementMarker(RenderedDocumentMarker& marker, const RenderStyle& style, const Font& font)
+void InlineTextBox::computeRectForReplacementMarker(RenderedDocumentMarker& marker, const RenderStyle& style, const FontCascade& font)
 {
     // Replacement markers are not actually drawn, but their rects need to be computed for hit testing.
     LayoutUnit top = selectionTop();
@@ -1177,7 +1177,7 @@ void InlineTextBox::computeRectForReplacementMarker(RenderedDocumentMarker& mark
     marker.setRenderedRect(markerRect);
 }
     
-void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const Font& font, bool background)
+void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, bool background)
 {
     if (!renderer().textNode())
         return;
@@ -1329,7 +1329,7 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
         return isLeftToRightDirection() ? 0 : len();
 
     const RenderStyle& lineStyle = this->lineStyle();
-    const Font& font = fontToUse(lineStyle, renderer());
+    const FontCascade& font = fontToUse(lineStyle, renderer());
     return font.offsetForPosition(constructTextRun(lineStyle, font), lineOffset - logicalLeft(), includePartialGlyphs);
 }
 
@@ -1342,7 +1342,7 @@ float InlineTextBox::positionForOffset(int offset) const
         return logicalLeft();
 
     const RenderStyle& lineStyle = this->lineStyle();
-    const Font& font = fontToUse(lineStyle, renderer());
+    const FontCascade& font = fontToUse(lineStyle, renderer());
     int from = !isLeftToRightDirection() ? offset - m_start : 0;
     int to = !isLeftToRightDirection() ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
@@ -1352,7 +1352,7 @@ float InlineTextBox::positionForOffset(int offset) const
     return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()).maxX();
 }
 
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& font, String* hyphenatedStringBuffer) const
+TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const FontCascade& font, String* hyphenatedStringBuffer) const
 {
     ASSERT(renderer().text());
 
@@ -1366,7 +1366,7 @@ TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& fo
     return constructTextRun(style, font, string, renderer().textLength() - startPos, hyphenatedStringBuffer);
 }
 
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const Font& font, String string, unsigned maximumLength, String* hyphenatedStringBuffer) const
+TextRun InlineTextBox::constructTextRun(const RenderStyle& style, const FontCascade& font, String string, unsigned maximumLength, String* hyphenatedStringBuffer) const
 {
     unsigned length = string.length();
 

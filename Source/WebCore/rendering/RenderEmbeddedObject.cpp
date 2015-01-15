@@ -29,7 +29,7 @@
 #include "ChromeClient.h"
 #include "Cursor.h"
 #include "EventHandler.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "FontSelector.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
@@ -298,7 +298,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     FloatRect indicatorRect;
     FloatRect replacementTextRect;
     FloatRect arrowRect;
-    Font font;
+    FontCascade font;
     TextRun run("");
     float textWidth;
     if (!getReplacementTextGeometry(paintOffset, contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth))
@@ -349,7 +349,7 @@ void RenderEmbeddedObject::setUnavailablePluginIndicatorIsHidden(bool hidden)
     repaint();
 }
 
-bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, Font& font, TextRun& run, float& textWidth) const
+bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, FontCascade& font, TextRun& run, float& textWidth) const
 {
     bool includesArrow = shouldUnavailablePluginMessageBeButton(document(), m_pluginUnavailabilityReason);
 
@@ -361,7 +361,7 @@ bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
     fontDescription.setWeight(FontWeightBold);
     fontDescription.setRenderingMode(frame().settings().fontRenderingMode());
     fontDescription.setComputedSize(12);
-    font = Font(fontDescription, 0, 0);
+    font = FontCascade(fontDescription, 0, 0);
     font.update(0);
 
     run = TextRun(m_unavailablePluginReplacementText);
@@ -391,7 +391,7 @@ LayoutRect RenderEmbeddedObject::unavailablePluginIndicatorBounds(const LayoutPo
     FloatRect indicatorRect;
     FloatRect replacementTextRect;
     FloatRect arrowRect;
-    Font font;
+    FontCascade font;
     TextRun run("", 0);
     float textWidth;
     if (getReplacementTextGeometry(accumulatedOffset, contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth))
@@ -582,7 +582,7 @@ bool RenderEmbeddedObject::isInUnavailablePluginIndicator(const FloatPoint& poin
     FloatRect indicatorRect;
     FloatRect replacementTextRect;
     FloatRect arrowRect;
-    Font font;
+    FontCascade font;
     TextRun run("");
     float textWidth;
     return getReplacementTextGeometry(IntPoint(), contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth)

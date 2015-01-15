@@ -37,7 +37,7 @@
 #import "DocumentLoader.h"
 #import "Element.h"
 #import "ElementTraversal.h"
-#import "Font.h"
+#import "FontCascade.h"
 #import "Frame.h"
 #import "FrameLoader.h"
 #import "HTMLElement.h"
@@ -1114,7 +1114,7 @@ static PlatformFont *_font(Element& element)
     auto renderer = element.renderer();
     if (!renderer)
         return nil;
-    return renderer->style().font().primaryFontData().getNSFont();
+    return renderer->style().fontCascade().primaryFontData().getNSFont();
 }
 #else
 static PlatformFont *_font(Element& element)
@@ -1122,7 +1122,7 @@ static PlatformFont *_font(Element& element)
     auto renderer = element.renderer();
     if (!renderer)
         return nil;
-    return (PlatformFont *)renderer->style().font().primaryFontData().getCTFont();
+    return (PlatformFont *)renderer->style().fontCascade().primaryFontData().getCTFont();
 }
 #endif
 
@@ -2594,10 +2594,10 @@ NSAttributedString *editingAttributedStringFromRange(Range& range, IncludeImages
             [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
         if (style.textDecorationsInEffect() & TextDecorationLineThrough)
             [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
-        if (NSFont *font = style.font().primaryFontData().getNSFont())
+        if (NSFont *font = style.fontCascade().primaryFontData().getNSFont())
             [attrs.get() setObject:font forKey:NSFontAttributeName];
         else
-            [attrs.get() setObject:[fontManager convertFont:WebDefaultFont() toSize:style.font().primaryFontData().platformData().size()] forKey:NSFontAttributeName];
+            [attrs.get() setObject:[fontManager convertFont:WebDefaultFont() toSize:style.fontCascade().primaryFontData().platformData().size()] forKey:NSFontAttributeName];
         if (style.visitedDependentColor(CSSPropertyColor).alpha())
             [attrs.get() setObject:nsColor(style.visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
         else

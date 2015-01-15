@@ -80,7 +80,7 @@ void PopupMenuMac::populate()
 
         PopupMenuStyle style = m_client->itemStyle(i);
         RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] init]);
-        if (style.font() != Font()) {
+        if (style.font() != FontCascade()) {
             NSFont *font = style.font().primaryFontData().getNSFont();
             if (!font) {
                 CGFloat size = style.font().primaryFontData().platformData().size();

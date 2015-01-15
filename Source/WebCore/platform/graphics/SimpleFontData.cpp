@@ -33,8 +33,8 @@
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
 #include "CoreTextSPI.h"
 #endif
-#include "Font.h"
 #include "FontCache.h"
+#include "FontCascade.h"
 #include "OpenTypeMathData.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
@@ -419,7 +419,7 @@ RefPtr<SimpleFontData> SimpleFontData::systemFallbackFontDataForCharacter(UChar3
         UChar codeUnits[2];
         int codeUnitsLength;
         if (U_IS_BMP(character)) {
-            codeUnits[0] = Font::normalizeSpaces(character);
+            codeUnits[0] = FontCascade::normalizeSpaces(character);
             codeUnitsLength = 1;
         } else {
             codeUnits[0] = U16_LEAD(character);

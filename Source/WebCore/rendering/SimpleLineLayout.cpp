@@ -184,17 +184,17 @@ bool canUseFor(const RenderBlockFlow& flow)
             }
         }
     }
-    if (style.font().primaryFontData().isSVGFont())
+    if (style.fontCascade().primaryFontData().isSVGFont())
         return false;
     // We assume that all lines have metrics based purely on the primary font.
-    auto& primaryFontData = style.font().primaryFontData();
+    auto& primaryFontData = style.fontCascade().primaryFontData();
     if (primaryFontData.isLoading())
         return false;
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
         if (textRenderer.isCombineText() || textRenderer.isCounter() || textRenderer.isQuote() || textRenderer.isTextFragment()
             || textRenderer.isSVGInlineText())
             return false;
-        if (style.font().codePath(TextRun(textRenderer.text())) != Font::Simple)
+        if (style.fontCascade().codePath(TextRun(textRenderer.text())) != FontCascade::Simple)
             return false;
         if (!canUseForText(textRenderer, primaryFontData))
             return false;

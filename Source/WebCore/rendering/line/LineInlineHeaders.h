@@ -56,7 +56,7 @@ inline bool requiresLineBoxForContent(const RenderInline& flow, const LineInfo& 
         const RenderStyle& parentStyle = lineStyle(*parent, lineInfo);
         if (flowStyle.lineHeight() != parentStyle.lineHeight()
             || flowStyle.verticalAlign() != parentStyle.verticalAlign()
-            || !parentStyle.font().fontMetrics().hasIdenticalAscentDescentAndLineGap(flowStyle.font().fontMetrics()))
+            || !parentStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(flowStyle.fontCascade().fontMetrics()))
         return true;
     }
     return false;

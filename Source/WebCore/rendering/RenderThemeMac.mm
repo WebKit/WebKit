@@ -817,7 +817,7 @@ void RenderThemeMac::setFontFromControlSize(StyleResolver&, RenderStyle& style, 
     style.setLineHeight(RenderStyle::initialLineHeight());
 
     if (style.setFontDescription(fontDescription))
-        style.font().update(0);
+        style.fontCascade().update(0);
 }
 
 NSControlSize RenderThemeMac::controlSizeForSystemFont(RenderStyle& style) const
@@ -1997,7 +1997,7 @@ NSTextFieldCell* RenderThemeMac::textField() const
     return m_textField.get();
 }
 
-String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const Font& font, int width, bool multipleFilesAllowed) const
+String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const FontCascade& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
         return String();

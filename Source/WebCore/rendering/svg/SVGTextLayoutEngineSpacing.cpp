@@ -20,7 +20,7 @@
 #include "config.h"
 #include "SVGTextLayoutEngineSpacing.h"
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
 
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-SVGTextLayoutEngineSpacing::SVGTextLayoutEngineSpacing(const Font& font)
+SVGTextLayoutEngineSpacing::SVGTextLayoutEngineSpacing(const FontCascade& font)
     : m_font(font)
     , m_lastCharacter(0)
 {
@@ -98,7 +98,7 @@ float SVGTextLayoutEngineSpacing::calculateCSSKerningAndSpacing(const SVGRenderS
 
     float spacing = m_font.letterSpacing() + kerning;
     if (currentCharacter && lastCharacter && m_font.wordSpacing()) {
-        if (Font::treatAsSpace(*currentCharacter) && !Font::treatAsSpace(*lastCharacter))
+        if (FontCascade::treatAsSpace(*currentCharacter) && !FontCascade::treatAsSpace(*lastCharacter))
             spacing += m_font.wordSpacing();
     }
 

@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef Font_h
-#define Font_h
+#ifndef FontCascade_h
+#define FontCascade_h
 
 #include "DashArray.h"
 #include "FontDescription.h"
@@ -106,24 +106,24 @@ public:
 };
 GlyphToPathTranslator::GlyphUnderlineType computeUnderlineType(const TextRun&, const GlyphBuffer&, int index);
 
-class Font {
+class FontCascade {
 public:
-    WEBCORE_EXPORT Font();
-    WEBCORE_EXPORT Font(const FontDescription&, float letterSpacing, float wordSpacing);
+    WEBCORE_EXPORT FontCascade();
+    WEBCORE_EXPORT FontCascade(const FontDescription&, float letterSpacing, float wordSpacing);
     // This constructor is only used if the platform wants to start with a native font.
-    WEBCORE_EXPORT Font(const FontPlatformData&, bool isPrinting, FontSmoothingMode = AutoSmoothing);
+    WEBCORE_EXPORT FontCascade(const FontPlatformData&, bool isPrinting, FontSmoothingMode = AutoSmoothing);
 
     // FIXME: We should make this constructor platform-independent.
 #if PLATFORM(IOS)
-    Font(const FontPlatformData&, PassRefPtr<FontSelector>);
+    FontCascade(const FontPlatformData&, PassRefPtr<FontSelector>);
 #endif
-    ~Font();
+    ~FontCascade();
 
-    Font(const Font&);
-    WEBCORE_EXPORT Font& operator=(const Font&);
+    FontCascade(const FontCascade&);
+    WEBCORE_EXPORT FontCascade& operator=(const FontCascade&);
 
-    WEBCORE_EXPORT bool operator==(const Font& other) const;
-    bool operator!=(const Font& other) const { return !(*this == other); }
+    WEBCORE_EXPORT bool operator==(const FontCascade& other) const;
+    bool operator!=(const FontCascade& other) const { return !(*this == other); }
 
     const FontDescription& fontDescription() const { return m_fontDescription; }
 
@@ -243,7 +243,7 @@ private:
 
 public:
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-    bool equalForTextAutoSizing(const Font& other) const
+    bool equalForTextAutoSizing(const FontCascade& other) const
     {
         return m_fontDescription.equalForTextAutoSizing(other.m_fontDescription)
             && m_letterSpacing == other.m_letterSpacing
@@ -269,7 +269,7 @@ public:
     static bool treatAsSpace(UChar c) { return c == ' ' || c == '\t' || c == '\n' || c == noBreakSpace; }
     static bool treatAsZeroWidthSpace(UChar c) { return treatAsZeroWidthSpaceInComplexScript(c) || c == 0x200c || c == 0x200d; }
     static bool treatAsZeroWidthSpaceInComplexScript(UChar c) { return c < 0x20 || (c >= 0x7F && c < 0xA0) || c == softHyphen || c == zeroWidthSpace || (c >= 0x200e && c <= 0x200f) || (c >= 0x202a && c <= 0x202e) || c == zeroWidthNoBreakSpace || c == objectReplacementCharacter; }
-    static bool canReceiveTextEmphasis(UChar32 c);
+    static bool canReceiveTextEmphasis(UChar32);
 
     static inline UChar normalizeSpaces(UChar character)
     {
@@ -347,34 +347,34 @@ void invalidateFontGlyphsCache();
 void pruneUnreferencedEntriesFromFontGlyphsCache();
 void clearWidthCaches();
 
-inline Font::~Font()
+inline FontCascade::~FontCascade()
 {
 }
 
-inline const SimpleFontData& Font::primaryFontData() const
+inline const SimpleFontData& FontCascade::primaryFontData() const
 {
     ASSERT(m_glyphs);
     return m_glyphs->primarySimpleFontData(m_fontDescription);
 }
 
-inline const FontRanges& Font::fallbackRangesAt(unsigned index) const
+inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
 {
     ASSERT(m_glyphs);
     return m_glyphs->realizeFallbackRangesAt(m_fontDescription, index);
 }
 
-inline bool Font::isFixedPitch() const
+inline bool FontCascade::isFixedPitch() const
 {
     ASSERT(m_glyphs);
     return m_glyphs->isFixedPitch(m_fontDescription);
 }
 
-inline FontSelector* Font::fontSelector() const
+inline FontSelector* FontCascade::fontSelector() const
 {
     return m_glyphs ? m_glyphs->fontSelector() : 0;
 }
 
-inline float Font::tabWidth(const SimpleFontData& fontData, unsigned tabSize, float position) const
+inline float FontCascade::tabWidth(const SimpleFontData& fontData, unsigned tabSize, float position) const
 {
     if (!tabSize)
         return letterSpacing();

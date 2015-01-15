@@ -1,3 +1,12 @@
+2015-01-15  Antti Koivisto  <antti@apple.com>
+
+        Rename Font to FontCascade
+        https://bugs.webkit.org/show_bug.cgi?id=140442
+
+        Reviewed by Darin Adler.
+
+        We can then rename SimpleFontData to Font. This will match the usual definition of a "font".
+
 2015-01-15  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Assert failure in RenderBlock::locateFlowThreadContainingBlock when showing the render tree debug info

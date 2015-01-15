@@ -27,7 +27,7 @@
 #define PopupMenuStyle_h
 
 #include "Color.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "Length.h"
 #include "TextDirection.h"
 
@@ -43,7 +43,7 @@ public:
         PopupMenuSizeMini
     };
 
-    PopupMenuStyle(const Color& foreground, const Color& background, const Font& font, bool visible, bool isDisplayNone, bool hasDefaultAppearance, Length textIndent, TextDirection textDirection, bool hasTextDirectionOverride, BackgroundColorType backgroundColorType = DefaultBackgroundColor, PopupMenuType menuType = SelectPopup, PopupMenuSize menuSize = PopupMenuSizeNormal)
+    PopupMenuStyle(const Color& foreground, const Color& background, const FontCascade& font, bool visible, bool isDisplayNone, bool hasDefaultAppearance, Length textIndent, TextDirection textDirection, bool hasTextDirectionOverride, BackgroundColorType backgroundColorType = DefaultBackgroundColor, PopupMenuType menuType = SelectPopup, PopupMenuSize menuSize = PopupMenuSizeNormal)
         : m_foregroundColor(foreground)
         , m_backgroundColor(background)
         , m_font(font)
@@ -61,7 +61,7 @@ public:
 
     const Color& foregroundColor() const { return m_foregroundColor; }
     const Color& backgroundColor() const { return m_backgroundColor; }
-    const Font& font() const { return m_font; }
+    const FontCascade& font() const { return m_font; }
     bool isVisible() const { return m_visible; }
     bool isDisplayNone() const { return m_isDisplayNone; }
     bool hasDefaultAppearance() const { return m_hasDefaultAppearance; }
@@ -75,7 +75,7 @@ public:
 private:
     Color m_foregroundColor;
     Color m_backgroundColor;
-    Font m_font;
+    FontCascade m_font;
     bool m_visible;
     bool m_isDisplayNone;
     bool m_hasDefaultAppearance;

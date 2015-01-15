@@ -254,8 +254,8 @@ void RenderRubyRun::layout()
     if (isHorizontalWritingMode() && rt->style().rubyPosition() == RubyPositionInterCharacter) {
         // Bopomofo. We need to move the RenderRubyText over to the right side and center it
         // vertically relative to the base.
-        const Font& font = style().font();
-        float distanceBetweenBase = max(font.letterSpacing(), 2.0f * rt->style().font().fontMetrics().height());
+        const FontCascade& font = style().fontCascade();
+        float distanceBetweenBase = max(font.letterSpacing(), 2.0f * rt->style().fontCascade().fontMetrics().height());
         setWidth(width() + distanceBetweenBase - font.letterSpacing());
         if (RenderRubyBase* rb = rubyBase()) {
             LayoutUnit firstLineTop = 0;

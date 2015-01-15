@@ -27,7 +27,7 @@
 #define LocalizedDateCache_h
 
 #include "DateComponents.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
@@ -46,7 +46,7 @@ public:
 class LocalizedDateCache {
 public:
     NSDateFormatter *formatterForDateType(DateComponents::Type);
-    float maximumWidthForDateType(DateComponents::Type, const Font&, const MeasureTextClient&);
+    float maximumWidthForDateType(DateComponents::Type, const FontCascade&, const MeasureTextClient&);
     void localeChanged();
 
 private:
@@ -63,7 +63,7 @@ private:
     typedef HashMap<int, float> DateTypeMaxWidthMap;
     DateTypeFormatterMap m_formatterMap;
     DateTypeMaxWidthMap m_maxWidthMap;
-    Font m_font;
+    FontCascade m_font;
 
     friend LocalizedDateCache& localizedDateCache();
     friend NeverDestroyed<LocalizedDateCache>;

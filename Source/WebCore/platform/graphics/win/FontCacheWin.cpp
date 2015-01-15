@@ -29,7 +29,6 @@
 #include "config.h"
 #include <winsock2.h>
 #include "FontCache.h"
-#include "Font.h"
 #include "HWndDC.h"
 #include "SimpleFontData.h"
 #include <mlang.h>

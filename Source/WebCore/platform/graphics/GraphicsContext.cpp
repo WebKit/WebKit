@@ -430,7 +430,7 @@ bool GraphicsContext::paintingDisabled() const
 // the width of the drawn text. Ensure that there aren't noticeable differences in layout.
 #if !PLATFORM(IOS)
 #if !USE(WINGDI)
-void GraphicsContext::drawText(const Font& font, const TextRun& run, const FloatPoint& point, int from, int to)
+void GraphicsContext::drawText(const FontCascade& font, const TextRun& run, const FloatPoint& point, int from, int to)
 {
     if (paintingDisabled())
         return;
@@ -439,7 +439,7 @@ void GraphicsContext::drawText(const Font& font, const TextRun& run, const Float
 }
 #endif
 #else
-float GraphicsContext::drawText(const Font& font, const TextRun& run, const FloatPoint& point, int from, int to)
+float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, const FloatPoint& point, int from, int to)
 {
     if (paintingDisabled())
         return 0;
@@ -448,7 +448,7 @@ float GraphicsContext::drawText(const Font& font, const TextRun& run, const Floa
 }
 #endif // !PLATFORM(IOS)
 
-void GraphicsContext::drawGlyphs(const Font& font, const SimpleFontData& fontData, const GlyphBuffer& buffer, int from, int numGlyphs, const FloatPoint& point)
+void GraphicsContext::drawGlyphs(const FontCascade& font, const SimpleFontData& fontData, const GlyphBuffer& buffer, int from, int numGlyphs, const FloatPoint& point)
 {
     if (paintingDisabled())
         return;
@@ -456,7 +456,7 @@ void GraphicsContext::drawGlyphs(const Font& font, const SimpleFontData& fontDat
     font.drawGlyphs(this, &fontData, buffer, from, numGlyphs, point);
 }
 
-void GraphicsContext::drawEmphasisMarks(const Font& font, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to)
+void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to)
 {
     if (paintingDisabled())
         return;
@@ -465,12 +465,12 @@ void GraphicsContext::drawEmphasisMarks(const Font& font, const TextRun& run, co
 }
 
 // FIXME: Better merge the iOS and non-iOS differences. In particular, make this method use the
-// returned width of the drawn text, Font::drawText(), instead of computing it. Ensure that there
+// returned width of the drawn text, FontCascade::drawText(), instead of computing it. Ensure that there
 // aren't noticeable differences in layout with such a change.
 #if !PLATFORM(IOS)
-void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const FloatPoint& point, Font::CustomFontNotReadyAction customFontNotReadyAction)
+void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
 #else
-float GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const FloatPoint& point, Font::CustomFontNotReadyAction customFontNotReadyAction, BidiStatus* status, int length)
+float GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, const FloatPoint& point, FontCascade::CustomFontNotReadyAction customFontNotReadyAction, BidiStatus* status, int length)
 #endif
 {
     if (paintingDisabled())
@@ -515,7 +515,7 @@ float GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const 
         font.drawText(this, subrun, currPoint, 0, -1, customFontNotReadyAction);
 
         bidiRun = bidiRun->next();
-        // FIXME: Have Font::drawText return the width of what it drew so that we don't have to re-measure here.
+        // FIXME: Have FontCascade::drawText return the width of what it drew so that we don't have to re-measure here.
         if (bidiRun)
             currPoint.move(font.width(subrun), 0);
 #else

@@ -26,7 +26,7 @@
 #ifndef SimpleLineLayoutFlowContents_h
 #define SimpleLineLayoutFlowContents_h
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "RenderStyle.h"
 #include "TextBreakIterator.h"
 #include "break_lines.h"
@@ -63,7 +63,7 @@ public:
     struct Style {
         explicit Style(const RenderStyle&);
 
-        const Font& font;
+        const FontCascade& font;
         ETextAlign textAlign;
         bool collapseWhitespace;
         bool preserveNewline;

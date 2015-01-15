@@ -34,7 +34,7 @@
 #import "AccessibilityTableCell.h"
 #import "Chrome.h"
 #import "ChromeClient.h"
-#import "Font.h"
+#import "FontCascade.h"
 #import "Frame.h"
 #import "FrameSelection.h"
 #import "FrameView.h"
@@ -1758,7 +1758,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     RenderStyle& style = renderer->style();
     
     // set basic font info
-    AXAttributeStringSetFont(attrString, style.font().primaryFontData().getCTFont(), range);
+    AXAttributeStringSetFont(attrString, style.fontCascade().primaryFontData().getCTFont(), range);
                 
     int decor = style.textDecorationsInEffect();
     if ((decor & (TextDecorationUnderline | TextDecorationLineThrough)) != 0) {

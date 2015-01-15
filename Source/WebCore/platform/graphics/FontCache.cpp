@@ -30,7 +30,7 @@
 #include "config.h"
 #include "FontCache.h"
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "FontGlyphs.h"
 #include "FontPlatformData.h"
 #include "FontSelector.h"

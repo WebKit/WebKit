@@ -41,13 +41,13 @@ public:
     
     virtual int baselinePositionAdjustment(ControlPart) const;
 
-    virtual FontDescription controlFont(ControlPart, const Font&, float zoomFactor) const;
+    virtual FontDescription controlFont(ControlPart, const FontCascade&, float zoomFactor) const;
     
-    virtual LengthSize controlSize(ControlPart, const Font&, const LengthSize&, float zoomFactor) const;
-    virtual LengthSize minimumControlSize(ControlPart, const Font&, float zoomFactor) const;
+    virtual LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize&, float zoomFactor) const;
+    virtual LengthSize minimumControlSize(ControlPart, const FontCascade&, float zoomFactor) const;
 
-    virtual LengthBox controlPadding(ControlPart, const Font&, const LengthBox& zoomedBox, float zoomFactor) const;
-    virtual LengthBox controlBorder(ControlPart, const Font&, const LengthBox& zoomedBox, float zoomFactor) const;
+    virtual LengthBox controlPadding(ControlPart, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const;
+    virtual LengthBox controlBorder(ControlPart, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const;
 
     virtual bool controlRequiresPreWhiteSpace(ControlPart part) const { return part == PushButtonPart; }
 

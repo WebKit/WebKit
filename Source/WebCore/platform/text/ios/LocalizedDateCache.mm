@@ -26,7 +26,7 @@
 #import "config.h"
 #import "LocalizedDateCache.h"
 
-#import "Font.h"
+#import "FontCascade.h"
 #import "TextRun.h"
 #import <math.h>
 #import <wtf/Assertions.h>
@@ -52,7 +52,6 @@ static void _localeChanged(CFNotificationCenterRef, void*, CFStringRef, const vo
 }
 
 LocalizedDateCache::LocalizedDateCache()
-    : m_font(Font())
 {
     // Listen to CF Notifications for locale change, and clear the cache when it does.
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), (void*)this, _localeChanged,
@@ -84,14 +83,14 @@ NSDateFormatter *LocalizedDateCache::formatterForDateType(DateComponents::Type t
     return dateFormatter;
 }
 
-float LocalizedDateCache::maximumWidthForDateType(DateComponents::Type type, const Font& font, const MeasureTextClient& measurer)
+float LocalizedDateCache::maximumWidthForDateType(DateComponents::Type type, const FontCascade& font, const MeasureTextClient& measurer)
 {
     int key = static_cast<int>(type);
     if (m_font == font) {
         if (m_maxWidthMap.contains(key))
             return m_maxWidthMap.get(key);
     } else {
-        m_font = Font(font);
+        m_font = FontCascade(font);
         m_maxWidthMap.clear();
     }
 

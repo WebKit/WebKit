@@ -199,17 +199,17 @@ void RenderMathMLRoot::updateStyle()
 
     // We set some constants to draw the radical, as defined in the OpenType MATH tables.
 
-    m_ruleThickness = 0.05f * style().font().size();
+    m_ruleThickness = 0.05f * style().fontCascade().size();
 
     // FIXME: The recommended default for m_verticalGap in displaystyle is rule thickness + 1/4 x-height (https://bugs.webkit.org/show_bug.cgi?id=118737).
     m_verticalGap = 11 * m_ruleThickness / 4;
     m_extraAscender = m_ruleThickness;
-    LayoutUnit kernBeforeDegree = 5 * style().font().size() / 18;
-    LayoutUnit kernAfterDegree = -10 * style().font().size() / 18;
+    LayoutUnit kernBeforeDegree = 5 * style().fontCascade().size() / 18;
+    LayoutUnit kernAfterDegree = -10 * style().fontCascade().size() / 18;
     m_degreeBottomRaisePercent = 0.6f;
 
-    const auto& primaryFontData = style().font().primaryFontData();
-    if (auto* mathData = style().font().primaryFontData().mathData()) {
+    const auto& primaryFontData = style().fontCascade().primaryFontData();
+    if (auto* mathData = style().fontCascade().primaryFontData().mathData()) {
         // FIXME: m_verticalGap should use RadicalDisplayStyleVertical in display mode (https://bugs.webkit.org/show_bug.cgi?id=118737).
         m_verticalGap = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalVerticalGap);
         m_ruleThickness = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalRuleThickness);

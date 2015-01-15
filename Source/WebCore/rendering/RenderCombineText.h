@@ -21,7 +21,7 @@
 #ifndef RenderCombineText_h
 #define RenderCombineText_h
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "RenderElement.h"
 #include "RenderText.h"
 #include "Text.h"
@@ -38,15 +38,15 @@ public:
     void adjustTextOrigin(FloatPoint& textOrigin, const FloatRect& boxRect) const;
     void getStringToRender(int, String&, int& length) const;
     bool isCombined() const { return m_isCombined; }
-    float combinedTextWidth(const Font& font) const { return font.size(); }
-    const Font& originalFont() const { return parent()->style().font(); }
-    const Font& textCombineFont() const { return m_combineFontStyle->font(); }
+    float combinedTextWidth(const FontCascade& font) const { return font.size(); }
+    const FontCascade& originalFont() const { return parent()->style().fontCascade(); }
+    const FontCascade& textCombineFont() const { return m_combineFontStyle->fontCascade(); }
 
 private:
     void node() const = delete;
 
     virtual bool isCombineText() const override { return true; }
-    virtual float width(unsigned from, unsigned length, const Font&, float xPosition, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const override;
+    virtual float width(unsigned from, unsigned length, const FontCascade&, float xPosition, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const override;
     virtual const char* renderName() const override { return "RenderCombineText"; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void setRenderedText(const String&) override;

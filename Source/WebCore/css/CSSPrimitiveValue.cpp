@@ -32,7 +32,7 @@
 #include "Color.h"
 #include "Counter.h"
 #include "ExceptionCode.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "Node.h"
 #include "Pair.h"
 #include "RGBColor.h"

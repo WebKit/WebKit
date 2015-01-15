@@ -34,8 +34,8 @@
 #import "DateComponents.h"
 #import "Document.h"
 #import "FloatRoundedRect.h"
-#import "Font.h"
 #import "FontCache.h"
+#import "FontCascade.h"
 #import "Frame.h"
 #import "FrameView.h"
 #import "Gradient.h"
@@ -545,7 +545,7 @@ static void adjustSelectListButtonStyle(RenderStyle& style, Element& element)
     
 class RenderThemeMeasureTextClient : public MeasureTextClient {
 public:
-    RenderThemeMeasureTextClient(const Font& font, RenderObject& renderObject, const RenderStyle& style)
+    RenderThemeMeasureTextClient(const FontCascade& font, RenderObject& renderObject, const RenderStyle& style)
         : m_font(font)
         , m_renderObject(renderObject)
         , m_style(style)
@@ -557,7 +557,7 @@ public:
         return m_font.width(run);
     }
 private:
-    const Font& m_font;
+    const FontCascade& m_font;
     RenderObject& m_renderObject;
     const RenderStyle& m_style;
 };
@@ -577,7 +577,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, HTMLInputElement& 
         return;
 
     // Enforce the width and set the box-sizing to content-box to not conflict with the padding.
-    Font font = style.font();
+    FontCascade font = style.fontCascade();
     
     RenderObject* renderer = inputElement.renderer();
     if (font.primaryFontData().isSVGFont() && !renderer)

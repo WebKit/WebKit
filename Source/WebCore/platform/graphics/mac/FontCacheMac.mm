@@ -33,7 +33,7 @@
 #if !PLATFORM(IOS)
 
 #import "CoreGraphicsSPI.h"
-#import "Font.h"
+#import "FontCascade.h"
 #import "SimpleFontData.h"
 #import "FontPlatformData.h"
 #import "NSFontSPI.h"

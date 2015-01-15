@@ -104,8 +104,8 @@ private:
     LayoutUnit selectionBottom() const;
     LayoutUnit selectionHeight() const;
 
-    TextRun constructTextRun(const RenderStyle&, const Font&, String* hyphenatedStringBuffer = nullptr) const;
-    TextRun constructTextRun(const RenderStyle&, const Font&, String, unsigned maximumLength, String* hyphenatedStringBuffer = nullptr) const;
+    TextRun constructTextRun(const RenderStyle&, const FontCascade&, String* hyphenatedStringBuffer = nullptr) const;
+    TextRun constructTextRun(const RenderStyle&, const FontCascade&, String, unsigned maximumLength, String* hyphenatedStringBuffer = nullptr) const;
 
 public:
     virtual FloatRect calculateBoundaries() const { return FloatRect(x(), y(), width(), height()); }
@@ -148,17 +148,17 @@ public:
     virtual float positionForOffset(int offset) const;
 
 protected:
-    void paintCompositionBackground(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, int startPos, int endPos);
-    void paintDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, bool background);
+    void paintCompositionBackground(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, int startPos, int endPos);
+    void paintDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, bool background);
     void paintCompositionUnderline(GraphicsContext&, const FloatPoint& boxOrigin, const CompositionUnderline&);
 
 private:
     void paintDecoration(GraphicsContext&, const FloatPoint& boxOrigin, TextDecoration, TextDecorationStyle, const ShadowData*, TextPainter&);
-    void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const Font&, Color textColor);
-    void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const Font&, bool grammar);
-    void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const Font&);
+    void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, Color textColor);
+    void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const FontCascade&, bool grammar);
+    void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const FontCascade&);
 
-    void computeRectForReplacementMarker(RenderedDocumentMarker&, const RenderStyle&, const Font&);
+    void computeRectForReplacementMarker(RenderedDocumentMarker&, const RenderStyle&, const FontCascade&);
 
     TextRun::ExpansionBehavior expansionBehavior() const
     {

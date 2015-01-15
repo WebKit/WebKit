@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InlineTextBoxStyle.h"
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "InlineTextBox.h"
 #include "RootInlineBox.h"
 
@@ -89,7 +89,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, InlineT
     float wavyOffset;
         
     TextDecorationStyle decorationStyle = lineStyle.textDecorationStyle();
-    float height = lineStyle.font().fontMetrics().floatHeight();
+    float height = lineStyle.fontCascade().fontMetrics().floatHeight();
     GlyphOverflow overflowResult;
     
     if (decorationStyle == TextDecorationStyleWavy) {

@@ -225,13 +225,13 @@ void RenderSVGInlineText::updateScaledFont()
     computeNewScaledFontForStyle(*this, style(), m_scalingFactor, m_scaledFont);
 }
 
-void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const RenderStyle& style, float& scalingFactor, Font& scaledFont)
+void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const RenderStyle& style, float& scalingFactor, FontCascade& scaledFont)
 {
     // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
     scalingFactor = SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
     if (scalingFactor == 1 || !scalingFactor || style.fontDescription().textRenderingMode() == GeometricPrecision) {
         scalingFactor = 1;
-        scaledFont = style.font();
+        scaledFont = style.fontCascade();
         return;
     }
 
@@ -240,7 +240,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
     // FIXME: We need to better handle the case when we compute very small fonts below (below 1pt).
     fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSizeForSVGInlineText(fontDescription.computedSize(), fontDescription.isAbsoluteSize(), scalingFactor, renderer.document()));
 
-    scaledFont = Font(fontDescription, 0, 0);
+    scaledFont = FontCascade(fontDescription, 0, 0);
     scaledFont.update(renderer.document().ensureStyleResolver().fontSelector());
 }
 

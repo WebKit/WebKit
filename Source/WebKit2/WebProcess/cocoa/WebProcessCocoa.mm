@@ -44,7 +44,7 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/FileSystem.h>
-#import <WebCore/Font.h>
+#import <WebCore/FontCascade.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryPressureHandler.h>
@@ -194,7 +194,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     m_compositingRenderServerPort = WTF::move(parameters.acceleratedCompositingPort);
     m_presenterApplicationPid = parameters.presenterApplicationPid;
     m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
-    Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
+    FontCascade::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
 
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
 

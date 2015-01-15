@@ -34,7 +34,7 @@ namespace WebCore {
 namespace SimpleLineLayout {
 
 FlowContents::Style::Style(const RenderStyle& style)
-    : font(style.font())
+    : font(style.fontCascade())
     , textAlign(style.textAlign())
     , collapseWhitespace(style.collapseWhiteSpace())
     , preserveNewline(style.preserveNewline())

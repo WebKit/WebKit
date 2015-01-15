@@ -25,7 +25,7 @@
 #include "config.h"
 #include "RenderDeprecatedFlexibleBox.h"
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "LayoutRepainter.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
@@ -997,7 +997,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, ellipsisAndSpaceStr, (ellipsisAndSpace, 2));
         DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, ellipsisStr, (&horizontalEllipsis, 1));
         const RenderStyle& lineStyle = numVisibleLines == 1 ? firstLineStyle() : style();
-        const Font& font = lineStyle.font();
+        const FontCascade& font = lineStyle.fontCascade();
 
         // Get ellipsis width, and if the last child is an anchor, it will go after the ellipsis, so add in a space and the anchor width too
         LayoutUnit totalWidth;

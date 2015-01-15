@@ -40,7 +40,7 @@ typedef const struct __CTLine * CTLineRef;
 
 namespace WebCore {
 
-class Font;
+class FontCascade;
 class SimpleFontData;
 class TextRun;
 
@@ -50,7 +50,7 @@ enum GlyphIterationStyle { IncludePartialGlyphs, ByWholeGlyphs };
 // complex scripts on OS X.
 class ComplexTextController {
 public:
-    ComplexTextController(const Font*, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool forTextEmphasis = false);
+    ComplexTextController(const FontCascade*, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool forTextEmphasis = false);
 
     // Advance and emit glyphs up to the specified character.
     void advance(unsigned to, GlyphBuffer* = 0, GlyphIterationStyle = IncludePartialGlyphs, HashSet<const SimpleFontData*>* fallbackFonts = 0);
@@ -138,7 +138,7 @@ private:
     Vector<unsigned, 16> m_runIndices;
     Vector<unsigned, 16> m_glyphCountFromStartToIndex;
 
-    const Font& m_font;
+    const FontCascade& m_font;
     const TextRun& m_run;
     bool m_isLTROnly;
     bool m_mayUseNaturalWritingDirection;

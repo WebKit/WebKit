@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "Font.h"
+#include "FontCascade.h"
 
 #include "AffineTransform.h"
 #include "CairoUtilities.h"
@@ -95,7 +95,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
     }
 }
 
-void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer,
+void FontCascade::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer,
     int from, int numGlyphs, const FloatPoint& point) const
 {
     if (!font->platformData().size())
@@ -290,7 +290,7 @@ void CairoGlyphToPathTranslator::advance()
     } while (m_fontData->isSVGFont() && m_index < m_glyphBuffer.size());
 }
 
-DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
+DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
 {
     if (isLoadingCustomFonts())
         return DashArray();
@@ -298,7 +298,7 @@ DashArray Font::dashesForIntersectionsWithRect(const TextRun& run, const FloatPo
     GlyphBuffer glyphBuffer;
     glyphBuffer.saveOffsetsInString();
     float deltaX;
-    if (codePath(run) != Font::Complex)
+    if (codePath(run) != FontCascade::Complex)
         deltaX = getGlyphsAndAdvancesForSimpleText(run, 0, run.length(), glyphBuffer);
     else
         deltaX = getGlyphsAndAdvancesForComplexText(run, 0, run.length(), glyphBuffer);

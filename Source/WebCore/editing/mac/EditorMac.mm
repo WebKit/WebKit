@@ -35,7 +35,7 @@
 #import "DocumentLoader.h"
 #import "Editor.h"
 #import "EditorClient.h"
-#import "Font.h"
+#import "FontCascade.h"
 #import "Frame.h"
 #import "FrameLoaderClient.h"
 #import "FrameView.h"
@@ -115,7 +115,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 
         const SimpleFontData* result = nullptr;
         if (style)
-            result = &style->font().primaryFontData();
+            result = &style->fontCascade().primaryFontData();
 
         if (nodeToRemove)
             nodeToRemove->remove(ASSERT_NO_EXCEPTION);
@@ -135,7 +135,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
             if (!renderer)
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            const SimpleFontData& primaryFont = renderer->style().font().primaryFontData();
+            const SimpleFontData& primaryFont = renderer->style().fontCascade().primaryFontData();
             if (!font)
                 font = &primaryFont;
             else if (font != &primaryFont) {
@@ -160,8 +160,8 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
     if (style->visitedDependentColor(CSSPropertyBackgroundColor).isValid() && style->visitedDependentColor(CSSPropertyBackgroundColor).alpha() != 0)
         [result setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
 
-    if (style->font().primaryFontData().getNSFont())
-        [result setObject:style->font().primaryFontData().getNSFont() forKey:NSFontAttributeName];
+    if (style->fontCascade().primaryFontData().getNSFont())
+        [result setObject:style->fontCascade().primaryFontData().getNSFont() forKey:NSFontAttributeName];
 
     if (style->visitedDependentColor(CSSPropertyColor).isValid() && style->visitedDependentColor(CSSPropertyColor) != Color::black)
         [result setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];

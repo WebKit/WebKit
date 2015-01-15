@@ -57,7 +57,7 @@ void RenderCombineText::setRenderedText(const String& text)
     m_needsFontUpdate = true;
 }
 
-float RenderCombineText::width(unsigned from, unsigned length, const Font& font, float xPosition, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float RenderCombineText::width(unsigned from, unsigned length, const FontCascade& font, float xPosition, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     if (m_isCombined)
         return font.size();
@@ -108,7 +108,7 @@ void RenderCombineText::combineText()
     float combinedTextWidth = width(0, textLength(), originalFont(), 0, nullptr, &glyphOverflow);
     m_isCombined = combinedTextWidth <= emWidth;
     
-    FontSelector* fontSelector = style().font().fontSelector();
+    FontSelector* fontSelector = style().fontCascade().fontSelector();
 
     if (m_isCombined)
         shouldUpdateFont = m_combineFontStyle->setFontDescription(description); // Need to change font orientation to horizontal.
@@ -117,7 +117,8 @@ void RenderCombineText::combineText()
         static const FontWidthVariant widthVariants[] = { HalfWidth, ThirdWidth, QuarterWidth };
         for (size_t i = 0 ; i < WTF_ARRAY_LENGTH(widthVariants) ; ++i) {
             description.setWidthVariant(widthVariants[i]);
-            Font compressedFont = Font(description, style().font().letterSpacing(), style().font().wordSpacing());
+
+            FontCascade compressedFont(description, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
             compressedFont.update(fontSelector);
             
             float runWidth = RenderText::width(0, textLength(), compressedFont, 0, nullptr, &glyphOverflow);
@@ -136,7 +137,7 @@ void RenderCombineText::combineText()
         shouldUpdateFont = m_combineFontStyle->setFontDescription(originalFont().fontDescription());
 
     if (shouldUpdateFont)
-        m_combineFontStyle->font().update(fontSelector);
+        m_combineFontStyle->fontCascade().update(fontSelector);
 
     if (m_isCombined) {
         DEPRECATED_DEFINE_STATIC_LOCAL(String, objectReplacementCharacterString, (&objectReplacementCharacter, 1));

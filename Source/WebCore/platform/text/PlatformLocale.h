@@ -33,7 +33,7 @@
 namespace WebCore {
 
 #if PLATFORM(IOS)
-class Font;
+class FontCascade;
 #endif
 
 class Locale {

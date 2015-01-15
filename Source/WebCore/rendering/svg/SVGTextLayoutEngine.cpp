@@ -439,7 +439,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
 
     auto upconvertedCharacters = StringView(text->text()).upconvertedCharacters();
     const UChar* characters = upconvertedCharacters;
-    const Font& font = style->font();
+    const FontCascade& font = style->fontCascade();
 
     SVGTextLayoutEngineSpacing spacingLayout(font);
     SVGTextLayoutEngineBaseline baselineLayout(font);

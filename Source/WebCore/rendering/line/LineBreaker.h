@@ -43,7 +43,7 @@ struct RenderTextInfo {
     RenderText* m_text;
     OwnPtr<TextLayout> m_layout;
     LazyLineBreakIterator m_lineBreakIterator;
-    const Font* m_font;
+    const FontCascade* m_font;
 };
 
 class LineBreaker {

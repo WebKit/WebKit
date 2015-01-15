@@ -20,7 +20,7 @@
 #include "config.h"
 #include "SVGTextLayoutEngineBaseline.h"
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "RenderElement.h"
 #include "SVGLengthContext.h"
 #include "SVGRenderStyle.h"
@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-SVGTextLayoutEngineBaseline::SVGTextLayoutEngineBaseline(const Font& font)
+SVGTextLayoutEngineBaseline::SVGTextLayoutEngineBaseline(const FontCascade& font)
     : m_font(font)
 {
 }

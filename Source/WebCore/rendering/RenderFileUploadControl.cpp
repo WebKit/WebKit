@@ -22,7 +22,7 @@
 #include "RenderFileUploadControl.h"
 
 #include "FileList.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -132,7 +132,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
 
     if (paintInfo.phase == PaintPhaseForeground) {
         const String& displayedFilename = fileTextValue();
-        const Font& font = style().font();
+        const FontCascade& font = style().fontCascade();
         TextRun textRun = constructTextRun(this, font, displayedFilename, style(), TextRun::AllowTrailingExpansion, RespectDirection | RespectDirectionOverride);
         textRun.disableRoundingHacks();
 
@@ -201,7 +201,7 @@ void RenderFileUploadControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogic
     // (using "0" as the nominal character).
     const UChar character = '0';
     const String characterAsString = String(&character, 1);
-    const Font& font = style().font();
+    const FontCascade& font = style().fontCascade();
     // FIXME: Remove the need for this const_cast by making constructTextRun take a const RenderObject*.
     RenderFileUploadControl* renderer = const_cast<RenderFileUploadControl*>(this);
     float minDefaultLabelWidth = defaultWidthNumChars * font.width(constructTextRun(renderer, font, characterAsString, style(), TextRun::AllowTrailingExpansion));
@@ -271,9 +271,9 @@ String RenderFileUploadControl::fileTextValue() const
     ASSERT(inputElement().files());
 #if PLATFORM(IOS)
     if (inputElement().files()->length())
-        return StringTruncator::rightTruncate(inputElement().displayString(), maxFilenameWidth(), style().font(), StringTruncator::EnableRoundingHacks);
+        return StringTruncator::rightTruncate(inputElement().displayString(), maxFilenameWidth(), style().fontCascade(), StringTruncator::EnableRoundingHacks);
 #endif
-    return theme().fileListNameForWidth(inputElement().files(), style().font(), maxFilenameWidth(), inputElement().multiple());
+    return theme().fileListNameForWidth(inputElement().files(), style().fontCascade(), maxFilenameWidth(), inputElement().multiple());
 }
     
 } // namespace WebCore

@@ -306,7 +306,7 @@ void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefP
 {
     m_ruleSets.appendAuthorStyleSheets(firstNew, styleSheets, m_medium.get(), m_inspectorCSSOMWrappers, this);
     if (auto renderView = document().renderView())
-        renderView->style().font().update(fontSelector());
+        renderView->style().fontCascade().update(fontSelector());
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     viewportStyleResolver()->resolve();
@@ -748,7 +748,7 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* d
         if (!s_styleNotYetAvailable) {
             s_styleNotYetAvailable = &RenderStyle::create().leakRef();
             s_styleNotYetAvailable->setDisplay(NONE);
-            s_styleNotYetAvailable->font().update(m_fontSelector);
+            s_styleNotYetAvailable->fontCascade().update(m_fontSelector);
         }
         element->document().setHasNodesWithPlaceholderStyle();
         return *s_styleNotYetAvailable;
@@ -1031,9 +1031,9 @@ Ref<RenderStyle> StyleResolver::defaultStyleForElement()
     // Make sure our fonts are initialized if we don't inherit them from our parent style.
     if (Settings* settings = documentSettings()) {
         initializeFontStyle(settings);
-        m_state.style()->font().update(fontSelector());
+        m_state.style()->fontCascade().update(fontSelector());
     } else
-        m_state.style()->font().update(0);
+        m_state.style()->fontCascade().update(nullptr);
 
     return m_state.takeStyle();
 }
@@ -1484,7 +1484,7 @@ void StyleResolver::updateFont()
     checkForGenericFamilyChange(style, m_state.parentStyle());
     checkForZoomChange(style, m_state.parentStyle());
     checkForOrientationChange(style);
-    style->font().update(m_fontSelector);
+    style->fontCascade().update(m_fontSelector);
     if (m_state.fontSizeHasViewportUnits())
         style->setHasViewportUnits(true);
     m_state.setFontDirty(false);

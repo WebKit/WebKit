@@ -239,7 +239,7 @@ public:
     virtual bool popsMenuBySpaceOrReturn() const { return false; }
 
     virtual String fileListDefaultLabel(bool multipleFilesAllowed) const;
-    virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const;
+    virtual String fileListNameForWidth(const FileList*, const FontCascade&, int width, bool multipleFilesAllowed) const;
 
     enum FileUploadDecorations { SingleFile, MultipleFiles };
     virtual bool paintFileUploadIconDecorations(const RenderObject& /*inputRenderer*/, const RenderObject& /*buttonRenderer*/, const PaintInfo&, const IntRect&, Icon*, FileUploadDecorations) { return true; }

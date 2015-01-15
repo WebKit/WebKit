@@ -31,7 +31,7 @@
 
 #import "CoreGraphicsSPI.h"
 #import "CoreTextSPI.h"
-#import "Font.h"
+#import "FontCascade.h"
 #import "RenderThemeIOS.h"
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>

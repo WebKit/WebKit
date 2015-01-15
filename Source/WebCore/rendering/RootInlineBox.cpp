@@ -901,7 +901,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
 
     const RenderStyle& boxLineStyle = box.lineStyle();
     if (usedFonts && !usedFonts->isEmpty() && (includeFont || (boxLineStyle.lineHeight().isNegative() && includeLeading))) {
-        usedFonts->append(&boxLineStyle.font().primaryFontData());
+        usedFonts->append(&boxLineStyle.fontCascade().primaryFontData());
         for (size_t i = 0; i < usedFonts->size(); ++i) {
             const FontMetrics& fontMetrics = usedFonts->at(i)->fontMetrics();
             int usedFontAscent = fontMetrics.ascent(baselineType());
@@ -1017,7 +1017,7 @@ LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositio
     
     if (verticalAlign != BASELINE) {
         const RenderStyle& parentLineStyle = firstLine ? parent->firstLineStyle() : parent->style();
-        const Font& font = parentLineStyle.font();
+        const FontCascade& font = parentLineStyle.fontCascade();
         const FontMetrics& fontMetrics = font.fontMetrics();
         int fontSize = font.pixelSize();
 

@@ -2049,8 +2049,8 @@ set(WebCore_SOURCES
     platform/graphics/FloatRect.cpp
     platform/graphics/FloatRoundedRect.cpp
     platform/graphics/FloatSize.cpp
-    platform/graphics/Font.cpp
     platform/graphics/FontCache.cpp
+    platform/graphics/FontCascade.cpp
     platform/graphics/FontDescription.cpp
     platform/graphics/FontFastPath.cpp
     platform/graphics/FontFeatureSettings.cpp

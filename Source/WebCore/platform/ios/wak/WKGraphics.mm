@@ -29,7 +29,7 @@
 #if PLATFORM(IOS)
 
 #import "CoreGraphicsSPI.h"
-#import "Font.h"
+#import "FontCascade.h"
 #import "WebCoreSystemInterface.h"
 #import "WebCoreThread.h"
 #import <ImageIO/ImageIO.h>

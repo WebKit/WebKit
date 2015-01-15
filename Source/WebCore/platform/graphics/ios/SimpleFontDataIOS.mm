@@ -29,8 +29,8 @@
 
 #import "BlockExceptions.h"
 #import "CoreGraphicsSPI.h"
-#import "Font.h"
 #import "FontCache.h"
+#import "FontCascade.h"
 #import "FontDescription.h"
 #import "FontServicesIOS.h"
 #import <CoreText/CoreText.h>

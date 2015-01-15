@@ -229,8 +229,8 @@ bool RenderText::isTextFragment() const
 bool RenderText::computeUseBackslashAsYenSymbol() const
 {
     const RenderStyle& style = this->style();
-    const FontDescription& fontDescription = style.font().fontDescription();
-    if (style.font().useBackslashAsYenSymbol())
+    const FontDescription& fontDescription = style.fontCascade().fontDescription();
+    if (style.fontCascade().useBackslashAsYenSymbol())
         return true;
     if (fontDescription.isSpecifiedFont())
         return false;
@@ -256,7 +256,7 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     if (!oldStyle) {
         m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
         needsResetText = m_useBackslashAsYenSymbol;
-    } else if (oldStyle->font().useBackslashAsYenSymbol() != newStyle.font().useBackslashAsYenSymbol()) {
+    } else if (oldStyle->fontCascade().useBackslashAsYenSymbol() != newStyle.fontCascade().useBackslashAsYenSymbol()) {
         m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
         needsResetText = true;
     }
@@ -451,7 +451,7 @@ LayoutRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, Lay
     return box.root().computeCaretRect(left, caretWidth, extraWidthToEndOfLine);
 }
 
-ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const
+ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, int start, int len, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const
 {
     if (style.hasTextCombine() && is<RenderCombineText>(*this)) {
         const RenderCombineText& combineText = downcast<RenderCombineText>(*this);
@@ -544,7 +544,7 @@ void RenderText::trimmedPrefWidths(float leadWidth,
     ASSERT(m_text);
     StringImpl& text = *m_text.impl();
     if (text[0] == ' ' || (text[0] == '\n' && !style.preserveNewline()) || text[0] == '\t') {
-        const Font& font = style.font(); // FIXME: This ignores first-line.
+        const FontCascade& font = style.fontCascade(); // FIXME: This ignores first-line.
         if (stripFrontSpaces) {
             const UChar space = ' ';
             float spaceWidth = font.width(RenderBlock::constructTextRun(this, font, &space, 1, style));
@@ -560,7 +560,7 @@ void RenderText::trimmedPrefWidths(float leadWidth,
 
     // Compute our max widths by scanning the string for newlines.
     if (hasBreak) {
-        const Font& f = style.font(); // FIXME: This ignores first-line.
+        const FontCascade& f = style.fontCascade(); // FIXME: This ignores first-line.
         bool firstLine = true;
         beginMaxW = maxW;
         endMaxW = maxW;
@@ -637,13 +637,13 @@ void RenderText::computePreferredLogicalWidths(float leadWidth)
         m_knownToHaveNoOverflowAndNoFallbackFonts = true;
 }
 
-static inline float hyphenWidth(RenderText* renderer, const Font& font)
+static inline float hyphenWidth(RenderText* renderer, const FontCascade& font)
 {
     const RenderStyle& style = renderer->style();
     return font.width(RenderBlock::constructTextRun(renderer, font, style.hyphenString().string(), style));
 }
 
-static float maxWordFragmentWidth(RenderText* renderer, const RenderStyle& style, const Font& font, StringView word, int minimumPrefixLength, unsigned minimumSuffixLength, int& suffixStart, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow& glyphOverflow)
+static float maxWordFragmentWidth(RenderText* renderer, const RenderStyle& style, const FontCascade& font, StringView word, int minimumPrefixLength, unsigned minimumSuffixLength, int& suffixStart, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow& glyphOverflow)
 {
     suffixStart = 0;
     if (word.length() <= minimumSuffixLength)
@@ -701,7 +701,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
     m_hasEndWS = false;
 
     const RenderStyle& style = this->style();
-    const Font& font = style.font(); // FIXME: This ignores first-line.
+    const FontCascade& font = style.fontCascade(); // FIXME: This ignores first-line.
     float wordSpacing = font.wordSpacing();
     int len = textLength();
     LazyLineBreakIterator breakIterator(m_text, style.locale(), mapLineBreakToIteratorMode(style.lineBreak()));
@@ -1215,10 +1215,10 @@ float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine,
         len = textLength() - from;
 
     const RenderStyle& lineStyle = firstLine ? firstLineStyle() : style();
-    return width(from, len, lineStyle.font(), xPos, fallbackFonts, glyphOverflow);
+    return width(from, len, lineStyle.fontCascade(), xPos, fallbackFonts, glyphOverflow);
 }
 
-float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ASSERT(from + len <= textLength());
     if (!textLength())
@@ -1226,7 +1226,7 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
 
     const RenderStyle& style = this->style();
     float w;
-    if (&f == &style.font()) {
+    if (&f == &style.fontCascade()) {
         if (!style.preserveNewline() && !from && len == textLength() && (!glyphOverflow || !glyphOverflow->computeBounds)) {
             if (fallbackFonts) {
                 ASSERT(glyphOverflow);
@@ -1556,7 +1556,7 @@ bool RenderText::computeCanUseSimpleFontCodePath() const
 {
     if (isAllASCII() || m_text.is8Bit())
         return true;
-    return Font::characterRangeCodePath(characters16(), length()) == Font::Simple;
+    return FontCascade::characterRangeCodePath(characters16(), length()) == FontCascade::Simple;
 }
 
 void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter)

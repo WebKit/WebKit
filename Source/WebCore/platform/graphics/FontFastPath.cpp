@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "Font.h"
+#include "FontCascade.h"
 
 #include "FloatRect.h"
 #include "FontGlyphs.h"
@@ -41,7 +41,7 @@ namespace WebCore {
 
 // FIXME: This function may not work if the emphasis mark uses a complex script, but none of the
 // standard emphasis marks do so.
-bool Font::getEmphasisMarkGlyphData(const AtomicString& mark, GlyphData& glyphData) const
+bool FontCascade::getEmphasisMarkGlyphData(const AtomicString& mark, GlyphData& glyphData) const
 {
     if (mark.isEmpty())
         return false;
@@ -66,7 +66,7 @@ bool Font::getEmphasisMarkGlyphData(const AtomicString& mark, GlyphData& glyphDa
     return true;
 }
 
-int Font::emphasisMarkAscent(const AtomicString& mark) const
+int FontCascade::emphasisMarkAscent(const AtomicString& mark) const
 {
     GlyphData markGlyphData;
     if (!getEmphasisMarkGlyphData(mark, markGlyphData))
@@ -80,7 +80,7 @@ int Font::emphasisMarkAscent(const AtomicString& mark) const
     return markFontData->fontMetrics().ascent();
 }
 
-int Font::emphasisMarkDescent(const AtomicString& mark) const
+int FontCascade::emphasisMarkDescent(const AtomicString& mark) const
 {
     GlyphData markGlyphData;
     if (!getEmphasisMarkGlyphData(mark, markGlyphData))
@@ -94,7 +94,7 @@ int Font::emphasisMarkDescent(const AtomicString& mark) const
     return markFontData->fontMetrics().descent();
 }
 
-int Font::emphasisMarkHeight(const AtomicString& mark) const
+int FontCascade::emphasisMarkHeight(const AtomicString& mark) const
 {
     GlyphData markGlyphData;
     if (!getEmphasisMarkGlyphData(mark, markGlyphData))
@@ -108,7 +108,7 @@ int Font::emphasisMarkHeight(const AtomicString& mark) const
     return markFontData->fontMetrics().height();
 }
 
-float Font::getGlyphsAndAdvancesForSimpleText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
+float FontCascade::getGlyphsAndAdvancesForSimpleText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
 {
     float initialAdvance;
 
@@ -138,7 +138,7 @@ float Font::getGlyphsAndAdvancesForSimpleText(const TextRun& run, int from, int 
     return initialAdvance;
 }
 
-float Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
+float FontCascade::drawSimpleText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     // This glyph buffer holds our glyphs+advances+font data for each glyph.
     GlyphBuffer glyphBuffer;
@@ -154,7 +154,7 @@ float Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const F
     return startPoint.x() - startX;
 }
 
-void Font::drawEmphasisMarksForSimpleText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
+void FontCascade::drawEmphasisMarksForSimpleText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
 {
     GlyphBuffer glyphBuffer;
     float initialAdvance = getGlyphsAndAdvancesForSimpleText(run, from, to, glyphBuffer, ForTextEmphasis);
@@ -165,7 +165,7 @@ void Font::drawEmphasisMarksForSimpleText(GraphicsContext* context, const TextRu
     drawEmphasisMarks(context, run, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
 }
 
-void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const GlyphBuffer& glyphBuffer, FloatPoint& point) const
+void FontCascade::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const GlyphBuffer& glyphBuffer, FloatPoint& point) const
 {
 #if !ENABLE(SVG_FONTS)
     UNUSED_PARAM(run);
@@ -231,7 +231,7 @@ inline static float offsetToMiddleOfGlyphAtIndex(const GlyphBuffer& glyphBuffer,
     return offsetToMiddleOfGlyph(glyphBuffer.fontDataAt(i), glyphBuffer.glyphAt(i));
 }
 
-void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const GlyphBuffer& glyphBuffer, const AtomicString& mark, const FloatPoint& point) const
+void FontCascade::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const GlyphBuffer& glyphBuffer, const AtomicString& mark, const FloatPoint& point) const
 {
     GlyphData markGlyphData;
     if (!getEmphasisMarkGlyphData(mark, markGlyphData))
@@ -260,7 +260,7 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
     drawGlyphBuffer(context, run, markBuffer, startPoint);
 }
 
-float Font::floatWidthForSimpleText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     WidthIterator it(this, run, fallbackFonts, glyphOverflow);
     GlyphBuffer glyphBuffer;
@@ -276,7 +276,7 @@ float Font::floatWidthForSimpleText(const TextRun& run, HashSet<const SimpleFont
     return it.m_runWidthSoFar;
 }
 
-void Font::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
+void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
 {
     GlyphBuffer glyphBuffer;
     WidthIterator it(this, run);
@@ -295,7 +295,7 @@ void Font::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRect& sele
     selectionRect.setWidth(afterWidth - beforeWidth);
 }
 
-int Font::offsetForPositionForSimpleText(const TextRun& run, float x, bool includePartialGlyphs) const
+int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
     float delta = x;
 

@@ -86,7 +86,7 @@ static Ref<RenderStyle> createFullScreenStyle()
     fullscreenStyle.get().setZIndex(INT_MAX);
 
     fullscreenStyle.get().setFontDescription(FontDescription());
-    fullscreenStyle.get().font().update(0);
+    fullscreenStyle.get().fontCascade().update(nullptr);
 
     fullscreenStyle.get().setDisplay(FLEX);
     fullscreenStyle.get().setJustifyContent(JustifyCenter);

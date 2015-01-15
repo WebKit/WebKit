@@ -23,7 +23,7 @@
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "EllipsisBox.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
 #include "HitTestResult.h"
@@ -122,7 +122,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
             shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         else if (child->behavesLikeText()) {
             if (child->renderer().isLineBreak() || child->renderer().parent() != &renderer()) {
-                if (!parentStyle.font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.font().fontMetrics())
+                if (!parentStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
                     || parentStyle.lineHeight() != childStyle.lineHeight()
                     || (parentStyle.verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle.verticalAlign() != BASELINE)
                     shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
@@ -138,7 +138,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
                 auto& childFlowBox = downcast<InlineFlowBox>(*child);
                 // Check the child's bit, and then also check for differences in font, line-height, vertical-align
                 if (!childFlowBox.descendantsHaveSameLineHeightAndBaseline()
-                    || !parentStyle.font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.font().fontMetrics())
+                    || !parentStyle.fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
                     || parentStyle.lineHeight() != childStyle.lineHeight()
                     || (parentStyle.verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle.verticalAlign() != BASELINE
                     || childStyle.hasBorder() || childStyle.hasPadding() || childStyle.hasTextCombine())
@@ -388,7 +388,7 @@ float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, Inlin
             RenderText& renderText = textBox.renderer();
             if (renderText.textLength()) {
                 if (needsWordSpacing && isSpaceOrNewline(renderText.characterAt(textBox.start())))
-                    logicalLeft += textBox.lineStyle().font().wordSpacing();
+                    logicalLeft += textBox.lineStyle().fontCascade().wordSpacing();
                 needsWordSpacing = !isSpaceOrNewline(renderText.characterAt(textBox.end()));
             }
             textBox.setLogicalLeft(logicalLeft);
@@ -449,7 +449,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
 
     const RenderStyle& lineStyle = this->lineStyle();
     if (lineStyle.fontDescription().nonCJKGlyphOrientation() == NonCJKGlyphOrientationUpright
-        || lineStyle.font().primaryFontData().hasVerticalGlyphs())
+        || lineStyle.fontCascade().primaryFontData().hasVerticalGlyphs())
         return true;
 
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
@@ -460,7 +460,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
             if (downcast<InlineFlowBox>(*child).requiresIdeographicBaseline(textBoxDataMap))
                 return true;
         } else {
-            if (child->lineStyle().font().primaryFontData().hasVerticalGlyphs())
+            if (child->lineStyle().fontCascade().primaryFontData().hasVerticalGlyphs())
                 return true;
             
             const Vector<const SimpleFontData*>* usedFonts = nullptr;
@@ -873,7 +873,7 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox& textBox, Glyp
 
     bool emphasisMarkIsAbove;
     if (lineStyle.textEmphasisMark() != TextEmphasisMarkNone && textBox.emphasisMarkExistsAndIsAbove(lineStyle, emphasisMarkIsAbove)) {
-        int emphasisMarkHeight = lineStyle.font().emphasisMarkHeight(lineStyle.textEmphasisMarkString());
+        int emphasisMarkHeight = lineStyle.fontCascade().emphasisMarkHeight(lineStyle.textEmphasisMarkString());
         if (emphasisMarkIsAbove == !lineStyle.isFlippedLinesWritingMode())
             topGlyphOverflow = std::min(topGlyphOverflow, -emphasisMarkHeight);
         else
@@ -882,7 +882,7 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox& textBox, Glyp
 
     // If letter-spacing is negative, we should factor that into right layout overflow. (Even in RTL, letter-spacing is
     // applied to the right, so this is not an issue with left overflow.
-    rightGlyphOverflow -= std::min(0, (int)lineStyle.font().letterSpacing());
+    rightGlyphOverflow -= std::min(0, (int)lineStyle.fontCascade().letterSpacing());
 
     LayoutUnit textShadowLogicalTop;
     LayoutUnit textShadowLogicalBottom;
@@ -1534,10 +1534,10 @@ LayoutUnit InlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allowedPosi
             bool emphasisMarkIsAbove;
             if (childLineStyle.textEmphasisMark() != TextEmphasisMarkNone && downcast<InlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle, emphasisMarkIsAbove) && emphasisMarkIsAbove) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
-                    int topOfEmphasisMark = child->logicalTop() - childLineStyle.font().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
+                    int topOfEmphasisMark = child->logicalTop() - childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
                     result = std::max(result, allowedPosition - topOfEmphasisMark);
                 } else {
-                    int bottomOfEmphasisMark = child->logicalBottom() + childLineStyle.font().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
+                    int bottomOfEmphasisMark = child->logicalBottom() + childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
                     result = std::max(result, bottomOfEmphasisMark - allowedPosition);
                 }
             }
@@ -1583,10 +1583,10 @@ LayoutUnit InlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allowedPos
             downcast<InlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle, emphasisMarkIsAbove);
             if (childLineStyle.textEmphasisMark() != TextEmphasisMarkNone && !emphasisMarkIsAbove) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
-                    LayoutUnit bottomOfEmphasisMark = child->logicalBottom() + childLineStyle.font().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
+                    LayoutUnit bottomOfEmphasisMark = child->logicalBottom() + childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
                     result = std::max(result, bottomOfEmphasisMark - allowedPosition);
                 } else {
-                    LayoutUnit topOfEmphasisMark = child->logicalTop() - childLineStyle.font().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
+                    LayoutUnit topOfEmphasisMark = child->logicalTop() - childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
                     result = std::max(result, allowedPosition - topOfEmphasisMark);
                 }
             }

@@ -21,7 +21,7 @@
 #include "EllipsisBox.h"
 
 #include "Document.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
@@ -54,7 +54,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
         setShadow = true;
     }
 
-    const Font& font = lineStyle.font();
+    const FontCascade& font = lineStyle.fontCascade();
     if (selectionState() != RenderObject::SelectionNone) {
         paintSelection(context, paintOffset, lineStyle, font);
 
@@ -110,7 +110,7 @@ void EllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintO
 IntRect EllipsisBox::selectionRect()
 {
     const RenderStyle& lineStyle = this->lineStyle();
-    const Font& font = lineStyle.font();
+    const FontCascade& font = lineStyle.fontCascade();
     const RootInlineBox& rootBox = root();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
     LayoutRect selectionRect = LayoutRect(x(), y() + rootBox.selectionTopAdjustedForPrecedingBlock(), 0, rootBox.selectionHeightAdjustedForPrecedingBlock());
@@ -119,7 +119,7 @@ IntRect EllipsisBox::selectionRect()
     return enclosingIntRect(selectionRect);
 }
 
-void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& paintOffset, const RenderStyle& style, const Font& font)
+void EllipsisBox::paintSelection(GraphicsContext* context, const LayoutPoint& paintOffset, const RenderStyle& style, const FontCascade& font)
 {
     Color textColor = style.visitedDependentColor(CSSPropertyColor);
     Color c = blockFlow().selectionBackgroundColor();

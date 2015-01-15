@@ -50,7 +50,7 @@ inline StyleInheritedData::StyleInheritedData(const StyleInheritedData& o)
 #if ENABLE(IOS_TEXT_AUTOSIZING)
     , specifiedLineHeight(o.specifiedLineHeight)
 #endif
-    , font(o.font)
+    , fontCascade(o.fontCascade)
     , color(o.color)
     , visitedLinkColor(o.visitedLinkColor)
 {
@@ -67,7 +67,7 @@ bool StyleInheritedData::operator==(const StyleInheritedData& o) const
 #if ENABLE(IOS_TEXT_AUTOSIZING)
         && specifiedLineHeight == o.specifiedLineHeight
 #endif
-        && font == o.font
+        && fontCascade == o.fontCascade
         && color == o.color
         && visitedLinkColor == o.visitedLinkColor
         && horizontal_border_spacing == o.horizontal_border_spacing

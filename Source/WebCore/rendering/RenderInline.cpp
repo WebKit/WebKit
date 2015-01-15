@@ -216,7 +216,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
         || (parentRenderInline && parentStyle->verticalAlign() != BASELINE)
         || style().verticalAlign() != BASELINE
         || style().textEmphasisMark() != TextEmphasisMarkNone
-        || (checkFonts && (!parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(style().font().fontMetrics())
+        || (checkFonts && (!parentStyle->fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(style().fontCascade().fontMetrics())
         || parentStyle->lineHeight() != style().lineHeight()))
         || (flowThread && flowThread->isRenderNamedFlowThread()); // FIXME: Enable the optimization once we make overflow computation for culled inlines in regions.
 
@@ -224,7 +224,7 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
         // Have to check the first line style as well.
         parentStyle = &parent()->firstLineStyle();
         RenderStyle& childStyle = firstLineStyle();
-        alwaysCreateLineBoxes = !parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.font().fontMetrics())
+        alwaysCreateLineBoxes = !parentStyle->fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().fontMetrics())
             || childStyle.verticalAlign() != BASELINE
             || parentStyle->lineHeight() != childStyle.lineHeight();
     }
@@ -574,8 +574,8 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
             if (renderBox.inlineBoxWrapper()) {
                 const RootInlineBox& rootBox = renderBox.inlineBoxWrapper()->root();
                 const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
-                int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
-                int logicalHeight = containerStyle.font().fontMetrics().height();
+                int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
+                int logicalHeight = containerStyle.fontCascade().fontMetrics().height();
                 if (isHorizontal)
                     context.addRect(FloatRect(renderBox.inlineBoxWrapper()->x() - renderBox.marginLeft(), logicalTop, renderBox.width() + renderBox.horizontalMarginExtent(), logicalHeight));
                 else
@@ -590,7 +590,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
                 for (InlineFlowBox* childLine = renderInline.firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
                     const RootInlineBox& rootBox = childLine->root();
                     const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
-                    int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
+                    int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
                     int logicalHeight = containerStyle.fontMetrics().height();
                     if (isHorizontal) {
                         context.addRect(FloatRect(childLine->x() - childLine->marginLogicalLeft(),
@@ -610,8 +610,8 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
             for (InlineTextBox* childText = currText.firstTextBox(); childText; childText = childText->nextTextBox()) {
                 const RootInlineBox& rootBox = childText->root();
                 const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
-                int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
-                int logicalHeight = containerStyle.font().fontMetrics().height();
+                int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
+                int logicalHeight = containerStyle.fontCascade().fontMetrics().height();
                 if (isHorizontal)
                     context.addRect(FloatRect(childText->x(), logicalTop, childText->logicalWidth(), logicalHeight));
                 else
@@ -622,7 +622,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
                 // FIXME: This could use a helper to share these with text path.
                 const RootInlineBox& rootBox = inlineBox->root();
                 const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
-                int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().font().fontMetrics().ascent() - containerStyle.font().fontMetrics().ascent());
+                int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
                 int logicalHeight = containerStyle.fontMetrics().height();
                 if (isHorizontal)
                     context.addRect(FloatRect(inlineBox->x(), logicalTop, inlineBox->logicalWidth(), logicalHeight));

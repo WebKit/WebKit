@@ -26,7 +26,7 @@
 #include "RenderListMarker.h"
 
 #include "Document.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "InlineElementBox.h"
 #include "RenderLayer.h"
@@ -1314,7 +1314,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (m_text.isEmpty())
         return;
 
-    const Font& font = style().font();
+    const FontCascade& font = style().fontCascade();
     TextRun textRun = RenderBlock::constructTextRun(this, font, m_text, style());
 
     GraphicsContextStateSaver stateSaver(*context, false);
@@ -1529,7 +1529,7 @@ void RenderListMarker::computePreferredLogicalWidths()
         return;
     }
 
-    const Font& font = style().font();
+    const FontCascade& font = style().fontCascade();
 
     LayoutUnit logicalWidth = 0;
     EListStyleType type = style().listStyleType();
@@ -1757,7 +1757,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
     switch (type) {
         case Asterisks:
         case Footnotes: {
-            const Font& font = style().font();
+            const FontCascade& font = style().fontCascade();
             TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
             relativeRect = IntRect(0, 0, font.width(run), font.fontMetrics().height());
             break;
@@ -1851,7 +1851,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         case Urdu:
             if (m_text.isEmpty())
                 return IntRect();
-            const Font& font = style().font();
+            const FontCascade& font = style().fontCascade();
             TextRun run = RenderBlock::constructTextRun(this, font, m_text, style(), TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, DefaultTextRunFlags);
             int itemWidth = font.width(run);
             UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };

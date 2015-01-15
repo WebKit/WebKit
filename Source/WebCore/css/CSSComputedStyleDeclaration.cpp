@@ -1504,8 +1504,8 @@ static void logUnimplementedPropertyID(CSSPropertyID propertyID)
 static Ref<CSSValueList> fontFamilyFromStyle(RenderStyle* style)
 {
     auto list = CSSValueList::createCommaSeparated();
-    for (unsigned i = 0; i < style->font().familyCount(); ++i)
-        list.get().append(valueForFamily(style->font().familyAt(i)));
+    for (unsigned i = 0; i < style->fontCascade().familyCount(); ++i)
+        list.get().append(valueForFamily(style->fontCascade().familyAt(i)));
     return list;
 }
 
@@ -2545,7 +2545,7 @@ PassRefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propert
         case CSSPropertyWordBreak:
             return cssValuePool().createValue(style->wordBreak());
         case CSSPropertyWordSpacing:
-            return zoomAdjustedPixelValue(style->font().wordSpacing(), style.get());
+            return zoomAdjustedPixelValue(style->fontCascade().wordSpacing(), style.get());
         case CSSPropertyWordWrap:
             return cssValuePool().createValue(style->overflowWrap());
         case CSSPropertyWebkitLineBreak:

@@ -27,8 +27,8 @@
 #include "ComplexTextController.h"
 
 #include "CoreTextSPI.h"
-#include "Font.h"
 #include "FontCache.h"
+#include "FontCascade.h"
 #include "TextRun.h"
 #include "WebCoreSystemInterface.h"
 
@@ -40,19 +40,19 @@
 
 @interface WebCascadeList : NSArray {
     @private
-    const WebCore::Font* _font;
+    const WebCore::FontCascade* _font;
     UChar32 _character;
     NSUInteger _count;
     Vector<RetainPtr<CTFontDescriptorRef>, 16> _fontDescriptors;
 }
 
-- (id)initWithFont:(const WebCore::Font*)font character:(UChar32)character;
+- (id)initWithFont:(const WebCore::FontCascade*)font character:(UChar32)character;
 
 @end
 
 @implementation WebCascadeList
 
-- (id)initWithFont:(const WebCore::Font*)font character:(UChar32)character
+- (id)initWithFont:(const WebCore::FontCascade*)font character:(UChar32)character
 {
     if (!(self = [super init]))
         return nil;
@@ -60,7 +60,7 @@
     _font = font;
     _character = character;
 
-    // By the time a WebCascadeList is used, the Font has already been asked to realize all of its
+    // By the time a WebCascadeList is used, the FontCascade has already been asked to realize all of its
     // FontData, so this loop does not hit the FontCache.
     while (!_font->fallbackRangesAt(_count).isNull())
         _count++;

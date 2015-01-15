@@ -30,7 +30,7 @@
 #include "ColorSpace.h"
 #include "DashArray.h"
 #include "FloatRect.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "Gradient.h"
 #include "Image.h"
 #include "ImageOrientation.h"
@@ -356,16 +356,16 @@ namespace WebCore {
 #endif
         
 #if !PLATFORM(IOS)
-        void drawText(const Font&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
+        void drawText(const FontCascade&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
 #else
-        float drawText(const Font&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
+        float drawText(const FontCascade&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
 #endif
-        void drawGlyphs(const Font&, const SimpleFontData&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
-        void drawEmphasisMarks(const Font&, const TextRun& , const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1);
+        void drawGlyphs(const FontCascade&, const SimpleFontData&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
+        void drawEmphasisMarks(const FontCascade&, const TextRun& , const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1);
 #if !PLATFORM(IOS)
-        void drawBidiText(const Font&, const TextRun&, const FloatPoint&, Font::CustomFontNotReadyAction = Font::DoNotPaintIfFontNotReady);
+        void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady);
 #else
-        WEBCORE_EXPORT float drawBidiText(const Font&, const TextRun&, const FloatPoint&, Font::CustomFontNotReadyAction = Font::DoNotPaintIfFontNotReady, BidiStatus* = 0, int length = -1);
+        WEBCORE_EXPORT float drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady, BidiStatus* = 0, int length = -1);
 #endif
         enum RoundingMode {
             RoundAllSides,

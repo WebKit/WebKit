@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "UniscribeController.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "HWndDC.h"
 #include "SimpleFontData.h"
 #include "TextRun.h"
@@ -41,7 +41,7 @@ namespace WebCore {
 // that does stuff in that method instead of doing everything in the constructor.  Have advance()
 // take the GlyphBuffer as an arg so that we don't have to populate the glyph buffer when
 // measuring.
-UniscribeController::UniscribeController(const Font* font, const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts)
+UniscribeController::UniscribeController(const FontCascade* font, const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts)
     : m_font(*font)
     , m_run(run)
     , m_fallbackFonts(fallbackFonts)
@@ -63,7 +63,7 @@ UniscribeController::UniscribeController(const Font* font, const TextRun& run, H
     else {
         float numSpaces = 0;
         for (int s = 0; s < m_run.length(); s++) {
-            if (Font::treatAsSpace(m_run[s]))
+            if (FontCascade::treatAsSpace(m_run[s]))
                 numSpaces++;
         }
 
@@ -287,8 +287,8 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
 
     for (int k = 0; k < len; k++) {
         UChar ch = *(str + k);
-        bool treatAsSpace = Font::treatAsSpace(ch);
-        bool treatAsZeroWidthSpace = Font::treatAsZeroWidthSpace(ch);
+        bool treatAsSpace = FontCascade::treatAsSpace(ch);
+        bool treatAsZeroWidthSpace = FontCascade::treatAsZeroWidthSpace(ch);
         if (treatAsSpace || treatAsZeroWidthSpace) {
             // Substitute in the space glyph at the appropriate place in the glyphs
             // array.
@@ -351,7 +351,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
                     else
                         candidateSpace = *(m_run.data16(characterIndex - 1));
 
-                    if (!Font::treatAsSpace(candidateSpace))
+                    if (!FontCascade::treatAsSpace(candidateSpace))
                         advance += m_font.wordSpacing();
                 }
             }

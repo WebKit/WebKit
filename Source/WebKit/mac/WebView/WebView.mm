@@ -1490,7 +1490,7 @@ static NSMutableSet *knownPluginMIMETypes()
 
 + (void)_setAlwaysUsesComplexTextCodePath:(BOOL)f
 {
-    Font::setCodePath(f ? Font::Complex : Font::Auto);
+    FontCascade::setCodePath(f ? FontCascade::Complex : FontCascade::Auto);
 }
 
 + (void)_setAllowsRoundingHacks:(BOOL)allowsRoundingHacks
@@ -3168,12 +3168,12 @@ static inline IMP getMethod(id o, SEL s)
 
 + (void)_setShouldUseFontSmoothing:(BOOL)f
 {
-    Font::setShouldUseSmoothing(f);
+    FontCascade::setShouldUseSmoothing(f);
 }
 
 + (BOOL)_shouldUseFontSmoothing
 {
-    return Font::shouldUseSmoothing();
+    return FontCascade::shouldUseSmoothing();
 }
 
 #if !PLATFORM(IOS)
@@ -4710,7 +4710,7 @@ static Vector<String> toStringVector(NSArray* patterns)
     grammarCheckingEnabled = [defaults boolForKey:WebGrammarCheckingEnabled];
 #endif
 
-    Font::setDefaultTypesettingFeatures([defaults boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey] ? Kerning | Ligatures : 0);
+    FontCascade::setDefaultTypesettingFeatures([defaults boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey] ? Kerning | Ligatures : 0);
 
 #if !PLATFORM(IOS)
     automaticQuoteSubstitutionEnabled = [self _shouldAutomaticQuoteSubstitutionBeEnabled];

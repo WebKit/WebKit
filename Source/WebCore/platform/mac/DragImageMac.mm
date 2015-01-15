@@ -29,7 +29,7 @@
 #if ENABLE(DRAG_SUPPORT)
 #import "BitmapImage.h"
 #import "CoreGraphicsSPI.h"
-#import "Font.h"
+#import "FontCascade.h"
 #import "FontDescription.h"
 #import "FontSelector.h"
 #import "GraphicsContext.h"
@@ -157,10 +157,10 @@ const float DragLinkUrlFontSize = 10;
 
 // FIXME - we should move all the functionality of NSString extras to WebCore
     
-static Font& fontFromNSFont(NSFont *font)
+static FontCascade& fontFromNSFont(NSFont *font)
 {
     static NSFont *currentFont;
-    DEPRECATED_DEFINE_STATIC_LOCAL(Font, currentRenderer, ());
+    DEPRECATED_DEFINE_STATIC_LOCAL(FontCascade, currentRenderer, ());
     
     if ([font isEqual:currentFont])
         return currentRenderer;
@@ -169,7 +169,7 @@ static Font& fontFromNSFont(NSFont *font)
     currentFont = font;
     CFRetain(currentFont);
     FontPlatformData f(font, [font pointSize]);
-    currentRenderer = Font(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
+    currentRenderer = FontCascade(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
     return currentRenderer;
 }
 
@@ -192,7 +192,7 @@ static float widthWithFont(NSString *string, NSFont *font)
     [string getCharacters:buffer.data()];
     
     if (canUseFastRenderer(buffer.data(), length)) {
-        Font webCoreFont(FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
+        FontCascade webCoreFont(FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
         TextRun run(buffer.data(), length);
         run.disableRoundingHacks();
         return webCoreFont.width(run);
@@ -224,7 +224,7 @@ static void drawAtPoint(NSString *string, NSPoint point, NSFont *font, NSColor *
         if (!flipped)
             CGContextScaleCTM(cgContext, 1, -1);
             
-        Font webCoreFont(FontPlatformData(font, [font pointSize]), ![nsContext isDrawingToScreen], Antialiased);
+        FontCascade webCoreFont(FontPlatformData(font, [font pointSize]), ![nsContext isDrawingToScreen], Antialiased);
         TextRun run(buffer.data(), length);
         run.disableRoundingHacks();
 

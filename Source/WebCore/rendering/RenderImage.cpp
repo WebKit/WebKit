@@ -30,8 +30,8 @@
 
 #include "BitmapImage.h"
 #include "CachedImage.h"
-#include "Font.h"
 #include "FontCache.h"
+#include "FontCascade.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "GeometryUtilities.h"
@@ -192,7 +192,7 @@ bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
 
     // we have an alt and the user meant it (its not a text we invented)
     if (!m_altText.isEmpty()) {
-        const Font& font = style().font();
+        const FontCascade& font = style().fontCascade();
         IntSize paddedTextSize(paddingWidth + std::min(ceilf(font.width(RenderBlock::constructTextRun(this, font, m_altText, style()))), maxAltTextWidth), paddingHeight + std::min(font.fontMetrics().height(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(paddedTextSize);
     }
@@ -444,7 +444,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             if (!m_altText.isEmpty()) {
                 String text = document().displayStringModifiedByEncoding(m_altText);
                 context->setFillColor(style().visitedDependentColor(CSSPropertyColor), style().colorSpace());
-                const Font& font = style().font();
+                const FontCascade& font = style().fontCascade();
                 const FontMetrics& fontMetrics = font.fontMetrics();
                 LayoutUnit ascent = fontMetrics.ascent();
                 LayoutPoint altTextOffset = paintOffset;

@@ -35,7 +35,7 @@
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "EditorClient.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "HTMLConverter.h"
@@ -213,7 +213,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
 
         const SimpleFontData* result = nullptr;
         if (style)
-            result = &style->font().primaryFontData();
+            result = &style->fontCascade().primaryFontData();
 
         if (nodeToRemove) {
             ExceptionCode ec;
@@ -235,7 +235,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
             if (!renderer)
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            const SimpleFontData& primaryFont = renderer->style().font().primaryFontData();
+            const SimpleFontData& primaryFont = renderer->style().fontCascade().primaryFontData();
             if (!font)
                 font = &primaryFont;
             else if (font != &primaryFont) {
@@ -257,7 +257,7 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
 
     NSMutableDictionary* result = [NSMutableDictionary dictionary];
     
-    CTFontRef font = style->font().primaryFontData().getCTFont();
+    CTFontRef font = style->fontCascade().primaryFontData().getCTFont();
     if (font)
         [result setObject:(id)font forKey:NSFontAttributeName];
 

@@ -35,7 +35,6 @@
 
 #include "FloatConversion.h"
 #include "FloatRect.h"
-#include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "GlyphBuffer.h"

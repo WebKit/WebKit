@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-class Font;
+class FontCascade;
 class SimpleFontData;
 
 class HarfBuzzShaper {
@@ -54,7 +54,7 @@ public:
         NormalizeMirrorChars
     };
 
-    HarfBuzzShaper(const Font*, const TextRun&);
+    HarfBuzzShaper(const FontCascade*, const TextRun&);
     virtual ~HarfBuzzShaper();
 
     bool shape(GlyphBuffer* = 0);
@@ -122,7 +122,7 @@ private:
 
     GlyphBufferAdvance createGlyphBufferAdvance(float, float);
 
-    const Font* m_font;
+    const FontCascade* m_font;
     std::unique_ptr<UChar[]> m_normalizedBuffer;
     unsigned m_normalizedBufferLength;
     const TextRun& m_run;

@@ -43,7 +43,7 @@
 #import "DOMNodeInternal.h"
 #import "DOMRangeInternal.h"
 #import "FloatPoint.h"
-#import "Font.h"
+#import "FontCascade.h"
 #import "FrameSelection.h"
 #import "HTMLAreaElement.h"
 #import "htmlediting.h"
@@ -71,7 +71,7 @@
 using namespace WebCore;
 
 using WebCore::FloatPoint;
-using WebCore::Font;
+using WebCore::FontCascade;
 using WebCore::HTMLAreaElement;
 using WebCore::HTMLImageElement;
 using WebCore::HTMLSelectElement;

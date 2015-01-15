@@ -79,7 +79,7 @@ Ref<RenderStyle> RenderFlowThread::createFlowThreadStyle(RenderStyle* parentStyl
     newStyle.get().setTop(Length(0, Fixed));
     newStyle.get().setWidth(Length(100, Percent));
     newStyle.get().setHeight(Length(100, Percent));
-    newStyle.get().font().update(0);
+    newStyle.get().fontCascade().update(nullptr);
     return newStyle;
 }
 

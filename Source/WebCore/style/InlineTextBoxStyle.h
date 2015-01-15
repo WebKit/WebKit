@@ -26,7 +26,7 @@
 #ifndef InlineTextBoxStyle_h
 #define InlineTextBoxStyle_h
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "RenderStyle.h"
 
 namespace WebCore {

@@ -1643,7 +1643,7 @@ IntRect RenderThemeGtk::calculateProgressRect(const RenderObject& renderObject, 
     return progressRect;
 }
 
-String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const Font& font, int width, bool multipleFilesAllowed) const
+String RenderThemeGtk::fileListNameForWidth(const FileList* fileList, const FontCascade& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
         return String();

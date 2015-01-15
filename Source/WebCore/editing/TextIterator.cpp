@@ -29,7 +29,7 @@
 
 #include "Document.h"
 #include "ExceptionCodePlaceholder.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "Frame.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
@@ -2185,7 +2185,7 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
 
     // Chinese and Japanese lack word boundary marks, and there is no clear agreement on what constitutes
     // a word, so treat the position before any CJK character as a word start.
-    if (Font::isCJKIdeographOrSymbol(firstCharacter))
+    if (FontCascade::isCJKIdeographOrSymbol(firstCharacter))
         return true;
 
     size_t wordBreakSearchStart = start + length;

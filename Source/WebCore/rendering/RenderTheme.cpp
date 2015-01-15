@@ -114,7 +114,7 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     case ButtonPart: {
         // Border
         LengthBox borderBox(style.borderTopWidth(), style.borderRightWidth(), style.borderBottomWidth(), style.borderLeftWidth());
-        borderBox = m_theme->controlBorder(part, style.font(), borderBox, style.effectiveZoom());
+        borderBox = m_theme->controlBorder(part, style.fontCascade(), borderBox, style.effectiveZoom());
         if (borderBox.top().value() != static_cast<int>(style.borderTopWidth())) {
             if (borderBox.top().value())
                 style.setBorderTopWidth(borderBox.top().value());
@@ -143,7 +143,7 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
         }
 
         // Padding
-        LengthBox paddingBox = m_theme->controlPadding(part, style.font(), style.paddingBox(), style.effectiveZoom());
+        LengthBox paddingBox = m_theme->controlPadding(part, style.fontCascade(), style.paddingBox(), style.effectiveZoom());
         if (paddingBox != style.paddingBox())
             style.setPaddingBox(paddingBox);
 
@@ -154,25 +154,25 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
         // Width / Height
         // The width and height here are affected by the zoom.
         // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
-        LengthSize controlSize = m_theme->controlSize(part, style.font(), LengthSize(style.width(), style.height()), style.effectiveZoom());
+        LengthSize controlSize = m_theme->controlSize(part, style.fontCascade(), LengthSize(style.width(), style.height()), style.effectiveZoom());
         if (controlSize.width() != style.width())
             style.setWidth(controlSize.width());
         if (controlSize.height() != style.height())
             style.setHeight(controlSize.height());
                 
         // Min-Width / Min-Height
-        LengthSize minControlSize = m_theme->minimumControlSize(part, style.font(), style.effectiveZoom());
+        LengthSize minControlSize = m_theme->minimumControlSize(part, style.fontCascade(), style.effectiveZoom());
         if (minControlSize.width() != style.minWidth())
             style.setMinWidth(minControlSize.width());
         if (minControlSize.height() != style.minHeight())
             style.setMinHeight(minControlSize.height());
                 
         // Font
-        FontDescription controlFont = m_theme->controlFont(part, style.font(), style.effectiveZoom());
-        if (controlFont != style.font().fontDescription()) {
+        FontDescription controlFont = m_theme->controlFont(part, style.fontCascade(), style.effectiveZoom());
+        if (controlFont != style.fontCascade().fontDescription()) {
             // Now update our font.
             if (style.setFontDescription(controlFont))
-                style.font().update(0);
+                style.fontCascade().update(0);
         }
         // Reset our line-height
         style.setLineHeight(RenderStyle::initialLineHeight());
@@ -1257,7 +1257,7 @@ String RenderTheme::fileListDefaultLabel(bool multipleFilesAllowed) const
     return fileButtonNoFileSelectedLabel();
 }
 
-String RenderTheme::fileListNameForWidth(const FileList* fileList, const Font& font, int width, bool multipleFilesAllowed) const
+String RenderTheme::fileListNameForWidth(const FileList* fileList, const FontCascade& font, int width, bool multipleFilesAllowed) const
 {
     if (width <= 0)
         return String();

@@ -461,7 +461,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     HashSet<const SimpleFontData*> fallbackFonts;
     GlyphOverflow glyphOverflow;
 
-    const Font& font = lineStyle(*renderer->parent(), lineInfo).font();
+    const FontCascade& font = lineStyle(*renderer->parent(), lineInfo).fontCascade();
     // Always compute glyph overflow if the block's line-box-contain value is "glyphs".
     if (lineBox->fitsToGlyphs()) {
         // If we don't stick out of the root line's font box, then don't bother computing our glyph overflow. This optimization
@@ -505,7 +505,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
                     &wordMeasurement.fallbackFonts, &overflow);
                 UChar c = renderer->characterAt(wordMeasurement.startOffset);
                 if (i > 0 && wordLength == 1 && (c == ' ' || c == '\t'))
-                    measuredWidth += renderer->style().font().wordSpacing();
+                    measuredWidth += renderer->style().fontCascade().wordSpacing();
             } else
                 measuredWidth += wordMeasurement.width;
             if (!wordMeasurement.fallbackFonts.isEmpty()) {
@@ -743,14 +743,14 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
             if (textAlign == JUSTIFY && run != trailingSpaceRun) {
                 if (!isAfterExpansion)
                     downcast<InlineTextBox>(*run->box()).setCanHaveLeadingExpansion(true);
-                unsigned opportunitiesInRun = Font::expansionOpportunityCount(renderText.stringView(run->m_start, run->m_stop), run->box()->direction(), isAfterExpansion);
+                unsigned opportunitiesInRun = FontCascade::expansionOpportunityCount(renderText.stringView(run->m_start, run->m_stop), run->box()->direction(), isAfterExpansion);
                 expansionOpportunities.append(opportunitiesInRun);
                 expansionOpportunityCount += opportunitiesInRun;
             }
 
             if (int length = renderText.textLength()) {
                 if (!run->m_start && needsWordSpacing && isSpaceOrNewline(renderText.characterAt(run->m_start)))
-                    totalLogicalWidth += lineStyle(*renderText.parent(), lineInfo).font().wordSpacing();
+                    totalLogicalWidth += lineStyle(*renderText.parent(), lineInfo).fontCascade().wordSpacing();
                 needsWordSpacing = !isSpaceOrNewline(renderText.characterAt(run->m_stop - 1)) && run->m_stop == length;
             }
 
@@ -768,7 +768,7 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
                             downcast<InlineTextBox>(*leafChild).setCanHaveLeadingExpansion(true);
                         encounteredJustifiedRuby = true;
                         auto& renderText = downcast<RenderText>(leafChild->renderer());
-                        unsigned opportunitiesInRun = Font::expansionOpportunityCount(renderText.stringView(), leafChild->direction(), isAfterExpansion);
+                        unsigned opportunitiesInRun = FontCascade::expansionOpportunityCount(renderText.stringView(), leafChild->direction(), isAfterExpansion);
                         expansionOpportunities.append(opportunitiesInRun);
                         expansionOpportunityCount += opportunitiesInRun;
                     }
@@ -1907,9 +1907,9 @@ void RenderBlockFlow::checkLinesForTextOverflow()
 {
     // Determine the width of the ellipsis using the current font.
     // FIXME: CSS3 says this is configurable, also need to use 0x002E (FULL STOP) if horizontal ellipsis is "not renderable"
-    const Font& font = style().font();
+    const FontCascade& font = style().fontCascade();
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, ellipsisStr, (&horizontalEllipsis, 1));
-    const Font& firstLineFont = firstLineStyle().font();
+    const FontCascade& firstLineFont = firstLineStyle().fontCascade();
     float firstLineEllipsisWidth = firstLineFont.width(constructTextRun(this, firstLineFont, &horizontalEllipsis, 1, firstLineStyle()));
     float ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(constructTextRun(this, font, &horizontalEllipsis, 1, style()));
 

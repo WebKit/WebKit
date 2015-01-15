@@ -978,7 +978,7 @@ void resolveTree(Document& document, Change change)
         if (Settings* settings = document.settings()) {
             StyleResolver* styleResolver = document.styleResolverIfExists();
             if (settings->fontFallbackPrefersPictographs() && styleResolver)
-                documentStyle.get().font().update(styleResolver->fontSelector());
+                documentStyle.get().fontCascade().update(styleResolver->fontSelector());
         }
 
         Style::Change documentChange = determineChange(documentStyle.get(), document.renderView()->style());

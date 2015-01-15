@@ -1191,8 +1191,8 @@ void RenderMathMLOperator::setOperatorPropertiesFromOpDictEntry(const MathMLOper
         m_operatorFlags = entry->flags;
 
     // Leading and trailing space is specified as multiple of 1/18em.
-    m_leadingSpace = entry->lspace * style().font().size() / 18;
-    m_trailingSpace = entry->rspace * style().font().size() / 18;
+    m_leadingSpace = entry->lspace * style().fontCascade().size() / 18;
+    m_trailingSpace = entry->rspace * style().fontCascade().size() / 18;
 }
 
 void RenderMathMLOperator::setOperatorProperties()
@@ -1229,9 +1229,9 @@ void RenderMathMLOperator::setOperatorProperties()
         m_operatorFlags &= MathMLOperatorDictionary::Fence | MathMLOperatorDictionary::Separator; // This resets all but the Fence and Separator properties.
     else
         m_operatorFlags = 0; // This resets all the operator properties.
-    m_leadingSpace = 5 * style().font().size() / 18; // This sets leading space to "thickmathspace".
-    m_trailingSpace = 5 * style().font().size() / 18; // This sets trailing space to "thickmathspace".
-    m_minSize = style().font().size(); // This sets minsize to "1em".
+    m_leadingSpace = 5 * style().fontCascade().size() / 18; // This sets leading space to "thickmathspace".
+    m_trailingSpace = 5 * style().fontCascade().size() / 18; // This sets trailing space to "thickmathspace".
+    m_minSize = style().fontCascade().size(); // This sets minsize to "1em".
     m_maxSize = intMaxForLayoutUnit; // This sets maxsize to "infinity".
 
     if (m_textContent) {
@@ -1355,7 +1355,7 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
         RenderMathMLToken::computePreferredLogicalWidths();
         if (isInvisibleOperator()) {
             // In some fonts, glyphs for invisible operators have nonzero width. Consequently, we subtract that width here to avoid wide gaps.
-            GlyphData data = style().font().glyphDataForCharacter(m_textContent, false);
+            GlyphData data = style().fontCascade().glyphDataForCharacter(m_textContent, false);
             float glyphWidth = advanceForGlyph(data);
             ASSERT(glyphWidth <= m_minPreferredLogicalWidth);
             m_minPreferredLogicalWidth -= glyphWidth;
@@ -1364,7 +1364,7 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
         return;
     }
 
-    GlyphData data = style().font().glyphDataForCharacter(m_textContent, !style().isLeftToRightDirection());
+    GlyphData data = style().fontCascade().glyphDataForCharacter(m_textContent, !style().isLeftToRightDirection());
     float maximumGlyphWidth = advanceForGlyph(data);
     if (!m_isVertical) {
         if (maximumGlyphWidth < stretchSize())
@@ -1521,7 +1521,7 @@ bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::Ass
     if (!bottom.glyph)
         bottom.glyph = extension.glyph;
 
-    top.fontData = &style().font().primaryFontData();
+    top.fontData = &style().fontCascade().primaryFontData();
     extension.fontData = top.fontData;
     bottom.fontData = top.fontData;
     if (middle.glyph)
@@ -1538,8 +1538,8 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::getDisplayStyleLargeOpe
 
     ASSERT(m_isVertical && isLargeOperatorInDisplayStyle());
 
-    const auto& primaryFontData = style().font().primaryFontData();
-    GlyphData baseGlyph = style().font().glyphDataForCharacter(character, !style().isLeftToRightDirection());
+    const auto& primaryFontData = style().fontCascade().primaryFontData();
+    GlyphData baseGlyph = style().fontCascade().glyphDataForCharacter(character, !style().isLeftToRightDirection());
     if (!primaryFontData.mathData() || baseGlyph.fontData != &primaryFontData)
         return data;
 
@@ -1570,8 +1570,8 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::findStretchyData(UChar 
     StretchyData data;
     StretchyData assemblyData;
 
-    const auto& primaryFontData = style().font().primaryFontData();
-    GlyphData baseGlyph = style().font().glyphDataForCharacter(character, !style().isLeftToRightDirection());
+    const auto& primaryFontData = style().fontCascade().primaryFontData();
+    GlyphData baseGlyph = style().fontCascade().glyphDataForCharacter(character, !style().isLeftToRightDirection());
     
     if (primaryFontData.mathData() && baseGlyph.fontData == &primaryFontData) {
         Vector<Glyph> sizeVariants;
@@ -1618,12 +1618,12 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::findStretchyData(UChar 
             return data;
 
         // We convert the list of Unicode characters into a list of glyph data.
-        GlyphData top = style().font().glyphDataForCharacter(stretchyCharacter->topChar, false);
-        GlyphData extension = style().font().glyphDataForCharacter(stretchyCharacter->extensionChar, false);
-        GlyphData bottom = style().font().glyphDataForCharacter(stretchyCharacter->bottomChar, false);
+        GlyphData top = style().fontCascade().glyphDataForCharacter(stretchyCharacter->topChar, false);
+        GlyphData extension = style().fontCascade().glyphDataForCharacter(stretchyCharacter->extensionChar, false);
+        GlyphData bottom = style().fontCascade().glyphDataForCharacter(stretchyCharacter->bottomChar, false);
         GlyphData middle;
         if (stretchyCharacter->middleChar)
-            middle = style().font().glyphDataForCharacter(stretchyCharacter->middleChar, false);
+            middle = style().fontCascade().glyphDataForCharacter(stretchyCharacter->middleChar, false);
         assemblyData.setGlyphAssemblyMode(top, extension, bottom, middle);
     }
 
@@ -1680,7 +1680,7 @@ void RenderMathMLOperator::updateStyle()
         m_stretchyData = getDisplayStyleLargeOperator(m_textContent);
     else {
         // We do not stretch if the base glyph is large enough.
-        GlyphData baseGlyph = style().font().glyphDataForCharacter(m_textContent, !style().isLeftToRightDirection());
+        GlyphData baseGlyph = style().fontCascade().glyphDataForCharacter(m_textContent, !style().isLeftToRightDirection());
         float baseSize = m_isVertical ? heightForGlyph(baseGlyph) : advanceForGlyph(baseGlyph);
         if (stretchSize() <= baseSize)
             return;
@@ -1802,7 +1802,7 @@ LayoutRect RenderMathMLOperator::paintGlyph(PaintInfo& info, const GlyphData& da
 
     GlyphBuffer buffer;
     buffer.add(data.glyph, data.fontData, advanceForGlyph(data));
-    info.context->drawGlyphs(style().font(), *data.fontData, buffer, 0, 1, origin);
+    info.context->drawGlyphs(style().fontCascade(), *data.fontData, buffer, 0, 1, origin);
 
     return glyphPaintRect;
 }
@@ -1898,7 +1898,7 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
         LayoutPoint operatorTopLeft = ceiledIntPoint(paintOffset + location());
         FloatRect glyphBounds = boundsForGlyph(m_stretchyData.variant());
         LayoutPoint operatorOrigin(operatorTopLeft.x(), operatorTopLeft.y() - glyphBounds.y());
-        info.context->drawGlyphs(style().font(), *m_stretchyData.variant().fontData, buffer, 0, 1, operatorOrigin);
+        info.context->drawGlyphs(style().fontCascade(), *m_stretchyData.variant().fontData, buffer, 0, 1, operatorOrigin);
         return;
     }
 
@@ -1980,7 +1980,7 @@ void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint
 
 LayoutUnit RenderMathMLOperator::trailingSpaceError()
 {
-    const auto& primaryFontData = style().font().primaryFontData();
+    const auto& primaryFontData = style().fontCascade().primaryFontData();
     if (!primaryFontData.mathData())
         return 0;
 
@@ -1989,7 +1989,7 @@ LayoutUnit RenderMathMLOperator::trailingSpaceError()
     LayoutUnit width = logicalWidth();
 
     if (m_stretchyData.mode() == DrawNormal) {
-        GlyphData data = style().font().glyphDataForCharacter(textContent(), !style().isLeftToRightDirection());
+        GlyphData data = style().fontCascade().glyphDataForCharacter(textContent(), !style().isLeftToRightDirection());
         return width - advanceForGlyph(data);
     }
 

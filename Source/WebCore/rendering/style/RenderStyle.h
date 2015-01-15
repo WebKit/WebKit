@@ -105,7 +105,7 @@ class ContentData;
 class CounterContent;
 class CursorList;
 class FilterOperations;
-class Font;
+class FontCascade;
 class FontMetrics;
 class IntRect;
 class MaskImageOperation;
@@ -689,7 +689,7 @@ public:
     EClear clear() const { return noninherited_flags.clear(); }
     ETableLayout tableLayout() const { return noninherited_flags.tableLayout(); }
 
-    WEBCORE_EXPORT const Font& font() const;
+    WEBCORE_EXPORT const FontCascade& fontCascade() const;
     WEBCORE_EXPORT const FontMetrics& fontMetrics() const;
     WEBCORE_EXPORT const FontDescription& fontDescription() const;
     float specifiedFontSize() const;

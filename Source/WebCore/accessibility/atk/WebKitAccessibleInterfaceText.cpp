@@ -36,7 +36,7 @@
 
 #include "AccessibilityObject.h"
 #include "Document.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "FrameView.h"
 #include "HTMLParserIdioms.h"
 #include "HostWindow.h"
@@ -130,14 +130,14 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_INDENT), buffer.get());
     }
 
-    String fontFamilyName = style->font().firstFamily();
+    String fontFamilyName = style->fontCascade().firstFamily();
     if (fontFamilyName.left(8) == "-webkit-")
         fontFamilyName = fontFamilyName.substring(8);
 
     result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FAMILY_NAME), fontFamilyName.utf8().data());
 
     int fontWeight = -1;
-    switch (style->font().weight()) {
+    switch (style->fontCascade().weight()) {
     case FontWeight100:
         fontWeight = 100;
         break;
@@ -192,7 +192,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
 
     result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_UNDERLINE), (style->textDecoration() & TextDecorationUnderline) ? "single" : "none");
 
-    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STYLE), style->font().italic() ? "italic" : "normal");
+    result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STYLE), style->fontCascade().italic() ? "italic" : "normal");
 
     result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_STRIKETHROUGH), (style->textDecoration() & TextDecorationLineThrough) ? "true" : "false");
 

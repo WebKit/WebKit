@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-LengthBox Theme::controlBorder(ControlPart part, const Font&, const LengthBox& zoomedBox, float) const
+LengthBox Theme::controlBorder(ControlPart part, const FontCascade&, const LengthBox& zoomedBox, float) const
 {
     switch (part) {
         case PushButtonPart:
@@ -42,7 +42,7 @@ LengthBox Theme::controlBorder(ControlPart part, const Font&, const LengthBox& z
     }
 }
 
-LengthBox Theme::controlPadding(ControlPart part, const Font&, const LengthBox& zoomedBox, float) const
+LengthBox Theme::controlPadding(ControlPart part, const FontCascade&, const LengthBox& zoomedBox, float) const
 {
     switch (part) {
         case MenulistPart:

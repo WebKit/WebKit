@@ -486,13 +486,13 @@ inline void updateCounterIfNeeded(RenderText& renderText)
     downcast<RenderCounter>(renderText).updateCounter();
 }
 
-inline float measureHyphenWidth(RenderText* renderer, const Font& font, HashSet<const SimpleFontData*>* fallbackFonts = 0)
+inline float measureHyphenWidth(RenderText* renderer, const FontCascade& font, HashSet<const SimpleFontData*>* fallbackFonts = 0)
 {
     const RenderStyle& style = renderer->style();
     return font.width(RenderBlock::constructTextRun(renderer, font, style.hyphenString().string(), style), fallbackFonts);
 }
 
-ALWAYS_INLINE float textWidth(RenderText* text, unsigned from, unsigned len, const Font& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace, HashSet<const SimpleFontData*>& fallbackFonts, TextLayout* layout = 0)
+ALWAYS_INLINE float textWidth(RenderText* text, unsigned from, unsigned len, const FontCascade& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace, HashSet<const SimpleFontData*>& fallbackFonts, TextLayout* layout = 0)
 {
     const RenderStyle& style = text->style();
 
@@ -501,7 +501,7 @@ ALWAYS_INLINE float textWidth(RenderText* text, unsigned from, unsigned len, con
         return text->width(from, len, font, xPos, &fallbackFonts, &glyphOverflow);
 
     if (layout)
-        return Font::width(*layout, from, len, &fallbackFonts);
+        return FontCascade::width(*layout, from, len, &fallbackFonts);
 
     TextRun run = RenderBlock::constructTextRun(text, font, text, from, len, style);
     run.setCharactersLength(text->textLength() - from);
@@ -521,7 +521,7 @@ inline void ensureCharacterGetsLineBox(LineMidpointState& lineMidpointState, Inl
     lineMidpointState.stopIgnoringSpaces(InlineIterator(0, textParagraphSeparator.renderer(), textParagraphSeparator.offset()));
 }
 
-inline void tryHyphenating(RenderText* text, const Font& font, const AtomicString& localeIdentifier, unsigned consecutiveHyphenatedLines, int consecutiveHyphenatedLinesLimit, int minimumPrefixLimit, int minimumSuffixLimit, unsigned lastSpace, unsigned pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
+inline void tryHyphenating(RenderText* text, const FontCascade& font, const AtomicString& localeIdentifier, unsigned consecutiveHyphenatedLines, int consecutiveHyphenatedLinesLimit, int minimumPrefixLimit, int minimumSuffixLimit, unsigned lastSpace, unsigned pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
 {
     // Map 'hyphenate-limit-{before,after}: auto;' to 2.
     unsigned minimumPrefixLength;
@@ -615,12 +615,12 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     }
 
     const RenderStyle& style = lineStyle(*renderText.parent(), m_lineInfo);
-    const Font& font = style.font();
+    const FontCascade& font = style.fontCascade();
     bool isFixedPitch = font.isFixedPitch();
     bool canHyphenate = style.hyphens() == HyphensAuto && WebCore::canHyphenate(style.locale());
 
     unsigned lastSpace = m_current.offset();
-    float wordSpacing = m_currentStyle->font().wordSpacing();
+    float wordSpacing = m_currentStyle->fontCascade().wordSpacing();
     float lastSpaceWordSpacing = 0;
     float wordSpacingForWordMeasurement = 0;
 

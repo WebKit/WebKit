@@ -33,7 +33,7 @@
 #include "DOMTimer.h"
 #include "Database.h"
 #include "Document.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "FontGenericFamilies.h"
 #include "FrameTree.h"
 #include "FrameView.h"

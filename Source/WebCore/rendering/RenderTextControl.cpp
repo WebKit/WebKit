@@ -174,12 +174,12 @@ void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutP
 float RenderTextControl::getAverageCharWidth()
 {
     float width;
-    if (style().font().fastAverageCharWidthIfAvailable(width))
+    if (style().fontCascade().fastAverageCharWidthIfAvailable(width))
         return width;
 
     const UChar ch = '0';
     const String str = String(&ch, 1);
-    const Font& font = style().font();
+    const FontCascade& font = style().fontCascade();
     TextRun textRun = constructTextRun(this, font, str, style(), TextRun::AllowTrailingExpansion);
     textRun.disableRoundingHacks();
     return font.width(textRun);
@@ -189,7 +189,7 @@ float RenderTextControl::scaleEmToUnits(int x) const
 {
     // This matches the unitsPerEm value for MS Shell Dlg and Courier New from the "head" font table.
     float unitsPerEm = 2048.0f;
-    return roundf(style().font().size() * x / unitsPerEm);
+    return roundf(style().fontCascade().size() * x / unitsPerEm);
 }
 
 void RenderTextControl::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const

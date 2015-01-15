@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Font.h"
+#include "FontCascade.h"
 
 #include "FontGlyphs.h"
 #include "GlyphBuffer.h"
@@ -41,17 +41,17 @@ using namespace std;
 
 namespace WebCore {
 
-bool Font::canReturnFallbackFontsForComplexText()
+bool FontCascade::canReturnFallbackFontsForComplexText()
 {
     return true;
 }
 
-bool Font::canExpandAroundIdeographsInComplexText()
+bool FontCascade::canExpandAroundIdeographsInComplexText()
 {
     return false;
 }
 
-void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
+void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
 {
     UniscribeController it(this, run);
     it.advance(from);
@@ -67,7 +67,7 @@ void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& sel
     selectionRect.setWidth(afterWidth - beforeWidth);
 }
 
-float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
+float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
 {
     if (forTextEmphasis) {
         // FIXME: Add forTextEmphasis paremeter to UniscribeController and use it.
@@ -92,7 +92,7 @@ float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int
     return beforeWidth;
 }
 
-float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
+float FontCascade::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     // This glyph buffer holds our glyphs + advances + font data for each glyph.
     GlyphBuffer glyphBuffer;
@@ -109,7 +109,7 @@ float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const 
     return startPoint.x() - startX;
 }
 
-void Font::drawEmphasisMarksForComplexText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
+void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
 {
     GlyphBuffer glyphBuffer;
     float initialAdvance = getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer, ForTextEmphasis);
@@ -120,7 +120,7 @@ void Font::drawEmphasisMarksForComplexText(GraphicsContext* context, const TextR
     drawEmphasisMarks(context, run, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
 }
 
-float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     UniscribeController controller(this, run, fallbackFonts);
     controller.advance(run.length());
@@ -133,10 +133,10 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
     return controller.runWidthSoFar();
 }
 
-int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat, bool includePartialGlyphs) const
+int FontCascade::offsetForPositionForComplexText(const TextRun& run, float xFloat, bool includePartialGlyphs) const
 {
     // FIXME: This truncation is not a problem for HTML, but only affects SVG, which passes floating-point numbers
-    // to Font::offsetForPosition(). Bug http://webkit.org/b/40673 tracks fixing this problem.
+    // to FontCascade::offsetForPosition(). Bug http://webkit.org/b/40673 tracks fixing this problem.
     int x = static_cast<int>(xFloat);
 
     UniscribeController controller(this, run);

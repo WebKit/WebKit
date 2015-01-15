@@ -31,7 +31,7 @@
 #include "config.h"
 #include "HarfBuzzShaper.h"
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "HarfBuzzFace.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include <hb-icu.h>
@@ -173,9 +173,9 @@ static void normalizeCharacters(const TextRun& run, UChar* destination, int leng
         int nextPosition = position;
         U16_NEXT(source, nextPosition, length, character);
         // Don't normalize tabs as they are not treated as spaces for word-end.
-        if (Font::treatAsSpace(character) && character != '\t')
+        if (FontCascade::treatAsSpace(character) && character != '\t')
             character = ' ';
-        else if (Font::treatAsZeroWidthSpaceInComplexScript(character))
+        else if (FontCascade::treatAsZeroWidthSpaceInComplexScript(character))
             character = zeroWidthSpace;
         U16_APPEND(destination, position, length, character, error);
         ASSERT_UNUSED(error, !error);
@@ -183,7 +183,7 @@ static void normalizeCharacters(const TextRun& run, UChar* destination, int leng
     }
 }
 
-HarfBuzzShaper::HarfBuzzShaper(const Font* font, const TextRun& run)
+HarfBuzzShaper::HarfBuzzShaper(const FontCascade* font, const TextRun& run)
     : m_font(font)
     , m_normalizedBufferLength(0)
     , m_run(run)
@@ -214,9 +214,9 @@ static void normalizeSpacesAndMirrorChars(const UChar* source, UChar* destinatio
         int nextPosition = position;
         U16_NEXT(source, nextPosition, length, character);
         // Don't normalize tabs as they are not treated as spaces for word-end
-        if (Font::treatAsSpace(character) && character != '\t')
+        if (FontCascade::treatAsSpace(character) && character != '\t')
             character = ' ';
-        else if (Font::treatAsZeroWidthSpace(character))
+        else if (FontCascade::treatAsZeroWidthSpace(character))
             character = zeroWidthSpace;
         else if (normalizeMode == HarfBuzzShaper::NormalizeMirrorChars)
             character = u_charMirror(character);
@@ -415,7 +415,7 @@ bool HarfBuzzShaper::collectHarfBuzzRuns()
         UScriptCode currentScript = nextScript;
 
         for (iterator.advance(clusterLength); iterator.consume(character, clusterLength); iterator.advance(clusterLength)) {
-            if (Font::treatAsZeroWidthSpace(character))
+            if (FontCascade::treatAsZeroWidthSpace(character))
                 continue;
 
             if (U_GET_GC_MASK(character) & U_GC_M_MASK) {
@@ -536,7 +536,7 @@ void HarfBuzzShaper::setGlyphPositionsForHarfBuzzRun(HarfBuzzRun* currentRun, hb
 
         glyphToCharacterIndexes[i] = glyphInfos[i].cluster;
 
-        if (isClusterEnd && !Font::treatAsZeroWidthSpace(m_normalizedBuffer[currentCharacterIndex]))
+        if (isClusterEnd && !FontCascade::treatAsZeroWidthSpace(m_normalizedBuffer[currentCharacterIndex]))
             spacing += m_letterSpacing;
 
         if (isClusterEnd && isWordEnd(currentCharacterIndex))

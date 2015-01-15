@@ -45,7 +45,7 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& textRenderer, const TextRun&
     float scalingFactor = textRenderer.scalingFactor();
     ASSERT(scalingFactor);
 
-    const Font& scaledFont = textRenderer.scaledFont();
+    const FontCascade& scaledFont = textRenderer.scaledFont();
     int length = 0;
 
     // Calculate width/height using the scaled font, divide this result by the scalingFactor afterwards.
@@ -70,7 +70,7 @@ TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText& text, unsigned pos
                 , style.direction()
                 , isOverride(style.unicodeBidi()) /* directionalOverride */);
 
-    if (style.font().primaryFontData().isSVGFont())
+    if (style.fontCascade().primaryFontData().isSVGFont())
         run.setRenderingContext(SVGTextRunRenderingContext::create(text));
 
     run.disableRoundingHacks();
@@ -91,7 +91,7 @@ SVGTextMetrics SVGTextMetrics::measureCharacterRange(RenderSVGInlineText& text, 
 
 SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText& text, unsigned position, unsigned length, float width, const String& glyphName)
 {
-    bool needsContext = text.style().font().primaryFontData().isSVGFont();
+    bool needsContext = text.style().fontCascade().primaryFontData().isSVGFont();
     float scalingFactor = text.scalingFactor();
     ASSERT(scalingFactor);
 

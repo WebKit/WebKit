@@ -29,7 +29,7 @@
 #import "BlockExceptions.h"
 #import "Cursor.h"
 #import "Document.h"
-#import "Font.h"
+#import "FontCascade.h"
 #import "Frame.h"
 #import "GraphicsContext.h"
 #import "Page.h"

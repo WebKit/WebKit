@@ -29,21 +29,21 @@
 #import "WebStringTruncator.h"
 
 #import "WebSystemInterface.h"
-#import <WebCore/Font.h>
+#import <WebCore/FontCascade.h>
 #import <WebCore/FontPlatformData.h>
 #import <WebCore/StringTruncator.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
-static WebCore::Font& fontFromNSFont(NSFont *font)
+static WebCore::FontCascade& fontFromNSFont(NSFont *font)
 {
     static NeverDestroyed<RetainPtr<NSFont>> currentNSFont;
-    static NeverDestroyed<WebCore::Font> currentFont;
+    static NeverDestroyed<WebCore::FontCascade> currentFont;
     if ([font isEqual:currentNSFont.get().get()])
         return currentFont;
     currentNSFont.get() = font;
-    currentFont.get() = WebCore::Font(WebCore::FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
+    currentFont.get() = WebCore::FontCascade(WebCore::FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
     return currentFont;
 }
 

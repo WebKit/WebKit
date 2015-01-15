@@ -26,16 +26,16 @@
 #ifndef UniscribeController_h
 #define UniscribeController_h
 
-#include <usp10.h>
-#include "Font.h"
+#include "FontCascade.h"
 #include "GlyphBuffer.h"
+#include <usp10.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class UniscribeController {
 public:
-    UniscribeController(const Font*, const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0);
+    UniscribeController(const FontCascade*, const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0);
 
     // Advance and measure/place up to the specified character.
     void advance(unsigned to, GlyphBuffer* = 0);
@@ -60,7 +60,7 @@ private:
                Vector<WORD>& glyphs, Vector<WORD>& clusters,
                Vector<SCRIPT_VISATTR>& visualAttributes);
 
-    const Font& m_font;
+    const FontCascade& m_font;
     const TextRun& m_run;
     HashSet<const SimpleFontData*>* m_fallbackFonts;
     FloatPoint m_glyphOrigin;

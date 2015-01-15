@@ -22,7 +22,6 @@
 #include "config.h"
 #include "FontCache.h"
 
-#include "Font.h"
 #include "OwnPtrCairo.h"
 #include "RefPtrCairo.h"
 #include "SimpleFontData.h"

@@ -52,7 +52,7 @@ static inline const SVGFontData* svgFontAndFontFaceElementForFontData(const Simp
     return svgFontData;
 }
 
-float SVGTextRunRenderingContext::floatWidthUsingSVGFont(const Font& font, const TextRun& run, int& charsConsumed, String& glyphName) const
+float SVGTextRunRenderingContext::floatWidthUsingSVGFont(const FontCascade& font, const TextRun& run, int& charsConsumed, String& glyphName) const
 {
     WidthIterator it(&font, run);
     GlyphBuffer glyphBuffer;
@@ -290,7 +290,7 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const S
     }
 }
 
-static GlyphData missingGlyphForFont(const Font& font)
+static GlyphData missingGlyphForFont(const FontCascade& font)
 {
     const SimpleFontData& primaryFontData = font.primaryFontData();
     if (!primaryFontData.isSVGFont())
@@ -301,7 +301,7 @@ static GlyphData missingGlyphForFont(const Font& font)
     return GlyphData(fontElement->missingGlyph(), &primaryFontData);
 }
 
-GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, WidthIterator& iterator, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache)
+GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const FontCascade& font, WidthIterator& iterator, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache)
 {
     GlyphData glyphData = font.glyphDataForCharacter(character, mirror, AutoVariant);
     if (!glyphData.glyph)
@@ -342,7 +342,7 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, Wi
     // The behavior does not seem to be specified. For simplicity we don't try to resolve font fallbacks context-sensitively.
     FontDescription fallbackDescription = font.fontDescription();
     fallbackDescription.setFamilies(Vector<AtomicString> { sansSerifFamily });
-    Font fallbackFont(fallbackDescription, font.letterSpacing(), font.wordSpacing());
+    FontCascade fallbackFont(fallbackDescription, font.letterSpacing(), font.wordSpacing());
     fallbackFont.update(font.fontSelector());
 
     return fallbackFont.glyphDataForCharacter(character, mirror, AutoVariant);

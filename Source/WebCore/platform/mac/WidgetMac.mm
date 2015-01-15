@@ -31,7 +31,7 @@
 #import "Chrome.h"
 #import "Cursor.h"
 #import "Document.h"
-#import "Font.h"
+#import "FontCascade.h"
 #import "Frame.h"
 #import "FrameView.h"
 #import "GraphicsContext.h"

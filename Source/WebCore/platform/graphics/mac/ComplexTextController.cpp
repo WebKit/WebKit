@@ -26,7 +26,7 @@
 #include "ComplexTextController.h"
 
 #include "FloatSize.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "RenderBlock.h"
 #include "RenderText.h"
 #include "TextBreakIterator.h"
@@ -43,13 +43,13 @@ namespace WebCore {
 
 class TextLayout {
 public:
-    static bool isNeeded(RenderText* text, const Font& font)
+    static bool isNeeded(RenderText* text, const FontCascade& font)
     {
         TextRun run = RenderBlock::constructTextRun(text, font, text, text->style());
-        return font.codePath(run) == Font::Complex;
+        return font.codePath(run) == FontCascade::Complex;
     }
 
-    TextLayout(RenderText* text, const Font& font, float xPos)
+    TextLayout(RenderText* text, const FontCascade& font, float xPos)
         : m_font(font)
         , m_run(constructTextRun(text, font, xPos))
         , m_controller(std::make_unique<ComplexTextController>(&m_font, m_run, true))
@@ -60,7 +60,7 @@ public:
     {
         m_controller->advance(from, 0, ByWholeGlyphs, fallbackFonts);
         float beforeWidth = m_controller->runWidthSoFar();
-        if (m_font.wordSpacing() && from && Font::treatAsSpace(m_run[from]))
+        if (m_font.wordSpacing() && from && FontCascade::treatAsSpace(m_run[from]))
             beforeWidth += m_font.wordSpacing();
         m_controller->advance(from + len, 0, ByWholeGlyphs, fallbackFonts);
         float afterWidth = m_controller->runWidthSoFar();
@@ -68,7 +68,7 @@ public:
     }
 
 private:
-    static TextRun constructTextRun(RenderText* text, const Font& font, float xPos)
+    static TextRun constructTextRun(RenderText* text, const FontCascade& font, float xPos)
     {
         TextRun run = RenderBlock::constructTextRun(text, font, text, text->style());
         run.setCharactersLength(text->textLength());
@@ -78,25 +78,25 @@ private:
         return run;
     }
 
-    // ComplexTextController has only references to its Font and TextRun so they must be kept alive here.
-    Font m_font;
+    // ComplexTextController has only references to its FontCascade and TextRun so they must be kept alive here.
+    FontCascade m_font;
     TextRun m_run;
     std::unique_ptr<ComplexTextController> m_controller;
 };
 
-PassOwnPtr<TextLayout> Font::createLayout(RenderText* text, float xPos, bool collapseWhiteSpace) const
+PassOwnPtr<TextLayout> FontCascade::createLayout(RenderText* text, float xPos, bool collapseWhiteSpace) const
 {
     if (!collapseWhiteSpace || !TextLayout::isNeeded(text, *this))
         return nullptr;
     return adoptPtr(new TextLayout(text, *this, xPos));
 }
 
-void Font::deleteLayout(TextLayout* layout)
+void FontCascade::deleteLayout(TextLayout* layout)
 {
     delete layout;
 }
 
-float Font::width(TextLayout& layout, unsigned from, unsigned len, HashSet<const SimpleFontData*>* fallbackFonts)
+float FontCascade::width(TextLayout& layout, unsigned from, unsigned len, HashSet<const SimpleFontData*>* fallbackFonts)
 {
     return layout.width(from, len, fallbackFonts);
 }
@@ -115,7 +115,7 @@ static inline CGFloat ceilCGFloat(CGFloat f)
     return static_cast<CGFloat>(ceil(f));
 }
 
-ComplexTextController::ComplexTextController(const Font* font, const TextRun& run, bool mayUseNaturalWritingDirection, HashSet<const SimpleFontData*>* fallbackFonts, bool forTextEmphasis)
+ComplexTextController::ComplexTextController(const FontCascade* font, const TextRun& run, bool mayUseNaturalWritingDirection, HashSet<const SimpleFontData*>* fallbackFonts, bool forTextEmphasis)
     : m_font(*font)
     , m_run(run)
     , m_isLTROnly(true)
@@ -144,7 +144,7 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
         m_expansionPerOpportunity = 0;
     else {
         bool isAfterExpansion = m_afterExpansion;
-        unsigned expansionOpportunityCount = Font::expansionOpportunityCount(m_run.text(), m_run.ltr() ? LTR : RTL, isAfterExpansion);
+        unsigned expansionOpportunityCount = FontCascade::expansionOpportunityCount(m_run.text(), m_run.ltr() ? LTR : RTL, isAfterExpansion);
         if (isAfterExpansion && !m_run.allowsTrailingExpansion())
             expansionOpportunityCount--;
 
@@ -615,7 +615,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             else
                 nextCh = *(m_complexTextRuns[r + 1]->characters() + m_complexTextRuns[r + 1]->indexAt(0));
 
-            bool treatAsSpace = Font::treatAsSpace(ch);
+            bool treatAsSpace = FontCascade::treatAsSpace(ch);
             CGGlyph glyph = treatAsSpace ? fontData.spaceGlyph() : glyphs[i];
             CGSize advance = treatAsSpace ? CGSizeMake(spaceWidth, advances[i].height) : advances[i];
 #if PLATFORM(IOS)
@@ -625,7 +625,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
             if (ch == '\t' && m_run.allowTabs())
                 advance.width = m_font.tabWidth(fontData, m_run.tabSize(), m_run.xPos() + m_totalWidth + widthSinceLastCommit);
-            else if (Font::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
+            else if (FontCascade::treatAsZeroWidthSpace(ch) && !treatAsSpace) {
                 advance.width = 0;
                 glyph = fontData.spaceGlyph();
             }
@@ -651,7 +651,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     advance.width += m_font.letterSpacing();
 
                 // Handle justification and word-spacing.
-                if (treatAsSpace || Font::isCJKIdeographOrSymbol(ch)) {
+                if (treatAsSpace || FontCascade::isCJKIdeographOrSymbol(ch)) {
                     // Distribute the run's total expansion evenly over all expansion opportunities in the run.
                     if (m_expansion) {
                         float previousExpansion = m_expansion;
@@ -685,12 +685,13 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             // We adjust the width of the last character of a "word" to ensure an integer width. 
             // Force characters that are used to determine word boundaries for the rounding hack 
             // to be integer width, so the following words will start on an integer boundary. 
-            if (m_run.applyWordRounding() && Font::isRoundingHackCharacter(ch)) 
+            if (m_run.applyWordRounding() && FontCascade::isRoundingHackCharacter(ch)) 
                 advance.width = ceilCGFloat(advance.width); 
 
             // Check to see if the next character is a "rounding hack character", if so, adjust the 
-            // width so that the total run width will be on an integer boundary. 
-            if ((m_run.applyWordRounding() && !lastGlyph && Font::isRoundingHackCharacter(nextCh)) || (m_run.applyRunRounding() && lastGlyph)) { 
+            // width so that the total run width will be on an integer boundary.
+            bool needsRoundingForCharacter = m_run.applyWordRounding() && !lastGlyph && FontCascade::isRoundingHackCharacter(nextCh);
+            if (needsRoundingForCharacter || (m_run.applyRunRounding() && lastGlyph)) {
                 CGFloat totalWidth = widthSinceLastCommit + advance.width; 
                 widthSinceLastCommit = ceilCGFloat(totalWidth); 
                 CGFloat extraWidth = widthSinceLastCommit - totalWidth; 
@@ -709,7 +710,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 widthSinceLastCommit += advance.width; 
 
             // FIXME: Combining marks should receive a text emphasis mark if they are combine with a space.
-            if (m_forTextEmphasis && (!Font::canReceiveTextEmphasis(ch) || (U_GET_GC_MASK(ch) & U_GC_M_MASK)))
+            if (m_forTextEmphasis && (!FontCascade::canReceiveTextEmphasis(ch) || (U_GET_GC_MASK(ch) & U_GC_M_MASK)))
                 glyph = 0;
 
             advance.height *= -1;

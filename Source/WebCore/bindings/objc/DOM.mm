@@ -37,7 +37,7 @@
 #import "DOMPrivate.h"
 #import "DOMRangeInternal.h"
 #import "DragImage.h"
-#import "Font.h"
+#import "FontCascade.h"
 #import "Frame.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
@@ -669,7 +669,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     auto renderer = core(self)->renderer();
     if (!renderer)
         return nil;
-    return renderer->style().font().primaryFontData().getNSFont();
+    return renderer->style().fontCascade().primaryFontData().getNSFont();
 }
 #else
 - (CTFontRef)_font
@@ -677,7 +677,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     RenderObject* renderer = core(self)->renderer();
     if (!renderer)
         return nil;
-    return renderer->style().font().primaryFontData().getCTFont();
+    return renderer->style().fontCascade().primaryFontData().getCTFont();
 }
 #endif
 

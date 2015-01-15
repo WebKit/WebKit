@@ -31,7 +31,7 @@
 
 #include "CoreGraphicsSPI.h"
 #include "CoreTextSPI.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "SimpleFontData.h"
 #include "WebCoreSystemInterface.h"
 #if !PLATFORM(IOS)
@@ -47,7 +47,7 @@ static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const 
     if (fontData->platformData().widthVariant() != RegularWidth || fontData->hasVerticalGlyphs()) {
         // Ideographs don't have a vertical variant or width variants.
         for (unsigned i = 0; i < bufferLength; ++i) {
-            if (!Font::isCJKIdeograph(buffer[i]))
+            if (!FontCascade::isCJKIdeograph(buffer[i]))
                 return true;
         }
     }

@@ -29,8 +29,8 @@
 #include "config.h"
 #include "FontGlyphs.h"
 
-#include "Font.h"
 #include "FontCache.h"
+#include "FontCascade.h"
 #include "GlyphPage.h"
 
 namespace WebCore {
@@ -264,7 +264,7 @@ GlyphData FontGlyphs::glyphDataForSystemFallback(UChar32 c, const FontDescriptio
     if (!systemFallbackFontData)
         return GlyphData();
 
-    if (systemFallbackFontData->platformData().orientation() == Vertical && !systemFallbackFontData->hasVerticalGlyphs() && Font::isCJKIdeographOrSymbol(c))
+    if (systemFallbackFontData->platformData().orientation() == Vertical && !systemFallbackFontData->hasVerticalGlyphs() && FontCascade::isCJKIdeographOrSymbol(c))
         variant = BrokenIdeographVariant;
 
     GlyphData fallbackGlyphData;
@@ -274,7 +274,7 @@ GlyphData FontGlyphs::glyphDataForSystemFallback(UChar32 c, const FontDescriptio
         fallbackGlyphData = systemFallbackFontData->variantFontData(description, variant)->glyphDataForCharacter(c);
 
     if (variant == NormalVariant && fallbackGlyphData.fontData) {
-        if (!Font::isCJKIdeographOrSymbol(c) && fallbackGlyphData.fontData->platformData().orientation() == Vertical && !fallbackGlyphData.fontData->isTextOrientationFallback())
+        if (!FontCascade::isCJKIdeographOrSymbol(c) && fallbackGlyphData.fontData->platformData().orientation() == Vertical && !fallbackGlyphData.fontData->isTextOrientationFallback())
             fallbackGlyphData = glyphDataForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), fallbackGlyphData);
     }
 
@@ -322,7 +322,7 @@ GlyphData FontGlyphs::glyphDataForNormalVariant(UChar32 c, const FontDescription
         GlyphData data = page->glyphDataForCharacter(c);
         if (data.fontData) {
             if (data.fontData->platformData().orientation() == Vertical && !data.fontData->isTextOrientationFallback()) {
-                if (!Font::isCJKIdeographOrSymbol(c))
+                if (!FontCascade::isCJKIdeographOrSymbol(c))
                     return glyphDataForNonCJKCharacterWithGlyphOrientation(c, description.nonCJKGlyphOrientation(), data);
 
                 if (!data.fontData->hasVerticalGlyphs()) {

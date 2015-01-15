@@ -22,7 +22,7 @@
 #ifndef RenderSVGInlineText_h
 #define RenderSVGInlineText_h
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "RenderText.h"
 #include "SVGTextLayoutAttributes.h"
 #include "Text.h"
@@ -41,9 +41,9 @@ public:
     SVGTextLayoutAttributes* layoutAttributes() { return &m_layoutAttributes; }
 
     float scalingFactor() const { return m_scalingFactor; }
-    const Font& scaledFont() const { return m_scaledFont; }
+    const FontCascade& scaledFont() const { return m_scaledFont; }
     void updateScaledFont();
-    static void computeNewScaledFontForStyle(const RenderObject&, const RenderStyle&, float& scalingFactor, Font& scaledFont);
+    static void computeNewScaledFontForStyle(const RenderObject&, const RenderStyle&, float& scalingFactor, FontCascade& scaledFont);
 
     // Preserves floating point precision for the use in DRT. It knows how to round and does a better job than enclosingIntRect.
     FloatRect floatLinesBoundingBox() const;
@@ -65,7 +65,7 @@ private:
     virtual std::unique_ptr<InlineTextBox> createTextBox() override;
 
     float m_scalingFactor;
-    Font m_scaledFont;
+    FontCascade m_scaledFont;
     SVGTextLayoutAttributes m_layoutAttributes;
 };
 

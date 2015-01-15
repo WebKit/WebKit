@@ -51,7 +51,7 @@
 
 namespace WebCore {
 
-class Font;
+class FontCascade;
 class FontPlatformData;
 class FontSelector;
 class OpenTypeVerticalData;

@@ -120,8 +120,8 @@ RunResolver::RunResolver(const RenderBlockFlow& flow, const Layout& layout)
     , m_lineHeight(lineHeightFromFlow(flow))
     , m_baseline(baselineFromFlow(flow))
     , m_borderAndPaddingBefore(flow.borderAndPaddingBefore())
-    , m_ascent(flow.style().font().fontMetrics().ascent())
-    , m_descent(flow.style().font().fontMetrics().descent())
+    , m_ascent(flow.style().fontCascade().fontMetrics().ascent())
+    , m_descent(flow.style().fontCascade().fontMetrics().descent())
 {
 }
 

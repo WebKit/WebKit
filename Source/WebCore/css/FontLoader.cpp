@@ -36,7 +36,7 @@
 #include "Dictionary.h"
 #include "Document.h"
 #include "ExceptionCodeDescription.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "FrameView.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
@@ -53,7 +53,7 @@ public:
         return adoptRef<LoadFontCallback>(new LoadFontCallback(numLoading, fontLoader, loadCallback, errorCallback));
     }
 
-    static PassRefPtr<LoadFontCallback> createFromParams(const Dictionary& params, FontLoader& fontLoader, const Font& font)
+    static PassRefPtr<LoadFontCallback> createFromParams(const Dictionary& params, FontLoader& fontLoader, const FontCascade& font)
     {
         RefPtr<VoidCallback> onsuccess;
         RefPtr<VoidCallback> onerror;
@@ -245,7 +245,7 @@ void FontLoader::loadFont(const Dictionary& params)
     String fontString;
     if (!params.get("font", fontString))
         return;
-    Font font;
+    FontCascade font;
     if (!resolveFontStyle(fontString, font))
         return;
     RefPtr<LoadFontCallback> callback = LoadFontCallback::createFromParams(params, *this, font);
@@ -265,7 +265,7 @@ void FontLoader::loadFont(const Dictionary& params)
 bool FontLoader::checkFont(const String& fontString, const String&)
 {
     // FIXME: The second parameter (text) is ignored.
-    Font font;
+    FontCascade font;
     if (!resolveFontStyle(fontString, font))
         return false;
     for (unsigned i = 0; i < font.familyCount(); i++) {
@@ -281,7 +281,7 @@ static void applyPropertyToCurrentStyle(StyleResolver& styleResolver, CSSPropert
     styleResolver.applyPropertyToCurrentStyle(id, parsedStyle->getPropertyCSSValue(id).get());
 }
 
-bool FontLoader::resolveFontStyle(const String& fontString, Font& font)
+bool FontLoader::resolveFontStyle(const String& fontString, FontCascade& font)
 {
     // Interpret fontString in the same way as the 'font' attribute of CanvasRenderingContext2D.
     RefPtr<MutableStyleProperties> parsedStyle = MutableStyleProperties::create();
@@ -302,7 +302,7 @@ bool FontLoader::resolveFontStyle(const String& fontString, Font& font)
 
     style->setFontDescription(defaultFontDescription);
 
-    style->font().update(style->font().fontSelector());
+    style->fontCascade().update(style->fontCascade().fontSelector());
 
     // Now map the font property longhands into the style.
     StyleResolver& styleResolver = m_document->ensureStyleResolver();
@@ -319,7 +319,7 @@ bool FontLoader::resolveFontStyle(const String& fontString, Font& font)
     styleResolver.updateFont();
     applyPropertyToCurrentStyle(styleResolver, CSSPropertyLineHeight, parsedStyle);
 
-    font = style->font();
+    font = style->fontCascade();
     font.update(styleResolver.fontSelector());
     return true;
 }

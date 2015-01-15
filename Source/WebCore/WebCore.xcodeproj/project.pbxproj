@@ -4704,8 +4704,8 @@
 		B2C3DA490D006C1D00EF6F26 /* TextEncodingRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA190D006C1D00EF6F26 /* TextEncodingRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA4A0D006C1D00EF6F26 /* TextStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA1A0D006C1D00EF6F26 /* TextStream.cpp */; };
 		B2C3DA4B0D006C1D00EF6F26 /* TextStream.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA1B0D006C1D00EF6F26 /* TextStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA600D006CD600EF6F26 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA4F0D006CD600EF6F26 /* Font.cpp */; };
-		B2C3DA610D006CD600EF6F26 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA500D006CD600EF6F26 /* Font.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B2C3DA600D006CD600EF6F26 /* FontCascade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA4F0D006CD600EF6F26 /* FontCascade.cpp */; };
+		B2C3DA610D006CD600EF6F26 /* FontCascade.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA500D006CD600EF6F26 /* FontCascade.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA620D006CD600EF6F26 /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA510D006CD600EF6F26 /* FontCache.cpp */; };
 		B2C3DA630D006CD600EF6F26 /* FontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA520D006CD600EF6F26 /* FontCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA640D006CD600EF6F26 /* SimpleFontData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA530D006CD600EF6F26 /* SimpleFontData.cpp */; };
@@ -12081,8 +12081,8 @@
 		B2C3DA190D006C1D00EF6F26 /* TextEncodingRegistry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextEncodingRegistry.h; sourceTree = "<group>"; };
 		B2C3DA1A0D006C1D00EF6F26 /* TextStream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextStream.cpp; sourceTree = "<group>"; };
 		B2C3DA1B0D006C1D00EF6F26 /* TextStream.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextStream.h; sourceTree = "<group>"; };
-		B2C3DA4F0D006CD600EF6F26 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Font.cpp; sourceTree = "<group>"; };
-		B2C3DA500D006CD600EF6F26 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
+		B2C3DA4F0D006CD600EF6F26 /* FontCascade.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontCascade.cpp; sourceTree = "<group>"; };
+		B2C3DA500D006CD600EF6F26 /* FontCascade.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontCascade.h; sourceTree = "<group>"; };
 		B2C3DA510D006CD600EF6F26 /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
 		B2C3DA520D006CD600EF6F26 /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontCache.h; sourceTree = "<group>"; };
 		B2C3DA530D006CD600EF6F26 /* SimpleFontData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleFontData.cpp; sourceTree = "<group>"; };
@@ -20414,6 +20414,8 @@
 				B27535380B053814002CE64F /* Color.cpp */,
 				B27535390B053814002CE64F /* Color.h */,
 				9382DF5710A8D5C900925652 /* ColorSpace.h */,
+				B2C3DA4F0D006CD600EF6F26 /* FontCascade.cpp */,
+				B2C3DA500D006CD600EF6F26 /* FontCascade.h */,
 				2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */,
 				2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */,
 				A8CB41020E85B8A50032C4F0 /* DashArray.h */,
@@ -20439,8 +20441,6 @@
 				B275353E0B053814002CE64F /* FloatSize.cpp */,
 				B275353F0B053814002CE64F /* FloatSize.h */,
 				58CD35CA18EB4C3900B9F3AC /* FloatSizeHash.h */,
-				B2C3DA4F0D006CD600EF6F26 /* Font.cpp */,
-				B2C3DA500D006CD600EF6F26 /* Font.h */,
 				BCB92D4E1293550B00C8387F /* FontBaseline.h */,
 				B2C3DA510D006CD600EF6F26 /* FontCache.cpp */,
 				B2C3DA520D006CD600EF6F26 /* FontCache.h */,
@@ -24312,7 +24312,7 @@
 				14993BE60B2F2B1C0050497F /* FocusController.h in Headers */,
 				062287840B4DB322000C34DF /* FocusDirection.h in Headers */,
 				B6D9D23514EABD260090D75E /* FocusEvent.h in Headers */,
-				B2C3DA610D006CD600EF6F26 /* Font.h in Headers */,
+				B2C3DA610D006CD600EF6F26 /* FontCascade.h in Headers */,
 				BCB92D4F1293550B00C8387F /* FontBaseline.h in Headers */,
 				B2C3DA630D006CD600EF6F26 /* FontCache.h in Headers */,
 				B2AFFC7E0D00A5C10030074D /* FontCustomPlatformData.h in Headers */,
@@ -27815,7 +27815,7 @@
 				D72F6D79153159A3001EE44E /* FlowThreadController.cpp in Sources */,
 				14993BE50B2F2B1C0050497F /* FocusController.cpp in Sources */,
 				B6D9D23614EABD260090D75E /* FocusEvent.cpp in Sources */,
-				B2C3DA600D006CD600EF6F26 /* Font.cpp in Sources */,
+				B2C3DA600D006CD600EF6F26 /* FontCascade.cpp in Sources */,
 				B2C3DA620D006CD600EF6F26 /* FontCache.cpp in Sources */,
 				3727DFD5142AAE4500D449CB /* FontCacheIOS.mm in Sources */,
 				B2AFFC7C0D00A5C10030074D /* FontCacheMac.mm in Sources */,

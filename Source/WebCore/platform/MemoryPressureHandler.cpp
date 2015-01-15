@@ -28,8 +28,8 @@
 
 #include "CSSValuePool.h"
 #include "Document.h"
-#include "Font.h"
 #include "FontCache.h"
+#include "FontCascade.h"
 #include "GCController.h"
 #include "JSDOMWindow.h"
 #include "MemoryCache.h"

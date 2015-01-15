@@ -280,9 +280,9 @@ void computeNormalizedSpaces(const TextRun& run, bool mirror, String& normalized
     if (normalizedSpacesStringCache.length() == static_cast<unsigned>(run.charactersLength()))
         return;
     if (run.is8Bit())
-        normalizedSpacesStringCache = Font::normalizeSpaces(run.characters8(), run.charactersLength());
+        normalizedSpacesStringCache = FontCascade::normalizeSpaces(run.characters8(), run.charactersLength());
     else
-        normalizedSpacesStringCache = Font::normalizeSpaces(run.characters16(), run.charactersLength());
+        normalizedSpacesStringCache = FontCascade::normalizeSpaces(run.characters16(), run.charactersLength());
     if (mirror)
         normalizedSpacesStringCache = createStringWithMirroredCharacters(normalizedSpacesStringCache);
 }

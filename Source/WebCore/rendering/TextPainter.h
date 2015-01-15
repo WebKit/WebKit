@@ -44,7 +44,7 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 
 class TextPainter {
 public:
-    TextPainter(GraphicsContext&, bool paintSelectedTextOnly, bool paintSelectedTextSeparately, const Font&,
+    TextPainter(GraphicsContext&, bool paintSelectedTextOnly, bool paintSelectedTextSeparately, const FontCascade&,
     int startPositionInTextRun, int endPositionInTextBoxString, int length, const AtomicString& emphasisMark, RenderCombineText*,
     TextRun&, FloatRect& boxRect, FloatPoint& textOrigin, int emphasisMarkOffset, const ShadowData* textShadow, const ShadowData* selectionShadow,
     bool textBoxIsHorizontal, TextPaintStyle& nonSelectionPaintStyle, TextPaintStyle& selectionPaintStyle);
@@ -61,7 +61,7 @@ private:
     const ShadowData* m_selectionShadow;
     bool m_paintSelectedTextOnly;
     bool m_paintSelectedTextSeparately;
-    const Font& m_font;
+    const FontCascade& m_font;
     int m_startPositionInTextRun;
     int m_endPositionInTextRun;
     int m_length;

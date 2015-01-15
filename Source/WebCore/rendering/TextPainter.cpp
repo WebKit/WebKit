@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-TextPainter::TextPainter(GraphicsContext& context, bool paintSelectedTextOnly, bool paintSelectedTextSeparately, const Font& font,
+TextPainter::TextPainter(GraphicsContext& context, bool paintSelectedTextOnly, bool paintSelectedTextSeparately, const FontCascade& font,
     int startPositionInTextRun, int endPositionInTextBoxString, int length, const AtomicString& emphasisMark, RenderCombineText* combinedText, TextRun& textRun,
     FloatRect& boxRect, FloatPoint& textOrigin, int emphasisMarkOffset, const ShadowData* textShadow, const ShadowData* selectionShadow,
     bool textBoxIsHorizontal, TextPaintStyle& textPaintStyle, TextPaintStyle& selectionPaintStyle)
@@ -56,7 +56,7 @@ TextPainter::TextPainter(GraphicsContext& context, bool paintSelectedTextOnly, b
 {
 }
 
-static void drawTextOrEmphasisMarks(GraphicsContext& context, const Font& font, const TextRun& textRun, const AtomicString& emphasisMark,
+static void drawTextOrEmphasisMarks(GraphicsContext& context, const FontCascade& font, const TextRun& textRun, const AtomicString& emphasisMark,
     int emphasisMarkOffset, const FloatPoint& point, const int from, const int to)
 {
     if (emphasisMark.isEmpty())
@@ -113,7 +113,7 @@ ShadowApplier::~ShadowApplier()
         m_context.clearShadow();
 }
 
-static void paintTextWithShadows(GraphicsContext& context, const Font& font, const TextRun& textRun, const AtomicString& emphasisMark,
+static void paintTextWithShadows(GraphicsContext& context, const FontCascade& font, const TextRun& textRun, const AtomicString& emphasisMark,
     int emphasisMarkOffset, int startOffset, int endOffset, int truncationPoint, const FloatPoint& textOrigin, const FloatRect& boxRect,
     const ShadowData* shadow, bool stroked, bool horizontal)
 {

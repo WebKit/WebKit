@@ -24,7 +24,7 @@
 
 namespace WebCore {
 
-class Font;
+class FontCascade;
 class SVGRenderStyle;
 class SVGElement;
 
@@ -32,13 +32,13 @@ class SVGElement;
 class SVGTextLayoutEngineSpacing {
     WTF_MAKE_NONCOPYABLE(SVGTextLayoutEngineSpacing);
 public:
-    SVGTextLayoutEngineSpacing(const Font&);
+    SVGTextLayoutEngineSpacing(const FontCascade&);
 
     float calculateSVGKerning(bool isVerticalText, const SVGTextMetrics::Glyph& currentGlyph);
     float calculateCSSKerningAndSpacing(const SVGRenderStyle*, SVGElement* lengthContext, const UChar* currentCharacter);
 
 private:
-    const Font& m_font;
+    const FontCascade& m_font;
     const UChar* m_lastCharacter;
 
 #if ENABLE(SVG_FONTS)

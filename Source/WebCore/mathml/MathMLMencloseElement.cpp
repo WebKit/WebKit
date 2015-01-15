@@ -133,7 +133,7 @@ String MathMLMencloseElement::longDivLeftPadding() const
     TextRun run(closingBrace.impl(), closingBrace.length());
     Node* node = parentNode();
     if (node && node->renderer()) {
-        const Font& font = node->renderer()->style().font();
+        const FontCascade& font = node->renderer()->style().fontCascade();
         padding.appendNumber(font.width(run));
         padding.appendLiteral("px");
     }

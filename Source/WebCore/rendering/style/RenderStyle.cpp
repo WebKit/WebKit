@@ -27,7 +27,7 @@
 #include "CursorList.h"
 #include "CSSPropertyNames.h"
 #include "FloatRoundedRect.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "FontSelector.h"
 #include "InlineTextBoxStyle.h"
 #include "Pagination.h"
@@ -293,7 +293,7 @@ bool RenderStyle::inheritedNotEqual(const RenderStyle* other) const
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)
-inline unsigned computeFontHash(const Font& font)
+inline unsigned computeFontHash(const FontCascade& font)
 {
     unsigned hashCodes[2] = {
         CaseFoldingHash::hash(font.fontDescription().firstFamily().impl()),
@@ -315,7 +315,7 @@ uint32_t RenderStyle::hashForTextAutosizing() const
     hash ^= rareInheritedData->nbspMode;
     hash ^= rareInheritedData->lineBreak;
     hash ^= WTF::FloatHash<float>::hash(inherited->specifiedLineHeight.value());
-    hash ^= computeFontHash(inherited->font);
+    hash ^= computeFontHash(inherited->fontCascade);
     hash ^= inherited->horizontal_border_spacing;
     hash ^= inherited->vertical_border_spacing;
     hash ^= inherited_flags._box_direction;
@@ -339,7 +339,7 @@ bool RenderStyle::equalForTextAutosizing(const RenderStyle* other) const
         && rareInheritedData->lineBreak == other->rareInheritedData->lineBreak
         && rareInheritedData->textSecurity == other->rareInheritedData->textSecurity
         && inherited->specifiedLineHeight == other->inherited->specifiedLineHeight
-        && inherited->font.equalForTextAutoSizing(other->inherited->font)
+        && inherited->fontCascade.equalForTextAutoSizing(other->inherited->fontCascade)
         && inherited->horizontal_border_spacing == other->inherited->horizontal_border_spacing
         && inherited->vertical_border_spacing == other->inherited->vertical_border_spacing
         && inherited_flags._box_direction == other->inherited_flags._box_direction
@@ -551,7 +551,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, unsigned& chang
 #if ENABLE(IOS_TEXT_AUTOSIZING)
         || inherited->specifiedLineHeight != other.inherited->specifiedLineHeight
 #endif
-        || inherited->font != other.inherited->font
+        || inherited->fontCascade != other.inherited->fontCascade
         || inherited->horizontal_border_spacing != other.inherited->horizontal_border_spacing
         || inherited->vertical_border_spacing != other.inherited->vertical_border_spacing
         || inherited_flags._box_direction != other.inherited_flags._box_direction
@@ -1184,7 +1184,7 @@ const AtomicString& RenderStyle::hyphenString() const
     // FIXME: This should depend on locale.
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, hyphenMinusString, (&hyphenMinus, 1));
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, hyphenString, (&hyphen, 1));
-    return font().primaryFontData().glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
+    return fontCascade().primaryFontData().glyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
 }
 
 const AtomicString& RenderStyle::textEmphasisMarkString() const
@@ -1340,20 +1340,20 @@ const Animation* RenderStyle::transitionForProperty(CSSPropertyID property) cons
     return 0;
 }
 
-const Font& RenderStyle::font() const { return inherited->font; }
-const FontMetrics& RenderStyle::fontMetrics() const { return inherited->font.fontMetrics(); }
-const FontDescription& RenderStyle::fontDescription() const { return inherited->font.fontDescription(); }
+const FontCascade& RenderStyle::fontCascade() const { return inherited->fontCascade; }
+const FontMetrics& RenderStyle::fontMetrics() const { return inherited->fontCascade.fontMetrics(); }
+const FontDescription& RenderStyle::fontDescription() const { return inherited->fontCascade.fontDescription(); }
 float RenderStyle::specifiedFontSize() const { return fontDescription().specifiedSize(); }
 float RenderStyle::computedFontSize() const { return fontDescription().computedSize(); }
-int RenderStyle::fontSize() const { return inherited->font.pixelSize(); }
+int RenderStyle::fontSize() const { return inherited->fontCascade.pixelSize(); }
 
 const Length& RenderStyle::wordSpacing() const { return rareInheritedData->wordSpacing; }
-float RenderStyle::letterSpacing() const { return inherited->font.letterSpacing(); }
+float RenderStyle::letterSpacing() const { return inherited->fontCascade.letterSpacing(); }
 
 bool RenderStyle::setFontDescription(const FontDescription& v)
 {
-    if (inherited->font.fontDescription() != v) {
-        inherited.access()->font = Font(v, inherited->font.letterSpacing(), inherited->font.wordSpacing());
+    if (inherited->fontCascade.fontDescription() != v) {
+        inherited.access()->fontCascade = FontCascade(v, inherited->fontCascade.letterSpacing(), inherited->fontCascade.wordSpacing());
         return true;
     }
     return false;
@@ -1404,7 +1404,7 @@ void RenderStyle::setWordSpacing(Length value)
         fontWordSpacing = 0;
         break;
     case Percent:
-        fontWordSpacing = value.percent() * font().spaceWidth() / 100;
+        fontWordSpacing = value.percent() * fontCascade().spaceWidth() / 100;
         break;
     case Fixed:
         fontWordSpacing = value.value();
@@ -1417,11 +1417,11 @@ void RenderStyle::setWordSpacing(Length value)
         fontWordSpacing = 0;
         break;
     }
-    inherited.access()->font.setWordSpacing(fontWordSpacing);
+    inherited.access()->fontCascade.setWordSpacing(fontWordSpacing);
     rareInheritedData.access()->wordSpacing = WTF::move(value);
 }
 
-void RenderStyle::setLetterSpacing(float v) { inherited.access()->font.setLetterSpacing(v); }
+void RenderStyle::setLetterSpacing(float v) { inherited.access()->fontCascade.setLetterSpacing(v); }
 
 void RenderStyle::setFontSize(float size)
 {
@@ -1434,7 +1434,7 @@ void RenderStyle::setFontSize(float size)
     else
         size = std::min(maximumAllowedFontSize, size);
 
-    FontSelector* currentFontSelector = font().fontSelector();
+    FontSelector* currentFontSelector = fontCascade().fontSelector();
     FontDescription desc(fontDescription());
     desc.setSpecifiedSize(size);
     desc.setComputedSize(size);
@@ -1448,7 +1448,7 @@ void RenderStyle::setFontSize(float size)
 #endif
 
     setFontDescription(desc);
-    font().update(currentFontSelector);
+    fontCascade().update(currentFontSelector);
 }
 
 void RenderStyle::getShadowExtent(const ShadowData* shadow, LayoutUnit &top, LayoutUnit &right, LayoutUnit &bottom, LayoutUnit &left) const

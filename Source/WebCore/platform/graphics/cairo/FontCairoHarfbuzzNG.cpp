@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "Font.h"
+#include "FontCascade.h"
 
 #include "GraphicsContext.h"
 #include "HarfBuzzShaper.h"
@@ -39,7 +39,7 @@
 namespace WebCore {
 
 
-float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int, int, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot /* forTextEmphasis */) const
+float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, int, int, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot /* forTextEmphasis */) const
 {
     HarfBuzzShaper shaper(this, run);
     if (!shaper.shape(&glyphBuffer)) {
@@ -50,7 +50,7 @@ float Font::getGlyphsAndAdvancesForComplexText(const TextRun& run, int, int, Gly
     // FIXME: Mac returns an initial advance here.
     return 0;
 }
-float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
+float FontCascade::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     // This glyph buffer holds our glyphs + advances + font data for each glyph.
     GlyphBuffer glyphBuffer;
@@ -68,22 +68,22 @@ float Font::drawComplexText(GraphicsContext* context, const TextRun& run, const 
     return startPoint.x() - startX;
 }
 
-void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
+void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const
 {
     notImplemented();
 }
 
-bool Font::canReturnFallbackFontsForComplexText()
+bool FontCascade::canReturnFallbackFontsForComplexText()
 {
     return false;
 }
 
-bool Font::canExpandAroundIdeographsInComplexText()
+bool FontCascade::canExpandAroundIdeographsInComplexText()
 {
     return false;
 }
 
-float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>*, GlyphOverflow*) const
+float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>*, GlyphOverflow*) const
 {
     HarfBuzzShaper shaper(this, run);
     if (shaper.shape())
@@ -92,7 +92,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
     return 0;
 }
 
-int Font::offsetForPositionForComplexText(const TextRun& run, float x, bool) const
+int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bool) const
 {
     HarfBuzzShaper shaper(this, run);
     if (shaper.shape())
@@ -101,7 +101,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float x, bool) con
     return 0;
 }
 
-void Font::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
+void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
 {
     HarfBuzzShaper shaper(this, run);
     if (shaper.shape()) {

@@ -33,7 +33,7 @@
 #include "CSSValueList.h"
 #include "Document.h"
 #include "ElementIterator.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceSrcElement.h"

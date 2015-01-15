@@ -22,7 +22,7 @@
 #ifndef WidthIterator_h
 #define WidthIterator_h
 
-#include "Font.h"
+#include "FontCascade.h"
 #include "SVGGlyph.h"
 #include "TextRun.h"
 #include <wtf/HashSet.h>
@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class Font;
+class FontCascade;
 class GlyphBuffer;
 class SimpleFontData;
 class TextRun;
@@ -39,7 +39,7 @@ struct GlyphData;
 struct WidthIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WidthIterator(const Font*, const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
+    WidthIterator(const FontCascade*, const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
 
     unsigned advance(int to, GlyphBuffer*);
     bool advanceOneCharacter(float& width, GlyphBuffer&);
@@ -58,7 +58,7 @@ public:
     Vector<SVGGlyph::ArabicForm>& arabicForms() { return m_arabicForms; }
 #endif
 
-    static bool supportsTypesettingFeatures(const Font& font)
+    static bool supportsTypesettingFeatures(const FontCascade& font)
     {
 #if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
         if (!font.isPrinterFont())
@@ -70,7 +70,7 @@ public:
 #endif
     }
 
-    const Font* m_font;
+    const FontCascade* m_font;
 
     const TextRun& m_run;
 

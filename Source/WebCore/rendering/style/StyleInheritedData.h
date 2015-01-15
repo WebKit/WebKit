@@ -26,7 +26,7 @@
 #define StyleInheritedData_h
 
 #include "Color.h"
-#include "Font.h"
+#include "FontCascade.h"
 #include "Length.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -56,7 +56,7 @@ public:
     Length specifiedLineHeight;
 #endif
 
-    Font font;
+    FontCascade fontCascade;
     Color color;
     Color visitedLinkColor;
 

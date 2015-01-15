@@ -31,7 +31,6 @@
 
 #include <windows.h>
 
-#include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "HWndDC.h"
