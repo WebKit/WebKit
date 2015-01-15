@@ -1,5 +1,19 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r175400. <rdar://problem/19424166>
+
+    2014-10-30  Jer Noble  <jer.noble@apple.com>
+
+            [EME] Add Setting for accessing storage location for MediaKeys data
+            https://bugs.webkit.org/show_bug.cgi?id=138147
+
+            Reviewed by Brady Eidson.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::WebPage): Pass from WebMediaKeyStorageManager into Settings.
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r175288. <rdar://problem/19480393>
 
     2014-10-28  Jer Noble  <jer.noble@apple.com>

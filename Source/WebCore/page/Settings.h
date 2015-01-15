@@ -267,6 +267,11 @@ public:
     static bool shouldManageAudioSessionCategory() { return gManageAudioSession; }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    void setMediaKeysStorageDirectory(const String& directory) { m_mediaKeysStorageDirectory = directory; }
+    const String& mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
+#endif
+
 private:
     explicit Settings(Page*);
 
@@ -344,6 +349,10 @@ private:
     static bool gAVKitEnabled;
     static bool gShouldOptOutOfNetworkStateObservation;
     static bool gManageAudioSession;
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    String m_mediaKeysStorageDirectory;
 #endif
 
     static double gHiddenPageDOMTimerAlignmentInterval;

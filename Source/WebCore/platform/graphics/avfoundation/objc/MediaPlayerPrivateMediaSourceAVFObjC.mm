@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
 
 #import "CDMSessionMediaSourceAVFObjC.h"
+#import "FileSystem.h"
 #import "Logging.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
@@ -662,29 +663,24 @@ void MediaPlayerPrivateMediaSourceAVFObjC::sizeChanged()
 }
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-static const String& sessionStorageDirectory()
-{
-    static NeverDestroyed<String> sessionDirectoryPath;
-
-    if (sessionDirectoryPath.get().isEmpty()) {
-        char cacheDirectoryPath[PATH_MAX];
-        if (!confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectoryPath, PATH_MAX))
-            return WTF::emptyString();
-
-        sessionDirectoryPath.get().append(String(cacheDirectoryPath, strlen(cacheDirectoryPath)));
-        sessionDirectoryPath.get().append(ASCIILiteral("AVStreamSession/"));
-    }
-    
-    return sessionDirectoryPath.get();
-}
-
 AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
 {
     if (!getAVStreamSessionClass() || ![getAVStreamSessionClass() instancesRespondToSelector:@selector(initWithStorageDirectoryAtURL:)])
         return nil;
 
-    if (!m_streamSession)
-        m_streamSession = adoptNS([[getAVStreamSessionClass() alloc] initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:sessionStorageDirectory()]]);
+    if (!m_streamSession) {
+        String storageDirectory = m_player->mediaKeysStorageDirectory();
+        if (storageDirectory.isEmpty())
+            return nil;
+
+        if (!fileExists(storageDirectory)) {
+            if (!makeAllDirectories(storageDirectory))
+                return nil;
+        }
+
+        String storagePath = pathByAppendingComponent(storageDirectory, "SecureStop.plist");
+        m_streamSession = adoptNS([[getAVStreamSessionClass() alloc] initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]]);
+    }
     return m_streamSession.get();
 }
 
