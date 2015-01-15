@@ -1,3 +1,9 @@
+2015-01-14  Alexey Proskuryakov  <ap@apple.com>
+
+        Update expectations for what we see on upgraded EWS machines.
+
+        * platform/mac/TestExpectations:
+
 2015-01-14  Jer Noble  <jer.noble@apple.com>
 
         [Mac][MSE] Stalled YouTube playback does not allow display to sleep.
