@@ -50,7 +50,7 @@ public:
     static Ref<StorageManager> create(const String& localStorageDirectory);
     ~StorageManager();
 
-    void createSessionStorageNamespace(uint64_t storageNamespaceID, IPC::Connection* allowedConnection, unsigned quotaInBytes);
+    void createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes);
     void destroySessionStorageNamespace(uint64_t storageNamespaceID);
     void setAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection* allowedConnection);
     void cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);

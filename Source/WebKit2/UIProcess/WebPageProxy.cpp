@@ -380,12 +380,15 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_viewStateChangeWantsSynchronousReply(false)
     , m_isPlayingAudio(false)
 {
+    m_process->processPool().storageManager().createSessionStorageNamespace(m_pageID, std::numeric_limits<unsigned>::max());
+
     m_webProcessLifetimeTracker.addObserver(m_visitedLinkProvider);
     m_webProcessLifetimeTracker.addObserver(m_websiteDataStore);
 
     if (m_process->state() == WebProcessProxy::State::Running) {
         if (m_userContentController)
             m_process->addWebUserContentControllerProxy(*m_userContentController);
+        m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, m_process->connection());
     }
 
     updateViewState();
@@ -422,9 +425,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
-    // FIXME: If we ever expose the session storage size as a preference, we need to pass it here.
-    IPC::Connection* connection = m_process->state() == WebProcessProxy::State::Running ? m_process->connection() : nullptr;
-    m_process->processPool().storageManager().createSessionStorageNamespace(m_pageID, connection, std::numeric_limits<unsigned>::max());
     setSessionID(configuration.sessionID);
 
 #if PLATFORM(COCOA)

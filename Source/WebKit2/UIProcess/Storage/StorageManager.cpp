@@ -356,7 +356,7 @@ void StorageManager::LocalStorageNamespace::clearAllStorageAreas()
 
 class StorageManager::SessionStorageNamespace : public ThreadSafeRefCounted<SessionStorageNamespace> {
 public:
-    static Ref<SessionStorageNamespace> create(IPC::Connection* allowedConnection, unsigned quotaInBytes);
+    static Ref<SessionStorageNamespace> create(unsigned quotaInBytes);
     ~SessionStorageNamespace();
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
@@ -369,7 +369,7 @@ public:
     void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
 
 private:
-    SessionStorageNamespace(IPC::Connection* allowedConnection, unsigned quotaInBytes);
+    explicit SessionStorageNamespace(unsigned quotaInBytes);
 
     RefPtr<IPC::Connection> m_allowedConnection;
     unsigned m_quotaInBytes;
@@ -377,14 +377,13 @@ private:
     HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>> m_storageAreaMap;
 };
 
-Ref<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(IPC::Connection* allowedConnection, unsigned quotaInBytes)
+Ref<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(unsigned quotaInBytes)
 {
-    return adoptRef(*new SessionStorageNamespace(allowedConnection, quotaInBytes));
+    return adoptRef(*new SessionStorageNamespace(quotaInBytes));
 }
 
-StorageManager::SessionStorageNamespace::SessionStorageNamespace(IPC::Connection* allowedConnection, unsigned quotaInBytes)
-    : m_allowedConnection(allowedConnection)
-    , m_quotaInBytes(quotaInBytes)
+StorageManager::SessionStorageNamespace::SessionStorageNamespace(unsigned quotaInBytes)
+    : m_quotaInBytes(quotaInBytes)
 {
 }
 
@@ -433,15 +432,14 @@ StorageManager::~StorageManager()
 {
 }
 
-void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, IPC::Connection* allowedConnection, unsigned quotaInBytes)
+void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, unsigned quotaInBytes)
 {
     RefPtr<StorageManager> storageManager(this);
-    RefPtr<IPC::Connection> connection(allowedConnection);
 
-    m_queue->dispatch([storageManager, connection, storageNamespaceID, quotaInBytes] {
+    m_queue->dispatch([storageManager, storageNamespaceID, quotaInBytes] {
         ASSERT(!storageManager->m_sessionStorageNamespaces.contains(storageNamespaceID));
 
-        storageManager->m_sessionStorageNamespaces.set(storageNamespaceID, SessionStorageNamespace::create(connection.get(), quotaInBytes));
+        storageManager->m_sessionStorageNamespaces.set(storageNamespaceID, SessionStorageNamespace::create(quotaInBytes));
     });
 }
 
