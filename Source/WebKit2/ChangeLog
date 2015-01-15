@@ -1,3 +1,75 @@
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
+        Merged r175188. <rdar://problem/19480522>
+
+    2014-10-24  Jer Noble  <jer.noble@apple.com>
+
+            Abstractify WebOriginDataManager to support arbitrary ChildProcess supplements.
+            https://bugs.webkit.org/show_bug.cgi?id=137993
+
+            Reviewed by Brady Eidson.
+
+            To allow different ChildProcess subclasses to handle listing and deletion of origin
+            data, make WebOriginDataManager more generic by having a supplement implement the
+            details, leaving WebOriginDataManager to deal with cross-process messaging.
+
+            De-virtualize AsyncTask, allowing a task to be created by passing in a
+            function<void()>, rather than an object, method, and arguments.
+
+            * Shared/AsyncTask.h:
+            (WebKit::AsyncTask::AsyncTask):
+            (WebKit::AsyncTask::performTask):
+            (WebKit::AsyncTask::~AsyncTask): Deleted.
+
+            Add a new virtual base class, to be implemented by various ChildProcesses, which
+            WebOriginDataManager will use to implement listing and deletion requests.
+
+            * WebProcess/OriginData/WebOriginDataManager.h:
+            * WebProcess/OriginData/WebOriginDataManagerSupplement.h: Added.
+            (WebKit::WebOriginDataManagerSupplement::WebOriginDataManagerSupplement):
+            (WebKit::WebOriginDataManagerSupplement::~WebOriginDataManagerSupplement):
+            (WebKit::WebOriginDataManagerSupplement::getOrigins):
+            (WebKit::WebOriginDataManagerSupplement::deleteEntriesForOrigin):
+            (WebKit::WebOriginDataManagerSupplement::deleteEntriesModifiedBetweenDates):
+            (WebKit::WebOriginDataManagerSupplement::deleteAllEntries):
+            * WebKit2.xcodeproj/project.pbxproj:
+
+            WebOriginDataManager doesn't need to be a ChildSupplement. Remove the DatabaseProcess-
+            specific implementations for its message handlers and replace with clean, generic calls
+            to its supplement. Because these supplements may want to respond to the request
+            asynchronously, pass a completion function in to be called by the supplement once its
+            work is complete.
+
+            * WebProcess/OriginData/WebOriginDataManager.cpp:
+            (WebKit::WebOriginDataManager::WebOriginDataManager):
+            (WebKit::WebOriginDataManager::getOrigins):
+            (WebKit::WebOriginDataManager::deleteEntriesForOrigin):
+            (WebKit::WebOriginDataManager::deleteEntriesModifiedBetweenDates):
+            (WebKit::WebOriginDataManager::deleteAllEntries):
+            (WebKit::WebOriginDataManager::supplementName): Deleted.
+
+            DatabaseProcess already uses WebOriginDataManager, so it will be the first process
+            to fall under the heel of the new regime. DatabaseProcess will subclass
+            WebOriginDataManagerSupplement, and pass itself in twice to the WebOriginDataManager
+            constructor. Create a lambda-based AsyncTask for each request, and call the completion
+            function when each request is complete.
+
+            * DatabaseProcess/DatabaseProcess.cpp:
+            (WebKit::DatabaseProcess::DatabaseProcess):
+            (WebKit::DatabaseProcess::getIndexedDatabaseOrigins):
+            (WebKit::DatabaseProcess::deleteIndexedDatabaseEntriesForOrigin):
+            (WebKit::DatabaseProcess::deleteIndexedDatabaseEntriesModifiedBetweenDates):
+            (WebKit::DatabaseProcess::deleteAllIndexedDatabaseEntries):
+            (WebKit::DatabaseProcess::getOrigins):
+            (WebKit::DatabaseProcess::deleteEntriesForOrigin):
+            (WebKit::DatabaseProcess::deleteEntriesModifiedBetweenDates):
+            (WebKit::DatabaseProcess::deleteAllEntries):
+            (WebKit::DatabaseProcess::doGetIndexedDatabaseOrigins): Deleted.
+            (WebKit::DatabaseProcess::doDeleteIndexedDatabaseEntriesForOrigin): Deleted.
+            (WebKit::DatabaseProcess::doDeleteIndexedDatabaseEntriesModifiedBetweenDates): Deleted.
+            (WebKit::DatabaseProcess::doDeleteAllIndexedDatabaseEntries): Deleted.
+            * DatabaseProcess/DatabaseProcess.h:
+
 2015-01-07  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r178056. rdar://problem/19300492

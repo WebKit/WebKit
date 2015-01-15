@@ -31,6 +31,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebOriginDataManagerMessages.h"
 #include "WebOriginDataManagerProxyMessages.h"
+#include "WebOriginDataManagerSupplement.h"
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginHash.h>
 
@@ -40,66 +41,39 @@ using namespace WebCore;
 
 namespace WebKit {
 
-const char* WebOriginDataManager::supplementName()
-{
-    return "WebOriginDataManager";
-}
-
-WebOriginDataManager::WebOriginDataManager(ChildProcess* childProcess)
+WebOriginDataManager::WebOriginDataManager(ChildProcess& childProcess, WebOriginDataManagerSupplement& supplement)
     : m_childProcess(childProcess)
+    , m_supplement(supplement)
 {
-    m_childProcess->addMessageReceiver(Messages::WebOriginDataManager::messageReceiverName(), *this);
+    m_childProcess.addMessageReceiver(Messages::WebOriginDataManager::messageReceiverName(), *this);
 }
 
 void WebOriginDataManager::getOrigins(WKOriginDataTypes types, uint64_t callbackID)
 {
-    // FIXME: For now, the DatabaseProcess only handles IndexedDatabase origin data.
-    // If it ever starts handling other data types (e.g. WebSQL) then it will have to aggregrate requests
-    // for multiple types into the one callback.
-    if (types & kWKIndexedDatabaseData) {
-        DatabaseProcess::shared().getIndexedDatabaseOrigins(callbackID);
-        return;
-    }
-
-    Vector<SecurityOriginData> results;
-    m_childProcess->send(Messages::WebOriginDataManagerProxy::DidGetOrigins(results, callbackID), 0);
+    m_supplement.getOrigins(types, [this, callbackID](const Vector<SecurityOriginData>& results) {
+        m_childProcess.send(Messages::WebOriginDataManagerProxy::DidGetOrigins(results, callbackID), 0);
+    });
 }
 
 void WebOriginDataManager::deleteEntriesForOrigin(WKOriginDataTypes types, const SecurityOriginData& originData, uint64_t callbackID)
 {
-    // FIXME: For now, the DatabaseProcess only handles IndexedDatabase origin data.
-    // If it ever starts handling other data types (e.g. WebSQL) then it will have to aggregrate requests
-    // for multiple types into the one callback.
-    if (types & kWKIndexedDatabaseData) {
-        DatabaseProcess::shared().deleteIndexedDatabaseEntriesForOrigin(originData, callbackID);
-        return;
-    }
-
-    m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
+    m_supplement.deleteEntriesForOrigin(types, originData, [this, callbackID] {
+        m_childProcess.send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
+    });
 }
 
 void WebOriginDataManager::deleteEntriesModifiedBetweenDates(WKOriginDataTypes types, double startTime, double endTime, uint64_t callbackID)
 {
-    // FIXME: For now, the DatabaseProcess only handles IndexedDatabase origin data.
-    // If it ever starts handling other data types (e.g. WebSQL) then it will have to aggregrate requests
-    // for multiple types into the one callback.
-    if (types & kWKIndexedDatabaseData) {
-        DatabaseProcess::shared().deleteIndexedDatabaseEntriesModifiedBetweenDates(startTime, endTime, callbackID);
-        return;
-    }
-    m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
+    m_supplement.deleteEntriesModifiedBetweenDates(types, startTime, endTime, [this, callbackID] {
+        m_childProcess.send(Messages::WebOriginDataManagerProxy::DidDeleteEntries(callbackID), 0);
+    });
 }
 
 void WebOriginDataManager::deleteAllEntries(WKOriginDataTypes types, uint64_t callbackID)
 {
-    // FIXME: For now, the DatabaseProcess only handles IndexedDatabase origin data.
-    // If it ever starts handling other data types (e.g. WebSQL) then it will have to aggregrate requests
-    // for multiple types into the one callback.
-    if (types & kWKIndexedDatabaseData) {
-        DatabaseProcess::shared().deleteAllIndexedDatabaseEntries(callbackID);
-        return;
-    }
-    m_childProcess->send(Messages::WebOriginDataManagerProxy::DidDeleteAllEntries(callbackID), 0);
+    m_supplement.deleteAllEntries(types, [this, callbackID] {
+        m_childProcess.send(Messages::WebOriginDataManagerProxy::DidDeleteAllEntries(callbackID), 0);
+    });
 }
 
 } // namespace WebKit

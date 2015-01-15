@@ -1598,6 +1598,7 @@
 		CDC3831017212440008A2FC3 /* CookieStorageShim.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC3830D1721242D008A2FC3 /* CookieStorageShim.mm */; };
 		CDCA85C8132ABA4E00E961DF /* WKFullScreenWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */; };
 		CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */; };
+		CDE6E2D319F731C400BA9688 /* WebOriginDataManagerSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE6E2D219F731C400BA9688 /* WebOriginDataManagerSupplement.h */; };
 		CEDA12E2152CD1AE00D9E08D /* WebAlternativeTextClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */; };
 		CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */; };
 		D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */; };
@@ -3700,6 +3701,7 @@
 		CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFullScreenWindowController.mm; sourceTree = "<group>"; };
 		CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFullScreenWindowController.h; sourceTree = "<group>"; };
 		CDCA85D4132AC2B300E961DF /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		CDE6E2D219F731C400BA9688 /* WebOriginDataManagerSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebOriginDataManagerSupplement.h; path = OriginData/WebOriginDataManagerSupplement.h; sourceTree = "<group>"; };
 		CEDA12DE152CCAE800D9E08D /* WebAlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAlternativeTextClient.h; sourceTree = "<group>"; };
 		CEDA12DF152CCAE800D9E08D /* WebAlternativeTextClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAlternativeTextClient.cpp; sourceTree = "<group>"; };
 		D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPopupMenu.cpp; sourceTree = "<group>"; };
@@ -5545,6 +5547,7 @@
 		755422C518064FFC0046F6A8 /* OriginData */ = {
 			isa = PBXGroup;
 			children = (
+				CDE6E2D219F731C400BA9688 /* WebOriginDataManagerSupplement.h */,
 				755422C618064FFC0046F6A8 /* WebOriginDataManager.cpp */,
 				755422C718064FFC0046F6A8 /* WebOriginDataManager.h */,
 				755422C818064FFC0046F6A8 /* WebOriginDataManager.messages.in */,
@@ -7034,6 +7037,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1ADAE12E1919A5B400F48E21 /* WKPreferences.h in Headers */,
+				CDE6E2D319F731C400BA9688 /* WebOriginDataManagerSupplement.h in Headers */,
 				1AF459321946559500F9D4A2 /* WKError.h in Headers */,
 				E19BDA8A193686A400B97F57 /* SandboxUtilities.h in Headers */,
 				1A7284471959ED100007BCE5 /* SessionStateConversion.h in Headers */,
