@@ -26,23 +26,22 @@
 #ifndef WebOriginDataManager_h
 #define WebOriginDataManager_h
 
-#include "ChildProcessSupplement.h"
 #include "MessageReceiver.h"
 #include "WKOriginDataManager.h"
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 class ChildProcess;
+class WebOriginDataManagerSupplement;
 struct SecurityOriginData;
 
-class WebOriginDataManager : public ChildProcessSupplement, public IPC::MessageReceiver {
+class WebOriginDataManager : public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebOriginDataManager);
 public:
-    WebOriginDataManager(ChildProcess*);
-
-    static const char* supplementName();
+    WebOriginDataManager(ChildProcess&, WebOriginDataManagerSupplement&);
 
 private:
     void getOrigins(WKOriginDataTypes, uint64_t callbackID);
@@ -53,7 +52,8 @@ private:
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection*, IPC::MessageDecoder&) override;
 
-    ChildProcess* m_childProcess;
+    ChildProcess& m_childProcess;
+    WebOriginDataManagerSupplement& m_supplement;
 };
 
 } // namespace WebKit
