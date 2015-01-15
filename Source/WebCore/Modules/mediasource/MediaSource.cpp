@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -502,7 +503,9 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
 {
     LOG(MediaSource, "MediaSource::addSourceBuffer(%s) %p", type.ascii().data(), this);
 
-    // 2.2 https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-MediaSource-addSourceBuffer-SourceBuffer-DOMString-type
+    // 2.2 http://www.w3.org/TR/media-source/#widl-MediaSource-addSourceBuffer-SourceBuffer-DOMString-type
+    // When this method is invoked, the user agent must run the following steps:
+
     // 1. If type is null or an empty then throw an INVALID_ACCESS_ERR exception and
     // abort these steps.
     if (type.isNull() || type.isEmpty()) {
@@ -536,11 +539,25 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
     }
 
     RefPtr<SourceBuffer> buffer = SourceBuffer::create(sourceBufferPrivate.releaseNonNull(), this);
-    // 6. Add the new object to sourceBuffers and fire a addsourcebuffer on that object.
+
+    // 6. Set the generate timestamps flag on the new object to the value in the "Generate Timestamps Flag"
+    // column of the byte stream format registry [MSE-REGISTRY] entry that is associated with type.
+    // NOTE: In the current byte stream format registry <http://www.w3.org/2013/12/byte-stream-format-registry/>
+    // only the "MPEG Audio Byte Stream Format" has the "Generate Timestamps Flag" value set.
+    bool shouldGenerateTimestamps = contentType.type() == "audio/aac" || contentType.type() == "audio/mpeg";
+    buffer->setShouldGenerateTimestamps(shouldGenerateTimestamps);
+
+    // 7. If the generate timestamps flag equals true:
+    // ↳ Set the mode attribute on the new object to "sequence".
+    // Otherwise:
+    // ↳ Set the mode attribute on the new object to "segments".
+    buffer->setMode(shouldGenerateTimestamps ? SourceBuffer::sequenceKeyword() : SourceBuffer::segmentsKeyword(), IGNORE_EXCEPTION);
+
+    // 8. Add the new object to sourceBuffers and fire a addsourcebuffer on that object.
     m_sourceBuffers->add(buffer);
     regenerateActiveSourceBuffers();
 
-    // 7. Return the new object to the caller.
+    // 9. Return the new object to the caller.
     return buffer.get();
 }
 
