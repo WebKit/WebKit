@@ -1,3 +1,12 @@
+2015-01-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed build fix after r178536.
+
+        Initialize member variables in the proper order.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+
 2015-01-15  Enrica Casucci  <enrica@apple.com>
 
         [WK2] Add support for fully editable WKWebView.
