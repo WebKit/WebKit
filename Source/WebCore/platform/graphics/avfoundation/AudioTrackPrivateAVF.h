@@ -40,20 +40,24 @@ public:
     virtual AtomicString id() const { return m_id; }
     virtual AtomicString label() const { return m_label; }
     virtual AtomicString language() const { return m_language; }
+    virtual int trackIndex() const { return m_index; }
 
 protected:
     void setKind(Kind kind) { m_kind = kind; }
     void setId(AtomicString newId) { m_id = newId; }
     void setLabel(AtomicString label) { m_label = label; }
     void setLanguage(AtomicString language) { m_language = language; }
+    void setTrackIndex(int index) { m_index = index; }
 
     Kind m_kind;
     AtomicString m_id;
     AtomicString m_label;
     AtomicString m_language;
+    int m_index;
 
     AudioTrackPrivateAVF()
-    : m_kind(None)
+        : m_kind(None)
+        , m_index(0)
     {
     }
 };
