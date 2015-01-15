@@ -55,6 +55,9 @@ public:
     String webSQLDatabaseDirectory() const { return m_webSQLDatabaseDirectory; }
     void setWebSQLDatabaseDirectory(const String& webSQLDatabaseDirectory) { m_webSQLDatabaseDirectory = webSQLDatabaseDirectory; }
 
+    String mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
+    void setMediaKeysStorageDirectory(const String& mediaKeysStorageDirectory) { m_mediaKeysStorageDirectory = mediaKeysStorageDirectory; }
+
     WebKit::WebContextConfiguration webContextConfiguration() const;
 
 private:
@@ -64,6 +67,7 @@ private:
     String m_injectedBundlePath;
     String m_localStorageDirectory;
     String m_webSQLDatabaseDirectory;
+    String m_mediaKeysStorageDirectory;
 };
 
 } // namespace API

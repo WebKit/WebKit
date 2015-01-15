@@ -290,6 +290,8 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp
 
+    WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
+
     WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp
 
     WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp

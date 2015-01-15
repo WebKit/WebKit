@@ -37,6 +37,7 @@
 #include "TextCheckerState.h"
 #include "ViewUpdateDispatcher.h"
 #include "VisitedLinkTable.h"
+#include "WebOriginDataManagerSupplement.h"
 #include <WebCore/SessionIDHash.h>
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
@@ -69,6 +70,7 @@ class InjectedBundle;
 class WebConnectionToUIProcess;
 class WebFrame;
 class WebIconDatabaseProxy;
+class WebOriginDataManager;
 class WebPage;
 class WebPageGroupProxy;
 class WebProcessSupplement;
@@ -86,7 +88,7 @@ class WebResourceLoadScheduler;
 class WebToDatabaseProcessConnection;
 #endif
 
-class WebProcess : public ChildProcess, private DownloadManager::Client {
+class WebProcess : public ChildProcess, public WebOriginDataManagerSupplement, private DownloadManager::Client {
     friend class NeverDestroyed<DownloadManager>;
 public:
     static WebProcess& shared();
@@ -283,6 +285,12 @@ private:
     // Implemented in generated WebProcessMessageReceiver.cpp
     void didReceiveWebProcessMessage(IPC::Connection*, IPC::MessageDecoder&);
 
+    // WebOriginDataManagerSupplement
+    virtual void getOrigins(WKOriginDataTypes, std::function<void(const Vector<SecurityOriginData>&)> completion) override;
+    virtual void deleteEntriesForOrigin(WKOriginDataTypes, const SecurityOriginData&, std::function<void()> completion) override;
+    virtual void deleteEntriesModifiedBetweenDates(WKOriginDataTypes, double startDate, double endDate, std::function<void()> completion) override;
+    virtual void deleteAllEntries(WKOriginDataTypes, std::function<void()> completion) override;
+
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 
     HashMap<uint64_t, RefPtr<WebPage>> m_pageMap;
@@ -345,6 +353,8 @@ private:
 
     HashSet<uint64_t> m_pagesInWindows;
     WebCore::Timer<WebProcess> m_nonVisibleProcessCleanupTimer;
+
+    std::unique_ptr<WebOriginDataManager> m_webOriginDataManager;
 };
 
 } // namespace WebKit

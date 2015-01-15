@@ -75,6 +75,7 @@ NSString *WebStorageDirectoryDefaultsKey = @"WebKitLocalStorageDatabasePathPrefe
 NSString *WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey = @"WebKitKerningAndLigaturesEnabledByDefault";
 NSString *WebKitJSCJITEnabledDefaultsKey = @"WebKitJSCJITEnabledDefaultsKey";
 NSString *WebKitJSCFTLJITEnabledDefaultsKey = @"WebKitJSCFTLJITEnabledDefaultsKey";
+NSString *WebKitMediaKeysStorageDirectoryDefaultsKey = @"WebKitMediaKeysStorageDirectory";
 
 #if !PLATFORM(IOS)
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
@@ -377,6 +378,14 @@ String WebContext::platformDefaultLocalStorageDirectory()
     if (!localStorageDirectory || ![localStorageDirectory isKindOfClass:[NSString class]])
         localStorageDirectory = @"~/Library/WebKit/LocalStorage";
     return stringByResolvingSymlinksInPath([localStorageDirectory stringByStandardizingPath]);
+}
+
+String WebContext::platformDefaultMediaKeysStorageDirectory()
+{
+    NSString *mediaKeysStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitMediaKeysStorageDirectoryDefaultsKey];
+    if (!mediaKeysStorageDirectory || ![mediaKeysStorageDirectory isKindOfClass:[NSString class]])
+        mediaKeysStorageDirectory = @"~/Library/WebKit/MediaKeys";
+    return stringByResolvingSymlinksInPath([mediaKeysStorageDirectory stringByStandardizingPath]);
 }
 
 bool WebContext::omitPDFSupport()
