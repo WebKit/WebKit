@@ -273,9 +273,9 @@ void TestRunner::notifyDone()
 static wstring jsStringRefToWString(JSStringRef jsStr)
 {
     size_t length = JSStringGetLength(jsStr);
-    Vector<WCHAR> buffer(length + 1);
+    Vector<WCHAR> buffer(length + 1, 0);
     memcpy(buffer.data(), JSStringGetCharactersPtr(jsStr), length * sizeof(WCHAR));
-    buffer[length] = '\0';
+    buffer[length] = 0;
 
     return buffer.data();
 }
@@ -287,7 +287,7 @@ JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef ur
     wstring localPath;
     if (!resolveCygwinPath(input, localPath)) {
         printf("ERROR: Failed to resolve Cygwin path %S\n", input.c_str());
-        return 0;
+        return nullptr;
     }
 
     return JSStringCreateWithCharacters(localPath.c_str(), localPath.length());
@@ -766,9 +766,9 @@ void TestRunner::setUserStyleSheetLocation(JSStringRef jsURL)
         return;
 
     // The path has been resolved, now convert it back to a CFURL.
-    int result = WideCharToMultiByte(CP_UTF8, 0, resultPath.c_str(), resultPath.size() + 1, 0, 0, 0, 0);
+    int result = ::WideCharToMultiByte(CP_UTF8, 0, resultPath.c_str(), resultPath.size() + 1, nullptr, 0, nullptr, nullptr);
     Vector<char> utf8Vector(result);
-    result = WideCharToMultiByte(CP_UTF8, 0, resultPath.c_str(), resultPath.size() + 1, utf8Vector.data(), result, 0, 0);
+    result = ::WideCharToMultiByte(CP_UTF8, 0, resultPath.c_str(), resultPath.size() + 1, utf8Vector.data(), result, nullptr, nullptr);
     if (!result)
         return;
 

@@ -43,12 +43,13 @@
 #include "WorkQueue.h"
 
 #include <comutil.h>
+#include <cstdio>
+#include <cstring>
 #include <fcntl.h>
+#include <fstream>
 #include <io.h>
 #include <math.h>
 #include <shlwapi.h>
-#include <stdio.h>
-#include <string.h>
 #include <tchar.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
@@ -68,9 +69,9 @@
 using namespace std;
 
 #ifdef DEBUG_ALL
-const LPWSTR TestPluginDir = L"TestNetscapePlugin_Debug";
+const _bstr_t TestPluginDir = L"TestNetscapePlugin_Debug";
 #else
-const LPWSTR TestPluginDir = L"TestNetscapePlugin";
+const _bstr_t TestPluginDir = L"TestNetscapePlugin";
 #endif
 
 static LPCWSTR fontsEnvironmentVariable = L"WEBKIT_TESTFONTS";
@@ -143,6 +144,9 @@ static wstring lastPathComponentAsWString(CFURLRef url)
 
 wstring urlSuitableForTestResult(const wstring& urlString)
 {
+    if (urlString.empty())
+        return urlString;
+
     RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(urlString.c_str()), urlString.length() * sizeof(wstring::value_type), kCFStringEncodingUTF16, 0));
 
     RetainPtr<CFStringRef> scheme = adoptCF(CFURLCopyScheme(url.get()));
@@ -515,19 +519,18 @@ static void dumpHistoryItem(IWebHistoryItem* item, int indent, bool current)
         return;
 
     if (wcsstr(static_cast<wchar_t*>(url), L"file:/") == static_cast<wchar_t*>(url)) {
-        static wchar_t* layoutTestsString = L"/LayoutTests/";
-        static wchar_t* fileTestString = L"(file test):";
+        static wchar_t* layoutTestsStringUnixPath = L"/LayoutTests/";
+        static wchar_t* layoutTestsStringDOSPath = L"\\LayoutTests\\";
         
-        wchar_t* result = wcsstr(static_cast<wchar_t*>(url), layoutTestsString);
-        if (result == NULL)
+        wchar_t* result = wcsstr(static_cast<wchar_t*>(url), layoutTestsStringUnixPath);
+        if (!result)
+            result = wcsstr(static_cast<wchar_t*>(url), layoutTestsStringDOSPath);
+        if (!result)
             return;
-        wchar_t* start = result + wcslen(layoutTestsString);
 
-        _bstr_t newURL(SysAllocStringLen(0, SysStringLen(url)), false);
-        wcscpy(static_cast<wchar_t*>(newURL), fileTestString);
-        wcscpy(static_cast<wchar_t*>(newURL) + wcslen(fileTestString), start);
+        wchar_t* start = result + wcslen(layoutTestsStringUnixPath);
 
-        url = newURL;
+        url = _bstr_t(L"(file test):") + _bstr_t(start);
     }
 
     printf("%S", static_cast<wchar_t*>(url));
@@ -1038,25 +1041,22 @@ static void runTest(const string& inputLine)
     str = CFURLGetString(url);
 
     CFIndex length = CFStringGetLength(str);
-    UniChar* buffer = new UniChar[length + 1];
 
-    CFStringGetCharacters(str, CFRangeMake(0, length), buffer);
-    buffer[length] = 0;
+    Vector<UniChar> buffer(length + 1, 0);
+    CFStringGetCharacters(str, CFRangeMake(0, length), buffer.data());
 
-    _bstr_t urlBStr((OLECHAR*)buffer);
+    _bstr_t urlBStr(reinterpret_cast<wchar_t*>(buffer.data()));
     ASSERT(urlBStr.length() == length);
-    delete[] buffer;
 
     CFIndex maximumURLLengthAsUTF8 = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
-    char* testURL = new char[maximumURLLengthAsUTF8];
-    CFStringGetCString(str, testURL, maximumURLLengthAsUTF8, kCFStringEncodingUTF8);
+    Vector<char> testURL(maximumURLLengthAsUTF8 + 1, 0);
+    CFStringGetCString(str, testURL.data(), maximumURLLengthAsUTF8, kCFStringEncodingUTF8);
 
     CFRelease(url);
 
     resetWebViewToConsistentStateBeforeTesting();
 
-    ::gTestRunner = TestRunner::create(testURL, command.expectedPixelHash);
-    delete[] testURL;
+    ::gTestRunner = TestRunner::create(testURL.data(), command.expectedPixelHash);
     ::gTestRunner->setCustomTimeout(command.timeout);
     topLoadingFrame = nullptr;
     done = false;
@@ -1220,10 +1220,8 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
     viewPrivate->setShouldApplyMacFontAscentHack(TRUE);
     viewPrivate->setAlwaysUsesComplexTextCodePath(forceComplexText);
 
-    _bstr_t pluginPath(SysAllocStringLen(0, exePath().length() + _tcslen(TestPluginDir)), false);
-    _tcscpy(static_cast<TCHAR*>(pluginPath), exePath().c_str());
-    _tcscat(static_cast<TCHAR*>(pluginPath), TestPluginDir);
-    if (FAILED(viewPrivate->addAdditionalPluginDirectory(pluginPath)))
+    _bstr_t pluginPath = _bstr_t(exePath().data()) + TestPluginDir;
+    if (FAILED(viewPrivate->addAdditionalPluginDirectory(pluginPath.GetBSTR())))
         return nullptr;
 
     HWND viewWindow;
@@ -1384,11 +1382,6 @@ static void prepareConsistentTestingEnvironment(IWebPreferences* standardPrefere
 
 int main(int argc, const char* argv[])
 {
-#ifdef _CRTDBG_MAP_ALLOC
-    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
-    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
-#endif
-
     // Cygwin calls ::SetErrorMode(SEM_FAILCRITICALERRORS), which we will inherit. This is bad for
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.

@@ -225,7 +225,7 @@ int main(int argc, const char* argv[])
             } else {
                 if (CGImageGetWidth(actualImage.get()) != CGImageGetWidth(baselineImage.get()) || CGImageGetHeight(actualImage.get()) != CGImageGetHeight(baselineImage.get())) {
 #if OS(WINDOWS)
-                    fprintf(stderr, "Error: test and reference images have different sizes. Test image is %zux%zu, reference image is %Iux%Iu\n",
+                    fprintf(stderr, "Error: test and reference images have different sizes. Test image is %Iux%Iu, reference image is %Iux%Iu\n",
 #else
                     fprintf(stderr, "Error: test and reference images have different sizes. Test image is %zux%zu, reference image is %zux%zu\n",
 #endif

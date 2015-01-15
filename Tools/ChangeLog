@@ -1,3 +1,39 @@
+2015-01-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Miscellaneous DRT fixes
+        https://bugs.webkit.org/show_bug.cgi?id=116562
+
+        Reviewed by Tim Horton.
+
+        While investigating the cause of several Windows crashes, I found:
+        (1) Messy conversions to and from BSTR types
+        (2) Weird mixes of wide-string and narrow string conversions
+        (3) Passing nullptr to some CoreFoundation routines that do not
+            permit null arguments.
+        (4) Commands to link the executable to the VS2005 runtime.
+
+        This patch cleans up these issues to improve DRT reliability on
+        Windows.
+
+        * DumpRenderTree/cg/ImageDiffCG.cpp:
+        (main): Get rid of VS2005 runtime linking.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (urlSuitableForTestResult): Protect against being asked
+        to process an empty URL.
+        (dumpHistoryItem): Do BSTR string building using _bstr_t, rather
+        than converting to/from wchar_t buffers.
+        (runTest): Simplify string and BSTR handling.
+        (createWebViewAndOffscreenWindow): Ditto.
+        (main): Get rid of VS2005 runtime linking.
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (jsStringRefToWString): Simplify code.
+        (TestRunner::pathToLocalResource):
+        (TestRunner::setUserStyleSheetLocation):
+        * TestWebKitAPI/win/main.cpp: Get rid of
+        VS2005 runtime linking.
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+        (wWinMain): Ditto.
+
 2015-01-15  Alexey Proskuryakov  <ap@apple.com>
 
         Stop hardcoding mac-mountainlion in commit queue
