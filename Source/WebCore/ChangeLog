@@ -1,5 +1,28 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r175331. <rdar://problem/19424160>
+
+    2014-10-29  Jer Noble  <jer.noble@apple.com>
+
+            [EME][Mac] MediaKeySession type "keyrelease" is ignored.
+            https://bugs.webkit.org/show_bug.cgi?id=138175
+
+            Reviewed by Eric Carlson.
+
+            To indicate that they would like to recevie expired session confirmation messages, clients
+            will create a MediaKeySession with a type parameter of "keyrelease". The code which validates
+            this type needs to be updated to recognize "keyrelease" as a valid type.
+
+            Also, the code which validates update() requests needs to allow updates containing the string
+            "acknowledged", so that clients can request the confirmation messages be discarded.
+
+            * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+            (WebCore::CDMPrivateMediaSourceAVFObjC::supportsMIMEType):
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (WebCore::CDMSessionMediaSourceAVFObjC::update):
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r175284. <rdar://problem/19424157>
 
     2014-10-28  Jer Noble  <jer.noble@apple.com>

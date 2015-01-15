@@ -174,9 +174,6 @@ static bool isEqual(Uint8Array* data, const char* literal)
 
 bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode)
 {
-    if (m_mode == KeyRelease)
-        return false;
-
     bool shouldGenerateKeyRequest = !m_certificate || isEqual(key, "renew");
     if (!m_certificate) {
         LOG(Media, "CDMSessionMediaSourceAVFObjC::update(%p) - certificate data", this);
@@ -197,6 +194,9 @@ bool CDMSessionMediaSourceAVFObjC::update(Uint8Array* key, RefPtr<Uint8Array>& n
         m_expiredSession = nullptr;
         return true;
     }
+
+    if (m_mode == KeyRelease)
+        return false;
 
     RefPtr<SourceBufferPrivateAVFObjC> protectedSourceBuffer;
     for (auto& sourceBuffer : m_sourceBuffers) {
