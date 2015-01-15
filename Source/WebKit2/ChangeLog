@@ -1,3 +1,51 @@
+2015-01-14  Sam Weinig  <sam@webkit.org>
+
+        Convert WKUserScript to be an API::Object bridged object
+        https://bugs.webkit.org/show_bug.cgi?id=140471
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        Add Type::UserScript.
+
+        * UIProcess/API/APIUserScript.h: Added.
+        Add API object for UserScripts.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController init]):
+        (-[WKUserContentController userScripts]):
+        (-[WKUserContentController addUserScript:]):
+        (-[WKUserContentController removeAllUserScripts]):
+        (toWebCoreUserScriptInjectionTime): Deleted.
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::WebUserContentControllerProxy):
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addUserScript):
+        (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        (WebKit::WebUserContentControllerProxy::userScripts):
+        Store the WKUserScripts in the WebUserContentControllerProxy instead of the
+        Objective-C layer WKUserContentController, to allow creation of the object
+        from either the Objective-C or C++ sides.
+
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        (generateIdentifier):
+        (-[WKUserScript initWithSource:injectionTime:forMainFrameOnly:]):
+        (-[WKUserScript source]):
+        (-[WKUserScript injectionTime]):
+        (-[WKUserScript isForMainFrameOnly]):
+        (-[WKUserScript _apiObject]):
+        * UIProcess/API/Cocoa/WKUserScriptInternal.h:
+        (API::wrapper):
+        (API::toWebCoreUserScriptInjectionTime):
+        (API::toWKUserScriptInjectionTime):
+        Convert to get properties from the API::UserScript.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add the new file.
+
 2015-01-14  Anders Carlsson  <andersca@apple.com>
 
         Add per page connection callbacks to the lifetime observer

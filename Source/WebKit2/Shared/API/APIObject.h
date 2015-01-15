@@ -81,6 +81,7 @@ public:
         URLRequest,
         URLResponse,
         UserContentURLPattern,
+        UserScript,
         WebArchive,
         WebArchiveResource,
 

@@ -32,8 +32,14 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+
+namespace API {
+class Array;
+class UserScript;
+}
 
 namespace IPC {
 class DataReference;
@@ -59,7 +65,8 @@ public:
     void addProcess(WebProcessProxy&);
     void removeProcess(WebProcessProxy&);
 
-    void addUserScript(WebCore::UserScript);
+    API::Array& userScripts() { return m_userScripts.get(); }
+    void addUserScript(API::UserScript&);
     void removeAllUserScripts();
 
     void addUserStyleSheet(WebCore::UserStyleSheet);
@@ -76,9 +83,8 @@ private:
     void didPostMessage(IPC::Connection&, uint64_t pageID, uint64_t frameID, uint64_t messageHandlerID, const IPC::DataReference&);
 
     uint64_t m_identifier;
-    HashSet<WebProcessProxy*> m_processes;
-
-    Vector<WebCore::UserScript> m_userScripts;
+    HashSet<WebProcessProxy*> m_processes;    
+    Ref<API::Array> m_userScripts;
     Vector<WebCore::UserStyleSheet> m_userStyleSheets;
     HashMap<uint64_t, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
 };

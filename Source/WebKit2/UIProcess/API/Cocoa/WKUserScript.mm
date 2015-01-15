@@ -28,38 +28,57 @@
 
 #if WK_API_ENABLED
 
+#import <wtf/text/StringBuilder.h>
+
 @implementation WKUserScript
+
+static uint64_t generateIdentifier()
+{
+    static uint64_t identifier;
+
+    return ++identifier;
+}
 
 - (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly
 {
     if (!(self = [super init]))
         return nil;
 
-    _source = adoptNS([source copy]);
-    _injectionTime = injectionTime;
-    _forMainFrameOnly = forMainFrameOnly;
+    StringBuilder urlStringBuilder;
+    urlStringBuilder.append("user-script:");
+    urlStringBuilder.appendNumber(generateIdentifier());
+    WebCore::URL url { WebCore::URL { }, urlStringBuilder.toString() };
+
+    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), url, { }, { }, API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames });
 
     return self;
 }
 
 - (NSString *)source
 {
-    return _source.get();
+    return _userScript->userScript().source();
 }
 
 - (WKUserScriptInjectionTime)injectionTime
 {
-    return _injectionTime;
+    return API::toWKUserScriptInjectionTime(_userScript->userScript().injectionTime());
 }
 
 - (BOOL)isForMainFrameOnly
 {
-    return _forMainFrameOnly;
+    return _userScript->userScript().injectedFrames() == WebCore::InjectInTopFrameOnly;
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
     return [self retain];
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_userScript;
 }
 
 @end

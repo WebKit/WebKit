@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebUserContentControllerProxy.h"
 
+#include "APIArray.h"
+#include "APIUserScript.h"
 #include "DataReference.h"
 #include "WebProcessProxy.h"
 #include "WebScriptMessageHandler.h"
@@ -44,6 +46,7 @@ static uint64_t generateIdentifier()
 
 WebUserContentControllerProxy::WebUserContentControllerProxy()
     : m_identifier(generateIdentifier())
+    , m_userScripts(*API::Array::create())
 {
 }
 
@@ -62,7 +65,11 @@ void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy)
 
     webProcessProxy.addMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), m_identifier, *this);
 
-    webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserScripts(m_userScripts), m_identifier);
+    Vector<WebCore::UserScript> userScripts;
+    for (const auto& userScript : m_userScripts->elementsOfType<API::UserScript>())
+        userScripts.append(userScript->userScript());
+    webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserScripts(userScripts), m_identifier);
+
     webProcessProxy.connection()->send(Messages::WebUserContentController::AddUserStyleSheets(m_userStyleSheets), m_identifier);
 
     Vector<WebScriptMessageHandlerHandle> messageHandlerHandles;
@@ -79,17 +86,17 @@ void WebUserContentControllerProxy::removeProcess(WebProcessProxy& webProcessPro
     webProcessProxy.removeMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), m_identifier);
 }
 
-void WebUserContentControllerProxy::addUserScript(WebCore::UserScript userScript)
+void WebUserContentControllerProxy::addUserScript(API::UserScript& userScript)
 {
-    m_userScripts.append(WTF::move(userScript));
+    m_userScripts->elements().append(&userScript);
 
     for (WebProcessProxy* process : m_processes)
-        process->connection()->send(Messages::WebUserContentController::AddUserScripts({ m_userScripts.last() }), m_identifier);
+        process->connection()->send(Messages::WebUserContentController::AddUserScripts({ userScript.userScript() }), m_identifier);
 }
 
 void WebUserContentControllerProxy::removeAllUserScripts()
 {
-    m_userScripts.clear();
+    m_userScripts->elements().clear();
 
     for (WebProcessProxy* process : m_processes)
         process->connection()->send(Messages::WebUserContentController::RemoveAllUserScripts(), m_identifier);

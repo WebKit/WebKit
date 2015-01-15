@@ -45,6 +45,7 @@
 #import "WKNavigationInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUserContentControllerInternal.h"
+#import "WKUserScriptInternal.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import "WKWebProcessPlugInFrameInternal.h"
 #import "WKWebProcessPlugInHitTestResultInternal.h"
@@ -156,6 +157,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::UserContentController:
         wrapper = [WKUserContentController alloc];
+        break;
+
+    case Type::UserScript:
+        wrapper = [WKUserScript alloc];
         break;
 
     case Type::WebsiteDataStore:

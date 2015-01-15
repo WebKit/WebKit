@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKUserScript.h"
+#ifndef APIUserScript_h
+#define APIUserScript_h
 
-#if WK_API_ENABLED
-
-#import "APIUserScript.h"
-#import <wtf/RetainPtr.h>
+#include "APIObject.h"
+#include <WebCore/UserScript.h>
 
 namespace API {
 
-inline WKUserScript *wrapper(UserScript& userScript)
-{
-    ASSERT([userScript.wrapper() isKindOfClass:[WKUserScript class]]);
-    return (WKUserScript *)userScript.wrapper();
-}
-
-inline WebCore::UserScriptInjectionTime toWebCoreUserScriptInjectionTime(WKUserScriptInjectionTime injectionTime)
-{
-    switch (injectionTime) {
-    case WKUserScriptInjectionTimeAtDocumentStart:
-        return WebCore::InjectAtDocumentStart;
-
-    case WKUserScriptInjectionTimeAtDocumentEnd:
-        return WebCore::InjectAtDocumentEnd;
+class UserScript final : public ObjectImpl<Object::Type::UserScript> {
+public:
+    UserScript(WebCore::UserScript userScript)
+        : m_userScript(userScript)
+    {
     }
 
-    ASSERT_NOT_REACHED();
-    return WebCore::InjectAtDocumentEnd;
-}
-
-inline WKUserScriptInjectionTime toWKUserScriptInjectionTime(WebCore::UserScriptInjectionTime injectionTime)
-{
-    switch (injectionTime) {
-    case WebCore::InjectAtDocumentStart:
-        return WKUserScriptInjectionTimeAtDocumentStart;
-
-    case WebCore::InjectAtDocumentEnd:
-        return WKUserScriptInjectionTimeAtDocumentEnd;
+    ~UserScript()
+    {
     }
 
-    ASSERT_NOT_REACHED();
-    return WKUserScriptInjectionTimeAtDocumentEnd;
-}
+    WebCore::UserScript& userScript() { return m_userScript; }
+    const WebCore::UserScript& userScript() const { return m_userScript; }
 
-}
+private:
+    WebCore::UserScript m_userScript;
+};
 
-@interface WKUserScript () <WKObject> {
-@package
-    API::ObjectStorage<API::UserScript> _userScript;
-}
-@end
+} // namespace API
 
-#endif
+#endif // APIUserScript_h
