@@ -1,5 +1,20 @@
 2015-01-15  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r178378. rdar://problem/19274499
+
+    2015-01-13  Beth Dakin  <bdakin@apple.com>
+
+            Should disable immediate actions for iTunes
+            https://bugs.webkit.org/show_bug.cgi?id=140405
+            -and corresponding-
+            rdar://problem/19461358
+
+            Reviewed by Tim Horton.
+
+            * WebCore.exp.in:
+
+2015-01-15  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r178304. rdar://problem/19447156
 
     2015-01-12  Timothy Horton  <timothy_horton@apple.com>
