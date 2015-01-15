@@ -1622,8 +1622,6 @@ webkit.org/b/118418 accessibility/img-fallsback-to-title.html [ Missing ]
 webkit.org/b/98348  accessibility/internal-link-anchors2.html [ Missing ]
 webkit.org/b/98348  accessibility/radio-button-group-members.html [ Missing ]
 
-accessibility/negative-tabindex-does-not-expose-label.html [ Missing ]
-
 # isProtocolHandlerRegistered() isn't supported by WK2 yet.
 webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
 
@@ -1823,8 +1821,6 @@ webkit.org/b/124658 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/124663 media/track/track-legacyapi-with-automatic-mode.html [ Skip ]
 
 webkit.org/b/124890 platform/efl/accessibility/media-emits-object-replacement.html [ Failure ]
-
-webkit.org/b/124894 accessibility/fieldset-element.html [ Missing ]
 
 webkit.org/b/125506 accessibility/alt-tag-on-image-with-nonimage-role.html [ Failure ]
 
