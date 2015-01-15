@@ -724,7 +724,7 @@ void RTCPeerConnection::scheduleDispatchEvent(PassRefPtr<Event> event)
         m_scheduledEventTimer.startOneShot(0);
 }
 
-void RTCPeerConnection::scheduledEventTimerFired(Timer<RTCPeerConnection>*)
+void RTCPeerConnection::scheduledEventTimerFired(Timer*)
 {
     if (m_stopped)
         return;

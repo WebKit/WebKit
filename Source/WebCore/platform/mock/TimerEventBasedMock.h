@@ -68,7 +68,7 @@ public:
 
     virtual ~TimerEvent() { }
 
-    void timerFired(Timer<TimerEvent>*)
+    void timerFired(Timer*)
     {
         m_notifier->fire();
         m_mock->removeEvent(this);
@@ -76,7 +76,7 @@ public:
 
 private:
     TimerEventBasedMock* m_mock;
-    Timer<TimerEvent> m_timer;
+    Timer m_timer;
     RefPtr<MockNotifier> m_notifier;
 };
 

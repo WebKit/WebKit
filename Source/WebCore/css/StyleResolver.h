@@ -501,7 +501,7 @@ private:
 
     // Every N additions to the matched declaration cache trigger a sweep where entries holding
     // the last reference to a style declaration are garbage collected.
-    void sweepMatchedPropertiesCache(Timer<StyleResolver>*);
+    void sweepMatchedPropertiesCache(Timer*);
 
     bool classNamesAffectedByRules(const SpaceSplitString&) const;
     bool sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement*) const;
@@ -512,7 +512,7 @@ private:
     typedef HashMap<unsigned, MatchedPropertiesCacheItem> MatchedPropertiesCache;
     MatchedPropertiesCache m_matchedPropertiesCache;
 
-    Timer<StyleResolver> m_matchedPropertiesCacheSweepTimer;
+    Timer m_matchedPropertiesCacheSweepTimer;
 
     std::unique_ptr<MediaQueryEvaluator> m_medium;
     RefPtr<RenderStyle> m_rootDefaultStyle;

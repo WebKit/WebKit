@@ -980,7 +980,7 @@ unsigned MediaPlayer::videoDecodedByteCount() const
     return m_private->videoDecodedByteCount();
 }
 
-void MediaPlayer::reloadTimerFired(Timer<MediaPlayer>&)
+void MediaPlayer::reloadTimerFired(Timer&)
 {
     m_private->cancelLoad();
     loadWithNextMediaEngine(m_currentMediaEngine);

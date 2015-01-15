@@ -45,9 +45,9 @@ public:
     
 private:
     virtual void initializeVoiceList();
-    void speakingFinished(Timer<PlatformSpeechSynthesizerMock>*);
+    void speakingFinished(Timer*);
     
-    Timer<PlatformSpeechSynthesizerMock> m_speakingFinishedTimer;
+    Timer m_speakingFinishedTimer;
     RefPtr<PlatformSpeechSynthesisUtterance> m_utterance;
 };
     

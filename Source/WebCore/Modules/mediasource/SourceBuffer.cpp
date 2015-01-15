@@ -467,7 +467,7 @@ void SourceBuffer::appendBufferInternal(unsigned char* data, unsigned size, Exce
     reportExtraMemoryCost();
 }
 
-void SourceBuffer::appendBufferTimerFired(Timer<SourceBuffer>&)
+void SourceBuffer::appendBufferTimerFired(Timer&)
 {
     if (isRemoved())
         return;
@@ -692,7 +692,7 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
     LOG(Media, "SourceBuffer::removeCodedFrames(%p) - buffered = %s", this, toString(m_buffered->ranges()).utf8().data());
 }
 
-void SourceBuffer::removeTimerFired(Timer<SourceBuffer>*)
+void SourceBuffer::removeTimerFired(Timer*)
 {
     ASSERT(m_updating);
     ASSERT(m_pendingRemoveStart.isValid());

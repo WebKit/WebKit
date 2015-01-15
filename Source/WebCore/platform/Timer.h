@@ -112,18 +112,29 @@ private:
     friend class TimerHeapReference;
 };
 
-template <typename TimerFiredClass> class Timer : public TimerBase {
-public:
-    typedef void (TimerFiredClass::*TimerFiredFunction)(Timer&);
-    typedef void (TimerFiredClass::*DeprecatedTimerFiredFunction)(Timer*);
 
-    Timer(TimerFiredClass* object, TimerFiredFunction function)
+class Timer : public TimerBase {
+public:
+    template <typename TimerFiredClass, typename TimerFiredBaseClass>
+    Timer(TimerFiredClass* object, void (TimerFiredBaseClass::*function)(Timer&))
         : m_function(std::bind(function, object, std::ref(*this)))
     {
     }
 
-    Timer(TimerFiredClass* object, DeprecatedTimerFiredFunction function)
+    template <typename TimerFiredClass, typename TimerFiredBaseClass>
+    Timer(TimerFiredClass* object, void (TimerFiredBaseClass::*function)(Timer*))
         : m_function(std::bind(function, object, this))
+    {
+    }
+
+    template <typename TimerFiredClass, typename TimerFiredBaseClass>
+    Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
+        : m_function(std::bind(function, &object))
+    {
+    }
+
+    Timer(std::function<void ()> function)
+        : m_function(WTF::move(function))
     {
     }
 
@@ -132,7 +143,7 @@ private:
     {
         m_function();
     }
-
+    
     std::function<void ()> m_function;
 };
 

@@ -89,7 +89,7 @@ void MediaKeySession::generateKeyRequest(const String& mimeType, Uint8Array* ini
     m_keyRequestTimer.startOneShot(0);
 }
 
-void MediaKeySession::keyRequestTimerFired(Timer<MediaKeySession>&)
+void MediaKeySession::keyRequestTimerFired(Timer&)
 {
     ASSERT(m_pendingKeyRequests.size());
     if (!m_session)
@@ -147,7 +147,7 @@ void MediaKeySession::update(Uint8Array* key, ExceptionCode& ec)
     m_addKeyTimer.startOneShot(0);
 }
 
-void MediaKeySession::addKeyTimerFired(Timer<MediaKeySession>&)
+void MediaKeySession::addKeyTimerFired(Timer&)
 {
     ASSERT(m_pendingKeys.size());
     if (!m_session)

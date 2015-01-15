@@ -793,7 +793,7 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
     m_asyncEventQueue.enqueueEvent(event.release());
 }
 
-void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>&)
+void HTMLMediaElement::loadTimerFired(Timer&)
 {
     Ref<HTMLMediaElement> protect(*this); // loadNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
 
@@ -2268,7 +2268,7 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys)
 }
 #endif
 
-void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>&)
+void HTMLMediaElement::progressEventTimerFired(Timer&)
 {
     ASSERT(m_player);
     if (m_networkState != NETWORK_LOADING)
@@ -2406,7 +2406,7 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
         seekTimerFired(m_seekTimer);
 }
 
-void HTMLMediaElement::seekTimerFired(Timer<HTMLMediaElement>&)
+void HTMLMediaElement::seekTimerFired(Timer&)
 {
     if (!m_player) {
         m_seeking = false;
@@ -3150,7 +3150,7 @@ double HTMLMediaElement::nextScanRate()
     return rate;
 }
 
-void HTMLMediaElement::scanTimerFired(Timer<HTMLMediaElement>&)
+void HTMLMediaElement::scanTimerFired(Timer&)
 {
     if (m_scanType == Seek) {
         double seekTime = m_scanDirection == Forward ? SeekTime : -SeekTime;
@@ -3172,7 +3172,7 @@ void HTMLMediaElement::startPlaybackProgressTimer()
     m_playbackProgressTimer.startRepeating(maxTimeupdateEventFrequency);
 }
 
-void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>&)
+void HTMLMediaElement::playbackProgressTimerFired(Timer&)
 {
     ASSERT(m_player);
 

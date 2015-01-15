@@ -123,7 +123,7 @@ private:
     void removeTilesInCohort(TileCohort);
 
     void scheduleCohortRemoval();
-    void cohortRemovalTimerFired(Timer<TileGrid>*);
+    void cohortRemovalTimerFired(Timer*);
     TileCohort nextTileCohort() const;
     void startedNewCohort(TileCohort);
     TileCohort newestTileCohort() const;
@@ -154,7 +154,7 @@ private:
     typedef Deque<TileCohortInfo> TileCohortList;
     TileCohortList m_cohortList;
 
-    Timer<TileGrid> m_cohortRemovalTimer;
+    Timer m_cohortRemovalTimer;
 
     typedef HashMap<PlatformCALayer*, int> RepaintCountMap;
     RepaintCountMap m_tileRepaintCounts;

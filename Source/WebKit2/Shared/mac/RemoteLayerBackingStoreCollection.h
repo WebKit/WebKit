@@ -52,7 +52,7 @@ public:
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
     void didFlushLayers();
 
-    void volatilityTimerFired(WebCore::Timer<RemoteLayerBackingStoreCollection>&);
+    void volatilityTimerFired(WebCore::Timer&);
     bool markAllBackingStoreVolatileImmediatelyIfPossible();
 
     void scheduleVolatilityTimer();
@@ -69,7 +69,7 @@ private:
     HashSet<RemoteLayerBackingStore*> m_unparentedBackingStore;
     HashSet<RemoteLayerBackingStore*> m_reachableBackingStoreInLatestFlush;
 
-    WebCore::Timer<RemoteLayerBackingStoreCollection> m_volatilityTimer;
+    WebCore::Timer m_volatilityTimer;
 
     bool m_inLayerFlush;
 };

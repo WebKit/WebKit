@@ -76,7 +76,7 @@ public:
 private:
     ResourceHandleManager();
     ~ResourceHandleManager();
-    void downloadTimerCallback(Timer<ResourceHandleManager>*);
+    void downloadTimerCallback(Timer*);
     void removeFromCurl(ResourceHandle*);
     bool removeScheduledJob(ResourceHandle*);
     void startJob(ResourceHandle*);
@@ -87,7 +87,7 @@ private:
 
     void initCookieSession();
 
-    Timer<ResourceHandleManager> m_downloadTimer;
+    Timer m_downloadTimer;
     CURLM* m_curlMultiHandle;
     CURLSH* m_curlShareHandle;
     char* m_cookieJarFileName;

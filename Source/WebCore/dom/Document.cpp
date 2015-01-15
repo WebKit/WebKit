@@ -1263,7 +1263,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
         frame->loader().forcePageTransitionIfNeeded();
 }
 
-void Document::visualUpdatesSuppressionTimerFired(Timer<Document>&)
+void Document::visualUpdatesSuppressionTimerFired(Timer&)
 {
     ASSERT(!m_visualUpdatesAllowed);
 
@@ -1700,7 +1700,7 @@ bool Document::hasPendingForcedStyleRecalc() const
     return m_styleRecalcTimer.isActive() && m_pendingStyleRecalcShouldForce;
 }
 
-void Document::styleRecalcTimerFired(Timer<Document>&)
+void Document::styleRecalcTimerFired(Timer&)
 {
     updateStyleIfNeeded();
 }
@@ -3202,7 +3202,7 @@ void Document::evaluateMediaQueryList()
         m_mediaQueryMatcher->styleResolverChanged();
 }
 
-void Document::optimizedStyleSheetUpdateTimerFired(Timer<Document>&)
+void Document::optimizedStyleSheetUpdateTimerFired(Timer&)
 {
     styleResolverChanged(RecalcStyleIfNeeded);
 }
@@ -4550,7 +4550,7 @@ void Document::finishedParsing()
     m_cachedResourceLoader->clearPreloads();
 }
 
-void Document::sharedObjectPoolClearTimerFired(Timer<Document>&)
+void Document::sharedObjectPoolClearTimerFired(Timer&)
 {
     m_sharedObjectPool = nullptr;
 }
@@ -4789,7 +4789,7 @@ void Document::cancelFocusAppearanceUpdate()
     m_updateFocusAppearanceTimer.stop();
 }
 
-void Document::updateFocusAppearanceTimerFired(Timer<Document>&)
+void Document::updateFocusAppearanceTimerFired(Timer&)
 {
     Element* element = focusedElement();
     if (!element)
@@ -4944,7 +4944,7 @@ void Document::postTask(Task task)
     });
 }
 
-void Document::pendingTasksTimerFired(Timer<Document>&)
+void Document::pendingTasksTimerFired(Timer&)
 {
     Vector<Task> pendingTasks = WTF::move(m_pendingTasks);
     for (auto& task : pendingTasks)
@@ -5479,7 +5479,7 @@ void Document::fullScreenRendererDestroyed()
     m_fullScreenRenderer = nullptr;
 }
 
-void Document::fullScreenChangeDelayTimerFired(Timer<Document>&)
+void Document::fullScreenChangeDelayTimerFired(Timer&)
 {
     // Since we dispatch events in this function, it's possible that the
     // document will be detached and GC'd. We protect it here to make sure we
@@ -5617,7 +5617,7 @@ void Document::decrementLoadEventDelayCount()
         m_loadEventDelayTimer.startOneShot(0);
 }
 
-void Document::loadEventDelayTimerFired(Timer<Document>&)
+void Document::loadEventDelayTimerFired(Timer&)
 {
     if (frame())
         frame()->loader().checkCompleted();
@@ -6136,7 +6136,7 @@ void Document::didAssociateFormControl(Element* element)
         m_didAssociateFormControlsTimer.startOneShot(0);
 }
 
-void Document::didAssociateFormControlsTimerFired(Timer<Document>& timer)
+void Document::didAssociateFormControlsTimerFired(Timer& timer)
 {
     ASSERT_UNUSED(timer, &timer == &m_didAssociateFormControlsTimer);
 
@@ -6164,7 +6164,7 @@ void Document::invalidateDOMCookieCache()
     m_cachedDOMCookies = String();
 }
 
-void Document::domCookieCacheExpiryTimerFired(Timer<Document>&)
+void Document::domCookieCacheExpiryTimerFired(Timer&)
 {
     invalidateDOMCookieCache();
 }

@@ -852,7 +852,7 @@ void FrameLoader::checkCompleted()
         checkLoadComplete();
 }
 
-void FrameLoader::checkTimerFired(Timer<FrameLoader>&)
+void FrameLoader::checkTimerFired(Timer&)
 {
     Ref<Frame> protect(m_frame);
 

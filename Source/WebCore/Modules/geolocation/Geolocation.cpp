@@ -142,7 +142,7 @@ void Geolocation::GeoNotifier::stopTimer()
     m_timer.stop();
 }
 
-void Geolocation::GeoNotifier::timerFired(Timer<GeoNotifier>&)
+void Geolocation::GeoNotifier::timerFired(Timer&)
 {
     m_timer.stop();
 
@@ -297,7 +297,7 @@ void Geolocation::resume()
         m_resumeTimer.startOneShot(0);
 }
 
-void Geolocation::resumeTimerFired(Timer<Geolocation>&)
+void Geolocation::resumeTimerFired(Timer&)
 {
     m_isSuspended = false;
 

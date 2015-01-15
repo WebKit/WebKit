@@ -607,7 +607,7 @@ size_t readCallback(void* ptr, size_t size, size_t nmemb, void* data)
     return sent;
 }
 
-void ResourceHandleManager::downloadTimerCallback(Timer<ResourceHandleManager>* /* timer */)
+void ResourceHandleManager::downloadTimerCallback(Timer* /* timer */)
 {
     startScheduledJobs();
 

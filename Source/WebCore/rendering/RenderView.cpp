@@ -157,7 +157,7 @@ void RenderView::unscheduleLazyRepaint(RenderBox& renderer)
         m_lazyRepaintTimer.stop();
 }
 
-void RenderView::lazyRepaintTimerFired(Timer<RenderView>&)
+void RenderView::lazyRepaintTimerFired(Timer&)
 {
     bool shouldRepaint = !document().inPageCache();
 

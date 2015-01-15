@@ -162,7 +162,7 @@ namespace WebCore {
         RetainPtr<CFURLStorageSessionRef> m_storageSession;
 #endif
 #if USE(WININET)
-        Timer<ResourceHandle> m_fileLoadTimer;
+        Timer m_fileLoadTimer;
         HINTERNET m_internetHandle;
         HINTERNET m_connectHandle;
         HINTERNET m_requestHandle;
@@ -220,7 +220,7 @@ namespace WebCore {
 
         AuthenticationChallenge m_currentWebChallenge;
         ResourceHandle::FailureType m_scheduledFailureType;
-        Timer<ResourceHandle> m_failureTimer;
+        Timer m_failureTimer;
     };
 
 } // namespace WebCore

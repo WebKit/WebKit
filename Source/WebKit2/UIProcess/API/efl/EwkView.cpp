@@ -563,7 +563,7 @@ inline IntSize EwkView::deviceSize() const
     return toIntSize(WKViewGetSize(wkView()));
 }
 
-void EwkView::displayTimerFired(Timer<EwkView>*)
+void EwkView::displayTimerFired(Timer*)
 {
     Ewk_View_Smart_Data* sd = smartData();
 

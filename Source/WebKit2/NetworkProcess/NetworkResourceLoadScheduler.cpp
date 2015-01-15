@@ -31,7 +31,7 @@ void NetworkResourceLoadScheduler::scheduleServePendingRequests()
         m_requestTimer.startOneShot(0);
 }
 
-void NetworkResourceLoadScheduler::requestTimerFired(WebCore::Timer<NetworkResourceLoadScheduler>*)
+void NetworkResourceLoadScheduler::requestTimerFired(WebCore::Timer*)
 {
     servePendingRequests();
 }

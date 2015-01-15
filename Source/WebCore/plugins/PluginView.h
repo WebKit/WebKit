@@ -288,16 +288,16 @@ namespace WebCore {
 
         void performRequest(PluginRequest*);
         void scheduleRequest(PassOwnPtr<PluginRequest>);
-        void requestTimerFired(Timer<PluginView>*);
-        void invalidateTimerFired(Timer<PluginView>*);
-        Timer<PluginView> m_requestTimer;
-        Timer<PluginView> m_invalidateTimer;
+        void requestTimerFired(Timer*);
+        void invalidateTimerFired(Timer*);
+        Timer m_requestTimer;
+        Timer m_invalidateTimer;
 
-        void popPopupsStateTimerFired(Timer<PluginView>*);
-        Timer<PluginView> m_popPopupsStateTimer;
+        void popPopupsStateTimerFired(Timer*);
+        Timer m_popPopupsStateTimer;
 
-        void lifeSupportTimerFired(Timer<PluginView>*);
-        Timer<PluginView> m_lifeSupportTimer;
+        void lifeSupportTimerFired(Timer*);
+        Timer m_lifeSupportTimer;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
         bool dispatchNPEvent(NPEvent&);

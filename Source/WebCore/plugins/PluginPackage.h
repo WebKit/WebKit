@@ -120,8 +120,8 @@ namespace WebCore {
 #endif
 
         void freeLibrarySoon();
-        void freeLibraryTimerFired(Timer<PluginPackage>*);
-        Timer<PluginPackage> m_freeLibraryTimer;
+        void freeLibraryTimerFired(Timer*);
+        Timer m_freeLibraryTimer;
 
         PluginQuirkSet m_quirks;
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)

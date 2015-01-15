@@ -344,7 +344,7 @@ bool TileController::shouldTemporarilyRetainTileCohorts() const
     return owningGraphicsLayer()->platformCALayerShouldTemporarilyRetainTileCohorts(m_tileCacheLayer);
 }
 
-void TileController::tileRevalidationTimerFired(Timer<TileController>*)
+void TileController::tileRevalidationTimerFired(Timer*)
 {
     if (!owningGraphicsLayer())
         return;

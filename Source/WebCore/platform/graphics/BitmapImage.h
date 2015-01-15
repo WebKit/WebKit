@@ -58,7 +58,7 @@ namespace WTF {
 
 namespace WebCore {
 
-template <typename T> class Timer;
+class Timer;
 
 // ================================================
 // FrameData Class
@@ -273,7 +273,7 @@ protected:
     int repetitionCount(bool imageKnownToBeComplete);  // |imageKnownToBeComplete| should be set if the caller knows the entire image has been decoded.
     bool shouldAnimate();
     virtual void startAnimation(CatchUpAnimation = CatchUp) override;
-    void advanceAnimation(Timer<BitmapImage>&);
+    void advanceAnimation(Timer&);
 
     // Function that does the real work of advancing the animation.  When
     // skippingFrames is true, we're in the middle of a loop trying to skip over
@@ -311,7 +311,7 @@ private:
     size_t m_currentFrame; // The index of the current frame of animation.
     Vector<FrameData, 1> m_frames; // An array of the cached frames of the animation. We have to ref frames to pin them in the cache.
 
-    std::unique_ptr<Timer<BitmapImage>> m_frameTimer;
+    std::unique_ptr<Timer> m_frameTimer;
     int m_repetitionCount; // How many total animation loops we should do.  This will be cAnimationNone if this image type is incapable of animation.
     RepetitionCountStatus m_repetitionCountStatus;
     int m_repetitionsComplete;  // How many repetitions we've finished.

@@ -118,14 +118,14 @@ private:
     virtual void setHaveFiredLoadEvent(bool haveFiredLoadEvent) override { m_haveFiredLoadEvent = haveFiredLoadEvent; }
     virtual bool isParserInserted() const override { return m_wasInsertedByParser; }
     virtual bool haveFiredLoadEvent() const override { return m_haveFiredLoadEvent; }
-    virtual Timer<SVGElement>* svgLoadEventTimer() override { return &m_svgLoadEventTimer; }
+    virtual Timer* svgLoadEventTimer() override { return &m_svgLoadEventTimer; }
 
     bool m_wasInsertedByParser;
     bool m_haveFiredLoadEvent;
     bool m_needsShadowTreeRecreation;
     RefPtr<SVGElementInstance> m_targetElementInstance;
     CachedResourceHandle<CachedSVGDocument> m_cachedDocument;
-    Timer<SVGElement> m_svgLoadEventTimer;
+    Timer m_svgLoadEventTimer;
 };
 
 NODE_TYPE_CASTS(SVGUseElement)

@@ -390,7 +390,7 @@ void Settings::setLoadsImagesAutomatically(bool loadsImagesAutomatically)
     m_setImageLoadingSettingsTimer.startOneShot(0);
 }
 
-void Settings::imageLoadingSettingsTimerFired(Timer<Settings>*)
+void Settings::imageLoadingSettingsTimerFired(Timer*)
 {
     setImageLoadingSettings(m_page);
 }

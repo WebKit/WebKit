@@ -53,12 +53,12 @@ public:
 private:
     virtual void scheduleTreeStateCommit() override;
 
-    void scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinatorMac>*);
+    void scrollingStateTreeCommitterTimerFired(Timer*);
     void commitTreeState();
     
     void updateTiledScrollingIndicator();
 
-    Timer<ScrollingCoordinatorMac> m_scrollingStateTreeCommitterTimer;
+    Timer m_scrollingStateTreeCommitterTimer;
 };
 
 } // namespace WebCore

@@ -475,7 +475,7 @@ double TileGrid::TileCohortInfo::timeUntilExpiration()
     return creationTime - timeThreshold;
 }
 
-void TileGrid::cohortRemovalTimerFired(Timer<TileGrid>*)
+void TileGrid::cohortRemovalTimerFired(Timer*)
 {
     if (m_cohortList.isEmpty()) {
         m_cohortRemovalTimer.stop();

@@ -78,11 +78,11 @@ private:
     RetainPtr<WebScrollbarPainterDelegate> m_horizontalScrollbarPainterDelegate;
     RetainPtr<WebScrollbarPainterDelegate> m_verticalScrollbarPainterDelegate;
 
-    void initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>&);
-    Timer<ScrollAnimatorMac> m_initialScrollbarPaintTimer;
+    void initialScrollbarPaintTimerFired(Timer&);
+    Timer m_initialScrollbarPaintTimer;
 
-    void sendContentAreaScrolledTimerFired(Timer<ScrollAnimatorMac>&);
-    Timer<ScrollAnimatorMac> m_sendContentAreaScrolledTimer;
+    void sendContentAreaScrolledTimerFired(Timer&);
+    Timer m_sendContentAreaScrolledTimer;
     FloatSize m_contentAreaScrolledTimerScrollDelta;
 
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
@@ -155,10 +155,10 @@ private:
     virtual void adjustScrollPositionToBoundsIfNecessary() override;
 
     bool pinnedInDirection(float deltaX, float deltaY);
-    void snapRubberBandTimerFired(Timer<ScrollAnimatorMac>&);
+    void snapRubberBandTimerFired(Timer&);
 
     ScrollElasticityController m_scrollElasticityController;
-    Timer<ScrollAnimatorMac> m_snapRubberBandTimer;
+    Timer m_snapRubberBandTimer;
 #endif
 
     bool m_haveScrolledSincePageLoad;

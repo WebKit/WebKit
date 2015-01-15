@@ -911,7 +911,7 @@ void FocusController::setFocusedElementNeedsRepaint()
     m_focusRepaintTimer.startOneShot(0.033);
 }
 
-void FocusController::focusRepaintTimerFired(Timer<FocusController>&)
+void FocusController::focusRepaintTimerFired(Timer&)
 {
     Document* focusedDocument = focusedOrMainFrame().document();
     if (!focusedDocument)

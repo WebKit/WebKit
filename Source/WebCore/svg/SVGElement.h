@@ -90,8 +90,8 @@ public:
 
     void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
     void sendSVGLoadEventIfPossibleAsynchronously();
-    void svgLoadEventTimerFired(Timer<SVGElement>*);
-    virtual Timer<SVGElement>* svgLoadEventTimer();
+    void svgLoadEventTimerFired(Timer*);
+    virtual Timer* svgLoadEventTimer();
 
     virtual AffineTransform* supplementalTransform() { return 0; }
 

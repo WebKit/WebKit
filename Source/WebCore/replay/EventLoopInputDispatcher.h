@@ -72,12 +72,12 @@ public:
 private:
     void dispatchInputSoon();
     void dispatchInput();
-    void timerFired(Timer<EventLoopInputDispatcher>*);
+    void timerFired(Timer*);
 
     Page& m_page;
     EventLoopInputDispatcherClient* m_client;
     ReplayingInputCursor& m_cursor;
-    Timer<EventLoopInputDispatcher> m_timer;
+    Timer m_timer;
 
     // This pointer is valid when an event loop input is presently dispatching.
     EventLoopInputBase* m_runningInput;

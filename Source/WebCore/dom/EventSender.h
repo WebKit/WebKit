@@ -49,10 +49,10 @@ public:
 #endif
 
 private:
-    void timerFired(Timer<EventSender<T>>&) { dispatchPendingEvents(); }
+    void timerFired(Timer&) { dispatchPendingEvents(); }
 
     AtomicString m_eventType;
-    Timer<EventSender<T>> m_timer;
+    Timer m_timer;
     Vector<T*> m_dispatchSoonList;
     Vector<T*> m_dispatchingList;
 };

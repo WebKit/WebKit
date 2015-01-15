@@ -342,9 +342,9 @@ private:
 
     bool shouldUsePrintingLayout() const;
 
-    void lazyRepaintTimerFired(Timer<RenderView>&);
+    void lazyRepaintTimerFired(Timer&);
 
-    Timer<RenderView> m_lazyRepaintTimer;
+    Timer m_lazyRepaintTimer;
     HashSet<RenderBox*> m_renderersNeedingLazyRepaint;
 
     std::unique_ptr<ImageQualityController> m_imageQualityController;

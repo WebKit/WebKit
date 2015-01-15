@@ -73,7 +73,7 @@ public:
     }
 
 private:
-    void hysteresisTimerFired(Timer<HysteresisActivity>&)
+    void hysteresisTimerFired(Timer&)
     {
         m_delegate.stopped();
         m_timer.stop();
@@ -82,7 +82,7 @@ private:
     Delegate& m_delegate;
     double m_hysteresisSeconds;
     bool m_active;
-    Timer<HysteresisActivity> m_timer;
+    Timer m_timer;
 };
 
 } // namespace WebCore

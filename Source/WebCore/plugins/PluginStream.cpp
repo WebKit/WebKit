@@ -321,7 +321,7 @@ void PluginStream::destroyStream()
         deleteFile(m_path);
 }
 
-void PluginStream::delayDeliveryTimerFired(Timer<PluginStream>* timer)
+void PluginStream::delayDeliveryTimerFired(Timer* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_delayDeliveryTimer);
 

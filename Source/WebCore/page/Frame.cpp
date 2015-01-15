@@ -515,7 +515,7 @@ void Frame::scrollOverflowLayer(RenderLayer* layer, const IntRect& visibleRect, 
     selection().updateAppearance();
 }
 
-void Frame::overflowAutoScrollTimerFired(Timer<Frame>*)
+void Frame::overflowAutoScrollTimerFired(Timer*)
 {
     if (!eventHandler().mousePressed() || checkOverflowScroll(PerformOverflowScroll) == OverflowScrollNone) {
         if (m_overflowAutoScrollTimer.isActive())

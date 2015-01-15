@@ -1131,7 +1131,7 @@ void DocumentLoader::deliverSubstituteResourcesAfterDelay()
         m_substituteResourceDeliveryTimer.startOneShot(0);
 }
 
-void DocumentLoader::substituteResourceDeliveryTimerFired(Timer<DocumentLoader>&)
+void DocumentLoader::substituteResourceDeliveryTimerFired(Timer&)
 {
     if (m_pendingSubstituteResources.isEmpty())
         return;

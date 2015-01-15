@@ -86,7 +86,7 @@ private:
 
     void dispatchInvalidationCallbacks();
 
-    void beginLoadTimerFired(Timer<CSSFontSelector>&);
+    void beginLoadTimerFired(Timer&);
 
     Document* m_document;
     HashMap<String, std::unique_ptr<Vector<RefPtr<CSSFontFace>>>, CaseFoldingHash> m_fontFaces;
@@ -95,7 +95,7 @@ private:
     HashSet<FontSelectorClient*> m_clients;
 
     Vector<CachedResourceHandle<CachedFont>> m_fontsToBeginLoading;
-    Timer<CSSFontSelector> m_beginLoadingTimer;
+    Timer m_beginLoadingTimer;
 
     unsigned m_uniqueId;
     unsigned m_version;

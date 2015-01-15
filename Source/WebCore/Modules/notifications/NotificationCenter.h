@@ -80,12 +80,12 @@ private:
     public:
         static PassRefPtr<NotificationRequestCallback> createAndStartTimer(NotificationCenter*, PassRefPtr<VoidCallback>);
         void startTimer();
-        void timerFired(Timer<NotificationRequestCallback>&);
+        void timerFired(Timer&);
     private:
         NotificationRequestCallback(NotificationCenter*, PassRefPtr<VoidCallback>);
 
         RefPtr<NotificationCenter> m_notificationCenter;
-        Timer<NotificationRequestCallback> m_timer;
+        Timer m_timer;
         RefPtr<VoidCallback> m_callback;
     };
 

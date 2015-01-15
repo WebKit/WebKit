@@ -62,7 +62,7 @@ void DeviceMotionClientMock::setMotion(PassRefPtr<DeviceMotionData> motion)
         m_timer.startOneShot(0);
 }
 
-void DeviceMotionClientMock::timerFired(Timer<DeviceMotionClientMock>* timer)
+void DeviceMotionClientMock::timerFired(Timer* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_timer);
     m_timer.stop();

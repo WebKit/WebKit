@@ -96,7 +96,7 @@ private:
     bool isTaskQueueEmpty() const;
     bool hasPendingTasks() const;
 
-    void taskTimerFired(Timer<IDBTransactionBackend>&);
+    void taskTimerFired(Timer&);
     void closeOpenCursors();
 
     const HashSet<int64_t> m_objectStoreIds;
@@ -113,7 +113,7 @@ private:
     Deque<RefPtr<IDBSynchronousOperation>> m_abortTaskQueue;
 
     // FIXME: delete the timer once we have threads instead.
-    Timer<IDBTransactionBackend> m_taskTimer;
+    Timer m_taskTimer;
     int m_pendingPreemptiveEvents;
 
     HashSet<IDBCursorBackend*> m_openCursors;

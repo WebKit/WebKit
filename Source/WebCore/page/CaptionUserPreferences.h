@@ -97,12 +97,12 @@ protected:
     void updateCaptionStyleSheetOveride();
 
 private:
-    void timerFired(Timer<CaptionUserPreferences>&);
+    void timerFired(Timer&);
     void notify();
 
     PageGroup& m_pageGroup;
     CaptionDisplayMode m_displayMode;
-    Timer<CaptionUserPreferences> m_timer;
+    Timer m_timer;
     String m_userPreferredLanguage;
     String m_captionsStyleSheetOverride;
     String m_primaryAudioTrackLanguageOverride;

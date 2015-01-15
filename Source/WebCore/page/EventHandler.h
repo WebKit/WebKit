@@ -326,9 +326,9 @@ private:
 
     OptionalCursor selectCursor(const HitTestResult&, bool shiftKey);
 
-    void hoverTimerFired(Timer<EventHandler>&);
+    void hoverTimerFired(Timer&);
 #if ENABLE(CURSOR_SUPPORT)
-    void cursorUpdateTimerFired(Timer<EventHandler>&);
+    void cursorUpdateTimerFired(Timer&);
 #endif
 
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
@@ -341,7 +341,7 @@ private:
     static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent*);
 
 #if !ENABLE(IOS_TOUCH_EVENTS)
-    void fakeMouseMoveEventTimerFired(Timer<EventHandler>&);
+    void fakeMouseMoveEventTimerFired(Timer&);
     void cancelFakeMouseMoveEvent();
 #endif
 
@@ -435,7 +435,7 @@ private:
 #if ENABLE(CURSOR_VISIBILITY)
     void startAutoHideCursorTimer();
     void cancelAutoHideCursorTimer();
-    void autoHideCursorTimerFired(Timer<EventHandler>&);
+    void autoHideCursorTimerFired(Timer&);
 #endif
 
     void clearLatchedState();
@@ -461,9 +461,9 @@ private:
 
     bool m_panScrollButtonPressed;
 
-    Timer<EventHandler> m_hoverTimer;
+    Timer m_hoverTimer;
 #if ENABLE(CURSOR_SUPPORT)
-    Timer<EventHandler> m_cursorUpdateTimer;
+    Timer m_cursorUpdateTimer;
 #endif
 
     std::unique_ptr<AutoscrollController> m_autoscrollController;
@@ -471,7 +471,7 @@ private:
     bool m_mouseDownWasInSubframe;
 
 #if !ENABLE(IOS_TOUCH_EVENTS)
-    Timer<EventHandler> m_fakeMouseMoveEventTimer;
+    Timer m_fakeMouseMoveEventTimer;
 #endif
 
     bool m_svgPan;
@@ -553,7 +553,7 @@ private:
     bool m_isHandlingWheelEvent;
 
 #if ENABLE(CURSOR_VISIBILITY)
-    Timer<EventHandler> m_autoHideCursorTimer;
+    Timer m_autoHideCursorTimer;
 #endif
 };
 

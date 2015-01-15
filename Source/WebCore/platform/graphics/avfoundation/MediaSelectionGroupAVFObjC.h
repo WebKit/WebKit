@@ -84,13 +84,13 @@ public:
 private:
     MediaSelectionGroupAVFObjC(AVPlayerItem*, AVMediaSelectionGroup*);
 
-    void selectionTimerFired(Timer<MediaSelectionGroupAVFObjC>&);
+    void selectionTimerFired(Timer&);
 
     RetainPtr<AVPlayerItem> m_playerItem;
     RetainPtr<AVMediaSelectionGroup> m_mediaSelectionGroup;
     OptionContainer m_options;
     MediaSelectionOptionAVFObjC* m_selectedOption;
-    Timer<MediaSelectionGroupAVFObjC> m_selectionTimer;
+    Timer m_selectionTimer;
 };
 
 }

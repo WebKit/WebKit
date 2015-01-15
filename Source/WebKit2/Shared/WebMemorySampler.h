@@ -85,8 +85,8 @@ private:
     void initializeSandboxedLogFile(const SandboxExtension::Handle&, const String&);
     void writeHeaders();
     void initializeTimers(double);
-    void sampleTimerFired(WebCore::Timer<WebMemorySampler>*);
-    void stopTimerFired(WebCore::Timer<WebMemorySampler>*);
+    void sampleTimerFired(WebCore::Timer*);
+    void stopTimerFired(WebCore::Timer*);
     void appendCurrentMemoryUsageToFile(WebCore::PlatformFileHandle&);
     void sendMemoryPressureEvent();
     
@@ -97,8 +97,8 @@ private:
     
     WebCore::PlatformFileHandle m_sampleLogFile;
     String m_sampleLogFilePath;
-    WebCore::Timer<WebMemorySampler> m_sampleTimer;
-    WebCore::Timer<WebMemorySampler> m_stopTimer;
+    WebCore::Timer m_sampleTimer;
+    WebCore::Timer m_stopTimer;
     bool m_isRunning;
     double m_runningTime;
     RefPtr<SandboxExtension> m_sampleLogSandboxExtension;

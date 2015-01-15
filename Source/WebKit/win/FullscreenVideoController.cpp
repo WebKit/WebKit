@@ -594,7 +594,7 @@ void FullscreenVideoController::onKeyDown(int virtualKey)
     }
 }
 
-void FullscreenVideoController::timerFired(Timer<FullscreenVideoController>*)
+void FullscreenVideoController::timerFired(Timer*)
 {
     // Update the time slider
     m_timeSlider.setValue(currentTime() / duration());

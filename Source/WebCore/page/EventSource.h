@@ -97,7 +97,7 @@ private:
     void networkRequestEnded();
     void scheduleInitialConnect();
     void scheduleReconnect();
-    void connectTimerFired(Timer<EventSource>&);
+    void connectTimerFired(Timer&);
     void abortConnectionAttempt();
     void parseEventStream();
     void parseEventStreamLine(unsigned pos, int fieldLength, int lineLength);
@@ -109,7 +109,7 @@ private:
 
     RefPtr<TextResourceDecoder> m_decoder;
     RefPtr<ThreadableLoader> m_loader;
-    Timer<EventSource> m_connectTimer;
+    Timer m_connectTimer;
     Vector<UChar> m_receiveBuf;
     bool m_discardTrailingNewline;
     bool m_requestInFlight;

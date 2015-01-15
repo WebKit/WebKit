@@ -54,13 +54,13 @@ public:
     void notifyScriptReady(ScriptElement*, ExecutionType);
 
 private:
-    void timerFired(Timer<ScriptRunner>&);
+    void timerFired(Timer&);
 
     Document& m_document;
     Vector<PendingScript> m_scriptsToExecuteInOrder;
     Vector<PendingScript> m_scriptsToExecuteSoon; // http://www.whatwg.org/specs/web-apps/current-work/#set-of-scripts-that-will-execute-as-soon-as-possible
     HashMap<ScriptElement*, PendingScript> m_pendingAsyncScripts;
-    Timer<ScriptRunner> m_timer;
+    Timer m_timer;
 };
 
 }

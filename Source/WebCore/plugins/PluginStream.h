@@ -100,8 +100,8 @@ namespace WebCore {
         PluginStreamState m_streamState;
         bool m_loadManually;
 
-        Timer<PluginStream> m_delayDeliveryTimer;
-        void delayDeliveryTimerFired(Timer<PluginStream>*);
+        Timer m_delayDeliveryTimer;
+        void delayDeliveryTimerFired(Timer*);
 
         OwnPtr< Vector<char> > m_deliveryData;
 

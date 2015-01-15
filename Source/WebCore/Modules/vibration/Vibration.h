@@ -40,7 +40,7 @@ public:
     // FIXME: When a visibilitychange event is dispatched while vibrating, the vibration should be canceled.
     void cancelVibration();
 
-    void timerFired(Timer<Vibration>*);
+    void timerFired(Timer*);
 
     static const char* supplementName();
     static Vibration* from(Page* page) { return static_cast<Vibration*>(Supplement<Page>::from(page, supplementName())); }
@@ -51,7 +51,7 @@ private:
     enum class State { Idle, Vibrating, Waiting };
 
     VibrationClient* m_vibrationClient;
-    Timer<Vibration> m_timer;
+    Timer m_timer;
     State m_state;
     VibrationPattern m_pattern;
 };

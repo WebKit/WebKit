@@ -52,13 +52,13 @@ private:
 
     void removeLayer(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer);
     void set(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer, const LayoutSize&);
-    void highQualityRepaintTimerFired(Timer<ImageQualityController>&);
+    void highQualityRepaintTimerFired(Timer&);
     void restartTimer();
     void removeObject(RenderBoxModelObject*);
 
     const RenderView& m_renderView;
     ObjectLayerSizeMap m_objectLayerSizeMap;
-    Timer<ImageQualityController> m_timer;
+    Timer m_timer;
     bool m_animatedResizeIsActive;
     bool m_liveResizeOptimizationIsActive;
 };

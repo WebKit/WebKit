@@ -292,7 +292,7 @@ bool IOSurfacePool::markOlderSurfacesPurgeable()
     return markedAllSurfaces;
 }
 
-void IOSurfacePool::collectionTimerFired(Timer<IOSurfacePool>&)
+void IOSurfacePool::collectionTimerFired(Timer&)
 {
     collectInUseSurfaces();
     bool markedAllSurfaces = markOlderSurfacesPurgeable();

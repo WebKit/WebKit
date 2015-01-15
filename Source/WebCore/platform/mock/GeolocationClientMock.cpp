@@ -109,7 +109,7 @@ void GeolocationClientMock::asyncUpdatePermission()
         m_permissionTimer.startOneShot(0);
 }
 
-void GeolocationClientMock::permissionTimerFired(WebCore::Timer<GeolocationClientMock>* timer)
+void GeolocationClientMock::permissionTimerFired(WebCore::Timer* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_permissionTimer);
     ASSERT(m_permissionState != PermissionStateUnset);
@@ -169,7 +169,7 @@ void GeolocationClientMock::asyncUpdateController()
         m_controllerTimer.startOneShot(0);
 }
 
-void GeolocationClientMock::controllerTimerFired(Timer<GeolocationClientMock>* timer)
+void GeolocationClientMock::controllerTimerFired(Timer* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_controllerTimer);
     ASSERT(m_controller);

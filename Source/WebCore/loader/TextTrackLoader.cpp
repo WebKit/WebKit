@@ -59,7 +59,7 @@ TextTrackLoader::~TextTrackLoader()
         m_resource->removeClient(this);
 }
 
-void TextTrackLoader::cueLoadTimerFired(Timer<TextTrackLoader>* timer)
+void TextTrackLoader::cueLoadTimerFired(Timer* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_cueLoadTimer);
     

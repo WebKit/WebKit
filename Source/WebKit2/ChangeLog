@@ -1,3 +1,44 @@
+2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r175719. rdar://problem/19424169
+
+    2014-11-05  Jer Noble  <jer.noble@apple.com>
+
+            De-templatize Timer
+            https://bugs.webkit.org/show_bug.cgi?id=138450
+
+            Reviewed by Anders Carlsson.
+
+            Remove template specifiers from Timer.
+
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::bufferingTimerFired):
+            * NetworkProcess/NetworkResourceLoader.h:
+            * Shared/WebMemorySampler.cpp:
+            (WebKit::WebMemorySampler::sampleTimerFired):
+            (WebKit::WebMemorySampler::stopTimerFired):
+            * Shared/WebMemorySampler.h:
+            * Shared/mac/RemoteLayerBackingStoreCollection.h:
+            * Shared/mac/RemoteLayerBackingStoreCollection.mm:
+            (WebKit::RemoteLayerBackingStoreCollection::volatilityTimerFired):
+            * UIProcess/API/efl/EwkView.cpp:
+            (EwkView::displayTimerFired):
+            * UIProcess/API/efl/EwkView.h:
+            * UIProcess/efl/TextCheckerClientEfl.cpp:
+            (TextCheckerClientEfl::languagesUpdateTimerFired):
+            (TextCheckerClientEfl::spellCheckingSettingChangeTimerFired):
+            * UIProcess/efl/TextCheckerClientEfl.h:
+            * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+            (WebKit::CoordinatedLayerTreeHost::layerFlushTimerFired):
+            * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+            * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+            * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+            (WebKit::RemoteLayerTreeDrawingArea::layerFlushTimerFired):
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::processSuspensionCleanupTimerFired):
+            (WebKit::WebProcess::nonVisibleProcessCleanupTimerFired):
+            * WebProcess/WebProcess.h:
+
 2015-01-15  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r178290. rdar://problem/19441243

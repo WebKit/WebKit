@@ -240,7 +240,7 @@ void RenderMarquee::updateMarqueeStyle()
         m_timer.stop();
 }
 
-void RenderMarquee::timerFired(Timer<RenderMarquee>&)
+void RenderMarquee::timerFired(Timer&)
 {
     if (m_layer->renderer().view().needsLayout())
         return;

@@ -92,7 +92,7 @@ public:
         m_timer.stop();
     }
 
-    void timerFired(Timer<InspectorBackendDispatchTask>&)
+    void timerFired(Timer&)
     {
         if (!m_messages.isEmpty()) {
             // Dispatch can lead to the timer destruction -> schedule the next shot first.
@@ -103,7 +103,7 @@ public:
 
 private:
     InspectorController* m_inspectorController;
-    Timer<InspectorBackendDispatchTask> m_timer;
+    Timer m_timer;
     Deque<String> m_messages;
 };
 
