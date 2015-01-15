@@ -3195,3 +3195,10 @@ webkit.org/b/140258 userscripts/user-stylesheet-invalidate.html
 
 webkit.org/b/140425 [ Debug ] fast/css/crash-on-custom-cursor-when-loading.html [ Crash ]
 webkit.org/b/140455 fast/dynamic/layer-no-longer-paginated.html [ Crash ]
+webkit.org/b/140502 fast/events/media-focus-in-standalone-media-document.html [ Crash ] 
+
+webkit.org/b/140190 [ Debug ] fast/events/keypress-insert-tab.html [ Crash ]
+webkit.org/b/140190 [ Debug ] fast/events/drag-parent-node.html [ Crash ]
+webkit.org/b/140190 [ Debug ] fast/events/mousedown-inside-dragstart-should-not-cause-crash.html [ Crash ]
+webkit.org/b/140190 [ Debug ] fast/events/onblur-remove.html [ Crash ]
+webkit.org/b/140190 [ Debug ] fast/events/change-overflow-on-overflow-change.html [ Crash ]
