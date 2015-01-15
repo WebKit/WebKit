@@ -1,3 +1,37 @@
+2015-01-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Layers need to be already updated before we call adjustViewSize
+        https://bugs.webkit.org/show_bug.cgi?id=135514
+
+        Reviewed by Simon Fraser.
+
+        Tested by 'fast/dynamic/layer-no-longer-paginated.html'
+
+        Defer updating scrollbars until we have finished layout. This
+        has a couple of benefits:
+        (1) We do not attempt to modify render layers during layout.
+        (2) In WK1 we do not attempt to paint during layout.
+
+        Add a new virtual predicate to ScrollView indicating when we are in
+        layout so that calls to setContentsSize do not attempt
+        to adjust scrollbars.
+
+        Modify FrameView to set its ScrollView state to block drawing
+        scrollbar updates during layout. Also add a post-layout
+        handler to complete the scrollbar updates after layout is
+        finished.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::shouldDeferScrollUpdateAfterContentSizeChange): Added.
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::handleDeferredScrollUpdateAfterContentSizeChange): Added.
+        (WebCore::ScrollView::scrollTo): If we should defer painting, cache the
+        the scroll delta and apply it after the layout is complete.
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::shouldDeferScrollUpdateAfterContentSizeChange): Added.
+
 2015-01-15  Benjamin Poulain  <benjamin@webkit.org>
 
         When building the NFA of the global disjunction, share the prefix subgraph of existing subpatterns

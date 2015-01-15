@@ -417,6 +417,10 @@ protected:
     float platformTopContentInset() const;
     void platformSetTopContentInset(float);
 
+    void handleDeferredScrollUpdateAfterContentSizeChange();
+
+    virtual bool shouldDeferScrollUpdateAfterContentSizeChange() { return false; }
+
 private:
     virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
     WEBCORE_EXPORT IntRect unobscuredContentRectInternal(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
@@ -449,6 +453,7 @@ private:
     IntPoint m_cachedScrollPosition;
     IntSize m_fixedLayoutSize;
     IntSize m_contentsSize;
+    IntSize m_deferredScrollDelta;
 
     int m_scrollbarsAvoidingResizer;
     bool m_scrollbarsSuppressed;
