@@ -80,6 +80,7 @@ public:
     void didFailToParseStreamDataWithError(NSError*);
     void didProvideMediaDataForTrackID(int trackID, CMSampleBufferRef, const String& mediaType, unsigned flags);
     void didReachEndOfTrackWithTrackID(int trackID, const String& mediaType);
+    void willProvideContentKeyRequestInitializationDataForTrackID(int trackID);
     void didProvideContentKeyRequestInitializationDataForTrackID(NSData*, int trackID);
 
     bool processCodedFrame(int trackID, CMSampleBufferRef, const String& mediaType);
