@@ -1,5 +1,31 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r175615. <rdar://problem/19424167>
+
+    2014-11-05  Jer Noble  <jer.noble@apple.com>
+
+            [EME][Mac] Allow the client to specify FPS protocol versions in the keySystem type field.
+            https://bugs.webkit.org/show_bug.cgi?id=138380
+
+            Reviewed by Eric Carlson.
+
+            Parse out the requested FPS protocol version of the keySystem type string and pass it to
+            AVStreamDataParser as an options dictionary.
+
+            * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+            (WebCore::validKeySystemRE): Added, match comma-separated version suffixes.
+            (WebCore::CDMPrivateMediaSourceAVFObjC::supportsKeySystem): Call above.
+            (WebCore::CDMPrivateMediaSourceAVFObjC::createSession): Parse out the version numbers
+                and pass into the session as a vector.
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (WebCore::CDMSessionMediaSourceAVFObjC::CDMSessionMediaSourceAVFObjC): Take a vector of
+                protocol version numbers.
+            (WebCore::CDMSessionMediaSourceAVFObjC::update): Create an NSArray and pass into
+                the key request creation method in an options dictionary.
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r175400. <rdar://problem/19424166>
 
     2014-10-30  Jer Noble  <jer.noble@apple.com>
