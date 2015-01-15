@@ -99,8 +99,7 @@ class ResourceLoadTiming;
 class ResourceRequest;
 class ResourceResponse;
 class SharedBuffer;
-
-template <typename T> class Timer;
+class Timer;
 
 class ResourceHandle : public RefCounted<ResourceHandle>
 #if PLATFORM(COCOA) || USE(CFNETWORK) || USE(CURL) || USE(SOUP)
@@ -183,7 +182,7 @@ public:
 
 #if USE(WININET)
     void setSynchronousInternetHandle(HINTERNET);
-    void fileLoadTimer(Timer<ResourceHandle>*);
+    void fileLoadTimer(Timer*);
     void onRedirect();
     bool onRequestComplete();
     static void CALLBACK internetStatusCallback(HINTERNET, DWORD_PTR, DWORD, LPVOID, DWORD);
@@ -243,7 +242,7 @@ public:
     ResourceRequest& firstRequest();
     const String& lastHTTPMethod() const;
 
-    void failureTimerFired(Timer<ResourceHandle>&);
+    void failureTimerFired(Timer&);
 
     NetworkingContext* context() const;
 

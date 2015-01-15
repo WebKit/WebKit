@@ -401,7 +401,7 @@ bool HTMLPlugInImageElement::partOfSnapshotOverlay(Node* node)
     return node && snapshotLabel && (node == snapshotLabel.get() || node->isDescendantOf(snapshotLabel.get()));
 }
 
-void HTMLPlugInImageElement::removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>&)
+void HTMLPlugInImageElement::removeSnapshotTimerFired(Timer&)
 {
     m_snapshotImage = nullptr;
     m_isRestartedPlugin = false;

@@ -41,7 +41,7 @@ PlatformSpeechSynthesizerMock::~PlatformSpeechSynthesizerMock()
 {
 }
 
-void PlatformSpeechSynthesizerMock::speakingFinished(Timer<PlatformSpeechSynthesizerMock>*)
+void PlatformSpeechSynthesizerMock::speakingFinished(Timer*)
 {
     ASSERT(m_utterance.get());
     RefPtr<PlatformSpeechSynthesisUtterance> protect(m_utterance);

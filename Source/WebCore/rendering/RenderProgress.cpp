@@ -81,7 +81,7 @@ bool RenderProgress::isDeterminate() const
             && HTMLProgressElement::InvalidPosition != position());
 }
 
-void RenderProgress::animationTimerFired(Timer<RenderProgress>&)
+void RenderProgress::animationTimerFired(Timer&)
 {
     repaint();
     if (!m_animationTimer.isActive() && m_animating)

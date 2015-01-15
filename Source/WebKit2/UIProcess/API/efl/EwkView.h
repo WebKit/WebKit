@@ -200,7 +200,7 @@ private:
     WebCore::IntSize size() const;
     WebCore::IntSize deviceSize() const;
 
-    void displayTimerFired(WebCore::Timer<EwkView>*);
+    void displayTimerFired(WebCore::Timer*);
 
     // Evas_Smart_Class callback interface:
     static void handleEvasObjectAdd(Evas_Object*);
@@ -277,7 +277,7 @@ private:
     bool m_touchEventsEnabled;
     std::unique_ptr<WebKit::GestureRecognizer> m_gestureRecognizer;
 #endif
-    WebCore::Timer<EwkView> m_displayTimer;
+    WebCore::Timer m_displayTimer;
     RefPtr<EwkContextMenu> m_contextMenu;
     std::unique_ptr<EwkPopupMenu> m_popupMenu;
     std::unique_ptr<WebKit::InputMethodContextEfl> m_inputMethodContext;

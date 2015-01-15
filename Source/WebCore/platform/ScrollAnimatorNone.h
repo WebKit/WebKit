@@ -145,7 +145,7 @@ protected:
     };
 
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
-    void animationTimerFired(Timer<ScrollAnimatorNone>*);
+    void animationTimerFired(Timer*);
     void startNextTimer(double delay);
 #else
     void startNextTimer();
@@ -161,7 +161,7 @@ protected:
 
     double m_startTime;
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
-    Timer<ScrollAnimatorNone> m_animationTimer;
+    Timer m_animationTimer;
 #else
     bool m_animationActive;
 #endif

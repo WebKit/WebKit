@@ -112,7 +112,7 @@ protected:
     bool m_inBeforeLoadEventHandler;
 
 private:
-    void swapRendererTimerFired(Timer<HTMLPlugInElement>&);
+    void swapRendererTimerFired(Timer&);
     bool shouldOverridePlugin(const String& url, const String& mimeType);
 
     bool dispatchBeforeLoadEvent(const String& sourceURL); // Not implemented, generates a compile error if subclasses call this by mistake.
@@ -126,7 +126,7 @@ private:
     virtual bool isPluginElement() const override final;
 
     RefPtr<JSC::Bindings::Instance> m_instance;
-    Timer<HTMLPlugInElement> m_swapRendererTimer;
+    Timer m_swapRendererTimer;
     RefPtr<PluginReplacement> m_pluginReplacement;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* m_NPObject;

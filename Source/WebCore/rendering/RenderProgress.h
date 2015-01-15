@@ -47,7 +47,7 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const override { return true; }
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const override;
 
-    void animationTimerFired(Timer<RenderProgress>&);
+    void animationTimerFired(Timer&);
     void updateAnimationState();
 
     double m_position;
@@ -55,7 +55,7 @@ private:
     double m_animationRepeatInterval;
     double m_animationDuration;
     bool m_animating;
-    Timer<RenderProgress> m_animationTimer;
+    Timer m_animationTimer;
 };
 
 RENDER_OBJECT_TYPE_CASTS(RenderProgress, isProgress())

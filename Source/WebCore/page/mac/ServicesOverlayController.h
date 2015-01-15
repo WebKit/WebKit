@@ -123,7 +123,7 @@ private:
 
     bool mouseIsOverHighlight(Highlight&, bool& mouseIsOverButton) const;
     std::chrono::milliseconds remainingTimeUntilHighlightShouldBeShown(Highlight*) const;
-    void determineActiveHighlightTimerFired(Timer<ServicesOverlayController>&);
+    void determineActiveHighlightTimerFired(Timer&);
 
     static bool highlightsAreEquivalent(const Highlight* a, const Highlight* b);
 
@@ -156,7 +156,7 @@ private:
     RefPtr<Highlight> m_currentMouseDownOnButtonHighlight;
     IntPoint m_mousePosition;
 
-    Timer<ServicesOverlayController> m_determineActiveHighlightTimer;
+    Timer m_determineActiveHighlightTimer;
 };
 
 } // namespace WebKit

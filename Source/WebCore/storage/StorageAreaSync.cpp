@@ -161,7 +161,7 @@ void StorageAreaSync::scheduleCloseDatabase()
     }
 }
 
-void StorageAreaSync::syncTimerFired(Timer<StorageAreaSync>*)
+void StorageAreaSync::syncTimerFired(Timer*)
 {
     ASSERT(isMainThread());
 

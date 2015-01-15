@@ -152,7 +152,7 @@ private:
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource*);
     bool checkInsecureContent(CachedResource::Type, const URL&) const;
 
-    void garbageCollectDocumentResourcesTimerFired(Timer<CachedResourceLoader>&);
+    void garbageCollectDocumentResourcesTimerFired(Timer&);
     void performPostLoadActions();
 
     bool clientDefersImage(const URL&) const;
@@ -173,7 +173,7 @@ private:
     };
     Deque<PendingPreload> m_pendingPreloads;
 
-    Timer<CachedResourceLoader> m_garbageCollectDocumentResourcesTimer;
+    Timer m_garbageCollectDocumentResourcesTimer;
 
 #if ENABLE(RESOURCE_TIMING)
     struct InitiatorInfo {

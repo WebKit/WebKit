@@ -50,7 +50,7 @@ private:
     bool resetDevice(ResetReason);
 
     void renderSoon();
-    void renderTimerFired(Timer<LegacyCACFLayerTreeHost>*);
+    void renderTimerFired(Timer*);
 
     virtual void initializeContext(void* userData, PlatformCALayer*);
     virtual void resize();
@@ -66,7 +66,7 @@ private:
     virtual GraphicsDeviceAdapter* graphicsDeviceAdapter() const override { return 0; }
 #endif
 
-    Timer<LegacyCACFLayerTreeHost> m_renderTimer;
+    Timer m_renderTimer;
     COMPtr<IDirect3DDevice9> m_d3dDevice;
     WKCACFContext* m_context;
     bool m_mightBeAbleToCreateDeviceLater;

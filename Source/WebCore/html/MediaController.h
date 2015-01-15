@@ -123,11 +123,11 @@ private:
     void updateMediaElements();
     void bringElementUpToSpeed(HTMLMediaElement*);
     void scheduleEvent(const AtomicString& eventName);
-    void asyncEventTimerFired(Timer<MediaController>&);
-    void clearPositionTimerFired(Timer<MediaController>&);
+    void asyncEventTimerFired(Timer&);
+    void clearPositionTimerFired(Timer&);
     bool hasEnded() const;
     void scheduleTimeupdateEvent();
-    void timeupdateTimerFired(Timer<MediaController>&);
+    void timeupdateTimerFired(Timer&);
     void startTimeupdateTimer();
 
     // EventTarget
@@ -147,13 +147,13 @@ private:
     ReadyState m_readyState;
     PlaybackState m_playbackState;
     Vector<RefPtr<Event>> m_pendingEvents;
-    Timer<MediaController> m_asyncEventTimer;
-    mutable Timer<MediaController> m_clearPositionTimer;
+    Timer m_asyncEventTimer;
+    mutable Timer m_clearPositionTimer;
     String m_mediaGroup;
     bool m_closedCaptionsVisible;
     std::unique_ptr<Clock> m_clock;
     ScriptExecutionContext& m_scriptExecutionContext;
-    Timer<MediaController> m_timeupdateTimer;
+    Timer m_timeupdateTimer;
     double m_previousTimeupdateTime;
 };
 

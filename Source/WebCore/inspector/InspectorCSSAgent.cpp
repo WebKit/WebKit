@@ -111,11 +111,11 @@ public:
     void scheduleFor(WebKitNamedFlow*, int documentNodeId);
     void unschedule(WebKitNamedFlow*);
     void reset();
-    void timerFired(Timer<ChangeRegionOversetTask>&);
+    void timerFired(Timer&);
 
 private:
     InspectorCSSAgent* m_cssAgent;
-    Timer<ChangeRegionOversetTask> m_timer;
+    Timer m_timer;
     HashMap<WebKitNamedFlow*, int> m_namedFlows;
 };
 
@@ -144,7 +144,7 @@ void ChangeRegionOversetTask::reset()
     m_namedFlows.clear();
 }
 
-void ChangeRegionOversetTask::timerFired(Timer<ChangeRegionOversetTask>&)
+void ChangeRegionOversetTask::timerFired(Timer&)
 {
     // The timer is stopped on m_cssAgent destruction, so this method will never be called after m_cssAgent has been destroyed.
     for (HashMap<WebKitNamedFlow*, int>::iterator it = m_namedFlows.begin(), end = m_namedFlows.end(); it != end; ++it)

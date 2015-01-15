@@ -1234,7 +1234,7 @@ void ScrollAnimatorMac::stopSnapRubberbandTimer()
     m_snapRubberBandTimer.stop();
 }
 
-void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>&)
+void ScrollAnimatorMac::snapRubberBandTimerFired(Timer&)
 {
     m_scrollElasticityController.snapRubberBandTimerFired();
 }
@@ -1315,7 +1315,7 @@ void ScrollAnimatorMac::stopScrollbarPaintTimer()
     m_initialScrollbarPaintTimer.stop();
 }
 
-void ScrollAnimatorMac::initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>&)
+void ScrollAnimatorMac::initialScrollbarPaintTimerFired(Timer&)
 {
     // To force the scrollbars to flash, we have to call hide first. Otherwise, the ScrollbarPainterController
     // might think that the scrollbars are already showing and bail early.
@@ -1339,7 +1339,7 @@ void ScrollAnimatorMac::sendContentAreaScrolled(const FloatSize& delta)
         [m_scrollbarPainterController contentAreaScrolled];
 }
 
-void ScrollAnimatorMac::sendContentAreaScrolledTimerFired(Timer<ScrollAnimatorMac>&)
+void ScrollAnimatorMac::sendContentAreaScrolledTimerFired(Timer&)
 {
     sendContentAreaScrolled(m_contentAreaScrolledTimerScrollDelta);
     m_contentAreaScrolledTimerScrollDelta = FloatSize();

@@ -1,3 +1,23 @@
+2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r175719. rdar://problem/19424169
+
+    2014-11-05  Jer Noble  <jer.noble@apple.com>
+
+            De-templatize Timer
+            https://bugs.webkit.org/show_bug.cgi?id=138450
+
+            Reviewed by Anders Carlsson.
+
+            Remove template specifiers from Timer.
+
+            * Plugins/Hosted/NetscapePluginInstanceProxy.h:
+            * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+            (WebKit::NetscapePluginInstanceProxy::requestTimerFired):
+            * Plugins/WebNetscapePluginStream.h:
+            * Plugins/WebNetscapePluginStream.mm:
+            (WebNetscapePluginStream::deliverDataTimerFired):
+
 2015-01-15  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r178378. rdar://problem/19274499

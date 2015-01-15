@@ -160,7 +160,7 @@ void SearchInputType::stopSearchEventTimer()
     m_searchEventTimer.stop();
 }
 
-void SearchInputType::searchEventTimerFired(Timer<SearchInputType>*)
+void SearchInputType::searchEventTimerFired(Timer*)
 {
     element().onSearch();
 }

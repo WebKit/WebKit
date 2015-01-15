@@ -139,7 +139,7 @@ private:
 
     static PassRefPtr<RTCConfiguration> parseConfiguration(const Dictionary& configuration, ExceptionCode&);
     void scheduleDispatchEvent(PassRefPtr<Event>);
-    void scheduledEventTimerFired(Timer<RTCPeerConnection>*);
+    void scheduledEventTimerFired(Timer*);
     bool hasLocalStreamWithTrackId(const String& trackId);
 
     // EventTarget implementation.
@@ -164,7 +164,7 @@ private:
 
     std::unique_ptr<RTCPeerConnectionHandler> m_peerHandler;
 
-    Timer<RTCPeerConnection> m_scheduledEventTimer;
+    Timer m_scheduledEventTimer;
     Vector<RefPtr<Event>> m_scheduledEvents;
 
     RefPtr<RTCConfiguration> m_configuration;

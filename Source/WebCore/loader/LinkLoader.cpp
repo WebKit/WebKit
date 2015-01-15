@@ -60,13 +60,13 @@ LinkLoader::~LinkLoader()
         m_cachedLinkResource->removeClient(this);
 }
 
-void LinkLoader::linkLoadTimerFired(Timer<LinkLoader>& timer)
+void LinkLoader::linkLoadTimerFired(Timer& timer)
 {
     ASSERT_UNUSED(timer, &timer == &m_linkLoadTimer);
     m_client->linkLoaded();
 }
 
-void LinkLoader::linkLoadingErrorTimerFired(Timer<LinkLoader>& timer)
+void LinkLoader::linkLoadingErrorTimerFired(Timer& timer)
 {
     ASSERT_UNUSED(timer, &timer == &m_linkLoadingErrorTimer);
     m_client->linkLoadingErrored();

@@ -96,7 +96,7 @@ void ScriptRunner::notifyScriptReady(ScriptElement* scriptElement, ExecutionType
     m_timer.startOneShot(0);
 }
 
-void ScriptRunner::timerFired(Timer<ScriptRunner>& timer)
+void ScriptRunner::timerFired(Timer& timer)
 {
     ASSERT_UNUSED(timer, &timer == &m_timer);
 

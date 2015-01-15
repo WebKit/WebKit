@@ -415,7 +415,7 @@ void LegacyTileCache::finishedCreatingTiles(bool didCreateTiles, bool createMore
         m_tileCreationTimer.startOneShot(0);
 }
 
-void LegacyTileCache::tileCreationTimerFired(Timer<LegacyTileCache>*)
+void LegacyTileCache::tileCreationTimerFired(Timer*)
 {
     if (isTileCreationSuspended())
         return;

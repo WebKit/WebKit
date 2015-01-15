@@ -105,11 +105,11 @@ private:
     void ensureRootStateNodeForFrameView(FrameView*);
     void updateMainFrameScrollLayerPosition();
 
-    void updateScrollPositionAfterAsyncScrollTimerFired(Timer<AsyncScrollingCoordinator>*);
+    void updateScrollPositionAfterAsyncScrollTimerFired(Timer*);
     
     FrameView* frameViewForScrollingNode(ScrollingNodeID) const;
 
-    Timer<AsyncScrollingCoordinator> m_updateNodeScrollPositionTimer;
+    Timer m_updateNodeScrollPositionTimer;
 
     struct ScheduledScrollUpdate {
         ScheduledScrollUpdate()

@@ -115,9 +115,9 @@ private:
 
     void wakeSyncThread();
     void scheduleOrDeferSyncTimer();
-    void syncTimerFired(Timer<IconDatabase>&);
+    void syncTimerFired(Timer&);
     
-    Timer<IconDatabase> m_syncTimer;
+    Timer m_syncTimer;
     ThreadIdentifier m_syncThread;
     bool m_syncThreadRunning;
     

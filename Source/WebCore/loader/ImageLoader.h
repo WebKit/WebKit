@@ -91,11 +91,11 @@ private:
     void setImageWithoutConsideringPendingLoadEvent(CachedImage*);
     void clearFailedLoadURL();
 
-    void timerFired(Timer<ImageLoader>&);
+    void timerFired(Timer&);
 
     Element& m_element;
     CachedResourceHandle<CachedImage> m_image;
-    Timer<ImageLoader> m_derefElementTimer;
+    Timer m_derefElementTimer;
     AtomicString m_failedLoadURL;
     bool m_hasPendingBeforeLoadEvent : 1;
     bool m_hasPendingLoadEvent : 1;

@@ -91,7 +91,7 @@ void Vibration::cancelVibration()
     }
 }
 
-void Vibration::timerFired(Timer<Vibration>* timer)
+void Vibration::timerFired(Timer* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_timer);
 

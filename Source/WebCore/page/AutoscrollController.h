@@ -69,13 +69,13 @@ public:
 #endif
 
 private:
-    void autoscrollTimerFired(Timer<AutoscrollController>&);
+    void autoscrollTimerFired(Timer&);
     void startAutoscrollTimer();
 #if ENABLE(PAN_SCROLLING)
     void updatePanScrollState(FrameView*, const IntPoint&);
 #endif
 
-    Timer<AutoscrollController> m_autoscrollTimer;
+    Timer m_autoscrollTimer;
     RenderBox* m_autoscrollRenderer;
     AutoscrollType m_autoscrollType;
     IntPoint m_dragAndDropAutoscrollReferencePosition;

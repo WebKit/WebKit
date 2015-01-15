@@ -190,7 +190,7 @@ void AsyncScrollingCoordinator::scheduleUpdateScrollPositionAfterAsyncScroll(Scr
     m_updateNodeScrollPositionTimer.startOneShot(0);
 }
 
-void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired(Timer<AsyncScrollingCoordinator>*)
+void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScrollTimerFired(Timer*)
 {
     updateScrollPositionAfterAsyncScroll(m_scheduledScrollUpdate.nodeID, m_scheduledScrollUpdate.scrollPosition, m_scheduledScrollUpdate.isProgrammaticScroll, m_scheduledScrollUpdate.updateLayerPositionAction);
 }

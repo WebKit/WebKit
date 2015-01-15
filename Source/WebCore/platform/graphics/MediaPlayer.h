@@ -599,12 +599,12 @@ private:
     MediaPlayer(MediaPlayerClient*);
     MediaPlayerFactory* nextBestMediaEngine(MediaPlayerFactory*) const;
     void loadWithNextMediaEngine(MediaPlayerFactory*);
-    void reloadTimerFired(Timer<MediaPlayer>&);
+    void reloadTimerFired(Timer&);
 
     static void initializeMediaEngines();
 
     MediaPlayerClient* m_mediaPlayerClient;
-    Timer<MediaPlayer> m_reloadTimer;
+    Timer m_reloadTimer;
     OwnPtr<MediaPlayerPrivateInterface> m_private;
     MediaPlayerFactory* m_currentMediaEngine;
     URL m_url;

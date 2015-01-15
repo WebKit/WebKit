@@ -278,7 +278,7 @@ void StorageAreaImpl::decrementAccessCount()
     }
 }
 
-void StorageAreaImpl::closeDatabaseTimerFired(Timer<StorageAreaImpl> *)
+void StorageAreaImpl::closeDatabaseTimerFired(Timer *)
 {
     blockUntilImportComplete();
     if (m_storageAreaSync)

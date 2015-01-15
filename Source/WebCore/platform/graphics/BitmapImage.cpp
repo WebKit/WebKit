@@ -596,7 +596,7 @@ void BitmapImage::startAnimation(CatchUpAnimation catchUpIfNecessary)
 
     if (catchUpIfNecessary == DoNotCatchUp || time < m_desiredFrameStartTime) {
         // Haven't yet reached time for next frame to start; delay until then.
-        m_frameTimer = std::make_unique<Timer<BitmapImage>>(this, &BitmapImage::advanceAnimation);
+        m_frameTimer = std::make_unique<Timer>(this, &BitmapImage::advanceAnimation);
         m_frameTimer->startOneShot(std::max(m_desiredFrameStartTime - time, 0.));
     } else {
         // We've already reached or passed the time for the next frame to start.
@@ -697,7 +697,7 @@ void BitmapImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, 
 }
 
 
-void BitmapImage::advanceAnimation(Timer<BitmapImage>&)
+void BitmapImage::advanceAnimation(Timer&)
 {
     internalAdvanceAnimation(false);
     // At this point the image region has been marked dirty, and if it's

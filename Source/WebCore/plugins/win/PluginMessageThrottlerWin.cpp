@@ -113,7 +113,7 @@ void PluginMessageThrottlerWin::processQueuedMessage()
     freeMessage(message);
 }
 
-void PluginMessageThrottlerWin::messageThrottleTimerFired(Timer<PluginMessageThrottlerWin>*)
+void PluginMessageThrottlerWin::messageThrottleTimerFired(Timer*)
 {
     processQueuedMessage();
 

@@ -74,7 +74,7 @@ void ImageQualityController::removeObject(RenderBoxModelObject* object)
     }
 }
 
-void ImageQualityController::highQualityRepaintTimerFired(Timer<ImageQualityController>&)
+void ImageQualityController::highQualityRepaintTimerFired(Timer&)
 {
     if (m_renderView.documentBeingDestroyed())
         return;

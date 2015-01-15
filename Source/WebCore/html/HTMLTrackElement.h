@@ -75,7 +75,7 @@ private:
 
     virtual bool isURLAttribute(const Attribute&) const override;
 
-    void loadTimerFired(Timer<HTMLTrackElement>&);
+    void loadTimerFired(Timer&);
 
     HTMLMediaElement* mediaElement() const;
 
@@ -91,7 +91,7 @@ private:
     bool canLoadURL(const URL&);
 
     RefPtr<LoadableTextTrack> m_track;
-    Timer<HTMLTrackElement> m_loadTimer;
+    Timer m_loadTimer;
 };
 
 NODE_TYPE_CASTS(HTMLTrackElement)

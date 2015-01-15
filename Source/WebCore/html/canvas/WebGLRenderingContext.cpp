@@ -5926,7 +5926,7 @@ void WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation()
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, objectOrZero(m_boundArrayBuffer.get()));
 }
 
-void WebGLRenderingContext::dispatchContextLostEvent(Timer<WebGLRenderingContext>*)
+void WebGLRenderingContext::dispatchContextLostEvent(Timer*)
 {
     RefPtr<WebGLContextEvent> event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, false, true, "");
     canvas()->dispatchEvent(event);
@@ -5935,7 +5935,7 @@ void WebGLRenderingContext::dispatchContextLostEvent(Timer<WebGLRenderingContext
         m_restoreTimer.startOneShot(0);
 }
 
-void WebGLRenderingContext::maybeRestoreContext(Timer<WebGLRenderingContext>*)
+void WebGLRenderingContext::maybeRestoreContext(Timer*)
 {
     ASSERT(m_contextLost);
     if (!m_contextLost)

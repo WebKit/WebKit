@@ -114,7 +114,7 @@ private:
     void updateScrolledExposedRect();
     void updateRootLayers();
 
-    void layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeDrawingArea>*);
+    void layerFlushTimerFired(WebCore::Timer*);
     void flushLayers();
 
     WebCore::TiledBacking* mainFrameTiledBacking() const;
@@ -148,7 +148,7 @@ private:
     WebCore::FloatRect m_exposedRect;
     WebCore::FloatRect m_scrolledExposedRect;
 
-    WebCore::Timer<RemoteLayerTreeDrawingArea> m_layerFlushTimer;
+    WebCore::Timer m_layerFlushTimer;
     bool m_isFlushingSuspended;
     bool m_hasDeferredFlush;
     bool m_isThrottlingLayerFlushes;

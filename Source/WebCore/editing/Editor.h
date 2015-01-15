@@ -480,7 +480,7 @@ private:
     enum EditorActionSpecifier { CutAction, CopyAction };
     void performCutOrCopy(EditorActionSpecifier);
 
-    void editorUIUpdateTimerFired(Timer<Editor>&);
+    void editorUIUpdateTimerFired(Timer&);
 
     Node* findEventTargetFromSelection() const;
 
@@ -515,16 +515,16 @@ private:
     bool m_overwriteModeEnabled;
 
     VisibleSelection m_oldSelectionForEditorUIUpdate;
-    Timer<Editor> m_editorUIUpdateTimer;
+    Timer m_editorUIUpdateTimer;
     bool m_editorUIUpdateTimerShouldCheckSpellingAndGrammar;
     bool m_editorUIUpdateTimerWasTriggeredByDictation;
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS)
     bool shouldDetectTelephoneNumbers();
-    void scanSelectionForTelephoneNumbers(Timer<Editor>&);
+    void scanSelectionForTelephoneNumbers(Timer&);
     void scanRangeForTelephoneNumbers(Range&, const StringView&, Vector<RefPtr<Range>>& markedRanges);
 
-    Timer<Editor> m_telephoneNumberDetectionUpdateTimer;
+    Timer m_telephoneNumberDetectionUpdateTimer;
     Vector<RefPtr<Range>> m_detectedTelephoneNumberRanges;
 #endif
 };

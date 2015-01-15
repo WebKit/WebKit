@@ -98,7 +98,7 @@ void DNSResolveQueue::add(const String& hostname)
     }
 }
 
-void DNSResolveQueue::timerFired(Timer<DNSResolveQueue>&)
+void DNSResolveQueue::timerFired(Timer&)
 {
     if (isUsingProxy()) {
         m_names.clear();

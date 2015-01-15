@@ -55,11 +55,11 @@ public:
     void setMotion(PassRefPtr<DeviceMotionData>);
 
 private:
-    void timerFired(Timer<DeviceMotionClientMock>*);
+    void timerFired(Timer*);
 
     RefPtr<DeviceMotionData> m_motion;
     DeviceMotionController* m_controller;
-    Timer<DeviceMotionClientMock> m_timer;
+    Timer m_timer;
     bool m_isUpdating;
 };
 

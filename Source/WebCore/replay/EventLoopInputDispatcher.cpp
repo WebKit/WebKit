@@ -78,7 +78,7 @@ void EventLoopInputDispatcher::pause()
         m_timer.stop();
 }
 
-void EventLoopInputDispatcher::timerFired(Timer<EventLoopInputDispatcher>*)
+void EventLoopInputDispatcher::timerFired(Timer*)
 {
     dispatchInput();
 }

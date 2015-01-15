@@ -304,7 +304,7 @@ bool RemoteLayerTreeDrawingArea::adjustLayerFlushThrottling(WebCore::LayerFlushT
     return true;
 }
 
-void RemoteLayerTreeDrawingArea::layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeDrawingArea>*)
+void RemoteLayerTreeDrawingArea::layerFlushTimerFired(WebCore::Timer*)
 {
     flushLayers();
 }

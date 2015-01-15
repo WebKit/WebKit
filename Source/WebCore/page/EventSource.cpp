@@ -170,7 +170,7 @@ void EventSource::scheduleReconnect()
     dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
-void EventSource::connectTimerFired(Timer<EventSource>&)
+void EventSource::connectTimerFired(Timer&)
 {
     connect();
 }

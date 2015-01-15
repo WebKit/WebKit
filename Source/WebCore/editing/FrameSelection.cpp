@@ -1893,7 +1893,7 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility)
     updateAppearance();
 }
 
-void FrameSelection::caretBlinkTimerFired(Timer<FrameSelection>&)
+void FrameSelection::caretBlinkTimerFired(Timer&)
 {
 #if ENABLE(TEXT_CARET)
     ASSERT(caretIsVisible());

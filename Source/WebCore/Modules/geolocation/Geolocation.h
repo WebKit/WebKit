@@ -100,7 +100,7 @@ private:
 
         void startTimerIfNeeded();
         void stopTimer();
-        void timerFired(Timer<GeoNotifier>&);
+        void timerFired(Timer&);
         bool hasZeroTimeout() const;
 
     private:
@@ -110,7 +110,7 @@ private:
         RefPtr<PositionCallback> m_successCallback;
         RefPtr<PositionErrorCallback> m_errorCallback;
         RefPtr<PositionOptions> m_options;
-        Timer<GeoNotifier> m_timer;
+        Timer m_timer;
         RefPtr<PositionError> m_fatalError;
         bool m_useCachedPosition;
     };
@@ -186,8 +186,8 @@ private:
     bool m_hasChangedPosition;
     RefPtr<PositionError> m_errorWaitingForResume;
 
-    void resumeTimerFired(Timer<Geolocation>&);
-    Timer<Geolocation> m_resumeTimer;
+    void resumeTimerFired(Timer&);
+    Timer m_resumeTimer;
 #endif // PLATFORM(IOS)
 
     GeoNotifierSet m_requestsAwaitingCachedPosition;

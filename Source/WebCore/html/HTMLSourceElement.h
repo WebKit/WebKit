@@ -52,9 +52,9 @@ private:
     virtual void removedFrom(ContainerNode&) override;
     virtual bool isURLAttribute(const Attribute&) const override;
 
-    void errorEventTimerFired(Timer<HTMLSourceElement>&);
+    void errorEventTimerFired(Timer&);
 
-    Timer<HTMLSourceElement> m_errorEventTimer;
+    Timer m_errorEventTimer;
 };
 
 NODE_TYPE_CASTS(HTMLSourceElement)

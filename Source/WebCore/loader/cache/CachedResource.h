@@ -283,11 +283,11 @@ protected:
         void cancel();
     private:
         CachedResourceCallback(CachedResource*, CachedResourceClient*);
-        void timerFired(Timer<CachedResourceCallback>&);
+        void timerFired(Timer&);
 
         CachedResource* m_resource;
         CachedResourceClient* m_client;
-        Timer<CachedResourceCallback> m_callbackTimer;
+        Timer m_callbackTimer;
     };
     HashMap<CachedResourceClient*, OwnPtr<CachedResourceCallback>> m_clientsAwaitingCallback;
 

@@ -91,7 +91,7 @@ void ScrollingCoordinatorIOS::scheduleTreeStateCommit()
     m_scrollingStateTreeCommitterTimer.startOneShot(0);
 }
 
-void ScrollingCoordinatorIOS::scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinatorIOS>*)
+void ScrollingCoordinatorIOS::scrollingStateTreeCommitterTimerFired(Timer*)
 {
     commitTreeState();
 }

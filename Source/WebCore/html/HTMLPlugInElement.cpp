@@ -300,7 +300,7 @@ RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(PassRef<Render
     return createRenderer<RenderEmbeddedObject>(*this, WTF::move(style));
 }
 
-void HTMLPlugInElement::swapRendererTimerFired(Timer<HTMLPlugInElement>&)
+void HTMLPlugInElement::swapRendererTimerFired(Timer&)
 {
     ASSERT(displayState() == PreparingPluginReplacement || displayState() == DisplayingSnapshot);
     if (userAgentShadowRoot())

@@ -474,7 +474,7 @@ void VTTRegion::stopTimer()
         m_scrollTimer.stop();
 }
 
-void VTTRegion::scrollTimerFired(Timer<VTTRegion>*)
+void VTTRegion::scrollTimerFired(Timer*)
 {
     LOG(Media, "VTTRegion::scrollTimerFired");
 

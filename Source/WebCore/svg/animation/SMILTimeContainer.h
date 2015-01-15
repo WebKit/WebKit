@@ -67,7 +67,7 @@ public:
 private:
     SMILTimeContainer(SVGSVGElement* owner);
 
-    void timerFired(Timer<SMILTimeContainer>*);
+    void timerFired(Timer*);
     void startTimer(SMILTime fireTime, SMILTime minimumDelay = 0);
     void updateAnimations(SMILTime elapsed, bool seekToTime = false);
     
@@ -82,7 +82,7 @@ private:
 
     bool m_documentOrderIndexesDirty;
     
-    Timer<SMILTimeContainer> m_timer;
+    Timer m_timer;
 
     typedef std::pair<SVGElement*, QualifiedName> ElementAttributePair;
     typedef Vector<SVGSMILElement*> AnimationsVector;
