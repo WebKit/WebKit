@@ -28,6 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
+[Conditional=MEDIA_SOURCE] enum AppendMode {
+    "segments",
+    "sequence"
+};
+
 [
     Conditional=MEDIA_SOURCE,
     NoInterfaceObject,
@@ -36,6 +41,8 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface SourceBuffer : EventTarget {
+
+    [SetterRaisesException] attribute AppendMode mode;
 
     readonly attribute boolean updating;
   

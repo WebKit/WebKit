@@ -1488,3 +1488,6 @@ fast/text/vertical-no-sideways.html [ Failure ]
 
 webkit.org/b/136532 [ MountainLion ] media/audio-data-url.html [ Failure ]
 webkit.org/b/136532 [ MountainLion ] media/sources-fallback-codecs.html [ Failure ]
+
+# Passing Media Source tests
+[ Yosemite+ ] http/tests/media/media-source/mediasource-sourcebuffer-mode.html [ Pass ]
