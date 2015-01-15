@@ -1,5 +1,16 @@
 2015-01-15  Antti Koivisto  <antti@apple.com>
 
+        Unreviewed, rolling out r178518.
+
+        Didn't mean to commit some of this
+
+        Reverted changeset:
+
+        "Try to fix windows build."
+        http://trac.webkit.org/changeset/178518
+
+2015-01-15  Antti Koivisto  <antti@apple.com>
+
         Try to fix windows build.
 
         * platform/graphics/Font.cpp: Copied from Source/WebCore/platform/graphics/SimpleFontData.cpp.

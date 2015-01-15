@@ -335,11 +335,11 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, FrameView* v)
         if (text.isEmpty())
             continue;
 
-        FontCascade itemFont = client()->menuStyle().font();
+        Font itemFont = client()->menuStyle().font();
         if (client()->itemIsLabel(i)) {
             FontDescription d = itemFont.fontDescription();
             d.setWeight(d.bolderWeight());
-            itemFont = FontCascade(d, itemFont.letterSpacing(), itemFont.wordSpacing());
+            itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
             itemFont.update(m_popupClient->fontSelector());
         }
 
@@ -641,11 +641,11 @@ void PopupMenuWin::paint(const IntRect& damageRect, HDC hdc)
         TextRun textRun(itemText, 0, 0, TextRun::AllowTrailingExpansion, itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
         context.setFillColor(optionTextColor, ColorSpaceDeviceRGB);
         
-        FontCascade itemFont = client()->menuStyle().font();
+        Font itemFont = client()->menuStyle().font();
         if (client()->itemIsLabel(index)) {
             FontDescription d = itemFont.fontDescription();
             d.setWeight(d.bolderWeight());
-            itemFont = FontCascade(d, itemFont.letterSpacing(), itemFont.wordSpacing());
+            itemFont = Font(d, itemFont.letterSpacing(), itemFont.wordSpacing());
             itemFont.update(m_popupClient->fontSelector());
         }
         

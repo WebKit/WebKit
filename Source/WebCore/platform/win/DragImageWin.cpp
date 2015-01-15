@@ -27,7 +27,7 @@
 #include "DragImage.h"
 
 #include "FloatRoundedRect.h"
-#include "FontCascade.h"
+#include "Font.h"
 #include "FontDescription.h"
 #include "FontSelector.h"
 #include "GraphicsContext.h"
@@ -101,9 +101,9 @@ const float MaxDragLabelStringWidth = (MaxDragLabelWidth - 2 * DragLabelBorderX)
 const float DragLinkLabelFontsize = 11;
 const float DragLinkUrlFontSize = 10;
 
-static FontCascade dragLabelFont(int size, bool bold, FontRenderingMode renderingMode)
+static Font dragLabelFont(int size, bool bold, FontRenderingMode renderingMode)
 {
-    FontCascade result;
+    Font result;
     NONCLIENTMETRICS metrics;
     metrics.cbSize = sizeof(metrics);
     SystemParametersInfo(SPI_GETNONCLIENTMETRICS, metrics.cbSize, &metrics, 0);
@@ -114,7 +114,7 @@ static FontCascade dragLabelFont(int size, bool bold, FontRenderingMode renderin
     description.setSpecifiedSize((float)size);
     description.setComputedSize((float)size);
     description.setRenderingMode(renderingMode);
-    result = FontCascade(description, 0, 0);
+    result = Font(description, 0, 0);
     result.update(0);
     return result;
 }
@@ -123,8 +123,8 @@ DragImageRef createDragImageForLink(URL& url, const String& inLabel, FontRenderi
 {
     // This is more or less an exact match for the Mac OS X code.
 
-    const FontCascade* labelFont;
-    const FontCascade* urlFont;
+    const Font* labelFont;
+    const Font* urlFont;
 
     if (fontRenderingMode == AlternateRenderingMode) {
         static const Font alternateRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, AlternateRenderingMode);

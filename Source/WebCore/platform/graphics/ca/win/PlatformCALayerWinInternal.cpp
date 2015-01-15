@@ -27,7 +27,7 @@
 
 #include "PlatformCALayerWinInternal.h"
 
-#include "FontCascade.h"
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "PlatformCALayer.h"
 #include "TextRun.h"
@@ -159,7 +159,7 @@ void PlatformCALayerWinInternal::displayCallback(CACFLayerRef caLayer, CGContext
 
         desc.setComputedSize(18);
         
-        FontCascade font = FontCascade(desc, 0, 0);
+        Font font = Font(desc, 0, 0);
         font.update(0);
 
         GraphicsContext cg(context);
