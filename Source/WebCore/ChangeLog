@@ -1,5 +1,81 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r174402. <rdar://problem/19478358>
+
+    2014-10-07  Jer Noble  <jer.noble@apple.com>
+
+            [Media] Expose AudioTracks in the "captions" menu.
+            https://bugs.webkit.org/show_bug.cgi?id=137472
+
+            Reviewed by Brent Fulgham.
+
+            Test: media/video-controls-audiotracks-trackmenu.html
+
+            If more than one AudioTrack is present in the video element, add those tracks to the
+            captions menu:
+            * English.lproj/mediaControlsLocalizedStrings.js:
+            * Modules/mediacontrols/mediaControlsApple.js:
+            (Controller.prototype.addVideoListeners):
+            (Controller.prototype.removeVideoListeners):
+            (Controller.prototype.handleAudioTrackChange):
+            (Controller.prototype.handleAudioTrackAdd):
+            (Controller.prototype.handleAudioTrackRemove):
+            (Controller.prototype.updateCaptionButton):
+            (Controller.prototype.buildCaptionMenu):
+            (Controller.prototype.handleCaptionItemKeyUp):
+            (Controller.prototype.audioTrackItemSelected):
+            (Controller.prototype.focusSiblingAudioTrackItem):
+            (Controller.prototype.handleAudioTrackItemKeyUp):
+
+            Add support to MediaControlHost for retrieving the sorted audio track list, and the
+            localized names for every audio track:
+            * Modules/mediacontrols/MediaControlsHost.cpp:
+            (WebCore::MediaControlsHost::sortedTrackListForMenu):
+            (WebCore::MediaControlsHost::displayNameForTrack):
+            * Modules/mediacontrols/MediaControlsHost.h:
+            * Modules/mediacontrols/MediaControlsHost.idl:
+            * page/CaptionUserPreferences.cpp:
+            (WebCore::trackDisplayName):
+            (WebCore::CaptionUserPreferences::displayNameForTrack):
+            (WebCore::CaptionUserPreferences::sortedTrackListForMenu):
+            * page/CaptionUserPreferences.h:
+            * platform/LocalizedStrings.cpp:
+            (WebCore::audioTrackNoLabelText):
+            * platform/LocalizedStrings.h:
+            * platform/efl/LocalizedStringsEfl.cpp:
+            (WebCore::audioTrackNoLabelText):
+            * platform/gtk/LocalizedStringsGtk.cpp:
+            (WebCore::audioTrackNoLabelText):
+
+            Drive-by fix; do not recurse into AudioTrackPrivate->setEnabled() when the enabled
+            state changes.
+            * html/track/AudioTrack.cpp:
+            (WebCore::AudioTrack::enabledChanged):
+
+            Fix possible out-of-bounds Vector access when adding tracks to a track list by
+            sorting the list at insert time, rather than inserting into the track's reported
+            position in the Vector:
+            * html/track/AudioTrackList.cpp:
+            (AudioTrackList::append):
+            * html/track/VideoTrackList.cpp:
+            (VideoTrackList::append):
+
+            Correctly report the trackIndex of audio and video tracks from AVFoundation:
+            * platform/graphics/avfoundation/AudioTrackPrivateAVF.h:
+            (WebCore::AudioTrackPrivateAVF::trackIndex):
+            (WebCore::AudioTrackPrivateAVF::setTrackIndex):
+            (WebCore::AudioTrackPrivateAVF::AudioTrackPrivateAVF):
+            * platform/graphics/avfoundation/VideoTrackPrivateAVF.h:
+            (WebCore::VideoTrackPrivateAVF::trackIndex):
+            (WebCore::VideoTrackPrivateAVF::setTrackIndex):
+            (WebCore::VideoTrackPrivateAVF::VideoTrackPrivateAVF):
+            * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm:
+            (WebCore::AudioTrackPrivateAVFObjC::resetPropertiesFromTrack):
+            * platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp:
+            (WebCore::VideoTrackPrivateAVFObjC::resetPropertiesFromTrack):
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r174652. <rdar://problem/19424154>
 
     2014-10-08  Jer Noble  <jer.noble@apple.com>

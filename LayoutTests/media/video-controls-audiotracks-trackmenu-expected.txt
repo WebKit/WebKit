@@ -1,0 +1,17 @@
+Test that we are able to trigger the list of captions, and select from the list.
+
+
+EVENT(canplaythrough)
+*** Menu item 0 should be selected
+EXPECTED (trackListItems.length == '3') OK
+EXPECTED (trackListItems[0].classList.contains('selected') == 'true') OK
+EXPECTED (trackListItems[1].classList.contains('selected') == 'false') OK
+EXPECTED (trackListItems[2].classList.contains('selected') == 'false') OK
+*** Selecting French Track
+- click on 'French' menu item.
+EXPECTED (video.audioTracks.length == '3') OK
+EXPECTED (video.audioTracks[0].enabled == 'false') OK
+EXPECTED (video.audioTracks[1].enabled == 'true') OK
+EXPECTED (video.audioTracks[2].enabled == 'false') OK
+END OF TEST
+
