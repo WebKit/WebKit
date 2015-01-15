@@ -1,3 +1,26 @@
+2015-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not resize the redirected XComposite window when not in accelerated compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=140353
+
+        Reviewed by Martin Robinson.
+
+        We create the redirected XComposite window unconditionally, but
+        with a size of 1x1 to save memory. However, we are always resizing
+        it, so in the end we always end up with a XWindow allocated for
+        the same size of the web view, even for web views that never enter
+        in accelerated compositing mode.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewRenderAcceleratedCompositingResults): Resize the
+        RedirectedXCompositeWindow to the current web view size to ensure
+        the sizes match before drawing.
+        (resizeWebKitWebViewBaseFromAllocation): Only resize the
+        RedirectedXCompositeWindow when in accelerated compositing mode.
+        * UIProcess/gtk/RedirectedXCompositeWindow.cpp:
+        (WebKit::RedirectedXCompositeWindow::resize): Return early if the
+        given size is the current size.
+
 2014-12-11  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (Async Text Input): Text input method state is not reset when reloading a page

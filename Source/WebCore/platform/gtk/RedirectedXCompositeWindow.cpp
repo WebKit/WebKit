@@ -174,6 +174,9 @@ RedirectedXCompositeWindow::~RedirectedXCompositeWindow()
 
 void RedirectedXCompositeWindow::resize(const IntSize& size)
 {
+    if (size == m_size)
+        return;
+
     Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
     XResizeWindow(display, m_window, size.width(), size.height());
 
