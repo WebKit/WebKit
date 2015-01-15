@@ -60,6 +60,18 @@ const CGFloat dropShadowBlurRadius = 2;
 const CGFloat rimShadowBlurRadius = 1;
 #endif
 
+#ifdef CGFLOAT_IS_DOUBLE
+#define CGRound(value) round((value))
+#define CGFloor(value) floor((value))
+#define CGCeiling(value) ceil((value))
+#define CGFAbs(value) fabs((value))
+#else
+#define CGRound(value) roundf((value))
+#define CGFloor(value) floorf((value))
+#define CGCeiling(value) ceilf((value))
+#define CGFAbs(value) fabsf((value))
+#endif
+
 NSString *textLayerKey = @"TextLayer";
 NSString *dropShadowLayerKey = @"DropShadowLayer";
 NSString *rimShadowLayerKey = @"RimShadowLayer";
@@ -388,6 +400,9 @@ void TextIndicatorWindow::setTextIndicator(PassRefPtr<TextIndicator> textIndicat
         horizontalMargin = std::max(horizontalMargin, textBoundingRectInScreenCoordinates.size.width * (midBounceScale - 1) + horizontalMargin);
         verticalMargin = std::max(verticalMargin, textBoundingRectInScreenCoordinates.size.height * (midBounceScale - 1) + verticalMargin);
     }
+
+    horizontalMargin = CGCeiling(horizontalMargin);
+    verticalMargin = CGCeiling(verticalMargin);
 
     CGRect contentRect = CGRectInset(textBoundingRectInScreenCoordinates, -horizontalMargin, -verticalMargin);
     NSRect windowContentRect = [NSWindow contentRectForFrameRect:NSIntegralRect(NSRectFromCGRect(contentRect)) styleMask:NSBorderlessWindowMask];
