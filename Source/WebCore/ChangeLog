@@ -1,3 +1,15 @@
+2015-01-14  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r173796.
+
+    2014-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+            Unreviewed, speculative build fix.
+
+            If you use typed arrays, you gotta include runtime/TypedArrayInlines.h.
+
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
         Merged r175615. <rdar://problem/19424167>
