@@ -1,3 +1,13 @@
+2015-01-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed Windows build fix.
+
+        More missing Font->FontCascade changes.
+
+        * platform/win/WebCoreTextRenderer.cpp:
+        (WebCore::WebCoreSetAlwaysUsesComplexTextCodePath):
+        (WebCore::WebCoreAlwaysUsesComplexTextCodePath):
+
 2015-01-15  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r178133): Membuster regressed ~4%
