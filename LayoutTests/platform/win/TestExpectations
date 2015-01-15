@@ -371,8 +371,6 @@ transitions/cancel-transition.html
 # http://webkit.org/b/48456
 transitions/change-values-during-transition.html
 
-# Sometimes times out http://webkit.org/b/48457
-fast/workers/storage/use-same-database-in-page-and-workers.html
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure Timeout ]
 
 # Times out on apple-windows-3 http://webkit.org/b/48750
@@ -400,11 +398,7 @@ http/tests/media [ Skip ]
 # Sometimes times out
 webkit.org/b/48997 animations/animation-iteration-event-destroy-renderer.html [ Pass Timeout ]
 
-# Sometimes times out http://webkit.org/b/49014
-fast/workers/storage/change-version-handle-reuse-sync.html
-
-# Sometimes fails http://webkit.org/b/49182
-animations/stop-animation-on-suspend.html
+webkit.org/b/49182 animations/stop-animation-on-suspend.html
 
 # Assertion failure http://webkit.org/b/52913
 transitions/transition-end-event-destroy-iframe.html
@@ -1278,7 +1272,6 @@ storage/storageinfo-request-quota.html
 storage/storagequota-query-usage.html
 storage/storagequota-request-quota.html
 fast/workers/worker-storagequota-query-usage.html
-fast/workers/shared-worker-storagequota-query-usage.html
 
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 fast/dom/HTMLAnchorElement/anchor-nodownload.html
@@ -2011,7 +2004,6 @@ webkit.org/b/116564 fast/text/text-combine-different-fonts.html [ Failure ]
 
 # Exclude WebSQL tests:
 webkit.org/b/116559 storage/websql [ Skip ]
-webkit.org/b/129006 fast/workers/storage [ Skip ]
 
 # Exclude some MathML tests that do not work properly under windows
 webkit.org/b/119002 mathml/presentation/bug97990.html [ ImageOnlyFailure ]
@@ -2543,7 +2535,6 @@ js/dfg-inline-arguments-use-from-all-the-places.html [ Pass Timeout Failure ]
 js/dfg-uint8clampedarray-out-of-bounds-put-by-val-alias.html [ Pass Timeout ]
 js/dom/const.html [ Pass Timeout ]
 js/dom/dfg-patchable-get-by-id-after-watchpoint.html [ Pass Timeout ]
-js/dom/global-constructors-attributes-shared-worker.html [ Pass Timeout ]
 js/kde/comment-1.html [ Pass Timeout ]
 js/math.html [ Pass Failure ]
 js/mozilla/strict/this-for-function-expression-recursion.html [ Pass Timeout ]
@@ -3203,3 +3194,4 @@ webkit.org/b/140258 userscripts/user-style-all-frames.html
 webkit.org/b/140258 userscripts/user-stylesheet-invalidate.html
 
 webkit.org/b/140425 [ Debug ] fast/css/crash-on-custom-cursor-when-loading.html [ Crash ]
+webkit.org/b/140455 fast/dynamic/layer-no-longer-paginated.html [ Crash ]
