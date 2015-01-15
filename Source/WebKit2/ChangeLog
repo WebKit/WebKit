@@ -1,5 +1,85 @@
 2015-01-14  Dana Burkart  <dburkart@apple.com>
 
+        Merged r175288. <rdar://problem/19480393>
+
+    2014-10-28  Jer Noble  <jer.noble@apple.com>
+
+            [EME] Pass location for media key storage through from WebKit/WebKit2.
+            https://bugs.webkit.org/show_bug.cgi?id=137120
+
+            Reviewed by Anders Carlsson.
+
+            Allow the location for media key storage to be passed into the WebProcess from the UIProcess
+            through the WebContextConfiguraiton struct.
+
+            * Shared/WebProcessCreationParameters.cpp:
+            (WebKit::WebProcessCreationParameters::encode): Add mediaKeysStorageDirectory.
+            (WebKit::WebProcessCreationParameters::decode): Ditto.
+            * Shared/WebProcessCreationParameters.h:
+            * UIProcess/API/C/WKContextConfigurationRef.cpp:
+            (WKContextConfigurationCopyMediaKeysStorageDirectory): Added getter.
+            (WKContextConfigurationSetMediaKeysStorageDirectory): Added setter.
+            * UIProcess/API/C/WKContextConfigurationRef.h:
+            * UIProcess/API/C/WKOriginDataManager.h:
+            * UIProcess/API/Cocoa/WKProcessPool.mm:
+            (-[WKProcessPool _initWithConfiguration:]): Provide a default location.
+            * UIProcess/APIContextConfiguration.cpp:
+            (API::ContextConfiguration::webContextConfiguration): Set mediaKeysStorageDirectory.
+            * UIProcess/APIContextConfiguration.h:
+            (API::ContextConfiguration::mediaKeysStorageDirectory): Added getter.
+            (API::ContextConfiguration::setMediaKeysStorageDirectory): Added setter.
+            * UIProcess/WebContext.cpp:
+            (WebKit::WebContext::applyPlatformSpecificConfigurationDefaults): Apply mediaKeysStorageDirectory.
+            (WebKit::WebContext::WebContext): Initialize m_mediaKeysStorageDirectory.
+            (WebKit::WebContext::createNewWebProcess): Create a sandbox extension handle for mediaKeysStorageDirectory.
+            * UIProcess/WebContext.h:
+            * UIProcess/efl/WebContextEfl.cpp:
+            (WebKit::WebContext::platformDefaultMediaKeysStorageDirectory): Return a default location.
+            * UIProcess/gtk/WebContextGtk.cpp:
+            (WebKit::WebContext::platformDefaultMediaKeysStorageDirectory): Ditto.
+            * UIProcess/mac/WebContextMac.mm:
+            (WebKit::WebContext::platformDefaultMediaKeysStorageDirectory): Return an overridable default location.
+            * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp: Added.
+            (WebKit::WebMediaKeyStorageManager::initialize): Pull the mediaKeysStorageDirectory out of configuration.
+            (WebKit::WebMediaKeyStorageManager::supplementName): Return a configuration name.
+            (WebKit::WebMediaKeyStorageManager::mediaKeyStorageDirectoryForOrigin): Return the
+                correct storage directory based on the SecureOrigin.
+            (WebKit::WebMediaKeyStorageManager::getMediaKeyOrigins): Return the origins within the
+                storage directory.
+            (WebKit::removeAllMediaKeyStorageForOriginPath): Static, remove contents and directory at path.
+            (WebKit::WebMediaKeyStorageManager::deleteMediaKeyEntriesForOrigin): Use
+                removeAllMediaKeyStorageForOriginPath to remove origin data.
+            (WebKit::WebMediaKeyStorageManager::deleteMediaKeyEntriesModifiedBetweenDates): Ditto.
+            (WebKit::WebMediaKeyStorageManager::deleteAllMediaKeyEntries): Ditto.
+            * WebProcess/MediaCache/WebMediaKeyStorageManager.h: Added.
+            (WebKit::WebMediaKeyStorageManager::WebMediaKeyStorageManager): Default constructor.
+            (WebKit::WebMediaKeyStorageManager::~WebMediaKeyStorageManager): Default virtual destructor.
+            (WebKit::WebMediaKeyStorageManager::mediaKeyStorageDirectory): Simple accessor.
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::WebProcess): Add WebMediaKeyStorageManager as a supplement.
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::platformInitializeWebProcess): Create a sandbox extension from the sandbox extension handle.
+
+            Add new source files to project(s).
+
+            * PlatformEfl.cmake:
+            * PlatformGTK.cmake:
+            * WebKit2.xcodeproj/project.pbxproj:
+            * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+            (WebKit::WebMediaKeyStorageManager::getMediaKeyOrigins):
+            (WebKit::removeAllMediaKeyStorageForOriginPath):
+
+            Drive-by fix: references to VoidCallback are ambiguous, since the same name is re-used in multiple namespaces.
+            Make references to WebCore::VoidCallback explicit where the entire WebCore (and other) namespaces are pulled in.
+
+            * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+            (WebKit::NotificationPermissionRequestManager::startRequest):
+            (WebKit::NotificationPermissionRequestManager::didReceiveNotificationPermissionDecision):
+            * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+            (WebKit::WebNotificationClient::requestPermission):
+
+2015-01-14  Dana Burkart  <dburkart@apple.com>
+
         Merged r175188. <rdar://problem/19480522>
 
     2014-10-24  Jer Noble  <jer.noble@apple.com>
