@@ -34,7 +34,7 @@
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/FloatRoundedRect.h>
-#include <WebCore/Font.h>
+#include <WebCore/FontCascade.h>
 #include <WebCore/FontSelector.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HWndDC.h>
@@ -515,7 +515,7 @@ void FullscreenVideoController::draw()
     desc.setOneFamily(metrics.lfSmCaptionFont.lfFaceName);
 
     desc.setComputedSize(textSize);
-    Font font = Font(desc, 0, 0);
+    FontCascade font = FontCascade(desc, 0, 0);
     font.update(0);
 
     String s;

@@ -1,3 +1,16 @@
+2015-01-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r178510
+
+        Correct #include and declarations from Font->FontCascade
+
+        * DOMCoreClasses.cpp:
+        (DOMElement::font):
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::draw):
+        * WebKitGraphics.cpp:
+        * WebPreferences.cpp:
+
 2015-01-14  Chris Dumez  <cdumez@apple.com>
 
         Make 'TypeName' parameter unnecessary in CSSPropertyNames.in

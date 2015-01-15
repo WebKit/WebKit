@@ -30,7 +30,7 @@
 
 #include "WebPreferences.h"
 
-#include <WebCore/Font.h>
+#include <WebCore/FontCascade.h>
 #include <WebCore/FontDescription.h>
 #include <WebCore/FontSelector.h>
 #include <WebCore/GraphicsContext.h>
@@ -46,7 +46,7 @@
 
 using namespace WebCore;
 
-static Font makeFont(const WebFontDescription& description)
+static FontCascade makeFont(const WebFontDescription& description)
 {
     AtomicString::init();
 
@@ -64,7 +64,7 @@ static Font makeFont(const WebFontDescription& description)
     if (SUCCEEDED(WebPreferences::sharedStandardPreferences()->fontSmoothing(&smoothingType)))
         f.setRenderingMode(smoothingType == FontSmoothingTypeWindows ? AlternateRenderingMode : NormalRenderingMode);
 
-    Font font(f, 0, 0);
+    FontCascade font(f, 0, 0);
     font.update(0);
 
     return font;
@@ -96,7 +96,7 @@ void FontMetrics(const WebFontDescription& description, int* ascent, int* descen
     if (!ascent && !descent && !lineSpacing)
         return;
 
-    Font font(makeFont(description));
+    FontCascade font(makeFont(description));
     const WebCore::FontMetrics& fontMetrics(font.fontMetrics());
 
     if (ascent)

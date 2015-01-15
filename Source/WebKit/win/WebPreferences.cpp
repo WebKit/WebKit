@@ -33,7 +33,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/Font.h>
+#include <WebCore/FontCascade.h>
 #include <WebCore/LocalizedStrings.h>
 #include <limits>
 #include <shlobj.h>
