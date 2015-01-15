@@ -1,3 +1,57 @@
+2015-01-15  Zalan Bujtas  <zalan@apple.com>
+
+        Move ClipRects and ClipRectsCache classes to RenderLayer.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=140461
+
+        Reviewed by Simon Fraser.
+
+        Move classes only used by RenderLayer to RenderLayer.cpp.
+
+        No change in functionality.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::ClipRects::create):
+        (WebCore::ClipRects::reset):
+        (WebCore::ClipRects::overflowClipRect):
+        (WebCore::ClipRects::setOverflowClipRect):
+        (WebCore::ClipRects::fixedClipRect):
+        (WebCore::ClipRects::setFixedClipRect):
+        (WebCore::ClipRects::posClipRect):
+        (WebCore::ClipRects::setPosClipRect):
+        (WebCore::ClipRects::fixed):
+        (WebCore::ClipRects::setFixed):
+        (WebCore::ClipRects::ref):
+        (WebCore::ClipRects::deref):
+        (WebCore::ClipRects::operator==):
+        (WebCore::ClipRects::operator=):
+        (WebCore::ClipRects::ClipRects):
+        (WebCore::ClipRectsCache::ClipRectsCache):
+        (WebCore::ClipRectsCache::getClipRects):
+        (WebCore::ClipRectsCache::setClipRects):
+        (WebCore::ClipRectsCache::getIndex):
+        (WebCore::RenderLayer::clipRects):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRects::create): Deleted.
+        (WebCore::ClipRects::ClipRects): Deleted.
+        (WebCore::ClipRects::reset): Deleted.
+        (WebCore::ClipRects::overflowClipRect): Deleted.
+        (WebCore::ClipRects::setOverflowClipRect): Deleted.
+        (WebCore::ClipRects::fixedClipRect): Deleted.
+        (WebCore::ClipRects::setFixedClipRect): Deleted.
+        (WebCore::ClipRects::posClipRect): Deleted.
+        (WebCore::ClipRects::setPosClipRect): Deleted.
+        (WebCore::ClipRects::fixed): Deleted.
+        (WebCore::ClipRects::setFixed): Deleted.
+        (WebCore::ClipRects::ref): Deleted.
+        (WebCore::ClipRects::deref): Deleted.
+        (WebCore::ClipRects::operator==): Deleted.
+        (WebCore::ClipRects::operator=): Deleted.
+        (WebCore::ClipRectsCache::ClipRectsCache): Deleted.
+        (WebCore::ClipRectsCache::getClipRects): Deleted.
+        (WebCore::ClipRectsCache::setClipRects): Deleted.
+        (WebCore::ClipRectsCache::getIndex): Deleted.
+
 2015-01-15  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Canonicalization of :lang() should preserve the :lang()'s arguments representations

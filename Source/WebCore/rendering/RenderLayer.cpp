@@ -133,6 +133,121 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+class ClipRects {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static PassRefPtr<ClipRects> create()
+    {
+        return adoptRef(new ClipRects);
+    }
+
+    static PassRefPtr<ClipRects> create(const ClipRects& other)
+    {
+        return adoptRef(new ClipRects(other));
+    }
+
+    ClipRects() = default;
+
+    void reset(const LayoutRect& clipRect)
+    {
+        m_overflowClipRect = clipRect;
+        m_fixedClipRect = clipRect;
+        m_posClipRect = clipRect;
+        m_fixed = false;
+    }
+
+    const ClipRect& overflowClipRect() const { return m_overflowClipRect; }
+    void setOverflowClipRect(const ClipRect& clipRect) { m_overflowClipRect = clipRect; }
+
+    const ClipRect& fixedClipRect() const { return m_fixedClipRect; }
+    void setFixedClipRect(const ClipRect& clipRect) { m_fixedClipRect = clipRect; }
+
+    const ClipRect& posClipRect() const { return m_posClipRect; }
+    void setPosClipRect(const ClipRect& clipRect) { m_posClipRect = clipRect; }
+
+    bool fixed() const { return m_fixed; }
+    void setFixed(bool fixed) { m_fixed = fixed; }
+
+    void ref() { m_refCount++; }
+    void deref()
+    {
+        if (!--m_refCount)
+            delete this;
+    }
+
+    bool operator==(const ClipRects& other) const
+    {
+        return m_overflowClipRect == other.overflowClipRect()
+            && m_fixedClipRect == other.fixedClipRect()
+            && m_posClipRect == other.posClipRect()
+            && m_fixed == other.fixed();
+    }
+
+    ClipRects& operator=(const ClipRects& other)
+    {
+        m_overflowClipRect = other.overflowClipRect();
+        m_fixedClipRect = other.fixedClipRect();
+        m_posClipRect = other.posClipRect();
+        m_fixed = other.fixed();
+        return *this;
+    }
+
+private:
+    ClipRects(const LayoutRect& clipRect)
+        : m_overflowClipRect(clipRect)
+        , m_fixedClipRect(clipRect)
+        , m_posClipRect(clipRect)
+    {
+    }
+
+    ClipRects(const ClipRects& other)
+        : m_overflowClipRect(other.overflowClipRect())
+        , m_fixedClipRect(other.fixedClipRect())
+        , m_posClipRect(other.posClipRect())
+        , m_fixed(other.fixed())
+    {
+    }
+
+    ClipRect m_overflowClipRect;
+    ClipRect m_fixedClipRect;
+    ClipRect m_posClipRect;
+    unsigned m_refCount = 1;
+    bool m_fixed = false;
+};
+
+class ClipRectsCache {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ClipRectsCache()
+    {
+#ifndef NDEBUG
+        for (int i = 0; i < NumCachedClipRectsTypes; ++i) {
+            m_clipRectsRoot[i] = 0;
+            m_scrollbarRelevancy[i] = IgnoreOverlayScrollbarSize;
+        }
+#endif
+    }
+
+    PassRefPtr<ClipRects> getClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow) { return m_clipRects[getIndex(clipRectsType, respectOverflow)]; }
+    void setClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow, PassRefPtr<ClipRects> clipRects) { m_clipRects[getIndex(clipRectsType, respectOverflow)] = clipRects; }
+
+#ifndef NDEBUG
+    const RenderLayer* m_clipRectsRoot[NumCachedClipRectsTypes];
+    OverlayScrollbarSizeRelevancy m_scrollbarRelevancy[NumCachedClipRectsTypes];
+#endif
+
+private:
+    int getIndex(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow)
+    {
+        int index = static_cast<int>(clipRectsType);
+        if (respectOverflow == RespectOverflowClip)
+            index += static_cast<int>(NumCachedClipRectsTypes);
+        return index;
+    }
+
+    RefPtr<ClipRects> m_clipRects[NumCachedClipRectsTypes * 2];
+};
+
 void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
 {
 #if !ENABLE(3D_RENDERING)
@@ -5286,6 +5401,12 @@ bool RenderLayer::mapLayerClipRectsToFragmentationLayer(ClipRects& clipRects) co
     clipRects.setPosClipRect(newPosClipRect);
 
     return true;
+}
+
+ClipRects* RenderLayer::clipRects(const ClipRectsContext& context) const
+{
+    ASSERT(context.clipRectsType < NumCachedClipRectsTypes);
+    return m_clipRectsCache ? m_clipRectsCache->getClipRects(context.clipRectsType, context.respectOverflowClip).get() : 0;
 }
 
 void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, ClipRects& clipRects) const
