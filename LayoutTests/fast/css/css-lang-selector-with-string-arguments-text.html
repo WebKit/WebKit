@@ -25,17 +25,24 @@ function parseThenSerializeRule(rule)
 
 function testSelectorRoundTrip(selector)
 {
-    var expected = selector.split('"').join('');
-    shouldBe("parseThenSerializeRule('" + selector + " { }')", "'" + expected + " { }'");
+    shouldBe("parseThenSerializeRule('" + selector + " { }')", "'" + selector + " { }'");
 }
 
 testSelectorRoundTrip(':lang("a")');
 testSelectorRoundTrip(':lang("bb", cc)');
 testSelectorRoundTrip(':lang("ddd", eee)');
+testSelectorRoundTrip(':lang("ddd", eee, ffff)');
+testSelectorRoundTrip(':lang("ddd", eee, "ffff")');
 testSelectorRoundTrip(':lang("*-1997")');
 testSelectorRoundTrip(':lang("*-1997", "*-1998")');
+testSelectorRoundTrip(':lang("*-1997", "*-1998", "*-1999")');
 testSelectorRoundTrip(':lang("")');
 
+debug('');
+
+shouldBe("parseThenSerializeRule(':lang(foo, \"bar\", baz) { }')", "':lang(foo, \"bar\", baz) { }'");
+shouldBe("parseThenSerializeRule(':lang(foo,      \"bar\"     , baz) { }')", "':lang(foo, \"bar\", baz) { }'");
+shouldBe("parseThenSerializeRule(':lang(    foo    ,     \"bar\"    ,     baz    ) { }')", "':lang(foo, \"bar\", baz) { }'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

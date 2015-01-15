@@ -1,3 +1,44 @@
+2015-01-15  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Canonicalization of :lang() should preserve the :lang()'s arguments representations
+        https://bugs.webkit.org/show_bug.cgi?id=139928
+
+        Reviewed by Benjamin Poulain.
+
+        Preserve the representation of IDENT and STRING when serializing the 
+        :lang(). For example, :lang(foo,"bar"   ,baz) should be serialized as 
+        :lang(foo, "bar", baz) instead of :lang(foo, bar, baz).
+
+        Rename CSSParserSelector::setArgumentList, CSSSelector::setArgumentList
+        and CSSSelector::argumentList to CSSParserSelector::setLangArgumentList,
+        CSSSelector::setLangArgumentList and CSSSelector::langArgumentList 
+        respectively, since those methods are being exclusively used in respect
+        with :lang().
+
+        Update the test of serializing :lang() with IDENT and STRING arguments.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::setLangArgumentList):
+        (WebCore::CSSParserSelector::setArgumentList): Deleted.
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserString::init):
+        (WebCore::CSSParserString::clear):
+        (WebCore::CSSParserString::isParsedFromString):
+        (WebCore::CSSParserString::setParsedFromString):
+        * css/CSSSelector.cpp:
+        (WebCore::appendLangArgumentList):
+        (WebCore::CSSSelector::selectorText):
+        (WebCore::CSSSelector::setLangArgumentList):
+        (WebCore::appendArgumentList): Deleted.
+        (WebCore::CSSSelector::setArgumentList): Deleted.
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::langArgumentList):
+        (WebCore::CSSSelector::langArgumentParsedFromStringFlagList):
+        (WebCore::CSSSelector::argumentList): Deleted.
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOne):
+
 2015-01-15  Brent Fulgham  <bfulgham@apple.com>
 
         Layers need to be already updated before we call adjustViewSize

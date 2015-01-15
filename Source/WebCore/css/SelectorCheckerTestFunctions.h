@@ -146,7 +146,7 @@ inline bool containslanguageSubtagMatchingRange(const Vector<String>& languageSu
     return false;
 }
 
-inline bool matchesLangPseudoClass(const Element* element, const Vector<AtomicString>& ranges)
+inline bool matchesLangPseudoClass(const Element* element, const Vector<LanguageArgument>& argumentList)
 {
     ASSERT(element);
 
@@ -161,14 +161,15 @@ inline bool matchesLangPseudoClass(const Element* element, const Vector<AtomicSt
     if (language.isEmpty())
         return false;
 
-    // Implement basic and extended filterings of given language tags 
+    // Implement basic and extended filterings of given language tags
     // as specified in www.ietf.org/rfc/rfc4647.txt.
     Vector<String> rangeSubtags;
     Vector<String> languageSubtags;
 
     language.string().split('-', true, languageSubtags);
 
-    for (const AtomicString& range : ranges) {
+    for (const LanguageArgument& argument : argumentList) {
+        const AtomicString& range = argument.languageRange;
         if (range.isEmpty())
             continue;
 

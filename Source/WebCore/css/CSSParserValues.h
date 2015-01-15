@@ -75,6 +75,11 @@ struct CSSParserString {
     unsigned length() const { return m_length; }
     void setLength(unsigned length) { m_length = length; }
 
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+    TokenType tokenType() const { return m_tokenType; }
+    void setTokenType(TokenType tokenType) { m_tokenType = tokenType; }
+#endif
+
     void lower();
 
     UChar operator[](unsigned i) const
@@ -101,6 +106,9 @@ struct CSSParserString {
     } m_data;
     unsigned m_length;
     bool m_is8Bit;
+#if ENABLE(CSS_SELECTORS_LEVEL4)
+    TokenType m_tokenType;
+#endif
 };
 
 struct CSSParserFunction;
@@ -202,7 +210,7 @@ public:
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
 #if ENABLE(CSS_SELECTORS_LEVEL4)
-    void setArgumentList(Vector<CSSParserString>& stringVector);
+    void setLangArgumentList(const Vector<CSSParserString>& stringVector);
 #endif
 
     void setPseudoClassValue(const CSSParserString& pseudoClassString);

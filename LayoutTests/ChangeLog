@@ -1,3 +1,13 @@
+2015-01-15  Dhi Aurrahman  <diorahman@rockybars.com>
+
+        Canonicalization of :lang() should preserve the :lang()'s arguments representations
+        https://bugs.webkit.org/show_bug.cgi?id=139928
+
+        Reviewed by Benjamin Poulain.
+
+        * fast/css/css-lang-selector-with-string-arguments-text-expected.txt: Updated.
+        * fast/css/css-lang-selector-with-string-arguments-text.html: Updated.
+
 2015-01-14  Alexey Proskuryakov  <ap@apple.com>
 
         Web Inspector and regular console use different source code locations for messages
