@@ -92,7 +92,7 @@ public:
     Ref<StorageArea> getOrCreateStorageArea(RefPtr<SecurityOrigin>&&);
     void didDestroyStorageArea(StorageArea*);
 
-    void clearStorageAreasMatchingOrigin(SecurityOrigin*);
+    void clearStorageAreasMatchingOrigin(const SecurityOrigin&);
     void clearAllStorageAreas();
 
 private:
@@ -340,11 +340,11 @@ void StorageManager::LocalStorageNamespace::didDestroyStorageArea(StorageArea* s
     m_storageManager->m_localStorageNamespaces.remove(m_storageNamespaceID);
 }
 
-void StorageManager::LocalStorageNamespace::clearStorageAreasMatchingOrigin(SecurityOrigin* securityOrigin)
+void StorageManager::LocalStorageNamespace::clearStorageAreasMatchingOrigin(const SecurityOrigin& securityOrigin)
 {
-    for (auto it = m_storageAreaMap.begin(), end = m_storageAreaMap.end(); it != end; ++it) {
-        if (it->key->equal(securityOrigin))
-            it->value->clear();
+    for (const auto& originAndStorageArea : m_storageAreaMap) {
+        if (originAndStorageArea.key->equal(&securityOrigin))
+            originAndStorageArea.value->clear();
     }
 }
 
@@ -546,7 +546,7 @@ void StorageManager::deleteEntriesForOrigin(const SecurityOrigin& securityOrigin
     RefPtr<SecurityOrigin> copiedOrigin = securityOrigin.isolatedCopy();
     m_queue->dispatch([storageManager, copiedOrigin] {
         for (auto& localStorageNamespace : storageManager->m_localStorageNamespaces.values())
-            localStorageNamespace->clearStorageAreasMatchingOrigin(copiedOrigin.get());
+            localStorageNamespace->clearStorageAreasMatchingOrigin(*copiedOrigin);
 
         for (auto& transientLocalStorageNamespace : storageManager->m_transientLocalStorageNamespaces.values())
             transientLocalStorageNamespace->clearStorageAreasMatchingOrigin(*copiedOrigin);
@@ -570,7 +570,7 @@ void StorageManager::deleteAllEntries()
     });
 }
 
-void StorageManager::deleteLocalStorageOriginsModifiedSince(time_t time, std::function<void ()> completionHandler)
+void StorageManager::deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point time, std::function<void ()> completionHandler)
 {
     RefPtr<StorageManager> storageManager(this);
 

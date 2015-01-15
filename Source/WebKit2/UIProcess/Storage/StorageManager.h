@@ -64,7 +64,7 @@ public:
     void deleteEntriesForOrigin(const WebCore::SecurityOrigin&);
     void deleteAllEntries();
 
-    void deleteLocalStorageOriginsModifiedSince(time_t, std::function<void ()> completionHandler);
+    void deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point, std::function<void ()> completionHandler);
 
 private:
     explicit StorageManager(const String& localStorageDirectory);

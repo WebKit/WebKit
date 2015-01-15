@@ -1,5 +1,44 @@
 2015-01-15  Anders Carlsson  <andersca@apple.com>
 
+        Clearing the website data store should clear local storage
+        https://bugs.webkit.org/show_bug.cgi?id=140507
+
+        Reviewed by Andreas Kling.
+
+        * Shared/WebsiteData/WebsiteDataTypes.h:
+        Add WebsiteDataTypeLocalStorage.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.h:
+        Add WKWebsiteDataTypeLocalStorage
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStore.mm:
+        (toWebsiteDataTypes):
+        Handle WKWebsiteDataTypeLocalStorage.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::fileModificationTime):
+        Use an early return.
+
+        (WebKit::LocalStorageDatabaseTracker::deleteDatabasesModifiedSince):
+        Change this to take an std::chrono::system_clock::time_point and don't
+        try to modifiy m_origins while iterating it.
+
+        * UIProcess/Storage/LocalStorageDatabaseTracker.h:
+        Update declarations.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::deleteLocalStorageOriginsModifiedSince):
+        Change this to take an std::chrono::system_clock::time_point.
+
+        * UIProcess/Storage/StorageManager.h:
+        Update declarations.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        Remove data from the storage manager as well.
+
+2015-01-15  Anders Carlsson  <andersca@apple.com>
+
         Give WebsiteDataStore a StorageManager
         https://bugs.webkit.org/show_bug.cgi?id=140505
 

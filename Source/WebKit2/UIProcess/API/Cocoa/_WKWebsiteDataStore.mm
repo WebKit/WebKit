@@ -62,6 +62,8 @@ static WebKit::WebsiteDataTypes toWebsiteDataTypes(WKWebsiteDataTypes wkWebsiteD
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeCookies;
     if (wkWebsiteDataTypes & WKWebsiteDataTypeDiskCache)
         websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeDiskCache;
+    if (wkWebsiteDataTypes & WKWebsiteDataTypeLocalStorage)
+        websiteDataTypes |= WebsiteDataTypes::WebsiteDataTypeLocalStorage;
 
     return static_cast<WebsiteDataTypes>(websiteDataTypes);
 }

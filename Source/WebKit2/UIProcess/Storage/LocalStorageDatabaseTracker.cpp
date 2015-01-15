@@ -134,12 +134,15 @@ static Optional<time_t> fileCreationTime(const String& filePath)
 static Optional<time_t> fileModificationTime(const String& filePath)
 {
     time_t time;
-    return getFileModificationTime(filePath, time) ? time : Optional<time_t>(Nullopt);
+    if (!getFileModificationTime(filePath, time))
+        return Nullopt;
+
+    return time;
 }
 
-Vector<RefPtr<SecurityOrigin>> LocalStorageDatabaseTracker::deleteDatabasesModifiedSince(time_t time)
+Vector<Ref<SecurityOrigin>> LocalStorageDatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::time_point time)
 {
-    Vector<RefPtr<SecurityOrigin>> deletedDatabaseOrigins;
+    Vector<String> originIdentifiersToDelete;
 
     for (const String& origin : m_origins) {
         String filePath = pathForDatabaseWithOriginIdentifier(origin);
@@ -148,11 +151,17 @@ Vector<RefPtr<SecurityOrigin>> LocalStorageDatabaseTracker::deleteDatabasesModif
         if (!modificationTime)
             continue;
 
-        if (modificationTime.value() >= time) {
-            removeDatabaseWithOriginIdentifier(origin);
+        if (modificationTime.value() >= std::chrono::system_clock::to_time_t(time))
+            originIdentifiersToDelete.append(origin);
+    }
 
-            deletedDatabaseOrigins.append(SecurityOrigin::createFromDatabaseIdentifier(origin));
-        }
+    Vector<Ref<SecurityOrigin>> deletedDatabaseOrigins;
+    deletedDatabaseOrigins.reserveInitialCapacity(originIdentifiersToDelete.size());
+
+    for (const auto& originIdentifier : originIdentifiersToDelete) {
+        removeDatabaseWithOriginIdentifier(originIdentifier);
+
+        deletedDatabaseOrigins.uncheckedAppend(SecurityOrigin::createFromDatabaseIdentifier(originIdentifier));
     }
 
     return deletedDatabaseOrigins;

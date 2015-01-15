@@ -173,6 +173,14 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
         }
     }
 
+    if (dataTypes & WebsiteDataTypeLocalStorage && m_storageManager) {
+        callbackAggregator->addPendingCallback();
+
+        m_storageManager->deleteLocalStorageOriginsModifiedSince(modifiedSince, [callbackAggregator] {
+            callbackAggregator->removePendingCallback();
+        });
+    }
+
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
 }
