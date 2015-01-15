@@ -465,6 +465,8 @@ public:
 
     MediaControlsHost* mediaControlsHost() { return m_mediaControlsHost.get(); }
 
+    bool isDisablingSleep() const { return m_sleepDisabler.get(); }
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
     virtual ~HTMLMediaElement();

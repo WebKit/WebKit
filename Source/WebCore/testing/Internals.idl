@@ -307,6 +307,7 @@ enum PageOverlayType {
     
     [Conditional=VIDEO] void simulateSystemSleep();
     [Conditional=VIDEO] void simulateSystemWake();
+    [Conditional=VIDEO] boolean elementIsBlockingDisplaySleep(Element element);
 
     [RaisesException] void installMockPageOverlay(PageOverlayType type);
     [RaisesException] DOMString pageOverlayLayerTreeAsText();

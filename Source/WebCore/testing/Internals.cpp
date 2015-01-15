@@ -59,6 +59,7 @@
 #include "HTMLPlugInElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
+#include "HTMLVideoElement.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "InspectorClient.h"
@@ -2432,6 +2433,12 @@ void Internals::simulateSystemWake() const
 #if ENABLE(VIDEO)
     MediaSessionManager::sharedManager().systemDidWake();
 #endif
+}
+
+bool Internals::elementIsBlockingDisplaySleep(Element* element) const
+{
+    HTMLMediaElement* mediaElement = downcast<HTMLMediaElement>(element);
+    return mediaElement ? mediaElement->isDisablingSleep() : false;
 }
 
 void Internals::installMockPageOverlay(const String& overlayType, ExceptionCode& ec)

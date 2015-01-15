@@ -351,6 +351,7 @@ public:
 
     void simulateSystemSleep() const;
     void simulateSystemWake() const;
+    bool elementIsBlockingDisplaySleep(Element*) const;
 
     void installMockPageOverlay(const String& overlayType, ExceptionCode&);
     String pageOverlayLayerTreeAsText(ExceptionCode&) const;

@@ -1,3 +1,31 @@
+2015-01-14  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][MSE] Stalled YouTube playback does not allow display to sleep.
+        https://bugs.webkit.org/show_bug.cgi?id=140468
+        rdar://problem/19171162
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-stalled-holds-sleep-assertion.html
+
+        The unstated convention of MediaPlayerPrivate::paused() is that implementations should 
+        return 'true' if the playback rate is 0. However, MediaPlayerPrivateMediaSourceAVFObjC
+        was returning 'false' if it was supposed to be playing, regardless of the actual rate.
+        This caused a check in HTMLMediaElement of whether to release the sleep assertion token
+        to fail, thinking the media engine was still playing.
+
+        Add some testing infrastructure to allow us to test whether the media element is disabling
+        display sleep from within layout tests.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::isDisablingSleep):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::paused):
+        * testing/Internals.cpp:
+        (WebCore::Internals::elementIsBlockingDisplaySleep):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2015-01-14  Zalan Bujtas  <zalan@apple.com>
 
         Move LayoutFragment and ClipRect to their own files.

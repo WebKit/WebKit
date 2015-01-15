@@ -337,7 +337,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal()
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::paused() const
 {
-    return !m_playing;
+    return ![m_synchronizer rate];
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVolume(float volume)

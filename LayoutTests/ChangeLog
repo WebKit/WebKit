@@ -1,3 +1,29 @@
+2015-01-14  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][MSE] Stalled YouTube playback does not allow display to sleep.
+        https://bugs.webkit.org/show_bug.cgi?id=140468
+        rdar://problem/19171162
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/content/test-fragmented-manifest.json: Added.
+        * media/media-source/content/test-fragmented.mp4: Added.
+        * media/media-source/media-source-loader.js: Added.
+        (MediaSourceLoader):
+        (MediaSourceLoader.prototype.loadManifest):
+        (MediaSourceLoader.prototype.loadManifestSucceeded):
+        (MediaSourceLoader.prototype.loadManifestFailed):
+        (MediaSourceLoader.prototype.loadMediaData):
+        (MediaSourceLoader.prototype.loadMediaDataSucceeded):
+        (MediaSourceLoader.prototype.loadMediaDataFailed):
+        (MediaSourceLoader.prototype.type):
+        (MediaSourceLoader.prototype.duration):
+        (MediaSourceLoader.prototype.initSegment):
+        (MediaSourceLoader.prototype.mediaSegmentsLength):
+        (MediaSourceLoader.prototype.mediaSegment):
+        * media/media-source/media-source-stalled-holds-sleep-assertion-expected.txt: Added.
+        * media/media-source/media-source-stalled-holds-sleep-assertion.html: Added.
+
 2015-01-14  Andrzej Badowski  <a.badowski@samsung.com>
 
         [EFL] Change expectations for two layout tests.
