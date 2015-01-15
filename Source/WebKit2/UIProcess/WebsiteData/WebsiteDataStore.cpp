@@ -70,21 +70,6 @@ WebsiteDataStore::WebsiteDataStore(WebCore::SessionID sessionID)
 
 WebsiteDataStore::~WebsiteDataStore()
 {
-    ASSERT(m_webPages.isEmpty());
-}
-
-void WebsiteDataStore::addWebPage(WebPageProxy& webPageProxy)
-{
-    ASSERT(!m_webPages.contains(&webPageProxy));
-
-    m_webPages.add(&webPageProxy);
-}
-
-void WebsiteDataStore::removeWebPage(WebPageProxy& webPageProxy)
-{
-    ASSERT(m_webPages.contains(&webPageProxy));
-
-    m_webPages.remove(&webPageProxy);
 }
 
 enum class ProcessAccessType {
@@ -146,8 +131,8 @@ void WebsiteDataStore::removeData(WebsiteDataTypes dataTypes, std::chrono::syste
     auto networkProcessAccessType = computeNetworkProcessAccessType(dataTypes, isNonPersistent());
     if (networkProcessAccessType != ProcessAccessType::None) {
         HashSet<WebProcessPool*> processPools;
-        for (auto& webPage : m_webPages)
-            processPools.add(&webPage->process().processPool());
+        for (auto& process : processes())
+            processPools.add(&process->processPool());
 
         for (auto& processPool : processPools) {
             switch (networkProcessAccessType) {

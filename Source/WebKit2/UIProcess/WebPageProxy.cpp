@@ -381,8 +381,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_isPlayingAudio(false)
 {
     m_webProcessLifetimeTracker.addObserver(m_visitedLinkProvider);
-
-    m_websiteDataStore->addWebPage(*this);
+    m_webProcessLifetimeTracker.addObserver(m_websiteDataStore);
 
     if (m_process->state() == WebProcessProxy::State::Running) {
         if (m_userContentController)
@@ -716,8 +715,6 @@ void WebPageProxy::close()
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
     m_process->processPool().storageManager().destroySessionStorageNamespace(m_pageID);
     m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this);
-
-    m_websiteDataStore->removeWebPage(*this);
 }
 
 bool WebPageProxy::tryClose()

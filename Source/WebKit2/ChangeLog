@@ -1,3 +1,19 @@
+2015-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Make WebsiteDataStore a WebProcessLifetimeObserver
+        https://bugs.webkit.org/show_bug.cgi?id=140472
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::addWebPage): Deleted.
+        (WebKit::WebsiteDataStore::removeWebPage): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2015-01-14  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Add private API to toggle diagnostic logging setting

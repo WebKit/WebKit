@@ -26,6 +26,7 @@
 #ifndef WebsiteDataStore_h
 #define WebsiteDataStore_h
 
+#include "WebProcessLifetimeObserver.h"
 #include "WebsiteDataTypes.h"
 #include <WebCore/SessionID.h>
 #include <functional>
@@ -37,16 +38,13 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebsiteDataStore : public RefCounted<WebsiteDataStore> {
+class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver {
 public:
     struct Configuration {
     };
     static RefPtr<WebsiteDataStore> createNonPersistent();
     static RefPtr<WebsiteDataStore> create(Configuration);
     virtual ~WebsiteDataStore();
-
-    void addWebPage(WebPageProxy&);
-    void removeWebPage(WebPageProxy&);
 
     uint64_t identifier() const { return m_identifier; }
 
@@ -59,7 +57,6 @@ private:
     explicit WebsiteDataStore(WebCore::SessionID);
     explicit WebsiteDataStore(Configuration);
 
-    HashSet<WebPageProxy*> m_webPages;
     uint64_t m_identifier;
     WebCore::SessionID m_sessionID;
 };
