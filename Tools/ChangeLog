@@ -1,3 +1,21 @@
+2015-01-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Stop hardcoding mac-mountainlion in commit queue
+        https://bugs.webkit.org/show_bug.cgi?id=140492
+
+        Reviewed by Anders Carlsson.
+
+        Use "mac", not "mac-<platform>". This matches how EWS queues are initialized, and
+        there should be no change in behavior, because:
+        1. PatchProcessingQueue converts the name with _new_port_name_from_old() before
+        using it to create a port object.
+        2. Although it doesn't convert the name before using DeprecatedPort.port(), it
+        is actually correct to use "mac" for the name there. We only used to get the expected
+        behavior with "mac-mountainlion" accidentally, because of a fallback to "mac"
+        for unknown deprecated port names.
+
+        * Scripts/webkitpy/tool/commands/queues.py: (CommitQueue):
+
 2015-01-14  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Create iOS-EWS server queue

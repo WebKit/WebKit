@@ -303,7 +303,7 @@ class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTas
         PatchProcessingQueue.__init__(self)
 
     name = "commit-queue"
-    port_name = "mac-mountainlion"
+    port_name = "mac"
 
     # AbstractPatchQueue methods
 
