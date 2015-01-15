@@ -1,3 +1,19 @@
+2015-01-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Build gtk-doc without gtkdoc-mktmpl
+        https://bugs.webkit.org/show_bug.cgi?id=140225
+
+        Reviewed by Darin Adler.
+
+        Stop calling gtkdoc-mktmpl. It's being removed upstream, and since we
+        don't modify the tmpl files that it generates, it's not doing anything
+        for us.
+
+        * gtk/gtkdoc.py:
+        (GTKDoc.generate):
+        (GTKDoc._run_gtkdoc_scangobj):
+        (GTKDoc._run_gtkdoc_mktmpl): Deleted.
+
 2014-12-09  Alberto Garcia  <berto@igalia.com>
 
         convertToUTF8String converts null string to empty string
