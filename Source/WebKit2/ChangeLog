@@ -1,5 +1,20 @@
 2015-01-16  Anders Carlsson  <andersca@apple.com>
 
+        Don't try to send SetSession messages before the web page has been constructed in the web process
+        https://bugs.webkit.org/show_bug.cgi?id=140558
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        We already send the session ID along in the page creation parameters so just message the network process
+        if we need to create an ephemeral session.
+
+        (WebKit::WebPageProxy::setSessionID):
+        Add an isValid call for good measure.
+
+2015-01-16  Anders Carlsson  <andersca@apple.com>
+
         Log unhandled messages in the web process
         https://bugs.webkit.org/show_bug.cgi?id=140549
 
