@@ -30,7 +30,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 
-#if ENABLE(ENCRYPTED_MEDIA_V2) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
+#if ENABLE(ENCRYPTED_MEDIA_V2) && HAVE(AVFOUNDATION_LOADER_DELEGATE)
 
 typedef struct OpaqueAVCFAssetResourceLoadingRequest* AVCFAssetResourceLoadingRequestRef;
 
