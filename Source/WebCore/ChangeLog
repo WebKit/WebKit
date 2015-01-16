@@ -1,5 +1,20 @@
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r174710. rdar://problem/19451946
+
+    2014-10-14  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Unreviewed build fix after r174698 and r174709.
+
+            * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+            * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.h:
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundationCF::supportsKeySystem):
+            (WebCore::AVFWrapper::shouldWaitForLoadingOfResource):
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+
+2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174709. rdar://problem/19451946
 
     2014-10-14  Brent Fulgham  <bfulgham@apple.com>
