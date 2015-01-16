@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container"></style>
+</head>
+<body>
+    <container id="container1">
+        <container id="container2">
+            <target id="target1"></target>
+        </container>
+        <container id="container3">
+            <target id="target2"></target>
+        </container>
+    </container>
+</body>
+<script>
+description('Test using the descendant combinator with the double-child syntax "&gt;&gt;" in querySelector.');
+
+shouldBe('document.querySelectorAll("body >> target").length', '2');
+shouldBeEqualToString('document.querySelectorAll("body >> target")[0].id', 'target1');
+shouldBeEqualToString('document.querySelectorAll("body >> target")[1].id', 'target2');
+
+shouldBe('document.querySelectorAll("target >> container").length', '0');
+
+shouldBe('document.querySelectorAll("container >> target").length', '2');
+shouldBeEqualToString('document.querySelectorAll("container >> target")[0].id', 'target1');
+shouldBeEqualToString('document.querySelectorAll("container >> target")[1].id', 'target2');
+
+shouldBe('document.querySelectorAll("container >> container").length', '2');
+shouldBeEqualToString('document.querySelectorAll("container >> container")[0].id', 'container2');
+shouldBeEqualToString('document.querySelectorAll("container >> container")[1].id', 'container3');
+
+shouldBe('document.querySelectorAll("body >> container").length', '3');
+shouldBeEqualToString('document.querySelectorAll("body >> container")[0].id', 'container1');
+shouldBeEqualToString('document.querySelectorAll("body >> container")[1].id', 'container2');
+shouldBeEqualToString('document.querySelectorAll("body >> container")[2].id', 'container3');
+
+shouldBe('document.querySelectorAll("container >> *").length', '4');
+shouldBeEqualToString('document.querySelectorAll("container >> *")[0].id', 'container2');
+shouldBeEqualToString('document.querySelectorAll("container >> *")[1].id', 'target1');
+shouldBeEqualToString('document.querySelectorAll("container >> *")[2].id', 'container3');
+shouldBeEqualToString('document.querySelectorAll("container >> *")[3].id', 'target2');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

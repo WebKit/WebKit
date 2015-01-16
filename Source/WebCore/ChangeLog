@@ -1,3 +1,33 @@
+2015-01-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add the alternative syntax for CSS Selector's descendant combinator (">>")
+        https://bugs.webkit.org/show_bug.cgi?id=140525
+
+        Reviewed by Antti Koivisto.
+
+        The latest Selector spec introduces the combinator ">>" as an alias for the descendant
+        relation: http://dev.w3.org/csswg/selectors-4/#descendant-combinators
+
+        This patch implements that combinator as an alias of the existing one. For CSSOM's selector
+        serialization, I use one bit of CSSSelector to store if that alternative syntax was used.
+
+        Tests: fast/css/descendant-combinator-doubled-child-syntax-styling.html
+               fast/css/parsing-css-descendant-combinator-doubled-child-syntax.html
+               fast/selectors/element-closest-descendant-combinator-doubled-child-syntax.html
+               fast/selectors/element-matches-descendant-combinator-doubled-child-syntax.html
+               fast/selectors/querySelector-descendant-combinator-doubled-child-syntax.html
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::appendTagHistory):
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserSelector::setDescendantUseDoubleChildSyntax):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::setDescendantUseDoubleChildSyntax):
+        (WebCore::CSSSelector::CSSSelector):
+
 2015-01-16  Chris Dumez  <cdumez@apple.com>
 
         Generate StylePropertyShorthand.* from CSSPropertyNames.in

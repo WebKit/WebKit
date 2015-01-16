@@ -35,6 +35,7 @@ PASS setThenReadSelectorText('[n|a]') is '[n|a]'
 
 PASS setThenReadSelectorText('a:active') is 'a:active'
 PASS setThenReadSelectorText('a b') is 'a b'
+PASS setThenReadSelectorText('a >> b') is 'a >> b'
 PASS setThenReadSelectorText('a + b') is 'a + b'
 PASS setThenReadSelectorText('a ~ b') is 'a ~ b'
 PASS setThenReadSelectorText('a > b') is 'a > b'
@@ -215,6 +216,12 @@ PASS setThenReadSelectorText('|a') is 'a'
 
 PASS setThenReadSelectorText('input[type=file]:focus') is 'input[type="file"]:focus'
 
+FAIL setThenReadSelectorText('a>>b { }') should be a >> b { }. Was _foo.
+FAIL setThenReadSelectorText('a >>b { }') should be a >> b { }. Was _foo.
+FAIL setThenReadSelectorText('a        >>b { }') should be a >> b { }. Was _foo.
+FAIL setThenReadSelectorText('a>> b { }') should be a >> b { }. Was _foo.
+FAIL setThenReadSelectorText('a>>       b { }') should be a >> b { }. Was _foo.
+FAIL setThenReadSelectorText('a        >>       b { }') should be a >> b { }. Was _foo.
 PASS setThenReadSelectorText('a+b') is 'a + b'
 PASS setThenReadSelectorText('a~b') is 'a ~ b'
 PASS setThenReadSelectorText('a>b') is 'a > b'

@@ -71,6 +71,7 @@ debug('');
 
 testSelectorRoundTrip('a:active');
 testSelectorRoundTrip('a b');
+testSelectorRoundTrip('a >> b');
 testSelectorRoundTrip('a + b');
 testSelectorRoundTrip('a ~ b');
 testSelectorRoundTrip('a > b');
@@ -288,6 +289,12 @@ shouldBe("setThenReadSelectorText('input[type=file]:focus')", "'input[type=\"fil
 
 debug('');
 
+shouldBe("setThenReadSelectorText('a>>b { }')", "'a >> b { }'");
+shouldBe("setThenReadSelectorText('a >>b { }')", "'a >> b { }'");
+shouldBe("setThenReadSelectorText('a        >>b { }')", "'a >> b { }'");
+shouldBe("setThenReadSelectorText('a>> b { }')", "'a >> b { }'");
+shouldBe("setThenReadSelectorText('a>>       b { }')", "'a >> b { }'");
+shouldBe("setThenReadSelectorText('a        >>       b { }')", "'a >> b { }'");
 shouldBe("setThenReadSelectorText('a+b')", "'a + b'");
 shouldBe("setThenReadSelectorText('a~b')", "'a ~ b'");
 shouldBe("setThenReadSelectorText('a>b')", "'a > b'");

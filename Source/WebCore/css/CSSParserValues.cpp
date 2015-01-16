@@ -318,7 +318,40 @@ void CSSParserSelector::appendTagHistory(CSSSelector::Relation relation, std::un
     CSSParserSelector* end = this;
     while (end->tagHistory())
         end = end->tagHistory();
+
     end->setRelation(relation);
+    end->setTagHistory(WTF::move(selector));
+}
+
+void CSSParserSelector::appendTagHistory(CSSParserSelectorCombinator relation, std::unique_ptr<CSSParserSelector> selector)
+{
+    CSSParserSelector* end = this;
+    while (end->tagHistory())
+        end = end->tagHistory();
+
+    CSSSelector::Relation selectorRelation;
+    switch (relation) {
+    case CSSParserSelectorCombinator::Child:
+        selectorRelation = CSSSelector::Child;
+        break;
+    case CSSParserSelectorCombinator::DescendantSpace:
+        selectorRelation = CSSSelector::Descendant;
+        break;
+    case CSSParserSelectorCombinator::DescendantDoubleChild:
+        selectorRelation = CSSSelector::Descendant;
+        break;
+    case CSSParserSelectorCombinator::DirectAdjacent:
+        selectorRelation = CSSSelector::DirectAdjacent;
+        break;
+    case CSSParserSelectorCombinator::IndirectAdjacent:
+        selectorRelation = CSSSelector::IndirectAdjacent;
+        break;
+    }
+    end->setRelation(selectorRelation);
+
+    if (relation == CSSParserSelectorCombinator::DescendantDoubleChild)
+        end->setDescendantUseDoubleChildSyntax();
+
     end->setTagHistory(WTF::move(selector));
 }
 

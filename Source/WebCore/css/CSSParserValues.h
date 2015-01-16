@@ -178,6 +178,14 @@ public:
     std::unique_ptr<CSSParserValueList> args;
 };
 
+enum class CSSParserSelectorCombinator {
+    Child,
+    DescendantSpace,
+    DescendantDoubleChild,
+    DirectAdjacent,
+    IndirectAdjacent
+};
+
 class CSSParserSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -226,9 +234,12 @@ public:
     void clearTagHistory() { m_tagHistory.reset(); }
     void insertTagHistory(CSSSelector::Relation before, std::unique_ptr<CSSParserSelector>, CSSSelector::Relation after);
     void appendTagHistory(CSSSelector::Relation, std::unique_ptr<CSSParserSelector>);
+    void appendTagHistory(CSSParserSelectorCombinator, std::unique_ptr<CSSParserSelector>);
     void prependTagSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
 
 private:
+    void setDescendantUseDoubleChildSyntax() { m_selector->setDescendantUseDoubleChildSyntax(); }
+
     std::unique_ptr<CSSSelector> m_selector;
     std::unique_ptr<CSSParserSelector> m_tagHistory;
 };

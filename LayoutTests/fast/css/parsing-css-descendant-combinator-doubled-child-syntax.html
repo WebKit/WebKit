@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container"></style>
+</head>
+<body>
+</body>
+<script>
+description('Test the parsing of the descendant combinator with the double-child syntax ">>" for querySelector and style.');
+
+function testValidSelector(selectorString, expectedSerializedSelector) {
+    shouldNotThrow('document.querySelector("' + selectorString.replace(/\\/g, '\\\\') + '")');
+
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = selectorString + ' { }';
+    shouldBe("document.getElementById('style-container').sheet.cssRules.length", "1");
+    if (!expectedSerializedSelector)
+        expectedSerializedSelector = selectorString;
+    shouldBeEqualToString("document.getElementById('style-container').sheet.cssRules[0].selectorText", expectedSerializedSelector);
+    styleContainer.innerHTML = '';
+}
+
+function testInvalidSelector(selectorString) {
+    shouldThrow('document.querySelector("' + selectorString + '")', '"Error: SyntaxError: DOM Exception 12"');
+
+    var styleContainer = document.getElementById('style-container');
+    styleContainer.innerHTML = selectorString + ' { }';
+    shouldBe("document.getElementById('style-container').sheet.cssRules.length", "0");
+    styleContainer.innerHTML = '';
+}
+
+var simpleValidSelectors = [
+    "ul >> li",
+    "div >> ul >> li",
+    "div >> ul li",
+    "div ul >> li",
+    "div ul >> li + li",
+    "div ul >> li ~ li",
+    "div > ul >> li ~ li"
+];
+
+debug("Valid selectors.");
+for (var selectorString of simpleValidSelectors) {
+    // The basics: every combinator.
+    testValidSelector(selectorString);
+
+    // Used in function pseudo classes.
+    testValidSelector(":nth-child(2n+1 of " + selectorString + ")");
+    testValidSelector(":nth-last-child(2n+1 of " + selectorString + ")");
+    testValidSelector(":matches(foo, " + selectorString + ", bar)");
+    testValidSelector(":not(" + selectorString + ")");
+}
+
+var simpleValidSelectors = [
+    ["ul >> li", "ul >> li"],
+
+    // Tab spacing.
+    ["ul\t>> li", "ul >> li"],
+    ["ul >>\tli", "ul >> li"],
+    ["ul\t>>\tli", "ul >> li"],
+
+    // Form feed.
+    ["ul\u000c>> li", "ul >> li"],
+    ["ul >>\u000cli", "ul >> li"],
+    ["ul\u000c>>\u000cli", "ul >> li"],
+
+    // Extra spacings.
+    ["ul    >> li", "ul >> li"],
+    ["ul >>    li", "ul >> li"],
+    ["ul    >>    li", "ul >> li"],
+
+];
+
+debug("Serialization selectors.");
+
+for (var testCase of simpleValidSelectors) {
+    testValidSelector(testCase[0], testCase[1]);
+}
+
+
+var invalidSelectors = [
+    "ul > > li",
+    "ul >\t> li",
+    "ul >+> li",
+    "ul >~> li",
+    "ul >>> li",
+    "ul >>() li",
+];
+
+debug("Invalid selectors.");
+for (var selectorString of invalidSelectors) {
+    testInvalidSelector(selectorString);
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

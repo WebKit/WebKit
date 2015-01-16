@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container"></style>
+</head>
+<body>
+    <container id="container1">
+        <container id="container2">
+            <target id="target1"></target>
+        </container>
+        <container id="container3">
+            <target id="target2"></target>
+        </container>
+    </container>
+</body>
+<script>
+description('Test using the descendant combinator with the double-child syntax "&gt;&gt;" in Element.matches().');
+
+shouldBeTrue('document.getElementById("target1").matches("body >> target")');
+shouldBeTrue('document.getElementById("target2").matches("body >> target")');
+
+shouldBeFalse('document.getElementById("target1").matches("target >> container")');
+shouldBeFalse('document.getElementById("target2").matches("target >> container")');
+shouldBeFalse('document.getElementById("container1").matches("target >> container")');
+shouldBeFalse('document.getElementById("container2").matches("target >> container")');
+shouldBeFalse('document.getElementById("container3").matches("target >> container")');
+
+shouldBeTrue('document.getElementById("target1").matches("container >> target")');
+shouldBeTrue('document.getElementById("target2").matches("container >> target")');
+shouldBeFalse('document.getElementById("container1").matches("container >> target")');
+shouldBeFalse('document.getElementById("container2").matches("container >> target")');
+shouldBeFalse('document.getElementById("container3").matches("container >> target")');
+
+shouldBeFalse('document.getElementById("target1").matches("container >> container")');
+shouldBeFalse('document.getElementById("target2").matches("container >> container")');
+shouldBeFalse('document.getElementById("container1").matches("container >> container")');
+shouldBeTrue('document.getElementById("container2").matches("container >> container")');
+shouldBeTrue('document.getElementById("container3").matches("container >> container")');
+
+shouldBeFalse('document.getElementById("target1").matches("body >> container")');
+shouldBeFalse('document.getElementById("target2").matches("body >> container")');
+shouldBeTrue('document.getElementById("container1").matches("body >> container")');
+shouldBeTrue('document.getElementById("container2").matches("body >> container")');
+shouldBeTrue('document.getElementById("container3").matches("body >> container")');
+
+shouldBeTrue('document.getElementById("target1").matches("container >> *")');
+shouldBeTrue('document.getElementById("target2").matches("container >> *")');
+shouldBeFalse('document.getElementById("container1").matches("container >> *")');
+shouldBeTrue('document.getElementById("container2").matches("container >> *")');
+shouldBeTrue('document.getElementById("container3").matches("container >> *")');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

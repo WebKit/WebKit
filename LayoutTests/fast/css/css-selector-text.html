@@ -54,6 +54,7 @@ debug('');
 
 testSelectorRoundTrip('a:active');
 testSelectorRoundTrip('a b');
+testSelectorRoundTrip('a >> b');
 testSelectorRoundTrip('a + b');
 testSelectorRoundTrip('a ~ b');
 testSelectorRoundTrip('a > b');
@@ -292,6 +293,12 @@ shouldBe("parseThenSerializeRule('input[type=file]:focus { }')", "'input[type=\"
 
 debug('');
 
+shouldBe("parseThenSerializeRule('a>>b { }')", "'a >> b { }'");
+shouldBe("parseThenSerializeRule('a >>b { }')", "'a >> b { }'");
+shouldBe("parseThenSerializeRule('a        >>b { }')", "'a >> b { }'");
+shouldBe("parseThenSerializeRule('a>> b { }')", "'a >> b { }'");
+shouldBe("parseThenSerializeRule('a>>       b { }')", "'a >> b { }'");
+shouldBe("parseThenSerializeRule('a        >>       b { }')", "'a >> b { }'");
 shouldBe("parseThenSerializeRule('a+b { }')", "'a + b { }'");
 shouldBe("parseThenSerializeRule('a~b { }')", "'a ~ b { }'");
 shouldBe("parseThenSerializeRule('a>b { }')", "'a > b { }'");

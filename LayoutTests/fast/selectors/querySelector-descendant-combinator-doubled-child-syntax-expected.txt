@@ -1,0 +1,28 @@
+Test using the descendant combinator with the double-child syntax ">>" in querySelector.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("body >> target").length is 2
+PASS document.querySelectorAll("body >> target")[0].id is "target1"
+PASS document.querySelectorAll("body >> target")[1].id is "target2"
+PASS document.querySelectorAll("target >> container").length is 0
+PASS document.querySelectorAll("container >> target").length is 2
+PASS document.querySelectorAll("container >> target")[0].id is "target1"
+PASS document.querySelectorAll("container >> target")[1].id is "target2"
+PASS document.querySelectorAll("container >> container").length is 2
+PASS document.querySelectorAll("container >> container")[0].id is "container2"
+PASS document.querySelectorAll("container >> container")[1].id is "container3"
+PASS document.querySelectorAll("body >> container").length is 3
+PASS document.querySelectorAll("body >> container")[0].id is "container1"
+PASS document.querySelectorAll("body >> container")[1].id is "container2"
+PASS document.querySelectorAll("body >> container")[2].id is "container3"
+PASS document.querySelectorAll("container >> *").length is 4
+PASS document.querySelectorAll("container >> *")[0].id is "container2"
+PASS document.querySelectorAll("container >> *")[1].id is "target1"
+PASS document.querySelectorAll("container >> *")[2].id is "container3"
+PASS document.querySelectorAll("container >> *")[3].id is "target2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,159 @@
+Test the parsing of the descendant combinator with the double-child syntax ">>" for querySelector and style.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Valid selectors.
+PASS document.querySelector("ul >> li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+PASS document.querySelector(":nth-child(2n+1 of ul >> li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of ul >> li)"
+PASS document.querySelector(":nth-last-child(2n+1 of ul >> li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of ul >> li)"
+PASS document.querySelector(":matches(foo, ul >> li, bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, ul >> li, bar)"
+PASS document.querySelector(":not(ul >> li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(ul >> li)"
+PASS document.querySelector("div >> ul >> li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div >> ul >> li"
+PASS document.querySelector(":nth-child(2n+1 of div >> ul >> li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div >> ul >> li)"
+PASS document.querySelector(":nth-last-child(2n+1 of div >> ul >> li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div >> ul >> li)"
+PASS document.querySelector(":matches(foo, div >> ul >> li, bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div >> ul >> li, bar)"
+PASS document.querySelector(":not(div >> ul >> li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div >> ul >> li)"
+PASS document.querySelector("div >> ul li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div >> ul li"
+PASS document.querySelector(":nth-child(2n+1 of div >> ul li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div >> ul li)"
+PASS document.querySelector(":nth-last-child(2n+1 of div >> ul li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div >> ul li)"
+PASS document.querySelector(":matches(foo, div >> ul li, bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div >> ul li, bar)"
+PASS document.querySelector(":not(div >> ul li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div >> ul li)"
+PASS document.querySelector("div ul >> li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div ul >> li"
+PASS document.querySelector(":nth-child(2n+1 of div ul >> li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div ul >> li)"
+PASS document.querySelector(":nth-last-child(2n+1 of div ul >> li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div ul >> li)"
+PASS document.querySelector(":matches(foo, div ul >> li, bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div ul >> li, bar)"
+PASS document.querySelector(":not(div ul >> li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div ul >> li)"
+PASS document.querySelector("div ul >> li + li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div ul >> li + li"
+PASS document.querySelector(":nth-child(2n+1 of div ul >> li + li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div ul >> li + li)"
+PASS document.querySelector(":nth-last-child(2n+1 of div ul >> li + li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div ul >> li + li)"
+PASS document.querySelector(":matches(foo, div ul >> li + li, bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div ul >> li + li, bar)"
+PASS document.querySelector(":not(div ul >> li + li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div ul >> li + li)"
+PASS document.querySelector("div ul >> li ~ li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div ul >> li ~ li"
+PASS document.querySelector(":nth-child(2n+1 of div ul >> li ~ li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div ul >> li ~ li)"
+PASS document.querySelector(":nth-last-child(2n+1 of div ul >> li ~ li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div ul >> li ~ li)"
+PASS document.querySelector(":matches(foo, div ul >> li ~ li, bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div ul >> li ~ li, bar)"
+PASS document.querySelector(":not(div ul >> li ~ li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div ul >> li ~ li)"
+PASS document.querySelector("div > ul >> li ~ li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div > ul >> li ~ li"
+PASS document.querySelector(":nth-child(2n+1 of div > ul >> li ~ li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div > ul >> li ~ li)"
+PASS document.querySelector(":nth-last-child(2n+1 of div > ul >> li ~ li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div > ul >> li ~ li)"
+PASS document.querySelector(":matches(foo, div > ul >> li ~ li, bar)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div > ul >> li ~ li, bar)"
+PASS document.querySelector(":not(div > ul >> li ~ li)") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div > ul >> li ~ li)"
+Serialization selectors.
+PASS document.querySelector("ul >> li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+PASS document.querySelector("ul	>> li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+PASS document.querySelector("ul >>	li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+PASS document.querySelector("ul	>>	li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+PASS document.querySelector("ul>> li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+PASS document.querySelector("ul >>li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+PASS document.querySelector("ul>>li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+PASS document.querySelector("ul    >> li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+PASS document.querySelector("ul >>    li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+PASS document.querySelector("ul    >>    li") did not throw exception.
+PASS document.getElementById('style-container').sheet.cssRules.length is 1
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+Invalid selectors.
+PASS document.querySelector("ul > > li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector("ul >	> li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector("ul >+> li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector("ul >~> li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector("ul >>> li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS document.querySelector("ul >>() li") threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById('style-container').sheet.cssRules.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

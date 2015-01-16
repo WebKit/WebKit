@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style id="style-container"></style>
+</head>
+<body>
+    <container id="container1">
+        <container id="container2">
+            <target id="target1"></target>
+        </container>
+        <container id="container3">
+            <target id="target2"></target>
+        </container>
+    </container>
+</body>
+<script>
+description('Test using the descendant combinator with the double-child syntax "&gt;&gt;" in Element.closest().');
+
+shouldBeEqualToString('document.getElementById("target1").closest("body >> target").id', 'target1');
+shouldBeEqualToString('document.getElementById("target2").closest("body >> target").id', 'target2');
+
+shouldBeEqualToString('document.getElementById("target1").closest("body >> container").id', 'container2');
+shouldBeEqualToString('document.getElementById("target2").closest("body >> container").id', 'container3');
+
+shouldBeEqualToString('document.getElementById("target1").closest("container >> container").id', 'container2');
+shouldBeEqualToString('document.getElementById("target2").closest("container >> container").id', 'container3');
+
+shouldBe('document.getElementById("target1").closest("target >> container")', 'null');
+shouldBe('document.getElementById("target2").closest("target >> container")', 'null');
+shouldBe('document.getElementById("container1").closest("target >> container")', 'null');
+shouldBe('document.getElementById("container2").closest("target >> container")', 'null');
+shouldBe('document.getElementById("container3").closest("target >> container")', 'null');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

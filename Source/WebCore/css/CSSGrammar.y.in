@@ -241,7 +241,7 @@ static bool selectorListDoesNotMatchAnyPseudoElement(const Vector<std::unique_pt
 
 %token <string> UNICODERANGE
 
-%union { CSSSelector::Relation relation; }
+%union { CSSParserSelectorCombinator relation; }
 %type <relation> combinator
 
 %union { StyleRuleBase* rule; }
@@ -1038,9 +1038,10 @@ region:
 ;
 
 combinator:
-    '+' maybe_space { $$ = CSSSelector::DirectAdjacent; }
-  | '~' maybe_space { $$ = CSSSelector::IndirectAdjacent; }
-  | '>' maybe_space { $$ = CSSSelector::Child; }
+    '+' maybe_space { $$ = CSSParserSelectorCombinator::DirectAdjacent; }
+  | '~' maybe_space { $$ = CSSParserSelectorCombinator::IndirectAdjacent; }
+  | '>' maybe_space { $$ = CSSParserSelectorCombinator::Child; }
+  | '>' '>' maybe_space { $$ = CSSParserSelectorCombinator::DescendantDoubleChild; }
   ;
 
 maybe_unary_operator: unary_operator | { $$ = 1; } ;
@@ -1134,7 +1135,7 @@ complex_selector:
         std::unique_ptr<CSSParserSelector> right($2);
         $$ = nullptr;
         if (left && right) {
-            right->appendTagHistory(CSSSelector::Descendant, WTF::move(left));
+            right->appendTagHistory(CSSParserSelectorCombinator::DescendantSpace, WTF::move(left));
             $$ = right.release();
         }
     }
