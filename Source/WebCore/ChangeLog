@@ -1,5 +1,76 @@
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r174346. rdar://problem/19451946
+
+    2014-10-06  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Extend AVFoundationCF Media Implementation
+            https://bugs.webkit.org/show_bug.cgi?id=137409
+
+            Reviewed by Eric Carlson.
+
+            This code is not yet being built and tested by our system. Appropriate
+            tests will be activated when we enable the build.
+
+            Most of this patch involves correcting some misuse of the AVFoundationCF API.
+            1. It is never appropriate in AVCF to pass a null CFErrorRef; instead you must
+               pass a CFErrorRef with error type kCFURLErrorUnknown.
+            2. Because of the asynchronous way we handle the request/response, it is possible
+               for AVCF to make two AVCF requests while negotiating the key exchange.
+
+            * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h: Add
+            missing declaration.
+            * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+            (WebCore::CDMSessionAVFoundationCF::generateKeyRequest): Tighten up scope
+            of 'underlyingError'.
+            (WebCore::CDMSessionAVFoundationCF::update): Add call to complete the
+            loading process.
+            * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.cpp:
+            (WebCore::InbandTextTrackPrivateAVCF::label): Handle null titles CFArray
+            found during testing.
+            (WebCore::InbandTextTrackPrivateAVCF::language): Ditto for a null locale.
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundationCF::registerMediaEngine): Add support
+            for the new 'supportsKeySystem' method.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::createContextVideoRenderer): Add
+            assertion for mainThread.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::destroyContextVideoRenderer): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::createVideoLayer): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::destroyVideoLayer): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::createAVPlayer): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::createAVPlayerItem): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::platformLayer): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::platformSetVisible): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::paintCurrentFrameInContext): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::paint): Ditto.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::supportsKeySystem): Added.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::sizeChanged): Add assertion that this
+            is being called on the main thread.
+            (WebCore::MediaPlayerPrivateAVFoundationCF::processMediaSelectionOptions): Handle
+            the allows empty media selection properly based on test behavior.
+            (WebCore::AVFWrapper::AVFWrapper): Initialize resource loader callback structure
+            when building with AVFOUNDATION_LOADER_DELEGATE.
+            (WebCore::AVFWrapper::createAssetForURL): Use AVFWrapper's loader callback struct,
+            rather than passing the address of a temporary value.
+            (WebCore::AVFWrapper::processNotification): Stop using the deprecated 
+            'dispatch_get_current_queue' function.
+            (WebCore::AVFWrapper::processCue): Ditto.
+            (WebCore::AVFWrapper::legibleOutputCallback): Ditto.
+            (WebCore::AVFWrapper::processShouldWaitForLoadingOfResource): Pass a valid CFError
+            object; nullptr is not allowed as an argument to the "...FinishedLoadingWithError"
+            method.
+            (WebCore::AVFWrapper::shouldWaitForLoadingOfResource): Add support for multiple
+            in-flight requests.
+            (WebCore::AVFWrapper::platformLayer): Assert we are on the main thread.
+            (WebCore::AVFWrapper::setRequestForKey): Add support for multiple in-flight requests.
+            (WebCore::AVFWrapper::takeRequestForKeyURI): Ditto.
+            (WebCore::LayerClient::platformCALayerLayoutSublayersOfLayer): Ditto.
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+            * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp: Make sure we pass
+            valid CFError objects, rather than nullptr.
+
+2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r173218. rdar://problem/19451975
 
     2014-09-03  Brent Fulgham  <bfulgham@apple.com>
