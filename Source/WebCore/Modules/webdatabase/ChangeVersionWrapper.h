@@ -28,8 +28,6 @@
 #ifndef ChangeVersionWrapper_h
 #define ChangeVersionWrapper_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "SQLTransactionBackend.h"
 #include <wtf/Forward.h>
 
@@ -55,7 +53,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif
 
 #endif // ChangeVersionWrapper_h

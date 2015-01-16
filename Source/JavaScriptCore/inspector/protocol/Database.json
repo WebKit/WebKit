@@ -1,6 +1,5 @@
 {
     "domain": "Database",
-    "featureGuard": "ENABLE(SQL_DATABASE)",
     "availability": "web",
     "types": [
         {

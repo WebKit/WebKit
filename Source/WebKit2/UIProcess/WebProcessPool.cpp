@@ -214,9 +214,7 @@ WebProcessPool::WebProcessPool(WebProcessPoolConfiguration configuration)
     addSupplement<WebMediaCacheManagerProxy>();
     addSupplement<WebNotificationManagerProxy>();
     addSupplement<WebResourceCacheManagerProxy>();
-#if ENABLE(SQL_DATABASE)
     addSupplement<WebDatabaseManagerProxy>();
-#endif
 #if USE(SOUP)
     addSupplement<WebSoupCustomProtocolRequestManager>();
 #endif

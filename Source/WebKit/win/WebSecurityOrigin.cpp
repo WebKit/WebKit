@@ -123,43 +123,28 @@ HRESULT WebSecurityOrigin::port(/* [retval][out] */ unsigned short* result)
         
 HRESULT WebSecurityOrigin::usage(/* [retval][out] */ unsigned long long* result)
 {
-#if ENABLE(SQL_DATABASE)
     if (!result)
         return E_POINTER;
 
     *result = DatabaseManager::manager().usageForOrigin(m_securityOrigin.get());
 
     return S_OK;
-#else
-    UNUSED_PARAM(result);
-    return E_NOTIMPL;
-#endif
 }
         
 HRESULT WebSecurityOrigin::quota(/* [retval][out] */ unsigned long long* result)
 {
-#if ENABLE(SQL_DATABASE)
     if (!result)
         return E_POINTER;
 
     *result = DatabaseManager::manager().quotaForOrigin(m_securityOrigin.get());
     return S_OK;
-#else
-    UNUSED_PARAM(result);
-    return E_NOTIMPL;
-#endif
 }
         
 HRESULT WebSecurityOrigin::setQuota(/* [in] */ unsigned long long quota) 
 {
-#if ENABLE(SQL_DATABASE)
     DatabaseManager::manager().setQuota(m_securityOrigin.get(), quota);
 
     return S_OK;
-#else
-    UNUSED_PARAM(quota);
-    return E_NOTIMPL;
-#endif
 }
 
 HRESULT WebSecurityOrigin::initWithURL(/* [in] */ BSTR urlBstr)

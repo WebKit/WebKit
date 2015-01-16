@@ -29,8 +29,6 @@
 #include "WebDatabaseManager.h"
 #include "WebKitDLL.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "COMEnumVariant.h"
 #include "COMPropertyBag.h"
 #include "MarshallingHelpers.h"
@@ -427,5 +425,3 @@ void WebKitInitializeWebDatabasesIfNecessary()
 
     initialized = true;
 }
-
-#endif

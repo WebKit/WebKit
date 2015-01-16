@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DatabaseBackend.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "ChangeVersionData.h"
 #include "ChangeVersionWrapper.h"
 #include "Database.h"
@@ -55,5 +53,3 @@ DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseContext> databaseContext, co
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

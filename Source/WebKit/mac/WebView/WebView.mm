@@ -917,7 +917,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         // of the initialization code which may depend on the strategies.
         WebPlatformStrategies::initializeIfNecessary();
 
-#if ENABLE(SQL_DATABASE)
 #if PLATFORM(IOS)
         // Set the WebSQLiteDatabaseTrackerClient.
         SQLiteDatabaseTracker::setClient(WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
@@ -925,7 +924,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         if ([standardPreferences databasesEnabled])
 #endif
         [WebDatabaseManager sharedWebDatabaseManager];
-#endif
 
 #if PLATFORM(IOS)        
         if ([standardPreferences storageTrackerEnabled])
@@ -2392,9 +2390,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setQTKitEnabled([preferences isQTKitEnabled]);
 #endif // PLATFORM(MAC)
 
-#if ENABLE(SQL_DATABASE)
     DatabaseManager::manager().setIsAvailable([preferences databasesEnabled]);
-#endif
 
 #if ENABLE(MEDIA_SOURCE)
     settings.setMediaSourceEnabled([preferences mediaSourceEnabled]);

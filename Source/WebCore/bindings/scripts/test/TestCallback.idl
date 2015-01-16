@@ -29,7 +29,7 @@
 // This IDL file is for testing the bindings code generator with a callback
 // interface and for tracking changes in its ouput.
 [
-    Conditional=SQL_DATABASE,
+    Conditional=SPEECH_SYNTHESIS,
 ] callback interface TestCallback {
   boolean callbackWithNoParam();
   boolean callbackWithArrayParam(Float32Array arrayParam);

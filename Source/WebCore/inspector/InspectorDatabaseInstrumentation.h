@@ -37,7 +37,6 @@
 
 namespace WebCore {
 
-#if ENABLE(SQL_DATABASE)
 inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* context, RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
 {
 #if ENABLE(INSPECTOR)
@@ -51,7 +50,6 @@ inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* co
     UNUSED_PARAM(version);
 #endif
 }
-#endif
 
 } // namespace WebCore
 

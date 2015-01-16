@@ -28,8 +28,6 @@
 #ifndef DatabaseThread_h
 #define DatabaseThread_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include <memory>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -100,5 +98,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SQL_DATABASE)
 #endif // DatabaseThread_h

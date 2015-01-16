@@ -34,9 +34,7 @@ static const char FeatureCounterPageCacheFailureMainDocumentErrorKey[] = "com.ap
 static const char FeatureCounterPageCacheFailureIsErrorPageKey[] = "com.apple.WebKit.pageCache.failure.isErrorPage";
 static const char FeatureCounterPageCacheFailureHasPlugins[] = "com.apple.WebKit.pageCache.failure.hasPlugins";
 static const char FeatureCounterPageCacheFailureHTTPSNoStoreKey[] = "com.apple.WebKit.pageCache.failure.httpsNoStore";
-#if ENABLE(SQL_DATABASE)
 static const char FeatureCounterPageCacheFailureHasOpenDatabasesKey[] = "com.apple.WebKit.pageCache.failure.hasOpenDatabases";
-#endif
 static const char FeatureCounterPageCacheFailureNoCurrentHistoryItemKey[] = "com.apple.WebKit.pageCache.failure.noCurrentHistoryItem";
 static const char FeatureCounterPageCacheFailureQuirkRedirectComingKey[] = "com.apple.WebKit.pageCache.failure.quirkRedirectComing";
 static const char FeatureCounterPageCacheFailureLoadingAPISenseKey[] = "com.apple.WebKit.pageCache.failure.loadingAPISense";

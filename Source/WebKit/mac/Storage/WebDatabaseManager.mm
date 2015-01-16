@@ -28,8 +28,6 @@
 
 #import "WebDatabaseManagerPrivate.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #import "WebDatabaseManagerClient.h"
 #import "WebPlatformStrategies.h"
 #import "WebSecurityOriginInternal.h"
@@ -305,5 +303,3 @@ static NSString *databasesDirectoryPath()
     
     return [databasesDirectory stringByStandardizingPath];
 }
-
-#endif

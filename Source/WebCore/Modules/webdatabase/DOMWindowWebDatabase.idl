@@ -25,7 +25,6 @@
  */
 
 [
-    Conditional=SQL_DATABASE,
 ] partial interface DOMWindow {
     [RaisesException] Database openDatabase(DOMString name, DOMString version, DOMString displayName, unsigned long estimatedSize, optional DatabaseCallback creationCallback);
 };

@@ -29,8 +29,6 @@
 #ifndef DatabaseTracker_h
 #define DatabaseTracker_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "DatabaseDetails.h"
 #include "DatabaseError.h"
 #include "SQLiteDatabase.h"
@@ -188,7 +186,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // DatabaseTracker_h

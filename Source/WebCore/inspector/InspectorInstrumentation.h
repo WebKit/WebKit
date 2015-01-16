@@ -228,9 +228,7 @@ public:
     static void startProfiling(Page&, JSC::ExecState*, const String& title);
     static RefPtr<JSC::Profile> stopProfiling(Page&, JSC::ExecState*, const String& title);
 
-#if ENABLE(SQL_DATABASE)
     static void didOpenDatabase(ScriptExecutionContext*, RefPtr<Database>&&, const String& domain, const String& name, const String& version);
-#endif
 
     static void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
@@ -418,9 +416,7 @@ private:
     static void startProfilingImpl(InstrumentingAgents&, JSC::ExecState*, const String& title);
     static RefPtr<JSC::Profile> stopProfilingImpl(InstrumentingAgents&, JSC::ExecState*, const String& title);
 
-#if ENABLE(SQL_DATABASE)
     static void didOpenDatabaseImpl(InstrumentingAgents&, RefPtr<Database>&&, const String& domain, const String& name, const String& version);
-#endif
 
     static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 

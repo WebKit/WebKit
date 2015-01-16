@@ -31,8 +31,6 @@
 #include <WebCore/SQLiteDatabaseTrackerClient.h>
 #include <wtf/Noncopyable.h>
 
-#if ENABLE(SQL_DATABASE)
-
 namespace WebKit {
 
 class WebProcess;
@@ -59,7 +57,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // WebSQLiteDatabaseTracker_h

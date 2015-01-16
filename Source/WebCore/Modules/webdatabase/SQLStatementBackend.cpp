@@ -28,8 +28,6 @@
 #include "config.h"
 #include "SQLStatementBackend.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "DatabaseBackend.h"
 #include "Logging.h"
 #include "SQLError.h"
@@ -241,5 +239,3 @@ bool SQLStatementBackend::lastExecutionFailedDueToQuota() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

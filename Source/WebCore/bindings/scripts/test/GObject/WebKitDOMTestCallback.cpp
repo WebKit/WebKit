@@ -40,12 +40,12 @@
 #define WEBKIT_DOM_TEST_CALLBACK_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_DOM_TYPE_TEST_CALLBACK, WebKitDOMTestCallbackPrivate)
 
 typedef struct _WebKitDOMTestCallbackPrivate {
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
     RefPtr<WebCore::TestCallback> coreObject;
-#endif // ENABLE(SQL_DATABASE)
+#endif // ENABLE(SPEECH_SYNTHESIS)
 } WebKitDOMTestCallbackPrivate;
 
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
 
 namespace WebKit {
 
@@ -73,16 +73,16 @@ WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback* coreObject)
 
 } // namespace WebKit
 
-#endif // ENABLE(SQL_DATABASE)
+#endif // ENABLE(SPEECH_SYNTHESIS)
 
 G_DEFINE_TYPE(WebKitDOMTestCallback, webkit_dom_test_callback, WEBKIT_DOM_TYPE_OBJECT)
 
 static void webkit_dom_test_callback_finalize(GObject* object)
 {
     WebKitDOMTestCallbackPrivate* priv = WEBKIT_DOM_TEST_CALLBACK_GET_PRIVATE(object);
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
     WebKit::DOMObjectCache::forget(priv->coreObject.get());
-#endif // ENABLE(SQL_DATABASE)
+#endif // ENABLE(SPEECH_SYNTHESIS)
     priv->~WebKitDOMTestCallbackPrivate();
     G_OBJECT_CLASS(webkit_dom_test_callback_parent_class)->finalize(object);
 }
@@ -90,11 +90,11 @@ static void webkit_dom_test_callback_finalize(GObject* object)
 static GObject* webkit_dom_test_callback_constructor(GType type, guint constructPropertiesCount, GObjectConstructParam* constructProperties)
 {
     GObject* object = G_OBJECT_CLASS(webkit_dom_test_callback_parent_class)->constructor(type, constructPropertiesCount, constructProperties);
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
     WebKitDOMTestCallbackPrivate* priv = WEBKIT_DOM_TEST_CALLBACK_GET_PRIVATE(object);
     priv->coreObject = static_cast<WebCore::TestCallback*>(WEBKIT_DOM_OBJECT(object)->coreObject);
     WebKit::DOMObjectCache::put(priv->coreObject.get(), object);
-#endif // ENABLE(SQL_DATABASE)
+#endif // ENABLE(SPEECH_SYNTHESIS)
     return object;
 }
 
@@ -114,7 +114,7 @@ static void webkit_dom_test_callback_init(WebKitDOMTestCallback* request)
 
 gboolean webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self)
 {
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_CALLBACK(self), FALSE);
     WebCore::TestCallback* item = WebKit::core(self);
@@ -122,14 +122,14 @@ gboolean webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* 
     return result;
 #else
     UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Speech Synthesis")
     return static_cast<gboolean>(0);
-#endif /* ENABLE(SQL_DATABASE) */
+#endif /* ENABLE(SPEECH_SYNTHESIS) */
 }
 
 gboolean webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallback* self, WebKitDOMFloat32Array* arrayParam)
 {
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_CALLBACK(self), FALSE);
     g_return_val_if_fail(WEBKIT_DOM_IS_FLOAT32ARRAY(arrayParam), FALSE);
@@ -140,14 +140,14 @@ gboolean webkit_dom_test_callback_callback_with_array_param(WebKitDOMTestCallbac
 #else
     UNUSED_PARAM(self);
     UNUSED_PARAM(arrayParam);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Speech Synthesis")
     return static_cast<gboolean>(0);
-#endif /* ENABLE(SQL_DATABASE) */
+#endif /* ENABLE(SPEECH_SYNTHESIS) */
 }
 
 gboolean webkit_dom_test_callback_callback_with_serialized_script_value_param(WebKitDOMTestCallback* self, const gchar* srzParam, const gchar* strArg)
 {
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_CALLBACK(self), FALSE);
     g_return_val_if_fail(srzParam, FALSE);
@@ -160,14 +160,14 @@ gboolean webkit_dom_test_callback_callback_with_serialized_script_value_param(We
     UNUSED_PARAM(self);
     UNUSED_PARAM(srzParam);
     UNUSED_PARAM(strArg);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Speech Synthesis")
     return static_cast<gboolean>(0);
-#endif /* ENABLE(SQL_DATABASE) */
+#endif /* ENABLE(SPEECH_SYNTHESIS) */
 }
 
 glong webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, const gchar* strArg)
 {
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_CALLBACK(self), 0);
     g_return_val_if_fail(strArg, 0);
@@ -178,14 +178,14 @@ glong webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestC
 #else
     UNUSED_PARAM(self);
     UNUSED_PARAM(strArg);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Speech Synthesis")
     return static_cast<glong>(0);
-#endif /* ENABLE(SQL_DATABASE) */
+#endif /* ENABLE(SPEECH_SYNTHESIS) */
 }
 
 gboolean webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, WebKitDOMDOMStringList* listParam)
 {
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_CALLBACK(self), FALSE);
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_STRING_LIST(listParam), FALSE);
@@ -196,14 +196,14 @@ gboolean webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallbac
 #else
     UNUSED_PARAM(self);
     UNUSED_PARAM(listParam);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Speech Synthesis")
     return static_cast<gboolean>(0);
-#endif /* ENABLE(SQL_DATABASE) */
+#endif /* ENABLE(SPEECH_SYNTHESIS) */
 }
 
 gboolean webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* self, gboolean boolParam)
 {
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_CALLBACK(self), FALSE);
     WebCore::TestCallback* item = WebKit::core(self);
@@ -212,14 +212,14 @@ gboolean webkit_dom_test_callback_callback_with_boolean(WebKitDOMTestCallback* s
 #else
     UNUSED_PARAM(self);
     UNUSED_PARAM(boolParam);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Speech Synthesis")
     return static_cast<gboolean>(0);
-#endif /* ENABLE(SQL_DATABASE) */
+#endif /* ENABLE(SPEECH_SYNTHESIS) */
 }
 
 gboolean webkit_dom_test_callback_callback_requires_this_to_pass(WebKitDOMTestCallback* self, glong longParam, WebKitDOMTestNode* testNodeParam)
 {
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_CALLBACK(self), FALSE);
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_NODE(testNodeParam), FALSE);
@@ -231,8 +231,8 @@ gboolean webkit_dom_test_callback_callback_requires_this_to_pass(WebKitDOMTestCa
     UNUSED_PARAM(self);
     UNUSED_PARAM(longParam);
     UNUSED_PARAM(testNodeParam);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("SQL Database")
+    WEBKIT_WARN_FEATURE_NOT_PRESENT("Speech Synthesis")
     return static_cast<gboolean>(0);
-#endif /* ENABLE(SQL_DATABASE) */
+#endif /* ENABLE(SPEECH_SYNTHESIS) */
 }
 

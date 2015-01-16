@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebSQLiteDatabaseTracker.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/SQLiteDatabaseTracker.h>
@@ -73,5 +71,3 @@ void WebSQLiteDatabaseTracker::hysteresisUpdated(HysteresisState state)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SQL_DATABASE)

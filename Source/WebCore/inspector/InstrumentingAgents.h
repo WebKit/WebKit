@@ -115,10 +115,8 @@ public:
     void setInspectorReplayAgent(InspectorReplayAgent* agent) { m_inspectorReplayAgent = agent; }
 #endif
 
-#if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* inspectorDatabaseAgent() const { return m_inspectorDatabaseAgent; }
     void setInspectorDatabaseAgent(InspectorDatabaseAgent* agent) { m_inspectorDatabaseAgent = agent; }
-#endif
 
     InspectorApplicationCacheAgent* inspectorApplicationCacheAgent() const { return m_inspectorApplicationCacheAgent; }
     void setInspectorApplicationCacheAgent(InspectorApplicationCacheAgent* agent) { m_inspectorApplicationCacheAgent = agent; }
@@ -158,9 +156,7 @@ private:
 #if ENABLE(WEB_REPLAY)
     InspectorReplayAgent* m_inspectorReplayAgent;
 #endif
-#if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* m_inspectorDatabaseAgent;
-#endif
     InspectorApplicationCacheAgent* m_inspectorApplicationCacheAgent;
     Inspector::InspectorDebuggerAgent* m_inspectorDebuggerAgent;
     PageDebuggerAgent* m_pageDebuggerAgent;

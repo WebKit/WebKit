@@ -28,8 +28,6 @@
 #ifndef SQLStatementCallback_h
 #define SQLStatementCallback_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -44,7 +42,5 @@ public:
 };
 
 }
-
-#endif
 
 #endif // SQLStatementErrorCallback_h

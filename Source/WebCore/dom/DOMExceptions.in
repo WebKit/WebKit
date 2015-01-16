@@ -4,7 +4,7 @@ DOMCoreException
 EventException
 FileException
 RangeException
-SQLException conditional=SQL_DATABASE
+SQLException
 SVGException
 XMLHttpRequestException
 XPathException

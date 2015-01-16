@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SQLTransactionStateMachine.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "Logging.h"
 #include <wtf/Assertions.h>
 
@@ -70,5 +68,3 @@ const char* nameForSQLTransactionState(SQLTransactionState state)
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

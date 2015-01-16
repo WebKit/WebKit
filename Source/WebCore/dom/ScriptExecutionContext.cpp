@@ -30,6 +30,7 @@
 
 #include "CachedScript.h"
 #include "DOMTimer.h"
+#include "DatabaseContext.h"
 #include "Document.h"
 #include "ErrorEvent.h"
 #include "MessagePort.h"
@@ -46,10 +47,6 @@
 
 #if PLATFORM(IOS)
 #include "Document.h"
-#endif
-
-#if ENABLE(SQL_DATABASE)
-#include "DatabaseContext.h"
 #endif
 
 using namespace Inspector;
@@ -459,13 +456,11 @@ JSC::VM& ScriptExecutionContext::vm()
     return downcast<WorkerGlobalScope>(*this).script()->vm();
 }
 
-#if ENABLE(SQL_DATABASE)
 void ScriptExecutionContext::setDatabaseContext(DatabaseContext* databaseContext)
 {
     ASSERT(!m_databaseContext);
     m_databaseContext = databaseContext;
 }
-#endif
 
 bool ScriptExecutionContext::hasPendingActivity() const
 {

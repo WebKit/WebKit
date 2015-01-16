@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "Database.h"
 #include "Element.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -52,10 +53,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 
-#if ENABLE(SQL_DATABASE)
-#include "Database.h"
-#endif
-
 using namespace Inspector;
 
 namespace WebCore {
@@ -70,9 +67,7 @@ CommandLineAPIHost::CommandLineAPIHost()
     , m_consoleAgent(nullptr)
     , m_domAgent(nullptr)
     , m_domStorageAgent(nullptr)
-#if ENABLE(SQL_DATABASE)
     , m_databaseAgent(nullptr)
-#endif
 {
     m_defaultInspectableObject = std::make_unique<InspectableObject>();
 }
@@ -87,9 +82,7 @@ void CommandLineAPIHost::disconnect()
     m_consoleAgent = nullptr;
     m_domAgent = nullptr;
     m_domStorageAgent = nullptr;
-#if ENABLE(SQL_DATABASE)
     m_databaseAgent = nullptr;
-#endif
 }
 
 void CommandLineAPIHost::inspectImpl(RefPtr<InspectorValue>&& object, RefPtr<InspectorValue>&& hints)
@@ -149,14 +142,12 @@ CommandLineAPIHost::InspectableObject* CommandLineAPIHost::inspectedObject(unsig
     return m_inspectedObjects[index].get();
 }
 
-#if ENABLE(SQL_DATABASE)
 String CommandLineAPIHost::databaseIdImpl(Database* database)
 {
     if (m_databaseAgent)
         return m_databaseAgent->databaseId(database);
     return String();
 }
-#endif
 
 String CommandLineAPIHost::storageIdImpl(Storage* storage)
 {

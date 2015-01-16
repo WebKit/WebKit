@@ -671,7 +671,6 @@ void WebChromeClient::print(Frame* frame)
     m_page->sendSync(Messages::WebPageProxy::PrintFrame(webFrame->frameID()), Messages::WebPageProxy::PrintFrame::Reply(), std::chrono::milliseconds::max(), syncSendFlags);
 }
 
-#if ENABLE(SQL_DATABASE)
 void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseName, DatabaseDetails details)
 {
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
@@ -698,8 +697,6 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
 
     dbManager.setQuota(origin, newQuota);
 }
-#endif
-
 
 void WebChromeClient::reachedMaxAppCacheSize(int64_t)
 {

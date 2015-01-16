@@ -26,8 +26,6 @@
 #ifndef DatabaseServer_h
 #define DatabaseServer_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "AbstractDatabaseServer.h"
 
 namespace WebCore {
@@ -68,7 +66,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // DatabaseServer_h

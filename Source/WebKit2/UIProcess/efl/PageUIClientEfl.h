@@ -58,9 +58,7 @@ private:
     static WKRect getWindowFrame(WKPageRef, const void*);
     static void setWindowFrame(WKPageRef, WKRect, const void*);
     static bool runBeforeUnloadConfirmPanel(WKPageRef, WKStringRef, WKFrameRef, const void*);
-#if ENABLE(SQL_DATABASE)
     static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long currentQuota, unsigned long long, unsigned long long, unsigned long long, const void*);
-#endif
     static void runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef, WKOpenPanelResultListenerRef, const void*);
     static WKPageRef createNewPage(WKPageRef, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*);
 

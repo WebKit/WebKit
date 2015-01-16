@@ -29,8 +29,6 @@
 #ifndef SQLTransactionCallback_h
 #define SQLTransactionCallback_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -44,7 +42,5 @@ public:
 };
 
 }
-
-#endif
 
 #endif // SQLTransactionCallback_h

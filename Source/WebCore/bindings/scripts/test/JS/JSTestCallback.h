@@ -21,7 +21,7 @@
 #ifndef JSTestCallback_h
 #define JSTestCallback_h
 
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
 
 #include "ActiveDOMCallback.h"
 #include "JSCallbackData.h"
@@ -59,6 +59,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SQL_DATABASE)
+#endif // ENABLE(SPEECH_SYNTHESIS)
 
 #endif

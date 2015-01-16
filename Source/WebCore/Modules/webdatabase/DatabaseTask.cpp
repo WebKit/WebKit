@@ -28,8 +28,6 @@
 #include "config.h"
 #include "DatabaseTask.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "Database.h"
 #include "DatabaseBackend.h"
 #include "Logging.h"
@@ -217,5 +215,3 @@ const char* DatabaseBackend::DatabaseTableNamesTask::debugTaskName() const
 #endif
 
 } // namespace WebCore
-
-#endif

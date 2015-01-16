@@ -30,8 +30,6 @@
 #ifndef DatabaseBackendBase_h
 #define DatabaseBackendBase_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "DatabaseBasicTypes.h"
 #include "DatabaseDetails.h"
 #include "DatabaseError.h"
@@ -133,7 +131,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // DatabaseBackendBase_h

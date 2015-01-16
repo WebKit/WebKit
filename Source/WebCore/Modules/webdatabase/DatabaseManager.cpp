@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DatabaseManager.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "AbstractDatabaseServer.h"
 #include "Database.h"
 #include "DatabaseBackend.h"
@@ -414,5 +412,3 @@ void DatabaseManager::logErrorMessage(ScriptExecutionContext* context, const Str
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

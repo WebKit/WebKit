@@ -28,8 +28,6 @@
 
 #import "WebDatabaseManagerPrivate.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #if PLATFORM(IOS)
 @interface WebDatabaseManager (WebDatabaseManagerInternal)
 + (void)willBeginFirstTransaction;
@@ -39,6 +37,4 @@
 @end
 
 void WebKitSetWebDatabasePaused(bool);
-#endif
-
 #endif

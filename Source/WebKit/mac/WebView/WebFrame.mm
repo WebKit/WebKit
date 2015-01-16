@@ -2092,10 +2092,8 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     }
     
     if (Document* document = _private->coreFrame->document()) {
-#if ENABLE(SQL_DATABASE)
         if (DatabaseManager::manager().hasOpenDatabases(document))
             [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameUsesDatabases];
-#endif
         if (!document->canSuspendActiveDOMObjects())
             [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameCanSuspendActiveDOMObjects];
     }

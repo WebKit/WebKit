@@ -26,15 +26,11 @@
 #ifndef DatabaseBasicTypes_h
 #define DatabaseBasicTypes_h
 
-#if ENABLE(SQL_DATABASE)
-
 namespace WebCore {
 
 typedef int DatabaseGuid;
 typedef int ExceptionCode;
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // DatabaseBasicTypes_h

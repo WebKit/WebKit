@@ -29,7 +29,6 @@
  */
 
 [
-    Conditional=SQL_DATABASE,
     DoNotCheckConstants,
     ImplementationLacksVTable
 ] exception SQLException {

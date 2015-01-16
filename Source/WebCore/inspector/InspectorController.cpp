@@ -122,11 +122,9 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
     m_agents.append(std::make_unique<InspectorCSSAgent>(m_instrumentingAgents.get(), m_domAgent));
 
-#if ENABLE(SQL_DATABASE)
     auto databaseAgentPtr = std::make_unique<InspectorDatabaseAgent>(m_instrumentingAgents.get());
     InspectorDatabaseAgent* databaseAgent = databaseAgentPtr.get();
     m_agents.append(WTF::move(databaseAgentPtr));
-#endif
 
 #if ENABLE(INDEXED_DATABASE)
     m_agents.append(std::make_unique<InspectorIndexedDBAgent>(m_instrumentingAgents.get(), m_injectedScriptManager.get(), pageAgent));
@@ -171,9 +169,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
             , consoleAgent
             , m_domAgent
             , domStorageAgent
-#if ENABLE(SQL_DATABASE)
             , databaseAgent
-#endif
         );
     }
 

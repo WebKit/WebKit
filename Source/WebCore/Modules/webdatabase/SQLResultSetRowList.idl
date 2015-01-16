@@ -28,7 +28,6 @@
 
 [
     NoInterfaceObject,
-    Conditional=SQL_DATABASE,
     ImplementationLacksVTable,
 ] interface SQLResultSetRowList {
     readonly attribute unsigned long length;

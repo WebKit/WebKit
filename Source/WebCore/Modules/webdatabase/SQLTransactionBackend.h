@@ -28,8 +28,6 @@
 #ifndef SQLTransactionBackend_h
 #define SQLTransactionBackend_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "DatabaseBasicTypes.h"
 #include "SQLTransactionStateMachine.h"
 #include <memory>
@@ -138,7 +136,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif
 
 #endif // SQLTransactionBackend_h

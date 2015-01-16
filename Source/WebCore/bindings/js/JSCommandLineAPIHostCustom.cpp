@@ -37,7 +37,9 @@
 #include "JSCommandLineAPIHost.h"
 
 #include "CommandLineAPIHost.h"
+#include "Database.h"
 #include "InspectorDOMAgent.h"
+#include "JSDatabase.h"
 #include "JSEventListener.h"
 #include "JSNode.h"
 #include "JSStorage.h"
@@ -51,10 +53,6 @@
 #include <runtime/JSLock.h>
 #include <runtime/ObjectConstructor.h>
 
-#if ENABLE(SQL_DATABASE)
-#include "Database.h"
-#include "JSDatabase.h"
-#endif
 
 using namespace JSC;
 
@@ -148,11 +146,9 @@ JSValue JSCommandLineAPIHost::databaseId(ExecState* exec)
     if (exec->argumentCount() < 1)
         return jsUndefined();
 
-#if ENABLE(SQL_DATABASE)
     Database* database = JSDatabase::toWrapped(exec->uncheckedArgument(0));
     if (database)
         return jsStringWithCache(exec, impl().databaseIdImpl(database));
-#endif
 
     return jsUndefined();
 }

@@ -28,8 +28,6 @@
 #ifndef DatabaseContext_h
 #define DatabaseContext_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "ActiveDOMObject.h"
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -93,7 +91,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // DatabaseContext_h

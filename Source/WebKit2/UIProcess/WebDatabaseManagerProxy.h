@@ -26,8 +26,6 @@
 #ifndef WebDatabaseManagerProxy_h
 #define WebDatabaseManagerProxy_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "APIObject.h"
 #include "Arguments.h"
 #include "GenericCallback.h"
@@ -99,7 +97,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // DatabaseManagerProxy_h

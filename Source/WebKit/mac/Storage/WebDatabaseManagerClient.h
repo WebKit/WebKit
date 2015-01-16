@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if ENABLE(SQL_DATABASE) 
-
 #import <WebCore/DatabaseManagerClient.h>
 
 class WebDatabaseManagerClient : public WebCore::DatabaseManagerClient {
@@ -54,5 +52,3 @@ private:
     bool m_isHandlingDeleteDatabaseOriginNotification;
 #endif
 };
-
-#endif

@@ -582,7 +582,6 @@ void WebChromeClient::print(Frame* frame)
         uiDelegate->printFrame(m_webView, kit(frame));
 }
 
-#if ENABLE(SQL_DATABASE)
 void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& databaseIdentifier, DatabaseDetails)
 {
     COMPtr<WebSecurityOrigin> origin(AdoptCOM, WebSecurityOrigin::createInstance(frame->document()->securityOrigin()));
@@ -618,7 +617,6 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
         }
     }
 }
-#endif
 
 // FIXME: Move this include to the top of the file with the other includes.
 #include "ApplicationCacheStorage.h"

@@ -155,9 +155,7 @@ public:
 
     virtual void print(Frame*) override { }
 
-#if ENABLE(SQL_DATABASE)
     virtual void exceededDatabaseQuota(Frame*, const String&, DatabaseDetails) override { }
-#endif
 
     virtual void reachedMaxAppCacheSize(int64_t) override { }
     virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t) override { }

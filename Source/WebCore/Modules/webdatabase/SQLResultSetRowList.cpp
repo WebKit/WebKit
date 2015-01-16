@@ -29,8 +29,6 @@
 #include "config.h"
 #include "SQLResultSetRowList.h"
 
-#if ENABLE(SQL_DATABASE)
-
 namespace WebCore {
 
 unsigned SQLResultSetRowList::length() const
@@ -44,5 +42,3 @@ unsigned SQLResultSetRowList::length() const
 }
 
 }
-
-#endif

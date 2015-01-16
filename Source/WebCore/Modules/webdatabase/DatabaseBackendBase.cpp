@@ -30,8 +30,6 @@
 #include "config.h"
 #include "DatabaseBackendBase.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "Database.h"
 #include "DatabaseAuthorizer.h"
 #include "DatabaseContext.h"
@@ -587,5 +585,3 @@ bool DatabaseBackendBase::isInterrupted()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

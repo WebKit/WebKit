@@ -28,7 +28,6 @@
 
 [
     NoInterfaceObject,
-    Conditional=SQL_DATABASE,
     ImplementationLacksVTable
 ] interface SQLError {
     readonly attribute unsigned long code;

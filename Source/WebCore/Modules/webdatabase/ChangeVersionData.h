@@ -26,8 +26,6 @@
 #ifndef ChangeVersionData_h
 #define ChangeVersionData_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -46,7 +44,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // ChangeVersionData_h

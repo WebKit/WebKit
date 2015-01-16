@@ -23,7 +23,7 @@
 
 #include "TestCallback.h"
 #include <webkitdom/WebKitDOMTestCallback.h>
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
 
 namespace WebKit {
 WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback*);
@@ -31,6 +31,6 @@ WebKitDOMTestCallback* kit(WebCore::TestCallback*);
 WebCore::TestCallback* core(WebKitDOMTestCallback*);
 } // namespace WebKit
 
-#endif /* ENABLE(SQL_DATABASE) */
+#endif /* ENABLE(SPEECH_SYNTHESIS) */
 
 #endif /* WebKitDOMTestCallbackPrivate_h */

@@ -29,8 +29,6 @@
 #ifndef WebDatabaseManager_h
 #define WebDatabaseManager_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "WebKit.h"
 #include <WebCore/DatabaseManagerClient.h>
 
@@ -88,7 +86,5 @@ private:
 };
 
 void WebKitInitializeWebDatabasesIfNecessary();
-
-#endif
 
 #endif

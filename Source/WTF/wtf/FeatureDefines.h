@@ -665,10 +665,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_SPELLCHECK 0
 #endif
 
-#if !defined(ENABLE_SQL_DATABASE)
-#define ENABLE_SQL_DATABASE 1
-#endif
-
 #if !defined(ENABLE_SVG_FONTS)
 #define ENABLE_SVG_FONTS 1
 #endif

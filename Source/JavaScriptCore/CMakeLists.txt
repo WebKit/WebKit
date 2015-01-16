@@ -1018,6 +1018,7 @@ set(JavaScriptCore_INSPECTOR_DOMAINS
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/DOM.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/DOMDebugger.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/DOMStorage.json
+    ${JAVASCRIPTCORE_DIR}/inspector/protocol/Database.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Debugger.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/GenericTypes.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Inspector.json
@@ -1028,12 +1029,6 @@ set(JavaScriptCore_INSPECTOR_DOMAINS
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Timeline.json
     ${JAVASCRIPTCORE_DIR}/inspector/protocol/Worker.json
 )
-
-if (ENABLE_SQL_DATABASE)
-    list(APPEND JavaScriptCore_INSPECTOR_DOMAINS
-        ${JAVASCRIPTCORE_DIR}/inspector/protocol/Database.json
-    )
-endif ()
 
 if (ENABLE_INDEXED_DATABASE)
     list(APPEND JavaScriptCore_INSPECTOR_DOMAINS

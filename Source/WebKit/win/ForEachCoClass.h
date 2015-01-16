@@ -31,11 +31,7 @@
 
 #include "ProgIDMacros.h"
 
-#if ENABLE(SQL_DATABASE)
 #define WEB_DATABASE_MANAGER(macro) macro(WebDatabaseManager)
-#else
-#define WEB_DATABASE_MANAGER(macro)
-#endif
 
 // Items may only be added to the end of this macro. No items may be removed from it.
 #define FOR_EACH_COCLASS(macro) \

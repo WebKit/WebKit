@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebDatabaseManager.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "OriginAndDatabases.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManagerMessages.h"
@@ -163,5 +161,3 @@ void WebDatabaseManager::dispatchDidModifyDatabase(WebCore::SecurityOrigin* orig
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SQL_DATABASE)

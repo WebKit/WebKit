@@ -26,8 +26,6 @@
 #ifndef SQLTransactionStateMachine_h
 #define SQLTransactionStateMachine_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "SQLTransactionState.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -106,7 +104,5 @@ void SQLTransactionStateMachine<T>::runStateMachine()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // SQLTransactionStateMachine_h

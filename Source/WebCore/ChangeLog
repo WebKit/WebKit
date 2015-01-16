@@ -1,3 +1,140 @@
+2015-01-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(SQL_DATABASE) guards
+        https://bugs.webkit.org/show_bug.cgi?id=140434
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/webdatabase/AbstractDatabaseServer.h:
+        * Modules/webdatabase/ChangeVersionData.h:
+        * Modules/webdatabase/ChangeVersionWrapper.cpp:
+        * Modules/webdatabase/ChangeVersionWrapper.h:
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        * Modules/webdatabase/DOMWindowWebDatabase.h:
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * Modules/webdatabase/Database.cpp:
+        * Modules/webdatabase/Database.h:
+        * Modules/webdatabase/Database.idl:
+        * Modules/webdatabase/DatabaseBackend.cpp:
+        * Modules/webdatabase/DatabaseBackend.h:
+        * Modules/webdatabase/DatabaseBackendBase.cpp:
+        * Modules/webdatabase/DatabaseBackendBase.h:
+        * Modules/webdatabase/DatabaseBasicTypes.h:
+        * Modules/webdatabase/DatabaseCallback.h:
+        * Modules/webdatabase/DatabaseCallback.idl:
+        * Modules/webdatabase/DatabaseContext.cpp:
+        * Modules/webdatabase/DatabaseContext.h:
+        * Modules/webdatabase/DatabaseDetails.h:
+        * Modules/webdatabase/DatabaseError.h:
+        * Modules/webdatabase/DatabaseManager.cpp:
+        * Modules/webdatabase/DatabaseManager.h:
+        * Modules/webdatabase/DatabaseManagerClient.h:
+        * Modules/webdatabase/DatabaseServer.cpp:
+        * Modules/webdatabase/DatabaseServer.h:
+        * Modules/webdatabase/DatabaseTask.cpp:
+        * Modules/webdatabase/DatabaseTask.h:
+        * Modules/webdatabase/DatabaseThread.cpp:
+        * Modules/webdatabase/DatabaseThread.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        * Modules/webdatabase/DatabaseTracker.h:
+        * Modules/webdatabase/OriginLock.cpp:
+        * Modules/webdatabase/OriginLock.h:
+        * Modules/webdatabase/SQLCallbackWrapper.h:
+        * Modules/webdatabase/SQLError.h:
+        * Modules/webdatabase/SQLError.idl:
+        * Modules/webdatabase/SQLException.cpp:
+        * Modules/webdatabase/SQLException.h:
+        * Modules/webdatabase/SQLException.idl:
+        * Modules/webdatabase/SQLResultSet.cpp:
+        * Modules/webdatabase/SQLResultSet.h:
+        * Modules/webdatabase/SQLResultSet.idl:
+        * Modules/webdatabase/SQLResultSetRowList.cpp:
+        * Modules/webdatabase/SQLResultSetRowList.h:
+        * Modules/webdatabase/SQLResultSetRowList.idl:
+        * Modules/webdatabase/SQLStatement.cpp:
+        * Modules/webdatabase/SQLStatement.h:
+        * Modules/webdatabase/SQLStatementBackend.cpp:
+        * Modules/webdatabase/SQLStatementBackend.h:
+        * Modules/webdatabase/SQLStatementCallback.h:
+        * Modules/webdatabase/SQLStatementCallback.idl:
+        * Modules/webdatabase/SQLStatementErrorCallback.h:
+        * Modules/webdatabase/SQLStatementErrorCallback.idl:
+        * Modules/webdatabase/SQLTransaction.cpp:
+        * Modules/webdatabase/SQLTransaction.h:
+        * Modules/webdatabase/SQLTransaction.idl:
+        * Modules/webdatabase/SQLTransactionBackend.cpp:
+        * Modules/webdatabase/SQLTransactionBackend.h:
+        * Modules/webdatabase/SQLTransactionCallback.h:
+        * Modules/webdatabase/SQLTransactionCallback.idl:
+        * Modules/webdatabase/SQLTransactionClient.cpp:
+        * Modules/webdatabase/SQLTransactionClient.h:
+        * Modules/webdatabase/SQLTransactionCoordinator.cpp:
+        * Modules/webdatabase/SQLTransactionCoordinator.h:
+        * Modules/webdatabase/SQLTransactionErrorCallback.h:
+        * Modules/webdatabase/SQLTransactionErrorCallback.idl:
+        * Modules/webdatabase/SQLTransactionState.h:
+        * Modules/webdatabase/SQLTransactionStateMachine.cpp:
+        * Modules/webdatabase/SQLTransactionStateMachine.h:
+        * bindings/js/JSCommandLineAPIHostCustom.cpp:
+        (WebCore::JSCommandLineAPIHost::databaseId):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        * bindings/js/JSExceptionBase.cpp:
+        (WebCore::toExceptionBase):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (webkit_dom_test_callback_finalize):
+        (webkit_dom_test_callback_constructor):
+        (webkit_dom_test_callback_callback_with_no_param):
+        (webkit_dom_test_callback_callback_with_array_param):
+        (webkit_dom_test_callback_callback_with_serialized_script_value_param):
+        (webkit_dom_test_callback_callback_with_non_bool_return_type):
+        (webkit_dom_test_callback_callback_with_string_list):
+        (webkit_dom_test_callback_callback_with_boolean):
+        (webkit_dom_test_callback_callback_requires_this_to_pass):
+        * bindings/scripts/test/GObject/WebKitDOMTestCallbackPrivate.h:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        * bindings/scripts/test/JS/JSTestCallback.h:
+        * bindings/scripts/test/ObjC/DOMTestCallback.mm:
+        * bindings/scripts/test/TestCallback.idl:
+        * dom/DOMExceptions.in:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::setDatabaseContext):
+        * dom/ScriptExecutionContext.h:
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::CommandLineAPIHost):
+        (WebCore::CommandLineAPIHost::disconnect):
+        (WebCore::CommandLineAPIHost::databaseIdImpl):
+        * inspector/CommandLineAPIHost.h:
+        (WebCore::CommandLineAPIHost::init):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorDatabaseAgent.cpp:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDatabaseInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didOpenDatabase):
+        * inspector/InspectorDatabaseResource.cpp:
+        * inspector/InspectorDatabaseResource.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::didOpenDatabaseImpl):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InstrumentingAgents.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * page/ChromeClient.h:
+        * platform/FeatureCounterKeys.h:
+
 2015-01-15  Zalan Bujtas  <zalan@apple.com>
 
         Element appears correctly but does not receive event with a large translation.

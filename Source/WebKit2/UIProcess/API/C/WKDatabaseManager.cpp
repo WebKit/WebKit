@@ -33,184 +33,102 @@ using namespace WebKit;
 
 WKTypeID WKDatabaseManagerGetTypeID()
 {
-#if ENABLE(SQL_DATABASE)
     return toAPI(WebDatabaseManagerProxy::APIType);
-#else
-    return 0;
-#endif
 }
 
 WKStringRef WKDatabaseManagerGetOriginKey()
 {
-#if ENABLE(SQL_DATABASE)
     static API::String* key = API::String::create(WebDatabaseManagerProxy::originKey()).leakRef();
     return toAPI(key);
-#else
-    return 0;
-#endif
 }
 
 WKStringRef WKDatabaseManagerGetOriginQuotaKey()
 {
-#if ENABLE(SQL_DATABASE)
     static API::String* key = API::String::create(WebDatabaseManagerProxy::originQuotaKey()).leakRef();
     return toAPI(key);
-#else
-    return 0;
-#endif
 }
 
 WKStringRef WKDatabaseManagerGetOriginUsageKey()
 {
-#if ENABLE(SQL_DATABASE)
     static API::String* key = API::String::create(WebDatabaseManagerProxy::originUsageKey()).leakRef();
     return toAPI(key);
-#else
-    return 0;
-#endif
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsKey()
 {
-#if ENABLE(SQL_DATABASE)
     static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsKey()).leakRef();
     return toAPI(key);
-#else
-    return 0;
-#endif
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsNameKey()
 {
-#if ENABLE(SQL_DATABASE)
     static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsNameKey()).leakRef();
     return toAPI(key);
-#else
-    return 0;
-#endif
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsDisplayNameKey()
 {
-#if ENABLE(SQL_DATABASE)
     static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsDisplayNameKey()).leakRef();
     return toAPI(key);
-#else
-    return 0;
-#endif
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey()
 {
-#if ENABLE(SQL_DATABASE)
     static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey()).leakRef();
     return toAPI(key);
-#else
-    return 0;
-#endif
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey()
 {
-#if ENABLE(SQL_DATABASE)
     static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()).leakRef();
     return toAPI(key);
-#else
-    return 0;
-#endif
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsCreationTimeKey()
 {
-#if ENABLE(SQL_DATABASE)
     static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsCreationTimeKey()).leakRef();
     return toAPI(key);
-#else
-    return 0;
-#endif
 }
 
 WKStringRef WKDatabaseManagerGetDatabaseDetailsModificationTimeKey()
 {
-#if ENABLE(SQL_DATABASE)
     static API::String* key = API::String::create(WebDatabaseManagerProxy::databaseDetailsModificationTimeKey()).leakRef();
     return toAPI(key);
-#else
-    return 0;
-#endif
 }
 
 void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManagerRef, const WKDatabaseManagerClientBase* wkClient)
 {
-#if ENABLE(SQL_DATABASE)
     if (wkClient && wkClient->version)
         return;
     toImpl(databaseManagerRef)->initializeClient(wkClient);
-#else
-    UNUSED_PARAM(databaseManagerRef);
-    UNUSED_PARAM(wkClient);
-#endif
 }
 
 void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef databaseManagerRef, void* context, WKDatabaseManagerGetDatabasesByOriginFunction callback)
 {
-#if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->getDatabasesByOrigin(toGenericCallbackFunction(context, callback));
-#else
-    UNUSED_PARAM(databaseManagerRef);
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(callback);
-#endif
 }
 
 void WKDatabaseManagerGetDatabaseOrigins(WKDatabaseManagerRef databaseManagerRef, void* context, WKDatabaseManagerGetDatabaseOriginsFunction callback)
 {
-#if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->getDatabaseOrigins(toGenericCallbackFunction(context, callback));
-#else
-    UNUSED_PARAM(databaseManagerRef);
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(callback);
-#endif
 }
 
 void WKDatabaseManagerDeleteDatabasesWithNameForOrigin(WKDatabaseManagerRef databaseManagerRef, WKStringRef databaseNameRef, WKSecurityOriginRef originRef)
 {
-#if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->deleteDatabaseWithNameForOrigin(toWTFString(databaseNameRef), toImpl(originRef));
-#else
-    UNUSED_PARAM(databaseManagerRef);
-    UNUSED_PARAM(databaseNameRef);
-    UNUSED_PARAM(originRef);
-#endif
 }
 
 void WKDatabaseManagerDeleteDatabasesForOrigin(WKDatabaseManagerRef databaseManagerRef, WKSecurityOriginRef originRef)
 {
-#if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->deleteDatabasesForOrigin(toImpl(originRef));
-#else
-    UNUSED_PARAM(databaseManagerRef);
-    UNUSED_PARAM(originRef);
-#endif
 }
 
 void WKDatabaseManagerDeleteAllDatabases(WKDatabaseManagerRef databaseManagerRef)
 {
-#if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->deleteAllDatabases();
-#else
-    UNUSED_PARAM(databaseManagerRef);
-#endif
 }
 
 void WKDatabaseManagerSetQuotaForOrigin(WKDatabaseManagerRef databaseManagerRef, WKSecurityOriginRef originRef, uint64_t quota)
 {
-#if ENABLE(SQL_DATABASE)
     toImpl(databaseManagerRef)->setQuotaForOrigin(toImpl(originRef), quota);
-#else
-    UNUSED_PARAM(databaseManagerRef);
-    UNUSED_PARAM(originRef);
-    UNUSED_PARAM(quota);
-#endif
 }

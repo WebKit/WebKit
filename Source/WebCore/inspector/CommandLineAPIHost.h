@@ -67,18 +67,14 @@ public:
         , Inspector::InspectorConsoleAgent* consoleAgent
         , InspectorDOMAgent* domAgent
         , InspectorDOMStorageAgent* domStorageAgent
-#if ENABLE(SQL_DATABASE)
         , InspectorDatabaseAgent* databaseAgent
-#endif
         )
     {
         m_inspectorAgent = inspectorAgent;
         m_consoleAgent = consoleAgent;
         m_domAgent = domAgent;
         m_domStorageAgent = domStorageAgent;
-#if ENABLE(SQL_DATABASE)
         m_databaseAgent = databaseAgent;
-#endif
     }
 
     void disconnect();
@@ -99,9 +95,7 @@ public:
 
     void getEventListenersImpl(Node*, Vector<EventListenerInfo>& listenersArray);
 
-#if ENABLE(SQL_DATABASE)
     String databaseIdImpl(Database*);
-#endif
     String storageIdImpl(Storage*);
 
 private:
@@ -111,9 +105,7 @@ private:
     Inspector::InspectorConsoleAgent* m_consoleAgent;
     InspectorDOMAgent* m_domAgent;
     InspectorDOMStorageAgent* m_domStorageAgent;
-#if ENABLE(SQL_DATABASE)
     InspectorDatabaseAgent* m_databaseAgent;
-#endif
 
     Vector<std::unique_ptr<InspectableObject>> m_inspectedObjects;
     std::unique_ptr<InspectableObject> m_defaultInspectableObject;

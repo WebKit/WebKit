@@ -957,8 +957,6 @@ bool ArgumentCoder<Cookie>::decode(ArgumentDecoder& decoder, Cookie& cookie)
     return true;
 }
 
-
-#if ENABLE(SQL_DATABASE)
 void ArgumentCoder<DatabaseDetails>::encode(ArgumentEncoder& encoder, const DatabaseDetails& details)
 {
     encoder << details.name();
@@ -998,8 +996,6 @@ bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder& decoder, DatabaseDe
     details = DatabaseDetails(name, displayName, expectedUsage, currentUsage, creationTime, modificationTime);
     return true;
 }
-
-#endif
 
 #if PLATFORM(IOS)
 

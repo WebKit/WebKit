@@ -1033,7 +1033,6 @@ WKEinaSharedString EwkView::requestJSPromptPopup(const WKEinaSharedString& messa
     return WKEinaSharedString::adopt(sd->api->run_javascript_prompt(sd, message, defaultValue));
 }
 
-#if ENABLE(SQL_DATABASE)
 /**
  * @internal
  * Calls exceeded_database_quota callback or falls back to default behavior returns default database quota.
@@ -1049,7 +1048,6 @@ unsigned long long EwkView::informDatabaseQuotaReached(const String& databaseNam
 
     return defaultQuota;
 }
-#endif
 
 WebView* EwkView::webView()
 {

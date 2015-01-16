@@ -43,6 +43,7 @@
 #include "WebConnectionToUIProcess.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebDatabaseManager.h"
 #include "WebFrame.h"
 #include "WebFrameNetworkingContext.h"
 #include "WebGeolocationManager.h"
@@ -119,11 +120,8 @@
 #include "WebNotificationManager.h"
 #endif
 
-#if ENABLE(SQL_DATABASE)
-#include "WebDatabaseManager.h"
 #if PLATFORM(IOS)
 #include "WebSQLiteDatabaseTracker.h"
-#endif
 #endif
 
 #if ENABLE(BATTERY_STATUS)
@@ -198,12 +196,9 @@ WebProcess::WebProcess()
     addSupplement<WebCookieManager>();
     addSupplement<WebMediaCacheManager>();
     addSupplement<AuthenticationManager>();
-    
-#if ENABLE(SQL_DATABASE)
     addSupplement<WebDatabaseManager>();
 #if PLATFORM(IOS)
     addSupplement<WebSQLiteDatabaseTracker>();
-#endif
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

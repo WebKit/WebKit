@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SQL_DATABASE,
-] callback interface SQLStatementErrorCallback {
+callback interface SQLStatementErrorCallback {
     [Custom] boolean handleEvent(SQLTransaction transaction, SQLError error);
 };

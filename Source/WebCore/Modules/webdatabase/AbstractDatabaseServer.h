@@ -26,8 +26,6 @@
 #ifndef AbstractDatabaseServer_h
 #define AbstractDatabaseServer_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "DatabaseBasicTypes.h"
 #include "DatabaseDetails.h"
 #include "DatabaseError.h"
@@ -81,7 +79,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // AbstractDatabaseServer_h

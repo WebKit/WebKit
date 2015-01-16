@@ -171,9 +171,7 @@ public:
 
     virtual EventQueue& eventQueue() const = 0;
 
-#if ENABLE(SQL_DATABASE)
     void setDatabaseContext(DatabaseContext*);
-#endif
 
 #if ENABLE(SUBTLE_CRYPTO)
     virtual bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) = 0;
@@ -226,9 +224,7 @@ private:
 
     std::unique_ptr<PublicURLManager> m_publicURLManager;
 
-#if ENABLE(SQL_DATABASE)
     RefPtr<DatabaseContext> m_databaseContext;
-#endif
 
     bool m_activeDOMObjectAdditionForbidden;
     int m_timerNestingLevel;

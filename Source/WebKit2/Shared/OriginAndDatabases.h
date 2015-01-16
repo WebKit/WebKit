@@ -26,8 +26,6 @@
 #ifndef OriginAndDatabases_h
 #define OriginAndDatabases_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include <WebCore/DatabaseDetails.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -50,7 +48,5 @@ struct OriginAndDatabases {
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // OriginAndDatabases_h

@@ -29,8 +29,6 @@
 #ifndef SQLResultSetRowList_h
 #define SQLResultSetRowList_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include "SQLValue.h"
@@ -57,7 +55,5 @@ private:
 };
 
 }
-
-#endif
 
 #endif

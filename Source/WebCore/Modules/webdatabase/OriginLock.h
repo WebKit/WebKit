@@ -26,8 +26,6 @@
 #ifndef OriginLock_h
 #define OriginLock_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "FileSystem.h"
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -57,7 +55,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // OriginLock_h

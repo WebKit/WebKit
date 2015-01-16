@@ -27,7 +27,6 @@
 #ifndef DOMWindowWebDatabase_h
 #define DOMWindowWebDatabase_h
 
-#if ENABLE(SQL_DATABASE)
 #include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -51,7 +50,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // DOMWindowWebDatabase_h

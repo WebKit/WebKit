@@ -772,10 +772,8 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
         if (InspectorCSSAgent* cssAgent = instrumentingAgents.inspectorCSSAgent())
             cssAgent->reset();
 
-#if ENABLE(SQL_DATABASE)
         if (InspectorDatabaseAgent* databaseAgent = instrumentingAgents.inspectorDatabaseAgent())
             databaseAgent->clearResources();
-#endif
 
         if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
             domAgent->setDocument(page->mainFrame().document());
@@ -939,7 +937,6 @@ RefPtr<JSC::Profile> InspectorInstrumentation::stopProfilingImpl(InstrumentingAg
     return nullptr;
 }
 
-#if ENABLE(SQL_DATABASE)
 void InspectorInstrumentation::didOpenDatabaseImpl(InstrumentingAgents& instrumentingAgents, RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
 {
     if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
@@ -947,7 +944,6 @@ void InspectorInstrumentation::didOpenDatabaseImpl(InstrumentingAgents& instrume
     if (InspectorDatabaseAgent* dbAgent = instrumentingAgents.inspectorDatabaseAgent())
         dbAgent->didOpenDatabase(database, domain, name, version);
 }
-#endif
 
 void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgents& instrumentingAgents, const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page* page)
 {

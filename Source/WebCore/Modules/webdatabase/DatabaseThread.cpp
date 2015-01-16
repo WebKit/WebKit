@@ -29,8 +29,6 @@
 #include "config.h"
 #include "DatabaseThread.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "Database.h"
 #include "DatabaseTask.h"
 #include "Logging.h"
@@ -271,4 +269,3 @@ void DatabaseThread::unscheduleDatabaseTasks(Database* database)
     m_queue.removeIf(predicate);
 }
 } // namespace WebCore
-#endif

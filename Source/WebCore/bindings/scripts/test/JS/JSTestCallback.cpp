@@ -20,7 +20,7 @@
 
 #include "config.h"
 
-#if ENABLE(SQL_DATABASE)
+#if ENABLE(SPEECH_SYNTHESIS)
 
 #include "JSTestCallback.h"
 
@@ -168,4 +168,4 @@ bool JSTestCallback::callbackRequiresThisToPass(int longParam, TestNode* testNod
 
 }
 
-#endif // ENABLE(SQL_DATABASE)
+#endif // ENABLE(SPEECH_SYNTHESIS)

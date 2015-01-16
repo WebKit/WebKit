@@ -1,3 +1,61 @@
+2015-01-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(SQL_DATABASE) guards
+        https://bugs.webkit.org/show_bug.cgi?id=140434
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/OriginAndDatabases.cpp:
+        * Shared/OriginAndDatabases.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetDatabaseManager):
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        (WKDatabaseManagerGetTypeID):
+        (WKDatabaseManagerGetOriginKey):
+        (WKDatabaseManagerGetOriginQuotaKey):
+        (WKDatabaseManagerGetOriginUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsKey):
+        (WKDatabaseManagerGetDatabaseDetailsNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsDisplayNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsCreationTimeKey):
+        (WKDatabaseManagerGetDatabaseDetailsModificationTimeKey):
+        (WKDatabaseManagerSetClient):
+        (WKDatabaseManagerGetDatabasesByOrigin):
+        (WKDatabaseManagerGetDatabaseOrigins):
+        (WKDatabaseManagerDeleteDatabasesWithNameForOrigin):
+        (WKDatabaseManagerDeleteDatabasesForOrigin):
+        (WKDatabaseManagerDeleteAllDatabases):
+        (WKDatabaseManagerSetQuotaForOrigin):
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::informDatabaseQuotaReached):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        * UIProcess/WebDatabaseManagerProxy.h:
+        * UIProcess/WebDatabaseManagerProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+        (WebKit::PageUIClientEfl::exceededDatabaseQuota):
+        * UIProcess/efl/PageUIClientEfl.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::clearAllDatabases):
+        (WebKit::InjectedBundle::setDatabaseQuota):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::exceededDatabaseQuota):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.messages.in:
+        * WebProcess/WebCoreSupport/WebSQLiteDatabaseTracker.cpp:
+        * WebProcess/WebCoreSupport/WebSQLiteDatabaseTracker.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+
 2015-01-15  Anders Carlsson  <andersca@apple.com>
 
         Add a connection parameter to StorageManager willOpen/didClose functions

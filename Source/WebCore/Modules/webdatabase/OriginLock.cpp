@@ -26,8 +26,6 @@
 #include "config.h"
 #include "OriginLock.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "FileSystem.h"
 
 namespace WebCore {
@@ -96,5 +94,3 @@ void OriginLock::deleteLockFile(String originPath)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

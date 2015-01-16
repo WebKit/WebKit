@@ -117,7 +117,6 @@ my (
     $resourceTimingSupport,
     $scriptedSpeechSupport,
     $seccompFiltersSupport,
-    $sqlDatabaseSupport,
     $styleScopedSupport,
     $subtleCrypto,
     $suidLinuxSandbox,
@@ -360,9 +359,6 @@ my @features = (
 
     { option => "scripted-speech", desc => "Toggle Scripted Speech support",
       define => "ENABLE_SCRIPTED_SPEECH", default => 0, value => \$scriptedSpeechSupport },
-
-    { option => "sql-database", desc => "Toggle SQL Database support",
-      define => "ENABLE_SQL_DATABASE", default => 1, value => \$sqlDatabaseSupport },
 
     { option => "subtle-crypto", desc => "Toggle WebCrypto Subtle-Crypto support",
       define => "ENABLE_SUBTLE_CRYPTO", default => (isGtk() || isEfl() || isAppleMacWebKit() || isIOSWebKit()), value => \$subtleCrypto },

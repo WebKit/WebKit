@@ -25,8 +25,6 @@
  
 #import "WebDatabaseManagerClient.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #import "WebDatabaseManagerPrivate.h"
 #import "WebSecurityOriginInternal.h"
 #import <wtf/MainThread.h>
@@ -232,5 +230,3 @@ void WebDatabaseManagerClient::databaseOriginsDidChange()
 }
 
 #endif // PLATFORM(IOS)
-
-#endif

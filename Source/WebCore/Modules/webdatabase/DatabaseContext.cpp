@@ -28,8 +28,6 @@
 #include "config.h"
 #include "DatabaseContext.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Database.h"
@@ -247,5 +245,3 @@ bool DatabaseContext::isContextThread() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

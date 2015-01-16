@@ -26,8 +26,6 @@
 #ifndef SQLTransactionState_h
 #define SQLTransactionState_h
 
-#if ENABLE(SQL_DATABASE)
-
 namespace WebCore {
 
 enum class SQLTransactionState {
@@ -48,7 +46,5 @@ enum class SQLTransactionState {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // SQLTransactionState_h

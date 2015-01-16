@@ -28,8 +28,6 @@
 #ifndef SQLCallbackWrapper_h
 #define SQLCallbackWrapper_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "ScriptExecutionContext.h"
 #include <wtf/ThreadingPrimitives.h>
 
@@ -101,7 +99,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // SQLCallbackWrapper_h

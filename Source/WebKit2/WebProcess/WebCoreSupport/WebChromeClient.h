@@ -138,10 +138,8 @@ private:
     virtual void setToolTip(const String&, WebCore::TextDirection) override;
     
     virtual void print(WebCore::Frame*) override;
-    
-#if ENABLE(SQL_DATABASE)
+
     virtual void exceededDatabaseQuota(WebCore::Frame*, const String& databaseName, WebCore::DatabaseDetails) override;
-#endif
 
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded) override;
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*, int64_t spaceNeeded) override;

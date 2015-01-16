@@ -26,8 +26,6 @@
 #ifndef WebDatabaseManager_h
 #define WebDatabaseManager_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include "MessageReceiver.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/DatabaseManagerClient.h>
@@ -74,7 +72,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // WebDatabaseManager_h

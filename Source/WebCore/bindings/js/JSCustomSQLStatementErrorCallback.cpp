@@ -27,9 +27,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SQL_DATABASE)
-
 #include "JSSQLStatementErrorCallback.h"
 
 #include "JSSQLError.h"
@@ -69,5 +66,3 @@ bool JSSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLEr
 }
 
 }
-
-#endif // ENABLE(SQL_DATABASE)

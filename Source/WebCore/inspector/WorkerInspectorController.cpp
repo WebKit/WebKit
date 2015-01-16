@@ -103,9 +103,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
             , nullptr
             , nullptr
             , nullptr
-#if ENABLE(SQL_DATABASE)
             , nullptr
-#endif
         );
     }
 }

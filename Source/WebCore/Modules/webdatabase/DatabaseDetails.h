@@ -29,8 +29,6 @@
 #ifndef DatabaseDetails_h
 #define DatabaseDetails_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include <thread>
 #include <wtf/text/WTFString.h>
 
@@ -85,7 +83,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif
 
 #endif // DatabaseDetails_h

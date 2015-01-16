@@ -32,8 +32,6 @@
 #include "config.h"
 #include "SQLTransactionCoordinator.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "Database.h"
 #include "SQLTransactionBackend.h"
 #include "SecurityOrigin.h"
@@ -151,5 +149,3 @@ void SQLTransactionCoordinator::shutdown()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

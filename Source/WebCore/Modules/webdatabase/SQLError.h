@@ -29,8 +29,6 @@
 #ifndef SQLError_h
 #define SQLError_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -69,7 +67,5 @@ private:
 };
 
 }
-
-#endif
 
 #endif // SQLError_h

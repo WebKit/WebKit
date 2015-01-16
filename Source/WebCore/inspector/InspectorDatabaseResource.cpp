@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(SQL_DATABASE) && ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR)
 
 #include "InspectorDatabaseResource.h"
 
@@ -70,4 +70,4 @@ void InspectorDatabaseResource::bind(InspectorDatabaseFrontendDispatcher* databa
 
 } // namespace WebCore
 
-#endif // ENABLE(SQL_DATABASE) && ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR)

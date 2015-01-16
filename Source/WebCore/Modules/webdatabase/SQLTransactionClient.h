@@ -31,8 +31,6 @@
 #ifndef SQLTransactionClient_h
 #define SQLTransactionClient_h
 
-#if ENABLE(SQL_DATABASE)
-
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
@@ -51,7 +49,5 @@ public:
 };
 
 }
-
-#endif // ENABLE(SQL_DATABASE)
 
 #endif // SQLTransactionClient_h

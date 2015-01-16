@@ -24,6 +24,7 @@
 
 #include "AXObjectCache.h"
 #include "Cursor.h"
+#include "DatabaseDetails.h"
 #include "DisplayRefreshMonitor.h"
 #include "FocusDirection.h"
 #include "FrameLoader.h"
@@ -51,10 +52,6 @@ class WAKResponder;
 #else
 @class WAKResponder;
 #endif
-#endif
-
-#if ENABLE(SQL_DATABASE)
-#include "DatabaseDetails.h"
 #endif
 
 OBJC_CLASS NSResponder;
@@ -204,9 +201,7 @@ public:
 
     virtual void pageExtendedBackgroundColorDidChange(Color) const { }
 
-#if ENABLE(SQL_DATABASE)
     virtual void exceededDatabaseQuota(Frame*, const String& databaseName, DatabaseDetails) = 0;
-#endif
 
     // Callback invoked when the application cache fails to save a cache object
     // because storing it would grow the database file past its defined maximum

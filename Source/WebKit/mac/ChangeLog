@@ -1,3 +1,33 @@
+2015-01-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(SQL_DATABASE) guards
+        https://bugs.webkit.org/show_bug.cgi?id=140434
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Storage/WebDatabaseManager.mm:
+        (databasesDirectoryPath):
+        * Storage/WebDatabaseManagerClient.h:
+        * Storage/WebDatabaseManagerClient.mm:
+        * Storage/WebDatabaseManagerInternal.h:
+        * Storage/WebDatabaseManagerPrivate.h:
+        * Storage/WebDatabaseQuotaManager.mm:
+        (-[WebDatabaseQuotaManager usage]):
+        (-[WebDatabaseQuotaManager quota]):
+        (-[WebDatabaseQuotaManager setQuota:]):
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin usage]):
+        (-[WebSecurityOrigin quota]):
+        (-[WebSecurityOrigin setQuota:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _cacheabilityDictionary]):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _preferencesChanged:]):
+
 2015-01-14  Chris Dumez  <cdumez@apple.com>
 
         Make 'TypeName' parameter unnecessary in CSSPropertyNames.in

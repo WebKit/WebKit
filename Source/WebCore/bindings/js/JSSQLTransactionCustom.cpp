@@ -28,10 +28,7 @@
 
 #include "config.h"
 
-#if ENABLE(SQL_DATABASE)
-
 #include "JSSQLTransaction.h"
-
 #include "DOMWindow.h"
 #include "ExceptionCode.h"
 #include "JSSQLStatementCallback.h"
@@ -118,5 +115,3 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SQL_DATABASE)

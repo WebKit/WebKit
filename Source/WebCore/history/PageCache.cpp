@@ -139,13 +139,11 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
         FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureHTTPSNoStoreKey);
         rejectReasons |= 1 << IsHttpsAndCacheControlled;
     }
-#if ENABLE(SQL_DATABASE)
     if (DatabaseManager::manager().hasOpenDatabases(frame->document())) {
         PCLOG("   -Frame has open database handles");
         FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureHasOpenDatabasesKey);
         rejectReasons |= 1 << HasDatabaseHandles;
     }
-#endif
     if (!frame->loader().history().currentItem()) {
         PCLOG("   -No current history item");
         FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureNoCurrentHistoryItemKey);
@@ -314,9 +312,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
         && (!frameLoader.subframeLoader().containsPlugins() || frame->page()->settings().pageCacheSupportsPlugins())
         && !(frame->isMainFrame() && document->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore())
-#if ENABLE(SQL_DATABASE)
         && !DatabaseManager::manager().hasOpenDatabases(document)
-#endif
         && frameLoader.history().currentItem()
         && !frameLoader.quickRedirectComing()
         && !documentLoader->isLoadingInAPISense()
