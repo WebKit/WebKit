@@ -42,8 +42,9 @@ public:
     }
     
     const LayoutRect& rect() const { return m_rect; }
-    void setRect(const LayoutRect& rect) { m_rect = rect; }
-    
+
+    void reset() { m_rect = LayoutRect::infiniteRect(); }
+
     bool affectedByRadius() const { return m_affectedByRadius; }
     void setAffectedByRadius(bool affectedByRadius) { m_affectedByRadius = affectedByRadius; }
     
@@ -57,10 +58,12 @@ public:
     void move(const LayoutSize& size) { m_rect.move(size); }
     void moveBy(const LayoutPoint& point) { m_rect.moveBy(point); }
     
-    bool isEmpty() const { return m_rect.isEmpty(); }
     bool intersects(const LayoutRect& rect) const { return m_rect.intersects(rect); }
     bool intersects(const HitTestLocation&) const;
-    
+
+    bool isEmpty() const { return m_rect.isEmpty(); }
+    bool isInfinite() const { return m_rect.isInfinite(); }
+
     void inflateX(LayoutUnit dx) { m_rect.inflateX(dx); }
     void inflateY(LayoutUnit dy) { m_rect.inflateY(dy); }
     void inflate(LayoutUnit d) { inflateX(d); inflateY(d); }

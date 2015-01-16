@@ -1,3 +1,32 @@
+2015-01-15  Zalan Bujtas  <zalan@apple.com>
+
+        Reduce LayoutRect::infiniteRect() usage.
+        https://bugs.webkit.org/show_bug.cgi?id=140511
+
+        Reviewed by Simon Fraser.
+
+        This is in preparation to get rid of LayoutRect/FloatRect::infiniteRect().
+
+        No change in functionality.
+
+        * platform/graphics/LayoutRect.h:
+        (WebCore::LayoutRect::isInfinite):
+        * rendering/ClipRect.h:
+        (WebCore::ClipRect::reset):
+        (WebCore::ClipRect::isEmpty):
+        (WebCore::ClipRect::isInfinite):
+        (WebCore::ClipRect::setRect): Deleted.
+        * rendering/PaintInfo.h:
+        (WebCore::PaintInfo::applyTransform):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRects::reset):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::clippedByAncestor):
+
 2015-01-15  Chris Dumez  <cdumez@apple.com>
 
         Intermittent WebCore build failures - CSSPropertyNames.gperf: No keywords in input file! calling gperf failed: 256 at WebCore/css/makeprop.pl line 901

@@ -95,7 +95,7 @@ struct PaintInfo {
 
         context->concatCTM(localToAncestorTransform);
 
-        if (rect == LayoutRect::infiniteRect())
+        if (rect.isInfinite())
             return;
 
         FloatRect tranformedRect(localToAncestorTransform.inverse().mapRect(rect));

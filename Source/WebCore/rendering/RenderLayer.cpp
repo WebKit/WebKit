@@ -148,11 +148,11 @@ public:
 
     ClipRects() = default;
 
-    void reset(const LayoutRect& clipRect)
+    void reset()
     {
-        m_overflowClipRect = clipRect;
-        m_fixedClipRect = clipRect;
-        m_posClipRect = clipRect;
+        m_overflowClipRect.reset();
+        m_fixedClipRect.reset();
+        m_posClipRect.reset();
         m_fixed = false;
     }
 
@@ -5406,7 +5406,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
 {
     if (!parent()) {
         // The root layer's clip rect is always infinite.
-        clipRects.reset(LayoutRect::infiniteRect());
+        clipRects.reset();
         return;
     }
     
@@ -5430,7 +5430,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
             parentLayer->calculateClipRects(parentContext, clipRects);
         }
     } else
-        clipRects.reset(LayoutRect::infiniteRect());
+        clipRects.reset();
 
     // A fixed object is essentially the root of its containing block hierarchy, so when
     // we encounter such an object, we reset our clip rects to the fixedClipRect.
@@ -5519,7 +5519,7 @@ ClipRect RenderLayer::backgroundClipRect(const ClipRectsContext& clipRectsContex
     RenderView& view = renderer().view();
 
     // Note: infinite clipRects should not be scrolled here, otherwise they will accidentally no longer be considered infinite.
-    if (parentRects.fixed() && &clipRectsContext.rootLayer->renderer() == &view && backgroundClipRect != LayoutRect::infiniteRect())
+    if (parentRects.fixed() && &clipRectsContext.rootLayer->renderer() == &view && !backgroundClipRect.isInfinite())
         backgroundClipRect.move(view.frameView().scrollOffsetForFixedPosition());
 
     return backgroundClipRect;
@@ -5671,7 +5671,7 @@ LayoutRect RenderLayer::localClipRect(bool& clipExceedsBounds) const
     calculateRects(clipRectsContext, LayoutRect::infiniteRect(), layerBounds, backgroundRect, foregroundRect, outlineRect, offsetFromRoot);
 
     LayoutRect clipRect = backgroundRect.rect();
-    if (clipRect == LayoutRect::infiniteRect())
+    if (clipRect.isInfinite())
         return clipRect;
 
     if (renderer().hasClip()) {
@@ -5881,7 +5881,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     if (flags & UseLocalClipRectIfPossible) {
         bool clipExceedsBounds = false;
         LayoutRect localClipRect = this->localClipRect(clipExceedsBounds);
-        if (localClipRect != LayoutRect::infiniteRect() && !clipExceedsBounds) {
+        if (!localClipRect.isInfinite() && !clipExceedsBounds) {
             if ((flags & IncludeSelfTransform) && paintsWithTransform(PaintBehaviorNormal))
                 localClipRect = transform()->mapRect(localClipRect);
 
@@ -6917,7 +6917,7 @@ void RenderLayer::paintFlowThreadIfRegionForFragments(const LayerFragments& frag
         if (flowFragment->shouldClipFlowThreadContent())
             clipRect.intersect(regionClipRect);
 
-        bool shouldClip = (clipRect != LayoutRect::infiniteRect());
+        bool shouldClip = !clipRect.isInfinite();
         // Optimize clipping for the single fragment case.
         if (shouldClip)
             clipToRect(paintingInfo, context, clipRect);
