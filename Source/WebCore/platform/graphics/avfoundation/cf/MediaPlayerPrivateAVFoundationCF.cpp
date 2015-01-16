@@ -1123,11 +1123,12 @@ std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(cons
     if (!keySystemIsSupported(keySystem))
         return nullptr;
 
-#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     return std::make_unique<CDMSessionAVFoundationCF>(this);
-#else
+}
+#elif ENABLE(ENCRYPTED_MEDIA_V2)
+std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationCF::createSession(const String& keySystem)
+{
     return nullptr;
-#endif
 }
 #endif
 
