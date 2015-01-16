@@ -1,3 +1,36 @@
+2015-01-15  Daniel Bates  <dabates@apple.com>
+
+        [iOS] REGRESSION (r174642): DumpRenderTree.app test may dump result twice
+        https://bugs.webkit.org/show_bug.cgi?id=139685
+        <rdar://problem/19281317>
+
+        Reviewed by Simon Fraser.
+
+        Fixes an issue where a test in DumpRenderTree.app may dump its result twice. In particular,
+        the test LayoutTests/fast/dom/gc-10.html may dump its result twice.
+
+        Following <http://trac.webkit.org/changeset/174642>, we dump the test result asynchronously
+        as opposed to synchronously. So, the WebThread or the main thread may perform other tasks
+        before DRT dumps the output of a test. In particular, the WebThread may start a new page
+        load (say, as a result of continued JavaScript execution), which will ultimately lead to
+        dumping the test result again. Instead we want DRT to dump the test result synchronously
+        such that we capture the state of the web page either when the page is loaded or when
+        window.testRunner.notifyDone() is called.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (createBitmapContextFromWebView): Moved logic to re-enable tile painting and update the
+        state of the display from here to updateDisplay(). Added call to -[CATransaction flush] to
+        flush CA transactions to the window.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (updateDisplay): Added iOS-specific code to update tiles and tell WebKit to flush
+        compositing changes to ensure that we have up-to-date tile content for a pixel/ref-test.
+        (dump): Renamed; formerly named dumpTestResults().
+        (displayWebView): Removed outdated FIXME comment. Added FIXME comment to investigate
+        enabling repaint support on iOS.
+        (-[DumpRenderTree _deferDumpToMainThread]): Deleted.
+        (-[DumpRenderTree _waitForWebThreadThenDump]): Deleted.
+        (dumpTestResults): Deleted.
+
 2015-01-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Miscellaneous DRT fixes

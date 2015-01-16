@@ -80,9 +80,9 @@ void dumpBitmap(BitmapContext* context, const char* checksum)
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool incrementalRepaint, bool sweepHorizontally, bool drawSelectionRect)
 {
     // TODO: <rdar://problem/6558366> DumpRenderTree: Investigate testRepaintSweepHorizontally and dumpSelectionRect
+
     WebThreadLock();
-    [gWebBrowserView layoutIfNeeded]; // Re-enables tile painting, which was disabled when committing the frame load.
-    [gWebBrowserView setNeedsDisplay];
+    [CATransaction flush];
 
     UIGraphicsBeginImageContextWithOptions([[mainFrame webView] frame].size, YES /* opaque */, [gDrtWindow screenScale]);
     [[gWebBrowserView layer] renderInContext:UIGraphicsGetCurrentContext()];

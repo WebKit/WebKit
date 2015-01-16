@@ -151,8 +151,11 @@ using namespace std;
 @end
 #endif
 
+@interface WebView (Details)
+- (BOOL)_flushCompositingChanges;
+@end
+
 static void runTest(const string& testURL);
-static void dumpTestResults();
 
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
 // - There is no load in progress
@@ -1220,15 +1223,6 @@ static const char **_argv;
     [self performSelectorOnMainThread:@selector(_runDumpRenderTree) withObject:nil waitUntilDone:NO];
 }
 
-- (void)_deferDumpToMainThread
-{
-    ASSERT(WebThreadIsCurrent());
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        dump();
-    });
-}
-
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     /* Apps will get suspended or killed some time after entering the background state but we want to be able to run multiple copies of DumpRenderTree. Periodically check to see if our remaining background time dips below a threshold and create a new background task.
@@ -1282,12 +1276,6 @@ static const char **_argv;
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
         [pool release];
     }
-}
-
-- (void)_waitForWebThreadThenDump
-{
-    [self _waitForWebThread];
-    dumpTestResults();
 }
 
 @end
@@ -1565,32 +1553,19 @@ bool shouldSetWaitToDumpWatchdog()
 static void updateDisplay()
 {
     WebView *webView = [mainFrame webView];
-
+#if PLATFORM(IOS)
+    [gWebBrowserView layoutIfNeeded]; // Re-enables tile painting, which was disabled when committing the frame load.
+    [gDrtWindow layoutTilesNow];
+    [webView _flushCompositingChanges];
+#else
     if ([webView _isUsingAcceleratedCompositing])
         [webView display];
     else
         [webView displayIfNeeded];
+#endif
 }
 
 void dump()
-{
-#if PLATFORM(IOS)
-    // This can get called on the web thread if from a JavaScript notifyDone().
-    if (WebThreadIsCurrent()) {
-        [(DumpRenderTree *)UIApp _deferDumpToMainThread];
-        return;
-    }
-
-    // Allow the web thread to run before dumping. We can't call -_waitForWebThread directly since we may
-    // be inside a delegate callback.
-    [UIApp performSelectorOnMainThread:@selector(_waitForWebThreadThenDump) withObject:nil waitUntilDone:NO];
-    return;
-#endif
-
-    dumpTestResults();
-}
-
-void dumpTestResults()
 {
 #if PLATFORM(IOS)
     WebThreadLock();
@@ -1980,11 +1955,11 @@ void displayWebView()
 #if !PLATFORM(IOS)
     WebView *webView = [mainFrame webView];
     [webView display];
-    
+
+    // FIXME: Tracking repaints is not specific to Mac. We should enable such support on iOS.
     [webView setTracksRepaints:YES];
     [webView resetTrackedRepaints];
 #else
-    // FIXME: <rdar://problem/5106253> DumpRenderTree: fix DRT and ImageDiff to re-enable pixel tests
     [gDrtWindow layoutTilesNow];
     [gDrtWindow setNeedsDisplayInRect:[gDrtWindow frame]];
     [CATransaction flush];
