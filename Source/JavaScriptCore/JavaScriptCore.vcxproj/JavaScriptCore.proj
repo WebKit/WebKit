@@ -4,9 +4,11 @@
   <!-- normalize configuration case -->
   <PropertyGroup Condition="'$(CONFIGURATION)'=='Release'">
 	<CONFIG>Production</CONFIG>
+    <DebugSuffix></DebugSuffix>
   </PropertyGroup>
   <PropertyGroup Condition="'$(CONFIGURATION)'=='Debug'">
 	<CONFIG>DebugSuffix</CONFIG>
+    <DebugSuffix>_debug</DebugSuffix>
   </PropertyGroup>
 
   <!-- Wrapper to build JavaScriptCore for both win32 and x64. -->
@@ -83,10 +85,10 @@
     <CreateItem Include="$(ConfigurationBuildDir)\bin64\*.pdb">
       <Output TaskParameter="Include" ItemName="Bin64SymbolFiles" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\bin32\JavaScriptCore.dll">
+    <CreateItem Include="$(ConfigurationBuildDir)\bin32\JavaScriptCore$(DebugSuffix).dll">
       <Output TaskParameter="Include" ItemName="Bin32DLLFiles" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\bin64\JavaScriptCore.dll">
+    <CreateItem Include="$(ConfigurationBuildDir)\bin64\JavaScriptCore$(DebugSuffix).dll">
       <Output TaskParameter="Include" ItemName="Bin64DLLFiles" />
     </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\bin32\*.resources">
