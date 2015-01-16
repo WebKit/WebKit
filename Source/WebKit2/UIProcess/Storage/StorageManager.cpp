@@ -485,12 +485,12 @@ void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, u
     });
 }
 
-void StorageManager::processWillOpenConnection(WebProcessProxy& webProcessProxy, IPC::Connection& connection)
+void StorageManager::processWillOpenConnection(WebProcessProxy&, IPC::Connection& connection)
 {
     connection.addWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName(), m_queue.get(), this);
 }
 
-void StorageManager::processDidCloseConnection(WebProcessProxy& webProcessProxy, IPC::Connection& connection)
+void StorageManager::processDidCloseConnection(WebProcessProxy&, IPC::Connection& connection)
 {
     connection.removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
 

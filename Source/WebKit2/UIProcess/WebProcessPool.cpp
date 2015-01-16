@@ -774,11 +774,11 @@ bool WebProcessPool::shouldTerminate(WebProcessProxy* process)
     return true;
 }
 
-void WebProcessPool::processWillOpenConnection(WebProcessProxy* process)
+void WebProcessPool::processWillOpenConnection(WebProcessProxy*)
 {
 }
 
-void WebProcessPool::processWillCloseConnection(WebProcessProxy* process)
+void WebProcessPool::processWillCloseConnection(WebProcessProxy*)
 {
 }
 

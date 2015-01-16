@@ -1,3 +1,19 @@
+2015-01-16  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Fix build warning in WebKit2/UIProcess module.
+        https://bugs.webkit.org/show_bug.cgi?id=140538
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix build warnings by removing parameter name from functions
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::processWillOpenConnection):
+        (WebKit::StorageManager::processDidCloseConnection):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processWillOpenConnection):
+        (WebKit::WebProcessPool::processWillCloseConnection):
+
 2015-01-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SQL_DATABASE) guards
