@@ -1,3 +1,13 @@
+2015-01-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed Windows gardening.
+
+        Remove a bunch of out-of-date entries, and try to properly mark tests so we get
+        proper coverage.
+
+        * platform/win-xp/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-01-15  Alexey Proskuryakov  <ap@apple.com>
 
         Update Mountain Lion results for fast/canvas/webgl/angle-instanced-arrays.html

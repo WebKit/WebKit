@@ -23,9 +23,6 @@
 # This file should contain entries for expectations that are specific
 # to the Apple Windows port running on Windows XP.
 
-# Almost always times out http://webkit.org/b/49449
-fast/workers/storage/change-version-handle-reuse-worker.html
-
 # Times out http://webkit.org/b/54291
 media/audio-mpeg4-supported.html
 
