@@ -1,5 +1,36 @@
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r174106. rdar://problem/19451946
+
+    2014-09-30  Eric Carlson  <eric.carlson@apple.com>
+
+            [Mac] MediaPlayerPrivateQTKit should not use FrameView
+            https://bugs.webkit.org/show_bug.cgi?id=137119
+
+            Reviewed by Carlos Garcia Campos.
+
+            Remove obsolete QTKit code that would fall back to rendering into an NSView.
+            Aside from being dead code, it was only used when accelerated compositing
+            was not enabled and tha hasn't been possible for a long time, it required a
+            layering violation to get the FrameView.
+
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+            (WebCore::MediaPlayerPrivateQTKit::currentRenderingMode):
+            (WebCore::MediaPlayerPrivateQTKit::preferredRenderingMode):
+            (WebCore::MediaPlayerPrivateQTKit::setUpVideoRendering):
+            (WebCore::MediaPlayerPrivateQTKit::tearDownVideoRendering):
+            (WebCore::MediaPlayerPrivateQTKit::hasSetUpVideoRendering):
+            (WebCore::MediaPlayerPrivateQTKit::setSize):
+            (WebCore::MediaPlayerPrivateQTKit::paint):
+            (WebCore::mainThreadSetNeedsDisplay): Deleted.
+            (WebCore::MediaPlayerPrivateQTKit::createQTMovieView): Deleted.
+            (WebCore::MediaPlayerPrivateQTKit::detachQTMovieView): Deleted.
+            (-[WebCoreMovieObserver menuForEventDelegate:]): Deleted.
+            (-[WebCoreMovieObserver setView:]): Deleted.
+
+2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174505. rdar://problem/19451946
 
     2014-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
