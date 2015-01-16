@@ -727,6 +727,11 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
 #endif
 }
 
+void WKPageSetPageDiagnosticLoggingClient(WKPageRef pageRef, const WKPageDiagnosticLoggingClientBase* wkClient)
+{
+    toImpl(pageRef)->initializeDiagnosticLoggingClient(wkClient);
+}
+
 void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClientBase* wkClient)
 {
     class FindClient : public API::Client<WKPageFindClientBase>, public API::FindClient {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundlePageDiagnosticLoggingClient_h
-#define InjectedBundlePageDiagnosticLoggingClient_h
+#ifndef WKDiagnosticLoggingResultType_h
+#define WKDiagnosticLoggingResultType_h
 
-#include "APIClient.h"
-#include "WKBundlePage.h"
-#include <JavaScriptCore/JSBase.h>
-#include <WebCore/DiagnosticLoggingResultType.h>
-#include <wtf/Forward.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace API {
-template<> struct ClientTraits<WKBundlePageDiagnosticLoggingClientBase> {
-    typedef std::tuple<WKBundlePageDiagnosticLoggingClientV0, WKBundlePageDiagnosticLoggingClientV1> Versions;
+enum {
+    kWKDiagnosticLoggingResultPass = 0,
+    kWKDiagnosticLoggingResultFail = 1,
+    kWKDiagnosticLoggingResultNoop = 2,
 };
+typedef uint32_t WKDiagnosticLoggingResultType;
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebKit {
+#endif /* WKDiagnosticLoggingResultType_h */
 
-class InjectedBundleHitTestResult;
-class WebContextMenuItemData;
-class WebPage;
-
-class InjectedBundlePageDiagnosticLoggingClient : public API::Client<WKBundlePageDiagnosticLoggingClientBase> {
-public:
-    void logDiagnosticMessageDeprecated(WebPage*, const String& message, const String& description, const String& success);
-    void logDiagnosticMessage(WebPage*, const String& message, const String& description);
-    void logDiagnosticMessageWithResult(WebPage*, const String& message, const String& description, WebCore::DiagnosticLoggingResultType);
-    void logDiagnosticMessageWithValue(WebPage*, const String& message, const String& description, const String& value);
-};
-
-} // namespace WebKit
-
-#endif // InjectedBundlePageDiagnosticLoggingClient_h

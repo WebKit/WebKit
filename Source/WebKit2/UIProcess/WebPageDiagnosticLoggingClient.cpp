@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,40 +24,36 @@
  */
 
 #include "config.h"
-#include "InjectedBundlePageDiagnosticLoggingClient.h"
+#include "WebPageDiagnosticLoggingClient.h"
 
 #include "WKAPICast.h"
-#include "WKBundleAPICast.h"
-#include "WebPage.h"
+#include "WebPageProxy.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-void InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessageDeprecated(WebPage* page, const String& message, const String& description, const String& success)
-{
-    if (!m_client.logDiagnosticMessageDeprecated)
-        return;
-    m_client.logDiagnosticMessageDeprecated(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), toAPI(success.impl()), m_client.base.clientInfo);
-}
-
-void InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessage(WebPage* page, const String& message, const String& description)
+void WebPageDiagnosticLoggingClient::logDiagnosticMessage(WebPageProxy* page, const String& message, const String& description)
 {
     if (!m_client.logDiagnosticMessage)
         return;
+
     m_client.logDiagnosticMessage(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessageWithResult(WebPage* page, const String& message, const String& description, WebCore::DiagnosticLoggingResultType result)
+void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithResult(WebPageProxy* page, const String& message, const String& description, WebCore::DiagnosticLoggingResultType result)
 {
     if (!m_client.logDiagnosticMessageWithResult)
         return;
+
     m_client.logDiagnosticMessageWithResult(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), toAPI(result), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageDiagnosticLoggingClient::logDiagnosticMessageWithValue(WebPage* page, const String& message, const String& description, const String& value)
+void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithValue(WebPageProxy* page, const String& message, const String& description, const String& value)
 {
     if (!m_client.logDiagnosticMessageWithValue)
         return;
+
     m_client.logDiagnosticMessageWithValue(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), toAPI(value.impl()), m_client.base.clientInfo);
 }
 
-}
+} // namespace WebKit

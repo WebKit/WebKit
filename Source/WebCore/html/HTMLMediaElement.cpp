@@ -1837,7 +1837,7 @@ static void logMediaLoadRequest(Page* page, const String& mediaEngine, const Str
         return;
 
     if (!succeeded) {
-        diagnosticLoggingClient->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::mediaLoadingFailedKey(), errorMessage, DiagnosticLoggingClient::Fail);
+        diagnosticLoggingClient->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::mediaLoadingFailedKey(), errorMessage, DiagnosticLoggingResultFail);
         return;
     }
 

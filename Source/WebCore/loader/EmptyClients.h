@@ -635,7 +635,7 @@ class EmptyProgressTrackerClient : public ProgressTrackerClient {
 
 class EmptyDiagnosticLoggingClient : public DiagnosticLoggingClient {
     virtual void logDiagnosticMessage(const String&, const String&) override { }
-    virtual void logDiagnosticMessageWithResult(const String&, const String&, LogResultType) override { }
+    virtual void logDiagnosticMessageWithResult(const String&, const String&, DiagnosticLoggingResultType) override { }
     virtual void logDiagnosticMessageWithValue(const String&, const String&, const String&) override { }
 };
 

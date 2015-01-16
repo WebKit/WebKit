@@ -27,13 +27,7 @@
 #define WKBundlePageDiagnosticLoggingClient_h
 
 #include <WebKit/WKBase.h>
-
-enum {
-    kWKDiagnosticLoggingResultPass = 0,
-    kWKDiagnosticLoggingResultFail = 1,
-    kWKDiagnosticLoggingResultNoop = 2,
-};
-typedef uint32_t WKDiagnosticLoggingResultType;
+#include <WebKit/WKDiagnosticLoggingResultType.h>
 
 typedef void (*WKBundlePageDiagnosticLoggingCallback)(WKBundlePageRef page, WKStringRef message, WKStringRef description, WKStringRef success, const void* clientInfo);
 typedef void (*WKBundlePageLogDiagnosticMessageCallback)(WKBundlePageRef page, WKStringRef message, WKStringRef description, const void* clientInfo);

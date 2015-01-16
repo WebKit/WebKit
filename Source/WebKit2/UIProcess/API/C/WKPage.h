@@ -33,6 +33,7 @@
 #include <WebKit/WKGeometry.h>
 #include <WebKit/WKNativeEvent.h>
 #include <WebKit/WKPageContextMenuClient.h>
+#include <WebKit/WKPageDiagnosticLoggingClient.h>
 #include <WebKit/WKPageFindClient.h>
 #include <WebKit/WKPageFindMatchesClient.h>
 #include <WebKit/WKPageFormClient.h>
@@ -207,6 +208,7 @@ WK_EXPORT void WKPageGetImageForFindMatch(WKPageRef page, int32_t matchIndex);
 WK_EXPORT void WKPageSelectFindMatch(WKPageRef page, int32_t matchIndex);
 
 WK_EXPORT void WKPageSetPageContextMenuClient(WKPageRef page, const WKPageContextMenuClientBase* client);
+WK_EXPORT void WKPageSetPageDiagnosticLoggingClient(WKPageRef page, const WKPageDiagnosticLoggingClientBase* client);
 WK_EXPORT void WKPageSetPageFindClient(WKPageRef page, const WKPageFindClientBase* client);
 WK_EXPORT void WKPageSetPageFindMatchesClient(WKPageRef page, const WKPageFindMatchesClientBase* client);
 WK_EXPORT void WKPageSetPageFormClient(WKPageRef page, const WKPageFormClientBase* client);

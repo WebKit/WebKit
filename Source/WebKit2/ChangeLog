@@ -1,3 +1,67 @@
+2015-01-15  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Wire diagnostic logging messages through the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=140486
+
+        Reviewed by Sam Weinig.
+
+        Wire diagnostic logging messages through the UIProcess.
+        Eventually, the corresponding bundle API should go away.
+
+        * CMakeLists.txt:
+        Add UIProcess/WebPageDiagnosticLoggingClient.cpp to CMake.
+
+        * Shared/API/c/WKDiagnosticLoggingResultType.h:
+        Extract WKDiagnosticLoggingResultType enumeration from
+        WKBundlePageDiagnosticLoggingClient.h into its own header so that
+        it can be shared with the new WKPageDiagnosticLoggingClient.h.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toDiagnosticLoggingResultType):
+        Add WebCore::DiagnosticLoggingResultType <-> WKDiagnosticLoggingResultType
+        casting functions.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageDiagnosticLoggingClient):
+        * UIProcess/API/C/WKPage.h:
+        Add WKPage API so that the application can set the DiagnosticLoggingClient.
+
+        * UIProcess/API/C/WKPageDiagnosticLoggingClient.h: Added.
+        New WK2 diagnostic logging client that will eventually replace the existing
+        WKBundlePageDiagnosticLoggingClient.h injected bundle client.
+
+        * UIProcess/WebPageDiagnosticLoggingClient.cpp: Copied from Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp.
+        * UIProcess/WebPageDiagnosticLoggingClient.h: Copied from Source/WebCore/page/DiagnosticLoggingClient.h.
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        Handle new IPC messages for logging diagnostic messages.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add 3 IPC messages for logging diagnostic messages.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files to XCode project.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageDiagnosticLoggingClient.h:
+        Remove WKDiagnosticLoggingResultType enum as it was moved to its own
+        header.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.h:
+        Use WebCore::DiagnosticLoggingResultType enum type instead of
+        WKDiagnosticLoggingResultType and call toAPI() to convert to
+        WKDiagnosticLoggingResultType type.
+
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.cpp:
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessage):
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessageWithResult):
+        (WebKit::WebDiagnosticLoggingClient::logDiagnosticMessageWithValue):
+        Send IPC to WebPageProxy in addition to calling the injected bundle client.
+
+        * WebProcess/WebCoreSupport/WebDiagnosticLoggingClient.h:
+        Use new DiagnosticLoggingResultType enum instead of the old LogType one.
+
 2015-01-15  Dan Bernstein  <mitz@apple.com>
 
         Added availability annotations to modern Cocoa SPI.

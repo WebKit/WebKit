@@ -1,3 +1,28 @@
+2015-01-15  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Wire diagnostic logging messages through the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=140486
+
+        Reviewed by Sam Weinig.
+
+        Wire diagnostic logging messages through the UIProcess.
+        Eventually, the corresponding bundle API should go away.
+
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        Add page/DiagnosticLoggingResultType.h to Windows project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add page/DiagnosticLoggingResultType.h to XCode project.
+
+        * html/HTMLMediaElement.cpp:
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        * page/DiagnosticLoggingClient.h:
+        * page/DiagnosticLoggingResultType.h: Copied from Source/WebCore/page/DiagnosticLoggingClient.h.
+        Use new DiagnosticLoggingResultType enum instead of old
+        DiagnosticLoggingClient::LogType one.
+
 2015-01-15  Zalan Bujtas  <zalan@apple.com>
 
         Reduce LayoutRect::infiniteRect() usage.

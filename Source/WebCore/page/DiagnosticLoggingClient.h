@@ -26,6 +26,7 @@
 #ifndef DiagnosticLoggingClient_h
 #define DiagnosticLoggingClient_h
 
+#include "DiagnosticLoggingResultType.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -33,13 +34,7 @@ namespace WebCore {
 class DiagnosticLoggingClient {
 public:
     virtual void logDiagnosticMessage(const String& message, const String& description) { UNUSED_PARAM(message); UNUSED_PARAM(description); }
-
-    enum LogResultType {
-        Pass,
-        Fail,
-        Noop,
-    };
-    virtual void logDiagnosticMessageWithResult(const String& message, const String& description, LogResultType) { UNUSED_PARAM(message); UNUSED_PARAM(description); }
+    virtual void logDiagnosticMessageWithResult(const String& message, const String& description, DiagnosticLoggingResultType) { UNUSED_PARAM(message); UNUSED_PARAM(description); }
     virtual void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value) { UNUSED_PARAM(message); UNUSED_PARAM(description); UNUSED_PARAM(value); }
 
 protected:

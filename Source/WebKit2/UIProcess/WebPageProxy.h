@@ -57,6 +57,7 @@
 #include "WebFrameProxy.h"
 #include "WebPageContextMenuClient.h"
 #include "WebPageCreationParameters.h"
+#include "WebPageDiagnosticLoggingClient.h"
 #include "WebPreferences.h"
 #include <WebCore/AlternativeTextClient.h> // FIXME: Needed by WebPageProxyMessages.h for DICTATION_ALTERNATIVES.
 #include "WebPageProxyMessages.h"
@@ -311,6 +312,7 @@ public:
     API::FindClient& findClient() { return *m_findClient; }
     void setFindClient(std::unique_ptr<API::FindClient>);
     void initializeFindMatchesClient(const WKPageFindMatchesClientBase*);
+    void initializeDiagnosticLoggingClient(const WKPageDiagnosticLoggingClientBase*);
     void setFormClient(std::unique_ptr<API::FormClient>);
     void setLoaderClient(std::unique_ptr<API::LoaderClient>);
     void setPolicyClient(std::unique_ptr<API::PolicyClient>);
@@ -1219,6 +1221,11 @@ private:
     void setCursor(const WebCore::Cursor&);
     void setCursorHiddenUntilMouseMoves(bool);
 
+    // Diagnostic messages logging.
+    void logDiagnosticMessage(const String& message, const String& description);
+    void logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result);
+    void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value);
+
     void didReceiveEvent(uint32_t opaqueType, bool handled);
     void stopResponsivenessTimer();
 
@@ -1360,6 +1367,7 @@ private:
 #endif
     std::unique_ptr<API::FindClient> m_findClient;
     WebFindMatchesClient m_findMatchesClient;
+    WebPageDiagnosticLoggingClient m_diagnosticLoggingClient;
 #if ENABLE(CONTEXT_MENUS)
     WebPageContextMenuClient m_contextMenuClient;
 #endif

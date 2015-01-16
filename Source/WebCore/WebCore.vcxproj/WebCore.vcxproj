@@ -19069,6 +19069,7 @@
     <ClInclude Include="..\page\DeviceClient.h" />
     <ClInclude Include="..\page\DeviceController.h" />
     <ClInclude Include="..\page\DiagnosticLoggingKeys.h" />
+    <ClInclude Include="..\page\DiagnosticLoggingResultType.h" />
     <ClInclude Include="..\page\DOMSelection.h" />
     <ClInclude Include="..\page\DOMTimer.h" />
     <ClInclude Include="..\page\DOMWindow.h" />

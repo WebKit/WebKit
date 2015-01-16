@@ -27,6 +27,7 @@
 #include "WebDiagnosticLoggingClient.h"
 
 #include "WebPage.h"
+#include "WebPageProxyMessages.h"
 #include <WebCore/Settings.h>
 
 namespace WebKit {
@@ -45,15 +46,19 @@ void WebDiagnosticLoggingClient::logDiagnosticMessage(const String& message, con
     if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
+    // FIXME: Remove this injected bundle API.
     m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessage(&m_page, message, description);
+    m_page.send(Messages::WebPageProxy::LogDiagnosticMessage(message, description));
 }
 
-void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingClient::LogResultType result)
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType result)
 {
     if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
+    // FIXME: Remove this injected bundle API.
     m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessageWithResult(&m_page, message, description, result);
+    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithResult(message, description, result));
 }
 
 void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& message, const String& description, const String& value)
@@ -61,7 +66,9 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithValue(const String& mes
     if (!m_page.corePage()->settings().diagnosticLoggingEnabled())
         return;
 
+    // FIXME: Remove this injected bundle API.
     m_page.injectedBundleDiagnosticLoggingClient().logDiagnosticMessageWithValue(&m_page, message, description, value);
+    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithValue(message, description, value));
 }
 
 } // namespace WebKit

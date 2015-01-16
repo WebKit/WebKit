@@ -2297,7 +2297,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (!diagnosticLoggingClient)
                 return;
 
-            diagnosticLoggingClient->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingClient::Pass : DiagnosticLoggingClient::Fail);
+            diagnosticLoggingClient->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingResultPass : DiagnosticLoggingResultFail);
 
             return;
         }

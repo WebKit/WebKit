@@ -7590,6 +7590,9 @@
     <ClInclude Include="..\page\DiagnosticLoggingKeys.h">
       <Filter>page</Filter>
     </ClInclude>
+    <ClInclude Include="..\page\DiagnosticLoggingResultType.h">
+      <Filter>page</Filter>
+    </ClInclude>
     <ClInclude Include="..\page\DOMSelection.h">
       <Filter>page</Filter>
     </ClInclude>

@@ -40,7 +40,7 @@ public:
 
 private:
     virtual void logDiagnosticMessage(const String& message, const String& description) override;
-    virtual void logDiagnosticMessageWithResult(const String& message, const String& description, LogResultType) override;
+    virtual void logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType) override;
     virtual void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value) override;
 
     WebPage& m_page;

@@ -550,6 +550,11 @@ void WebPageProxy::initializeFindMatchesClient(const WKPageFindMatchesClientBase
     m_findMatchesClient.initialize(client);
 }
 
+void WebPageProxy::initializeDiagnosticLoggingClient(const WKPageDiagnosticLoggingClientBase* client)
+{
+    m_diagnosticLoggingClient.initialize(client);
+}
+
 #if ENABLE(CONTEXT_MENUS)
 void WebPageProxy::initializeContextMenuClient(const WKPageContextMenuClientBase* client)
 {
@@ -701,12 +706,13 @@ void WebPageProxy::close()
     m_formClient = std::make_unique<API::FormClient>();
     m_uiClient = std::make_unique<API::UIClient>();
 #if PLATFORM(EFL)
-    m_uiPopupMenuClient.initialize(0);
+    m_uiPopupMenuClient.initialize(nullptr);
 #endif
     m_findClient = std::make_unique<API::FindClient>();
-    m_findMatchesClient.initialize(0);
+    m_findMatchesClient.initialize(nullptr);
+    m_diagnosticLoggingClient.initialize(nullptr);
 #if ENABLE(CONTEXT_MENUS)
-    m_contextMenuClient.initialize(0);
+    m_contextMenuClient.initialize(nullptr);
 #endif
 
     m_webProcessLifetimeTracker.pageWasInvalidated();
@@ -4377,6 +4383,21 @@ void WebPageProxy::editingRangeCallback(const EditingRange& range, uint64_t call
     }
 
     callback->performCallbackWithReturnValue(range);
+}
+
+void WebPageProxy::logDiagnosticMessage(const String& message, const String& description)
+{
+    m_diagnosticLoggingClient.logDiagnosticMessage(this, message, description);
+}
+
+void WebPageProxy::logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result)
+{
+    m_diagnosticLoggingClient.logDiagnosticMessageWithResult(this, message, description, static_cast<WebCore::DiagnosticLoggingResultType>(result));
+}
+
+void WebPageProxy::logDiagnosticMessageWithValue(const String& message, const String& description, const String& value)
+{
+    m_diagnosticLoggingClient.logDiagnosticMessageWithValue(this, message, description, value);
 }
 
 void WebPageProxy::rectForCharacterRangeCallback(const IntRect& rect, const EditingRange& actualRange, uint64_t callbackID)
