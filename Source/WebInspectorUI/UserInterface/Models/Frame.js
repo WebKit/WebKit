@@ -73,6 +73,7 @@ WebInspector.Frame.Event = {
 
 WebInspector.Frame.TypeIdentifier = "Frame";
 WebInspector.Frame.MainResourceURLCookieKey = "frame-main-resource-url";
+WebInspector.Frame.IsMainFrameCookieKey = "frame-is-main-frame";
 
 WebInspector.Frame.prototype = {
     constructor: WebInspector.Frame,
@@ -465,6 +466,7 @@ WebInspector.Frame.prototype = {
     saveIdentityToCookie: function(cookie)
     {
         cookie[WebInspector.Frame.MainResourceURLCookieKey] = this.mainResource.url.hash;
+        cookie[WebInspector.Frame.IsMainFrameCookieKey] = this._isMainFrame;
     },
 
     // Private

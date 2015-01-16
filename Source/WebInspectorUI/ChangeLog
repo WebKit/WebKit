@@ -1,5 +1,17 @@
 2015-01-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Reopening the inspector can selects a sub-frame instead of the Main Frame's DOM
+        https://bugs.webkit.org/show_bug.cgi?id=140513
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/Frame.js:
+        (WebInspector.Frame.prototype.saveIdentityToCookie):
+        Specifically identify the main frame, so that any sub-frames with the same
+        URL, don't get choosen over the main frame when restoring state from cookie.
+
+2015-01-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: selecting Paint timeline records from sidebar does not trigger preview of paint quad
         https://bugs.webkit.org/show_bug.cgi?id=139151
 
