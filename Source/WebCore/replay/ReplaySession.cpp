@@ -37,9 +37,9 @@ namespace WebCore {
 
 static unsigned s_nextIdentifier = 1;
 
-PassRefPtr<ReplaySession> ReplaySession::create()
+Ref<ReplaySession> ReplaySession::create()
 {
-    return adoptRef(new ReplaySession());
+    return adoptRef(*new ReplaySession());
 }
 
 ReplaySession::ReplaySession()
@@ -52,35 +52,39 @@ ReplaySession::~ReplaySession()
 {
 }
 
-PassRefPtr<ReplaySessionSegment> ReplaySession::at(size_t position) const
+RefPtr<ReplaySessionSegment> ReplaySession::at(size_t position) const
 {
-    return m_segments.at(position);
+    ASSERT_ARG(position, position >= 0 && position < m_segments.size());
+
+    return m_segments.at(position).copyRef();
 }
 
-void ReplaySession::appendSegment(PassRefPtr<ReplaySessionSegment> prpSegment)
+void ReplaySession::appendSegment(RefPtr<ReplaySessionSegment>&& segment)
 {
-    RefPtr<ReplaySessionSegment> segment = prpSegment;
-
+    ASSERT_ARG(segment, segment);
     // For now, only support one segment.
     ASSERT(!m_segments.size());
 
     // Since replay locations are specified with segment IDs, we can only
     // have one instance of a segment in the session.
-    size_t offset = m_segments.find(segment);
+    size_t offset = m_segments.find(segment.copyRef());
     ASSERT_UNUSED(offset, offset == notFound);
 
-    m_segments.append(segment.release());
+    m_segments.append(WTF::move(segment));
 }
 
-void ReplaySession::insertSegment(size_t position, PassRefPtr<ReplaySessionSegment> segment)
+void ReplaySession::insertSegment(size_t position, RefPtr<ReplaySessionSegment>&& segment)
 {
-    ASSERT(position < m_segments.size());
-    m_segments.insert(position, segment);
+    ASSERT_ARG(segment, segment);
+    ASSERT_ARG(position, position >= 0 && position < m_segments.size());
+
+    m_segments.insert(position, WTF::move(segment));
 }
 
 void ReplaySession::removeSegment(size_t position)
 {
-    ASSERT(position < m_segments.size());
+    ASSERT_ARG(position, position >= 0 && position < m_segments.size());
+
     m_segments.remove(position);
 }
 

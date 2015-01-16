@@ -52,7 +52,7 @@ private:
     const QueuedInputs& queue(InputQueue) const;
 
     Vector<QueuedInputs*, 3> m_queues;
-    unsigned m_inputCount;
+    unsigned m_inputCount {0};
 };
 
 } // namespace WebCore

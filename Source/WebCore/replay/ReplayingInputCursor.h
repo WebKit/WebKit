@@ -32,7 +32,6 @@
 
 #include <replay/InputCursor.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -50,7 +49,7 @@ struct EventLoopInputData {
 class ReplayingInputCursor final : public InputCursor {
     WTF_MAKE_NONCOPYABLE(ReplayingInputCursor);
 public:
-    static PassRefPtr<ReplayingInputCursor> create(PassRefPtr<ReplaySessionSegment>, Page&, EventLoopInputDispatcherClient*);
+    static Ref<ReplayingInputCursor> create(RefPtr<ReplaySessionSegment>&&, Page&, EventLoopInputDispatcherClient*);
     virtual ~ReplayingInputCursor();
 
     virtual bool isCapturing() const override { return false; }
@@ -60,9 +59,9 @@ public:
 
     EventLoopInputData loadEventLoopInput();
 protected:
-    virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString& type) override;
+    virtual NondeterministicInputBase* loadInput(InputQueue, const String& type) override;
 private:
-    ReplayingInputCursor(PassRefPtr<ReplaySessionSegment>, Page&, EventLoopInputDispatcherClient*);
+    ReplayingInputCursor(RefPtr<ReplaySessionSegment>&&, Page&, EventLoopInputDispatcherClient*);
 
     virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) override;
     virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) override;

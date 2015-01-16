@@ -128,7 +128,7 @@ public:
         replayToPosition(ReplayPosition(), speed);
     }
 
-    void switchSession(PassRefPtr<ReplaySession>);
+    void switchSession(RefPtr<ReplaySession>&&);
 
     // InspectorReplayAgent notifications.
     void frameNavigated(DocumentLoader*);
@@ -140,10 +140,10 @@ public:
     SessionState sessionState() const { return m_sessionState; }
     SegmentState segmentState() const { return m_segmentState; }
 
-    PassRefPtr<ReplaySession> loadedSession() const;
-    PassRefPtr<ReplaySessionSegment> loadedSegment() const;
+    RefPtr<ReplaySession> loadedSession() const;
+    RefPtr<ReplaySessionSegment> loadedSegment() const;
 
-    JSC::InputCursor& activeInputCursor() const;
+    JSC::InputCursor& activeInputCursor();
     ReplayPosition currentPosition() const { return m_currentPosition; }
 
 private:
@@ -176,7 +176,7 @@ private:
 
     RefPtr<ReplaySessionSegment> m_loadedSegment;
     RefPtr<ReplaySession> m_loadedSession;
-    const RefPtr<JSC::InputCursor> m_emptyCursor;
+    Ref<JSC::InputCursor> m_emptyCursor;
     // The active cursor is set to nullptr when invalid.
     RefPtr<JSC::InputCursor> m_activeCursor;
 

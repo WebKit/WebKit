@@ -1,5 +1,19 @@
 2015-01-16  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Replay: purge remaining PassRefPtr uses and minor cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=140456
+
+        Reviewed by Andreas Kling.
+
+        Get rid of PassRefPtr. Introduce default initializers where it makes sense.
+        Remove mistaken uses of AtomicString that were not removed as part of r174113.
+
+        * replay/EmptyInputCursor.h:
+        * replay/InputCursor.h:
+        (JSC::InputCursor::InputCursor):
+
+2015-01-16  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Inspector: code generator should fail on duplicate parameter and member names
         https://bugs.webkit.org/show_bug.cgi?id=140555
 

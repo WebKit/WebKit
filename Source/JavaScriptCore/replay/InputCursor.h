@@ -33,18 +33,13 @@
 #include "NondeterministicInput.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
-#include <wtf/text/AtomicString.h>
 
 namespace JSC {
 
 class InputCursor : public RefCounted<InputCursor> {
     WTF_MAKE_NONCOPYABLE(InputCursor);
 public:
-    InputCursor()
-        : m_withinEventLoopInputExtent(false)
-    {
-    }
-
+    InputCursor() { }
     virtual ~InputCursor() { }
 
     virtual bool isCapturing() const = 0;
@@ -78,10 +73,10 @@ public:
     virtual void storeInput(std::unique_ptr<NondeterministicInputBase>) = 0;
     virtual NondeterministicInputBase* uncheckedLoadInput(InputQueue) = 0;
 protected:
-    virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString&) = 0;
+    virtual NondeterministicInputBase* loadInput(InputQueue, const String&) = 0;
 
 private:
-    bool m_withinEventLoopInputExtent;
+    bool m_withinEventLoopInputExtent {false};
 };
 
 } // namespace JSC

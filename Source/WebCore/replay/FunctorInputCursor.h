@@ -43,9 +43,9 @@ namespace WebCore {
 class FunctorInputCursor final : public InputCursor {
     WTF_MAKE_NONCOPYABLE(FunctorInputCursor);
 public:
-    static PassRefPtr<FunctorInputCursor> create(PassRefPtr<ReplaySessionSegment> segment)
+    static Ref<FunctorInputCursor> create(RefPtr<ReplaySessionSegment>&& segment)
     {
-        return adoptRef(new FunctorInputCursor(segment));
+        return adoptRef(*new FunctorInputCursor(WTF::move(segment)));
     }
 
     // InputCursor
@@ -58,9 +58,9 @@ public:
     template<typename Functor>
     typename Functor::ReturnType forEachInputInQueue(InputQueue, Functor&);
 protected:
-    virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString&) override;
+    virtual NondeterministicInputBase* loadInput(InputQueue, const String&) override;
 private:
-    FunctorInputCursor(PassRefPtr<ReplaySessionSegment>);
+    FunctorInputCursor(RefPtr<ReplaySessionSegment>&&);
 
     RefPtr<ReplaySessionSegment> m_segment;
 };
@@ -74,8 +74,8 @@ typename Functor::ReturnType FunctorInputCursor::forEachInputInQueue(InputQueue 
     return functor.returnValue();
 }
 
-inline FunctorInputCursor::FunctorInputCursor(PassRefPtr<ReplaySessionSegment> segment)
-    : m_segment(segment)
+inline FunctorInputCursor::FunctorInputCursor(RefPtr<ReplaySessionSegment>&& segment)
+    : m_segment(WTF::move(segment))
 {
 }
 
@@ -84,7 +84,7 @@ inline void FunctorInputCursor::storeInput(std::unique_ptr<NondeterministicInput
     ASSERT_NOT_REACHED();
 }
 
-inline NondeterministicInputBase* FunctorInputCursor::loadInput(InputQueue, const AtomicString&)
+inline NondeterministicInputBase* FunctorInputCursor::loadInput(InputQueue, const String&)
 {
     ASSERT_NOT_REACHED();
     return nullptr;

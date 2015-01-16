@@ -43,20 +43,20 @@ typedef Vector<RefPtr<ReplaySessionSegment>>::const_iterator SegmentIterator;
 class ReplaySession : public RefCounted<ReplaySession> {
     WTF_MAKE_NONCOPYABLE(ReplaySession);
 public:
-    static PassRefPtr<ReplaySession> create();
+    static Ref<ReplaySession> create();
     ~ReplaySession();
 
     double timestamp() const { return m_timestamp; }
     unsigned identifier() const { return m_identifier; }
 
     size_t size() const { return m_segments.size(); }
-    PassRefPtr<ReplaySessionSegment> at(size_t position) const;
+    RefPtr<ReplaySessionSegment> at(size_t position) const;
 
     SegmentIterator begin() const { return m_segments.begin(); }
     SegmentIterator end() const { return m_segments.end(); }
 
-    void appendSegment(PassRefPtr<ReplaySessionSegment>);
-    void insertSegment(size_t position, PassRefPtr<ReplaySessionSegment>);
+    void appendSegment(RefPtr<ReplaySessionSegment>&&);
+    void insertSegment(size_t position, RefPtr<ReplaySessionSegment>&&);
     void removeSegment(size_t position);
 
 private:

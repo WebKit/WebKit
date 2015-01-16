@@ -35,22 +35,20 @@
 #include "ReplayingInputCursor.h"
 #include "SegmentedInputStorage.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 static unsigned s_nextSegmentIdentifier = 1;
 
-PassRefPtr<ReplaySessionSegment> ReplaySessionSegment::create()
+Ref<ReplaySessionSegment> ReplaySessionSegment::create()
 {
-    return adoptRef(new ReplaySessionSegment);
+    return adoptRef(*new ReplaySessionSegment);
 }
 
 ReplaySessionSegment::ReplaySessionSegment()
     : m_storage(std::make_unique<SegmentedInputStorage>())
     , m_identifier(s_nextSegmentIdentifier++)
-    , m_canCapture(true)
     , m_timestamp(currentTimeMS())
 {
 }

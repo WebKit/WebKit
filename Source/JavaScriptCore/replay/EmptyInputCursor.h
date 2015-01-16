@@ -40,9 +40,9 @@ class EmptyInputCursor final : public InputCursor {
 public:
     virtual ~EmptyInputCursor() { }
 
-    static PassRefPtr<EmptyInputCursor> create()
+    static Ref<EmptyInputCursor> create()
     {
-        return adoptRef(new EmptyInputCursor());
+        return adoptRef(*new EmptyInputCursor());
     }
 
     virtual bool isCapturing() const override { return false; }
@@ -60,7 +60,7 @@ public:
     }
 
 protected:
-    virtual NondeterministicInputBase* loadInput(InputQueue, const AtomicString&) override
+    virtual NondeterministicInputBase* loadInput(InputQueue, const String&) override
     {
         ASSERT_NOT_REACHED();
         return nullptr;

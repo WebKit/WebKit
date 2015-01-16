@@ -1,3 +1,81 @@
+2015-01-16  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: purge remaining PassRefPtr uses and minor cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=140456
+
+        Reviewed by Andreas Kling.
+
+        Get rid of PassRefPtr. Introduce default initializers where it makes sense. Change
+        uses of ASSERT to ASSERT_ARG when the assert is a precondition on an argument.
+
+        Remove mistaken uses of AtomicString that were not removed as part of r174113.
+
+        No new tests, no behavior changed.
+
+        * inspector/InspectorReplayAgent.cpp:
+        (WebCore::SerializeInputToJSONFunctor::operator()):
+        (WebCore::SerializeInputToJSONFunctor::returnValue):
+        (WebCore::InspectorReplayAgent::sessionCreated):
+        (WebCore::InspectorReplayAgent::sessionModified):
+        (WebCore::InspectorReplayAgent::sessionLoaded):
+        (WebCore::InspectorReplayAgent::segmentCreated):
+        (WebCore::InspectorReplayAgent::segmentCompleted):
+        (WebCore::InspectorReplayAgent::segmentLoaded):
+        (WebCore::InspectorReplayAgent::switchSession):
+        (WebCore::InspectorReplayAgent::insertSessionSegment):
+        (WebCore::InspectorReplayAgent::removeSessionSegment):
+        (WebCore::InspectorReplayAgent::findSession):
+        (WebCore::InspectorReplayAgent::findSegment):
+        * inspector/InspectorReplayAgent.h:
+        * replay/CapturingInputCursor.cpp:
+        (WebCore::CapturingInputCursor::CapturingInputCursor):
+        (WebCore::CapturingInputCursor::create):
+        (WebCore::CapturingInputCursor::loadInput):
+        * replay/CapturingInputCursor.h:
+        * replay/EventLoopInputDispatcher.cpp:
+        (WebCore::EventLoopInputDispatcher::EventLoopInputDispatcher):
+        * replay/EventLoopInputDispatcher.h:
+        * replay/FunctorInputCursor.h:
+        (WebCore::FunctorInputCursor::FunctorInputCursor):
+        (WebCore::FunctorInputCursor::loadInput):
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::ReplayController):
+        (WebCore::ReplayController::setForceDeterministicSettings):
+        (WebCore::ReplayController::setSessionState):
+        (WebCore::ReplayController::setSegmentState):
+        (WebCore::ReplayController::switchSession):
+        (WebCore::ReplayController::createSegment):
+        (WebCore::ReplayController::completeSegment):
+        (WebCore::ReplayController::loadSegmentAtIndex):
+        (WebCore::ReplayController::unloadSegment):
+        (WebCore::ReplayController::frameNavigated):
+        (WebCore::ReplayController::loadedSession):
+        (WebCore::ReplayController::loadedSegment):
+        (WebCore::ReplayController::activeInputCursor):
+        (WebCore::ReplayController::dispatcher):
+        * replay/ReplayController.h:
+        * replay/ReplaySession.cpp:
+        (WebCore::ReplaySession::create):
+        (WebCore::ReplaySession::at):
+        (WebCore::ReplaySession::appendSegment):
+        (WebCore::ReplaySession::insertSegment):
+        (WebCore::ReplaySession::removeSegment):
+        * replay/ReplaySession.h:
+        * replay/ReplaySessionSegment.cpp:
+        (WebCore::ReplaySessionSegment::create):
+        (WebCore::ReplaySessionSegment::ReplaySessionSegment):
+        * replay/ReplaySessionSegment.h:
+        * replay/ReplayingInputCursor.cpp:
+        (WebCore::ReplayingInputCursor::ReplayingInputCursor):
+        (WebCore::ReplayingInputCursor::create):
+        (WebCore::ReplayingInputCursor::loadInput):
+        * replay/ReplayingInputCursor.h:
+        * replay/SegmentedInputStorage.cpp:
+        (WebCore::SegmentedInputStorage::store):
+        (WebCore::SegmentedInputStorage::queue):
+        (WebCore::SegmentedInputStorage::SegmentedInputStorage): Deleted.
+        * replay/SegmentedInputStorage.h:
+
 2015-01-16  Andreas Kling  <akling@apple.com>
 
         Remove assertion that Page::m_editorClient is non-null.

@@ -48,7 +48,7 @@ friend class CapturingInputCursor;
 friend class FunctorInputCursor;
 friend class ReplayingInputCursor;
 public:
-    static PassRefPtr<ReplaySessionSegment> create();
+    static Ref<ReplaySessionSegment> create();
     ~ReplaySessionSegment();
 
     unsigned identifier() const { return m_identifier; }
@@ -64,7 +64,7 @@ private:
     Vector<double, 0> m_eventLoopTimings;
 
     unsigned m_identifier;
-    bool m_canCapture;
+    bool m_canCapture {true};
     double m_timestamp;
 };
 

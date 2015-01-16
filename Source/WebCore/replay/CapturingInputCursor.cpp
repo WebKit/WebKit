@@ -38,8 +38,8 @@
 
 namespace WebCore {
 
-CapturingInputCursor::CapturingInputCursor(PassRefPtr<ReplaySessionSegment> segment)
-    : m_segment(segment)
+CapturingInputCursor::CapturingInputCursor(RefPtr<ReplaySessionSegment>&& segment)
+    : m_segment(WTF::move(segment))
 {
     LOG(WebReplay, "%-30sCreated capture cursor=%p.\n", "[ReplayController]", this);
 }
@@ -49,9 +49,9 @@ CapturingInputCursor::~CapturingInputCursor()
     LOG(WebReplay, "%-30sDestroyed capture cursor=%p.\n", "[ReplayController]", this);
 }
 
-Ref<CapturingInputCursor> CapturingInputCursor::create(PassRefPtr<ReplaySessionSegment> segment)
+Ref<CapturingInputCursor> CapturingInputCursor::create(RefPtr<ReplaySessionSegment>&& segment)
 {
-    return adoptRef(*new CapturingInputCursor(segment));
+    return adoptRef(*new CapturingInputCursor(WTF::move(segment)));
 }
 
 void CapturingInputCursor::storeInput(std::unique_ptr<NondeterministicInputBase> input)
@@ -67,7 +67,7 @@ void CapturingInputCursor::storeInput(std::unique_ptr<NondeterministicInputBase>
     m_segment->storage().store(WTF::move(input));
 }
 
-NondeterministicInputBase* CapturingInputCursor::loadInput(InputQueue, const AtomicString&)
+NondeterministicInputBase* CapturingInputCursor::loadInput(InputQueue, const String&)
 {
     // Can't load inputs from capturing cursor.
     ASSERT_NOT_REACHED();
