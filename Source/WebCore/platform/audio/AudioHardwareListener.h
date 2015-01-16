@@ -31,7 +31,7 @@
 
 namespace WebCore {
     
-enum AudioHardwareActivityType {
+enum class AudioHardwareActivityType {
     Unknown,
     IsActive,
     IsInactive
