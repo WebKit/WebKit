@@ -327,7 +327,6 @@ void ArgumentsRecoveryGenerator::generateFor(
     if (m_didCreateArgumentsObject.add(inlineCallFrame).isNewEntry) {
         // We know this call frame optimized out an arguments object that
         // the baseline JIT would have created. Do that creation now.
-#if USE(JSVALUE64)
         if (inlineCallFrame) {
             jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->stackOffset * sizeof(EncodedJSValue)), GPRInfo::callFrameRegister, GPRInfo::regT0);
             jit.setupArguments(GPRInfo::regT0);
@@ -337,6 +336,7 @@ void ArgumentsRecoveryGenerator::generateFor(
             AssemblyHelpers::TrustedImmPtr(
                 bitwise_cast<void*>(operationCreateArgumentsDuringOSRExit)),
             GPRInfo::nonArgGPR0);
+#if USE(JSVALUE64)
         jit.call(GPRInfo::nonArgGPR0);
         jit.store64(GPRInfo::returnValueGPR, AssemblyHelpers::addressFor(argumentsRegister));
         jit.store64(
@@ -344,20 +344,6 @@ void ArgumentsRecoveryGenerator::generateFor(
             AssemblyHelpers::addressFor(unmodifiedArgumentsRegister(argumentsRegister)));
         jit.move(GPRInfo::returnValueGPR, GPRInfo::regT0); // no-op move on almost all platforms.
 #else // USE(JSVALUE64) -> so the 32_64 part
-        if (inlineCallFrame) {
-            jit.setupArgumentsWithExecState(
-                AssemblyHelpers::TrustedImmPtr(inlineCallFrame));
-            jit.move(
-                AssemblyHelpers::TrustedImmPtr(
-                    bitwise_cast<void*>(operationCreateInlinedArgumentsDuringOSRExit)),
-                GPRInfo::nonArgGPR0);
-        } else {
-            jit.setupArgumentsExecState();
-            jit.move(
-                AssemblyHelpers::TrustedImmPtr(
-                    bitwise_cast<void*>(operationCreateArgumentsDuringOSRExit)),
-                GPRInfo::nonArgGPR0);
-        }
         jit.call(GPRInfo::nonArgGPR0);
         jit.store32(
             AssemblyHelpers::TrustedImm32(JSValue::CellTag),

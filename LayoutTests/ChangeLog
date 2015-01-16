@@ -1,3 +1,30 @@
+2015-01-16  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r174226): Header on huffingtonpost.com is too large
+        https://bugs.webkit.org/show_bug.cgi?id=140306
+
+        Reviewed by Filip Pizlo.
+
+        Updated js/arguments-iterator to test changing argument to array values.
+        Removed tests that changed arguments to a string and an object as they were
+        bogus and didn't test what the appeared to test. 
+        for .. of works on iterable objects only.
+
+        Added new regression test, js/regress-140306.
+
+        * js/arguments-iterator-expected.txt:
+        * js/regress-140306-expected.txt: Added.
+        * js/regress-140306.html: Added.
+        * js/script-tests/arguments-iterator.js:
+        (testEmptyArrayArguments):
+        (testArrayArguments):
+        (testOverwrittenArguments): Deleted.
+        (testNullArguments): Deleted.
+        (testNonArrayLikeArguments): Deleted.
+        * js/script-tests/regress-140306.js: Added.
+        (checkArgs):
+        (applyToArgs):
+
 2015-01-16  Jeremy Jones  <jeremyj@apple.com>
 
         [mac] Fix test expectations after r178310.

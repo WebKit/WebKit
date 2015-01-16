@@ -774,12 +774,6 @@ JSCell* JIT_OPERATION operationCreateInlinedArguments(
     return result;
 }
 
-JSCell* JIT_OPERATION operationCreateInlinedArgumentsDuringOSRExit(ExecState* exec, InlineCallFrame* inlineCallFrame)
-{
-    DeferGCForAWhile(exec->vm().heap);
-    return operationCreateInlinedArguments(exec, inlineCallFrame);
-}
-
 void JIT_OPERATION operationTearOffInlinedArguments(
     ExecState* exec, JSCell* argumentsCell, JSCell* activationCell, InlineCallFrame* inlineCallFrame)
 {

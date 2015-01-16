@@ -1,3 +1,45 @@
+2015-01-16  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r174226): Header on huffingtonpost.com is too large
+        https://bugs.webkit.org/show_bug.cgi?id=140306
+
+        Reviewed by Filip Pizlo.
+
+        BytecodeGenerator::willResolveToArguments() is used to check to see if we can use the
+        arguments register or whether we need to resolve "arguments".  If the arguments have
+        been captured, then they are stored in the lexical environment and the arguments
+        register is not used.
+
+        Changed BytecodeGenerator::willResolveToArguments() to also check to see if the arguments
+        register is captured.  Renamed the function to willResolveToArgumentsRegister() to
+        better indicate what we are checking.
+
+        Aligned 32 and 64 bit paths in ArgumentsRecoveryGenerator::generateFor() for creating
+        an arguments object that was optimized out of an inlined callFrame.  The 32 bit path
+        incorrectly calculated the location of the reified callee frame.  This alignment resulted
+        in the removal of operationCreateInlinedArgumentsDuringOSRExit()
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::willResolveToArgumentsRegister):
+        (JSC::BytecodeGenerator::uncheckedLocalArgumentsRegister):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::willResolveToArguments): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BracketAccessorNode::emitBytecode):
+        (JSC::DotAccessorNode::emitBytecode):
+        (JSC::getArgumentByVal):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::ArrayPatternNode::emitDirectBinding):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::ArgumentsRecoveryGenerator::generateFor):
+        * dfg/DFGOperations.cpp:
+        (JSC::operationCreateInlinedArgumentsDuringOSRExit): Deleted.
+        * dfg/DFGOperations.h:
+        (JSC::operationCreateInlinedArgumentsDuringOSRExit): Deleted.
+
 2015-01-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SQL_DATABASE) guards
