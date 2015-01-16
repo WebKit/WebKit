@@ -885,7 +885,7 @@ static bool styleChangeRequiresLayerRebuild(const RenderLayer& layer, const Rend
     if (!oldStyle.opacity() != !newStyle.opacity()) {
         RenderLayerModelObject* repaintContainer = layer.renderer().containerForRepaint();
         if (RenderLayerBacking* ancestorBacking = repaintContainer ? repaintContainer->layer()->backing() : nullptr) {
-            if (newStyle.opacity() != ancestorBacking->graphicsLayer()->drawsContent())
+            if (static_cast<bool>(newStyle.opacity()) != ancestorBacking->graphicsLayer()->drawsContent())
                 return true;
         }
     }

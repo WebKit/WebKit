@@ -1,3 +1,14 @@
+2015-01-15  Brent Fulgham  <bfulgham@apple.com>
+
+        RenderLayerCompositor: Strange comparison of opacity (float) to boolean.
+        https://bugs.webkit.org/show_bug.cgi?id=140477.
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::styleChangeRequiresLayerRebuild): Add a cast to make the meaning of this
+        code clearer.
+
 2015-01-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed, rolling out r178531.
