@@ -1,5 +1,14 @@
 2015-01-16  Andreas Kling  <akling@apple.com>
 
+        Remove assertion that Page::m_editorClient is non-null.
+
+        Unreviewed debug build fix. (It's a reference, it won't be null.)
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+
+2015-01-16  Andreas Kling  <akling@apple.com>
+
         Page::editorClient() should return a reference.
         <https://webkit.org/b/140552>
 

@@ -212,8 +212,6 @@ Page::Page(PageConfiguration& pageConfiguration)
     , m_isClosing(false)
     , m_isPlayingAudio(false)
 {
-    ASSERT(m_editorClient);
-    
     setTimerThrottlingEnabled(m_viewState & ViewState::IsVisuallyIdle);
 
     m_storageNamespaceProvider->addPage(*this);
