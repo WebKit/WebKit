@@ -1407,7 +1407,6 @@ void AVFWrapper::scheduleDisconnectAndDelete()
 static void destroyAVFWrapper(void* context)
 {
     ASSERT(isMainThread());
-    ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     AVFWrapper* avfWrapper = static_cast<AVFWrapper*>(context);
     if (!avfWrapper)
         return;
