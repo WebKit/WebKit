@@ -1436,8 +1436,8 @@ void AVFWrapper::createAssetForURL(const String& url, bool inheritURI)
     loaderCallbacks.context = callbackContext();
     loaderCallbacks.resourceLoaderShouldWaitForLoadingOfRequestedResource = AVFWrapper::resourceLoaderShouldWaitForLoadingOfRequestedResource;
 
-    RetainPtr<AVCFAssetResourceLoaderRef> resourceLoader = adoptCF(AVCFURLAssetGetResourceLoader(m_avAsset.get()));
-    AVCFAssetResourceLoaderSetCallbacks(resourceLoader.get(), &loaderCallbacks, globalLoaderDelegateQueue());
+    AVCFAssetResourceLoaderRef resourceLoader = AVCFURLAssetGetResourceLoader(m_avAsset.get());
+    AVCFAssetResourceLoaderSetCallbacks(resourceLoader, &loaderCallbacks, globalLoaderDelegateQueue());
 #endif
 }
 
