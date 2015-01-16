@@ -196,7 +196,7 @@ private:
 
     InbandTextTrackPrivateAVF* m_currentTextTrack;
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     HashMap<String, Vector<RetainPtr<AVCFAssetResourceLoadingRequestRef>>> m_keyURIToRequestMap;
     AVCFAssetResourceLoaderCallbacks m_resourceLoaderCallbacks;
 #endif
