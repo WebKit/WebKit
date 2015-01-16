@@ -1,3 +1,24 @@
+2015-01-16  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: code generator should fail on duplicate parameter and member names
+        https://bugs.webkit.org/show_bug.cgi?id=140555
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/scripts/codegen/models.py:
+        (find_duplicates): Add a helper function to find duplicates in a list.
+        (Protocol.parse_type_declaration):
+        (Protocol.parse_command):
+        (Protocol.parse_event):
+        * inspector/scripts/tests/expected/fail-on-duplicate-command-call-parameter-names.json-error: Added.
+        * inspector/scripts/tests/expected/fail-on-duplicate-command-return-parameter-names.json-error: Added.
+        * inspector/scripts/tests/expected/fail-on-duplicate-event-parameter-names.json-error: Added.
+        * inspector/scripts/tests/expected/fail-on-duplicate-type-member-names.json-error: Added.
+        * inspector/scripts/tests/fail-on-duplicate-command-call-parameter-names.json: Added.
+        * inspector/scripts/tests/fail-on-duplicate-command-return-parameter-names.json: Added.
+        * inspector/scripts/tests/fail-on-duplicate-event-parameter-names.json: Added.
+        * inspector/scripts/tests/fail-on-duplicate-type-member-names.json: Added.
+
 2015-01-16  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r174226): Header on huffingtonpost.com is too large

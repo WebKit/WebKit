@@ -25,12 +25,17 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import collections
 
 log = logging.getLogger('global')
 
 
 def ucfirst(str):
     return str[:1].upper() + str[1:]
+
+
+def find_duplicates(l):
+    return [key for key, count in collections.Counter(l).items() if count > 1]
 
 
 _FRAMEWORK_CONFIG_MAP = {
@@ -326,6 +331,10 @@ class Protocol:
                 raise ParseException("Malformed type specification: properties is not an array")
             type_members.extend([self.parse_type_member(member) for member in json['properties']])
 
+        duplicate_names = find_duplicates([member.member_name for member in type_members])
+        if len(duplicate_names) > 0:
+            raise ParseException("Malformed domain specification: type declaration for %s has duplicate member names" % json['id'])
+
         type_ref = TypeReference(json['type'], json.get('$ref'), json.get('enum'), json.get('items'))
         return TypeDeclaration(json['id'], type_ref, json.get("description", ""), type_members)
 
@@ -348,10 +357,18 @@ class Protocol:
                 raise ParseException("Malformed command specification: parameters is not an array")
             call_parameters.extend([self.parse_call_or_return_parameter(parameter) for parameter in json['parameters']])
 
+            duplicate_names = find_duplicates([param.parameter_name for param in call_parameters])
+            if len(duplicate_names) > 0:
+                raise ParseException("Malformed domain specification: call parameter list for command %s has duplicate parameter names" % json['name'])
+
         if 'returns' in json:
             if not isinstance(json['returns'], list):
                 raise ParseException("Malformed command specification: returns is not an array")
             return_parameters.extend([self.parse_call_or_return_parameter(parameter) for parameter in json['returns']])
+
+            duplicate_names = find_duplicates([param.parameter_name for param in return_parameters])
+            if len(duplicate_names) > 0:
+                raise ParseException("Malformed domain specification: return parameter list for command %s has duplicate parameter names" % json['name'])
 
         return Command(json['name'], call_parameters, return_parameters, json.get('description', ""), json.get('async', False))
 
@@ -365,6 +382,10 @@ class Protocol:
             if not isinstance(json['parameters'], list):
                 raise ParseException("Malformed event specification: parameters is not an array")
             event_parameters.extend([self.parse_call_or_return_parameter(parameter) for parameter in json['parameters']])
+
+            duplicate_names = find_duplicates([param.parameter_name for param in event_parameters])
+            if len(duplicate_names) > 0:
+                raise ParseException("Malformed domain specification: parameter list for event %s has duplicate parameter names" % json['name'])
 
         return Event(json['name'], event_parameters, json.get('description', ""))
 
