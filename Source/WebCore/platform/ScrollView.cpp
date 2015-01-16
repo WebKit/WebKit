@@ -457,19 +457,6 @@ void ScrollView::setScrollOffset(const IntPoint& offset)
     scrollTo(newOffset);
 }
 
-void ScrollView::handleDeferredScrollUpdateAfterContentSizeChange()
-{
-    ASSERT(!shouldDeferScrollUpdateAfterContentSizeChange());
-    if (m_deferredScrollDelta.isZero())
-        return;
-
-    updateLayerPositionsAfterScrolling();
-    scrollContents(m_deferredScrollDelta);
-    updateCompositingLayersAfterScrolling();
-
-    m_deferredScrollDelta = IntSize();
-}
-
 void ScrollView::scrollTo(const IntSize& newOffset)
 {
     IntSize scrollDelta = newOffset - m_scrollOffset;
@@ -486,14 +473,6 @@ void ScrollView::scrollTo(const IntSize& newOffset)
         return;
     }
 #endif
-    // We should not attempt to actually modify layer contents if the layout phase
-    // is not complete. Instead, defer the scroll event until the layout finishes.
-    if (shouldDeferScrollUpdateAfterContentSizeChange()) {
-        ASSERT(m_deferredScrollDelta.isZero());
-        m_deferredScrollDelta = scrollDelta;
-        return;
-    }
-
     updateLayerPositionsAfterScrolling();
     scrollContents(scrollDelta);
     updateCompositingLayersAfterScrolling();

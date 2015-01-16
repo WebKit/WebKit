@@ -1,3 +1,27 @@
+2015-01-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed, rolling out r178531.
+
+        Caused LayoutTest ASSERTs/CRASHs on Debug Yosemite build-bot.
+
+        Reverted changeset:
+
+        "Layers need to be already updated before we call adjustViewSize."
+        https://bugs.webkit.org/show_bug.cgi?id=135514
+        http://trac.webkit.org/changeset/178531
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::updateCompositingLayersAfterScrolling):
+        (WebCore::FrameView::paintContents):
+        (WebCore::FrameView::shouldDeferScrollUpdateAfterContentSizeChange): Deleted.
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollTo):
+        (WebCore::ScrollView::handleDeferredScrollUpdateAfterContentSizeChange): Deleted.
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::shouldDeferScrollUpdateAfterContentSizeChange): Deleted.
+
 2015-01-15  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Wire diagnostic logging messages through the UIProcess

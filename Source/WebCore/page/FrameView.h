@@ -542,7 +542,6 @@ private:
         InLayout,
         InViewSizeAdjust,
         InPostLayout,
-        InPostLayerPositionsUpdatedAfterLayout,
     };
     LayoutPhase layoutPhase() const { return m_layoutPhase; }
 
@@ -558,8 +557,6 @@ private:
     bool shouldLayoutAfterContentsResized() const;
 
     bool shouldUpdateCompositingLayersAfterScrolling() const;
-
-    virtual bool shouldDeferScrollUpdateAfterContentSizeChange() override;
 
     void applyOverflowToViewport(RenderElement*, ScrollbarMode& hMode, ScrollbarMode& vMode);
     void applyPaginationToViewport();
