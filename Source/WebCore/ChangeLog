@@ -1,3 +1,15 @@
+2014-11-26  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Tracks shrink sometimes with indefinite remaining space
+        https://bugs.webkit.org/show_bug.cgi?id=139059
+
+        Reviewed by David Hyatt.
+
+        Test: fast/css-grid-layout/grid-grow-tracks-to-their-max.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+
 2015-01-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SQL_DATABASE) guards

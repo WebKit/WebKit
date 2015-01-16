@@ -13,7 +13,7 @@ PASS window.getComputedStyle(gridMaxContentAndMaxContentFixed, '').getPropertyVa
 PASS window.getComputedStyle(gridMinContentFixedAndAutoAboveLimits, '').getPropertyValue('-webkit-grid-template-columns') is "15px 95px"
 PASS window.getComputedStyle(gridMaxContentFixedAndAutoAboveLimits, '').getPropertyValue('-webkit-grid-template-columns') is "65px 85px"
 PASS window.getComputedStyle(gridMinContentFixedAndFixedFixedAndAuto, '').getPropertyValue('-webkit-grid-template-columns') is "20px 20px 60px"
-PASS window.getComputedStyle(gridAutoAndFixedFixedAndMaxContentFixed, '').getPropertyValue('-webkit-grid-template-columns') is "40px 20px 90px"
+PASS window.getComputedStyle(gridAutoAndFixedFixedAndMaxContentFixed, '').getPropertyValue('-webkit-grid-template-columns') is "70px 20px 60px"
 PASS successfullyParsed is true
 
 TEST COMPLETE
