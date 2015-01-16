@@ -1845,7 +1845,7 @@ void AVFWrapper::setAsset(AVCFURLAssetRef asset)
         return;
 
     AVCFAssetCancelLoading(avAsset());
-    m_avAsset = adoptCF(asset);
+    m_avAsset = asset;
 }
 
 PlatformLayer* AVFWrapper::platformLayer()
