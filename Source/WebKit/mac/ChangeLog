@@ -1,3 +1,12 @@
+2015-01-16  Daniel Bates  <dabates@apple.com>
+
+        Fix the public iOS SDK build after <http://trac.webkit.org/changeset/178285>
+        (https://bugs.webkit.org/show_bug.cgi?id=140360)
+
+        Forward declare protocol NSURLDownloadDelegate as it is SPI on iOS.
+
+        * Misc/WebDownload.h:
+
 2015-01-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SQL_DATABASE) guards

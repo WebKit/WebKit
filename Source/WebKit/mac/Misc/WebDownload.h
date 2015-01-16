@@ -34,6 +34,8 @@
 #else
 @interface NSURLDownload : NSObject
 @end
+
+@protocol NSURLDownloadDelegate;
 #endif
 
 #if TARGET_OS_IPHONE
