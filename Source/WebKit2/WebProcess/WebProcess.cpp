@@ -592,7 +592,10 @@ void WebProcess::terminate()
 
 void WebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder, std::unique_ptr<IPC::MessageEncoder>& replyEncoder)
 {
-    messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder);
+    if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
+        return;
+
+    LOG_ERROR("Unhandled synchronous web process message '%s:%s'", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data());
 }
 
 void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
@@ -616,6 +619,8 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::MessageDeco
         
         pageGroupProxy->didReceiveMessage(connection, decoder);
     }
+
+    LOG_ERROR("Unhandled web process message '%s:%s'", decoder.messageReceiverName().toString().data(), decoder.messageName().toString().data());
 }
 
 void WebProcess::didClose(IPC::Connection&)
