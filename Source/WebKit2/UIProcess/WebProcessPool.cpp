@@ -774,14 +774,6 @@ bool WebProcessPool::shouldTerminate(WebProcessProxy* process)
     return true;
 }
 
-void WebProcessPool::processWillOpenConnection(WebProcessProxy*)
-{
-}
-
-void WebProcessPool::processWillCloseConnection(WebProcessProxy*)
-{
-}
-
 void WebProcessPool::applicationWillTerminate()
 {
     m_storageManager->applicationWillTerminate();

@@ -167,8 +167,6 @@ public:
     // Sends the message to WebProcess or DatabaseProcess as approporiate for current process model.
     template<typename T> void sendToDatabaseProcessRelaunchingIfNecessary(T&& message);
 
-    void processWillOpenConnection(WebProcessProxy*);
-    void processWillCloseConnection(WebProcessProxy*);
     void processDidFinishLaunching(WebProcessProxy*);
 
     void applicationWillTerminate();

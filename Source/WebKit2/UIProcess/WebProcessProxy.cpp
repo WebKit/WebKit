@@ -133,8 +133,6 @@ void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
 
     for (WebPageProxyMap::iterator it = m_pageMap.begin(), end = m_pageMap.end(); it != end; ++it)
         it->value->connectionWillOpen(&connection);
-
-    m_processPool->processWillOpenConnection(this);
 }
 
 void WebProcessProxy::connectionDidClose(IPC::Connection& connection)
@@ -143,8 +141,6 @@ void WebProcessProxy::connectionDidClose(IPC::Connection& connection)
 
     for (WebPageProxyMap::iterator it = m_pageMap.begin(), end = m_pageMap.end(); it != end; ++it)
         it->value->connectionWillClose(&connection);
-
-    m_processPool->processWillCloseConnection(this);
 }
 
 void WebProcessProxy::disconnect()
