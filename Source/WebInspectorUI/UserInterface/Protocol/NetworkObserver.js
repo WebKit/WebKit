@@ -86,6 +86,21 @@ WebInspector.NetworkObserver.prototype = {
     webSocketClosed: function(requestId, timestamp)
     {
         // FIXME: Not implemented.
+    },
+
+    webSocketFrameReceived: function(requestId, timestamp, response)
+    {
+        // FIXME: Not implemented.
+    },
+
+    webSocketFrameError: function(requestId, timestamp, errorMessage)
+    {
+        // FIXME: Not implemented.
+    },
+
+    webSocketFrameSent: function(requestId, timestamp, response)
+    {
+        // FIXME: Not implemented.
     }
 };
 
