@@ -1483,14 +1483,6 @@ webkit.org/b/139968 [ MountainLion ] platform/mac/editing/spelling/autocorrectio
 # Fails on Mountain Lion and Yosemite on bots.
 webkit.org/b/139968 fast/text/atsui-rtl-override-selection.html [ Failure ]
 # These tests became flaky, text width gets slightly off.
-webkit.org/b/139968 [ Yosemite+ ] http/tests/misc/acid3.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] tables/mozilla/bugs/bug10633.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] tables/mozilla/bugs/bug113235-1.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] tables/mozilla/bugs/bug8858.html [ Pass Failure ]
-webkit.org/b/139977 [ Mavericks+ ] fast/encoding/utf-16-big-endian.html [ Pass Failure ]
-webkit.org/b/139977 [ Mavericks+ ] fast/encoding/utf-16-little-endian.html [ Pass Failure ]
-webkit.org/b/139982 [ Mavericks+ ] svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
-webkit.org/b/139988 [ Mavericks+ ] fonts/sans-serif.html [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] fast/block/margin-collapse/103.html [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] fast/dom/52776.html [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] fast/text/complex-text-opacity.html [ Pass Failure ]
@@ -1509,5 +1501,5 @@ webkit.org/b/139968 [ Mavericks+ ] svg/W3C-SVG-1.1-SE/text-intro-05-t.svg [ Pass
 webkit.org/b/139968 [ Mavericks+ ] svg/W3C-SVG-1.1/text-intro-05-t.svg [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] svg/text/text-intro-05-t.svg [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] tables/mozilla/bugs/bug2479-2.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] media/controls-after-reload.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks+ ] media/controls-without-preload.html [ Pass Failure ]
+webkit.org/b/139968 [ Mavericks ] media/controls-after-reload.html [ Pass Failure ]
+webkit.org/b/139968 [ Mavericks ] media/controls-without-preload.html [ Pass Failure ]
