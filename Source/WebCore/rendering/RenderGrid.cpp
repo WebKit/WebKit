@@ -345,7 +345,7 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
         distributeSpaceToTracks(tracksForDistribution, 0, &GridTrack::usedBreadth, &GridTrack::growUsedBreadth, sizingData, availableLogicalSpace);
     } else {
         for (auto& track : tracks)
-            track.m_usedBreadth = std::max(track.m_usedBreadth, track.m_maxBreadth);
+            track.m_usedBreadth = track.m_maxBreadth;
     }
 
     if (flexibleSizedTracksIndex.isEmpty())
