@@ -13,6 +13,11 @@
             ]
         },
         {
+            "id": "ErrorList",
+            "type": "array",
+            "items": { "$ref": "Error" }
+        },
+        {
             "id": "OptionalParameterBundle",
             "type": "object",
             "properties": [
@@ -21,7 +26,8 @@
                 { "name": "timestamp", "type": "number", "optional": true },
                 { "name": "values", "type": "object", "optional": true },
                 { "name": "payload", "type": "any", "optional": true },
-                { "name": "error", "$ref": "Error", "optional": true }
+                { "name": "error", "$ref": "Error", "optional": true },
+                { "name": "errorList", "$ref": "ErrorList", "optional": true }
             ]
         },
         {
@@ -33,7 +39,8 @@
                 { "name": "timestamp", "type": "number" },
                 { "name": "values", "type": "object" },
                 { "name": "payload", "type": "any" },
-                { "name": "error", "$ref": "Error" }
+                { "name": "error", "$ref": "Error" },
+                { "name": "errorList", "$ref": "ErrorList" }
             ]
         },
         {

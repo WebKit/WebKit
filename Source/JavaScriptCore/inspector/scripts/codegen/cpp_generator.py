@@ -93,10 +93,11 @@ class CppGenerator:
     def cpp_protocol_type_for_type(_type):
         if isinstance(_type, ObjectType) and len(_type.members) == 0:
             return 'Inspector::InspectorObject'
-        if isinstance(_type, (ObjectType, AliasedType, EnumType)):
-            return 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
         if isinstance(_type, ArrayType):
-            return 'Inspector::Protocol::Array<%s>' % CppGenerator.cpp_protocol_type_for_type(_type.element_type)
+            if _type.raw_name() is None:  # Otherwise, fall through and use typedef'd name.
+                return 'Inspector::Protocol::Array<%s>' % CppGenerator.cpp_protocol_type_for_type(_type.element_type)
+        if isinstance(_type, (ObjectType, AliasedType, EnumType, ArrayType)):
+            return 'Inspector::Protocol::%s::%s' % (_type.type_domain().domain_name, _type.raw_name())
         if isinstance(_type, PrimitiveType):
             return CppGenerator.cpp_name_for_primitive_type(_type)
 

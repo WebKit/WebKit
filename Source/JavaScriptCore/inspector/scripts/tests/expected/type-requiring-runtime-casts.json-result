@@ -357,7 +357,6 @@ enum class UncastedAnimals;
 // Typedefs.
 namespace Test {
 typedef int CastedObjectId;
-
 typedef int UncastedObjectId;
 } // Test
 // End of typedefs.

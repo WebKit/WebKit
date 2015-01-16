@@ -90,8 +90,8 @@ private:
 
 // Database.
 InspectorBackend.registerDatabaseDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, "Database");
-InspectorBackend.registerEvent("Database.didExecuteOptionalParameters", ["columnNames", "notes", "timestamp", "values", "payload", "sqlError", "screenColor", "printColor"]);
-InspectorBackend.registerEvent("Database.didExecuteNoOptionalParameters", ["columnNames", "notes", "timestamp", "values", "payload", "sqlError", "screenColor", "printColor"]);
+InspectorBackend.registerEvent("Database.didExecuteOptionalParameters", ["columnNames", "notes", "timestamp", "values", "payload", "sqlError", "screenColor", "alternateColors", "printColor"]);
+InspectorBackend.registerEvent("Database.didExecuteNoOptionalParameters", ["columnNames", "notes", "timestamp", "values", "payload", "sqlError", "screenColor", "alternateColors", "printColor"]);
 InspectorBackend.activateDomain("Database");
 ### End File: InspectorBackendCommands.js
 
@@ -250,8 +250,8 @@ namespace Inspector {
 class InspectorDatabaseFrontendDispatcher {
 public:
     InspectorDatabaseFrontendDispatcher(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }
-    void didExecuteOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors* const screenColor, const String* const printColor);
-    void didExecuteNoOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String& notes, double timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors& screenColor, const String& printColor);
+    void didExecuteOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor);
+    void didExecuteNoOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String& notes, double timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors& screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String& printColor);
 private:
     InspectorFrontendChannel* m_inspectorFrontendChannel;
 };
@@ -303,7 +303,7 @@ private:
 
 namespace Inspector {
 
-void InspectorDatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors* const screenColor, const String* const printColor)
+void InspectorDatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String* const notes, const double* const timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors* const screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String* const printColor)
 {
     Ref<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteOptionalParameters"));
@@ -322,6 +322,8 @@ void InspectorDatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<In
         paramsObject->setObject(ASCIILiteral("sqlError"), sqlError);
     if (screenColor)
         paramsObject->setString(ASCIILiteral("screenColor"), *screenColor);
+    if (alternateColors)
+        paramsObject->setArray(ASCIILiteral("alternateColors"), alternateColors);
     if (printColor)
         paramsObject->setString(ASCIILiteral("printColor"), *printColor);
     jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
@@ -329,7 +331,7 @@ void InspectorDatabaseFrontendDispatcher::didExecuteOptionalParameters(RefPtr<In
     m_inspectorFrontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
 
-void InspectorDatabaseFrontendDispatcher::didExecuteNoOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String& notes, double timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors& screenColor, const String& printColor)
+void InspectorDatabaseFrontendDispatcher::didExecuteNoOptionalParameters(RefPtr<Inspector::Protocol::Array<String>> columnNames, const String& notes, double timestamp, RefPtr<Inspector::InspectorObject> values, RefPtr<Inspector::InspectorValue> payload, RefPtr<Inspector::Protocol::Database::Error> sqlError, const Inspector::Protocol::Database::PrimaryColors& screenColor, RefPtr<Inspector::Protocol::Database::ColorList> alternateColors, const String& printColor)
 {
     Ref<InspectorObject> jsonMessage = InspectorObject::create();
     jsonMessage->setString(ASCIILiteral("method"), ASCIILiteral("Database.didExecuteNoOptionalParameters"));
@@ -341,6 +343,7 @@ void InspectorDatabaseFrontendDispatcher::didExecuteNoOptionalParameters(RefPtr<
     paramsObject->setValue(ASCIILiteral("payload"), payload);
     paramsObject->setObject(ASCIILiteral("sqlError"), sqlError);
     paramsObject->setString(ASCIILiteral("screenColor"), screenColor);
+    paramsObject->setArray(ASCIILiteral("alternateColors"), alternateColors);
     paramsObject->setString(ASCIILiteral("printColor"), printColor);
     jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
 
@@ -409,8 +412,8 @@ class Error;
 namespace Database {
 /* Unique identifier of Database object. */
 typedef String DatabaseId;
-
 typedef String PrimaryColors;
+typedef Inspector::Protocol::Array<Inspector::Protocol::Database::PrimaryColors> ColorList;
 } // Database
 // End of typedefs.
 
@@ -868,7 +871,7 @@ using namespace Inspector;
     return self;
 }
 
-- (void)didExecuteOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ **)columnNames notes:(NSString **)notes timestamp:(double *)timestamp values:(RWIProtocolJSONObject **)values payload:(RWIProtocolJSONObject **)payload sqlError:(RWIProtocolDatabaseError **)sqlError screenColor:(NSString **)screenColor printColor:(NSString **)printColor
+- (void)didExecuteOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ **)columnNames notes:(NSString **)notes timestamp:(double *)timestamp values:(RWIProtocolJSONObject **)values payload:(RWIProtocolJSONObject **)payload sqlError:(RWIProtocolDatabaseError **)sqlError screenColor:(NSString **)screenColor alternateColors:(NSArray/*<NSString>*/ **)alternateColors printColor:(NSString **)printColor
 {
     InspectorFrontendChannel* frontendChannel = _controller->frontendChannel();
     if (!frontendChannel)
@@ -880,6 +883,7 @@ using namespace Inspector;
     THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(payload, @"payload");
     THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(sqlError, @"sqlError");
     THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(screenColor, @"screenColor");
+    THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(alternateColors, @"alternateColors");
     THROW_EXCEPTION_FOR_BAD_OPTIONAL_PARAMETER(printColor, @"printColor");
 
     Ref<InspectorObject> jsonMessage = InspectorObject::create();
@@ -899,13 +903,15 @@ using namespace Inspector;
         paramsObject->setObject(ASCIILiteral("sqlError"), [(*sqlError) toInspectorObject]);
     if (screenColor)
         paramsObject->setString(ASCIILiteral("screenColor"), (*screenColor));
+    if (alternateColors)
+        paramsObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray((*alternateColors)));
     if (printColor)
         paramsObject->setString(ASCIILiteral("printColor"), (*printColor));
     jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
     frontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
 }
 
-- (void)didExecuteNoOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload sqlError:(RWIProtocolDatabaseError *)sqlError screenColor:(NSString *)screenColor printColor:(NSString *)printColor
+- (void)didExecuteNoOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload sqlError:(RWIProtocolDatabaseError *)sqlError screenColor:(NSString *)screenColor alternateColors:(NSArray/*<NSString>*/ *)alternateColors printColor:(NSString *)printColor
 {
     InspectorFrontendChannel* frontendChannel = _controller->frontendChannel();
     if (!frontendChannel)
@@ -917,6 +923,7 @@ using namespace Inspector;
     THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(payload, @"payload");
     THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(sqlError, @"sqlError");
     THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(screenColor, @"screenColor");
+    THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(alternateColors, @"alternateColors");
     THROW_EXCEPTION_FOR_REQUIRED_PARAMETER(printColor, @"printColor");
 
     Ref<InspectorObject> jsonMessage = InspectorObject::create();
@@ -929,6 +936,7 @@ using namespace Inspector;
     paramsObject->setValue(ASCIILiteral("payload"), [payload toInspectorObject]);
     paramsObject->setObject(ASCIILiteral("sqlError"), [sqlError toInspectorObject]);
     paramsObject->setString(ASCIILiteral("screenColor"), screenColor);
+    paramsObject->setArray(ASCIILiteral("alternateColors"), inspectorStringArray(alternateColors));
     paramsObject->setString(ASCIILiteral("printColor"), printColor);
     jsonMessage->setObject(ASCIILiteral("params"), WTF::move(paramsObject));
     frontendChannel->sendMessageToFrontend(jsonMessage->toJSONString());
@@ -991,8 +999,8 @@ __attribute__((visibility ("default")))
 
 __attribute__((visibility ("default")))
 @interface RWIProtocolDatabaseDomainEventDispatcher : NSObject
-- (void)didExecuteOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ **)columnNames notes:(NSString **)notes timestamp:(double *)timestamp values:(RWIProtocolJSONObject **)values payload:(RWIProtocolJSONObject **)payload sqlError:(RWIProtocolDatabaseError **)sqlError screenColor:(NSString **)screenColor printColor:(NSString **)printColor;
-- (void)didExecuteNoOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload sqlError:(RWIProtocolDatabaseError *)sqlError screenColor:(NSString *)screenColor printColor:(NSString *)printColor;
+- (void)didExecuteOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ **)columnNames notes:(NSString **)notes timestamp:(double *)timestamp values:(RWIProtocolJSONObject **)values payload:(RWIProtocolJSONObject **)payload sqlError:(RWIProtocolDatabaseError **)sqlError screenColor:(NSString **)screenColor alternateColors:(NSArray/*<NSString>*/ **)alternateColors printColor:(NSString **)printColor;
+- (void)didExecuteNoOptionalParametersWithColumnNames:(NSArray/*<NSString>*/ *)columnNames notes:(NSString *)notes timestamp:(double)timestamp values:(RWIProtocolJSONObject *)values payload:(RWIProtocolJSONObject *)payload sqlError:(RWIProtocolDatabaseError *)sqlError screenColor:(NSString *)screenColor alternateColors:(NSArray/*<NSString>*/ *)alternateColors printColor:(NSString *)printColor;
 @end
 
 

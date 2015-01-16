@@ -12,6 +12,11 @@
             "enum": ["red", "green", "blue"]
         },
         {
+            "id": "ColorList",
+            "type": "array",
+            "items": { "$ref": "PrimaryColors" }
+        },
+        {
             "id": "Error",
             "type": "object",
             "description": "Database error.",
@@ -37,6 +42,7 @@
                 { "name": "databaseId", "$ref": "DatabaseId", "optional": true },
                 { "name": "sqlError", "$ref": "Error", "optional": true },
                 { "name": "screenColor", "$ref": "PrimaryColors", "optional": true },
+                { "name": "alternateColors", "$ref": "ColorList", "optional": true },
                 { "name": "printColor", "type": "string", "enum": ["cyan", "magenta", "yellow", "black"], "optional": true }
             ]
         },
@@ -56,6 +62,7 @@
                 { "name": "databaseId", "$ref": "DatabaseId", "optional": true },
                 { "name": "sqlError", "$ref": "Error", "optional": true },
                 { "name": "screenColor", "$ref": "PrimaryColors", "optional": true },
+                { "name": "alternateColors", "$ref": "ColorList", "optional": true },
                 { "name": "printColor", "type": "string", "enum": ["cyan", "magenta", "yellow", "black"], "optional": true }
             ]
         },
@@ -73,6 +80,7 @@
                 { "name": "payload", "type": "any" },
                 { "name": "databaseId", "$ref": "DatabaseId" },
                 { "name": "sqlError", "$ref": "Error" },
+                { "name": "alternateColors", "$ref": "ColorList" },
                 { "name": "screenColor", "$ref": "PrimaryColors" },
                 { "name": "printColor", "type": "string", "enum": ["cyan", "magenta", "yellow", "black"] }
             ]
@@ -93,6 +101,7 @@
                 { "name": "databaseId", "$ref": "DatabaseId" },
                 { "name": "sqlError", "$ref": "Error" },
                 { "name": "screenColor", "$ref": "PrimaryColors" },
+                { "name": "alternateColors", "$ref": "ColorList" },
                 { "name": "printColor", "type": "string", "enum": ["cyan", "magenta", "yellow", "black"] }
             ]
         }

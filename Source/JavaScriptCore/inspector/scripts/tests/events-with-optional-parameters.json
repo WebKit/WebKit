@@ -12,6 +12,11 @@
             "values": ["red", "green", "blue"]
         },
         {
+            "id": "ColorList",
+            "type": "array",
+            "items": { "$ref": "PrimaryColors" }
+        },
+        {
             "id": "Error",
             "type": "object",
             "description": "Database error.",
@@ -32,6 +37,7 @@
                 { "name": "payload", "type": "any", "optional": true },
                 { "name": "sqlError", "$ref": "Error", "optional": true },
                 { "name": "screenColor", "$ref": "PrimaryColors", "optional": true },
+                { "name": "alternateColors", "$ref": "ColorList", "optional": true },
                 { "name": "printColor", "type": "string", "values": ["cyan", "magenta", "yellow", "black"], "optional": true }
             ]
         },
@@ -45,6 +51,7 @@
                 { "name": "payload", "type": "any" },
                 { "name": "sqlError", "$ref": "Error" },
                 { "name": "screenColor", "$ref": "PrimaryColors" },
+                { "name": "alternateColors", "$ref": "ColorList" },
                 { "name": "printColor", "type": "string", "values": ["cyan", "magenta", "yellow", "black"] }
             ]
         }

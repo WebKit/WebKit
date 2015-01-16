@@ -62,7 +62,7 @@ public:
     bool isEqual(ScriptCallStack*) const;
 
 #if ENABLE(INSPECTOR)
-    Ref<Inspector::Protocol::Array<Inspector::Protocol::Console::CallFrame>> buildInspectorArray() const;
+    Ref<Inspector::Protocol::Console::StackTrace> buildInspectorArray() const;
 #endif
 
 private:

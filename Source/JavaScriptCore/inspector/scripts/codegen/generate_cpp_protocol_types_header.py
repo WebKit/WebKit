@@ -134,7 +134,8 @@ class CppProtocolTypesHeaderGenerator(Generator):
 
     def _generate_typedefs_for_domain(self, domain):
         primitive_declarations = filter(lambda decl: isinstance(decl.type, AliasedType), domain.type_declarations)
-        if len(primitive_declarations) == 0:
+        array_declarations = filter(lambda decl: isinstance(decl.type, ArrayType), domain.type_declarations)
+        if len(primitive_declarations) == 0 and len(array_declarations) == 0:
             return ''
 
         sections = []
@@ -146,9 +147,17 @@ class CppProtocolTypesHeaderGenerator(Generator):
             typedef_lines.append('typedef %s %s;' % (primitive_name, declaration.type_name))
             sections.append('\n'.join(typedef_lines))
 
+        for declaration in array_declarations:
+            element_type = CppGenerator.cpp_protocol_type_for_type(declaration.type.element_type)
+            typedef_lines = []
+            if len(declaration.description) > 0:
+                typedef_lines.append('/* %s */' % declaration.description)
+            typedef_lines.append('typedef Inspector::Protocol::Array<%s> %s;' % (element_type, declaration.type_name))
+            sections.append('\n'.join(typedef_lines))
+
         lines = []
         lines.append('namespace %s {' % domain.domain_name)
-        lines.append('\n\n'.join(sections))
+        lines.append('\n'.join(sections))
         lines.append('} // %s' % domain.domain_name)
         return self.wrap_with_guard_for_domain(domain, '\n'.join(lines))
 

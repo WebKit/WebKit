@@ -224,7 +224,8 @@ class EnumType(Type):
 
 
 class ArrayType(Type):
-    def __init__(self, element_type_ref, domain):
+    def __init__(self, name, element_type_ref, domain):
+        self._name = name
         self._domain = domain
         self._element_type_ref = element_type_ref
         self.element_type = None
@@ -426,7 +427,7 @@ class Protocol:
                     primitive_type_ref = TypeReference(declaration.type_ref.type_kind, None, None, None)
                     type_instance = EnumType(declaration.type_name, domain, declaration.type_ref.enum_values, primitive_type_ref)
                 elif kind == "array":
-                    type_instance = ArrayType(declaration.type_ref.array_type_ref, domain)
+                    type_instance = ArrayType(declaration.type_name, declaration.type_ref.array_type_ref, domain)
                 elif kind == "object":
                     type_instance = ObjectType(declaration.type_name, domain, declaration.type_members)
                 else:
@@ -452,7 +453,7 @@ class Protocol:
     def lookup_type_reference(self, type_ref, domain):
         # If reference is to an anonymous array type, create a fresh instance.
         if type_ref.type_kind == "array":
-            type_instance = ArrayType(type_ref.array_type_ref, domain)
+            type_instance = ArrayType(None, type_ref.array_type_ref, domain)
             type_instance.resolve_type_references(self)
             log.debug("< Created fresh type instance for anonymous array type: %s" % type_instance.qualified_name())
             return type_instance

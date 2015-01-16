@@ -1,5 +1,43 @@
 2015-01-16  Brian J. Burg  <burg@cs.washington.edu>
 
+        Web Inspector: code generator should introduce typedefs for protocol types that are arrays
+        https://bugs.webkit.org/show_bug.cgi?id=140557
+
+        Reviewed by Joseph Pecoraro.
+
+        Currently, there is no generated type name for "array" type declarations such as Console.CallStack.
+        This makes it longwinded and confusing to use the type in C++ code.
+
+        This patch adds a typedef for array type declarations, so types such as Console::CallStack
+        can be referred to directly, rather than using Inspector::Protocol::Array<Console::CallFrame>.
+
+        Some tests were updated to cover array type declarations used as parameters and type members.
+
+        * inspector/ScriptCallStack.cpp: Use the new typedef.
+        (Inspector::ScriptCallStack::buildInspectorArray):
+        * inspector/ScriptCallStack.h:
+        * inspector/scripts/codegen/cpp_generator.py:
+        (CppGenerator.cpp_protocol_type_for_type): If an ArrayType is nominal, use the typedef'd name instead.
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (_generate_typedefs_for_domain): Also generate typedefs for array type declarations.
+        (_generate_typedefs_for_domain.Inspector):
+        * inspector/scripts/codegen/models.py: Save the name of an ArrayType when it is a type declaration.
+        (ArrayType.__init__):
+        (Protocol.resolve_types):
+        (Protocol.lookup_type_reference):
+        * inspector/scripts/tests/commands-with-async-attribute.json:
+        * inspector/scripts/tests/commands-with-optional-call-return-parameters.json:
+        * inspector/scripts/tests/events-with-optional-parameters.json:
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * inspector/scripts/tests/type-declaration-object-type.json:
+
+2015-01-16  Brian J. Burg  <burg@cs.washington.edu>
+
         Web Replay: purge remaining PassRefPtr uses and minor cleanup
         https://bugs.webkit.org/show_bug.cgi?id=140456
 
