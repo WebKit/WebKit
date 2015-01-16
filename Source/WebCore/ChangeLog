@@ -1,5 +1,16 @@
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r174350. rdar://problem/19451946
+
+    2014-10-06  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Build fix aftr r174347.
+
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: Use correct build
+            macro to prevent build break when ENCRYPTED_MEDIA_V2 is not enabled.
+
+2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174346. rdar://problem/19451946
 
     2014-10-06  Brent Fulgham  <bfulgham@apple.com>
