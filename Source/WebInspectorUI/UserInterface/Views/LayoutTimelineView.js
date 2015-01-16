@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,6 +75,16 @@ WebInspector.LayoutTimelineView = function(timeline)
     this._dataGrid.sortColumnIdentifier = "startTime";
     this._dataGrid.sortOrder = WebInspector.DataGrid.SortOrder.Ascending;
 
+    this._hoveredTreeElement = null;
+    this._hoveredDataGridNode = null;
+    this._showingHighlight = false;
+    this._showingHighlightForRecord = null;
+
+    this._dataGrid.element.addEventListener("mouseover", this._mouseOverDataGrid.bind(this));
+    this._dataGrid.element.addEventListener("mouseleave", this._mouseLeaveDataGrid.bind(this));
+    this.navigationSidebarTreeOutline.element.addEventListener("mouseover", this._mouseOverTreeOutline.bind(this));
+    this.navigationSidebarTreeOutline.element.addEventListener("mouseleave", this._mouseLeaveTreeOutline.bind(this));
+
     this.element.classList.add(WebInspector.LayoutTimelineView.StyleClassName);
     this.element.appendChild(this._dataGrid.element);
 
@@ -101,14 +111,25 @@ WebInspector.LayoutTimelineView.prototype = {
     {
         WebInspector.TimelineView.prototype.shown.call(this);
 
+        this._updateHighlight();
+
         this._dataGrid.shown();
     },
 
     hidden: function()
     {
+        this._hideHighlightIfNeeded();
+
         this._dataGrid.hidden();
 
         WebInspector.TimelineView.prototype.hidden.call(this);
+    },
+
+    filterDidChange: function()
+    {
+        WebInspector.TimelineView.prototype.filterDidChange.call(this);
+
+        this._updateHighlight();
     },
 
     updateLayout: function()
@@ -128,6 +149,8 @@ WebInspector.LayoutTimelineView.prototype = {
     reset: function()
     {
         WebInspector.TimelineView.prototype.reset.call(this);
+
+        this._hideHighlightIfNeeded();
 
         this._dataGrid.reset();
     },
@@ -183,6 +206,8 @@ WebInspector.LayoutTimelineView.prototype = {
     {
         if (treeElement.status)
             treeElement.status = "";
+
+        this._updateHighlight();
     },
 
     _treeElementSelected: function(treeElement, selectedByUser)
@@ -200,6 +225,8 @@ WebInspector.LayoutTimelineView.prototype = {
             console.error("Unknown tree element selected.");
             return;
         }
+
+        this._updateHighlight();
 
         if (!treeElement.record.sourceCodeLocation) {
             WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Layout);
@@ -229,5 +256,107 @@ WebInspector.LayoutTimelineView.prototype = {
     {
         this.navigationSidebarTreeOutline.selectedTreeElement.deselect();
         WebInspector.timelineSidebarPanel.showTimelineViewForType(WebInspector.TimelineRecord.Type.Layout);
+    },
+
+    _updateHighlight: function()
+    {
+        var record = this._hoveredOrSelectedRecord();
+        if (!record) {
+            this._hideHighlightIfNeeded();
+            return;
+        }
+
+        this._showHighlightForRecord(record);
+    },
+
+    _showHighlightForRecord: function(record)
+    {
+        if (this._showingHighlightForRecord === record)
+            return;
+
+        this._showingHighlightForRecord = record;
+
+        const contentColor = {r: 111, g: 168, b: 220, a: 0.66};
+        const outlineColor = {r: 255, g: 229, b: 153, a: 0.66};
+
+        var quad = record.quad;
+        if (quad && DOMAgent.highlightQuad) {
+            DOMAgent.highlightQuad(quad.toProtocol(), contentColor, outlineColor);
+            this._showingHighlight = true;
+            return;
+        }
+
+        // COMPATIBILITY (iOS 6): iOS 6 included Rect information instead of Quad information. Fallback to highlighting the rect.
+        var rect = record.rect;
+        if (rect) {
+            DOMAgent.highlightRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, contentColor, outlineColor);
+            this._showingHighlight = true;
+            return;
+        }
+
+        // This record doesn't have a highlight, so hide any existing highlight.
+        if (this._showingHighlight) {
+            this._showingHighlight = false;
+            DOMAgent.hideHighlight();
+        }
+    },
+
+    _hideHighlightIfNeeded: function()
+    {
+        this._showingHighlightForRecord = null;
+
+        if (this._showingHighlight) {
+            this._showingHighlight = false;
+            DOMAgent.hideHighlight();
+        }
+    },
+
+    _hoveredOrSelectedRecord: function()
+    {
+        if (this._hoveredDataGridNode)
+            return this._hoveredDataGridNode.record;
+
+        if (this._hoveredTreeElement)
+            return this._hoveredTreeElement.record;
+
+        if (this._dataGrid.selectedNode) {
+            var treeElement = this._dataGrid.treeElementForDataGridNode(this._dataGrid.selectedNode);
+            if (treeElement.revealed())
+                return this._dataGrid.selectedNode.record;
+        }
+
+        return null;
+    },
+
+    _mouseOverDataGrid: function(event)
+    {
+        var hoveredDataGridNode = this._dataGrid.dataGridNodeFromNode(event.target);
+        if (!hoveredDataGridNode)
+            return;
+
+        this._hoveredDataGridNode = hoveredDataGridNode;
+        this._updateHighlight();
+    },
+
+    _mouseLeaveDataGrid: function(event)
+    {
+        this._hoveredDataGridNode = null;
+        this._updateHighlight();
+    },
+
+    _mouseOverTreeOutline: function(event)
+    {
+        var hoveredTreeElement = this.navigationSidebarTreeOutline.treeElementFromNode(event.target);
+        if (!hoveredTreeElement)
+            return;
+
+        this._hoveredTreeElement = hoveredTreeElement;
+        this._updateHighlight();
+    },
+
+    _mouseLeaveTreeOutline: function(event)
+    {
+        this._hoveredTreeElement = null;
+        this._updateHighlight();
     }
 };

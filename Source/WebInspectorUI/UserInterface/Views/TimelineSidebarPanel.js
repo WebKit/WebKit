@@ -283,6 +283,13 @@ WebInspector.TimelineSidebarPanel.prototype = {
 
     // Protected
 
+    updateFilter: function()
+    {
+        WebInspector.NavigationSidebarPanel.prototype.updateFilter.call(this);
+
+        this._activeContentView.filterDidChange();
+    },
+
     hasCustomFilters: function()
     {
         return true;

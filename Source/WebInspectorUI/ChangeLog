@@ -1,3 +1,56 @@
+2015-01-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: selecting Paint timeline records from sidebar does not trigger preview of paint quad
+        https://bugs.webkit.org/show_bug.cgi?id=139151
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/LayoutTimelineDataGrid.js:
+        (WebInspector.LayoutTimelineDataGrid):
+        (WebInspector.LayoutTimelineDataGrid.prototype.callFramePopoverAnchorElement):
+        (WebInspector.LayoutTimelineDataGrid.prototype.reset): Deleted.
+        (WebInspector.LayoutTimelineDataGrid.prototype.hidden): Deleted.
+        (WebInspector.LayoutTimelineDataGrid.prototype._layoutDataGridSelectedNodeChanged): Deleted.
+        (WebInspector.LayoutTimelineDataGrid.prototype._hideHighlightIfNeeded): Deleted.
+        Move the node highlight from the datagrid to the timeline view because
+        we want this to happen on both the Navigation sidebar and the datagrid.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WebInspector.LayoutTimelineView.prototype.shown):
+        (WebInspector.LayoutTimelineView.prototype.hidden):
+        (WebInspector.LayoutTimelineView.prototype.filterDidChange):
+        (WebInspector.LayoutTimelineView.prototype.reset):
+        (WebInspector.LayoutTimelineView.prototype._treeElementDeselected):
+        (WebInspector.LayoutTimelineView.prototype._treeElementSelected):
+        Update the highlight for major view updates.
+
+        (WebInspector.LayoutTimelineView.prototype._updateHighlight):
+        (WebInspector.LayoutTimelineView.prototype._showHighlightForRecord):
+        (WebInspector.LayoutTimelineView.prototype._hideHighlightIfNeeded):
+        (WebInspector.LayoutTimelineView.prototype._hoveredOrSelectedRecord):
+        Show a highlight for what we are hovering, or what is selected.
+        Note the selected node may not be visible due to filtering.
+
+        (WebInspector.LayoutTimelineView.prototype._mouseOverDataGrid):
+        (WebInspector.LayoutTimelineView.prototype._mouseLeaveDataGrid):
+        (WebInspector.LayoutTimelineView.prototype._mouseOverTreeOutline):
+        (WebInspector.LayoutTimelineView.prototype._mouseLeaveTreeOutline):
+        Update hovered information mousing over the datagrid and tree outline.
+
+        * UserInterface/Views/TimelineContentView.js:
+        (WebInspector.TimelineContentView.prototype.filterDidChange):
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.prototype.updateFilter):
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.filterDidChange):
+        Include a "filterDidChange" TimelineView method that gets called after
+        updateFilter (things like the filter bar or timeline range changes).
+
+        * UserInterface/Views/TreeOutline.js:
+        (TreeOutline.prototype.treeElementFromNode):
+        (TreeOutline.prototype.treeElementFromPoint):
+        Provide a helper to get a tree element from an event target.
+
 2015-01-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: TextEditor doesn't update when resizing console, white space instead of content

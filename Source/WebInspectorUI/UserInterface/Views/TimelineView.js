@@ -194,6 +194,11 @@ WebInspector.TimelineView.prototype = {
         this._visible = false;
     },
 
+    filterDidChange: function()
+    {
+        // Implemented by sub-classes if needed.
+    },
+
     matchTreeElementAgainstCustomFilters: function(treeElement)
     {
         // Implemented by sub-classes if needed.

@@ -364,16 +364,21 @@ TreeOutline.prototype._treeElementDidChange = function(treeElement)
         this.onchange(treeElement);
 };
 
+TreeOutline.prototype.treeElementFromNode = function(node)
+{
+    var listNode = node.enclosingNodeOrSelfWithNodeNameInArray(["ol", "li"]);
+    if (listNode)
+        return listNode.parentTreeElement || listNode.treeElement;
+    return null;
+};
+
 TreeOutline.prototype.treeElementFromPoint = function(x, y)
 {
     var node = this._childrenListNode.ownerDocument.elementFromPoint(x, y);
     if (!node)
         return null;
 
-    var listNode = node.enclosingNodeOrSelfWithNodeNameInArray(["ol", "li"]);
-    if (listNode)
-        return listNode.parentTreeElement || listNode.treeElement;
-    return null;
+    return this.treeElementFromNode(node);
 };
 
 TreeOutline.prototype._treeKeyDown = function(event)

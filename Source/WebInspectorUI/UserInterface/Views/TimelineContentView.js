@@ -179,6 +179,14 @@ WebInspector.TimelineContentView.prototype = {
         this._currentTimelineView.hidden();
     },
 
+    filterDidChange: function()
+    {
+        if (!this._currentTimelineView)
+            return;
+
+        this._currentTimelineView.filterDidChange();
+    },
+
     updateLayout: function()
     {
         this._timelineOverview.updateLayoutForResize();
