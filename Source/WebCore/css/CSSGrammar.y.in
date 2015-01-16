@@ -1104,7 +1104,7 @@ nested_selector_list:
     ;
 
 #if ENABLE_CSS_SELECTORS_LEVEL4
-lang_range: LANGRANGE | IDENT | STRING { $1.setTokenType(TokenType::AtomicStringToken); $$ = $1; } ;
+lang_range: LANGRANGE | IDENT | STRING
 
 comma_separated_lang_ranges:
     lang_range %prec UNIMPORTANT_TOK {
@@ -1397,7 +1397,7 @@ pseudo:
         if ($4) {
             auto selector = std::make_unique<CSSParserSelector>();
             selector->setMatch(CSSSelector::PseudoClass);
-            selector->setLangArgumentList(*std::unique_ptr<Vector<CSSParserString>>($4));
+            selector->setArgumentList(*std::unique_ptr<Vector<CSSParserString>>($4));
             selector->setPseudoClassValue($2);
             if (selector->pseudoClassType() == CSSSelector::PseudoClassLang)
                 $$ = selector.release();
