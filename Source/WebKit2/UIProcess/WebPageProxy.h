@@ -911,8 +911,8 @@ public:
     void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&);
     void didCancelCheckingText(uint64_t requestID);
 
-    void connectionWillOpen(IPC::Connection*);
-    void connectionWillClose(IPC::Connection*);
+    void connectionWillOpen(IPC::Connection&);
+    void connectionDidClose(IPC::Connection&);
 
     void processDidFinishLaunching();
 

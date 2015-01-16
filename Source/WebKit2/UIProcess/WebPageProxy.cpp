@@ -3220,17 +3220,17 @@ void WebPageProxy::didCancelTrackingPotentialLongMousePress(const UserData& user
     m_uiClient->didCancelTrackingPotentialLongMousePress(this, m_process->transformHandlesToObjects(userData.object()).get());
 }
 
-void WebPageProxy::connectionWillOpen(IPC::Connection* connection)
+void WebPageProxy::connectionWillOpen(IPC::Connection& connection)
 {
-    ASSERT(connection == m_process->connection());
+    ASSERT(&connection == m_process->connection());
 
     m_webProcessLifetimeTracker.connectionWillOpen();
-    m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, connection);
+    m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, &connection);
 }
 
-void WebPageProxy::connectionWillClose(IPC::Connection* connection)
+void WebPageProxy::connectionDidClose(IPC::Connection& connection)
 {
-    ASSERT_UNUSED(connection, connection == m_process->connection());
+    ASSERT_UNUSED(connection, &connection == m_process->connection());
 
     m_webProcessLifetimeTracker.connectionWillClose();
     m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);

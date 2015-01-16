@@ -1,5 +1,21 @@
 2015-01-16  Anders Carlsson  <andersca@apple.com>
 
+        More WebPageProxy CTTE
+        https://bugs.webkit.org/show_bug.cgi?id=140565
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::connectionWillOpen):
+        (WebKit::WebPageProxy::connectionDidClose):
+        (WebKit::WebPageProxy::connectionWillClose): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connectionWillOpen):
+        (WebKit::WebProcessProxy::connectionDidClose):
+
+2015-01-16  Anders Carlsson  <andersca@apple.com>
+
         Remove dead code
         https://bugs.webkit.org/show_bug.cgi?id=140563
 
