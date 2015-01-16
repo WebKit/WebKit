@@ -1,3 +1,23 @@
+2015-01-15  Anders Carlsson  <andersca@apple.com>
+
+        Add a connection parameter to StorageManager willOpen/didClose functions
+        https://bugs.webkit.org/show_bug.cgi?id=140527
+
+        Reviewed by Tim Horton.
+
+        Rename processWillCloseConnection to processDidCloseConnection and pass connections
+        to both functions since in the near future we won't be able to get the connection from 
+        the web process proxy in these scenarios.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::processWillOpenConnection):
+        (WebKit::StorageManager::processDidCloseConnection):
+        (WebKit::StorageManager::processWillCloseConnection): Deleted.
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::webProcessWillOpenConnection):
+        (WebKit::WebsiteDataStore::webProcessDidCloseConnection):
+
 2015-01-15  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Wire diagnostic logging messages through the UIProcess

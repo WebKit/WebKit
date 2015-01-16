@@ -55,8 +55,8 @@ public:
     void setAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, IPC::Connection* allowedConnection);
     void cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);
 
-    void processWillOpenConnection(WebProcessProxy*);
-    void processWillCloseConnection(WebProcessProxy*);
+    void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);
+    void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
     void applicationWillTerminate();
 
     void getOrigins(std::function<void (Vector<RefPtr<WebCore::SecurityOrigin>>)> completionHandler);

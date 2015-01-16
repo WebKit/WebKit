@@ -485,23 +485,24 @@ void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, u
     });
 }
 
-void StorageManager::processWillOpenConnection(WebProcessProxy* webProcessProxy)
+void StorageManager::processWillOpenConnection(WebProcessProxy& webProcessProxy, IPC::Connection& connection)
 {
-    webProcessProxy->connection()->addWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName(), m_queue.get(), this);
+    connection.addWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName(), m_queue.get(), this);
 }
 
-void StorageManager::processWillCloseConnection(WebProcessProxy* webProcessProxy)
+void StorageManager::processDidCloseConnection(WebProcessProxy& webProcessProxy, IPC::Connection& connection)
 {
-    webProcessProxy->connection()->removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
+    connection.removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
 
     RefPtr<StorageManager> storageManager(this);
-    RefPtr<IPC::Connection> connection(webProcessProxy->connection());
+    RefPtr<IPC::Connection> protectedConnection(&connection);
 
-    m_queue->dispatch([storageManager, connection] {
+    m_queue->dispatch([storageManager, protectedConnection] {
         Vector<std::pair<RefPtr<IPC::Connection>, uint64_t>> connectionAndStorageMapIDPairsToRemove;
         auto storageAreasByConnection = storageManager->m_storageAreasByConnection;
-        for (HashMap<std::pair<RefPtr<IPC::Connection>, uint64_t>, RefPtr<StorageArea>>::const_iterator it = storageAreasByConnection.begin(), end = storageAreasByConnection.end(); it != end; ++it) {
-            if (it->key.first != connection)
+
+        for (auto it = storageAreasByConnection.begin(), end = storageAreasByConnection.end(); it != end; ++it) {
+            if (it->key.first != protectedConnection)
                 continue;
 
             it->value->removeListener(*it->key.first, it->key.second);

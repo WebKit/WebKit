@@ -197,10 +197,10 @@ void WebsiteDataStore::webPageWasRemoved(WebPageProxy& webPageProxy)
         m_storageManager->destroySessionStorageNamespace(webPageProxy.pageID());
 }
 
-void WebsiteDataStore::webProcessWillOpenConnection(WebProcessProxy& webProcessProxy, IPC::Connection&)
+void WebsiteDataStore::webProcessWillOpenConnection(WebProcessProxy& webProcessProxy, IPC::Connection& connection)
 {
     if (m_storageManager)
-        m_storageManager->processWillOpenConnection(&webProcessProxy);
+        m_storageManager->processWillOpenConnection(webProcessProxy, connection);
 }
 
 void WebsiteDataStore::webPageWillOpenConnection(WebPageProxy& webPageProxy, IPC::Connection& connection)
@@ -215,10 +215,10 @@ void WebsiteDataStore::webPageDidCloseConnection(WebPageProxy& webPageProxy, IPC
         m_storageManager->setAllowedSessionStorageNamespaceConnection(webPageProxy.pageID(), nullptr);
 }
 
-void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessProxy, IPC::Connection&)
+void WebsiteDataStore::webProcessDidCloseConnection(WebProcessProxy& webProcessProxy, IPC::Connection& connection)
 {
     if (m_storageManager)
-        m_storageManager->processWillCloseConnection(&webProcessProxy);
+        m_storageManager->processDidCloseConnection(webProcessProxy, connection);
 }
 
 }
