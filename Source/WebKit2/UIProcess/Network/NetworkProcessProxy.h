@@ -73,8 +73,7 @@ private:
 
     // ChildProcessProxy
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
-    virtual void connectionWillOpen(IPC::Connection*) override;
-    virtual void connectionWillClose(IPC::Connection*) override;
+    virtual void connectionWillOpen(IPC::Connection&) override;
 
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
     void networkProcessCrashedOrFailedToLaunch();

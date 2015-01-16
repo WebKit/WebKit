@@ -123,26 +123,26 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
     platformGetLaunchOptions(launchOptions);
 }
 
-void WebProcessProxy::connectionWillOpen(IPC::Connection* connection)
+void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
 {
-    ASSERT(this->connection() == connection);
+    ASSERT(this->connection() == &connection);
 
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShimProxy::shared().initializeConnection(connection);
 #endif
 
     for (WebPageProxyMap::iterator it = m_pageMap.begin(), end = m_pageMap.end(); it != end; ++it)
-        it->value->connectionWillOpen(connection);
+        it->value->connectionWillOpen(&connection);
 
     m_processPool->processWillOpenConnection(this);
 }
 
-void WebProcessProxy::connectionWillClose(IPC::Connection* connection)
+void WebProcessProxy::connectionDidClose(IPC::Connection& connection)
 {
-    ASSERT(this->connection() == connection);
+    ASSERT(this->connection() == &connection);
 
     for (WebPageProxyMap::iterator it = m_pageMap.begin(), end = m_pageMap.end(); it != end; ++it)
-        it->value->connectionWillClose(connection);
+        it->value->connectionWillClose(&connection);
 
     m_processPool->processWillCloseConnection(this);
 }

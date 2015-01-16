@@ -84,8 +84,8 @@ protected:
     
 private:
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) = 0;
-    virtual void connectionWillOpen(IPC::Connection*);
-    virtual void connectionWillClose(IPC::Connection*);
+    virtual void connectionWillOpen(IPC::Connection&);
+    virtual void connectionDidClose(IPC::Connection&);
 
     Vector<std::pair<std::unique_ptr<IPC::MessageEncoder>, unsigned>> m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;

@@ -61,14 +61,6 @@ void DatabaseProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& laun
     platformGetLaunchOptions(launchOptions);
 }
 
-void DatabaseProcessProxy::connectionWillOpen(IPC::Connection*)
-{
-}
-
-void DatabaseProcessProxy::connectionWillClose(IPC::Connection*)
-{
-}
-
 void DatabaseProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::DatabaseProcessProxy::messageReceiverName()) {

@@ -39,7 +39,7 @@ WTF_MAKE_NONCOPYABLE(SecItemShimProxy);
 public:
     static SecItemShimProxy& shared();
 
-    void initializeConnection(IPC::Connection*);
+    void initializeConnection(IPC::Connection&);
 
 private:
     SecItemShimProxy();

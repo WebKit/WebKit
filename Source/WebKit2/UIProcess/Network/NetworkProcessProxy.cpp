@@ -82,17 +82,13 @@ void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launc
     platformGetLaunchOptions(launchOptions);
 }
 
-void NetworkProcessProxy::connectionWillOpen(IPC::Connection* connection)
+void NetworkProcessProxy::connectionWillOpen(IPC::Connection& connection)
 {
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemShimProxy::shared().initializeConnection(connection);
 #else
     UNUSED_PARAM(connection);
 #endif
-}
-
-void NetworkProcessProxy::connectionWillClose(IPC::Connection*)
-{
 }
 
 void NetworkProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)

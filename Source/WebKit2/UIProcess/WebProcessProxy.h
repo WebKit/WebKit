@@ -149,8 +149,8 @@ private:
     // From ChildProcessProxy
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
     void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
-    virtual void connectionWillOpen(IPC::Connection*) override;
-    virtual void connectionWillClose(IPC::Connection*) override;
+    virtual void connectionWillOpen(IPC::Connection&) override;
+    virtual void connectionDidClose(IPC::Connection&) override;
 
     // Called when the web process has crashed or we know that it will terminate soon.
     // Will potentially cause the WebProcessProxy object to be freed.

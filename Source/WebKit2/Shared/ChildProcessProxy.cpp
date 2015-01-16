@@ -138,7 +138,7 @@ void ChildProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Id
     m_connection->setShouldCloseConnectionOnMachExceptions();
 #endif
 
-    connectionWillOpen(m_connection.get());
+    connectionWillOpen(*m_connection);
     m_connection->open();
 
     for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
@@ -164,17 +164,18 @@ void ChildProcessProxy::clearConnection()
     if (!m_connection)
         return;
 
-    connectionWillClose(m_connection.get());
+    // FIXME: Call this after the connection has been invalidated.
+    connectionDidClose(*m_connection);
 
     m_connection->invalidate();
     m_connection = nullptr;
 }
 
-void ChildProcessProxy::connectionWillOpen(IPC::Connection*)
+void ChildProcessProxy::connectionWillOpen(IPC::Connection&)
 {
 }
 
-void ChildProcessProxy::connectionWillClose(IPC::Connection*)
+void ChildProcessProxy::connectionDidClose(IPC::Connection&)
 {
 }
 
