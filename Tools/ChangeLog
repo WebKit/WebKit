@@ -1,3 +1,31 @@
+2015-01-16  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r171968): run-safari --simulator fails to launch Safari on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=135589
+
+        Reviewed by David Kilzer.
+
+        Derived from a patch by David Farler.
+
+        Following the removal IPhoneSimulatorNotification.pm in <http://trac.webkit.org/changeset/171968>
+        run-safari --simulator fails to launch Safari on iOS. We need to implement run-safari
+        in terms of the simctl command line utility.
+
+        * Scripts/webkitdirs.pm: Added constant SIMULATOR_DEVICE_STATE_BOOTED.
+        (eraseIOSSimulatorDevice): Added.
+        (bootedIOSSimulatorDevice): Added.
+        (iosSimulatorApplicationsPath): Added.
+        (installedMobileSafariBundle): Implemented in terms of iosSimulatorApplicationsPath().
+        (openIOSSimulator): Modified to launch iOS Simulator using OPEN(1).
+        (quitIOSSimulator): Added.
+        (iosSimulatorDeviceByName): Modified to find the first simulator device that matches
+        the specified name and currently selected iOS runtime.
+        (isIOSSimulatorSystemInstalledApp): Added.
+        (runIOSWebKitAppInSimulator): Modified to use simctl launch to launch an app in the simulator.
+        (deleteiOSSimulatorDevice): Deleted.
+        (loadIPhoneSimulatorNotificationIfNeeded): Deleted.
+        (installAndLaunchIOSWebKitAppInSimulator): Deleted.
+
 2015-01-16  Alex Christensen  <alex.christensen@flexsim.com>
 
         Resurrect the WinCairo bot.
