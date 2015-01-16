@@ -1,5 +1,26 @@
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r173218. rdar://problem/19451975
+
+    2014-09-03  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Improper release of unretained AVCFAssetResourceLoaderRef
+            https://bugs.webkit.org/show_bug.cgi?id=136493
+            <rdar://problem/18112559>
+
+            Reviewed by Eric Carlson.
+
+            Don't bother wrapping the return value of AVCFURLAssetGetResourceLoader in a
+            RetainPtr. We don't hold onto this value or want to control its lifetime; we just
+            want to pass it to the AVCFAssetResourceLoaderSetCallbacks function.
+
+            Use of the RetainPtr created a double-release and crash.
+
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+            (WebCore::AVFWrapper::createAssetForURL): 
+
+2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r173216. rdar://problem/19451946
 
     2014-09-03  Brent Fulgham  <bfulgham@apple.com>
