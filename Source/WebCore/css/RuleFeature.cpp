@@ -103,4 +103,10 @@ void RuleFeatureSet::clear()
     usesFirstLetterRules = false;
 }
 
+void RuleFeatureSet::shrinkToFit()
+{
+    siblingRules.shrinkToFit();
+    uncommonAttributeRules.shrinkToFit();
+}
+
 } // namespace WebCore

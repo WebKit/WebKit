@@ -52,7 +52,7 @@ struct RuleFeatureSet {
 
     void add(const RuleFeatureSet&);
     void clear();
-
+    void shrinkToFit();
     void collectFeaturesFromSelector(const CSSSelector&, bool& hasSiblingSelector);
 
     HashSet<AtomicStringImpl*> idsInRules;

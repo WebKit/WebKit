@@ -85,7 +85,7 @@ private:
 
     void collectMatchingRules(const MatchRequest&, StyleResolver::RuleRange&);
     void collectMatchingRulesForRegion(const MatchRequest&, StyleResolver::RuleRange&);
-    void collectMatchingRulesForList(const Vector<RuleData>*, const MatchRequest&, StyleResolver::RuleRange&);
+    void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&, StyleResolver::RuleRange&);
     bool ruleMatches(const RuleData&, unsigned &specificity);
 
     void sortMatchedRules();

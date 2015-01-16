@@ -183,15 +183,15 @@ void RuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map, const RuleDa
 {
     if (!key)
         return;
-    std::unique_ptr<Vector<RuleData>>& rules = map.add(key, nullptr).iterator->value;
+    auto& rules = map.add(key, nullptr).iterator->value;
     if (!rules)
-        rules = std::make_unique<Vector<RuleData>>();
+        rules = std::make_unique<RuleDataVector>();
     rules->append(ruleData);
 }
 
 static unsigned rulesCountForName(const RuleSet::AtomRuleMap& map, AtomicStringImpl* name)
 {
-    if (const Vector<RuleData>* rules = map.get(name))
+    if (const auto* rules = map.get(name))
         return rules->size();
     return 0;
 }
@@ -377,9 +377,8 @@ void RuleSet::addStyleRule(StyleRule* rule, AddRuleFlags addRuleFlags)
 
 static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)
 {
-    RuleSet::AtomRuleMap::iterator end = map.end();
-    for (RuleSet::AtomRuleMap::iterator it = map.begin(); it != end; ++it)
-        it->value->shrinkToFit();
+    for (auto& vector : map.values())
+        vector->shrinkToFit();
 }
 
 void RuleSet::shrinkToFit()
@@ -395,6 +394,8 @@ void RuleSet::shrinkToFit()
     m_focusPseudoClassRules.shrinkToFit();
     m_universalRules.shrinkToFit();
     m_pageRules.shrinkToFit();
+    m_features.shrinkToFit();
+    m_regionSelectorsAndRuleSets.shrinkToFit();
 }
 
 } // namespace WebCore

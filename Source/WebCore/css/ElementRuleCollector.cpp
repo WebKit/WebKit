@@ -351,7 +351,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     return selectorChecker.match(ruleData.selector(), &m_element, context, specificity);
 }
 
-void ElementRuleCollector::collectMatchingRulesForList(const Vector<RuleData>* rules, const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
+void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVector* rules, const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
 {
     if (!rules)
         return;

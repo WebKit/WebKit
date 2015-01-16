@@ -155,7 +155,8 @@ public:
 
     RuleSet();
 
-    typedef HashMap<AtomicStringImpl*, std::unique_ptr<Vector<RuleData>>> AtomRuleMap;
+    typedef Vector<RuleData, 1> RuleDataVector;
+    typedef HashMap<AtomicStringImpl*, std::unique_ptr<RuleDataVector>> AtomRuleMap;
 
     void addRulesFromSheet(StyleSheetContents*, const MediaQueryEvaluator&, StyleResolver* = 0);
 
@@ -169,16 +170,17 @@ public:
 
     const RuleFeatureSet& features() const { return m_features; }
 
-    const Vector<RuleData>* idRules(AtomicStringImpl* key) const { return m_idRules.get(key); }
-    const Vector<RuleData>* classRules(AtomicStringImpl* key) const { return m_classRules.get(key); }
-    const Vector<RuleData>* tagRules(AtomicStringImpl* key) const { return m_tagRules.get(key); }
-    const Vector<RuleData>* shadowPseudoElementRules(AtomicStringImpl* key) const { return m_shadowPseudoElementRules.get(key); }
-    const Vector<RuleData>* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
+    const RuleDataVector* idRules(AtomicStringImpl* key) const { return m_idRules.get(key); }
+    const RuleDataVector* classRules(AtomicStringImpl* key) const { return m_classRules.get(key); }
+    const RuleDataVector* tagRules(AtomicStringImpl* key) const { return m_tagRules.get(key); }
+    const RuleDataVector* shadowPseudoElementRules(AtomicStringImpl* key) const { return m_shadowPseudoElementRules.get(key); }
+    const RuleDataVector* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
 #if ENABLE(VIDEO_TRACK)
-    const Vector<RuleData>* cuePseudoRules() const { return &m_cuePseudoRules; }
+    const RuleDataVector* cuePseudoRules() const { return &m_cuePseudoRules; }
 #endif
-    const Vector<RuleData>* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
-    const Vector<RuleData>* universalRules() const { return &m_universalRules; }
+    const RuleDataVector* focusPseudoClassRules() const { return &m_focusPseudoClassRules; }
+    const RuleDataVector* universalRules() const { return &m_universalRules; }
+
     const Vector<StyleRulePage*>& pageRules() const { return m_pageRules; }
     const Vector<RuleSetSelectorPair>& regionSelectorsAndRuleSets() const { return m_regionSelectorsAndRuleSets; }
 
@@ -193,12 +195,12 @@ private:
     AtomRuleMap m_classRules;
     AtomRuleMap m_tagRules;
     AtomRuleMap m_shadowPseudoElementRules;
-    Vector<RuleData> m_linkPseudoClassRules;
+    RuleDataVector m_linkPseudoClassRules;
 #if ENABLE(VIDEO_TRACK)
-    Vector<RuleData> m_cuePseudoRules;
+    RuleDataVector m_cuePseudoRules;
 #endif
-    Vector<RuleData> m_focusPseudoClassRules;
-    Vector<RuleData> m_universalRules;
+    RuleDataVector m_focusPseudoClassRules;
+    RuleDataVector m_universalRules;
     Vector<StyleRulePage*> m_pageRules;
     unsigned m_ruleCount;
     bool m_autoShrinkToFitEnabled;

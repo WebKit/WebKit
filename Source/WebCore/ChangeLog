@@ -1,3 +1,38 @@
+2015-01-16  Andreas Kling  <akling@apple.com>
+
+        Some improvements to RuleSet shrinking.
+        <https://webkit.org/b/140534>
+
+        Reviewed by Antti Koivisto.
+
+        Give an inline capacity (1) to the RuleData Vectors in RuleSet.
+        The vast majority of Vectors have only a single entry, and this
+        avoids having to allocate a separate Vector backing store for them.
+
+        Also make sure to shrink some Vectors that we weren't already,
+        like those in RuleFeatureSet.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRulesForList):
+        * css/ElementRuleCollector.h:
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::shrinkToFit):
+        * css/RuleFeature.h:
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addToRuleSet):
+        (WebCore::rulesCountForName):
+        (WebCore::shrinkMapVectorsToFit):
+        (WebCore::RuleSet::shrinkToFit):
+        * css/RuleSet.h:
+        (WebCore::RuleSet::idRules):
+        (WebCore::RuleSet::classRules):
+        (WebCore::RuleSet::tagRules):
+        (WebCore::RuleSet::shadowPseudoElementRules):
+        (WebCore::RuleSet::linkPseudoClassRules):
+        (WebCore::RuleSet::cuePseudoRules):
+        (WebCore::RuleSet::focusPseudoClassRules):
+        (WebCore::RuleSet::universalRules):
+
 2015-01-16  Antti Koivisto  <antti@apple.com>
 
         Correct naming for FontCascade implementation files
