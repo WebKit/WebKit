@@ -45,6 +45,7 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
+#include <wtf/StringPrintStream.h>
 
 #if !PLATFORM(WIN)
 #define SOFT_LINK_AVF_FRAMEWORK(Lib) SOFT_LINK_FRAMEWORK_OPTIONAL(Lib)
