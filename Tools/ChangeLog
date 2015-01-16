@@ -1,3 +1,23 @@
+2015-01-16  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r178586): Caused webkitpy.w3c.test_converter_unittest.W3CTestConverterTest.test_convert_prefixed_properties to fail
+        https://bugs.webkit.org/show_bug.cgi?id=140568
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix the script parsing CSSPropertyNames.in to stop splitting lines
+        on '=' sign. The '=' sign is also used in StyleBuilder parameters:
+        e.g. "Longhands=background-position-x|background-position-y".
+        This would confuse the script and treat this as a CSS property:
+        "background-position-x|background-position-y".
+
+        We now split on white space and treat the first string on the line
+        to be the property name (this is the syntax in this file).
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (_W3CTestConverter.__init__):
+        (_W3CTestConverter.read_webkit_prefixed_css_property_list):
+
 2015-01-16  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r171968): run-safari --simulator fails to launch Safari on iOS
