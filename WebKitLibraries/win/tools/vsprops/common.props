@@ -62,6 +62,7 @@ nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
       <StringPooling>false</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <CompileAs>CompileAsCpp</CompileAs>
+      <EnableEnhancedInstructionSet Condition="$(Platform)=='Win32'">NoExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
     <Lib>
       <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
