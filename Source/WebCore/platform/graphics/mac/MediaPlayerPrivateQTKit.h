@@ -42,7 +42,6 @@ class QTTime;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS QTMovie;
-OBJC_CLASS QTMovieView;
 OBJC_CLASS QTMovieLayer;
 OBJC_CLASS QTVideoRendererWebKitOnly;
 OBJC_CLASS WebCoreMovieObserver;
@@ -145,16 +144,13 @@ private:
     void createQTMovie(const String& url);
     void createQTMovie(NSURL *, NSDictionary *movieAttributes);
 
-    enum MediaRenderingMode { MediaRenderingNone, MediaRenderingMovieView, MediaRenderingSoftwareRenderer, MediaRenderingMovieLayer };
+    enum MediaRenderingMode { MediaRenderingNone, MediaRenderingSoftwareRenderer, MediaRenderingMovieLayer };
     MediaRenderingMode currentRenderingMode() const;
     MediaRenderingMode preferredRenderingMode() const;
     
     void setUpVideoRendering();
     void tearDownVideoRendering();
     bool hasSetUpVideoRendering() const;
-    
-    void createQTMovieView();
-    void detachQTMovieView();
     
     enum QTVideoRendererMode { QTVideoRendererModeDefault, QTVideoRendererModeListensForNewImages };
     void createQTVideoRenderer(QTVideoRendererMode rendererMode);
@@ -186,7 +182,6 @@ private:
 
     MediaPlayer* m_player;
     RetainPtr<QTMovie> m_qtMovie;
-    RetainPtr<QTMovieView> m_qtMovieView;
     RetainPtr<QTVideoRendererWebKitOnly> m_qtVideoRenderer;
     RetainPtr<WebCoreMovieObserver> m_objcObserver;
     String m_movieURL;
