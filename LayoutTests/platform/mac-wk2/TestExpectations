@@ -436,7 +436,6 @@ storage/indexeddb/dont-wedge.html [ Skip ]
 storage/indexeddb/key-sort-order-across-types.html [ Skip ]
 
 # We don't currently support indexeddb in workers
-storage/indexeddb/basics-shared-workers.html [ Skip ]
 storage/indexeddb/basics-workers.html [ Skip ]
 storage/indexeddb/cursor-advance-workers.html [ Skip ]
 storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-workers.html [ Skip ]
@@ -460,7 +459,6 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 ########################################
 ### START OF (6) Features that are not supported when NetworkProcess is enabled (i.e. they only work on Mountain Lion, and not on newer OS versions).
 
-[ Mavericks+ ] js/dom/global-constructors-attributes-shared-worker.html [ Skip ]
 [ Mavericks+ ] fast/dom/call-a-constructor-as-a-function.html [ Failure ]
 [ Mavericks+ ] js/dom/constructor-length.html [ Failure ]
 [ Mavericks+ ] js/dom/global-constructors-attributes.html [ Failure ]
