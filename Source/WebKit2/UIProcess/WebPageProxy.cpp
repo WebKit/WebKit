@@ -3224,16 +3224,14 @@ void WebPageProxy::connectionWillOpen(IPC::Connection& connection)
 {
     ASSERT(&connection == m_process->connection());
 
-    m_webProcessLifetimeTracker.connectionWillOpen();
-    m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, &connection);
+    m_webProcessLifetimeTracker.connectionWillOpen(connection);
 }
 
 void WebPageProxy::connectionDidClose(IPC::Connection& connection)
 {
     ASSERT_UNUSED(connection, &connection == m_process->connection());
 
-    m_webProcessLifetimeTracker.connectionWillClose();
-    m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);
+    m_webProcessLifetimeTracker.connectionDidClose(connection);
 }
 
 void WebPageProxy::processDidFinishLaunching()

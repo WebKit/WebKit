@@ -1,5 +1,21 @@
 2015-01-16  Anders Carlsson  <andersca@apple.com>
 
+        Pass the connection along to WebProcessLifetimeTracker
+        https://bugs.webkit.org/show_bug.cgi?id=140569
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::connectionWillOpen):
+        (WebKit::WebPageProxy::connectionDidClose):
+        * UIProcess/WebProcessLifetimeTracker.cpp:
+        (WebKit::WebProcessLifetimeTracker::connectionWillOpen):
+        (WebKit::WebProcessLifetimeTracker::connectionDidClose):
+        (WebKit::WebProcessLifetimeTracker::connectionWillClose): Deleted.
+        * UIProcess/WebProcessLifetimeTracker.h:
+
+2015-01-16  Anders Carlsson  <andersca@apple.com>
+
         More WebPageProxy CTTE
         https://bugs.webkit.org/show_bug.cgi?id=140565
 

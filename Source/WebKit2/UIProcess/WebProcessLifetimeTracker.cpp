@@ -52,7 +52,7 @@ void WebProcessLifetimeTracker::addObserver(WebProcessLifetimeObserver& observer
         observer.addWebPage(m_webPageProxy);
 }
 
-void WebProcessLifetimeTracker::connectionWillOpen()
+void WebProcessLifetimeTracker::connectionWillOpen(IPC::Connection&)
 {
     ASSERT(processIsRunning());
 
@@ -60,7 +60,7 @@ void WebProcessLifetimeTracker::connectionWillOpen()
         observer->addWebPage(m_webPageProxy);
 }
 
-void WebProcessLifetimeTracker::connectionWillClose()
+void WebProcessLifetimeTracker::connectionDidClose(IPC::Connection&)
 {
     ASSERT(processIsRunning());
 

@@ -28,6 +28,10 @@
 
 #include <wtf/HashSet.h>
 
+namespace IPC {
+class Connection;
+}
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -40,8 +44,8 @@ public:
 
     void addObserver(WebProcessLifetimeObserver&);
 
-    void connectionWillOpen();
-    void connectionWillClose();
+    void connectionWillOpen(IPC::Connection&);
+    void connectionDidClose(IPC::Connection&);
 
     void pageWasInvalidated();
 
