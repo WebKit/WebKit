@@ -2,6 +2,18 @@
 
         Merge r174295. rdar://problem/19501151
 
+    2014-09-09  Roger Fong  <roger_fong@apple.com>
+
+            Unreviewed build fix for Windows.
+
+            * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+
+2015-01-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Merge r174295. rdar://problem/19501151
+
     2014-10-03  Brent Fulgham  <bfulgham@apple.com>
 
             [Win] Unreviewed build fix for MSVC 2013 SP 3.
