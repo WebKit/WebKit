@@ -1,3 +1,20 @@
+2015-01-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        std::all_of requires complete C++ iterators in GCC 4.8
+        https://bugs.webkit.org/show_bug.cgi?id=140530
+
+        Reviewed by Darin Adler.
+
+        In the WebKit2/UIProcess/WebProcessLifetimeObserver.cpp, std::all_of
+        is used for HashIterators. However, std::all_of requires the complete
+        C++ iterator interface including iterator_category typedef member and
+        it raises compile error in GCC 4.8 (and libstdc++) environment.
+
+        This patch inherits std::iterator with appropriate type parameters.
+        It automatically defines required typedefs including iterator_category.
+
+        * wtf/HashIterators.h:
+
 2015-01-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SQL_DATABASE) guards

@@ -26,6 +26,8 @@
 #ifndef WTF_HashIterators_h
 #define WTF_HashIterators_h
 
+#include <iterator>
+
 namespace WTF {
 
     template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstKeysIterator;
@@ -33,7 +35,7 @@ namespace WTF {
     template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableKeysIterator;
     template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableValuesIterator;
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> : public std::iterator<std::forward_iterator_tag, KeyValuePair<KeyType, MappedType>, std::ptrdiff_t, const KeyValuePair<KeyType, MappedType>*, const KeyValuePair<KeyType, MappedType>&> {
     private:
         typedef KeyValuePair<KeyType, MappedType> ValueType;
     public:
@@ -56,7 +58,7 @@ namespace WTF {
         typename HashTableType::const_iterator m_impl;
     };
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> : public std::iterator<std::forward_iterator_tag, KeyValuePair<KeyType, MappedType>, std::ptrdiff_t, KeyValuePair<KeyType, MappedType>*, KeyValuePair<KeyType, MappedType>&> {
     private:
         typedef KeyValuePair<KeyType, MappedType> ValueType;
     public:
@@ -84,7 +86,7 @@ namespace WTF {
         typename HashTableType::iterator m_impl;
     };
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstKeysIterator {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstKeysIterator : public std::iterator<std::forward_iterator_tag, KeyType, std::ptrdiff_t, const KeyType*, const KeyType&> {
     private:
         typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> ConstIterator;
 
@@ -101,7 +103,7 @@ namespace WTF {
         ConstIterator m_impl;
     };
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstValuesIterator {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstValuesIterator : public std::iterator<std::forward_iterator_tag, MappedType, std::ptrdiff_t, const MappedType*, const MappedType&> {
     private:
         typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> ConstIterator;
 
@@ -118,7 +120,7 @@ namespace WTF {
         ConstIterator m_impl;
     };
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableKeysIterator {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableKeysIterator : public std::iterator<std::forward_iterator_tag, KeyType, std::ptrdiff_t, KeyType*, KeyType&> {
     private:
         typedef HashTableIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> Iterator;
         typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> ConstIterator;
@@ -141,7 +143,7 @@ namespace WTF {
         Iterator m_impl;
     };
 
-    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableValuesIterator {
+    template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableValuesIterator : public std::iterator<std::forward_iterator_tag, MappedType, std::ptrdiff_t, MappedType*, MappedType&> {
     private:
         typedef HashTableIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> Iterator;
         typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> ConstIterator;
