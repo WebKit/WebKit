@@ -38,12 +38,16 @@ namespace ContentExtensions {
 const uint16_t hasNonCharacterMask = 0x0080;
 const uint16_t characterMask = 0x0007F;
 const uint16_t newlineClassIDBuiltinMask = 0x100;
+const uint16_t caseInsensitiveMask = 0x200;
 
-static TrivialAtom trivialAtomFromASCIICharacter(char character)
+static TrivialAtom trivialAtomFromASCIICharacter(char character, bool caseSensitive)
 {
     ASSERT(isASCII(character));
 
-    return static_cast<uint16_t>(character);
+    if (caseSensitive || !isASCIIAlpha(character))
+        return static_cast<uint16_t>(character);
+
+    return static_cast<uint16_t>(toASCIILower(character)) | caseInsensitiveMask;
 }
 
 enum class TrivialAtomQuantifier : uint16_t {
@@ -71,8 +75,9 @@ private:
         unsigned end;
     };
 public:
-    GraphBuilder(NFA& nfa, PrefixTreeEntry& prefixTreeRoot, uint64_t patternId)
+    GraphBuilder(NFA& nfa, PrefixTreeEntry& prefixTreeRoot, bool patternIsCaseSensitive, uint64_t patternId)
         : m_nfa(nfa)
+        , m_patternIsCaseSensitive(patternIsCaseSensitive)
         , m_patternId(patternId)
         , m_activeGroup({ nfa.root(), nfa.root() })
         , m_lastPrefixTreeEntry(&prefixTreeRoot)
@@ -113,7 +118,7 @@ public:
         m_hasValidAtom = true;
 
         ASSERT(m_lastPrefixTreeEntry);
-        m_pendingTrivialAtom = trivialAtomFromASCIICharacter(asciiChararacter);
+        m_pendingTrivialAtom = trivialAtomFromASCIICharacter(asciiChararacter, m_patternIsCaseSensitive);
     }
 
     void atomBuiltInCharacterClass(JSC::Yarr::BuiltInCharacterClassID builtInCharacterClassID, bool inverted)
@@ -240,8 +245,14 @@ private:
             ASSERT(trivialAtom & newlineClassIDBuiltinMask);
             for (unsigned i = 1; i < 128; ++i)
                 m_nfa.addTransition(source, target, i);
-        } else
-            m_nfa.addTransition(source, target, static_cast<char>(trivialAtom & characterMask));
+        } else {
+            if (trivialAtom & caseInsensitiveMask) {
+                char character = static_cast<char>(trivialAtom & characterMask);
+                m_nfa.addTransition(source, target, character);
+                m_nfa.addTransition(source, target, toASCIIUpper(character));
+            } else
+                m_nfa.addTransition(source, target, static_cast<char>(trivialAtom & characterMask));
+        }
     }
 
     BoundedSubGraph sinkTrivialAtom(TrivialAtom trivialAtom, unsigned start)
@@ -330,6 +341,7 @@ private:
     }
 
     NFA& m_nfa;
+    bool m_patternIsCaseSensitive;
     const uint64_t m_patternId;
 
     BoundedSubGraph m_activeGroup;
@@ -350,7 +362,7 @@ URLFilterParser::URLFilterParser(NFA& nfa)
     m_prefixTreeRoot.nfaNode = nfa.root();
 }
 
-String URLFilterParser::addPattern(const String& pattern, uint64_t patternId)
+String URLFilterParser::addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId)
 {
     if (!pattern.containsOnlyASCII())
         return ASCIILiteral("URLFilterParser only supports ASCII patterns.");
@@ -363,7 +375,7 @@ String URLFilterParser::addPattern(const String& pattern, uint64_t patternId)
 
     String error;
 
-    GraphBuilder graphBuilder(m_nfa, m_prefixTreeRoot, patternId);
+    GraphBuilder graphBuilder(m_nfa, m_prefixTreeRoot, patternIsCaseSensitive, patternId);
     error = String(JSC::Yarr::parse(graphBuilder, pattern, 0));
     if (error.isNull())
         graphBuilder.finalize();

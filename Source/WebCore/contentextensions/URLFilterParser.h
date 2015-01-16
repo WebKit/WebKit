@@ -48,7 +48,7 @@ struct PrefixTreeEntry {
 class URLFilterParser {
 public:
     explicit URLFilterParser(NFA&);
-    String addPattern(const String& pattern, uint64_t patternId);
+    String addPattern(const String& pattern, bool patternIsCaseSensitive, uint64_t patternId);
 
 private:
     NFA& m_nfa;

@@ -70,7 +70,7 @@ void ContentExtensionsBackend::setRuleList(const String& identifier, const Vecto
         const ContentExtensionRule::Trigger& trigger = contentExtensionRule.trigger();
         ASSERT(trigger.urlFilter.length());
 
-        String error = urlFilterParser.addPattern(trigger.urlFilter, ruleIndex);
+        String error = urlFilterParser.addPattern(trigger.urlFilter, trigger.urlFilterIsCaseSensitive, ruleIndex);
 
         if (!error.isNull()) {
             dataLogF("Error while parsing %s: %s\n", trigger.urlFilter.utf8().data(), error.utf8().data());

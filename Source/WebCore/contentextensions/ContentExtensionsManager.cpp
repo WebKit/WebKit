@@ -67,8 +67,12 @@ static bool loadTrigger(ExecState& exec, JSObject& ruleObject, ContentExtensionR
         WTFLogAlways("Invalid url-filter object. The url is empty.");
         return false;
     }
-
     trigger.urlFilter = urlFilter;
+
+    JSValue urlFilterCaseObject = triggerObject.get(&exec, Identifier(&exec, "url-filter-is-case-sensitive"));
+    if (urlFilterCaseObject && !exec.hadException() && urlFilterCaseObject.isBoolean())
+        trigger.urlFilterIsCaseSensitive = urlFilterCaseObject.toBoolean(&exec);
+
     return true;
 }
 

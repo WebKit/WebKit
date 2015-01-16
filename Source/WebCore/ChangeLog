@@ -1,3 +1,26 @@
+2015-01-16  Benjamin Poulain  <benjamin@webkit.org>
+
+        Make URL filters case-insensitive by default
+        https://bugs.webkit.org/show_bug.cgi?id=140531
+
+        Reviewed by Andreas Kling.
+
+        Safari's filters were case-insensitive. Adopt that convention in the engine,
+        and add a flag in case someone ever need a case-sensitive filter.
+
+        * contentextensions/ContentExtensionRule.h:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::setRuleList):
+        * contentextensions/ContentExtensionsManager.cpp:
+        (WebCore::ContentExtensions::ExtensionsManager::loadTrigger):
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::trivialAtomFromASCIICharacter):
+        (WebCore::ContentExtensions::GraphBuilder::GraphBuilder):
+        (WebCore::ContentExtensions::GraphBuilder::atomPatternCharacter):
+        (WebCore::ContentExtensions::GraphBuilder::generateTransition):
+        (WebCore::ContentExtensions::URLFilterParser::addPattern):
+        * contentextensions/URLFilterParser.h:
+
 2015-01-16  Benjamin Poulain  <bpoulain@apple.com>
 
         Add the alternative syntax for CSS Selector's descendant combinator (">>")

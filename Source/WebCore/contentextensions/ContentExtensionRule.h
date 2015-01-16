@@ -46,6 +46,7 @@ class ContentExtensionRule {
 public:
     struct Trigger {
         String urlFilter;
+        bool urlFilterIsCaseSensitive = false;
     };
 
     struct Action {
