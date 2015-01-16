@@ -31,9 +31,7 @@
 
 #import "BlockExceptions.h"
 #import "DocumentLoader.h"
-#import "Frame.h"
 #import "FrameView.h"
-#import "HostWindow.h"
 #import "GraphicsContext.h"
 #import "URL.h"
 #import "Logging.h"

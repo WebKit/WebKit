@@ -56,10 +56,8 @@ RenderVideo::RenderVideo(HTMLVideoElement& element, PassRef<RenderStyle> style)
 
 RenderVideo::~RenderVideo()
 {
-    if (MediaPlayer* player = videoElement().player()) {
+    if (MediaPlayer* player = videoElement().player())
         player->setVisible(false);
-        player->setFrameView(0);
-    }
 }
 
 IntSize RenderVideo::defaultSize()
@@ -233,7 +231,6 @@ void RenderVideo::updatePlayer()
     contentChanged(VideoChanged);
     
     IntRect videoBounds = videoBox(); 
-    mediaPlayer->setFrameView(&view().frameView());
     mediaPlayer->setSize(IntSize(videoBounds.width(), videoBounds.height()));
     mediaPlayer->setVisible(true);
     mediaPlayer->setShouldMaintainAspectRatio(style().objectFit() != ObjectFitFill);
