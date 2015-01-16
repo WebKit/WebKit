@@ -37,13 +37,7 @@ import re
 from webkitpy.common.checkout.scm import Git
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.user import User
-
-try:
-    # Use keyring, a cross platform keyring interface, as a fallback:
-    # http://pypi.python.org/pypi/keyring
-    import keyring
-except ImportError:
-    keyring = None
+from webkitpy.thirdparty.autoinstalled import keyring
 
 _log = logging.getLogger(__name__)
 

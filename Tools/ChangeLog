@@ -1,3 +1,23 @@
+2015-01-16  Chris Dumez  <cdumez@apple.com>
+
+        webkit-patch should auto-install the keyring python module
+        https://bugs.webkit.org/show_bug.cgi?id=140547
+
+        Reviewed by David Kilzer.
+
+        Auto-install the keyring python module. This is the module that
+        webkit-patch uses for cross-platform access to the keyring
+        service.
+
+        Without this module, if the password if not in the keychain,
+        webkit-patch will keep asking for your username / password and
+        never remember them.
+
+        * Scripts/webkitpy/common/net/credentials.py:
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_keyring):
+
 2015-01-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SQL_DATABASE) guards
