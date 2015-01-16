@@ -589,6 +589,8 @@ private:
     virtual bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const override;
 #endif
 
+    virtual bool mediaPlayerIsInMediaDocument() const override final;
+
     void loadTimerFired(Timer&);
     void progressEventTimerFired(Timer&);
     void playbackProgressTimerFired(Timer&);

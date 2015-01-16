@@ -30,8 +30,6 @@
 
 #include "ContentType.h"
 #include "Document.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "IntRect.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
@@ -315,7 +313,6 @@ MediaPlayer::MediaPlayer(MediaPlayerClient* client)
     , m_reloadTimer(this, &MediaPlayer::reloadTimerFired)
     , m_private(createNullMediaPlayer(this))
     , m_currentMediaEngine(0)
-    , m_frameView(0)
     , m_preload(Auto)
     , m_visible(false)
     , m_rate(1.0f)
@@ -592,12 +589,9 @@ bool MediaPlayer::hasAudio() const
     return m_private->hasAudio();
 }
 
-bool MediaPlayer::inMediaDocument()
+bool MediaPlayer::inMediaDocument() const
 {
-    if (!m_frameView)
-        return false;
-    Document* document = m_frameView->frame().document();
-    return document && document->isMediaDocument();
+    return m_visible && m_mediaPlayerClient && m_mediaPlayerClient->mediaPlayerIsInMediaDocument();
 }
 
 PlatformMedia MediaPlayer::platformMedia() const
