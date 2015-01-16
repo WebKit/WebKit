@@ -7983,7 +7983,6 @@
     <ClCompile Include="..\platform\graphics\FontDescription.cpp" />
     <ClCompile Include="..\platform\graphics\FontGenericFamilies.cpp" />
     <ClCompile Include="..\platform\graphics\FontGlyphs.cpp" />
-    <ClCompile Include="..\platform\graphics\FontFastPath.cpp" />
     <ClCompile Include="..\platform\graphics\FontFeatureSettings.cpp" />
     <ClCompile Include="..\platform\graphics\FontPlatformData.cpp" />
     <ClCompile Include="..\platform\graphics\FontRanges.cpp" />

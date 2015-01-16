@@ -2052,7 +2052,6 @@ set(WebCore_SOURCES
     platform/graphics/FontCache.cpp
     platform/graphics/FontCascade.cpp
     platform/graphics/FontDescription.cpp
-    platform/graphics/FontFastPath.cpp
     platform/graphics/FontFeatureSettings.cpp
     platform/graphics/FontGenericFamilies.cpp
     platform/graphics/FontGlyphs.cpp

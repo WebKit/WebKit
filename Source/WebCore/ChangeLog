@@ -1,3 +1,46 @@
+2015-01-16  Antti Koivisto  <antti@apple.com>
+
+        Correct naming for FontCascade implementation files
+        https://bugs.webkit.org/show_bug.cgi?id=140544
+
+        Reviewed by Zalan Bujtas.
+
+        Also reduce their number.
+
+        Merge FontFastPath.cpp into FontCascade.cpp
+        Merge FontMac.mm and FontComplexTextMac.cpp into FontCascadeCocoa.mm
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::getEmphasisMarkGlyphData):
+        (WebCore::FontCascade::emphasisMarkAscent):
+        (WebCore::FontCascade::emphasisMarkDescent):
+        (WebCore::FontCascade::emphasisMarkHeight):
+        (WebCore::FontCascade::getGlyphsAndAdvancesForSimpleText):
+        (WebCore::FontCascade::drawSimpleText):
+        (WebCore::FontCascade::drawEmphasisMarksForSimpleText):
+        (WebCore::FontCascade::drawGlyphBuffer):
+        (WebCore::offsetToMiddleOfGlyph):
+        (WebCore::offsetToMiddleOfGlyphAtIndex):
+        (WebCore::FontCascade::drawEmphasisMarks):
+        (WebCore::FontCascade::floatWidthForSimpleText):
+        (WebCore::FontCascade::adjustSelectionRectForSimpleText):
+        (WebCore::FontCascade::offsetForPositionForSimpleText):
+        * platform/graphics/FontFastPath.cpp: Removed.
+        * platform/graphics/cocoa/FontCascadeCocoa.mm: Copied from Source/WebCore/platform/graphics/mac/FontMac.mm.
+        (WebCore::FontCascade::drawGlyphs):
+        (WebCore::FontCascade::adjustSelectionRectForComplexText):
+        (WebCore::FontCascade::getGlyphsAndAdvancesForComplexText):
+        (WebCore::FontCascade::drawComplexText):
+        (WebCore::FontCascade::drawEmphasisMarksForComplexText):
+        (WebCore::FontCascade::floatWidthForComplexText):
+        (WebCore::FontCascade::offsetForPositionForComplexText):
+        (WebCore::FontCascade::fontDataForCombiningCharacterSequence):
+        * platform/graphics/mac/FontComplexTextMac.cpp: Removed.
+        * platform/graphics/mac/FontMac.mm: Removed.
+
 2014-11-26  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Tracks shrink sometimes with indefinite remaining space

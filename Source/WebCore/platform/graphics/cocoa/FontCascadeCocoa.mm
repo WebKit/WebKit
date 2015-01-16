@@ -23,11 +23,13 @@
 #import "config.h"
 #import "FontCascade.h"
 
+#import "ComplexTextController.h"
 #import "CoreGraphicsSPI.h"
 #import "CoreTextSPI.h"
 #import "DashArray.h"
 #import "GlyphBuffer.h"
 #import "GraphicsContext.h"
+#import "LayoutRect.h"
 #import "Logging.h"
 #import "SimpleFontData.h"
 #import "WebCoreSystemInterface.h"
@@ -206,7 +208,7 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const SimpleFontData* fon
     bool shouldSmoothFonts;
     bool changeFontSmoothing;
     
-    switch(fontDescription().fontSmoothing()) {
+    switch (fontDescription().fontSmoothing()) {
     case Antialiased: {
         context->setShouldAntialias(true);
         shouldSmoothFonts = false;
@@ -600,6 +602,150 @@ bool FontCascade::primaryFontDataIsSystemFont() const
     // for that here rather than try to keep the list up to date.
     return firstFamily().startsWith('.');
 #endif
+}
+
+void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, int from, int to) const
+{
+    ComplexTextController controller(this, run);
+    controller.advance(from);
+    float beforeWidth = controller.runWidthSoFar();
+    controller.advance(to);
+    float afterWidth = controller.runWidthSoFar();
+
+    if (run.rtl())
+        selectionRect.move(controller.totalWidth() - afterWidth, 0);
+    else
+        selectionRect.move(beforeWidth, 0);
+    selectionRect.setWidth(afterWidth - beforeWidth);
+}
+
+float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, int from, int to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
+{
+    float initialAdvance;
+
+    ComplexTextController controller(this, run, false, 0, forTextEmphasis);
+    controller.advance(from);
+    float beforeWidth = controller.runWidthSoFar();
+    controller.advance(to, &glyphBuffer);
+
+    if (glyphBuffer.isEmpty())
+        return 0;
+
+    float afterWidth = controller.runWidthSoFar();
+
+    if (run.rtl()) {
+        initialAdvance = controller.totalWidth() + controller.finalRoundingWidth() - afterWidth;
+        glyphBuffer.reverse(0, glyphBuffer.size());
+    } else
+        initialAdvance = beforeWidth;
+
+    return initialAdvance;
+}
+
+float FontCascade::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
+{
+    // This glyph buffer holds our glyphs + advances + font data for each glyph.
+    GlyphBuffer glyphBuffer;
+
+    float startX = point.x() + getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer);
+
+    // We couldn't generate any glyphs for the run. Give up.
+    if (glyphBuffer.isEmpty())
+        return 0;
+
+    // Draw the glyph buffer now at the starting point returned in startX.
+    FloatPoint startPoint(startX, point.y());
+    drawGlyphBuffer(context, run, glyphBuffer, startPoint);
+
+    return startPoint.x() - startX;
+}
+
+void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
+{
+    GlyphBuffer glyphBuffer;
+    float initialAdvance = getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer, ForTextEmphasis);
+
+    if (glyphBuffer.isEmpty())
+        return;
+
+    drawEmphasisMarks(context, run, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
+}
+
+float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+{
+    ComplexTextController controller(this, run, true, fallbackFonts);
+    if (glyphOverflow) {
+        glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().ascent()));
+        glyphOverflow->bottom = std::max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().descent()));
+        glyphOverflow->left = std::max<int>(0, ceilf(-controller.minGlyphBoundingBoxX()));
+        glyphOverflow->right = std::max<int>(0, ceilf(controller.maxGlyphBoundingBoxX() - controller.totalWidth()));
+    }
+    return controller.totalWidth();
+}
+
+int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bool includePartialGlyphs) const
+{
+    ComplexTextController controller(this, run);
+    return controller.offsetForPosition(x, includePartialGlyphs);
+}
+
+const SimpleFontData* FontCascade::fontDataForCombiningCharacterSequence(const UChar* characters, size_t length, FontDataVariant variant) const
+{
+    UChar32 baseCharacter;
+    size_t baseCharacterLength = 0;
+    U16_NEXT(characters, baseCharacterLength, length, baseCharacter);
+
+    GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, variant);
+
+    if (!baseCharacterGlyphData.glyph)
+        return 0;
+
+    if (length == baseCharacterLength)
+        return baseCharacterGlyphData.fontData;
+
+    bool triedBaseCharacterFontData = false;
+
+    for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
+        const SimpleFontData* simpleFontData = fallbackRangesAt(i).fontDataForCharacter(baseCharacter);
+        if (!simpleFontData)
+            continue;
+#if PLATFORM(IOS)
+        if (baseCharacter >= 0x0600 && baseCharacter <= 0x06ff && simpleFontData->shouldNotBeUsedForArabic())
+            continue;
+#endif
+        if (variant == NormalVariant) {
+            if (simpleFontData->platformData().orientation() == Vertical) {
+                if (isCJKIdeographOrSymbol(baseCharacter) && !simpleFontData->hasVerticalGlyphs()) {
+                    variant = BrokenIdeographVariant;
+                    simpleFontData = simpleFontData->brokenIdeographFontData().get();
+                } else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientationVerticalRight) {
+                    SimpleFontData* verticalRightFontData = simpleFontData->verticalRightOrientationFontData().get();
+                    Glyph verticalRightGlyph = verticalRightFontData->glyphForCharacter(baseCharacter);
+                    if (verticalRightGlyph == baseCharacterGlyphData.glyph)
+                        simpleFontData = verticalRightFontData;
+                } else {
+                    SimpleFontData* uprightFontData = simpleFontData->uprightOrientationFontData().get();
+                    Glyph uprightGlyph = uprightFontData->glyphForCharacter(baseCharacter);
+                    if (uprightGlyph != baseCharacterGlyphData.glyph)
+                        simpleFontData = uprightFontData;
+                }
+            }
+        } else {
+            if (const SimpleFontData* variantFontData = simpleFontData->variantFontData(m_fontDescription, variant).get())
+                simpleFontData = variantFontData;
+        }
+
+        if (simpleFontData == baseCharacterGlyphData.fontData)
+            triedBaseCharacterFontData = true;
+
+        if (simpleFontData->canRenderCombiningCharacterSequence(characters, length))
+            return simpleFontData;
+    }
+
+    if (!triedBaseCharacterFontData && baseCharacterGlyphData.fontData && baseCharacterGlyphData.fontData->canRenderCombiningCharacterSequence(characters, length))
+        return baseCharacterGlyphData.fontData;
+
+    return SimpleFontData::systemFallback();
 }
 
 }

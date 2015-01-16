@@ -1387,7 +1387,6 @@
 		37ACCE420DA2980F0089E602 /* FontRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 37ACCE410DA2980F0089E602 /* FontRenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37ACCF690DA414E70089E602 /* FontDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37ACCE620DA2AA960089E602 /* FontDescription.cpp */; };
 		37BAAE581980D1DD005DFE71 /* ProtectionSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		37C2360B1097EDED00EF9F72 /* FontComplexTextMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360A1097EDED00EF9F72 /* FontComplexTextMac.cpp */; };
 		37C236101097EE7700EF9F72 /* ComplexTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */; };
 		37C236111097EE7700EF9F72 /* ComplexTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C2360F1097EE7700EF9F72 /* ComplexTextController.h */; };
 		37C238221098C84200EF9F72 /* ComplexTextControllerCoreText.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */; };
@@ -2339,7 +2338,6 @@
 		724ED32C1A3A7E5400F5F13C /* EXTBlendMinMax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */; };
 		724ED3311A3A8B2300F5F13C /* JSEXTBlendMinMax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 724ED32F1A3A8B2300F5F13C /* JSEXTBlendMinMax.cpp */; };
 		724ED3321A3A8B2300F5F13C /* JSEXTBlendMinMax.h in Headers */ = {isa = PBXBuildFile; fileRef = 724ED3301A3A8B2300F5F13C /* JSEXTBlendMinMax.h */; };
-		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
 		727AFED41A2EA6AE000442E8 /* EXTsRGB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 727AFED11A2EA6A0000442E8 /* EXTsRGB.cpp */; };
 		72E417631A2E8D2F004C562A /* JSEXTsRGB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72E417611A2E8D2F004C562A /* JSEXTsRGB.cpp */; };
 		72F1ADA21A3904DC00014E18 /* EXTFragDepth.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72F1AD9F1A3904C300014E18 /* EXTFragDepth.cpp */; };
@@ -4670,7 +4668,7 @@
 		B2AFFC7D0D00A5C10030074D /* FontCustomPlatformData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC750D00A5C10030074D /* FontCustomPlatformData.cpp */; };
 		B2AFFC7E0D00A5C10030074D /* FontCustomPlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2AFFC760D00A5C10030074D /* FontCustomPlatformData.h */; };
 		B2AFFC7F0D00A5C10030074D /* SimpleFontDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC770D00A5C10030074D /* SimpleFontDataMac.mm */; };
-		B2AFFC800D00A5C10030074D /* FontMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC780D00A5C10030074D /* FontMac.mm */; };
+		B2AFFC800D00A5C10030074D /* FontCascadeCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC780D00A5C10030074D /* FontCascadeCocoa.mm */; };
 		B2AFFC830D00A5C10030074D /* GlyphPageMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC7B0D00A5C10030074D /* GlyphPageMac.cpp */; };
 		B2AFFC970D00A5DF0030074D /* TextBoundaries.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC8C0D00A5DF0030074D /* TextBoundaries.mm */; };
 		B2AFFC980D00A5DF0030074D /* TextBreakIteratorInternalICUMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2AFFC8D0D00A5DF0030074D /* TextBreakIteratorInternalICUMac.mm */; };
@@ -8430,7 +8428,6 @@
 		37ACCE410DA2980F0089E602 /* FontRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontRenderingMode.h; sourceTree = "<group>"; };
 		37ACCE620DA2AA960089E602 /* FontDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontDescription.cpp; sourceTree = "<group>"; };
 		37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtectionSpace.h; sourceTree = "<group>"; };
-		37C2360A1097EDED00EF9F72 /* FontComplexTextMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontComplexTextMac.cpp; sourceTree = "<group>"; };
 		37C2360E1097EE7700EF9F72 /* ComplexTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComplexTextController.cpp; sourceTree = "<group>"; };
 		37C2360F1097EE7700EF9F72 /* ComplexTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexTextController.h; sourceTree = "<group>"; };
 		37C238201098C84200EF9F72 /* ComplexTextControllerCoreText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ComplexTextControllerCoreText.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -9477,7 +9474,6 @@
 		724ED32B1A3A7E5400F5F13C /* EXTBlendMinMax.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTBlendMinMax.idl; path = canvas/EXTBlendMinMax.idl; sourceTree = "<group>"; };
 		724ED32F1A3A8B2300F5F13C /* JSEXTBlendMinMax.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTBlendMinMax.cpp; sourceTree = "<group>"; };
 		724ED3301A3A8B2300F5F13C /* JSEXTBlendMinMax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTBlendMinMax.h; sourceTree = "<group>"; };
-		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
 		727AFED11A2EA6A0000442E8 /* EXTsRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EXTsRGB.cpp; path = canvas/EXTsRGB.cpp; sourceTree = "<group>"; };
 		727AFED21A2EA6A0000442E8 /* EXTsRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTsRGB.h; path = canvas/EXTsRGB.h; sourceTree = "<group>"; };
 		727AFED31A2EA6A0000442E8 /* EXTsRGB.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EXTsRGB.idl; path = canvas/EXTsRGB.idl; sourceTree = "<group>"; };
@@ -12044,7 +12040,7 @@
 		B2AFFC750D00A5C10030074D /* FontCustomPlatformData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontCustomPlatformData.cpp; sourceTree = "<group>"; };
 		B2AFFC760D00A5C10030074D /* FontCustomPlatformData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontCustomPlatformData.h; sourceTree = "<group>"; };
 		B2AFFC770D00A5C10030074D /* SimpleFontDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SimpleFontDataMac.mm; sourceTree = "<group>"; };
-		B2AFFC780D00A5C10030074D /* FontMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontMac.mm; sourceTree = "<group>"; };
+		B2AFFC780D00A5C10030074D /* FontCascadeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontCascadeCocoa.mm; sourceTree = "<group>"; };
 		B2AFFC7B0D00A5C10030074D /* GlyphPageMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlyphPageMac.cpp; sourceTree = "<group>"; };
 		B2AFFC850D00A5DF0030074D /* character-sets.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "character-sets.txt"; sourceTree = "<group>"; };
 		B2AFFC860D00A5DF0030074D /* mac-encodings.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "mac-encodings.txt"; sourceTree = "<group>"; };
@@ -20362,10 +20358,8 @@
 				B275354C0B053814002CE64F /* FloatRectMac.mm */,
 				B275354D0B053814002CE64F /* FloatSizeMac.mm */,
 				B2AFFC740D00A5C10030074D /* FontCacheMac.mm */,
-				37C2360A1097EDED00EF9F72 /* FontComplexTextMac.cpp */,
 				B2AFFC750D00A5C10030074D /* FontCustomPlatformData.cpp */,
 				B2AFFC760D00A5C10030074D /* FontCustomPlatformData.h */,
-				B2AFFC780D00A5C10030074D /* FontMac.mm */,
 				B2AFFC7B0D00A5C10030074D /* GlyphPageMac.cpp */,
 				49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */,
 				B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */,
@@ -20446,7 +20440,6 @@
 				B2C3DA520D006CD600EF6F26 /* FontCache.h */,
 				37ACCE620DA2AA960089E602 /* FontDescription.cpp */,
 				B2C3DA550D006CD600EF6F26 /* FontDescription.h */,
-				72626E010EF022FE00A07E20 /* FontFastPath.cpp */,
 				4A6E9FC513C17D570046A7F8 /* FontFeatureSettings.cpp */,
 				4A6E9FC613C17D570046A7F8 /* FontFeatureSettings.h */,
 				E44EE3A617576E5500EEE8CF /* FontGenericFamilies.cpp */,
@@ -20714,6 +20707,7 @@
 		B5320D68122A24E9002D1440 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				B2AFFC780D00A5C10030074D /* FontCascadeCocoa.mm */,
 				B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */,
 				2D0B4AA918DA1CCD00434DE1 /* IOSurface.h */,
 				2D0B4AAA18DA1CCD00434DE1 /* IOSurface.mm */,
@@ -27820,15 +27814,13 @@
 				B2C3DA620D006CD600EF6F26 /* FontCache.cpp in Sources */,
 				3727DFD5142AAE4500D449CB /* FontCacheIOS.mm in Sources */,
 				B2AFFC7C0D00A5C10030074D /* FontCacheMac.mm in Sources */,
-				37C2360B1097EDED00EF9F72 /* FontComplexTextMac.cpp in Sources */,
 				B2AFFC7D0D00A5C10030074D /* FontCustomPlatformData.cpp in Sources */,
 				37ACCF690DA414E70089E602 /* FontDescription.cpp in Sources */,
-				72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */,
 				4A6E9FC713C17D570046A7F8 /* FontFeatureSettings.cpp in Sources */,
 				E44EE3A817577EBD00EEE8CF /* FontGenericFamilies.cpp in Sources */,
 				B2C3DA670D006CD600EF6F26 /* FontGlyphs.cpp in Sources */,
 				FD96C9971982FBDF0086E156 /* FontLoader.cpp in Sources */,
-				B2AFFC800D00A5C10030074D /* FontMac.mm in Sources */,
+				B2AFFC800D00A5C10030074D /* FontCascadeCocoa.mm in Sources */,
 				84B62685133138F90095A489 /* FontPlatformData.cpp in Sources */,
 				B5320D6C122A24E9002D1440 /* FontPlatformDataCocoa.mm in Sources */,
 				C58361AA1744523F00173511 /* FontServicesIOS.mm in Sources */,
