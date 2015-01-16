@@ -1,3 +1,11 @@
+2015-01-15  Dan Bernstein  <mitz@apple.com>
+
+        Added availability annotations to modern Cocoa SPI.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2015-01-15  Anders Carlsson  <andersca@apple.com>
 
         Fix assertions on the Mountain Lion bots.
