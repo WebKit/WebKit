@@ -783,7 +783,7 @@ void SourceBufferPrivateAVFObjC::abort()
 
 void SourceBufferPrivateAVFObjC::destroyParser()
 {
-    if (m_mediaSource->player()->hasStreamSession())
+    if (m_mediaSource && m_mediaSource->player()->hasStreamSession())
         [m_mediaSource->player()->streamSession() removeStreamDataParser:m_parser.get()];
 
     [m_delegate invalidate];
