@@ -1,4 +1,19 @@
-2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
+2015-01-16  Brent Fulgham  <bfulgham@webkit.org>
+
+        Merge r173391. rdar://problem/19501151
+
+    2014-09-08  peavo@outlook.com  <peavo@outlook.com>
+
+            [WinCairo] Compile error.
+            https://bugs.webkit.org/show_bug.cgi?id=136633
+
+            Reviewed by Darin Adler.
+
+            Enum name has already been defined.
+
+            * platform/audio/AudioHardwareListener.h:
+
+2014-09-08  Tim Horton  <timothy_horton@apple.com>
 
         Merge r176896. rdar://problem/19451941
 
