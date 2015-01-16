@@ -280,7 +280,6 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
 void Connection::addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue* workQueue, WorkQueueMessageReceiver* workQueueMessageReceiver)
 {
     ASSERT(&RunLoop::current() == &m_clientRunLoop);
-    ASSERT(!m_isConnected);
 
     RefPtr<Connection> connection(this);
     m_connectionQueue->dispatch([connection, messageReceiverName, workQueue, workQueueMessageReceiver] {

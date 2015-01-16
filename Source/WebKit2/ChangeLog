@@ -1,3 +1,13 @@
+2015-01-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix assertions on the Mountain Lion bots.
+
+        It is allowed to call addWorkQueueMessageReceiver even if the connection is open
+        so remove that assertion.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::addWorkQueueMessageReceiver):
+
 2015-01-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed build fix after r178536.
