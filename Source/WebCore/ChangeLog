@@ -1,3 +1,30 @@
+2015-01-16  Andreas Kling  <akling@apple.com>
+
+        Page::editorClient() should return a reference.
+        <https://webkit.org/b/140552>
+
+        Reviewed by Chris Dumez.
+
+        Page always has an EditorClient, so make editorClient() return a reference.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::editorClient):
+        (WebCore::AlternativeTextController::textChecker):
+        * editing/Editor.cpp:
+        (WebCore::Editor::client):
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::client):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedElement):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        (WebCore::Page::clearUndoRedoOperations):
+        * page/Page.h:
+        (WebCore::Page::editorClient):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+
 2015-01-16  Benjamin Poulain  <benjamin@webkit.org>
 
         Make URL filters case-insensitive by default

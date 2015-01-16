@@ -171,10 +171,9 @@ EditingBehavior Editor::behavior() const
 EditorClient* Editor::client() const
 {
     if (Page* page = m_frame.page())
-        return page->editorClient();
-    return 0;
+        return &page->editorClient();
+    return nullptr;
 }
-
 
 TextCheckerClient* Editor::textChecker() const
 {

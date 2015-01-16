@@ -152,7 +152,7 @@ Page::Page(PageConfiguration& pageConfiguration)
     , m_backForwardController(std::make_unique<BackForwardController>(*this, pageConfiguration.backForwardClient))
     , m_mainFrame(MainFrame::create(*this, pageConfiguration))
     , m_theme(RenderTheme::themeForPage(this))
-    , m_editorClient(pageConfiguration.editorClient)
+    , m_editorClient(*pageConfiguration.editorClient)
     , m_plugInClient(pageConfiguration.plugInClient)
     , m_validationMessageClient(pageConfiguration.validationMessageClient)
     , m_subframeCount(0)
@@ -254,7 +254,7 @@ Page::~Page()
         frame->detachFromPage();
     }
 
-    m_editorClient->pageDestroyed();
+    m_editorClient.pageDestroyed();
     if (m_plugInClient)
         m_plugInClient->pageDestroyed();
     if (m_alternativeTextClient)
@@ -731,7 +731,7 @@ void Page::setDefersLoading(bool defers)
 
 void Page::clearUndoRedoOperations()
 {
-    m_editorClient->clearUndoRedoOperations();
+    m_editorClient.clearUndoRedoOperations();
 }
 
 bool Page::inLowQualityImageInterpolationMode() const

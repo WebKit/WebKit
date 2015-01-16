@@ -123,8 +123,8 @@ TextCheckerClient* SpellChecker::client() const
 {
     Page* page = m_frame.page();
     if (!page)
-        return 0;
-    return page->editorClient()->textChecker();
+        return nullptr;
+    return page->editorClient().textChecker();
 }
 
 void SpellChecker::timerFiredToProcessQueuedRequest()

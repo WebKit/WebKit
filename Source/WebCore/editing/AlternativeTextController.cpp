@@ -505,14 +505,14 @@ AlternativeTextClient* AlternativeTextController::alternativeTextClient()
 
 EditorClient* AlternativeTextController::editorClient()
 {
-    return m_frame.page() ? m_frame.page()->editorClient() : 0;
+    return m_frame.page() ? &m_frame.page()->editorClient() : nullptr;
 }
 
 TextCheckerClient* AlternativeTextController::textChecker()
 {
     if (EditorClient* owner = editorClient())
         return owner->textChecker();
-    return 0;
+    return nullptr;
 }
 
 void AlternativeTextController::recordAutocorrectionResponseReversed(const String& replacedString, const String& replacementString)

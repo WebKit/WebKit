@@ -336,7 +336,7 @@ void AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll(ScrollingNo
         scrollableArea->scrollToOffsetWithoutAnimation(scrollPosition);
         scrollableArea->setIsUserScroll(false);
         if (scrollingLayerPositionAction == SetScrollingLayerPosition)
-            m_page->editorClient()->overflowScrollPositionChanged();
+            m_page->editorClient().overflowScrollPositionChanged();
     }
 }
 
