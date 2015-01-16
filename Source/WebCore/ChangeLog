@@ -1,3 +1,19 @@
+2015-01-15  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r175083.
+
+    2014-10-22  Jer Noble  <jer.noble@apple.com>
+
+            REGRESSION(r175000): Crash in SourceBufferPrivateAVFObjC::destroyParser()
+            https://bugs.webkit.org/show_bug.cgi?id=137990
+
+            Reviewed by Alexey Proskuryakov.
+
+            NULL-check m_mediaSource before using.
+
+            * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+            (WebCore::SourceBufferPrivateAVFObjC::destroyParser):
+
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175719. rdar://problem/19424169
