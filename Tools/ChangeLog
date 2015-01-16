@@ -1,3 +1,17 @@
+2015-01-16  Alex Christensen  <alex.christensen@flexsim.com>
+
+        Resurrect the WinCairo bot.
+        https://bugs.webkit.org/show_bug.cgi?id=139908
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (appendCustomBuildFlags):
+        * BuildSlaveSupport/test-result-archive:
+        (archiveTestResults):
+        Add WinCairo buildbot.
+
 2015-01-16  Chris Dumez  <cdumez@apple.com>
 
         webkit-patch should auto-install the keyring python module

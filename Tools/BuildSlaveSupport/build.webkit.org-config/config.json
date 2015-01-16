@@ -55,6 +55,8 @@
                     { "name": "bot511", "platform": "win" },
                     { "name": "bot501", "platform": "win" },
 
+                    { "name": "wincairo-1", "platform": "wincairo" },
+
                     { "name": "gtk-linux-slave-1", "platform": "gtk" },
                     { "name": "gtk-linux-slave-2", "platform": "gtk" },
                     { "name": "gtk-linux-slave-3", "platform": "gtk" },
@@ -253,6 +255,11 @@
                       "slavenames": ["gtk-linux-slave-8"]
                     },
                     {
+                      "name": "WinCairo 64-Bit Release", "type": "BuildAndNonLayoutTest", "builddir": "win-cairo-release",
+                      "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["wincairo-1"]
+                    },
+                    {
                       "name": "EFL Linux 64-bit Release WK2", "type": "BuildAndTest", "builddir": "efl-linux-64-release-wk2",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-slave-2"]
@@ -281,7 +288,7 @@
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release (Build)", "GTK Linux 64-bit Debug (Build)", "GTK Linux ARM Release",
                                        "EFL Linux 64-bit Release WK2",
                                        "EFL Linux ARMv7 Thumb2 Release (Build)", "EFL Linux ARMv7 Traditional Release (Build)",
-                                       "EFL Linux 64-bit Release WK2 (Perf)"]
+                                       "EFL Linux 64-bit Release WK2 (Perf)", "WinCairo 64-Bit Release"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-mountainlion", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple MountainLion Release (Build)", "Apple MountainLion Debug (Build)", "Apple MountainLion Release (32-bit Build)"]
