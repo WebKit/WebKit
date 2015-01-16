@@ -1,5 +1,42 @@
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r174505. rdar://problem/19451946
+
+    2014-10-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+            Layering violation: MediaPlayer should not reference/use FrameView
+            https://bugs.webkit.org/show_bug.cgi?id=21562
+
+            Reviewed by Darin Adler.
+
+            Remove FrameView dependency from MediaPlayer.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::mediaPlayerIsInMediaDocument): Check if
+            the element document is a media document.
+            * html/HTMLMediaElement.h:
+            * platform/graphics/MediaPlayer.cpp:
+            (WebCore::MediaPlayer::MediaPlayer): Remove m_frameView initialization.
+            (WebCore::MediaPlayer::inMediaDocument): Use the MediaPlayerClient
+            to check if the media player is in a media document.
+            * platform/graphics/MediaPlayer.h:
+            (WebCore::MediaPlayerClient::mediaPlayerIsInMediaDocument):
+            (WebCore::MediaPlayer::setFrameView): Deleted.
+            (WebCore::MediaPlayer::frameView): Deleted.
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundation::preferredRenderingMode):
+            Do not check if the media player has a frame view, checking whether it's visible
+            is enough.
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+            Remove unneeded header include.
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm: Ditto.
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: Ditto.
+            * rendering/RenderVideo.cpp:
+            (WebCore::RenderVideo::~RenderVideo): Do not call MediaPlayer::setFrameView().
+            (WebCore::RenderVideo::updatePlayer): Ditto.
+
+2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174350. rdar://problem/19451946
 
     2014-10-06  Brent Fulgham  <bfulgham@apple.com>
