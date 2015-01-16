@@ -2899,9 +2899,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyListStyle:
         return parseShorthand(propId, listStyleShorthand(), important);
     case CSSPropertyColumns:
-        return parseShorthand(propId, webkitColumnsShorthand(), important);
+        return parseShorthand(propId, columnsShorthand(), important);
     case CSSPropertyColumnRule:
-        return parseShorthand(propId, webkitColumnRuleShorthand(), important);
+        return parseShorthand(propId, columnRuleShorthand(), important);
     case CSSPropertyWebkitTextStroke:
         return parseShorthand(propId, webkitTextStrokeShorthand(), important);
     case CSSPropertyAnimation:

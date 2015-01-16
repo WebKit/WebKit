@@ -23,6 +23,7 @@
 #define StylePropertyShorthand_h
 
 #include "CSSPropertyNames.h"
+#include "StylePropertyShorthandFunctions.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,15 +38,8 @@ public:
     {
     }
 
-    StylePropertyShorthand(CSSPropertyID id, const CSSPropertyID* properties, unsigned numProperties)
-        : m_properties(properties)
-        , m_propertiesForInitialization(0)
-        , m_length(numProperties)
-        , m_shorthandID(id)
-    {
-    }
-
-    StylePropertyShorthand(CSSPropertyID id, const CSSPropertyID* properties, const StylePropertyShorthand* propertiesForInitialization, unsigned numProperties)
+    template<unsigned numProperties>
+    StylePropertyShorthand(CSSPropertyID id, const CSSPropertyID (&properties)[numProperties], const StylePropertyShorthand* propertiesForInitialization = nullptr)
         : m_properties(properties)
         , m_propertiesForInitialization(propertiesForInitialization)
         , m_length(numProperties)
@@ -65,61 +59,12 @@ private:
     CSSPropertyID m_shorthandID;
 };
 
-StylePropertyShorthand animationShorthand();
+// Custom StylePropertyShorthand functions.
 StylePropertyShorthand animationShorthandForParsing(CSSPropertyID);
-StylePropertyShorthand backgroundShorthand();
-StylePropertyShorthand backgroundPositionShorthand();
-StylePropertyShorthand backgroundRepeatShorthand();
-StylePropertyShorthand borderShorthand();
 StylePropertyShorthand borderAbridgedShorthand();
-StylePropertyShorthand borderBottomShorthand();
-StylePropertyShorthand borderColorShorthand();
-StylePropertyShorthand borderImageShorthand();
-StylePropertyShorthand borderLeftShorthand();
-StylePropertyShorthand borderRadiusShorthand();
-StylePropertyShorthand borderRightShorthand();
-StylePropertyShorthand borderSpacingShorthand();
-StylePropertyShorthand borderStyleShorthand();
-StylePropertyShorthand borderTopShorthand();
-StylePropertyShorthand borderWidthShorthand();
-StylePropertyShorthand listStyleShorthand();
-StylePropertyShorthand flexFlowShorthand();
-StylePropertyShorthand flexShorthand();
 StylePropertyShorthand fontShorthand();
 StylePropertyShorthand heightShorthand();
-StylePropertyShorthand marginShorthand();
-StylePropertyShorthand outlineShorthand();
-StylePropertyShorthand overflowShorthand();
-StylePropertyShorthand paddingShorthand();
-StylePropertyShorthand transitionShorthand();
-StylePropertyShorthand webkitAnimationShorthand();
-StylePropertyShorthand webkitBorderAfterShorthand();
-StylePropertyShorthand webkitBorderBeforeShorthand();
-StylePropertyShorthand webkitBorderEndShorthand();
-StylePropertyShorthand webkitBorderRadiusShorthand();
-StylePropertyShorthand webkitBorderStartShorthand();
-StylePropertyShorthand webkitColumnsShorthand();
-StylePropertyShorthand webkitColumnRuleShorthand();
-StylePropertyShorthand webkitGridShorthand();
-StylePropertyShorthand webkitGridTemplateShorthand();
-StylePropertyShorthand webkitGridAreaShorthand();
-StylePropertyShorthand webkitGridColumnShorthand();
-StylePropertyShorthand webkitGridRowShorthand();
-StylePropertyShorthand webkitMarginCollapseShorthand();
-StylePropertyShorthand webkitMarqueeShorthand();
-StylePropertyShorthand webkitMaskShorthand();
-StylePropertyShorthand webkitMaskPositionShorthand();
-StylePropertyShorthand webkitMaskRepeatShorthand();
-StylePropertyShorthand webkitPerspectiveOriginShorthand();
-StylePropertyShorthand webkitTextEmphasisShorthand();
-StylePropertyShorthand webkitTextStrokeShorthand();
-StylePropertyShorthand webkitTransitionShorthand();
-StylePropertyShorthand webkitTransformOriginShorthand();
 StylePropertyShorthand widthShorthand();
-
-StylePropertyShorthand webkitTextDecorationShorthand();
-
-StylePropertyShorthand markerShorthand();
 
 // Returns empty value if the property is not a shorthand.
 StylePropertyShorthand shorthandForProperty(CSSPropertyID);

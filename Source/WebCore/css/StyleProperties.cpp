@@ -154,9 +154,9 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyBorderStyle:
         return get4Values(borderStyleShorthand());
     case CSSPropertyColumnRule:
-        return getShorthandValue(webkitColumnRuleShorthand());
+        return getShorthandValue(columnRuleShorthand());
     case CSSPropertyColumns:
-        return getShorthandValue(webkitColumnsShorthand());
+        return getShorthandValue(columnsShorthand());
     case CSSPropertyFlex:
         return getShorthandValue(flexShorthand());
     case CSSPropertyFlexFlow:

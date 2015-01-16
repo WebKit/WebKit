@@ -1,3 +1,89 @@
+2015-01-16  Chris Dumez  <cdumez@apple.com>
+
+        Generate StylePropertyShorthand.* from CSSPropertyNames.in
+        https://bugs.webkit.org/show_bug.cgi?id=140501
+
+        Reviewed by Darin Adler.
+
+        Add initial support for having makeprop.pl generate most of
+        StylePropertyShorthand.* from CSSPropertyNames.in.
+
+        This patch replaces [Shorthand] parameter in CSSPropertyNames.in by a
+        more descriptive [Longhands=property1|property2|...] parameter. With
+        this information, makeprop.pl is now able to generate the
+        StylePropertyShorthand factories for all CSS shorthand properties
+        in a new StylePropertyShorthandFunctions.h header.
+
+        The switches in StylePropertyShorthand.cpp could also be generated
+        but this will be taken care of in follow-up patches to reduce patch
+        size.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::shorthandForProperty):
+        (WebCore::matchingShorthandsForLonghand):
+        (WebCore::backgroundShorthand): Deleted.
+        (WebCore::backgroundPositionShorthand): Deleted.
+        (WebCore::backgroundRepeatShorthand): Deleted.
+        (WebCore::borderShorthand): Deleted.
+        (WebCore::borderBottomShorthand): Deleted.
+        (WebCore::borderColorShorthand): Deleted.
+        (WebCore::borderImageShorthand): Deleted.
+        (WebCore::borderLeftShorthand): Deleted.
+        (WebCore::borderRadiusShorthand): Deleted.
+        (WebCore::webkitBorderRadiusShorthand): Deleted.
+        (WebCore::borderRightShorthand): Deleted.
+        (WebCore::borderSpacingShorthand): Deleted.
+        (WebCore::borderStyleShorthand): Deleted.
+        (WebCore::borderTopShorthand): Deleted.
+        (WebCore::borderWidthShorthand): Deleted.
+        (WebCore::listStyleShorthand): Deleted.
+        (WebCore::marginShorthand): Deleted.
+        (WebCore::markerShorthand): Deleted.
+        (WebCore::outlineShorthand): Deleted.
+        (WebCore::overflowShorthand): Deleted.
+        (WebCore::paddingShorthand): Deleted.
+        (WebCore::transitionShorthand): Deleted.
+        (WebCore::animationShorthand): Deleted.
+        (WebCore::webkitAnimationShorthand): Deleted.
+        (WebCore::webkitBorderAfterShorthand): Deleted.
+        (WebCore::webkitBorderBeforeShorthand): Deleted.
+        (WebCore::webkitBorderEndShorthand): Deleted.
+        (WebCore::webkitBorderStartShorthand): Deleted.
+        (WebCore::webkitColumnsShorthand): Deleted.
+        (WebCore::webkitColumnRuleShorthand): Deleted.
+        (WebCore::flexFlowShorthand): Deleted.
+        (WebCore::flexShorthand): Deleted.
+        (WebCore::webkitMarginCollapseShorthand): Deleted.
+        (WebCore::webkitGridShorthand): Deleted.
+        (WebCore::webkitGridTemplateShorthand): Deleted.
+        (WebCore::webkitGridAreaShorthand): Deleted.
+        (WebCore::webkitGridColumnShorthand): Deleted.
+        (WebCore::webkitGridRowShorthand): Deleted.
+        (WebCore::webkitMarqueeShorthand): Deleted.
+        (WebCore::webkitMaskShorthand): Deleted.
+        (WebCore::webkitMaskPositionShorthand): Deleted.
+        (WebCore::webkitMaskRepeatShorthand): Deleted.
+        (WebCore::webkitTextDecorationShorthand): Deleted.
+        (WebCore::webkitTextEmphasisShorthand): Deleted.
+        (WebCore::webkitTextStrokeShorthand): Deleted.
+        (WebCore::webkitTransitionShorthand): Deleted.
+        (WebCore::webkitPerspectiveOriginShorthand): Deleted.
+        (WebCore::webkitTransformOriginShorthand): Deleted.
+        * css/StylePropertyShorthand.h:
+        * css/makeprop.pl:
+
 2015-01-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r178532.

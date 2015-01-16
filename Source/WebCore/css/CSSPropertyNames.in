@@ -86,9 +86,12 @@
 // * SkipBuilder:
 // Ignore this property in the StyleBuilder.
 //
-// * Shorthand:
+// * Longhands=property1|property2|...:
 // This is a shorthand property so it should not use the StyleBuilder. An
 // ASSERT_NOT_REACHED() will be generated for this property in the StyleBuilder.
+// property1, property2, ... are the longhands for this shorthand property. A
+// corresponding "StylePropertyShorthand propertyIdShorthand()" function will be
+// generated in StylePropertyShorthandFunctions.h header.
 
 
 // high-priority property names have to be listed first, to simplify the check
@@ -129,7 +132,7 @@ line-height [Inherited, Getter=specifiedLineHeight, ConditionalConverter=LineHei
 
 // The remaining properties are listed in alphabetical order
 alignment-baseline [SVG]
-animation [Shorthand]
+animation [Longhands=animation-name|animation-duration|animation-timing-function|animation-delay|animation-iteration-count|animation-direction|animation-fill-mode]
 animation-delay [AnimationProperty, NameForMethods=Delay]
 animation-direction [AnimationProperty, NameForMethods=Direction]
 animation-duration [AnimationProperty, NameForMethods=Duration]
@@ -138,23 +141,23 @@ animation-iteration-count [AnimationProperty, NameForMethods=IterationCount]
 animation-name [AnimationProperty, NameForMethods=Name]
 animation-play-state [AnimationProperty, NameForMethods=PlayState]
 animation-timing-function [AnimationProperty, NameForMethods=TimingFunction]
-background [Shorthand]
+background [Longhands=background-image|background-position-x|background-position-y|background-size|background-repeat-x|background-repeat-y|background-attachment|background-origin|background-clip|background-color]
 background-attachment [FillLayerProperty, NameForMethods=Attachment]
 background-blend-mode [FillLayerProperty, NameForMethods=BlendMode]
 background-clip [FillLayerProperty, NameForMethods=Clip]
 background-color [VisitedLinkColorSupport, Initial=invalidColor, NoDefaultColor]
 background-image [FillLayerProperty, NameForMethods=Image]
 background-origin [FillLayerProperty, NameForMethods=Origin]
-background-position [Shorthand]
+background-position [Longhands=background-position-x|background-position-y]
 background-position-x [FillLayerProperty, NameForMethods=XPosition]
 background-position-y [FillLayerProperty, NameForMethods=YPosition]
-background-repeat [Shorthand]
+background-repeat [Longhands=background-repeat-x|background-repeat-y]
 background-repeat-x [FillLayerProperty, NameForMethods=RepeatX]
 background-repeat-y [FillLayerProperty, NameForMethods=RepeatY]
 background-size [FillLayerProperty, NameForMethods=Size]
 baseline-shift [SVG, Custom=Value]
-border [Shorthand]
-border-bottom [Shorthand]
+border [Longhands=border-top-color|border-top-style|border-top-width|border-right-color|border-right-style|border-right-width|border-bottom-color|border-bottom-style|border-bottom-width|border-left-color|border-left-style|border-left-width]
+border-bottom [Longhands=border-bottom-width|border-bottom-style|border-bottom-color]
 border-bottom-color [VisitedLinkColorSupport, Initial=invalidColor]
 border-bottom-left-radius [Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-bottom-left-radius = border-bottom-left-radius
@@ -163,25 +166,25 @@ border-bottom-right-radius [Initial=initialBorderRadius, Converter=Radius]
 border-bottom-style [Initial=initialBorderStyle]
 border-bottom-width [Initial=initialBorderWidth, Converter=LineWidth<float>]
 border-collapse [Inherited]
-border-color [Shorthand]
-border-image [Shorthand]
+border-color [Longhands=border-top-color|border-right-color|border-bottom-color|border-left-color]
+border-image [Longhands=border-image-source|border-image-slice|border-image-width|border-image-outset|border-image-repeat]
 border-image-outset [Custom=All]
 border-image-repeat [Custom=All]
 border-image-slice [Custom=All]
 border-image-source [Converter=StyleImage<CSSPropertyBorderImageSource>]
 border-image-width [Custom=All]
-border-left [Shorthand]
+border-left [Longhands=border-left-width|border-left-style|border-left-color]
 border-left-color [VisitedLinkColorSupport, Initial=invalidColor]
 border-left-style [Initial=initialBorderStyle]
 border-left-width [Initial=initialBorderWidth, Converter=LineWidth<float>]
-border-radius [Shorthand]
-border-right [Shorthand]
+border-radius [Longhands=border-top-left-radius|border-top-right-radius|border-bottom-right-radius|border-bottom-left-radius]
+border-right [Longhands=border-right-width|border-right-style|border-right-color]
 border-right-color [VisitedLinkColorSupport, Initial=invalidColor]
 border-right-style [Initial=initialBorderStyle]
 border-right-width [Initial=initialBorderWidth, Converter=LineWidth<float>]
-border-spacing [Inherited, Shorthand]
-border-style [Shorthand]
-border-top [Shorthand]
+border-spacing [Inherited, Longhands=-webkit-border-horizontal-spacing|-webkit-border-vertical-spacing]
+border-style [Longhands=border-top-style|border-right-style|border-bottom-style|border-left-style]
+border-top [Longhands=border-top-width|border-top-style|border-top-color]
 border-top-color [VisitedLinkColorSupport, Initial=invalidColor]
 border-top-left-radius [Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-top-left-radius = border-top-left-radius
@@ -189,7 +192,7 @@ border-top-right-radius [Initial=initialBorderRadius, Converter=Radius]
 -webkit-border-top-right-radius = border-top-right-radius
 border-top-style [Initial=initialBorderStyle]
 border-top-width [Initial=initialBorderWidth, Converter=LineWidth<float>]
-border-width [Shorthand]
+border-width [Longhands=border-top-width|border-right-width|border-bottom-width|border-left-width]
 bottom [Initial=initialOffset, Converter=LengthOrAuto]
 box-shadow [Custom=All]
 box-sizing
@@ -241,16 +244,16 @@ kerning [Inherited, SVG, Converter=SVGLength]
 left [Initial=initialOffset, Converter=LengthOrAuto]
 letter-spacing [Inherited, Converter=Spacing]
 lighting-color [SVG, Converter=SVGColor]
-list-style [Inherited, Shorthand]
+list-style [Inherited, Longhands=list-style-type|list-style-position|list-style-image]
 list-style-image [Inherited, Converter=StyleImage<CSSPropertyListStyleImage>]
 list-style-position [Inherited]
 list-style-type [Inherited]
-margin [Shorthand]
+margin [Longhands=margin-top|margin-right|margin-bottom|margin-left]
 margin-bottom [Initial=initialMargin, Converter=LengthOrAuto]
 margin-left [Initial=initialMargin, Converter=LengthOrAuto]
 margin-right [Initial=initialMargin, Converter=LengthOrAuto]
 margin-top [Initial=initialMargin, Converter=LengthOrAuto]
-marker [Inherited, Shorthand]
+marker [Inherited, Longhands=marker-start|marker-mid|marker-end]
 marker-end [Inherited, SVG, Converter=SVGURIReference, NameForMethods=MarkerEndResource]
 marker-mid [Inherited, SVG, Converter=SVGURIReference, NameForMethods=MarkerMidResource]
 marker-start [Inherited, SVG, Converter=SVGURIReference, NameForMethods=MarkerStartResource]
@@ -266,16 +269,16 @@ opacity
 // and may be in use on some websites and widgets.
 -webkit-opacity = opacity
 orphans [Inherited, AutoFunctions]
-outline [Shorthand]
+outline [Longhands=outline-color|outline-style|outline-width]
 outline-color [VisitedLinkColorSupport, Initial=invalidColor]
 outline-offset [Converter=ComputedLength<int>]
 outline-style [Custom=All]
 outline-width [Converter=LineWidth<unsigned short>]
-overflow [Shorthand]
+overflow [Longhands=overflow-x|overflow-y]
 overflow-wrap
 overflow-x
 overflow-y
-padding [Shorthand]
+padding [Longhands=padding-top|padding-right|padding-bottom|padding-left]
 padding-bottom [Initial=initialPadding, Converter=Length]
 padding-left [Initial=initialPadding, Converter=Length]
 padding-right [Initial=initialPadding, Converter=Length]
@@ -333,7 +336,7 @@ text-underline-mode [SkipBuilder]
 text-underline-style [SkipBuilder]
 text-underline-width [SkipBuilder]
 top [Initial=initialOffset, Converter=LengthOrAuto]
-transition [Shorthand]
+transition [Longhands=transition-property|transition-duration|transition-timing-function|transition-delay]
 transition-delay [SkipBuilder]
 transition-duration [SkipBuilder]
 transition-property [SkipBuilder]
@@ -357,7 +360,7 @@ y [Initial=initialZeroLength, Converter=Length]
 z-index [AutoFunctions]
 alt [NameForMethods=ContentAltText, Custom=Value]
 -webkit-alt = alt
--webkit-animation [Shorthand]
+-webkit-animation [Longhands=-webkit-animation-name|-webkit-animation-duration|-webkit-animation-timing-function|-webkit-animation-delay|-webkit-animation-iteration-count|-webkit-animation-direction|-webkit-animation-fill-mode]
 -webkit-animation-delay [AnimationProperty, NameForMethods=Delay]
 -webkit-animation-direction [AnimationProperty, NameForMethods=Direction]
 -webkit-animation-duration [AnimationProperty, NameForMethods=Duration]
@@ -376,15 +379,15 @@ alt [NameForMethods=ContentAltText, Custom=Value]
 // a single value: -webkit-background-size: l; is equivalent to background-size: l l;
 // whereas background-size: l; is equivalent to background-size: l auto;
 -webkit-background-size [FillLayerProperty, NameForMethods=Size]
--webkit-border-after [Shorthand]
+-webkit-border-after [Longhands=-webkit-border-after-width|-webkit-border-after-style|-webkit-border-after-color]
 -webkit-border-after-color [SkipBuilder]
 -webkit-border-after-style [SkipBuilder]
 -webkit-border-after-width [SkipBuilder]
--webkit-border-before [Shorthand]
+-webkit-border-before [Longhands=-webkit-border-before-width|-webkit-border-before-style|-webkit-border-before-color]
 -webkit-border-before-color [SkipBuilder]
 -webkit-border-before-style [SkipBuilder]
 -webkit-border-before-width [SkipBuilder]
--webkit-border-end [Shorthand]
+-webkit-border-end [Longhands=-webkit-border-end-width|-webkit-border-end-style|-webkit-border-end-color]
 -webkit-border-end-color [SkipBuilder]
 -webkit-border-end-style [SkipBuilder]
 -webkit-border-end-width [SkipBuilder]
@@ -394,8 +397,8 @@ alt [NameForMethods=ContentAltText, Custom=Value]
 // -webkit-border-radius differs from border-radius only in the interpretation of
 // a value consisting of two lengths: "-webkit-border-radius: l1 l2;" is equivalent
 // to "border-radius: l1 / l2;"
--webkit-border-radius [Shorthand]
--webkit-border-start [Shorthand]
+-webkit-border-radius [Longhands=border-top-left-radius|border-top-right-radius|border-bottom-right-radius|border-bottom-left-radius]
+-webkit-border-start [Longhands=-webkit-border-start-width|-webkit-border-start-style|-webkit-border-start-color]
 -webkit-border-start-color [SkipBuilder]
 -webkit-border-start-style [SkipBuilder]
 -webkit-border-start-width [SkipBuilder]
@@ -426,7 +429,7 @@ column-gap [Custom=All]
 -webkit-column-gap = column-gap
 column-progression
 -webkit-column-progression = column-progression
-column-rule [Shorthand]
+column-rule [Longhands=column-rule-width|column-rule-style|column-rule-color]
 -webkit-column-rule = column-rule
 column-rule-color [VisitedLinkColorSupport, Initial=invalidColor]
 -webkit-column-rule-color = column-rule-color
@@ -438,7 +441,7 @@ column-span
 -webkit-column-span = column-span
 column-width [AutoFunctions, Converter=ComputedLength<float>]
 -webkit-column-width = column-width
-columns [Shorthand]
+columns [Longhands=column-width|column-count]
 -webkit-columns = columns
 #if defined(ENABLE_CSS_BOX_DECORATION_BREAK) && ENABLE_CSS_BOX_DECORATION_BREAK
 -webkit-box-decoration-break
@@ -454,13 +457,13 @@ align-items
 -webkit-align-items = align-items
 align-self
 -webkit-align-self = align-self
-flex [Shorthand]
+flex [Longhands=flex-grow|flex-shrink|flex-basis]
 -webkit-flex = flex
 flex-basis [Converter=LengthOrAuto]
 -webkit-flex-basis = flex-basis
 flex-direction
 -webkit-flex-direction = flex-direction
-flex-flow [Shorthand]
+flex-flow [Longhands=flex-direction|flex-wrap]
 -webkit-flex-flow = flex-flow
 flex-grow
 -webkit-flex-grow = flex-grow
@@ -476,19 +479,19 @@ justify-content
 -webkit-justify-self [Custom=Value]
 -webkit-font-size-delta [SkipBuilder]
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
--webkit-grid [Shorthand]
--webkit-grid-area [Shorthand]
+-webkit-grid [Longhands=-webkit-grid-template-columns|-webkit-grid-template-rows|-webkit-grid-template-areas|-webkit-grid-auto-flow|-webkit-grid-auto-columns|-webkit-grid-auto-rows]
+-webkit-grid-area [Longhands=-webkit-grid-row-start|-webkit-grid-column-start|-webkit-grid-row-end|-webkit-grid-row-start]
 -webkit-grid-auto-columns [ConditionalConverter=GridTrackSize]
 -webkit-grid-auto-rows [ConditionalConverter=GridTrackSize]
 -webkit-grid-column-end [ConditionalConverter=GridPosition, NameForMethods=GridItemColumnEnd]
 -webkit-grid-column-start [ConditionalConverter=GridPosition, NameForMethods=GridItemColumnStart]
--webkit-grid-template [Shorthand]
+-webkit-grid-template [Longhands=-webkit-grid-template-columns|-webkit-grid-template-rows|-webkit-grid-template-areas]
 -webkit-grid-template-columns [Custom=All]
 -webkit-grid-template-rows [Custom=All]
 -webkit-grid-row-end [ConditionalConverter=GridPosition, NameForMethods=GridItemRowEnd]
 -webkit-grid-row-start [ConditionalConverter=GridPosition, NameForMethods=GridItemRowStart]
--webkit-grid-column [Shorthand]
--webkit-grid-row [Shorthand]
+-webkit-grid-column [Longhands=-webkit-grid-column-start|-webkit-grid-column-end]
+-webkit-grid-row [Longhands=-webkit-grid-row-start|-webkit-grid-row-end]
 -webkit-grid-template-areas [Custom=All]
 -webkit-grid-auto-flow [Converter=GridAutoFlow]
 #endif
@@ -511,18 +514,18 @@ justify-content
 -webkit-margin-before-collapse
 -webkit-margin-bottom-collapse [NameForMethods=MarginAfterCollapse]
 -webkit-margin-top-collapse [NameForMethods=MarginBeforeCollapse]
--webkit-margin-collapse [Shorthand]
+-webkit-margin-collapse [Longhands=-webkit-margin-before-collapse|-webkit-margin-after-collapse]
 -webkit-margin-after [SkipBuilder]
 -webkit-margin-before [SkipBuilder]
 -webkit-margin-end [SkipBuilder]
 -webkit-margin-start [SkipBuilder]
--webkit-marquee [Shorthand]
+-webkit-marquee [Longhands=-webkit-marquee-direction|-webkit-marquee-increment|-webkit-marquee-repetition|-webkit-marquee-style|-webkit-marquee-speed]
 -webkit-marquee-direction
 -webkit-marquee-increment [ConditionalConverter=MarqueeIncrement]
 -webkit-marquee-repetition [NameForMethods=MarqueeLoopCount, Converter=MarqueeRepetition]
 -webkit-marquee-speed [Converter=MarqueeSpeed]
 -webkit-marquee-style [NameForMethods=MarqueeBehavior]
--webkit-mask [Shorthand]
+-webkit-mask [Longhands=-webkit-mask-image|-webkit-mask-source-type|-webkit-mask-position-x|-webkit-mask-position-y|-webkit-mask-size|-webkit-mask-repeat-x|-webkit-mask-repeat-y|-webkit-mask-origin|-webkit-mask-clip]
 -webkit-mask-box-image [Initial=initialNinePieceImage, Converter=BorderMask<CSSPropertyWebkitMaskBoxImage>]
 -webkit-mask-box-image-outset [Custom=All]
 -webkit-mask-box-image-repeat [Custom=All]
@@ -533,10 +536,10 @@ justify-content
 -webkit-mask-composite [FillLayerProperty, NameForMethods=Composite]
 -webkit-mask-image [Custom=Initial|Inherit, Converter=MaskImageOperations]
 -webkit-mask-origin [FillLayerProperty, NameForMethods=Origin]
--webkit-mask-position [Shorthand]
+-webkit-mask-position [Longhands=-webkit-mask-position-x|-webkit-mask-position-y]
 -webkit-mask-position-x [FillLayerProperty, NameForMethods=XPosition]
 -webkit-mask-position-y [FillLayerProperty, NameForMethods=YPosition]
--webkit-mask-repeat [Shorthand]
+-webkit-mask-repeat [Longhands=-webkit-mask-repeat-x|-webkit-mask-repeat-y]
 -webkit-mask-repeat-x [FillLayerProperty, NameForMethods=RepeatX]
 -webkit-mask-repeat-y [FillLayerProperty, NameForMethods=RepeatY]
 -webkit-mask-size [FillLayerProperty, NameForMethods=Size]
@@ -553,7 +556,7 @@ order
 -webkit-padding-end [SkipBuilder]
 -webkit-padding-start [SkipBuilder]
 -webkit-perspective [ConditionalConverter=Perspective]
--webkit-perspective-origin [Shorthand]
+-webkit-perspective-origin [Longhands=-webkit-perspective-origin-x|-webkit-perspective-origin-y]
 -webkit-perspective-origin-x [Converter=Length]
 -webkit-perspective-origin-y [Converter=Length]
 -webkit-print-color-adjust [Inherited]
@@ -572,14 +575,14 @@ order
 -webkit-text-align-last [Inherited]
 -webkit-text-justify [Inherited]
 #endif
--webkit-text-decoration [SkipBuilder]
+-webkit-text-decoration [Longhands=-webkit-text-decoration-line|-webkit-text-decoration-style|-webkit-text-decoration-color]
 -webkit-text-decoration-line [NameForMethods=TextDecoration, Converter=TextDecoration]
 -webkit-text-decoration-style
 -webkit-text-decoration-color [VisitedLinkColorSupport, Initial=invalidColor]
 -webkit-text-decoration-skip [Inherited, Converter=TextDecorationSkip]
 -webkit-text-underline-position [Inherited, Converter=TextUnderlinePosition]
 -webkit-text-decorations-in-effect [Inherited, SkipBuilder]
--webkit-text-emphasis [Inherited, Shorthand]
+-webkit-text-emphasis [Inherited, Longhands=-webkit-text-emphasis-style|-webkit-text-emphasis-color]
 -epub-text-emphasis = -webkit-text-emphasis
 text-emphasis = -webkit-text-emphasis
 -webkit-text-emphasis-color [Inherited, VisitedLinkColorSupport, Initial=invalidColor]
@@ -592,16 +595,16 @@ text-emphasis-position = -webkit-text-emphasis-position
 text-emphasis-style = -webkit-text-emphasis-style
 -webkit-text-fill-color [Inherited, VisitedLinkColorSupport, Initial=invalidColor]
 -webkit-text-security [Inherited]
--webkit-text-stroke [Inherited, Shorthand]
+-webkit-text-stroke [Inherited, Longhands=-webkit-text-stroke-width|-webkit-text-stroke-color]
 -webkit-text-stroke-color [Inherited, VisitedLinkColorSupport, Initial=invalidColor]
 -webkit-text-stroke-width [Inherited, Converter=TextStrokeWidth]
 -webkit-transform [Converter=Transform]
--webkit-transform-origin [Shorthand]
+-webkit-transform-origin [Longhands=-webkit-transform-origin-x|-webkit-transform-origin-y|-webkit-transform-origin-z]
 -webkit-transform-origin-x [Converter=Length]
 -webkit-transform-origin-y [Converter=Length]
 -webkit-transform-origin-z [Converter=ComputedLength<float>]
 -webkit-transform-style [NameForMethods=TransformStyle3D]
--webkit-transition [Shorthand]
+-webkit-transition [Longhands=-webkit-transition-property|-webkit-transition-duration|-webkit-transition-timing-function|-webkit-transition-delay]
 -webkit-transition-delay [AnimationProperty, NameForMethods=Delay]
 -webkit-transition-duration [AnimationProperty, NameForMethods=Duration]
 -webkit-transition-property [AnimationProperty, NameForMethods=Property]
