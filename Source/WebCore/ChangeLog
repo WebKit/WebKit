@@ -1,5 +1,16 @@
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r174713. rdar://problem/19451946
+
+    2014-10-14  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Unreviewed build fix after r174710.
+
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+            (WebCore::MediaPlayerPrivateAVFoundationCF::createSession):
+
+2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174710. rdar://problem/19451946
 
     2014-10-14  Brent Fulgham  <bfulgham@apple.com>
