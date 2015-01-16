@@ -1,3 +1,21 @@
+2015-01-15  Zalan Bujtas  <zalan@apple.com>
+
+        Element appears correctly but does not receive event with a large translation.
+        https://bugs.webkit.org/show_bug.cgi?id=139815
+
+        Reviewed by Simon Fraser.
+
+        When the hit point gets translated beyond the min/max value of LayoutRect (infiniteRect()),
+        we fail to find the corresponding layer.
+        When there's no clipping on a layer, we use min/max values to represent infiniteness.
+        However it does not work well across types. With IntPoint(hittest) we can address a point that's outside
+        of LayoutRect's boundary(clipping).
+        This patch addresses the immediate issue of not being able to hittest transformed layers properly. 
+        Fixing the representation of infiniteness is tracked here: webkit.org/b/140533
+        
+        * transforms/hittest-translated-content-off-to-infinity-and-back-expected.html: Added.
+        * transforms/hittest-translated-content-off-to-infinity-and-back.html: Added.
+
 2015-01-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         tables/mozilla/bugs/bug10633.html is flakey on Yosemite

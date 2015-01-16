@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>This test that hittest finds the box that is translated beyond min/max layout unit and back.</title>
+<style>
+  div { 
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    top: 0px;
+    left: 0px;
+  }
+  
+</style>
+</head>
+<body>
+  <div style="-webkit-transform: translate3d(-41946743px, -41946743px, 0px);">
+    <div style="-webkit-transform: translate3d(41946743px, 41946743px, 0px); top: 0px; left: 0px;"></div>
+  </div>
+  <div style="-webkit-transform: translate3d(41946743px, 41946743px, 0px);">
+    <div id=second style="-webkit-transform: translate3d(-41946743px, -41946743px, 0px); top: 100px; left: 100px;"></div>
+  </div>
+  <script>
+	document.elementFromPoint(0, 0).style.backgroundColor = "green";
+	document.elementFromPoint(100, 100).style.backgroundColor = "green";
+  </script>
+</body>
+</html>

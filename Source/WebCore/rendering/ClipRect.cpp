@@ -32,6 +32,9 @@ namespace WebCore {
 
 bool ClipRect::intersects(const HitTestLocation& hitTestLocation) const
 {
+    if (isInfinite())
+        return true;
+
     return hitTestLocation.intersects(m_rect);
 }
 
