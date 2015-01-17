@@ -94,13 +94,13 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
 
 bool CachedFont::ensureCustomFontData(bool, const AtomicString&)
 {
-    return ensureCustomFontData(m_data.copyRef());
+    return ensureCustomFontData(m_data.get());
 }
 
-bool CachedFont::ensureCustomFontData(RefPtr<SharedBuffer>&& data)
+bool CachedFont::ensureCustomFontData(SharedBuffer* data)
 {
     if (!m_fontData && !errorOccurred() && !isLoading() && data) {
-        RefPtr<SharedBuffer> buffer = data;
+        RefPtr<SharedBuffer> buffer(data);
 
 #if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090) && (!PLATFORM(IOS) || __IPHONE_OS_VERSION_MIN_REQUIRED < 80000)
         if (isWOFF(buffer.get())) {

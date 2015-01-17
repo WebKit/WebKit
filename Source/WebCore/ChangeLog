@@ -1,3 +1,26 @@
+2015-01-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Converter] Crashes when SVG font is invalid
+        https://bugs.webkit.org/show_bug.cgi?id=140378
+
+        Reviewed by Antti Koivisto.
+
+        Because CachedSVGFonts are cached, they have to be able to be used
+        in subsequent documents regardless how the first document left it.
+
+        Tests: fast/css/font-face-svg-decoding-error.html
+               svg/custom/svg-fonts-in-html.html
+               svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::ensureCustomFontData):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::getFontData):
+        (WebCore::CachedSVGFont::ensureCustomFontData):
+        (WebCore::CachedSVGFont::maybeInitializeExternalSVGFontElement):
+        * loader/cache/CachedSVGFont.h:
+
 2015-01-17  Chris Dumez  <cdumez@apple.com>
 
         Converting time, angle and frequency units in CSS calc() function

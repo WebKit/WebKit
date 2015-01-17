@@ -53,13 +53,16 @@ CachedSVGFont::CachedSVGFont(const ResourceRequest& resourceRequest, SessionID s
 
 PassRefPtr<SimpleFontData> CachedSVGFont::getFontData(const FontDescription& fontDescription, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG)
 {
-#if !ENABLE(SVG_OTF_CONVERTER)
+#if ENABLE(SVG_OTF_CONVERTER)
+    if (!externalSVG || firstFontFace(remoteURI))
+        return CachedFont::getFontData(fontDescription, remoteURI, syntheticBold, syntheticItalic, externalSVG);
+#else
     if (!externalSVG)
-#endif
         return CachedFont::getFontData(fontDescription, remoteURI, syntheticBold, syntheticItalic, externalSVG);
 
     if (SVGFontFaceElement* firstFontFace = this->firstFontFace(remoteURI))
         return SimpleFontData::create(std::make_unique<SVGFontData>(firstFontFace), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
+#endif
     return nullptr;
 }
 
@@ -79,21 +82,31 @@ bool CachedSVGFont::ensureCustomFontData(bool externalSVG, const AtomicString& r
         m_externalSVGDocument = SVGDocument::create(nullptr, URL());
         RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("application/xml");
         m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->data(), m_data->size()));
+#if !ENABLE(SVG_OTF_CONVERTER)
         if (decoder->sawError())
             m_externalSVGDocument = nullptr;
-#if ENABLE(SVG_OTF_CONVERTER)
-        firstFontFace(remoteURI); // Sets m_externalSVGFontElement
-        if (m_externalSVGFontElement) {
-            Vector<char> convertedFont = convertSVGToOTFFont(*m_externalSVGFontElement);
-            return CachedFont::ensureCustomFontData(SharedBuffer::adoptVector(convertedFont));
-        }
+#else
+        if (decoder->sawError())
+            m_externalSVGDocument = nullptr;
+        else
+            maybeInitializeExternalSVGFontElement(remoteURI);
+        if (!m_externalSVGFontElement)
+            return false;
+        Vector<char> convertedFont = convertSVGToOTFFont(*m_externalSVGFontElement);
+        m_convertedFont = SharedBuffer::adoptVector(convertedFont);
 #endif
     }
+
+#if !ENABLE(SVG_OTF_CONVERTER)
     return m_externalSVGDocument;
+#else
+    return m_externalSVGDocument && CachedFont::ensureCustomFontData(m_convertedFont.get());
+#endif
 }
 
 SVGFontElement* CachedSVGFont::getSVGFontById(const String& fontName) const
 {
+    ASSERT(m_externalSVGDocument);
     auto elements = descendantsOfType<SVGFontElement>(*m_externalSVGDocument);
 
     if (fontName.isEmpty())
@@ -106,17 +119,21 @@ SVGFontElement* CachedSVGFont::getSVGFontById(const String& fontName) const
     return nullptr;
 }
 
+SVGFontElement* CachedSVGFont::maybeInitializeExternalSVGFontElement(const AtomicString& remoteURI)
+{
+    if (m_externalSVGFontElement)
+        return m_externalSVGFontElement;
+    String fragmentIdentifier;
+    size_t start = remoteURI.find('#');
+    if (start != notFound)
+        fragmentIdentifier = remoteURI.string().substring(start + 1);
+    m_externalSVGFontElement = getSVGFontById(fragmentIdentifier);
+    return m_externalSVGFontElement;
+}
+
 SVGFontFaceElement* CachedSVGFont::firstFontFace(const AtomicString& remoteURI)
 {
-    if (!m_externalSVGFontElement) {
-        String fragmentIdentifier;
-        size_t start = remoteURI.find('#');
-        if (start != notFound)
-            fragmentIdentifier = remoteURI.string().substring(start + 1);
-        m_externalSVGFontElement = getSVGFontById(fragmentIdentifier);
-    }
-
-    if (!m_externalSVGFontElement)
+    if (!maybeInitializeExternalSVGFontElement(remoteURI))
         return nullptr;
 
     if (auto* firstFontFace = childrenOfType<SVGFontFaceElement>(*m_externalSVGFontElement).first())

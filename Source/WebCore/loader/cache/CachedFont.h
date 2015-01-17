@@ -57,7 +57,7 @@ public:
 protected:
     FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);
 
-    bool ensureCustomFontData(RefPtr<SharedBuffer>&& data);
+    bool ensureCustomFontData(SharedBuffer* data);
 
 private:
     virtual void checkNotify() override;
