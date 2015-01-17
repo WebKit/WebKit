@@ -46,7 +46,7 @@ class IOSPort(ApplePort):
     port_name = "ios-device"
 
     ARCHITECTURES = ['armv7', 'armv7s', 'arm64']
-    VERSION_FALLBACK_ORDER = ['ios-device-8']
+    VERSION_FALLBACK_ORDER = ['ios-device-7', 'ios-device-8']
 
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):

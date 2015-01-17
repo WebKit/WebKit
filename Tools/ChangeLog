@@ -1,5 +1,14 @@
 2015-01-17  David Kilzer  <ddkilzer@apple.com>
 
+        Attempt to fix webkitpy tests on Mountain Lion, Mavericks bots
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort): Add 'ios-device-7' to VERSION_FALLBACK_ORDER so that
+        test-webkitpy doesn't fail since iOS 7.x SDKs are installed on
+        the Mountain Lion and Mavericks bots.
+
+2015-01-17  David Kilzer  <ddkilzer@apple.com>
+
         Attempt to fix webkitpy tests on GTK Linux ports
 
         * Scripts/webkitpy/port/ios.py:
