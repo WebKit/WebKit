@@ -31,7 +31,6 @@
 #include "Page.h"
 #include "PerProcess.h"
 #include "SmallChunk.h"
-#include "XLargeChunk.h"
 #include <thread>
 
 namespace bmalloc {
@@ -320,22 +319,23 @@ void Heap::deallocateMediumLine(std::lock_guard<StaticMutex>& lock, MediumLine* 
     }
 }
 
-void* Heap::allocateXLarge(std::lock_guard<StaticMutex>&, size_t size)
+Range Heap::findXLarge(std::lock_guard<StaticMutex>&, void* object)
 {
-    XLargeChunk* chunk = XLargeChunk::create(size);
-
-    BeginTag* beginTag = LargeChunk::beginTag(chunk->begin());
-    beginTag->setXLarge();
-    beginTag->setFree(false);
-    beginTag->setHasPhysicalPages(true);
-    
-    return chunk->begin();
+    return m_vmHeap.findXLarge(object);
 }
 
-void Heap::deallocateXLarge(std::lock_guard<StaticMutex>&, void* object)
+void* Heap::allocateXLarge(std::lock_guard<StaticMutex>&, size_t size)
 {
-    XLargeChunk* chunk = XLargeChunk::get(object);
-    XLargeChunk::destroy(chunk);
+    m_isAllocatingPages = true;
+
+    void* result = m_vmHeap.allocateXLarge(size);
+    vmAllocatePhysicalPagesSloppy(result, size);
+    return result;
+}
+
+void Heap::deallocateXLarge(std::unique_lock<StaticMutex>& lock, void* object)
+{
+    m_vmHeap.deallocateXLarge(lock, object);
 }
 
 void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t size)

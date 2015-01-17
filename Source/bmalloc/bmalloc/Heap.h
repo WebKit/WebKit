@@ -63,7 +63,8 @@ public:
     void deallocateLarge(std::lock_guard<StaticMutex>&, void*);
 
     void* allocateXLarge(std::lock_guard<StaticMutex>&, size_t);
-    void deallocateXLarge(std::lock_guard<StaticMutex>&, void*);
+    Range findXLarge(std::lock_guard<StaticMutex>&, void*);
+    void deallocateXLarge(std::unique_lock<StaticMutex>&, void*);
 
     void scavenge(std::unique_lock<StaticMutex>&, std::chrono::milliseconds sleepDuration);
 

@@ -48,10 +48,14 @@ public:
     SmallPage* allocateSmallPage();
     MediumPage* allocateMediumPage();
     Range allocateLargeRange(size_t);
+    void* allocateXLarge(size_t);
+
+    Range findXLarge(void*);
 
     void deallocateSmallPage(std::unique_lock<StaticMutex>&, SmallPage*);
     void deallocateMediumPage(std::unique_lock<StaticMutex>&, MediumPage*);
     void deallocateLargeRange(std::unique_lock<StaticMutex>&, Range);
+    void deallocateXLarge(std::unique_lock<StaticMutex>&, void*);
 
 private:
     void allocateSuperChunk();
@@ -59,6 +63,7 @@ private:
     Vector<SmallPage*> m_smallPages;
     Vector<MediumPage*> m_mediumPages;
     SegregatedFreeList m_largeRanges;
+    Vector<Range> m_xLargeRanges;
 };
 
 inline SmallPage* VMHeap::allocateSmallPage()
@@ -86,6 +91,24 @@ inline Range VMHeap::allocateLargeRange(size_t size)
         BASSERT(range);
     }
     return range;
+}
+
+inline void* VMHeap::allocateXLarge(size_t size)
+{
+    void* result = vmAllocate(size, superChunkSize);
+    m_xLargeRanges.push(Range(result, size));
+    return result;
+}
+
+inline Range VMHeap::findXLarge(void* object)
+{
+    for (auto& range : m_xLargeRanges) {
+        if (range.begin() != object)
+            continue;
+        return range;
+    }
+
+    return Range();
 }
 
 inline void VMHeap::deallocateSmallPage(std::unique_lock<StaticMutex>& lock, SmallPage* page)
@@ -127,6 +150,23 @@ inline void VMHeap::deallocateLargeRange(std::unique_lock<StaticMutex>& lock, Ra
     endTag->setHasPhysicalPages(false);
 
     m_largeRanges.insert(range);
+}
+
+inline void VMHeap::deallocateXLarge(std::unique_lock<StaticMutex>& lock, void* object)
+{
+    for (size_t i = 0; i < m_xLargeRanges.size(); ++i) {
+        Range range = m_xLargeRanges[i];
+        if (range.begin() != object)
+            continue;
+
+        m_xLargeRanges.pop(i);
+
+        lock.unlock();
+        vmDeallocate(range.begin(), range.size());
+        lock.lock();
+        
+        break;
+    }
 }
 
 } // namespace bmalloc

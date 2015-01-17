@@ -68,7 +68,7 @@ void Deallocator::deallocateLarge(void* object)
 
 void Deallocator::deallocateXLarge(void* object)
 {
-    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    std::unique_lock<StaticMutex> lock(PerProcess<Heap>::mutex());
     PerProcess<Heap>::getFastCase()->deallocateXLarge(lock, object);
 }
 
@@ -109,8 +109,7 @@ void Deallocator::deallocateSlowCase(void* object)
         return;
     }
 
-    BeginTag* beginTag = LargeChunk::beginTag(object);
-    if (!beginTag->isXLarge())
+    if (!isXLarge(object))
         return deallocateLarge(object);
     
     return deallocateXLarge(object);

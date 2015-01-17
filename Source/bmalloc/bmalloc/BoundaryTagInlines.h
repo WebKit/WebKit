@@ -42,17 +42,14 @@ IF_DEBUG(
     EndTag* endTag = LargeChunk::endTag(range.begin(), range.size());
 
     BASSERT(!beginTag->isEnd());
-    if (beginTag->isXLarge())
-        return;
-)
     BASSERT(range.size() >= largeMin);
     BASSERT(beginTag->size() == range.size());
 
     BASSERT(beginTag->size() == endTag->size());
     BASSERT(beginTag->isFree() == endTag->isFree());
     BASSERT(beginTag->hasPhysicalPages() == endTag->hasPhysicalPages());
-    BASSERT(beginTag->isXLarge() == endTag->isXLarge());
     BASSERT(static_cast<BoundaryTag*>(endTag) == static_cast<BoundaryTag*>(beginTag) || endTag->isEnd());
+);
 }
 
 static inline void validatePrev(EndTag* prev, void* object)
@@ -164,7 +161,6 @@ inline Range BoundaryTag::deallocate(void* object)
 {
     BeginTag* beginTag = LargeChunk::beginTag(object);
     BASSERT(!beginTag->isFree());
-    BASSERT(!beginTag->isXLarge())
 
     Range range(object, beginTag->size());
     EndTag* endTag = LargeChunk::endTag(range.begin(), range.size());

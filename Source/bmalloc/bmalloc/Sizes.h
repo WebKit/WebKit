@@ -80,6 +80,8 @@ namespace Sizes {
     static_assert(1 << largeAlignmentShift == largeAlignment, "largeAlignmentShift be log2(largeAlignment).");
     static const size_t largeMax = largeChunkSize * 99 / 100; // Plenty of room for metadata.
     static const size_t largeMin = mediumMax;
+    
+    static const size_t xLargeAlignment = vmPageSize;
 
     static const size_t segregatedFreeListSearchDepth = 16;
 

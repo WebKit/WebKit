@@ -54,7 +54,6 @@
 		14DD78CE18F48D7500950702 /* Syscall.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F64F18B7280C0076FA3F /* Syscall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78CF18F48D7500950702 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479E21217A1A255006D4E9D /* Vector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78D018F48D7500950702 /* VMAllocate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479E21417A1A63E006D4E9D /* VMAllocate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14DD78D118F48EC600950702 /* XLargeChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 147AAA8918CD17CE002201E4 /* XLargeChunk.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14F271C318EA3978008C152F /* Allocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 145F6855179DC8CA00D65598 /* Allocator.cpp */; };
 		14F271C418EA397B008C152F /* Cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 144469E417A46BFE00F9EA1D /* Cache.cpp */; };
 		14F271C518EA397E008C152F /* Deallocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 145F6859179DC90200D65598 /* Deallocator.cpp */; };
@@ -114,7 +113,6 @@
 		1479E21217A1A255006D4E9D /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = Vector.h; path = bmalloc/Vector.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1479E21417A1A63E006D4E9D /* VMAllocate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = VMAllocate.h; path = bmalloc/VMAllocate.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		147AAA8818CD17CE002201E4 /* LargeChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LargeChunk.h; path = bmalloc/LargeChunk.h; sourceTree = "<group>"; };
-		147AAA8918CD17CE002201E4 /* XLargeChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XLargeChunk.h; path = bmalloc/XLargeChunk.h; sourceTree = "<group>"; };
 		147AAA8C18CD36A7002201E4 /* SmallChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SmallChunk.h; path = bmalloc/SmallChunk.h; sourceTree = "<group>"; };
 		147AAA8E18CD89E3002201E4 /* MediumChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediumChunk.h; path = bmalloc/MediumChunk.h; sourceTree = "<group>"; };
 		147AAA9418CE5CA6002201E4 /* Chunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Chunk.h; path = bmalloc/Chunk.h; sourceTree = "<group>"; };
@@ -216,7 +214,6 @@
 				147AAA8818CD17CE002201E4 /* LargeChunk.h */,
 				146BEE2118C845AE0002D5A2 /* SegregatedFreeList.cpp */,
 				146BEE1E18C841C50002D5A2 /* SegregatedFreeList.h */,
-				147AAA8918CD17CE002201E4 /* XLargeChunk.h */,
 			);
 			name = "heap: large | xlarge";
 			sourceTree = "<group>";
@@ -310,7 +307,6 @@
 				14DD78B418F48D6B00950702 /* Chunk.h in Headers */,
 				14DD78CA18F48D7500950702 /* Mutex.h in Headers */,
 				143CB81D19022BC900B16A45 /* StaticMutex.h in Headers */,
-				14DD78D118F48EC600950702 /* XLargeChunk.h in Headers */,
 				14DD78B918F48D6B00950702 /* MediumTraits.h in Headers */,
 				1448C30118F3754C00502839 /* bmalloc.h in Headers */,
 				14DD789A18F48D4A00950702 /* Deallocator.h in Headers */,

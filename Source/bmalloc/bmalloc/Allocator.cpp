@@ -30,7 +30,6 @@
 #include "LargeChunk.h"
 #include "PerProcess.h"
 #include "Sizes.h"
-#include "XLargeChunk.h"
 #include <algorithm>
 #include <cstdlib>
 
@@ -90,8 +89,10 @@ void* Allocator::reallocate(void* object, size_t newSize)
         break;
     }
     case XLarge: {
-        XLargeChunk* chunk = XLargeChunk::get(object);
-        oldSize = chunk->size();
+        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+        Range range = PerProcess<Heap>::getFastCase()->findXLarge(lock, object);
+        RELEASE_BASSERT(range);
+        oldSize = range.size();
         break;
     }
     }
@@ -151,7 +152,7 @@ NO_INLINE void* Allocator::allocateLarge(size_t size)
 
 NO_INLINE void* Allocator::allocateXLarge(size_t size)
 {
-    size = roundUpToMultipleOf<largeAlignment>(size);
+    size = roundUpToMultipleOf<xLargeAlignment>(size);
     std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
     return PerProcess<Heap>::getFastCase()->allocateXLarge(lock, size);
 }

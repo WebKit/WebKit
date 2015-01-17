@@ -1,5 +1,74 @@
 2015-01-16  Geoffrey Garen  <ggaren@apple.com>
 
+        bmalloc: refactored XLarge allocation for better alignment
+        https://bugs.webkit.org/show_bug.cgi?id=140582
+
+        Reviewed by Andreas Kling.
+
+        XLarge objects used to be Large objects with an extra bit of metadata
+        that said "actually, I'm not large -- I'm extra large".
+
+        The metadata header in an XLarge allocation made it impossible for the
+        XLarge object to honor a very large alignment request.
+
+        The solution is to stop using a metadata header for XLarge objects, and
+        instead to store explicit metadata on the side.
+
+        This is a bit less astonishing, which is also nice.
+
+        Finding XLarge metadata is now a linear search. That's probably OK, since
+        it was always so in TCMalloc, and the usual number of XLarge allocations
+        in a process is 0.
+
+        This design makes it possible for the heap to cache XLarge allocations
+        with and/or without physical pages. I haven't actually done that yet
+        because the tradeoffs are subtle, so I don't want to do anything without
+        a motivating test case.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate): Removed the concept of an XLargeChunk,
+        since an XLarge allocation is now just a naked buffer without a header.
+
+        (bmalloc::Allocator::allocateXLarge): Added an explicit qualifier for
+        XLarge alignment, since XLargeChunk won't give this to us implicitly
+        anymore.
+
+        * bmalloc/BoundaryTag.h:
+        (bmalloc::BoundaryTag::setRange):
+        (bmalloc::BoundaryTag::isXLarge): Deleted.
+        (bmalloc::BoundaryTag::setXLarge): Deleted.
+        * bmalloc/BoundaryTagInlines.h:
+        (bmalloc::validate):
+        (bmalloc::BoundaryTag::deallocate): Removed the XLarge hacks from Large allocations.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::deallocateXLarge):
+        (bmalloc::Deallocator::deallocateSlowCase):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::findXLarge):
+        (bmalloc::Heap::allocateXLarge):
+        (bmalloc::Heap::deallocateXLarge):
+        * bmalloc/Heap.h: Updated for interface changes.
+
+        * bmalloc/ObjectType.cpp:
+        (bmalloc::objectType):
+        * bmalloc/ObjectType.h:
+        (bmalloc::isXLarge): We can now tell if a pointer is XLarge just by
+        examining its bit pattern -- just like we do for other kinds of
+        allocations -- which is nice.
+
+        * bmalloc/Sizes.h:
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateXLarge):
+        (bmalloc::VMHeap::findXLarge):
+        (bmalloc::VMHeap::deallocateXLarge): Keep an explicit vector of metadata
+        for XLarge allocations.
+
+        * bmalloc/XLargeChunk.h: Removed.
+
+2015-01-16  Geoffrey Garen  <ggaren@apple.com>
+
         bmalloc: added some infrastructure for aligned allocation
         https://bugs.webkit.org/show_bug.cgi?id=140572
 

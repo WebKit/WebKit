@@ -51,6 +51,11 @@ inline bool isMedium(void* smallOrMedium)
     return !isSmall(smallOrMedium);
 }
 
+inline bool isXLarge(void* object)
+{
+    return !test(object, superChunkSize - 1);
+}
+
 } // namespace bmalloc
 
 #endif // ObjectType_h

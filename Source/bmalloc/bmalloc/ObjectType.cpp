@@ -36,9 +36,9 @@ ObjectType objectType(void* object)
         return Medium;
     }
     
-    BeginTag* beginTag = LargeChunk::beginTag(object);
-    if (!beginTag->isXLarge())
+    if (!isXLarge(object))
         return Large;
+    
     return XLarge;
 }
 
