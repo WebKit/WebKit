@@ -9,14 +9,14 @@ function testFunction(a, b)
 
 var arrayArguments = [2, 3, 4]
 var result = 0;
-for (var i = 0; i < 1000000; i++)
+for (var i = 0; i < 50000; i++)
     result += testFunction(...arrayArguments);
 
-for (var i = 0; i < 1000000; i++)
+for (var i = 0; i < 50000; i++)
     result += testFunction(...[1, 2, result, 4]);
 
 function test2() {
-    for (var i = 0; i < 1000000; i++)
+    for (var i = 0; i < 50000; i++)
         result += testFunction(...arguments);
 }
 
@@ -25,11 +25,11 @@ test2(1,2,3,4)
 
 function test3() {
     aliasedArguments = arguments;
-    for (var i = 0; i < 1000000; i++)
+    for (var i = 0; i < 50000; i++)
         result += testFunction(...aliasedArguments);
 }
 
 test3(1,2,result,4)
 
-if (result != -856444619779264)
-    throw "Result was " + result + " expected -856444619779264";
+if (result != 43424761715344)
+    throw "Result was " + result + " expected 43424761715344";

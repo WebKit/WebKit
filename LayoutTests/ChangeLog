@@ -1,3 +1,19 @@
+2015-01-16  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(178591): js/slow-stress/call-spread.html & js/slow-stress/new-spread.html
+        https://bugs.webkit.org/show_bug.cgi?id=140574
+
+        Rubber stamped by Oliver Hunt.
+
+        Changed the loop counts in the test to lower values to speed up the tests.
+
+        * js/slow-stress/script-tests/call-spread.js:
+        (test2):
+        (test3):
+        * js/slow-stress/script-tests/new-spread.js:
+        (test2):
+        (test3):
+
 2015-01-16  Zalan Bujtas  <zalan@apple.com>
 
         When border-radius is present, inset/outset/groove/ridge border color changes.
