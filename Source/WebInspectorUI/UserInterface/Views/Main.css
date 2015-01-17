@@ -211,8 +211,8 @@ body.mac-platform.legacy #split-content-browser > .navigation-bar {
 }
 
 .go-to-link {
-    color: rgb(85, 85, 85) !important;
-    text-decoration: underline !important;
+    color: rgb(85, 85, 85);
+    text-decoration: underline;
     cursor: pointer;
 }
 

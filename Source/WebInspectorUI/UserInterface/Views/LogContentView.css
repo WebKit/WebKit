@@ -53,11 +53,30 @@
 }
 
 .console-item.selected {
-    background-color: rgb(212, 212, 212);
+    background-color: hsl(210, 0%, 96%);
 }
 
 .console-messages:focus .console-item.selected {
-    background-color: highlight;
+    background-color: hsl(210, 98%, 96%);
+}
+
+.console-item.selected .console-message::after {
+    position: absolute;
+    display: block;
+    content: "";
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: hsl(0, 0%, 60%);
+    width: 2px;
+}
+
+.console-messages:focus .console-item.selected .console-message::after {
+    background: hsl(210, 100%, 49%);
+}
+
+.console-messages:focus .console-item.selected .go-to-link {
+    color: hsl(210, 100%, 33%);
 }
 
 .console-user-command-result.console-log-level::before {

@@ -1,3 +1,20 @@
+2015-01-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Make message selection in the console more readable
+        https://bugs.webkit.org/show_bug.cgi?id=140385
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-item.selected):
+        (.console-messages:focus .console-item.selected):
+        (.console-item.selected .console-message::after):
+        (.console-messages:focus .console-item.selected .console-message::after):
+        (.console-messages:focus .console-item.selected .go-to-link):
+        * UserInterface/Views/Main.css:
+        (.go-to-link):
+        !important statements seem to be unnecessary, remove them.
+
 2015-01-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused WebInspector.LocalJSONObject
