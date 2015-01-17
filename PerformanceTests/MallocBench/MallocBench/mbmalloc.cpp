@@ -35,6 +35,13 @@ void* mbmalloc(size_t size)
     return malloc(size);
 }
 
+void* mbmemalign(size_t alignment, size_t size)
+{
+    void* result;
+    posix_memalign(&result, alignment, size);
+    return result;
+}
+
 void mbfree(void* p, size_t)
 {
     return free(p);

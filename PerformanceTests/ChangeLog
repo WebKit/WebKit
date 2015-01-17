@@ -1,3 +1,20 @@
+2015-01-16  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: added the tiniest bit of testing for aligned allocation
+        https://bugs.webkit.org/show_bug.cgi?id=140573
+
+        Reviewed by Andreas Kling.
+
+        Just good enoug to catch two bugs in a preliminary implementation.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj:
+        * MallocBench/MallocBench/Benchmark.cpp:
+        * MallocBench/MallocBench/mbmalloc.cpp:
+        * MallocBench/MallocBench/mbmalloc.h:
+        * MallocBench/MallocBench/memalign.cpp: Added.
+        (benchmark_memalign):
+        * MallocBench/MallocBench/memalign.h: Added.
+
 2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add performance test related to font fallback

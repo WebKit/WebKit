@@ -33,8 +33,10 @@
 #include "fragment.h"
 #include "list.h"
 #include "medium.h"
+#include "memalign.h"
 #include "message.h"
 #include "reddit.h"
+#include "realloc.h"
 #include "stress.h"
 #include "theverge.h"
 #include "tree.h"
@@ -69,8 +71,10 @@ static const BenchmarkPair benchmarkPairs[] = {
     { "list_allocate", benchmark_list_allocate },
     { "list_traverse", benchmark_list_traverse },
     { "medium", benchmark_medium },
+    { "memalign", benchmark_memalign },
     { "message_many", benchmark_message_many },
     { "message_one", benchmark_message_one },
+    { "realloc", benchmark_realloc },
     { "reddit", benchmark_reddit },
     { "reddit_memory_warning", benchmark_reddit_memory_warning },
     { "stress", benchmark_stress },

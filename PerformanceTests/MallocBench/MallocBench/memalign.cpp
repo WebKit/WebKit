@@ -23,31 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef mbmalloc_h
-#define mbmalloc_h
-
+#include <assert.h>
+#include "memalign.h"
+#include <memory>
 #include <stddef.h>
 
-// This file defines a default implementation of the mbmalloc API, using system
-// malloc. To test with another malloc, supply an override .dylib that exports
-// these symbols.
+#include "mbmalloc.h"
 
-extern "C" {
+void benchmark_memalign(bool isParallel)
+{
+    {
+        size_t alignment = 128;
+        size_t size = 8;
+        void* result = mbmemalign(alignment, size);
 
-void* mbmalloc(size_t);
-void* mbmemalign(size_t, size_t);
-void mbfree(void*, size_t);
-void* mbrealloc(void*, size_t, size_t);
-void mbscavenge();
+        assert(result);
+        assert(((uintptr_t)result & (alignment - 1)) == 0);
+        
+        mbfree(result, size);
+    }
     
+    {
+        size_t alignment = 2048 * 1024 * 1024;
+        size_t size = 8;
+        void* result = mbmemalign(alignment, size);
+
+        assert(result);
+        assert(((uintptr_t)result & (alignment - 1)) == 0);
+        
+        mbfree(result, size);
+    }
 }
-
-// Catch accidental benchmark allocation through malloc and free. All benchmark
-// code should use mbmalloc / mbfree, to call the instrumented malloc we're
-// benchmarking against.
-
-#define malloc error
-#define free error
-#define realloc error
-
-#endif // mbmalloc_h
