@@ -34,6 +34,7 @@
 #endif
 
 #import "APILegacyContextHistoryClient.h"
+#import "APIPageConfiguration.h"
 #import "ActionMenuHitTestResult.h"
 #import "AttributedString.h"
 #import "ColorSpaceData.h"
@@ -3793,6 +3794,14 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     webPageConfiguration.relatedPage = toImpl(relatedPage);
 
     return [self initWithFrame:frame processPool:*toImpl(contextRef) configuration:webPageConfiguration webView:nil];
+}
+
+- (id)initWithFrame:(NSRect)frame configurationRef:(WKPageConfigurationRef)configuration
+{
+    auto& processPool = *toImpl(configuration)->processPool();
+    auto webPageConfiguration = toImpl(configuration)->webPageConfiguration();
+
+    return [self initWithFrame:frame processPool:processPool configuration:webPageConfiguration webView:nil];
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080

@@ -128,6 +128,7 @@ public:
         OpenPanelResultListener,
         OriginDataManager,
         Page,
+        PageConfiguration,
         PageGroup,
         ProcessPool,
         ProcessPoolConfiguration,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKUserScriptInternal.h"
+#include "config.h"
+#include "WKUserScriptRef.h"
 
-#if WK_API_ENABLED
+#include "APIUserScript.h"
+#include "WKAPICast.h"
 
-@implementation WKUserScript
+using namespace WebKit;
 
-- (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly
+WKTypeID WKUserScriptGetTypeID()
 {
-    if (!(self = [super init]))
-        return nil;
-
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), API::UserScript::generateUniqueURL(), { }, { }, API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames });
-
-    return self;
+    return toAPI(API::UserScript::APIType);
 }
 
-- (NSString *)source
+WKUserScriptRef WKUserScriptCreateWithSource(WKStringRef sourceRef, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly)
 {
-    return _userScript->userScript().source();
+    return toAPI(API::UserScript::create(WebCore::UserScript { toWTFString(sourceRef), API::UserScript::generateUniqueURL(), { }, { }, toUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames }).leakRef());
 }
 
-- (WKUserScriptInjectionTime)injectionTime
+WKStringRef WKUserScriptCopySource(WKUserScriptRef userScriptRef)
 {
-    return API::toWKUserScriptInjectionTime(_userScript->userScript().injectionTime());
+    return toCopiedAPI(toImpl(userScriptRef)->userScript().source());
 }
 
-- (BOOL)isForMainFrameOnly
+_WKUserScriptInjectionTime WKUserScriptGetInjectionTime(WKUserScriptRef userScriptRef)
 {
-    return _userScript->userScript().injectedFrames() == WebCore::InjectInTopFrameOnly;
+    return toWKUserScriptInjectionTime(toImpl(userScriptRef)->userScript().injectionTime());
 }
 
-- (id)copyWithZone:(NSZone *)zone
+bool WKUserScriptGetMainFrameOnly(WKUserScriptRef userScriptRef)
 {
-    return [self retain];
+    return toImpl(userScriptRef)->userScript().injectedFrames() == WebCore::InjectInTopFrameOnly;
 }
-
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_userScript;
-}
-
-@end
-
-#endif

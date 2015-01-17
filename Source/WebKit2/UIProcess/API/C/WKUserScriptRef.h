@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKUserScriptInternal.h"
+#ifndef WKUserScriptRef_h
+#define WKUserScriptRef_h
 
-#if WK_API_ENABLED
+#include <WebKit/WKBase.h>
+#include <WebKit/WKUserScriptInjectionTime.h>
 
-@implementation WKUserScript
-
-- (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly
-{
-    if (!(self = [super init]))
-        return nil;
-
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), API::UserScript::generateUniqueURL(), { }, { }, API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames });
-
-    return self;
-}
-
-- (NSString *)source
-{
-    return _userScript->userScript().source();
-}
-
-- (WKUserScriptInjectionTime)injectionTime
-{
-    return API::toWKUserScriptInjectionTime(_userScript->userScript().injectionTime());
-}
-
-- (BOOL)isForMainFrameOnly
-{
-    return _userScript->userScript().injectedFrames() == WebCore::InjectInTopFrameOnly;
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_userScript;
-}
-
-@end
-
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+WK_EXPORT WKTypeID WKUserScriptGetTypeID();
+
+WK_EXPORT WKUserScriptRef WKUserScriptCreateWithSource(WKStringRef source, _WKUserScriptInjectionTime injectionTime, bool forMainFrameOnly);
+
+WK_EXPORT WKStringRef WKUserScriptCopySource(WKUserScriptRef userScript);
+WK_EXPORT _WKUserScriptInjectionTime WKUserScriptGetInjectionTime(WKUserScriptRef userScript);
+WK_EXPORT bool WKUserScriptGetMainFrameOnly(WKUserScriptRef userScript);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* WKUserScriptRef_h */

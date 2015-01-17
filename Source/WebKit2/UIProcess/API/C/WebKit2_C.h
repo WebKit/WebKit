@@ -51,13 +51,16 @@
 #include <WebKit/WKOpenPanelParameters.h>
 #include <WebKit/WKOpenPanelResultListener.h>
 #include <WebKit/WKPage.h>
+#include <WebKit/WKPageConfigurationRef.h>
 #include <WebKit/WKPageGroup.h>
 #include <WebKit/WKPreferencesRef.h>
 #include <WebKit/WKString.h>
 #include <WebKit/WKURL.h>
 #include <WebKit/WKURLRequest.h>
 #include <WebKit/WKURLResponse.h>
+#include <WebKit/WKUserContentControllerRef.h>
 #include <WebKit/WKUserMediaPermissionRequest.h>
+#include <WebKit/WKUserScriptRef.h>
 
 #if defined(__OBJC__) && __OBJC__
 #import <WebKit/WKView.h>

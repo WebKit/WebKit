@@ -40,6 +40,7 @@
 #else
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef relatedToPage:(WKPageRef)relatedPage;
+- (id)initWithFrame:(NSRect)frame configurationRef:(WKPageConfigurationRef)configuration;
 #endif
 
 #if TARGET_OS_IPHONE

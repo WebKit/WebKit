@@ -37,7 +37,7 @@ PassRefPtr<Array> Array::create()
 
 PassRefPtr<Array> Array::create(Vector<RefPtr<Object>> elements)
 {
-    return adoptRef(new Array(WTF::move(elements)));
+    return adoptRef(*new Array(WTF::move(elements)));
 }
 
 PassRefPtr<Array> Array::createStringArray(const Vector<WTF::String>& strings)
@@ -63,6 +63,19 @@ Vector<WTF::String> Array::toStringVector()
     for (const auto& entry : elementsOfType<API::String>())
         patternsVector.uncheckedAppend(entry->string());
     return patternsVector;
+}
+
+Ref<API::Array> Array::copy()
+{
+    size_t size = this->size();
+    if (!size)
+        return *Array::create();
+
+    Vector<RefPtr<Object>> elements;
+    elements.reserveInitialCapacity(size);
+    for (const auto& entry : this->elements())
+        elements.uncheckedAppend(entry);
+    return *Array::create(elements);
 }
 
 Array::Array(Vector<RefPtr<Object>> elements)

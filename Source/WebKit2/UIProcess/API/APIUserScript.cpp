@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKUserScriptInternal.h"
+#include "config.h"
+#include "APIUserScript.h"
 
-#if WK_API_ENABLED
+#include <wtf/text/StringBuilder.h>
 
-@implementation WKUserScript
+namespace API {
 
-- (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly
+static uint64_t generateIdentifier()
 {
-    if (!(self = [super init]))
-        return nil;
+    static uint64_t identifier;
 
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), API::UserScript::generateUniqueURL(), { }, { }, API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames });
-
-    return self;
+    return ++identifier;
 }
 
-- (NSString *)source
+WebCore::URL UserScript::generateUniqueURL()
 {
-    return _userScript->userScript().source();
+    StringBuilder urlStringBuilder;
+    urlStringBuilder.append("user-script:");
+    urlStringBuilder.appendNumber(generateIdentifier());
+    return WebCore::URL { WebCore::URL { }, urlStringBuilder.toString() };
 }
 
-- (WKUserScriptInjectionTime)injectionTime
-{
-    return API::toWKUserScriptInjectionTime(_userScript->userScript().injectionTime());
-}
 
-- (BOOL)isForMainFrameOnly
-{
-    return _userScript->userScript().injectedFrames() == WebCore::InjectInTopFrameOnly;
-}
-
-- (id)copyWithZone:(NSZone *)zone
-{
-    return [self retain];
-}
-
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_userScript;
-}
-
-@end
-
-#endif
+} // namespace API

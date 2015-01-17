@@ -1,3 +1,84 @@
+2015-01-16  Sam Weinig  <sam@webkit.org>
+
+        Add a basic configuration object for WKView
+        https://bugs.webkit.org/show_bug.cgi?id=140559
+
+        Reviewed by Anders Carlsson.
+
+        - Adds WKPageConfigurationRef (backed by API::PageConfiguration). WKWebView configuration
+          is not yet bridged to this, but that will happen soon. For now, it has a few basic
+          configuration options.
+        - Adds WKUserContentControllerRef as C-SPI version of WKUserContentController.
+        - Adds WKUserScriptRef as C-SPI version of WKUserScript.
+
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toWKUserScriptInjectionTime):
+        * UIProcess/API/APIPageConfiguration.cpp: Added.
+        (API::PageConfiguration::PageConfiguration):
+        (API::PageConfiguration::~PageConfiguration):
+        (API::PageConfiguration::processPool):
+        (API::PageConfiguration::setProcessPool):
+        (API::PageConfiguration::userContentController):
+        (API::PageConfiguration::setUserContentController):
+        (API::PageConfiguration::pageGroup):
+        (API::PageConfiguration::setPageGroup):
+        (API::PageConfiguration::preferences):
+        (API::PageConfiguration::setPreferences):
+        (API::PageConfiguration::relatedPage):
+        (API::PageConfiguration::setRelatedPage):
+        (API::PageConfiguration::webPageConfiguration):
+        * UIProcess/API/APIPageConfiguration.h: Added.
+        (API::PageConfiguration::create):
+        * UIProcess/API/APIUserScript.cpp: Added.
+        (API::generateIdentifier):
+        (API::UserScript::generateUniqueURL):
+        * UIProcess/API/APIUserScript.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKPageConfigurationRef.cpp: Added.
+        (WKPageConfigurationGetTypeID):
+        (WKPageConfigurationCreate):
+        (WKPageConfigurationGetContext):
+        (WKPageConfigurationSetContext):
+        (WKPageConfigurationGetPageGroup):
+        (WKPageConfigurationSetPageGroup):
+        (WKPageConfigurationGetUserContentController):
+        (WKPageConfigurationSetUserContentController):
+        (WKPageConfigurationGetPreferences):
+        (WKPageConfigurationSetPreferences):
+        (WKPageConfigurationGetRelatedPage):
+        (WKPageConfigurationSetRelatedPage):
+        * UIProcess/API/C/WKPageConfigurationRef.h: Added.
+        * UIProcess/API/C/WKUserContentControllerRef.cpp: Added.
+        (WKUserContentControllerGetTypeID):
+        (WKUserContentControllerCreate):
+        (WKUserContentControllerCopyUserScripts):
+        (WKUserContentControllerAddUserScript):
+        (WKUserContentControllerRemoveAllUserScripts):
+        * UIProcess/API/C/WKUserContentControllerRef.h: Added.
+        * UIProcess/API/C/WKUserScriptRef.cpp: Added.
+        (WKUserScriptGetTypeID):
+        (WKUserScriptCreateWithSource):
+        (WKUserScriptCopySource):
+        (WKUserScriptGetInjectionTime):
+        (WKUserScriptGetMainFrameOnly):
+        * UIProcess/API/C/WKUserScriptRef.h: Added.
+        * UIProcess/API/C/WebKit2_C.h:
+        * UIProcess/API/Cocoa/WKUserScript.mm:
+        (-[WKUserScript initWithSource:injectionTime:forMainFrameOnly:]):
+        (generateIdentifier): Deleted.
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (LazyInitialized::get):
+        (LazyInitialized::set):
+        (LazyInitialized::peek):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:configurationRef:]):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        (WebKit::WebUserContentControllerProxy::create):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-01-16  Anders Carlsson  <andersca@apple.com>
 
         Pass the connection along to WebProcessLifetimeTracker

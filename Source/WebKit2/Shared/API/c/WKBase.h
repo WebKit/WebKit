@@ -120,6 +120,7 @@ typedef const struct OpaqueWKOpenPanelParameters* WKOpenPanelParametersRef;
 typedef const struct OpaqueWKOpenPanelResultListener* WKOpenPanelResultListenerRef;
 typedef const struct OpaqueWKOriginDataManager* WKOriginDataManagerRef;
 typedef const struct OpaqueWKPage* WKPageRef;
+typedef const struct OpaqueWKPageConfiguration* WKPageConfigurationRef;
 typedef const struct OpaqueWKPageGroup* WKPageGroupRef;
 typedef const struct OpaqueWKPluginSiteDataManager* WKPluginSiteDataManagerRef;
 typedef const struct OpaqueWKPreferences* WKPreferencesRef;
@@ -127,7 +128,9 @@ typedef const struct OpaqueWKProtectionSpace* WKProtectionSpaceRef;
 typedef const struct OpaqueWKTextChecker* WKTextCheckerRef;
 typedef const struct OpaqueWKSession* WKSessionRef;
 typedef const struct OpaqueWKSessionState* WKSessionStateRef;
+typedef const struct OpaqueWKUserContentController* WKUserContentControllerRef;
 typedef const struct OpaqueWKUserMediaPermissionRequest* WKUserMediaPermissionRequestRef;
+typedef const struct OpaqueWKUserScript* WKUserScriptRef;
 typedef const struct OpaqueWKVibration* WKVibrationRef;
 typedef const struct OpaqueWKViewportAttributes* WKViewportAttributesRef;
 

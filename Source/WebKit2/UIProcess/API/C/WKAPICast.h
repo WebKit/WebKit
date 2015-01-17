@@ -52,8 +52,10 @@
 
 namespace API {
 class NavigationData;
+class PageConfiguration;
 class ProcessPoolConfiguration;
 class SessionState;
+class UserScript;
 }
 
 namespace WebKit {
@@ -69,7 +71,6 @@ class WebBackForwardList;
 class WebBackForwardListItem;
 class WebBatteryManagerProxy;
 class WebBatteryStatus;
-class WebResourceCacheManagerProxy;
 class WebColorPickerResultListenerProxy;
 class WebCookieManagerProxy;
 class WebCredential;
@@ -86,8 +87,8 @@ class WebInspectorProxy;
 class WebKeyValueStorageManager;
 class WebMediaCacheManagerProxy;
 class WebNotification;
-class WebNotificationProvider;
 class WebNotificationManagerProxy;
+class WebNotificationProvider;
 class WebOpenPanelParameters;
 class WebOpenPanelResultListenerProxy;
 class WebOriginDataManagerProxy;
@@ -99,7 +100,9 @@ class WebProcessPool;
 class WebProtectionSpace;
 class WebRenderLayer;
 class WebRenderObject;
+class WebResourceCacheManagerProxy;
 class WebTextChecker;
+class WebUserContentControllerProxy;
 class WebVibrationProxy;
 class WebViewportAttributes;
 
@@ -139,6 +142,7 @@ WK_ADD_API_MAPPING(WKOpenPanelParametersRef, WebOpenPanelParameters)
 WK_ADD_API_MAPPING(WKOpenPanelResultListenerRef, WebOpenPanelResultListenerProxy)
 WK_ADD_API_MAPPING(WKOriginDataManagerRef, WebOriginDataManagerProxy)
 WK_ADD_API_MAPPING(WKPageGroupRef, WebPageGroup)
+WK_ADD_API_MAPPING(WKPageConfigurationRef, API::PageConfiguration)
 WK_ADD_API_MAPPING(WKPageRef, WebPageProxy)
 WK_ADD_API_MAPPING(WKPluginSiteDataManagerRef, WebPluginSiteDataManager)
 WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)
@@ -147,7 +151,9 @@ WK_ADD_API_MAPPING(WKRenderLayerRef, WebRenderLayer)
 WK_ADD_API_MAPPING(WKRenderObjectRef, WebRenderObject)
 WK_ADD_API_MAPPING(WKSessionStateRef, API::SessionState)
 WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
+WK_ADD_API_MAPPING(WKUserContentControllerRef, WebUserContentControllerProxy)
 WK_ADD_API_MAPPING(WKUserMediaPermissionRequestRef, UserMediaPermissionRequestProxy)
+WK_ADD_API_MAPPING(WKUserScriptRef, API::UserScript)
 WK_ADD_API_MAPPING(WKVibrationRef, WebVibrationProxy)
 WK_ADD_API_MAPPING(WKViewportAttributesRef, WebViewportAttributes)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)

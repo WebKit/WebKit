@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKUserScriptInternal.h"
+#include "config.h"
+#include "WKUserContentControllerRef.h"
 
-#if WK_API_ENABLED
+#include "WKAPICast.h"
+#include "WebUserContentControllerProxy.h"
 
-@implementation WKUserScript
+using namespace WebKit;
 
-- (instancetype)initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly
+WKTypeID WKUserContentControllerGetTypeID()
 {
-    if (!(self = [super init]))
-        return nil;
-
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { WTF::String(source), API::UserScript::generateUniqueURL(), { }, { }, API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::InjectInTopFrameOnly : WebCore::InjectInAllFrames });
-
-    return self;
+    return toAPI(WebUserContentControllerProxy::APIType);
 }
 
-- (NSString *)source
+WKUserContentControllerRef WKUserContentControllerCreate()
 {
-    return _userScript->userScript().source();
+    return toAPI(&WebUserContentControllerProxy::create().leakRef());
 }
 
-- (WKUserScriptInjectionTime)injectionTime
+WKArrayRef WKUserContentControllerCopyUserScripts(WKUserContentControllerRef userContentControllerRef)
 {
-    return API::toWKUserScriptInjectionTime(_userScript->userScript().injectionTime());
+    Ref<API::Array> userScripts = toImpl(userContentControllerRef)->userScripts().copy();
+    return toAPI(&userScripts.leakRef());
 }
 
-- (BOOL)isForMainFrameOnly
+void WKUserContentControllerAddUserScript(WKUserContentControllerRef userContentControllerRef, WKUserScriptRef userScriptRef)
 {
-    return _userScript->userScript().injectedFrames() == WebCore::InjectInTopFrameOnly;
+    toImpl(userContentControllerRef)->addUserScript(*toImpl(userScriptRef));
 }
 
-- (id)copyWithZone:(NSZone *)zone
+void WKUserContentControllerRemoveAllUserScripts(WKUserContentControllerRef userContentControllerRef)
 {
-    return [self retain];
+    toImpl(userContentControllerRef)->removeAllUserScripts();
 }
-
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_userScript;
-}
-
-@end
-
-#endif

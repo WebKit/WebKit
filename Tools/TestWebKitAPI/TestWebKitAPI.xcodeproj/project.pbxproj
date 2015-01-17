@@ -55,6 +55,7 @@
 		7673499D1930C5BB00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7673499A1930182E00E44DF9 /* StopLoadingDuringDidFailProvisionalLoad_bundle.cpp */; };
 		76E182DD1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */; };
 		76E182DF154767E600F1FADD /* auto-submitting-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 76E182DE15475A8300F1FADD /* auto-submitting-form.html */; };
+		7C89D2AC1A69B80D003A5FDE /* WKPageConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C89D2AA1A69B80D003A5FDE /* WKPageConfiguration.cpp */; };
 		7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */; };
 		7CCE7EA41A4119F300447C4C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587FF13FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm */; };
 		7CCE7EA51A411A0800447C4C /* JavaScriptTestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C081224013FC172400DC39AE /* JavaScriptTestMac.mm */; };
@@ -507,6 +508,7 @@
 		7C6BBD8A19CEA54300C1F5E0 /* Counters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Counters.h; sourceTree = "<group>"; };
 		7C6BBD8B19CEA63000C1F5E0 /* Counters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Counters.cpp; sourceTree = "<group>"; };
 		7C74D42D188228F300E5ED57 /* StringView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringView.cpp; sourceTree = "<group>"; };
+		7C89D2AA1A69B80D003A5FDE /* WKPageConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageConfiguration.cpp; sourceTree = "<group>"; };
 		7C8DDAA91735DE1D00EA5AC0 /* CloseThenTerminate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CloseThenTerminate.cpp; sourceTree = "<group>"; };
 		7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = attributedStringStrikethrough.html; sourceTree = "<group>"; };
 		7CBBA07619BB8A9100BBF025 /* OSObjectPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSObjectPtr.cpp; sourceTree = "<group>"; };
@@ -977,6 +979,7 @@
 				76E182D91547550100F1FADD /* WillSendSubmitEvent.cpp */,
 				76E182DC1547569100F1FADD /* WillSendSubmitEvent_Bundle.cpp */,
 				A1FDFD2E19C288BB005148A4 /* WKImageCreateCGImageCrash.cpp */,
+				7C89D2AA1A69B80D003A5FDE /* WKPageConfiguration.cpp */,
 				51E93016156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp */,
 				524BBC9C19DF377A002F1AF1 /* WKPageIsPlayingAudio.cpp */,
 				BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */,
@@ -1409,6 +1412,7 @@
 				7CCE7EFF1A411AE600447C4C /* LoadCanceledNoServerRedirectCallback.cpp in Sources */,
 				7CCE7F001A411AE600447C4C /* LoadPageOnCrash.cpp in Sources */,
 				7CCE7F3A1A411B8E00447C4C /* MathExtras.cpp in Sources */,
+				7C89D2AC1A69B80D003A5FDE /* WKPageConfiguration.cpp in Sources */,
 				7CCE7F391A411B8E00447C4C /* MD5.cpp in Sources */,
 				7CCE7F3B1A411B8E00447C4C /* MediaTime.cpp in Sources */,
 				7CCE7EB21A411A5100447C4C /* MemoryCacheAddImageToCacheIOS.mm in Sources */,

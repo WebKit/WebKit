@@ -973,6 +973,19 @@ inline WebCore::UserScriptInjectionTime toUserScriptInjectionTime(_WKUserScriptI
     return WebCore::InjectAtDocumentStart;
 }
 
+inline _WKUserScriptInjectionTime toWKUserScriptInjectionTime(WebCore::UserScriptInjectionTime injectedTime)
+{
+    switch (injectedTime) {
+    case WebCore::InjectAtDocumentStart:
+        return kWKInjectAtDocumentStart;
+    case WebCore::InjectAtDocumentEnd:
+        return kWKInjectAtDocumentEnd;
+    }
+
+    ASSERT_NOT_REACHED();
+    return kWKInjectAtDocumentStart;
+}
+
 inline WebCore::UserContentInjectedFrames toUserContentInjectedFrames(WKUserContentInjectedFrames wkInjectedFrames)
 {
     switch (wkInjectedFrames) {

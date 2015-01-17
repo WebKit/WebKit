@@ -55,6 +55,7 @@ public:
     static PassRefPtr<Array> create(Vector<RefPtr<Object>> elements);
     static PassRefPtr<Array> createStringArray(const Vector<WTF::String>&);
     Vector<WTF::String> toStringVector();
+    Ref<Array> copy();
 
     virtual ~Array();
 
@@ -81,6 +82,7 @@ public:
             WTF::makeTransformIterator(GetObjectTransform<T>(), WTF::makeFilterIterator(IsTypePredicate<T>(), m_elements.end(), m_elements.end()))
         );
     }
+
 
 private:
     explicit Array(Vector<RefPtr<Object>> elements);

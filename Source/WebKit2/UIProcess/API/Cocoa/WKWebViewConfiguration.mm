@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "APIPageConfiguration.h"
 #import "WKPreferences.h"
 #import "WKProcessPool.h"
 #import "WKUserContentController.h"
@@ -43,8 +44,10 @@
 
 template<typename T> class LazyInitialized {
 public:
+    typedef typename WTF::GetPtrHelper<T>::PtrType PtrType;
+
     template<typename F>
-    T* get(F&& f)
+    PtrType get(F&& f)
     {
         if (!m_isInitialized) {
             m_value = f();
@@ -54,38 +57,38 @@ public:
         return m_value.get();
     }
 
-    void set(T* t)
+    void set(PtrType t)
     {
         m_value = t;
         m_isInitialized = true;
     }
 
-    void set(RetainPtr<T>&& t)
+    void set(T&& t)
     {
         m_value = WTF::move(t);
         m_isInitialized = true;
     }
 
-    T* peek()
+    PtrType peek()
     {
         return m_value.get();
     }
 
 private:
     bool m_isInitialized = false;
-    RetainPtr<T> m_value;
+    T m_value;
 };
 
 @implementation WKWebViewConfiguration {
-    LazyInitialized<WKProcessPool> _processPool;
-    LazyInitialized<WKPreferences> _preferences;
-    LazyInitialized<WKUserContentController> _userContentController;
-    LazyInitialized<_WKVisitedLinkProvider> _visitedLinkProvider;
-    LazyInitialized<_WKWebsiteDataStore> _websiteDataStore;
+    LazyInitialized<RetainPtr<WKProcessPool>> _processPool;
+    LazyInitialized<RetainPtr<WKPreferences>> _preferences;
+    LazyInitialized<RetainPtr<WKUserContentController>> _userContentController;
+    LazyInitialized<RetainPtr<_WKVisitedLinkProvider>> _visitedLinkProvider;
+    LazyInitialized<RetainPtr<_WKWebsiteDataStore>> _websiteDataStore;
     WebKit::WeakObjCPtr<WKWebView> _relatedWebView;
     WebKit::WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
     RetainPtr<NSString> _groupIdentifier;
-    LazyInitialized<NSString> _applicationNameForUserAgent;
+    LazyInitialized<RetainPtr<NSString>> _applicationNameForUserAgent;
 
 #if PLATFORM(IOS)
     LazyInitialized<WKWebViewContentProviderRegistry> _contentProviderRegistry;

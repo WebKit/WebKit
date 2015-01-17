@@ -57,6 +57,10 @@ class WebScriptMessageHandler;
 
 class WebUserContentControllerProxy : public API::ObjectImpl<API::Object::Type::UserContentController>, private IPC::MessageReceiver {
 public:
+    static Ref<WebUserContentControllerProxy> create()
+    { 
+        return adoptRef(*new WebUserContentControllerProxy);
+    } 
     explicit WebUserContentControllerProxy();
     ~WebUserContentControllerProxy();
 
