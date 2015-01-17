@@ -933,6 +933,7 @@ print SHORTHANDS_CPP << "EOF";
 #include "StylePropertyShorthandFunctions.h"
 
 #include "StylePropertyShorthand.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -956,6 +957,33 @@ foreach my $name (@names) {
   print SHORTHANDS_CPP "    return StylePropertyShorthand(CSSProperty" . $nameToId{$name} . ", " . $lowercaseId . "Properties);\n";
   print SHORTHANDS_CPP "}\n\n";
 }
+
+print SHORTHANDS_CPP << "EOF";
+StylePropertyShorthand shorthandForProperty(CSSPropertyID propertyID)
+{
+    static NeverDestroyed<StylePropertyShorthand> emptyShorthand;
+
+    switch (propertyID) {
+EOF
+
+foreach my $name (@names) {
+  # Skip non-Shorthand properties.
+  next if (!exists $propertiesWithStyleBuilderOptions{$name}{"Longhands"});
+
+  print SHORTHANDS_CPP "    case CSSProperty" . $nameToId{$name} . ":\n";
+  print SHORTHANDS_CPP "        return " . lcfirst($nameToId{$name}) . "Shorthand();\n";
+}
+
+# FIXME: CSSPropertyFont is currently an exception. It is hard-coded here
+# because it is not marked as a shorthand in CSSPropertyNames.in.
+print SHORTHANDS_CPP << "EOF";
+    case CSSPropertyFont:
+        return fontShorthand();
+    default:
+        return emptyShorthand;
+    }
+}
+EOF
 
 print SHORTHANDS_CPP << "EOF";
 } // namespace WebCore

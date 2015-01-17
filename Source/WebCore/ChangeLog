@@ -1,3 +1,19 @@
+2015-01-17  Chris Dumez  <cdumez@apple.com>
+
+        Generate shorthandForProperty() implementation from CSSPropertyNames.in
+        https://bugs.webkit.org/show_bug.cgi?id=140556
+
+        Reviewed by Darin Adler.
+
+        Generate shorthandForProperty() implementation from CSSPropertyNames.in.
+        This is just a big switch() statement calling the right
+        StylePropertyShorthand factory function for a given CSSPropertyID.
+
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::shorthandForProperty): Deleted.
+        * css/StylePropertyShorthand.h:
+        * css/makeprop.pl:
+
 2015-01-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Mac] Correct infinite loop in Wheel Handler code in EventHandlerMac

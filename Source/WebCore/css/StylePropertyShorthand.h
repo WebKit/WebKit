@@ -67,6 +67,7 @@ StylePropertyShorthand heightShorthand();
 StylePropertyShorthand widthShorthand();
 
 // Returns empty value if the property is not a shorthand.
+// The implementation is generated in StylePropertyShorthandFunctions.cpp.
 StylePropertyShorthand shorthandForProperty(CSSPropertyID);
 
 // Return the list of shorthands for a given longhand.
