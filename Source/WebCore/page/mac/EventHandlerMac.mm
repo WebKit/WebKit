@@ -834,7 +834,7 @@ static bool latchingIsLockedToAncestorOfThisFrame(const Frame& frame)
     if (&frame == latchedState->frame())
         return false;
 
-    for (Frame* ancestor = frame.tree().parent(); ancestor; ancestor->tree().parent()) {
+    for (Frame* ancestor = frame.tree().parent(); ancestor; ancestor = ancestor->tree().parent()) {
         if (ancestor == latchedState->frame())
             return true;
     }
