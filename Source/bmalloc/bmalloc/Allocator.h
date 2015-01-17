@@ -42,6 +42,7 @@ public:
     ~Allocator();
 
     void* allocate(size_t);
+    void* allocate(size_t alignment, size_t);
     void* reallocate(void*, size_t);
 
     void scavenge();

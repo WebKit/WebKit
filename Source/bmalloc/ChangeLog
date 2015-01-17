@@ -1,3 +1,30 @@
+2015-01-16  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: added some infrastructure for aligned allocation
+        https://bugs.webkit.org/show_bug.cgi?id=140572
+
+        Reviewed by Andreas Kling.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::isPowerOfTwo):
+        (bmalloc::roundUpToMultipleOf):
+        (bmalloc::roundDownToMultipleOf): Refactored some duplicate code to use our
+        isPowerOfTwo helper function.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocate):
+        * bmalloc/Allocator.h: Stubbed out an implementation of aligned allocation.
+        Doesn't do anything yet, but does correctly forward to system malloc
+        when bmalloc is disabled.
+
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::allocateSlowCaseNullCache):
+        * bmalloc/Cache.h:
+        (bmalloc::Cache::allocate):
+        * bmalloc/bmalloc.h:
+        (bmalloc::api::memalign):
+        * bmalloc/mbmalloc.cpp: Stubbed out an API for aligned allocation.
+
 2015-01-13  Geoffrey Garen  <ggaren@apple.com>
 
         Consider alignment when allocating from a SegregatedFreeList

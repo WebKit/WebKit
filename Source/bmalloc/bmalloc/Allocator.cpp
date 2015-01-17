@@ -51,6 +51,18 @@ Allocator::~Allocator()
     scavenge();
 }
 
+void* Allocator::allocate(size_t alignment, size_t size)
+{
+    if (!m_isBmallocEnabled) {
+        void* result = nullptr;
+        posix_memalign(&result, alignment, size);
+        return result;
+    }
+    
+    BASSERT(isPowerOfTwo(alignment));
+    return nullptr;
+}
+
 void* Allocator::reallocate(void* object, size_t newSize)
 {
     if (!m_isBmallocEnabled)

@@ -40,6 +40,7 @@ public:
     void operator delete(void*, size_t);
 
     static void* allocate(size_t);
+    static void* allocate(size_t alignment, size_t);
     static void deallocate(void*);
     static void* reallocate(void*, size_t);
     static void scavenge();
@@ -51,6 +52,7 @@ public:
 
 private:
     static void* allocateSlowCaseNullCache(size_t);
+    static void* allocateSlowCaseNullCache(size_t alignment, size_t);
     static void deallocateSlowCaseNullCache(void*);
     static void* reallocateSlowCaseNullCache(void*, size_t);
 
@@ -64,6 +66,14 @@ inline void* Cache::allocate(size_t size)
     if (!cache)
         return allocateSlowCaseNullCache(size);
     return cache->allocator().allocate(size);
+}
+
+inline void* Cache::allocate(size_t alignment, size_t size)
+{
+    Cache* cache = PerThread<Cache>::getFastCase();
+    if (!cache)
+        return allocateSlowCaseNullCache(alignment, size);
+    return cache->allocator().allocate(alignment, size);
 }
 
 inline void Cache::deallocate(void* object)

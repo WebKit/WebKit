@@ -64,6 +64,11 @@ NO_INLINE void* Cache::allocateSlowCaseNullCache(size_t size)
     return PerThread<Cache>::getSlowCase()->allocator().allocate(size);
 }
 
+NO_INLINE void* Cache::allocateSlowCaseNullCache(size_t alignment, size_t size)
+{
+    return PerThread<Cache>::getSlowCase()->allocator().allocate(alignment, size);
+}
+
 NO_INLINE void Cache::deallocateSlowCaseNullCache(void* object)
 {
     PerThread<Cache>::getSlowCase()->deallocator().deallocate(object);

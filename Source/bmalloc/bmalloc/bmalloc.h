@@ -33,6 +33,11 @@ inline void* malloc(size_t size)
     return Cache::allocate(size);
 }
 
+inline void* memalign(size_t alignment, size_t size)
+{
+    return Cache::allocate(alignment, size);
+}
+
 inline void free(void* object)
 {
     Cache::deallocate(object);

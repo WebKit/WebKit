@@ -30,6 +30,7 @@
 extern "C" {
 
 EXPORT void* mbmalloc(size_t);
+EXPORT void* mbmemalign(size_t, size_t);
 EXPORT void mbfree(void*, size_t);
 EXPORT void* mbrealloc(void*, size_t, size_t);
 EXPORT void mbscavenge();
@@ -37,6 +38,11 @@ EXPORT void mbscavenge();
 void* mbmalloc(size_t size)
 {
     return bmalloc::api::malloc(size);
+}
+
+void* mbmemalign(size_t alignment, size_t size)
+{
+    return bmalloc::api::memalign(alignment, size);
 }
 
 void mbfree(void* p, size_t)

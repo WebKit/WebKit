@@ -62,21 +62,26 @@ template<typename T> inline constexpr bool test(T value, uintptr_t mask)
     return !!(reinterpret_cast<uintptr_t>(value) & mask);
 }
 
+inline constexpr bool isPowerOfTwo(size_t size)
+{
+    return !(size & (size - 1));
+}
+
 template<typename T> inline T roundUpToMultipleOf(size_t divisor, T x)
 {
-    BASSERT(divisor && !(divisor & (divisor - 1)));
+    BASSERT(isPowerOfTwo(divisor));
     return reinterpret_cast<T>((reinterpret_cast<uintptr_t>(x) + (divisor - 1ul)) & ~(divisor - 1ul));
 }
 
 template<size_t divisor, typename T> inline constexpr T roundUpToMultipleOf(T x)
 {
-    static_assert(divisor && !(divisor & (divisor - 1)), "'divisor' must be a power of two.");
+    static_assert(isPowerOfTwo(divisor), "'divisor' must be a power of two.");
     return roundUpToMultipleOf(divisor, x);
 }
 
 template<size_t divisor, typename T> inline constexpr T roundDownToMultipleOf(T x)
 {
-    static_assert(divisor && !(divisor & (divisor - 1)), "'divisor' must be a power of two.");
+    static_assert(isPowerOfTwo(divisor), "'divisor' must be a power of two.");
     return reinterpret_cast<T>(mask(reinterpret_cast<uintptr_t>(x), ~(divisor - 1ul)));
 }
 
@@ -99,11 +104,6 @@ template<typename T> inline constexpr size_t sizeOf()
 template<typename T> inline constexpr size_t bitCount()
 {
     return sizeof(T) * 8;
-}
-
-inline constexpr bool isPowerOfTwo(size_t size)
-{
-    return !(size & (size - 1));
 }
 
 } // namespace bmalloc
