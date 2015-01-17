@@ -83,6 +83,7 @@ class PortFactory(object):
     PORT_CLASSES = (
         'efl.EflPort',
         'gtk.GtkPort',
+        'ios.IOSPort',
         'ios.IOSSimulatorPort',
         'mac.MacPort',
         'mock_drt.MockDRTPort',

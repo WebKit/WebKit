@@ -29,6 +29,7 @@
 from optparse import make_option
 
 class Options(object):
+    architecture = make_option("--architecture", action="store", type="string", dest="architecture", default=None, help="Target architecture")
     blocks = make_option("--blocks", action="store", type="string", dest="blocks", default=None, help="Bug number which the created bug blocks.")
     build = make_option("--build", action="store_true", dest="build", default=False, help="Build and run run-webkit-tests before committing.")
     build_style = make_option("--build-style", action="store", dest="build_style", default=None, help="Whether to build debug, release, or both.")

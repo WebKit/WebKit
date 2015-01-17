@@ -108,7 +108,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         return self.name
 
     def run_command(self, command):
-        self.run_webkit_patch(command + [self._deprecated_port.flag()])
+        self.run_webkit_patch(command + [self._deprecated_port.flag()] + (['--architecture=%s' % self._port.architecture()] if self._port.architecture() else []))
 
     def command_passed(self, message, patch):
         pass
@@ -153,6 +153,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
             classes.append(type(str(name.replace(' ', '')), (AbstractEarlyWarningSystem,), {
                 'name': config['port'] + '-ews',
                 'port_name': config['port'],
+                'architecture': config.get('architecture', None),
                 'watchers': config.get('watchers', []),
                 'run_tests': config.get('runTests', cls.run_tests),
             }))

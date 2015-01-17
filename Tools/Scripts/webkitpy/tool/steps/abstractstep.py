@@ -72,6 +72,7 @@ class AbstractStep(object):
         return [
             # We need this option here because cached_lookup uses it.  :(
             Options.git_commit,
+            Options.architecture,
         ]
 
     def run(self, state):

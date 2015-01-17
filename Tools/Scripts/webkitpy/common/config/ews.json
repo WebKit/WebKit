@@ -14,6 +14,10 @@
     "Win EWS": {
         "port": "win"
     },
+    "iOS EWS": {
+        "port": "ios-device",
+        "architecture": "armv7"
+    },
     "Mac EWS": {
         "port": "mac",
         "watchers": [

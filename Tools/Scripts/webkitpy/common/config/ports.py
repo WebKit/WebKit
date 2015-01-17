@@ -1,5 +1,6 @@
 # Copyright (C) 2009, Google Inc. All rights reserved.
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+# Copyright (C) 2015 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -63,6 +64,7 @@ class DeprecatedPort(object):
     def port(port_name):
         ports = {
             "gtk-wk2": GtkWK2Port,
+            "ios-device": IOSPort,
             "mac": MacPort,
             "mac-wk2": MacWK2Port,
             "win": WinPort,
@@ -116,6 +118,15 @@ class DeprecatedPort(object):
 
     def run_bindings_tests_command(self):
         return self.script_shell_command("run-bindings-tests")
+
+
+class IOSPort(DeprecatedPort):
+    port_flag_name = "ios-device"
+
+    def build_webkit_command(self, build_style=None):
+        command = super(IOSPort, self).build_webkit_command(build_style=build_style)
+        command.append("--sdk=iphoneos")
+        return command
 
 
 class MacPort(DeprecatedPort):

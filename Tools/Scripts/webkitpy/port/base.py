@@ -127,6 +127,9 @@ class Port(object):
         self._root_was_set = hasattr(options, 'root') and options.root
         self._jhbuild_wrapper = []
 
+    def architecture(self):
+        return self._architecture
+
     def additional_drt_flag(self):
         return []
 

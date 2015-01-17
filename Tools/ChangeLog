@@ -1,3 +1,62 @@
+2015-01-17  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Create iOS-EWS client queue
+        https://bugs.webkit.org/show_bug.cgi?id=140476
+
+        Reviewed by Alexey Proskuryakov.
+
+        * EWSTools/start-queue-mac.sh:
+        Adds call to configure-xcode-for-ios-development for iOS EWS.
+        * Scripts/webkitpy/common/config/ews.json:
+        Adds the iOS EWS config entry.
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.port):
+        Adds IOSPort to the port map.
+        (IOSPort):
+        (IOSPort.build_webkit_command):
+        Adds --sdk=iphoneos to the webkit build command.
+        * Scripts/webkitpy/port/base.py:
+        (Port.architecture):
+        Adds an accessor for the architecture member variable.
+        * Scripts/webkitpy/port/factory.py:
+        (PortFactory):
+        Adds IOSPort to the port class list.
+        * Scripts/webkitpy/port/ios.py:
+        Adds the IOSPort to encapsulate iOS-specific things.
+        (IOSPort):
+        (IOSPort.determine_full_port_name):
+        (IOSPort.__init__):
+        (IOSPort._build_driver_flags):
+        (IOSPort.operating_system):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        Adds the archetecture option to the mock options.
+        (DownloadCommandsTest._default_options):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        Appends the archetecture option into calls to webkit-patch.
+        (AbstractEarlyWarningSystem.review_patch):
+        (AbstractEarlyWarningSystem.run_command):
+        (AbstractEarlyWarningSystem.load_ews_classes):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        Adds logic to soothe the unittest now that --architecture is being
+        thrown around everywhere.
+        (EarlyWarningSystemTest._default_expected_logs):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        Adds glue code to ferry the --architecture option around.
+        (AbstractQueue.__init__):
+        (PatchProcessingQueue.begin_work_queue):
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        Adds the archetecture option to all AbstractSteps so that
+        EarlyWarningSystem doesn't start shoving --architecture into
+        unsuspecting commands.
+        (AbstractStep.options):
+        * Scripts/webkitpy/tool/steps/build.py:
+        Translates the --architecture option into an ARCHS= format to pass to
+        build-webkit.
+        (Build.build):
+        * Scripts/webkitpy/tool/steps/options.py:
+        Adds a definition for the --architecture option.
+        (Options):
+
 2015-01-16  Sam Weinig  <sam@webkit.org>
 
         Add a basic configuration object for WKView

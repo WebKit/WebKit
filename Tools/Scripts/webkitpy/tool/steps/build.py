@@ -50,6 +50,10 @@ class Build(AbstractStep):
         env = environment.to_dictionary()
 
         build_webkit_command = self._tool.deprecated_port().build_webkit_command(build_style=build_style)
+
+        if self._options.architecture:
+            build_webkit_command += ['ARCHS=%s' % self._options.architecture]
+
         self._tool.executive.run_and_throw_if_fail(build_webkit_command, self._options.quiet,
             cwd=self._tool.scm().checkout_root, env=env)
 

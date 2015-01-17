@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2012 Google Inc. All rights reserved.
-# Copyright (c) 2014 Apple Inc. All rights reserved.
+# Copyright (c) 2014, 2015 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -39,20 +39,28 @@ RESET_AFTER_ITERATION=$3
 shift 3
 QUEUE_PARAMS="$@"
 
+EWS_HOME=/Volumes/Data/EWS
+WEBKIT_HOME=$EWS_HOME/WebKit
+
+# If building for iOS, make sure we run this script to make it possible to build frameworks.
+if [ "$QUEUE_NAME" == "ios-ews" ]; then
+    (cd $WEBKIT_HOME; sudo ./Tools/Scripts/configure-xcode-for-ios-development)
+fi
+
 # We reboot every night between 1 and 6 to reduce the likelihood of unexpected reboots while people are looking into things.
 TIME_TO_REBOOT=$(( $(date +%s) + 3600 * 12))
 
 while [ $TIME_TO_REBOOT -gt $(date +%s) ] || [ $(date +%H) -lt 1 ] || [ $(date +%H) -ge 6 ]; do
-    # Delete log files older than 14 days, move aside the main mac-ews.log file to prevent it from growing extra large.
-    cd /Volumes/Data/EWS/$QUEUE_NAME-logs
+    # Delete log files older than 14 days, move aside the main $QUEUE_NAME-ews.log file to prevent it from growing extra large.
+    cd $EWS_HOME/$QUEUE_NAME-logs
     find . -mtime +14 -delete
     if [ -s $QUEUE_NAME.log ]; then
         mv -f $QUEUE_NAME.log ${QUEUE_NAME}_$(date +%Y-%m-%d_%H-%m).log
     fi
-    cd /Volumes/Data/EWS/Webkit
+    cd $WEBKIT_HOME
     
     # Delete WebKitBuild to force a clean build
-    rm -rf /Volumes/Data/EWS/WebKit/WebKitBuild
+    rm -rf $WEBKIT_HOME/WebKitBuild
     
     # This somewhat quirky sequence of steps seems to clear up all the broken
     # git situations we've gotten ourself into in the past.

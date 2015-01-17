@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@ import subprocess
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.port.apple import ApplePort
 from webkitpy.port import driver, image_diff
 from webkitpy.port.base import Port
 from webkitpy.port.leakdetector import LeakDetector
@@ -39,6 +40,42 @@ from webkitpy.xcode import simulator
 
 
 _log = logging.getLogger(__name__)
+
+
+class IOSPort(ApplePort):
+    port_name = "ios-device"
+
+    ARCHITECTURES = ['armv7', 'armv7s', 'arm64']
+    VERSION_FALLBACK_ORDER = ['ios-device-8']
+
+    @classmethod
+    def determine_full_port_name(cls, host, options, port_name):
+        if port_name == cls.port_name:
+            sdk_command_process = subprocess.Popen('xcrun --sdk iphoneos --show-sdk-version', stdout=subprocess.PIPE, stderr=None, shell=True)
+            sdk_command_stdout = sdk_command_process.communicate()[0].strip()
+
+            assert sdk_command_stdout, "Xcode is not installed, and hence we cannot construct an iOS port object!"
+
+            port_name = port_name + '-' + re.match('^([0-9]+).*', sdk_command_stdout).group(1)
+
+        return port_name
+
+    def __init__(self, *args, **kwargs):
+        super(IOSPort, self).__init__(*args, **kwargs)
+
+        self._architecture = self.get_option('architecture')
+
+        if not self._architecture:
+            self._architecture = 'armv7'
+
+        self._testing_device = None
+
+    # Despite their names, these flags do not actually get passed all the way down to webkit-build.
+    def _build_driver_flags(self):
+        return ['--sdk', 'iphoneos'] + (['ARCHS=%s' % self._architecture] if self._architecture else [])
+
+    def operating_system(self):
+        return 'ios'
 
 
 class IOSSimulatorPort(Port):

@@ -29,6 +29,7 @@
 
 import codecs
 import logging
+import optparse
 import os
 import re
 import sys
@@ -74,6 +75,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
         self.help_text = "Run the %s" % self.name
         Command.__init__(self, options=options_list)
         self._iteration_count = 0
+        self.architecture = None
 
     def _cc_watchers(self, bug_id):
         try:
@@ -275,7 +277,10 @@ class PatchProcessingQueue(AbstractPatchQueue):
         self._deprecated_port = DeprecatedPort.port(self.port_name)
         # FIXME: This violates abstraction
         self._tool._deprecated_port = self._deprecated_port
-        self._port = self._tool.port_factory.get(self._new_port_name_from_old(self.port_name, self._tool.platform))
+        port_options = optparse.Values()
+        if self.architecture:
+            setattr(port_options, 'architecture', self.architecture)
+        self._port = self._tool.port_factory.get(self._new_port_name_from_old(self.port_name, self._tool.platform), port_options)
 
     def _upload_results_archive_for_patch(self, patch, results_archive_zip):
         if not self._port:
