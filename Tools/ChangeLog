@@ -1,3 +1,16 @@
+2015-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WeakPtr functions crash when created with default constructor
+        https://bugs.webkit.org/show_bug.cgi?id=140479
+
+        Reviewed by Andreas Kling.
+
+        Add WeakPtr API tests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp: Added.
+        * TestWebKitAPI/Tests/WTF/Ref.cpp: Update to not use copy constructor.
+
 2015-01-16  Chris Dumez  <cdumez@apple.com>
 
         Regression(r178586): Caused webkitpy.w3c.test_converter_unittest.W3CTestConverterTest.test_convert_prefixed_properties to fail

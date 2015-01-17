@@ -151,7 +151,7 @@ TEST(WTF_Ref, ReturnValue)
 
     {
         Ref<DerivedRefLogger> derivedReference(a);
-        Ref<RefLogger> baseReference(passWithRef(Ref<RefLogger>(derivedReference)));
+        Ref<RefLogger> baseReference(passWithRef(derivedReference.copyRef()));
         ASSERT_EQ(&a, derivedReference.ptr());
         ASSERT_EQ(&a, baseReference.ptr());
     }

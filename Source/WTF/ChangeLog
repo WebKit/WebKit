@@ -1,3 +1,47 @@
+2015-01-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WeakPtr functions crash when created with default constructor
+        https://bugs.webkit.org/show_bug.cgi?id=140479
+
+        Reviewed by Andreas Kling.
+
+        This patch rearranges how WeakPtr works, and has the following ideas behind it:
+
+        1. WeakPtr should use Ref internally. This solves the crash by always having a
+        valid WeakReference.
+        2. Clients should not be able to construct WeakReferences directly. Instead,
+        only WeakPtrFactory (and WeakPtr's default constructor) should be able to
+        construct them. They are considered an implementation detail of WeakPtr.
+        3. Except for the default constructor, clients should not be able to construct
+        WeakPtrs directly. Instead, the WeakPtrFactory must construct them. This
+        guarantees that the WeakPtrs all reference the same WeakReference.
+        4. Clients can construct a WeakPtr using its default constructor, and then
+        use the assignment operator to make it non-null. (Or they could use
+        WeakPtrFactory to make it non-null at creation-time.)
+        5. No one was using WeakReference::bindTo(), and it doesn't seem useful, so I
+        removed it.
+
+        Tests: WTF_WeakPtr API tests
+
+        * wtf/Ref.h:
+        (WTF::Ref::Ref): Added extra ASSERT()s, and explicitly deleted copy
+        constructors with a comment.
+        (WTF::Ref::operator=): Added extra ASSERT()s, and explicitly deleted copy
+        assignment operators with a comment.
+        * wtf/WeakPtr.h:
+        (WTF::WeakReference::clear): Used nullptr.
+        (WTF::WeakReference::create): Moved to private:
+        (WTF::WeakPtr::WeakPtr): For the default constructor, initialized the Ref with
+        a new WeakReference. For the other constructor, moved it to private:. Also added
+        copy constructors and copy assignment operators (since Ref doesn't have them but
+        RefPtr does). These constructors/operators are relied upon in various places
+        throughout WebCore.
+        (WTF::WeakPtr::operator bool): Made non-explicit.
+        (WTF::WeakReference::createUnbound): Deleted.
+        (WTF::WeakReference::bindTo): Deleted.
+        (WTF::WeakReference::WeakReference): Deleted.
+        (WTF::WeakPtrFactory::WeakPtrFactory): Deleted.
+
 2015-01-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         std::all_of requires complete C++ iterators in GCC 4.8

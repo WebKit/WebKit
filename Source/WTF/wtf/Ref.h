@@ -52,15 +52,21 @@ public:
         m_ptr->ref();
     }
 
+    // Use copyRef() instead.
+    Ref(const Ref& other) = delete;
+    template<typename U> Ref(const Ref<U>& other) = delete;
+
     Ref(Ref&& other)
         : m_ptr(&other.leakRef())
     {
+        ASSERT(m_ptr);
     }
 
     template<typename U>
     Ref(Ref<U>&& other)
         : m_ptr(&other.leakRef())
     {
+        ASSERT(m_ptr);
     }
 
     Ref& operator=(T& object)
@@ -69,14 +75,20 @@ public:
         object.ref();
         m_ptr->deref();
         m_ptr = &object;
+        ASSERT(m_ptr);
         return *this;
     }
+
+    // Use copyRef() and the move assignment operators instead.
+    Ref& operator=(const Ref& reference) = delete;
+    template<typename U> Ref& operator=(const Ref<U>& reference) = delete;
 
     Ref& operator=(Ref&& reference)
     {
         ASSERT(m_ptr);
         m_ptr->deref();
         m_ptr = &reference.leakRef();
+        ASSERT(m_ptr);
         return *this;
     }
 
@@ -85,6 +97,7 @@ public:
         ASSERT(m_ptr);
         m_ptr->deref();
         m_ptr = &reference.leakRef();
+        ASSERT(m_ptr);
         return *this;
     }
 
