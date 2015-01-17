@@ -2051,12 +2051,8 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext,
         return;
     }
     case INSET:
-        if (side == BSTop || side == BSLeft)
-            color = color.dark();
-        break;
     case OUTSET:
-        if (side == BSBottom || side == BSRight)
-            color = color.dark();
+        calculateBorderStyleColor(borderStyle, side, color);
         break;
     default:
         break;

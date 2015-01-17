@@ -2458,6 +2458,7 @@ RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const
 
 void RenderObject::calculateBorderStyleColor(const EBorderStyle& style, const BoxSide& side, Color& color)
 {
+    ASSERT(style == INSET || style == OUTSET);
     // This values were derived empirically.
     const RGBA32 baseDarkColor = 0xFF202020;
     const RGBA32 baseLightColor = 0xFFEBEBEB;
