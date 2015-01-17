@@ -51,12 +51,14 @@ class IOSPort(ApplePort):
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         if port_name == cls.port_name:
-            sdk_command_process = subprocess.Popen('xcrun --sdk iphoneos --show-sdk-version', stdout=subprocess.PIPE, stderr=None, shell=True)
-            sdk_command_stdout = sdk_command_process.communicate()[0].strip()
+            sdk_version = '8.0'
+            if host.platform.is_mac():
+                sdk_command_process = subprocess.Popen('xcrun --sdk iphoneos --show-sdk-version', stdout=subprocess.PIPE, stderr=None, shell=True)
+                sdk_command_output = sdk_command_process.communicate()[0].strip()
+                if sdk_command_output:
+                    sdk_version = sdk_command_output
 
-            assert sdk_command_stdout, "Xcode is not installed, and hence we cannot construct an iOS port object!"
-
-            port_name = port_name + '-' + re.match('^([0-9]+).*', sdk_command_stdout).group(1)
+            port_name = port_name + '-' + re.match('^([0-9]+).*', sdk_version).group(1)
 
         return port_name
 
