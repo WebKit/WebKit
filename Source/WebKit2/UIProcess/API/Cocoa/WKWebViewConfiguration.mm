@@ -91,7 +91,7 @@ private:
     LazyInitialized<RetainPtr<NSString>> _applicationNameForUserAgent;
 
 #if PLATFORM(IOS)
-    LazyInitialized<WKWebViewContentProviderRegistry> _contentProviderRegistry;
+    LazyInitialized<RetainPtr<WKWebViewContentProviderRegistry>> _contentProviderRegistry;
     BOOL _allowsAlternateFullscreen;
     BOOL _featureCounterEnabled;
 #endif
