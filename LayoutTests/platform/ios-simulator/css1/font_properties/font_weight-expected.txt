@@ -9,25 +9,15 @@ layer at (0,0) size 800x1083
       RenderBlock {PRE} at (0,36) size 784x154
         RenderText {#text} at (0,0) size 235x154
           text run at (0,0) width 196: ".one {font-weight: bold;}"
-          text run at (195,0) width 1: " "
           text run at (0,14) width 211: ".two {font-weight: bolder;}"
-          text run at (210,14) width 1: " "
           text run at (0,28) width 235: ".three {font-weight: lighter;}"
-          text run at (234,28) width 1: " "
           text run at (0,42) width 196: ".four {font-weight: 100;}"
-          text run at (195,42) width 1: " "
           text run at (0,56) width 196: ".five {font-weight: 300;}"
-          text run at (195,56) width 1: " "
           text run at (0,70) width 188: ".six {font-weight: 500;}"
-          text run at (187,70) width 1: " "
           text run at (0,84) width 203: ".seven {font-weight: 700;}"
-          text run at (202,84) width 1: " "
           text run at (0,98) width 203: ".eight {font-weight: 900;}"
-          text run at (202,98) width 1: " "
           text run at (0,112) width 219: ".nine {font-weight: normal;}"
-          text run at (218,112) width 1: " "
           text run at (0,126) width 196: "B {font-weight: lighter;}"
-          text run at (195,126) width 1: " "
           text run at (0,140) width 0: " "
       RenderBlock {HR} at (0,203) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,221) size 784x20

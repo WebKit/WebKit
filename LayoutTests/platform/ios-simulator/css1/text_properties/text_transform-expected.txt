@@ -9,13 +9,9 @@ layer at (0,0) size 800x775
       RenderBlock {PRE} at (0,36) size 784x70
         RenderText {#text} at (0,0) size 266x70
           text run at (0,0) width 219: ".ttn {text-transform: none;}"
-          text run at (218,0) width 1: " "
           text run at (0,14) width 266: ".cap {text-transform: capitalize;}"
-          text run at (265,14) width 1: " "
           text run at (0,28) width 258: ".upp {text-transform: uppercase;}"
-          text run at (257,28) width 1: " "
           text run at (0,42) width 258: ".low {text-transform: lowercase;}"
-          text run at (257,42) width 1: " "
           text run at (0,56) width 0: " "
       RenderBlock {HR} at (0,119) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,137) size 784x40

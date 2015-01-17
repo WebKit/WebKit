@@ -10,9 +10,7 @@ layer at (0,0) size 800x156
         RenderBlock {P} at (3,3) size 225x45
           RenderText {#text} at (0,-2) size 53x48
             text run at (0,-2) width 42: "x  x   x"
-            text run at (41,-2) width 1: " "
             text run at (0,13) width 53: " x    x   x"
-            text run at (52,13) width 1: " "
             text run at (0,28) width 42: "    x   x"
         RenderBlock {P} at (3,48) size 225x15
           RenderText {#text} at (0,-2) size 87x18

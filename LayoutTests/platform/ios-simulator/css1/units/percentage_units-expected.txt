@@ -9,13 +9,9 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,36) size 784x70
         RenderText {#text} at (0,0) size 492x70
           text run at (0,0) width 219: ".zero { background: yellow }"
-          text run at (218,0) width 1: " "
           text run at (0,14) width 492: ".one { margin-left: 25%; margin-right: 25%; background: white }"
-          text run at (491,14) width 1: " "
           text run at (0,28) width 484: ".two { margin-left: 50%; margin-right: 0%; background: white }"
-          text run at (483,28) width 1: " "
           text run at (0,42) width 203: ".three {margin-left: 25%;}"
-          text run at (202,42) width 1: " "
           text run at (0,56) width 0: " "
       RenderBlock {HR} at (0,119) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,137) size 784x136 [bgcolor=#FFFF00]

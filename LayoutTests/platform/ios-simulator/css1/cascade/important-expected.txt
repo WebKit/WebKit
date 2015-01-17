@@ -9,11 +9,8 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,36) size 784x56
         RenderText {#text} at (0,0) size 227x56
           text run at (0,0) width 227: "P {color: green ! important;}"
-          text run at (226,0) width 1: " "
           text run at (0,14) width 118: "P {color: red;}"
-          text run at (117,14) width 1: " "
           text run at (0,28) width 172: "P#id1 {color: purple;}"
-          text run at (171,28) width 1: " "
           text run at (0,42) width 0: " "
       RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x40 [color=#008000]

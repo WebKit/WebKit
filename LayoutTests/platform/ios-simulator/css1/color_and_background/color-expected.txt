@@ -9,7 +9,6 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,36) size 784x28
         RenderText {#text} at (0,0) size 157x28
           text run at (0,0) width 157: ".one {color: green;}"
-          text run at (156,0) width 1: " "
           text run at (0,14) width 0: " "
       RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,95) size 784x20 [color=#008000]

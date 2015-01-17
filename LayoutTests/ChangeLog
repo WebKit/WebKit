@@ -1,3 +1,12 @@
+2015-01-16  Daniel Bates  <dabates@apple.com>
+
+        Update some expected results for iOS
+
+        * platform/ios-simulator-wk2/css2.1/t100801-c548-ln-ht-00-c-a-expected.txt:
+        * platform/ios-simulator-wk2/css2.1/t1606-c562-white-sp-00-b-ag-expected.txt:
+        * platform/ios-simulator/TestExpectations:
+        [...]
+
 2015-01-16  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(178591): js/slow-stress/call-spread.html & js/slow-stress/new-spread.html

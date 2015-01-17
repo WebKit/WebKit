@@ -16,13 +16,9 @@ layer at (0,0) size 800x368
       RenderBlock {PRE} at (15,133) size 769x57 [color=#000066]
         RenderText {#text} at (0,0) size 211x56
           text run at (0,0) width 79: "<colgroup>"
-          text run at (78,0) width 1: " "
           text run at (0,14) width 211: " <col width=\"100\" span=\"2\">"
-          text run at (210,14) width 1: " "
           text run at (0,28) width 141: " <col width=\"200\">"
-          text run at (140,28) width 1: " "
           text run at (0,42) width 86: "</colgroup>"
-          text run at (85,42) width 1: " "
       RenderBlock {P} at (0,205) size 784x21
         RenderText {#text} at (0,0) size 564x19
           text run at (0,0) width 564: "So the first two colums should both be 100px wide, and the third should be 200px wide."

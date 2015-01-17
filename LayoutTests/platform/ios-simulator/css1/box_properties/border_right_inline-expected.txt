@@ -9,19 +9,12 @@ layer at (0,0) size 800x1149
       RenderBlock {PRE} at (0,36) size 784x98
         RenderText {#text} at (0,0) size 344x98
           text run at (0,0) width 180: "P {margin-right: 20px;}"
-          text run at (179,0) width 1: " "
           text run at (0,14) width 313: ".one {border-right: purple double 10px;}"
-          text run at (312,14) width 1: " "
           text run at (0,28) width 305: ".two {border-right: purple thin solid;}"
-          text run at (304,28) width 1: " "
           text run at (0,42) width 336: ".threea {border-right: black medium solid;}"
-          text run at (335,42) width 1: " "
           text run at (0,56) width 344: ".threeb {border-right: purple medium solid;}"
-          text run at (343,56) width 1: " "
           text run at (0,70) width 328: ".threec {border-right: blue medium solid;}"
-          text run at (327,70) width 1: " "
           text run at (0,84) width 274: "TD {border-right: green 2px solid;}"
-          text run at (273,84) width 1: " "
       RenderBlock {HR} at (0,147) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,165) size 764x40
         RenderText {#text} at (0,0) size 732x39

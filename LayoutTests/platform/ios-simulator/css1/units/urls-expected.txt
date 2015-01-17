@@ -9,11 +9,8 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,36) size 784x56
         RenderText {#text} at (0,0) size 632x56
           text run at (0,0) width 632: "<LINK rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"../resources/bg.gif\">"
-          text run at (631,0) width 1: " "
           text run at (0,14) width 289: "@import url(../resources/sec642.css);"
-          text run at (288,14) width 1: " "
           text run at (0,28) width 344: "BODY {background: url(../resources/bg.gif);}"
-          text run at (343,28) width 1: " "
           text run at (0,42) width 0: " "
       RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x20

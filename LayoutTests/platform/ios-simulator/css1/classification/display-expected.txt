@@ -9,15 +9,10 @@ layer at (0,0) size 800x863
       RenderBlock {PRE} at (0,36) size 784x70
         RenderText {#text} at (0,0) size 554x70
           text run at (0,0) width 172: ".one {display: block;}"
-          text run at (171,0) width 1: " "
           text run at (0,14) width 180: ".two {display: inline;}"
-          text run at (179,14) width 1: " "
           text run at (0,28) width 554: ".three {display: list-item; list-style-type: square; margin-left: 3em;}"
-          text run at (553,28) width 1: " "
           text run at (0,42) width 266: ".four {display: none; color: red;}"
-          text run at (265,42) width 1: " "
           text run at (0,56) width 149: "I {display: block;}"
-          text run at (148,56) width 1: " "
       RenderBlock {HR} at (0,119) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,137) size 784x20
         RenderText {#text} at (0,0) size 300x19

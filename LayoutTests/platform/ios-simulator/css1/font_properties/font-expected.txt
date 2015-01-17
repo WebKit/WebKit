@@ -9,29 +9,17 @@ layer at (0,0) size 800x4172
       RenderBlock {PRE} at (0,27) size 784x156
         RenderText {#text} at (0,0) size 411x156
           text run at (0,0) width 166: "BODY {font-size: 12px;}"
-          text run at (165,0) width 1: " "
           text run at (0,13) width 332: ".one {font: italic small-caps 13pt Helvetica;}"
-          text run at (331,13) width 1: " "
           text run at (0,26) width 209: ".two {font: 150%/150% serif;}"
-          text run at (208,26) width 1: " "
           text run at (0,39) width 260: ".three {font: 150%/150% sans-serif;}"
-          text run at (259,39) width 1: " "
           text run at (0,52) width 238: ".four {font: small/200% cursive;}"
-          text run at (237,52) width 1: " "
           text run at (0,65) width 411: ".five {font: italic small-caps 900 150%/150% sans-serif;}"
-          text run at (410,65) width 1: " "
           text run at (0,78) width 404: ".six {font: italic small-caps 100 150%/300% sans-serif;}"
-          text run at (403,78) width 1: " "
           text run at (0,91) width 404: ".seven {font: italic small-caps 900 150%/2em monospace;}"
-          text run at (403,91) width 1: " "
           text run at (0,104) width 411: ".eight {font: italic small-caps 500 150%/1in sans-serif;}"
-          text run at (410,104) width 1: " "
           text run at (0,117) width 389: ".nine {font: oblique normal 700 18px/200% sans-serif;}"
-          text run at (388,117) width 1: " "
           text run at (0,130) width 310: ".ten {font: normal 400 80%/2.5 sans-serif;}"
-          text run at (309,130) width 1: " "
           text run at (0,143) width 274: "SPAN.color {background-color: silver;}"
-          text run at (273,143) width 1: " "
       RenderBlock {HR} at (0,195) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,209) size 784x15
         RenderText {#text} at (0,0) size 719x14

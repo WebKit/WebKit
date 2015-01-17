@@ -6,11 +6,8 @@ layer at (0,0) size 800x145
       RenderBlock {PRE} at (0,0) size 784x42
         RenderText {#text} at (0,0) size 164x42
           text run at (0,0) width 118: "table width=50%"
-          text run at (117,0) width 1: " "
           text run at (0,14) width 94: "  td nowrap "
-          text run at (93,14) width 1: " "
           text run at (0,28) width 164: "    input width=100% "
-          text run at (163,28) width 1: " "
       RenderTable {TABLE} at (0,55) size 392x49 [bgcolor=#C0C0C0] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 390x47
           RenderTableRow {TR} at (0,2) size 390x43

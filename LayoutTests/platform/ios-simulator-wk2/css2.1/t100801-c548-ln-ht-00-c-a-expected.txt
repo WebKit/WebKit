@@ -12,11 +12,7 @@ layer at (0,0) size 800x280
       RenderBlock {PRE} at (12,126) size 126x126 [color=#00FFFF] [bgcolor=#008080] [border: (3px solid #000080)]
         RenderText {#text} at (3,1) size 53x124
           text run at (3,1) width 30: "     "
-          text run at (33,1) width 0: " "
           text run at (3,25) width 53: " X X "
-          text run at (55,25) width 1: " "
           text run at (3,49) width 30: "     "
-          text run at (33,49) width 0: " "
           text run at (3,73) width 53: " X X "
-          text run at (55,73) width 1: " "
           text run at (3,97) width 30: "     "

@@ -9,11 +9,8 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,36) size 784x56
         RenderText {#text} at (0,0) size 289x56
           text run at (0,0) width 219: "P {background-color: green;}"
-          text run at (218,0) width 1: " "
           text run at (0,14) width 235: ".one {background-color: lime;}"
-          text run at (234,14) width 1: " "
           text run at (0,28) width 289: ".two {background-color: transparent;}"
-          text run at (288,28) width 1: " "
           text run at (0,42) width 0: " "
       RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x20 [bgcolor=#008000]

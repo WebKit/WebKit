@@ -9,23 +9,14 @@ layer at (0,0) size 800x1629
       RenderBlock {PRE} at (0,36) size 784x140
         RenderText {#text} at (0,0) size 297x140
           text run at (0,0) width 227: ".one {list-style-type: disc;}"
-          text run at (226,0) width 1: " "
           text run at (0,14) width 242: ".two {list-style-type: circle;}"
-          text run at (241,14) width 1: " "
           text run at (0,28) width 258: ".three {list-style-type: square;}"
-          text run at (257,28) width 1: " "
           text run at (0,42) width 289: ".four {list-style-type: lower-roman;}"
-          text run at (288,42) width 1: " "
           text run at (0,56) width 289: ".five {list-style-type: upper-roman;}"
-          text run at (288,56) width 1: " "
           text run at (0,70) width 281: ".six {list-style-type: lower-alpha;}"
-          text run at (280,70) width 1: " "
           text run at (0,84) width 297: ".seven {list-style-type: upper-alpha;}"
-          text run at (296,84) width 1: " "
           text run at (0,98) width 266: ".eight {list-style-type: decimal;}"
-          text run at (265,98) width 1: " "
           text run at (0,112) width 235: ".nine {list-style-type: none;}"
-          text run at (234,112) width 1: " "
           text run at (0,126) width 0: " "
       RenderBlock {HR} at (0,189) size 784x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,207) size 784x60

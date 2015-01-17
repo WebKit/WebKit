@@ -95,7 +95,6 @@ layer at (8,8) size 784x1536
             RenderBlock {PRE} at (21,609) size 431x16 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 40x14
                 text run at (1,1) width 40: "  ..."
-                text run at (40,1) width 1: " "
             RenderBlock {P} at (21,641) size 431x42 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 419x39
                 text run at (1,1) width 419: "The dotted borders and lines and the text in the left cell should be"

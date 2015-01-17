@@ -9,25 +9,15 @@ layer at (0,0) size 800x947
       RenderBlock {PRE} at (0,36) size 784x154
         RenderText {#text} at (0,0) size 227x154
           text run at (0,0) width 211: ".one {word-spacing: 0.3in;}"
-          text run at (210,0) width 1: " "
           text run at (0,14) width 211: ".two {word-spacing: 0.5cm;}"
-          text run at (210,14) width 1: " "
           text run at (0,28) width 211: ".three {word-spacing: 5mm;}"
-          text run at (210,28) width 1: " "
           text run at (0,42) width 203: ".four {word-spacing: 3pt;}"
-          text run at (202,42) width 1: " "
           text run at (0,56) width 227: ".five {word-spacing: 0.25pc;}"
-          text run at (226,56) width 1: " "
           text run at (0,70) width 196: ".six {word-spacing: 1em;}"
-          text run at (195,70) width 1: " "
           text run at (0,84) width 211: ".seven {word-spacing: 1ex;}"
-          text run at (210,84) width 1: " "
           text run at (0,98) width 211: ".eight {word-spacing: 5px;}"
-          text run at (210,98) width 1: " "
           text run at (0,112) width 227: ".nine {word-spacing: normal;}"
-          text run at (226,112) width 1: " "
           text run at (0,126) width 219: ".ten {word-spacing: -0.2em;}"
-          text run at (218,126) width 1: " "
           text run at (0,140) width 0: " "
       RenderBlock {HR} at (0,203) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,221) size 784x20

@@ -9,9 +9,7 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,36) size 750x28
         RenderText {#text} at (0,0) size 539x28
           text run at (0,0) width 235: "HTML {background-color: aqua;}"
-          text run at (234,0) width 1: " "
           text run at (0,14) width 539: "BODY {background-color: green; background-image: none; margin: 25px;}"
-          text run at (538,14) width 1: " "
       RenderBlock {HR} at (0,77) size 750x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,95) size 750x60
         RenderText {#text} at (0,0) size 746x59

@@ -9,9 +9,7 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,36) size 784x42
         RenderText {#text} at (0,0) size 430x42
           text run at (0,0) width 430: ".one {list-style-image: url(../resources/oransqr.gif);}"
-          text run at (429,0) width 1: " "
           text run at (0,14) width 235: ".two {list-style-image: none;}"
-          text run at (234,14) width 1: " "
           text run at (0,28) width 0: " "
       RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
       RenderBlock {UL} at (0,109) size 784x60

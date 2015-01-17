@@ -9,25 +9,15 @@ layer at (0,0) size 800x1307
       RenderBlock {PRE} at (0,36) size 784x154
         RenderText {#text} at (0,0) size 375x154
           text run at (0,0) width 344: ".one {text-indent: 0.5in; background: aqua;}"
-          text run at (343,0) width 1: " "
           text run at (0,14) width 328: ".two {text-indent: 2cm; background: aqua;}"
-          text run at (327,14) width 1: " "
           text run at (0,28) width 352: ".three {text-indent: 20mm; background: aqua;}"
-          text run at (351,28) width 1: " "
           text run at (0,42) width 344: ".four {text-indent: 24pt; background: aqua;}"
-          text run at (343,42) width 1: " "
           text run at (0,56) width 336: ".five {text-indent: 2pc; background: aqua;}"
-          text run at (335,56) width 1: " "
           text run at (0,70) width 328: ".six {text-indent: 2em; background: aqua;}"
-          text run at (327,70) width 1: " "
           text run at (0,84) width 344: ".seven {text-indent: 2ex; background: aqua;}"
-          text run at (343,84) width 1: " "
           text run at (0,98) width 344: ".eight {text-indent: 50%; background: aqua;}"
-          text run at (343,98) width 1: " "
           text run at (0,112) width 344: ".nine {text-indent: 25px; background: aqua;}"
-          text run at (343,112) width 1: " "
           text run at (0,126) width 375: "blockquote {text-indent: 50%; background: aqua;}"
-          text run at (374,126) width 1: " "
           text run at (0,140) width 0: " "
       RenderBlock {HR} at (0,203) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,221) size 784x20 [bgcolor=#00FFFF]

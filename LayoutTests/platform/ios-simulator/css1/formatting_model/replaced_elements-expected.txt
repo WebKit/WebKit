@@ -9,21 +9,13 @@ layer at (0,0) size 800x2391
       RenderBlock {PRE} at (0,36) size 784x112
         RenderText {#text} at (0,0) size 492x112
           text run at (0,0) width 203: "IMG.one {display: inline;}"
-          text run at (202,0) width 1: " "
           text run at (0,14) width 196: "IMG.two {display: block;}"
-          text run at (195,14) width 1: " "
           text run at (0,28) width 203: "IMG.three {display: block;"
-          text run at (202,28) width 1: " "
           text run at (0,42) width 492: "           margin-right: auto; margin-left: auto; width: auto;}"
-          text run at (491,42) width 1: " "
           text run at (0,56) width 196: "IMG.four {display: block;"
-          text run at (195,56) width 1: " "
           text run at (0,70) width 476: "          margin-right: auto; margin-left: auto; width: 50%;}"
-          text run at (475,70) width 1: " "
           text run at (0,84) width 196: "IMG.five {display: block;"
-          text run at (195,84) width 1: " "
           text run at (0,98) width 453: "          margin-right: 0; margin-left: auto; width: 50%;}"
-          text run at (452,98) width 1: " "
       RenderBlock {HR} at (0,161) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,179) size 784x20
         RenderImage {IMG} at (0,0) size 15x15

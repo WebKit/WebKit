@@ -9,11 +9,8 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,36) size 784x56
         RenderText {#text} at (0,0) size 258x56
           text run at (0,0) width 258: "P:first-line {font-weight: bold;}"
-          text run at (257,0) width 1: " "
           text run at (0,14) width 250: "P.two:first-line {color: green;}"
-          text run at (249,14) width 1: " "
           text run at (0,28) width 250: "P:first-line.three {color: red;}"
-          text run at (249,28) width 1: " "
           text run at (0,42) width 0: " "
       RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x40

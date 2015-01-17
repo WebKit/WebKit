@@ -9,11 +9,8 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,36) size 784x56
         RenderText {#text} at (0,0) size 242x56
           text run at (0,0) width 203: ".one {font-style: italic;}"
-          text run at (202,0) width 1: " "
           text run at (0,14) width 211: ".two {font-style: oblique;}"
-          text run at (210,14) width 1: " "
           text run at (0,28) width 242: ".three, I {font-style: normal;}"
-          text run at (241,28) width 1: " "
           text run at (0,42) width 0: " "
       RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x20

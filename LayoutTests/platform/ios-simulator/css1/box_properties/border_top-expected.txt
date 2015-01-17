@@ -9,13 +9,9 @@ layer at (0,0) size 800x1015
       RenderBlock {PRE} at (0,36) size 784x56
         RenderText {#text} at (0,0) size 313x56
           text run at (0,0) width 297: ".one {border-top: purple double 10px;}"
-          text run at (296,0) width 1: " "
           text run at (0,14) width 289: ".two {border-top: purple thin solid;}"
-          text run at (288,14) width 1: " "
           text run at (0,28) width 313: ".three {border-top: black medium solid;}"
-          text run at (312,28) width 1: " "
           text run at (0,42) width 258: "TD {border-top: green 2px solid;}"
-          text run at (257,42) width 1: " "
       RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,123) size 784x40
         RenderText {#text} at (0,0) size 772x39
