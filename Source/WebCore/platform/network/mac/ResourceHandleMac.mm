@@ -105,7 +105,6 @@ static void applyBasicAuthorizationHeader(ResourceRequest& request, const Creden
     request.setHTTPHeaderField(HTTPHeaderName::Authorization, authenticationHeader);
 }
 
-#if !PLATFORM(IOS)
 static NSOperationQueue *operationQueueForAsyncClients()
 {
     static NSOperationQueue *queue;
@@ -116,7 +115,6 @@ static NSOperationQueue *operationQueueForAsyncClients()
     }
     return queue;
 }
-#endif
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
@@ -259,11 +257,6 @@ bool ResourceHandle::start()
         (NSDictionary *)client()->connectionProperties(this).get());
 #endif
 
-#if PLATFORM(IOS)
-    NSURLConnection *urlConnection = connection();
-    [urlConnection scheduleInRunLoop:WebThreadNSRunLoop() forMode:NSDefaultRunLoopMode];
-    [urlConnection start];
-#else
     bool scheduled = false;
     if (SchedulePairHashSet* scheduledPairs = d->m_context->scheduledRunLoopPairs()) {
         SchedulePairHashSet::iterator end = scheduledPairs->end();
@@ -280,6 +273,12 @@ bool ResourceHandle::start()
         [connection() setDelegateQueue:operationQueueForAsyncClients()];
         scheduled = true;
     }
+#if PLATFORM(IOS)
+    else {
+        [connection() scheduleInRunLoop:WebThreadNSRunLoop() forMode:NSDefaultRunLoopMode];
+        scheduled = true;
+    }
+#endif
 
     // Start the connection if we did schedule with at least one runloop.
     // We can't start the connection until we have one runloop scheduled.
@@ -287,7 +286,6 @@ bool ResourceHandle::start()
         [connection() start];
     else
         d->m_startWhenScheduled = true;
-#endif
 
     LOG(Network, "Handle %p starting connection %p for %@", this, connection(), firstRequest().nsURLRequest(DoNotUpdateHTTPBody));
     

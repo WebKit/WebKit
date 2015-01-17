@@ -1,3 +1,31 @@
+2015-01-16  Pratik Solanki  <psolanki@apple.com>
+
+        Web pages fail to load using public iOS WebKit; ASSERT(!isMainThread()) in
+        -[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]
+        https://bugs.webkit.org/show_bug.cgi?id=140470
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes an issue where a web page would fail to load in iOS WebKit2 built with the public iOS SDK
+        because NSURLConnection callbacks were always being scheduled on the main thread.
+
+        Currently we always schedule NSURLConnection callbacks to occur on the WebThread or the main
+        thread depending on whether the WebThread was started. In iOS WebKit2, the callbacks were
+        always being scheduled on the main thread regardless of whether we were using the NetworkProcess
+        (since the WebThread is only started when using WebKit1). This led to an assertion failure.
+        Instead we want to schedule callbacks to an NSOperationsQueue queue when using WebKit2 with the
+        NetworkProcess (i.e. ResourceHandleClient::usesAsyncCallbacks() is true), on the main thread when
+        using WebKit2 without the NetworkProcess and on the WebThread when using WebKit1.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::operationQueueForAsyncClients): Remove PLATFORM(IOS)-guards as we want to make use
+        of this code for iOS WebKit2 with the NetworkProcess.
+        (WebCore::ResourceHandle::start): Modified to use the existing Mac code path to conditionally
+        schedule NSURLConnection callbacks to an operation queue when ResourceHandleClient::usesAsyncCallbacks()
+        is true. Otherwise, schedule the callbacks on the run loop returned by WebThreadNSRunLoop(),
+        which is either the WebThread or the main thread run loop when using WebKit1 and WebKit2 without
+        the NetworkProcess, respectively.
+
 2015-01-16  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: purge remaining PassRefPtr uses and minor cleanup
