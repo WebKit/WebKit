@@ -1,3 +1,18 @@
+2015-01-17  Chris Dumez  <cdumez@apple.com>
+
+        Converting time, angle and frequency units in CSS calc() function
+        https://bugs.webkit.org/show_bug.cgi?id=138356
+
+        Reviewed by Darin Adler.
+
+        Update fast/css/calc-with-angle-time-frequency.html to include more
+        test cases and actually validate the result of the calculation,
+        instead of merely setting the CSS property and being happy if we don't
+        crash.
+
+        * fast/css/calc-with-angle-time-frequency-expected.txt:
+        * fast/css/calc-with-angle-time-frequency.html:
+
 2015-01-16  Daniel Bates  <dabates@apple.com>
 
         Update some expected results for iOS

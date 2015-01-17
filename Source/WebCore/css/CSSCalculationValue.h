@@ -95,6 +95,7 @@ public:
     bool isNegative() const { return m_expression->doubleValue() < 0; }
     bool isPositive() const { return m_expression->doubleValue() > 0; }
     double computeLengthPx(const CSSToLengthConversionData&) const;
+    unsigned short primitiveType() const { return m_expression->primitiveType(); }
 
     Ref<CalculationValue> createCalculationValue(const CSSToLengthConversionData&) const;
     void setPermittedValueRange(CalculationPermittedValueRange);

@@ -1,5 +1,35 @@
 2015-01-17  Chris Dumez  <cdumez@apple.com>
 
+        Converting time, angle and frequency units in CSS calc() function
+        https://bugs.webkit.org/show_bug.cgi?id=138356
+
+        Reviewed by Darin Adler.
+
+        Update CSSPrimitiveValue::primitiveType() to actually query the
+        primitiveType of the CSSCalcValue instead of assuming a given
+        type based on its category (e.g. If category is CalcTime, then
+        assume type is CSS_MS, even though it would be CSS_S as well).
+
+        This would like to calculation errors such as:
+        calc(4s + 1s) -> 5ms
+
+        Because we would assume the unit is CSS_MS without actually
+        checking.
+
+        This patch is inspired by the following Blink revision
+        by <rhodovan.u-szeged@partner.samsung.com> and initial WebKit
+        patch from <tmeszaros.u-szeged@partner.samsung.com>:
+        https://src.chromium.org/viewvc/blink?view=rev&revision=179101
+
+        Test: fast/css/calc-with-angle-time-frequency.html
+
+        * css/CSSCalculationValue.h:
+        (WebCore::CSSCalcValue::primitiveType):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::primitiveType):
+
+2015-01-17  Chris Dumez  <cdumez@apple.com>
+
         Generate shorthandForProperty() implementation from CSSPropertyNames.in
         https://bugs.webkit.org/show_bug.cgi?id=140556
 
