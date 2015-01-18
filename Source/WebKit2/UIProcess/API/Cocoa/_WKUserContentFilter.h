@@ -30,7 +30,7 @@
 WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
 @interface _WKUserContentFilter : NSObject
 
-- (instancetype)_initWithName:(NSString *)name serializedRules:(NSString *)serializedRules;
+- (instancetype)initWithName:(NSString *)name serializedRules:(NSString *)serializedRules;
 
 @end
 

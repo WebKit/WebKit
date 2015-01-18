@@ -30,7 +30,7 @@
 
 @implementation _WKUserContentFilter
 
-- (instancetype)_initWithName:(NSString *)name serializedRules:(NSString *)serializedRules
+- (instancetype)initWithName:(NSString *)name serializedRules:(NSString *)serializedRules
 {
     if (!(self = [super init]))
         return nil;
