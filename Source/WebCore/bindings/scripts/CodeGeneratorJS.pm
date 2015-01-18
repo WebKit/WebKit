@@ -142,56 +142,31 @@ sub GenerateInterface
 
 sub GenerateAttributeEventListenerCall
 {
-    my $className = shift;
     my $implSetterFunctionName = shift;
     my $windowEventListener = shift;
 
     my $wrapperObject = $windowEventListener ? "globalObject" : "castedThis";
     my @GenerateEventListenerImpl = ();
 
-    if ($className eq "JSSVGElementInstance") {
-        # SVGElementInstances have to create JSEventListeners with the wrapper equal to the correspondingElement
-        $wrapperObject = "asObject(correspondingElementWrapper)";
-
-        push(@GenerateEventListenerImpl, <<END);
-    JSValue correspondingElementWrapper = toJS(exec, castedThis->globalObject(), impl.correspondingElement());
-    if (correspondingElementWrapper.isObject())
-END
-
-        # Add leading whitespace to format the impl.set... line correctly
-        push(@GenerateEventListenerImpl, "    ");
-    }
-
-    push(@GenerateEventListenerImpl, "    impl.set$implSetterFunctionName(createJSAttributeEventListener(exec, value, $wrapperObject));\n");
+    push(@GenerateEventListenerImpl, "    impl.set$implSetterFunctionName(createJSEventListenerForAttribute(*exec, value, *$wrapperObject));\n");
     return @GenerateEventListenerImpl;
 }
 
 sub GenerateEventListenerCall
 {
-    my $className = shift;
     my $functionName = shift;
-    my $passRefPtrHandling = ($functionName eq "add") ? "" : ".get()";
+    my $suffix = ucfirst $functionName;
+    my $passRefPtrHandling = ($functionName eq "add") ? "" : ".ptr()";
 
     $implIncludes{"JSEventListener.h"} = 1;
 
     my @GenerateEventListenerImpl = ();
-    my $wrapperObject = "castedThis";
-    if ($className eq "JSSVGElementInstance") {
-        # SVGElementInstances have to create JSEventListeners with the wrapper equal to the correspondingElement
-        $wrapperObject = "asObject(correspondingElementWrapper)";
-
-        push(@GenerateEventListenerImpl, <<END);
-    JSValue correspondingElementWrapper = toJS(exec, castedThis->globalObject(), impl.correspondingElement());
-    if (!correspondingElementWrapper.isObject())
-        return JSValue::encode(jsUndefined());
-END
-    }
 
     push(@GenerateEventListenerImpl, <<END);
     JSValue listener = exec->argument(1);
-    if (!listener.isObject())
+    if (UNLIKELY(!listener.isObject()))
         return JSValue::encode(jsUndefined());
-    impl.${functionName}EventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), $wrapperObject, false, currentWorld(exec))$passRefPtrHandling, exec->argument(2).toBoolean(exec));
+    impl.${functionName}EventListener(exec->argument(0).toString(exec)->toAtomicString(exec), createJSEventListenerFor$suffix(*exec, *asObject(listener), *castedThis)$passRefPtrHandling, exec->argument(2).toBoolean(exec));
     return JSValue::encode(jsUndefined());
 END
     return @GenerateEventListenerImpl;
@@ -2597,7 +2572,7 @@ sub GenerateImplementation
                         $implIncludes{"JSErrorHandler.h"} = 1;
                         push(@implContent, "    impl.set$implSetterFunctionName(createJSErrorHandler(exec, value, castedThis));\n");
                     } else {
-                        push(@implContent, GenerateAttributeEventListenerCall($className, $implSetterFunctionName, $windowEventListener));
+                        push(@implContent, GenerateAttributeEventListenerCall($implSetterFunctionName, $windowEventListener));
                     }
                 } elsif ($attribute->signature->type =~ /Constructor$/) {
                     my $constructorType = $attribute->signature->type;
@@ -2837,9 +2812,9 @@ sub GenerateImplementation
 
                     # For compatibility with legacy content, the EventListener calls are generated without GenerateArgumentsCountCheck.
                     if ($function->signature->name eq "addEventListener") {
-                        push(@implContent, GenerateEventListenerCall($className, "add"));
+                        push(@implContent, GenerateEventListenerCall("add"));
                     } elsif ($function->signature->name eq "removeEventListener") {
-                        push(@implContent, GenerateEventListenerCall($className, "remove"));
+                        push(@implContent, GenerateEventListenerCall("remove"));
                     } else {
                         GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
@@ -4521,7 +4496,7 @@ EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(Exec
     if (!executionContext)
         return throwVMError(exec, createReferenceError(exec, "Constructor associated execution context is unavailable"));
 
-    AtomicString eventType = exec->argument(0).toString(exec)->value(exec);
+    AtomicString eventType = exec->argument(0).toString(exec)->toAtomicString(exec);
     if (UNLIKELY(exec->hadException()))
         return JSValue::encode(jsUndefined());
 

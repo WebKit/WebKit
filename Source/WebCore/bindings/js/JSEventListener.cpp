@@ -27,6 +27,7 @@
 #include "JSEventTarget.h"
 #include "JSMainThreadExecState.h"
 #include "JSMainThreadExecStateInstrumentation.h"
+#include "JSSVGElementInstance.h"
 #include "ScriptController.h"
 #include "WorkerGlobalScope.h"
 #include <runtime/ExceptionHelpers.h>
@@ -161,6 +162,35 @@ bool JSEventListener::operator==(const EventListener& listener)
     if (const JSEventListener* jsEventListener = JSEventListener::cast(&listener))
         return m_jsFunction == jsEventListener->m_jsFunction && m_isAttribute == jsEventListener->m_isAttribute;
     return false;
+}
+
+// SVGElementInstance forwards listeners to its corresponding element, so the listeners are
+// protected by the wrapper of the corresponding element, not the element instance's wrapper.
+
+bool forwardsEventListeners(JSC::JSObject& object)
+{
+    if (object.classInfo() == JSSVGElementInstance::info())
+        return true;
+    ASSERT(!object.inherits(JSSVGElementInstance::info()));
+    return false;
+}
+
+static JSC::JSObject& correspondingElementWrapper(JSC::ExecState& state, JSC::JSObject& wrapper)
+{
+    JSSVGElementInstance& castedWrapper = *jsCast<JSSVGElementInstance*>(&wrapper);
+    return *asObject(toJS(&state, castedWrapper.globalObject(), *castedWrapper.impl().correspondingElement()));
+}
+
+RefPtr<JSEventListener> createJSEventListenerForAttribute(JSC::ExecState& state, JSC::JSValue listener, JSSVGElementInstance& wrapper)
+{
+    return createJSEventListenerForAttribute(state, listener, correspondingElementWrapper(state, wrapper));
+}
+
+Ref<JSEventListener> createJSEventListenerForAdd(JSC::ExecState& state, JSC::JSObject& listener, JSC::JSObject& wrapper)
+{
+    JSC::JSObject& actualWrapper = forwardsEventListeners(wrapper) ? correspondingElementWrapper(state, wrapper) : wrapper;
+    ASSERT(!forwardsEventListeners(actualWrapper));
+    return JSEventListener::create(&listener, &actualWrapper, false, currentWorld(&state));
 }
 
 } // namespace WebCore

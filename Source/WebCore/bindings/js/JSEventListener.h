@@ -30,12 +30,13 @@
 namespace WebCore {
 
     class JSDOMGlobalObject;
+    class JSSVGElementInstance;
 
     class JSEventListener : public EventListener {
     public:
-        static PassRefPtr<JSEventListener> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld& world)
+        static Ref<JSEventListener> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld& world)
         {
-            return adoptRef(new JSEventListener(listener, wrapper, isAttribute, world));
+            return adoptRef(*new JSEventListener(listener, wrapper, isAttribute, world));
         }
 
         static const JSEventListener* cast(const EventListener* listener)
@@ -75,6 +76,15 @@ namespace WebCore {
         RefPtr<DOMWrapperWorld> m_isolatedWorld;
     };
 
+    // For "onXXX" event attributes.
+    RefPtr<JSEventListener> createJSEventListenerForAttribute(JSC::ExecState&, JSC::JSValue listener, JSC::JSObject& wrapper);
+    RefPtr<JSEventListener> createJSEventListenerForAttribute(JSC::ExecState&, JSC::JSValue listener, JSSVGElementInstance& wrapper);
+
+    Ref<JSEventListener> createJSEventListenerForAdd(JSC::ExecState&, JSC::JSObject& listener, JSC::JSObject& wrapper);
+    Ref<JSEventListener> createJSEventListenerForRemove(JSC::ExecState&, JSC::JSObject& listener, JSC::JSObject& wrapper);
+
+    bool forwardsEventListeners(JSC::JSObject& wrapper);
+
     inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext* scriptExecutionContext) const
     {
         // initializeJSFunction can trigger code that deletes this event listener
@@ -106,15 +116,18 @@ namespace WebCore {
         return m_jsFunction.get();
     }
 
-    // Creates a JS EventListener for an "onXXX" event attribute.
-    inline PassRefPtr<JSEventListener> createJSAttributeEventListener(JSC::ExecState* exec, JSC::JSValue listener, JSC::JSObject* wrapper)
+    inline RefPtr<JSEventListener> createJSEventListenerForAttribute(JSC::ExecState& state, JSC::JSValue listener, JSC::JSObject& wrapper)
     {
+        ASSERT(!forwardsEventListeners(wrapper));
         if (!listener.isObject())
-            return 0;
-
-        return JSEventListener::create(asObject(listener), wrapper, true, currentWorld(exec));
+            return nullptr;
+        return JSEventListener::create(asObject(listener), &wrapper, true, currentWorld(&state));
     }
 
+    inline Ref<JSEventListener> createJSEventListenerForRemove(JSC::ExecState& state, JSC::JSObject& listener, JSC::JSObject& wrapper)
+    {
+        return createJSEventListenerForAdd(state, listener, wrapper);
+    }
 
 } // namespace WebCore
 

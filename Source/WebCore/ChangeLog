@@ -1,3 +1,54 @@
+2015-01-18  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r125251): wrapper lifetimes of SVGElementInstance are incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=132148
+
+        Reviewed by Anders Carlsson.
+
+        Test: svg/custom/use-instanceRoot-event-listeners.xhtml
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::addEventListener): Updated for the new return type
+        of JSListener::create. For the event type, use JSString::toAtomicString instead of
+        calling JSString::value and then converting to an AtomicString.
+        (WebCore::JSDOMWindow::removeEventListener): Same changes as for addEventListener.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::forwardsEventListeners): Added. Helper to detect the special case needed
+        for SVGElementInstance. In the future, for better encapsulation, we could use virtual
+        functions, but for now hard coding this single class seems fine.
+        (WebCore::correspondingElementWrapper): Added. For use if forwardsEventListeners
+        returns true, to find out where event listeners will be forwarded.
+        (WebCore::createJSEventListenerForAttribute): Added. Replaces the old function
+        createJSAttributeEventListener, for SVGElementInstance attributes only.
+        (WebCore::createJSEventListenerForAdd): Added. Helper function to avoid repeated
+        generated code in the addElementListener bindings other than the DOMWindow one.
+
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::create): Changed to return a Ref instead of a PassRefPtr.
+        (WebCore::createJSEventListenerForAttribute): Renamed from createJSAttributeEventListener,
+        changed to return a RefPtr instead of a PassRefPtr and to take references rather than
+        pointers for non-null things.
+        (WebCore::createJSEventListenerForRemove): Added. Small wrapper that calls
+        createJSEventListenerForAdd since they are currently identical.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeEventListenerCall): Removed the special case for JSSVGElementInstance
+        and updated to call the new createJSEventListenerForAttribute. The special case for
+        SVGElementInstance is now in JSEventListener.h/cpp, which is nicer since we prefer to
+        keep the generated code simpler if possible.
+        (GenerateEventListenerCall): Removed the special case for JSSVGElementInstance. This
+        has been dead code since the explicit definition of add/removeEventListener was removed
+        from SVGElementInstance.idl, and was also a problem if someone were to use the
+        addEventListener function from EventTarget on an SVGElementInstance object. The function
+        needs to be generic at runtime. Use toAtomicString as in JSDOMWindow::addEventListener above.
+        Call the two new functions, createJSEventListenerForAdd and createJSEventListenerForRemove.
+        Those new functions properly handle SVGElementInstance.
+        (GenerateImplementation): Don't pass the class name to GenerateAttributeEventListenerCall
+        or GenerateEventListenerCall any more.
+        (GenerateConstructorDefinition): Use JSString::toAtomicString instead of calling
+        JSString::value and then converting to AtomicString.
+
 2015-01-17  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: highlight data for overlay should use protocol type builders
