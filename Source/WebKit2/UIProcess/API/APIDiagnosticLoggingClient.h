@@ -23,36 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageDiagnosticLoggingClient_h
-#define WebPageDiagnosticLoggingClient_h
+#ifndef APIDiagnosticLoggingClient_h
+#define APIDiagnosticLoggingClient_h
 
-#include "APIClient.h"
-#include "APIDiagnosticLoggingClient.h"
-#include "WKPage.h"
 #include <WebCore/DiagnosticLoggingResultType.h>
-#include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebKit {
+class WebPageProxy;
+}
 
 namespace API {
 
-template<> struct ClientTraits<WKPageDiagnosticLoggingClientBase> {
-    typedef std::tuple<WKPageDiagnosticLoggingClientV0> Versions;
+class DiagnosticLoggingClient {
+public:
+    virtual ~DiagnosticLoggingClient() { }
+
+    virtual void logDiagnosticMessage(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description) { UNUSED_PARAM(message); UNUSED_PARAM(description); }
+    virtual void logDiagnosticMessageWithResult(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, WebCore::DiagnosticLoggingResultType) { UNUSED_PARAM(message); UNUSED_PARAM(description); }
+    virtual void logDiagnosticMessageWithValue(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, const WTF::String& value) { UNUSED_PARAM(message); UNUSED_PARAM(description); UNUSED_PARAM(value); }
 };
 
 } // namespace API
 
-namespace WebKit {
+#endif // APIDiagnosticLoggingClient_h
 
-class WebPageProxy;
-
-class WebPageDiagnosticLoggingClient final : public API::Client<WKPageDiagnosticLoggingClientBase>, public API::DiagnosticLoggingClient {
-public:
-    explicit WebPageDiagnosticLoggingClient(const WKPageDiagnosticLoggingClientBase*);
-
-    virtual void logDiagnosticMessage(WebPageProxy*, const String& message, const String& description) override;
-    virtual void logDiagnosticMessageWithResult(WebPageProxy*, const String& message, const String& description, WebCore::DiagnosticLoggingResultType) override;
-    virtual void logDiagnosticMessageWithValue(WebPageProxy*, const String& message, const String& description, const String& value) override;
-};
-
-} // namespace WebKit
-
-#endif // WebPageDiagnosticLoggingClient_h

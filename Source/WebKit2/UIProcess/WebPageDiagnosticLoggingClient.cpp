@@ -32,6 +32,11 @@
 
 namespace WebKit {
 
+WebPageDiagnosticLoggingClient::WebPageDiagnosticLoggingClient(const WKPageDiagnosticLoggingClientBase* client)
+{
+    initialize(client);
+}
+
 void WebPageDiagnosticLoggingClient::logDiagnosticMessage(WebPageProxy* page, const String& message, const String& description)
 {
     if (!m_client.logDiagnosticMessage)

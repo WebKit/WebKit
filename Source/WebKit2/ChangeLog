@@ -1,3 +1,48 @@
+2015-01-17  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Add Cocoa delegate for logging diagnostic messages
+        https://bugs.webkit.org/show_bug.cgi?id=140410
+
+        Reviewed by Sam Weinig.
+
+        Add Cocoa delegate for logging diagnostic messages.
+
+        * UIProcess/API/APIDiagnosticLoggingClient.h: Copied from Source/WebKit2/UIProcess/WebPageDiagnosticLoggingClient.h.
+        (API::DiagnosticLoggingClient::~DiagnosticLoggingClient):
+        (API::DiagnosticLoggingClient::logDiagnosticMessage):
+        (API::DiagnosticLoggingClient::logDiagnosticMessageWithResult):
+        (API::DiagnosticLoggingClient::logDiagnosticMessageWithValue):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageDiagnosticLoggingClient):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView _diagnosticLoggingDelegate]):
+        (-[WKWebView _setDiagnosticLoggingDelegate:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h: Copied from Source/WebKit2/UIProcess/WebPageDiagnosticLoggingClient.h.
+        * UIProcess/Cocoa/DiagnosticLoggingClient.h: Copied from Source/WebKit2/UIProcess/WebPageDiagnosticLoggingClient.h.
+        * UIProcess/Cocoa/DiagnosticLoggingClient.mm: Added.
+        (WebKit::DiagnosticLoggingClient::DiagnosticLoggingClient):
+        (WebKit::DiagnosticLoggingClient::delegate):
+        (WebKit::DiagnosticLoggingClient::setDelegate):
+        (WebKit::DiagnosticLoggingClient::logDiagnosticMessage):
+        (WebKit::DiagnosticLoggingClient::logDiagnosticMessageWithResult):
+        (WebKit::DiagnosticLoggingClient::logDiagnosticMessageWithValue):
+        * UIProcess/WebPageDiagnosticLoggingClient.cpp:
+        (WebKit::WebPageDiagnosticLoggingClient::WebPageDiagnosticLoggingClient):
+        * UIProcess/WebPageDiagnosticLoggingClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setDiagnosticLoggingClient):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::logDiagnosticMessage):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithResult):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithValue):
+        (WebKit::WebPageProxy::initializeDiagnosticLoggingClient): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::diagnosticLoggingClient):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-01-17  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r178618): Change to WKWebViewConfiguration broke iOS build

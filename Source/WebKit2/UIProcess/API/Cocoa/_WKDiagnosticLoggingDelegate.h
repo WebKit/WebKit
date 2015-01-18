@@ -23,36 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageDiagnosticLoggingClient_h
-#define WebPageDiagnosticLoggingClient_h
+#import <WebKit/WKFoundation.h>
 
-#include "APIClient.h"
-#include "APIDiagnosticLoggingClient.h"
-#include "WKPage.h"
-#include <WebCore/DiagnosticLoggingResultType.h>
-#include <wtf/Forward.h>
+#if WK_API_ENABLED
 
-namespace API {
+#import <Foundation/Foundation.h>
+#import <WebKit/WKDiagnosticLoggingResultType.h>
 
-template<> struct ClientTraits<WKPageDiagnosticLoggingClientBase> {
-    typedef std::tuple<WKPageDiagnosticLoggingClientV0> Versions;
-};
+@protocol _WKDiagnosticLoggingDelegate <NSObject>
+@optional
 
-} // namespace API
+- (void)_webView:(WKWebView *)webView logDiagnosticMessage:(NSString *)message description:(NSString *)description;
+- (void)_webView:(WKWebView *)webView logDiagnosticMessageWithResult:(NSString *)message description:(NSString *)description result:(WKDiagnosticLoggingResultType)result;
+- (void)_webView:(WKWebView *)webView logDiagnosticMessageWithValue:(NSString *)message description:(NSString *)description value:(NSString *) value;
 
-namespace WebKit {
+@end
 
-class WebPageProxy;
+#endif // WK_API_ENABLED
 
-class WebPageDiagnosticLoggingClient final : public API::Client<WKPageDiagnosticLoggingClientBase>, public API::DiagnosticLoggingClient {
-public:
-    explicit WebPageDiagnosticLoggingClient(const WKPageDiagnosticLoggingClientBase*);
-
-    virtual void logDiagnosticMessage(WebPageProxy*, const String& message, const String& description) override;
-    virtual void logDiagnosticMessageWithResult(WebPageProxy*, const String& message, const String& description, WebCore::DiagnosticLoggingResultType) override;
-    virtual void logDiagnosticMessageWithValue(WebPageProxy*, const String& message, const String& description, const String& value) override;
-};
-
-} // namespace WebKit
-
-#endif // WebPageDiagnosticLoggingClient_h

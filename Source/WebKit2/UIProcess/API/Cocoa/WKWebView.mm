@@ -31,6 +31,7 @@
 #import "APIFormClient.h"
 #import "APISerializedScriptValue.h"
 #import "CompletionHandlerCallChecker.h"
+#import "DiagnosticLoggingClient.h"
 #import "FindClient.h"
 #import "LegacySessionStateCoding.h"
 #import "NavigationState.h"
@@ -66,6 +67,7 @@
 #import "WebPreferencesKeys.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
+#import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFormDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
@@ -362,6 +364,7 @@ static int32_t deviceOrientation()
     _page->setUIClient(_uiDelegate->createUIClient());
 
     _page->setFindClient(std::make_unique<WebKit::FindClient>(self));
+    _page->setDiagnosticLoggingClient(std::make_unique<WebKit::DiagnosticLoggingClient>(self));
 
     pageToViewMap().add(_page.get(), self);
 
@@ -1968,6 +1971,16 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 - (void)_setPageZoomFactor:(double)zoomFactor
 {
     _page->setPageZoomFactor(zoomFactor);
+}
+
+- (id <_WKDiagnosticLoggingDelegate>)_diagnosticLoggingDelegate
+{
+    return [static_cast<WebKit::DiagnosticLoggingClient&>(_page->diagnosticLoggingClient()).delegate().leakRef() autorelease];
+}
+
+- (void)_setDiagnosticLoggingDelegate:(id<_WKDiagnosticLoggingDelegate>)diagnosticLoggingDelegate
+{
+    static_cast<WebKit::DiagnosticLoggingClient&>(_page->diagnosticLoggingClient()).setDelegate(diagnosticLoggingDelegate);
 }
 
 - (id <_WKFindDelegate>)_findDelegate

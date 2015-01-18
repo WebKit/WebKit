@@ -55,6 +55,7 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 @class _WKWebViewPrintFormatter;
 
 @protocol WKHistoryDelegatePrivate;
+@protocol _WKDiagnosticLoggingDelegate;
 @protocol _WKFindDelegate;
 @protocol _WKFormDelegate;
 
@@ -175,6 +176,7 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
 @property (nonatomic, setter=_setTextZoomFactor:) double _textZoomFactor;
 @property (nonatomic, setter=_setPageZoomFactor:) double _pageZoomFactor;
 
+@property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id <_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 @property (nonatomic, weak, setter=_setFindDelegate:) id <_WKFindDelegate> _findDelegate;
 - (void)_findString:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;
 - (void)_countStringMatches:(NSString *)string options:(_WKFindOptions)options maxCount:(NSUInteger)maxCount;

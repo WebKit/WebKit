@@ -23,36 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageDiagnosticLoggingClient_h
-#define WebPageDiagnosticLoggingClient_h
+#ifndef DiagnosticLoggingClient_h
+#define DiagnosticLoggingClient_h
 
-#include "APIClient.h"
-#include "APIDiagnosticLoggingClient.h"
-#include "WKPage.h"
-#include <WebCore/DiagnosticLoggingResultType.h>
-#include <wtf/Forward.h>
+#import "WKFoundation.h"
 
-namespace API {
+#if WK_API_ENABLED
 
-template<> struct ClientTraits<WKPageDiagnosticLoggingClientBase> {
-    typedef std::tuple<WKPageDiagnosticLoggingClientV0> Versions;
-};
+#import "APIDiagnosticLoggingClient.h"
+#import "WeakObjCPtr.h"
+#import <WebCore/DiagnosticLoggingResultType.h>
 
-} // namespace API
+@class WKWebView;
+@protocol _WKDiagnosticLoggingDelegate;
 
 namespace WebKit {
 
-class WebPageProxy;
-
-class WebPageDiagnosticLoggingClient final : public API::Client<WKPageDiagnosticLoggingClientBase>, public API::DiagnosticLoggingClient {
+class DiagnosticLoggingClient final : public API::DiagnosticLoggingClient {
 public:
-    explicit WebPageDiagnosticLoggingClient(const WKPageDiagnosticLoggingClientBase*);
+    explicit DiagnosticLoggingClient(WKWebView *);
 
+    RetainPtr<id <_WKDiagnosticLoggingDelegate>> delegate();
+    void setDelegate(id <_WKDiagnosticLoggingDelegate>);
+
+private:
+    // From API::DiagnosticLoggingClient
     virtual void logDiagnosticMessage(WebPageProxy*, const String& message, const String& description) override;
     virtual void logDiagnosticMessageWithResult(WebPageProxy*, const String& message, const String& description, WebCore::DiagnosticLoggingResultType) override;
     virtual void logDiagnosticMessageWithValue(WebPageProxy*, const String& message, const String& description, const String& value) override;
+
+    WKWebView *m_webView;
+    WeakObjCPtr<id <_WKDiagnosticLoggingDelegate>> m_delegate;
+
+    struct {
+        unsigned webviewLogDiagnosticMessage : 1;
+        unsigned webviewLogDiagnosticMessageWithResult : 1;
+        unsigned webviewLogDiagnosticMessageWithValue : 1;
+    } m_delegateMethods;
 };
 
-} // namespace WebKit
+} // WebKit
 
-#endif // WebPageDiagnosticLoggingClient_h
+#endif // WK_API_ENABLED
+
+#endif // DiagnosticLoggingClient_h
+

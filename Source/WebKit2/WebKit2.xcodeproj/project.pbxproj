@@ -1119,6 +1119,10 @@
 		8372DB281A67562800C697C5 /* WebPageDiagnosticLoggingClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8372DB261A67562800C697C5 /* WebPageDiagnosticLoggingClient.cpp */; };
 		8372DB291A67562800C697C5 /* WebPageDiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 8372DB271A67562800C697C5 /* WebPageDiagnosticLoggingClient.h */; };
 		8372DB2F1A677D4A00C697C5 /* WKDiagnosticLoggingResultType.h in Headers */ = {isa = PBXBuildFile; fileRef = 8372DB2E1A677D4A00C697C5 /* WKDiagnosticLoggingResultType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83891B631A68B3420030F386 /* APIDiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83891B621A68B3420030F386 /* APIDiagnosticLoggingClient.h */; };
+		83891B691A68BEBC0030F386 /* _WKDiagnosticLoggingDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 83891B681A68BEBC0030F386 /* _WKDiagnosticLoggingDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83891B6A1A68C30B0030F386 /* DiagnosticLoggingClient.h */; };
+		83891B6D1A68C30B0030F386 /* DiagnosticLoggingClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 83891B6B1A68C30B0030F386 /* DiagnosticLoggingClient.mm */; };
 		84477853176FCC0800CDC7BB /* InjectedBundleHitTestResultMediaType.h in Headers */ = {isa = PBXBuildFile; fileRef = 84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */; };
 		868160D0187645570021E79D /* WindowServerConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 868160CF187645370021E79D /* WindowServerConnection.mm */; };
 		86E67A251910B9D100004AB7 /* ProcessThrottler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E67A21190F411800004AB7 /* ProcessThrottler.h */; };
@@ -3241,6 +3245,10 @@
 		8372DB261A67562800C697C5 /* WebPageDiagnosticLoggingClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageDiagnosticLoggingClient.cpp; sourceTree = "<group>"; };
 		8372DB271A67562800C697C5 /* WebPageDiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageDiagnosticLoggingClient.h; sourceTree = "<group>"; };
 		8372DB2E1A677D4A00C697C5 /* WKDiagnosticLoggingResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDiagnosticLoggingResultType.h; sourceTree = "<group>"; };
+		83891B621A68B3420030F386 /* APIDiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIDiagnosticLoggingClient.h; sourceTree = "<group>"; };
+		83891B681A68BEBC0030F386 /* _WKDiagnosticLoggingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDiagnosticLoggingDelegate.h; sourceTree = "<group>"; };
+		83891B6A1A68C30B0030F386 /* DiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticLoggingClient.h; sourceTree = "<group>"; };
+		83891B6B1A68C30B0030F386 /* DiagnosticLoggingClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DiagnosticLoggingClient.mm; sourceTree = "<group>"; };
 		84477851176FCAC100CDC7BB /* InjectedBundleHitTestResultMediaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleHitTestResultMediaType.h; sourceTree = "<group>"; };
 		868160CD18763D4B0021E79D /* WindowServerConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WindowServerConnection.h; sourceTree = "<group>"; };
 		868160CF187645370021E79D /* WindowServerConnection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowServerConnection.mm; sourceTree = "<group>"; };
@@ -4730,6 +4738,8 @@
 			isa = PBXGroup;
 			children = (
 				517DD5BB180DA7C40081660B /* Databases */,
+				83891B6A1A68C30B0030F386 /* DiagnosticLoggingClient.h */,
+				83891B6B1A68C30B0030F386 /* DiagnosticLoggingClient.mm */,
 				A1DF631118E0B7C8003A3E2A /* DownloadClient.h */,
 				A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */,
 				00B9661818E25AE100CE1F88 /* FindClient.h */,
@@ -5131,6 +5141,7 @@
 				37A5E01218BBF937000A081E /* _WKActivatedElementInfo.h */,
 				37A5E01118BBF937000A081E /* _WKActivatedElementInfo.mm */,
 				379A873518BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h */,
+				83891B681A68BEBC0030F386 /* _WKDiagnosticLoggingDelegate.h */,
 				A1A4FE5718DCE9FA00B5EA8A /* _WKDownload.h */,
 				A1A4FE5818DCE9FA00B5EA8A /* _WKDownload.mm */,
 				A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */,
@@ -6069,6 +6080,7 @@
 				BC8A501311765F4500757573 /* cpp */,
 				2DA944771884E3AB00ED86DB /* ios */,
 				BC111B47112F616900337BAB /* mac */,
+				83891B621A68B3420030F386 /* APIDiagnosticLoggingClient.h */,
 				1F7D36C018DA513F00D9D659 /* APIDownloadClient.h */,
 				00B9661518E24CBA00CE1F88 /* APIFindClient.h */,
 				37E25D6D18FDE5D6005D3A00 /* APIFormClient.h */,
@@ -7429,6 +7441,7 @@
 				1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */,
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
 				1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */,
+				83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */,
 				5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */,
 				E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */,
 				1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */,
@@ -7737,6 +7750,7 @@
 				51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */,
 				51D02F6A132EC73700BEAA96 /* WebIconDatabaseMessages.h in Headers */,
 				511B24A7132E095700065A0C /* WebIconDatabaseProxy.h in Headers */,
+				83891B691A68BEBC0030F386 /* _WKDiagnosticLoggingDelegate.h in Headers */,
 				51D02F6C132EC73700BEAA96 /* WebIconDatabaseProxyMessages.h in Headers */,
 				51E351F6180F5C7500E53BE9 /* WebIDBFactoryBackend.h in Headers */,
 				51290993183ACEAF005522A6 /* WebIDBServerConnection.h in Headers */,
@@ -7983,6 +7997,7 @@
 				BC4075FE124FF0270068F20A /* WKMutableArray.h in Headers */,
 				BC407600124FF0270068F20A /* WKMutableDictionary.h in Headers */,
 				C09AE5E9125257C20025825D /* WKNativeEvent.h in Headers */,
+				83891B631A68B3420030F386 /* APIDiagnosticLoggingClient.h in Headers */,
 				1A5B1C511898606F004FCF9B /* WKNavigation.h in Headers */,
 				1A256E3818A1A788006FB922 /* WKNavigationAction.h in Headers */,
 				1A256E3A18A1A7DF006FB922 /* WKNavigationActionInternal.h in Headers */,
@@ -9711,6 +9726,7 @@
 				37BF2F071947DEB400723C48 /* WKNSURLRequest.mm in Sources */,
 				BC407601124FF0270068F20A /* WKNumber.cpp in Sources */,
 				7CD5EBB81746A15B000C1C45 /* WKObjCTypeWrapperRef.mm in Sources */,
+				83891B6D1A68C30B0030F386 /* DiagnosticLoggingClient.mm in Sources */,
 				374436881820E7240049579F /* WKObject.mm in Sources */,
 				BC85806312B8505700EDEB2E /* WKOpenPanelParameters.cpp in Sources */,
 				BC85806212B8505700EDEB2E /* WKOpenPanelResultListener.cpp in Sources */,

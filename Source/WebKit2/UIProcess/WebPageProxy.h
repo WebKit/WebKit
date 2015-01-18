@@ -311,8 +311,9 @@ public:
 #endif
     API::FindClient& findClient() { return *m_findClient; }
     void setFindClient(std::unique_ptr<API::FindClient>);
+    API::DiagnosticLoggingClient& diagnosticLoggingClient() { return *m_diagnosticLoggingClient; }
+    void setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient>);
     void initializeFindMatchesClient(const WKPageFindMatchesClientBase*);
-    void initializeDiagnosticLoggingClient(const WKPageDiagnosticLoggingClientBase*);
     void setFormClient(std::unique_ptr<API::FormClient>);
     void setLoaderClient(std::unique_ptr<API::LoaderClient>);
     void setPolicyClient(std::unique_ptr<API::PolicyClient>);
@@ -1367,7 +1368,7 @@ private:
 #endif
     std::unique_ptr<API::FindClient> m_findClient;
     WebFindMatchesClient m_findMatchesClient;
-    WebPageDiagnosticLoggingClient m_diagnosticLoggingClient;
+    std::unique_ptr<API::DiagnosticLoggingClient> m_diagnosticLoggingClient;
 #if ENABLE(CONTEXT_MENUS)
     WebPageContextMenuClient m_contextMenuClient;
 #endif

@@ -264,6 +264,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_formClient(std::make_unique<API::FormClient>())
     , m_uiClient(std::make_unique<API::UIClient>())
     , m_findClient(std::make_unique<API::FindClient>())
+    , m_diagnosticLoggingClient(std::make_unique<API::DiagnosticLoggingClient>())
     , m_navigationState(std::make_unique<WebNavigationState>())
     , m_process(process)
     , m_pageGroup(*configuration.pageGroup)
@@ -553,9 +554,14 @@ void WebPageProxy::initializeFindMatchesClient(const WKPageFindMatchesClientBase
     m_findMatchesClient.initialize(client);
 }
 
-void WebPageProxy::initializeDiagnosticLoggingClient(const WKPageDiagnosticLoggingClientBase* client)
+void WebPageProxy::setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient> diagnosticLoggingClient)
 {
-    m_diagnosticLoggingClient.initialize(client);
+    if (!diagnosticLoggingClient) {
+        m_diagnosticLoggingClient = std::make_unique<API::DiagnosticLoggingClient>();
+        return;
+    }
+
+    m_diagnosticLoggingClient = WTF::move(diagnosticLoggingClient);
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -716,7 +722,7 @@ void WebPageProxy::close()
 #endif
     m_findClient = std::make_unique<API::FindClient>();
     m_findMatchesClient.initialize(nullptr);
-    m_diagnosticLoggingClient.initialize(nullptr);
+    m_diagnosticLoggingClient = std::make_unique<API::DiagnosticLoggingClient>();
 #if ENABLE(CONTEXT_MENUS)
     m_contextMenuClient.initialize(nullptr);
 #endif
@@ -4391,17 +4397,17 @@ void WebPageProxy::editingRangeCallback(const EditingRange& range, uint64_t call
 
 void WebPageProxy::logDiagnosticMessage(const String& message, const String& description)
 {
-    m_diagnosticLoggingClient.logDiagnosticMessage(this, message, description);
+    m_diagnosticLoggingClient->logDiagnosticMessage(this, message, description);
 }
 
 void WebPageProxy::logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result)
 {
-    m_diagnosticLoggingClient.logDiagnosticMessageWithResult(this, message, description, static_cast<WebCore::DiagnosticLoggingResultType>(result));
+    m_diagnosticLoggingClient->logDiagnosticMessageWithResult(this, message, description, static_cast<WebCore::DiagnosticLoggingResultType>(result));
 }
 
 void WebPageProxy::logDiagnosticMessageWithValue(const String& message, const String& description, const String& value)
 {
-    m_diagnosticLoggingClient.logDiagnosticMessageWithValue(this, message, description, value);
+    m_diagnosticLoggingClient->logDiagnosticMessageWithValue(this, message, description, value);
 }
 
 void WebPageProxy::rectForCharacterRangeCallback(const IntRect& rect, const EditingRange& actualRange, uint64_t callbackID)
