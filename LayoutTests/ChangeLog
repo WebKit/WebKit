@@ -1,3 +1,19 @@
+2015-01-17  Michael Saboff  <msaboff@apple.com>
+
+        Crash in JSScope::resolve() on tools.ups.com
+        https://bugs.webkit.org/show_bug.cgi?id=140579
+
+        Reviewed by Geoffrey Garen.
+
+        New regression test.
+
+        * js/regress-140579-expected.txt: Added.
+        * js/regress-140579.html: Added.
+        * js/script-tests/regress-140579.js: Added.
+        (Test.this.isString):
+        (Test.this.test):
+        (Test):
+
 2015-01-17  Chris Dumez  <cdumez@apple.com>
 
         Converting time, angle and frequency units in CSS calc() function

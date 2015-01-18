@@ -3187,6 +3187,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case GlobalPropertyWithVarInjectionChecks:
             case GlobalVarWithVarInjectionChecks:
                 set(VirtualRegister(dst), weakJSConstant(m_inlineStackTop->m_codeBlock->globalObject()));
+                if (resolveType == GlobalPropertyWithVarInjectionChecks || resolveType == GlobalVarWithVarInjectionChecks)
+                    addToGraph(Phantom, getDirect(m_inlineStackTop->remapOperand(VirtualRegister(currentInstruction[2].u.operand))));
                 break;
             case LocalClosureVar:
             case ClosureVar:

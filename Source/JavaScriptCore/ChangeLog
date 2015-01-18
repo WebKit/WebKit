@@ -1,3 +1,18 @@
+2015-01-17  Michael Saboff  <msaboff@apple.com>
+
+        Crash in JSScope::resolve() on tools.ups.com
+        https://bugs.webkit.org/show_bug.cgi?id=140579
+
+        Reviewed by Geoffrey Garen.
+
+        For op_resolve_scope of a global property or variable that needs to check for the var
+        injection check watchpoint, we need to keep the scope around with a Phantom.  The
+        baseline JIT slowpath for op_resolve_scope needs the scope value if the watchpoint
+        fired.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2015-01-16  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: code generator should introduce typedefs for protocol types that are arrays
