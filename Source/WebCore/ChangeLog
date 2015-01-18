@@ -1,3 +1,72 @@
+2015-01-17  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: highlight data for overlay should use protocol type builders
+        https://bugs.webkit.org/show_bug.cgi?id=129441
+
+        Reviewed by Timothy Hatcher.
+
+        As a first step towards cleaning up the inspector overlay, convert highlight
+        data construction to use protocol type builders. It's now really obvious what
+        data is being sent to the inspector overlay page.
+
+        This change paves the way towards using inspector protocol commands and events
+        if we want to support more interactive functionality in the inspector overlay.
+
+        This patch makes a few style cleanups, such as standardizing variable names,
+        using default member initializers, passing by reference, and fixing casts.
+
+        No new tests, no behavior changed.
+
+        * WebCore.exp.in:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::getHighlight):
+        (WebCore::InspectorController::buildObjectForHighlightedNode):
+        (WebCore::InspectorController::inspect): Deleted.
+        * inspector/InspectorController.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildRendererHighlight):
+        (WebCore::buildNodeHighlight):
+        (WebCore::buildQuadHighlight):
+        (WebCore::InspectorOverlay::InspectorOverlay):
+        (WebCore::InspectorOverlay::getHighlight):
+        (WebCore::buildObjectForPoint):
+        (WebCore::buildObjectForRect):
+        (WebCore::buildArrayForQuad):
+        (WebCore::buildObjectForHighlight):
+        (WebCore::buildObjectForRegion):
+        (WebCore::buildObjectForFlowRegions):
+        (WebCore::buildObjectForSize):
+        (WebCore::buildQuadObjectForCSSRegionContentClip):
+        Simplify how the clipping area is encoded. It's now 'regionClippingArea'
+        stored on a FragmentHighlightData instance.
+
+        (WebCore::InspectorOverlay::updatePaintRectsTimerFired):
+        (WebCore::InspectorOverlay::drawPaintRects):
+        (WebCore::buildArrayForRendererFragments):
+        (WebCore::appendPathCommandAndPoints):
+        (WebCore::appendPathSegment):
+        (WebCore::buildObjectForShapeOutside):
+        (WebCore::buildObjectForElementData):
+        (WebCore::InspectorOverlay::buildObjectForHighlightedNode):
+        (WebCore::InspectorOverlay::drawNodeHighlight):
+        (WebCore::InspectorOverlay::drawQuadHighlight):
+        (WebCore::InspectorOverlay::reset):
+        (WebCore::buildObjectForRegionHighlight): Deleted.
+        (WebCore::buildObjectForCSSRegionsHighlight): Deleted.
+        (WebCore::buildObjectForCSSRegionContentClip): Deleted.
+        (WebCore::buildObjectForRendererFragments): Deleted.
+        (WebCore::buildObjectForElementInfo): Deleted.
+        * inspector/InspectorOverlay.h:
+        (WebCore::Highlight::Highlight):
+        * inspector/InspectorOverlayPage.js:
+        (_createElementTitle):
+        (_drawElementTitle):
+        (_drawFragmentHighlight):
+        (drawNodeHighlight):
+        * testing/Internals.cpp:
+        (WebCore::Internals::inspectorHighlightRects):
+        (WebCore::Internals::inspectorHighlightObject):
+
 2015-01-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Crashes when SVG font is invalid

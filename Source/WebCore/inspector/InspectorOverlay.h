@@ -41,6 +41,12 @@
 namespace Inspector {
 class InspectorObject;
 class InspectorValue;
+
+namespace Protocol {
+namespace OverlayTypes {
+class NodeHighlightData;
+}
+}
 }
 
 namespace WebCore {
@@ -64,17 +70,13 @@ public:
     bool usePageCoordinates;
 };
 
-enum HighlightType {
-    HighlightTypeNode,
-    HighlightTypeRects,
+enum class HighlightType {
+    Node, // Provides 4 quads: margin, border, padding, content.
+    Rects, // Provides a list of quads.
 };
 
 struct Highlight {
-    Highlight()
-        : type(HighlightTypeNode)
-        , usePageCoordinates(true)
-    {
-    }
+    Highlight() { }
 
     void setDataFromConfig(const HighlightConfig& highlightConfig)
     {
@@ -92,11 +94,9 @@ struct Highlight {
     Color borderColor;
     Color marginColor;
 
-    // When the type is Node, there are 4 quads (margin, border, padding, content).
-    // When the type is Rects, this is just a list of quads.
-    HighlightType type;
+    HighlightType type {HighlightType::Node};
     Vector<FloatQuad> quads;
-    bool usePageCoordinates;
+    bool usePageCoordinates {true};
 };
 
 class InspectorOverlay {
@@ -112,7 +112,7 @@ public:
 
     void update();
     void paint(GraphicsContext&);
-    void getHighlight(Highlight*, CoordinateSystem) const;
+    void getHighlight(Highlight&, CoordinateSystem) const;
 
     void setPausedInDebuggerMessage(const String*);
 
@@ -129,7 +129,7 @@ public:
 
     void setIndicating(bool indicating);
 
-    RefPtr<Inspector::InspectorObject> buildObjectForHighlightedNode() const;
+    RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> buildObjectForHighlightedNode() const;
 
     void freePage();
 private:
@@ -161,8 +161,8 @@ private:
     typedef std::pair<std::chrono::steady_clock::time_point, FloatRect> TimeRectPair;
     Deque<TimeRectPair> m_paintRects;
     Timer m_paintRectUpdateTimer;
-    bool m_indicating;
-    bool m_showingPaintRects;
+    bool m_indicating {false};
+    bool m_showingPaintRects {false};
 };
 
 } // namespace WebCore

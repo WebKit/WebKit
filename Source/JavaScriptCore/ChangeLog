@@ -1,3 +1,16 @@
+2015-01-17  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: highlight data for overlay should use protocol type builders
+        https://bugs.webkit.org/show_bug.cgi?id=129441
+
+        Reviewed by Timothy Hatcher.
+
+        Add a new domain for overlay types.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * inspector/protocol/OverlayTypes.json: Added.
+
 2015-01-17  Michael Saboff  <msaboff@apple.com>
 
         Crash in JSScope::resolve() on tools.ups.com

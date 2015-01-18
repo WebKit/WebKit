@@ -48,6 +48,12 @@ class InspectorAgent;
 class InspectorBackendDispatcher;
 class InspectorFrontendChannel;
 class InspectorObject;
+
+namespace Protocol {
+namespace OverlayTypes {
+class NodeHighlightData;
+}
+}
 }
 
 namespace WebCore {
@@ -104,13 +110,13 @@ public:
 
     void inspect(Node*);
     WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
-    WEBCORE_EXPORT void getHighlight(Highlight*, InspectorOverlay::CoordinateSystem) const;
+    WEBCORE_EXPORT void getHighlight(Highlight&, InspectorOverlay::CoordinateSystem) const;
     void hideHighlight();
     Node* highlightedNode() const;
 
     void setIndicating(bool);
 
-    WEBCORE_EXPORT RefPtr<Inspector::InspectorObject> buildObjectForHighlightedNode() const;
+    WEBCORE_EXPORT RefPtr<Inspector::Protocol::OverlayTypes::NodeHighlightData> buildObjectForHighlightedNode() const;
 
     bool isUnderTest() const { return m_isUnderTest; }
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
