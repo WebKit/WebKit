@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsManager_h
-#define ContentExtensionsManager_h
+#include "config.h"
+#include "APIUserContentFilter.h"
 
-#if ENABLE(CONTENT_EXTENSIONS)
+namespace API {
 
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
+UserContentFilter::UserContentFilter(const WTF::String& name, const WTF::String& serializedRules)
+    : m_name(name)
+    , m_serializedRules(serializedRules)
+{
+}
 
-namespace WebCore {
+UserContentFilter::~UserContentFilter()
+{
+}
 
-namespace ContentExtensions {
-
-class ContentExtensionRule;
-
-// The ExtensionsManager loads serialized content extension rules directly into WebCore.
-namespace ExtensionsManager {
-
-Vector<ContentExtensionRule> createRuleList(const String& rules);
-
-} // namespace ExtensionsManager
-
-} // namespace ContentExtensions
-} // namespace WebCore
-
-#endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // ContentExtensionsManager_h
+} // namespace API

@@ -1045,8 +1045,6 @@
 		26C17A3E1491D2D400D12BA2 /* FileSystemIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */; };
 		26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */; };
-		26F0C8921A2D79CB002794F8 /* ContentExtensionsInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F0C8911A2D79CB002794F8 /* ContentExtensionsInterface.h */; };
-		26F0C8941A2D7A76002794F8 /* ContentExtensionsInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F0C8931A2D7A76002794F8 /* ContentExtensionsInterface.cpp */; };
 		26F0C8971A2E724B002794F8 /* ContentExtensionsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F0C8951A2E724B002794F8 /* ContentExtensionsManager.cpp */; };
 		26F0C8981A2E724B002794F8 /* ContentExtensionsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F0C8961A2E724B002794F8 /* ContentExtensionsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26F0C89B1A2EC110002794F8 /* ContentExtensionRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F0C8991A2EC110002794F8 /* ContentExtensionRule.cpp */; };
@@ -8049,8 +8047,6 @@
 		26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemIOS.h; path = ios/FileSystemIOS.h; sourceTree = "<group>"; };
 		26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSystemIOS.mm; path = ios/FileSystemIOS.mm; sourceTree = "<group>"; };
 		26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecASCIIFastPath.h; sourceTree = "<group>"; };
-		26F0C8911A2D79CB002794F8 /* ContentExtensionsInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionsInterface.h; sourceTree = "<group>"; };
-		26F0C8931A2D7A76002794F8 /* ContentExtensionsInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionsInterface.cpp; sourceTree = "<group>"; };
 		26F0C8951A2E724B002794F8 /* ContentExtensionsManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionsManager.cpp; sourceTree = "<group>"; };
 		26F0C8961A2E724B002794F8 /* ContentExtensionsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionsManager.h; sourceTree = "<group>"; };
 		26F0C8991A2EC110002794F8 /* ContentExtensionRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionRule.cpp; sourceTree = "<group>"; };
@@ -9720,8 +9716,8 @@
 		839AAFEA1A0C0C8D00605F99 /* HTMLWBRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLWBRElement.cpp; sourceTree = "<group>"; };
 		839AAFEB1A0C0C8D00605F99 /* HTMLWBRElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLWBRElement.h; sourceTree = "<group>"; };
 		83B9687919F8AB83004EF7AF /* StyleBuilderConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderConverter.h; sourceTree = "<group>"; };
-		83C05A581A686212007E5DEA /* StylePropertyShorthandFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; name = StylePropertyShorthandFunctions.cpp; path = StylePropertyShorthandFunctions.cpp; sourceTree = "<group>"; };
-		83C05A591A686212007E5DEA /* StylePropertyShorthandFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; name = StylePropertyShorthandFunctions.h; path = StylePropertyShorthandFunctions.h; sourceTree = "<group>"; };
+		83C05A581A686212007E5DEA /* StylePropertyShorthandFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StylePropertyShorthandFunctions.cpp; sourceTree = "<group>"; };
+		83C05A591A686212007E5DEA /* StylePropertyShorthandFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StylePropertyShorthandFunctions.h; sourceTree = "<group>"; };
 		83C1D413178D5AB400141E68 /* SVGPathSegArcAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegArcAbs.h; sourceTree = "<group>"; };
 		83C1D414178D5AB400141E68 /* SVGPathSegArcRel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegArcRel.h; sourceTree = "<group>"; };
 		83C1D415178D5AB400141E68 /* SVGPathSegCurvetoCubicAbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegCurvetoCubicAbs.h; sourceTree = "<group>"; };
@@ -15328,8 +15324,6 @@
 				26F0C89D1A2EC3BE002794F8 /* ContentExtensionsBackend.cpp */,
 				26F0C89E1A2EC3BE002794F8 /* ContentExtensionsBackend.h */,
 				262391351A648CEE007251A3 /* ContentExtensionsDebugging.h */,
-				26F0C8931A2D7A76002794F8 /* ContentExtensionsInterface.cpp */,
-				26F0C8911A2D79CB002794F8 /* ContentExtensionsInterface.h */,
 				26F0C8951A2E724B002794F8 /* ContentExtensionsManager.cpp */,
 				26F0C8961A2E724B002794F8 /* ContentExtensionsManager.h */,
 				267725F61A5B3AD9003C24DD /* DFA.cpp */,
@@ -26283,7 +26277,6 @@
 				8419D2AD120D92FC00141F8F /* SVGPathByteStreamSource.h in Headers */,
 				8476C9EC11DF6A2900555B02 /* SVGPathConsumer.h in Headers */,
 				71537A01146BD9D7008BD615 /* SVGPathData.h in Headers */,
-				26F0C8921A2D79CB002794F8 /* ContentExtensionsInterface.h in Headers */,
 				B2227A590D00BF220071B782 /* SVGPathElement.h in Headers */,
 				8476C9F011DF6A5800555B02 /* SVGPathParser.h in Headers */,
 				B2227A5B0D00BF220071B782 /* SVGPathSeg.h in Headers */,
@@ -27471,7 +27464,6 @@
 				93309DDE099E64920056E581 /* DeleteFromTextNodeCommand.cpp in Sources */,
 				93309DE0099E64920056E581 /* DeleteSelectionCommand.cpp in Sources */,
 				A7C9ABF81357A3BF00F5503F /* DetailsMarkerControl.cpp in Sources */,
-				26F0C8941A2D7A76002794F8 /* ContentExtensionsInterface.cpp in Sources */,
 				CCC2B51515F613060048CDD6 /* DeviceController.cpp in Sources */,
 				31EAF97F121435A400E7C1BF /* DeviceMotionClientIOS.mm in Sources */,
 				31FB1A58120A5D0600DC02A0 /* DeviceMotionController.cpp in Sources */,

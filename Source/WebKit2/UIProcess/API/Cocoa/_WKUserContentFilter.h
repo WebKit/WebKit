@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsManager_h
-#define ContentExtensionsManager_h
+#import <WebKit/WKFoundation.h>
 
-#if ENABLE(CONTENT_EXTENSIONS)
+#if WK_API_ENABLED
 
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
+WK_CLASS_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA)
+@interface _WKUserContentFilter : NSObject
 
-namespace WebCore {
+- (instancetype)_initWithName:(NSString *)name serializedRules:(NSString *)serializedRules;
 
-namespace ContentExtensions {
+@end
 
-class ContentExtensionRule;
-
-// The ExtensionsManager loads serialized content extension rules directly into WebCore.
-namespace ExtensionsManager {
-
-Vector<ContentExtensionRule> createRuleList(const String& rules);
-
-} // namespace ExtensionsManager
-
-} // namespace ContentExtensions
-} // namespace WebCore
-
-#endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // ContentExtensionsManager_h
+#endif // WK_API_ENABLED

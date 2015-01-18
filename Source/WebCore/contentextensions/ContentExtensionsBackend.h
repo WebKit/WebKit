@@ -47,15 +47,13 @@ namespace ContentExtensions {
 // 2) It provides APIs for the WebCore interfaces to use those rules efficiently.
 class ContentExtensionsBackend {
 public:
-    static ContentExtensionsBackend& sharedInstance();
-
     // - Rule management interface. This can be used by upper layer.
 
     // Set a list of rules for a given name. If there were existing rules for the name, they are overriden.
     // The identifier cannot be empty.
     void setRuleList(const String& identifier, const Vector<ContentExtensionRule>&);
-
     void removeRuleList(const String& identifier);
+    void removeAllRuleLists();
 
     // - Internal WebCore Interface.
     bool shouldBlockURL(const URL&);

@@ -158,7 +158,7 @@ static Vector<ContentExtensionRule> loadEncodedRules(ExecState& exec, const Stri
     return Vector<ContentExtensionRule>();
 }
 
-void loadExtension(const String& identifier, const String& rules)
+Vector<ContentExtensionRule> createRuleList(const String& rules)
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double loadExtensionStartTime = monotonicallyIncreasingTime();
@@ -173,17 +173,15 @@ void loadExtension(const String& identifier, const String& rules)
 
     vm.clear();
 
-    if (ruleList.isEmpty()) {
+    if (ruleList.isEmpty())
         WTFLogAlways("Empty extension.");
-        return;
-    }
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double loadExtensionEndTime = monotonicallyIncreasingTime();
     dataLogF("Time spent loading extension %s: %f\n", identifier.utf8().data(), (loadExtensionEndTime - loadExtensionStartTime));
 #endif
 
-    ContentExtensionsBackend::sharedInstance().setRuleList(identifier, ruleList);
+    return ruleList;
 }
 
 } // namespace ExtensionsManager

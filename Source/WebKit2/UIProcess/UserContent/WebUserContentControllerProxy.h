@@ -38,6 +38,7 @@
 
 namespace API {
 class Array;
+class UserContentFilter;
 class UserScript;
 }
 
@@ -80,6 +81,11 @@ public:
     bool addUserScriptMessageHandler(WebScriptMessageHandler*);
     void removeUserMessageHandlerForName(const String&);
 
+#if ENABLE(CONTENT_EXTENSIONS)
+    void addUserContentFilter(API::UserContentFilter&);
+    void removeAllUserContentFilters();
+#endif
+
 private:
     // IPC::MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
@@ -91,6 +97,10 @@ private:
     Ref<API::Array> m_userScripts;
     Vector<WebCore::UserStyleSheet> m_userStyleSheets;
     HashMap<uint64_t, RefPtr<WebScriptMessageHandler>> m_scriptMessageHandlers;
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    Ref<API::Array> m_userContentFilters;
+#endif
 };
 
 } // namespace WebKit

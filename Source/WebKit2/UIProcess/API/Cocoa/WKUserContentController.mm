@@ -36,6 +36,7 @@
 #import "WKWebViewInternal.h"
 #import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
+#import "_WKUserContentFilterInternal.h"
 #import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSValue.h>
 #import <WebCore/SerializedScriptValue.h>
@@ -120,6 +121,24 @@ private:
 - (API::Object&)_apiObject
 {
     return *_userContentControllerProxy;
+}
+
+@end
+
+@implementation WKUserContentController (WKPrivate)
+
+- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _userContentControllerProxy->addUserContentFilter(*userContentFilter->_userContentFilter);
+#endif
+}
+
+- (void)_removeAllUserContentFilters
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _userContentControllerProxy->removeAllUserContentFilters();
+#endif
 }
 
 @end

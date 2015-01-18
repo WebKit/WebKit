@@ -37,6 +37,11 @@
 #include "UserMessageHandlerDescriptor.h"
 #endif
 
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "ContentExtensionsBackend.h"
+#include "ContentExtensionsManager.h"
+#endif
+
 namespace WebCore {
 
 RefPtr<UserContentController> UserContentController::create()
@@ -171,6 +176,33 @@ void UserContentController::removeUserMessageHandlerDescriptor(UserMessageHandle
 
     m_userMessageHandlerDescriptors->remove(std::make_pair(descriptor.name(), &descriptor.world()));
 }
+#endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void UserContentController::addUserContentFilter(const String& name, const String& ruleList)
+{
+    if (!m_contentExtensionBackend)
+        m_contentExtensionBackend = std::make_unique<ContentExtensions::ContentExtensionsBackend>();
+    
+    m_contentExtensionBackend->setRuleList(name, ContentExtensions::ExtensionsManager::createRuleList(ruleList));
+}
+
+void UserContentController::removeAllUserContentFilters()
+{
+    if (!m_contentExtensionBackend)
+        return;
+
+    m_contentExtensionBackend->removeAllRuleLists();
+}
+
+bool UserContentController::contentFilterBlocksURL(const URL& url)
+{
+    if (!m_contentExtensionBackend)
+        return false;
+
+    return m_contentExtensionBackend->shouldBlockURL(url);
+}
+
 #endif
 
 void UserContentController::removeAllUserContent()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ContentExtensionsInterface.h"
+#ifndef APIUserContentFilter_h
+#define APIUserContentFilter_h
 
-#if ENABLE(CONTENT_EXTENSIONS)
+#include "APIObject.h"
+#include <wtf/text/WTFString.h>
 
-#include "ContentExtensionsBackend.h"
+namespace API {
 
-namespace WebCore {
-namespace ContentExtensions {
+class UserContentFilter final : public ObjectImpl<Object::Type::UserContentFilter> {
+public:
+    static Ref<UserContentFilter> create(const WTF::String& name, const WTF::String& serializedRules)
+    {
+        return adoptRef(*new UserContentFilter(name, serializedRules));
+    }
 
-bool shouldBlockURL(const URL& url)
-{
-    return ContentExtensionsBackend::sharedInstance().shouldBlockURL(url);
-}
+    UserContentFilter(const WTF::String& name, const WTF::String& serializedRules);
+    ~UserContentFilter();
 
-} // namespace ContentExtensions
-} // namespace WebCore
+    const WTF::String& name() const { return m_name; }
+    const WTF::String& serializedRules() const { return m_serializedRules; }
 
-#endif // ENABLE(CONTENT_EXTENSIONS)
+private:
+    WTF::String m_name;
+    WTF::String m_serializedRules;
+};
+
+} // namespace API
+
+#endif // APIUserContentFilter_h

@@ -104,10 +104,6 @@
 #include "NetworkProcessConnection.h"
 #endif
 
-#if ENABLE(CONTENT_EXTENSIONS)
-#include <WebCore/ContentExtensionsManager.h>
-#endif
-
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShim.h"
 #endif
@@ -1318,13 +1314,6 @@ RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
 
     return UserData::transform(object, Transformer());
 }
-
-#if ENABLE(CONTENT_EXTENSIONS)
-void WebProcess::loadContentExtension(const String& identifier, const String& serializedRules)
-{
-    ContentExtensions::ExtensionsManager::loadExtension(identifier, serializedRules);
-}
-#endif
 
 void WebProcess::setMemoryCacheDisabled(bool disabled)
 {

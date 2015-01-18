@@ -247,20 +247,6 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
     _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
 }
 
-- (void)_loadContentExtensionWithIdentifier:(NSString *)identifier serializedRules:(NSString *)serializedRules successCompletionHandler:(void (^)(NSDictionary *info))successCompletionHandler errorCompletionHandler:(void (^)(NSError *error))errorCompletionHandler
-{
-#if ENABLE(CONTENT_EXTENSIONS)
-    // For this experimentation, the ContentExtensions are handled by each WebProcess.
-    // Eventually the ContentExtension will have to be handled separately from the WebProcesses and we'll be able
-    // to provide meaningful completion handlers.
-    UNUSED_PARAM(errorCompletionHandler);
-
-    _processPool->loadContentExtension(identifier, serializedRules);
-
-    successCompletionHandler(nil);
-#endif
-}
-
 - (id <_WKDownloadDelegate>)_downloadDelegate
 {
     return _downloadDelegate.getAutoreleased();

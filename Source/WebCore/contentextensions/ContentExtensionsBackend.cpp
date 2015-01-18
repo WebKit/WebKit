@@ -42,12 +42,6 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
-ContentExtensionsBackend& ContentExtensionsBackend::sharedInstance()
-{
-    static NeverDestroyed<ContentExtensionsBackend> instance;
-    return instance;
-}
-
 void ContentExtensionsBackend::setRuleList(const String& identifier, const Vector<ContentExtensionRule>& ruleList)
 {
     ASSERT(!identifier.isEmpty());
@@ -110,6 +104,11 @@ void ContentExtensionsBackend::setRuleList(const String& identifier, const Vecto
 void ContentExtensionsBackend::removeRuleList(const String& identifier)
 {
     m_ruleLists.remove(identifier);
+}
+
+void ContentExtensionsBackend::removeAllRuleLists()
+{
+    m_ruleLists.clear();
 }
 
 bool ContentExtensionsBackend::shouldBlockURL(const URL& url)

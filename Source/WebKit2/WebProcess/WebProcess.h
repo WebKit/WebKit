@@ -202,10 +202,6 @@ public:
     bool hasRichContentServices() const { return m_hasRichContentServices; }
 #endif
 
-#if ENABLE(CONTENT_EXTENSIONS)
-    void loadContentExtension(const String& identifier, const String& serializedRules);
-#endif
-
 private:
     WebProcess();
 

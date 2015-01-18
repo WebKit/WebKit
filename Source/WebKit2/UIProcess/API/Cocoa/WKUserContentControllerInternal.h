@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKUserContentController.h"
+#import "WKUserContentControllerPrivate.h"
 
 #if WK_API_ENABLED
 

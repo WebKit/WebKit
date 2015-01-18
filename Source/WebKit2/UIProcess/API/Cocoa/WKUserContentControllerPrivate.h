@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsInterface_h
-#define ContentExtensionsInterface_h
+#import <WebKit/WKUserContentController.h>
 
-#if ENABLE(CONTENT_EXTENSIONS)
+#if WK_API_ENABLED
 
-namespace WebCore {
+@class _WKUserContentFilter;
 
-class URL;
+@interface WKUserContentController (WKPrivate)
 
-// This defines the interface by which WebCore interact with Content Extensions.
-namespace ContentExtensions {
-bool shouldBlockURL(const URL&);
-}
+- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter;
+- (void)_removeAllUserContentFilters;
 
-} // namespace WebCore
+@end
 
-#endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // ContentExtensionsInterface_h
+#endif

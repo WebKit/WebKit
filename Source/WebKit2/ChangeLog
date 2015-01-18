@@ -1,3 +1,73 @@
+2015-01-17  Sam Weinig  <sam@webkit.org>
+
+        Add initial experimental user content filtering API
+        https://bugs.webkit.org/show_bug.cgi?id=140584
+
+        Reviewed by Benjamin Poulain.
+
+        Moves content filtering from being per-ProcessPool to per-UserContentController.
+
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * UIProcess/API/APIUserContentFilter.cpp: Added.
+        (API::UserContentFilter::UserContentFilter):
+        (API::UserContentFilter::~UserContentFilter):
+        * UIProcess/API/APIUserContentFilter.h: Added.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKUserContentFilterRef.cpp: Added.
+        (WKUserContentFilterGetTypeID):
+        (WKUserContentFilterCreate):
+        * UIProcess/API/C/WKUserContentFilterRef.h: Added.
+        * UIProcess/API/C/WebKit2_C.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilter.h: Added.
+        * UIProcess/API/Cocoa/_WKUserContentFilter.mm: Added.
+        (WKUserContentControllerAddUserContentFilter):
+        (WKUserContentControllerRemoveAllUserContentFilters):
+        (-[_WKUserContentFilter _initWithName:ruleList:]):
+        * UIProcess/API/Cocoa/_WKUserContentFilterInternal.h: Added.
+        Add a basic UserContentFilter type and expose it via both the Objective-C API (as _WKUserContentFilter)
+        and via the C SPI (as WKUserContentFilterRef).
+
+        * UIProcess/API/C/WKUserContentControllerRef.h:
+        * UIProcess/API/C/WKUserContentControllerRef.cpp:
+        Add C-SPI to set and remove WKUserContentFilterRefs.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _loadContentExtensionWithIdentifier:serializedRules:successCompletionHandler:errorCompletionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processDidFinishLaunching):
+        (WebKit::WebProcessPool::loadContentExtension): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::loadContentExtension): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Remove the old SPI for loading content filters that was per-ProcessPool. Content filters now follow
+        the same pattern as UserScripts and UserStyleSheets as being per-UserContentController.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (-[WKUserContentController _addUserContentFilter:]):
+        (-[WKUserContentController _removeAllUserContentFilters]):
+        * UIProcess/API/Cocoa/WKUserContentControllerInternal.h:
+        * UIProcess/API/Cocoa/WKUserContentControllerPrivate.h: Added.
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::WebUserContentControllerProxy):
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::addUserContentFilter):
+        (WebKit::WebUserContentControllerProxy::removeAllUserContentFilters):
+        * UIProcess/UserContent/WebUserContentControllerProxy.h:
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        (WebKit::WebUserContentController::addUserContentFilters):
+        (WebKit::WebUserContentController::removeAllUserContentFilters):
+        * WebProcess/UserContent/WebUserContentController.h:
+        * WebProcess/UserContent/WebUserContentController.messages.in:
+        Pipe user content filters over to all the WebProcesses that the UserContentController is
+        connected to.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2015-01-17  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Add Cocoa delegate for logging diagnostic messages

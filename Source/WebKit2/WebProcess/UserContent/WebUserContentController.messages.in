@@ -25,11 +25,16 @@
 
 messages -> WebUserContentController {
     AddUserScripts(Vector<WebCore::UserScript> userScripts);
-    RemoveAllUserScripts()
+    RemoveAllUserScripts();
 
-    AddUserStyleSheets(Vector<WebCore::UserStyleSheet> userStyleShhets);
-    RemoveAllUserStyleSheets()
+    AddUserStyleSheets(Vector<WebCore::UserStyleSheet> userStyleSheets);
+    RemoveAllUserStyleSheets();
 
     AddUserScriptMessageHandlers(Vector<WebKit::WebScriptMessageHandlerHandle> scriptMessageHandlers);
-    RemoveUserScriptMessageHandler(uint64_t identifier)
+    RemoveUserScriptMessageHandler(uint64_t identifier);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    AddUserContentFilters(Vector<std::pair<String, String>> userContentFilters);
+    RemoveAllUserContentFilters();
+#endif
 }

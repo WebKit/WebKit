@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentExtensionsManager_h
-#define ContentExtensionsManager_h
+#import "config.h"
+#import "_WKUserContentFilterInternal.h"
 
-#if ENABLE(CONTENT_EXTENSIONS)
+#if WK_API_ENABLED
 
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
+@implementation _WKUserContentFilter
 
-namespace WebCore {
+- (instancetype)_initWithName:(NSString *)name serializedRules:(NSString *)serializedRules
+{
+    if (!(self = [super init]))
+        return nil;
 
-namespace ContentExtensions {
+    API::Object::constructInWrapper<API::UserContentFilter>(self, String(name), String(serializedRules));
 
-class ContentExtensionRule;
+    return self;
+}
 
-// The ExtensionsManager loads serialized content extension rules directly into WebCore.
-namespace ExtensionsManager {
+- (void)dealloc
+{
+    _userContentFilter->~UserContentFilter();
 
-Vector<ContentExtensionRule> createRuleList(const String& rules);
+    [super dealloc];
+}
 
-} // namespace ExtensionsManager
+#pragma mark WKObject protocol implementation
 
-} // namespace ContentExtensions
-} // namespace WebCore
+- (API::Object&)_apiObject
+{
+    return *_userContentFilter;
+}
 
-#endif // ENABLE(CONTENT_EXTENSIONS)
+@end
 
-#endif // ContentExtensionsManager_h
+#endif // WK_API_ENABLED

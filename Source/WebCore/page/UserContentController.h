@@ -45,6 +45,10 @@ class UserScript;
 class UserStyleSheet;
 class UserMessageHandlerDescriptor;
 
+namespace ContentExtensions {
+class ContentExtensionsBackend;
+}
+
 class UserContentController : public RefCounted<UserContentController> {
 public:
     WEBCORE_EXPORT static RefPtr<UserContentController> create();
@@ -74,6 +78,15 @@ public:
     WEBCORE_EXPORT void removeUserMessageHandlerDescriptor(UserMessageHandlerDescriptor&);
 #endif
 
+#if ENABLE(CONTENT_EXTENSIONS)
+    // FIXME: This should really take a pointer to a compiled UserContentFilter.
+    WEBCORE_EXPORT void addUserContentFilter(const String& name, const String& ruleList);
+    WEBCORE_EXPORT void removeAllUserContentFilters();
+    
+    // FIXME: Consider putting this (and other future content filter predicates) in its own class.
+    bool contentFilterBlocksURL(const URL&);
+#endif
+
 private:
     UserContentController();
 
@@ -85,6 +98,9 @@ private:
     std::unique_ptr<UserStyleSheetMap> m_userStyleSheets;
 #if ENABLE(USER_MESSAGE_HANDLERS)
     std::unique_ptr<UserMessageHandlerDescriptorMap> m_userMessageHandlerDescriptors;
+#endif
+#if ENABLE(CONTENT_EXTENSIONS)
+    std::unique_ptr<ContentExtensions::ContentExtensionsBackend> m_contentExtensionBackend;
 #endif
 };
 

@@ -40,6 +40,8 @@ WK_EXPORT WKArrayRef WKUserContentControllerCopyUserScripts(WKUserContentControl
 WK_EXPORT void WKUserContentControllerAddUserScript(WKUserContentControllerRef userContentController, WKUserScriptRef userScript);
 WK_EXPORT void WKUserContentControllerRemoveAllUserScripts(WKUserContentControllerRef userContentController);
 
+WK_EXPORT void WKUserContentControllerAddUserContentFilter(WKUserContentControllerRef userContentController, WKUserContentFilterRef userContentFilter);
+WK_EXPORT void WKUserContentControllerRemoveAllUserContentFilters(WKUserContentControllerRef userContentController);
 
 #ifdef __cplusplus
 }

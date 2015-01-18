@@ -24,49 +24,19 @@
  */
 
 #include "config.h"
-#include "WKUserContentControllerRef.h"
+#include "WKUserContentFilterRef.h"
 
+#include "APIUserContentFilter.h"
 #include "WKAPICast.h"
-#include "WebUserContentControllerProxy.h"
 
 using namespace WebKit;
 
-WKTypeID WKUserContentControllerGetTypeID()
+WKTypeID WKUserContentFilterGetTypeID()
 {
-    return toAPI(WebUserContentControllerProxy::APIType);
+    return toAPI(API::UserContentFilter::APIType);
 }
 
-WKUserContentControllerRef WKUserContentControllerCreate()
+WKUserContentFilterRef WKUserContentFilterCreate(WKStringRef nameRef, WKStringRef serializedRulesRef)
 {
-    return toAPI(&WebUserContentControllerProxy::create().leakRef());
-}
-
-WKArrayRef WKUserContentControllerCopyUserScripts(WKUserContentControllerRef userContentControllerRef)
-{
-    Ref<API::Array> userScripts = toImpl(userContentControllerRef)->userScripts().copy();
-    return toAPI(&userScripts.leakRef());
-}
-
-void WKUserContentControllerAddUserScript(WKUserContentControllerRef userContentControllerRef, WKUserScriptRef userScriptRef)
-{
-    toImpl(userContentControllerRef)->addUserScript(*toImpl(userScriptRef));
-}
-
-void WKUserContentControllerRemoveAllUserScripts(WKUserContentControllerRef userContentControllerRef)
-{
-    toImpl(userContentControllerRef)->removeAllUserScripts();
-}
-
-void WKUserContentControllerAddUserContentFilter(WKUserContentControllerRef userContentControllerRef, WKUserContentFilterRef userContentFilterRef)
-{
-#if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(userContentControllerRef)->addUserContentFilter(*toImpl(userContentFilterRef));
-#endif
-}
-
-void WKUserContentControllerRemoveAllUserContentFilters(WKUserContentControllerRef userContentControllerRef)
-{
-#if ENABLE(CONTENT_EXTENSIONS)
-    toImpl(userContentControllerRef)->removeAllUserContentFilters();
-#endif
+    return toAPI(&API::UserContentFilter::create(toWTFString(nameRef), toWTFString(serializedRulesRef)).leakRef());
 }

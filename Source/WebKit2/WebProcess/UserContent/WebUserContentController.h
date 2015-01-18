@@ -51,14 +51,19 @@ private:
     // IPC::MessageReceiver.
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 
-    void addUserScripts(const Vector<WebCore::UserScript>& userScripts);
+    void addUserScripts(const Vector<WebCore::UserScript>&);
     void removeAllUserScripts();
 
-    void addUserStyleSheets(const Vector<WebCore::UserStyleSheet>& userStyleSheets);
+    void addUserStyleSheets(const Vector<WebCore::UserStyleSheet>&);
     void removeAllUserStyleSheets();
 
-    void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerHandle>& scriptMessageHandlers);
+    void addUserScriptMessageHandlers(const Vector<WebScriptMessageHandlerHandle>&);
     void removeUserScriptMessageHandler(uint64_t);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    void addUserContentFilters(const Vector<std::pair<String, String>>&);
+    void removeAllUserContentFilters();
+#endif
 
     uint64_t m_identifier;
     Ref<WebCore::UserContentController> m_userContentController;

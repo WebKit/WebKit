@@ -355,10 +355,6 @@ public:
         return m_processSuppressionDisabledForPageCounter.token<ProcessSuppressionDisabledTokenType>();
     }
 
-#if ENABLE(CONTENT_EXTENSIONS)
-    void loadContentExtension(const String& identifier, const String& serializedRules);
-#endif
-
 private:
     void platformInitialize();
 

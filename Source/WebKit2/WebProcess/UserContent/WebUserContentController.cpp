@@ -180,4 +180,17 @@ void WebUserContentController::removeUserScriptMessageHandler(uint64_t identifie
 #endif
 }
 
+#if ENABLE(CONTENT_EXTENSIONS)
+void WebUserContentController::addUserContentFilters(const Vector<std::pair<String, String>>& userContentFilters)
+{
+    for (const auto& userContentFilter : userContentFilters)
+        m_userContentController->addUserContentFilter(userContentFilter.first, userContentFilter.second);
+}
+
+void WebUserContentController::removeAllUserContentFilters()
+{
+    m_userContentController->removeAllUserContentFilters();
+}
+#endif
+
 } // namespace WebKit

@@ -799,11 +799,6 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy* process)
         process->send(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, m_memorySamplerInterval), 0);
     }
 
-#if ENABLE(CONTENT_EXTENSIONS)
-    for (const auto& slot : m_encodedContentExtensions)
-        process->send(Messages::WebProcess::LoadContentExtension(slot.key, slot.value), 0);
-#endif
-
     m_connectionClient.didCreateConnection(this, process->webConnection());
 }
 
@@ -1424,13 +1419,5 @@ void WebProcessPool::setMemoryCacheDisabled(bool disabled)
     m_memoryCacheDisabled = disabled;
     sendToAllProcesses(Messages::WebProcess::SetMemoryCacheDisabled(disabled));
 }
-
-#if ENABLE(CONTENT_EXTENSIONS)
-void WebProcessPool::loadContentExtension(const String& identifier, const String& serializedRules)
-{
-    m_encodedContentExtensions.set(identifier, serializedRules);
-    sendToAllProcesses(Messages::WebProcess::LoadContentExtension(identifier, serializedRules));
-}
-#endif
 
 } // namespace WebKit

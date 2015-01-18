@@ -60,12 +60,9 @@
 #include "SecurityOrigin.h"
 #include "SessionID.h"
 #include "Settings.h"
+#include "UserContentController.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-
-#if ENABLE(CONTENT_EXTENSIONS)
-#include "ContentExtensionsInterface.h"
-#endif
 
 #if ENABLE(VIDEO_TRACK)
 #include "CachedTextTrack.h"
@@ -458,7 +455,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         return 0;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (ContentExtensions::shouldBlockURL(url))
+    if (frame() && frame()->page() && frame()->page()->userContentController() && frame()->page()->userContentController()->contentFilterBlocksURL(url))
         return nullptr;
 #endif
 
