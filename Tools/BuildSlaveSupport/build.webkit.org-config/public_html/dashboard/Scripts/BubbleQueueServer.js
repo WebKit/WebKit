@@ -26,11 +26,11 @@
 BubbleQueueServer = function()
 {
     const queueInfo = {
-        "commit-queue": {platform: Dashboard.Platform.MacOSXMountainLion, shortName: "commit", title: "Commit Queue"},
+        "commit-queue": {platform: Dashboard.Platform.MacOSXMavericks, shortName: "commit", title: "Commit Queue"},
         "style-queue": {shortName: "style", title: "Style Checker Queue"},
         "gtk-wk2-ews": {platform: Dashboard.Platform.LinuxGTK, shortName: "gtk-wk2", title: "WebKit2\xa0Release\xa0Build\xa0EWS"},
-        "mac-ews": {platform: Dashboard.Platform.MacOSXMountainLion, shortName: "mac", title: "WebKit1\xa0Release\xa0Tests\xa0EWS"},
-        "mac-wk2-ews": {platform: Dashboard.Platform.MacOSXMountainLion, shortName: "mac-wk2", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
+        "mac-ews": {platform: Dashboard.Platform.MacOSXMavericks, shortName: "mac", title: "WebKit1\xa0Release\xa0Tests\xa0EWS"},
+        "mac-wk2-ews": {platform: Dashboard.Platform.MacOSXMavericks, shortName: "mac-wk2", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
         "win-ews": {platform: Dashboard.Platform.Windows7, shortName: "win", title: "WebKit1\xa0Release\xa0Build\xa0EWS"},
         "efl-wk2-ews": {platform: Dashboard.Platform.LinuxEFL, shortName: "efl-wk2", title: "WebKit2\xa0Release\xa0Build\xa0EWS"}
     };
