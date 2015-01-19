@@ -1,3 +1,15 @@
+2015-01-19  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r178250): ~2% PLT regression
+        https://bugs.webkit.org/show_bug.cgi?id=140640
+
+        Reviewed by Andreas Kling.
+
+        * platform/graphics/FontCache.cpp:
+
+        The patch accidentally contained a change to reduce the size of the cache (to verify that purgin works).
+        Restore it back to the original value.
+
 2015-01-19  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo][Video] Windows Media Foundation implementation is not completed.

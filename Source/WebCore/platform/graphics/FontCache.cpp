@@ -372,7 +372,7 @@ static FontDataCache& cachedFonts()
 const int cMaxInactiveFontData = 120;
 const int cTargetInactiveFontData = 100;
 #else
-const int cMaxInactiveFontData = 5;
+const int cMaxInactiveFontData = 225;
 const int cTargetInactiveFontData = 200;
 #endif
 
