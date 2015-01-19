@@ -434,7 +434,8 @@ sub determineXcodeSDK
         $xcodeSDK = $sdk;
     }
     if (checkForArgumentAndRemoveFromARGV("--device")) {
-        $xcodeSDK ||= 'iphoneos.internal';
+        my $hasInternalSDK = exitStatus(system("xcrun --sdk iphoneos.internal --show-sdk-version > /dev/null 2>&1")) == 0;
+        $xcodeSDK ||= $hasInternalSDK ? "iphoneos.internal" : "iphoneos";
     }
     if (checkForArgumentAndRemoveFromARGV("--sim") ||
         checkForArgumentAndRemoveFromARGV("--simulator") ||
@@ -1638,8 +1639,7 @@ sub buildXCodeProject($$@)
         push(@extraOptions, "clean");
     }
 
-    push(@extraOptions, ("-sdk", "iphonesimulator")) if willUseIOSSimulatorSDKWhenBuilding();
-    push(@extraOptions, ("-sdk", "iphoneos.internal")) if willUseIOSDeviceSDKWhenBuilding();
+    push(@extraOptions, ("-sdk", xcodeSDK())) if isIOSWebKit();
 
     chomp($ENV{DSYMUTIL_NUM_THREADS} = `sysctl -n hw.activecpu`);
     return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;

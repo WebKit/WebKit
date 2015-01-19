@@ -1,3 +1,17 @@
+2015-01-19  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Do not hard-code iphoneos.internal SDK in buildXCodeProject()
+        <http://webkit.org/b/140623>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/build-webkit: Update help for --device switch.
+        * Scripts/webkitdirs.pm:
+        (determineXcodeSDK): When passing --device, prefer the internal
+        iOS SDK if it exists, else fall back to the external iOS SDK.
+        (buildXCodeProject): Use xcodeSDK() as -sdk argument for
+        xcodebuild instead of trying to sanitize values.
+
 2015-01-19  Alexey Proskuryakov  <ap@apple.com>
 
         "Unknown option: sharedworkerglobalscopeconstructorsfile" when running bindings tests.
