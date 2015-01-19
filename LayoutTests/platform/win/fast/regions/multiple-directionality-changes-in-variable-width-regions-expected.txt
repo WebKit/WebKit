@@ -26,16 +26,16 @@ Named flows
                   text run at (-17,18) width 248: "the region. This line of text should not"
                   text run at (-17,36) width 248: "get out of the region. This line of text"
                   text run at (0,57) width 314: "should not get out of the region. This line of text"
-                  text run at (0,75) width 205: "should not get out of the region."
+                  text run at (0,75) width 201: "should not get out of the region."
               RenderBlock {P} at (1,126) size 314x72
                 RenderText {#text} at (0,0) size 314x71
                   text run at (0,0) width 314: "This line of text should not get out of the region."
                   text run at (0,18) width 314: "This line of text should not get out of the region."
                   text run at (0,36) width 314: "This line of text should not get out of the region."
-                  text run at (0,54) width 311: "This line of text should not get out of the region."
+                  text run at (0,54) width 304: "This line of text should not get out of the region."
               RenderBlock {P} at (1,214) size 314x18
-                RenderText {#text} at (0,0) size 311x17
-                  text run at (0,0) width 311: "This line of text should not get out of the region."
+                RenderText {#text} at (0,0) size 304x17
+                  text run at (0,0) width 304: "This line of text should not get out of the region."
     Regions for named flow 'flow1'
       RenderNamedFlowFragment (anonymous child of {DIV} #region1)
       RenderNamedFlowFragment (anonymous child of {DIV} #region2)

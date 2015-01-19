@@ -1,3 +1,15 @@
+2015-01-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed Windows gardening.
+
+        Rebaseline a few tests based on current bot output.
+
+        * platform/win/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt:
+        * platform/win/fast/regions/region-dynamic-after-before-expected.txt:
+        * platform/win/fast/regions/region-generated-content-before-after-expected.txt:
+        * platform/win/fast/regions/text-region-split-small-pagination-expected.txt:
+        * platform/win/fast/text/international/thai-baht-space-expected.txt:
+
 2015-01-19  Roger Fong  <roger_fong@apple.com>
 
         [Mac] Test fix after r178674.
