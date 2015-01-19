@@ -2823,9 +2823,6 @@ userscripts/window-onerror-for-isolated-world-2.html [ Timeout ]
 webkit.org/b/140520 inspector-protocol/debugger/setBreakpoint-dfg.html [ Crash ]
 webkit.org/b/140522 mathml/opentype/munderover-layout-resize.html [ Crash ]
 
-# [Win] REGRESSION(r177542 or r177613): svg/W3C tests are broken
-webkit.org/b/139972 svg/W3C-SVG-1.1 [ Failure ]
-
 # [Win] REGRESSION: fast/regions reference tests are failing with minor pixel differences
 # https://bugs.webkit.org/show_bug.cgi?id=139973. Many are also flaky, which was documented
 # under https://bugs.webkit.org/show_bug.cgi?id=128855.
