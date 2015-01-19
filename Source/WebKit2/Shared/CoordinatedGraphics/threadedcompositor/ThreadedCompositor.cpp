@@ -272,7 +272,11 @@ void ThreadedCompositor::renderLayerTree()
 
 void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 {
-    m_scene->appendUpdate(bind(&CoordinatedGraphicsScene::commitSceneState, m_scene.get(), state));
+    RefPtr<CoordinatedGraphicsScene> scene = m_scene;
+    m_scene->appendUpdate([scene, state] {
+        scene->commitSceneState(state);
+    });
+
     setNeedsDisplay();
 }
 
