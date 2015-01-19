@@ -1,3 +1,25 @@
+2015-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Converter] Glyphs get clipped weirdly
+        https://bugs.webkit.org/show_bug.cgi?id=137095
+
+        Reviewed by Antti Koivisto.
+
+        The Adobe CFF spec doesn't actually tell you how to serialize a
+        "FontBBox." After trial and error, it seems to be (x, y, width,
+        height).
+
+        Test: svg/text/kerning.svg
+              svg/W3C-SVG-1.1/fonts-kern-01-t.svg
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendHEADTable):
+        (WebCore::SVGToOTFFontConverter::appendCFFTable):
+        (WebCore::SVGToOTFFontConverter::appendVHEATable):
+        (WebCore::CFFBuilder::CFFBuilder):
+        (WebCore::SVGToOTFFontConverter::transcodeGlyphPaths):
+        (WebCore::SVGToOTFFontConverter::processGlyphElement):
+
 2015-01-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r178486): It broke the !ENABLE(VIDEO) build

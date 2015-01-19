@@ -322,10 +322,10 @@ void SVGToOTFFontConverter::appendHEADTable()
     append32(0); // Last half of creation date
     append32(0); // First half of modification date
     append32(0); // Last half of modification date
-    append16(m_boundingBox.x()); // Minimum X
-    append16(m_boundingBox.y()); // Minimum Y
-    append16(m_boundingBox.maxX()); // Maximum X
-    append16(m_boundingBox.maxY()); // Maximum Y
+    append16(clampTo<int16_t>(m_boundingBox.x()));
+    append16(clampTo<int16_t>(m_boundingBox.y()));
+    append16(clampTo<int16_t>(m_boundingBox.maxX()));
+    append16(clampTo<int16_t>(m_boundingBox.maxY()));
     append16((m_italic ? 1 << 1 : 0) | (m_weight >= 7 ? 1 : 0));
     append16(3); // Smallest readable size in pixels
     append16(0); // Might contain LTR or RTL glyphs
@@ -575,11 +575,11 @@ void SVGToOTFFontConverter::appendCFFTable()
     m_result.append(operand32Bit);
     append32(clampTo<int32_t>(m_boundingBox.x()));
     m_result.append(operand32Bit);
-    append32(clampTo<int32_t>(m_boundingBox.maxX()));
-    m_result.append(operand32Bit);
     append32(clampTo<int32_t>(m_boundingBox.y()));
     m_result.append(operand32Bit);
-    append32(clampTo<int32_t>(m_boundingBox.maxY()));
+    append32(clampTo<int32_t>(m_boundingBox.width()));
+    m_result.append(operand32Bit);
+    append32(clampTo<int32_t>(m_boundingBox.height()));
     m_result.append(fontBBoxKey);
     m_result.append(operand32Bit);
     unsigned charsetOffsetLocation = m_result.size();
@@ -887,6 +887,7 @@ void SVGToOTFFontConverter::appendVHEATable()
     append16(m_unitsPerEm / 2); // Vertical typographic ascender (vertical baseline to the right)
     append16(clampTo<int16_t>(-static_cast<int>(m_unitsPerEm / 2))); // Vertical typographic descender
     append16(m_unitsPerEm / 10); // Vertical typographic line gap
+    // FIXME: m_unitsPerEm is almost certainly not correct
     append16(clampTo<int16_t>(m_advanceHeightMax));
     append16(clampTo<int16_t>(m_unitsPerEm - m_boundingBox.maxY())); // Minimum top side bearing
     append16(clampTo<int16_t>(m_boundingBox.y())); // Minimum bottom side bearing
@@ -1049,6 +1050,7 @@ public:
         : m_cffData(cffData)
         , m_hasBoundingBox(false)
     {
+        // FIXME: Moving to the origin isn't going to work for subsequent absolute coordinates
         writeCFFEncodedNumber(m_cffData, width);
         writeCFFEncodedNumber(m_cffData, origin.x());
         writeCFFEncodedNumber(m_cffData, origin.y());
@@ -1149,11 +1151,11 @@ Vector<char> SVGToOTFFontConverter::transcodeGlyphPaths(float width, const SVGEl
     // FIXME: If we are vertical, use vert_origin_x and vert_origin_y
     bool ok;
     float horizontalOriginX = glyphOrMissingGlyphElement.fastGetAttribute(SVGNames::horiz_origin_xAttr).toFloat(&ok);
-    if (!ok)
-        horizontalOriginX = m_fontFaceElement ? m_fontFaceElement->horizontalOriginX() : 0;
+    if (!ok && m_fontFaceElement)
+        horizontalOriginX = m_fontFaceElement->horizontalOriginX();
     float horizontalOriginY = glyphOrMissingGlyphElement.fastGetAttribute(SVGNames::horiz_origin_yAttr).toFloat(&ok);
     if (!ok && m_fontFaceElement)
-        horizontalOriginY = m_fontFaceElement ? m_fontFaceElement->horizontalOriginY() : 0;
+        horizontalOriginY = m_fontFaceElement->horizontalOriginY();
 
     CFFBuilder builder(result, width, FloatPoint(horizontalOriginX, horizontalOriginY));
     SVGPathStringSource source(dAttribute);
@@ -1195,7 +1197,7 @@ void SVGToOTFFontConverter::processGlyphElement(const SVGElement& glyphOrMissing
     m_minRightSideBearing = std::min(m_minRightSideBearing, horizontalAdvance - glyphBoundingBox.maxX());
     initialGlyph = false;
 
-    m_glyphs.append(GlyphData(WTF::move(path), glyphElement, horizontalAdvance, verticalAdvance, m_boundingBox, codepoints));
+    m_glyphs.append(GlyphData(WTF::move(path), glyphElement, horizontalAdvance, verticalAdvance, glyphBoundingBox, codepoints));
 }
 
 void SVGToOTFFontConverter::appendLigatureGlyphs()
