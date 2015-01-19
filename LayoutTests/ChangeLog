@@ -1,5 +1,14 @@
 2015-01-19  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed gardening: Remove unneeded win-specific result.
+
+        At one point, Windows error messages did not include line numbers and needed its own results.
+        This is no longer the case, and any such results should be removed
+
+        * platform/win/fast/xmlhttprequest/xmlhttprequest-no-file-access-expected.txt: Removed.
+
+2015-01-19  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed gardening: Mark some passing tests appropriately.
 
         * platform/win/TestExpectations:
