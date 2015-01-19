@@ -1,5 +1,12 @@
 2015-01-19  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Correct merge error in last commit.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (findAccessibleObjectById): Undo accidental paste made during landing.
+
+2015-01-19  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Periodic failure in DumpRenderTree related to WebActionPropertyBag::Read
         https://bugs.webkit.org/show_bug.cgi?id=139906
 

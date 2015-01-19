@@ -90,7 +90,6 @@ static COMPtr<IAccessible> findAccessibleObjectById(AccessibilityUIElement paren
     if (!comparable)
         return 0;
 
-    COMVariant navigationType;
     _variant_t value;
     _bstr_t elementIdAttributeKey(L"AXDRTElementIdAttribute");
     if (SUCCEEDED(comparable->get_attribute(elementIdAttributeKey, &value.GetVARIANT()))) {
