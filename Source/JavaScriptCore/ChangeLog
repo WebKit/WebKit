@@ -1,3 +1,20 @@
+2015-01-18  Dean Jackson  <dino@apple.com>
+
+        ES6: Support Array.of construction
+        https://bugs.webkit.org/show_bug.cgi?id=140605
+        <rdar://problem/19513655>
+
+        Reviewed by Geoffrey Garen.
+
+        Add and implementation of Array.of, described in 22.1.2.3 of the ES6
+        specification (15 Jan 2015). The Array.of() method creates a new Array
+        instance with a variable number of arguments, regardless of number or type
+        of the arguments.
+
+        * runtime/ArrayConstructor.cpp:
+        (JSC::arrayConstructorOf): Create a new empty Array, then iterate
+        over the arguments, setting them to the appropriate index.
+
 2015-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Flip the switch on
