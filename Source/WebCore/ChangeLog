@@ -1,3 +1,14 @@
+2015-01-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r178486): It broke the !ENABLE(VIDEO) build
+        https://bugs.webkit.org/show_bug.cgi?id=140611
+
+        Reviewed by Eric Carlson.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::elementIsBlockingDisplaySleep):
+        * testing/Internals.h:
+
 2015-01-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Tracks shrink sometimes with indefinite remaining space

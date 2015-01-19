@@ -2419,6 +2419,13 @@ void Internals::postRemoteControlCommand(const String& commandString, ExceptionC
     
     MediaSessionManager::sharedManager().didReceiveRemoteControlCommand(command);
 }
+
+bool Internals::elementIsBlockingDisplaySleep(Element* element) const
+{
+    HTMLMediaElement* mediaElement = downcast<HTMLMediaElement>(element);
+    return mediaElement ? mediaElement->isDisablingSleep() : false;
+}
+
 #endif // ENABLE(VIDEO)
 
 void Internals::simulateSystemSleep() const
@@ -2435,11 +2442,6 @@ void Internals::simulateSystemWake() const
 #endif
 }
 
-bool Internals::elementIsBlockingDisplaySleep(Element* element) const
-{
-    HTMLMediaElement* mediaElement = downcast<HTMLMediaElement>(element);
-    return mediaElement ? mediaElement->isDisablingSleep() : false;
-}
 
 void Internals::installMockPageOverlay(const String& overlayType, ExceptionCode& ec)
 {

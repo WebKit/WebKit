@@ -347,11 +347,11 @@ public:
     void applicationWillEnterBackground() const;
     void setMediaSessionRestrictions(const String& mediaType, const String& restrictions, ExceptionCode&);
     void postRemoteControlCommand(const String&, ExceptionCode&);
+    bool elementIsBlockingDisplaySleep(Element*) const;
 #endif
 
     void simulateSystemSleep() const;
     void simulateSystemWake() const;
-    bool elementIsBlockingDisplaySleep(Element*) const;
 
     void installMockPageOverlay(const String& overlayType, ExceptionCode&);
     String pageOverlayLayerTreeAsText(ExceptionCode&) const;
