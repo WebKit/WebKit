@@ -80,14 +80,14 @@ function testRemovals()
 
     testRemoval("unconstrainedAutoGrid", { 'width': '390', 'height': '10' }, { 'width': '350', 'height': '10' }, { 'width': '170', 'height': '10' });
     testRemoval("unconstrainedMinContentFixedGrid", { 'width': '100', 'height': '60' }, { 'width': '100', 'height': '60' }, { 'width': '100', 'height': '40' });
-    testRemoval("unconstrainedMinContentFixedGridUndefinedHeight", { 'width': '100', 'height': '40' }, { 'width': '100', 'height': '40' }, { 'width': '100', 'height': '40' });
+    testRemoval("unconstrainedMinContentFixedGridUndefinedHeight", { 'width': '100', 'height': '60' }, { 'width': '100', 'height': '60' }, { 'width': '100', 'height': '40' });
     testRemoval("unconstrainedMaxContentFixedGrid", { 'width': '390', 'height': '40' }, { 'width': '350', 'height': '40' }, { 'width': '170', 'height': '40' });
     testRemoval("unconstrainedFixedMinContentGrid", { 'width': '100', 'height': '60' }, { 'width': '100', 'height': '60' }, { 'width': '100', 'height': '40' });
     testRemoval("unconstrainedFixedMaxContentGrid", { 'width': '390', 'height': '40' }, { 'width': '350', 'height': '40' }, { 'width': '170', 'height': '40' });
 
     testRemoval("lessConstrainedAutoGrid", { 'width': '60', 'height': '90' }, { 'width': '60', 'height': '60' }, { 'width': '60', 'height': '30' });
     testRemoval("lessConstrainedMinContentFixedGrid", { 'width': '60', 'height': '90' }, { 'width': '60', 'height': '60' }, { 'width': '60', 'height': '30' });
-    testRemoval("lessConstrainedMinContentFixedGridUndefinedHeight", { 'width': '60', 'height': '40' }, { 'width': '60', 'height': '40' }, { 'width': '60', 'height': '40' });
+    testRemoval("lessConstrainedMinContentFixedGridUndefinedHeight", { 'width': '60', 'height': '90' }, { 'width': '60', 'height': '60' }, { 'width': '60', 'height': '40' });
     testRemoval("lessConstrainedMaxContentFixedGrid", { 'width': '350', 'height': '20' }, { 'width': '350', 'height': '20' }, { 'width': '170', 'height': '20' });
     testRemoval("lessConstrainedMaxContentFixedGridUndefinedHeight", { 'width': '350', 'height': '40' }, { 'width': '350', 'height': '40' }, { 'width': '170', 'height': '40' });
     testRemoval("lessConstrainedFixedMinContentGrid", { 'width': '100', 'height': '40' }, { 'width': '100', 'height': '40' }, { 'width': '100', 'height': '40' });

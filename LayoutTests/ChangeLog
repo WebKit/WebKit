@@ -1,3 +1,36 @@
+2015-01-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Tracks shrink sometimes with indefinite remaining space
+        https://bugs.webkit.org/show_bug.cgi?id=139059
+
+        Reviewed by David Hyatt.
+
+        The third step of the grid track sizing algorithm (method
+        ComputeUsedBreadthOfGridTracks in the old specs version of the
+        algorithm) tries to grow all grid tracks until the remaining space
+        is exhausted. Should the remaining space is undefined we should fill
+        the tracks up to their limits. This is specified in pseudocode like
+        this:
+
+            For each Grid track t in GridTracks
+                t.UsedBreadth = t.MaxBreadth
+
+        That's correct for most of the cases, but it becomes
+        wrong whenever t.UsedBreadth > t.MaxBreadth something that is not
+        incorrect. What we actually want to do is to grow the track to its
+        maximum if and only if the used breadth is smaller than the maximum.
+
+        * TestExpectations: Added a test which is correct but starts to fail
+        due to another bug (wkb.ug/139058).
+        * fast/css-grid-layout/grid-auto-columns-rows-update.html:
+        * fast/css-grid-layout/grid-grow-tracks-to-their-max-expected.txt: Added.
+        * fast/css-grid-layout/grid-grow-tracks-to-their-max.html: Added.
+        * fast/css-grid-layout/grid-item-removal-track-breadth-update.html:
+        * fast/css-grid-layout/minmax-max-content-resolution-rows.html:
+        * fast/css-grid-layout/minmax-min-content-column-resolution-rows.html:
+        * fast/css-grid-layout/percent-of-indefinite-track-size-in-auto.html:
+        * fast/css-grid-layout/percent-of-indefinite-track-size.html:
+
 2015-01-18  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/navigation/navigation-interrupted-by-fragment.html frequently times out
