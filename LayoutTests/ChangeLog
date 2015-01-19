@@ -1,3 +1,20 @@
+2015-01-18  Dean Jackson  <dino@apple.com>
+
+        Out of bounds write in canvas.toDataURL
+        https://bugs.webkit.org/show_bug.cgi?id=140594
+        <rdar://problem/19449135>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Creates a WebGL context that does not have
+        premultiplied alpha, fills it with 50% transparent white,
+        and attempts to convert the canvas to a JPEG data URL. This
+        exercises the code path that was not accurately
+        allocating data (to flatten the alpha).
+
+        * fast/canvas/webgl/toDataURL-unpremultipliedAlpha-expected.txt: Added.
+        * fast/canvas/webgl/toDataURL-unpremultipliedAlpha.html: Added.
+
 2015-01-17  Michael Saboff  <msaboff@apple.com>
 
         Crash in JSScope::resolve() on tools.ups.com

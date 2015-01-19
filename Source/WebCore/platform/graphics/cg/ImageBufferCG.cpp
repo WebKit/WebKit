@@ -540,6 +540,7 @@ String ImageDataToDataURL(const ImageData& source, const String& mimeType, const
         if (!premultipliedData.tryReserveCapacity(size))
             return "data:,";
 
+        premultipliedData.resize(size);
         unsigned char *buffer = premultipliedData.data();
         for (size_t i = 0; i < size; i += 4) {
             unsigned alpha = data[i + 3];
