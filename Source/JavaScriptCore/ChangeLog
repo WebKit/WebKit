@@ -1,3 +1,29 @@
+2015-01-19  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: convert to is<T> and downcast<T> for decoding replay inputs
+        https://bugs.webkit.org/show_bug.cgi?id=140512
+
+        Reviewed by Chris Dumez.
+
+        Generate a SPECIALIZE_TYPE_TRAITS_* chunk of code for each input. This cannot
+        be done using REPLAY_INPUT_NAMES_FOR_EACH macro since that doesn't fully qualify
+        input types, and the type traits macro is defined in namespace WTF.
+
+        * replay/NondeterministicInput.h: Make overridden methods public.
+        * replay/scripts/CodeGeneratorReplayInputs.py:
+        (Generator.generate_header):
+        (Generator.qualified_input_name): Allow forcing qualification. WTF is never a target framework.
+        (Generator.generate_input_type_trait_declaration): Added.
+        * replay/scripts/CodeGeneratorReplayInputsTemplates.py: Add a template.
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-input-with-guard.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-inputs-with-flags.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-memoized-type-modes.json-TestReplayInputs.h:
+
 2015-01-19  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r178653.

@@ -166,8 +166,8 @@ EncodedValue EncodingTraits<NondeterministicInputBase>::encodeValue(const Nondet
     ENCODE_TYPE_WITH_KEY(encodedValue, String, type, input.type());
 
 #define ENCODE_IF_TYPE_TAG_MATCHES(name) \
-    if (input.type() == InputTraits<name>::type()) { \
-        InputTraits<name>::encode(encodedValue, static_cast<const name&>(input)); \
+    if (is<name>(input)) { \
+        InputTraits<name>::encode(encodedValue, downcast<name>(input)); \
         return encodedValue; \
     } \
 
@@ -176,8 +176,8 @@ EncodedValue EncodingTraits<NondeterministicInputBase>::encodeValue(const Nondet
 #undef ENCODE_IF_TYPE_TAG_MATCHES
 
     // The macro won't work here because of the class template argument.
-    if (input.type() == InputTraits<MemoizedDOMResultBase>::type()) {
-        InputTraits<MemoizedDOMResultBase>::encode(encodedValue, static_cast<const MemoizedDOMResultBase&>(input));
+    if (is<MemoizedDOMResultBase>(input)) {
+        InputTraits<MemoizedDOMResultBase>::encode(encodedValue, downcast<MemoizedDOMResultBase>(input));
         return encodedValue;
     }
 

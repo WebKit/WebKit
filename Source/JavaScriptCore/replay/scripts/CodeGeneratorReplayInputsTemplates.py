@@ -88,6 +88,8 @@ namespace ${inputsNamespace} {
 ${inputClassDeclarations}
 } // namespace ${inputsNamespace}
 
+${inputTypeTraitDeclarations}
+
 ${forEachMacro}
 
 #endif // ${guardCondition}
@@ -103,6 +105,11 @@ ${forEachMacro}
     static void encode(JSC::EncodedValue&, const ${qualifiedInputName}&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<${qualifiedInputName}>&);
 };""")
+
+    InputTypeTraitsDeclaration = (
+    """SPECIALIZE_TYPE_TRAITS_BEGIN(${qualifiedInputName})
+    static bool isType(const NondeterministicInputBase& input) { return input.type() == InputTraits<${qualifiedInputName}>::type(); }
+SPECIALIZE_TYPE_TRAITS_END()""")
 
     EnumTraitDeclaration = (
     """template<> struct EncodingTraits<${enumName}> {

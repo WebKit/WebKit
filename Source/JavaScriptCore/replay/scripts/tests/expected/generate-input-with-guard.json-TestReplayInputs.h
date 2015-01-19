@@ -88,6 +88,16 @@ private:
 };
 } // namespace Test
 
+#if ENABLE(DUMMY_FEATURE)
+SPECIALIZE_TYPE_TRAITS_BEGIN(Test::GetCurrentTime)
+    static bool isType(const NondeterministicInputBase& input) { return input.type() == InputTraits<Test::GetCurrentTime>::type(); }
+SPECIALIZE_TYPE_TRAITS_END()
+#endif // ENABLE(DUMMY_FEATURE)
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(Test::SetRandomSeed)
+    static bool isType(const NondeterministicInputBase& input) { return input.type() == InputTraits<Test::SetRandomSeed>::type(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #define TEST_REPLAY_INPUT_NAMES_FOR_EACH(macro) \
     macro(GetCurrentTime) \
     macro(SetRandomSeed) \

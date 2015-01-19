@@ -90,6 +90,14 @@ private:
 };
 } // namespace Test
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(Test::ArrayOfThings)
+    static bool isType(const NondeterministicInputBase& input) { return input.type() == InputTraits<Test::ArrayOfThings>::type(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(Test::SavedHistory)
+    static bool isType(const NondeterministicInputBase& input) { return input.type() == InputTraits<Test::SavedHistory>::type(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #define TEST_REPLAY_INPUT_NAMES_FOR_EACH(macro) \
     macro(ArrayOfThings) \
     macro(SavedHistory) \

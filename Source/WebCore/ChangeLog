@@ -1,3 +1,19 @@
+2015-01-19  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: convert to is<T> and downcast<T> for decoding replay inputs
+        https://bugs.webkit.org/show_bug.cgi?id=140512
+
+        Reviewed by Chris Dumez.
+
+        No new tests, no behavior changed.
+
+        * replay/EventLoopInput.h: Make overridden methods public.
+        * replay/MemoizedDOMResult.h: Add type trait specialization here. It is
+        special-cased because the input type parameter doesn't work with macros.
+        * replay/SerializationMethods.cpp:
+        (JSC::EncodingTraits<NondeterministicInputBase>::encodeValue):
+        Use is() and downcast() when dispatching to encoders based on type.
+
 2015-01-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Replace use of WTF::bind() in MemoryPressureHandlerLinux.cpp with a C++ lambda

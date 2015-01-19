@@ -32,6 +32,7 @@
 
 #include <replay/EncodedValue.h>
 #include <replay/NondeterministicInput.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -153,6 +154,10 @@ struct InputTraits<MemoizedDOMResultBase> {
 };
 
 } // namespace JSC
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MemoizedDOMResultBase)
+static bool isType(const NondeterministicInputBase& input) { return input.type() == InputTraits<WebCore::MemoizedDOMResultBase>::type(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(WEB_REPLAY)
 

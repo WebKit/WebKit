@@ -98,6 +98,10 @@ private:
 };
 } // namespace Test
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(Test::FormCombo)
+    static bool isType(const NondeterministicInputBase& input) { return input.type() == InputTraits<Test::FormCombo>::type(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #define TEST_REPLAY_INPUT_NAMES_FOR_EACH(macro) \
     macro(FormCombo) \
     \

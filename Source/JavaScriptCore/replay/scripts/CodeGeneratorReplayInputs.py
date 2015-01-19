@@ -57,6 +57,9 @@ GLOBAL_CONFIG = {
         (["JavaScriptCore"],
             ("JavaScriptCore", "replay/NondeterministicInput.h")
         ),
+        (["JavaScriptCore", "WebCore"],
+            ("WTF", "wtf/TypeCasts.h")
+        ),
         (["WebCore"],
             ("WTF", "wtf/text/WTFString.h")
         ),
@@ -596,6 +599,7 @@ class Generator:
             'inputForwardDeclarations': "\n".join([wrap_with_guard("class %s;", _input.guard) % _input.name for _input in self._model.inputs]),
             'inputClassDeclarations': "\n\n".join([self.generate_class_declaration(_input) for _input in self._model.inputs]),
             'inputTraitDeclarations': "\n\n".join([self.generate_input_trait_declaration(_input) for _input in self._model.inputs]),
+            'inputTypeTraitDeclarations': "\n\n".join([self.generate_input_type_trait_declaration(_input) for _input in self._model.inputs]),
             'enumTraitDeclarations': "\n\n".join([wrap_with_guard(self.generate_enum_trait_declaration(_type), _type.guard) for _type in self._model.enum_types()]),
             'forEachMacro': self.generate_for_each_macro(),
         }
@@ -747,11 +751,11 @@ class Generator:
     def generate_input_member_tuples(self, _input):
         return [(_member, self._model.get_type_for_member(_member)) for _member in _input.members]
 
-    def qualified_input_name(self, _input):
-        if self.target_framework == self.traits_framework:
-            return _input.name
-        else:
+    def qualified_input_name(self, _input, forceQualified=False):
+        if forceQualified or self.target_framework != self.traits_framework:
             return "%s::%s" % (self.target_framework.setting('namespace'), _input.name)
+        else:
+            return _input.name
 
     def generate_input_trait_declaration(self, _input):
         decl_type = ['struct']
@@ -765,6 +769,13 @@ class Generator:
         }
 
         return wrap_with_guard(Template(Templates.InputTraitsDeclaration).substitute(template_arguments), _input.guard)
+
+    def generate_input_type_trait_declaration(self, _input):
+        template_arguments = {
+            'qualifiedInputName': self.qualified_input_name(_input, forceQualified=True),
+        }
+
+        return wrap_with_guard(Template(Templates.InputTypeTraitsDeclaration).substitute(template_arguments), _input.guard)
 
     def generate_enum_trait_declaration(self, _type):
         should_qualify_type = _type.framework != self.traits_framework

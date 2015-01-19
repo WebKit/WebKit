@@ -82,6 +82,14 @@ private:
 };
 } // namespace Test
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(Test::ScalarInput)
+    static bool isType(const NondeterministicInputBase& input) { return input.type() == InputTraits<Test::ScalarInput>::type(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(Test::MapInput)
+    static bool isType(const NondeterministicInputBase& input) { return input.type() == InputTraits<Test::MapInput>::type(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #define TEST_REPLAY_INPUT_NAMES_FOR_EACH(macro) \
     macro(ScalarInput) \
     macro(MapInput) \

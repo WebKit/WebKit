@@ -65,6 +65,7 @@ public:
 
 template<typename InputType>
 class NondeterministicInput : public NondeterministicInputBase {
+public:
     virtual const String& type() const override
     {
         return InputTraits<InputType>::type();
