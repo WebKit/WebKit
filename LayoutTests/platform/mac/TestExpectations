@@ -1169,8 +1169,7 @@ webkit.org/b/137319 [ MountainLion ] fast/css/test-setting-canvas-color.html [ P
 [ Yosemite+ ] webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
 [ Yosemite+ ] webaudio/oscillator-sawtooth.html [ Failure ]
 
-# Flaky logging underneath us
-webkit.org/b/124219 [ Yosemite ] media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
+webkit.org/b/137505 [ Mavericks+ ] media/track/track-forced-subtitles-in-band.html [ Failure Pass ]
 
 # FIXME: Needs bugzilla (<rdar://problem/15971968>)
 [ Yosemite+ ] platform/mac/accessibility/misspelled-attributed-string.html [ Pass Failure ]
