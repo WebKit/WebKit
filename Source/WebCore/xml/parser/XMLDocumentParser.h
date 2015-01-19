@@ -65,7 +65,7 @@ class Text;
         xmlParserCtxtPtr m_context;
     };
 
-    class XMLDocumentParser : public ScriptableDocumentParser, public CachedResourceClient {
+    class XMLDocumentParser final : public ScriptableDocumentParser, public CachedResourceClient {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         static Ref<XMLDocumentParser> create(Document& document, FrameView* view)
@@ -90,8 +90,6 @@ class Text;
         // Used by the XMLHttpRequest to check if the responseXML was well formed.
         virtual bool wellFormed() const { return !m_sawError; }
 
-        TextPosition textPosition() const;
-
         static bool supportsXMLVersion(const String&);
 
     private:
@@ -105,6 +103,9 @@ class Text;
         virtual bool isWaitingForScripts() const override;
         virtual void stopParsing() override;
         virtual void detach() override;
+
+        virtual TextPosition textPosition() const override;
+        virtual bool shouldAssociateConsoleMessagesWithTextPosition() const override;
 
         // from CachedResourceClient
         virtual void notifyFinished(CachedResource*) override;

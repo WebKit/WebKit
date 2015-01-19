@@ -261,6 +261,8 @@ bool XMLDocumentParser::isWaitingForScripts() const
 
 void XMLDocumentParser::pauseParsing()
 {
+    ASSERT(!m_parserPaused);
+
     if (m_parsingFragment)
         return;
 

@@ -462,6 +462,11 @@ TextPosition HTMLDocumentParser::textPosition() const
     return TextPosition(currentString.currentLine(), currentString.currentColumn());
 }
 
+bool HTMLDocumentParser::shouldAssociateConsoleMessagesWithTextPosition() const
+{
+    return inPumpSession() && !isExecutingScript();
+}
+
 bool HTMLDocumentParser::isWaitingForScripts() const
 {
     // When the TreeBuilder encounters a </script> tag, it returns to the HTMLDocumentParser

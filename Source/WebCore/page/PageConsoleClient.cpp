@@ -83,27 +83,34 @@ void PageConsoleClient::unmute()
     muteCount--;
 }
 
+static void getParserLocationForConsoleMessage(Document* document, String& url, unsigned& line, unsigned& column)
+{
+    if (!document)
+        return;
+
+    // We definitely cannot associate the message with a location being parsed if we are not even parsing.
+    if (!document->parsing())
+        return;
+
+    ScriptableDocumentParser* parser = document->scriptableDocumentParser();
+
+    // When the parser waits for scripts, any messages must be coming from some other source, and are not related to the location of the script element that made the parser wait.
+    if (!parser->shouldAssociateConsoleMessagesWithTextPosition())
+        return;
+
+    url = document->url().string();
+    TextPosition position = parser->textPosition();
+    line = position.m_line.oneBasedInt();
+    column = position.m_column.oneBasedInt();
+}
+
 void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier, Document* document)
 {
     String url;
-    if (document)
-        url = document->url().string();
-
-    // FIXME: The below code attempts to determine line numbers for parser generated errors, but this is not the only reason why we can get here.
-    // For example, if we are still parsing and get a WebSocket network error, it will be erroneously attributed to a line where parsing was paused.
-    // Also, we should determine line numbers for script generated messages (e.g. calling getImageData on a canvas).
-    // We probably need to split this function into multiple ones, as appropriate for different call sites. Or maybe decide based on MessageSource.
-    // https://bugs.webkit.org/show_bug.cgi?id=125340
     unsigned line = 0;
     unsigned column = 0;
-    if (document && document->parsing() && !document->isInDocumentWrite() && document->scriptableDocumentParser()) {
-        ScriptableDocumentParser* parser = document->scriptableDocumentParser();
-        if (!parser->isWaitingForScripts() && !JSMainThreadExecState::currentState()) {
-            TextPosition position = parser->textPosition();
-            line = position.m_line.oneBasedInt();
-            column = position.m_column.oneBasedInt();
-        }
-    }
+    getParserLocationForConsoleMessage(document, url, line, column);
+
     addMessage(source, level, message, url, line, column, 0, JSMainThreadExecState::currentState(), requestIdentifier);
 }
 

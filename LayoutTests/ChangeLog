@@ -1,3 +1,45 @@
+2015-01-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Console log sometimes prefixed with line number
+        https://bugs.webkit.org/show_bug.cgi?id=105280
+
+        Reviewed by Darin Adler.
+
+        Some messages lost line numbers now. Some of these were definitely wrong, others
+        were roughly right. Unfortunately, it is not currently possible to figure out whether
+        ScriptController actually executes a script after passing control to it. So the cases
+        where it refuses to execute the script and logs a message are handled like those
+        where it does.
+
+        I think that it shouldn't be a big obstacle in practice, it is easy enough to find
+        a script in a page when Web Inspector tells you that scripts were not allowed.
+
+        * fast/frames/sandboxed-iframe-attribute-parsing-06-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-07-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-08-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-09-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-10-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-11-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-12-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-13-expected.txt:
+        * fast/frames/sandboxed-iframe-attribute-parsing-14-expected.txt:
+        * fast/frames/sandboxed-iframe-parsing-space-characters-expected.txt:
+        * fast/frames/sandboxed-iframe-scripting-04-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-subframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header-control-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-in-http-header-expected.txt:
+        * http/tests/security/contentSecurityPolicy/sandbox-invalid-header-expected.txt:
+        * http/tests/security/isolatedWorld/sandboxed-iframe-expected.txt:
+        * http/tests/security/mixedContent/insecure-script-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe-expected.txt:
+        * http/tests/security/no-javascript-refresh-expected.txt:
+        * http/tests/security/no-javascript-refresh-spaces-expected.txt:
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        Unmark tests that were broken by this.
+
 2015-01-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Win] REGRESSION(r177542 or r177613): svg/W3C tests are broken

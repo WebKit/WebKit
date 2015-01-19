@@ -87,6 +87,8 @@ private:
     virtual void suspendScheduledTasks() override final;
     virtual void resumeScheduledTasks() override final;
 
+    virtual bool shouldAssociateConsoleMessagesWithTextPosition() const override final;
+
     // HTMLScriptRunnerHost
     virtual void watchForLoad(CachedResource*) override final;
     virtual void stopWatchingForLoad(CachedResource*) override final;

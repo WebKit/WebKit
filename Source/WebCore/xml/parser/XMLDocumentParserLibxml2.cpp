@@ -1434,6 +1434,11 @@ TextPosition XMLDocumentParser::textPosition() const
                         OrdinalNumber::fromOneBasedInt(context->input->col));
 }
 
+bool XMLDocumentParser::shouldAssociateConsoleMessagesWithTextPosition() const
+{
+    return !m_parserPaused && !m_requestingScript;
+}
+
 void XMLDocumentParser::stopParsing()
 {
     DocumentParser::stopParsing();

@@ -1,3 +1,26 @@
+2015-01-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Console log sometimes prefixed with line number
+        https://bugs.webkit.org/show_bug.cgi?id=105280
+
+        Reviewed by Darin Adler.
+
+        Improve the logic for determining whether a console message should be associated
+        with a source code location.
+
+        * dom/ScriptableDocumentParser.h:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::shouldAssociateConsoleMessagesWithTextPosition):
+        * html/parser/HTMLDocumentParser.h:
+        * page/PageConsoleClient.cpp:
+        (WebCore::getParserLocationForConsoleMessage):
+        (WebCore::PageConsoleClient::addMessage):
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::pauseParsing):
+        * xml/parser/XMLDocumentParser.h:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::shouldAssociateConsoleMessagesWithTextPosition):
+
 2015-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Glyphs get clipped weirdly

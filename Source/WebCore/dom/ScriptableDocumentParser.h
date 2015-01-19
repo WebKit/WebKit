@@ -46,6 +46,10 @@ public:
 
     virtual TextPosition textPosition() const = 0;
 
+    // Returns true if the parser didn't yield or pause or synchronously execute a script,
+    // so calls to PageConsoleClient should be associated with the parser's text position.
+    virtual bool shouldAssociateConsoleMessagesWithTextPosition() const = 0;
+
     void setWasCreatedByScript(bool wasCreatedByScript) { m_wasCreatedByScript = wasCreatedByScript; }
     bool wasCreatedByScript() const { return m_wasCreatedByScript; }
 
