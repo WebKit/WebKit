@@ -1,3 +1,57 @@
+2015-01-19  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo][Video] Windows Media Foundation implementation is not completed.
+        https://bugs.webkit.org/show_bug.cgi?id=140337
+
+        Reviewed by Alex Christensen.
+
+        This patch aims to complete some of the methods which are not implemented.
+        Currently, only MP4 is supported.
+        Video is rendered in a child window of the main window.
+        We should eventually render the video directly in the main window,
+        by reading and painting individual video frames from the stream.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::MediaPlayerPrivateMediaFoundation):
+        (WebCore::MediaPlayerPrivateMediaFoundation::~MediaPlayerPrivateMediaFoundation):
+        (WebCore::MediaPlayerPrivateMediaFoundation::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateMediaFoundation::supportsType):
+        (WebCore::MediaPlayerPrivateMediaFoundation::load):
+        (WebCore::MediaPlayerPrivateMediaFoundation::play):
+        (WebCore::MediaPlayerPrivateMediaFoundation::pause):
+        (WebCore::MediaPlayerPrivateMediaFoundation::naturalSize):
+        (WebCore::MediaPlayerPrivateMediaFoundation::hasVideo):
+        (WebCore::MediaPlayerPrivateMediaFoundation::hasAudio):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setVisible):
+        (WebCore::MediaPlayerPrivateMediaFoundation::paused):
+        (WebCore::MediaPlayerPrivateMediaFoundation::readyState):
+        (WebCore::MediaPlayerPrivateMediaFoundation::didLoadingProgress):
+        (WebCore::MediaPlayerPrivateMediaFoundation::setSize):
+        (WebCore::MediaPlayerPrivateMediaFoundation::paint):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createSession):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endSession):
+        (WebCore::MediaPlayerPrivateMediaFoundation::startCreateMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endCreatedMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::endGetEvent):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createTopologyFromSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::addBranchToPartialTopology):
+        (WebCore::MediaPlayerPrivateMediaFoundation::VideoViewWndProc):
+        (WebCore::MediaPlayerPrivateMediaFoundation::registerVideoWindowClass):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createVideoWindow):
+        (WebCore::MediaPlayerPrivateMediaFoundation::destroyVideoWindow):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createOutputNode):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createSourceStreamNode):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onCreatedMediaSource):
+        (WebCore::MediaPlayerPrivateMediaFoundation::onTopologySet):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::AsyncCallback):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::~AsyncCallback):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::QueryInterface):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::AddRef):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::Release):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::GetParameters):
+        (WebCore::MediaPlayerPrivateMediaFoundation::AsyncCallback::Invoke):
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.h:
+
 2015-01-19  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: convert to is<T> and downcast<T> for decoding replay inputs
