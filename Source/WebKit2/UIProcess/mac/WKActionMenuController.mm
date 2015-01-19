@@ -96,7 +96,7 @@ using namespace WebKit;
 
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
-    if (menu != _wkView.actionMenu)
+    if (menu != _wkView._actionMenu)
         return;
 
     [_wkView _dismissContentRelativeChildWindows];
@@ -114,7 +114,7 @@ using namespace WebKit;
 
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
-    if (menu != _wkView.actionMenu)
+    if (menu != _wkView._actionMenu)
         return;
 
     if (!menu.numberOfItems)
@@ -147,7 +147,7 @@ using namespace WebKit;
 
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
-    if (menu != _wkView.actionMenu)
+    if (menu != _wkView._actionMenu)
         return;
 
     [self _clearActionMenuState];
@@ -505,7 +505,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
 - (void)menuNeedsUpdate:(NSMenu *)menu
 {
-    if (menu != _wkView.actionMenu)
+    if (menu != _wkView._actionMenu)
         return;
 
     ASSERT(_state != ActionMenuState::None);
@@ -749,7 +749,7 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
 
 - (void)_updateActionMenuItems
 {
-    [_wkView.actionMenu removeAllItems];
+    [_wkView._actionMenu removeAllItems];
 
     NSArray *menuItems = [self _defaultMenuItems];
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
@@ -760,10 +760,10 @@ static NSString *pathToPhotoOnDisk(NSString *suggestedFilename)
         menuItems = [_wkView _actionMenuItemsForHitTestResult:toAPI(hitTestResult.get()) withType:_type defaultActionMenuItems:menuItems userData:toAPI(_userData.get())];
 
     for (NSMenuItem *item in menuItems)
-        [_wkView.actionMenu addItem:item];
+        [_wkView._actionMenu addItem:item];
 
-    if (!_wkView.actionMenu.numberOfItems)
-        [_wkView.actionMenu cancelTracking];
+    if (!_wkView._actionMenu.numberOfItems)
+        [_wkView._actionMenu cancelTracking];
 }
 
 @end

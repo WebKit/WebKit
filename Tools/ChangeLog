@@ -1,3 +1,15 @@
+2015-01-19  Timothy Horton  <timothy_horton@apple.com>
+
+        Adjust naming of action menu SPI
+        https://bugs.webkit.org/show_bug.cgi?id=140644
+        <rdar://problem/19448129>
+
+        Reviewed by Brian Weinstein.
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/ActionMenus.mm:
+        (-[ActionMenusTestWKView runMenuSequenceAtPoint:preDidCloseMenuHandler:]):
+        (TestWebKitAPI::TEST):
+
 2015-01-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Generate the make dist manifest from a CMake template file

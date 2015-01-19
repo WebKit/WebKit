@@ -1,3 +1,21 @@
+2015-01-19  Timothy Horton  <timothy_horton@apple.com>
+
+        Adjust naming of action menu SPI
+        https://bugs.webkit.org/show_bug.cgi?id=140644
+        <rdar://problem/19448129>
+
+        Reviewed by Brian Weinstein.
+
+        * WebView/WebActionMenuController.mm:
+        (-[WebActionMenuController prepareForMenu:withEvent:]):
+        (-[WebActionMenuController willOpenMenu:withEvent:]):
+        (-[WebActionMenuController didCloseMenu:withEvent:]):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView prepareForMenu:withEvent:]):
+        (-[WebView willOpenMenu:withEvent:]):
+        (-[WebView didCloseMenu:withEvent:]):
+
 2015-01-19  Beth Dakin  <bdakin@apple.com>
 
         REGRESSION (r178290): Yellow highlight from context menu Lookup in Dictionary is 

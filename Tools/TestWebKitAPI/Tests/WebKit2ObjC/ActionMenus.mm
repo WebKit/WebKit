@@ -51,7 +51,7 @@ static bool didFinishDownload = false;
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event;
 
-- (NSMenu *)actionMenu;
+- (NSMenu *)_actionMenu;
 - (void)copy:(id)sender;
 
 @end
@@ -108,7 +108,7 @@ struct ActionMenuResult {
 {
     __block bool didFinishSequence = false;
 
-    NSMenu *actionMenu = self.actionMenu;
+    NSMenu *actionMenu = self._actionMenu;
     RetainPtr<NSEvent> event = [NSEvent mouseEventWithType:NSLeftMouseDown location:point modifierFlags:0 timestamp:0 windowNumber:self.window.windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
 
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -480,7 +480,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::Word) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuReadOnlyText, [wkView _actionMenuResult].type);
         EXPECT_WK_STREQ(@"word", retrieveSelection([wkView pageRef]));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 0, kWKContextActionItemTagCopyText);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyText);
         EXPECT_WK_STREQ(@"word", watchPasteboardForString());
     }];
 
@@ -488,7 +488,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::Phrase) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuReadOnlyText, [wkView _actionMenuResult].type);
         EXPECT_WK_STREQ(@"New York", retrieveSelection([wkView pageRef]));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 0, kWKContextActionItemTagCopyText);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyText);
         EXPECT_WK_STREQ(@"New York", watchPasteboardForString());
     }];
 
@@ -518,7 +518,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::ContentEditableWords) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuEditableText, [wkView _actionMenuResult].type);
         EXPECT_WK_STREQ(@"editable", retrieveSelection([wkView pageRef]));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 0, kWKContextActionItemTagCopyText);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyText);
         EXPECT_WK_STREQ(@"editable", watchPasteboardForString());
     }];
 
@@ -526,7 +526,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::ContentEditablePhrase) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuEditableText, [wkView _actionMenuResult].type);
         EXPECT_WK_STREQ(@"New York", retrieveSelection([wkView pageRef]));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 0, kWKContextActionItemTagCopyText);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyText);
         EXPECT_WK_STREQ(@"New York", watchPasteboardForString());
     }];
 
@@ -536,7 +536,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
         [[NSPasteboard generalPasteboard] clearContents];
         [[NSPasteboard generalPasteboard] setString:@"pasted string" forType:NSPasteboardTypeString];
         EXPECT_WK_STREQ(@"editable", retrieveSelection([wkView pageRef]));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 2, kWKContextActionItemTagPaste);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 2, kWKContextActionItemTagPaste);
 
         // Now check and see if our paste succeeded. It should only replace one 'editable'.
         watchEditableAreaForString([wkView pageRef], "editable1", "pasted string editable editable editable");
@@ -548,7 +548,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
         [[NSPasteboard generalPasteboard] clearContents];
         [[NSPasteboard generalPasteboard] setString:@"pasted over phrase" forType:NSPasteboardTypeString];
         EXPECT_WK_STREQ(@"New York", retrieveSelection([wkView pageRef]));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 2, kWKContextActionItemTagPaste);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 2, kWKContextActionItemTagPaste);
 
         // Now check and see if our paste succeeded, and replaced the whole phrase.
         watchEditableAreaForString([wkView pageRef], "editable2", "pasted over phrase some words");
@@ -558,7 +558,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::TextInputWords) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuEditableText, [wkView _actionMenuResult].type);
         EXPECT_WK_STREQ(@"editable", retrieveSelectionInElement([wkView pageRef], "input1"));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 0, kWKContextActionItemTagCopyText);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyText);
         EXPECT_WK_STREQ(@"editable", watchPasteboardForString());
     }];
 
@@ -566,7 +566,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::TextInputPhrase) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuEditableText, [wkView _actionMenuResult].type);
         EXPECT_WK_STREQ(@"New York", retrieveSelectionInElement([wkView pageRef], "input2"));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 0, kWKContextActionItemTagCopyText);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyText);
         EXPECT_WK_STREQ(@"New York", watchPasteboardForString());
     }];
 
@@ -576,7 +576,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
         [[NSPasteboard generalPasteboard] clearContents];
         [[NSPasteboard generalPasteboard] setString:@"pasted string" forType:NSPasteboardTypeString];
         EXPECT_WK_STREQ(@"editable", retrieveSelectionInElement([wkView pageRef], "input1"));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 2, kWKContextActionItemTagPaste);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 2, kWKContextActionItemTagPaste);
 
         // Now check and see if our paste succeeded. It should only replace one 'editable'.
         watchEditableAreaForString([wkView pageRef], "input1", "pasted string editable editable editable");
@@ -588,7 +588,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
         [[NSPasteboard generalPasteboard] clearContents];
         [[NSPasteboard generalPasteboard] setString:@"pasted over phrase" forType:NSPasteboardTypeString];
         EXPECT_WK_STREQ(@"New York", retrieveSelectionInElement([wkView pageRef], "input2"));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 2, kWKContextActionItemTagPaste);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 2, kWKContextActionItemTagPaste);
 
         // Now check and see if our paste succeeded, and replaced the whole phrase.
         watchEditableAreaForString([wkView pageRef], "input2", "pasted over phrase some words");
@@ -598,7 +598,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::TextAreaWords) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuEditableText, [wkView _actionMenuResult].type);
         EXPECT_WK_STREQ(@"editable", retrieveSelectionInElement([wkView pageRef], "textarea1"));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 0, kWKContextActionItemTagCopyText);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyText);
         EXPECT_WK_STREQ(@"editable", watchPasteboardForString());
     }];
 
@@ -606,7 +606,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::TextAreaPhrase) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuEditableText, [wkView _actionMenuResult].type);
         EXPECT_WK_STREQ(@"New York", retrieveSelectionInElement([wkView pageRef], "textarea2"));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 0, kWKContextActionItemTagCopyText);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyText);
         EXPECT_WK_STREQ(@"New York", watchPasteboardForString());
     }];
 
@@ -616,7 +616,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
         [[NSPasteboard generalPasteboard] clearContents];
         [[NSPasteboard generalPasteboard] setString:@"pasted" forType:NSPasteboardTypeString];
         EXPECT_WK_STREQ(@"editable", retrieveSelectionInElement([wkView pageRef], "textarea1"));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 2, kWKContextActionItemTagPaste);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 2, kWKContextActionItemTagPaste);
 
         // Now check and see if our paste succeeded. It should only replace one 'editable'.
         watchEditableAreaForString([wkView pageRef], "textarea1", "pasted editable editable editable");
@@ -628,7 +628,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
         [[NSPasteboard generalPasteboard] clearContents];
         [[NSPasteboard generalPasteboard] setString:@"pasted over phrase" forType:NSPasteboardTypeString];
         EXPECT_WK_STREQ(@"New York", retrieveSelectionInElement([wkView pageRef], "textarea2"));
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 2, kWKContextActionItemTagPaste);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 2, kWKContextActionItemTagPaste);
 
         // Now check and see if our paste succeeded, and replaced the whole phrase.
         watchEditableAreaForString([wkView pageRef], "textarea2", "pasted over phrase some words");
@@ -638,7 +638,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::Image) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuImage, [wkView _actionMenuResult].type);
 
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 0, kWKContextActionItemTagCopyImage);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyImage);
         NSImage *image = watchPasteboardForImage();
 
         EXPECT_EQ(215, image.size.width);
@@ -651,7 +651,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
         EXPECT_EQ(kWKActionMenuImage, [wkView _actionMenuResult].type);
 
         didFinishDownload = false;
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 2, kWKContextActionItemTagSaveImageToDownloads);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 2, kWKContextActionItemTagSaveImageToDownloads);
         Util::run(&didFinishDownload);
     }];
     activeDownloadContext.shouldCheckForImage = false;
@@ -668,7 +668,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::Video) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuVideo, [wkView _actionMenuResult].type);
 
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 0, kWKContextActionItemTagCopyVideoURL);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyVideoURL);
         NSString *videoURL = watchPasteboardForString();
         EXPECT_WK_STREQ(@"test.mp4", [videoURL lastPathComponent]);
     }];
@@ -678,12 +678,12 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::MSEVideo) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuVideo, [wkView _actionMenuResult].type);
 
-        performMenuItemAtIndexOfTypeAsync([wkView actionMenu], 0, kWKContextActionItemTagCopyVideoURL);
+        performMenuItemAtIndexOfTypeAsync([wkView _actionMenu], 0, kWKContextActionItemTagCopyVideoURL);
         NSString *videoURL = watchPasteboardForString();
         EXPECT_WK_STREQ(@"action-menu-targets.html", [videoURL lastPathComponent]);
 
         // Also, the download menu item should be disabled for non-downloadable video.
-        ensureMenuItemAtIndexOfTypeIsDisabled([wkView actionMenu], 2, kWKContextActionItemTagSaveVideoToDownloads);
+        ensureMenuItemAtIndexOfTypeIsDisabled([wkView _actionMenu], 2, kWKContextActionItemTagSaveVideoToDownloads);
     }];
 
     // HTTP link.
@@ -721,8 +721,8 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     RetainPtr<NSMenuItem> item = adoptNS([[NSMenuItem alloc] initWithTitle:@"Some Action" action:@selector(copy:) keyEquivalent:@""]);
     [wkView _setOverrideActionMenuItems:@[ item.get() ]];
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::Image) preDidCloseMenuHandler:^() {
-        EXPECT_EQ(1, [wkView actionMenu].numberOfItems);
-        EXPECT_WK_STREQ(@"Some Action", [[wkView actionMenu] itemAtIndex:0].title);
+        EXPECT_EQ(1, [wkView _actionMenu].numberOfItems);
+        EXPECT_WK_STREQ(@"Some Action", [[wkView _actionMenu] itemAtIndex:0].title);
     }];
     [wkView _setOverrideActionMenuItems:nil];
 
@@ -736,7 +736,7 @@ TEST(WebKit2, DISABLED_ActionMenusTest)
     // No menu should be built for whitespace (except in editable areas).
     [wkView runMenuSequenceAtPoint:windowPointForTarget(TargetType::PageWhitespace) preDidCloseMenuHandler:^() {
         EXPECT_EQ(kWKActionMenuNone, [wkView _actionMenuResult].type);
-        EXPECT_EQ(0, [wkView actionMenu].numberOfItems);
+        EXPECT_EQ(0, [wkView _actionMenu].numberOfItems);
     }];
 }
 
