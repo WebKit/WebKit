@@ -15,7 +15,7 @@
         "port": "win"
     },
     "iOS EWS": {
-        "port": "ios-device",
+        "port": "ios",
         "architecture": "armv7"
     },
     "Mac EWS": {

@@ -1,3 +1,26 @@
+2015-01-18  David Kilzer  <ddkilzer@apple.com>
+
+        iOS EWS queue name should be consistent
+        <http://webkit.org/b/140585>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/common/config/ews.json: Rename 'ios-device'
+        to 'ios'.
+        * Scripts/webkitpy/common/config/ports.py: Ditto.
+        (DeprecatedPort.port):
+        (IOSPort):
+        * Scripts/webkitpy/port/ios.py: Ditto.
+        (IOSPort):
+
+        * Scripts/webkitpy/port/factory.py:
+        (PortFactory): Re-order PORT_CLASSES so ios.IOSSimulatorPort
+        appears before ios.IOSPort.  If this is not done,
+        `run-webkit-tests --ios-simulator` will get the wrong Port class
+        (IOSPort instead of IOSSimulatorPort) due to the way that
+        PortFactory.get() uses prefix matching of <Port>.port_name to
+        find the correct class to use.
+
 2015-01-18  Alexey Proskuryakov  <ap@apple.com>
 
         build.webkit.org/dashboard: OS X EWS is now on Mavericks

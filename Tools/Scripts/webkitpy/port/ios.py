@@ -43,10 +43,10 @@ _log = logging.getLogger(__name__)
 
 
 class IOSPort(ApplePort):
-    port_name = "ios-device"
+    port_name = "ios"
 
     ARCHITECTURES = ['armv7', 'armv7s', 'arm64']
-    VERSION_FALLBACK_ORDER = ['ios-device-7', 'ios-device-8']
+    VERSION_FALLBACK_ORDER = ['ios-7', 'ios-8']
 
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
