@@ -56,9 +56,9 @@ public:
 
     virtual size_t memoryBytesUsedByCache() override;
 
-    virtual void incrementAccessCount();
-    virtual void decrementAccessCount();
-    virtual void closeDatabaseIfIdle();
+    virtual void incrementAccessCount() override;
+    virtual void decrementAccessCount() override;
+    virtual void closeDatabaseIfIdle() override;
 
     PassRefPtr<StorageAreaImpl> copy();
     void close();
