@@ -447,6 +447,8 @@ webkit.org/b/121452 [ Debug ] fast/frames/lots-of-iframes.html [ Slow ]
 webkit.org/b/135053 [ Debug ] html5lib/webkit-resumer.html [ Slow ]
 [ Debug ] js/dfg-double-vote-fuzz.html [ Slow ]
 [ Debug ] js/dom/string-replacement-outofmemory.html [ Slow ]
+[ Debug ] js/regress-139548.html [ Slow ]
+[ Debug ] webgl/1.0.2/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
 
 webkit.org/b/139865 js/promises-tests/promises-tests-2-3-3.html [ Skip ]
 
