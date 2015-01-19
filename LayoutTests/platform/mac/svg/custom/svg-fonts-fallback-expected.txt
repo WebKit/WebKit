@@ -30,7 +30,7 @@ layer at (0,0) size 800x450
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {hr} at (0,344) size 784x2 [border: (1px inset #000000)]
       RenderBlock {p} at (0,362) size 784x56
-        RenderInline {span} at (0,0) size 113x52
-          RenderText {#text} at (0,2) size 113x52
-            text run at (0,2) width 113: "a \x{BE2} o"
-        RenderBR {br} at (112,30) size 1x18
+        RenderInline {span} at (0,0) size 73x52
+          RenderText {#text} at (0,2) size 73x52
+            text run at (0,2) width 73: "a \x{BE2} o"
+        RenderBR {br} at (72,30) size 1x18
