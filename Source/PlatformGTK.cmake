@@ -51,40 +51,46 @@ add_custom_target(check
     COMMAND ${TOOLS_DIR}/gtk/check-for-webkitdom-api-breaks
 )
 
+if (DEVELOPER_MODE)
+    configure_file(
+        ${TOOLS_DIR}/gtk/manifest.txt.in
+        ${CMAKE_BINARY_DIR}/manifest.txt
+    )
 
-add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-    DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
-    DEPENDS ${TOOLS_DIR}/gtk/manifest.txt
-    DEPENDS WebKit2
-    DEPENDS gtkdoc
-    COMMAND ${TOOLS_DIR}/gtk/make-dist.py
-            --source-dir=${CMAKE_SOURCE_DIR}
-            --build-dir=${CMAKE_BINARY_DIR}
-            --version=${PROJECT_VERSION}
-            ${TOOLS_DIR}/gtk/manifest.txt
-)
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+        DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
+        DEPENDS ${CMAKE_BINARY_DIR}/manifest.txt
+        DEPENDS WebKit2
+        DEPENDS gtkdoc
+        COMMAND ${TOOLS_DIR}/gtk/make-dist.py
+                --source-dir=${CMAKE_SOURCE_DIR}
+                --build-dir=${CMAKE_BINARY_DIR}
+                --version=${PROJECT_VERSION}
+                ${CMAKE_BINARY_DIR}/manifest.txt
+    )
 
-add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
-    DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-    COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-)
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
+        DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+        COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+    )
 
-add_custom_target(dist
-    DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
-)
+    add_custom_target(dist
+        DEPENDS ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar.xz
+    )
 
-add_custom_target(distcheck
-    DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
-    DEPENDS ${TOOLS_DIR}/gtk/manifest.txt
-    DEPENDS WebKit2
-    DEPENDS gtkdoc
-    COMMAND ${TOOLS_DIR}/gtk/make-dist.py
-            --check
-            --source-dir=${CMAKE_SOURCE_DIR}
-            --build-dir=${CMAKE_BINARY_DIR}
-            --version=/webkitgtk-${PROJECT_VERSION}
-            ${TOOLS_DIR}/gtk/manifest.txt
-    COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
-)
+    add_custom_target(distcheck
+        DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
+        DEPENDS ${CMAKE_BINARY_DIR}/manifest.txt
+        DEPENDS WebKit2
+        DEPENDS gtkdoc
+        COMMAND ${TOOLS_DIR}/gtk/make-dist.py
+                --check
+                --source-dir=${CMAKE_SOURCE_DIR}
+                --build-dir=${CMAKE_BINARY_DIR}
+                --version=${PROJECT_VERSION}
+                ${CMAKE_BINARY_DIR}/manifest.txt
+        COMMAND xz -f ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
+    )
+endif ()
