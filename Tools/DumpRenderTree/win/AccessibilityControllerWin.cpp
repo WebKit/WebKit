@@ -90,22 +90,18 @@ static COMPtr<IAccessible> findAccessibleObjectById(AccessibilityUIElement paren
     if (!comparable)
         return 0;
 
-    VARIANT value;
-    ::VariantInit(&value);
-
+    COMVariant navigationType;
+    _variant_t value;
     _bstr_t elementIdAttributeKey(L"AXDRTElementIdAttribute");
-    if (SUCCEEDED(comparable->get_attribute(elementIdAttributeKey, &value))) {
+    if (SUCCEEDED(comparable->get_attribute(elementIdAttributeKey, &value.GetVARIANT()))) {
         ASSERT(V_VT(&value) == VT_BSTR);
-        if (VARCMP_EQ == ::VarBstrCmp(value.bstrVal, idAttribute, LOCALE_USER_DEFAULT, 0)) {
-            ::VariantClear(&value);
+        if (VARCMP_EQ == ::VarBstrCmp(value.bstrVal, idAttribute, LOCALE_USER_DEFAULT, 0))
             return parentIAccessible;
-        }
     }
-    ::VariantClear(&value);
 
     long childCount = parentObject.childrenCount();
     if (!childCount)
-        return 0;
+        return nullptr;
 
     COMPtr<IAccessible> result;
     for (long i = 0; i < childCount; ++i) {
@@ -116,7 +112,7 @@ static COMPtr<IAccessible> findAccessibleObjectById(AccessibilityUIElement paren
             return result;
     }
 
-    return 0;
+    return nullptr;
 }
 
 AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRef id)
@@ -136,9 +132,9 @@ AccessibilityUIElement AccessibilityController::focusedElement()
 {
     COMPtr<IAccessible> rootAccessible = rootElement().platformUIElement();
 
-    VARIANT vFocus;
-    if (FAILED(rootAccessible->get_accFocus(&vFocus)))
-        return 0;
+    _variant_t vFocus;
+    if (FAILED(rootAccessible->get_accFocus(&vFocus.GetVARIANT())))
+        return nullptr;
 
     if (V_VT(&vFocus) == VT_I4) {
         ASSERT(V_I4(&vFocus) == CHILDID_SELF);
@@ -179,18 +175,16 @@ static void CALLBACK logEventProc(HWINEVENTHOOK, DWORD event, HWND hwnd, LONG id
     // Get the accessible object for this event.
     COMPtr<IAccessible> parentObject;
 
-    VARIANT vChild;
-    VariantInit(&vChild);
+    _variant_t vChild;
 
-    HRESULT hr = AccessibleObjectFromEvent(hwnd, idObject, idChild, &parentObject, &vChild);
+    HRESULT hr = AccessibleObjectFromEvent(hwnd, idObject, idChild, &parentObject, &vChild.GetVARIANT());
     ASSERT(SUCCEEDED(hr));
 
     // Get the name of the focused element, and log it to stdout.
-    BSTR nameBSTR;
-    hr = parentObject->get_accName(vChild, &nameBSTR);
+    _bstr_t nameBSTR;
+    hr = parentObject->get_accName(vChild, &nameBSTR.GetBSTR());
     ASSERT(SUCCEEDED(hr));
-    wstring name(nameBSTR, ::SysStringLen(nameBSTR));
-    SysFreeString(nameBSTR);
+    wstring name(nameBSTR, nameBSTR.length());
 
     switch (event) {
         case EVENT_OBJECT_FOCUS:
@@ -202,11 +196,10 @@ static void CALLBACK logEventProc(HWINEVENTHOOK, DWORD event, HWND hwnd, LONG id
             break;
 
         case EVENT_OBJECT_VALUECHANGE: {
-            BSTR valueBSTR;
-            hr = parentObject->get_accValue(vChild, &valueBSTR);
+            _bstr_t valueBSTR;
+            hr = parentObject->get_accValue(vChild, &valueBSTR.GetBSTR());
             ASSERT(SUCCEEDED(hr));
-            wstring value(valueBSTR, ::SysStringLen(valueBSTR));
-            SysFreeString(valueBSTR);
+            wstring value(valueBSTR, valueBSTR.length());
 
             printf("Received value change event for object '%S', value '%S'.\n", name.c_str(), value.c_str());
             break;
@@ -220,8 +213,6 @@ static void CALLBACK logEventProc(HWINEVENTHOOK, DWORD event, HWND hwnd, LONG id
             printf("Received unknown event for object '%S'.\n", name.c_str());
             break;
     }
-
-    VariantClear(&vChild);
 }
 
 void AccessibilityController::setLogFocusEvents(bool logFocusEvents)
@@ -323,24 +314,17 @@ static void CALLBACK notificationListenerProc(HWINEVENTHOOK, DWORD event, HWND h
     // Get the accessible object for this event.
     COMPtr<IAccessible> parentObject;
 
-    VARIANT vChild;
-    VariantInit(&vChild);
-
-    HRESULT hr = AccessibleObjectFromEvent(hwnd, idObject, idChild, &parentObject, &vChild);
+    _variant_t vChild;
+    HRESULT hr = AccessibleObjectFromEvent(hwnd, idObject, idChild, &parentObject, &vChild.GetVARIANT());
     if (FAILED(hr) || !parentObject)
         return;
 
     COMPtr<IDispatch> childDispatch;
-    if (FAILED(parentObject->get_accChild(vChild, &childDispatch))) {
-        VariantClear(&vChild);
+    if (FAILED(parentObject->get_accChild(vChild, &childDispatch)))
         return;
-    }
 
     COMPtr<IAccessible> childAccessible(Query, childDispatch);
-
     sharedFrameLoadDelegate->accessibilityController()->winNotificationReceived(childAccessible, stringEvent(event));
-
-    VariantClear(&vChild);
 }
 
 bool AccessibilityController::addNotificationListener(JSObjectRef functionCallback)

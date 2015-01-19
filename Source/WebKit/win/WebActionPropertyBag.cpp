@@ -105,12 +105,12 @@ static const MouseEvent* findMouseEvent(const Event* event)
     return 0;
 }
 
-HRESULT STDMETHODCALLTYPE WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErrorLog * /*pErrorLog*/)
+HRESULT WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IErrorLog * /*pErrorLog*/)
 {
     if (!pszPropName)
         return E_POINTER;
 
-    VariantClear(pVar);
+    ::VariantClear(pVar);
 
     if (isEqual(pszPropName, WebActionNavigationTypeKey)) {
         V_VT(pVar) = VT_I4;

@@ -1,3 +1,32 @@
+2015-01-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Periodic failure in DumpRenderTree related to WebActionPropertyBag::Read
+        https://bugs.webkit.org/show_bug.cgi?id=139906
+
+        Reviewed by Dean Jackson.
+
+        WebKit on Windows was creating uninitialized VARIANT structures, then attempting
+        to use them. This patch fixes that.
+
+        Identified by dom/html/level2/html/HTMLIFrameElement03.html (and others)
+
+        * COMEnumVariant.h:
+        (COMEnumVariant<ContainerType>::Next):
+        * COMPropertyBag.h:
+        (HashType>::Read):
+        * DefaultPolicyDelegate.cpp:
+        (DefaultPolicyDelegate::decidePolicyForNavigationAction):
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Read):
+        * WebDatabaseManager.cpp:
+        (DatabaseDetailsPropertyBag::Read):
+        * WebElementPropertyBag.cpp:
+        (WebElementPropertyBag::Read):
+        * WebFrame.cpp:
+        (EnumChildFrames::Next):
+        * WebView.cpp:
+        (WebView::notifyDidAddIcon):
+
 2015-01-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(SQL_DATABASE) guards

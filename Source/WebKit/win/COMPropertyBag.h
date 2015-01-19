@@ -170,7 +170,7 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, KeyType, HashType>::Read(ULO
     HRESULT hr = S_OK;
 
     for (ULONG i = 0; i < cProperties; ++i) {
-        VariantInit(&pvarValue[i]);
+        ::VariantInit(&pvarValue[i]);
         pvarValue[i].vt = pPropBag[i].vt;
         phrError[i] = Read(pPropBag[i].pstrName, &pvarValue[i], pErrorLog);
         if (FAILED(phrError[i]))

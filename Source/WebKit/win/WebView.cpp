@@ -2926,7 +2926,7 @@ HRESULT WebView::notifyDidAddIcon(IWebNotification* notification)
         return E_FAIL;
 
     COMVariant iconUserInfoURL;
-    hr = propertyBag->Read(WebIconDatabase::iconDatabaseNotificationUserInfoURLKey(), &iconUserInfoURL, 0);
+    hr = propertyBag->Read(WebIconDatabase::iconDatabaseNotificationUserInfoURLKey(), &iconUserInfoURL, nullptr);
     if (FAILED(hr))
         return hr;
 

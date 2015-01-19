@@ -112,12 +112,12 @@ HRESULT STDMETHODCALLTYPE DatabaseDetailsPropertyBag::QueryInterface(REFIID riid
 }
 
 // IPropertyBag --------------------------------------------------------------------
-HRESULT STDMETHODCALLTYPE DatabaseDetailsPropertyBag::Read(LPCOLESTR pszPropName, VARIANT* pVar, IErrorLog*)
+HRESULT DatabaseDetailsPropertyBag::Read(LPCOLESTR pszPropName, VARIANT* pVar, IErrorLog*)
 {
     if (!pszPropName || !pVar)
         return E_POINTER;
 
-    VariantInit(pVar);
+    ::VariantInit(pVar);
 
     if (isEqual(pszPropName, WebDatabaseDisplayNameKey)) {
         COMVariantSetter<String>::setVariant(pVar, m_details.displayName());

@@ -133,7 +133,7 @@ HRESULT STDMETHODCALLTYPE COMEnumVariant<ContainerType>::Next(ULONG celt, VARIAN
     if (!rgVar)
         return E_POINTER;
     for (unsigned i = 0 ; i < celt; i++)
-        VariantInit(&rgVar[i]);
+        ::VariantInit(&rgVar[i]);
 
     for (unsigned i = 0; i < celt; i++) {
         if (m_currentPos == m_container.end())

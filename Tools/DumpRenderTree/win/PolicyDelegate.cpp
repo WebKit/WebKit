@@ -90,20 +90,16 @@ ULONG PolicyDelegate::Release(void)
     return newRef;
 }
 
-HRESULT PolicyDelegate::decidePolicyForNavigationAction(
-    /*[in]*/ IWebView* /*webView*/, 
-    /*[in]*/ IPropertyBag* actionInformation, 
-    /*[in]*/ IWebURLRequest* request, 
-    /*[in]*/ IWebFrame* frame, 
-    /*[in]*/ IWebPolicyDecisionListener* listener)
+HRESULT PolicyDelegate::decidePolicyForNavigationAction(IWebView* /*webView*/, IPropertyBag* actionInformation, 
+    IWebURLRequest* request, IWebFrame* frame, IWebPolicyDecisionListener* listener)
 {
     _bstr_t url;
     request->URL(&url.GetBSTR());
     wstring wurl = urlSuitableForTestResult(wstring(url, url.length()));
 
     int navType = 0;
-    VARIANT var;
-    if (SUCCEEDED(actionInformation->Read(WebActionNavigationTypeKey, &var, 0))) {
+    _variant_t var;
+    if (SUCCEEDED(actionInformation->Read(WebActionNavigationTypeKey, &var.GetVARIANT(), nullptr))) {
         V_VT(&var) = VT_I4;
         navType = V_I4(&var);
     }
@@ -134,11 +130,11 @@ HRESULT PolicyDelegate::decidePolicyForNavigationAction(
 
     wstring message = TEXT("Policy delegate: attempt to load ") + wurl + TEXT(" with navigation type '") + typeDescription + TEXT("'");
 
-    VARIANT actionElementVar;
-    if (SUCCEEDED(actionInformation->Read(WebActionElementKey, &actionElementVar, 0))) {
+    _variant_t actionElementVar;
+    if (SUCCEEDED(actionInformation->Read(WebActionElementKey, &actionElementVar, nullptr))) {
         COMPtr<IPropertyBag> actionElement(Query, V_UNKNOWN(&actionElementVar));
-        VARIANT originatingNodeVar;
-        if (SUCCEEDED(actionElement->Read(WebElementDOMNodeKey, &originatingNodeVar, 0))) {
+        _variant_t originatingNodeVar;
+        if (SUCCEEDED(actionElement->Read(WebElementDOMNodeKey, &originatingNodeVar, nullptr))) {
             COMPtr<IDOMNode> originatingNode(Query, V_UNKNOWN(&originatingNodeVar));
             message += TEXT(" originating from ") + dumpPath(originatingNode.get());
         }
@@ -153,7 +149,7 @@ HRESULT PolicyDelegate::decidePolicyForNavigationAction(
 
     if (m_controllerToNotifyDone) {
         m_controllerToNotifyDone->notifyDone();
-        m_controllerToNotifyDone = 0;
+        m_controllerToNotifyDone = nullptr;
     }
 
     return S_OK;

@@ -119,7 +119,7 @@ HRESULT WebElementPropertyBag::Read(LPCOLESTR pszPropName, VARIANT *pVar, IError
         return E_FAIL;
 
     BSTR key = (BSTR)pszPropName;
-    VariantClear(pVar);
+    ::VariantClear(pVar);
     if (isEqual(WebElementDOMNodeKey, key)) {
         IDOMNode* node = DOMNode::createInstance(m_result->innerNonSharedNode());
         V_VT(pVar) = VT_UNKNOWN;

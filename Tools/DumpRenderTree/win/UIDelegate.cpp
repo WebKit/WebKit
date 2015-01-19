@@ -523,8 +523,8 @@ HRESULT UIDelegate::exceededDatabaseQuota(IWebView* sender, IWebFrame* frame, IW
         origin->setQuota(defaultQuota);
         return S_OK;
     }
-    VARIANT var;
-    detailsBag->Read(WebDatabaseUsageKey, &var, 0);
+    _variant_t var;
+    detailsBag->Read(WebDatabaseUsageKey, &var.GetVARIANT(), nullptr);
     unsigned long long expectedSize = V_UI8(&var);
     unsigned long long newQuota = defaultQuota;
 

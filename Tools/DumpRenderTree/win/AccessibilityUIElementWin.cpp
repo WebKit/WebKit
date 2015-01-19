@@ -145,16 +145,15 @@ AccessibilityUIElement AccessibilityUIElement::linkedUIElementAtIndex(unsigned i
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
     if (!m_element)
-        return 0;
+        return nullptr;
 
     COMPtr<IDispatch> child;
-    VARIANT vChild;
-    ::VariantInit(&vChild);
+    _variant_t vChild;
     V_VT(&vChild) = VT_I4;
     // In MSAA, index 0 is the object itself.
     V_I4(&vChild) = index + 1;
-    if (FAILED(m_element->get_accChild(vChild, &child)))
-        return 0;
+    if (FAILED(m_element->get_accChild(vChild.GetVARIANT(), &child)))
+        return nullptr;
     return COMPtr<IAccessible>(Query, child);
 }
 
@@ -187,31 +186,22 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
     if (!comparable)
         return 0;
 
-    VARIANT value;
-    ::VariantInit(&value);
-
+    _variant_t value;
     _bstr_t titleUIElementAttributeKey(L"AXTitleUIElementAttribute");
-    if (FAILED(comparable->get_attribute(titleUIElementAttributeKey, &value))) {
-        ::VariantClear(&value);
-        return 0;
-    }
+    if (FAILED(comparable->get_attribute(titleUIElementAttributeKey, &value.GetVARIANT())))
+        return nullptr;
 
-    if (V_VT(&value) == VT_EMPTY) {
-        ::VariantClear(&value);
-        return 0;
-    }
+    if (V_VT(&value) == VT_EMPTY)
+        return nullptr;
 
     ASSERT(V_VT(&value) == VT_UNKNOWN);
 
-    if (V_VT(&value) != VT_UNKNOWN) {
-        ::VariantClear(&value);
-        return 0;
-    }
+    if (V_VT(&value) != VT_UNKNOWN)
+        return nullptr;
 
     COMPtr<IAccessible> titleElement(Query, value.punkVal);
     if (value.punkVal)
         value.punkVal->Release();
-    ::VariantClear(&value);
 
     return titleElement;
 }
@@ -240,11 +230,10 @@ JSStringRef AccessibilityUIElement::parameterizedAttributeNames()
 
 static VARIANT& self()
 {
-    static VARIANT vSelf;
+    static _variant_t vSelf;
     static bool haveInitialized;
 
     if (!haveInitialized) {
-        ::VariantInit(&vSelf);
         V_VT(&vSelf) = VT_I4;
         V_I4(&vSelf) = CHILDID_SELF;
     }
@@ -256,15 +245,15 @@ JSStringRef AccessibilityUIElement::role()
     if (!m_element)
         return JSStringCreateWithCharacters(0, 0);
 
-    VARIANT vRole;
-    if (FAILED(m_element->get_accRole(self(), &vRole)))
-        return JSStringCreateWithCharacters(0, 0);
+    _variant_t vRole;
+    if (FAILED(m_element->get_accRole(self(), &vRole.GetVARIANT())))
+        return JSStringCreateWithCharacters(nullptr, 0);
 
     ASSERT(V_VT(&vRole) == VT_I4 || V_VT(&vRole) == VT_BSTR);
 
     wstring result;
     if (V_VT(&vRole) == VT_I4) {
-        unsigned roleTextLength = ::GetRoleText(V_I4(&vRole), 0, 0) + 1;
+        unsigned roleTextLength = ::GetRoleText(V_I4(&vRole), nullptr, 0) + 1;
 
         Vector<TCHAR> roleText(roleTextLength);
 
@@ -273,8 +262,6 @@ JSStringRef AccessibilityUIElement::role()
         result = roleText.data();
     } else if (V_VT(&vRole) == VT_BSTR)
         result = wstring(V_BSTR(&vRole), ::SysStringLen(V_BSTR(&vRole)));
-
-    ::VariantClear(&vRole);
 
     return JSStringCreateWithCharacters(result.data(), result.length());
 }
@@ -394,19 +381,18 @@ double AccessibilityUIElement::clickPointY()
 
 JSStringRef AccessibilityUIElement::valueDescription()
 {
-    return 0;
+    return nullptr;
 }
 
 static DWORD accessibilityState(COMPtr<IAccessible> element)
 {
-    VARIANT state;
-    if (FAILED(element->get_accState(self(), &state)))
+    _variant_t state;
+    if (FAILED(element->get_accState(self(), &state.GetVARIANT())))
         return 0;
 
     ASSERT(V_VT(&state) == VT_I4);
 
     DWORD result = state.lVal;
-    VariantClear(&state);
 
     return result;
 }
@@ -448,8 +434,8 @@ bool AccessibilityUIElement::isChecked() const
     if (!m_element)
         return false;
 
-    VARIANT vState;
-    if (FAILED(m_element->get_accState(self(), &vState)))
+    _variant_t vState;
+    if (FAILED(m_element->get_accState(self(), &vState.GetVARIANT())))
         return false;
 
     return vState.lVal & STATE_SYSTEM_CHECKED;

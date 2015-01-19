@@ -793,7 +793,7 @@ public:
             *pCeltFetched = 0;
         if (!rgVar)
             return E_POINTER;
-        VariantInit(rgVar);
+        ::VariantInit(rgVar);
         if (!celt || celt > 1)
             return S_FALSE;
         if (!m_frame || !m_curChild)

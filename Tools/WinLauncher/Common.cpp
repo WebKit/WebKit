@@ -665,19 +665,15 @@ typedef _com_ptr_t<_com_IIID<IPropertyBag, &__uuidof(IPropertyBag)>> IPropertyBa
 
 static void setWindowText(HWND dialog, UINT field, IPropertyBagPtr statistics, const _bstr_t& key)
 {
-    VARIANT var;
-    ::VariantInit(&var);
+    _variant_t var;
     V_VT(&var) = VT_UI8;
-    if (FAILED(statistics->Read(key, &var, 0))) {
-        ::VariantClear(&var);
+    if (FAILED(statistics->Read(key, &var.GetVARIANT(), nullptr)))
         return;
-    }
 
     unsigned long long value = V_UI8(&var);
     String valueStr = WTF::String::number(value);
 
     setWindowText(dialog, field, _bstr_t(valueStr.utf8().data()));
-    ::VariantClear(&var);
 }
 
 static void setWindowText(HWND dialog, UINT field, CFDictionaryRef dictionary, CFStringRef key, UINT& total)

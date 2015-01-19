@@ -412,14 +412,12 @@ void dumpFrameScrollPosition(IWebFrame* frame)
         COMPtr<IEnumVARIANT> enumKids;
         if (FAILED(frame->childFrames(&enumKids)))
             return;
-        VARIANT var;
-        VariantInit(&var);
-        while (enumKids->Next(1, &var, 0) == S_OK) {
+        _variant_t var;
+        while (enumKids->Next(1, &var.GetVARIANT(), nullptr) == S_OK) {
             ASSERT(V_VT(&var) == VT_UNKNOWN);
             COMPtr<IWebFrame> framePtr;
             V_UNKNOWN(&var)->QueryInterface(IID_IWebFrame, (void**)&framePtr);
             dumpFrameScrollPosition(framePtr.get());
-            VariantClear(&var);
         }
     }
 }
@@ -467,14 +465,12 @@ static wstring dumpFramesAsText(IWebFrame* frame)
         if (FAILED(frame->childFrames(&enumKids)))
             return L"";
 
-        VARIANT var;
-        ::VariantInit(&var);
-        while (enumKids->Next(1, &var, 0) == S_OK) {
+        _variant_t var;
+        while (enumKids->Next(1, &var.GetVARIANT(), nullptr) == S_OK) {
             ASSERT(V_VT(&var) == VT_UNKNOWN);
             COMPtr<IWebFrame> framePtr;
             V_UNKNOWN(&var)->QueryInterface(IID_IWebFrame, (void**)&framePtr);
             result.append(dumpFramesAsText(framePtr.get()));
-            ::VariantClear(&var);
         }
     }
 
