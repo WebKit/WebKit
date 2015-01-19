@@ -1,3 +1,10 @@
+2015-01-19  Roger Fong  <roger_fong@apple.com>
+
+        [Mac] Test fix after r178674.
+
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mountainlion/js/dom/global-constructors-attributes-expected.txt:
+
 2015-01-19  Dhi Aurrahman  <diorahman@rockybars.com>
 
         Canonicalization of :lang() should preserve the :lang()'s arguments representations
