@@ -1,3 +1,16 @@
+2015-01-16  Ada Chan  <adachan@apple.com>
+
+        HTMLMediaElement::isPlayingAudio() should return false if the element is explicitly muted by script.
+        https://bugs.webkit.org/show_bug.cgi?id=140524
+
+        Reviewed by Andreas Kling.
+
+        The test contains a looping video. It makes sure initially Page::isPlayingAudio() returns true.
+        It should return false after the video is muted, and true again after the video is unmuted.
+
+        * media/muted-video-is-playing-audio-expected.txt: Added.
+        * media/muted-video-is-playing-audio.html: Added.
+
 2015-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Flip the switch on

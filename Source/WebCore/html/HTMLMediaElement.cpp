@@ -3033,6 +3033,7 @@ void HTMLMediaElement::setMuted(bool muted)
             }
         }
         scheduleEvent(eventNames().volumechangeEvent);
+        document().updateIsPlayingAudio();
     }
 #endif
 }
@@ -6107,7 +6108,7 @@ bool HTMLMediaElement::overrideBackgroundPlaybackRestriction() const
 
 bool HTMLMediaElement::isPlayingAudio()
 {
-    return isPlaying() && hasAudio();
+    return isPlaying() && hasAudio() && !muted();
 }
 
 void HTMLMediaElement::pageMutedStateDidChange()
