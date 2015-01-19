@@ -262,9 +262,9 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionAddEventListener(
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
-    if (!listener.isObject())
+    if (UNLIKELY(!listener.isObject()))
         return JSValue::encode(jsUndefined());
-    impl.addEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec)), exec->argument(2).toBoolean(exec));
+    impl.addEventListener(exec->argument(0).toString(exec)->toAtomicString(exec), createJSEventListenerForAdd(*exec, *asObject(listener), *castedThis), exec->argument(2).toBoolean(exec));
     return JSValue::encode(jsUndefined());
 }
 
@@ -277,9 +277,9 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionRemoveEventListen
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     TestEventTarget& impl = castedThis->impl();
     JSValue listener = exec->argument(1);
-    if (!listener.isObject())
+    if (UNLIKELY(!listener.isObject()))
         return JSValue::encode(jsUndefined());
-    impl.removeEventListener(exec->argument(0).toString(exec)->value(exec), JSEventListener::create(asObject(listener), castedThis, false, currentWorld(exec)).get(), exec->argument(2).toBoolean(exec));
+    impl.removeEventListener(exec->argument(0).toString(exec)->toAtomicString(exec), createJSEventListenerForRemove(*exec, *asObject(listener), *castedThis).ptr(), exec->argument(2).toBoolean(exec));
     return JSValue::encode(jsUndefined());
 }
 
