@@ -30,16 +30,16 @@
 
 namespace WebCore {
 
-class WebGLRenderingContext;
+class WebGLRenderingContextBase;
 
 class ANGLEInstancedArrays final : public WebGLExtension {
 public:
-    explicit ANGLEInstancedArrays(WebGLRenderingContext*);
+    explicit ANGLEInstancedArrays(WebGLRenderingContextBase*);
     virtual ~ANGLEInstancedArrays();
 
     virtual ExtensionName getName() const;
 
-    static bool supported(WebGLRenderingContext*);
+    static bool supported(WebGLRenderingContextBase*);
 
     void drawArraysInstancedANGLE(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei primcount);
     void drawElementsInstancedANGLE(GC3Denum mode, GC3Dsizei count, GC3Denum type, long long offset, GC3Dsizei primcount);

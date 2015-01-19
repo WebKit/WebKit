@@ -61,7 +61,7 @@ public:
 
     virtual ~WebGLFramebuffer();
 
-    static PassRefPtr<WebGLFramebuffer> create(WebGLRenderingContext*);
+    static PassRefPtr<WebGLFramebuffer> create(WebGLRenderingContextBase*);
 
     void setAttachmentForBoundFramebuffer(GC3Denum attachment, GC3Denum texTarget, WebGLTexture*, GC3Dint level);
     void setAttachmentForBoundFramebuffer(GC3Denum attachment, WebGLRenderbuffer*);
@@ -101,7 +101,7 @@ public:
     GC3Denum getDrawBuffer(GC3Denum);
 
 protected:
-    WebGLFramebuffer(WebGLRenderingContext*);
+    WebGLFramebuffer(WebGLRenderingContextBase*);
 
     virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 

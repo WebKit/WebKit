@@ -54,7 +54,7 @@
 
 #if ENABLE(WEBGL)    
 #include "WebGLContextAttributes.h"
-#include "WebGLRenderingContext.h"
+#include "WebGLRenderingContextBase.h"
 #endif
 
 namespace WebCore {
@@ -212,7 +212,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
             if (m_context && !m_context->is3d())
                 return nullptr;
             if (!m_context) {
-                m_context = WebGLRenderingContext::create(this, static_cast<WebGLContextAttributes*>(attrs));
+                m_context = WebGLRenderingContextBase::create(this, static_cast<WebGLContextAttributes*>(attrs), type);
                 if (m_context) {
                     // Need to make sure a RenderLayer and compositing layer get created for the Canvas
                     setNeedsStyleRecalc(SyntheticStyleChange);
@@ -327,7 +327,7 @@ void HTMLCanvasElement::reset()
 
 #if ENABLE(WEBGL)
     if (is3D() && oldSize != size())
-        static_cast<WebGLRenderingContext*>(m_context.get())->reshape(width(), height());
+        static_cast<WebGLRenderingContextBase*>(m_context.get())->reshape(width(), height());
 #endif
 
     if (auto renderer = this->renderer()) {
@@ -394,7 +394,7 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const LayoutRect& r, boo
 
 #if ENABLE(WEBGL)    
     if (is3D())
-        static_cast<WebGLRenderingContext*>(m_context.get())->markLayerComposited();
+        static_cast<WebGLRenderingContextBase*>(m_context.get())->markLayerComposited();
 #endif
 }
 
@@ -475,7 +475,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
     if (!is3D())
         return nullptr;
 
-    WebGLRenderingContext* ctx = static_cast<WebGLRenderingContext*>(m_context.get());
+    WebGLRenderingContextBase* ctx = static_cast<WebGLRenderingContextBase*>(m_context.get());
 
     return ctx->paintRenderingResultsToImageData();
 #else

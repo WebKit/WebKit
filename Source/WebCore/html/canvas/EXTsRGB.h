@@ -32,7 +32,7 @@ namespace WebCore {
 
 class EXTsRGB final : public WebGLExtension {
 public:
-    explicit EXTsRGB(WebGLRenderingContext*);
+    explicit EXTsRGB(WebGLRenderingContextBase*);
     virtual ~EXTsRGB();
 
     virtual ExtensionName getName() const override;

@@ -30,11 +30,11 @@
 #include "WebGLCompressedTextureS3TC.h"
 
 #include "Extensions3D.h"
-#include "WebGLRenderingContext.h"
+#include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
 
-WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC(WebGLRenderingContext* context)
+WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC(WebGLRenderingContextBase* context)
     : WebGLExtension(context)
 {
     context->addCompressedTextureFormat(Extensions3D::COMPRESSED_RGB_S3TC_DXT1_EXT);
@@ -52,7 +52,7 @@ WebGLExtension::ExtensionName WebGLCompressedTextureS3TC::getName() const
     return WebGLCompressedTextureS3TCName;
 }
 
-bool WebGLCompressedTextureS3TC::supported(WebGLRenderingContext* context)
+bool WebGLCompressedTextureS3TC::supported(WebGLRenderingContextBase* context)
 {
     Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
     return extensions->supports("GL_EXT_texture_compression_s3tc")

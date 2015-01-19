@@ -30,11 +30,11 @@
 #include "WebGLSharedObject.h"
 
 #include "WebGLContextGroup.h"
-#include "WebGLRenderingContext.h"
+#include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
 
-WebGLSharedObject::WebGLSharedObject(WebGLRenderingContext* context)
+WebGLSharedObject::WebGLSharedObject(WebGLRenderingContextBase* context)
     : WebGLObject(context),
       m_contextGroup(context->contextGroup())
 {

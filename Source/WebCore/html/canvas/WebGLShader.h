@@ -36,7 +36,7 @@ class WebGLShader final : public WebGLSharedObject {
 public:
     virtual ~WebGLShader();
 
-    static PassRefPtr<WebGLShader> create(WebGLRenderingContext*, GC3Denum);
+    static PassRefPtr<WebGLShader> create(WebGLRenderingContextBase*, GC3Denum);
 
     GC3Denum getType() const { return m_type; }
     const String& getSource() const { return m_source; }
@@ -47,7 +47,7 @@ public:
     void setValid(bool valid) { m_isValid = valid; }
 
 private:
-    WebGLShader(WebGLRenderingContext*, GC3Denum);
+    WebGLShader(WebGLRenderingContextBase*, GC3Denum);
 
     virtual void deleteObjectImpl(GraphicsContext3D*, Platform3DObject) override;
 
