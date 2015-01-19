@@ -1,3 +1,10 @@
+2015-01-19  Dean Jackson  <dino@apple.com>
+
+        Add "override" to fix the build with newer clangs.
+
+        * TestWebKitAPI/Tests/WebCore/CalculationValue.cpp:
+        (TestWebKitAPI::CalculationDeletionTestNode::operator==):
+
 2015-01-19  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Do not hard-code iphoneos.internal SDK in buildXCodeProject()

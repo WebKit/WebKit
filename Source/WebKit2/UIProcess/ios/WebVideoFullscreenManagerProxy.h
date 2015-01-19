@@ -58,7 +58,7 @@ private:
     void setupFullscreenWithID(uint32_t, WebCore::IntRect initialRect, float hostingDeviceScaleFactor, WebCore::HTMLMediaElement::VideoFullscreenMode, bool allowOptimizedFullscreen);
     void setSeekableRangesVector(const Vector<std::pair<double, double>>&);
     void setExternalPlaybackProperties(bool enabled, uint32_t targetType, String localizedDeviceName);
-    void fullscreenModeChanged(WebCore::HTMLMediaElement::VideoFullscreenMode);
+    void fullscreenModeChanged(WebCore::HTMLMediaElement::VideoFullscreenMode) override;
     
     // Fullscreen Observer
     virtual void didSetupFullscreen() override;

@@ -39,7 +39,7 @@ public:
     }
 
     virtual float evaluate(float) const override { return 0; }
-    bool operator==(const CalcExpressionNode&) const { ASSERT_NOT_REACHED(); return false; }
+    bool operator==(const CalcExpressionNode&) const override { ASSERT_NOT_REACHED(); return false; }
 };
 
 static Ref<WebCore::CalculationValue> createTestValue()

@@ -1,3 +1,17 @@
+2015-01-19  Dean Jackson  <dino@apple.com>
+
+        Add "override" to fix the build with newer clangs.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::transformHandlesToObjects):
+        (WebKit::WebProcessProxy::transformObjectsToHandles):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::transformObjectsToHandles):
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::transformHandlesToObjects):
+        (WebKit::WebProcess::transformObjectsToHandles):
+
 2015-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Flip the switch on

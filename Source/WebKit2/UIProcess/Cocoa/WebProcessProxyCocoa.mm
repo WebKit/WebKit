@@ -53,7 +53,7 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformHandlesToObjects(ObjCObjectGra
             return false;
         }
 
-        virtual RetainPtr<id> transformObject(id object) const
+        virtual RetainPtr<id> transformObject(id object) const override
         {
 #if WK_API_ENABLED
             if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
@@ -91,7 +91,7 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGra
             return false;
         }
 
-        virtual RetainPtr<id> transformObject(id object) const
+        virtual RetainPtr<id> transformObject(id object) const override
         {
 #if WK_API_ENABLED
             if (auto* controller = dynamic_objc_cast<WKBrowsingContextController>(object))
