@@ -257,9 +257,9 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 
 - (void)update:(const Highlight&)highlight
 {
-    if (highlight.type == HighlightTypeNode)
+    if (highlight.type == HighlightType::Node)
         [self _layoutForNodeHighlight:highlight];
-    else if (highlight.type == HighlightTypeRects)
+    else if (highlight.type == HighlightType::Rects)
         [self _layoutForRectsHighlight:highlight];
 }
 

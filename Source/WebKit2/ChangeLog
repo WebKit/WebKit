@@ -1,3 +1,15 @@
+2015-01-18  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the iOS build after <http://trac.webkit.org/changeset/178631>
+        (https://bugs.webkit.org/show_bug.cgi?id=129441)
+
+        * UIProcess/WKInspectorHighlightView.mm:
+        (-[WKInspectorHighlightView update:]): Substitute HighlightType::Node and
+        HighlightType::Rects for HighlightTypeNode and HighlightTypeRects, respectively.
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::highlight): Pass lvalue reference to WebCore::Highlight
+        instead of pointer in call to InspectorController::getHighlight().
+
 2015-01-18  Sam Weinig  <sam@webkit.org>
 
         Fix style issues and add availability macros missed in r178634

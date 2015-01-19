@@ -1,3 +1,14 @@
+2015-01-18  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the iOS build after <http://trac.webkit.org/changeset/178631>
+        (https://bugs.webkit.org/show_bug.cgi?id=129441)
+
+        Pass lvalue reference to WebCore::Highlight instead of pointer in call to InspectorController::getHighlight().
+        Also substitute HighlightType::Node and HighlightType::Rects for HighlightTypeNode and HighlightTypeRects, respectively.
+
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView layoutSublayers:]):
+
 2015-01-16  Beth Dakin  <bdakin@apple.com>
 
         Make sure early cancellation of immediate action actually does that in WK1

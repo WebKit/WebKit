@@ -123,7 +123,7 @@ void WebInspectorClient::highlight()
     }
 #else
     Highlight highlight;
-    m_page->corePage()->inspectorController().getHighlight(&highlight, InspectorOverlay::CoordinateSystem::Document);
+    m_page->corePage()->inspectorController().getHighlight(highlight, InspectorOverlay::CoordinateSystem::Document);
     m_page->showInspectorHighlight(highlight);
 #endif
 }

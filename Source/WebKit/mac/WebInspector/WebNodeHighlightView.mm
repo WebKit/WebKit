@@ -315,11 +315,11 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
         return;
 
     Highlight h;
-    [_webNodeHighlight inspectorController]->getHighlight(&h, InspectorOverlay::CoordinateSystem::View);
+    [_webNodeHighlight inspectorController]->getHighlight(h, InspectorOverlay::CoordinateSystem::View);
 
-    if (h.type == HighlightTypeNode)
+    if (h.type == HighlightType::Node)
         [self _layoutForNodeHighlight:&h parent:parentLayer];
-    else if (h.type == HighlightTypeRects)
+    else if (h.type == HighlightType::Rects)
         [self _layoutForRectsHighlight:&h parent:parentLayer];
 }
 #endif
