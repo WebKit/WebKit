@@ -71,10 +71,36 @@ StylePropertyShorthand widthShorthand();
 StylePropertyShorthand shorthandForProperty(CSSPropertyID);
 
 // Return the list of shorthands for a given longhand.
+// The implementation is generated in StylePropertyShorthandFunctions.cpp.
 Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID);
+
 unsigned indexOfShorthandForLonghand(CSSPropertyID, const Vector<StylePropertyShorthand>&);
 
 bool isExpandedShorthand(CSSPropertyID);
+
+// FIXME: This should try to get rid of this function and generate the rest of these shorthands.
+inline Vector<StylePropertyShorthand> matchingCustomShorthandsForLonghand(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyFontFamily:
+    case CSSPropertyFontSize:
+    case CSSPropertyFontStyle:
+    case CSSPropertyFontVariant:
+    case CSSPropertyFontWeight:
+    case CSSPropertyLineHeight:
+        return Vector<StylePropertyShorthand>{fontShorthand()};
+    case CSSPropertyMinWidth:
+    case CSSPropertyMaxWidth:
+        return Vector<StylePropertyShorthand>{widthShorthand()};
+    case CSSPropertyMinHeight:
+    case CSSPropertyMaxHeight:
+        return Vector<StylePropertyShorthand>{heightShorthand()};
+    default:
+        break;
+    }
+
+    return Vector<StylePropertyShorthand>();
+}
 
 } // namespace WebCore
 

@@ -1,3 +1,26 @@
+2015-01-18  Chris Dumez  <cdumez@apple.com>
+
+        Generate matchingShorthandsForLonghand() implementation from CSSPropertyNames.in
+        https://bugs.webkit.org/show_bug.cgi?id=140599
+
+        Reviewed by Antti Koivisto.
+
+        Generate matchingShorthandsForLonghand() implementation from
+        CSSPropertyNames.in. We already have all the information we need in
+        CSSPropertyNames.in to generate the big switch() in
+        matchingShorthandsForLonghand().
+
+        A few shorthands still aren't generated. I will look into getting rid
+        of the custom code in a follow-up patch.
+
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::makeVector): Deleted.
+        (WebCore::matchingShorthandsForLonghand): Deleted.
+        * css/StylePropertyShorthand.h:
+        (WebCore::matchingCustomShorthandsForLonghand):
+        * css/makeprop.pl:
+        (constructShorthandsVector):
+
 2015-01-18  Dean Jackson  <dino@apple.com>
 
         Out of bounds write in canvas.toDataURL

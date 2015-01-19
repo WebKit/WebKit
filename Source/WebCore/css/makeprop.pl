@@ -939,6 +939,8 @@ namespace WebCore {
 
 EOF
 
+my %longhandToShorthands = ();
+
 foreach my $name (@names) {
   # Skip non-Shorthand properties.
   next if (!exists $propertiesWithStyleBuilderOptions{$name}{"Longhands"});
@@ -951,6 +953,7 @@ foreach my $name (@names) {
   print SHORTHANDS_CPP "    static const CSSPropertyID " . $lowercaseId . "Properties[] = {\n";
   foreach (@longhands) {
     die "Unknown CSS property used in Longhands: " . $nameToId{$_} if !exists($nameToId{$_});
+    push(@{$longhandToShorthands{$_}}, $name);
     print SHORTHANDS_CPP "        CSSProperty" . $nameToId{$_} . ",\n";
   }
   print SHORTHANDS_CPP "    };\n";
@@ -981,6 +984,44 @@ print SHORTHANDS_CPP << "EOF";
         return fontShorthand();
     default:
         return emptyShorthand;
+    }
+}
+EOF
+
+print SHORTHANDS_CPP << "EOF";
+Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+EOF
+
+sub constructShorthandsVector {
+  my $shorthands = shift;
+
+  my $vector = "Vector<StylePropertyShorthand>{";
+  foreach my $i (0 .. $#$shorthands) {
+    $vector .= ", " unless $i == 0;
+    $vector .= lcfirst($nameToId{$shorthands->[$i]}) . "Shorthand()";
+  }
+  $vector .= "}";
+  return $vector;
+}
+
+my %vectorToLonghands = ();
+for my $longhand (sort keys %longhandToShorthands) {
+  my @shorthands = sort(@{$longhandToShorthands{$longhand}});
+  push(@{$vectorToLonghands{constructShorthandsVector(\@shorthands)}}, $longhand);
+}
+
+for my $vector (sort keys %vectorToLonghands) {
+  foreach (@{$vectorToLonghands{$vector}}) {
+    print SHORTHANDS_CPP "    case CSSProperty" . $nameToId{$_} . ":\n";
+  }
+  print SHORTHANDS_CPP "        return " . $vector . ";\n";
+}
+
+print SHORTHANDS_CPP << "EOF";
+    default:
+        return matchingCustomShorthandsForLonghand(propertyID);
     }
 }
 EOF
