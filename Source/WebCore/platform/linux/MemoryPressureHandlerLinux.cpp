@@ -38,7 +38,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
@@ -99,7 +98,9 @@ void MemoryPressureHandler::waitForMemoryPressureEvent(void*)
     }
 
     memoryPressureHandler().m_underMemoryPressure = true;
-    callOnMainThread(bind(&MemoryPressureHandler::respondToMemoryPressure, &memoryPressureHandler(), true));
+    callOnMainThread([] {
+        memoryPressureHandler().respondToMemoryPressure(true);
+    });
 }
 
 inline void MemoryPressureHandler::logErrorAndCloseFDs(const char* log)
