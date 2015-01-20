@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "APINavigationData.h"
+#import "APIProcessPoolConfiguration.h"
 #import "ObjCObjectGraph.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -189,20 +190,18 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
     InitWebCoreThreadSystemInterface();
 #endif
 
-    WebProcessPoolConfiguration configuration;
-    configuration.injectedBundlePath = bundleURL ? String(bundleURL.path) : String();
+    auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
+    configuration->setInjectedBundlePath(bundleURL ? String(bundleURL.path) : String());
+#if PLATFORM(IOS)
+    configuration->setUseNetworkProcess(true);
+    configuration->setProcessModel(ProcessModelMultipleSecondaryProcesses);
+#endif
 
-    WebProcessPool::applyPlatformSpecificConfigurationDefaults(configuration);
-
-    _processPool = WebProcessPool::create(WTF::move(configuration));
+    _processPool = WebProcessPool::create(configuration);
 
     setUpConnectionClient(self, toAPI(_processPool.get()));
     setUpInectedBundleClient(self, toAPI(_processPool.get()));
     setUpHistoryClient(self, toAPI(_processPool.get()));
-#if PLATFORM(IOS)
-    _processPool->setUsesNetworkProcess(true);
-    _processPool->setProcessModel(ProcessModelMultipleSecondaryProcesses);
-#endif
 
     return self;
 }

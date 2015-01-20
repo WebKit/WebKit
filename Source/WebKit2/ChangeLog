@@ -1,3 +1,149 @@
+2015-01-18  Sam Weinig  <sam@webkit.org>
+
+        Merge API::ProcessPoolConfiguration and _WKProcessPoolConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=140601
+
+        Reviewed by Anders Carlsson.
+
+        - Converts _WKProcessPoolConfiguration to be backed via API::ProcessPoolConfiguration.
+        - Expands API::ProcessPoolConfiguration to add all the parameters necessary to fully
+          initialize a WebProcessPool. This allows -[WKProcessPool _initWithConfiguration:] to
+          be a simple pass through initializer, which in turn allows us to consider WebProcessPools
+          created on the C++ and Objective-C sides as equivalent.
+        - Makes WebProcessPool own the reference to the API::ProcessPoolConfiguration (rather than
+          the WKProcessPool wrapper).
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        Create the API::ProcessPoolConfigurations using [_WKProcessPoolConfiguration alloc] as its 
+        storage..
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::create):
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        (API::ProcessPoolConfiguration::ProcessPoolConfiguration):
+        (API::ProcessPoolConfiguration::~ProcessPoolConfiguration):
+        (API::ProcessPoolConfiguration::copy):
+        (API::ProcessPoolConfiguration::webProcessPoolConfiguration): Deleted.
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        Add the remaining initialization parameters and add a convenience create function
+        for configuring legacy WebProcessPools (for use by the C-SPI).
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        Expose helper for getting the website data directories for use in the ProcessPoolConfiguration.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextCreate):
+        (WKContextCreateWithInjectedBundlePath):
+        (WKContextCreateWithConfiguration):
+        Use ProcessPoolConfiguration::createWithLegacyOptions() to keep backwards compatibility.
+
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationCreate):
+        Update for ProcessPoolConfiguration::create() returning a Ref. Note, this function
+        was not changed to call ProcessPoolConfiguration::createWithLegacyOptions() since
+        it has not been around long enough to warrant it.
+
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        Use ProcessPoolConfiguration::createWithLegacyOptions() to keep backwards compatibility.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool description]):
+        Change to pull the configuration from the underlying API::Object.
+
+        (-[WKProcessPool _configuration]):
+        Change to pull the configuration from the underlying API::Object and call the new
+        copy() helper on it.
+        
+        (-[WKProcessPool _initWithConfiguration:]):
+        Convert to be a simple pass through to API::Object::constructInWrapper.
+
+        (websiteDataDirectoryURL): Deleted.
+        Moved to APIWebsiteDataStore.h
+
+        * UIProcess/API/Cocoa/WKProcessPoolInternal.h:
+        Removes the _WKProcessPoolConfiguration member, now that it is stored on the WebProcessPool.
+        
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration init]):
+        (-[_WKProcessPoolConfiguration dealloc]):
+        Added to support API::Object bridging.
+
+        (-[_WKProcessPoolConfiguration injectedBundleURL]):
+        (-[_WKProcessPoolConfiguration setInjectedBundleURL:]):
+        Convert to getting the URL from the underlying object. Moved the exception
+        that used to be on creation of the WKProcessPool.
+
+        (-[_WKProcessPoolConfiguration maximumProcessCount]):
+        (-[_WKProcessPoolConfiguration setMaximumProcessCount:]):
+        Convert to getting the count from the underlying object.
+
+        (-[_WKProcessPoolConfiguration cachePartitionedURLSchemes]):
+        Convert to constructing the NSArray on demand from the underlying Vector.
+
+        (-[_WKProcessPoolConfiguration setCachePartitionedURLSchemes:]):
+        Converts the NSArray to a Vector rather than storing the array.
+
+        * UIProcess/API/Cocoa/_WKProcessPoolConfigurationInternal.h: Added.
+        (API::wrapper):
+        Add boilerplate for API::Object bridging.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        Update to use API::ProcessPoolConfiguration::createWithLegacyOptions() to keep backwards compatibility.
+
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectorProcessPool):
+        Update to call API::ProcessPoolConfiguration::createWithLegacyOptions().
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::create):
+        (WebKit::websiteDataStoreConfiguration):
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::applyPlatformSpecificConfigurationDefaults): Deleted.
+        This functionality was moved to the constructor of the API::ProcessPoolConfiguration.
+        * UIProcess/WebProcessPool.h:
+        Changed to take (and store) a API::ProcessPoolConfiguration rather than the WebProcessPoolConfiguration.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory):
+        (WebKit::WebProcessPool::platformDefaultWebSQLDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::platformDefaultIndexedDBDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::platformDefaultLocalStorageDirectory): Deleted.
+        (WebKit::WebProcessPool::platformDefaultMediaKeysStorageDirectory): Deleted.
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory):
+        (WebKit::WebProcessPool::platformDefaultWebSQLDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::platformDefaultIndexedDBDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::platformDefaultLocalStorageDirectory): Deleted.
+        (WebKit::WebProcessPool::platformDefaultMediaKeysStorageDirectory): Deleted.
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory):
+        (WebKit::WebProcessPool::platformDefaultWebSQLDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::platformDefaultIndexedDBDatabaseDirectory): Deleted.
+        (WebKit::WebProcessPool::platformDefaultLocalStorageDirectory): Deleted.
+        (WebKit::WebProcessPool::platformDefaultMediaKeysStorageDirectory): Deleted.
+        Renamed to make it clear these were the legacy locations for these directories.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Added new files.
+
 2015-01-19  Beth Dakin  <bdakin@apple.com>
 
          Speculative build fix.

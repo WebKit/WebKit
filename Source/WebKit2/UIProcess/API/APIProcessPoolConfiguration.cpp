@@ -26,11 +26,36 @@
 #include "config.h"
 #include "APIProcessPoolConfiguration.h"
 
+#include "APIWebsiteDataStore.h"
 #include "WebProcessPool.h"
 
 namespace API {
 
+Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::create()
+{
+    return adoptRef(*new ProcessPoolConfiguration);
+}
+
+Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::createWithLegacyOptions()
+{
+    auto configuration = ProcessPoolConfiguration::create();
+
+    configuration->m_processModel = WebKit::ProcessModelSharedSecondaryProcess;
+    configuration->m_useNetworkProcess = false;
+    configuration->m_cacheModel = WebKit::CacheModelDocumentViewer;
+    configuration->m_localStorageDirectory = WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory();
+    configuration->m_webSQLDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory();
+    configuration->m_indexedDBDatabaseDirectory = WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory();
+    configuration->m_mediaKeysStorageDirectory = WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory();
+
+    return configuration;
+}
+
 ProcessPoolConfiguration::ProcessPoolConfiguration()
+    : m_indexedDBDatabaseDirectory(WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation("IndexedDB"))
+    , m_localStorageDirectory(WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation("LocalStorage"))
+    , m_webSQLDatabaseDirectory(WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation("WebSQL"))
+    , m_mediaKeysStorageDirectory(WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation("MediaKeys"))
 {
 }
 
@@ -38,19 +63,22 @@ ProcessPoolConfiguration::~ProcessPoolConfiguration()
 {
 }
 
-WebKit::WebProcessPoolConfiguration ProcessPoolConfiguration::webProcessPoolConfiguration() const
+Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 {
-    WebKit::WebProcessPoolConfiguration configuration;
+    auto copy = this->create();
 
-    configuration.indexedDBDatabaseDirectory = m_indexedDBDatabaseDirectory;
-    configuration.injectedBundlePath = m_injectedBundlePath;
-    configuration.localStorageDirectory = m_localStorageDirectory;
-    configuration.webSQLDatabaseDirectory = m_webSQLDatabaseDirectory;
-    configuration.mediaKeysStorageDirectory = m_mediaKeysStorageDirectory;
-
-    WebKit::WebProcessPool::applyPlatformSpecificConfigurationDefaults(configuration);
-
-    return configuration;
+    copy->m_processModel = this->m_processModel;
+    copy->m_useNetworkProcess = this->m_useNetworkProcess;
+    copy->m_maximumProcessCount = this->m_maximumProcessCount;
+    copy->m_cacheModel = this->m_cacheModel;
+    copy->m_indexedDBDatabaseDirectory = this->m_indexedDBDatabaseDirectory;
+    copy->m_injectedBundlePath = this->m_injectedBundlePath;
+    copy->m_localStorageDirectory = this->m_localStorageDirectory;
+    copy->m_webSQLDatabaseDirectory = this->m_webSQLDatabaseDirectory;
+    copy->m_mediaKeysStorageDirectory = this->m_mediaKeysStorageDirectory;
+    copy->m_cachePartitionedURLSchemes = this->m_cachePartitionedURLSchemes;
+    
+    return copy;
 }
 
 } // namespace API

@@ -29,6 +29,7 @@
 #include "APIArray.h"
 #include "APIDownloadClient.h"
 #include "APILegacyContextHistoryClient.h"
+#include "APIProcessPoolConfiguration.h"
 #include "CustomProtocolManagerMessages.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
@@ -112,31 +113,10 @@ static const double sharedSecondaryProcessShutdownTimeout = 60;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, processPoolCounter, ("WebProcessPool"));
 
-void WebProcessPool::applyPlatformSpecificConfigurationDefaults(WebProcessPoolConfiguration& configuration)
-{
-    // FIXME: This function should not be needed; all ports should make sure that the configuration has the right
-    // values, and then we should get rid of the platform specific defaults inside WebProcessPool.
-
-    if (!configuration.localStorageDirectory)
-        configuration.localStorageDirectory = platformDefaultLocalStorageDirectory();
-
-    if (!configuration.webSQLDatabaseDirectory)
-        configuration.webSQLDatabaseDirectory = platformDefaultWebSQLDatabaseDirectory();
-
-    // *********
-    // IMPORTANT: Do not change the directory structure for indexed databases on disk without first consulting a reviewer from Apple (<rdar://problem/17454712>)
-    // *********
-    if (!configuration.indexedDBDatabaseDirectory)
-        configuration.indexedDBDatabaseDirectory = platformDefaultIndexedDBDatabaseDirectory();
-
-    if (!configuration.mediaKeysStorageDirectory)
-        configuration.mediaKeysStorageDirectory = platformDefaultMediaKeysStorageDirectory();
-}
-
-PassRefPtr<WebProcessPool> WebProcessPool::create(WebProcessPoolConfiguration configuration)
+Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
 {
     InitializeWebKit2();
-    return adoptRef(new WebProcessPool(WTF::move(configuration)));
+    return adoptRef(*new WebProcessPool(configuration));
 }
 
 static Vector<WebProcessPool*>& processPools()
@@ -150,22 +130,23 @@ const Vector<WebProcessPool*>& WebProcessPool::allProcessPools()
     return processPools();
 }
 
-static WebsiteDataStore::Configuration websiteDataStoreConfiguration(const WebProcessPoolConfiguration& processPoolConfiguration)
+static WebsiteDataStore::Configuration websiteDataStoreConfiguration(API::ProcessPoolConfiguration& processPoolConfiguration)
 {
     WebsiteDataStore::Configuration configuration;
 
-    configuration.localStorageDirectory = processPoolConfiguration.localStorageDirectory;
+    configuration.localStorageDirectory = processPoolConfiguration.localStorageDirectory();
 
     return configuration;
 }
 
-WebProcessPool::WebProcessPool(WebProcessPoolConfiguration configuration)
-    : m_processModel(ProcessModelSharedSecondaryProcess)
-    , m_webProcessCountLimit(UINT_MAX)
+WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
+    : m_configuration(configuration.copy())
+    , m_processModel(m_configuration->processModel())
+    , m_webProcessCountLimit(!m_configuration->maximumProcessCount() ? UINT_MAX : m_configuration->maximumProcessCount())
     , m_haveInitialEmptyProcess(false)
     , m_processWithPageCache(0)
     , m_defaultPageGroup(WebPageGroup::createNonNull())
-    , m_injectedBundlePath(configuration.injectedBundlePath)
+    , m_injectedBundlePath(m_configuration->injectedBundlePath())
     , m_downloadClient(std::make_unique<API::DownloadClient>())
     , m_historyClient(std::make_unique<API::LegacyContextHistoryClient>())
     , m_visitedLinkProvider(VisitedLinkProvider::create())
@@ -173,22 +154,22 @@ WebProcessPool::WebProcessPool(WebProcessPoolConfiguration configuration)
     , m_plugInAutoStartProvider(this)
     , m_alwaysUsesComplexTextCodePath(false)
     , m_shouldUseFontSmoothing(true)
-    , m_cacheModel(CacheModelDocumentViewer)
+    , m_cacheModel(m_configuration->cacheModel())
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
-    , m_websiteDataStore(WebsiteDataStore::create(websiteDataStoreConfiguration(configuration)))
-    , m_storageManager(StorageManager::create(configuration.localStorageDirectory))
+    , m_websiteDataStore(WebsiteDataStore::create(websiteDataStoreConfiguration(m_configuration.get())))
+    , m_storageManager(StorageManager::create(m_configuration->localStorageDirectory()))
 #if USE(SOUP)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
 #endif
-    , m_webSQLDatabaseDirectory(WTF::move(configuration.webSQLDatabaseDirectory))
-    , m_indexedDBDatabaseDirectory(WTF::move(configuration.indexedDBDatabaseDirectory))
-    , m_mediaKeysStorageDirectory(WTF::move(configuration.mediaKeysStorageDirectory))
+    , m_webSQLDatabaseDirectory(configuration.webSQLDatabaseDirectory())
+    , m_indexedDBDatabaseDirectory(configuration.indexedDBDatabaseDirectory())
+    , m_mediaKeysStorageDirectory(configuration.mediaKeysStorageDirectory())
     , m_shouldUseTestingNetworkSession(false)
     , m_processTerminationEnabled(true)
 #if ENABLE(NETWORK_PROCESS)
     , m_canHandleHTTPSServerTrustEvaluation(true)
-    , m_usesNetworkProcess(false)
+    , m_usesNetworkProcess(m_configuration->useNetworkProcess())
 #endif
 #if USE(SOUP)
     , m_ignoreTLSErrors(true)
@@ -197,6 +178,11 @@ WebProcessPool::WebProcessPool(WebProcessPoolConfiguration configuration)
     , m_userObservablePageCounter([this](bool) { updateProcessSuppressionState(); })
     , m_processSuppressionDisabledForPageCounter([this](bool) { updateProcessSuppressionState(); })
 {
+#if ENABLE(CACHE_PARTITIONING)
+    for (const auto& urlScheme : m_configuration->cachePartitionedURLSchemes())
+        m_schemesToRegisterAsCachePartitioned.add(urlScheme);
+#endif
+
     platformInitialize();
 
     addMessageReceiver(Messages::WebProcessPool::messageReceiverName(), *this);

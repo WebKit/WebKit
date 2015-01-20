@@ -27,47 +27,65 @@
 #define APIContextConfiguration_h
 
 #include "APIObject.h"
+#include "CacheModel.h"
+#include "ProcessModel.h"
+#include <wtf/Ref.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
-
-namespace WebKit {
-struct WebProcessPoolConfiguration;
-}
 
 namespace API {
 
-class ProcessPoolConfiguration : public ObjectImpl<Object::Type::ProcessPoolConfiguration> {
+class ProcessPoolConfiguration final : public ObjectImpl<Object::Type::ProcessPoolConfiguration> {
 public:
-    static PassRefPtr<ProcessPoolConfiguration> create()
-    {
-        return adoptRef(new ProcessPoolConfiguration);
-    }
+    static Ref<ProcessPoolConfiguration> create();
+    static Ref<ProcessPoolConfiguration> createWithLegacyOptions();
+    
+    explicit ProcessPoolConfiguration();
     virtual ~ProcessPoolConfiguration();
+    
+    Ref<ProcessPoolConfiguration> copy();
 
-    String indexedDBDatabaseDirectory() const { return m_indexedDBDatabaseDirectory; }
-    void setIndexedDBDatabaseDirectory(const String& indexedDBDatabaseDirectory) { m_indexedDBDatabaseDirectory = indexedDBDatabaseDirectory; }
+    WebKit::ProcessModel processModel() const { return m_processModel; }
+    void setProcessModel(WebKit::ProcessModel processModel) { m_processModel = processModel; } 
 
-    String injectedBundlePath() const { return m_injectedBundlePath; }
-    void setInjectedBundlePath(const String& injectedBundlePath) { m_injectedBundlePath = injectedBundlePath; }
+    bool useNetworkProcess() const { return m_useNetworkProcess; }
+    void setUseNetworkProcess(bool useNetworkProcess) { m_useNetworkProcess = useNetworkProcess; } 
 
-    String localStorageDirectory() const { return m_localStorageDirectory; }
-    void setLocalStorageDirectory(const String& localStorageDirectory) { m_localStorageDirectory = localStorageDirectory; }
+    unsigned maximumProcessCount() const { return m_maximumProcessCount; }
+    void setMaximumProcessCount(unsigned maximumProcessCount) { m_maximumProcessCount = maximumProcessCount; } 
 
-    String webSQLDatabaseDirectory() const { return m_webSQLDatabaseDirectory; }
-    void setWebSQLDatabaseDirectory(const String& webSQLDatabaseDirectory) { m_webSQLDatabaseDirectory = webSQLDatabaseDirectory; }
+    WebKit::CacheModel cacheModel() const { return m_cacheModel; }
+    void setCacheModel(WebKit::CacheModel cacheModel) { m_cacheModel = cacheModel; } 
 
-    String mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
-    void setMediaKeysStorageDirectory(const String& mediaKeysStorageDirectory) { m_mediaKeysStorageDirectory = mediaKeysStorageDirectory; }
+    WTF::String indexedDBDatabaseDirectory() const { return m_indexedDBDatabaseDirectory; }
+    void setIndexedDBDatabaseDirectory(const WTF::String& indexedDBDatabaseDirectory) { m_indexedDBDatabaseDirectory = indexedDBDatabaseDirectory; }
 
-    WebKit::WebProcessPoolConfiguration webProcessPoolConfiguration() const;
+    WTF::String injectedBundlePath() const { return m_injectedBundlePath; }
+    void setInjectedBundlePath(const WTF::String& injectedBundlePath) { m_injectedBundlePath = injectedBundlePath; }
+
+    WTF::String localStorageDirectory() const { return m_localStorageDirectory; }
+    void setLocalStorageDirectory(const WTF::String& localStorageDirectory) { m_localStorageDirectory = localStorageDirectory; }
+
+    WTF::String webSQLDatabaseDirectory() const { return m_webSQLDatabaseDirectory; }
+    void setWebSQLDatabaseDirectory(const WTF::String& webSQLDatabaseDirectory) { m_webSQLDatabaseDirectory = webSQLDatabaseDirectory; }
+
+    WTF::String mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
+    void setMediaKeysStorageDirectory(const WTF::String& mediaKeysStorageDirectory) { m_mediaKeysStorageDirectory = mediaKeysStorageDirectory; }
+
+    const Vector<WTF::String>& cachePartitionedURLSchemes() { return m_cachePartitionedURLSchemes; }
+    void setCachePartitionedURLSchemes(Vector<WTF::String>&& cachePartitionedURLSchemes) { m_cachePartitionedURLSchemes = WTF::move(cachePartitionedURLSchemes); }
 
 private:
-    ProcessPoolConfiguration();
-
-    String m_indexedDBDatabaseDirectory;
-    String m_injectedBundlePath;
-    String m_localStorageDirectory;
-    String m_webSQLDatabaseDirectory;
-    String m_mediaKeysStorageDirectory;
+    WebKit::ProcessModel m_processModel { WebKit::ProcessModelMultipleSecondaryProcesses };
+    bool m_useNetworkProcess { true };
+    unsigned m_maximumProcessCount { 0 };
+    WebKit::CacheModel m_cacheModel { WebKit::CacheModelPrimaryWebBrowser };
+    WTF::String m_injectedBundlePath;
+    WTF::String m_indexedDBDatabaseDirectory;
+    WTF::String m_localStorageDirectory;
+    WTF::String m_webSQLDatabaseDirectory;
+    WTF::String m_mediaKeysStorageDirectory;
+    Vector<WTF::String> m_cachePartitionedURLSchemes;
 };
 
 } // namespace API

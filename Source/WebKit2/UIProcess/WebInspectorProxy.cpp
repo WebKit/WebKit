@@ -29,6 +29,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "APIProcessPoolConfiguration.h"
 #include "APIURLRequest.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
@@ -365,15 +366,11 @@ WebProcessPool& WebInspectorProxy::inspectorProcessPool()
 {
     // Having our own process pool removes us from the main process pool and
     // guarantees no process sharing for our user interface.
-
-    static WebProcessPool* processPool;
-    if (!processPool) {
-        WebProcessPoolConfiguration configuration;
-        WebProcessPool::applyPlatformSpecificConfigurationDefaults(configuration);
-        
-        processPool = (WebProcessPool::create(WTF::move(configuration))).leakRef();
-        processPool->setProcessModel(ProcessModelMultipleSecondaryProcesses);
-    }
+    static WebProcessPool* processPool = []{
+        auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
+        configuration->setProcessModel(ProcessModelMultipleSecondaryProcesses);
+        return &WebProcessPool::create(configuration.get()).leakRef();
+    }();
 
     return *processPool;
 }

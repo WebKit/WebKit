@@ -46,8 +46,6 @@ inline WKProcessPool *wrapper(WebProcessPool& processPool)
 
 @interface WKProcessPool () <WKObject> {
 @package
-    RetainPtr<_WKProcessPoolConfiguration> _configuration;
-
     API::ObjectStorage<WebKit::WebProcessPool> _processPool;
 }
 

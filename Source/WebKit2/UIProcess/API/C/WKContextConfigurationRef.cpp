@@ -33,7 +33,7 @@ using namespace WebKit;
 
 WKContextConfigurationRef WKContextConfigurationCreate()
 {
-    return toAPI(API::ProcessPoolConfiguration::create().leakRef());
+    return toAPI(&API::ProcessPoolConfiguration::create().leakRef());
 }
 
 WKStringRef WKContextConfigurationCopyIndexedDBDatabaseDirectory(WKContextConfigurationRef configuration)

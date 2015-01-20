@@ -21,6 +21,7 @@
 #include "WebKitWebContext.h"
 
 #include "APIDownloadClient.h"
+#include "APIProcessPoolConfiguration.h"
 #include "APIString.h"
 #include "WebBatteryManagerProxy.h"
 #include "WebCertificateInfo.h"
@@ -257,15 +258,16 @@ static void webkitWebContextConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_web_context_parent_class)->constructed(object);
 
     GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory(), "libwebkit2gtkinjectedbundle.so", nullptr));
-    WebProcessPoolConfiguration webContextConfiguration;
-    webContextConfiguration.injectedBundlePath = WebCore::filenameToString(bundleFilename.get());
-    WebProcessPool::applyPlatformSpecificConfigurationDefaults(webContextConfiguration);
+
+    auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
+    configuration->setInjectedBundlePath(WebCore::filenameToString(bundleFilename.get()));
+
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;
     if (!priv->localStorageDirectory.isNull())
-        webContextConfiguration.localStorageDirectory = WebCore::filenameToString(priv->localStorageDirectory.data());
+        configuration->setLocalStorageDirectory(WebCore::filenameToString(priv->localStorageDirectory.data()));
 
-    priv->context = WebProcessPool::create(WTF::move(webContextConfiguration));
+    priv->context = WebProcessPool::create(configuration.get());
 
     priv->requestManager = priv->context->supplement<WebSoupCustomProtocolRequestManager>();
     priv->context->setCacheModel(CacheModelPrimaryWebBrowser);

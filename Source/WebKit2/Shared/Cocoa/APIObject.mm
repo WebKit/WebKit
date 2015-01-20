@@ -55,6 +55,7 @@
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 #import "_WKDownloadInternal.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKProcessPoolConfigurationInternal.h"
 #import "_WKWebsiteDataStoreInternal.h"
 #import <objc/objc-auto.h>
 
@@ -109,6 +110,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::ProcessPool:
         wrapper = [WKProcessPool alloc];
+        break;
+
+    case Type::ProcessPoolConfiguration:
+        wrapper = [_WKProcessPoolConfiguration alloc];
         break;
 
     case Type::Data:

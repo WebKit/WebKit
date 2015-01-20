@@ -71,6 +71,7 @@ OBJC_CLASS NSString;
 namespace API {
 class DownloadClient;
 class LegacyContextHistoryClient;
+class ProcessPoolConfiguration;
 }
 
 namespace WebKit {
@@ -97,26 +98,18 @@ int webProcessLatencyQOS();
 int webProcessThroughputQOS();
 #endif
 
-struct WebProcessPoolConfiguration {
-    String injectedBundlePath;
-    String localStorageDirectory;
-    String webSQLDatabaseDirectory;
-    String indexedDBDatabaseDirectory;
-    String mediaKeysStorageDirectory;
-};
-
-class WebProcessPool : public API::ObjectImpl<API::Object::Type::ProcessPool>, private IPC::MessageReceiver
+class WebProcessPool final : public API::ObjectImpl<API::Object::Type::ProcessPool>, private IPC::MessageReceiver
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , private PluginInfoStoreClient
 #endif
     {
 public:
-    static void applyPlatformSpecificConfigurationDefaults(WebProcessPoolConfiguration&);
+    static Ref<WebProcessPool> create(API::ProcessPoolConfiguration&);
 
-    WebProcessPool(WebProcessPoolConfiguration);
-        
-    static PassRefPtr<WebProcessPool> create(WebProcessPoolConfiguration);
+    explicit WebProcessPool(API::ProcessPoolConfiguration&);        
     virtual ~WebProcessPool();
+
+    API::ProcessPoolConfiguration& configuration() { return m_configuration.get(); }
 
     static const Vector<WebProcessPool*>& allProcessPools();
 
@@ -355,6 +348,12 @@ public:
         return m_processSuppressionDisabledForPageCounter.token<ProcessSuppressionDisabledTokenType>();
     }
 
+    // FIXME: Move these to API::WebsiteDataStore.
+    static String legacyPlatformDefaultLocalStorageDirectory();
+    static String legacyPlatformDefaultIndexedDBDatabaseDirectory();
+    static String legacyPlatformDefaultWebSQLDatabaseDirectory();
+    static String legacyPlatformDefaultMediaKeysStorageDirectory();
+
 private:
     void platformInitialize();
 
@@ -388,11 +387,6 @@ private:
 
     String platformDefaultIconDatabasePath() const;
 
-    static String platformDefaultLocalStorageDirectory();
-    static String platformDefaultIndexedDBDatabaseDirectory();
-    static String platformDefaultWebSQLDatabaseDirectory();
-    static String platformDefaultMediaKeysStorageDirectory();
-
     String diskCacheDirectory() const;
     String platformDefaultDiskCacheDirectory() const;
 
@@ -421,6 +415,8 @@ private:
     // PluginInfoStoreClient:
     virtual void pluginInfoStoreDidLoadPlugins(PluginInfoStore*) override;
 #endif
+
+    Ref<API::ProcessPoolConfiguration> m_configuration;
 
     IPC::MessageReceiverMap m_messageReceiverMap;
 

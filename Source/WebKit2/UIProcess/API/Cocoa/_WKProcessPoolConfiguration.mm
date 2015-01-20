@@ -24,55 +24,98 @@
  */
 
 #import "config.h"
-#import "_WKProcessPoolConfiguration.h"
+#import "_WKProcessPoolConfigurationInternal.h"
 
 #if WK_API_ENABLED
 
 #import <wtf/RetainPtr.h>
 
-@implementation _WKProcessPoolConfiguration {
-    RetainPtr<NSURL> _injectedBundleURL;
-    RetainPtr<NSArray> _cachePartitionedURLSchemes;
+@implementation _WKProcessPoolConfiguration
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    API::Object::constructInWrapper<API::ProcessPoolConfiguration>(self);
+
+    return self;
+}
+
+- (void)dealloc
+{
+    _processPoolConfiguration->~ProcessPoolConfiguration();
+
+    [super dealloc];
 }
 
 - (NSURL *)injectedBundleURL
 {
-    return _injectedBundleURL.get();
+    return [NSURL fileURLWithPath:_processPoolConfiguration->injectedBundlePath()];
 }
 
 - (void)setInjectedBundleURL:(NSURL *)injectedBundleURL
 {
-    _injectedBundleURL = adoptNS([injectedBundleURL copy]);
+    if (injectedBundleURL && !injectedBundleURL.isFileURL)
+        [NSException raise:NSInvalidArgumentException format:@"Injected Bundle URL must be a file URL"];
+
+    _processPoolConfiguration->setInjectedBundlePath(injectedBundleURL.path);
+}
+
+- (NSUInteger)maximumProcessCount
+{
+    return _processPoolConfiguration->maximumProcessCount();
+}
+
+- (void)setMaximumProcessCount:(NSUInteger)maximumProcessCount
+{
+    _processPoolConfiguration->setMaximumProcessCount(maximumProcessCount);
 }
 
 - (NSArray *)cachePartitionedURLSchemes
 {
-    return _cachePartitionedURLSchemes.get();
+    auto schemes = _processPoolConfiguration->cachePartitionedURLSchemes();
+    if (schemes.isEmpty())
+        return @[];
+
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:schemes.size()];
+    for (const auto& scheme : schemes)
+        [array addObject:(NSString *)scheme];
+
+    return array;
 }
 
 - (void)setCachePartitionedURLSchemes:(NSArray *)cachePartitionedURLSchemes
 {
-    _cachePartitionedURLSchemes = adoptNS([[NSArray alloc] initWithArray:cachePartitionedURLSchemes copyItems:YES]);
+    Vector<String> schemes;
+    for (id urlScheme in cachePartitionedURLSchemes) {
+        if ([urlScheme isKindOfClass:[NSString class]])
+            schemes.append(String((NSString *)urlScheme));
+    }
+    
+    _processPoolConfiguration->setCachePartitionedURLSchemes(WTF::move(schemes));
 }
 
 - (NSString *)description
 {
-    NSString *description = [NSString stringWithFormat:@"<%@: %p; maximumProcessCount = %lu", NSStringFromClass(self.class), self, static_cast<unsigned long>(_maximumProcessCount)];
-    if (_injectedBundleURL)
-        return [description stringByAppendingFormat:@"; injectedBundleURL: \"%@\">", _injectedBundleURL.get()];
+    NSString *description = [NSString stringWithFormat:@"<%@: %p; maximumProcessCount = %lu", NSStringFromClass(self.class), self, static_cast<unsigned long>([self maximumProcessCount])];
+
+    if (!_processPoolConfiguration->injectedBundlePath().isEmpty())
+        return [description stringByAppendingFormat:@"; injectedBundleURL: \"%@\">", [self injectedBundleURL]];
 
     return [description stringByAppendingString:@">"];
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    _WKProcessPoolConfiguration *configuration = [(_WKProcessPoolConfiguration *)[[self class] allocWithZone:zone] init];
+    return wrapper(_processPoolConfiguration->copy().leakRef());
+}
 
-    configuration.maximumProcessCount = self.maximumProcessCount;
-    configuration.injectedBundleURL = self.injectedBundleURL;
-    configuration.cachePartitionedURLSchemes = self.cachePartitionedURLSchemes;
+#pragma mark WKObject protocol implementation
 
-    return configuration;
+- (API::Object&)_apiObject
+{
+    return *_processPoolConfiguration;
 }
 
 @end

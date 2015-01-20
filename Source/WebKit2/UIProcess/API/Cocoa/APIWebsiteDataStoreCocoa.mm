@@ -26,17 +26,45 @@
 #include "config.h"
 #include "APIWebsiteDataStore.h"
 
-// FIXME: This function is currently in WKProcessPool. It should be moved to this file instead.
-NSURL *websiteDataDirectoryURL(NSString *directoryName);
+#include "SandboxUtilities.h"
 
 namespace API {
+
+String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName)
+{
+    static dispatch_once_t onceToken;
+    static NSURL *websiteDataURL;
+
+    dispatch_once(&onceToken, ^{
+        NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nullptr create:NO error:nullptr];
+        if (!url)
+            RELEASE_ASSERT_NOT_REACHED();
+
+        url = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
+
+        if (!WebKit::processHasContainer()) {
+            NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
+            if (!bundleIdentifier)
+                bundleIdentifier = [NSProcessInfo processInfo].processName;
+            url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
+        }
+
+        websiteDataURL = [[url URLByAppendingPathComponent:@"WebsiteData" isDirectory:YES] retain];
+    });
+
+    NSURL *url = [websiteDataURL URLByAppendingPathComponent:directoryName isDirectory:YES];
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:url withIntermediateDirectories:YES attributes:nil error:nullptr])
+        LOG_ERROR("Failed to create directory %@", url);
+
+    return url.absoluteURL.path.fileSystemRepresentation;
+}
 
 WebKit::WebsiteDataStore::Configuration WebsiteDataStore::defaultDataStoreConfiguration()
 {
     // FIXME: Fill everything in.
     WebKit::WebsiteDataStore::Configuration configuration;
 
-    configuration.localStorageDirectory = websiteDataDirectoryURL(@"LocalStorage").absoluteURL.path.fileSystemRepresentation;
+    configuration.localStorageDirectory = websiteDataDirectoryFileSystemRepresentation("LocalStorage");
 
     return configuration;
 }

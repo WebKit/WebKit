@@ -100,12 +100,12 @@ void WebProcessPool::platformInvalidateContext()
     notImplemented();
 }
 
-String WebProcessPool::platformDefaultWebSQLDatabaseDirectory()
+String WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory()
 {
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/Databases";
 }
 
-String WebProcessPool::platformDefaultIndexedDBDatabaseDirectory()
+String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
 {
     notImplemented();
     return String();
@@ -116,12 +116,12 @@ String WebProcessPool::platformDefaultIconDatabasePath() const
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/IconDatabase/" + WebCore::IconDatabase::defaultDatabaseFilename();
 }
 
-String WebProcessPool::platformDefaultLocalStorageDirectory()
+String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
 {
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/LocalStorage";
 }
 
-String WebProcessPool::platformDefaultMediaKeysStorageDirectory()
+String WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory()
 {
     return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/MediaKeys";
 }

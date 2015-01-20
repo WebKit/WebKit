@@ -78,20 +78,21 @@ WKTypeID WKContextGetTypeID()
 
 WKContextRef WKContextCreate()
 {
-    return WKContextCreateWithConfiguration(adoptWK(WKContextConfigurationCreate()).get());
+    auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
+    return toAPI(&WebProcessPool::create(configuration).leakRef());
 }
 
 WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
 {
-    auto configuration = adoptWK(WKContextConfigurationCreate());
-    WKContextConfigurationSetInjectedBundlePath(configuration.get(), pathRef);
+    auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
+    configuration->setInjectedBundlePath(toWTFString(pathRef));
 
-    return WKContextCreateWithConfiguration(configuration.get());
+    return toAPI(&WebProcessPool::create(configuration).leakRef());
 }
 
 WKContextRef WKContextCreateWithConfiguration(WKContextConfigurationRef configuration)
 {
-    return toAPI(WebProcessPool::create(toImpl(configuration)->webProcessPoolConfiguration()).leakRef());
+    return toAPI(&WebProcessPool::create(*toImpl(configuration)).leakRef());
 }
 
 void WKContextSetClient(WKContextRef contextRef, const WKContextClientBase* wkClient)

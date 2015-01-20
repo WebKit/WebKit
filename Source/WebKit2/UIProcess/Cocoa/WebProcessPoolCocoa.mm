@@ -334,7 +334,7 @@ String WebProcessPool::containerTemporaryDirectory() const
 }
 #endif
 
-String WebProcessPool::platformDefaultWebSQLDatabaseDirectory()
+String WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory()
 {
     NSString *databasesDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebDatabaseDirectoryDefaultsKey];
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
@@ -342,14 +342,31 @@ String WebProcessPool::platformDefaultWebSQLDatabaseDirectory()
     return stringByResolvingSymlinksInPath([databasesDirectory stringByStandardizingPath]);
 }
 
-String WebProcessPool::platformDefaultIndexedDBDatabaseDirectory()
+String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
 {
     // Indexed databases exist in a subdirectory of the "database directory path."
     // Currently, the top level of that directory contains entities related to WebSQL databases.
     // We should fix this, and move WebSQL into a subdirectory (https://bugs.webkit.org/show_bug.cgi?id=124807)
     // In the meantime, an entity name prefixed with three underscores will not conflict with any WebSQL entities.
-    return pathByAppendingComponent(platformDefaultWebSQLDatabaseDirectory(), "___IndexedDB");
+    return pathByAppendingComponent(legacyPlatformDefaultWebSQLDatabaseDirectory(), "___IndexedDB");
 }
+
+String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
+{
+    NSString *localStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebStorageDirectoryDefaultsKey];
+    if (!localStorageDirectory || ![localStorageDirectory isKindOfClass:[NSString class]])
+        localStorageDirectory = @"~/Library/WebKit/LocalStorage";
+    return stringByResolvingSymlinksInPath([localStorageDirectory stringByStandardizingPath]);
+}
+
+String WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory()
+{
+    NSString *mediaKeysStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitMediaKeysStorageDirectoryDefaultsKey];
+    if (!mediaKeysStorageDirectory || ![mediaKeysStorageDirectory isKindOfClass:[NSString class]])
+        mediaKeysStorageDirectory = @"~/Library/WebKit/MediaKeys";
+    return stringByResolvingSymlinksInPath([mediaKeysStorageDirectory stringByStandardizingPath]);
+}
+
 
 String WebProcessPool::platformDefaultIconDatabasePath() const
 {
@@ -358,22 +375,6 @@ String WebProcessPool::platformDefaultIconDatabasePath() const
     if (!databasesDirectory || ![databasesDirectory isKindOfClass:[NSString class]])
         databasesDirectory = @"~/Library/Icons/WebpageIcons.db";
     return stringByResolvingSymlinksInPath([databasesDirectory stringByStandardizingPath]);
-}
-
-String WebProcessPool::platformDefaultLocalStorageDirectory()
-{
-    NSString *localStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebStorageDirectoryDefaultsKey];
-    if (!localStorageDirectory || ![localStorageDirectory isKindOfClass:[NSString class]])
-        localStorageDirectory = @"~/Library/WebKit/LocalStorage";
-    return stringByResolvingSymlinksInPath([localStorageDirectory stringByStandardizingPath]);
-}
-
-String WebProcessPool::platformDefaultMediaKeysStorageDirectory()
-{
-    NSString *mediaKeysStorageDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitMediaKeysStorageDirectoryDefaultsKey];
-    if (!mediaKeysStorageDirectory || ![mediaKeysStorageDirectory isKindOfClass:[NSString class]])
-        mediaKeysStorageDirectory = @"~/Library/WebKit/MediaKeys";
-    return stringByResolvingSymlinksInPath([mediaKeysStorageDirectory stringByStandardizingPath]);
 }
 
 bool WebProcessPool::omitPDFSupport()
