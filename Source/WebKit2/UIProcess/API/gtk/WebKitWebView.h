@@ -474,6 +474,14 @@ webkit_web_view_get_snapshot_finish                  (WebKitWebView             
 WEBKIT_API WebKitUserContentManager *
 webkit_web_view_get_user_content_manager             (WebKitWebView             *web_view);
 
+WEBKIT_API void
+webkit_web_view_set_background_color                 (WebKitWebView             *web_view,
+                                                      const GdkRGBA             *rgba);
+
+WEBKIT_API void
+webkit_web_view_get_background_color                 (WebKitWebView             *web_view,
+                                                      GdkRGBA                   *rgba);
+
 G_END_DECLS
 
 #endif

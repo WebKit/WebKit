@@ -1,3 +1,25 @@
+2015-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to change the WebKitWebView background color
+        https://bugs.webkit.org/show_bug.cgi?id=140610
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add --bg-color command line option to MiniBrowser to be able to
+        manually test the API passing any RGBA color to MiniBrowser.
+        Also add a simple unit test to check that getting and setting
+        colors from the API point of view.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browser_window_set_background_color):
+        * MiniBrowser/gtk/BrowserWindow.h:
+        * MiniBrowser/gtk/main.c:
+        (createBrowserWindow):
+        (parseBackgroundColor):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewBackgroundColor):
+        (beforeAll):
+
 2015-01-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Layout Test fast/xmlhttprequest/xmlhttprequest-no-file-access.html is failing

@@ -1,3 +1,33 @@
+2015-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to change the WebKitWebView background color
+        https://bugs.webkit.org/show_bug.cgi?id=140610
+
+        Reviewed by Gustavo Noronha Silva.
+
+        When a color different than the default one (opaque white) is
+        used, the SetDrawsBackground message is sent to the WebProcess with
+        a False value to indicate WebCore to not render backgrounds. The
+        background color passed is saved in the WebPageProxy and used by
+        the backing store to fill the background before the actual
+        contents are rendered in the WebView.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_set_background_color):
+        (webkit_web_view_get_background_color):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize m_backgroundColor member.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::backgroundColor): Return m_backgroundColor.
+        (WebKit::WebPageProxy::setBackgroundColor): Set m_backgroundColor.
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate): Fill the damage region
+        with the WebPageProxy background color when the WebProcess is not
+        rendering backgrounds. If the background color is not fully opaque
+        we need to clear the region before filling it with the color.
+
 2015-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Flip the switch on

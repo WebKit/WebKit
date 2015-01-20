@@ -95,6 +95,15 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
     for (const auto& updateRect : updateInfo.updateRects) {
         IntRect srcRect = updateRect;
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
+#if PLATFORM(GTK)
+        if (!m_webPageProxy.drawsBackground()) {
+            const WebCore::Color color = m_webPageProxy.backgroundColor();
+            if (color.hasAlpha())
+                graphicsContext.clearRect(srcRect);
+            if (color.alpha() > 0)
+                graphicsContext.fillRect(srcRect, color, ColorSpaceDeviceRGB);
+        }
+#endif
         bitmap->paint(graphicsContext, deviceScaleFactor(), updateRect.location(), srcRect);
     }
 }

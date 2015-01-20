@@ -729,6 +729,31 @@ static void testWebViewIsPlayingAudio(IsPlayingAudioWebViewTest* test, gconstpoi
     g_assert(!webkit_web_view_is_playing_audio(test->m_webView));
 }
 
+static void testWebViewBackgroundColor(WebViewTest* test, gconstpointer)
+{
+    // White is the default background.
+    GdkRGBA rgba;
+    webkit_web_view_get_background_color(test->m_webView, &rgba);
+    g_assert_cmpfloat(rgba.red, ==, 1);
+    g_assert_cmpfloat(rgba.green, ==, 1);
+    g_assert_cmpfloat(rgba.blue, ==, 1);
+    g_assert_cmpfloat(rgba.alpha, ==, 1);
+
+    // Set a different (semi-transparent red).
+    rgba.red = 1;
+    rgba.green = 0;
+    rgba.blue = 0;
+    rgba.alpha = 0.5;
+    webkit_web_view_set_background_color(test->m_webView, &rgba);
+    g_assert_cmpfloat(rgba.red, ==, 1);
+    g_assert_cmpfloat(rgba.green, ==, 0);
+    g_assert_cmpfloat(rgba.blue, ==, 0);
+    g_assert_cmpfloat(rgba.alpha, ==, 0.5);
+
+    // The actual rendering can't be tested using unit tests, use
+    // MiniBrowser --bg-color="<color-value>" for manually testing this API.
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     if (message->method != SOUP_METHOD_GET) {
@@ -761,6 +786,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
     NotificationWebViewTest::add("WebKitWebView", "notification", testWebViewNotification);
     IsPlayingAudioWebViewTest::add("WebKitWebView", "is-playing-audio", testWebViewIsPlayingAudio);
+    WebViewTest::add("WebKitWebView", "background-color", testWebViewBackgroundColor);
 }
 
 void afterAll()

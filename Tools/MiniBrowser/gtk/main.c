@@ -37,6 +37,7 @@
 
 static const gchar **uriArguments = NULL;
 static const char *miniBrowserAboutScheme = "minibrowser-about";
+static GdkRGBA *backgroundColor;
 
 typedef enum {
     MINI_BROWSER_ERROR_INVALID_ABOUT_PATH
@@ -60,6 +61,8 @@ static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings
 {
     GtkWidget *webView = webkit_web_view_new();
     GtkWidget *mainWindow = browser_window_new(WEBKIT_WEB_VIEW(webView), NULL);
+    if (backgroundColor)
+        browser_window_set_background_color(BROWSER_WINDOW(mainWindow), backgroundColor);
     gchar *url = argumentToURL(uri);
 
     if (webkitSettings)
@@ -72,8 +75,21 @@ static void createBrowserWindow(const gchar *uri, WebKitSettings *webkitSettings
     gtk_widget_show(mainWindow);
 }
 
+static gboolean parseBackgroundColor(const char *optionName, const char *value, gpointer data, GError **error)
+{
+    GdkRGBA rgba;
+    if (gdk_rgba_parse(&rgba, value)) {
+        backgroundColor = gdk_rgba_copy(&rgba);
+        return TRUE;
+    }
+
+    g_set_error(error, G_OPTION_ERROR, G_OPTION_ERROR_FAILED, "Failed to parse '%s' as RGBA color", value);
+    return FALSE;
+}
+
 static const GOptionEntry commandLineOptions[] =
 {
+    { "bg-color", 0, 0, G_OPTION_ARG_CALLBACK, parseBackgroundColor, "Background color", NULL },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
     { 0, 0, 0, 0, 0, 0, 0 }
 };

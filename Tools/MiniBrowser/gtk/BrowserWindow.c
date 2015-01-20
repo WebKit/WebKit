@@ -924,3 +924,25 @@ void browser_window_load_uri(BrowserWindow *window, const char *uri)
 
     webkit_web_view_run_javascript(window->webView, strstr(uri, "javascript:"), NULL, NULL, NULL);
 }
+
+void browser_window_set_background_color(BrowserWindow *window, GdkRGBA *rgba)
+{
+    g_return_if_fail(BROWSER_IS_WINDOW(window));
+    g_return_if_fail(rgba);
+
+    GdkRGBA viewRGBA;
+    webkit_web_view_get_background_color(window->webView, &viewRGBA);
+    if (gdk_rgba_equal(rgba, &viewRGBA))
+        return;
+
+    if (rgba->alpha < 1) {
+        GdkVisual *rgbaVisual = gdk_screen_get_rgba_visual(gtk_window_get_screen(GTK_WINDOW(window)));
+        if (!rgbaVisual)
+            return;
+
+        gtk_widget_set_visual(GTK_WIDGET(window), rgbaVisual);
+        gtk_widget_set_app_paintable(GTK_WIDGET(window), TRUE);
+    }
+
+    webkit_web_view_set_background_color(window->webView, rgba);
+}

@@ -336,6 +336,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #if PLATFORM(COCOA)
     , m_isSmartInsertDeleteEnabled(TextChecker::isSmartInsertDeleteEnabled())
 #endif
+#if PLATFORM(GTK)
+    , m_backgroundColor(Color::white)
+#endif
     , m_spellDocumentTag(0)
     , m_hasSpellDocumentTag(false)
     , m_pendingLearnOrIgnoreWordMessageCount(0)

@@ -558,6 +558,8 @@ public:
 #endif
 #if PLATFORM(GTK)
     PlatformWidget viewWidget();
+    const WebCore::Color& backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(const WebCore::Color& color) { m_backgroundColor = color; }
 #endif
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     void commitPageTransitionViewport();
@@ -1545,6 +1547,7 @@ private:
 
 #if PLATFORM(GTK)
     String m_accessibilityPlugID;
+    WebCore::Color m_backgroundColor;
 #endif
 
     int64_t m_spellDocumentTag;
