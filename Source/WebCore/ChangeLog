@@ -1,5 +1,29 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r172326.
+
+    2014-08-07  Zalan Bujtas  <zalan@apple.com>
+
+            Subpixel rendering: Border thickness and length flooring can result empty borders
+            due to losing precision during multiple float <-> LayoutUnit conversions.
+            https://bugs.webkit.org/show_bug.cgi?id=135686
+
+            Reviewed by Simon Fraser.
+
+            The combination of losing precision and flooring the border thickness/length to avoid
+            empty border rect drawing can lead to false positives of missing borders.
+            This patch moves empty border checking right before painting where we can safely use round
+            instead of floor.
+
+            Tests: fast/borders/hidpi-border-width-flooring.html
+
+            * rendering/RenderObject.cpp:
+            (WebCore::drawBorderLineRect):
+            (WebCore::drawBorderLine):
+            (WebCore::RenderObject::drawLineForBoxSide):
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r172215.
 
     2014-08-07  Pratik Solanki  <psolanki@apple.com>
