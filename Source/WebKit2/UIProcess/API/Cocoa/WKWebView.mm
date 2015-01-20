@@ -35,6 +35,7 @@
 #import "FindClient.h"
 #import "LegacySessionStateCoding.h"
 #import "NavigationState.h"
+#import "RemoteLayerTreeScrollingPerformanceData.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteObjectRegistry.h"
 #import "RemoteObjectRegistryMessages.h"
@@ -848,6 +849,15 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     scrollView.contentOffset = contentOffsetBoundedInValidRange(scrollView, contentOffset);
 }
 
+- (WebCore::FloatRect)visibleRectInViewCoordinates
+{
+    WebCore::FloatRect bounds = self.bounds;
+    bounds.moveBy([_scrollView contentOffset]);
+    WebCore::FloatRect contentViewBounds = [_contentView bounds];
+    bounds.intersect(contentViewBounds);
+    return bounds;
+}
+
 // WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
 // we need to ignore differences that are within a small rounding error on floats.
 static inline bool areEssentiallyEqualAsFloat(float a, float b)
@@ -918,6 +928,9 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         }
         [self _updateVisibleContentRects];
     }
+    
+    if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = _page->scrollingPerformanceData())
+        scrollPerfData->didCommitLayerTree([self visibleRectInViewCoordinates]);
 }
 
 - (void)_dynamicViewportUpdateChangedTargetToScale:(double)newScale position:(CGPoint)newScrollPosition nextValidLayerTreeTransactionID:(uint64_t)nextValidLayerTreeTransactionID
@@ -1376,6 +1389,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [_customContentView scrollViewDidScroll:(UIScrollView *)scrollView];
 
     [self _updateVisibleContentRects];
+    
+    if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = _page->scrollingPerformanceData())
+        scrollPerfData->didScroll([self visibleRectInViewCoordinates]);
 }
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
@@ -2112,6 +2128,27 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (BOOL)_isShowingNavigationGestureSnapshot
 {
     return _page->isShowingNavigationGestureSnapshot();
+}
+
+#pragma mark scrollperf methods
+
+- (void)_setScrollPerformanceDataCollectionEnabled:(BOOL)enabled
+{
+    _page->setScrollPerformanceDataCollectionEnabled(enabled);
+}
+
+- (BOOL)_scrollPerformanceDataCollectionEnabled
+{
+    return _page->scrollPerformanceDataCollectionEnabled();
+}
+
+- (NSArray *)_scrollPerformanceData
+{
+#if PLATFORM(IOS)
+    if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPefData = _page->scrollingPerformanceData())
+        return scrollPefData->data();
+#endif
+    return nil;
 }
 
 #pragma mark iOS-specific methods

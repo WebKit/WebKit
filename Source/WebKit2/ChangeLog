@@ -1,3 +1,47 @@
+2015-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a way to collect scrolling performance data (viewport tile coverage) with UI-side compositing
+        https://bugs.webkit.org/show_bug.cgi?id=140474
+
+        Reviewed by Tim Horton.
+        
+        Add a private method to enable scrolling data collection to WKWebView. When enabled, create
+        a RemoteLayerTreeScrollingPerformanceData object that collects "blank pixel" data on
+        every layer tree commit and scroll, and stores them in a vector. A second SPI call
+        allows retrieval of an NSArray of this data.
+        
+        To allow RemoteLayerTreeScrollingPerformanceData to find the correct layer which
+        contains the main tile grid, we set a layer name on the appropriate layer (even
+        in release builds).
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView visibleRectInScreenCoordinates]):
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView scrollViewDidScroll:]):
+        (-[WKWebView _setScrollPerformanceDataCollectionEnabled:]):
+        (-[WKWebView _scrollPerformanceDataCollectionEnabled]):
+        (-[WKWebView _scrollPerformanceData]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/RemoteLayerTreeScrollingPerformanceData.h: Added.
+        (WebKit::RemoteLayerTreeScrollingPerformanceData::BlankPixelCount::BlankPixelCount):
+        * UIProcess/Cocoa/RemoteLayerTreeScrollingPerformanceData.mm: Added.
+        (WebKit::RemoteLayerTreeScrollingPerformanceData::RemoteLayerTreeScrollingPerformanceData):
+        (WebKit::RemoteLayerTreeScrollingPerformanceData::~RemoteLayerTreeScrollingPerformanceData):
+        (WebKit::RemoteLayerTreeScrollingPerformanceData::didCommitLayerTree):
+        (WebKit::RemoteLayerTreeScrollingPerformanceData::didScroll):
+        (WebKit::RemoteLayerTreeScrollingPerformanceData::BlankPixelCount::canCoalesce):
+        (WebKit::RemoteLayerTreeScrollingPerformanceData::appendBlankPixelCount):
+        (WebKit::RemoteLayerTreeScrollingPerformanceData::data):
+        (WebKit::findTileGridContainerLayer):
+        (WebKit::RemoteLayerTreeScrollingPerformanceData::blankPixelCount):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setScrollPerformanceDataCollectionEnabled):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::scrollPerformanceDataCollectionEnabled):
+        (WebKit::WebPageProxy::scrollingPerformanceData):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-01-19  Dean Jackson  <dino@apple.com>
 
         Support "plus-darker" in mix-blend mode

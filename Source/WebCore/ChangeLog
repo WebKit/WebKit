@@ -1,3 +1,24 @@
+2015-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a way to collect scrolling performance data (viewport tile coverage) with UI-side compositing
+        https://bugs.webkit.org/show_bug.cgi?id=140474
+
+        Reviewed by Tim Horton.
+
+        Add accessors for standard names for container CALayer for each of the tile grids,
+        and when tile grids are swapped, update those names as appropriate.
+        
+        * WebCore.exp.in:
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::tileGridContainerLayerName):
+        (WebCore::TileController::zoomedOutTileGridContainerLayerName):
+        (WebCore::TileController::setContentsScale):
+        * platform/graphics/ca/TileController.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::TileGrid):
+        (WebCore::TileGrid::setIsZoomedOutTileGrid):
+        * platform/graphics/ca/TileGrid.h:
+
 2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix unused-private-field warning in IconEfl.cpp

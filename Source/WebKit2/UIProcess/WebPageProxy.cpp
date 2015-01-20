@@ -128,12 +128,13 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "RemoteLayerTreeDrawingAreaProxy.h"
+#include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "ViewSnapshotStore.h"
 #include <WebCore/RunLoopObserver.h>
 #endif
 
 #if PLATFORM(IOS)
-#include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "WebVideoFullscreenManagerProxy.h"
 #include "WebVideoFullscreenManagerProxyMessages.h"
 #endif
@@ -378,6 +379,10 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_mediaVolume(1)
     , m_muted(false)
     , m_mayStartMediaWhenInWindow(true)
+    , m_waitingForDidUpdateViewState(false)
+#if PLATFORM(COCOA)
+    , m_scrollPerformanceDataCollectionEnabled(false)
+#endif
     , m_scrollPinningBehavior(DoNotPin)
     , m_navigationID(0)
     , m_configurationPreferenceValues(configuration.preferenceValues)
@@ -5336,6 +5341,18 @@ void WebPageProxy::confirmCompositionAsync()
     process().send(Messages::WebPage::ConfirmCompositionAsync(), m_pageID);
 }
 
+void WebPageProxy::setScrollPerformanceDataCollectionEnabled(bool enabled)
+{
+    if (enabled == m_scrollPerformanceDataCollectionEnabled)
+        return;
+
+    m_scrollPerformanceDataCollectionEnabled = enabled;
+
+    if (m_scrollPerformanceDataCollectionEnabled && !m_scrollingPerformanceData)
+        m_scrollingPerformanceData = std::make_unique<RemoteLayerTreeScrollingPerformanceData>(downcast<RemoteLayerTreeDrawingAreaProxy>(*m_drawingArea));
+    else if (!m_scrollPerformanceDataCollectionEnabled)
+        m_scrollingPerformanceData = nullptr;
+}
 #endif
 
 void WebPageProxy::takeSnapshot(IntRect rect, IntSize bitmapSize, SnapshotOptions options, std::function<void (const ShareableBitmap::Handle&, CallbackBase::Error)> callbackFunction)

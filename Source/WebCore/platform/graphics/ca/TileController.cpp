@@ -40,6 +40,16 @@
 
 namespace WebCore {
 
+String TileController::tileGridContainerLayerName()
+{
+    return ASCIILiteral("TileGrid Container Layer");
+}
+
+String TileController::zoomedOutTileGridContainerLayerName()
+{
+    return ASCIILiteral("Zoomed Out TileGrid Container Layer");
+}
+
 TileController::TileController(PlatformCALayer* rootPlatformLayer)
     : m_tileCacheLayer(rootPlatformLayer)
     , m_tileGrid(std::make_unique<TileGrid>(*this))
@@ -113,12 +123,14 @@ void TileController::setContentsScale(float scale)
 
     if (m_zoomedOutTileGrid && m_zoomedOutTileGrid->scale() == scale) {
         m_tileGrid = WTF::move(m_zoomedOutTileGrid);
+        m_tileGrid->setIsZoomedOutTileGrid(false);
         m_tileGrid->revalidateTiles(0);
         return;
     }
 
     if (m_zoomedOutContentsScale && m_zoomedOutContentsScale == tileGrid().scale() && tileGrid().scale() != scale && !m_hasTilesWithTemporaryScaleFactor) {
         m_zoomedOutTileGrid = WTF::move(m_tileGrid);
+        m_zoomedOutTileGrid->setIsZoomedOutTileGrid(true);
         m_tileGrid = std::make_unique<TileGrid>(*this);
     }
 

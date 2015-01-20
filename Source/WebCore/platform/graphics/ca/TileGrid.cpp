@@ -45,9 +45,7 @@ TileGrid::TileGrid(TileController& controller)
     , m_scale(1)
     , m_cohortRemovalTimer(*this, &TileGrid::cohortRemovalTimerFired)
 {
-#ifndef NDEBUG
-    m_containerLayer.get().setName("TileGrid Container Layer");
-#endif
+    m_containerLayer.get().setName(TileController::tileGridContainerLayerName());
 }
 
 TileGrid::~TileGrid()
@@ -56,6 +54,14 @@ TileGrid::~TileGrid()
 
     for (auto& tile : m_tiles.values())
         tile.layer->setOwner(nullptr);
+}
+
+void TileGrid::setIsZoomedOutTileGrid(bool isZoomedOutGrid)
+{
+    if (isZoomedOutGrid)
+        m_containerLayer.get().setName(TileController::zoomedOutTileGridContainerLayerName());
+    else
+        m_containerLayer.get().setName(TileController::tileGridContainerLayerName());
 }
 
 void TileGrid::setScale(float scale)

@@ -53,6 +53,8 @@ public:
 
     PlatformCALayer& containerLayer() { return m_containerLayer; }
 
+    void setIsZoomedOutTileGrid(bool);
+
     void setScale(float);
     float scale() const { return m_scale; }
 
