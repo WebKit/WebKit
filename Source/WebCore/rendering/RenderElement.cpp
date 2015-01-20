@@ -1064,14 +1064,6 @@ void RenderElement::willBeDestroyed()
     if (hasCounterNodeMap())
         RenderCounter::destroyCounterNodes(*this);
 
-    if (!documentBeingDestroyed() && view().frameView().layoutRoot() == this) {
-        ASSERT_NOT_REACHED();
-        // This indicates a failure to layout the child, which is why
-        // the layout root is still set to |this|. Make sure to clear it
-        // since we are getting destroyed.
-        view().frameView().clearLayoutRoot();
-    }
-
     RenderObject::willBeDestroyed();
 
 #if !ASSERT_DISABLED

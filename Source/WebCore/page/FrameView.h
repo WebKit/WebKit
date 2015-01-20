@@ -114,7 +114,7 @@ public:
     bool layoutPending() const;
     bool isInLayout() const { return m_layoutPhase == InLayout; }
 
-    RenderElement* layoutRoot(bool onlyDuringLayout = false) const;
+    RenderObject* layoutRoot(bool onlyDuringLayout = false) const;
     void clearLayoutRoot() { m_layoutRoot = nullptr; }
     int layoutCount() const { return m_layoutCount; }
 
