@@ -1,3 +1,29 @@
+2015-01-19  Dean Jackson  <dino@apple.com>
+
+        Support "plus-darker" in mix-blend mode
+        https://bugs.webkit.org/show_bug.cgi?id=140646
+        <rdar://problem/19523370>
+
+        Reviewed by Simon Fraser.
+
+        Support the "plus-darker" blending mode to CSS.
+        See: https://lists.w3.org/Archives/Public/public-fx/2015JanMar/0021.html
+
+        Test: css3/blending/svg-blend-plus-darker.html
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue): mix-blend-mode can now accept
+        the new keyword.
+        * css/CSSPrimitiveValueMappings.h: Add the mappings.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator BlendMode):
+        * platform/graphics/GraphicsTypes.cpp: Add the new GraphicsType.
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/ca/mac/PlatformCAFiltersMac.mm: Map to the CA compositing filter.
+        (PlatformCAFilters::setBlendingFiltersOnLayer):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation): Map to the CG blending flag.
+
 2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix 'register' storage class specifier is deprecated warning

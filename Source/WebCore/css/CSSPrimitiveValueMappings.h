@@ -4103,6 +4103,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BlendMode blendMode)
     case BlendModeLuminosity:
         m_value.valueID = CSSValueLuminosity;
         break;
+    case BlendModePlusDarker:
+        m_value.valueID = CSSValuePlusDarker;
+        break;
     }
 }
 
@@ -4143,6 +4146,8 @@ template<> inline CSSPrimitiveValue::operator BlendMode() const
         return BlendModeColor;
     case CSSValueLuminosity:
         return BlendModeLuminosity;
+    case CSSValuePlusDarker:
+        return BlendModePlusDarker;
     default:
         break;
     }

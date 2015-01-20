@@ -577,6 +577,9 @@ void PlatformCAFilters::setBlendingFiltersOnLayer(PlatformLayer* layer, const Bl
         case BlendModeScreen:
             filter = [CAFilter filterWithType:kCAFilterScreenBlendMode];
             break;
+        case BlendModePlusDarker:
+            filter = [CAFilter filterWithType:kCAFilterPlusD];
+            break;
         default:
             ASSERT_NOT_REACHED();
     }

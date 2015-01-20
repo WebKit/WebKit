@@ -65,7 +65,8 @@ static const char* const blendOperatorNames[] = {
     "hue",
     "saturation",
     "color",
-    "luminosity"
+    "luminosity",
+    "plus-darker"
 };
 const int numCompositeOperatorNames = WTF_ARRAY_LENGTH(compositeOperatorNames);
 const int numBlendOperatorNames = WTF_ARRAY_LENGTH(blendOperatorNames);

@@ -99,6 +99,14 @@ PASS declaration.getPropertyValue('mix-blend-mode') is 'exclusion'
 PASS jsWrapperClass(blendModeRule) is 'CSSPrimitiveValue'
 PASS jsWrapperClass(blendModeRule.__proto__) is 'CSSPrimitiveValuePrototype'
 PASS jsWrapperClass(blendModeRule.constructor) is 'CSSPrimitiveValueConstructor'
+
+Basic reference : plus-darker
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('mix-blend-mode') is 'plus-darker'
+PASS jsWrapperClass(blendModeRule) is 'CSSPrimitiveValue'
+PASS jsWrapperClass(blendModeRule.__proto__) is 'CSSPrimitiveValuePrototype'
+PASS jsWrapperClass(blendModeRule.constructor) is 'CSSPrimitiveValueConstructor'
 PASS successfullyParsed is true
 
 TEST COMPLETE

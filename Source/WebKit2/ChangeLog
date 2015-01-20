@@ -1,3 +1,16 @@
+2015-01-19  Dean Jackson  <dino@apple.com>
+
+        Support "plus-darker" in mix-blend mode
+        https://bugs.webkit.org/show_bug.cgi?id=140646
+        <rdar://problem/19523370>
+
+        Reviewed by Simon Fraser.
+
+        Output the appropriate blending type when logging.
+
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTextStream::operator<<):
+
 2015-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.7.4 release.
