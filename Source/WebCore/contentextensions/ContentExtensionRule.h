@@ -35,7 +35,8 @@ namespace WebCore {
 namespace ContentExtensions {
 
 enum class ExtensionActionType {
-    BlockLoad
+    BlockLoad,
+    IgnorePreviousRules
 };
 
 // A ContentExtensionRule is the smallest unit in a ContentExtension.

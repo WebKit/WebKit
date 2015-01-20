@@ -91,12 +91,15 @@ static bool loadAction(ExecState& exec, JSObject& ruleObject, ContentExtensionRu
     }
 
     String actionType = typeObject.toWTFString(&exec);
-    if (actionType != "block") {
-        WTFLogAlways("Unrocognized action: \"%s\"", actionType.utf8().data());
+
+    if (actionType == "block")
+        action.type = ExtensionActionType::BlockLoad;
+    else if (actionType == "ignore-previous-rules")
+        action.type = ExtensionActionType::IgnorePreviousRules;
+    else if (actionType != "block" && actionType != "") {
+        WTFLogAlways("Unrecognized action: \"%s\"", actionType.utf8().data());
         return false;
     }
-
-    action.type = ExtensionActionType::BlockLoad;
 
     return true;
 }

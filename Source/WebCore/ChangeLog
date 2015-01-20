@@ -1,5 +1,18 @@
 2015-01-20  Benjamin Poulain  <benjamin@webkit.org>
 
+        Add a mechanism to ignore previous content extension rules
+        https://bugs.webkit.org/show_bug.cgi?id=140663
+
+        Reviewed by Andreas Kling.
+
+        * contentextensions/ContentExtensionRule.h:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::shouldBlockURL):
+        * contentextensions/ContentExtensionsManager.cpp:
+        (WebCore::ContentExtensions::ExtensionsManager::loadAction):
+
+2015-01-20  Benjamin Poulain  <benjamin@webkit.org>
+
         Resolve the epsilon transitions for each state upfront instead of dynamically
         https://bugs.webkit.org/show_bug.cgi?id=140654
 

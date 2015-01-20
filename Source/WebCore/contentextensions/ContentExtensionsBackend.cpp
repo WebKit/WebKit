@@ -120,15 +120,25 @@ bool ContentExtensionsBackend::shouldBlockURL(const URL& url)
         CompiledContentExtension& compiledContentExtension = ruleListSlot.value;
         unsigned state = compiledContentExtension.dfa.root();
 
+        HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> triggeredActions;
+
         for (unsigned i = 0; i < urlString.length(); ++i) {
             char character = static_cast<char>(urlString[i]);
             bool ok;
             state = compiledContentExtension.dfa.nextState(state, character, ok);
             if (!ok)
-                return false;
+                break;
 
-            // FIXME: accumulate the actions.
-            if (!compiledContentExtension.dfa.actions(state).isEmpty())
+            const Vector<uint64_t>& actions = compiledContentExtension.dfa.actions(state);
+            if (!actions.isEmpty())
+                triggeredActions.add(actions.begin(), actions.end());
+        }
+        if (!triggeredActions.isEmpty()) {
+            Vector<uint64_t> sortedActions;
+            copyToVector(triggeredActions, sortedActions);
+            std::sort(sortedActions.begin(), sortedActions.end());
+            uint64_t lastAction = sortedActions.last();
+            if (compiledContentExtension.ruleList[lastAction].action().type == ExtensionActionType::BlockLoad)
                 return true;
         }
     }
