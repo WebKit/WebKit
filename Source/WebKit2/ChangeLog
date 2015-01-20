@@ -1,5 +1,25 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r172199.
+
+    2014-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] www.france24.com doesn't always load the page, sections stay white
+            https://bugs.webkit.org/show_bug.cgi?id=135684
+            <rdar://problem/17931712>
+
+            Reviewed by Tim Horton.
+
+            It's possible for a UIScrollView for overflow to move between one scrolling tree node
+            and another. When this happens, we need to avoid unconditionally clearing the delegate
+            on the node that's being destroyed, because the new node will already have set the
+            UIScrollView delegate to its own delegate.
+
+            * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+            (WebKit::ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS):
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r171775.
 
     2014-07-29  Tim Horton  <timothy_horton@apple.com>
