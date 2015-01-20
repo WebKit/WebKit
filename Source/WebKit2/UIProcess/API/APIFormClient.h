@@ -26,11 +26,11 @@
 #ifndef APIFormClient_h
 #define APIFormClient_h
 
+#include "WebFormSubmissionListenerProxy.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
-class WebFormSubmissionListenerProxy;
 class WebFrameProxy;
 class WebPageProxy;
 }
@@ -42,12 +42,9 @@ class FormClient {
 public:
     virtual ~FormClient() { }
 
-    virtual bool willSubmitForm(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, WebKit::WebFrameProxy* sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& textFieldValues, API::Object* userData, WebKit::WebFormSubmissionListenerProxy*)
+    virtual void willSubmitForm(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebKit::WebFrameProxy&, const Vector<std::pair<WTF::String, WTF::String>>&, API::Object*, Ref<WebKit::WebFormSubmissionListenerProxy>&& listener)
     {
-        UNUSED_PARAM(sourceFrame);
-        UNUSED_PARAM(textFieldValues);
-        UNUSED_PARAM(userData);
-        return false;
+        listener->continueSubmission();
     }
 };
 

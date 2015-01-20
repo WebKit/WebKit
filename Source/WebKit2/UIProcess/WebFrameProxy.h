@@ -119,8 +119,8 @@ public:
 
     // Policy operations.
     void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID, API::Navigation* = nullptr);
-    WebFramePolicyListenerProxy* setUpPolicyListenerProxy(uint64_t listenerID);
-    WebFormSubmissionListenerProxy* setUpFormSubmissionListenerProxy(uint64_t listenerID);
+    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(uint64_t listenerID);
+    WebFormSubmissionListenerProxy& setUpFormSubmissionListenerProxy(uint64_t listenerID);
 
 #if ENABLE(CONTENT_FILTERING)
     void setContentFilterForBlockedLoad(std::unique_ptr<WebCore::ContentFilter> contentFilter) { m_contentFilterForBlockedLoad = WTF::move(contentFilter); }

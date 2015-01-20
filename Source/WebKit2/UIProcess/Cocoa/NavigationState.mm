@@ -222,7 +222,7 @@ NavigationState::PolicyClient::~PolicyClient()
 {
 }
 
-void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy*, WebFrameProxy* destinationFrame, const NavigationActionData& navigationActionData, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest& request, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
+void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy&, WebFrameProxy* destinationFrame, const NavigationActionData& navigationActionData, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest& request, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
 {
     RetainPtr<NSURLRequest> nsURLRequest = adoptNS(wrapper(*API::URLRequest::create(request).leakRef()));
 
@@ -266,17 +266,18 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
     [navigationAction setRequest:nsURLRequest.get()];
     [navigationAction _setOriginalURL:originalRequest.url()];
 
+    RefPtr<WebFramePolicyListenerProxy> localListener = WTF::move(listener);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[listener, checker](WKNavigationActionPolicy actionPolicy) {
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[localListener, checker](WKNavigationActionPolicy actionPolicy) {
         checker->didCallCompletionHandler();
 
         switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:
-            listener->use();
+            localListener->use();
             break;
 
         case WKNavigationActionPolicyCancel:
-            listener->ignore();
+            localListener->ignore();
             break;
 
 // FIXME: Once we have a new enough compiler everywhere we don't need to ignore -Wswitch.
@@ -284,18 +285,18 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
 #pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationActionPolicyDownload:
 #pragma clang diagnostic pop
-            listener->download();
+            localListener->download();
             break;
         }
     }];
 }
 
-void NavigationState::PolicyClient::decidePolicyForNewWindowAction(WebPageProxy* webPageProxy, WebFrameProxy* sourceFrame, const NavigationActionData& navigationActionData, const WebCore::ResourceRequest& request, const WTF::String& frameName, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
+void NavigationState::PolicyClient::decidePolicyForNewWindowAction(WebPageProxy& webPageProxy, WebFrameProxy& sourceFrame, const NavigationActionData& navigationActionData, const WebCore::ResourceRequest& request, const WTF::String& frameName, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
 {
-    decidePolicyForNavigationAction(webPageProxy, nullptr, navigationActionData, sourceFrame, request, request, WTF::move(listener), userData);
+    decidePolicyForNavigationAction(webPageProxy, nullptr, navigationActionData, &sourceFrame, request, request, WTF::move(listener), userData);
 }
 
-void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFrameProxy* frame, const WebCore::ResourceResponse& resourceResponse, const WebCore::ResourceRequest& resourceRequest, bool canShowMIMEType, RefPtr<WebFramePolicyListenerProxy> listener, API::Object* userData)
+void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy&, WebFrameProxy& frame, const WebCore::ResourceResponse& resourceResponse, const WebCore::ResourceRequest& resourceRequest, bool canShowMIMEType, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler) {
         NSURL *url = resourceResponse.nsURLResponse().URL;
@@ -323,22 +324,23 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFr
 
     auto navigationResponse = adoptNS([[WKNavigationResponse alloc] init]);
 
-    navigationResponse->_frame = adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*frame]);
+    navigationResponse->_frame = adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:frame]);
     navigationResponse->_request = resourceRequest.nsURLRequest(WebCore::DoNotUpdateHTTPBody);
     [navigationResponse setResponse:resourceResponse.nsURLResponse()];
     [navigationResponse setCanShowMIMEType:canShowMIMEType];
 
+    RefPtr<WebFramePolicyListenerProxy> localListener = WTF::move(listener);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:navigationResponse.get() decisionHandler:[listener, checker](WKNavigationResponsePolicy responsePolicy) {
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:navigationResponse.get() decisionHandler:[localListener, checker](WKNavigationResponsePolicy responsePolicy) {
         checker->didCallCompletionHandler();
 
         switch (responsePolicy) {
         case WKNavigationResponsePolicyAllow:
-            listener->use();
+            localListener->use();
             break;
 
         case WKNavigationResponsePolicyCancel:
-            listener->ignore();
+            localListener->ignore();
             break;
 
 // FIXME: Once we have a new enough compiler everywhere we don't need to ignore -Wswitch.
@@ -346,7 +348,7 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy*, WebFr
 #pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationResponsePolicyBecomeDownload:
 #pragma clang diagnostic pop
-            listener->download();
+            localListener->download();
             break;
         }
     }];

@@ -182,20 +182,20 @@ void WebFrameProxy::receivedPolicyDecision(WebCore::PolicyAction action, uint64_
     m_page->receivedPolicyDecision(action, this, listenerID, navigation);
 }
 
-WebFramePolicyListenerProxy* WebFrameProxy::setUpPolicyListenerProxy(uint64_t listenerID)
+WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(uint64_t listenerID)
 {
     if (m_activeListener)
         m_activeListener->invalidate();
     m_activeListener = WebFramePolicyListenerProxy::create(this, listenerID);
-    return static_cast<WebFramePolicyListenerProxy*>(m_activeListener.get());
+    return *static_cast<WebFramePolicyListenerProxy*>(m_activeListener.get());
 }
 
-WebFormSubmissionListenerProxy* WebFrameProxy::setUpFormSubmissionListenerProxy(uint64_t listenerID)
+WebFormSubmissionListenerProxy& WebFrameProxy::setUpFormSubmissionListenerProxy(uint64_t listenerID)
 {
     if (m_activeListener)
         m_activeListener->invalidate();
     m_activeListener = WebFormSubmissionListenerProxy::create(this, listenerID);
-    return static_cast<WebFormSubmissionListenerProxy*>(m_activeListener.get());
+    return *static_cast<WebFormSubmissionListenerProxy*>(m_activeListener.get());
 }
 
 void WebFrameProxy::getWebArchive(std::function<void (API::Data*, CallbackBase::Error)> callbackFunction)
