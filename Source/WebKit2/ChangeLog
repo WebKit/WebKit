@@ -1,3 +1,14 @@
+2015-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        Switch to comparing PLATFORM_NAME in terms of macosx
+        <http://webkit.org/b/139516>
+
+        Reviewed by Timothy Hatcher.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * mac/rewrite-availability-macros.sh: Remove the else block that
+        checked for an unknown PLATFORM_NAME.
+
 2015-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         Add a way to collect scrolling performance data (viewport tile coverage) with UI-side compositing

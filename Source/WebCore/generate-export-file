@@ -85,10 +85,10 @@ sub preprocessorMacros($\@)
     # Xcode 3.1 is required for SDKROOT to be set.
     if (exists $ENV{SYSTEM_LIBRARY_DIR} && $ENV{SYSTEM_LIBRARY_DIR}) {
         my $frameworkSearchPath = $ENV{SDKROOT} . $ENV{SYSTEM_LIBRARY_DIR};
-        if ($ENV{PLATFORM_NAME} eq "iphoneos" || $ENV{PLATFORM_NAME} eq "iphonesimulator") {
-            $frameworkSearchPath .= "/PrivateFrameworks";
-        } else {
+        if (!defined $ENV{PLATFORM_NAME} || $ENV{PLATFORM_NAME} =~ /macosx/) {
             $frameworkSearchPath .= "/Frameworks";
+        } else {
+            $frameworkSearchPath .= "/PrivateFrameworks";
         }
         push(@args, "-F" . $frameworkSearchPath);
     }

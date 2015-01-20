@@ -1,3 +1,15 @@
+2015-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        Switch to comparing PLATFORM_NAME in terms of macosx
+        <http://webkit.org/b/139516>
+
+        Reviewed by Timothy Hatcher.
+
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor):
+        * generate-export-file:
+        (preprocessorMacros):
+
 2015-01-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Attempt to fix 32bits builds after r178743

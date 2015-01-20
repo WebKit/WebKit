@@ -35,14 +35,12 @@ if [[ -e $TIMESTAMP_PATH && $0 -nt $TIMESTAMP_PATH ]]; then
 fi
 
 function rewrite_headers () {
-    if [[ $PLATFORM_NAME == "iphonesimulator" || $PLATFORM_NAME == "iphoneos" ]]; then
-        IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET/\./_}
-        OSX_VERSION="NA"
-    elif [[ $PLATFORM_NAME == "macosx" ]]; then
+    if [[ "${PLATFORM_NAME}" == "macosx" ]]; then
         OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET/\./_}
         IOS_VERSION="NA"
     else
-        exit 1;
+        IOS_VERSION=${IPHONEOS_DEPLOYMENT_TARGET/\./_}
+        OSX_VERSION="NA"
     fi
 
     for HEADER_PATH in $1/*.h; do

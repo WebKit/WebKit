@@ -190,7 +190,7 @@ all : \
     $(PRIVATE_HEADERS_DIR)/nptypes.h \
 #
 
-ifneq ($(filter iphoneos iphonesimulator, $(PLATFORM_NAME)), )
+ifneq ($(PLATFORM_NAME), macosx)
 all : \
     $(PRIVATE_HEADERS_DIR)/DOMHTMLTextAreaElementPrivate.h \
     $(PRIVATE_HEADERS_DIR)/DOMUIKitExtensions.h \
