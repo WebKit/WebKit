@@ -1,3 +1,21 @@
+2015-01-19  Michael Saboff  <msaboff@apple.com>
+
+        A "cached" null setter should throw a TypeException when called in strict mode and doesn't
+        https://bugs.webkit.org/show_bug.cgi?id=139418
+
+        Reviewed by Filip Pizlo.
+
+        New regression test.
+
+        * js/regress-139418-expected.txt: Added.
+        * js/regress-139418.html: Added.
+        * js/script-tests/regress-139418.js: Added.
+        (InnerObjectNoSetter):
+        (InnerObjectNoSetter.prototype.get enabled):
+        (StrictOuterObject):
+        (StrictOuterObject.prototype.get enabled):
+        (StrictOuterObject.prototype.set enabled):
+
 2015-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Flip the switch on

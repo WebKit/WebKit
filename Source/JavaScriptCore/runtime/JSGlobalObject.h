@@ -80,6 +80,7 @@ class RegExpConstructor;
 class RegExpPrototype;
 class SourceCode;
 class NullGetterFunction;
+class NullSetterFunction;
 struct ActivationStackNode;
 struct HashTable;
 
@@ -175,6 +176,7 @@ protected:
     WriteBarrier<ObjectConstructor> m_objectConstructor;
 
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
+    WriteBarrier<NullSetterFunction> m_nullSetterFunction;
 
     WriteBarrier<JSFunction> m_evalFunction;
     WriteBarrier<JSFunction> m_callFunction;
@@ -374,6 +376,7 @@ public:
 #endif
 
     NullGetterFunction* nullGetterFunction() const { return m_nullGetterFunction.get(); }
+    NullSetterFunction* nullSetterFunction() const { return m_nullSetterFunction.get(); }
 
     JSFunction* evalFunction() const { return m_evalFunction.get(); }
     JSFunction* callFunction() const { return m_callFunction.get(); }

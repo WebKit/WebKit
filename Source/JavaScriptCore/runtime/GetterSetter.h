@@ -28,6 +28,7 @@
 #include "CallFrame.h"
 #include "JSGlobalObject.h"
 #include "NullGetterFunction.h"
+#include "NullSetterFunction.h"
 #include "Structure.h"
 
 namespace JSC {
@@ -48,7 +49,7 @@ private:
         : JSCell(vm, vm.getterSetterStructure.get())
     {
         m_getter.set(vm, this, globalObject->nullGetterFunction());
-        m_setter.set(vm, this, globalObject->nullGetterFunction());
+        m_setter.set(vm, this, globalObject->nullSetterFunction());
     }
 
 public:
@@ -73,7 +74,7 @@ public:
     }
 
     bool isGetterNull() const { return !!jsDynamicCast<NullGetterFunction*>(m_getter.get()); }
-    bool isSetterNull() const { return !!jsDynamicCast<NullGetterFunction*>(m_setter.get()); }
+    bool isSetterNull() const { return !!jsDynamicCast<NullSetterFunction*>(m_setter.get()); }
 
     // Set the getter. It's only valid to call this if you've never set the getter on this
     // object.
@@ -101,7 +102,7 @@ public:
     void setSetter(VM& vm, JSGlobalObject* globalObject, JSObject* setter)
     {
         if (!setter)
-            setter = jsCast<JSObject*>(globalObject->nullGetterFunction());
+            setter = jsCast<JSObject*>(globalObject->nullSetterFunction());
 
         RELEASE_ASSERT(isSetterNull());
         WTF::storeStoreFence();

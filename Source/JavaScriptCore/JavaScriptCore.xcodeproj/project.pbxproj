@@ -918,6 +918,7 @@
 		6514F21918B3E1670098FF8B /* Bytecodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6514F21718B3E1670098FF8B /* Bytecodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65303D641447B9E100D3F904 /* ParserTokens.h in Headers */ = {isa = PBXBuildFile; fileRef = 65303D631447B9E100D3F904 /* ParserTokens.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6546F5211A32B313006F07D5 /* NullGetterFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6546F51F1A32A59C006F07D5 /* NullGetterFunction.cpp */; };
+		65525FC51A6DD801007B5495 /* NullSetterFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65525FC31A6DD3B3007B5495 /* NullSetterFunction.cpp */; };
 		6553A33117A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6553A32F17A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp */; };
 		6553A33217A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 6553A33017A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h */; };
 		655EB29B10CE2581001A990E /* NodesCodegen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 655EB29A10CE2581001A990E /* NodesCodegen.cpp */; };
@@ -2565,6 +2566,8 @@
 		65400C100A69BAF200509887 /* PropertyNameArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PropertyNameArray.h; sourceTree = "<group>"; };
 		6546F51F1A32A59C006F07D5 /* NullGetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NullGetterFunction.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		6546F5201A32A59C006F07D5 /* NullGetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullGetterFunction.h; sourceTree = "<group>"; };
+		65525FC31A6DD3B3007B5495 /* NullSetterFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NullSetterFunction.cpp; sourceTree = "<group>"; };
+		65525FC41A6DD3B3007B5495 /* NullSetterFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullSetterFunction.h; sourceTree = "<group>"; };
 		6553A32F17A1F1EE008CF6F3 /* CommonSlowPathsExceptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonSlowPathsExceptions.cpp; sourceTree = "<group>"; };
 		6553A33017A1F1EE008CF6F3 /* CommonSlowPathsExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonSlowPathsExceptions.h; sourceTree = "<group>"; };
 		655EB29A10CE2581001A990E /* NodesCodegen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesCodegen.cpp; sourceTree = "<group>"; };
@@ -4444,6 +4447,8 @@
 				BC02E90B0E1839DB000F9297 /* NativeErrorPrototype.h */,
 				6546F51F1A32A59C006F07D5 /* NullGetterFunction.cpp */,
 				6546F5201A32A59C006F07D5 /* NullGetterFunction.h */,
+				65525FC31A6DD3B3007B5495 /* NullSetterFunction.cpp */,
+				65525FC41A6DD3B3007B5495 /* NullSetterFunction.h */,
 				BC2680C20E16D4E900A06E92 /* NumberConstructor.cpp */,
 				BC2680C30E16D4E900A06E92 /* NumberConstructor.h */,
 				F692A8700255597D01FF60F7 /* NumberObject.cpp */,
@@ -7179,6 +7184,7 @@
 				148F21B7107EC5470042EC2C /* Nodes.cpp in Sources */,
 				655EB29B10CE2581001A990E /* NodesCodegen.cpp in Sources */,
 				6546F5211A32B313006F07D5 /* NullGetterFunction.cpp in Sources */,
+				65525FC51A6DD801007B5495 /* NullSetterFunction.cpp in Sources */,
 				14469DE2107EC7E700650446 /* NumberConstructor.cpp in Sources */,
 				14469DE3107EC7E700650446 /* NumberObject.cpp in Sources */,
 				14469DE4107EC7E700650446 /* NumberPrototype.cpp in Sources */,

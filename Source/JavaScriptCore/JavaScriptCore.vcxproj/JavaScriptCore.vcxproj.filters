@@ -759,6 +759,9 @@
     <ClCompile Include="..\runtime\NullGetterFunction.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\NullSetterFunction.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\NumberConstructor.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -2772,6 +2775,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\NullGetterFunction.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\NullSetterFunction.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\NumberConstructor.h">

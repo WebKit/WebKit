@@ -1,3 +1,48 @@
+2015-01-19  Michael Saboff  <msaboff@apple.com>
+
+        A "cached" null setter should throw a TypeException when called in strict mode and doesn't
+        https://bugs.webkit.org/show_bug.cgi?id=139418
+
+        Reviewed by Filip Pizlo.
+
+        Made a new NullSetterFunction class similar to NullGetterFunction.  The difference is that 
+        NullSetterFunction will throw a TypeError per the ECMA262 spec for a strict mode caller.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Added new files NullSetterFunction.cpp and NullSetterFunction.h.
+
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::GetterSetter):
+        (JSC::GetterSetter::isSetterNull):
+        (JSC::GetterSetter::setSetter):
+        Change setter instances from using NullGetterFunction to using NullSetterFunction.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::nullSetterFunction):
+        Added m_nullSetterFunction and accessor.
+
+        * runtime/NullSetterFunction.cpp: Added.
+        (JSC::GetCallerStrictnessFunctor::GetCallerStrictnessFunctor):
+        (JSC::GetCallerStrictnessFunctor::operator()):
+        (JSC::GetCallerStrictnessFunctor::callerIsStrict):
+        (JSC::callerIsStrict):
+        Method to determine if the caller is in strict mode.
+
+        (JSC::callReturnUndefined):
+        (JSC::constructReturnUndefined):
+        (JSC::NullSetterFunction::getCallData):
+        (JSC::NullSetterFunction::getConstructData):
+        * runtime/NullSetterFunction.h: Added.
+        (JSC::NullSetterFunction::create):
+        (JSC::NullSetterFunction::createStructure):
+        (JSC::NullSetterFunction::NullSetterFunction):
+        Class with handlers for a null setter.
+
 2015-01-19  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: Provide a front end for JSC's Control Flow Profiler

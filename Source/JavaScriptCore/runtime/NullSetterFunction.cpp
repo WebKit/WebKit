@@ -1,0 +1,98 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "NullSetterFunction.h"
+
+#include "Error.h"
+#include "JSCInlines.h"
+#include "JSCJSValueInlines.h"
+#include "StackVisitor.h"
+
+namespace JSC {
+
+const ClassInfo NullSetterFunction::s_info = { "Function", &Base::s_info, 0, CREATE_METHOD_TABLE(NullSetterFunction) };
+
+
+class GetCallerStrictnessFunctor {
+public:
+    GetCallerStrictnessFunctor()
+        : m_iterations(0)
+        , m_callerIsStrict(false)
+    {
+    }
+
+    StackVisitor::Status operator()(StackVisitor& visitor)
+    {
+        ++m_iterations;
+        if (m_iterations < 2)
+            return StackVisitor::Continue;
+
+        CodeBlock* codeBlock = visitor->codeBlock();
+        m_callerIsStrict = codeBlock && codeBlock->isStrictMode();
+        return StackVisitor::Done;
+    }
+
+    bool callerIsStrict() const { return m_callerIsStrict; }
+
+private:
+    int m_iterations;
+    bool m_callerIsStrict;
+};
+
+static bool callerIsStrict(ExecState* exec)
+{
+    GetCallerStrictnessFunctor iter;
+    exec->iterate(iter);
+    return iter.callerIsStrict();
+}
+
+static EncodedJSValue JSC_HOST_CALL callReturnUndefined(ExecState* exec)
+{
+    if (callerIsStrict(exec))
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Setting a property that has only a getter")));
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL constructReturnUndefined(ExecState* exec)
+{
+    if (callerIsStrict(exec))
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Setting a property that has only a getter")));
+    return JSValue::encode(jsUndefined());
+}
+
+CallType NullSetterFunction::getCallData(JSCell*, CallData& callData)
+{
+    callData.native.function = callReturnUndefined;
+    return CallTypeHost;
+}
+
+ConstructType NullSetterFunction::getConstructData(JSCell*, ConstructData& constructData)
+{
+    constructData.native.function = constructReturnUndefined;
+    return ConstructTypeHost;
+}
+
+}

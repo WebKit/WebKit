@@ -514,6 +514,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/NativeErrorConstructor.cpp
     runtime/NativeErrorPrototype.cpp
     runtime/NullGetterFunction.cpp
+    runtime/NullSetterFunction.cpp
     runtime/NumberConstructor.cpp
     runtime/NumberObject.cpp
     runtime/NumberPrototype.cpp
