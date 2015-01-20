@@ -1,3 +1,22 @@
+2015-01-20  Chris Dumez  <cdumez@apple.com>
+
+        Drop width / height shorthands code from StylePropertyShorthand.*
+        https://bugs.webkit.org/show_bug.cgi?id=140686
+
+        Reviewed by Andreas Kling.
+
+        Drop width / height shorthands code from StylePropertyShorthand.*.
+        width / height are not shorthands for min-width/max-width and
+        min-height/max-height. Also, only matchingCustomShorthandsForLonghand()
+        treats these as shorthands. For e.g, the reverse method
+        (indexOfShorthandForLonghand()) does not.
+
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::widthShorthand): Deleted.
+        (WebCore::heightShorthand): Deleted.
+        * css/StylePropertyShorthand.h:
+        (WebCore::matchingCustomShorthandsForLonghand):
+
 2015-01-20  Benjamin Poulain  <benjamin@webkit.org>
 
         Add a mechanism to ignore previous content extension rules

@@ -63,8 +63,6 @@ private:
 StylePropertyShorthand animationShorthandForParsing(CSSPropertyID);
 StylePropertyShorthand borderAbridgedShorthand();
 StylePropertyShorthand fontShorthand();
-StylePropertyShorthand heightShorthand();
-StylePropertyShorthand widthShorthand();
 
 // Returns empty value if the property is not a shorthand.
 // The implementation is generated in StylePropertyShorthandFunctions.cpp.
@@ -89,12 +87,6 @@ inline Vector<StylePropertyShorthand> matchingCustomShorthandsForLonghand(CSSPro
     case CSSPropertyFontWeight:
     case CSSPropertyLineHeight:
         return Vector<StylePropertyShorthand>{fontShorthand()};
-    case CSSPropertyMinWidth:
-    case CSSPropertyMaxWidth:
-        return Vector<StylePropertyShorthand>{widthShorthand()};
-    case CSSPropertyMinHeight:
-    case CSSPropertyMaxHeight:
-        return Vector<StylePropertyShorthand>{heightShorthand()};
     default:
         break;
     }

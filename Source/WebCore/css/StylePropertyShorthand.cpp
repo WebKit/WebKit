@@ -82,24 +82,6 @@ StylePropertyShorthand animationShorthandForParsing(CSSPropertyID propId)
     return StylePropertyShorthand(CSSPropertyWebkitAnimation, prefixedAnimationPropertiesForParsing);
 }
 
-StylePropertyShorthand widthShorthand()
-{
-    static const CSSPropertyID widthProperties[] = {
-        CSSPropertyMinWidth,
-        CSSPropertyMaxWidth
-    };
-    return StylePropertyShorthand(CSSPropertyWidth, widthProperties);
-}
-
-StylePropertyShorthand heightShorthand()
-{
-    static const CSSPropertyID heightProperties[] = {
-        CSSPropertyMinHeight,
-        CSSPropertyMaxHeight
-    };
-    return StylePropertyShorthand(CSSPropertyHeight, heightProperties);
-}
-
 bool isExpandedShorthand(CSSPropertyID id)
 {
     // The system fonts bypass the normal style resolution by using RenderTheme,
