@@ -1,5 +1,31 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173501.
+
+    2014-09-10  Tim Horton  <timothy_horton@apple.com>
+
+            Call setCollectsTimingData only once, and before making any {CF,NS}URLConnections
+            https://bugs.webkit.org/show_bug.cgi?id=136731
+            <rdar://problem/18252844>
+
+            Reviewed by Simon Fraser.
+
+            * platform/network/cf/ResourceHandleCFNet.cpp:
+            (WebCore::ResourceHandle::start):
+            Move setCollectsTimingData to before createCFURLConnection, so the first connection
+            has timing data associated with it.
+
+            * platform/network/mac/ResourceHandleMac.mm:
+            (WebCore::ResourceHandle::createNSURLConnection):
+            Move setCollectsTimingData to before we create our NSURLConnection, so the first connection
+            has timing data associated with it.
+            Use setCollectsTimingData instead of the NSURLConnection SPI directly.
+
+            (WebCore::ResourceHandle::setCollectsTimingData):
+            Only call _setCollectsTimingData once.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r173071.
 
     2014-08-27  Enrica Casucci  <enrica@apple.com>
