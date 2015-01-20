@@ -140,8 +140,8 @@ public:
 #endif
         
 #if PLATFORM(COCOA) && ENABLE(WEB_TIMING)
-#if USE(CFNETWORK)
     void setCollectsTimingData();
+#if USE(CFNETWORK)
     static void getConnectionTimingData(CFURLConnectionRef, ResourceLoadTiming&);
 #else
     static void getConnectionTimingData(NSURLConnection *, ResourceLoadTiming&);

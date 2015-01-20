@@ -754,9 +754,7 @@ void ResourceHandle::getConnectionTimingData(NSDictionary *timingData, ResourceL
     timing.requestStart = requestStart <= 0 ? 0 : (requestStart - referenceStart) * 1000;
     timing.responseStart = responseStart <= 0 ? 0 : (responseStart - referenceStart) * 1000;
 }
-    
-#if USE(CFNETWORK)
-    
+
 void ResourceHandle::setCollectsTimingData()
 {
     static dispatch_once_t onceToken;
@@ -764,6 +762,8 @@ void ResourceHandle::setCollectsTimingData()
         [NSURLConnection _setCollectsTimingData:YES];
     });
 }
+
+#if USE(CFNETWORK)
     
 void ResourceHandle::getConnectionTimingData(CFURLConnectionRef connection, ResourceLoadTiming& timing)
 {

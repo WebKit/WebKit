@@ -1,5 +1,16 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173504.
+
+    2014-09-10  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the build.
+
+            * platform/network/ResourceHandle.h:
+            * platform/network/mac/ResourceHandleMac.mm:
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r173501.
 
     2014-09-10  Tim Horton  <timothy_horton@apple.com>
