@@ -656,6 +656,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #endif
 
     visitor.append(&thisObject->m_nullGetterFunction);
+    visitor.append(&thisObject->m_nullSetterFunction);
 
     visitor.append(&thisObject->m_evalFunction);
     visitor.append(&thisObject->m_callFunction);

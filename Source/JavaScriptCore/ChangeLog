@@ -1,3 +1,15 @@
+2015-01-20  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(178696): Sporadic crashes while garbage collecting
+        https://bugs.webkit.org/show_bug.cgi?id=140688
+
+        Reviewed by Geoffrey Garen.
+
+        Added missing visitor.append(&thisObject->m_nullSetterFunction).
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::visitChildren):
+
 2015-01-19  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: code generator should take supplemental specifications and allow cross-framework references
