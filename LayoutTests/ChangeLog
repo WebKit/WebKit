@@ -1,3 +1,18 @@
+2015-01-20  Andrzej Badowski  <a.badowski@samsung.com>
+
+        [EFL] [GTK] Change/supplement expectations for two accessibility layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=140620
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/accessibility/media-element-expected.txt:
+          Currently, accessibility/media-element.html is positive for EFL with a new, richer description.
+        * platform/efl/accessibility/render-counter-text-expected.txt: Added.
+          Omitted file by r178508.
+        * platform/gtk/accessibility/render-counter-text-expected.txt: Added.
+          Omitted file by r178508.
+
 2015-01-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Wrong arguments passed to computeNormalizedFractionBreadth

@@ -9,31 +9,47 @@ State at 'canplaythrough' event:
     role: AXRole: AXVideo
 
 
-        description: AXDescription: video playback
+        description: AXDescription: Video Playback
         role: AXRole: AXToolbar
 
 
-            description: AXDescription: play
+            description: AXDescription: Rewind 30 Seconds
             role: AXRole: AXButton
 
 
-            description: AXDescription: 
+            description: AXDescription: Play
+            role: AXRole: AXButton
+
+
+            description: AXDescription: Elapsed
+            role: AXRole: AXTimer
+
+
+                description: AXDescription: 
+                role: AXRole: AXGroup
+
+
+            description: AXDescription: Duration
             role: AXRole: AXSlider
 
 
-            description: AXDescription: fast reverse
+            description: AXDescription: Remaining
+            role: AXRole: AXTimer
+
+
+                description: AXDescription: 
+                role: AXRole: AXGroup
+
+
+            description: AXDescription: Volume
+            role: AXRole: AXSlider
+
+
+            description: AXDescription: Mute
             role: AXRole: AXButton
 
 
-            description: AXDescription: fast forward
-            role: AXRole: AXButton
-
-
-            description: AXDescription: enter fullscreen
-            role: AXRole: AXButton
-
-
-            description: AXDescription: mute
+            description: AXDescription: Display Full Screen
             role: AXRole: AXButton
 
 

@@ -1975,9 +1975,6 @@ webkit.org/b/133306 fast/canvas/webgl/css-webkit-canvas-repaint.html [ Failure ]
 # Failures EFL WK2 since the inception
 webkit.org/b/133484 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Timeout ]
 
-# Failing at least from 2014-05-01, but cause unknown
-webkit.org/b/133507 accessibility/media-element.html [ Failure ]
-
 webkit.org/b/130187 accessibility/aria-hidden-false-works-in-subtrees.html [ Missing ]
 
 webkit.org/b/131496 accessibility/help-text.html [ Failure ]
