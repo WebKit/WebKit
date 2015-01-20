@@ -91,16 +91,19 @@ struct BasicBlockRange {
 
 class ControlFlowProfiler {
 public:
+    ControlFlowProfiler();
     ~ControlFlowProfiler();
     BasicBlockLocation* getBasicBlockLocation(intptr_t sourceID, int startOffset, int endOffset);
     JS_EXPORT_PRIVATE void dumpData() const;
     Vector<BasicBlockRange> getBasicBlocksForSourceID(intptr_t sourceID, VM&) const;
+    BasicBlockLocation* dummyBasicBlock() { return &m_dummyBasicBlock; }
 
 private:
     typedef HashMap<BasicBlockKey, BasicBlockLocation*> BlockLocationCache;
     typedef HashMap<intptr_t, BlockLocationCache> SourceIDBuckets;
 
     SourceIDBuckets m_sourceIDBuckets;
+    BasicBlockLocation m_dummyBasicBlock;
 };
 
 } // namespace JSC

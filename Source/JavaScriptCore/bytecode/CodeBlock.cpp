@@ -2136,45 +2136,8 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         i += opLength;
     }
 
-    if (vm()->controlFlowProfiler()) {
-        const Vector<size_t>& bytecodeOffsets = unlinkedCodeBlock->opProfileControlFlowBytecodeOffsets();
-        for (size_t i = 0, offsetsLength = bytecodeOffsets.size(); i < offsetsLength; i++) {
-            // Because op_profile_control_flow is emitted at the beginning of every basic block, finding 
-            // the next op_profile_control_flow will give us the text range of a single basic block.
-            size_t startIdx = bytecodeOffsets[i];
-            RELEASE_ASSERT(vm()->interpreter->getOpcodeID(instructions[startIdx].u.opcode) == op_profile_control_flow);
-            int basicBlockStartOffset = instructions[startIdx + 1].u.operand;
-            int basicBlockEndOffset;
-            if (i + 1 < offsetsLength) {
-                size_t endIdx = bytecodeOffsets[i + 1];
-                RELEASE_ASSERT(vm()->interpreter->getOpcodeID(instructions[endIdx].u.opcode) == op_profile_control_flow);
-                basicBlockEndOffset = instructions[endIdx + 1].u.operand;
-            } else
-                basicBlockEndOffset = m_sourceOffset + m_ownerExecutable->source().length() - 1;
-
-            BasicBlockLocation* basicBlockLocation = vm()->controlFlowProfiler()->getBasicBlockLocation(m_ownerExecutable->sourceID(), basicBlockStartOffset, basicBlockEndOffset);
-
-            // Find all functions that are enclosed within the range: [basicBlockStartOffset, basicBlockEndOffset]
-            // and insert these functions' start/end offsets as gaps in the current BasicBlockLocation.
-            // This is necessary because in the original source text of a JavaScript program, 
-            // function literals form new basic blocks boundaries, but they aren't represented 
-            // inside the CodeBlock's instruction stream.
-            auto insertFunctionGaps = [basicBlockLocation, basicBlockStartOffset, basicBlockEndOffset] (const WriteBarrier<FunctionExecutable>& functionExecutable) {
-                const UnlinkedFunctionExecutable* executable = functionExecutable->unlinkedExecutable();
-                int functionStart = executable->typeProfilingStartOffset();
-                int functionEnd = executable->typeProfilingEndOffset();
-                if (functionStart >= basicBlockStartOffset && functionEnd <= basicBlockEndOffset)
-                    basicBlockLocation->insertGap(functionStart, functionEnd);
-            };
-
-            for (const WriteBarrier<FunctionExecutable>& executable : m_functionDecls)
-                insertFunctionGaps(executable);
-            for (const WriteBarrier<FunctionExecutable>& executable : m_functionExprs)
-                insertFunctionGaps(executable);
-
-            instructions[startIdx + 1].u.basicBlockLocation = basicBlockLocation;
-        }
-    }
+    if (vm()->controlFlowProfiler())
+        insertBasicBlockBoundariesForControlFlowProfiler(instructions);
 
     m_instructions = WTF::RefCountedArray<Instruction>(instructions);
 
@@ -4065,5 +4028,72 @@ DFG::CapabilityLevel CodeBlock::capabilityLevel()
     return result;
 }
 #endif
+
+void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler(Vector<Instruction, 0, UnsafeVectorOverflow>& instructions)
+{
+    const Vector<size_t>& bytecodeOffsets = unlinkedCodeBlock()->opProfileControlFlowBytecodeOffsets();
+    for (size_t i = 0, offsetsLength = bytecodeOffsets.size(); i < offsetsLength; i++) {
+        // Because op_profile_control_flow is emitted at the beginning of every basic block, finding 
+        // the next op_profile_control_flow will give us the text range of a single basic block.
+        size_t startIdx = bytecodeOffsets[i];
+        RELEASE_ASSERT(vm()->interpreter->getOpcodeID(instructions[startIdx].u.opcode) == op_profile_control_flow);
+        int basicBlockStartOffset = instructions[startIdx + 1].u.operand;
+        int basicBlockEndOffset;
+        if (i + 1 < offsetsLength) {
+            size_t endIdx = bytecodeOffsets[i + 1];
+            RELEASE_ASSERT(vm()->interpreter->getOpcodeID(instructions[endIdx].u.opcode) == op_profile_control_flow);
+            basicBlockEndOffset = instructions[endIdx + 1].u.operand;
+        } else {
+            basicBlockEndOffset = m_sourceOffset + m_ownerExecutable->source().length() - 1; // Offset before the closing brace.
+            basicBlockStartOffset = std::min(basicBlockStartOffset, basicBlockEndOffset); // Some start offsets may be at the closing brace, ensure it is the offset before.
+        }
+
+        // The following check allows for the same textual JavaScript basic block to have its bytecode emitted more
+        // than once and still play nice with the control flow profiler. When basicBlockStartOffset is larger than 
+        // basicBlockEndOffset, it indicates that the bytecode generator has emitted code for the same AST node 
+        // more than once (for example: ForInNode, Finally blocks in TryNode, etc). Though these are different 
+        // basic blocks at the bytecode level, they are generated from the same textual basic block in the JavaScript 
+        // program. The condition: 
+        // (basicBlockEndOffset < basicBlockStartOffset) 
+        // is encountered when op_profile_control_flow lies across the boundary of these duplicated bytecode basic 
+        // blocks and the textual offset goes from the end of the duplicated block back to the beginning. These 
+        // ranges are dummy ranges and are ignored. The duplicated bytecode basic blocks point to the same 
+        // internal data structure, so if any of them execute, it will record the same textual basic block in the 
+        // JavaScript program as executing.
+        // At the bytecode level, this situation looks like:
+        // j: op_profile_control_flow (from j->k, we have basicBlockEndOffset < basicBlockStartOffset)
+        // ...
+        // k: op_profile_control_flow (we want to skip over the j->k block and start fresh at offset k as the start of a new basic block k->m).
+        // ...
+        // m: op_profile_control_flow
+        if (basicBlockEndOffset < basicBlockStartOffset) {
+            RELEASE_ASSERT(i + 1 < offsetsLength); // We should never encounter dummy blocks at the end of a CodeBlock.
+            instructions[startIdx + 1].u.basicBlockLocation = vm()->controlFlowProfiler()->dummyBasicBlock();
+            continue;
+        }
+
+        BasicBlockLocation* basicBlockLocation = vm()->controlFlowProfiler()->getBasicBlockLocation(m_ownerExecutable->sourceID(), basicBlockStartOffset, basicBlockEndOffset);
+
+        // Find all functions that are enclosed within the range: [basicBlockStartOffset, basicBlockEndOffset]
+        // and insert these functions' start/end offsets as gaps in the current BasicBlockLocation.
+        // This is necessary because in the original source text of a JavaScript program, 
+        // function literals form new basic blocks boundaries, but they aren't represented 
+        // inside the CodeBlock's instruction stream.
+        auto insertFunctionGaps = [basicBlockLocation, basicBlockStartOffset, basicBlockEndOffset] (const WriteBarrier<FunctionExecutable>& functionExecutable) {
+            const UnlinkedFunctionExecutable* executable = functionExecutable->unlinkedExecutable();
+            int functionStart = executable->typeProfilingStartOffset();
+            int functionEnd = executable->typeProfilingEndOffset();
+            if (functionStart >= basicBlockStartOffset && functionEnd <= basicBlockEndOffset)
+                basicBlockLocation->insertGap(functionStart, functionEnd);
+        };
+
+        for (const WriteBarrier<FunctionExecutable>& executable : m_functionDecls)
+            insertFunctionGaps(executable);
+        for (const WriteBarrier<FunctionExecutable>& executable : m_functionExprs)
+            insertFunctionGaps(executable);
+
+        instructions[startIdx + 1].u.basicBlockLocation = basicBlockLocation;
+    }
+}
 
 } // namespace JSC

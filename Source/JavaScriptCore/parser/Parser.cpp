@@ -1706,12 +1706,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseConditionalE
     next(TreeBuilder::DontBuildStrings);
     TreeExpression lhs = parseAssignmentExpression(context);
     failIfFalse(lhs, "Cannot parse left hand side of ternary operator");
-    context.setEndOffset(lhs, m_lexer->currentOffset());
+    context.setEndOffset(lhs, m_lastTokenEndPosition.offset);
     consumeOrFailWithFlags(COLON, TreeBuilder::DontBuildStrings, "Expected ':' in ternary operator");
     
     TreeExpression rhs = parseAssignmentExpression(context);
     failIfFalse(rhs, "Cannot parse right hand side of ternary operator");
-    context.setEndOffset(rhs, m_lexer->currentOffset());
+    context.setEndOffset(rhs, m_lastTokenEndPosition.offset);
     return context.createConditionalExpr(location, cond, lhs, rhs);
 }
 

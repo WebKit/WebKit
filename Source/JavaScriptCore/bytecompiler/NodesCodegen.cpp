@@ -2110,9 +2110,13 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
         generator.emitToIndexString(propertyName.get(), i.get());
         this->emitLoopHeader(generator, propertyName.get());
 
+        generator.emitProfileControlFlow(m_statement->startOffset());
+
         generator.pushIndexedForInScope(local.get(), i.get());
         generator.emitNode(dst, m_statement);
         generator.popIndexedForInScope(local.get());
+
+        generator.emitProfileControlFlow(m_statement->endOffset());
 
         generator.emitLabel(scope->continueTarget());
         generator.emitInc(i.get());
@@ -2144,9 +2148,13 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
 
         this->emitLoopHeader(generator, propertyName.get());
 
+        generator.emitProfileControlFlow(m_statement->startOffset());
+
         generator.pushStructureForInScope(local.get(), i.get(), propertyName.get(), structureEnumerator.get());
         generator.emitNode(dst, m_statement);
         generator.popStructureForInScope(local.get());
+
+        generator.emitProfileControlFlow(m_statement->endOffset());
 
         generator.emitLabel(scope->continueTarget());
         generator.emitInc(i.get());
@@ -2177,6 +2185,8 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
 
         this->emitLoopHeader(generator, propertyName.get());
 
+        generator.emitProfileControlFlow(m_statement->startOffset());
+
         generator.emitNode(dst, m_statement);
 
         generator.emitLabel(scope->continueTarget());
@@ -2196,6 +2206,7 @@ void ForInNode::emitMultiLoopBytecode(BytecodeGenerator& generator, RegisterID* 
 
     generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
     generator.emitLabel(end.get());
+    generator.emitProfileControlFlow(m_statement->endOffset());
 }
 
 void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -2247,9 +2258,11 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             DeconstructingAssignmentNode* assignNode = static_cast<DeconstructingAssignmentNode*>(m_lexpr);
             assignNode->bindings()->bindValue(generator, value);
         }
+        generator.emitProfileControlFlow(m_statement->startOffset());
         generator.emitNode(dst, m_statement);
     };
     generator.emitEnumeration(this, m_expr, extractor);
+    generator.emitProfileControlFlow(m_statement->endOffset());
 }
 
 // ------------------------------ ContinueNode ---------------------------------
@@ -2608,26 +2621,23 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
         RefPtr<Label> finallyEndLabel = generator.newLabel();
 
-        // FIXME: To the JS programmer, running the normal path is the same basic block as running the uncaught exception path.
-        // But, we generate two different code paths for this, but we shouldn't generate two op_profile_control_flows for these because they
-        // logically represent the same basic block.
-        // https://bugs.webkit.org/show_bug.cgi?id=139287
-        if (m_catchBlock)
-            generator.emitProfileControlFlow(m_catchBlock->endOffset());
-        else
-            generator.emitProfileControlFlow(m_tryBlock->endOffset());
+        int finallyStartOffset = m_catchBlock ? m_catchBlock->endOffset() : m_tryBlock->endOffset();
 
         // Normal path: run the finally code, and jump to the end.
+        generator.emitProfileControlFlow(finallyStartOffset);
         generator.emitNode(dst, m_finallyBlock);
+        generator.emitProfileControlFlow(m_finallyBlock->endOffset());
         generator.emitJump(finallyEndLabel.get());
 
         // Uncaught exception path: invoke the finally block, then re-throw the exception.
         RefPtr<RegisterID> tempExceptionRegister = generator.popTryAndEmitCatch(tryData, generator.newTemporary(), preFinallyLabel.get());
+        generator.emitProfileControlFlow(finallyStartOffset);
         generator.emitNode(dst, m_finallyBlock);
         generator.emitThrow(tempExceptionRegister.get());
 
         generator.emitLabel(finallyEndLabel.get());
-    } else 
+        generator.emitProfileControlFlow(m_finallyBlock->endOffset());
+    } else
         generator.emitProfileControlFlow(m_catchBlock->endOffset());
 
 }

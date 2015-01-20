@@ -31,6 +31,11 @@
 
 namespace JSC {
 
+ControlFlowProfiler::ControlFlowProfiler()
+    : m_dummyBasicBlock(BasicBlockLocation(-1, -1))
+{
+}
+
 ControlFlowProfiler::~ControlFlowProfiler()
 {
     for (const BlockLocationCache& cache : m_sourceIDBuckets.values()) {

@@ -1037,6 +1037,8 @@ private:
             m_rareData = std::make_unique<RareData>();
     }
 
+    void insertBasicBlockBoundariesForControlFlowProfiler(Vector<Instruction, 0, UnsafeVectorOverflow>&);
+
 #if ENABLE(JIT)
     void resetStubInternal(RepatchBuffer&, StructureStubInfo&);
     void resetStubDuringGCInternal(RepatchBuffer&, StructureStubInfo&);

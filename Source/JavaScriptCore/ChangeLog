@@ -1,3 +1,37 @@
+2015-01-19  Saam Barati  <saambarati1@gmail.com>
+
+        Basic block start offsets should never be larger than end offsets in the control flow profiler
+        https://bugs.webkit.org/show_bug.cgi?id=140377
+
+        Reviewed by Filip Pizlo.
+
+        The bytecode generator will emit code more than once for some AST nodes. For instance, 
+        the finally block of TryNode will emit two code paths for its finally block: one for 
+        the normal path, and another for the path where an exception is thrown in the catch block. 
+        
+        This repeated code emission of the same AST node previously broke how the control 
+        flow profiler computed text ranges of basic blocks because when the same AST node 
+        is emitted multiple times, there is a good chance that there are ranges that span 
+        from the end offset of one of these duplicated nodes back to the start offset of 
+        the same duplicated node. This caused a basic block range to report a larger start 
+        offset than end offset. This was incorrect. Now, when this situation is encountered 
+        while linking a CodeBlock, the faulty range in question is ignored.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler):
+        * bytecode/CodeBlock.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseConditionalExpression):
+        * runtime/ControlFlowProfiler.cpp:
+        (JSC::ControlFlowProfiler::ControlFlowProfiler):
+        * runtime/ControlFlowProfiler.h:
+        (JSC::ControlFlowProfiler::dummyBasicBlock):
+
 2015-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Flip the switch on
