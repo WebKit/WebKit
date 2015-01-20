@@ -58,7 +58,6 @@
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
-#include "FeatureCounter.h"
 #include "FloatRect.h"
 #include "FormState.h"
 #include "FormSubmission.h"
@@ -1373,35 +1372,27 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
 
 static void logNavigation(MainFrame& frame, FrameLoadType type)
 {
-    const char* featureCounterKey;
     String navigationDescription;
     switch (type) {
     case FrameLoadType::Standard:
-        featureCounterKey = FeatureCounterNavigationStandardKey;
         navigationDescription = ASCIILiteral("standard");
         break;
     case FrameLoadType::Back:
-        featureCounterKey = FeatureCounterNavigationBackKey;
         navigationDescription = ASCIILiteral("back");
         break;
     case FrameLoadType::Forward:
-        featureCounterKey = FeatureCounterNavigationForwardKey;
         navigationDescription = ASCIILiteral("forward");
         break;
     case FrameLoadType::IndexedBackForward:
-        featureCounterKey = FeatureCounterNavigationIndexedBackForwardKey;
         navigationDescription = ASCIILiteral("indexedBackForward");
         break;
     case FrameLoadType::Reload:
-        featureCounterKey = FeatureCounterNavigationReloadKey;
         navigationDescription = ASCIILiteral("reload");
         break;
     case FrameLoadType::Same:
-        featureCounterKey = FeatureCounterNavigationSameKey;
         navigationDescription = ASCIILiteral("same");
         break;
     case FrameLoadType::ReloadFromOrigin:
-        featureCounterKey = FeatureCounterNavigationReloadFromOriginKey;
         navigationDescription = ASCIILiteral("reloadFromOrigin");
         break;
     case FrameLoadType::Replace:
@@ -1413,8 +1404,6 @@ static void logNavigation(MainFrame& frame, FrameLoadType type)
         if (auto* client = frame.diagnosticLoggingClient())
             client->logDiagnosticMessage(DiagnosticLoggingKeys::navigationKey(), navigationDescription);
     }
-    // FIXME: Remove once DiagnosticLoggingClient works on iOS.
-    FEATURE_COUNTER_INCREMENT_KEY(frame.page(), featureCounterKey);
 }
 
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, PassRefPtr<FormState> prpFormState, AllowNavigationToInvalidURL allowNavigationToInvalidURL)

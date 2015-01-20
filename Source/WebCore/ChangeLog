@@ -1,3 +1,17 @@
+2015-01-19  Chris Dumez  <cdumez@apple.com>
+
+        Stop using FeatureCounter to log navigation types
+        https://bugs.webkit.org/show_bug.cgi?id=140642
+
+        Reviewed by Andreas Kling.
+
+        Stop using FeatureCounter to log navigation types now that
+        DiagnosticLoggingClient is working on iOS.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::logNavigation):
+        * platform/FeatureCounterKeys.h:
+
 2015-01-19  Andreas Kling  <akling@apple.com>
 
         LayoutState and subtree layout code should use RenderElement.

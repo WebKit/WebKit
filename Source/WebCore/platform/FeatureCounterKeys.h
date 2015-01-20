@@ -74,15 +74,6 @@ static const char FeatureCounterMediaAudioElementLoadingKey[] = "com.apple.WebKi
 static const char FeatureCounterMediaVideoElementPlayedKey[] = "com.apple.WebKit.media.video.played";
 static const char FeatureCounterMediaAudioElementPlayedKey[] = "com.apple.WebKit.media.audio.played";
 
-// Navigation types.
-static const char FeatureCounterNavigationStandardKey[] = "com.apple.WebKit.navigation.standard";
-static const char FeatureCounterNavigationBackKey[] = "com.apple.WebKit.navigation.back";
-static const char FeatureCounterNavigationForwardKey[] = "com.apple.WebKit.navigation.forward";
-static const char FeatureCounterNavigationIndexedBackForwardKey[] = "com.apple.WebKit.navigation.indexedBackForward";
-static const char FeatureCounterNavigationReloadKey[] = "com.apple.WebKit.navigation.reload";
-static const char FeatureCounterNavigationSameKey[] = "com.apple.WebKit.navigation.same";
-static const char FeatureCounterNavigationReloadFromOriginKey[] = "com.apple.WebKit.navigation.reloadFromOrigin";
-
 // Resource types.
 static const char FeatureCounterResourceLoadedFontKey[] = "com.apple.WebKit.resource.loaded.font";
 static const char FeatureCounterResourceLoadedImageKey[] = "com.apple.WebKit.resource.loaded.image";
