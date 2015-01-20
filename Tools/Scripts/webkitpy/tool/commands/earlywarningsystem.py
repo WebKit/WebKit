@@ -108,7 +108,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         return self.name
 
     def run_command(self, command):
-        self.run_webkit_patch(command + [self._deprecated_port.flag()] + (['--architecture=%s' % self._port.architecture()] if self._port.architecture() else []))
+        self.run_webkit_patch(command + [self._deprecated_port.flag()] + (['--architecture=%s' % self._port.architecture()] if self._port.architecture() and self._port.did_override_architecture else []))
 
     def command_passed(self, message, patch):
         pass

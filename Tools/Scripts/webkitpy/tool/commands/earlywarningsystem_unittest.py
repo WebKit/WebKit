@@ -60,26 +60,23 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
 
 class EarlyWarningSystemTest(QueuesTest):
     def _default_expected_logs(self, ews):
-        host = Host()
-        real_port_name = PatchProcessingQueue()._new_port_name_from_old(ews.port_name, host.platform)
-        real_port = Host().port_factory.get(real_port_name)
         string_replacements = {
             "name": ews.name,
             "port": ews.port_name,
-            "architecture": real_port.architecture(),
+            "architecture": " --architecture=%s" % ews.architecture if ews.architecture else "",
         }
         if ews.run_tests:
-            run_tests_line = "Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=%(port)s --architecture=%(architecture)s\n" % string_replacements
+            run_tests_line = "Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=%(port)s%(architecture)s\n" % string_replacements
         else:
             run_tests_line = ""
         string_replacements['run_tests_line'] = run_tests_line
 
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs(ews.name),
-            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=%(port)s --architecture=%(architecture)s
-Running: webkit-patch --status-host=example.com update --port=%(port)s --architecture=%(architecture)s
-Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=%(port)s --architecture=%(architecture)s
-Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=%(port)s --architecture=%(architecture)s
+            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=%(port)s%(architecture)s
+Running: webkit-patch --status-host=example.com update --port=%(port)s%(architecture)s
+Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=%(port)s%(architecture)s
+Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=%(port)s%(architecture)s
 %(run_tests_line)sMOCK: update_status: %(name)s Pass
 MOCK: release_work_item: %(name)s 10000
 """ % string_replacements,

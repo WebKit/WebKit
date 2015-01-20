@@ -78,6 +78,8 @@ class Port(object):
 
     ALL_BUILD_TYPES = ('debug', 'release')
 
+    DEFAULT_ARCHITECTURE = 'x86'
+
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         """Return a fully-specified port name that can be used to construct objects."""
@@ -96,12 +98,19 @@ class Port(object):
 
         # These are default values that should be overridden in a subclasses.
         self._version = ''
-        self._architecture = 'x86'
+
+        # FIXME: This can be removed once default architectures for GTK and EFL EWS bots are set.
+        self.did_override_architecture = False
 
         # FIXME: Ideally we'd have a package-wide way to get a
         # well-formed options object that had all of the necessary
         # options defined on it.
         self._options = options or optparse.Values()
+
+        if self.get_option('architecture'):
+            self.did_override_architecture = True
+        else:
+            self.set_option('architecture', self.DEFAULT_ARCHITECTURE)
 
         if self._name and '-wk2' in self._name:
             self._options.webkit_test_runner = True
@@ -128,7 +137,11 @@ class Port(object):
         self._jhbuild_wrapper = []
 
     def architecture(self):
-        return self._architecture
+        return self.get_option('architecture')
+
+    def set_architecture(self, arch):
+        self.did_override_architecture = True
+        self.set_option('architecture', arch)
 
     def additional_drt_flag(self):
         return []
@@ -713,9 +726,6 @@ class Port(object):
         expectations, determining search paths, and logging information."""
         return self._version
 
-    def architecture(self):
-        return self._architecture
-
     def get_option(self, name, default_value=None):
         return getattr(self._options, name, default_value)
 
@@ -923,7 +933,7 @@ class Port(object):
     def test_configuration(self):
         """Returns the current TestConfiguration for the port."""
         if not self._test_configuration:
-            self._test_configuration = TestConfiguration(self._version, self._architecture, self._options.configuration.lower())
+            self._test_configuration = TestConfiguration(self._version, self.architecture(), self._options.configuration.lower())
         return self._test_configuration
 
     # FIXME: Belongs on a Platform object.

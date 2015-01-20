@@ -46,35 +46,30 @@ class IOSPort(ApplePort):
     port_name = "ios"
 
     ARCHITECTURES = ['armv7', 'armv7s', 'arm64']
-    VERSION_FALLBACK_ORDER = ['ios-7', 'ios-8']
+    DEFAULT_ARCHITECTURE = 'armv7'
+    VERSION_FALLBACK_ORDER = ['ios-7', 'ios-8', 'ios-9']
 
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         if port_name == cls.port_name:
             sdk_version = '8.0'
             if host.platform.is_mac():
-                sdk_command_process = subprocess.Popen('xcrun --sdk iphoneos --show-sdk-version', stdout=subprocess.PIPE, stderr=None, shell=True)
-                sdk_command_output = sdk_command_process.communicate()[0].strip()
+                sdk_command_output = subprocess.check_output(['/usr/bin/xcrun', '--sdk', 'iphoneos', '--show-sdk-version'], stderr=None).rstrip()
                 if sdk_command_output:
                     sdk_version = sdk_command_output
 
-            port_name = port_name + '-' + re.match('^([0-9]+).*', sdk_version).group(1)
+            port_name = port_name + '-' + re.match('^([0-9]+)', sdk_version).group(1)
 
         return port_name
 
     def __init__(self, *args, **kwargs):
         super(IOSPort, self).__init__(*args, **kwargs)
 
-        self._architecture = self.get_option('architecture')
-
-        if not self._architecture:
-            self._architecture = 'armv7'
-
         self._testing_device = None
 
     # Despite their names, these flags do not actually get passed all the way down to webkit-build.
     def _build_driver_flags(self):
-        return ['--sdk', 'iphoneos'] + (['ARCHS=%s' % self._architecture] if self._architecture else [])
+        return ['--sdk', 'iphoneos'] + (['ARCHS=%s' % self.architecture()] if self.architecture() else [])
 
     def operating_system(self):
         return 'ios'
@@ -87,15 +82,12 @@ class IOSSimulatorPort(Port):
 
     ARCHITECTURES = ['x86_64', 'x86']
 
+    DEFAULT_ARCHITECTURE = 'x86_64'
+
     relay_name = 'LayoutTestRelay'
 
     def __init__(self, *args, **kwargs):
         super(IOSSimulatorPort, self).__init__(*args, **kwargs)
-
-        self._architecture = self.get_option('architecture')
-
-        if not self._architecture:
-            self._architecture = 'x86_64'
 
         self._leak_detector = LeakDetector(self)
         if self.get_option("leaks"):

@@ -1,3 +1,56 @@
+2015-01-20  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Fix EWS python unit tests and address code comments as per 140476
+        https://bugs.webkit.org/show_bug.cgi?id=140637
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port):
+        (Port.__init__):
+        Adds DEFAULT_ARCHITECTURE member.
+        (Port.architecture):
+        Removes architecture member and instead uses
+        self.get_option('architecture'). Also removes redundant architecture
+        method.
+        (Port.set_architecture):
+        Adds a setter for the architecture variable to be able to set a flag
+        upon modification.
+        (Port.test_configuration):
+        Uses self.architecture() instead of self._architecture.
+        * Scripts/webkitpy/port/ios.py:
+        Overrides DEFAULT_ARCHITECTURE.
+        (IOSPort):
+        (IOSPort.determine_full_port_name):
+        Uses subprocess.check_output instead of Popen. Uses rstrip instead of
+        strip. Fixes regex to not match arbitrary characters after the
+        relevent digits are matched.
+        (IOSPort.__init__):
+        Removes old _architecture defaulting strategy.
+        (IOSPort._build_driver_flags):
+        Uses self.architecture() instead of self._architecture.
+        (IOSSimulatorPort):
+        Overrides DEFAULT_ARCHITECTURE.
+        (IOSSimulatorPort.__init__):
+        Removes old _architecture defaulting strategy.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort):
+        Overrides DEFAULT_ARCHITECTURE.
+        (MacPort.__init__):
+        Removes old _architecture defaulting strategy.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.run_command):
+        Checks the did_override_architecture flag to determine whether to add
+        the --architecture option.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        Uses ews.architecture rather than trying to discern the correct
+        architecture using a port object.
+        (EarlyWarningSystemTest._default_expected_logs):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        Removes use of optparse, and removes the import statement.
+        (AbstractQueue.__init__):
+        (PatchProcessingQueue.begin_work_queue):
+
 2015-01-20  Sam Weinig  <sam@webkit.org>
 
         Attempt to fix Mountain Lion and EFL tests.

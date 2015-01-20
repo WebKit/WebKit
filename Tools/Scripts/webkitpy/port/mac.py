@@ -48,12 +48,10 @@ class MacPort(ApplePort):
 
     ARCHITECTURES = ['x86_64', 'x86']
 
+    DEFAULT_ARCHITECTURE = 'x86_64'
+
     def __init__(self, host, port_name, **kwargs):
         ApplePort.__init__(self, host, port_name, **kwargs)
-        self._architecture = self.get_option('architecture')
-
-        if not self._architecture:
-            self._architecture = 'x86_64'
 
         self._leak_detector = LeakDetector(self)
         if self.get_option("leaks"):
