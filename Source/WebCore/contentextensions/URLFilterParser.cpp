@@ -126,6 +126,8 @@ public:
         if (hasError())
             return;
 
+        sinkPendingAtomIfNecessary();
+
         if (builtInCharacterClassID == JSC::Yarr::NewlineClassID && inverted) {
             m_hasValidAtom = true;
             ASSERT(m_lastPrefixTreeEntry);
