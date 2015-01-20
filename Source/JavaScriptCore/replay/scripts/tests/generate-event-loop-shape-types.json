@@ -7,30 +7,32 @@
         ]
     },
 
-    "inputs": [
-        {
-            "name": "ScalarInput",
-            "description": "",
-            "queue": "EVENT_LOOP",
-            "members": [
-                { "name": "data", "type": "ScalarType" }
-            ]
-        },
-        {
-            "name": "MapInput",
-            "description": "",
-            "queue": "EVENT_LOOP",
-            "members": [
-                { "name": "data", "type": "MapType" }
-            ]
-        },
-        {
-            "name": "SharedMapInput",
-            "description": "",
-            "queue": "EVENT_LOOP",
-            "members": [
-                { "name": "data", "type": "SharedMapType" }
-            ]
-        }
-    ]
+    "inputs": {
+        "Test": [
+            {
+                "name": "ScalarInput",
+                "description": "",
+                "queue": "EVENT_LOOP",
+                "members": [
+                    { "name": "data", "type": "ScalarType" }
+                ]
+            },
+            {
+                "name": "MapInput",
+                "description": "",
+                "queue": "EVENT_LOOP",
+                "members": [
+                    { "name": "data", "type": "MapType" }
+                ]
+            },
+            {
+                "name": "SharedMapInput",
+                "description": "",
+                "queue": "EVENT_LOOP",
+                "members": [
+                    { "name": "data", "type": "SharedMapType" }
+                ]
+            }
+        ]
+    }
 }

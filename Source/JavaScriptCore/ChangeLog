@@ -1,3 +1,105 @@
+2015-01-19  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: code generator should take supplemental specifications and allow cross-framework references
+        https://bugs.webkit.org/show_bug.cgi?id=136312
+
+        Reviewed by Joseph Pecoraro.
+
+        Some types are shared between replay inputs from different frameworks.
+        Previously, these type declarations were duplicated in every input
+        specification file in which they were used. This caused some type encoding
+        traits to be emitted twice if used from WebCore inputs and WebKit2 inputs.
+
+        This patch teaches the replay inputs code generator to accept multiple
+        input specification files. Inputs can freely reference types from other
+        frameworks without duplicating declarations.
+
+        On the code generation side, the model could contain types and inputs from
+        frameworks that are not the target framework. Only generate code for the
+        target framework.
+
+        To properly generate cross-framework type encoding traits, use
+        Type.encoding_type_argument in more places, and add the export macro for WebCore
+        and the Test framework.
+
+        Adjust some tests so that enum coverage is preserved by moving the enum types
+        into "Test" (the target framework for tests).
+
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+        For Windows, copy over JSInputs.json as if it were a private header.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Make JSInputs.json a private header.
+        * replay/JSInputs.json:
+        Put all primitive types and WTF types in this specification file.
+
+        * replay/scripts/CodeGeneratorReplayInputs.py:
+        (Input.__init__):
+        (InputsModel.__init__): Keep track of the input's framework.
+        (InputsModel.parse_specification): Parse the framework here. Adjust to new format,
+        and allow either types or inputs to be missing from a single file.
+
+        (InputsModel.parse_type_with_framework):
+        (InputsModel.parse_input_with_framework):
+        (Generator.should_generate_item): Added helper method.
+        (Generator.generate_header): Filter inputs to generate.
+        (Generator.generate_implementation): Filter inputs to generate.
+        (Generator.generate_enum_trait_declaration): Filter enums to generate.
+        Add WEBCORE_EXPORT macro to enum encoding traits.
+
+        (Generator.generate_for_each_macro): Filter inputs to generate.
+        (Generator.generate_enum_trait_implementation): Filter enums to generate.
+        (generate_from_specifications): Added.
+        (generate_from_specifications.parse_json_from_file):
+        (InputsModel.parse_toplevel): Deleted.
+        (InputsModel.parse_type_with_framework_name): Deleted.
+        (InputsModel.parse_input): Deleted.
+        (generate_from_specification): Deleted.
+        * replay/scripts/CodeGeneratorReplayInputsTemplates.py:
+        * replay/scripts/tests/expected/fail-on-no-inputs.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-no-types.json-error: Removed.
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.cpp:
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.cpp:
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.cpp:
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.cpp:
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-input-with-guard.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-inputs-with-flags.json-TestReplayInputs.h:
+        * replay/scripts/tests/expected/generate-memoized-type-modes.json-TestReplayInputs.h:
+        * replay/scripts/tests/fail-on-c-style-enum-no-storage.json:
+        * replay/scripts/tests/fail-on-duplicate-enum-type.json:
+        * replay/scripts/tests/fail-on-duplicate-input-names.json:
+        * replay/scripts/tests/fail-on-duplicate-type-names.json:
+        * replay/scripts/tests/fail-on-enum-type-missing-values.json:
+        * replay/scripts/tests/fail-on-missing-input-member-name.json:
+        * replay/scripts/tests/fail-on-missing-input-name.json:
+        * replay/scripts/tests/fail-on-missing-input-queue.json:
+        * replay/scripts/tests/fail-on-missing-type-mode.json:
+        * replay/scripts/tests/fail-on-missing-type-name.json:
+        * replay/scripts/tests/fail-on-no-inputs.json:
+        Removed, no longer required to be in a single file.
+
+        * replay/scripts/tests/fail-on-no-types.json:
+        Removed, no longer required to be in a single file.
+
+        * replay/scripts/tests/fail-on-unknown-input-queue.json:
+        * replay/scripts/tests/fail-on-unknown-member-type.json:
+        * replay/scripts/tests/fail-on-unknown-type-mode.json:
+        * replay/scripts/tests/generate-enum-encoding-helpers-with-guarded-values.json:
+        * replay/scripts/tests/generate-enum-encoding-helpers.json:
+        * replay/scripts/tests/generate-enum-with-guard.json:
+        Include enums that are and are not generated.
+
+        * replay/scripts/tests/generate-enums-with-same-base-name.json:
+        * replay/scripts/tests/generate-event-loop-shape-types.json:
+        * replay/scripts/tests/generate-input-with-guard.json:
+        * replay/scripts/tests/generate-input-with-vector-members.json:
+        * replay/scripts/tests/generate-inputs-with-flags.json:
+        * replay/scripts/tests/generate-memoized-type-modes.json:
+
 2015-01-20  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Cannot compile 2.7.3 on PowerPC machines

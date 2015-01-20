@@ -42,7 +42,7 @@ class MapInput;
 } // namespace Test
 
 namespace JSC {
-template<> struct InputTraits<Test::ScalarInput> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::ScalarInput> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
     static const String& type();
 
@@ -50,7 +50,7 @@ template<> struct InputTraits<Test::ScalarInput> {
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::ScalarInput>&);
 };
 
-template<> struct InputTraits<Test::MapInput> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::MapInput> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
     static const String& type();
 
@@ -63,7 +63,7 @@ template<> struct InputTraits<Test::MapInput> {
 namespace Test {
 class ScalarInput : public NondeterministicInput<ScalarInput> {
 public:
-    ScalarInput(ScalarType data);
+    TEST_EXPORT_MACRO ScalarInput(ScalarType data);
     virtual ~ScalarInput();
 
     ScalarType data() const { return m_data; }
@@ -73,7 +73,7 @@ private:
 
 class MapInput : public NondeterministicInput<MapInput> {
 public:
-    MapInput(std::unique_ptr<MapType> data);
+    TEST_EXPORT_MACRO MapInput(std::unique_ptr<MapType> data);
     virtual ~MapInput();
 
     const MapType& data() const { return *m_data; }

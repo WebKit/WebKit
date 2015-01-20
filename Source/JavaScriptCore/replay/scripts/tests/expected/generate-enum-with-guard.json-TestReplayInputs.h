@@ -34,9 +34,12 @@
 #include "InternalNamespaceHeaderIncludeDummy.h"
 #include <platform/ExternalNamespaceHeaderIncludeDummy.h>
 
+namespace Test {
+enum PlatformWheelPhase : uint64_t;
+}
+
 namespace WebCore {
 class PlatformWheelEvent;
-enum PlatformWheelEventPhase : uint64_t;
 }
 
 
@@ -45,7 +48,7 @@ class HandleWheelEvent;
 } // namespace Test
 
 namespace JSC {
-template<> struct InputTraits<Test::HandleWheelEvent> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::HandleWheelEvent> {
     static InputQueue queue() { return InputQueue::EventLoopInput; }
     static const String& type();
 
@@ -53,11 +56,11 @@ template<> struct InputTraits<Test::HandleWheelEvent> {
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::HandleWheelEvent>&);
 };
 #if ENABLE(DUMMY_FEATURE)
-template<> struct EncodingTraits<WebCore::PlatformWheelEventPhase> {
-    typedef WebCore::PlatformWheelEventPhase DecodedType;
+template<> struct TEST_EXPORT_MACRO EncodingTraits<Test::PlatformWheelPhase> {
+    typedef Test::PlatformWheelPhase DecodedType;
 
-    static EncodedValue encodeValue(const WebCore::PlatformWheelEventPhase& value);
-    static bool decodeValue(EncodedValue&, WebCore::PlatformWheelEventPhase& value);
+    static EncodedValue encodeValue(const Test::PlatformWheelPhase& value);
+    static bool decodeValue(EncodedValue&, Test::PlatformWheelPhase& value);
 };
 #endif // ENABLE(DUMMY_FEATURE)
 } // namespace JSC
@@ -65,14 +68,16 @@ template<> struct EncodingTraits<WebCore::PlatformWheelEventPhase> {
 namespace Test {
 class HandleWheelEvent : public EventLoopInput<HandleWheelEvent> {
 public:
-    HandleWheelEvent(std::unique_ptr<PlatformWheelEvent> platformEvent);
+    TEST_EXPORT_MACRO HandleWheelEvent(std::unique_ptr<PlatformWheelEvent> platformEvent, PlatformWheelPhase phase);
     virtual ~HandleWheelEvent();
 
     // EventLoopInput API
     virtual void dispatch(ReplayController&) override final;
     const PlatformWheelEvent& platformEvent() const { return *m_platformEvent; }
+    PlatformWheelPhase phase() const { return m_phase; }
 private:
     std::unique_ptr<PlatformWheelEvent> m_platformEvent;
+    PlatformWheelPhase m_phase;
 };
 } // namespace Test
 

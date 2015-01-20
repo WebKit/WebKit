@@ -16,7 +16,7 @@
                 "header": "replay/PlatformEvent.h"
             }
         ],
-        "WebCore": [
+        "Test": [
             {
                 "name": "Type", "mode": "SCALAR", "storage": "uint64_t",
                 "enclosing_class": "FormData1",
@@ -34,17 +34,19 @@
         ]
     },
 
-    "inputs": [
-        {
-            "name": "FormCombo",
-            "description": "Combines an event type and form data type.",
-            "queue": "SCRIPT_MEMOIZED",
-            "members": [
-                { "name": "eventType1", "type": "PlatformEvent1::Type" },
-                { "name": "eventType2", "type": "PlatformEvent2::Type" },
-                { "name": "formType1", "type": "FormData1::Type" },
-                { "name": "formType2", "type": "FormData2::Type" }
-            ]
-        }
-    ]
+    "inputs": {
+        "Test": [
+            {
+                "name": "FormCombo",
+                "description": "Combines an event type and form data type.",
+                "queue": "SCRIPT_MEMOIZED",
+                "members": [
+                    { "name": "eventType1", "type": "PlatformEvent1::Type" },
+                    { "name": "eventType2", "type": "PlatformEvent2::Type" },
+                    { "name": "formType1", "type": "FormData1::Type" },
+                    { "name": "formType2", "type": "FormData2::Type" }
+                ]
+            }
+        ]
+    }
 }

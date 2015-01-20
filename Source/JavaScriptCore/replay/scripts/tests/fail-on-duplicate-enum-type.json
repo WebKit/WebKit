@@ -20,14 +20,16 @@
         ]
     },
 
-    "inputs": [
-        {
-            "name": "FormCombo",
-            "description": "Combines an event type and form data type.",
-            "queue": "SCRIPT_MEMOIZED",
-            "members": [
-                { "name": "eventType", "type": "PlatformEvent::Type" }
-            ]
-        }
-    ]
+    "inputs": {
+        "Test": [
+            {
+                "name": "FormCombo",
+                "description": "Combines an event type and form data type.",
+                "queue": "SCRIPT_MEMOIZED",
+                "members": [
+                    { "name": "eventType", "type": "PlatformEvent::Type" }
+                ]
+            }
+        ]
+    }
 }

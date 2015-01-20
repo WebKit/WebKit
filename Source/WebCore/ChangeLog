@@ -1,3 +1,15 @@
+2015-01-19  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Replay: code generator should take supplemental specifications and allow cross-framework references
+        https://bugs.webkit.org/show_bug.cgi?id=136312
+
+        Reviewed by Joseph Pecoraro.
+
+        Changes covered by existing input generator tests.
+
+        * DerivedSources.make: Add JSInputs.json as supplemental specification.
+        * replay/WebInputs.json: Moved common types to JSInputs.json.
+
 2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix unused-const-variable warning in RenderLayerCompositor.cpp

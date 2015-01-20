@@ -1162,6 +1162,7 @@ INPUT_GENERATOR_SCRIPTS = \
 
 INPUT_GENERATOR_SPECIFICATIONS = \
 	$(WebCore)/replay/WebInputs.json \
+	$(WebReplayScripts)/JSInputs.json \
 #
 
 all : WebReplayInputs.h

@@ -31,10 +31,10 @@
 #define generate_enums_with_same_base_name_json_TestReplayInputs_h
 
 #if ENABLE(WEB_REPLAY)
+#include "FormData1.h"
+#include "FormData2.h"
 #include "InternalNamespaceHeaderIncludeDummy.h"
 #include <platform/ExternalNamespaceHeaderIncludeDummy.h>
-#include <replay/FormData1.h>
-#include <replay/FormData2.h>
 #include <replay/PlatformEvent.h>
 
 
@@ -44,46 +44,32 @@ class FormCombo;
 } // namespace Test
 
 namespace JSC {
-template<> struct InputTraits<Test::FormCombo> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::FormCombo> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
     static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::FormCombo&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::FormCombo>&);
 };
-template<> struct EncodingTraits<WebCore::FormData1::Type> {
-    typedef WebCore::FormData1::Type DecodedType;
+template<> struct TEST_EXPORT_MACRO EncodingTraits<Test::FormData1::Type> {
+    typedef Test::FormData1::Type DecodedType;
 
-    static EncodedValue encodeValue(const WebCore::FormData1::Type& value);
-    static bool decodeValue(EncodedValue&, WebCore::FormData1::Type& value);
+    static EncodedValue encodeValue(const Test::FormData1::Type& value);
+    static bool decodeValue(EncodedValue&, Test::FormData1::Type& value);
 };
 
-template<> struct EncodingTraits<WebCore::FormData2::Type> {
-    typedef WebCore::FormData2::Type DecodedType;
+template<> struct TEST_EXPORT_MACRO EncodingTraits<Test::FormData2::Type> {
+    typedef Test::FormData2::Type DecodedType;
 
-    static EncodedValue encodeValue(const WebCore::FormData2::Type& value);
-    static bool decodeValue(EncodedValue&, WebCore::FormData2::Type& value);
-};
-
-template<> struct EncodingTraits<PlatformEvent1::Type> {
-    typedef PlatformEvent1::Type DecodedType;
-
-    static EncodedValue encodeValue(const PlatformEvent1::Type& value);
-    static bool decodeValue(EncodedValue&, PlatformEvent1::Type& value);
-};
-
-template<> struct EncodingTraits<PlatformEvent2::Type> {
-    typedef PlatformEvent2::Type DecodedType;
-
-    static EncodedValue encodeValue(const PlatformEvent2::Type& value);
-    static bool decodeValue(EncodedValue&, PlatformEvent2::Type& value);
+    static EncodedValue encodeValue(const Test::FormData2::Type& value);
+    static bool decodeValue(EncodedValue&, Test::FormData2::Type& value);
 };
 } // namespace JSC
 
 namespace Test {
 class FormCombo : public NondeterministicInput<FormCombo> {
 public:
-    FormCombo(PlatformEvent1::Type eventType1, PlatformEvent2::Type eventType2, FormData1::Type formType1, FormData2::Type formType2);
+    TEST_EXPORT_MACRO FormCombo(PlatformEvent1::Type eventType1, PlatformEvent2::Type eventType2, FormData1::Type formType1, FormData2::Type formType2);
     virtual ~FormCombo();
 
     PlatformEvent1::Type eventType1() const { return m_eventType1; }

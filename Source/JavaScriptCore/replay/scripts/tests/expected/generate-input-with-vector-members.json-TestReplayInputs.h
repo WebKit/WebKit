@@ -46,7 +46,7 @@ class SavedHistory;
 } // namespace Test
 
 namespace JSC {
-template<> struct InputTraits<Test::ArrayOfThings> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::ArrayOfThings> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
     static const String& type();
 
@@ -54,7 +54,7 @@ template<> struct InputTraits<Test::ArrayOfThings> {
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::ArrayOfThings>&);
 };
 
-template<> struct InputTraits<Test::SavedHistory> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::SavedHistory> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
     static const String& type();
 
@@ -67,7 +67,7 @@ template<> struct InputTraits<Test::SavedHistory> {
 namespace Test {
 class ArrayOfThings : public NondeterministicInput<ArrayOfThings> {
 public:
-    ArrayOfThings(Vector<double>& doubles, Vector<JSThing>& jsthings, Vector<WebThing>& webthings);
+    TEST_EXPORT_MACRO ArrayOfThings(Vector<double>& doubles, Vector<JSThing>& jsthings, Vector<WebThing>& webthings);
     virtual ~ArrayOfThings();
 
     const Vector<double>& doubles() const { return m_doubles; }
@@ -81,7 +81,7 @@ private:
 
 class SavedHistory : public NondeterministicInput<SavedHistory> {
 public:
-    SavedHistory(Vector<RefPtr<HistoryItem>>& entries);
+    TEST_EXPORT_MACRO SavedHistory(Vector<RefPtr<HistoryItem>>& entries);
     virtual ~SavedHistory();
 
     const Vector<RefPtr<HistoryItem>>& entries() const { return m_entries; }

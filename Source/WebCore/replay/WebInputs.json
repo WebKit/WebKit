@@ -1,30 +1,5 @@
 {
     "types": {
-        "Global": [
-            { "name": "bool", "mode": "SCALAR" },
-            { "name": "double", "mode": "SCALAR" },
-            { "name": "uint32_t", "mode": "SCALAR", "description": "Unsigned 32-bit integer." },
-            { "name": "uint64_t", "mode": "SCALAR", "description": "Unsigned 64-bit integer." },
-            { "name": "int32_t", "mode": "SCALAR", "description": "Signed 32-bit integer." },
-            { "name": "int64_t", "mode": "SCALAR", "description": "Signed 64-bit integer." }
-        ],
-
-        "WTF": [
-            {
-                "name": "String", "mode": "HEAVY_SCALAR",
-                "header": "wtf/text/WTFString.h"
-            }
-        ],
-
-        "JavaScriptCore": [
-            {
-                "name": "InputQueue", "mode": "SCALAR", "storage": "uint8_t",
-                "flags": ["ENUM_CLASS"],
-                "values": ["EventLoopInput", "LoaderMemoizedData", "ScriptMemoizedData", "Count"],
-                "header": "replay/NondeterministicInput.h"
-            }
-        ],
-
         "WebCore": [
             {
                 "name": "EncodedCType", "mode": "SCALAR", "storage": "uint8_t",
@@ -157,104 +132,106 @@
         ]
     },
 
-    "inputs": [
-        {
-            "name": "BeginSegmentSentinel",
-            "description": "A sentinel input to signal the start of a segment.",
-            "queue": "EVENT_LOOP",
-            "members": [ ]
-        },
-        {
-            "name": "DocumentLastModifiedDate",
-            "description": "A fallback value used for the document's last modified date if the Last-Modified header can't be found or used.",
-            "queue": "SCRIPT_MEMOIZED",
-            "members": [
-                { "name": "fallbackValue", "type": "double" }
-            ]
-        },
-        {
-            "name": "EndSegmentSentinel",
-            "description": "A sentinel input to signal the end of a segment.",
-            "queue": "EVENT_LOOP",
-            "members": [ ]
-        },
-        {
-            "name": "HandleMouseMove",
-            "description": "The embedder signalled a mouse move event.",
-            "queue": "EVENT_LOOP",
-            "members": [
-                { "name": "platformEvent", "type": "PlatformMouseEvent" },
-                { "name": "scrollbarTargeted", "type": "bool" }
-            ]
-        },
-        {
-            "name": "HandleMousePress",
-            "description": "The embedder signalled a mouse press event.",
-            "queue": "EVENT_LOOP",
-            "members": [
-                { "name": "platformEvent", "type": "PlatformMouseEvent" }
-            ]
-        },
-        {
-            "name": "HandleMouseRelease",
-            "description": "The embedder signalled a mouse release event.",
-            "queue": "EVENT_LOOP",
-            "members": [
-                { "name": "platformEvent", "type": "PlatformMouseEvent" }
-            ]
-        },
-        {
-            "name": "HandleKeyPress",
-            "description": "The embedder signalled a key press event.",
-            "queue": "EVENT_LOOP",
-            "members": [
-                { "name": "platformEvent", "type": "PlatformKeyboardEvent" }
-            ]
-        },
-        {
-            "name": "HandleWheelEvent",
-            "description": "The embedder signalled a mouse wheel event.",
-            "queue": "EVENT_LOOP",
-            "members": [
-                { "name": "platformEvent", "type": "PlatformWheelEvent" }
-            ]
-        },
-        {
-            "name": "InitialNavigation",
-            "description": "Initiate the initial main frame navigation.",
-            "queue": "EVENT_LOOP",
-            "flags": ["HIDDEN", "CREATE_FROM_PAGE"],
-            "members": [
-                { "name": "securityOrigin", "type": "SecurityOrigin" },
-                { "name": "url", "type": "URL" },
-                { "name": "referrer", "type": "String" }
-            ]
-        },
-        {
-            "name": "FetchPluginData",
-            "description": "Plugin data was requested through DOMPluginArray or DOMMimeTypeArray.",
-            "queue": "SCRIPT_MEMOIZED",
-            "members": [
-                { "name": "pluginData", "type": "PluginData" }
-            ]
-        },
-        {
-            "name": "LogicalScrollPage",
-            "description": "The embedder signalled a logical scroll event.",
-            "queue": "EVENT_LOOP",
-            "members": [
-                { "name": "direction", "type": "ScrollLogicalDirection" },
-                { "name": "granularity", "type": "ScrollGranularity" }
-            ]
-        },
-        {
-            "name": "ScrollPage",
-            "description": "The embedder signalled a scroll event.",
-            "queue": "EVENT_LOOP",
-            "members": [
-                { "name": "direction", "type": "ScrollDirection" },
-                { "name": "granularity", "type": "ScrollGranularity" }
-            ]
-        }
-    ]
+    "inputs": {
+        "WebCore": [
+            {
+                "name": "BeginSegmentSentinel",
+                "description": "A sentinel input to signal the start of a segment.",
+                "queue": "EVENT_LOOP",
+                "members": [ ]
+            },
+            {
+                "name": "DocumentLastModifiedDate",
+                "description": "A fallback value used for the document's last modified date if the Last-Modified header can't be found or used.",
+                "queue": "SCRIPT_MEMOIZED",
+                "members": [
+                    { "name": "fallbackValue", "type": "double" }
+                ]
+            },
+            {
+                "name": "EndSegmentSentinel",
+                "description": "A sentinel input to signal the end of a segment.",
+                "queue": "EVENT_LOOP",
+                "members": [ ]
+            },
+            {
+                "name": "HandleMouseMove",
+                "description": "The embedder signalled a mouse move event.",
+                "queue": "EVENT_LOOP",
+                "members": [
+                    { "name": "platformEvent", "type": "PlatformMouseEvent" },
+                    { "name": "scrollbarTargeted", "type": "bool" }
+                ]
+            },
+            {
+                "name": "HandleMousePress",
+                "description": "The embedder signalled a mouse press event.",
+                "queue": "EVENT_LOOP",
+                "members": [
+                    { "name": "platformEvent", "type": "PlatformMouseEvent" }
+                ]
+            },
+            {
+                "name": "HandleMouseRelease",
+                "description": "The embedder signalled a mouse release event.",
+                "queue": "EVENT_LOOP",
+                "members": [
+                    { "name": "platformEvent", "type": "PlatformMouseEvent" }
+                ]
+            },
+            {
+                "name": "HandleKeyPress",
+                "description": "The embedder signalled a key press event.",
+                "queue": "EVENT_LOOP",
+                "members": [
+                    { "name": "platformEvent", "type": "PlatformKeyboardEvent" }
+                ]
+            },
+            {
+                "name": "HandleWheelEvent",
+                "description": "The embedder signalled a mouse wheel event.",
+                "queue": "EVENT_LOOP",
+                "members": [
+                    { "name": "platformEvent", "type": "PlatformWheelEvent" }
+                ]
+            },
+            {
+                "name": "InitialNavigation",
+                "description": "Initiate the initial main frame navigation.",
+                "queue": "EVENT_LOOP",
+                "flags": ["HIDDEN", "CREATE_FROM_PAGE"],
+                "members": [
+                    { "name": "securityOrigin", "type": "SecurityOrigin" },
+                    { "name": "url", "type": "URL" },
+                    { "name": "referrer", "type": "String" }
+                ]
+            },
+            {
+                "name": "FetchPluginData",
+                "description": "Plugin data was requested through DOMPluginArray or DOMMimeTypeArray.",
+                "queue": "SCRIPT_MEMOIZED",
+                "members": [
+                    { "name": "pluginData", "type": "PluginData" }
+                ]
+            },
+            {
+                "name": "LogicalScrollPage",
+                "description": "The embedder signalled a logical scroll event.",
+                "queue": "EVENT_LOOP",
+                "members": [
+                    { "name": "direction", "type": "ScrollLogicalDirection" },
+                    { "name": "granularity", "type": "ScrollGranularity" }
+                ]
+            },
+            {
+                "name": "ScrollPage",
+                "description": "The embedder signalled a scroll event.",
+                "queue": "EVENT_LOOP",
+                "members": [
+                    { "name": "direction", "type": "ScrollDirection" },
+                    { "name": "granularity", "type": "ScrollGranularity" }
+                ]
+            }
+        ]
+    }
 }

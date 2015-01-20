@@ -5,17 +5,19 @@
         ]
     },
 
-    "inputs": [
-        {
-            "name": "SetRandomSeed",
-            "description": "Sets the PRNG seed used by Math.random().",
-            "queue": "SCRIPT_MEMOIZED",
-            "members": [
-                {
-                    "name": "randomSeed",
-                    "type": "double"
-                }
-            ]
-        }
-    ]
+    "inputs": {
+        "Test": [
+            {
+                "name": "SetRandomSeed",
+                "description": "Sets the PRNG seed used by Math.random().",
+                "queue": "SCRIPT_MEMOIZED",
+                "members": [
+                    {
+                        "name": "randomSeed",
+                        "type": "double"
+                    }
+                ]
+            }
+        ]
+    }
 }

@@ -32,13 +32,15 @@
 
 #if ENABLE(WEB_REPLAY)
 #include "InternalNamespaceImplIncludeDummy.h"
+#include "PlatformWheelEvent.h"
 #include <platform/ExternalNamespaceImplIncludeDummy.h>
 #include <platform/PlatformWheelEvent.h>
 
 namespace Test {
-HandleWheelEvent::HandleWheelEvent(std::unique_ptr<PlatformWheelEvent> platformEvent)
+HandleWheelEvent::HandleWheelEvent(std::unique_ptr<PlatformWheelEvent> platformEvent, PlatformWheelPhase phase)
     : EventLoopInput<HandleWheelEvent>()
     , m_platformEvent(WTF::move(platformEvent))
+    , m_phase(phase)
 {
 }
 
@@ -57,6 +59,7 @@ const String& InputTraits<Test::HandleWheelEvent>::type()
 void InputTraits<Test::HandleWheelEvent>::encode(EncodedValue& encodedValue, const Test::HandleWheelEvent& input)
 {
     encodedValue.put<WebCore::PlatformWheelEvent>(ASCIILiteral("platformEvent"), input.platformEvent());
+    encodedValue.put<Test::PlatformWheelPhase>(ASCIILiteral("phase"), input.phase());
 }
 
 bool InputTraits<Test::HandleWheelEvent>::decode(EncodedValue& encodedValue, std::unique_ptr<Test::HandleWheelEvent>& input)
@@ -65,22 +68,26 @@ bool InputTraits<Test::HandleWheelEvent>::decode(EncodedValue& encodedValue, std
     if (!encodedValue.get<WebCore::PlatformWheelEvent>(ASCIILiteral("platformEvent"), platformEvent))
         return false;
 
-    input = std::make_unique<Test::HandleWheelEvent>(WTF::move(platformEvent));
+    Test::PlatformWheelPhase phase;
+    if (!encodedValue.get<Test::PlatformWheelPhase>(ASCIILiteral("phase"), phase))
+        return false;
+
+    input = std::make_unique<Test::HandleWheelEvent>(WTF::move(platformEvent), phase);
     return true;
 }
 #if ENABLE(DUMMY_FEATURE)
-EncodedValue EncodingTraits<WebCore::PlatformWheelEventPhase>::encodeValue(const WebCore::PlatformWheelEventPhase& enumValue)
+EncodedValue EncodingTraits<Test::PlatformWheelPhase>::encodeValue(const Test::PlatformWheelPhase& enumValue)
 {
     EncodedValue encodedValue = EncodedValue::createArray();
-    if (enumValue & WebCore::PlatformWheelEventPhaseNone) {
+    if (enumValue & Test::PlatformWheelEventPhaseNone) {
         encodedValue.append<String>(ASCIILiteral("PlatformWheelEventPhaseNone"));
-        if (enumValue == WebCore::PlatformWheelEventPhaseNone)
+        if (enumValue == Test::PlatformWheelEventPhaseNone)
             return encodedValue;
     }
     return encodedValue;
 }
 
-bool EncodingTraits<WebCore::PlatformWheelEventPhase>::decodeValue(EncodedValue& encodedValue, WebCore::PlatformWheelEventPhase& enumValue)
+bool EncodingTraits<Test::PlatformWheelPhase>::decodeValue(EncodedValue& encodedValue, Test::PlatformWheelPhase& enumValue)
 {
     Vector<String> enumStrings;
     if (!EncodingTraits<Vector<String>>::decodeValue(encodedValue, enumStrings))
@@ -88,7 +95,7 @@ bool EncodingTraits<WebCore::PlatformWheelEventPhase>::decodeValue(EncodedValue&
 
     for (const String& enumString : enumStrings) {
         if (enumString == "PlatformWheelEventPhaseNone")
-            enumValue = static_cast<WebCore::PlatformWheelEventPhase>(enumValue | WebCore::PlatformWheelEventPhaseNone);
+            enumValue = static_cast<Test::PlatformWheelPhase>(enumValue | Test::PlatformWheelEventPhaseNone);
     }
 
     return true;

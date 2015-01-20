@@ -86,6 +86,9 @@ for %%d in (
 echo Copying Web Replay generated headers as if they were private headers...
 xcopy /y "%DerivedSourcesDirectory%\JSReplayInputs.h" "%PrivateHeadersDirectory%" >NUL
 
+echo Copying Web Replay specification files as if they were private headers...
+xcopy /y /d ..\replay\*.json "%PrivateHeadersDirectory%" >NUL
+
 echo Copying builtins header as if it were a private header...
 xcopy /y "%DerivedSourcesDirectory%\JSCBuiltins.h" "%PrivateHeadersDirectory%" >NUL
 xcopy /y "%DerivedSourcesDirectory%\Bytecodes.h" "%PrivateHeadersDirectory%" >NUL

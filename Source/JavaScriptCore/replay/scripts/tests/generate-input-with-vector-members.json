@@ -17,24 +17,26 @@
         ]
     },
 
-    "inputs": [
-        {
-            "name": "ArrayOfThings",
-            "description": "Supplies arrays of things.",
-            "queue": "SCRIPT_MEMOIZED",
-            "members": [
-                { "name": "doubles", "type": "double", "flags": ["VECTOR"] },
-                { "name": "jsthings", "type": "JSThing", "flags": ["VECTOR"] },
-                { "name": "webthings", "type": "WebThing", "flags": ["VECTOR"] }
-            ]
-        },
-        {
-            "name": "SavedHistory",
-            "description": "Save history items.",
-            "queue": "SCRIPT_MEMOIZED",
-            "members": [
-                { "name": "entries", "type": "HistoryItem", "flags": ["VECTOR"] }
-            ]
-        }
-    ]
+    "inputs": {
+        "Test": [
+            {
+                "name": "ArrayOfThings",
+                "description": "Supplies arrays of things.",
+                "queue": "SCRIPT_MEMOIZED",
+                "members": [
+                    { "name": "doubles", "type": "double", "flags": ["VECTOR"] },
+                    { "name": "jsthings", "type": "JSThing", "flags": ["VECTOR"] },
+                    { "name": "webthings", "type": "WebThing", "flags": ["VECTOR"] }
+                ]
+            },
+            {
+                "name": "SavedHistory",
+                "description": "Save history items.",
+                "queue": "SCRIPT_MEMOIZED",
+                "members": [
+                    { "name": "entries", "type": "HistoryItem", "flags": ["VECTOR"] }
+                ]
+            }
+        ]
+    }
 }

@@ -42,7 +42,7 @@ class ScalarInput2;
 } // namespace Test
 
 namespace JSC {
-template<> struct InputTraits<Test::ScalarInput1> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::ScalarInput1> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
     static const String& type();
 
@@ -50,7 +50,7 @@ template<> struct InputTraits<Test::ScalarInput1> {
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::ScalarInput1>&);
 };
 
-template<> struct InputTraits<Test::ScalarInput2> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::ScalarInput2> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
     static const String& type();
 
@@ -63,7 +63,7 @@ template<> struct InputTraits<Test::ScalarInput2> {
 namespace Test {
 class ScalarInput1 : public NondeterministicInput<ScalarInput1> {
 public:
-    ScalarInput1(ScalarType data);
+    TEST_EXPORT_MACRO ScalarInput1(ScalarType data);
     virtual ~ScalarInput1();
 
     ScalarType data() const { return m_data; }
@@ -73,7 +73,7 @@ private:
 
 class ScalarInput2 : public NondeterministicInput<ScalarInput2> {
 public:
-    ScalarInput2(ScalarType data);
+    TEST_EXPORT_MACRO ScalarInput2(ScalarType data);
     virtual ~ScalarInput2();
 
     ScalarType data() const { return m_data; }

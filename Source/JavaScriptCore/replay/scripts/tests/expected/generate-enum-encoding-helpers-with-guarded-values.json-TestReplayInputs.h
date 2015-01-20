@@ -44,25 +44,20 @@ class SavedMouseButton;
 } // namespace Test
 
 namespace JSC {
-template<> struct InputTraits<Test::SavedMouseButton> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::SavedMouseButton> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
     static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::SavedMouseButton&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::SavedMouseButton>&);
 };
-template<> struct EncodingTraits<WebCore::MouseButton> {
-    typedef WebCore::MouseButton DecodedType;
 
-    static EncodedValue encodeValue(const WebCore::MouseButton& value);
-    static bool decodeValue(EncodedValue&, WebCore::MouseButton& value);
-};
 } // namespace JSC
 
 namespace Test {
 class SavedMouseButton : public NondeterministicInput<SavedMouseButton> {
 public:
-    SavedMouseButton(MouseButton button);
+    TEST_EXPORT_MACRO SavedMouseButton(MouseButton button);
     virtual ~SavedMouseButton();
 
     MouseButton button() const { return m_button; }

@@ -32,14 +32,11 @@
 
 #if ENABLE(WEB_REPLAY)
 #include "InternalNamespaceHeaderIncludeDummy.h"
+#include "PlatformEvent.h"
 #include <platform/ExternalNamespaceHeaderIncludeDummy.h>
-#include <platform/PlatformEvent.h>
 
-namespace WebCore {
+namespace Test {
 enum MouseButton : unsigned;
-}
-
-namespace JSC {
 enum class InputQueue;
 }
 
@@ -49,39 +46,39 @@ class SavedMouseButton;
 } // namespace Test
 
 namespace JSC {
-template<> struct InputTraits<Test::SavedMouseButton> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::SavedMouseButton> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
     static const String& type();
 
     static void encode(JSC::EncodedValue&, const Test::SavedMouseButton&);
     static bool decode(JSC::EncodedValue&, std::unique_ptr<Test::SavedMouseButton>&);
 };
-template<> struct EncodingTraits<InputQueue> {
-    typedef InputQueue DecodedType;
+template<> struct TEST_EXPORT_MACRO EncodingTraits<Test::InputQueue> {
+    typedef Test::InputQueue DecodedType;
 
-    static EncodedValue encodeValue(const InputQueue& value);
-    static bool decodeValue(EncodedValue&, InputQueue& value);
+    static EncodedValue encodeValue(const Test::InputQueue& value);
+    static bool decodeValue(EncodedValue&, Test::InputQueue& value);
 };
 
-template<> struct EncodingTraits<WebCore::MouseButton> {
-    typedef WebCore::MouseButton DecodedType;
+template<> struct TEST_EXPORT_MACRO EncodingTraits<Test::MouseButton> {
+    typedef Test::MouseButton DecodedType;
 
-    static EncodedValue encodeValue(const WebCore::MouseButton& value);
-    static bool decodeValue(EncodedValue&, WebCore::MouseButton& value);
+    static EncodedValue encodeValue(const Test::MouseButton& value);
+    static bool decodeValue(EncodedValue&, Test::MouseButton& value);
 };
 
-template<> struct EncodingTraits<WebCore::PlatformEvent::Type> {
-    typedef WebCore::PlatformEvent::Type DecodedType;
+template<> struct TEST_EXPORT_MACRO EncodingTraits<Test::PlatformEvent::Type> {
+    typedef Test::PlatformEvent::Type DecodedType;
 
-    static EncodedValue encodeValue(const WebCore::PlatformEvent::Type& value);
-    static bool decodeValue(EncodedValue&, WebCore::PlatformEvent::Type& value);
+    static EncodedValue encodeValue(const Test::PlatformEvent::Type& value);
+    static bool decodeValue(EncodedValue&, Test::PlatformEvent::Type& value);
 };
 } // namespace JSC
 
 namespace Test {
 class SavedMouseButton : public NondeterministicInput<SavedMouseButton> {
 public:
-    SavedMouseButton(MouseButton button);
+    TEST_EXPORT_MACRO SavedMouseButton(MouseButton button);
     virtual ~SavedMouseButton();
 
     MouseButton button() const { return m_button; }

@@ -45,7 +45,7 @@ class SetRandomSeed;
 
 namespace JSC {
 #if ENABLE(DUMMY_FEATURE)
-template<> struct InputTraits<Test::GetCurrentTime> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::GetCurrentTime> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
     static const String& type();
 
@@ -54,7 +54,7 @@ template<> struct InputTraits<Test::GetCurrentTime> {
 };
 #endif // ENABLE(DUMMY_FEATURE)
 
-template<> struct InputTraits<Test::SetRandomSeed> {
+template<> struct TEST_EXPORT_MACRO InputTraits<Test::SetRandomSeed> {
     static InputQueue queue() { return InputQueue::ScriptMemoizedData; }
     static const String& type();
 
@@ -68,7 +68,7 @@ namespace Test {
 #if ENABLE(DUMMY_FEATURE)
 class GetCurrentTime : public NondeterministicInput<GetCurrentTime> {
 public:
-    GetCurrentTime(double currentTime);
+    TEST_EXPORT_MACRO GetCurrentTime(double currentTime);
     virtual ~GetCurrentTime();
 
     double currentTime() const { return m_currentTime; }
@@ -79,7 +79,7 @@ private:
 
 class SetRandomSeed : public NondeterministicInput<SetRandomSeed> {
 public:
-    SetRandomSeed(uint64_t randomSeed);
+    TEST_EXPORT_MACRO SetRandomSeed(uint64_t randomSeed);
     virtual ~SetRandomSeed();
 
     uint64_t randomSeed() const { return m_randomSeed; }
