@@ -297,6 +297,7 @@ bool RenderGrid::gridElementIsShrinkToFit()
 
 void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection direction, GridSizingData& sizingData, LayoutUnit& availableLogicalSpace)
 {
+    const LayoutUnit initialAvailableLogicalSpace = availableLogicalSpace;
     Vector<GridTrack>& tracks = (direction == ForColumns) ? sizingData.columnTracks : sizingData.rowTracks;
     Vector<unsigned> flexibleSizedTracksIndex;
     sizingData.contentSizedTracksIndex.shrink(0);
@@ -334,8 +335,7 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
     if (!hasUndefinedRemainingSpace && availableLogicalSpace <= 0)
         return;
 
-    // 3. Grow all Grid tracks in GridTracks from their UsedBreadth up to their MaxBreadth value until
-    // availableLogicalSpace (RemainingSpace in the specs) is exhausted.
+    // 3. Grow all Grid tracks in GridTracks from their UsedBreadth up to their MaxBreadth value until availableLogicalSpace is exhausted.
     if (!hasUndefinedRemainingSpace) {
         const unsigned tracksSize = tracks.size();
         Vector<GridTrack*> tracksForDistribution(tracksSize);
@@ -354,7 +354,7 @@ void RenderGrid::computeUsedBreadthOfGridTracks(GridTrackSizingDirection directi
     // 4. Grow all Grid tracks having a fraction as the MaxTrackSizingFunction.
     double normalizedFractionBreadth = 0;
     if (!hasUndefinedRemainingSpace)
-        normalizedFractionBreadth = computeNormalizedFractionBreadth(tracks, GridSpan(0, tracks.size() - 1), direction, availableLogicalSpace);
+        normalizedFractionBreadth = computeNormalizedFractionBreadth(tracks, GridSpan(0, tracks.size() - 1), direction, initialAvailableLogicalSpace);
     else {
         for (auto trackIndex : flexibleSizedTracksIndex) {
             const GridTrackSize& trackSize = gridTrackSize(direction, trackIndex);
@@ -421,17 +421,19 @@ LayoutUnit RenderGrid::computeUsedBreadthOfSpecifiedLength(GridTrackSizingDirect
     return valueForLength(trackLength, direction == ForColumns ? logicalWidth() : computeContentLogicalHeight(style().logicalHeight()));
 }
 
-double RenderGrid::computeNormalizedFractionBreadth(Vector<GridTrack>& tracks, const GridSpan& tracksSpan, GridTrackSizingDirection direction, LayoutUnit availableLogicalSpace) const
+double RenderGrid::computeNormalizedFractionBreadth(Vector<GridTrack>& tracks, const GridSpan& tracksSpan, GridTrackSizingDirection direction, LayoutUnit spaceToFill) const
 {
-    // |availableLogicalSpace| already accounts for the used breadths so no need to remove it here.
-
+    LayoutUnit allocatedSpace;
     Vector<GridTrackForNormalization> tracksForNormalization;
     for (auto& position : tracksSpan) {
+        GridTrack& track = tracks[position.toInt()];
+        allocatedSpace += track.m_usedBreadth;
+
         const GridTrackSize& trackSize = gridTrackSize(direction, position.toInt());
         if (!trackSize.maxTrackBreadth().isFlex())
             continue;
 
-        tracksForNormalization.append(GridTrackForNormalization(tracks[position.toInt()], trackSize.maxTrackBreadth().flex()));
+        tracksForNormalization.append(GridTrackForNormalization(track, trackSize.maxTrackBreadth().flex()));
     }
 
     // The function is not called if we don't have <flex> grid tracks
@@ -447,7 +449,7 @@ double RenderGrid::computeNormalizedFractionBreadth(Vector<GridTrack>& tracks, c
     // fit into availableLogicalSpaceIgnoringFractionTracks.
     double accumulatedFractions = 0;
     LayoutUnit fractionValueBasedOnGridItemsRatio = 0;
-    LayoutUnit availableLogicalSpaceIgnoringFractionTracks = availableLogicalSpace;
+    LayoutUnit availableLogicalSpaceIgnoringFractionTracks = spaceToFill - allocatedSpace;
 
     for (auto& track : tracksForNormalization) {
         if (track.m_normalizedFlexValue > fractionValueBasedOnGridItemsRatio) {

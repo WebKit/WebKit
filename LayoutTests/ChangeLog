@@ -1,3 +1,14 @@
+2015-01-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Wrong arguments passed to computeNormalizedFractionBreadth
+        https://bugs.webkit.org/show_bug.cgi?id=139058
+
+        Reviewed by Andreas Kling.
+
+        * TestExpectations: Removed the test added in r148643 (missing
+        from r148642) as the test works as expected now.
+        * fast/css-grid-layout/flex-and-minmax-content-resolution-rows.html:
+
 2015-01-19  Michael Saboff  <msaboff@apple.com>
 
         Re-enable js/dom/string-replace-exception-crash.html as root problem is fixed.

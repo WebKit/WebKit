@@ -1,3 +1,26 @@
+2015-01-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Wrong arguments passed to computeNormalizedFractionBreadth
+        https://bugs.webkit.org/show_bug.cgi?id=139058
+
+        Reviewed by Andreas Kling.
+
+        The method RenderGrid::computeNormalizedFractionBreadth() is
+        supposed to get as fourth argument either the grid element's
+        content box size or the max-size of a particular grid item. For
+        the former we were incorrectly passing the free space after
+        distributing the available space to tracks.
+
+        Apart from that, that method has a bug in its implementation. As
+        we were using the free space instead of the grid element's content
+        box size, we didn't have to subtract the usedBreadth of grid
+        tracks from the passed in value. That did not work for the case of
+        the caller passing the max-size of a particular item.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeUsedBreadthOfGridTracks):
+        (WebCore::RenderGrid::computeNormalizedFractionBreadth):
+
 2015-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Flip the switch on
