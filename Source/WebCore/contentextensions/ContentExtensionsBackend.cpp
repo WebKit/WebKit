@@ -137,7 +137,7 @@ bool ContentExtensionsBackend::shouldBlockURL(const URL& url)
             Vector<uint64_t> sortedActions;
             copyToVector(triggeredActions, sortedActions);
             std::sort(sortedActions.begin(), sortedActions.end());
-            uint64_t lastAction = sortedActions.last();
+            size_t lastAction = static_cast<size_t>(sortedActions.last());
             if (compiledContentExtension.ruleList[lastAction].action().type == ExtensionActionType::BlockLoad)
                 return true;
         }

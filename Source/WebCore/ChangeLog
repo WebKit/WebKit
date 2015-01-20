@@ -1,3 +1,10 @@
+2015-01-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Attempt to fix 32bits builds after r178743
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::shouldBlockURL):
+
 2015-01-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         put_by_val_direct need to check the property is index or not for using putDirect / putDirectIndex
