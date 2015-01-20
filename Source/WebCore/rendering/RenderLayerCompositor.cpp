@@ -88,7 +88,9 @@ WEBCORE_EXPORT bool WebCoreHas3DRendering = true;
 
 namespace WebCore {
 
+#if !USE(COMPOSITING_FOR_SMALL_CANVASES)
 static const int canvasAreaThresholdRequiringCompositing = 50 * 100;
+#endif
 // During page loading delay layer flushes up to this many seconds to allow them coalesce, reducing workload.
 #if PLATFORM(IOS)
 static const double throttledLayerFlushInitialDelay = .5;

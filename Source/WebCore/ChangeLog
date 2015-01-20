@@ -1,5 +1,14 @@
 2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix unused-const-variable warning in RenderLayerCompositor.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=140678
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderLayerCompositor.cpp:
+
+2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
+
         [gstreamer] Fix expression result unused warning in GRefPtrGStreamer.cpp
         https://bugs.webkit.org/show_bug.cgi?id=140671
 
