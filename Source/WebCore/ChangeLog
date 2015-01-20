@@ -1,5 +1,21 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173688.
+
+    2014-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+            filterRootById accidentally clears inAdjacentChain flag
+            https://bugs.webkit.org/show_bug.cgi?id=136851
+
+            Reviewed by Benjamin Poulain.
+
+            Test: fast/selectors/filter-root-node-with-selector-contains-adjacents.html
+
+            * dom/SelectorQuery.cpp:
+            (WebCore::filterRootById):
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r173504.
 
     2014-09-10  Timothy Horton  <timothy_horton@apple.com>
