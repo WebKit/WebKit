@@ -95,7 +95,9 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
     m_findIndicatorOverlay->setFrame(matchRect);
     m_findIndicatorOverlay->setNeedsDisplay();
 
-    m_webPage->zoomToRect(matchRect, m_webPage->minimumPageScaleFactor(), std::min(m_webPage->maximumPageScaleFactor(), maximumFindIndicatorZoom));
+    if (isShowingOverlay || shouldAnimate)
+        m_webPage->zoomToRect(matchRect, m_webPage->minimumPageScaleFactor(), std::min(m_webPage->maximumPageScaleFactor(), maximumFindIndicatorZoom));
+
     m_findIndicatorRect = matchRect;
     m_isShowingFindIndicator = true;
     

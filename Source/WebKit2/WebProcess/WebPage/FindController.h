@@ -68,6 +68,8 @@ public:
 
     void deviceScaleFactorDidChange();
 
+    void redraw();
+
 private:
     // PageOverlay::Client.
     virtual void pageOverlayDestroyed(WebCore::PageOverlay&);

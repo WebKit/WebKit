@@ -3478,6 +3478,7 @@ void WebPage::mainFrameDidLayout()
             viewportConfigurationChanged();
         }
     }
+    m_findController.redraw();
 #endif
 }
 

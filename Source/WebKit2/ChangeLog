@@ -1,3 +1,19 @@
+2015-01-20  Martin Hock  <mhock@apple.com>
+
+        [iOS][WK2] Redraw find-in-page indicator on rotation
+        https://bugs.webkit.org/show_bug.cgi?id=140632
+        <rdar://problem/18858394>
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::redraw): Add method to redraw find indicator (only used by iOS).
+        * WebProcess/WebPage/FindController.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mainFrameDidLayout):
+        * WebProcess/WebPage/ios/FindControllerIOS.mm:
+        (WebKit::FindController::updateFindIndicator): Redraw should not trigger zoom.
+
 2015-01-20  David Kilzer  <ddkilzer@apple.com>
 
         Switch to comparing PLATFORM_NAME in terms of macosx

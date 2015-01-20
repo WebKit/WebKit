@@ -369,6 +369,18 @@ void FindController::deviceScaleFactorDidChange()
     updateFindIndicator(*selectedFrame, true, false);
 }
 
+void FindController::redraw()
+{
+    if (!m_isShowingFindIndicator)
+        return;
+
+    Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
+    if (!selectedFrame)
+        return;
+
+    updateFindIndicator(*selectedFrame, isShowingOverlay(), false);
+}
+
 Vector<IntRect> FindController::rectsForTextMatches()
 {
     Vector<IntRect> rects;
