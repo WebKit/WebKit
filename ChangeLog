@@ -1,3 +1,19 @@
+2015-01-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Fix cmake warning
+        https://bugs.webkit.org/show_bug.cgi?id=140497
+
+        Reviewed by Gustavo Noronha Silva.
+
+        r173155 already tried to fix cmake warning though, the warning is still exist.
+        CMAKE_LINK_INTERFACE_LIBRARIES seems to cause this warning. Individual target is
+        already set for their libraries though, INTERFACE_LINK_LIBRARIES contains the list
+        of transitive link dependencies, and CMAKE_LINK_INTERFACE_LIBRARIES can override
+        the INTERFACE_LINK_LIBRARIES property when CMP0022 is not set. CMake warns this override.
+        To avoid it, EFL port doesn't set CMAKE_LINK_INTERFACE_LIBRARIES.
+
+        * CMakeLists.txt:
+
 2015-01-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Generate the make dist manifest from a CMake template file

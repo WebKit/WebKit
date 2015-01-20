@@ -32,9 +32,6 @@ if (NOT DEFINED ENABLE_TOOLS AND EXISTS ${TOOLS_DIR})
     set(ENABLE_TOOLS ON)
 endif ()
 
-# Do not create transitive library dependencies by default
-set(CMAKE_LINK_INTERFACE_LIBRARIES "")
-
 include(WebKitMacros)
 include(WebKitFS)
 include(WebKitHelpers)
