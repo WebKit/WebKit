@@ -145,6 +145,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/StyleProperties.h>
 #include <WebCore/SubframeLoader.h>
 #include <WebCore/SubstituteData.h>
 #include <WebCore/TextIterator.h>
@@ -762,10 +763,17 @@ EditorState WebPage::editorState() const
                 result.typingAttributes |= AttributeBold;
             if (traits & kCTFontTraitItalic)
                 result.typingAttributes |= AttributeItalics;
-            
-            if (style->textDecorationsInEffect() & TextDecorationUnderline)
-                result.typingAttributes |= AttributeUnderline;
-            
+
+            RefPtr<EditingStyle> typingStyle = frame.selection().typingStyle();
+            if (typingStyle && typingStyle->style()) {
+                String value = typingStyle->style()->getPropertyValue(CSSPropertyWebkitTextDecorationsInEffect);
+                if (value.contains("underline"))
+                    result.typingAttributes |= AttributeUnderline;
+            } else {
+                if (style->textDecorationsInEffect() & TextDecorationUnderline)
+                    result.typingAttributes |= AttributeUnderline;
+            }
+
             if (nodeToRemove)
                 nodeToRemove->remove(ASSERT_NO_EXCEPTION);
         }
