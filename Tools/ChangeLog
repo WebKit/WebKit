@@ -1,3 +1,16 @@
+2015-01-20  David Kilzer  <ddkilzer@apple.com>
+
+        configure-xcode-for-ios-development needs to update iPhoneOS SDK
+        <http://webkit.org/b/140661>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/configure-xcode-for-ios-development: Add for() loop to
+        run createXcodeSpecificationFilesForSDKIfNeeded() for both
+        "iphoneos" and "iphonesimulator" SDKs.
+        (createXcodeSpecificationFilesForSDKIfNeeded): Extracted from
+        the main body of the script.
+
 2015-01-20  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Add API to set the web view editable into WebKit2 GTK+ API

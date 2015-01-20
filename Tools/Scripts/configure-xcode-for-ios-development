@@ -38,12 +38,14 @@ use File::Find;
 use File::Spec;
 use File::Temp qw(tempfile);
 
+sub createXcodeSpecificationFilesForSDKIfNeeded($);
 sub createXcodeSpecificationFromSpecificationAndId($$$);
 sub readXcodeSpecificationById($$);
 sub xcodeSDKSpecificationsPath($);
 
 use constant COMMAND_LINE_PACKAGE_TYPE => "com.apple.package-type.mach-o-executable";
 use constant COMMAND_LINE_PRODUCT_TYPE => "com.apple.product-type.tool";
+use constant SDK_TO_XCSPEC_NAME_MAP => +{ "iphoneos" => "iPhoneOS", "iphonesimulator" => "iPhone Simulator " };
 
 # FIXME: We should only require running as root if needed. It's not necessary to run as root if
 #        Xcode was installed by the user, say via a download from <http://developer.apple.com>.
@@ -52,60 +54,70 @@ if ($EFFECTIVE_USER_ID) {
     exit 1;
 }
 
-my $iosSimulatorSDKSpecificationsPath = xcodeSDKSpecificationsPath("iphonesimulator");
-
-my @xcodeSpecificationFiles;
-sub wanted
-{
-    my $file = $_;
-
-    # Ignore hidden files/directories.
-    if ($file =~ /^\../) {
-        $File::Find::prune = 1;
-        return;
-    }
-
-    if (!-f $file || $file !~ /\.xcspec$/) {
-        return;
-    }
-
-    push @xcodeSpecificationFiles, $File::Find::name;
-}
-
-find(\&wanted, $iosSimulatorSDKSpecificationsPath);
-
-my $hasPackageTypeForCommandLineTool;
-my $hasProductTypeForCommandLineTool;
-foreach my $specificationFile (@xcodeSpecificationFiles) {
-    last if $hasPackageTypeForCommandLineTool && $hasProductTypeForCommandLineTool;
-    if (!$hasPackageTypeForCommandLineTool && readXcodeSpecificationById($specificationFile, COMMAND_LINE_PACKAGE_TYPE)) {
-        $hasPackageTypeForCommandLineTool = 1;
-        next;
-    }
-    if (!$hasProductTypeForCommandLineTool && readXcodeSpecificationById($specificationFile, COMMAND_LINE_PRODUCT_TYPE)) {
-        $hasProductTypeForCommandLineTool = 1;
-        next;
-    }
-}
-
-if ($hasPackageTypeForCommandLineTool && $hasProductTypeForCommandLineTool) {
-    exit 0; # Xcode knows how to build a command line tool for the iOS Simulator.
-}
-
-my $macosxSDKSpecificationsPath = xcodeSDKSpecificationsPath("macosx");
-if (!$hasPackageTypeForCommandLineTool) {
-    my $packageTypesForMacOSXPath = File::Spec->catfile($macosxSDKSpecificationsPath, "MacOSX Package Types.xcspec");
-    my $packageTypesForWebKitDevelopmentPath = File::Spec->catfile($iosSimulatorSDKSpecificationsPath, "iPhone Simulator PackageTypes For WebKit Development.xcspec");
-    createXcodeSpecificationFromSpecificationAndId($packageTypesForWebKitDevelopmentPath, $packageTypesForMacOSXPath, COMMAND_LINE_PACKAGE_TYPE);
-}
-
-if (!$hasProductTypeForCommandLineTool) {
-    my $productTypesForMacOSXPath = File::Spec->catfile($macosxSDKSpecificationsPath, "MacOSX Product Types.xcspec");
-    my $productTypesForWebKitDevelopmentPath = File::Spec->catfile($iosSimulatorSDKSpecificationsPath, "iPhone Simulator ProductTypes For WebKit Development.xcspec");
-    createXcodeSpecificationFromSpecificationAndId($productTypesForWebKitDevelopmentPath, $productTypesForMacOSXPath, COMMAND_LINE_PRODUCT_TYPE);
+for my $sdk (qw(iphoneos iphonesimulator)) {
+    createXcodeSpecificationFilesForSDKIfNeeded($sdk);
 }
 
 exit 0;
+
+sub createXcodeSpecificationFilesForSDKIfNeeded($)
+{
+    my ($sdk) = @_;
+    my $sdkSpecificationsPath = xcodeSDKSpecificationsPath($sdk);
+
+    local @::xcodeSpecificationFiles;
+    sub wanted
+    {
+        my $file = $_;
+
+        # Ignore hidden files/directories.
+        if ($file =~ /^\../) {
+            $File::Find::prune = 1;
+            return;
+        }
+
+        if (!-f $file || $file !~ /\.xcspec$/) {
+            return;
+        }
+
+        push @::xcodeSpecificationFiles, $File::Find::name;
+    }
+
+    find(\&wanted, $sdkSpecificationsPath);
+
+    my $hasPackageTypeForCommandLineTool;
+    my $hasProductTypeForCommandLineTool;
+    foreach my $specificationFile (@::xcodeSpecificationFiles) {
+        last if $hasPackageTypeForCommandLineTool && $hasProductTypeForCommandLineTool;
+        if (!$hasPackageTypeForCommandLineTool && readXcodeSpecificationById($specificationFile, COMMAND_LINE_PACKAGE_TYPE)) {
+            $hasPackageTypeForCommandLineTool = 1;
+            next;
+        }
+        if (!$hasProductTypeForCommandLineTool && readXcodeSpecificationById($specificationFile, COMMAND_LINE_PRODUCT_TYPE)) {
+            $hasProductTypeForCommandLineTool = 1;
+            next;
+        }
+    }
+
+    if ($hasPackageTypeForCommandLineTool && $hasProductTypeForCommandLineTool) {
+        return; # Xcode knows how to build a command line tool for $sdk.
+    }
+
+    my $fileNamePrefix = SDK_TO_XCSPEC_NAME_MAP->{$sdk};
+
+    my $macosxSDKSpecificationsPath = xcodeSDKSpecificationsPath("macosx");
+    if (!$hasPackageTypeForCommandLineTool) {
+        my $packageTypesForMacOSXPath = File::Spec->catfile($macosxSDKSpecificationsPath, "MacOSX Package Types.xcspec");
+        my $packageTypesForWebKitDevelopmentPath = File::Spec->catfile($sdkSpecificationsPath, "${fileNamePrefix}PackageTypes For WebKit Development.xcspec");
+        createXcodeSpecificationFromSpecificationAndId($packageTypesForWebKitDevelopmentPath, $packageTypesForMacOSXPath, COMMAND_LINE_PACKAGE_TYPE);
+    }
+
+    if (!$hasProductTypeForCommandLineTool) {
+        my $productTypesForMacOSXPath = File::Spec->catfile($macosxSDKSpecificationsPath, "MacOSX Product Types.xcspec");
+        my $productTypesForWebKitDevelopmentPath = File::Spec->catfile($sdkSpecificationsPath, "${fileNamePrefix}ProductTypes For WebKit Development.xcspec");
+        createXcodeSpecificationFromSpecificationAndId($productTypesForWebKitDevelopmentPath, $productTypesForMacOSXPath, COMMAND_LINE_PRODUCT_TYPE);
+    }
+}
 
 sub writeXcodeSpecification($$)
 {
