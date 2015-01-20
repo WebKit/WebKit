@@ -1,3 +1,27 @@
+2015-01-20  Benjamin Poulain  <benjamin@webkit.org>
+
+        Resolve the epsilon transitions for each state upfront instead of dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=140654
+
+        Reviewed by Andreas Kling.
+
+        Instead of recomputing the epsilon-closure for each set, we compute the closure
+        of every element at the beginning of the transformation.
+
+        We then remove the epsilon transitions from the NFA to simplify populateTransitions().
+        The epsilon transitions are still there, but they are now in a separate graph we use
+        in parallel.
+
+        * contentextensions/NFAToDFA.cpp:
+        (WebCore::ContentExtensions::epsilonClosureExcludingSelf):
+        (WebCore::ContentExtensions::resolveEpsilonClosures):
+        (WebCore::ContentExtensions::extendSetWithClosure):
+        (WebCore::ContentExtensions::populateTransitions):
+        (WebCore::ContentExtensions::NFAToDFA::convert):
+        (WebCore::ContentExtensions::epsilonClosure): Deleted.
+        (WebCore::ContentExtensions::populateTransitionsExcludingEpsilon): Deleted.
+        * contentextensions/NFAToDFA.h:
+
 2015-01-20  Chris Dumez  <cdumez@apple.com>
 
         Log types of resources being loaded using DiagnosticLoggingClient
