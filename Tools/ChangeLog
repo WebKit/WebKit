@@ -1,3 +1,11 @@
+2015-01-20  Sam Weinig  <sam@webkit.org>
+
+        Attempt to fix Mountain Lion and EFL tests.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        Disable Process-per-tab and network process on Mountain Lion and EFL.
+
 2015-01-20  Darin Adler  <darin@apple.com>
 
         Remove SVGElementInstanceList, m_instanceUnderMouse, DUMP_INSTANCE_TREE, DUMP_SHADOW_TREE
