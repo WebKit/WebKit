@@ -28,6 +28,8 @@
 #include "BasicBlockLocation.h"
 
 #include "CCallHelpers.h"
+#include <climits>
+#include <wtf/DataLog.h>
 
 namespace JSC {
 

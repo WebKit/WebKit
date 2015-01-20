@@ -1,3 +1,14 @@
+2015-01-20  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Cannot compile 2.7.3 on PowerPC machines
+        https://bugs.webkit.org/show_bug.cgi?id=140616
+
+        Include climits for INT_MAX and wtf/DataLog.h for dataLogF
+
+        Reviewed by Csaba Osztrogonác.
+
+        * runtime/BasicBlockLocation.cpp:
+
 2015-01-19  Michael Saboff  <msaboff@apple.com>
 
         A "cached" null setter should throw a TypeException when called in strict mode and doesn't
