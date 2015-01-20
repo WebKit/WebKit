@@ -416,9 +416,10 @@ HRESULT UIDelegate::webViewAddMessageToConsole(IWebView* /*sender*/, BSTR messag
     wstring newMessage;
     if (message) {
         newMessage = message;
-        size_t fileProtocol = newMessage.find(L"file://");
+        const std::wstring fileURL(L"file://");
+        size_t fileProtocol = newMessage.find(fileURL);
         if (fileProtocol != wstring::npos)
-            newMessage = newMessage.substr(0, fileProtocol) + lastPathComponent(newMessage.substr(fileProtocol));
+            newMessage = newMessage.substr(0, fileProtocol) + lastPathComponent(newMessage.substr(fileProtocol + fileURL.size()));
     }
 
     printf("CONSOLE MESSAGE: ");

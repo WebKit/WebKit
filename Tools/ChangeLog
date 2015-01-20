@@ -1,3 +1,14 @@
+2015-01-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Layout Test fast/xmlhttprequest/xmlhttprequest-no-file-access.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=140665
+
+        Reviewed by Brian Burg.
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::webViewAddMessageToConsole): Correct string search and concatenation to
+        match expected test output.
+
 2015-01-19  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the support for custom suffixes on ChangeLog
