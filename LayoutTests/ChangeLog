@@ -1,3 +1,15 @@
+2015-01-20  Jeremy Jones  <jeremyj@apple.com>
+
+        [mac] Fix test expectations after r178188
+        https://bugs.webkit.org/show_bug.cgi?id=140641
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove references to removed tests.
+
+        * platform/mac/TestExpectations:
+        removed reference to fast/workers/storage/use-same-database-in-page-and-workers.html
+
 2015-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         fast/hidpi/image-srcset-change-dynamically-from-js-2x.html is flaky

@@ -317,8 +317,6 @@ fast/events/constructors/device-proximity-event-constructor.html
 
 webkit.org/b/81410 scrollbars/scrollbar-middleclick-nopaste.html
 
-webkit.org/b/81618 fast/workers/storage/use-same-database-in-page-and-workers.html [ Pass Timeout ]
-
 # Has failed since its introduction in r105826.
 webkit.org/b/61630 fast/events/dropzone-005.html [ Failure ]
 
