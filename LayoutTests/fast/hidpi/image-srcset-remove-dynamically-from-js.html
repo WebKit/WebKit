@@ -3,12 +3,11 @@
 <script>
     window.targetScaleFactor = 1;
 </script>
-<script src="resources/srcset-helper.js"></script>
+<script src="../../resources/srcset-helper.js"></script>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.dumpAsText();
-    }
 
     function updateSrc() {
         var img = document.getElementById("foo");
@@ -19,9 +18,11 @@
     addEventListener("DOMContentLoaded", function() {
         updateSrc();
     }, false);
-    addEventListener("load", function() {
+
+    function runTest()
+    {
         shouldBeTrue('document.getElementById("foo").clientWidth==200');
-    }, false);
+    }
 </script>
 </head>
 <body id="body">

@@ -1,3 +1,64 @@
+2015-01-20  Alexey Proskuryakov  <ap@apple.com>
+
+        fast/hidpi/image-srcset-change-dynamically-from-js-2x.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=140649
+
+        fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html is failing on some bots
+        https://bugs.webkit.org/show_bug.cgi?id=134769
+
+        Reviewed by Darin Adler.
+
+        Streamline resources/srcset-helper.js and remove races.
+
+        * TestExpectations: Unskip fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html.
+
+        * fast/hidpi/resources/srcset-helper.js: Deleted. We aleady had a copy in /resources,
+        no need for two copies.
+
+        * resources/srcset-helper.js: This script used to depend on setBackingScaleFactor
+        invoke its callback really fast, which is not guaranteed. Also, it had broken logic
+        that used non-existent window.deviceScaleFactor.
+
+        * fast/dom/HTMLImageElement/sizes/image-sizes-2x.html:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-js-change-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml.html:
+        Updated to run the tests from runTest() function, not a load event handler.
+        Where appropriate, changed from testRunner.dumpResourceLoadCallbacks() to
+        testRunner.dumpResourceResponseMIMETypes(), because the latter doesn't unnecessarily
+        include reloaded scripts. It feels somewhat hacky, but the hack is already used in
+        fast/hidpi, and it improves output.
+
+        * fast/hidpi/image-srcset-change-dynamically-from-js-1x.html:
+        * fast/hidpi/image-srcset-change-dynamically-from-js-2x.html:
+        * fast/hidpi/image-srcset-fraction-1.5x.html:
+        * fast/hidpi/image-srcset-fraction.html:
+        * fast/hidpi/image-srcset-intrinsic-size.html:
+        * fast/hidpi/image-srcset-invalid-descriptor.html:
+        * fast/hidpi/image-srcset-invalid-inputs-except-one.html:
+        * fast/hidpi/image-srcset-nomodifier.html:
+        * fast/hidpi/image-srcset-only-src-attribute.html:
+        * fast/hidpi/image-srcset-remove-dynamically-from-js.html:
+        * fast/hidpi/image-srcset-same-alternative-for-both-attributes.html:
+        * fast/hidpi/image-srcset-simple-1x.html:
+        * fast/hidpi/image-srcset-simple-2x.html:
+        * fast/hidpi/image-srcset-space-left-nomodifier.html:
+        * fast/hidpi/image-srcset-space-prefix-nomodifier.html:
+        * fast/hidpi/image-srcset-space-suffix-nomodifier.html:
+        * fast/hidpi/image-srcset-space-surrounded-nomodifier.html:
+        * fast/hidpi/image-srcset-src-selection-1x-both.html:
+        * fast/hidpi/image-srcset-src-selection-1x.html:
+        * fast/hidpi/image-srcset-src-selection-2x.html:
+        * fast/hidpi/image-srcset-viewport-modifiers.html:
+        Updated to run the tests from runTest() function, not a load event handler.
+
+        * http/tests/loading/sizes/preload-image-sizes-2x-expected.txt: Updated results
+        for srcset-helper.js now always starting the redirect after the load is fully finished.
+
+        * svg/css/svg-resource-fragment-identifier-img-src.html: Updated for the unified
+        location of the script.
+
 2015-01-20  Darin Adler  <darin@apple.com>
 
         Remove SVGElementInstanceList, m_instanceUnderMouse, DUMP_INSTANCE_TREE, DUMP_SHADOW_TREE

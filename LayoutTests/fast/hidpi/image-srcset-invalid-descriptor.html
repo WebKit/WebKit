@@ -3,17 +3,17 @@
 <script>
     window.targetScaleFactor = 1;
 </script>
-<script src="resources/srcset-helper.js"></script>
+<script src="../../resources/srcset-helper.js"></script>
 <script src="../../resources/js-test.js"></script>
 <script>
-    addEventListener("load", function() {
+    function runTest() {
         shouldBe('document.getElementById("invalid_with_x").clientWidth', '100');
         shouldBe('document.getElementById("invalid_without_x").clientWidth', '100');
         shouldBe('document.getElementById("future_descriptor").clientWidth', '100');
         shouldBe('document.getElementById("future_descriptor_without_x").clientWidth', '100');
         shouldBe('document.getElementById("x_with_w_ignored").clientWidth', '200');
         shouldBe('document.getElementById("x_with_h_ignored").clientWidth', '200');
-    }, false);
+    }
 </script>
 </head>
 

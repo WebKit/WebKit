@@ -3,13 +3,14 @@
 <script>
     window.targetScaleFactor = 2.5;
 </script>
-<script src="resources/srcset-helper.js"></script>
+<script src="../../resources/srcset-helper.js"></script>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-    addEventListener("load", function() {
+    function runTest()
+    {
         if (internals)
             shouldBeTrue('document.getElementById("testimg").clientWidth==200');
-    }, false);
+    }
 </script>
 </head>
 <body>

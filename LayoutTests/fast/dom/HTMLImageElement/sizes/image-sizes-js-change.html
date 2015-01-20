@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<script src="../../../hidpi/resources/srcset-helper.js"></script>
+<script src="../../../../resources/srcset-helper.js"></script>
 <script src="../../../../resources/js-test.js"></script>
 <script src="../resources/currentSrcHelper.js"></script>
 <script>
@@ -16,12 +16,14 @@
     }
 
     addEventListener("DOMContentLoaded", function() {
-        if (window.testRunner && sessionStorage.pageReloaded)
-            testRunner.dumpResourceLoadCallbacks();
+        if (sessionStorage.pageReloaded)
+            testRunner.dumpResourceResponseMIMETypes();
         updateSrc();
     }, false);
-    addEventListener("load", function() {
+
+    function runTest()
+    {
         shouldBe('currentSrcFileName("foo")', '"image-set-4x.png"');
-    }, false);
+    }
 </script>
 <img id="foo">

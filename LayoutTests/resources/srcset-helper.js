@@ -1,33 +1,33 @@
-function runTest() {
+window.addEventListener("load", function () {
     if (!window.testRunner || !window.sessionStorage)
         return;
 
     if (!window.targetScaleFactor)
         window.targetScaleFactor = 2;
 
-    if(!sessionStorage.pageReloaded && window.targetScaleFactor == window.deviceScaleFactor)
-        return;
+    var needsBackingScaleFactorChange = window.targetScaleFactor != 1 && !sessionStorage.pageReloaded;
 
-    if (!sessionStorage.scaleFactorIsSet) {
+    if (needsBackingScaleFactorChange) {
         testRunner.waitUntilDone();
-        testRunner.setBackingScaleFactor(targetScaleFactor, scaleFactorIsSet);
+        testRunner.setBackingScaleFactor(targetScaleFactor, function() {
+            // Right now there is a bug that srcset does not properly deal with dynamic changes to the scale factor,
+            // so to work around that, we must reload the page to get the new image.
+            sessionStorage.pageReloaded = true;
+            setTimeout(function() { document.location.reload(true) }, 0);
+        });
+        return;
     }
 
-    if (sessionStorage.pageReloaded && sessionStorage.scaleFactorIsSet) {
-        delete sessionStorage.pageReloaded;
-        delete sessionStorage.scaleFactorIsSet;
-        if (!window.manualNotifyDone)
-            testRunner.notifyDone();
-    } else {
-        // Right now there is a bug that srcset does not properly deal with dynamic changes to the scale factor,
-        // so to work around that, we must reload the page to get the new image.
-        sessionStorage.pageReloaded = true;
-        document.location.reload(true);
+    try {
+        if (window.runTest)
+            runTest();
+    } catch (ex) {
+        testFailed("Uncaught exception" + ex);
     }
-}
 
-function scaleFactorIsSet() {
-    sessionStorage.scaleFactorIsSet = true;
-}
+    var didReload = sessionStorage.pageReloaded;
+    delete sessionStorage.pageReloaded;
 
-window.addEventListener("load", runTest, false);
+    if (didReload)
+        testRunner.notifyDone();
+});

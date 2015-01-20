@@ -2,14 +2,15 @@
 <script>
     window.targetScaleFactor = 2;
 </script>
-<script src="../../../hidpi/resources/srcset-helper.js"></script>
+<script src="../../../../resources/srcset-helper.js"></script>
 <script src="../../../../resources/js-test.js"></script>
 <script src="../resources/currentSrcHelper.js"></script>
 <script>
     if (window.testRunner)
         testRunner.dumpAsText();
 
-    addEventListener("load", function() {
+    function runTest()
+    {
         shouldBe('document.getElementById("simple").clientWidth', 'window.innerWidth');
         shouldBe('currentSrcFileName("simple")', '"image-set-2x.png"');
         shouldBe('document.getElementById("small_sizes").clientWidth', '300');
@@ -34,7 +35,7 @@
         shouldBe('currentSrcFileName("half_size")', '"image-set-2x.png"');
         shouldBe('document.getElementById("infitisimal_sizes").clientWidth', '(window.innerWidth/100)');
         shouldBe('currentSrcFileName("infitisimal_sizes")', '"image-set-2x.png"');
-    }, false);
+    }
 </script>
 <img id="simple" src="" sizes="(max-width: 300px) 400px, 800px" srcset="../../../hidpi/resources/image-set-1x.png 400w, ../../../hidpi/resources/image-set-2x.png 800w">
 <img id="small_sizes" src="" sizes="300px" srcset="../../../hidpi/resources/image-set-1x.png 400w, ../../../hidpi/resources/image-set-2x.png 800w">

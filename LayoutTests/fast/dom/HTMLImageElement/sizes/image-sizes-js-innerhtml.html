@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<script src="../../../../resources/srcset-helper.js"></script>
 <script src="../../../../resources/js-test.js"></script>
 <script src="../resources/currentSrcHelper.js"></script>
 <script>
@@ -6,13 +7,14 @@
         testRunner.dumpAsText();
 
     addEventListener("DOMContentLoaded", function() {
-        if (window.testRunner && sessionStorage.pageReloaded)
-            testRunner.dumpResourceRequestCallbacks();
+        if (sessionStorage.pageReloaded)
+            testRunner.dumpResourceResponseMIMETypes();
         window.testdiv = document.createElement("div");
         window.testdiv.innerHTML = '<img id="foo" src="../resources/blue-100-px-square.png" srcset="../../../hidpi/resources/image-set-1x.png 200w, ../../../hidpi/resources/image-set-2x.png 400w, ../resources/image-set-4x.png 800w">';
     }, false);
-    addEventListener("load", function() {
+    function runTest()
+    {
         shouldBe('fileName(window.testdiv.children[0].currentSrc)', '"image-set-4x.png"');
-    }, false);
+    }
 </script>
 <img id="foo">

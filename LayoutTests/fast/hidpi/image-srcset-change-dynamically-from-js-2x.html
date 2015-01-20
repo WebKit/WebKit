@@ -1,11 +1,10 @@
 <html>
 <head>
-<script src="resources/srcset-helper.js"></script>
+<script src="../../resources/srcset-helper.js"></script>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.dumpAsText();
-    }
 
     function updateSrc() {
         var img = document.getElementById("foo");
@@ -19,9 +18,11 @@
             testRunner.dumpResourceResponseMIMETypes();
         updateSrc();
     }, false);
-    addEventListener("load", function() {
+
+    function runTest()
+    {
         shouldBeTrue('document.getElementById("foo").clientWidth==200');
-    }, false);
+    }
 </script>
 </head>
 

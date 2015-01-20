@@ -2,19 +2,18 @@
 <head>
 <script>
     window.targetScaleFactor = 2;
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.dumpAsText();
-    }
 </script>
-<script src="resources/srcset-helper.js"></script>
+<script src="../../resources/srcset-helper.js"></script>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-    addEventListener("load", function() {
+    function runTest() {
         shouldBeTrue('document.getElementById("foo").clientWidth==200');
         shouldBeTrue('document.getElementById("foo2").clientWidth==400');
         shouldBeTrue('document.getElementById("foo3").clientWidth==100');
         shouldBeTrue('document.getElementById("foo4").clientWidth==200');
-    }, false);
+    }
 </script>
 </head>
 
