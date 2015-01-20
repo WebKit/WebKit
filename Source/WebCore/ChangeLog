@@ -1,3 +1,18 @@
+2015-01-20  peavo@outlook.com  <peavo@outlook.com>
+
+        Plugin content not loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=140672
+
+        Reviewed by Brent Fulgham.
+
+        It seems this is caused by a std::unique_ptr in CClass::methodNamed being moved,
+        resetting its raw pointer. The raw pointer, which now is null, is then returned
+        from the method.
+
+        * bridge/c/c_class.cpp:
+        (JSC::Bindings::CClass::methodNamed):
+        (JSC::Bindings::CClass::fieldNamed):
+
 2015-01-20  Darin Adler  <darin@apple.com>
 
         Remove SVGElementInstanceList, m_instanceUnderMouse, DUMP_INSTANCE_TREE, DUMP_SHADOW_TREE

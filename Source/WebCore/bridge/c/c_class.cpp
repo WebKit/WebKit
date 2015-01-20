@@ -79,11 +79,12 @@ Method* CClass::methodNamed(PropertyName propertyName, Instance* instance) const
     NPObject* obj = inst->getObject();
     if (m_isa->hasMethod && m_isa->hasMethod(obj, ident)) {
         auto method = std::make_unique<CMethod>(ident);
+        CMethod* ret = method.get();
         m_methods.set(name.impl(), WTF::move(method));
-        return method.get();
+        return ret;
     }
     
-    return 0;
+    return nullptr;
 }
 
 Field* CClass::fieldNamed(PropertyName propertyName, Instance* instance) const
@@ -98,11 +99,12 @@ Field* CClass::fieldNamed(PropertyName propertyName, Instance* instance) const
     NPObject* obj = inst->getObject();
     if (m_isa->hasProperty && m_isa->hasProperty(obj, ident)) {
         auto field = std::make_unique<CField>(ident);
+        CField* ret = field.get();
         m_fields.set(name.impl(), WTF::move(field));
-        return field.get();
+        return ret;
     }
 
-    return 0;
+    return nullptr;
 }
 
 } } // namespace JSC::Bindings
