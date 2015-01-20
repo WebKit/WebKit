@@ -1,3 +1,41 @@
+2015-01-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Make ASan do bounds checks for WTF::Vector
+        https://bugs.webkit.org/show_bug.cgi?id=140631
+        rdar://problem/19437718
+
+        Reviewed by Darin Adler.
+
+        * wtf/SizeLimits.cpp: Disable Vector object size checks for ASan enabled builds.
+
+        * wtf/Vector.h:
+        (WTF::VectorBuffer::endOfBuffer):
+        (WTF::Vector::Vector):
+        (WTF::Vector::~Vector):
+        (WTF::Vector::swap):
+        (WTF::OverflowHandler>::Vector):
+        (WTF::=):
+        (WTF::OverflowHandler>::fill):
+        (WTF::OverflowHandler>::resize):
+        (WTF::OverflowHandler>::shrink):
+        (WTF::OverflowHandler>::grow):
+        (WTF::OverflowHandler>::asanSetInitialBufferSizeTo):
+        (WTF::OverflowHandler>::asanSetBufferSizeToFullCapacity):
+        (WTF::OverflowHandler>::asanBufferSizeWillChangeTo):
+        (WTF::OverflowHandler>::reserveCapacity):
+        (WTF::OverflowHandler>::tryReserveCapacity):
+        (WTF::OverflowHandler>::shrinkCapacity):
+        (WTF::OverflowHandler>::append):
+        (WTF::OverflowHandler>::tryAppend):
+        (WTF::OverflowHandler>::appendSlowCase):
+        (WTF::OverflowHandler>::uncheckedAppend):
+        (WTF::OverflowHandler>::insert):
+        (WTF::OverflowHandler>::remove):
+        (WTF::OverflowHandler>::releaseBuffer):
+
+        * wtf/Compiler.h: Changed ASAN_ENABLED macro fallback value from false to 0,
+        MSVC was not happy with false.
+
 2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove non-Windows cruft from WebKit/win/Plugins

@@ -34,6 +34,10 @@
 #include <wtf/ValueCheck.h>
 #include <wtf/VectorTraits.h>
 
+#if ASAN_ENABLED
+extern "C" void __sanitizer_annotate_contiguous_container(const void* begin, const void* end, const void* old_mid, const void* new_mid);
+#endif
+
 namespace WTF {
 
 const size_t notFound = static_cast<size_t>(-1);
@@ -381,6 +385,13 @@ public:
     
     void restoreInlineBufferIfNeeded() { }
 
+#if ASAN_ENABLED
+    void* endOfBuffer()
+    {
+        return buffer() + capacity();
+    }
+#endif
+
     using Base::allocateBuffer;
     using Base::tryAllocateBuffer;
     using Base::shouldReallocateBuffer;
@@ -492,6 +503,19 @@ public:
         m_capacity = inlineCapacity;
     }
 
+#if ASAN_ENABLED
+    void* endOfBuffer()
+    {
+        ASSERT(buffer());
+        static_assert((offsetof(VectorBuffer, m_inlineBuffer) + sizeof(m_inlineBuffer)) % 8 == 0, "Inline buffer end needs to be on 8 byte boundary for ASan annotations to work.");
+
+        if (buffer() == inlineBuffer())
+            return reinterpret_cast<char*>(m_inlineBuffer) + sizeof(m_inlineBuffer);
+
+        return buffer() + capacity();
+    }
+#endif
+
     using Base::buffer;
     using Base::capacity;
     using Base::bufferMemoryOffset;
@@ -539,7 +563,15 @@ private:
     T* inlineBuffer() { return reinterpret_cast_ptr<T*>(m_inlineBuffer); }
     const T* inlineBuffer() const { return reinterpret_cast_ptr<const T*>(m_inlineBuffer); }
 
+#if ASAN_ENABLED
+    // ASan needs the buffer to begin and end on 8-byte boundaries for annotations to work.
+    // FIXME: Add a redzone before the buffer to catch off by one accesses. We don't need a guard after, because the buffer is the last member variable.
+    static const size_t asanInlineBufferAlignment = std::alignment_of<T>::value >= 8 ? std::alignment_of<T>::value : 8;
+    static const size_t asanAdjustedInlineCapacity = ((sizeof(T) * inlineCapacity + 7) & ~7) / sizeof(T);
+    typename std::aligned_storage<sizeof(T), asanInlineBufferAlignment>::type m_inlineBuffer[asanAdjustedInlineCapacity];
+#else
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type m_inlineBuffer[inlineCapacity];
+#endif
 };
 
 struct UnsafeVectorOverflow {
@@ -572,6 +604,8 @@ public:
     explicit Vector(size_t size)
         : Base(size, size)
     {
+        asanSetInitialBufferSizeTo(size);
+
         if (begin())
             TypeOperations::initialize(begin(), end());
     }
@@ -579,6 +613,8 @@ public:
     Vector(size_t size, const T& val)
         : Base(size, size)
     {
+        asanSetInitialBufferSizeTo(size);
+
         if (begin())
             TypeOperations::uninitializedFill(begin(), end(), val);
     }
@@ -586,6 +622,9 @@ public:
     Vector(std::initializer_list<T> initializerList)
     {
         reserveInitialCapacity(initializerList.size());
+
+        asanSetInitialBufferSizeTo(initializerList.size());
+
         for (const auto& element : initializerList)
             uncheckedAppend(element);
     }
@@ -594,6 +633,8 @@ public:
     {
         if (m_size)
             shrink(0);
+
+        asanSetBufferSizeToFullCapacity();
     }
 
     Vector(const Vector&);
@@ -711,8 +752,20 @@ public:
 
     void swap(Vector<T, inlineCapacity, OverflowHandler>& other)
     {
+#if ASAN_ENABLED
+        if (this == &other) // ASan will crash if we try to restrict access to the same buffer twice.
+            return;
+#endif
+
+        // Make it possible to copy inline buffers.
+        asanSetBufferSizeToFullCapacity();
+        other.asanSetBufferSizeToFullCapacity();
+
         Base::swap(other, m_size, other.m_size);
         std::swap(m_size, other.m_size);
+
+        asanSetInitialBufferSizeTo(m_size);
+        other.asanSetInitialBufferSizeTo(other.m_size);
     }
 
     void reverse();
@@ -727,6 +780,10 @@ private:
     template<typename U> U* expandCapacity(size_t newMinCapacity, U*); 
     template<typename U> void appendSlowCase(U&&);
 
+    void asanSetInitialBufferSizeTo(size_t);
+    void asanSetBufferSizeToFullCapacity();
+    void asanBufferSizeWillChangeTo(size_t);
+
     using Base::m_size;
     using Base::buffer;
     using Base::capacity;
@@ -738,12 +795,17 @@ private:
     using Base::reallocateBuffer;
     using Base::restoreInlineBufferIfNeeded;
     using Base::releaseBuffer;
+#if ASAN_ENABLED
+    using Base::endOfBuffer;
+#endif
 };
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
 Vector<T, inlineCapacity, OverflowHandler>::Vector(const Vector& other)
     : Base(other.capacity(), other.size())
 {
+    asanSetInitialBufferSizeTo(other.size());
+
     if (begin())
         TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
 }
@@ -753,6 +815,8 @@ template<size_t otherCapacity, typename otherOverflowBehaviour>
 Vector<T, inlineCapacity, OverflowHandler>::Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>& other)
     : Base(other.capacity(), other.size())
 {
+    asanSetInitialBufferSizeTo(other.size());
+
     if (begin())
         TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
 }
@@ -770,7 +834,9 @@ Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHa
         reserveCapacity(other.size());
         ASSERT(begin());
     }
-    
+
+    asanBufferSizeWillChangeTo(other.size());
+
     std::copy(other.begin(), other.begin() + size(), begin());
     TypeOperations::uninitializedCopy(other.begin() + size(), other.end(), end());
     m_size = other.size();
@@ -797,6 +863,8 @@ Vector<T, inlineCapacity, OverflowHandler>& Vector<T, inlineCapacity, OverflowHa
         ASSERT(begin());
     }
     
+    asanBufferSizeWillChangeTo(other.size());
+
     std::copy(other.begin(), other.begin() + size(), begin());
     TypeOperations::uninitializedCopy(other.begin() + size(), other.end(), end());
     m_size = other.size();
@@ -857,7 +925,9 @@ void Vector<T, inlineCapacity, OverflowHandler>::fill(const T& val, size_t newSi
         reserveCapacity(newSize);
         ASSERT(begin());
     }
-    
+
+    asanBufferSizeWillChangeTo(newSize);
+
     std::fill(begin(), end(), val);
     TypeOperations::uninitializedFill(end(), begin() + newSize, val);
     m_size = newSize;
@@ -919,11 +989,13 @@ inline U* Vector<T, inlineCapacity, OverflowHandler>::expandCapacity(size_t newM
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
 inline void Vector<T, inlineCapacity, OverflowHandler>::resize(size_t size)
 {
-    if (size <= m_size)
+    if (size <= m_size) {
         TypeOperations::destruct(begin() + size, end());
-    else {
+        asanBufferSizeWillChangeTo(size);
+    } else {
         if (size > capacity())
             expandCapacity(size);
+        asanBufferSizeWillChangeTo(size);
         if (begin())
             TypeOperations::initialize(end(), begin() + size);
     }
@@ -943,6 +1015,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::shrink(size_t size)
 {
     ASSERT(size <= m_size);
     TypeOperations::destruct(begin() + size, end());
+    asanBufferSizeWillChangeTo(size);
     m_size = size;
 }
 
@@ -952,9 +1025,52 @@ void Vector<T, inlineCapacity, OverflowHandler>::grow(size_t size)
     ASSERT(size >= m_size);
     if (size > capacity())
         expandCapacity(size);
+    asanBufferSizeWillChangeTo(size);
     if (begin())
         TypeOperations::initialize(end(), begin() + size);
     m_size = size;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler>
+inline void Vector<T, inlineCapacity, OverflowHandler>::asanSetInitialBufferSizeTo(size_t size)
+{
+#if ASAN_ENABLED
+    if (!buffer())
+        return;
+
+    // This function resticts buffer access to only elements in [begin(), end()) range, making ASan detect an error
+    // when accessing elements in [end(), endOfBuffer()) range.
+    // A newly allocated buffer can be accessed without restrictions, so "old_mid" argument equals "end" argument.
+    __sanitizer_annotate_contiguous_container(buffer(), endOfBuffer(), endOfBuffer(), buffer() + size);
+#else
+    UNUSED_PARAM(size);
+#endif
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler>
+inline void Vector<T, inlineCapacity, OverflowHandler>::asanSetBufferSizeToFullCapacity()
+{
+#if ASAN_ENABLED
+    if (!buffer())
+        return;
+
+    // ASan requires that the annotation is returned to its initial state before deallocation.
+    __sanitizer_annotate_contiguous_container(buffer(), endOfBuffer(), buffer() + size(), endOfBuffer());
+#endif
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler>
+inline void Vector<T, inlineCapacity, OverflowHandler>::asanBufferSizeWillChangeTo(size_t newSize)
+{
+#if ASAN_ENABLED
+    if (!buffer())
+        return;
+
+    // Change allowed range.
+    __sanitizer_annotate_contiguous_container(buffer(), endOfBuffer(), buffer() + size(), buffer() + newSize);
+#else
+    UNUSED_PARAM(newSize);
+#endif
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
@@ -964,8 +1080,14 @@ void Vector<T, inlineCapacity, OverflowHandler>::reserveCapacity(size_t newCapac
         return;
     T* oldBuffer = begin();
     T* oldEnd = end();
+
+    asanSetBufferSizeToFullCapacity();
+
     Base::allocateBuffer(newCapacity);
     ASSERT(begin());
+
+    asanSetInitialBufferSizeTo(size());
+
     TypeOperations::move(oldBuffer, oldEnd, begin());
     Base::deallocateBuffer(oldBuffer);
 }
@@ -977,9 +1099,17 @@ bool Vector<T, inlineCapacity, OverflowHandler>::tryReserveCapacity(size_t newCa
         return true;
     T* oldBuffer = begin();
     T* oldEnd = end();
-    if (!Base::tryAllocateBuffer(newCapacity))
+
+    asanSetBufferSizeToFullCapacity();
+
+    if (!Base::tryAllocateBuffer(newCapacity)) {
+        asanSetInitialBufferSizeTo(size());
         return false;
+    }
     ASSERT(begin());
+
+    asanSetInitialBufferSizeTo(size());
+
     TypeOperations::move(oldBuffer, oldEnd, begin());
     Base::deallocateBuffer(oldBuffer);
     return true;
@@ -1003,10 +1133,13 @@ void Vector<T, inlineCapacity, OverflowHandler>::shrinkCapacity(size_t newCapaci
     if (newCapacity < size()) 
         shrink(newCapacity);
 
+    asanSetBufferSizeToFullCapacity();
+
     T* oldBuffer = begin();
     if (newCapacity > 0) {
         if (Base::shouldReallocateBuffer(newCapacity)) {
             Base::reallocateBuffer(newCapacity);
+            asanSetInitialBufferSizeTo(size());
             return;
         }
 
@@ -1018,6 +1151,8 @@ void Vector<T, inlineCapacity, OverflowHandler>::shrinkCapacity(size_t newCapaci
 
     Base::deallocateBuffer(oldBuffer);
     Base::restoreInlineBufferIfNeeded();
+
+    asanSetInitialBufferSizeTo(size());
 }
 
 // Templatizing these is better than just letting the conversion happen implicitly,
@@ -1033,6 +1168,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::append(const U* data, size_t da
     }
     if (newSize < m_size)
         CRASH();
+    asanBufferSizeWillChangeTo(newSize);
     T* dest = end();
     VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], dest);
     m_size = newSize;
@@ -1050,6 +1186,7 @@ bool Vector<T, inlineCapacity, OverflowHandler>::tryAppend(const U* data, size_t
     }
     if (newSize < m_size)
         return false;
+    asanBufferSizeWillChangeTo(newSize);
     T* dest = end();
     VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], dest);
     m_size = newSize;
@@ -1060,6 +1197,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler> template<t
 ALWAYS_INLINE void Vector<T, inlineCapacity, OverflowHandler>::append(U&& value)
 {
     if (size() != capacity()) {
+        asanBufferSizeWillChangeTo(m_size + 1);
         new (NotNull, end()) T(std::forward<U>(value));
         ++m_size;
         return;
@@ -1077,6 +1215,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::appendSlowCase(U&& value)
     ptr = expandCapacity(size() + 1, ptr);
     ASSERT(begin());
 
+    asanBufferSizeWillChangeTo(m_size + 1);
     new (NotNull, end()) T(std::forward<U>(*ptr));
     ++m_size;
 }
@@ -1088,6 +1227,8 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler> template<t
 inline void Vector<T, inlineCapacity, OverflowHandler>::uncheckedAppend(U&& value)
 {
     ASSERT(size() < capacity());
+
+    asanBufferSizeWillChangeTo(m_size + 1);
 
     auto ptr = std::addressof(value);
     new (NotNull, end()) T(std::forward<U>(*ptr));
@@ -1111,6 +1252,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, const U
     }
     if (newSize < m_size)
         CRASH();
+    asanBufferSizeWillChangeTo(newSize);
     T* spot = begin() + position;
     TypeOperations::moveOverlapping(spot, end(), spot + dataSize);
     VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], spot);
@@ -1127,6 +1269,8 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, 
         ptr = expandCapacity(size() + 1, ptr);
         ASSERT(begin());
     }
+
+    asanBufferSizeWillChangeTo(m_size + 1);
 
     T* spot = begin() + position;
     TypeOperations::moveOverlapping(spot, end(), spot + 1);
@@ -1147,6 +1291,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::remove(size_t position)
     T* spot = begin() + position;
     spot->~T();
     TypeOperations::moveOverlapping(spot + 1, end(), spot);
+    asanBufferSizeWillChangeTo(m_size - 1);
     --m_size;
 }
 
@@ -1159,6 +1304,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::remove(size_t position, 
     T* endSpot = beginSpot + length;
     TypeOperations::destruct(beginSpot, endSpot); 
     TypeOperations::moveOverlapping(endSpot, end(), beginSpot);
+    asanBufferSizeWillChangeTo(m_size - length);
     m_size -= length;
 }
 
@@ -1172,6 +1318,11 @@ inline void Vector<T, inlineCapacity, OverflowHandler>::reverse()
 template<typename T, size_t inlineCapacity, typename OverflowHandler>
 inline MallocPtr<T> Vector<T, inlineCapacity, OverflowHandler>::releaseBuffer()
 {
+    // FIXME: Find a way to preserve annotations on the returned buffer.
+    // ASan requires that all annotations are removed before deallocation,
+    // and MallocPtr doesn't implement that.
+    asanSetBufferSizeToFullCapacity();
+
     auto buffer = Base::releaseBuffer();
     if (inlineCapacity && !buffer && m_size) {
         // If the vector had some data, but no buffer to release,
@@ -1182,6 +1333,7 @@ inline MallocPtr<T> Vector<T, inlineCapacity, OverflowHandler>::releaseBuffer()
         memcpy(buffer.get(), data(), bytes);
     }
     m_size = 0;
+    // FIXME: Should we call Base::restoreInlineBufferIfNeeded() here?
     return buffer;
 }
 

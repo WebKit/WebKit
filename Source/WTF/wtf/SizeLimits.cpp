@@ -54,6 +54,13 @@ struct SameSizeAsRefCounted {
     // Don't add anything here because this should stay small.
 };
 #endif
+
+static_assert(sizeof(OwnPtr<int>) == sizeof(int*), "OwnPtr should stay small!");
+static_assert(sizeof(PassRefPtr<RefCounted<int>>) == sizeof(int*), "PassRefPtr should stay small!");
+static_assert(sizeof(RefCounted<int>) == sizeof(SameSizeAsRefCounted), "RefCounted should stay small!");
+static_assert(sizeof(RefPtr<RefCounted<int>>) == sizeof(int*), "RefPtr should stay small!");
+
+#if !ASAN_ENABLED
 template<typename T, unsigned inlineCapacity = 0>
 struct SameSizeAsVectorWithInlineCapacity;
 
@@ -70,12 +77,9 @@ struct SameSizeAsVectorWithInlineCapacity {
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type inlineBuffer[inlineCapacity];
 };
 
-static_assert(sizeof(OwnPtr<int>) == sizeof(int*), "OwnPtr should stay small!");
-static_assert(sizeof(PassRefPtr<RefCounted<int>>) == sizeof(int*), "PassRefPtr should stay small!");
-static_assert(sizeof(RefCounted<int>) == sizeof(SameSizeAsRefCounted), "RefCounted should stay small!");
-static_assert(sizeof(RefPtr<RefCounted<int>>) == sizeof(int*), "RefPtr should stay small!");
 static_assert(sizeof(Vector<int>) == sizeof(SameSizeAsVectorWithInlineCapacity<int>), "Vector should stay small!");
 static_assert(sizeof(Vector<int, 1>) == sizeof(SameSizeAsVectorWithInlineCapacity<int, 1>), "Vector should stay small!");
 static_assert(sizeof(Vector<int, 2>) == sizeof(SameSizeAsVectorWithInlineCapacity<int, 2>), "Vector should stay small!");
 static_assert(sizeof(Vector<int, 3>) == sizeof(SameSizeAsVectorWithInlineCapacity<int, 3>), "Vector should stay small!");
+#endif
 }
