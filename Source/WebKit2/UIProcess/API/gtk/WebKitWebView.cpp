@@ -3475,6 +3475,7 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
     message.set(String::fromUTF8("SnapshotOptions"), API::UInt64::create(static_cast<uint64_t>(webKitSnapshotOptionsToSnapshotOptions(options))));
     message.set(String::fromUTF8("SnapshotRegion"), API::UInt64::create(static_cast<uint64_t>(toSnapshotRegion(region))));
     message.set(String::fromUTF8("CallbackID"), API::UInt64::create(callbackID));
+    message.set(String::fromUTF8("TransparentBackground"), API::Boolean::create(options & WEBKIT_SNAPSHOT_OPTIONS_TRANSPARENT_BACKGROUND));
 
     webView->priv->snapshotResultsMap.set(callbackID, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
     getPage(webView)->postMessageToInjectedBundle(String::fromUTF8("GetSnapshot"), API::Dictionary::create(WTF::move(message)).get());

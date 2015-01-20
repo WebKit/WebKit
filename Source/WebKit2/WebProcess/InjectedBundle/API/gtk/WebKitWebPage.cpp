@@ -454,6 +454,7 @@ void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageNa
         SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(static_cast<API::UInt64*>(message.get("SnapshotOptions"))->value());
         uint64_t callbackID = static_cast<API::UInt64*>(message.get("CallbackID"))->value();
         SnapshotRegion region = static_cast<SnapshotRegion>(static_cast<API::UInt64*>(message.get("SnapshotRegion"))->value());
+        bool transparentBackground = static_cast<API::Boolean*>(message.get("TransparentBackground"))->value();
 
         RefPtr<WebImage> snapshotImage;
         WebPage* webPage = page->priv->webPage;
@@ -469,8 +470,16 @@ void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageNa
             default:
                 ASSERT_NOT_REACHED();
             }
-            if (!snapshotRect.isEmpty())
+            if (!snapshotRect.isEmpty()) {
+                Color savedBackgroundColor;
+                if (transparentBackground) {
+                    savedBackgroundColor = frameView->baseBackgroundColor();
+                    frameView->setBaseBackgroundColor(Color::transparent);
+                }
                 snapshotImage = webPage->scaledSnapshotWithOptions(snapshotRect, 1, snapshotOptions | SnapshotOptionsShareable);
+                if (transparentBackground)
+                    frameView->setBaseBackgroundColor(savedBackgroundColor);
+            }
         }
 
         API::Dictionary::MapType messageReply;

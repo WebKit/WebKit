@@ -581,6 +581,13 @@ static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
     g_assert_cmpint(cairo_image_surface_get_width(surface1), ==, cairo_image_surface_get_width(surface2));
     g_assert_cmpint(cairo_image_surface_get_height(surface1), ==, cairo_image_surface_get_height(surface2));
     g_assert(!Test::cairoSurfacesEqual(surface1, surface2));
+
+    // Get a snpashot with a transparent background, the result must be different.
+    surface2 = test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_VISIBLE, WEBKIT_SNAPSHOT_OPTIONS_TRANSPARENT_BACKGROUND);
+    g_assert_cmpuint(cairo_surface_get_type(surface2), ==, CAIRO_SURFACE_TYPE_IMAGE);
+    g_assert_cmpint(cairo_image_surface_get_width(surface1), ==, cairo_image_surface_get_width(surface2));
+    g_assert_cmpint(cairo_image_surface_get_height(surface1), ==, cairo_image_surface_get_height(surface2));
+    g_assert(!Test::cairoSurfacesEqual(surface1, surface2));
     cairo_surface_destroy(surface1);
 
     // Test that cancellation works.

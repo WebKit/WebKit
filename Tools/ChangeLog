@@ -1,3 +1,15 @@
+2015-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add an option to create WebKitWebView snapshots with transparent background
+        https://bugs.webkit.org/show_bug.cgi?id=140617
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewSnapshot): Check that the same snapshot with
+        transparent background is different than the default one filled
+        with white.
+
 2015-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to change the WebKitWebView background color
