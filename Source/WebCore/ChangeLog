@@ -1,3 +1,13 @@
+2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [gstreamer] Fix expression result unused warning in GRefPtrGStreamer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=140671
+
+        Reviewed by Philippe Normand.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::refGPtr<GstToc>):
+
 2015-01-19  Dean Jackson  <dino@apple.com>
 
         Support "plus-darker" in mix-blend mode

@@ -248,7 +248,7 @@ template<> GRefPtr<GstToc> adoptGRef(GstToc* ptr)
 template<> GstToc* refGPtr<GstToc>(GstToc* ptr)
 {
     if (ptr)
-        gst_toc_ref(ptr);
+        return gst_toc_ref(ptr);
 
     return ptr;
 }
