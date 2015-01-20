@@ -323,8 +323,7 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
     GstClockTime duration = gst_util_uint64_scale(priv->numberOfSamples, GST_SECOND, priv->sampleRate) - timestamp;
 
     GSList* channelBufferList = 0;
-    register int i;
-    for (i = g_slist_length(priv->sources) - 1; i >= 0; i--) {
+    for (int i = g_slist_length(priv->sources) - 1; i >= 0; i--) {
         AudioSrcBuffer* buffer = g_new(AudioSrcBuffer, 1);
         GstBuffer* channelBuffer;
 
@@ -363,7 +362,7 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
     GSList* buffersIt = channelBufferList;
 
     GstFlowReturn ret = GST_FLOW_OK;
-    for (i = 0; sourcesIt && buffersIt; sourcesIt = g_slist_next(sourcesIt), buffersIt = g_slist_next(buffersIt), ++i) {
+    for (int i = 0; sourcesIt && buffersIt; sourcesIt = g_slist_next(sourcesIt), buffersIt = g_slist_next(buffersIt), ++i) {
         GstElement* appsrc = static_cast<GstElement*>(sourcesIt->data);
         AudioSrcBuffer* buffer = static_cast<AudioSrcBuffer*>(buffersIt->data);
         GstBuffer* channelBuffer = buffer->buffer;

@@ -1,3 +1,13 @@
+2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix 'register' storage class specifier is deprecated warning
+        https://bugs.webkit.org/show_bug.cgi?id=140669
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcLoop):
+
 2015-01-20  Chris Dumez  <cdumez@apple.com>
 
         Use DiagnosticLoggingClient to log page cache failures
