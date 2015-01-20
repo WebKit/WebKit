@@ -45,7 +45,6 @@ public:
     static bool supportsFormat(const String&);
 
 private:
-    FT_Face m_freeTypeFace;
     cairo_font_face_t* m_fontFace;
 };
 
