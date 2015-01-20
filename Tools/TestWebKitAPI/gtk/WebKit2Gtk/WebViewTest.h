@@ -74,6 +74,10 @@ public:
 
     bool runWebProcessTest(const char* suiteName, const char* testName);
 
+    // Prohibit overrides because this is called when the web view is created
+    // in our constructor, before a derived class's vtable is ready.
+    void initializeWebExtensions() override final { Test::initializeWebExtensions(); }
+
     WebKitWebView* m_webView;
     GMainLoop* m_mainLoop;
     CString m_activeURI;

@@ -1,3 +1,15 @@
+2015-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] WebViewTest should prohibit overriding initializeWebExtensions()
+        https://bugs.webkit.org/show_bug.cgi?id=140028
+
+        Reviewed by Carlos Garcia Campos.
+
+        This won't work as expected, since this function is called before the
+        WebViewTest constructor completes.
+
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.h:
+
 2015-01-20  David Kilzer  <ddkilzer@apple.com>
 
         configure-xcode-for-ios-development needs to update iPhoneOS SDK
