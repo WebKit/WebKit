@@ -43,16 +43,6 @@ static const char FeatureCounterMediaAudioElementLoadingKey[] = "com.apple.WebKi
 static const char FeatureCounterMediaVideoElementPlayedKey[] = "com.apple.WebKit.media.video.played";
 static const char FeatureCounterMediaAudioElementPlayedKey[] = "com.apple.WebKit.media.audio.played";
 
-// Resource types.
-static const char FeatureCounterResourceLoadedFontKey[] = "com.apple.WebKit.resource.loaded.font";
-static const char FeatureCounterResourceLoadedImageKey[] = "com.apple.WebKit.resource.loaded.image";
-static const char FeatureCounterResourceLoadedMainResourceKey[] = "com.apple.WebKit.resource.loaded.mainResource";
-static const char FeatureCounterResourceLoadedRawKey[] = "com.apple.WebKit.resource.loaded.raw";
-static const char FeatureCounterResourceLoadedSVGDocumentKey[] = "com.apple.WebKit.resource.loaded.svgDocument";
-static const char FeatureCounterResourceLoadedScriptKey[] = "com.apple.WebKit.resource.loaded.script";
-static const char FeatureCounterResourceLoadedStyleSheetKey[] = "com.apple.WebKit.resource.loaded.styleSheet";
-static const char FeatureCounterResourceLoadedOtherKey[] = "com.apple.WebKit.resource.loaded.other";
-
 // Memory cache.
 static const char FeatureCounterResourceRequestInMemoryCacheKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache";
 static const char FeatureCounterResourceRequestNotInMemoryCacheKey[] = "com.apple.WebKit.resourceRequest.notInMemoryCache";

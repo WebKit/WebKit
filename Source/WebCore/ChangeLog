@@ -1,3 +1,31 @@
+2015-01-20  Chris Dumez  <cdumez@apple.com>
+
+        Log types of resources being loaded using DiagnosticLoggingClient
+        https://bugs.webkit.org/show_bug.cgi?id=140682
+
+        Reviewed by Andreas Kling.
+
+        Log types of resources being loaded using DiagnosticLoggingClient
+        instead of the legacy FeatureCounter.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::logResourceLoadedUsingFeatureCounter): Deleted.
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::otherKey):
+        (WebCore::DiagnosticLoggingKeys::mainResourceKey):
+        (WebCore::DiagnosticLoggingKeys::loadedKey):
+        (WebCore::DiagnosticLoggingKeys::imageKey):
+        (WebCore::DiagnosticLoggingKeys::rawKey):
+        (WebCore::DiagnosticLoggingKeys::resourceKey):
+        (WebCore::DiagnosticLoggingKeys::scriptKey):
+        (WebCore::DiagnosticLoggingKeys::styleSheetKey):
+        (WebCore::DiagnosticLoggingKeys::svgDocumentKey):
+        (WebCore::DiagnosticLoggingKeys::fontKey):
+        * page/DiagnosticLoggingKeys.h:
+        * platform/FeatureCounterKeys.h:
+
 2015-01-20  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Remove redundant style.preserveNewline check when collapsing trailing whitespace.

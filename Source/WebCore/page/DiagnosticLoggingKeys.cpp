@@ -103,14 +103,29 @@ String DiagnosticLoggingKeys::noDocumentLoaderKey()
     return ASCIILiteral("noDocumentLoader");
 }
 
+String DiagnosticLoggingKeys::otherKey()
+{
+    return ASCIILiteral("other");
+}
+
 String DiagnosticLoggingKeys::mainDocumentErrorKey()
 {
     return ASCIILiteral("mainDocumentError");
 }
 
+String DiagnosticLoggingKeys::mainResourceKey()
+{
+    return ASCIILiteral("mainResource");
+}
+
 String DiagnosticLoggingKeys::isErrorPageKey()
 {
     return ASCIILiteral("isErrorPage");
+}
+
+String DiagnosticLoggingKeys::loadedKey()
+{
+    return ASCIILiteral("loaded");
 }
 
 String DiagnosticLoggingKeys::hasPluginsKey()
@@ -121,6 +136,11 @@ String DiagnosticLoggingKeys::hasPluginsKey()
 String DiagnosticLoggingKeys::httpsNoStoreKey()
 {
     return ASCIILiteral("httpsNoStore");
+}
+
+String DiagnosticLoggingKeys::imageKey()
+{
+    return ASCIILiteral("image");
 }
 
 String DiagnosticLoggingKeys::hasOpenDatabasesKey()
@@ -136,6 +156,11 @@ String DiagnosticLoggingKeys::noCurrentHistoryItemKey()
 String DiagnosticLoggingKeys::quirkRedirectComingKey()
 {
     return ASCIILiteral("quirkRedirectComing");
+}
+
+String DiagnosticLoggingKeys::rawKey()
+{
+    return ASCIILiteral("raw");
 }
 
 String DiagnosticLoggingKeys::loadingAPISenseKey()
@@ -183,6 +208,11 @@ String DiagnosticLoggingKeys::reloadKey()
     return ASCIILiteral("reload");
 }
 
+String DiagnosticLoggingKeys::resourceKey()
+{
+    return ASCIILiteral("resource");
+}
+
 String DiagnosticLoggingKeys::reloadFromOriginKey()
 {
     return ASCIILiteral("reloadFromOrigin");
@@ -193,9 +223,29 @@ String DiagnosticLoggingKeys::sameLoadKey()
     return ASCIILiteral("sameLoad");
 }
 
+String DiagnosticLoggingKeys::scriptKey()
+{
+    return ASCIILiteral("script");
+}
+
+String DiagnosticLoggingKeys::styleSheetKey()
+{
+    return ASCIILiteral("styleSheet");
+}
+
+String DiagnosticLoggingKeys::svgDocumentKey()
+{
+    return ASCIILiteral("svgDocument");
+}
+
 String DiagnosticLoggingKeys::expiredKey()
 {
     return ASCIILiteral("expired");
+}
+
+String DiagnosticLoggingKeys::fontKey()
+{
+    return ASCIILiteral("font");
 }
 
 String DiagnosticLoggingKeys::prunedDueToMemoryPressureKey()

@@ -41,17 +41,22 @@ public:
     static String documentLoaderStoppingKey();
     static String engineFailedToLoadKey();
     static String expiredKey();
+    static String fontKey();
     static String hasOpenDatabasesKey();
     static String hasPluginsKey();
     static String httpsNoStoreKey();
+    static String imageKey();
     static String isErrorPageKey();
+    static String loadedKey();
     static String loadingAPISenseKey();
     static String mainDocumentErrorKey();
+    static String mainResourceKey();
     static String mediaLoadedKey();
     static String mediaLoadingFailedKey();
     static String navigationKey();
     static String noCurrentHistoryItemKey();
     static String noDocumentLoaderKey();
+    static String otherKey();
     static String pageCacheKey();
     static String pageContainsAtLeastOneMediaEngineKey();
     static String pageContainsAtLeastOnePluginKey();
@@ -64,9 +69,14 @@ public:
     static String prunedDueToMemoryPressureKey();
     static String prunedDueToProcessSuspended();
     static String quirkRedirectComingKey();
+    static String rawKey();
     static String reloadFromOriginKey();
     static String reloadKey();
+    static String resourceKey();
     static String sameLoadKey();
+    static String scriptKey();
+    static String styleSheetKey();
+    static String svgDocumentKey();
 
     // Success / Failure keys.
     static String successKey();
