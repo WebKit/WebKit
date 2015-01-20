@@ -382,8 +382,8 @@ static void removeTrailingWhitespace(LineState& lineState, Layout::RunVector& li
         lineState.removeCommittedTrailingWhitespace();
     }
 
-    // If we skipped any whitespace and now the line end is a "preserved" newline, skip the newline too as we are wrapping the line here already.
-    if (lastPosition != lineState.position && style.preserveNewline && !flowContents.isEnd(lineState.position) && flowContents.isLineBreak(lineState.position))
+    // If we skipped any whitespace and now the line end is a hard newline, skip the newline too as we are wrapping the line here already.
+    if (lastPosition != lineState.position && !flowContents.isEnd(lineState.position) && flowContents.isLineBreak(lineState.position))
         ++lineState.position;
 }
 

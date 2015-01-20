@@ -1,3 +1,17 @@
+2015-01-20  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Remove redundant style.preserveNewline check when collapsing trailing whitespace.
+        https://bugs.webkit.org/show_bug.cgi?id=140684
+
+        Reviewed by Antti Koivisto.
+
+        FlowContents::isLineBreak() checks whether we are at a hard newline.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+
 2015-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         Add a way to collect scrolling performance data (viewport tile coverage) with UI-side compositing
