@@ -856,7 +856,6 @@ protected:
 
     void adjustRectForOutlineAndShadow(LayoutRect&) const;
 
-    void clearLayoutRootIfNeeded() const;
     virtual void willBeDestroyed();
 
     virtual void insertedIntoTree();

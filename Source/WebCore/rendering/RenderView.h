@@ -137,10 +137,10 @@ public:
     bool doingFullRepaint() const { return frameView().needsFullRepaint(); }
 
     // Subtree push/pop
-    void pushLayoutState(RenderObject&);
-    void popLayoutState(RenderObject&) { return popLayoutState(); } // Just doing this to keep popLayoutState() private and to make the subtree calls symmetrical.
+    void pushLayoutState(RenderElement&);
+    void popLayoutState(RenderElement&) { return popLayoutState(); } // Just doing this to keep popLayoutState() private and to make the subtree calls symmetrical.
 
-    bool shouldDisableLayoutStateForSubtree(RenderObject*) const;
+    bool shouldDisableLayoutStateForSubtree(const RenderElement&) const;
 
     // Returns true if layoutState should be used for its cached offset and clip.
     bool layoutStateEnabled() const { return m_layoutStateDisableCount == 0 && m_layoutState; }
@@ -290,7 +290,7 @@ private:
     void checkLayoutState(const LayoutState&);
 #endif
 
-    void pushLayoutStateForCurrentFlowThread(const RenderObject&);
+    void pushLayoutStateForCurrentFlowThread(const RenderElement&);
     void popLayoutStateForCurrentFlowThread();
 
     friend class LayoutStateMaintainer;

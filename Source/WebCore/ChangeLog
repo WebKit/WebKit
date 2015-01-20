@@ -1,3 +1,46 @@
+2015-01-19  Andreas Kling  <akling@apple.com>
+
+        LayoutState and subtree layout code should use RenderElement.
+        <https://webkit.org/b/126878>
+
+        Subtree layout will never begin at a RenderText, so tighten up
+        the code to operate on RenderElements instead of RenderObjects.
+
+        Reviewed by Antti Koivisto.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willLayout):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutRoot):
+        (WebCore::FrameView::layout):
+        * page/FrameView.h:
+
+            Make FrameView::layoutRoot() return RenderElement*.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::willBeDestroyed):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        * rendering/RenderObject.h:
+
+            Move subtree layout root clearing logic in willBeDestroyed()
+            from RenderObject to RenderElement.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        * rendering/RenderView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::pushLayoutState):
+        (WebCore::RenderView::pushLayoutStateForCurrentFlowThread):
+
+            Make all of these functions take RenderElement instead of
+            RenderObject since layout never starts from a RenderText.
+
+        (WebCore::RenderView::shouldDisableLayoutStateForSubtree):
+
+            Tweak loop since it's never null on first iteration.
+
 2015-01-19  Beth Dakin  <bdakin@apple.com>
 
         Speculative build fix.

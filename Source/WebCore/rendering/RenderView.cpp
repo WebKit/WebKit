@@ -1186,7 +1186,7 @@ float RenderView::zoomFactor() const
     return frameView().frame().pageZoomFactor();
 }
 
-void RenderView::pushLayoutState(RenderObject& root)
+void RenderView::pushLayoutState(RenderElement& root)
 {
     ASSERT(m_layoutStateDisableCount == 0);
     ASSERT(m_layoutState == 0);
@@ -1195,9 +1195,9 @@ void RenderView::pushLayoutState(RenderObject& root)
     pushLayoutStateForCurrentFlowThread(root);
 }
 
-bool RenderView::shouldDisableLayoutStateForSubtree(RenderObject* renderer) const
+bool RenderView::shouldDisableLayoutStateForSubtree(const RenderElement& renderer) const
 {
-    RenderObject* o = renderer;
+    const RenderElement* o = &renderer;
     while (o) {
         if (o->hasTransform() || o->hasReflection())
             return true;
@@ -1300,18 +1300,18 @@ FlowThreadController& RenderView::flowThreadController()
     return *m_flowThreadController;
 }
 
-void RenderView::pushLayoutStateForCurrentFlowThread(const RenderObject& object)
+void RenderView::pushLayoutStateForCurrentFlowThread(const RenderElement& renderer)
 {
     if (!m_flowThreadController)
         return;
 
-    RenderFlowThread* currentFlowThread = object.flowThreadContainingBlock();
+    RenderFlowThread* currentFlowThread = renderer.flowThreadContainingBlock();
     if (!currentFlowThread)
         return;
 
     m_layoutState->setCurrentRenderFlowThread(currentFlowThread);
 
-    currentFlowThread->pushFlowThreadLayoutState(object);
+    currentFlowThread->pushFlowThreadLayoutState(renderer);
 }
 
 void RenderView::popLayoutStateForCurrentFlowThread()

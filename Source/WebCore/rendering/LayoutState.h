@@ -37,7 +37,6 @@ class RenderBlockFlow;
 class RenderBox;
 class RenderElement;
 class RenderFlowThread;
-class RenderObject;
 class ShapeInsideInfo;
 
 class LayoutState {
@@ -61,7 +60,7 @@ public:
     }
 
     LayoutState(std::unique_ptr<LayoutState>, RenderBox*, const LayoutSize& offset, LayoutUnit pageHeight, bool pageHeightChanged);
-    explicit LayoutState(RenderObject&);
+    explicit LayoutState(RenderElement&);
 
     void clearPaginationInformation();
     bool isPaginated() const { return m_isPaginated; }
@@ -129,7 +128,7 @@ public:
     RenderFlowThread* m_currentRenderFlowThread { nullptr };
 
 #ifndef NDEBUG
-    RenderObject* m_renderer;
+    RenderElement* m_renderer;
 #endif
 };
 

@@ -282,7 +282,7 @@ void InspectorTimelineAgent::didInvalidateLayout(Frame& frame)
 
 void InspectorTimelineAgent::willLayout(Frame& frame)
 {
-    RenderObject* root = frame.view()->layoutRoot();
+    RenderElement* root = frame.view()->layoutRoot();
     bool partialLayout = !!root;
 
     if (!partialLayout)

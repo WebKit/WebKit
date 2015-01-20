@@ -1083,9 +1083,9 @@ void FrameView::setIsInWindow(bool isInWindow)
         renderView->setIsInWindow(isInWindow);
 }
 
-RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const
+RenderElement* FrameView::layoutRoot(bool onlyDuringLayout) const
 {
-    return onlyDuringLayout && layoutPending() ? 0 : m_layoutRoot;
+    return onlyDuringLayout && layoutPending() ? nullptr : m_layoutRoot;
 }
 
 inline void FrameView::forceLayoutParentViewIfNeeded()
@@ -1301,7 +1301,7 @@ void FrameView::layout(bool allowSubtree)
 
         bool disableLayoutState = false;
         if (subtree) {
-            disableLayoutState = root->view().shouldDisableLayoutStateForSubtree(root);
+            disableLayoutState = root->view().shouldDisableLayoutStateForSubtree(*root);
             root->view().pushLayoutState(*root);
         }
         LayoutStateDisabler layoutStateDisabler(disableLayoutState ? &root->view() : 0);
