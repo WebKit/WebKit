@@ -310,7 +310,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfg
 
 PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const StructureSet& set, AtomicStringImpl* uid, bool isDirect)
 {
-    if (toUInt32FromStringImpl(uid))
+    if (toUInt32FromStringImpl(uid) != PropertyName::NotAnIndex)
         return PutByIdStatus(TakesSlowPath);
 
     if (set.isEmpty())

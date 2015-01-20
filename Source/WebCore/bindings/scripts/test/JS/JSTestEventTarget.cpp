@@ -180,10 +180,10 @@ bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, ExecState* exec, Pr
         slot.setCacheableCustom(thisObject, entry->attributes(), entry->propertyGetter());
         return true;
     }
-    Optional<uint32_t> index = propertyName.asIndex();
-    if (index && index.value() < thisObject->impl().length()) {
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex && index < thisObject->impl().length()) {
         unsigned attributes = DontDelete | ReadOnly;
-        slot.setValue(thisObject, attributes, toJS(exec, thisObject->globalObject(), thisObject->impl().item(index.value())));
+        slot.setValue(thisObject, attributes, toJS(exec, thisObject->globalObject(), thisObject->impl().item(index)));
         return true;
     }
     if (canGetItemsForName(exec, &thisObject->impl(), propertyName)) {

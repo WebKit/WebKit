@@ -649,8 +649,9 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
             {
                 JSObject* object = asObject(objectStack.last());
                 PropertyName ident = identifierStack.last();
-                if (Optional<uint32_t> index = ident.asIndex())
-                    object->putDirectIndex(m_exec, index.value(), lastValue);
+                unsigned i = ident.asIndex();
+                if (i != PropertyName::NotAnIndex)
+                    object->putDirectIndex(m_exec, i, lastValue);
                 else
                     object->putDirect(m_exec->vm(), ident, lastValue);
                 identifierStack.removeLast();

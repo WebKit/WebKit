@@ -360,16 +360,15 @@ sub GenerateGetOwnPropertySlotBody
     }
 
     if ($indexedGetterFunction) {
-        push(@getOwnPropertySlotImpl, "    Optional<uint32_t> optionalIndex = propertyName.asIndex();\n");
+        push(@getOwnPropertySlotImpl, "    unsigned index = propertyName.asIndex();\n");
 
         # If the item function returns a string then we let the TreatReturnedNullStringAs handle the cases
         # where the index is out of range.
         if ($indexedGetterFunction->signature->type eq "DOMString") {
-            push(@getOwnPropertySlotImpl, "    if (optionalIndex) {\n");
+            push(@getOwnPropertySlotImpl, "    if (index != PropertyName::NotAnIndex) {\n");
         } else {
-            push(@getOwnPropertySlotImpl, "    if (optionalIndex && optionalIndex.value() < thisObject->impl().length()) {\n");
+            push(@getOwnPropertySlotImpl, "    if (index != PropertyName::NotAnIndex && index < thisObject->impl().length()) {\n");
         }
-        push(@getOwnPropertySlotImpl, "        unsigned index = optionalIndex.value();\n");
         # Assume that if there's a setter, the index will be writable
         if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
             push(@getOwnPropertySlotImpl, "        unsigned attributes = ${namespaceMaybe}DontDelete;\n");
@@ -2457,8 +2456,9 @@ sub GenerateImplementation
             push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n");
             if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
-                push(@implContent, "    if (Optional<uint32_t> index = propertyName.asIndex()) {\n");
-                push(@implContent, "        thisObject->indexSetter(exec, index.value(), value);\n");
+                push(@implContent, "    unsigned index = propertyName.asIndex();\n");
+                push(@implContent, "    if (index != PropertyName::NotAnIndex) {\n");
+                push(@implContent, "        thisObject->indexSetter(exec, index, value);\n");
                 push(@implContent, "        return;\n");
                 push(@implContent, "    }\n");
             }

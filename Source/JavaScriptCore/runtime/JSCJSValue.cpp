@@ -119,8 +119,9 @@ void JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
 {
     VM& vm = exec->vm();
 
-    if (Optional<uint32_t> index = propertyName.asIndex()) {
-        putToPrimitiveByIndex(exec, index.value(), value, slot.isStrictMode());
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex) {
+        putToPrimitiveByIndex(exec, index, value, slot.isStrictMode());
         return;
     }
 

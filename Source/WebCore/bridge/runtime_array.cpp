@@ -89,10 +89,11 @@ bool RuntimeArray::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
         return true;
     }
     
-    Optional<uint32_t> index = propertyName.asIndex();
-    if (index && index.value() < thisObject->getLength()) {
+    unsigned index = propertyName.asIndex();
+    if (index < thisObject->getLength()) {
+        ASSERT(index != PropertyName::NotAnIndex);
         slot.setValue(thisObject, DontDelete | DontEnum,
-            thisObject->getConcreteArray()->valueAt(exec, index.value()));
+            thisObject->getConcreteArray()->valueAt(exec, index));
         return true;
     }
     
@@ -119,8 +120,9 @@ void RuntimeArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
         return;
     }
     
-    if (Optional<uint32_t> index = propertyName.asIndex()) {
-        thisObject->getConcreteArray()->setValueAt(exec, index.value(), value);
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex) {
+        thisObject->getConcreteArray()->setValueAt(exec, index, value);
         return;
     }
     

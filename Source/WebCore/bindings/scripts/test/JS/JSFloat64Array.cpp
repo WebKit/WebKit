@@ -174,9 +174,9 @@ bool JSFloat64Array::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
 {
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Optional<uint32_t> index = propertyName.asIndex();
-    if (index && index.value() < static_cast<Float64Array*>(thisObject->impl())->length()) {
-        slot.setValue(thisObject, thisObject->getByIndex(exec, index.value()));
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex && index < static_cast<Float64Array*>(thisObject->impl())->length()) {
+        slot.setValue(thisObject, thisObject->getByIndex(exec, index));
         return true;
     }
     return getStaticValueSlot<JSFloat64Array, Base>(exec, getJSFloat64ArrayTable(exec), thisObject, propertyName, slot);
@@ -186,9 +186,9 @@ bool JSFloat64Array::getOwnPropertyDescriptor(JSObject* object, ExecState* exec,
 {
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Optional<uint32_t> index = propertyName.asIndex();
-    if (index && index.value() < static_cast<Float64Array*>(thisObject->impl())->length()) {
-        descriptor.setDescriptor(thisObject->getByIndex(exec, index.value()), DontDelete);
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex && index < static_cast<Float64Array*>(thisObject->impl())->length()) {
+        descriptor.setDescriptor(thisObject->getByIndex(exec, index), DontDelete);
         return true;
     }
     return getStaticValueDescriptor<JSFloat64Array, Base>(exec, getJSFloat64ArrayTable(exec), thisObject, propertyName, descriptor);
@@ -215,8 +215,9 @@ void JSFloat64Array::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
 {
     JSFloat64Array* thisObject = jsCast<JSFloat64Array*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    if (Optional<uint32_t> index = propertyName.asIndex()) {
-        thisObject->indexSetter(exec, index.value(), value);
+    unsigned index = propertyName.asIndex();
+    if (index != PropertyName::NotAnIndex) {
+        thisObject->indexSetter(exec, index, value);
         return;
     }
     Base::put(thisObject, exec, propertyName, value, slot);

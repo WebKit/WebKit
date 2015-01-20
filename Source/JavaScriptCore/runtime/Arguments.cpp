@@ -161,11 +161,11 @@ void Arguments::createStrictModeCalleeIfNecessary(ExecState* exec)
 bool Arguments::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
     Arguments* thisObject = jsCast<Arguments*>(object);
-    if (Optional<uint32_t> index = propertyName.asIndex()) {
-        if (JSValue value = thisObject->tryGetArgument(index.value())) {
-            slot.setValue(thisObject, None, value);
-            return true;
-        }
+    unsigned i = propertyName.asIndex();
+    if (JSValue value = thisObject->tryGetArgument(i)) {
+        RELEASE_ASSERT(i < PropertyName::NotAnIndex);
+        slot.setValue(thisObject, None, value);
+        return true;
     }
 
     if (propertyName == exec->propertyNames().length && LIKELY(!thisObject->m_overrodeLength)) {
@@ -224,8 +224,8 @@ void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue va
 void Arguments::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
     Arguments* thisObject = jsCast<Arguments*>(cell);
-    Optional<uint32_t> index = propertyName.asIndex();
-    if (index && thisObject->trySetArgument(exec->vm(), index.value(), value))
+    unsigned i = propertyName.asIndex();
+    if (thisObject->trySetArgument(exec->vm(), i, value))
         return;
 
     if (propertyName == exec->propertyNames().length && !thisObject->m_overrodeLength) {
@@ -267,11 +267,12 @@ bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
         return Base::deleteProperty(cell, exec, propertyName);
 
     Arguments* thisObject = jsCast<Arguments*>(cell);
-    Optional<uint32_t> index = propertyName.asIndex();
-    if (index && index.value() < thisObject->m_numArguments) {
+    unsigned i = propertyName.asIndex();
+    if (i < thisObject->m_numArguments) {
+        RELEASE_ASSERT(i < PropertyName::NotAnIndex);
         if (!Base::deleteProperty(cell, exec, propertyName))
             return false;
-        if (thisObject->tryDeleteArgument(exec->vm(), index.value()))
+        if (thisObject->tryDeleteArgument(exec->vm(), i))
             return true;
     }
 
@@ -297,13 +298,13 @@ bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prope
 bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
     Arguments* thisObject = jsCast<Arguments*>(object);
-    Optional<uint32_t> optionalIndex = propertyName.asIndex();
-    if (optionalIndex && optionalIndex.value() < thisObject->m_numArguments) {
+    unsigned i = propertyName.asIndex();
+    if (i < thisObject->m_numArguments) {
+        RELEASE_ASSERT(i < PropertyName::NotAnIndex);
         // If the property is not yet present on the object, and is not yet marked as deleted, then add it now.
-        uint32_t index = optionalIndex.value();
         PropertySlot slot(thisObject);
-        if (!thisObject->isDeletedArgument(index) && !JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot)) {
-            JSValue value = thisObject->tryGetArgument(index);
+        if (!thisObject->isDeletedArgument(i) && !JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot)) {
+            JSValue value = thisObject->tryGetArgument(i);
             ASSERT(value);
             object->putDirectMayBeIndex(exec, propertyName, value);
         }
@@ -312,20 +313,20 @@ bool Arguments::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNam
 
         // From ES 5.1, 10.6 Arguments Object
         // 5. If the value of isMapped is not undefined, then
-        if (thisObject->isArgument(index)) {
+        if (thisObject->isArgument(i)) {
             // a. If IsAccessorDescriptor(Desc) is true, then
             if (descriptor.isAccessorDescriptor()) {
                 // i. Call the [[Delete]] internal method of map passing P, and false as the arguments.
-                thisObject->tryDeleteArgument(exec->vm(), index);
+                thisObject->tryDeleteArgument(exec->vm(), i);
             } else { // b. Else
                 // i. If Desc.[[Value]] is present, then
                 // 1. Call the [[Put]] internal method of map passing P, Desc.[[Value]], and Throw as the arguments.
                 if (descriptor.value())
-                    thisObject->trySetArgument(exec->vm(), index, descriptor.value());
+                    thisObject->trySetArgument(exec->vm(), i, descriptor.value());
                 // ii. If Desc.[[Writable]] is present and its value is false, then
                 // 1. Call the [[Delete]] internal method of map passing P and false as arguments.
                 if (descriptor.writablePresent() && !descriptor.writable())
-                    thisObject->tryDeleteArgument(exec->vm(), index);
+                    thisObject->tryDeleteArgument(exec->vm(), i);
             }
         }
         return true;

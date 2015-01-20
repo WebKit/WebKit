@@ -51,7 +51,6 @@
 #include "JSWithScope.h"
 #include "LegacyProfiler.h"
 #include "ObjectConstructor.h"
-#include "PropertyName.h"
 #include "Repatch.h"
 #include "RepatchBuffer.h"
 #include "TestRunnerUtils.h"
@@ -481,40 +480,18 @@ static void putByVal(CallFrame* callFrame, JSValue baseValue, JSValue subscript,
 
 static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue subscript, JSValue value)
 {
-    bool isStrictMode = callFrame->codeBlock()->isStrictMode();
     if (LIKELY(subscript.isUInt32())) {
-        uint32_t index = subscript.asUInt32();
-        ASSERT_WITH_MESSAGE(index != PropertyName::NotAnIndex, "Since JSValue::isUInt32 returns true only when the boxed value is int32_t and positive, it doesn't return true for uint32_t max value that is PropertyName::NotAnIndex.");
-        baseObject->putDirectIndex(callFrame, index, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
-        return;
-    }
-
-    if (subscript.isDouble()) {
-        double subscriptAsDouble = subscript.asDouble();
-        uint32_t subscriptAsUInt32 = static_cast<uint32_t>(subscriptAsDouble);
-        if (subscriptAsDouble == subscriptAsUInt32 && subscriptAsUInt32 != PropertyName::NotAnIndex) {
-            baseObject->putDirectIndex(callFrame, subscriptAsUInt32, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
-            return;
-        }
-    }
-
-    if (isName(subscript)) {
-        PutPropertySlot slot(baseObject, isStrictMode);
+        uint32_t i = subscript.asUInt32();
+        baseObject->putDirectIndex(callFrame, i, value);
+    } else if (isName(subscript)) {
+        PutPropertySlot slot(baseObject, callFrame->codeBlock()->isStrictMode());
         baseObject->putDirect(callFrame->vm(), jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
-        return;
-    }
-
-    // Don't put to an object if toString throws an exception.
-    Identifier property = subscript.toString(callFrame)->toIdentifier(callFrame);
-    if (callFrame->vm().exception())
-        return;
-
-    PropertyName propertyName(property);
-    if (Optional<uint32_t> index = propertyName.asIndex())
-        baseObject->putDirectIndex(callFrame, index.value(), value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
-    else {
-        PutPropertySlot slot(baseObject, isStrictMode);
-        baseObject->putDirect(callFrame->vm(), propertyName, value, slot);
+    } else {
+        Identifier property = subscript.toString(callFrame)->toIdentifier(callFrame);
+        if (!callFrame->vm().exception()) { // Don't put to an object if toString threw an exception.
+            PutPropertySlot slot(baseObject, callFrame->codeBlock()->isStrictMode());
+            baseObject->putDirect(callFrame->vm(), property, value, slot);
+        }
     }
 }
 void JIT_OPERATION operationPutByVal(ExecState* exec, EncodedJSValue encodedBaseValue, EncodedJSValue encodedSubscript, EncodedJSValue encodedValue)

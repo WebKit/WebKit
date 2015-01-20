@@ -617,54 +617,6 @@ function shouldThrow(_a, _e)
     testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
 }
 
-function dfgShouldThrow(theFunction, _a, _e)
-{
-  if (typeof theFunction != "function" || typeof _a != "string" || typeof _e != "string")
-    debug("WARN: dfgShouldBe() expects a function and two strings");
-  noInline(theFunction);
-  var values = [], _av = undefined, notThrow = false;
-
-  // Defend against tests that muck with numeric properties on array.prototype.
-  values.__proto__ = null;
-  values.push = Array.prototype.push;
-
-  while (!dfgCompiled({f:theFunction})) {
-    try {
-        _av = eval(_a);
-        notThrow = true;
-    } catch (exception) {
-        values.push(exception);
-    }
-  }
-  try {
-    _av = eval(_a);
-    notThrow = true;
-  } catch (exception) {
-    values.push(exception);
-  }
-
-  var _ev = eval(_e);
-  if (notThrow) {
-    if (typeof _av == "undefined")
-      testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was undefined.");
-    else
-      testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Was " + _av + ".");
-  } else {
-    var allPassed = true;
-    for (var i = 0; i < values.length; ++i) {
-      var _av = values[i];
-      if (typeof _e == "undefined" || _av == _ev)
-        continue;
-      testFailed(_a + " should throw " + (typeof _e == "undefined" ? "an exception" : _ev) + ". Threw exception " + _av + ".");
-      allPassed = false;
-    }
-    if (allPassed)
-      testPassed(_a + " threw exception " + _e + " on all iterations including after DFG tier-up.");
-  }
-
-  return values.length;
-}
-
 function shouldHaveHadError(message)
 {
     if (errorMessage) {
