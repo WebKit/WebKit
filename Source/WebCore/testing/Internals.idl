@@ -83,6 +83,8 @@
     void addTextMatchMarker(Range range, boolean isActive);
     [RaisesException] void setMarkedTextMatchesAreHighlighted(boolean flag);
 
+    void invalidateFontCache();
+
     [RaisesException] void setScrollViewPosition(long x, long y);
 
     [RaisesException] void setPagination(DOMString mode, long gap, optional long pageLength);

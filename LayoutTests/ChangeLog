@@ -1,5 +1,22 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r172504.
+
+    2014-08-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Fonts forced to use non synthetic italics might be laid out with the incorrect baseline
+            https://bugs.webkit.org/show_bug.cgi?id=135403
+
+            Reviewed by Darin Adler.
+
+            Laying out the same string twice (where there is a cache collision) should be rendered
+            the same as laying out similar strings (where there is no cache collision).
+
+            * fast/text/international/synthesized-italic-vertical-latin-double-expected.html: Added.
+            * fast/text/international/synthesized-italic-vertical-latin-double.html: Added.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r172326.
 
     2014-08-07  Zalan Bujtas  <zalan@apple.com>
