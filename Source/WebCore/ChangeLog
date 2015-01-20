@@ -1,5 +1,20 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r171984.
+
+    2014-08-03  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/17782529> REGRESSION: OS marketing version in iOS Simulator user-agent string is the host OS’s
+            https://bugs.webkit.org/show_bug.cgi?id=135549
+
+            Reviewed by Mark Rowe.
+
+            * platform/cocoa/SystemVersion.mm:
+            (WebCore::createSystemMarketingVersion): On the iOS Simulator, locate the system Library
+            directory relative to the Simulator root.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r171941.
 
     2014-07-30  Myles C. Maxfield  <mmaxfield@apple.com>
