@@ -80,19 +80,18 @@ void FunctionHasExecutedCache::removeUnexecutedRange(intptr_t id, unsigned start
     map[range] = true;
 }
 
-Vector<std::pair<unsigned, unsigned>> FunctionHasExecutedCache::getUnexecutedFunctionRanges(intptr_t id)
+Vector<std::tuple<bool, unsigned, unsigned>> FunctionHasExecutedCache::getFunctionRanges(intptr_t id)
 {
-    Vector<std::pair<unsigned, unsigned>> ranges(0);
+    Vector<std::tuple<bool, unsigned, unsigned>> ranges(0);
     auto findResult = m_rangeMap.find(id);
     if (findResult == m_rangeMap.end())
         return ranges;
 
     RangeMap& map = m_rangeMap.find(id)->second;
     for (auto iter = map.begin(), end = map.end(); iter != end; ++iter) {
-        if (!iter->second) {
-            const FunctionRange& range = iter->first;
-            ranges.append(std::pair<unsigned, unsigned>(range.m_start, range.m_end));
-        }
+        const FunctionRange& range = iter->first;
+        bool hasExecuted = iter->second;
+        ranges.append(std::tuple<bool, unsigned, unsigned>(hasExecuted, range.m_start, range.m_end));
     }
 
     return ranges;

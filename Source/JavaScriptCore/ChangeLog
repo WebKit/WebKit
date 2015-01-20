@@ -1,3 +1,22 @@
+2015-01-19  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: Provide a front end for JSC's Control Flow Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=138454
+
+        Reviewed by Timothy Hatcher.
+
+        This patch puts the final touches on what JSC needs to provide
+        for the Web Inspector to show a UI for the control flow profiler.
+
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::recompileAllJSFunctionsForTypeProfiling):
+        * runtime/ControlFlowProfiler.cpp:
+        (JSC::ControlFlowProfiler::getBasicBlocksForSourceID):
+        * runtime/FunctionHasExecutedCache.cpp:
+        (JSC::FunctionHasExecutedCache::getFunctionRanges):
+        (JSC::FunctionHasExecutedCache::getUnexecutedFunctionRanges): Deleted.
+        * runtime/FunctionHasExecutedCache.h:
+
 2015-01-19  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Only use LLVM static library arguments on 64-bit builds of libllvmForJSC.dylib

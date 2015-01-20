@@ -86,12 +86,12 @@ Vector<BasicBlockRange> ControlFlowProfiler::getBasicBlocksForSourceID(intptr_t 
         }
     }
 
-    const Vector<std::pair<unsigned, unsigned>>& unexecutedFunctionRanges = vm.functionHasExecutedCache()->getUnexecutedFunctionRanges(sourceID);
+    const Vector<std::tuple<bool, unsigned, unsigned>>& unexecutedFunctionRanges = vm.functionHasExecutedCache()->getFunctionRanges(sourceID);
     for (const auto& functionRange : unexecutedFunctionRanges) {
         BasicBlockRange range;
-        range.m_hasExecuted = false;
-        range.m_startOffset = static_cast<int>(functionRange.first);
-        range.m_endOffset = static_cast<int>(functionRange.second + 1);
+        range.m_hasExecuted = std::get<0>(functionRange);
+        range.m_startOffset = static_cast<int>(std::get<1>(functionRange));
+        range.m_endOffset = static_cast<int>(std::get<2>(functionRange) + 1);
         result.append(range);
     }
 

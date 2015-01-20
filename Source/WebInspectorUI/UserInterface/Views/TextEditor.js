@@ -45,6 +45,8 @@ WebInspector.TextEditor = function(element, mimeType, delegate)
     this._codeMirror.on("change", this._contentChanged.bind(this));
     this._codeMirror.on("gutterClick", this._gutterMouseDown.bind(this));
     this._codeMirror.on("gutterContextMenu", this._gutterContextMenu.bind(this));
+    this._codeMirror.on("focus", this.gainedFocus.bind(this));
+    this._codeMirror.on("blur", this.lostFocus.bind(this));
     this._codeMirror.getScrollerElement().addEventListener("click", this._openClickedLinks.bind(this), true);
 
     this._completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror, this);
@@ -454,6 +456,16 @@ WebInspector.TextEditor.prototype = {
         return this._codeMirror.getLine(lineNumber);
     },
 
+    getTextInRange: function(startPosition, endPosition)
+    {
+        return this._codeMirror.getRange(startPosition, endPosition);
+    },
+
+    addStyleToTextRange: function(startPosition, endPosition, styleClassName)
+    {
+        return this._codeMirror.getDoc().markText(startPosition, endPosition, {className: styleClassName});
+    },
+
     revealPosition: function(position, textRangeToSelect, forceUnformatted, noHighlight)
     {
         console.assert(position === undefined || position instanceof WebInspector.SourceCodePosition, "revealPosition called without a SourceCodePosition");
@@ -813,6 +825,16 @@ WebInspector.TextEditor.prototype = {
         }
 
         this._codeMirror.operation(prettyPrintAndUpdateEditor.bind(this));
+    },
+
+    gainedFocus: function()
+    {
+        // Implemented by subclasses.
+    },
+
+    lostFocus: function()
+    {
+        // Implemented by subclasses.
     },
 
     // Private

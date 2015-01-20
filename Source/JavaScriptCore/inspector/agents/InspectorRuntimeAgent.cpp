@@ -271,10 +271,12 @@ public:
 
 static void recompileAllJSFunctionsForTypeProfiling(VM& vm, bool shouldEnableTypeProfiling)
 {
-    vm.prepareToDiscardCode();
+    bool shouldRecompileFromTypeProfiler = (shouldEnableTypeProfiling ? vm.enableTypeProfiler() : vm.disableTypeProfiler()); 
+    bool shouldRecompileFromControlFlowProfiler = (shouldEnableTypeProfiling ? vm.enableControlFlowProfiler() : vm.disableControlFlowProfiler());
+    bool needsToRecompile = shouldRecompileFromTypeProfiler || shouldRecompileFromControlFlowProfiler;
 
-    bool needsToRecompile = (shouldEnableTypeProfiling ? vm.enableTypeProfiler() : vm.disableTypeProfiler());
     if (needsToRecompile) {
+        vm.prepareToDiscardCode();
         TypeRecompiler recompiler;
         HeapIterationScope iterationScope(vm.heap);
         vm.heap.objectSpace().forEachLiveCell(iterationScope, recompiler);

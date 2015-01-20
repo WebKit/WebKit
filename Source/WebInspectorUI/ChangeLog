@@ -1,3 +1,68 @@
+2015-01-19  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: Provide a front end for JSC's Control Flow Profiler
+        https://bugs.webkit.org/show_bug.cgi?id=138454
+
+        Reviewed by Timothy Hatcher.
+
+        This patch creates a user interface for JSC's control flow profiler.
+        The Web Inspector gets basic block ranges from JSC, and displays
+        basic blocks that have not executed as having a gray background.
+        
+        BasicBlockAnnotator is the class responsible for this UI logic.
+        It also does a few nifty things when presenting a UI for this gray
+        background color: if an entire line of code is within the basic 
+        block's boundary, the annotator will not just highlight the background 
+        behind the text, but the background of the entire line itself. This
+        provides a nicer experience when glancing through large JavaScript files.
+
+        This patch also adds some necessary wrapper methods inside TextEditor
+        for accessing CodeMirror's text highlighting functionality. It also
+        creates a way for TextEditor and SourceCodeTextEditor to listen
+        for focus events inside CodeMirror.
+
+        * UserInterface/Controllers/AnnotatorManager.js: Removed.
+        * UserInterface/Controllers/BasicBlockAnnotator.js: Added.
+        (WebInspector.BasicBlockAnnotator):
+        (WebInspector.BasicBlockAnnotator.prototype.clearAnnotations):
+        (WebInspector.BasicBlockAnnotator.prototype.insertAnnotations):
+        (WebInspector.BasicBlockAnnotator.prototype._annotateBasicBlockExecutionRanges.):
+        (WebInspector.BasicBlockAnnotator.prototype._annotateBasicBlockExecutionRanges):
+        (WebInspector.BasicBlockAnnotator.prototype.set _highlightTextForBasicBlock):
+        (WebInspector.BasicBlockAnnotator.prototype._isTextRangeOnlyWhitespace):
+        (WebInspector.BasicBlockAnnotator.prototype._canGrayOutEntireLine):
+        (WebInspector.BasicBlockAnnotator.prototype._grayOutLine):
+        (WebInspector.BasicBlockAnnotator.prototype._clearRangeForBasicBlockMarker.get marker):
+        (WebInspector.BasicBlockAnnotator.prototype._clearRangeForBasicBlockMarker):
+        * UserInterface/Main.html:
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.basic-block-has-not-executed):
+        (.basic-block-has-not-executed-prepend::before):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype.shown):
+        (WebInspector.SourceCodeTextEditor.prototype.hidden):
+        (WebInspector.SourceCodeTextEditor.prototype.canShowTypeAnnotations):
+        (WebInspector.SourceCodeTextEditor.prototype.contentDidChange):
+        (WebInspector.SourceCodeTextEditor.prototype.gainedFocus):
+        (WebInspector.SourceCodeTextEditor.prototype.lostFocus):
+        (WebInspector.SourceCodeTextEditor.prototype.toggleTypeAnnotations):
+        (WebInspector.SourceCodeTextEditor.prototype.prettyPrint):
+        (WebInspector.SourceCodeTextEditor.prototype._populateWithContent):
+        (WebInspector.SourceCodeTextEditor.prototype._debuggerDidPause):
+        (WebInspector.SourceCodeTextEditor.prototype._debuggerDidResume):
+        (WebInspector.SourceCodeTextEditor.prototype._updateTokenTrackingControllerState):
+        (WebInspector.SourceCodeTextEditor.prototype._makeTypeTokenAnnotator):
+        (WebInspector.SourceCodeTextEditor.prototype._makeBasicBlockAnnotator):
+        (WebInspector.SourceCodeTextEditor.prototype._makeTypeTokenScrollEventHandler.scrollHandler):
+        (WebInspector.SourceCodeTextEditor.prototype._makeTypeTokenScrollEventHandler):
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype.getTextInRange):
+        (WebInspector.TextEditor.prototype.addStyleToTextRange):
+        (WebInspector.TextEditor.prototype.gainedFocus):
+        (WebInspector.TextEditor.prototype.lostFocus):
+
 2015-01-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Make message selection in the console more readable

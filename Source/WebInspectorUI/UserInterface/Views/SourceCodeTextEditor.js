@@ -37,7 +37,10 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
     WebInspector.TextEditor.call(this, null, null, this);
 
     this._typeTokenScrollHandler = null;
-    this._annotatorManager = new WebInspector.AnnotatorManager;
+    this._typeTokenAnnotator = null;
+    this._basicBlockAnnotator = null;
+
+    this._hasFocus = false;
 
     // FIXME: Currently this just jumps between resources and related source map resources. It doesn't "jump to symbol" yet.
     this._updateTokenTrackingControllerState();
@@ -90,8 +93,6 @@ WebInspector.SourceCodeTextEditor.DurationToUpdateTypeTokensAfterScrolling = 100
 
 WebInspector.SourceCodeTextEditor.AutoFormatMinimumLineLength = 500;
 
-WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey = "TypeTokenAnnotatorKey";
-
 WebInspector.SourceCodeTextEditor.Event = {
     ContentWillPopulate: "source-code-text-editor-content-will-populate",
     ContentDidPopulate: "source-code-text-editor-content-did-populate"
@@ -111,7 +112,21 @@ WebInspector.SourceCodeTextEditor.prototype = {
     {
         WebInspector.TextEditor.prototype.shown.call(this);
 
-        this._annotatorManager.resumeAll();
+        if (WebInspector.showJavaScriptTypeInformationSetting.value) {
+            if (this._typeTokenAnnotator)
+                this._typeTokenAnnotator.resume();
+            if (this._basicBlockAnnotator)
+                this._basicBlockAnnotator.resume();
+            if (!this._typeTokenScrollHandler && (this._typeTokenAnnotator || this._basicBlockAnnotator))
+                this._enableScrollEventsForTypeTokenAnnotator();
+        } else {
+            if (this._typeTokenAnnotator)
+                this._typeTokenAnnotator.clear();
+            if (this._basicBlockAnnotator)
+                this._basicBlockAnnotator.clear();
+            if (this._typeTokenScrollHandler)
+                this._disableScrollEventsForTypeTokenAnnotator();
+        }
     },
 
     hidden: function()
@@ -124,7 +139,10 @@ WebInspector.SourceCodeTextEditor.prototype = {
         
         this._dismissEditingController(true);
 
-        this._annotatorManager.pauseAll();
+        if (this._typeTokenAnnotator)
+            this._typeTokenAnnotator.pause();
+        if (this._basicBlockAnnotator)
+            this._basicBlockAnnotator.pause();
     },
 
     close: function()
@@ -166,7 +184,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
     canShowTypeAnnotations: function()
     {
-        return !!this._annotatorManager.getAnnotator(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey);
+        return !!this._typeTokenAnnotator;
     },
 
     customPerformSearch: function(query)
@@ -256,28 +274,54 @@ WebInspector.SourceCodeTextEditor.prototype = {
         for (var range of newRanges)
             this._updateEditableMarkers(range);
 
-        this._annotatorManager.clearAll();
-        this._annotatorManager.removeAllAnnotators();
+        if (this._typeTokenAnnotator) {
+            this._typeTokenAnnotator.clear();
+            this._typeTokenAnnotator = null;
+        }
+        if (this._basicBlockAnnotator) {
+            this._basicBlockAnnotator.clear();
+            this._basicBlockAnnotator = null;
+        }
         if (this._typeTokenScrollHandler)
             this._disableScrollEventsForTypeTokenAnnotator();
     },
 
+    gainedFocus: function()
+    {
+        this._hasFocus = true;
+        if (this._basicBlockAnnotator)
+            this._basicBlockAnnotator.clear();
+    },
+
+    lostFocus: function()
+    {
+        this._hasFocus = false;
+        if (this._basicBlockAnnotator && WebInspector.showJavaScriptTypeInformationSetting.value)
+            this._basicBlockAnnotator.resume();
+    },
+
     toggleTypeAnnotations: function()
     {
-        var typeTokenAnnotator = this._annotatorManager.getAnnotator(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey);
-        if (!typeTokenAnnotator)
+        if (!this._typeTokenAnnotator)
             return false;
 
-        var isActivated = typeTokenAnnotator.toggleTypeAnnotations();
+        var isActivated = this._typeTokenAnnotator.toggleTypeAnnotations();
         if (isActivated) {
+            if (this._basicBlockAnnotator && !this._basicBlockAnnotator.isActive && !this._hasFocus)
+                this._basicBlockAnnotator.reset();
+
             RuntimeAgent.enableTypeProfiler();
             this._enableScrollEventsForTypeTokenAnnotator();
         } else {
+            if (this._basicBlockAnnotator)
+                this._basicBlockAnnotator.clear();
+
             // We disable type profiling when exiting the inspector, so no need to call it here. If we were
             // to call it here, we would have JavaScriptCore compile out all the necessary type profiling information,
             // so if a user were to quickly press then unpress the button, we wouldn't be able to re-show type information.
             this._disableScrollEventsForTypeTokenAnnotator();
         }
+
         WebInspector.showJavaScriptTypeInformationSetting.value = isActivated;
 
         this._updateTokenTrackingControllerState();
@@ -306,9 +350,22 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
     prettyPrint: function(pretty)
     {
+        // The annotators must be cleared before pretty printing takes place and resumed 
+        // after so that they clear their annotations in a known state and insert new annotations 
+        // in the new state.
+        var shouldResumeTypeTokenAnnotator = this._typeTokenAnnotator && this._typeTokenAnnotator.isActive;
+        var shouldResumeBasicBlockAnnotator = this._basicBlockAnnotator && this._basicBlockAnnotator.isActive;
+        if (shouldResumeTypeTokenAnnotator)
+            this._typeTokenAnnotator.clear();
+        if (shouldResumeBasicBlockAnnotator)
+            this._basicBlockAnnotator.clear();
+
         WebInspector.TextEditor.prototype.prettyPrint.call(this, pretty);
 
-        this._annotatorManager.resetAllIfActive();
+        if (shouldResumeTypeTokenAnnotator)
+            this._typeTokenAnnotator.reset();
+        if (shouldResumeBasicBlockAnnotator)
+            this._basicBlockAnnotator.reset();
     },
 
     // Private
@@ -437,6 +494,16 @@ WebInspector.SourceCodeTextEditor.prototype = {
         this.string = content;
 
         this._makeTypeTokenAnnotator();
+        this._makeBasicBlockAnnotator();
+
+        if (WebInspector.showJavaScriptTypeInformationSetting.value) {
+            if (this._basicBlockAnnotator)
+                this._basicBlockAnnotator.reset();
+            if (this._typeTokenAnnotator)
+                this._typeTokenAnnotator.reset();
+            if (this._typeTokenAnnotator || this._basicBlockAnnotator)
+                this._enableScrollEventsForTypeTokenAnnotator();
+        }
 
         this._contentDidPopulate();
     },
@@ -1052,14 +1119,20 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _debuggerDidPause: function(event)
     {
         this._updateTokenTrackingControllerState();
-        this._annotatorManager.refreshAllIfActive();
+        if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive)
+            this._typeTokenAnnotator.refresh();
+        if (this._basicBlockAnnotator && this._basicBlockAnnotator.isActive)
+            this._basicBlockAnnotator.refresh();
     },
 
     _debuggerDidResume: function(event)
     {
         this._updateTokenTrackingControllerState();
         this._dismissPopover();
-        this._annotatorManager.refreshAllIfActive();
+        if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive)
+            this._typeTokenAnnotator.refresh();
+        if (this._basicBlockAnnotator && this._basicBlockAnnotator.isActive)
+            this._basicBlockAnnotator.refresh();
     },
 
     _sourceCodeSourceMapAdded: function(event)
@@ -1075,7 +1148,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         var mode = WebInspector.CodeMirrorTokenTrackingController.Mode.None;
         if (WebInspector.debuggerManager.paused)
             mode = WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptExpression;
-        else if (this._annotatorManager.isAnnotatorActive(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey))
+        else if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive)
             mode = WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptTypeInformation;
         else if (this._hasColorMarkers())
             mode = WebInspector.CodeMirrorTokenTrackingController.Mode.MarkedTokens;
@@ -1549,13 +1622,19 @@ WebInspector.SourceCodeTextEditor.prototype = {
         if (!script)
             return;
 
-        var typeTokenAnnotator = new WebInspector.TypeTokenAnnotator(this, script);
-        this._annotatorManager.addAnnotator(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey, typeTokenAnnotator);
+        this._typeTokenAnnotator = new WebInspector.TypeTokenAnnotator(this, script);
+    },
 
-        if (WebInspector.showJavaScriptTypeInformationSetting.value) {
-            typeTokenAnnotator.reset();
-            this._enableScrollEventsForTypeTokenAnnotator();
-        }
+    _makeBasicBlockAnnotator: function()
+    {
+        if (!RuntimeAgent.getBasicBlocks)
+            return;
+
+        var script = this._getAssociatedScript();
+        if (!script)
+            return;
+
+        this._basicBlockAnnotator = new WebInspector.BasicBlockAnnotator(this, script);
     },
 
     _enableScrollEventsForTypeTokenAnnotator: function()
@@ -1576,22 +1655,23 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _makeTypeTokenScrollEventHandler: function()
     {
         var timeoutIdentifier = null;
-        var typeTokenAnnotator = this._annotatorManager.getAnnotator(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey);
         function scrollHandler()
         {
             if (timeoutIdentifier)
                 clearTimeout(timeoutIdentifier);
-            else
-                typeTokenAnnotator.pause();
+            else {
+                if (this._typeTokenAnnotator)
+                    this._typeTokenAnnotator.pause();
+                if (this._basicBlockAnnotator)
+                    this._basicBlockAnnotator.pause();
+            }
 
             timeoutIdentifier = setTimeout(function() {
                 timeoutIdentifier = null;
-                var typeTokenAnnotator = this._annotatorManager.getAnnotator(WebInspector.SourceCodeTextEditor.TypeTokenAnnotatorKey);
-                // There is a small chance that we disabled the type token annotator and the scroll handler 
-                // during the DurationToUpdateTypeTokensAfterScrolling time delay, so we must ensure that this
-                // is not null.
-                if (typeTokenAnnotator)
-                    typeTokenAnnotator.resume();
+                if (this._typeTokenAnnotator)
+                    this._typeTokenAnnotator.resume();
+                if (!this._hasFocus && this._basicBlockAnnotator)
+                    this._basicBlockAnnotator.resume();
             }.bind(this), WebInspector.SourceCodeTextEditor.DurationToUpdateTypeTokensAfterScrolling);
         }
 
