@@ -1,3 +1,13 @@
+2015-01-19  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Only use LLVM static library arguments on 64-bit builds of libllvmForJSC.dylib
+        <http://webkit.org/b/140658>
+
+        Reviewed by Filip Pizlo.
+
+        * Configurations/LLVMForJSC.xcconfig: Set OTHER_LDFLAGS_LLVM
+        only when building for 64-bit architectures.
+
 2015-01-19  Filip Pizlo  <fpizlo@apple.com>
 
         ClosureCallStubRoutine no longer needs codeOrigin
