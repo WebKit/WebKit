@@ -1,5 +1,26 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r172215.
+
+    2014-08-07  Pratik Solanki  <psolanki@apple.com>
+
+            Random resource replacement on beta.icloud.com
+            https://bugs.webkit.org/show_bug.cgi?id=135685
+            <rdar://problem/17937975>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Revert the performance optimization in r170499. It turns out we could get a delayed disk
+            cache notification for a resource that has since been changed in WebCore. In such a case, we
+            were replacing the newer resource data with the older disk cached resource data. This was
+            happening for cached POST content on beta.icloud.com. Fix this by forcing a memcmp of data
+            contents before replacing it which is what we used to do before.
+
+            * loader/cache/CachedResource.cpp:
+            (WebCore::CachedResource::tryReplaceEncodedData):
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r171984.
 
     2014-08-03  Dan Bernstein  <mitz@apple.com>

@@ -896,8 +896,11 @@ void CachedResource::tryReplaceEncodedData(PassRefPtr<SharedBuffer> newBuffer)
     if (!mayTryReplaceEncodedData())
         return;
 
-    ASSERT(m_data->size() == newBuffer->size());
-    ASSERT(!memcmp(m_data->data(), newBuffer->data(), m_data->size()));
+    // We have to do the memcmp because we can't tell if the replacement file backed data is for the
+    // same resource or if we made a second request with the same URL which gave us a different
+    // resource. We have seen this happen for cached POST resources.
+    if (m_data->size() != newBuffer->size() || memcmp(m_data->data(), newBuffer->data(), m_data->size()))
+        return;
 
     m_data->tryReplaceSharedBufferContents(newBuffer.get());
 }
