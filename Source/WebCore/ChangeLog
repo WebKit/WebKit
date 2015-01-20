@@ -1,3 +1,9 @@
+2015-01-19  Beth Dakin  <bdakin@apple.com>
+
+        Speculative build fix.
+
+        * platform/spi/mac/NSViewSPI.h:
+
 2015-01-19  Timothy Horton  <timothy_horton@apple.com>
 
         Adjust naming of action menu SPI

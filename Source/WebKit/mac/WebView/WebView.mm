@@ -889,7 +889,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     [frameView release];
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    if ([self respondsToSelector:@selector(setActionMenu:)]) {
+    if ([self respondsToSelector:@selector(_setActionMenu:)]) {
         RetainPtr<NSMenu> actionMenu = adoptNS([[NSMenu alloc] init]);
         self._actionMenu = actionMenu.get();
         _private->actionMenuController = [[WebActionMenuController alloc] initWithWebView:self];

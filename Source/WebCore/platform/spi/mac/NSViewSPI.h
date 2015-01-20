@@ -28,5 +28,5 @@
 #import <AppKit/NSView.h>
 
 @interface NSView (Private)
-@property (strong) NSMenu *_actionMenu;
+@property (strong, setter=_setActionMenu:) NSMenu *_actionMenu;
 @end

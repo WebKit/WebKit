@@ -3613,7 +3613,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_dictionaryLookupPopoverWillClose:) name:getLUNotificationPopoverWillClose() object:nil];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-    if ([self respondsToSelector:@selector(setActionMenu:)]) {
+    if ([self respondsToSelector:@selector(_setActionMenu:)]) {
         RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
         self._actionMenu = menu.get();
         _data->_actionMenuController = adoptNS([[WKActionMenuController alloc] initWithPage:*_data->_page view:self]);
