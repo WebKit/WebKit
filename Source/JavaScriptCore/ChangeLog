@@ -1,3 +1,38 @@
+2015-01-19  Filip Pizlo  <fpizlo@apple.com>
+
+        ClosureCallStubRoutine no longer needs codeOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=140659
+
+        Reviewed by Michael Saboff.
+        
+        Once upon a time, we would look for the CodeOrigin associated with a return PC. This search
+        would start with the CodeBlock according to the caller frame's call frame header. But if the
+        call was a closure call, the return PC would be inside some closure call stub. So if the
+        CodeBlock search failed, we would search *all* closure call stub routines to see which one
+        encompasses the return PC. Then, we would use the CodeOrigin stored in the stub routine
+        object. This was all a bunch of madness, and we actually got rid of it - we now determine
+        the CodeOrigin for a call frame using the encoded code origin bits inside the tag of the
+        argument count.
+        
+        This patch removes the final vestiges of the madness:
+        
+        - Remove the totally unused method declaration for the thing that did the closure call stub
+          search.
+        
+        - Remove the CodeOrigin field from the ClosureCallStubRoutine. Except for that crazy search
+          that we no longer do, everyone else who finds a ClosureCallStubRoutine will find it via
+          the CallLinkInfo. The CallLinkInfo also has the CodeOrigin, so we don't need this field
+          anymore.
+
+        * bytecode/CodeBlock.h:
+        * jit/ClosureCallStubRoutine.cpp:
+        (JSC::ClosureCallStubRoutine::ClosureCallStubRoutine):
+        * jit/ClosureCallStubRoutine.h:
+        (JSC::ClosureCallStubRoutine::executable):
+        (JSC::ClosureCallStubRoutine::codeOrigin): Deleted.
+        * jit/Repatch.cpp:
+        (JSC::linkClosureCall):
+
 2015-01-19  Saam Barati  <saambarati1@gmail.com>
 
         Basic block start offsets should never be larger than end offsets in the control flow profiler

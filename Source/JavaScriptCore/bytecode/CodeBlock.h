@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -987,10 +987,6 @@ private:
     
     double optimizationThresholdScalingFactor();
 
-#if ENABLE(JIT)
-    ClosureCallStubRoutine* findClosureCallForReturnPC(ReturnAddressPtr);
-#endif
-        
     void updateAllPredictionsAndCountLiveness(unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 
     void setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants)

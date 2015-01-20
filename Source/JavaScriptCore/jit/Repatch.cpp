@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1731,7 +1731,7 @@ void linkClosureCall(
             ("Closure call stub for %s, return point %p, target %p (%s)",
                 toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation.labelAtOffset(0).executableAddress(),
                 codePtr.executableAddress(), toCString(pointerDump(calleeCodeBlock)).data())),
-        *vm, callerCodeBlock->ownerExecutable(), executable, callLinkInfo.codeOrigin));
+        *vm, callerCodeBlock->ownerExecutable(), executable));
     
     RepatchBuffer repatchBuffer(callerCodeBlock);
     
