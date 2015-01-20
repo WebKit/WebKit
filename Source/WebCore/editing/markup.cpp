@@ -104,8 +104,8 @@ static void completeURLs(DocumentFragment* fragment, const String& baseURL)
         if (!element.hasAttributes())
             continue;
         for (const Attribute& attribute : element.attributesIterator()) {
-            if (element.isURLAttribute(attribute) && !attribute.value().isEmpty())
-                changes.append(AttributeChange(&element, attribute.name(), URL(parsedBaseURL, attribute.value()).string()));
+            if (element.attributeContainsURL(attribute) && !attribute.value().isEmpty())
+                changes.append(AttributeChange(&element, attribute.name(), element.completeURLsInAttributeValue(parsedBaseURL, attribute)));
         }
     }
 

@@ -39,6 +39,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SourceSizeList.h"
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsRootElement.h"
@@ -351,6 +352,37 @@ bool HTMLImageElement::isURLAttribute(const Attribute& attribute) const
         || attribute.name() == longdescAttr
         || (attribute.name() == usemapAttr && attribute.value().string()[0] != '#')
         || HTMLElement::isURLAttribute(attribute);
+}
+
+bool HTMLImageElement::attributeContainsURL(const Attribute& attribute) const
+{
+    return attribute.name() == srcsetAttr
+        || HTMLElement::attributeContainsURL(attribute);
+}
+
+String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Attribute& attribute) const
+{
+    if (attribute.name() == srcsetAttr) {
+        Vector<ImageCandidate> imageCandidates = parseImageCandidatesFromSrcsetAttribute(StringView(attribute.value()));
+        StringBuilder result;
+        for (const auto& candidate : imageCandidates) {
+            if (&candidate != &imageCandidates[0])
+                result.appendLiteral(", ");
+            result.append(URL(base, candidate.string.toString()).string());
+            if (candidate.density != UninitializedDescriptor) {
+                result.append(' ');
+                result.appendNumber(candidate.density);
+                result.append('x');
+            }
+            if (candidate.resourceWidth != UninitializedDescriptor) {
+                result.append(' ');
+                result.appendNumber(candidate.resourceWidth);
+                result.append('x');
+            }
+        }
+        return result.toString();
+    }
+    return HTMLElement::completeURLsInAttributeValue(base, attribute);
 }
 
 bool HTMLImageElement::matchesLowercasedUsemap(const AtomicStringImpl& name) const
