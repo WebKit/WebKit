@@ -1,3 +1,15 @@
+2015-01-20  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Use FlowContents::Segment::text instead of renderer when possible.
+        https://bugs.webkit.org/show_bug.cgi?id=140692
+
+        Reviewed by Myles C. Maxfield.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayoutResolver.cpp:
+        (WebCore::SimpleLineLayout::RunResolver::Run::text):
+
 2015-01-20  David Kilzer  <ddkilzer@apple.com>
 
         Switch to comparing PLATFORM_NAME in terms of macosx
