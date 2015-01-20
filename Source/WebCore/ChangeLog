@@ -1,3 +1,12 @@
+2015-01-19  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        Avoid compiling files twice when they are included in an 'AllInOne.cpp' file.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Mark several files as 'not to be built', since
+        they are also build as part of an 'AllInOne.cpp' file.
+
 2015-01-19  Chris Dumez  <cdumez@apple.com>
 
         Stop using FeatureCounter to log navigation types
