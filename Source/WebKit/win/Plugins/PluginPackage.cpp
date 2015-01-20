@@ -185,94 +185,6 @@ PassRefPtr<PluginPackage> PluginPackage::createPackageFromCache(const String& pa
 }
 #endif
 
-#if defined(XP_UNIX)
-void PluginPackage::determineQuirks(const String& mimeType)
-{
-    if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
-        // Because a single process cannot create multiple VMs, and we cannot reliably unload a
-        // Java VM, we cannot unload the Java plugin, or we'll lose reference to our only VM
-        m_quirks.add(PluginQuirkDontUnloadPlugin);
-
-        // Setting the window region to an empty region causes bad scrolling repaint problems
-        // with the Java plug-in.
-        m_quirks.add(PluginQuirkDontClipToZeroRectWhenScrolling);
-        return;
-    }
-
-    if (mimeType == "application/x-shockwave-flash") {
-        static const PlatformModuleVersion flashTenVersion(0x0a000000);
-
-        if (compareFileVersion(flashTenVersion) >= 0) {
-            // Flash 10.0 b218 doesn't like having a NULL window handle
-            m_quirks.add(PluginQuirkDontSetNullWindowHandleOnDestroy);
-        } else {
-            // Flash 9 and older requests windowless plugins if we return a mozilla user agent
-            m_quirks.add(PluginQuirkWantsMozillaUserAgent);
-        }
-
-#if CPU(X86_64)
-        // 64-bit Flash freezes if right-click is sent in windowless mode
-        m_quirks.add(PluginQuirkIgnoreRightClickInWindowlessMode);
-#endif
-
-        m_quirks.add(PluginQuirkRequiresDefaultScreenDepth);
-        m_quirks.add(PluginQuirkThrottleInvalidate);
-        m_quirks.add(PluginQuirkThrottleWMUserPlusOneMessages);
-        m_quirks.add(PluginQuirkFlashURLNotifyBug);
-    }
-}
-#endif
-
-#if !OS(WINDOWS)
-void PluginPackage::determineModuleVersionFromDescription()
-{
-    // It's a bit lame to detect the plugin version by parsing it
-    // from the plugin description string, but it doesn't seem that
-    // version information is available in any standardized way at
-    // the module level, like in Windows
-
-    if (m_description.isEmpty())
-        return;
-
-    if (m_description.startsWith("Shockwave Flash") && m_description.length() >= 19) {
-        // The flash version as a PlatformModuleVersion differs on Unix from Windows
-        // since the revision can be larger than a 8 bits, so we allow it 16 here and
-        // push the major/minor up 8 bits. Thus on Unix, Flash's version may be
-        // 0x0a000000 instead of 0x000a0000.
-
-        Vector<String> versionParts;
-        m_description.substring(16).split(' ', /*allowEmptyEntries =*/ false, versionParts);
-        if (versionParts.isEmpty())
-            return;
-
-        if (versionParts.size() >= 1) {
-            Vector<String> majorMinorParts;
-            versionParts[0].split('.', majorMinorParts);
-            if (majorMinorParts.size() >= 1) {
-                bool converted = false;
-                unsigned major = majorMinorParts[0].toUInt(&converted);
-                if (converted)
-                    m_moduleVersion = (major & 0xff) << 24;
-            }
-            if (majorMinorParts.size() == 2) {
-                bool converted = false;
-                unsigned minor = majorMinorParts[1].toUInt(&converted);
-                if (converted)
-                    m_moduleVersion |= (minor & 0xff) << 16;
-            }
-        }
-
-        if (versionParts.size() >= 2) {
-            String revision = versionParts[1];
-            if (revision.length() > 1 && (revision[0] == 'r' || revision[0] == 'b')) {
-                revision.remove(0, 1);
-                m_moduleVersion |= revision.toInt() & 0xffff;
-            }
-        }
-    }
-}
-#endif
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 static void getListFromVariantArgs(JSC::ExecState* exec, const NPVariant* args, unsigned argCount, JSC::Bindings::RootObject* rootObject, JSC::MarkedArgumentBuffer& aList)
 {
@@ -421,40 +333,15 @@ void PluginPackage::initializeBrowserFuncs()
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-#if ENABLE(PLUGIN_PACKAGE_SIMPLE_HASH)
-unsigned PluginPackage::hash() const
-{
-    struct HashCodes {
-        unsigned hash;
-        time_t modifiedDate;
-    } hashCodes;
-
-    hashCodes.hash = m_path.impl()->hash();
-    hashCodes.modifiedDate = m_lastModified;
-
-    return StringHasher::hashMemory<sizeof(hashCodes)>(&hashCodes);
-}
-
-bool PluginPackage::equal(const PluginPackage& a, const PluginPackage& b)
-{
-    return a.m_description == b.m_description;
-}
-#endif
-
 int PluginPackage::compareFileVersion(const PlatformModuleVersion& compareVersion) const
 {
     // return -1, 0, or 1 if plug-in version is less than, equal to, or greater than
     // the passed version
 
-#if OS(WINDOWS)
     if (m_moduleVersion.mostSig != compareVersion.mostSig)
         return m_moduleVersion.mostSig > compareVersion.mostSig ? 1 : -1;
     if (m_moduleVersion.leastSig != compareVersion.leastSig)
         return m_moduleVersion.leastSig > compareVersion.leastSig ? 1 : -1;
-#else    
-    if (m_moduleVersion != compareVersion)
-        return m_moduleVersion > compareVersion ? 1 : -1;
-#endif
 
     return 0;
 }

@@ -75,7 +75,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
 
-#if OS(WINDOWS) && ENABLE(NETSCAPE_PLUGIN_API)
+#if ENABLE(NETSCAPE_PLUGIN_API)
 #include "PluginMessageThrottlerWin.h"
 #endif
 
@@ -142,14 +142,8 @@ void PluginView::setFrameRect(const IntRect& rect)
 
     updatePluginWidget();
 
-#if OS(WINDOWS)
     // On Windows always call plugin to change geometry.
     setNPWindowRect(rect);
-#elif defined(XP_UNIX)
-    // On Unix, multiple calls to setNPWindow() in windowed mode causes Flash to crash
-    if (m_mode == NP_FULL || !m_isWindowed)
-        setNPWindowRect(rect);
-#endif
 }
 
 void PluginView::frameRectsChanged()
@@ -174,18 +168,8 @@ void PluginView::handleEvent(Event* event)
         handleMouseEvent(static_cast<MouseEvent*>(event));
     else if (event->isKeyboardEvent())
         handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
-#if defined(XP_MACOSX)
-    else if (event->type() == eventNames().wheelEvent || event->type() == eventNames().mousewheelEvent)
-        handleWheelEvent(static_cast<WheelEvent*>(event));
-#endif
     else if (event->type() == eventNames().contextmenuEvent)
         event->setDefaultHandled(); // We don't know if the plug-in has handled mousedown event by displaying a context menu, so we never want WebKit to show a default one.
-#if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
-    else if (event->type() == eventNames().focusoutEvent)
-        handleFocusOutEvent();
-    else if (event->type() == eventNames().focusinEvent)
-        handleFocusInEvent();
-#endif
 }
 
 void PluginView::init()
@@ -337,7 +321,6 @@ void PluginView::stop()
     JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonVM());
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-#if defined(XP_WIN) && !PLATFORM(GTK)
     // Unsubclass the window
     if (m_isWindowed) {
         WNDPROC currentWndProc = (WNDPROC)GetWindowLongPtr(platformPluginWidget(), GWLP_WNDPROC);
@@ -345,10 +328,8 @@ void PluginView::stop()
         if (currentWndProc == PluginViewWndProc)
             SetWindowLongPtr(platformPluginWidget(), GWLP_WNDPROC, (LONG_PTR)m_pluginWndProc);
     }
-#endif // !defined(XP_WIN) || PLATFORM(GTK)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-#if !defined(XP_MACOSX)
     // Clear the window
     m_npWindow.window = 0;
 
@@ -359,13 +340,6 @@ void PluginView::stop()
         setCallingPlugin(false);
         PluginView::setCurrentPluginView(0);
     }
-
-#ifdef XP_UNIX
-    delete static_cast<NPSetWindowCallbackStruct*>(m_npWindow.ws_info);
-    m_npWindow.ws_info = 0;
-#endif
-
-#endif // !defined(XP_MACOSX)
 
     PluginMainThreadScheduler::scheduler().unregisterPlugin(m_instance);
 
@@ -622,41 +596,6 @@ NPError PluginView::setValue(NPPVariable variable, void* value)
     case NPPVpluginTransparentBool:
         m_isTransparent = value;
         return NPERR_NO_ERROR;
-#if defined(XP_MACOSX)
-    case NPPVpluginDrawingModel: {
-        // Can only set drawing model inside NPP_New()
-        if (this != currentPluginView())
-           return NPERR_GENERIC_ERROR;
-
-        NPDrawingModel newDrawingModel = NPDrawingModel(uintptr_t(value));
-        switch (newDrawingModel) {
-        case NPDrawingModelCoreGraphics:
-            return NPERR_NO_ERROR;
-        case NPDrawingModelCoreAnimation:
-        default:
-            LOG(Plugins, "Plugin asked for unsupported drawing model: %s",
-                    prettyNameForDrawingModel(newDrawingModel));
-            return NPERR_GENERIC_ERROR;
-        }
-    }
-
-    case NPPVpluginEventModel: {
-        // Can only set event model inside NPP_New()
-        if (this != currentPluginView())
-           return NPERR_GENERIC_ERROR;
-
-        NPEventModel newEventModel = NPEventModel(uintptr_t(value));
-        switch (newEventModel) {
-        case NPEventModelCocoa:
-            return NPERR_NO_ERROR;
-        default:
-            LOG(Plugins, "Plugin asked for unsupported event model: %s",
-                    prettyNameForEventModel(newEventModel));
-            return NPERR_GENERIC_ERROR;
-        }
-    }
-#endif // defined(XP_MACOSX)
-
     default:
         notImplemented();
         return NPERR_GENERIC_ERROR;
@@ -805,39 +744,16 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_paramValues(0)
     , m_mimeType(mimeType)
     , m_instance(0)
-#if defined(XP_MACOSX)
-    , m_isWindowed(false)
-    , m_updatedCocoaTextInputRequested(false)
-    , m_keyDownSent(false)
-    , m_disregardKeyUpCounter(0)
-#else
     , m_isWindowed(true)
-#endif
     , m_isTransparent(false)
     , m_haveInitialized(false)
     , m_isWaitingToStart(false)
-#if defined(XP_UNIX)
-    , m_needsXEmbed(false)
-#endif
-#if OS(WINDOWS) && ENABLE(NETSCAPE_PLUGIN_API)
+#if ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginWndProc(0)
     , m_lastMessage(0)
     , m_isCallingPluginWndProc(false)
     , m_wmPrintHDC(0)
     , m_haveUpdatedPluginWidget(false)
-#endif
-#if PLATFORM(EFL)
-    , m_window(0)
-#endif
-#if defined(XP_MACOSX)
-    , m_contextRef(0)
-#endif
-#if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
-    , m_hasPendingGeometryChange(true)
-    , m_drawable(0)
-    , m_visual(0)
-    , m_colormap(0)
-    , m_pluginDisplay(0)
 #endif
     , m_loadManually(loadManually)
     , m_manualStream(0)
@@ -858,9 +774,6 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     setParameters(paramNames, paramValues);
 
     memset(&m_npWindow, 0, sizeof(m_npWindow));
-#if defined(XP_MACOSX)
-    memset(&m_npCgContext, 0, sizeof(m_npCgContext));
-#endif
 
     resize(size);
 }
@@ -1212,33 +1125,11 @@ void PluginView::paintMissingPluginIcon(GraphicsContext* context, const IntRect&
 }
 
 static const char* MozillaUserAgent = "Mozilla/5.0 ("
-#if defined(XP_MACOSX)
-        "Macintosh; U; Intel Mac OS X;"
-#elif defined(XP_WIN)
         "Windows; U; Windows NT 5.1;"
-#elif defined(XP_UNIX)
-// The Gtk port uses X11 plugins in Mac.
-#if OS(DARWIN) && PLATFORM(GTK)
-    "X11; U; Intel Mac OS X;"
-#else
-    "X11; U; Linux i686;"
-#endif
-#endif
         " en-US; rv:1.8.1) Gecko/20061010 Firefox/2.0";
 
 static const char* const ChromeUserAgent = "Mozilla/5.0 ("
-#if defined(XP_MACOSX)
-    "Macintosh; U; Intel Mac OS X;"
-#elif defined(XP_WIN)
     "Windows; U; Windows NT 5.1;"
-#elif defined(XP_UNIX)
-    // The Gtk port uses X11 plugins in Mac.
-#if OS(DARWIN) && PLATFORM(GTK)
-    "X11; U; Intel Mac OS X;"
-#else
-    "X11; U; Linux i686;"
-#endif
-#endif
     " AppleWebKit/534.34 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/534.34";
 
 const char* PluginView::userAgent()

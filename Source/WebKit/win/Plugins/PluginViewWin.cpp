@@ -78,22 +78,9 @@
 #include <cairo-win32.h>
 #endif
 
-#if PLATFORM(GTK)
-#include <gdk/gdkwin32.h>
-#include <gtk/gtk.h>
-#endif
-
 static inline HWND windowHandleForPageClient(PlatformPageClient client)
 {
-#if PLATFORM(GTK)
-    if (!client)
-        return 0;
-    if (GdkWindow* window = gtk_widget_get_window(client))
-        return static_cast<HWND>(GDK_WINDOW_HWND(window));
-    return 0;
-#else
     return client;
-#endif
 }
 
 using JSC::ExecState;
@@ -124,7 +111,7 @@ static BYTE* endPaint;
 typedef HDC (WINAPI *PtrBeginPaint)(HWND, PAINTSTRUCT*);
 typedef BOOL (WINAPI *PtrEndPaint)(HWND, const PAINTSTRUCT*);
 
-#if OS(WINDOWS) && CPU(X86_64) && COMPILER(MSVC)
+#if CPU(X86_64)
 extern "C" HDC __stdcall _HBeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint);
 extern "C" BOOL __stdcall _HEndPaint(HWND hWnd, const PAINTSTRUCT* lpPaint);
 #endif
@@ -141,17 +128,7 @@ HDC WINAPI PluginView::hookedBeginPaint(HWND hWnd, PAINTSTRUCT* lpPaint)
         return pluginView->m_wmPrintHDC;
     }
 
-#if COMPILER(GCC)
-    HDC result;
-    asm ("push    %2\n"
-         "push    %3\n"
-         "call    *%4\n"
-         : "=a" (result)
-         : "a" (beginPaintSysCall), "g" (lpPaint), "g" (hWnd), "m" (beginPaint)
-         : "memory"
-        );
-    return result;
-#elif defined(_M_IX86)
+#if defined(_M_IX86)
     // Call through to the original BeginPaint.
     __asm   mov     eax, beginPaintSysCall
     __asm   push    lpPaint
@@ -171,16 +148,7 @@ BOOL WINAPI PluginView::hookedEndPaint(HWND hWnd, const PAINTSTRUCT* lpPaint)
         return TRUE;
     }
 
-#if COMPILER(GCC)
-    BOOL result;
-    asm ("push   %2\n"
-         "push   %3\n"
-         "call   *%4\n"
-         : "=a" (result)
-         : "a" (endPaintSysCall), "g" (lpPaint), "g" (hWnd), "m" (endPaint)
-        );
-    return result;
-#elif defined (_M_IX86)
+#if defined (_M_IX86)
     // Call through to the original EndPaint.
     __asm   mov     eax, endPaintSysCall
     __asm   push    lpPaint
@@ -200,7 +168,7 @@ static void hook(const char* module, const char* proc, unsigned& sysCallID, BYTE
 
     pProc = reinterpret_cast<BYTE*>(reinterpret_cast<ptrdiff_t>(GetProcAddress(hMod, proc)));
 
-#if COMPILER(GCC) || defined(_M_IX86)
+#if defined(_M_IX86)
     if (pProc[0] != 0xB8)
         return;
 
@@ -270,10 +238,6 @@ static bool registerPluginView()
         return true;
 
     haveRegisteredWindowClass = true;
-
-#if PLATFORM(GTK)
-    WebCore::setInstanceHandle((HINSTANCE)(GetModuleHandle(0)));
-#endif
 
     ASSERT(WebCore::instanceHandle());
 
@@ -594,21 +558,11 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
     }
 
-    // In the GTK and Qt ports we draw in an offscreen buffer and don't want to use the window
-    // coordinates.
-#if PLATFORM(GTK)
-    IntRect rectInWindow(rect);
-    rectInWindow.intersect(frameRect());
-#else
     IntRect rectInWindow = downcast<FrameView>(*parent()).contentsToWindow(frameRect());
-#endif
     LocalWindowsContext windowsContext(context, rectInWindow, m_isTransparent);
 
     // On Safari/Windows without transparency layers the GraphicsContext returns the HDC
     // of the window and the plugin expects that the passed in DC has window coordinates.
-    // In the GTK and Qt ports we always draw in an offscreen buffer and therefore need
-    // to preserve the translation set in getWindowsContext.
-#if !PLATFORM(GTK)
     if (!context->isInTransparencyLayer()) {
         XFORM transform;
         GetWorldTransform(windowsContext.hdc(), &transform);
@@ -616,7 +570,6 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         transform.eDy = 0;
         SetWorldTransform(windowsContext.hdc(), &transform);
     }
-#endif
 
     paintIntoTransformedContext(windowsContext.hdc());
 }
@@ -714,13 +667,11 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     if (dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 
-#if !PLATFORM(GTK)
     // Currently, Widget::setCursor is always called after this function in EventHandler.cpp
     // and since we don't want that we set ignoreNextSetCursor to true here to prevent that.
     ignoreNextSetCursor = true;
     if (Page* page = m_parentFrame->page())
         page->chrome().client().setLastSetCursorToCurrentCursor();
-#endif
 }
 
 void PluginView::setParent(ScrollView* parent)
@@ -762,13 +713,7 @@ void PluginView::setNPWindowRect(const IntRect& rect)
     if (!m_isStarted)
         return;
 
-    // In the GTK port we draw in an offscreen buffer and don't want to use the window
-    // coordinates.
-# if PLATFORM(GTK)
-    IntPoint p = rect.location();
-# else
     IntPoint p = downcast<FrameView>(*parent()).contentsToWindow(rect.location());
-# endif
     m_npWindow.x = p.x();
     m_npWindow.y = p.y();
 
@@ -933,15 +878,11 @@ bool PluginView::platformStart()
         HWND window = ::CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
                                        0, 0, 0, 0, parentWindowHandle, 0, WebCore::instanceHandle(), 0);
 
-#if OS(WINDOWS) && PLATFORM(GTK)
-        m_window = window;
-#else
         setPlatformWidget(window);
-#endif
 
         // Calling SetWindowLongPtrA here makes the window proc ASCII, which is required by at least
         // the Shockwave Director plug-in.
-#if OS(WINDOWS) && CPU(X86_64)
+#if CPU(X86_64)
         ::SetWindowLongPtrA(platformPluginWidget(), GWLP_WNDPROC, (LONG_PTR)DefWindowProcA);
 #else
         ::SetWindowLongPtrA(platformPluginWidget(), GWL_WNDPROC, (LONG)DefWindowProcA);
@@ -974,7 +915,7 @@ void PluginView::platformDestroy()
 
 PassRefPtr<Image> PluginView::snapshot()
 {
-#if !PLATFORM(GTK) && !USE(WINGDI)
+#if !USE(WINGDI)
     auto hdc = adoptGDIObject(::CreateCompatibleDC(0));
 
     if (!m_isWindowed) {

@@ -1,3 +1,49 @@
+2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove non-Windows cruft from WebKit/win/Plugins
+        https://bugs.webkit.org/show_bug.cgi?id=140675
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory):
+        (WebCore::PluginDatabase::getPluginPathsInDirectories):
+        * Plugins/PluginDebug.cpp:
+        (WebCore::prettyNameForNPNVariable):
+        (WebCore::prettyNameForNPPVariable):
+        (WebCore::prettyNameForDrawingModel): Deleted.
+        (WebCore::prettyNameForEventModel): Deleted.
+        * Plugins/PluginDebug.h:
+        * Plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::compareFileVersion):
+        (WebCore::PluginPackage::determineQuirks): Deleted.
+        (WebCore::PluginPackage::determineModuleVersionFromDescription): Deleted.
+        (WebCore::PluginPackage::hash): Deleted.
+        (WebCore::PluginPackage::equal): Deleted.
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::setFrameRect):
+        (WebCore::PluginView::handleEvent):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::setValue):
+        (WebCore::PluginView::PluginView):
+        * Plugins/PluginView.h:
+        (WebCore::PluginView::platformPluginWidget): Deleted.
+        (WebCore::PluginView::setPlatformPluginWidget): Deleted.
+        * Plugins/PluginViewWin.cpp:
+        (windowHandleForPageClient):
+        (WebCore::PluginView::hookedBeginPaint):
+        (WebCore::PluginView::hookedEndPaint):
+        (WebCore::hook):
+        (WebCore::registerPluginView):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::snapshot):
+        * Plugins/npapi.cpp:
+        (NPN_InvalidateRect):
+
 2015-01-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Periodic failure in DumpRenderTree related to WebActionPropertyBag::Read

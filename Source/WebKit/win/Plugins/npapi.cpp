@@ -122,12 +122,6 @@ void NPN_Status(NPP instance, const char* message)
 void NPN_InvalidateRect(NPP instance, NPRect* invalidRect)
 {
     PluginView* view = pluginViewForInstance(instance);
-#if defined(XP_UNIX)
-    // NSPluginWrapper, a plugin wrapper binary that allows running 32-bit plugins
-    // on 64-bit architectures typically used in X11, will sometimes give us a null NPP here.
-    if (!view)
-        return;
-#endif
     view->invalidateRect(invalidRect);
 }
 

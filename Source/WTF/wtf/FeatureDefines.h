@@ -288,22 +288,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 /* --------- EFL port (Unix) --------- */
 #if PLATFORM(EFL)
-
-#if !defined(ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH)
-#define ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH 1
-#endif
-
 #endif /* PLATFORM(EFL) */
 
 /* --------- Gtk port (Unix, Windows, Mac) --------- */
 #if PLATFORM(GTK)
-
-#if OS(UNIX)
-#if !defined(ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH)
-#define ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH 1
-#endif
-#endif
-
 #endif /* PLATFORM(GTK) */
 
 /* ENABLE macro defaults for WebCore */
@@ -611,10 +599,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #if !defined(ENABLE_PAN_SCROLLING)
 #define ENABLE_PAN_SCROLLING 1
 #endif
-#endif
-
-#if !defined(ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH)
-#define ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH 0
 #endif
 
 #if !defined(ENABLE_POINTER_LOCK)

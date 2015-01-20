@@ -51,36 +51,10 @@ static const char* const errorStrings[] = {
     "Unknown error code"
 };
 
-#ifdef XP_MACOSX
-static const char* const drawingModels[] = {
-    "NPDrawingModelQuickDraw",
-    "NPDrawingModelCoreGraphics",
-    "NPDrawingModelOpenGL",
-    "NPDrawingModelCoreAnimation"
-};
-
-static const char* const eventModels[] = {
-    "NPEventModelCarbon",
-    "NPEventModelCocoa"
-};
-#endif //XP_MACOSX
-
 const char* prettyNameForNPError(NPError error)
 {
     return errorStrings[error];
 }
-
-#ifdef XP_MACOSX
-const char* prettyNameForDrawingModel(NPDrawingModel drawingModel)
-{
-    return drawingModels[drawingModel];
-}
-
-const char* prettyNameForEventModel(NPEventModel eventModel)
-{
-    return eventModels[eventModel];
-}
-#endif //XP_MACOSX
 
 CString prettyNameForNPNVariable(NPNVariable variable)
 {
@@ -103,25 +77,11 @@ CString prettyNameForNPNVariable(NPNVariable variable)
     case NPNVSupportsWindowless: return "NPNVSupportsWindowless";
     case NPNVprivateModeBool: return "NPNVprivateModeBool";
 
-#ifdef XP_MACOSX
-    case NPNVpluginDrawingModel: return "NPNVpluginDrawingModel";
-#ifndef NP_NO_QUICKDRAW
-    case NPNVsupportsQuickDrawBool: return "NPNVsupportsQuickDrawBool";
-#endif
-    case NPNVsupportsCoreGraphicsBool: return "NPNVsupportsCoreGraphicsBool";
-    case NPNVsupportsOpenGLBool: return "NPNVsupportsOpenGLBool";
-    case NPNVsupportsCoreAnimationBool: return "NPNVsupportsCoreAnimationBool";
-#ifndef NP_NO_CARBON
-    case NPNVsupportsCarbonBool: return "NPNVsupportsCarbonBool";
-#endif
-    case NPNVsupportsCocoaBool: return "NPNVsupportsCocoaBool";
-#endif
-
     default: return "Unknown variable";
     }
 }
 
-CString prettyNameForNPPVariable(NPPVariable variable, void* value)
+CString prettyNameForNPPVariable(NPPVariable variable, void*)
 {
     switch (variable) {
     case NPPVpluginNameString: return "NPPVpluginNameString";
@@ -145,22 +105,6 @@ CString prettyNameForNPPVariable(NPPVariable variable, void* value)
 
     case NPPVpluginWantsAllNetworkStreams: return "NPPVpluginWantsAllNetworkStreams";
     case NPPVpluginCancelSrcStream: return "NPPVpluginCancelSrcStream";
-
-#ifdef XP_MACOSX
-    case NPPVpluginDrawingModel: {
-        String result("NPPVpluginDrawingModel, ");
-        result.append(prettyNameForDrawingModel(NPDrawingModel(uintptr_t(value))));
-        return result.latin1();
-    }
-    case NPPVpluginEventModel: {
-        String result("NPPVpluginEventModel, ");
-        result.append(prettyNameForEventModel(NPEventModel(uintptr_t(value))));
-        return result.latin1();
-    }
-    case NPPVpluginCoreAnimationLayer: return "NPPVpluginCoreAnimationLayer";
-#else
-    UNUSED_PARAM(value);
-#endif
 
     default: return "Unknown variable";
     }
