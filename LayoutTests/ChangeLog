@@ -1,3 +1,105 @@
+2015-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Converter] Flip the switch on
+        https://bugs.webkit.org/show_bug.cgi?id=140592
+
+        Updating test expected results.
+
+        svg/W3C-SVG-1.1/fonts-glyph-04-t.svg tests something which isn't spec'ed
+        and is impossible to perform with the converter, so I have deleted that
+        test.
+
+        svg/custom/skip-underline-missing-glyph-expected.html was testing
+        incorrect behavior, so I have updated the test.
+
+        The getStartPositionOfChar() calls in svg/text/kerning.svg and
+        svg/text/multichar-glyph.svg are currently impossible to be implemented
+        correctly with the converter, so I have updated the expected results to
+        test for the updated results of those calls.
+
+        Reviewed by Antti Koivisto.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.png: Removed.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt: Removed.
+        * platform/mac/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-08-b-expected.txt:
+        * platform/mac/svg/custom/glyph-setting-d-attribute-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-fallback-expected.txt:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/mac/svg/text/kerning-expected.txt:
+        * platform/mac/svg/text/multichar-glyph-expected.txt:
+        * platform/mac/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/mac-mountainlion/svg/W3C-SVG-1.1/text-align-08-b-expected.txt:
+        * platform/mac-mountainlion/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac-mountainlion/svg/custom/svg-fonts-fallback-expected.txt:
+        * platform/mac-mountainlion/svg/text/kerning-expected.txt:
+        * platform/mac-mountainlion/svg/text/multichar-glyph-expected.txt:
+        * platform/mac-mountainlion/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt: Removed.
+        * svg/W3C-SVG-1.1/fonts-glyph-04-t-w3c.png: Removed.
+        * svg/W3C-SVG-1.1/fonts-glyph-04-t.svg: Removed.
+        * svg/custom/skip-underline-missing-glyph-expected.html: Removed.
+        * svg/custom/skip-underline-missing-glyph-expected.txt: Added.
+        * svg/custom/skip-underline-missing-glyph.html:
+
 2015-01-19  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed Windows gardening.

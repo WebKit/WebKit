@@ -1,3 +1,12 @@
+2015-01-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [SVG -> OTF Converter] Flip the switch on
+        https://bugs.webkit.org/show_bug.cgi?id=140592
+
+        Reviewed by Antti Koivisto.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-01-19  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/140504> REGRESSION (r178452): Visited link coloring only appears to work in the first web process
