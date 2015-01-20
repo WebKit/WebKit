@@ -1,5 +1,16 @@
 2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Fix unused-private-field warning in IconEfl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=140676
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/Icon.h:
+        * platform/graphics/efl/IconEfl.cpp:
+        (WebCore::Icon::Icon): Deleted.
+
+2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
+
         Fix unused-private-field warning in FontCustomPlatformDataFreeType.cpp
         https://bugs.webkit.org/show_bug.cgi?id=140677
 

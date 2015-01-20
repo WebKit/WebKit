@@ -76,7 +76,6 @@ private:
     GdkPixbuf* m_icon;
 #elif PLATFORM(EFL)
     Icon();
-    Evas_Object* m_icon;
 #endif
 };
 
