@@ -1,3 +1,58 @@
+2015-01-20  Chris Dumez  <cdumez@apple.com>
+
+        Use DiagnosticLoggingClient to log page cache failures
+        https://bugs.webkit.org/show_bug.cgi?id=140650
+
+        Reviewed by Andreas Kling.
+
+        Use DiagnosticLoggingClient to log page cache failures instead of the
+        legacy FeatureCounter.
+
+        * history/PageCache.cpp:
+        (WebCore::logPageCacheFailureDiagnosticMessage):
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::logCanCachePageDecision):
+        (WebCore::PageCache::canCache):
+        (WebCore::pruningReasonToDiagnosticLoggingKey):
+        (WebCore::PageCache::take):
+        (WebCore::PageCache::get):
+        (WebCore::pruningReasonToFeatureCounterKey): Deleted.
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::successKey):
+        (WebCore::DiagnosticLoggingKeys::failureKey):
+        (WebCore::DiagnosticLoggingKeys::pageLoadedKey):
+        (WebCore::DiagnosticLoggingKeys::engineFailedToLoadKey):
+        (WebCore::DiagnosticLoggingKeys::navigationKey):
+        (WebCore::DiagnosticLoggingKeys::pageCacheKey):
+        (WebCore::DiagnosticLoggingKeys::noDocumentLoaderKey):
+        (WebCore::DiagnosticLoggingKeys::mainDocumentErrorKey):
+        (WebCore::DiagnosticLoggingKeys::isErrorPageKey):
+        (WebCore::DiagnosticLoggingKeys::hasPluginsKey):
+        (WebCore::DiagnosticLoggingKeys::httpsNoStoreKey):
+        (WebCore::DiagnosticLoggingKeys::hasOpenDatabasesKey):
+        (WebCore::DiagnosticLoggingKeys::noCurrentHistoryItemKey):
+        (WebCore::DiagnosticLoggingKeys::quirkRedirectComingKey):
+        (WebCore::DiagnosticLoggingKeys::loadingAPISenseKey):
+        (WebCore::DiagnosticLoggingKeys::documentLoaderStoppingKey):
+        (WebCore::DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey):
+        (WebCore::DiagnosticLoggingKeys::applicationCacheKey):
+        (WebCore::DiagnosticLoggingKeys::deniedByClientKey):
+        (WebCore::DiagnosticLoggingKeys::deviceMotionKey):
+        (WebCore::DiagnosticLoggingKeys::deviceOrientationKey):
+        (WebCore::DiagnosticLoggingKeys::deviceProximityKey):
+        (WebCore::DiagnosticLoggingKeys::reloadKey):
+        (WebCore::DiagnosticLoggingKeys::reloadFromOriginKey):
+        (WebCore::DiagnosticLoggingKeys::sameLoadKey):
+        (WebCore::DiagnosticLoggingKeys::expiredKey):
+        (WebCore::DiagnosticLoggingKeys::prunedDueToMemoryPressureKey):
+        (WebCore::DiagnosticLoggingKeys::prunedDueToCapacityReached):
+        (WebCore::DiagnosticLoggingKeys::prunedDueToProcessSuspended):
+        (WebCore::DiagnosticLoggingKeys::passKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::failKey): Deleted.
+        (WebCore::DiagnosticLoggingKeys::noopKey): Deleted.
+        * page/DiagnosticLoggingKeys.h:
+        * platform/FeatureCounterKeys.h:
+
 2015-01-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Wrong arguments passed to computeNormalizedFractionBreadth

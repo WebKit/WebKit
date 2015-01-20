@@ -32,23 +32,45 @@ namespace WebCore {
 
 class DiagnosticLoggingKeys {
 public:
-    // Message keys.
+    static String applicationCacheKey();
+    static String cannotSuspendActiveDOMObjectsKey();
+    static String deniedByClientKey();
+    static String deviceMotionKey();
+    static String deviceOrientationKey();
+    static String deviceProximityKey();
+    static String documentLoaderStoppingKey();
+    static String engineFailedToLoadKey();
+    static String expiredKey();
+    static String hasOpenDatabasesKey();
+    static String hasPluginsKey();
+    static String httpsNoStoreKey();
+    static String isErrorPageKey();
+    static String loadingAPISenseKey();
+    static String mainDocumentErrorKey();
     static String mediaLoadedKey();
     static String mediaLoadingFailedKey();
-    static String pluginLoadedKey();
-    static String pluginLoadingFailedKey();
-    static String pageContainsPluginKey();
+    static String navigationKey();
+    static String noCurrentHistoryItemKey();
+    static String noDocumentLoaderKey();
+    static String pageCacheKey();
+    static String pageContainsAtLeastOneMediaEngineKey();
     static String pageContainsAtLeastOnePluginKey();
     static String pageContainsMediaEngineKey();
-    static String pageContainsAtLeastOneMediaEngineKey();
+    static String pageContainsPluginKey();
     static String pageLoadedKey();
-    static String engineFailedToLoadKey();
-    static String navigationKey();
+    static String pluginLoadedKey();
+    static String pluginLoadingFailedKey();
+    static String prunedDueToCapacityReached();
+    static String prunedDueToMemoryPressureKey();
+    static String prunedDueToProcessSuspended();
+    static String quirkRedirectComingKey();
+    static String reloadFromOriginKey();
+    static String reloadKey();
+    static String sameLoadKey();
 
-    // Success keys.
-    static String passKey();
-    static String failKey();
-    static String noopKey();
+    // Success / Failure keys.
+    static String successKey();
+    static String failureKey();
 };
 
 }

@@ -68,35 +68,150 @@ String DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey()
     return ASCIILiteral("pageContainsAtLeastOneMediaEngine");
 }
 
-String DiagnosticLoggingKeys::passKey()
+String DiagnosticLoggingKeys::successKey()
 {
-    return ASCIILiteral("pass");
+    return ASCIILiteral("success");
 }
 
-String DiagnosticLoggingKeys::failKey()
+String DiagnosticLoggingKeys::failureKey()
 {
-    return ASCIILiteral("fail");
-}
-
-String DiagnosticLoggingKeys::noopKey()
-{
-    return ASCIILiteral("noop");
+    return ASCIILiteral("failure");
 }
 
 String DiagnosticLoggingKeys::pageLoadedKey()
 {
-    return WTF::ASCIILiteral("pageLoaded");
+    return ASCIILiteral("pageLoaded");
 }
 
 String DiagnosticLoggingKeys::engineFailedToLoadKey()
 {
-    return WTF::ASCIILiteral("engineFailedToLoad");
+    return ASCIILiteral("engineFailedToLoad");
 }
 
-WTF::String DiagnosticLoggingKeys::navigationKey()
+String DiagnosticLoggingKeys::navigationKey()
 {
-    return WTF::ASCIILiteral("navigation");
+    return ASCIILiteral("navigation");
 }
 
+String DiagnosticLoggingKeys::pageCacheKey()
+{
+    return ASCIILiteral("pageCache");
 }
+
+String DiagnosticLoggingKeys::noDocumentLoaderKey()
+{
+    return ASCIILiteral("noDocumentLoader");
+}
+
+String DiagnosticLoggingKeys::mainDocumentErrorKey()
+{
+    return ASCIILiteral("mainDocumentError");
+}
+
+String DiagnosticLoggingKeys::isErrorPageKey()
+{
+    return ASCIILiteral("isErrorPage");
+}
+
+String DiagnosticLoggingKeys::hasPluginsKey()
+{
+    return ASCIILiteral("hasPlugins");
+}
+
+String DiagnosticLoggingKeys::httpsNoStoreKey()
+{
+    return ASCIILiteral("httpsNoStore");
+}
+
+String DiagnosticLoggingKeys::hasOpenDatabasesKey()
+{
+    return ASCIILiteral("hasOpenDatabases");
+}
+
+String DiagnosticLoggingKeys::noCurrentHistoryItemKey()
+{
+    return ASCIILiteral("noCurrentHistoryItem");
+}
+
+String DiagnosticLoggingKeys::quirkRedirectComingKey()
+{
+    return ASCIILiteral("quirkRedirectComing");
+}
+
+String DiagnosticLoggingKeys::loadingAPISenseKey()
+{
+    return ASCIILiteral("loadingAPISense");
+}
+
+String DiagnosticLoggingKeys::documentLoaderStoppingKey()
+{
+    return ASCIILiteral("documentLoaderStopping");
+}
+
+String DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey()
+{
+    return ASCIILiteral("cannotSuspendActiveDOMObjects");
+}
+
+String DiagnosticLoggingKeys::applicationCacheKey()
+{
+    return ASCIILiteral("applicationCache");
+}
+
+String DiagnosticLoggingKeys::deniedByClientKey()
+{
+    return ASCIILiteral("deniedByClient");
+}
+
+String DiagnosticLoggingKeys::deviceMotionKey()
+{
+    return ASCIILiteral("deviceMotion");
+}
+
+String DiagnosticLoggingKeys::deviceOrientationKey()
+{
+    return ASCIILiteral("deviceOrientation");
+}
+
+String DiagnosticLoggingKeys::deviceProximityKey()
+{
+    return ASCIILiteral("deviceProximity");
+}
+
+String DiagnosticLoggingKeys::reloadKey()
+{
+    return ASCIILiteral("reload");
+}
+
+String DiagnosticLoggingKeys::reloadFromOriginKey()
+{
+    return ASCIILiteral("reloadFromOrigin");
+}
+
+String DiagnosticLoggingKeys::sameLoadKey()
+{
+    return ASCIILiteral("sameLoad");
+}
+
+String DiagnosticLoggingKeys::expiredKey()
+{
+    return ASCIILiteral("expired");
+}
+
+String DiagnosticLoggingKeys::prunedDueToMemoryPressureKey()
+{
+    return ASCIILiteral("pruned.memoryPressure");
+}
+
+String DiagnosticLoggingKeys::prunedDueToCapacityReached()
+{
+    return ASCIILiteral("pruned.capacityReached");
+}
+
+String DiagnosticLoggingKeys::prunedDueToProcessSuspended()
+{
+    return ASCIILiteral("pruned.processSuspended");
+}
+
+} // namespace WebCore
 
