@@ -64,7 +64,7 @@ template<typename T> inline constexpr bool test(T value, uintptr_t mask)
 
 inline constexpr bool isPowerOfTwo(size_t size)
 {
-    return !(size & (size - 1));
+    return size && !(size & (size - 1));
 }
 
 template<typename T> inline T roundUpToMultipleOf(size_t divisor, T x)

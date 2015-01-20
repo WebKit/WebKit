@@ -102,6 +102,7 @@ private:
     Vector<MediumPage*> m_mediumPages;
 
     SegregatedFreeList m_largeRanges;
+    Vector<Range> m_xLargeRanges;
 
     bool m_isAllocatingPages;
 

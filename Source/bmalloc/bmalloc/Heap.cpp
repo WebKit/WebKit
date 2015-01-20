@@ -319,23 +319,40 @@ void Heap::deallocateMediumLine(std::lock_guard<StaticMutex>& lock, MediumLine* 
     }
 }
 
-Range Heap::findXLarge(std::lock_guard<StaticMutex>&, void* object)
-{
-    return m_vmHeap.findXLarge(object);
-}
-
 void* Heap::allocateXLarge(std::lock_guard<StaticMutex>&, size_t size)
 {
     m_isAllocatingPages = true;
 
-    void* result = m_vmHeap.allocateXLarge(size);
-    vmAllocatePhysicalPagesSloppy(result, size);
+    void* result = vmAllocate(size, superChunkSize);
+    m_xLargeRanges.push(Range(result, size));
     return result;
+}
+
+Range Heap::findXLarge(std::lock_guard<StaticMutex>&, void* object)
+{
+    for (auto& range : m_xLargeRanges) {
+        if (range.begin() != object)
+            continue;
+        return range;
+    }
+
+    return Range();
 }
 
 void Heap::deallocateXLarge(std::unique_lock<StaticMutex>& lock, void* object)
 {
-    m_vmHeap.deallocateXLarge(lock, object);
+    for (auto& range : m_xLargeRanges) {
+        if (range.begin() != object)
+            continue;
+
+        Range toDeallocate = m_xLargeRanges.pop(&range);
+
+        lock.unlock();
+        vmDeallocate(toDeallocate.begin(), toDeallocate.size());
+        lock.lock();
+        
+        break;
+    }
 }
 
 void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t size)

@@ -1,3 +1,43 @@
+2015-01-20  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: a little bit of cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=140687
+
+        Reviewed by Anders Carlsson.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::isPowerOfTwo): Added a check for 0, since 0 would break a lot
+        of code.
+
+        * bmalloc/BoundaryTag.h:
+        * bmalloc/BoundaryTagInlines.h:
+        (bmalloc::BoundaryTag::mergeLeft):
+        (bmalloc::BoundaryTag::mergeRight):
+        (bmalloc::BoundaryTag::merge):
+        (bmalloc::BoundaryTag::deallocate):
+        (bmalloc::BoundaryTag::split):
+        (bmalloc::BoundaryTag::allocate):
+        (bmalloc::BoundaryTag::mergeLargeLeft): Deleted.
+        (bmalloc::BoundaryTag::mergeLargeRight): Deleted.
+        (bmalloc::BoundaryTag::mergeLarge): Deleted.
+        (bmalloc::BoundaryTag::splitLarge): Deleted. Removed the word "Large"
+        from all these functions, since boundary tags always pertain to large
+        objects, and putting the word "Large" everywhere wasn't helping to
+        explain that.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateXLarge):
+        (bmalloc::Heap::findXLarge):
+        (bmalloc::Heap::deallocateXLarge):
+        * bmalloc/Heap.h:
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateXLarge): Deleted.
+        (bmalloc::VMHeap::findXLarge): Deleted.
+        (bmalloc::VMHeap::deallocateXLarge): Deleted. Moved XLarge allocation
+        from VMHeap to Heap. Since the purpose of the VMHeap is to cache VM
+        ranges, and the VMHeap never caches any XLarge ranges, it doesn't
+        really make sense for the VMHeap to be involved.
+
 2015-01-16  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: refactored XLarge allocation for better alignment

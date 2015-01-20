@@ -72,10 +72,10 @@ private:
     static_assert((1 << compactBeginBits) - 1 >= largeMin / largeAlignment, "compactBegin must be encodable in a BoundaryTag.");
     static_assert((1 << sizeBits) - 1 >= largeMax, "largeMax must be encodable in a BoundaryTag.");
 
-    static void splitLarge(BeginTag*, size_t size, EndTag*& endTag, Range&, Range& leftover);
-    static void mergeLargeLeft(EndTag*& prev, BeginTag*& beginTag, Range&, bool& hasPhysicalPages);
-    static void mergeLargeRight(EndTag*&, BeginTag*& next, Range&, bool& hasPhysicalPages);
-    static void mergeLarge(BeginTag*&, EndTag*&, Range&);
+    static void split(BeginTag*, size_t, EndTag*&, Range&, Range& leftover);
+    static void mergeLeft(EndTag*& prev, BeginTag*&, Range&, bool& hasPhysicalPages);
+    static void mergeRight(EndTag*&, BeginTag*& next, Range&, bool& hasPhysicalPages);
+    static void merge(BeginTag*&, EndTag*&, Range&);
 
     bool m_isFree: 1;
     bool m_isEnd: 1;
