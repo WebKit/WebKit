@@ -1,3 +1,30 @@
+2015-01-19  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/140504> REGRESSION (r178452): Visited link coloring only appears to work in the first web process
+
+        Roll out r178452 since it broke visited link coloring.
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::~VisitedLinkProvider):
+        (WebKit::VisitedLinkProvider::addProcess):
+        (WebKit::VisitedLinkProvider::removeProcess):
+        (WebKit::VisitedLinkProvider::removeAll):
+        (WebKit::VisitedLinkProvider::webProcessWillOpenConnection):
+        (WebKit::VisitedLinkProvider::webProcessDidCloseConnection):
+        (WebKit::VisitedLinkProvider::pendingVisitedLinksTimerFired):
+        (WebKit::VisitedLinkProvider::resizeTable):
+        * UIProcess/VisitedLinkProvider.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::processDidFinishLaunching):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::disconnect):
+        (WebKit::WebProcessProxy::addVisitedLinkProvider):
+        (WebKit::WebProcessProxy::didDestroyVisitedLinkProvider):
+        * UIProcess/WebProcessProxy.h:
+
 2015-01-19  Sam Weinig  <sam@webkit.org>
 
         Sprinkle some CTTE on API::PolicyClient and API::FormClient

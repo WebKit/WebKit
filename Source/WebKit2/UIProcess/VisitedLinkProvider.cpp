@@ -54,6 +54,8 @@ PassRefPtr<VisitedLinkProvider> VisitedLinkProvider::create()
 
 VisitedLinkProvider::~VisitedLinkProvider()
 {
+    for (WebProcessProxy* process : m_processes)
+        process->didDestroyVisitedLinkProvider(*this);
 }
 
 VisitedLinkProvider::VisitedLinkProvider()
@@ -62,6 +64,31 @@ VisitedLinkProvider::VisitedLinkProvider()
     , m_tableSize(0)
     , m_pendingVisitedLinksTimer(RunLoop::main(), this, &VisitedLinkProvider::pendingVisitedLinksTimerFired)
 {
+}
+
+void VisitedLinkProvider::addProcess(WebProcessProxy& process)
+{
+    ASSERT(process.state() == WebProcessProxy::State::Running);
+
+    if (!m_processes.add(&process).isNewEntry)
+        return;
+
+    process.addMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier, *this);
+
+    if (!m_keyCount)
+        return;
+
+    ASSERT(m_table.sharedMemory());
+
+    sendTable(process);
+}
+
+void VisitedLinkProvider::removeProcess(WebProcessProxy& process)
+{
+    ASSERT(m_processes.contains(&process));
+
+    m_processes.remove(&process);
+    process.removeMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier);
 }
 
 void VisitedLinkProvider::addVisitedLinkHash(LinkHash linkHash)
@@ -80,27 +107,20 @@ void VisitedLinkProvider::removeAll()
     m_tableSize = 0;
     m_table.clear();
 
-    for (WebProcessProxy* process : processes()) {
+    for (WebProcessProxy* process : m_processes) {
         ASSERT(process->processPool().processes().contains(process));
         process->connection()->send(Messages::VisitedLinkTableController::RemoveAllVisitedLinks(), m_identifier);
     }
 }
 
-void VisitedLinkProvider::webProcessWillOpenConnection(WebProcessProxy& webProcessProxy, IPC::Connection&)
+void VisitedLinkProvider::webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&)
 {
-    webProcessProxy.addMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier, *this);
-
-    if (!m_keyCount)
-        return;
-
-    ASSERT(m_table.sharedMemory());
-
-    sendTable(webProcessProxy);
+    // FIXME: Implement.
 }
 
-void VisitedLinkProvider::webProcessDidCloseConnection(WebProcessProxy& webProcessProxy, IPC::Connection&)
+void VisitedLinkProvider::webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&)
 {
-    webProcessProxy.removeMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier);
+    // FIXME: Implement.
 }
 
 void VisitedLinkProvider::addVisitedLinkHashFromPage(uint64_t pageID, LinkHash linkHash)
@@ -168,7 +188,7 @@ void VisitedLinkProvider::pendingVisitedLinksTimerFired()
     if (addedVisitedLinks.isEmpty())
         return;
 
-    for (WebProcessProxy* process : processes()) {
+    for (WebProcessProxy* process : m_processes) {
         ASSERT(process->processPool().processes().contains(process));
 
         if (addedVisitedLinks.size() > 20)
@@ -219,7 +239,7 @@ void VisitedLinkProvider::resizeTable(unsigned newTableSize)
     }
     m_pendingVisitedLinks.clear();
 
-    for (WebProcessProxy* process : processes())
+    for (WebProcessProxy* process : m_processes)
         sendTable(*process);
 }
 

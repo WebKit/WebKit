@@ -165,6 +165,10 @@ void WebProcessProxy::disconnect()
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
 
+    for (VisitedLinkProvider* visitedLinkProvider : m_visitedLinkProviders)
+        visitedLinkProvider->removeProcess(*this);
+    m_visitedLinkProviders.clear();
+
     for (WebUserContentControllerProxy* webUserContentControllerProxy : m_webUserContentControllerProxies)
         webUserContentControllerProxy->removeProcess(*this);
     m_webUserContentControllerProxies.clear();
@@ -228,10 +232,22 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
     disconnect();
 }
 
+void WebProcessProxy::addVisitedLinkProvider(VisitedLinkProvider& provider)
+{
+    m_visitedLinkProviders.add(&provider);
+    provider.addProcess(*this);
+}
+
 void WebProcessProxy::addWebUserContentControllerProxy(WebUserContentControllerProxy& proxy)
 {
     m_webUserContentControllerProxies.add(&proxy);
     proxy.addProcess(*this);
+}
+
+void WebProcessProxy::didDestroyVisitedLinkProvider(VisitedLinkProvider& provider)
+{
+    ASSERT(m_visitedLinkProviders.contains(&provider));
+    m_visitedLinkProviders.remove(&provider);
 }
 
 void WebProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy& proxy)

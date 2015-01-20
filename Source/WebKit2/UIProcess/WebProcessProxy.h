@@ -88,7 +88,9 @@ public:
     WTF::IteratorRange<WebPageProxyMap::const_iterator::Values> pages() const { return m_pageMap.values(); }
     unsigned pageCount() const { return m_pageMap.size(); }
 
+    void addVisitedLinkProvider(VisitedLinkProvider&);
     void addWebUserContentControllerProxy(WebUserContentControllerProxy&);
+    void didDestroyVisitedLinkProvider(VisitedLinkProvider&);
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
 
     WebBackForwardListItem* webBackForwardItem(uint64_t itemID) const;
@@ -209,6 +211,7 @@ private:
     WebFrameProxyMap m_frameMap;
     WebBackForwardListItemMap m_backForwardListItemMap;
 
+    HashSet<VisitedLinkProvider*> m_visitedLinkProviders;
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
 
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;

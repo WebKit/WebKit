@@ -391,6 +391,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
         if (m_userContentController)
             m_process->addWebUserContentControllerProxy(*m_userContentController);
         m_process->processPool().storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, m_process->connection());
+        m_process->addVisitedLinkProvider(m_visitedLinkProvider);
     }
 
     updateViewState();
@@ -3245,6 +3246,7 @@ void WebPageProxy::processDidFinishLaunching()
 
     if (m_userContentController)
         m_process->addWebUserContentControllerProxy(*m_userContentController);
+    m_process->addVisitedLinkProvider(m_visitedLinkProvider);
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
