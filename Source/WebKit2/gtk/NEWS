@@ -1,4 +1,17 @@
 =================
+WebKitGTK+  2.7.4
+=================
+
+What's new in WebKitGTK+ 2.7.4?
+
+  - Add API to change the WebKitWebView background color.
+  - Add an option to create WebKitWebView snapshots with transparent background.
+  - Add API to make the WebKitWebView editable.
+  - Add is-playing-audio property to WebKitWebView.
+  - Do not resize the accelerating compositing window to the web size until accelerated
+    compositing mode is activated.
+
+=================
 WebKitGTK+  2.7.3
 =================
 

@@ -1,3 +1,9 @@
+2015-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.7.4 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2015-01-19  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Fix cmake warning
