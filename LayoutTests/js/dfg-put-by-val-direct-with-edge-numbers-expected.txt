@@ -1,0 +1,60 @@
+Test that a object accepts DFG PutByValueDirect operation with edge numbers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS lookupWithKey(-0x80000001) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(-0x80000000) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(-1) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(0) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(1) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(0x7fffffff) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(0x80000000) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(0xfffffffd) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(0xfffffffe) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(0xffffffff) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(0x100000000) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("-2147483649") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("-2147483648") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("-1") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("0") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("1") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("2147483647") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("2147483648") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("4294967293") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("4294967294") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("4294967295") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("4294967296") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(Number.MIN_VALUE) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(Number.MAX_VALUE) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(Number.MIN_SAFE_INTEGER) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(Number.MAX_SAFE_INTEGER) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(Number.POSITIVE_INFINITY) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(Number.NEGATIVE_INFINITY) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(Number.NaN) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(Number.EPSILON) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(+0.0) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(-0.0) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(0.1) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(-0.1) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(4.2) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey(-4.2) is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("5e-324") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("1.7976931348623157e+308") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("-9007199254740991") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("9007199254740991") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("Infinity") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("-Infinity") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("NaN") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("2.220446049250313e-16") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("+0.0") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("-0.0") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("0.1") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("-0.1") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("4.2") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey("-4.2") is 42 on all iterations including after DFG tier-up.
+PASS lookupWithKey2(toStringThrowsError) threw exception 'Error: ng' on all iterations including after DFG tier-up.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

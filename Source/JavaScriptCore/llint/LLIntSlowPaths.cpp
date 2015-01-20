@@ -819,18 +819,41 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val_direct)
     JSValue value = LLINT_OP_C(3).jsValue();
     RELEASE_ASSERT(baseValue.isObject());
     JSObject* baseObject = asObject(baseValue);
+    bool isStrictMode = exec->codeBlock()->isStrictMode();
     if (LIKELY(subscript.isUInt32())) {
-        uint32_t i = subscript.asUInt32();
-        baseObject->putDirectIndex(exec, i, value);
-    } else if (isName(subscript)) {
-        PutPropertySlot slot(baseObject, exec->codeBlock()->isStrictMode());
-        baseObject->putDirect(exec->vm(), jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
-    } else {
-        Identifier property = subscript.toString(exec)->toIdentifier(exec);
-        if (!exec->vm().exception()) { // Don't put to an object if toString threw an exception.
-            PutPropertySlot slot(baseObject, exec->codeBlock()->isStrictMode());
-            baseObject->putDirect(exec->vm(), property, value, slot);
+        uint32_t index = subscript.asUInt32();
+        ASSERT_WITH_MESSAGE(index != PropertyName::NotAnIndex, "Since JSValue::isUInt32 returns true only when the boxed value is int32_t and positive, it doesn't return true for uint32_t max value that is PropertyName::NotAnIndex.");
+        baseObject->putDirectIndex(exec, index, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+        LLINT_END();
+    }
+
+
+    if (subscript.isDouble()) {
+        double subscriptAsDouble = subscript.asDouble();
+        uint32_t subscriptAsUInt32 = static_cast<uint32_t>(subscriptAsDouble);
+        if (subscriptAsDouble == subscriptAsUInt32 && subscriptAsUInt32 != PropertyName::NotAnIndex) {
+            baseObject->putDirectIndex(exec, subscriptAsUInt32, value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+            LLINT_END();
         }
+    }
+
+    if (isName(subscript)) {
+        PutPropertySlot slot(baseObject, isStrictMode);
+        baseObject->putDirect(exec->vm(), jsCast<NameInstance*>(subscript.asCell())->privateName(), value, slot);
+        LLINT_END();
+    }
+
+    // Don't put to an object if toString throws an exception.
+    Identifier property = subscript.toString(exec)->toIdentifier(exec);
+    if (exec->vm().exception())
+        LLINT_END();
+
+    PropertyName propertyName(property);
+    if (Optional<uint32_t> index = propertyName.asIndex())
+        baseObject->putDirectIndex(exec, index.value(), value, 0, isStrictMode ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+    else {
+        PutPropertySlot slot(baseObject, isStrictMode);
+        baseObject->putDirect(exec->vm(), propertyName, value, slot);
     }
     LLINT_END();
 }

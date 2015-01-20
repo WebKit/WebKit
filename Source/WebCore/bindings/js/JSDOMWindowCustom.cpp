@@ -214,11 +214,10 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* exec, Property
     // We need to test the correct priority order.
 
     // allow window[1] or parent[1] etc. (#56983)
-    unsigned i = propertyName.asIndex();
-    if (i < thisObject->impl().frame()->tree().scopedChildCount()) {
-        ASSERT(i != PropertyName::NotAnIndex);
+    Optional<uint32_t> index = propertyName.asIndex();
+    if (index && index.value() < thisObject->impl().frame()->tree().scopedChildCount()) {
         slot.setValue(thisObject, ReadOnly | DontDelete | DontEnum,
-            toJS(exec, thisObject->impl().frame()->tree().scopedChild(i)->document()->domWindow()));
+            toJS(exec, thisObject->impl().frame()->tree().scopedChild(index.value())->document()->domWindow()));
         return true;
     }
 

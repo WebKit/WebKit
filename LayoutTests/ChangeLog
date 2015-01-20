@@ -1,3 +1,18 @@
+2015-01-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        put_by_val_direct need to check the property is index or not for using putDirect / putDirectIndex
+        https://bugs.webkit.org/show_bug.cgi?id=140426
+
+        Reviewed by Geoffrey Garen.
+
+        * js/dfg-put-by-val-direct-with-edge-numbers-expected.txt: Added.
+        * js/dfg-put-by-val-direct-with-edge-numbers.html: Added.
+        * js/script-tests/dfg-put-by-val-direct-with-edge-numbers.js: Added.
+        (lookupWithKey):
+        (lookupWithKey2):
+        (toStringThrowsError.toString):
+        * resources/js-test-pre.js:
+
 2015-01-20  Jeremy Jones  <jeremyj@apple.com>
 
         [mac] Fix test expectations after r178188

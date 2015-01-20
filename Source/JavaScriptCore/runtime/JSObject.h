@@ -1244,9 +1244,8 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSObject* object, ExecState* exe
     Structure& structure = *object->structure(vm);
     if (object->inlineGetOwnPropertySlot(vm, structure, propertyName, slot))
         return true;
-    unsigned index = propertyName.asIndex();
-    if (index != PropertyName::NotAnIndex)
-        return getOwnPropertySlotByIndex(object, exec, index, slot);
+    if (Optional<uint32_t> index = propertyName.asIndex())
+        return getOwnPropertySlotByIndex(object, exec, index.value(), slot);
     return false;
 }
 
@@ -1274,9 +1273,8 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName prope
         object = asObject(prototype);
     }
 
-    unsigned index = propertyName.asIndex();
-    if (index != PropertyName::NotAnIndex)
-        return getPropertySlot(exec, index, slot);
+    if (Optional<uint32_t> index = propertyName.asIndex())
+        return getPropertySlot(exec, index.value(), slot);
     return false;
 }
 
@@ -1320,7 +1318,7 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
     ASSERT(value);
     ASSERT(value.isGetterSetter() == !!(attributes & Accessor));
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
-    ASSERT(propertyName.asIndex() == PropertyName::NotAnIndex);
+    ASSERT(!propertyName.asIndex());
 
     Structure* structure = this->structure(vm);
     if (structure->isDictionary()) {
