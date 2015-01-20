@@ -1,3 +1,27 @@
+2015-01-20  Andreas Kling  <akling@apple.com>
+
+        Fast path for casting JSValue to JSDocument*.
+        <https://webkit.org/b/134655>
+
+        Add a custom JSType bit for JSDocument so we can quickly cast to it
+        from JSValue in the DocumentPrototype functions. This removes a bunch
+        of grunt work and branches from common functions like getElementById.
+
+        Also removed GetCastingHelperForBaseObject and replace it with
+        simple jsCasts since we don't need dynamic type checks for the base.
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWrapper.h:
+        * bindings/js/JSDocumentCustom.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GetCastingHelperForThisObject):
+        (GenerateImplementation):
+        (GetCastingHelperForBaseObject): Deleted.
+        * dom/Document.idl:
+
 2015-01-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r178751.

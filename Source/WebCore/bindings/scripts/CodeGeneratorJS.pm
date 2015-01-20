@@ -929,6 +929,8 @@ sub GenerateHeader
     push(@headerContent, "    {\n");
     if (IsDOMGlobalObject($interface)) {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());\n");
+    } elsif ($codeGenerator->InheritsInterface($interface, "Document")) {
+        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSDocumentWrapperType), StructureFlags), info());\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "Element")) {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSElementType), StructureFlags), info());\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "Node")) {
@@ -1609,20 +1611,10 @@ sub GetCastingHelperForThisObject
     if ($interface->name eq "Element") {
         return "jsElementCast";
     }
+    if ($interface->name eq "Document") {
+        return "jsDocumentCast";
+    }
     return "jsDynamicCast<JS" . $interface->name . "*>";
-}
-
-sub GetCastingHelperForBaseObject
-{
-    my $interface = shift;
-
-    if ($interface->name eq "Node") {
-        return "jsNodeCast";
-    }
-    if ($interface->name eq "Element") {
-        return "jsElementCast";
-    }
-    return "jsCast<JS" . $interface->name . "*>";
 }
 
 sub GetIndexedGetterExpression
@@ -2173,7 +2165,7 @@ sub GenerateImplementation
                 if ($interface->extendedAttributes->{"CustomProxyToJSObject"}) {
                     push(@implContent, "    ${className}* castedThis = to${className}(JSValue::decode(thisValue));\n");
                 } elsif (AttributeShouldBeOnInstance($interface, $attribute)) {
-                    push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForBaseObject($interface) . "(slotBase);\n");
+                    push(@implContent, "    ${className}* castedThis = jsCast<JS${interfaceName}*>(slotBase);\n");
                     if (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
                         push(@implContent, "    ${className}* castedThisObject = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
                         push(@implContent, "    if (UNLIKELY(!castedThisObject))\n");
@@ -2529,7 +2521,7 @@ sub GenerateImplementation
                         push(@implContent, "    ${className}* castedThis = to${className}(JSValue::decode(thisValue));\n");
                     } elsif (AttributeShouldBeOnInstance($interface, $attribute)) {
                         push(@implContent, "    UNUSED_PARAM(thisValue);\n");
-                        push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForBaseObject($interface) . "(baseObject);\n");
+                        push(@implContent, "    ${className}* castedThis = jsCast<JS${interfaceName}*>(baseObject);\n");
                         if (InterfaceRequiresAttributesOnInstanceForCompatibility($interface)) {
                             push(@implContent, "    ${className}* castedThisObject = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
                             push(@implContent, "    if (UNLIKELY(!castedThisObject))\n");
