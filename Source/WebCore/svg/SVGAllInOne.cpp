@@ -67,7 +67,6 @@
 #include "SVGDocumentExtensions.cpp"
 #include "SVGElement.cpp"
 #include "SVGElementInstance.cpp"
-#include "SVGElementInstanceList.cpp"
 #include "SVGEllipseElement.cpp"
 #include "SVGException.cpp"
 #include "SVGExternalResourcesRequired.cpp"

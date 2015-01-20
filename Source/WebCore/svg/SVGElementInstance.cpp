@@ -30,7 +30,6 @@
 #include "FrameView.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
-#include "SVGElementInstanceList.h"
 #include "SVGUseElement.h"
 
 #include <wtf/RefCountedLeakCounter.h>
@@ -156,11 +155,6 @@ void SVGElementInstance::detach()
     m_correspondingUseElement = 0;
 
     removeDetachedChildrenInContainer<SVGElementInstance, SVGElementInstance>(*this);
-}
-
-PassRefPtr<SVGElementInstanceList> SVGElementInstance::childNodes()
-{
-    return SVGElementInstanceList::create(this);
 }
 
 Document* SVGElementInstance::ownerDocument() const

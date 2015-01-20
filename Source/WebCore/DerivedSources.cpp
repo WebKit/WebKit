@@ -353,7 +353,6 @@
 #include "JSSVGDocument.cpp"
 #include "JSSVGElement.cpp"
 #include "JSSVGElementInstance.cpp"
-#include "JSSVGElementInstanceList.cpp"
 #include "JSSVGEllipseElement.cpp"
 #include "JSSVGException.cpp"
 #include "JSSVGFEBlendElement.cpp"

@@ -659,7 +659,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGDocument.idl
     svg/SVGElement.idl
     svg/SVGElementInstance.idl
-    svg/SVGElementInstanceList.idl
     svg/SVGEllipseElement.idl
     svg/SVGException.idl
     svg/SVGExternalResourcesRequired.idl
@@ -2518,7 +2517,6 @@ set(WebCore_SOURCES
     svg/SVGDocumentExtensions.cpp
     svg/SVGElement.cpp
     svg/SVGElementInstance.cpp
-    svg/SVGElementInstanceList.cpp
     svg/SVGEllipseElement.cpp
     svg/SVGException.cpp
     svg/SVGExternalResourcesRequired.cpp

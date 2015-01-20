@@ -1,3 +1,38 @@
+2015-01-20  Darin Adler  <darin@apple.com>
+
+        Remove SVGElementInstanceList, m_instanceUnderMouse, DUMP_INSTANCE_TREE, DUMP_SHADOW_TREE
+        https://bugs.webkit.org/show_bug.cgi?id=140679
+
+        Reviewed by Anders Carlsson.
+
+        First step in removing the SVG instance tree.
+        All based on redoing the same excellent work Rob Buis did to remove this in Blink in crbug.com/313438.
+
+        * CMakeLists.txt: Removed the source files.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj: Ditto.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear): Removed code to set unused m_instanceUnderMouse.
+        (WebCore::EventHandler::updateMouseEventTargetNode): Ditto.
+        * page/EventHandler.h: Removed m_instanceUnderMouse.
+
+        * svg/SVGAllInOne.cpp: Removed the source files.
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::childNodes): Deleted.
+        * svg/SVGElementInstance.h: Removed childNodes.
+        * svg/SVGElementInstance.idl: Ditto.
+        * svg/SVGElementInstanceList.cpp: Removed.
+        * svg/SVGElementInstanceList.h: Removed.
+        * svg/SVGElementInstanceList.idl: Removed.
+        * svg/SVGUseElement.cpp:
+        (WebCore::dumpInstanceTree): Deleted.
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree): Removed DUMP_INSTANCE_TREE and
+        DUMP_SHADOW_TREE code.
+
 2015-01-19  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Replay: code generator should take supplemental specifications and allow cross-framework references

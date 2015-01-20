@@ -33,8 +33,6 @@ void addChildNodesToDeletionQueue(GenericNode*& head, GenericNode*& tail, Generi
 
 class Document;
 class SVGElement;
-class SVGElementInstanceList;
-class SVGElement;
 class SVGUseElement;
 
 // SVGElementInstance mimics Node, but without providing all its functionality
@@ -64,7 +62,6 @@ public:
     void detach();
 
     SVGElementInstance* parentNode() const { return m_parentInstance; }
-    PassRefPtr<SVGElementInstanceList> childNodes();
 
     SVGElementInstance* previousSibling() const { return m_previousSibling; }
     SVGElementInstance* nextSibling() const { return m_nextSibling; }

@@ -555,7 +555,6 @@ SVG_BINDING_IDLS = \
     $(WebCore)/svg/SVGDocument.idl \
     $(WebCore)/svg/SVGElement.idl \
     $(WebCore)/svg/SVGElementInstance.idl \
-    $(WebCore)/svg/SVGElementInstanceList.idl \
     $(WebCore)/svg/SVGEllipseElement.idl \
     $(WebCore)/svg/SVGException.idl \
     $(WebCore)/svg/SVGExternalResourcesRequired.idl \

@@ -449,7 +449,6 @@ Here are other examples of numeric types in function parameters and settable att
 ../../../../WebCore/html/HTMLMediaElement.idl:    attribute float volume 
 
 ../../../../WebCore/svg/SVGAnimatedInteger.idl:                 attribute long baseVal
-../../../../WebCore/svg/SVGElementInstanceList.idl:        SVGElementInstance item(in unsigned long index);
 ../../../../WebCore/svg/SVGFilterElement.idl:        void setFilterRes(in unsigned long filterResX, in unsigned long filterResY);
 ../../../../WebCore/svg/SVGLengthList.idl:        SVGLength getItem(in unsigned long index)
 ../../../../WebCore/svg/SVGLengthList.idl:        SVGLength insertItemBefore(in SVGLength item, in unsigned long index)

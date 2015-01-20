@@ -40,7 +40,6 @@
 #include "ShadowRoot.h"
 #include "SVGElementInstance.h"
 #include "SVGElementRareData.h"
-#include "SVGElementInstanceList.h"
 #include "SVGGElement.h"
 #include "SVGLengthContext.h"
 #include "SVGNames.h"
@@ -52,12 +51,6 @@
 #include "XMLDocumentParser.h"
 #include "XMLSerializer.h"
 #include <wtf/NeverDestroyed.h>
-
-// Dump SVGElementInstance object tree - useful to debug instanceRoot problems
-// #define DUMP_INSTANCE_TREE
-
-// Dump the deep-expanded shadow tree (where the renderers are built from)
-// #define DUMP_SHADOW_TREE
 
 namespace WebCore {
 
@@ -276,60 +269,6 @@ void SVGUseElement::willAttachRenderers()
         buildPendingResource();
 }
 
-#ifdef DUMP_INSTANCE_TREE
-static void dumpInstanceTree(unsigned int& depth, String& text, SVGElementInstance* targetInstance)
-{
-    SVGElement* element = targetInstance->correspondingElement();
-    ASSERT(element);
-
-    if (is<SVGUseElement>(*element)) {
-        if (downcast<SVGUseElement>(*element).cachedDocumentIsStillLoading())
-            return;
-    }
-
-    SVGElement* shadowTreeElement = targetInstance->shadowTreeElement();
-    ASSERT(shadowTreeElement);
-
-    SVGUseElement* directUseElement = targetInstance->directUseElement();
-    String directUseElementName = directUseElement ? directUseElement->nodeName() : "null";
-
-    String elementId = element->getIdAttribute();
-    String elementNodeName = element->nodeName();
-    String shadowTreeElementNodeName = shadowTreeElement->nodeName();
-    String parentNodeName = element->parentNode() ? element->parentNode()->nodeName() : "null";
-    String firstChildNodeName = element->firstChild() ? element->firstChild()->nodeName() : "null";
-
-    for (unsigned int i = 0; i < depth; ++i)
-        text += "  ";
-
-    text += String::format("SVGElementInstance this=%p, (parentNode=%s (%p), firstChild=%s (%p), correspondingElement=%s (%p), directUseElement=%s (%p), shadowTreeElement=%s (%p), id=%s)\n",
-                           targetInstance, parentNodeName.latin1().data(), element->parentNode(), firstChildNodeName.latin1().data(), element->firstChild(),
-                           elementNodeName.latin1().data(), element, directUseElementName.latin1().data(), directUseElement, shadowTreeElementNodeName.latin1().data(), shadowTreeElement, elementId.latin1().data());
-
-    for (unsigned int i = 0; i < depth; ++i)
-        text += "  ";
-
-    const HashSet<SVGElementInstance*>& elementInstances = element->instancesForElement();
-    text += "Corresponding element is associated with " + String::number(elementInstances.size()) + " instance(s):\n";
-
-    const HashSet<SVGElementInstance*>::const_iterator end = elementInstances.end();
-    for (HashSet<SVGElementInstance*>::const_iterator it = elementInstances.begin(); it != end; ++it) {
-        for (unsigned int i = 0; i < depth; ++i)
-            text += "  ";
-
-        text += String::format(" -> SVGElementInstance this=%p, (refCount: %i, shadowTreeElement in document? %i)\n",
-                               *it, (*it)->refCount(), (*it)->shadowTreeElement()->inDocument());
-    }
-
-    ++depth;
-
-    for (SVGElementInstance* instance = targetInstance->firstChild(); instance; instance = instance->nextSibling())
-        dumpInstanceTree(depth, text, instance);
-
-    --depth;
-}
-#endif
-
 static bool isDisallowedElement(const Element& element)
 {
     // Spec: "Any 'svg', 'symbol', 'g', graphics element or other 'use' is potentially a template object that can be re-used
@@ -505,22 +444,6 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGElement* target)
 
     // Update relative length information.
     updateRelativeLengthsInformation();
-
-    // Eventually dump instance tree
-#ifdef DUMP_INSTANCE_TREE
-    String text;
-    unsigned int depth = 0;
-
-    dumpInstanceTree(depth, text, m_targetElementInstance.get());
-    fprintf(stderr, "\nDumping <use> instance tree:\n%s\n", text.latin1().data());
-#endif
-
-    // Eventually dump shadow tree
-#ifdef DUMP_SHADOW_TREE
-    RefPtr<XMLSerializer> serializer = XMLSerializer::create();
-    String markup = serializer->serializeToString(shadowTreeRootElement, ASSERT_NO_EXCEPTION);
-    fprintf(stderr, "Dumping <use> shadow tree markup:\n%s\n", markup.latin1().data());
-#endif
 }
 
 RenderPtr<RenderElement> SVGUseElement::createElementRenderer(Ref<RenderStyle>&& style)

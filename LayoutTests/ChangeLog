@@ -1,3 +1,27 @@
+2015-01-20  Darin Adler  <darin@apple.com>
+
+        Remove SVGElementInstanceList, m_instanceUnderMouse, DUMP_INSTANCE_TREE, DUMP_SHADOW_TREE
+        https://bugs.webkit.org/show_bug.cgi?id=140679
+
+        Reviewed by Anders Carlsson.
+
+        * fast/dom/script-tests/non-numeric-values-numeric-parameters.js:
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/ios-sim-deprecated/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/ios-sim-deprecated/fast/js/global-constructors-expected.txt:
+        * platform/ios-sim-deprecated/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mountainlion/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        * svg/custom/global-constructors-expected.txt:
+        * svg/custom/script-tests/global-constructors.js:
+        * svg/dom/svg2-inheritance-expected.txt:
+        * svg/dom/svg2-inheritance.html:
+        Removed all tests and results referencing SVGElementInstanceList.
+
 2015-01-19  Dean Jackson  <dino@apple.com>
 
         Support "plus-darker" in mix-blend mode

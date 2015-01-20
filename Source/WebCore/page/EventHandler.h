@@ -488,7 +488,6 @@ private:
 #endif
 
     bool m_svgPan;
-    RefPtr<SVGElementInstance> m_instanceUnderMouse;
     RefPtr<SVGElementInstance> m_lastInstanceUnderMouse;
 
     RenderLayer* m_resizeLayer;

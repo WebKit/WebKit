@@ -1,3 +1,13 @@
+2015-01-20  Darin Adler  <darin@apple.com>
+
+        Remove SVGElementInstanceList, m_instanceUnderMouse, DUMP_INSTANCE_TREE, DUMP_SHADOW_TREE
+        https://bugs.webkit.org/show_bug.cgi?id=140679
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitperl/filter-build-webkit_unittest/shouldIgnoreLine_unittests.pl:
+        Removed a reference to SVGElementInstanceList.
+
 2015-01-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] WebViewTest should prohibit overriding initializeWebExtensions()
