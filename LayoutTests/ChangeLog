@@ -1,5 +1,54 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r172797.
+
+    2014-08-20  Zalan Bujtas  <zalan@apple.com>
+
+            Dashed/dotted borders do not paint.
+            https://bugs.webkit.org/show_bug.cgi?id=135898
+
+            Reviewed by Simon Fraser.
+
+            *-at-all files test that we always paint borders.
+            The other set of files test that borders are painted properly. They take
+            advantage of the fact that borders with radius use a different painting code path.
+
+            * TestExpectations:
+            * fast/borders/border-painting-dashed-at-all-expected.html: Added.
+            * fast/borders/border-painting-dashed-at-all.html: Added.
+            * fast/borders/border-painting-dashed-expected.html: Added.
+            * fast/borders/border-painting-dashed.html: Added.
+            * fast/borders/border-painting-dotted-at-all-expected.html: Added.
+            * fast/borders/border-painting-dotted-at-all.html: Added.
+            * fast/borders/border-painting-dotted-expected.html: Added.
+            * fast/borders/border-painting-dotted.html: Added.
+            * fast/borders/border-painting-double-at-all-expected.html: Added.
+            * fast/borders/border-painting-double-at-all.html: Added.
+            * fast/borders/border-painting-double-expected.html: Added.
+            * fast/borders/border-painting-double.html: Added.
+            * fast/borders/border-painting-groove-at-all-expected.html: Added.
+            * fast/borders/border-painting-groove-at-all.html: Added.
+            * fast/borders/border-painting-inset-at-all-expected.html: Added.
+            * fast/borders/border-painting-inset-at-all.html: Added.
+            * fast/borders/border-painting-inset-expected.html: Added.
+            * fast/borders/border-painting-inset.html: Added.
+            * fast/borders/border-painting-outset-at-all-expected.html: Added.
+            * fast/borders/border-painting-outset-at-all.html: Added.
+            * fast/borders/border-painting-outset-expected.html: Added.
+            * fast/borders/border-painting-outset.html: Added.
+            * fast/borders/border-painting-ridge-at-all-expected.html: Added.
+            * fast/borders/border-painting-ridge-at-all.html: Added.
+            * fast/borders/border-painting-solid-at-all-expected.html: Added.
+            * fast/borders/border-painting-solid-at-all.html: Added.
+            * fast/borders/border-painting-solid-expected.html: Added.
+            * fast/borders/border-painting-solid.html: Added.
+            * fast/borders/hidpi-border-painting-groove-expected.html: Added.
+            * fast/borders/hidpi-border-painting-groove.html: Added.
+            * fast/borders/hidpi-border-painting-ridge-expected.html: Added.
+            * fast/borders/hidpi-border-painting-ridge.html: Added.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r172504.
 
     2014-08-12  Myles C. Maxfield  <mmaxfield@apple.com>

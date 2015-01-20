@@ -1,5 +1,41 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r172797.
+
+    2014-08-20  Zalan Bujtas  <zalan@apple.com>
+
+            Dashed/dotted borders do not paint.
+            https://bugs.webkit.org/show_bug.cgi?id=135898
+
+            Reviewed by Simon Fraser.
+
+            Remove the empty line checks for drawLines. There's no need to protect the graphics
+            context from empty lines.
+
+            Tests: fast/borders/border-painting-dashed-at-all.html
+                   fast/borders/border-painting-dashed.html
+                   fast/borders/border-painting-dotted-at-all.html
+                   fast/borders/border-painting-dotted.html
+                   fast/borders/border-painting-double-at-all.html
+                   fast/borders/border-painting-double.html
+                   fast/borders/border-painting-groove-at-all.html
+                   fast/borders/border-painting-inset-at-all.html
+                   fast/borders/border-painting-inset.html
+                   fast/borders/border-painting-outset-at-all.html
+                   fast/borders/border-painting-outset.html
+                   fast/borders/border-painting-ridge-at-all.html
+                   fast/borders/border-painting-solid-at-all.html
+                   fast/borders/border-painting-solid.html
+                   fast/borders/hidpi-border-painting-groove.html
+                   fast/borders/hidpi-border-painting-ridge.html
+
+            * rendering/RenderObject.cpp:
+            (WebCore::RenderObject::drawLineForBoxSide):
+            (WebCore::drawBorderLineRect): Deleted.
+            (WebCore::drawBorderLine): Deleted.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r172504.
 
     2014-08-12  Myles C. Maxfield  <mmaxfield@apple.com>
