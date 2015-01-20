@@ -148,8 +148,7 @@ while (my $curLine = <LOG>) {
         # (without the log comment info). We don't need it.
     }
     $existingLog = isGit() && !($curLine =~ /^#/ || $curLine =~ /^\s*$/) unless $existingLog;
-    my $changeLogFileName = changeLogFileName();
-    push @changeLogs, makeFilePathRelative($1) if $inChangesToBeCommitted && ($curLine =~ /^(?:M|A)....(.*$changeLogFileName)\r?\n?$/ || $curLine =~ /^#\t(?:modified|new file):   (.*$changeLogFileName)$/) && $curLine !~ /-$changeLogFileName$/;
+    push @changeLogs, makeFilePathRelative($1) if $inChangesToBeCommitted && ($curLine =~ /^(?:M|A)....(.*ChangeLog)\r?\n?$/ || $curLine =~ /^#\t(?:modified|new file):   (.*ChangeLog)$/) && $curLine !~ /-ChangeLog$/;
 }
 close LOG;
 

@@ -1,3 +1,24 @@
+2015-01-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the support for custom suffixes on ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=140648
+
+        Reviewed by David Kilzer.
+
+        Custom suffixes were used for the iOS branch of WebKit.
+        Now that everything is opensource, there is no need for it.
+
+        * Scripts/VCSUtils.pm:
+        (changeLogSuffix): Deleted.
+        (changeLogFileName): Deleted.
+        * Scripts/commit-log-editor:
+        * Scripts/prepare-ChangeLog:
+        (getLatestChangeLogs):
+        (generateNewChangeLogs):
+        (generateFileList):
+        * Scripts/resolve-ChangeLogs:
+        (findChangeLog):
+
 2015-01-19  Timothy Horton  <timothy_horton@apple.com>
 
         Adjust naming of action menu SPI

@@ -496,7 +496,7 @@ sub getLatestChangeLogs($)
 
     my @changeLogs = ();
     foreach my $prefix (@$prefixes) {
-        push @changeLogs, File::Spec->catfile($prefix || ".", changeLogFileName());
+        push @changeLogs, File::Spec->catfile($prefix || ".", "ChangeLog");
     }
     return \@changeLogs;
 }
@@ -535,7 +535,7 @@ sub generateNewChangeLogs($$$$$$$$$$$$)
         my @old_change_log;
 
         if ($writeChangeLogs) {
-            my $changeLogPath = File::Spec->catfile($prefix || ".", changeLogFileName());
+            my $changeLogPath = File::Spec->catfile($prefix || ".", "ChangeLog");
             print STDERR "  Editing the ${changeLogPath} file.\n";
             open OLD_CHANGE_LOG, ${changeLogPath} or die "Could not open ${changeLogPath} file: $!.\n";
             # It's less efficient to read the whole thing into memory than it would be
@@ -1854,11 +1854,11 @@ sub generateFileList(\%$$$)
                        && !scalar(grep(/^resources$/i, @components))
                        && !scalar(grep(/^script-tests$/i, @components));
             }
-            push @changedFiles, $file if $components[$#components] ne changeLogFileName();
+            push @changedFiles, $file if $components[$#components] ne "ChangeLog";
         } elsif (isConflictStatus($status, $gitCommit, $gitIndex) || isConflictStatus($propertyStatus, $gitCommit, $gitIndex)) {
             push @conflictFiles, $file;
         }
-        if (basename($file) ne changeLogFileName()) {
+        if (basename($file) ne "ChangeLog") {
             my $description = statusDescription($status, $propertyStatus, $original, $propertyChanges);
             $functionLists{$file} = $description if defined $description;
         }

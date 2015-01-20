@@ -50,7 +50,6 @@ BEGIN {
         &callSilently
         &canonicalizePath
         &changeLogEmailAddress
-        &changeLogFileName
         &changeLogName
         &chdirReturningRelativePath
         &decodeGitBinaryChunk
@@ -1895,23 +1894,6 @@ sub gitConfig($)
     my $result = `git config $config`;
     chomp $result;
     return $result;
-}
-
-sub changeLogSuffix()
-{
-    my $rootPath = determineVCSRoot();
-    my $changeLogSuffixFile = File::Spec->catfile($rootPath, ".changeLogSuffix");
-    return "" if ! -e $changeLogSuffixFile;
-    open FILE, $changeLogSuffixFile or die "Could not open $changeLogSuffixFile: $!";
-    my $changeLogSuffix = <FILE>;
-    chomp $changeLogSuffix;
-    close FILE;
-    return $changeLogSuffix;
-}
-
-sub changeLogFileName()
-{
-    return "ChangeLog" . changeLogSuffix()
 }
 
 sub changeLogNameError($)
