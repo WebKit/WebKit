@@ -1,3 +1,11 @@
+2015-01-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        * win/tools/vsprops/FeatureDefines.props: Add feature definition for SVG converter,
+        but do NOT turn it on.
+        * win/tools/vsprops/FeatureDefinesCairo.props: Ditto.
+
 2015-01-19  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo][Video] Windows Media Foundation implementation is not completed.
