@@ -395,6 +395,8 @@ EXPORTS
         symbolWithPointer(?create@BitmapInfo@WebCore@@SA?AU12@ABVIntSize@2@W4BitCount@12@@Z, ?create@BitmapInfo@WebCore@@SA?AU12@AEBVIntSize@2@W4BitCount@12@@Z)
         symbolWithPointer(?drawPattern@Image@WebCore@@UAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVAffineTransform@2@ABVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1W4BlendMode@2@@Z, ?drawPattern@Image@WebCore@@UEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@AEBVAffineTransform@2@AEBVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1W4BlendMode@2@@Z)
         symbolWithPointer(?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z, ?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MEAAXPEAVGraphicsContext@2@AEBVFloatRect@2@AEBVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z)
+        symbolWithPointer(?fontCache@WebCore@@YAAAVFontCache@1@XZ, ?fontCache@WebCore@@YAAEAVFontCache@1@XZ)
+        symbolWithPointer(?invalidate@FontCache@WebCore@@QAEXXZ, ?invalidate@FontCache@WebCore@@QEAAXXZ)
         symbolWithPointer(?mayFillWithSolidColor@BitmapImage@WebCore@@MAE_NXZ, ?mayFillWithSolidColor@BitmapImage@WebCore@@MEAA_NXZ)
         symbolWithPointer(?solidColor@BitmapImage@WebCore@@MBE?AVColor@2@XZ, ?solidColor@BitmapImage@WebCore@@MEBA?AVColor@2@XZ)
         symbolWithPointer(?frameOrientationAtIndex@BitmapImage@WebCore@@IAE?AVImageOrientation@2@I@Z, ?frameOrientationAtIndex@BitmapImage@WebCore@@IEAA?AVImageOrientation@2@_K@Z)
