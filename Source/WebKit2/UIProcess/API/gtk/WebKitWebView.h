@@ -485,6 +485,13 @@ WEBKIT_API void
 webkit_web_view_get_background_color                 (WebKitWebView             *web_view,
                                                       GdkRGBA                   *rgba);
 
+WEBKIT_API gboolean
+webkit_web_view_is_editable                          (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_set_editable                         (WebKitWebView             *web_view,
+                                                      gboolean                  editable);
+
 G_END_DECLS
 
 #endif

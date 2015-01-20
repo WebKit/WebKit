@@ -149,7 +149,8 @@ enum {
     PROP_URI,
     PROP_ZOOM_LEVEL,
     PROP_IS_LOADING,
-    PROP_IS_PLAYING_AUDIO
+    PROP_IS_PLAYING_AUDIO,
+    PROP_EDITABLE
 };
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
@@ -688,6 +689,9 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_ZOOM_LEVEL:
         webkit_web_view_set_zoom_level(webView, g_value_get_double(value));
         break;
+    case PROP_EDITABLE:
+        webkit_web_view_set_editable(webView, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -727,6 +731,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_IS_PLAYING_AUDIO:
         g_value_set_boolean(value, webkit_web_view_is_playing_audio(webView));
+        break;
+    case PROP_EDITABLE:
+        g_value_set_boolean(value, webkit_web_view_is_editable(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -957,6 +964,24 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             _("Whether the view is playing audio"),
             FALSE,
             WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitWebView:editable:
+     *
+     * Whether the pages loaded inside #WebKitWebView are editable. For more
+     * information see webkit_web_view_set_editable().
+     *
+     * Since: 2.8
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_EDITABLE,
+        g_param_spec_boolean(
+            "editable",
+            _("Editable"),
+            _("Whether the content can be modified by the user."),
+            FALSE,
+            WEBKIT_PARAM_READWRITE));
 
     /**
      * WebKitWebView::load-changed:
@@ -3572,4 +3597,54 @@ void webkit_web_view_get_background_color(WebKitWebView* webView, GdkRGBA* rgba)
     g_return_if_fail(rgba);
 
     *rgba = getPage(webView)->backgroundColor();
+}
+
+/*
+ * webkit_web_view_is_editable:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets whether the user is allowed to edit the HTML document. When @web_view
+ * is not editable an element in the HTML document can only be edited if the
+ * CONTENTEDITABLE attribute has been set on the element or one of its parent
+ * elements. By default a #WebKitWebView is not editable.
+ *
+ * Returns: %TRUE if the user is allowed to edit the HTML document, or %FALSE otherwise.
+ *
+ * Since: 2.8
+ */
+gboolean webkit_web_view_is_editable(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    return getPage(webView)->isEditable();
+}
+
+/**
+ * webkit_web_view_set_editable:
+ * @web_view: a #WebKitWebView
+ * @editable: a #gboolean indicating the editable state
+ *
+ * Sets whether the user is allowed to edit the HTML document.
+ *
+ * If @editable is %TRUE, @web_view allows the user to edit the HTML document. If
+ * @editable is %FALSE, an element in @web_view's document can only be edited if the
+ * CONTENTEDITABLE attribute has been set on the element or one of its parent
+ * elements. By default a #WebKitWebView is not editable.
+ *
+ * Normally, a HTML document is not editable unless the elements within the
+ * document are editable. This function provides a way to make the contents
+ * of a #WebKitWebView editable without altering the document or DOM structure.
+ *
+ * Since: 2.8
+ */
+void webkit_web_view_set_editable(WebKitWebView* webView, gboolean editable)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    if (editable == getPage(webView)->isEditable())
+        return;
+
+    getPage(webView)->setEditable(editable);
+
+    g_object_notify(G_OBJECT(webView), "editable");
 }

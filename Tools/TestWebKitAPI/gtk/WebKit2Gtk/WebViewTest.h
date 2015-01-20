@@ -53,6 +53,9 @@ public:
     void selectAll();
     const char* mainResourceData(size_t& mainResourceDataSize);
 
+    bool isEditable();
+    void setEditable(bool);
+
     void mouseMoveTo(int x, int y, unsigned mouseModifiers = 0);
     void clickMouseButton(int x, int y, unsigned button = 1, unsigned mouseModifiers = 0);
     void keyStroke(unsigned keyVal, unsigned keyModifiers = 0);

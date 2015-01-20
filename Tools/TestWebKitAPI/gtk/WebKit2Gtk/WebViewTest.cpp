@@ -262,6 +262,16 @@ void WebViewTest::selectAll()
     webkit_web_view_execute_editing_command(m_webView, "SelectAll");
 }
 
+bool WebViewTest::isEditable()
+{
+    webkit_web_view_is_editable(m_webView);
+}
+
+void WebViewTest::setEditable(bool editable)
+{
+    webkit_web_view_set_editable(m_webView, editable);
+}
+
 static void resourceGetDataCallback(GObject* object, GAsyncResult* result, gpointer userData)
 {
     size_t dataSize;

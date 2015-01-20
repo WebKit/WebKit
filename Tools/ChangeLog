@@ -1,3 +1,29 @@
+2015-01-20  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Add API to set the web view editable into WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=139443
+
+        Reviewed by Carlos Garcia Campos.
+
+        Create the new test cases for setting the editable property on the web
+        view and on the contenteditable enabled document. Also rework the
+        current tests that are expecting that the web view is editable.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebViewEditor.cpp:
+        (loadTestHtml):
+        (testWebViewEditorCutCopyPasteNonEditable):
+        (testWebViewEditorCutCopyPasteEditable):
+        (testWebViewEditorSelectAllNonEditable):
+        (testWebViewEditorSelectAllEditable):
+        (runEditorEditableCutTests):
+        (testWebViewEditorEditableOnNonEditable):
+        (testWebViewEditorEditableOnContentEditable):
+        (testWebViewEditorNonEditable):
+        (beforeAll):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (WebViewTest::isEditable):
+        (WebViewTest::setEditable):
+
 2015-01-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add an option to create WebKitWebView snapshots with transparent background

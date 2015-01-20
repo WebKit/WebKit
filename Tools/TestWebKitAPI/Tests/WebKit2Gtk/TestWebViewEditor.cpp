@@ -73,25 +73,42 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
+    gchar* cutSelection()
+    {
+        g_assert(canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
+        g_assert(canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
+
+        webkit_web_view_execute_editing_command(m_webView, WEBKIT_EDITING_COMMAND_CUT);
+        // There's no way to know when the selection has been cut to
+        // the clipboard, so use a timeout source to query the clipboard.
+        m_triesCount = 0;
+        g_timeout_add(kClipboardWaitTimeout, reinterpret_cast<GSourceFunc>(waitForClipboardText), this);
+        g_main_loop_run(m_mainLoop);
+
+        return gtk_clipboard_wait_for_text (m_clipboard);
+    }
+
     GtkClipboard* m_clipboard;
     bool m_canExecuteEditingCommand;
     size_t m_triesCount;
 };
 
+static const char* selectedSpanHTMLFormat =
+    "<html><body contentEditable=\"%s\">"
+    "<span id=\"mainspan\">All work and no play <span id=\"subspan\">make Jack a dull</span> boy.</span>"
+    "<script>document.getSelection().collapse();\n"
+    "document.getSelection().selectAllChildren(document.getElementById('subspan'));\n"
+    "</script></body></html>";
+
 static void testWebViewEditorCutCopyPasteNonEditable(EditorTest* test, gconstpointer)
 {
-    static const char* selectedSpanHTML = "<html><body contentEditable=\"false\">"
-        "<span id=\"mainspan\">All work and no play <span id=\"subspan\">make Jack a dull</span> boy.</span>"
-        "<script>document.getSelection().collapse();\n"
-        "document.getSelection().selectAllChildren(document.getElementById('subspan'));\n"
-        "</script></body></html>";
-
     // Nothing loaded yet.
     g_assert(!test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
     g_assert(!test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_COPY));
     g_assert(!test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
 
-    test->loadHtml(selectedSpanHTML, 0);
+    GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
+    test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
 
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_COPY));
@@ -107,18 +124,17 @@ static void testWebViewEditorCutCopyPasteNonEditable(EditorTest* test, gconstpoi
 
 static void testWebViewEditorCutCopyPasteEditable(EditorTest* test, gconstpointer)
 {
-    static const char* selectedSpanHTML = "<html><body contentEditable=\"true\">"
-        "<span id=\"mainspan\">All work and no play <span>make Jack a dull</span> boy.</span>"
-        "<script>document.getSelection().collapse();\n"
-        "document.getSelection().selectAllChildren(document.getElementById('mainspan'));\n"
-        "</script></body></html>";
-
     // Nothing loaded yet.
     g_assert(!test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
     g_assert(!test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_COPY));
     g_assert(!test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
 
-    test->loadHtml(selectedSpanHTML, 0);
+    g_assert(!test->isEditable());
+    test->setEditable(true);
+    g_assert(test->isEditable());
+
+    GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
+    test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
 
     // There's a selection.
@@ -128,20 +144,15 @@ static void testWebViewEditorCutCopyPasteEditable(EditorTest* test, gconstpointe
 
     test->copyClipboard();
     GUniquePtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
-    g_assert_cmpstr(clipboardText.get(), ==, "All work and no play make Jack a dull boy.");
+    g_assert_cmpstr(clipboardText.get(), ==, "make Jack a dull");
 }
 
 static void testWebViewEditorSelectAllNonEditable(EditorTest* test, gconstpointer)
 {
-    static const char* selectedSpanHTML = "<html><body contentEditable=\"false\">"
-        "<span id=\"mainspan\">All work and no play <span id=\"subspan\">make Jack a dull</span> boy.</span>"
-        "<script>document.getSelection().collapse();\n"
-        "document.getSelection().selectAllChildren(document.getElementById('subspan'));\n"
-        "</script></body></html>";
-
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_SELECT_ALL));
 
-    test->loadHtml(selectedSpanHTML, 0);
+    GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
+    test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
 
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_SELECT_ALL));
@@ -162,15 +173,14 @@ static void testWebViewEditorSelectAllNonEditable(EditorTest* test, gconstpointe
 
 static void testWebViewEditorSelectAllEditable(EditorTest* test, gconstpointer)
 {
-    static const char* selectedSpanHTML = "<html><body contentEditable=\"true\">"
-        "<span id=\"mainspan\">All work and no play <span id=\"subspan\">make Jack a dull</span> boy.</span>"
-        "<script>document.getSelection().collapse();\n"
-        "document.getSelection().selectAllChildren(document.getElementById('subspan'));\n"
-        "</script></body></html>";
-
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_SELECT_ALL));
 
-    test->loadHtml(selectedSpanHTML, 0);
+    g_assert(!test->isEditable());
+    test->setEditable(true);
+    g_assert(test->isEditable());
+
+    GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
+    test->loadHtml(selectedSpanHTML.get(), nullptr);
     test->waitUntilLoadFinished();
 
     g_assert(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_SELECT_ALL));
@@ -189,8 +199,65 @@ static void testWebViewEditorSelectAllEditable(EditorTest* test, gconstpointer)
     g_assert_cmpstr(clipboardText.get(), ==, "All work and no play make Jack a dull boy.");
 }
 
+static void loadContentsAndTryToCutSelection(EditorTest* test, bool contentEditable)
+{
+    // View is not editable by default.
+    g_assert(!test->isEditable());
+
+    GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, contentEditable ? "true" : "false"));
+    test->loadHtml(selectedSpanHTML.get(), nullptr);
+    test->waitUntilLoadFinished();
+
+    g_assert(!test->isEditable());
+    test->setEditable(true);
+    g_assert(test->isEditable());
+
+    // Cut the selection to the clipboard to see if the view is indeed editable.
+    GUniquePtr<char> clipboardText(test->cutSelection());
+    g_assert_cmpstr(clipboardText.get(), ==, "make Jack a dull");
+
+    // Reset the editable for next test.
+    test->setEditable(false);
+    g_assert(!test->isEditable());
+}
+
+static void testWebViewEditorNonEditable(EditorTest* test)
+{
+    GUniquePtr<char> selectedSpanHTML(g_strdup_printf(selectedSpanHTMLFormat, "false"));
+    test->loadHtml(selectedSpanHTML.get(), nullptr);
+    test->waitUntilLoadFinished();
+
+    g_assert(!test->isEditable());
+    test->setEditable(true);
+    g_assert(test->isEditable());
+    test->setEditable(false);
+    g_assert(!test->isEditable());
+
+    // Check if view is indeed non-editable.
+    g_assert(!test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
+    g_assert(!test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
+}
+
+static void testWebViewEditorEditable(EditorTest* test, gconstpointer)
+{
+    testWebViewEditorNonEditable(test);
+
+    // Reset the editable for next test.
+    test->setEditable(false);
+    g_assert(!test->isEditable());
+
+    loadContentsAndTryToCutSelection(test, true);
+
+    // Reset the editable for next test.
+    test->setEditable(false);
+    g_assert(!test->isEditable());
+
+    loadContentsAndTryToCutSelection(test, false);
+}
+
 void beforeAll()
 {
+    EditorTest::add("WebKitWebView", "editable/editable", testWebViewEditorEditable);
     EditorTest::add("WebKitWebView", "cut-copy-paste/non-editable", testWebViewEditorCutCopyPasteNonEditable);
     EditorTest::add("WebKitWebView", "cut-copy-paste/editable", testWebViewEditorCutCopyPasteEditable);
     EditorTest::add("WebKitWebView", "select-all/non-editable", testWebViewEditorSelectAllNonEditable);
