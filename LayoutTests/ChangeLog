@@ -1,3 +1,9 @@
+2015-01-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening after reactivating some tests.
+
+        * platform/win/TestExpectations: Add failure entries for a few tests with bug reports.
+
 2015-01-21  Manuel Rego Casasnovas  <rego@igalia.com>
 
         first-letter pseudo-element from ancestors is not being ignored in grids and flexboxes

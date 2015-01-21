@@ -2954,3 +2954,8 @@ webkit.org/b/140703 loader/go-back-cached-main-resource.html [ Failure ]
 webkit.org/b/140705 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
 webkit.org/b/140707 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html [ Failure ]
 webkit.org/b/140707 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
+
+webkit.org/b/140724 css2.1/t1202-counter-04-b.html [ Failure ]
+webkit.org/b/140724 css2.1/t1202-counters-04-b.html [ Failure ]
+webkit.org/b/140725 fast/dom/34176.html [ Failure ]
+webkit.org/b/140726 fast/dom/zoom-scroll-page-test.html [ Failure ]
