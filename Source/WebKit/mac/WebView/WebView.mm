@@ -893,9 +893,9 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ([self respondsToSelector:@selector(setActionMenu:)]) {
         RetainPtr<NSMenu> actionMenu = adoptNS([[NSMenu alloc] init]);
-        self._actionMenu = actionMenu.get();
+        self.actionMenu = actionMenu.get();
         _private->actionMenuController = [[WebActionMenuController alloc] initWithWebView:self];
-        self._actionMenu.autoenablesItems = NO;
+        self.actionMenu.autoenablesItems = NO;
     }
 
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
@@ -8585,7 +8585,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (void)prepareForMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
-    if (menu != self._actionMenu)
+    if (menu != self.actionMenu)
         return;
 
     [_private->actionMenuController prepareForMenu:menu withEvent:event];
@@ -8593,7 +8593,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
-    if (menu != self._actionMenu)
+    if (menu != self.actionMenu)
         return;
 
     [_private->actionMenuController willOpenMenu:menu withEvent:event];
@@ -8601,7 +8601,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
-    if (menu != self._actionMenu)
+    if (menu != self.actionMenu)
         return;
 
     [_private->actionMenuController didCloseMenu:menu withEvent:event];
