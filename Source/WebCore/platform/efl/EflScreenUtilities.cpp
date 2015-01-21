@@ -131,7 +131,7 @@ Ecore_X_Cursor createCustomCursor(Ecore_X_Window window, Image* image, const Int
 
     unsigned char* buffer = cairo_image_surface_get_data(surface.get());
 
-    return ecore_x_cursor_new(window, (int*)(buffer), cursorSize.width(), cursorSize.height(), hotSpot.x(), hotSpot.y());
+    return ecore_x_cursor_new(window, reinterpret_cast_ptr<int*>(buffer), cursorSize.width(), cursorSize.height(), hotSpot.x(), hotSpot.y());
 }
 
 Ecore_X_Window getEcoreXWindow(Ecore_Evas* ecoreEvas)
