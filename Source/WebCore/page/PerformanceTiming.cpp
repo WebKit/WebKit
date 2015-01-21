@@ -328,7 +328,7 @@ DocumentLoadTiming* PerformanceTiming::documentLoadTiming() const
     if (!loader)
         return 0;
 
-    return loader->timing();
+    return &loader->timing();
 }
 
 unsigned long long PerformanceTiming::resourceLoadTimeRelativeToAbsolute(int relativeMilliseconds) const

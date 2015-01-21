@@ -132,8 +132,8 @@ void ScriptedAnimationController::serviceScriptedAnimations(double monotonicTime
     if (!m_callbacks.size() || m_suspendCount || (m_document->settings() && !m_document->settings()->requestAnimationFrameEnabled()))
         return;
 
-    double highResNowMs = 1000.0 * m_document->loader()->timing()->monotonicTimeToZeroBasedDocumentTime(monotonicTimeNow);
-    double legacyHighResNowMs = 1000.0 * m_document->loader()->timing()->monotonicTimeToPseudoWallTime(monotonicTimeNow);
+    double highResNowMs = 1000.0 * m_document->loader()->timing().monotonicTimeToZeroBasedDocumentTime(monotonicTimeNow);
+    double legacyHighResNowMs = 1000.0 * m_document->loader()->timing().monotonicTimeToPseudoWallTime(monotonicTimeNow);
 
     // First, generate a list of callbacks to consider.  Callbacks registered from this point
     // on are considered only for the "next" frame, not this one.

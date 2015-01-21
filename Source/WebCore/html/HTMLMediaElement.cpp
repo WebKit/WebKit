@@ -5811,7 +5811,7 @@ RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
     double now = performance ? performance->now() : 0;
 #else
     DocumentLoader* loader = document().loader();
-    double now = loader ? 1000.0 * loader->timing()->monotonicTimeToZeroBasedDocumentTime(monotonicallyIncreasingTime()) : 0;
+    double now = loader ? 1000.0 * loader->timing().monotonicTimeToZeroBasedDocumentTime(monotonicallyIncreasingTime()) : 0;
 #endif
 
     if (!m_player)

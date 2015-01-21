@@ -1,3 +1,44 @@
+2015-01-21  Andreas Kling  <akling@apple.com>
+
+        DocumentLoader::timing() should return a reference.
+        <https://webkit.org/b/128272>
+
+        Reviewed by Antti Koivisto.
+
+        There is always a DocumentLoadTiming object, so return it by
+        reference since it can never be null.
+
+        * Modules/gamepad/NavigatorGamepad.cpp:
+        (WebCore::NavigatorGamepad::from):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::serviceScriptedAnimations):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForTiming):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::continueAfterNavigationPolicy):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::timing):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::loadProvisionalItemFromCachedPage):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        * page/Performance.cpp:
+        (WebCore::Performance::now):
+        * page/PerformanceNavigation.cpp:
+        (WebCore::PerformanceNavigation::redirectCount):
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::monotonicTimeToDocumentMilliseconds):
+        (WebCore::PerformanceResourceTiming::resourceTimeToDocumentMilliseconds):
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::documentLoadTiming):
+
 2015-01-21  Benjamin Poulain  <benjamin@webkit.org>
 
         Handle the transition on any character as a separate type of transition

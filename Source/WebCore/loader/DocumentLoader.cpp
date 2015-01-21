@@ -423,7 +423,7 @@ void DocumentLoader::finishedLoading(double finishTime)
         responseEndTime = m_timeOfLastDataReceived;
     if (!responseEndTime)
         responseEndTime = monotonicallyIncreasingTime();
-    timing()->setResponseEnd(responseEndTime);
+    timing().setResponseEnd(responseEndTime);
 
     commitIfReady();
     if (!frameLoader())
@@ -512,7 +512,7 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
         return;
     }
 
-    ASSERT(timing()->fetchStart());
+    ASSERT(timing().fetchStart());
     if (!redirectResponse.isNull()) {
         // If the redirecting url is not allowed to display content from the target origin,
         // then block the redirect.
@@ -522,7 +522,7 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
             return;
         }
-        timing()->addRedirect(redirectResponse.url(), newRequest.url());
+        timing().addRedirect(redirectResponse.url(), newRequest.url());
     }
 
     // Update cookie policy base URL as URL changes, except for subframes, which use the
@@ -573,7 +573,7 @@ void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool 
         stopLoadingForPolicyChange();
     else if (m_substituteData.isValid()) {
         // A redirect resulted in loading substitute data.
-        ASSERT(timing()->redirectCount());
+        ASSERT(timing().redirectCount());
 
         // We need to remove our reference to the CachedResource in favor of a SubstituteData load.
         // This will probably trigger the cancellation of the CachedResource's underlying ResourceLoader, though there is a
@@ -1397,7 +1397,7 @@ bool DocumentLoader::maybeLoadEmpty()
 void DocumentLoader::startLoadingMainResource()
 {
     m_mainDocumentError = ResourceError();
-    timing()->markNavigationStart();
+    timing().markNavigationStart();
     ASSERT(!m_mainResource);
     ASSERT(!m_loadingMainResource);
     m_loadingMainResource = true;
@@ -1411,9 +1411,9 @@ void DocumentLoader::startLoadingMainResource()
     // because we pass a wrong loadType (see FIXME in addExtraFieldsToMainResourceRequest()).
     frameLoader()->addExtraFieldsToMainResourceRequest(m_request);
 
-    ASSERT(timing()->navigationStart());
-    ASSERT(!timing()->fetchStart());
-    timing()->markFetchStart();
+    ASSERT(timing().navigationStart());
+    ASSERT(!timing().fetchStart());
+    timing().markFetchStart();
     willSendRequest(m_request, ResourceResponse());
 
     // willSendRequest() may lead to our Frame being detached or cancelling the load via nulling the ResourceRequest.

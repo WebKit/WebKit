@@ -248,7 +248,7 @@ namespace WebCore {
         void recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest&);
         void takeMemoryCacheLoadsForClientNotification(Vector<ResourceRequest>& loads);
 
-        DocumentLoadTiming* timing() { return &m_documentLoadTiming; }
+        DocumentLoadTiming& timing() { return m_documentLoadTiming; }
         void resetTiming() { m_documentLoadTiming = DocumentLoadTiming(); }
 
         // The WebKit layer calls this function when it's ready for the data to

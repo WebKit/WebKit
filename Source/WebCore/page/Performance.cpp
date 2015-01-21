@@ -228,7 +228,7 @@ void Performance::webkitClearMeasures(const String& measureName)
 
 double Performance::now() const
 {
-    return 1000.0 * m_frame->document()->loader()->timing()->monotonicTimeToZeroBasedDocumentTime(monotonicallyIncreasingTime());
+    return 1000.0 * m_frame->document()->loader()->timing().monotonicTimeToZeroBasedDocumentTime(monotonicallyIncreasingTime());
 }
 
 } // namespace WebCore

@@ -49,7 +49,7 @@ namespace WebCore {
 static double monotonicTimeToDocumentMilliseconds(Document* document, double seconds)
 {
     ASSERT(seconds >= 0.0);
-    return document->loader()->timing()->monotonicTimeToZeroBasedDocumentTime(seconds) * 1000.0;
+    return document->loader()->timing().monotonicTimeToZeroBasedDocumentTime(seconds) * 1000.0;
 }
 
 static bool passesTimingAllowCheck(const ResourceResponse& response, Document* requestingDocument)
@@ -194,7 +194,7 @@ double PerformanceResourceTiming::resourceTimeToDocumentMilliseconds(int deltaMi
 {
     if (!deltaMilliseconds)
         return 0.0;
-    return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_requestingDocument.get()->loader()->timing()->navigationStart()) + deltaMilliseconds;
+    return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_requestingDocument->loader()->timing().navigationStart()) + deltaMilliseconds;
 }
 
 } // namespace WebCore

@@ -452,12 +452,12 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
                         // time into freed memory.
                         RefPtr<DocumentLoader> documentLoader = m_provisionalDocumentLoader;
                         m_pageDismissalEventBeingDispatched = UnloadDismissal;
-                        if (documentLoader && !documentLoader->timing()->unloadEventStart() && !documentLoader->timing()->unloadEventEnd()) {
-                            DocumentLoadTiming* timing = documentLoader->timing();
-                            ASSERT(timing->navigationStart());
-                            timing->markUnloadEventStart();
+                        if (documentLoader && !documentLoader->timing().unloadEventStart() && !documentLoader->timing().unloadEventEnd()) {
+                            DocumentLoadTiming& timing = documentLoader->timing();
+                            ASSERT(timing.navigationStart());
+                            timing.markUnloadEventStart();
                             m_frame.document()->domWindow()->dispatchEvent(unloadEvent, m_frame.document());
-                            timing->markUnloadEventEnd();
+                            timing.markUnloadEventEnd();
                         } else
                             m_frame.document()->domWindow()->dispatchEvent(unloadEvent, m_frame.document());
                     }
@@ -1786,7 +1786,7 @@ void FrameLoader::commitProvisionalLoad()
     if (pdl && m_documentLoader) {
         // Check if the destination page is allowed to access the previous page's timing information.
         Ref<SecurityOrigin> securityOrigin(SecurityOrigin::create(pdl->request().url()));
-        m_documentLoader->timing()->setHasSameOriginAsPreviousDocument(securityOrigin.get().canRequest(m_previousURL));
+        m_documentLoader->timing().setHasSameOriginAsPreviousDocument(securityOrigin.get().canRequest(m_previousURL));
     }
 
     // Call clientRedirectCancelledOrFinished() here so that the frame load delegate is notified that the redirect's
@@ -3091,9 +3091,9 @@ void FrameLoader::loadProvisionalItemFromCachedPage()
     m_loadingFromCachedPage = true;
 
     // Should have timing data from previous time(s) the page was shown.
-    ASSERT(provisionalLoader->timing()->navigationStart());
+    ASSERT(provisionalLoader->timing().navigationStart());
     provisionalLoader->resetTiming();
-    provisionalLoader->timing()->markNavigationStart();
+    provisionalLoader->timing().markNavigationStart();
 
     provisionalLoader->setCommitted(true);
     commitProvisionalLoad();
