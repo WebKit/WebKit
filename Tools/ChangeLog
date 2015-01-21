@@ -1,3 +1,12 @@
+2015-01-20  Lucas Forschler  <lforschler@apple.com>
+
+        Update LeaksViewer from MountainLion to Yosemite
+        
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/LeaksViewer.js:
+        (LeaksViewer._displayURLPrompt):
+
 2015-01-20  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Fix EWS python unit tests and address code comments as per 140476
