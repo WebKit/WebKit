@@ -65,6 +65,11 @@ public:
     void removeAllUserScripts();
     void removeAllUserContent();
 
+#if ENABLE(CONTENT_EXTENSIONS)
+    void addUserContentFilter(const API::UserContentFilter&);
+    void removeAllUserContentFilters();
+#endif
+
 private:
     template<typename T> void sendToAllProcessesInGroup(const T&, uint64_t destinationID);
 

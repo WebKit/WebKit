@@ -49,6 +49,10 @@ struct WebPageGroupData {
 
     Vector<WebCore::UserStyleSheet> userStyleSheets;
     Vector<WebCore::UserScript> userScripts;
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    Vector<std::pair<String, String>> userContentFilters;
+#endif
 };
 
 } // namespace WebKit

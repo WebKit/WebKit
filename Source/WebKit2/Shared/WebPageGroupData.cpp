@@ -38,6 +38,9 @@ void WebPageGroupData::encode(IPC::ArgumentEncoder& encoder) const
     encoder << visibleToHistoryClient;
     encoder << userStyleSheets;
     encoder << userScripts;
+#if ENABLE(CONTENT_EXTENSIONS)
+    encoder << userContentFilters;
+#endif
 }
 
 bool WebPageGroupData::decode(IPC::ArgumentDecoder& decoder, WebPageGroupData& data)
@@ -54,6 +57,10 @@ bool WebPageGroupData::decode(IPC::ArgumentDecoder& decoder, WebPageGroupData& d
         return false;
     if (!decoder.decode(data.userScripts))
         return false;
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (!decoder.decode(data.userContentFilters))
+        return false;
+#endif
     return true;
 }
 

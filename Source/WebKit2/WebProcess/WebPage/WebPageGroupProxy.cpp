@@ -48,10 +48,15 @@ WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
     : m_data(data)
     , m_pageGroup(WebCore::PageGroup::pageGroup(m_data.identifier))
 {
-    for (size_t i = 0; i < data.userStyleSheets.size(); ++i)
-        addUserStyleSheet(data.userStyleSheets[i]);
-    for (size_t i = 0; i < data.userScripts.size(); ++i)
-        addUserScript(data.userScripts[i]);
+    for (const auto& userStyleSheet : data.userStyleSheets)
+        addUserStyleSheet(userStyleSheet);
+    for (const auto& userScript : data.userScripts)
+        addUserScript(userScript);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    for (const auto& pair : data.userContentFilters)
+        addUserContentFilter(pair.first, pair.second);
+#endif
 }
 
 WebPageGroupProxy::~WebPageGroupProxy()
@@ -90,5 +95,17 @@ void WebPageGroupProxy::removeAllUserContent()
 {
     userContentController().removeAllUserContent();
 }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void WebPageGroupProxy::addUserContentFilter(const String& name, const String& serializedRules)
+{
+    userContentController().addUserContentFilter(name, serializedRules);
+}
+
+void WebPageGroupProxy::removeAllUserContentFilters()
+{
+    userContentController().removeAllUserContentFilters();    
+}
+#endif
 
 } // namespace WebKit

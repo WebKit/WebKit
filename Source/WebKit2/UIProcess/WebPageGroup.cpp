@@ -27,6 +27,7 @@
 #include "WebPageGroup.h"
 
 #include "APIArray.h"
+#include "APIUserContentFilter.h"
 #include "WebPageGroupProxyMessages.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
@@ -170,5 +171,19 @@ void WebPageGroup::removeAllUserContent()
     m_data.userScripts.clear();
     sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserContent(), m_data.pageGroupID);
 }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void WebPageGroup::addUserContentFilter(const API::UserContentFilter& userContentFilter)
+{
+    m_data.userContentFilters.append(std::make_pair(userContentFilter.name(), userContentFilter.serializedRules()));
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::AddUserContentFilter(userContentFilter.name(), userContentFilter.serializedRules()), m_data.pageGroupID);
+}
+
+void WebPageGroup::removeAllUserContentFilters()
+{
+    m_data.userContentFilters.clear();
+    sendToAllProcessesInGroup(Messages::WebPageGroupProxy::RemoveAllUserContentFilters(), m_data.pageGroupID);
+}
+#endif
 
 } // namespace WebKit

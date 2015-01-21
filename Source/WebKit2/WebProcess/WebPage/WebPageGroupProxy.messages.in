@@ -26,4 +26,9 @@ messages -> WebPageGroupProxy {
     RemoveAllUserStyleSheets();
     RemoveAllUserScripts();
     RemoveAllUserContent();
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    AddUserContentFilter(String name, String serializedRules);
+    RemoveAllUserContentFilters();
+#endif
 }

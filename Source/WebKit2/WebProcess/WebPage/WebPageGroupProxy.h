@@ -63,6 +63,11 @@ public:
     void removeAllUserScripts();
     void removeAllUserContent();
 
+#if ENABLE(CONTENT_EXTENSIONS)
+    void addUserContentFilter(const String& name, const String& serializedRules);
+    void removeAllUserContentFilters();
+#endif
+
 private:
     WebPageGroupProxy(const WebPageGroupData&);
 

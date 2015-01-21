@@ -77,3 +77,17 @@ void WKPageGroupRemoveAllUserScripts(WKPageGroupRef pageGroupRef)
 {
     toImpl(pageGroupRef)->removeAllUserScripts();
 }
+
+void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroupRef, WKUserContentFilterRef userContentFilterRef)
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    toImpl(pageGroupRef)->addUserContentFilter(*toImpl(userContentFilterRef));
+#endif
+}
+
+void WKPageGroupRemoveAllUserContentFilters(WKPageGroupRef pageGroupRef)
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    toImpl(pageGroupRef)->removeAllUserScripts();
+#endif
+}
