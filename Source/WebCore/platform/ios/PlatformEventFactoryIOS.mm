@@ -213,6 +213,21 @@ static PlatformEvent::Type touchEventType(WebEvent *event)
         return PlatformEvent::TouchCancel;
     }
 }
+    
+static PlatformTouchPoint::TouchPhaseType touchPhaseFromPlatformEventType(PlatformEvent::Type type)
+{
+    switch (type) {
+    case PlatformEvent::TouchStart:
+        return PlatformTouchPoint::TouchPhaseBegan;
+    case PlatformEvent::TouchMove:
+        return PlatformTouchPoint::TouchPhaseMoved;
+    case PlatformEvent::TouchEnd:
+        return PlatformTouchPoint::TouchPhaseEnded;
+    default:
+        ASSERT_NOT_REACHED();
+        return PlatformTouchPoint::TouchPhaseCancelled;
+    }
+}
 
 class PlatformTouchPointBuilder : public PlatformTouchPoint {
 public:
@@ -245,12 +260,35 @@ public:
             m_touchPoints.uncheckedAppend(PlatformTouchPointBuilder(identifier, location, touchPhase));
         }
     }
+    
+    PlatformTouchEventBuilder(PlatformEvent::Type type, IntPoint location)
+    {
+        m_type = type;
+        m_timestamp = currentTime();
+        
+        m_gestureScale = 1;
+        m_gestureRotation = 0;
+        m_isGesture = 0;
+        m_position = location;
+        m_globalPosition = location;
+        
+        unsigned touchCount = 1;
+        m_touchPoints.reserveInitialCapacity(touchCount);
+        for (unsigned i = 0; i < touchCount; ++i)
+            m_touchPoints.uncheckedAppend(PlatformTouchPointBuilder(1, location, touchPhaseFromPlatformEventType(type)));
+    }
 };
 
 PlatformTouchEvent PlatformEventFactory::createPlatformTouchEvent(WebEvent *event)
 {
     return PlatformTouchEventBuilder(event);
 }
+    
+PlatformTouchEvent PlatformEventFactory::createPlatformSimulatedTouchEvent(PlatformEvent::Type type, IntPoint location)
+{
+    return PlatformTouchEventBuilder(type, location);
+}
+
 #endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WebCore

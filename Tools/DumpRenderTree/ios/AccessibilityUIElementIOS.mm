@@ -77,6 +77,7 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (CGFloat)_accessibilityMinValue;
 - (CGFloat)_accessibilityMaxValue;
 - (void)_accessibilitySetValue:(NSString *)value;
+- (void)_accessibilityActivate;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -704,6 +705,7 @@ void AccessibilityUIElement::showMenu()
 
 void AccessibilityUIElement::press()
 {
+    [m_element _accessibilityActivate];
 }
 
 JSStringRef AccessibilityUIElement::accessibilityValue() const

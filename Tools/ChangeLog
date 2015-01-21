@@ -1,5 +1,21 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176904.
+
+    2014-12-05  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: I cannot activate links on the mobile version of news.google.com
+            https://bugs.webkit.org/show_bug.cgi?id=139330
+
+            Reviewed by Simon Fraser.
+
+            Implement press for iOS.
+
+            * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+            (AccessibilityUIElement::press):
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176318.
 
     2014-11-19  Chris Fleizach  <cfleizach@apple.com>

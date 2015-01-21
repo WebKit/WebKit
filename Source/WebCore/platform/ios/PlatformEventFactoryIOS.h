@@ -42,6 +42,7 @@ public:
     static PlatformKeyboardEvent createPlatformKeyboardEvent(WebEvent *);
 #if ENABLE(TOUCH_EVENTS)
     static PlatformTouchEvent createPlatformTouchEvent(WebEvent *);
+    static PlatformTouchEvent createPlatformSimulatedTouchEvent(PlatformEvent::Type, IntPoint location);
 #endif
 };
 

@@ -1,5 +1,36 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176904.
+
+    2014-12-05  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: I cannot activate links on the mobile version of news.google.com
+            https://bugs.webkit.org/show_bug.cgi?id=139330
+
+            Reviewed by Simon Fraser.
+
+            This website only listens for touch events. VoiceOver normally dispatches click and mouse events,
+            so on iOS this falls and VoiceOver is not able to activate anything.
+
+            The solution here is to dispatch simulated touch down/up events.
+
+            Test: platform/ios-simulator/ios-accessibility/press-fires-touch-events.html
+
+            * accessibility/AccessibilityObject.cpp:
+            (WebCore::AccessibilityObject::press):
+            (WebCore::AccessibilityObject::dispatchTouchEvent):
+            * accessibility/AccessibilityObject.h:
+            (WebCore::AccessibilityObject::isDetachedFromParent):
+            * page/EventHandler.h:
+            * page/ios/EventHandlerIOS.mm:
+            (WebCore::EventHandler::dispatchSimulatedTouchEvent):
+            * platform/ios/PlatformEventFactoryIOS.h:
+            * platform/ios/PlatformEventFactoryIOS.mm:
+            (WebCore::PlatformTouchEventBuilder::PlatformTouchEventBuilder):
+            (WebCore::PlatformEventFactory::createPlatformSimulatedTouchEvent):
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176768.
 
     2014-12-03  Myles C. Maxfield  <mmaxfield@apple.com>

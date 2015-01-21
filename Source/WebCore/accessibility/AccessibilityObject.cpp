@@ -35,6 +35,7 @@
 #include "AccessibilityTable.h"
 #include "DOMTokenList.h"
 #include "Editor.h"
+#include "EventHandler.h"
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -775,8 +776,25 @@ bool AccessibilityObject::press()
         pressElement = hitTestElement;
     
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
-    pressElement->accessKeyAction(true);
+    
+    bool dispatchedTouchEvent = dispatchTouchEvent();
+    if (!dispatchedTouchEvent)
+        pressElement->accessKeyAction(true);
+    
     return true;
+}
+    
+bool AccessibilityObject::dispatchTouchEvent()
+{
+    bool handled = false;
+#if ENABLE(IOS_TOUCH_EVENTS)
+    MainFrame* frame = mainFrame();
+    if (!frame)
+        return false;
+
+    frame->eventHandler().dispatchSimulatedTouchEvent(clickPoint());
+#endif
+    return handled;
 }
 
 Frame* AccessibilityObject::frame() const
