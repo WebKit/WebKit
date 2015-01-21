@@ -894,6 +894,8 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
             m_currentWordRange = Range::create(*frame.document(), range->startPosition(), range->endPosition());
             break;
         case GestureRecognizerState::Changed:
+            if (!m_currentWordRange)
+                break;
             range = Range::create(*frame.document(), m_currentWordRange->startPosition(), m_currentWordRange->endPosition());
             if (position < range->startPosition())
                 range->setStart(position.deepEquivalent(), ASSERT_NO_EXCEPTION);

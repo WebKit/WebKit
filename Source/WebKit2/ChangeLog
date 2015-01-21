@@ -1,5 +1,28 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175636.
+
+    2014-11-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+            WebContent crash in WebPage::selectWithGesture()
+
+            <https://bugs.webkit.org/show_bug.cgi?id=138399>
+            <rdar://problem/18550631>
+
+            This crash occurs when the web process receives a "TapAndAHalf" gesture
+            with the "Changed" state without having received a "TapAndAHalf"
+            gesture with the "Began" state.
+
+            No test possible.
+
+            Reviewed by Simon Fraser.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::selectWithGesture):
+            Null check m_currentWordRange before dereferencing it.
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175334.
 
     2014-10-29  Joseph Pecoraro  <pecoraro@apple.com>
