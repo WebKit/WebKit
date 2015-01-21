@@ -1,5 +1,31 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176354.
+
+    2014-11-19  David Hyatt  <hyatt@apple.com>
+
+            Images/replaced elements that are as tall as a page should be on their own page
+            https://bugs.webkit.org/show_bug.cgi?id=138886 - <rdar://problem/18296371>
+
+            Reviewed by Dean Jackson.
+
+            Added fast/multicol/tall-image-behavior.html (and RL/LR variants)
+
+            * rendering/InlineFlowBox.cpp:
+            (WebCore::InlineFlowBox::computeReplacedAndTextLineTopAndBottom):
+            * rendering/InlineFlowBox.h:
+            Add a new method that computes the line top and line bottom ignoring all margins,
+            overflow and line-height. This allows us to see if a line that is taller than a page
+            can be made to fit if we ignored margins and unused descent.
+
+            * rendering/RenderBlockFlow.cpp:
+            (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+            Call the new helper function, computeReplacedAndTextLineTopAndBottom and push
+            to a new page if we see that we can fit on a page by ourselves without blank space
+            included.
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176318.
 
     2014-11-19  Chris Fleizach  <cfleizach@apple.com>
