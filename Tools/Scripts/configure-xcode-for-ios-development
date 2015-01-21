@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2014 Apple Inc. All rights reserved.
+# Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,8 +27,6 @@
 # tool product- and package- type using the definitions in the OS X SDK for the
 # same types.
 
-# FIXME: We should also configure Xcode to support building a command line tool for an iOS device.
-
 use strict;
 use warnings;
 
@@ -38,8 +36,11 @@ use File::Find;
 use File::Spec;
 use File::Temp qw(tempfile);
 
+sub copyMissingHeadersToIPhoneOSSDKIfNeeded();
 sub createXcodeSpecificationFilesForSDKIfNeeded($);
 sub createXcodeSpecificationFromSpecificationAndId($$$);
+sub sdkDirectory($);
+sub sdkPlatformDirectory($);
 sub readXcodeSpecificationById($$);
 sub xcodeSDKSpecificationsPath($);
 
@@ -58,7 +59,39 @@ for my $sdk (qw(iphoneos iphonesimulator)) {
     createXcodeSpecificationFilesForSDKIfNeeded($sdk);
 }
 
+copyMissingHeadersToIPhoneOSSDKIfNeeded();
+
 exit 0;
+
+sub copyMissingHeadersToIPhoneOSSDKIfNeeded()
+{
+    my @missingHeaders = qw(
+        /usr/include/crt_externs.h
+        /usr/include/MacErrors.h
+        /usr/include/mach/mach_types.defs
+        /usr/include/mach/machine/machine_types.defs
+        /usr/include/mach/std_types.defs
+        /usr/include/objc/objc-class.h
+        /usr/include/objc/objc-runtime.h
+        /usr/include/objc/Protocol.h
+        /usr/include/readline/history.h
+        /usr/include/readline/readline.h
+        /usr/include/sqlite3_private.h
+    );
+
+    my $iphoneosSDKDirectory = sdkDirectory("iphoneos");
+    my $iphonesimulatorSDKDirectory = sdkDirectory("iphonesimulator");
+
+    for my $header (@missingHeaders) {
+        my $iphoneosSDKPath = File::Spec->canonpath(File::Spec->catfile($iphoneosSDKDirectory, $header));
+        next if (-f $iphoneosSDKPath);
+
+        my $iphonesimulatorSDKPath = File::Spec->canonpath(File::Spec->catfile($iphonesimulatorSDKDirectory, $header));
+        system("/usr/bin/ditto", $iphonesimulatorSDKPath, $iphoneosSDKPath);
+        die "Could not copy $iphonesimulatorSDKPath to $iphoneosSDKPath: $!" if exitStatus($?);
+        print "Successfully copied $iphonesimulatorSDKPath to $iphoneosSDKPath.\n";
+    }
+}
 
 sub createXcodeSpecificationFilesForSDKIfNeeded($)
 {
@@ -119,6 +152,22 @@ sub createXcodeSpecificationFilesForSDKIfNeeded($)
     }
 }
 
+sub sdkDirectory($)
+{
+    my ($sdkName) = @_;
+    chomp(my $sdkDirectory = `xcrun --sdk '$sdkName' --show-sdk-path`);
+    die "Failed to get SDK path from xcrun: $!" if exitStatus($?);
+    return $sdkDirectory;
+}
+
+sub sdkPlatformDirectory($)
+{
+    my ($sdkName) = @_;
+    chomp(my $sdkPlatformDirectory = `xcrun --sdk '$sdkName' --show-sdk-platform-path`);
+    die "Failed to get SDK platform path from xcrun: $!" if exitStatus($?);
+    return $sdkPlatformDirectory;
+}
+
 sub writeXcodeSpecification($$)
 {
     my ($xcodeSpecificationFile, $specification) = @_;
@@ -177,10 +226,8 @@ sub readXcodeSpecificationById($$)
 sub xcodeSDKSpecificationsPath($)
 {
     my ($sdkName) = @_;
-    chomp(my $sdkPlatformDirectory = `xcrun --sdk '$sdkName' --show-sdk-platform-path`);
-    die "Failed to get SDK platform path from xcrun" if $?;
 
-    return File::Spec->catdir($sdkPlatformDirectory, "Developer", "Library", "Xcode", "Specifications");
+    return File::Spec->catdir(sdkPlatformDirectory($sdkName), "Developer", "Library", "Xcode", "Specifications");
 }
 
 sub createXcodeSpecificationFromSpecificationAndId($$$)

@@ -1,3 +1,23 @@
+2015-01-21  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Update configure-xcode-for-ios-development to copy missing headers to iphoneos SDK
+        <http://webkit.org/b/140704>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/configure-xcode-for-ios-development:
+        - Update copyright.
+        - Remove FIXME addressed by r178709.
+        - Call copyMissingHeadersToIPhoneOSSDKIfNeeded().
+        (copyMissingHeadersToIPhoneOSSDKIfNeeded): Add method to copy
+        missing headers from iphonesimulator SDK to iphoneos SDK.
+        (sdkDirectory): Add method that returns SDK directory.
+        (sdkPlatformDirectory): Extract method from
+        xcodeSDKSpecificationsPath() that returns SDK platform
+        directory.
+        (xcodeSDKSpecificationsPath): Update to use
+        sdkPlatformDirectory().
+
 2015-01-21  Alexey Proskuryakov  <ap@apple.com>
 
         https://build.webkit.org/dashboard/metrics.html fails because of ios-ews
