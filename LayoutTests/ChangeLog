@@ -1,5 +1,12 @@
 2015-01-20  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] More test gardening.
+
+        * platform/win/TestExpectations: Mark several tests as failing now that bug
+        reports have been filed for them.
+
+2015-01-20  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed test gardening.
 
         Now that Mac has switched to new SVG font results, commit the old Mac output for

@@ -3041,3 +3041,8 @@ webkit.org/b/140258 userscripts/user-stylesheet-invalidate.html [ Failure ]
 
 # <rdar://problem/19526412>
 fast/images/bad-png.html [ Skip ]
+
+webkit.org/b/140703 loader/go-back-cached-main-resource.html [ Failure ]
+webkit.org/b/140705 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure 
+webkit.org/b/140707 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html [ Failure ]
+webkit.org/b/140707 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
