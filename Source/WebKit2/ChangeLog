@@ -1,3 +1,16 @@
+2015-01-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        Clean up ViewUpdateDispatcher
+        https://bugs.webkit.org/show_bug.cgi?id=140619
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::visibleContentRectUpdate):
+        Replace WTF::bind() with a C++ lambda.
+        (WebKit::ViewUpdateDispatcher::dispatchVisibleContentRectUpdate):
+        Use WTF::move() to move the HashMap member into the local variable.
+
 2015-01-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(INSPECTOR) ifdef guards

@@ -67,19 +67,23 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(uint64_t pageID, const Visib
         else
             iterator->value.visibleContentRectUpdateInfo = visibleContentRectUpdateInfo;
     }
-    if (updateListWasEmpty)
-        RunLoop::main().dispatch(bind(&ViewUpdateDispatcher::dispatchVisibleContentRectUpdate, this));
+    if (updateListWasEmpty) {
+        RefPtr<ViewUpdateDispatcher> protector(this);
+        RunLoop::main().dispatch([protector] {
+            protector->dispatchVisibleContentRectUpdate();
+        });
+    }
 }
 
 void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
 {
-    HashMap<uint64_t, UpdateData> localCopy;
+    HashMap<uint64_t, UpdateData> update;
     {
         SpinLockHolder locker(&m_dataMutex);
-        localCopy.swap(m_latestUpdate);
+        update = WTF::move(m_latestUpdate);
     }
 
-    for (auto& slot : localCopy) {
+    for (auto& slot : update) {
         if (WebPage* webPage = WebProcess::shared().webPage(slot.key))
             webPage->updateVisibleContentRects(slot.value.visibleContentRectUpdateInfo, slot.value.oldestTimestamp);
     }
