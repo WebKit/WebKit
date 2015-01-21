@@ -111,10 +111,6 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_scheduleCompositingLayerFlush;
 - (BOOL)_flushCompositingChanges;
 
-#if USE(GLIB)
-- (void)_scheduleGlibContextIterations;
-#endif
-
 #if USE(AUTOCORRECTION_PANEL)
 - (void)handleAcceptedAlternativeText:(NSString*)text;
 #endif

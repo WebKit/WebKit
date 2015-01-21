@@ -1,3 +1,19 @@
+2015-01-20  Anders Carlsson  <andersca@apple.com>
+
+        Remove USE(GLIB) code from WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=140714
+
+        Reviewed by Andreas Kling.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _close]):
+        (-[WebView _clearGlibLoopObserver]): Deleted.
+        (glibContextIterationCallback): Deleted.
+        (-[WebView _scheduleGlibContextIterations]): Deleted.
+        * WebView/WebViewData.h:
+        * WebView/WebViewInternal.h:
+
 2015-01-20  David Kilzer  <ddkilzer@apple.com>
 
         Switch to comparing PLATFORM_NAME in terms of macosx

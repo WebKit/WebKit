@@ -274,9 +274,6 @@ private:
 #endif
 #endif
 
-#if USE(GLIB)
-    CFRunLoopObserverRef glibRunLoopObserver;
-#endif
     id<WebGeolocationProvider> _geolocationProvider;
     id<WebDeviceOrientationProvider> m_deviceOrientationProvider;
     id<WebNotificationProvider> _notificationProvider;

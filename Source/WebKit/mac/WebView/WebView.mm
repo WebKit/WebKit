@@ -279,10 +279,6 @@
 #endif
 #endif
 
-#if USE(GLIB)
-#import <glib.h>
-#endif
-
 #if USE(QUICK_LOOK)
 #include <WebCore/QuickLook.h>
 #endif
@@ -562,9 +558,6 @@ static WebPageVisibilityState kit(PageVisibilityState visibilityState)
 + (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
 - (NSResponder *)_responderForResponderOperations;
-#if USE(GLIB)
-- (void)_clearGlibLoopObserver;
-#endif
 @end
 
 NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
@@ -1078,10 +1071,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         ResourceHandle::forceContentSniffing();
 
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
-#endif
-
-#if USE(GLIB)
-    [self _scheduleGlibContextIterations];
 #endif
 }
 
@@ -1782,10 +1771,6 @@ static bool fastDocumentTeardownEnabled()
         _private->layerFlushController->invalidate();
         _private->layerFlushController = nullptr;
     }
-    
-#if USE(GLIB)
-    [self _clearGlibLoopObserver];
-#endif
 
     [[self _notificationProvider] unregisterWebView:self];
 
@@ -8148,17 +8133,6 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 }
 #endif // !PLATFORM(IOS)
 
-#if USE(GLIB)
-- (void)_clearGlibLoopObserver
-{
-    if (!_private->glibRunLoopObserver)
-        return;
-
-    CFRunLoopObserverInvalidate(_private->glibRunLoopObserver);
-    CFRelease(_private->glibRunLoopObserver);
-    _private->glibRunLoopObserver = 0;
-}
-#endif
 @end
 
 @implementation WebView (WebViewInternal)
@@ -8488,32 +8462,6 @@ bool LayerFlushController::flushLayers()
     if (!_private->newFullscreenController)
         return;
     [_private->newFullscreenController exitFullScreen];
-}
-#endif
-
-#if USE(GLIB)
-
-static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*)
-{
-    g_main_context_iteration(0, FALSE);
-}
-
-- (void)_scheduleGlibContextIterations
-{
-    if (_private->glibRunLoopObserver)
-        return;
-
-    NSRunLoop* myRunLoop = [NSRunLoop currentRunLoop];
-
-    // Create a run loop observer and attach it to the run loop.
-    CFRunLoopObserverContext context = {0, self, 0, 0, 0};
-    _private->glibRunLoopObserver = CFRunLoopObserverCreate(kCFAllocatorDefault, kCFRunLoopBeforeWaiting, YES, 0, &glibContextIterationCallback, &context);
-
-    if (_private->glibRunLoopObserver) {
-        CFRunLoopRef cfLoop = [myRunLoop getCFRunLoop];
-        CFRunLoopAddObserver(cfLoop, _private->glibRunLoopObserver, kCFRunLoopDefaultMode);
-    }
-
 }
 #endif
 
