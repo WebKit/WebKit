@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2014 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Baidu Inc. All rights reserved
  *
  * Redistribution and use in source and binary forms, with or without
@@ -751,6 +751,35 @@ static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef f
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef scalePageByCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return JSValueMakeUndefined(context);
+
+    COMPtr<IWebViewPrivate> webViewPrivate;
+    if (FAILED(webView->QueryInterface(&webViewPrivate)))
+        return JSValueMakeUndefined(context);
+
+    POINT origin;
+    origin.x = 0;
+    origin.y = 0;
+
+    double scale = JSValueToNumber(context, arguments[0], exception);
+
+    if (argumentCount > 1)
+        origin.x = JSValueToNumber(context, arguments[1], exception);
+    if (argumentCount > 2)
+        origin.y = JSValueToNumber(context, arguments[2], exception);
+
+    webViewPrivate->scaleWebView(scale, origin);
+
+    return JSValueMakeUndefined(context);
+}
+
 static JSStaticFunction staticFunctions[] = {
     { "contextClick", contextClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseDown", mouseDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -764,6 +793,7 @@ static JSStaticFunction staticFunctions[] = {
     { "zoomPageIn", zoomPageInCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "zoomPageOut", zoomPageOutCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "beginDragWithFiles", beginDragWithFilesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "scalePageBy", scalePageByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { 0, 0, 0 }
 };
 

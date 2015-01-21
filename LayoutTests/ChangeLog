@@ -1,5 +1,15 @@
 2015-01-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] eventSender does not support scalePageBy
+        https://bugs.webkit.org/show_bug.cgi?id=140726
+        <rdar://problem/19549865>
+
+        Reviewed by Dean Jackson.
+
+        * platform/win/TestExpectations: Unskip test.
+
+2015-01-21  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed gardening after reactivating some tests.
 
         * platform/win/TestExpectations: Add failure entries for a few tests with bug reports.

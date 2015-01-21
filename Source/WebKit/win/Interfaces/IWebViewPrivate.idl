@@ -293,4 +293,6 @@ interface IWebViewPrivate : IUnknown
 
     // SPI for DumpRenderTree
     HRESULT setLoadResourcesSerially([in] BOOL serialize);
+
+    HRESULT scaleWebView([in] double scale, [in] POINT origin);
 }

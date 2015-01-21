@@ -1,3 +1,17 @@
+2015-01-21  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] eventSender does not support scalePageBy
+        https://bugs.webkit.org/show_bug.cgi?id=140726
+        <rdar://problem/19549865>
+
+        Reviewed by Dean Jackson.
+
+        * Interfaces/IWebViewPrivate.idl: Add scaleWebView API.
+        * WebView.cpp:
+        (WebView::scaleWebView): 
+        Connect WebCore implementation to the Windows COM interface.
+        * WebView.h:
+
 2015-01-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(INSPECTOR) ifdef guards
