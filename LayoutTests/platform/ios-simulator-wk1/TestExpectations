@@ -1,0 +1,31 @@
+# These are the layout test expectations for Apple's iOS port of WebKit1.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+# LayoutTests/fast tests that fail:
+fast/borders/bidi-002.html [ Failure ]
+fast/dom/HTMLLinkElement/prefetch-beforeload.html [ Failure ]
+fast/events/touch/gesture/gesture-scrollbar.html [ Failure ]
+fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
+
+# LayoutTests/fast test that time out:
+fast/block/positioning/vertical-rl/001.html
+fast/body-propagation/background-color/001-xhtml.xhtml
+fast/body-propagation/background-image/001-xhtml.xhtml
+fast/body-propagation/overflow/001-xhtml.xhtml
+fast/borders/0px-borders-no-line-height.html
+fast/box-decoration-break/box-decoration-break-parsing.html
+fast/box-shadow/basic-shadows.html
+fast/css/reload-non-styled-element-crash.html
+fast/dom/HTMLLinkElement/prefetch.html
+fast/dom/Window/window-postmessage-clone-frames.html
+fast/dom/Window/window-postmessage-clone.html
+fast/dom/Window/window-resize-contents.html
+fast/events/clipboard-dataTransferItemList.html
+fast/forms/interactive-validation-crash-by-style-override.html
+fast/forms/interactive-validation-select-crash.html
+fast/forms/select-empty-optgroup.html
+fast/forms/validation-message-in-relative-body.html
+fast/frames/lots-of-iframes.html
+fast/frames/lots-of-objects.html
+fast/images/animated-gif-webkit-transform.html

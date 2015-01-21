@@ -174,7 +174,7 @@ class IOSSimulatorPort(Port):
         if self.get_option('webkit_test_runner'):
             fallback_names = [self.port_name + '-wk2'] + [self.port_name]
         else:
-            fallback_names = [self.port_name]
+            fallback_names = [self.port_name + '-wk1'] + [self.port_name]
 
         return map(self._webkit_baseline_path, fallback_names)
 
