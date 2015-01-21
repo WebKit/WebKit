@@ -78,7 +78,7 @@
                     },
                     { "name": "Apple MountainLion Debug (Build)", "type": "Build", "builddir": "mountainlion-debug",
                       "platform": "mac-mountainlion", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["mountainlion-debug-tests-wk1", "mountainlion-debug-tests-wk2", "mountainlion-leaks"],
+                      "triggers": ["mountainlion-debug-tests-wk1", "mountainlion-debug-tests-wk2"],
                       "slavenames": ["bot145", "bot157"]
                     },
                     { "name": "Apple MountainLion Release (Build)", "type": "Build", "builddir": "mountainlion-release",
@@ -156,7 +156,7 @@
                     },
                     { "name": "Apple Yosemite Debug (Build)", "type": "Build", "builddir": "yosemite-debug",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["yosemite-debug-tests-wk1", "yosemite-debug-tests-wk2"],
+                      "triggers": ["yosemite-debug-tests-wk1", "yosemite-debug-tests-wk2", "yosemite-leaks"],
                       "slavenames": ["bot180", "bot181"]
                     },
                     { "name": "Apple Yosemite Debug WK1 (Tests)", "type": "Test", "builddir": "yosemite-debug-tests-wk1",
@@ -317,7 +317,7 @@
                     { "type": "Triggerable", "name": "mountainlion-debug-tests-wk2",
                       "builderNames": ["Apple MountainLion Debug WK2 (Tests)"]
                     },
-                    { "type": "Triggerable", "name": "mountainlion-leaks",
+                    { "type": "Triggerable", "name": "yosemite-leaks",
                       "builderNames": ["Apple Yosemite (Leaks)"]
                     },
                     { "type": "Triggerable", "name": "mavericks-release-tests-wk1",
