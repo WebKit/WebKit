@@ -1,5 +1,32 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175812.
+
+    2014-11-10  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] wireless playback placeholder UI doesn't always draw
+            https://bugs.webkit.org/show_bug.cgi?id=138548
+
+            While it is important to only listen for the 'webkitplaybacktargetavailabilitychanged' event
+            when we are displaying inline controls because listening for it increases power consumption,
+            we should always listen for the 'webkitcurrentplaybacktargetiswirelesschanged' event because
+            it controls whether or not we draw the placeholder UI which is always visible during wireless
+            playback.
+
+            Reviewed by Brent Fulgham.
+
+            * Modules/mediacontrols/mediaControlsiOS.js:
+            (ControllerIOS.prototype.addVideoListeners): Always listen for the
+                'webkitcurrentplaybacktargetiswirelesschanged' event.
+            (ControllerIOS.prototype.removeVideoListeners): Always stop listening for the 
+                'webkitcurrentplaybacktargetiswirelesschanged' event.
+            (ControllerIOS.prototype.handleStartPlaybackButtonTouchEnd): Call updateControls so we update 
+                the type of controls rendered and start listening for wireless target changes immediately.
+            (ControllerIOS.prototype.setShouldListenForPlaybackTargetAvailabilityEvent): Don't start and stop 
+                listening for 'webkitcurrentplaybacktargetiswirelesschanged', we should always listen for it.
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175771.
 
     2014-11-07  Alexey Proskuryakov  <ap@apple.com>

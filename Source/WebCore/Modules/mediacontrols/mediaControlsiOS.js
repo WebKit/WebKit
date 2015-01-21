@@ -30,6 +30,7 @@ ControllerIOS.prototype = {
 
         this.listenFor(this.video, 'webkitbeginfullscreen', this.handleFullscreenChange);
         this.listenFor(this.video, 'webkitendfullscreen', this.handleFullscreenChange);
+        this.listenFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
     },
 
     removeVideoListeners: function() {
@@ -37,6 +38,7 @@ ControllerIOS.prototype = {
 
         this.stopListeningFor(this.video, 'webkitbeginfullscreen', this.handleFullscreenChange);
         this.stopListeningFor(this.video, 'webkitendfullscreen', this.handleFullscreenChange);
+        this.stopListeningFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
 
         this.setShouldListenForPlaybackTargetAvailabilityEvent(false);
     },
@@ -405,6 +407,7 @@ ControllerIOS.prototype = {
             return true;
 
         this.video.play();
+        this.updateControls();
 
         return true;
     },
@@ -486,13 +489,10 @@ ControllerIOS.prototype = {
             return;
 
         this.isListeningForPlaybackTargetAvailabilityEvent = shouldListen;
-        if (shouldListen) {
-            this.listenFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
+        if (shouldListen)
             this.listenFor(this.video, 'webkitplaybacktargetavailabilitychanged', this.handleWirelessTargetAvailableChange);
-        } else {
-            this.stopListeningFor(this.video, 'webkitcurrentplaybacktargetiswirelesschanged', this.handleWirelessPlaybackChange);
+        else
             this.stopListeningFor(this.video, 'webkitplaybacktargetavailabilitychanged', this.handleWirelessTargetAvailableChange);
-        }
     },
 
     get pageScaleFactor() {
