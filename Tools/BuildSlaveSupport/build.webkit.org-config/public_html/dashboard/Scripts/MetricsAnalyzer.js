@@ -479,7 +479,7 @@ Analyzer.prototype = {
 
         for (patchID in dataByPatch) {
             for (queueID in dataByPatch[patchID]) {
-                if (!queueID in data)
+                if (!(queueID in data))
                     continue;
                 var patchData = dataByPatch[patchID][queueID];
                 if (patchData.date < this.fromDate || patchData.date > this.toDate)

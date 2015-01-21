@@ -1,3 +1,13 @@
+2015-01-21  Alexey Proskuryakov  <ap@apple.com>
+
+        https://build.webkit.org/dashboard/metrics.html fails because of ios-ews
+        https://bugs.webkit.org/show_bug.cgi?id=140731
+
+        Reviewed by Tim Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/MetricsAnalyzer.js:
+        (Analyzer.prototype._analyzeAllBubblesPerformance): Corrected a typo.
+
 2015-01-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] eventSender does not support scalePageBy
