@@ -1,5 +1,41 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175771.
+
+    2014-11-07  Alexey Proskuryakov  <ap@apple.com>
+
+            CSP is enforced for eval in report-only mode on first page load
+            https://bugs.webkit.org/show_bug.cgi?id=138492
+            rdar://problem/15782525
+
+            Reviewed by Daniel Bates.
+
+            This is covered by existing tests when running as one test per process invocation.
+
+            * page/ContentSecurityPolicy.cpp:
+            (WebCore::CSPDirectiveList::allowEval): Allow when in report only mode. The allowEval
+            function itself needs to return false, because it's used in checkEvalAndReportViolation().
+            (WebCore::CSPDirectiveList::allowJavaScriptURLs): Apply the same fix, although it's
+            not changing the behavior - this function is never called with ContentSecurityPolicy::SuppressReport.
+            (WebCore::CSPDirectiveList::allowInlineEventHandlers): Ditto.
+            (WebCore::CSPDirectiveList::allowInlineScript): Ditto.
+            (WebCore::CSPDirectiveList::allowInlineStyle): Ditto.
+            (WebCore::CSPDirectiveList::allowPluginType): Ditto.
+            (WebCore::CSPDirectiveList::allowScriptFromSource): Ditto.
+            (WebCore::CSPDirectiveList::allowObjectFromSource): Ditto.
+            (WebCore::CSPDirectiveList::allowChildFrameFromSource): Ditto.
+            (WebCore::CSPDirectiveList::allowImageFromSource): Ditto.
+            (WebCore::CSPDirectiveList::allowStyleFromSource): Ditto.
+            (WebCore::CSPDirectiveList::allowFontFromSource): Ditto.
+            (WebCore::CSPDirectiveList::allowMediaFromSource): Ditto.
+            (WebCore::CSPDirectiveList::allowConnectToSource): Ditto.
+            (WebCore::CSPDirectiveList::allowFormAction): Ditto.
+            (WebCore::CSPDirectiveList::allowBaseURI): Ditto.
+            (WebCore::ContentSecurityPolicy::didReceiveHeader): Remove isReportOnly() check,
+            which is now inside allowEval().
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175718.
 
     2014-11-06  Yongjun Zhang  <yongjun_zhang@apple.com>
