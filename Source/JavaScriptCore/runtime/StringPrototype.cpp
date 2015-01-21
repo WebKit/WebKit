@@ -1101,10 +1101,15 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             // a. Call SplitMatch(S, q, R) and let z be its MatchResult result.
             Vector<int, 32> ovector;
             int mpos = reg->match(*vm, input, matchPosition, ovector);
-            // b. If z is failure, then let q = q + 1.
+
+            // b. If z is a failure then we can break because there are no matches
             if (mpos < 0)
                 break;
             matchPosition = mpos;
+
+            // if the match is the empty match at the end, break.
+            if (matchPosition >= input.length())
+                break;
 
             // c. Else, z is not failure
             // i. z must be a State. Let e be z's endIndex and let cap be z's captures array.
@@ -1115,6 +1120,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
                 ++matchPosition;
                 continue;
             }
+            // iii. if matchEnd == 0 then position should also be zero and thus matchEnd should equal position.
+            ASSERT(matchEnd);
+
             // iii. Else, e != p
 
             // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
@@ -1122,6 +1130,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
             // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
             //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
             result->putDirectIndex(exec, resultLength, jsSubstring(exec, input, position, matchPosition - position));
+
             // 3. Increment lengthA by 1.
             // 4. If lengthA == lim, return A.
             if (++resultLength == limit)

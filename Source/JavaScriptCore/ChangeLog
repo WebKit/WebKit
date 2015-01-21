@@ -1,3 +1,15 @@
+2015-01-21  Matthew Mirman  <mmirman@apple.com>
+
+        Updated split such that it does not include the empty end of input string match.
+        https://bugs.webkit.org/show_bug.cgi?id=138129
+        <rdar://problem/18807403>
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncSplit):
+        * tests/stress/empty_eos_regex_split.js: Added.
+
 2015-01-21  Michael Saboff  <msaboff@apple.com>
 
         Eliminate Scope slot from JavaScript CallFrame
