@@ -102,7 +102,7 @@ WebInspector.BasicBlockAnnotator.prototype = {
         var startPosition = this.sourceCodeTextEditor.originalOffsetToCurrentPosition(basicBlock.startOffset);
         var endPosition = this.sourceCodeTextEditor.originalOffsetToCurrentPosition(basicBlock.endOffset);
 
-        if (this._isTextRangeOnlyWhitespace(startPosition, endPosition))
+        if (this._isTextRangeOnlyWhitespace(startPosition, endPosition) || this._isTextRangeOnlyClosingBrace(startPosition, endPosition))
             return null;
 
         // Gray out the text range.
@@ -121,6 +121,7 @@ WebInspector.BasicBlockAnnotator.prototype = {
             }
 
             var endLineStartPosition = {line: endPosition.line, ch: 0};
+             
             if (this._canGrayOutEntireLine(endPosition.line, endLineStartPosition, endPosition)) {
                 this._grayOutLine(endPosition.line);
                 lineStyles.push({line: endPosition.line, className: WebInspector.BasicBlockAnnotator.HasNotExecutedClassName});
@@ -157,6 +158,12 @@ WebInspector.BasicBlockAnnotator.prototype = {
     {
         var isOnlyWhitespace = /^\s+$/;
         return isOnlyWhitespace.test(this.sourceCodeTextEditor.getTextInRange(startPosition, endPosition));
+    },
+
+    _isTextRangeOnlyClosingBrace: function(startPosition, endPosition)
+    {
+        var isOnlyClosingBrace = /^\s*\}$/;
+        return isOnlyClosingBrace.test(this.sourceCodeTextEditor.getTextInRange(startPosition, endPosition));
     },
 
     _canGrayOutEntireLine: function(lineNumber, startPosition, endPosition)

@@ -1,3 +1,20 @@
+2015-01-21  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: Don't allow the BasicBlockAnnotator to highlight a section if it's only a closing brace
+        https://bugs.webkit.org/show_bug.cgi?id=140727
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/BasicBlockAnnotator.js:
+        (WebInspector.BasicBlockAnnotator.prototype.set _highlightTextForBasicBlock):
+        (WebInspector.BasicBlockAnnotator.prototype._isTextRangeOnlyClosingBrace):
+        BasicBlockAnnotator tries to no longer highlight a basic block if it is only
+        whitespace and a closing brace. These ranges are often after statements
+        that make these basic blocks unreachable, such as a return/break/continue
+        statement occurring inside a if/else/while/for block. This check won't
+        match every highlighted empty closing brace, but catches most of them 
+        because it only does intra block analysis instead of inter block analysis.
+
 2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Use spread operator in a few places
