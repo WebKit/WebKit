@@ -1,5 +1,12 @@
 2015-01-21  Daniel Bates  <dabates@apple.com>
 
+        Update iOS WebKit test expectations for compositing tests
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+
+2015-01-21  Daniel Bates  <dabates@apple.com>
+
         [iOS] Many compositing tests fail in DumpRenderTree due to contentsOpaque difference
         https://bugs.webkit.org/show_bug.cgi?id=140742
 

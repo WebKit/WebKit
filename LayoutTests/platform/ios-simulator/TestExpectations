@@ -222,6 +222,7 @@ compositing/repaint/opacity-between-absolute2.html
 compositing/transitions/scale-transition-no-start.html
 compositing/transitions/singular-scale-transition.html
 compositing/visible-rect/animated-from-none.html
+compositing/visible-rect/animated.html
 css3/filters/animation-from-initial-values-with-color-matrix.html
 css3/filters/composited-during-animation-layertree.html
 css3/filters/composited-during-transition-layertree.html
@@ -315,12 +316,7 @@ compositing/images/direct-image-object-fit.html [ Failure ]
 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
 compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Failure ]
 compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html [ Failure ]
-compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
-compositing/overflow/scrolling-without-painting.html [ Failure ]
-compositing/overflow/textarea-scroll-touch.html [ Failure ]
-compositing/overflow/updating-scrolling-content.html [ Failure ]
 compositing/reflections/direct-image-object-fit-reflected.html [ Failure ]
-compositing/reflections/nested-reflection-on-overflow.html [ Failure ]
 compositing/repaint/page-scale-repaint.html [ Failure ]
 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
@@ -329,6 +325,19 @@ compositing/rtl/rtl-overflow-scrolling.html [ Failure ]
 compositing/visible-rect/3d-transform-style.html [ Failure ]
 compositing/visible-rect/animated.html [ Failure ]
 compositing/visible-rect/iframe-no-layers.html [ Failure ]
+compositing/contents-scale/incremental-change.html [ ImageOnlyFailure ]
+compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ ImageOnlyFailure ]
+compositing/masks/solid-color-masked.html [ ImageOnlyFailure ]
+compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
+compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
+compositing/regions/propagate-region-box-shadow-border-padding.html [ ImageOnlyFailure ]
+compositing/regions/z-index-update.html [ ImageOnlyFailure ]
+compositing/regions/z-index.html [ ImageOnlyFailure ]
+compositing/repaint/foreground-layer-change.html [ ImageOnlyFailure ]
+compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
+compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
+compositing/backing/child-layer-no-backing.html [ Failure ]
+compositing/geometry/preserve-3d-switching.html [ Failure ]
 
 # Compositing tests that fail and rely on media loading:
 compositing/geometry/clipped-video-controller.html
@@ -361,6 +370,8 @@ compositing/overflow/ancestor-overflow.html
 compositing/overlap-blending/children-opacity-huge.html
 compositing/patterns/direct-pattern-compositing-add-text.html
 compositing/reflections/backface-hidden-reflection.html
+compositing/tiling/huge-layer-img.html
+compositing/video/video-border-radius.html
 
 # <rdar://problem/19191637> compositing/layer-creation/deep-tree.html fails
 compositing/layer-creation/deep-tree.html
@@ -2489,6 +2500,18 @@ fast/dom/location-new-window-no-crash.html
 
 # <rdar://problem/19017693> ASSERTION FAILED: [[dataSource webFrame] dataSource] || [[dataSource webFrame] provisionalDataSource] in -[ResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]
 fast/events/message-port-inactive-document.html
+
+# <rdar://problem/19551640> ASSERT([_overflowScrollViews containsObject:view] || [_overflowScrollViewsPendingInsertion containsObject:view]) fails in UIWebBrowserView.m
+compositing/overflow/iframe-inside-overflow-clipping.html
+compositing/overflow/nested-scrolling.html
+compositing/overflow/overflow-auto-with-touch-toggle.html
+compositing/overflow/overflow-auto-with-touch.html
+compositing/overflow/overflow-overlay-with-touch.html
+compositing/overflow/remove-overflow-crash.html
+compositing/overflow/scrolling-content-clip-to-viewport.html
+compositing/overflow/scrolling-without-painting.html
+compositing/overflow/textarea-scroll-touch.html
+compositing/overflow/updating-scrolling-content.html
 
 # Failures as of 01/16/2015:
 css1/box_properties/acid_test.html [ Failure ]
