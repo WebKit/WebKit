@@ -436,6 +436,19 @@ static JSValueRef isEqualCallback(JSContextRef context, JSObjectRef function, JS
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isEqual(toAXElement(otherElement)));
 }
 
+static JSValueRef setValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> valueText = 0;
+    if (argumentCount == 1) {
+        if (JSValueIsString(context, arguments[0]))
+            valueText.adopt(JSValueToStringCopy(context, arguments[0], exception));
+    }
+    
+    toAXElement(thisObject)->setValue(valueText.get());
+    
+    return JSValueMakeUndefined(context);
+}
+
 static JSValueRef setSelectedChildCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     JSObjectRef element = 0;
@@ -1335,6 +1348,7 @@ AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringR
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)
 JSStringRef AccessibilityUIElement::pathDescription() const { return 0; }
+void AccessibilityUIElement::setValue(JSStringRef);
 #endif
 
 #if !PLATFORM(COCOA)
@@ -1626,6 +1640,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "previousTextMarker", previousTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stringForTextMarkerRange", stringForTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSelectedChild", setSelectedChildCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setValue", setValueCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedChildAtIndex", selectedChildAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "scrollToMakeVisible", scrollToMakeVisibleCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #if PLATFORM(GTK) || PLATFORM(EFL)
