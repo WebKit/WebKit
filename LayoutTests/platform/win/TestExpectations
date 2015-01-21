@@ -3038,3 +3038,6 @@ webkit.org/b/140258 userscripts/user-script-all-frames.html [ Failure ]
 webkit.org/b/140258 userscripts/user-script-image-document.html [ Failure ]
 webkit.org/b/140258 userscripts/user-style-all-frames.html [ Failure ]
 webkit.org/b/140258 userscripts/user-stylesheet-invalidate.html [ Failure ]
+
+# <rdar://problem/19526412>
+fast/images/bad-png.html [ Skip ]

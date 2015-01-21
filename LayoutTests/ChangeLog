@@ -1,3 +1,106 @@
+2015-01-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test gardening.
+
+        Now that Mac has switched to new SVG font results, commit the old Mac output for
+        use with Windows tests until they are also cut over.
+
+        * platform/win/TestExpectations:
+        * platform/win/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png:
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/filters-light-04-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/render-elems-06-t-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/render-elems-07-t-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/render-elems-08-t-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/render-groups-01-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/render-groups-03-t-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/text-align-08-b-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/text-align-08-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png: Added.
+        * platform/win/svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt: Added.
+        * platform/win/svg/custom/glyph-setting-d-attribute-expected.png: Added.
+        * platform/win/svg/custom/glyph-setting-d-attribute-expected.txt: Added.
+        * platform/win/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png: Added.
+        * platform/win/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt: Added.
+        * platform/win/svg/foreignObject: Added.
+        * platform/win/svg/foreignObject/text-tref-02-b-expected.png: Added.
+        * platform/win/svg/foreignObject/text-tref-02-b-expected.txt: Added.
+        * platform/win/svg/text/kerning-expected.png: Added.
+        * platform/win/svg/text/kerning-expected.txt: Added.
+        * platform/win/svg/text/multichar-glyph-expected.png: Added.
+        * platform/win/svg/text/multichar-glyph-expected.txt: Added.
+        * platform/win/svg/transforms: Added.
+        * platform/win/svg/transforms/text-with-mask-with-svg-transform-expected.png: Added.
+        * platform/win/svg/transforms/text-with-mask-with-svg-transform-expected.txt: Added.
+
 2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Expanding event objects in console shows undefined for most values, it should have real values
