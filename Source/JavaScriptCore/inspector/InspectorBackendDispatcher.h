@@ -30,7 +30,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorProtocolTypes.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

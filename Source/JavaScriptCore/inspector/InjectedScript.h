@@ -37,7 +37,6 @@
 #include "InjectedScriptBase.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace Deprecated {

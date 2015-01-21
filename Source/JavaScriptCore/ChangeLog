@@ -1,3 +1,21 @@
+2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cleanup RuntimeAgent a bit
+        https://bugs.webkit.org/show_bug.cgi?id=140706
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScript.h:
+        * inspector/InspectorBackendDispatcher.h:
+        * inspector/ScriptCallFrame.cpp:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::InspectorRuntimeAgent::evaluate):
+        (Inspector::InspectorRuntimeAgent::getProperties):
+        (Inspector::InspectorRuntimeAgent::run):
+        (Inspector::InspectorRuntimeAgent::getRuntimeTypesForVariablesAtOffsets):
+        (Inspector::recompileAllJSFunctionsForTypeProfiling):
+        (Inspector::InspectorRuntimeAgent::setTypeProfilerEnabledState):
+
 2015-01-20  Matthew Mirman  <mmirman@apple.com>
 
         Made Identity in the DFG allocate a new temp register and move 

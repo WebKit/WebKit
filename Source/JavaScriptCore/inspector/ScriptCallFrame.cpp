@@ -33,7 +33,6 @@
 #include "ScriptCallFrame.h"
 
 #include "InspectorValues.h"
-#include <wtf/PassRefPtr.h>
 
 namespace Inspector {
 
