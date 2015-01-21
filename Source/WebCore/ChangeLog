@@ -1,5 +1,19 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176977.
+
+    2014-12-08  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] YouTube plug-in replacement should support partial urls
+            https://bugs.webkit.org/show_bug.cgi?id=139400
+
+            Reviewed by Alexey Proskuryakov.
+
+            * Modules/plugins/YouTubePluginReplacement.cpp:
+            (WebCore::YouTubePluginReplacement::youTubeURL): Call Document::completeURL.
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176971.
 
     2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
