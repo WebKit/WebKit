@@ -1,5 +1,9 @@
 2015-01-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Rollout r178679. rdar://problem/19448129
+
+2015-01-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r178679. rdar://problem/19448129
 
     2015-01-19  Timothy Horton  <timothy_horton@apple.com>
