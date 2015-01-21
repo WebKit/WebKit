@@ -1,5 +1,23 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176372.
+
+    2014-11-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [OS X] Upright vertical text is completely broken for multi-code-unit codepoints
+            https://bugs.webkit.org/show_bug.cgi?id=138891
+
+            Reviewed by Dan Bernstein.
+
+            Make sure a single upright vertical multi-code-unit codepoint is rendered the same as
+            the same codepoint rendered horizontally.
+
+            * platform/mac/fast/text/multiple-codeunit-vertical-upright-expected.html: Added.
+            * platform/mac/fast/text/multiple-codeunit-vertical-upright.html: Added.
+            * platform/mac/fast/text/resources/multiple-codeunit-vertical-upright.otf: Added.
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176354.
 
     2014-11-19  David Hyatt  <hyatt@apple.com>
