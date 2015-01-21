@@ -1,5 +1,14 @@
 2015-01-21  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL][WK2] EFL MiniBrowser doesn't run because shared library is not found
+        https://bugs.webkit.org/show_bug.cgi?id=140049
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsCommon.cmake:
+
+2015-01-21  Csaba Osztrogonác  <ossy@webkit.org>
+
         Remove ENABLE(INSPECTOR) ifdef guards
         https://bugs.webkit.org/show_bug.cgi?id=140668
 
