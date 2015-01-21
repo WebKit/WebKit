@@ -1,3 +1,34 @@
+2015-01-21  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        first-letter pseudo-element from ancestors is not being ignored in grids and flexboxes
+        https://bugs.webkit.org/show_bug.cgi?id=138424
+
+        Reviewed by Benjamin Poulain.
+
+        Source/WebCore:
+
+        According to the grid and flexbox specs:
+        "::first-letter pseudo-element do not apply to grid/flex containers".
+        http://dev.w3.org/csswg/css-grid/#grid-containers
+        http://dev.w3.org/csswg/css-flexbox/#flex-containers
+
+        Check also the CSS WG mailing list discussion:
+        http://lists.w3.org/Archives/Public/www-style/2014Dec/0305.html
+
+        This was almost working right, except in the case that an ancestor was
+        setting the ::first-letter pseudo-element.
+
+        Added a few more cases to the current tests in order to check this
+        behavior.
+        Also created some new tests to increase coverage
+
+        Tests: fast/css/first-letter-from-ancestors-not-apply-inline-elements.html
+               fast/css/first-letter-ignores-display-property.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::getFirstLetter): Go to the next sibling when
+        looking for the first text child if you reach a grid or flexbox.
+
 2015-01-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix cast-align warning in Source/WebCore/platform/efl/EflScreenUtilities.cpp

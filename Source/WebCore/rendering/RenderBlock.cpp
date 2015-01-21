@@ -3209,6 +3209,12 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
             firstLetter = current.nextSibling();
         } else if (current.isReplaced() || is<RenderButton>(current) || is<RenderMenuList>(current))
             break;
+        else if (current.isFlexibleBoxIncludingDeprecated()
+#if ENABLE(CSS_GRID_LAYOUT)
+            || current.isRenderGrid()
+#endif
+            )
+            firstLetter = current.nextSibling();
         else if (current.style().hasPseudoStyle(FIRST_LETTER) && current.canHaveGeneratedChildren())  {
             // We found a lower-level node with first-letter, which supersedes the higher-level style
             firstLetterContainer = &current;
@@ -3217,7 +3223,7 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
             firstLetter = current.firstChild();
     }
     
-    if (!firstLetter || !isRenderBlockFlowOrRenderButton(*firstLetterContainer))
+    if (!firstLetter)
         firstLetterContainer = nullptr;
 }
 

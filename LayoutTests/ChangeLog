@@ -1,3 +1,23 @@
+2015-01-21  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        first-letter pseudo-element from ancestors is not being ignored in grids and flexboxes
+        https://bugs.webkit.org/show_bug.cgi?id=138424
+
+        Reviewed by Benjamin Poulain.
+
+        Modified current tests to check that first-letter from ancestors is
+        ignored too.
+        Added 2 new tests to increase coverage.
+
+        * css3/flexbox/flexbox-ignore-container-firstLetter-expected.txt:
+        * css3/flexbox/flexbox-ignore-container-firstLetter.html:
+        * fast/css-grid-layout/grid-container-ignore-first-letter-expected.txt:
+        * fast/css-grid-layout/grid-container-ignore-first-letter.html:
+        * fast/css/first-letter-from-ancestors-not-apply-inline-elements-expected.html: Added.
+        * fast/css/first-letter-from-ancestors-not-apply-inline-elements.html: Added.
+        * fast/css/first-letter-ignores-display-property-expected.html: Added.
+        * fast/css/first-letter-ignores-display-property.html: Added.
+
 2015-01-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

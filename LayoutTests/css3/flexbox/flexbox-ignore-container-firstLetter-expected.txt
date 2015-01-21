@@ -1,7 +1,80 @@
 This test flex item should ignore container's firstLetter pseudo element.
 
 The first item.
-
 The second item.
-
+PASS
+The first item.
+The second item.
+ PASS
+Anonymous item.
+PASS
+Anonymous item.
+PASS
+The first item.
+The second item.
+Out of flexbox.
+PASS
+The first item.
+The second item.
+Out of flexbox.
+PASS
+The first item.
+The second item.
+Out of flexbox.
+PASS
+The first item.
+The second item.
+Out of flexbox.
+PASS
+Anonymous item.
+Out of flexbox.
+PASS
+Anonymous item.
+Out of flexbox.
+PASS
+The first item.
+The second item.
+Out of flexbox.
+PASS
+The first item.
+The second item.
+Out of flexbox.
+PASS
+The first item.
+The second item.
+Out of flexbox.
+PASS
+The first item.
+The second item.
+Out of flexbox.
+PASS
+Anonymous item.
+Out of flexbox.
+PASS
+Anonymous item.
+Out of flexbox.
+PASS
+Out of flexbox.
+PASS
+Out of flexbox.
+PASS
+Out of flexbox.
+PASS
+Out of flexbox.
+PASS
+Out of flexbox.
+PASS
+Out of flexbox.
+PASS
+Out of flexbox.
+PASS
+Out of flexbox.
+PASS
+Out of flexbox.
+PASS
+Out of flexbox.
+PASS
+Out of flexbox.
+PASS
+Out of flexbox.
 PASS
