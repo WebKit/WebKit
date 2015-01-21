@@ -886,6 +886,7 @@ editing/spelling/markers.html [ Skip ]
 # TODO EditorClient::requestCheckingOfString() is not implemented
 editing/spelling/spellcheck-paste.html
 editing/spelling/spellcheck-paste-disabled.html
+editing/spelling/spelling-unified-emulation.html
 
 # Replacement text for misspelling is not given.
 webkit.org/b/77934 editing/spelling/spelling-marker-description.html [ Timeout ]
@@ -2930,17 +2931,8 @@ webkit.org/b/140254 imported/mozilla/svg/blend-screen.svg [ ImageOnlyFailure ]
 # Missing glyph symbol is not rendered properly
 webkit.org/b/140257 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
 
-# Userscripts stuff is not working
-webkit.org/b/140258 userscripts/document-element-available-at-start.html [ Failure ]
-webkit.org/b/140258 userscripts/mixed-case-stylesheet.html [ Failure ]
-webkit.org/b/140258 userscripts/script-not-run-for-fragments.html [ Failure ]
-webkit.org/b/140258 userscripts/script-run-at-end.html [ Failure ]
-webkit.org/b/140258 userscripts/script-run-at-start.html [ Failure ]
-webkit.org/b/140258 userscripts/simple-stylesheet.html [ Failure ]
-webkit.org/b/140258 userscripts/user-script-all-frames.html [ Failure ]
-webkit.org/b/140258 userscripts/user-script-image-document.html [ Failure ]
-webkit.org/b/140258 userscripts/user-style-all-frames.html [ Failure ]
-webkit.org/b/140258 userscripts/user-stylesheet-invalidate.html [ Failure ]
+# TODO Userscripts stuff is not implemented
+webkit.org/b/140258 userscripts/ [ Skip ]
 
 # <rdar://problem/19526412>
 fast/images/bad-png.html [ Skip ]
@@ -2953,3 +2945,4 @@ webkit.org/b/140707 storage/domstorage/storage-close-database-on-idle.html [ Fai
 webkit.org/b/140724 css2.1/t1202-counter-04-b.html [ Failure ]
 webkit.org/b/140724 css2.1/t1202-counters-04-b.html [ Failure ]
 webkit.org/b/140725 fast/dom/34176.html [ Failure ]
+webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Failure ]

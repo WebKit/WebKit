@@ -34,8 +34,8 @@ Named flows
             RenderText {#text} at (123,50) size 15x17
               text run at (123,50) width 15: "\". "
             RenderInline {B} at (0,0) size 179x68
-              RenderText {#text} at (138,50) size 181x68
-                text run at (139,50) width 41: "There"
+              RenderText {#text} at (138,50) size 179x68
+                text run at (138,50) width 41: "There"
                 text run at (0,68) width 166: "should be nothing in this"
                 text run at (0,100) width 139: "region after this line."
     Regions for named flow 'flow'

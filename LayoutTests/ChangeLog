@@ -1,5 +1,16 @@
 2015-01-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed gardening based on TestBot runs.
+
+        Update a few failure cass with bug reports. Rebaseline a handful of tests.
+
+        * platform/win/TestExpectations: Update based on bug reports.
+        * platform/win/fast/regions/text-region-split-small-pagination-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt:
+
+2015-01-21  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] eventSender does not support scalePageBy
         https://bugs.webkit.org/show_bug.cgi?id=140726
         <rdar://problem/19549865>
