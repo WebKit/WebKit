@@ -124,7 +124,7 @@ using namespace WebCore;
     if (!_webView)
         return;
 
-    NSMenu *actionMenu = _webView.actionMenu;
+    NSMenu *actionMenu = _webView._actionMenu;
     if (menu != actionMenu)
         return;
 
@@ -175,7 +175,7 @@ using namespace WebCore;
 
 - (void)willOpenMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
-    if (menu != _webView.actionMenu)
+    if (menu != _webView._actionMenu)
         return;
 
     if (!menu.numberOfItems)
@@ -207,7 +207,7 @@ using namespace WebCore;
 
 - (void)didCloseMenu:(NSMenu *)menu withEvent:(NSEvent *)event
 {
-    if (menu != _webView.actionMenu)
+    if (menu != _webView._actionMenu)
         return;
 
     if (_currentActionContext && _hasActivatedActionContext) {
