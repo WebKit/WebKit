@@ -53,10 +53,10 @@ runTest('resources/reply.txt', 'text').then(function(req) {
     window.responseURL = req.responseURL;
     shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/cross-site-progress-events.cgi');
 
-    return runTest("resources/supported-xml-content-types.cgi?type=foo#bar/baz+xml", 'xml');
+    return runTest("supported-xml-content-types.cgi?type=foo#bar/baz+xml", 'xml');
 }).then(function(req) {
     window.responseURL = req.responseURL;
-    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/resources/supported-xml-content-types.cgi?type=foo');
+    shouldBeEqualToString('responseURL', 'http://127.0.0.1:8000/xmlhttprequest/supported-xml-content-types.cgi?type=foo');
 
     req.open('GET', 'http://127.0.0.1:8000/xmlhttprequest/resources/not-found.txt');
 }).catch(function(reason) {
