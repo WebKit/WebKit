@@ -34,6 +34,7 @@
 		14CC393C18EA812B004AFE34 /* libmbmalloc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 14CC393818EA811F004AFE34 /* libmbmalloc.dylib */; settings = {ATTRIBUTES = (Required, ); }; };
 		14CC393F18EA8184004AFE34 /* mbmalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CC391C18EA6759004AFE34 /* mbmalloc.cpp */; };
 		14CE4A6017BD355800288DAA /* big.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CE4A5E17BD355800288DAA /* big.cpp */; };
+		14D0BFF31A6F4D3B00109F31 /* stress_aligned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D0BFF11A6F4D3B00109F31 /* stress_aligned.cpp */; };
 		14D6322E1A69BE0B00A8F84F /* memalign.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D6322C1A69BE0B00A8F84F /* memalign.cpp */; };
 		14E11932177ECC8B003A8D15 /* CPUCount.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14E11930177ECC8B003A8D15 /* CPUCount.cpp */; };
 		14FCA36119A7C917001CFDA9 /* stress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14FCA35F19A7C917001CFDA9 /* stress.cpp */; };
@@ -104,6 +105,8 @@
 		14CC393818EA811F004AFE34 /* libmbmalloc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmbmalloc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		14CE4A5E17BD355800288DAA /* big.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = big.cpp; path = MallocBench/big.cpp; sourceTree = "<group>"; };
 		14CE4A5F17BD355800288DAA /* big.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = big.h; path = MallocBench/big.h; sourceTree = "<group>"; };
+		14D0BFF11A6F4D3B00109F31 /* stress_aligned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stress_aligned.cpp; path = MallocBench/stress_aligned.cpp; sourceTree = "<group>"; };
+		14D0BFF21A6F4D3B00109F31 /* stress_aligned.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stress_aligned.h; path = MallocBench/stress_aligned.h; sourceTree = "<group>"; };
 		14D6322C1A69BE0B00A8F84F /* memalign.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = memalign.cpp; path = MallocBench/memalign.cpp; sourceTree = "<group>"; };
 		14D6322D1A69BE0B00A8F84F /* memalign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = memalign.h; path = MallocBench/memalign.h; sourceTree = "<group>"; };
 		14E11930177ECC8B003A8D15 /* CPUCount.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUCount.cpp; sourceTree = "<group>"; };
@@ -220,6 +223,8 @@
 				1447AE8C18FB584200B3D7FF /* reddit.ops */,
 				14FCA35F19A7C917001CFDA9 /* stress.cpp */,
 				14FCA36019A7C917001CFDA9 /* stress.h */,
+				14D0BFF11A6F4D3B00109F31 /* stress_aligned.cpp */,
+				14D0BFF21A6F4D3B00109F31 /* stress_aligned.h */,
 				1447AE9818FB59D900B3D7FF /* theverge_memory_warning.ops */,
 				1447AE8D18FB584200B3D7FF /* theverge.cpp */,
 				1447AE8E18FB584200B3D7FF /* theverge.h */,
@@ -320,6 +325,7 @@
 				14976EC8177E3649006B819A /* list.cpp in Sources */,
 				14976ECC177E3C87006B819A /* CommandLine.cpp in Sources */,
 				1447AE9218FB584200B3D7FF /* theverge.cpp in Sources */,
+				14D0BFF31A6F4D3B00109F31 /* stress_aligned.cpp in Sources */,
 				1451FAED18B14B7100DB6D47 /* medium.cpp in Sources */,
 				14C5009318403DA0007A531D /* Interpreter.cpp in Sources */,
 				1447AE9118FB584200B3D7FF /* reddit.cpp in Sources */,

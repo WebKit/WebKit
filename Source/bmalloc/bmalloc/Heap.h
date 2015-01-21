@@ -60,9 +60,11 @@ public:
     void derefMediumLine(std::lock_guard<StaticMutex>&, MediumLine*);
 
     void* allocateLarge(std::lock_guard<StaticMutex>&, size_t);
+    void* allocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t, size_t unalignedSize);
     void deallocateLarge(std::lock_guard<StaticMutex>&, void*);
 
     void* allocateXLarge(std::lock_guard<StaticMutex>&, size_t);
+    void* allocateXLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
     Range findXLarge(std::lock_guard<StaticMutex>&, void*);
     void deallocateXLarge(std::unique_lock<StaticMutex>&, void*);
 
@@ -79,7 +81,8 @@ private:
     void deallocateSmallLine(std::lock_guard<StaticMutex>&, SmallLine*);
     void deallocateMediumLine(std::lock_guard<StaticMutex>&, MediumLine*);
 
-    void* allocateLarge(Range, size_t);
+    void* allocateLarge(std::lock_guard<StaticMutex>&, const Range&, size_t);
+    void allocateLarge(std::lock_guard<StaticMutex>&, const Range&, size_t, Range& leftover);
     Range allocateLargeChunk();
 
     void splitLarge(BeginTag*, size_t, EndTag*&, Range&);

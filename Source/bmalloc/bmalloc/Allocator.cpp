@@ -52,14 +52,45 @@ Allocator::~Allocator()
 
 void* Allocator::allocate(size_t alignment, size_t size)
 {
+    BASSERT(isPowerOfTwo(alignment));
+
     if (!m_isBmallocEnabled) {
         void* result = nullptr;
         posix_memalign(&result, alignment, size);
         return result;
     }
     
-    BASSERT(isPowerOfTwo(alignment));
-    return nullptr;
+    if (size <= smallMax && alignment <= smallLineSize) {
+        size_t alignmentMask = alignment - 1;
+        while (void* p = allocate(size)) {
+            if (!test(p, alignmentMask))
+                return p;
+            m_deallocator.deallocate(p);
+        }
+    }
+
+    if (size <= mediumMax && alignment <= mediumLineSize) {
+        size = std::max(size, smallMax + Sizes::alignment);
+        size_t alignmentMask = alignment - 1;
+        while (void* p = allocate(size)) {
+            if (!test(p, alignmentMask))
+                return p;
+            m_deallocator.deallocate(p);
+        }
+    }
+
+    size = std::max(largeMin, roundUpToMultipleOf<largeAlignment>(size));
+    alignment = roundUpToMultipleOf<largeAlignment>(alignment);
+    size_t unalignedSize = largeMin + alignment + size;
+    if (unalignedSize <= largeMax && alignment <= largeChunkSize / 2) {
+        std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+        return PerProcess<Heap>::getFastCase()->allocateLarge(lock, alignment, size, unalignedSize);
+    }
+
+    size = roundUpToMultipleOf<xLargeAlignment>(size);
+    alignment = std::max(superChunkSize, alignment);
+    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+    return PerProcess<Heap>::getFastCase()->allocateXLarge(lock, alignment, size);
 }
 
 void* Allocator::reallocate(void* object, size_t newSize)

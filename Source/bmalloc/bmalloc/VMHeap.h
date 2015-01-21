@@ -48,6 +48,7 @@ public:
     SmallPage* allocateSmallPage();
     MediumPage* allocateMediumPage();
     Range allocateLargeRange(size_t);
+    Range allocateLargeRange(size_t alignment, size_t, size_t unalignedSize);
 
     void deallocateSmallPage(std::unique_lock<StaticMutex>&, SmallPage*);
     void deallocateMediumPage(std::unique_lock<StaticMutex>&, MediumPage*);
@@ -83,6 +84,17 @@ inline Range VMHeap::allocateLargeRange(size_t size)
     if (!range) {
         allocateSuperChunk();
         range = m_largeRanges.take(size);
+        BASSERT(range);
+    }
+    return range;
+}
+
+inline Range VMHeap::allocateLargeRange(size_t alignment, size_t size, size_t unalignedSize)
+{
+    Range range = m_largeRanges.take(alignment, size, unalignedSize);
+    if (!range) {
+        allocateSuperChunk();
+        range = m_largeRanges.take(alignment, size, unalignedSize);
         BASSERT(range);
     }
     return range;

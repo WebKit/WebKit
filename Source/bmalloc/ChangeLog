@@ -1,3 +1,59 @@
+2015-01-21  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: support aligned allocation
+        https://bugs.webkit.org/show_bug.cgi?id=140732
+
+        Reviewed by Andreas Kling.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocate): New function for aligned allocation.
+
+        Small and medium requests just allocate and free until they find an
+        aligned pointer. This is slightly inefficient in the worst case, but
+        still constant-time with little-to-no space overhead.
+
+        Large requests use a new API that requires the client to specify both
+        its ideal size and alignment, and the worst-case size you would have to
+        allocate in order to produce some interior pointer of the requested size
+        and alignment. We put the burden of this calculation on the client
+        because it simplifies things if we guarantee that allocation won't fail.
+
+        XLarge requests are easy: we just forward them to vmAllocate, which
+        already supported aligned requests.
+
+        * bmalloc/BoundaryTag.h:
+        * bmalloc/BoundaryTagInlines.h:
+        (bmalloc::BoundaryTag::mergeLeft):
+        (bmalloc::BoundaryTag::mergeRight):
+        (bmalloc::BoundaryTag::merge):
+        (bmalloc::BoundaryTag::deallocate):
+        (bmalloc::BoundaryTag::split):
+        (bmalloc::BoundaryTag::allocate): No behavior change here. I just
+        refactored the interface to remove some reference out parameters in
+        order to clarify what changes and what doesn't.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::allocateXLarge): Added an alignment API.
+
+        (bmalloc::Heap::allocateLarge):
+        * bmalloc/Heap.h: Added an alignment API. I split out allocateLarge into
+        a few variants, so aligned and unaligned allocation could share some code.
+
+        * bmalloc/SegregatedFreeList.cpp:
+        (bmalloc::SegregatedFreeList::take):
+        * bmalloc/SegregatedFreeList.h: Changed to use a separate, explicit API
+        for aligned allocation. It turns out that the aligned path is pretty
+        different, since it ends up searching for two potential ways to satisfy
+        an allocation: either large enough and aligned, or large enough to split
+        into something not aligned and something large enough and aligned.
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmAllocate): Switched alignment to come before size because
+        that's how the memalign API specifies it.
+
+        * bmalloc/VMHeap.h:
+        (bmalloc::VMHeap::allocateLargeRange): Added an alignment API.
+
 2015-01-20  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: a little bit of cleanup

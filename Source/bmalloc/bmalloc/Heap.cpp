@@ -319,13 +319,22 @@ void Heap::deallocateMediumLine(std::lock_guard<StaticMutex>& lock, MediumLine* 
     }
 }
 
-void* Heap::allocateXLarge(std::lock_guard<StaticMutex>&, size_t size)
+void* Heap::allocateXLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t size)
 {
+    BASSERT(isPowerOfTwo(alignment));
+    BASSERT(alignment >= xLargeAlignment);
+    BASSERT(size == roundUpToMultipleOf<xLargeAlignment>(size));
+
     m_isAllocatingPages = true;
 
-    void* result = vmAllocate(size, superChunkSize);
+    void* result = vmAllocate(alignment, size);
     m_xLargeRanges.push(Range(result, size));
     return result;
+}
+
+void* Heap::allocateXLarge(std::lock_guard<StaticMutex>& lock, size_t size)
+{
+    return allocateXLarge(lock, superChunkSize, size);
 }
 
 Range Heap::findXLarge(std::lock_guard<StaticMutex>&, void* object)
@@ -355,28 +364,73 @@ void Heap::deallocateXLarge(std::unique_lock<StaticMutex>& lock, void* object)
     }
 }
 
-void* Heap::allocateLarge(std::lock_guard<StaticMutex>&, size_t size)
+void Heap::allocateLarge(std::lock_guard<StaticMutex>&, const Range& range, size_t size, Range& leftover)
+{
+    bool hasPhysicalPages;
+    BoundaryTag::allocate(range, size, leftover, hasPhysicalPages);
+
+    if (!hasPhysicalPages)
+        vmAllocatePhysicalPagesSloppy(range.begin(), range.size());
+}
+
+void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, const Range& range, size_t size)
+{
+    Range leftover;
+    allocateLarge(lock, range, size, leftover);
+
+    if (!!leftover)
+        m_largeRanges.insert(leftover);
+    
+    return range.begin();
+}
+
+void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t size)
 {
     BASSERT(size <= largeMax);
     BASSERT(size >= largeMin);
+    BASSERT(size == roundUpToMultipleOf<largeAlignment>(size));
     
     m_isAllocatingPages = true;
 
     Range range = m_largeRanges.take(size);
     if (!range)
         range = m_vmHeap.allocateLargeRange(size);
-    
-    Range leftover;
-    bool hasPhysicalPages;
-    BoundaryTag::allocate(size, range, leftover, hasPhysicalPages);
 
-    if (!!leftover)
-        m_largeRanges.insert(leftover);
-    
-    if (!hasPhysicalPages)
-        vmAllocatePhysicalPagesSloppy(range.begin(), range.size());
+    return allocateLarge(lock, range, size);
+}
 
-    return range.begin();
+void* Heap::allocateLarge(std::lock_guard<StaticMutex>& lock, size_t alignment, size_t size, size_t unalignedSize)
+{
+    BASSERT(size <= largeMax);
+    BASSERT(size >= largeMin);
+    BASSERT(size == roundUpToMultipleOf<largeAlignment>(size));
+    BASSERT(unalignedSize <= largeMax);
+    BASSERT(unalignedSize >= largeMin);
+    BASSERT(unalignedSize == roundUpToMultipleOf<largeAlignment>(unalignedSize));
+    BASSERT(alignment <= largeChunkSize / 2);
+    BASSERT(alignment >= largeAlignment);
+    BASSERT(isPowerOfTwo(alignment));
+
+    m_isAllocatingPages = true;
+
+    Range range = m_largeRanges.take(alignment, size, unalignedSize);
+    if (!range)
+        range = m_vmHeap.allocateLargeRange(alignment, size, unalignedSize);
+
+    size_t alignmentMask = alignment - 1;
+    if (test(range.begin(), alignmentMask)) {
+        // Because we allocate left-to-right, we must explicitly allocate the
+        // unaligned space on the left in order to break off the aligned space
+        // we want in the middle.
+        Range aligned;
+        size_t unalignedSize = roundUpToMultipleOf(alignment, range.begin() + largeMin) - range.begin();
+        allocateLarge(lock, range, unalignedSize, aligned);
+        allocateLarge(lock, aligned, size);
+        deallocateLarge(lock, range.begin());
+        return aligned.begin();
+    }
+
+    return allocateLarge(lock, range, size);
 }
 
 void Heap::deallocateLarge(std::lock_guard<StaticMutex>&, void* object)

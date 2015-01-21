@@ -41,7 +41,7 @@ class BoundaryTag {
 public:
     static Range init(LargeChunk*);
     static Range deallocate(void*);
-    static void allocate(size_t, Range&, Range& leftover, bool& hasPhysicalPages);
+    static void allocate(const Range&, size_t, Range& leftover, bool& hasPhysicalPages);
     static unsigned compactBegin(const Range&);
 
     bool isFree() { return m_isFree; }
@@ -72,10 +72,10 @@ private:
     static_assert((1 << compactBeginBits) - 1 >= largeMin / largeAlignment, "compactBegin must be encodable in a BoundaryTag.");
     static_assert((1 << sizeBits) - 1 >= largeMax, "largeMax must be encodable in a BoundaryTag.");
 
-    static void split(BeginTag*, size_t, EndTag*&, Range&, Range& leftover);
-    static void mergeLeft(EndTag*& prev, BeginTag*&, Range&, bool& hasPhysicalPages);
-    static void mergeRight(EndTag*&, BeginTag*& next, Range&, bool& hasPhysicalPages);
-    static void merge(BeginTag*&, EndTag*&, Range&);
+    static void split(const Range&, size_t, BeginTag*, EndTag*&, Range& leftover);
+    static Range mergeLeft(const Range&, BeginTag*&, EndTag* prev, bool& hasPhysicalPages);
+    static Range mergeRight(const Range&, EndTag*&, BeginTag* next, bool& hasPhysicalPages);
+    static Range merge(const Range&, BeginTag*&, EndTag*&);
 
     bool m_isFree: 1;
     bool m_isEnd: 1;

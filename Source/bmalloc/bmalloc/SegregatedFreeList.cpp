@@ -81,10 +81,22 @@ Range SegregatedFreeList::takeGreedy(List& list, size_t size)
     return Range();
 }
 
-Range SegregatedFreeList::take(size_t size, size_t alignmentMask)
+Range SegregatedFreeList::take(size_t size)
 {
     for (auto* list = &select(size); list != m_lists.end(); ++list) {
-        Range range = take(*list, size, alignmentMask);
+        Range range = take(*list, size);
+        if (!range)
+            continue;
+
+        return range;
+    }
+    return Range();
+}
+
+Range SegregatedFreeList::take(size_t alignment, size_t size, size_t unalignedSize)
+{
+    for (auto* list = &select(size); list != m_lists.end(); ++list) {
+        Range range = take(*list, alignment, size, unalignedSize);
         if (!range)
             continue;
 
@@ -104,7 +116,7 @@ INLINE auto SegregatedFreeList::select(size_t size) -> List&
     return m_lists[result];
 }
 
-INLINE Range SegregatedFreeList::take(List& list, size_t size, size_t alignmentMask)
+INLINE Range SegregatedFreeList::take(List& list, size_t size)
 {
     Range first;
     size_t end = list.size() > segregatedFreeListSearchDepth ? list.size() - segregatedFreeListSearchDepth : 0;
@@ -122,7 +134,37 @@ INLINE Range SegregatedFreeList::take(List& list, size_t size, size_t alignmentM
         if (range.size() < size)
             continue;
 
-        if (test(range.begin(), alignmentMask))
+        if (!!first && first < range)
+            continue;
+
+        first = range;
+    }
+    
+    return first;
+}
+
+INLINE Range SegregatedFreeList::take(List& list, size_t alignment, size_t size, size_t unalignedSize)
+{
+    BASSERT(isPowerOfTwo(alignment));
+    size_t alignmentMask = alignment - 1;
+
+    Range first;
+    size_t end = list.size() > segregatedFreeListSearchDepth ? list.size() - segregatedFreeListSearchDepth : 0;
+    for (size_t i = list.size(); i-- > end; ) {
+        Range range = list[i];
+
+        // We don't eagerly remove items when we merge and/or split ranges, so
+        // we need to validate each free list entry before using it.
+        BeginTag* beginTag = LargeChunk::beginTag(range.begin());
+        if (!beginTag->isInFreeList(range)) {
+            list.pop(i);
+            continue;
+        }
+
+        if (range.size() < size)
+            continue;
+
+        if (test(range.begin(), alignmentMask) && range.size() < unalignedSize)
             continue;
 
         if (!!first && first < range)

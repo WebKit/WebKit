@@ -83,7 +83,7 @@ inline void vmDeallocate(void* p, size_t vmSize)
 // Allocates vmSize bytes at a specified power-of-two alignment.
 // Use this function to create maskable memory regions.
 
-inline void* vmAllocate(size_t vmSize, size_t vmAlignment)
+inline void* vmAllocate(size_t vmAlignment, size_t vmSize)
 {
     vmValidate(vmSize);
     vmValidate(vmAlignment);

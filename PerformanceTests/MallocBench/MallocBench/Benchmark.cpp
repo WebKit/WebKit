@@ -38,6 +38,7 @@
 #include "reddit.h"
 #include "realloc.h"
 #include "stress.h"
+#include "stress_aligned.h"
 #include "theverge.h"
 #include "tree.h"
 #include <dispatch/dispatch.h>
@@ -78,6 +79,7 @@ static const BenchmarkPair benchmarkPairs[] = {
     { "reddit", benchmark_reddit },
     { "reddit_memory_warning", benchmark_reddit_memory_warning },
     { "stress", benchmark_stress },
+    { "stress_aligned", benchmark_stress_aligned },
     { "theverge", benchmark_theverge },
     { "theverge_memory_warning", benchmark_theverge_memory_warning },
     { "tree_allocate", benchmark_tree_allocate },

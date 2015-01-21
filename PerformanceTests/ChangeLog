@@ -1,3 +1,21 @@
+2015-01-21  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: support aligned allocation
+        https://bugs.webkit.org/show_bug.cgi?id=140732
+
+        Reviewed by Andreas Kling.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj:
+        * MallocBench/MallocBench/Benchmark.cpp:
+        * MallocBench/MallocBench/memalign.cpp:
+        (test):
+        (benchmark_memalign): Added a test for specific interesting memalign values.
+
+        * MallocBench/MallocBench/stress_aligned.cpp: Added.
+        (benchmark_stress_aligned):
+        * MallocBench/MallocBench/stress_aligned.h: Added. Added a stress test
+        for arbitrary memalign values.
+
 2015-01-16  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: added the tiniest bit of testing for aligned allocation

@@ -23,34 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <assert.h>
-#include "memalign.h"
-#include <memory>
-#include <stddef.h>
+#ifndef stress_aligned_h
+#define stress_aligned_h
 
-#include "mbmalloc.h"
+void benchmark_stress_aligned(bool isParallel);
 
-void test(size_t alignment, size_t size)
-{
-    void* result = mbmemalign(alignment, size);
-
-    assert(result);
-    assert(!((uintptr_t)result & (alignment - 1)));
-    
-    mbfree(result, size);
-}
-
-void benchmark_memalign(bool isParallel)
-{
-    for (size_t alignment = 2; alignment < 4096; alignment *= 2) {
-        for (size_t size = 0; size < 4096; ++size)
-            test(alignment, size);
-    }
-
-    test(1 * 1024 * 1024, 8);
-    test(8 * 1024 * 1024, 8);
-    test(32 * 1024 * 1024, 8);
-    test(64 * 1024 * 1024, 8);
-    test(1 * 1024 * 1024, 8 * 1024 * 1024);
-    test(1 * 1024 * 1024, 16 * 1024 * 1024);
-}
+#endif // stress_aligned_h
