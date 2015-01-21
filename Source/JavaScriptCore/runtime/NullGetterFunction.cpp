@@ -38,21 +38,15 @@ static EncodedJSValue JSC_HOST_CALL callReturnUndefined(ExecState*)
     return JSValue::encode(jsUndefined());
 }
 
-static EncodedJSValue JSC_HOST_CALL constructReturnUndefined(ExecState*)
-{
-    return JSValue::encode(jsUndefined());
-}
-
 CallType NullGetterFunction::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callReturnUndefined;
     return CallTypeHost;
 }
 
-ConstructType NullGetterFunction::getConstructData(JSCell*, ConstructData& constructData)
+ConstructType NullGetterFunction::getConstructData(JSCell*, ConstructData&)
 {
-    constructData.native.function = constructReturnUndefined;
-    return ConstructTypeHost;
+    return ConstructTypeNone;
 }
 
 }

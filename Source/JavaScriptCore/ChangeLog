@@ -1,3 +1,20 @@
+2015-01-21  Michael Saboff  <msaboff@apple.com>
+
+        Eliminate construct methods from NullGetterFunction and NullSetterFunction classes
+        https://bugs.webkit.org/show_bug.cgi?id=140708
+
+        Reviewed by Mark Lam.
+
+        Eliminated construct methods and change getConstructData() for both classes to return
+        ConstructTypeNone as they can never be called.
+
+        * runtime/NullGetterFunction.cpp:
+        (JSC::NullGetterFunction::getConstructData):
+        (JSC::constructReturnUndefined): Deleted.
+        * runtime/NullSetterFunction.cpp:
+        (JSC::NullSetterFunction::getConstructData):
+        (JSC::constructReturnUndefined): Deleted.
+
 2015-01-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(INSPECTOR) ifdef guards

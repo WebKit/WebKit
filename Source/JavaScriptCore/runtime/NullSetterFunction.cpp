@@ -76,23 +76,15 @@ static EncodedJSValue JSC_HOST_CALL callReturnUndefined(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-static EncodedJSValue JSC_HOST_CALL constructReturnUndefined(ExecState* exec)
-{
-    if (callerIsStrict(exec))
-        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Setting a property that has only a getter")));
-    return JSValue::encode(jsUndefined());
-}
-
 CallType NullSetterFunction::getCallData(JSCell*, CallData& callData)
 {
     callData.native.function = callReturnUndefined;
     return CallTypeHost;
 }
 
-ConstructType NullSetterFunction::getConstructData(JSCell*, ConstructData& constructData)
+ConstructType NullSetterFunction::getConstructData(JSCell*, ConstructData&)
 {
-    constructData.native.function = constructReturnUndefined;
-    return ConstructTypeHost;
+    return ConstructTypeNone;
 }
 
 }
