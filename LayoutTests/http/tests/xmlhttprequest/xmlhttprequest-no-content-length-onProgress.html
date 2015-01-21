@@ -7,8 +7,8 @@
 <p> This test verify that file with content type does trigger onProgress event. </p>
 <p> You should see PASSED twice. </p>
 <body>
-<p id="shouldBeCalled"> FAILED </p>
-<p id="shouldNotBeCalled"> PASSED </p>
+<p id="result1"> FAILED </p>
+<p id="result2"> FAILED </p>
 <script type="text/javascript">
 if (window.testRunner) {
     testRunner.dumpAsText();
@@ -21,26 +21,21 @@ function checkDone() {
         testRunner.notifyDone();
 }
 
-function onProgressPassed(e) {
-    document.getElementById("shouldBeCalled").innerHTML = "PASSED";
-}
-
-function onProgressFailed(e) {
-    document.getElementById("shouldNotBeCalled").innerHTML = "FAILED";
+function onProgressPassed(elementID) {
+    document.getElementById(elementID).innerHTML = "PASSED";
 }
 
 var req = new XMLHttpRequest();
-req.onprogress = onProgressPassed;
+req.onprogress = function() { onProgressPassed("result1"); }
 req.onload = checkDone;
 // Test that onProgress is called on a normal file
 req.open("GET", "resources/1251.html", true);
 req.send(null);
 
-// If content length is not given, it should not be called
 var req2 = new XMLHttpRequest();
-req2.onprogress = onProgressFailed;
+req2.onprogress = function() { onProgressPassed("result2"); }
 req2.onload = checkDone;
-req2.open("GET", "resources/noContentLength.asis", true);
+req2.open("GET", "resources/noContentLength.cgi", true);
 req2.send(null);
 
 </script>
