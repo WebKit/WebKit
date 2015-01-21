@@ -12,7 +12,7 @@ if ($ENV{'REQUEST_METHOD'} eq "POST") {
     }
 
     @list = split(/&/, $ENV{'QUERY_STRING'});
-    @values;
+    my @values;
     $values{'start'} = 0;
     $values{'length'} = -1;
     $values{'convert_newlines'} = 0;
