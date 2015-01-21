@@ -151,6 +151,7 @@ void WebProcessProxy::disconnect()
     }
 
     m_responsivenessTimer.invalidate();
+    m_tokenForHoldingLockedFiles = nullptr;
 
     Vector<RefPtr<WebFrameProxy>> frames;
     copyValuesToVector(m_frameMap, frames);
@@ -751,6 +752,16 @@ void WebProcessProxy::processReadyToSuspend()
 void WebProcessProxy::didCancelProcessSuspension()
 {
     m_throttler->didCancelProcessSuspension();
+}
+
+void WebProcessProxy::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
+{
+    if (!isHoldingLockedFiles) {
+        m_tokenForHoldingLockedFiles = nullptr;
+        return;
+    }
+    if (!m_tokenForHoldingLockedFiles)
+        m_tokenForHoldingLockedFiles = std::make_unique<ProcessThrottler::BackgroundActivityToken>(*m_throttler);
 }
 
 } // namespace WebKit

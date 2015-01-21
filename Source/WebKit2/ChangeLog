@@ -1,5 +1,56 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175698.
+
+    2014-11-06  Daniel Bates  <dabates@apple.com>
+
+            [iOS] WebProcess needs to take a background task assertion to prevent being killed
+            for "suspended with locked system files"
+            https://bugs.webkit.org/show_bug.cgi?id=138155
+            <rdar://problem/17939303>
+
+            Reviewed by Anders Carlsson.
+
+            Mitigates an issue where the WebProcess may be killed when suspended holding locked files
+            by allowing the WebProcess to notify the UIProcess when it is holding such files so that
+            both can continue to run for a period of time after the UIProcess transitions to the
+            background. In particular, the WebProcess notifies the UIProcess that it is holding- or
+            relinquished- a locked file when it begins and ends a sequence of SQLite transactions,
+            respectively.
+
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::disconnect): Relinquish an existing background task assertion
+            when the WebProcess disconnects. Among other situations, the WebProcess may disconnect as
+            a result of being suspended holding locked files even when the UIProcess requested a
+            background task assertion (i.e. it may have exceeded its background time limit).
+            (WebKit::WebProcessProxy::setIsHoldingLockedFiles): Added. Either acquires a new background
+            task assertion or relinquishes an existing one.
+            * UIProcess/WebProcessProxy.h:
+            * UIProcess/WebProcessProxy.messages.in: Added message SetIsHoldingLockedFiles(bool). The WebProcess
+            dispatches this message to inform the UIProcess that it is holding- or relinquished- a locked file.
+            * WebKit2.xcodeproj/project.pbxproj: Added files WebSQLiteDatabaseTracker.{cpp, h}.
+            * WebProcess/WebCoreSupport/WebSQLiteDatabaseTracker.cpp: Added.
+            (WebKit::WebSQLiteDatabaseTracker::supplementName): Added.
+            (WebKit::WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker): Added.
+            (WebKit::WebSQLiteDatabaseTracker::initialize): Register to receive SQLiteDatabaseTrackerClient callbacks.
+            (WebKit::WebSQLiteDatabaseTracker::willBeginFirstTransaction): Inform the HysteresisActivity object on
+            the main thread that we began a transaction so that it calls WebSQLiteDatabaseTracker::started().
+            (WebKit::WebSQLiteDatabaseTracker::didFinishLastTransaction): Inform the HysteresisActivity object on
+            the main thread that we finished a transaction so that it may eventually call WebSQLiteDatabaseTracker::stopped().
+            (WebKit::WebSQLiteDatabaseTracker::started): Notify the UIProcess that the WebProcess is holding
+            a locked file.
+            (WebKit::WebSQLiteDatabaseTracker::stopped): Notify the UIProcess that the WebProcess has
+            relinquished the locked file.
+            * WebProcess/WebCoreSupport/WebSQLiteDatabaseTracker.h: Added. We use a HysteresisActivity object
+            to coalesce SetIsHoldingLockedFiles(false) messages as an optimization to minimize the number of
+            messages exchanged between the UIProcess and WebProcess when a web page performs SQLite transactions
+            in batches.
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::WebProcess): Instantiate the supplement WebSQLiteDatabaseTracker when building
+            for iOS.
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175636.
 
     2014-11-04  Jon Honeycutt  <jhoneycutt@apple.com>
