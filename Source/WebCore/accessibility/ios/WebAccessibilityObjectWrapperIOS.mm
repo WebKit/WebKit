@@ -360,7 +360,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return 0;
 
-    if ([self isAttachment])
+    if ([self isAttachment] && [self attachmentView])
         return [[self attachmentView] accessibilityElementCount];
     
     return m_object->children().size();
@@ -371,7 +371,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    if ([self isAttachment])
+    if ([self isAttachment] && [self attachmentView])
         return [[self attachmentView] accessibilityElementAtIndex:index];
     
     const auto& children = m_object->children();
@@ -391,7 +391,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return NSNotFound;
     
-    if ([self isAttachment])
+    if ([self isAttachment] && [self attachmentView])
         return [[self attachmentView] indexOfAccessibilityElement:element];
     
     const auto& children = m_object->children();
@@ -1262,7 +1262,11 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (parent)
         return parent->wrapper();
 
-    // The only object without a parent wrapper should be a scroll view.
+    // Mock objects can have their parents detached but still exist in the cache.
+    if (m_object->isDetachedFromParent())
+        return nil;
+    
+    // The only object without a parent wrapper at this point should be a scroll view.
     ASSERT(m_object->isAccessibilityScrollView());
     
     // Verify this is the top document. If not, we might need to go through the platform widget.
