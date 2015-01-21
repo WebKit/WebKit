@@ -1,5 +1,27 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r174148.
+
+    2014-10-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+            [iOS] <select> with <optgroup> may change initial selected option when assisted
+            https://bugs.webkit.org/show_bug.cgi?id=137261
+
+            Reviewed by Enrica Casucci.
+
+            The initial assignemnt of _singleSelectionIndex was calculating the
+            item index (ignoring groups) instead of the row index (affected by
+            groups!). Thus if there was N groups we would select the row N
+            before the real selection.
+
+            Also avoid this entirely if this is a multiple selection picker.
+            This logic is only needed for single selection with groups.
+
+            * UIProcess/ios/forms/WKFormSelectPicker.mm:
+            (-[WKMultipleSelectPicker initWithView:]):
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r173934.
 
     2014-09-24  Sam Weinig  <sam@webkit.org>
