@@ -789,9 +789,8 @@
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/LexicalConventions/7.7.3-2.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
-# Test fails due to rdar://problem/19339106
-# - path: ecma/LexicalConventions/7.7.3.js
-#   cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.7.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/LexicalConventions/7.7.4.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/LexicalConventions/7.8.2-n.js

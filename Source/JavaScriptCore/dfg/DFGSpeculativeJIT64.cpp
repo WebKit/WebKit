@@ -1799,17 +1799,23 @@ void SpeculativeJIT::compile(Node* node)
         case DoubleRepRealUse:
         case DoubleRepMachineIntUse: {
             SpeculateDoubleOperand op(this, node->child1());
-            doubleResult(op.fpr(), node);
+            FPRTemporary scratch(this, op);
+            m_jit.moveDouble(op.fpr(), scratch.fpr());
+            doubleResult(scratch.fpr(), node);
             break;
         }
         case Int52RepUse: {
             SpeculateInt52Operand op(this, node->child1());
-            int52Result(op.gpr(), node);
+            GPRTemporary result(this, Reuse, op);
+            m_jit.move(op.gpr(), result.gpr());
+            int52Result(result.gpr(), node);
             break;
         }
         default: {
             JSValueOperand op(this, node->child1());
-            jsValueResult(op.gpr(), node);
+            GPRTemporary result(this, Reuse, op);
+            m_jit.move(op.gpr(), result.gpr());
+            jsValueResult(result.gpr(), node);
             break;
         }
         } // switch
