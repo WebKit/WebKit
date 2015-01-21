@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPlaceholder, ignoreHasOwnProperty, extraProperties, treeElementConstructor)
+WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPlaceholder, getAllProperties, extraProperties, treeElementConstructor)
 {
     this.emptyPlaceholder = (emptyPlaceholder || WebInspector.UIString("No Properties"));
     this.object = object;
-    this.ignoreHasOwnProperty = ignoreHasOwnProperty;
+    this.getAllProperties = getAllProperties;
     this.extraProperties = extraProperties;
     this.treeElementConstructor = treeElementConstructor || WebInspector.ObjectPropertyTreeElement;
     this.editable = true;
@@ -50,10 +50,10 @@ WebInspector.ObjectPropertiesSection.prototype = {
                 return;
             self.updateProperties(properties);
         }
-        if (this.ignoreHasOwnProperty)
+        if (this.getAllProperties)
             this.object.getAllProperties(callback);
         else
-            this.object.getOwnProperties(callback);
+            this.object.getOwnAndGetterProperties(callback);
     },
 
     updateProperties: function(properties, rootTreeElementConstructor, rootPropertyComparer)
@@ -163,7 +163,11 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 this.appendChild(new this.treeOutline.section.treeElementConstructor(properties[i]));
             }
         };
-        this.property.value.getOwnProperties(callback.bind(this));
+
+        if (this.property.name === "__proto__")
+            this.property.value.getOwnProperties(callback.bind(this));
+        else
+            this.property.value.getOwnAndGetterProperties(callback.bind(this));
     },
 
     ondblclick: function(event)
