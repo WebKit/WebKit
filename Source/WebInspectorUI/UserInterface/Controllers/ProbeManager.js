@@ -57,11 +57,7 @@ WebInspector.ProbeManager.prototype = {
 
     get probeSets()
     {
-        var sets = [];
-        for (var set of this._probeSetsByBreakpoint.values())
-            sets.push(set);
-
-        return sets;
+        return [...this._probeSetsByBreakpoint.values()];
     },
 
     probeForIdentifier: function(identifier)

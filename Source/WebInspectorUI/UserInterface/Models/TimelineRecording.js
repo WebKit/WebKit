@@ -138,7 +138,7 @@ WebInspector.TimelineRecording.prototype = {
         var timelines = this._sourceCodeTimelinesMap.get(sourceCode);
         if (!timelines)
             return [];
-        return timelines.values();
+        return [...timelines.values()];
     },
 
     addEventMarker: function(eventMarker)

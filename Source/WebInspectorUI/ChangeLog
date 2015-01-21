@@ -1,5 +1,21 @@
 2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Use spread operator in a few places
+        https://bugs.webkit.org/show_bug.cgi?id=140699
+
+        Reviewed by Geoffrey Garen.
+
+        * UserInterface/Controllers/ProbeManager.js:
+        (WebInspector.ProbeManager.prototype.get probeSets):
+        Simplify by using the spread operator.
+
+        * UserInterface/Models/TimelineRecording.js:
+        This actually fixes an issue. The one place this was used was expecting
+        an array and called ".length" on the result. However, the iterator being
+        returned does not have a ".length" property so it was always undefined.
+
+2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Expanding event objects in console shows undefined for most values, it should have real values
         https://bugs.webkit.org/show_bug.cgi?id=137306
 
