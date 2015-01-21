@@ -1,3 +1,39 @@
+2015-01-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        AsyncRequestImpl casting in AsyncRequest::completeRequest() is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=139724
+
+        Reviewed by Darin Adler.
+
+        AsyncRequestImpl casting in AsyncRequest::completeRequest() relies on
+        the parameter pack to properly determine the type of the AsyncRequestImpl
+        object. The casting result can be incorrect when an argument is passed
+        by reference while the original object was constructed with a callback
+        that expects an argument that's passed by value.
+
+        To avoid this the AsyncRequestImpl template is now instantiated with
+        raw types, with callback parameters remaining raw types in case
+        of being integral (enforcing passing-by-value these arguments when
+        dispatching), and const references being used otherwise (enforcing
+        passing-by-reference).
+
+        This enables casting AsyncRequest objects to the correct AsyncRequestImpl<>
+        by running the parameter pack through std::decay.
+
+        * DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp:
+        (WebKit::UniqueIDBDatabase::putRecord):
+        (WebKit::UniqueIDBDatabase::getRecord):
+        (WebKit::UniqueIDBDatabase::openCursor):
+        (WebKit::UniqueIDBDatabase::cursorAdvance):
+        (WebKit::UniqueIDBDatabase::cursorIterate):
+        (WebKit::UniqueIDBDatabase::count):
+        (WebKit::UniqueIDBDatabase::deleteRange):
+        * Shared/AsyncRequest.h:
+        (WebKit::AsyncRequest::completeRequest):
+        * WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp:
+        (WebKit::WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata):
+        (WebKit::WebIDBServerConnection::get):
+
 2015-01-21  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Stop using WKDiagnosticLoggingResultType.h C API header in Cocoa API

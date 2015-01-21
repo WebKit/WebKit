@@ -568,7 +568,7 @@ void UniqueIDBDatabase::putRecord(const IDBIdentifier& transactionIdentifier, in
 
     ASSERT(m_metadata->objectStores.contains(objectStoreID));
 
-    RefPtr<AsyncRequest> request = AsyncRequestImpl<const IDBKeyData&, uint32_t, const String&>::create([this, callback](const IDBKeyData& keyData, uint32_t errorCode, const String& errorMessage) {
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<IDBKeyData, uint32_t, String>::create([this, callback](const IDBKeyData& keyData, uint32_t errorCode, const String& errorMessage) {
         callback(keyData, errorCode, errorMessage);
     }, [this, callback] {
         callback(IDBKeyData(), INVALID_STATE_ERR, "Unable to put record into database");
@@ -591,7 +591,7 @@ void UniqueIDBDatabase::getRecord(const IDBIdentifier& transactionIdentifier, in
 
     ASSERT(m_metadata->objectStores.contains(objectStoreID));
 
-    RefPtr<AsyncRequest> request = AsyncRequestImpl<const IDBGetResult&, uint32_t, const String&>::create([this, callback](const IDBGetResult& result, uint32_t errorCode, const String& errorMessage) {
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<IDBGetResult, uint32_t, String>::create([this, callback](const IDBGetResult& result, uint32_t errorCode, const String& errorMessage) {
         callback(result, errorCode, errorMessage);
     }, [this, callback] {
         callback(IDBGetResult(), INVALID_STATE_ERR, "Unable to get record from database");
@@ -614,7 +614,7 @@ void UniqueIDBDatabase::openCursor(const IDBIdentifier& transactionIdentifier, i
 
     ASSERT(m_metadata->objectStores.contains(objectStoreID));
 
-    RefPtr<AsyncRequest> request = AsyncRequestImpl<int64_t, const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&>::create([this, callback](int64_t cursorID, const IDBKeyData& key, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<int64_t, IDBKeyData, IDBKeyData, PassRefPtr<SharedBuffer>, uint32_t, String>::create([this, callback](int64_t cursorID, const IDBKeyData& key, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
         callback(cursorID, key, primaryKey, value, errorCode, errorMessage);
     }, [this, callback] {
         callback(0, nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to get record from database");
@@ -635,7 +635,7 @@ void UniqueIDBDatabase::cursorAdvance(const IDBIdentifier& cursorIdentifier, uin
         return;
     }
 
-    RefPtr<AsyncRequest> request = AsyncRequestImpl<const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&>::create([this, callback](const IDBKeyData& key, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<IDBKeyData, IDBKeyData, PassRefPtr<SharedBuffer>, uint32_t, String>::create([this, callback](const IDBKeyData& key, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
         callback(key, primaryKey, value, errorCode, errorMessage);
     }, [this, callback] {
         callback(nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to advance cursor in database");
@@ -656,7 +656,7 @@ void UniqueIDBDatabase::cursorIterate(const IDBIdentifier& cursorIdentifier, con
         return;
     }
 
-    RefPtr<AsyncRequest> request = AsyncRequestImpl<const IDBKeyData&, const IDBKeyData&, PassRefPtr<SharedBuffer>, uint32_t, const String&>::create([this, callback](const IDBKeyData& key, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<IDBKeyData, IDBKeyData, PassRefPtr<SharedBuffer>, uint32_t, String>::create([this, callback](const IDBKeyData& key, const IDBKeyData& primaryKey, PassRefPtr<SharedBuffer> value, uint32_t errorCode, const String& errorMessage) {
         callback(key, primaryKey, value, errorCode, errorMessage);
     }, [this, callback] {
         callback(nullptr, nullptr, nullptr, INVALID_STATE_ERR, "Unable to iterate cursor in database");
@@ -677,7 +677,7 @@ void UniqueIDBDatabase::count(const IDBIdentifier& transactionIdentifier, int64_
         return;
     }
 
-    RefPtr<AsyncRequest> request = AsyncRequestImpl<int64_t, uint32_t, const String&>::create([this, callback](int64_t count, uint32_t errorCode, const String& errorMessage) {
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<int64_t, uint32_t, String>::create([this, callback](int64_t count, uint32_t errorCode, const String& errorMessage) {
         callback(count, errorCode, errorMessage);
     }, [this, callback] {
         callback(0, INVALID_STATE_ERR, "Unable to get count from database");
@@ -698,7 +698,7 @@ void UniqueIDBDatabase::deleteRange(const IDBIdentifier& transactionIdentifier, 
         return;
     }
 
-    RefPtr<AsyncRequest> request = AsyncRequestImpl<uint32_t, const String&>::create([callback](uint32_t errorCode, const String& errorMessage) {
+    RefPtr<AsyncRequest> request = AsyncRequestImpl<uint32_t, String>::create([callback](uint32_t errorCode, const String& errorMessage) {
         callback(errorCode, errorMessage);
     }, [callback] {
         callback(INVALID_STATE_ERR, "Unable to deleteRange from database");

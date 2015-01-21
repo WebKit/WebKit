@@ -114,7 +114,7 @@ void WebIDBServerConnection::didDeleteDatabase(uint64_t requestID, bool success)
 
 void WebIDBServerConnection::getOrEstablishIDBDatabaseMetadata(GetIDBDatabaseMetadataFunction completionCallback)
 {
-    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<const IDBDatabaseMetadata&, bool>::create(completionCallback);
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<IDBDatabaseMetadata, bool>::create(completionCallback);
 
     serverRequest->setAbortHandler([completionCallback] {
         IDBDatabaseMetadata metadata;
@@ -399,7 +399,7 @@ void WebIDBServerConnection::didDeleteIndex(uint64_t requestID, bool success)
 
 void WebIDBServerConnection::get(IDBTransactionBackend& transaction, const GetOperation& operation, std::function<void (const IDBGetResult&, PassRefPtr<IDBDatabaseError>)> completionCallback)
 {
-    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<const IDBGetResult&, PassRefPtr<IDBDatabaseError>>::create(completionCallback);
+    RefPtr<AsyncRequest> serverRequest = AsyncRequestImpl<IDBGetResult, PassRefPtr<IDBDatabaseError>>::create(completionCallback);
 
     serverRequest->setAbortHandler([completionCallback] {
         completionCallback(IDBGetResult(), IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Unknown error occured getting record"));

@@ -57,12 +57,14 @@ private:
 template <typename... Arguments>
 class AsyncRequestImpl final : public AsyncRequest {
 public:
-    static PassRefPtr<AsyncRequest> create(std::function<void (Arguments...)> completionHandler)
+    template<typename T> using ArgumentType = std::conditional<std::is_integral<T>::value, T, const T&>;
+
+    static PassRefPtr<AsyncRequest> create(std::function<void (typename ArgumentType<Arguments>::type...)> completionHandler)
     {
         return adoptRef(new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), nullptr));
     }
 
-    static PassRefPtr<AsyncRequest> create(std::function<void (Arguments...)> completionHandler, std::function<void ()> abortHandler)
+    static PassRefPtr<AsyncRequest> create(std::function<void (typename ArgumentType<Arguments>::type...)> completionHandler, std::function<void ()> abortHandler)
     {
         return adoptRef(new AsyncRequestImpl<Arguments...>(WTF::move(completionHandler), WTF::move(abortHandler)));
     }
@@ -72,14 +74,15 @@ public:
         ASSERT(!m_completionHandler);
     }
 
-    void completeRequest(Arguments&&... arguments)
+    template<typename... RequestArguments>
+    void completeRequest(RequestArguments&&... arguments)
     {
-        m_completionHandler(std::forward<Arguments>(arguments)...);
+        m_completionHandler(std::forward<RequestArguments>(arguments)...);
         m_completionHandler = nullptr;
     }
 
 private:
-    AsyncRequestImpl(std::function<void (Arguments...)> completionHandler, std::function<void ()> abortHandler)
+    AsyncRequestImpl(std::function<void (typename ArgumentType<Arguments>::type...)> completionHandler, std::function<void ()> abortHandler)
         : AsyncRequest(WTF::move(abortHandler))
         , m_completionHandler(WTF::move(completionHandler))
     {
@@ -91,12 +94,12 @@ private:
         m_completionHandler = nullptr;
     }
 
-    std::function<void (Arguments...)> m_completionHandler;
+    std::function<void (typename ArgumentType<Arguments>::type...)> m_completionHandler;
 };
 
 template<typename... Arguments> void AsyncRequest::completeRequest(Arguments&&... arguments)
 {
-    AsyncRequestImpl<Arguments...>* request = static_cast<AsyncRequestImpl<Arguments...>*>(this);
+    auto* request = static_cast<AsyncRequestImpl<typename std::decay<Arguments>::type...>*>(this);
     request->completeRequest(std::forward<Arguments>(arguments)...);
     m_abortHandler = nullptr;
 }
