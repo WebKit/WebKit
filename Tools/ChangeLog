@@ -1,5 +1,14 @@
 2015-01-20  Lucas Forschler  <lforschler@apple.com>
 
+        Update Apple MountainLion Leaks slave to Yosemite
+        Update Apple MountainLion Release (32-bit) Build slave to Yosemite
+        
+        Unreviewed.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2015-01-20  Lucas Forschler  <lforschler@apple.com>
+
         Update LeaksViewer from MountainLion to Yosemite
         
         Reviewed by Alexey Proskuryakov.
