@@ -788,7 +788,7 @@ void SVGToOTFFontConverter::appendGSUBTable()
     overwrite16(scriptListLocation + 12, m_result.size() - scriptListLocation);
     appendScriptSubtable(4);
 
-    unsigned featureCount = 5;
+    const unsigned featureCount = 5;
 
     // FeatureList
     toFeatureList.populate();

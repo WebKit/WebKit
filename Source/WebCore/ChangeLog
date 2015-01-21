@@ -1,5 +1,14 @@
 2015-01-20  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Build fix after r178760.
+
+        Windows will not accept a variable as the size declaration for an array.
+
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendGSUBTable): Make size argument a const.
+
+2015-01-20  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed Windows project file gardening.
 
         * WebCore.vcxproj/WebCore.vcxproj: Add missing SVG files and put things in their proper
