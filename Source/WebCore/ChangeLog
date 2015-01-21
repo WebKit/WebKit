@@ -1,5 +1,24 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176484.
+
+    2014-11-21  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: com.apple.WebKit.WebContent crashed at WebCore: WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const
+            https://bugs.webkit.org/show_bug.cgi?id=138905
+
+            Reviewed by Mario Sanchez Prada.
+
+            The crash log indicates that m_renderer is null at the time we ask ancestorsOfType(). 
+            This is more of a speculative fix, since I am not entirely sure m_renderer is null when we enter the method.
+
+            Unable to determine cause of crash or how to reproduce on demand.
+
+            * accessibility/AccessibilityRenderObject.cpp:
+            (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176471.
 
     2014-11-21  Eric Carlson  <eric.carlson@apple.com>
