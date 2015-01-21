@@ -1392,7 +1392,7 @@ static void addFileTypesToCache(NSArray * fileTypes, HashSet<String> &cache)
             Vector<String> typesForExtension = MIMETypeRegistry::getMediaMIMETypesForExtension(ext);
             unsigned count = typesForExtension.size();
             for (unsigned ndx = 0; ndx < count; ++ndx) {
-                String& type = typesForExtension[ndx];
+                String type = typesForExtension[ndx].lower();
 
                 if (shouldRejectMIMEType(type))
                     continue;
