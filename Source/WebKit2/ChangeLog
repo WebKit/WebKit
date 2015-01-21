@@ -1,3 +1,21 @@
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r175266.
+
+    2014-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+            [iOS] iPhone should not allow selecting <optgroup> in <select multiple>
+            https://bugs.webkit.org/show_bug.cgi?id=137991
+
+            Reviewed by Darin Adler.
+
+            We seem to be getting the delegate when we are not supposed to.
+            Workaround the issue as best we can by reseting the styles
+            for the group's content view and not changing selections.
+
+            * UIProcess/ios/forms/WKFormSelectPicker.mm:
+            (-[WKMultipleSelectPicker pickerView:row:column:checked:]):
+
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r175135.
