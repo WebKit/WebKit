@@ -1,3 +1,11 @@
+2015-01-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed Windows project file gardening.
+
+        * WebCore.vcxproj/WebCore.vcxproj: Add missing SVG files and put things in their proper
+        folders.
+        * WebCore.vcxproj/WebCore.vcxproj.filters: Ditto.
+
 2015-01-20  Benjamin Poulain  <benjamin@webkit.org>
 
         URLFilterParser dismisses the last atom when parsing a builtin character class

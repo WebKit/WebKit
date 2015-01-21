@@ -247,18 +247,6 @@
     <Filter Include="plugins">
       <UniqueIdentifier>{d4cb7e8c-e901-4797-94cd-f6b1b9dfe2aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="rendering\svg\animation">
-      <UniqueIdentifier>{8fe48833-bab8-4dd8-9a63-635b7a413b29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="rendering\svg\graphics">
-      <UniqueIdentifier>{24ae8441-0b72-4855-af04-3ff5560ba326}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="rendering\svg\graphics\filters">
-      <UniqueIdentifier>{87b981ca-470a-4e85-b1b7-e4e752674979}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="rendering\svg\properties">
-      <UniqueIdentifier>{647695ab-7ca1-49a3-bfa8-1294849f9612}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ForwardingHeaders">
       <UniqueIdentifier>{95216a70-a3b2-453c-a66f-a81cc1abefee}</UniqueIdentifier>
     </Filter>
@@ -282,9 +270,6 @@
     </Filter>
     <Filter Include="ForwardingHeaders\inspector\agents">
       <UniqueIdentifier>{132bade2-0aab-6274-0adff-abcdacbdabc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="history">
-      <UniqueIdentifier>{6f39dedf-2d3a-414e-83fe-7bf64f911cfb}</UniqueIdentifier>
     </Filter>
     <Filter Include="storage">
       <UniqueIdentifier>{e5121f0f-9548-4aa4-b23c-23d197118a0d}</UniqueIdentifier>
@@ -360,6 +345,27 @@
     </Filter>
     <Filter Include="Modules\plugins">
       <UniqueIdentifier>{d37aa05d-ced2-4c39-b72b-f410f6c2bf2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\graphics\opentype">
+      <UniqueIdentifier>{e939128b-31ef-4a48-b267-bee37417a96e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="svg">
+      <UniqueIdentifier>{c988c178-01d1-4d58-aa25-0617d43da2f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ForwardingHeaders\history">
+      <UniqueIdentifier>{6f39dedf-2d3a-414e-83fe-7bf64f911cfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="svg\animation">
+      <UniqueIdentifier>{8fe48833-bab8-4dd8-9a63-635b7a413b29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="svg\graphics">
+      <UniqueIdentifier>{24ae8441-0b72-4855-af04-3ff5560ba326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="svg\graphics\filters">
+      <UniqueIdentifier>{87b981ca-470a-4e85-b1b7-e4e752674979}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="svg\properties">
+      <UniqueIdentifier>{647695ab-7ca1-49a3-bfa8-1294849f9612}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1468,15 +1474,6 @@
       <Filter>platform\graphics\win</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\win\MediaPlayerPrivateMediaFoundation.cpp">
-      <Filter>platform\graphics\win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\opentype\OpenTypeMathData.cpp">
-      <Filter>platform\graphics\win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\opentype\OpenTypeUtilities.cpp">
-      <Filter>platform\graphics\win</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\opentype\OpenTypeVerticalData.cpp">
       <Filter>platform\graphics\win</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\win\SimpleFontDataCairoWin.cpp">
@@ -4512,83 +4509,59 @@
     <ClCompile Include="..\plugins\PluginMainThreadScheduler.cpp">
       <Filter>plugins</Filter>
     </ClCompile>
-    <ClCompile Include="..\svg\SVGAllInOne.cpp">
-      <Filter>rendering\svg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\svg\SVGFontFaceElement.cpp">
-      <Filter>rendering\svg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\svg\SVGGlyphElement.cpp">
-      <Filter>rendering\svg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\svg\SVGGlyphRefElement.cpp">
-      <Filter>rendering\svg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\svg\SVGHKernElement.cpp">
-      <Filter>rendering\svg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\svg\SVGMaskElement.cpp">
-      <Filter>rendering\svg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\svg\SVGStyleElement.cpp">
-      <Filter>rendering\svg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\svg\SVGVKernElement.cpp">
-      <Filter>rendering\svg</Filter>
-    </ClCompile>
     <ClCompile Include="..\svg\animation\SMILTime.cpp">
-      <Filter>rendering\svg\animation</Filter>
+      <Filter>svg\animation</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\animation\SMILTimeContainer.cpp">
-      <Filter>rendering\svg\animation</Filter>
+      <Filter>svg\animation</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\animation\SVGSMILElement.cpp">
-      <Filter>rendering\svg\animation</Filter>
+      <Filter>svg\animation</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\graphics\SVGImage.cpp">
-      <Filter>rendering\svg\graphics</Filter>
+      <Filter>svg\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\graphics\SVGImageCache.cpp">
-      <Filter>rendering\svg\graphics</Filter>
+      <Filter>svg\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\graphics\filters\SVGFEImage.cpp">
-      <Filter>rendering\svg\graphics\filters</Filter>
+      <Filter>svg\graphics\filters</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\graphics\filters\SVGFilter.cpp">
-      <Filter>rendering\svg\graphics\filters</Filter>
+      <Filter>svg\graphics\filters</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\graphics\filters\SVGFilterBuilder.cpp">
-      <Filter>rendering\svg\graphics\filters</Filter>
+      <Filter>svg\graphics\filters</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\properties\SVGAnimatedProperty.cpp">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\properties\SVGAttributeToPropertyMap.cpp">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\properties\SVGPathSegListPropertyTearOff.cpp">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\properties\SVGPropertyInfo.cpp">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClCompile>
     <ClCompile Include="..\history\BackForwardController.cpp">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClCompile>
     <ClCompile Include="..\history\BackForwardList.cpp">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClCompile>
     <ClCompile Include="..\history\CachedFrame.cpp">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClCompile>
     <ClCompile Include="..\history\CachedPage.cpp">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClCompile>
     <ClCompile Include="..\history\HistoryItem.cpp">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClCompile>
     <ClCompile Include="..\history\PageCache.cpp">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClCompile>
     <ClCompile Include="..\storage\Storage.cpp">
       <Filter>storage</Filter>
@@ -5006,7 +4979,7 @@
       <Filter>page</Filter>
     </ClCompile>
     <ClCompile Include="..\svg\graphics\SVGImageForContainer.cpp">
-      <Filter>rendering\svg\graphics</Filter>
+      <Filter>svg\graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\HitTestLocation.cpp">
       <Filter>rendering</Filter>
@@ -7120,9 +7093,6 @@
     <ClCompile Include="..\css\WebKitCSSResourceValue.cpp">
       <Filter>css</Filter>
     </ClCompile>
-    <ClCompile Include="..\page\PageConfiguration.cpp" />
-    <ClCompile Include="..\loader\cache\CacheValidation.cpp" />
-    <ClCompile Include="..\html\HTMLWBRElement.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTsRGB.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -7141,8 +7111,6 @@
     <ClCompile Include="..\html\canvas\EXTBlendMinMax.cpp">
       <Filter>html\canvas</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\FontCascade.cpp" />
-    <ClCompile Include="..\platform\graphics\FontRanges.cpp" />
     <ClCompile Include="..\bindings\js\JSWebGL2RenderingContextCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
@@ -7160,6 +7128,57 @@
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLRenderingContextBase.cpp">
       <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opentype\OpenTypeMathData.cpp">
+      <Filter>platform\graphics\opentype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opentype\OpenTypeUtilities.cpp">
+      <Filter>platform\graphics\opentype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\opentype\OpenTypeVerticalData.cpp">
+      <Filter>platform\graphics\opentype</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svg\SVGAllInOne.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svg\SVGFontFaceElement.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svg\SVGGlyphElement.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svg\SVGGlyphRefElement.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svg\SVGHKernElement.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svg\SVGMaskElement.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svg\SVGToOTFFontConversion.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svg\SVGVKernElement.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svg\SVGStyleElement.cpp">
+      <Filter>svg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\FontRanges.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\FontCascade.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\html\HTMLWBRElement.cpp">
+      <Filter>html</Filter>
+    </ClCompile>
+    <ClCompile Include="..\loader\cache\CacheValidation.cpp">
+      <Filter>loader\cache</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\PageConfiguration.cpp">
+      <Filter>page</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -8463,18 +8482,6 @@
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\win\LocalWindowsContext.h">
-      <Filter>platform\graphics\win</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\opentype\OpenTypeMathData.h">
-      <Filter>platform\graphics\win</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\opentype\OpenTypeTypes.h">
-      <Filter>platform\graphics\win</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\opentype\OpenTypeUtilities.h">
-      <Filter>platform\graphics\win</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\opentype\OpenTypeVerticalData.h">
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\win\UniscribeController.h">
@@ -11462,593 +11469,95 @@
     <ClInclude Include="..\plugins\PluginMainThreadScheduler.h">
       <Filter>plugins</Filter>
     </ClInclude>
-    <ClInclude Include="..\svg\ColorDistance.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAltGlyphDefElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAltGlyphElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAltGlyphItemElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimateMotionElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimateTransformElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimationElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatorFactory.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGCircleElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGClipPathElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGColor.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGComponentTransferFunctionElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGCursorElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGDefsElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGDescElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGDocument.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGDocumentExtensions.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGElementInstance.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGElementRareData.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGEllipseElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGException.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGExternalResourcesRequired.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEBlendElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEColorMatrixElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEComponentTransferElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFECompositeElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEConvolveMatrixElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEDiffuseLightingElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEDisplacementMapElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEDistantLightElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEDropShadowElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEFloodElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEFuncAElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEFuncBElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEFuncGElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEFuncRElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEGaussianBlurElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEImageElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFELightElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEMergeElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEMergeNodeElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEOffsetElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFEPointLightElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFESpecularLightingElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFESpotLightElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFETileElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFETurbulenceElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFilterElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFilterPrimitiveStandardAttributes.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFitToViewBox.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFontData.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFontElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFontFaceElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFontFaceFormatElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFontFaceNameElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFontFaceSrcElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGFontFaceUriElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGForeignObjectElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGGElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGGlyphElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGGlyphMap.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGGlyphRefElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGGradientElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGHKernElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGImageElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGImageLoader.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGLangSpace.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGLength.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGLengthContext.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGLengthList.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGLinearGradientElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGLineElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGLocatable.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGMarkerElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGMaskElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGMatrix.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGMetadataElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGMissingGlyphElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGMPathElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGNumberList.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPaint.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGParserUtilities.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGParsingError.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathBlender.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathBuilder.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathByteStream.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathByteStreamBuilder.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathByteStreamSource.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathConsumer.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathParser.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSeg.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegArc.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegArcAbs.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegArcRel.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegClosePath.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoCubic.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicAbs.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicRel.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicSmooth.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicSmoothAbs.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicSmoothRel.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadratic.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticAbs.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticRel.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticSmoothAbs.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticSmoothRel.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegLinetoAbs.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegLinetoRel.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegLinetoHorizontal.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegLinetoHorizontalAbs.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegLinetoHorizontalRel.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegLinetoVertical.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegLinetoVerticalAbs.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegLinetoVerticalRel.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegList.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegListBuilder.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegListSource.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegMovetoAbs.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSegMovetoRel.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathSource.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathStringBuilder.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathStringSource.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathTraversalStateBuilder.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPathUtilities.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPatternElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPointList.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPolyElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPolygonElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPolylineElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGPreserveAspectRatio.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGRadialGradientElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGRectElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGRenderingIntent.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGScriptElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGSetElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGStopElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGStringList.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGGraphicsElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGStyleElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGSVGElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGSwitchElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGSymbolElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTests.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTextContentElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTextElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTextPathElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTextPositioningElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTitleElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTransform.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTransformable.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTransformDistance.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTransformList.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTRefElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGTSpanElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGUnitTypes.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGURIReference.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGUnknownElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGUseElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGViewElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGViewSpec.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGVKernElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGZoomAndPan.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGZoomEvent.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
     <ClInclude Include="..\svg\animation\SMILTime.h">
-      <Filter>rendering\svg\animation</Filter>
+      <Filter>svg\animation</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\animation\SMILTimeContainer.h">
-      <Filter>rendering\svg\animation</Filter>
+      <Filter>svg\animation</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\animation\SVGSMILElement.h">
-      <Filter>rendering\svg\animation</Filter>
+      <Filter>svg\animation</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\graphics\SVGImage.h">
-      <Filter>rendering\svg\graphics</Filter>
+      <Filter>svg\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\graphics\SVGImageCache.h">
-      <Filter>rendering\svg\graphics</Filter>
+      <Filter>svg\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\graphics\SVGImageChromeClient.h">
-      <Filter>rendering\svg\graphics</Filter>
+      <Filter>svg\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\graphics\filters\SVGFEImage.h">
-      <Filter>rendering\svg\graphics\filters</Filter>
+      <Filter>svg\graphics\filters</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\graphics\filters\SVGFilter.h">
-      <Filter>rendering\svg\graphics\filters</Filter>
+      <Filter>svg\graphics\filters</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\graphics\filters\SVGFilterBuilder.h">
-      <Filter>rendering\svg\graphics\filters</Filter>
+      <Filter>svg\graphics\filters</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGAnimatedEnumerationPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGAnimatedListPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGAnimatedPathSegListPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGAnimatedProperty.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGAnimatedPropertyDescription.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGAnimatedPropertyMacros.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGAnimatedPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGAnimatedStaticPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGAnimatedTransformListPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGAttributeToPropertyMap.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGListProperty.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGListPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGMatrixTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGPathSegListPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGProperty.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGPropertyInfo.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGPropertyTraits.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGStaticListPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGStaticPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\properties\SVGTransformListPropertyTearOff.h">
-      <Filter>rendering\svg\properties</Filter>
+      <Filter>svg\properties</Filter>
     </ClInclude>
     <ClInclude Include="..\ForwardingHeaders\bindings\ScriptFunctionCall.h">
       <Filter>ForwardingHeaders\bindings</Filter>
@@ -12186,28 +11695,28 @@
       <Filter>ForwardingHeaders\inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\history\BackForwardClient.h">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClInclude>
     <ClInclude Include="..\history\BackForwardController.h">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClInclude>
     <ClInclude Include="..\history\BackForwardList.h">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClInclude>
     <ClInclude Include="..\history\CachedFrame.h">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClInclude>
     <ClInclude Include="..\history\CachedFramePlatformData.h">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClInclude>
     <ClInclude Include="..\history\CachedPage.h">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClInclude>
     <ClInclude Include="..\history\HistoryItem.h">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClInclude>
     <ClInclude Include="..\history\PageCache.h">
-      <Filter>history</Filter>
+      <Filter>ForwardingHeaders\history</Filter>
     </ClInclude>
     <ClInclude Include="..\storage\Storage.h">
       <Filter>storage</Filter>
@@ -12623,72 +12132,6 @@
     </ClInclude>
     <ClInclude Include="..\page\Chrome.h">
       <Filter>page</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAngle.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimateElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimateColorElement.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedAngle.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedBoolean.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedColor.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedEnumeration.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedInteger.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedIntegerOptionalInteger.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedLength.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedLengthList.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedNumber.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedNumberList.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedNumberOptionalNumber.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedPath.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedPointList.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedPreserveAspectRatio.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedRect.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedString.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedTransformList.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedType.h">
-      <Filter>rendering\svg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\svg\SVGAnimatedTypeAnimator.h">
-      <Filter>rendering\svg</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\cf\CFURLExtras.h">
       <Filter>platform\cf</Filter>
@@ -15028,9 +14471,6 @@
     <ClInclude Include="..\css\WebKitCSSResourceValue.h">
       <Filter>css</Filter>
     </ClInclude>
-    <ClInclude Include="..\loader\cache\CacheValidation.h" />
-    <ClInclude Include="..\html\HTMLWBRElement.h" />
-    <ClInclude Include="..\storage\StorageNamespaceProvider.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEXTsRGB.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -15049,11 +14489,6 @@
     <ClInclude Include="..\html\canvas\EXTBlendMinMax.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\webdatabase\DatabaseBackendSync.h" />
-    <ClInclude Include="..\Modules\webdatabase\SQLStatementSync.h" />
-    <ClInclude Include="..\Modules\webdatabase\SQLTransactionBackendSync.h" />
-    <ClInclude Include="..\platform\graphics\FontCascade.h" />
-    <ClInclude Include="..\platform\graphics\FontRanges.h" />
     <ClInclude Include="..\html\canvas\WebGL2RenderingContext.h">
       <Filter>html\canvas</Filter>
     </ClInclude>
@@ -15065,6 +14500,597 @@
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLRenderingContextBase.h">
       <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\opentype\OpenTypeMathData.h">
+      <Filter>platform\graphics\opentype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\opentype\OpenTypeTypes.h">
+      <Filter>platform\graphics\opentype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\opentype\OpenTypeUtilities.h">
+      <Filter>platform\graphics\opentype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\opentype\OpenTypeVerticalData.h">
+      <Filter>platform\graphics\opentype</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\ColorDistance.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAltGlyphItemElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAltGlyphDefElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAltGlyphElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedColor.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAngle.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimateColorElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedAngle.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedBoolean.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedNumberOptionalNumber.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedEnumeration.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedInteger.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedIntegerOptionalInteger.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedLength.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedLengthList.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedNumber.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedNumberList.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedType.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedPath.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedPointList.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedPreserveAspectRatio.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedRect.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedString.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedTransformList.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGCursorElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatedTypeAnimator.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimateElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimateMotionElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimateTransformElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimationElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGAnimatorFactory.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGCircleElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGClipPathElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGColor.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGComponentTransferFunctionElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGExternalResourcesRequired.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGDefsElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGDescElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGDocument.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGDocumentExtensions.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGElementInstance.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGElementRareData.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGEllipseElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGException.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEFuncRElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEBlendElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEColorMatrixElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEComponentTransferElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFECompositeElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEConvolveMatrixElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEDiffuseLightingElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEDisplacementMapElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEDistantLightElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEDropShadowElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEFloodElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEFuncAElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEFuncBElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEFuncGElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFilterElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEGaussianBlurElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEImageElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFELightElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEMergeElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEMergeNodeElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEOffsetElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFEPointLightElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFESpecularLightingElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFESpotLightElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFETileElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFETurbulenceElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGGlyphElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFilterPrimitiveStandardAttributes.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFitToViewBox.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFontData.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFontElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFontFaceElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFontFaceFormatElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFontFaceNameElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFontFaceSrcElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGFontFaceUriElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGForeignObjectElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGGElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGImageLoader.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGGlyphMap.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGGlyphRefElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGGradientElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGGraphicsElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGHKernElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGImageElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGLocatable.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGLangSpace.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGLength.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGLengthContext.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGLengthList.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGLinearGradientElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGLineElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGMarkerElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGMaskElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGMatrix.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGMetadataElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGMissingGlyphElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGMPathElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGNumberList.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPaint.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathConsumer.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGParserUtilities.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGParsingError.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathBlender.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathBuilder.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathByteStream.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathByteStreamBuilder.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathByteStreamSource.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathParser.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathElement.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGZoomEvent.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTransform.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTransformable.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTransformDistance.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTransformList.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTRefElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTSpanElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGUnitTypes.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGUnknownElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGURIReference.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGUseElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGViewElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGViewSpec.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGVKernElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGZoomAndPan.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTitleElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicRel.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSeg.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegArc.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegArcAbs.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegArcRel.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegClosePath.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoCubic.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicAbs.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoVerticalRel.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicSmooth.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicSmoothAbs.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoCubicSmoothRel.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadratic.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticAbs.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticRel.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticSmoothAbs.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegCurvetoQuadraticSmoothRel.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoAbs.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoHorizontal.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoHorizontalAbs.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoHorizontalRel.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoRel.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoVertical.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegLinetoVerticalAbs.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathUtilities.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegList.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegListBuilder.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegListSource.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegMovetoAbs.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSegMovetoRel.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathSource.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathStringBuilder.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathStringSource.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPathTraversalStateBuilder.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGRectElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPatternElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPointList.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPolyElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPolygonElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPolylineElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGPreserveAspectRatio.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGRadialGradientElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGRenderingIntent.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTests.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGScriptElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGSetElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGStopElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGStringList.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGStyleElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGSVGElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGSwitchElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGSymbolElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTextElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTextContentElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTextPositioningElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\SVGTextPathElement.h">
+      <Filter>svg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\FontRanges.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\FontCascade.h">
+      <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\HTMLWBRElement.h">
+      <Filter>html</Filter>
+    </ClInclude>
+    <ClInclude Include="..\loader\cache\CacheValidation.h">
+      <Filter>loader\cache</Filter>
+    </ClInclude>
+    <ClInclude Include="..\storage\StorageNamespaceProvider.h">
+      <Filter>storage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
