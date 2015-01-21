@@ -33,9 +33,9 @@ namespace WebCore {
 
 class DiagnosticLoggingClient {
 public:
-    virtual void logDiagnosticMessage(const String& message, const String& description) { UNUSED_PARAM(message); UNUSED_PARAM(description); }
-    virtual void logDiagnosticMessageWithResult(const String& message, const String& description, DiagnosticLoggingResultType) { UNUSED_PARAM(message); UNUSED_PARAM(description); }
-    virtual void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value) { UNUSED_PARAM(message); UNUSED_PARAM(description); UNUSED_PARAM(value); }
+    virtual void logDiagnosticMessage(const String& message, const String& description) = 0;
+    virtual void logDiagnosticMessageWithResult(const String& message, const String& description, DiagnosticLoggingResultType) = 0;
+    virtual void logDiagnosticMessageWithValue(const String& message, const String& description, const String& value) = 0;
 
 protected:
     virtual ~DiagnosticLoggingClient() { }

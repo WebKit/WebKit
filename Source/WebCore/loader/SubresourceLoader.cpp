@@ -298,7 +298,7 @@ bool SubresourceLoader::checkForHTTPStatusCodeError()
 
 static void logResourceLoaded(Frame* frame, CachedResource::Type type)
 {
-    if (!frame || !frame->settings().diagnosticLoggingEnabled())
+    if (!frame)
         return;
 
     String resourceType;
@@ -340,8 +340,7 @@ static void logResourceLoaded(Frame* frame, CachedResource::Type type)
         resourceType = DiagnosticLoggingKeys::otherKey();
         break;
     }
-    if (auto* client = frame->mainFrame().diagnosticLoggingClient())
-        client->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceKey(), DiagnosticLoggingKeys::loadedKey(), resourceType);
+    frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceKey(), DiagnosticLoggingKeys::loadedKey(), resourceType);
 }
 
 void SubresourceLoader::didFinishLoading(double finishTime)

@@ -1829,25 +1829,22 @@ void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
 
 static void logMediaLoadRequest(Page* page, const String& mediaEngine, const String& errorMessage, bool succeeded)
 {
-    if (!page || !page->settings().diagnosticLoggingEnabled())
+    if (!page)
         return;
 
-    DiagnosticLoggingClient* diagnosticLoggingClient = page->mainFrame().diagnosticLoggingClient();
-    if (!diagnosticLoggingClient)
-        return;
-
+    DiagnosticLoggingClient& diagnosticLoggingClient = page->mainFrame().diagnosticLoggingClient();
     if (!succeeded) {
-        diagnosticLoggingClient->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::mediaLoadingFailedKey(), errorMessage, DiagnosticLoggingResultFail);
+        diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::mediaLoadingFailedKey(), errorMessage, DiagnosticLoggingResultFail);
         return;
     }
 
-    diagnosticLoggingClient->logDiagnosticMessage(DiagnosticLoggingKeys::mediaLoadedKey(), mediaEngine);
+    diagnosticLoggingClient.logDiagnosticMessage(DiagnosticLoggingKeys::mediaLoadedKey(), mediaEngine);
 
     if (!page->hasSeenAnyMediaEngine())
-        diagnosticLoggingClient->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey(), emptyString());
+        diagnosticLoggingClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey(), emptyString());
 
     if (!page->hasSeenMediaEngine(mediaEngine))
-        diagnosticLoggingClient->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsMediaEngineKey(), mediaEngine);
+        diagnosticLoggingClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsMediaEngineKey(), mediaEngine);
 
     page->sawMediaEngine(mediaEngine);
 }
@@ -5786,16 +5783,8 @@ void HTMLMediaElement::mediaPlayerEngineFailedToLoad() const
     if (!m_player)
         return;
 
-    Page* page = document().page();
-    if (!page || !page->settings().diagnosticLoggingEnabled())
-        return;
-
-    DiagnosticLoggingClient* diagnosticLoggingClient = page->mainFrame().diagnosticLoggingClient();
-    if (!diagnosticLoggingClient)
-        return;
-
-    String engine = m_player->engineDescription();
-    diagnosticLoggingClient->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::engineFailedToLoadKey(), engine, String::number(m_player->platformErrorCode()));
+    if (Frame* frame = document().frame())
+        frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::engineFailedToLoadKey(), m_player->engineDescription(), String::number(m_player->platformErrorCode()));
 }
 
 double HTMLMediaElement::mediaPlayerRequestedPlaybackRate() const

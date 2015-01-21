@@ -1400,10 +1400,7 @@ static void logNavigation(MainFrame& frame, FrameLoadType type)
         // Not logging those for now.
         return;
     }
-    if (frame.settings().diagnosticLoggingEnabled()) {
-        if (auto* client = frame.diagnosticLoggingClient())
-            client->logDiagnosticMessage(DiagnosticLoggingKeys::navigationKey(), navigationDescription);
-    }
+    frame.diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::navigationKey(), navigationDescription);
 }
 
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, PassRefPtr<FormState> prpFormState, AllowNavigationToInvalidURL allowNavigationToInvalidURL)
@@ -2277,14 +2274,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (AXObjectCache* cache = m_frame.document()->existingAXObjectCache())
                 cache->frameLoadingEventNotification(&m_frame, loadingEvent);
 
-            if (!page || !page->settings().diagnosticLoggingEnabled())
-                return;
-
-            DiagnosticLoggingClient* diagnosticLoggingClient = page->mainFrame().diagnosticLoggingClient();
-            if (!diagnosticLoggingClient)
-                return;
-
-            diagnosticLoggingClient->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingResultPass : DiagnosticLoggingResultFail);
+            if (page)
+                page->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingResultPass : DiagnosticLoggingResultFail);
 
             return;
         }

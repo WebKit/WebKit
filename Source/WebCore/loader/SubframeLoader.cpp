@@ -180,7 +180,7 @@ static String findPluginMIMETypeFromURL(Page* page, const String& url)
 
 static void logPluginRequest(Page* page, const String& mimeType, const String& url, bool success)
 {
-    if (!page || !page->settings().diagnosticLoggingEnabled())
+    if (!page)
         return;
 
     String newMIMEType = mimeType;
@@ -194,17 +194,14 @@ static void logPluginRequest(Page* page, const String& mimeType, const String& u
     String pluginFile = page->pluginData().pluginFileForMimeType(newMIMEType);
     String description = !pluginFile ? newMIMEType : pluginFile;
 
-    DiagnosticLoggingClient* diagnosticLoggingClient = page->mainFrame().diagnosticLoggingClient();
-    if (!diagnosticLoggingClient)
-        return;
-
-    diagnosticLoggingClient->logDiagnosticMessage(success ? DiagnosticLoggingKeys::pluginLoadedKey() : DiagnosticLoggingKeys::pluginLoadingFailedKey(), description);
+    DiagnosticLoggingClient& diagnosticLoggingClient = page->mainFrame().diagnosticLoggingClient();
+    diagnosticLoggingClient.logDiagnosticMessage(success ? DiagnosticLoggingKeys::pluginLoadedKey() : DiagnosticLoggingKeys::pluginLoadingFailedKey(), description);
 
     if (!page->hasSeenAnyPlugin())
-        diagnosticLoggingClient->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey(), emptyString());
+        diagnosticLoggingClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey(), emptyString());
 
     if (!page->hasSeenPlugin(description))
-        diagnosticLoggingClient->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsPluginKey(), description);
+        diagnosticLoggingClient.logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsPluginKey(), description);
 
     page->sawPlugin(description);
 }

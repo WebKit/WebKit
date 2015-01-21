@@ -61,7 +61,7 @@ public:
     void resetLatchingState();
 #endif // PLATFORM(MAC)
 
-    DiagnosticLoggingClient* diagnosticLoggingClient() const { return m_diagnosticLoggingClient; }
+    DiagnosticLoggingClient& diagnosticLoggingClient() const;
 
 private:
     MainFrame(Page&, PageConfiguration&);

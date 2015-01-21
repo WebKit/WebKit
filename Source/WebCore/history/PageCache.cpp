@@ -96,10 +96,9 @@ enum ReasonFrameCannotBeInPageCache {
 };
 COMPILE_ASSERT(NumberOfReasonsFramesCannotBeInPageCache <= sizeof(unsigned)*8, ReasonFrameCannotBeInPageCacheDoesNotFitInBitmap);
 
-static inline void logPageCacheFailureDiagnosticMessage(DiagnosticLoggingClient* client, const String& reason)
+static inline void logPageCacheFailureDiagnosticMessage(DiagnosticLoggingClient& client, const String& reason)
 {
-    if (client)
-        client->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::failureKey(), reason);
+    client.logDiagnosticMessageWithValue(DiagnosticLoggingKeys::pageCacheKey(), DiagnosticLoggingKeys::failureKey(), reason);
 }
 
 static inline void logPageCacheFailureDiagnosticMessage(Page* page, const String& reason)
@@ -107,12 +106,10 @@ static inline void logPageCacheFailureDiagnosticMessage(Page* page, const String
     if (!page)
         return;
 
-    MainFrame& mainFrame = page->mainFrame();
-    if (mainFrame.settings().diagnosticLoggingEnabled())
-        logPageCacheFailureDiagnosticMessage(mainFrame.diagnosticLoggingClient(), reason);
+    logPageCacheFailureDiagnosticMessage(page->mainFrame().diagnosticLoggingClient(), reason);
 }
 
-static unsigned logCanCacheFrameDecision(Frame& frame, DiagnosticLoggingClient* diagnosticLoggingClient, int indentLevel)
+static unsigned logCanCacheFrameDecision(Frame& frame, DiagnosticLoggingClient& diagnosticLoggingClient, int indentLevel)
 {
     PCLOG("+---");
     if (!frame.loader().documentLoader()) {
@@ -241,7 +238,7 @@ static void logCanCachePageDecision(Page& page)
     
     unsigned rejectReasons = 0;
     MainFrame& mainFrame = page.mainFrame();
-    DiagnosticLoggingClient* diagnosticLoggingClient = mainFrame.settings().diagnosticLoggingEnabled() ? mainFrame.diagnosticLoggingClient() : nullptr;
+    DiagnosticLoggingClient& diagnosticLoggingClient = mainFrame.diagnosticLoggingClient();
     unsigned frameRejectReasons = logCanCacheFrameDecision(mainFrame, diagnosticLoggingClient, indentLevel + 1);
     if (frameRejectReasons)
         rejectReasons |= 1 << FrameCannotBeInPageCache;
@@ -291,8 +288,7 @@ static void logCanCachePageDecision(Page& page)
     else
         PCLOG(" Page CAN be cached\n--------");
 
-    if (diagnosticLoggingClient)
-        diagnosticLoggingClient->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), emptyString(), rejectReasons ? DiagnosticLoggingResultFail : DiagnosticLoggingResultPass);
+    diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), emptyString(), rejectReasons ? DiagnosticLoggingResultFail : DiagnosticLoggingResultPass);
 }
 
 PageCache* pageCache()

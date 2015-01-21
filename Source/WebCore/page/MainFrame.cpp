@@ -27,10 +27,13 @@
 #include "MainFrame.h"
 
 #include "Element.h"
+#include "EmptyClients.h"
 #include "PageConfiguration.h"
 #include "PageOverlayController.h"
 #include "ScrollLatchingState.h"
+#include "Settings.h"
 #include "WheelEventDeltaTracker.h"
+#include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(MAC)
 #include "ServicesOverlayController.h"
@@ -79,6 +82,15 @@ void MainFrame::selfOnlyDeref()
         dropChildren();
 
     deref();
+}
+
+DiagnosticLoggingClient& MainFrame::diagnosticLoggingClient() const
+{
+    static NeverDestroyed<EmptyDiagnosticLoggingClient> dummyClient;
+    if (!settings().diagnosticLoggingEnabled() || !m_diagnosticLoggingClient)
+        return dummyClient;
+
+    return *m_diagnosticLoggingClient;
 }
 
 void MainFrame::dropChildren()

@@ -1,3 +1,41 @@
+2015-01-20  Chris Dumez  <cdumez@apple.com>
+
+        Simplify DiagnosticLoggingClient call sites
+        https://bugs.webkit.org/show_bug.cgi?id=140701
+
+        Reviewed by Andreas Kling.
+
+        Simplify DiagnosticLoggingClient call sites by:
+        - Moving the Settings::diagnosticLoggingEnabled() check inside the
+          MainFrame::diagnosticLoggingClient() getter.
+        - Having MainFrame::diagnosticLoggingClient() return a reference
+          instead of a pointer (returning a dummy client if necessary).
+
+        Otherwise, each call site needs to both check the setting and do a
+        null-check on the client which is a bit annoying.
+
+        * history/PageCache.cpp:
+        (WebCore::logPageCacheFailureDiagnosticMessage):
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::logCanCachePageDecision):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::logNavigation):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        * loader/SubframeLoader.cpp:
+        (WebCore::logPluginRequest):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded):
+        * page/DiagnosticLoggingClient.h:
+        (WebCore::DiagnosticLoggingClient::logDiagnosticMessage): Deleted.
+        (WebCore::DiagnosticLoggingClient::logDiagnosticMessageWithResult): Deleted.
+        (WebCore::DiagnosticLoggingClient::logDiagnosticMessageWithValue): Deleted.
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::diagnosticLoggingClient):
+        * page/MainFrame.h:
+
 2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should show dynamic specificity values
