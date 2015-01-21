@@ -1,5 +1,21 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173934.
+
+    2014-09-24  Sam Weinig  <sam@webkit.org>
+
+            Remove incorrect use of the BKSProcessAssertionAllowSuspendOnSleep flag for process suspension in iOS WebKit2
+            <rdar://problem/18400566>
+            https://bugs.webkit.org/show_bug.cgi?id=137077
+
+            Reviewed by Anders Carlsson.
+
+            * UIProcess/ios/ProcessAssertionIOS.mm:
+            Remove use of the BKSProcessAssertionAllowSuspendOnSleep which does not do what we expect, and instead
+            causes processes to be suspended "forever" after sleep.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r173737.
 
     2014-09-18  Simon Fraser  <simon.fraser@apple.com>
