@@ -1,3 +1,13 @@
+2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should show dynamic specificity values
+        https://bugs.webkit.org/show_bug.cgi?id=140647
+
+        Reviewed by Benjamin Poulain.
+
+        * inspector/css/selector-dynamic-specificity-expected.txt: Added.
+        * inspector/css/selector-dynamic-specificity.html: Added.
+
 2015-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         http/tests/xmlhttprequest/xmlhttprequest-responseURL.html uses an incorrect resource path

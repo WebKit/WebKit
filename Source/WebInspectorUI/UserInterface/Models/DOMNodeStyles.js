@@ -770,7 +770,7 @@ WebInspector.DOMNodeStyles.prototype = {
         }
 
         return selectors.map(function(selectorPayload) {
-            return new WebInspector.CSSSelector(selectorPayload.text, selectorPayload.specificity);
+            return new WebInspector.CSSSelector(selectorPayload.text, selectorPayload.specificity, selectorPayload.dynamic);
         });
     },
 

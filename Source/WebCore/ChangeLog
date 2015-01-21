@@ -1,3 +1,33 @@
+2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should show dynamic specificity values
+        https://bugs.webkit.org/show_bug.cgi?id=140647
+
+        Reviewed by Benjamin Poulain.
+
+        Test: inspector/css/selector-dynamic-specificity.html
+
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::addRule):
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+        (WebCore::InspectorCSSAgent::buildArrayForMatchedRuleList):
+        When building a response for a particular element, pass the element along.
+
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::hasDynamicSpecificity):
+        (WebCore::buildObjectForSelectorHelper):
+        (WebCore::selectorsFromSource):
+        (WebCore::InspectorStyleSheet::buildObjectForSelector):
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        (WebCore::InspectorStyleSheet::buildArrayForRuleList):
+        (WebCore::InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle):
+        When building a response for a Selector, include the specificity if we know
+        the element in context.
+
 2015-01-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Build fix after r178760.

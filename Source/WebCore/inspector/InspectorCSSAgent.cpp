@@ -781,7 +781,7 @@ void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const RefPtr<I
     bool success = m_domAgent->history()->perform(std::make_unique<SetRuleSelectorAction>(inspectorStyleSheet, compoundId, selector), ec);
 
     if (success)
-        result = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
+        result = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId), nullptr);
     errorString = InspectorDOMAgent::toErrorString(ec);
 }
 
@@ -808,7 +808,7 @@ void InspectorCSSAgent::addRule(ErrorString& errorString, const int contextNodeI
 
     InspectorCSSId ruleId = rawAction->newRuleId();
     CSSStyleRule* rule = inspectorStyleSheet->ruleForId(ruleId);
-    result = inspectorStyleSheet->buildObjectForRule(rule);
+    result = inspectorStyleSheet->buildObjectForRule(rule, nullptr);
 }
 
 void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSPropertyInfo>>& cssProperties)
@@ -1016,7 +1016,7 @@ Inspector::Protocol::CSS::StyleSheetOrigin InspectorCSSAgent::detectOrigin(CSSSt
     return origin;
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(StyleRule* styleRule, StyleResolver& styleResolver)
+RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(StyleRule* styleRule, StyleResolver& styleResolver, Element* element)
 {
     if (!styleRule)
         return nullptr;
@@ -1027,7 +1027,7 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
     if (!cssomWrapper)
         return nullptr;
     InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(cssomWrapper->parentStyleSheet());
-    return inspectorStyleSheet ? inspectorStyleSheet->buildObjectForRule(cssomWrapper) : nullptr;
+    return inspectorStyleSheet ? inspectorStyleSheet->buildObjectForRule(cssomWrapper, element) : nullptr;
 }
 
 RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(CSSStyleRule* rule)
@@ -1037,7 +1037,7 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
 
     ASSERT(rule->parentStyleSheet());
     InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(rule->parentStyleSheet());
-    return inspectorStyleSheet ? inspectorStyleSheet->buildObjectForRule(rule) : nullptr;
+    return inspectorStyleSheet ? inspectorStyleSheet->buildObjectForRule(rule, nullptr) : nullptr;
 }
 
 RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMatchedRuleList(const Vector<RefPtr<StyleRule>>& matchedRules, StyleResolver& styleResolver, Element* element)
@@ -1048,7 +1048,7 @@ RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> Inspecto
     SelectorChecker selectorChecker(element->document());
 
     for (auto& matchedRule : matchedRules) {
-        RefPtr<Inspector::Protocol::CSS::CSSRule> ruleObject = buildObjectForRule(matchedRule.get(), styleResolver);
+        RefPtr<Inspector::Protocol::CSS::CSSRule> ruleObject = buildObjectForRule(matchedRule.get(), styleResolver, element);
         if (!ruleObject)
             continue;
 

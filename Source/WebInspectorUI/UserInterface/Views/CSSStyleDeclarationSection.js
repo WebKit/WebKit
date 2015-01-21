@@ -181,7 +181,20 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
             var specificity = selector.specificity;
             if (specificity) {
                 var approximatedSpecificity = (specificity[0] * 100) + (specificity[1] * 10) + specificity[2];
-                selectorElement.title = WebInspector.UIString("Specificity: (%d, %d, %d) ≈ %d").format(specificity[0], specificity[1], specificity[2], approximatedSpecificity);
+                var tooltip = WebInspector.UIString("Specificity: (%d, %d, %d) ≈ %d").format(specificity[0], specificity[1], specificity[2], approximatedSpecificity);
+                if (selector.dynamic) {
+                    tooltip += "\n";
+                    if (this._style.inherited)
+                        tooltip += WebInspector.UIString("Dynamically calculated for the parent element");
+                    else
+                        tooltip += WebInspector.UIString("Dynamically calculated for the selected element");
+                }
+                selectorElement.title = tooltip;
+            } else if (selector.dynamic) {
+                var tooltip = WebInspector.UIString("Specificity: No value for selected element");
+                tooltip += "\n";
+                tooltip += WebInspector.UIString("Dynamically calculated for the selected element and did not match");
+                selectorElement.title = tooltip;
             }
 
             this._selectorElement.appendChild(selectorElement);

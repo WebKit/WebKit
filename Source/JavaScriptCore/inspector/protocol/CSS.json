@@ -63,7 +63,8 @@
             "type": "object",
             "properties": [
                 { "name": "text", "type": "string", "description": "Canonicalized selector text." },
-                { "name": "specificity", "optional": true, "type": "array", "items": { "type": "integer" }, "description": "Specificity (a, b, c) tuple. If missing the specificity is not known statically and may be dynamic." }
+                { "name": "specificity", "optional": true, "type": "array", "items": { "type": "integer" }, "description": "Specificity (a, b, c) tuple. Included if the selector is sent in response to CSS.getMatchedStylesForNode which provides a context element." },
+                { "name": "dynamic", "optional": true, "type": "boolean", "description": "Whether or not the specificity can be dynamic. Included if the selector is sent in response to CSS.getMatchedStylesForNode which provides a context element." }
             ],
             "description": "CSS selector."
         },

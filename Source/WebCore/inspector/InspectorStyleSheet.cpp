@@ -996,27 +996,58 @@ RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::build
         .release();
 }
 
-static Ref<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String& selectorText, const CSSSelector& selector)
+static bool hasDynamicSpecificity(const CSSSelector& simpleSelector)
+{
+    // It is possible that these can have a static specificity if each selector in the list has
+    // equal specificity, but lets always report that they can be dynamic.
+    for (const CSSSelector* selector = &simpleSelector; selector; selector = selector->tagHistory()) {
+        if (selector->match() == CSSSelector::PseudoClass) {
+            CSSSelector::PseudoClassType pseudoClassType = selector->pseudoClassType();
+            if (pseudoClassType == CSSSelector::PseudoClassMatches)
+                return true;
+            if (pseudoClassType == CSSSelector::PseudoClassNthChild || pseudoClassType == CSSSelector::PseudoClassNthLastChild) {
+                if (selector->selectorList())
+                    return true;
+                return false;
+            }
+        }
+    }
+
+    return false;
+}
+
+static Ref<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String& selectorText, const CSSSelector& selector, Element* element)
 {
     auto inspectorSelector = Inspector::Protocol::CSS::CSSSelector::create()
         .setText(selectorText)
         .release();
 
-    bool ok;
-    unsigned specificity = selector.staticSpecificity(ok);
+    if (element) {
+        bool dynamic = hasDynamicSpecificity(selector);
+        if (dynamic)
+            inspectorSelector->setDynamic(true);
 
-    if (ok) {
-        auto tuple = Inspector::Protocol::Array<int>::create();
-        tuple->addItem(static_cast<int>((specificity & CSSSelector::idMask) >> 16));
-        tuple->addItem(static_cast<int>((specificity & CSSSelector::classMask) >> 8));
-        tuple->addItem(static_cast<int>(specificity & CSSSelector::elementMask));
-        inspectorSelector->setSpecificity(WTF::move(tuple));
+        SelectorChecker::CheckingContext context(SelectorChecker::Mode::CollectingRules);
+        SelectorChecker selectorChecker(element->document());
+
+        unsigned specificity;
+        bool okay = selectorChecker.match(&selector, element, context, specificity);
+        if (!okay)
+            specificity = selector.staticSpecificity(okay);
+
+        if (okay) {
+            auto tuple = Inspector::Protocol::Array<int>::create();
+            tuple->addItem(static_cast<int>((specificity & CSSSelector::idMask) >> 16));
+            tuple->addItem(static_cast<int>((specificity & CSSSelector::classMask) >> 8));
+            tuple->addItem(static_cast<int>(specificity & CSSSelector::elementMask));
+            inspectorSelector->setSpecificity(WTF::move(tuple));
+        }
     }
 
     return WTF::move(inspectorSelector);
 }
 
-static Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> selectorsFromSource(const CSSRuleSourceData* sourceData, const String& sheetText, const CSSSelectorList& selectorList)
+static Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> selectorsFromSource(const CSSRuleSourceData* sourceData, const String& sheetText, const CSSSelectorList& selectorList, Element* element)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(JSC::Yarr::RegularExpression, comment, ("/\\*[^]*?\\*/", TextCaseSensitive, JSC::Yarr::MultilineEnabled));
 
@@ -1029,19 +1060,19 @@ static Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>> se
 
         // We don't want to see any comments in the selector components, only the meaningful parts.
         replace(selectorText, comment, String());
-        result->addItem(buildObjectForSelectorHelper(selectorText.stripWhiteSpace(), *selector));
+        result->addItem(buildObjectForSelectorHelper(selectorText.stripWhiteSpace(), *selector, element));
 
         selector = CSSSelectorList::next(selector);
     }
     return WTF::move(result);
 }
 
-Ref<Inspector::Protocol::CSS::CSSSelector> InspectorStyleSheet::buildObjectForSelector(const CSSSelector* selector)
+Ref<Inspector::Protocol::CSS::CSSSelector> InspectorStyleSheet::buildObjectForSelector(const CSSSelector* selector, Element* element)
 {
-    return buildObjectForSelectorHelper(selector->selectorText(), *selector);
+    return buildObjectForSelectorHelper(selector->selectorText(), *selector, element);
 }
 
-Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForSelectorList(CSSStyleRule* rule)
+Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForSelectorList(CSSStyleRule* rule, Element* element)
 {
     RefPtr<CSSRuleSourceData> sourceData;
     if (ensureParsedDataReady())
@@ -1052,12 +1083,12 @@ Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForS
     String selectorText = rule->selectorText();
 
     if (sourceData)
-        selectors = selectorsFromSource(sourceData.get(), m_parsedStyleSheet->text(), rule->styleRule().selectorList());
+        selectors = selectorsFromSource(sourceData.get(), m_parsedStyleSheet->text(), rule->styleRule().selectorList(), element);
     else {
         selectors = Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSSelector>::create();
         const CSSSelectorList& selectorList = rule->styleRule().selectorList();
         for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
-            selectors->addItem(buildObjectForSelector(selector));
+            selectors->addItem(buildObjectForSelector(selector, element));
     }
     auto result = Inspector::Protocol::CSS::SelectorList::create()
         .setSelectors(selectors.release())
@@ -1068,14 +1099,14 @@ Ref<Inspector::Protocol::CSS::SelectorList> InspectorStyleSheet::buildObjectForS
     return WTF::move(result);
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRule(CSSStyleRule* rule)
+RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRule(CSSStyleRule* rule, Element* element)
 {
     CSSStyleSheet* styleSheet = pageStyleSheet();
     if (!styleSheet)
         return nullptr;
 
     auto result = Inspector::Protocol::CSS::CSSRule::create()
-        .setSelectorList(buildObjectForSelectorList(rule))
+        .setSelectorList(buildObjectForSelectorList(rule, element))
         .setSourceLine(rule->styleRule().sourceLine())
         .setOrigin(m_origin)
         .setStyle(buildObjectForStyle(&rule->style()))
@@ -1435,7 +1466,7 @@ Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSRule>> InspectorStyl
     collectFlatRules(WTF::move(refRuleList), &rules);
 
     for (unsigned i = 0, size = rules.size(); i < size; ++i)
-        result->addItem(buildObjectForRule(rules.at(i).get()));
+        result->addItem(buildObjectForRule(rules.at(i).get(), nullptr));
 
     return WTF::move(result);
 }
@@ -1464,7 +1495,7 @@ Ref<InspectorStyleSheetForInlineStyle> InspectorStyleSheetForInlineStyle::create
 }
 
 InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(InspectorPageAgent* pageAgent, const String& id, RefPtr<Element>&& element, Inspector::Protocol::CSS::StyleSheetOrigin origin, Listener* listener)
-    : InspectorStyleSheet(pageAgent, id, nullptr, origin, "", listener)
+    : InspectorStyleSheet(pageAgent, id, nullptr, origin, String(), listener)
     , m_element(WTF::move(element))
     , m_ruleSourceData(nullptr)
     , m_isStyleTextValid(false)

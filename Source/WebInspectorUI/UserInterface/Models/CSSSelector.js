@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSSelector = function(text, specificity)
+WebInspector.CSSSelector = function(text, specificity, dynamic)
 {
     WebInspector.Object.call(this);
 
@@ -31,6 +31,7 @@ WebInspector.CSSSelector = function(text, specificity)
 
     this._text = text;
     this._specificity = specificity || null;
+    this._dynamic = dynamic || false;
 };
 
 WebInspector.CSSSelector.prototype = {
@@ -47,5 +48,10 @@ WebInspector.CSSSelector.prototype = {
     get specificity()
     {
         return this._specificity;
+    },
+
+    get dynamic()
+    {
+        return this._dynamic;
     }
 };

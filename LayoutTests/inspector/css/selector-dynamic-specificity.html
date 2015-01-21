@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+:matches(div, article),                         /* dynamic, but statically always the same */
+:matches(div, .foo, #bar, div#bar),             /* dynamic, changing based on matched element */
+div:nth-child(odd),                             /* static, no selector list */
+:nth-child(odd of div),                         /* dynamic, but statically always the same */
+:nth-child(odd of div, .foo, #bar, div#bar),    /* dynamic, changing based on matched element */
+:nth-child(even of div, .foo, #bar, div#bar),   /* dynamic, changing based on matched element */
+:not(span, #missing),                           /* static, maximum in list */
+:not(:not(:matches(div, .foo, #bar, div#bar))), /* static, matches() inside not() is maximized */
+* /* ignored */
+{
+    color: green;
+}
+</style>
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test() {
+    var nodeStyles;
+    var documentNode;
+
+    var currentSelector = null;
+    var currentStepIndex = 0;
+    var steps = ["p", "div", ".foo", "#bar"];
+
+    function validateSelectors()
+    {
+        InspectorTest.log("");
+
+        var seenRules = [];
+
+        for (var i = 0; i < nodeStyles.matchedRules.length; ++i) {
+            var rule = nodeStyles.matchedRules[i];
+            if (rule.type !== WebInspector.CSSRule.Type.Author)
+                continue;
+
+            if (seenRules.some(function(r) { return r.isEqualTo(rule); }))
+                continue;
+            seenRules.push(rule);
+
+            for (var selector of rule.selectors) {
+                if (selector.text === "*")
+                    continue;
+
+                var output = currentSelector + " - " + selector.text;
+                output += selector.specificity ? " (" + selector.specificity.join(", ") + ")" : " (no value)";
+                if (selector.dynamic)
+                    output += " (dynamic)";
+                InspectorTest.log(output);
+            }
+        }
+
+        runNextStep();
+    }
+
+    function onStylesRefreshed()
+    {
+        nodeStyles.removeEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+        validateSelectors();
+    }
+
+    function runNextStep()
+    {
+        if (currentStepIndex >= steps.length) {
+            InspectorTest.completeTest();
+            return;
+        }
+
+        currentSelector = steps[currentStepIndex++];
+        WebInspector.domTreeManager.querySelector(documentNode.id, currentSelector, function(contentNodeId) {
+            if (contentNodeId) {
+                var domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
+                nodeStyles = WebInspector.cssStyleManager.stylesForNode(domNode);
+
+                if (nodeStyles.needsRefresh)
+                    nodeStyles.addEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+                else
+                    validateSelectors();
+            } else {
+                InspectorTest.log("DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    }
+
+    WebInspector.domTreeManager.requestDocument(function(node) {
+        documentNode = node;
+        runNextStep();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that dynamic selectors have expected specificity values depending on the context node.</p>
+
+    <div></div>
+    <div class="foo"></div>
+    <div id="bar"></div>
+</body>
+</html>
