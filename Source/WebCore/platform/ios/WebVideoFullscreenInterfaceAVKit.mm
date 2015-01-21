@@ -385,7 +385,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
 
 - (BOOL)hasAudioMediaSelectionOptions
 {
-    return [[self audioMediaSelectionOptions] count] > 0;
+    return [[self audioMediaSelectionOptions] count] > 1;
 }
 
 + (NSSet *)keyPathsForValuesAffectingHasAudioMediaSelectionOptions
@@ -395,7 +395,8 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
 
 - (BOOL)hasLegibleMediaSelectionOptions
 {
-    return [[self legibleMediaSelectionOptions] count] > 0;
+    const NSUInteger numDefaultLegibleOptions = 2;
+    return [[self legibleMediaSelectionOptions] count] > numDefaultLegibleOptions;
 }
 
 + (NSSet *)keyPathsForValuesAffectingHasLegibleMediaSelectionOptions
