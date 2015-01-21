@@ -1,5 +1,21 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175135.
+
+    2014-10-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+            [iOS] iPhone unselecting items in <select multiple> shows incorrect values selected
+            https://bugs.webkit.org/show_bug.cgi?id=137989
+
+            Reviewed by Alexey Proskuryakov.
+
+            * UIProcess/ios/forms/WKFormSelectPicker.mm:
+            (-[WKMultipleSelectPicker pickerView:row:column:checked:]):
+            The second argument is "allowsMultipleSelection" and should only be set
+            when we are making a selection in a <select multiple>.
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r174148.
 
     2014-10-01  Joseph Pecoraro  <pecoraro@apple.com>
