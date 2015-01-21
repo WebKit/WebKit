@@ -285,7 +285,6 @@ public:
     virtual void didFinishDrawingPagesToPDF(const IPC::DataReference&) = 0;
     virtual Vector<String> mimeTypesWithCustomContentProviders() = 0;
 
-#if ENABLE(INSPECTOR)
     virtual void showInspectorHighlight(const WebCore::Highlight&) = 0;
     virtual void hideInspectorHighlight() = 0;
 
@@ -294,7 +293,6 @@ public:
 
     virtual void enableInspectorNodeSearch() = 0;
     virtual void disableInspectorNodeSearch() = 0;
-#endif
 #endif
 
     // Auxiliary Client Creation

@@ -26,8 +26,6 @@
 #ifndef JSJavaScriptCallFramePrototype_h
 #define JSJavaScriptCallFramePrototype_h
 
-#if ENABLE(INSPECTOR)
-
 #include "JSObject.h"
 
 namespace Inspector {
@@ -62,7 +60,5 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(JSJavaScriptCallFramePrototype_h)

@@ -57,20 +57,17 @@ namespace WebCore {
         virtual bool hasPendingActivity() const override;
         virtual void workerObjectDestroyed() override;
         virtual void notifyNetworkStateChange(bool isOnline) override;
-#if ENABLE(INSPECTOR)
+
         virtual void connectToInspector(WorkerGlobalScopeProxy::PageInspector*) override;
         virtual void disconnectFromInspector() override;
         virtual void sendMessageToInspector(const String&) override;
-#endif
 
         // Implementations of WorkerObjectProxy.
         // (Only use these methods in the worker context thread.)
         virtual void postMessageToWorkerObject(PassRefPtr<SerializedScriptValue>, std::unique_ptr<MessagePortChannelArray>) override;
         virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) override;
         virtual void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, int columnNumber, const String& sourceURL) override;
-#if ENABLE(INSPECTOR)
         virtual void postMessageToPageInspector(const String&) override;
-#endif
         virtual void confirmMessageFromWorkerObject(bool hasPendingActivity) override;
         virtual void reportPendingActivity(bool hasPendingActivity) override;
         virtual void workerGlobalScopeClosed() override;
@@ -112,9 +109,7 @@ namespace WebCore {
         bool m_askedToTerminate;
 
         Vector<std::unique_ptr<ScriptExecutionContext::Task>> m_queuedEarlyTasks; // Tasks are queued here until there's a thread object created.
-#if ENABLE(INSPECTOR)
         WorkerGlobalScopeProxy::PageInspector* m_pageInspector;
-#endif
     };
 
 } // namespace WebCore

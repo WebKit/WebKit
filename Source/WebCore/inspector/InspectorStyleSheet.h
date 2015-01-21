@@ -51,8 +51,6 @@ class Element;
 class InspectorPageAgent;
 class InspectorStyleSheet;
 
-#if ENABLE(INSPECTOR)
-
 typedef String ErrorString;
 
 class InspectorCSSId {
@@ -289,8 +287,6 @@ private:
     mutable String m_styleText;
     mutable bool m_isStyleTextValid;
 };
-
-#endif
 
 } // namespace WebCore
 

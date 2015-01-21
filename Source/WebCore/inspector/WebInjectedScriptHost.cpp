@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebInjectedScriptHost.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "ExceptionHeaders.h"
 #include "ExceptionInterfaces.h"
 #include "JSHTMLAllCollection.h"
@@ -63,5 +61,3 @@ bool WebInjectedScriptHost::isHTMLAllCollection(JSC::JSValue value)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

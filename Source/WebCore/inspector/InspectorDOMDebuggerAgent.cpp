@@ -31,8 +31,6 @@
 #include "config.h"
 #include "InspectorDOMDebuggerAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "HTMLElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorInstrumentation.h"
@@ -424,5 +422,3 @@ void InspectorDOMDebuggerAgent::clear()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

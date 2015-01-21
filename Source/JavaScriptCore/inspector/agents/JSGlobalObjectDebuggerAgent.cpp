@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSGlobalObjectDebuggerAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "ConsoleMessage.h"
 #include "InjectedScriptManager.h"
 #include "InspectorConsoleAgent.h"
@@ -74,5 +72,3 @@ void JSGlobalObjectDebuggerAgent::breakpointActionLog(JSC::ExecState* exec, cons
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

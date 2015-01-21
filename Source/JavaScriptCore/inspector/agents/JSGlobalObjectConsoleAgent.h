@@ -26,8 +26,6 @@
 #ifndef JSGlobalObjectConsoleAgent_h
 #define JSGlobalObjectConsoleAgent_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorConsoleAgent.h"
 #include "JSGlobalObjectScriptDebugServer.h"
 
@@ -48,7 +46,5 @@ public:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(JSGlobalObjectConsoleAgent_h)

@@ -178,10 +178,10 @@ void TestInvocation::invoke()
     dumpResults();
 
 end:
-#if ENABLE(INSPECTOR) && !PLATFORM(IOS)
+#if !PLATFORM(IOS)
     if (m_gotInitialResponse)
         WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
-#endif // ENABLE(INSPECTOR)
+#endif // !PLATFORM(IOS)
 
     if (m_webProcessIsUnresponsive)
         dumpWebProcessUnresponsiveness();

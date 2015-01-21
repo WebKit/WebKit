@@ -27,8 +27,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
 #include "InspectorOverlay.h"
 
 #include "DocumentLoader.h"
@@ -903,5 +901,3 @@ void InspectorOverlay::freePage()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

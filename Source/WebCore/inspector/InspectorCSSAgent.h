@@ -61,8 +61,6 @@ class StyleResolver;
 class StyleRule;
 class ChangeRegionOversetTask;
 
-#if ENABLE(INSPECTOR)
-
 class InspectorCSSAgent final
     : public InspectorAgentBase
     , public InspectorDOMAgent::DOMListener
@@ -183,8 +181,6 @@ private:
 
     int m_lastStyleSheetId;
 };
-
-#endif
 
 } // namespace WebCore
 

@@ -31,8 +31,6 @@
 #include "config.h"
 #include "PageConsoleAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "CommandLineAPIHost.h"
 #include "InspectorDOMAgent.h"
 #include "Node.h"
@@ -79,5 +77,3 @@ void PageConsoleAgent::addInspectedNode(ErrorString& errorString, int nodeId)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

@@ -426,14 +426,10 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
         return true;
 
     ResourceRequest newRequest = ResourceRequest(resource->url());
-#if ENABLE(INSPECTOR)
     if (request.resourceRequest().hiddenFromInspector())
         newRequest.setHiddenFromInspector(true);
-#else
-    UNUSED_PARAM(request);
-#endif
     frame()->loader().loadedResourceFromMemoryCache(resource, newRequest);
-    
+
     // FIXME <http://webkit.org/b/113251>: If the delegate modifies the request's
     // URL, it is no longer appropriate to use this CachedResource.
     return !newRequest.isNull();

@@ -31,8 +31,6 @@
 #include "config.h"
 #include "InspectorPageAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "CachedCSSStyleSheet.h"
 #include "CachedFont.h"
 #include "CachedImage.h"
@@ -1074,5 +1072,3 @@ void InspectorPageAgent::archive(ErrorString& errorString, String* data)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

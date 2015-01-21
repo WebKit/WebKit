@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebInspectorUI.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "WebInspectorMessages.h"
 #include "WebInspectorProxyMessages.h"
 #include "WebPage.h"
@@ -284,5 +282,3 @@ void WebInspectorUI::evaluatePendingExpressions()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(INSPECTOR)

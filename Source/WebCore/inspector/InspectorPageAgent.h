@@ -31,8 +31,6 @@
 #ifndef InspectorPageAgent_h
 #define InspectorPageAgent_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorWebAgentBase.h"
 #include "IntSize.h"
 #include "LayoutRect.h"
@@ -190,7 +188,5 @@ private:
 
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorPagerAgent_h)

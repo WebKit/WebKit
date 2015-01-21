@@ -31,8 +31,6 @@
 #include "config.h"
 #include "InspectorAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorEnvironment.h"
 #include "InspectorValues.h"
 #include "ScriptValue.h"
@@ -152,5 +150,3 @@ void InspectorAgent::activateExtraDomains(const Vector<String>& extraDomains)
 #endif
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

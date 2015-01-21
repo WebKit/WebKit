@@ -26,8 +26,6 @@
 #ifndef WebInjectedScriptManager_h
 #define WebInjectedScriptManager_h
 
-#if ENABLE(INSPECTOR)
-
 #include "CommandLineAPIHost.h"
 #include <inspector/InjectedScriptManager.h>
 #include <wtf/RefPtr.h>
@@ -55,7 +53,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(WebInjectedScriptManager_h)

@@ -75,7 +75,6 @@ namespace WebCore {
             OBSOLETE_EVENT  // Must remain the last value, this is used to size arrays.
         };
 
-#if ENABLE(INSPECTOR)
         struct CacheInfo {
             CacheInfo(const URL& manifest, double creationTime, double updateTime, long long size)
                 : m_manifest(manifest)
@@ -107,7 +106,6 @@ namespace WebCore {
         };
 
         typedef Vector<ResourceInfo> ResourceInfoList;
-#endif
 
         explicit ApplicationCacheHost(DocumentLoader&);
         ~ApplicationCacheHost();
@@ -144,10 +142,8 @@ namespace WebCore {
 
         void stopDeferringEvents(); // Also raises the events that have been queued up.
 
-#if ENABLE(INSPECTOR)
         void fillResourceList(ResourceInfoList*);
         CacheInfo applicationCacheInfo();
-#endif
 
         bool shouldLoadResourceFromApplicationCache(const ResourceRequest&, ApplicationCacheResource*&);
         bool getApplicationCacheFallbackResource(const ResourceRequest&, ApplicationCacheResource*&, ApplicationCache* = 0);

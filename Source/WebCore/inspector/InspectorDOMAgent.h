@@ -78,8 +78,6 @@ struct HighlightConfig;
 typedef String ErrorString;
 typedef int BackendNodeId;
 
-#if ENABLE(INSPECTOR)
-
 struct EventListenerInfo {
     EventListenerInfo(Node* node, const AtomicString& eventType, const EventListenerVector& eventListenerVector)
         : node(node)
@@ -274,8 +272,6 @@ private:
     bool m_suppressAttributeModifiedEvent;
     bool m_documentRequested;
 };
-
-#endif // ENABLE(INSPECTOR)
 
 } // namespace WebCore
 

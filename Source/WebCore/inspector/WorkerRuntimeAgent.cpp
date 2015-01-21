@@ -31,8 +31,6 @@
 #include "config.h"
 #include "WorkerRuntimeAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "InstrumentingAgents.h"
 #include "JSDOMWindowBase.h"
 #include "ScriptState.h"
@@ -108,5 +106,3 @@ void WorkerRuntimeAgent::pauseWorkerGlobalScope(WorkerGlobalScope* context)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

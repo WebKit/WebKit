@@ -63,9 +63,7 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker* workerObject)
     , m_unconfirmedMessageCount(0)
     , m_workerThreadHadPendingActivity(false)
     , m_askedToTerminate(false)
-#if ENABLE(INSPECTOR)
     , m_pageInspector(nullptr)
-#endif
 {
     ASSERT(m_workerObject);
     ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
@@ -213,7 +211,6 @@ void WorkerMessagingProxy::notifyNetworkStateChange(bool isOnline)
     });
 }
 
-#if ENABLE(INSPECTOR)
 void WorkerMessagingProxy::connectToInspector(WorkerGlobalScopeProxy::PageInspector* pageInspector)
 {
     if (m_askedToTerminate)
@@ -245,7 +242,6 @@ void WorkerMessagingProxy::sendMessageToInspector(const String& message)
     }, WorkerDebuggerAgent::debuggerTaskMode);
     WorkerDebuggerAgent::interruptAndDispatchInspectorCommands(m_workerThread.get());
 }
-#endif
 
 void WorkerMessagingProxy::workerGlobalScopeDestroyed()
 {
@@ -288,7 +284,6 @@ void WorkerMessagingProxy::terminateWorkerGlobalScope()
     InspectorInstrumentation::workerGlobalScopeTerminated(m_scriptExecutionContext.get(), this);
 }
 
-#if ENABLE(INSPECTOR)
 void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
 {
     StringCapture capturedMessage(message);
@@ -297,7 +292,6 @@ void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
             m_pageInspector->dispatchMessageFromWorker(capturedMessage.string());
     });
 }
-#endif
 
 void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivity)
 {

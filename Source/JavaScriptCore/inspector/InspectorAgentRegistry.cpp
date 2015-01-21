@@ -27,8 +27,6 @@
 #include "config.h"
 #include "InspectorAgentRegistry.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorAgentBase.h"
 
 namespace Inspector {
@@ -71,4 +69,3 @@ void InspectorAgentRegistry::discardAgents()
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)

@@ -686,9 +686,7 @@ void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder& encoder, const Reso
     encoder << resourceRequest.cachePartition();
 #endif
 
-#if ENABLE(INSPECTOR)
     encoder << resourceRequest.hiddenFromInspector();
-#endif
 
     if (resourceRequest.encodingRequiresPlatformData()) {
         encoder << true;
@@ -708,12 +706,10 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRe
     resourceRequest.setCachePartition(cachePartition);
 #endif
 
-#if ENABLE(INSPECTOR)
     bool isHiddenFromInspector;
     if (!decoder.decode(isHiddenFromInspector))
         return false;
     resourceRequest.setHiddenFromInspector(isHiddenFromInspector);
-#endif
 
     bool hasPlatformData;
     if (!decoder.decode(hasPlatformData))

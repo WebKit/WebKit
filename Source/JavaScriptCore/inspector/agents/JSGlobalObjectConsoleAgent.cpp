@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSGlobalObjectConsoleAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 namespace Inspector {
 
 JSGlobalObjectConsoleAgent::JSGlobalObjectConsoleAgent(InjectedScriptManager* injectedScriptManager)
@@ -46,5 +44,3 @@ void JSGlobalObjectConsoleAgent::addInspectedNode(ErrorString& errorString, int)
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

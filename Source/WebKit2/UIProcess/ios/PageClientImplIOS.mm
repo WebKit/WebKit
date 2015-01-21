@@ -554,7 +554,6 @@ bool PageClientImpl::handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPa
     return true;
 }
 
-#if ENABLE(INSPECTOR)
 void PageClientImpl::showInspectorHighlight(const WebCore::Highlight& highlight)
 {
     [m_contentView _showInspectorHighlight:highlight];
@@ -584,7 +583,6 @@ void PageClientImpl::disableInspectorNodeSearch()
 {
     [m_contentView _disableInspectorNodeSearch];
 }
-#endif
 
 #if ENABLE(FULLSCREEN_API)
 

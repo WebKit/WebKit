@@ -28,8 +28,6 @@
 
 #include "WebInspectorClient.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "WebCoreBundleWin.h"
 #include "WebInspectorDelegate.h"
 #include "WebKit.h"
@@ -560,5 +558,3 @@ static ATOM registerWindowClass()
 
     return ::RegisterClassEx(&wcex);
 }
-
-#endif // ENABLE(INSPECTOR)

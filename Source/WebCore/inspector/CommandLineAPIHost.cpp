@@ -31,8 +31,6 @@
 #include "config.h"
 #include "CommandLineAPIHost.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "Database.h"
 #include "Element.h"
 #include "Frame.h"
@@ -157,5 +155,3 @@ String CommandLineAPIHost::storageIdImpl(Storage* storage)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

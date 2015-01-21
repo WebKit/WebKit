@@ -361,7 +361,6 @@ messages -> WebPageProxy {
     StopAssistingNode()
     NotifyRevealedSelection()
 
-#if ENABLE(INSPECTOR)
     ShowInspectorHighlight(struct WebCore::Highlight highlight)
     HideInspectorHighlight()
 
@@ -370,7 +369,6 @@ messages -> WebPageProxy {
 
     EnableInspectorNodeSearch()
     DisableInspectorNodeSearch()
-#endif
 #endif
 
     # Search popup menus

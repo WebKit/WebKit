@@ -127,8 +127,6 @@ InspectorBackend.registerEnum("Test.CastedAnimals", {Ducks: "Ducks", Hens: "Hens
 #ifndef InspectorBackendDispatchers_h
 #define InspectorBackendDispatchers_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorBackendDispatcher.h>
 #include <wtf/text/WTFString.h>
@@ -140,8 +138,6 @@ typedef String ErrorString;
 
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorBackendDispatchers_h)
 ### End File: InspectorBackendDispatchers.h
@@ -180,8 +176,6 @@ typedef String ErrorString;
 #include "config.h"
 #include "InspectorBackendDispatchers.h"
 
-#if ENABLE(INSPECTOR)
-
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/text/CString.h>
@@ -195,8 +189,6 @@ namespace Inspector {
 
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 ### End File: InspectorBackendDispatchers.cpp
 
@@ -234,8 +226,6 @@ namespace Inspector {
 #ifndef InspectorFrontendDispatchers_h
 #define InspectorFrontendDispatchers_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
@@ -246,8 +236,6 @@ namespace Inspector {
 
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorFrontendDispatchers_h)
 ### End File: InspectorFrontendDispatchers.h
@@ -286,15 +274,11 @@ namespace Inspector {
 #include "config.h"
 #include "InspectorFrontendDispatchers.h"
 
-#if ENABLE(INSPECTOR)
-
 #include <wtf/text/CString.h>
 
 namespace Inspector {
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 ### End File: InspectorFrontendDispatchers.cpp
 
@@ -331,8 +315,6 @@ namespace Inspector {
 
 #ifndef InspectorProtocolObjects_h
 #define InspectorProtocolObjects_h
-
-#if ENABLE(INSPECTOR)
 
 #include <inspector/InspectorProtocolTypes.h>
 #include <wtf/Assertions.h>
@@ -605,8 +587,6 @@ static void assertValueHasExpectedType(Inspector::InspectorValue*);
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)
-
 #endif // !defined(InspectorProtocolObjects_h)
 ### End File: InspectorProtocolObjects.h
 
@@ -643,8 +623,6 @@ static void assertValueHasExpectedType(Inspector::InspectorValue*);
 
 #include "config.h"
 #include "InspectorProtocolObjects.h"
-
-#if ENABLE(INSPECTOR)
 
 #include <wtf/text/CString.h>
 
@@ -776,8 +754,6 @@ void BindingTraits<Inspector::Protocol::Test::RecursiveObject2>::assertValueHasE
 } // namespace Protocol
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 ### End File: InspectorProtocolObjects.cpp
 

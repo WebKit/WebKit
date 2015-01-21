@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorWorkerAgent.h"
 
 #include "InspectorForwarding.h"
@@ -240,5 +237,3 @@ void InspectorWorkerAgent::createWorkerFrontendChannel(WorkerGlobalScopeProxy* w
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

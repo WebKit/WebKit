@@ -32,8 +32,6 @@
 #include "config.h"
 #include "InjectedScript.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorValues.h"
 #include "JSCInlines.h"
 #include "ScriptFunctionCall.h"
@@ -263,4 +261,3 @@ void InjectedScript::releaseObjectGroup(const String& objectGroup)
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)

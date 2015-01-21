@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebDebuggerAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "InstrumentingAgents.h"
 
 using namespace Inspector;
@@ -53,5 +51,3 @@ void WebDebuggerAgent::disable(bool isBeingDestroyed)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

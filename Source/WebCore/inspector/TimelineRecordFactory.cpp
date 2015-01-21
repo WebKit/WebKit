@@ -30,9 +30,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "TimelineRecordFactory.h"
 
 #include "Event.h"
@@ -267,5 +264,3 @@ void TimelineRecordFactory::appendProfile(InspectorObject* data, RefPtr<JSC::Pro
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

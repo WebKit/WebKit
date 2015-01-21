@@ -34,10 +34,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
-
-#if ENABLE(INSPECTOR)
 #include "InspectorProtocolObjects.h"
-#endif
 
 namespace Inspector {
 
@@ -53,9 +50,7 @@ public:
 
     bool isEqual(const ScriptCallFrame&) const;
 
-#if ENABLE(INSPECTOR)
     Ref<Inspector::Protocol::Console::CallFrame> buildInspectorObject() const;
-#endif
 
 private:
     String m_functionName;

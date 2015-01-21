@@ -32,8 +32,6 @@
 #include "config.h"
 #include "InjectedScriptBase.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "DebuggerEvalEnabler.h"
 #include "InspectorValues.h"
 #include "JSCInlines.h"
@@ -153,4 +151,3 @@ void InjectedScriptBase::makeEvalCall(ErrorString& errorString, Deprecated::Scri
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)

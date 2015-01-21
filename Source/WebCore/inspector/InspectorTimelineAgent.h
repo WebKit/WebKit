@@ -32,8 +32,6 @@
 #ifndef InspectorTimelineAgent_h
 #define InspectorTimelineAgent_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorWebAgentBase.h"
 #include "LayoutRect.h"
 #include <inspector/InspectorBackendDispatchers.h>
@@ -250,5 +248,4 @@ private:
 
 } // namespace WebCore
 
-#endif // !ENABLE(INSPECTOR)
 #endif // !defined(InspectorTimelineAgent_h)

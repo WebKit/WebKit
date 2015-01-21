@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(INSPECTOR) && ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE)
 
 #include "InspectorIndexedDBAgent.h"
 
@@ -776,4 +776,4 @@ void InspectorIndexedDBAgent::clearObjectStore(ErrorString& errorString, const S
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR) && ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE)

@@ -462,12 +462,7 @@ void WKBundlePageListenForLayoutMilestones(WKBundlePageRef pageRef, WKLayoutMile
 
 WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef pageRef)
 {
-#if ENABLE(INSPECTOR)
     return toAPI(toImpl(pageRef)->inspector());
-#else
-    UNUSED_PARAM(pageRef);
-    return 0;
-#endif
 }
 
 void WKBundlePageForceRepaint(WKBundlePageRef page)

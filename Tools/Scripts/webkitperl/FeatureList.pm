@@ -86,7 +86,6 @@ my (
     $inputTypeMonthSupport,
     $inputTypeTimeSupport,
     $inputTypeWeekSupport,
-    $inspectorSupport,
     $legacyNotificationsSupport,
     $legacyVendorPrefixSupport,
     $legacyWebAudioSupport,
@@ -272,9 +271,6 @@ my @features = (
 
     { option => "input-type-week", desc => "Toggle Input Type Week support",
       define => "ENABLE_INPUT_TYPE_WEEK", default => 0, value => \$inputTypeWeekSupport },
-
-    { option => "inspector", desc => "Toggle Inspector support",
-      define => "ENABLE_INSPECTOR", default => 1, value => \$inspectorSupport },
 
     { option => "legacy-notifications", desc => "Toggle Legacy Notifications support",
       define => "ENABLE_LEGACY_NOTIFICATIONS", default => 0, value => \$legacyNotificationsSupport },

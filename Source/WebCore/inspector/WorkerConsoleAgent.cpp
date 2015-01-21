@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "WorkerConsoleAgent.h"
 
 using namespace Inspector;
@@ -49,5 +46,3 @@ void WorkerConsoleAgent::addInspectedNode(ErrorString& error, int)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

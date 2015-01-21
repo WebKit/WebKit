@@ -399,24 +399,18 @@ void TestRunner::makeWindowObject(JSContextRef context, JSObjectRef windowObject
 
 void TestRunner::showWebInspector()
 {
-#if ENABLE(INSPECTOR)
     WKBundleInspectorShow(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()));
-#endif // ENABLE(INSPECTOR)
 }
 
 void TestRunner::closeWebInspector()
 {
-#if ENABLE(INSPECTOR)
     WKBundleInspectorClose(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()));
-#endif // ENABLE(INSPECTOR)
 }
 
 void TestRunner::evaluateInWebInspector(JSStringRef script)
 {
-#if ENABLE(INSPECTOR)
     WKRetainPtr<WKStringRef> scriptWK = toWK(script);
     WKBundleInspectorEvaluateScriptForTest(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), scriptWK.get());
-#endif // ENABLE(INSPECTOR)
 }
 
 typedef WTF::HashMap<unsigned, WKRetainPtr<WKBundleScriptWorldRef> > WorldMap;

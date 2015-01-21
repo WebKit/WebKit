@@ -39,8 +39,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(INSPECTOR)
-
 namespace Inspector {
 class InspectorArray;
 class InspectorObject;
@@ -158,7 +156,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorResourceAgent_h)

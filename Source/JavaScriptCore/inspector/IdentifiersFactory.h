@@ -26,8 +26,6 @@
 #ifndef IdentifiersFactory_h
 #define IdentifiersFactory_h
 
-#if ENABLE(INSPECTOR)
-
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -47,5 +45,3 @@ private:
 } // namespace Inspector
 
 #endif // !defined(IdentifiersFactory_h)
-
-#endif // ENABLE(INSPECTOR)

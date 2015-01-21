@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSInjectedScriptHost.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "DateInstance.h"
 #include "Error.h"
 #include "InjectedScriptHost.h"
@@ -205,5 +203,3 @@ JSInjectedScriptHost* toJSInjectedScriptHost(JSValue value)
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

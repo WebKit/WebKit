@@ -42,8 +42,6 @@ class ContainerNode;
 class Element;
 class Node;
 
-#if ENABLE(INSPECTOR)
-
 class InspectorHistory final {
     WTF_MAKE_NONCOPYABLE(InspectorHistory); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -81,8 +79,6 @@ private:
     Vector<std::unique_ptr<Action>> m_history;
     size_t m_afterLastActionIndex;
 };
-
-#endif // ENABLE(INSPECTOR)
 
 } // namespace WebCore
 

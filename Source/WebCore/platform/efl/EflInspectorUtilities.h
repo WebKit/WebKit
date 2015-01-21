@@ -19,8 +19,6 @@
 #ifndef EflInspectorUtilities_h
 #define EflInspectorUtilities_h
 
-#if ENABLE(INSPECTOR)
-
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -29,5 +27,4 @@ String inspectorResourcePath();
 
 } // namespace WebCore
 
-#endif
 #endif // EflInspectorUtilities_h

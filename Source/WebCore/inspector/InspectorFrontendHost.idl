@@ -32,7 +32,6 @@
 
 [
     NoInterfaceObject,
-    Conditional=INSPECTOR,
     ImplementationLacksVTable
 ] interface InspectorFrontendHost {
     void loaded();

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebInspector.h"
 
-#if ENABLE(INSPECTOR)
-
 #include <WebCore/EflInspectorUtilities.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,5 +42,3 @@ String WebInspector::localizedStringsURL() const
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(INSPECTOR)

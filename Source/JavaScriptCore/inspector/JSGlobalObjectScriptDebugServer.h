@@ -26,8 +26,6 @@
 #ifndef JSGlobalObjectScriptDebugServer_h
 #define JSGlobalObjectScriptDebugServer_h
 
-#if ENABLE(INSPECTOR)
-
 #include "ScriptDebugServer.h"
 #include <wtf/Forward.h>
 
@@ -63,7 +61,5 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // JSGlobalObjectScriptDebugServer_h

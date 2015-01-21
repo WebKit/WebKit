@@ -27,9 +27,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorDatabaseAgent.h"
 
 #include "Database.h"
@@ -322,5 +319,3 @@ Database* InspectorDatabaseAgent::databaseForId(const String& databaseId)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

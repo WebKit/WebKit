@@ -70,9 +70,7 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, Wo
     , m_userAgent(userAgent)
     , m_script(std::make_unique<WorkerScriptController>(this))
     , m_thread(thread)
-#if ENABLE(INSPECTOR)
     , m_workerInspectorController(std::make_unique<WorkerInspectorController>(*this))
-#endif
     , m_closing(false)
     , m_eventQueue(*this)
     , m_topOrigin(topOrigin)

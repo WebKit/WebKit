@@ -32,13 +32,10 @@
 #include "ScriptGlobalObject.h"
 
 #include "JSDOMBinding.h"
+#include "JSInspectorFrontendHost.h"
 #include <bindings/ScriptObject.h>
 #include <runtime/IdentifierInlines.h>
 #include <runtime/JSLock.h>
-
-#if ENABLE(INSPECTOR)
-#include "JSInspectorFrontendHost.h"
-#endif
 
 using namespace JSC;
 
@@ -60,7 +57,6 @@ bool ScriptGlobalObject::set(JSC::ExecState* scriptState, const char* name, cons
     return handleException(scriptState);
 }
 
-#if ENABLE(INSPECTOR)
 bool ScriptGlobalObject::set(JSC::ExecState* scriptState, const char* name, InspectorFrontendHost* value)
 {
     JSLockHolder lock(scriptState);
@@ -68,7 +64,6 @@ bool ScriptGlobalObject::set(JSC::ExecState* scriptState, const char* name, Insp
     globalObject->putDirect(scriptState->vm(), Identifier(scriptState, name), toJS(scriptState, globalObject, value));
     return handleException(scriptState);
 }
-#endif // ENABLE(INSPECTOR)
 
 bool ScriptGlobalObject::get(JSC::ExecState* scriptState, const char* name, Deprecated::ScriptObject& value)
 {

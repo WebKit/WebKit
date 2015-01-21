@@ -1066,10 +1066,8 @@ protected:
     HWND m_viewWindow;
     WebFrame* m_mainFrame;
     WebCore::Page* m_page;
-#if ENABLE(INSPECTOR)
     WebInspectorClient* m_inspectorClient;
-#endif // ENABLE(INSPECTOR)
-    
+
     RefPtr<WebCore::SharedGDIObject<HBITMAP>> m_backingStoreBitmap;
     SIZE m_backingStoreSize;
     RefPtr<WebCore::SharedGDIObject<HRGN>> m_backingStoreDirtyRegion;
@@ -1086,9 +1084,7 @@ protected:
     COMPtr<IWebDownloadDelegate> m_downloadDelegate;
     COMPtr<IWebHistoryDelegate> m_historyDelegate;
     COMPtr<WebPreferences> m_preferences;
-#if ENABLE(INSPECTOR)
     COMPtr<WebInspector> m_webInspector;
-#endif // ENABLE(INSPECTOR)
     COMPtr<IWebGeolocationProvider> m_geolocationProvider;
 
     bool m_userAgentOverridden;

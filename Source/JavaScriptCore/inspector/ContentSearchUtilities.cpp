@@ -29,8 +29,6 @@
 #include "config.h"
 #include "ContentSearchUtilities.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorValues.h"
 #include "RegularExpression.h"
 #include "Yarr.h"
@@ -217,5 +215,3 @@ String findStylesheetSourceMapURL(const String& content)
 
 } // namespace ContentSearchUtilities
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

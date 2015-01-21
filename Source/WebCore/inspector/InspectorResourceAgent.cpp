@@ -31,8 +31,6 @@
 #include "config.h"
 #include "InspectorResourceAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "CachedRawResource.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
@@ -796,5 +794,3 @@ void InspectorResourceAgent::mainFrameNavigated(DocumentLoader& loader)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

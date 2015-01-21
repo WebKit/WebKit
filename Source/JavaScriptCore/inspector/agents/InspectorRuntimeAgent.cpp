@@ -32,8 +32,6 @@
 #include "config.h"
 #include "InspectorRuntimeAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "Completion.h"
 #include "HeapIterationScope.h"
 #include "InjectedScript.h"
@@ -345,5 +343,3 @@ void InspectorRuntimeAgent::getBasicBlocks(ErrorString& errorString, const Strin
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

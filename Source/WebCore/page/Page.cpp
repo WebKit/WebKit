@@ -141,9 +141,7 @@ Page::Page(PageConfiguration& pageConfiguration)
 #if ENABLE(WEB_REPLAY)
     , m_replayController(std::make_unique<ReplayController>(*this))
 #endif
-#if ENABLE(INSPECTOR)
     , m_inspectorController(std::make_unique<InspectorController>(*this, pageConfiguration.inspectorClient))
-#endif
 #if ENABLE(POINTER_LOCK)
     , m_pointerLockController(std::make_unique<PointerLockController>(*this))
 #endif
@@ -258,9 +256,7 @@ Page::~Page()
     if (m_alternativeTextClient)
         m_alternativeTextClient->pageDestroyed();
 
-#if ENABLE(INSPECTOR)
     m_inspectorController->inspectedPageDestroyed();
-#endif
 
     if (m_scrollingCoordinator)
         m_scrollingCoordinator->pageDestroyed();

@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorDatabaseResource.h"
 
 #include "Database.h"
@@ -69,5 +66,3 @@ void InspectorDatabaseResource::bind(InspectorDatabaseFrontendDispatcher* databa
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

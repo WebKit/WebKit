@@ -28,7 +28,7 @@
 #include "config.h"
 #include "InspectorReplayAgent.h"
 
-#if ENABLE(INSPECTOR) && ENABLE(WEB_REPLAY)
+#if ENABLE(WEB_REPLAY)
 
 #include "DocumentLoader.h"
 #include "Event.h"
@@ -509,4 +509,4 @@ void InspectorReplayAgent::getSegmentData(ErrorString& errorString, Inspector::P
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR) && ENABLE(WEB_REPLAY)
+#endif // ENABLE(WEB_REPLAY)

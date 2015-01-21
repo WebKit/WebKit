@@ -40,6 +40,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
+#include "ProgressTracker.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "SchemeRegistry.h"
@@ -48,10 +49,6 @@
 #include "ThreadableLoaderClient.h"
 #include <wtf/Assertions.h>
 #include <wtf/Ref.h>
-
-#if ENABLE(INSPECTOR)
-#include "ProgressTracker.h"
-#endif
 
 namespace WebCore {
 
@@ -241,11 +238,9 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
 
     String accessControlErrorDescription;
     if (m_actualRequest) {
-#if ENABLE(INSPECTOR)
         DocumentLoader* loader = m_document.frame()->loader().documentLoader();
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_document.frame());
         InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, response, 0);
-#endif
 
         if (!passesAccessControlCheck(response, m_options.allowCredentials(), securityOrigin(), accessControlErrorDescription)) {
             preflightFailure(identifier, response.url(), accessControlErrorDescription);
@@ -373,12 +368,10 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         ASSERT(!m_resource);
         m_resource = m_document.cachedResourceLoader()->requestRawResource(newRequest);
         if (m_resource) {
-#if ENABLE(INSPECTOR)
             if (m_resource->loader()) {
                 unsigned long identifier = m_resource->loader()->identifier();
                 InspectorInstrumentation::documentThreadableLoaderStartedLoadingForClient(m_document, identifier, m_client);
             }
-#endif
             m_resource->addClient(this);
         }
         return;

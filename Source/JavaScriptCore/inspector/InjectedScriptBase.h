@@ -32,8 +32,6 @@
 #ifndef InjectedScriptBase_h
 #define InjectedScriptBase_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorEnvironment.h"
 #include "InspectorProtocolObjects.h"
 #include "bindings/ScriptObject.h"
@@ -77,7 +75,5 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // InjectedScriptBase_h

@@ -23,9 +23,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorStyleSheet.h"
 
 #include "CSSImportRule.h"
@@ -1602,5 +1599,3 @@ bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(CSSRuleSourceDat
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

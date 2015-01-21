@@ -31,8 +31,6 @@
 #ifndef WorkerInspectorController_h
 #define WorkerInspectorController_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorInstrumentationCookie.h"
 #include "InspectorWebAgentBase.h"
 #include <inspector/InspectorAgentRegistry.h>
@@ -91,7 +89,5 @@ private:
 };
 
 }
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(WorkerInspectorController_h)

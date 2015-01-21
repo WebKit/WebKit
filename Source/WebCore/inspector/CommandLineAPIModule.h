@@ -28,8 +28,6 @@
 
 #include <inspector/InjectedScriptModule.h>
 
-#if ENABLE(INSPECTOR)
-
 namespace WebCore {
 
 class CommandLineAPIModule final : public Inspector::InjectedScriptModule {
@@ -44,7 +42,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(CommandLineAPIModule_h)

@@ -97,7 +97,6 @@ bool ScriptValue::isFunction() const
     return getCallData(m_value.get(), callData) != CallTypeNone;
 }
 
-#if ENABLE(INSPECTOR)
 static RefPtr<InspectorValue> jsToInspectorValue(ExecState* scriptState, JSValue value, int maxDepth)
 {
     if (!value) {
@@ -159,6 +158,5 @@ RefPtr<InspectorValue> ScriptValue::toInspectorValue(ExecState* scriptState) con
     JSLockHolder holder(scriptState);
     return jsToInspectorValue(scriptState, m_value.get(), InspectorValue::maxDepth);
 }
-#endif // ENABLE(INSPECTOR)
 
 } // namespace Deprecated

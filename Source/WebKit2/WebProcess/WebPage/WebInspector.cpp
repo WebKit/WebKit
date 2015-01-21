@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebInspector.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "WebFrame.h"
 #include "WebInspectorMessages.h"
 #include "WebInspectorProxyMessages.h"
@@ -241,5 +239,3 @@ void WebInspector::remoteFrontendDisconnected()
 #endif
 
 } // namespace WebKit
-
-#endif // ENABLE(INSPECTOR)

@@ -760,25 +760,19 @@ void TestRunner::setDeveloperExtrasEnabled(bool enabled)
 
 void TestRunner::showWebInspector()
 {
-#if ENABLE(INSPECTOR)
     [[[mainFrame webView] inspector] show:nil];
-#endif
 }
 
 void TestRunner::closeWebInspector()
 {
-#if ENABLE(INSPECTOR)
     [[[mainFrame webView] inspector] close:nil];
-#endif
 }
 
 void TestRunner::evaluateInWebInspector(JSStringRef script)
 {
-#if ENABLE(INSPECTOR)
     RetainPtr<CFStringRef> scriptCF = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, script));
     NSString *scriptNS = (NSString *)scriptCF.get();
     [[[mainFrame webView] inspector] evaluateInFrontend:nil script:scriptNS];
-#endif
 }
 
 typedef HashMap<unsigned, RetainPtr<WebScriptWorld> > WorldMap;

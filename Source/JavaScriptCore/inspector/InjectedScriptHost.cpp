@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InjectedScriptHost.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "JSInjectedScriptHost.h"
 
 using namespace JSC;
@@ -79,5 +77,3 @@ void InjectedScriptHost::clearAllWrappers()
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

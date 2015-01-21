@@ -35,8 +35,6 @@
 #include "InjectedScriptBase.h"
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(INSPECTOR)
-
 namespace JSC {
 class JSValue;
 }
@@ -63,7 +61,5 @@ protected:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // InjectedScriptModule_h

@@ -27,8 +27,6 @@
 #ifndef WebInspectorProxy_h
 #define WebInspectorProxy_h
 
-#if ENABLE(INSPECTOR)
-
 #include "APIObject.h"
 #include "Attachment.h"
 #include "MessageReceiver.h"
@@ -258,7 +256,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // WebInspectorProxy_h

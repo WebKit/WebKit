@@ -31,8 +31,6 @@
 #ifndef ConsoleMessage_h
 #define ConsoleMessage_h
 
-#if ENABLE(INSPECTOR)
-
 #include "ConsoleTypes.h"
 #include "InspectorFrontendDispatchers.h"
 #include <wtf/Forward.h>
@@ -95,5 +93,3 @@ private:
 } // namespace Inspector
 
 #endif // ConsoleMessage_h
-
-#endif // ENABLE(INSPECTOR)

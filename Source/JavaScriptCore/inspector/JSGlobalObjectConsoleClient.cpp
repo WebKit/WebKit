@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSGlobalObjectConsoleClient.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "ConsoleMessage.h"
 #include "InspectorConsoleAgent.h"
 #include "ScriptArguments.h"
@@ -126,5 +124,3 @@ void JSGlobalObjectConsoleClient::warnUnimplemented(const String& method)
 }
 
 } // namespace Inspector
-
-#endif

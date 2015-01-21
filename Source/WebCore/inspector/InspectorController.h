@@ -31,8 +31,6 @@
 #ifndef InspectorController_h
 #define InspectorController_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorInstrumentationCookie.h"
 #include "InspectorOverlay.h"
 #include <inspector/InspectorAgentRegistry.h>
@@ -171,7 +169,5 @@ private:
 };
 
 }
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorController_h)

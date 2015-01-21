@@ -26,8 +26,6 @@
 #ifndef InjectedScriptHost_h
 #define InjectedScriptHost_h
 
-#if ENABLE(INSPECTOR)
-
 #include "JSCJSValueInlines.h"
 #include "Strong.h"
 #include "StrongInlines.h"
@@ -53,7 +51,5 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InjectedScriptHost_h)

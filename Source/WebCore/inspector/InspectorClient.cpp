@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorClient.h"
 
 #include "MainFrame.h"
@@ -57,5 +54,3 @@ bool InspectorClient::doDispatchMessageOnFrontendPage(Page* frontendPage, const 
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

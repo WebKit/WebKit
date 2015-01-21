@@ -156,9 +156,7 @@ void WorkerThread::workerThread()
     }
 
     WorkerScriptController* script = m_workerGlobalScope->script();
-#if ENABLE(INSPECTOR)
     InspectorInstrumentation::willEvaluateWorkerScript(workerGlobalScope(), m_startupData->m_startMode);
-#endif
     script->evaluate(ScriptSourceCode(m_startupData->m_sourceCode, m_startupData->m_scriptURL));
     // Free the startup data to cause its member variable deref's happen on the worker's thread (since
     // all ref/derefs of these objects are happening on the thread at this point). Note that

@@ -33,8 +33,6 @@ class CppGeneratorTemplates:
     """#ifndef ${headerGuardString}
 #define ${headerGuardString}
 
-#if ENABLE(INSPECTOR)
-
 ${includes}
 
 namespace Inspector {
@@ -44,15 +42,11 @@ ${typedefs}""")
     HeaderPostlude = (
     """} // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)
-
 #endif // !defined(${headerGuardString})""")
 
     ImplementationPrelude = (
     """#include "config.h"
 #include ${primaryInclude}
-
-#if ENABLE(INSPECTOR)
 
 ${secondaryIncludes}
 
@@ -60,8 +54,6 @@ namespace Inspector {""")
 
     ImplementationPostlude = (
     """} // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 """)
 
     AlternateDispatchersHeaderPrelude = (

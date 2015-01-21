@@ -31,8 +31,6 @@
 #include "config.h"
 #include "ScriptDebugServer.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "DebuggerCallFrame.h"
 #include "DebuggerScope.h"
 #include "JSJavaScriptCallFrame.h"
@@ -349,5 +347,3 @@ Deprecated::ScriptValue ScriptDebugServer::exceptionOrCaughtValue(JSC::ExecState
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

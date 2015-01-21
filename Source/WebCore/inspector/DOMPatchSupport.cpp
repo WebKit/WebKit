@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "DOMPatchSupport.h"
 
 #include "Attribute.h"
@@ -515,5 +512,3 @@ void DOMPatchSupport::dumpMap(const ResultMap& map, const String& name)
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

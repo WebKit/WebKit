@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorFrontendClientLocal.h"
 
 #include "Chrome.h"
@@ -357,5 +354,3 @@ void InspectorFrontendClientLocal::evaluateOnLoad(const String& expression)
 }
 
 } // namespace WebCore
-
-#endif

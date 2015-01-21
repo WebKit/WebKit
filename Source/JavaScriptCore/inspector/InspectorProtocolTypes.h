@@ -27,8 +27,6 @@
 #ifndef InspectorProtocolTypes_h
 #define InspectorProtocolTypes_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorValues.h"
 #include <wtf/Assertions.h>
 
@@ -176,7 +174,5 @@ template<> struct BindingTraits<int> : public PrimitiveBindingTraits<InspectorVa
 using Protocol::BindingTraits;
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorProtocolTypes_h)

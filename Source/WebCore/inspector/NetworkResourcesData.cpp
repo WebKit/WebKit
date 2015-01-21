@@ -27,9 +27,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "NetworkResourcesData.h"
 
 #include "CachedResource.h"
@@ -382,5 +379,3 @@ bool NetworkResourcesData::ensureFreeSpace(size_t size)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

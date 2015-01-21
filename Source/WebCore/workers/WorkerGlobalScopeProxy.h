@@ -60,7 +60,6 @@ namespace WebCore {
 
         virtual void notifyNetworkStateChange(bool isOnline) = 0;
 
-#if ENABLE(INSPECTOR)
         class PageInspector {
         public:
             virtual ~PageInspector() { }
@@ -69,7 +68,6 @@ namespace WebCore {
         virtual void connectToInspector(PageInspector*) { }
         virtual void disconnectFromInspector() { }
         virtual void sendMessageToInspector(const String&) { }
-#endif
     };
 
 } // namespace WebCore

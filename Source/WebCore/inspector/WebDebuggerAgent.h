@@ -26,8 +26,6 @@
 #ifndef WebDebuggerAgent_h
 #define WebDebuggerAgent_h
 
-#if ENABLE(INSPECTOR)
-
 #include <inspector/agents/InspectorDebuggerAgent.h>
 
 namespace WebCore {
@@ -50,7 +48,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(WebDebuggerAgent_h)

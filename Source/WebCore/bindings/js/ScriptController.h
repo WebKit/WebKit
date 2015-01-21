@@ -151,9 +151,7 @@ public:
 
     WEBCORE_EXPORT PassRefPtr<JSC::Bindings::RootObject> createRootObject(void* nativeHandle);
 
-#if ENABLE(INSPECTOR)
     void collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*>>&);
-#endif
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT WebScriptObject* windowScriptObject();

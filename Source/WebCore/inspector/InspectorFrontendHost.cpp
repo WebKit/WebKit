@@ -28,9 +28,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorFrontendHost.h"
 
 #include "ContextMenu.h"
@@ -324,5 +321,3 @@ bool InspectorFrontendHost::canInspectWorkers()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

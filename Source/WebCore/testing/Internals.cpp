@@ -179,7 +179,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-#if ENABLE(INSPECTOR)
 class InspectorFrontendClientDummy : public InspectorFrontendClientLocal {
 public:
     InspectorFrontendClientDummy(InspectorController*, Page*);
@@ -224,7 +223,6 @@ bool InspectorFrontendChannelDummy::sendMessageToFrontend(const String& message)
 {
     return InspectorClient::doDispatchMessageOnFrontendPage(m_frontendPage, message);
 }
-#endif // ENABLE(INSPECTOR)
 
 static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerTypes& result)
 {
@@ -288,9 +286,7 @@ void Internals::resetToConsistentState(Page* page)
     TextRun::setAllowsRoundingHacks(false);
     WebCore::overrideUserPreferredLanguages(Vector<String>());
     WebCore::Settings::setUsesOverlayScrollbars(false);
-#if ENABLE(INSPECTOR)
     page->inspectorController().setProfilerEnabled(false);
-#endif
 #if ENABLE(VIDEO_TRACK)
     page->group().captionPreferences()->setCaptionsStyleSheetOverride(emptyString());
     page->group().captionPreferences()->setTestingMode(false);
@@ -777,7 +773,6 @@ Ref<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& ec)
 
 Ref<ClientRectList> Internals::inspectorHighlightRects(ExceptionCode& ec)
 {
-#if ENABLE(INSPECTOR)
     Document* document = contextDocument();
     if (!document || !document->page()) {
         ec = INVALID_ACCESS_ERR;
@@ -787,15 +782,10 @@ Ref<ClientRectList> Internals::inspectorHighlightRects(ExceptionCode& ec)
     Highlight highlight;
     document->page()->inspectorController().getHighlight(highlight, InspectorOverlay::CoordinateSystem::View);
     return ClientRectList::create(highlight.quads);
-#else
-    UNUSED_PARAM(ec);
-    return ClientRectList::create();
-#endif
 }
 
 String Internals::inspectorHighlightObject(ExceptionCode& ec)
 {
-#if ENABLE(INSPECTOR)
     Document* document = contextDocument();
     if (!document || !document->page()) {
         ec = INVALID_ACCESS_ERR;
@@ -803,10 +793,6 @@ String Internals::inspectorHighlightObject(ExceptionCode& ec)
     }
     auto object = document->page()->inspectorController().buildObjectForHighlightedNode();
     return object ? object->toJSONString() : String();
-#else
-    UNUSED_PARAM(ec);
-    return String();
-#endif
 }
 
 unsigned Internals::markerCountForNode(Node* node, const String& markerType, ExceptionCode& ec)
@@ -1484,7 +1470,6 @@ unsigned Internals::numberOfLiveDocuments() const
     return Document::allDocuments().size();
 }
 
-#if ENABLE(INSPECTOR)
 Vector<String> Internals::consoleMessageArgumentCounts() const
 {
     Document* document = contextDocument();
@@ -1566,7 +1551,6 @@ void Internals::setInspectorIsUnderTest(bool isUnderTest, ExceptionCode& ec)
 
     page->inspectorController().setIsUnderTest(isUnderTest);
 }
-#endif // ENABLE(INSPECTOR)
 
 bool Internals::hasGrammarMarker(int from, int length, ExceptionCode&)
 {

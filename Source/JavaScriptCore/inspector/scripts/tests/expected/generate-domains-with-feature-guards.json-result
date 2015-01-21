@@ -138,8 +138,6 @@ InspectorBackend.activateDomain("Network3");
 #ifndef InspectorBackendDispatchers_h
 #define InspectorBackendDispatchers_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorBackendDispatcher.h>
 #include <wtf/text/WTFString.h>
@@ -184,8 +182,6 @@ private:
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)
-
 #endif // !defined(InspectorBackendDispatchers_h)
 ### End File: InspectorBackendDispatchers.h
 
@@ -222,8 +218,6 @@ private:
 
 #include "config.h"
 #include "InspectorBackendDispatchers.h"
-
-#if ENABLE(INSPECTOR)
 
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
@@ -284,8 +278,6 @@ void InspectorNetwork1BackendDispatcher::loadResource(long callId, const Inspect
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)
-
 ### End File: InspectorBackendDispatchers.cpp
 
 ### Begin File: InspectorFrontendDispatchers.h
@@ -322,8 +314,6 @@ void InspectorNetwork1BackendDispatcher::loadResource(long callId, const Inspect
 #ifndef InspectorFrontendDispatchers_h
 #define InspectorFrontendDispatchers_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorProtocolObjects.h"
 #include <inspector/InspectorFrontendChannel.h>
 #include <inspector/InspectorValues.h>
@@ -344,8 +334,6 @@ private:
 #endif // PLATFORM(WEB_EVENTS)
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorFrontendDispatchers_h)
 ### End File: InspectorFrontendDispatchers.h
@@ -384,8 +372,6 @@ private:
 #include "config.h"
 #include "InspectorFrontendDispatchers.h"
 
-#if ENABLE(INSPECTOR)
-
 #include <wtf/text/CString.h>
 
 namespace Inspector {
@@ -401,8 +387,6 @@ void InspectorNetwork3FrontendDispatcher::resourceLoaded()
 #endif // PLATFORM(WEB_EVENTS)
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 ### End File: InspectorFrontendDispatchers.cpp
 
@@ -439,8 +423,6 @@ void InspectorNetwork3FrontendDispatcher::resourceLoaded()
 
 #ifndef InspectorProtocolObjects_h
 #define InspectorProtocolObjects_h
-
-#if ENABLE(INSPECTOR)
 
 #include <inspector/InspectorProtocolTypes.h>
 #include <wtf/Assertions.h>
@@ -544,8 +526,6 @@ public:
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)
-
 #endif // !defined(InspectorProtocolObjects_h)
 ### End File: InspectorProtocolObjects.h
 
@@ -583,8 +563,6 @@ public:
 #include "config.h"
 #include "InspectorProtocolObjects.h"
 
-#if ENABLE(INSPECTOR)
-
 #include <wtf/text/CString.h>
 
 namespace Inspector {
@@ -603,8 +581,6 @@ String getEnumConstantValue(int code) {
 } // namespace Protocol
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 ### End File: InspectorProtocolObjects.cpp
 

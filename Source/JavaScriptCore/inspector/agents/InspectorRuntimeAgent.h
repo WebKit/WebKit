@@ -32,8 +32,6 @@
 #ifndef InspectorRuntimeAgent_h
 #define InspectorRuntimeAgent_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
 #include "inspector/InspectorAgentBase.h"
@@ -99,5 +97,4 @@ private:
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)
 #endif // InspectorRuntimeAgent_h

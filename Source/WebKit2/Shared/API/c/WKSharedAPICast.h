@@ -453,10 +453,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagPDFFacingPagesScrolling;
     case WebCore::ContextMenuItemTagDictationAlternative:
         return kWKContextMenuItemTagDictationAlternative;
-#if ENABLE(INSPECTOR)
     case WebCore::ContextMenuItemTagInspectElement:
         return kWKContextMenuItemTagInspectElement;
-#endif
     case WebCore::ContextMenuItemTagTextDirectionMenu:
         return kWKContextMenuItemTagTextDirectionMenu;
     case WebCore::ContextMenuItemTagTextDirectionDefault:
@@ -647,10 +645,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagPDFFacingPagesScrolling;
     case kWKContextMenuItemTagDictationAlternative:
         return WebCore::ContextMenuItemTagDictationAlternative;
-#if ENABLE(INSPECTOR)
     case kWKContextMenuItemTagInspectElement:
         return WebCore::ContextMenuItemTagInspectElement;
-#endif
     case kWKContextMenuItemTagTextDirectionMenu:
         return WebCore::ContextMenuItemTagTextDirectionMenu;
     case kWKContextMenuItemTagTextDirectionDefault:

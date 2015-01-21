@@ -26,8 +26,6 @@
 #ifndef WebInspectorUI_h
 #define WebInspectorUI_h
 
-#if ENABLE(INSPECTOR)
-
 #include "APIObject.h"
 #include "Connection.h"
 #include <WebCore/InspectorForwarding.h>
@@ -131,7 +129,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // WebInspectorUI_h

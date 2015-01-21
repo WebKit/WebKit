@@ -46,9 +46,7 @@ class InspectorFrontendHost;
 class ScriptGlobalObject {
 public:
     static bool set(JSC::ExecState*, const char* name, const Deprecated::ScriptObject&);
-#if ENABLE(INSPECTOR)
     WEBCORE_EXPORT static bool set(JSC::ExecState*, const char* name, InspectorFrontendHost*);
-#endif
 
     static bool get(JSC::ExecState*, const char* name, Deprecated::ScriptObject&);
     static bool remove(JSC::ExecState*, const char* name);

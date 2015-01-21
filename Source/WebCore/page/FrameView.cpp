@@ -3017,14 +3017,12 @@ void FrameView::sendResizeEventIfNeeded()
         frame().document()->enqueueWindowEvent(resizeEvent.release());
     }
 
-#if ENABLE(INSPECTOR)
     if (InspectorInstrumentation::hasFrontends() && isMainFrame) {
         if (Page* page = frame().page()) {
             if (InspectorClient* inspectorClient = page->inspectorController().inspectorClient())
                 inspectorClient->didResizeMainFrame(&frame());
         }
     }
-#endif
 }
 
 void FrameView::willStartLiveResize()

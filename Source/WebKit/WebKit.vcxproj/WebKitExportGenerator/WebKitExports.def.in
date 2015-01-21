@@ -207,7 +207,6 @@ EXPORTS
         symbolWithPointer(?intersects@IntRect@WebCore@@QBE_NABV12@@Z, ?intersects@IntRect@WebCore@@QEBA_NAEBV12@@Z)
         symbolWithPointer(?item@StaticNodeList@WebCore@@UBEPAVNode@2@I@Z, ?item@StaticNodeList@WebCore@@UEBAPEAVNode@2@I@Z)
         ?selectTag@HTMLNames@WebCore@@3VHTMLQualifiedName@2@B
-#if ENABLE(INSPECTOR)
         symbolWithPointer(?buildObjectForHighlightedNode@InspectorController@WebCore@@QBE?AV?$RefPtr@VNodeHighlightData@OverlayTypes@Protocol@Inspector@@@WTF@@XZ, ?buildObjectForHighlightedNode@InspectorController@WebCore@@QBEA?AV?$RefPtr@VNodeHighlightData@OverlayTypes@Protocol@Inspector@@@WTF@@XZ)
         symbolWithPointer(?getHighlight@InspectorController@WebCore@@QBEXAAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z, ?getHighlight@InspectorController@WebCore@@QBEXEAAUHighlight@2@W4CoordinateSystem@InspectorOverlay@2@@Z)
         symbolWithPointer(?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@SAPAVInstrumentingAgents@2@PAVPage@2@@Z, ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@SAPEAVInstrumentingAgents@2@PEAVPage@2@@Z)
@@ -231,7 +230,6 @@ EXPORTS
         symbolWithPointer(?pathByAppendingComponent@WebCore@@YA?AVString@WTF@@ABV23@0@Z, ?pathByAppendingComponent@WebCore@@YA?AVString@WTF@@AEBV23@0@Z)
         symbolWithPointer(?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z, ?setProfilerEnabled@InspectorController@WebCore@@QEAAX_N@Z)
         symbolWithPointer(?disconnectFrontend@InspectorController@WebCore@@QAEXW4InspectorDisconnectReason@Inspector@@@Z, ?disconnectFrontend@InspectorController@WebCore@@QEAAXW4InspectorDisconnectReason@Inspector@@@Z)
-#endif
         symbolWithPointer(?isActiveInsertionPoint@WebCore@@YA_NPBVNode@1@@Z, ?isActiveInsertionPoint@WebCore@@YA_NPEBVNode@1@@Z)
         symbolWithPointer(?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z, ?isPreloaded@CachedResourceLoader@WebCore@@QEBA_NAEBVString@WTF@@@Z)
         symbolWithPointer(?jsArray@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z, ?jsArray@WebCore@@YA?AVJSValue@JSC@@PEAVExecState@3@PEAVJSDOMGlobalObject@1@V?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@@Z)

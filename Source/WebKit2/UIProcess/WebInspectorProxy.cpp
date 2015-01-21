@@ -27,8 +27,6 @@
 #include "config.h"
 #include "WebInspectorProxy.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "APIProcessPoolConfiguration.h"
 #include "APIURLRequest.h"
 #include "WebFramePolicyListenerProxy.h"
@@ -647,5 +645,3 @@ void WebInspectorProxy::sendMessageToRemoteFrontend(const String& message)
 #endif
 
 } // namespace WebKit
-
-#endif // ENABLE(INSPECTOR)

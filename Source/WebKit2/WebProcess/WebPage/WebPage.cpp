@@ -360,10 +360,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageConfiguration.dragClient = new WebDragClient(this);
 #endif
     pageConfiguration.backForwardClient = WebBackForwardListProxy::create(this);
-#if ENABLE(INSPECTOR)
     m_inspectorClient = new WebInspectorClient(this);
     pageConfiguration.inspectorClient = m_inspectorClient;
-#endif
 #if USE(AUTOCORRECTION_PANEL)
     pageConfiguration.alternativeTextClient = new WebAlternativeTextClient(this);
 #endif
@@ -479,10 +477,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     WebProcess::shared().addMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID, *this);
 #endif
-#if ENABLE(INSPECTOR)
     WebProcess::shared().addMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID, *this);
     WebProcess::shared().addMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID, *this);
-#endif
 #if ENABLE(FULLSCREEN_API)
     WebProcess::shared().addMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID, *this);
 #endif
@@ -565,10 +561,8 @@ WebPage::~WebPage()
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
     WebProcess::shared().removeMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID);
 #endif
-#if ENABLE(INSPECTOR)
     WebProcess::shared().removeMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID);
     WebProcess::shared().removeMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID);
-#endif
 #if ENABLE(FULLSCREEN_API)
     WebProcess::shared().removeMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID);
 #endif
@@ -975,9 +969,7 @@ void WebPage::close()
     if (pageGroup()->isVisibleToInjectedBundle() && WebProcess::shared().injectedBundle())
         WebProcess::shared().injectedBundle()->willDestroyPage(this);
 
-#if ENABLE(INSPECTOR)
     m_inspector = 0;
-#endif
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = 0;
 #endif
@@ -2956,7 +2948,6 @@ void WebPage::didFlushLayerTreeAtTime(std::chrono::milliseconds timestamp)
 }
 #endif
 
-#if ENABLE(INSPECTOR)
 WebInspector* WebPage::inspector()
 {
     if (m_isClosed)
@@ -2974,7 +2965,6 @@ WebInspectorUI* WebPage::inspectorUI()
         m_inspectorUI = WebInspectorUI::create(this);
     return m_inspectorUI.get();
 }
-#endif
 
 #if PLATFORM(IOS)
 WebVideoFullscreenManager* WebPage::videoFullscreenManager()
@@ -3562,7 +3552,6 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder
     }
 #endif
 
-#if ENABLE(INSPECTOR)
     if (decoder.messageReceiverName() == Messages::WebInspector::messageReceiverName()) {
         if (WebInspector* inspector = this->inspector())
             inspector->didReceiveMessage(connection, decoder);
@@ -3574,7 +3563,6 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder
             inspectorUI->didReceiveMessage(connection, decoder);
         return;
     }
-#endif
 
 #if ENABLE(FULLSCREEN_API)
     if (decoder.messageReceiverName() == Messages::WebFullScreenManager::messageReceiverName()) {

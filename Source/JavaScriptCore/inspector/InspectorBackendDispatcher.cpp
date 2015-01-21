@@ -27,8 +27,6 @@
 #include "config.h"
 #include "InspectorBackendDispatcher.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorFrontendChannel.h"
 #include "InspectorValues.h"
 #include <wtf/text/CString.h>
@@ -265,5 +263,3 @@ RefPtr<InspectorValue> InspectorBackendDispatcher::getValue(InspectorObject* obj
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

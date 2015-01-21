@@ -32,8 +32,6 @@
 #include "config.h"
 #include "InstrumentingAgents.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorController.h"
 #include "Page.h"
 #include "WorkerGlobalScope.h"
@@ -96,5 +94,3 @@ void InstrumentingAgents::reset()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

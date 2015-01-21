@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorLayerTreeAgent.h"
 
 #include "InspectorDOMAgent.h"
@@ -361,5 +358,3 @@ void InspectorLayerTreeAgent::unbindPseudoElement(PseudoElement* pseudoElement)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

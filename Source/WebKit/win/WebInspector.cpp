@@ -28,8 +28,6 @@
 
 #include "WebInspector.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "WebInspectorClient.h"
 #include "WebKitDLL.h"
 #include "WebView.h"
@@ -274,5 +272,3 @@ HRESULT STDMETHODCALLTYPE WebInspector::setTimelineProfilingEnabled(BOOL enabled
     frontendClient()->setTimelineProfilingEnabled(enabled);
     return S_OK;
 }
-
-#endif // ENABLE(INSPECTOR)

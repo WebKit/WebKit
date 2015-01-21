@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebInspectorProxy.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "EwkView.h"
 #include "WebProcessProxy.h"
 #include "ewk_context_private.h"
@@ -248,5 +246,3 @@ void WebInspectorProxy::platformAttachAvailabilityChanged(bool)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(INSPECTOR)

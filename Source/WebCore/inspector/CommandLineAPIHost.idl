@@ -32,7 +32,6 @@
 
 [
     NoInterfaceObject,
-    Conditional=INSPECTOR,
     ImplementationLacksVTable
 ] interface CommandLineAPIHost {
     void clearConsoleMessages();

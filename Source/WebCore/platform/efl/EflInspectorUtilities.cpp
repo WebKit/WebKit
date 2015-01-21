@@ -17,8 +17,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
 #include "EflInspectorUtilities.h"
 
 #include <unistd.h>
@@ -36,5 +34,3 @@ String inspectorResourcePath()
 }
 
 } // namespace WebCore
-
-#endif

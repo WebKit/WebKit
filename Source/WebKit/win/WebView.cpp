@@ -385,9 +385,7 @@ WebView::WebView()
     , m_viewWindow(0)
     , m_mainFrame(0)
     , m_page(0)
-#if ENABLE(INSPECTOR)
     , m_inspectorClient(0)
-#endif // ENABLE(INSPECTOR)
     , m_hasCustomDropTarget(false)
     , m_useBackForwardList(true)
     , m_userAgentOverridden(false)
@@ -773,11 +771,9 @@ HRESULT STDMETHODCALLTYPE WebView::close()
     setUIDelegate(0);
     setFormDelegate(0);
 
-#if ENABLE(INSPECTOR)
     m_inspectorClient = 0;
     if (m_webInspector)
         m_webInspector->webViewClosed();
-#endif // ENABLE(INSPECTOR)
 
     delete m_page;
     m_page = 0;
@@ -2800,18 +2796,14 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     if (SUCCEEDED(m_preferences->shouldUseHighResolutionTimers(&useHighResolutionTimer)))
         Settings::setShouldUseHighResolutionTimers(useHighResolutionTimer);
 
-#if ENABLE(INSPECTOR)
     m_inspectorClient = new WebInspectorClient(this);
-#endif // ENABLE(INSPECTOR)
 
     PageConfiguration configuration;
     configuration.chromeClient = new WebChromeClient(this);
     configuration.contextMenuClient = new WebContextMenuClient(this);
     configuration.editorClient = new WebEditorClient(this);
     configuration.dragClient = new WebDragClient(this);
-#if ENABLE(INSPECTOR)
     configuration.inspectorClient = m_inspectorClient;
-#endif // ENABLE(INSPECTOR)
     configuration.loaderClientForMainFrame = new WebFrameLoaderClient;
     configuration.databaseProvider = &WebDatabaseProvider::shared();
     configuration.storageNamespaceProvider = WebStorageNamespaceProvider::create(localStorageDatabasePath(m_preferences.get()));
@@ -5906,14 +5898,10 @@ bool WebView::onIMESetContext(WPARAM wparam, LPARAM)
 
 HRESULT STDMETHODCALLTYPE WebView::inspector(IWebInspector** inspector)
 {
-#if ENABLE(INSPECTOR)
     if (!m_webInspector)
         m_webInspector.adoptRef(WebInspector::createInstance(this, m_inspectorClient));
 
     return m_webInspector.copyRefTo(inspector);
-#else // !ENABLE(INSPECTOR)
-    return S_OK;
-#endif // ENABLE(INSPECTOR)
 }
 
 

@@ -23,6 +23,7 @@
 #include "ewk_view_private.h"
 
 #include "EwkView.h"
+#include "WebInspectorProxy.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_context_private.h"
 #include "ewk_main_private.h"
@@ -41,10 +42,6 @@
 #include <WebKit/WKView.h>
 #include <WebKit/WKViewEfl.h>
 #include <wtf/text/CString.h>
-
-#if ENABLE(INSPECTOR)
-#include "WebInspectorProxy.h"
-#endif
 
 #if HAVE(ACCESSIBILITY)
 #include "WebAccessibility.h"
@@ -507,7 +504,6 @@ Eina_Bool ewk_view_touch_events_enabled_get(const Evas_Object* ewkView)
 
 Eina_Bool ewk_view_inspector_show(Evas_Object* ewkView)
 {
-#if ENABLE(INSPECTOR)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
     WKInspectorRef wkInspector = WKPageGetInspector(impl->wkPage());
@@ -515,15 +511,10 @@ Eina_Bool ewk_view_inspector_show(Evas_Object* ewkView)
         WKInspectorShow(wkInspector);
 
     return true;
-#else
-    UNUSED_PARAM(ewkView);
-    return false;
-#endif
 }
 
 Eina_Bool ewk_view_inspector_close(Evas_Object* ewkView)
 {
-#if ENABLE(INSPECTOR)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
     WKInspectorRef wkInspector = WKPageGetInspector(impl->wkPage());
@@ -531,10 +522,6 @@ Eina_Bool ewk_view_inspector_close(Evas_Object* ewkView)
         WKInspectorClose(wkInspector);
 
     return true;
-#else
-    UNUSED_PARAM(ewkView);
-    return false;
-#endif
 }
 
 inline WKPaginationMode toWKPaginationMode(Ewk_Pagination_Mode mode)

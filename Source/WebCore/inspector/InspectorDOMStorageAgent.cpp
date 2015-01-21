@@ -28,9 +28,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorDOMStorageAgent.h"
 
 #include "DOMWindow.h"
@@ -205,5 +202,3 @@ RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& error
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

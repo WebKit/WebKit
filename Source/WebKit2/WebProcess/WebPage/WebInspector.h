@@ -26,8 +26,6 @@
 #ifndef WebInspector_h
 #define WebInspector_h
 
-#if ENABLE(INSPECTOR)
-
 #include "APIObject.h"
 #include "Connection.h"
 #include "MessageReceiver.h"
@@ -110,7 +108,5 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // WebInspector_h

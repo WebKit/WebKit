@@ -33,8 +33,6 @@
 
 #include "WebConsoleAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 namespace WebCore {
 
 class InspectorDOMAgent;
@@ -55,7 +53,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(PageConsoleAgent_h)

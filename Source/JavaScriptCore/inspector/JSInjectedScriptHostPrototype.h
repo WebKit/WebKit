@@ -26,8 +26,6 @@
 #ifndef JSInjectedScriptHostPrototype_h
 #define JSInjectedScriptHostPrototype_h
 
-#if ENABLE(INSPECTOR)
-
 #include "JSObject.h"
 
 namespace Inspector {
@@ -62,7 +60,5 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(JSInjectedScriptHostPrototype_h)

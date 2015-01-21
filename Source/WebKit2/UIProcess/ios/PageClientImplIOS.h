@@ -132,7 +132,6 @@ private:
     virtual double minimumZoomScale() const override;
     virtual WebCore::FloatSize contentsSize() const override;
 
-#if ENABLE(INSPECTOR)
     virtual void showInspectorHighlight(const WebCore::Highlight&) override;
     virtual void hideInspectorHighlight() override;
 
@@ -141,7 +140,6 @@ private:
 
     virtual void enableInspectorNodeSearch() override;
     virtual void disableInspectorNodeSearch() override;
-#endif
 
     virtual void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale) override;
     virtual void overflowScrollViewWillStartPanGesture() override;

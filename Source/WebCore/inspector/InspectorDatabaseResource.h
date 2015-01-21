@@ -31,8 +31,6 @@
 #ifndef InspectorDatabaseResource_h
 #define InspectorDatabaseResource_h
 
-#if ENABLE(INSPECTOR)
-
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -62,7 +60,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // InspectorDatabaseResource_h

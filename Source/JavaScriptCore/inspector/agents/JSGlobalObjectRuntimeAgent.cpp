@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSGlobalObjectRuntimeAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "JSGlobalObject.h"
@@ -74,5 +72,3 @@ InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(ErrorString& er
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

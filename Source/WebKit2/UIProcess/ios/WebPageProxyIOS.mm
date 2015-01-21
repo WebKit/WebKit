@@ -763,7 +763,6 @@ void WebPageProxy::stopAssistingNode()
     m_pageClient.stopAssistingNode();
 }
 
-#if ENABLE(INSPECTOR)
 void WebPageProxy::showInspectorHighlight(const WebCore::Highlight& highlight)
 {
     m_pageClient.showInspectorHighlight(highlight);
@@ -793,7 +792,6 @@ void WebPageProxy::disableInspectorNodeSearch()
 {
     m_pageClient.disableInspectorNodeSearch();
 }
-#endif
 
 void WebPageProxy::focusNextAssistedNode(bool isForward, std::function<void (CallbackBase::Error)> callbackFunction)
 {

@@ -31,7 +31,7 @@
 #ifndef InspectorIndexedDBAgent_h
 #define InspectorIndexedDBAgent_h
 
-#if ENABLE(INSPECTOR) && ENABLE(INDEXED_DATABASE)
+#if ENABLE(INDEXED_DATABASE)
 
 #include "InspectorWebAgentBase.h"
 #include <inspector/InspectorBackendDispatchers.h>
@@ -71,5 +71,5 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR) && ENABLE(INDEXED_DATABASE)
+#endif // ENABLE(INDEXED_DATABASE)
 #endif // !defined(InspectorIndexedDBAgent_h)

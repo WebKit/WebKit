@@ -31,9 +31,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "JSCommandLineAPIHost.h"
 
 #include "CommandLineAPIHost.h"
@@ -166,5 +163,3 @@ JSValue JSCommandLineAPIHost::storageId(ExecState* exec)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

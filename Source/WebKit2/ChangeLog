@@ -1,3 +1,98 @@
+2015-01-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(INSPECTOR) ifdef guards
+        https://bugs.webkit.org/show_bug.cgi?id=140668
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceRequest>::encode):
+        (IPC::ArgumentCoder<ResourceRequest>::decode):
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorGetTypeID):
+        (WKInspectorGetPage):
+        (WKInspectorIsConnected):
+        (WKInspectorIsVisible):
+        (WKInspectorIsFront):
+        (WKInspectorConnect):
+        (WKInspectorShow):
+        (WKInspectorHide):
+        (WKInspectorClose):
+        (WKInspectorShowConsole):
+        (WKInspectorShowResources):
+        (WKInspectorShowMainResourceForFrame):
+        (WKInspectorIsAttached):
+        (WKInspectorAttach):
+        (WKInspectorDetach):
+        (WKInspectorIsProfilingPage):
+        (WKInspectorTogglePageProfiling):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetInspector):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_inspector_show):
+        (ewk_view_inspector_close):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::maybeInitializeSandboxExtensionHandle):
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::disableInspectorNodeSearch):
+        * UIProcess/ios/WebInspectorProxyIOS.mm:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::disableInspectorNodeSearch):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        * WebProcess/InjectedBundle/API/c/WKBundleInspector.cpp:
+        (WKBundleInspectorGetTypeID):
+        (WKBundleInspectorShow):
+        (WKBundleInspectorClose):
+        (WKBundleInspectorEvaluateScriptForTest):
+        (WKBundleInspectorSetPageProfilingEnabled):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetInspector):
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.h:
+        * WebProcess/WebPage/WebInspector.cpp:
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.messages.in:
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::inspectorUI):
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/efl/WebInspectorEfl.cpp:
+        * WebProcess/WebPage/efl/WebInspectorUIEfl.cpp:
+        * WebProcess/WebPage/gtk/WebInspectorGtk.cpp:
+        * WebProcess/WebPage/gtk/WebInspectorUIGtk.cpp:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::disableInspectorNodeSearch):
+        * WebProcess/WebPage/mac/WebInspectorMac.mm:
+        * WebProcess/WebPage/mac/WebInspectorUIMac.mm:
+        * config.h:
+
 2015-01-20  Martin Hock  <mhock@apple.com>
 
         [iOS][WK2] Redraw find-in-page indicator on rotation

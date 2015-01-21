@@ -29,8 +29,6 @@
 #include "config.h"
 #include "WebInspectorProxy.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "WebKitWebViewBasePrivate.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FileSystem.h>
@@ -319,5 +317,3 @@ void WebInspectorProxy::platformAttachAvailabilityChanged(bool available)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(INSPECTOR)

@@ -27,8 +27,6 @@
 #include "config.h"
 #include "IdentifiersFactory.h"
 
-#if ENABLE(INSPECTOR)
-
 #include <wtf/text/StringBuilder.h>
 
 namespace Inspector {
@@ -62,4 +60,3 @@ String IdentifiersFactory::addProcessIdPrefixTo(const String& id)
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)

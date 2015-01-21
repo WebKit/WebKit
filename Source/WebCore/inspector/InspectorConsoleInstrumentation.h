@@ -40,95 +40,51 @@ namespace WebCore {
 
 inline void InspectorInstrumentation::addMessageToConsole(Page& page, std::unique_ptr<Inspector::ConsoleMessage> message)
 {
-#if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         addMessageToConsoleImpl(*instrumentingAgents, WTF::move(message));
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(message);
-#endif
 }
 
 inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, std::unique_ptr<Inspector::ConsoleMessage> message)
 {
-#if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(workerGlobalScope))
         addMessageToConsoleImpl(*instrumentingAgents, WTF::move(message));
-#else
-    UNUSED_PARAM(workerGlobalScope);
-    UNUSED_PARAM(message);
-#endif
 }
 
 inline void InspectorInstrumentation::consoleCount(Page& page, JSC::ExecState* state, RefPtr<Inspector::ScriptArguments>&& arguments)
 {
-#if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         consoleCountImpl(*instrumentingAgents, state, WTF::move(arguments));
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(state);
-    UNUSED_PARAM(arguments);
-#endif
 }
 
 inline void InspectorInstrumentation::startConsoleTiming(Frame& frame, const String& title)
 {
-#if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         startConsoleTimingImpl(*instrumentingAgents, frame, title);
-#else
-    UNUSED_PARAM(frame);
-    UNUSED_PARAM(title);
-#endif
 }
 
 inline void InspectorInstrumentation::stopConsoleTiming(Frame& frame, const String& title, RefPtr<Inspector::ScriptCallStack>&& stack)
 {
-#if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         stopConsoleTimingImpl(*instrumentingAgents, frame, title, WTF::move(stack));
-#else
-    UNUSED_PARAM(frame);
-    UNUSED_PARAM(title);
-    UNUSED_PARAM(stack);
-#endif
 }
 
 inline void InspectorInstrumentation::consoleTimeStamp(Frame& frame, RefPtr<Inspector::ScriptArguments>&& arguments)
 {
-#if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         consoleTimeStampImpl(*instrumentingAgents, frame, WTF::move(arguments));
-#else
-    UNUSED_PARAM(frame);
-    UNUSED_PARAM(arguments);
-#endif
 }
 
 inline void InspectorInstrumentation::startProfiling(Page& page, JSC::ExecState* exec, const String &title)
 {
-#if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         startProfilingImpl(*instrumentingAgents, exec, title);
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(title);
-#endif
 }
 
 inline RefPtr<JSC::Profile> InspectorInstrumentation::stopProfiling(Page& page, JSC::ExecState* exec, const String &title)
 {
-#if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         return stopProfilingImpl(*instrumentingAgents, exec, title);
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(exec);
-    UNUSED_PARAM(title);
-#endif
     return nullptr;
 }
 

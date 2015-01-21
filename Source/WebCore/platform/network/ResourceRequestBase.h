@@ -143,11 +143,9 @@ namespace WebCore {
         bool reportRawHeaders() const { return m_reportRawHeaders; }
         void setReportRawHeaders(bool reportRawHeaders) { m_reportRawHeaders = reportRawHeaders; }
 
-#if ENABLE(INSPECTOR)
         // Whether this request should be hidden from the Inspector.
         bool hiddenFromInspector() const { return m_hiddenFromInspector; }
         void setHiddenFromInspector(bool hiddenFromInspector) { m_hiddenFromInspector = hiddenFromInspector; }
-#endif
 
 #if !PLATFORM(COCOA)
         bool encodingRequiresPlatformData() const { return true; }
@@ -175,9 +173,7 @@ namespace WebCore {
             , m_reportUploadProgress(false)
             , m_reportLoadTiming(false)
             , m_reportRawHeaders(false)
-#if ENABLE(INSPECTOR)
             , m_hiddenFromInspector(false)
-#endif
             , m_priority(ResourceLoadPriorityLow)
         {
         }
@@ -199,9 +195,7 @@ namespace WebCore {
             , m_reportUploadProgress(false)
             , m_reportLoadTiming(false)
             , m_reportRawHeaders(false)
-#if ENABLE(INSPECTOR)
             , m_hiddenFromInspector(false)
-#endif
             , m_priority(ResourceLoadPriorityLow)
         {
         }
@@ -228,9 +222,7 @@ namespace WebCore {
         bool m_reportUploadProgress : 1;
         bool m_reportLoadTiming : 1;
         bool m_reportRawHeaders : 1;
-#if ENABLE(INSPECTOR)
         bool m_hiddenFromInspector : 1;
-#endif
         ResourceLoadPriority m_priority : 4; // not unsigned because ResourceLoadPriority has negative values
 
     private:

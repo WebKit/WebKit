@@ -31,8 +31,6 @@
 #include "config.h"
 #include "ConsoleMessage.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "IdentifiersFactory.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
@@ -291,5 +289,3 @@ unsigned ConsoleMessage::argumentCount() const
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

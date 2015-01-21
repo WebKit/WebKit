@@ -30,8 +30,6 @@
 #include "config.h"
 #include "InspectorDebuggerAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "ContentSearchUtilities.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
@@ -829,5 +827,3 @@ void InspectorDebuggerAgent::clearExceptionValue()
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

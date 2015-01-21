@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorDOMAgent.h"
 
 #include "AXObjectCache.h"
@@ -2020,5 +2017,3 @@ Deprecated::ScriptValue InspectorDOMAgent::nodeAsScriptValue(JSC::ExecState* sta
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

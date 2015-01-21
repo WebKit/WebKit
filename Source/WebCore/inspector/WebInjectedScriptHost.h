@@ -26,8 +26,6 @@
 #ifndef WebInjectedScriptHost_h
 #define WebInjectedScriptHost_h
 
-#if ENABLE(INSPECTOR)
-
 #include <inspector/InjectedScriptHost.h>
 
 namespace WebCore {
@@ -41,7 +39,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(WebInjectedScriptHost_h)

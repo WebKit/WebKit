@@ -35,50 +35,28 @@ using namespace WebKit;
 
 WKTypeID WKBundleInspectorGetTypeID()
 {
-#if ENABLE(INSPECTOR)
     return toAPI(WebInspector::APIType);
-#else
-    return toAPI(API::Object::Type::Null);
-#endif
 }
 
 void WKBundleInspectorShow(WKBundleInspectorRef inspectorRef)
 {
-#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->show();
-#else
-    UNUSED_PARAM(inspectorRef);
-#endif
 }
 
 void WKBundleInspectorClose(WKBundleInspectorRef inspectorRef)
 {
-#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->close();
-#else
-    UNUSED_PARAM(inspectorRef);
-#endif
 }
 
 void WKBundleInspectorEvaluateScriptForTest(WKBundleInspectorRef inspectorRef, WKStringRef script)
 {
-#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->evaluateScriptForTest(toWTFString(script));
-#else
-    UNUSED_PARAM(script);
-    UNUSED_PARAM(inspectorRef);
-#endif
 }
 
 void WKBundleInspectorSetPageProfilingEnabled(WKBundleInspectorRef inspectorRef, bool enabled)
 {
-#if ENABLE(INSPECTOR)
     if (enabled)
         toImpl(inspectorRef)->startPageProfiling();
     else
         toImpl(inspectorRef)->stopPageProfiling();
-#else
-    UNUSED_PARAM(enabled);
-    UNUSED_PARAM(inspectorRef);
-#endif
 }

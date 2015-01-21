@@ -31,8 +31,6 @@
 #ifndef WorkerRuntimeAgent_h
 #define WorkerRuntimeAgent_h
 
-#if ENABLE(INSPECTOR)
-
 #include <inspector/agents/InspectorRuntimeAgent.h>
 
 namespace WebCore {
@@ -63,7 +61,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorPagerAgent_h)

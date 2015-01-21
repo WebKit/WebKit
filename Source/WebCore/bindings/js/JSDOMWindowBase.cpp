@@ -103,10 +103,6 @@ void JSDOMWindowBase::printErrorMessage(const String& message) const
 
 bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)
 {
-#if !ENABLE(INSPECTOR)
-    UNUSED_PARAM(object);
-    return false;
-#else
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
     Frame* frame = thisObject->impl().frame();
     if (!frame)
@@ -117,15 +113,10 @@ bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)
         return false;
 
     return page->inspectorController().profilerEnabled();
-#endif // ENABLE(INSPECTOR)
 }
 
 bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
 {
-#if !ENABLE(INSPECTOR)
-    UNUSED_PARAM(object);
-    return false;
-#else
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
     Frame* frame = thisObject->impl().frame();
     if (!frame)
@@ -139,7 +130,6 @@ bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
     ASSERT(enabled || !thisObject->debugger());
     ASSERT(enabled || !supportsProfiling(thisObject));
     return enabled;
-#endif
 }
 
 static inline bool shouldInterruptScriptToPreventInfiniteRecursionWhenClosingPage(Page* page)

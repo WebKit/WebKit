@@ -59,9 +59,8 @@ private:
     void onWebViewWindowPosChanged(WINDOWPOS*);
     void onRootWindowPosChanged(WINDOWPOS*);
 
-#if ENABLE(INSPECTOR)
     WebView* m_inspectedWebView;
-#endif // ENABLE(INSPECTOR)
+
     HWND m_inspectedWebViewWindow;
     HWND m_overlay;
     HWND m_observedWindow;

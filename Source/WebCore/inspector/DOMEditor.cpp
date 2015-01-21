@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "DOMEditor.h"
 
 #include "DOMPatchSupport.h"
@@ -453,5 +450,3 @@ bool DOMEditor::replaceWholeText(Text* textNode, const String& text, ErrorString
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

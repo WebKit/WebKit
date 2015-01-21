@@ -26,8 +26,6 @@
 #ifndef WebConsoleAgent_h
 #define WebConsoleAgent_h
 
-#if ENABLE(INSPECTOR)
-
 #include <inspector/agents/InspectorConsoleAgent.h>
 
 namespace WebCore {
@@ -58,7 +56,5 @@ protected:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(WebConsoleAgent_h)

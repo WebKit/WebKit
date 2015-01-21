@@ -26,8 +26,6 @@
 #ifndef JavaScriptCallFrame_h
 #define JavaScriptCallFrame_h
 
-#if ENABLE(INSPECTOR)
-
 #include "JSCJSValueInlines.h"
 #include "debugger/DebuggerCallFrame.h"
 #include "interpreter/CallFrame.h"
@@ -67,7 +65,5 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // JavaScriptCallFrame_h

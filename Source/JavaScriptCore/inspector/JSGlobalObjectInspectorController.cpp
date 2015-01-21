@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSGlobalObjectInspectorController.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "Completion.h"
 #include "ConsoleMessage.h"
 #include "ErrorHandlingScope.h"
@@ -245,4 +243,3 @@ void JSGlobalObjectInspectorController::appendExtraAgent(std::unique_ptr<Inspect
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)

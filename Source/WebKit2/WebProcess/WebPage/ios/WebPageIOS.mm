@@ -635,7 +635,6 @@ void WebPage::setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSel
     select.optionSelectedByUser(index, true, allowMultipleSelection);
 }
 
-#if ENABLE(INSPECTOR)
 void WebPage::showInspectorHighlight(const WebCore::Highlight& highlight)
 {
     send(Messages::WebPageProxy::ShowInspectorHighlight(highlight));
@@ -665,7 +664,6 @@ void WebPage::disableInspectorNodeSearch()
 {
     send(Messages::WebPageProxy::DisableInspectorNodeSearch());
 }
-#endif
 
 static FloatQuad innerFrameQuad(Frame* frame, Node* assistedNode)
 {

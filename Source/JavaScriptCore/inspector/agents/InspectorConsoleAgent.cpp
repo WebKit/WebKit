@@ -26,8 +26,6 @@
 #include "config.h"
 #include "InspectorConsoleAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "ConsoleMessage.h"
 #include "InjectedScriptManager.h"
 #include "ScriptArguments.h"
@@ -223,5 +221,3 @@ void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> co
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

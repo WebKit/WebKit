@@ -32,8 +32,6 @@
 #ifndef InjectedScript_h
 #define InjectedScript_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InjectedScriptBase.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -78,7 +76,5 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // InjectedScript_h

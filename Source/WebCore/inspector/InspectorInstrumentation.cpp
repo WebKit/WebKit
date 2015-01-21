@@ -32,8 +32,6 @@
 #include "config.h"
 #include "InspectorInstrumentation.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "CSSRule.h"
 #include "CSSStyleRule.h"
 #include "DOMWindow.h"
@@ -1289,5 +1287,3 @@ void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents& i
 }
 
 } // namespace WebCore
-
-#endif // !ENABLE(INSPECTOR)

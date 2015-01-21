@@ -31,8 +31,6 @@
 #include "config.h"
 #include "InjectedScriptManager.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "Completion.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptSource.h"
@@ -191,4 +189,3 @@ void InjectedScriptManager::didCreateInjectedScript(InjectedScript)
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)

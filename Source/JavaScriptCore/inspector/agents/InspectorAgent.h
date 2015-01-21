@@ -30,8 +30,6 @@
 #ifndef InspectorAgent_h
 #define InspectorAgent_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
 #include "inspector/InspectorAgentBase.h"
@@ -82,7 +80,5 @@ private:
 };
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorAgent_h)

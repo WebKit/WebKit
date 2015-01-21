@@ -53,6 +53,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLStyleElement.h"
 #include "InsertionPoint.h"
+#include "InspectorController.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MutationEvent.h"
@@ -85,10 +86,6 @@
 
 #if ENABLE(INDIE_UI)
 #include "UIRequestEvent.h"
-#endif
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
 #endif
 
 namespace WebCore {
@@ -554,10 +551,8 @@ bool Node::isContentRichlyEditable()
 
 void Node::inspect()
 {
-#if ENABLE(INSPECTOR)
     if (document().page())
         document().page()->inspectorController().inspect(this);
-#endif
 }
 
 bool Node::hasEditableStyle(EditableLevel editableLevel, UserSelectAllTreatment treatment) const

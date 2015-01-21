@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSJavaScriptCallFramePrototype.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "Error.h"
 #include "GetterSetter.h"
 #include "Identifier.h"
@@ -239,5 +237,3 @@ EncodedJSValue JSC_HOST_CALL jsJavaScriptCallFrameConstantFUNCTION_NAME_SCOPE(Ex
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

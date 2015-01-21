@@ -39,16 +39,8 @@ namespace WebCore {
 
 inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* context, RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
 {
-#if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
         didOpenDatabaseImpl(*instrumentingAgents, WTF::move(database), domain, name, version);
-#else
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(database);
-    UNUSED_PARAM(domain);
-    UNUSED_PARAM(name);
-    UNUSED_PARAM(version);
-#endif
 }
 
 } // namespace WebCore

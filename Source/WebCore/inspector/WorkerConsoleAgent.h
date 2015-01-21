@@ -33,8 +33,6 @@
 
 #include "WebConsoleAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 namespace WebCore {
 
 class WorkerConsoleAgent final : public WebConsoleAgent {
@@ -51,7 +49,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(WorkerConsoleAgent_h)

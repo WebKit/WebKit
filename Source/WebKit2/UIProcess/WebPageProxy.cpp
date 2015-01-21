@@ -421,9 +421,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     m_preferences->addPage(*this);
     m_pageGroup->addPage(this);
 
-#if ENABLE(INSPECTOR)
     m_inspector = WebInspectorProxy::create(this);
-#endif
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = WebFullScreenManagerProxy::create(*this, m_pageClient.fullScreenManagerProxyClient());
 #endif
@@ -604,9 +602,7 @@ void WebPageProxy::reattachToWebProcess()
     updateViewState();
     updateActivityToken();
 
-#if ENABLE(INSPECTOR)
     m_inspector = WebInspectorProxy::create(this);
-#endif
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = WebFullScreenManagerProxy::create(*this, m_pageClient.fullScreenManagerProxyClient());
 #endif
@@ -763,10 +759,8 @@ bool WebPageProxy::maybeInitializeSandboxExtensionHandle(const URL& url, Sandbox
     if (m_process->hasAssumedReadAccessToURL(url))
         return false;
 
-#if ENABLE(INSPECTOR)
     // Inspector resources are in a directory with assumed access.
     ASSERT_WITH_SECURITY_IMPLICATION(!WebInspectorProxy::isInspectorPage(*this));
-#endif
 
     SandboxExtension::createHandle("/", SandboxExtension::ReadOnly, sandboxExtensionHandle);
     return true;
@@ -3562,17 +3556,12 @@ void WebPageProxy::didDraw()
 }
 
 // Inspector
-
-#if ENABLE(INSPECTOR)
-
 WebInspectorProxy* WebPageProxy::inspector()
 {
     if (isClosed() || !isValid())
         return 0;
     return m_inspector.get();
 }
-
-#endif
 
 #if ENABLE(FULLSCREEN_API)
 WebFullScreenManagerProxy* WebPageProxy::fullScreenManager()
@@ -4520,12 +4509,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_mainFrame = nullptr;
     m_drawingArea = nullptr;
 
-#if ENABLE(INSPECTOR)
     if (m_inspector) {
         m_inspector->invalidate();
         m_inspector = nullptr;
     }
-#endif
 
 #if ENABLE(FULLSCREEN_API)
     if (m_fullScreenManager) {

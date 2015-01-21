@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebInspectorProxy.h"
 
-#if PLATFORM(IOS) && ENABLE(INSPECTOR)
+#if PLATFORM(IOS)
 
 #import <WebCore/NotImplemented.h>
 
@@ -146,4 +146,4 @@ void WebInspectorProxy::platformAttachAvailabilityChanged(bool available)
 
 } // namespace WebKit
 
-#endif // PLATFORM(IOS) && ENABLE(INSPECTOR)
+#endif // PLATFORM(IOS)

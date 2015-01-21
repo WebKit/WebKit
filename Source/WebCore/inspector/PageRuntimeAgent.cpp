@@ -31,8 +31,6 @@
 #include "config.h"
 #include "PageRuntimeAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "Document.h"
 #include "Frame.h"
 #include "InspectorPageAgent.h"
@@ -177,5 +175,3 @@ void PageRuntimeAgent::notifyContextCreated(const String& frameId, JSC::ExecStat
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

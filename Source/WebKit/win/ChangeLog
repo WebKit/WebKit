@@ -1,3 +1,25 @@
+2015-01-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(INSPECTOR) ifdef guards
+        https://bugs.webkit.org/show_bug.cgi?id=140668
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (registerWindowClass):
+        * WebInspector.cpp:
+        (WebInspector::setTimelineProfilingEnabled):
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::WebNodeHighlight):
+        (WebNodeHighlight::update):
+        * WebNodeHighlight.h:
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::close):
+        (WebView::initWithFrame):
+        (WebView::inspector):
+        * WebView.h:
+
 2015-01-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove non-Windows cruft from WebKit/win/Plugins

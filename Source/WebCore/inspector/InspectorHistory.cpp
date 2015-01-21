@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorHistory.h"
 
 #include "ExceptionCodePlaceholder.h"
@@ -151,5 +148,3 @@ void InspectorHistory::reset()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

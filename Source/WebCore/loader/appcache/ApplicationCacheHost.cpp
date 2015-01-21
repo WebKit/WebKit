@@ -279,7 +279,6 @@ void ApplicationCacheHost::stopDeferringEvents()
     m_defersEvents = false;
 }
 
-#if ENABLE(INSPECTOR)
 void ApplicationCacheHost::fillResourceList(ResourceInfoList* resources)
 {
     ApplicationCache* cache = applicationCache();
@@ -299,17 +298,16 @@ void ApplicationCacheHost::fillResourceList(ResourceInfoList* resources)
         resources->append(ResourceInfo(resource->url(), isMaster, isManifest, isFallback, isForeign, isExplicit, resource->estimatedSizeInStorage()));
     }
 }
- 
+
 ApplicationCacheHost::CacheInfo ApplicationCacheHost::applicationCacheInfo()
 {
     ApplicationCache* cache = applicationCache();
     if (!cache || !cache->isComplete())
         return CacheInfo(URL(), 0, 0, 0);
-  
+
     // FIXME: Add "Creation Time" and "Update Time" to Application Caches.
     return CacheInfo(cache->manifestResource()->url(), 0, 0, cache->estimatedSizeInStorage());
 }
-#endif
 
 void ApplicationCacheHost::dispatchDOMEvent(EventID id, int total, int done)
 {

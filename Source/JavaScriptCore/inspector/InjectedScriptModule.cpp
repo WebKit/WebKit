@@ -32,8 +32,6 @@
 #include "config.h"
 #include "InjectedScriptModule.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "ScriptFunctionCall.h"
@@ -88,5 +86,3 @@ void InjectedScriptModule::ensureInjected(InjectedScriptManager* injectedScriptM
 }
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)

@@ -28,7 +28,7 @@
 #ifndef InspectorReplayAgent_h
 #define InspectorReplayAgent_h
 
-#if ENABLE(INSPECTOR) && ENABLE(WEB_REPLAY)
+#if ENABLE(WEB_REPLAY)
 
 #include "InspectorWebAgentBase.h"
 #include <inspector/InspectorBackendDispatchers.h>
@@ -124,6 +124,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR) && ENABLE(WEB_REPLAY)
+#endif // ENABLE(WEB_REPLAY)
 
 #endif // InspectorReplayAgent_h

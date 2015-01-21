@@ -31,8 +31,6 @@
 #ifndef PageRuntimeAgent_h
 #define PageRuntimeAgent_h
 
-#if ENABLE(INSPECTOR)
-
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <inspector/agents/InspectorRuntimeAgent.h>
 
@@ -82,7 +80,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorPagerAgent_h)

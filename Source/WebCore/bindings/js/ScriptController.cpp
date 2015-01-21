@@ -358,7 +358,6 @@ PassRefPtr<Bindings::RootObject> ScriptController::createRootObject(void* native
     return rootObject.release();
 }
 
-#if ENABLE(INSPECTOR)
 void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*, SecurityOrigin*>>& result)
 {
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
@@ -367,7 +366,6 @@ void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::ExecState*,
         result.append(std::pair<JSC::ExecState*, SecurityOrigin*>(exec, origin));
     }
 }
-#endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 

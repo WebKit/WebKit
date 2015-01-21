@@ -277,12 +277,7 @@ uint64_t WKPageGetRenderTreeSize(WKPageRef page)
 
 WKInspectorRef WKPageGetInspector(WKPageRef pageRef)
 {
-#if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
     return toAPI(toImpl(pageRef)->inspector());
-#else
-    UNUSED_PARAM(pageRef);
-    return 0;
-#endif
 }
 
 WKVibrationRef WKPageGetVibration(WKPageRef page)

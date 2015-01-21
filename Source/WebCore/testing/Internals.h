@@ -233,13 +233,11 @@ public:
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
 
-#if ENABLE(INSPECTOR)
     Vector<String> consoleMessageArgumentCounts() const;
     PassRefPtr<DOMWindow> openDummyInspectorFrontend(const String& url);
     void closeDummyInspectorFrontend();
     void setJavaScriptProfilingEnabled(bool enabled, ExceptionCode&);
     void setInspectorIsUnderTest(bool isUnderTest, ExceptionCode&);
-#endif
 
     String counterValue(Element*);
 
@@ -366,11 +364,10 @@ private:
     Vector<String> iconURLs(Document*, int iconTypesMask) const;
 
     RenderedDocumentMarker* markerAt(Node*, const String& markerType, unsigned index, ExceptionCode&);
-#if ENABLE(INSPECTOR)
+
     RefPtr<DOMWindow> m_frontendWindow;
     std::unique_ptr<InspectorFrontendClientDummy> m_frontendClient;
     std::unique_ptr<InspectorFrontendChannelDummy> m_frontendChannel;
-#endif
 };
 
 } // namespace WebCore

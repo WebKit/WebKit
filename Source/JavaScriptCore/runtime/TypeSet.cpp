@@ -236,7 +236,6 @@ String TypeSet::leastCommonAncestor() const
     return StructureShape::leastCommonAncestor(m_structureHistory);
 }
 
-#if ENABLE(INSPECTOR)
 Ref<Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>> TypeSet::allStructureRepresentations() const
 {
     auto description = Inspector::Protocol::Array<Inspector::Protocol::Runtime::StructureDescription>::create();
@@ -260,7 +259,6 @@ Ref<Inspector::Protocol::Runtime::TypeSet> TypeSet::inspectorTypeSet() const
         .setIsObject((m_seenTypes & TypeObject) != TypeNothing)
         .release();
 }
-#endif
 
 String TypeSet::toJSONString() const
 {
@@ -510,7 +508,6 @@ String StructureShape::toJSONString() const
     return json.toString();
 }
 
-#if ENABLE(INSPECTOR)
 Ref<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspectorRepresentation()
 {
     auto base = Inspector::Protocol::Runtime::StructureDescription::create().release();
@@ -541,7 +538,6 @@ Ref<Inspector::Protocol::Runtime::StructureDescription> StructureShape::inspecto
 
     return WTF::move(base);
 }
-#endif
 
 bool StructureShape::hasSamePrototypeChain(PassRefPtr<StructureShape> prpOther)
 {

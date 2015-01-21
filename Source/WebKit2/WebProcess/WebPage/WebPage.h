@@ -228,11 +228,9 @@ public:
     void didFlushLayerTreeAtTime(std::chrono::milliseconds);
 #endif
 
-#if ENABLE(INSPECTOR)
     WebInspector* inspector();
     WebInspectorUI* inspectorUI();
     bool isInspectorPage() { return !!m_inspectorUI; }
-#endif
 
 #if PLATFORM(IOS)
     WebVideoFullscreenManager* videoFullscreenManager();
@@ -528,7 +526,7 @@ public:
     void executeEditCommandWithCallback(const String&, uint64_t callbackID);
 
     std::chrono::milliseconds eventThrottlingDelay() const;
-#if ENABLE(INSPECTOR)
+
     void showInspectorHighlight(const WebCore::Highlight&);
     void hideInspectorHighlight();
 
@@ -537,7 +535,6 @@ public:
 
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
-#endif
 #endif
 
     NotificationPermissionRequestManager* notificationPermissionRequestManager();
@@ -1200,10 +1197,8 @@ private:
 
     FindController m_findController;
 
-#if ENABLE(INSPECTOR)
     RefPtr<WebInspector> m_inspector;
     RefPtr<WebInspectorUI> m_inspectorUI;
-#endif
 #if PLATFORM(IOS)
     RefPtr<WebVideoFullscreenManager> m_videoFullscreenManager;
 #endif

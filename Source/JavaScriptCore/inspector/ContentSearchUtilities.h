@@ -29,8 +29,6 @@
 #ifndef ContentSearchUtilities_h
 #define ContentSearchUtilities_h
 
-#if ENABLE(INSPECTOR)
-
 #include "InspectorProtocolObjects.h"
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
@@ -57,7 +55,5 @@ JS_EXPORT_PRIVATE String findStylesheetSourceMapURL(const String& content);
 } // namespace ContentSearchUtilities
 
 } // namespace Inspector
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(ContentSearchUtilities_h)

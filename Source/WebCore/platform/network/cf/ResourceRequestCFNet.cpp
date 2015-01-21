@@ -232,17 +232,13 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
 {
     ResourceLoadPriority oldPriority = priority();
     RefPtr<FormData> oldHTTPBody = httpBody();
-#if ENABLE(INSPECTOR)
     bool isHiddenFromInspector = hiddenFromInspector();
-#endif
 
     *this = delegateProvidedRequest;
 
     setPriority(oldPriority);
     setHTTPBody(oldHTTPBody.release());
-#if ENABLE(INSPECTOR)
     setHiddenFromInspector(isHiddenFromInspector);
-#endif
 }
 
 void ResourceRequest::doUpdateResourceRequest()

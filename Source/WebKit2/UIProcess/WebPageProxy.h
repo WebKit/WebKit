@@ -287,9 +287,7 @@ public:
     void didEnterFullscreen();
     void didExitFullscreen();
 
-#if ENABLE(INSPECTOR)
     WebInspectorProxy* inspector();
-#endif
 
 #if ENABLE(REMOTE_INSPECTOR)
     bool allowsRemoteInspection() const { return m_allowsRemoteInspection; }
@@ -1311,7 +1309,6 @@ private:
     void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, const UserData&);
     void stopAssistingNode();
 
-#if ENABLE(INSPECTOR)
     void showInspectorHighlight(const WebCore::Highlight&);
     void hideInspectorHighlight();
 
@@ -1320,7 +1317,7 @@ private:
 
     void enableInspectorNodeSearch();
     void disableInspectorNodeSearch();
-#endif
+
     void notifyRevealedSelection();
 #endif // PLATFORM(IOS)
 
@@ -1411,9 +1408,7 @@ private:
     String m_customUserAgent;
     String m_customTextEncodingName;
 
-#if ENABLE(INSPECTOR)
     RefPtr<WebInspectorProxy> m_inspector;
-#endif
 
 #if ENABLE(FULLSCREEN_API)
     RefPtr<WebFullScreenManagerProxy> m_fullScreenManager;

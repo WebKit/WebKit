@@ -27,8 +27,6 @@
 #include "config.h"
 #include "WebConsoleAgent.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "CommandLineAPIHost.h"
 #include "DOMWindow.h"
 #include "ResourceError.h"
@@ -111,5 +109,3 @@ void WebConsoleAgent::didFailLoading(unsigned long requestIdentifier, const Reso
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

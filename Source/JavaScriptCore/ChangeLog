@@ -1,3 +1,89 @@
+2015-01-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove ENABLE(INSPECTOR) ifdef guards
+        https://bugs.webkit.org/show_bug.cgi?id=140668
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bindings/ScriptValue.cpp:
+        (Deprecated::ScriptValue::toInspectorValue):
+        * bindings/ScriptValue.h:
+        * inspector/ConsoleMessage.cpp:
+        * inspector/ConsoleMessage.h:
+        * inspector/ContentSearchUtilities.cpp:
+        * inspector/ContentSearchUtilities.h:
+        * inspector/IdentifiersFactory.cpp:
+        * inspector/IdentifiersFactory.h:
+        * inspector/InjectedScript.cpp:
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptBase.cpp:
+        * inspector/InjectedScriptBase.h:
+        * inspector/InjectedScriptHost.cpp:
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptManager.cpp:
+        * inspector/InjectedScriptManager.h:
+        * inspector/InjectedScriptModule.cpp:
+        * inspector/InjectedScriptModule.h:
+        * inspector/InspectorAgentRegistry.cpp:
+        * inspector/InspectorBackendDispatcher.cpp:
+        * inspector/InspectorBackendDispatcher.h:
+        * inspector/InspectorProtocolTypes.h:
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectScriptDebugServer.cpp:
+        * inspector/JSGlobalObjectScriptDebugServer.h:
+        * inspector/JSInjectedScriptHost.cpp:
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        * inspector/JSInjectedScriptHostPrototype.h:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        * inspector/JSJavaScriptCallFrame.h:
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        * inspector/JSJavaScriptCallFramePrototype.h:
+        * inspector/JavaScriptCallFrame.cpp:
+        * inspector/JavaScriptCallFrame.h:
+        * inspector/ScriptCallFrame.cpp:
+        (Inspector::ScriptCallFrame::buildInspectorObject):
+        * inspector/ScriptCallFrame.h:
+        * inspector/ScriptCallStack.cpp:
+        (Inspector::ScriptCallStack::buildInspectorArray):
+        * inspector/ScriptCallStack.h:
+        * inspector/ScriptDebugServer.cpp:
+        * inspector/agents/InspectorAgent.cpp:
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/JSGlobalObjectConsoleAgent.cpp:
+        * inspector/agents/JSGlobalObjectConsoleAgent.h:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.h:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.cpp:
+        * inspector/agents/JSGlobalObjectRuntimeAgent.h:
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        (CppGeneratorTemplates):
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/same-type-id-different-domain.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-aliased-primitive-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-array-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-enum-type.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::inspectorTypeSet):
+        (JSC::StructureShape::inspectorRepresentation):
+
 2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Clean up InjectedScriptSource.js

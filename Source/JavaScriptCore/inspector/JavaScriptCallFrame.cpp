@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JavaScriptCallFrame.h"
 
-#if ENABLE(INSPECTOR)
-
 using namespace JSC;
 
 namespace Inspector {
@@ -52,4 +50,3 @@ JavaScriptCallFrame* JavaScriptCallFrame::caller()
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)

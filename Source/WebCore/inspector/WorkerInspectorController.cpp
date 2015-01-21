@@ -29,9 +29,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "WorkerInspectorController.h"
 
 #include "CommandLineAPIHost.h"
@@ -176,5 +173,3 @@ Ref<Stopwatch> WorkerInspectorController::executionStopwatch()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

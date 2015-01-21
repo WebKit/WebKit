@@ -32,8 +32,6 @@
 #include "config.h"
 #include "InspectorController.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "CommandLineAPIHost.h"
 #include "DOMWrapperWorld.h"
 #include "GraphicsContext.h"
@@ -456,5 +454,3 @@ Ref<Stopwatch> InspectorController::executionStopwatch()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

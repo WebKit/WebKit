@@ -32,14 +32,11 @@
 #ifndef ScriptCallStack_h
 #define ScriptCallStack_h
 
+#include "InspectorProtocolObjects.h"
 #include "ScriptCallFrame.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(INSPECTOR)
-#include "InspectorProtocolObjects.h"
-#endif
 
 namespace Inspector {
 
@@ -61,9 +58,7 @@ public:
 
     bool isEqual(ScriptCallStack*) const;
 
-#if ENABLE(INSPECTOR)
     Ref<Inspector::Protocol::Console::StackTrace> buildInspectorArray() const;
-#endif
 
 private:
     ScriptCallStack();

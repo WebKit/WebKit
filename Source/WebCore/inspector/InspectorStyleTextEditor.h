@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-#if ENABLE(INSPECTOR)
-
 struct InspectorStyleProperty;
 struct SourceRange;
 
@@ -59,8 +57,6 @@ private:
     String m_styleText;
     const std::pair<String, String> m_format;
 };
-
-#endif
 
 } // namespace WebCore
 

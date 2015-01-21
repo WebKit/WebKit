@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebInspectorProxy.h"
 
-#if PLATFORM(MAC) && ENABLE(INSPECTOR)
+#if PLATFORM(MAC)
 
 #import "WKAPICast.h"
 #import "WKInspectorPrivateMac.h"
@@ -892,4 +892,4 @@ String WebInspectorProxy::inspectorBaseURL() const
 
 } // namespace WebKit
 
-#endif // PLATFORM(MAC) && ENABLE(INSPECTOR)
+#endif // PLATFORM(MAC)

@@ -31,8 +31,6 @@
 #ifndef InspectorWorkerResource_h
 #define InspectorWorkerResource_h
 
-#if ENABLE(INSPECTOR)
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -64,7 +62,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // InspectorWorkerResource_h

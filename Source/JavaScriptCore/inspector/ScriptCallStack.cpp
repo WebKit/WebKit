@@ -106,7 +106,6 @@ bool ScriptCallStack::isEqual(ScriptCallStack* o) const
     return true;
 }
 
-#if ENABLE(INSPECTOR)
 Ref<Inspector::Protocol::Console::StackTrace> ScriptCallStack::buildInspectorArray() const
 {
     auto frames = Inspector::Protocol::Console::StackTrace::create();
@@ -114,6 +113,5 @@ Ref<Inspector::Protocol::Console::StackTrace> ScriptCallStack::buildInspectorArr
         frames->addItem(m_frames.at(i).buildInspectorObject());
     return WTF::move(frames);
 }
-#endif
 
 } // namespace Inspector

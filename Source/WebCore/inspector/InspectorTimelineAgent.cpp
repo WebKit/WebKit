@@ -30,9 +30,6 @@
 */
 
 #include "config.h"
-
-#if ENABLE(INSPECTOR)
-
 #include "InspectorTimelineAgent.h"
 
 #include "Event.h"
@@ -706,5 +703,3 @@ Page* InspectorTimelineAgent::page()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)

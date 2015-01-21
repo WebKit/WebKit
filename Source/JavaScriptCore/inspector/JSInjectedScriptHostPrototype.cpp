@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSInjectedScriptHostPrototype.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "Error.h"
 #include "GetterSetter.h"
 #include "Identifier.h"
@@ -137,4 +135,3 @@ EncodedJSValue JSC_HOST_CALL jsInjectedScriptHostPrototypeFunctionGetInternalPro
 
 } // namespace Inspector
 
-#endif // ENABLE(INSPECTOR)
