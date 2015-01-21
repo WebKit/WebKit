@@ -1,3 +1,17 @@
+2015-01-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Update build.webkit.org/dashboard to match current Mac queues.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Lion.png: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/Lion@2x.png: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/MountainLion.png: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/MountainLion@2x.png: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (table.queue-grid tr.platform.mac-os-x-mountain-lion img.logo): Deleted.
+        (table.queue-grid tr.platform.mac-os-x-lion img.logo): Deleted.
+
 2015-01-20  Lucas Forschler  <lforschler@apple.com>
 
         Update Apple MountainLion Leaks slave to Yosemite

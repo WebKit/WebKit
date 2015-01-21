@@ -172,14 +172,6 @@ table.queue-grid tr.platform.mac-os-x-mavericks img.logo {
     content: -webkit-image-set(url(../Images/Mavericks@2x.png) 2x, url(../Images/Mavericks.png) 1x);
 }
 
-table.queue-grid tr.platform.mac-os-x-mountain-lion img.logo {
-    content: -webkit-image-set(url(../Images/MountainLion@2x.png) 2x, url(../Images/MountainLion.png) 1x);
-}
-
-table.queue-grid tr.platform.mac-os-x-lion img.logo {
-    content: -webkit-image-set(url(../Images/Lion@2x.png) 2x, url(../Images/Lion.png) 1x);
-}
-
 table.queue-grid tr.platform.windows-8 img.logo {
     content: -webkit-image-set(url(../Images/Windows8@2x.png) 2x, url(../Images/Windows8.png) 1x);
 }

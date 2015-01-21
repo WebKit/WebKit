@@ -27,12 +27,9 @@ Dashboard = {
     Platform: {
         MacOSXYosemite: { name: "mac-os-x-yosemite", readableName: "OS X Yosemite", order: 10 },
         MacOSXMavericks: { name: "mac-os-x-mavericks", readableName: "OS X Mavericks", order: 20 },
-        MacOSXMountainLion: { name: "mac-os-x-mountain-lion", readableName: "OS X Mountain Lion", order: 30 },
-        MacOSXLion: { name : "mac-os-x-lion", readableName: "Mac OS X Lion", order: 40 },
         Windows8: { name: "windows-8", readableName: "Windows 8", order: 50 },
         Windows7: { name: "windows-7", readableName: "Windows 7", order: 60 },
         WindowsXP: { name: "windows-xp", readableName: "Windows XP", order: 70 },
-        LinuxQt: { name : "linux-qt", readableName: "Linux Qt", order: 80 },
         LinuxGTK: { name : "linux-gtk", readableName: "Linux GTK", order: 90 },
         LinuxEFL: { name: "linux-efl", readableName: "Linux EFL", order : 100 }
     },
