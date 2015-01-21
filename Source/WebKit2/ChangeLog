@@ -1,5 +1,23 @@
 2015-01-21  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WK2] Use C++ lambdas in ProcessLauncher class
+        https://bugs.webkit.org/show_bug.cgi?id=138186
+
+        Reviewed by Darin Adler.
+
+        Replace uses of WTF::bind() in the ProcessLauncher class with C++ lambdas.
+
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::connectToService):
+        (WebKit::tryPreexistingProcess):
+        (WebKit::createProcess):
+
+2015-01-21  Zan Dobersek  <zdobersek@igalia.com>
+
         Clean up ViewUpdateDispatcher
         https://bugs.webkit.org/show_bug.cgi?id=140619
 

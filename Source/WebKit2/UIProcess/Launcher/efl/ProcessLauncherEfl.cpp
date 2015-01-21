@@ -111,7 +111,11 @@ void ProcessLauncher::launchProcess()
         close(sockets[0]);
         m_processIdentifier = pid;
         // We've finished launching the process, message back to the main run loop.
-        RunLoop::main().dispatch(bind(&ProcessLauncher::didFinishLaunchingProcess, this, pid, sockets[1]));
+        RefPtr<ProcessLauncher> protector(this);
+        IPC::Connection::Identifier serverSocket = sockets[1];
+        RunLoop::main().dispatch([protector, pid, serverSocket] {
+            protector->didFinishLaunchingProcess(pid, serverSocket);
+        });
     } else {
         ASSERT_NOT_REACHED();
         return;
