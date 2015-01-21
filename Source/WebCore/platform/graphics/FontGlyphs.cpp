@@ -392,4 +392,17 @@ GlyphData FontGlyphs::glyphDataForCharacter(UChar32 c, const FontDescription& de
     return glyphData;
 }
 
+void FontGlyphs::pruneSystemFallbacks()
+{
+    if (m_systemFallbackFontDataSet.isEmpty())
+        return;
+    // Mutable glyph pages may reference fallback fonts.
+    if (m_cachedPageZero && !m_cachedPageZero->isImmutable())
+        m_cachedPageZero = nullptr;
+    m_cachedPages.removeIf([](decltype(m_cachedPages)::KeyValuePairType& keyAndValue) {
+        return !keyAndValue.value->isImmutable();
+    });
+    m_systemFallbackFontDataSet.clear();
+}
+
 }

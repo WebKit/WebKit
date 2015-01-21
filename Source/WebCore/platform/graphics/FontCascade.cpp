@@ -287,14 +287,15 @@ static unsigned computeFontGlyphsCacheHash(const FontGlyphsCacheKey& key)
 
 void pruneUnreferencedEntriesFromFontGlyphsCache()
 {
-    Vector<unsigned, 50> toRemove;
-    FontGlyphsCache::iterator end = fontGlyphsCache().end();
-    for (FontGlyphsCache::iterator it = fontGlyphsCache().begin(); it != end; ++it) {
-        if (it->value->glyphs.get().hasOneRef())
-            toRemove.append(it->key);
-    }
-    for (unsigned i = 0; i < toRemove.size(); ++i)
-        fontGlyphsCache().remove(toRemove[i]);
+    fontGlyphsCache().removeIf([](FontGlyphsCache::KeyValuePairType& entry) {
+        return entry.value->glyphs.get().hasOneRef();
+    });
+}
+
+void pruneSystemFallbackFonts()
+{
+    for (auto& entry : fontGlyphsCache().values())
+        entry->glyphs->pruneSystemFallbacks();
 }
 
 static Ref<FontGlyphs> retrieveOrAddCachedFontGlyphs(const FontDescription& fontDescription, PassRefPtr<FontSelector> fontSelector)

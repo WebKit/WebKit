@@ -345,6 +345,7 @@ private:
 
 void invalidateFontGlyphsCache();
 void pruneUnreferencedEntriesFromFontGlyphsCache();
+void pruneSystemFallbackFonts();
 void clearWidthCaches();
 
 inline FontCascade::~FontCascade()

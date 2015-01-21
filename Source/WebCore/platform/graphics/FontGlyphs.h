@@ -69,6 +69,8 @@ public:
     const SimpleFontData& primarySimpleFontData(const FontDescription&);
     WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontDescription&, unsigned fallbackIndex);
 
+    void pruneSystemFallbacks();
+
 private:
     FontGlyphs(PassRefPtr<FontSelector>);
     FontGlyphs(const FontPlatformData&);
