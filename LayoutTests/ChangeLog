@@ -1,3 +1,187 @@
+2015-01-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        Rebaseline and clean-up of skipped files.
+
+        * platform/win/TestExpectations:
+        * platform/win/css2.1/20110323: Added.
+        * platform/win/css2.1/20110323/abspos-containing-block-initial-001-expected.png: Added.
+        * platform/win/css2.1/20110323/abspos-containing-block-initial-007-expected.png: Added.
+        * platform/win/css2.1/20110323/border-conflict-style-079-expected.png: Added.
+        * platform/win/css2.1/20110323/border-conflict-style-088-expected.png: Added.
+        * platform/win/css2.1/20110323/border-spacing-applies-to-015-expected.png: Added.
+        * platform/win/css2.1/20110323/dynamic-top-change-001-expected.png: Added.
+        * platform/win/css2.1/20110323/dynamic-top-change-002-expected.png: Added.
+        * platform/win/css2.1/20110323/dynamic-top-change-003-expected.png: Added.
+        * platform/win/css2.1/20110323/dynamic-top-change-004-expected.png: Added.
+        * platform/win/css2.1/20110323/floating-replaced-height-008-expected.png: Added.
+        * platform/win/css2.1/20110323/height-width-inline-table-001-expected.png: Added.
+        * platform/win/css2.1/20110323/height-width-table-001-expected.png: Added.
+        * platform/win/css2.1/20110323/inline-block-replaced-height-008-expected.png: Added.
+        * platform/win/css2.1/20110323/inline-replaced-height-008-expected.png: Added.
+        * platform/win/css2.1/20110323/inline-table-001-expected.png: Added.
+        * platform/win/css2.1/20110323/inline-table-002a-expected.png: Added.
+        * platform/win/css2.1/20110323/inline-table-003-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-001-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-002-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-003-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-004-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-005-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-006-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-007-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-008-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-009-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-010-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-012-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-013-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-014-expected.png: Added.
+        * platform/win/css2.1/20110323/margin-applies-to-015-expected.png: Added.
+        * platform/win/css2.1/20110323/table-caption-001-expected.png: Added.
+        * platform/win/css2.1/20110323/table-caption-002-expected.png: Added.
+        * platform/win/css2.1/20110323/table-caption-horizontal-alignment-001-expected.png: Added.
+        * platform/win/css2.1/20110323/table-caption-margins-001-expected.png: Added.
+        * platform/win/css2.1/20110323/table-caption-optional-001-expected.png: Added.
+        * platform/win/css2.1/20110323/table-caption-optional-002-expected.png: Added.
+        * platform/win/css2.1/20110323/table-height-algorithm-023-expected.png: Added.
+        * platform/win/css2.1/20110323/table-height-algorithm-024-expected.png: Added.
+        * platform/win/css2.1/t0805-c5518-brdr-t-01-e-expected.png: Added.
+        * platform/win/css2.1/t0805-c5518-brdr-t-01-e-expected.txt: Added.
+        * platform/win/css2.1/t0805-c5519-brdr-r-00-a-expected.png: Added.
+        * platform/win/css2.1/t0805-c5519-brdr-r-00-a-expected.txt: Added.
+        * platform/win/css2.1/t0805-c5519-brdr-r-01-e-expected.png: Added.
+        * platform/win/css2.1/t0805-c5519-brdr-r-01-e-expected.txt:
+        * platform/win/css2.1/t0805-c5520-brdr-b-01-e-expected.png: Added.
+        * platform/win/css2.1/t0805-c5520-brdr-b-01-e-expected.txt: Added.
+        * platform/win/css2.1/t0805-c5521-brdr-l-00-a-expected.png: Added.
+        * platform/win/css2.1/t0805-c5521-brdr-l-00-a-expected.txt: Added.
+        * platform/win/css2.1/t0805-c5521-brdr-l-01-e-expected.png: Added.
+        * platform/win/css2.1/t0805-c5521-brdr-l-01-e-expected.txt:
+        * platform/win/css2.1/t0805-c5521-ibrdr-l-00-a-expected.png: Added.
+        * platform/win/css2.1/t0805-c5521-ibrdr-l-00-a-expected.txt: Added.
+        * platform/win/css2.1/t09-c5526c-display-00-e-expected.png: Added.
+        * platform/win/css2.1/t09-c5526c-display-00-e-expected.txt: Added.
+        * platform/win/css2.1/t0905-c414-flt-01-b-expected.png: Added.
+        * platform/win/css2.1/t0905-c414-flt-01-b-expected.txt: Added.
+        * platform/win/css2.1/t0905-c414-flt-02-c-expected.png: Added.
+        * platform/win/css2.1/t0905-c414-flt-02-c-expected.txt: Added.
+        * platform/win/css2.1/t0905-c414-flt-03-c-expected.png: Added.
+        * platform/win/css2.1/t0905-c414-flt-03-c-expected.txt: Added.
+        * platform/win/css2.1/t0905-c414-flt-04-c-expected.png: Added.
+        * platform/win/css2.1/t0905-c414-flt-04-c-expected.txt: Added.
+        * platform/win/css2.1/t0905-c414-flt-fit-01-d-g-expected.png: Added.
+        * platform/win/css2.1/t0905-c414-flt-fit-01-d-g-expected.txt: Added.
+        * platform/win/css2.1/t0905-c414-flt-wrap-00-e-expected.txt:
+        * platform/win/css2.1/t0905-c5525-fltblck-00-d-ag-expected.txt:
+        * platform/win/css2.1/t0905-c5525-fltblck-01-d-expected.png: Added.
+        * platform/win/css2.1/t0905-c5525-fltblck-01-d-expected.txt: Added.
+        * platform/win/css2.1/t0905-c5525-fltcont-00-d-g-expected.png: Added.
+        * platform/win/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt: Added.
+        * platform/win/css2.1/t0905-c5525-flthw-00-c-g-expected.png: Added.
+        * platform/win/css2.1/t0905-c5525-flthw-00-c-g-expected.txt: Added.
+        * platform/win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.png: Added.
+        * platform/win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/win/css2.1/t0905-c5525-fltwidth-02-c-g-expected.png: Added.
+        * platform/win/css2.1/t0905-c5525-fltwidth-02-c-g-expected.txt: Added.
+        * platform/win/css2.1/t0905-c5525-fltwidth-03-c-g-expected.png: Added.
+        * platform/win/css2.1/t0905-c5525-fltwidth-03-c-g-expected.txt: Added.
+        * platform/win/css2.1/t0905-c5525-fltwrap-00-b-expected.png: Added.
+        * platform/win/css2.1/t0905-c5525-fltwrap-00-b-expected.txt:
+        * platform/win/css2.1/t0905-c5526-flthw-00-c-g-expected.png: Added.
+        * platform/win/css2.1/t0905-c5526-flthw-00-c-g-expected.txt: Added.
+        * platform/win/css2.1/t090501-c414-flt-01-b-expected.png: Added.
+        * platform/win/css2.1/t090501-c414-flt-01-b-expected.txt: Added.
+        * platform/win/css2.1/t090501-c414-flt-03-b-g-expected.png: Added.
+        * platform/win/css2.1/t090501-c414-flt-03-b-g-expected.txt: Added.
+        * platform/win/css2.1/t090501-c414-flt-ln-01-d-g-expected.txt: Added.
+        * platform/win/css2.1/t090501-c5525-flt-l-00-b-g-expected.png: Added.
+        * platform/win/css2.1/t090501-c5525-flt-l-00-b-g-expected.txt: Added.
+        * platform/win/css2.1/t090501-c5525-flt-r-00-b-g-expected.png: Added.
+        * platform/win/css2.1/t090501-c5525-flt-r-00-b-g-expected.txt: Added.
+        * platform/win/css2.1/t100304-c43-rpl-bbx-01-d-g-expected.png: Added.
+        * platform/win/css2.1/t100304-c43-rpl-bbx-01-d-g-expected.txt: Added.
+        * platform/win/css2.1/t1202-counter-03-b-expected.txt: Added.
+        * platform/win/css2.1/t1202-counter-04-b-expected.png: Added.
+        * platform/win/css2.1/t1202-counter-04-b-expected.txt:
+        * platform/win/css2.1/t1202-counters-03-b-expected.png: Added.
+        * platform/win/css2.1/t1202-counters-03-b-expected.txt: Added.
+        * platform/win/css2.1/t1202-counters-04-b-expected.png: Added.
+        * platform/win/css2.1/t1202-counters-04-b-expected.txt:
+        * platform/win/css2.1/t1205-c566-list-stl-01-c-g-expected.png: Added.
+        * platform/win/css2.1/t1205-c566-list-stl-01-c-g-expected.txt: Added.
+        * platform/win/css3/selectors3: Added.
+        * platform/win/css3/selectors3/html: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-161-expected.png: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-161-expected.txt: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-19b-expected.png: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-19b-expected.txt: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-23-expected.png: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-23-expected.txt: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-24-expected.png: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-24-expected.txt: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-25-expected.png: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-25-expected.txt: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-64-expected.png: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-64-expected.txt: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-68-expected.png: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-68-expected.txt: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-69-expected.png: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-69-expected.txt: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-70-expected.png: Added.
+        * platform/win/css3/selectors3/html/css3-modsel-70-expected.txt: Added.
+        * platform/win/css3/selectors3/xhtml: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-161-expected.png: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-161-expected.txt: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-19b-expected.png: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-19b-expected.txt: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-23-expected.png: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-23-expected.txt: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-24-expected.png: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-24-expected.txt: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-25-expected.png: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-25-expected.txt: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-64-expected.png: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-64-expected.txt: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-68-expected.png: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-68-expected.txt: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-69-expected.png: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-69-expected.txt: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-70-expected.png: Added.
+        * platform/win/css3/selectors3/xhtml/css3-modsel-70-expected.txt: Added.
+        * platform/win/css3/selectors3/xml: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-161-expected.png: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-161-expected.txt: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-19b-expected.png: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-19b-expected.txt: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-23-expected.png: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-23-expected.txt: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-24-expected.png: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-24-expected.txt: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-25-expected.png: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-25-expected.txt: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-64-expected.png: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-64-expected.txt: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-68-expected.png: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-68-expected.txt: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-69-expected.png: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-69-expected.txt: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-70-expected.png: Added.
+        * platform/win/css3/selectors3/xml/css3-modsel-70-expected.txt: Added.
+        * platform/win/fast/block/float/016-expected.png: Added.
+        * platform/win/fast/block/float/016-expected.txt: Added.
+        * platform/win/fast/css/non-standard-checkbox-size-expected.txt: Added.
+        * platform/win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/win/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/win/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png:
+        * platform/win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/win/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/win/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
 2015-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         inspector/model/remote-object-get-properties.html asserts

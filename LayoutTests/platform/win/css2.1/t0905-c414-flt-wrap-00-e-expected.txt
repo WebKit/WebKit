@@ -14,7 +14,7 @@ layer at (0,0) size 800x192
           RenderText {#text} at (100,0) size 40x18
             text run at (100,0) width 40: "PASS"
         RenderText {#text} at (43,0) size 236x126
-          text run at (43,0) width 188: "fail fail fail fail fail fail fail fail"
+          text run at (43,0) width 189: "fail fail fail fail fail fail fail fail"
           text run at (0,36) width 48: "fail fail "
           text run at (48,36) width 188: "fail fail fail fail fail fail fail fail"
           text run at (0,54) width 48: "fail fail "
