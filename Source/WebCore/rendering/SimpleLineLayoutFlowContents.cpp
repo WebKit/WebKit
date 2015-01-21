@@ -66,6 +66,48 @@ FlowContents::FlowContents(const RenderBlockFlow& flow)
 {
 }
 
+FlowContents::TextFragment FlowContents::nextTextFragment(unsigned position, float xPosition) const
+{
+    // A fragment can either be
+    // 1. new line character when preserveNewline is on (not considered as whitespace) or
+    // 2. whitespace (collasped, non-collapsed multi or single) or
+    // 3. non-whitespace characters.
+    TextFragment fragment;
+    fragment.start = position;
+    if (isLineBreak(fragment.start)) {
+        fragment.type = TextFragment::LineBreak;
+        fragment.end = fragment.start + 1;
+        return fragment;
+    }
+
+    unsigned spaceCount = 0;
+    unsigned whitespaceEnd = findNextNonWhitespacePosition(fragment.start, spaceCount);
+    ASSERT(fragment.start <= whitespaceEnd);
+    if (fragment.start != whitespaceEnd) {
+        fragment.type = TextFragment::Whitespace;
+        fragment.end = whitespaceEnd;
+        bool multipleWhitespace = fragment.start + 1 < fragment.end;
+        fragment.isCollapsed = multipleWhitespace && m_style.collapseWhitespace;
+        fragment.isBreakable = !fragment.isCollapsed && multipleWhitespace;
+        if (fragment.isCollapsed)
+            fragment.width = m_style.spaceWidth;
+        else {
+            unsigned fragmentLength = fragment.end - fragment.start;
+            if (fragmentLength == spaceCount)
+                fragment.width = fragmentLength * m_style.spaceWidth;
+            else
+                fragment.width = textWidth(fragment.start, fragment.end, xPosition);
+        }
+        return fragment;
+    }
+
+    fragment.type = TextFragment::NonWhitespace;
+    fragment.isBreakable = m_style.breakWordOnOverflow;
+    fragment.end = findNextBreakablePosition(fragment.start + 1);
+    fragment.width = textWidth(fragment.start, fragment.end, xPosition);
+    return fragment;
+}
+
 template <typename CharacterType>
 static unsigned nextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, const FlowContents::Segment& segment, unsigned position)
 {

@@ -1,3 +1,30 @@
+2015-01-21  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Move nextTextFragment() to FlowContents class.
+        https://bugs.webkit.org/show_bug.cgi?id=140738
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation to make FlowContents an iterator class.
+        
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::addUncommitted):
+        (WebCore::SimpleLineLayout::LineState::addUncommittedWhitespace):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::initializeNewLine):
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::TextFragment::TextFragment): Deleted.
+        (WebCore::SimpleLineLayout::TextFragment::isEmpty): Deleted.
+        (WebCore::SimpleLineLayout::nextFragment): Deleted.
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::FlowContents::nextTextFragment):
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::TextFragment::TextFragment):
+        (WebCore::SimpleLineLayout::FlowContents::TextFragment::isEmpty):
+
 2015-01-21  Andreas Kling  <akling@apple.com>
 
         DocumentLoader::timing() should return a reference.

@@ -40,7 +40,31 @@ class FlowContents {
 public:
     FlowContents(const RenderBlockFlow&);
 
-    unsigned findNextBreakablePosition(unsigned position) const;
+    struct TextFragment {
+        TextFragment() = default;
+        TextFragment(unsigned textStart, unsigned textEnd, float textWidth, bool isWhitespaceOnly)
+            : start(textStart)
+            , end(textEnd)
+            , type(isWhitespaceOnly ? Whitespace : NonWhitespace)
+            , width(textWidth)
+        {
+        }
+
+        bool isEmpty() const
+        {
+            return start == end;
+        }
+
+        enum Type { LineBreak, Whitespace, NonWhitespace };
+        unsigned start = 0;
+        unsigned end = 0;
+        Type type = NonWhitespace;
+        bool isCollapsed = false;
+        bool isBreakable = false;
+        float width = 0;
+    };
+
+    TextFragment nextTextFragment(unsigned position, float xPosition) const;
     unsigned findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const;
 
     float textWidth(unsigned from, unsigned to, float xPosition) const;
@@ -76,6 +100,7 @@ public:
     const Style& style() const { return m_style; }
 
 private:
+    unsigned findNextBreakablePosition(unsigned position) const;
     unsigned segmentIndexForPosition(unsigned position) const;
     unsigned segmentIndexForPositionSlow(unsigned position) const;
 
