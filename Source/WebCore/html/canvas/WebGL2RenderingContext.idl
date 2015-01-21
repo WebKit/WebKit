@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef long long GLint64;
+typedef unsigned long long GLuint64;
+
 [
     Conditional=WEBGL,
     JSCustomMarkFunction,
