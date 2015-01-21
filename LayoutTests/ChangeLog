@@ -1,3 +1,10 @@
+2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed gardening. Remove variable objectId from output.
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * inspector/model/remote-object-get-properties.html:
+
 2015-01-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Rebaseline a test, unskip some working tests.
