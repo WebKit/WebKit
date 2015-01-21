@@ -291,9 +291,10 @@ private:
     NodeIdSet m_targets[128];
 };
 
-static inline void populateTransitions(SetTransitions& setTransitions, const UniqueNodeIdSetImpl& sourceNodeSet, const Vector<NFANode>& graph, const Vector<Vector<unsigned>>& nfaNodeclosures)
+static inline void populateTransitions(SetTransitions& setTransitions, NodeIdSet& setFallbackTransition, const UniqueNodeIdSetImpl& sourceNodeSet, const Vector<NFANode>& graph, const Vector<Vector<unsigned>>& nfaNodeclosures)
 {
     ASSERT(!graph.isEmpty());
+    ASSERT(setFallbackTransition.isEmpty());
 #if !ASSERT_DISABLED
     for (const NodeIdSet& set : setTransitions)
         ASSERT(set.isEmpty());
@@ -302,14 +303,34 @@ static inline void populateTransitions(SetTransitions& setTransitions, const Uni
     const unsigned* buffer = sourceNodeSet.buffer();
     for (unsigned i = 0; i < sourceNodeSet.m_size; ++i) {
         unsigned nodeId = buffer[i];
+        const NFANode& nfaSourceNode = graph[nodeId];
+        if (!nfaSourceNode.transitionsOnAnyCharacter.isEmpty())
+            setFallbackTransition.add(nfaSourceNode.transitionsOnAnyCharacter.begin(), nfaSourceNode.transitionsOnAnyCharacter.end());
+    }
+    for (unsigned targetNodeId : setFallbackTransition)
+        extendSetWithClosure(nfaNodeclosures, targetNodeId, setFallbackTransition);
+
+    for (unsigned i = 0; i < sourceNodeSet.m_size; ++i) {
+        unsigned nodeId = buffer[i];
         for (const auto& transitionSlot : graph[nodeId].transitions) {
             NodeIdSet& targetSet = setTransitions[transitionSlot.key];
             for (unsigned targetNodId : transitionSlot.value) {
                 targetSet.add(targetNodId);
                 extendSetWithClosure(nfaNodeclosures, targetNodId, targetSet);
             }
+            targetSet.add(setFallbackTransition.begin(), setFallbackTransition.end());
         }
     }
+}
+
+static ALWAYS_INLINE unsigned getOrCreateDFANode(const NodeIdSet& nfaNodeSet, const Vector<NFANode>& nfaGraph, Vector<DFANode>& dfaGraph, UniqueNodeIdSetTable& uniqueNodeIdSetTable, Vector<UniqueNodeIdSetImpl*>& unprocessedNodes)
+{
+    NodeIdSetToUniqueNodeIdSetSource nodeIdSetToUniqueNodeIdSetSource(dfaGraph, nfaGraph, nfaNodeSet);
+    auto uniqueNodeIdAddResult = uniqueNodeIdSetTable.add<NodeIdSetToUniqueNodeIdSetTranslator>(nodeIdSetToUniqueNodeIdSetSource);
+    if (uniqueNodeIdAddResult.isNewEntry)
+        unprocessedNodes.append(uniqueNodeIdAddResult.iterator->impl());
+
+    return uniqueNodeIdAddResult.iterator->impl()->m_dfaNodeId;
 }
 
 DFA NFAToDFA::convert(NFA& nfa)
@@ -337,7 +358,8 @@ DFA NFAToDFA::convert(NFA& nfa)
         UniqueNodeIdSetImpl* uniqueNodeIdSetImpl = unprocessedNodes.takeLast();
 
         unsigned dfaNodeId = uniqueNodeIdSetImpl->m_dfaNodeId;
-        populateTransitions(transitionsFromClosedSet, *uniqueNodeIdSetImpl, nfaGraph, nfaNodeClosures);
+        NodeIdSet setFallbackTransition;
+        populateTransitions(transitionsFromClosedSet, setFallbackTransition, *uniqueNodeIdSetImpl, nfaGraph, nfaNodeClosures);
 
         // FIXME: there should not be any transition on key 0.
         for (unsigned key = 0; key < transitionsFromClosedSet.size(); ++key) {
@@ -346,17 +368,18 @@ DFA NFAToDFA::convert(NFA& nfa)
             if (targetNodeSet.isEmpty())
                 continue;
 
-            NodeIdSetToUniqueNodeIdSetSource nodeIdSetToUniqueNodeIdSetSource(dfaGraph, nfaGraph, targetNodeSet);
-            auto uniqueNodeIdAddResult = uniqueNodeIdSetTable.add<NodeIdSetToUniqueNodeIdSetTranslator>(nodeIdSetToUniqueNodeIdSetSource);
-
-            unsigned targetNodeId = uniqueNodeIdAddResult.iterator->impl()->m_dfaNodeId;
+            unsigned targetNodeId = getOrCreateDFANode(targetNodeSet, nfaGraph, dfaGraph, uniqueNodeIdSetTable, unprocessedNodes);
             const auto addResult = dfaGraph[dfaNodeId].transitions.add(key, targetNodeId);
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
-            if (uniqueNodeIdAddResult.isNewEntry)
-                unprocessedNodes.append(uniqueNodeIdAddResult.iterator->impl());
-
             targetNodeSet.clear();
+        }
+        if (!setFallbackTransition.isEmpty()) {
+            unsigned targetNodeId = getOrCreateDFANode(setFallbackTransition, nfaGraph, dfaGraph, uniqueNodeIdSetTable, unprocessedNodes);
+            DFANode& dfaSourceNode = dfaGraph[dfaNodeId];
+            ASSERT(!dfaSourceNode.hasFallbackTransition);
+            dfaSourceNode.hasFallbackTransition = true;
+            dfaSourceNode.fallbackTransition = targetNodeId;
         }
     } while (!unprocessedNodes.isEmpty());
 

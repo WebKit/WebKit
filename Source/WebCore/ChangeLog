@@ -1,3 +1,53 @@
+2015-01-21  Benjamin Poulain  <benjamin@webkit.org>
+
+        Handle the transition on any character as a separate type of transition
+        https://bugs.webkit.org/show_bug.cgi?id=140711
+
+        Reviewed by Andreas Kling.
+
+        Instead of considering the universal transition as 127 transitions, it is now
+        handled as a separate type of transition.
+
+        The goal is to reduce the number of exit edge to consider for each node. Instead
+        of having 127 for any partition containing one universal transition, we have
+        as few exit edges as necessary + one universal transition.
+
+        In the NFA, the universal transition is stored directly on NFANode in a new
+        HashSet (transitionsOnAnyCharacter).
+        The target nodes are made exclusive between "transitionsOnAnyCharacter" and "transitions"
+        by construction. That is not strictly needed but it simplify debugging at the moment.
+
+        When converting a NFA to a DFA, we first find all the node that transition on any character.
+        Then, when we iterate over "real" transition, we also augment that set with the set on
+        any character.
+
+        When creating the DFA node, we first consider each "real" transition, then we have a single
+        "fallback" transition for any character that has not been handled yet.
+
+        When matching, we first search for any real transition. If there is none but a fallback exists,
+        we take the fallback.
+
+        * contentextensions/DFA.cpp:
+        (WebCore::ContentExtensions::DFA::nextState):
+        (WebCore::ContentExtensions::printTransitions):
+        (WebCore::ContentExtensions::DFA::debugPrintDot):
+        (WebCore::ContentExtensions::printTransition): Deleted.
+        * contentextensions/DFANode.h:
+        * contentextensions/NFA.cpp:
+        (WebCore::ContentExtensions::NFA::addTransition):
+        (WebCore::ContentExtensions::NFA::addTransitionsOnAnyCharacter):
+        (WebCore::ContentExtensions::printTransitions):
+        (WebCore::ContentExtensions::NFA::debugPrintDot):
+        (WebCore::ContentExtensions::printTransition): Deleted.
+        * contentextensions/NFA.h:
+        * contentextensions/NFANode.h:
+        * contentextensions/NFAToDFA.cpp:
+        (WebCore::ContentExtensions::populateTransitions):
+        (WebCore::ContentExtensions::getOrCreateDFANode):
+        (WebCore::ContentExtensions::NFAToDFA::convert):
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::GraphBuilder::generateTransition):
+
 2015-01-20  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r178180): Membuster regressed ~4%

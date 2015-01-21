@@ -65,12 +65,17 @@ unsigned DFA::nextState(unsigned currentState, char character, bool& ok) const
 
     const DFANode& node = m_nodes[currentState];
     auto nextNode = node.transitions.find(character);
-    if (nextNode == node.transitions.end()) {
-        ok = false;
-        return 0;
+    if (nextNode != node.transitions.end()) {
+        ok = true;
+        return nextNode->value;
     }
-    ok = true;
-    return nextNode->value;
+    if (node.hasFallbackTransition) {
+        ok = true;
+        return node.fallbackTransition;
+    }
+    ok = false;
+    return 0;
+
 }
 
 const Vector<uint64_t>& DFA::actions(unsigned currentState) const
@@ -95,9 +100,12 @@ static void printRange(bool firstRange, char rangeStart, char rangeEnd)
         dataLogF("\\\\%d-\\\\%d", rangeStart, rangeEnd);
 }
 
-static void printTransition(unsigned sourceNode, const HashMap<uint16_t, unsigned>& transitions)
+static void printTransitions(const Vector<DFANode>& graph, unsigned sourceNodeId)
 {
-    if (transitions.isEmpty())
+    const DFANode& sourceNode = graph[sourceNodeId];
+    const HashMap<uint16_t, unsigned>& transitions = sourceNode.transitions;
+
+    if (transitions.isEmpty() && !sourceNode.hasFallbackTransition)
         return;
 
     HashMap<unsigned, Vector<uint16_t>, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsPerTarget;
@@ -112,7 +120,7 @@ static void printTransition(unsigned sourceNode, const HashMap<uint16_t, unsigne
 
     // Then we go over each one an display the ranges one by one.
     for (const auto& transitionPerTarget : transitionsPerTarget) {
-        dataLogF("        %d -> %d [label=\"", sourceNode, transitionPerTarget.key);
+        dataLogF("        %d -> %d [label=\"", sourceNodeId, transitionPerTarget.key);
 
         Vector<uint16_t> incommingCharacters = transitionPerTarget.value;
         std::sort(incommingCharacters.begin(), incommingCharacters.end());
@@ -134,6 +142,9 @@ static void printTransition(unsigned sourceNode, const HashMap<uint16_t, unsigne
 
         dataLogF("\"];\n");
     }
+
+    if (sourceNode.hasFallbackTransition)
+        dataLogF("        %d -> %d [label=\"[fallback]\"];\n", sourceNodeId, sourceNode.fallbackTransition);
 }
 
 void DFA::debugPrintDot() const
@@ -174,7 +185,7 @@ void DFA::debugPrintDot() const
 
     dataLogF("    {\n");
     for (unsigned i = 0; i < m_nodes.size(); ++i)
-        printTransition(i, m_nodes[i].transitions);
+        printTransitions(m_nodes, i);
 
     dataLogF("    }\n");
     dataLogF("}\n");

@@ -53,6 +53,10 @@ void NFA::addTransition(unsigned from, unsigned to, char character)
     ASSERT(to < m_nodes.size());
     ASSERT(character);
 
+    NFANode& fromNode = m_nodes[from];
+    if (fromNode.transitionsOnAnyCharacter.contains(to))
+        return;
+
     auto addResult = m_nodes[from].transitions.add(character, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>());
     addResult.iterator->value.add(to);
 }
@@ -64,6 +68,18 @@ void NFA::addEpsilonTransition(unsigned from, unsigned to)
 
     auto addResult = m_nodes[from].transitions.add(epsilonTransitionCharacter, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>());
     addResult.iterator->value.add(to);
+}
+
+void NFA::addTransitionsOnAnyCharacter(unsigned from, unsigned to)
+{
+    ASSERT(from < m_nodes.size());
+    ASSERT(to < m_nodes.size());
+
+    NFANode& fromNode = m_nodes[from];
+    fromNode.transitionsOnAnyCharacter.add(to);
+
+    for (auto transitionSlot : fromNode.transitions)
+        transitionSlot.value.remove(to);
 }
 
 void NFA::setFinal(unsigned node, uint64_t ruleId)
@@ -114,8 +130,11 @@ static void printRange(bool firstRange, uint16_t rangeStart, uint16_t rangeEnd, 
     }
 }
 
-static void printTransition(unsigned sourceNode, const HashMap<uint16_t, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>>& transitions, uint16_t epsilonTransitionCharacter)
+static void printTransitions(const Vector<NFANode>& graph, unsigned sourceNode, uint16_t epsilonTransitionCharacter)
 {
+    const NFANode& node = graph[sourceNode];
+    const HashMap<uint16_t, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>>& transitions = node.transitions;
+
     HashMap<unsigned, HashSet<uint16_t>, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsPerTarget;
 
     for (const auto& transition : transitions) {
@@ -149,6 +168,9 @@ static void printTransition(unsigned sourceNode, const HashMap<uint16_t, HashSet
 
         dataLogF("\"];\n");
     }
+
+    for (unsigned targetOnAnyCharacter : node.transitionsOnAnyCharacter)
+        dataLogF("        %d -> %d [label=\"[any input]\"];\n", sourceNode, targetOnAnyCharacter);
 }
 
 void NFA::debugPrintDot() const
@@ -193,7 +215,7 @@ void NFA::debugPrintDot() const
 
     dataLogF("    {\n");
     for (unsigned i = 0; i < m_nodes.size(); ++i)
-        printTransition(i, m_nodes[i].transitions, epsilonTransitionCharacter);
+        printTransitions(m_nodes, i, epsilonTransitionCharacter);
     dataLogF("    }\n");
     dataLogF("}\n");
 }

@@ -245,8 +245,7 @@ private:
     {
         if (trivialAtom & hasNonCharacterMask) {
             ASSERT(trivialAtom & newlineClassIDBuiltinMask);
-            for (unsigned i = 1; i < 128; ++i)
-                m_nfa.addTransition(source, target, i);
+            m_nfa.addTransitionsOnAnyCharacter(source, target);
         } else {
             if (trivialAtom & caseInsensitiveMask) {
                 char character = static_cast<char>(trivialAtom & characterMask);

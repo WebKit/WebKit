@@ -48,6 +48,7 @@ public:
 
     void addTransition(unsigned from, unsigned to, char character);
     void addEpsilonTransition(unsigned from, unsigned to);
+    void addTransitionsOnAnyCharacter(unsigned from, unsigned to);
     void setFinal(unsigned node, uint64_t ruleId);
 
     unsigned graphSize() const;

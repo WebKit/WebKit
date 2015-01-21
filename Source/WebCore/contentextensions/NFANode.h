@@ -41,6 +41,7 @@ namespace ContentExtensions {
 class NFANode {
 public:
     HashMap<uint16_t, HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>> transitions;
+    HashSet<unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsOnAnyCharacter;
 
     Vector<uint64_t> finalRuleIds;
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
