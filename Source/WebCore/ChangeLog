@@ -1,5 +1,25 @@
 2015-01-20  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r173790.
+
+    2014-09-19  Jer Noble  <jer.noble@apple.com>
+
+            [Media][Mac] Buffered range slides around as you resize a window
+            https://bugs.webkit.org/show_bug.cgi?id=136960
+
+            Reviewed by Dean Jackson.
+
+            Rather than using a canvas as the background image for the timeline slider, use a generated SVG image
+            to represent the buffered ranges.
+
+            * Modules/mediacontrols/mediaControlsApple.css:
+            (audio::-webkit-media-controls-timeline):
+            * Modules/mediacontrols/mediaControlsApple.js:
+            (Controller.prototype.createControls):
+            (Controller.prototype.updateProgress):
+
+2015-01-20  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r173688.
 
     2014-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>

@@ -39,9 +39,6 @@ Controller.FullScreenControls = 1;
 Controller.PlayAfterSeeking = 0;
 Controller.PauseAfterSeeking = 1;
 
-/* Globals */
-Controller.gLastTimelineId = 0;
-
 Controller.prototype = {
 
     /* Constants */
@@ -332,10 +329,8 @@ Controller.prototype = {
         currentTime.setAttribute('role', 'timer');
 
         var timeline = this.controls.timeline = document.createElement('input');
-        this.timelineID = ++Controller.gLastTimelineId;
         timeline.setAttribute('pseudo', '-webkit-media-controls-timeline');
         timeline.setAttribute('aria-label', this.UIString('Duration'));
-        timeline.style.backgroundImage = '-webkit-canvas(timeline-' + this.timelineID + ')';
         timeline.type = 'range';
         this.listenFor(timeline, 'input', this.handleTimelineChange);
         this.listenFor(timeline, 'mouseover', this.handleTimelineMouseOver);
@@ -941,13 +936,7 @@ Controller.prototype = {
     {
         this.updateTimelineMetricsIfNeeded();
 
-        var width = this.timelineWidth;
-        var height = this.timelineHeight;
-
-        var context = document.getCSSCanvasContext('2d', 'timeline-' + this.timelineID, width, height);
-        context.clearRect(0, 0, width, height);
-
-        context.fillStyle = this.progressFillStyle(context);
+        var background = 'url(\'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" preserveAspectRatio="none"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(2, 2, 2)"/><stop offset="1" stop-color="rgb(23, 23, 23)"/></linearGradient><g style="fill:url(#gradient)">'
 
         var duration = this.video.duration;
         var buffered = this.video.buffered;
@@ -955,10 +944,13 @@ Controller.prototype = {
             var startTime = buffered.start(i);
             var endTime = buffered.end(i);
 
-            var startX = width * startTime / duration;
-            var endX = width * endTime / duration;
-            context.fillRect(startX, 0, endX - startX, height);
+            var startX = startTime / duration;
+            var widthX = (endTime - startTime) / duration;
+            background += '<rect x="' + startX + '" y="0" width="' + widthX + '" height="1"/>';
         }
+
+        background += '</g></svg>\')'
+        this.controls.timeline.style.backgroundImage = background;
     },
 
     formatTime: function(time)
