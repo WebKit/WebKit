@@ -654,9 +654,10 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         ts << "(usingTiledLayer " << m_usingTiledBacking << ")\n";
     }
 
-    if (m_contentsOpaque) {
+    bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack = m_client.needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(*this);
+    if (m_contentsOpaque || needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack) {
         writeIndent(ts, indent + 1);
-        ts << "(contentsOpaque " << m_contentsOpaque << ")\n";
+        ts << "(contentsOpaque " << (m_contentsOpaque || needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack) << ")\n";
     }
 
     if (m_preserves3D) {

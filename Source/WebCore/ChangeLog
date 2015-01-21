@@ -1,3 +1,34 @@
+2015-01-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Many compositing tests fail in DumpRenderTree due to contentsOpaque difference
+        https://bugs.webkit.org/show_bug.cgi?id=140742
+
+        Reviewed by Simon Fraser.
+
+        Make RenderLayerBacking::layerTreeAsText() (including internals.layerTreeAsText()) always
+        report that the main frame's RenderView layer is opaque when running iOS DumpRenderTree to
+        avoid test failures and the need to maintain for iOS WebKit1 an almost identical copy of the
+        platform-independent compositing test results.
+
+        The main frame's RenderView layer is always transparent in iOS WebKit1 since it does
+        not make use of a tiled cache layer and defers to UIKit to handle the final compositing
+        of the web view, including applying the page scale factor.
+
+        * platform/RuntimeApplicationChecksIOS.mm:
+        (WebCore::applicationIsDumpRenderTree): The app bundle identifier of DumpRenderTree has
+        the form org.webkit.DumpRenderTreeX where X is some non-negative integer.
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties): Modified to report that a layer is opaque when
+        GraphicsLayerClient::needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack() returns true.
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack): Added
+        default implementation (returns false).
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack): Added;
+        returns true when running in DumpRenderTree and the passed GraphicsLayer corresponds to the main frame's
+        RenderView layer.
+        * rendering/RenderLayerBacking.h:
+
 2015-01-21  Roger Fong  <roger_fong@apple.com>
 
         WebGL2 (spec section 3.1): Add new types to WebGL2 API.

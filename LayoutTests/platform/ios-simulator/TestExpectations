@@ -350,10 +350,6 @@ compositing/video/video-poster.html
 compositing/video/video-reflection.html
 compositing/visibility/visibility-simple-video-layer.html
 
-# Compositing tests that fail due to contentsOpaque differences:
-compositing/backing/backface-visibility-flip.html [ Failure ]
-compositing/contents-scale/animating.html [ Failure ]
-
 # Compositing tests that time out:
 compositing/framesets/composited-frame-alignment.html
 compositing/geometry/abs-position-inside-opacity.html

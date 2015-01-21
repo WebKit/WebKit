@@ -219,6 +219,10 @@ public:
     virtual bool shouldTemporarilyRetainTileCohorts(const GraphicsLayer*) const override;
     virtual bool needsPixelAligment() const override { return !m_isMainFrameRenderViewLayer; }
 
+#if PLATFORM(IOS)
+    virtual bool needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer&) const override;
+#endif
+
 #ifndef NDEBUG
     virtual void verifyNotPainting() override;
 #endif

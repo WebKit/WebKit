@@ -51,7 +51,9 @@ bool applicationIsMobileSafari()
 
 bool applicationIsDumpRenderTree()
 {
-    static bool isDumpRenderTree = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.DumpRenderTree"];
+    // We use a prefix match instead of strict equality since LayoutTestRelay may launch multiple instances of
+    // DumpRenderTree where the bundle identifier of each instance has a unique suffix.
+    static bool isDumpRenderTree = [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"org.webkit.DumpRenderTree"]; // e.g. org.webkit.DumpRenderTree0
     return isDumpRenderTree;
 }
 

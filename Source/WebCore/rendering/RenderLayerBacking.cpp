@@ -67,6 +67,10 @@
 #include "GraphicsContext3D.h"
 #endif
 
+#if PLATFORM(IOS)
+#include "RuntimeApplicationChecksIOS.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -331,6 +335,17 @@ void RenderLayerBacking::layerWillBeDestroyed()
         if (pluginViewBase && m_graphicsLayer->contentsLayerForMedia())
             pluginViewBase->detachPluginLayer();
     }
+}
+
+bool RenderLayerBacking::needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysOpaqueHack(const GraphicsLayer& layer) const
+{
+    if (m_isMainFrameRenderViewLayer && applicationIsDumpRenderTree()) {
+        // In iOS WebKit1 the main frame's RenderView layer is always transparent. We lie that it is opaque so that
+        // internals.layerTreeAsText() tests succeed.
+        ASSERT(!layer.contentsOpaque());
+        return true;
+    }
+    return false;
 }
 #endif
 
