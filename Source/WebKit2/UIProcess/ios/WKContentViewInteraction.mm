@@ -542,6 +542,8 @@ static FloatQuad inflateQuad(const FloatQuad& quad, float inflateSize)
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsNativeGesture
 {
     if (preventsNativeGesture) {
+        _highlightLongPressCanClick = NO;
+
         _canSendTouchEventsAsynchronously = YES;
         [_touchEventGestureRecognizer setDefaultPrevented:YES];
     }
@@ -945,19 +947,22 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     switch ([gestureRecognizer state]) {
     case UIGestureRecognizerStateBegan:
+        _highlightLongPressCanClick = YES;
         cancelPotentialTapIfNecessary(self);
         _page->tapHighlightAtPosition([gestureRecognizer startPoint], ++_latestTapHighlightID);
         _isTapHighlightIDValid = YES;
         break;
     case UIGestureRecognizerStateEnded:
-        if (!_positionInformation.clickableElementName.isEmpty()) {
+        if (_highlightLongPressCanClick && !_positionInformation.clickableElementName.isEmpty()) {
             [self _attemptClickAtLocation:[gestureRecognizer startPoint]];
             [self _finishInteraction];
         } else
             [self _cancelInteraction];
+        _highlightLongPressCanClick = NO;
         break;
     case UIGestureRecognizerStateCancelled:
         [self _cancelInteraction];
+        _highlightLongPressCanClick = NO;
         break;
     default:
         break;

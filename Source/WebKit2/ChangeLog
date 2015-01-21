@@ -1,5 +1,49 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176305.
+
+    2014-11-18  Benjamin Poulain  <bpoulain@apple.com>
+
+            iOS8 new "slow tap" heuristic fires mouse compat events despite preventDefault on touchend
+            https://bugs.webkit.org/show_bug.cgi?id=137069
+            rdar://problem/18481464
+
+            Reviewed by Simon Fraser.
+
+            On WebKit2, we let UIWebTouchEventsGestureRecognizer and _UIWebHighlightLongPressGestureRecognizer
+            run concurrently. This causes a race with an incorrect behavior:
+            1) If UIWebTouchEventsGestureRecognizer does not cancel the native gestures on start.
+            2) _UIWebHighlightLongPressGestureRecognizer starts after highlightDelay.
+            3) When the finger leaves the screen, both gestures end.
+            -> If the touch end sent to JavaScript in [3] ask the priority over native events, that no longer stops
+               the _UIWebHighlightLongPressGestureRecognizer.
+
+            The two gesture recognizers can run in any order, there is no guarantee on which one runs first.
+            To solve the bug, I must make sure the _UIWebHighlightLongPressGestureRecognizer never trigger a click
+            if the page wants the event.
+
+            To solve the order problem, I use the fact that event recognition goes in two phases for
+            non cancelled events:
+            1) Update the gesture recognizers.
+            2) Trigger the actions.
+
+            I do not know the order of recognizers in [1], but I know both have run before [2] is executed.
+            I use that to stop _UIWebHighlightLongPressGestureRecognizer from ending with a click in the case of the bug:
+            1) When _UIWebHighlightLongPressGestureRecognizer starts, I set _highlightLongPressCanClick signaling
+               the gesture can end normally. This is done on a timer and not direct input so I don't really have to worry
+               about a race here.
+            2) When processing the touch event for UIWebTouchEventsGestureRecognizer, I reset the flag _highlightLongPressCanClick
+               if the page wants the event.
+            3) When the actions of _UIWebHighlightLongPressGestureRecognizer are processed, the touch event
+               has already been processed by the page and the flag has been cleared if needed.
+
+            * UIProcess/ios/WKContentViewInteraction.h:
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _webTouchEvent:preventsNativeGestures:]):
+            (-[WKContentView _highlightLongPressRecognized:]):
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175698.
 
     2014-11-06  Daniel Bates  <dabates@apple.com>
