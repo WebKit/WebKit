@@ -1,5 +1,21 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176969.
+
+    2014-12-08  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/18046692> [iOS] Safari crashes at -[_NSUndoStack popAndInvoke] when trying to undo typing on closed tab
+            https://bugs.webkit.org/show_bug.cgi?id=139408
+
+            Reviewed by Anders Carlsson.
+
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView undoManager]): Override to initialize if necessary and return a unique undo
+            manager for this instance. This ensures that undoable operations for this webview don’t get
+            put in other undo managers, and matches UIWebView behavior.
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176701.
 
     2014-12-02  Dan Bernstein  <mitz@apple.com>
