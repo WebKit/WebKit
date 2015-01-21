@@ -3614,10 +3614,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ([self respondsToSelector:@selector(setActionMenu:)]) {
         RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
-        self.actionMenu = menu.get();
+        self._actionMenu = menu.get();
         _data->_actionMenuController = adoptNS([[WKActionMenuController alloc] initWithPage:*_data->_page view:self]);
-        self.actionMenu.delegate = _data->_actionMenuController.get();
-        self.actionMenu.autoenablesItems = NO;
+        self._actionMenu.delegate = _data->_actionMenuController.get();
+        self._actionMenu.autoenablesItems = NO;
     }
 
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {

@@ -23,16 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPLE_INTERNAL_SDK) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101002
-
-#import <AppKit/NSView_Private.h>
-
-#else
+// FIXME: This should include private headers when possible.
 
 #import <AppKit/NSView.h>
 
 @interface NSView (Private)
-@property (strong) NSMenu *actionMenu;
+@property (strong) NSMenu *_actionMenu;
 @end
-
-#endif
