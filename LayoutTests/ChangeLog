@@ -1,5 +1,22 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176972.
+
+    2014-12-08  Mark Lam  <mark.lam@apple.com>
+
+            CFA wrongly assumes that a speculation for SlowPutArrayStorageShape disallows ArrayStorageShape arrays.
+            <https://webkit.org/b/139327>
+
+            Reviewed by Michael Saboff.
+
+            * js/dfg-slow-put-array-storage-spec-should-allow-fast-array-storage-expected.txt: Added.
+            * js/dfg-slow-put-array-storage-spec-should-allow-fast-array-storage.html: Added.
+            * js/script-tests/dfg-slow-put-array-storage-spec-should-allow-fast-array-storage.js: Added.
+            (foo):
+            (test):
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r176971.
 
     2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
