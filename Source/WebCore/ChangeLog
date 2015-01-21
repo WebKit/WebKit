@@ -1,5 +1,26 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r175718.
+
+    2014-11-06  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+            Don't send identifierForInitialRequest callback method for request with DoNotSendCallbacks option.
+            https://bugs.webkit.org/show_bug.cgi?id=138473
+
+            The iOS specific code that sets up a valid m_identifier is not needed any more, since this
+            will be done later in ResourceLoader::willSendRequest. This also matches the behavior that
+            we don't call assignIdentifierToInitialRequest callback method if the reqeust has
+            DoNotSendCallbacks option.
+
+            Reviewed by Pratik Solanki.
+
+            * loader/ResourceLoader.cpp: 
+            (WebCore::ResourceLoader::willSendRequest): Remove iOS specific block for setting up a valid
+                m_identifier. In iOS, also make sure we still bail out if the resource loader was stopped
+                in assignIdentifierToInitialRequest callback by a client.
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175277.
 
     2014-10-24  Jeffrey Pfau  <jpfau@apple.com>
