@@ -241,8 +241,11 @@ ControllerIOS.prototype = {
         return 'rgba(0, 0, 0, 0.5)';
     },
 
-    updateProgress: function() {
-        Controller.prototype.updateProgress.call(this);
+    updateProgress: function(forceUpdate) {
+        Controller.prototype.updateProgress.call(this, forceUpdate);
+
+        if (!forceUpdate && this.controlsAreHidden())
+            return;
 
         var width = this.timelineWidth;
         var height = this.timelineHeight;

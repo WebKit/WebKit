@@ -332,6 +332,7 @@ Controller.prototype = {
         timeline.setAttribute('pseudo', '-webkit-media-controls-timeline');
         timeline.setAttribute('aria-label', this.UIString('Duration'));
         timeline.type = 'range';
+        timeline.value = 0;
         this.listenFor(timeline, 'input', this.handleTimelineChange);
         this.listenFor(timeline, 'mouseover', this.handleTimelineMouseOver);
         this.listenFor(timeline, 'mouseout', this.handleTimelineMouseOut);
@@ -566,8 +567,8 @@ Controller.prototype = {
     handleDurationChange: function(event)
     {
         this.updateDuration();
-        this.updateTime();
-        this.updateProgress();
+        this.updateTime(true);
+        this.updateProgress(true);
     },
 
     handlePlay: function(event)
@@ -932,8 +933,11 @@ Controller.prototype = {
         return gradient;
     },
 
-    updateProgress: function()
+    updateProgress: function(forceUpdate)
     {
+        if (!forceUpdate && this.controlsAreHidden())
+            return;
+
         this.updateTimelineMetricsIfNeeded();
 
         var background = 'url(\'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" preserveAspectRatio="none"><linearGradient id="gradient" x2="0" y2="100%" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="rgb(2, 2, 2)"/><stop offset="1" stop-color="rgb(23, 23, 23)"/></linearGradient><g style="fill:url(#gradient)">'
@@ -1026,8 +1030,11 @@ Controller.prototype = {
         this.setNeedsTimelineMetricsUpdate();
     },
 
-    updateTime: function()
+    updateTime: function(forceUpdate)
     {
+        if (!forceUpdate && this.controlsAreHidden())
+            return;
+
         var currentTime = this.video.currentTime;
         var timeRemaining = currentTime - this.video.duration;
         this.controls.currentTime.innerText = this.formatTime(currentTime);
