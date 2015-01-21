@@ -1,5 +1,22 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r176285.
+
+    2014-11-18  Myles C. Maxfield  <litherum@gmail.com>
+
+            Multicolumn layout with negative line spacing and orphans causes pieces of letters to be shown at the bottom of columns
+            https://bugs.webkit.org/show_bug.cgi?id=138204
+
+            Reviewed by Dave Hyatt.
+
+            Create a layout where the "orphans" css property causes a block element to
+            be pushed to the next column.
+
+            * fast/multicol/orphans-negative-line-spacing-expected.html: Added.
+            * fast/multicol/orphans-negative-line-spacing.html: Added.
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r175236.
 
     2014-10-24  David Hyatt  <hyatt@apple.com>
