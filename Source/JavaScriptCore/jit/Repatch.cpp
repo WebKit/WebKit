@@ -511,13 +511,6 @@ static void generateByIdStub(
                 MacroAssembler::NotEqual, loadedValueGPR, addressOfLinkFunctionCheck,
                 MacroAssembler::TrustedImmPtr(0));
             
-            // loadedValueGPR is already burned. We can reuse it. From here on we assume that
-            // any volatile register will be clobbered anyway.
-            stubJit.loadPtr(
-                MacroAssembler::Address(loadedValueGPR, JSFunction::offsetOfScopeChain()),
-                loadedValueGPR);
-            stubJit.storeCell(
-                loadedValueGPR, calleeFrame.withOffset(JSStack::ScopeChain * sizeof(Register)));
             fastPathCall = stubJit.nearCall();
             
             stubJit.addPtr(
@@ -1684,23 +1677,6 @@ void linkClosureCall(
             CCallHelpers::NotEqual,
             CCallHelpers::Address(calleeGPR, JSFunction::offsetOfExecutable()),
             CCallHelpers::TrustedImmPtr(executable)));
-    
-    stubJit.loadPtr(
-        CCallHelpers::Address(calleeGPR, JSFunction::offsetOfScopeChain()),
-        GPRInfo::returnValueGPR);
-    
-#if USE(JSVALUE64)
-    stubJit.store64(
-        GPRInfo::returnValueGPR,
-        CCallHelpers::Address(MacroAssembler::stackPointerRegister, static_cast<ptrdiff_t>(sizeof(Register) * JSStack::ScopeChain) + offsetToFrame));
-#else
-    stubJit.storePtr(
-        GPRInfo::returnValueGPR,
-        CCallHelpers::Address(MacroAssembler::stackPointerRegister, static_cast<ptrdiff_t>(sizeof(Register) * JSStack::ScopeChain) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload) + offsetToFrame));
-    stubJit.store32(
-        CCallHelpers::TrustedImm32(JSValue::CellTag),
-        CCallHelpers::Address(MacroAssembler::stackPointerRegister, static_cast<ptrdiff_t>(sizeof(Register) * JSStack::ScopeChain) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag) + offsetToFrame));
-#endif
     
     AssemblyHelpers::Call call = stubJit.nearCall();
     AssemblyHelpers::Jump done = stubJit.jump();

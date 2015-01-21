@@ -32,11 +32,10 @@
 
 namespace JSC {
 
-void ProtoCallFrame::init(CodeBlock* codeBlock, JSScope* scope, JSObject* callee, JSValue thisValue, int argCountIncludingThis, JSValue* otherArgs)
+void ProtoCallFrame::init(CodeBlock* codeBlock, JSObject* callee, JSValue thisValue, int argCountIncludingThis, JSValue* otherArgs)
 {
     this->args = otherArgs;
     this->setCodeBlock(codeBlock);
-    this->setScope(scope);
     this->setCallee(callee);
     this->setArgumentCountIncludingThis(argCountIncludingThis);
     if (codeBlock && argCountIncludingThis < codeBlock->numParameters())

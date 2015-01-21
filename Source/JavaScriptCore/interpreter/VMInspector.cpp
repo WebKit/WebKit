@@ -73,14 +73,12 @@ void VMInspector::dumpFrame(CallFrame* frame, const char* prefix,
     if (prefix)
         printf("%s ", prefix);
 
-    printf("frame [%d] %p { cb %p:%s, retPC %p:%s, scope %p:%s, callee %p:%s, callerFrame %p:%s, argc %d, vPC %p }",
+    printf("frame [%d] %p { cb %p:%s, retPC %p:%s, callee %p:%s, callerFrame %p:%s, argc %d, vPC %p }",
         frameCount, frame,
         CAST<void*>(frame[JSStack::CodeBlock].payload()),
         getTypeName(frame[JSStack::CodeBlock].jsValue()),
         CAST<void*>(frame[JSStack::ReturnPC].payload()),
         getTypeName(frame[JSStack::ReturnPC].jsValue()),
-        CAST<void*>(frame[JSStack::ScopeChain].payload()),
-        getTypeName(frame[JSStack::ScopeChain].jsValue()),
         CAST<void*>(frame[JSStack::Callee].payload()),
         getTypeName(frame[JSStack::Callee].jsValue()),
         CAST<void*>(frame[JSStack::CallerFrame].callFrame()),

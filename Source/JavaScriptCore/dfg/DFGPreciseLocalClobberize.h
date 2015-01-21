@@ -131,10 +131,8 @@ private:
         for (InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->caller.inlineCallFrame) {
             for (unsigned i = inlineCallFrame->arguments.size(); i-- > 1;)
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
-            if (inlineCallFrame->isClosureCall) {
-                m_read(VirtualRegister(inlineCallFrame->stackOffset + JSStack::ScopeChain));
+            if (inlineCallFrame->isClosureCall)
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + JSStack::Callee));
-            }
         }
     }
     

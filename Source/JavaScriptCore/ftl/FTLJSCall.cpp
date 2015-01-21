@@ -57,15 +57,6 @@ void JSCall::emit(CCallHelpers& jit)
         CCallHelpers::NotEqual, GPRInfo::regT0, m_targetToCheck,
         CCallHelpers::TrustedImmPtr(0));
     
-    jit.loadPtr(
-        CCallHelpers::Address(GPRInfo::regT0, JSFunction::offsetOfScopeChain()),
-        GPRInfo::regT1);
-    jit.store64(
-        GPRInfo::regT1,
-        CCallHelpers::Address(
-            CCallHelpers::stackPointerRegister,
-            sizeof(Register) * (JSStack::ScopeChain - JSStack::CallerFrameAndPCSize)));
-    
     m_fastCall = jit.nearCall();
     CCallHelpers::Jump done = jit.jump();
     

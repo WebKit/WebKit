@@ -1,5 +1,69 @@
 2015-01-21  Michael Saboff  <msaboff@apple.com>
 
+        Eliminate Scope slot from JavaScript CallFrame
+        https://bugs.webkit.org/show_bug.cgi?id=136724
+
+        Reviewed by Geoffrey Garen.
+
+        This finishes the removal of the scope chain slot from the call frame header.
+
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLJSCall.cpp:
+        (JSC::FTL::JSCall::emit):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::LowerDFGToLLVM::compileNativeCallOrConstruct):
+        (JSC::FTL::LowerDFGToLLVM::compileCallOrConstruct):
+        * interpreter/JSStack.h:
+        * interpreter/VMInspector.cpp:
+        (JSC::VMInspector::dumpFrame):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/Repatch.cpp:
+        (JSC::generateByIdStub):
+        (JSC::linkClosureCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualForThunkGenerator):
+        (JSC::nativeForGenerator):
+        Deleted ScopeChain slot from JSStack.  Removed all code where ScopeChain was being
+        read or set.  In most cases this was where we make JS calls.
+
+        * interpreter/CallFrameClosure.h:
+        (JSC::CallFrameClosure::setArgument):
+        (JSC::CallFrameClosure::resetCallFrame): Deleted.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * interpreter/ProtoCallFrame.cpp:
+        (JSC::ProtoCallFrame::init):
+        * interpreter/ProtoCallFrame.h:
+        (JSC::ProtoCallFrame::scope): Deleted.
+        (JSC::ProtoCallFrame::setScope): Deleted.
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        Removed the related scopeChainValue member from ProtoCallFrame.  Reduced the number of
+        registers that needed to be copied from the ProtoCallFrame to a callee's frame
+        from 5 to 4.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        In addition to the prior changes, also deleted the unused macro getDeBruijnScope.
+
+2015-01-21  Michael Saboff  <msaboff@apple.com>
+
         Eliminate construct methods from NullGetterFunction and NullSetterFunction classes
         https://bugs.webkit.org/show_bug.cgi?id=140708
 

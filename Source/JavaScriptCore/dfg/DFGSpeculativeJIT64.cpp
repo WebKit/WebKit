@@ -676,9 +676,6 @@ void SpeculativeJIT::emitCall(Node* node)
 
     slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(0));
 
-    m_jit.loadPtr(MacroAssembler::Address(calleeGPR, OBJECT_OFFSETOF(JSFunction, m_scope)), resultGPR);
-    m_jit.store64(resultGPR, calleeFrameSlot(JSStack::ScopeChain));
-
     JITCompiler::Call fastCall = m_jit.nearCall();
 
     JITCompiler::Jump done = m_jit.jump();

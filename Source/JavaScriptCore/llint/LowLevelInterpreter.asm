@@ -34,10 +34,10 @@ end
 
 if JSVALUE64
     const PtrSize = 8
-    const CallFrameHeaderSlots = 6
+    const CallFrameHeaderSlots = 5
 else
     const PtrSize = 4
-    const CallFrameHeaderSlots = 5
+    const CallFrameHeaderSlots = 4
     const CallFrameAlignSlots = 1
 end
 const SlotSize = 8
@@ -50,8 +50,7 @@ const CallerFrameAndPCSize = 2 * PtrSize
 const CallerFrame = 0
 const ReturnPC = CallerFrame + PtrSize
 const CodeBlock = ReturnPC + PtrSize
-const ScopeChain = CodeBlock + SlotSize
-const Callee = ScopeChain + SlotSize
+const Callee = CodeBlock + SlotSize
 const ArgumentCount = Callee + SlotSize
 const ThisArgumentOffset = ArgumentCount + SlotSize
 const CallFrameHeaderSize = ThisArgumentOffset

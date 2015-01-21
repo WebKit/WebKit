@@ -58,7 +58,6 @@ namespace JSC {
         enum CallFrameHeaderEntry {
             CallerFrameAndPCSize = sizeof(CallerFrameAndPC) / sizeof(Register),
             CodeBlock = CallerFrameAndPCSize,
-            ScopeChain,
             Callee,
             ArgumentCount,
             CallFrameHeaderSize,

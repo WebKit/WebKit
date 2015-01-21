@@ -73,10 +73,10 @@ void Data::performAssertions(VM& vm)
 #ifndef NDEBUG
 #if USE(JSVALUE64)
     const ptrdiff_t PtrSize = 8;
-    const ptrdiff_t CallFrameHeaderSlots = 6;
+    const ptrdiff_t CallFrameHeaderSlots = 5;
 #else // USE(JSVALUE64) // i.e. 32-bit version
     const ptrdiff_t PtrSize = 4;
-    const ptrdiff_t CallFrameHeaderSlots = 5;
+    const ptrdiff_t CallFrameHeaderSlots = 4;
 #endif
     const ptrdiff_t SlotSize = 8;
 #endif
@@ -89,8 +89,7 @@ void Data::performAssertions(VM& vm)
     ASSERT(JSStack::CallerFrameAndPCSize == (PtrSize * 2) / SlotSize);
     ASSERT(CallFrame::returnPCOffset() == CallFrame::callerFrameOffset() + PtrSize);
     ASSERT(JSStack::CodeBlock * sizeof(Register) == CallFrame::returnPCOffset() + PtrSize);
-    ASSERT(JSStack::ScopeChain * sizeof(Register) == JSStack::CodeBlock * sizeof(Register) + SlotSize);
-    ASSERT(JSStack::Callee * sizeof(Register) == JSStack::ScopeChain * sizeof(Register) + SlotSize);
+    ASSERT(JSStack::Callee * sizeof(Register) == JSStack::CodeBlock * sizeof(Register) + SlotSize);
     ASSERT(JSStack::ArgumentCount * sizeof(Register) == JSStack::Callee * sizeof(Register) + SlotSize);
     ASSERT(JSStack::ThisArgument * sizeof(Register) == JSStack::ArgumentCount * sizeof(Register) + SlotSize);
     ASSERT(JSStack::CallFrameHeaderSize == JSStack::ThisArgument);

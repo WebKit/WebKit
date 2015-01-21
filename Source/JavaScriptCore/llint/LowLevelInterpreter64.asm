@@ -226,7 +226,7 @@ macro doVMEntry(makeCall)
 
 .stackHeightOK:
     move temp1, sp
-    move 5, temp1
+    move 4, temp1
 
 .copyHeaderLoop:
     subi 1, temp1
@@ -1799,9 +1799,7 @@ macro doCall(slowPath)
     lshifti 3, t3
     negp t3
     addp cfr, t3
-    loadp JSFunction::m_scope[t2], t0
     storeq t2, Callee[t3]
-    storeq t0, ScopeChain[t3]
     loadisFromInstruction(3, t2)
     storei PC, ArgumentCount + TagOffset[cfr]
     storei t2, ArgumentCount + PayloadOffset[t3]
@@ -1930,9 +1928,6 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         andp MarkedBlockMask, t0, t1
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
         storep cfr, VM::topCallFrame[t1]
-        // Callee still in t0
-        loadp JSCallee::m_scope[t0], t1
-        storeq t1, ScopeChain[cfr]
         move cfr, arg1
         loadp Callee[cfr], arg2
         loadp JSFunction::m_executable[arg2], temp
@@ -1952,9 +1947,6 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         andp MarkedBlockMask, t0, t1
         loadp MarkedBlock::m_weakSet + WeakSet::m_vm[t1], t1
         storep cfr, VM::topCallFrame[t1]
-        // Callee still in t0
-        loadp JSCallee::m_scope[t0], t1
-        storep t1, ScopeChain[cfr]
         preserveReturnAddressAfterCall(t3)
         storep t3, ReturnPC[cfr]
         move cfr, t0

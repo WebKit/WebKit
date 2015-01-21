@@ -214,17 +214,6 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
     // Now we know that we have a CodeBlock, and we're committed to making a fast
     // call.
     
-    jit.loadPtr(
-        CCallHelpers::Address(GPRInfo::regT0, JSFunction::offsetOfScopeChain()),
-        GPRInfo::regT1);
-#if USE(JSVALUE64)
-    jit.emitPutToCallFrameHeaderBeforePrologue(GPRInfo::regT1, JSStack::ScopeChain);
-#else
-    jit.emitPutPayloadToCallFrameHeaderBeforePrologue(GPRInfo::regT1, JSStack::ScopeChain);
-    jit.emitPutTagToCallFrameHeaderBeforePrologue(CCallHelpers::TrustedImm32(JSValue::CellTag),
-        JSStack::ScopeChain);
-#endif
-    
     // Make a tail call. This will return back to JIT code.
     emitPointerValidation(jit, GPRInfo::regT4);
     jit.jump(GPRInfo::regT4);
@@ -276,12 +265,6 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     jit.storePtr(JSInterfaceJIT::callFrameRegister, &vm->topCallFrame);
 
 #if CPU(X86)
-    // Load callee's scope chain into this callframe so that whatever we call can
-    // get to its global data.
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::Callee, JSInterfaceJIT::regT1);
-    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::regT1, JSCallee::offsetOfScopeChain()), JSInterfaceJIT::regT1);
-    jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
-
     // Calling convention:      f(ecx, edx, ...);
     // Host function signature: f(ExecState*);
     jit.move(JSInterfaceJIT::callFrameRegister, X86Registers::ecx);
@@ -296,11 +279,6 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     jit.addPtr(JSInterfaceJIT::TrustedImm32(8), JSInterfaceJIT::stackPointerRegister);
 
 #elif CPU(X86_64)
-    // Load callee's scope chain into this callframe so that whatever we call can
-    // get to its global data.
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::Callee, JSInterfaceJIT::regT1);
-    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::regT1, JSCallee::offsetOfScopeChain()), JSInterfaceJIT::regT1);
-    jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
 #if !OS(WINDOWS)
     // Calling convention:      f(edi, esi, edx, ecx, ...);
     // Host function signature: f(ExecState*);
@@ -333,12 +311,6 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     COMPILE_ASSERT(ARM64Registers::x1 != JSInterfaceJIT::regT3, T3_not_trampled_by_arg_1);
     COMPILE_ASSERT(ARM64Registers::x2 != JSInterfaceJIT::regT3, T3_not_trampled_by_arg_2);
 
-    // Load callee's scope chain into this callframe so that whatever we call can
-    // get to its global data.
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::Callee, JSInterfaceJIT::regT1);
-    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::regT1, JSCallee::offsetOfScopeChain()), JSInterfaceJIT::regT1);
-    jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
-
     // Host function signature: f(ExecState*);
     jit.move(JSInterfaceJIT::callFrameRegister, ARM64Registers::x0);
 
@@ -346,12 +318,6 @@ static MacroAssemblerCodeRef nativeForGenerator(VM* vm, CodeSpecializationKind k
     jit.loadPtr(JSInterfaceJIT::Address(ARM64Registers::x1, JSFunction::offsetOfExecutable()), ARM64Registers::x2);
     jit.call(JSInterfaceJIT::Address(ARM64Registers::x2, executableOffsetToFunction));
 #elif CPU(ARM) || CPU(SH4) || CPU(MIPS)
-    // Load callee's scope chain into this callframe so that whatever we call can
-    // get to its global data.
-    jit.emitGetFromCallFrameHeaderPtr(JSStack::Callee, JSInterfaceJIT::regT1);
-    jit.loadPtr(JSInterfaceJIT::Address(JSInterfaceJIT::regT1, JSCallee::offsetOfScopeChain()), JSInterfaceJIT::regT1);
-    jit.emitPutCellToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ScopeChain);
-
 #if CPU(MIPS)
     // Allocate stack space for (unused) 16 bytes (8-byte aligned) for 4 arguments.
     jit.subPtr(JSInterfaceJIT::TrustedImm32(16), JSInterfaceJIT::stackPointerRegister);

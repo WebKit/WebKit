@@ -32,7 +32,6 @@ namespace JSC {
 
 struct ProtoCallFrame {
     Register codeBlockValue;
-    Register scopeChainValue;
     Register calleeValue;
     Register argCountAndCodeOriginValue;
     Register thisArg;
@@ -40,13 +39,10 @@ struct ProtoCallFrame {
     bool arityMissMatch;
     JSValue *args;
 
-    void init(CodeBlock*, JSScope*, JSObject*, JSValue, int, JSValue* otherArgs = 0);
+    void init(CodeBlock*, JSObject*, JSValue, int, JSValue* otherArgs = 0);
 
     CodeBlock* codeBlock() const { return codeBlockValue.Register::codeBlock(); }
     void setCodeBlock(CodeBlock* codeBlock) { codeBlockValue = codeBlock; }
-
-    JSScope* scope() const { return scopeChainValue.Register::scope(); }
-    void setScope(JSScope* scope) { scopeChainValue = scope; }
 
     JSObject* callee() const { return calleeValue.Register::function(); }
     void setCallee(JSObject* callee) { calleeValue = Register::withCallee(callee); }

@@ -3627,10 +3627,8 @@ private:
         if ((notInlinable = !callee))
             callee = m_out.operation(function);
 
-        JSScope* scope = knownFunction->scopeUnchecked();
         m_out.storePtr(m_callFrame, m_execStorage, m_heaps.CallFrame_callerFrame);
         m_out.storePtr(constNull(m_out.intPtr), addressFor(m_execStorage, JSStack::CodeBlock));
-        m_out.storePtr(weakPointer(scope), addressFor(m_execStorage, JSStack::ScopeChain));
         m_out.storePtr(weakPointer(knownFunction), addressFor(m_execStorage, JSStack::Callee));
 
         m_out.store64(m_out.constInt64(numArgs), addressFor(m_execStorage, JSStack::ArgumentCount));
@@ -3678,7 +3676,6 @@ private:
         arguments.append(m_out.constInt32(1 + JSStack::CallFrameHeaderSize - JSStack::CallerFrameAndPCSize + numArgs));
         arguments.append(jsCallee); // callee -> %rax
         arguments.append(getUndef(m_out.int64)); // code block
-        arguments.append(getUndef(m_out.int64)); // scope chain
         arguments.append(jsCallee); // callee -> stack
         arguments.append(m_out.constInt64(numArgs)); // argument count and zeros for the tag
         if (dummyThisArgument)

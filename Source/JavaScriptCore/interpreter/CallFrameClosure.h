@@ -49,11 +49,6 @@ struct CallFrameClosure {
     {
         protoCallFrame->setArgument(argument, value);
     }
-
-    void resetCallFrame()
-    {
-        protoCallFrame->setScope(scope);
-    }
 };
 
 }

@@ -264,12 +264,11 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         - Initializes ArgumentCount; CallerFrame; Callee.
 
        For a JS call:
-        - Caller initializes ScopeChain.
         - Callee initializes ReturnPC; CodeBlock.
         - Callee restores callFrameRegister before return.
 
        For a non-JS call:
-        - Caller initializes ScopeChain; ReturnPC; CodeBlock.
+        - Caller initializes ReturnPC; CodeBlock.
         - Caller restores callFrameRegister after return.
     */
     
@@ -326,10 +325,6 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     m_callCompilationInfo.append(CallCompilationInfo());
     m_callCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
     m_callCompilationInfo[callLinkInfoIndex].callLinkInfo = info;
-
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scope)), regT2);
-    store32(regT2, Address(MacroAssembler::stackPointerRegister, JSStack::ScopeChain * sizeof(Register) + PayloadOffset - sizeof(CallerFrameAndPC)));
-    store32(TrustedImm32(JSValue::CellTag), Address(stackPointerRegister, JSStack::ScopeChain * sizeof(Register) + TagOffset - sizeof(CallerFrameAndPC)));
 
     checkStackPointerAlignment();
     m_callCompilationInfo[callLinkInfoIndex].hotPathOther = emitNakedCall();
