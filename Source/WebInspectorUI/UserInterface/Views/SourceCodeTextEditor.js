@@ -307,7 +307,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
         var isActivated = this._typeTokenAnnotator.toggleTypeAnnotations();
         if (isActivated) {
-            if (this._basicBlockAnnotator && !this._basicBlockAnnotator.isActive && !this._hasFocus)
+            if (this._basicBlockAnnotator && !this._basicBlockAnnotator.isActive() && !this._hasFocus)
                 this._basicBlockAnnotator.reset();
 
             RuntimeAgent.enableTypeProfiler();
@@ -353,8 +353,8 @@ WebInspector.SourceCodeTextEditor.prototype = {
         // The annotators must be cleared before pretty printing takes place and resumed 
         // after so that they clear their annotations in a known state and insert new annotations 
         // in the new state.
-        var shouldResumeTypeTokenAnnotator = this._typeTokenAnnotator && this._typeTokenAnnotator.isActive;
-        var shouldResumeBasicBlockAnnotator = this._basicBlockAnnotator && this._basicBlockAnnotator.isActive;
+        var shouldResumeTypeTokenAnnotator = this._typeTokenAnnotator && this._typeTokenAnnotator.isActive();
+        var shouldResumeBasicBlockAnnotator = this._basicBlockAnnotator && this._basicBlockAnnotator.isActive();
         if (shouldResumeTypeTokenAnnotator)
             this._typeTokenAnnotator.clear();
         if (shouldResumeBasicBlockAnnotator)
@@ -1119,9 +1119,9 @@ WebInspector.SourceCodeTextEditor.prototype = {
     _debuggerDidPause: function(event)
     {
         this._updateTokenTrackingControllerState();
-        if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive)
+        if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive())
             this._typeTokenAnnotator.refresh();
-        if (this._basicBlockAnnotator && this._basicBlockAnnotator.isActive)
+        if (this._basicBlockAnnotator && this._basicBlockAnnotator.isActive())
             this._basicBlockAnnotator.refresh();
     },
 
@@ -1129,9 +1129,9 @@ WebInspector.SourceCodeTextEditor.prototype = {
     {
         this._updateTokenTrackingControllerState();
         this._dismissPopover();
-        if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive)
+        if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive())
             this._typeTokenAnnotator.refresh();
-        if (this._basicBlockAnnotator && this._basicBlockAnnotator.isActive)
+        if (this._basicBlockAnnotator && this._basicBlockAnnotator.isActive())
             this._basicBlockAnnotator.refresh();
     },
 
@@ -1148,7 +1148,7 @@ WebInspector.SourceCodeTextEditor.prototype = {
         var mode = WebInspector.CodeMirrorTokenTrackingController.Mode.None;
         if (WebInspector.debuggerManager.paused)
             mode = WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptExpression;
-        else if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive)
+        else if (this._typeTokenAnnotator && this._typeTokenAnnotator.isActive())
             mode = WebInspector.CodeMirrorTokenTrackingController.Mode.JavaScriptTypeInformation;
         else if (this._hasColorMarkers())
             mode = WebInspector.CodeMirrorTokenTrackingController.Mode.MarkedTokens;

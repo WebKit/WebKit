@@ -1,5 +1,29 @@
 2015-01-21  Saam Barati  <saambarati1@gmail.com>
 
+        Web Inspector: Change Annotator's isActive getter into an isActive() function.
+        https://bugs.webkit.org/show_bug.cgi?id=140729
+
+        Reviewed by Timothy Hatcher.
+
+        This patch also makes the child classes of Annotator use
+        the function instead of accessing the property directly.
+
+        * UserInterface/Controllers/Annotator.js:
+        (WebInspector.Annotator.prototype.isActive):
+        (WebInspector.Annotator.prototype.get isActive): Deleted.
+        * UserInterface/Controllers/BasicBlockAnnotator.js:
+        (WebInspector.BasicBlockAnnotator.prototype.insertAnnotations):
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WebInspector.TypeTokenAnnotator.prototype.toggleTypeAnnotations):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.toggleTypeAnnotations):
+        (WebInspector.SourceCodeTextEditor.prototype.prettyPrint):
+        (WebInspector.SourceCodeTextEditor.prototype._debuggerDidPause):
+        (WebInspector.SourceCodeTextEditor.prototype._debuggerDidResume):
+        (WebInspector.SourceCodeTextEditor.prototype._updateTokenTrackingControllerState):
+
+2015-01-21  Saam Barati  <saambarati1@gmail.com>
+
         Web Inspector: Don't allow the BasicBlockAnnotator to highlight a section if it's only a closing brace
         https://bugs.webkit.org/show_bug.cgi?id=140727
 

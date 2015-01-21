@@ -46,7 +46,7 @@ WebInspector.Annotator.prototype = {
         return this._sourceCodeTextEditor;
     },
 
-    get isActive()
+    isActive: function()
     {
         return this._isActive;
     },

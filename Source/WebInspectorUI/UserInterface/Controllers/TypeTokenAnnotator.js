@@ -40,7 +40,7 @@ WebInspector.TypeTokenAnnotator.prototype = {
 
     toggleTypeAnnotations: function()
     {
-        if (this._isActive) {
+        if (this.isActive()) {
             this._isActive = false;
             this._clearTypeTokens();
         } else {
@@ -48,14 +48,14 @@ WebInspector.TypeTokenAnnotator.prototype = {
             this.reset();
         }
 
-        return this._isActive;
+        return this.isActive();
     },
 
     // Protected
 
     insertAnnotations: function()
     {
-        if (!this._isActive)
+        if (!this.isActive())
             return;
 
         var scriptSyntaxTree = this._script.scriptSyntaxTree;
@@ -79,7 +79,7 @@ WebInspector.TypeTokenAnnotator.prototype = {
         var allNodesInRange = scriptSyntaxTree.filterByRange(startOffset, endOffset);
         scriptSyntaxTree.updateTypes(allNodesInRange, function afterTypeUpdates() {
             // Because this is an asynchronous call, we could have been deactivated before the callback function is called.
-            if (!this._isActive)
+            if (!this.isActive())
                 return;
 
             allNodesInRange.forEach(this._insertTypeTokensForEachNode, this);

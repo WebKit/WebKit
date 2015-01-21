@@ -49,7 +49,7 @@ WebInspector.BasicBlockAnnotator.prototype = {
 
     insertAnnotations: function()
     {
-        if (!this._isActive)
+        if (!this.isActive())
             return;
         this._annotateBasicBlockExecutionRanges();
     },
@@ -67,7 +67,7 @@ WebInspector.BasicBlockAnnotator.prototype = {
                 return;
             }
 
-            if (!this._isActive)
+            if (!this.isActive())
                 return;
 
             var {startOffset, endOffset} = this.sourceCodeTextEditor.visibleRangeOffsets();
