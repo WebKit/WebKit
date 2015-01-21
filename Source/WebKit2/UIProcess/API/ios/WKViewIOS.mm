@@ -223,7 +223,7 @@ using namespace WebKit;
     webPageConfiguration.pageGroup = toImpl(pageGroupRef);
     webPageConfiguration.relatedPage = toImpl(relatedPage);
 
-    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds processPool:*toImpl(contextRef) configuration:WTF::move(webPageConfiguration) webView:nil]);
+    _contentView = adoptNS([[WKContentView alloc] initWithFrame:bounds processPool:*toImpl(contextRef) configuration:WTF::move(webPageConfiguration) wkView:self]);
 
     [[_contentView layer] setAnchorPoint:CGPointZero];
     [_contentView setFrame:bounds];
@@ -335,6 +335,12 @@ using namespace WebKit;
 {
     _hasStaticMinimumLayoutSize = YES;
     _minimumLayoutSizeOverride = minimumLayoutSizeOverride;
+}
+
+- (void)_didRelaunchProcess
+{
+    // Update the WebView to our size rather than the default size it will have after being relaunched.
+    [self _frameOrBoundsChanged];
 }
 
 - (UIEdgeInsets)_obscuredInsets

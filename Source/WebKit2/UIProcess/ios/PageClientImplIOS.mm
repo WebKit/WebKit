@@ -40,6 +40,7 @@
 #import "WKContentViewInteraction.h"
 #import "WKGeolocationProviderIOS.h"
 #import "WKProcessPoolInternal.h"
+#import "WKViewPrivate.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProviderRegistry.h"
 #import "WKWebViewInternal.h"
@@ -110,6 +111,15 @@ namespace WebKit {
 PageClientImpl::PageClientImpl(WKContentView *contentView, WKWebView *webView)
     : m_contentView(contentView)
     , m_webView(webView)
+    , m_wkView(nil)
+    , m_undoTarget(adoptNS([[WKEditorUndoTargetObjC alloc] init]))
+{
+}
+
+PageClientImpl::PageClientImpl(WKContentView *contentView, WKView *wkView)
+    : m_contentView(contentView)
+    , m_webView(nil)
+    , m_wkView(wkView)
     , m_undoTarget(adoptNS([[WKEditorUndoTargetObjC alloc] init]))
 {
 }
@@ -213,6 +223,7 @@ void PageClientImpl::didRelaunchProcess()
 {
     [m_contentView _didRelaunchProcess];
     [m_webView _didRelaunchProcess];
+    [m_wkView _didRelaunchProcess];
 }
 
 void PageClientImpl::pageClosed()

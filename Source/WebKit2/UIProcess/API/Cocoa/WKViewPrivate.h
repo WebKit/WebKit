@@ -57,6 +57,7 @@
 
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;
+- (void)_didRelaunchProcess;
 
 #else
 

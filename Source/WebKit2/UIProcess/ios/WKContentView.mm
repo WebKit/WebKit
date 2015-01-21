@@ -178,14 +178,9 @@ private:
     RetainPtr<NSUndoManager> _undoManager;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView
+- (instancetype)_commonInitializationWithProcessPool:(WebKit::WebProcessPool&)processPool configuration:(WebKit::WebPageConfiguration)webPageConfiguration
 {
-    if (!(self = [super initWithFrame:frame]))
-        return nil;
-
-    InitializeWebKit2();
-
-    _pageClient = std::make_unique<PageClientImpl>(self, webView);
+    ASSERT(_pageClient);
 
     _page = processPool.createWebPage(*_pageClient, WTF::move(webPageConfiguration));
     _page->initializeWebPage();
@@ -193,8 +188,6 @@ private:
     _page->setUseFixedLayout(true);
     _page->setDelegatesScrolling(true);
 
-    _webView = webView;
-    
     _isBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
 
     WebProcessPool::statistics().wkViewCount++;
@@ -224,6 +217,31 @@ private:
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
 
     return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    InitializeWebKit2();
+
+    _pageClient = std::make_unique<PageClientImpl>(self, webView);
+    _webView = webView;
+
+    return [self _commonInitializationWithProcessPool:processPool configuration:webPageConfiguration];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(WebKit::WebPageConfiguration)webPageConfiguration wkView:(WKView *)wkView
+{
+    if (!(self = [super initWithFrame:frame]))
+        return nil;
+
+    InitializeWebKit2();
+
+    _pageClient = std::make_unique<PageClientImpl>(self, wkView);
+
+    return [self _commonInitializationWithProcessPool:processPool configuration:webPageConfiguration];
 }
 
 - (void)dealloc

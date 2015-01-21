@@ -1,3 +1,53 @@
+2015-01-20  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        [iOS] WebKitTestRunner: Tests fail due to incorrect web view size
+
+        <https://bugs.webkit.org/show_bug.cgi?id=139736>
+        <rdar://problem/19282196>
+
+        This starts happening after we fail to reset the test controller to
+        consistent values in TestInvocation::invoke(). When we terminate the
+        web process and relaunch it, the new WebPage object created in the web
+        process is using the default ViewportConfiguration with dimensions of
+        1024x768.
+
+        The PageClient on iOS currently notifies the WKWebView and the
+        WKContentView when the web process is relaunched. This patch extends
+        that to also notify the WKView.
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        Declare -_didRelaunchProcess.
+
+        * UIProcess/API/ios/WKViewIOS.mm:
+        (-[WKView _commonInitializationWithContextRef:pageGroupRef:relatedToPage:]):
+        Call the new method that accepts a WKView.
+        (-[WKView _didRelaunchProcess]):
+        Call -_frameOrBoundsChanged to update the web process's size to the
+        size of the WKView.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        Add a constructor that takes a WKView, and add a member var to hold it.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::PageClientImpl):
+        Implement the constructor that takes a WKView.
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        Tell the WKView that the web process relaunched.
+
+        * UIProcess/ios/WKContentView.h:
+        Declare an initializer that takes a WKView.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        Split out from -[WKContentView initWithFrame:processPool:configuration:webView:].
+        (-[WKContentView initWithFrame:processPool:configuration:webView:]):
+        Perform some initialization, including creating the PageClient, and
+        call the common initializer.
+        (-[WKContentView initWithFrame:processPool:configuration:wkView:]):
+        Ditto.
+
 2015-01-21  Sam Weinig  <sam@webkit.org>
 
         Add WKPageGroupRef SPI for user content filters

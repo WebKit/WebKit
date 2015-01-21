@@ -31,6 +31,7 @@
 #import <wtf/RetainPtr.h>
 
 @class WKContentView;
+@class WKView;
 @class WKWebView;
 
 namespace WebCore {
@@ -62,6 +63,7 @@ struct WebPageConfiguration;
 @property (nonatomic, readonly) BOOL isBackground;
 
 - (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(WebKit::WebPageConfiguration)webPageConfiguration webView:(WKWebView *)webView;
+- (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(WebKit::WebPageConfiguration)webPageConfiguration wkView:(WKView *)webView;
 
 - (void)didUpdateVisibleRect:(CGRect)visibleRect unobscuredRect:(CGRect)unobscuredRect
     unobscuredRectInScrollViewCoordinates:(CGRect)unobscuredRectInScrollViewCoordinates
