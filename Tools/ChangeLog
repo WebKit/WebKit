@@ -1,3 +1,11 @@
+2015-01-21  Lucas Forschler  <lforschler@apple.com>
+
+        Remove Apple Mountain Lion Build & Test slaves.
+        
+        Unreviewed.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2015-01-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ENABLE(INSPECTOR) ifdef guards
