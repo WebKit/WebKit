@@ -1,3 +1,20 @@
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r177088.
+
+    2014-12-10  Dean Jackson  <dino@apple.com>
+
+            Blur filter performance test doesn't provide results
+            https://bugs.webkit.org/show_bug.cgi?id=139462
+
+            Reviewed by Sam Weinig.
+
+            This can't currently work under our performance test
+            infrastructure. Move it to a manual test to avoid
+            putting FAILures into the results.
+
+            * ManualTests/blur-filter-timing.html: Renamed from PerformanceTests/Interactive/blur-filter-timing.html.
+
 2014-07-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE] ENABLE_ENCRYPTED_MEDIA_V2 should depend on ENABLE_VIDEO
