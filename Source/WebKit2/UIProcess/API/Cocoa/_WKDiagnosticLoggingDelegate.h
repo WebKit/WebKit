@@ -28,13 +28,24 @@
 #if WK_API_ENABLED
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WKDiagnosticLoggingResultType.h>
+
+typedef NS_ENUM(NSInteger, _WKDiagnosticLoggingResultType) {
+    _WKDiagnosticLoggingResultPass,
+    _WKDiagnosticLoggingResultFail,
+    _WKDiagnosticLoggingResultNoop,
+} WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+// FIXME: Remove these once the client-side has been ported.
+#define WKDiagnosticLoggingResultType _WKDiagnosticLoggingResultType
+#define kWKDiagnosticLoggingResultPass _WKDiagnosticLoggingResultPass
+#define kWKDiagnosticLoggingResultFail _WKDiagnosticLoggingResultFail
+#define kWKDiagnosticLoggingResultNoop _WKDiagnosticLoggingResultNoop
 
 @protocol _WKDiagnosticLoggingDelegate <NSObject>
 @optional
 
 - (void)_webView:(WKWebView *)webView logDiagnosticMessage:(NSString *)message description:(NSString *)description;
-- (void)_webView:(WKWebView *)webView logDiagnosticMessageWithResult:(NSString *)message description:(NSString *)description result:(WKDiagnosticLoggingResultType)result;
+- (void)_webView:(WKWebView *)webView logDiagnosticMessageWithResult:(NSString *)message description:(NSString *)description result:(_WKDiagnosticLoggingResultType)result;
 - (void)_webView:(WKWebView *)webView logDiagnosticMessageWithValue:(NSString *)message description:(NSString *)description value:(NSString *) value;
 
 @end

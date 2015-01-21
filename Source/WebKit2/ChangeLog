@@ -1,3 +1,23 @@
+2015-01-21  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Stop using WKDiagnosticLoggingResultType.h C API header in Cocoa API
+        https://bugs.webkit.org/show_bug.cgi?id=140655
+
+        Reviewed by Anders Carlsson.
+
+        Stop using WKDiagnosticLoggingResultType.h C API header in Cocoa API.
+        Instead, introduce a new _WKDiagnosticLoggingResultType enum in
+        _WKDiagnosticLoggingDelegate.h.
+
+        A few defines mapping WKDiagnosticLoggingResultType enum and its values
+        to the new _WKDiagnosticLoggingResultType are temporarily added until
+        the client-side is transitioned.
+
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h:
+        * UIProcess/Cocoa/DiagnosticLoggingClient.mm:
+        (WebKit::toWKDiagnosticLoggingResultType):
+        (WebKit::DiagnosticLoggingClient::logDiagnosticMessageWithResult):
+
 2015-01-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [WK2] Use C++ lambdas in ProcessLauncher class

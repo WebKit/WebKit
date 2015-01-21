@@ -58,10 +58,22 @@ void DiagnosticLoggingClient::logDiagnosticMessage(WebKit::WebPageProxy*, const 
         [m_delegate.get() _webView:m_webView logDiagnosticMessage:message description:description];
 }
 
+static _WKDiagnosticLoggingResultType toWKDiagnosticLoggingResultType(WebCore::DiagnosticLoggingResultType result)
+{
+    switch (result) {
+    case WebCore::DiagnosticLoggingResultPass:
+        return _WKDiagnosticLoggingResultPass;
+    case WebCore::DiagnosticLoggingResultFail:
+        return _WKDiagnosticLoggingResultFail;
+    case WebCore::DiagnosticLoggingResultNoop:
+        return _WKDiagnosticLoggingResultNoop;
+    }
+}
+
 void DiagnosticLoggingClient::logDiagnosticMessageWithResult(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, WebCore::DiagnosticLoggingResultType result)
 {
     if (m_delegateMethods.webviewLogDiagnosticMessageWithResult)
-        [m_delegate.get() _webView:m_webView logDiagnosticMessageWithResult:message description:description result:toAPI(result)];
+        [m_delegate.get() _webView:m_webView logDiagnosticMessageWithResult:message description:description result:toWKDiagnosticLoggingResultType(result)];
 }
 
 void DiagnosticLoggingClient::logDiagnosticMessageWithValue(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, const WTF::String& value)
