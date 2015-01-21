@@ -45,10 +45,6 @@ webkit.org/b/74716 css3/filters/filter-is-on-subpixel-position.html [ Skip ]
 webkit.org/b/74716 css3/masking/clip-path-filter.html [ Skip ]
 webkit.org/b/74716 css3/filters/backdrop [ Skip ]
 
-# Needs rebaseline now that bug 97217 is fixed
-# https://bugs.webkit.org/show_bug.cgi?id=97325
-css3/masking/clip-path-circle-relative-overflow.html
-
 # CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
 fast/css/cursor-parsing-image-set.html [ Skip ]
 fast/events/mouse-cursor-image-set.html [ Skip ]
@@ -75,9 +71,6 @@ http/tests/navigation/ping-cross-origin-from-https.html
 http/tests/ssl
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
-
-# The following needs a rebaseline
-webkit.org/b/125754 js/dom/global-constructors-attributes.html [ Failure ]
 
 # <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results:
 #                          - Mac OS X and Windows do not have an Arabic font in common
@@ -203,8 +196,8 @@ editing/pasteboard/emacs-ctrl-k-y-001.html
 editing/pasteboard/emacs-cntl-y-001.html
 
 # <rdar://5508270> Intermittently time out
-editing/selection/5057506-2.html
-editing/selection/5057506.html
+editing/selection/5057506-2.html [ Pass Timeout ]
+editing/selection/5057506.html [ Pass Timeout ]
 
 # We can't make platform specifc results so keep this here for now
 # This test is dependant on DRT being able to open windows.
@@ -3043,6 +3036,6 @@ webkit.org/b/140258 userscripts/user-stylesheet-invalidate.html [ Failure ]
 fast/images/bad-png.html [ Skip ]
 
 webkit.org/b/140703 loader/go-back-cached-main-resource.html [ Failure ]
-webkit.org/b/140705 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure 
+webkit.org/b/140705 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
 webkit.org/b/140707 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html [ Failure ]
 webkit.org/b/140707 storage/domstorage/storage-close-database-on-idle.html [ Failure ]

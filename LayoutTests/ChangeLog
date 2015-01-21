@@ -1,5 +1,12 @@
 2015-01-20  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Rebaseline a test, unskip some working tests.
+
+        * platform/win/TestExpectations:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+
+2015-01-20  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] More test gardening.
 
         * platform/win/TestExpectations: Mark several tests as failing now that bug
