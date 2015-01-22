@@ -1,3 +1,30 @@
+2015-01-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        put_by_val_direct need to check the property is index or not for using putDirect / putDirectIndex
+        https://bugs.webkit.org/show_bug.cgi?id=140426
+
+        Reviewed by Geoffrey Garen.
+
+        Test: js/dfg-put-by-val-direct-with-edge-numbers.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::callHTMLAllCollection):
+        (WebCore::JSHTMLAllCollection::item):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore::JSFloat64Array::getOwnPropertySlot):
+        (WebCore::JSFloat64Array::getOwnPropertyDescriptor):
+        (WebCore::JSFloat64Array::put):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::getOwnPropertySlot):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        (JSC::RuntimeArray::put):
+
 2015-01-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Size tracks using a list of all items sorted by span

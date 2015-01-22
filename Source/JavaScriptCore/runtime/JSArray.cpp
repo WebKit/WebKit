@@ -158,9 +158,9 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
 
     // 4. Else if P is an array index (15.4), then
     // a. Let index be ToUint32(P).
-    unsigned index = propertyName.asIndex();
-    if (index != PropertyName::NotAnIndex) {
+    if (Optional<uint32_t> optionalIndex = propertyName.asIndex()) {
         // b. Reject if index >= oldLen and oldLenDesc.[[Writable]] is false.
+        uint32_t index = optionalIndex.value();
         if (index >= array->length() && !array->isLengthWritable())
             return reject(exec, throwException, "Attempting to define numeric property on array with non-writable length property.");
         // c. Let succeeded be the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing P, Desc, and false as arguments.

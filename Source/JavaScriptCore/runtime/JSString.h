@@ -626,10 +626,9 @@ ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, PropertyName
         return true;
     }
 
-    unsigned i = propertyName.asIndex();
-    if (i < m_length) {
-        ASSERT(i != PropertyName::NotAnIndex); // No need for an explicit check, the above test would always fail!
-        slot.setValue(this, DontDelete | ReadOnly, getIndex(exec, i));
+    Optional<uint32_t> index = propertyName.asIndex();
+    if (index && index.value() < m_length) {
+        slot.setValue(this, DontDelete | ReadOnly, getIndex(exec, index.value()));
         return true;
     }
 

@@ -982,7 +982,7 @@ static Structure* emitPutTransitionStubAndGetOldStructure(ExecState* exec, VM* v
 {
     PropertyName pname(ident);
     Structure* oldStructure = structure;
-    if (!oldStructure->isObject() || oldStructure->isDictionary() || pname.asIndex() != PropertyName::NotAnIndex)
+    if (!oldStructure->isObject() || oldStructure->isDictionary() || pname.asIndex())
         return nullptr;
 
     PropertyOffset propertyOffset;

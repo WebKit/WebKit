@@ -302,9 +302,9 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot(
         return true;
     }
     
-    unsigned index = propertyName.asIndex();
-    if (index != PropertyName::NotAnIndex && thisObject->canGetIndexQuickly(index)) {
-        slot.setValue(thisObject, DontDelete | ReadOnly, thisObject->getIndexQuickly(index));
+    Optional<uint32_t> index = propertyName.asIndex();
+    if (index && thisObject->canGetIndexQuickly(index.value())) {
+        slot.setValue(thisObject, DontDelete | ReadOnly, thisObject->getIndexQuickly(index.value()));
         return true;
     }
     
@@ -324,9 +324,8 @@ void JSGenericTypedArrayView<Adaptor>::put(
         return;
     }
     
-    unsigned index = propertyName.asIndex();
-    if (index != PropertyName::NotAnIndex) {
-        putByIndex(thisObject, exec, index, value, slot.isStrictMode());
+    if (Optional<uint32_t> index = propertyName.asIndex()) {
+        putByIndex(thisObject, exec, index.value(), value, slot.isStrictMode());
         return;
     }
     
@@ -343,8 +342,7 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
     // This is matching Firefox behavior. In particular, it rejects all attempts to
     // defineOwnProperty for indexed properties on typed arrays, even if they're out
     // of bounds.
-    if (propertyName == exec->propertyNames().length
-        || propertyName.asIndex() != PropertyName::NotAnIndex)
+    if (propertyName == exec->propertyNames().length || propertyName.asIndex())
         return reject(exec, shouldThrow, "Attempting to write to a read-only typed array property.");
     
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
@@ -356,8 +354,7 @@ bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
     
-    if (propertyName == exec->propertyNames().length
-        || propertyName.asIndex() != PropertyName::NotAnIndex)
+    if (propertyName == exec->propertyNames().length || propertyName.asIndex())
         return false;
     
     return Base::deleteProperty(thisObject, exec, propertyName);
