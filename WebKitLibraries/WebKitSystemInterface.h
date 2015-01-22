@@ -14,9 +14,6 @@
 #else
 #import <CoreImage/CoreImage.h>
 #import <CoreText/CoreText.h>
-#if !TARGET_IPHONE_SIMULATOR
-#import <IOSurface/IOSurface.h>
-#endif
 #import <WebKitSystemInterfaceIOS.h>
 #endif
 
@@ -172,6 +169,8 @@ CTTypesetterRef WKCreateCTTypesetterWithUniCharProviderAndOptions(const UniChar*
 CGSize WKCTRunGetInitialAdvance(CTRunRef);
 
 #if (TARGET_OS_IPHONE && TARGET_OS_EMBEDDED) || MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+typedef struct __IOSurface *IOSurfaceRef;
+
 CGContextRef WKIOSurfaceContextCreate(IOSurfaceRef, unsigned width, unsigned height, CGColorSpaceRef);
 CGImageRef WKIOSurfaceContextCreateImage(CGContextRef context);
 #endif
