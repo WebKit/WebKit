@@ -662,8 +662,6 @@ webkit.org/b/117323 platform/win/plugins/windowless-paint-rect-coordinates.html 
 # This test is dependant on DRT being able to open windows.
 fast/dom/Window/new-window-opener.html
 
-webkit.org/b/131746 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html [ Failure ]
-
 # <rdar://5667279> Undefined value exception
 http/tests/xmlhttprequest/XMLHttpRequestException.html [ Skip ]
 
@@ -769,7 +767,6 @@ fast/media/media-query-list-03.html [ Failure ]
 fast/media/media-query-list-04.html [ Failure ]
 fast/media/media-query-list-05.html [ Failure ]
 fast/media/media-query-list-06.html [ Failure ]
-fast/media/media-query-list-07.html [ Failure ]
 
 webkit.org/b/38376 media/media-document-audio-size.html [ Timeout ]
 
@@ -1063,15 +1060,12 @@ fast/forms/file/file-input-capture.html [ Skip ]
 ################################################################################
 
 ###### Pasteboard
-# Text, caret
-editing/pasteboard/copy-paste-bidi.html [ Failure ]
 # Caret, RenderBlock
 editing/pasteboard/copy-standalone-image.html [ Failure ]
 # Text, caret, RenderBlock
 editing/pasteboard/paste-RTFD.html [ Failure ]
 editing/pasteboard/paste-TIFF.html [ Failure ]
 # Caret, RenderBlock
-editing/pasteboard/undoable-fragment-removes.html [ Failure ]
 editing/pasteboard/input-field-1.html [ Failure ]
 webkit.org/b/29057 editing/pasteboard/files-during-page-drags.html [ Failure ]
 # TODO eventSender.contextClick() needs to return a JS array of the context menu items.
@@ -1123,7 +1117,6 @@ editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html [ Failure ]
 editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html [ Failure ]
 # Subpixel: incorrect caret position
 webkit.org/b/126283 editing/selection/mixed-editability-10.html [ Failure ]
-editing/selection/doubleclick-beside-cr-span.html [ Timeout ]
 editing/selection/replaced-boundaries-3.html [ Failure ]
 editing/selection/vertical-rl-rtl-extend-line-backward-br.html [ Failure ]
 
@@ -1421,6 +1414,58 @@ webkit.org/b/97026 accessibility/file-upload-button-with-axpress.html [ Timeout 
 
 
 ################################################################################
+##################          Canvas Issues                   ####################
+################################################################################
+
+# These tests fail on all platforms:
+canvas/philip/tests/2d.composite.operation.clear.html
+canvas/philip/tests/2d.composite.operation.darker.html
+canvas/philip/tests/2d.drawImage.outsidesource.html
+canvas/philip/tests/2d.gradient.radial.cone.front.html
+
+# These tests only fail on Windows.
+webkit.org/b/140759 canvas/philip/tests/2d.gradient.radial.cone.top.html
+webkit.org/b/140759 canvas/philip/tests/2d.gradient.radial.inside2.html
+webkit.org/b/140759 canvas/philip/tests/2d.gradient.radial.inside3.html
+webkit.org/b/140759 canvas/philip/tests/2d.gradient.radial.outside1.html
+webkit.org/b/140759 canvas/philip/tests/2d.line.cap.closed.html
+webkit.org/b/140759 canvas/philip/tests/2d.path.arcTo.collinear.2.html
+webkit.org/b/140759 canvas/philip/tests/2d.path.arcTo.collinear.3.html
+webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.blur.html
+webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.x.html
+webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.y.html
+
+webkit.org/b/24810 fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
+fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
+fast/canvas/canvas-blending-global-alpha.html [ Failure ]
+fast/canvas/canvas-blending-shadow.html [ Failure ]
+fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Failure ]
+fast/canvas/canvas-scale-drawImage-shadow.html [ Failure ]
+fast/canvas/canvas-scale-fillPath-shadow.html [ Failure ]
+fast/canvas/canvas-scale-fillRect-shadow.html [ Failure ]
+fast/canvas/canvas-transforms-fillRect-shadow.html [ Failure ]
+fast/canvas/canvas-blending-pattern-over-gradient.html [ Pass Timeout ]
+fast/canvas/canvas-composite-fill-repaint.html [ Pass Timeout ]
+fast/canvas/draw-focus-if-needed-with-path.html [ Failure ]
+fast/canvas/draw-focus-if-needed.html [ Failure ]
+webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Failure ]
+webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.cone.top.html [ Failure ]
+webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.inside2.html [ Failure ]
+webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.inside3.html [ Failure ]
+webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.outside1.html [ Failure ]
+webkit.org/b/138862 imported/w3c/canvas/2d.line.cap.closed.html [ Failure ]
+webkit.org/b/138862 imported/w3c/canvas/2d.path.arcTo.collinear.2.html [ Failure ]
+webkit.org/b/138862 imported/w3c/canvas/2d.path.arcTo.collinear.3.html [ Failure ]
+webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.blur.html [ Failure ]
+webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.x.html [ Failure ]
+webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.y.html [ Failure ]
+
+################################################################################
+#################          End Canvas Issues                ####################
+################################################################################
+
+
+################################################################################
 ##################             SVG Issues                   ####################
 ################################################################################
 # SVG Blur is not working on Windows
@@ -1512,7 +1557,6 @@ webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 
 svg/clip-path/mask-objectboundingbox-content-clip.svg [ ImageOnlyFailure ]
 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr.html [ Failure ]
 svg/custom/inline-svg-in-xhtml.xml [ Failure ]
 svg/custom/foreign-object-skew.svg [ Failure ]
 webkit.org/b/140249 fast/css/fontloader-svg-select.svg [ Failure ]
@@ -1557,7 +1601,6 @@ webkit.org/b/72828 mathml/opentype/horizontal.html [ Failure ]
 webkit.org/b/72828 mathml/opentype/horizontal-munderover.html [ Failure ]
 webkit.org/b/119038 mathml/presentation/mo-stretch.html [ Failure ]
 webkit.org/b/119038 mathml/presentation/roots.xhtml [ Failure ]
-mathml/presentation/stretchy-depth-height.html [ Failure ]
 mathml/opentype/opentype-stretchy-horizontal.html [ Crash Failure ]
 mathml/presentation/style-changed.html [ Crash Pass ]
 webkit.org/b/140522 mathml/opentype/munderover-layout-resize.html [ Crash ]
@@ -1674,7 +1717,6 @@ webkit.org/b/140506 fast/forms/select/popup-closes-on-blur.html [ Crash ]
 
 # fast/html/keygen.html is failing on boomer <rdar://problem/5133799>
 fast/html/keygen.html [ Failure ]
-fast/invalid/residual-style.html [ Failure ]
 
 #<rdar://problem/5224271> Some LayoutTests fail when not run by themselves.
 http/tests/navigation/anchor-frames.html
@@ -1715,7 +1757,6 @@ fast/frames/frame-navigation.html [ Skip ]
 fast/forms/searchfield-heights.html [ Failure ]
 
 # Not investigated yet
-http/tests/xmlhttprequest/connection-error-sync.html [ Failure ]
 webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nopassword.html
 webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nouser.html
 
@@ -1745,9 +1786,6 @@ http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Pass Failure Time
 
 # Mixed content tests failing on Windows
 webkit.org/b/29213 http/tests/security/mixedContent [ Failure ]
-
-# For some reason crashes when run with all tests. Passes individually.
-fast/forms/multiple-form-submission-protection-mouse.html [ Failure ]
 
 # Skip these two failures I introduced this morning while I explore them.
 http/tests/globalhistory/history-delegate-basic-visited-links.html [ Failure ]
@@ -1815,7 +1853,6 @@ printing/return-from-printing-mode.html
 ################################################################################
 ######################### Start list of UNREVIEWED failures ########################
 ################################################################################
-webkit.org/b/24810 fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
 webkit.org/b/24810 fast/events/key-events-in-input-button.html [ Failure ]
 webkit.org/b/24810 fast/events/mouseup-from-button2.html [ Failure ]
 webkit.org/b/24810 fast/events/special-key-events-in-input-text.html [ Failure ]
@@ -1840,7 +1877,6 @@ webkit.org/b/24810 fast/loader/stop-provisional-loads.html [ Failure ]
 webkit.org/b/24810 fast/replaced/border-radius-clip.html [ Failure ]
 webkit.org/b/24810 fast/replaced/replaced-breaking.html [ Failure ]
 webkit.org/b/24810 fast/text/drawBidiText.html [ Failure ]
-fast/text/emphasis-vertical.html [ Failure ]
 fast/text/fallback-traits-fixup.html [ Failure ]
 fast/text/international/combining-marks-position.html [ Failure ]
 webkit.org/b/24810 fast/text/international/hindi-spacing.html [ Failure ]
@@ -1871,7 +1907,6 @@ fast/dom/MutationObserver/inline-event-listener.html [ Timeout ]
 fast/events/dropzone-005.html [ Failure ]
 fast/harness/results.html [ Failure ]
 fast/images/support-broken-image-delegate.html [ Failure ]
-fast/repaint/canvas-putImageData.html [ Failure ]
 fast/repaint/moving-shadow-on-container.html [ Failure ]
 fast/repaint/moving-shadow-on-path.html [ Failure ]
 printing/iframe-print.html [ Failure ]
@@ -1961,7 +1996,6 @@ compositing/filters/sw-nested-shadow-overlaps-hw-nested-shadow.html [ Failure ]
 compositing/iframes/iframe-size-from-zero.html [ Failure ]
 compositing/iframes/overlapped-iframe-iframe.html [ Failure ]
 compositing/tiling/tiled-layer-resize.html [ Failure ]
-fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 fast/events/ime-composition-events-001.html [ Failure ]
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure ]
@@ -1978,7 +2012,6 @@ webkit.org/b/116564 compositing/layer-creation/animation-overlap-with-children.h
 webkit.org/b/116564 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Failure ]
 webkit.org/b/116564 fast/dom/Window/window-onFocus.html [ Failure ]
 webkit.org/b/116564 fast/dom/Window/window-postmessage-clone.html [ Pass Failure ]
-webkit.org/b/116564 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
 webkit.org/b/116564 fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 webkit.org/b/117322 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
 webkit.org/b/117322 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
@@ -1998,31 +2031,17 @@ fast/dom/call-a-constructor-as-a-function.html [ Failure ]
 fast/forms/search-event-delay.html [ Failure ]
 fast/lists/inlineBoxWrapperNullCheck.html [ Failure ]
 js/dom/global-constructors-attributes-dedicated-worker.html [ Failure ]
-webkit.org/b/121509 fast/repaint/selection-rl.html	[ Failure ]
-webkit.org/b/121509 fast/dom/Window/window-early-properties.html	[ Failure ]
 webkit.org/b/121509 fast/dom/MutationObserver/database-callback-delivery.html	[ Failure ]
-webkit.org/b/121509 fast/dom/object-plugin-hides-properties.html	[ Failure ]
-webkit.org/b/121509 fast/workers/worker-document-leak.html	[ Failure ]
-#Also webkit.org/b/117326 fast/workers/worker-document-leak.html [ Failure ]
-webkit.org/b/121509 fast/workers/worker-lifecycle.html	[ Failure ]
+#Also webkit.org/b/117326
+fast/workers/worker-document-leak.html [ Failure ]
 #Also webkit.org/b/106415
 webkit.org/b/121509 fast/events/page-visibility-iframe-delete-test.html	[ Failure ]
 webkit.org/b/121509 fast/events/wheelevent-mousewheel-interaction.html	[ Failure ]
-webkit.org/b/121509 fast/events/message-port-context-destroyed.html	[ Failure ]
-webkit.org/b/121509 fast/events/open-window-from-another-frame.html	[ Failure ]
 webkit.org/b/121509 fast/events/page-visibility-iframe-propagation-test.html	[ Failure ]
-webkit.org/b/121509 fast/events/popup-allowed-from-gesture-initiated-event.html	[ Failure ]
 webkit.org/b/121509 fast/events/page-visibility-transition-test.html	[ Failure ]
 webkit.org/b/121509 fast/events/page-visibility-iframe-move-test.html	[ Failure ]
 webkit.org/b/121509 fast/history/go-back-to-iframe-with-plugin.html	[ Failure ]
-webkit.org/b/121509 loader/go-back-to-different-window-size.html	[ Failure ]
-fast/canvas/canvas-blending-global-alpha.html [ Failure ]
-fast/canvas/canvas-blending-shadow.html [ Failure ]
-fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Failure ]
-fast/canvas/canvas-scale-drawImage-shadow.html [ Failure ]
-fast/canvas/canvas-scale-fillPath-shadow.html [ Failure ]
-fast/canvas/canvas-scale-fillRect-shadow.html [ Failure ]
-fast/canvas/canvas-transforms-fillRect-shadow.html [ Failure ]
+fast/repaint/canvas-putImageData.html [ Failure ]
 fast/events/wheelevent-basic.html [ Failure ]
 fast/events/wheelevent-constructor.html [ Failure ]
 fast/loader/file-protocol-fragment.html [ Failure ]
@@ -2100,8 +2119,6 @@ dom/xhtml/level1/core/hc_nodelistindexgetlength.xhtml [ Pass Failure ]
 dom/xhtml/level2/html/HTMLElement102.xhtml [ Pass Failure Timeout ]
 dom/xhtml/level3/core/documentrenamenode08.xhtml [ Pass Timeout ]
 fast/block/margin-collapse/021.html [ Pass Timeout ]
-fast/canvas/canvas-blending-pattern-over-gradient.html [ Pass Timeout ]
-fast/canvas/canvas-composite-fill-repaint.html [ Pass Timeout ]
 fast/images/exif-orientation.html [ Failure ]
 fast/loader/fragment-after-redirect-gets-back-entry.html [ Pass Failure ]
 fast/loader/url-parse-1.html [ Pass Failure ]
@@ -2162,8 +2179,6 @@ fast/frames/flattening/frameset-flattening-simple.html [ Failure ]
 fast/forms/select/listbox-click-on-scrollbar.html [ Failure ]
 fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure ]
 fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFailure ]
-
-# More random tests to skip on Windows to get the bots green
 fast/replaced/width100percent-button.html [ Failure ]
 fast/replaced/width100percent-radio.html [ Failure ]
 fast/selectors/querySelector-window-inactive.html [ Failure ]
@@ -2174,30 +2189,17 @@ inspector/test-harness-trivially-works.html [ Failure ]
 js/date-constructor.html [ Failure ]
 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
 js/slow-stress/Int32Array-alloc-large-long-lived.html [ Failure ]
-fast/images/cmyk-jpeg-with-color-profile.html [ Failure ]
-fast/images/destroyed-image-load-event.html [ Failure ]
 fast/images/image-controls-basic.html [ Failure ]
 fast/inline/positionedLifetime.html [ Failure ]
 fast/masking/clip-path-selection.html [ Failure ]
 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failure ]
 fast/dom/Window/window-property-invalid-characters-ignored.html [ Failure ]
 fast/dom/Window/window-resize-contents.html [ Failure ]
-fast/dom/anchor-text.html [ Failure ]
 fast/dom/constants.html [ Failure ]
 fast/dom/navigation-with-sideeffects.html [ Failure ]
 fast/dynamic/window-resize-scrollbars-test.html [ Failure ]
 fast/events/shadow-event-path.html [ Failure ]
-tables/mozilla/bugs/bug32841.html [ Failure ]
-fast/canvas/draw-focus-if-needed-with-path.html [ Failure ]
-fast/canvas/draw-focus-if-needed.html [ Failure ]
-fast/forms/checkbox-appearance-change-by-checked.html [ Failure ]
-fast/frames/lots-of-objects.html [ Failure ]
 fast/text/indic.html [ Failure ]
-fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Failure ]
-ietestcenter/Javascript/12.10-2-2.html [ Failure ]
-js/dom/non-object-proto.html [ Failure ]
-storage/domstorage/sessionstorage/delete-removal.html [ Failure ]
-tables/mozilla/bugs/bug133756-1.html [ Failure ]
 fast/forms/week/week-input-type.html [ Crash Failure ]
 fast/borders/bidi-002.html [ Failure ]
 fast/borders/bidi-009a.html [ Failure ]
@@ -2207,14 +2209,11 @@ inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
 fast/dom/SelectorAPI/dumpNodeList-almost-strict.html [ Crash Pass ]
 fast/regions/writing-mode/changing-writing-mode.html [ Crash Pass ]
 fast/dom/HTMLTableElement/colSpan.html	[ ImageOnlyFailure ]
-tables/mozilla/other/test6.html [ Failure ]
 fast/text/emphasis-combined-text.html [ ImageOnlyFailure ]
-fast/repaint/obscured-background-no-repaint.html [ Failure ]
 js/slow-stress/emscripten-memops.html [ Pass Timeout ]
 
 # Skip tests that fail only in Debug mode 
 [ Debug ] compositing [ Skip ]
-[ Debug ] fast/canvas [ Skip ]
 [ Debug ] inspector-protocol [ Skip ]
 [ Debug ] transforms/3d/hit-testing [ Skip ]
 [ Debug ] transforms/3d/point-mapping [ Skip ]
@@ -2328,18 +2327,6 @@ webkit.org/b/138042 fast/repaint/search-field-cancel.html [ Failure ]
 webkit.org/b/138042 fast/repaint/subtree-root-skipped.html [ Failure ]
 webkit.org/b/138042 fast/repaint/button-spurious-layout-hint.html [ Failure ]
 webkit.org/b/138042 fast/repaint/renderer-destruction-by-invalidateSelection-crash.html [ Failure ]
-
-webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.cone.top.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.inside2.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.inside3.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.outside1.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.line.cap.closed.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.path.arcTo.collinear.2.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.path.arcTo.collinear.3.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.blur.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.x.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.y.html [ Failure ]
 
 # new timeouts, need bug reports
 fast/events/pageshow-pagehide-on-back-uncached.html [ Timeout ]

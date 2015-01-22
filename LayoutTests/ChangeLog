@@ -1,5 +1,11 @@
 2015-01-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Update expectations file for failures on test machine.
+
+        * platform/win/TestExpectations:
+
+2015-01-21  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Add more tests and baselines.
 
         Stop skipping a number of tests that are fully functional. Add some
