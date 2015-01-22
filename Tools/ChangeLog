@@ -1,3 +1,28 @@
+2015-01-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] run-webkit-tests --ios-sim dies with an error; fails to parse Apple Internal
+        runtime in simctl output
+        https://bugs.webkit.org/show_bug.cgi?id=140751
+
+        Reviewed by David Kilzer.
+
+        Following the fix for <rdar://problem/19444383>, run-webkit-tests --ios-sim dies
+        with an error because it does not know how to parse the output of the simctl tool
+        to identify an Apple Internal runtime.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Runtime.__init__): Add parameter is_internal_runtime (defaults to False).
+        (Runtime.__eq__): Take is_internal_runtime when comparing two Runtime objects for equality.
+        (Runtime.__repr__): Update printable representation of Runtime object to indicate whether
+        the runtime is an internal runtime.
+        (Simulator): Update regular expressions runtime_re and version_re to match an internal runtime.
+        (Simulator._parse_runtimes): Pass is_internal_runtime to the Runtime constructor with the
+        appropriate value.
+        (Simulator._parse_devices): Pass argument is_internal_runtime to Simulator.runtime() so that
+        it updates the appropriate Runtime object.
+        (Simulator.runtime): Added optional parameter, is_internal_runtime. Modified to support
+        looking up a Runtime object for an internal runtime.
+
 2015-01-22  Alexey Proskuryakov  <ap@apple.com>
 
         LeaksViewer doesn't show recent builds if there are less than 10

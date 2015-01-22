@@ -83,21 +83,24 @@ class Runtime(object):
     Represents a CoreSimulator runtime associated with an iOS SDK.
     """
 
-    def __init__(self, version, identifier, available, devices=None):
+    def __init__(self, version, identifier, available, devices=None, is_internal_runtime=False):
         """
         :param version: The iOS SDK version
         :type version: tuple
-        :param identifier: The CoreSimualtor runtime identifier
+        :param identifier: The CoreSimulator runtime identifier
         :type identifier: str
         :param availability: Whether the runtime is available for use.
         :type availability: bool
         :param devices: A list of devices under this runtime
         :type devices: list or None
+        :param is_internal_runtime: Whether the runtime is an Apple internal runtime
+        :type is_internal_runtime: bool
         """
         self.version = version
         self.identifier = identifier
         self.available = available
         self.devices = devices or []
+        self.is_internal_runtime = is_internal_runtime
 
     @classmethod
     def from_identifier(cls, identifier):
@@ -116,14 +119,17 @@ class Runtime(object):
         return runtime
 
     def __eq__(self, other):
-        return (self.version == other.version) and (self.identifier == other.identifier)
+        return (self.version == other.version) and (self.identifier == other.identifier) and (self.is_internal_runtime == other.is_internal_runtime)
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def __repr__(self):
+        version_suffix = ""
+        if self.is_internal_runtime:
+            version_suffix = " Internal"
         return '<Runtime {version}: {identifier}. Available: {available}, {num_devices} devices>'.format(
-            version='.'.join(map(str, self.version)),
+            version='.'.join(map(str, self.version)) + version_suffix,
             identifier=self.identifier,
             available=self.available,
             num_devices=len(self.devices))
@@ -202,14 +208,18 @@ class Device(object):
             runtime=self.runtime.identifier)
 
 
+# FIXME: This class is fragile because it parses the output of the simctl command line utility, which may change.
+#        We should find a better way to query for simulator device state and capabilities. Maybe take a similiar
+#        approach as in webkitdirs.pm and utilize the parsed output from the device.plist files in the sub-
+#        directories of ~/Library/Developer/CoreSimulator/Devices?
 class Simulator(object):
     """
     Represents the iOS Simulator infrastructure under the currently select Xcode.app bundle.
     """
     device_type_re = re.compile('(?P<name>[^(]+)\((?P<identifier>[^)]+)\)')
     runtime_re = re.compile(
-        'iOS (?P<version>[0-9]+\.[0-9]) \([0-9]+\.[0-9]+ - (?P<build_version>[^)]+)\) \((?P<identifier>[^)]+)\)( \((?P<availability>[^)]+)\))?')
-    version_re = re.compile('-- iOS (?P<version>[0-9]+\.[0-9]+) --')
+        'iOS (?P<version>[0-9]+\.[0-9])(?P<internal> Internal)? \([0-9]+\.[0-9]+ - (?P<build_version>[^)]+)\) \((?P<identifier>[^)]+)\)( \((?P<availability>[^)]+)\))?')
+    version_re = re.compile('-- iOS (?P<version>[0-9]+\.[0-9]+)(?P<internal> Internal)? --')
     devices_re = re.compile(
         '\s*(?P<name>[^(]+ )\((?P<udid>[^)]+)\) \((?P<state>[^)]+)\)( \((?P<availability>[^)]+)\))?')
 
@@ -270,7 +280,8 @@ class Simulator(object):
             version = tuple(map(int, runtime_match.group('version').split('.')))
             runtime = Runtime(version=version,
                               identifier=runtime_match.group('identifier'),
-                              available=runtime_match.group('availability') is None)
+                              available=runtime_match.group('availability') is None,
+                              is_internal_runtime=bool(runtime_match.group('internal')))
             self.runtimes.append(runtime)
         self._parse_devices(lines)
 
@@ -286,7 +297,7 @@ class Simulator(object):
             version_match = self.version_re.match(line)
             if version_match:
                 version = tuple(map(int, version_match.group('version').split('.')))
-                current_runtime = self.runtime(version=version)
+                current_runtime = self.runtime(version=version, is_internal_runtime=bool(version_match.group('internal')))
                 assert current_runtime
                 continue
             device_match = self.devices_re.match(line)
@@ -316,7 +327,7 @@ class Simulator(object):
             return device_type
         return None
 
-    def runtime(self, version=None, identifier=None):
+    def runtime(self, version=None, identifier=None, is_internal_runtime=None):
         """
         :param version: The iOS version of the desired runtime.
         :type version: tuple
@@ -330,6 +341,8 @@ class Simulator(object):
 
         for runtime in self.runtimes:
             if version and runtime.version != version:
+                continue
+            if is_internal_runtime and runtime.is_internal_runtime != is_internal_runtime:
                 continue
             if identifier and runtime.identifier != identifier:
                 continue
