@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundlePageContextMenuClient_h
-#define InjectedBundlePageContextMenuClient_h
+#ifndef APIInjectedBundlePageContextMenuClient_h
+#define APIInjectedBundlePageContextMenuClient_h
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include "APIClient.h"
-#include "APIInjectedBundlePageContextMenuClient.h"
-#include "WKBundlePage.h"
-
-namespace API {
-class Object;
-
-template<> struct ClientTraits<WKBundlePageContextMenuClientBase> {
-    typedef std::tuple<WKBundlePageContextMenuClientV0, WKBundlePageContextMenuClientV1> Versions;
-};
-}
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class ContextMenuItem;
@@ -47,18 +37,27 @@ class HitTestResult;
 
 namespace WebKit {
 class WebContextMenuItemData;
+class WebFrame;
 class WebPage;
+class WebSecurityOrigin;
+}
 
-class InjectedBundlePageContextMenuClient : public API::Client<WKBundlePageContextMenuClientBase>, public API::InjectedBundle::PageContextMenuClient {
+namespace API {
+class Object;
+
+namespace InjectedBundle {
+
+class PageContextMenuClient {
 public:
-    explicit InjectedBundlePageContextMenuClient(const WKBundlePageContextMenuClientBase*);
+    virtual ~PageContextMenuClient() { }
 
-private:
-    bool getCustomMenuFromDefaultItems(WebPage&, const WebCore::HitTestResult&, const Vector<WebCore::ContextMenuItem>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<API::Object>& userData) override;
-    void prepareForActionMenu(WebPage&, const WebCore::HitTestResult&, RefPtr<API::Object>& userData) override;
+    virtual bool getCustomMenuFromDefaultItems(WebKit::WebPage&, const WebCore::HitTestResult&, const Vector<WebCore::ContextMenuItem>& /* defaultMenu */, Vector<WebKit::WebContextMenuItemData>& /* newMenu */, RefPtr<API::Object>& /* userData */) { return false; }
+    virtual void prepareForActionMenu(WebKit::WebPage&, const WebCore::HitTestResult&, RefPtr<API::Object>& /* userData */) { }
 };
 
-} // namespace WebKit
+} // namespace InjectedBundle
+
+} // namespace API
 
 #endif // ENABLE(CONTEXT_MENUS)
-#endif // InjectedBundlePageEditorClient_h
+#endif // APIInjectedBundlePageContextMenuClient_h

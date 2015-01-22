@@ -349,7 +349,6 @@ set(WebKit2_SOURCES
     UIProcess/WebMediaCacheManagerProxy.cpp
     UIProcess/WebOpenPanelResultListenerProxy.cpp
     UIProcess/WebOriginDataManagerProxy.cpp
-    UIProcess/WebPageContextMenuClient.cpp
     UIProcess/WebPageDiagnosticLoggingClient.cpp
     UIProcess/WebPageGroup.cpp
     UIProcess/WebPageProxy.cpp

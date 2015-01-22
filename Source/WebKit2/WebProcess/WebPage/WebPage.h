@@ -27,6 +27,7 @@
 #define WebPage_h
 
 #include "APIInjectedBundleFormClient.h"
+#include "APIInjectedBundlePageContextMenuClient.h"
 #include "APIInjectedBundlePageUIClient.h"
 #include "APIObject.h"
 #include "DictionaryPopupInfo.h"
@@ -281,7 +282,7 @@ public:
 
     // -- InjectedBundle methods
 #if ENABLE(CONTEXT_MENUS)
-    void initializeInjectedBundleContextMenuClient(WKBundlePageContextMenuClientBase*);
+    void setInjectedBundleContextMenuClient(std::unique_ptr<API::InjectedBundle::PageContextMenuClient>);
 #endif
     void initializeInjectedBundleEditorClient(WKBundlePageEditorClientBase*);
     void setInjectedBundleFormClient(std::unique_ptr<API::InjectedBundle::FormClient>);
@@ -295,7 +296,7 @@ public:
     void initializeInjectedBundleDiagnosticLoggingClient(WKBundlePageDiagnosticLoggingClientBase*);
 
 #if ENABLE(CONTEXT_MENUS)
-    InjectedBundlePageContextMenuClient& injectedBundleContextMenuClient() { return m_contextMenuClient; }
+    API::InjectedBundle::PageContextMenuClient& injectedBundleContextMenuClient() { return *m_contextMenuClient.get(); }
 #endif
     InjectedBundlePageEditorClient& injectedBundleEditorClient() { return m_editorClient; }
     API::InjectedBundle::FormClient& injectedBundleFormClient() { return *m_formClient.get(); }
@@ -1182,7 +1183,7 @@ private:
     WebCore::IntSize m_windowResizerSize;
 
 #if ENABLE(CONTEXT_MENUS)
-    InjectedBundlePageContextMenuClient m_contextMenuClient;
+    std::unique_ptr<API::InjectedBundle::PageContextMenuClient> m_contextMenuClient;
 #endif
     InjectedBundlePageEditorClient m_editorClient;
     std::unique_ptr<API::InjectedBundle::FormClient> m_formClient;

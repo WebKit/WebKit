@@ -28,6 +28,7 @@
 #include "WebPageProxy.h"
 
 #include "APIArray.h"
+#include "APIContextMenuClient.h"
 #include "APIFindClient.h"
 #include "APIFormClient.h"
 #include "APIGeometry.h"
@@ -266,6 +267,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_uiClient(std::make_unique<API::UIClient>())
     , m_findClient(std::make_unique<API::FindClient>())
     , m_diagnosticLoggingClient(std::make_unique<API::DiagnosticLoggingClient>())
+#if ENABLE(CONTEXT_MENUS)
+    , m_contextMenuClient(std::make_unique<API::ContextMenuClient>())
+#endif
     , m_navigationState(std::make_unique<WebNavigationState>())
     , m_process(process)
     , m_pageGroup(*configuration.pageGroup)
@@ -572,9 +576,14 @@ void WebPageProxy::setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLog
 }
 
 #if ENABLE(CONTEXT_MENUS)
-void WebPageProxy::initializeContextMenuClient(const WKPageContextMenuClientBase* client)
+void WebPageProxy::setContextMenuClient(std::unique_ptr<API::ContextMenuClient> contextMenuClient)
 {
-    m_contextMenuClient.initialize(client);
+    if (!contextMenuClient) {
+        m_contextMenuClient = std::make_unique<API::ContextMenuClient>();
+        return;
+    }
+
+    m_contextMenuClient = WTF::move(contextMenuClient);
 }
 #endif
 
@@ -729,7 +738,7 @@ void WebPageProxy::close()
     m_findMatchesClient.initialize(nullptr);
     m_diagnosticLoggingClient = std::make_unique<API::DiagnosticLoggingClient>();
 #if ENABLE(CONTEXT_MENUS)
-    m_contextMenuClient.initialize(nullptr);
+    m_contextMenuClient = std::make_unique<API::ContextMenuClient>();
 #endif
 
     m_webProcessLifetimeTracker.pageWasInvalidated();
@@ -3851,9 +3860,9 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
 {
     m_activeContextMenuContextData = contextMenuContextData;
 
-    if (!m_contextMenuClient.hideContextMenu(this) && m_activeContextMenu) {
+    if (!m_contextMenuClient->hideContextMenu(*this) && m_activeContextMenu) {
         m_activeContextMenu->hideContextMenu();
-        m_activeContextMenu = 0;
+        m_activeContextMenu = nullptr;
     }
 
     m_activeContextMenu = m_pageClient.createContextMenuProxy(this);
@@ -3872,21 +3881,21 @@ void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const C
         askClientToChangeMenu = false;
 #endif
 
-    if (askClientToChangeMenu && m_contextMenuClient.getContextMenuFromProposedMenu(this, proposedItems, items, contextMenuContextData.webHitTestResultData(), m_process->transformHandlesToObjects(userData.object()).get()))
+    if (askClientToChangeMenu && m_contextMenuClient->getContextMenuFromProposedMenu(*this, proposedItems, items, contextMenuContextData.webHitTestResultData(), m_process->transformHandlesToObjects(userData.object()).get()))
         useProposedItems = false;
 
     const Vector<WebContextMenuItemData>& itemsToShow = useProposedItems ? proposedItems : items;
-    if (!m_contextMenuClient.showContextMenu(this, menuLocation, itemsToShow))
+    if (!m_contextMenuClient->showContextMenu(*this, menuLocation, itemsToShow))
         m_activeContextMenu->showContextMenu(menuLocation, itemsToShow, contextMenuContextData);
 
-    m_contextMenuClient.contextMenuDismissed(this);
+    m_contextMenuClient->contextMenuDismissed(*this);
 }
 
 void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
 {
     // Application custom items don't need to round-trip through to WebCore in the WebProcess.
     if (item.action() >= ContextMenuItemBaseApplicationTag) {
-        m_contextMenuClient.customContextMenuItemSelected(this, item);
+        m_contextMenuClient->customContextMenuItemSelected(*this, item);
         return;
     }
 

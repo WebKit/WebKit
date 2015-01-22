@@ -1079,8 +1079,7 @@ void WebPage::performActionMenuHitTestAtLocation(WebCore::FloatPoint locationInV
     }
 
     RefPtr<API::Object> userData;
-    RefPtr<InjectedBundleHitTestResult> injectedBundleHitTestResult = InjectedBundleHitTestResult::create(hitTestResult);
-    injectedBundleContextMenuClient().prepareForActionMenu(this, injectedBundleHitTestResult.get(), userData);
+    injectedBundleContextMenuClient().prepareForActionMenu(*this, hitTestResult, userData);
 
     send(Messages::WebPageProxy::DidPerformActionMenuHitTest(actionMenuResult, forImmediateAction, UserData(WebProcess::shared().transformObjectsToHandles(userData.get()).get())));
 }

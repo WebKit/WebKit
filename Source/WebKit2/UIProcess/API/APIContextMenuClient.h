@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageContextMenuClient_h
-#define WebPageContextMenuClient_h
+#ifndef APIContextMenuClient_h
+#define APIContextMenuClient_h
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include "APIClient.h"
 #include "WebHitTestResult.h"
-#include "WKPage.h"
-#include <WebCore/IntPoint.h>
 #include <wtf/Vector.h>
 
-namespace API {
-template<> struct ClientTraits<WKPageContextMenuClientBase> {
-    typedef std::tuple<WKPageContextMenuClientV0, WKPageContextMenuClientV1, WKPageContextMenuClientV2, WKPageContextMenuClientV3> Versions;
-};
+namespace WebCore {
+class IntPoint;
 }
 
 namespace WebKit {
-
 class WebContextMenuItemData;
 class WebPageProxy;
+}
 
-class WebPageContextMenuClient : public API::Client<WKPageContextMenuClientBase> {
+namespace API {
+
+class ContextMenuClient {
 public:
-    bool getContextMenuFromProposedMenu(WebPageProxy*, const Vector<WebContextMenuItemData>& proposedMenu, Vector<WebContextMenuItemData>& customMenu, const WebHitTestResult::Data&, API::Object* userData);
-    void customContextMenuItemSelected(WebPageProxy*, const WebContextMenuItemData&);
-    void contextMenuDismissed(WebPageProxy*);
-    bool showContextMenu(WebPageProxy*, const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);
-    bool hideContextMenu(WebPageProxy*);
+    virtual ~ContextMenuClient() { }
+
+    virtual bool getContextMenuFromProposedMenu(WebKit::WebPageProxy&, const Vector<WebKit::WebContextMenuItemData>& /* proposedMenu */, Vector<WebKit::WebContextMenuItemData>& /* customMenu */, const WebKit::WebHitTestResult::Data&, API::Object* /* userData */) { return false; }
+    virtual void customContextMenuItemSelected(WebKit::WebPageProxy&, const WebKit::WebContextMenuItemData&) { }
+    virtual void contextMenuDismissed(WebKit::WebPageProxy&) { }
+    virtual bool showContextMenu(WebKit::WebPageProxy&, const WebCore::IntPoint&, const Vector<WebKit::WebContextMenuItemData>&) { return false; }
+    virtual bool hideContextMenu(WebKit::WebPageProxy&) { return false; }
 };
 
-} // namespace WebKit
+} // namespace API
 
 #endif // ENABLE(CONTEXT_MENUS)
-#endif // WebPageContextMenuClient_h
+#endif // APIContextMenuClient_h

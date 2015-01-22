@@ -55,7 +55,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebFindClient.h"
 #include "WebFrameProxy.h"
-#include "WebPageContextMenuClient.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageDiagnosticLoggingClient.h"
 #include "WebPreferences.h"
@@ -113,6 +112,7 @@
 #endif
 
 namespace API {
+class ContextMenuClient;
 class FindClient;
 class FormClient;
 class LoaderClient;
@@ -306,7 +306,7 @@ public:
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
-    void initializeContextMenuClient(const WKPageContextMenuClientBase*);
+    void setContextMenuClient(std::unique_ptr<API::ContextMenuClient>);
 #endif
     API::FindClient& findClient() { return *m_findClient; }
     void setFindClient(std::unique_ptr<API::FindClient>);
@@ -1379,7 +1379,7 @@ private:
     WebFindMatchesClient m_findMatchesClient;
     std::unique_ptr<API::DiagnosticLoggingClient> m_diagnosticLoggingClient;
 #if ENABLE(CONTEXT_MENUS)
-    WebPageContextMenuClient m_contextMenuClient;
+    std::unique_ptr<API::ContextMenuClient> m_contextMenuClient;
 #endif
 
     std::unique_ptr<WebNavigationState> m_navigationState;

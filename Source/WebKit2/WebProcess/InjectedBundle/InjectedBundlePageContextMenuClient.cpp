@@ -42,19 +42,25 @@ using namespace WebCore;
 
 namespace WebKit {
 
-bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage* page, InjectedBundleHitTestResult* hitTestResult, const Vector<WebContextMenuItemData>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<API::Object>& userData)
+InjectedBundlePageContextMenuClient::InjectedBundlePageContextMenuClient(const WKBundlePageContextMenuClientBase* client)
+{
+    initialize(client);
+}
+
+bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage& page, const HitTestResult& hitTestResult, const Vector<ContextMenuItem>& proposedMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<API::Object>& userData)
 {
     if (!m_client.getContextMenuFromDefaultMenu)
         return false;
 
+    Vector<WebContextMenuItemData> defaultMenu = kitItems(proposedMenu);
     Vector<RefPtr<API::Object>> defaultMenuItems;
     defaultMenuItems.reserveInitialCapacity(defaultMenu.size());
     for (const auto& item : defaultMenu)
         defaultMenuItems.uncheckedAppend(WebContextMenuItem::create(item));
 
-    WKArrayRef newMenuWK = 0;
-    WKTypeRef userDataToPass = 0;
-    m_client.getContextMenuFromDefaultMenu(toAPI(page), toAPI(hitTestResult), toAPI(API::Array::create(WTF::move(defaultMenuItems)).get()), &newMenuWK, &userDataToPass, m_client.base.clientInfo);
+    WKArrayRef newMenuWK = nullptr;
+    WKTypeRef userDataToPass = nullptr;
+    m_client.getContextMenuFromDefaultMenu(toAPI(&page), toAPI(InjectedBundleHitTestResult::create(hitTestResult).get()), toAPI(API::Array::create(WTF::move(defaultMenuItems)).get()), &newMenuWK, &userDataToPass, m_client.base.clientInfo);
     RefPtr<API::Array> array = adoptRef(toImpl(newMenuWK));
     userData = adoptRef(toImpl(userDataToPass));
     
@@ -77,13 +83,13 @@ bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage*
     return true;
 }
 
-void InjectedBundlePageContextMenuClient::prepareForActionMenu(WebPage* page, InjectedBundleHitTestResult* hitTestResult, RefPtr<API::Object>& userData)
+void InjectedBundlePageContextMenuClient::prepareForActionMenu(WebPage& page, const HitTestResult& hitTestResult, RefPtr<API::Object>& userData)
 {
     if (!m_client.prepareForActionMenu)
         return;
 
     WKTypeRef userDataToPass = nullptr;
-    m_client.prepareForActionMenu(toAPI(page), toAPI(hitTestResult), &userDataToPass, m_client.base.clientInfo);
+    m_client.prepareForActionMenu(toAPI(&page), toAPI(InjectedBundleHitTestResult::create(hitTestResult).get()), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
 }
 

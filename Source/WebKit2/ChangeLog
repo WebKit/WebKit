@@ -1,3 +1,57 @@
+2015-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add API::ContextMenuClient and API::InjectedBundle::PageContextMenuClient classes
+        https://bugs.webkit.org/show_bug.cgi?id=138466
+
+        Reviewed by Anders Carlsson.
+
+        Move ContextMenuClient to use API classes in both UI and Injected
+        Bundle APIs.
+
+        * CMakeLists.txt: Remove WebPageContextMenuClient.cpp.
+        * UIProcess/API/APIContextMenuClient.h: Renamed from Source/WebKit2/UIProcess/WebPageContextMenuClient.h.
+        (API::ContextMenuClient::~ContextMenuClient):
+        (API::ContextMenuClient::getContextMenuFromProposedMenu):
+        (API::ContextMenuClient::customContextMenuItemSelected):
+        (API::ContextMenuClient::contextMenuDismissed):
+        (API::ContextMenuClient::showContextMenu):
+        (API::ContextMenuClient::hideContextMenu):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient):
+        * UIProcess/WebPageContextMenuClient.cpp: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setContextMenuClient):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        (WebKit::WebPageProxy::initializeContextMenuClient): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj: Remove deleted files and add
+        new files to compilation.
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageContextMenuClient.h: Copied from Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h.
+        (API::InjectedBundle::PageContextMenuClient::~PageContextMenuClient):
+        (API::InjectedBundle::PageContextMenuClient::getCustomMenuFromDefaultItems):
+        (API::InjectedBundle::PageContextMenuClient::prepareForActionMenu):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetContextMenuClient):
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+        (WebKit::InjectedBundlePageContextMenuClient::InjectedBundlePageContextMenuClient):
+        (WebKit::InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems):
+        (WebKit::InjectedBundlePageContextMenuClient::prepareForActionMenu):
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h:
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::menuItemsWithUserData):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::setInjectedBundleContextMenuClient):
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::initializeInjectedBundleContextMenuClient): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleContextMenuClient):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performActionMenuHitTestAtLocation):
+
 2015-01-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
         [iOS] WebKitTestRunner: Tests fail due to incorrect web view size

@@ -26,10 +26,8 @@
 #include "WebContextMenu.h"
 
 #include "ContextMenuContextData.h"
-#include "InjectedBundleHitTestResult.h"
 #include "UserData.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebHitTestResult.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
@@ -93,12 +91,9 @@ void WebContextMenu::menuItemsWithUserData(Vector<WebContextMenuItemData> &menuI
     Vector<ContextMenuItem> coreItems = contextMenuItemVector(menu->platformDescription());
 #endif
 
-    Vector<WebContextMenuItemData> proposedMenu = kitItems(coreItems);
-    Vector<WebContextMenuItemData> newMenu;
-    RefPtr<InjectedBundleHitTestResult> hitTestResult = InjectedBundleHitTestResult::create(controller.hitTestResult());
-    if (m_page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(m_page, hitTestResult.get(), proposedMenu, newMenu, userData))
-        proposedMenu = newMenu;
-    menuItems = proposedMenu;
+    if (m_page->injectedBundleContextMenuClient().getCustomMenuFromDefaultItems(*m_page, controller.hitTestResult(), coreItems, menuItems, userData))
+        return;
+    menuItems = kitItems(coreItems);
 }
 
 Vector<WebContextMenuItemData> WebContextMenu::items() const
