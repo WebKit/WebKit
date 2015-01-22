@@ -1,5 +1,27 @@
 2015-01-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Rebaseline SVG results from test machine.
+
+        * platform/win/css2.1/20110323/c543-txt-decor-000-expected.png: Added.
+        * platform/win/css2.1/20110323/c543-txt-decor-000-expected.txt: Added.
+        * platform/win/css2.1/20110323/replaced-elements-001-expected.png: Added.
+        * platform/win/css2.1/20110323/replaced-elements-001-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/text-align-08-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt:
+
+2015-01-21  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Update expectations file for failures on test machine.
 
         * platform/win/TestExpectations:
