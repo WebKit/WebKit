@@ -25,9 +25,10 @@
 
 #include "config.h"
 #include "UniscribeController.h"
+
+#include "Font.h"
 #include "FontCascade.h"
 #include "HWndDC.h"
-#include "SimpleFontData.h"
 #include "TextRun.h"
 #include <wtf/MathExtras.h>
 
@@ -41,7 +42,7 @@ namespace WebCore {
 // that does stuff in that method instead of doing everything in the constructor.  Have advance()
 // take the GlyphBuffer as an arg so that we don't have to populate the glyph buffer when
 // measuring.
-UniscribeController::UniscribeController(const FontCascade* font, const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts)
+UniscribeController::UniscribeController(const FontCascade* font, const TextRun& run, HashSet<const Font*>* fallbackFonts)
     : m_font(*font)
     , m_run(run)
     , m_fallbackFonts(fallbackFonts)
@@ -136,8 +137,8 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     const UChar* curr = m_run.rtl() ? cp + length  - 1 : cp;
     const UChar* end = m_run.rtl() ? cp - 1 : cp + length;
 
-    const SimpleFontData* fontData;
-    const SimpleFontData* nextFontData = m_font.glyphDataForCharacter(*curr, false).fontData;
+    const Font* fontData;
+    const Font* nextFontData = m_font.glyphDataForCharacter(*curr, false).font;
 
     UChar newC = 0;
 
@@ -158,14 +159,14 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
         UChar c = *curr;
 
         bool forceSmallCaps = isSmallCaps && (U_GET_GC_MASK(c) & U_GC_M_MASK);
-        nextFontData = m_font.glyphDataForCharacter(*curr, false, forceSmallCaps ? SmallCapsVariant : AutoVariant).fontData;
+        nextFontData = m_font.glyphDataForCharacter(*curr, false, forceSmallCaps ? SmallCapsVariant : AutoVariant).font;
         if (m_font.isSmallCaps()) {
             nextIsSmallCaps = forceSmallCaps || (newC = u_toupper(c)) != c;
             if (nextIsSmallCaps)
                 smallCapsBuffer[index] = forceSmallCaps ? c : newC;
         }
 
-        if (m_fallbackFonts && fontData && nextFontData != fontData && fontData != &m_font.primaryFontData())
+        if (m_fallbackFonts && fontData && nextFontData != fontData && fontData != &m_font.primaryFont())
             m_fallbackFonts->add(fontData);
 
         if (nextFontData != fontData || nextIsSmallCaps != isSmallCaps) {
@@ -179,7 +180,7 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     
     int itemLength = m_run.rtl() ? indexOfFontTransition + 1 : length - indexOfFontTransition;
     if (itemLength) {
-        if (m_fallbackFonts && nextFontData && nextFontData != &m_font.primaryFontData())
+        if (m_fallbackFonts && nextFontData && nextFontData != &m_font.primaryFont())
             m_fallbackFonts->add(nextFontData);
 
         int itemStart = m_run.rtl() ? 0 : indexOfFontTransition;
@@ -190,7 +191,7 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     m_currentCharacter = baseCharacter + length;
 }
 
-void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length, const SimpleFontData* fontData, GlyphBuffer* glyphBuffer)
+void UniscribeController::itemizeShapeAndPlace(const UChar* cp, unsigned length, const Font* fontData, GlyphBuffer* glyphBuffer)
 {
     // ScriptItemize (in Windows XP versions prior to SP2) can overflow by 1.  This is why there is an extra empty item
     // hanging out at the end of the array
@@ -232,7 +233,7 @@ void UniscribeController::resetControlAndState()
     m_state.fOverrideDirection = m_run.directionalOverride();
 }
 
-bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const SimpleFontData* fontData, GlyphBuffer* glyphBuffer)
+bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const Font* fontData, GlyphBuffer* glyphBuffer)
 {
     // Determine the string for this item.
     const UChar* str = cp + m_items[i].iCharPos;
@@ -404,7 +405,7 @@ bool UniscribeController::shapeAndPlaceItem(const UChar* cp, unsigned i, const S
     return true;
 }
 
-bool UniscribeController::shape(const UChar* str, int len, SCRIPT_ITEM item, const SimpleFontData* fontData,
+bool UniscribeController::shape(const UChar* str, int len, SCRIPT_ITEM item, const Font* fontData,
                                 Vector<WORD>& glyphs, Vector<WORD>& clusters,
                                 Vector<SCRIPT_VISATTR>& visualAttributes)
 {

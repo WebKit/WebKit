@@ -451,7 +451,7 @@ LayoutRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, Lay
     return box.root().computeCaretRect(left, caretWidth, extraWidthToEndOfLine);
 }
 
-ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, int start, int len, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const
+ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, int start, int len, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow, const RenderStyle& style) const
 {
     if (style.hasTextCombine() && is<RenderCombineText>(*this)) {
         const RenderCombineText& combineText = downcast<RenderCombineText>(*this);
@@ -630,7 +630,7 @@ LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak lineBreak)
 
 void RenderText::computePreferredLogicalWidths(float leadWidth)
 {
-    HashSet<const SimpleFontData*> fallbackFonts;
+    HashSet<const Font*> fallbackFonts;
     GlyphOverflow glyphOverflow;
     computePreferredLogicalWidths(leadWidth, fallbackFonts, glyphOverflow);
     if (fallbackFonts.isEmpty() && !glyphOverflow.left && !glyphOverflow.right && !glyphOverflow.top && !glyphOverflow.bottom)
@@ -643,7 +643,7 @@ static inline float hyphenWidth(RenderText* renderer, const FontCascade& font)
     return font.width(RenderBlock::constructTextRun(renderer, font, style.hyphenString().string(), style));
 }
 
-static float maxWordFragmentWidth(RenderText* renderer, const RenderStyle& style, const FontCascade& font, StringView word, int minimumPrefixLength, unsigned minimumSuffixLength, int& suffixStart, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow& glyphOverflow)
+static float maxWordFragmentWidth(RenderText* renderer, const RenderStyle& style, const FontCascade& font, StringView word, int minimumPrefixLength, unsigned minimumSuffixLength, int& suffixStart, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow)
 {
     suffixStart = 0;
     if (word.length() <= minimumSuffixLength)
@@ -683,7 +683,7 @@ static float maxWordFragmentWidth(RenderText* renderer, const RenderStyle& style
     return maxFragmentWidth;
 }
 
-void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const SimpleFontData*>& fallbackFonts, GlyphOverflow& glyphOverflow)
+void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Font*>& fallbackFonts, GlyphOverflow& glyphOverflow)
 {
     ASSERT(m_hasTab || preferredLogicalWidthsDirty() || !m_knownToHaveNoOverflowAndNoFallbackFonts);
 
@@ -1206,7 +1206,7 @@ const SimpleLineLayout::Layout* RenderText::simpleLineLayout() const
     return downcast<RenderBlockFlow>(*parent()).simpleLineLayout();
 }
 
-float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     if (from >= textLength())
         return 0;
@@ -1218,7 +1218,7 @@ float RenderText::width(unsigned from, unsigned len, float xPos, bool firstLine,
     return width(from, len, lineStyle.fontCascade(), xPos, fallbackFonts, glyphOverflow);
 }
 
-float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float xPos, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ASSERT(from + len <= textLength());
     if (!textLength())

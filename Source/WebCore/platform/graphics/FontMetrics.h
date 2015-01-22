@@ -133,7 +133,7 @@ public:
     void setHasZeroWidth(bool hasZeroWidth) { m_hasZeroWidth = hasZeroWidth; }
 
 private:
-    friend class SimpleFontData;
+    friend class Font;
 
     void reset()
     {

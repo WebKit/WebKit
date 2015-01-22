@@ -42,8 +42,8 @@ namespace WebCore {
 class CachedFont;
 class CSSFontFace;
 class CSSFontSelector;
+class Font;
 class FontDescription;
-class SimpleFontData;
 
 class CSSFontFaceSource final : public CachedFontClient {
 public:
@@ -59,7 +59,7 @@ public:
 
     virtual void fontLoaded(CachedFont*) override;
 
-    PassRefPtr<SimpleFontData> getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic, CSSFontSelector*);
+    RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, CSSFontSelector*);
 
     void pruneTable();
 
@@ -81,7 +81,7 @@ private:
     AtomicString m_string; // URI for remote, built-in font name for local.
     CachedResourceHandle<CachedFont> m_font; // For remote fonts, a pointer to our cached resource.
     CSSFontFace* m_face; // Our owning font face.
-    HashMap<unsigned, RefPtr<SimpleFontData>> m_fontDataTable; // The hash key is composed of size synthetic styles.
+    HashMap<unsigned, RefPtr<Font>> m_fontTable; // The hash key is composed of size synthetic styles.
 
 #if ENABLE(SVG_OTF_CONVERTER)
     RefPtr<SharedBuffer> m_generatedOTFBuffer;

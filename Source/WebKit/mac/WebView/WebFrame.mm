@@ -114,11 +114,11 @@
 #import <WebCore/Editor.h>
 #import <WebCore/EditorClient.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/Font.h>
 #import <WebCore/FrameSelection.h>
 #import <WebCore/HistoryController.h>
 #import <WebCore/NodeTraversal.h>
 #import <WebCore/RenderLayer.h>
-#import <WebCore/SimpleFontData.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/WAKScrollView.h>
 #import <WebCore/WAKViewPrivate.h>
@@ -1869,7 +1869,8 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     bool multipleFonts = false;
     CTFontRef font = nil;
     if (_private->coreFrame) {
-        const SimpleFontData* fd = _private->coreFrame->editor().fontForSelection(multipleFonts);
+        const Font
+        * fd = _private->coreFrame->editor().fontForSelection(multipleFonts);
         if (fd)
             font = fd->getCTFont();
     }

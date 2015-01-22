@@ -22,9 +22,9 @@
 #include "config.h"
 #include "FontCache.h"
 
+#include "Font.h"
 #include "OwnPtrCairo.h"
 #include "RefPtrCairo.h"
-#include "SimpleFontData.h"
 #include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>
 #include <cairo.h>
@@ -80,7 +80,7 @@ FcPattern* findBestFontGivenFallbacks(const FontPlatformData& fontData, FcPatter
     return FcFontSetMatch(0, sets, 1, pattern, &fontConfigResult);
 }
 
-RefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool, const UChar* characters, int length)
+RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool, const UChar* characters, int length)
 {
     RefPtr<FcPattern> pattern = adoptRef(createFontConfigPatternForCharacters(characters, length));
     const FontPlatformData& fontData = originalFontData->platformData();
@@ -99,7 +99,7 @@ RefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescript
     return fontForPlatformData(alternateFontData);
 }
 
-Ref<SimpleFontData> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
+Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     // We want to return a fallback font here, otherwise the logic preventing FontConfig
     // matches for non-fallback fonts might return 0. See isFallbackFontAllowed.

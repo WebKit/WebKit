@@ -27,11 +27,11 @@
 #import "CoreGraphicsSPI.h"
 #import "CoreTextSPI.h"
 #import "DashArray.h"
+#import "Font.h"
 #import "GlyphBuffer.h"
 #import "GraphicsContext.h"
 #import "LayoutRect.h"
 #import "Logging.h"
-#import "SimpleFontData.h"
 #import "WebCoreSystemInterface.h"
 #if USE(APPKIT)
 #import <AppKit/AppKit.h>
@@ -91,7 +91,7 @@ static inline bool shouldUseLetterpressEffect(const GraphicsContext& context)
 #endif
 }
 
-static void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData* font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
+static void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const Font* font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
 {
 #if ENABLE(LETTERPRESS)
     if (!count)
@@ -131,7 +131,7 @@ static void showLetterpressedGlyphsWithAdvances(const FloatPoint& point, const S
 #endif
 }
 
-static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData* font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
+static void showGlyphsWithAdvances(const FloatPoint& point, const Font* font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
 {
     if (!count)
         return;
@@ -197,7 +197,7 @@ static void setCGFontRenderingMode(CGContextRef cgContext, NSFontRenderingMode r
 }
 #endif
 
-void FontCascade::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& anchorPoint) const
+void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& anchorPoint) const
 {
     const FontPlatformData& platformData = font->platformData();
     if (!platformData.size())
@@ -468,7 +468,7 @@ public:
         : m_index(0)
         , m_textRun(textRun)
         , m_glyphBuffer(glyphBuffer)
-        , m_fontData(glyphBuffer.fontDataAt(m_index))
+        , m_fontData(glyphBuffer.fontAt(m_index))
         , m_translation(CGAffineTransformScale(CGAffineTransformMakeTranslation(textOrigin.x(), textOrigin.y()), 1, -1))
     {
         moveToNextValidGlyph();
@@ -487,7 +487,7 @@ private:
     int m_index;
     const TextRun& m_textRun;
     const GlyphBuffer& m_glyphBuffer;
-    const SimpleFontData* m_fontData;
+    const Font* m_fontData;
     CGAffineTransform m_translation;
 };
 
@@ -524,7 +524,7 @@ void MacGlyphToPathTranslator::advance()
         ++m_index;
         if (m_index >= m_glyphBuffer.size())
             break;
-        m_fontData = m_glyphBuffer.fontDataAt(m_index);
+        m_fontData = m_glyphBuffer.fontAt(m_index);
     } while (m_fontData->isSVGFont() && m_index < m_glyphBuffer.size());
 }
 
@@ -545,7 +545,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
         return DashArray();
     
     // FIXME: Handle SVG + non-SVG interleaved runs. https://bugs.webkit.org/show_bug.cgi?id=133778
-    const SimpleFontData* fontData = glyphBuffer.fontDataAt(0);
+    const Font* fontData = glyphBuffer.fontAt(0);
     std::unique_ptr<GlyphToPathTranslator> translator;
     bool isSVG = false;
     FloatPoint origin = FloatPoint(textOrigin.x() + deltaX, textOrigin.y());
@@ -561,8 +561,8 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     DashArray result;
     for (int index = 0; translator->containsMorePaths(); ++index, translator->advance()) {
         GlyphIterationState info = GlyphIterationState(CGPointMake(0, 0), CGPointMake(0, 0), lineExtents.y(), lineExtents.y() + lineExtents.height(), lineExtents.x() + lineExtents.width(), lineExtents.x());
-        const SimpleFontData* localFontData = glyphBuffer.fontDataAt(index);
-        if (!localFontData || (!isSVG && localFontData->isSVGFont()) || (isSVG && localFontData != fontData)) {
+        const Font* localFont = glyphBuffer.fontAt(index);
+        if (!localFont || (!isSVG && localFont->isSVGFont()) || (isSVG && localFont != fontData)) {
             // The advances will get all messed up if we do anything other than bail here.
             result.clear();
             break;
@@ -592,10 +592,10 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
 }
 #endif
 
-bool FontCascade::primaryFontDataIsSystemFont() const
+bool FontCascade::primaryFontIsSystemFont() const
 {
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED > 1090
-    const auto& fontData = primaryFontData();
+    const auto& fontData = primaryFont();
     return !fontData.isSVGFont() && CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(fontData.platformData().ctFont())).get());
 #else
     // System fonts are hidden by having a name that begins with a period, so simply search
@@ -671,7 +671,7 @@ void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext* context, cons
     drawEmphasisMarks(context, run, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
 }
 
-float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     ComplexTextController controller(this, run, true, fallbackFonts);
     if (glyphOverflow) {
@@ -689,7 +689,7 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
     return controller.offsetForPosition(x, includePartialGlyphs);
 }
 
-const SimpleFontData* FontCascade::fontDataForCombiningCharacterSequence(const UChar* characters, size_t length, FontDataVariant variant) const
+const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characters, size_t length, FontVariant variant) const
 {
     UChar32 baseCharacter;
     size_t baseCharacterLength = 0;
@@ -701,51 +701,51 @@ const SimpleFontData* FontCascade::fontDataForCombiningCharacterSequence(const U
         return 0;
 
     if (length == baseCharacterLength)
-        return baseCharacterGlyphData.fontData;
+        return baseCharacterGlyphData.font;
 
-    bool triedBaseCharacterFontData = false;
+    bool triedBaseCharacterFont = false;
 
     for (unsigned i = 0; !fallbackRangesAt(i).isNull(); ++i) {
-        const SimpleFontData* simpleFontData = fallbackRangesAt(i).fontDataForCharacter(baseCharacter);
-        if (!simpleFontData)
+        const Font* font = fallbackRangesAt(i).fontForCharacter(baseCharacter);
+        if (!font)
             continue;
 #if PLATFORM(IOS)
-        if (baseCharacter >= 0x0600 && baseCharacter <= 0x06ff && simpleFontData->shouldNotBeUsedForArabic())
+        if (baseCharacter >= 0x0600 && baseCharacter <= 0x06ff && font->shouldNotBeUsedForArabic())
             continue;
 #endif
         if (variant == NormalVariant) {
-            if (simpleFontData->platformData().orientation() == Vertical) {
-                if (isCJKIdeographOrSymbol(baseCharacter) && !simpleFontData->hasVerticalGlyphs()) {
+            if (font->platformData().orientation() == Vertical) {
+                if (isCJKIdeographOrSymbol(baseCharacter) && !font->hasVerticalGlyphs()) {
                     variant = BrokenIdeographVariant;
-                    simpleFontData = simpleFontData->brokenIdeographFontData().get();
+                    font = font->brokenIdeographFont().get();
                 } else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientationVerticalRight) {
-                    SimpleFontData* verticalRightFontData = simpleFontData->verticalRightOrientationFontData().get();
-                    Glyph verticalRightGlyph = verticalRightFontData->glyphForCharacter(baseCharacter);
+                    Font* verticalRightFont = font->verticalRightOrientationFont().get();
+                    Glyph verticalRightGlyph = verticalRightFont->glyphForCharacter(baseCharacter);
                     if (verticalRightGlyph == baseCharacterGlyphData.glyph)
-                        simpleFontData = verticalRightFontData;
+                        font = verticalRightFont;
                 } else {
-                    SimpleFontData* uprightFontData = simpleFontData->uprightOrientationFontData().get();
-                    Glyph uprightGlyph = uprightFontData->glyphForCharacter(baseCharacter);
+                    Font* uprightFont = font->uprightOrientationFont().get();
+                    Glyph uprightGlyph = uprightFont->glyphForCharacter(baseCharacter);
                     if (uprightGlyph != baseCharacterGlyphData.glyph)
-                        simpleFontData = uprightFontData;
+                        font = uprightFont;
                 }
             }
         } else {
-            if (const SimpleFontData* variantFontData = simpleFontData->variantFontData(m_fontDescription, variant).get())
-                simpleFontData = variantFontData;
+            if (const Font* variantFont = font->variantFont(m_fontDescription, variant).get())
+                font = variantFont;
         }
 
-        if (simpleFontData == baseCharacterGlyphData.fontData)
-            triedBaseCharacterFontData = true;
+        if (font == baseCharacterGlyphData.font)
+            triedBaseCharacterFont = true;
 
-        if (simpleFontData->canRenderCombiningCharacterSequence(characters, length))
-            return simpleFontData;
+        if (font->canRenderCombiningCharacterSequence(characters, length))
+            return font;
     }
 
-    if (!triedBaseCharacterFontData && baseCharacterGlyphData.fontData && baseCharacterGlyphData.fontData->canRenderCombiningCharacterSequence(characters, length))
-        return baseCharacterGlyphData.fontData;
+    if (!triedBaseCharacterFont && baseCharacterGlyphData.font && baseCharacterGlyphData.font->canRenderCombiningCharacterSequence(characters, length))
+        return baseCharacterGlyphData.font;
 
-    return SimpleFontData::systemFallback();
+    return Font::systemFallback();
 }
 
 }

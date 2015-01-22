@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
+class Font;
 class FontPlatformData;
 class GlyphPage;
-class SimpleFontData;
 
 class OpenTypeVerticalData : public RefCounted<OpenTypeVerticalData> {
 public:
@@ -48,9 +48,9 @@ public:
 
     bool isOpenType() const { return !m_advanceWidths.isEmpty(); }
     bool hasVerticalMetrics() const { return !m_advanceHeights.isEmpty(); }
-    float advanceHeight(const SimpleFontData*, Glyph) const;
-    void getVerticalTranslationsForGlyphs(const SimpleFontData*, const Glyph*, size_t, float* outXYArray) const;
-    void substituteWithVerticalGlyphs(const SimpleFontData*, GlyphPage*, unsigned offset, unsigned length) const;
+    float advanceHeight(const Font*, Glyph) const;
+    void getVerticalTranslationsForGlyphs(const Font*, const Glyph*, size_t, float* outXYArray) const;
+    void substituteWithVerticalGlyphs(const Font*, GlyphPage*, unsigned offset, unsigned length) const;
 
 private:
     explicit OpenTypeVerticalData(const FontPlatformData&);

@@ -885,7 +885,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
         return;
     }
 
-    Vector<const SimpleFontData*>* usedFonts = nullptr;
+    Vector<const Font*>* usedFonts = nullptr;
     GlyphOverflow* glyphOverflow = nullptr;
     if (is<InlineTextBox>(box)) {
         GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(&downcast<InlineTextBox>(box));
@@ -901,7 +901,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
 
     const RenderStyle& boxLineStyle = box.lineStyle();
     if (usedFonts && !usedFonts->isEmpty() && (includeFont || (boxLineStyle.lineHeight().isNegative() && includeLeading))) {
-        usedFonts->append(&boxLineStyle.fontCascade().primaryFontData());
+        usedFonts->append(&boxLineStyle.fontCascade().primaryFont());
         for (size_t i = 0; i < usedFonts->size(); ++i) {
             const FontMetrics& fontMetrics = usedFonts->at(i)->fontMetrics();
             int usedFontAscent = fontMetrics.ascent(baselineType());

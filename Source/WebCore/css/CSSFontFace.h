@@ -40,7 +40,7 @@ namespace WebCore {
 
 class CSSSegmentedFontFace;
 class FontDescription;
-class SimpleFontData;
+class Font;
 
 class CSSFontFace : public RefCounted<CSSFontFace> {
 public:
@@ -65,7 +65,7 @@ public:
 
     void fontLoaded(CSSFontFaceSource*);
 
-    PassRefPtr<SimpleFontData> getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
+    RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic);
 
     struct UnicodeRange {
         UnicodeRange(UChar32 from, UChar32 to)

@@ -30,9 +30,9 @@
 #include "CSSFontFaceSource.h"
 #include "CSSFontSelector.h"
 #include "Document.h"
+#include "Font.h"
 #include "FontDescription.h"
 #include "RuntimeEnabledFeatures.h"
-#include "SimpleFontData.h"
 
 namespace WebCore {
 
@@ -90,21 +90,21 @@ void CSSSegmentedFontFace::appendFontFace(PassRefPtr<CSSFontFace> fontFace)
     m_fontFaces.append(fontFace);
 }
 
-static void appendFontDataWithInvalidUnicodeRangeIfLoading(FontRanges& ranges, Ref<SimpleFontData>&& fontData, const Vector<CSSFontFace::UnicodeRange>& unicodeRanges)
+static void appendFontWithInvalidUnicodeRangeIfLoading(FontRanges& ranges, Ref<Font>&& font, const Vector<CSSFontFace::UnicodeRange>& unicodeRanges)
 {
-    if (fontData->isLoading()) {
-        ranges.appendRange(FontRanges::Range(0, 0, WTF::move(fontData)));
+    if (font->isLoading()) {
+        ranges.appendRange(FontRanges::Range(0, 0, WTF::move(font)));
         return;
     }
 
     unsigned numRanges = unicodeRanges.size();
     if (!numRanges) {
-        ranges.appendRange(FontRanges::Range(0, 0x7FFFFFFF, WTF::move(fontData)));
+        ranges.appendRange(FontRanges::Range(0, 0x7FFFFFFF, WTF::move(font)));
         return;
     }
 
     for (unsigned j = 0; j < numRanges; ++j)
-        ranges.appendRange(FontRanges::Range(unicodeRanges[j].from(), unicodeRanges[j].to(), fontData.copyRef()));
+        ranges.appendRange(FontRanges::Range(unicodeRanges[j].from(), unicodeRanges[j].to(), font.copyRef()));
 }
 
 FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescription)
@@ -128,8 +128,8 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
             FontTraitsMask traitsMask = face->traitsMask();
             bool syntheticBold = !(traitsMask & (FontWeight600Mask | FontWeight700Mask | FontWeight800Mask | FontWeight900Mask)) && (desiredTraitsMask & (FontWeight600Mask | FontWeight700Mask | FontWeight800Mask | FontWeight900Mask));
             bool syntheticItalic = !(traitsMask & FontStyleItalicMask) && (desiredTraitsMask & FontStyleItalicMask);
-            if (RefPtr<SimpleFontData> faceFontData = face->getFontData(fontDescription, syntheticBold, syntheticItalic))
-                appendFontDataWithInvalidUnicodeRangeIfLoading(fontRanges, faceFontData.releaseNonNull(), face->ranges());
+            if (RefPtr<Font> faceFont = face->font(fontDescription, syntheticBold, syntheticItalic))
+                appendFontWithInvalidUnicodeRangeIfLoading(fontRanges, faceFont.releaseNonNull(), face->ranges());
         }
     }
     return fontRanges;

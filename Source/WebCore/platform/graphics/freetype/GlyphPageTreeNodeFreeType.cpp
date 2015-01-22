@@ -31,7 +31,7 @@
 #include "config.h"
 #include "GlyphPage.h"
 
-#include "SimpleFontData.h"
+#include "Font.h"
 #include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>
 #include <cairo.h>
@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const Font* fontData)
 {
     cairo_scaled_font_t* scaledFont = fontData->platformData().scaledFont();
     ASSERT(scaledFont);

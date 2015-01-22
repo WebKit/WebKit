@@ -57,7 +57,7 @@ void RenderCombineText::setRenderedText(const String& text)
     m_needsFontUpdate = true;
 }
 
-float RenderCombineText::width(unsigned from, unsigned length, const FontCascade& font, float xPosition, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float RenderCombineText::width(unsigned from, unsigned length, const FontCascade& font, float xPosition, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     if (m_isCombined)
         return font.size();

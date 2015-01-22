@@ -55,7 +55,7 @@ class FontCascade;
 class FontPlatformData;
 class FontSelector;
 class OpenTypeVerticalData;
-class SimpleFontData;
+class Font;
 
 #if PLATFORM(WIN)
 #if USE(IMLANG_FONT_LINK2)
@@ -111,7 +111,7 @@ public:
     friend FontCache& fontCache();
 
     // This method is implemented by the platform.
-    RefPtr<SimpleFontData> systemFallbackForCharacters(const FontDescription&, const SimpleFontData* originalFontData, bool isPlatformFont, const UChar* characters, int length);
+    RefPtr<Font> systemFallbackForCharacters(const FontDescription&, const Font* originalFontData, bool isPlatformFont, const UChar* characters, int length);
 
     // Also implemented by the platform.
     void platformInit();
@@ -128,10 +128,10 @@ public:
 
     void getTraitsInFamily(const AtomicString&, Vector<unsigned>&);
 
-    WEBCORE_EXPORT RefPtr<SimpleFontData> fontForFamily(const FontDescription&, const AtomicString&, bool checkingAlternateName = false);
-    WEBCORE_EXPORT Ref<SimpleFontData> lastResortFallbackFont(const FontDescription&);
-    WEBCORE_EXPORT Ref<SimpleFontData> fontForPlatformData(const FontPlatformData&);
-    RefPtr<SimpleFontData> similarFontPlatformData(const FontDescription&);
+    WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, const AtomicString&, bool checkingAlternateName = false);
+    WEBCORE_EXPORT Ref<Font> lastResortFallbackFont(const FontDescription&);
+    WEBCORE_EXPORT Ref<Font> fontForPlatformData(const FontPlatformData&);
+    RefPtr<Font> similarFont(const FontDescription&);
 
     void addClient(FontSelector*);
     void removeClient(FontSelector*);
@@ -139,12 +139,12 @@ public:
     unsigned short generation();
     WEBCORE_EXPORT void invalidate();
 
-    WEBCORE_EXPORT size_t fontDataCount();
-    WEBCORE_EXPORT size_t inactiveFontDataCount();
+    WEBCORE_EXPORT size_t fontCount();
+    WEBCORE_EXPORT size_t inactiveFontCount();
     WEBCORE_EXPORT void purgeInactiveFontData(int count = INT_MAX);
 
 #if PLATFORM(WIN)
-    RefPtr<SimpleFontData> fontDataFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, AtomicString& outFontFamilyName);
+    RefPtr<Font> fontFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, AtomicString& outFontFamilyName);
 #endif
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -173,7 +173,7 @@ private:
     // These methods are implemented by each platform.
 #if PLATFORM(IOS)
     FontPlatformData* getCustomFallbackFont(const UInt32, const FontDescription&);
-    PassRefPtr<SimpleFontData> getSystemFontFallbackForCharacters(const FontDescription&, const SimpleFontData*, const UChar* characters, int length);
+    PassRefPtr<Font> getSystemFontFallbackForCharacters(const FontDescription&, const Font*, const UChar* characters, int length);
 #endif
     std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomicString& family);
 
@@ -182,7 +182,7 @@ private:
 #if PLATFORM(COCOA)
     friend class ComplexTextController;
 #endif
-    friend class SimpleFontData;
+    friend class Font;
 };
 
 // Get the global fontCache.

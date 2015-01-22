@@ -26,6 +26,7 @@
 #include "BitmapInfo.h"
 #include "Document.h"
 #include "FloatRect.h"
+#include "Font.h"
 #include "FontSelector.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -42,7 +43,6 @@
 #include "RenderView.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
-#include "SimpleFontData.h"
 #include "TextRun.h"
 #include "WebCoreInstanceHandle.h"
 #include <wtf/WindowsExtras.h>

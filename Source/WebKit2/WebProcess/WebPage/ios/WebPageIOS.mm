@@ -1790,8 +1790,8 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uin
 
     bool multipleFonts = false;
     CTFontRef font = nil;
-    if (const SimpleFontData* fontData = frame.editor().fontForSelection(multipleFonts))
-        font = fontData->getCTFont();
+    if (auto* coreFont = frame.editor().fontForSelection(multipleFonts))
+        font = coreFont->getCTFont();
 
     CGFloat fontSize = CTFontGetSize(font);
     uint64_t fontTraits = CTFontGetSymbolicTraits(font);

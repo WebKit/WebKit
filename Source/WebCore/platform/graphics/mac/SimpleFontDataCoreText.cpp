@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "SimpleFontData.h"
+#include "Font.h"
 
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-CFDictionaryRef SimpleFontData::getCFStringAttributes(TypesettingFeatures typesettingFeatures, FontOrientation orientation) const
+CFDictionaryRef Font::getCFStringAttributes(TypesettingFeatures typesettingFeatures, FontOrientation orientation) const
 {
     unsigned key = typesettingFeatures + 1;
     HashMap<unsigned, RetainPtr<CFDictionaryRef>>::AddResult addResult = m_CFStringAttributes.add(key, RetainPtr<CFDictionaryRef>());

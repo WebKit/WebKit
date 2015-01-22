@@ -96,6 +96,7 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/Font.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/FrameTree.h>
@@ -148,7 +149,6 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
-#include <WebCore/SimpleFontData.h>
 #include <WebCore/SystemInfo.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
@@ -5505,7 +5505,7 @@ HRESULT WebView::setProhibitsMainFrameScrolling(BOOL b)
 
 HRESULT WebView::setShouldApplyMacFontAscentHack(BOOL b)
 {
-    SimpleFontData::setShouldApplyMacAscentHack(b);
+    Font::setShouldApplyMacAscentHack(b);
     return S_OK;
 }
 

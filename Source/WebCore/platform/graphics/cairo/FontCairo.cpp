@@ -33,6 +33,7 @@
 
 #include "AffineTransform.h"
 #include "CairoUtilities.h"
+#include "Font.h"
 #include "GlyphBuffer.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
@@ -41,11 +42,10 @@
 #include "PlatformContextCairo.h"
 #include "PlatformPathCairo.h"
 #include "ShadowBlur.h"
-#include "SimpleFontData.h"
 
 namespace WebCore {
 
-static void drawGlyphsToContext(cairo_t* context, const SimpleFontData* font, GlyphBufferGlyph* glyphs, int numGlyphs)
+static void drawGlyphsToContext(cairo_t* context, const Font* font, GlyphBufferGlyph* glyphs, int numGlyphs)
 {
     cairo_matrix_t originalTransform;
     float syntheticBoldOffset = font->syntheticBoldOffset();
@@ -64,7 +64,7 @@ static void drawGlyphsToContext(cairo_t* context, const SimpleFontData* font, Gl
         cairo_set_matrix(context, &originalTransform);
 }
 
-static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint& point, const SimpleFontData* font, GlyphBufferGlyph* glyphs, int numGlyphs)
+static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint& point, const Font* font, GlyphBufferGlyph* glyphs, int numGlyphs)
 {
     ShadowBlur& shadow = graphicsContext->platformContext()->shadowBlur();
 
@@ -95,7 +95,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
     }
 }
 
-void FontCascade::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, const GlyphBuffer& glyphBuffer,
+void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const GlyphBuffer& glyphBuffer,
     int from, int numGlyphs, const FloatPoint& point) const
 {
     if (!font->platformData().size())
@@ -216,7 +216,7 @@ public:
         : m_index(0)
         , m_textRun(textRun)
         , m_glyphBuffer(glyphBuffer)
-        , m_fontData(glyphBuffer.fontDataAt(m_index))
+        , m_fontData(glyphBuffer.fontAt(m_index))
         , m_translation(AffineTransform().translate(textOrigin.x(), textOrigin.y()))
     {
         moveToNextValidGlyph();
@@ -235,7 +235,7 @@ private:
     int m_index;
     const TextRun& m_textRun;
     const GlyphBuffer& m_glyphBuffer;
-    const SimpleFontData* m_fontData;
+    const Font* m_fontData;
     AffineTransform m_translation;
 };
 
@@ -286,7 +286,7 @@ void CairoGlyphToPathTranslator::advance()
         ++m_index;
         if (m_index >= m_glyphBuffer.size())
             break;
-        m_fontData = m_glyphBuffer.fontDataAt(m_index);
+        m_fontData = m_glyphBuffer.fontAt(m_index);
     } while (m_fontData->isSVGFont() && m_index < m_glyphBuffer.size());
 }
 
@@ -307,7 +307,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
         return DashArray();
 
     // FIXME: Handle SVG + non-SVG interleaved runs. https://bugs.webkit.org/show_bug.cgi?id=133778
-    const SimpleFontData* fontData = glyphBuffer.fontDataAt(0);
+    const Font* fontData = glyphBuffer.fontAt(0);
     std::unique_ptr<GlyphToPathTranslator> translator;
     bool isSVG = false;
     FloatPoint origin = FloatPoint(textOrigin.x() + deltaX, textOrigin.y());
@@ -326,7 +326,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     for (int index = 0; translator->containsMorePaths(); ++index, translator->advance()) {
         float centerOfLine = lineExtents.y() + (lineExtents.height() / 2);
         GlyphIterationState info = GlyphIterationState(FloatPoint(), FloatPoint(), centerOfLine, lineExtents.x() + lineExtents.width(), lineExtents.x());
-        const SimpleFontData* localFontData = glyphBuffer.fontDataAt(index);
+        const Font* localFontData = glyphBuffer.fontAt(index);
         if (!localFontData || (!isSVG && localFontData->isSVGFont()) || (isSVG && localFontData != fontData)) {
             // The advances will get all messed up if we do anything other than bail here.
             result.clear();

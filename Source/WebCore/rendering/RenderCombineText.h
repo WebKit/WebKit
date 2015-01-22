@@ -46,7 +46,7 @@ private:
     void node() const = delete;
 
     virtual bool isCombineText() const override { return true; }
-    virtual float width(unsigned from, unsigned length, const FontCascade&, float xPosition, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const override;
+    virtual float width(unsigned from, unsigned length, const FontCascade&, float xPosition, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const override;
     virtual const char* renderName() const override { return "RenderCombineText"; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
     virtual void setRenderedText(const String&) override;

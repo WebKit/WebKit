@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-class SimpleFontData;
+class Font;
 
 #if USE(CAIRO)
 // FIXME: Why does Cairo use such a huge struct instead of just an offset into an array?
@@ -76,12 +76,12 @@ typedef FloatSize GlyphBufferAdvance;
 
 class GlyphBuffer {
 public:
-    bool isEmpty() const { return m_fontData.isEmpty(); }
-    int size() const { return m_fontData.size(); }
+    bool isEmpty() const { return m_font.isEmpty(); }
+    int size() const { return m_font.size(); }
     
     void clear()
     {
-        m_fontData.clear();
+        m_font.clear();
         m_glyphs.clear();
         m_advances.clear();
         if (m_offsetsInString)
@@ -96,7 +96,7 @@ public:
     const GlyphBufferGlyph* glyphs(int from) const { return m_glyphs.data() + from; }
     const GlyphBufferAdvance* advances(int from) const { return m_advances.data() + from; }
 
-    const SimpleFontData* fontDataAt(int index) const { return m_fontData[index]; }
+    const Font* fontAt(int index) const { return m_font[index]; }
 
     void setInitialAdvance(GlyphBufferAdvance initialAdvance) { m_initialAdvance = initialAdvance; }
     const GlyphBufferAdvance& initialAdvance() const { return m_initialAdvance; }
@@ -126,9 +126,9 @@ public:
     }
     
     static const unsigned noOffset = UINT_MAX;
-    void add(Glyph glyph, const SimpleFontData* font, float width, unsigned offsetInString = noOffset, const FloatSize* offset = 0)
+    void add(Glyph glyph, const Font* font, float width, unsigned offsetInString = noOffset, const FloatSize* offset = 0)
     {
-        m_fontData.append(font);
+        m_font.append(font);
 
 #if USE(CAIRO)
         cairo_glyph_t cairoGlyph;
@@ -159,9 +159,9 @@ public:
     }
     
 #if !USE(WINGDI)
-    void add(Glyph glyph, const SimpleFontData* font, GlyphBufferAdvance advance, unsigned offsetInString = noOffset)
+    void add(Glyph glyph, const Font* font, GlyphBufferAdvance advance, unsigned offsetInString = noOffset)
     {
-        m_fontData.append(font);
+        m_font.append(font);
 #if USE(CAIRO)
         cairo_glyph_t cairoGlyph;
         cairoGlyph.index = glyph;
@@ -205,9 +205,9 @@ public:
 private:
     void swap(int index1, int index2)
     {
-        const SimpleFontData* f = m_fontData[index1];
-        m_fontData[index1] = m_fontData[index2];
-        m_fontData[index2] = f;
+        const Font* f = m_font[index1];
+        m_font[index1] = m_font[index2];
+        m_font[index2] = f;
 
         GlyphBufferGlyph g = m_glyphs[index1];
         m_glyphs[index1] = m_glyphs[index2];
@@ -224,7 +224,7 @@ private:
 #endif
     }
 
-    Vector<const SimpleFontData*, 2048> m_fontData;
+    Vector<const Font*, 2048> m_font;
     Vector<GlyphBufferGlyph, 2048> m_glyphs;
     Vector<GlyphBufferAdvance, 2048> m_advances;
     GlyphBufferAdvance m_initialAdvance;

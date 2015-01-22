@@ -59,7 +59,7 @@ struct WordMeasurement {
     float width;
     int startOffset;
     int endOffset;
-    HashSet<const SimpleFontData*> fallbackFonts;
+    HashSet<const Font*> fallbackFonts;
 };
 
 class BreakingContext {
@@ -486,13 +486,13 @@ inline void updateCounterIfNeeded(RenderText& renderText)
     downcast<RenderCounter>(renderText).updateCounter();
 }
 
-inline float measureHyphenWidth(RenderText* renderer, const FontCascade& font, HashSet<const SimpleFontData*>* fallbackFonts = 0)
+inline float measureHyphenWidth(RenderText* renderer, const FontCascade& font, HashSet<const Font*>* fallbackFonts = 0)
 {
     const RenderStyle& style = renderer->style();
     return font.width(RenderBlock::constructTextRun(renderer, font, style.hyphenString().string(), style), fallbackFonts);
 }
 
-ALWAYS_INLINE float textWidth(RenderText* text, unsigned from, unsigned len, const FontCascade& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace, HashSet<const SimpleFontData*>& fallbackFonts, TextLayout* layout = 0)
+ALWAYS_INLINE float textWidth(RenderText* text, unsigned from, unsigned len, const FontCascade& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace, HashSet<const Font*>& fallbackFonts, TextLayout* layout = 0)
 {
     const RenderStyle& style = text->style();
 
@@ -578,7 +578,7 @@ inline void tryHyphenating(RenderText* text, const FontCascade& font, const Atom
     ASSERT(pos - lastSpace - prefixLength >= minimumSuffixLength);
 
 #if !ASSERT_DISABLED
-    HashSet<const SimpleFontData*> fallbackFonts;
+    HashSet<const Font*> fallbackFonts;
     float prefixWidth = hyphenWidth + textWidth(text, lastSpace, prefixLength, font, xPos, isFixedPitch, collapseWhiteSpace, fallbackFonts) + lastSpaceWordSpacing;
     ASSERT(xPos + prefixWidth <= availableWidth);
 #else
@@ -656,7 +656,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
 
     // Non-zero only when kerning is enabled and TextLayout isn't used, in which case we measure
     // words with their trailing space, then subtract its width.
-    HashSet<const SimpleFontData*> fallbackFonts;
+    HashSet<const Font*> fallbackFonts;
     float wordTrailingSpaceWidth = (font.typesettingFeatures() & Kerning) && !textLayout ? font.width(RenderBlock::constructTextRun(&renderText, font, &space, 1, style), &fallbackFonts) + wordSpacing : 0;
 
     UChar lastCharacter = m_renderTextInfo.m_lineBreakIterator.lastCharacter();

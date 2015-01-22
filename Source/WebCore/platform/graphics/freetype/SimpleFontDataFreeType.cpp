@@ -31,7 +31,7 @@
  */
 
 #include "config.h"
-#include "SimpleFontData.h"
+#include "Font.h"
 
 #include "FloatConversion.h"
 #include "FloatRect.h"
@@ -51,7 +51,7 @@
 
 namespace WebCore {
 
-void SimpleFontData::platformInit()
+void Font::platformInit()
 {
     if (!m_platformData.m_size)
         return;
@@ -93,17 +93,17 @@ void SimpleFontData::platformInit()
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 }
 
-void SimpleFontData::platformCharWidthInit()
+void Font::platformCharWidthInit()
 {
     m_avgCharWidth = 0.f;
     m_maxCharWidth = 0.f;
     initCharWidths();
 }
 
-PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescription, float scaleFactor) const
 {
     ASSERT(m_platformData.scaledFont());
-    return SimpleFontData::create(FontPlatformData(cairo_scaled_font_get_font_face(m_platformData.scaledFont()),
+    return Font::create(FontPlatformData(cairo_scaled_font_get_font_face(m_platformData.scaledFont()),
         scaleFactor * fontDescription.computedSize(),
         m_platformData.syntheticBold(),
         m_platformData.syntheticOblique(),
@@ -111,12 +111,12 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
         isCustomFont(), false);
 }
 
-void SimpleFontData::determinePitch()
+void Font::determinePitch()
 {
     m_treatAsFixedPitch = m_platformData.isFixedPitch();
 }
 
-FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
+FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 {
     if (!m_platformData.size())
         return FloatRect();
@@ -131,7 +131,7 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
     return FloatRect();
 }
 
-float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
+float Font::platformWidthForGlyph(Glyph glyph) const
 {
     if (!m_platformData.size())
         return 0;
@@ -147,7 +147,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 }
 
 #if USE(HARFBUZZ)
-bool SimpleFontData::canRenderCombiningCharacterSequence(const UChar* characters, size_t length) const
+bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t length) const
 {
     if (!m_combiningCharacterSequenceSupport)
         m_combiningCharacterSequenceSupport = std::make_unique<HashMap<String, bool>>();

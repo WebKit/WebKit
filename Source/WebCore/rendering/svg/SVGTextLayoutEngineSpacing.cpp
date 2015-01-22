@@ -41,16 +41,16 @@ SVGTextLayoutEngineSpacing::SVGTextLayoutEngineSpacing(const FontCascade& font)
 float SVGTextLayoutEngineSpacing::calculateSVGKerning(bool isVerticalText, const SVGTextMetrics::Glyph& currentGlyph)
 {
 #if ENABLE(SVG_FONTS)
-    const SimpleFontData& fontData = m_font.primaryFontData();
-    if (!fontData.isSVGFont()) {
+    const Font& font = m_font.primaryFont();
+    if (!font.isSVGFont()) {
         m_lastGlyph.isValid = false;
         return 0;
     }
 
-    ASSERT(fontData.isCustomFont());
-    ASSERT(fontData.isSVGFont());
+    ASSERT(font.isCustomFont());
+    ASSERT(font.isSVGFont());
 
-    auto* svgFontData = static_cast<const SVGFontData*>(fontData.svgData());
+    auto* svgFontData = static_cast<const SVGFontData*>(font.svgData());
     SVGFontFaceElement* svgFontFace = svgFontData->svgFontFaceElement();
     ASSERT(svgFontFace);
 

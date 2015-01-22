@@ -448,12 +448,12 @@ float GraphicsContext::drawText(const FontCascade& font, const TextRun& run, con
 }
 #endif // !PLATFORM(IOS)
 
-void GraphicsContext::drawGlyphs(const FontCascade& font, const SimpleFontData& fontData, const GlyphBuffer& buffer, int from, int numGlyphs, const FloatPoint& point)
+void GraphicsContext::drawGlyphs(const FontCascade& fontCascade, const Font& font, const GlyphBuffer& buffer, int from, int numGlyphs, const FloatPoint& point)
 {
     if (paintingDisabled())
         return;
 
-    font.drawGlyphs(this, &fontData, buffer, from, numGlyphs, point);
+    fontCascade.drawGlyphs(this, &font, buffer, from, numGlyphs, point);
 }
 
 void GraphicsContext::drawEmphasisMarks(const FontCascade& font, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to)

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class UniscribeController {
 public:
-    UniscribeController(const FontCascade*, const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0);
+    UniscribeController(const FontCascade*, const TextRun&, HashSet<const Font*>* fallbackFonts = 0);
 
     // Advance and measure/place up to the specified character.
     void advance(unsigned to, GlyphBuffer* = 0);
@@ -54,15 +54,15 @@ public:
 private:    
     void resetControlAndState();
 
-    void itemizeShapeAndPlace(const UChar*, unsigned length, const SimpleFontData*, GlyphBuffer*);
-    bool shapeAndPlaceItem(const UChar*, unsigned index, const SimpleFontData*, GlyphBuffer*);
-    bool shape(const UChar* str, int len, SCRIPT_ITEM item, const SimpleFontData* fontData,
+    void itemizeShapeAndPlace(const UChar*, unsigned length, const Font*, GlyphBuffer*);
+    bool shapeAndPlaceItem(const UChar*, unsigned index, const Font*, GlyphBuffer*);
+    bool shape(const UChar* str, int len, SCRIPT_ITEM, const Font*,
                Vector<WORD>& glyphs, Vector<WORD>& clusters,
                Vector<SCRIPT_VISATTR>& visualAttributes);
 
     const FontCascade& m_font;
     const TextRun& m_run;
-    HashSet<const SimpleFontData*>* m_fallbackFonts;
+    HashSet<const Font*>* m_fallbackFonts;
     FloatPoint m_glyphOrigin;
     float m_minGlyphBoundingBoxX;
     float m_maxGlyphBoundingBoxX;

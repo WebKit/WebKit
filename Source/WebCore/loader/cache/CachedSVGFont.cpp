@@ -51,17 +51,17 @@ CachedSVGFont::CachedSVGFont(const ResourceRequest& resourceRequest, SessionID s
 {
 }
 
-PassRefPtr<SimpleFontData> CachedSVGFont::getFontData(const FontDescription& fontDescription, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG)
+RefPtr<Font> CachedSVGFont::createFont(const FontDescription& fontDescription, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG)
 {
 #if ENABLE(SVG_OTF_CONVERTER)
     if (!externalSVG || firstFontFace(remoteURI))
-        return CachedFont::getFontData(fontDescription, remoteURI, syntheticBold, syntheticItalic, externalSVG);
+        return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, externalSVG);
 #else
     if (!externalSVG)
-        return CachedFont::getFontData(fontDescription, remoteURI, syntheticBold, syntheticItalic, externalSVG);
+        return CachedFont::createFont(fontDescription, remoteURI, syntheticBold, syntheticItalic, externalSVG);
 
     if (SVGFontFaceElement* firstFontFace = this->firstFontFace(remoteURI))
-        return SimpleFontData::create(std::make_unique<SVGFontData>(firstFontFace), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
+        return Font::create(std::make_unique<SVGFontData>(firstFontFace), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
 #endif
     return nullptr;
 }

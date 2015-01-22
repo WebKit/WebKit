@@ -26,10 +26,10 @@
 #define FontCascade_h
 
 #include "DashArray.h"
+#include "Font.h"
 #include "FontDescription.h"
 #include "FontGlyphs.h"
 #include "Path.h"
-#include "SimpleFontData.h"
 #include "TextDirection.h"
 #include "TypesettingFeatures.h"
 #include <wtf/HashMap.h>
@@ -134,17 +134,17 @@ public:
 
     enum CustomFontNotReadyAction { DoNotPaintIfFontNotReady, UseFallbackIfFontNotReady };
     WEBCORE_EXPORT float drawText(GraphicsContext*, const TextRun&, const FloatPoint&, int from = 0, int to = -1, CustomFontNotReadyAction = DoNotPaintIfFontNotReady) const;
-    void drawGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&) const;
+    void drawGlyphs(GraphicsContext*, const Font*, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&) const;
     void drawEmphasisMarks(GraphicsContext*, const TextRun&, const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1) const;
 
     DashArray dashesForIntersectionsWithRect(const TextRun&, const FloatPoint& textOrigin, const FloatRect& lineExtents) const;
 
-    WEBCORE_EXPORT float width(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
+    WEBCORE_EXPORT float width(const TextRun&, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     float width(const TextRun&, int& charsConsumed, String& glyphName) const;
 
     PassOwnPtr<TextLayout> createLayout(RenderText*, float xPos, bool collapseWhiteSpace) const;
     static void deleteLayout(TextLayout*);
-    static float width(TextLayout&, unsigned from, unsigned len, HashSet<const SimpleFontData*>* fallbackFonts = 0);
+    static float width(TextLayout&, unsigned from, unsigned len, HashSet<const Font*>* fallbackFonts = 0);
 
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForText(const TextRun&, LayoutRect& selectionRect, int from = 0, int to = -1) const;
@@ -172,10 +172,10 @@ public:
 
     bool isPlatformFont() const { return m_glyphs->isForPlatformFont(); }
 
-    const FontMetrics& fontMetrics() const { return primaryFontData().fontMetrics(); }
-    float spaceWidth() const { return primaryFontData().spaceWidth() + m_letterSpacing; }
-    float tabWidth(const SimpleFontData&, unsigned tabSize, float position) const;
-    float tabWidth(unsigned tabSize, float position) const { return tabWidth(primaryFontData(), tabSize, position); }
+    const FontMetrics& fontMetrics() const { return primaryFont().fontMetrics(); }
+    float spaceWidth() const { return primaryFont().spaceWidth() + m_letterSpacing; }
+    float tabWidth(const Font&, unsigned tabSize, float position) const;
+    float tabWidth(unsigned tabSize, float position) const { return tabWidth(primaryFont(), tabSize, position); }
     bool hasValidAverageCharWidth() const;
     bool fastAverageCharWidthIfAvailable(float &width) const; // returns true on success
 
@@ -183,12 +183,12 @@ public:
     int emphasisMarkDescent(const AtomicString&) const;
     int emphasisMarkHeight(const AtomicString&) const;
 
-    const SimpleFontData& primaryFontData() const;
+    const Font& primaryFont() const;
     const FontRanges& fallbackRangesAt(unsigned) const;
-    GlyphData glyphDataForCharacter(UChar32, bool mirror, FontDataVariant = AutoVariant) const;
+    GlyphData glyphDataForCharacter(UChar32, bool mirror, FontVariant = AutoVariant) const;
     
 #if PLATFORM(COCOA)
-    const SimpleFontData* fontDataForCombiningCharacterSequence(const UChar*, size_t length, FontDataVariant) const;
+    const Font* fontForCombiningCharacterSequence(const UChar*, size_t length, FontVariant) const;
 #endif
 
     static bool isCJKIdeograph(UChar32);
@@ -207,7 +207,7 @@ public:
     static CodePath characterRangeCodePath(const LChar*, unsigned) { return Simple; }
     static CodePath characterRangeCodePath(const UChar*, unsigned len);
 
-    bool primaryFontDataIsSystemFont() const;
+    bool primaryFontIsSystemFont() const;
 
 private:
     enum ForTextEmphasisOrNot { NotForTextEmphasis, ForTextEmphasis };
@@ -218,7 +218,7 @@ private:
     void drawEmphasisMarksForSimpleText(GraphicsContext*, const TextRun&, const AtomicString& mark, const FloatPoint&, int from, int to) const;
     void drawGlyphBuffer(GraphicsContext*, const TextRun&, const GlyphBuffer&, FloatPoint&) const;
     void drawEmphasisMarks(GraphicsContext*, const TextRun&, const GlyphBuffer&, const AtomicString&, const FloatPoint&) const;
-    float floatWidthForSimpleText(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
+    float floatWidthForSimpleText(const TextRun&, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForSimpleText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForSimpleText(const TextRun&, LayoutRect& selectionRect, int from, int to) const;
 
@@ -231,7 +231,7 @@ private:
     float getGlyphsAndAdvancesForComplexText(const TextRun&, int from, int to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
     float drawComplexText(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
     void drawEmphasisMarksForComplexText(GraphicsContext*, const TextRun&, const AtomicString& mark, const FloatPoint&, int from, int to) const;
-    float floatWidthForComplexText(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
+    float floatWidthForComplexText(const TextRun&, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, int from, int to) const;
 
@@ -352,10 +352,10 @@ inline FontCascade::~FontCascade()
 {
 }
 
-inline const SimpleFontData& FontCascade::primaryFontData() const
+inline const Font& FontCascade::primaryFont() const
 {
     ASSERT(m_glyphs);
-    return m_glyphs->primarySimpleFontData(m_fontDescription);
+    return m_glyphs->primaryFont(m_fontDescription);
 }
 
 inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
@@ -375,13 +375,13 @@ inline FontSelector* FontCascade::fontSelector() const
     return m_glyphs ? m_glyphs->fontSelector() : 0;
 }
 
-inline float FontCascade::tabWidth(const SimpleFontData& fontData, unsigned tabSize, float position) const
+inline float FontCascade::tabWidth(const Font& font, unsigned tabSize, float position) const
 {
     if (!tabSize)
         return letterSpacing();
-    float tabWidth = tabSize * fontData.spaceWidth() + letterSpacing();
+    float tabWidth = tabSize * font.spaceWidth() + letterSpacing();
     float tabDeltaWidth = tabWidth - fmodf(position, tabWidth);
-    return (tabDeltaWidth < fontData.spaceWidth() / 2) ? tabWidth : tabDeltaWidth;
+    return (tabDeltaWidth < font.spaceWidth() / 2) ? tabWidth : tabDeltaWidth;
 }
 
 }

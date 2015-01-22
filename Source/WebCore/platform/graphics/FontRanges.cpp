@@ -26,7 +26,7 @@
 #include "config.h"
 #include "FontRanges.h"
 
-#include "SimpleFontData.h"
+#include "Font.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,34 +36,34 @@ FontRanges::FontRanges()
 {
 }
 
-FontRanges::FontRanges(RefPtr<SimpleFontData>&& fontData)
+FontRanges::FontRanges(RefPtr<Font>&& font)
 {
-    if (fontData)
-        m_ranges.append(Range { 0, 0x7FFFFFFF, fontData.releaseNonNull() });
+    if (font)
+        m_ranges.append(Range { 0, 0x7FFFFFFF, font.releaseNonNull() });
 }
 
 FontRanges::~FontRanges()
 {
 }
 
-const SimpleFontData* FontRanges::fontDataForCharacter(UChar32 c) const
+const Font* FontRanges::fontForCharacter(UChar32 c) const
 {
     for (auto& range : m_ranges) {
         if (range.from() <= c && c <= range.to())
-            return &range.fontData();
+            return &range.font();
     }
     return nullptr;
 }
 
-const SimpleFontData& FontRanges::fontDataForFirstRange() const
+const Font& FontRanges::fontForFirstRange() const
 {
-    return m_ranges[0].fontData();
+    return m_ranges[0].font();
 }
 
 bool FontRanges::isLoading() const
 {
     for (auto& range : m_ranges) {
-        if (range.fontData().isLoading())
+        if (range.font().isLoading())
             return true;
     }
     return false;

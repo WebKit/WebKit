@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "SimpleFontData.h"
+#include "Font.h"
 
 #include "FloatRect.h"
 #include "FontCache.h"
@@ -48,7 +48,7 @@ namespace WebCore {
 
 using namespace std;
 
-void SimpleFontData::platformInit()
+void Font::platformInit()
 {
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
     m_scriptCache = 0;
@@ -103,7 +103,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setUnitsPerEm(unitsPerEm);
 }
 
-FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
+FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 {
     if (!platformData().size())
         return FloatRect();
@@ -122,7 +122,7 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
     return boundingBox;
 }
 
-float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
+float Font::platformWidthForGlyph(Glyph glyph) const
 {
     if (!platformData().size())
         return 0;

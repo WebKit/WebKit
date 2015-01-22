@@ -105,7 +105,7 @@ bool Editor::insertParagraphSeparatorInQuotedContent()
     return true;
 }
 
-const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
+const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
 {
     hasMultipleFonts = false;
 
@@ -113,9 +113,9 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
         Node* nodeToRemove;
         RenderStyle* style = styleForSelectionStart(&m_frame, nodeToRemove); // sets nodeToRemove
 
-        const SimpleFontData* result = nullptr;
+        const Font* result = nullptr;
         if (style)
-            result = &style->fontCascade().primaryFontData();
+            result = &style->fontCascade().primaryFont();
 
         if (nodeToRemove)
             nodeToRemove->remove(ASSERT_NO_EXCEPTION);
@@ -123,7 +123,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
         return result;
     }
 
-    const SimpleFontData* font = 0;
+    const Font* font = 0;
     RefPtr<Range> range = m_frame.selection().toNormalizedRange();
     Node* startNode = adjustedSelectionStartForStyleComputation(m_frame.selection().selection()).deprecatedNode();
     if (range && startNode) {
@@ -135,7 +135,7 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
             if (!renderer)
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            const SimpleFontData& primaryFont = renderer->style().fontCascade().primaryFontData();
+            const Font& primaryFont = renderer->style().fontCascade().primaryFont();
             if (!font)
                 font = &primaryFont;
             else if (font != &primaryFont) {
@@ -160,8 +160,8 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
     if (style->visitedDependentColor(CSSPropertyBackgroundColor).isValid() && style->visitedDependentColor(CSSPropertyBackgroundColor).alpha() != 0)
         [result setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
 
-    if (style->fontCascade().primaryFontData().getNSFont())
-        [result setObject:style->fontCascade().primaryFontData().getNSFont() forKey:NSFontAttributeName];
+    if (style->fontCascade().primaryFont().getNSFont())
+        [result setObject:style->fontCascade().primaryFont().getNSFont() forKey:NSFontAttributeName];
 
     if (style->visitedDependentColor(CSSPropertyColor).isValid() && style->visitedDependentColor(CSSPropertyColor) != Color::black)
         [result setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];

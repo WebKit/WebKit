@@ -41,6 +41,7 @@
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
+#include "Font.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
@@ -51,7 +52,6 @@
 #include "PlatformPathCairo.h"
 #include "RefPtrCairo.h"
 #include "ShadowBlur.h"
-#include "SimpleFontData.h"
 #include "TransformationMatrix.h"
 #include <cairo.h>
 #include <math.h>

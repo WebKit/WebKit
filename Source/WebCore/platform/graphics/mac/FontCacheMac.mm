@@ -33,8 +33,8 @@
 #if !PLATFORM(IOS)
 
 #import "CoreGraphicsSPI.h"
+#import "Font.h"
 #import "FontCascade.h"
-#import "SimpleFontData.h"
 #import "FontPlatformData.h"
 #import "NSFontSPI.h"
 #import "WebCoreNSStringExtras.h"
@@ -337,7 +337,7 @@ static bool shouldAutoActivateFontIfNeeded(const AtomicString& family)
     return knownFamilies.get().add(family).isNewEntry;
 }
 
-RefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool isPlatformFont, const UChar* characters, int length)
+RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool isPlatformFont, const UChar* characters, int length)
 {
     UChar32 character;
     U16_GET(characters, 0, 0, length, character);
@@ -405,34 +405,35 @@ RefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescript
     return fontForPlatformData(alternateFont);
 }
 
-RefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescription& description)
+RefPtr<Font> FontCache::similarFont(const FontDescription& description)
 {
     // Attempt to find an appropriate font using a match based on 
     // the presence of keywords in the the requested names.  For example, we'll
     // match any name that contains "Arabic" to Geeza Pro.
-    RefPtr<SimpleFontData> simpleFontData;
+    RefPtr<Font> font;
     for (unsigned i = 0; i < description.familyCount(); ++i) {
         const AtomicString& family = description.familyAt(i);
         if (family.isEmpty())
             continue;
         static String* matchWords[3] = { new String("Arabic"), new String("Pashto"), new String("Urdu") };
         DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro", AtomicString::ConstructFromLiteral));
-        for (int j = 0; j < 3 && !simpleFontData; ++j)
+        for (int j = 0; j < 3 && !font; ++j) {
             if (family.contains(*matchWords[j], false))
-                simpleFontData = fontForFamily(description, geezaStr);
+                font = fontForFamily(description, geezaStr);
+        }
     }
-    return simpleFontData.release();
+    return font.release();
 }
 
-Ref<SimpleFontData> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
+Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, timesStr, ("Times", AtomicString::ConstructFromLiteral));
 
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    RefPtr<SimpleFontData> simpleFontData = fontForFamily(fontDescription, timesStr, false);
-    if (simpleFontData)
-        return *simpleFontData;
+    RefPtr<Font> font = fontForFamily(fontDescription, timesStr, false);
+    if (font)
+        return *font;
 
     // The Times fallback will almost always work, but in the highly unusual case where
     // the user doesn't have it, we fall back on Lucida Grande because that's

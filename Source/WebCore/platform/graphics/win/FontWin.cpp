@@ -26,13 +26,13 @@
 #include "config.h"
 #include "FontCascade.h"
 
+#include "Font.h"
 #include "FontGlyphs.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "LayoutRect.h"
 #include "Logging.h"
-#include "SimpleFontData.h"
 #include "TextRun.h"
 #include "UniscribeController.h"
 #include <wtf/MathExtras.h>
@@ -120,7 +120,7 @@ void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext* context, cons
     drawEmphasisMarks(context, run, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
 }
 
-float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
+float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
     UniscribeController controller(this, run, fallbackFonts);
     controller.advance(run.length());

@@ -2054,6 +2054,7 @@ set(WebCore_SOURCES
     platform/graphics/FloatRect.cpp
     platform/graphics/FloatRoundedRect.cpp
     platform/graphics/FloatSize.cpp
+    platform/graphics/Font.cpp
     platform/graphics/FontCache.cpp
     platform/graphics/FontCascade.cpp
     platform/graphics/FontDescription.cpp
@@ -2089,7 +2090,6 @@ set(WebCore_SOURCES
     platform/graphics/RoundedRect.cpp
     platform/graphics/SVGGlyph.cpp
     platform/graphics/ShadowBlur.cpp
-    platform/graphics/SimpleFontData.cpp
     platform/graphics/StringTruncator.cpp
     platform/graphics/SurrogatePairAwareTextIterator.cpp
     platform/graphics/TextRun.cpp

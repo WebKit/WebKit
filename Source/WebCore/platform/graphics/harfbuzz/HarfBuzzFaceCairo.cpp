@@ -32,10 +32,10 @@
 #include "config.h"
 #include "HarfBuzzFace.h"
 
+#include "Font.h"
 #include "FontPlatformData.h"
 #include "GlyphBuffer.h"
 #include "HarfBuzzShaper.h"
-#include "SimpleFontData.h"
 #include "TextEncoding.h"
 #include <cairo-ft.h>
 #include <cairo.h>

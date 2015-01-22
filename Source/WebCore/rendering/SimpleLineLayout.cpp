@@ -52,7 +52,7 @@ namespace WebCore {
 namespace SimpleLineLayout {
 
 template <typename CharacterType>
-static bool canUseForText(const CharacterType* text, unsigned length, const SimpleFontData& fontData)
+static bool canUseForText(const CharacterType* text, unsigned length, const Font& font)
 {
     // FIXME: <textarea maxlength=0> generates empty text node.
     if (!length)
@@ -75,17 +75,17 @@ static bool canUseForText(const CharacterType* text, unsigned length, const Simp
             || direction == U_POP_DIRECTIONAL_FORMAT || direction == U_BOUNDARY_NEUTRAL)
             return false;
 
-        if (!fontData.glyphForCharacter(character))
+        if (!font.glyphForCharacter(character))
             return false;
     }
     return true;
 }
 
-static bool canUseForText(const RenderText& textRenderer, const SimpleFontData& fontData)
+static bool canUseForText(const RenderText& textRenderer, const Font& font)
 {
     if (textRenderer.is8Bit())
-        return canUseForText(textRenderer.characters8(), textRenderer.textLength(), fontData);
-    return canUseForText(textRenderer.characters16(), textRenderer.textLength(), fontData);
+        return canUseForText(textRenderer.characters8(), textRenderer.textLength(), font);
+    return canUseForText(textRenderer.characters16(), textRenderer.textLength(), font);
 }
 
 bool canUseFor(const RenderBlockFlow& flow)
@@ -184,11 +184,11 @@ bool canUseFor(const RenderBlockFlow& flow)
             }
         }
     }
-    if (style.fontCascade().primaryFontData().isSVGFont())
+    if (style.fontCascade().primaryFont().isSVGFont())
         return false;
     // We assume that all lines have metrics based purely on the primary font.
-    auto& primaryFontData = style.fontCascade().primaryFontData();
-    if (primaryFontData.isLoading())
+    auto& primaryFont = style.fontCascade().primaryFont();
+    if (primaryFont.isLoading())
         return false;
     for (const auto& textRenderer : childrenOfType<RenderText>(flow)) {
         if (textRenderer.isCombineText() || textRenderer.isCounter() || textRenderer.isQuote() || textRenderer.isTextFragment()
@@ -196,7 +196,7 @@ bool canUseFor(const RenderBlockFlow& flow)
             return false;
         if (style.fontCascade().codePath(TextRun(textRenderer.text())) != FontCascade::Simple)
             return false;
-        if (!canUseForText(textRenderer, primaryFontData))
+        if (!canUseForText(textRenderer, primaryFont))
             return false;
     }
     return true;

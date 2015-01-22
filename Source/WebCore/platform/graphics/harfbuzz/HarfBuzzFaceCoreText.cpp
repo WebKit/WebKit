@@ -31,9 +31,9 @@
 #include "config.h"
 #include "HarfBuzzFace.h"
 
+#include "Font.h"
 #include "FontPlatformData.h"
 #include "HarfBuzzShaper.h"
-#include "SimpleFontData.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <hb.h>
 

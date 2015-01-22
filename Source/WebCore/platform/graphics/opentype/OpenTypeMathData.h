@@ -35,13 +35,13 @@ namespace WebCore {
 
 class FontPlatformData;
 class SharedBuffer;
-class SimpleFontData;
+class Font;
 
 class OpenTypeMathData : public RefCounted<OpenTypeMathData> {
 public:
-    static PassRefPtr<OpenTypeMathData> create(const FontPlatformData& fontData)
+    static PassRefPtr<OpenTypeMathData> create(const FontPlatformData& font)
     {
-        return adoptRef(new OpenTypeMathData(fontData));
+        return adoptRef(new OpenTypeMathData(font));
     }
     ~OpenTypeMathData();
 
@@ -113,8 +113,8 @@ public:
         bool isExtender;
     };
 
-    float getMathConstant(const SimpleFontData&, MathConstant) const;
-    float getItalicCorrection(const SimpleFontData&, Glyph) const;
+    float getMathConstant(const Font&, MathConstant) const;
+    float getItalicCorrection(const Font&, Glyph) const;
     void getMathVariants(Glyph, bool isVertical, Vector<Glyph>& sizeVariants, Vector<AssemblyPart>& assemblyParts) const;
 
 private:

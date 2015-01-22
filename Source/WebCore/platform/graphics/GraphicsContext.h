@@ -64,7 +64,7 @@ namespace WebCore {
 
 #if USE(WINGDI)
     class SharedBitmap;
-    class SimpleFontData;
+    class Font;
     class GlyphBuffer;
 #endif
 
@@ -360,7 +360,7 @@ namespace WebCore {
 #else
         float drawText(const FontCascade&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
 #endif
-        void drawGlyphs(const FontCascade&, const SimpleFontData&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
+        void drawGlyphs(const FontCascade&, const Font&, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
         void drawEmphasisMarks(const FontCascade&, const TextRun& , const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1);
 #if !PLATFORM(IOS)
         void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady);
@@ -479,7 +479,7 @@ namespace WebCore {
         AffineTransform& affineTransform();
         void resetAffineTransform();
         void fillRect(const FloatRect&, const Gradient*);
-        void drawText(const SimpleFontData* fontData, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point);
+        void drawText(const Font*, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&);
         void drawFrameControl(const IntRect& rect, unsigned type, unsigned state);
         void drawFocusRect(const IntRect& rect);
         void paintTextField(const IntRect& rect, unsigned state);

@@ -37,6 +37,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/DragImage.h>
 #include <WebCore/Element.h>
+#include <WebCore/Font.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/Frame.h>
 #include <WebCore/HTMLFormElement.h>
@@ -48,7 +49,6 @@
 #include <WebCore/NodeList.h>
 #include <WebCore/RenderElement.h>
 #include <WebCore/RenderTreeAsText.h>
-#include <WebCore/SimpleFontData.h>
 
 #include <initguid.h>
 // {3B0C0EFF-478B-4b0b-8290-D2321E08E23E}

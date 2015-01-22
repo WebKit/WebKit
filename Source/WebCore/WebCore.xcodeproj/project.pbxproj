@@ -4708,8 +4708,8 @@
 		B2C3DA610D006CD600EF6F26 /* FontCascade.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA500D006CD600EF6F26 /* FontCascade.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA620D006CD600EF6F26 /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA510D006CD600EF6F26 /* FontCache.cpp */; };
 		B2C3DA630D006CD600EF6F26 /* FontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA520D006CD600EF6F26 /* FontCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B2C3DA640D006CD600EF6F26 /* SimpleFontData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA530D006CD600EF6F26 /* SimpleFontData.cpp */; };
-		B2C3DA650D006CD600EF6F26 /* SimpleFontData.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA540D006CD600EF6F26 /* SimpleFontData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B2C3DA640D006CD600EF6F26 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA530D006CD600EF6F26 /* Font.cpp */; };
+		B2C3DA650D006CD600EF6F26 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA540D006CD600EF6F26 /* Font.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA660D006CD600EF6F26 /* FontDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA550D006CD600EF6F26 /* FontDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2C3DA670D006CD600EF6F26 /* FontGlyphs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2C3DA560D006CD600EF6F26 /* FontGlyphs.cpp */; };
 		B2C3DA680D006CD600EF6F26 /* FontGlyphs.h in Headers */ = {isa = PBXBuildFile; fileRef = B2C3DA570D006CD600EF6F26 /* FontGlyphs.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12092,8 +12092,8 @@
 		B2C3DA500D006CD600EF6F26 /* FontCascade.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontCascade.h; sourceTree = "<group>"; };
 		B2C3DA510D006CD600EF6F26 /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontCache.cpp; sourceTree = "<group>"; };
 		B2C3DA520D006CD600EF6F26 /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontCache.h; sourceTree = "<group>"; };
-		B2C3DA530D006CD600EF6F26 /* SimpleFontData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleFontData.cpp; sourceTree = "<group>"; };
-		B2C3DA540D006CD600EF6F26 /* SimpleFontData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SimpleFontData.h; sourceTree = "<group>"; };
+		B2C3DA530D006CD600EF6F26 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Font.cpp; sourceTree = "<group>"; };
+		B2C3DA540D006CD600EF6F26 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
 		B2C3DA550D006CD600EF6F26 /* FontDescription.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontDescription.h; sourceTree = "<group>"; };
 		B2C3DA560D006CD600EF6F26 /* FontGlyphs.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FontGlyphs.cpp; sourceTree = "<group>"; };
 		B2C3DA570D006CD600EF6F26 /* FontGlyphs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FontGlyphs.h; sourceTree = "<group>"; };
@@ -20572,8 +20572,8 @@
 				371F4FFA0D25E7F300ECE0D5 /* FontRanges.h */,
 				0F3DD44D12F5EA1B000D9190 /* ShadowBlur.cpp */,
 				0F3DD44E12F5EA1B000D9190 /* ShadowBlur.h */,
-				B2C3DA530D006CD600EF6F26 /* SimpleFontData.cpp */,
-				B2C3DA540D006CD600EF6F26 /* SimpleFontData.h */,
+				B2C3DA530D006CD600EF6F26 /* Font.cpp */,
+				B2C3DA540D006CD600EF6F26 /* Font.h */,
 				CD641EB21818F5ED00EE4C41 /* SourceBufferPrivate.h */,
 				CDC8B5AC1804AE5D0016E685 /* SourceBufferPrivateClient.h */,
 				B23540F00D00782E002382FA /* StringTruncator.cpp */,
@@ -26034,7 +26034,7 @@
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				97B1F02F13B025D200F5103F /* SharedBufferChunkReader.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
-				B2C3DA650D006CD600EF6F26 /* SimpleFontData.h in Headers */,
+				B2C3DA650D006CD600EF6F26 /* Font.h in Headers */,
 				E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */,
 				E4E9B11D1814569C003ACCDF /* SimpleLineLayoutFunctions.h in Headers */,
 				E4E9B1191810916F003ACCDF /* SimpleLineLayoutResolver.h in Headers */,
@@ -29466,7 +29466,7 @@
 				1A4A95520B4EDCFF002D8C3C /* SharedBufferMac.mm in Sources */,
 				E45390460EAFD637003695C8 /* SharedTimerIOS.mm in Sources */,
 				93309EA2099EB78C0056E581 /* SharedTimerMac.mm in Sources */,
-				B2C3DA640D006CD600EF6F26 /* SimpleFontData.cpp in Sources */,
+				B2C3DA640D006CD600EF6F26 /* Font.cpp in Sources */,
 				163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */,
 				37E65950163B10C200EB4574 /* SimpleFontDataIOS.mm in Sources */,
 				B2AFFC7F0D00A5C10030074D /* SimpleFontDataMac.mm in Sources */,

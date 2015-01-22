@@ -927,8 +927,8 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
     data.statisticsNumbers.set(ASCIILiteral("IconsWithDataCount"), iconDatabase().iconRecordCountWithData());
     
     // Gather font statistics.
-    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataCount"), fontCache().fontDataCount());
-    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataInactiveCount"), fontCache().inactiveFontDataCount());
+    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataCount"), fontCache().fontCount());
+    data.statisticsNumbers.set(ASCIILiteral("CachedFontDataInactiveCount"), fontCache().inactiveFontCount());
     
     // Gather glyph page statistics.
     data.statisticsNumbers.set(ASCIILiteral("GlyphPageCount"), GlyphPage::count());

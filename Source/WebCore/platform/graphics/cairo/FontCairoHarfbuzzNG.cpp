@@ -27,13 +27,13 @@
 #include "config.h"
 #include "FontCascade.h"
 
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "HarfBuzzShaper.h"
 #include "LayoutRect.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "PlatformContextCairo.h"
-#include "SimpleFontData.h"
 #include <cairo.h>
 
 namespace WebCore {
@@ -83,7 +83,7 @@ bool FontCascade::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>*, GlyphOverflow*) const
+float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>*, GlyphOverflow*) const
 {
     HarfBuzzShaper shaper(this, run);
     if (shaper.shape())

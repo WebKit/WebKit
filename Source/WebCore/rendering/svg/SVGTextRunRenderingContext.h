@@ -43,9 +43,9 @@ public:
     void setActivePaintingResource(RenderSVGResource* object) { m_activePaintingResource = object; }
 
     virtual GlyphData glyphDataForCharacter(const FontCascade&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache) override;
-    virtual void drawSVGGlyphs(GraphicsContext*, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const override;
+    virtual void drawSVGGlyphs(GraphicsContext*, const Font*, const GlyphBuffer&, int from, int to, const FloatPoint&) const override;
     virtual float floatWidthUsingSVGFont(const FontCascade&, const TextRun&, int& charsConsumed, String& glyphName) const override;
-    virtual bool applySVGKerning(const SimpleFontData*, WidthIterator&, GlyphBuffer*, int from) const override;
+    virtual bool applySVGKerning(const Font*, WidthIterator&, GlyphBuffer*, int from) const override;
 #endif
 
 private:
@@ -60,7 +60,7 @@ private:
     virtual ~SVGTextRunRenderingContext() { }
 
 #if ENABLE(SVG_FONTS)
-    virtual std::unique_ptr<GlyphToPathTranslator> createGlyphToPathTranslator(const SimpleFontData&, const TextRun*, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&) const override;
+    virtual std::unique_ptr<GlyphToPathTranslator> createGlyphToPathTranslator(const Font&, const TextRun*, const GlyphBuffer&, int from, int numGlyphs, const FloatPoint&) const override;
 #endif
 
     RenderObject& m_renderer;

@@ -28,9 +28,9 @@
 
 #include "config.h"
 #include <winsock2.h>
+#include "Font.h"
 #include "FontCache.h"
 #include "HWndDC.h"
-#include "SimpleFontData.h"
 #include <mlang.h>
 #include <windows.h>
 #include <wtf/HashSet.h>
@@ -199,10 +199,10 @@ static HFONT createMLangFont(IMLangFontLinkType* langFontLink, HDC hdc, DWORD co
     return hfont;
 }
 
-RefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescription& description, const SimpleFontData* originalFontData, bool, const UChar* characters, int length)
+RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool, const UChar* characters, int length)
 {
     UChar character = characters[0];
-    RefPtr<SimpleFontData> fontData;
+    RefPtr<Font> fontData;
     HWndDC hdc(0);
     HFONT primaryFont = originalFontData->platformData().hfont();
     HGDIOBJ oldFont = SelectObject(hdc, primaryFont);
@@ -309,16 +309,16 @@ RefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDescript
     return fontData.release();
 }
 
-RefPtr<SimpleFontData> FontCache::fontDataFromDescriptionAndLogFont(const FontDescription& fontDescription, const LOGFONT& font, AtomicString& outFontFamilyName)
+RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fontDescription, const LOGFONT& font, AtomicString& outFontFamilyName)
 {
     AtomicString familyName = String(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
-    RefPtr<SimpleFontData> fontData = fontForFamily(fontDescription, familyName);
+    RefPtr<Font> fontData = fontForFamily(fontDescription, familyName);
     if (fontData)
         outFontFamilyName = familyName;
     return fontData;
 }
 
-Ref<SimpleFontData> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
+Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, fallbackFontName, ());
     if (!fallbackFontName.isEmpty())
@@ -337,7 +337,7 @@ Ref<SimpleFontData> FontCache::lastResortFallbackFont(const FontDescription& fon
         AtomicString("Lucida Sans Unicode", AtomicString::ConstructFromLiteral),
         AtomicString("Arial", AtomicString::ConstructFromLiteral)
     };
-    RefPtr<SimpleFontData> simpleFont;
+    RefPtr<Font> simpleFont;
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(fallbackFonts); ++i) {
         if (simpleFont = fontForFamily(fontDescription, fallbackFonts[i])) {
             fallbackFontName = fallbackFonts[i];
@@ -349,7 +349,7 @@ Ref<SimpleFontData> FontCache::lastResortFallbackFont(const FontDescription& fon
     if (HFONT defaultGUIFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))) {
         LOGFONT defaultGUILogFont;
         GetObject(defaultGUIFont, sizeof(defaultGUILogFont), &defaultGUILogFont);
-        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, defaultGUILogFont, fallbackFontName))
+        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, defaultGUILogFont, fallbackFontName))
             return *simpleFont;
     }
 
@@ -357,15 +357,15 @@ Ref<SimpleFontData> FontCache::lastResortFallbackFont(const FontDescription& fon
     NONCLIENTMETRICS nonClientMetrics = {0};
     nonClientMetrics.cbSize = sizeof(nonClientMetrics);
     if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(nonClientMetrics), &nonClientMetrics, 0)) {
-        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfMessageFont, fallbackFontName))
+        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfMessageFont, fallbackFontName))
             return *simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfMenuFont, fallbackFontName))
+        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfMenuFont, fallbackFontName))
             return *simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfStatusFont, fallbackFontName))
+        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfStatusFont, fallbackFontName))
             return *simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfCaptionFont, fallbackFontName))
+        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfCaptionFont, fallbackFontName))
             return *simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
+        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
             return *simpleFont;
     }
     

@@ -32,9 +32,9 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "ElementIterator.h"
+#include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
-#include "SimpleFontData.h"
 
 #if ENABLE(SVG_OTF_CONVERTER)
 #include "FontCustomPlatformData.h"
@@ -74,10 +74,10 @@ CSSFontFaceSource::~CSSFontFaceSource()
 
 void CSSFontFaceSource::pruneTable()
 {
-    if (m_fontDataTable.isEmpty())
+    if (m_fontTable.isEmpty())
         return;
 
-    m_fontDataTable.clear();
+    m_fontTable.clear();
 }
 
 bool CSSFontFaceSource::isLoaded() const
@@ -101,7 +101,7 @@ void CSSFontFaceSource::fontLoaded(CachedFont*)
         m_face->fontLoaded(this);
 }
 
-PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, CSSFontSelector* fontSelector)
+RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic, CSSFontSelector* fontSelector)
 {
     // If the font hasn't loaded or an error occurred, then we've got nothing.
     if (!isValid())
@@ -112,18 +112,17 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
             && !m_svgFontFaceElement
 #endif
     ) {
-        // We're local. Just return a SimpleFontData from the normal cache.
+        // We're local. Just return a Font from the normal cache.
         // We don't want to check alternate font family names here, so pass true as the checkingAlternateName parameter.
         return fontCache().fontForFamily(fontDescription, m_string, true);
     }
 
-    // See if we have a mapping in our FontData cache.
     unsigned hashKey = (fontDescription.computedPixelSize() + 1) << 5 | fontDescription.widthVariant() << 3
                        | (fontDescription.orientation() == Vertical ? 4 : 0) | (syntheticBold ? 2 : 0) | (syntheticItalic ? 1 : 0);
 
-    RefPtr<SimpleFontData> fontData = m_fontDataTable.add(hashKey, nullptr).iterator->value;
-    if (fontData)
-        return fontData.release();
+    RefPtr<Font> font = m_fontTable.add(hashKey, nullptr).iterator->value;
+    if (font)
+        return font.release();
 
     // If we are still loading, then we let the system pick a font.
     if (isLoaded()) {
@@ -136,7 +135,7 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
             if (!m_font->ensureCustomFontData(hasExternalSVGFont, m_string))
                 return nullptr;
 
-            fontData = m_font->getFontData(fontDescription, m_string, syntheticBold, syntheticItalic, hasExternalSVGFont);
+            font = m_font->createFont(fontDescription, m_string, syntheticBold, syntheticItalic, hasExternalSVGFont);
         } else {
 #if ENABLE(SVG_FONTS)
             // In-Document SVG Fonts
@@ -152,9 +151,9 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
                 if (!m_generatedOTFBuffer)
                     return nullptr;
                 std::unique_ptr<FontCustomPlatformData> customPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer);
-                fontData = SimpleFontData::create(customPlatformData->fontPlatformData(static_cast<int>(fontDescription.computedPixelSize()), syntheticBold, syntheticItalic, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false);
+                font = Font::create(customPlatformData->fontPlatformData(static_cast<int>(fontDescription.computedPixelSize()), syntheticBold, syntheticItalic, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false);
 #else
-                fontData = SimpleFontData::create(std::make_unique<SVGFontData>(m_svgFontFaceElement.get()), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
+                font = Font::create(std::make_unique<SVGFontData>(m_svgFontFaceElement.get()), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic);
 #endif
             }
 #endif
@@ -164,12 +163,12 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
         // and the loader may invoke arbitrary delegate or event handler code.
         fontSelector->beginLoadingFontSoon(m_font.get());
 
-        Ref<SimpleFontData> placeholderFont = fontCache().lastResortFallbackFont(fontDescription);
-        Ref<SimpleFontData> placeholderFontCopyInLoadingState = SimpleFontData::create(placeholderFont->platformData(), true, true);
+        Ref<Font> placeholderFont = fontCache().lastResortFallbackFont(fontDescription);
+        Ref<Font> placeholderFontCopyInLoadingState = Font::create(placeholderFont->platformData(), true, true);
         return WTF::move(placeholderFontCopyInLoadingState);
     }
 
-    return fontData.release();
+    return font.release();
 }
 
 #if ENABLE(FONT_LOAD_EVENTS)

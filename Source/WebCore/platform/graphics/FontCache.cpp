@@ -52,14 +52,14 @@
 #include <wtf/Noncopyable.h>
 
 // FIXME: We may be able to simplify this code using C++11 threading primitives, including std::call_once().
-static pthread_mutex_t fontDataLock;
+static pthread_mutex_t fontLock;
 
 static void initFontCacheLockOnce()
 {
     pthread_mutexattr_t mutexAttribute;
     pthread_mutexattr_init(&mutexAttribute);
     pthread_mutexattr_settype(&mutexAttribute, PTHREAD_MUTEX_RECURSIVE);
-    pthread_mutex_init(&fontDataLock, &mutexAttribute);
+    pthread_mutex_init(&fontLock, &mutexAttribute);
     pthread_mutexattr_destroy(&mutexAttribute);
 }
 
@@ -71,13 +71,13 @@ public:
     FontLocker()
     {
         pthread_once(&initFontLockControl, initFontCacheLockOnce);
-        int lockcode = pthread_mutex_lock(&fontDataLock);
-        ASSERT_WITH_MESSAGE_UNUSED(lockcode, !lockcode, "fontDataLock lock failed with code:%d", lockcode);    
+        int lockcode = pthread_mutex_lock(&fontLock);
+        ASSERT_WITH_MESSAGE_UNUSED(lockcode, !lockcode, "fontLock lock failed with code:%d", lockcode);    
     }
     ~FontLocker()
     {
-        int lockcode = pthread_mutex_unlock(&fontDataLock);
-        ASSERT_WITH_MESSAGE_UNUSED(lockcode, !lockcode, "fontDataLock unlock failed with code:%d", lockcode);
+        int lockcode = pthread_mutex_unlock(&fontLock);
+        ASSERT_WITH_MESSAGE_UNUSED(lockcode, !lockcode, "fontLock unlock failed with code:%d", lockcode);
     }
 };
 #endif // PLATFORM(IOS)
@@ -359,7 +359,7 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     }
 };
 
-typedef HashMap<FontPlatformData, RefPtr<SimpleFontData>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
+typedef HashMap<FontPlatformData, RefPtr<Font>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
 
 static FontDataCache& cachedFonts()
 {
@@ -379,7 +379,7 @@ const int cTargetInactiveFontData = 200;
 const int cMaxUnderMemoryPressureInactiveFontData = 50;
 const int cTargetUnderMemoryPressureInactiveFontData = 30;
 
-RefPtr<SimpleFontData> FontCache::fontForFamily(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName)
+RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName)
 {
     if (!m_purgeTimer.isActive())
         m_purgeTimer.startOneShot(std::chrono::milliseconds::zero());
@@ -391,7 +391,7 @@ RefPtr<SimpleFontData> FontCache::fontForFamily(const FontDescription& fontDescr
     return fontForPlatformData(*platformData);
 }
 
-Ref<SimpleFontData> FontCache::fontForPlatformData(const FontPlatformData& platformData)
+Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
 {
 #if PLATFORM(IOS)
     FontLocker fontLocker;
@@ -399,7 +399,7 @@ Ref<SimpleFontData> FontCache::fontForPlatformData(const FontPlatformData& platf
     
     auto addResult = cachedFonts().add(platformData, nullptr);
     if (addResult.isNewEntry)
-        addResult.iterator->value = SimpleFontData::create(platformData);
+        addResult.iterator->value = Font::create(platformData);
 
     return *addResult.iterator->value;
 }
@@ -416,7 +416,7 @@ void FontCache::purgeInactiveFontDataIfNeeded()
 
     if (cachedFonts().size() < inactiveFontDataLimit)
         return;
-    int inactiveCount = inactiveFontDataCount();
+    int inactiveCount = inactiveFontCount();
     if (inactiveCount <= inactiveFontDataLimit)
         return;
 
@@ -434,7 +434,7 @@ void FontCache::purgeInactiveFontData(int purgeCount)
 #endif
 
     while (purgeCount) {
-        Vector<RefPtr<SimpleFontData>, 20> fontsToDelete;
+        Vector<RefPtr<Font>, 20> fontsToDelete;
         for (auto& font : cachedFonts().values()) {
             if (!font->hasOneRef())
                 continue;
@@ -466,8 +466,8 @@ void FontCache::purgeInactiveFontData(int purgeCount)
             if (verticalData)
                 verticalData->m_inFontCache = false;
         }
-        for (auto& fontData : cachedFonts().values()) {
-            auto* verticalData = const_cast<OpenTypeVerticalData*>(fontData->verticalData());
+        for (auto& font : cachedFonts().values()) {
+            auto* verticalData = const_cast<OpenTypeVerticalData*>(font->verticalData());
             if (verticalData)
                 verticalData->m_inFontCache = true;
         }
@@ -483,12 +483,12 @@ void FontCache::purgeInactiveFontData(int purgeCount)
 #endif
 }
 
-size_t FontCache::fontDataCount()
+size_t FontCache::fontCount()
 {
     return cachedFonts().size();
 }
 
-size_t FontCache::inactiveFontDataCount()
+size_t FontCache::inactiveFontCount()
 {
 #if PLATFORM(IOS)
     FontLocker fontLocker;
@@ -551,7 +551,7 @@ void FontCache::invalidate()
 }
 
 #if !PLATFORM(COCOA)
-RefPtr<SimpleFontData> FontCache::similarFontPlatformData(const FontDescription&)
+RefPtr<Font> FontCache::similarFont(const FontDescription&)
 {
     return nullptr;
 }

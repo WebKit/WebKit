@@ -147,12 +147,12 @@ using namespace WebCore;
 
 + (size_t)cachedFontDataCount
 {
-    return fontCache().fontDataCount();
+    return fontCache().fontCount();
 }
 
 + (size_t)cachedFontDataInactiveCount
 {
-    return fontCache().inactiveFontDataCount();
+    return fontCache().inactiveFontCount();
 }
 
 + (void)purgeInactiveFontData

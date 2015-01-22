@@ -27,6 +27,7 @@
 #include "CSSFontSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
+#include "Font.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -40,7 +41,6 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "SimpleFontData.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
 #include <wtf/StackStats.h>
@@ -346,7 +346,7 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
     if (family == "Lucida Grande")
         maxCharWidth = scaleEmToUnits(4027);
     else if (style().fontCascade().hasValidAverageCharWidth())
-        maxCharWidth = roundf(style().fontCascade().primaryFontData().maxCharWidth());
+        maxCharWidth = roundf(style().fontCascade().primaryFont().maxCharWidth());
 #endif
 
     // For text inputs, IE adds some extra width.

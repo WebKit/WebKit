@@ -32,14 +32,14 @@ namespace WebCore {
 
 class FontCascade;
 class GlyphBuffer;
-class SimpleFontData;
+class Font;
 class TextRun;
 struct GlyphData;
 
 struct WidthIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WidthIterator(const FontCascade*, const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
+    WidthIterator(const FontCascade*, const TextRun&, HashSet<const Font*>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
 
     unsigned advance(int to, GlyphBuffer*);
     bool advanceOneCharacter(float& width, GlyphBuffer&);
@@ -94,7 +94,7 @@ private:
     bool shouldApplyFontTransforms() const { return m_run.length() > 1 && (m_typesettingFeatures & (Kerning | Ligatures)); }
 
     TypesettingFeatures m_typesettingFeatures;
-    HashSet<const SimpleFontData*>* m_fallbackFonts;
+    HashSet<const Font*>* m_fallbackFonts;
     bool m_accountForGlyphBounds;
     float m_maxGlyphBoundingBoxY;
     float m_minGlyphBoundingBoxY;

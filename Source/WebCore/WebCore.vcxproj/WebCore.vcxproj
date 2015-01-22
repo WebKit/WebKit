@@ -8027,6 +8027,7 @@
     <ClCompile Include="..\platform\graphics\FloatRect.cpp" />
     <ClCompile Include="..\platform\graphics\FloatRoundedRect.cpp" />
     <ClCompile Include="..\platform\graphics\FloatSize.cpp" />
+    <ClCompile Include="..\platform\graphics\Font.cpp" />
     <ClCompile Include="..\platform\graphics\FontCache.cpp" />
     <ClCompile Include="..\platform\graphics\FontCascade.cpp" />
     <ClCompile Include="..\platform\graphics\FontDescription.cpp" />
@@ -8069,7 +8070,6 @@
     <ClCompile Include="..\platform\graphics\Region.cpp" />
     <ClCompile Include="..\platform\graphics\RoundedRect.cpp" />
     <ClCompile Include="..\platform\graphics\ShadowBlur.cpp" />
-    <ClCompile Include="..\platform\graphics\SimpleFontData.cpp" />
     <ClCompile Include="..\platform\graphics\TextRun.cpp" />
     <ClCompile Include="..\platform\graphics\TextTrackRepresentation.cpp" />
     <ClCompile Include="..\platform\graphics\WOFFFileFormat.cpp" />
@@ -19516,6 +19516,7 @@
     <ClInclude Include="..\platform\graphics\FloatRoundedRect.h" />
     <ClInclude Include="..\platform\graphics\FloatSize.h" />
     <ClInclude Include="..\platform\graphics\FloatSizeHash.h" />
+    <ClInclude Include="..\platform\graphics\Font.h" />
     <ClInclude Include="..\platform\graphics\FontCache.h" />
     <ClInclude Include="..\platform\graphics\FontCascade.h" />
     <ClInclude Include="..\platform\graphics\FontDescription.h" />
@@ -19568,7 +19569,6 @@
     <ClInclude Include="..\platform\graphics\Region.h" />
     <ClInclude Include="..\platform\graphics\RoundedRect.h" />
     <ClInclude Include="..\platform\graphics\ShadowBlur.h" />
-    <ClInclude Include="..\platform\graphics\SimpleFontData.h" />
     <ClInclude Include="..\platform\graphics\TextRun.h" />
     <ClInclude Include="..\platform\graphics\TextTrackRepresentation.h" />
     <ClInclude Include="..\platform\graphics\UnitBezier.h" />

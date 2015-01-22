@@ -449,7 +449,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
 
     const RenderStyle& lineStyle = this->lineStyle();
     if (lineStyle.fontDescription().nonCJKGlyphOrientation() == NonCJKGlyphOrientationUpright
-        || lineStyle.fontCascade().primaryFontData().hasVerticalGlyphs())
+        || lineStyle.fontCascade().primaryFont().hasVerticalGlyphs())
         return true;
 
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
@@ -460,18 +460,18 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
             if (downcast<InlineFlowBox>(*child).requiresIdeographicBaseline(textBoxDataMap))
                 return true;
         } else {
-            if (child->lineStyle().fontCascade().primaryFontData().hasVerticalGlyphs())
+            if (child->lineStyle().fontCascade().primaryFont().hasVerticalGlyphs())
                 return true;
             
-            const Vector<const SimpleFontData*>* usedFonts = nullptr;
+            const Vector<const Font*>* usedFonts = nullptr;
             if (is<InlineTextBox>(*child)) {
                 GlyphOverflowAndFallbackFontsMap::const_iterator it = textBoxDataMap.find(downcast<InlineTextBox>(child));
                 usedFonts = it == textBoxDataMap.end() ? nullptr : &it->value.first;
             }
 
             if (usedFonts) {
-                for (const SimpleFontData* fontData : *usedFonts) {
-                    if (fontData->hasVerticalGlyphs())
+                for (const Font* font : *usedFonts) {
+                    if (font->hasVerticalGlyphs())
                         return true;
                 }
             }

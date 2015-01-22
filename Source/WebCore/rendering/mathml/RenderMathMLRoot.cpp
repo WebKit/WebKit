@@ -208,17 +208,17 @@ void RenderMathMLRoot::updateStyle()
     LayoutUnit kernAfterDegree = -10 * style().fontCascade().size() / 18;
     m_degreeBottomRaisePercent = 0.6f;
 
-    const auto& primaryFontData = style().fontCascade().primaryFontData();
-    if (auto* mathData = style().fontCascade().primaryFontData().mathData()) {
+    const auto& primaryFont = style().fontCascade().primaryFont();
+    if (auto* mathData = style().fontCascade().primaryFont().mathData()) {
         // FIXME: m_verticalGap should use RadicalDisplayStyleVertical in display mode (https://bugs.webkit.org/show_bug.cgi?id=118737).
-        m_verticalGap = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalVerticalGap);
-        m_ruleThickness = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalRuleThickness);
-        m_extraAscender = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalExtraAscender);
+        m_verticalGap = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalVerticalGap);
+        m_ruleThickness = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalRuleThickness);
+        m_extraAscender = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalExtraAscender);
 
         if (!isRenderMathMLSquareRoot()) {
-            kernBeforeDegree = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalKernBeforeDegree);
-            kernAfterDegree = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalKernAfterDegree);
-            m_degreeBottomRaisePercent = mathData->getMathConstant(primaryFontData, OpenTypeMathData::RadicalDegreeBottomRaisePercent);
+            kernBeforeDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalKernBeforeDegree);
+            kernAfterDegree = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalKernAfterDegree);
+            m_degreeBottomRaisePercent = mathData->getMathConstant(primaryFont, OpenTypeMathData::RadicalDegreeBottomRaisePercent);
         }
     }
 

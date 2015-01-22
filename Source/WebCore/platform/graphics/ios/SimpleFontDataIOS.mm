@@ -25,7 +25,7 @@
  */
 
 #import "config.h"
-#import "SimpleFontData.h"
+#import "Font.h"
 
 #import "BlockExceptions.h"
 #import "CoreGraphicsSPI.h"
@@ -67,7 +67,7 @@ static bool fontHasVerticalGlyphs(CTFontRef ctFont)
     return false;
 }
 
-void SimpleFontData::platformInit()
+void Font::platformInit()
 {
     m_syntheticBoldOffset = m_platformData.m_syntheticBold ? ceilf(m_platformData.size()  / 24.0f) : 0.f;
     m_spaceGlyph = 0;
@@ -128,7 +128,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setLineSpacing(0);
 }
 
-void SimpleFontData::platformCharWidthInit()
+void Font::platformCharWidthInit()
 {
     m_avgCharWidth = 0;
     m_maxCharWidth = 0;
@@ -137,12 +137,12 @@ void SimpleFontData::platformCharWidthInit()
     initCharWidths();
 }
 
-PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const FontDescription&, float scaleFactor) const
+PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleFactor) const
 {
     if (isCustomFont()) {
         FontPlatformData scaledFontData(m_platformData);
         scaledFontData.m_size = scaledFontData.m_size * scaleFactor;
-        return SimpleFontData::create(scaledFontData, true, false);
+        return Font::create(scaledFontData, true, false);
     }
 
     float size = m_platformData.size() * scaleFactor;
@@ -167,7 +167,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
     return nullptr;
 }
 
-void SimpleFontData::determinePitch()
+void Font::determinePitch()
 {
     CTFontRef ctFont = m_platformData.font();
     m_treatAsFixedPitch = false;
@@ -184,12 +184,12 @@ void SimpleFontData::determinePitch()
     }
 }
 
-CGFontRenderingStyle SimpleFontData::renderingStyle() const
+CGFontRenderingStyle Font::renderingStyle() const
 {
     return kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
 }
 
-bool SimpleFontData::advanceForColorBitmapFont(Glyph, CGSize&) const
+bool Font::advanceForColorBitmapFont(Glyph, CGSize&) const
 {
     return false;
 }

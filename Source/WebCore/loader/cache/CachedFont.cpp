@@ -99,7 +99,7 @@ bool CachedFont::ensureCustomFontData(bool, const AtomicString&)
 
 bool CachedFont::ensureCustomFontData(SharedBuffer* data)
 {
-    if (!m_fontData && !errorOccurred() && !isLoading() && data) {
+    if (!m_fontCustomPlatformData && !errorOccurred() && !isLoading() && data) {
         RefPtr<SharedBuffer> buffer(data);
 
 #if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090) && (!PLATFORM(IOS) || __IPHONE_OS_VERSION_MIN_REQUIRED < 80000)
@@ -112,30 +112,30 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
         }
 #endif
 
-        m_fontData = buffer ? createFontCustomPlatformData(*buffer) : nullptr;
-        m_hasCreatedFontDataWrappingResource = m_fontData && (buffer == m_data);
-        if (!m_fontData)
+        m_fontCustomPlatformData = buffer ? createFontCustomPlatformData(*buffer) : nullptr;
+        m_hasCreatedFontDataWrappingResource = m_fontCustomPlatformData && (buffer == m_data);
+        if (!m_fontCustomPlatformData)
             setStatus(DecodeError);
     }
 
-    return m_fontData.get();
+    return m_fontCustomPlatformData.get();
 }
 
-PassRefPtr<SimpleFontData> CachedFont::getFontData(const FontDescription& fontDescription, const AtomicString&, bool syntheticBold, bool syntheticItalic, bool)
+RefPtr<Font> CachedFont::createFont(const FontDescription& fontDescription, const AtomicString&, bool syntheticBold, bool syntheticItalic, bool)
 {
-    return SimpleFontData::create(platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic,
+    return Font::create(platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic,
         fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.renderingMode()), true, false);
 }
 
 FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation orientation, FontWidthVariant widthVariant, FontRenderingMode renderingMode)
 {
-    ASSERT(m_fontData);
-    return m_fontData->fontPlatformData(static_cast<int>(size), bold, italic, orientation, widthVariant, renderingMode);
+    ASSERT(m_fontCustomPlatformData);
+    return m_fontCustomPlatformData->fontPlatformData(static_cast<int>(size), bold, italic, orientation, widthVariant, renderingMode);
 }
 
 void CachedFont::allClientsRemoved()
 {
-    m_fontData = nullptr;
+    m_fontCustomPlatformData = nullptr;
 }
 
 void CachedFont::checkNotify()

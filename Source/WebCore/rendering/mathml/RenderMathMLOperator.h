@@ -28,11 +28,11 @@
 
 #if ENABLE(MATHML)
 
+#include "Font.h"
 #include "GlyphPage.h"
 #include "MathMLElement.h"
 #include "OpenTypeMathData.h"
 #include "RenderMathMLToken.h"
-#include "SimpleFontData.h"
 
 namespace WebCore {
 

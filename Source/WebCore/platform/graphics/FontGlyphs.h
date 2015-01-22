@@ -21,10 +21,10 @@
 #ifndef FontGlyphs_h
 #define FontGlyphs_h
 
+#include "Font.h"
 #include "FontRanges.h"
 #include "FontSelector.h"
 #include "GlyphPage.h"
-#include "SimpleFontData.h"
 #include "WidthCache.h"
 #include <wtf/Forward.h>
 #include <wtf/MainThread.h>
@@ -51,7 +51,7 @@ public:
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
-    GlyphData glyphDataForCharacter(UChar32, const FontDescription&, FontDataVariant);
+    GlyphData glyphDataForCharacter(UChar32, const FontDescription&, FontVariant);
 
     bool isFixedPitch(const FontDescription&);
     void determinePitch(const FontDescription&);
@@ -66,7 +66,7 @@ public:
     WidthCache& widthCache() { return m_widthCache; }
     const WidthCache& widthCache() const { return m_widthCache; }
 
-    const SimpleFontData& primarySimpleFontData(const FontDescription&);
+    const Font& primaryFont(const FontDescription&);
     WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontDescription&, unsigned fallbackIndex);
 
     void pruneSystemFallbacks();
@@ -75,9 +75,9 @@ private:
     FontGlyphs(PassRefPtr<FontSelector>);
     FontGlyphs(const FontPlatformData&);
 
-    GlyphData glyphDataForSystemFallback(UChar32, const FontDescription&, FontDataVariant);
+    GlyphData glyphDataForSystemFallback(UChar32, const FontDescription&, FontVariant);
     GlyphData glyphDataForNormalVariant(UChar32, const FontDescription&);
-    GlyphData glyphDataForVariant(UChar32, const FontDescription&, FontDataVariant, unsigned fallbackIndex);
+    GlyphData glyphDataForVariant(UChar32, const FontDescription&, FontVariant, unsigned fallbackIndex);
 
     Vector<FontRanges, 1> m_realizedFallbackRanges;
     unsigned m_lastRealizedFallbackIndex { 0 };
@@ -85,9 +85,9 @@ private:
     RefPtr<GlyphPage> m_cachedPageZero;
     HashMap<int, RefPtr<GlyphPage>> m_cachedPages;
 
-    HashSet<RefPtr<SimpleFontData>> m_systemFallbackFontDataSet;
+    HashSet<RefPtr<Font>> m_systemFallbackFontSet;
 
-    const SimpleFontData* m_cachedPrimarySimpleFontData;
+    const Font* m_cachedPrimaryFont;
     RefPtr<FontSelector> m_fontSelector;
 
     WidthCache m_widthCache;
@@ -105,16 +105,16 @@ inline bool FontGlyphs::isFixedPitch(const FontDescription& description)
     return m_pitch == FixedPitch;
 };
 
-inline const SimpleFontData& FontGlyphs::primarySimpleFontData(const FontDescription& description)
+inline const Font& FontGlyphs::primaryFont(const FontDescription& description)
 {
     ASSERT(isMainThread());
-    if (!m_cachedPrimarySimpleFontData) {
+    if (!m_cachedPrimaryFont) {
         auto& primaryRanges = realizeFallbackRangesAt(description, 0);
-        m_cachedPrimarySimpleFontData = primaryRanges.fontDataForCharacter(' ');
-        if (!m_cachedPrimarySimpleFontData)
-            m_cachedPrimarySimpleFontData = &primaryRanges.fontDataForFirstRange();
+        m_cachedPrimaryFont = primaryRanges.fontForCharacter(' ');
+        if (!m_cachedPrimaryFont)
+            m_cachedPrimaryFont = &primaryRanges.fontForFirstRange();
     }
-    return *m_cachedPrimarySimpleFontData;
+    return *m_cachedPrimaryFont;
 }
 
 }

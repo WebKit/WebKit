@@ -804,7 +804,7 @@ EditorState WebPage::editorState() const
     if (!selection.isNone()) {
         Node* nodeToRemove;
         if (RenderStyle* style = Editor::styleForSelectionStart(&frame, nodeToRemove)) {
-            CTFontRef font = style->fontCascade().primaryFontData().getCTFont();
+            CTFontRef font = style->fontCascade().primaryFont().getCTFont();
             CTFontSymbolicTraits traits = font ? CTFontGetSymbolicTraits(font) : 0;
             
             if (traits & kCTFontTraitBold)

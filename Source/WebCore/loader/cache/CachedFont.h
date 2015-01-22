@@ -28,10 +28,10 @@
 
 #include "CachedResource.h"
 #include "CachedResourceClient.h"
+#include "Font.h"
 #include "FontOrientation.h"
 #include "FontRenderingMode.h"
 #include "FontWidthVariant.h"
-#include "SimpleFontData.h"
 
 namespace WebCore {
 
@@ -52,7 +52,7 @@ public:
 
     virtual bool ensureCustomFontData(bool externalSVG, const AtomicString& remoteURI);
 
-    virtual PassRefPtr<SimpleFontData> getFontData(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG);
+    virtual RefPtr<Font> createFont(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, bool externalSVG);
 
 protected:
     FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);
@@ -70,7 +70,7 @@ private:
 
     virtual void allClientsRemoved() override;
 
-    std::unique_ptr<FontCustomPlatformData> m_fontData;
+    std::unique_ptr<FontCustomPlatformData> m_fontCustomPlatformData;
     bool m_loadInitiated;
     bool m_hasCreatedFontDataWrappingResource;
 

@@ -57,15 +57,15 @@ SVGFontData::SVGFontData(SVGFontFaceElement* fontFaceElement)
     ASSERT_ARG(fontFaceElement, fontFaceElement);
 }
 
-void SVGFontData::initializeFontData(SimpleFontData* fontData, float fontSize)
+void SVGFontData::initializeFont(Font* font, float fontSize)
 {
-    ASSERT(fontData);
+    ASSERT(font);
 
     SVGFontFaceElement* svgFontFaceElement = this->svgFontFaceElement();
     ASSERT(svgFontFaceElement);
 
-    fontData->setZeroWidthSpaceGlyph(0);
-    fontData->determinePitch();
+    font->setZeroWidthSpaceGlyph(0);
+    font->determinePitch();
 
     unsigned unitsPerEm = svgFontFaceElement->unitsPerEm();
     float scale = scaleEmToUnits(fontSize, unitsPerEm);
@@ -74,15 +74,15 @@ void SVGFontData::initializeFontData(SimpleFontData* fontData, float fontSize)
     float descent = svgFontFaceElement->descent() * scale;
     float lineGap = 0.1f * fontSize;
 
-    const GlyphPage* glyphPageZero = fontData->glyphPage(0);
+    const GlyphPage* glyphPageZero = font->glyphPage(0);
 
     if (!xHeight && glyphPageZero) {
         // Fallback if x_heightAttr is not specified for the font element.
         Glyph letterXGlyph = glyphPageZero->glyphDataForCharacter('x').glyph;
-        xHeight = letterXGlyph ? fontData->widthForGlyph(letterXGlyph) : 2 * ascent / 3;
+        xHeight = letterXGlyph ? font->widthForGlyph(letterXGlyph) : 2 * ascent / 3;
     }
 
-    FontMetrics& fontMetrics = fontData->fontMetrics();
+    FontMetrics& fontMetrics = font->fontMetrics();
     fontMetrics.setUnitsPerEm(unitsPerEm);
     fontMetrics.setAscent(ascent);
     fontMetrics.setDescent(descent);
@@ -91,25 +91,25 @@ void SVGFontData::initializeFontData(SimpleFontData* fontData, float fontSize)
     fontMetrics.setXHeight(xHeight);
 
     if (!glyphPageZero) {
-        fontData->setSpaceGlyph(0);
-        fontData->setSpaceWidths(0);
-        fontData->setAvgCharWidth(0);
-        fontData->setMaxCharWidth(ascent);
+        font->setSpaceGlyph(0);
+        font->setSpaceWidths(0);
+        font->setAvgCharWidth(0);
+        font->setMaxCharWidth(ascent);
         return;
     }
 
     // Calculate space width.
     Glyph spaceGlyph = glyphPageZero->glyphDataForCharacter(' ').glyph;
-    fontData->setSpaceGlyph(spaceGlyph);
-    fontData->setSpaceWidths(fontData->widthForGlyph(spaceGlyph));
+    font->setSpaceGlyph(spaceGlyph);
+    font->setSpaceWidths(font->widthForGlyph(spaceGlyph));
 
     // Estimate average character width.
     Glyph numeralZeroGlyph = glyphPageZero->glyphDataForCharacter('0').glyph;
-    fontData->setAvgCharWidth(numeralZeroGlyph ? fontData->widthForGlyph(numeralZeroGlyph) : fontData->spaceWidth());
+    font->setAvgCharWidth(numeralZeroGlyph ? font->widthForGlyph(numeralZeroGlyph) : font->spaceWidth());
 
     // Estimate maximum character width.
     Glyph letterWGlyph = glyphPageZero->glyphDataForCharacter('W').glyph;
-    fontData->setMaxCharWidth(letterWGlyph ? fontData->widthForGlyph(letterWGlyph) : ascent);
+    font->setMaxCharWidth(letterWGlyph ? font->widthForGlyph(letterWGlyph) : ascent);
 }
 
 float SVGFontData::widthForSVGGlyph(Glyph glyph, float fontSize) const
@@ -208,10 +208,10 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
     return false;
 }
 
-bool SVGFontData::fillSVGGlyphPage(GlyphPage* pageToFill, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData) const
+bool SVGFontData::fillSVGGlyphPage(GlyphPage* pageToFill, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const Font* font) const
 {
-    ASSERT(fontData->isCustomFont());
-    ASSERT(fontData->isSVGFont());
+    ASSERT(font->isCustomFont());
+    ASSERT(font->isSVGFont());
 
     SVGFontFaceElement* fontFaceElement = this->svgFontFaceElement();
     ASSERT(fontFaceElement);
@@ -220,13 +220,13 @@ bool SVGFontData::fillSVGGlyphPage(GlyphPage* pageToFill, unsigned offset, unsig
     ASSERT(fontElement);
 
     if (bufferLength == length)
-        return fillBMPGlyphs(fontElement, pageToFill, offset, length, buffer, fontData);
+        return fillBMPGlyphs(fontElement, pageToFill, offset, length, buffer, font);
 
     ASSERT(bufferLength == 2 * length);
-    return fillNonBMPGlyphs(fontElement, pageToFill, offset, length, buffer, fontData);
+    return fillNonBMPGlyphs(fontElement, pageToFill, offset, length, buffer, font);
 }
 
-bool SVGFontData::fillBMPGlyphs(SVGFontElement* fontElement, GlyphPage* pageToFill, unsigned offset, unsigned length, UChar* buffer, const SimpleFontData* fontData) const
+bool SVGFontData::fillBMPGlyphs(SVGFontElement* fontElement, GlyphPage* pageToFill, unsigned offset, unsigned length, UChar* buffer, const Font* font) const
 {
     bool haveGlyphs = false;
     Vector<SVGGlyph> glyphs;
@@ -243,14 +243,14 @@ bool SVGFontData::fillBMPGlyphs(SVGFontElement* fontElement, GlyphPage* pageToFi
         // care of matching to the correct glyph, if multiple ones are available, as that's
         // only possible within the context of a string (eg. arabic form matching).
         haveGlyphs = true;
-        pageToFill->setGlyphDataForIndex(offset + i, glyphs.first().tableEntry, fontData);
+        pageToFill->setGlyphDataForIndex(offset + i, glyphs.first().tableEntry, font);
         glyphs.clear();
     }
 
     return haveGlyphs;
 }
 
-bool SVGFontData::fillNonBMPGlyphs(SVGFontElement* fontElement, GlyphPage* pageToFill, unsigned offset, unsigned length, UChar* buffer, const SimpleFontData* fontData) const
+bool SVGFontData::fillNonBMPGlyphs(SVGFontElement* fontElement, GlyphPage* pageToFill, unsigned offset, unsigned length, UChar* buffer, const Font* font) const
 {
     bool haveGlyphs = false;
     Vector<SVGGlyph> glyphs;
@@ -268,7 +268,7 @@ bool SVGFontData::fillNonBMPGlyphs(SVGFontElement* fontElement, GlyphPage* pageT
         // care of matching to the correct glyph, if multiple ones are available, as that's
         // only possible within the context of a string (eg. arabic form matching).
         haveGlyphs = true;
-        pageToFill->setGlyphDataForIndex(offset + i, glyphs.first().tableEntry, fontData);
+        pageToFill->setGlyphDataForIndex(offset + i, glyphs.first().tableEntry, font);
         glyphs.clear();
     }
 

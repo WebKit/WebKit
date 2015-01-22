@@ -41,7 +41,7 @@ typedef const struct __CTLine * CTLineRef;
 namespace WebCore {
 
 class FontCascade;
-class SimpleFontData;
+class Font;
 class TextRun;
 
 enum GlyphIterationStyle { IncludePartialGlyphs, ByWholeGlyphs };
@@ -50,10 +50,10 @@ enum GlyphIterationStyle { IncludePartialGlyphs, ByWholeGlyphs };
 // complex scripts on OS X.
 class ComplexTextController {
 public:
-    ComplexTextController(const FontCascade*, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const SimpleFontData*>* fallbackFonts = 0, bool forTextEmphasis = false);
+    ComplexTextController(const FontCascade*, const TextRun&, bool mayUseNaturalWritingDirection = false, HashSet<const Font*>* fallbackFonts = 0, bool forTextEmphasis = false);
 
     // Advance and emit glyphs up to the specified character.
-    void advance(unsigned to, GlyphBuffer* = 0, GlyphIterationStyle = IncludePartialGlyphs, HashSet<const SimpleFontData*>* fallbackFonts = 0);
+    void advance(unsigned to, GlyphBuffer* = 0, GlyphIterationStyle = IncludePartialGlyphs, HashSet<const Font*>* fallbackFonts = 0);
 
     // Compute the character offset for a given x coordinate.
     int offsetForPosition(float x, bool includePartialGlyphs);
@@ -73,18 +73,18 @@ public:
 private:
     class ComplexTextRun : public RefCounted<ComplexTextRun> {
     public:
-        static Ref<ComplexTextRun> create(CTRunRef ctRun, const SimpleFontData& fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange)
+        static Ref<ComplexTextRun> create(CTRunRef ctRun, const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange)
         {
-            return adoptRef(*new ComplexTextRun(ctRun, fontData, characters, stringLocation, stringLength, runRange));
+            return adoptRef(*new ComplexTextRun(ctRun, font, characters, stringLocation, stringLength, runRange));
         }
 
-        static Ref<ComplexTextRun> create(const SimpleFontData& fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
+        static Ref<ComplexTextRun> create(const Font& font, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr)
         {
-            return adoptRef(*new ComplexTextRun(fontData, characters, stringLocation, stringLength, ltr));
+            return adoptRef(*new ComplexTextRun(font, characters, stringLocation, stringLength, ltr));
         }
 
         unsigned glyphCount() const { return m_glyphCount; }
-        const SimpleFontData& fontData() const { return m_fontData; }
+        const Font& font() const { return m_font; }
         const UChar* characters() const { return m_characters; }
         unsigned stringLocation() const { return m_stringLocation; }
         size_t stringLength() const { return m_stringLength; }
@@ -100,11 +100,11 @@ private:
         void setIsNonMonotonic();
 
     private:
-        ComplexTextRun(CTRunRef, const SimpleFontData&, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange);
-        ComplexTextRun(const SimpleFontData&, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr);
+        ComplexTextRun(CTRunRef, const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange);
+        ComplexTextRun(const Font&, const UChar* characters, unsigned stringLocation, size_t stringLength, bool ltr);
 
         unsigned m_glyphCount;
-        const SimpleFontData& m_fontData;
+        const Font& m_font;
         const UChar* m_characters;
         unsigned m_stringLocation;
         size_t m_stringLength;
@@ -127,7 +127,7 @@ private:
 
     void collectComplexTextRuns();
 
-    void collectComplexTextRunsForCharacters(const UChar*, unsigned length, unsigned stringLocation, const SimpleFontData*);
+    void collectComplexTextRunsForCharacters(const UChar*, unsigned length, unsigned stringLocation, const Font*);
     void adjustGlyphsAndAdvances();
 
     unsigned indexOfCurrentRun(unsigned& leftmostGlyph);
@@ -169,7 +169,7 @@ private:
     float m_leadingExpansion;
     bool m_afterExpansion;
 
-    HashSet<const SimpleFontData*>* m_fallbackFonts;
+    HashSet<const Font*>* m_fallbackFonts;
 
     float m_minGlyphBoundingBoxX;
     float m_maxGlyphBoundingBoxX;

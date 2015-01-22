@@ -22,10 +22,10 @@
 #include "config.h"
 #include "WidthIterator.h"
 
+#include "Font.h"
 #include "FontCascade.h"
 #include "GlyphBuffer.h"
 #include "Latin1TextIterator.h"
-#include "SimpleFontData.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include <wtf/MathExtras.h>
 
@@ -34,7 +34,7 @@ using namespace Unicode;
 
 namespace WebCore {
 
-WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis)
+WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSet<const Font*>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis)
     : m_font(font)
     , m_run(run)
     , m_currentCharacter(0)
@@ -100,7 +100,7 @@ public:
 
 typedef Vector<std::pair<int, OriginalAdvancesForCharacterTreatedAsSpace>, 64> CharactersTreatedAsSpace;
 
-static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int& lastGlyphCount, const SimpleFontData* fontData, WidthIterator& iterator, TypesettingFeatures typesettingFeatures, CharactersTreatedAsSpace& charactersTreatedAsSpace)
+static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int& lastGlyphCount, const Font* font, WidthIterator& iterator, TypesettingFeatures typesettingFeatures, CharactersTreatedAsSpace& charactersTreatedAsSpace)
 {
     ASSERT(typesettingFeatures & (Kerning | Ligatures));
 
@@ -123,16 +123,16 @@ static inline float applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, int&
     UNUSED_PARAM(iterator);
 #else
     // We need to handle transforms on SVG fonts internally, since they are rendered internally.
-    if (fontData->isSVGFont()) {
+    if (font->isSVGFont()) {
         // SVG font ligatures are handled during glyph selection, only kerning remaining.
         if (iterator.run().renderingContext() && (typesettingFeatures & Kerning)) {
             // FIXME: We could pass the necessary context down to this level so we can lazily create rendering contexts at this point.
             // However, a larger refactoring of SVG fonts might necessary to sidestep this problem completely.
-            iterator.run().renderingContext()->applySVGKerning(fontData, iterator, glyphBuffer, lastGlyphCount);
+            iterator.run().renderingContext()->applySVGKerning(font, iterator, glyphBuffer, lastGlyphCount);
         }
     } else
 #endif
-        fontData->applyTransforms(glyphBuffer->glyphs(lastGlyphCount), advances + lastGlyphCount, glyphBufferSize - lastGlyphCount, typesettingFeatures);
+        font->applyTransforms(glyphBuffer->glyphs(lastGlyphCount), advances + lastGlyphCount, glyphBufferSize - lastGlyphCount, typesettingFeatures);
 
     if (!ltr)
         glyphBuffer->reverse(lastGlyphCount, glyphBufferSize - lastGlyphCount);
@@ -166,8 +166,8 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
     float lastRoundingWidth = m_finalRoundingWidth;
     FloatRect bounds;
 
-    const SimpleFontData& primaryFontData = m_font->primaryFontData();
-    const SimpleFontData* lastFontData = &primaryFontData;
+    const Font& primaryFont = m_font->primaryFont();
+    const Font* lastFontData = &primaryFont;
     int lastGlyphCount = glyphBuffer ? glyphBuffer->size() : 0;
 
     UChar32 character = 0;
@@ -183,15 +183,15 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
             textIterator.advance(advanceLength);
             continue;
         }
-        const SimpleFontData* fontData = glyphData.fontData;
-        ASSERT(fontData);
+        const Font* font = glyphData.font;
+        ASSERT(font);
 
         // Now that we have a glyph and font data, get its width.
         float width;
         if (character == '\t' && m_run.allowTabs())
-            width = m_font->tabWidth(*fontData, m_run.tabSize(), m_run.xPos() + m_runWidthSoFar + widthSinceLastRounding);
+            width = m_font->tabWidth(*font, m_run.tabSize(), m_run.xPos() + m_runWidthSoFar + widthSinceLastRounding);
         else {
-            width = fontData->widthForGlyph(glyph);
+            width = font->widthForGlyph(glyph);
 
             // SVG uses horizontalGlyphStretch(), when textLength is used to stretch/squeeze text.
             width *= m_run.horizontalGlyphStretch();
@@ -200,26 +200,26 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
             // First, we round spaces to an adjusted width in all fonts.
             // Second, in fixed-pitch fonts we ensure that all characters that
             // match the width of the space character have the same width as the space character.
-            if (m_run.applyWordRounding() && width == fontData->spaceWidth() && (fontData->pitch() == FixedPitch || glyph == fontData->spaceGlyph()))
-                width = fontData->adjustedSpaceWidth();
+            if (m_run.applyWordRounding() && width == font->spaceWidth() && (font->pitch() == FixedPitch || glyph == font->spaceGlyph()))
+                width = font->adjustedSpaceWidth();
         }
 
-        if (fontData != lastFontData && width) {
+        if (font != lastFontData && width) {
             if (shouldApplyFontTransforms()) {
                 m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, *this, m_typesettingFeatures, charactersTreatedAsSpace);
                 lastGlyphCount = glyphBuffer->size(); // applyFontTransforms doesn't update when there had been only one glyph.
             }
 
-            lastFontData = fontData;
-            if (m_fallbackFonts && fontData != &primaryFontData) {
+            lastFontData = font;
+            if (m_fallbackFonts && font != &primaryFont) {
                 // FIXME: This does a little extra work that could be avoided if
                 // glyphDataForCharacter() returned whether it chose to use a small caps font.
                 if (!m_font->isSmallCaps() || character == u_toupper(character))
-                    m_fallbackFonts->add(fontData);
+                    m_fallbackFonts->add(font);
                 else {
                     const GlyphData& uppercaseGlyphData = m_font->glyphDataForCharacter(u_toupper(character), rtl);
-                    if (uppercaseGlyphData.fontData != &primaryFontData)
-                        m_fallbackFonts->add(uppercaseGlyphData.fontData);
+                    if (uppercaseGlyphData.font != &primaryFont)
+                        m_fallbackFonts->add(uppercaseGlyphData.font);
                 }
             }
         }
@@ -243,9 +243,9 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
                         if (glyphBuffer) {
                             if (glyphBuffer->isEmpty()) {
                                 if (m_forTextEmphasis)
-                                    glyphBuffer->add(fontData->zeroWidthSpaceGlyph(), fontData, m_expansionPerOpportunity, currentCharacter);
+                                    glyphBuffer->add(font->zeroWidthSpaceGlyph(), font, m_expansionPerOpportunity, currentCharacter);
                                 else
-                                    glyphBuffer->add(fontData->spaceGlyph(), fontData, expansionAtThisOpportunity, currentCharacter);
+                                    glyphBuffer->add(font->spaceGlyph(), font, expansionAtThisOpportunity, currentCharacter);
                             } else
                                 glyphBuffer->expandLastAdvance(expansionAtThisOpportunity);
                         }
@@ -274,7 +274,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         }
 
         if (m_accountForGlyphBounds) {
-            bounds = fontData->boundsForGlyph(glyph);
+            bounds = font->boundsForGlyph(glyph);
             if (!currentCharacter)
                 m_firstGlyphOverflow = std::max<float>(0, -bounds.x());
         }
@@ -314,7 +314,7 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
         }
 
         if (glyphBuffer)
-            glyphBuffer->add(glyph, fontData, (rtl ? oldWidth + lastRoundingWidth : width), currentCharacter);
+            glyphBuffer->add(glyph, font, (rtl ? oldWidth + lastRoundingWidth : width), currentCharacter);
 
         lastRoundingWidth = width - oldWidth;
 

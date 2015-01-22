@@ -44,8 +44,8 @@
 
 namespace WebCore {
 
+class Font;
 class FontCascade;
-class SimpleFontData;
 
 class HarfBuzzShaper {
 public:
@@ -66,7 +66,7 @@ public:
 private:
     class HarfBuzzRun {
     public:
-        HarfBuzzRun(const SimpleFontData*, unsigned startIndex, unsigned numCharacters, TextDirection, hb_script_t);
+        HarfBuzzRun(const Font*, unsigned startIndex, unsigned numCharacters, TextDirection, hb_script_t);
 
         void applyShapeResult(hb_buffer_t*);
         void setGlyphAndPositions(unsigned index, uint16_t glyphId, float advance, float offsetX, float offsetY);
@@ -75,7 +75,7 @@ private:
         int characterIndexForXPosition(float targetX);
         float xPositionForOffset(unsigned offset);
 
-        const SimpleFontData* fontData() { return m_fontData; }
+        const Font* fontData() { return m_fontData; }
         unsigned startIndex() const { return m_startIndex; }
         unsigned numCharacters() const { return m_numCharacters; }
         unsigned numGlyphs() const { return m_numGlyphs; }
@@ -88,7 +88,7 @@ private:
         hb_script_t script() { return m_script; }
 
     private:
-        const SimpleFontData* m_fontData;
+        const Font* m_fontData;
         unsigned m_startIndex;
         size_t m_numCharacters;
         unsigned m_numGlyphs;

@@ -28,6 +28,7 @@
 #include "RenderSVGText.h"
 
 #include "FloatQuad.h"
+#include "Font.h"
 #include "GraphicsContext.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -45,7 +46,6 @@
 #include "SVGTextRunRenderingContext.h"
 #include "SVGTransformList.h"
 #include "SVGURIReference.h"
-#include "SimpleFontData.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
 #include <wtf/StackStats.h>

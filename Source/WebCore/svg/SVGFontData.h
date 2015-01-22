@@ -21,21 +21,21 @@
 #define SVGFontData_h
 
 #if ENABLE(SVG_FONTS)
-#include "SimpleFontData.h"
+#include "Font.h"
 
 namespace WebCore {
 
 class SVGFontElement;
 class SVGFontFaceElement;
 
-class SVGFontData : public SimpleFontData::SVGData {
+class SVGFontData : public Font::SVGData {
 public:
     explicit SVGFontData(SVGFontFaceElement*);
     virtual ~SVGFontData() { }
 
-    virtual void initializeFontData(SimpleFontData*, float fontSize) override;
+    virtual void initializeFont(Font*, float fontSize) override;
     virtual float widthForSVGGlyph(Glyph, float fontSize) const override;
-    virtual bool fillSVGGlyphPage(GlyphPage*, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData*) const override;
+    virtual bool fillSVGGlyphPage(GlyphPage*, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const Font*) const override;
 
     bool applySVGGlyphSelection(WidthIterator&, GlyphData&, bool mirror, int currentCharacter, unsigned& advanceLength, String& normalizedSpacesStringCache) const;
 
@@ -50,8 +50,8 @@ public:
     float verticalAdvanceY() const { return m_verticalAdvanceY; }
 
 private:
-    bool fillBMPGlyphs(SVGFontElement*, GlyphPage* , unsigned offset, unsigned length, UChar* buffer, const SimpleFontData*) const;
-    bool fillNonBMPGlyphs(SVGFontElement*, GlyphPage* , unsigned offset, unsigned length, UChar* buffer, const SimpleFontData*) const;
+    bool fillBMPGlyphs(SVGFontElement*, GlyphPage* , unsigned offset, unsigned length, UChar* buffer, const Font*) const;
+    bool fillNonBMPGlyphs(SVGFontElement*, GlyphPage* , unsigned offset, unsigned length, UChar* buffer, const Font*) const;
 
     bool applyTransforms(GlyphBufferGlyph*, GlyphBufferAdvance*, size_t, TypesettingFeatures) const = delete;
 

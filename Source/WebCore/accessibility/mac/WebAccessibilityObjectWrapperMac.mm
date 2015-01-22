@@ -47,6 +47,7 @@
 #import "ColorMac.h"
 #import "ContextMenuController.h"
 #import "Editor.h"
+#import "Font.h"
 #import "FontCascade.h"
 #import "FrameLoaderClient.h"
 #import "FrameSelection.h"
@@ -64,7 +65,6 @@
 #import "RenderView.h"
 #import "RenderWidget.h"
 #import "ScrollView.h"
-#import "SimpleFontData.h"
 #import "TextCheckerClient.h"
 #import "TextCheckingHelper.h"
 #import "TextIterator.h"
@@ -848,7 +848,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     const RenderStyle& style = renderer->style();
     
     // set basic font info
-    AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style.fontCascade().primaryFontData().getNSFont(), range);
+    AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style.fontCascade().primaryFont().getNSFont(), range);
     
     // set basic colors
     AXAttributeStringSetColor(attrString, NSAccessibilityForegroundColorTextAttribute, nsColor(style.visitedDependentColor(CSSPropertyColor)), range);

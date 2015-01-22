@@ -27,10 +27,10 @@
 #include "OpenTypeVerticalData.h"
 
 #include "FloatRect.h"
+#include "Font.h"
 #include "GlyphPage.h"
 #include "OpenTypeTypes.h"
 #include "SharedBuffer.h"
-#include "SimpleFontData.h"
 #include <wtf/RefPtr.h>
 
 using namespace std;
@@ -479,7 +479,7 @@ void OpenTypeVerticalData::loadVerticalGlyphSubstitutions(const FontPlatformData
         gsub->getVerticalGlyphSubstitutions(&m_verticalGlyphMap, *buffer.get());
 }
 
-float OpenTypeVerticalData::advanceHeight(const SimpleFontData* font, Glyph glyph) const
+float OpenTypeVerticalData::advanceHeight(const Font* font, Glyph glyph) const
 {
     size_t countHeights = m_advanceHeights.size();
     if (countHeights) {
@@ -492,7 +492,7 @@ float OpenTypeVerticalData::advanceHeight(const SimpleFontData* font, Glyph glyp
     return font->fontMetrics().height();
 }
 
-void OpenTypeVerticalData::getVerticalTranslationsForGlyphs(const SimpleFontData* font, const Glyph* glyphs, size_t count, float* outXYArray) const
+void OpenTypeVerticalData::getVerticalTranslationsForGlyphs(const Font* font, const Glyph* glyphs, size_t count, float* outXYArray) const
 {
     size_t countWidths = m_advanceWidths.size();
     ASSERT(countWidths > 0);
@@ -535,7 +535,7 @@ void OpenTypeVerticalData::getVerticalTranslationsForGlyphs(const SimpleFontData
     }
 }
 
-void OpenTypeVerticalData::substituteWithVerticalGlyphs(const SimpleFontData* font, GlyphPage* glyphPage, unsigned offset, unsigned length) const
+void OpenTypeVerticalData::substituteWithVerticalGlyphs(const Font* font, GlyphPage* glyphPage, unsigned offset, unsigned length) const
 {
     const HashMap<Glyph, Glyph>& map = m_verticalGlyphMap;
     if (map.isEmpty())

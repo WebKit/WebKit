@@ -29,12 +29,12 @@
 #include "config.h"
 #include "GlyphPage.h"
 
-#include "SimpleFontData.h"
+#include "Font.h"
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 
 namespace WebCore {
 
-bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const Font* fontData)
 {
     // bufferLength will be greater than the requested number of glyphs if the buffer contains surrogate pairs.
     // We won't support this for now.

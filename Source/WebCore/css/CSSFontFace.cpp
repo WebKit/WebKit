@@ -30,10 +30,10 @@
 #include "CSSFontSelector.h"
 #include "CSSSegmentedFontFace.h"
 #include "Document.h"
+#include "Font.h"
 #include "FontDescription.h"
 #include "FontLoader.h"
 #include "RuntimeEnabledFeatures.h"
-#include "SimpleFontData.h"
 
 namespace WebCore {
 
@@ -108,7 +108,7 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource* source)
 #endif
 }
 
-PassRefPtr<SimpleFontData> CSSFontFace::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
+RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
 {
     m_activeSource = 0;
     if (!isValid())
@@ -124,7 +124,7 @@ PassRefPtr<SimpleFontData> CSSFontFace::getFontData(const FontDescription& fontD
 
     size_t size = m_sources.size();
     for (size_t i = 0; i < size; ++i) {
-        if (RefPtr<SimpleFontData> result = m_sources[i]->getFontData(fontDescription, syntheticBold, syntheticItalic, fontSelector)) {
+        if (RefPtr<Font> result = m_sources[i]->font(fontDescription, syntheticBold, syntheticItalic, fontSelector)) {
             m_activeSource = m_sources[i].get();
 #if ENABLE(FONT_LOAD_EVENTS)
             if (RuntimeEnabledFeatures::sharedFeatures().fontLoadEventsEnabled() && m_loadState == Loading && m_sources[i]->isLoaded()) {

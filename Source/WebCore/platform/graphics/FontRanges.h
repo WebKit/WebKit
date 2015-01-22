@@ -26,7 +26,7 @@
 #ifndef FontRanges_h
 #define FontRanges_h
 
-#include "SimpleFontData.h"
+#include "Font.h"
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
@@ -35,25 +35,25 @@ namespace WebCore {
 class FontRanges {
 public:
     struct Range {
-        Range(UChar32 from, UChar32 to, Ref<SimpleFontData>&& fontData)
+        Range(UChar32 from, UChar32 to, Ref<Font>&& font)
             : m_from(from)
             , m_to(to)
-            , m_fontData(WTF::move(fontData))
+            , m_font(WTF::move(font))
         {
         }
 
         UChar32 from() const { return m_from; }
         UChar32 to() const { return m_to; }
-        const SimpleFontData& fontData() const { return *m_fontData; }
+        const Font& font() const { return *m_font; }
 
     private:
         UChar32 m_from;
         UChar32 m_to;
-        RefPtr<SimpleFontData> m_fontData;
+        RefPtr<Font> m_font;
     };
 
     FontRanges();
-    explicit FontRanges(RefPtr<SimpleFontData>&&);
+    explicit FontRanges(RefPtr<Font>&&);
     ~FontRanges();
 
     bool isNull() const { return m_ranges.isEmpty(); }
@@ -62,8 +62,8 @@ public:
     unsigned size() const { return m_ranges.size(); }
     const Range& rangeAt(unsigned i) const { return m_ranges[i]; }
 
-    const SimpleFontData* fontDataForCharacter(UChar32) const;
-    const SimpleFontData& fontDataForFirstRange() const;
+    const Font* fontForCharacter(UChar32) const;
+    const Font& fontForFirstRange() const;
     bool isLoading() const;
 
 private:

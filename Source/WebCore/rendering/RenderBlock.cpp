@@ -2325,7 +2325,7 @@ LayoutUnit RenderBlock::adjustLogicalLeftOffsetForLine(LayoutUnit offsetFromFloa
         return left;
 
     // FIXME: Should letter-spacing apply? This is complicated since it doesn't apply at the edge?
-    float maxCharWidth = lineGrid->style().fontCascade().primaryFontData().maxCharWidth();
+    float maxCharWidth = lineGrid->style().fontCascade().primaryFont().maxCharWidth();
     if (!maxCharWidth)
         return left;
 
@@ -2365,7 +2365,7 @@ LayoutUnit RenderBlock::adjustLogicalRightOffsetForLine(LayoutUnit offsetFromFlo
         return right;
 
     // FIXME: Should letter-spacing apply? This is complicated since it doesn't apply at the edge?
-    float maxCharWidth = lineGrid->style().fontCascade().primaryFontData().maxCharWidth();
+    float maxCharWidth = lineGrid->style().fontCascade().primaryFont().maxCharWidth();
     if (!maxCharWidth)
         return right;
 
@@ -3705,7 +3705,7 @@ static inline TextRun constructTextRunInternal(RenderObject* context, const Font
     bool directionalOverride = style.rtlOrdering() == VisualOrder;
 
     TextRun run(characters, length, 0, 0, expansion, textDirection, directionalOverride);
-    if (font.primaryFontData().isSVGFont()) {
+    if (font.primaryFont().isSVGFont()) {
         ASSERT(context); // FIXME: Thread a RenderObject& to this point so we don't have to dereference anything.
         run.setRenderingContext(SVGTextRunRenderingContext::create(*context));
     }
@@ -3725,7 +3725,7 @@ static inline TextRun constructTextRunInternal(RenderObject* context, const Font
             directionalOverride |= isOverride(style.unicodeBidi());
     }
     TextRun run(characters, length, 0, 0, expansion, textDirection, directionalOverride);
-    if (font.primaryFontData().isSVGFont()) {
+    if (font.primaryFont().isSVGFont()) {
         ASSERT(context); // FIXME: Thread a RenderObject& to this point so we don't have to dereference anything.
         run.setRenderingContext(SVGTextRunRenderingContext::create(*context));
     }

@@ -25,7 +25,7 @@
  */
 
 #import "config.h"
-#import "SimpleFontData.h"
+#import "Font.h"
 
 #import "BlockExceptions.h"
 #import "Color.h"
@@ -71,7 +71,7 @@ static bool fontHasVerticalGlyphs(CTFontRef ctFont)
     return false;
 }
 
-static bool initFontData(SimpleFontData* fontData)
+static bool initFontData(Font* fontData)
 {
     if (!fontData->platformData().cgFont())
         return false;
@@ -85,7 +85,7 @@ static NSString *webFallbackFontFamily(void)
     return webFallbackFontFamily;
 }
 
-const SimpleFontData* SimpleFontData::compositeFontReferenceFontData(NSFont *key) const
+const Font* Font::compositeFontReferenceFont(NSFont *key) const
 {
     if (!key || CFEqual(adoptCF(CTFontCopyPostScriptName(CTFontRef(key))).get(), CFSTR("LastResort")))
         return nullptr;
@@ -103,12 +103,12 @@ const SimpleFontData* SimpleFontData::compositeFontReferenceFontData(NSFont *key
         bool syntheticOblique = platformData().syntheticOblique() && !(traits & kCTFontItalicTrait);
 
         FontPlatformData substitutePlatform(substituteFont, platformData().size(), isUsingPrinterFont, syntheticBold, syntheticOblique, platformData().orientation(), platformData().widthVariant());
-        addResult.iterator->value = SimpleFontData::create(substitutePlatform, isCustomFont());
+        addResult.iterator->value = Font::create(substitutePlatform, isCustomFont());
     }
     return addResult.iterator->value.get();
 }
 
-void SimpleFontData::platformInit()
+void Font::platformInit()
 {
     m_syntheticBoldOffset = m_platformData.m_syntheticBold ? 1.0f : 0.f;
 
@@ -226,7 +226,7 @@ void SimpleFontData::platformInit()
         else
             xHeight = scaleEmToUnits(CGFontGetXHeight(m_platformData.cgFont()), unitsPerEm) * pointSize;
     } else
-        xHeight = verticalRightOrientationFontData()->fontMetrics().xHeight();
+        xHeight = verticalRightOrientationFont()->fontMetrics().xHeight();
 
     m_fontMetrics.setUnitsPerEm(unitsPerEm);
     m_fontMetrics.setAscent(ascent);
@@ -241,7 +241,7 @@ static CFDataRef copyFontTableForTag(FontPlatformData& platformData, FourCharCod
     return CGFontCopyTableForTag(platformData.cgFont(), tableName);
 }
 
-void SimpleFontData::platformCharWidthInit()
+void Font::platformCharWidthInit()
 {
     m_avgCharWidth = 0;
     m_maxCharWidth = 0;
@@ -269,17 +269,17 @@ void SimpleFontData::platformCharWidthInit()
 }
 #endif // USE(APPKIT)
 
-void SimpleFontData::platformDestroy()
+void Font::platformDestroy()
 {
 }
 
 #if !PLATFORM(IOS)
-PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescription, float scaleFactor) const
 {
     if (isCustomFont()) {
         FontPlatformData scaledFontData(m_platformData);
         scaledFontData.m_size = scaledFontData.m_size * scaleFactor;
-        return SimpleFontData::create(scaledFontData, true, false);
+        return Font::create(scaledFontData, true, false);
     }
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -310,7 +310,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const Fo
     return 0;
 }
 
-void SimpleFontData::determinePitch()
+void Font::determinePitch()
 {
     NSFont* f = m_platformData.nsFont();
     // Special case Osaka-Mono.
@@ -333,7 +333,7 @@ void SimpleFontData::determinePitch()
 }
 #endif // !PLATFORM(IOS)
 
-FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
+FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 {
     FloatRect boundingBox;
     boundingBox = CTFontGetBoundingRectsForGlyphs(m_platformData.ctFont(), platformData().orientation() == Vertical ? kCTFontVerticalOrientation : kCTFontHorizontalOrientation, &glyph, 0, 1);
@@ -345,7 +345,7 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 }
 
 #if PLATFORM(MAC)
-inline CGFontRenderingStyle SimpleFontData::renderingStyle() const
+inline CGFontRenderingStyle Font::renderingStyle() const
 {
     CGFontRenderingStyle style = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization;
     NSFont *font = platformData().nsFont();
@@ -364,7 +364,7 @@ inline CGFontRenderingStyle SimpleFontData::renderingStyle() const
     return style;
 }
 
-inline bool SimpleFontData::advanceForColorBitmapFont(Glyph glyph, CGSize& advance) const
+inline bool Font::advanceForColorBitmapFont(Glyph glyph, CGSize& advance) const
 {
     NSFont *font = platformData().nsFont();
     if (!font || !platformData().isColorBitmapFont())
@@ -394,7 +394,7 @@ static inline bool isEmoji(const FontPlatformData& platformData)
 #endif
 }
 
-inline bool SimpleFontData::canUseFastGlyphAdvanceGetter(Glyph glyph, CGSize& advance, bool& populatedAdvance) const
+inline bool Font::canUseFastGlyphAdvanceGetter(Glyph glyph, CGSize& advance, bool& populatedAdvance) const
 {
     // Fast getter doesn't take custom tracking into account
     if (hasCustomTracking(platformData().ctFont()))
@@ -410,7 +410,7 @@ inline bool SimpleFontData::canUseFastGlyphAdvanceGetter(Glyph glyph, CGSize& ad
     return true;
 }
 
-float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
+float Font::platformWidthForGlyph(Glyph glyph) const
 {
     CGSize advance = CGSizeZero;
     bool horizontal = platformData().orientation() == Horizontal;
@@ -446,7 +446,7 @@ static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* c
     return info->characters + stringIndex;
 }
 
-bool SimpleFontData::canRenderCombiningCharacterSequence(const UChar* characters, size_t length) const
+bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t length) const
 {
     ASSERT(isMainThread());
 

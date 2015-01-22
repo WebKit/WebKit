@@ -31,8 +31,8 @@
 
 #include "CoreGraphicsSPI.h"
 #include "CoreTextSPI.h"
+#include "Font.h"
 #include "FontCascade.h"
-#include "SimpleFontData.h"
 #include "WebCoreSystemInterface.h"
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const Font* fontData)
 {
     if (fontData->platformData().isCompositeFontReference())
         return true;
@@ -55,7 +55,7 @@ static bool shouldUseCoreText(const UChar* buffer, unsigned bufferLength, const 
     return false;
 }
 
-bool GlyphPage::mayUseMixedFontDataWhenFilling(const UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+bool GlyphPage::mayUseMixedFontsWhenFilling(const UChar* buffer, unsigned bufferLength, const Font* fontData)
 {
 #if USE(APPKIT)
     // FIXME: This is only really needed for composite font references.
@@ -68,7 +68,7 @@ bool GlyphPage::mayUseMixedFontDataWhenFilling(const UChar* buffer, unsigned buf
 #endif
 }
 
-bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
+bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const Font* fontData)
 {
     bool haveGlyphs = false;
 
@@ -163,7 +163,7 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
                     }
 #if USE(APPKIT)
                 } else {
-                    const SimpleFontData* runSimple = fontData->compositeFontReferenceFontData((NSFont *)runFont);
+                    const Font* runSimple = fontData->compositeFontReferenceFont((NSFont *)runFont);
                     if (runSimple) {
                         for (CFIndex i = 0; i < glyphCount; ++i) {
                             if (stringIndices[i] >= static_cast<CFIndex>(bufferLength)) {

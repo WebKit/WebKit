@@ -1333,7 +1333,7 @@ void RenderMathMLOperator::resetStretchSize()
 
 FloatRect RenderMathMLOperator::boundsForGlyph(const GlyphData& data) const
 {
-    return data.fontData->boundsForGlyph(data.glyph);
+    return data.font->boundsForGlyph(data.glyph);
 }
 
 float RenderMathMLOperator::heightForGlyph(const GlyphData& data) const
@@ -1343,7 +1343,7 @@ float RenderMathMLOperator::heightForGlyph(const GlyphData& data) const
 
 float RenderMathMLOperator::advanceForGlyph(const GlyphData& data) const
 {
-    return data.fontData->widthForGlyph(data.glyph);
+    return data.font->widthForGlyph(data.glyph);
 }
 
 void RenderMathMLOperator::computePreferredLogicalWidths()
@@ -1521,11 +1521,11 @@ bool RenderMathMLOperator::getGlyphAssemblyFallBack(Vector<OpenTypeMathData::Ass
     if (!bottom.glyph)
         bottom.glyph = extension.glyph;
 
-    top.fontData = &style().fontCascade().primaryFontData();
-    extension.fontData = top.fontData;
-    bottom.fontData = top.fontData;
+    top.font = &style().fontCascade().primaryFont();
+    extension.font = top.font;
+    bottom.font = top.font;
     if (middle.glyph)
-        middle.fontData = top.fontData;
+        middle.font = top.font;
 
     stretchyData.setGlyphAssemblyMode(top, extension, bottom, middle);
 
@@ -1538,24 +1538,24 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::getDisplayStyleLargeOpe
 
     ASSERT(m_isVertical && isLargeOperatorInDisplayStyle());
 
-    const auto& primaryFontData = style().fontCascade().primaryFontData();
+    const auto& primaryFont = style().fontCascade().primaryFont();
     GlyphData baseGlyph = style().fontCascade().glyphDataForCharacter(character, !style().isLeftToRightDirection());
-    if (!primaryFontData.mathData() || baseGlyph.fontData != &primaryFontData)
+    if (!primaryFont.mathData() || baseGlyph.font != &primaryFont)
         return data;
 
     Vector<Glyph> sizeVariants;
     Vector<OpenTypeMathData::AssemblyPart> assemblyParts;
 
     // The value of displayOperatorMinHeight is sometimes too small, so we ensure that it is at least \sqrt{2} times the size of the base glyph.
-    float displayOperatorMinHeight = std::max(baseGlyph.fontData->boundsForGlyph(baseGlyph.glyph).height() * sqrtOfTwoFloat, primaryFontData.mathData()->getMathConstant(primaryFontData, OpenTypeMathData::DisplayOperatorMinHeight));
+    float displayOperatorMinHeight = std::max(baseGlyph.font->boundsForGlyph(baseGlyph.glyph).height() * sqrtOfTwoFloat, primaryFont.mathData()->getMathConstant(primaryFont, OpenTypeMathData::DisplayOperatorMinHeight));
 
-    primaryFontData.mathData()->getMathVariants(baseGlyph.glyph, true, sizeVariants, assemblyParts);
+    primaryFont.mathData()->getMathVariants(baseGlyph.glyph, true, sizeVariants, assemblyParts);
 
     // We choose the first size variant that is larger than the expected displayOperatorMinHeight and otherwise fallback to the largest variant.
     for (auto& variant : sizeVariants) {
         GlyphData sizeVariant;
         sizeVariant.glyph = variant;
-        sizeVariant.fontData = &primaryFontData;
+        sizeVariant.font = &primaryFont;
         data.setSizeVariantMode(sizeVariant);
         if (boundsForGlyph(sizeVariant).height() >= displayOperatorMinHeight)
             return data;
@@ -1570,18 +1570,18 @@ RenderMathMLOperator::StretchyData RenderMathMLOperator::findStretchyData(UChar 
     StretchyData data;
     StretchyData assemblyData;
 
-    const auto& primaryFontData = style().fontCascade().primaryFontData();
+    const auto& primaryFont = style().fontCascade().primaryFont();
     GlyphData baseGlyph = style().fontCascade().glyphDataForCharacter(character, !style().isLeftToRightDirection());
     
-    if (primaryFontData.mathData() && baseGlyph.fontData == &primaryFontData) {
+    if (primaryFont.mathData() && baseGlyph.font == &primaryFont) {
         Vector<Glyph> sizeVariants;
         Vector<OpenTypeMathData::AssemblyPart> assemblyParts;
-        primaryFontData.mathData()->getMathVariants(baseGlyph.glyph, m_isVertical, sizeVariants, assemblyParts);
+        primaryFont.mathData()->getMathVariants(baseGlyph.glyph, m_isVertical, sizeVariants, assemblyParts);
         // We verify the size variants.
         for (auto& variant : sizeVariants) {
             GlyphData sizeVariant;
             sizeVariant.glyph = variant;
-            sizeVariant.fontData = &primaryFontData;
+            sizeVariant.font = &primaryFont;
             if (maximumGlyphWidth)
                 *maximumGlyphWidth = std::max(*maximumGlyphWidth, advanceForGlyph(sizeVariant));
             else {
@@ -1801,8 +1801,8 @@ LayoutRect RenderMathMLOperator::paintGlyph(PaintInfo& info, const GlyphData& da
     info.context->clip(clipBounds);
 
     GlyphBuffer buffer;
-    buffer.add(data.glyph, data.fontData, advanceForGlyph(data));
-    info.context->drawGlyphs(style().fontCascade(), *data.fontData, buffer, 0, 1, origin);
+    buffer.add(data.glyph, data.font, advanceForGlyph(data));
+    info.context->drawGlyphs(style().fontCascade(), *data.font, buffer, 0, 1, origin);
 
     return glyphPaintRect;
 }
@@ -1894,11 +1894,11 @@ void RenderMathMLOperator::paint(PaintInfo& info, const LayoutPoint& paintOffset
     if (m_stretchyData.mode() == DrawSizeVariant) {
         ASSERT(m_stretchyData.variant().glyph);
         GlyphBuffer buffer;
-        buffer.add(m_stretchyData.variant().glyph, m_stretchyData.variant().fontData, advanceForGlyph(m_stretchyData.variant()));
+        buffer.add(m_stretchyData.variant().glyph, m_stretchyData.variant().font, advanceForGlyph(m_stretchyData.variant()));
         LayoutPoint operatorTopLeft = ceiledIntPoint(paintOffset + location());
         FloatRect glyphBounds = boundsForGlyph(m_stretchyData.variant());
         LayoutPoint operatorOrigin(operatorTopLeft.x(), operatorTopLeft.y() - glyphBounds.y());
-        info.context->drawGlyphs(style().fontCascade(), *m_stretchyData.variant().fontData, buffer, 0, 1, operatorOrigin);
+        info.context->drawGlyphs(style().fontCascade(), *m_stretchyData.variant().font, buffer, 0, 1, operatorOrigin);
         return;
     }
 
@@ -1980,8 +1980,8 @@ void RenderMathMLOperator::paintChildren(PaintInfo& paintInfo, const LayoutPoint
 
 LayoutUnit RenderMathMLOperator::trailingSpaceError()
 {
-    const auto& primaryFontData = style().fontCascade().primaryFontData();
-    if (!primaryFontData.mathData())
+    const auto& primaryFont = style().fontCascade().primaryFont();
+    if (!primaryFont.mathData())
         return 0;
 
     // For OpenType MATH font, the layout is based on RenderMathOperator for which the preferred width is sometimes overestimated (bug https://bugs.webkit.org/show_bug.cgi?id=130326).

@@ -28,11 +28,11 @@
 #import <WebCore/Chrome.h>
 #import <WebCore/ChromeClient.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/Font.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/PopupMenuClient.h>
-#import <WebCore/SimpleFontData.h>
 #import <WebCore/WebCoreSystemInterface.h>
 
 using namespace WebCore;
@@ -81,9 +81,9 @@ void PopupMenuMac::populate()
         PopupMenuStyle style = m_client->itemStyle(i);
         RetainPtr<NSMutableDictionary> attributes = adoptNS([[NSMutableDictionary alloc] init]);
         if (style.font() != FontCascade()) {
-            NSFont *font = style.font().primaryFontData().getNSFont();
+            NSFont *font = style.font().primaryFont().getNSFont();
             if (!font) {
-                CGFloat size = style.font().primaryFontData().platformData().size();
+                CGFloat size = style.font().primaryFont().platformData().size();
                 font = style.font().weight() < FontWeightBold ? [NSFont systemFontOfSize:size] : [NSFont boldSystemFontOfSize:size];
             }
             [attributes setObject:font forKey:NSFontAttributeName];
@@ -148,7 +148,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
     NSMenu* menu = [m_popup menu];
     
     NSPoint location;
-    NSFont* font = m_client->menuStyle().font().primaryFontData().getNSFont();
+    NSFont* font = m_client->menuStyle().font().primaryFont().getNSFont();
 
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -10;

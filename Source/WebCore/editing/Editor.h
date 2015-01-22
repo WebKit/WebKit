@@ -64,7 +64,7 @@ class HitTestResult;
 class KillRing;
 class Pasteboard;
 class SharedBuffer;
-class SimpleFontData;
+class Font;
 class SpellCheckRequest;
 class SpellChecker;
 class StyleProperties;
@@ -422,7 +422,7 @@ public:
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
     WEBCORE_EXPORT bool insertParagraphSeparatorInQuotedContent();
-    WEBCORE_EXPORT const SimpleFontData* fontForSelection(bool&) const;
+    WEBCORE_EXPORT const Font* fontForSelection(bool&) const;
     WEBCORE_EXPORT NSDictionary *fontAttributesForSelectionStart() const;
     WEBCORE_EXPORT String stringSelectionForPasteboard();
     String stringSelectionForPasteboardWithImageAltText();

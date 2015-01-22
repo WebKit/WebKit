@@ -35,8 +35,8 @@ public:
     virtual ~EmojiFallbackFontSelector() override { }
     virtual WebCore::FontRanges fontRangesForFamily(const WebCore::FontDescription&, const AtomicString&) override { ASSERT_NOT_REACHED(); return WebCore::FontRanges(); }
     virtual bool resolvesFamilyFor(const WebCore::FontDescription&) const override { ASSERT_NOT_REACHED(); return false; }
-    virtual size_t fallbackFontDataCount() override { return 1; };
-    virtual PassRefPtr<WebCore::SimpleFontData> fallbackFontDataAt(const WebCore::FontDescription&, size_t) override;
+    virtual size_t fallbackFontCount() override { return 1; };
+    virtual PassRefPtr<WebCore::Font> fallbackFontAt(const WebCore::FontDescription&, size_t) override;
 
     virtual void registerForInvalidationCallbacks(WebCore::FontSelectorClient*) override { }
     virtual void unregisterForInvalidationCallbacks(WebCore::FontSelectorClient*) override { }

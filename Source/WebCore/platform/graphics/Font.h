@@ -21,13 +21,13 @@
  *
  */
 
-#ifndef SimpleFontData_h
-#define SimpleFontData_h
+#ifndef Font_h
+#define Font_h
 
+#include "FloatRect.h"
 #include "FontBaseline.h"
 #include "FontMetrics.h"
 #include "FontPlatformData.h"
-#include "FloatRect.h"
 #include "GlyphBuffer.h"
 #include "GlyphMetricsMap.h"
 #include "GlyphPage.h"
@@ -64,36 +64,36 @@ class SharedBuffer;
 struct GlyphData;
 struct WidthIterator;
 
-enum FontDataVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
+enum FontVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
-class SimpleFontData : public RefCounted<SimpleFontData> {
+class Font : public RefCounted<Font> {
 public:
     class SVGData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~SVGData() { }
 
-        virtual void initializeFontData(SimpleFontData*, float fontSize) = 0;
+        virtual void initializeFont(Font*, float fontSize) = 0;
         virtual float widthForSVGGlyph(Glyph, float fontSize) const = 0;
-        virtual bool fillSVGGlyphPage(GlyphPage*, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData*) const = 0;
+        virtual bool fillSVGGlyphPage(GlyphPage*, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const Font*) const = 0;
     };
 
     // Used to create platform fonts.
-    static Ref<SimpleFontData> create(const FontPlatformData& platformData, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false)
+    static Ref<Font> create(const FontPlatformData& platformData, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false)
     {
-        return adoptRef(*new SimpleFontData(platformData, isCustomFont, isLoading, isTextOrientationFallback));
+        return adoptRef(*new Font(platformData, isCustomFont, isLoading, isTextOrientationFallback));
     }
 
     // Used to create SVG Fonts.
-    static Ref<SimpleFontData> create(std::unique_ptr<SVGData> svgData, float fontSize, bool syntheticBold, bool syntheticItalic)
+    static Ref<Font> create(std::unique_ptr<SVGData> svgData, float fontSize, bool syntheticBold, bool syntheticItalic)
     {
-        return adoptRef(*new SimpleFontData(WTF::move(svgData), fontSize, syntheticBold, syntheticItalic));
+        return adoptRef(*new Font(WTF::move(svgData), fontSize, syntheticBold, syntheticItalic));
     }
 
-    ~SimpleFontData();
+    ~Font();
 
-    static const SimpleFontData* systemFallback() { return reinterpret_cast<const SimpleFontData*>(-1); }
+    static const Font* systemFallback() { return reinterpret_cast<const Font*>(-1); }
 
     const FontPlatformData& platformData() const { return m_platformData; }
     const OpenTypeMathData* mathData() const;
@@ -101,30 +101,30 @@ public:
     const OpenTypeVerticalData* verticalData() const { return m_verticalData.get(); }
 #endif
 
-    PassRefPtr<SimpleFontData> smallCapsFontData(const FontDescription&) const;
-    PassRefPtr<SimpleFontData> emphasisMarkFontData(const FontDescription&) const;
-    PassRefPtr<SimpleFontData> brokenIdeographFontData() const;
-    PassRefPtr<SimpleFontData> nonSyntheticItalicFontData() const;
+    PassRefPtr<Font> smallCapsFont(const FontDescription&) const;
+    PassRefPtr<Font> emphasisMarkFont(const FontDescription&) const;
+    PassRefPtr<Font> brokenIdeographFont() const;
+    PassRefPtr<Font> nonSyntheticItalicFont() const;
 
-    PassRefPtr<SimpleFontData> variantFontData(const FontDescription& description, FontDataVariant variant) const
+    PassRefPtr<Font> variantFont(const FontDescription& description, FontVariant variant) const
     {
         switch (variant) {
         case SmallCapsVariant:
-            return smallCapsFontData(description);
+            return smallCapsFont(description);
         case EmphasisMarkVariant:
-            return emphasisMarkFontData(description);
+            return emphasisMarkFont(description);
         case BrokenIdeographVariant:
-            return brokenIdeographFontData();
+            return brokenIdeographFont();
         case AutoVariant:
         case NormalVariant:
             break;
         }
         ASSERT_NOT_REACHED();
-        return const_cast<SimpleFontData*>(this);
+        return const_cast<Font*>(this);
     }
 
-    PassRefPtr<SimpleFontData> verticalRightOrientationFontData() const;
-    PassRefPtr<SimpleFontData> uprightOrientationFontData() const;
+    PassRefPtr<Font> verticalRightOrientationFont() const;
+    PassRefPtr<Font> uprightOrientationFont() const;
 
     bool hasVerticalGlyphs() const { return m_hasVerticalGlyphs; }
     bool isTextOrientationFallback() const { return m_isTextOrientationFallback; }
@@ -140,7 +140,7 @@ public:
     void setAvgCharWidth(float avgCharWidth) { m_avgCharWidth = avgCharWidth; }
 
     FloatRect boundsForGlyph(Glyph) const;
-    float widthForGlyph(Glyph glyph) const;
+    float widthForGlyph(Glyph) const;
     FloatRect platformBoundsForGlyph(Glyph) const;
     float platformWidthForGlyph(Glyph) const;
 
@@ -167,7 +167,7 @@ public:
     GlyphData glyphDataForCharacter(UChar32) const;
     Glyph glyphForCharacter(UChar32) const;
 
-    RefPtr<SimpleFontData> systemFallbackFontDataForCharacter(UChar32, const FontDescription&, bool isForPlatformFont) const;
+    RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, bool isForPlatformFont) const;
 
     const GlyphPage* glyphPage(unsigned pageNumber) const;
 
@@ -185,7 +185,7 @@ public:
 #endif
 
 #if USE(APPKIT)
-    const SimpleFontData* compositeFontReferenceFontData(NSFont *key) const;
+    const Font* compositeFontReferenceFont(NSFont *key) const;
     NSFont* getNSFont() const { return m_platformData.nsFont(); }
 #endif
 
@@ -213,9 +213,9 @@ public:
 #endif
 
 private:
-    SimpleFontData(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false);
+    Font(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false);
 
-    SimpleFontData(std::unique_ptr<SVGData>, float fontSize, bool syntheticBold, bool syntheticItalic);
+    Font(std::unique_ptr<SVGData>, float fontSize, bool syntheticBold, bool syntheticItalic);
 
     void platformInit();
     void platformGlyphInit();
@@ -224,20 +224,20 @@ private:
 
     void initCharWidths();
 
-    PassRefPtr<SimpleFontData> createScaledFontData(const FontDescription&, float scaleFactor) const;
-    PassRefPtr<SimpleFontData> platformCreateScaledFontData(const FontDescription&, float scaleFactor) const;
+    PassRefPtr<Font> createScaledFont(const FontDescription&, float scaleFactor) const;
+    PassRefPtr<Font> platformCreateScaledFont(const FontDescription&, float scaleFactor) const;
 
     void removeFromSystemFallbackCache();
 
 #if PLATFORM(WIN)
     void initGDIFont();
     void platformCommonDestroy();
-    FloatRect boundsForGDIGlyph(Glyph glyph) const;
-    float widthForGDIGlyph(Glyph glyph) const;
+    FloatRect boundsForGDIGlyph(Glyph) const;
+    float widthForGDIGlyph(Glyph) const;
 #endif
 
 #if USE(CG)
-    bool canUseFastGlyphAdvanceGetter(Glyph glyph, CGSize& advance, bool& populatedAdvance) const;
+    bool canUseFastGlyphAdvanceGetter(Glyph, CGSize& advance, bool& populatedAdvance) const;
     CGFontRenderingStyle renderingStyle() const;
     bool advanceForColorBitmapFont(Glyph, CGSize& result) const; // Returns true if the font is a color bitmap font
 #endif
@@ -255,7 +255,7 @@ private:
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
 
     bool m_treatAsFixedPitch;
-    bool m_isCustomFont;  // Whether or not we are custom font loaded via @font-face
+    bool m_isCustomFont; // Whether or not we are custom font loaded via @font-face
     bool m_isLoading; // Whether or not this custom font is still in the act of loading.
 
     bool m_isTextOrientationFallback;
@@ -284,14 +284,14 @@ private:
         ~DerivedFontData();
 
         bool forCustomFont;
-        RefPtr<SimpleFontData> smallCaps;
-        RefPtr<SimpleFontData> emphasisMark;
-        RefPtr<SimpleFontData> brokenIdeograph;
-        RefPtr<SimpleFontData> verticalRightOrientation;
-        RefPtr<SimpleFontData> uprightOrientation;
-        RefPtr<SimpleFontData> nonSyntheticItalic;
+        RefPtr<Font> smallCaps;
+        RefPtr<Font> emphasisMark;
+        RefPtr<Font> brokenIdeograph;
+        RefPtr<Font> verticalRightOrientation;
+        RefPtr<Font> uprightOrientation;
+        RefPtr<Font> nonSyntheticItalic;
 #if USE(APPKIT)
-        HashMap<NSFont*, RefPtr<SimpleFontData>> compositeFontReferences;
+        HashMap<NSFont*, RefPtr<Font>> compositeFontReferences;
 #endif
     };
 
@@ -319,7 +319,7 @@ private:
 #endif
 };
 
-ALWAYS_INLINE FloatRect SimpleFontData::boundsForGlyph(Glyph glyph) const
+ALWAYS_INLINE FloatRect Font::boundsForGlyph(Glyph glyph) const
 {
     if (isZeroWidthSpaceGlyph(glyph))
         return FloatRect();
@@ -338,7 +338,7 @@ ALWAYS_INLINE FloatRect SimpleFontData::boundsForGlyph(Glyph glyph) const
     return bounds;
 }
 
-ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
+ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph) const
 {
     if (isZeroWidthSpaceGlyph(glyph))
         return 0;
@@ -366,4 +366,4 @@ ALWAYS_INLINE float SimpleFontData::widthForGlyph(Glyph glyph) const
 
 } // namespace WebCore
 
-#endif // SimpleFontData_h
+#endif // Font_h

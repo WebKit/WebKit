@@ -1,3 +1,13 @@
+2015-01-21  Antti Koivisto  <antti@apple.com>
+
+        Rename SimpleFontData to Font
+        https://bugs.webkit.org/show_bug.cgi?id=140496
+
+        Reviewed by Zalan Bujtas.
+
+        The fallback supporting Font type was renamed FontCascade.
+        We can now rename SimpleFontData to Font matching the usual definition.
+
 2015-01-22  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Make trailing whitespace handling more explicit.
