@@ -1,3 +1,15 @@
+2015-01-22  Mark Lam  <mark.lam@apple.com>
+
+        BytecodeGenerator::initializeCapturedVariable() sets a misleading value for the 5th operand of op_put_to_scope.
+        <https://webkit.org/b/140743>
+
+        Reviewed by Oliver Hunt.
+
+        * js/dfg-osr-exit-between-create-and-tearoff-arguments-expected.txt: Added.
+        * js/dfg-osr-exit-between-create-and-tearoff-arguments.html: Added.
+        * js/script-tests/dfg-osr-exit-between-create-and-tearoff-arguments.js: Added.
+        (foo):
+
 2015-01-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] More unskips and rebaselines. 

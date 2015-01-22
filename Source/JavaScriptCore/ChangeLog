@@ -1,3 +1,63 @@
+2015-01-22  Mark Lam  <mark.lam@apple.com>
+
+        BytecodeGenerator::initializeCapturedVariable() sets a misleading value for the 5th operand of op_put_to_scope.
+        <https://webkit.org/b/140743>
+
+        Reviewed by Oliver Hunt.
+
+        BytecodeGenerator::initializeCapturedVariable() was setting the 5th operand to
+        op_put_to_scope to an inappropriate value (i.e. 0).  As a result, the execution
+        of put_to_scope could store a wrong inferred value into the VariableWatchpointSet
+        for which ever captured variable is at local index 0.  In practice, this turns
+        out to be the local for the Arguments object.  In this reproduction case in the
+        bug, the wrong inferred value written there is the boolean true.
+
+        Subsequently, DFG compilation occurs and CreateArguments is emitted to first do
+        a check of the local for the Arguments object.  But because that local has a
+        wrong inferred value, the check always discovers a non-null value and we never
+        actually create the Arguments object.  Immediately after this, an OSR exit
+        occurs leaving the Arguments object local uninitialized.  Later on at arguments
+        tear off, we run into a boolean true where we had expected to find an Arguments
+        object, which in turn, leads to the crash.
+
+        The fix is to:
+        1. In the case where the resolveModeType is LocalClosureVar, change the
+           5th operand of op_put_to_scope to be a boolean.  True means that the
+           local var is watchable.  False means it is not watchable.  We no longer
+           pass the local index (instead of true) and UINT_MAX (instead of false).
+
+           This allows us to express more clearer in the code what that value means,
+           as well as remove the redundant way of getting the local's identifier.
+           The identifier is always the one passed in the 2nd operand. 
+
+        2. Previously, though intuitively, we know that the watchable variable
+           identifier should be the same as the one that is passed in operand 2, this
+           relationship was not clear in the code.  By code analysis, I confirmed that 
+           the callers of BytecodeGenerator::emitPutToScope() always use the same
+           identifier for operand 2 and for filling out the ResolveScopeInfo from
+           which we get the watchable variable identifier later.  I've changed the
+           code to make this clear now by always using the identifier passed in
+           operand 2.
+
+        3. In the case where the resolveModeType is LocalClosureVar,
+           initializeCapturedVariable() and emitPutToScope() will now query
+           hasWatchableVariable() to determine if the local is watchable or not.
+           Accordingly, we pass the boolean result of hasWatchableVariable() as
+           operand 5 of op_put_to_scope.
+
+        Also added some assertions.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::initializeCapturedVariable):
+        (JSC::BytecodeGenerator::hasConstant):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::hasWatchableVariable):
+        (JSC::BytecodeGenerator::watchableVariableIdentifier):
+        (JSC::BytecodeGenerator::watchableVariable): Deleted.
+
 2015-01-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         PropertyListNode::emitNode duplicates the code to put a constant property
