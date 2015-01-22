@@ -1,3 +1,25 @@
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix iphoneos SDK builds for ios-ews queue
+        <http://webkit.org/b/140748>
+
+        Reviewed by Daniel Bates.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new SPI headers.
+        * platform/graphics/cg/ImageBufferCG.cpp: Switch to using
+        "IOSurfaceSPI.h" from <IOSurface/IOSurface.h>.
+        * platform/graphics/cg/ImageBufferDataCG.cpp: Ditto.
+        * platform/graphics/cocoa/IOSurface.mm: Ditto.  Move definitions
+        in <IOSurface/IOSurfacePrivate.h> into "IOSurfaceSPI.h".
+        * platform/spi/cg/CoreGraphicsSPI.h: Switch to
+        WTF_EXTERN_C_{BEGIN,END}.  Add
+        CGContextGetFontAntialiasingStyle() and
+        CGContextSetFontAntialiasingStyle().
+        * platform/spi/cocoa/IOPMLibSPI.h: Switch to use IOReturnSPI.h.
+        * platform/spi/cocoa/IOReturnSPI.h: Add.
+        * platform/spi/cocoa/IOSurfaceSPI.h: Add.
+        * platform/spi/cocoa/IOTypesSPI.h: Add.
+
 2015-01-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Skip items spanning flex tracks when sizing content based tracks

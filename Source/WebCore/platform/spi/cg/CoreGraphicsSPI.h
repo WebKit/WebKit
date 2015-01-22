@@ -112,43 +112,50 @@ typedef struct CGFontCache CGFontCache;
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
-EXTERN_C CGColorRef CGColorTransformConvertColor(CGColorTransformRef, CGColorRef, CGColorRenderingIntent);
-EXTERN_C CGColorTransformRef CGColorTransformCreate(CGColorSpaceRef, CFDictionaryRef attributes);
+WTF_EXTERN_C_BEGIN
 
-EXTERN_C CGAffineTransform CGContextGetBaseCTM(CGContextRef);
-EXTERN_C CGCompositeOperation CGContextGetCompositeOperation(CGContextRef);
-EXTERN_C CGColorRef CGContextGetFillColorAsColor(CGContextRef);
-EXTERN_C CGFloat CGContextGetLineWidth(CGContextRef);
-EXTERN_C bool CGContextGetShouldSmoothFonts(CGContextRef);
-EXTERN_C void CGContextSetBaseCTM(CGContextRef, CGAffineTransform);
-EXTERN_C void CGContextSetCTM(CGContextRef, CGAffineTransform);
-EXTERN_C void CGContextSetCompositeOperation(CGContextRef, CGCompositeOperation);
-EXTERN_C void CGContextSetShouldAntialiasFonts(CGContextRef, bool shouldAntialiasFonts);
+CGColorRef CGColorTransformConvertColor(CGColorTransformRef, CGColorRef, CGColorRenderingIntent);
+CGColorTransformRef CGColorTransformCreate(CGColorSpaceRef, CFDictionaryRef attributes);
 
-EXTERN_C CFStringRef CGFontCopyFamilyName(CGFontRef);
-EXTERN_C bool CGFontGetDescriptor(CGFontRef, CGFontDescriptor*);
-EXTERN_C bool CGFontGetGlyphAdvancesForStyle(CGFontRef, const CGAffineTransform* , CGFontRenderingStyle, const CGGlyph[], size_t count, CGSize advances[]);
-EXTERN_C void CGFontGetGlyphsForUnichars(CGFontRef, const UniChar[], CGGlyph[], size_t count);
-EXTERN_C const CGFontHMetrics* CGFontGetHMetrics(CGFontRef);
-EXTERN_C const char* CGFontGetPostScriptName(CGFontRef);
-EXTERN_C bool CGFontIsFixedPitch(CGFontRef);
-EXTERN_C void CGFontSetShouldUseMulticache(bool);
+CGAffineTransform CGContextGetBaseCTM(CGContextRef);
+CGCompositeOperation CGContextGetCompositeOperation(CGContextRef);
+CGColorRef CGContextGetFillColorAsColor(CGContextRef);
+CGFloat CGContextGetLineWidth(CGContextRef);
+bool CGContextGetShouldSmoothFonts(CGContextRef);
+void CGContextSetBaseCTM(CGContextRef, CGAffineTransform);
+void CGContextSetCTM(CGContextRef, CGAffineTransform);
+void CGContextSetCompositeOperation(CGContextRef, CGCompositeOperation);
+void CGContextSetShouldAntialiasFonts(CGContextRef, bool shouldAntialiasFonts);
 
-EXTERN_C void CGImageSetCachingFlags(CGImageRef, CGImageCachingFlags);
-EXTERN_C CGImageCachingFlags CGImageGetCachingFlags(CGImageRef);
+CFStringRef CGFontCopyFamilyName(CGFontRef);
+bool CGFontGetDescriptor(CGFontRef, CGFontDescriptor*);
+bool CGFontGetGlyphAdvancesForStyle(CGFontRef, const CGAffineTransform* , CGFontRenderingStyle, const CGGlyph[], size_t count, CGSize advances[]);
+void CGFontGetGlyphsForUnichars(CGFontRef, const UniChar[], CGGlyph[], size_t count);
+const CGFontHMetrics* CGFontGetHMetrics(CGFontRef);
+const char* CGFontGetPostScriptName(CGFontRef);
+bool CGFontIsFixedPitch(CGFontRef);
+void CGFontSetShouldUseMulticache(bool);
 
-EXTERN_C CGDataProviderRef CGPDFDocumentGetDataProvider(CGPDFDocumentRef);
+void CGImageSetCachingFlags(CGImageRef, CGImageCachingFlags);
+CGImageCachingFlags CGImageGetCachingFlags(CGImageRef);
+
+CGDataProviderRef CGPDFDocumentGetDataProvider(CGPDFDocumentRef);
+
+CGFontAntialiasingStyle CGContextGetFontAntialiasingStyle(CGContextRef);
+void CGContextSetFontAntialiasingStyle(CGContextRef, CGFontAntialiasingStyle);
 
 #if PLATFORM(COCOA)
-EXTERN_C CGSRegionEnumeratorObj CGSRegionEnumerator(CGRegionRef);
-EXTERN_C CGRect* CGSNextRect(const CGSRegionEnumeratorObj);
-EXTERN_C CGError CGSReleaseRegionEnumerator(const CGSRegionEnumeratorObj);
+CGSRegionEnumeratorObj CGSRegionEnumerator(CGRegionRef);
+CGRect* CGSNextRect(const CGSRegionEnumeratorObj);
+CGError CGSReleaseRegionEnumerator(const CGSRegionEnumeratorObj);
 #endif
 
 #if PLATFORM(WIN)
-EXTERN_C CGFontCache* CGFontCacheGetLocalCache();
-EXTERN_C void CGFontCacheSetShouldAutoExpire(CGFontCache*, bool);
-EXTERN_C void CGFontCacheSetMaxSize(CGFontCache*, size_t);
+CGFontCache* CGFontCacheGetLocalCache();
+void CGFontCacheSetShouldAutoExpire(CGFontCache*, bool);
+void CGFontCacheSetMaxSize(CGFontCache*, size_t);
 #endif
+
+WTF_EXTERN_C_END
 
 #endif // CoreGraphicsSPI_h

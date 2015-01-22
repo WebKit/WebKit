@@ -30,25 +30,13 @@
 
 #import "GraphicsContextCG.h"
 #import "IOSurfacePool.h"
+#import "IOSurfaceSPI.h"
 #import "MachSendRight.h"
-#import <IOSurface/IOSurface.h>
 #import <wtf/Assertions.h>
-
-#if __has_include(<IOSurface/IOSurfacePrivate.h>)
-#import <IOSurface/IOSurfacePrivate.h>
-#else
-enum {
-    kIOSurfacePurgeableNonVolatile = 0,
-    kIOSurfacePurgeableVolatile = 1,
-    kIOSurfacePurgeableEmpty = 2,
-    kIOSurfacePurgeableKeepCurrent = 3,
-};
-#endif
 
 extern "C" {
 CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo);
 CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);
-IOReturn IOSurfaceSetPurgeable(IOSurfaceRef, uint32_t, uint32_t *);
 }
 
 using namespace WebCore;

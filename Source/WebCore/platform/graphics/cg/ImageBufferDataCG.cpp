@@ -35,7 +35,7 @@
 #endif
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-#include <IOSurface/IOSurface.h>
+#include "IOSurfaceSPI.h"
 #include <dispatch/dispatch.h>
 #endif
 

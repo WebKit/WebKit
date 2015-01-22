@@ -1,3 +1,13 @@
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Fix iphoneos SDK builds for ios-ews queue
+        <http://webkit.org/b/140748>
+
+        Reviewed by Daniel Bates.
+
+        * Platform/spi/ios/BKSProcessAssertionSPI.h: Add -invalidate
+        definition.  Sort @property to the top of BKSProcessAssertion.
+
 2015-01-22  Shivakumar JM  <shiva.jm@samsung.com>
 
         Fix build warning in WebKit2/UIProcess module

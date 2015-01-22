@@ -1626,6 +1626,9 @@
 		44C991A00F3D210E00586670 /* ThemeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44C9919E0F3D210E00586670 /* ThemeIOS.mm */; };
 		44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44DAB5AF15A623580097C1E4 /* Extensions3DOpenGLCommon.cpp */; };
 		44DAB5B215A623580097C1E4 /* Extensions3DOpenGLCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DAB5B015A623580097C1E4 /* Extensions3DOpenGLCommon.h */; };
+		44DEF6431A6FF92700D45EEC /* IOReturnSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DEF6421A6FF92700D45EEC /* IOReturnSPI.h */; };
+		44DFF6431A6FF92700D45EEC /* IOSurfaceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DFF6421A6FF92700D45EEC /* IOSurfaceSPI.h */; };
+		44EFF6431A6FF92700D45EEC /* IOTypesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44EFF6421A6FF92700D45EEC /* IOTypesSPI.h */; };
 		45099C411370A7800058D513 /* IconURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45099C401370A7800058D513 /* IconURL.cpp */; };
 		450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 450CEBEE15073BBE002BB149 /* LabelableElement.cpp */; };
 		450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 450CEBEF15073BBE002BB149 /* LabelableElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8690,6 +8693,9 @@
 		44D8DA9A139545CD00337B75 /* SVGAnimateMotionElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGAnimateMotionElement.idl; sourceTree = "<group>"; };
 		44DAB5AF15A623580097C1E4 /* Extensions3DOpenGLCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Extensions3DOpenGLCommon.cpp; sourceTree = "<group>"; };
 		44DAB5B015A623580097C1E4 /* Extensions3DOpenGLCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions3DOpenGLCommon.h; sourceTree = "<group>"; };
+		44DEF6421A6FF92700D45EEC /* IOReturnSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOReturnSPI.h; sourceTree = "<group>"; };
+		44DFF6421A6FF92700D45EEC /* IOSurfaceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSurfaceSPI.h; sourceTree = "<group>"; };
+		44EFF6421A6FF92700D45EEC /* IOTypesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOTypesSPI.h; sourceTree = "<group>"; };
 		45099C401370A7800058D513 /* IconURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconURL.cpp; sourceTree = "<group>"; };
 		450CEBEE15073BBE002BB149 /* LabelableElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelableElement.cpp; sourceTree = "<group>"; };
 		450CEBEF15073BBE002BB149 /* LabelableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelableElement.h; sourceTree = "<group>"; };
@@ -16234,6 +16240,9 @@
 				CE12524A1A16C79B00864480 /* DispatchSPI.h */,
 				CE1252441A16C22500864480 /* DynamicLinkerSPI.h */,
 				CE12524C1A1A77DE00864480 /* IOPMLibSPI.h */,
+				44DEF6421A6FF92700D45EEC /* IOReturnSPI.h */,
+				44DFF6421A6FF92700D45EEC /* IOSurfaceSPI.h */,
+				44EFF6421A6FF92700D45EEC /* IOTypesSPI.h */,
 				CE12524E1A1A78D200864480 /* MachVMSPI.h */,
 				CE1252501A1BEBD800864480 /* NSCalendarDateSPI.h */,
 				2DDB97F319F9AECA002025D8 /* NSExtensionSPI.h */,
@@ -24699,8 +24708,11 @@
 				B27535750B053814002CE64F /* IntSize.h in Headers */,
 				B27535760B053814002CE64F /* IntSizeHash.h in Headers */,
 				CE12524D1A1A77DE00864480 /* IOPMLibSPI.h in Headers */,
+				44DEF6431A6FF92700D45EEC /* IOReturnSPI.h in Headers */,
 				2D0B4AAB18DA1CCD00434DE1 /* IOSurface.h in Headers */,
 				1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */,
+				44DFF6431A6FF92700D45EEC /* IOSurfaceSPI.h in Headers */,
+				44EFF6431A6FF92700D45EEC /* IOTypesSPI.h in Headers */,
 				07AC47021952102100EE9723 /* ISOVTTCue.h in Headers */,
 				418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */,
 				0705851B17FB44B4005F2BCB /* JSAllAudioCapabilities.h in Headers */,
