@@ -1527,7 +1527,7 @@ void AVFWrapper::createPlayer(IDirect3DDevice9* d3dDevice)
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
 static RetainPtr<CFArrayRef> createLegibleOutputSubtypes()
 {
-    int webVTTInt = kCMSubtitleFormatType_WebVTT;
+    int webVTTInt = 'wvtt'; // kCMSubtitleFormatType_WebVTT;
     RetainPtr<CFNumberRef> webVTTNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &webVTTInt));
     CFTypeRef formatTypes[] = { webVTTNumber.get() };
     return adoptCF(CFArrayCreate(0, formatTypes, WTF_ARRAY_LENGTH(formatTypes), &kCFTypeArrayCallBacks));
