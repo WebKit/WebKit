@@ -1,3 +1,9 @@
+2015-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Try to fix Debug build after r178889.
+
+        * UIProcess/API/C/WKPage.cpp: Include Logging.h.
+
 2015-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add API::ContextMenuClient and API::InjectedBundle::PageContextMenuClient classes

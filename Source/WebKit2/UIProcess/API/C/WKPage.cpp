@@ -38,6 +38,7 @@
 #include "APIUIClient.h"
 #include "AuthenticationChallengeProxy.h"
 #include "LegacySessionStateCoding.h"
+#include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "NavigationActionData.h"
