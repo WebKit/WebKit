@@ -1,3 +1,41 @@
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r174371. rdar://problem/19450845
+
+    2014-10-06  Mark Lam  <mark.lam@apple.com>
+
+            Fixed compiler warnings on Windows build.
+            <https://webkit.org/b/135205>
+
+            Reviewed by Geoffrey Garen.
+
+            Benchmarking with jsc shows that perf is neutral with this change.
+
+            * assembler/MacroAssemblerX86_64.h:
+            (JSC::MacroAssemblerX86_64::call):
+            * bytecode/CodeBlock.cpp:
+            (JSC::CodeBlock::CodeBlock):
+            * dfg/DFGArgumentPosition.h:
+            (JSC::DFG::ArgumentPosition::mergeShouldNeverUnbox):
+            (JSC::DFG::ArgumentPosition::mergeArgumentUnboxingAwareness):
+            * dfg/DFGEdge.h:
+            (JSC::DFG::Edge::makeWord):
+            * dfg/DFGNodeFlags.h:
+            (JSC::DFG::nodeMayOverflow):
+            (JSC::DFG::nodeMayNegZero):
+            * dfg/DFGOSRExitCompilerCommon.cpp:
+            (JSC::DFG::reifyInlinedCallFrames):
+            * dfg/DFGVariableAccessData.cpp:
+            (JSC::DFG::VariableAccessData::mergeIsCaptured):
+            * dfg/DFGVariableAccessData.h:
+            (JSC::DFG::VariableAccessData::mergeIsProfitableToUnbox):
+            (JSC::DFG::VariableAccessData::mergeStructureCheckHoistingFailed):
+            (JSC::DFG::VariableAccessData::mergeCheckArrayHoistingFailed):
+            (JSC::DFG::VariableAccessData::mergeIsArgumentsAlias):
+            (JSC::DFG::VariableAccessData::mergeIsLoadedFrom):
+            * runtime/JSDataViewPrototype.cpp:
+            (JSC::getData):
+
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r178364. rdar://problem/19465091

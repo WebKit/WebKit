@@ -66,8 +66,8 @@ VariableAccessData::VariableAccessData(VirtualRegister local, bool isCaptured)
 
 bool VariableAccessData::mergeIsCaptured(bool isCaptured)
 {
-    return checkAndSet(m_shouldNeverUnbox, m_shouldNeverUnbox | isCaptured)
-        | checkAndSet(m_isCaptured, m_isCaptured | isCaptured);
+    return checkAndSet(m_shouldNeverUnbox, m_shouldNeverUnbox || isCaptured)
+        | checkAndSet(m_isCaptured, m_isCaptured || isCaptured);
 }
 
 bool VariableAccessData::mergeShouldNeverUnbox(bool shouldNeverUnbox)
