@@ -1,3 +1,17 @@
+2015-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a build flag for ES6 class syntax
+        https://bugs.webkit.org/show_bug.cgi?id=140760
+
+        Reviewed by Michael Saboff.
+
+        Added ES6_CLASS_SYNTAX build flag and used it in tokenizer to recognize
+        "class", "extends", "static" and "super" keywords.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * parser/Keywords.table:
+        * parser/ParserTokens.h:
+
 2015-01-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r178894.

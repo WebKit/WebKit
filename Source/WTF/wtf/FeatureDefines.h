@@ -325,6 +325,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_CHANNEL_MESSAGING 1
 #endif
 
+#if !defined(ENABLE_ES6_CLASS_SYNTAX)
+#define ENABLE_ES6_CLASS_SYNTAX 0
+#endif
+
 #if !defined(ENABLE_CONTENT_EXTENSIONS)
 #define ENABLE_CONTENT_EXTENSIONS 0
 #endif

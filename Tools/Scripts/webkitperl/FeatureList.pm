@@ -48,6 +48,7 @@ my (
     $canvasPathSupport,
     $canvasProxySupport,
     $channelMessagingSupport,
+    $classSyntax,
     $cspNextSupport,
     $css3ConditionalRulesSupport,
     $css3TextSupport,
@@ -163,6 +164,9 @@ my @features = (
 
     { option => "channel-messaging", desc => "Toggle Channel Messaging support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
+
+    { option => "class-syntax", desc => "Toggle ES6 class syntax support",
+      define => "ENABLE_ES6_CLASS_SYNTAX", default => 0, value => \$classSyntax },
 
     { option => "csp-next", desc => "Toggle Content Security Policy 1.1 support",
       define => "ENABLE_CSP_NEXT", default => isGtk(), value => \$cspNextSupport },
