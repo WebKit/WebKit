@@ -191,7 +191,7 @@ private:
     bool m_breakpointsActivated : 1;
     bool m_hasHandlerForExceptionCallback : 1;
     bool m_isInWorkerThread : 1;
-    SteppingMode m_steppingMode : 1;
+    unsigned m_steppingMode : 1; // SteppingMode
 
     ReasonForPause m_reasonForPause;
     JSValue m_currentException;

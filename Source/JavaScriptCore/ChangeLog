@@ -1,5 +1,22 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r174381. rdar://problem/19450841
+
+    2014-10-06  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Use of 1-bit Enum type behaves improperly
+            https://bugs.webkit.org/show_bug.cgi?id=137471
+            <rdar://problem/18559172>
+
+            Reviewed by Mark Lam.
+
+            Represent 1-bit enum element as 'unsigned', as we have done elsewhere
+            in WebKit to avoid problems when building with MSVC.
+
+            * debugger/Debugger.h:
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174371. rdar://problem/19450845
 
     2014-10-06  Mark Lam  <mark.lam@apple.com>
