@@ -318,6 +318,7 @@ bool ObjCObjectGraph::decode(IPC::ArgumentDecoder& decoder, RetainPtr<id>& resul
             return false;
 
         result = adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(object.get())]);
+        break;
     }
 #endif
 

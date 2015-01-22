@@ -1,3 +1,15 @@
+2015-01-22  Timothy Horton  <timothy_horton@apple.com>
+
+        UserData decoding of WKTypeRefWrapper always fails
+        https://bugs.webkit.org/show_bug.cgi?id=140791
+        <rdar://problem/19438402>
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/mac/ObjCObjectGraph.mm:
+        (WebKit::ObjCObjectGraph::decode):
+        Add a missing break.
+
 2015-01-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a build flag for ES6 class syntax
