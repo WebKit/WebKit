@@ -1,3 +1,25 @@
+2015-01-22  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Make trailing whitespace handling more explicit.
+        https://bugs.webkit.org/show_bug.cgi?id=140776
+
+        Reviewed by Antti Koivisto.
+
+        Differentiate between committed and uncommitted trailing whitespace.
+        This enables further cleanup in removeTrailingWhitespace().
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::commitAndCreateRun):
+        (WebCore::SimpleLineLayout::LineState::addUncommitted):
+        (WebCore::SimpleLineLayout::LineState::hasWhitespaceOnly):
+        (WebCore::SimpleLineLayout::LineState::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::LineState::LineState): Deleted.
+        (WebCore::SimpleLineLayout::LineState::removeCommittedTrailingWhitespace): Deleted.
+        (WebCore::SimpleLineLayout::LineState::resetTrailingWhitespace): Deleted.
+
 2015-01-22  Alexey Proskuryakov  <ap@apple.com>
 
         Crash in URL::protocol() after appcache load fails

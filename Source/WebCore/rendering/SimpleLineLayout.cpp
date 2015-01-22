@@ -227,20 +227,6 @@ static float computeLineLeft(ETextAlign textAlign, float availableWidth, float c
 }
 
 struct LineState {
-    LineState()
-        : availableWidth(0)
-        , logicalLeftOffset(0)
-        , lineStartRunIndex(0)
-        , uncommittedStart(0)
-        , uncommittedEnd(0)
-        , uncommittedWidth(0)
-        , committedWidth(0)
-        , committedLogicalRight(0)
-        , position(0)
-        , trailingWhitespaceWidth(0)
-    {
-    }
-
     void commitAndCreateRun(Layout::RunVector& lineRuns)
     {
         if (uncommittedStart == uncommittedEnd)
@@ -250,9 +236,13 @@ struct LineState {
         // Move uncommitted to committed.
         committedWidth += uncommittedWidth;
         committedLogicalRight += committedWidth;
+        committedTrailingWhitespaceWidth = uncomittedTrailingWhitespaceWidth;
+        committedTrailingWhitespaceLength = uncomittedTrailingWhitespaceLength;
 
         uncommittedStart = uncommittedEnd;
         uncommittedWidth = 0;
+        uncomittedTrailingWhitespaceWidth = 0;
+        uncomittedTrailingWhitespaceLength = 0;
     }
 
     void addUncommitted(const FlowContents::TextFragment& fragment)
@@ -261,8 +251,8 @@ struct LineState {
         uncommittedWidth += fragment.width;
         uncommittedEnd = fragment.end;
         position = uncommittedEnd;
-        trailingWhitespaceWidth = fragment.type == FlowContents::TextFragment::Whitespace ? fragment.width : 0;
-        trailingWhitespaceLength = fragment.type == FlowContents::TextFragment::Whitespace ? uncomittedFragmentLength  : 0;
+        uncomittedTrailingWhitespaceWidth = fragment.type == FlowContents::TextFragment::Whitespace ? fragment.width : 0;
+        uncomittedTrailingWhitespaceLength = fragment.type == FlowContents::TextFragment::Whitespace ? uncomittedFragmentLength  : 0;
     }
 
     void addUncommittedWhitespace(float whitespaceWidth)
@@ -280,6 +270,11 @@ struct LineState {
         committedLogicalRight = logicalRight;
     }
 
+    bool hasWhitespaceOnly() const
+    {
+        return committedTrailingWhitespaceWidth && committedWidth == committedTrailingWhitespaceWidth;
+    }
+
     float width() const
     {
         return committedWidth + uncommittedWidth;
@@ -290,35 +285,33 @@ struct LineState {
         return availableWidth >= width() + extra;
     }
 
-    void removeCommittedTrailingWhitespace()
+    void removeTrailingWhitespace()
     {
-        ASSERT(!uncommittedWidth);
-        committedWidth -= trailingWhitespaceWidth;
-        committedLogicalRight -= trailingWhitespaceWidth;
+        committedWidth -= committedTrailingWhitespaceWidth;
+        committedLogicalRight -= committedTrailingWhitespaceWidth;
+        committedTrailingWhitespaceWidth = 0;
+        committedTrailingWhitespaceLength = 0;
     }
 
-    void resetTrailingWhitespace()
-    {
-        trailingWhitespaceWidth = 0;
-        trailingWhitespaceLength = 0;
-    }
+    float availableWidth { 0 };
+    float logicalLeftOffset { 0 };
+    unsigned lineStartRunIndex { 0 }; // The run that the line starts with.
+    unsigned position { 0 };
 
-    float availableWidth;
-    float logicalLeftOffset;
-    unsigned lineStartRunIndex; // The run that the line starts with.
+    unsigned uncommittedStart { 0 };
+    unsigned uncommittedEnd { 0 };
+    float uncommittedWidth { 0 };
+    float committedWidth { 0 };
 
-    unsigned uncommittedStart;
-    unsigned uncommittedEnd;
-    float uncommittedWidth;
-    float committedWidth;
-    float committedLogicalRight; // Last committed X (coordinate) position.
-
-    unsigned position;
-
-    float trailingWhitespaceWidth; // Use this to remove trailing whitespace without re-mesuring the text.
-    float trailingWhitespaceLength;
+    float committedLogicalRight { 0 }; // Last committed X (coordinate) position.
+    float committedTrailingWhitespaceWidth { 0 }; // Use this to remove trailing whitespace without re-mesuring the text.
+    unsigned committedTrailingWhitespaceLength { 0 };
 
     FlowContents::TextFragment oveflowedFragment;
+
+private:
+    float uncomittedTrailingWhitespaceWidth { 0 };
+    unsigned uncomittedTrailingWhitespaceLength { 0 };
 };
 
 static void removeTrailingWhitespace(LineState& lineState, Layout::RunVector& lineRuns, const FlowContents& flowContents)
@@ -326,36 +319,30 @@ static void removeTrailingWhitespace(LineState& lineState, Layout::RunVector& li
     const auto& style = flowContents.style();
     bool preWrap = style.wrapLines && !style.collapseWhitespace;
     // Trailing whitespace gets removed when we either collapse whitespace or pre-wrap is present.
-    if (!(style.collapseWhitespace || preWrap)) {
-        lineState.resetTrailingWhitespace();
+    if (!(style.collapseWhitespace || preWrap))
         return;
-    }
 
     ASSERT(lineRuns.size());
     Run& lastRun = lineRuns.last();
 
     unsigned lastPosition = lineState.position;
     bool trailingPreWrapWhitespaceNeedsToBeRemoved = false;
-    // When pre-wrap is present, trailing whitespace needs to be removed:
-    // 1. from the "next line": when at least the first charater fits. When even the first whitespace is wider that the available width,
-    // we don't remove any whitespace at all.
-    // 2. from this line: remove whitespace, unless it's the only fragment on the line -so removing the whitesapce would produce an empty line.
     if (preWrap) {
+        // Special overflow pre-wrap fragment handling: Ignore the overflow whitespace fragment if we managed to fit at least one character on this line.
+        // When the line is too short to fit one character (thought it still stays on the line) we keep the overflow whitespace content as it is.
         if (lineState.oveflowedFragment.type == FlowContents::TextFragment::Whitespace && !lineState.oveflowedFragment.isEmpty() && lineState.availableWidth >= lineState.committedWidth) {
             lineState.position = lineState.oveflowedFragment.end;
             lineState.oveflowedFragment = FlowContents::TextFragment();
         }
-        if (lineState.trailingWhitespaceLength) {
-            // Check if we've got only whitespace on this line.
-            trailingPreWrapWhitespaceNeedsToBeRemoved = !(lineState.committedWidth == lineState.trailingWhitespaceWidth);
-        }
+        // Remove whitespace, unless it's the only fragment on the line -so removing the whitesapce would produce an empty line.
+        trailingPreWrapWhitespaceNeedsToBeRemoved = !lineState.hasWhitespaceOnly();
     }
-    if (lineState.trailingWhitespaceLength && (style.collapseWhitespace || trailingPreWrapWhitespaceNeedsToBeRemoved)) {
-        lastRun.logicalRight -= lineState.trailingWhitespaceWidth;
-        lastRun.end -= lineState.trailingWhitespaceLength;
+    if (lineState.committedTrailingWhitespaceLength && (style.collapseWhitespace || trailingPreWrapWhitespaceNeedsToBeRemoved)) {
+        lastRun.logicalRight -= lineState.committedTrailingWhitespaceWidth;
+        lastRun.end -= lineState.committedTrailingWhitespaceLength;
         if (lastRun.start == lastRun.end)
             lineRuns.removeLast();
-        lineState.removeCommittedTrailingWhitespace();
+        lineState.removeTrailingWhitespace();
     }
 
     // If we skipped any whitespace and now the line end is a hard newline, skip the newline too as we are wrapping the line here already.
