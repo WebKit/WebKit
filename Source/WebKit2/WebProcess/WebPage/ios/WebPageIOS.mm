@@ -891,7 +891,7 @@ void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uin
         switch (wkGestureState) {
         case GestureRecognizerState::Began:
             range = wordRangeFromPosition(position);
-            m_currentWordRange = Range::create(*frame.document(), range->startPosition(), range->endPosition());
+            m_currentWordRange = range ? Range::create(*frame.document(), range->startPosition(), range->endPosition()) : nullptr;
             break;
         case GestureRecognizerState::Changed:
             if (!m_currentWordRange)
