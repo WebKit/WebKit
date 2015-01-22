@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2014 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@ class Document;
 class DOMWindow;
 class Node;
 class NodeList;
+class Range;
 }
 
 
@@ -925,4 +926,87 @@ protected:
     WebCore::Element* m_element;
 };
 
+class DOMRange : public DOMObject, public IDOMRange {
+protected:
+    DOMRange(WebCore::Range*);
+    ~DOMRange();
+
+public:
+    static IDOMRange* createInstance(WebCore::Range*);
+
+public:
+    // IUnknown
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMObject::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMObject::Release(); }
+
+    // IWebScriptObject
+    virtual HRESULT STDMETHODCALLTYPE throwException(BSTR exceptionMessage, BOOL* result)
+    {
+        return DOMObject::throwException(exceptionMessage, result);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod(BSTR name, const VARIANT args[], int cArgs, VARIANT* result)
+    {
+        return DOMObject::callWebScriptMethod(name, args, cArgs, result);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript(BSTR script, VARIANT* result)
+    {
+        return DOMObject::evaluateWebScript(script, result);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey(BSTR name)
+    {
+        return DOMObject::removeWebScriptKey(name);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE stringRepresentation(BSTR* stringRepresentation)
+    {
+        return DOMObject::stringRepresentation(stringRepresentation);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex(unsigned index, VARIANT* result)
+    {
+        return DOMObject::webScriptValueAtIndex(index, result);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex(unsigned index, VARIANT val)
+    {
+        return DOMObject::setWebScriptValueAtIndex(index, val);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE setException(BSTR description)
+    {
+        return DOMObject::setException(description);
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE startContainer(IDOMNode**);
+    virtual HRESULT STDMETHODCALLTYPE startOffset(int*);
+    virtual HRESULT STDMETHODCALLTYPE endContainer(IDOMNode**);
+    virtual HRESULT STDMETHODCALLTYPE endOffset(int*);
+    virtual HRESULT STDMETHODCALLTYPE collapsed(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE commonAncestorContainer(IDOMNode**);
+    virtual HRESULT STDMETHODCALLTYPE setStart(IDOMNode*, int offset);
+    virtual HRESULT STDMETHODCALLTYPE setEnd(IDOMNode*, int offset);
+    virtual HRESULT STDMETHODCALLTYPE setStartBefore(IDOMNode*);
+    virtual HRESULT STDMETHODCALLTYPE setStartAfter(IDOMNode*);
+    virtual HRESULT STDMETHODCALLTYPE setEndBefore(IDOMNode*);
+    virtual HRESULT STDMETHODCALLTYPE setEndAfter(IDOMNode*);
+    virtual HRESULT STDMETHODCALLTYPE collapse(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE selectNode(IDOMNode*);
+    virtual HRESULT STDMETHODCALLTYPE selectNodeContents(IDOMNode*);
+    virtual HRESULT STDMETHODCALLTYPE compareBoundaryPoints(unsigned short how, IDOMRange* sourceRange);
+    virtual HRESULT STDMETHODCALLTYPE deleteContents();
+    virtual HRESULT STDMETHODCALLTYPE extractContents(IDOMDocumentFragment**);
+    virtual HRESULT STDMETHODCALLTYPE cloneContents(IDOMDocumentFragment**);
+    virtual HRESULT STDMETHODCALLTYPE insertNode(IDOMNode*);
+    virtual HRESULT STDMETHODCALLTYPE surroundContents(IDOMNode* newParent);
+    virtual HRESULT STDMETHODCALLTYPE cloneRange(IDOMRange**);
+    virtual HRESULT STDMETHODCALLTYPE toString(BSTR*);
+    virtual HRESULT STDMETHODCALLTYPE detach();
+
+protected:
+    WebCore::Range* m_range;
+};
 #endif

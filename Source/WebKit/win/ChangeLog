@@ -1,3 +1,76 @@
+2015-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Expose missing editing features through WebView interface
+        https://bugs.webkit.org/show_bug.cgi?id=140773
+        <rdar://problem/19565421>
+
+        Reviewed by Dean Jackson.
+
+        Connect the various WebView editing delegate methods to our
+        test infrastructure. Also prefer _bstr_t to raw BSTR types
+        to simplify life cycle management.
+
+        * DOMCoreClasses.cpp: Flesh out the DOMRange object.
+        (DOMElement::createInstance):
+        (DOMRange::QueryInterface):
+        (DOMRange::DOMRange):
+        (DOMRange::~DOMRange):
+        (DOMRange::createInstance):
+        (DOMRange::startContainer):
+        (DOMRange::startOffset):
+        (DOMRange::endContainer):
+        (DOMRange::endOffset):
+        (DOMRange::collapsed):
+        (DOMRange::commonAncestorContainer):
+        (DOMRange::setStart):
+        (DOMRange::setEnd):
+        (DOMRange::setStartBefore):
+        (DOMRange::setStartAfter):
+        (DOMRange::setEndBefore):
+        (DOMRange::setEndAfter):
+        (DOMRange::collapse):
+        (DOMRange::selectNode):
+        (DOMRange::selectNodeContents):
+        (DOMRange::compareBoundaryPoints):
+        (DOMRange::deleteContents):
+        (DOMRange::extractContents):
+        (DOMRange::cloneContents):
+        (DOMRange::insertNode):
+        (DOMRange::surroundContents):
+        (DOMRange::cloneRange):
+        (DOMRange::toString):
+        (DOMRange::detach):
+        * DOMCoreClasses.h:
+        (DOMRange::AddRef):
+        (DOMRange::Release):
+        (DOMRange::throwException):
+        (DOMRange::callWebScriptMethod):
+        (DOMRange::evaluateWebScript):
+        (DOMRange::removeWebScriptKey):
+        (DOMRange::stringRepresentation):
+        (DOMRange::webScriptValueAtIndex):
+        (DOMRange::setWebScriptValueAtIndex):
+        (DOMRange::setException):
+        * Interfaces/IWebEditingDelegate.idl:
+        * Interfaces/IWebView.idl:
+        * WebCoreSupport/WebEditorClient.cpp: Connect more methods
+        to actual editing features in WebCore.
+        (WebEditorClient::shouldBeginEditing):
+        (WebEditorClient::shouldEndEditing):
+        (WebEditorClient::didBeginEditing):
+        (WebEditorClient::respondToChangedContents):
+        (WebEditorClient::respondToChangedSelection):
+        (WebEditorClient::didEndEditing):
+        (WebEditorClient::shouldDeleteRange):
+        (WebEditorClient::shouldInsertNode):
+        (WebEditorClient::shouldInsertText):
+        (WebEditorClient::shouldChangeSelectedRange):
+        (WebEditorClient::webViewDidChangeTypingStyle):
+        (WebEditorClient::webViewDidChangeSelection):
+        (WebEditorClient::isSelectTrailingWhitespaceEnabled):
+        * WebView.cpp:
+        (WebView::setEditingDelegate): Added.
+
 2015-01-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] eventSender does not support scalePageBy

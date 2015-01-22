@@ -866,6 +866,19 @@ static void resetWebViewToConsistentStateBeforeTesting()
     if (FAILED(frame->webView(&webView))) 
         return;
 
+    COMPtr<IWebViewEditing> viewEditing;
+    if (SUCCEEDED(webView->QueryInterface(&viewEditing)) && viewEditing) {
+
+        viewEditing->setEditable(FALSE);
+
+        COMPtr<IWebEditingDelegate> delegate;
+        if (SUCCEEDED(viewEditing->editingDelegate(&delegate)) && delegate) {
+            COMPtr<EditingDelegate> editingDelegate(Query, viewEditing.get());
+            if (editingDelegate)
+                editingDelegate->setAcceptsEditing(TRUE);
+        }
+    }
+
     COMPtr<IWebIBActions> webIBActions(Query, webView);
     if (webIBActions) {
         webIBActions->makeTextStandardSize(0);

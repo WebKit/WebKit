@@ -30,6 +30,10 @@ cpp_quote("#define WebViewProgressStartedNotification TEXT(\"WebProgressStartedN
 cpp_quote("#define WebViewProgressEstimateChangedNotification TEXT(\"WebProgressEstimateChangedNotification\")")
 cpp_quote("#define WebViewProgressFinishedNotification TEXT(\"WebProgressFinishedNotification\")")
 cpp_quote("#define WebViewDidChangeSelectionNotification TEXT(\"WebViewDidChangeSelectionNotification\")")
+cpp_quote("#define WebViewDidBeginEditingNotification TEXT(\"WebViewDidBeginEditingNotification\")")
+cpp_quote("#define WebViewDidEndEditingNotification TEXT(\"WebViewDidEndEditingNotification\")")
+cpp_quote("#define WebViewDidChangeTypingStyleNotification TEXT(\"WebViewDidChangeTypingStyleNotification\")")
+cpp_quote("#define WebViewDidChangeNotification TEXT(\"WebViewDidChangeNotification\")")
 
 #ifndef DO_NO_IMPORTS
 import "oaidl.idl";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2014-2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/NodeList.h>
+#include <WebCore/Range.h>
 #include <WebCore/RenderElement.h>
 #include <WebCore/RenderTreeAsText.h>
 
@@ -1529,4 +1530,213 @@ IDOMElement* DOMElement::createInstance(WebCore::Element* e)
         return 0;
 
     return domElement;
+}
+
+// DOMRange - IUnknown -----------------------------------------------------
+
+HRESULT DOMRange::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = nullptr;
+    if (IsEqualGUID(riid, IID_IDOMRange))
+        *ppvObject = static_cast<IDOMRange*>(this);
+    else
+        return DOMObject::QueryInterface(riid, ppvObject);
+
+    AddRef();
+    return S_OK;
+}
+
+// DOMRange ----------------------------------------------------------------- 
+
+DOMRange::DOMRange(WebCore::Range* e)
+    : m_range(e)
+{
+}
+
+DOMRange::~DOMRange()
+{
+}
+
+IDOMRange* DOMRange::createInstance(WebCore::Range* range)
+{
+    if (!range)
+        return nullptr;
+
+    DOMRange* newRange = new DOMRange(range);
+
+    IDOMRange* domRange = nullptr;
+    if (FAILED(newRange->QueryInterface(IID_IDOMRange, reinterpret_cast<void**>(&domRange))))
+        return nullptr;
+
+    return newRange;
+}
+
+HRESULT DOMRange::startContainer(IDOMNode** node)
+{
+    if (!node)
+        return E_POINTER;
+
+    if (!m_range)
+        return E_UNEXPECTED;
+
+    *node = DOMNode::createInstance(m_range->startContainer());
+
+    return S_OK;
+}
+
+HRESULT DOMRange::startOffset(int* offset)
+{
+    if (!offset)
+        return E_POINTER;
+
+    if (!m_range)
+        return E_UNEXPECTED;
+
+    *offset = m_range->startOffset();
+
+    return S_OK;
+}
+
+HRESULT DOMRange::endContainer(IDOMNode** node)
+{
+    if (!node)
+        return E_POINTER;
+
+    if (!m_range)
+        return E_UNEXPECTED;
+
+    *node = DOMNode::createInstance(m_range->endContainer());
+
+    return S_OK;
+}
+
+HRESULT DOMRange::endOffset(int* offset)
+{
+    if (!offset)
+        return E_POINTER;
+
+    if (!m_range)
+        return E_UNEXPECTED;
+
+    *offset = m_range->endOffset();
+
+    return S_OK;
+}
+
+HRESULT DOMRange::collapsed(BOOL* result)
+{
+    if (!result)
+        return E_POINTER;
+
+    if (!m_range)
+        return E_UNEXPECTED;
+
+    WebCore::ExceptionCode ec = 0;
+    *result = m_range->collapsed(ec);
+
+    return S_OK;
+}
+
+HRESULT DOMRange::commonAncestorContainer(IDOMNode** container)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::setStart(IDOMNode* refNode, int offset)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::setEnd(IDOMNode* refNode, int offset)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::setStartBefore(IDOMNode* refNode)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::setStartAfter(IDOMNode* refNode)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::setEndBefore(IDOMNode* refNode)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::setEndAfter(IDOMNode* refNode)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::collapse(BOOL toStart)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::selectNode(IDOMNode* refNode)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::selectNodeContents(IDOMNode* refNode)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::compareBoundaryPoints(unsigned short how, IDOMRange* sourceRange)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::deleteContents()
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::extractContents(IDOMDocumentFragment** fragment)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::cloneContents(IDOMDocumentFragment** fragment)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::insertNode(IDOMNode* newNode)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::surroundContents(IDOMNode* newParent)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::cloneRange(IDOMRange** range)
+{
+    return E_NOTIMPL;
+}
+
+HRESULT DOMRange::toString(BSTR* str)
+{
+    if (!str)
+        return E_POINTER;
+
+    if (!m_range)
+        return E_UNEXPECTED;
+
+    WebCore::ExceptionCode ec = 0;
+    *str = BString(m_range->toString(ec)).release();
+
+    return S_OK;
+}
+
+HRESULT DOMRange::detach()
+{
+    return E_NOTIMPL;
 }

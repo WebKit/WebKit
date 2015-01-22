@@ -113,7 +113,7 @@ interface IWebEditingDelegate : IUnknown
     /*
         - (BOOL)webView:(WebView *)webView shouldInsertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
     */
-    HRESULT shouldInsertNode([in] IWebView* webView, [in] IDOMNode* node, [in] IDOMRange* range, [in] WebViewInsertAction action);
+    HRESULT shouldInsertNode([in] IWebView* webView, [in] IDOMNode* node, [in] IDOMRange* range, [in] WebViewInsertAction action, [out, retval] BOOL* result);
 
     /*
         - (BOOL)webView:(WebView *)webView shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
