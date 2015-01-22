@@ -1,3 +1,18 @@
+2015-01-22  Chris Dumez  <cdumez@apple.com>
+
+        Fix remaining multiple targets per rule issues in DerivedSources.make
+        https://bugs.webkit.org/show_bug.cgi?id=140790
+
+        Reviewed by David Kilzer.
+
+        Fix remaining multiple target per rule issues in DerivedSources.make,
+        similarly to Bug 140784 and Bug 140756.
+
+        This was causing us to run scripts several times to generate the same
+        files and may lead to malformed files in case of concurrency.
+
+        * DerivedSources.make:
+
 2015-01-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a build flag for ES6 class syntax
