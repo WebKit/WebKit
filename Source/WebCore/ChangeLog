@@ -1,5 +1,16 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r171388. rdar://problem/19451349
+
+    2014-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Build fix for EWS bots.
+
+            * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp: Forward declare
+            structure definition.
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r171385. rdar://problem/19451349
 
     2014-07-22  Brent Fulgham  <bfulgham@apple.com>
