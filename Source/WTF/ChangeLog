@@ -1,5 +1,17 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r176982. rdar://problem/19452174
+
+    2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Fix iOS build after r176971.
+
+            I had previously modified the WTF forwarding header instead of modifying the real source.
+
+            * wtf/unicode/CharacterNames.h:
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174377. rdar://problem/19451247
 
     2014-10-06  Brent Fulgham  <bfulgham@apple.com>
