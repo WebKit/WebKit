@@ -376,11 +376,11 @@ void CSSPrimitiveValue::init(const LengthSize& lengthSize, const RenderStyle* st
     m_value.pair = Pair::create(create(lengthSize.width(), style), create(lengthSize.height(), style)).leakRef();
 }
 
-void CSSPrimitiveValue::init(PassRefPtr<Counter> c)
+void CSSPrimitiveValue::init(Ref<Counter>&& counter)
 {
     m_primitiveUnitType = CSS_COUNTER;
     m_hasCachedCSSText = false;
-    m_value.counter = c.leakRef();
+    m_value.counter = &counter.leakRef();
 }
 
 void CSSPrimitiveValue::init(PassRefPtr<Rect> r)

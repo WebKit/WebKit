@@ -1,5 +1,26 @@
 2015-01-22  Chris Dumez  <cdumez@apple.com>
 
+        Have Counter::create() return a Ref<Counter>
+        https://bugs.webkit.org/show_bug.cgi?id=140777
+
+        Reviewed by Andreas Kling.
+
+        Have Counter::create() return a Ref<Counter> instead of a PassRefPtr.
+
+        The CSSPrimitiveValue class needed some updates as well to support
+        constructing a CSSPrimitiveValue object from a Ref<>.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::init):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::create):
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/Counter.h:
+        (WebCore::Counter::create):
+        (WebCore::Counter::cloneForCSSOM):
+
+2015-01-22  Chris Dumez  <cdumez@apple.com>
+
         Drop the legacy FeatureCounter class
         https://bugs.webkit.org/show_bug.cgi?id=140749
 

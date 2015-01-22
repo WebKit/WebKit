@@ -28,9 +28,9 @@ namespace WebCore {
 
 class Counter : public RefCounted<Counter> {
 public:
-    static PassRefPtr<Counter> create(PassRefPtr<CSSPrimitiveValue> identifier, PassRefPtr<CSSPrimitiveValue> listStyle, PassRefPtr<CSSPrimitiveValue> separator)
+    static Ref<Counter> create(PassRefPtr<CSSPrimitiveValue> identifier, PassRefPtr<CSSPrimitiveValue> listStyle, PassRefPtr<CSSPrimitiveValue> separator)
     {
-        return adoptRef(new Counter(identifier, listStyle, separator));
+        return adoptRef(*new Counter(identifier, listStyle, separator));
     }
 
     String identifier() const { return m_identifier ? m_identifier->getStringValue() : String(); }
@@ -50,11 +50,11 @@ public:
             && separator() == other.separator();
     }
     
-    PassRefPtr<Counter> cloneForCSSOM() const
+    Ref<Counter> cloneForCSSOM() const
     {
-        return create(m_identifier ? m_identifier->cloneForCSSOM() : 0
-            , m_listStyle ? m_listStyle->cloneForCSSOM() : 0
-            , m_separator ? m_separator->cloneForCSSOM() : 0);
+        return create(m_identifier ? m_identifier->cloneForCSSOM() : nullptr
+            , m_listStyle ? m_listStyle->cloneForCSSOM() : nullptr
+            , m_separator ? m_separator->cloneForCSSOM() : nullptr);
     }
 
 private:

@@ -232,9 +232,14 @@ public:
     static Ref<CSSPrimitiveValue> create(const Length& value, const RenderStyle* style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
     static Ref<CSSPrimitiveValue> create(const LengthSize& value, const RenderStyle* style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
 
-    template<typename T> static Ref<CSSPrimitiveValue> create(T value)
+    template<typename T> static Ref<CSSPrimitiveValue> create(const T& value)
     {
         return adoptRef(*new CSSPrimitiveValue(value));
+    }
+
+    template<typename T> static Ref<CSSPrimitiveValue> create(T&& value)
+    {
+        return adoptRef(*new CSSPrimitiveValue(WTF::move(value)));
     }
 
     // This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.
@@ -376,10 +381,16 @@ private:
         init(PassRefPtr<T>(val));
     }
 
-    template<typename T> CSSPrimitiveValue(PassRefPtr<T> val)
+    template<typename T> CSSPrimitiveValue(PassRefPtr<T> value)
         : CSSValue(PrimitiveClass)
     {
-        init(val);
+        init(value);
+    }
+
+    template<typename T> CSSPrimitiveValue(Ref<T>&& value)
+        : CSSValue(PrimitiveClass)
+    {
+        init(WTF::move(value));
     }
 
     static void create(int); // compile-time guard
@@ -388,7 +399,7 @@ private:
 
     void init(const Length&);
     void init(const LengthSize&, const RenderStyle*);
-    void init(PassRefPtr<Counter>);
+    void init(Ref<Counter>&&);
     void init(PassRefPtr<Rect>);
     void init(PassRefPtr<Pair>);
     void init(PassRefPtr<Quad>);
