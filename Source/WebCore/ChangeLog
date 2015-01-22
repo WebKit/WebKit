@@ -1,5 +1,34 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r178038. rdar://problem/19451263
+
+    2015-01-07  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Crash: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::AXObjectCache::clearTextMarkerNodesInUse + 149
+            https://bugs.webkit.org/show_bug.cgi?id=139929
+
+            Reviewed by Darin Adler.
+
+            When a frame is replaced, there were instances when it was not clearing its associated nodes in the accessibility text marker -> Node cache.
+            This caused dead Nodes to be left in the cache which would eventually be accessed when the cache was cleaned out at a later time.
+
+            To fix this we should be clearing out the cache in Document::prepareForDestruction, instead of Frame::disconnectOwnerElement.
+
+            While working on this, it also exposed a problem where when a frame goes away, it doesn't inform its parent to update its children,
+            which causes an ASSERT to be hit with this test as well.
+
+            Tests: accessibility/frame-disconnect-textmarker-cache-crash.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::prepareForDestruction):
+            * page/Frame.cpp:
+            (WebCore::Frame::disconnectOwnerElement):
+                Remove cache management from here since it is superceded by code in Document::prepareForDestruction
+            * page/FrameView.cpp:
+            (WebCore::FrameView::removeFromAXObjectCache):
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177360. rdar://problem/19451319
 
     2014-12-16  Chris Dumez  <cdumez@apple.com>
