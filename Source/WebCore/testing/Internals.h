@@ -133,6 +133,8 @@ public:
     void addTextMatchMarker(const Range*, bool isActive);
     void setMarkedTextMatchesAreHighlighted(bool, ExceptionCode&);
 
+    void invalidateFontCache();
+
     void setScrollViewPosition(long x, long y, ExceptionCode&);
     void setPagination(const String& mode, int gap, ExceptionCode& ec) { setPagination(mode, gap, 0, ec); }
     void setPagination(const String& mode, int gap, int pageLength, ExceptionCode&);
