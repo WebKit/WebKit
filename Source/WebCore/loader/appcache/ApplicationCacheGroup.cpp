@@ -300,7 +300,7 @@ void ApplicationCacheGroup::failedLoadingMainResource(DocumentLoader* loader)
     case Failure:
         // Cache update failed, too.
         ASSERT(!m_cacheBeingUpdated); // Already cleared out by stopLoading().
-        ASSERT(!loader->applicationCacheHost()->applicationCache() || loader->applicationCacheHost()->applicationCache() == m_cacheBeingUpdated);
+        ASSERT(!loader->applicationCacheHost()->applicationCache() || loader->applicationCacheHost()->applicationCache()->group() == this);
 
         loader->applicationCacheHost()->setApplicationCache(0); // Will unset candidate, too.
         m_associatedDocumentLoaders.remove(loader);

@@ -62,9 +62,9 @@ void ApplicationCache::setGroup(ApplicationCacheGroup* group)
     m_group = group;
 }
 
-bool ApplicationCache::isComplete() const
+bool ApplicationCache::isComplete()
 {
-    return !m_group->cacheIsBeingUpdated(this);
+    return m_group && m_group->cacheIsComplete(this);
 }
 
 void ApplicationCache::setManifestResource(PassRefPtr<ApplicationCacheResource> manifest)

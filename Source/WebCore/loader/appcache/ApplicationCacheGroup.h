@@ -77,7 +77,7 @@ public:
     
     void abort(Frame*);
 
-    bool cacheIsBeingUpdated(const ApplicationCache* cache) const { return cache == m_cacheBeingUpdated; }
+    bool cacheIsComplete(ApplicationCache* cache) { return m_caches.contains(cache); }
 
     void stopLoadingInFrame(Frame*);
 

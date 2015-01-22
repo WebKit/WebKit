@@ -1,3 +1,32 @@
+2015-01-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Crash in URL::protocol() after appcache load fails
+        https://bugs.webkit.org/show_bug.cgi?id=140755
+        rdar://problem/7881290
+
+        Reviewed by Dan Bates.
+
+        Test: http/tests/appcache/404-resource-with-slow-main-resource.php
+
+        Not every cache that isn't being updated is complete. It could also be in a zombie
+        state after failing to load. We get rid of the cache once the main resource finishes
+        loading, but while it's being loaded, the zombie still looks like a regular
+        candidate application cache.
+
+        * loader/appcache/ApplicationCache.cpp: (WebCore::ApplicationCache::isComplete):
+        * loader/appcache/ApplicationCache.h:
+        Removed const from isComplete(), because otherwise we couldn't use ApplicationCacheGroup::m_caches.contains().
+        Constness doesn't make a lot of sense for these objects anyway.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::failedLoadingMainResource): Toned down an assertion.
+        We can fail a main resource load when the document has a zombie appcache, too.
+
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::cacheIsComplete):
+        (WebCore::ApplicationCacheGroup::cacheIsBeingUpdated): Deleted.
+        These functions are only used in ApplicationCache::isComplete().
+
 2015-01-22  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Avoid defining always empty Vector<TextCheckingResult>
