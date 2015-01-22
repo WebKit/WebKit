@@ -369,8 +369,16 @@ static int32_t calculateUTCOffset()
 {
 #if OS(WINDOWS)
     TIME_ZONE_INFORMATION timeZoneInformation;
-    GetTimeZoneInformation(&timeZoneInformation);
-    int32_t bias = timeZoneInformation.Bias + timeZoneInformation.StandardBias;
+    DWORD rc = ::GetTimeZoneInformation(&timeZoneInformation);
+    if (rc == TIME_ZONE_ID_INVALID)
+        return 0;
+
+    int32_t bias = 0;
+    if (rc == TIME_ZONE_ID_DAYLIGHT)
+        bias = timeZoneInformation.Bias + timeZoneInformation.DaylightBias;
+    else if (rc == TIME_ZONE_ID_STANDARD || rc == TIME_ZONE_ID_UNKNOWN)
+        bias = timeZoneInformation.Bias + timeZoneInformation.StandardBias;
+
     return -bias * 60 * 1000;
 #else
     time_t localTime = time(0);
@@ -432,8 +440,10 @@ static double calculateDSTOffset(time_t localTime, double utcOffset)
     FILETIME utcFileTime;
     UnixTimeToFileTime(localTime, &utcFileTime);
     SYSTEMTIME utcSystemTime, localSystemTime;
-    FileTimeToSystemTime(&utcFileTime, &utcSystemTime);
-    SystemTimeToTzSpecificLocalTime(0, &utcSystemTime, &localSystemTime);
+    if (!::FileTimeToSystemTime(&utcFileTime, &utcSystemTime))
+        return 0;
+    if (!::SystemTimeToTzSpecificLocalTime(nullptr, &utcSystemTime, &localSystemTime))
+        return 0;
 
     double offsetTime = (localTime * msPerSecond) + utcOffset;
 
