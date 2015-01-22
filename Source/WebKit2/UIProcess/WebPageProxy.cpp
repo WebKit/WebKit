@@ -887,11 +887,19 @@ uint64_t WebPageProxy::reload(bool reloadFromOrigin)
 
 void WebPageProxy::recordNavigationSnapshot()
 {
+    if (WebBackForwardListItem* item = m_backForwardList->currentItem())
+        recordNavigationSnapshot(*item);
+}
+
+void WebPageProxy::recordNavigationSnapshot(WebBackForwardListItem& item)
+{
     if (!m_shouldRecordNavigationSnapshots)
         return;
 
 #if PLATFORM(COCOA)
-    ViewSnapshotStore::shared().recordSnapshot(*this);
+    ViewSnapshotStore::shared().recordSnapshot(*this, item);
+#else
+    UNUSED_PARAM(item);
 #endif
 }
 

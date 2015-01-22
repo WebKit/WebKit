@@ -896,6 +896,7 @@ public:
     bool shouldRecordNavigationSnapshots() const { return m_shouldRecordNavigationSnapshots; }
     void setShouldRecordNavigationSnapshots(bool shouldRecordSnapshots) { m_shouldRecordNavigationSnapshots = shouldRecordSnapshots; }
     void recordNavigationSnapshot();
+    void recordNavigationSnapshot(WebBackForwardListItem&);
 
 #if PLATFORM(COCOA)
     PassRefPtr<ViewSnapshot> takeViewSnapshot();

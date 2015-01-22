@@ -1,3 +1,34 @@
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r175759. rdar://problem/19450899
+
+    2014-11-07  Anshu Chimala  <anshu@apple.com>
+
+            Make it possible to associate snapshots with back/forward list items other than the current item.
+            https://bugs.webkit.org/show_bug.cgi?id=138490
+
+            Reviewed by Tim Horton.
+
+            * UIProcess/API/Cocoa/WKViewPrivate.h:
+            Declare -saveBackForwardSnapshotForItem:, an alternative to -saveBackForwardSnapshotForCurrentItem that accepts a
+            back/forward list item as an argument.
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView saveBackForwardSnapshotForItem:]):
+            Pass the provided back/forward list item along to WebPageProxy::recordNavigationSnapshot().
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::recordNavigationSnapshot):
+            Overloaded to optionally take a back/forward list item as an argument. If one isn't provided, default to the current item
+            as before; otherwise, associate the snapshot with whichever item was provided.
+            * UIProcess/WebPageProxy.h:
+            Declare the new recordNavigationSnapshot() overload.
+
+            * UIProcess/mac/ViewSnapshotStore.h:
+            Make recordSnapshot() take a back/forward list item as an argument.
+            * UIProcess/mac/ViewSnapshotStore.mm:
+            (WebKit::ViewSnapshotStore::recordSnapshot):
+            Store the snapshot in the provided back/forward list item instead of in the current item.
+
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175719. rdar://problem/19424169

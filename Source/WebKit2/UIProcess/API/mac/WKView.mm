@@ -3776,6 +3776,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page->recordNavigationSnapshot();
 }
 
+- (void)saveBackForwardSnapshotForItem:(WKBackForwardListItemRef)item
+{
+    _data->_page->recordNavigationSnapshot(*toImpl(item));
+}
+
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
 {
     return [self initWithFrame:frame contextRef:contextRef pageGroupRef:pageGroupRef relatedToPage:nil];
