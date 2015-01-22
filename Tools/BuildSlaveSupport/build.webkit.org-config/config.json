@@ -157,7 +157,7 @@
                     { "name": "Apple Yosemite Release WK2 (Tests)", "type": "TestWebKit2", "builddir": "yosemite-release-tests-wk2",
                       "platform": "mac-yosemite", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
-                      "slavenames": ["bot192", "bot193", "bot319", "bot320]
+                      "slavenames": ["bot192", "bot193", "bot319", "bot320"]
                     },
                     {
                       "name": "Apple Yosemite Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "yosemite-release-perf-tests",
