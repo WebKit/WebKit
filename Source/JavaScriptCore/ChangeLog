@@ -1,3 +1,31 @@
+2015-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Consolidate out arguments of parseFunctionInfo into a struct
+        https://bugs.webkit.org/show_bug.cgi?id=140754
+
+        Reviewed by Oliver Hunt.
+
+        Introduced ParserFunctionInfo for storing out arguments of parseFunctionInfo.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionExpr):
+        (JSC::ASTBuilder::createGetterOrSetterProperty): This one takes a property name in addition to
+        ParserFunctionInfo since the property name and the function name could differ.
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        * parser/ParserFunctionInfo.h: Added.
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFunctionExpr):
+        (JSC::SyntaxChecker::createFuncDeclStatement):
+        (JSC::SyntaxChecker::createClassDeclStatement):
+        (JSC::SyntaxChecker::createGetterOrSetterProperty):
+
 2015-01-21  Mark Hahnenberg  <mhahnenb@gmail.com>
 
         Change Heap::m_compiledCode to use a Vector
