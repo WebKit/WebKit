@@ -121,7 +121,7 @@ EncodedJSValue getData(ExecState* exec)
     union {
         typename Adaptor::Type value;
         uint8_t rawBytes[dataSize];
-    } u;
+    } u = { };
 
     uint8_t* dataPtr = static_cast<uint8_t*>(dataView->vector()) + byteOffset;
 

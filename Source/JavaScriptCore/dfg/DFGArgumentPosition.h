@@ -64,7 +64,7 @@ public:
     
     bool mergeShouldNeverUnbox(bool shouldNeverUnbox)
     {
-        return checkAndSet(m_shouldNeverUnbox, m_shouldNeverUnbox | shouldNeverUnbox);
+        return checkAndSet(m_shouldNeverUnbox, m_shouldNeverUnbox || shouldNeverUnbox);
     }
     
     bool mergeArgumentPredictionAwareness()
@@ -93,7 +93,7 @@ public:
         bool changed = false;
         for (unsigned i = 0; i < m_variables.size(); ++i) {
             VariableAccessData* variable = m_variables[i]->find();
-            changed |= checkAndSet(m_isProfitableToUnbox, m_isProfitableToUnbox | variable->isProfitableToUnbox());
+            changed |= checkAndSet(m_isProfitableToUnbox, m_isProfitableToUnbox || variable->isProfitableToUnbox());
         }
         if (!changed)
             return false;
