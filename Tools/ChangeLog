@@ -1,3 +1,12 @@
+2015-01-22  Lucas Forschler  <lforschler@apple.com>
+
+        Add Apple build slaves.
+        Fixed text alignment for slave list.
+        
+        Unreviewed.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2015-01-21  Lucas Forschler  <lforschler@apple.com>
 
         Teach build.webkit.org about bot308 and bot309.
