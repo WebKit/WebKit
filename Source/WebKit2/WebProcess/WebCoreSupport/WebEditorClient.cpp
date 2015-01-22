@@ -198,6 +198,11 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
 #endif
 }
 
+void WebEditorClient::discardedComposition(Frame*)
+{
+    m_page->discardedComposition();
+}
+
 void WebEditorClient::didEndEditing()
 {
     static NeverDestroyed<String> WebViewDidEndEditingNotification(ASCIILiteral("WebViewDidEndEditingNotification"));

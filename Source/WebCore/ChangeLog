@@ -1,5 +1,30 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177152. rdar://problem/19451288
+
+    2014-12-11  Alexey Proskuryakov  <ap@apple.com>
+
+            REGRESSION (Async Text Input): Text input method state is not reset when reloading a page
+            https://bugs.webkit.org/show_bug.cgi?id=139504
+            rdar://problem/19034674
+
+            Reviewed by Enrica Casucci.
+
+            Explicitly notify EditorClient when a composition is voluntarily canceled by WebCore.
+            These are almost certainly not all the places where this happens, but this fixes the bug,
+            and lays the groundwork for using this new client call instead of didChangeSelection
+            hacks.
+
+            * editing/Editor.cpp:
+            (WebCore::Editor::clear):
+            (WebCore::Editor::cancelComposition):
+            * loader/EmptyClients.h:
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::willTransitionToCommitted):
+            * page/EditorClient.h:
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r176971. rdar://problem/19452174
 
     2014-12-08  Myles C. Maxfield  <mmaxfield@apple.com>

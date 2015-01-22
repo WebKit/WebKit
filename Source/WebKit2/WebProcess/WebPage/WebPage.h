@@ -580,6 +580,7 @@ public:
 #endif
 
     void didChangeSelection();
+    void discardedComposition();
 
 #if PLATFORM(COCOA)
     void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);
