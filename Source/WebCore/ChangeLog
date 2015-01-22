@@ -1,5 +1,21 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r173688. rdar://problem/19451277
+
+    2014-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+            filterRootById accidentally clears inAdjacentChain flag
+            https://bugs.webkit.org/show_bug.cgi?id=136851
+
+            Reviewed by Benjamin Poulain.
+
+            Test: fast/selectors/filter-root-node-with-selector-contains-adjacents.html
+
+            * dom/SelectorQuery.cpp:
+            (WebCore::filterRootById):
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r172797. rdar://problem/19451324
 
     2014-08-20  Zalan Bujtas  <zalan@apple.com>

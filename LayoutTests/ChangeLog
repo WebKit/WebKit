@@ -1,5 +1,24 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r173688. rdar://problem/19451277
+
+    2014-09-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+            filterRootById accidentally clears inAdjacentChain flag
+            https://bugs.webkit.org/show_bug.cgi?id=136851
+
+            Reviewed by Benjamin Poulain.
+
+            When SubSelector comes, `inAdjacentChain` flag is cleared to false.
+            So for example, `document.querySelector("span#id + ok")` doesn't work correctly.
+            In this patch, we handles SubSelector relation correctly; don't change `inAdjacentChain` flag
+            to filter the right search root node.
+
+            * fast/selectors/filter-root-node-with-selector-contains-adjacents-expected.txt: Added.
+            * fast/selectors/filter-root-node-with-selector-contains-adjacents.html: Added.
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r172797. rdar://problem/19451324
 
     2014-08-20  Zalan Bujtas  <zalan@apple.com>
