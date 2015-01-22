@@ -1,3 +1,28 @@
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r174377. rdar://problem/19451247
+
+    2014-10-06  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] DateMath's calculateUTFOffset does not account for DST.
+            https://bugs.webkit.org/show_bug.cgi?id=137458
+            <rdar://problem/18559172>
+
+            Reviewed by Geoffrey Garen.
+
+            Check the return value of GetTimeZoneInformation and use the
+            proper bias against UTC (depending on whether we are in daylight
+            savings time, or standard time).
+
+            Also, handle possible error cases in the FileTimeToSystemTime
+            and SystemTimeToTzSpecificLocalTime, rather than using potentially
+            uninitialized values.
+
+            * wtf/DateMath.cpp:
+            (WTF::calculateUTCOffset): Use proper daylight-savings-time state.
+            (WTF::calculateDSTOffset): Avoid uninitialized data due to failing
+            API calls.
+
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r177448. rdar://problem/19451944
