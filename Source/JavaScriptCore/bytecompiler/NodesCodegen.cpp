@@ -1323,7 +1323,7 @@ RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
     }
 
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(left, m_rightHasAssignments, right->isPure(generator));
-    bool wasTypeof = generator.m_lastOpcodeID == op_typeof;
+    bool wasTypeof = generator.lastOpcodeID() == op_typeof;
     RefPtr<RegisterID> src2 = generator.emitNode(right);
     generator.emitExpressionInfo(position(), position(), position());
     if (wasTypeof && (opcodeID == op_neq || opcodeID == op_nstricteq)) {

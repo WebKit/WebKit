@@ -576,7 +576,9 @@ namespace JSC {
         bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
         
         bool isBuiltinFunction() const { return m_isBuiltinFunction; }
-        
+
+        OpcodeID lastOpcodeID() const { return m_lastOpcodeID; }
+
     private:
         friend class Label;
         
@@ -741,7 +743,8 @@ namespace JSC {
         {
             return watchableVariable(operand) != UINT_MAX;
         }
-        
+
+    private:
         Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow> m_instructions;
 
         bool m_shouldEmitDebugHooks;
@@ -786,9 +789,6 @@ namespace JSC {
 
         int m_firstConstantIndex;
         int m_nextConstantOffset;
-        unsigned m_globalConstantIndex;
-
-        int m_globalVarStorageOffset;
 
         int m_firstLazyFunction;
         int m_lastLazyFunction;

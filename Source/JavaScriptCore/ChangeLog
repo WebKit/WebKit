@@ -1,3 +1,19 @@
+2015-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        BytecodeGenerator shouldn't expose all of its member variables
+        https://bugs.webkit.org/show_bug.cgi?id=140752
+
+        Reviewed by Mark Lam.
+
+        Added "private:" and removed unused data members as detected by clang.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::lastOpcodeID): Added. Used in BinaryOpNode::emitBytecode.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BinaryOpNode::emitBytecode):
+
 2015-01-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ASSERT expanding objects in console PrimitiveBindingTraits<T>::assertValueHasExpectedType
