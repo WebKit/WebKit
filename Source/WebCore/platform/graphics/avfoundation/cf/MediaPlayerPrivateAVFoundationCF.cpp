@@ -1524,6 +1524,16 @@ void AVFWrapper::createPlayer(IDirect3DDevice9* d3dDevice)
     m_timeObserver = adoptCF(AVCFPlayerCreatePeriodicTimeObserverForInterval(playerRef, CMTimeMake(veryLongInterval, 10), m_notificationQueue, &periodicTimeObserverCallback, callbackContext()));
 }
 
+#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
+static RetainPtr<CFArrayRef> createLegibleOutputSubtypes()
+{
+    int webVTTInt = kCMSubtitleFormatType_WebVTT;
+    RetainPtr<CFNumberRef> webVTTNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &webVTTInt));
+    CFTypeRef formatTypes[] = { webVTTNumber.get() };
+    return adoptCF(CFArrayCreate(0, formatTypes, WTF_ARRAY_LENGTH(formatTypes), &kCFTypeArrayCallBacks));
+}
+#endif
+
 void AVFWrapper::createPlayerItem()
 {
     ASSERT(isMainThread());
@@ -1557,7 +1567,7 @@ void AVFWrapper::createPlayerItem()
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
     const CFTimeInterval legibleOutputAdvanceInterval = 2;
 
-    m_legibleOutput = adoptCF(AVCFPlayerItemLegibleOutputCreateWithMediaSubtypesForNativeRepresentation(kCFAllocatorDefault, 0));
+    m_legibleOutput = adoptCF(AVCFPlayerItemLegibleOutputCreateWithMediaSubtypesForNativeRepresentation(kCFAllocatorDefault, createLegibleOutputSubtypes().get()));
     AVCFPlayerItemOutputSetSuppressPlayerRendering(m_legibleOutput.get(), TRUE);
 
     AVCFPlayerItemLegibleOutputCallbacks callbackInfo;
