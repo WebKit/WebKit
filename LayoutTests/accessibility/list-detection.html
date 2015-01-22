@@ -86,7 +86,10 @@
             var element = document.getElementById("list" + k);
             var axElement =  accessibilityController.accessibleElementById("list" + k);
             debug(element.getAttribute("test-description"));
-            if (element.getAttribute("is-list") === "true") {
+            if (element.getAttribute("id") == "list4" && accessibilityController.platformName == "atk") {
+                shouldBeTrue("axElement.role == 'AXRole: AXDescriptionList'")
+            }
+            else if (element.getAttribute("is-list") === "true") {
                 shouldBeTrue("axElement.role == 'AXRole: AXList'");
             } else {
                 shouldBeFalse("axElement.role == 'AXRole: AXList'");

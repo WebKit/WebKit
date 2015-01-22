@@ -2043,8 +2043,6 @@ webkit.org/b/129958 svg/clip-path/mask-objectboundingbox-content-clip.svg [ Imag
 webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip-transform.svg [ ImageOnlyFailure ]
 webkit.org/b/129958 svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 
-webkit.org/b/128901 accessibility/list-detection.html [ Failure ]
-
 webkit.org/b/127743 media/video-restricted-no-preload-auto.html [ Failure ]
 
 # .webkitClosedCaptionsVisible doesn't work with "Automatic" caption mode

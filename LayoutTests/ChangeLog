@@ -1,3 +1,21 @@
+2015-01-22  Andrzej Badowski  <a.badowski@samsung.com>
+
+        AX: [ATK] Mark accessibility/list-detection.html as a suitable test for EFL and GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=140721
+
+        Reviewed by Chris Fleizach.
+
+        The test checks the heuristic to determine if a 'list' is really a list.
+        In the area of ATK a role for description list has been separated from the role AXList.
+        This made the test stopped giving positive results for ports EFL and GTK.
+        The proposed amendment restores test for these ports.
+
+        * accessibility/list-detection.html:
+        * platform/efl/TestExpectations:
+        * platform/efl/accessibility/list-detection-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/list-detection-expected.txt: Added.
+
 2015-01-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [CSS Grid Layout] Skip items spanning flex tracks when sizing content based tracks
