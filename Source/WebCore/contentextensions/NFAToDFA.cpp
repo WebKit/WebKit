@@ -300,15 +300,19 @@ static inline void populateTransitions(SetTransitions& setTransitions, NodeIdSet
         ASSERT(set.isEmpty());
 #endif
 
+    Vector<unsigned, 8> allFallbackTransitions;
     const unsigned* buffer = sourceNodeSet.buffer();
     for (unsigned i = 0; i < sourceNodeSet.m_size; ++i) {
         unsigned nodeId = buffer[i];
         const NFANode& nfaSourceNode = graph[nodeId];
-        if (!nfaSourceNode.transitionsOnAnyCharacter.isEmpty())
-            setFallbackTransition.add(nfaSourceNode.transitionsOnAnyCharacter.begin(), nfaSourceNode.transitionsOnAnyCharacter.end());
+        for (unsigned targetTransition : nfaSourceNode.transitionsOnAnyCharacter)
+            allFallbackTransitions.append(targetTransition);
     }
-    for (unsigned targetNodeId : setFallbackTransition)
-        extendSetWithClosure(nfaNodeclosures, targetNodeId, setFallbackTransition);
+    for (unsigned targetNodeId : allFallbackTransitions) {
+        auto addResult = setFallbackTransition.add(targetNodeId);
+        if (addResult.isNewEntry)
+            extendSetWithClosure(nfaNodeclosures, targetNodeId, setFallbackTransition);
+    }
 
     for (unsigned i = 0; i < sourceNodeSet.m_size; ++i) {
         unsigned nodeId = buffer[i];
