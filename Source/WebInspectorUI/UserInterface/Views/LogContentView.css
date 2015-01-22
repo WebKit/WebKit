@@ -60,6 +60,7 @@
     background-color: hsl(210, 98%, 96%);
 }
 
+.console-item.selected .console-user-command::after,
 .console-item.selected .console-message::after {
     position: absolute;
     display: block;
@@ -71,6 +72,7 @@
     width: 2px;
 }
 
+.console-messages:focus .console-item.selected .console-user-command::after,
 .console-messages:focus .console-item.selected .console-message::after {
     background: hsl(210, 100%, 49%);
 }
