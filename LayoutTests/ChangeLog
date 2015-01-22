@@ -1,5 +1,13 @@
 2015-01-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] More gardening.
+
+        Unskip the flexbox tests. These have been functional in Windows for YEARS!
+
+        * platform/win/TestExpectations:
+
+2015-01-21  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Gardening pass over file.
    
         Convert Skips to Failure wherever possible. Try to delete unnecessary skips/failures.

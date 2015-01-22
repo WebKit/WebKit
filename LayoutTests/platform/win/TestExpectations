@@ -91,13 +91,6 @@ webkit.org/b/74716 css3/filters/filter-is-on-subpixel-position.html [ Skip ]
 webkit.org/b/74716 css3/masking/clip-path-filter.html [ Skip ]
 webkit.org/b/74716 css3/filters/backdrop [ Skip ]
 
-# TODO CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
-fast/css/cursor-parsing-image-set.html [ Skip ]
-fast/events/mouse-cursor-image-set.html [ Skip ]
-
-# TODO X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
-http/tests/security/contentTypeOptions [ Skip ]
-
 # TODO Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html [ Skip ]
 
@@ -162,21 +155,13 @@ http/tests/xmlhttprequest/upload-onloadstart-event.html [ Skip ]
 http/tests/xmlhttprequest/upload-progress-events.html [ Skip ]
 http/tests/xmlhttprequest/upload-onprogress-event.html [ Skip ]
 
-# TODO File API is not supported yet (e.g. ENABLE(BLOB))
+# TODO Missing File API and BLOB support (e.g. ENABLE(BLOB))
 fast/files [ Skip ]
 http/tests/fileapi [ Skip ]
 fast/forms/file/recover-file-input-in-unposted-form.html [ Skip ]
 http/tests/security/contentSecurityPolicy/blob-urls-match-self.html [ Skip ]
 http/tests/xmlhttprequest/post-blob-content-type-async.html [ Skip ]
 http/tests/xmlhttprequest/post-blob-content-type-sync.html [ Skip ]
-
-# TODO Directory upload is not enabled.
-fast/forms/file/input-file-directory-upload.html [ Skip ]
-
-# TODO A test that failed because eventSender cannot send function-key events.
-fast/events/keydown-function-keys.html [ Skip ]
-
-# TODO Missing file API and BLOB support
 webkit.org/b/29287 http/tests/local/fileapi/ [ Skip ]
 webkit.org/b/29287 http/tests/local/blob/send-hybrid-blob.html [ Skip ]
 webkit.org/b/29287 http/tests/local/formdata/ [ Skip ]
@@ -186,6 +171,12 @@ http/tests/local/blob/send-sliced-data-blob.html [ Skip ]
 
 # TODO BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html [ Skip ]
+
+# TODO Directory upload is not enabled.
+fast/forms/file/input-file-directory-upload.html [ Skip ]
+
+# TODO A test that failed because eventSender cannot send function-key events.
+fast/events/keydown-function-keys.html [ Skip ]
 
 # TODO No support for WebArchives in WebKitWin <rdar://problem/6436020>
 webarchive [ Skip ]
@@ -209,7 +200,7 @@ fast/events/touch/ [ Skip ]
 # TODO No support for key event location in EventSender.
 webkit.org/b/140526 fast/events/keydown-numpad-keys.html [ Failure ]
 
-# TODO The equivalent of option-tab doesn not exist in Boomer <rdar://problem/5137230>
+# TODO The equivalent of option-tab does not exist in Boomer <rdar://problem/5137230>
 fast/events/frame-tab-focus.html [ Failure ]
 fast/events/option-tab.html [ Failure ]
 fast/forms/focus2.html [ Failure ]
@@ -545,11 +536,6 @@ webkit.org/b/87858 js/names.html [ Skip ]
 
 # TODO LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 compositing/visible-rect/  [ Skip ]
-
-# TODO CSS3 flexbox is disabled <rdar://problem/11570384>
-css3/flexbox/ [ Skip ]
-transitions/flex-transitions.html [ Skip ]
-fast/multicol/span/clone-flexbox.html [ Skip ]
 
 # TODO CSS image-orientation property not yet supported
 fast/css/image-orientation/ [ Skip ]
@@ -1665,6 +1651,9 @@ webkit.org/b/140724 css2.1/t1202-counter-04-b.html [ Failure ]
 webkit.org/b/140724 css2.1/t1202-counters-04-b.html [ Failure ]
 css2.1/20110323/abspos-replaced-width-margin-000-ref.htm [ Failure ]
 
+css3/flexbox/button.html [ Failure ]
+css3/flexbox/flexitem.html [ Failure ]
+css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 ################################################################################
 #################            End CSS Issues              #######################
 ################################################################################
