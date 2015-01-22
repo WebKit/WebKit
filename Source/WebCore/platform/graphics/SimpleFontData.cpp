@@ -242,7 +242,7 @@ PassRefPtr<SimpleFontData> SimpleFontData::nonSyntheticItalicFontData() const
 #if PLATFORM(COCOA)
         nonSyntheticItalicFontPlatformData.m_syntheticOblique = false;
 #endif
-        m_derivedFontData->nonSyntheticItalic = create(nonSyntheticItalicFontPlatformData, isCustomFont(), false, true);
+        m_derivedFontData->nonSyntheticItalic = create(nonSyntheticItalicFontPlatformData, isCustomFont());
     }
     return m_derivedFontData->nonSyntheticItalic;
 }
