@@ -1,5 +1,26 @@
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r177329.
+
+    2014-12-15  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS WK2] Possible crash when setting the WKWebViews's scroll view delegate, if the scroll view outlives the web view
+            https://bugs.webkit.org/show_bug.cgi?id=139662
+            rdar://problem/18083882
+
+            Reviewed by Benjamin Poulain.
+
+            Null out the internal delegate on the WKScrollView when the WKWebView goes away, since
+            it's possible for a client to set its own scroll view delegate, forcing the creation of
+            a WKScrollViewDelegateForwarder, and then retain the UIScrollView past the lifetime of
+            the WKWebView. In this situation, the WKScrollViewDelegateForwarder's internalDelegate
+            would point to a deleted WKWebView.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView dealloc]):
+
+2015-01-21  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r177115.
 
     2014-12-09  Jon Honeycutt  <jhoneycutt@apple.com>

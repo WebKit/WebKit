@@ -360,6 +360,7 @@ static int32_t deviceOrientation()
 #if PLATFORM(IOS)
     [[_configuration _contentProviderRegistry] removePage:*_page];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_scrollView setInternalDelegate:nil];
 #endif
 
     pageToViewMap().remove(_page.get());
