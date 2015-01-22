@@ -52,7 +52,7 @@ static inline bool isFontWeightBold(NSInteger fontWeight)
 
 static inline bool requiresCustomFallbackFont(const UInt32 character)
 {
-    return character == AppleLogo || character == blackCircle;
+    return character == AppleLogo || character == blackCircle || character == narrowNonBreakingSpace;
 }
 
 static CFCharacterSetRef copyFontCharacterSet(CFStringRef fontName)
@@ -489,15 +489,30 @@ PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescri
 FontPlatformData* FontCache::getCustomFallbackFont(const UInt32 c, const FontDescription& description)
 {
     ASSERT(requiresCustomFallbackFont(c));
-    if (c == AppleLogo) {
-        static NeverDestroyed<AtomicString> helveticaFamily("Helvetica Neue", AtomicString::ConstructFromLiteral);
-        return getCachedFontPlatformData(description, helveticaFamily);
+
+    static NeverDestroyed<AtomicString> helveticaFamily("Helvetica Neue", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> lockClockFamily("LockClock-Light", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> timesNewRomanPSMTFamily("TimesNewRomanPSMT", AtomicString::ConstructFromLiteral);
+
+    AtomicString* family = nullptr;
+    switch (c) {
+    case AppleLogo:
+        family = &helveticaFamily.get();
+        break;
+    case blackCircle:
+        family = &lockClockFamily.get();
+        break;
+    case narrowNonBreakingSpace:
+        family = &timesNewRomanPSMTFamily.get();
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return nullptr;
     }
-    if (c == blackCircle) {
-        static NeverDestroyed<AtomicString> lockClockFamily("LockClock-Light", AtomicString::ConstructFromLiteral);
-        return getCachedFontPlatformData(description, lockClockFamily);
-    }
-    return nullptr;
+    ASSERT(family);
+    if (!family)
+        return nullptr;
+    return getCachedFontPlatformData(description, *family);
 }
 
 static inline FontTraitsMask toTraitsMask(CTFontSymbolicTraits ctFontTraits)
