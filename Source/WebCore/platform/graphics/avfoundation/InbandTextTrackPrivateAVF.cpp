@@ -69,6 +69,21 @@ SOFT_LINK(CoreMedia, CMBlockBufferGetDataLength, size_t, (CMBlockBufferRef theBu
 SOFT_LINK(CoreMedia, CMSampleBufferGetSampleTimingInfo, OSStatus, (CMSampleBufferRef sbuf, CMItemIndex sampleIndex, CMSampleTimingInfo* timingInfoOut), (sbuf, sampleIndex, timingInfoOut))
 SOFT_LINK(CoreMedia, CMFormatDescriptionGetExtensions, CFDictionaryRef, (CMFormatDescriptionRef desc), (desc))
 SOFT_LINK(CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, (CMSampleBufferRef sbuf), (sbuf))
+#else
+SOFT_LINK_DLL_IMPORT(CoreMedia, CMTimeGetSeconds, Float64, __cdecl, (CMTime time), (time))
+#define CMTimeGetSeconds softLink_CMTimeGetSeconds
+SOFT_LINK_DLL_IMPORT(CoreMedia, CMSampleBufferGetDataBuffer, CMBlockBufferRef, __cdecl, (CMSampleBufferRef sbuf), (sbuf))
+#define CMSampleBufferGetDataBuffer softLink_CMSampleBufferGetDataBuffer
+SOFT_LINK_DLL_IMPORT(CoreMedia, CMBlockBufferCopyDataBytes, OSStatus, __cdecl, (CMBlockBufferRef theSourceBuffer, size_t offsetToData, size_t dataLength, void* destination), (theSourceBuffer, offsetToData, dataLength, destination))
+#define CMBlockBufferCopyDataBytes softLink_CMBlockBufferCopyDataBytes
+SOFT_LINK_DLL_IMPORT(CoreMedia, CMBlockBufferGetDataLength, size_t, __cdecl, (CMBlockBufferRef theBuffer), (theBuffer))
+#define CMBlockBufferGetDataLength softLink_CMBlockBufferGetDataLength
+SOFT_LINK_DLL_IMPORT(CoreMedia, CMSampleBufferGetSampleTimingInfo, OSStatus, __cdecl, (CMSampleBufferRef sbuf, CMItemIndex sampleIndex, CMSampleTimingInfo* timingInfoOut), (sbuf, sampleIndex, timingInfoOut))
+#define CMSampleBufferGetSampleTimingInfo softLink_CMSampleBufferGetSampleTimingInfo
+SOFT_LINK_DLL_IMPORT(CoreMedia, CMFormatDescriptionGetExtensions, CFDictionaryRef, __cdecl, (CMFormatDescriptionRef desc), (desc))
+#define CMFormatDescriptionGetExtensions softLink_CMFormatDescriptionGetExtensions
+SOFT_LINK_DLL_IMPORT(CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef, __cdecl, (CMSampleBufferRef sbuf), (sbuf))
+#define CMSampleBufferGetFormatDescription softLink_CMSampleBufferGetFormatDescription
 #endif
 
 SOFT_LINK_AVF_POINTER(CoreMedia, kCMTextMarkupAttribute_Alignment, CFStringRef)
@@ -546,11 +561,6 @@ void InbandTextTrackPrivateAVF::setMode(InbandTextTrackPrivate::Mode newMode)
 
 void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, const MediaTime& presentationTime)
 {
-#if PLATFORM(WIN)
-    UNUSED_PARAM(nativeSamples);
-    UNUSED_PARAM(presentationTime);
-    ASSERT_NOT_REACHED();
-#else
     if (!nativeSamples)
         return;
 
@@ -640,7 +650,6 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
 
         m_sampleInputBuffer.remove(0, boxLength);
     }
-#endif
 }
 
 } // namespace WebCore
