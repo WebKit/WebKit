@@ -65,8 +65,9 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
     if (exec->argumentCount() == 1) {
         // Support for document.all(<index>) etc.
         String string = exec->argument(0).toString(exec)->value(exec);
-        if (Optional<uint32_t> index = toUInt32FromStringImpl(string.impl()))
-            return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection.item(index.value())));
+        unsigned index = toUInt32FromStringImpl(string.impl());
+        if (index != PropertyName::NotAnIndex)
+            return JSValue::encode(toJS(exec, jsCollection->globalObject(), collection.item(index)));
 
         // Support for document.images('<name>') etc.
         return JSValue::encode(namedItems(exec, jsCollection, Identifier(exec, string)));
@@ -74,8 +75,9 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
 
     // The second arg, if set, is the index of the item we want
     String string = exec->argument(0).toString(exec)->value(exec);
-    if (Optional<uint32_t> index = toUInt32FromStringImpl(exec->argument(1).toWTFString(exec).impl())) {
-        if (auto* item = collection.namedItemWithIndex(string, index.value()))
+    unsigned index = toUInt32FromStringImpl(exec->argument(1).toWTFString(exec).impl());
+    if (index != PropertyName::NotAnIndex) {
+        if (auto* item = collection.namedItemWithIndex(string, index))
             return JSValue::encode(toJS(exec, jsCollection->globalObject(), item));
     }
 
@@ -101,8 +103,9 @@ EncodedJSValue JSHTMLAllCollection::nameGetter(ExecState* exec, JSObject* slotBa
 
 JSValue JSHTMLAllCollection::item(ExecState* exec)
 {
-    if (Optional<uint32_t> index = toUInt32FromStringImpl(exec->argument(0).toString(exec)->value(exec).impl()))
-        return toJS(exec, globalObject(), impl().item(index.value()));
+    uint32_t index = toUInt32FromStringImpl(exec->argument(0).toString(exec)->value(exec).impl());
+    if (index != PropertyName::NotAnIndex)
+        return toJS(exec, globalObject(), impl().item(index));
     return namedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
 }
 

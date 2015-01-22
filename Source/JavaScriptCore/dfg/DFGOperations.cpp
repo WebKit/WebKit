@@ -97,16 +97,14 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
     JSValue value = JSValue::decode(encodedValue);
 
     if (LIKELY(property.isUInt32())) {
-        uint32_t index = property.asUInt32();
-        ASSERT_WITH_MESSAGE(index != PropertyName::NotAnIndex, "Since JSValue::isUInt32 returns true only when the boxed value is int32_t and positive, it doesn't return true for uint32_t max value that is PropertyName::NotAnIndex.");
-        putByVal<strict, direct>(exec, baseValue, index, value);
+        putByVal<strict, direct>(exec, baseValue, property.asUInt32(), value);
         return;
     }
 
     if (property.isDouble()) {
         double propertyAsDouble = property.asDouble();
         uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
-        if (propertyAsDouble == propertyAsUInt32 && propertyAsUInt32 != PropertyName::NotAnIndex) {
+        if (propertyAsDouble == propertyAsUInt32) {
             putByVal<strict, direct>(exec, baseValue, propertyAsUInt32, value);
             return;
         }
@@ -124,19 +122,14 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
 
     // Don't put to an object if toString throws an exception.
     Identifier ident = property.toString(exec)->toIdentifier(exec);
-    if (vm->exception())
-        return;
-
-    PutPropertySlot slot(baseValue, strict);
-    if (direct) {
-        PropertyName propertyName(ident);
-        RELEASE_ASSERT(baseValue.isObject());
-        if (Optional<uint32_t> index = propertyName.asIndex())
-            asObject(baseValue)->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
-        else
-            asObject(baseValue)->putDirect(*vm, propertyName, value, slot);
-    } else
-        baseValue.put(exec, ident, value, slot);
+    if (!vm->exception()) {
+        PutPropertySlot slot(baseValue, strict);
+        if (direct) {
+            RELEASE_ASSERT(baseValue.isObject());
+            asObject(baseValue)->putDirect(*vm, ident, value, slot);
+        } else
+            baseValue.put(exec, ident, value, slot);
+    }
 }
 
 template<typename ViewClass>

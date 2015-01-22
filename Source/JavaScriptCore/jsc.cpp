@@ -334,9 +334,10 @@ public:
             return true;
         }
 
-        Optional<uint32_t> index = propertyName.asIndex();
-        if (index && index.value() < thisObject->getLength()) {
-            slot.setValue(thisObject, DontDelete | DontEnum, jsNumber(thisObject->m_vector[index.value()]));
+        unsigned index = propertyName.asIndex();
+        if (index < thisObject->getLength()) {
+            ASSERT(index != PropertyName::NotAnIndex);
+            slot.setValue(thisObject, DontDelete | DontEnum, jsNumber(thisObject->m_vector[index]));
             return true;
         }
 

@@ -1010,7 +1010,8 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 bool Structure::prototypeChainMayInterceptStoreTo(VM& vm, PropertyName propertyName)
 {
-    if (propertyName.asIndex())
+    unsigned i = propertyName.asIndex();
+    if (i != PropertyName::NotAnIndex)
         return anyObjectInChainMayInterceptIndexedAccesses();
     
     for (Structure* current = this; ;) {
