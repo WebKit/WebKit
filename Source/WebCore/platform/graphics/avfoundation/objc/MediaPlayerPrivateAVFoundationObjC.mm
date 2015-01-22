@@ -1441,7 +1441,7 @@ static HashSet<String> mimeTypeCache()
 
     NSArray *types = [AVURLAsset audiovisualMIMETypes];
     for (NSString *mimeType in types)
-        cache.add(mimeType);
+        cache.add([mimeType lowercaseString]);
 
     return cache;
 } 
