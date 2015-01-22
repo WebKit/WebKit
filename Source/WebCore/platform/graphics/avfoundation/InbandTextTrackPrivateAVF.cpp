@@ -73,7 +73,30 @@ SOFT_LINK(CoreMedia, CMSampleBufferGetFormatDescription, CMFormatDescriptionRef,
 typedef struct OpaqueCMBlockBuffer* CMBlockBufferRef;
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
 typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
-typedef struct CMSampleTimingInfo;
+
+#ifndef CMSAMPLEBUFFER_H
+extern "C" {
+#pragma pack(push, 4)
+#ifndef CMTIME_H
+    typedef struct
+    {
+        int64_t value;
+        int32_t timescale;
+        uint32_t flags;
+        int64_t epoch;
+    } CMTime;
+#endif
+
+    typedef struct
+    {
+        CMTime duration;
+        CMTime presentationTimeStamp;
+        CMTime decodeTimeStamp;
+    } CMSampleTimingInfo;
+#pragma pack(pop)
+}
+#endif
+
 SOFT_LINK_DLL_IMPORT(CoreMedia, CMTimeGetSeconds, Float64, __cdecl, (CMTime time), (time))
 #define CMTimeGetSeconds softLink_CMTimeGetSeconds
 SOFT_LINK_DLL_IMPORT(CoreMedia, CMSampleBufferGetDataBuffer, CMBlockBufferRef, __cdecl, (CMSampleBufferRef sbuf), (sbuf))
