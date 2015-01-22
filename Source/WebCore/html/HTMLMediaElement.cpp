@@ -45,7 +45,6 @@
 #include "ElementIterator.h"
 #include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
-#include "FeatureCounter.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -1164,7 +1163,9 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
     }
 
     // Log that we started loading a media element.
-    FEATURE_COUNTER_INCREMENT_KEY(document().page(), isVideo() ? FeatureCounterMediaVideoElementLoadingKey : FeatureCounterMediaAudioElementLoadingKey);
+    if (Frame* frame = document().frame())
+        frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::mediaKey(), isVideo() ? DiagnosticLoggingKeys::videoKey() : DiagnosticLoggingKeys::audioKey(), DiagnosticLoggingKeys::loadingKey());
+
     m_firstTimePlaying = true;
 
     // Set m_currentSrc *before* changing to the cache url, the fact that we are loading from the app
@@ -4549,7 +4550,8 @@ void HTMLMediaElement::updatePlayState()
 
             if (m_firstTimePlaying) {
                 // Log that a media element was played.
-                FEATURE_COUNTER_INCREMENT_KEY(document().page(), isVideo() ? FeatureCounterMediaVideoElementPlayedKey : FeatureCounterMediaAudioElementPlayedKey);
+                if (Frame* frame = document().frame())
+                    frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::mediaKey(), isVideo() ? DiagnosticLoggingKeys::videoKey() : DiagnosticLoggingKeys::audioKey(), DiagnosticLoggingKeys::playedKey());
                 m_firstTimePlaying = false;
             }
 

@@ -38,6 +38,11 @@ String DiagnosticLoggingKeys::mediaLoadingFailedKey()
     return ASCIILiteral("mediaFailedLoading");
 }
 
+String DiagnosticLoggingKeys::mustRevalidateIsExpiredKey()
+{
+    return ASCIILiteral("mustRevalidateIsExpired");
+}
+
 String DiagnosticLoggingKeys::pluginLoadedKey()
 {
     return ASCIILiteral("pluginLoaded");
@@ -83,6 +88,11 @@ String DiagnosticLoggingKeys::pageLoadedKey()
     return ASCIILiteral("pageLoaded");
 }
 
+String DiagnosticLoggingKeys::playedKey()
+{
+    return ASCIILiteral("played");
+}
+
 String DiagnosticLoggingKeys::engineFailedToLoadKey()
 {
     return ASCIILiteral("engineFailedToLoad");
@@ -91,6 +101,21 @@ String DiagnosticLoggingKeys::engineFailedToLoadKey()
 String DiagnosticLoggingKeys::navigationKey()
 {
     return ASCIILiteral("navigation");
+}
+
+String DiagnosticLoggingKeys::noCacheKey()
+{
+    return ASCIILiteral("noCache");
+}
+
+String DiagnosticLoggingKeys::noStoreKey()
+{
+    return ASCIILiteral("noStore");
+}
+
+String DiagnosticLoggingKeys::notInMemoryCacheKey()
+{
+    return ASCIILiteral("notInMemoryCache");
 }
 
 String DiagnosticLoggingKeys::pageCacheKey()
@@ -118,14 +143,29 @@ String DiagnosticLoggingKeys::mainResourceKey()
     return ASCIILiteral("mainResource");
 }
 
+String DiagnosticLoggingKeys::mediaKey()
+{
+    return ASCIILiteral("media");
+}
+
 String DiagnosticLoggingKeys::isErrorPageKey()
 {
     return ASCIILiteral("isErrorPage");
 }
 
+String DiagnosticLoggingKeys::isExpiredKey()
+{
+    return ASCIILiteral("isExpired");
+}
+
 String DiagnosticLoggingKeys::loadedKey()
 {
     return ASCIILiteral("loaded");
+}
+
+String DiagnosticLoggingKeys::loadingKey()
+{
+    return ASCIILiteral("loading");
 }
 
 String DiagnosticLoggingKeys::hasPluginsKey()
@@ -141,6 +181,11 @@ String DiagnosticLoggingKeys::httpsNoStoreKey()
 String DiagnosticLoggingKeys::imageKey()
 {
     return ASCIILiteral("image");
+}
+
+String DiagnosticLoggingKeys::inMemoryCacheKey()
+{
+    return ASCIILiteral("inMemoryCache");
 }
 
 String DiagnosticLoggingKeys::hasOpenDatabasesKey()
@@ -163,6 +208,11 @@ String DiagnosticLoggingKeys::rawKey()
     return ASCIILiteral("raw");
 }
 
+String DiagnosticLoggingKeys::reasonKey()
+{
+    return ASCIILiteral("reason");
+}
+
 String DiagnosticLoggingKeys::loadingAPISenseKey()
 {
     return ASCIILiteral("loadingAPISense");
@@ -181,6 +231,16 @@ String DiagnosticLoggingKeys::cannotSuspendActiveDOMObjectsKey()
 String DiagnosticLoggingKeys::applicationCacheKey()
 {
     return ASCIILiteral("applicationCache");
+}
+
+String DiagnosticLoggingKeys::audioKey()
+{
+    return ASCIILiteral("audio");
+}
+
+String DiagnosticLoggingKeys::cachedResourceRevalidationKey()
+{
+    return ASCIILiteral("cachedResourceRevalidation");
 }
 
 String DiagnosticLoggingKeys::deniedByClientKey()
@@ -213,6 +273,16 @@ String DiagnosticLoggingKeys::resourceKey()
     return ASCIILiteral("resource");
 }
 
+String DiagnosticLoggingKeys::resourceRequestKey()
+{
+    return ASCIILiteral("resourceRequest");
+}
+
+String DiagnosticLoggingKeys::revalidatingKey()
+{
+    return ASCIILiteral("revalidating");
+}
+
 String DiagnosticLoggingKeys::reloadFromOriginKey()
 {
     return ASCIILiteral("reloadFromOrigin");
@@ -236,6 +306,71 @@ String DiagnosticLoggingKeys::styleSheetKey()
 String DiagnosticLoggingKeys::svgDocumentKey()
 {
     return ASCIILiteral("svgDocument");
+}
+
+String DiagnosticLoggingKeys::unusedKey()
+{
+    return ASCIILiteral("unused");
+}
+
+String DiagnosticLoggingKeys::unusedReasonCredentialSettingsKey()
+{
+    return ASCIILiteral("unused.reason.credentialSettings");
+}
+
+String DiagnosticLoggingKeys::unusedReasonErrorKey()
+{
+    return ASCIILiteral("unused.reason.error");
+}
+
+String DiagnosticLoggingKeys::unusedReasonMustRevalidateNoValidatorKey()
+{
+    return ASCIILiteral("unused.reason.mustRevalidateNoValidator");
+}
+
+String DiagnosticLoggingKeys::unusedReasonNoStoreKey()
+{
+    return ASCIILiteral("unused.reason.noStore");
+}
+
+String DiagnosticLoggingKeys::unusedReasonRedirectChainKey()
+{
+    return ASCIILiteral("unused.reason.redirectChain");
+}
+
+String DiagnosticLoggingKeys::unusedReasonReloadKey()
+{
+    return ASCIILiteral("unused.reason.reload");
+}
+
+String DiagnosticLoggingKeys::unusedReasonTypeMismatchKey()
+{
+    return ASCIILiteral("unused.reason.typeMismatch");
+}
+
+String DiagnosticLoggingKeys::usedKey()
+{
+    return ASCIILiteral("used");
+}
+
+String DiagnosticLoggingKeys::userKey()
+{
+    return ASCIILiteral("user");
+}
+
+String DiagnosticLoggingKeys::videoKey()
+{
+    return ASCIILiteral("video");
+}
+
+String DiagnosticLoggingKeys::webViewKey()
+{
+    return ASCIILiteral("webView");
+}
+
+String DiagnosticLoggingKeys::zoomedKey()
+{
+    return ASCIILiteral("zoomed");
 }
 
 String DiagnosticLoggingKeys::expiredKey()

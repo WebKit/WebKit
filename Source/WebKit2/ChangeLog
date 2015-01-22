@@ -1,3 +1,27 @@
+2015-01-22  Chris Dumez  <cdumez@apple.com>
+
+        Drop the legacy FeatureCounter class
+        https://bugs.webkit.org/show_bug.cgi?id=140749
+
+        Reviewed by Andreas Kling.
+
+        Drop the legacy FeatureCounter class and use DiagnosticLoggingClient
+        instead.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _featureCounterEnabled]):
+        (-[WKWebViewConfiguration _setFeatureCounterEnabled:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::willStartUserTriggeredZooming):
+
 2015-01-22  Beth Dakin  <bdakin@apple.com>
 
         ibtoold crash below -[WebView close]

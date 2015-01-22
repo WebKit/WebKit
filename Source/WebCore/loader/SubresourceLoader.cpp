@@ -34,7 +34,6 @@
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "FeatureCounter.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Logging.h"
@@ -161,7 +160,8 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
         if (newRequest.isConditional() && m_resource->resourceToRevalidate() && newRequest.url() != m_resource->resourceToRevalidate()->response().url()) {
             newRequest.makeUnconditional();
             memoryCache().revalidationFailed(m_resource);
-            FEATURE_COUNTER_INCREMENT_KEY(m_frame ? m_frame->page() : nullptr, FeatureCounterCachedResourceRevalidationFailureKey);
+            if (m_frame)
+                m_frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultFail);
         }
         
         if (!m_documentLoader->cachedResourceLoader().canRequest(m_resource->type(), newRequest.url(), options())) {
@@ -208,14 +208,16 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
             // Existing resource is ok, just use it updating the expiration time.
             m_resource->setResponse(response);
             memoryCache().revalidationSucceeded(m_resource, response);
-            FEATURE_COUNTER_INCREMENT_KEY(m_frame ? m_frame->page() : nullptr, FeatureCounterCachedResourceRevalidationSuccessKey);
+            if (m_frame)
+                m_frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultPass);
             if (!reachedTerminalState())
                 ResourceLoader::didReceiveResponse(response);
             return;
         }
         // Did not get 304 response, continue as a regular resource load.
         memoryCache().revalidationFailed(m_resource);
-        FEATURE_COUNTER_INCREMENT_KEY(m_frame ? m_frame->page() : nullptr, FeatureCounterCachedResourceRevalidationFailureKey);
+        if (m_frame)
+            m_frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultFail);
     }
 
     m_resource->responseReceived(response);

@@ -1,3 +1,65 @@
+2015-01-22  Chris Dumez  <cdumez@apple.com>
+
+        Drop the legacy FeatureCounter class
+        https://bugs.webkit.org/show_bug.cgi?id=140749
+
+        Reviewed by Andreas Kling.
+
+        Drop the legacy FeatureCounter class and use DiagnosticLoggingClient
+        instead.
+
+        * CMakeLists.txt:
+        * Configurations/WebCore.xcconfig:
+        * WebCore.exp.in:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequest):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::mustRevalidateDueToCacheHeaders):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::logMemoryCacheResourceRequest):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::mustRevalidateIsExpiredKey):
+        (WebCore::DiagnosticLoggingKeys::playedKey):
+        (WebCore::DiagnosticLoggingKeys::noCacheKey):
+        (WebCore::DiagnosticLoggingKeys::noStoreKey):
+        (WebCore::DiagnosticLoggingKeys::notInMemoryCacheKey):
+        (WebCore::DiagnosticLoggingKeys::mediaKey):
+        (WebCore::DiagnosticLoggingKeys::isExpiredKey):
+        (WebCore::DiagnosticLoggingKeys::loadingKey):
+        (WebCore::DiagnosticLoggingKeys::inMemoryCacheKey):
+        (WebCore::DiagnosticLoggingKeys::reasonKey):
+        (WebCore::DiagnosticLoggingKeys::audioKey):
+        (WebCore::DiagnosticLoggingKeys::cachedResourceRevalidationKey):
+        (WebCore::DiagnosticLoggingKeys::resourceRequestKey):
+        (WebCore::DiagnosticLoggingKeys::revalidatingKey):
+        (WebCore::DiagnosticLoggingKeys::unusedKey):
+        (WebCore::DiagnosticLoggingKeys::unusedReasonCredentialSettingsKey):
+        (WebCore::DiagnosticLoggingKeys::unusedReasonErrorKey):
+        (WebCore::DiagnosticLoggingKeys::unusedReasonMustRevalidateNoValidatorKey):
+        (WebCore::DiagnosticLoggingKeys::unusedReasonNoStoreKey):
+        (WebCore::DiagnosticLoggingKeys::unusedReasonRedirectChainKey):
+        (WebCore::DiagnosticLoggingKeys::unusedReasonReloadKey):
+        (WebCore::DiagnosticLoggingKeys::unusedReasonTypeMismatchKey):
+        (WebCore::DiagnosticLoggingKeys::usedKey):
+        (WebCore::DiagnosticLoggingKeys::userKey):
+        (WebCore::DiagnosticLoggingKeys::videoKey):
+        (WebCore::DiagnosticLoggingKeys::webViewKey):
+        (WebCore::DiagnosticLoggingKeys::zoomedKey):
+        * page/DiagnosticLoggingKeys.h:
+        * page/Settings.in:
+        * platform/FeatureCounter.cpp: Removed.
+        * platform/FeatureCounter.h: Removed.
+        * platform/FeatureCounterKeys.h: Removed.
+        * platform/ios/FeatureCounter.mm: Removed.
+
 2015-01-22  Benjamin Poulain  <benjamin@webkit.org>
 
         When extending the fallback transitions with their closure, we are modifying the Set while iterating it

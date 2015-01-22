@@ -40,9 +40,10 @@
 #include "ChromeClient.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
+#include "DiagnosticLoggingClient.h"
+#include "DiagnosticLoggingKeys.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "FeatureCounter.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -50,6 +51,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
+#include "MainFrame.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "PingLoader.h"
@@ -435,6 +437,16 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
     return !newRequest.isNull();
 }
 
+static inline void logMemoryCacheResourceRequest(Frame* frame, const String& description, const String& value = String())
+{
+    if (!frame)
+        return;
+    if (value.isNull())
+        frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::resourceRequestKey(), description);
+    else
+        frame->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceRequestKey(), description, value);
+}
+
 CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest& request)
 {
     URL url = request.resourceRequest().url();
@@ -445,10 +457,10 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     url = MemoryCache::removeFragmentIdentifierIfNeeded(url);
 
     if (!url.isValid())
-        return 0;
+        return nullptr;
 
     if (!canRequest(type, url, request.options(), request.forPreload()))
-        return 0;
+        return nullptr;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (frame() && frame()->page() && frame()->page()->userContentController() && frame()->page()->userContentController()->contentFilterBlocksURL(url))
@@ -472,8 +484,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
 
     resource = memoryCache().resourceForRequest(request.resourceRequest(), sessionID());
 
-    Page* page = frame() ? frame()->page() : nullptr;
-    FEATURE_COUNTER_INCREMENT_KEY(page, resource ? FeatureCounterResourceRequestInMemoryCacheKey : FeatureCounterResourceRequestNotInMemoryCacheKey);
+    logMemoryCacheResourceRequest(frame(), resource ? DiagnosticLoggingKeys::inMemoryCacheKey() : DiagnosticLoggingKeys::notInMemoryCacheKey());
 
     const RevalidationPolicy policy = determineRevalidationPolicy(type, request.mutableResourceRequest(), request.forPreload(), resource.get(), request.defer());
     switch (policy) {
@@ -482,24 +493,24 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         FALLTHROUGH;
     case Load:
         if (resource)
-            FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUnusedKey);
+            logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedKey());
         resource = loadResource(type, request);
         break;
     case Revalidate:
         if (resource)
-            FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheRevalidatingKey);
+            logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::revalidatingKey());
         resource = revalidateResource(request, resource.get());
         break;
     case Use:
         if (!shouldContinueAfterNotifyingLoadedFromMemoryCache(request, resource.get()))
-            return 0;
-        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUsedKey);
+            return nullptr;
+        logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::usedKey());
         memoryCache().resourceAccessed(resource.get());
         break;
     }
 
     if (!resource)
-        return 0;
+        return nullptr;
 
     if (!request.forPreload() || policy != Use)
         resource->setLoadPriority(request.priority());
@@ -511,7 +522,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         if (resource->errorOccurred()) {
             if (resource->inCache())
                 memoryCache().remove(resource.get());
-            return 0;
+            return nullptr;
         }
     }
 
@@ -595,12 +606,10 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     if (forPreload && existingResource->isPreloaded())
         return Use;
 
-    Page* page = frame() ? frame()->page() : nullptr;
-
     // If the same URL has been loaded as a different type, we need to reload.
     if (existingResource->type() != type) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to type mismatch.");
-        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUnusedReasonTypeMismatchKey);
+        logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedReasonTypeMismatchKey());
         return Reload;
     }
 
@@ -627,7 +636,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     bool cachePolicyIsHistoryBuffer = cachePolicy(type) == CachePolicyHistoryBuffer;
     if (!existingResource->redirectChainAllowsReuse(cachePolicyIsHistoryBuffer ? ReuseExpiredRedirection : DoNotReuseExpiredRedirection)) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to not cached or expired redirections.");
-        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUnusedReasonRedirectChainKey);
+        logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedReasonRedirectChainKey());
         return Reload;
     }
 
@@ -642,7 +651,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // Don't reuse resources with Cache-control: no-store.
     if (existingResource->response().cacheControlContainsNoStore()) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to Cache-control: no-store.");
-        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUnusedReasonNoStoreKey);
+        logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedReasonNoStoreKey());
         return Reload;
     }
 
@@ -654,7 +663,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // client's requests are made without CORS and some with.
     if (existingResource->resourceRequest().allowCookies() != request.allowCookies()) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to difference in credentials settings.");
-        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUnusedReasonCredentialSettingsKey);
+        logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedReasonCredentialSettingsKey());
         return Reload;
     }
 
@@ -665,14 +674,14 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // CachePolicyReload always reloads
     if (cachePolicy(type) == CachePolicyReload) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to CachePolicyReload.");
-        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUnusedReasonReloadKey);
+        logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedReasonReloadKey());
         return Reload;
     }
     
     // We'll try to reload the resource if it failed last time.
     if (existingResource->errorOccurred()) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicye reloading due to resource being in the error state");
-        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUnusedReasonErrorKey);
+        logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedReasonErrorKey());
         return Reload;
     }
     
@@ -688,7 +697,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         
         // No, must reload.
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to missing cache validators.");
-        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterResourceRequestInMemoryCacheUnusedReasonMustRevalidateNoValidatorKey);
+        logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedReasonMustRevalidateNoValidatorKey());
         return Reload;
     }
 

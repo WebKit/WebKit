@@ -51,10 +51,11 @@
 #import <CoreText/CTFont.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/DNS.h>
+#import <WebCore/DiagnosticLoggingClient.h>
+#import <WebCore/DiagnosticLoggingKeys.h>
 #import <WebCore/Element.h>
 #import <WebCore/ElementAncestorIterator.h>
 #import <WebCore/EventHandler.h>
-#import <WebCore/FeatureCounter.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
@@ -2692,7 +2693,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
 void WebPage::willStartUserTriggeredZooming()
 {
-    FEATURE_COUNTER_INCREMENT_KEY(m_page.get(), FeatureCounterWebViewUserZoomedKey);
+    m_page->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::webViewKey(), DiagnosticLoggingKeys::userKey(), DiagnosticLoggingKeys::zoomedKey());
     m_userHasChangedPageScaleFactor = true;
 }
 
