@@ -531,8 +531,10 @@ void FrameLoader::willTransitionToCommitted()
     if (m_frame.editor().hasComposition()) {
         // The text was already present in DOM, so it's better to confirm than to cancel the composition.
         m_frame.editor().confirmComposition();
-        if (EditorClient* editorClient = m_frame.editor().client())
+        if (EditorClient* editorClient = m_frame.editor().client()) {
             editorClient->respondToChangedSelection(&m_frame);
+            editorClient->discardedComposition(&m_frame);
+        }
     }
 }
 
