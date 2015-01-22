@@ -4,6 +4,15 @@
         https://bugs.webkit.org/show_bug.cgi?id=140755
         rdar://problem/7881290
 
+        * http/tests/appcache/404-resource-with-slow-main-resource.php: Try updating the
+        tiemout, as it's not sufficient for appcache load to fail on some bots.
+
+2015-01-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Crash in URL::protocol() after appcache load fails
+        https://bugs.webkit.org/show_bug.cgi?id=140755
+        rdar://problem/7881290
+
         Reviewed by Dan Bates.
 
         * http/tests/appcache/404-resource-with-slow-main-resource-expected.txt: Added.

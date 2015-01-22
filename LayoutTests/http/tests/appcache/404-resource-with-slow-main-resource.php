@@ -18,13 +18,13 @@ function finish()
 
 // The test needs to attempt to load a subresource after appcache load fails. There is no way
 // to observe appcache loading progress before onload fires, so we just let it run for a while.
-window.setTimeout(finish, 1000);
+window.setTimeout(finish, 2000);
 </script>
 
 <div id="container">
 <?php
     while (True) {
-        usleep(100000);
+        usleep(200000);
         print "<img src='/does-not-exist.png'>\n";
         flush();
     }
