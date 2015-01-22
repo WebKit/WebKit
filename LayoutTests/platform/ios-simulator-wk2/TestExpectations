@@ -58,6 +58,8 @@ compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Fa
 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
 compositing/overflow/fixed-position-ancestor-clip.html [ Failure ]
 compositing/fixed-positioned-pseudo-content-no-compositing.html [ Failure ]
+compositing/reflections/nested-reflection-on-overflow.html [ Failure ]
+compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
 
 # Compositing test that time out:
 compositing/animation/animation-compositing.html

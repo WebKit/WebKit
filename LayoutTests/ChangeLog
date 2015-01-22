@@ -1,5 +1,21 @@
 2015-01-21  Daniel Bates  <dabates@apple.com>
 
+        Update iOS WebKit2 expected results for compositing tests
+
+        Following the patch for bug #140742, <https://bugs.webkit.org/show_bug.cgi?id=140742>, we can remove
+        all iOS WebKit2-specific expected results that are identical to the platform-independent results.
+
+        * platform/ios-simulator-wk2/TestExpectations: Add WebKit2-specific failures: compositing/reflections/nested-reflection-on-overflow.html
+        and compositing/repaint/invalidations-on-composited-layers.html.
+        * platform/ios-simulator-wk2/compositing/absolute-inside-out-of-view-fixed-expected.txt: Removed.
+        [...]
+        * platform/ios-simulator-wk2/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt: Removed.
+        * platform/ios-simulator-wk2/compositing/visibility/layer-visible-content-expected.txt: Removed.
+        * platform/ios-simulator-wk2/compositing/visible-rect/3d-transform-style-expected.txt: Removed.
+        * platform/ios-simulator/TestExpectations: Remove tests that now pass in both iOS WebKit1 and WebKit2.
+
+2015-01-21  Daniel Bates  <dabates@apple.com>
+
         Update iOS WebKit test expectations for compositing tests
 
         * platform/ios-simulator-wk1/TestExpectations:
