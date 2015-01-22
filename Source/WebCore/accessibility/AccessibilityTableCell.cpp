@@ -86,17 +86,20 @@ AccessibilityTable* AccessibilityTableCell::parentTable() const
     // by javascript, and creating a table element may try to access the render tree while in a bad state.
     // By using only get() implies that the AXTable must be created before AXTableCells. This should
     // always be the case when AT clients access a table.
-    // https://bugs.webkit.org/show_bug.cgi?id=42652    
-    return toAccessibilityTable(axObjectCache()->get(toRenderTableCell(m_renderer)->table()));
+    // https://bugs.webkit.org/show_bug.cgi?id=42652
+    AccessibilityObject* parentTable = axObjectCache()->get(toRenderTableCell(m_renderer)->table());
+    if (!parentTable || !parentTable->isTable())
+        return nullptr;
+    return toAccessibilityTable(parentTable);
 }
     
 bool AccessibilityTableCell::isTableCell() const
 {
-    AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent || !parent->isTableRow())
-        return false;
-    
-    return true;
+    // If the parent table is an accessibility table, then we are a table cell.
+    // This used to check if the unignoredParent was a row, but that exploded performance if
+    // this was in nested tables. This check should be just as good.
+    AccessibilityObject* parentTable = this->parentTable();
+    return parentTable && parentTable->isAccessibilityTable();
 }
     
 AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
