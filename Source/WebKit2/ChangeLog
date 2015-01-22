@@ -1,3 +1,39 @@
+2014-11-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use API::ContextMenuClient and API::InjectedBundle::PageContextMenuClient classes
+        https://bugs.webkit.org/show_bug.cgi?id=138467
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitContextMenu.cpp:
+        (webkitContextMenuPopulate): Add a version that receives a Vector<WebContextMenuItemData>&.
+        (webkitContextMenuCreate): Change it to receive a const
+        Vector<WebContextMenuItemData>& instead of a API::Array* and also
+        add a another version that receives const Vector<ContextMenuItem>&.
+        * UIProcess/API/gtk/WebKitContextMenuClient.cpp:
+        (attachContextMenuClientToView): Use a class derived from
+        API::ContextMenuClient to implement the context menu client.
+        (getContextMenuFromProposedMenu): Deleted.
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        (webkitContextMenuItemCreate): Change it to receive a const
+        WebContextMenuItemData& and added another version that receives a
+        const ContextMenuItem&.
+        * UIProcess/API/gtk/WebKitContextMenuItemPrivate.h:
+        * UIProcess/API/gtk/WebKitContextMenuPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewPopulateContextMenu): Remove the creation of a
+        WebHitTestResult::Data, since it receives it now as parameter.
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResult.cpp:
+        (webkitWebHitTestResultCreate): Change it to receive a const
+        HitTestResult& instead of const InjectedBundleHitTestResult&.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResultPrivate.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkitWebPageCreate): Use a class derived from
+        API::InjectedBundle::PageContextMenuClient to implement the
+        context menu client.
+        (getContextMenuFromDefaultMenu): Deleted.
+
 2015-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Try to fix Debug build after r178889.

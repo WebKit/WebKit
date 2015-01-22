@@ -228,35 +228,34 @@ static void didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint6
     WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFailLoadForResource"), API::Dictionary::create(WTF::move(message)).get());
 }
 
-static void getContextMenuFromDefaultMenu(WKBundlePageRef, WKBundleHitTestResultRef wkHitTestResult, WKArrayRef wkDefaultMenu, WKArrayRef* wkNewMenu, WKTypeRef* wkUserData, const void* clientInfo)
-{
-    GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(toImpl(wkDefaultMenu)));
-    GRefPtr<WebKitWebHitTestResult> webHitTestResult = adoptGRef(webkitWebHitTestResultCreate(*toImpl(wkHitTestResult)));
-    gboolean returnValue;
-    g_signal_emit(WEBKIT_WEB_PAGE(clientInfo), signals[CONTEXT_MENU], 0, contextMenu.get(), webHitTestResult.get(), &returnValue);
-    if (GVariant* userData = webkit_context_menu_get_user_data(contextMenu.get())) {
-        GUniquePtr<gchar> dataString(g_variant_print(userData, TRUE));
-        *wkUserData = static_cast<WKTypeRef>(WKStringCreateWithUTF8CString(dataString.get()));
+class PageContextMenuClient final : public API::InjectedBundle::PageContextMenuClient {
+public:
+    explicit PageContextMenuClient(WebKitWebPage* webPage)
+        : m_webPage(webPage)
+    {
     }
 
-    if (!returnValue) {
-        WKRetain(wkDefaultMenu);
-        *wkNewMenu = wkDefaultMenu;
-        return;
+private:
+    bool getCustomMenuFromDefaultItems(WebPage&, const WebCore::HitTestResult& hitTestResult, const Vector<WebCore::ContextMenuItem>& defaultMenu, Vector<WebContextMenuItemData>& newMenu, RefPtr<API::Object>& userData) override
+    {
+        GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(defaultMenu));
+        GRefPtr<WebKitWebHitTestResult> webHitTestResult = adoptGRef(webkitWebHitTestResultCreate(hitTestResult));
+        gboolean returnValue;
+        g_signal_emit(m_webPage, signals[CONTEXT_MENU], 0, contextMenu.get(), webHitTestResult.get(), &returnValue);
+        if (GVariant* variant = webkit_context_menu_get_user_data(contextMenu.get())) {
+            GUniquePtr<gchar> dataString(g_variant_print(variant, TRUE));
+            userData = API::String::create(String::fromUTF8(dataString.get()));
+        }
+
+        if (!returnValue)
+            return false;
+
+        webkitContextMenuPopulate(contextMenu.get(), newMenu);
+        return true;
     }
 
-    Vector<ContextMenuItem> contextMenuItems;
-    webkitContextMenuPopulate(contextMenu.get(), contextMenuItems);
-
-    Vector<RefPtr<API::Object>> newMenuItems;
-    newMenuItems.reserveInitialCapacity(contextMenuItems.size());
-    for (const auto& item : contextMenuItems)
-        newMenuItems.uncheckedAppend(WebContextMenuItem::create(item));
-
-    RefPtr<API::Array> array = API::Array::create(WTF::move(newMenuItems));
-    *wkNewMenu = toAPI(array.get());
-    WKRetain(*wkNewMenu);
-}
+    WebKitWebPage* m_webPage;
+};
 
 static void webkitWebPageGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
@@ -436,14 +435,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     };
     WKBundlePageSetResourceLoadClient(toAPI(webPage), &resourceLoadClient.base);
 
-    WKBundlePageContextMenuClientV0 contextMenuClient = {
-        {
-            0, // version
-            page, // clientInfo
-        },
-        getContextMenuFromDefaultMenu,
-    };
-    WKBundlePageSetContextMenuClient(toAPI(webPage), &contextMenuClient.base);
+    webPage->setInjectedBundleContextMenuClient(std::make_unique<PageContextMenuClient>(page));
 
     return page;
 }

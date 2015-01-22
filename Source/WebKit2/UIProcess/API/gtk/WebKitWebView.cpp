@@ -2059,30 +2059,17 @@ static void contextMenuDismissed(GtkMenuShell*, WebKitWebView* webView)
     g_signal_emit(webView, signals[CONTEXT_MENU_DISMISSED], 0, NULL);
 }
 
-void webkitWebViewPopulateContextMenu(WebKitWebView* webView, API::Array* proposedMenu, WebHitTestResult* webHitTestResult, GVariant* userData)
+void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebContextMenuItemData>& proposedMenu, const WebHitTestResult::Data& hitTestResultData, GVariant* userData)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
     WebContextMenuProxyGtk* contextMenuProxy = webkitWebViewBaseGetActiveContextMenuProxy(webViewBase);
     ASSERT(contextMenuProxy);
 
     GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(proposedMenu));
-    if (webHitTestResult->isContentEditable())
+    if (hitTestResultData.isContentEditable)
         webkitWebViewCreateAndAppendInputMethodsMenuItem(webView, contextMenu.get());
 
-    // FIXME: we should use a custom ContextMenuClient at some point, that will receive a
-    // const WebHitTestResult::Data& that we can use directly here.
-    WebHitTestResult::Data data;
-    data.absoluteImageURL = webHitTestResult->absoluteImageURL();
-    data.absoluteLinkURL = webHitTestResult->absoluteLinkURL();
-    data.absoluteMediaURL = webHitTestResult->absoluteMediaURL();
-    data.linkLabel = webHitTestResult->linkLabel();
-    data.linkTitle = webHitTestResult->linkTitle();
-    data.isContentEditable = webHitTestResult->isContentEditable();
-    data.elementBoundingBox = webHitTestResult->elementBoundingBox();
-    data.isScrollbar = webHitTestResult->isScrollbar();
-    data.isSelected = webHitTestResult->isSelected();
-
-    GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(data));
+    GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
     GUniquePtr<GdkEvent> contextMenuEvent(webkitWebViewBaseTakeContextMenuEvent(webViewBase));
 
     if (userData)

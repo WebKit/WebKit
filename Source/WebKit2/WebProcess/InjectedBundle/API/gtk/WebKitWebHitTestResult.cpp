@@ -106,30 +106,36 @@ static void webkit_web_hit_test_result_class_init(WebKitWebHitTestResultClass* k
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 }
 
-WebKitWebHitTestResult* webkitWebHitTestResultCreate(const InjectedBundleHitTestResult& hitTestResult)
+WebKitWebHitTestResult* webkitWebHitTestResultCreate(const HitTestResult& hitTestResult)
 {
     unsigned context = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
-    if (!hitTestResult.absoluteLinkURL().isEmpty())
+    String absoluteLinkURL = hitTestResult.absoluteLinkURL().string();
+    if (!absoluteLinkURL.isEmpty())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK;
-    if (!hitTestResult.absoluteImageURL().isEmpty())
+    String absoluteImageURL = hitTestResult.absoluteImageURL().string();
+    if (!absoluteImageURL.isEmpty())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE;
-    if (!hitTestResult.absoluteMediaURL().isEmpty())
+    String absoluteMediaURL = hitTestResult.absoluteMediaURL().string();
+    if (!absoluteMediaURL.isEmpty())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA;
-    if (hitTestResult.coreHitTestResult().isContentEditable())
+    if (hitTestResult.isContentEditable())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
-    if (hitTestResult.coreHitTestResult().scrollbar())
+    if (hitTestResult.scrollbar())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR;
     if (hitTestResult.isSelected())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_SELECTION;
 
+    String linkTitle = hitTestResult.titleDisplayString();
+    String linkLabel = hitTestResult.textContent();
+
     return WEBKIT_WEB_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_WEB_HIT_TEST_RESULT,
         "context", context,
-        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? hitTestResult.absoluteLinkURL().utf8().data() : nullptr,
-        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? hitTestResult.absoluteImageURL().utf8().data() : nullptr,
-        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? hitTestResult.absoluteMediaURL().utf8().data() : nullptr,
-        "link-title", !hitTestResult.linkTitle().isEmpty() ? hitTestResult.linkTitle().utf8().data() : nullptr,
-        "link-label", !hitTestResult.linkLabel().isEmpty() ? hitTestResult.linkLabel().utf8().data() : nullptr,
-        "node", kit(hitTestResult.coreHitTestResult().innerNonSharedNode()),
+        "link-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK ? absoluteLinkURL.utf8().data() : nullptr,
+        "image-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE ? absoluteImageURL.utf8().data() : nullptr,
+        "media-uri", context & WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA ? absoluteMediaURL.utf8().data() : nullptr,
+        "link-title", !linkTitle.isEmpty() ? linkTitle.utf8().data() : nullptr,
+        "link-label", !linkLabel.isEmpty() ? linkLabel.utf8().data() : nullptr,
+        "node", kit(hitTestResult.innerNonSharedNode()),
         nullptr));
 }
 

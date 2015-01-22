@@ -90,20 +90,27 @@ static void webkitContextMenuItemSetSubMenu(WebKitContextMenuItem* item, GRefPtr
         webkitContextMenuSetParentItem(subMenu.get(), item);
 }
 
-WebKitContextMenuItem* webkitContextMenuItemCreate(WebContextMenuItem* webItem)
+WebKitContextMenuItem* webkitContextMenuItemCreate(const WebContextMenuItemData& itemData)
 {
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, NULL));
-    WebContextMenuItemData* itemData = webItem->data();
-    item->priv->menuItem = std::make_unique<ContextMenuItem>(itemData->type(), itemData->action(), itemData->title(), itemData->enabled(), itemData->checked());
-    const Vector<WebContextMenuItemData>& subMenu = itemData->submenu();
-    if (!subMenu.size())
-        return item;
 
-    Vector<RefPtr<API::Object>> subMenuItems;
-    subMenuItems.reserveInitialCapacity(subMenu.size());
-    for (size_t i = 0; i < subMenu.size(); ++i)
-        subMenuItems.uncheckedAppend(WebContextMenuItem::create(subMenu[i]).get());
-    webkitContextMenuItemSetSubMenu(item, adoptGRef(webkitContextMenuCreate(API::Array::create(WTF::move(subMenuItems)).get())));
+    item->priv->menuItem = std::make_unique<ContextMenuItem>(itemData.type(), itemData.action(), itemData.title(), itemData.enabled(), itemData.checked());
+    const Vector<WebContextMenuItemData>& subMenu = itemData.submenu();
+    if (!subMenu.isEmpty())
+        webkitContextMenuItemSetSubMenu(item, adoptGRef(webkitContextMenuCreate(subMenu)));
+
+    return item;
+}
+
+WebKitContextMenuItem* webkitContextMenuItemCreate(const ContextMenuItem& coreItem)
+{
+    WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, NULL));
+
+    item->priv->menuItem = std::make_unique<ContextMenuItem>(coreItem.type(), coreItem.action(), coreItem.title(), coreItem.enabled(), coreItem.checked());
+    if (coreItem.type() == WebCore::SubmenuType) {
+        Vector<ContextMenuItem> subMenu = contextMenuItemVector(coreItem.platformSubMenu());
+        webkitContextMenuItemSetSubMenu(item, adoptGRef(webkitContextMenuCreate(subMenu)));
+    }
 
     return item;
 }

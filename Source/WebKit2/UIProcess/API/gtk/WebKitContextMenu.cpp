@@ -76,13 +76,29 @@ void webkitContextMenuPopulate(WebKitContextMenu* menu, Vector<ContextMenuItem>&
     }
 }
 
-WebKitContextMenu* webkitContextMenuCreate(API::Array* items)
+void webkitContextMenuPopulate(WebKitContextMenu* menu, Vector<WebContextMenuItemData>& contextMenuItems)
+{
+    for (GList* item = menu->priv->items; item; item = g_list_next(item)) {
+        WebKitContextMenuItem* menuItem = WEBKIT_CONTEXT_MENU_ITEM(item->data);
+        contextMenuItems.append(WebContextMenuItemData(ContextMenuItem(webkitContextMenuItemRelease(menuItem))));
+    }
+}
+
+WebKitContextMenu* webkitContextMenuCreate(const Vector<WebContextMenuItemData>& items)
 {
     WebKitContextMenu* menu = webkit_context_menu_new();
-    for (size_t i = 0; i < items->size(); ++i) {
-        WebContextMenuItem* item = static_cast<WebContextMenuItem*>(items->at(i));
+    for (const auto& item : items)
         webkit_context_menu_prepend(menu, webkitContextMenuItemCreate(item));
-    }
+    menu->priv->items = g_list_reverse(menu->priv->items);
+
+    return menu;
+}
+
+WebKitContextMenu* webkitContextMenuCreate(const Vector<ContextMenuItem>& items)
+{
+    WebKitContextMenu* menu = webkit_context_menu_new();
+    for (const auto& item : items)
+        webkit_context_menu_prepend(menu, webkitContextMenuItemCreate(item));
     menu->priv->items = g_list_reverse(menu->priv->items);
 
     return menu;

@@ -20,9 +20,9 @@
 #ifndef WebKitWebHitTestResultPrivate_h
 #define WebKitWebHitTestResultPrivate_h
 
-#include "InjectedBundleHitTestResult.h"
 #include "WebKitWebHitTestResult.h"
+#include <WebCore/HitTestResult.h>
 
-WebKitWebHitTestResult* webkitWebHitTestResultCreate(const WebKit::InjectedBundleHitTestResult&);
+WebKitWebHitTestResult* webkitWebHitTestResultCreate(const WebCore::HitTestResult&);
 
 #endif // WebKitWebHitTestResultPrivate_h
