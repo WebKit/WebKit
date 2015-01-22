@@ -236,8 +236,7 @@ void SpellChecker::didCheckSucceed(int sequence, const Vector<TextCheckingResult
 
 void SpellChecker::didCheckCancel(int sequence)
 {
-    Vector<TextCheckingResult> results;
-    didCheck(sequence, results);
+    didCheck(sequence, Vector<TextCheckingResult>());
 }
 
 } // namespace WebCore

@@ -1,3 +1,17 @@
+2015-01-22  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Avoid defining always empty Vector<TextCheckingResult>
+        https://bugs.webkit.org/show_bug.cgi?id=140765
+
+        Reviewed by Alexey Proskuryakov.
+
+        Pass an empty vector direclty instead.
+
+        No new tests. No behavior change.
+
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::didCheckCancel):
+
 2015-01-22  Chris Dumez  <cdumez@apple.com>
 
         makeprop.pl script is called too many times during build
