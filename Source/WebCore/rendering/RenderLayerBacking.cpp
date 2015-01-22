@@ -342,7 +342,7 @@ bool RenderLayerBacking::needsIOSDumpRenderTreeMainFrameRenderViewLayerIsAlwaysO
     if (m_isMainFrameRenderViewLayer && applicationIsDumpRenderTree()) {
         // In iOS WebKit1 the main frame's RenderView layer is always transparent. We lie that it is opaque so that
         // internals.layerTreeAsText() tests succeed.
-        ASSERT(!layer.contentsOpaque());
+        ASSERT_UNUSED(layer, !layer.contentsOpaque());
         return true;
     }
     return false;
