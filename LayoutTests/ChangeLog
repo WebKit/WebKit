@@ -1,3 +1,40 @@
+2015-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test gardening.
+
+        Clean up editing-related tests and rebaseline some output.
+
+        * platform/win/TestExpectations:
+        * platform/win/editing/input/reveal-caret-of-multiline-contenteditable-expected.txt:
+        * platform/win/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/win/editing/inserting/4960120-1-expected.txt:
+        * platform/win/editing/inserting/break-blockquote-after-delete-expected.txt:
+        * platform/win/editing/inserting/insert-3907422-fix-expected.txt: Removed.
+        * platform/win/editing/pasteboard/4641033-expected.txt: Added.
+        * platform/win/editing/pasteboard/4944770-1-expected.txt: Added.
+        * platform/win/editing/pasteboard/4944770-2-expected.txt: Added.
+        * platform/win/editing/pasteboard/drop-text-without-selection-expected.txt: Added.
+        * platform/win/editing/selection/3690703-2-expected.txt:
+        * platform/win/editing/selection/3690703-expected.txt:
+        * platform/win/editing/selection/3690719-expected.txt:
+        * platform/win/editing/selection/4975120-expected.txt: Added.
+        * platform/win/editing/selection/5240265-expected.txt:
+        * platform/win/editing/selection/caret-before-select-expected.txt: Added.
+        * platform/win/editing/selection/caret-rtl-2-expected.txt: Added.
+        * platform/win/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/win/editing/selection/caret-rtl-expected.txt: Added.
+        * platform/win/editing/selection/caret-rtl-right-expected.txt:
+        * platform/win/editing/selection/drag-select-1-expected.txt: Added.
+        * platform/win/editing/selection/mixed-editability-10-expected.txt:
+        * platform/win/editing/selection/replaced-boundaries-3-expected.txt: Added.
+        * platform/win/editing/selection/select-box-expected.txt: Added.
+        * platform/win/editing/selection/select-element-paragraph-boundary-expected.txt: Added.
+        * platform/win/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/win/editing/selection/selection-button-text-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+
 2015-01-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed, skip flakey inspector test.

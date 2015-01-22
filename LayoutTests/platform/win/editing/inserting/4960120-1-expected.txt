@@ -14,6 +14,6 @@ layer at (10,44) size 179x34 clip at (11,45) size 177x32
     RenderBlock {DIV} at (3,3) size 175x30
       RenderText {#text} at (0,0) size 0x15
         text run at (0,0) width 0: " "
-      RenderText {#text} at (0,13) size 0x15
+      RenderText {#text} at (0,15) size 0x15
         text run at (0,15) width 0: " "
 caret: position 0 of child 1 {#text} of child 0 {DIV} of {#document-fragment} of child 2 {TEXTAREA} of body

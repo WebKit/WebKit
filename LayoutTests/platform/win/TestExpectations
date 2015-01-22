@@ -1060,13 +1060,16 @@ fast/forms/file/file-input-capture.html [ Skip ]
 ################################################################################
 
 ###### Pasteboard
-# Caret, RenderBlock
-editing/pasteboard/copy-standalone-image.html [ Failure ]
-# Text, caret, RenderBlock
+###### These tests are very flaky.
+editing/pasteboard/ [ Pass Failure ]
+webkit.org/b/140783 editing/pasteboard/copy-standalone-image.html [ Failure ]
+webkit.org/b/140786 editing/pasteboard/copy-backslash-with-euc.html [ Failure ]
 editing/pasteboard/paste-RTFD.html [ Failure ]
 editing/pasteboard/paste-TIFF.html [ Failure ]
-# Caret, RenderBlock
-editing/pasteboard/input-field-1.html [ Failure ]
+editing/pasteboard/paste-and-sanitize.html [ Failure ]
+webkit.org/b/140788 editing/pasteboard/paste-list-002.html [ Failure ]
+webkit.org/b/140788 editing/pasteboard/paste-list-004.html [ Failure ]
+webkit.org/b/140788 editing/pasteboard/simplfiying-markup-should-not-strip-content.html [ Failure ]
 webkit.org/b/29057 editing/pasteboard/files-during-page-drags.html [ Failure ]
 # TODO eventSender.contextClick() needs to return a JS array of the context menu items.
 webkit.org/b/62597 editing/pasteboard/copy-standalone-image-crash.html [ Timeout ]
@@ -1082,7 +1085,7 @@ editing/pasteboard/data-transfer-items-drag-drop-string.html [ Skip ]
 editing/pasteboard/clipboard-customData.html [ Skip ]
 # TODO Windows does not have global selection.
 editing/pasteboard/paste-global-selection.html [ Skip ]
-webkit.org/b/116564 editing/pasteboard/copy-without-selection.html [ Failure ]
+webkit.org/b/116564 editing/pasteboard/copy-without-selection.html [ Skip ]
 editing/pasteboard/smart-paste-004.html [ Failure ]
 # TODO Drag & Drop doesn't work correctly in DRT <rdar://5621244>
 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html [ Skip ]
@@ -1090,57 +1093,66 @@ editing/pasteboard/drag-image-in-about-blank-frame.html [ Skip ]
 editing/pasteboard/drop-file-svg.html [ Skip ]
 editing/pasteboard/file-drag-to-editable.html [ Skip ]
 editing/pasteboard/get-data-text-plain-drop.html [ Skip ]
+# TODO PasteBoard::plainText() does not support file names.
+editing/pasteboard/drag-files-to-editable-element.html [ Skip ]
+# TODO FileInputType::receiveDroppedFiles receive relative path
+webkit.org/b/90426 editing/pasteboard/file-input-files-access.html [ Failure ]
+webkit.org/b/90425 editing/pasteboard/dataTransfer-setData-getData.html [ Failure ]
+# TODO DOM ClipboardData.setData does not allow writes during clipboard events
+# https://bugs.webkit.org/show_bug.cgi?id=17645
+webkit.org/b/17645 editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
+webkit.org/b/17645 editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
+webkit.org/b/17645 editing/pasteboard/can-read-in-copy-and-cut-events.html [ Failure ]
+# emacs key bindings <rdar://problem/4883609> Support for kill rings
+editing/input/emacs-ctrl-o.html [ Failure ]
+editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
+editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
+editing/pasteboard/emacs-ctrl-k-y-001.html [ Failure ]
+editing/pasteboard/emacs-cntl-y-001.html [ Failure ]
+# Assertion failure in replaySavedEvents
+webkit.org/b/21796 editing/pasteboard/drop-text-events.html [ Skip ]
 
 ###### Selection
-# Text
-editing/selection/caret-rtl-2.html [ Failure ]
-editing/selection/caret-rtl.html [ Failure ]
-# Timed out loading page (check if this is due to missing DumpRenderTree functionality)
-editing/selection/4975120.html [ Failure ]
+editing/selection/ [ Pass Failure ]
+# This test is flaky due to capitalization; perhaps a capslock keypress or something?
+editing/selection/caret-after-keypress.html [ Pass Failure ]
 editing/selection/designmode-no-caret.html [ Failure ]
 # This test has never passed on Windows
 webkit.org/b/30234 platform/win/editing/selection/doubleclick-should-not-expand-across-lines.html [ Failure ]
 # TODO DRT does not support toggling caret browsing on / off
 editing/selection/caret-mode-paragraph-keys-navigation.html [ Skip ]
-webkit.org/b/97026 editing/selection/select-from-textfield-outwards.html [ Failure ]
 webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
 webkit.org/b/100424 editing/selection/user-select-all-with-shift.html [ Failure ]
-webkit.org/b/116564 editing/selection/user-drag-element-and-user-select-none.html [ Failure ]
 # TODO -webkit-user-select:all not supported
 webkit.org/b/118740 editing/selection/user-select-all-image-with-single-click.html [ Failure ]
 webkit.org/b/118740 editing/selection/user-select-all-with-single-click.html [ Failure ]
 editing/selection/caret-ltr-right.html [ Failure ]
 editing/selection/context-menu-on-text.html [ Failure ]
-editing/selection/caret-rtl-2-left.html [ Failure ]
-editing/selection/caret-rtl-right.html [ Failure ]
-editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html [ Failure ]
-editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html [ Failure ]
-# Subpixel: incorrect caret position
-webkit.org/b/126283 editing/selection/mixed-editability-10.html [ Failure ]
-editing/selection/replaced-boundaries-3.html [ Failure ]
-editing/selection/vertical-rl-rtl-extend-line-backward-br.html [ Failure ]
+# Lucida Grande is not used for Hebrew text
+webkit.org/b/23925 editing/selection/extend-selection-bidi.html [ Failure ]
+# <rdar://5508270> Intermittently time out
+editing/selection/5057506-2.html [ Pass Timeout ]
+editing/selection/5057506.html [ Failure Timeout ]
+# Assertion failure in replaySavedEvents
+webkit.org/b/21796 editing/selection/drag-in-iframe.html [ Skip ]
+# These test fail due to 'notifyDone' not being executed.
+webkit.org/b/121509 editing/spelling/grammar-paste.html [ Skip ]
 
 ###### Command enabling
 editing/execCommand/enabling-and-selection-2.html [ Failure ]
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
+editing/execCommand/find-after-replace.html [ Failure ]
 
 ###### Inserting
 # TODO testRunner::setAutomaticLinkDetectionEnabled isn't implemented
 editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]
-# Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=84286
-webkit.org/b/84286 editing/inserting/break-blockquote-after-delete.html [ Failure ]
-webkit.org/b/117323 editing/inserting/insert-3907422-fix.html [ Failure ]
 
 ###### Text Iterator
 # Plain text controller currently in Mac DumpRenderTree only.
 editing/text-iterator [ Skip ]
 # TODO Missing testRunner.findString()
 webkit.org/b/50234 editing/text-iterator/findString.html [ Skip ]
-
-###### Input
-editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
-editing/input/reveal-caret-of-multiline-input.html [ Failure ]
 
 ###### TODO Spellchecker is not implemented. Skip these test.
 webkit.org/b/66620 editing/spelling/spelling-insert-html.html [ Skip ]
@@ -1167,64 +1179,13 @@ editing/deleting/delete-start-block.html [ Failure ]
 # https://bugs.webkit.org/show_bug.cgi?id=138025
 # Larger text and as a result, larger elements containing said text (as compared to Mac port)
 # Many of these may also be wrong due to form element differences in theme (i.e rounded vs. square buttons)
-editing/input/caret-at-the-edge-of-input.html [ Failure ]
-editing/inserting/4960120-1.html [ Failure ]
-
-# TODO <select> elements are not rendering properly
-webkit.org/b/137962 editing/pasteboard/4641033.html [ Failure ]
-webkit.org/b/137962 editing/pasteboard/4944770-1.html [ Failure ]
-webkit.org/b/137962 editing/pasteboard/4944770-2.html [ Failure ]
-webkit.org/b/137962 editing/selection/caret-before-select.html [ Failure ]
-webkit.org/b/137962 editing/selection/select-box.html [ Failure ]
-webkit.org/b/137962 editing/selection/select-element-paragraph-boundary.html [ Failure ]
-# Selected text rendering white.
-webkit.org/b/137963 editing/pasteboard/drop-text-without-selection.html [ Failure ]
-webkit.org/b/137963 editing/selection/3690703-2.html [ Failure ]
-webkit.org/b/137963 editing/selection/3690703.html [ Failure ]
-webkit.org/b/137963 editing/selection/3690719.html [ Failure ]
-webkit.org/b/137963 editing/selection/5240265.html [ Failure ]
-webkit.org/b/137963 editing/selection/drag-select-1.html [ Failure ]
-webkit.org/b/137963 editing/selection/selection-button-text.html [ Failure ]
-
-# Borders render too dark sometimes.
-webkit.org/b/138041 [ Debug ] editing/selection/block-cursor-overtype-mode-end-of-line.html [ Pass Timeout ]
-
-# Lucida Grande is not used for Hebrew text
-webkit.org/b/23925 editing/selection/extend-selection-bidi.html [ Failure ]
-
-# TODO DOM ClipboardData.setData does not allow writes during clipboard events
-# https://bugs.webkit.org/show_bug.cgi?id=17645
-webkit.org/b/17645 editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
-webkit.org/b/17645 editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
-webkit.org/b/17645 editing/pasteboard/can-read-in-copy-and-cut-events.html [ Failure ]
+#editing/input/caret-at-the-edge-of-input.html [ Failure ]
 
 # TODO Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
 webkit.org/b/140528 fast/encoding/idn-security.html [ Skip ]
 
-# TODO PasteBoard::plainText() does not support file names.
-editing/pasteboard/drag-files-to-editable-element.html [ Skip ]
+editing/style/non-inheritable-styles.html [ Failure ]
 
-webkit.org/b/90425 editing/pasteboard/dataTransfer-setData-getData.html [ Failure ]
-
-# TODO FileInputType::receiveDroppedFiles receive relative path
-webkit.org/b/90426 editing/pasteboard/file-input-files-access.html [ Failure ]
-
-# emacs key bindings <rdar://problem/4883609> Support for kill rings
-editing/input/emacs-ctrl-o.html [ Failure ]
-editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
-editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
-editing/pasteboard/emacs-ctrl-k-y-001.html [ Failure ]
-editing/pasteboard/emacs-cntl-y-001.html [ Failure ]
-
-# <rdar://5508270> Intermittently time out
-editing/selection/5057506-2.html [ Pass Timeout ]
-editing/selection/5057506.html [ Failure Timeout ]
-
-# Assertion failure in replaySavedEvents
-webkit.org/b/21796 editing/pasteboard/drop-text-events.html [ Skip ]
-webkit.org/b/21796 editing/selection/drag-in-iframe.html [ Skip ]
-# These test fail due to 'notifyDone' not being executed.
-webkit.org/b/121509 editing/spelling/grammar-paste.html [ Skip ]
 ################################################################################
 ###########################   End Editing Failures   ###########################
 ################################################################################

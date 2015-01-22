@@ -1,3 +1,13 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange: toDOMRange:range from 11 of #text > DIV > #document-fragment to 11 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > #document-fragment to 11 of #text > DIV > #document-fragment toDOMRange:range from 11 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment toDOMRange:range from 0 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment toDOMRange:range from 11 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment toDOMRange:range from 11 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -22,17 +32,17 @@ layer at (0,0) size 800x600
           text run at (0,0) width 778: "Curabitur pretium, quam quis semper malesuada, est libero feugiat libero, vel fringilla orci nibh sed neque. Quisque eu nulla"
           text run at (0,18) width 732: "non nisi molestie accumsan. Etiam tellus urna, laoreet ac, laoreet non, suscipit sed, sapien. Phasellus vehicula, sem at"
           text run at (0,36) width 541: "posuere vehicula, augue nibh molestie nisl, nec ullamcorper lacus ante vulputate pede."
-      RenderBlock (anonymous) at (0,140) size 784x92
-        RenderTextControl {INPUT} at (20,20) size 280x52 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderBlock (anonymous) at (0,140) size 784x91
+        RenderTextControl {INPUT} at (20,20) size 293x51 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,248) size 784x54
+      RenderBlock {P} at (0,247) size 784x54
         RenderText {#text} at (0,0) size 769x54
           text run at (0,0) width 754: "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris viverra augue vitae purus."
           text run at (0,18) width 769: "Morbi sed sem. Donec dui nisi, ultrices non, pretium quis, hendrerit non, est. Donec tellus. Donec eget dui id eros pharetra"
           text run at (0,36) width 733: "rutrum. Suspendisse sodales lectus sit amet nulla. Morbi tortor arcu, convallis blandit, elementum eu, aliquet a, tellus."
-layer at (40,180) size 256x28
-  RenderBlock {DIV} at (12,12) size 256x28
-    RenderText {#text} at (0,0) size 222x28
-      text run at (0,0) width 222: "Lorem ipsum dolor"
-selection start: position 6 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body
-selection end:   position 17 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body
+layer at (40,180) size 269x27
+  RenderBlock {DIV} at (12,12) size 269x27
+    RenderText {#text} at (0,0) size 194x27
+      text run at (0,0) width 194: "Lorem ipsum dolor"
+selection start: position 11 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body
+selection end:   position 12 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body

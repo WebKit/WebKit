@@ -6,7 +6,7 @@ layer at (0,0) size 800x216
       RenderBlock {DIV} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 595x18
           text run at (0,0) width 595: "When the caret is scrolled out, on starting typing it must be brought to the center of the control."
-layer at (8,26) size 784x182 clip at (9,27) size 767x165 scrollY 251 scrollHeight 558
+layer at (8,26) size 784x182 clip at (9,27) size 767x165 scrollY 252 scrollHeight 558
   RenderBlock {DIV} at (0,18) size 784x182 [border: (1px solid #000000)]
     RenderText {#text} at (1,1) size 16x18
       text run at (1,1) width 16: "00"
