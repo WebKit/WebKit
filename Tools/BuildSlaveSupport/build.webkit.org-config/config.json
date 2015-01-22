@@ -17,6 +17,8 @@
                     { "name": "bot152", "platform": "mac-mavericks" },
                     { "name": "bot301", "platform": "mac-mavericks" },
                     { "name": "bot306", "platform": "mac-mavericks" },
+                    { "name": "bot308", "platform": "mac-mavericks" },
+                    { "name": "bot309", "platform": "mac-mavericks" },
 
                     { "name": "bot139", "platform": "mac-yosemite" },
                     { "name": "bot148", "platform": "mac-yosemite" },
@@ -79,7 +81,7 @@
                     },
                     { "name": "Apple Mavericks Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "mavericks-debug-tests-wk2",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["bot144"]
+                      "slavenames": ["bot144", "bot308", "bot309"]
                     },
                     { "name": "Apple Mavericks LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "mavericks-cloop-debug",
                       "platform": "mac-mavericks", "configuration": "debug", "architectures": ["x86_64"],

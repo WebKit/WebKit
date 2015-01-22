@@ -1,5 +1,13 @@
 2015-01-21  Lucas Forschler  <lforschler@apple.com>
 
+        Teach build.webkit.org about bot308 and bot309.
+        
+        Unreviewed.
+        
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2015-01-21  Lucas Forschler  <lforschler@apple.com>
+
         Add two Apple Mavericks slaves.
         
         Unreviewed.
