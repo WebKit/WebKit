@@ -1,5 +1,34 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177360. rdar://problem/19451319
+
+    2014-12-16  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (r163928): Animated GIFs are not resumed when translated into view using -webkit-transform
+            https://bugs.webkit.org/show_bug.cgi?id=139672
+            <rdar://problem/19260797>
+
+            Reviewed by Antti Koivisto.
+
+            After r163928, animated GIFs were not resumed when translated into view
+            using '-webkit-transform' CSS property.
+
+            This broke animated gifs on the mobile version of weibo.com (which is
+            one of the most popular blogging sites in China) on iPhone. e.g.
+            http://m.weibo.cn/page/tpl?containerid=1005052150182731_-_WEIBO_SECOND_PROFILE_WEIBO&itemid=&title=全部微博
+
+            This patch calls FrameView::resumeVisibleImageAnimationsIncludingSubframes()
+            after style recalc so that we resume animated images if they become visible
+            after the style has changed. Doing so after layout wouldn't work because
+            no layout happens in this case.
+
+            Test: fast/images/animated-gif-webkit-transform.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::recalcStyle):
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177292. rdar://problem/19452139
 
     2014-12-15  Myles C. Maxfield  <mmaxfield@apple.com>

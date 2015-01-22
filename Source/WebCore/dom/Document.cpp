@@ -1772,6 +1772,10 @@ void Document::recalcStyle(Style::Change change)
 
     InspectorInstrumentation::didRecalculateStyle(cookie);
 
+    // Some animated images may now be inside the viewport due to style recalc,
+    // resume them if necessary.
+    frameView.resumeVisibleImageAnimationsIncludingSubframes();
+
     // As a result of the style recalculation, the currently hovered element might have been
     // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
     // to check if any other elements ended up under the mouse pointer due to re-layout.
