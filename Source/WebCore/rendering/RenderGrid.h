@@ -114,6 +114,8 @@ private:
 
     bool gridWasPopulated() const { return !m_grid.isEmpty() && !m_grid[0].isEmpty(); }
 
+    bool spanningItemCrossesFlexibleSizedTracks(const GridCoordinate&, GridTrackSizingDirection) const;
+
     unsigned gridColumnCount() const
     {
         ASSERT(gridWasPopulated());

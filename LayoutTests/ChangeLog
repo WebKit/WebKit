@@ -1,3 +1,13 @@
+2015-01-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Skip items spanning flex tracks when sizing content based tracks
+        https://bugs.webkit.org/show_bug.cgi?id=140720
+
+        Reviewed by David Hyatt.
+
+        * fast/css-grid-layout/flex-and-content-sized-resolution-columns-expected.txt: Added.
+        * fast/css-grid-layout/flex-and-content-sized-resolution-columns.html: Added.
+
 2015-01-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         put_by_val_direct need to check the property is index or not for using putDirect / putDirectIndex

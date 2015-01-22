@@ -559,17 +559,37 @@ private:
     unsigned m_span;
 };
 
+bool RenderGrid::spanningItemCrossesFlexibleSizedTracks(const GridCoordinate& coordinate, GridTrackSizingDirection direction) const
+{
+    const GridSpan itemSpan = (direction == ForColumns) ? coordinate.columns : coordinate.rows;
+    for (auto trackPosition : itemSpan) {
+        const GridTrackSize& trackSize = gridTrackSize(direction, trackPosition.toInt());
+        if (trackSize.minTrackBreadth().isFlex() || trackSize.maxTrackBreadth().isFlex())
+            return true;
+    }
+
+    return false;
+}
+
+static inline unsigned integerSpanForDirection(const GridCoordinate& coordinate, GridTrackSizingDirection direction)
+{
+    return (direction == ForRows) ? coordinate.rows.integerSpan() : coordinate.columns.integerSpan();
+}
+
 void RenderGrid::resolveContentBasedTrackSizingFunctions(GridTrackSizingDirection direction, GridSizingData& sizingData)
 {
-    // FIXME: Split the grid tracks into groups that doesn't overlap a <flex> grid track.
     sizingData.itemsSortedByIncreasingSpan.shrink(0);
     HashSet<RenderBox*> itemsSet;
     for (auto trackIndex : sizingData.contentSizedTracksIndex) {
         GridIterator iterator(m_grid, direction, trackIndex);
 
         while (RenderBox* gridItem = iterator.nextGridItem()) {
-            if (itemsSet.add(gridItem).isNewEntry)
-                sizingData.itemsSortedByIncreasingSpan.append(GridItemWithSpan(*gridItem, cachedGridCoordinate(*gridItem), direction));
+            if (itemsSet.add(gridItem).isNewEntry) {
+                const GridCoordinate& coordinate = cachedGridCoordinate(*gridItem);
+                // We should not include items spanning more than one track that span tracks with flexible sizing functions.
+                if (integerSpanForDirection(coordinate, direction) == 1 || !spanningItemCrossesFlexibleSizedTracks(coordinate, direction))
+                    sizingData.itemsSortedByIncreasingSpan.append(GridItemWithSpan(*gridItem, coordinate, direction));
+            }
         }
     }
     std::sort(sizingData.itemsSortedByIncreasingSpan.begin(), sizingData.itemsSortedByIncreasingSpan.end());

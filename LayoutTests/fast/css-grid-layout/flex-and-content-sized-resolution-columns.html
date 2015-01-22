@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.grid {
+     font: 10px/1 Ahem;
+}
+
+.gridFixedAndMinContentAndFlex {
+     -webkit-grid-template-columns: 20px -webkit-min-content 1fr;
+}
+
+.gridMinMaxFixedFlexAndMaxContentAndAuto {
+     -webkit-grid-template-columns: minmax(20px, 1fr) -webkit-max-content auto;
+}
+
+.gridMinMaxFlexFixedAndMinContentAndFixed {
+     -webkit-grid-template-columns: minmax(0.5fr, 35px) -webkit-min-content 25px;
+}
+
+.gridMinContentAndMinMaxFixedMinContentAndFlex {
+     -webkit-grid-template-columns: -webkit-min-content minmax(20px, -webkit-min-content) 2fr;
+}
+
+.gridMaxContentAndMinMaxFixedMaxContentAndFlex {
+     -webkit-grid-template-columns: -webkit-max-content minmax(20px, -webkit-max-content) 1fr;
+}
+
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p>Test that resolving auto tracks on grid items works properly.</p>
+
+<div style="position: relative; width: 100px;">
+    <div id="gridFixedAndMinContentAndFlex" class="grid gridFixedAndMinContentAndFlex">
+	<div style="-webkit-grid-column: 2 / span 2;">XXXXXXXX</div>
+	<div style="-webkit-grid-column: 1 / span 2; -webkit-grid-row: 2;">XXXXX</div>
+    </div>
+</div>
+
+<div style="position: relative; width: 100px;">
+    <div id="gridFixedAndMinContentAndFlexMultipleOverlap" class="grid gridFixedAndMinContentAndFlex">
+	<div style="-webkit-grid-column: 1 / span 2;">XXX XXX</div>
+	<div style="-webkit-grid-column: 1 / -1; -webkit-grid-row: 2;">XXXX</div>
+    </div>
+</div>
+
+<div style="position: relative; width: 100px;">
+    <div id="gridMinMaxFixedFlexAndMaxContentAndAuto" class="grid gridMinMaxFixedFlexAndMaxContentAndAuto">
+	<div style="-webkit-grid-column: 1 / span 2;">XXX XXX</div>
+	<div style="-webkit-grid-column: 2 / span 2; -webkit-grid-row: 2;">XXXX</div>
+    </div>
+</div>
+
+<div style="position: relative; width: 100px;">
+    <div id="gridMinMaxFixedFlexAndMaxContentAndAutoNoFlexSpanningItems" class="grid gridMinMaxFixedFlexAndMaxContentAndAuto">
+	<div style="-webkit-grid-column: 1 / -1;">XXX XXX</div>
+	<div style="-webkit-grid-column: 1 / span 2; -webkit-grid-row: 2;">XXXX XXXX</div>
+    </div>
+</div>
+
+<div style="position: relative; width: 100px;">
+    <div id="gridMinMaxFlexFixedAndMinContentAndFixed" class="grid gridMinMaxFlexFixedAndMinContentAndFixed">
+	<div style="-webkit-grid-column: 1 / span 2;">XXXX XXXX</div>
+	<div style="-webkit-grid-column: 2 / span 2; -webkit-grid-row: 2;">XXX XXX</div>
+	<div style="-webkit-grid-column: 1 / -1; -webkit-grid-row: 3;">XXXXX XXXXX</div>
+	<div style="-webkit-grid-column: 2 / span 2; -webkit-grid-row: 4;">XX XX XX XX</div>
+    </div>
+</div>
+
+<div style="position: relative; width: 100px;">
+    <div id="gridMinContentAndMinMaxFixedMinContentAndFlex" class="grid gridMinContentAndMinMaxFixedMinContentAndFlex">
+	<div style="-webkit-grid-column: 2 / span 2;">XXXXX</div>
+	<div style="-webkit-grid-column: 1 / -1; -webkit-grid-row: 2;">XXX XXX XXX</div>
+	<div style="-webkit-grid-column: 1 / span 2; -webkit-grid-row: 3;">XXXX XXXX</div>
+    </div>
+</div>
+
+<div style="position: relative; width: 100px;">
+    <div id="gridMaxContentAndMinMaxFixedMaxContentAndFlex" class="grid gridMaxContentAndMinMaxFixedMaxContentAndFlex">
+	<div style="-webkit-grid-column: 2 / span 2;">XXXXX</div>
+	<div style="-webkit-grid-column: 1 / -1; -webkit-grid-row: 2;">XXX XXX XXX</div>
+	<div style="-webkit-grid-column: 1 / span 2; -webkit-grid-row: 3;">XXXX XXXX</div>
+    </div>
+</div>
+
+</body>
+<script src="resources/grid-definitions-parsing-utils.js"></script>
+<script>
+function checkColumns(gridId, columnValue)
+{
+     window.gridElement = document.getElementById(gridId);
+     shouldBeEqualToString("window.getComputedStyle(" + gridId + ", '').getPropertyValue('-webkit-grid-template-columns')", columnValue);
+}
+
+checkColumns("gridFixedAndMinContentAndFlex", "20px 30px 50px");
+checkColumns("gridFixedAndMinContentAndFlexMultipleOverlap", "20px 10px 70px");
+checkColumns("gridMinMaxFixedFlexAndMaxContentAndAuto", "60px 20px 20px");
+checkColumns("gridMinMaxFixedFlexAndMaxContentAndAutoNoFlexSpanningItems", "100px 0px 0px");
+checkColumns("gridMinMaxFlexFixedAndMinContentAndFixed", "35px 5px 25px");
+checkColumns("gridMinContentAndMinMaxFixedMinContentAndFlex", "20px 20px 60px");
+checkColumns("gridMaxContentAndMinMaxFixedMaxContentAndFlex", "70px 20px 10px");
+
+</script>
+</html>
