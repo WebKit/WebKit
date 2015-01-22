@@ -1,5 +1,25 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177292. rdar://problem/19452139
+
+    2014-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [iOS] Codepoints not associated with languages are drawn as boxes
+            https://bugs.webkit.org/show_bug.cgi?id=138906
+
+            Reviewed by Darin Adler.
+
+            Use SPI CTFontCreateForCharacters(), but only if we don't already know what to do
+            with the characters.
+
+            Test: platform/ios-simulator/fast/text/non-language-font-fallback.html
+
+            * platform/graphics/ios/FontCacheIOS.mm:
+            (WebCore::FontCache::systemFallbackForCharacters):
+            * platform/spi/cocoa/CoreTextSPI.h:
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r177152. rdar://problem/19451288
 
     2014-12-11  Alexey Proskuryakov  <ap@apple.com>

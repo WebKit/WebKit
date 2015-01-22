@@ -429,6 +429,11 @@ PassRefPtr<SimpleFontData> FontCache::systemFallbackForCharacters(const FontDesc
         }
         if (useEmojiFont)
             simpleFontData = getCachedFontData(description, appleColorEmoji, false, DoNotRetain);
+        else {
+            RetainPtr<CTFontRef> fallbackFont = adoptCF(CTFontCreateForCharacters(originalFontData->getCTFont(), characters, length, nullptr));
+            if (RetainPtr<CFStringRef> foundFontName = adoptCF(CTFontCopyPostScriptName(fallbackFont.get())))
+                simpleFontData = getCachedFontData(description, foundFontName.get(), false, DoNotRetain);
+        }
         break;
     }
     }
