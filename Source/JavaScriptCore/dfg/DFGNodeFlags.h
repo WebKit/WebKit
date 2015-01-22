@@ -97,7 +97,7 @@ enum RareCaseProfilingSource {
 
 static inline bool nodeMayOverflow(NodeFlags flags, RareCaseProfilingSource source)
 {
-    NodeFlags mask;
+    NodeFlags mask = 0;
     switch (source) {
     case BaselineRareCase:
         mask = NodeMayOverflowInBaseline;
@@ -114,7 +114,7 @@ static inline bool nodeMayOverflow(NodeFlags flags, RareCaseProfilingSource sour
 
 static inline bool nodeMayNegZero(NodeFlags flags, RareCaseProfilingSource source)
 {
-    NodeFlags mask;
+    NodeFlags mask = 0;
     switch (source) {
     case BaselineRareCase:
         mask = NodeMayNegZeroInBaseline;
