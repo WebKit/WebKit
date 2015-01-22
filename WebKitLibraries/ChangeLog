@@ -1,3 +1,12 @@
+2015-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        Activate ENABLE(MOUSE_CURSOR_SCALE). This works on Windows and causes more tests to pass.
+
+        * win/tools/vsprops/FeatureDefines.props:
+        * win/tools/vsprops/FeatureDefinesCairo.props:
+
 2015-01-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.
