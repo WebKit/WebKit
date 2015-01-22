@@ -1,3 +1,59 @@
+2015-01-22  Roger Fong  <roger_fong@apple.com>
+
+        [WebGL2] Create empty interface files for new WebGL2 objects.
+        https://bugs.webkit.org/show_bug.cgi?id=140779.
+        <rdar://problem/15002288>
+
+        Reviewed by Dean Jackson.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/WebGLQuery.cpp: Added.
+        (WebCore::WebGLQuery::create):
+        (WebCore::WebGLQuery::~WebGLQuery):
+        (WebCore::WebGLQuery::WebGLQuery):
+        (WebCore::WebGLQuery::deleteObjectImpl):
+        * html/canvas/WebGLQuery.h: Added.
+        * html/canvas/WebGLQuery.idl: Added.
+        * html/canvas/WebGLSampler.cpp: Added.
+        (WebCore::WebGLSampler::create):
+        (WebCore::WebGLSampler::~WebGLSampler):
+        (WebCore::WebGLSampler::WebGLSampler):
+        (WebCore::WebGLSampler::deleteObjectImpl):
+        * html/canvas/WebGLSampler.h: Added.
+        * html/canvas/WebGLSampler.idl: Added.
+        * html/canvas/WebGLSharedObject.h:
+        (WebCore::WebGLSharedObject::isQuery):
+        (WebCore::WebGLSharedObject::isSampler):
+        (WebCore::WebGLSharedObject::isSync):
+        (WebCore::WebGLSharedObject::isTransformFeedback):
+        (WebCore::WebGLSharedObject::isVertexArrayObject):
+        * html/canvas/WebGLSync.cpp: Added.
+        (WebCore::WebGLSync::create):
+        (WebCore::WebGLSync::~WebGLSync):
+        (WebCore::WebGLSync::WebGLSync):
+        (WebCore::WebGLSync::deleteObjectImpl):
+        * html/canvas/WebGLSync.h: Added.
+        * html/canvas/WebGLSync.idl: Added.
+        * html/canvas/WebGLTransformFeedback.cpp: Added.
+        (WebCore::WebGLTransformFeedback::create):
+        (WebCore::WebGLTransformFeedback::~WebGLTransformFeedback):
+        (WebCore::WebGLTransformFeedback::WebGLTransformFeedback):
+        (WebCore::WebGLTransformFeedback::deleteObjectImpl):
+        * html/canvas/WebGLTransformFeedback.h: Added.
+        * html/canvas/WebGLTransformFeedback.idl: Added.
+        * html/canvas/WebGLVertexArrayObject.cpp: Added.
+        (WebCore::WebGLVertexArrayObject::create):
+        (WebCore::WebGLVertexArrayObject::~WebGLVertexArrayObject):
+        (WebCore::WebGLVertexArrayObject::WebGLVertexArrayObject):
+        (WebCore::WebGLVertexArrayObject::deleteObjectImpl):
+        * html/canvas/WebGLVertexArrayObject.h: Added.
+        * html/canvas/WebGLVertexArrayObject.idl: Added.
+
 2015-01-22  Chris Dumez  <cdumez@apple.com>
 
         Fix remaining multiple targets per rule issues in DerivedSources.make

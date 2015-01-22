@@ -787,6 +787,46 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLQuery.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLSampler.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLSync.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLTransformFeedback.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSWebGLVertexArrayObject.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\accessibility\AccessibilityNodeObject.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">true</ExcludedFromBuild>
@@ -6703,14 +6743,19 @@
     <ClCompile Include="..\html\canvas\WebGLLoseContext.cpp" />
     <ClCompile Include="..\html\canvas\WebGLObject.cpp" />
     <ClCompile Include="..\html\canvas\WebGLProgram.cpp" />
+    <ClCompile Include="..\html\canvas\WebGLQuery.cpp" />
     <ClCompile Include="..\html\canvas\WebGLRenderbuffer.cpp" />
     <ClCompile Include="..\html\canvas\WebGLRenderingContext.cpp" />
     <ClCompile Include="..\html\canvas\WebGLRenderingContextBase.cpp" />
+    <ClCompile Include="..\html\canvas\WebGLSampler.cpp" />
     <ClCompile Include="..\html\canvas\WebGLShader.cpp" />
     <ClCompile Include="..\html\canvas\WebGLShaderPrecisionFormat.cpp" />
     <ClCompile Include="..\html\canvas\WebGLSharedObject.cpp" />
+    <ClCompile Include="..\html\canvas\WebGLSync.cpp" />
     <ClCompile Include="..\html\canvas\WebGLTexture.cpp" />
+    <ClCompile Include="..\html\canvas\WebGLTransformFeedback.cpp" />
     <ClCompile Include="..\html\canvas\WebGLUniformLocation.cpp" />
+    <ClCompile Include="..\html\canvas\WebGLVertexArrayObject.cpp" />
     <ClCompile Include="..\html\canvas\WebGLVertexArrayObjectOES.cpp" />
     <ClCompile Include="..\html\track\AudioTrack.cpp" />
     <ClCompile Include="..\html\track\AudioTrackList.cpp" />
@@ -18810,6 +18855,11 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEXTBlendMinMax.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGL2RenderingContext.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLRenderingContextBase.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLQuery.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLSampler.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLSync.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLTransformFeedback.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSWebGLVertexArrayObject.h" />
     <ClInclude Include="..\accessibility\AccessibilityNodeObject.h" />
     <ClInclude Include="..\css\CSSImageSetValue.h" />
     <ClInclude Include="..\css\WebKitCSSResourceValue.h" />
@@ -18929,14 +18979,19 @@
     <ClInclude Include="..\html\canvas\WebGLLoseContext.h" />
     <ClInclude Include="..\html\canvas\WebGLObject.h" />
     <ClInclude Include="..\html\canvas\WebGLProgram.h" />
+    <ClInclude Include="..\html\canvas\WebGLQuery.h" />
     <ClInclude Include="..\html\canvas\WebGLRenderbuffer.h" />
     <ClInclude Include="..\html\canvas\WebGLRenderingContext.h" />
     <ClInclude Include="..\html\canvas\WebGLRenderingContextBase.h" />
+    <ClInclude Include="..\html\canvas\WebGLSampler.h" />
     <ClInclude Include="..\html\canvas\WebGLShader.h" />
     <ClInclude Include="..\html\canvas\WebGLShaderPrecisionFormat.h" />
     <ClInclude Include="..\html\canvas\WebGLSharedObject.h" />
+    <ClInclude Include="..\html\canvas\WebGLSync.h" />
     <ClInclude Include="..\html\canvas\WebGLTexture.h" />
+    <ClInclude Include="..\html\canvas\WebGLTransformFeedback.h" />
     <ClInclude Include="..\html\canvas\WebGLUniformLocation.h" />
+    <ClInclude Include="..\html\canvas\WebGLVertexArrayObject.h" />
     <ClInclude Include="..\html\canvas\WebGLVertexArrayObjectOES.h" />
     <ClInclude Include="..\html\track\AudioTrack.h" />
     <ClInclude Include="..\html\track\AudioTrackList.h" />

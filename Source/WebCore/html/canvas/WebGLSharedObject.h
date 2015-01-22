@@ -44,9 +44,14 @@ public:
 
     virtual bool isBuffer() const { return false; }
     virtual bool isProgram() const { return false; }
+    virtual bool isQuery() const { return false; }
     virtual bool isRenderbuffer() const { return false; }
+    virtual bool isSampler() const { return false; }
     virtual bool isShader() const { return false; }
+    virtual bool isSync() const { return false; }
     virtual bool isTexture() const { return false; }
+    virtual bool isTransformFeedback() const { return false; }
+    virtual bool isVertexArrayObject() const { return false; }
 
     virtual bool validate(const WebGLContextGroup* contextGroup, const WebGLRenderingContextBase*) const override
     {

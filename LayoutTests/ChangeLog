@@ -1,3 +1,15 @@
+2015-01-22  Roger Fong  <roger_fong@apple.com>
+
+        [WebGL2] Create empty interface files for new WebGL2 objects.
+        https://bugs.webkit.org/show_bug.cgi?id=140779.
+        <rdar://problem/15002288>
+
+        Reviewed by Dean Jackson.
+
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-mountainlion/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2015-01-22  Alexey Proskuryakov  <ap@apple.com>
 
         Skip another copy of oes-vertex-array-object test, because it has the same problems

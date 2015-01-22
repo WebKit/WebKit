@@ -2313,6 +2313,26 @@
 		6ED8C37A183BFF8C009E53BD /* BoxShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED8C378183BFF8C009E53BD /* BoxShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */; };
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
+		6F995A151A70756200A735F4 /* WebGLSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A131A70756200A735F4 /* WebGLSync.cpp */; };
+		6F995A161A70756200A735F4 /* WebGLSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A141A70756200A735F4 /* WebGLSync.h */; };
+		6F995A1F1A7078B100A735F4 /* WebGLQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A171A7078B100A735F4 /* WebGLQuery.cpp */; };
+		6F995A201A7078B100A735F4 /* WebGLQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A181A7078B100A735F4 /* WebGLQuery.h */; };
+		6F995A211A7078B100A735F4 /* WebGLSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A191A7078B100A735F4 /* WebGLSampler.cpp */; };
+		6F995A221A7078B100A735F4 /* WebGLSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A1A1A7078B100A735F4 /* WebGLSampler.h */; };
+		6F995A231A7078B100A735F4 /* WebGLTransformFeedback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A1B1A7078B100A735F4 /* WebGLTransformFeedback.cpp */; };
+		6F995A241A7078B100A735F4 /* WebGLTransformFeedback.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A1C1A7078B100A735F4 /* WebGLTransformFeedback.h */; };
+		6F995A251A7078B100A735F4 /* WebGLVertexArrayObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A1D1A7078B100A735F4 /* WebGLVertexArrayObject.cpp */; };
+		6F995A261A7078B100A735F4 /* WebGLVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A1E1A7078B100A735F4 /* WebGLVertexArrayObject.h */; };
+		6F995A311A70833700A735F4 /* JSWebGLQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A271A70833700A735F4 /* JSWebGLQuery.cpp */; };
+		6F995A321A70833700A735F4 /* JSWebGLQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A281A70833700A735F4 /* JSWebGLQuery.h */; };
+		6F995A331A70833700A735F4 /* JSWebGLSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A291A70833700A735F4 /* JSWebGLSampler.cpp */; };
+		6F995A341A70833700A735F4 /* JSWebGLSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A2A1A70833700A735F4 /* JSWebGLSampler.h */; };
+		6F995A351A70833700A735F4 /* JSWebGLSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A2B1A70833700A735F4 /* JSWebGLSync.cpp */; };
+		6F995A361A70833700A735F4 /* JSWebGLSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A2C1A70833700A735F4 /* JSWebGLSync.h */; };
+		6F995A371A70833700A735F4 /* JSWebGLTransformFeedback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A2D1A70833700A735F4 /* JSWebGLTransformFeedback.cpp */; };
+		6F995A381A70833700A735F4 /* JSWebGLTransformFeedback.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A2E1A70833700A735F4 /* JSWebGLTransformFeedback.h */; };
+		6F995A391A70833700A735F4 /* JSWebGLVertexArrayObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6F995A2F1A70833700A735F4 /* JSWebGLVertexArrayObject.cpp */; };
+		6F995A3A1A70833700A735F4 /* JSWebGLVertexArrayObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */; };
 		6FA4454E898F2FC168BC38C1 /* JSBeforeUnloadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E04A27BED2F81F98E9022B /* JSBeforeUnloadEvent.h */; };
 		70F546E8B8B5D7DC54EE144E /* JSBeforeUnloadEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8225432CA9D4B4CF4628EC7F /* JSBeforeUnloadEvent.cpp */; };
 		7117445914BC34EC00EE5FC8 /* SVGTextMetricsBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */; };
@@ -9451,6 +9471,31 @@
 		6ED8C378183BFF8C009E53BD /* BoxShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoxShape.h; sourceTree = "<group>"; };
 		6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextAttributes.cpp; sourceTree = "<group>"; };
 		6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextAttributes.h; sourceTree = "<group>"; };
+		6F995A091A7070E600A735F4 /* WebGLQuery.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLQuery.idl; path = canvas/WebGLQuery.idl; sourceTree = "<group>"; };
+		6F995A0A1A7070E600A735F4 /* WebGLSampler.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLSampler.idl; path = canvas/WebGLSampler.idl; sourceTree = "<group>"; };
+		6F995A0B1A7070E600A735F4 /* WebGLSync.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLSync.idl; path = canvas/WebGLSync.idl; sourceTree = "<group>"; };
+		6F995A0C1A7070E600A735F4 /* WebGLTransformFeedback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLTransformFeedback.idl; path = canvas/WebGLTransformFeedback.idl; sourceTree = "<group>"; };
+		6F995A0D1A7070E600A735F4 /* WebGLVertexArrayObject.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLVertexArrayObject.idl; path = canvas/WebGLVertexArrayObject.idl; sourceTree = "<group>"; };
+		6F995A131A70756200A735F4 /* WebGLSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLSync.cpp; path = canvas/WebGLSync.cpp; sourceTree = "<group>"; };
+		6F995A141A70756200A735F4 /* WebGLSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLSync.h; path = canvas/WebGLSync.h; sourceTree = "<group>"; };
+		6F995A171A7078B100A735F4 /* WebGLQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLQuery.cpp; path = canvas/WebGLQuery.cpp; sourceTree = "<group>"; };
+		6F995A181A7078B100A735F4 /* WebGLQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLQuery.h; path = canvas/WebGLQuery.h; sourceTree = "<group>"; };
+		6F995A191A7078B100A735F4 /* WebGLSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLSampler.cpp; path = canvas/WebGLSampler.cpp; sourceTree = "<group>"; };
+		6F995A1A1A7078B100A735F4 /* WebGLSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLSampler.h; path = canvas/WebGLSampler.h; sourceTree = "<group>"; };
+		6F995A1B1A7078B100A735F4 /* WebGLTransformFeedback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLTransformFeedback.cpp; path = canvas/WebGLTransformFeedback.cpp; sourceTree = "<group>"; };
+		6F995A1C1A7078B100A735F4 /* WebGLTransformFeedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLTransformFeedback.h; path = canvas/WebGLTransformFeedback.h; sourceTree = "<group>"; };
+		6F995A1D1A7078B100A735F4 /* WebGLVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLVertexArrayObject.cpp; path = canvas/WebGLVertexArrayObject.cpp; sourceTree = "<group>"; };
+		6F995A1E1A7078B100A735F4 /* WebGLVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLVertexArrayObject.h; path = canvas/WebGLVertexArrayObject.h; sourceTree = "<group>"; };
+		6F995A271A70833700A735F4 /* JSWebGLQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLQuery.cpp; sourceTree = "<group>"; };
+		6F995A281A70833700A735F4 /* JSWebGLQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLQuery.h; sourceTree = "<group>"; };
+		6F995A291A70833700A735F4 /* JSWebGLSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLSampler.cpp; sourceTree = "<group>"; };
+		6F995A2A1A70833700A735F4 /* JSWebGLSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLSampler.h; sourceTree = "<group>"; };
+		6F995A2B1A70833700A735F4 /* JSWebGLSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLSync.cpp; sourceTree = "<group>"; };
+		6F995A2C1A70833700A735F4 /* JSWebGLSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLSync.h; sourceTree = "<group>"; };
+		6F995A2D1A70833700A735F4 /* JSWebGLTransformFeedback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLTransformFeedback.cpp; sourceTree = "<group>"; };
+		6F995A2E1A70833700A735F4 /* JSWebGLTransformFeedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLTransformFeedback.h; sourceTree = "<group>"; };
+		6F995A2F1A70833700A735F4 /* JSWebGLVertexArrayObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLVertexArrayObject.cpp; sourceTree = "<group>"; };
+		6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLVertexArrayObject.h; sourceTree = "<group>"; };
 		7117445614BC34E200EE5FC8 /* SVGTextMetricsBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextMetricsBuilder.cpp; sourceTree = "<group>"; };
 		7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextMetricsBuilder.h; sourceTree = "<group>"; };
 		7118FED215685CC60030B79A /* JSSVGViewSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGViewSpec.cpp; sourceTree = "<group>"; };
@@ -15845,6 +15890,9 @@
 				49C7B9B61042D32F0009D447 /* WebGLProgram.cpp */,
 				49C7B9B71042D32F0009D447 /* WebGLProgram.h */,
 				49C7B9B81042D32F0009D447 /* WebGLProgram.idl */,
+				6F995A171A7078B100A735F4 /* WebGLQuery.cpp */,
+				6F995A181A7078B100A735F4 /* WebGLQuery.h */,
+				6F995A091A7070E600A735F4 /* WebGLQuery.idl */,
 				49C7B9B91042D32F0009D447 /* WebGLRenderbuffer.cpp */,
 				49C7B9BA1042D32F0009D447 /* WebGLRenderbuffer.h */,
 				49C7B9BB1042D32F0009D447 /* WebGLRenderbuffer.idl */,
@@ -15857,6 +15905,9 @@
 				49C7B9BF1042D32F0009D447 /* WebGLRenderingContext.cpp */,
 				49C7B9C01042D32F0009D447 /* WebGLRenderingContext.h */,
 				49C7B9C11042D32F0009D447 /* WebGLRenderingContext.idl */,
+				6F995A191A7078B100A735F4 /* WebGLSampler.cpp */,
+				6F995A1A1A7078B100A735F4 /* WebGLSampler.h */,
+				6F995A0A1A7070E600A735F4 /* WebGLSampler.idl */,
 				49C7B9C21042D32F0009D447 /* WebGLShader.cpp */,
 				49C7B9C31042D32F0009D447 /* WebGLShader.h */,
 				49C7B9C41042D32F0009D447 /* WebGLShader.idl */,
@@ -15865,12 +15916,21 @@
 				A07D3359152B633E001B6393 /* WebGLShaderPrecisionFormat.idl */,
 				01D3CF8014BD0A3000FE9970 /* WebGLSharedObject.cpp */,
 				01D3CF8114BD0A3000FE9970 /* WebGLSharedObject.h */,
+				6F995A131A70756200A735F4 /* WebGLSync.cpp */,
+				6F995A141A70756200A735F4 /* WebGLSync.h */,
+				6F995A0B1A7070E600A735F4 /* WebGLSync.idl */,
 				49C7B9C51042D32F0009D447 /* WebGLTexture.cpp */,
 				49C7B9C61042D32F0009D447 /* WebGLTexture.h */,
 				49C7B9C71042D32F0009D447 /* WebGLTexture.idl */,
+				6F995A1B1A7078B100A735F4 /* WebGLTransformFeedback.cpp */,
+				6F995A1C1A7078B100A735F4 /* WebGLTransformFeedback.h */,
+				6F995A0C1A7070E600A735F4 /* WebGLTransformFeedback.idl */,
 				0C3F1F5710C8871200D72CE1 /* WebGLUniformLocation.cpp */,
 				0C3F1F5810C8871200D72CE1 /* WebGLUniformLocation.h */,
 				0C3F1F5910C8871200D72CE1 /* WebGLUniformLocation.idl */,
+				6F995A1D1A7078B100A735F4 /* WebGLVertexArrayObject.cpp */,
+				6F995A1E1A7078B100A735F4 /* WebGLVertexArrayObject.h */,
+				6F995A0D1A7070E600A735F4 /* WebGLVertexArrayObject.idl */,
 				77A17A7412F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp */,
 				77A17A7512F28642004E02F6 /* WebGLVertexArrayObjectOES.h */,
 				77A17A7612F28642004E02F6 /* WebGLVertexArrayObjectOES.idl */,
@@ -18928,6 +18988,8 @@
 				93F1D5BF12D5335600832BEC /* JSWebGLLoseContext.h */,
 				49C7B9881042D2D30009D447 /* JSWebGLProgram.cpp */,
 				49C7B9891042D2D30009D447 /* JSWebGLProgram.h */,
+				6F995A271A70833700A735F4 /* JSWebGLQuery.cpp */,
+				6F995A281A70833700A735F4 /* JSWebGLQuery.h */,
 				49C7B98A1042D2D30009D447 /* JSWebGLRenderbuffer.cpp */,
 				49C7B98B1042D2D30009D447 /* JSWebGLRenderbuffer.h */,
 				D3F3D3651A69B1A50059FC2B /* JSWebGLRenderingContextBase.cpp */,
@@ -18936,14 +18998,22 @@
 				D3F3D3621A69B1900059FC2B /* JSWebGL2RenderingContext.h */,
 				49EED1401051969400099FAB /* JSWebGLRenderingContext.cpp */,
 				49EED1411051969400099FAB /* JSWebGLRenderingContext.h */,
+				6F995A2B1A70833700A735F4 /* JSWebGLSync.cpp */,
+				6F995A2C1A70833700A735F4 /* JSWebGLSync.h */,
 				49C7B98F1042D2D30009D447 /* JSWebGLShader.cpp */,
 				49C7B9901042D2D30009D447 /* JSWebGLShader.h */,
+				6F995A291A70833700A735F4 /* JSWebGLSampler.cpp */,
+				6F995A2A1A70833700A735F4 /* JSWebGLSampler.h */,
 				A07D3353152B630E001B6393 /* JSWebGLShaderPrecisionFormat.cpp */,
 				A07D3354152B630E001B6393 /* JSWebGLShaderPrecisionFormat.h */,
 				49C7B9911042D2D30009D447 /* JSWebGLTexture.cpp */,
 				49C7B9921042D2D30009D447 /* JSWebGLTexture.h */,
+				6F995A2D1A70833700A735F4 /* JSWebGLTransformFeedback.cpp */,
+				6F995A2E1A70833700A735F4 /* JSWebGLTransformFeedback.h */,
 				0C45342510CDBBFA00869157 /* JSWebGLUniformLocation.cpp */,
 				0C45342610CDBBFA00869157 /* JSWebGLUniformLocation.h */,
+				6F995A2F1A70833700A735F4 /* JSWebGLVertexArrayObject.cpp */,
+				6F995A301A70833700A735F4 /* JSWebGLVertexArrayObject.h */,
 				77EF62F112F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.cpp */,
 				77EF62F212F9DB7400C77BD2 /* JSWebGLVertexArrayObjectOES.h */,
 				0FDA7C241883333200C954B5 /* JSWebKitPlaybackTargetAvailabilityEvent.cpp */,
@@ -23860,6 +23930,7 @@
 				85E7118E0AC5D5350053270F /* DOMCDATASectionInternal.h in Headers */,
 				85ACA9860A9B520300671E90 /* DOMCharacterData.h in Headers */,
 				85E7118F0AC5D5350053270F /* DOMCharacterDataInternal.h in Headers */,
+				6F995A201A7078B100A735F4 /* WebGLQuery.h in Headers */,
 				85089CD90A98C42800A275AA /* DOMComment.h in Headers */,
 				85E711900AC5D5350053270F /* DOMCommentInternal.h in Headers */,
 				B56576E817DA94E200A56BDC /* DOMConstructorWithDocument.h in Headers */,
@@ -24695,6 +24766,7 @@
 				B27535750B053814002CE64F /* IntSize.h in Headers */,
 				B27535760B053814002CE64F /* IntSizeHash.h in Headers */,
 				CE12524D1A1A77DE00864480 /* IOPMLibSPI.h in Headers */,
+				6F995A161A70756200A735F4 /* WebGLSync.h in Headers */,
 				44DEF6431A6FF92700D45EEC /* IOReturnSPI.h in Headers */,
 				2D0B4AAB18DA1CCD00434DE1 /* IOSurface.h in Headers */,
 				1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */,
@@ -24940,6 +25012,7 @@
 				E44614190CD6826900FADA75 /* JSMediaError.h in Headers */,
 				BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */,
 				D3A94A47122DC40F00A37BBC /* JSMediaQueryList.h in Headers */,
+				6F995A381A70833700A735F4 /* JSWebGLTransformFeedback.h in Headers */,
 				7C5343FD17B74B63004232F0 /* JSMediaQueryListListener.h in Headers */,
 				CD9DE17517AAC74C00EA386D /* JSMediaSource.h in Headers */,
 				07C59B7217F79C7C000FBCBB /* JSMediaSourceStates.h in Headers */,
@@ -25177,6 +25250,7 @@
 				B2FA3DF10AB75A6F000E5AC4 /* JSSVGRenderingIntent.h in Headers */,
 				B2FA3DF30AB75A6F000E5AC4 /* JSSVGScriptElement.h in Headers */,
 				B2FA3DF50AB75A6F000E5AC4 /* JSSVGSetElement.h in Headers */,
+				6F995A361A70833700A735F4 /* JSWebGLSync.h in Headers */,
 				B2FA3DF70AB75A6F000E5AC4 /* JSSVGStopElement.h in Headers */,
 				B2FA3DF90AB75A6F000E5AC4 /* JSSVGStringList.h in Headers */,
 				B2FA3DFB0AB75A6F000E5AC4 /* JSSVGStyleElement.h in Headers */,
@@ -25331,6 +25405,7 @@
 				51E6821016387302003BBF3C /* LoaderStrategy.h in Headers */,
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
 				F5973DE015CFB2030027F804 /* LocaleMac.h in Headers */,
+				6F995A261A7078B100A735F4 /* WebGLVertexArrayObject.h in Headers */,
 				7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */,
 				A516E8B7136E04DB0076C3C0 /* LocalizedDateCache.h in Headers */,
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
@@ -25429,6 +25504,7 @@
 				75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */,
 				E1ADECBF0E76ACF1004A1A5E /* MessagePort.h in Headers */,
 				41BF700C0FE86F49005E8DEC /* MessagePortChannel.h in Headers */,
+				6F995A341A70833700A735F4 /* JSWebGLSampler.h in Headers */,
 				A78E52701346BD1700AD9C31 /* MeterShadowElement.h in Headers */,
 				37DDCDA51384501C0008B793 /* MHTMLArchive.h in Headers */,
 				37DDCDA71384501C0008B793 /* MHTMLParser.h in Headers */,
@@ -25459,6 +25535,7 @@
 				52B6C9C615E3F4DF00690B05 /* NamedFlowCollection.h in Headers */,
 				A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */,
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,
+				6F995A321A70833700A735F4 /* JSWebGLQuery.h in Headers */,
 				6B3480940EEF50D400AC1B41 /* NativeImagePtr.h in Headers */,
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */,
@@ -25506,6 +25583,7 @@
 				1A927FD41416A15B003A83C8 /* nptypes.h in Headers */,
 				CE1252511A1BEBD800864480 /* NSCalendarDateSPI.h in Headers */,
 				2DDB97F419F9AECA002025D8 /* NSExtensionSPI.h in Headers */,
+				6F995A3A1A70833700A735F4 /* JSWebGLVertexArrayObject.h in Headers */,
 				CE12523B1A16711000864480 /* NSFileManagerSPI.h in Headers */,
 				1C6466281A12C4200094603C /* NSFontSPI.h in Headers */,
 				CE1252471A16C2C200864480 /* NSPointerFunctionsSPI.h in Headers */,
@@ -26517,6 +26595,7 @@
 				49E911D20EF86D47009D0CAF /* TranslateTransformOperation.h in Headers */,
 				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
 				37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */,
+				6F995A241A7078B100A735F4 /* WebGLTransformFeedback.h in Headers */,
 				14D64B5D134A5B6B00E58FDA /* TreeScope.h in Headers */,
 				A77E1FF014AACB6E005B7CB6 /* TreeScopeAdopter.h in Headers */,
 				1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */,
@@ -26710,6 +26789,7 @@
 				3FBC4AEA189880EF0046EE38 /* WebVideoFullscreenModel.h in Headers */,
 				65FD466519B596F0001E2B4D /* WebVideoFullscreenModelVideoElement.h in Headers */,
 				F12171F616A8CF0B000053CA /* WebVTTElement.h in Headers */,
+				6F995A221A7078B100A735F4 /* WebGLSampler.h in Headers */,
 				5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */,
 				B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */,
 				B10B6982140C174000BC1C26 /* WebVTTTokenizer.h in Headers */,
@@ -27297,6 +27377,7 @@
 				FD315FFE12B0267600C1A359 /* ChannelMergerNode.cpp in Sources */,
 				FD31600112B0267600C1A359 /* ChannelSplitterNode.cpp in Sources */,
 				6550B69F099DF0270090D781 /* CharacterData.cpp in Sources */,
+				6F995A1F1A7078B100A735F4 /* WebGLQuery.cpp in Sources */,
 				9326DC0C09DAD5D600AFC847 /* CharsetData.cpp in Sources */,
 				F55B3DB11251F12D003EF269 /* CheckboxInputType.cpp in Sources */,
 				93F925440F7EF5B8007E37C9 /* CheckedRadioButtons.cpp in Sources */,
@@ -27417,6 +27498,7 @@
 				BC23E4E10DAACE0F009FDC91 /* CSSGradientValue.cpp in Sources */,
 				650F53DD09D15DDF00C9B0C8 /* CSSGrammar.cpp in Sources */,
 				CD7DBB2818CA19A400C11066 /* CSSGridLineNamesValue.cpp in Sources */,
+				6F995A391A70833700A735F4 /* JSWebGLVertexArrayObject.cpp in Sources */,
 				CD3E252318046BCD00E27F56 /* CSSGridTemplateAreasValue.cpp in Sources */,
 				FBF89045169E9F1F0052D86E /* CSSGroupingRule.cpp in Sources */,
 				BC23E76C0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp in Sources */,
@@ -28132,6 +28214,7 @@
 				7A0E770E10C00A8800A0276E /* InspectorFrontendHost.cpp in Sources */,
 				7A54857F14E02D51006AE05A /* InspectorHistory.cpp in Sources */,
 				7ACD88D314C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp in Sources */,
+				6F995A211A7078B100A735F4 /* WebGLSampler.cpp in Sources */,
 				20D629261253690B00081543 /* InspectorInstrumentation.cpp in Sources */,
 				A5840E1C187B74D500843B10 /* InspectorInstrumentationCookie.cpp in Sources */,
 				71B1E1261640491A00B1880A /* InspectorLayerTreeAgent.cpp in Sources */,
@@ -28156,6 +28239,7 @@
 				B27535620B053814002CE64F /* IntSizeCG.cpp in Sources */,
 				B275357E0B053814002CE64F /* IntSizeMac.mm in Sources */,
 				2D0B4AAC18DA1CCD00434DE1 /* IOSurface.mm in Sources */,
+				6F995A251A7078B100A735F4 /* WebGLVertexArrayObject.cpp in Sources */,
 				1C21E57C183ED1FF001C289D /* IOSurfacePool.cpp in Sources */,
 				AD9FF6E11908391D003B61E0 /* IOSurfacePoolCocoa.mm in Sources */,
 				07AC47011952102100EE9723 /* ISOVTTCue.cpp in Sources */,
@@ -28597,6 +28681,7 @@
 				B59DD6A211902A52007E9684 /* JSSQLTransactionErrorCallback.cpp in Sources */,
 				51E3F9D60DA05E1D00250911 /* JSStorage.cpp in Sources */,
 				51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */,
+				6F995A231A7078B100A735F4 /* WebGLTransformFeedback.cpp in Sources */,
 				51E0BAEA0DA55D4A00A9E417 /* JSStorageEvent.cpp in Sources */,
 				0FF50269102BA9430066F39A /* JSStyleMedia.cpp in Sources */,
 				BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */,
@@ -29155,6 +29240,7 @@
 				372ADA3B197F687600FC501E /* ProtectionSpaceCocoa.mm in Sources */,
 				1AF8E13312565A4400230FF7 /* ProxyServer.cpp in Sources */,
 				1AF8E1C3125673E000230FF7 /* ProxyServerCFNet.cpp in Sources */,
+				6F995A331A70833700A735F4 /* JSWebGLSampler.cpp in Sources */,
 				FF945ECB161F7F3600971BC8 /* PseudoElement.cpp in Sources */,
 				0081FEFF16B0A2B6008AAA7A /* PublicSuffixMac.mm in Sources */,
 				CDEE393717974259001D7580 /* PublicURLManager.cpp in Sources */,
@@ -29601,6 +29687,7 @@
 				08FB17C113BC7E9100040086 /* SVGAttributeToPropertyMap.cpp in Sources */,
 				B222799B0D00BF220071B782 /* SVGCircleElement.cpp in Sources */,
 				B222799E0D00BF220071B782 /* SVGClipPathElement.cpp in Sources */,
+				6F995A311A70833700A735F4 /* JSWebGLQuery.cpp in Sources */,
 				B22279A10D00BF220071B782 /* SVGColor.cpp in Sources */,
 				B22279A40D00BF220071B782 /* SVGComponentTransferFunctionElement.cpp in Sources */,
 				B2227B050D00BFF10071B782 /* SVGCSSComputedStyleDeclaration.cpp in Sources */,
@@ -29722,6 +29809,7 @@
 				B2227AC40D00BF220071B782 /* SVGTests.cpp in Sources */,
 				B2227AC70D00BF220071B782 /* SVGTextContentElement.cpp in Sources */,
 				B2227ACA0D00BF220071B782 /* SVGTextElement.cpp in Sources */,
+				6F995A371A70833700A735F4 /* JSWebGLTransformFeedback.cpp in Sources */,
 				B2227ACD0D00BF220071B782 /* SVGTextPathElement.cpp in Sources */,
 				B2227AD00D00BF220071B782 /* SVGTextPositioningElement.cpp in Sources */,
 				B2227AD30D00BF220071B782 /* SVGTitleElement.cpp in Sources */,
@@ -29768,6 +29856,7 @@
 				9343CB8112F25E510033C5EE /* TextCodecUTF8.cpp in Sources */,
 				142B97C913138943008BEF4B /* TextControlInnerElements.cpp in Sources */,
 				1AF7AFC71A48A8BC00C8E4E7 /* SecurityOriginPolicy.cpp in Sources */,
+				6F995A351A70833700A735F4 /* JSWebGLSync.cpp in Sources */,
 				97BC84B312371180000C6161 /* TextDocument.cpp in Sources */,
 				97BC84831236FD93000C6161 /* TextDocumentParser.cpp in Sources */,
 				B2C3DA460D006C1D00EF6F26 /* TextEncoding.cpp in Sources */,
@@ -30014,6 +30103,7 @@
 				2E4346480F546A8200B0F1BA /* WorkerGlobalScope.cpp in Sources */,
 				51D719FB181106E00016DC51 /* WorkerGlobalScopeIndexedDatabase.cpp in Sources */,
 				97F8E665151D4A4B00D2D181 /* WorkerGlobalScopeNotifications.cpp in Sources */,
+				6F995A151A70756200A735F4 /* WebGLSync.cpp in Sources */,
 				F36E07A41358A8BE00AACBC9 /* WorkerInspectorController.cpp in Sources */,
 				2E43464C0F546A8200B0F1BA /* WorkerLocation.cpp in Sources */,
 				2E43464F0F546A8200B0F1BA /* WorkerMessagingProxy.cpp in Sources */,
