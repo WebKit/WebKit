@@ -416,6 +416,7 @@ audio::-webkit-media-controls-timeline {
     -webkit-flex: 1 1 0;
     height: 9px;
     margin: 0;
+    background-size: 100% 9px;
 
     border-radius: 4.5px;
     background-color: rgb(74, 74, 74);
