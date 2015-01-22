@@ -1,3 +1,16 @@
+2015-01-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Size tracks using a list of all items sorted by span
+        https://bugs.webkit.org/show_bug.cgi?id=140615
+
+        Reviewed by Andreas Kling.
+
+        * fast/css-grid-layout/grid-content-sized-columns-resolution-expected.txt:
+        Added tons of new test cases.
+        * fast/css-grid-layout/grid-content-sized-columns-resolution.html: Ditto.
+        * fast/css-grid-layout/grid-preferred-logical-widths.html:
+        Adjusted results.
+
 2015-01-21  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Rebaseline SVG results from test machine.

@@ -1,3 +1,24 @@
+2015-01-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        [CSS Grid Layout] Size tracks using a list of all items sorted by span
+        https://bugs.webkit.org/show_bug.cgi?id=140615
+
+        Reviewed by Andreas Kling.
+
+        In r173620 we fixed
+        RenderGrid::resolveContentBasedTrackSizingFunctions() so that it
+        now collects all items spanning content-sized tracks and process
+        them one by one after sorting them by ascending span.
+
+        The problem is that it was incorrectly implemented, it has two
+        important bugs. First one is that the hash table that collects
+        items is regenerated after processing each track, so it's actually
+        doing nothing. Secondly we're only sorting the items on each
+        track, instead of all the items in the grid.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveContentBasedTrackSizingFunctions):
+
 2015-01-21  Daniel Bates  <dabates@apple.com>
 
         Fix the iOS release build after <http://trac.webkit.org/changeset/178868>
