@@ -1,5 +1,27 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r175131. rdar://problem/19452187
+
+    2014-10-23  Jer Noble  <jer.noble@apple.com>
+
+            [Mac] Safari cannot play 'audio/amr' content.
+            https://bugs.webkit.org/show_bug.cgi?id=137894
+
+            Reviewed by Eric Carlson.
+
+            Test: media/media-can-play-case-insensitive.html
+
+            Sites are returning 'video/amr' for AMR audio content, but the IANA spec says 'audio/AMR', which is also what
+            AVFoundation claims to support.  However, MIME types are supposed to be case-insensitive. When creating our
+            mime type cache, case-fold to lower all MIME types given to us by our media frameworks.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+            (WebCore::mimeTypeCache):
+            * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+            (WebCore::addFileTypesToCache):
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174716. rdar://problem/19451273
 
     2014-10-14  Zalan Bujtas  <zalan@apple.com>
