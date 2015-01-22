@@ -1,5 +1,33 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r172504. rdar://problem/19451367
+
+    2014-08-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Fonts forced to use non synthetic italics might be laid out with the incorrect baseline
+            https://bugs.webkit.org/show_bug.cgi?id=135403
+
+            Reviewed by Darin Adler.
+
+            When italics is specified on a font, and the font isn't coming from the cache, we ask
+            the SimpleFontData to provide a non-synthetic-italic version of itself. Our current
+            implementation doesn't preserve whether or not the SimpleFontData includes vertical
+            glyphs (glyphs that are not rotated when drawn in the vertical writing mode), which
+            determines which baseline we use to lay out the text. By passing "false" to
+            the isTextOrientationFallback argument to SimpleFontData::create(), we preserve this
+            hasVerticalGlyphs flag.
+
+            Test: fast/text/international/synthesized-italic-vertical-latin-double.html
+
+            * platform/graphics/SimpleFontData.cpp:
+            (WebCore::SimpleFontData::nonSyntheticItalicFontData):
+            * testing/Internals.cpp:
+            (WebCore::Internals::invalidateFontCache): Add "invalidateFontCache" to window.internals.
+            * testing/Internals.h: Ditto.
+            * testing/Internals.idl: Ditto.
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r172326. rdar://problem/19452126
 
     2014-08-07  Zalan Bujtas  <zalan@apple.com>

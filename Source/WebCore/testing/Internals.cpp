@@ -47,6 +47,7 @@
 #include "Element.h"
 #include "EventHandler.h"
 #include "ExceptionCode.h"
+#include "FontCache.h"
 #include "FormController.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
@@ -811,6 +812,11 @@ void Internals::setMarkedTextMatchesAreHighlighted(bool flag, ExceptionCode& ec)
         return;
     }
     document->frame()->editor().setMarkedTextMatchesAreHighlighted(flag);
+}
+
+void Internals::invalidateFontCache()
+{
+    fontCache().invalidate();
 }
 
 void Internals::setScrollViewPosition(long x, long y, ExceptionCode& ec)
