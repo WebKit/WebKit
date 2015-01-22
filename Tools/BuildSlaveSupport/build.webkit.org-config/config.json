@@ -49,6 +49,7 @@
                     { "name": "bot318", "platform": "mac-yosemite" },
                     { "name": "bot319", "platform": "mac-yosemite" },
                     { "name": "bot320", "platform": "mac-yosemite" },
+                    { "name": "bot321", "platform": "mac-yosemite" },
 
                     { "name": "bot516", "platform": "win" },
                     { "name": "bot514", "platform": "win" },
@@ -130,7 +131,7 @@
                     },
                     { "name": "Apple Yosemite Debug WK1 (Tests)", "type": "Test", "builddir": "yosemite-debug-tests-wk1",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["bot182", "bot183", "bot314", "bot315"]
+                      "slavenames": ["bot182", "bot183", "bot314", "bot321"]
                     },
                     { "name": "Apple Yosemite Debug WK2 (Tests)", "type": "TestWebKit2", "builddir": "yosemite-debug-tests-wk2",
                       "platform": "mac-yosemite", "configuration": "debug", "architectures": ["x86_64"],
