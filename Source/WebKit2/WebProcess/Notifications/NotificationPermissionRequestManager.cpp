@@ -157,6 +157,9 @@ void NotificationPermissionRequestManager::didReceiveNotificationPermissionDecis
         return;
 
     RefPtr<WebCore::SecurityOrigin> origin = m_idToOriginMap.take(requestID);
+    if (!origin)
+        return;
+
     m_originToIDMap.remove(origin);
 
     WebProcess::shared().supplement<WebNotificationManager>()->didUpdateNotificationDecision(origin->toString(), allowed);

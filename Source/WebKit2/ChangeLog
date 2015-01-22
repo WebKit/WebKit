@@ -1,5 +1,37 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r177033. rdar://problem/19451244
+
+    2014-12-09  Chris Dumez  <cdumez@apple.com>
+
+            [WK2] Crash when answering notification permission request after navigating
+            https://bugs.webkit.org/show_bug.cgi?id=139429
+            <rdar://problem/18921122>
+
+            Reviewed by Andreas Kling.
+
+            When requesting a notification permission, navigating away and then
+            answering the permission, WebKit2 would crash. This is because upon
+            navigating, the request is cancelled and removed from the HashMaps
+            in NotificationPermissionRequestManager. When
+            didReceiveNotificationPermissionDecision() is later called, it would
+            look for the request identifier in m_idToOriginMap HashMap. As the
+            request was cancelled, HashMap::take() call would return null for
+            the SecurityOrigin*. This security origin pointer is then removed
+            from m_originToIDMap, but the code was failing to do a null check
+            first. Calling HashMap::remove(nullptr) would then crash.
+
+            This patch adds the missing null check and a layout test to cover
+            this case.
+
+            Test: http/tests/notifications/legacy/notification-request-permission-then-navigate.html
+
+
+            * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+            (WebKit::NotificationPermissionRequestManager::didReceiveNotificationPermissionDecision):
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r175759. rdar://problem/19450899
 
     2014-11-07  Anshu Chimala  <anshu@apple.com>
