@@ -1,5 +1,16 @@
 2015-01-21  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Add more tests and baselines.
+
+        Stop skipping a number of tests that are fully functional. Add some
+        Windows baselines.
+
+        * platform/win/TestExpectations:
+        * platform/win/printing/setPrinting-expected.txt: Added.
+        * platform/win/printing/width-overflow-expected.txt: Added.
+
+2015-01-21  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] More gardening.
 
         Unskip the flexbox tests. These have been functional in Windows for YEARS!

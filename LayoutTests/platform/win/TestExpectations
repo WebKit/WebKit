@@ -117,7 +117,7 @@ fast/events/drag-and-drop-autoscroll-inner-frame.html
 http/tests/security/clipboard/clipboard-file-access.html
 http/tests/security/drag-drop-same-unique-origin.html
 
-# TODO EventSender::dumpFilenameBeingDragged not implemented.
+# TODO EventSender::dumpFilenameBeingDragged not implemented. (Chromium Only)
 webkit.org/b/61829 fast/events/drag-image-filename.html [ Failure ]
 
 # TODO Application cache
@@ -265,8 +265,8 @@ fast/dom/HTMLLinkElement/subresource.html [ Skip ]
 http/tests/misc/link-rel-prefetch-and-subresource.html [ Skip ]
 http/tests/misc/prefetch-purpose.html [ Skip ]
 
-# TODO testRunner::pageProperty is not implemented for WIN yet.
-printing/page-rule-selection.html
+# TODO testRunner::pageProperty is not responding to changing user style sheet.
+printing/page-rule-selection.html [ Failure ]
 
 # TODO Hyphenation is not implemented yet.
 webkit.org/b/140234 fast/text/hyphenate-character.html [ Failure ]
@@ -285,9 +285,6 @@ webkit.org/b/53675 fast/harness/show-modal-dialog.html [ Skip ]
 webkit.org/b/53675 fast/events/scroll-event-during-modal-dialog.html [ Skip ]
 webkit.org/b/53675 fast/dom/Window/open-window-min-size.html [ Skip ]
 webkit.org/b/53675 js/dom/function-length.html [ Skip ]
-
-# TODO testRunner::isPageBoxVisible, pageAreaRectInPixels, and preferredPageSizeInPixels are not implemented yet for WIN.
-printing/page-format-data.html [ Skip ]
 
 # TODO Implement spinbutton support in RenderThemeSafari
 webkit.org/b/54662 fast/forms/number/number-appearance-rtl.html [ Skip ]
@@ -328,10 +325,6 @@ webkit.org/b/128943 userscripts/user-script-audio-document.html [ Skip ]
 webkit.org/b/41800 userscripts/user-script-top-frame-only.html [ Skip ]
 webkit.org/b/41800 userscripts/user-style-top-frame-only.html [ Skip ]
 userscripts/user-script-plugin-document.html [ Skip ]
-
-# TODO Need setPrinting.
-webkit.org/b/20011 printing/setPrinting.html [ Skip ]
-webkit.org/b/20011 printing/width-overflow.html [ Skip ]
 
 # TODO Need to call Settings::setInteractiveFormValidationEnabled(true).
 fast/forms/interactive-validation-prevented.html [ Skip ]
@@ -409,7 +402,6 @@ fast/frames/meta-refresh-user-gesture.html [ Skip ]
 # TODO These require DRT setSerializeHTTPLoads implementation to be reliable.
 webkit.org/b/50758 http/tests/local/link-stylesheet-load-order.html [ Pass Failure ]
 webkit.org/b/50758 http/tests/local/link-stylesheet-load-order-preload.html [ Pass Failure ]
-webkit.org/b/50758 fast/preloader/scan-body-from-head-script.html [ Pass Failure ]
 
 # TODO DRT does not obey addURLToRedirect
 http/tests/loading/cross-origin-XHR-willLoadRequest.html [ Skip ]
@@ -440,8 +432,9 @@ fast/dom/HTMLAnchorElement/anchor-download.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Skip ]
 
-# TODO Expose title direction in WebKit API
-webkit.org/b/58845 fast/dom/title-directionality.html [ Failure ]
+# TODO Expose title direction in WebKit API (Chromium Only)
+webkit.org/b/58845 fast/dom/title-directionality.html [ Skip ]
+webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Skip ]
 
 # TODO CSS Grid Layout is not yet enabled.
 webkit.org/b/60731 fast/css-grid-layout/ [ Skip ]
@@ -2580,6 +2573,3 @@ webkit.org/b/140250 fast/loader/stateobjects/replacestate-in-iframe.html [ Failu
 ################################################################################
 ######################### End list of UNREVIEWED failures ##########################
 ################################################################################
-
-
-
