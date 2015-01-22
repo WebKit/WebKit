@@ -504,9 +504,10 @@ namespace JSC {
         PropertyListNode(const JSTokenLocation&, PropertyNode*);
         PropertyListNode(const JSTokenLocation&, PropertyNode*, PropertyListNode*);
 
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
-
     private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+        void emitPutConstantProperty(BytecodeGenerator&, RegisterID*, PropertyNode&);
+
         PropertyNode* m_node;
         PropertyListNode* m_next;
     };

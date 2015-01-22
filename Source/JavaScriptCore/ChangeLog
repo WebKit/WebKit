@@ -1,3 +1,19 @@
+2015-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PropertyListNode::emitNode duplicates the code to put a constant property
+        https://bugs.webkit.org/show_bug.cgi?id=140761
+
+        Reviewed by Geoffrey Garen.
+
+        Extracted PropertyListNode::emitPutConstantProperty to share the code.
+
+        Also made PropertyListNode::emitBytecode private since nobody is calling this function directly.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        (JSC::PropertyListNode::emitPutConstantProperty): Added.
+        * parser/Nodes.h:
+
 2015-01-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         put_by_val_direct need to check the property is index or not for using putDirect / putDirectIndex

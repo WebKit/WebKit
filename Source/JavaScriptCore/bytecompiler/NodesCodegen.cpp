@@ -291,14 +291,8 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
     
     // Fast case: this loop just handles regular value properties.
     PropertyListNode* p = this;
-    for (; p && p->m_node->m_type == PropertyNode::Constant; p = p->m_next) {
-        if (p->m_node->m_name) {
-            generator.emitDirectPutById(newObj.get(), *p->m_node->name(), generator.emitNode(p->m_node->m_assign));
-            continue;
-        }
-        RefPtr<RegisterID> propertyName = generator.emitNode(p->m_node->m_expression);
-        generator.emitDirectPutByVal(newObj.get(), propertyName.get(), generator.emitNode(p->m_node->m_assign));
-    }
+    for (; p && p->m_node->m_type == PropertyNode::Constant; p = p->m_next)
+        emitPutConstantProperty(generator, newObj.get(), *p->m_node);
 
     // Were there any get/set properties?
     if (p) {
@@ -324,15 +318,10 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 
             // Handle regular values.
             if (node->m_type == PropertyNode::Constant) {
-                if (node->name()) {
-                    generator.emitDirectPutById(newObj.get(), *node->name(), generator.emitNode(node->m_assign));
-                    continue;
-                }
-                RefPtr<RegisterID> propertyName = generator.emitNode(p->m_node->m_expression);
-                generator.emitDirectPutByVal(newObj.get(), propertyName.get(), generator.emitNode(p->m_node->m_assign));
+                emitPutConstantProperty(generator, newObj.get(), *node);
                 continue;
             }
-            
+
             RegisterID* value = generator.emitNode(node->m_assign);
 
             // This is a get/set property, find its entry in the map.
@@ -375,6 +364,16 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
     }
 
     return generator.moveToDestinationIfNeeded(dst, newObj.get());
+}
+
+void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, RegisterID* newObj, PropertyNode& node)
+{
+    if (node.name()) {
+        generator.emitDirectPutById(newObj, *node.name(), generator.emitNode(node.m_assign));
+        return;
+    }
+    RefPtr<RegisterID> propertyName = generator.emitNode(node.m_expression);
+    generator.emitDirectPutByVal(newObj, propertyName.get(), generator.emitNode(node.m_assign));
 }
 
 // ------------------------------ BracketAccessorNode --------------------------------
