@@ -1,3 +1,16 @@
+2015-01-22  Shivakumar JM  <shiva.jm@samsung.com>
+
+        Fix build warning in WebKit2/UIProcess module
+        https://bugs.webkit.org/show_bug.cgi?id=140758
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix build warnings by using UNUSED_PARAM macro
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserContentFilter):
+        (WKPageGroupRemoveAllUserContentFilters):
+
 2014-11-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use API::ContextMenuClient and API::InjectedBundle::PageContextMenuClient classes

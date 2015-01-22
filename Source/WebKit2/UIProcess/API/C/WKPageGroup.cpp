@@ -82,6 +82,9 @@ void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroupRef, WKUserContentF
 {
 #if ENABLE(CONTENT_EXTENSIONS)
     toImpl(pageGroupRef)->addUserContentFilter(*toImpl(userContentFilterRef));
+#else
+    UNUSED_PARAM(pageGroupRef);
+    UNUSED_PARAM(userContentFilterRef);
 #endif
 }
 
@@ -89,5 +92,7 @@ void WKPageGroupRemoveAllUserContentFilters(WKPageGroupRef pageGroupRef)
 {
 #if ENABLE(CONTENT_EXTENSIONS)
     toImpl(pageGroupRef)->removeAllUserScripts();
+#else
+    UNUSED_PARAM(pageGroupRef);
 #endif
 }
