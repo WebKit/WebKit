@@ -1,3 +1,18 @@
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r174698. rdar://problem/19451342
+
+    2014-10-14  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Enable Encrypted Media Support
+            https://bugs.webkit.org/show_bug.cgi?id=137710
+            <rdar://problem/18652699>
+
+            Reviewed by Jer Noble.
+
+            * win/tools/vsprops/FeatureDefines.props: Activate the
+            ENCRYPTED_MEDIA_V2 flag on Windows.
+
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r174698. rdar://problem/19451946

@@ -1,5 +1,28 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r174698. rdar://problem/19451342
+
+    2014-10-14  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Enable Encrypted Media Support
+            https://bugs.webkit.org/show_bug.cgi?id=137710
+            <rdar://problem/18652699>
+
+            Reviewed by Jer Noble.
+
+            This feature is covered by existing media tests.
+
+            * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+            (WebCore::destroyAVFWrapper): Remove redundant ASSERT.
+            * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+            (displayOnMainThreadContext::displayOnMainThreadContext): Added.
+            (redispatchOnMainQueue): Added.
+            (PlatformCALayerWinInternal::displayCallback): Check if a display
+            call is happening on a background queue, and re-dispatch on the
+            main thread if necessary.
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174345. rdar://problem/19451258
 
     2014-10-06  Chris Fleizach  <cfleizach@apple.com>
