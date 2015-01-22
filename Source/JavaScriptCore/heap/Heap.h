@@ -376,7 +376,7 @@ private:
     double m_lastEdenGCLength;
     double m_lastCodeDiscardTime;
 
-    DoublyLinkedList<ExecutableBase> m_compiledCode;
+    Vector<ExecutableBase*> m_compiledCode;
     
     RefPtr<GCActivityCallback> m_fullActivityCallback;
     RefPtr<GCActivityCallback> m_edenActivityCallback;
