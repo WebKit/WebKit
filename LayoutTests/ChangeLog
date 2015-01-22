@@ -1,3 +1,20 @@
+2015-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] More unskips and rebaselines. 
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/win/fast/repaint/repaint-across-writing-mode-boundary-expected.txt:
+        * platform/win/inspector-protocol: Added.
+        * platform/win/inspector-protocol/debugger: Added.
+        * platform/win/inspector-protocol/debugger/breakpoint-eval-with-exception-expected.txt: Added.
+        * platform/win/inspector-protocol/debugger/setBreakpoint-actions-expected.txt: Added.
+        * platform/win/inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local-expected.txt: Added.
+        * platform/win/svg/text/kerning-expected.txt:
+        * platform/win/svg/text/multichar-glyph-expected.txt:
+        * platform/win/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/win/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+
 2015-01-22  Andrzej Badowski  <a.badowski@samsung.com>
 
         AX: [ATK] Mark accessibility/list-detection.html as a suitable test for EFL and GTK.

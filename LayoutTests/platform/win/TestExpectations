@@ -118,7 +118,7 @@ http/tests/security/clipboard/clipboard-file-access.html
 http/tests/security/drag-drop-same-unique-origin.html
 
 # TODO EventSender::dumpFilenameBeingDragged not implemented. (Chromium Only)
-webkit.org/b/61829 fast/events/drag-image-filename.html [ Failure ]
+webkit.org/b/61829 fast/events/drag-image-filename.html [ Skip ]
 
 # TODO Application cache
 http/tests/appcache/ [ Skip ]
@@ -617,20 +617,20 @@ webkit.org/b/140528 plugins/get-url-that-the-resource-load-delegate-will-disallo
 webkit.org/b/140528 plugins/get-url-with-blank-target.html [ Skip ]
 webkit.org/b/140528 plugins/open-and-close-window-with-plugin.html [ Skip ]
 webkit.org/b/140528 plugins/plugin-javascript-access.html [ Skip ]
-plugins/netscape-plugin-setwindow-size.html [ Failure ]
-webkit.org/b/57693 plugins/windowless_plugin_paint_test.html [ Failure Timeout ]
+plugins/netscape-plugin-setwindow-size.html [ Skip ]
+webkit.org/b/57693 plugins/windowless_plugin_paint_test.html [ Skip ]
 plugins/reloadplugins-and-pages.html
 plugins/reloadplugins-no-pages.html
 webkit.org/b/29289 plugins/destroy-during-npp-new.html [ Skip ]
-webkit.org/b/24810 plugins/npruntime/npruntime.html [ Failure Timeout ]
-webkit.org/b/24810 plugins/netscape-destroy-plugin-script-objects.html [ Failure ]
-webkit.org/b/24810 plugins/netscape-plugin-setwindow-size-2.html [ Failure Timeout ]
+webkit.org/b/24810 plugins/npruntime/npruntime.html [ Skip ]
+webkit.org/b/24810 plugins/netscape-destroy-plugin-script-objects.html [ Skip ]
+webkit.org/b/24810 plugins/netscape-plugin-setwindow-size-2.html [ Skip ]
 # Needs to implement NPP_HandleEvent() in TestNetscapePlugin
-plugins/keyboard-events.html
-plugins/plugin-initiate-popup-window.html
-webkit.org/b/58924 plugins/mouse-click-iframe-to-plugin.html
+plugins/keyboard-events.html  [ Skip ]
+plugins/plugin-initiate-popup-window.html [ Skip ]
+webkit.org/b/58924 plugins/mouse-click-iframe-to-plugin.html [ Skip ]
 # Need to implement getFormValue().
-plugins/form-value.html [ Failure ]
+plugins/form-value.html [ Skip ]
 # New plugins/npruntime/delete-plugin-within-* tests introduced in r117012 fail/crash
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Skip ]
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Skip ]
@@ -648,12 +648,12 @@ webkit.org/b/88107 plugins/netscape-plugin-page-cache-works.html [ Skip ]
 plugins/nested-plugin-objects.html [ Skip ]
 
 http/tests/plugins/ [ Skip ]
-http/tests/plugins/plugin-document-has-focus.html
+http/tests/plugins/plugin-document-has-focus.html [ Skip ]
 http/tests/plugins/npapi-response-headers.html [ Skip ]
 
-webkit.org/b/117323 fast/frames/sandboxed-iframe-plugins.html [ Failure ]
-webkit.org/b/117323 platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
-webkit.org/b/117323 platform/win/plugins/windowless-paint-rect-coordinates.html [ Failure ]
+webkit.org/b/117323 fast/frames/sandboxed-iframe-plugins.html [ Skip ]
+webkit.org/b/117323 platform/win/plugins/call-javascript-that-destroys-plugin.html [ Skip ]
+webkit.org/b/117323 platform/win/plugins/windowless-paint-rect-coordinates.html [ Skip ]
 ################################################################################
 ############################   End Plugin Failures   ###########################
 ################################################################################
@@ -1534,7 +1534,7 @@ svg/text/font-size-below-point-five.svg [ Failure ]
 svg/css/shadow-changes.svg [ Failure ]
 webkit.org/b/140705 imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
 webkit.org/b/116564 transitions/svg-text-shadow-transition.html [ Failure ]
-webkit.org/b/117322 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ Failure ]
+webkit.org/b/117322 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 webkit.org/b/117322 svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
 
 # Subpixel rendering: borders are reporting float values.
@@ -1560,6 +1560,7 @@ svg/clip-path/mask-userspaceonuse-content-clip.svg [ ImageOnlyFailure ]
 svg/custom/inline-svg-in-xhtml.xml [ Failure ]
 svg/custom/foreign-object-skew.svg [ Failure ]
 webkit.org/b/140249 fast/css/fontloader-svg-select.svg [ Failure ]
+webkit.org/b/140770 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Failure ]
 ################################################################################
 ###################          End SVG Issues              #######################
 ################################################################################
@@ -1604,6 +1605,7 @@ webkit.org/b/119038 mathml/presentation/roots.xhtml [ Failure ]
 mathml/opentype/opentype-stretchy-horizontal.html [ Crash Failure ]
 mathml/presentation/style-changed.html [ Crash Pass ]
 webkit.org/b/140522 mathml/opentype/munderover-layout-resize.html [ Crash ]
+mathml/very-large-stretchy-operators.html [ Skip ]
 
 ################################################################################
 #################          End MathML Issues                ####################
@@ -1690,8 +1692,19 @@ css2.1/20110323/abspos-replaced-width-margin-000-ref.htm [ Failure ]
 css3/flexbox/button.html [ Failure ]
 css3/flexbox/flexitem.html [ Failure ]
 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
+webkit.org/b/140767 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
+webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 ################################################################################
 #################            End CSS Issues              #######################
+################################################################################
+
+
+################################################################################
+################             DOM Issues                  #######################
+################################################################################
+webkit.org/b/140768 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Failure ]
+################################################################################
+#################            End DOM Issues              #######################
 ################################################################################
 
 
@@ -1771,6 +1784,8 @@ webkit.org/b/35973 fast/multicol/hit-test-above-or-below.html [ Failure ]
 webkit.org/b/49769 fast/dom/HTMLProgressElement/progress-element-with-child-crash.html [ Failure ]
 webkit.org/b/50994 fast/loader/user-stylesheet-fast-path.html [ Failure ]
 webkit.org/b/59062 fast/images/animated-gif-restored-from-bfcache.html [ Failure ]
+fast/images/animated-gif-window-resizing.html [ Timeout ]
+fast/images/animated-gif-zooming.html [ Timeout ]
 webkit.org/b/140211 fast/xsl/sort-locale.xml [ Failure ]
 
 # Some http tests crash in Debug Windows builds due to an assertion in CFNetwork when releasing a CFURLConnection
@@ -1795,6 +1810,7 @@ fast/text-autosizing/narrow-iframe-flattened.html [ ImageOnlyFailure ]
 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
 fast/box-shadow/box-shadow-with-zero-radius.html [ ImageOnlyFailure ]
 webkit.org/b/97026 scrollbars/corner-resizer-window-inactive.html [ ImageOnlyFailure ]
+fast/regions/overflow/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ]
 
 # Still working out flakiness issues with the perf tests.
 webkit.org/b/44199 perf/ [ Skip ]
@@ -1803,7 +1819,7 @@ webkit.org/b/44199 perf/ [ Skip ]
 webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
 # Fails because MutationObservers are not notified at end-of-task
-webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]
+webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Skip ]
 
 # Interferes with the other requestAnimationFrame tests
 webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
@@ -1833,6 +1849,7 @@ js/dom/global-recursion-on-full-stack.html [ Skip ]
 fast/images/bad-png.html [ Skip ]
 
 webkit.org/b/140703 loader/go-back-cached-main-resource.html [ Failure ]
+webkit.org/b/140703 fast/preloader/scan-body-from-head-script.html [ Failure ]
 webkit.org/b/140707 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html [ Failure ]
 webkit.org/b/140707 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
 
@@ -1842,9 +1859,7 @@ webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Failure ]
 # Windows doesn't seem to have some of these fonts:
 webkit.org/b/116564 fast/text/text-combine-different-fonts.html [ Failure ]
 
-################################################################################
-######################### All of above may be related ##########################
-################################################################################
+webkit.org/b/140771 transforms/hittest-translated-content-off-to-infinity-and-back.html [ ImageOnlyFailure ]
 
 # Tests generating new results
 printing/return-from-printing-mode.html
@@ -2020,7 +2035,7 @@ webkit.org/b/117322 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Im
 webkit.org/b/117322 printing/quirks-percentage-height-body.html [ ImageOnlyFailure ]
 webkit.org/b/117322 printing/quirks-percentage-height.html [ ImageOnlyFailure ]
 webkit.org/b/117322 printing/standards-percentage-heights.html [ ImageOnlyFailure ]
-webkit.org/b/117323 animations/animation-delay-changed.html [ Pass Timeout ]
+webkit.org/b/117323 animations/animation-delay-changed.html [ Pass Failure Timeout ]
 webkit.org/b/117323 fast/frames/sandboxed-iframe-about-blank.html [ Failure ]
 webkit.org/b/117323 fast/frames/sandboxed-iframe-navigation-allowed.html [ Failure ]
 webkit.org/b/117323 fast/replaced/invalid-object-with-fallback.html [ Failure ]
@@ -2031,16 +2046,14 @@ fast/dom/call-a-constructor-as-a-function.html [ Failure ]
 fast/forms/search-event-delay.html [ Failure ]
 fast/lists/inlineBoxWrapperNullCheck.html [ Failure ]
 js/dom/global-constructors-attributes-dedicated-worker.html [ Failure ]
-webkit.org/b/121509 fast/dom/MutationObserver/database-callback-delivery.html	[ Failure ]
-#Also webkit.org/b/117326
-fast/workers/worker-document-leak.html [ Failure ]
-#Also webkit.org/b/106415
-webkit.org/b/121509 fast/events/page-visibility-iframe-delete-test.html	[ Failure ]
-webkit.org/b/121509 fast/events/wheelevent-mousewheel-interaction.html	[ Failure ]
-webkit.org/b/121509 fast/events/page-visibility-iframe-propagation-test.html	[ Failure ]
-webkit.org/b/121509 fast/events/page-visibility-transition-test.html	[ Failure ]
-webkit.org/b/121509 fast/events/page-visibility-iframe-move-test.html	[ Failure ]
-webkit.org/b/121509 fast/history/go-back-to-iframe-with-plugin.html	[ Failure ]
+webkit.org/b/121509 fast/dom/MutationObserver/database-callback-delivery.html [ Timeout ]
+# fast/events/page-visibility tests timeout.
+webkit.org/b/121509 fast/events/page-visibility-iframe-delete-test.html	[ Timeout ]
+webkit.org/b/121509 fast/events/wheelevent-mousewheel-interaction.html	[ Timeout ]
+webkit.org/b/121509 fast/events/page-visibility-iframe-propagation-test.html	[ Timeout ]
+webkit.org/b/121509 fast/events/page-visibility-transition-test.html	[ Timeout ]
+webkit.org/b/121509 fast/events/page-visibility-iframe-move-test.html	[ Timeout ]
+webkit.org/b/121509 fast/history/go-back-to-iframe-with-plugin.html	[ Timeout ]
 fast/repaint/canvas-putImageData.html [ Failure ]
 fast/events/wheelevent-basic.html [ Failure ]
 fast/events/wheelevent-constructor.html [ Failure ]
@@ -2164,13 +2177,15 @@ fast/multicol/vertical-rl/float-multicol.html [ ImageOnlyFailure ]
 fast/multicol/vertical-rl/nested-columns.html [ ImageOnlyFailure ]
 fast/text/empty-shadow.html [ ImageOnlyFailure ]
 
-# Some inspector tests failing after r173992
-webkit.org/b/137157 inspector/css/matched-style-properties.html [ Timeout ]
-webkit.org/b/137157 inspector/event-listener-set.html [ Timeout ]
-webkit.org/b/137157 inspector/event-listener.html [ Timeout ]
-webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Timeout ]
-webkit.org/b/137157 inspector/page/main-frame-resource.html [ Timeout ]
-webkit.org/b/137157 inspector/protocol-promise-result.html [ Timeout ]
+# Some inspector tests timing out after r173992. Skip them.
+webkit.org/b/137157 inspector/css/matched-style-properties.html [ Skip ]
+webkit.org/b/137157 inspector/css/selector-dynamic-specificity.html [ Skip ]
+webkit.org/b/137157 inspector/event-listener-set.html [ Skip ]
+webkit.org/b/137157 inspector/event-listener.html [ Skip ]
+webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Skip ]
+webkit.org/b/137157 inspector/model/remote-object-get-properties.html [ Pass Timeout ]
+webkit.org/b/137157 inspector/page/main-frame-resource.html [ Skip ]
+webkit.org/b/137157 inspector/protocol-promise-result.html [ Skip ]
 
 # A handful of flattening tests failing on Windows that we are skipping to get the bots green
 fast/frames/flattening/frameset-flattening-simple.html [ Failure ]
@@ -2185,19 +2200,19 @@ fast/selectors/querySelector-window-inactive.html [ Failure ]
 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Failure ]
 inspector-protocol/layers/layers-blending-compositing-reasons.html [ Failure ]
-inspector/test-harness-trivially-works.html [ Failure ]
+inspector/test-harness-trivially-works.html [ Skip ]
 js/date-constructor.html [ Failure ]
 js/dom/dom-static-property-for-in-iteration.html [ Failure ]
-js/slow-stress/Int32Array-alloc-large-long-lived.html [ Failure ]
+js/slow-stress/Int32Array-alloc-large-long-lived.html [ Pass Failure ]
 fast/images/image-controls-basic.html [ Failure ]
 fast/inline/positionedLifetime.html [ Failure ]
 fast/masking/clip-path-selection.html [ Failure ]
 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failure ]
 fast/dom/Window/window-property-invalid-characters-ignored.html [ Failure ]
-fast/dom/Window/window-resize-contents.html [ Failure ]
+webkit.org/b/140772 fast/dom/Window/window-resize-contents.html [ Skip ]
 fast/dom/constants.html [ Failure ]
 fast/dom/navigation-with-sideeffects.html [ Failure ]
-fast/dynamic/window-resize-scrollbars-test.html [ Failure ]
+fast/dynamic/window-resize-scrollbars-test.html [ Failure Timeout ]
 fast/events/shadow-event-path.html [ Failure ]
 fast/text/indic.html [ Failure ]
 fast/forms/week/week-input-type.html [ Crash Failure ]
