@@ -737,23 +737,6 @@ RenderBlock* RenderObject::containingBlock() const
     return toRenderBlock(o);
 }
 
-static void drawBorderLineRect(GraphicsContext& graphicsContext, const LayoutRect& rect, float deviceScaleFactor)
-{
-    FloatRect pixelSnappedRect = pixelSnappedForPainting(rect, deviceScaleFactor);
-    if (pixelSnappedRect.isEmpty())
-        return;
-    graphicsContext.drawRect(pixelSnappedRect);
-}
-
-static void drawBorderLine(GraphicsContext& graphicsContext, const LayoutPoint& point1, const LayoutPoint& point2, float deviceScaleFactor)
-{
-    FloatPoint p1 = roundedForPainting(point1, deviceScaleFactor);
-    FloatPoint p2 = roundedForPainting(point2, deviceScaleFactor);
-    if (p1.x() == p2.x() || p1.y() == p2.y())
-        return;
-    graphicsContext.drawLine(point1, point2);
-}
-
 void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1, float y1, float x2, float y2,
     BoxSide side, Color color, EBorderStyle borderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias) const
 {
@@ -797,11 +780,11 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1
                 switch (side) {
                     case BSBottom:
                     case BSTop:
-                        drawBorderLine(*graphicsContext, LayoutPoint(x1, adjustedY), LayoutPoint(x2, adjustedY), deviceScaleFactor);
+                        graphicsContext->drawLine(FloatPoint(x1, adjustedY), FloatPoint(x2, adjustedY));
                         break;
                     case BSRight:
                     case BSLeft:
-                        drawBorderLine(*graphicsContext, LayoutPoint(adjustedX, y1), LayoutPoint(adjustedX, y2), deviceScaleFactor);
+                        graphicsContext->drawLine(FloatPoint(adjustedX, y1), FloatPoint(adjustedX, y2));
                         break;
                 }
                 graphicsContext->setShouldAntialias(wasAntialiased);
@@ -824,13 +807,13 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1
                 switch (side) {
                     case BSTop:
                     case BSBottom:
-                        drawBorderLineRect(*graphicsContext, LayoutRect(x1, y1, length, thirdOfThickness), deviceScaleFactor);
-                        drawBorderLineRect(*graphicsContext, LayoutRect(x1, y2 - thirdOfThickness, length, thirdOfThickness), deviceScaleFactor);
+                        graphicsContext->drawRect(pixelSnappedForPainting(x1, y1, length, thirdOfThickness, deviceScaleFactor));
+                        graphicsContext->drawRect(pixelSnappedForPainting(x1, y2 - thirdOfThickness, length, thirdOfThickness, deviceScaleFactor));
                         break;
                     case BSLeft:
                     case BSRight:
-                        drawBorderLineRect(*graphicsContext, LayoutRect(x1, y1, thirdOfThickness, length), deviceScaleFactor);
-                        drawBorderLineRect(*graphicsContext, LayoutRect(x2 - thirdOfThickness, y1, thirdOfThickness, length), deviceScaleFactor);
+                        graphicsContext->drawRect(pixelSnappedForPainting(x1, y1, thirdOfThickness, length, deviceScaleFactor));
+                        graphicsContext->drawRect(pixelSnappedForPainting(x2 - thirdOfThickness, y1, thirdOfThickness, length, deviceScaleFactor));
                         break;
                 }
 
@@ -976,7 +959,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1
                 graphicsContext->setFillColor(color, style.colorSpace());
                 bool wasAntialiased = graphicsContext->shouldAntialias();
                 graphicsContext->setShouldAntialias(antialias);
-                drawBorderLineRect(*graphicsContext, LayoutRect(x1, y1, x2 - x1, y2 - y1), deviceScaleFactor);
+                graphicsContext->drawRect(pixelSnappedForPainting(x1, y1, x2 - x1, y2 - y1, deviceScaleFactor));
                 graphicsContext->setShouldAntialias(wasAntialiased);
                 graphicsContext->setStrokeStyle(oldStrokeStyle);
                 return;
@@ -987,8 +970,7 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, float x1
             y1 = roundToDevicePixel(y1, deviceScaleFactor);
             x2 = roundToDevicePixel(x2, deviceScaleFactor);
             y2 = roundToDevicePixel(y2, deviceScaleFactor);
-            if (x1 == x2 || y1 == y2)
-                return;
+
             FloatPoint quad[4];
             switch (side) {
                 case BSTop:
