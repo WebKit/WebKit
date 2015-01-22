@@ -1,0 +1,11 @@
+main frame - has 1 onunload handler(s)
+Tests that we are not crashing when a permission request is answered after navigating
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS This test did not crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
