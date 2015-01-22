@@ -1,3 +1,14 @@
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r172509. rdar://problem/19451367
+
+    2014-08-12  Brent Fulgham  <bfulgham@apple.com>
+
+            [Win] Unreviewed build fix after r172504
+
+            * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add missing
+            symbol exports.
+
 2015-01-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r177448. rdar://problem/19451944
