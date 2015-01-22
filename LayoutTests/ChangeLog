@@ -1,3 +1,11 @@
+2015-01-21  Tim Horton  <timothy_horton@apple.com>
+
+        After updating tests to use kerning, ligatures, and printer fonts, some tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=139968
+
+        * platform/mac/TestExpectations:
+        Mark svg/custom/svg-fonts-without-missing-glyph.xhtml as flaky.
+
 2015-01-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ASSERT expanding objects in console PrimitiveBindingTraits<T>::assertValueHasExpectedType
