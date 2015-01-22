@@ -350,21 +350,35 @@ static void removeTrailingWhitespace(LineState& lineState, Layout::RunVector& li
         ++lineState.position;
 }
 
-static void initializeNewLine(LineState& lineState, const FlowContents& flowContents, unsigned lineStartRunIndex)
+static void updateLineConstrains(const RenderBlockFlow& flow, float& availableWidth, float& logicalLeftOffset)
 {
+    LayoutUnit height = flow.logicalHeight();
+    LayoutUnit logicalHeight = flow.minLineHeightForReplacedRenderer(false, 0);
+    float logicalRightOffset = flow.logicalRightOffsetForLine(height, false, logicalHeight);
+    logicalLeftOffset = flow.logicalLeftOffsetForLine(height, false, logicalHeight);
+    availableWidth = std::max<float>(0, logicalRightOffset - logicalLeftOffset);
+}
+
+static LineState initializeNewLine(const LineState& previousLine, const RenderBlockFlow& flow, const FlowContents& flowContents, unsigned lineStartRunIndex)
+{
+    LineState lineState;
+    lineState.jumpTo(previousLine.position, 0);
     lineState.lineStartRunIndex = lineStartRunIndex;
+    updateLineConstrains(flow, lineState.availableWidth, lineState.logicalLeftOffset);
     // Skip leading whitespace if collapsing whitespace, unless there's an uncommitted fragment pushed from the previous line.
     // FIXME: Be smarter when the run from the previous line does not fit the current line. Right now, we just reprocess it.
-    if (lineState.oveflowedFragment.width) {
-        if (lineState.fits(lineState.oveflowedFragment.width))
-            lineState.addUncommitted(lineState.oveflowedFragment);
-        else
-            lineState.jumpTo(lineState.oveflowedFragment.start, 0); // Start over with this fragment.
+    if (previousLine.oveflowedFragment.width) {
+        if (lineState.fits(previousLine.oveflowedFragment.width))
+            lineState.addUncommitted(previousLine.oveflowedFragment);
+        else {
+            // Start over with this fragment.
+            lineState.jumpTo(previousLine.oveflowedFragment.start, 0);
+        }
     } else {
         unsigned spaceCount = 0;
-        lineState.jumpTo(flowContents.style().collapseWhitespace ? flowContents.findNextNonWhitespacePosition(lineState.position, spaceCount) : lineState.position, 0);
+        lineState.jumpTo(flowContents.style().collapseWhitespace ? flowContents.findNextNonWhitespacePosition(previousLine.position, spaceCount) : previousLine.position, 0);
     }
-    lineState.oveflowedFragment = FlowContents::TextFragment();
+    return lineState;
 }
 
 static FlowContents::TextFragment splitFragmentToFitLine(FlowContents::TextFragment& fragmentToSplit, float availableWidth, bool keepAtLeastOneCharacter, const FlowContents& flowContents)
@@ -401,7 +415,7 @@ static FlowContents::TextFragment splitFragmentToFitLine(FlowContents::TextFragm
         ++right;
     FlowContents::TextFragment fragmentForNextLine(fragmentToSplit);
     fragmentToSplit.end = right;
-    fragmentToSplit.width = fragmentToSplit.isEmpty() ? 0 : flowContents.textWidth(fragmentToSplit.start, right, 0);
+    fragmentToSplit.width = fragmentToSplit.isEmpty() ? 0 : flowContents.textWidth(fragmentToSplit.start, fragmentToSplit.end, 0);
 
     fragmentForNextLine.start = fragmentToSplit.end;
     fragmentForNextLine.width -= fragmentToSplit.width;
@@ -509,15 +523,6 @@ static void splitRunsAtRendererBoundary(Layout::RunVector& lineRuns, const FlowC
     } while (++runIndex < lineRuns.size());
 }
 
-static void updateLineConstrains(const RenderBlockFlow& flow, float& availableWidth, float& logicalLeftOffset)
-{
-    LayoutUnit height = flow.logicalHeight();
-    LayoutUnit logicalHeight = flow.minLineHeightForReplacedRenderer(false, 0);
-    float logicalRightOffset = flow.logicalRightOffsetForLine(height, false, logicalHeight);
-    logicalLeftOffset = flow.logicalLeftOffsetForLine(height, false, logicalHeight);
-    availableWidth = std::max<float>(0, logicalRightOffset - logicalLeftOffset);
-}
-
 static void createTextRuns(Layout::RunVector& runs, RenderBlockFlow& flow, unsigned& lineCount)
 {
     LayoutUnit borderAndPaddingBefore = flow.borderAndPaddingBefore();
@@ -528,8 +533,7 @@ static void createTextRuns(Layout::RunVector& runs, RenderBlockFlow& flow, unsig
 
     do {
         flow.setLogicalHeight(lineHeight * lineCount + borderAndPaddingBefore);
-        updateLineConstrains(flow, lineState.availableWidth, lineState.logicalLeftOffset);
-        initializeNewLine(lineState, flowContents, runs.size());
+        lineState = initializeNewLine(lineState, flow, flowContents, runs.size());
         isEndOfContent = createLineRuns(lineState, runs, flowContents);
         closeLineEndingAndAdjustRuns(lineState, runs, lineCount, flowContents);
     } while (!isEndOfContent);

@@ -1,3 +1,21 @@
+2015-01-22  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Reset LineState when starting a new line.
+        https://bugs.webkit.org/show_bug.cgi?id=140789
+
+        Reviewed by Antti Koivisto.
+
+        Reset LineState when starting a new line to ensure we always
+        start with a clean state.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::updateLineConstrains):
+        (WebCore::SimpleLineLayout::initializeNewLine):
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine):
+        (WebCore::SimpleLineLayout::createTextRuns):
+
 2015-01-22  Roger Fong  <roger_fong@apple.com>
 
         [WebGL2] Create empty interface files for new WebGL2 objects.
