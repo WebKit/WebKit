@@ -1,3 +1,33 @@
+2015-01-22  Chris Dumez  <cdumez@apple.com>
+
+        makeprop.pl script is called too many times during build
+        https://bugs.webkit.org/show_bug.cgi?id=140756
+        <rdar://problem/19467942>
+
+        Reviewed by David Kilzer.
+
+        The makeprop.pl script was called 4 times (instead of once) during
+        build due to a bad Makefile rule in DerivedSources.make. makeprop.pl
+        had 4 associated targets and thus was called 4 times (with the same
+        parameter). Calling it once is sufficient to generate all 4 files
+        that were marked as target. This patch uses an INTERMEDIATE target
+        instead so that we can indicate that several files are generated
+        by the same command.
+
+        I believe this may be the reason for the sporatic build failures
+        that look like:
+        """
+        CSSPropertyNames.gperf: No keywords in input file!
+        calling gperf failed: 256 at WebCore/css/makeprop.pl line 1036.
+        """
+        The makeprop.pl script is generating gperf's input file and calling the
+        gperf executable on this file. If the script is executed several times
+        in parallel, it would explain the build failures as several instances
+        of makeprop.pl may be writing / reading from the same
+        CSSPropertyNames.gperf file.
+
+        * DerivedSources.make:
+
 2015-01-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r178894.
