@@ -201,6 +201,9 @@ public:
     static bool isCJKIdeograph(UChar32);
     static bool isCJKIdeographOrSymbol(UChar32);
 
+    // BEWARE: If isAfterExpansion is true after this function call, then the returned value includes a trailing opportunity
+    // which may or may not actually be present. RenderBlockFlow::computeInlineDirectionPositionsForSegment() compensates
+    // for this by decrementing the returned value if isAfterExpansion is true at the end of a line.
     static unsigned expansionOpportunityCount(const LChar*, size_t length, TextDirection, bool& isAfterExpansion);
     static unsigned expansionOpportunityCount(const UChar*, size_t length, TextDirection, bool& isAfterExpansion);
 
