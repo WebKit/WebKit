@@ -1,3 +1,16 @@
+2015-01-23  Enrica Casucci  <enrica@apple.com>
+
+        Hit test returns incorrect results when performed in paginated content over the page gaps.
+        https://bugs.webkit.org/show_bug.cgi?id=140837
+        rdar://problem/17494390
+
+        Reviewed by Dave Hyatt.
+
+        * fast/multicol/pagination/LeftToRight-tb-hittest-expected.txt: Added.
+        * fast/multicol/pagination/LeftToRight-tb-hittest.html: Added.
+        * fast/multicol/pagination/RightToLeft-rl-hittest-expected.txt: Added.
+        * fast/multicol/pagination/RightToLeft-rl-hittest.html: Added.
+
 2015-01-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening after landing r179024.
