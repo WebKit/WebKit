@@ -238,6 +238,8 @@ struct LineState {
         committedLogicalRight += committedWidth;
         committedTrailingWhitespaceWidth = uncomittedTrailingWhitespaceWidth;
         committedTrailingWhitespaceLength = uncomittedTrailingWhitespaceLength;
+        if (!m_firstCharacterFits)
+            m_firstCharacterFits = uncommittedStart + 1 > uncommittedEnd || committedWidth <= availableWidth;
 
         uncommittedStart = uncommittedEnd;
         uncommittedWidth = 0;
@@ -306,6 +308,9 @@ struct LineState {
     float committedLogicalRight { 0 }; // Last committed X (coordinate) position.
     float committedTrailingWhitespaceWidth { 0 }; // Use this to remove trailing whitespace without re-mesuring the text.
     unsigned committedTrailingWhitespaceLength { 0 };
+    // Having one character on the line does not necessarily mean it actually fits.
+    // First character of the first fragment might be forced on to the current line even if it does not fit.
+    bool m_firstCharacterFits { false };
 
     FlowContents::TextFragment oveflowedFragment;
 
@@ -314,40 +319,32 @@ private:
     unsigned uncomittedTrailingWhitespaceLength { 0 };
 };
 
+static bool preWrap(const FlowContents::Style& style)
+{
+    return style.wrapLines && !style.collapseWhitespace;
+}
+    
 static void removeTrailingWhitespace(LineState& lineState, Layout::RunVector& lineRuns, const FlowContents& flowContents)
 {
+    if (!lineState.committedTrailingWhitespaceLength)
+        return;
+    
+    // Remove collapsed whitespace, or non-collapsed pre-wrap whitespace, unless it's the only content on the line -so removing the whitesapce would produce an empty line.
     const auto& style = flowContents.style();
-    bool preWrap = style.wrapLines && !style.collapseWhitespace;
-    // Trailing whitespace gets removed when we either collapse whitespace or pre-wrap is present.
-    if (!(style.collapseWhitespace || preWrap))
+    bool collapseWhitespace = style.collapseWhitespace | preWrap(style);
+    if (!collapseWhitespace)
+        return;
+
+    if (preWrap(style) && lineState.hasWhitespaceOnly())
         return;
 
     ASSERT(lineRuns.size());
     Run& lastRun = lineRuns.last();
-
-    unsigned lastPosition = lineState.position;
-    bool trailingPreWrapWhitespaceNeedsToBeRemoved = false;
-    if (preWrap) {
-        // Special overflow pre-wrap fragment handling: Ignore the overflow whitespace fragment if we managed to fit at least one character on this line.
-        // When the line is too short to fit one character (thought it still stays on the line) we keep the overflow whitespace content as it is.
-        if (lineState.oveflowedFragment.type == FlowContents::TextFragment::Whitespace && !lineState.oveflowedFragment.isEmpty() && lineState.availableWidth >= lineState.committedWidth) {
-            lineState.position = lineState.oveflowedFragment.end;
-            lineState.oveflowedFragment = FlowContents::TextFragment();
-        }
-        // Remove whitespace, unless it's the only fragment on the line -so removing the whitesapce would produce an empty line.
-        trailingPreWrapWhitespaceNeedsToBeRemoved = !lineState.hasWhitespaceOnly();
-    }
-    if (lineState.committedTrailingWhitespaceLength && (style.collapseWhitespace || trailingPreWrapWhitespaceNeedsToBeRemoved)) {
-        lastRun.logicalRight -= lineState.committedTrailingWhitespaceWidth;
-        lastRun.end -= lineState.committedTrailingWhitespaceLength;
-        if (lastRun.start == lastRun.end)
-            lineRuns.removeLast();
-        lineState.removeTrailingWhitespace();
-    }
-
-    // If we skipped any whitespace and now the line end is a hard newline, skip the newline too as we are wrapping the line here already.
-    if (lastPosition != lineState.position && !flowContents.isEnd(lineState.position) && flowContents.isLineBreak(lineState.position))
-        ++lineState.position;
+    lastRun.logicalRight -= lineState.committedTrailingWhitespaceWidth;
+    lastRun.end -= lineState.committedTrailingWhitespaceLength;
+    if (lastRun.start == lastRun.end)
+        lineRuns.removeLast();
+    lineState.removeTrailingWhitespace();
 }
 
 static void updateLineConstrains(const RenderBlockFlow& flow, float& availableWidth, float& logicalLeftOffset)
@@ -365,19 +362,34 @@ static LineState initializeNewLine(const LineState& previousLine, const RenderBl
     lineState.jumpTo(previousLine.position, 0);
     lineState.lineStartRunIndex = lineStartRunIndex;
     updateLineConstrains(flow, lineState.availableWidth, lineState.logicalLeftOffset);
-    // Skip leading whitespace if collapsing whitespace, unless there's an uncommitted fragment pushed from the previous line.
-    // FIXME: Be smarter when the run from the previous line does not fit the current line. Right now, we just reprocess it.
-    if (previousLine.oveflowedFragment.width) {
-        if (lineState.fits(previousLine.oveflowedFragment.width))
-            lineState.addUncommitted(previousLine.oveflowedFragment);
-        else {
-            // Start over with this fragment.
-            lineState.jumpTo(previousLine.oveflowedFragment.start, 0);
-        }
-    } else {
-        unsigned spaceCount = 0;
-        lineState.jumpTo(flowContents.style().collapseWhitespace ? flowContents.findNextNonWhitespacePosition(previousLine.position, spaceCount) : previousLine.position, 0);
+
+    // Handle overflowed fragment from previous line.
+    auto overflowedFragment = previousLine.oveflowedFragment;
+    unsigned linePositon = previousLine.position;
+    // Special overflow pre-wrap whitespace handling: ignore the overflowed whitespace if we managed to fit at least one character on the previous line.
+    // When the line is too short to fit one character (thought it still stays on the line) we continue with the overflow whitespace content on this line.
+    const auto& style = flowContents.style();
+    if (overflowedFragment.type == FlowContents::TextFragment::Whitespace && preWrap(style) && previousLine.m_firstCharacterFits) {
+        linePositon = overflowedFragment.end;
+        overflowedFragment = FlowContents::TextFragment();
+        // If skipping the whitespace puts us on a hard newline, skip the newline too as we already wrapped the line.
+        if (flowContents.isLineBreak(linePositon))
+            ++linePositon;
     }
+
+    if (overflowedFragment.isEmpty()) {
+        unsigned spaceCount = 0;
+        lineState.jumpTo(style.collapseWhitespace ? flowContents.findNextNonWhitespacePosition(linePositon, spaceCount) : linePositon, 0);
+        return lineState;
+    }
+
+    if (lineState.fits(overflowedFragment.width)) {
+        lineState.addUncommitted(overflowedFragment);
+        return lineState;
+    }
+
+    // Start over with this fragment.
+    lineState.jumpTo(overflowedFragment.start, 0);
     return lineState;
 }
 

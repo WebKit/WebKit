@@ -122,6 +122,8 @@ inline UChar FlowContents::characterAt(unsigned position) const
 
 inline bool FlowContents::isLineBreak(unsigned position) const
 {
+    if (isEnd(position))
+        return false;
     return m_style.preserveNewline && characterAt(position) == '\n';
 }
 

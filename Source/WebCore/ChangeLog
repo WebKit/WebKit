@@ -1,3 +1,22 @@
+2015-01-22  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Move leading whitespace handling from removeTrailingWhitespace() to initializeNewLine().
+        https://bugs.webkit.org/show_bug.cgi?id=140757
+
+        Reviewed by Antti Koivisto.
+
+        Checking if overflowed pre-wrap whitespace needs to be ignored should not be part of the trailing whitespace handling.
+        Move it to initializeNewLine(). 
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::preWrap):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::initializeNewLine):
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::isLineBreak):
+
 2015-01-22  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Media controls disappear when loading a HLS live stream
