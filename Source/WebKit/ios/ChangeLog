@@ -1,3 +1,15 @@
+2015-01-22  Andreas Kling  <akling@apple.com>
+
+        Remove unused class EmojiFallbackFontSelector.
+        <https://webkit.org/b/140809>
+
+        Reviewed by Antti Koivisto.
+
+        This class no longer has any clients.
+
+        * Misc/EmojiFallbackFontSelector.cpp: Removed.
+        * Misc/EmojiFallbackFontSelector.h: Removed.
+
 2015-01-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed iOS build fix after r178375

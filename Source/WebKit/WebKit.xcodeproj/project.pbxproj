@@ -358,8 +358,6 @@
 		A10C1D1D18202F9C0036883A /* WebDefaultResourceLoadDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D1518202F9C0036883A /* WebDefaultResourceLoadDelegate.m */; };
 		A10C1D1E18202F9C0036883A /* WebDefaultUIKitDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D1618202F9C0036883A /* WebDefaultUIKitDelegate.h */; };
 		A10C1D1F18202F9C0036883A /* WebDefaultUIKitDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D1718202F9C0036883A /* WebDefaultUIKitDelegate.m */; };
-		A10C1D3018202FC50036883A /* EmojiFallbackFontSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D2118202FC50036883A /* EmojiFallbackFontSelector.cpp */; };
-		A10C1D3118202FC50036883A /* EmojiFallbackFontSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D2218202FC50036883A /* EmojiFallbackFontSelector.h */; };
 		A10C1D3218202FC50036883A /* MemoryMeasure.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D2318202FC50036883A /* MemoryMeasure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A10C1D3318202FC50036883A /* MemoryMeasure.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10C1D2418202FC50036883A /* MemoryMeasure.mm */; };
 		A10C1D3418202FC50036883A /* WebGeolocationCoreLocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = A10C1D2518202FC50036883A /* WebGeolocationCoreLocationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -766,8 +764,6 @@
 		A10C1D1518202F9C0036883A /* WebDefaultResourceLoadDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WebDefaultResourceLoadDelegate.m; path = ios/DefaultDelegates/WebDefaultResourceLoadDelegate.m; sourceTree = SOURCE_ROOT; };
 		A10C1D1618202F9C0036883A /* WebDefaultUIKitDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDefaultUIKitDelegate.h; path = ios/DefaultDelegates/WebDefaultUIKitDelegate.h; sourceTree = SOURCE_ROOT; };
 		A10C1D1718202F9C0036883A /* WebDefaultUIKitDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WebDefaultUIKitDelegate.m; path = ios/DefaultDelegates/WebDefaultUIKitDelegate.m; sourceTree = SOURCE_ROOT; };
-		A10C1D2118202FC50036883A /* EmojiFallbackFontSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EmojiFallbackFontSelector.cpp; path = ios/Misc/EmojiFallbackFontSelector.cpp; sourceTree = SOURCE_ROOT; };
-		A10C1D2218202FC50036883A /* EmojiFallbackFontSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmojiFallbackFontSelector.h; path = ios/Misc/EmojiFallbackFontSelector.h; sourceTree = SOURCE_ROOT; };
 		A10C1D2318202FC50036883A /* MemoryMeasure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MemoryMeasure.h; path = ios/Misc/MemoryMeasure.h; sourceTree = SOURCE_ROOT; };
 		A10C1D2418202FC50036883A /* MemoryMeasure.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MemoryMeasure.mm; path = ios/Misc/MemoryMeasure.mm; sourceTree = SOURCE_ROOT; };
 		A10C1D2518202FC50036883A /* WebGeolocationCoreLocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGeolocationCoreLocationProvider.h; path = ios/Misc/WebGeolocationCoreLocationProvider.h; sourceTree = SOURCE_ROOT; };
@@ -1462,8 +1458,6 @@
 		A10C1D2018202FAF0036883A /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				A10C1D2118202FC50036883A /* EmojiFallbackFontSelector.cpp */,
-				A10C1D2218202FC50036883A /* EmojiFallbackFontSelector.h */,
 				A10C1D2318202FC50036883A /* MemoryMeasure.h */,
 				A10C1D2418202FC50036883A /* MemoryMeasure.mm */,
 				A10C1D2518202FC50036883A /* WebGeolocationCoreLocationProvider.h */,
@@ -1877,7 +1871,6 @@
 				1AAF58970EDCCF15008D883D /* WebKitPluginHost.defs in Headers */,
 				1AAF58980EDCCF15008D883D /* WebKitPluginHostTypes.defs in Headers */,
 				1AAF5D090EDDE71D008D883D /* WebKitPluginHostTypes.h in Headers */,
-				A10C1D3118202FC50036883A /* EmojiFallbackFontSelector.h in Headers */,
 				A10C1D1C18202F9C0036883A /* WebDefaultResourceLoadDelegate.h in Headers */,
 				939810470824BF01008DF038 /* WebKitPrefix.h in Headers */,
 				9398101F0824BF01008DF038 /* WebKitStatistics.h in Headers */,
@@ -2260,7 +2253,6 @@
 				931633EF0AEDFFAE0062B92D /* WebFrameLoaderClient.mm in Sources */,
 				9391F276121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */,
 				939811060824BF01008DF038 /* WebFrameView.mm in Sources */,
-				A10C1D3018202FC50036883A /* EmojiFallbackFontSelector.cpp in Sources */,
 				CDA62AE3125F87C2007FD118 /* WebFullScreenController.mm in Sources */,
 				BC7F884C10C8775A00D6133D /* WebGeolocationClient.mm in Sources */,
 				BC7F889F10C9D30C00D6133D /* WebGeolocationPosition.mm in Sources */,
