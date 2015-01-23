@@ -36,21 +36,6 @@ WebInspector.TypeTokenAnnotator.prototype = {
     constructor: WebInspector.TypeTokenAnnotator,
     __proto__: WebInspector.Annotator.prototype,
 
-    // Public
-
-    toggleTypeAnnotations: function()
-    {
-        if (this.isActive()) {
-            this._isActive = false;
-            this._clearTypeTokens();
-        } else {
-            this._isActive = true;
-            this.reset();
-        }
-
-        return this.isActive();
-    },
-
     // Protected
 
     insertAnnotations: function()

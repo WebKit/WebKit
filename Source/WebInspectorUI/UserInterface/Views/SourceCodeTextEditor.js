@@ -39,6 +39,8 @@ WebInspector.SourceCodeTextEditor = function(sourceCode)
     this._typeTokenScrollHandler = null;
     this._typeTokenAnnotator = null;
     this._basicBlockAnnotator = null;
+    
+    this._isProbablyMinified = false;
 
     this._hasFocus = false;
 
@@ -120,12 +122,8 @@ WebInspector.SourceCodeTextEditor.prototype = {
             if (!this._typeTokenScrollHandler && (this._typeTokenAnnotator || this._basicBlockAnnotator))
                 this._enableScrollEventsForTypeTokenAnnotator();
         } else {
-            if (this._typeTokenAnnotator)
-                this._typeTokenAnnotator.clear();
-            if (this._basicBlockAnnotator)
-                this._basicBlockAnnotator.clear();
-            if (this._typeTokenScrollHandler)
-                this._disableScrollEventsForTypeTokenAnnotator();
+            if (this._typeTokenAnnotator || this._basicBlockAnnotator)
+                this._setTypeTokenAnnotatorEnabledState(false);
         }
     },
 
@@ -274,16 +272,11 @@ WebInspector.SourceCodeTextEditor.prototype = {
         for (var range of newRanges)
             this._updateEditableMarkers(range);
 
-        if (this._typeTokenAnnotator) {
-            this._typeTokenAnnotator.clear();
+        if (this._typeTokenAnnotator || this._basicBlockAnnotator) {
+            this._setTypeTokenAnnotatorEnabledState(false);
             this._typeTokenAnnotator = null;
-        }
-        if (this._basicBlockAnnotator) {
-            this._basicBlockAnnotator.clear();
             this._basicBlockAnnotator = null;
         }
-        if (this._typeTokenScrollHandler)
-            this._disableScrollEventsForTypeTokenAnnotator();
     },
 
     gainedFocus: function()
@@ -305,27 +298,12 @@ WebInspector.SourceCodeTextEditor.prototype = {
         if (!this._typeTokenAnnotator)
             return false;
 
-        var isActivated = this._typeTokenAnnotator.toggleTypeAnnotations();
-        if (isActivated) {
-            if (this._basicBlockAnnotator && !this._basicBlockAnnotator.isActive() && !this._hasFocus)
-                this._basicBlockAnnotator.reset();
+        var newActivatedState = !this._typeTokenAnnotator.isActive();
+        if (newActivatedState && this._isProbablyMinified && !this.formatted)
+            this.formatted = true;
 
-            RuntimeAgent.enableTypeProfiler();
-            this._enableScrollEventsForTypeTokenAnnotator();
-        } else {
-            if (this._basicBlockAnnotator)
-                this._basicBlockAnnotator.clear();
-
-            // We disable type profiling when exiting the inspector, so no need to call it here. If we were
-            // to call it here, we would have JavaScriptCore compile out all the necessary type profiling information,
-            // so if a user were to quickly press then unpress the button, we wouldn't be able to re-show type information.
-            this._disableScrollEventsForTypeTokenAnnotator();
-        }
-
-        WebInspector.showJavaScriptTypeInformationSetting.value = isActivated;
-
-        this._updateTokenTrackingControllerState();
-        return isActivated;
+        this._setTypeTokenAnnotatorEnabledState(newActivatedState);
+        return newActivatedState;
     },
 
     showPopoverForTypes: function(types, bounds, title)
@@ -355,17 +333,19 @@ WebInspector.SourceCodeTextEditor.prototype = {
         // in the new state.
         var shouldResumeTypeTokenAnnotator = this._typeTokenAnnotator && this._typeTokenAnnotator.isActive();
         var shouldResumeBasicBlockAnnotator = this._basicBlockAnnotator && this._basicBlockAnnotator.isActive();
-        if (shouldResumeTypeTokenAnnotator)
-            this._typeTokenAnnotator.clear();
-        if (shouldResumeBasicBlockAnnotator)
-            this._basicBlockAnnotator.clear();
+        if (shouldResumeTypeTokenAnnotator || shouldResumeBasicBlockAnnotator)
+            this._setTypeTokenAnnotatorEnabledState(false);
 
         WebInspector.TextEditor.prototype.prettyPrint.call(this, pretty);
 
-        if (shouldResumeTypeTokenAnnotator)
-            this._typeTokenAnnotator.reset();
-        if (shouldResumeBasicBlockAnnotator)
-            this._basicBlockAnnotator.reset();
+        if (pretty || !this._isProbablyMinified) {
+            if (shouldResumeTypeTokenAnnotator || shouldResumeBasicBlockAnnotator)
+                this._setTypeTokenAnnotatorEnabledState(true);
+        } else {
+            console.assert(!pretty && this._isProbablyMinified);
+            if (this._typeTokenAnnotator || this._basicBlockAnnotator)
+                this._setTypeTokenAnnotatorEnabledState(false);
+        }
     },
 
     // Private
@@ -449,13 +429,16 @@ WebInspector.SourceCodeTextEditor.prototype = {
             while (true) {
                 var nextNewlineIndex = content.indexOf("\n", lastNewlineIndex);
                 if (nextNewlineIndex === -1) {
-                    if (content.length - lastNewlineIndex > WebInspector.SourceCodeTextEditor.AutoFormatMinimumLineLength)
+                    if (content.length - lastNewlineIndex > WebInspector.SourceCodeTextEditor.AutoFormatMinimumLineLength) {
                         this.autoFormat = true;
+                        this._isProbablyMinified = true;
+                    }
                     break;
                 }
 
                 if (nextNewlineIndex - lastNewlineIndex > WebInspector.SourceCodeTextEditor.AutoFormatMinimumLineLength) {
                     this.autoFormat = true;
+                    this._isProbablyMinified = true;
                     break;
                 }
 
@@ -497,12 +480,8 @@ WebInspector.SourceCodeTextEditor.prototype = {
         this._makeBasicBlockAnnotator();
 
         if (WebInspector.showJavaScriptTypeInformationSetting.value) {
-            if (this._basicBlockAnnotator)
-                this._basicBlockAnnotator.reset();
-            if (this._typeTokenAnnotator)
-                this._typeTokenAnnotator.reset();
-            if (this._typeTokenAnnotator || this._basicBlockAnnotator)
-                this._enableScrollEventsForTypeTokenAnnotator();
+            if (this._basicBlockAnnotator || this._typeTokenAnnotator)
+                this._setTypeTokenAnnotatorEnabledState(true);
         }
 
         this._contentDidPopulate();
@@ -1604,6 +1583,43 @@ WebInspector.SourceCodeTextEditor.prototype = {
         this._ignoreContentDidChange--;
 
         delete this._editingController;
+    },
+
+    _setTypeTokenAnnotatorEnabledState: function(shouldActivate)
+    {
+        console.assert(this._typeTokenAnnotator);
+        if (!this._typeTokenAnnotator)
+            return;
+
+        if (shouldActivate) {
+            RuntimeAgent.enableTypeProfiler();
+
+            this._typeTokenAnnotator.reset();
+            if (this._basicBlockAnnotator && !this._hasFocus) {
+                console.assert(!this._basicBlockAnnotator.isActive());
+                this._basicBlockAnnotator.reset();
+            }
+
+            if (!this._typeTokenScrollHandler)
+                this._enableScrollEventsForTypeTokenAnnotator();
+        } else {
+            // Because we disable type profiling when exiting the inspector, there is no need to call 
+            // RuntimeAgent.disableTypeProfiler() here.  If we were to call it here, JavaScriptCore would 
+            // compile out all the necessary type profiling information, so if a user were to quickly press then 
+            // unpress the type profiling button, we wouldn't be able to re-show type information which would 
+            // provide a confusing user experience.
+
+            this._typeTokenAnnotator.clear();
+            if (this._basicBlockAnnotator)
+                this._basicBlockAnnotator.clear();
+
+            if (this._typeTokenScrollHandler)
+                this._disableScrollEventsForTypeTokenAnnotator();
+        }
+
+        WebInspector.showJavaScriptTypeInformationSetting.value = shouldActivate;
+
+        this._updateTokenTrackingControllerState();
     },
 
     _getAssociatedScript: function()

@@ -1,3 +1,42 @@
+2015-01-23  Saam Barati  <saambarati1@gmail.com>
+
+        Web Inspector: Disable *Annotators on minified files that aren't pretty printed
+        https://bugs.webkit.org/show_bug.cgi?id=140550
+
+        Reviewed by Timothy Hatcher.
+
+        When SourceCodeTextEditor speculates that a file is minified it 
+        sets a flag on itself that the Annotators will notice when pretty 
+        printing and turning on type profiling. 
+
+        SourceCodeTextEditor enforces the following two behaviors:
+
+        1. Always pretty print a file if we think it's minified while 
+        viewing type annotations. So, while viewing a minified file, 
+        if you press the type profiling button, the pretty printer will 
+        first reformat the file, then the type profiler will insert type annotations.
+
+        2. If the type profiler is enabled and we're viewing a pretty 
+        printed file that we think originally was minified, and the 
+        pretty printer is disabled via pressing the button, then the 
+        type profiler will also be disabled.
+
+        These two behaviors maintain a good user experience because 
+        it prevents a bad visual representation of profiler data and 
+        also prevents bad performance.
+
+        * UserInterface/Controllers/TypeTokenAnnotator.js:
+        (WebInspector.TypeTokenAnnotator.prototype.toggleTypeAnnotations): Deleted.
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype.shown):
+        (WebInspector.SourceCodeTextEditor.prototype.contentDidChange):
+        (WebInspector.SourceCodeTextEditor.prototype.toggleTypeAnnotations):
+        (WebInspector.SourceCodeTextEditor.prototype.prettyPrint):
+        (WebInspector.SourceCodeTextEditor.prototype._contentWillPopulate):
+        (WebInspector.SourceCodeTextEditor.prototype._populateWithContent):
+        (WebInspector.SourceCodeTextEditor.prototype._setTypeTokenAnnotatorEnabledState):
+
 2015-01-22  Jonathan Wells  <jonowells@apple.com>
 
         Web Inspector: ResourceContentView.js incorrectly contains call to WebInspector.UIString with a variable parameter
