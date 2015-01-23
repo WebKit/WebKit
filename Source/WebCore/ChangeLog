@@ -1,5 +1,43 @@
 2015-01-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r174297
+
+    2014-10-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Clean up interface to Font::expansionOpportunityCount()
+            https://bugs.webkit.org/show_bug.cgi?id=137355
+
+            Reviewed by Dean Jackson.
+
+            There are two overloads of Font::expansionOpportunityCount() which perform the same
+            operation. One overload takes a UChar*, the other takes an LChar*, and they both
+            take a length. This is the abstraction that StringView was designed to be. Instead
+            of forcing each caller to take a different overload based on if their data is
+            8 bit or not, allow the caller to construct a StringView and pass that into
+            Font::expansionOpportunityCount() instead of a raw pointer/length.
+
+            No new tests because there is no behavior change.
+
+            * platform/graphics/Font.cpp:
+            (WebCore::Font::expansionOpportunityCountInternal): Original two functions,
+            renamed.
+            (WebCore::Font::expansionOpportunityCount): Takes a StringView, calls 
+            expansionOpportunityCountInternal().
+            * platform/graphics/Font.h: Update signatures.
+            * platform/graphics/WidthIterator.cpp:
+            (WebCore::WidthIterator::WidthIterator): Use new signature to
+            Font::expansionOpportunityCount().
+            * platform/graphics/mac/ComplexTextController.cpp:
+            (WebCore::ComplexTextController::ComplexTextController): Ditto.
+            * rendering/RenderBlockLineLayout.cpp:
+            (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment): Ditto.
+            * rendering/RenderText.cpp:
+            (WebCore::RenderText::stringView): Accessor to encapsulate character pointer
+            and length.
+            * rendering/RenderText.h: Signature of new accessor.
+
+2015-01-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r174233
 
     2014-10-01  Myles C. Maxfield  <mmaxfield@apple.com>

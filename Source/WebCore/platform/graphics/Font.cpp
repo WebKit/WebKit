@@ -968,7 +968,7 @@ bool Font::isCJKIdeographOrSymbol(UChar32 c)
     return isCJKIdeograph(c);
 }
 
-unsigned Font::expansionOpportunityCount(const LChar* characters, size_t length, TextDirection direction, bool& isAfterExpansion)
+unsigned Font::expansionOpportunityCountInternal(const LChar* characters, size_t length, TextDirection direction, bool& isAfterExpansion)
 {
     unsigned count = 0;
     if (direction == LTR) {
@@ -991,7 +991,7 @@ unsigned Font::expansionOpportunityCount(const LChar* characters, size_t length,
     return count;
 }
 
-unsigned Font::expansionOpportunityCount(const UChar* characters, size_t length, TextDirection direction, bool& isAfterExpansion)
+unsigned Font::expansionOpportunityCountInternal(const UChar* characters, size_t length, TextDirection direction, bool& isAfterExpansion)
 {
     static bool expandAroundIdeographs = canExpandAroundIdeographsInComplexText();
     unsigned count = 0;
@@ -1039,6 +1039,13 @@ unsigned Font::expansionOpportunityCount(const UChar* characters, size_t length,
         }
     }
     return count;
+}
+
+unsigned Font::expansionOpportunityCount(const StringView& stringView, TextDirection direction, bool& isAfterExpansion)
+{
+    if (stringView.is8Bit())
+        return expansionOpportunityCountInternal(stringView.characters8(), stringView.length(), direction, isAfterExpansion);
+    return expansionOpportunityCountInternal(stringView.characters16(), stringView.length(), direction, isAfterExpansion);
 }
 
 bool Font::canReceiveTextEmphasis(UChar32 c)

@@ -57,7 +57,7 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
         m_expansionPerOpportunity = 0;
     else {
         bool isAfterExpansion = m_isAfterExpansion;
-        unsigned expansionOpportunityCount = m_run.is8Bit() ? Font::expansionOpportunityCount(m_run.characters8(), m_run.length(), m_run.ltr() ? LTR : RTL, isAfterExpansion) : Font::expansionOpportunityCount(m_run.characters16(), m_run.length(), m_run.ltr() ? LTR : RTL, isAfterExpansion);
+        unsigned expansionOpportunityCount = Font::expansionOpportunityCount(m_run.text(), m_run.ltr() ? LTR : RTL, isAfterExpansion);
         if (isAfterExpansion && !m_run.allowsTrailingExpansion())
             expansionOpportunityCount--;
 

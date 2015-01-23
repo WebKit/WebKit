@@ -201,8 +201,7 @@ public:
     static bool isCJKIdeograph(UChar32);
     static bool isCJKIdeographOrSymbol(UChar32);
 
-    static unsigned expansionOpportunityCount(const LChar*, size_t length, TextDirection, bool& isAfterExpansion);
-    static unsigned expansionOpportunityCount(const UChar*, size_t length, TextDirection, bool& isAfterExpansion);
+    static unsigned expansionOpportunityCount(const StringView&, TextDirection, bool& isAfterExpansion);
 
     static void setShouldUseSmoothing(bool);
     static bool shouldUseSmoothing();
@@ -239,6 +238,9 @@ private:
     float floatWidthForComplexText(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, int from, int to) const;
+
+    static unsigned expansionOpportunityCountInternal(const LChar*, size_t length, TextDirection, bool& isAfterExpansion);
+    static unsigned expansionOpportunityCountInternal(const UChar*, size_t length, TextDirection, bool& isAfterExpansion);
 
     friend struct WidthIterator;
     friend class SVGTextRunRenderingContext;
