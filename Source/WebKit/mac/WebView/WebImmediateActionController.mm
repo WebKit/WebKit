@@ -133,8 +133,12 @@ using namespace WebCore;
     [self performHitTestAtPoint:locationInDocumentView];
     [self _updateImmediateActionItem];
 
-    if (!_immediateActionRecognizer.animationController)
-        [self _cancelImmediateAction];
+    if (!_immediateActionRecognizer.animationController) {
+        // FIXME: We should be able to remove the dispatch_async when rdar://problem/19502927 is resolved.
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self _cancelImmediateAction];
+        });
+    }
 }
 
 - (void)immediateActionRecognizerWillBeginAnimation:(NSImmediateActionGestureRecognizer *)immediateActionRecognizer
