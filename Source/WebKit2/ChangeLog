@@ -1,5 +1,22 @@
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r174286.
+
+    2014-10-03  Andy Estes  <aestes@apple.com>
+
+        [iOS] Highlight clicked links in WKPDFView
+        https://bugs.webkit.org/show_bug.cgi?id=137400
+
+        Reviewed by Tim Horton.
+
+        Show a _UIHighlightView on top of clicked links for 200 ms before starting the navigation. This matches the behavior of UIWebPDFView.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _createHighlightViewWithFrame:]): Created a _UIHighlightView with a color and border radius matching the values used by UIWebPDFView.
+        (-[WKPDFView annotation:wasTouchedAtPoint:controller:]): Displayed the highlight, then removed it after the navigation began.
+
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
         Merge r174250.
 
     2014-10-02  Andy Estes  <aestes@apple.com>
