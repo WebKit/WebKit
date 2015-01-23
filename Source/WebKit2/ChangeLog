@@ -1,3 +1,19 @@
+2015-01-22  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Drop WKWebViewConfiguration._featureCounterEnabled SPI.
+        https://bugs.webkit.org/show_bug.cgi?id=140799
+
+        Reviewed by Dan Bernstein.
+
+        Drop WKWebViewConfiguration._featureCounterEnabled SPI now that the
+        client-side has been updated.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _setAllowsAlternateFullscreen:]):
+        (-[WKWebViewConfiguration _featureCounterEnabled]): Deleted.
+        (-[WKWebViewConfiguration _setFeatureCounterEnabled:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2015-01-22  Antti Koivisto  <antti@apple.com>
 
         Fix ENABLE(NETWORK_CACHE) build

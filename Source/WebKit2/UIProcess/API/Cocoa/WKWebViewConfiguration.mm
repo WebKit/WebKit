@@ -292,15 +292,6 @@ static NSString *defaultApplicationNameForUserAgent()
 {
     _allowsAlternateFullscreen = allowed;
 }
-
-- (BOOL)_featureCounterEnabled
-{
-    return NO;
-}
-
-- (void)_setFeatureCounterEnabled:(BOOL)featureCounterEnabled
-{
-}
 #endif
 
 @end

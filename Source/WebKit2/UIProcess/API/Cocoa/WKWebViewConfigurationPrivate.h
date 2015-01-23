@@ -44,9 +44,6 @@
 
 #if TARGET_OS_IPHONE
 @property (nonatomic, setter=_setAllowsAlternateFullscreen:) BOOL _allowsAlternateFullscreen WK_AVAILABLE(NA, WK_IOS_TBA);
-
-// FIXME: Remove the following property once the client side has been updated.
-@property (nonatomic, setter=_setFeatureCounterEnabled:) BOOL _featureCounterEnabled WK_AVAILABLE(NA, WK_IOS_TBA);
 #endif
 
 @end
