@@ -1,3 +1,10 @@
+2015-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test fix after r178965.
+
+        * WebView.cpp: Supply missing implementation of 'setEditable'. It
+        currently asserts, causing all debug tests to fail.
+
 2015-01-22  peavo@outlook.com  <peavo@outlook.com>
 
         [Win] No plugin content on some sites.

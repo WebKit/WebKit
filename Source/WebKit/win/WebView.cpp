@@ -4177,8 +4177,7 @@ HRESULT STDMETHODCALLTYPE WebView::setSelectedDOMRange(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE WebView::selectedDOMRange( 
-        /* [retval][out] */ IDOMRange** /*range*/)
+HRESULT WebView::selectedDOMRange(IDOMRange** range)
 {
     ASSERT_NOT_REACHED();
     return E_NOTIMPL;
@@ -4191,18 +4190,34 @@ HRESULT STDMETHODCALLTYPE WebView::selectionAffinity(
     return E_NOTIMPL;
 }
     
-HRESULT STDMETHODCALLTYPE WebView::setEditable( 
-        /* [in] */ BOOL /*flag*/)
+HRESULT WebView::setEditable(BOOL flag)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!m_page)
+        return S_OK;
+
+    if (m_page->isEditable() == flag)
+        return S_OK;
+
+    m_page->setEditable(flag);
+    if (!m_page->tabKeyCyclesThroughElements())
+        m_page->setTabKeyCyclesThroughElements(!flag);
+
+    return S_OK;
 }
     
-HRESULT STDMETHODCALLTYPE WebView::isEditable( 
-        /* [retval][out] */ BOOL* /*isEditable*/)
+HRESULT WebView::isEditable(BOOL* isEditable)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!isEditable)
+        return E_POINTER;
+
+    if (!m_page) {
+        *isEditable = FALSE;
+        return S_OK;
+    }
+
+    *isEditable = m_page->isEditable();
+
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE WebView::setTypingStyle( 
