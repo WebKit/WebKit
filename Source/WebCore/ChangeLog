@@ -1,5 +1,40 @@
 2015-01-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r174489
+
+    2014-10-08  Myles C. Maxfield  <litherum@gmail.com>
+
+            Inline ruby does not get justified correctly
+            https://bugs.webkit.org/show_bug.cgi?id=137421
+
+            Reviewed by Dave Hyatt.
+
+            We justify text in two passes: one counts expansion opportunities within a line,
+            and the other doles out widths and expansion amounts to constituent inline boxes.
+            This patch simply modifies both passes to descend into ruby bases. Once it has
+            done so, we then re-layout the ruby run with the newly found width.
+
+            Tests: fast/ruby/ruby-justification-hittest.html
+                   fast/ruby/ruby-justification.html
+
+            * rendering/InlineBox.h:
+            (WebCore::InlineBox::setExpansion): updateRubyForJustifiedText() has to set the
+            expansion for an inline box, so make setExpansion() public.
+            * rendering/RenderBlockLineLayout.cpp:
+            (WebCore::updateRubyForJustifiedText): Given values that have already been
+            computed in computeInlineDirectionPositionsForSegment(), adjust the widths and
+            expansion values for all the various pieces of ruby.
+            (WebCore::computeExpansionForJustifiedText): Call updateRubyForJustifiedText() if
+            necessary.
+            (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment): When
+            counting expansion opportunities in a line, include ruby bases.
+            * rendering/RenderRubyRun.h: Fix grammar in comment.
+            * rendering/RenderText.cpp:
+            (WebCore::RenderText::stringView): Give default arguments to function.
+            * rendering/RenderText.h: Ditto.
+
+2015-01-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r174373
 
     2014-10-06  Myles C. Maxfield  <mmaxfield@apple.com>

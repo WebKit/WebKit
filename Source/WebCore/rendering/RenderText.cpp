@@ -1527,6 +1527,8 @@ void RenderText::momentarilyRevealLastTypedCharacter(unsigned lastTypedCharacter
 
 StringView RenderText::stringView(int start, int stop) const
 {
+    if (stop == -1)
+        stop = textLength();
     ASSERT(static_cast<unsigned>(start) <= length());
     ASSERT(static_cast<unsigned>(stop) <= length());
     ASSERT(start <= stop);

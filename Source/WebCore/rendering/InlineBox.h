@@ -269,6 +269,13 @@ public:
     bool dirOverride() const { return m_bitfields.dirOverride(); }
     void setDirOverride(bool dirOverride) { m_bitfields.setDirOverride(dirOverride); }
 
+    void setExpansion(float newExpansion)
+    {
+        m_logicalWidth -= m_expansion;
+        m_expansion = newExpansion;
+        m_logicalWidth += m_expansion;
+    }
+
 private:
     InlineBox* m_next; // The next element on the same line as us.
     InlineBox* m_prev; // The previous element on the same line as us.
@@ -400,7 +407,6 @@ protected:
     bool canHaveLeadingExpansion() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeadingExpansion(); }
     void setCanHaveLeadingExpansion(bool canHaveLeadingExpansion) { m_bitfields.setHasSelectedChildrenOrCanHaveLeadingExpansion(canHaveLeadingExpansion); }
     float expansion() const { return m_expansion; }
-    void setExpansion(float expansion) { m_expansion = expansion; }
     
     // For InlineFlowBox and InlineTextBox
     bool extracted() const { return m_bitfields.extracted(); }
