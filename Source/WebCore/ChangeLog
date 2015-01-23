@@ -1,3 +1,15 @@
+2015-01-23  Jer Noble  <jer.noble@apple.com>
+
+        Layout Test http/tests/media/track-in-band-hls-metadata.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=140827
+
+        Reviewed by Eric Carlson.
+
+        Create the m_metadataTrack by calling prepareMetadataTrack() before deref-ing it.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive):
+
 2015-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add initial database process support

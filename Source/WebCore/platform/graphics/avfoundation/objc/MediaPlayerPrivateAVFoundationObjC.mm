@@ -2728,13 +2728,13 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(RetainPtr<NSArray> me
     if (seeking())
         return;
 
+    if (!m_metadataTrack)
+        processMetadataTrack();
+
     if (!metadata || [metadata isKindOfClass:[NSNull class]]) {
         m_metadataTrack->updatePendingCueEndTimes(mediaTime);
         return;
     }
-
-    if (!m_metadataTrack)
-        processMetadataTrack();
 
     // Set the duration of all incomplete cues before adding new ones.
     MediaTime earliestStartTime = MediaTime::positiveInfiniteTime();
