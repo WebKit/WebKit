@@ -1,3 +1,21 @@
+2015-01-22  Chris Dumez  <cdumez@apple.com>
+
+        Import fast/css/font-shorthand-line-height.html layout test from Blink
+        https://bugs.webkit.org/show_bug.cgi?id=140801
+
+        Reviewed by Andreas Kling.
+
+        Import fast/css/font-shorthand-line-height.html layout test from Blink
+        to get better test coverage for 'line-height' font shorthands cascades:
+        https://src.chromium.org/viewvc/blink?view=rev&revision=184346
+
+        I am working on expanding the font shorthand at parsing time (like
+        other shorthands) via Bug 140577 and I want to make sure I don't break
+        line-height in the process.
+
+        * fast/css/font-shorthand-line-height-expected.txt: Added.
+        * fast/css/font-shorthand-line-height.html: Added.
+
 2015-01-22  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (174847): can't view NHK(Japan's national public broadcasting organization)’s news pages
