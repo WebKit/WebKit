@@ -50,6 +50,7 @@
 #import "WKNavigationInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
+#import "WKSharedAPICast.h"
 #import "WKUIDelegate.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKUserContentControllerInternal.h"
@@ -956,14 +957,18 @@ static inline bool withinEpsilon(TypeA a, TypeB b)
     return WebKit::ViewSnapshot::create(slotID, imageSize, imageSize.width() * imageSize.height() * 4);
 }
 
-- (void)_zoomToPoint:(WebCore::FloatPoint)point atScale:(double)scale
+- (void)_zoomToPoint:(WebCore::FloatPoint)point atScale:(double)scale animated:(BOOL)animated
 {
-    double maximumZoomDuration = 0.4;
-    double minimumZoomDuration = 0.1;
-    double zoomDurationFactor = 0.3;
-
+    CFTimeInterval duration = 0;
     CGFloat zoomScale = contentZoomScale(self);
-    CFTimeInterval duration = std::min(fabs(log(zoomScale) - log(scale)) * zoomDurationFactor + minimumZoomDuration, maximumZoomDuration);
+
+    if (animated) {
+        const double maximumZoomDuration = 0.4;
+        const double minimumZoomDuration = 0.1;
+        const double zoomDurationFactor = 0.3;
+
+        duration = std::min(fabs(log(zoomScale) - log(scale)) * zoomDurationFactor + minimumZoomDuration, maximumZoomDuration);
+    }
 
     if (scale != zoomScale)
         _page->willStartUserTriggeredZooming();
@@ -971,7 +976,7 @@ static inline bool withinEpsilon(TypeA a, TypeB b)
     [_scrollView _zoomToCenter:point scale:scale duration:duration];
 }
 
-- (void)_zoomToRect:(WebCore::FloatRect)targetRect atScale:(double)scale origin:(WebCore::FloatPoint)origin
+- (void)_zoomToRect:(WebCore::FloatRect)targetRect atScale:(double)scale origin:(WebCore::FloatPoint)origin animated:(BOOL)animated
 {
     // FIMXE: Some of this could be shared with _scrollToRect.
     const double visibleRectScaleChange = contentZoomScale(self) / scale;
@@ -997,7 +1002,7 @@ static inline bool withinEpsilon(TypeA a, TypeB b)
     visibleRectAfterZoom.move(-topLeftObscuredInsetAfterZoom);
     visibleRectAfterZoom.expand(topLeftObscuredInsetAfterZoom + bottomRightObscuredInsetAfterZoom);
 
-    [self _zoomToPoint:visibleRectAfterZoom.center() atScale:scale];
+    [self _zoomToPoint:visibleRectAfterZoom.center() atScale:scale animated:animated];
 }
 
 static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOffset, WebCore::FloatSize contentSize, WebCore::FloatSize unobscuredContentSize)
@@ -1070,9 +1075,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return true;
 }
 
-- (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin
+- (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin animated:(BOOL)animated
 {
-    [self _zoomToPoint:origin atScale:[_scrollView minimumZoomScale]];
+    [self _zoomToPoint:origin atScale:[_scrollView minimumZoomScale] animated:animated];
 }
 
 // focusedElementRect and selectionRect are both in document coordinates.
@@ -1212,7 +1217,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         if ([self _scrollToRect:targetRect origin:origin minimumScrollDistance:minimumScrollDistance])
             return true;
     } else if (targetScale != currentScale) {
-        [self _zoomToRect:targetRect atScale:targetScale origin:origin];
+        [self _zoomToRect:targetRect atScale:targetScale origin:origin animated:YES];
         return true;
     }
     
@@ -1405,6 +1410,11 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         unobscuredRectInScrollViewCoordinates:unobscuredRect
         scale:scaleFactor minimumScale:[_scrollView minimumZoomScale]
         inStableState:isStableState isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively];
+}
+
+- (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)navigationType
+{
+    [_customContentView web_didSameDocumentNavigation:toAPI(navigationType)];
 }
 
 - (void)_keyboardChangedWithInfo:(NSDictionary *)keyboardInfo adjustScrollView:(BOOL)adjustScrollView

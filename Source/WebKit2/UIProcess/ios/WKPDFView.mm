@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "SessionState.h"
 #import "WKPDFPageNumberIndicator.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
@@ -57,6 +58,10 @@ typedef struct {
     RetainPtr<UIPDFPage> page;
 } PDFPageInfo;
 
+@interface WKPDFView ()
+- (void)_resetZoomAnimated:(BOOL)animated;
+@end
+
 @implementation WKPDFView {
     RetainPtr<UIPDFDocument> _pdfDocument;
     RetainPtr<NSString> _suggestedFilename;
@@ -72,6 +77,7 @@ typedef struct {
     UIView *_fixedOverlayView;
 
     BOOL _isStartingZoom;
+    BOOL _isPerformingSameDocumentNavigation;
 }
 
 - (instancetype)web_initWithFrame:(CGRect)frame webView:(WKWebView *)webView
@@ -129,6 +135,8 @@ typedef struct {
     RetainPtr<CGPDFDocumentRef> cgPDFDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
     _pdfDocument = adoptNS([[UIPDFDocument alloc] initWithCGPDFDocument:cgPDFDocument.get()]);
 
+    // FIXME: restore the scroll position and page scale if navigating from the back/forward list.
+
     [self _computePageAndDocumentFrames];
     [self _revalidateViews];
 }
@@ -147,7 +155,9 @@ typedef struct {
         return;
 
     [self _revalidateViews];
-    [_pageNumberIndicator show];
+
+    if (!_isPerformingSameDocumentNavigation)
+        [_pageNumberIndicator show];
 }
 
 - (void)_revalidateViews
@@ -201,6 +211,9 @@ typedef struct {
 
 - (void)_updatePageNumberIndicator
 {
+    if (_isPerformingSameDocumentNavigation)
+        return;
+
     if (!_pageNumberIndicator)
         _pageNumberIndicator = adoptNS([[WKPDFPageNumberIndicator alloc] initWithFrame:CGRectZero]);
 
@@ -227,6 +240,36 @@ typedef struct {
 
     if (_pageNumberIndicator)
         [_fixedOverlayView addSubview:_pageNumberIndicator.get()];
+}
+
+- (void)web_didSameDocumentNavigation:(WKSameDocumentNavigationType)navigationType
+{
+    // Check for kWKSameDocumentNavigationSessionStatePop instead of kWKSameDocumentNavigationAnchorNavigation since the
+    // latter is only called once when navigating to the same anchor in succession. If the user navigates to a page
+    // then scrolls back and clicks on the same link a second time, we want to scroll again.
+    if (navigationType != kWKSameDocumentNavigationSessionStatePop)
+        return;
+
+    // FIXME: restore the scroll position and page scale if navigating back from a fragment.
+
+    NSString *fragment = _webView.URL.fragment;
+    if (![fragment hasPrefix:@"page"])
+        return;
+
+    NSInteger pageIndex = [[fragment substringFromIndex:4] integerValue] - 1;
+    if (pageIndex < 0 || static_cast<std::size_t>(pageIndex) >= _pages.size())
+        return;
+
+    _isPerformingSameDocumentNavigation = YES;
+
+    [_pageNumberIndicator hide];
+    [self _resetZoomAnimated:NO];
+
+    // Ensure that the page margin is visible below the content inset.
+    const CGFloat verticalOffset = _pages[pageIndex].frame.origin.y - _webView._computedContentInset.top - pdfPageMargin;
+    [_scrollView setContentOffset:CGPointMake(_scrollView.contentOffset.x, verticalOffset) animated:NO];
+
+    _isPerformingSameDocumentNavigation = NO;
 }
 
 - (void)_computePageAndDocumentFrames
@@ -264,6 +307,17 @@ typedef struct {
     [_scrollView setContentSize:newFrame.size];
 }
 
+- (void)_resetZoomAnimated:(BOOL)animated
+{
+    _isStartingZoom = YES;
+
+    CGRect scrollViewBounds = _scrollView.bounds;
+    CGPoint centerOfPageInDocumentCoordinates = [_scrollView convertPoint:CGPointMake(CGRectGetMidX(scrollViewBounds), CGRectGetMidY(scrollViewBounds)) toView:self];
+    [_webView _zoomOutWithOrigin:centerOfPageInDocumentCoordinates animated:animated];
+
+    _isStartingZoom = NO;
+}
+
 #pragma mark UIPDFPageViewDelegate
 
 - (void)zoom:(UIPDFPageView *)pageView to:(CGRect)targetRect atPoint:(CGPoint)origin kind:(UIPDFObjectKind)kind
@@ -285,13 +339,7 @@ typedef struct {
 
 - (void)resetZoom:(UIPDFPageView *)pageView
 {
-    _isStartingZoom = YES;
-    
-    CGRect scrollViewBounds = _scrollView.bounds;
-    CGPoint centerOfPageInDocumentCoordinates = [_scrollView convertPoint:CGPointMake(CGRectGetMidX(scrollViewBounds), CGRectGetMidY(scrollViewBounds)) toView:self];
-    [_webView _zoomOutWithOrigin:centerOfPageInDocumentCoordinates];
-
-    _isStartingZoom = NO;
+    [self _resetZoomAnimated:YES];
 }
 
 #pragma mark UIPDFAnnotationControllerDelegate
@@ -304,11 +352,16 @@ typedef struct {
         return;
 
     UIPDFLinkAnnotation *linkAnnotation = (UIPDFLinkAnnotation *)annotation;
-    String urlString = linkAnnotation.url.absoluteString;
+    String urlString;
+    if (NSURL *url = linkAnnotation.url)
+        urlString = url.absoluteString;
+    else if (NSUInteger pageNumber = linkAnnotation.pageNumber) {
+        urlString = ASCIILiteral("#page");
+        urlString.append(String::number(pageNumber));
+    }
+
     if (urlString.isEmpty())
         return;
-
-    // FIXME: Support pageNumber navigations
 
     CGPoint documentPoint = [controller.pageView convertPoint:point toView:self];
     CGPoint screenPoint = [self.window convertPoint:[self convertPoint:documentPoint toView:nil] toWindow:nil];

@@ -1,5 +1,50 @@
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r174232.
+
+    2014-10-02  Andy Estes  <aestes@apple.com>
+
+        [iOS] Teach WKPDFView to navigate to pageNumber links
+        https://bugs.webkit.org/show_bug.cgi?id=137358
+
+        Reviewed by Tim Horton.
+
+        Treat PDF pageNumber annotations as if they were fragment navigations in an HTML document. For a given page
+        number N, create a fragment called "#pageN" and tell WebKit to navigate to it. By doing this we create history
+        entries for each pageNumber navigation and allow for proper back/forward. When navigating to a page, reset to
+        the initial scale factor and scroll to the beginning of the Nth page.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _zoomToPoint:atScale:animated:]): Added an animated parameter. If animated is NO, use a duration of 0.
+        (-[WKWebView _zoomToRect:atScale:origin:animated:]): Added an animated parameter and passed it to _zoomToPoint:atScale:animated:.
+        (-[WKWebView _zoomOutWithOrigin:animated:]): Ditto.
+        (-[WKWebView _zoomToRect:withOrigin:fitEntireRect:minimumScale:maximumScale:minimumScrollDistance:]): Called _zoomToRect:atScale:origin:animated:,
+        setting animated to YES.
+        (-[WKWebView _didSameDocumentNavigationForMainFrame:]): Called web_didSameDocumentNavigation: on _customContentView.
+        (-[WKWebView _zoomToPoint:atScale:]): Deleted.
+        (-[WKWebView _zoomToRect:atScale:origin:]): Deleted.
+        (-[WKWebView _zoomOutWithOrigin:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/Cocoa/WKWebViewContentProvider.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didSameDocumentNavigationForMainFrame): Called _didSameDocumentNavigationForMainFrame on m_webView.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _zoomOutWithOrigin:]): Called _zoomOutWithOrigin:animated: on m_webView, setting animated to YES.
+        * UIProcess/ios/WKPDFPageNumberIndicator.h:
+        * UIProcess/ios/WKPDFPageNumberIndicator.mm:
+        (-[WKPDFPageNumberIndicator hide]): Added a method to hide the page number indicator.
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]): Added a FIXME for restoring scroll position and page scale when loading from the back/forward list.
+        (-[WKPDFView scrollViewDidScroll:]): Stopped showing the page number indicator if a same-document navigation is occurring (to match UIWebPDFView).
+        (-[WKPDFView _updatePageNumberIndicator]): Ditto.
+        (-[WKPDFView web_didSameDocumentNavigation:]):
+        (-[WKPDFView _resetZoomAnimated:]): For same-document navigations of type kWKSameDocumentNavigationSessionStatePop, extracted the page index from the URL fragment
+        identifier, hid the page number indicator, reset the zoom (without an animation to match UIWebPDFView), and scrolled to the beginning of the given page.
+        (-[WKPDFView resetZoom:]): Called _resetZoomAnimated:, setting animated to YES.
+        (-[WKPDFView annotation:wasTouchedAtPoint:controller:]): If there is a non-zero pageNumber in the link annotation, construct a "#pageN" fragment and navigate to it.
+
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
         Merge r174072.
 
     2014-09-27  Andy Estes  <aestes@apple.com>
