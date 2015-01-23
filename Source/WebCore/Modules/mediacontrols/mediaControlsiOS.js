@@ -204,6 +204,14 @@ ControllerIOS.prototype = {
             this.controls.startPlaybackButton.parentNode.removeChild(this.controls.startPlaybackButton);
     },
 
+    reconnectControls: function()
+    {
+        Controller.prototype.reconnectControls.call(this);
+
+        if (this.controlsType === ControllerIOS.StartPlaybackControls)
+            this.addStartPlaybackControls();
+    },
+
     configureInlineControls: function() {
         this.controls.panel.appendChild(this.controls.playButton);
         this.controls.panel.appendChild(this.controls.statusDisplay);
