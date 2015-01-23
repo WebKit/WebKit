@@ -1,46 +1,10 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {H1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 265x37
-          text run at (0,0) width 265: "CSS2 System Fonts"
-      RenderBlock {P} at (0,58) size 784x37
-        RenderText {#text} at (0,0) size 394x18
-          text run at (0,0) width 394: "The following should appear with the fonts specified, per the "
-        RenderInline {A} at (0,0) size 76x18 [color=#0000EE]
-          RenderText {#text} at (393,0) size 76x18
-            text run at (393,0) width 76: "CSS2 specs"
-        RenderText {#text} at (468,0) size 778x36
-          text run at (468,0) width 310: ". If they appear in a monospace font, the test has"
-          text run at (0,18) width 41: "failed."
-      RenderBlock {UL} at (0,110) size 784x90
-        RenderListItem {LI} at (40,0) size 744x16
-          RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (0,0) size 331x16
-            text run at (0,0) width 331: "Caption (on Mac will be Lucida Grande 13.0 Regular)"
-        RenderListItem {LI} at (40,16) size 744x16
-          RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (0,0) size 626x16
-            text run at (0,0) width 626: "Icon (on Mac will be Lucida Grande 13.0 Regular for now, not sure how to get this info from Finder)"
-        RenderListItem {LI} at (40,32) size 744x16
-          RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (0,0) size 317x16
-            text run at (0,0) width 317: "Menu (on Mac will be Lucida Grande 13.0 Regular)"
-        RenderListItem {LI} at (40,48) size 744x16
-          RenderListMarker at (-16,0) size 6x16: bullet
-          RenderText {#text} at (0,0) size 366x16
-            text run at (0,0) width 366: "Message-Box (on Mac will be Lucida Grande 13.0 Regular)"
-        RenderListItem {LI} at (40,64) size 744x13
-          RenderListMarker at (-15,0) size 6x13: bullet
-          RenderText {#text} at (0,0) size 315x13
-            text run at (0,0) width 315: "Small-Caption (on Mac will be Lucida Grande 11.0 Regular)"
-        RenderListItem {LI} at (40,77) size 744x12
-          RenderListMarker at (-14,0) size 5x12: bullet
-          RenderText {#text} at (0,0) size 268x12
-            text run at (0,0) width 268: "Status-Bar (on Mac will be Lucida Grande 10.0 Regular)"
-      RenderBlock {P} at (0,215) size 784x19
-        RenderInline {A} at (0,0) size 186x18 [color=#0000EE]
-          RenderText {#text} at (0,0) size 186x18
-            text run at (0,0) width 186: "\x{AB} Return to Safari Bugs page"
+This tests platform specific system font styles. If any of the styles appear in monospace the test fails.
+caption: normal normal normal 13px/normal '.LucidaGrandeUI'
+icon: normal normal normal 13px/normal '.LucidaGrandeUI'
+menu: normal normal normal 13px/normal '.LucidaGrandeUI'
+message-box: normal normal normal 13px/normal '.LucidaGrandeUI'
+small-caption: normal normal normal 11px/normal '.LucidaGrandeUI'
+status-bar: normal normal normal 10px/normal '.LucidaGrandeUI'
+-webkit-mini-control: normal normal normal 9px/normal '.LucidaGrandeUI'
+-webkit-small-control: normal normal normal 11px/normal '.LucidaGrandeUI'
+-webkit-control: normal normal normal 13px/normal '.LucidaGrandeUI'

@@ -1,3 +1,34 @@
+2015-01-23  Chris Dumez  <cdumez@apple.com>
+
+        Rewrite the fast/css/css2-system-fonts.html test to be more useful on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=140810
+
+        Reviewed by Andreas Kling.
+
+        Make the fast/css/css2-system-fonts.html explicit about the font styles
+        expected on each platform instead of just Mac.
+
+        It also converts the test to be text only as the style information is
+        now displayed in text format.
+
+        This change is in preparation for a refactor of system font handling.
+
+        This change is based on the following Blink revision by
+        <alancutter@chromium.org>:
+        http://src.chromium.org/viewvc/blink?view=revision&revision=169612
+
+        * fast/css/css2-system-fonts.html:
+        * platform/efl/fast/css/css2-system-fonts-expected.png: Removed.
+        * platform/efl/fast/css/css2-system-fonts-expected.txt: Removed.
+        * platform/gtk/fast/css/css2-system-fonts-expected.png: Removed.
+        * platform/gtk/fast/css/css2-system-fonts-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/css/css2-system-fonts-expected.txt:
+        * platform/mac-mavericks/fast/css/css2-system-fonts-expected.png: Removed.
+        * platform/mac-mavericks/fast/css/css2-system-fonts-expected.txt:
+        * platform/mac-mountainlion/fast/css/css2-system-fonts-expected.txt: Removed.
+        * platform/mac/fast/css/css2-system-fonts-expected.png: Removed.
+        * platform/mac/fast/css/css2-system-fonts-expected.txt:
+
 2015-01-22  Chris Dumez  <cdumez@apple.com>
 
         Import fast/css/font-shorthand-line-height.html layout test from Blink
