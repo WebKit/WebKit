@@ -1038,11 +1038,13 @@ void WebProcess::ensureWebToDatabaseProcessConnection()
 
 #if OS(DARWIN)
     IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
-    if (IPC::Connection::identifierIsNull(connectionIdentifier))
-        return;
+#elif USE(UNIX_DOMAIN_SOCKETS)
+    IPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.releaseFileDescriptor();
 #else
     ASSERT_NOT_REACHED();
 #endif
+    if (IPC::Connection::identifierIsNull(connectionIdentifier))
+        return;
     m_webToDatabaseProcessConnection = WebToDatabaseProcessConnection::create(connectionIdentifier);
 }
 

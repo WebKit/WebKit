@@ -79,6 +79,11 @@ void ProcessLauncher::launchProcess()
         executablePath = executablePathOfNetworkProcess();
         break;
 #endif
+#if ENABLE(DATABASE_PROCESS)
+    case DatabaseProcess:
+        executablePath = executablePathOfDatabaseProcess();
+        break;
+#endif
     default:
         ASSERT_NOT_REACHED();
         return;

@@ -219,6 +219,7 @@ set(WebKit2_OUTPUT_NAME webkit2gtk-${WEBKITGTK_API_VERSION})
 set(WebKit2_WebProcess_OUTPUT_NAME WebKitWebProcess)
 set(WebKit2_NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
 set(WebKit2_PluginProcess_OUTPUT_NAME WebKitPluginProcess)
+set(WebKit2_DatabaseProcess_OUTPUT_NAME WebKitDatabaseProcess)
 
 add_definitions(-DBUILDING_GTK__=1)
 add_definitions(-DGETTEXT_PACKAGE="WebKit2GTK-${WEBKITGTK_API_VERSION}")

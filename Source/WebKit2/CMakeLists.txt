@@ -1,6 +1,9 @@
 set(WebKit2_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/llint"
     "${WEBKIT2_DIR}"
+    "${WEBKIT2_DIR}/DatabaseProcess"
+    "${WEBKIT2_DIR}/DatabaseProcess/IndexedDB"
+    "${WEBKIT2_DIR}/DatabaseProcess/IndexedDB/sqlite"
     "${WEBKIT2_DIR}/NetworkProcess"
     "${WEBKIT2_DIR}/NetworkProcess/FileAPI"
     "${WEBKIT2_DIR}/NetworkProcess/cache"
@@ -12,6 +15,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/API/c"
     "${WEBKIT2_DIR}/Shared/Authentication"
     "${WEBKIT2_DIR}/Shared/CoreIPCSupport"
+    "${WEBKIT2_DIR}/Shared/Databases"
     "${WEBKIT2_DIR}/Shared/Databases/IndexedDB"
     "${WEBKIT2_DIR}/Shared/Downloads"
     "${WEBKIT2_DIR}/Shared/FileAPI"
@@ -26,6 +30,7 @@ set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/C"
     "${WEBKIT2_DIR}/UIProcess/API/cpp"
     "${WEBKIT2_DIR}/UIProcess/Authentication"
+    "${WEBKIT2_DIR}/UIProcess/Databases"
     "${WEBKIT2_DIR}/UIProcess/Downloads"
     "${WEBKIT2_DIR}/UIProcess/InspectorServer"
     "${WEBKIT2_DIR}/UIProcess/Launcher"
@@ -149,6 +154,16 @@ if (WTF_USE_3D_GRAPHICS)
 endif ()
 
 set(WebKit2_SOURCES
+    DatabaseProcess/DatabaseToWebProcessConnection.cpp
+    DatabaseProcess/DatabaseProcess.cpp
+    DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.cpp
+    DatabaseProcess/IndexedDB/IDBSerialization.cpp
+    DatabaseProcess/IndexedDB/UniqueIDBDatabase.cpp
+    DatabaseProcess/IndexedDB/UniqueIDBDatabaseIdentifier.cpp
+    DatabaseProcess/IndexedDB/sqlite/SQLiteIDBCursor.cpp
+    DatabaseProcess/IndexedDB/sqlite/SQLiteIDBTransaction.cpp
+    DatabaseProcess/IndexedDB/sqlite/UniqueIDBDatabaseBackingStoreSQLite.cpp
+
     NetworkProcess/NetworkConnectionToWebProcess.cpp
     NetworkProcess/NetworkProcess.cpp
     NetworkProcess/NetworkProcessPlatformStrategies.cpp
@@ -197,6 +212,7 @@ set(WebKit2_SOURCES
     Shared/API/APIURLResponse.cpp
 
     Shared/ActivityAssertion.cpp
+    Shared/AsyncRequest.cpp
     Shared/BlobDataFileReferenceWithSandboxExtension.cpp
     Shared/CacheModel.cpp
     Shared/ChildProcess.cpp
@@ -227,6 +243,7 @@ set(WebKit2_SOURCES
     Shared/WebContextMenuItem.cpp
     Shared/WebContextMenuItemData.cpp
     Shared/WebCoreArgumentCoders.cpp
+    Shared/WebCrossThreadCopier.cpp
     Shared/WebEvent.cpp
     Shared/WebEventConversion.cpp
     Shared/WebGeolocationPosition.cpp
@@ -275,6 +292,9 @@ set(WebKit2_SOURCES
     Shared/API/c/WKUserContentURLPattern.cpp
 
     Shared/Authentication/AuthenticationManager.cpp
+
+    Shared/Databases/DatabaseProcessCreationParameters.cpp
+    Shared/Databases/IndexedDB/IDBUtilities.cpp
 
     Shared/Downloads/Download.cpp
     Shared/Downloads/DownloadAuthenticationClient.cpp
@@ -416,6 +436,8 @@ set(WebKit2_SOURCES
     UIProcess/Authentication/WebCredential.cpp
     UIProcess/Authentication/WebProtectionSpace.cpp
 
+    UIProcess/Databases/DatabaseProcessProxy.cpp
+
     UIProcess/Downloads/DownloadProxy.cpp
     UIProcess/Downloads/DownloadProxyMap.cpp
 
@@ -459,6 +481,8 @@ set(WebKit2_SOURCES
 
     WebProcess/Databases/WebDatabaseProvider.cpp
     WebProcess/Databases/IndexedDB/WebIDBFactoryBackend.cpp
+    WebProcess/Databases/IndexedDB/WebIDBServerConnection.cpp
+    WebProcess/Databases/WebToDatabaseProcessConnection.cpp
 
     WebProcess/FileAPI/BlobRegistryProxy.cpp
 
@@ -586,6 +610,10 @@ set(WebKit2_SOURCES
 )
 
 set(WebKit2_MESSAGES_IN_FILES
+    DatabaseProcess/DatabaseToWebProcessConnection.messages.in
+    DatabaseProcess/DatabaseProcess.messages.in
+    DatabaseProcess/IndexedDB/DatabaseProcessIDBConnection.messages.in
+
     NetworkProcess/NetworkConnectionToWebProcess.messages.in
     NetworkProcess/NetworkProcess.messages.in
     NetworkProcess/NetworkResourceLoader.messages.in
@@ -621,6 +649,8 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebResourceCacheManagerProxy.messages.in
     UIProcess/WebVibrationProxy.messages.in
 
+    UIProcess/Databases/DatabaseProcessProxy.messages.in
+
     UIProcess/Downloads/DownloadProxy.messages.in
 
     UIProcess/Network/NetworkProcessProxy.messages.in
@@ -640,6 +670,8 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/Battery/WebBatteryManager.messages.in
 
     WebProcess/Cookies/WebCookieManager.messages.in
+
+    WebProcess/Databases/IndexedDB/WebIDBServerConnection.messages.in
 
     WebProcess/FullScreen/WebFullScreenManager.messages.in
 
@@ -683,6 +715,10 @@ set(WebProcess_LIBRARIES
 
 set(NetworkProcess_LIBRARIES
     WebKit2
+)
+
+set(DatabaseProcess_LIBRARIES
+  WebKit2
 )
 
 set(WebKit2_LIBRARIES
@@ -764,6 +800,19 @@ if (ENABLE_PLUGIN_PROCESS)
 
     if (WebKit2_PluginProcess_OUTPUT_NAME)
       set_target_properties(PluginProcess PROPERTIES OUTPUT_NAME ${WebKit2_PluginProcess_OUTPUT_NAME})
+    endif ()
+endif ()
+
+if (ENABLE_DATABASE_PROCESS)
+    add_definitions(-DENABLE_DATABASE_PROCESS=1)
+    add_executable(DatabaseProcess ${DatabaseProcess_SOURCES})
+    add_webkit2_prefix_header(DatabaseProcess)
+    target_link_libraries(DatabaseProcess ${DatabaseProcess_LIBRARIES})
+    set_target_properties(DatabaseProcess PROPERTIES FOLDER "WebKit")
+    install(TARGETS DatabaseProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
+
+    if (WebKit2_DatabaseProcess_OUTPUT_NAME)
+        set_target_properties(DatabaseProcess PROPERTIES OUTPUT_NAME ${WebKit2_DatabaseProcess_OUTPUT_NAME})
     endif ()
 endif ()
 

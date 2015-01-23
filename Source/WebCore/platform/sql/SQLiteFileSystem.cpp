@@ -50,7 +50,7 @@ SQLiteFileSystem::SQLiteFileSystem()
 
 int SQLiteFileSystem::openDatabase(const String& filename, sqlite3** database, bool)
 {
-    return sqlite3_open(filename.utf8().data(), database);
+    return sqlite3_open(fileSystemRepresentation(filename).data(), database);
 }
 
 String SQLiteFileSystem::getFileNameForNewDatabase(const String& dbDir, const String&,

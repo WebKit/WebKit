@@ -1,3 +1,76 @@
+2015-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add initial database process support
+        https://bugs.webkit.org/show_bug.cgi?id=139491
+
+        Reviewed by Sergio Villar Senin.
+
+        Add initial support for DatabaseProcess, disabled by default for
+        now.
+
+        * CMakeLists.txt: Add required files to compilation.
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::createDatabaseToWebProcessConnection):
+        Add the unix domain sockets implementation.
+        * DatabaseProcess/EntryPoint/unix/DatabaseProcessMain.cpp: Added.
+        (main):
+        * DatabaseProcess/gtk/DatabaseProcessMainGtk.cpp: Added.
+        (WebKit::DatabaseProcessMainUnix):
+        * DatabaseProcess/unix/DatabaseProcessMainUnix.h: Added.
+        * PlatformGTK.cmake: Add required files to compilation.
+        * Shared/ProcessExecutablePath.h:
+        * Shared/gtk/KeyedDecoder.cpp: Added.
+        (WebKit::KeyedDecoder::KeyedDecoder):
+        (WebKit::KeyedDecoder::~KeyedDecoder):
+        (WebKit::KeyedDecoder::buildDictionaryFromGVariant):
+        (WebKit::KeyedDecoder::decodeBytes):
+        (WebKit::KeyedDecoder::decodeBool):
+        (WebKit::KeyedDecoder::decodeUInt32):
+        (WebKit::KeyedDecoder::decodeInt32):
+        (WebKit::KeyedDecoder::decodeInt64):
+        (WebKit::KeyedDecoder::decodeFloat):
+        (WebKit::KeyedDecoder::decodeDouble):
+        (WebKit::KeyedDecoder::decodeString):
+        (WebKit::KeyedDecoder::beginObject):
+        (WebKit::KeyedDecoder::endObject):
+        (WebKit::KeyedDecoder::beginArray):
+        (WebKit::KeyedDecoder::beginArrayElement):
+        (WebKit::KeyedDecoder::endArrayElement):
+        (WebKit::KeyedDecoder::endArray):
+        * Shared/gtk/KeyedDecoder.h: Added.
+        * Shared/gtk/KeyedEncoder.cpp: Added.
+        (WebKit::KeyedEncoder::KeyedEncoder):
+        (WebKit::KeyedEncoder::~KeyedEncoder):
+        (WebKit::KeyedEncoder::encodeBytes):
+        (WebKit::KeyedEncoder::encodeBool):
+        (WebKit::KeyedEncoder::encodeUInt32):
+        (WebKit::KeyedEncoder::encodeInt32):
+        (WebKit::KeyedEncoder::encodeInt64):
+        (WebKit::KeyedEncoder::encodeFloat):
+        (WebKit::KeyedEncoder::encodeDouble):
+        (WebKit::KeyedEncoder::encodeString):
+        (WebKit::KeyedEncoder::beginObject):
+        (WebKit::KeyedEncoder::endObject):
+        (WebKit::KeyedEncoder::beginArray):
+        (WebKit::KeyedEncoder::beginArrayElement):
+        (WebKit::KeyedEncoder::endArrayElement):
+        (WebKit::KeyedEncoder::endArray):
+        (WebKit::KeyedEncoder::finishEncoding):
+        * Shared/gtk/KeyedEncoder.h: Added.
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        (WebKit::executablePathOfDatabaseProcess):
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::didCreateDatabaseToWebProcessConnection):
+        Add the unix domain sockets implementation.
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Handle the
+        DatabaseProcess too.
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformDefaultIndexedDBDatabaseDirectory):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureWebToDatabaseProcessConnection): Add
+        the unix domain sockets implementation.
+
 2015-01-22  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS][WK2] Ignore synthetic click initiated on a previous page

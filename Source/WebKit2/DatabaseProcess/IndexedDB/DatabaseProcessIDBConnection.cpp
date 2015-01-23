@@ -37,6 +37,8 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebIDBServerConnectionMessages.h"
 #include <WebCore/IDBDatabaseMetadata.h>
+#include <WebCore/IDBIndexMetadata.h>
+#include <WebCore/IDBObjectStoreMetadata.h>
 #include <WebCore/IDBServerConnection.h>
 #include <WebCore/IndexedDB.h>
 

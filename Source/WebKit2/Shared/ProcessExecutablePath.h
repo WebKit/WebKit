@@ -35,7 +35,9 @@ String executablePathOfPluginProcess();
 #if ENABLE(NETWORK_PROCESS)
 String executablePathOfNetworkProcess();
 #endif
-
+#if ENABLE(DATABASE_PROCESS)
+String executablePathOfDatabaseProcess();
+#endif
 }
 
 #endif

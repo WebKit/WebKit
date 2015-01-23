@@ -31,6 +31,7 @@
 #include "WebOriginDataManagerProxy.h"
 #include "WebOriginDataManagerProxyMessages.h"
 #include "WebProcessPool.h"
+#include <WebCore/NotImplemented.h>
 
 #if ENABLE(DATABASE_PROCESS)
 
@@ -117,6 +118,8 @@ void DatabaseProcessProxy::didCreateDatabaseToWebProcessConnection(const IPC::At
 
 #if OS(DARWIN)
     reply->send(IPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
+#elif USE(UNIX_DOMAIN_SOCKETS)
+    reply->send(connectionIdentifier);
 #else
     notImplemented();
 #endif

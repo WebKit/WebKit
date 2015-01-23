@@ -225,6 +225,8 @@ template <> WTF_EXPORT_PRIVATE GMainLoop* refGPtr(GMainLoop* ptr);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GMainLoop* ptr);
 template <> WTF_EXPORT_PRIVATE GVariant* refGPtr(GVariant* ptr);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GVariant* ptr);
+template <> WTF_EXPORT_PRIVATE GVariantBuilder* refGPtr(GVariantBuilder* ptr);
+template <> WTF_EXPORT_PRIVATE void derefGPtr(GVariantBuilder* ptr);
 template <> WTF_EXPORT_PRIVATE GSource* refGPtr(GSource* ptr);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GSource* ptr);
 template <> WTF_EXPORT_PRIVATE GPtrArray* refGPtr(GPtrArray*);

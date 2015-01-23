@@ -39,6 +39,7 @@
 #include "WebOriginDataManagerMessages.h"
 #include "WebOriginDataManagerProxyMessages.h"
 #include <WebCore/FileSystem.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/TextEncoding.h>
 #include <wtf/MainThread.h>
 
@@ -188,6 +189,10 @@ void DatabaseProcess::createDatabaseToWebProcessConnection()
 
     IPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidCreateDatabaseToWebProcessConnection(clientPort), 0);
+#elif USE(UNIX_DOMAIN_SOCKETS)
+    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
+    m_databaseToWebProcessConnections.append(DatabaseToWebProcessConnection::create(socketPair.server));
+    parentProcessConnection()->send(Messages::DatabaseProcessProxy::DidCreateDatabaseToWebProcessConnection(IPC::Attachment(socketPair.client)), 0);
 #else
     notImplemented();
 #endif

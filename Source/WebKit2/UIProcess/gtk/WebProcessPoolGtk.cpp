@@ -120,8 +120,8 @@ String WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory()
 
 String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
 {
-    notImplemented();
-    return String();
+    GUniquePtr<gchar> indexedDBDatabaseDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "databases", "indexeddb", nullptr));
+    return WebCore::filenameToString(indexedDBDatabaseDirectory.get());
 }
 
 String WebProcessPool::platformDefaultIconDatabasePath() const

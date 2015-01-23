@@ -15,6 +15,8 @@ add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")
 set(WebKit2_USE_PREFIX_HEADER ON)
 
 list(APPEND WebKit2_SOURCES
+    DatabaseProcess/gtk/DatabaseProcessMainGtk.cpp
+
     NetworkProcess/cache/NetworkCacheStorageSoup.cpp
 
     NetworkProcess/gtk/NetworkProcessMainGtk.cpp
@@ -50,6 +52,8 @@ list(APPEND WebKit2_SOURCES
     Shared/cairo/ShareableBitmapCairo.cpp
 
     Shared/gtk/ArgumentCodersGtk.cpp
+    Shared/gtk/KeyedEncoder.cpp
+    Shared/gtk/KeyedDecoder.cpp
     Shared/gtk/NativeWebKeyboardEventGtk.cpp
     Shared/gtk/NativeWebMouseEventGtk.cpp
     Shared/gtk/NativeWebTouchEventGtk.cpp
@@ -71,6 +75,8 @@ list(APPEND WebKit2_SOURCES
     Shared/soup/WebCoreArgumentCodersSoup.cpp
 
     Shared/unix/ChildProcessMain.cpp
+
+    UIProcess/Databases/gtk/DatabaseProcessProxyGtk.cpp
 
     UIProcess/DefaultUndoController.cpp
     UIProcess/DrawingAreaProxyImpl.cpp
@@ -431,6 +437,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/enchant"
+    "${WEBKIT2_DIR}/DatabaseProcess/unix"
     "${WEBKIT2_DIR}/NetworkProcess/gtk"
     "${WEBKIT2_DIR}/NetworkProcess/unix"
     "${WEBKIT2_DIR}/Shared/API/c/gtk"
@@ -486,6 +493,10 @@ list(APPEND WebProcess_SOURCES
 
 list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp
+)
+
+list(APPEND DatabaseProcess_SOURCES
+    DatabaseProcess/EntryPoint/unix/DatabaseProcessMain.cpp
 )
 
 file(WRITE ${CMAKE_BINARY_DIR}/test_atomic.cpp
@@ -950,6 +961,7 @@ add_custom_command(
             ${WebKit2_SOURCES}
             ${WebProcess_SOURCES}
             ${NetworkProcess_SOURCES}
+            ${DatabaseProcess_SOURCES}
             ${PluginProcessGTK2_SOURCES}
             ${PluginProcess_SOURCES}
             ${WebKit2_HEADERS}

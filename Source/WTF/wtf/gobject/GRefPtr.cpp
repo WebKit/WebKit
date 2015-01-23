@@ -89,6 +89,19 @@ template <> void derefGPtr(GVariant* ptr)
     g_variant_unref(ptr);
 }
 
+template <> GVariantBuilder* refGPtr(GVariantBuilder* ptr)
+{
+    if (ptr)
+        g_variant_builder_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GVariantBuilder* ptr)
+{
+    if (ptr)
+        g_variant_builder_unref(ptr);
+}
+
 template <> GSource* refGPtr(GSource* ptr)
 {
     if (ptr)
