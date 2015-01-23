@@ -28,10 +28,10 @@
                 var anonymousBlock = accessibilityController.focusedElement.childAtIndex(0);
                 var e = anonymousBlock.childAtIndex(0);
                 
-                shouldBe('e.title', '"ARIA labeled-by name"');
+                shouldBe('e.title', '"AXTitle: ARIA labeled-by name"');
 
                 e = anonymousBlock.childAtIndex(1);
-                shouldBe('e.title', '"alternate text"');
+                shouldBe('e.title', '"AXTitle: alternate text"');
             }
         </script>
     </body>

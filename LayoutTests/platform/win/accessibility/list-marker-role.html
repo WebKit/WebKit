@@ -26,7 +26,7 @@
                 document.getElementById("listItem").focus();
 
                 var listMarker = accessibilityController.focusedElement.childAtIndex(0);
-                shouldBe('listMarker.role', '"text"');
+                shouldBe('listMarker.role', '"AXRole: AXStaticText"');
             }
         </script>
     </body>

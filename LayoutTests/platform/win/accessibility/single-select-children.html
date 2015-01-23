@@ -43,14 +43,14 @@
 
         document.getElementById("selectElement").focus();
         var selectElement = accessibilityController.focusedElement;
-        shouldBe('selectElement.role', '"combo box"');
+        shouldBe('selectElement.role', '"AXRole: combo box"');
         shouldBeFalse('selectElement.isMultiSelectable');
         shouldBeTrue('selectElement.isCollapsed');
         shouldBeTrue('selectElement.hasPopup');
         debug("");
 
         var list = accessibilityController.focusedElement.childAtIndex(0);
-        shouldBe('list.role', '"list"');
+        shouldBe('list.role', '"AXRole: list"');
         shouldBeFalse('list.isVisible');
         shouldBeTrue('list.isOffScreen');
         debug("");

@@ -2,8 +2,8 @@
 This tests that we can adjust focus and selection via accessibility API.
 
 
-FAIL accessibilityController.focusedElement.role should be document. Was client.
-PASS accessibilityController.focusedElement.role is "list"
+FAIL accessibilityController.focusedElement.role should be document. Was AXRole: AXWebArea.
+FAIL accessibilityController.focusedElement.role should be AXList. Was AXRole: AXList.
 
 Option 0 is selected.
 Option 1 is not selected.

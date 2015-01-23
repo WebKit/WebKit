@@ -5,7 +5,7 @@
         {
             if (!window.accessibilityController || !window.testRunner)
                 return;
-            shouldBe('accessibilityController.focusedElement.parentElement().role', '"document"');
+            shouldBe('accessibilityController.focusedElement.parentElement().role', '"AXRole: document"');
             shouldBeTrue('accessibilityController.focusedElement.parentElement().isEnabled');
         }
     </script>

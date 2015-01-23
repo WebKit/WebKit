@@ -1,3 +1,67 @@
+2015-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening after landing r179024.
+
+        Update Windows-specific accessibility tests and test expectations after making Windows AX output match Mac.
+        This allows us to share more Mac results.
+
+        * platform/win/TestExpectations:
+        * platform/win/accessibility/adjacent-continuations-cause-assertion-failure-expected.txt:
+        * platform/win/accessibility/aria-checkbox-text-expected.txt: Removed.
+        * platform/win/accessibility/aria-combobox-expected.txt:
+        * platform/win/accessibility/aria-fallback-roles-expected.txt: Removed.
+        * platform/win/accessibility/aria-hidden-expected.txt: Removed.
+        * platform/win/accessibility/aria-labelledby-on-input-expected.txt: Removed.
+        * platform/win/accessibility/aria-labelledby-overrides-aria-label-expected.txt:
+        * platform/win/accessibility/aria-labelledby-overrides-label-expected.txt: Removed.
+        * platform/win/accessibility/aria-list-and-listitem-expected.txt:
+        * platform/win/accessibility/aria-mappings-expected.txt: Added.
+        * platform/win/accessibility/aria-menubar-menuitems-expected.txt:
+        * platform/win/accessibility/aria-option-role-expected.txt:
+        * platform/win/accessibility/aria-presentational-role-expected.txt: Removed.
+        * platform/win/accessibility/aria-roles-expected.txt:
+        * platform/win/accessibility/aria-tab-role-on-buttons-expected.txt:
+        * platform/win/accessibility/aria-tab-roles-expected.txt:
+        * platform/win/accessibility/aria-toggle-button-with-title-expected.txt: Removed.
+        * platform/win/accessibility/canvas-description-and-role-expected.txt:
+        * platform/win/accessibility/canvas-fallback-content-expected.txt:
+        * platform/win/accessibility/css-content-attribute-expected.txt: Added.
+        * platform/win/accessibility/deleting-iframe-destroys-axcache-expected.txt:
+        * platform/win/accessibility/div-within-anchors-causes-crash-expected.txt:
+        * platform/win/accessibility/document-enabled-state-expected.txt:
+        * platform/win/accessibility/document-enabled-state.html:
+        * platform/win/accessibility/document-role-expected.txt:
+        * platform/win/accessibility/heading-elements-expected.txt:
+        * platform/win/accessibility/heading-elements.html:
+        * platform/win/accessibility/image-map1-expected.txt: Added.
+        * platform/win/accessibility/image-with-alt-and-map-expected.txt: Added.
+        * platform/win/accessibility/img-alt-attribute-expected.txt:
+        * platform/win/accessibility/img-alt-attribute.html:
+        * platform/win/accessibility/img-alt-tag-only-whitespace-expected.txt: Removed.
+        * platform/win/accessibility/img-aria-button-alt-tag-expected.txt: Removed.
+        * platform/win/accessibility/img-fallsback-to-title-expected.txt: Removed.
+        * platform/win/accessibility/input-image-alt-expected.txt: Removed.
+        * platform/win/accessibility/linked-elements-expected.txt:
+        * platform/win/accessibility/linked-elements.html:
+        * platform/win/accessibility/list-item-role-expected.txt:
+        * platform/win/accessibility/list-item-role.html:
+        * platform/win/accessibility/list-marker-role-expected.txt:
+        * platform/win/accessibility/list-marker-role.html:
+        * platform/win/accessibility/list-role-expected.txt:
+        * platform/win/accessibility/list-role.html:
+        * platform/win/accessibility/multiple-select-element-role-expected.txt:
+        * platform/win/accessibility/multiple-select-element-role.html:
+        * platform/win/accessibility/parent-element-expected.txt:
+        * platform/win/accessibility/parent-element.html:
+        * platform/win/accessibility/select-element-role-expected.txt:
+        * platform/win/accessibility/select-element-role.html:
+        * platform/win/accessibility/selection-and-focus-expected.txt:
+        * platform/win/accessibility/selection-and-focus.html:
+        * platform/win/accessibility/single-select-children.html:
+        * platform/win/accessibility/svg-image-expected.txt: Removed.
+        * platform/win/accessibility/text-role-expected.txt:
+        * platform/win/aria-labelledby-overrides-aria-label-actual.txt: Added.
+
 2015-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Object Previews in the Console

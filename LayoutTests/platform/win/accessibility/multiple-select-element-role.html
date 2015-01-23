@@ -25,8 +25,8 @@ elements.</p>
         testRunner.dumpAsText();
 
         document.getElementById("selectElement").focus();
-        shouldBe('accessibilityController.focusedElement.role', '"list"');
-        shouldBe('accessibilityController.focusedElement.childAtIndex(0).role', '"text"');
+        shouldBe('accessibilityController.focusedElement.role', '"AXRole: AXList"');
+        shouldBe('accessibilityController.focusedElement.childAtIndex(0).role', '"AXRole: AXStaticText"');
     }
 </script>
 </body>

@@ -9,7 +9,7 @@ PASS e.accessibilityValue.substr(-8) is "img.html"
 PASS e.accessibilityValue.substr(-8) is "img.html"
 PASS e.accessibilityValue.substr(-9) is "text.html"
 PASS e.accessibilityValue.substr(-9) is "text.html"
-PASS e.title is "link text"
+PASS e.title is "AXTitle: link text"
 PASS e.accessibilityValue.substr(-10) is "input.html"
 PASS e.accessibilityValue is "input value"
 

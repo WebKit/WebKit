@@ -2,5 +2,5 @@ This test verifies that, on Windows, list markers return the non-editable "text"
 
 
 list item
-PASS listMarker.role is "text"
+PASS listMarker.role is "AXRole: AXStaticText"
 

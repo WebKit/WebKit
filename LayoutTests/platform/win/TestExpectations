@@ -1195,179 +1195,168 @@ editing/style/non-inheritable-styles.html [ Failure ]
 ##################        Accessibility Issues              ####################
 ################################################################################
 
-accessibility [ Skip ]
-
-# AX: windows DRT needs to implement ::press
-webkit.org/b/36145 accessibility/aria-link-supports-press.html
-webkit.org/b/36145 accessibility/label-element-press.html
-webkit.org/b/36145 accessibility/press-works-on-control-types.html
+# Missing 'press' support
+accessibility/axpress-on-aria-button.html [ Skip ]
+accessibility/svg-element-press.html [ Skip ]
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X (or Windows)
 accessibility/aria-checkbox-sends-notification.html [ Skip ]
 accessibility/children-changed-sends-notification.html [ Skip ]
 
-# isIndeterminate is not implemented in mac
-webkit.org/b/125855 accessibility/aria-checked-mixed-value.html [ Skip ]
+webkit.org/b/140796 accessibility/alt-tag-on-image-with-nonimage-role.html [ Skip ]
+webkit.org/b/140798 accessibility/aria-controls-with-tabs.html [ Skip ]
 
-# ariaControlsElementAtIndex is not implemented in mac or win
-webkit.org/b/127908 accessibility/aria-controls.html [ Skip ]
+# The Windows Accessibility implementation is unable to recurse through the document to
+# find elements (in some cases). The following failures are due to this.
+webkit.org/b/140798 accessibility/aria-checked-mixed-value.html [ Failure ]
+webkit.org/b/140798 accessibility/aria-controls.html [ Failure ]
+webkit.org/b/140798 accessibility/aria-flowto.html [ Failure ]
+webkit.org/b/140798 accessibility/aria-hidden-negates-no-visibility.html [ Failure ]
+webkit.org/b/140798 accessibility/aria-hidden-with-elements.html [ Failure ]
+webkit.org/b/140798 accessibility/aria-labeled-with-hidden-node.html [ Failure ]
+webkit.org/b/140798 accessibility/aria-sort.html [ Failure ]
+webkit.org/b/140798 accessibility/aria-tables.html [ Failure ]
+webkit.org/b/140798 accessibility/aria-text-role.html [ Failure ]
+webkit.org/b/140798 accessibility/aria-used-on-image-maps.html [ Failure ]
+webkit.org/b/140798 accessibility/auto-filled-value.html [ Failure ]
+webkit.org/b/140798 accessibility/box-styled-lists.html [ Failure ]
+webkit.org/b/140798 accessibility/canvas-fallback-content-2.html [ Failure ]
+webkit.org/b/140798 accessibility/empty-image-with-title.html [ Failure ]
+webkit.org/b/140798 accessibility/fieldset-element.html [ Failure ]
+webkit.org/b/140798 accessibility/global-aria-attributes-invalidate-presentational.html [ Failure ]
+webkit.org/b/140798 accessibility/heading-crash-after-hidden.html [ Failure ]
+webkit.org/b/140798 accessibility/html-html-element-is-ignored.html [ Failure ]
+webkit.org/b/140798 accessibility/inline-block-assertion.html [ Failure ]
+webkit.org/b/140798 accessibility/input-type-hidden-in-aria-hidden-false.html [ Failure ]
+webkit.org/b/140798 accessibility/legend-children-are-visible.html [ Failure ]
+webkit.org/b/140798 accessibility/link-inside-button-accessible-text.html [ Failure ]
+webkit.org/b/140798 accessibility/list-detection.html [ Failure ]
+webkit.org/b/140798 accessibility/listitem-title.html [ Failure ]
+webkit.org/b/140798 accessibility/math-text.html [ Failure ]
+webkit.org/b/140798 accessibility/negative-tabindex-does-not-expose-label.html [ Failure ]
+webkit.org/b/140798 accessibility/non-data-table-cell-title-ui-element.html [ Failure ]
+webkit.org/b/140798 accessibility/noscript-ignored.html [ Failure ]
+webkit.org/b/140798 accessibility/password-field-value.html [ Failure ]
+webkit.org/b/140798 accessibility/poorly-formed-aria-table.html [ Failure ]
+webkit.org/b/140798 accessibility/radio-button-group-members.html [ Failure ]
+webkit.org/b/140798 accessibility/radio-button-title-label.html [ Failure ]
+webkit.org/b/140798 accessibility/range-alter-by-percent.html [ Failure ]
+webkit.org/b/140798 accessibility/render-counter-text.html [ Failure ]
+webkit.org/b/140798 accessibility/secure-textfield-title-ui.html [ Failure ]
+webkit.org/b/140798 accessibility/select-element-at-index.html [ Failure ]
+webkit.org/b/140798 accessibility/self-referencing-aria-labelledby.html [ Failure ]
+webkit.org/b/140798 accessibility/svg-bounds.html [ Failure ]
+webkit.org/b/140798 accessibility/svg-group-element-with-title.html [ Failure ]
+webkit.org/b/140798 accessibility/svg-labelledby.html [ Failure ]
+webkit.org/b/140798 accessibility/tabindex-elements-are-accessible.html [ Failure ]
+webkit.org/b/140798 accessibility/table-cell-for-column-and-row-crash.html [ Failure ]
+webkit.org/b/140798 accessibility/table-cell-spans.html [ Failure ]
+webkit.org/b/140798 accessibility/table-cells-roles.html [ Failure ]
+webkit.org/b/140798 accessibility/table-cells.html [ Failure ]
+webkit.org/b/140798 accessibility/table-column-headers-with-captions.html [ Failure ]
+webkit.org/b/140798 accessibility/table-fallback-roles-expose-element-attributes.html [ Failure ]
+webkit.org/b/140798 accessibility/table-headers.html [ Failure ]
+webkit.org/b/140798 accessibility/table-incorrect-colspan-cell.html [ Failure ]
+webkit.org/b/140798 accessibility/table-missing-column-header-crash.html [ Failure ]
+webkit.org/b/140798 accessibility/table-title.html [ Failure ]
+webkit.org/b/140798 accessibility/table-with-aria-role.html [ Failure ]
+webkit.org/b/140798 accessibility/table-with-footer-section-above-body.html [ Failure ]
+webkit.org/b/140798 accessibility/table-with-hidden-head-section.html [ Failure ]
+webkit.org/b/140798 accessibility/table-with-mismatch-column-count-in-initial-section.html [ Failure ]
+webkit.org/b/140798 accessibility/table-with-missing-aria-role-rows.html [ Failure ]
+webkit.org/b/140798 accessibility/text-role-with-aria-hidden-inside.html [ Failure ]
+webkit.org/b/140798 accessibility/textarea-insertion-point-line-number.html [ Failure ]
+webkit.org/b/140798 accessibility/th-as-title-ui.html [ Failure ]
+webkit.org/b/140798 accessibility/title-ui-element-correctness.html [ Failure ]
+webkit.org/b/140798 accessibility/transformed-bounds.html [ Failure ]
+# The following timeouts are caused by the same problem: [ Failure ]
+webkit.org/b/126066 accessibility/loading-iframe-updates-axtree.html [ Skip ]
+webkit.org/b/140798 accessibility/aria-hidden-false-works-in-subtrees.html [ Skip ]
 
-# Accessibility tests without results or with Mac-specific results.
-accessibility/aria-checkbox-text.html
-accessibility/aria-combobox.html
-accessibility/aria-controls-with-tabs.html
-accessibility/aria-describedby-on-input.html
-accessibility/aria-disabled.html
-accessibility/aria-hidden.html
-accessibility/aria-hidden-with-elements.html
-accessibility/aria-invalid.html
-accessibility/aria-label.html
-accessibility/aria-labelledby-overrides-label.html
-accessibility/aria-labelledby-on-input.html
-accessibility/aria-labelledby-stay-within.html
-accessibility/aria-list-and-listitem.html
-accessibility/aria-menubar-menuitems.html
-accessibility/aria-presentational-role.html
-accessibility/aria-readonly.html
-accessibility/aria-roles.html
-accessibility/aria-slider-value.html
-accessibility/aria-scrollbar-role.html
-accessibility/aria-tables.html
-accessibility/aria-tab-roles.html
-accessibility/aria-text-role.html
-accessibility/aria-used-on-image-maps.html
-accessibility/button-press-action.html
-accessibility/document-attributes.html
-accessibility/ignore-spacer-elements.html
-accessibility/image-link.html
-accessibility/image-map1.html
-accessibility/image-map2.html
-accessibility/img-aria-button-alt-tag.html
-accessibility/input-image-alt.html
-accessibility/internal-link-anchors2.html
-accessibility/language-attribute.html
-accessibility/lists.html
-accessibility/media-element.html
-accessibility/nochildren-elements.html
-accessibility/non-data-table-cell-title-ui-element.html
-accessibility/non-native-image-crash.html
-accessibility/notification-listeners.html
-accessibility/onclick-handlers.html
-accessibility/aria-option-role.html
-accessibility/placeholder.html
-accessibility/plugin.html
-accessibility/radio-button-group-members.html
-accessibility/radio-button-title-label.html
-accessibility/secure-textfield-title-ui.html
-accessibility/spinbutton-value.html
-accessibility/svg-remote-element.html
-accessibility/table-attributes.html
-accessibility/table-cell-for-column-and-row-crash.html
-accessibility/table-cell-spans.html
-accessibility/table-cells.html
-accessibility/table-detection.html
-accessibility/table-modification-crash.html
-accessibility/table-nofirstbody.html
-accessibility/table-notbody.html
-accessibility/table-one-cell.html
-accessibility/table-sections.html
-accessibility/table-with-aria-role.html
-accessibility/table-with-rules.html
-accessibility/textarea-insertion-point-line-number.html
-accessibility/textarea-line-for-index.html
-accessibility/textarea-selected-text-range.html
-accessibility/title-ui-element-correctness.html
-accessibility/th-as-title-ui.html
-accessibility/transformed-element.html
-accessibility/visible-elements.html
+# The following fail because of missing numerical output support.
+webkit.org/b/140832 accessibility/aria-slider-value-change.html [ Failure ]
+webkit.org/b/140832 accessibility/aria-slider-value.html [ Failure ]
+webkit.org/b/140832 accessibility/combo-box-collapsed-selection-changed.html [ Failure ]
+webkit.org/b/140832 accessibility/meter-element.html [ Failure ]
+webkit.org/b/140832 accessibility/progressbar.html [ Failure ]
+webkit.org/b/140832 accessibility/range-alter-by-step.html [ Failure ]
+webkit.org/b/140832 accessibility/aria-scrollbar-role.html [ Failure ]
+webkit.org/b/140832 accessibility/notification-listeners.html [ Failure ]
+webkit.org/b/140832 accessibility/spinbutton-value.html [ Failure ]
+webkit.org/b/140832 accessibility/svg-remote-element.html [ Failure ]
+webkit.org/b/140832 accessibility/textarea-line-for-index.html [ Failure ]
+webkit.org/b/140832 accessibility/textarea-selected-text-range.html [ Failure ]
 
-# Skip a bunch of tests to get EWS bots in a better state.
-accessibility/canvas-fallback-content-2.html
-accessibility/axpress-on-aria-button.html
-accessibility/password-field-value.html
-accessibility/paragraph-with-linebreaks.html
-accessibility/aria-hidden-negates-no-visibility.html
-accessibility/tabindex-elements-are-accessible.html
-accessibility/roles-exposed.html
-accessibility/aria-sort.html
-accessibility/transformed-bounds.html
-accessibility/global-aria-attributes-invalidate-presentational.html
-accessibility/content-editable.html
-accessibility/alt-tag-on-image-with-nonimage-role.html
-accessibility/focusable-div.html
-accessibility/roles-computedRoleString.html
-accessibility/aria-slider-value-change.html
-accessibility/aria-labeled-with-hidden-node.html
-accessibility/table-with-mismatch-column-count-in-initial-section.html
-accessibility/table-title.html
-accessibility/negative-tabindex-does-not-expose-label.html
-accessibility/deleting-iframe-destroys-axcache.html
-accessibility/svg-element-press.html
-accessibility/link-inside-button-accessible-text.html
-accessibility/html5-required-attribute.html
-accessibility/meter-element.html
-accessibility/poorly-formed-aria-table.html
-accessibility/aria-hidden-hides-all-elements.html
-accessibility/aria-required.html
-accessibility/text-role-with-aria-hidden-inside.html
-accessibility/aria-disabled-propagated-to-children.html
-accessibility/aria-labelledby-overrides-aria-labeledby.html
-accessibility/aria-mappings.html
-accessibility/aria-flowto.html
-accessibility/img-fallsback-to-title.html
-accessibility/svg-group-element-with-title.html
-accessibility/progressbar.html
-accessibility/self-referencing-aria-labelledby.html
-accessibility/element-haspopup.html
-accessibility/heading-crash-after-hidden.html
-accessibility/aria-hidden-false-works-in-subtrees.html
-accessibility/range-alter-by-step.html
-accessibility/popup-button-title.html
-accessibility/fieldset-element.html
-accessibility/box-styled-lists.html
-accessibility/list-detection.html
-accessibility/table-with-hidden-head-section.html
-accessibility/file-upload-button-stringvalue.html
-accessibility/range-alter-by-percent.html
-accessibility/listitem-title.html
-accessibility/heading-title-includes-links.html
-accessibility/aria-help.html
-accessibility/empty-image-with-title.html
-platform/win/accessibility/single-select-children-changed.html	[ Skip ]
+# The following failures have not been investigated.
+accessibility/aria-readonly.html [ Failure ]
+accessibility/aria-required.html [ Failure ]
+accessibility/content-editable.html [ Failure ]
+accessibility/document-attributes.html [ Failure ]
+accessibility/element-haspopup.html [ Failure ]
+accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
+accessibility/heading-level.html [ Failure ]
+accessibility/help-text.html [ Failure ]
+accessibility/html5-required-attribute.html [ Failure ]
+accessibility/image-link.html [ Failure ]
+accessibility/image-map2.html [ Failure ]
+accessibility/internal-link-anchors2.html [ Failure ]
+accessibility/language-attribute.html [ Failure ]
+accessibility/lists.html [ Failure ]
+accessibility/multiselect-list-reports-active-option.html [ Failure ]
+accessibility/onclick-handlers.html [ Failure ]
+accessibility/parent-delete.html [ Failure ]
+accessibility/placeholder.html [ Failure ]
+accessibility/plugin.html [ Failure ]
+accessibility/press-target-uses-text-descendant-node.html [ Failure ]
+accessibility/roles-computedRoleString.html [ Failure ]
+accessibility/roles-exposed.html [ Failure ]
+accessibility/table-attributes.html [ Failure ]
+accessibility/table-detection.html [ Failure ]
+accessibility/table-one-cell.html [ Failure ]
+accessibility/table-roles-hierarchy.html [ Failure ]
+accessibility/table-sections.html [ Failure ]
+accessibility/table-with-rules.html [ Failure ]
+accessibility/transformed-element.html [ Failure ]
+accessibility/visible-elements.html [ Failure ]
 
 # Need to implement global addNotificationListener in Windows DRT
-accessibility/loading-iframe-sends-notification.html
+accessibility/content-editable-as-textarea.html [ Skip ]
+accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Skip ]
+accessibility/loading-iframe-sends-notification.html [ Failure ]
+platform/win/accessibility/single-select-children-changed.html	[ Skip ]
 
 webkit.org/b/130011 accessibility/aria-setsize-posinset.html [ Skip ]
 
 # ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener
-webkit.org/b/87426 [ Debug ] accessibility/menu-list-sends-change-notification.html [ Crash ]
-webkit.org/b/87425 [ Debug ] accessibility/multiselect-list-reports-active-option.html [ Crash ]
-webkit.org/b/87425 [ Debug ] platform/win/accessibility/detached-object-notification-crash.html [ Crash ]
+#webkit.org/b/87426 [ Debug ] accessibility/menu-list-sends-change-notification.html [ Crash ]
+#webkit.org/b/87425 [ Debug ] accessibility/multiselect-list-reports-active-option.html [ Crash ]
+#webkit.org/b/87425 [ Debug ] platform/win/accessibility/detached-object-notification-crash.html [ Crash ]
 
 # Test times out
 webkit.org/b/95405 platform/win/accessibility/single-select-children.html [ Skip ]
+accessibility/file-upload-button-stringvalue.html
+webkit.org/b/97026 accessibility/file-upload-button-with-axpress.html [ Timeout ]
 
 # AX role needs to be updated on Windows, many test cases involve AX role crash or fail
-accessibility/svg-bounds.html
-accessibility/html-html-element-is-ignored.html
-webkit.org/b/126066 accessibility/loading-iframe-updates-axtree.html
-webkit.org/b/108249 accessibility/corresponding-control-deleted-crash.html
-
-# Missing AX features:
-accessibility/heading-level.html
-accessibility/render-counter-text.html
+#accessibility/svg-bounds.html
+#accessibility/html-html-element-is-ignored.html
+# Wants 'webkitCreateShadowRoot()' access:
+webkit.org/b/108249 accessibility/corresponding-control-deleted-crash.html [ Failure ]
 
 # Color Well is not implemented:
 accessibility/color-well.html
 
 # Failing Windows-only accessibility tests
-webkit.org/b/127485 platform/win/accessibility/parent-element.html [ Failure ]
+#webkit.org/b/127485 platform/win/accessibility/parent-element.html [ Failure ]
 
-# Skipping on windows, missing implementation.
+# Skipping on windows, missing implementation of cellForColumnAndRow
 webkit.org/b/129250 accessibility/table-scope.html [ Skip ]
 
-webkit.org/b/97026 accessibility/file-upload-button-with-axpress.html [ Timeout ]
+# Exclude media element for the time being
+accessibility/media-element.html [ Skip ]
+
+# Timeouts -- not investigated
+accessibility/aria-invalid.html [ Skip ]
 
 ################################################################################
 #######################   End Accessibility Issues   ###########################

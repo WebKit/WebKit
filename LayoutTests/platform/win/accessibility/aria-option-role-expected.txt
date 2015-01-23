@@ -5,10 +5,10 @@ This tests that the aria 'option' role works as expected. That is, it becomes a 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-firstChild.role is text
-firstChild.title is option 1
-secondChild.role is text
-secondChild.description is Description: label 2
+firstChild.role is AXRole: AXStaticText
+firstChild.title is AXTitle: option 1
+secondChild.role is AXRole: AXStaticText
+secondChild.description is AXDescription: label 2
 PASS firstChild.childrenCount is 0
 PASS secondChild.childrenCount is 0
 PASS successfullyParsed is true

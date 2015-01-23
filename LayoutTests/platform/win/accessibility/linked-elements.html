@@ -46,7 +46,7 @@
                 // The child text node.
                 e = e.childAtIndex(0);
                 shouldBe('e.accessibilityValue.substr(-9)', '"text.html"');
-                shouldBe('e.title', '"link text"');
+                shouldBe('e.title', '"AXTitle: link text"');
 
                 document.getElementById("link3").focus();
                 e = accessibilityController.focusedElement;

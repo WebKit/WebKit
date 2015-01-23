@@ -4,12 +4,12 @@ This tests that the aria roles for tab and tablist work as expected for buttons.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-tabList.role = page tab list
-tab1.role = page tab
-tab1.title = Tab A
+tabList.role = AXRole: AXTabGroup
+tab1.role = AXRole: AXTab
+tab1.title = AXTitle: Tab A
 PASS tab1.childrenCount is 0
-tab2.role = page tab
-tab2.title = Tab B
+tab2.role = AXRole: AXTab
+tab2.title = AXTitle: Tab B
 PASS successfullyParsed is true
 
 TEST COMPLETE
