@@ -1,5 +1,16 @@
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r173762.
+
+    2014-09-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the Mac Mavericks build. Only iOS cares about fencing.
+
+        * Platform/mac/LayerHostingContext.h:
+        * Platform/mac/LayerHostingContext.mm:
+
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
         Merge r173741.
 
     2014-09-18  Jeremy Jones  <jeremyj@apple.com>

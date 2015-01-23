@@ -58,7 +58,9 @@ public:
     void setColorSpace(CGColorSpaceRef);
     CGColorSpaceRef colorSpace() const;
     
+#if PLATFORM(IOS)
     void setFencePort(mach_port_t);
+#endif
 
 private:
     LayerHostingMode m_layerHostingMode;
