@@ -30,11 +30,13 @@
 
 #include "CDM.h"
 #include "CDMSession.h"
+#include "Document.h"
 #include "Event.h"
 #include "GenericEventQueue.h"
 #include "MediaKeyError.h"
 #include "MediaKeyMessageEvent.h"
 #include "MediaKeys.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -218,6 +220,27 @@ void MediaKeySession::sendError(CDMSessionClient::MediaKeyErrorCode errorCode, u
     RefPtr<Event> keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, false, false);
     keyerrorEvent->setTarget(this);
     m_asyncEventQueue.enqueueEvent(keyerrorEvent.release());
+}
+
+String MediaKeySession::mediaKeysStorageDirectory() const
+{
+    Document* document = toDocument(scriptExecutionContext());
+    if (!document)
+        return emptyString();
+
+    Settings* settings = document->settings();
+    if (!settings)
+        return emptyString();
+
+    String storageDirectory = settings->mediaKeysStorageDirectory();
+    if (storageDirectory.isEmpty())
+        return emptyString();
+
+    SecurityOrigin* origin = document->securityOrigin();
+    if (!origin)
+        return emptyString();
+
+    return pathByAppendingComponent(storageDirectory, origin->databaseIdentifier());
 }
 
 }

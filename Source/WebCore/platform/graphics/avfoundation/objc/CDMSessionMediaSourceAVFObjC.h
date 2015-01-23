@@ -61,6 +61,7 @@ public:
     void setSessionId(const String& sessionId) { m_sessionId = sessionId; }
 
 protected:
+    String storagePath() const;
     PassRefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, unsigned long& systemCode);
 
     Vector<RefPtr<SourceBufferPrivateAVFObjC>> m_sourceBuffers;

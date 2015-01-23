@@ -1,3 +1,44 @@
+2015-01-22  Dana Burkart  <dburkart@apple.com>
+
+        Merged r178967. <rdar://problem/19572776>
+
+    2015-01-22  Jer Noble  <jer.noble@apple.com>
+
+            [Mac][EME] Adopt changes to AVStreamSession class methods
+            https://bugs.webkit.org/show_bug.cgi?id=140778
+            rdar://problem/19458200
+
+            Reviewed by Eric Carlson.
+
+            AVStreamSession class methods have added a "storageDirectoryAtURL:" parameter so as to be able to
+            read and modify records stored at non-default storage locations.
+
+            * Modules/encryptedmedia/MediaKeySession.cpp:
+            (WebCore::MediaKeySession::mediaKeysStorageDirectory): Implement client method by querying document and settings.
+            * Modules/encryptedmedia/MediaKeySession.h:
+            * platform/graphics/CDMSession.h:
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+            * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+            (WebCore::CDMSessionMediaSourceAVFObjC::releaseKeys): Check whether the AVStreamSession class responds to new selector before calling.
+            (WebCore::CDMSessionMediaSourceAVFObjC::update): Ditto.
+            (WebCore::CDMSessionMediaSourceAVFObjC::generateKeyReleaseMessage): Ditto.
+            (WebCore::CDMSessionMediaSourceAVFObjC::storagePath): Fetch the storage path from the client.
+
+    2015-01-22  Michael Saboff  <msaboff@apple.com>
+
+            REGRESSION (174847): can't view NHK(Japan's national public broadcasting organization)’s news pages
+            https://bugs.webkit.org/show_bug.cgi?id=140794
+
+            Reviewed by Anders Carlsson.
+
+            If a document.open has been set, return it instead of always returning a new,
+            non-cached instance of jsHTMLDocumentPrototypeFunctionOpen.
+
+            Test: js/dom/document-overwrite-open.html
+
+            * bindings/js/JSHTMLDocumentCustom.cpp:
+            (WebCore::JSHTMLDocument::getOwnPropertySlot):
+
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r178426. rdar://problem/19526069

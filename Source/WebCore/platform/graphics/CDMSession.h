@@ -50,6 +50,8 @@ public:
     };
     typedef unsigned short MediaKeyErrorCode;
     virtual void sendError(MediaKeyErrorCode, unsigned long systemCode) = 0;
+
+    virtual String mediaKeysStorageDirectory() const = 0;
 };
 
 enum CDMSessionType {
