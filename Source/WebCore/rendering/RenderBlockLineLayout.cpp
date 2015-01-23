@@ -556,7 +556,7 @@ static inline void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* 
             // Only justify text if whitespace is collapsed.
             if (r->renderer().style().collapseWhiteSpace()) {
                 InlineTextBox* textBox = toInlineTextBox(r->box());
-                int expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
+                float expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
                 textBox->setExpansion(expansion);
                 totalLogicalWidth += expansion;
             }

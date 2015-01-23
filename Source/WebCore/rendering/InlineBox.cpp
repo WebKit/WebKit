@@ -40,8 +40,8 @@ struct SameSizeAsInlineBox {
     virtual ~SameSizeAsInlineBox() { }
     void* a[4];
     FloatPoint b;
-    float c;
-    uint32_t d : 32;
+    float c[2];
+    unsigned d : 20;
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
     unsigned s;
     bool f;

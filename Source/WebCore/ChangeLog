@@ -1,3 +1,30 @@
+2015-01-23  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r174233
+
+    2014-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Subpixel] Use floats instead of ints for text justification expansion
+            https://bugs.webkit.org/show_bug.cgi?id=137327
+
+            Reviewed by Zalan Bujtas.
+
+            Use a float instead of an int for the expansion variable in InlineBox. The int was inside an inner class
+            that held a collection of bitfields, and this patch removes that inner-inner variable.
+
+            No new tests because there is plenty of existing coverage and existing tests are rebaselined.
+
+            * rendering/InlineBox.cpp: Update static_assert for the size of InlineBox.
+            * rendering/InlineBox.h: Use a float for the justification expansion amount instead of an int bitfield.
+            (WebCore::InlineBox::InlineBoxBitfields::InlineBoxBitfields): Remove int bitfield.
+            (WebCore::InlineBox::InlineBox): Initialize float expansion.
+            (WebCore::InlineBox::expansion): Return a float.
+            (WebCore::InlineBox::setExpansion): Take a float.
+            (WebCore::InlineBox::InlineBoxBitfields::expansion): Deleted. Moved to InlineBox.
+            (WebCore::InlineBox::InlineBoxBitfields::setExpansion): Deleted. Ditto.
+            * rendering/InlineTextBox.h:
+            (WebCore::InlineTextBox::setExpansion): Take a float.
+
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
         Merge r174250.

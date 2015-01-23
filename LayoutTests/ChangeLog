@@ -1,3 +1,55 @@
+2015-01-23  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r174233
+
+    2014-10-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Subpixel] Use floats instead of ints for text justification expansion
+            https://bugs.webkit.org/show_bug.cgi?id=137327
+
+            Reviewed by Zalan Bujtas.
+
+            Rebaselining tests due to subpixel differences.
+
+            * platform/mac/css1/box_properties/clear_float-expected.txt:
+            * platform/mac/css1/box_properties/float_on_text_elements-expected.txt:
+            * platform/mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+            * platform/mac/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+            * platform/mac/css2.1/t1602-c546-txt-align-00-b-expected.txt:
+            * platform/mac/fast/multicol/float-avoidance-expected.txt:
+            * platform/mac/fast/multicol/overflow-across-columns-expected.txt:
+            * platform/mac/fast/multicol/overflow-across-columns-percent-height-expected.txt:
+            * platform/mac/fast/multicol/overflow-unsplittable-expected.txt:
+            * platform/mac/fast/multicol/positive-leading-expected.txt:
+            * platform/mac/fast/multicol/vertical-lr/float-avoidance-expected.txt:
+            * platform/mac/fast/multicol/vertical-rl/float-avoidance-expected.txt:
+            * platform/mac/fast/regions/multiple-directionality-changes-in-variable-width-regions-expected.txt:
+            * platform/mac/fast/regions/repaint/line-flow-with-floats-in-regions-expected.txt:
+            * platform/mac/fast/repaint/line-flow-with-floats-1-expected.txt:
+            * platform/mac/fast/repaint/line-flow-with-floats-10-expected.txt:
+            * platform/mac/fast/repaint/line-flow-with-floats-2-expected.txt:
+            * platform/mac/fast/repaint/line-flow-with-floats-3-expected.txt:
+            * platform/mac/fast/repaint/line-flow-with-floats-4-expected.txt:
+            * platform/mac/fast/repaint/line-flow-with-floats-5-expected.txt:
+            * platform/mac/fast/repaint/line-flow-with-floats-6-expected.txt:
+            * platform/mac/fast/repaint/line-flow-with-floats-7-expected.txt:
+            * platform/mac/fast/repaint/line-flow-with-floats-8-expected.txt:
+            * platform/mac/fast/repaint/line-flow-with-floats-9-expected.txt:
+            * platform/mac/fast/ruby/bopomofo-rl-expected.txt:
+            * platform/mac/fast/text/hyphenate-character-expected.txt:
+            * platform/mac/fast/text/hyphens-expected.txt:
+            * platform/mac/fast/text/justified-selection-at-edge-expected.txt:
+            * platform/mac/fast/text/justify-ideograph-leading-expansion-expected.txt:
+            * platform/mac/fast/text/justify-nbsp-expected.txt: Added.
+            * platform/mac/fast/text/trailing-white-space-2-expected.txt:
+            * platform/mac/fast/text/trailing-white-space-expected.txt:
+            * platform/mac/tables/mozilla/marvin/x_tbody_align_justify-expected.txt:
+            * platform/mac/tables/mozilla/marvin/x_td_align_justify-expected.txt:
+            * platform/mac/tables/mozilla/marvin/x_tfoot_align_justify-expected.txt:
+            * platform/mac/tables/mozilla/marvin/x_th_align_justify-expected.txt:
+            * platform/mac/tables/mozilla/marvin/x_thead_align_justify-expected.txt:
+            * platform/mac/tables/mozilla/marvin/x_tr_align_justify-expected.txt:
+
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r176972.
