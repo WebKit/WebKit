@@ -1,3 +1,16 @@
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
+        configure-xcode-for-ios-development needs to import webkitdirs.pm
+        <http://webkit.org/b/140704>
+
+        Fixes the following runtime error:
+
+            Undefined subroutine &main::exitStatus called at ./Tools/Scripts/configure-xcode-for-ios-development line 167.
+
+        * Scripts/configure-xcode-for-ios-development: Add back code to
+        import webkitdirs.pm for the exitStatus() method.  Not sure why
+        I removed it before patch review.
+
 2015-01-22  Timothy Horton  <timothy_horton@apple.com>
 
         REGRESSION (r178847): Yosemite 32-bit bot isn't doing any work

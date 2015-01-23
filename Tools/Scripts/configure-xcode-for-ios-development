@@ -35,6 +35,9 @@ use File::Basename;
 use File::Find;
 use File::Spec;
 use File::Temp qw(tempfile);
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
 
 sub copyMissingHeadersToIPhoneOSSDKIfNeeded();
 sub createXcodeSpecificationFilesForSDKIfNeeded($);
