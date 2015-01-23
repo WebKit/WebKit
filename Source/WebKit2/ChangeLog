@@ -1,5 +1,25 @@
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r175608.
+
+    2014-11-04  Andy Estes  <aestes@apple.com>
+
+        [iOS] WKPDFView should scroll to a fragment when loading a PDF
+        https://bugs.webkit.org/show_bug.cgi?id=138404
+
+        Reviewed by Tim Horton.
+
+        WKPDFView already knew how to scroll to a page number fragment during a same-document navigation, but it didn't
+        know to do so when loading a PDF whose URL already contained a page number fragment. This could happen if the
+        user long-presses a page number link and taps 'Open in New Tab'.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_setContentProviderData:suggestedFilename:]): Called _scrollToFragment:.
+        (-[WKPDFView _scrollToFragment:]): Moved fragment scrolling code to here from web_didSameDocumentNavigation:.
+        (-[WKPDFView web_didSameDocumentNavigation:]): Called _scrollToFragment.
+
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
         Merge r175607.
 
     2014-11-04  Andy Estes  <aestes@apple.com>
