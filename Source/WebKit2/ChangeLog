@@ -1,5 +1,18 @@
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r174250.
+
+    2014-10-02  Andy Estes  <aestes@apple.com>
+
+        [iOS] Create an SPI wrapper for _UIHighlightView and use it in WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=137370
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm: Included <WebCore/_UIHighlightViewSPI.h> instead of <UIKit/_UIHighlightView.h>.
+
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
         Merge r174232.
 
     2014-10-02  Andy Estes  <aestes@apple.com>

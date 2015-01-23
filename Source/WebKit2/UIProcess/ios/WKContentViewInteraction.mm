@@ -59,12 +59,12 @@
 #import <UIKit/UITapGestureRecognizer_Private.h>
 #import <UIKit/UITextInteractionAssistant_Private.h>
 #import <UIKit/UIWebDocumentView.h> // FIXME: should not include this header.
-#import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UIWebHighlightLongPressGestureRecognizer.h>
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebEvent.h>
+#import <WebCore/_UIHighlightViewSPI.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
 #import <wtf/RetainPtr.h>
 

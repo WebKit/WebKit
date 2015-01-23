@@ -1,5 +1,21 @@
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r174250.
+
+    2014-10-02  Andy Estes  <aestes@apple.com>
+
+        [iOS] Create an SPI wrapper for _UIHighlightView and use it in WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=137370
+
+        Reviewed by Tim Horton.
+
+        Added _UIHighlightViewSPI.h. When building against the internal SDK it imports <UIKit/_UIHighlightView.h>. Otherwise, it redeclares the SPI we use in WebKit2.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/spi/ios/_UIHighlightViewSPI.h: Added.
+
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
         Merge r173741.
 
     2014-09-18  Jeremy Jones  <jeremyj@apple.com>
