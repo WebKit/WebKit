@@ -1,3 +1,17 @@
+2015-01-23  Chris Dumez  <cdumez@apple.com>
+
+        Leverage CSSValuePool's font family cache in CSSComputedStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=140829
+
+        Reviewed by Andreas Kling.
+
+        Leverage CSSValuePool's font family cache in CSSComputedStyleDeclaration
+        by calling CSSValuePool::createFontFamilyValue() to create the font
+        family CSSPrimitiveValue instead of cssValuePool().createValue().
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForFamily):
+
 2015-01-23  Timothy Horton  <timothy_horton@apple.com>
 
         QLPreviewMenuItem popovers don't close when the page scrolls
