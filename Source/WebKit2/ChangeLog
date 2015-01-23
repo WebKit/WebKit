@@ -1,5 +1,46 @@
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r175595.
+
+    2014-11-04  Andy Estes  <aestes@apple.com>
+
+        [iOS] Add long press support for links in WKPDFView
+        https://bugs.webkit.org/show_bug.cgi?id=138357
+
+        Reviewed by Dan Bernstein.
+
+        Use WKActionSheetAssistant to show a link action sheet in response to long-pressing on a link. Have WKPDFView
+        conform to WKActionSheetAssistantDelegate in order to respond to the open and copy actions as well as to
+        provide the link's URL and position information to WKActionSheetAssistant. The long-pressed link is highlighted
+        for .75 seconds before the sheet is displayed in order to match UIWebPDFView.
+
+        * UIProcess/ios/WKActionSheetAssistant.h: Made protocol methods that WKPDFView doesn't implement optional.
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant updatePositionInformation]): Checked if delegate responds to
+        updatePositionInformationForActionSheetAssistant: before calling.
+        (-[WKActionSheetAssistant _createSheetWithElementActions:showLinkTitle:]): Checked if delegate responds to
+        actionSheetAssistant:willStartInteractionWithElement: before calling.
+        (-[WKActionSheetAssistant cleanupSheet]): Checked if delegate responds to actionSheetAssistantDidStopInteraction:
+        before calling.
+        * UIProcess/ios/WKPDFView.h: Conformed to WKActionSheetAssistantDelegate.
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_initWithFrame:webView:]): Instantiated a WKActionSheetAssistant and set self as its delegate.
+        (-[WKPDFView _highlightLinkAnnotation:forDuration:completionHandler:]): Moved highlight drawing to here from
+        annotation:wasTouchedAtPoint:controller: in order to be reused for long-press.
+        (-[WKPDFView _URLForLinkAnnotation:]): Moved URL creation to here from annotation:wasTouchedAtPoint:controller:
+        in order to be reused for long-press. Generated an absolute URL since this URL might go into the pasteboard.
+        (-[WKPDFView annotation:wasTouchedAtPoint:controller:]): Changed to call
+        _highlightLinkAnnotation:forDuration:completionHandler: and _URLForLinkAnnotation:.
+        (-[WKPDFView annotation:isBeingPressedAtPoint:controller:]): Set values on _positionInformation and called
+        -[WKActionSheetAssistant showLinkSheet] after showing a highlight for .75 seconds.
+        (-[WKPDFView positionInformation]): Returned _positionInformation.
+        (-[WKPDFView performAction:]): Added a UTF-8 text and URL representation of the pressed URL to the pasteboard.
+        (-[WKPDFView openElementAtLocation:]): Called WebPage::navigateToURLWithSimulatedClick().
+        (-[WKPDFView actionsForElement:defaultActions:]): Returned actions from UIClient::actionsForElement().
+        (-[WKPDFView _createHighlightViewWithFrame:]): Deleted.
+
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
         Merge r175577.
 
     2014-11-04  Andy Estes  <aestes@apple.com>
