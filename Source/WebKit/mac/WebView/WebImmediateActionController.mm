@@ -98,6 +98,12 @@ using namespace WebCore;
     [self _clearImmediateActionState];
 }
 
+- (void)webView:(WebView *)webView didHandleScrollWheel:(NSEvent *)event
+{
+    [_currentQLPreviewMenuItem close];
+    [self _clearImmediateActionState];
+}
+
 - (void)_cancelImmediateAction
 {
     // Reset the recognizer by turning it off and on again.
@@ -121,6 +127,7 @@ using namespace WebCore;
 
     _type = WebImmediateActionNone;
     _currentActionContext = nil;
+    _currentQLPreviewMenuItem = nil;
 }
 
 - (void)performHitTestAtPoint:(NSPoint)viewPoint
@@ -211,6 +218,7 @@ using namespace WebCore;
         RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem = [NSMenuItem standardQuickLookMenuItem];
         [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
         [qlPreviewLinkItem setDelegate:self];
+        _currentQLPreviewMenuItem = qlPreviewLinkItem.get();
         return (id <NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
     }
 
