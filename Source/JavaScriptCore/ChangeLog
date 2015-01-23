@@ -1,3 +1,18 @@
+2015-01-23  Michael Saboff  <msaboff@apple.com>
+
+        LayoutTests/js/script-tests/reentrant-caching.js crashing on 32 bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=140843
+
+        Reviewed by Oliver Hunt.
+
+        When we are in vmEntryToJavaScript, we keep the stack pointer at an
+        alignment sutiable for pointing to a call frame header, which is the
+        alignment post making a call.  We adjust the sp when calling to JS code,
+        but don't adjust it before calling the out of stack handler.
+
+        * llint/LowLevelInterpreter32_64.asm:
+        Moved stack point down 8 bytes to get it aligned.
+
 2015-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Object Previews in the Console

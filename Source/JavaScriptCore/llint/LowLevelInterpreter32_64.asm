@@ -259,6 +259,7 @@ macro doVMEntry(makeCall)
         move temp3, vm
     end
 
+    subp 8, sp # Align stack for cCall2() to make a call.
     cCall2(_llint_throw_stack_overflow_error, vm, protoCallFrame)
 
     if ARMv7
