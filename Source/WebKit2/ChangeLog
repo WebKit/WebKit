@@ -1,5 +1,40 @@
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r175577.
+
+    2014-11-04  Andy Estes  <aestes@apple.com>
+
+        [iOS] Include a WKActionSheetAssistant parameter in WKActionSheetAssistantDelegate methods
+        https://bugs.webkit.org/show_bug.cgi?id=137792
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction elementActionWithTitle:actionHandler:]):
+        (+[_WKElementAction elementActionWithType:customTitle:]):
+        (-[_WKElementAction _runActionWithElementInfo:forActionSheetAssistant:]):
+        * UIProcess/API/Cocoa/_WKElementActionInternal.h:
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant initialPresentationRectInHostViewForSheet]):
+        (-[WKActionSheetAssistant presentationRectInHostViewForSheet]):
+        (-[WKActionSheetAssistant updatePositionInformation]):
+        (-[WKActionSheetAssistant _createSheetWithElementActions:showLinkTitle:]):
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        (-[WKActionSheetAssistant cleanupSheet]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView positionInformationForActionSheetAssistant:]):
+        (-[WKContentView updatePositionInformationForActionSheetAssistant:]):
+        (-[WKContentView actionSheetAssistant:performAction:]):
+        (-[WKContentView actionSheetAssistant:openElementAtLocation:]):
+        (-[WKContentView actionSheetAssistant:decideActionsForElement:defaultActions:]):
+        (-[WKContentView actionSheetAssistant:willStartInteractionWithElement:]):
+        (-[WKContentView actionSheetAssistantDidStopInteraction:]):
+
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
         Merge r174885.
 
     2014-10-16  Andy Estes  <aestes@apple.com>

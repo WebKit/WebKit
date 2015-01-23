@@ -43,7 +43,7 @@
 SOFT_LINK_FRAMEWORK(SafariServices);
 SOFT_LINK_CLASS(SafariServices, SSReadingList);
 
-typedef void (^WKElementActionHandlerInternal)(id <WKActionSheetAssistantDelegate>, _WKActivatedElementInfo *);
+typedef void (^WKElementActionHandlerInternal)(WKActionSheetAssistant *, _WKActivatedElementInfo *);
 
 @implementation _WKElementAction  {
     RetainPtr<NSString> _title;
@@ -72,7 +72,7 @@ typedef void (^WKElementActionHandlerInternal)(id <WKActionSheetAssistantDelegat
 
 + (instancetype)elementActionWithTitle:(NSString *)title actionHandler:(WKElementActionHandler)handler
 {
-    return [[[self alloc] _initWithTitle:title actionHandler:^(id <WKActionSheetAssistantDelegate>, _WKActivatedElementInfo *actionInfo) { handler(actionInfo); }
+    return [[[self alloc] _initWithTitle:title actionHandler:^(WKActionSheetAssistant *, _WKActivatedElementInfo *actionInfo) { handler(actionInfo); }
        type:_WKElementActionTypeCustom] autorelease];
 }
 
@@ -91,25 +91,25 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     switch (type) {
     case _WKElementActionTypeCopy:
         title = WEB_UI_STRING_KEY("Copy", "Copy ActionSheet Link", "Title for Copy Link or Image action button");
-        handler = ^(id <WKActionSheetAssistantDelegate> delegate, _WKActivatedElementInfo *actionInfo) {
-            [delegate performAction:WebKit::SheetAction::Copy];
+        handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
+            [assistant.delegate actionSheetAssistant:assistant performAction:WebKit::SheetAction::Copy];
         };
         break;
     case _WKElementActionTypeOpen:
         title = WEB_UI_STRING_KEY("Open", "Open ActionSheet Link", "Title for Open Link action button");
-        handler = ^(id <WKActionSheetAssistantDelegate> delegate, _WKActivatedElementInfo *actionInfo) {
-            [delegate openElementAtLocation:actionInfo._interactionLocation];
+        handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
+            [assistant.delegate actionSheetAssistant:assistant openElementAtLocation:actionInfo._interactionLocation];
         };
         break;
     case _WKElementActionTypeSaveImage:
         title = WEB_UI_STRING_KEY("Save Image", "Save Image", "Title for Save Image action button");
-        handler = ^(id <WKActionSheetAssistantDelegate> delegate, _WKActivatedElementInfo *actionInfo) {
-            [delegate performAction:WebKit::SheetAction::SaveImage];
+        handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
+            [assistant.delegate actionSheetAssistant:assistant performAction:WebKit::SheetAction::SaveImage];
         };
         break;
     case _WKElementActionTypeAddToReadingList:
         title = WEB_UI_STRING("Add to Reading List", "Title for Add to Reading List action button");
-        handler = ^(id <WKActionSheetAssistantDelegate>, _WKActivatedElementInfo *actionInfo) {
+        handler = ^(WKActionSheetAssistant *, _WKActivatedElementInfo *actionInfo) {
             addToReadingList(actionInfo.URL, actionInfo.title);
         };
         break;
@@ -131,9 +131,9 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     return _title.get();
 }
 
-- (void)_runActionWithElementInfo:(_WKActivatedElementInfo *)info delegate:(id <WKActionSheetAssistantDelegate>)delegate
+- (void)_runActionWithElementInfo:(_WKActivatedElementInfo *)info forActionSheetAssistant:(WKActionSheetAssistant *)assistant
 {
-    _actionHandler(delegate, info);
+    _actionHandler(assistant, info);
 }
 
 @end

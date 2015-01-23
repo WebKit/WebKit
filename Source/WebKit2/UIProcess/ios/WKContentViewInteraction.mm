@@ -2717,33 +2717,38 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
 #pragma mark - Implementation of WKActionSheetAssistantDelegate.
 
-- (void)updatePositionInformation
+- (const WebKit::InteractionInformationAtPosition&)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+{
+    return _positionInformation;
+}
+
+- (void)updatePositionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
 {
     _hasValidPositionInformation = NO;
     _page->requestPositionInformation(_positionInformation.point);
 }
 
-- (void)performAction:(WebKit::SheetAction)action
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant performAction:(WebKit::SheetAction)action
 {
     _page->performActionOnElement((uint32_t)action);
 }
 
-- (void)openElementAtLocation:(CGPoint)location
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant openElementAtLocation:(CGPoint)location
 {
     [self _attemptClickAtLocation:location];
 }
 
-- (RetainPtr<NSArray>)actionsForElement:(_WKActivatedElementInfo *)element defaultActions:(RetainPtr<NSArray>)defaultActions
+- (RetainPtr<NSArray>)actionSheetAssistant:(WKActionSheetAssistant *)assistant decideActionsForElement:(_WKActivatedElementInfo *)element defaultActions:(RetainPtr<NSArray>)defaultActions
 {
     return _page->uiClient().actionsForElement(element, WTF::move(defaultActions));
 }
 
-- (void)startInteractionWithElement:(_WKActivatedElementInfo *)element
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant willStartInteractionWithElement:(_WKActivatedElementInfo *)element
 {
     _page->startInteractionWithElementAtPosition(_positionInformation.point);
 }
 
-- (void)stopInteraction
+- (void)actionSheetAssistantDidStopInteraction:(WKActionSheetAssistant *)assistant
 {
     _page->stopInteraction();
 }
