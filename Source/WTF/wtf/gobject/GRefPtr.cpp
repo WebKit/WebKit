@@ -35,7 +35,8 @@ template <> GHashTable* refGPtr(GHashTable* ptr)
 
 template <> void derefGPtr(GHashTable* ptr)
 {
-    g_hash_table_unref(ptr);
+    if (ptr)
+        g_hash_table_unref(ptr);
 }
 
 template <> GMainContext* refGPtr(GMainContext* ptr)
@@ -86,7 +87,8 @@ template <> GVariant* refGPtr(GVariant* ptr)
 
 template <> void derefGPtr(GVariant* ptr)
 {
-    g_variant_unref(ptr);
+    if (ptr)
+        g_variant_unref(ptr);
 }
 
 template <> GVariantBuilder* refGPtr(GVariantBuilder* ptr)
