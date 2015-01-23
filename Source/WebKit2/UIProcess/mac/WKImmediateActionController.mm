@@ -93,6 +93,18 @@ using namespace WebKit;
     [self _clearImmediateActionState];
 }
 
+- (void)_cancelImmediateActionIfNeeded
+{
+    if (!_immediateActionRecognizer.animationController)
+        [self _cancelImmediateAction];
+
+    if (_currentActionContext) {
+        _hasActivatedActionContext = YES;
+        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
+            [self _cancelImmediateAction];
+    }
+}
+
 - (void)_clearImmediateActionState
 {
     _page->clearTextIndicator();
@@ -117,6 +129,7 @@ using namespace WebKit;
     _userData = userData;
 
     [self _updateImmediateActionItem];
+    [self _cancelImmediateActionIfNeeded];
 }
 
 #pragma mark NSImmediateActionGestureRecognizerDelegate
@@ -154,18 +167,9 @@ using namespace WebKit;
         }
     }
 
-    if (_state != ImmediateActionState::Ready)
+    if (_state != ImmediateActionState::Ready) {
         [self _updateImmediateActionItem];
-
-    if (!_immediateActionRecognizer.animationController) {
-        [self _cancelImmediateAction];
-        return;
-    }
-
-    if (_currentActionContext) {
-        _hasActivatedActionContext = YES;
-        if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
-            [self _cancelImmediateAction];
+        [self _cancelImmediateActionIfNeeded];
     }
 }
 
