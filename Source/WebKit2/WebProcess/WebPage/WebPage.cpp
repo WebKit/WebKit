@@ -4547,6 +4547,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_firstLayerTreeTransactionIDAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingArea>(*m_drawingArea).nextTransactionID();
     m_userHasChangedPageScaleFactor = false;
     m_estimatedLatency = std::chrono::milliseconds(1000 / 60);
+    cancelPotentialTap();
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     WebProcess::shared().eventDispatcher().clearQueuedTouchEventsForPage(*this);

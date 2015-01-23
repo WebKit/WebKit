@@ -286,6 +286,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_dynamicViewportSizeUpdateWaitingForTarget(false)
     , m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit(false)
     , m_dynamicViewportSizeUpdateLayerTreeTransactionID(0)
+    , m_layerTreeTransactionIdAtLastTouchStart(0)
 #endif
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
@@ -1782,8 +1783,10 @@ void WebPageProxy::handleTouchEventSynchronously(const NativeWebTouchEvent& even
     if (!isValid())
         return;
 
-    if (event.type() == WebEvent::TouchStart)
+    if (event.type() == WebEvent::TouchStart) {
         m_isTrackingTouchEvents = shouldStartTrackingTouchEvents(event);
+        m_layerTreeTransactionIdAtLastTouchStart = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).lastCommittedLayerTreeTransactionID();
+    }
 
     if (!m_isTrackingTouchEvents)
         return;
@@ -4578,6 +4581,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_dynamicViewportSizeUpdateWaitingForTarget = false;
     m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = false;
     m_dynamicViewportSizeUpdateLayerTreeTransactionID = 0;
+    m_layerTreeTransactionIdAtLastTouchStart = 0;
 #endif
 
     CallbackBase::Error error;

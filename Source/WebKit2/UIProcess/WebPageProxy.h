@@ -896,6 +896,7 @@ public:
     void commitPotentialTap();
     void cancelPotentialTap();
     void tapHighlightAtPosition(const WebCore::FloatPoint&, uint64_t& requestID);
+    void handleTap(const WebCore::FloatPoint&);
 
     void inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint&);
     void inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&);
@@ -1422,6 +1423,7 @@ private:
     bool m_dynamicViewportSizeUpdateWaitingForTarget;
     bool m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit;
     uint64_t m_dynamicViewportSizeUpdateLayerTreeTransactionID;
+    uint64_t m_layerTreeTransactionIdAtLastTouchStart;
 #endif
 
 #if ENABLE(VIBRATION)
