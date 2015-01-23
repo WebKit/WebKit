@@ -291,6 +291,8 @@ public:
             parent()->clearDescendantsHaveSameLineHeightAndBaseline();
     }
 
+    void computeReplacedAndTextLineTopAndBottom(LayoutUnit& lineTop, LayoutUnit& lineBottom) const;
+    
 private:
     virtual bool isInlineFlowBox() const override final { return true; }
     void boxModelObject() const = delete;

@@ -1654,11 +1654,28 @@ void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, La
     bool hasUniformPageLogicalHeight = !flowThread || flowThread->regionsHaveUniformLogicalHeight();
     // If lineHeight is greater than pageLogicalHeight, but logicalVisualOverflow.height() still fits, we are
     // still going to add a strut, so that the visible overflow fits on a single page.
-    if (!pageLogicalHeight || (hasUniformPageLogicalHeight && logicalVisualOverflow.height() > pageLogicalHeight)
-        || !hasNextPage(logicalOffset))
+    if (!pageLogicalHeight || !hasNextPage(logicalOffset)) {
         // FIXME: In case the line aligns with the top of the page (or it's slightly shifted downwards) it will not be marked as the first line in the page.
         // From here, the fix is not straightforward because it's not easy to always determine when the current line is the first in the page.
         return;
+    }
+
+    if (hasUniformPageLogicalHeight && logicalVisualOverflow.height() > pageLogicalHeight) {
+        // We are so tall that we are bigger than a page. Before we give up and just leave the line where it is, try drilling into the
+        // line and computing a new height that excludes anything we consider "blank space". We will discard margins, descent, and even overflow. If we are
+        // able to fit with the blank space and overflow excluded, we will give the line its own page with the highest non-blank element being aligned with the
+        // top of the page.
+        // FIXME: We are still honoring gigantic margins, which does leave open the possibility of blank pages caused by this heuristic. It remains to be seen whether or not
+        // this will be a real-world issue. For now we don't try to deal with this problem.
+        logicalOffset = intMaxForLayoutUnit;
+        logicalBottom = intMinForLayoutUnit;
+        lineBox->computeReplacedAndTextLineTopAndBottom(logicalOffset, logicalBottom);
+        lineHeight = logicalBottom - logicalOffset;
+        if (logicalOffset == intMaxForLayoutUnit || lineHeight > pageLogicalHeight)
+            return; // Give up. We're genuinely too big even after excluding blank space and overflow.
+        pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
+    }
+    
     LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, ExcludePageBoundary);
     overflowsRegion = (lineHeight > remainingLogicalHeight);
 
