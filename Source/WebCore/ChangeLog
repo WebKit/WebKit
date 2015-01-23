@@ -1,3 +1,18 @@
+2015-01-22  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (174847): can't view NHK(Japan's national public broadcasting organization)’s news pages
+        https://bugs.webkit.org/show_bug.cgi?id=140794
+
+        Reviewed by Anders Carlsson.
+
+        If a document.open has been set, return it instead of always returning a new,
+        non-cached instance of jsHTMLDocumentPrototypeFunctionOpen.
+
+        Test: js/dom/document-overwrite-open.html
+
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::getOwnPropertySlot):
+
 2015-01-22  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Reset LineState when starting a new line.

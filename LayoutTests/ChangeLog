@@ -1,3 +1,13 @@
+2015-01-22  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (174847): can't view NHK(Japan's national public broadcasting organization)’s news pages
+        https://bugs.webkit.org/show_bug.cgi?id=140794
+
+        Reviewed by Anders Carlsson.
+
+        * js/dom/document-overwrite-open-expected.txt: Added.
+        * js/dom/document-overwrite-open.html: Added.
+
 2015-01-22  Roger Fong  <roger_fong@apple.com>
 
         [WebGL2] Create empty interface files for new WebGL2 objects.

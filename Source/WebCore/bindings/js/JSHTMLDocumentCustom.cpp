@@ -64,6 +64,9 @@ bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* exec, Prope
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (propertyName == "open") {
+        if (Base::getOwnPropertySlot(thisObject, exec, propertyName, slot))
+            return true;
+
         slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHTMLDocumentPrototypeFunctionOpen, 2>);
         return true;
     }
