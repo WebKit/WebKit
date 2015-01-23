@@ -1,3 +1,22 @@
+2015-01-23  Andreas Kling  <akling@apple.com>
+
+        Document should be a FontSelectorClient.
+        <https://webkit.org/b/140833>
+
+        Reviewed by Antti Koivisto.
+
+        Make Document a FontSelectorClient so it can listen to the invalidation
+        callbacks from FontSelector instead of having code in FontSelector that
+        calls out to Document on invalidation.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::dispatchInvalidationCallbacks):
+        * dom/Document.cpp:
+        (WebCore::Document::fontsNeedUpdate):
+        (WebCore::Document::fontSelector):
+        (WebCore::Document::clearStyleResolver):
+        * dom/Document.h:
+
 2015-01-23  Chris Dumez  <cdumez@apple.com>
 
         Leverage CSSValuePool's font family cache in CSSComputedStyleDeclaration
