@@ -1,3 +1,25 @@
+2015-01-22  Jer Noble  <jer.noble@apple.com>
+
+        [Mac][EME] Adopt changes to AVStreamSession class methods
+        https://bugs.webkit.org/show_bug.cgi?id=140778
+        rdar://problem/19458200
+
+        Reviewed by Eric Carlson.
+
+        AVStreamSession class methods have added a "storageDirectoryAtURL:" parameter so as to be able to
+        read and modify records stored at non-default storage locations.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::mediaKeysStorageDirectory): Implement client method by querying document and settings.
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * platform/graphics/CDMSession.h:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::releaseKeys): Check whether the AVStreamSession class responds to new selector before calling.
+        (WebCore::CDMSessionMediaSourceAVFObjC::update): Ditto.
+        (WebCore::CDMSessionMediaSourceAVFObjC::generateKeyReleaseMessage): Ditto.
+        (WebCore::CDMSessionMediaSourceAVFObjC::storagePath): Fetch the storage path from the client.
+
 2015-01-22  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (174847): can't view NHK(Japan's national public broadcasting organization)’s news pages

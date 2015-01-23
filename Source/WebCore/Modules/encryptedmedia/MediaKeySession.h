@@ -90,6 +90,7 @@ protected:
     // CDMSessionClient
     virtual void sendMessage(Uint8Array*, String destinationURL);
     virtual void sendError(MediaKeyErrorCode, unsigned long systemCode);
+    virtual String mediaKeysStorageDirectory() const;
 
     MediaKeys* m_keys;
     String m_keySystem;
