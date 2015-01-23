@@ -308,6 +308,7 @@ public:
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL, API::Object* userData = nullptr);
     void loadPlainTextString(const String&, API::Object* userData = nullptr);
     void loadWebArchiveData(API::Data*, API::Object* userData = nullptr);
+    void navigateToURLWithSimulatedClick(const String& url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint);
 
     void stopLoading();
     uint64_t reload(bool reloadFromOrigin);

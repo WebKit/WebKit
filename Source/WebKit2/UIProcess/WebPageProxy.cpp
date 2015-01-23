@@ -845,6 +845,18 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     m_process->responsivenessTimer()->start();
 }
 
+void WebPageProxy::navigateToURLWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)
+{
+    if (m_isClosed)
+        return;
+
+    if (!isValid())
+        reattachToWebProcess();
+
+    m_process->send(Messages::WebPage::NavigateToURLWithSimulatedClick(url, documentPoint, screenPoint), m_pageID);
+    m_process->responsivenessTimer()->start();
+}
+
 void WebPageProxy::stopLoading()
 {
     if (!isValid())

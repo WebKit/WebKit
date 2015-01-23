@@ -1,5 +1,36 @@
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r174072.
+
+    2014-09-27  Andy Estes  <aestes@apple.com>
+
+        [iOS] Add basic support for link navigation in WKPDFView
+        https://bugs.webkit.org/show_bug.cgi?id=137182
+
+        Reviewed by Tim Horton.
+
+        Teach WKPDFView to navigate to URLs when PDF link annotations are tapped.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::navigateToURLWithSimulatedClick): Sent Messages::WebPage::NavigateToURLWithSimulatedClick.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKPDFView.h:
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _clearPages]): Removed self as the UIPDFAnnotationControllerDelegate.
+        (-[WKPDFView _revalidateViews]): Added self as the UIPDFAnnotationControllerDelegate.
+        (-[WKPDFView annotation:wasTouchedAtPoint:controller:]): Retrieved the URL from the touched annotation,
+        computed the touched point relative to the WKPDFView and to the screen, and called
+        navigateToURLWithSimulatedClick() after a 200 ms delay in order to show a soon-to-be-added tap highlight
+        (this value matches the delay in UIWebPDFView).
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToURLWithSimulatedClick): Created a fake single-click MouseEvent and called
+        FrameLoader::urlSelected(). Creating a mouse event ensures that the navigation appears as a
+        NavigationTypeLinkClicked in navigation policy delegates.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
         Merge r172966.
 
     2014-08-26  Tim Horton  <timothy_horton@apple.com>
