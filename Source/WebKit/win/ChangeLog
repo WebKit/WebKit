@@ -1,3 +1,14 @@
+2015-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Teach WebKit to provide IAccessible2 'get_language'
+        https://bugs.webkit.org/show_bug.cgi?id=140839
+
+        Reviewed by Dean Jackson.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_locale): Wrap the Webore::AccessibleObject::language
+        result in an IA2Locale structure to statisfy the IAccessible2 specification.
+
 2015-01-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test fix after r178965.

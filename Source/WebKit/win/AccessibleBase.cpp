@@ -311,8 +311,15 @@ HRESULT AccessibleBase::get_indexInParent(long* indexInParent)
 
 HRESULT AccessibleBase::get_locale(IA2Locale* locale)
 {
-    notImplemented();
-    return E_NOTIMPL;
+    if (!locale)
+        return E_POINTER;
+
+    if (!m_object)
+        return E_FAIL;
+
+    locale->language = BString(m_object->language().createCFString().get()).release();
+
+    return S_OK;
 }
 
 HRESULT AccessibleBase::get_attributes(BSTR* attributes)

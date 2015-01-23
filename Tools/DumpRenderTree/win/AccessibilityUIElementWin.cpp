@@ -374,7 +374,18 @@ JSStringRef AccessibilityUIElement::stringValue()
 
 JSStringRef AccessibilityUIElement::language()
 {
-    return JSStringCreateWithCharacters(0, 0);
+    if (!m_element)
+        return JSStringCreateWithBSTR(_bstr_t(L"AXLanguage: "));
+
+    COMPtr<IAccessibleComparable> accessible2Element = comparableObject(m_element.get());
+    if (!accessible2Element)
+        return JSStringCreateWithBSTR(_bstr_t(L"AXLanguage: "));
+
+    IA2Locale locale;
+    if (FAILED(accessible2Element->get_locale(&locale)))
+        return JSStringCreateWithBSTR(_bstr_t(L"AXLanguage: "));
+
+    return JSStringCreateWithBSTR(_bstr_t(L"AXLanguage: ") + _bstr_t(locale.language, false));
 }
 
 JSStringRef AccessibilityUIElement::helpText() const
