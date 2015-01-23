@@ -1,3 +1,21 @@
+2015-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update DRT Accessibility implementation to better match Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=140830
+
+        Reviewed by Dean Jackson.
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::titleUIElement):
+        (AccessibilityUIElement::parentElement):
+        (convertToDRTLabel):
+        (AccessibilityUIElement::role):
+        (AccessibilityUIElement::title):
+        (AccessibilityUIElement::description):
+        (AccessibilityUIElement::stringValue):
+        (AccessibilityUIElement::helpText):
+        (AccessibilityUIElement::isFocused):
+
 2015-01-23  Sergio Villar Senin  <svillar@igalia.com>
 
         REGRESSION: run-perf-tests --profiler= seems to have broken
