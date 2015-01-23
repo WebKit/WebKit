@@ -326,8 +326,8 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double fini
             didRetrieveCacheEntry(WTF::move(m_cacheEntryForValidation));
             return;
         }
-
-        bool hasCacheableRedirect = WebCore::redirectChainAllowsReuse(m_redirectChainCacheStatus);
+        bool allowStale = originalRequest().cachePolicy() >= ReturnCacheDataElseLoad;
+        bool hasCacheableRedirect = WebCore::redirectChainAllowsReuse(m_redirectChainCacheStatus, allowStale ? WebCore::ReuseExpiredRedirection : WebCore::DoNotReuseExpiredRedirection);
         if (hasCacheableRedirect && m_redirectChainCacheStatus.status == RedirectChainCacheStatus::CachedRedirection) {
             // FIXME: Cache the actual redirects instead of the end result.
             double now = currentTime();

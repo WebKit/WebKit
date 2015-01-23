@@ -1,3 +1,10 @@
+2015-01-22  Antti Koivisto  <antti@apple.com>
+
+        Fix ENABLE(NETWORK_CACHE) build
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+
 2015-01-22  Timothy Horton  <timothy_horton@apple.com>
 
         UserData decoding of WKTypeRefWrapper always fails
