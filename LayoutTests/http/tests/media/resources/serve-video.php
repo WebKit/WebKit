@@ -7,7 +7,7 @@
 
     // Set variables
     $settings = array(
-        "chunkSize" => 1024 * 256,
+        "chunkSize" => array_key_exists("chunkSize", $_GET) ? $_GET["chunkSize"] : 1024 * 256,
         "databaseFile" => "metadata.db",
         "httpStatus" => "500 Internal Server Error",
         "mediaDirectory" => array_key_exists("name", $_GET) ? dirname($_GET["name"]) : "",
@@ -18,6 +18,8 @@
         "setContentLength" => array_key_exists("content-length", $_GET) ? $_GET["content-length"] : "yes",
         "setIcyData" => array_key_exists("icy-data", $_GET) ? $_GET["icy-data"] : "no",
         "supportRanges" => array_key_exists("ranges", $_GET) ? $_GET["ranges"] : "yes",
+        "stallOffset" => array_key_exists("stallOffset", $_GET) ? $_GET["stallOffset"] : 0,
+        "stallDuration" => array_key_exists("stallDuration", $_GET) ? $_GET["stallDuration"] : 2,
     );
 
     // 500 on errors
@@ -25,10 +27,10 @@
         trigger_error("You have not specified a 'name' parameter.", E_USER_WARNING);
         goto answering;
     }
-    $fileName = $_GET["name"];
 
+    $fileName = $_GET["name"];
     if (!file_exists($fileName)) {
-        trigger_error("The file to stream specified at 'name' doesn't exist.", E_USER_WARNING);
+        trigger_error("The file '" . $fileName . "' doesn't exist.", E_USER_WARNING);
         goto answering;
     }
     $settings["databaseFile"] = $settings["mediaDirectory"] . "/" . $settings["databaseFile"];
@@ -67,6 +69,11 @@
 
     // There is everything needed to send the media file
     $fileSize = filesize($fileName);
+    if ($settings["stallOffset"] && ($settings["stallOffset"] > $fileSize)) {
+        trigger_error("The 'stallOffset' offset parameter is greater than file size (" . $fileSize . ").", E_USER_WARNING);
+        goto answering;
+    }
+
     $start = 0;
     $end = $fileSize - 1;
     if ($settings["supportRanges"] != "no" && array_key_exists("HTTP_RANGE", $_SERVER))
@@ -107,7 +114,7 @@ answering:
     }
 
     header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-    header("Pragma: no-cache");
+    header("Cache-Control: no-cache");
     header("Etag: " . '"' . $fileSize . "-" . filemtime($fileName) . '"');
     if ($settings["setIcyData"] == "yes") {
         $bitRate = ceil($playFiles[$i]["bitRate"] / 1000);
@@ -134,12 +141,24 @@ answering:
     $fn = fopen($fileName, "rb");
     fseek($fn, $offset, 0);
 
+    if ($settings["stallDuration"])
+        set_time_limit(0);
+
     while (!feof($fn) && $offset <= $end && connection_status() == 0) {
         $readSize = min($settings["chunkSize"], ($end - $offset) + 1);
+        $stallNow = false;
+        if ($settings["stallOffset"] && $settings["stallOffset"] >= $offset && $settings["stallOffset"] < $offset + $readSize) {
+            $readSize = min($settings["chunkSize"], $settings["stallOffset"] - $offset);
+            $stallNow = true;
+        }
+
         $buffer = fread($fn, $readSize);
         print($buffer);
         flush();
         $offset += $settings["chunkSize"];
+        
+        if ($stallNow)
+            sleep($settings["stallDuration"]);
     }
     fclose($fn);
 

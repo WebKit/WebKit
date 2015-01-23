@@ -1,3 +1,13 @@
+2015-01-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Create a "load and stall" cgi that support byte ranges.
+        https://bugs.webkit.org/show_bug.cgi?id=140628
+
+        Reviewed by Jer Noble.
+
+        * http/tests/media/resources/serve-video.php: Add support for "stallOffset", "stallDuration", 
+            and "chunkSize" parameters.
+
 2015-01-23  Alexey Proskuryakov  <ap@apple.com>
 
         svg-resource-fragment-identifier-img-src.html is a hidpi reftest, but its -expected.html
