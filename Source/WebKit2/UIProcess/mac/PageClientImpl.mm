@@ -429,6 +429,13 @@ void PageClientImpl::notifyInputContextAboutDiscardedComposition()
     [m_wkView _notifyInputContextAboutDiscardedComposition];
 }
 
+#if PLATFORM(MAC) && !USE(ASYNC_NSTEXTINPUTCLIENT)
+void PageClientImpl::notifyApplicationAboutInputContextChange()
+{
+    [NSApp updateWindows];
+}
+#endif
+
 FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)
 {
     return [m_wkView _convertToDeviceSpace:rect];
