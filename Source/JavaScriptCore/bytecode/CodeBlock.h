@@ -324,12 +324,12 @@ public:
 
     void setScopeRegister(VirtualRegister scopeRegister)
     {
+        ASSERT(scopeRegister.isLocal() || !scopeRegister.isValid());
         m_scopeRegister = scopeRegister;
     }
 
     VirtualRegister scopeRegister() const
     {
-        ASSERT(m_scopeRegister.isValid());
         return m_scopeRegister;
     }
 

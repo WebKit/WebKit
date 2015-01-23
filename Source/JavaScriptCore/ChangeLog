@@ -1,3 +1,28 @@
+2015-01-23  Michael Saboff  <msaboff@apple.com>
+
+        Immediate crash when setting JS breakpoint
+        https://bugs.webkit.org/show_bug.cgi?id=140811
+
+        Reviewed by Mark Lam.
+
+        When the DFG stack layout phase doesn't allocate a register for the scope register,
+        it incorrectly sets the scope register in the code block to a bad value, one with
+        an offset of 0.  Changed it so that we set the code block's scope register to the 
+        invalid VirtualRegister instead.
+
+        No tests needed as adding the ASSERT in setScopeRegister() was used to find the bug.
+        We crash with that ASSERT in testapi and likely many other tests as well.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setScopeRegister):
+        (JSC::CodeBlock::scopeRegister):
+        Added ASSERTs to catch any future improper setting of the code block's scope register.
+
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+
 2015-01-22  Mark Hahnenberg  <mhahnenb@gmail.com>
 
         EdenCollections unnecessarily visit SmallStrings

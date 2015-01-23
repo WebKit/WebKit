@@ -169,8 +169,8 @@ public:
         }
         
         if (codeBlock()->scopeRegister().isValid()) {
-            codeBlock()->setScopeRegister(
-                virtualRegisterForLocal(allocation[codeBlock()->scopeRegister().toLocal()]));
+            unsigned scopeRegisterAllocation = allocation[codeBlock()->scopeRegister().toLocal()];
+            codeBlock()->setScopeRegister(scopeRegisterAllocation == UINT_MAX ? VirtualRegister() : virtualRegisterForLocal(scopeRegisterAllocation));
         }
 
         for (unsigned i = m_graph.m_inlineVariableData.size(); i--;) {
