@@ -1,3 +1,27 @@
+2015-01-23  Dana Burkart  <dburkart@apple.com>
+
+        Merged r174489. <rdar://problem/19452129>
+
+    2014-10-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Inline ruby does not get justified correctly
+            https://bugs.webkit.org/show_bug.cgi?id=137421
+
+            Reviewed by Dave Hyatt.
+
+            Test that ruby gets spaces inside the ruby base, and that hit testing the
+            ruby base gives us correct answers.
+
+            * fast/ruby/ruby-justification-expected.html: Added.
+            * fast/ruby/ruby-justification-hittest-expected.txt: Added.
+            * fast/ruby/ruby-justification-hittest.html: Added.
+            * fast/ruby/ruby-justification.html: Added.
+            * platform/mac/fast/ruby/bopomofo-rl-expected.txt: Ruby text gets the CSS
+            property text-align: justify, which worked prior to this patch. However, this
+            patch now justifies ruby bases, so now if there is text that is both a ruby
+            base and ruby text (such as ruby in ruby) it correctly gets justified. This
+            test does such, and therefore needs to be rebaselined.
+
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r175264. rdar://problem/19451378
