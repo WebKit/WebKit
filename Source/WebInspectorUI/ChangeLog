@@ -1,3 +1,25 @@
+2015-01-22  Jonathan Wells  <jonowells@apple.com>
+
+        Web Inspector: ResourceContentView.js incorrectly contains call to WebInspector.UIString with a variable parameter
+        https://bugs.webkit.org/show_bug.cgi?id=140268
+
+        Reviewed by Timothy Hatcher.
+
+        UIString no longer incorrectly used around variables. Drive-by fixes to prototype inheritance style.
+        Use of Promises corrected such that requesting content for a resource resolves rather than rejects if
+        a resource can't be found or has another error that isn't a web inspector error.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+        * UserInterface/Models/Resource.js: Change reject to resolve.
+        * UserInterface/Models/Script.js:
+        (WebInspector.Script.prototype.requestContentFromBackend): Proper use of Error object.
+        * UserInterface/Models/SourceCode.js: Use correct inheritance style.
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView.prototype._contentAvailable): Handle error now that promise resolves.
+        (WebInspector.ResourceContentView.prototype._contentError): Remove incorrect use of UIString.
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._contentAvailable): Handle error now that promise resolves.
+
 2015-01-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Expected gutter highlight when selecting console input line, just like output line

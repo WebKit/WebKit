@@ -58,6 +58,7 @@ WebInspector.ResourceContentView.StyleClassName = "resource";
 
 WebInspector.ResourceContentView.prototype = {
     constructor: WebInspector.ResourceContentView,
+    __proto__: WebInspector.ContentView.prototype,
 
     // Public
 
@@ -88,6 +89,11 @@ WebInspector.ResourceContentView.prototype = {
 
     _contentAvailable: function(parameters)
     {
+        if (parameters.error) {
+            this._contentError({ message: parameters.error });
+            return;
+        }
+
         // Content is ready to show, call the public method now.
         this.contentAvailable(parameters.content, parameters.base64Encoded);
     },
@@ -99,7 +105,7 @@ WebInspector.ResourceContentView.prototype = {
             return;
 
         this.element.removeChildren();
-        this.element.appendChild(WebInspector.createMessageTextView(WebInspector.UIString(error.message), true));
+        this.element.appendChild(WebInspector.createMessageTextView(error.message, true));
     },
 
     _issueWasAdded: function(event)
@@ -120,5 +126,3 @@ WebInspector.ResourceContentView.prototype = {
         WebInspector.handlePossibleLinkClick(event, this.resource.parentFrame);
     }
 };
-
-WebInspector.ResourceContentView.prototype.__proto__ = WebInspector.ContentView.prototype;

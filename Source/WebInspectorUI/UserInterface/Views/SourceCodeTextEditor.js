@@ -510,6 +510,10 @@ WebInspector.SourceCodeTextEditor.prototype = {
 
     _contentAvailable: function(parameters)
     {
+        // Return if resource is not available.
+        if (parameters.error)
+            return;
+
         var sourceCode = parameters.sourceCode;
         var content = parameters.content;
         var base64Encoded = parameters.base64Encoded;

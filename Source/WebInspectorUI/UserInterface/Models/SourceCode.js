@@ -47,6 +47,7 @@ WebInspector.SourceCode.Event = {
 
 WebInspector.SourceCode.prototype = {
     constructor: WebInspector.SourceCode,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 
@@ -206,5 +207,3 @@ WebInspector.SourceCode.prototype = {
         });
     }
 };
-
-WebInspector.SourceCode.prototype.__proto__ = WebInspector.Object.prototype;

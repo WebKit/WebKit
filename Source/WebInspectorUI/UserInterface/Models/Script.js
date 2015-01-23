@@ -58,6 +58,7 @@ WebInspector.Script._nextUniqueDisplayNameNumber = 1;
 
 WebInspector.Script.prototype = {
     constructor: WebInspector.Script,
+    __proto__: WebInspector.SourceCode.prototype,
 
     // Public
 
@@ -110,12 +111,12 @@ WebInspector.Script.prototype = {
         return this._scriptSyntaxTree;
     },
 
-    requestContentFromBackend: function(callback)
+    requestContentFromBackend: function()
     {
         if (!this._id) {
             // There is no identifier to request content with. Return false to cause the
             // pending callbacks to get null content.
-            return Promise.reject({ message: "There is no identifier to request content with." });
+            return Promise.reject(new Error("There is no identifier to request content with."));
         }
 
         return DebuggerAgent.getScriptSource.promise(this._id);
@@ -212,5 +213,3 @@ WebInspector.Script.prototype = {
         this._scriptSyntaxTree = new WebInspector.ScriptSyntaxTree(sourceText, this);
     }
 };
-
-WebInspector.Script.prototype.__proto__ = WebInspector.SourceCode.prototype;

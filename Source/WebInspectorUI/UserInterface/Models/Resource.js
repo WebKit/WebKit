@@ -186,6 +186,7 @@ WebInspector.Resource.displayNameForType = function(type, plural)
 
 WebInspector.Resource.prototype = {
     constructor: WebInspector.Resource,
+    __proto__: WebInspector.SourceCode.prototype,
 
     // Public
 
@@ -679,7 +680,7 @@ WebInspector.Resource.prototype = {
             return WebInspector.SourceCode.prototype.requestContent.call(this);
 
         if (this._failed)
-            return Promise.reject(new Error("An error occurred trying to load the resource."));
+            return Promise.resolve({ error: WebInspector.UIString("An error occurred trying to load the resource.") });
 
         if (!this._finishThenRequestContentPromise) {
             var listener = new WebInspector.EventListener(this, true);
@@ -714,5 +715,3 @@ WebInspector.Resource.prototype = {
         cookie[WebInspector.Resource.MainResourceCookieKey] = this.isMainResource();
     }
 };
-
-WebInspector.Resource.prototype.__proto__ = WebInspector.SourceCode.prototype;
