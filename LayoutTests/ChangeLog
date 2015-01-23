@@ -1,3 +1,14 @@
+2015-01-23  Alexey Proskuryakov  <ap@apple.com>
+
+        svg-resource-fragment-identifier-img-src.html is a hidpi reftest, but its -expected.html
+        counterpart isn't hidpi
+        https://bugs.webkit.org/show_bug.cgi?id=140815
+
+        Reviewed by Simon Fraser.
+
+        * svg/css/svg-resource-fragment-identifier-img-src-expected.html: Make the expectation
+        match its test.
+
 2015-01-23  Chris Dumez  <cdumez@apple.com>
 
         Rewrite the fast/css/css2-system-fonts.html test to be more useful on all platforms
