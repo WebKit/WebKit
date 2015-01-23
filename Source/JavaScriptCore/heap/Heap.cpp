@@ -547,6 +547,7 @@ void Heap::markRoots(double gcStartTime)
 
 void Heap::copyBackingStores()
 {
+    GCPHASE(CopyBackingStores);
     if (m_operationInProgress == EdenCollection)
         m_storageSpace.startedCopying<EdenCollection>();
     else {
@@ -611,11 +612,12 @@ void Heap::visitExternalRememberedSet()
 void Heap::visitSmallStrings()
 {
     GCPHASE(VisitSmallStrings);
-    m_vm->smallStrings.visitStrongReferences(m_slotVisitor);
+    if (!m_vm->smallStrings.needsToBeVisited(m_operationInProgress))
+        return;
 
+    m_vm->smallStrings.visitStrongReferences(m_slotVisitor);
     if (Options::logGC() == GCLogging::Verbose)
         dataLog("Small strings:\n", m_slotVisitor);
-
     m_slotVisitor.donateAndDrain();
 }
 

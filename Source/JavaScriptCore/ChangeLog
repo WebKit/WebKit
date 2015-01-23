@@ -1,3 +1,24 @@
+2015-01-22  Mark Hahnenberg  <mhahnenb@gmail.com>
+
+        EdenCollections unnecessarily visit SmallStrings
+        https://bugs.webkit.org/show_bug.cgi?id=140762
+
+        Reviewed by Geoffrey Garen.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::copyBackingStores): Also added a GCPhase for copying
+        backing stores, which is a significant portion of garbage collection.
+        (JSC::Heap::visitSmallStrings): Check to see if we need to visit
+        SmallStrings based on the collection type.
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::SmallStrings):
+        (JSC::SmallStrings::visitStrongReferences): Set the fact that we have
+        visited the SmallStrings since the last modification.
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::needsToBeVisited): If we're doing a
+        FullCollection, we need to visit. Otherwise, it depends on whether
+        we've been visited since the last modification/allocation.
+
 2015-01-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a build flag for ES6 class syntax
