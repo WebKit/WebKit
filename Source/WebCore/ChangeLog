@@ -1,3 +1,13 @@
+2015-01-23  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        [GTK] Fix debug build after r178940
+        https://bugs.webkit.org/show_bug.cgi?id=140814
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/opentype/OpenTypeVerticalData.cpp:
+        (WebCore::OpenTypeVerticalData::substituteWithVerticalGlyphs):
+
 2015-01-22  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Move leading whitespace handling from removeTrailingWhitespace() to initializeNewLine().
