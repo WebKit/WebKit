@@ -1,3 +1,18 @@
+2015-01-22  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] No plugin content on some sites.
+        https://bugs.webkit.org/show_bug.cgi?id=140780
+
+        Reviewed by Anders Carlsson.
+
+        Return script instance from ScriptController::createScriptInstanceForWidget(),
+        instead of always returning null.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::bindingInstance):
+
 2015-01-22  Jer Noble  <jer.noble@apple.com>
 
         [Mac][EME] Adopt changes to AVStreamSession class methods

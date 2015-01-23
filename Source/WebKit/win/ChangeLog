@@ -1,3 +1,14 @@
+2015-01-22  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] No plugin content on some sites.
+        https://bugs.webkit.org/show_bug.cgi?id=140780
+
+        Reviewed by Anders Carlsson.
+
+        Add override modifier to bindingInstance method.
+
+        * Plugins/PluginView.h:
+
 2015-01-22  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Expose missing editing features through WebView interface

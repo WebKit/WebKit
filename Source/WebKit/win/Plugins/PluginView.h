@@ -129,7 +129,7 @@ namespace WebCore {
 #if ENABLE(NETSCAPE_PLUGIN_API)
         NPObject* npObject();
 #endif
-        PassRefPtr<JSC::Bindings::Instance> bindingInstance();
+        virtual PassRefPtr<JSC::Bindings::Instance> bindingInstance() override;
 
         PluginStatus status() const { return m_status; }
 

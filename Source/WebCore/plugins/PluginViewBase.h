@@ -26,6 +26,7 @@
 #define PluginWidget_h
 
 #include "AudioHardwareListener.h"
+#include "BridgeJSC.h"
 #include "PlatformLayer.h"
 #include "ScrollTypes.h"
 #include "Widget.h"
@@ -78,6 +79,8 @@ public:
     virtual AudioHardwareActivityType audioHardwareActivity() const { return AudioHardwareActivityType::Unknown; }
 
     virtual void setJavaScriptPaused(bool) { }
+
+    virtual PassRefPtr<JSC::Bindings::Instance> bindingInstance() { return nullptr; }
 
 protected:
     explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
