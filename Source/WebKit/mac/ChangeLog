@@ -1,5 +1,25 @@
 2015-01-23  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r178676. rdar://problem/19489593
+
+    2015-01-19  Beth Dakin  <bdakin@apple.com>
+
+            REGRESSION (r178290): Yellow highlight from context menu Lookup in Dictionary is
+            offset by flipped-ness
+            https://bugs.webkit.org/show_bug.cgi?id=140643
+            -and corresponding-
+            rdar://problem/19489593
+
+            Reviewed by Tim Horton.
+
+            We universally flipped because we assumed that the root view was flipped and the
+            WebView was not. However, in Dictionary, the WebView is flipped! So this patch
+            fixes that assumption by checking the WebView’s flipped-ness.
+            * WebView/WebView.mm:
+            (-[WebView _convertRectFromRootView:]):
+
+2015-01-23  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r178605. rdar://problem/19490114
 
     2015-01-16  Beth Dakin  <bdakin@apple.com>
