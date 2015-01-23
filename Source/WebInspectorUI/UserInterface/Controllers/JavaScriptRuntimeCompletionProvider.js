@@ -104,7 +104,7 @@ WebInspector.JavaScriptRuntimeCompletionProvider.prototype = {
         if (!base && activeCallFrame && !this._alwaysEvaluateInWindowContext)
             activeCallFrame.collectScopeChainVariableNames(receivedPropertyNames.bind(this));
         else
-            WebInspector.runtimeManager.evaluateInInspectedWindow(base, "completion", true, true, false, evaluated.bind(this));
+            WebInspector.runtimeManager.evaluateInInspectedWindow(base, "completion", true, true, false, false, evaluated.bind(this));
 
         function updateLastPropertyNames(propertyNames)
         {
@@ -155,7 +155,7 @@ WebInspector.JavaScriptRuntimeCompletionProvider.prototype = {
             if (result.type === "object" || result.type === "function")
                 result.callFunctionJSON(getCompletions, undefined, receivedPropertyNames.bind(this));
             else if (result.type === "string" || result.type === "number" || result.type === "boolean")
-                WebInspector.runtimeManager.evaluateInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, receivedPropertyNamesFromEvaluate.bind(this));
+                WebInspector.runtimeManager.evaluateInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, false, receivedPropertyNamesFromEvaluate.bind(this));
             else
                 console.error("Unknown result type: " + result.type);
         }

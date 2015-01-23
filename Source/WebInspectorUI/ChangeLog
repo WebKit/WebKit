@@ -1,3 +1,69 @@
+2015-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Object Previews in the Console
+        https://bugs.webkit.org/show_bug.cgi?id=129204
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptTextCommitted):
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (get WebInspector.JavaScriptRuntimeCompletionProvider.prototype.):
+        Update RuntimeManager callsites that do not need object previews.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WebInspector.RuntimeManager.prototype.evalCallback):
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+        Update the main evaluate method to include a boolean parameter for
+        object previews. Most callers do not need them. Also, since previews
+        were not available on iOS 6, switch to invoke, to conditionally
+        include the command parameter.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.prototype.get preview):
+        Store the preview from the payload.
+
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl.prototype._format):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameter):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsNode):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsString):
+        (WebInspector.ConsoleMessageImpl.prototype._formatAsArrayEntry):
+        Pass an explicit false for most formatters to not use a preview if available.
+        
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsArray):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsObject):
+        Currently only object types are previewed. Though we request previews
+        for arrays, we don't use the preview because we show a better preview
+        by just immediately requesting for a full non-preview property list.
+        
+        (WebInspector.ConsoleMessageImpl.prototype._appendObjectPreview):
+        Quickly output an object preview into the title element. The format
+        is "ClassName {prop: value...}". Elide the class name if it is "Object".
+        Also skip over certain preview properties that may not be useful
+        at a glance (like constructor, or accessors without values).
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-object-preview):
+        (.console-formatted-array .console-object-preview):
+        (.console-object-preview-lossless):
+        (.expanded .console-object-preview):
+        Show lossy previews in italics.
+        Show lossless previews and array previews without italics.
+        Do not show the class name in the preview in italics when expanded.
+
+        (.console-object-preview .name):
+        Give preview property names the same color as ObjectPropertiesSection property names.
+        
+        (.expanded .console-object-preview > .console-object-preview-body):
+        When expanding an object, hide the preview.
+
+        (.console-object-preview > .console-object-preview-name.console-object-preview-name-Object):
+        (.expanded .console-object-preview > .console-object-preview-name.console-object-preview-name-Object):
+        For "Object" previews, hide the name "Object" when not expanded, and show it when expanded.
+
 2015-01-23  Saam Barati  <saambarati1@gmail.com>
 
         Web Inspector: Disable *Annotators on minified files that aren't pretty printed

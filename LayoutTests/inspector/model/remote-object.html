@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+    var currentStepIndex = 0;
+    var steps = [
+    // Special:
+
+        // Null / undefined
+        {expression: "null"},
+        {expression: "undefined"},
+
+    // Primatives:
+
+        // Boolean
+        {expression: "true"},
+        {expression: "false"},
+
+        // Number
+        {expression: "0"},
+        {expression: "-0"},
+        {expression: "1"},
+        {expression: "-1"},
+        {expression: "1.234"},
+        {expression: "-1.234"},
+        {expression: "1e3"},
+        {expression: "Number.MAX_VALUE"},
+        {expression: "Number.MIN_VALUE"},
+        {expression: "NaN"},
+        {expression: "Infinity"},
+
+        // Strings
+        {expression: "''"},
+        {expression: "'\"'"}, // a single quote
+        {expression: "\"'\""}, // a double quote
+        {expression: "'string'"},
+        {expression: "'Unicode…'"},
+        {expression: "'I wish I had something to put here.'"},
+
+        // Function
+        {expression: "(function(){})"},
+        {expression: "function foo(){}; foo"},
+        {expression: "function myFunction(a, b) { console.log(a, b); }; myFunction"},
+        {expression: "Array.prototype.push"}, // native (ECMAScript)
+        {expression: "window.setTimeout"}, // native (DOM)
+        {expression: "Object.getOwnPropertyDescriptor({ get getter() { return 1 } }, 'getter').get"}, // getter
+        {expression: "Object.getOwnPropertyDescriptor({ set setter(v) { console.log(v); } }, 'setter').set"}, // setter
+
+    // Objects:
+
+        // Date
+        {expression: "new Date(99)", browserOnly: true},
+        {expression: "new Date(1421903245871)", browserOnly: true},
+
+        // Regexp
+        {expression: "/ /"},
+        {expression: "/(?:)/"},
+        {expression: "/^r(e)g[e]{1,}x+/"},
+        {expression: "/^r(e)g[e]{1,}x+/ig"},
+        {expression: "new RegExp('')"},
+        {expression: "new RegExp('test', 'i')"},
+
+        // Array
+        {expression: "[]"},
+        {expression: "[1, 2]"},
+        {expression: "[[1],[2],[3]]"},
+        {expression: "[true, 1, 1.234, 'string', /regex/]"},
+        {expression: "arr = []; arr.length = 100; arr"}, // 100 empty elements
+        {expression: "arr = []; arr.length = 100; arr.fill(1)"}, // 100 full elements
+        {expression: "arr = []; arr.length = 100; arr[10] = 1; arr"}, // sparse
+
+        // Array-like (Arguments, TypedArrays)
+        {expression: "a = null; (function() { a = arguments; })(1, '2', /3/); a"},
+        {expression: "new Int32Array(new ArrayBuffer(16))"},
+        {expression: "var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; i < intArray.length; ++i) intArray[i] = i; intArray"},
+
+        // Object
+        {expression: "({})"},
+        {expression: "({a: 1})"},
+        {expression: "({a: 1, b: \"string\", c :/regex/})"},
+        {expression: "({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){}})"},
+        {expression: "function Foo() {}; new Foo"},
+        {expression: "function Bar() { this._x = 5 }; Bar.prototype = {constructor: Bar, get x() {return this._x;}}; new Bar"},
+        {expression: "window.loadEvent"}, // window.loadEvent is set inside of <body onload="..."> below.
+        {expression: "new ArrayBuffer(16)"},
+        {expression: "new DataView(new ArrayBuffer(16))"},
+
+        // Node
+        {expression: "document.body"},
+        {expression: "div = document.createElement('div'); div.className = 'foo bar'; div"},
+        {expression: "span = document.createElement('span'); span.id = 'foo'; span"},
+        {expression: "document.createTextNode('text')"},
+
+        // Node Collections (NodeLists / Collections)
+        {expression: "document.all", browserOnly: true}, // HTMLAllCollection
+        {expression: "document.head.children"}, // HTMLCollection
+        {expression: "document.getElementsByClassName('my-test')"}, // NodeList
+        {expression: "document.querySelectorAll('.my-test')"}, // Non-Live NodeList
+
+        // Error
+        {expression: "error = null; try { [].x.x; } catch (e) { error = e; }; error"},
+        {expression: "error = null; try { eval('if()'); } catch (e) { error = e; }; error"},
+        {expression: "error = null; try { document.createTextNode('').splitText(100); } catch (e) { error = e; }; error"},
+
+    // Improveable:
+
+        // Sealed / Frozen objects.
+        {expression: "Object.seal({})"},
+        {expression: "Object.freeze({})"},
+
+        // Map / WeakMap
+        {expression: "new Map"},
+        {expression: "map = new Map; map.set(1, 2); map.set('key', 'value'); map"},
+        {expression: "map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]); map"},
+        {expression: "map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map"},
+        {expression: "map = new WeakMap; map.set({id:1}, [1,2]); map"},
+
+        // Set
+        {expression: "new Set"},
+        {expression: "set = new Set; set.add(1); set.add(2); set.add('key'); set"},
+        {expression: "set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]); set"},
+        {expression: "set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set"},
+
+        // Promise
+        {expression: "new Promise(function(){})"},
+        {expression: "Promise.reject()"},
+        {expression: "Promise.resolve()"},
+    ];
+
+    if (!window.WebInspector) {
+        window.steps = steps;
+        return;
+    }
+
+    function remoteObjectJSONFilter(key, value)
+    {
+        if (key === "_objectId")
+            return "<filtered>";
+
+        if (key === "_hasChildren")
+            return undefined;
+
+        return value;
+    }
+
+    function runNextStep() {
+        if (currentStepIndex >= steps.length) {
+            InspectorTest.completeTest();
+            return;
+        }
+
+        var step = steps[currentStepIndex++];
+        if (step.browserOnly) {
+            runNextStep();
+            return;
+        }
+
+        InspectorTest.log("");
+        InspectorTest.log("-----------------------------------------------------");
+        InspectorTest.log("EXPRESSION: " + step.expression);
+
+        WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, "test", false, true, false, true, function(remoteObject, wasThrown) {
+            InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
+            InspectorTest.log(JSON.stringify(remoteObject, remoteObjectJSONFilter, "  "));
+            runNextStep();
+        });
+    }
+
+    runNextStep();
+}
+
+function runInBrowserTest()
+{
+    if (window.testRunner)
+        return;
+ 
+    test(); // get steps.
+
+    for (var step of steps) {
+        console.info("EXPRESSION", step.expression);
+        console.log(eval(step.expression));
+    }
+}
+</script>
+</head>
+<body onload="window.loadEvent = event; runTest(); runInBrowserTest();">
+    <p class="my-test"></p><p class="my-test"></p><p class="my-test"></p>
+</body>
+</html>

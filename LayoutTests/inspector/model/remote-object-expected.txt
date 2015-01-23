@@ -1,0 +1,2062 @@
+
+-----------------------------------------------------
+EXPRESSION: null
+{
+  "_type": "object",
+  "_subtype": "null",
+  "_description": "null",
+  "value": null
+}
+
+-----------------------------------------------------
+EXPRESSION: undefined
+{
+  "_type": "undefined",
+  "_description": "undefined"
+}
+
+-----------------------------------------------------
+EXPRESSION: true
+{
+  "_type": "boolean",
+  "_description": "true",
+  "value": true
+}
+
+-----------------------------------------------------
+EXPRESSION: false
+{
+  "_type": "boolean",
+  "_description": "false",
+  "value": false
+}
+
+-----------------------------------------------------
+EXPRESSION: 0
+{
+  "_type": "number",
+  "_description": "0",
+  "value": 0
+}
+
+-----------------------------------------------------
+EXPRESSION: -0
+{
+  "_type": "number",
+  "_description": "0",
+  "value": 0
+}
+
+-----------------------------------------------------
+EXPRESSION: 1
+{
+  "_type": "number",
+  "_description": "1",
+  "value": 1
+}
+
+-----------------------------------------------------
+EXPRESSION: -1
+{
+  "_type": "number",
+  "_description": "-1",
+  "value": -1
+}
+
+-----------------------------------------------------
+EXPRESSION: 1.234
+{
+  "_type": "number",
+  "_description": "1.234",
+  "value": 1.234
+}
+
+-----------------------------------------------------
+EXPRESSION: -1.234
+{
+  "_type": "number",
+  "_description": "-1.234",
+  "value": -1.234
+}
+
+-----------------------------------------------------
+EXPRESSION: 1e3
+{
+  "_type": "number",
+  "_description": "1000",
+  "value": 1000
+}
+
+-----------------------------------------------------
+EXPRESSION: Number.MAX_VALUE
+{
+  "_type": "number",
+  "_description": "1.7976931348623157e+308",
+  "value": 1.7976931348623157e+308
+}
+
+-----------------------------------------------------
+EXPRESSION: Number.MIN_VALUE
+{
+  "_type": "number",
+  "_description": "5e-324",
+  "value": 5e-324
+}
+
+-----------------------------------------------------
+EXPRESSION: NaN
+{
+  "_type": "number",
+  "_description": "NaN",
+  "value": null
+}
+
+-----------------------------------------------------
+EXPRESSION: Infinity
+{
+  "_type": "number",
+  "_description": "Infinity",
+  "value": null
+}
+
+-----------------------------------------------------
+EXPRESSION: ''
+{
+  "_type": "string",
+  "_description": "",
+  "value": ""
+}
+
+-----------------------------------------------------
+EXPRESSION: '"'
+{
+  "_type": "string",
+  "_description": "\"",
+  "value": "\""
+}
+
+-----------------------------------------------------
+EXPRESSION: "'"
+{
+  "_type": "string",
+  "_description": "'",
+  "value": "'"
+}
+
+-----------------------------------------------------
+EXPRESSION: 'string'
+{
+  "_type": "string",
+  "_description": "string",
+  "value": "string"
+}
+
+-----------------------------------------------------
+EXPRESSION: 'Unicode…'
+{
+  "_type": "string",
+  "_description": "Unicode…",
+  "value": "Unicode…"
+}
+
+-----------------------------------------------------
+EXPRESSION: 'I wish I had something to put here.'
+{
+  "_type": "string",
+  "_description": "I wish I had something to put here.",
+  "value": "I wish I had something to put here."
+}
+
+-----------------------------------------------------
+EXPRESSION: (function(){})
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function () {}"
+}
+
+-----------------------------------------------------
+EXPRESSION: function foo(){}; foo
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function foo() {}"
+}
+
+-----------------------------------------------------
+EXPRESSION: function myFunction(a, b) { console.log(a, b); }; myFunction
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function myFunction(a, b) { console.log(a, b); }"
+}
+
+-----------------------------------------------------
+EXPRESSION: Array.prototype.push
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function push() {\n    [native code]\n}"
+}
+
+-----------------------------------------------------
+EXPRESSION: window.setTimeout
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function setTimeout() {\n    [native code]\n}"
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.getOwnPropertyDescriptor({ get getter() { return 1 } }, 'getter').get
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function () { return 1; }"
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.getOwnPropertyDescriptor({ set setter(v) { console.log(v); } }, 'setter').set
+{
+  "_type": "function",
+  "_objectId": "<filtered>",
+  "_description": "function (v) { console.log(v); }"
+}
+
+-----------------------------------------------------
+EXPRESSION: / /
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/ /",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "lastIndex",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "global",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "ignoreCase",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "multiline",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "source",
+        "type": "string",
+        "value": " "
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: /(?:)/
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/(?:)/",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "lastIndex",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "global",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "ignoreCase",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "multiline",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "source",
+        "type": "string",
+        "value": "(?:)"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: /^r(e)g[e]{1,}x+/
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/^r(e)g[e]{1,}x+/",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "lastIndex",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "global",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "ignoreCase",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "multiline",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "source",
+        "type": "string",
+        "value": "^r(e)g[e]{1,}x+"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: /^r(e)g[e]{1,}x+/ig
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/^r(e)g[e]{1,}x+/gi",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "lastIndex",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "global",
+        "type": "boolean",
+        "value": "true"
+      },
+      {
+        "name": "ignoreCase",
+        "type": "boolean",
+        "value": "true"
+      },
+      {
+        "name": "multiline",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "source",
+        "type": "string",
+        "value": "^r(e)g[e]{1,}x+"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new RegExp('')
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/(?:)/",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "lastIndex",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "global",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "ignoreCase",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "multiline",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "source",
+        "type": "string",
+        "value": "(?:)"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new RegExp('test', 'i')
+{
+  "_type": "object",
+  "_subtype": "regexp",
+  "_objectId": "<filtered>",
+  "_description": "/test/i",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "lastIndex",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "global",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "ignoreCase",
+        "type": "boolean",
+        "value": "true"
+      },
+      {
+        "name": "multiline",
+        "type": "boolean",
+        "value": "false"
+      },
+      {
+        "name": "source",
+        "type": "string",
+        "value": "test"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: []
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array[0]",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [1, 2]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array[2]",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "1",
+        "type": "number",
+        "value": "2"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [[1],[2],[3]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array[3]",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "object",
+        "subtype": "array",
+        "value": "Array[1]"
+      },
+      {
+        "name": "1",
+        "type": "object",
+        "subtype": "array",
+        "value": "Array[1]"
+      },
+      {
+        "name": "2",
+        "type": "object",
+        "subtype": "array",
+        "value": "Array[1]"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [true, 1, 1.234, 'string', /regex/]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array[5]",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "boolean",
+        "value": "true"
+      },
+      {
+        "name": "1",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "2",
+        "type": "number",
+        "value": "1.234"
+      },
+      {
+        "name": "3",
+        "type": "string",
+        "value": "string"
+      },
+      {
+        "name": "4",
+        "type": "object",
+        "subtype": "regexp",
+        "value": "/regex/"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: arr = []; arr.length = 100; arr
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array[100]",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: arr = []; arr.length = 100; arr.fill(1)
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array[100]",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "1",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "2",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "3",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "4",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "5",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "6",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "7",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "8",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "9",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "10",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "11",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "12",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "13",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "14",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "15",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "16",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "17",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "18",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "19",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "20",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "21",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "22",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "23",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "24",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "25",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "26",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "27",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "28",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "29",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "30",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "31",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "32",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "33",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "34",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "35",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "36",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "37",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "38",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "39",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "40",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "41",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "42",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "43",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "44",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "45",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "46",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "47",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "48",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "49",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "50",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "51",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "52",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "53",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "54",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "55",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "56",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "57",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "58",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "59",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "60",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "61",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "62",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "63",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "64",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "65",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "66",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "67",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "68",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "69",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "70",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "71",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "72",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "73",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "74",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "75",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "76",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "77",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "78",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "79",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "80",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "81",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "82",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "83",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "84",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "85",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "86",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "87",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "88",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "89",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "90",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "91",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "92",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "93",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "94",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "95",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "96",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "97",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "98",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "99",
+        "type": "number",
+        "value": "1"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: arr = []; arr.length = 100; arr[10] = 1; arr
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array[100]",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "10",
+        "type": "number",
+        "value": "1"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: a = null; (function() { a = arguments; })(1, '2', /3/); a
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Arguments[3]",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "1",
+        "type": "string",
+        "value": "2"
+      },
+      {
+        "name": "2",
+        "type": "object",
+        "subtype": "regexp",
+        "value": "/3/"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Int32Array(new ArrayBuffer(16))
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Int32Array[4]",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "1",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "2",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "3",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "byteOffset",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "byteLength",
+        "type": "number",
+        "value": "16"
+      },
+      {
+        "name": "buffer",
+        "type": "object",
+        "value": "ArrayBuffer"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; i < intArray.length; ++i) intArray[i] = i; intArray
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Int32Array[4]",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "1",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "2",
+        "type": "number",
+        "value": "2"
+      },
+      {
+        "name": "3",
+        "type": "number",
+        "value": "3"
+      },
+      {
+        "name": "byteOffset",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "byteLength",
+        "type": "number",
+        "value": "16"
+      },
+      {
+        "name": "buffer",
+        "type": "object",
+        "value": "ArrayBuffer"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a: 1})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "a",
+        "type": "number",
+        "value": "1"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a: 1, b: "string", c :/regex/})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "a",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "b",
+        "type": "string",
+        "value": "string"
+      },
+      {
+        "name": "c",
+        "type": "object",
+        "subtype": "regexp",
+        "value": "/regex/"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: ({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){}})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "a",
+        "type": "function",
+        "value": ""
+      },
+      {
+        "name": "b",
+        "type": "function",
+        "value": ""
+      },
+      {
+        "name": "getter",
+        "type": "accessor"
+      },
+      {
+        "name": "setter",
+        "type": "accessor"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: function Foo() {}; new Foo
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Foo",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: function Bar() { this._x = 5 }; Bar.prototype = {constructor: Bar, get x() {return this._x;}}; new Bar
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Bar",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "_x",
+        "type": "number",
+        "value": "5"
+      },
+      {
+        "name": "constructor",
+        "type": "function",
+        "value": ""
+      },
+      {
+        "name": "x",
+        "type": "accessor"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: window.loadEvent
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Event",
+  "_preview": {
+    "lossless": false,
+    "overflow": true,
+    "properties": [
+      {
+        "name": "clipboardData",
+        "type": "undefined",
+        "value": "undefined"
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "value": "load"
+      },
+      {
+        "name": "target",
+        "type": "object",
+        "subtype": "node",
+        "value": "#document"
+      },
+      {
+        "name": "currentTarget",
+        "type": "object",
+        "value": "Window"
+      },
+      {
+        "name": "eventPhase",
+        "type": "number",
+        "value": "2"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new ArrayBuffer(16)
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "ArrayBuffer",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "byteLength",
+        "type": "number",
+        "value": "16"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new DataView(new ArrayBuffer(16))
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "DataView",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "byteOffset",
+        "type": "number",
+        "value": "0"
+      },
+      {
+        "name": "byteLength",
+        "type": "number",
+        "value": "16"
+      },
+      {
+        "name": "buffer",
+        "type": "object",
+        "value": "ArrayBuffer"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: document.body
+{
+  "_type": "object",
+  "_subtype": "node",
+  "_objectId": "<filtered>",
+  "_description": "body",
+  "_preview": {
+    "lossless": false,
+    "overflow": true,
+    "properties": [
+      {
+        "name": "aLink",
+        "type": "string",
+        "value": ""
+      },
+      {
+        "name": "background",
+        "type": "string",
+        "value": ""
+      },
+      {
+        "name": "bgColor",
+        "type": "string",
+        "value": ""
+      },
+      {
+        "name": "link",
+        "type": "string",
+        "value": ""
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "value": ""
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: div = document.createElement('div'); div.className = 'foo bar'; div
+{
+  "_type": "object",
+  "_subtype": "node",
+  "_objectId": "<filtered>",
+  "_description": "div.foo.bar",
+  "_preview": {
+    "lossless": false,
+    "overflow": true,
+    "properties": [
+      {
+        "name": "align",
+        "type": "string",
+        "value": ""
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "value": ""
+      },
+      {
+        "name": "lang",
+        "type": "string",
+        "value": ""
+      },
+      {
+        "name": "translate",
+        "type": "boolean",
+        "value": "true"
+      },
+      {
+        "name": "dir",
+        "type": "string",
+        "value": ""
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: span = document.createElement('span'); span.id = 'foo'; span
+{
+  "_type": "object",
+  "_subtype": "node",
+  "_objectId": "<filtered>",
+  "_description": "span#foo",
+  "_preview": {
+    "lossless": false,
+    "overflow": true,
+    "properties": [
+      {
+        "name": "title",
+        "type": "string",
+        "value": ""
+      },
+      {
+        "name": "lang",
+        "type": "string",
+        "value": ""
+      },
+      {
+        "name": "translate",
+        "type": "boolean",
+        "value": "true"
+      },
+      {
+        "name": "dir",
+        "type": "string",
+        "value": ""
+      },
+      {
+        "name": "tabIndex",
+        "type": "number",
+        "value": "-1"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: document.createTextNode('text')
+{
+  "_type": "object",
+  "_subtype": "node",
+  "_objectId": "<filtered>",
+  "_description": "#text",
+  "_preview": {
+    "lossless": false,
+    "overflow": true,
+    "properties": [
+      {
+        "name": "wholeText",
+        "type": "string",
+        "value": "text"
+      },
+      {
+        "name": "splitText",
+        "type": "function",
+        "value": ""
+      },
+      {
+        "name": "replaceWholeText",
+        "type": "function",
+        "value": ""
+      },
+      {
+        "name": "data",
+        "type": "string",
+        "value": "text"
+      },
+      {
+        "name": "length",
+        "type": "number",
+        "value": "4"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: document.head.children
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "HTMLCollection[3]",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "object",
+        "subtype": "node",
+        "value": "meta"
+      },
+      {
+        "name": "1",
+        "type": "object",
+        "subtype": "node",
+        "value": "script"
+      },
+      {
+        "name": "2",
+        "type": "object",
+        "subtype": "node",
+        "value": "script"
+      },
+      {
+        "name": "item",
+        "type": "function",
+        "value": ""
+      },
+      {
+        "name": "namedItem",
+        "type": "function",
+        "value": ""
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: document.getElementsByClassName('my-test')
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "NodeList[3]",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "object",
+        "subtype": "node",
+        "value": "p.my-test"
+      },
+      {
+        "name": "1",
+        "type": "object",
+        "subtype": "node",
+        "value": "p.my-test"
+      },
+      {
+        "name": "2",
+        "type": "object",
+        "subtype": "node",
+        "value": "p.my-test"
+      },
+      {
+        "name": "constructor",
+        "type": "object",
+        "value": "NodeListConstructor"
+      },
+      {
+        "name": "item",
+        "type": "function",
+        "value": ""
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: document.querySelectorAll('.my-test')
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "NodeList[3]",
+  "_preview": {
+    "lossless": false,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "object",
+        "subtype": "node",
+        "value": "p.my-test"
+      },
+      {
+        "name": "1",
+        "type": "object",
+        "subtype": "node",
+        "value": "p.my-test"
+      },
+      {
+        "name": "2",
+        "type": "object",
+        "subtype": "node",
+        "value": "p.my-test"
+      },
+      {
+        "name": "constructor",
+        "type": "object",
+        "value": "NodeListConstructor"
+      },
+      {
+        "name": "item",
+        "type": "function",
+        "value": ""
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
+{
+  "_type": "object",
+  "_subtype": "error",
+  "_objectId": "<filtered>",
+  "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "message",
+        "type": "string",
+        "value": "undefined is not an object (evaluating '[].x.x')"
+      },
+      {
+        "name": "line",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "column",
+        "type": "number",
+        "value": "25"
+      },
+      {
+        "name": "stack",
+        "type": "string",
+        "value": "eval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
+{
+  "_type": "object",
+  "_subtype": "error",
+  "_objectId": "<filtered>",
+  "_description": "SyntaxError: Unexpected token ')'",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": [
+      {
+        "name": "message",
+        "type": "string",
+        "value": "Unexpected token ')'"
+      },
+      {
+        "name": "line",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "column",
+        "type": "number",
+        "value": "25"
+      },
+      {
+        "name": "stack",
+        "type": "string",
+        "value": "eval@[native code]\neval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: error = null; try { document.createTextNode('').splitText(100); } catch (e) { error = e; }; error
+{
+  "_type": "object",
+  "_subtype": "error",
+  "_objectId": "<filtered>",
+  "_description": "Error: IndexSizeError: DOM Exception 1",
+  "_preview": {
+    "lossless": false,
+    "overflow": true,
+    "properties": [
+      {
+        "name": "code",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "value": "IndexSizeError"
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "value": "IndexSizeError: DOM Exception 1"
+      },
+      {
+        "name": "line",
+        "type": "number",
+        "value": "1"
+      },
+      {
+        "name": "column",
+        "type": "number",
+        "value": "58"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.seal({})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Object.freeze({})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Object",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Map
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]); map
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Map",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: map = new WeakMap; map.set({id:1}, [1,2]); map
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "WeakMap",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Set
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Set",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: set = new Set; set.add(1); set.add(2); set.add('key'); set
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Set",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]); set
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Set",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Set",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: new Promise(function(){})
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Promise",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Promise.reject()
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Promise",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: Promise.resolve()
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Promise",
+  "_preview": {
+    "lossless": true,
+    "overflow": false,
+    "properties": []
+  }
+}
+

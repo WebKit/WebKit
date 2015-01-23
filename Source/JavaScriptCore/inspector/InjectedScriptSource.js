@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +33,18 @@
 
 // Protect against Object overwritten by the user code.
 var Object = {}.constructor;
+
+function toString(obj)
+{
+    return "" + obj;
+}
+    
+function isUInt32(obj)
+{
+    if (typeof obj === "number")
+        return obj >>> 0 === obj && (obj > 0 || 1 / obj > 0);
+    return "" + (obj >>> 0) === obj;
+}
 
 var InjectedScript = function()
 {
@@ -80,7 +93,7 @@ InjectedScript.prototype = {
         if (this.isPrimitiveValue(object))
             result.value = object;
         else
-            result.description = this._toString(object);
+            result.description = toString(object);
         return result;
     },
 
@@ -323,7 +336,7 @@ InjectedScript.prototype = {
     {
         var remoteObject = this._wrapObject(value, objectGroup);
         try {
-            remoteObject.description = this._toString(value);
+            remoteObject.description = toString(value);
         } catch (e) {}
         return {
             wasThrown: true,
@@ -479,7 +492,7 @@ InjectedScript.prototype = {
         // Modes:
         //  - ownProperties - only own properties and __proto__
         //  - ownAndGetterProperties - own properties, __proto__, and getters in the prototype chain
-        //  - neither - get all properties in the prototype chain, exclude __proto__
+        //  - neither - get all properties in the prototype chain and __proto__
 
         var descriptors = [];
         var nameProcessed = {};
@@ -611,7 +624,6 @@ InjectedScript.prototype = {
         } catch (e) {
         }
 
-        // If owning frame has navigated to somewhere else window properties will be undefined.
         return null;
     },
 
@@ -623,13 +635,13 @@ InjectedScript.prototype = {
         var subtype = this._subtype(obj);
 
         if (subtype === "regexp")
-            return this._toString(obj);
+            return toString(obj);
 
         if (subtype === "date")
-            return this._toString(obj);
+            return toString(obj);
 
         if (subtype === "error")
-            return this._toString(obj);
+            return toString(obj);
 
         if (subtype === "node") {
             var description = obj.nodeName.toLowerCase();
@@ -655,23 +667,16 @@ InjectedScript.prototype = {
 
         // NodeList in JSC is a function, check for array prior to this.
         if (typeof obj === "function")
-            return this._toString(obj);
+            return toString(obj);
 
-        // FIXME: Can we remove this?
+        // If Object, try for a better name from the constructor.
         if (className === "Object") {
-            // In Chromium DOM wrapper prototypes will have Object as their constructor name,
-            // get the real DOM wrapper name from the constructor property.
             var constructorName = obj.constructor && obj.constructor.name;
             if (constructorName)
                 return constructorName;
         }
-        return className;
-    },
 
-    _toString: function(obj)
-    {
-        // We don't use String(obj) because inspectedGlobalObject.String is undefined if owning frame navigated to another page.
-        return "" + obj;
+        return className;
     }
 }
 
@@ -708,7 +713,7 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType, 
     this.className = InjectedScriptHost.internalConstructorName(object);
     this.description = injectedScript._describe(object);
 
-    if (generatePreview && (this.type === "object" || injectedScript._isHTMLAllCollection(object)))
+    if (generatePreview && this.type === "object")
         this.preview = this._generatePreview(object, undefined, columnNames);
 }
 
@@ -727,85 +732,122 @@ InjectedScript.RemoteObject.prototype = {
             properties: isTableRowsRequest ? 1000 : Math.max(5, firstLevelKeysCount),
             indexes: isTableRowsRequest ? 1000 : Math.max(100, firstLevelKeysCount)
         };
-        for (var o = object; injectedScript._isDefined(o); o = o.__proto__)
-            this._generateProtoPreview(o, preview, propertiesThreshold, firstLevelKeys, secondLevelKeys);
+
+        try {
+            // All properties.
+            var descriptors = injectedScript._propertyDescriptors(object);
+            this._appendPropertyDescriptors(preview, descriptors, propertiesThreshold, secondLevelKeys);
+            if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
+                return preview;
+
+            // FIXME: Internal properties.
+            // FIXME: Map/Set/Iterator entries.
+        } catch (e) {
+            preview.lossless = false;
+        }
+
         return preview;
     },
 
-    _generateProtoPreview: function(object, preview, propertiesThreshold, firstLevelKeys, secondLevelKeys)
+    _appendPropertyDescriptors: function(preview, descriptors, propertiesThreshold, secondLevelKeys)
     {
-        var propertyNames = firstLevelKeys ? firstLevelKeys : Object.keys(object);
-        try {
-            for (var i = 0; i < propertyNames.length; ++i) {
-                if (!propertiesThreshold.properties || !propertiesThreshold.indexes) {
-                    preview.overflow = true;
-                    preview.lossless = false;
-                    break;
-                }
-                var name = propertyNames[i];
-                if (this.subtype === "array" && name === "length")
-                    continue;
+        for (var descriptor of descriptors) {
+            // Seen enough.
+            if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
+                break;
 
-                var descriptor = Object.getOwnPropertyDescriptor(object, name);
-                if (!("value" in descriptor) || !descriptor.enumerable) {
-                    preview.lossless = false;
-                    continue;
-                }
-
-                var value = descriptor.value;
-                if (value === null) {
-                    this._appendPropertyPreview(preview, { name: name, type: "object", value: "null" }, propertiesThreshold);
-                    continue;
-                }
-
-                const maxLength = 100;
-                var type = typeof value;
-
-                if (InjectedScript.primitiveTypes[type]) {
-                    if (type === "string") {
-                        if (value.length > maxLength) {
-                            value = this._abbreviateString(value, maxLength, true);
-                            preview.lossless = false;
-                        }
-                        value = value.replace(/\n/g, "\u21B5");
-                    }
-                    this._appendPropertyPreview(preview, { name: name, type: type, value: value + "" }, propertiesThreshold);
-                    continue;
-                }
-
-                if (secondLevelKeys === null || secondLevelKeys) {
-                    var subPreview = this._generatePreview(value, secondLevelKeys || undefined);
-                    var property = { name: name, type: type, valuePreview: subPreview };
-                    this._appendPropertyPreview(preview, property, propertiesThreshold);
-                    if (!subPreview.lossless)
-                        preview.lossless = false;
-                    if (subPreview.overflow)
-                        preview.overflow = true;
-                    continue;
-                }
-
+            // Error in descriptor.
+            if (descriptor.wasThrown) {
                 preview.lossless = false;
+                continue;
+            }
 
-                var subtype = injectedScript._subtype(value);
+            // Do not show "__proto__" in preview.
+            var name = descriptor.name;
+            if (name === "__proto__")
+                continue;
+
+            // Do not show "length" on array like objects in preview.
+            if (this.subtype === "array" && name === "length")
+                continue;
+
+            // Do not show non-enumerable non-own properties. Special case to allow array indexes that may be on the prototype.
+            if (!descriptor.enumerable && !descriptor.isOwn && !(this.subtype === "array" && isUInt32(name)))
+                continue;
+
+            // Getter/setter.
+            if (!("value" in descriptor)) {
+                preview.lossless = false;
+                this._appendPropertyPreview(preview, {name: name, type: "accessor"}, propertiesThreshold);
+                continue;
+            }
+
+            // Null value.
+            var value = descriptor.value;
+            if (value === null) {
+                this._appendPropertyPreview(preview, {name: name, type: "object", subtype: "null", value: "null"}, propertiesThreshold);
+                continue;
+            }
+
+            // Ignore non-enumerable functions.
+            var type = typeof value;
+            if (!descriptor.enumerable && type === "function")
+                continue;
+
+            // Fix type of document.all.
+            if (type === "undefined" && injectedScript._isHTMLAllCollection(value))
+                type = "object";
+
+            // Primitive.
+            const maxLength = 100;
+            if (InjectedScript.primitiveTypes[type]) {
+                if (type === "string" && value.length > maxLength) {
+                    value = this._abbreviateString(value, maxLength, true);
+                    preview.lossless = false;
+                }
+                this._appendPropertyPreview(preview, {name: name, type: type, value: toString(value)}, propertiesThreshold);
+                continue;
+            }
+
+            // Object.
+            var property = {name: name, type: type};
+            var subtype = injectedScript._subtype(value);
+            if (subtype)
+                property.subtype = subtype;
+
+            // Second level.
+            if (secondLevelKeys === null || secondLevelKeys) {
+                var subPreview = this._generatePreview(value, secondLevelKeys || undefined, undefined);
+                property.valuePreview = subPreview;
+                if (!subPreview.lossless)
+                    preview.lossless = false;
+                if (subPreview.overflow)
+                    preview.overflow = true;
+            } else {
                 var description = "";
                 if (type !== "function")
                     description = this._abbreviateString(injectedScript._describe(value), maxLength, subtype === "regexp");
-
-                var property = { name: name, type: type, value: description };
-                if (subtype)
-                    property.subtype = subtype;
-                this._appendPropertyPreview(preview, property, propertiesThreshold);
+                property.value = description;
+                preview.lossless = false;
             }
-        } catch (e) {
+
+            this._appendPropertyPreview(preview, property, propertiesThreshold);
         }
     },
 
     _appendPropertyPreview: function(preview, property, propertiesThreshold)
     {
-        if (isNaN(property.name))
-            propertiesThreshold.properties--;
-        else
+        if (toString(property.name >>> 0) === property.name)
             propertiesThreshold.indexes--;
+        else
+            propertiesThreshold.properties--;
+
+        if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0) {
+            preview.overflow = true;
+            preview.lossless = false;
+            return;
+        }
+
         preview.properties.push(property);
     },
 

@@ -1,3 +1,32 @@
+2015-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Object Previews in the Console
+        https://bugs.webkit.org/show_bug.cgi?id=129204
+
+        Reviewed by Timothy Hatcher.
+
+        Update the very old, unused object preview code. Part of this comes from
+        the earlier WebKit legacy implementation, and the Blink implementation.
+
+        A RemoteObject may include a preview, if it is asked for, and if the
+        RemoteObject is an object. Previews are a shallow (single level) list
+        of a limited number of properties on the object. The previewed
+        properties are always stringified (even if primatives). Previews are
+        limited to just 5 properties or 100 indices. Previews are marked
+        as lossless if they are a complete snapshot of the object.
+
+        There is a path to make previews two levels deep, that is currently
+        unused but should soon be used for tables (e.g. IndexedDB).
+
+        * inspector/InjectedScriptSource.js:
+        - Move some code off of InjectedScript to be generic functions
+        usable by RemoteObject as well.
+        - Update preview generation to use 
+
+        * inspector/protocol/Runtime.json:
+        - Add a new type, "accessor" for preview objects. This represents
+        a getter / setter. We currently don't get the value.
+
 2015-01-23  Michael Saboff  <msaboff@apple.com>
 
         Immediate crash when setting JS breakpoint

@@ -1,3 +1,21 @@
+2015-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Object Previews in the Console
+        https://bugs.webkit.org/show_bug.cgi?id=129204
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/debugger/command-line-api-exception-nested-catch.html:
+        * inspector/debugger/command-line-api-exception.html:
+        * inspector/model/remote-object-get-properties.html:
+        Update RuntimeManager callsites to not ask for previews when evaluating.
+
+        * inspector/model/remote-object-expected.txt: Added.
+        * inspector/model/remote-object.html: Added.
+        Add a test specifically for Remote Object. This test can also be
+        opened in a browser. It attempts to run the gamut of all different
+        types of objects and shows the RemoteObject constructed for it.
+
 2015-01-23  Eric Carlson  <eric.carlson@apple.com>
 
         Create a "load and stall" cgi that support byte ranges.

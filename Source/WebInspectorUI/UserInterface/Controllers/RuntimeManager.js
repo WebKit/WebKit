@@ -41,7 +41,7 @@ WebInspector.RuntimeManager.prototype = {
 
     // Public
 
-    evaluateInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
+    evaluateInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, callback)
     {
         if (!expression) {
             // There is no expression, so the completion should happen against global properties.
@@ -51,7 +51,7 @@ WebInspector.RuntimeManager.prototype = {
         function evalCallback(error, result, wasThrown)
         {
             this.dispatchEventToListeners(WebInspector.RuntimeManager.Event.DidEvaluate);
-            
+
             if (error) {
                 console.error(error);
                 callback(null, false);
@@ -65,14 +65,16 @@ WebInspector.RuntimeManager.prototype = {
         }
 
         if (WebInspector.debuggerManager.activeCallFrame) {
-            DebuggerAgent.evaluateOnCallFrame(WebInspector.debuggerManager.activeCallFrame.id, expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, evalCallback.bind(this));
+            // COMPATIBILITY (iOS 6): "generatePreview" did not exist.
+            DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WebInspector.debuggerManager.activeCallFrame.id, expression: expression, objectGroup: objectGroup, includeCommandLineAPI: includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole: doNotPauseOnExceptionsAndMuteConsole, returnByValue: returnByValue, generatePreview: generatePreview}, evalCallback.bind(this));
             return;
         }
 
         // COMPATIBILITY (iOS 6): Execution context identifiers (contextId) did not exist
         // in iOS 6. Fallback to including the frame identifier (frameId).
+        // COMPATIBILITY (iOS 6): "generatePreview" did not exist.
         var contextId = WebInspector.quickConsole.executionContextIdentifier;
-        RuntimeAgent.evaluate.invoke({expression: expression, objectGroup: objectGroup, includeCommandLineAPI: includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole: doNotPauseOnExceptionsAndMuteConsole, contextId: contextId, frameId: contextId, returnByValue: returnByValue}, evalCallback.bind(this));
+        RuntimeAgent.evaluate.invoke({expression: expression, objectGroup: objectGroup, includeCommandLineAPI: includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole: doNotPauseOnExceptionsAndMuteConsole, contextId: contextId, frameId: contextId, returnByValue: returnByValue, generatePreview: generatePreview}, evalCallback.bind(this));
     },
 
     getPropertiesForRemoteObject: function(objectId, callback)

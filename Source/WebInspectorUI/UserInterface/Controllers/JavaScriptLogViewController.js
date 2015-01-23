@@ -232,7 +232,7 @@ WebInspector.JavaScriptLogViewController.prototype = {
 
         text += "\n//# sourceURL=__WebInspectorConsole__\n";
 
-        WebInspector.runtimeManager.evaluateInInspectedWindow(text, "console", true, false, false, printResult.bind(this));
+        WebInspector.runtimeManager.evaluateInInspectedWindow(text, "console", true, false, false, true, printResult.bind(this));
     },
 
     // Private

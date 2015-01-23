@@ -18,7 +18,7 @@
                 { "name": "value", "type": "any", "optional": true, "description": "Remote object value (in case of primitive values or JSON values if it was requested)." },
                 { "name": "description", "type": "string", "optional": true, "description": "String representation of the object." },
                 { "name": "objectId", "$ref": "RemoteObjectId", "optional": true, "description": "Unique object identifier (for non-primitive values)." },
-                { "name": "preview", "$ref": "ObjectPreview", "optional": true, "description": "Preview containsing abbreviated property values." }
+                { "name": "preview", "$ref": "ObjectPreview", "optional": true, "description": "Preview containing abbreviated property values. Specified for <code>object</code> type values only." }
             ]
         },
         {
@@ -36,10 +36,10 @@
             "type": "object",
             "properties": [
                 { "name": "name", "type": "string", "description": "Property name." },
-                { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean"], "description": "Object type." },
+                { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean", "accessor"], "description": "Object type." },
+                { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date", "error"], "description": "Object subtype hint. Specified for <code>object</code> type values only." },
                 { "name": "value", "type": "string", "optional": true, "description": "User-friendly property value string." },
-                { "name": "valuePreview", "$ref": "ObjectPreview", "optional": true, "description": "Nested value preview." },
-                { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date", "error"], "description": "Object subtype hint. Specified for <code>object</code> type values only." }
+                { "name": "valuePreview", "$ref": "ObjectPreview", "optional": true, "description": "Nested value preview." }
             ]
         },
         {
