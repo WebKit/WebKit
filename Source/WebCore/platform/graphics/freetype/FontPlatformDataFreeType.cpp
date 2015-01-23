@@ -127,12 +127,12 @@ static void rotateCairoMatrixForVerticalOrientation(cairo_matrix_t* matrix)
 
 FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fontDescription)
     : m_pattern(pattern)
-    , m_fallbacks(0)
+    , m_fallbacks(nullptr)
     , m_size(fontDescription.computedPixelSize())
     , m_syntheticBold(false)
     , m_syntheticOblique(false)
     , m_fixedWidth(false)
-    , m_scaledFont(0)
+    , m_scaledFont(nullptr)
     , m_orientation(fontDescription.orientation())
 {
     RefPtr<cairo_font_face_t> fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(m_pattern.get()));
@@ -156,24 +156,24 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
 }
 
 FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
-    : m_fallbacks(0)
+    : m_fallbacks(nullptr)
     , m_size(size)
     , m_syntheticBold(bold)
     , m_syntheticOblique(italic)
     , m_fixedWidth(false)
-    , m_scaledFont(0)
+    , m_scaledFont(nullptr)
     , m_orientation(Horizontal)
 {
     // We cannot create a scaled font here.
 }
 
 FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool bold, bool italic, FontOrientation orientation)
-    : m_fallbacks(0)
+    : m_fallbacks(nullptr)
     , m_size(size)
     , m_syntheticBold(bold)
     , m_syntheticOblique(italic)
     , m_fixedWidth(false)
-    , m_scaledFont(0)
+    , m_scaledFont(nullptr)
     , m_orientation(orientation)
 {
     initializeWithFontFace(fontFace);
@@ -202,7 +202,7 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
     if (m_fallbacks) {
         FcFontSetDestroy(m_fallbacks);
         // This will be re-created on demand.
-        m_fallbacks = 0;
+        m_fallbacks = nullptr;
     }
 
     if (m_scaledFont && m_scaledFont != hashTableDeletedFontValue())
@@ -215,15 +215,17 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
 }
 
 FontPlatformData::FontPlatformData(const FontPlatformData& other)
-    : m_fallbacks(0)
-    , m_scaledFont(0)
+    : m_fallbacks(nullptr)
+    , m_scaledFont(nullptr)
     , m_harfBuzzFace(other.m_harfBuzzFace)
 {
     *this = other;
 }
 
 FontPlatformData::FontPlatformData(const FontPlatformData& other, float size)
-    : m_harfBuzzFace(other.m_harfBuzzFace)
+    : m_fallbacks(nullptr)
+    , m_scaledFont(nullptr)
+    , m_harfBuzzFace(other.m_harfBuzzFace)
 {
     *this = other;
 
@@ -237,7 +239,7 @@ FontPlatformData::~FontPlatformData()
 {
     if (m_fallbacks) {
         FcFontSetDestroy(m_fallbacks);
-        m_fallbacks = 0;
+        m_fallbacks = nullptr;
     }
 
     if (m_scaledFont && m_scaledFont != hashTableDeletedFontValue())

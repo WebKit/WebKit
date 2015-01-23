@@ -1,3 +1,17 @@
+2015-01-23  Byeongha Cho  <byeongha.cho@samsung.com>
+
+        Initialization for some member variable of FontPlatformData
+        https://bugs.webkit.org/show_bug.cgi?id=136327
+
+        Reviewed by Myles C. Maxfield.
+
+        No new tests. There's no functional change.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::~FontPlatformData):
+
 2015-01-23  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Rename ChildNodeRemovalNotifier::m_insertionPoint to m_removalPoint
