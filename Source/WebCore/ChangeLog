@@ -1,3 +1,26 @@
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
+        Merge r173741.
+
+    2014-09-18  Jeremy Jones  <jeremyj@apple.com>
+
+        Improve fullscreen video rotation animation.
+        https://bugs.webkit.org/show_bug.cgi?id=136870
+
+        Reviewed by Simon Fraser.
+
+        Instead of setting the frame on the video layer, set position and bounds separately. This allows the position to be synchronized with the rest of the animation.
+        When using a fencePort to synchronize animations, if the fence times out, pivoting around the center provides a better fallback.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (-[WebAVVideoLayer setVideoSublayer:]): added
+        (-[WebAVVideoLayer videoSublayer]): added
+        (-[WebAVVideoLayer setBounds:]):  set position and bounds insted of frame.
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen): use setVideoSublayer
+        * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::setVideoFullscreenLayer): set bounds and anchorPoint instead of frame
+        (WebVideoFullscreenModelVideoElement::setVideoLayerFrame): set bounds instead of frame.
+
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r178072.

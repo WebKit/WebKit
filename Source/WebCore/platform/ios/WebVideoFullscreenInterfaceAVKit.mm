@@ -476,12 +476,14 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
 @property (nonatomic) CGRect videoRect;
 - (void)setPlayerViewController:(AVPlayerViewController *)playerViewController;
 - (void)setPlayerController:(AVPlayerController *)playerController;
+@property (nonatomic, retain) CALayer* videoSublayer;
 @end
 
 @implementation WebAVVideoLayer
 {
     RetainPtr<WebAVPlayerController> _avPlayerController;
     RetainPtr<AVPlayerViewController> _avPlayerViewController;
+    RetainPtr<CALayer> _videoSublayer;
     AVVideoLayerGravity _videoLayerGravity;
 }
 
@@ -511,6 +513,17 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
     _avPlayerViewController = playerViewController;
 }
 
+- (void)setVideoSublayer:(CALayer *)videoSublayer
+{
+    _videoSublayer = videoSublayer;
+    [self addSublayer:videoSublayer];
+}
+
+- (CALayer*)videoSublayer
+{
+    return _videoSublayer.get();
+}
+
 - (void)setBounds:(CGRect)bounds
 {
     [super setBounds:bounds];
@@ -521,14 +534,22 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeIndefinite, CMTime)
     UIView* rootView = [[_avPlayerViewController view] window];
     if (!rootView)
         return;
+    
+    [CATransaction begin];
+    NSTimeInterval animationDuration = [self animationForKey:@"bounds"].duration;
+    if (!animationDuration) // a duration of 0 for CA means 0.25. This is a way to approximate 0.
+        animationDuration = 0.001;
+    [CATransaction setAnimationDuration:animationDuration];
+    [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
 
     FloatRect rootBounds = [rootView bounds];
     [_avPlayerController delegate]->setVideoLayerFrame(rootBounds);
 
     FloatRect sourceBounds = largestRectWithAspectRatioInsideRect(CGRectGetWidth(bounds) / CGRectGetHeight(bounds), rootBounds);
     CATransform3D transform = CATransform3DMakeScale(bounds.size.width / sourceBounds.width(), bounds.size.height / sourceBounds.height(), 1);
-    transform = CATransform3DTranslate(transform, bounds.origin.x - sourceBounds.x(), bounds.origin.y - sourceBounds.y(), 0);
-    [self setSublayerTransform:transform];
+    [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(bounds), CGRectGetMidY(bounds))];
+    [_videoSublayer setSublayerTransform:transform];
+    [CATransaction commit];
 }
 
 - (void)setVideoLayerGravity:(AVVideoLayerGravity)videoLayerGravity
@@ -756,7 +777,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal(PlatformLayer& vi
 
     m_videoLayerContainer = [WebAVVideoLayer videoLayer];
     [m_videoLayerContainer setHidden:playerController().externalPlaybackActive];
-    [m_videoLayerContainer addSublayer:m_videoLayer.get()];
+    [m_videoLayerContainer setVideoSublayer:m_videoLayer.get()];
 
     CGSize videoSize = playerController().contentDimensions;
     CGRect videoRect = CGRectMake(0, 0, videoSize.width, videoSize.height);

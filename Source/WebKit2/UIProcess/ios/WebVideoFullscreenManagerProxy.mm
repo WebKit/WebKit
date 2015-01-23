@@ -23,19 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebVideoFullscreenManagerProxy.h"
+#import "config.h"
+#import "WebVideoFullscreenManagerProxy.h"
 
 #if PLATFORM(IOS)
 
-#include "RemoteLayerTreeDrawingAreaProxy.h"
-#include "WebPageProxy.h"
-#include "WebProcessProxy.h"
-#include "WebVideoFullscreenManagerMessages.h"
-#include "WebVideoFullscreenManagerProxyMessages.h"
-#include <QuartzCore/CoreAnimation.h>
-#include <WebKitSystemInterface.h>
-#include <WebCore/TimeRanges.h>
+#import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "WebPageProxy.h"
+#import "WebProcessProxy.h"
+#import "WebVideoFullscreenManagerMessages.h"
+#import "WebVideoFullscreenManagerProxyMessages.h"
+#import <QuartzCore/CoreAnimation.h>
+#import <WebCore/TimeRanges.h>
+#import <WebKitSystemInterface.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <UIKit/UIWindow_Private.h>
+#else
+#import <UIKit/UIWindow.h>
+@interface UIWindow (Details)
++ (mach_port_t)_synchronizeDrawingAcrossProcesses;
+@end
+#endif
 
 using namespace WebCore;
 
@@ -188,7 +197,8 @@ void WebVideoFullscreenManagerProxy::endScanning()
 
 void WebVideoFullscreenManagerProxy::setVideoLayerFrame(WebCore::FloatRect frame)
 {
-    m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerFrame(frame), m_page->pageID());
+    IPC::Attachment fencePort([UIWindow _synchronizeDrawingAcrossProcesses], MACH_MSG_TYPE_MOVE_SEND);
+    m_page->send(Messages::WebVideoFullscreenManager::SetVideoLayerFrameFenced(frame, fencePort), m_page->pageID());
 }
 
 void WebVideoFullscreenManagerProxy::setVideoLayerGravity(WebCore::WebVideoFullscreenModel::VideoGravity gravity)

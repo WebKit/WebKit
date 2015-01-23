@@ -37,7 +37,7 @@ messages -> WebVideoFullscreenManager {
     DidExitFullscreen()
     DidEnterFullscreen()
     DidCleanupFullscreen()
-    SetVideoLayerFrame(WebCore::FloatRect bounds)
+    SetVideoLayerFrameFenced(WebCore::FloatRect bounds, IPC::Attachment fencePort)
     SetVideoLayerGravityEnum(unsigned gravity)
     SelectAudioMediaOption(uint64_t index)
     SelectLegibleMediaOption(uint64_t index)

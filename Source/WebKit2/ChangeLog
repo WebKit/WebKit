@@ -1,3 +1,35 @@
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
+        Merge r173741.
+
+    2014-09-18  Jeremy Jones  <jeremyj@apple.com>
+
+        Improve fullscreen video rotation animation.
+        https://bugs.webkit.org/show_bug.cgi?id=136870
+
+        Reviewed by Simon Fraser.
+
+        Remove WKCAContext from LayerHostingContext and use a fencePort to synchronize animation between processes.
+
+        * Platform/mac/LayerHostingContext.h: add setFencePort. Remove WKCAContext.
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForPort): Remove WKCAContext.
+        (WebKit::LayerHostingContext::createForExternalHostingProcess): ditto
+        (WebKit::LayerHostingContext::setRootLayer): ditto
+        (WebKit::LayerHostingContext::rootLayer): ditto
+        (WebKit::LayerHostingContext::contextID): ditto
+        (WebKit::LayerHostingContext::invalidate): ditto
+        (WebKit::LayerHostingContext::setColorSpace): ditto
+        (WebKit::LayerHostingContext::colorSpace): ditto
+        (WebKit::LayerHostingContext::setFencePort): added
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setVideoLayerFrame): 
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        * WebProcess/ios/WebVideoFullscreenManager.messages.in: add fence port parameter
+        * WebProcess/ios/WebVideoFullscreenManager.mm: ditto
+        (WebKit::WebVideoFullscreenManager::didSetupFullscreen): ditto
+        (WebKit::WebVideoFullscreenManager::setVideoLayerFrameFenced): ditto
+
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r177329.

@@ -158,7 +158,8 @@ void WebVideoFullscreenModelMediaElement::setVideoFullscreenLayer(PlatformLayer*
         return;
     
     m_videoFullscreenLayer = videoLayer;
-    [m_videoFullscreenLayer setFrame:m_videoFrame];
+    [m_videoFullscreenLayer setAnchorPoint:CGPointMake(0.5, 0.5)];
+    [m_videoFullscreenLayer setBounds:m_videoFrame];
     
     __block RefPtr<WebVideoFullscreenModelMediaElement> protect(this);
     WebThreadRun(^{
@@ -283,7 +284,7 @@ void WebVideoFullscreenModelMediaElement::requestExitFullscreen()
 void WebVideoFullscreenModelMediaElement::setVideoLayerFrame(FloatRect rect)
 {
     m_videoFrame = rect;
-    [m_videoFullscreenLayer setFrame:CGRect(rect)];
+    [m_videoFullscreenLayer setBounds:CGRect(rect)];
     m_mediaElement->setVideoFullscreenFrame(rect);
 }
 
