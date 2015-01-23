@@ -1,5 +1,23 @@
 2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r174708. rdar://problem/19451256
+
+    2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
+            Merge r175629. rdar://problem/19465100
+
+        2014-11-05  Alexey Proskuryakov  <ap@apple.com>
+
+                Incorrect sandbox_check in RemoteInspector.mm
+                https://bugs.webkit.org/show_bug.cgi?id=138408
+
+                Reviewed by Joseph Pecoraro.
+
+                * inspector/remote/RemoteInspector.mm:
+                (Inspector::canAccessWebInspectorMachPort):
+
+2015-01-22  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r174381. rdar://problem/19450841
 
     2014-10-06  Brent Fulgham  <bfulgham@apple.com>
