@@ -1,5 +1,19 @@
 2015-01-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r174373
+
+    2014-10-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Addressing post-review comment on r174297.
+            https://bugs.webkit.org/show_bug.cgi?id=137355
+
+            Unreviewed.
+
+            * rendering/RenderText.cpp:
+            (WebCore::RenderText::stringView):
+
+2015-01-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r174297
 
     2014-10-03  Myles C. Maxfield  <mmaxfield@apple.com>
