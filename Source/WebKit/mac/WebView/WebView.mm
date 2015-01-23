@@ -8578,8 +8578,10 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 
 - (NSRect)_convertRectFromRootView:(NSRect)rect
 {
+#if PLATFORM(MAC)
     if (self.isFlipped)
         return rect;
+#endif
     return NSMakeRect(rect.origin.x, [self bounds].size.height - rect.origin.y - rect.size.height, rect.size.width, rect.size.height);
 }
 
