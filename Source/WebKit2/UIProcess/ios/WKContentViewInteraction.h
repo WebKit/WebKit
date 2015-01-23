@@ -30,10 +30,11 @@
 #import "AssistedNodeInformation.h"
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
-#import "WKSyntheticClickTapGestureRecognizer.h"
+#import "WKActionSheetAssistant.h"
 #import "WKAirPlayRoutePicker.h"
 #import "WKFileUploadPanel.h"
 #import "WKFormPeripheral.h"
+#import "WKSyntheticClickTapGestureRecognizer.h"
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIView.h>
 #import <UIKit/UIWKSelectionAssistant.h>
@@ -146,7 +147,7 @@ struct WKAutoCorrectionData {
 
 @end
 
-@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UIWebTouchEventsGestureRecognizerDelegate, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWKInteractionViewProtocol, WKFileUploadPanelDelegate>
+@interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UIWebTouchEventsGestureRecognizerDelegate, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWKInteractionViewProtocol, WKFileUploadPanelDelegate, WKActionSheetAssistantDelegate>
 
 @property (nonatomic, readonly) CGPoint lastInteractionLocation;
 @property (nonatomic, readonly) BOOL isEditable;
@@ -171,8 +172,6 @@ struct WKAutoCorrectionData {
 - (BOOL)_interpretKeyEvent:(WebIOSEvent *)theEvent isCharEvent:(BOOL)isCharEvent;
 - (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info;
 - (void)_attemptClickAtLocation:(CGPoint)location;
-- (void)_updatePositionInformation;
-- (void)_performAction:(WebKit::SheetAction)action;
 - (void)_willStartScrollingOrZooming;
 - (void)_didScroll;
 - (void)_didEndScrollingOrZooming;

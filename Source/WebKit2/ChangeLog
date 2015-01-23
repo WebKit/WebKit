@@ -1,5 +1,61 @@
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r174885.
+
+    2014-10-16  Andy Estes  <aestes@apple.com>
+
+        [iOS] Capture WKActionSheetAssistant's interaction with WKContentView in a @protocol
+        https://bugs.webkit.org/show_bug.cgi?id=137792
+
+        Reviewed by Tim Horton.
+
+        WKPDFView would like to use WKActionSheetAssistant to show an action sheet when long-pressing a link, but it
+        can't so long as WKActionSheetAssistant is tightly coupled to WKContentView. Resolve this by factoring
+        WKActionSheetAssistant's interaction with WKContentView into a new protocol called
+        WKActionSheetAssistantDelegate and having WKContentView conform to this protocol.
+
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction elementActionWithTitle:actionHandler:]): Changed instances of WKContentView * to id <WKActionSheetAssistantDelegate>.
+        (+[_WKElementAction elementActionWithType:customTitle:]): Ditto.
+        (-[_WKElementAction _runActionWithElementInfo:delegate:]): Ditto.
+        (copyElement): Deleted.
+        (saveImage): Deleted.
+        (-[_WKElementAction _runActionWithElementInfo:view:]): Deleted.
+        * UIProcess/API/Cocoa/_WKElementActionInternal.h:
+        * UIProcess/ios/WKActionSheet.h:
+        * UIProcess/ios/WKActionSheet.mm:
+        (-[WKActionSheet init]): Renamed from initWithView: since WKActionSheet no longer needs to know about a view.
+        (-[WKActionSheet _didRotateAndLayout]): Called -[WKActionSheetDelegate updatePositionInformation].
+        (-[WKActionSheet initWithView:]): Deleted.
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant delegate]): Added a getter for the delegate property.
+        (-[WKActionSheetAssistant setDelegate:]): Added a setter for the delegate property.
+        (-[WKActionSheetAssistant initWithView:]): Changed argument type from WKContentView * to UIView *.
+        (-[WKActionSheetAssistant initialPresentationRectInHostViewForSheet]): Returned CGRectZero if there is no delegate.
+        Otherwise, retrieved positionInformation from the delegate.
+        (-[WKActionSheetAssistant presentationRectInHostViewForSheet]): Ditto.
+        (-[WKActionSheetAssistant updatePositionInformation]): Called -[WKActionSheetAssistantDelegate updatePositionInformation].
+        (-[WKActionSheetAssistant _createSheetWithElementActions:showLinkTitle:]): Returned early if there is no delegate.
+        Otherwise, retrieved positionInformation from the delegate.
+        (-[WKActionSheetAssistant showImageSheet]): Ditto.
+        (-[WKActionSheetAssistant showLinkSheet]): Ditto.
+        (-[WKActionSheetAssistant showDataDetectorsSheet]): Ditto.
+        (-[WKActionSheetAssistant cleanupSheet]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]): Installed self as WKActionSheetAssistant's delegate.
+        (-[WKContentView updatePositionInformation]): Renamed from _updatePositionInformation.
+        (-[WKContentView performAction:]): Renamed from _performAction:.
+        (-[WKContentView openElementAtLocation:]): Called _attemptClickAtLocation:.
+        (-[WKContentView actionsForElement:defaultActions:]): Called API::UIClient::actionsForElement().
+        (-[WKContentView startInteractionWithElement:]): Called WebPageProxy::startInteractionWithElementAtPosition().
+        (-[WKContentView stopInteraction]): Called WebPageProxy::stopInteraction().
+        (-[WKContentView _updatePositionInformation]): Deleted.
+        (-[WKContentView _performAction:]): Deleted.
+
+2015-01-22  David Kilzer  <ddkilzer@apple.com>
+
         Merge r174286.
 
     2014-10-03  Andy Estes  <aestes@apple.com>
