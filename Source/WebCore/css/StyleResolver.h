@@ -50,7 +50,6 @@
 namespace WebCore {
 
 class CSSCursorImageValue;
-class CSSFontSelector;
 class CSSFontFace;
 class CSSFontFaceRule;
 class CSSFontValue;
@@ -219,7 +218,6 @@ public:
     bool hasSelectorForClass(const AtomicString&) const;
     bool hasSelectorForAttribute(const Element&, const AtomicString&) const;
 
-    CSSFontSelector* fontSelector() const { return m_fontSelector.get(); }
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     ViewportStyleResolver* viewportStyleResolver() { return m_viewportStyleResolver.get(); }
 #endif
@@ -521,7 +519,6 @@ private:
 
     bool m_matchAuthorAndUserStyles;
 
-    RefPtr<CSSFontSelector> m_fontSelector;
     Vector<std::unique_ptr<MediaQueryResult>> m_viewportDependentMediaQueryResults;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)

@@ -330,7 +330,7 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
                 addChildRules(mediaRule.childRules(), medium, resolver, hasDocumentSecurityOrigin, addRuleFlags);
         } else if (is<StyleRuleFontFace>(*rule) && resolver) {
             // Add this font face to our set.
-            resolver->fontSelector()->addFontFaceRule(downcast<StyleRuleFontFace>(rule.get()));
+            resolver->document().fontSelector().addFontFaceRule(downcast<StyleRuleFontFace>(rule.get()));
             resolver->invalidateMatchedPropertiesCache();
         } else if (is<StyleRuleKeyframes>(*rule) && resolver)
             resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(rule.get()));

@@ -115,8 +115,7 @@ Ref<RenderStyle> resolveForDocument(const Document& document)
 
     documentStyle.get().setFontDescription(fontDescription);
 
-    CSSFontSelector* fontSelector = document.styleResolverIfExists() ? document.styleResolverIfExists()->fontSelector() : nullptr;
-    documentStyle.get().fontCascade().update(fontSelector);
+    documentStyle.get().fontCascade().update(&const_cast<Document&>(document).fontSelector());
 
     return documentStyle;
 }

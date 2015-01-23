@@ -1,3 +1,70 @@
+2015-01-23  Andreas Kling  <akling@apple.com>
+
+        Hang CSSFontSelector off Document instead of StyleResolver.
+        <https://webkit.org/b/140820>
+
+        Reviewed by Antti Koivisto.
+
+        Move the CSSFontSelector from StyleResolver to Document. This is the first
+        step towards making the CSSFontSelector be able to survive full style recalc.
+
+        Clearing a Document's StyleResolver will still nuke the CSSFontSelector,
+        though that is done in Document::clearStyleResolver() now.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        * css/CSSFontSelector.h:
+
+            Modernize CSSFontSelector construction a bit by having create() return
+            a Ref and the constructor take a Document& instead of a Document*.
+            Also made the constructor explicit.
+
+        (WebCore::StyleResolver::~StyleResolver):
+        * dom/Document.cpp:
+        (WebCore::Document::clearStyleResolver):
+
+            Nuke the current CSSFontSelector in clearStyleResolver() instead of
+            in ~StyleResolver. It's a minor change, but shows the way forward.
+            Added a FIXME about how CSSFontSelector should eventually survive
+            this operation.
+
+        (WebCore::Document::fontSelector):
+        * css/FontLoader.cpp:
+        (WebCore::FontLoader::loadFont):
+        (WebCore::FontLoader::checkFont):
+        (WebCore::FontLoader::resolveFontStyle):
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addChildRules):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::fontSelector): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::appendAuthorStyleSheets):
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::defaultStyleForElement):
+        (WebCore::StyleResolver::updateFont):
+        * dom/Document.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::fontSelector):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::fontSelector):
+        * rendering/TextAutoSizing.cpp:
+        (WebCore::TextAutoSizingValue::adjustNodeSizes):
+        (WebCore::TextAutoSizingValue::reset):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+        * style/StyleResolveTree.cpp:
+        (WebCore::Style::resolveTree):
+
+            Move CSSFontSelector ownership from StyleResolver to Document.
+
 2015-01-23  Jer Noble  <jer.noble@apple.com>
 
         Layout Test http/tests/media/track-in-band-hls-metadata.html is flaky

@@ -69,6 +69,7 @@ class AXObjectCache;
 class Attr;
 class AudioProducer;
 class CDATASection;
+class CSSFontSelector;
 class CSSStyleDeclaration;
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
@@ -543,6 +544,8 @@ public:
             createStyleResolver();
         return *m_styleResolver;
     }
+
+    CSSFontSelector& fontSelector();
 
     void notifyRemovePendingSheetIfNeeded();
 
@@ -1690,6 +1693,8 @@ private:
     RefPtr<Document> m_templateDocument;
     Document* m_templateDocumentHost; // Manually managed weakref (backpointer from m_templateDocument).
 #endif
+
+    RefPtr<CSSFontSelector> m_fontSelector;
 
 #if ENABLE(FONT_LOAD_EVENTS)
     RefPtr<FontLoader> m_fontloader;

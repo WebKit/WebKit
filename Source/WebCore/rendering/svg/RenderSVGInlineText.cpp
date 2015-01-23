@@ -241,7 +241,7 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
     fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSizeForSVGInlineText(fontDescription.computedSize(), fontDescription.isAbsoluteSize(), scalingFactor, renderer.document()));
 
     scaledFont = FontCascade(fontDescription, 0, 0);
-    scaledFont.update(renderer.document().ensureStyleResolver().fontSelector());
+    scaledFont.update(&renderer.document().fontSelector());
 }
 
 }

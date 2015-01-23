@@ -976,9 +976,8 @@ void resolveTree(Document& document, Change change)
         // Inserting the pictograph font at the end of the font fallback list is done by the
         // font selector, so set a font selector if needed.
         if (Settings* settings = document.settings()) {
-            StyleResolver* styleResolver = document.styleResolverIfExists();
-            if (settings->fontFallbackPrefersPictographs() && styleResolver)
-                documentStyle.get().fontCascade().update(styleResolver->fontSelector());
+            if (settings->fontFallbackPrefersPictographs())
+                documentStyle.get().fontCascade().update(&document.fontSelector());
         }
 
         Style::Change documentChange = determineChange(documentStyle.get(), document.renderView()->style());

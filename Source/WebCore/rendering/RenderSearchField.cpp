@@ -339,7 +339,7 @@ void RenderSearchField::setTextFromItem(unsigned listIndex)
 
 FontSelector* RenderSearchField::fontSelector() const
 {
-    return document().ensureStyleResolver().fontSelector();
+    return &document().fontSelector();
 }
 
 HostWindow* RenderSearchField::hostWindow() const

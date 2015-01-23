@@ -33,6 +33,7 @@
 #include "Attr.h"
 #include "AudioProducer.h"
 #include "CDATASection.h"
+#include "CSSFontSelector.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
@@ -1941,9 +1942,22 @@ void Document::createStyleResolver()
     m_styleSheetCollection.combineCSSFeatureFlags();
 }
 
+CSSFontSelector& Document::fontSelector()
+{
+    if (!m_fontSelector)
+        m_fontSelector = CSSFontSelector::create(*this);
+    return *m_fontSelector;
+}
+
 void Document::clearStyleResolver()
 {
     m_styleResolver = nullptr;
+
+    // FIXME: It would be better if the FontSelector could survive this operation.
+    if (m_fontSelector) {
+        m_fontSelector->clearDocument();
+        m_fontSelector = nullptr;
+    }
 }
 
 void Document::createRenderTree()

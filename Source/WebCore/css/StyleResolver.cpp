@@ -257,7 +257,6 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
     , m_matchedPropertiesCacheSweepTimer(*this, &StyleResolver::sweepMatchedPropertiesCache)
     , m_document(document)
     , m_matchAuthorAndUserStyles(matchAuthorAndUserStyles)
-    , m_fontSelector(CSSFontSelector::create(&m_document))
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     , m_viewportStyleResolver(ViewportStyleResolver::create(&document))
 #endif
@@ -295,7 +294,7 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
         const HashSet<SVGFontFaceElement*>& svgFontFaceElements = m_document.svgExtensions()->svgFontFaceElements();
         HashSet<SVGFontFaceElement*>::const_iterator end = svgFontFaceElements.end();
         for (HashSet<SVGFontFaceElement*>::const_iterator it = svgFontFaceElements.begin(); it != end; ++it)
-            fontSelector()->addFontFaceRule((*it)->fontFaceRule());
+            m_document.fontSelector().addFontFaceRule((*it)->fontFaceRule());
     }
 #endif
 
@@ -306,7 +305,7 @@ void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefP
 {
     m_ruleSets.appendAuthorStyleSheets(firstNew, styleSheets, m_medium.get(), m_inspectorCSSOMWrappers, this);
     if (auto renderView = document().renderView())
-        renderView->style().fontCascade().update(fontSelector());
+        renderView->style().fontCascade().update(&document().fontSelector());
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     viewportStyleResolver()->resolve();
@@ -344,8 +343,6 @@ void StyleResolver::addKeyframeStyle(PassRefPtr<StyleRuleKeyframes> rule)
 
 StyleResolver::~StyleResolver()
 {
-    m_fontSelector->clearDocument();
-
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     m_viewportStyleResolver->clearDocument();
 #endif
@@ -748,7 +745,7 @@ Ref<RenderStyle> StyleResolver::styleForElement(Element* element, RenderStyle* d
         if (!s_styleNotYetAvailable) {
             s_styleNotYetAvailable = &RenderStyle::create().leakRef();
             s_styleNotYetAvailable->setDisplay(NONE);
-            s_styleNotYetAvailable->fontCascade().update(m_fontSelector);
+            s_styleNotYetAvailable->fontCascade().update(&document().fontSelector());
         }
         element->document().setHasNodesWithPlaceholderStyle();
         return *s_styleNotYetAvailable;
@@ -1031,7 +1028,7 @@ Ref<RenderStyle> StyleResolver::defaultStyleForElement()
     // Make sure our fonts are initialized if we don't inherit them from our parent style.
     if (Settings* settings = documentSettings()) {
         initializeFontStyle(settings);
-        m_state.style()->fontCascade().update(fontSelector());
+        m_state.style()->fontCascade().update(&document().fontSelector());
     } else
         m_state.style()->fontCascade().update(nullptr);
 
@@ -1484,7 +1481,7 @@ void StyleResolver::updateFont()
     checkForGenericFamilyChange(style, m_state.parentStyle());
     checkForZoomChange(style, m_state.parentStyle());
     checkForOrientationChange(style);
-    style->fontCascade().update(m_fontSelector);
+    style->fontCascade().update(&document().fontSelector());
     if (m_state.fontSizeHasViewportUnits())
         style->setHasViewportUnits(true);
     m_state.setFontDirty(false);

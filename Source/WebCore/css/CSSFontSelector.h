@@ -49,9 +49,9 @@ class StyleRuleFontFace;
 
 class CSSFontSelector final : public FontSelector {
 public:
-    static PassRefPtr<CSSFontSelector> create(Document* document)
+    static Ref<CSSFontSelector> create(Document& document)
     {
-        return adoptRef(new CSSFontSelector(document));
+        return adoptRef(*new CSSFontSelector(document));
     }
     virtual ~CSSFontSelector();
     
@@ -82,7 +82,7 @@ public:
     void beginLoadingFontSoon(CachedFont*);
 
 private:
-    CSSFontSelector(Document*);
+    explicit CSSFontSelector(Document&);
 
     void dispatchInvalidationCallbacks();
 

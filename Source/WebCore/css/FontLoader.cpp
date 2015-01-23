@@ -252,7 +252,7 @@ void FontLoader::loadFont(const Dictionary& params)
     m_numLoadingFromJS += callback->familyCount();
 
     for (unsigned i = 0; i < font.familyCount(); i++) {
-        CSSSegmentedFontFace* face = m_document->ensureStyleResolver().fontSelector()->getFontFace(font.fontDescription(), font.familyAt(i));
+        CSSSegmentedFontFace* face = m_document->fontSelector().getFontFace(font.fontDescription(), font.familyAt(i));
         if (!face) {
             if (callback)
                 callback->notifyError();
@@ -269,7 +269,7 @@ bool FontLoader::checkFont(const String& fontString, const String&)
     if (!resolveFontStyle(fontString, font))
         return false;
     for (unsigned i = 0; i < font.familyCount(); i++) {
-        CSSSegmentedFontFace* face = m_document->ensureStyleResolver().fontSelector()->getFontFace(font.fontDescription(), font.familyAt(i));
+        CSSSegmentedFontFace* face = m_document->fontSelector().getFontFace(font.fontDescription(), font.familyAt(i));
         if (!face || !face->checkFont())
             return false;
     }
@@ -320,7 +320,7 @@ bool FontLoader::resolveFontStyle(const String& fontString, FontCascade& font)
     applyPropertyToCurrentStyle(styleResolver, CSSPropertyLineHeight, parsedStyle);
 
     font = style->fontCascade();
-    font.update(styleResolver.fontSelector());
+    font.update(&m_document->fontSelector());
     return true;
 }
 
