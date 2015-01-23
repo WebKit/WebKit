@@ -1,3 +1,20 @@
+2015-01-23  Sergio Villar Senin  <svillar@igalia.com>
+
+        REGRESSION: run-perf-tests --profiler= seems to have broken
+        https://bugs.webkit.org/show_bug.cgi?id=113528
+
+        Reviewed by Daniel Bates.
+
+        The problem is that "perf --record" (or the equivalent call for
+        other profilers) is never called whenever there is a wrapper
+        option in the port. We should inject the profiler call first
+        (should it exists) and then use the port wrapper.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver._command_wrapper):
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_profiler_and_wrapper): New unit test.
+
 2015-01-22  David Kilzer  <ddkilzer@apple.com>
 
         configure-xcode-for-ios-development needs to import webkitdirs.pm

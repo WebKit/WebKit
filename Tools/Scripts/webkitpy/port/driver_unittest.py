@@ -103,6 +103,10 @@ class DriverTest(unittest.TestCase):
         driver = Driver(self.make_port(MockSystemHost(os_name='linux'), MockOptions(profile=True, profiler='perf')), None, False)
         self.assertEqual(driver._command_wrapper(), ['perf', 'record', '-g', '--output', '/mock-build/layout-test-results/test.data'])
 
+    def test_profiler_and_wrapper(self):
+        driver = Driver(self.make_port(MockSystemHost(os_name='linux'), MockOptions(profile=True, profiler='perf', wrapper='valgrind')), None, False)
+        self.assertEqual(driver._command_wrapper(), ['valgrind', 'perf', 'record', '-g', '--output', '/mock-build/layout-test-results/test.data'])
+
     def test_test_to_uri(self):
         port = self.make_port()
         driver = Driver(port, None, pixel_tests=False)

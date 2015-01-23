@@ -225,11 +225,12 @@ class Driver(object):
 
     def _command_wrapper(self):
         # Hook for injecting valgrind or other runtime instrumentation, used by e.g. tools/valgrind/valgrind_tests.py.
-        if self._port.get_option('wrapper'):
-            return shlex.split(self._port.get_option('wrapper'))
+        wrapper_arguments = []
         if self._profiler:
-            return self._profiler.wrapper_arguments()
-        return []
+            wrapper_arguments = self._profiler.wrapper_arguments()
+        if self._port.get_option('wrapper'):
+            return shlex.split(self._port.get_option('wrapper')) + wrapper_arguments
+        return wrapper_arguments
 
     HTTP_DIR = "http/tests/"
     HTTP_LOCAL_DIR = "http/tests/local/"
