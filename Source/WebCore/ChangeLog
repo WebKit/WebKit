@@ -1,3 +1,21 @@
+2015-01-23  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Rename ChildNodeRemovalNotifier::m_insertionPoint to m_removalPoint
+        https://bugs.webkit.org/show_bug.cgi?id=140766
+
+        Reviewed by Andreas Kling.
+
+        ChildNodeRemovalNotifier::ChildNodeRemovalNotifier(...) should take
+        a node as removal point.
+        It's probably Copy/Paste from ChildNodeInsertionNotifier::m_insertionPoint.
+
+        No new tests. No behavior change.
+
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildNodeRemovalNotifier::ChildNodeRemovalNotifier):
+        (WebCore::ChildNodeRemovalNotifier::notifyNodeRemovedFromDocument):
+        (WebCore::ChildNodeRemovalNotifier::notifyNodeRemovedFromTree):
+
 2015-01-23  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         [GTK] Fix debug build after r178940
