@@ -26,6 +26,7 @@
 #import "WKViewPrivate.h"
 
 #import "PluginComplexTextInputState.h"
+#import "SameDocumentNavigationType.h"
 #import "WebFindOptions.h"
 #import <wtf/Forward.h>
 #import <wtf/RetainPtr.h>
@@ -106,6 +107,8 @@ struct WebPageConfiguration;
 
 - (void)_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates;
 - (BOOL)_suppressVisibilityUpdates;
+
+- (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)type;
 
 #if WK_API_ENABLED
 @property (nonatomic, setter=_setThumbnailView:) _WKThumbnailView *_thumbnailView;

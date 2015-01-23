@@ -302,6 +302,8 @@ public:
     virtual void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&) = 0;
     virtual void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&) = 0;
     virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) = 0;
+
+    virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) = 0;
 };
 
 } // namespace WebKit

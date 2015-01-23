@@ -3598,6 +3598,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 #endif
 
+- (void)_didSameDocumentNavigationForMainFrame:(SameDocumentNavigationType)type
+{
+    if (_data->_gestureController)
+        _data->_gestureController->didSameDocumentNavigationForMainFrame(type);
+}
+
 @end
 
 @implementation WKView (Private)

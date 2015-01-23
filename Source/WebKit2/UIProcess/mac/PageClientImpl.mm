@@ -727,6 +727,11 @@ void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 #endif
 }
 
+void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
+{
+    [m_wkView _didSameDocumentNavigationForMainFrame:type];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

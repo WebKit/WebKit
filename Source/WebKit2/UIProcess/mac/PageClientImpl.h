@@ -180,6 +180,8 @@ private:
 
     NSView *activeView() const;
 
+    virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
+
     WKView *m_wkView;
     WKWebView *m_webView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
