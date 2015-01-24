@@ -96,7 +96,8 @@ public:
 private:
     NetworkCacheStorage(const String& directoryPath);
 
-    void initializeKeyFilter();
+    void initialize();
+    void shrinkIfNeeded();
 
     void removeEntry(const NetworkCacheKey&);
 
@@ -109,12 +110,14 @@ private:
 
     const String m_directoryPath;
 
-    size_t m_maximumSize;
+    size_t m_maximumSize { std::numeric_limits<size_t>::max() };
 
     BloomFilter<20> m_keyFilter;
+    std::atomic<size_t> m_approximateEntryCount { 0 };
+    std::atomic<bool> m_shrinkInProgress { false };
 
     Vector<Deque<RetrieveOperation>> m_pendingRetrieveOperationsByPriority;
-    unsigned m_activeRetrieveOperationCount;
+    unsigned m_activeRetrieveOperationCount { 0 };
 
 #if PLATFORM(COCOA)
     mutable OSObjectPtr<dispatch_queue_t> m_ioQueue;

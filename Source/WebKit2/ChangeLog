@@ -1,3 +1,25 @@
+2015-01-23  Antti Koivisto  <antti@apple.com>
+
+        Implement cache size limit
+        https://bugs.webkit.org/show_bug.cgi?id=140844
+
+        Reviewed by Andreas Kling.
+
+        Prevent the cache from growing without bounds. The simple scheme implemented here
+        estimates the cache size from number of entries. When the estimated size exceeds
+        the maximum size we randomly clear 1/4 of the entries.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::NetworkCacheStorage):
+        (WebKit::NetworkCacheStorage::initialize):
+        (WebKit::NetworkCacheStorage::removeEntry):
+        (WebKit::NetworkCacheStorage::store):
+        (WebKit::NetworkCacheStorage::setMaximumSize):
+        (WebKit::NetworkCacheStorage::clear):
+        (WebKit::NetworkCacheStorage::shrinkIfNeeded):
+        (WebKit::NetworkCacheStorage::initializeKeyFilter): Deleted.
+
 2015-01-23  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the pre-Yosemite build.

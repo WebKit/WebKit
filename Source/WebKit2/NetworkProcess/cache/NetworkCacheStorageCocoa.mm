@@ -122,30 +122,30 @@ std::unique_ptr<NetworkCacheStorage> NetworkCacheStorage::open(const String& cac
 
 NetworkCacheStorage::NetworkCacheStorage(const String& directoryPath)
     : m_directoryPath(directoryPath)
-    , m_maximumSize(std::numeric_limits<size_t>::max())
-    , m_activeRetrieveOperationCount(0)
     , m_ioQueue(adoptOSObject(dispatch_queue_create("com.apple.WebKit.Cache.Storage", DISPATCH_QUEUE_CONCURRENT)))
     , m_backgroundIOQueue(adoptOSObject(dispatch_queue_create("com.apple.WebKit.Cache.Storage.Background", DISPATCH_QUEUE_CONCURRENT)))
 {
     dispatch_set_target_queue(m_backgroundIOQueue.get(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0));
 
-    initializeKeyFilter();
+    initialize();
 }
 
-void NetworkCacheStorage::initializeKeyFilter()
+void NetworkCacheStorage::initialize()
 {
     ASSERT(RunLoop::isMain());
 
     StringCapture cachePathCapture(m_directoryPath);
     auto& keyFilter = m_keyFilter;
+    auto& entryCount = m_approximateEntryCount;
 
-    dispatch_async(m_backgroundIOQueue.get(), [cachePathCapture, &keyFilter] {
+    dispatch_async(m_backgroundIOQueue.get(), [cachePathCapture, &keyFilter, &entryCount] {
         String cachePath = cachePathCapture.string();
-        traverseCacheFiles(cachePath, [&keyFilter](const String& fileName, const String&) {
+        traverseCacheFiles(cachePath, [&keyFilter, &entryCount](const String& fileName, const String&) {
             NetworkCacheKey::HashType hash;
             if (!NetworkCacheKey::stringToHash(fileName, hash))
                 return;
             keyFilter.add(hash);
+            ++entryCount;
         });
     });
 }
@@ -343,9 +343,11 @@ void NetworkCacheStorage::removeEntry(const NetworkCacheKey& key)
         m_keyFilter.remove(key.hash());
 
     StringCapture filePathCapture(filePathForKey(key, m_directoryPath));
-    dispatch_async(m_ioQueue.get(), [filePathCapture] {
+    dispatch_async(m_ioQueue.get(), [this, filePathCapture] {
         CString path = WebCore::fileSystemRepresentation(filePathCapture.string());
         unlink(path.data());
+        if (m_approximateEntryCount)
+            --m_approximateEntryCount;
     });
 }
 
@@ -427,8 +429,11 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
         dispatch_io_write(channel.get(), 0, data.get(), dispatch_get_main_queue(), [this, key, completionHandler](bool done, dispatch_data_t, int error) {
             ASSERT_UNUSED(done, done);
             LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
-            if (!error)
+            if (!error) {
                 m_keyFilter.add(key.hash());
+                ++m_approximateEntryCount;
+                shrinkIfNeeded();
+            }
             completionHandler(!error);
         });
     });
@@ -437,8 +442,9 @@ void NetworkCacheStorage::store(const NetworkCacheKey& key, const Entry& entry, 
 void NetworkCacheStorage::setMaximumSize(size_t size)
 {
     ASSERT(RunLoop::isMain());
-    // FIXME: Implement.
     m_maximumSize = size;
+
+    shrinkIfNeeded();
 }
 
 void NetworkCacheStorage::clear()
@@ -447,6 +453,7 @@ void NetworkCacheStorage::clear()
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
 
     m_keyFilter.clear();
+    m_approximateEntryCount = 0;
 
     StringCapture directoryPathCapture(m_directoryPath);
 
@@ -460,6 +467,51 @@ void NetworkCacheStorage::clear()
             });
             rmdir(WebCore::fileSystemRepresentation(subdirPath).data());
         });
+    });
+}
+
+void NetworkCacheStorage::shrinkIfNeeded()
+{
+    const size_t assumedAverageResourceSize { 48 * 1024 };
+    const size_t everyNthResourceToDelete { 4 };
+
+    size_t estimatedCacheSize = assumedAverageResourceSize * m_approximateEntryCount;
+
+    if (estimatedCacheSize <= m_maximumSize)
+        return;
+    if (m_shrinkInProgress)
+        return;
+    m_shrinkInProgress = true;
+
+    LOG(NetworkCacheStorage, "(NetworkProcess) shrinking cache m_approximateEntryCount=%d estimatedCacheSize=%d, m_maximumSize=%d", static_cast<size_t>(m_approximateEntryCount), estimatedCacheSize, m_maximumSize);
+
+    StringCapture cachePathCapture(m_directoryPath);
+    dispatch_async(m_backgroundIOQueue.get(), [this, cachePathCapture] {
+        String cachePath = cachePathCapture.string();
+        size_t foundEntryCount = 0;
+        size_t deletedCount = 0;
+        traverseCacheFiles(cachePath, [this, &foundEntryCount, &deletedCount](const String& fileName, const String& directory) {
+            String partitionPath = WebCore::pathByAppendingComponent(directory, fileName);
+            CString path = WebCore::fileSystemRepresentation(partitionPath);
+            ++foundEntryCount;
+            if (foundEntryCount % everyNthResourceToDelete)
+                return;
+            ++deletedCount;
+
+            unlink(path.data());
+
+            NetworkCacheKey::HashType hash;
+            if (!NetworkCacheKey::stringToHash(fileName, hash))
+                return;
+            dispatch_async(dispatch_get_main_queue(), [this, hash] {
+                if (m_keyFilter.mayContain(hash))
+                    m_keyFilter.remove(hash);
+            });
+        });
+        m_approximateEntryCount = foundEntryCount - deletedCount;
+        m_shrinkInProgress = false;
+
+        LOG(NetworkCacheStorage, "(NetworkProcess) cache shrink completed m_approximateEntryCount=%d", static_cast<size_t>(m_approximateEntryCount));
     });
 }
 
