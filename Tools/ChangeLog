@@ -1,3 +1,16 @@
+2015-01-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the false positive build failures on the Windows buildbots
+        https://bugs.webkit.org/show_bug.cgi?id=140819
+
+        Reviewed by Brent Fulgham.
+
+        Increase the build timeout (without producing output) to 2 hours for Windows bots,
+        the default 20 minutes is enough for others since they produce output during the build.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (BuildFactory.__init__):
+
 2015-01-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Teach WebKit to provide IAccessible2 'get_language' and access AXLanguage
