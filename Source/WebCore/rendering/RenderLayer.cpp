@@ -1150,21 +1150,6 @@ void RenderLayer::updateDescendantDependentFlags(HashSet<const RenderObject*>* o
     }
 }
 
-// Return true if the new clipping behaviour requires layer update.
-bool RenderLayer::checkIfDescendantClippingContextNeedsUpdate(bool isClipping)
-{
-    for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
-        RenderLayerBacking* backing = child->backing();
-        // Layer subtree needs update when new clipping is added or existing clipping is removed.
-        if (backing && (isClipping || backing->hasAncestorClippingLayer()))
-            return true;
-
-        if (child->checkIfDescendantClippingContextNeedsUpdate(isClipping))
-            return true;
-    }
-    return false;
-}
-
 void RenderLayer::dirty3DTransformedDescendantStatus()
 {
     RenderLayer* curr = stackingContainer();
@@ -6374,18 +6359,6 @@ void RenderLayer::updateOutOfFlowPositioned(const RenderStyle* oldStyle)
     }
 }
 
-inline bool RenderLayer::needsCompositingLayersRebuiltForClip(const RenderStyle* oldStyle, const RenderStyle* newStyle) const
-{
-    ASSERT(newStyle);
-    return oldStyle && (oldStyle->clip() != newStyle->clip() || oldStyle->hasClip() != newStyle->hasClip());
-}
-
-inline bool RenderLayer::needsCompositingLayersRebuiltForOverflow(const RenderStyle* oldStyle, const RenderStyle* newStyle) const
-{
-    ASSERT(newStyle);
-    return !isComposited() && oldStyle && (oldStyle->overflowX() != newStyle->overflowX()) && stackingContainer()->hasCompositingDescendant();
-}
-
 void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle)
 {
     bool isNormalFlowOnly = shouldBeNormalFlowOnly();
@@ -6442,44 +6415,15 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 
     updateNeedsCompositedScrolling();
 
-    const RenderStyle& newStyle = renderer().style();
-    if (compositor().updateLayerCompositingState(*this)
-        || needsCompositingLayersRebuiltForClip(oldStyle, &newStyle)
-        || needsCompositingLayersRebuiltForOverflow(oldStyle, &newStyle))
-        compositor().setCompositingLayersNeedRebuild();
-    else if (isComposited()) {
-        // FIXME: updating geometry here is potentially harmful, because layout is not up-to-date.
-        backing()->updateGeometry();
-        backing()->updateAfterDescendents();
-    }
+    compositor().layerStyleChanged(*this, oldStyle);
 
-    if (oldStyle) {
-        // Compositing layers keep track of whether they are clipped by any of the ancestors.
-        // When the current layer's clipping behaviour changes, we need to propagate it to the descendants.
-        const RenderStyle& style = renderer().style();
-        bool wasClipping = oldStyle->hasClip() || oldStyle->overflowX() != OVISIBLE || oldStyle->overflowY() != OVISIBLE;
-        bool isClipping = style.hasClip() || style.overflowX() != OVISIBLE || style.overflowY() != OVISIBLE;
-        if (isClipping != wasClipping) {
-            if (checkIfDescendantClippingContextNeedsUpdate(isClipping))
-                compositor().setCompositingLayersNeedRebuild();
-        }
-    }
+    updateOrRemoveFilterEffectRenderer();
 
 #if PLATFORM(IOS) && ENABLE(TOUCH_EVENTS)
     if (diff == StyleDifferenceRecompositeLayer || diff >= StyleDifferenceLayoutPositionedMovementOnly)
         renderer().document().dirtyTouchEventRects();
 #else
     UNUSED_PARAM(diff);
-#endif
-
-#if ENABLE(CSS_FILTERS)
-    updateOrRemoveFilterEffectRenderer();
-    bool backingDidCompositeLayers = isComposited() && backing()->canCompositeFilters();
-    if (isComposited() && backingDidCompositeLayers && !backing()->canCompositeFilters()) {
-        // The filters used to be drawn by platform code, but now the platform cannot draw them anymore.
-        // Fallback to drawing them in software.
-        setBackingNeedsRepaint();
-    }
 #endif
 }
 
@@ -6633,7 +6577,7 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
         // Don't delete the whole filter info here, because we might use it
         // for loading SVG reference filter files.
         if (FilterInfo* filterInfo = FilterInfo::getIfExists(*this))
-            filterInfo->setRenderer(0);
+            filterInfo->setRenderer(nullptr);
 
         // Early-return only if we *don't* have reference filters.
         // For reference filters, we still want the FilterEffect graph built
@@ -6660,7 +6604,7 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
     // If the filter fails to build, remove it from the layer. It will still attempt to
     // go through regular processing (e.g. compositing), but never apply anything.
     if (!filterInfo.renderer()->build(&renderer(), renderer().style().filter(), FilterProperty))
-        filterInfo.setRenderer(0);
+        filterInfo.setRenderer(nullptr);
 }
 
 void RenderLayer::filterNeedsRepaint()

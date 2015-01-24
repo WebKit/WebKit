@@ -169,6 +169,8 @@ public:
     void layerWasAdded(RenderLayer& parent, RenderLayer& child);
     void layerWillBeRemoved(RenderLayer& parent, RenderLayer& child);
 
+    void layerStyleChanged(RenderLayer&, const RenderStyle* oldStyle);
+
     // Get the nearest ancestor layer that has overflow or clip, but is not a stacking context
     RenderLayer* enclosingNonStackingClippingLayer(const RenderLayer&) const;
 

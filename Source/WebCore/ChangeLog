@@ -1,3 +1,33 @@
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
+        Merge r174356.
+
+    2014-10-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Some compositing logic cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=133060
+
+        Reviewed by Zalan Bujtas.
+
+        Move compositing-related code from RenderLayer::styleChanged() to
+        RenderLayerCompositor::layerStyleChanged(). Combine various tests
+        (many clip-related) for changes that require layer rebuilding into 
+        styleChangeRequiresLayerRebuild().
+        
+        Remove code that calls setBackingNeedsRepaint() after filters change
+        between being composited or not; I verified that existing "repaint after
+        style change" code takes care those repaints.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::checkIfDescendantClippingContextNeedsUpdate): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::checkIfDescendantClippingContextNeedsUpdate):
+        (WebCore::styleChangeRequiresLayerRebuild):
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+        * rendering/RenderLayerCompositor.h:
+
 2015-01-23  Pratik Solanki  <psolanki@apple.com>
 
         <rdar://problem/19564738> Stowe: CrashTracer: [USER] com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::SharedBuffer::createPurgeableBuffer const + 14

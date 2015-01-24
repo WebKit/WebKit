@@ -829,8 +829,6 @@ public:
     virtual GraphicsLayer* layerForScrollCorner() const override;
     virtual bool usesCompositedScrolling() const override;
     bool needsCompositedScrolling() const;
-    bool needsCompositingLayersRebuiltForClip(const RenderStyle* oldStyle, const RenderStyle* newStyle) const;
-    bool needsCompositingLayersRebuiltForOverflow(const RenderStyle* oldStyle, const RenderStyle* newStyle) const;
 
     bool paintsWithTransparency(PaintBehavior paintBehavior) const
     {
@@ -1105,7 +1103,6 @@ private:
     void setAncestorChainHasVisibleDescendant();
 
     void updateDescendantDependentFlags(HashSet<const RenderObject*>* outOfFlowDescendantContainingBlocks = nullptr);
-    bool checkIfDescendantClippingContextNeedsUpdate(bool isClipping);
 
     bool has3DTransformedDescendant() const { return m_has3DTransformedDescendant; }
 

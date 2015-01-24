@@ -838,6 +838,54 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, int depth)
 }
 #endif
 
+static bool checkIfDescendantClippingContextNeedsUpdate(const RenderLayer& layer, bool isClipping)
+{
+    for (RenderLayer* child = layer.firstChild(); child; child = child->nextSibling()) {
+        RenderLayerBacking* backing = child->backing();
+        if (backing && (isClipping || backing->hasAncestorClippingLayer()))
+            return true;
+
+        if (checkIfDescendantClippingContextNeedsUpdate(*child, isClipping))
+            return true;
+    }
+    return false;
+}
+
+static bool styleChangeRequiresLayerRebuild(const RenderLayer& layer, const RenderStyle& oldStyle, const RenderStyle& newStyle)
+{
+    // Clip can affect ancestor compositing bounds, so we need recompute overlap when it changes on a non-composited layer.
+    // FIXME: we should avoid doing this for all clip changes.
+    if (oldStyle.clip() != newStyle.clip() || oldStyle.hasClip() != newStyle.hasClip())
+        return true;
+
+    // When overflow changes, composited layers may need to update their ancestorClipping layers.
+    if (!layer.isComposited() && (oldStyle.overflowX() != newStyle.overflowX()) && layer.stackingContainer()->hasCompositingDescendant())
+        return true;
+
+    // Compositing layers keep track of whether they are clipped by any of the ancestors.
+    // When the current layer's clipping behaviour changes, we need to propagate it to the descendants.
+    bool wasClipping = oldStyle.hasClip() || oldStyle.overflowX() != OVISIBLE || oldStyle.overflowY() != OVISIBLE;
+    bool isClipping = newStyle.hasClip() || newStyle.overflowX() != OVISIBLE || newStyle.overflowY() != OVISIBLE;
+    if (isClipping != wasClipping) {
+        if (checkIfDescendantClippingContextNeedsUpdate(layer, isClipping))
+            return true;
+    }
+
+    return false;
+}
+
+void RenderLayerCompositor::layerStyleChanged(RenderLayer& layer, const RenderStyle* oldStyle)
+{
+    const RenderStyle& newStyle = layer.renderer().style();
+    if (updateLayerCompositingState(layer) || (oldStyle && styleChangeRequiresLayerRebuild(layer, *oldStyle, newStyle)))
+        setCompositingLayersNeedRebuild();
+    else if (layer.isComposited()) {
+        // FIXME: updating geometry here is potentially harmful, because layout is not up-to-date.
+        layer.backing()->updateGeometry();
+        layer.backing()->updateAfterDescendents();
+    }
+}
+
 bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeRepaint shouldRepaint)
 {
     bool layerChanged = false;
