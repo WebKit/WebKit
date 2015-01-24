@@ -1,3 +1,51 @@
+2015-01-24  Darin Adler  <darin@apple.com>
+
+        Move height/width implementation for use element from RenderSVGViewportContainer to SVGUseElement
+        https://bugs.webkit.org/show_bug.cgi?id=140826
+
+        Reviewed by Anders Carlsson.
+
+        Tests: svg/animations/use-animate-width-and-height.html
+               svg/custom/use-attribute-invalidations.html
+               svg/custom/use-dynamic-attribute-setting.html
+
+        This is an adaptation of work Rob Buis did in Blink:
+
+            http://src.chromium.org/viewvc/blink?view=revision&revision=173258
+
+        The goal here is to reduce use of SVGElementInstance since we are going to
+        remove it. The tests Rob added to Blink (which I believe I improved a bit here)
+        meant we had to fix quite a few bugs in the implementation of the width/height
+        logic rather than just moving it. Even so, this could use even more test coverage
+        since there is separate logic for <symbol> and <svg>, three different code paths
+        (animation/attribute setting, initial creation, and one other), and also
+        distinct issues for attributes not set at all, attributes set to values that
+        can't be parsed, and attributes set with different units.
+
+        * rendering/svg/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::calcViewport): Removed the old logic.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement): Use ASCIILiteral to more efficiently
+        create strings from ASCII literals here.
+        (WebCore::SVGSVGElement::parseAttribute): Default to 100%, not 0, when the
+        width or height property are either not set or not successfully parsed. Without
+        this change, one of the SVG tests starts failing.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::updateWidthAndHeight): Added. The tricky part here is that we have
+        to copy width and height attributes only if they were successfully parsed, and
+        also we need to copy the current animating values, not the original attribute
+        strings. Kind of messy, but I wanted to adapt Rob's solution for the time being,
+        rather than inventing something new.
+        (WebCore::SVGUseElement::svgAttributeChanged): Call updateWidthAndHeight.
+        This is used both when actual attribute changes occur and also when animation
+        changes the current value.
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree): Call updateWidthAndHeight.
+        This is used when the shadow elements are first created.
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree): Call updateWidthAndHeight.
+        This was in Rob's patch, but I am not sure we have sufficient test coverage.
+
 2015-01-24  Chris Dumez  <cdumez@apple.com>
 
         Provide implementation for WTF::DefaultHash<bool>

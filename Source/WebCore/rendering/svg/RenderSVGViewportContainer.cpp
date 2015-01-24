@@ -58,62 +58,17 @@ void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
 
 void RenderSVGViewportContainer::calcViewport()
 {
-    SVGSVGElement& svg = svgSVGElement();
-    FloatRect oldViewport = m_viewport;
+    SVGSVGElement& element = svgSVGElement();
+    SVGLengthContext lengthContext(&element);
+    FloatRect newViewport(element.x().value(lengthContext), element.y().value(lengthContext), element.width().value(lengthContext), element.height().value(lengthContext));
 
-    SVGLengthContext lengthContext(&svg);
-    m_viewport = FloatRect(svg.x().value(lengthContext), svg.y().value(lengthContext), svg.width().value(lengthContext), svg.height().value(lengthContext));
+    if (m_viewport == newViewport)
+        return;
 
-    SVGElement* correspondingElement = svg.correspondingElement();
-    if (correspondingElement && svg.isInShadowTree()) {
-        const HashSet<SVGElementInstance*>& instances = correspondingElement->instancesForElement();
-        ASSERT(!instances.isEmpty());
+    m_viewport = newViewport;
 
-        SVGUseElement* useElement = 0;
-        const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
-        for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
-            const SVGElementInstance* instance = (*it);
-            ASSERT(instance->correspondingElement()->hasTagName(SVGNames::svgTag) || instance->correspondingElement()->hasTagName(SVGNames::symbolTag));
-            if (instance->shadowTreeElement() == &svg) {
-                ASSERT(correspondingElement == instance->correspondingElement());
-                useElement = instance->directUseElement();
-                if (!useElement)
-                    useElement = instance->correspondingUseElement();
-                break;
-            }
-        }
-
-        ASSERT(useElement);
-        bool isSymbolElement = correspondingElement->hasTagName(SVGNames::symbolTag);
-
-        // Spec (<use> on <symbol>): This generated 'svg' will always have explicit values for attributes width and height.
-        // If attributes width and/or height are provided on the 'use' element, then these attributes
-        // will be transferred to the generated 'svg'. If attributes width and/or height are not specified,
-        // the generated 'svg' element will use values of 100% for these attributes.
-
-        // Spec (<use> on <svg>): If attributes width and/or height are provided on the 'use' element, then these
-        // values will override the corresponding attributes on the 'svg' in the generated tree.
-
-        SVGLengthContext lengthContext(&svg);
-        if (useElement->hasAttribute(SVGNames::widthAttr))
-            m_viewport.setWidth(useElement->width().value(lengthContext));
-        else if (isSymbolElement && svg.hasAttribute(SVGNames::widthAttr)) {
-            SVGLength containerWidth(LengthModeWidth, "100%");
-            m_viewport.setWidth(containerWidth.value(lengthContext));
-        }
-
-        if (useElement->hasAttribute(SVGNames::heightAttr))
-            m_viewport.setHeight(useElement->height().value(lengthContext));
-        else if (isSymbolElement && svg.hasAttribute(SVGNames::heightAttr)) {
-            SVGLength containerHeight(LengthModeHeight, "100%");
-            m_viewport.setHeight(containerHeight.value(lengthContext));
-        }
-    }
-
-    if (oldViewport != m_viewport) {
-        setNeedsBoundariesUpdate();
-        setNeedsTransformUpdate();
-    }
+    setNeedsBoundariesUpdate();
+    setNeedsTransformUpdate();
 }
 
 bool RenderSVGViewportContainer::calculateLocalTransform() 

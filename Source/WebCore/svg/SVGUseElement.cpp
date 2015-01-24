@@ -213,6 +213,26 @@ Document* SVGUseElement::externalDocument() const
     return 0;
 }
 
+static void updateWidthAndHeight(SVGElement& shadowElement, const SVGUseElement& useElement, const SVGElement& originalElement)
+{
+    // FIXME: The check for valueInSpecifiedUnits being non-zero below is a workaround for the fact
+    // that we currently have no good way to tell whether a particular animatable attribute is a value
+    // indicating it was unspecified, or specified but could not be parsed. Would be nice to fix that some day.
+    if (is<SVGSymbolElement>(shadowElement)) {
+        // Spec (<use> on <symbol>): This generated 'svg' will always have explicit values for attributes width and height.
+        // If attributes width and/or height are provided on the 'use' element, then these attributes
+        // will be transferred to the generated 'svg'. If attributes width and/or height are not specified,
+        // the generated 'svg' element will use values of 100% for these attributes.
+        shadowElement.setAttribute(SVGNames::widthAttr, (useElement.widthIsValid() && useElement.width().valueInSpecifiedUnits()) ? AtomicString(useElement.width().valueAsString()) : "100%");
+        shadowElement.setAttribute(SVGNames::heightAttr, (useElement.heightIsValid() && useElement.height().valueInSpecifiedUnits()) ? AtomicString(useElement.height().valueAsString()) : "100%");
+    } else if (is<SVGSVGElement>(shadowElement)) {
+        // Spec (<use> on <svg>): If attributes width and/or height are provided on the 'use' element, then these
+        // values will override the corresponding attributes on the 'svg' in the generated tree.
+        shadowElement.setAttribute(SVGNames::widthAttr, (useElement.widthIsValid() && useElement.width().valueInSpecifiedUnits()) ? AtomicString(useElement.width().valueAsString()) : originalElement.getAttribute(SVGNames::widthAttr));
+        shadowElement.setAttribute(SVGNames::heightAttr, (useElement.heightIsValid() && useElement.height().valueInSpecifiedUnits()) ? AtomicString(useElement.height().valueAsString()) : originalElement.getAttribute(SVGNames::heightAttr));
+    }
+}
+
 void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (!isSupportedAttribute(attrName)) {
@@ -222,13 +242,16 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
 
     SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
-    auto renderer = this->renderer();
-    if (attrName == SVGNames::xAttr
-        || attrName == SVGNames::yAttr
-        || attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr) {
+    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr || attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
         updateRelativeLengthsInformation();
-        if (renderer)
+        if (m_targetElementInstance) {
+            // FIXME: It's unnecessarily inefficient to do this work any time we change "x" or "y".
+            // FIXME: It's unnecessarily inefficient to update both width and height each time either is changed.
+            ASSERT(m_targetElementInstance->shadowTreeElement());
+            ASSERT(m_targetElementInstance->correspondingElement());
+            updateWidthAndHeight(*m_targetElementInstance->shadowTreeElement(), *this, *m_targetElementInstance->correspondingElement());
+        }
+        if (auto* renderer = this->renderer())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
@@ -428,6 +451,10 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGElement* target)
     // Now that the shadow tree is completly expanded, we can associate
     // shadow tree elements <-> instances in the instance tree.
     associateInstancesWithShadowTreeElements(shadowTreeRootElement->firstChild(), m_targetElementInstance.get());
+
+    ASSERT(m_targetElementInstance->shadowTreeElement());
+    ASSERT(m_targetElementInstance->correspondingElement() == target);
+    updateWidthAndHeight(*m_targetElementInstance->shadowTreeElement(), *this, *target);
 
     // If no shadow tree element is present, this means that the reference root
     // element was removed, as it is disallowed (ie. <use> on <foreignObject>)
@@ -651,7 +678,7 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
 
         if (target && !isDisallowedElement(*target)) {
             RefPtr<Element> newChild = target->cloneElementWithChildren(document());
-            ASSERT(newChild->isSVGElement());
+            updateWidthAndHeight(downcast<SVGElement>(*newChild), use, *target);
             cloneParent->appendChild(newChild.release());
         }
 

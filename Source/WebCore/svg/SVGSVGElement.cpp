@@ -84,8 +84,8 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document& docu
     : SVGGraphicsElement(tagName, document)
     , m_x(LengthModeWidth)
     , m_y(LengthModeHeight)
-    , m_width(LengthModeWidth, "100%")
-    , m_height(LengthModeHeight, "100%") 
+    , m_width(LengthModeWidth, ASCIILiteral("100%"))
+    , m_height(LengthModeHeight, ASCIILiteral("100%"))
     , m_useCurrentView(false)
     , m_zoomAndPan(SVGZoomAndPanMagnify)
     , m_timeContainer(SMILTimeContainer::create(this))
@@ -257,11 +257,23 @@ void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString
         setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
         setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (name == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
-    else if (name == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
-    else if (SVGLangSpace::parseAttribute(name, value)
+    else if (name == SVGNames::widthAttr) {
+        SVGLength length = SVGLength::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths);
+        if (parseError != NoError || value.isEmpty()) {
+            // FIXME: This is definitely the correct behavior for a missing/removed attribute.
+            // Not sure it's correct for the empty string or for something that can't be parsed.
+            length = SVGLength(LengthModeWidth, ASCIILiteral("100%"));
+        }
+        setWidthBaseValue(length);
+    } else if (name == SVGNames::heightAttr) {
+        SVGLength length = SVGLength::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths);
+        if (parseError != NoError || value.isEmpty()) {
+            // FIXME: This is definitely the correct behavior for a removed attribute.
+            // Not sure it's correct for the empty string or for something that can't be parsed.
+            length = SVGLength(LengthModeHeight, ASCIILiteral("100%"));
+        }
+        setHeightBaseValue(length);
+    } else if (SVGLangSpace::parseAttribute(name, value)
                || SVGExternalResourcesRequired::parseAttribute(name, value)
                || SVGFitToViewBox::parseAttribute(this, name, value)
                || SVGZoomAndPan::parseAttribute(this, name, value)) {

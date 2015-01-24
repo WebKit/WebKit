@@ -1,3 +1,20 @@
+2015-01-24  Darin Adler  <darin@apple.com>
+
+        Move height/width implementation for use element from RenderSVGViewportContainer to SVGUseElement
+        https://bugs.webkit.org/show_bug.cgi?id=140826
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.png: Old test
+        result was expecting failure. New one expects success.
+        * platform/mac/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt: Ditto.
+        * svg/animations/use-animate-width-and-height-expected.txt: Added.
+        * svg/animations/use-animate-width-and-height.html: Added.
+        * svg/custom/use-attribute-invalidations-expected.html: Added.
+        * svg/custom/use-attribute-invalidations.html: Added.
+        * svg/custom/use-dynamic-attribute-setting-expected.html: Added.
+        * svg/custom/use-dynamic-attribute-setting.html: Added.
+
 2015-01-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening. Add Windows baseline for
