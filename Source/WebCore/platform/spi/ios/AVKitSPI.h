@@ -32,7 +32,6 @@
 #import <AVKit/AVPlayerController.h>
 #import <AVKit/AVPlayerViewController_Private.h>
 #import <AVKit/AVPlayerViewController_WebKitOnly.h>
-#import <AVKit/AVValueTiming.h>
 #import <AVKit/AVVideoLayer.h>
 
 #else
@@ -92,6 +91,14 @@ typedef NSInteger AVPlayerViewControllerOptimizedFullscreenStopReason;
 @property (nonatomic, strong) AVPlayerController *playerController;
 @property (nonatomic, weak) id <AVPlayerViewControllerDelegate> delegate;
 @end
+
+#endif
+
+#if USE(APPLE_INTERNAL_SDK) && __IPHONE_OS_VERSION_MIN_REQUIRED < 90000
+
+#import <AVKit/AVValueTiming.h>
+
+#else
 
 @interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
 @end

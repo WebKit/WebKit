@@ -1,3 +1,11 @@
+2015-01-23  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Attempt to fix the build after AVValueTiming.h moved
+
+        * platform/spi/ios/AVKitSPI.h: The AVValueTiming.h header moved
+        to an unexpected location, so work around it by using local SPI
+        declarations.
+
 2015-01-23  Alexey Proskuryakov  <ap@apple.com>
 
         Try to fix the build after r179056.
