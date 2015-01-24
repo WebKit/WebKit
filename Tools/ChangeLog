@@ -1,3 +1,15 @@
+2015-01-23  David Kilzer  <ddkilzer@apple.com>
+
+        test-webkitpy: webkitpy.tool.commands.earlywarningsystem_unittest.EarlyWarningSystemTest.test_ewses fails on EFL, GTK, Win ports
+        <http://webkit.org/b/140787>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.determine_full_port_name): Instead of checking the type
+        of the current host, test if /usr/bin/xcrun exists before trying
+        to use it.
+
 2015-01-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the false positive build failures on the Windows buildbots
