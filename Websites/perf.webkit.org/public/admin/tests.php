@@ -45,7 +45,7 @@ if ($action == 'dashboard') {
             notice("Failed to associate triggerable $triggerable_id with test $test_id on platform $platform_id.");
         }
     } else {
-        $db->query_and_get_affected_rows('DELETE FROM triggerable_configurations WHERE trigrepo_test = $1 AND trigrepo_platform = $2',
+        $db->query_and_get_affected_rows('DELETE FROM triggerable_configurations WHERE trigconfig_test = $1 AND trigconfig_platform = $2',
             array($test_id, $platform_id));
     }
 } else if ($action == 'add') {
@@ -120,8 +120,8 @@ if ($db) {
 
             $test_url = htmlspecialchars($test['test_url']);
 
-            $triggerable_platforms = $db->query_and_fetch_all('SELECT * FROM platforms LEFT OUTER JOIN triggerable_configurations
-                ON trigconfig_platform = platform_id AND trigconfig_test = $1 ORDER BY platform_name', array($test_id));
+            $triggerable_platforms = $db->query_and_fetch_all('SELECT * FROM platforms
+                LEFT OUTER JOIN triggerable_configurations ON trigconfig_platform = platform_id AND trigconfig_test = $1 ORDER BY platform_name', array($test_id));
             $triggerables = '';
             foreach ($triggerable_platforms as $platform_row) {
                 if (!$test_name_resolver->test_exists_on_platform($test_id, $platform_row['platform_id']))
@@ -137,7 +137,7 @@ if ($db) {
         <select name="triggerable" onchange="this.form.submit();">
             <option value="">None</option>
 END;
-                $selected_triggerable = array_get($platform_row, 'trigrepo_triggerable');
+                $selected_triggerable = array_get($platform_row, 'trigconfig_triggerable');
                 foreach ($build_triggerable_table as $triggerable_row) {
                     $triggerable_id = $triggerable_row['triggerable_id'];
                     $selected = $triggerable_id == $selected_triggerable ? ' selected' : '';
