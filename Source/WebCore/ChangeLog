@@ -1,3 +1,15 @@
+2015-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Rename InjectedScriptHost::type to subtype
+        https://bugs.webkit.org/show_bug.cgi?id=140841
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/WebInjectedScriptHost.cpp:
+        (WebCore::WebInjectedScriptHost::subtype):
+        (WebCore::WebInjectedScriptHost::type): Deleted.
+        * inspector/WebInjectedScriptHost.h:
+
 2015-01-23  Jer Noble  <jer.noble@apple.com>
 
         [Mac][EME] Support ClearKey encryption with AES128-encrypted HLS

@@ -39,7 +39,7 @@ public:
     static PassRefPtr<InjectedScriptHost> create() { return adoptRef(new InjectedScriptHost); }
     virtual ~InjectedScriptHost();
 
-    virtual JSC::JSValue type(JSC::ExecState*, JSC::JSValue) { return JSC::jsUndefined(); }
+    virtual JSC::JSValue subtype(JSC::ExecState*, JSC::JSValue) { return JSC::jsUndefined(); }
     virtual bool isHTMLAllCollection(JSC::JSValue) { return false; }
 
     JSC::JSValue jsWrapper(JSC::ExecState*, JSC::JSGlobalObject*);

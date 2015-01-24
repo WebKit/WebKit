@@ -1,3 +1,24 @@
+2015-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Rename InjectedScriptHost::type to subtype
+        https://bugs.webkit.org/show_bug.cgi?id=140841
+
+        Reviewed by Timothy Hatcher.
+
+        We were using this to set the subtype of an "object" type RemoteObject
+        so we should clean up the name and call it subtype.
+
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptSource.js:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        (Inspector::JSInjectedScriptHost::type): Deleted.
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionSubtype):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionType): Deleted.
+
 2015-01-23  Michael Saboff  <msaboff@apple.com>
 
         LayoutTests/js/script-tests/reentrant-caching.js crashing on 32 bit builds

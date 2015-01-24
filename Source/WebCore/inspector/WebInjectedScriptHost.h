@@ -34,7 +34,7 @@ class WebInjectedScriptHost final : public Inspector::InjectedScriptHost {
 public:
     static PassRefPtr<WebInjectedScriptHost> create() { return adoptRef(new WebInjectedScriptHost); }
 
-    virtual JSC::JSValue type(JSC::ExecState*, JSC::JSValue) override;
+    virtual JSC::JSValue subtype(JSC::ExecState*, JSC::JSValue) override;
     virtual bool isHTMLAllCollection(JSC::JSValue) override;
 };
 

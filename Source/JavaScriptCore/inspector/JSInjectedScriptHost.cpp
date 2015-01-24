@@ -106,7 +106,7 @@ JSValue JSInjectedScriptHost::isHTMLAllCollection(ExecState* exec)
     return jsBoolean(impl().isHTMLAllCollection(value));
 }
 
-JSValue JSInjectedScriptHost::type(ExecState* exec)
+JSValue JSInjectedScriptHost::subtype(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
@@ -136,7 +136,7 @@ JSValue JSInjectedScriptHost::type(ExecState* exec)
     if (value.inherits(JSFloat32Array::info()) || value.inherits(JSFloat64Array::info()))
         return jsNontrivialString(exec, ASCIILiteral("array"));
 
-    return impl().type(exec, value);
+    return impl().subtype(exec, value);
 }
 
 JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)

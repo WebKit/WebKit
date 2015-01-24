@@ -104,7 +104,7 @@ InjectedScript.prototype = {
         var columnNames = null;
         if (typeof columns === "string")
             columns = [columns];
-        if (InjectedScriptHost.type(columns) === "array") {
+        if (InjectedScriptHost.subtype(columns) === "array") {
             columnNames = [];
             for (var i = 0; i < columns.length; ++i)
                 columnNames.push(String(columns[i]));
@@ -611,7 +611,7 @@ InjectedScript.prototype = {
         if (this._isHTMLAllCollection(obj))
             return "array";
 
-        var preciseType = InjectedScriptHost.type(obj);
+        var preciseType = InjectedScriptHost.subtype(obj);
         if (preciseType)
             return preciseType;
 
