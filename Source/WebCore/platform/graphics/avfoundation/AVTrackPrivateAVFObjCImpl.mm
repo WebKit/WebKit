@@ -28,27 +28,16 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#import "MediaSelectionGroupAVFObjC.h"
 #import "SoftLinking.h"
-#import <AVFoundation/AVAssetTrack.h>
-#import <AVFoundation/AVMediaSelectionGroup.h>
-#import <AVFoundation/AVMetadataItem.h>
-#import <AVFoundation/AVPlayerItem.h>
-#import <AVFoundation/AVPlayerItemTrack.h>
 #import <objc/runtime.h>
-
-@class AVMediaSelectionOption;
-@interface AVMediaSelectionOption (WebKitInternal)
-- (id)optionID;
-@end
+#import <AVFoundation/AVAssetTrack.h>
+#import <AVFoundation/AVPlayerItemTrack.h>
+#import <AVFoundation/AVMetadataItem.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
 SOFT_LINK_CLASS(AVFoundation, AVAssetTrack)
-SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerItemTrack)
-SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionGroup)
-SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionOption)
 SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
 
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaCharacteristicIsMainProgramContent, NSString *)
@@ -80,120 +69,48 @@ AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl(AVAssetTrack* track)
 {
 }
 
-AVTrackPrivateAVFObjCImpl::AVTrackPrivateAVFObjCImpl(MediaSelectionOptionAVFObjC& option)
-    : m_mediaSelectionOption(&option)
-{
-}
-
-AVTrackPrivateAVFObjCImpl::~AVTrackPrivateAVFObjCImpl()
-{
-}
-    
 bool AVTrackPrivateAVFObjCImpl::enabled() const
 {
-    if (m_playerItemTrack)
-        return [m_playerItemTrack isEnabled];
-    if (m_mediaSelectionOption)
-        return m_mediaSelectionOption->selected();
-    ASSERT_NOT_REACHED();
-    return false;
+    ASSERT(m_playerItemTrack);
+    return [m_playerItemTrack isEnabled];
 }
 
 void AVTrackPrivateAVFObjCImpl::setEnabled(bool enabled)
 {
-    if (m_playerItemTrack)
-        [m_playerItemTrack setEnabled:enabled];
-    else if (m_mediaSelectionOption)
-        m_mediaSelectionOption->setSelected(enabled);
-    else
-        ASSERT_NOT_REACHED();
+    ASSERT(m_playerItemTrack);
+    [m_playerItemTrack setEnabled:enabled];
 }
 
 AudioTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::audioKind() const
 {
-    if (m_assetTrack) {
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
-            return AudioTrackPrivate::Alternative;
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
-            return AudioTrackPrivate::Main;
-        return AudioTrackPrivate::None;
-    }
-
-    if (m_mediaSelectionOption) {
-        AVMediaSelectionOption *option = m_mediaSelectionOption->avMediaSelectionOption();
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
-            return AudioTrackPrivate::Alternative;
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
-            return AudioTrackPrivate::Main;
-        return AudioTrackPrivate::None;
-    }
-
-    ASSERT_NOT_REACHED();
+    if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
+        return AudioTrackPrivate::Alternative;
+    else if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
+        return AudioTrackPrivate::Main;
     return AudioTrackPrivate::None;
 }
 
 VideoTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::videoKind() const
 {
-    if (m_assetTrack) {
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
-            return VideoTrackPrivate::Sign;
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
-            return VideoTrackPrivate::Captions;
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
-            return VideoTrackPrivate::Alternative;
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
-            return VideoTrackPrivate::Main;
-        return VideoTrackPrivate::None;
-    }
-
-    if (m_mediaSelectionOption) {
-        AVMediaSelectionOption *option = m_mediaSelectionOption->avMediaSelectionOption();
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
-            return VideoTrackPrivate::Sign;
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
-            return VideoTrackPrivate::Captions;
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
-            return VideoTrackPrivate::Alternative;
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
-            return VideoTrackPrivate::Main;
-        return VideoTrackPrivate::None;
-    }
-
-    ASSERT_NOT_REACHED();
+    if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+        return VideoTrackPrivate::Sign;
+    else if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
+        return VideoTrackPrivate::Captions;
+    else if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
+        return VideoTrackPrivate::Alternative;
+    else if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
+        return VideoTrackPrivate::Main;
     return VideoTrackPrivate::None;
-}
-
-int AVTrackPrivateAVFObjCImpl::index() const
-{
-    if (m_assetTrack)
-        return [[[m_assetTrack asset] tracks] indexOfObject:m_assetTrack.get()];
-    if (m_mediaSelectionOption)
-        return [[[m_playerItem asset] tracks] count] + m_mediaSelectionOption->index();
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 AtomicString AVTrackPrivateAVFObjCImpl::id() const
 {
-    if (m_assetTrack)
-        return String::format("%d", [m_assetTrack trackID]);
-    if (m_mediaSelectionOption)
-        return [[m_mediaSelectionOption->avMediaSelectionOption() optionID] stringValue];
-    ASSERT_NOT_REACHED();
-    return emptyAtom;
+    return String::format("%d", [m_assetTrack trackID]);
 }
 
 AtomicString AVTrackPrivateAVFObjCImpl::label() const
 {
-    NSArray *commonMetadata = nil;
-    if (m_assetTrack)
-        commonMetadata = [m_assetTrack commonMetadata];
-    else if (m_mediaSelectionOption)
-        commonMetadata = [m_mediaSelectionOption->avMediaSelectionOption() commonMetadata];
-    else
-        ASSERT_NOT_REACHED();
-
-    NSArray *titles = [AVMetadataItem metadataItemsFromArray:commonMetadata withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
+    NSArray *titles = [AVMetadataItem metadataItemsFromArray:[m_assetTrack commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if (![titles count])
         return emptyAtom;
 
@@ -206,13 +123,7 @@ AtomicString AVTrackPrivateAVFObjCImpl::label() const
 
 AtomicString AVTrackPrivateAVFObjCImpl::language() const
 {
-    if (m_assetTrack)
-        return languageForAVAssetTrack(m_assetTrack.get());
-    if (m_mediaSelectionOption)
-        return languageForAVMediaSelectionOption(m_mediaSelectionOption->avMediaSelectionOption());
-
-    ASSERT_NOT_REACHED();
-    return emptyAtom;
+    return languageForAVAssetTrack(m_assetTrack.get());
 }
 
 String AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(AVAssetTrack* track)
@@ -232,35 +143,9 @@ String AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(AVAssetTrack* track)
     return language;
 }
 
-String AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption(AVMediaSelectionOption* option)
-{
-#if  __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    NSString *language = [option extendedLanguageTag];
-#else
-    NSString *language = nil;
-#endif
-
-    // If the language code is stored as a QuickTime 5-bit packed code there aren't enough bits for a full
-    // RFC 4646 language tag so extendedLanguageTag returns NULL. In this case languageCode will return the
-    // ISO 639-2/T language code so check it.
-    if (!language)
-        language = [[option locale] objectForKey:NSLocaleLanguageCode];
-
-    // Some legacy tracks have "und" as a language, treat that the same as no language at all.
-    if (!language || [language isEqualToString:@"und"])
-        return emptyString();
-    
-    return language;
-}
-
 int AVTrackPrivateAVFObjCImpl::trackID() const
 {
-    if (m_assetTrack)
-        return [m_assetTrack trackID];
-    if (m_mediaSelectionOption)
-        return [[m_mediaSelectionOption->avMediaSelectionOption() optionID] intValue];
-    ASSERT_NOT_REACHED();
-    return 0;
+    return [m_assetTrack trackID];
 }
 
 }

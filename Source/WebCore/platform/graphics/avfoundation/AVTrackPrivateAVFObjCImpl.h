@@ -31,29 +31,20 @@
 #include "AudioTrackPrivate.h"
 #include "VideoTrackPrivate.h"
 #include <wtf/OwnPtr.h>
-#include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS AVAssetTrack;
-OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVPlayerItemTrack;
-OBJC_CLASS AVMediaSelectionGroup;
-OBJC_CLASS AVMediaSelectionOption;
 
 namespace WebCore {
-
-class MediaSelectionOptionAVFObjC;
 
 class AVTrackPrivateAVFObjCImpl {
 public:
     explicit AVTrackPrivateAVFObjCImpl(AVPlayerItemTrack*);
     explicit AVTrackPrivateAVFObjCImpl(AVAssetTrack*);
-    explicit AVTrackPrivateAVFObjCImpl(MediaSelectionOptionAVFObjC&);
-    ~AVTrackPrivateAVFObjCImpl();
 
     AVPlayerItemTrack* playerItemTrack() const { return m_playerItemTrack.get(); }
     AVAssetTrack* assetTrack() const { return m_assetTrack.get(); }
-    MediaSelectionOptionAVFObjC* mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
 
     bool enabled() const;
     void setEnabled(bool);
@@ -61,7 +52,6 @@ public:
     AudioTrackPrivate::Kind audioKind() const;
     VideoTrackPrivate::Kind videoKind() const;
 
-    int index() const;
     AtomicString id() const;
     AtomicString label() const;
     AtomicString language() const;
@@ -69,13 +59,10 @@ public:
     int trackID() const;
 
     static String languageForAVAssetTrack(AVAssetTrack*);
-    static String languageForAVMediaSelectionOption(AVMediaSelectionOption *);
 
 private:
     RetainPtr<AVPlayerItemTrack> m_playerItemTrack;
     RetainPtr<AVAssetTrack> m_assetTrack;
-    RetainPtr<AVPlayerItem> m_playerItem;
-    RefPtr<MediaSelectionOptionAVFObjC> m_mediaSelectionOption;
 };
 
 }

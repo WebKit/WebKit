@@ -26,7 +26,6 @@
 #import "config.h"
 #import "AudioTrackPrivateAVFObjC.h"
 #import "AVTrackPrivateAVFObjCImpl.h"
-#import "MediaSelectionGroupAVFObjC.h"
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -38,19 +37,13 @@ AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(AVPlayerItemTrack* track)
     resetPropertiesFromTrack();
 }
 
-AudioTrackPrivateAVFObjC::AudioTrackPrivateAVFObjC(MediaSelectionOptionAVFObjC& option)
-    : m_impl(std::make_unique<AVTrackPrivateAVFObjCImpl>(option))
-{
-    resetPropertiesFromTrack();
-}
-
 void AudioTrackPrivateAVFObjC::resetPropertiesFromTrack()
 {
     // Don't call this->setEnabled() because it also sets the enabled state of the
     // AVPlayerItemTrack
     AudioTrackPrivateAVF::setEnabled(m_impl->enabled());
 
-    setTrackIndex(m_impl->index());
+    setTrackIndex(m_impl->trackID());
     setKind(m_impl->audioKind());
     setId(m_impl->id());
     setLabel(m_impl->label());
@@ -83,17 +76,6 @@ void AudioTrackPrivateAVFObjC::setAssetTrack(AVAssetTrack *track)
 AVAssetTrack* AudioTrackPrivateAVFObjC::assetTrack()
 {
     return m_impl->assetTrack();
-}
-
-void AudioTrackPrivateAVFObjC::setMediaSelectionOption(MediaSelectionOptionAVFObjC& option)
-{
-    m_impl = std::make_unique<AVTrackPrivateAVFObjCImpl>(option);
-    resetPropertiesFromTrack();
-}
-
-MediaSelectionOptionAVFObjC* AudioTrackPrivateAVFObjC::mediaSelectionOption()
-{
-    return m_impl->mediaSelectionOption();
 }
 
 void AudioTrackPrivateAVFObjC::setEnabled(bool enabled)
