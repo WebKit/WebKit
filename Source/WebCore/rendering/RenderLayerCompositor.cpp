@@ -851,6 +851,18 @@ static bool checkIfDescendantClippingContextNeedsUpdate(const RenderLayer& layer
     return false;
 }
 
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+static bool isScrollableOverflow(EOverflow overflow)
+{
+    return overflow == OSCROLL || overflow == OAUTO || overflow == OOVERLAY;
+}
+
+static bool styleHasTouchScrolling(const RenderStyle& style)
+{
+    return isScrollableOverflow(style.overflowX()) && style.useTouchOverflowScrolling();
+}
+#endif
+
 static bool styleChangeRequiresLayerRebuild(const RenderLayer& layer, const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     // Clip can affect ancestor compositing bounds, so we need recompute overlap when it changes on a non-composited layer.
@@ -861,6 +873,11 @@ static bool styleChangeRequiresLayerRebuild(const RenderLayer& layer, const Rend
     // When overflow changes, composited layers may need to update their ancestorClipping layers.
     if (!layer.isComposited() && (oldStyle.overflowX() != newStyle.overflowX()) && layer.stackingContainer()->hasCompositingDescendant())
         return true;
+    
+#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+    if (styleHasTouchScrolling(oldStyle) != styleHasTouchScrolling(newStyle))
+        return true;
+#endif
 
     // Compositing layers keep track of whether they are clipped by any of the ancestors.
     // When the current layer's clipping behaviour changes, we need to propagate it to the descendants.

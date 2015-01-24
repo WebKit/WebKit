@@ -1,5 +1,35 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r175085.
+
+    2014-10-22  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Toggling overflow:scroll to hidden on element with -webkit-overflow-scrolling:touch can cause children to disappear
+        https://bugs.webkit.org/show_bug.cgi?id=137999
+        rdar://problem/18425550
+
+        Reviewed by Zalan Bujtas.
+        
+        When toggling overflow from scroll to hidden on an element with -webkit-overflow-scrolling:touch,
+        we'd fail to do a compositing layer rebuild, which caused various issues like unparented
+        descendants, and misplaced and unrepainted content.
+        
+        This happened because we'd get to RenderLayerBacking::updateConfiguration() via styleChanged
+        with the view needing layout, so never hit the updateScrollingLayers() code, and the subsequent
+        updateCompositingLayers() would be a no-op.
+        
+        Fix by explicitly triggering a layer rebuild when style changes such that the touch-scrollability
+        of an element changes, as we do for changes in clip.
+
+        Test: compositing/scrolling/touch-scroll-to-clip.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::isScrollableOverflow):
+        (WebCore::styleHasTouchScrolling):
+        (WebCore::styleChangeRequiresLayerRebuild):
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r174356.
 
     2014-10-06  Simon Fraser  <simon.fraser@apple.com>
