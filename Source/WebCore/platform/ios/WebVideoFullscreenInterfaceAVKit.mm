@@ -763,6 +763,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreenInternal(PlatformLayer& vi
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     m_parentView = parentView;
+    m_parentWindow = parentView.window;
 
     if (!applicationIsAdSheet()) {
         m_window = adoptNS([[getUIWindowClass() alloc] initWithFrame:[[getUIScreenClass() mainScreen] bounds]]);
@@ -889,7 +890,8 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal()
     if (m_window) {
         [m_window setHidden:YES];
         [m_window setRootViewController:nil];
-        [[getUIApplicationClass() sharedApplication] _setStatusBarOrientation:[[m_parentView window] interfaceOrientation]];
+        if (m_parentWindow)
+            [[getUIApplicationClass() sharedApplication] _setStatusBarOrientation:[m_parentWindow interfaceOrientation]];
     }
     [m_playerViewController setDelegate:nil];
     [[m_playerViewController view] removeFromSuperview];
@@ -906,6 +908,7 @@ void WebVideoFullscreenInterfaceAVKit::cleanupFullscreenInternal()
     m_viewController = nil;
     m_window = nil;
     m_parentView = nil;
+    m_parentWindow = nil;
     
     RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
     WebThreadRun([strongThis] {
@@ -935,6 +938,7 @@ void WebVideoFullscreenInterfaceAVKit::invalidate()
     m_viewController = nil;
     m_window = nil;
     m_parentView = nil;
+    m_parentWindow = nil;
 }
 
 void WebVideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()

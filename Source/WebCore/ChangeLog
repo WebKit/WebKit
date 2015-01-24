@@ -1,5 +1,27 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r175585.
+
+    2014-11-04  Reza Abbasian  <rabbasian@apple.com>
+
+        [iOS] Fix incorrect interface orientation that can be caused by fullscreen video dismissal.
+        https://bugs.webkit.org/show_bug.cgi?id=137930.
+
+        Reviewed by Jer Noble.
+
+        When a fullscreen video gets dismissed programmatically, for instance for removing
+        a webview from the view hierarchy, it can put the device in an incorrect orientation.
+        Make sure we retain the window of parentView when we attempt to go to fullscreen and use
+        the retained window for putting the device in correct orientation after dismissal.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen):
+        (WebVideoFullscreenInterfaceAVKit::cleanupFullscreen):
+        (WebVideoFullscreenInterfaceAVKit::invalidate):
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r174860.
 
     2014-10-18  Chris Fleizach  <cfleizach@apple.com>

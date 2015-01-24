@@ -79,6 +79,7 @@ protected:
     RetainPtr<UIWindow> m_window;
     RetainPtr<UIViewController> m_viewController;
     RetainPtr<UIView> m_parentView;
+    RetainPtr<UIWindow> m_parentWindow;
 
     WebAVPlayerController *playerController();
     
