@@ -397,7 +397,8 @@ bool Font::applyTransforms(GlyphBufferGlyph* glyphs, GlyphBufferAdvance* advance
 }
 
 // Fonts are not ref'd to avoid cycles.
-typedef HashMap<std::pair<UChar32, unsigned>, Font*> CharacterFallbackMap;
+typedef std::pair<UChar32, bool /* isForPlatformFont */> CharacterFallbackMapKey;
+typedef HashMap<CharacterFallbackMapKey, Font*> CharacterFallbackMap;
 typedef HashMap<const Font*, CharacterFallbackMap> SystemFallbackCache;
 
 static SystemFallbackCache& systemFallbackCache()
@@ -443,7 +444,7 @@ void Font::removeFromSystemFallbackCache()
         return;
 
     for (auto& characterMap : systemFallbackCache().values()) {
-        Vector<std::pair<UChar32, unsigned>, 512> toRemove;
+        Vector<CharacterFallbackMapKey, 512> toRemove;
         for (auto& entry : characterMap) {
             if (entry.value == this)
                 toRemove.append(entry.key);

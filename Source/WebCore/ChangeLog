@@ -1,3 +1,17 @@
+2015-01-24  Chris Dumez  <cdumez@apple.com>
+
+        Provide implementation for WTF::DefaultHash<bool>
+        https://bugs.webkit.org/show_bug.cgi?id=140848
+
+        Reviewed by Anders Carlsson.
+
+        Use HashMap<std::pair<UChar32, bool>> type in Font.cpp for
+        CharacterFallbackMap instead of HashMap<std::pair<UChar32, unsigned>>.
+        It builds now that WTF::DefaultHash<bool> is defined in WTF.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::removeFromSystemFallbackCache):
+
 2015-01-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Cursor assignment operator is skipping scale factor

@@ -173,6 +173,7 @@ namespace WTF {
 
     // make IntHash the default hash function for many integer types
 
+    template<> struct DefaultHash<bool> { typedef IntHash<uint8_t> Hash; };
     template<> struct DefaultHash<short> { typedef IntHash<unsigned> Hash; };
     template<> struct DefaultHash<unsigned short> { typedef IntHash<unsigned> Hash; };
     template<> struct DefaultHash<int> { typedef IntHash<unsigned> Hash; };

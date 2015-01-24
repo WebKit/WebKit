@@ -1,3 +1,16 @@
+2015-01-24  Chris Dumez  <cdumez@apple.com>
+
+        Provide implementation for WTF::DefaultHash<bool>
+        https://bugs.webkit.org/show_bug.cgi?id=140848
+
+        Reviewed by Anders Carlsson.
+
+        Provide implementation for WTF::DefaultHash<bool> so that we can use
+        HashMap<std::pair<XXX, bool>> in the code base. Right now, we need to
+        use some integer type to work around the issue.
+
+        * wtf/HashFunctions.h:
+
 2015-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add missing null check in some derefGPtr implementations
