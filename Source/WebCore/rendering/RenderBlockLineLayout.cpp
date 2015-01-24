@@ -737,7 +737,7 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
                         if (!isAfterExpansion)
                             toInlineTextBox(leafChild)->setCanHaveLeadingExpansion(true);
                         encounteredJustifiedRuby = true;
-                        auto& renderText = downcast<RenderText>(leafChild->renderer());
+                        auto& renderText = toRenderText(leafChild->renderer());
                         unsigned opportunitiesInRun = Font::expansionOpportunityCount(renderText.stringView(), leafChild->direction(), isAfterExpansion);
                         expansionOpportunities.append(opportunitiesInRun);
                         expansionOpportunityCount += opportunitiesInRun;

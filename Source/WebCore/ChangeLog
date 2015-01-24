@@ -1,5 +1,18 @@
 2015-01-23  Lucas Forschler  <lforschler@apple.com>
 
+        Build fix after r179028, r179030, r179031, r179032. 
+
+        Reviewed by Dana Burkart.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::computeInlineDirectionPositionsForSegment):
+
+2015-01-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r174489
 
     2014-10-08  Myles C. Maxfield  <litherum@gmail.com>
