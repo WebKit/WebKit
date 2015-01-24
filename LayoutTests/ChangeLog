@@ -1,5 +1,21 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r176262.
+
+    2014-11-17  David Hyatt  <hyatt@apple.com>
+
+        Improve Ruby selection (getting rid of overlap and improving gap filling)
+        https://bugs.webkit.org/show_bug.cgi?id=138250
+
+        Reviewed by Dean Jackson.
+
+        Added fast/repaint/selection-ruby-rl.html
+
+        * fast/repaint/selection-ruby-rl-expected.txt: Added.
+        * fast/repaint/selection-ruby-rl.html: Added.
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r174860.
 
     2014-10-18  Chris Fleizach  <cfleizach@apple.com>
