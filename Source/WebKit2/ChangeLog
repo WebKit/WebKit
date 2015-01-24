@@ -1,5 +1,33 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r176382.
+
+    2014-11-19  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Don't track sub-resources that are started after main frame progress has completed.
+        https://bugs.webkit.org/show_bug.cgi?id=138582
+
+        Reviewed by Sam Weinig.
+
+        After main frame progress has finished, starting loading a sub-resource shouldn't affect
+        UI process's view of page loading status (i.e., the page has already completed loading
+        and the progress shouldn't change). To achive that, don't track the subresources that
+        are started after the main frame has finished, except for those triggered by user interaction.
+
+        * WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp:  Notify WebPage that the main frame progress
+            has started or finished.
+        (WebKit::WebProgressTrackerClient::progressStarted):
+        (WebKit::WebProgressTrackerClient::progressFinished):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::addResourceRequest): Don't track the resource request if it is initiated after
+            the main frame is loaded and it is not triggered by user interaction.
+        (WebKit::WebPage::removeResourceRequest):
+        * WebProcess/WebPage/WebPage.h: Rename m_networkResourceRequestIdentifiers to m_trackedNetworkResourceRequestIdentifiers.
+        (WebKit::WebPage::setMainFrameProgressCompleted):
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         <rdar://problem/19433134> REGRESSION (iOS 8): Reproducible null deref in WebKit::nextFocusableElement
 
         Merged small change from r175549.

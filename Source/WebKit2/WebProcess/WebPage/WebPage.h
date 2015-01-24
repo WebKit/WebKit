@@ -845,6 +845,7 @@ public:
 
     void willChangeCurrentHistoryItemForMainFrame();
 
+    void setMainFrameProgressCompleted(bool completed) { m_mainFrameProgressCompleted = completed; }
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -1213,7 +1214,7 @@ private:
 
     unsigned m_cachedPageCount;
 
-    HashSet<unsigned long> m_networkResourceRequestIdentifiers;
+    HashSet<unsigned long> m_trackedNetworkResourceRequestIdentifiers;
 
     WebCore::IntSize m_minimumLayoutSize;
     bool m_autoSizingShouldExpandToViewHeight;
@@ -1286,6 +1287,8 @@ private:
 #endif
 
     PageOverlayController m_pageOverlayController;
+
+    bool m_mainFrameProgressCompleted;
 };
 
 } // namespace WebKit

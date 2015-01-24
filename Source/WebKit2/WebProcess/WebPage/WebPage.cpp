@@ -328,6 +328,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_systemWebGLPolicy(WebGLAllowCreation)
 #endif
     , m_pageOverlayController(*this)
+    , m_mainFrameProgressCompleted(false)
 {
     ASSERT(m_pageID);
     // FIXME: This is a non-ideal location for this Setting and
@@ -3927,19 +3928,22 @@ void WebPage::addResourceRequest(unsigned long identifier, const WebCore::Resour
     if (!request.url().protocolIsInHTTPFamily())
         return;
 
-    ASSERT(!m_networkResourceRequestIdentifiers.contains(identifier));
-    bool wasEmpty = m_networkResourceRequestIdentifiers.isEmpty();
-    m_networkResourceRequestIdentifiers.add(identifier);
+    if (m_mainFrameProgressCompleted && !ScriptController::processingUserGesture())
+        return;
+
+    ASSERT(!m_trackedNetworkResourceRequestIdentifiers.contains(identifier));
+    bool wasEmpty = m_trackedNetworkResourceRequestIdentifiers.isEmpty();
+    m_trackedNetworkResourceRequestIdentifiers.add(identifier);
     if (wasEmpty)
         send(Messages::WebPageProxy::SetNetworkRequestsInProgress(true));
 }
 
 void WebPage::removeResourceRequest(unsigned long identifier)
 {
-    if (!m_networkResourceRequestIdentifiers.remove(identifier))
+    if (!m_trackedNetworkResourceRequestIdentifiers.remove(identifier))
         return;
 
-    if (m_networkResourceRequestIdentifiers.isEmpty())
+    if (m_trackedNetworkResourceRequestIdentifiers.isEmpty())
         send(Messages::WebPageProxy::SetNetworkRequestsInProgress(false));
 }
 
