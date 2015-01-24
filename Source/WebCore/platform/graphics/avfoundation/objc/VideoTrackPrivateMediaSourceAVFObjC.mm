@@ -47,7 +47,6 @@ void VideoTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack()
 {
     m_trackID = m_impl->trackID();
 
-    setTrackIndex(m_impl->index());
     setKind(m_impl->videoKind());
     setId(m_impl->id());
     setLabel(m_impl->label());
