@@ -1,5 +1,25 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r175260.
+
+    2014-10-28  David Hyatt  <hyatt@apple.com>
+
+        Selection gap painting is ugly for ruby bases.
+        https://bugs.webkit.org/show_bug.cgi?id=138136
+
+        Reviewed by Dean Jackson.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGaps):
+        For ruby bases don't fill to the end of the block (in the block direction),
+        since ideographic baselines push that end below the text baseline.
+
+        (WebCore::RenderBlock::blockSelectionGaps):
+        * rendering/RenderBlockFlow.cpp:
+        Skip ruby bases for block selection gap filling.
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r175976.
 
     2014-11-11  Eric Carlson  <eric.carlson@apple.com>
