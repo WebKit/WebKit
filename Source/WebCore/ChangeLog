@@ -1,3 +1,54 @@
+2015-01-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add pointer/hover media queries
+        https://bugs.webkit.org/show_bug.cgi?id=134822
+
+        Reviewed by Antti Koivisto.
+
+        Media Queries Level 4 introduces two types of Interaction Media Features:
+        "pointer" and "hover". Those media features are useful for adapting the design
+        to the type of input:
+            http://dev.w3.org/csswg/mediaqueries-4/#mf-interaction
+
+        This implementation is trivial: just #ifdef the return value depending on
+        the support for touch events.
+        In the future we should move that to a client interface but let's start easy
+        for now.
+
+        Tests: fast/media/mq-any-hover-cssom.html
+               fast/media/mq-any-hover-invalid.html
+               fast/media/mq-any-hover-matchMedia.html
+               fast/media/mq-any-hover-styling.html
+               fast/media/mq-any-pointer-cssom.html
+               fast/media/mq-any-pointer-invalid.html
+               fast/media/mq-any-pointer-matchMedia.html
+               fast/media/mq-any-pointer-styling.html
+               fast/media/mq-hover-cssom.html
+               fast/media/mq-hover-invalid.html
+               fast/media/mq-hover-matchMedia.html
+               fast/media/mq-hover-styling.html
+               fast/media/mq-pointer-cssom.html
+               fast/media/mq-pointer-invalid.html
+               fast/media/mq-pointer-matchMedia.html
+               fast/media/mq-pointer-styling.html
+
+        * css/CSSValueKeywords.in:
+        * css/MediaFeatureNames.h:
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::hoverMediaFeatureEval):
+        (WebCore::any_hoverMediaFeatureEval):
+        (WebCore::pointerMediaFeatureEval):
+        (WebCore::any_pointerMediaFeatureEval):
+        (WebCore::leastCapablePrimaryPointerDeviceType): Deleted.
+        * css/MediaQueryExp.cpp:
+        (WebCore::featureWithCSSValueID):
+        (WebCore::featureWithZeroOrOne):
+        (WebCore::featureWithoutValue):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoon):
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired):
+        * page/Settings.in:
+
 2015-01-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179051.

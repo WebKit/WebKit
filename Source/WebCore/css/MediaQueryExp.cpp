@@ -47,6 +47,9 @@ static inline bool featureWithCSSValueID(const AtomicString& mediaFeature, const
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
         || mediaFeature == MediaFeatureNames::view_modeMediaFeature
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
+        || mediaFeature == MediaFeatureNames::any_hoverMediaFeature
+        || mediaFeature == MediaFeatureNames::any_pointerMediaFeature
+        || mediaFeature == MediaFeatureNames::hoverMediaFeature
         || mediaFeature == MediaFeatureNames::inverted_colorsMediaFeature
         || mediaFeature == MediaFeatureNames::pointerMediaFeature;
 }
@@ -114,8 +117,7 @@ static inline bool featureWithZeroOrOne(const AtomicString& mediaFeature, const 
     if (!value->isInt || !(value->fValue == 1 || !value->fValue))
         return false;
 
-    return mediaFeature == MediaFeatureNames::gridMediaFeature
-        || mediaFeature == MediaFeatureNames::hoverMediaFeature;
+    return mediaFeature == MediaFeatureNames::gridMediaFeature;
 }
 
 static inline bool featureWithAspectRatio(const AtomicString& mediaFeature)
@@ -131,7 +133,9 @@ static inline bool featureWithAspectRatio(const AtomicString& mediaFeature)
 static inline bool featureWithoutValue(const AtomicString& mediaFeature)
 {
     // Media features that are prefixed by min/max cannot be used without a value.
-    return mediaFeature == MediaFeatureNames::monochromeMediaFeature
+    return mediaFeature == MediaFeatureNames::any_hoverMediaFeature
+        || mediaFeature == MediaFeatureNames::any_pointerMediaFeature
+        || mediaFeature == MediaFeatureNames::monochromeMediaFeature
         || mediaFeature == MediaFeatureNames::colorMediaFeature
         || mediaFeature == MediaFeatureNames::color_indexMediaFeature
         || mediaFeature == MediaFeatureNames::gridMediaFeature

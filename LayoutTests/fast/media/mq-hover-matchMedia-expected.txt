@@ -1,0 +1,19 @@
+Test the hover media feature with machMedia.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+window.matchMedia("(hover)").matches = true
+window.matchMedia("(hover: hover)").matches = true
+window.matchMedia("(hover: on-demand)").matches = false
+window.matchMedia("(hover: none)").matches = false
+window.matchMedia("(hover: Hover)").matches = true
+window.matchMedia("(hover: On-demand)").matches = false
+window.matchMedia("(hover: None)").matches = false
+window.matchMedia("(Hover: hover)").matches = true
+window.matchMedia("(Hover: on-demand)").matches = false
+window.matchMedia("(Hover: none)").matches = false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

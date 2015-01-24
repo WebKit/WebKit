@@ -1,0 +1,29 @@
+Test the CSSOM serialization of the any-hover media feature.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: on-demand)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: on-demand)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: none)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: none)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(any-hover: hover)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

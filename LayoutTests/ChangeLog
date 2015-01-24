@@ -1,3 +1,54 @@
+2015-01-23  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add pointer/hover media queries
+        https://bugs.webkit.org/show_bug.cgi?id=134822
+
+        Reviewed by Antti Koivisto.
+
+        * fast/media/mq-any-hover-cssom-expected.txt: Added.
+        * fast/media/mq-any-hover-cssom.html: Added.
+        * fast/media/mq-any-hover-invalid-expected.txt: Added.
+        * fast/media/mq-any-hover-invalid.html: Added.
+        * fast/media/mq-any-hover-matchMedia-expected.txt: Added.
+        * fast/media/mq-any-hover-matchMedia.html: Added.
+        * fast/media/mq-any-hover-styling-expected.txt: Added.
+        * fast/media/mq-any-hover-styling.html: Added.
+        * fast/media/mq-any-pointer-cssom-expected.txt: Added.
+        * fast/media/mq-any-pointer-cssom.html: Added.
+        * fast/media/mq-any-pointer-invalid-expected.txt: Added.
+        * fast/media/mq-any-pointer-invalid.html: Added.
+        * fast/media/mq-any-pointer-matchMedia-expected.txt: Added.
+        * fast/media/mq-any-pointer-matchMedia.html: Added.
+        * fast/media/mq-any-pointer-styling-expected.txt: Added.
+        * fast/media/mq-any-pointer-styling.html: Added.
+        * fast/media/mq-hover-cssom-expected.txt: Added.
+        * fast/media/mq-hover-cssom.html: Added.
+        * fast/media/mq-hover-invalid-expected.txt: Added.
+        * fast/media/mq-hover-invalid.html: Added.
+        * fast/media/mq-hover-matchMedia-expected.txt: Added.
+        * fast/media/mq-hover-matchMedia.html: Added.
+        * fast/media/mq-hover-styling-expected.txt: Added.
+        * fast/media/mq-hover-styling.html: Added.
+        * fast/media/mq-pointer-cssom-expected.txt: Added.
+        * fast/media/mq-pointer-cssom.html: Added.
+        * fast/media/mq-pointer-expected.txt:
+        * fast/media/mq-pointer-invalid-expected.txt: Added.
+        * fast/media/mq-pointer-invalid.html: Added.
+        * fast/media/mq-pointer-matchMedia-expected.txt: Added.
+        * fast/media/mq-pointer-matchMedia.html: Added.
+        * fast/media/mq-pointer-styling-expected.txt: Added.
+        * fast/media/mq-pointer-styling.html: Added.
+        * fast/media/mq-pointer.html:
+        * platform/ios-simulator/fast/media/mq-any-hover-matchMedia-expected.txt: Added.
+        * platform/ios-simulator/fast/media/mq-any-hover-styling-expected.txt: Added.
+        * platform/ios-simulator/fast/media/mq-any-pointer-matchMedia-expected.txt: Added.
+        * platform/ios-simulator/fast/media/mq-any-pointer-styling-expected.txt: Added.
+        * platform/ios-simulator/fast/media/mq-hover-matchMedia-expected.txt: Added.
+        * platform/ios-simulator/fast/media/mq-hover-styling-expected.txt: Added.
+        * platform/ios-simulator/fast/media/mq-pointer-expected.txt: Added.
+        * platform/ios-simulator/fast/media/mq-pointer-matchMedia-expected.txt: Added.
+        * platform/ios-simulator/fast/media/mq-pointer-styling-expected.txt: Added.
+
 2015-01-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179051.

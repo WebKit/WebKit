@@ -32,6 +32,8 @@ namespace WebCore {
 #endif
 
 #define CSS_MEDIAQUERY_NAMES_FOR_EACH_MEDIAFEATURE(macro) \
+    macro(any_hover, "any-hover") \
+    macro(any_pointer, "any-pointer") \
     macro(color, "color") \
     macro(color_index, "color-index") \
     macro(grid, "grid") \

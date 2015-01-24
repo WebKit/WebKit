@@ -34,15 +34,7 @@
 
     function runTests()
     {
-        log("------------- default configuration -------------");
         testQueries();
-
-        if (window.internals) {
-            internals.settings.setDeviceSupportsTouch(true);
-
-            log("------------- with touch screen -------------");
-            testQueries();
-        }
     }
 
 </script>

@@ -1,0 +1,29 @@
+Test the CSSOM serialization of the pointer media feature.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: coarse)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: coarse)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: none)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: none)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS document.styleSheets[1].cssRules[0].media.mediaText is "(pointer: fine)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

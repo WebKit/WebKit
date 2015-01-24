@@ -647,64 +647,45 @@ static bool video_playable_inlineMediaFeatureEval(CSSValue*, const CSSToLengthCo
     return !isRunningOnIPhoneOrIPod() || frame->settings().mediaPlaybackAllowsInline();
 }
 
-enum PointerDeviceType { TouchPointer, MousePointer, NoPointer, UnknownPointer };
-
-static PointerDeviceType leastCapablePrimaryPointerDeviceType(Frame* frame)
+static bool hoverMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix)
 {
-    if (frame->settings().deviceSupportsTouch())
-        return TouchPointer;
-
-    // FIXME: We should also try to determine if we know we have a mouse.
-    // When we do this, we'll also need to differentiate between known not to
-    // have mouse or touch screen (NoPointer) and unknown (UnknownPointer).
-    // We could also take into account other preferences like accessibility
-    // settings to decide which of the available pointers should be considered
-    // "primary".
-
-    return UnknownPointer;
-}
-
-static bool hoverMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix)
-{
-    PointerDeviceType pointer = leastCapablePrimaryPointerDeviceType(frame);
-
-    // If we're on a port that hasn't explicitly opted into providing pointer device information
-    // (or otherwise can't be confident in the pointer hardware available), then behave exactly
-    // as if this feature feature isn't supported.
-    if (pointer == UnknownPointer)
+    if (!is<CSSPrimitiveValue>(value)) {
+#if ENABLE(TOUCH_EVENTS)
         return false;
-
-    float number = 1;
-    if (value) {
-        if (!numberValue(value, number))
-            return false;
+#else
+        return true;
+#endif
     }
 
-    return (pointer == NoPointer && !number)
-        || (pointer == TouchPointer && !number)
-        || (pointer == MousePointer && number == 1);
+    int hoverCSSKeywordID = downcast<CSSPrimitiveValue>(*value).getValueID();
+#if ENABLE(TOUCH_EVENTS)
+    return hoverCSSKeywordID == CSSValueNone;
+#else
+    return hoverCSSKeywordID == CSSValueHover;
+#endif
 }
 
-static bool pointerMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame* frame, MediaFeaturePrefix)
+static bool any_hoverMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& cssToLengthConversionData, Frame* frame, MediaFeaturePrefix prefix)
 {
-    PointerDeviceType pointer = leastCapablePrimaryPointerDeviceType(frame);
+    return hoverMediaFeatureEval(value, cssToLengthConversionData, frame, prefix);
+}
 
-    // If we're on a port that hasn't explicitly opted into providing pointer device information
-    // (or otherwise can't be confident in the pointer hardware available), then behave exactly
-    // as if this feature feature isn't supported.
-    if (pointer == UnknownPointer)
-        return false;
+static bool pointerMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData&, Frame*, MediaFeaturePrefix)
+{
+    if (!is<CSSPrimitiveValue>(value))
+        return true;
 
-    if (!value)
-        return pointer != NoPointer;
+    int pointerCSSKeywordID = downcast<CSSPrimitiveValue>(*value).getValueID();
+#if ENABLE(TOUCH_EVENTS)
+    return pointerCSSKeywordID == CSSValueCoarse;
+#else
+    return pointerCSSKeywordID == CSSValueFine;
+#endif
+}
 
-    if (!is<CSSPrimitiveValue>(*value))
-        return false;
-
-    const CSSValueID id = downcast<CSSPrimitiveValue>(*value).getValueID();
-    return (pointer == NoPointer && id == CSSValueNone)
-        || (pointer == TouchPointer && id == CSSValueCoarse)
-        || (pointer == MousePointer && id == CSSValueFine);
+static bool any_pointerMediaFeatureEval(CSSValue* value, const CSSToLengthConversionData& cssToLengthConversionData, Frame* frame, MediaFeaturePrefix prefix)
+{
+    return pointerMediaFeatureEval(value, cssToLengthConversionData, frame, prefix);
 }
 
 // FIXME: Remove unnecessary '&' from the following 'ADD_TO_FUNCTIONMAP' definition

@@ -1030,6 +1030,11 @@ alphabetic
 coarse
 fine
 
+// (hover:) media feature.
+// none
+hover
+on-demand
+
 // blend modes
 // normal
 multiply
