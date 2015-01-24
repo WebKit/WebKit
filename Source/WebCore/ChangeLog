@@ -1,5 +1,19 @@
 2015-01-23  Zalan Bujtas  <zalan@apple.com>
 
+        Simple line layout: Refactor line wrapping logic.
+        https://bugs.webkit.org/show_bug.cgi?id=140834
+
+        Reviewed by Antti Koivisto.
+
+        Use a more readable structure to deal with wrapping logic. 
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::createLineRuns):
+
+2015-01-23  Zalan Bujtas  <zalan@apple.com>
+
         Simple line layout: Use only FlowContents::nextTextFragment() to read fragments from the text flow.
         https://bugs.webkit.org/show_bug.cgi?id=140842
 

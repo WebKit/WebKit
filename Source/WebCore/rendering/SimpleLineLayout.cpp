@@ -443,41 +443,50 @@ static bool createLineRuns(LineState& lineState, Layout::RunVector& lineRuns, co
     const auto& style = flowContents.style();
     bool lineCanBeWrapped = style.wrapLines || style.breakWordOnOverflow;
     while (!flowContents.isEnd(lineState.position)) {
-        // Find the next text fragment. Start from the end of the previous fragment -current line end.
-        FlowContents::TextFragment fragment = flowContents.nextTextFragment(lineState.position, lineState.width());
-        if ((lineCanBeWrapped && !lineState.fits(fragment.width)) || fragment.type == FlowContents::TextFragment::LineBreak) {
-            // Overflow wrapping behaviour:
-            // 1. Newline character: wraps the line unless it's treated as whitespace.
-            // 2. Whitesapce collapse on: whitespace is skipped.
-            // 3. Whitespace collapse off: whitespace is wrapped.
-            // 4. First, non-whitespace fragment is either wrapped or kept on the line. (depends on overflow-wrap)
-            // 5. Non-whitespace fragment when there's already another fragment on the line gets pushed to the next line.
-            bool isFirstFragment = !lineState.width();
-            if (fragment.type == FlowContents::TextFragment::LineBreak) {
-                if (isFirstFragment)
-                    lineState.addUncommitted(fragment);
-                else {
-                    // No need to add the new line fragment if there's already content on the line. We are about to close this line anyway.
-                    ++lineState.position;
-                }
-            } else if (style.collapseWhitespace && fragment.type == FlowContents::TextFragment::Whitespace) {
-                // Whitespace collapse is on: whitespace that doesn't fit is simply skipped.
-                lineState.position = fragment.end;
-            } else if (fragment.type == FlowContents::TextFragment::Whitespace || ((isFirstFragment && style.breakWordOnOverflow) || !style.wrapLines)) { // !style.wrapLines: bug138102(preserve existing behavior)
-                // Whitespace collapse is off or non-whitespace content. split the fragment; (modified)fragment -> this lineState, oveflowedFragment -> next line.
-                // When this is the only (first) fragment, the first character stays on the line, even if it does not fit.
-                lineState.oveflowedFragment = splitFragmentToFitLine(fragment, lineState.availableWidth - lineState.width(), isFirstFragment, flowContents);
-                if (!fragment.isEmpty()) {
-                    // Whitespace fragments can get pushed entirely to the next line.
-                    lineState.addUncommitted(fragment);
-                }
-            } else if (isFirstFragment) {
-                // Non-breakable non-whitespace first fragment. Add it to the current line. -it overflows though.
+        // Find the next text fragment.
+        auto fragment = flowContents.nextTextFragment(lineState.position, lineState.width());
+        // Hard linebreak.
+        if (fragment.type == FlowContents::TextFragment::LineBreak) {
+            if (lineState.width()) {
+                // No need to add the new line fragment if there's already content on the line. We are about to close this line anyway.
+                ++lineState.position;
+            } else
                 lineState.addUncommitted(fragment);
-            } else {
-                // Non-breakable non-whitespace fragment when there's already a fragment on the line. Push it to the next line.
-                lineState.oveflowedFragment = fragment;
+            break;
+        }
+        if (lineCanBeWrapped && !lineState.fits(fragment.width)) {
+            // Overflow wrapping behaviour:
+            // 1. Whitesapce collapse on: whitespace is skipped. Jump to next line.
+            // 2. Whitespace collapse off: whitespace is wrapped.
+            // 3. First, non-whitespace fragment is either wrapped or kept on the line. (depends on overflow-wrap)
+            // 4. Non-whitespace fragment when there's already another fragment on the line gets pushed to the next line.
+            bool emptyLine = !lineState.width();
+            // Whitespace fragment.
+            if (fragment.type == FlowContents::TextFragment::Whitespace) {
+                if (style.collapseWhitespace) {
+                    // Whitespace collapse is on: whitespace that doesn't fit is simply skipped.
+                    lineState.position = fragment.end;
+                    break;
+                }
+                // Split the fragment; (modified)fragment stays on this line, oveflowedFragment is pushed to next line.
+                lineState.oveflowedFragment = splitFragmentToFitLine(fragment, lineState.availableWidth - lineState.width(), emptyLine, flowContents);
+                lineState.addUncommitted(fragment);
+                break;
             }
+            // Non-whitespace fragment. (!style.wrapLines: bug138102(preserve existing behavior)
+            if ((emptyLine && style.breakWordOnOverflow) || !style.wrapLines) {
+                // Split the fragment; (modified)fragment stays on this line, oveflowedFragment is pushed to next line.
+                lineState.oveflowedFragment = splitFragmentToFitLine(fragment, lineState.availableWidth - lineState.width(), emptyLine, flowContents);
+                lineState.addUncommitted(fragment);
+                break;
+            }
+            // Non-breakable non-whitespace first fragment. Add it to the current line. -it overflows though.
+            if (emptyLine) {
+                lineState.addUncommitted(fragment);
+                break;
+            }
+            // Non-breakable non-whitespace fragment when there's already content on the line. Push it to the next line.
+            lineState.oveflowedFragment = fragment;
             break;
         }
         // When the current fragment is collapsed whitespace, we need to create a run for what we've processed so far.
