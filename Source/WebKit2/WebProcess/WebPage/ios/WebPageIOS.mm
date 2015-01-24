@@ -2001,6 +2001,9 @@ static inline bool isAssistableNode(Node* node)
 
 static inline Element* nextFocusableElement(Node* startNode, Page* page, bool isForward)
 {
+    if (!startNode->isElementNode())
+        return nullptr;
+
     RefPtr<KeyboardEvent> key = KeyboardEvent::create();
 
     Element* nextElement = toElement(startNode);
