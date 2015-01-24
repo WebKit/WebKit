@@ -6922,12 +6922,6 @@
     <ClCompile Include="..\Modules\encryptedmedia\CDMPrivateMediaPlayer.cpp">
       <Filter>Modules\encryptedmedia</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\encryptedmedia\CDMPrivateClearKey.cpp">
-      <Filter>Modules\encryptedmedia</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\encryptedmedia\CDMSessionClearKey.cpp">
-      <Filter>Modules\encryptedmedia</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\encryptedmedia\MediaKeyMessageEvent.cpp">
       <Filter>Modules\encryptedmedia</Filter>
     </ClCompile>
@@ -14286,12 +14280,6 @@
       <Filter>Modules\encryptedmedia</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\encryptedmedia\CDMPrivateMediaPlayer.h">
-      <Filter>Modules\encryptedmedia</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\encryptedmedia\CDMPrivateClearKey.h">
-      <Filter>Modules\encryptedmedia</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\encryptedmedia\CDMSessionClearKey.h">
       <Filter>Modules\encryptedmedia</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\encryptedmedia\MediaKeyMessageEvent.h">

@@ -2734,8 +2734,6 @@ if (ENABLE_ENCRYPTED_MEDIA OR ENABLE_ENCRYPTED_MEDIA_V2)
     list(APPEND WebCore_SOURCES
         Modules/encryptedmedia/CDM.cpp
         Modules/encryptedmedia/CDMPrivateMediaPlayer.cpp
-        Modules/encryptedmedia/CDMPrivateClearKey.cpp
-        Modules/encryptedmedia/CDMSessionClearKey.cpp
         Modules/encryptedmedia/MediaKeyMessageEvent.cpp
         Modules/encryptedmedia/MediaKeyNeededEvent.cpp
         Modules/encryptedmedia/MediaKeys.cpp
