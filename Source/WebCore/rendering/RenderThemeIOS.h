@@ -43,13 +43,13 @@ public:
 
     static void adjustRoundBorderRadius(RenderStyle&, RenderBox&);
 
-    virtual void systemFont(CSSValueID, FontDescription&) const override;
-
     static CFStringRef contentSizeCategory();
 
     WEBCORE_EXPORT static void setContentSizeCategory(const String&);
 
 protected:
+    virtual FontDescription& cachedSystemFontDescription(CSSValueID systemFontID) const override;
+    virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
     virtual int baselinePosition(const RenderObject&) const override;
 
     virtual bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer& background, const Color& backgroundColor) const override;

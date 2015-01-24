@@ -338,64 +338,41 @@ static FontWeight toFontWeight(NSInteger appKitFontWeight)
     return fontWeights[appKitFontWeight - 1];
 }
 
-void RenderThemeMac::systemFont(CSSValueID cssValueId, FontDescription& fontDescription) const
+void RenderThemeMac::updateCachedSystemFontDescription(CSSValueID cssValueId, FontDescription& fontDescription) const
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, systemFont, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, smallSystemFont, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, menuFont, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, labelFont, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, miniControlFont, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, smallControlFont, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(FontDescription, controlFont, ());
-
-    FontDescription* cachedDesc;
-    NSFont* font = nil;
+    NSFont* font;
     switch (cssValueId) {
         case CSSValueSmallCaption:
-            cachedDesc = &smallSystemFont;
-            if (!smallSystemFont.isAbsoluteSize())
-                font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
+            font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
             break;
         case CSSValueMenu:
-            cachedDesc = &menuFont;
-            if (!menuFont.isAbsoluteSize())
-                font = [NSFont menuFontOfSize:[NSFont systemFontSize]];
+            font = [NSFont menuFontOfSize:[NSFont systemFontSize]];
             break;
         case CSSValueStatusBar:
-            cachedDesc = &labelFont;
-            if (!labelFont.isAbsoluteSize())
-                font = [NSFont labelFontOfSize:[NSFont labelFontSize]];
+            font = [NSFont labelFontOfSize:[NSFont labelFontSize]];
             break;
         case CSSValueWebkitMiniControl:
-            cachedDesc = &miniControlFont;
-            if (!miniControlFont.isAbsoluteSize())
-                font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSMiniControlSize]];
+            font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSMiniControlSize]];
             break;
         case CSSValueWebkitSmallControl:
-            cachedDesc = &smallControlFont;
-            if (!smallControlFont.isAbsoluteSize())
-                font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]];
+            font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]];
             break;
         case CSSValueWebkitControl:
-            cachedDesc = &controlFont;
-            if (!controlFont.isAbsoluteSize())
-                font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSRegularControlSize]];
+            font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSRegularControlSize]];
             break;
         default:
-            cachedDesc = &systemFont;
-            if (!systemFont.isAbsoluteSize())
-                font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
+            font = [NSFont systemFontOfSize:[NSFont systemFontSize]];
     }
 
-    if (font) {
-        NSFontManager *fontManager = [NSFontManager sharedFontManager];
-        cachedDesc->setIsAbsoluteSize(true);
-        cachedDesc->setOneFamily([font webCoreFamilyName]);
-        cachedDesc->setSpecifiedSize([font pointSize]);
-        cachedDesc->setWeight(toFontWeight([fontManager weightOfFont:font]));
-        cachedDesc->setIsItalic([fontManager traitsOfFont:font] & NSItalicFontMask);
-    }
-    fontDescription = *cachedDesc;
+    if (!font)
+        return;
+
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    fontDescription.setIsAbsoluteSize(true);
+    fontDescription.setOneFamily([font webCoreFamilyName]);
+    fontDescription.setSpecifiedSize([font pointSize]);
+    fontDescription.setWeight(toFontWeight([fontManager weightOfFont:font]));
+    fontDescription.setIsItalic([fontManager traitsOfFont:font] & NSItalicFontMask);
 }
 
 static RGBA32 convertNSColorToColor(NSColor *color)

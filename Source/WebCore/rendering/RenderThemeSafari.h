@@ -71,9 +71,6 @@ public:
 
     virtual Color platformFocusRingColor() const;
 
-    // System fonts.
-    virtual void systemFont(CSSValueID, FontDescription&) const;
-
     virtual int minimumMenuListSize(RenderStyle&) const;
 
     virtual void adjustSliderThumbSize(RenderStyle&, Element*) const;
@@ -85,6 +82,9 @@ public:
     virtual int popupInternalPaddingBottom(RenderStyle&) const;
 
 protected:
+    // System fonts.
+    virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
+
     // Methods for each appearance value.
     virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&);
     virtual void setCheckboxSize(RenderStyle&) const;

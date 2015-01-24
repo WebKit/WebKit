@@ -192,63 +192,40 @@ static float systemFontSizeForControlSize(NSControlSize controlSize)
     return sizes[controlSize];
 }
 
-void RenderThemeSafari::systemFont(CSSValueID valueID, FontDescription& fontDescription) const
+void RenderThemeSafari::updateCachedSystemFontDescription(CSSValueID valueID, FontDescription& fontDescription) const
 {
-    static FontDescription systemFont;
-    static FontDescription smallSystemFont;
-    static FontDescription menuFont;
-    static FontDescription labelFont;
-    static FontDescription miniControlFont;
-    static FontDescription smallControlFont;
-    static FontDescription controlFont;
-
-    FontDescription* cachedDesc;
-    float fontSize = 0;
+    float fontSize;
     switch (valueID) {
     case CSSValueSmallCaption:
-        cachedDesc = &smallSystemFont;
-        if (!smallSystemFont.isAbsoluteSize())
-            fontSize = systemFontSizeForControlSize(NSSmallControlSize);
+        fontSize = systemFontSizeForControlSize(NSSmallControlSize);
         break;
     case CSSValueMenu:
-        cachedDesc = &menuFont;
-        if (!menuFont.isAbsoluteSize())
-            fontSize = systemFontSizeForControlSize(NSRegularControlSize);
+        fontSize = systemFontSizeForControlSize(NSRegularControlSize);
         break;
     case CSSValueStatusBar:
-        cachedDesc = &labelFont;
-        if (!labelFont.isAbsoluteSize())
-            fontSize = 10.0f;
+        fontSize = 10.0f;
         break;
     case CSSValueWebkitMiniControl:
-        cachedDesc = &miniControlFont;
-        if (!miniControlFont.isAbsoluteSize())
-            fontSize = systemFontSizeForControlSize(NSMiniControlSize);
+        fontSize = systemFontSizeForControlSize(NSMiniControlSize);
         break;
     case CSSValueWebkitSmallControl:
-        cachedDesc = &smallControlFont;
-        if (!smallControlFont.isAbsoluteSize())
-            fontSize = systemFontSizeForControlSize(NSSmallControlSize);
+        fontSize = systemFontSizeForControlSize(NSSmallControlSize);
         break;
     case CSSValueWebkitControl:
-        cachedDesc = &controlFont;
-        if (!controlFont.isAbsoluteSize())
-            fontSize = systemFontSizeForControlSize(NSRegularControlSize);
+        fontSize = systemFontSizeForControlSize(NSRegularControlSize);
         break;
     default:
-        cachedDesc = &systemFont;
-        if (!systemFont.isAbsoluteSize())
-            fontSize = 13.0f;
+        fontSize = 13.0f;
     }
 
-    if (fontSize) {
-        cachedDesc->setIsAbsoluteSize(true);
-        cachedDesc->setOneFamily("Lucida Grande");
-        cachedDesc->setSpecifiedSize(fontSize);
-        cachedDesc->setWeight(FontWeightNormal);
-        cachedDesc->setItalic(FontItalicOff);
-    }
-    fontDescription = *cachedDesc;
+    if (!fontSize)
+        return;
+
+    fontDescription.setIsAbsoluteSize(true);
+    fontDescription.setOneFamily("Lucida Grande");
+    fontDescription.setSpecifiedSize(fontSize);
+    fontDescription.setWeight(FontWeightNormal);
+    fontDescription.setItalic(FontItalicOff);
 }
 
 bool RenderThemeSafari::isControlStyled(const RenderStyle& style, const BorderData& border,

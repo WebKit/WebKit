@@ -66,9 +66,6 @@ public:
 
     virtual void platformColorsDidChange() override;
 
-    // System fonts.
-    virtual void systemFont(CSSValueID, FontDescription&) const override;
-
     virtual int minimumMenuListSize(RenderStyle&) const override;
 
     virtual void adjustSliderThumbSize(RenderStyle&, Element*) const override;
@@ -111,6 +108,9 @@ public:
 protected:
     RenderThemeMac();
     virtual ~RenderThemeMac();
+
+    // System fonts.
+    virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
 
 #if ENABLE(VIDEO)
     // Media controls

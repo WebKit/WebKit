@@ -1,3 +1,26 @@
+2015-01-23  Chris Dumez  <cdumez@apple.com>
+
+        Implement system fonts FontDescription caching at RenderTheme level
+        https://bugs.webkit.org/show_bug.cgi?id=140840
+
+        Reviewed by Andreas Kling.
+
+        Implement system fonts FontDescription caching at RenderTheme level
+        instead of duplicating the logic in its subclasses for each platform.
+        This reduces code / logic duplication and reduces the amount of
+        platform-specific code. This will also make the refactoring at
+        Bug 140577 a lot easier.
+
+        The caching logic remains in RenderThemeIOS class for iOS because:
+        - It supports different system font values than all other platforms
+        - It requires cache invalidation in some cases while other platforms
+          do not.
+
+        This patch is inspired by the following Blink revision:
+        https://src.chromium.org/viewvc/blink?view=rev&revision=184449
+
+        Test: fast/css/css2-system-fonts.html
+
 2015-01-23  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Refactor line wrapping logic.

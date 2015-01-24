@@ -36,9 +36,6 @@ class RenderThemeGtk final : public RenderTheme {
 public:
     static PassRefPtr<RenderTheme> create();
 
-    // System fonts.
-    virtual void systemFont(CSSValueID, FontDescription&) const override;
-
 #if ENABLE(DATALIST_ELEMENT)
     // Returns size of one slider tick mark for a horizontal track.
     // For vertical tracks we rotate it and use it. i.e. Width is always length along the track.
@@ -47,6 +44,11 @@ public:
     virtual int sliderTickOffsetFromTrackCenter() const override;
 #endif
 
+private:
+    // System fonts.
+    virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
+
+public:
 #ifndef GTK_API_VERSION_2
 
     // A method asking if the theme's controls actually care about redrawing when hovered.

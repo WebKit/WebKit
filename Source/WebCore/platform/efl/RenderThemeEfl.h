@@ -104,9 +104,6 @@ public:
 
     void adjustSizeConstraints(RenderStyle&, FormType) const;
 
-    // System fonts.
-    virtual void systemFont(CSSValueID, FontDescription&) const override;
-
     virtual void adjustCheckboxStyle(StyleResolver&, RenderStyle&, Element*) const override;
     virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
@@ -188,6 +185,9 @@ private:
     {
         return m_edje || (!m_themePath.isEmpty() && const_cast<RenderThemeEfl*>(this)->loadTheme());
     }
+
+    // System fonts.
+    virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
 
     ALWAYS_INLINE Ecore_Evas* canvas() const { return m_canvas.get(); }
     ALWAYS_INLINE Evas_Object* edje() const { return m_edje.get(); }

@@ -1,7 +1,8 @@
-/**
+/*
  * This file is part of the theme implementation for form controls in WebCore.
  *
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012 Apple Inc.
+ * Copyright (C) 2005-2010, 2012, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,6 +46,7 @@
 #include "SpinButtonElement.h"
 #include "StringTruncator.h"
 #include "TextControlInnerElements.h"
+#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(METER_ELEMENT)
 #include "HTMLMeterElement.h"
@@ -1128,6 +1130,55 @@ void RenderTheme::platformColorsDidChange()
     m_inactiveListBoxSelectionForegroundColor = Color();
 
     Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment();
+}
+
+FontDescription& RenderTheme::cachedSystemFontDescription(CSSValueID systemFontID) const
+{
+    static NeverDestroyed<FontDescription> caption;
+    static NeverDestroyed<FontDescription> icon;
+    static NeverDestroyed<FontDescription> menu;
+    static NeverDestroyed<FontDescription> messageBox;
+    static NeverDestroyed<FontDescription> smallCaption;
+    static NeverDestroyed<FontDescription> statusBar;
+    static NeverDestroyed<FontDescription> webkitMiniControl;
+    static NeverDestroyed<FontDescription> webkitSmallControl;
+    static NeverDestroyed<FontDescription> webkitControl;
+    static NeverDestroyed<FontDescription> defaultDescription;
+
+    switch (systemFontID) {
+    case CSSValueCaption:
+        return caption;
+    case CSSValueIcon:
+        return icon;
+    case CSSValueMenu:
+        return menu;
+    case CSSValueMessageBox:
+        return messageBox;
+    case CSSValueSmallCaption:
+        return smallCaption;
+    case CSSValueStatusBar:
+        return statusBar;
+    case CSSValueWebkitMiniControl:
+        return webkitMiniControl;
+    case CSSValueWebkitSmallControl:
+        return webkitSmallControl;
+    case CSSValueWebkitControl:
+        return webkitControl;
+    case CSSValueNone:
+        return defaultDescription;
+    default:
+        ASSERT_NOT_REACHED();
+        return defaultDescription;
+    }
+}
+
+void RenderTheme::systemFont(CSSValueID systemFontID, FontDescription& fontDescription) const
+{
+    fontDescription = cachedSystemFontDescription(systemFontID);
+    if (fontDescription.isAbsoluteSize())
+        return;
+
+    updateCachedSystemFontDescription(systemFontID, fontDescription);
 }
 
 Color RenderTheme::systemColor(CSSValueID cssValueId) const
