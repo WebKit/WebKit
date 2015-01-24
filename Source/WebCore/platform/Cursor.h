@@ -132,10 +132,10 @@ namespace WebCore {
 #if !PLATFORM(IOS)
             // This is an invalid Cursor and should never actually get used.
             : m_type(static_cast<Type>(-1))
-            , m_platformCursor(0)
 #if ENABLE(MOUSE_CURSOR_SCALE)
             , m_imageScaleFactor(1)
 #endif
+            , m_platformCursor(0)
 #endif // !PLATFORM(IOS)
         {
         }

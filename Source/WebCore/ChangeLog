@@ -1,3 +1,9 @@
+2015-01-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Try to fix the build after r179056.
+
+        * platform/Cursor.h: (WebCore::Cursor::Cursor): Initialize dadat members in correct order.
+
 2015-01-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Cursor copy constructor does not initialize scale factor
