@@ -1,3 +1,9 @@
+2015-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening: Correct some typos in Failure entries.
+
+        * platform/win/TestExpectations:
+
 2015-01-23  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [MSE] Implement Range Removal algorithm.
