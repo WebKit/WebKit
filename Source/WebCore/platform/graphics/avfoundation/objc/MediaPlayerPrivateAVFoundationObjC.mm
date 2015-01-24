@@ -45,7 +45,6 @@
 #import "OutOfBandTextTrackPrivateAVF.h"
 #import "URL.h"
 #import "Logging.h"
-#import "MediaSelectionGroupAVFObjC.h"
 #import "MediaTimeAVFoundation.h"
 #import "PlatformTimeRanges.h"
 #import "SecurityOrigin.h"
@@ -66,7 +65,6 @@
 #import <runtime/Uint8Array.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/Functional.h>
-#import <wtf/ListHashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/StringBuilder.h>
@@ -88,12 +86,6 @@
 #import <CoreVideo/CoreVideo.h>
 #import <VideoToolbox/VideoToolbox.h>
 #endif
-
-namespace std {
-template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionAVFObjC>>::iterator> {
-    typedef RefPtr<WebCore::MediaSelectionOptionAVFObjC> value_type;
-};
-}
 
 @interface WebVideoContainerLayer : CALayer
 @end
@@ -130,11 +122,7 @@ template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionA
 
 typedef AVPlayer AVPlayerType;
 typedef AVPlayerItem AVPlayerItemType;
-typedef AVPlayerItemLegibleOutput AVPlayerItemLegibleOutputType;
-typedef AVPlayerItemVideoOutput AVPlayerItemVideoOutputType;
 typedef AVMetadataItem AVMetadataItemType;
-typedef AVMediaSelectionGroup AVMediaSelectionGroupType;
-typedef AVMediaSelectionOption AVMediaSelectionOptionType;
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_FRAMEWORK_OPTIONAL(CoreMedia)
@@ -864,7 +852,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #endif
 
 #if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
-    [m_avPlayer.get() setAppliesMediaSelectionCriteriaAutomatically:NO];
+    [m_avPlayer.get() setAppliesMediaSelectionCriteriaAutomatically:YES];
 #endif
 
 #if ENABLE(IOS_AIRPLAY)
@@ -918,12 +906,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:legibleOutputAdvanceInterval];
     [m_legibleOutput.get() setTextStylingResolution:AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly];
     [m_avPlayerItem.get() addOutput:m_legibleOutput.get()];
-#endif
-
-#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP) && HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
-        [m_avPlayerItem selectMediaOptionAutomaticallyInMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
-        [m_avPlayerItem selectMediaOptionAutomaticallyInMediaSelectionGroup:safeMediaSelectionGroupForAudibleMedia()];
-        [m_avPlayerItem selectMediaOptionAutomaticallyInMediaSelectionGroup:safeMediaSelectionGroupForVisualMedia()];
 #endif
 
     setDelayCallbacks(false);
@@ -1752,27 +1734,24 @@ void determineChangedTracksFromNewTracksAndOldItems(NSArray* tracks, NSString* t
     }]]]);
     RetainPtr<NSMutableSet> oldTracks = adoptNS([[NSMutableSet alloc] initWithCapacity:oldItems.size()]);
 
-    for (auto& oldItem : oldItems) {
-        if (oldItem->playerItemTrack())
-            [oldTracks addObject:oldItem->playerItemTrack()];
-    }
+    typedef Vector<RefT> ItemVector;
+    for (auto i = oldItems.begin(); i != oldItems.end(); ++i)
+        [oldTracks addObject:(*i)->playerItemTrack()];
 
-    // Find the added & removed AVPlayerItemTracks:
     RetainPtr<NSMutableSet> removedTracks = adoptNS([oldTracks mutableCopy]);
     [removedTracks minusSet:newTracks.get()];
 
     RetainPtr<NSMutableSet> addedTracks = adoptNS([newTracks mutableCopy]);
     [addedTracks minusSet:oldTracks.get()];
 
-    typedef Vector<RefT> ItemVector;
     ItemVector replacementItems;
     ItemVector addedItems;
     ItemVector removedItems;
-    for (auto& oldItem : oldItems) {
-        if (oldItem->playerItemTrack() && [removedTracks containsObject:oldItem->playerItemTrack()])
-            removedItems.append(oldItem);
+    for (auto i = oldItems.begin(); i != oldItems.end(); ++i) {
+        if ([removedTracks containsObject:(*i)->playerItemTrack()])
+            removedItems.append(*i);
         else
-            replacementItems.append(oldItem);
+            replacementItems.append(*i);
     }
 
     for (AVPlayerItemTrack* track in addedTracks.get())
@@ -1781,74 +1760,12 @@ void determineChangedTracksFromNewTracksAndOldItems(NSArray* tracks, NSString* t
     replacementItems.appendVector(addedItems);
     oldItems.swap(replacementItems);
 
-    for (auto& removedItem : removedItems)
-        (player->*removedFunction)(removedItem);
+    for (auto i = removedItems.begin(); i != removedItems.end(); ++i)
+        (player->*removedFunction)(*i);
 
-    for (auto& addedItem : addedItems)
-        (player->*addedFunction)(addedItem);
+    for (auto i = addedItems.begin(); i != addedItems.end(); ++i)
+        (player->*addedFunction)(*i);
 }
-
-#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
-template <typename RefT, typename PassRefT>
-void determineChangedTracksFromNewTracksAndOldItems(MediaSelectionGroupAVFObjC* group, Vector<RefT>& oldItems, RefT (*itemFactory)(MediaSelectionOptionAVFObjC&), MediaPlayer* player, void (MediaPlayer::*removedFunction)(PassRefT), void (MediaPlayer::*addedFunction)(PassRefT))
-{
-    group->updateOptions();
-
-    // Only add selection options which do not have an associated persistant track.
-    ListHashSet<RefPtr<MediaSelectionOptionAVFObjC>> newSelectionOptions;
-    for (auto& option : group->options()) {
-        if (!option)
-            continue;
-        AVMediaSelectionOptionType* avOption = option->avMediaSelectionOption();
-        if (!avOption)
-            continue;
-        if (![avOption respondsToSelector:@selector(track)] || ![avOption performSelector:@selector(track)])
-            newSelectionOptions.add(option);
-    }
-
-    ListHashSet<RefPtr<MediaSelectionOptionAVFObjC>> oldSelectionOptions;
-    for (auto& oldItem : oldItems) {
-        if (MediaSelectionOptionAVFObjC *option = oldItem->mediaSelectionOption())
-            oldSelectionOptions.add(option);
-    }
-
-    // Find the added & removed AVMediaSelectionOptions:
-    ListHashSet<RefPtr<MediaSelectionOptionAVFObjC>> removedSelectionOptions;
-    for (auto& oldOption : oldSelectionOptions) {
-        if (!newSelectionOptions.contains(oldOption))
-            removedSelectionOptions.add(oldOption);
-    }
-
-    ListHashSet<RefPtr<MediaSelectionOptionAVFObjC>> addedSelectionOptions;
-    for (auto& newOption : newSelectionOptions) {
-        if (!oldSelectionOptions.contains(newOption))
-            addedSelectionOptions.add(newOption);
-    }
-
-    typedef Vector<RefT> ItemVector;
-    ItemVector replacementItems;
-    ItemVector addedItems;
-    ItemVector removedItems;
-    for (auto& oldItem : oldItems) {
-        if (oldItem->mediaSelectionOption() && removedSelectionOptions.contains(oldItem->mediaSelectionOption()))
-            removedItems.append(oldItem);
-        else
-            replacementItems.append(oldItem);
-    }
-
-    for (auto& option : addedSelectionOptions)
-        addedItems.append(itemFactory(*option.get()));
-
-    replacementItems.appendVector(addedItems);
-    oldItems.swap(replacementItems);
-    
-    for (auto& removedItem : removedItems)
-        (player->*removedFunction)(removedItem);
-    
-    for (auto& addedItem : addedItems)
-        (player->*addedFunction)(addedItem);
-}
-#endif
 
 void MediaPlayerPrivateAVFoundationObjC::updateAudioTracks()
 {
@@ -1857,19 +1774,6 @@ void MediaPlayerPrivateAVFoundationObjC::updateAudioTracks()
 #endif
 
     determineChangedTracksFromNewTracksAndOldItems(m_cachedTracks.get(), AVMediaTypeAudio, m_audioTracks, &AudioTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack);
-
-#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
-    if (!m_audibleGroup) {
-        if (AVMediaSelectionGroupType *group = safeMediaSelectionGroupForAudibleMedia())
-            m_audibleGroup = MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group);
-    }
-
-    if (m_audibleGroup)
-        determineChangedTracksFromNewTracksAndOldItems(m_audibleGroup.get(), m_audioTracks, &AudioTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeAudioTrack, &MediaPlayer::addAudioTrack);
-#endif
-
-    for (auto& track : m_audioTracks)
-        track->resetPropertiesFromTrack();
 
 #if !LOG_DISABLED
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::updateAudioTracks(%p) - audio track count was %lu, is %lu", this, count, m_audioTracks.size());
@@ -1883,19 +1787,6 @@ void MediaPlayerPrivateAVFoundationObjC::updateVideoTracks()
 #endif
 
     determineChangedTracksFromNewTracksAndOldItems(m_cachedTracks.get(), AVMediaTypeVideo, m_videoTracks, &VideoTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeVideoTrack, &MediaPlayer::addVideoTrack);
-
-#if HAVE(AVFOUNDATION_MEDIA_SELECTION_GROUP)
-    if (!m_visualGroup) {
-        if (AVMediaSelectionGroupType *group = safeMediaSelectionGroupForVisualMedia())
-            m_visualGroup = MediaSelectionGroupAVFObjC::create(m_avPlayerItem.get(), group);
-    }
-
-    if (m_visualGroup)
-        determineChangedTracksFromNewTracksAndOldItems(m_visualGroup.get(), m_videoTracks, &VideoTrackPrivateAVFObjC::create, player(), &MediaPlayer::removeVideoTrack, &MediaPlayer::addVideoTrack);
-#endif
-
-    for (auto& track : m_audioTracks)
-        track->resetPropertiesFromTrack();
 
 #if !LOG_DISABLED
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::updateVideoTracks(%p) - video track count was %lu, is %lu", this, count, m_videoTracks.size());
@@ -2301,28 +2192,6 @@ AVMediaSelectionGroupType* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectio
     return [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible];
 }
 
-AVMediaSelectionGroupType* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForAudibleMedia()
-{
-    if (!m_avAsset)
-        return nil;
-
-    if ([m_avAsset.get() statusOfValueForKey:@"availableMediaCharacteristicsWithMediaSelectionOptions" error:NULL] != AVKeyValueStatusLoaded)
-        return nil;
-
-    return [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
-}
-
-AVMediaSelectionGroupType* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForVisualMedia()
-{
-    if (!m_avAsset)
-        return nil;
-
-    if ([m_avAsset.get() statusOfValueForKey:@"availableMediaCharacteristicsWithMediaSelectionOptions" error:NULL] != AVKeyValueStatusLoaded)
-        return nil;
-
-    return [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicVisual];
-}
-
 void MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions()
 {
     AVMediaSelectionGroupType *legibleGroup = safeMediaSelectionGroupForLegibleMedia();
@@ -2713,14 +2582,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksDidChange(RetainPtr<NSArray> trac
     for (AVPlayerItemTrack *track in m_cachedTracks.get())
         [track removeObserver:m_objcObserver.get() forKeyPath:@"enabled"];
 
-    NSArray *assetTracks = [m_avAsset tracks];
-
-    // Tracks which are not present in the AVAsset are streaming tracks, and will instead be represented by
-    // AVMediaSelectionOptions.
-    m_cachedTracks = [tracks objectsAtIndexes:[tracks indexesOfObjectsPassingTest:^(id obj, NSUInteger, BOOL*) {
-        return [assetTracks containsObject:[obj assetTrack]];
-    }]];
-
+    m_cachedTracks = tracks;
     for (AVPlayerItemTrack *track in m_cachedTracks.get())
         [track addObserver:m_objcObserver.get() forKeyPath:@"enabled" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayerItemTrack];
 
