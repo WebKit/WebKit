@@ -126,6 +126,7 @@ public:
     bool shouldGenerateTimestamps() const { return m_shouldGenerateTimestamps; }
     void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
 
+    void rangeRemoval(const MediaTime&, const MediaTime&);
 protected:
     // EventTarget interface
     virtual void refEventTarget() override { ref(); }

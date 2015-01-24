@@ -1,3 +1,16 @@
+2015-01-23  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Implement Range Removal algorithm.
+        https://bugs.webkit.org/show_bug.cgi?id=140622.
+
+        Reviewed by Jer Noble.
+
+        Added short test to check whether endOfStream incorrectly switches back
+        to 'open' state.
+
+        * media/media-source/media-source-end-of-stream-readyState.html: Added.
+        * media/media-source/media-source-end-of-stream-readyState-expected.txt: Added.
+
 2015-01-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Test gardening. Mark a few failures after filing bugs.

@@ -371,7 +371,7 @@ void MediaSource::setDurationInternal(const MediaTime& duration)
     // on all objects in sourceBuffers.
     if (oldDuration.isValid() && duration < oldDuration) {
         for (auto& sourceBuffer : *m_sourceBuffers)
-            sourceBuffer->remove(duration, oldDuration, IGNORE_EXCEPTION);
+            sourceBuffer->rangeRemoval(duration, oldDuration);
     }
 
     // 5. If a user agent is unable to partially render audio frames or text cues that start before and end after the
@@ -447,6 +447,10 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
 
     // 2.4.7 https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#end-of-stream-algorithm
 
+    // 1. Change the readyState attribute value to "ended".
+    // 2. Queue a task to fire a simple event named sourceended at the MediaSource.
+    setReadyState(endedKeyword());
+
     // 3.
     if (error.isEmpty()) {
         // ↳ If error is not set, is null, or is an empty string
@@ -462,13 +466,6 @@ void MediaSource::streamEndedWithError(const AtomicString& error, ExceptionCode&
         // 2. Notify the media element that it now has all of the media data.
         m_private->markEndOfStream(MediaSourcePrivate::EosNoError);
     }
-
-    // NOTE: Do steps 1 & 2 after step 3 (with an empty error) to avoid the MediaSource's readyState being re-opened by a
-    // remove() operation resulting from a duration change.
-    // FIXME: Re-number or update this section once <https://www.w3.org/Bugs/Public/show_bug.cgi?id=26316> is resolved.
-    // 1. Change the readyState attribute value to "ended".
-    // 2. Queue a task to fire a simple event named sourceended at the MediaSource.
-    setReadyState(endedKeyword());
 
     if (error == network) {
         // ↳ If error is set to "network"

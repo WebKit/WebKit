@@ -1,3 +1,26 @@
+2015-01-23  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        [MSE] Implement Range Removal algorithm.
+        https://bugs.webkit.org/show_bug.cgi?id=140622.
+
+        Reviewed by Jer Noble.
+
+        This extract Range Removal algorithm (Editor's Draft version, bug:26316) from remove(),
+        to separate function to deal with old FIXME since bug in spec was resolved.
+        This should both guarantee good order of events, and prevent from switching to 'open' state
+        during end of stream.
+
+        Test: media/media-source/media-source-end-of-stream-readyState.html
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::setDurationInternal): update to use rangeRemoval(), not remove()
+        (WebCore::MediaSource::streamEndedWithError): remove FIXME, brigning back correct order of events.
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::remove): comments up to spec, extract rangeRemoval algorithm.
+        (WebCore::SourceBuffer::rangeRemoval):
+        (WebCore::SourceBuffer::removeTimerFired): comments up to spec.
+        * Modules/mediasource/SourceBuffer.h:
+
 2015-01-23  Enrica Casucci  <enrica@apple.com>
 
         Hit test returns incorrect results when performed in paginated content over the page gaps.

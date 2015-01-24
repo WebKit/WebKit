@@ -360,33 +360,49 @@ void SourceBuffer::remove(const MediaTime& start, const MediaTime& end, Exceptio
     LOG(MediaSource, "SourceBuffer::remove(%p) - start(%lf), end(%lf)", this, start.toDouble(), end.toDouble());
 
     // Section 3.2 remove() method steps.
-    // 1. If start is negative or greater than duration, then throw an InvalidAccessError exception and abort these steps.
-    // 2. If end is less than or equal to start, then throw an InvalidAccessError exception and abort these steps.
-    if (start < MediaTime::zeroTime() || (m_source && (!m_source->duration().isValid() || start > m_source->duration())) || end <= start) {
+    // 1. If duration equals NaN, then throw an InvalidAccessError exception and abort these steps.
+    // 2. If start is negative or greater than duration, then throw an InvalidAccessError exception and abort these steps.
+    // 3. If end is less than or equal to start, then throw an InvalidAccessError exception and abort these steps.
+
+    // FIXME: reorder/revisit this section once <https://www.w3.org/Bugs/Public/show_bug.cgi?id=27857> got resolved
+    // as it seems wrong to check mediaSource duration before checking isRemoved().
+    if ((m_source && m_source->duration().isInvalid())
+        || start < MediaTime::zeroTime() || (m_source && start > m_source->duration())
+        || end <= start) {
         ec = INVALID_ACCESS_ERR;
         return;
     }
 
-    // 3. If this object has been removed from the sourceBuffers attribute of the parent media source then throw an
+    // 4. If this object has been removed from the sourceBuffers attribute of the parent media source then throw an
     //    InvalidStateError exception and abort these steps.
-    // 4. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
+    // 5. If the updating attribute equals true, then throw an InvalidStateError exception and abort these steps.
     if (isRemoved() || m_updating) {
         ec = INVALID_STATE_ERR;
         return;
     }
 
-    // 5. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
-    // 5.1. Set the readyState attribute of the parent media source to "open"
-    // 5.2. Queue a task to fire a simple event named sourceopen at the parent media source .
+    // 6. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
+    // 6.1. Set the readyState attribute of the parent media source to "open"
+    // 6.2. Queue a task to fire a simple event named sourceopen at the parent media source .
     m_source->openIfInEndedState();
 
-    // 6. Set the updating attribute to true.
+    // 7. Run the range removal algorithm with start and end as the start and end of the removal range.
+    rangeRemoval(start, end);
+}
+
+void SourceBuffer::rangeRemoval(const MediaTime& start, const MediaTime& end)
+{
+    // 3.5.7 Range Removal
+    // https://rawgit.com/w3c/media-source/7bbe4aa33c61ec025bc7acbd80354110f6a000f9/media-source.html#sourcebuffer-range-removal
+    // 1. Let start equal the starting presentation timestamp for the removal range.
+    // 2. Let end equal the end presentation timestamp for the removal range.
+    // 3. Set the updating attribute to true.
     m_updating = true;
 
-    // 7. Queue a task to fire a simple event named updatestart at this SourceBuffer object.
+    // 4. Queue a task to fire a simple event named updatestart at this SourceBuffer object.
     scheduleEvent(eventNames().updatestartEvent);
 
-    // 8. Return control to the caller and run the rest of the steps asynchronously.
+    // 5. Return control to the caller and run the rest of the steps asynchronously.
     m_pendingRemoveStart = start;
     m_pendingRemoveEnd = end;
     m_removeTimer.startOneShot(0);
@@ -789,21 +805,21 @@ void SourceBuffer::removeTimerFired()
     ASSERT(m_pendingRemoveStart.isValid());
     ASSERT(m_pendingRemoveStart < m_pendingRemoveEnd);
 
-    // Section 3.2 remove() method steps
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-SourceBuffer-remove-void-double-start-double-end
+    // Section 3.5.7 Range Removal
+    // http://w3c.github.io/media-source/#sourcebuffer-range-removal
 
-    // 9. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
+    // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
     removeCodedFrames(m_pendingRemoveStart, m_pendingRemoveEnd);
 
-    // 10. Set the updating attribute to false.
+    // 7. Set the updating attribute to false.
     m_updating = false;
     m_pendingRemoveStart = MediaTime::invalidTime();
     m_pendingRemoveEnd = MediaTime::invalidTime();
 
-    // 11. Queue a task to fire a simple event named update at this SourceBuffer object.
+    // 8. Queue a task to fire a simple event named update at this SourceBuffer object.
     scheduleEvent(eventNames().updateEvent);
 
-    // 12. Queue a task to fire a simple event named updateend at this SourceBuffer object.
+    // 9. Queue a task to fire a simple event named updateend at this SourceBuffer object.
     scheduleEvent(eventNames().updateendEvent);
 }
 
