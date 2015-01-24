@@ -90,7 +90,7 @@ class ReportProcessor {
 
         // FIXME: Deprecate and unsupport "jobId".
         $build_id = $this->resolve_build_id($build_data, array_get($report, 'revisions', array()),
-            array_get($report, 'jobId') or array_get($report, 'buildRequest'));
+            array_get($report, 'jobId', array_get($report, 'buildRequest')));
 
         $this->runs->commit($platform_id, $build_id);
     }
@@ -129,7 +129,7 @@ class ReportProcessor {
             $this->exit_with_error('FailedToInsertBuild', $build_data);
 
         if ($build_request_id) {
-            if ($db->update_row('build_requests', 'request', array('id' => $build_request_id), array('status' => 'completed', 'build' => $build_id))
+            if ($this->db->update_row('build_requests', 'request', array('id' => $build_request_id), array('status' => 'completed', 'build' => $build_id))
                 != $build_request_id)
                 $this->exit_with_error('FailedToUpdateBuildRequest', array('buildRequest' => $build_request_id, 'build' => $build_id));
         }
@@ -439,8 +439,9 @@ class TestRunsGenerator {
             }
         }
 
-        $this->db->query_and_get_affected_rows("UPDATE reports SET report_committed_at = CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
-            WHERE report_id = $1", array($this->report_id));
+        $this->db->query_and_get_affected_rows("UPDATE reports
+            SET (report_committed_at, report_build) = (CURRENT_TIMESTAMP AT TIME ZONE 'UTC', $2)
+            WHERE report_id = $1", array($this->report_id, $build_id));
 
         $this->db->commit_transaction() or $this->exit_with_error('FailedToCommitTransaction');
     }
