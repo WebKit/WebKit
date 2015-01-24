@@ -88,33 +88,7 @@ Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackLis
     return captionPreferences->sortedTrackListForMenu(trackList);
 }
 
-Vector<RefPtr<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackList* trackList)
-{
-    if (!trackList)
-        return Vector<RefPtr<AudioTrack>>();
-
-    Page* page = m_mediaElement->document().page();
-    if (!page)
-        return Vector<RefPtr<AudioTrack>>();
-
-    CaptionUserPreferences* captionPreferences = page->group().captionPreferences();
-    return captionPreferences->sortedTrackListForMenu(trackList);
-}
-
 String MediaControlsHost::displayNameForTrack(TextTrack* track)
-{
-    if (!track)
-        return emptyString();
-
-    Page* page = m_mediaElement->document().page();
-    if (!page)
-        return emptyString();
-
-    CaptionUserPreferences* captionPreferences = page->group().captionPreferences();
-    return captionPreferences->displayNameForTrack(track);
-}
-
-String MediaControlsHost::displayNameForTrack(AudioTrack* track)
 {
     if (!track)
         return emptyString();
