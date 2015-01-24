@@ -1,5 +1,39 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r175976.
+
+    2014-11-11  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] cleanup wireless route monitoring
+        https://bugs.webkit.org/show_bug.cgi?id=138614
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::clearMediaPlayer): Add logging.
+        (WebCore::HTMLMediaElement::removeEventListener): Ditto.
+        (WebCore::HTMLMediaElement::createMediaPlayer): Ditto.
+
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::resetRestrictions): Add logging.
+        (WebCore::MediaSessionManageriOS::configureWireLessTargetMonitoring): Ditto.
+        (WebCore::MediaSessionManageriOS::updateNowPlayingInfo): Ditto.
+        (-[WebMediaSessionHelper initWithCallback:]): Ditto.
+        (-[WebMediaSessionHelper dealloc]): Always deallocate volume view and routing controller
+            on the main thread.
+        (-[WebMediaSessionHelper clearCallback]): Add logging.
+        (-[WebMediaSessionHelper hasWirelessTargetsAvailable]): Ditto.
+        (-[WebMediaSessionHelper startMonitoringAirPlayRoutes]): Always call routing controller on
+            the main thread.
+        (-[WebMediaSessionHelper stopMonitoringAirPlayRoutes]): Ditto.
+        (-[WebMediaSessionHelper interruption:]): Add logging.
+        (-[WebMediaSessionHelper applicationWillEnterForeground:]): Ditto.
+        (-[WebMediaSessionHelper applicationDidBecomeActive:]): Ditto.
+        (-[WebMediaSessionHelper applicationWillResignActive:]): Ditto.
+        (-[WebMediaSessionHelper wirelessRoutesAvailableDidChange:]): Ditto.
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r175585.
 
     2014-11-04  Reza Abbasian  <rabbasian@apple.com>
