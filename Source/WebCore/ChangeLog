@@ -1,3 +1,21 @@
+2015-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Cursor copy constructor does not initialize scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=140849
+
+        Reviewed by Antti Koivisto.
+
+        Found by fast/events/mouse-cursor-image-set.html
+
+        Make sure the scale factor is captured during copy construction. Also make sure
+        it is properly initialized in the default constructor, since it it used in the
+        Windows port for some default cursors.
+
+        * platform/CursorWin.h:
+        * platform/win/CursorWin.cpp:
+        (WebCore::Cursor::Cursor): Make sure copy constructor captures
+        the scale factor.
+
 2015-01-23  Benjamin Poulain  <bpoulain@apple.com>
 
         Add pointer/hover media queries
