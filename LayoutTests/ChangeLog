@@ -1,5 +1,19 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r174860.
+
+    2014-10-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Tables with <colgroups> are not reporting table column headers
+        https://bugs.webkit.org/show_bug.cgi?id=137846
+
+        Reviewed by Mario Sanchez Prada.
+
+        * accessibility/table-column-headers-with-captions-expected.txt: Added.
+        * accessibility/table-column-headers-with-captions.html: Added.
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r175085.
 
     2014-10-22  Simon Fraser  <simon.fraser@apple.com>

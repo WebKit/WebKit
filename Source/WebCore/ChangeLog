@@ -1,5 +1,25 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r174860.
+
+    2014-10-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Tables with <colgroups> are not reporting table column headers
+        https://bugs.webkit.org/show_bug.cgi?id=137846
+
+        Reviewed by Mario Sanchez Prada.
+
+        The code to search for header objects was getting stuck on anonymous RenderTableSections.
+        We also need to check more rows for headers, in case the first row or more is not visible or is empty.
+
+        Test: accessibility/table-column-headers-with-captions.html
+
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::headerObject):
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r175085.
 
     2014-10-22  Simon Fraser  <simon.fraser@apple.com>
