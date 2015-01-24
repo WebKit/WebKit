@@ -36,8 +36,6 @@
 
 namespace WebCore {
 
-class AudioTrack;
-class AudioTrackList;
 class Element;
 class HTMLMediaElement;
 class MediaControlTextTrackContainerElement;
@@ -54,9 +52,7 @@ public:
     static const AtomicString& alwaysOnKeyword();
 
     Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*);
-    Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList*);
     String displayNameForTrack(TextTrack*);
-    String displayNameForTrack(AudioTrack*);
     TextTrack* captionMenuOffItem();
     TextTrack* captionMenuAutomaticItem();
     AtomicString captionDisplayMode();

@@ -49,13 +49,7 @@ void VideoTrackList::append(PassRefPtr<VideoTrack> prpTrack)
 
     // Insert tracks in the media file order.
     size_t index = track->inbandTrackIndex();
-    size_t insertionIndex;
-    for (insertionIndex = 0; insertionIndex < m_inbandTracks.size(); ++insertionIndex) {
-        VideoTrack* otherTrack = static_cast<VideoTrack*>(m_inbandTracks[insertionIndex].get());
-        if (otherTrack->inbandTrackIndex() > index)
-            break;
-    }
-    m_inbandTracks.insert(insertionIndex, track);
+    m_inbandTracks.insert(index, track);
 
     ASSERT(!track->mediaElement() || track->mediaElement() == mediaElement());
     track->setMediaElement(mediaElement());

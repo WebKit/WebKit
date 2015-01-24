@@ -810,11 +810,6 @@ String textTrackNoLabelText()
 {
     return String::fromUTF8(C_("Menu item label for a closed captions track that has no other name", "No label"));
 }
-
-String audioTrackNoLabelText()
-{
-    return String::fromUTF8(C_("Menu item label for an audio track that has no other name", "No label"));
-}
 #endif
 
 String snapshottedPlugInLabelTitle()
