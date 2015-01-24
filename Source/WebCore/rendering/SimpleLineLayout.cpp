@@ -378,8 +378,12 @@ static LineState initializeNewLine(const LineState& previousLine, const RenderBl
     }
 
     if (overflowedFragment.isEmpty()) {
-        unsigned spaceCount = 0;
-        lineState.jumpTo(style.collapseWhitespace ? flowContents.findNextNonWhitespacePosition(linePositon, spaceCount) : linePositon, 0);
+        if (style.collapseWhitespace) {
+            auto firstFragment = flowContents.nextTextFragment(linePositon, 0);
+            if (firstFragment.type == FlowContents::TextFragment::Whitespace)
+                linePositon = firstFragment.end;
+        }
+        lineState.jumpTo(linePositon, 0);
         return lineState;
     }
 

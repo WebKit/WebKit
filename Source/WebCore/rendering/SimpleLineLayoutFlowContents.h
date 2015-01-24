@@ -63,12 +63,8 @@ public:
         bool isBreakable = false;
         float width = 0;
     };
-
     TextFragment nextTextFragment(unsigned position, float xPosition) const;
-    unsigned findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const;
-
     float textWidth(unsigned from, unsigned to, float xPosition) const;
-
     bool isLineBreak(unsigned position) const;
     bool isEnd(unsigned position) const;
 
@@ -100,6 +96,7 @@ public:
     const Style& style() const { return m_style; }
 
 private:
+    unsigned findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const;
     unsigned findNextBreakablePosition(unsigned position) const;
     unsigned segmentIndexForPosition(unsigned position) const;
     unsigned segmentIndexForPositionSlow(unsigned position) const;

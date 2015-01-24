@@ -1,3 +1,18 @@
+2015-01-23  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Use only FlowContents::nextTextFragment() to read fragments from the text flow.
+        https://bugs.webkit.org/show_bug.cgi?id=140842
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation to make FlowContents a content iterator class.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::initializeNewLine):
+        * rendering/SimpleLineLayoutFlowContents.h:
+
 2015-01-23  Bartlomiej Gajda  <b.gajda@samsung.com>
 
         [MSE] Implement Range Removal algorithm.
