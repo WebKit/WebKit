@@ -1,3 +1,10 @@
+2015-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening. Add Windows baseline for
+        mouse-cursor-image-set.
+
+        * platform/win/fast/events/mouse-cursor-image-set-expected.txt: Added.
+
 2015-01-23  Benjamin Poulain  <bpoulain@apple.com>
 
         Add pointer/hover media queries
