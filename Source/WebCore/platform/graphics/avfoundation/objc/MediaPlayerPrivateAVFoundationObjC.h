@@ -91,6 +91,7 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     RetainPtr<AVAssetResourceLoadingRequest> takeRequestForKeyURI(const String&);
+    virtual void keyAdded() override;
 #endif
 
     void playerItemStatusDidChange(int);

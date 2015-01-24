@@ -80,6 +80,11 @@ void MediaKeySession::close()
         m_session->releaseKeys();
 }
 
+RefPtr<ArrayBuffer> MediaKeySession::cachedKeyForKeyId(const String& keyId) const
+{
+    return m_session ? m_session->cachedKeyForKeyID(keyId) : nullptr;
+}
+
 const String& MediaKeySession::sessionId() const
 {
     return m_session->sessionId();
@@ -184,6 +189,8 @@ void MediaKeySession::addKeyTimerFired()
             RefPtr<Event> keyaddedEvent = Event::create(eventNames().webkitkeyaddedEvent, false, false);
             keyaddedEvent->setTarget(this);
             m_asyncEventQueue.enqueueEvent(keyaddedEvent.release());
+
+            keys()->keyAdded();
         }
 
         // 2.8. If any of the preceding steps in the task failed

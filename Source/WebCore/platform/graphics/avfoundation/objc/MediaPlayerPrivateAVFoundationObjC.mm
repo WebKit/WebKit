@@ -52,6 +52,7 @@
 #import "SecurityOrigin.h"
 #import "SerializedPlatformRepresentationMac.h"
 #import "SoftLinking.h"
+#import "TextEncoding.h"
 #import "TextTrackRepresentation.h"
 #import "UUID.h"
 #import "VideoTrackPrivateAVFObjC.h"
@@ -1507,7 +1508,7 @@ void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String>& supp
 #if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
 static bool keySystemIsSupported(const String& keySystem)
 {
-    if (equalIgnoringCase(keySystem, "com.apple.fps") || equalIgnoringCase(keySystem, "com.apple.fps.1_0"))
+    if (equalIgnoringCase(keySystem, "com.apple.fps") || equalIgnoringCase(keySystem, "com.apple.fps.1_0") || equalIgnoringCase(keySystem, "org.w3c.clearkey"))
         return true;
     return false;
 }
@@ -1522,6 +1523,10 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
     // 1. Check whether the Key System is supported with the specified container and codec type(s) by following the steps for the first matching condition from the following list:
     //    If keySystem is null, continue to the next step.
     if (!parameters.keySystem.isNull() && !parameters.keySystem.isEmpty()) {
+        // "Clear Key" is only supported with HLS:
+        if (equalIgnoringCase(parameters.keySystem, "org.w3c.clearkey") && !parameters.type.isEmpty() && !equalIgnoringCase(parameters.type, "application/x-mpegurl"))
+            return MediaPlayer::IsNotSupported;
+
         // If keySystem contains an unrecognized or unsupported Key System, return the empty string
         if (!keySystemIsSupported(parameters.keySystem))
             return MediaPlayer::IsNotSupported;
@@ -1554,6 +1559,10 @@ bool MediaPlayerPrivateAVFoundationObjC::supportsKeySystem(const String& keySyst
 {
 #if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
     if (!keySystem.isEmpty()) {
+        // "Clear Key" is only supported with HLS:
+        if (equalIgnoringCase(keySystem, "org.w3c.clearkey") && !mimeType.isEmpty() && !equalIgnoringCase(mimeType, "application/x-mpegurl"))
+            return MediaPlayer::IsNotSupported;
+
         if (!keySystemIsSupported(keySystem))
             return false;
 
@@ -1570,6 +1579,35 @@ bool MediaPlayerPrivateAVFoundationObjC::supportsKeySystem(const String& keySyst
 }
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+static void fulfillRequestWithKeyData(AVAssetResourceLoadingRequest *request, ArrayBuffer* keyData)
+{
+    if (AVAssetResourceLoadingContentInformationRequest *infoRequest = [request contentInformationRequest]) {
+        [infoRequest setContentLength:keyData->byteLength()];
+        [infoRequest setByteRangeAccessSupported:YES];
+    }
+
+    if (AVAssetResourceLoadingDataRequest *dataRequest = [request dataRequest]) {
+        long start = [dataRequest currentOffset];
+        long long end = std::min<long long>(keyData->byteLength(), [dataRequest currentOffset] + [dataRequest requestedLength]);
+
+        ASSERT(start <= std::numeric_limits<int>::max());
+        ASSERT(end <= std::numeric_limits<int>::max());
+
+        if (start < 0 || end < 0 || start >= keyData->byteLength()) {
+            [request finishLoadingWithError:nil];
+            return;
+        }
+
+        RefPtr<ArrayBuffer> requestedKeyData = keyData->slice(start, end);
+        RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:requestedKeyData->data() length:requestedKeyData->byteLength()]);
+        [dataRequest respondWithData:nsData.get()];
+    }
+
+    [request finishLoading];
+}
+#endif
+
 bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest* avRequest)
 {
     String scheme = [[[avRequest request] URL] scheme];
@@ -1597,6 +1635,27 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 
         m_keyURIToRequestMap.set(keyURI, avRequest);
         return true;
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    } else if (scheme == "clearkey") {
+        String keyID = [[[avRequest request] URL] resourceSpecifier];
+        StringView keyIDView(keyID);
+        CString utf8EncodedKeyId = UTF8Encoding().encode(keyIDView, URLEncodedEntitiesForUnencodables);
+
+        RefPtr<Uint8Array> initData = Uint8Array::create(utf8EncodedKeyId.length());
+        initData->setRange((JSC::Uint8Adaptor::Type*)utf8EncodedKeyId.data(), utf8EncodedKeyId.length(), 0);
+
+        auto keyData = player()->cachedKeyForKeyId(keyID);
+        if (keyData) {
+            fulfillRequestWithKeyData(avRequest, keyData.get());
+            return false;
+        }
+
+        if (!player()->keyNeeded(initData.get()))
+            return false;
+
+        m_keyURIToRequestMap.set(keyID, avRequest);
+        return true;
+#endif
     }
 #endif
 
@@ -2291,6 +2350,26 @@ MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::cancelKeyRequ
 RetainPtr<AVAssetResourceLoadingRequest> MediaPlayerPrivateAVFoundationObjC::takeRequestForKeyURI(const String& keyURI)
 {
     return m_keyURIToRequestMap.take(keyURI);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::keyAdded()
+{
+    Vector<String> fulfilledKeyIds;
+
+    for (auto& pair : m_keyURIToRequestMap) {
+        const String& keyId = pair.key;
+        const RetainPtr<AVAssetResourceLoadingRequest>& request = pair.value;
+
+        auto keyData = player()->cachedKeyForKeyId(keyId);
+        if (!keyData)
+            continue;
+
+        fulfillRequestWithKeyData(request.get(), keyData.get());
+        fulfilledKeyIds.append(keyId);
+    }
+
+    for (auto& keyId : fulfilledKeyIds)
+        m_keyURIToRequestMap.remove(keyId);
 }
 
 std::unique_ptr<CDMSession> MediaPlayerPrivateAVFoundationObjC::createSession(const String& keySystem)

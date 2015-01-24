@@ -242,6 +242,8 @@ public:
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     MediaKeys* keys() const { return m_mediaKeys.get(); }
     void setMediaKeys(MediaKeys*);
+
+    void keyAdded();
 #endif
 
 // controls
@@ -563,6 +565,7 @@ private:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
+    virtual RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String& keyId) const override;
     virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) override;
     virtual String mediaPlayerMediaKeysStorageDirectory() const override;
 #endif

@@ -203,6 +203,11 @@ function waitForEventAndTest(eventName, testFuncString, endit)
     mediaElement.addEventListener(eventName, _eventCallback, true);
 }
 
+function waitForEventOnceOn(element, eventName, func, endit)
+{
+    waitForEventOn(element, eventName, func, endit, true);
+}
+
 function waitForEventOn(element, eventName, func, endit, oneTimeOnly)
 {
     waitForEvent(eventName, func, endit, oneTimeOnly, element);
