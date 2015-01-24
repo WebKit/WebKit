@@ -1214,6 +1214,9 @@ webkit.org/b/140798 accessibility/aria-flowto.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-hidden-negates-no-visibility.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-hidden-with-elements.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-labeled-with-hidden-node.html [ Failure ]
+webkit.org/b/140798 accessibility/aria-labelledby-overrides-aria-labeledby [ Failure ]
+webkit.org/b/140798 accessibility/aria-labelledby-with-descendants [ Failure ]
+webkit.org/b/140798 accessibility/aria-namefrom-author [ Failure ]
 webkit.org/b/140798 accessibility/aria-sort.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-tables.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-text-role.html [ Failure ]
@@ -1585,7 +1588,7 @@ webkit.org/b/136484 fast/css-generated-content/initial-letter-raised.html [ Fail
 webkit.org/b/136484 fast/css-generated-content/initial-letter-sunken.html [ Failure ]
 fast/css/direct-adjacent-style-update-optimization.html [ Failure ]
 fast/css/indirect-adjacent-style-update-optimization.html [ Failure ]
-fast/css/read-only-read-write-input-basics.html [ Failure ]
+fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=138025
 # Larger text and as a result, larger elements containing said text (as compared to Mac port)
@@ -1814,6 +1817,7 @@ webkit.org/b/140771 transforms/hittest-translated-content-off-to-infinity-and-ba
 # Tests generating new results
 printing/return-from-printing-mode.html
 
+webkit.org/b/140847 js/dom/date-negative-setmonth.html [ Failure ]
 
 ################################################################################
 ######################### Start list of UNREVIEWED failures ########################
@@ -2522,6 +2526,8 @@ fast/inline/out-of-flow-positioned-render-replaced-box-moves.html [ ImageOnlyFai
 webkit.org/b/140250 fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html [ Failure ]
 webkit.org/b/140250 fast/loader/stateobjects/document-destroyed-navigate-back.html [ Failure ]
 webkit.org/b/140250 fast/loader/stateobjects/replacestate-in-iframe.html [ Failure ]
+
+platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
 ################################################################################
 ######################### End list of UNREVIEWED failures ##########################
 ################################################################################

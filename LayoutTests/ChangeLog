@@ -1,3 +1,15 @@
+2015-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Test gardening. Mark a few failures after filing bugs.
+
+        Also rebaseline a few tests.
+
+        * platform/win/TestExpectations:
+        * platform/win/accessibility/parent-element-expected.txt:
+        * platform/win/editing/input/caret-at-the-edge-of-input-expected.png: Added.
+        * platform/win/editing/input/caret-at-the-edge-of-input-expected.txt: Added.
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+
 2015-01-23  Enrica Casucci  <enrica@apple.com>
 
         Hit test returns incorrect results when performed in paginated content over the page gaps.
