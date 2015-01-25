@@ -849,6 +849,11 @@ RefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)
     if (position.isNull())
         return nullptr;
 
+    Position deepPosition = position.deepEquivalent();
+    Text* containerText = deepPosition.containerText();
+    if (!containerText || !containerText->renderer() || containerText->renderer()->style().userSelect() == SELECT_NONE)
+        return nullptr;
+
     VisiblePosition previous = position.previous();
     if (previous.isNotNull()) {
         RefPtr<Range> previousCharacterRange = makeRange(previous, position);
