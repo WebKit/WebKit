@@ -578,6 +578,11 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
         if (!m_videoLayer)
             createAVPlayerLayer();
 
+#if USE(VIDEOTOOLBOX) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+        if (!m_videoOutput)
+            createVideoOutput();
+#endif
+
         player()->mediaPlayerClient()->mediaPlayerRenderingModeChanged(player());
     });
 }
@@ -1859,7 +1864,11 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
         return;
 
 #if USE(VIDEOTOOLBOX)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    NSDictionary* attributes = nil;
+#else
     NSDictionary* attributes = @{ (NSString*)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_422YpCbCr8) };
+#endif
 #else
     NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey,
                                 nil];
@@ -1870,8 +1879,6 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
     [m_videoOutput setDelegate:m_videoOutputDelegate.get() queue:globalPullDelegateQueue()];
 
     [m_avPlayerItem.get() addOutput:m_videoOutput.get()];
-
-    waitForVideoOutputMediaDataWillChange();
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoOutput(%p) - returning %p", this, m_videoOutput.get());
 }
@@ -1993,6 +2000,9 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage()
 
 void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* context, const IntRect& outputRect)
 {
+    if (m_videoOutput && !m_lastImage)
+        waitForVideoOutputMediaDataWillChange();
+
     updateLastImage();
 
     if (m_lastImage) {

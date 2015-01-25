@@ -1,5 +1,36 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r175251.
+
+    2014-10-28  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] The first software paint of a <video> element takes up to 2.5s.
+        https://bugs.webkit.org/show_bug.cgi?id=137754
+
+        Reviewed by Brent Fulgham.
+
+        It turns out that, if you pass nil to -[AVPlayerItemVideoOutput initWithPixelBufferAttributes:]
+        the video output will not attempt to conform the resulting pixel buffers into a particular format.
+        This means that adding such a video output to a AVPlayerItem should have almost no performance
+        penalty, since the video output does not even copy the resulting buffers, but rather just retains
+        and returns the ones from the AVPlayerLayer.
+
+        Create and attach an AVPlayerItemVideoOutput after creating the AVPlayerItem, but before attaching
+        the player item to the AVPlayer. This eliminates the reconfigure step which occurs after attaching
+        a video output to an already attached AVPlayerItem.
+
+        When creating the AVPlayerItemVideoOutput, pass in `nil` for the pixelBufferAttributes parameter.
+
+        Instead of blocking waiting for output from the AVPlayerItemVideoOutput during creating, block and
+        whait when asked to paint with the video output.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r176321.
 
     2014-11-19  Chris Fleizach  <cfleizach@apple.com>
