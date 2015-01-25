@@ -1,5 +1,21 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r176475.
+
+    2014-11-21  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Delay of 1-2s after the first paint of a video frame.
+        https://bugs.webkit.org/show_bug.cgi?id=138979
+
+        Reviewed by Eric Carlson.
+
+        Only bother waiting for a signal that a new image is ready when the image isn't ready in the first place.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r175251.
 
     2014-10-28  Jer Noble  <jer.noble@apple.com>
