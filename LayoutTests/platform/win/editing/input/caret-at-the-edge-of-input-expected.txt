@@ -15,4 +15,3 @@ layer at (12,31) size 75x15 scrollX 40 scrollWidth 295
     RenderText {#text} at (0,0) size 294x15
       text run at (0,0) width 294: "012345678901012345678901234567890123456789"
 caret: position 12 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body
-

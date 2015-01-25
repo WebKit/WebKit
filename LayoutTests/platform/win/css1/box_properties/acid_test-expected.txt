@@ -19,18 +19,18 @@ layer at (0,0) size 800x420
               RenderBlock (anonymous) at (10,20) size 140x0
                 RenderInline {FORM} at (0,0) size 0x0
                   RenderText {#text} at (0,0) size 0x0
-              RenderBlock (anonymous) at (10,20) size 140x40
-                RenderBlock {P} at (0,0) size 140x20
-                  RenderText {#text} at (0,4) size 28x12
-                    text run at (0,4) width 28: "bang "
+              RenderBlock (anonymous) at (10,20) size 140x44
+                RenderBlock {P} at (0,0) size 140x22
+                  RenderText {#text} at (0,6) size 28x12
+                    text run at (0,6) width 28: "bang "
                   RenderBlock {INPUT} at (33,3) size 13x13 [color=#000000]
                   RenderText {#text} at (0,0) size 0x0
-                RenderBlock {P} at (0,20) size 140x20
-                  RenderText {#text} at (0,4) size 47x12
-                    text run at (0,4) width 47: "whimper "
+                RenderBlock {P} at (0,22) size 140x22
+                  RenderText {#text} at (0,6) size 47x12
+                    text run at (0,6) width 47: "whimper "
                   RenderBlock {INPUT} at (52,3) size 13x13 [color=#000000]
                   RenderText {#text} at (0,0) size 0x0
-              RenderBlock (anonymous) at (10,60) size 140x0
+              RenderBlock (anonymous) at (10,64) size 140x0
                 RenderInline {FORM} at (0,0) size 0x0
                 RenderText {#text} at (0,0) size 0x0
             RenderBlock (floating) {LI} at (259,0) size 81x120 [color=#000000] [bgcolor=#FFCC00] [border: (5px solid #000000)]

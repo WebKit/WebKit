@@ -1,3 +1,116 @@
+2015-01-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening. Reactivating tests.
+
+        Re-enable a series of tests that work properly on Windows. New baselines will be needed.
+
+        * platform/win/TestExpectations:
+        * platform/win/css1/box_properties/acid_test-expected.png: Added.
+        * platform/win/css1/box_properties/acid_test-expected.txt:
+        * platform/win/editing/input/caret-at-the-edge-of-input-expected.txt:
+        * platform/win/fast/block/float/float-avoidance-expected.txt:
+        * platform/win/fast/block/margin-collapse/103-expected.txt:
+        * platform/win/fast/css/box-shadow-and-border-radius-expected.png:
+        * platform/win/fast/dynamic/008-expected.txt: Added.
+        * platform/win/fast/forms/001-expected.png: Added.
+        * platform/win/fast/forms/001-expected.txt:
+        * platform/win/fast/forms/003-expected.txt:
+        * platform/win/fast/forms/004-expected.txt:
+        * platform/win/fast/forms/006-expected.png: Added.
+        * platform/win/fast/forms/007-expected.png: Added.
+        * platform/win/fast/forms/HTMLOptionElement_label01-expected.txt: Added.
+        * platform/win/fast/forms/HTMLOptionElement_label02-expected.txt: Added.
+        * platform/win/fast/forms/HTMLOptionElement_label03-expected.txt: Added.
+        * platform/win/fast/forms/HTMLOptionElement_label04-expected.txt: Added.
+        * platform/win/fast/forms/HTMLOptionElement_label05-expected.txt: Added.
+        * platform/win/fast/forms/HTMLOptionElement_label06-expected.txt: Removed property svn:executable.
+        * platform/win/fast/forms/HTMLOptionElement_label07-expected.txt: Added.
+        * platform/win/fast/forms/basic-buttons-expected.png: Added.
+        * platform/win/fast/forms/basic-buttons-expected.txt: Added.
+        * platform/win/fast/forms/basic-inputs-expected.png: Added.
+        * platform/win/fast/forms/basic-selects-expected.txt:
+        * platform/win/fast/forms/basic-textareas-expected.png: Added.
+        * platform/win/fast/forms/box-shadow-override-expected.png: Added.
+        * platform/win/fast/forms/box-shadow-override-expected.txt: Added.
+        * platform/win/fast/forms/button-positioned-expected.txt: Added.
+        * platform/win/fast/forms/button-sizes-expected.txt: Added.
+        * platform/win/fast/forms/button-style-color-expected.txt: Added.
+        * platform/win/fast/forms/button-text-transform-expected.txt: Added.
+        * platform/win/fast/forms/control-clip-overflow-expected.txt: Added.
+        * platform/win/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/win/fast/forms/disabled-select-change-index-expected.txt: Added.
+        * platform/win/fast/forms/form-element-geometry-expected.txt: Added.
+        * platform/win/fast/forms/hidden-listbox-expected.txt: Added.
+        * platform/win/fast/forms/input-appearance-focus-expected.txt: Added.
+        * platform/win/fast/forms/input-double-click-selection-gap-bug-expected.txt: Added.
+        * platform/win/fast/forms/input-readonly-autoscroll-expected.txt: Added.
+        * platform/win/fast/forms/input-text-double-click-expected.txt: Added.
+        * platform/win/fast/forms/listbox-hit-test-zoomed-expected.txt: Added.
+        * platform/win/fast/forms/listbox-scrollbar-incremental-load-expected.txt: Added.
+        * platform/win/fast/forms/listbox-width-change-expected.txt: Added.
+        * platform/win/fast/forms/menulist-deselect-update-expected.txt:
+        * platform/win/fast/forms/menulist-no-overflow-expected.txt: Added.
+        * platform/win/fast/forms/number/number-appearance-rtl-expected.txt: Added.
+        * platform/win/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Added.
+        * platform/win/fast/forms/number/number-appearance-spinbutton-layer-expected.txt: Added.
+        * platform/win/fast/forms/option-strip-whitespace-expected.txt: Added.
+        * platform/win/fast/forms/plaintext-mode-2-expected.txt: Added.
+        * platform/win/fast/forms/search: Added.
+        * platform/win/fast/forms/search/search-size-with-decorations-expected.txt: Added.
+        * platform/win/fast/forms/select-align-expected.txt: Added.
+        * platform/win/fast/forms/select-baseline-expected.txt: Added.
+        * platform/win/fast/forms/select-block-background-expected.txt: Added.
+        * platform/win/fast/forms/select-change-listbox-size-expected.txt: Added.
+        * platform/win/fast/forms/select-change-listbox-to-popup-expected.txt: Added.
+        * platform/win/fast/forms/select-dirty-parent-pref-widths-expected.txt: Added.
+        * platform/win/fast/forms/select-disabled-appearance-expected.txt: Added.
+        * platform/win/fast/forms/select-initial-position-expected.txt: Added.
+        * platform/win/fast/forms/select-item-background-clip-expected.txt: Added.
+        * platform/win/fast/forms/select-list-box-with-height-expected.txt: Added.
+        * platform/win/fast/forms/select-selected-expected.txt: Added.
+        * platform/win/fast/forms/select/optgroup-rendering-expected.txt:
+        * platform/win/fast/forms/tabbing-input-iframe-expected.txt: Added.
+        * platform/win/fast/frames: Added.
+        * platform/win/fast/frames/take-focus-from-iframe-expected.txt: Added.
+        * platform/win/fast/multicol/pagination: Added.
+        * platform/win/fast/multicol/pagination/LeftToRight-tb-hittest-expected.txt: Added.
+        * platform/win/fast/multicol/pagination/RightToLeft-rl-hittest-expected.txt: Added.
+        * platform/win/fast/overflow/entity-comment-in-textarea-expected.txt: Added.
+        * platform/win/fast/overflow/open-comment-in-textarea-expected.txt: Added.
+        * platform/win/fast/overflow/overflow-x-y-expected.txt: Added.
+        * platform/win/fast/table/003-expected.txt: Added.
+        * platform/win/fast/table/colspanMinWidth-expected.txt: Added.
+        * platform/win/fast/table/colspanMinWidth-vertical-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug103533-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug1188-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug12384-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug1318-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug2479-2-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug26178-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug29326-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug30692-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug4382-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug4429-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug44505-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug55545-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug92647-2-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug96334-expected.txt: Added.
+        * platform/win/tables/mozilla/bugs/bug99948-expected.txt: Added.
+        * platform/win/tables/mozilla/core: Added.
+        * platform/win/tables/mozilla/core/bloomberg-expected.txt: Added.
+        * platform/win/tables/mozilla/core/margins-expected.txt: Added.
+        * platform/win/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/win/tables/mozilla/marvin/x_col_align_justify-expected.png: Added.
+        * platform/win/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/win/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/win/tables/mozilla_expected_failures/bugs/bug45621-expected.txt: Added.
+        * platform/win/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+
 2015-01-24  Darin Adler  <darin@apple.com>
 
         Move height/width implementation for use element from RenderSVGViewportContainer to SVGUseElement

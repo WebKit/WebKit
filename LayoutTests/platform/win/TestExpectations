@@ -286,12 +286,6 @@ webkit.org/b/53675 fast/events/scroll-event-during-modal-dialog.html [ Skip ]
 webkit.org/b/53675 fast/dom/Window/open-window-min-size.html [ Skip ]
 webkit.org/b/53675 js/dom/function-length.html [ Skip ]
 
-# TODO Implement spinbutton support in RenderThemeSafari
-webkit.org/b/54662 fast/forms/number/number-appearance-rtl.html [ Skip ]
-webkit.org/b/54662 fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Skip ]
-webkit.org/b/54662 fast/forms/number/number-appearance-spinbutton-layer.html [ Skip ]
-webkit.org/b/54662 fast/forms/number/number-appearance-spinbutton-visibility.html [ Skip ]
-
 # TODO Datalist is not yet enabled.
 fast/forms/datalist/ [ Skip ]
 
@@ -667,9 +661,6 @@ http/tests/xmlhttprequest/XMLHttpRequestException.html [ Skip ]
 
 # <rdar://5670235> Sometimes spews output into the next test
 http/tests/security/cross-frame-access-put.html [ Skip ]
-
-# <rdar://5673685>
-fast/forms/input-readonly-autoscroll.html [ Failure ]
 
 # <rdar://5683523> Failing on at least one bot due to pixel depth differences (may no longer fail)
 fast/dom/Window/window-screen-properties.html [ Pass Failure ]
@@ -1664,12 +1655,50 @@ webkit.org/b/140768 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [
 ################################################################################
 ################             Forms Issues                   ####################
 ################################################################################
-fast/forms/basic-buttons.html [ Failure ]
-fast/forms/box-shadow-override.html [ Failure ]
-fast/forms/button-positioned.html [ Failure ]
-fast/forms/button-sizes.html [ Failure ]
-fast/forms/button-style-color.html [ Failure ]
-fast/forms/button-text-transform.html [ Failure ]
+# Not putting 'focused' text
+webkit.org/b/24810 fast/forms/legend-access-key.html [ Failure ]
+
+webkit.org/b/97026 fast/forms/state-restore-broken-state.html [ Failure ]
+fast/forms/select/listbox-click-on-scrollbar.html [ Failure ]
+
+# Search fields do change in size. May be correct behavior
+fast/forms/searchfield-heights.html [ Failure ]
+
+# Test uses "required" form element property which currently does not work on Safari
+fast/forms/validation-message-user-modify.html [ Failure ]
+
+# Are not drawing as tiny slivers. Still show full control.
+webkit.org/b/137962 fast/forms/menulist-narrow-width.html [ Failure ]
+
+webkit.org/b/140506 fast/forms/select/popup-closes-on-blur.html [ Crash ]
+webkit.org/b/93667 fast/forms/select/menulist-popup-crash.html [ Pass Timeout ]
+fast/forms/file/file-input-reset.html [ Pass Timeout ]
+fast/forms/select/intrinsic-min-width-applies-with-fixed-width.html [ Pass Timeout ]
+
+# <select> in DRT is painting as invisible (works in WinLauncher)
+fast/forms/003.html [ ImageOnlyFailure ]
+fast/forms/004.html [ ImageOnlyFailure ]
+
+
+
+
+#fast/forms/search-event-delay.html [ Failure ]
+#fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure ]
+#fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFailure ]
+#fast/forms/week/week-input-type.html [ Crash Failure ]
+# <select> elements are not rendering properly
+#webkit.org/b/137962 fast/invalid/014.html [ Failure ]
+
+# new timeouts, need bug reports
+fast/forms/button-state-restore.html [ Skip ]
+fast/forms/radio/state-restore-radio-group.html [ Skip ]
+fast/forms/select/select-state-restore.html [ Skip ]
+fast/forms/state-restore-hidden.html [ Skip ]
+fast/forms/state-restore-per-form.html [ Skip ]
+fast/forms/state-restore-to-non-autocomplete-form.html [ Skip ]
+fast/forms/state-restore-to-non-edited-controls.html [ Skip ]
+fast/forms/state-save-of-detached-control.html [ Skip ]
+fast/forms/textarea/textarea-state-restore.html [ Skip ]
 ################################################################################
 #################          End Forms Issues              #######################
 ################################################################################
@@ -1678,8 +1707,6 @@ fast/text/atsui-pointtooffset-calls-cg.html [ Pass Failure ]
 
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
-
-webkit.org/b/140506 fast/forms/select/popup-closes-on-blur.html [ Crash ]
 
 # fast/html/keygen.html is failing on boomer <rdar://problem/5133799>
 fast/html/keygen.html [ Failure ]
@@ -1694,7 +1721,6 @@ webkit.org/b/25189 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
 webkit.org/b/25483 http/tests/navigation/redirect-cycle.html [ Pass Timeout ]
 webkit.org/b/28467 http/tests/loading/preload-img-test.html [ Pass Timeout ]
 fast/frames/flattening/scrolling-in-object.html [ Pass Timeout ]
-webkit.org/b/93667 fast/forms/select/menulist-popup-crash.html [ Pass Timeout ]
 webkit.org/b/24810 fast/dom/location-new-window-no-crash.html [ Pass Timeout ]
 webkit.org/b/24810 fast/loader/user-style-sheet-resource-load-callbacks.html [ Pass Timeout ]
 
@@ -1712,15 +1738,9 @@ http/tests/multipart/invalid-image-data-standalone.html [ Pass Timeout ]
 http/tests/cache/subresource-expiration-1.html [ Pass Timeout ]
 http/tests/cache/subresource-expiration-2.html [ Pass Timeout ]
 
-# These tests only fail in Release builds
-fast/forms/plaintext-mode-2.html [ Failure ]
-
 # Timed out loading page (check if this is due to missing DumpRenderTree functionality)
 fast/encoding/char-encoding.html [ Skip ]
 fast/frames/frame-navigation.html [ Skip ]
-
-# Random sizing issues (Renderblock, RenderTableCells)
-fast/forms/searchfield-heights.html [ Failure ]
 
 # Not investigated yet
 webkit.org/b/51596 http/tests/xmlhttprequest/basic-auth-nopassword.html
@@ -1777,14 +1797,8 @@ webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Skip ]
 # Interferes with the other requestAnimationFrame tests
 webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
-# off by 1 pixel
-tables/mozilla/bugs/bug2479-2.html [ Failure ]
-
 # Causes crashes in the next test
 webkit.org/b/87416 fast/dom/Window/Location/set-location-after-close.html [ Skip ]
-
-# Test uses "required" form element property which currently does not work on Safari
-fast/forms/validation-message-user-modify.html [ Failure ]
 
 # As usual, DRT on Windows has problems knowing how to continue a test when focus moves to a popup window, in this case the file chooser
 webkit.org/b/87469 fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Pass Failure Timeout ]
@@ -1825,21 +1839,6 @@ webkit.org/b/140847 js/dom/date-negative-setmonth.html [ Failure ]
 webkit.org/b/24810 fast/events/key-events-in-input-button.html [ Failure ]
 webkit.org/b/24810 fast/events/mouseup-from-button2.html [ Failure ]
 webkit.org/b/24810 fast/events/special-key-events-in-input-text.html [ Failure ]
-webkit.org/b/24810 fast/forms/HTMLOptionElement_label05.html [ Failure ]
-webkit.org/b/24810 fast/forms/disabled-select-change-index.html [ Failure ]
-webkit.org/b/24810 fast/forms/form-element-geometry.html [ Failure ]
-webkit.org/b/24810 fast/forms/hidden-listbox.html [ Failure ]
-webkit.org/b/24810 fast/forms/legend-access-key.html [ Failure ]
-webkit.org/b/24810 fast/forms/listbox-hit-test-zoomed.html [ Failure ]
-webkit.org/b/24810 fast/forms/listbox-scrollbar-incremental-load.html [ Failure ]
-webkit.org/b/24810 fast/forms/listbox-width-change.html [ Failure ]
-webkit.org/b/24810 fast/forms/option-strip-whitespace.html [ Failure ]
-webkit.org/b/24810 fast/forms/select-block-background.html [ Failure ]
-webkit.org/b/24810 fast/forms/select-change-listbox-size.html [ Failure ]
-webkit.org/b/24810 fast/forms/select-change-popup-to-listbox.html [ Failure ]
-webkit.org/b/24810 fast/forms/select-initial-position.html [ Failure ]
-webkit.org/b/24810 fast/forms/select-item-background-clip.html [ Failure ]
-webkit.org/b/24810 fast/forms/select-list-box-with-height.html [ Failure ]
 webkit.org/b/24810 js/sort-stability.html [ Failure ]
 webkit.org/b/24810 fast/loader/main-document-url-for-non-http-loads.html [ Failure ]
 webkit.org/b/24810 fast/loader/stop-provisional-loads.html [ Failure ]
@@ -1859,7 +1858,6 @@ webkit.org/b/24810 http/tests/xmlhttprequest/redirect-cross-origin-post-sync.htm
 webkit.org/b/24810 http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html [ Pass Failure ]
 webkit.org/b/24810 http/tests/xmlhttprequest/redirect-cross-origin-sync.html [ Pass Failure ]
 webkit.org/b/24810 security/block-test.html [ Failure ]
-webkit.org/b/24810 tables/mozilla/core/bloomberg.html [ Failure ]
 webkit.org/b/24810 transforms/2d/zoom-menulist.html [ Failure ]
 webkit.org/b/24810 fast/loader/local-CSS-from-local.html [ Failure Timeout ]
 webkit.org/b/24810 fast/loader/local-JavaScript-from-local.html [ Failure ]
@@ -1890,7 +1888,6 @@ compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
 webkit.org/b/140216 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
-tables/mozilla/marvin/x_col_align_justify.xml [ ImageOnlyFailure ]
 http/tests/security/referrer-policy-https-origin.html [ Timeout ]
 webkit.org/b/95803 http/tests/security/local-image-from-remote-whitelisted.html [ Pass Failure ]
 webkit.org/b/95803 http/tests/security/object-literals.html [ Pass Failure ]
@@ -1930,7 +1927,6 @@ http/tests/security/referrer-policy-https-never.html [ Timeout ]
 http/tests/security/referrer-policy-redirect.html [ Timeout ]
 webkit.org/b/95805 http/tests/cookies/multiple-cookies.html [ Pass Failure ]
 webkit.org/b/95805 http/tests/cookies/single-quoted-value.html [ Pass Failure ]
-webkit.org/b/97026 fast/forms/state-restore-broken-state.html [ Failure ]
 webkit.org/b/97026 scrollbars/custom-scrollbar-with-incomplete-style.html [ Failure ]
 http/tests/fullscreen/fullscreenelement-different-origin.html [ Skip ]
 http/tests/fullscreen/fullscreenelement-same-origin.html [ Skip ]
@@ -1959,8 +1955,6 @@ webkit.org/b/97026 fast/loader/javascript-url-in-embed.html [ Failure ]
 webkit.org/b/97026 http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
 webkit.org/b/103043 fast/events/frame-scroll-fake-mouse-move.html [ Skip ]
 webkit.org/b/103043 fast/events/overflow-scroll-fake-mouse-move.html [ Skip ]
-tables/mozilla/bugs/bug1188.html [ Failure ]
-tables/mozilla/bugs/bug1318.html [ Failure ]
 compositing/filters/sw-nested-shadow-overlaps-hw-nested-shadow.html [ Failure ]
 compositing/iframes/iframe-size-from-zero.html [ Failure ]
 compositing/iframes/overlapped-iframe-iframe.html [ Failure ]
@@ -1997,7 +1991,6 @@ webkit.org/b/117323 fast/replaced/no-focus-ring-embed.html [ Timeout ]
 webkit.org/b/117323 fast/replaced/no-focus-ring-object.html [ Timeout ]
 webkit.org/b/117323 fast/replaced/object-with-embed-url-param.html [ Failure ]
 fast/dom/call-a-constructor-as-a-function.html [ Failure ]
-fast/forms/search-event-delay.html [ Failure ]
 fast/lists/inlineBoxWrapperNullCheck.html [ Failure ]
 js/dom/global-constructors-attributes-dedicated-worker.html [ Failure ]
 webkit.org/b/121509 fast/dom/MutationObserver/database-callback-delivery.html [ Timeout ]
@@ -2067,9 +2060,6 @@ fast/events/drag-outside-window.html [ Pass Timeout ]
 fast/events/event-sender-mouse-moved.html [ Pass Timeout ]
 fast/events/inputText-never-fired-on-keydown-cancel.html [ Pass Timeout ]
 fast/flexbox/001.html [ Pass Failure ]
-fast/forms/file/file-input-reset.html [ Pass Timeout ]
-fast/forms/select/intrinsic-min-width-applies-with-fixed-width.html [ Pass Timeout ]
-fast/forms/select-disabled-appearance.html [ Failure ]
 fast/frames/sandboxed-iframe-scripting-05.html [ Pass Timeout ]
 fast/lists/li-style-alpha-huge-value-crash.html	 [ Pass Timeout ]
 fast/multicol/newmulticol/direct-child-column-span-all.html [ Pass Timeout ]
@@ -2145,9 +2135,6 @@ webkit.org/b/137157 inspector/protocol-promise-result.html [ Skip ]
 fast/frames/flattening/frameset-flattening-simple.html [ Failure ]
 
 # A handful of forms tests failing on Windows that we are skipping to get the bots green
-fast/forms/select/listbox-click-on-scrollbar.html [ Failure ]
-fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure ]
-fast/forms/textarea-placeholder-wrapping.html [ ImageOnlyFailure ]
 fast/replaced/width100percent-button.html [ Failure ]
 fast/replaced/width100percent-radio.html [ Failure ]
 fast/selectors/querySelector-window-inactive.html [ Failure ]
@@ -2169,7 +2156,6 @@ fast/dom/navigation-with-sideeffects.html [ Failure ]
 fast/dynamic/window-resize-scrollbars-test.html [ Failure Timeout ]
 fast/events/shadow-event-path.html [ Failure ]
 fast/text/indic.html [ Failure ]
-fast/forms/week/week-input-type.html [ Crash Failure ]
 fast/borders/bidi-002.html [ Failure ]
 fast/borders/bidi-009a.html [ Failure ]
 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Timeout ]
@@ -2192,32 +2178,7 @@ js/slow-stress/emscripten-memops.html [ Pass Timeout ]
 # https://bugs.webkit.org/show_bug.cgi?id=138025
 # Larger text and as a result, larger elements containing said text (as compared to Mac port)
 # Many of these may also be wrong due to form element differences in theme (i.e rounded vs. square buttons)
-fast/dynamic/008.html [ Failure ]
-fast/frames/take-focus-from-iframe.html [ Failure ]
-fast/overflow/overflow-x-y.html [ Failure ]
-fast/parser/entity-comment-in-textarea.html [ Failure ]
-fast/parser/open-comment-in-textarea.html [ Failure ]
-fast/table/003.html [ Failure ]
-fast/table/colspanMinWidth-vertical.html [ Failure ]
-fast/table/colspanMinWidth.html [ Failure ]
 fast/text/international/unicode-bidi-plaintext-in-textarea.html [ Failure ]
-tables/mozilla/bugs/bug103533.html [ Failure ]
-tables/mozilla/bugs/bug12384.html [ Failure ]
-tables/mozilla/bugs/bug26178.html [ Failure ]
-tables/mozilla/bugs/bug28928.html [ Failure ]
-tables/mozilla/bugs/bug30559.html [ Failure ]
-tables/mozilla/bugs/bug30692.html [ Failure ]
-tables/mozilla/bugs/bug4429.html [ Failure ]
-tables/mozilla/bugs/bug44505.html [ Failure ]
-tables/mozilla/bugs/bug51037.html [ Failure ]
-tables/mozilla/bugs/bug55545.html [ Failure ]
-tables/mozilla/bugs/bug92647-2.html [ Failure ]
-tables/mozilla/bugs/bug99948.html [ Failure ]
-tables/mozilla/other/move_row.html [ Failure ]
-tables/mozilla_expected_failures/bugs/bug1725.html [ Failure ]
-tables/mozilla_expected_failures/bugs/bug2479-5.html [ Failure ]
-tables/mozilla_expected_failures/bugs/bug45621.html [ Failure ]
-tables/mozilla_expected_failures/bugs/bug58402-2.html [ Failure ]
 fast/selectors/064.html [ Failure ]
 fast/replaced/width100percent-textfield.html [ Failure ]
 fast/replaced/width100percent-textarea.html [ Failure ]
@@ -2226,53 +2187,16 @@ fast/replaced/width100percent-menulist.html [ Failure ]
 fast/replaced/width100percent-checkbox.html [ Failure ]
 fast/dom/HTMLInputElement/input-image-alt-text.html [ Failure ]
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html [ Failure ]
-fast/forms/search/search-size-with-decorations.html [ Failure ]
-fast/forms/HTMLOptionElement_label07.html [ Failure ]
 fast/overflow/scroll-nested-positioned-layer-in-overflow.html [ Failure ]
 fast/overflow/scrollRevealButton.html [ Failure ]
 fast/repaint/control-clip.html [ Failure ]
 
 # <select> elements are not rendering properly
-webkit.org/b/137962 fast/block/float/float-avoidance.html [ Failure ]
-webkit.org/b/137962 fast/block/margin-collapse/103.html [ Failure ]
-webkit.org/b/137962 fast/forms/001.html [ Failure ]
-webkit.org/b/137962 fast/forms/003.html [ Failure ]
-webkit.org/b/137962 fast/forms/004.html [ Failure ]
-webkit.org/b/137962 fast/forms/HTMLOptionElement_label01.html [ Failure ]
-webkit.org/b/137962 fast/forms/HTMLOptionElement_label02.html [ Failure ]
-webkit.org/b/137962 fast/forms/HTMLOptionElement_label03.html [ Failure ]
-webkit.org/b/137962 fast/forms/HTMLOptionElement_label04.html [ Failure ]
-webkit.org/b/137962 fast/forms/basic-selects.html [ Failure ]
-webkit.org/b/137962 fast/forms/control-clip-overflow.html [ Failure ]
-webkit.org/b/137962 fast/forms/control-restrict-line-height.html [ Failure ]
-webkit.org/b/137962 fast/forms/menulist-deselect-update.html [ Failure ]
-webkit.org/b/137962 fast/forms/menulist-narrow-width.html [ Failure ]
-webkit.org/b/137962 fast/forms/menulist-no-overflow.html [ Failure ]
-webkit.org/b/137962 fast/forms/select-align.html [ Failure ]
-webkit.org/b/137962 fast/forms/select-baseline.html [ Failure ]
-webkit.org/b/137962 fast/forms/select-change-listbox-to-popup.html [ Failure ]
-webkit.org/b/137962 fast/forms/select-dirty-parent-pref-widths.html [ Failure ]
-webkit.org/b/137962 fast/forms/select-selected.html [ Failure ]
-webkit.org/b/137962 fast/forms/select/optgroup-rendering.html [ Failure ]
-webkit.org/b/137962 fast/invalid/014.html [ Failure ]
 webkit.org/b/137962 fast/parser/document-write-option.html [ Failure ]
 webkit.org/b/137962 fast/replaced/replaced-breaking-mixture.html [ Failure ]
-#webkit.org/b/137962 fast/text/international/pop-up-button-text-alignment-and-direction.html [ Failure ]
-webkit.org/b/137962 tables/mozilla/bugs/bug18359.html [ Failure ]
-webkit.org/b/137962 tables/mozilla/bugs/bug29326.html [ Failure ]
-webkit.org/b/137962 tables/mozilla/bugs/bug33855.html [ Failure ]
-webkit.org/b/137962 tables/mozilla/bugs/bug4382.html [ Failure ]
-webkit.org/b/137962 tables/mozilla/bugs/bug96334.html [ Failure ]
-webkit.org/b/137962 tables/mozilla/core/margins.html [ Failure ]
-webkit.org/b/137962 tables/mozilla/dom/tableDom.html [ Failure ]
 
 # Selected text rendering white.
 webkit.org/b/137963 fast/events/context-no-deselect.html [ Failure ]
-webkit.org/b/137963 fast/forms/input-appearance-focus.html [ Failure ]
-webkit.org/b/137963 fast/forms/input-appearance-selection.html [ Failure ]
-webkit.org/b/137963 fast/forms/input-double-click-selection-gap-bug.html [ Failure ]
-webkit.org/b/137963 fast/forms/input-text-double-click.html [ Failure ]
-webkit.org/b/137963 fast/forms/tabbing-input-iframe.html [ Failure ]
 
 # Handful of harder to classify miscellaneous failures on the Windows bots after removing SafariTheme
 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
@@ -2299,15 +2223,6 @@ webkit.org/b/138042 fast/repaint/renderer-destruction-by-invalidateSelection-cra
 
 # new timeouts, need bug reports
 fast/events/pageshow-pagehide-on-back-uncached.html [ Timeout ]
-fast/forms/button-state-restore.html [ Timeout ]
-fast/forms/radio/state-restore-radio-group.html [ Timeout ]
-fast/forms/select/select-state-restore.html [ Timeout ]
-fast/forms/state-restore-hidden.html [ Timeout ]
-fast/forms/state-restore-per-form.html [ Timeout ]
-fast/forms/state-restore-to-non-autocomplete-form.html [ Timeout ]
-fast/forms/state-restore-to-non-edited-controls.html [ Timeout ]
-fast/forms/state-save-of-detached-control.html [ Timeout ]
-fast/forms/textarea/textarea-state-restore.html [ Timeout ]
 fast/history/history-back-initial-vs-final-url.html [ Timeout ]
 fast/history/history-length.html [ Timeout ]
 fast/history/history-subframe-with-name.html [ Timeout ]
