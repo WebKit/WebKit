@@ -1,3 +1,12 @@
+2015-01-24  Dan Bernstein  <mitz@apple.com>
+
+        update-webkit’s --internal option is unused
+        https://bugs.webkit.org/show_bug.cgi?id=140861
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/update-webkit: Removed the option.
+
 2015-01-24  Brent Fulgham  <bfulgham@apple.com>
 
         DumpRenderTree needs to run with Windows native controls on Windows

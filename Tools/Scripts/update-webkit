@@ -48,14 +48,11 @@ determineIsWinCairo();
 chdirWebKit();
 
 my $auxiliaryLibs = 1;
-my $internal;
 
 my $getOptionsResult = GetOptions(
     'h|help'  => \$showHelp,
     'q|quiet' => \$quiet,
     'auxiliary-libs!' => \$auxiliaryLibs,
-    # FIXME: This option is ignored. Remove it once no one in passing it in.
-    'internal!' => \$internal,
 );
 
 if (!$getOptionsResult || $showHelp) {
