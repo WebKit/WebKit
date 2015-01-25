@@ -1,5 +1,13 @@
 2015-01-25  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed gardening.
+
+        Document a few more failures in the expectations file.
+
+        * platform/win/TestExpectations:
+
+2015-01-25  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Document some Debug crashes in Accessibility code.
 
         * platform/win/TestExpectations:
