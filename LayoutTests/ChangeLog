@@ -1,5 +1,33 @@
 2015-01-24  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed baseline update.
+
+        First batch: CSS updates.
+
+        * platform/win/css2.1/t09-c5526c-display-00-e-expected.txt:
+        * platform/win/css3/selectors3/html/css3-modsel-161-expected.png:
+        * platform/win/css3/selectors3/html/css3-modsel-161-expected.txt:
+        * platform/win/css3/selectors3/html/css3-modsel-25-expected.png:
+        * platform/win/css3/selectors3/html/css3-modsel-25-expected.txt:
+        * platform/win/css3/selectors3/html/css3-modsel-70-expected.png:
+        * platform/win/css3/selectors3/html/css3-modsel-70-expected.txt:
+        * platform/win/css3/selectors3/xhtml/css3-modsel-161-expected.png:
+        * platform/win/css3/selectors3/xhtml/css3-modsel-161-expected.txt:
+        * platform/win/css3/selectors3/xhtml/css3-modsel-25-expected.png:
+        * platform/win/css3/selectors3/xhtml/css3-modsel-25-expected.txt:
+        * platform/win/css3/selectors3/xhtml/css3-modsel-70-expected.png:
+        * platform/win/css3/selectors3/xhtml/css3-modsel-70-expected.txt:
+        * platform/win/css3/selectors3/xml/css3-modsel-161-expected.png:
+        * platform/win/css3/selectors3/xml/css3-modsel-161-expected.txt:
+        * platform/win/css3/selectors3/xml/css3-modsel-25-expected.png:
+        * platform/win/css3/selectors3/xml/css3-modsel-25-expected.txt:
+        * platform/win/css3/selectors3/xml/css3-modsel-70-expected.png:
+        * platform/win/css3/selectors3/xml/css3-modsel-70-expected.txt:
+        * platform/win/fast/block/float/float-avoidance-expected.txt:
+        * platform/win/fast/block/margin-collapse/103-expected.txt:
+
+2015-01-24  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed gardening. Reactivating tests.
 
         Re-enable a series of tests that work properly on Windows. New baselines will be needed.
