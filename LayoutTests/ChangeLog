@@ -1,5 +1,119 @@
 2015-01-24  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unreviewed rebaselining.
+
+        Second batch: Fast
+
+        * platform/win/fast/block/float/float-avoidance-expected.png: Added.
+        * platform/win/fast/block/margin-collapse/103-expected.png: Added.
+        * platform/win/fast/canvas/fallback-content-expected.txt:
+        * platform/win/fast/css/non-standard-checkbox-size-expected.png: Added.
+        * platform/win/fast/css/non-standard-checkbox-size-expected.txt:
+        * platform/win/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/win/fast/forms/001-expected.png:
+        * platform/win/fast/forms/001-expected.txt:
+        * platform/win/fast/forms/003-expected.png: Added.
+        * platform/win/fast/forms/003-expected.txt:
+        * platform/win/fast/forms/004-expected.png: Added.
+        * platform/win/fast/forms/004-expected.txt:
+        * platform/win/fast/forms/HTMLOptionElement_label01-expected.png: Added.
+        * platform/win/fast/forms/HTMLOptionElement_label01-expected.txt:
+        * platform/win/fast/forms/HTMLOptionElement_label02-expected.png: Added.
+        * platform/win/fast/forms/HTMLOptionElement_label02-expected.txt:
+        * platform/win/fast/forms/HTMLOptionElement_label03-expected.png: Added.
+        * platform/win/fast/forms/HTMLOptionElement_label03-expected.txt:
+        * platform/win/fast/forms/HTMLOptionElement_label04-expected.png: Added.
+        * platform/win/fast/forms/HTMLOptionElement_label04-expected.txt:
+        * platform/win/fast/forms/HTMLOptionElement_label06-expected.txt:
+        * platform/win/fast/forms/HTMLOptionElement_label07-expected.txt:
+        * platform/win/fast/forms/basic-inputs-expected.png:
+        * platform/win/fast/forms/basic-inputs-expected.txt:
+        * platform/win/fast/forms/basic-selects-expected.png:
+        * platform/win/fast/forms/basic-selects-expected.txt:
+        * platform/win/fast/forms/basic-textareas-quirks-expected.png: Added.
+        * platform/win/fast/forms/box-shadow-override-expected.png:
+        * platform/win/fast/forms/box-shadow-override-expected.txt:
+        * platform/win/fast/forms/control-clip-overflow-expected.png: Added.
+        * platform/win/fast/forms/control-clip-overflow-expected.txt:
+        * platform/win/fast/forms/control-restrict-line-height-expected.png: Added.
+        * platform/win/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/win/fast/forms/disabled-select-change-index-expected.png: Added.
+        * platform/win/fast/forms/disabled-select-change-index-expected.txt:
+        * platform/win/fast/forms/file/file-input-disabled-expected.png:
+        * platform/win/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/win/fast/forms/form-element-geometry-expected.png: Added.
+        * platform/win/fast/forms/form-element-geometry-expected.txt:
+        * platform/win/fast/forms/formmove-expected.png: Added.
+        * platform/win/fast/forms/formmove-expected.txt:
+        * platform/win/fast/forms/indeterminate-expected.png: Added.
+        * platform/win/fast/forms/indeterminate-expected.txt:
+        * platform/win/fast/forms/input-appearance-height-expected.png: Added.
+        * platform/win/fast/forms/input-appearance-height-expected.txt:
+        * platform/win/fast/forms/input-appearance-selection-expected.png: Added.
+        * platform/win/fast/forms/input-appearance-selection-expected.txt: Added.
+        * platform/win/fast/forms/menulist-deselect-update-expected.txt:
+        * platform/win/fast/forms/menulist-no-overflow-expected.png: Added.
+        * platform/win/fast/forms/menulist-no-overflow-expected.txt:
+        * platform/win/fast/forms/menulist-restrict-line-height-expected.png: Added.
+        * platform/win/fast/forms/menulist-restrict-line-height-expected.txt:
+        * platform/win/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/win/fast/forms/menulist-style-color-expected.png:
+        * platform/win/fast/forms/menulist-style-color-expected.txt:
+        * platform/win/fast/forms/menulist-width-change-expected.txt:
+        * platform/win/fast/forms/option-script-expected.txt:
+        * platform/win/fast/forms/option-strip-whitespace-expected.png: Added.
+        * platform/win/fast/forms/option-strip-whitespace-expected.txt:
+        * platform/win/fast/forms/option-text-clip-expected.png:
+        * platform/win/fast/forms/option-text-clip-expected.txt:
+        * platform/win/fast/forms/range/input-appearance-range-expected.png: Added.
+        * platform/win/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/win/fast/forms/range/slider-delete-while-dragging-thumb-expected.txt: Added.
+        * platform/win/fast/forms/range/slider-mouse-events-expected.txt:
+        * platform/win/fast/forms/range/slider-onchange-event-expected.txt: Added.
+        * platform/win/fast/forms/range/slider-padding-expected.txt:
+        * platform/win/fast/forms/range/slider-thumb-shared-style-expected.png: Added.
+        * platform/win/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/win/fast/forms/range/slider-zoomed-expected.txt: Added.
+        * platform/win/fast/forms/select-align-expected.png: Added.
+        * platform/win/fast/forms/select-align-expected.txt:
+        * platform/win/fast/forms/select-background-none-expected.txt:
+        * platform/win/fast/forms/select-baseline-expected.png: Added.
+        * platform/win/fast/forms/select-baseline-expected.txt:
+        * platform/win/fast/forms/select-change-listbox-to-popup-expected.png: Added.
+        * platform/win/fast/forms/select-change-listbox-to-popup-expected.txt:
+        * platform/win/fast/forms/select-change-popup-to-listbox-expected.png: Added.
+        * platform/win/fast/forms/select-change-popup-to-listbox-expected.txt: Added.
+        * platform/win/fast/forms/select-disabled-appearance-expected.png: Added.
+        * platform/win/fast/forms/select-disabled-appearance-expected.txt:
+        * platform/win/fast/forms/select-initial-position-expected.png: Added.
+        * platform/win/fast/forms/select-initial-position-expected.txt:
+        * platform/win/fast/forms/select-selected-expected.png: Added.
+        * platform/win/fast/forms/select-selected-expected.txt:
+        * platform/win/fast/forms/select-size-expected.txt:
+        * platform/win/fast/forms/select-style-expected.png: Added.
+        * platform/win/fast/forms/select-style-expected.txt:
+        * platform/win/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/win/fast/forms/select-writing-direction-natural-expected.png:
+        * platform/win/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/win/fast/forms/select/optgroup-rendering-expected.png:
+        * platform/win/fast/forms/select/optgroup-rendering-expected.txt:
+        * platform/win/fast/forms/selectlist-minsize-expected.txt:
+        * platform/win/fast/forms/stuff-on-my-optgroup-expected.png: Added.
+        * platform/win/fast/forms/stuff-on-my-optgroup-expected.txt:
+        * platform/win/fast/invalid: Added.
+        * platform/win/fast/invalid/014-expected.txt: Added.
+        * platform/win/fast/multicol/pagination/RightToLeft-rl-hittest-expected.txt:
+        * platform/win/fast/parser: Added.
+        * platform/win/fast/parser/entity-comment-in-textarea-expected.txt: Added.
+        * platform/win/fast/parser/open-comment-in-textarea-expected.txt: Added.
+        * platform/win/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/win/fast/replaced/three-selects-break-expected.txt:
+        * platform/win/fast/text/international/bidi-menulist-expected.txt:
+        * platform/win/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+        * platform/win/fast/text/textIteratorNilRenderer-expected.txt:
+
+2015-01-24  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed baseline update.
 
         First batch: CSS updates.

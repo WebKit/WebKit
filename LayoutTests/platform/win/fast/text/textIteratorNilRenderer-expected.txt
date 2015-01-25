@@ -24,8 +24,8 @@ layer at (0,0) size 800x600
                   RenderInline {LABEL} at (0,0) size 119x13
                     RenderText {#text} at (0,0) size 0x0
                     RenderBlock {INPUT} at (14,3) size 13x13
-                    RenderText {#text} at (30,4) size 99x13
-                      text run at (30,4) width 99: " Remember this location"
+                    RenderText {#text} at (30,6) size 99x13
+                      text run at (30,6) width 99: " Remember this location"
                   RenderText {#text} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,41) size 784x18
           RenderBR {BR} at (392,0) size 0x18

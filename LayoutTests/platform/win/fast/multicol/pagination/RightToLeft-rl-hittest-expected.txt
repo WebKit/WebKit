@@ -86,5 +86,8 @@ layer at (-1294,0) size 2094x585 backgroundClip at (0,0) size 2460x585 clip at (
           text run at (141,0) width 559: "voluptate velit esse cillum dolore eu fugiat nulla pariatur."
           text run at (169,0) width 533: "Excepteur sint occaecat cupidatat non proident, sunt in"
           text run at (197,0) width 519: "culpa qui officia deserunt mollit anim id est laborum."
-caret: position 70 of child 0 {#text} of child 11 {P} of body
+layer at (0,0) size 56x56
+  RenderBlock (positioned) {DIV} at (744,0) size 56x56 [border: (3px solid #0000FF)]
+selection start: position 67 of child 0 {#text} of child 11 {P} of body
+selection end:   position 74 of child 0 {#text} of child 11 {P} of body
 scrolled to -800,0

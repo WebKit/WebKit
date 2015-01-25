@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         text run at (0,0) width 783: "This tests that a malformed size attribute will be parsed and corrected so that the right size attribute value is used to match the"
         text run at (0,18) width 406: "style rule that determines whether to use a menu list or a list box."
       RenderBR {BR} at (406,32) size 0x0
-      RenderMenuList {SELECT} at (2,38) size 78x24 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 53x20
-          RenderText at (8,2) size 22x15
-            text run at (8,2) width 22: "test"
+      RenderMenuList {SELECT} at (2,38) size 47x19 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,2) size 22x15
+          RenderText at (0,0) size 22x15
+            text run at (0,0) width 22: "test"
       RenderText {#text} at (0,0) size 0x0

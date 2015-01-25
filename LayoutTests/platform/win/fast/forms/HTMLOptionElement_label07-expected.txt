@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         text run at (0,0) width 781: "The select item below has a label specified, and enclosed text that is whitespace. There should be no text shown in the select"
         text run at (0,18) width 28: "box."
       RenderBR {BR} at (28,32) size 0x0
-      RenderMenuList {SELECT} at (2,38) size 65x24 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 40x20
-          RenderText at (8,2) size 0x15
-            text run at (8,2) width 0: " "
+      RenderMenuList {SELECT} at (2,38) size 25x19 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,2) size 0x15
+          RenderText at (0,0) size 0x15
+            text run at (0,0) width 0: " "
       RenderText {#text} at (0,0) size 0x0

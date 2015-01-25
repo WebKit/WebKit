@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 673x18
         text run at (0,0) width 673: "In the selection list below, the text 'The label for this element is \"1\"' should appear, and not the character '1'"
       RenderBR {BR} at (673,14) size 0x0
-      RenderMenuList {SELECT} at (2,20) size 228x24 [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 203x20
-          RenderText at (8,2) size 172x15
-            text run at (8,2) width 172: "the label for this element is \"1\""
+      RenderMenuList {SELECT} at (2,20) size 197x19 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,2) size 172x15
+          RenderText at (0,0) size 172x15
+            text run at (0,0) width 172: "the label for this element is \"1\""
       RenderText {#text} at (0,0) size 0x0

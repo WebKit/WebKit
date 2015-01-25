@@ -11,6 +11,6 @@ layer at (0,0) size 800x600
         RenderSlider {INPUT} at (2,2) size 100x35 [color=#C4C4C4] [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (10,10) size 80x15
             RenderBlock {DIV} at (0,0) size 80x15
-              RenderBlock {DIV} at (0,0) size 15x15
+              RenderBlock {DIV} at (0,0) size 7x15
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {PRE} at (0,70) size 784x0
