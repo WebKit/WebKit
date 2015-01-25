@@ -1,3 +1,14 @@
+2015-01-24  Brent Fulgham  <bfulgham@apple.com>
+
+        DumpRenderTree needs to run with Windows native controls on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=25592
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues): Tell DRT to use native controls.
+        (prepareConsistentTestingEnvironment): Ditto.
+
 2015-01-23  David Kilzer  <ddkilzer@apple.com>
 
         test-webkitpy: webkitpy.tool.commands.earlywarningsystem_unittest.EarlyWarningSystemTest.test_ewses fails on EFL, GTK, Win ports

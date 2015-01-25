@@ -838,7 +838,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     preferences->setCSSRegionsEnabled(TRUE);
     // Set uses HTML5 parser quirks: NO
     // Async spellcheck: NO
-    prefsPrivate->setShouldPaintNativeControls(TRUE); // FIXME - need to make DRT pass with Windows native controls <http://bugs.webkit.org/show_bug.cgi?id=25592>
+    prefsPrivate->setShouldPaintNativeControls(TRUE);
     prefsPrivate->setMockScrollbarsEnabled(TRUE);
 
     preferences->setFontSmoothing(FontSmoothingTypeStandard);
@@ -1377,8 +1377,7 @@ static void prepareConsistentTestingEnvironment(IWebPreferences* standardPrefere
     ASSERT(standardPreferencesPrivate);
     standardPreferences->setAutosaves(FALSE);
 
-    // FIXME - need to make DRT pass with Windows native controls <http://bugs.webkit.org/show_bug.cgi?id=25592>
-    standardPreferencesPrivate->setShouldPaintNativeControls(FALSE);
+    standardPreferencesPrivate->setShouldPaintNativeControls(TRUE);
     standardPreferences->setJavaScriptEnabled(TRUE);
     standardPreferences->setDefaultFontSize(16);
 #if USE(CG)
