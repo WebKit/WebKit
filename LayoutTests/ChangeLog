@@ -1,5 +1,38 @@
 2015-01-24  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] More rebaselines. (Tables)
+
+        * platform/win/tables/mozilla/bugs/bug1188-expected.png: Added.
+        * platform/win/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug18359-expected.png: Added.
+        * platform/win/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug2479-3-expected.png: Added.
+        * platform/win/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug2479-4-expected.png: Added.
+        * platform/win/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug29326-expected.png: Added.
+        * platform/win/tables/mozilla/bugs/bug29326-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug33855-expected.png: Added.
+        * platform/win/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug4382-expected.png: Added.
+        * platform/win/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/win/tables/mozilla/bugs/bug96334-expected.png: Added.
+        * platform/win/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/win/tables/mozilla/core/margins-expected.png: Added.
+        * platform/win/tables/mozilla/core/margins-expected.txt:
+        * platform/win/tables/mozilla/dom/tableDom-expected.png: Added.
+        * platform/win/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/win/tables/mozilla/other/move_row-expected.txt:
+        * platform/win/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png: Added.
+        * platform/win/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/win/tables/mozilla_expected_failures/core/captions1-expected.png: Added.
+        * platform/win/tables/mozilla_expected_failures/core/captions1-expected.txt:
+        * platform/win/tables/mozilla_expected_failures/core/captions2-expected.png: Added.
+        * platform/win/tables/mozilla_expected_failures/core/captions2-expected.txt:
+
+2015-01-24  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed rebaselining.
 
         Second batch: Fast

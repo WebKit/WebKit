@@ -1,8 +1,8 @@
-layer at (0,0) size 785x693
+layer at (0,0) size 785x690
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x693
-  RenderBlock {HTML} at (0,0) size 785x693
-    RenderBody {BODY} at (8,21) size 769x656
+layer at (0,0) size 785x690
+  RenderBlock {HTML} at (0,0) size 785x690
+    RenderBody {BODY} at (8,21) size 769x653
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 315x37
           text run at (0,0) width 315: "Generic Table Tests - 1"
@@ -62,29 +62,28 @@ layer at (0,0) size 785x693
       RenderBlock {H2} at (0,400) size 769x29
         RenderText {#text} at (0,0) size 154x28
           text run at (0,0) width 154: "Submit Results"
-      RenderBlock {FORM} at (0,448) size 769x54
-        RenderBlock {P} at (0,0) size 769x53
-          RenderText {#text} at (0,4) size 263x18
-            text run at (0,4) width 263: "How does your browser fare on this test? "
-          RenderMenuList {SELECT} at (265,2) size 280x24 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (4,2) size 255x20
-              RenderText at (8,2) size 150x15
-                text run at (8,2) width 150: "The test renders correctly."
-          RenderText {#text} at (547,4) size 4x18
-            text run at (547,4) width 4: " "
-          RenderInline {LABEL} at (0,0) size 621x45
-            RenderText {#text} at (551,4) size 70x18
-              text run at (551,4) width 70: "Comment: "
-            RenderTextControl {INPUT} at (2,30) size 149x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderText {#text} at (153,31) size 4x18
-            text run at (153,31) width 4: " "
-          RenderButton {INPUT} at (159,30) size 57x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
+      RenderBlock {FORM} at (0,448) size 769x51
+        RenderBlock {P} at (0,0) size 769x50
+          RenderText {#text} at (0,3) size 263x18
+            text run at (0,3) width 263: "How does your browser fare on this test? "
+          RenderMenuList {SELECT} at (265,3) size 249x19 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (4,2) size 224x15
+              RenderText at (0,0) size 150x15
+                text run at (0,0) width 150: "The test renders correctly."
+          RenderText {#text} at (516,3) size 4x18
+            text run at (516,3) width 4: " "
+          RenderInline {LABEL} at (0,0) size 223x18
+            RenderText {#text} at (520,3) size 70x18
+              text run at (520,3) width 70: "Comment: "
+            RenderTextControl {INPUT} at (592,2) size 149x21 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderText {#text} at (0,0) size 0x0
+          RenderButton {INPUT} at (2,27) size 57x21 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]
             RenderBlock (anonymous) at (8,3) size 41x15
               RenderText at (0,0) size 41x15
                 text run at (0,0) width 41: "Submit"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,517) size 769x3 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,535) size 769x19
+      RenderBlock {HR} at (0,514) size 769x3 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,532) size 769x19
         RenderText {#text} at (0,0) size 63x18
           text run at (0,0) width 63: "Up to the "
         RenderInline {A} at (0,0) size 73x18 [color=#0000EE]
@@ -92,7 +91,7 @@ layer at (0,0) size 785x693
             text run at (63,0) width 73: "Table Tests"
         RenderText {#text} at (136,0) size 4x18
           text run at (136,0) width 4: "."
-      RenderBlock {P} at (0,569) size 769x19
+      RenderBlock {P} at (0,566) size 769x19
         RenderText {#text} at (0,0) size 63x18
           text run at (0,0) width 63: "Up to the "
         RenderInline {A} at (0,0) size 98x18 [color=#0000EE]
@@ -100,7 +99,7 @@ layer at (0,0) size 785x693
             text run at (63,0) width 98: "Evil Tests Page"
         RenderText {#text} at (161,0) size 4x18
           text run at (161,0) width 4: "."
-      RenderBlock {P} at (0,603) size 769x19
+      RenderBlock {P} at (0,600) size 769x19
         RenderText {#text} at (0,0) size 173x18
           text run at (0,0) width 173: "This page is maintained by "
         RenderInline {A} at (0,0) size 77x18 [color=#0000EE]
@@ -113,8 +112,8 @@ layer at (0,0) size 785x693
             text run at (259,0) width 123: "py8ieh@bath.ac.uk"
         RenderText {#text} at (382,0) size 9x18
           text run at (382,0) width 9: ")."
-      RenderBlock {P} at (0,637) size 769x19
+      RenderBlock {P} at (0,634) size 769x19
         RenderText {#text} at (0,0) size 182x18
           text run at (0,0) width 182: "Last updated in March 1999."
-layer at (12,503) size 145x15
+layer at (602,475) size 145x15
   RenderBlock {DIV} at (2,3) size 145x15
