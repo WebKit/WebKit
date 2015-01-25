@@ -307,6 +307,8 @@ protected:
     void clearTextTracks();
     Vector<RefPtr<InbandTextTrackPrivateAVF>> m_textTracks;
 
+virtual URL resolvedURL() const;
+
 private:
     MediaPlayer* m_player;
 

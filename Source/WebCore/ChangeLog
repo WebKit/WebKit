@@ -1,5 +1,16 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge 'resolvedURL' changes from r176108.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::resolvedURL): Add.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::resolvedURL): Add.
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r176475.
 
     2014-11-21  Jer Noble  <jer.noble@apple.com>

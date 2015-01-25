@@ -1058,6 +1058,14 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
 }
 #endif
 
+URL MediaPlayerPrivateAVFoundation::resolvedURL() const
+{
+    if (!m_assetURL.length())
+        return URL();
+
+    return URL(ParsedURLString, m_assetURL);
+}
+
 } // namespace WebCore
 
 #endif
