@@ -1,5 +1,25 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r176725.
+
+    2014-12-03  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Hang when calling -[AVAsset resolvedURL].
+        https://bugs.webkit.org/show_bug.cgi?id=139223
+
+        Reviewed by Eric Carlson.
+
+        On a particularly slow-loading site, a call to -[AVAsset resolvedURL] can take an arbitrarily long
+        time. Treat this AVAsset property similar to other "metadata" properties, and check the load status
+        of the property before requesting it.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin): Check the load state of -resolvedURL.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::resolvedURL): Ditto.
+        (WebCore::assetMetadataKeyNames): Add @"resolvedURL".
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge 'resolvedURL' changes from r176108.
 
         * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
