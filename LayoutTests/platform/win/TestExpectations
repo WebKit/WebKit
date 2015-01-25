@@ -1344,6 +1344,32 @@ accessibility/media-element.html [ Skip ]
 # Timeouts -- not investigated
 accessibility/aria-invalid.html [ Skip ]
 
+# The following fail in debug mode because an assertion is fire:
+webkit.org/b/140867 [ Debug ] accessibility/aria-labelledby-overrides-aria-label.html [ Skip ]
+webkit.org/b/140867 [ Debug ] accessibility/aria-tab-role-on-buttons.html [ Skip ]
+webkit.org/b/140867 [ Debug ] accessibility/aria-labelledby-overrides-label.html [ Skip ]
+webkit.org/b/140867 [ Debug ] accessibility/button-title-uses-inner-img-alt.html [ Skip ]
+webkit.org/b/140867 [ Debug ] accessibility/spinbutton-value.html [ Skip ]
+webkit.org/b/140867 [ Debug ] accessibility/canvas-fallback-content-2.html [ Skip ]
+webkit.org/b/140867 [ Debug ] accessibility/aria-tab-roles.html [ Skip ]
+webkit.org/b/140867 [ Debug ] accessibility/aria-option-role.html [ Skip ]
+webkit.org/b/140867 [ Debug ] accessibility/aria-toggle-button-with-title.html [ Skip ]
++accessibility/focusable-div.html	crash log sample	history
+
+
+# Crash adding notification listener
+webkit.org/b/140868 [ Debug ] accessibility/notification-listeners.html [ Skip ]
+webkit.org/b/140868 [ Debug ] accessibility/combo-box-collapsed-selection-changed.html [ Skip ]
+webkit.org/b/140868 [ Debug ] accessibility/multiselect-list-reports-active-option.html [ Skip ]
++accessibility/menu-list-sends-change-notification.html	crash log sample	history
+
+# Attempt to add a text element that claims NOT to be an accessibility element:
+webkit.org/b/140870 [ Debug ] accessibility/canvas-fallback-content.html [ Skip ]
+webkit.org/b/140870 [ Debug ] accessibility/canvas-accessibilitynodeobject.html [ Skip ]
+
+# Asserts because it does not have a popup menu:
+webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
+
 ################################################################################
 #######################   End Accessibility Issues   ###########################
 ################################################################################

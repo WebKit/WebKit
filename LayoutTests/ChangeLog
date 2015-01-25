@@ -1,5 +1,11 @@
 2015-01-25  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Document some Debug crashes in Accessibility code.
+
+        * platform/win/TestExpectations:
+
+2015-01-25  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed gardening.
 
         Skip crashes and timeouts to speed up test runs.
