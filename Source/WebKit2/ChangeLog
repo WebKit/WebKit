@@ -1,3 +1,19 @@
+2015-01-25  Timothy Horton  <timothy_horton@apple.com>
+
+        Unresponsive Web processes sometimes throw ObjC exceptions under didPerformActionMenuHitTest:
+        https://bugs.webkit.org/show_bug.cgi?id=140859
+        <rdar://problem/19571057>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController didPerformActionMenuHitTest:userData:]):
+        If we've already given up on this gesture (either because it was canceled or the
+        willBeginAnimation timeout expired), we shouldn't build a new animationController for it.
+        This is true both because it wouldn't look good to swap animationControllers out
+        from under the gesture, but also because AppKit throws an exception when you do this
+        and that breaks a lot of things.
+
 2015-01-24  Chris Dumez  <cdumez@apple.com>
 
         [WK2][Cocoa] Drop WKDiagnosticLoggingResultType defines
