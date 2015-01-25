@@ -1211,7 +1211,6 @@ webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailur
 
 # Fullscreen API is enabled but not fully implemented.
 webkit.org/b/86187 media/media-fullscreen-not-in-document.html [ Timeout ]
-webkit.org/b/86187 media/media-fullscreen-inline.html [ Failure ]
 
 # This test is specific to QuickTime media engine.
 Bug(EFL) media/video-does-not-loop.html

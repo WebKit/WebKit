@@ -1,3 +1,9 @@
+2015-01-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, gardening for EFL port.
+
+        * platform/efl/TestExpectations: media/media-fullscreen-inline.html has been passed since r19100. 
+
 2015-01-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] More rebaselines. (Tables)
