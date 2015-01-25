@@ -61,6 +61,7 @@
     macro(WebGeolocationPosition) \
     macro(WebSerializedJSValue) \
     macro(WebUserContentURLPattern) \
+    macro(WebKitMessageLoop) \
     // end of macro
 
 // Everything below this point is deprecated. Please do not use.

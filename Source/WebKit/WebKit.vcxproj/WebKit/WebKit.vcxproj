@@ -383,6 +383,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\win\WebKitLogging.cpp" />
+    <ClCompile Include="..\..\win\WebKitMessageLoop.cpp" />
     <ClCompile Include="..\..\win\WebKitPrefix.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -518,6 +519,7 @@
     <ClInclude Include="..\..\win\WebKitDLL.h" />
     <ClInclude Include="..\..\win\WebKitGraphics.h" />
     <ClInclude Include="..\..\win\WebKitLogging.h" />
+    <ClInclude Include="..\..\win\WebKitMessageLoop.h" />
     <ClInclude Include="..\..\win\WebKitPrefix.h" />
     <ClInclude Include="..\..\win\WebKitStatistics.h" />
     <ClInclude Include="..\..\win\WebKitStatisticsPrivate.h" />

@@ -1,3 +1,17 @@
+2015-01-25  peavo@outlook.com  <peavo@outlook.com>
+
+        [Win] Add WebKit message loop interface.
+        https://bugs.webkit.org/show_bug.cgi?id=140857
+
+        Reviewed by Brent Fulgham.
+
+        Added message loop interface which will run the message loop,
+        and perform required tasks (like calling CFRunLoopRunInMode)
+        on each iteration of the loop.
+
+        * WinLauncher/WinMain.cpp:
+        (wWinMain): Use new message loop interface.
+
 2015-01-24  Dan Bernstein  <mitz@apple.com>
 
         update-webkit’s --internal option is unused

@@ -31,10 +31,6 @@
 #include "WinLauncherWebHost.h"
 #include "Common.cpp"
 
-#if USE(GLIB)
-#include <glib.h>
-#endif
-
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 {
 #ifdef _CRTDBG_MAP_ALLOC
@@ -161,18 +157,14 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 
     // Main message loop:
     __try {
-        while (GetMessage(&msg, 0, 0, 0)) {
-#if USE(CF)
-            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, true);
-#endif
-            if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-            }
-#if USE(GLIB)
-            g_main_context_iteration(0, false);
-#endif
-        }
+        _com_ptr_t<_com_IIID<IWebKitMessageLoop, &__uuidof(IWebKitMessageLoop)>> messageLoop;
+
+        hr = WebKitCreateInstance(CLSID_WebKitMessageLoop, 0, IID_IWebKitMessageLoop, reinterpret_cast<void**>(&messageLoop.GetInterfacePtr()));
+        if (FAILED(hr))
+            goto exit;
+
+        messageLoop->run(hAccelTable);
+
     } __except(createCrashReport(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER) { }
 
 exit:

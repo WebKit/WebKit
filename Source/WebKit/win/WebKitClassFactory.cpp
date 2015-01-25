@@ -42,6 +42,7 @@
 #include "WebIconDatabase.h"
 #include "WebJavaScriptCollector.h"
 #include "WebKit.h"
+#include "WebKitMessageLoop.h"
 #include "WebKitStatistics.h"
 #include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"

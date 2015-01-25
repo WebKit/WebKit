@@ -330,6 +330,9 @@
     <ClCompile Include="..\..\win\Plugins\npapi.cpp">
       <Filter>Sources\Plugins</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\win\WebKitMessageLoop.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\win\WebCoreSupport\EmbeddedWidget.h">
@@ -646,6 +649,9 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\..\win\Plugins\PluginStrategy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\WebKitMessageLoop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

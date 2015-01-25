@@ -139,6 +139,7 @@ import "AccessibleApplication.idl";
 #include "IWebView.idl"
 #include "IWebViewPrivate.idl"
 #include "IWebWorkersPrivate.idl"
+#include "WebKitMessageLoop.idl"
 
 #define __TYPELIB_VERSION__ __BUILD_NUMBER_MAJOR__##.##__BUILD_NUMBER_MINOR__
 
@@ -299,5 +300,10 @@ library WebKit
     [uuid(6eb8d98f-2723-4472-88d3-5936f9d6e631)]
     coclass WebSecurityOrigin {
         [default] interface IWebSecurityOrigin;
+    };
+
+    [uuid(21799291-0067-4593-993E-467877FDA58B)]
+    coclass WebKitMessageLoop {
+        [default] interface IWebKitMessageLoop;
     };
 }
