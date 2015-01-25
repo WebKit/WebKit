@@ -1,3 +1,16 @@
+2015-01-24  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][Cocoa] Drop WKDiagnosticLoggingResultType defines
+        https://bugs.webkit.org/show_bug.cgi?id=140838
+
+        Reviewed by Sam Weinig.
+
+        Drop WKDiagnosticLoggingResultType defines in _WKDiagnosticLoggingDelegate.h
+        header now that the client-side is correctly using
+        _WKDiagnosticLoggingResultType instead.
+
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h:
+
 2015-01-23  Antti Koivisto  <antti@apple.com>
 
         Implement cache size limit

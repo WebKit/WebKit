@@ -35,12 +35,6 @@ typedef NS_ENUM(NSInteger, _WKDiagnosticLoggingResultType) {
     _WKDiagnosticLoggingResultNoop,
 } WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
-// FIXME: Remove these once the client-side has been ported.
-#define WKDiagnosticLoggingResultType _WKDiagnosticLoggingResultType
-#define kWKDiagnosticLoggingResultPass _WKDiagnosticLoggingResultPass
-#define kWKDiagnosticLoggingResultFail _WKDiagnosticLoggingResultFail
-#define kWKDiagnosticLoggingResultNoop _WKDiagnosticLoggingResultNoop
-
 @protocol _WKDiagnosticLoggingDelegate <NSObject>
 @optional
 
