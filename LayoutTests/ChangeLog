@@ -1,3 +1,11 @@
+2015-01-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening.
+
+        Skip crashes and timeouts to speed up test runs.
+
+        * platform/win/TestExpectations:
+
 2015-01-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, gardening for EFL port.
