@@ -1,3 +1,9 @@
+2015-01-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Unreviewed. Moving myself to the committer section.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-01-26  Michael Catanzaro  <mcatanzaro@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] gtkdoc does not appear in DevHelp
