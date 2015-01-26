@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,45 +26,40 @@
 #ifndef ElementIteratorAssertions_h
 #define ElementIteratorAssertions_h
 
-#include "Document.h"
 #include "Element.h"
 
 namespace WebCore {
 
 class ElementIteratorAssertions {
 public:
-    ElementIteratorAssertions();
-    ElementIteratorAssertions(const Element* first);
+    ElementIteratorAssertions(const Element* first = nullptr);
     bool domTreeHasMutated() const;
     void dropEventDispatchAssertion();
 
 private:
     const Document* m_document;
     uint64_t m_initialDOMTreeVersion;
-    OwnPtr<NoEventDispatchAssertion> m_noEventDispatchAssertion;
+    Optional<NoEventDispatchAssertion> m_eventDispatchAssertion;
 };
 
-inline ElementIteratorAssertions::ElementIteratorAssertions()
-    : m_document(nullptr)
-    , m_initialDOMTreeVersion(0)
-{
-}
+// FIXME: No real point in doing these as inlines; they are for debugging and we usually turn off inlining in debug builds.
 
 inline ElementIteratorAssertions::ElementIteratorAssertions(const Element* first)
     : m_document(first ? &first->document() : nullptr)
-    , m_initialDOMTreeVersion(m_document ? m_document->domTreeVersion() : 0)
-    , m_noEventDispatchAssertion(m_document ? adoptPtr(new NoEventDispatchAssertion) : nullptr)
+    , m_initialDOMTreeVersion(first ? m_document->domTreeVersion() : 0)
 {
+    if (first)
+        m_eventDispatchAssertion = NoEventDispatchAssertion();
 }
 
 inline bool ElementIteratorAssertions::domTreeHasMutated() const
 {
-    return m_initialDOMTreeVersion && m_document && m_document->domTreeVersion() != m_initialDOMTreeVersion;
+    return m_document && m_document->domTreeVersion() != m_initialDOMTreeVersion;
 }
 
 inline void ElementIteratorAssertions::dropEventDispatchAssertion()
 {
-    m_noEventDispatchAssertion = nullptr;
+    m_eventDispatchAssertion = Nullopt;
 }
 
 }

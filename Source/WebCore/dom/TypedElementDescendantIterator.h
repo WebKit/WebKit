@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,7 +155,7 @@ inline TypedElementDescendantIterator<ElementType> TypedElementDescendantIterato
     ASSERT(descendant.isDescendantOf(&m_root));
     if (is<ElementType>(descendant))
         return TypedElementDescendantIterator<ElementType>(m_root, downcast<ElementType>(&descendant));
-    ElementType* next = Traversal<ElementType>::next(&m_root, &descendant);
+    ElementType* next = Traversal<ElementType>::next(&descendant, &m_root);
     return TypedElementDescendantIterator<ElementType>(m_root, next);
 }
 
@@ -204,7 +204,7 @@ inline TypedElementDescendantConstIterator<ElementType> TypedElementDescendantCo
     ASSERT(descendant.isDescendantOf(&m_root));
     if (is<ElementType>(descendant))
         return TypedElementDescendantConstIterator<ElementType>(m_root, downcast<ElementType>(&descendant));
-    const ElementType* next = Traversal<ElementType>::next(&m_root, &descendant);
+    const ElementType* next = Traversal<ElementType>::next(&descendant, &m_root);
     return TypedElementDescendantConstIterator<ElementType>(m_root, next);
 }
 

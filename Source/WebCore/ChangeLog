@@ -1,3 +1,98 @@
+2015-01-25  Darin Adler  <darin@apple.com>
+
+        Streamline SVGUseElement shadow tree handling and make it use SVGElementInstance less
+        https://bugs.webkit.org/show_bug.cgi?id=140875
+
+        Reviewed by Anders Carlsson.
+
+        Refactoring of code that is pretty well covered by existing tests, so
+        not adding new tests.
+
+        Inspired by work Rob Buis did in Blink:
+
+            http://src.chromium.org/viewvc/blink?view=revision&revision=173273
+
+        Althgouh that is less than half of what ended up in this patch.
+
+        * dom/ContainerNode.h: Fixed NoEventDispatchAssertion so it can be
+        copied without causing an underflow of NoEventDispatchAssertion::s_count.
+        Made the copy constructor call the default constructor. Also changed it
+        to be based on ASSERT_DISABLED rather than NDEBUG and tweaked it a bit.
+
+        * dom/ElementIteratorAssertions.h: Removed an unnecessary include and
+        an unnecessary default constructor. Changed to use WTF::Optional instead
+        of WTF::OwnPtr to handle NoEventDispatchAssertion, which makes this class
+        copyable and assignable, which in turn makes the iterators based on this
+        copyable and assignable, which is what I needed in SVGUseElement code.
+        Also simplified code in a couple places.
+
+        * dom/TypedElementDescendantIterator.h:
+        (WebCore::TypedElementDescendantIteratorAdapter<ElementType>::from):
+        Fixed an error where the arguments to Traversal::next were passed backwards.
+        This led to incomplete iteration in SVGUseElement code, and an immediate
+        assertion failure. Probably could use some unit test coverage, too.
+        (WebCore::TypedElementDescendantConstIteratorAdapter<ElementType>::from):
+        Ditto.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::animatedInstanceRoot): Deleted.
+        (WebCore::SVGUseElement::transferSizeAttributesToShadowTreeTargetClone):
+        Removed the originalElement argument, since we can use the correspondingElement
+        to get back to it. Removed the useElement argument and changed this into a
+        member function.
+        (WebCore::SVGUseElement::svgAttributeChanged): Updated for above changes.
+        (WebCore::subtreeContainsDisallowedElement): Deleted this function, because
+        it was only used to optimize by not calling removeDisallowedElementsFromSubtree,
+        but that function is already similarly efficient when called to do nothing, so
+        the preflight was not useful.
+        (WebCore::SVGUseElement::clearResourceReferences): Call userAgentShadowRoot
+        instead of shadowRoot for clarity.
+        (WebCore::SVGUseElement::buildPendingResource): Pass a reference instead of
+        a pointer to buildShadowAndInstanceTree, since it's guaranteed to not be null.
+        (WebCore::SVGUseElement::shadowTreeTargetClone): Added. Returns the SVG element
+        inside the shadow tree that corresponds to the use element's target.
+        (WebCore::SVGUseElement::buildShadowAndInstanceTree): Changed argument type
+        to a reference instead of a pointer. Removed comments explaining why we have
+        an instance tree, since soon we will not have one. Removed many comments that
+        simply state the names of the functions they are commenting on and perhaps a tiny
+        bit more. Changed to not use m_targetElementInstance as much, dealing with the
+        shadow tree directly instead of through the instance tree.
+        (WebCore::SVGUseElement::toClipPath): Use shadowTreeTargetClone instead of
+        getting at the element through m_targetElementInstance.
+        (WebCore::SVGUseElement::rendererClipChild): Ditto.
+        (WebCore::removeDisallowedElementsFromSubtree): Removed the inline keyword,
+        since there's no good reason to inline thif function's body. Improved local
+        variable names and used a modern for loop. Also moved the comment about why
+        this function is used here inside the function instead of repeating it at
+        each call site.
+        (WebCore::SVGUseElement::buildShadowTree): Changed to take a reference
+        instead of a pointer. Moved the check to see if the target is disallowed
+        out of this function and into buildShadowAndInstanceTree, which needs to
+        handle that failure explicitly. Tightened up the code a bit, using Ref instead
+        of RefPtr, putting the comment about removeDisallowedElementsFromSubtree into
+        that function itself, and removing the unneeded subtreeContainsDisallowedElement
+        check entirely.
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree): Removed the argument,
+        getting the shadow tree from the shadowTree function instead. Walk the tree
+        iteratively instead of recursively, using the descendantsOfType function.
+        Rearranged and streamlined the logic.
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree): Ditto.
+        (WebCore::SVGUseElement::transferEventListenersToShadowTree): Ditto.
+        (WebCore::SVGUseElement::transferAttributesToShadowTreeReplacement): Renamed
+        this to avoid the term "replaced element", which is not a reasonable way to
+        refer to the <g> element in the shadow tree that replaces the <use> element.
+        Changed the argument type to SVGGElement to make it harder to misuse this
+        function by accident, and made the use element be "this" instead of passing
+        it as an argument.
+        (WebCore::SVGUseElement::selfHasRelativeLengths): Call hasRelativeLengths
+        on the target inside the shadow tree rather than the original target, which
+        makes more sense anyway, and is straightforward now that we have the
+        shadowTreeTargetClone function. Removes use of m_targetElementInstance here.
+
+        * svg/SVGUseElement.h: Updated for above changes.
+
+        * svg/SVGUseElement.idl: Removed animatedInstanceRoot and tweaked formatting.
+
 2015-01-25  Chris Dumez  <cdumez@apple.com>
 
         Remove 'font' shorthand property special casing

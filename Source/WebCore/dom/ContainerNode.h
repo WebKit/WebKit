@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,16 +47,21 @@ class NoEventDispatchAssertion {
 public:
     NoEventDispatchAssertion()
     {
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
         if (!isMainThread())
             return;
-        s_count++;
+        ++s_count;
 #endif
+    }
+
+    NoEventDispatchAssertion(const NoEventDispatchAssertion&)
+        : NoEventDispatchAssertion()
+    {
     }
 
     ~NoEventDispatchAssertion()
     {
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
         if (!isMainThread())
             return;
         ASSERT(s_count);
@@ -64,18 +69,20 @@ public:
 #endif
     }
 
-#ifndef NDEBUG
     static bool isEventDispatchForbidden()
     {
-        if (!isMainThread())
-            return false;
-        return s_count;
-    }
+#if ASSERT_DISABLED
+        return false;
+#else
+        return isMainThread() && s_count;
 #endif
+    }
+
+#if !ASSERT_DISABLED
 
 private:
-#ifndef NDEBUG
     WEBCORE_EXPORT static unsigned s_count;
+
 #endif
 };
 
