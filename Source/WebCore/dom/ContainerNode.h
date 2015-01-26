@@ -306,8 +306,6 @@ private:
     ChildNodesLazySnapshot* m_nextSnapshot;
 };
 
-LayoutRect rendererAnchorRect(const ContainerNode&);
-
 } // namespace WebCore
 
 #endif // ContainerNode_h

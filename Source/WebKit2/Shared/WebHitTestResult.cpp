@@ -103,7 +103,11 @@ IntRect WebHitTestResult::Data::elementBoundingBoxInWindowCoordinates(const HitT
     if (!view)
         return IntRect();
 
-    return view->contentsToWindow(rendererBoundingBox(*node));
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return IntRect();
+
+    return view->contentsToWindow(renderer->absoluteBoundingBoxRect());
 }
 
 } // WebKit

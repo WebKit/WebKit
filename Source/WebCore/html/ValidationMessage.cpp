@@ -168,6 +168,10 @@ static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble
 void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
 {
     ASSERT(!validationMessageClient());
+
+    if (!m_element->renderer())
+        return;
+
     ShadowRoot& shadowRoot = m_element->ensureUserAgentShadowRoot();
 
     Document& document = m_element->document();
@@ -178,7 +182,7 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
     m_bubble->setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
     shadowRoot.appendChild(m_bubble.get(), ASSERT_NO_EXCEPTION);
     document.updateLayout();
-    adjustBubblePosition(rendererBoundingBox(*m_element), m_bubble.get());
+    adjustBubblePosition(m_element->renderer()->absoluteBoundingBoxRect(), m_bubble.get());
 
     RefPtr<HTMLDivElement> clipper = HTMLDivElement::create(document);
     clipper->setPseudo(AtomicString("-webkit-validation-bubble-arrow-clipper", AtomicString::ConstructFromLiteral));

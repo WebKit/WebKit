@@ -133,7 +133,8 @@ public:
     bool hasHiddenBackface() const { return style().backfaceVisibility() == BackfaceVisibilityHidden; }
 
     // anchorRect() is conceptually similar to absoluteBoundingBoxRect(), but is intended for scrolling to an anchor.
-    // It works differently than absoluteBoundingBoxRect() for inline renderers.
+    // For inline renderers, this gets the logical top left of the first leaf child and the logical bottom right of the
+    // last leaf child, converts them to absolute coordinates, and makes a box out of them.
     LayoutRect anchorRect() const;
 
 #if ENABLE(CSS_FILTERS)

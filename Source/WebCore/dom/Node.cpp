@@ -2231,13 +2231,6 @@ bool Node::inRenderedDocument() const
     return inDocument() && document().hasLivingRenderTree();
 }
 
-IntRect rendererBoundingBox(const Node& node)
-{
-    if (RenderObject* renderer = node.renderer())
-        return renderer->absoluteBoundingBoxRect();
-    return IntRect();
-}
-
 } // namespace WebCore
 
 #ifndef NDEBUG

@@ -737,8 +737,6 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
     return parentNode();
 }
 
-IntRect rendererBoundingBox(const Node&);
-
 #define NODE_TYPE_CASTS(ToClassName) \
     TYPE_CASTS_BASE(ToClassName, Node, node, WebCore::is##ToClassName(*node), WebCore::is##ToClassName(node))
 
