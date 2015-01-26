@@ -1572,9 +1572,8 @@ static NSMutableSet *knownPluginMIMETypes()
     _private->mainViewIsScrollingOrZooming = NO;
     [self setDefersCallbacks:NO];
     [[self mainFrame] setTimeoutsPaused:NO];
-    FrameView* view = [self _mainCoreFrame]->view();
-    if (view && view->renderView())
-        view->renderView()->resumePausedImageAnimationsIfNeeded();
+    if (FrameView* view = [self _mainCoreFrame]->view())
+        view->resumeVisibleImageAnimationsIncludingSubframes();
 }
 
 - (void)_setResourceLoadSchedulerSuspended:(BOOL)suspend

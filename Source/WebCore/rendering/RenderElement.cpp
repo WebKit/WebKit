@@ -1321,7 +1321,8 @@ static bool shouldRepaintForImageAnimation(const RenderElement& renderer, const 
 
 void RenderElement::newImageAnimationFrameAvailable(CachedImage& image)
 {
-    auto visibleRect = view().frameView().visibleContentRect();
+    auto& frameView = view().frameView();
+    auto visibleRect = frameView.windowToContents(frameView.windowClipRect());
     if (!shouldRepaintForImageAnimation(*this, visibleRect)) {
         // FIXME: It would be better to pass the image along with the renderer
         // so that we can be smarter about detecting if the image is inside the
