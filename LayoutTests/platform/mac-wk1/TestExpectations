@@ -49,5 +49,10 @@ fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
 # Disable snapshotting tests on WK1 only
 plugins/snapshotting
 
+# Animated image throttling behaves differently on WK1.
+fast/images/animated-gif-body-outside-viewport.html [ Skip ]
+fast/images/animated-gif-window-resizing.html [ Skip ]
+fast/images/animated-gif-zooming.html [ Skip ]
+
 ### END OF (2) Failures without bug reports
 ########################################

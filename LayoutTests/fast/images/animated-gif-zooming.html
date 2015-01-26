@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<div style="position: relative; width: 1600px; height: 2400px; background-color: green;">
+  <div style="position:absolute; left: 600px; top: 800px;"><img src="resources/animated.gif" id="testImage"/></div>
+</div>
+<script>
+description("Make sure that animated images are properly stopped / resumed when zooming in or out.");
+jsTestIsAsync = true;
+
+function isImageAnimated()
+{
+  return !internals.hasPausedImageAnimations(document.getElementById("testImage"));
+}
+
+function zoomIn() {
+  debug("Zoom in so that the image is no longer visible.");
+  for (var i = 0; i < 5; ++i)
+    window.eventSender.zoomPageIn();
+
+  shouldBecomeEqual("isImageAnimated()", "false", finishJSTest);
+}
+
+function zoomOut() {
+  debug("Zoom out so that the image becomes visible.");
+
+  for (var i = 0; i < 5; ++i)
+    window.eventSender.zoomPageOut();
+
+  shouldBecomeEqual("isImageAnimated()", "true", zoomIn);
+}
+
+function imageLoaded() {
+  shouldBecomeEqual("isImageAnimated()", "false", zoomOut);
+}
+
+function runTest() {
+  if (!window.internals)
+    return;
+
+  var img = new Image();
+  // Make sure the image is loaded before we check if it is animated.
+  img.onload = imageLoaded;
+  img.src = "resources/animated.gif";
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -435,6 +435,9 @@ void FrameView::setFrameRect(const IntRect& newRect)
         if (renderView->usesCompositing())
             renderView->compositor().frameViewDidChangeSize();
     }
+
+    // The frame view was resized, check if we should resume animated images.
+    resumeVisibleImageAnimationsIncludingSubframes();
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
