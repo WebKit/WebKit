@@ -1,3 +1,15 @@
+2015-01-26  Andreas Kling  <akling@apple.com>
+
+        Plug leak in jsValueWithDictionaryInContext().
+        <https://webkit.org/b/140889>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a missing JSStringRelease to plug leak that was showing up on leaks bot.
+
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        (WebCore::jsValueWithDictionaryInContext):
+
 2015-01-26  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix CSS Selector's tag name matching when mixing HTML and XML
