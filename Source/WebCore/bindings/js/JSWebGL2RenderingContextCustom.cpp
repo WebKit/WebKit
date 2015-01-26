@@ -36,6 +36,55 @@ void JSWebGL2RenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(&impl());
 }
+    
+JSValue JSWebGL2RenderingContext::getFramebufferAttachmentParameter(ExecState* exec)
+{
+    UNUSED_PARAM(exec);
+    return jsUndefined();
+}
+
+JSValue JSWebGL2RenderingContext::getInternalformatParameter(ExecState* exec)
+{
+    UNUSED_PARAM(exec);
+    return jsUndefined();
+}
+
+JSValue JSWebGL2RenderingContext::getQueryParameter(ExecState* exec)
+{
+    UNUSED_PARAM(exec);
+    return jsUndefined();
+}
+
+JSValue JSWebGL2RenderingContext::getSamplerParameter(ExecState* exec)
+{
+    UNUSED_PARAM(exec);
+    return jsUndefined();
+}
+
+JSValue JSWebGL2RenderingContext::getSyncParameter(ExecState* exec)
+{
+    UNUSED_PARAM(exec);
+    return jsUndefined();
+}
+
+JSValue JSWebGL2RenderingContext::getIndexedParameter(ExecState* exec)
+{
+    UNUSED_PARAM(exec);
+    return jsUndefined();
+}
+
+JSValue JSWebGL2RenderingContext::getActiveUniformBlockParameter(ExecState* exec)
+{
+    UNUSED_PARAM(exec);
+    return jsUndefined();
+}
+
+JSValue JSWebGL2RenderingContext::getActiveUniformBlockName(ExecState* exec)
+{
+    UNUSED_PARAM(exec);
+    return jsUndefined();
+}
+
 
 } // namespace WebCore
 

@@ -1,3 +1,116 @@
+2015-01-26  Roger Fong  <roger_fong@apple.com>
+
+        [WebGL2] Update IDL for WebGL2.
+        https://bugs.webkit.org/show_bug.cgi?id=126406
+        <rdar://problem/15002268>.
+
+        Reviewed by Brent Fulgham.
+
+        Update WebGL2RenderingContext idl to match spec. Create method stubs as necessary.
+
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp:
+        (WebCore::JSWebGL2RenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::JSWebGL2RenderingContext::getInternalformatParameter):
+        (WebCore::JSWebGL2RenderingContext::getQueryParameter):
+        (WebCore::JSWebGL2RenderingContext::getSamplerParameter):
+        (WebCore::JSWebGL2RenderingContext::getSyncParameter):
+        (WebCore::JSWebGL2RenderingContext::getIndexedParameter):
+        (WebCore::JSWebGL2RenderingContext::getActiveUniformBlockParameter):
+        (WebCore::JSWebGL2RenderingContext::getActiveUniformBlockName):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::copyBufferSubData):
+        (WebCore::WebGL2RenderingContext::getBufferSubData):
+        (WebCore::WebGL2RenderingContext::getFramebufferAttachmentParameter):
+        (WebCore::WebGL2RenderingContext::blitFramebuffer):
+        (WebCore::WebGL2RenderingContext::framebufferTextureLayer):
+        (WebCore::WebGL2RenderingContext::getInternalformatParameter):
+        (WebCore::WebGL2RenderingContext::invalidateFramebuffer):
+        (WebCore::WebGL2RenderingContext::invalidateSubFramebuffer):
+        (WebCore::WebGL2RenderingContext::readBuffer):
+        (WebCore::WebGL2RenderingContext::renderbufferStorageMultisample):
+        (WebCore::WebGL2RenderingContext::texStorage2D):
+        (WebCore::WebGL2RenderingContext::texStorage3D):
+        (WebCore::WebGL2RenderingContext::texImage3D):
+        (WebCore::WebGL2RenderingContext::texSubImage3D):
+        (WebCore::WebGL2RenderingContext::copyTexSubImage3D):
+        (WebCore::WebGL2RenderingContext::compressedTexImage3D):
+        (WebCore::WebGL2RenderingContext::compressedTexSubImage3D):
+        (WebCore::WebGL2RenderingContext::getFragDataLocation):
+        (WebCore::WebGL2RenderingContext::uniform1ui):
+        (WebCore::WebGL2RenderingContext::uniform2ui):
+        (WebCore::WebGL2RenderingContext::uniform3ui):
+        (WebCore::WebGL2RenderingContext::uniform4ui):
+        (WebCore::WebGL2RenderingContext::uniform1uiv):
+        (WebCore::WebGL2RenderingContext::uniform2uiv):
+        (WebCore::WebGL2RenderingContext::uniform3uiv):
+        (WebCore::WebGL2RenderingContext::uniform4uiv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix2x3fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix3x2fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix2x4fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix4x2fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix3x4fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix4x3fv):
+        (WebCore::WebGL2RenderingContext::vertexAttribI4i):
+        (WebCore::WebGL2RenderingContext::vertexAttribI4iv):
+        (WebCore::WebGL2RenderingContext::vertexAttribI4ui):
+        (WebCore::WebGL2RenderingContext::vertexAttribI4uiv):
+        (WebCore::WebGL2RenderingContext::vertexAttribIPointer):
+        (WebCore::WebGL2RenderingContext::vertexAttribDivisor):
+        (WebCore::WebGL2RenderingContext::drawArraysInstanced):
+        (WebCore::WebGL2RenderingContext::drawElementsInstanced):
+        (WebCore::WebGL2RenderingContext::drawRangeElements):
+        (WebCore::WebGL2RenderingContext::drawBuffers):
+        (WebCore::WebGL2RenderingContext::clearBufferiv):
+        (WebCore::WebGL2RenderingContext::clearBufferuiv):
+        (WebCore::WebGL2RenderingContext::clearBufferfv):
+        (WebCore::WebGL2RenderingContext::clearBufferfi):
+        (WebCore::WebGL2RenderingContext::createQuery):
+        (WebCore::WebGL2RenderingContext::deleteQuery):
+        (WebCore::WebGL2RenderingContext::isQuery):
+        (WebCore::WebGL2RenderingContext::beginQuery):
+        (WebCore::WebGL2RenderingContext::endQuery):
+        (WebCore::WebGL2RenderingContext::getQuery):
+        (WebCore::WebGL2RenderingContext::getQueryParameter):
+        (WebCore::WebGL2RenderingContext::createSampler):
+        (WebCore::WebGL2RenderingContext::deleteSampler):
+        (WebCore::WebGL2RenderingContext::isSampler):
+        (WebCore::WebGL2RenderingContext::bindSampler):
+        (WebCore::WebGL2RenderingContext::samplerParameteri):
+        (WebCore::WebGL2RenderingContext::samplerParameterf):
+        (WebCore::WebGL2RenderingContext::getSamplerParameter):
+        (WebCore::WebGL2RenderingContext::fenceSync):
+        (WebCore::WebGL2RenderingContext::isSync):
+        (WebCore::WebGL2RenderingContext::deleteSync):
+        (WebCore::WebGL2RenderingContext::clientWaitSync):
+        (WebCore::WebGL2RenderingContext::waitSync):
+        (WebCore::WebGL2RenderingContext::getSyncParameter):
+        (WebCore::WebGL2RenderingContext::createTransformFeedback):
+        (WebCore::WebGL2RenderingContext::deleteTransformFeedback):
+        (WebCore::WebGL2RenderingContext::isTransformFeedback):
+        (WebCore::WebGL2RenderingContext::bindTransformFeedback):
+        (WebCore::WebGL2RenderingContext::beginTransformFeedback):
+        (WebCore::WebGL2RenderingContext::endTransformFeedback):
+        (WebCore::WebGL2RenderingContext::transformFeedbackVaryings):
+        (WebCore::WebGL2RenderingContext::getTransformFeedbackVarying):
+        (WebCore::WebGL2RenderingContext::pauseTransformFeedback):
+        (WebCore::WebGL2RenderingContext::resumeTransformFeedback):
+        (WebCore::WebGL2RenderingContext::bindBufferBase):
+        (WebCore::WebGL2RenderingContext::bindBufferRange):
+        (WebCore::WebGL2RenderingContext::getIndexedParameter):
+        (WebCore::WebGL2RenderingContext::getUniformIndices):
+        (WebCore::WebGL2RenderingContext::getActiveUniforms):
+        (WebCore::WebGL2RenderingContext::getUniformBlockIndex):
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockParameter):
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockName):
+        (WebCore::WebGL2RenderingContext::uniformBlockBinding):
+        (WebCore::WebGL2RenderingContext::createVertexArray):
+        (WebCore::WebGL2RenderingContext::deleteVertexArray):
+        (WebCore::WebGL2RenderingContext::isVertexArray):
+        (WebCore::WebGL2RenderingContext::bindVertexArray):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * platform/graphics/GraphicsTypes3D.h:
+
 2015-01-26  Andreas Kling  <akling@apple.com>
 
         Don't let the CSSValuePool's font family cache grow unbounded.
