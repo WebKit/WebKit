@@ -27,6 +27,7 @@
 #include "CSSValueKeywords.h"
 #include "Color.h"
 #include "LayoutUnit.h"
+#include <utility>
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PassRefPtr.h>
@@ -236,14 +237,9 @@ public:
     static Ref<CSSPrimitiveValue> create(const Length& value, const RenderStyle* style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
     static Ref<CSSPrimitiveValue> create(const LengthSize& value, const RenderStyle* style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
 
-    template<typename T> static Ref<CSSPrimitiveValue> create(const T& value)
-    {
-        return adoptRef(*new CSSPrimitiveValue(value));
-    }
-
     template<typename T> static Ref<CSSPrimitiveValue> create(T&& value)
     {
-        return adoptRef(*new CSSPrimitiveValue(WTF::move(value)));
+        return adoptRef(*new CSSPrimitiveValue(std::forward<T>(value)));
     }
 
     // This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.

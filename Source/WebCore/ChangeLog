@@ -1,3 +1,20 @@
+2015-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Use std::forward() instead of WTF::move() in CSSPrimitiveValue::create(T&& value)
+        https://bugs.webkit.org/show_bug.cgi?id=140891
+
+        Reviewed by Anders Carlsson.
+
+        Use std::forward() instead of WTF::move() in CSSPrimitiveValue::create(T&& value)
+        to make sure the argument is not unexpectedly moved when it shouldn't (like I
+        experienced yesterday in Bug 140577):
+        <http://trac.webkit.org/changeset/179105>
+
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::create):
+        * css/CSSValuePool.h:
+        (WebCore::CSSValuePool::createValue):
+
 2015-01-26  Beth Dakin  <bdakin@apple.com>
 
         Blacklist iBooks for WebKit's default immediate actions

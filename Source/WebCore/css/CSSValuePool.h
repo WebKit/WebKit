@@ -32,6 +32,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include <utility>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefPtr.h>
@@ -56,7 +57,7 @@ public:
     Ref<CSSPrimitiveValue> createValue(const String& value, CSSPrimitiveValue::UnitTypes type) { return CSSPrimitiveValue::create(value, type); }
     Ref<CSSPrimitiveValue> createValue(const Length& value, const RenderStyle* style) { return CSSPrimitiveValue::create(value, style); }
     Ref<CSSPrimitiveValue> createValue(const LengthSize& value, const RenderStyle* style) { return CSSPrimitiveValue::create(value, style); }
-    template<typename T> static Ref<CSSPrimitiveValue> createValue(T value) { return CSSPrimitiveValue::create(value); }
+    template<typename T> static Ref<CSSPrimitiveValue> createValue(T&& value) { return CSSPrimitiveValue::create(std::forward<T>(value)); }
 
     void drain();
 
