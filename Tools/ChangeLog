@@ -1,5 +1,20 @@
 2015-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Refactor run-javascriptcore-tests
+        https://bugs.webkit.org/show_bug.cgi?id=140824
+
+        Reviewed by Darin Adler.
+
+        Separated mozilla, stress test code paths and
+        determining skipped mozilla tests into subroutines.
+
+        * Scripts/run-javascriptcore-tests:
+        (runMozillaTests):
+        (runJSCStressTests):
+        (defaultJsDriverArgsForMozillaTests):
+
+2015-01-26  Csaba Osztrogonác  <ossy@webkit.org>
+
         [buildbot] Fix grammar of TestWithFailureCount
         https://bugs.webkit.org/show_bug.cgi?id=140884
 
