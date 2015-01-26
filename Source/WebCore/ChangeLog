@@ -1,5 +1,18 @@
 2015-01-25  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r177449.
+
+    2014-12-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test fix after r177444.
+
+        Unreviewed.
+
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySliderThumb::elementRect):
+
+2015-01-25  David Kilzer  <ddkilzer@apple.com>
+
         Merge r177444.
 
     2014-12-16  Myles C. Maxfield  <mmaxfield@apple.com>
