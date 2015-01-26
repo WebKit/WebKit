@@ -40,6 +40,9 @@ vibration
 webaudio
 http/tests/notifications
 
+# ENABLE(MEDIA_CAPTURE) is not enabled
+fast/forms/file/file-input-capture.html
+
 # Plugins are not supported on iOS
 plugins
 compositing/plugins
@@ -177,13 +180,17 @@ editing/pasteboard/drop-inputtext-acquires-style.html
 editing/pasteboard/drop-link.html
 editing/pasteboard/drop-text-events.html
 editing/pasteboard/dataTransfer-setData-getData.html
+http/tests/local/fileapi/send-dragged-file.html
+http/tests/local/fileapi/send-sliced-dragged-file.html
 
 ###
 # Known failures
 ##
 
+# <rdar://problem/14590711> CrashTracer: [USER] DumpRenderTree at WebCore: WebCore::Element::detach + 17
+svg/as-image/svg-nested.html
+
 # SVG
-webkit.org/b/137574 svg/as-image/svg-nested.html [ Skip ] # Times out
 webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Skip ] # Pass, Crash
 webkit.org/b/137574 svg/css/arrow-with-shadow.svg [ Skip ] # Pass, Crash
 
@@ -228,6 +235,7 @@ css3/filters/composited-during-animation-layertree.html
 css3/filters/composited-during-transition-layertree.html
 css3/filters/filter-animation-from-none-multi-hw.html
 transitions/cancel-transition.html
+transitions/default-timing-function.html
 transitions/interrupted-accelerated-transition.html
 transitions/change-values-during-transition.html
 transitions/suspend-transform-transition.html
@@ -289,12 +297,10 @@ http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-even
 crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html [ Skip ]
 
 # Crypto tests that time out:
-crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-small-key.html [ Skip ]
+crypto/subtle/rsa-indexeddb-non-exportable.html
+crypto/subtle/rsa-indexeddb.html
 crypto/subtle/rsa-oaep-plaintext-length.html [ Skip ] # Timeout, Pass
-
-# Crypto tests that fail:
-crypto/subtle/rsa-indexeddb-non-exportable.html [ Failure ]
-crypto/subtle/rsa-indexeddb.html [ Failure ]
+crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-small-key.html [ Skip ]
 
 # Compositing tests that fail:
 compositing/regions/abs-transformed-dynamic-update.html [ ImageOnlyFailure ]
@@ -323,7 +329,6 @@ compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
 compositing/rtl/rtl-overflow-scrolling.html [ Failure ]
 compositing/visible-rect/3d-transform-style.html [ Failure ]
-compositing/visible-rect/animated.html [ Failure ]
 compositing/visible-rect/iframe-no-layers.html [ Failure ]
 compositing/backing/child-layer-no-backing.html [ Failure ]
 compositing/geometry/preserve-3d-switching.html [ Failure ]
@@ -601,6 +606,7 @@ pageoverlay/overlay-large-document.html [ Failure ]
 # MathML tests that fail:
 mathml/opentype/horizontal.html [ Failure ]
 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
+mathml/mathml-in-dashboard.html [ Failure ]
 
 # <rdar://problem/19221067> ASSERT(m_stretchyData.top().glyph) fails in RenderMathMLOperator.cpp
 mathml/presentation/style-changed.html
@@ -610,7 +616,6 @@ svg/text/svg-fallback-font-crash.html
 svg/css/font-face-variant-crash.html
 
 # SVG tests that fail:
-svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 svg/clip-path/clip-path-on-svg-001.svg [ ImageOnlyFailure ]
 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 svg/custom/anchor-on-use.svg [ ImageOnlyFailure ]
@@ -619,74 +624,28 @@ svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
 svg/text/svg-font-word-rounding-hacks-spaces.html [ ImageOnlyFailure ]
 svg/text/textpath-outline.svg [ ImageOnlyFailure ]
-svg/css/composite-shadow-text.svg [ Failure ]
 svg/css/css-box-min-width.html [ Failure ]
 svg/custom/absolute-sized-svg-in-xhtml.xhtml [ Failure ]
 svg/custom/bug45331.svg [ Failure ]
 svg/custom/clone-element-with-animated-svg-properties.html [ Failure ]
-svg/custom/container-opacity-clip-viewBox.svg [ Failure ]
-svg/custom/coords-relative-units-transforms.svg [ Failure ]
 svg/custom/dynamic-svg-document-creation.svg [ Failure ]
-svg/custom/feComponentTransfer-Discrete.svg [ Failure ]
-svg/custom/feComponentTransfer-Gamma.svg [ Failure ]
-svg/custom/feComponentTransfer-Linear.svg [ Failure ]
-svg/custom/feComponentTransfer-Table.svg [ Failure ]
-svg/custom/fill-fallback.svg [ Failure ]
 svg/custom/getPresentationAttribute.svg [ Failure ]
 svg/custom/getsvgdocument.html [ Failure ]
-svg/custom/gradient-with-1d-boundingbox.svg [ Failure ]
-svg/custom/hit-test-unclosed-subpaths.svg [ Failure ]
 svg/custom/hit-test-with-br.xhtml [ Failure ]
 svg/custom/image-rescale-scroll.html [ Failure ]
-svg/custom/image-with-transform-clip-filter.svg [ Failure ]
-svg/custom/invalid-css.svg [ Failure ]
-svg/custom/invalid-fill-hex.svg [ Failure ]
-svg/custom/invalid-fill.svg [ Failure ]
-svg/custom/invalid-stroke-hex.svg [ Failure ]
-svg/custom/invalid-uri-stroke.svg [ Failure ]
 svg/custom/junk-data.svg [ Failure ]
-svg/custom/linking-uri-01-b.svg [ Failure ]
-svg/custom/marker-default-width-height.svg [ Failure ]
 svg/custom/marker-orient-auto.html [ Failure ]
 svg/custom/missing-xlink.svg [ Failure ]
 svg/custom/path-bad-data.svg [ Failure ]
-svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml [ Failure ]
-svg/custom/pattern-with-transformation.svg [ Failure ]
-svg/custom/pointer-events-image-css-transform.svg [ Failure ]
-svg/custom/pointer-events-image.svg [ Failure ]
-svg/custom/pointer-events-path.svg [ Failure ]
-svg/custom/pointer-events-text-css-transform.svg [ Failure ]
-svg/custom/pointer-events-text.svg [ Failure ]
 svg/custom/relative-sized-deep-shadow-tree-content.xhtml [ Failure ]
 svg/custom/rootmost-svg-xy-attrs.xhtml [ Failure ]
 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Failure ]
-svg/custom/second-inline-text.xhtml [ Failure ]
 svg/custom/simpleCDF.xml [ Failure ]
-svg/custom/stroke-fallback.svg [ Failure ]
 svg/custom/svg-float-border-padding.xml [ Failure ]
 svg/custom/svg-fonts-in-html.html [ Failure ]
 svg/custom/svg-fonts-without-missing-glyph.xhtml [ Failure ]
 svg/custom/svg-fonts-word-spacing.html [ Failure ]
-svg/custom/text-clip.svg [ Failure ]
-svg/custom/text-decoration-visibility.svg [ Failure ]
-svg/custom/text-dom-01-f.svg [ Failure ]
-svg/custom/text-filter.svg [ Failure ]
-svg/custom/text-rotated-gradient.svg [ Failure ]
-svg/custom/text-tref-03-b-change-href-dom.svg [ Failure ]
-svg/custom/text-tref-03-b-change-href.svg [ Failure ]
-svg/custom/text-tref-03-b-referenced-element-removal.svg [ Failure ]
-svg/custom/text-tref-03-b-tref-removal.svg [ Failure ]
-svg/custom/text-whitespace-handling.svg [ Failure ]
-svg/custom/tref-own-content-removal.svg [ Failure ]
-svg/custom/use-elementInstance-event-target.svg [ Failure ]
-svg/custom/use-elementInstance-methods.svg [ Failure ]
-svg/custom/use-event-handler-on-referenced-element.svg [ Failure ]
-svg/custom/use-event-handler-on-use-element.svg [ Failure ]
 svg/custom/use-font-face-crash.svg [ Failure ]
-svg/custom/use-instanceRoot-modifications.svg [ Failure ]
-svg/custom/use-modify-container-in-target.svg [ Failure ]
-svg/custom/use-modify-target-container.svg [ Failure ]
-svg/custom/use-modify-target-symbol.svg [ Failure ]
 svg/custom/use-on-disallowed-foreign-object-1.svg [ Failure ]
 svg/custom/use-on-disallowed-foreign-object-2.svg [ Failure ]
 svg/custom/use-on-disallowed-foreign-object-3.svg [ Failure ]
@@ -694,9 +653,6 @@ svg/custom/use-on-disallowed-foreign-object-4.svg [ Failure ]
 svg/custom/use-on-disallowed-foreign-object-5.svg [ Failure ]
 svg/custom/use-on-disallowed-foreign-object-6.svg [ Failure ]
 svg/custom/use-on-non-svg-namespaced-element.svg [ Failure ]
-svg/custom/use-on-text.svg [ Failure ]
-svg/custom/use-property-changes-through-dom.svg [ Failure ]
-svg/custom/use-property-changes-through-svg-dom.svg [ Failure ]
 svg/custom/viewport-em.svg [ Failure ]
 svg/dom/SVGPathSegList-cloning.html [ Failure ]
 svg/zoom/page/zoom-foreignObject.svg [ Failure ]
@@ -846,7 +802,6 @@ svg/W3C-SVG-1.1/fonts-elem-06-t.svg [ Failure ]
 svg/W3C-SVG-1.1/fonts-elem-07-b.svg [ Failure ]
 svg/W3C-SVG-1.1/fonts-glyph-02-t.svg [ Failure ]
 svg/W3C-SVG-1.1/fonts-glyph-03-t.svg [ Failure ]
-svg/W3C-SVG-1.1/fonts-glyph-04-t.svg [ Failure ]
 svg/W3C-SVG-1.1/fonts-kern-01-t.svg [ Failure ]
 svg/W3C-SVG-1.1/interact-cursor-01-f.svg [ Failure ]
 svg/W3C-SVG-1.1/interact-dom-01-b.svg [ Failure ]
@@ -1091,9 +1046,7 @@ svg/custom/animate-path-discrete.svg [ Failure ]
 svg/custom/animate-path-morphing.svg [ Failure ]
 svg/custom/foreign-object-skew.svg [ Failure ]
 svg/custom/getscreenctm-in-mixed-content2.xhtml [ Failure ]
-svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
 svg/custom/glyph-selection-lang-attribute.svg [ Failure ]
-svg/custom/glyph-selection-non-bmp.svg [ Failure ]
 svg/custom/linking-base-external-reference.xhtml [ Failure ]
 svg/custom/object-no-size-attributes.xhtml [ Failure ]
 svg/custom/object-sizing-no-width-height.xhtml [ Failure ]
@@ -1120,7 +1073,6 @@ svg/filters/sourceAlpha.svg [ Failure ]
 svg/foreignObject/fO-parent-display-changes.svg [ Failure ]
 svg/foreignObject/svg-document-as-direct-child.svg [ Failure ]
 svg/foreignObject/text-tref-02-b.svg [ Failure ]
-svg/hixie/dynamic/002.xml [ Failure ]
 svg/hixie/error/002.xml [ Failure ]
 svg/hixie/error/003.xml [ Failure ]
 svg/hixie/error/010.xml [ Failure ]
@@ -1140,8 +1092,6 @@ svg/hixie/shapes/path/001.xml [ Failure ]
 svg/hixie/text/002.xml [ Failure ]
 svg/hixie/text/003a.xml [ Failure ]
 svg/hixie/text/003b.xml [ Failure ]
-svg/hixie/viewbox/002.xml [ Failure ]
-svg/hixie/viewbox/003.xml [ Failure ]
 svg/hixie/viewbox/preserveAspectRatio/001.xml [ Failure ]
 svg/hixie/viewbox/preserveAspectRatio/002.xml [ Failure ]
 svg/in-html/by-reference.html [ Failure ]
@@ -1237,7 +1187,6 @@ svg/text/text-tspan-01-b.svg [ Failure ]
 svg/text/text-viewbox-rescale.html [ Failure ]
 svg/text/text-ws-01-t.svg [ Failure ]
 svg/text/text-ws-02-t.svg [ Failure ]
-svg/text/textPathBoundsBug.svg [ Failure ]
 svg/text/tspan-dynamic-positioning.svg [ Failure ]
 svg/transforms/text-with-mask-with-svg-transform.svg [ Failure ]
 svg/transforms/text-with-pattern-with-svg-transform.svg [ Failure ]
@@ -1257,19 +1206,44 @@ svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 svg/zoom/text/zoom-coords-viewattr-01-b.svg [ Failure ]
 svg/zoom/text/zoom-hixie-rendering-model-004.xhtml [ Failure ]
 svg/zoom/text/zoom-svg-float-border-padding.xml [ Failure ]
+svg/W3C-SVG-1.1-SE/color-prop-05-t.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/coords-dom-01-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/coords-dom-02-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/coords-dom-03-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/coords-dom-04-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/filters-felem-01-b.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/painting-marker-07-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/pservers-grad-20-b.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/pservers-pattern-04-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/struct-use-14-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/text-tref-03-b.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/types-dom-01-b.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/types-dom-02-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/types-dom-03-b.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/types-dom-04-b.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/types-dom-05-b.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/types-dom-06-f.svg [ Failure ]
+svg/W3C-SVG-1.1-SE/types-dom-07-f.svg [ Failure ]
+svg/W3C-SVG-1.1/filters-turb-02-f.svg [ Failure ]
+svg/custom/altglyph.svg [ Failure ]
+svg/custom/glyph-setting-d-attribute.svg [ Failure ]
+svg/filters/filter-hidden-content.svg [ Failure ]
+svg/text/kerning.svg [ Failure ]
+svg/text/multichar-glyph.svg [ Failure ]
+svg/text/text-hkern.svg [ Failure ]
+svg/text/text-vkern.svg [ Failure ]
+svg/wicd/test-rightsizing-b.xhtml [ Failure ]
 
 # CSS transform tests that fail:
-transforms/3d/point-mapping/3d-point-mapping-2.html [ Failure ]
 transforms/3d/point-mapping/3d-point-mapping-3.html [ Failure ]
-transforms/3d/point-mapping/3d-point-mapping-coplanar.html [ Failure ]
-transforms/3d/point-mapping/3d-point-mapping-deep.html [ Failure ]
-transforms/3d/point-mapping/3d-point-mapping-origins.html [ Failure ]
 transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ Failure ]
-transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html [ Failure ]
-transforms/3d/point-mapping/3d-point-mapping.html [ Failure ]
-
-# CSS transition tests that fail:
-transitions/cross-fade-border-image.html [ Failure ]
 
 # HTML table tests that fail:
 tables/mozilla/bugs/adforce_imgis_com.html [ Failure ]
@@ -1311,10 +1285,6 @@ inspector-protocol/debugger/nested-inspectors.html [ Failure ]
 inspector-protocol/debugger/regress-133182.html [ Failure ]
 inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Failure ]
 
-# Performance tests that fail:
-perf/append-text-nodes-without-renderers.html [ Failure ]
-perf/show-hide-table-rows.html [ Failure ]
-
 # Scrolling coordinator tests that fail:
 scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Failure ]
 scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ Failure ]
@@ -1328,8 +1298,10 @@ webarchive/test-css-url-resources-in-stylesheets.html [ Failure ]
 webarchive/test-css-url-resources-inline-styles.html [ Failure ]
 webarchive/test-link-rel-icon.html [ Failure ]
 
-# Webarchive tests that differ from Mac (need to verify correctness):
-
+# Webarchive tests that fail due to <https://bugs.webkit.org/show_bug.cgi?id=82665>:
+http/tests/webarchive/test-css-url-encoding-shift-jis.html
+http/tests/webarchive/test-css-url-encoding-utf-8.html
+http/tests/webarchive/test-css-url-encoding.html
 
 # XMLHttpRequest tests that fail:
 webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
@@ -1699,8 +1671,6 @@ fast/text/text-combine-rendering.html [ ImageOnlyFailure ]
 fast/text/whitespace/inline-whitespace-wrapping-7.html [ ImageOnlyFailure ]
 fast/css/vertical-align-baseline-rowspan-010.html [ ImageOnlyFailure ]
 fast/css/vertical-align-block-elements.html [ ImageOnlyFailure ]
-fast/css/word-spacing-between-blocks.html [ ImageOnlyFailure ]
-fast/css/word-spacing-between-inlines.html [ ImageOnlyFailure ]
 fast/css/word-spacing-characters.html [ ImageOnlyFailure ]
 fast/writing-mode/flipped-blocks-inline-map-local-to-container.html [ ImageOnlyFailure ]
 fast/autoresize/autoresize-with-iframe.html [ Failure ]
@@ -1724,10 +1694,6 @@ fast/block/positioning/negative-rel-position.html [ Failure ]
 fast/block/positioning/relative-positioned-inline-container.html [ Failure ]
 fast/block/positioning/rtl-fixed-positioning.html [ Failure ]
 fast/borders/border-fit.html [ Failure ]
-fast/borders/border-image-outset-split-inline-vertical-lr.html [ Failure ]
-fast/borders/border-image-outset-split-inline.html [ Failure ]
-fast/borders/inline-mask-overlay-image-outset-vertical-rl.html [ Failure ]
-fast/borders/inline-mask-overlay-image-outset.html [ Failure ]
 fast/canvas/canvas-bg.html [ Failure ]
 fast/canvas/canvas-blending-global-alpha.html [ Failure ]
 fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
@@ -1881,11 +1847,9 @@ fast/events/autoscroll-in-overflow-hidden-html.html [ Failure ]
 fast/events/autoscroll-in-textarea.html [ Failure ]
 fast/events/autoscroll-in-textfield.html [ Failure ]
 fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html [ Failure ]
-fast/events/autoscroll-should-not-stop-on-keypress.html [ Failure ]
 fast/events/backspace-navigates-back.html [ Failure ]
 fast/events/blur-focus-window-should-blur-focus-element.html [ Failure ]
 fast/events/capture-on-target.html [ Failure ]
-fast/events/change-frame-focus.html [ Failure ]
 fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html [ Failure ]
 fast/events/check-defocus-event-order-when-triggered-by-tab.html [ Failure ]
 fast/events/click-count.html [ Failure ]
@@ -2031,7 +1995,6 @@ fast/forms/empty-textarea-toggle-disabled.html [ Failure ]
 fast/forms/enter-clicks-buttons.html [ Failure ]
 fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html [ Failure ]
 fast/forms/fieldset-with-float.html [ Failure ]
-fast/forms/file/file-input-capture.html [ Failure ]
 fast/forms/file/file-input-change-event.html [ Failure ]
 fast/forms/file/file-style-inheritance.html [ Failure ]
 fast/forms/file/input-file-value.html [ Failure ]
@@ -2321,7 +2284,6 @@ fast/text/whitespace/023.html [ Failure ]
 fast/text/whitespace/029.html [ Failure ]
 fast/text/whitespace/pre-newline-box-test.html [ Failure ]
 fast/text/whitespace/tab-character-basics.html [ Failure ]
-fast/tokenizer/script_extra_close.html [ Failure ]
 fast/transforms/rotated-transform-affects-scrolling-1.html [ Failure ]
 fast/transforms/rotated-transform-affects-scrolling-2.html [ Failure ]
 fast/transforms/selection-bounds-in-transformed-view.html [ Failure ]
@@ -2333,7 +2295,6 @@ fast/viewport/viewport-legacy-ordering-5.html [ Failure ]
 fast/viewport/viewport-legacy-ordering-6.html [ Failure ]
 fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Failure ]
 fast/viewport/viewport-legacy-xhtmlmp.html [ Failure ]
-fast/workers/shared-worker-storagequota-query-usage.html [ Failure ]
 fast/workers/worker-storagequota-query-usage.html [ Failure ]
 fast/xsl/sort-locale.xml [ Failure ]
 fast/box-sizing/box-sizing.html [ Failure ]
@@ -2344,7 +2305,6 @@ fast/events/event-view-toString.html [ Failure ]
 fast/events/focus-change-crash2.html [ Failure ]
 fast/events/frame-click-focus.html [ Failure ]
 fast/events/frame-detached-in-mousedown.html [ Failure ]
-fast/events/frame-programmatic-focus.html [ Failure ]
 fast/events/iframe-onmousemove.html [ Failure ]
 fast/events/imagemap-norender-crash.html [ Failure ]
 fast/events/input-tab-focus-no-duplicate-events.html [ Failure ]
@@ -2354,6 +2314,12 @@ fast/events/keydown-keypress-focus-change.html [ Failure ]
 fast/events/keydown-keypress-preventDefault.html [ Failure ]
 fast/events/media-element-focus-tab.html [ Failure ]
 fast/writing-mode/flipped-blocks-hit-test-line-edges.html [ Failure ]
+fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
+fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
+
+# <rdar://problem/12073352> PEP Web Tools: emulator touch tests cause DRT to timeout
+fast/events/touch/emulate-touch-events.html
+fast/events/touch/emulated-touch-iframe.html
 
 # LayoutTests/fast tests that time out:
 fast/events/reveal-link-when-focused.html
@@ -2384,8 +2350,6 @@ fast/events/mouse-cursor-image-set.html
 fast/events/recorded-keydown-event.html
 fast/events/remove-child-onscroll.html
 fast/events/resize-subframe.html
-fast/events/touch/emulate-touch-events.html
-fast/events/touch/emulated-touch-iframe.html
 fast/events/touch/gesture/gesture-click.html
 fast/events/touch/gesture/gesture-dblclick.html
 fast/events/touch/gesture/gesture-scroll.html
@@ -2425,7 +2389,6 @@ fast/images/animated-gif-body-outside-viewport.html
 fast/images/animated-gif-html-background-image.html
 fast/replaced/frame-removed-during-resize-smaller.html
 fast/scrolling/scrollbar-tickmarks-hittest.html
-fast/workers/storage/use-same-database-in-page-and-workers.html
 fast/workers/worker-close-more.html
 fast/workers/worker-copy-shared-blob-url.html
 fast/workers/worker-document-leak.html
@@ -2511,52 +2474,25 @@ css2.1/t0803-c5504-mrgn-l-03-c.html [ Failure ]
 css2.1/t0804-c5507-padn-r-03-f.html [ Failure ]
 css2.1/t0804-c5509-padn-l-03-f-g.html [ Failure ]
 css2.1/t0804-c5510-padn-02-f.html [ Failure ]
-css2.1/t0805-c5518-brdr-t-01-e.html [ Failure ]
-css2.1/t0805-c5519-brdr-r-00-a.html [ Failure ]
-css2.1/t0805-c5520-brdr-b-01-e.html [ Failure ]
-css2.1/t0805-c5521-brdr-l-00-a.html [ Failure ]
-css2.1/t0805-c5521-brdr-l-01-e.html [ Failure ]
-css2.1/t0805-c5521-ibrdr-l-00-a.html [ Failure ]
 css2.1/t09-c5526c-display-00-e.html [ Failure ]
-css2.1/t0905-c414-flt-02-c.html [ Failure ]
-css2.1/t0905-c414-flt-03-c.html [ Failure ]
-css2.1/t0905-c414-flt-04-c.html [ Failure ]
-css2.1/t0905-c414-flt-fit-01-d-g.html [ Failure ]
-css2.1/t0905-c5525-fltblck-01-d.html [ Failure ]
 css2.1/t0905-c5525-fltcont-00-d-g.html [ Failure ]
-css2.1/t0905-c5525-flthw-00-c-g.html [ Failure ]
 css2.1/t0905-c5525-fltwidth-00-c-g.html [ Failure ]
-css2.1/t0905-c5525-fltwidth-02-c-g.html [ Failure ]
 css2.1/t0905-c5525-fltwidth-03-c-g.html [ Failure ]
 css2.1/t0905-c5525-fltwrap-00-b.html [ Failure ]
-css2.1/t0905-c5526-flthw-00-c-g.html [ Failure ]
 css2.1/t090501-c414-flt-01-b.html [ Failure ]
 css2.1/t090501-c414-flt-03-b-g.html [ Failure ]
-css2.1/t090501-c5525-flt-l-00-b-g.html [ Failure ]
-css2.1/t090501-c5525-flt-r-00-b-g.html [ Failure ]
-css2.1/t100304-c43-rpl-bbx-01-d-g.html [ Failure ]
 css2.1/t1202-counter-08-b.html [ Failure ]
-css2.1/t1202-counter-09-b.html [ Failure ]
 css2.1/t1202-counter-13-b.html [ Failure ]
 css2.1/t1202-counter-14-b.html [ Failure ]
 css2.1/t1202-counters-08-b.html [ Failure ]
-css2.1/t1202-counters-09-b.html [ Failure ]
 css2.1/t1202-counters-13-b.html [ Failure ]
 css2.1/t1202-counters-14-b.html [ Failure ]
-css3/filters/composited-during-transition-layertree.html [ Failure ]
-css3/selectors3/html/css3-modsel-61.html [ Failure ]
-css3/selectors3/html/css3-modsel-83.html [ Failure ]
-css3/selectors3/xhtml/css3-modsel-61.xml [ Failure ]
-css3/selectors3/xhtml/css3-modsel-83.xml [ Failure ]
-css3/selectors3/xml/css3-modsel-61.xml [ Failure ]
-css3/selectors3/xml/css3-modsel-83.xml [ Failure ]
 http/tests/misc/favicon-as-image.html [ Failure ]
 http/tests/misc/iframe404.html [ Failure ]
 http/tests/misc/slow-loading-image-in-pattern.html [ Failure ]
 http/tests/misc/slow-loading-mask.html [ Failure ]
 http/tests/uri/css-href.php [ Failure ]
 ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Failure ]
-mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
 mathml/presentation/mo-stretch.html [ Failure ]
 scrollbars/overflow-scrollbar-combinations.html [ Failure ]
 svg/W3C-SVG-1.1/animate-elem-04-t.svg [ Failure ]
@@ -2570,45 +2506,12 @@ svg/W3C-SVG-1.1/animate-elem-36-t.svg [ Failure ]
 svg/W3C-SVG-1.1/animate-elem-37-t.svg [ Failure ]
 svg/W3C-SVG-1.1/animate-elem-41-t.svg [ Failure ]
 svg/W3C-SVG-1.1/animate-elem-82-t.svg [ Failure ]
-svg/css/css-box-min-width.html [ Failure ]
-svg/custom/absolute-sized-svg-in-xhtml.xhtml [ Failure ]
-svg/custom/bug45331.svg [ Failure ]
-svg/custom/clone-element-with-animated-svg-properties.html [ Failure ]
-svg/custom/dynamic-svg-document-creation.svg [ Failure ]
-svg/custom/getPresentationAttribute.svg [ Failure ]
-svg/custom/getsvgdocument.html [ Failure ]
-svg/custom/hit-test-with-br.xhtml [ Failure ]
-svg/custom/image-rescale-scroll.html [ Failure ]
-svg/custom/junk-data.svg [ Failure ]
-svg/custom/marker-orient-auto.html [ Failure ]
-svg/custom/missing-xlink.svg [ Failure ]
-svg/custom/path-bad-data.svg [ Failure ]
-svg/custom/relative-sized-deep-shadow-tree-content.xhtml [ Failure ]
-svg/custom/rootmost-svg-xy-attrs.xhtml [ Failure ]
-svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Failure ]
-svg/custom/simpleCDF.xml [ Failure ]
-svg/custom/svg-float-border-padding.xml [ Failure ]
-svg/custom/svg-fonts-fallback.xhtml [ Failure ]
-svg/custom/svg-fonts-in-html.html [ Failure ]
-svg/custom/svg-fonts-without-missing-glyph.xhtml [ Failure ]
-svg/custom/svg-fonts-word-spacing.html [ Failure ]
-svg/custom/use-font-face-crash.svg [ Failure ]
-svg/custom/use-on-disallowed-foreign-object-1.svg [ Failure ]
-svg/custom/use-on-disallowed-foreign-object-2.svg [ Failure ]
-svg/custom/use-on-disallowed-foreign-object-3.svg [ Failure ]
-svg/custom/use-on-disallowed-foreign-object-4.svg [ Failure ]
-svg/custom/use-on-disallowed-foreign-object-5.svg [ Failure ]
-svg/custom/use-on-disallowed-foreign-object-6.svg [ Failure ]
-svg/custom/use-on-non-svg-namespaced-element.svg [ Failure ]
-svg/custom/viewport-em.svg [ Failure ]
-svg/dom/SVGPathSegList-cloning.html [ Failure ]
 svg/foreignObject/svg-document-in-html-document.svg [ Failure ]
 svg/hixie/error/013.xml [ Failure ]
 svg/hixie/intrinsic/003.html [ Failure ]
 svg/hixie/text/003.html [ Failure ]
 svg/text/non-bmp-positioning-lists.svg [ Failure ]
 svg/text/text-rescale.html [ Failure ]
-svg/zoom/page/zoom-foreignObject.svg [ Failure ]
 tables/layering/paint-test-layering-1.html [ Failure ]
 tables/layering/paint-test-layering-2.html [ Failure ]
 tables/mozilla/bugs/bug2479-2.html [ Failure ]
@@ -2618,8 +2521,71 @@ tables/mozilla/marvin/tables_width_percent.html [ Failure ]
 tables/mozilla_expected_failures/bugs/bug1010.html [ Failure ]
 tables/mozilla_expected_failures/bugs/bug220653.html [ Failure ]
 tables/mozilla_expected_failures/other/test4.html [ Failure ]
-transforms/3d/point-mapping/3d-point-mapping-3.html [ Failure ]
-transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ Failure ]
+
+# Editing tests that are flaky:
+editing/selection/extend-selection-home-end.html
+editing/spelling/spellcheck-async.html
+editing/spelling/spellcheck-async-mutation.html
+editing/spelling/spellcheck-queue.html
+editing/style/style-text-node-without-editable-parent.html
+
+# Editing tests that fail:
+editing/inserting/typing-at-end-of-line.html [ Failure ]
+editing/pasteboard/4076267-2.html [ Failure ]
+editing/pasteboard/4076267.html [ Failure ]
+editing/pasteboard/4242293.html [ Failure ]
+editing/pasteboard/4641033.html [ Failure ]
+editing/pasteboard/bad-placeholder.html [ Failure ]
+
+# Sputnik tests that are flaky:
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html
+
+# Sputnik tests that fail:
+sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Failure ]
+sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Failure ]
+sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Failure ]
+sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
+
+# storage tests that fail:
+storage/websql/sql-error-codes.html [ Failure ]
+
+# iOS-specific tests that fail:
+platform/ios-simulator/ios/compositing/overlap-page-scale.html [ Failure ]
+platform/ios-simulator/ios/fast/fixed/absolute-over-fixed.html [ Failure ]
+platform/ios-simulator/ios/fast/fixed/fixed-in-transform.html [ Failure ]
+platform/ios-simulator/ios/fast/fixed/four-bars.html [ Failure ]
+platform/ios-simulator/ios/fast/fixed/frame-with-fixed.html [ Failure ]
+platform/ios-simulator/ios/fast/fixed/overlay-fixed.html [ Failure ]
+platform/ios-simulator/ios/fast/forms/borderless-input-gradient.html [ Failure ]
+platform/ios-simulator/ios/fast/forms/date-input-decorations.html [ Failure ]
+platform/ios-simulator/ios/fast/forms/form-controls-on-backgrounds.html [ Failure ]
+platform/ios-simulator/ios/fast/text/emoji-complextext.html [ Failure ]
+platform/ios-simulator/ios/fast/text/emoji-text.html [ Failure ]
+platform/ios-simulator/ios/fast/text/line-breaking-with-kerning.html [ Failure ]
+platform/ios-simulator/ios/fast/text/mid-word-break-before-combining-mark.html [ Failure ]
+platform/ios-simulator/ios/fast/text/opticalFont.html [ Failure ]
+platform/ios-simulator/ios/fast/text/opticalFontWithTextStyle.html [ Failure ]
+platform/ios-simulator/ios/fast/text/opticalFontWithWeight.html [ Failure ]
+platform/ios-simulator/ios/fast/text/textStylesWithSizes.html [ Failure ]
+platform/ios-simulator/ios/fixed/absolute-inside-fixed.html [ Failure ]
+platform/ios-simulator/ios/fixed/four-bars.html [ Failure ]
+platform/ios-simulator/ios/fixed/nested-fixed.html [ Failure ]
+platform/ios-simulator/ios/fixed/percentage-inside-fixed.html [ Failure ]
+platform/ios-simulator/ios/scrolling/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Failure ]
+platform/ios-simulator/ios/scrolling/overflow-scroll-touch.html [ Failure ]
+platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip-size.html [ Failure ]
+platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip.html [ Failure ]
+platform/ios-simulator/ios/scrolling/scrollbar-hiding.html [ Failure ]
+platform/ios-simulator/ios/scrolling/scrolling-content-clip-to-viewport.html [ Failure ]
+platform/ios-simulator/ios/scrolling/textarea-scroll-touch.html [ Failure ]
+platform/ios-simulator/ios/scrolling/touch-stacking.html [ Failure ]
+
+# iOS tests that assert:
+platform/ios-simulator/ios/fast/text/combining-enclosing-keycap.html
+platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html
+platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html
 
 ###
 # Mark as passing specific tests in folders that were skipped temporarily above.

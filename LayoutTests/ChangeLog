@@ -1,3 +1,12 @@
+2015-01-25  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Update expected results and test expectations
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        [...]
+
 2015-01-25  Alexey Proskuryakov  <ap@apple.com>
 
         fast/html/marquee-scrollamount.html is flaky

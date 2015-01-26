@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 751x39
+          text run at (0,0) width 294: "This test for a bug in Insert{Un}OrderedList. "
+          text run at (293,0) width 458: "Inside an empty editable region, a new paragraph is added, then a list is"
+          text run at (0,20) width 55: "created. "
+          text run at (54,20) width 130: "The caret should be "
+        RenderInline {B} at (0,0) size 41x19
+          RenderText {#text} at (183,20) size 41x19
+            text run at (183,20) width 41: "inside"
+        RenderText {#text} at (223,20) size 129x19
+          text run at (223,20) width 129: " the empty list item."
+      RenderBlock {DIV} at (0,56) size 784x20

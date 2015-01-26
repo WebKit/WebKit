@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x274
+  RenderBlock {HTML} at (0,0) size 800x274
+    RenderBody {BODY} at (8,8) size 784x258
+      RenderBlock (anonymous) at (0,0) size 784x218
+        RenderInline {MAP} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderImage {IMG} at (0,0) size 104x104 [border: (2px solid #000000)]
+        RenderText {#text} at (104,89) size 4x19
+          text run at (104,89) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderInline {MAP} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderImage {IMG} at (0,109) size 104x104 [border: (2px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,218) size 784x20
+        RenderText {#text} at (0,0) size 48x19
+          text run at (0,0) width 48: "success"
+      RenderBlock {DIV} at (0,238) size 784x20
+        RenderText {#text} at (0,0) size 48x19
+          text run at (0,0) width 48: "success"

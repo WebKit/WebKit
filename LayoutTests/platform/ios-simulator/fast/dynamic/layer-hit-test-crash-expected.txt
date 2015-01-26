@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 758x19
+          text run at (0,0) width 758: "Mousing over the yellow square below should not cause an assertion failure or crash. This tests for regressions against"
+        RenderInline {A} at (0,0) size 32x19 [color=#0000EE]
+          RenderText {#text} at (0,20) size 32x19
+            text run at (0,20) width 32: "6931"
+        RenderText {#text} at (32,20) size 4x19
+          text run at (32,20) width 4: "."
+layer at (50,50) size 200x200
+  RenderBlock (positioned) zI: 1 {DIV} at (50,50) size 200x200 [bgcolor=#FFFF00]
+caret: position 0 of child 1 {DIV} of child 3 {DIV} of body

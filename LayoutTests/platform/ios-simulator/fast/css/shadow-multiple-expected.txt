@@ -1,0 +1,31 @@
+layer at (0,0) size 800x640
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x640
+  RenderBlock {HTML} at (0,0) size 800x640
+    RenderBody {BODY} at (8,20) size 784x570
+      RenderBlock {DIV} at (20,0) size 744x120
+        RenderInline {SPAN} at (0,0) size 112x60 [textStrokeWidth=1.00]
+          RenderText {#text} at (0,0) size 112x60
+            text run at (0,0) width 112: "This"
+        RenderText {#text} at (111,0) size 18x60
+          text run at (111,0) width 18: " "
+        RenderInline {SPAN} at (0,0) size 108x60 [textFillColor=#FFFFFF] [textStrokeWidth=1.00]
+          RenderText {#text} at (128,0) size 108x60
+            text run at (128,0) width 108: "text"
+        RenderText {#text} at (235,0) size 18x60
+          text run at (235,0) width 18: " "
+        RenderInline {SPAN} at (0,0) size 140x60 [color=#0000004C]
+          RenderText {#text} at (252,0) size 140x60
+            text run at (252,0) width 140: "casts"
+        RenderText {#text} at (391,0) size 17x60
+          text run at (391,0) width 17: " "
+        RenderInline {SPAN} at (0,0) size 223x60
+          RenderText {#text} at (407,0) size 223x60
+            text run at (407,0) width 223: "multiple"
+        RenderText {#text} at (0,60) size 237x60
+          text run at (0,60) width 237: "shadows"
+      RenderBlock {DIV} at (50,170) size 100x100
+      RenderBlock {DIV} at (50,320) size 100x100 [bgcolor=#FFFFFF]
+      RenderBlock {DIV} at (50,470) size 100x100 [bgcolor=#00000033]
+selection start: position 0 of child 0 {#text} of child 7 {SPAN} of child 0 {DIV} of body
+selection end:   position 6 of child 0 {#text} of child 7 {SPAN} of child 0 {DIV} of body

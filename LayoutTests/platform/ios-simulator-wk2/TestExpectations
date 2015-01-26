@@ -72,10 +72,6 @@ compositing/overflow/scroll-ancestor-update.html
 compositing/visible-rect/animated.html
 compositing/video/video-border-radius.html
 
-# Crypto tests that time out:
-crypto/subtle/rsa-indexeddb.html
-crypto/subtle/rsa-indexeddb-non-exportable.html
-
 # CSS tests that fail:
 css2.1/20110323/border-conflict-element-001d.htm [ ImageOnlyFailure ]
 css2.1/20110323/border-conflict-element-021a.htm [ ImageOnlyFailure ]
@@ -188,9 +184,6 @@ jquery/manipulation.html
 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html
 storage/domstorage/storage-close-database-on-idle.html
 
-# storage tests that fail:
-storage/websql/sql-error-codes.html [ Failure ]
-
 # ietestcenter tests that fail:
 ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Failure ]
 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
@@ -251,7 +244,6 @@ js/dom/constructor-length.html [ Failure ]
 
 # JavaScript tests that time out:
 js/dom/dfg-inline-resolve.html
-js/dom/global-constructors-attributes-shared-worker.html
 
 # Page overlay tests that fail:
 pageoverlay/overlay-large-document-scrolled.html [ Failure ]
@@ -596,16 +588,12 @@ http/tests/security/clipboard/clipboard-file-access.html [ Failure ]
 http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html [ Failure ]
 http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Failure ]
 http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Failure ]
-http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html [ Failure ]
-http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html [ Failure ]
 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html [ Failure ]
 http/tests/security/cross-frame-access-put.html [ Failure ]
 http/tests/security/cross-origin-plugin-allowed.html [ Failure ]
 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure ]
 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
 http/tests/security/cross-origin-plugin.html [ Failure ]
-http/tests/security/cross-origin-shared-worker-allowed.html [ Failure ]
-http/tests/security/cross-origin-shared-worker.html [ Failure ]
 http/tests/security/cross-origin-worker-indexeddb-allowed.html [ Failure ]
 http/tests/security/cross-origin-worker-indexeddb.html [ Failure ]
 http/tests/security/drag-drop-local-file.html [ Failure ]
@@ -618,14 +606,11 @@ http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Failure ]
 http/tests/security/no-referrer.html [ Failure ]
 http/tests/security/redirect-BLOCKED-to-localURL.html [ Failure ]
-http/tests/security/same-origin-shared-worker-blocked.html [ Failure ]
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html [ Failure ]
 http/tests/security/storage-blocking-loosened-plugin.html [ Failure ]
 http/tests/security/storage-blocking-loosened-private-browsing-plugin.html [ Failure ]
-http/tests/security/storage-blocking-loosened-shared-worker.html [ Failure ]
 http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
-http/tests/security/storage-blocking-strengthened-shared-worker.html [ Failure ]
 http/tests/uri/css-href.php [ Failure ]
 http/tests/css/vertical-align-baseline-after-image-load-2.html [ ImageOnlyFailure ]
 http/tests/css/vertical-align-baseline-after-image-load-3.html [ ImageOnlyFailure ]
@@ -677,9 +662,6 @@ http/tests/security/window-events-pass.html
 http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url.html
 http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
 http/tests/security/xssAuditor/link-opens-new-window.html
-http/tests/webarchive/test-css-url-encoding-shift-jis.html
-http/tests/webarchive/test-css-url-encoding-utf-8.html
-http/tests/webarchive/test-css-url-encoding.html
 http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html
 http/tests/xmlhttprequest/close-window.html
 http/tests/xmlhttprequest/cross-origin-authorization.html
@@ -745,16 +727,7 @@ http/tests/security/video-cross-origin-accessfailure.html
 http/tests/security/video-cross-origin-accesssameorigin.html
 http/tests/security/video-cross-origin-readback.html
 http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html
-http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html
-http/tests/websocket/tests/hybi/workers/shared-worker-simple.html
-http/tests/workers/shared-worker-importScripts.html
 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
-http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html
-http/tests/xmlhttprequest/workers/shared-worker-close.html
-http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
-http/tests/xmlhttprequest/workers/shared-worker-methods.html
-http/tests/xmlhttprequest/workers/shared-worker-referer.html
-http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html
 
 # HTTP tests that are flaky:
 http/tests/cache/iframe-304-crash.html [ Failure Pass ]
@@ -763,8 +736,6 @@ http/tests/navigation/forward-and-cancel.html [ Failure Pass ]
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Failure Pass ]
 http/tests/webarchive/cross-origin-stylesheet-crash.html [ Failure Pass ]
 http/tests/webarchive/test-preload-resources.html [ Failure Pass ]
-http/tests/workers/shared-worker-invalid-url.html [ Failure Pass ]
-http/tests/workers/shared-worker-redirect.html [ Failure Pass ]
 http/tests/xmlhttprequest/event-listener-gc.html [ Failure Pass ]
 
 # <rdar://problem/19270403> BitmapImage::cacheFrame(); ASSERT(isInBounds<ToType>(value)) fails in WTF::safeCast(FromType)
@@ -843,7 +814,6 @@ fast/dom/HTMLDocument/hasFocus.html [ Failure ]
 fast/dom/HTMLLinkElement/prefetch-beforeload.html [ Failure ]
 fast/dom/Window/Plug-ins.html [ Failure ]
 fast/dom/Window/post-message-crash.html [ Failure ]
-fast/dom/call-a-constructor-as-a-function.html [ Failure ]
 fast/dom/fragment-activation-focuses-target.html [ Failure ]
 fast/dom/nested-timer-display-none-element-throttling.html [ Failure ]
 fast/dom/nodesFromRect/nodesFromRect-culled-inline-with-linebreak.html [ Failure ]
@@ -860,6 +830,7 @@ fast/events/access-key-self-destruct.html [ Failure ]
 fast/events/anchor-empty-focus.html [ Failure ]
 fast/events/arrow-keys-on-body.html [ Failure ]
 fast/events/attribute-listener-deletion-crash.html [ Failure ]
+fast/events/autoscroll-should-not-stop-on-keypress.html [ Failure ]
 fast/events/mosuedrag-on-canvas-should-not-start-selection.html [ Failure ]
 fast/events/mouse-focus-imagemap.html [ Failure ]
 fast/events/mouse-relative-position.html [ Failure ]
@@ -877,7 +848,6 @@ fast/forms/25153.html [ Failure ]
 fast/forms/ValidityState-valueMissing-002.html [ Failure ]
 fast/forms/access-key-for-all-elements.html [ Failure ]
 fast/forms/access-key.html [ Failure ]
-fast/forms/autofocus-input-css-style-change.html [ Failure ]
 fast/forms/button-enter-click.html [ Failure ]
 fast/forms/button-spacebar-click.html [ Failure ]
 fast/forms/cursor-at-editable-content-boundary.html [ Failure ]
@@ -975,7 +945,6 @@ fast/ruby/overhang-vertical.html [ Failure ]
 fast/ruby/position-after.html [ Failure ]
 fast/ruby/positioned-ruby-text.html [ Failure ]
 fast/ruby/ruby-justification-hittest.html [ Failure ]
-fast/ruby/ruby-svg-crash.html [ Failure ]
 fast/ruby/ruby-text-before-child-split.html [ Failure ]
 fast/selectors/active-hover-quirks.html [ Failure ]
 fast/selectors/active-hover-strict.html [ Failure ]
@@ -1011,10 +980,6 @@ fast/text/selection-painted-separately.html [ Failure ]
 fast/text/setData-dirty-lines.html [ Failure ]
 fast/text/splitText-dirty-lines.html [ Failure ]
 fast/transforms/shadows.html [ Failure ]
-fast/workers/shared-worker-constructor.html [ Failure ]
-fast/workers/shared-worker-name.html [ Failure ]
-fast/workers/shared-worker-script-error.html [ Failure ]
-fast/workers/worker-crash-with-invalid-location.html [ Failure ]
 fast/css/unknown-pseudo-element-matching.html [ Failure ]
 fast/dom/Window/window-focus-self.html [ Failure ]
 fast/dom/Window/window-lookup-precedence.html [ Failure ]
@@ -1074,9 +1039,7 @@ fast/forms/textfield-inside-anchor.html [ Failure ]
 fast/frames/meta-refresh-user-gesture.html [ Failure ]
 fast/multicol/span/before-child-anonymous-column-block.html [ Failure ]
 fast/multicol/vertical-lr/float-truncation.html [ Failure ]
-fast/parser/innerhtml-with-prefixed-elements.xhtml [ Failure ]
 fast/parser/pre-html5-parser-quirks.html [ Failure ]
-fast/parser/style-script-head-test.html [ Failure ]
 fast/parser/tabindex-parsing.html [ Failure ]
 fast/regions/cssom/client-rects-fixed-content.html [ Failure ]
 fast/regions/cssom/client-rects-inline-complex.html [ Failure ]
@@ -1100,7 +1063,6 @@ fast/table/table-row-split2.html [ Failure ]
 fast/table/table-section-split2.html [ Failure ]
 fast/table/table-split.html [ Failure ]
 fast/table/table-split2.html [ Failure ]
-fast/text/font-size-zero.html [ Failure ]
 fast/text/soft-hyphen-2.html [ Failure ]
 fast/text/soft-hyphen-3.html [ Failure ]
 fast/css-generated-content/pseudo-transition.html [ Failure ]
@@ -1243,9 +1205,88 @@ fast/sub-pixel/sub-pixel-composited-layers.html [ ImageOnlyFailure ]
 fast/table/inline-table-in-inline-block-last-baseline-align.html [ ImageOnlyFailure ]
 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 fast/text/font-kerning.html [ ImageOnlyFailure ]
-fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
-fast/text/word-space-nbsp.html [ ImageOnlyFailure ]
+fast/block/basic/011.html [ Failure ]
+fast/block/basic/minheight.html [ Failure ]
+fast/block/margin-collapse/103.html [ Failure ]
+fast/css-grid-layout/flex-and-content-sized-resolution-columns.html [ Failure ]
+fast/css-grid-layout/grid-grow-tracks-to-their-max.html [ Failure ]
+fast/css/002.html [ Failure ]
+fast/css/beforeSelectorOnCodeElement.html [ Failure ]
+fast/css/css1_forward_compatible_parsing.html [ Failure ]
+fast/css/empty-pseudo-class.html [ Failure ]
+fast/css/ex-unit-with-no-x-height.html [ Failure ]
+fast/css/first-child-pseudo-class.html [ Failure ]
+fast/css/font-face-locally-installed.html [ Failure ]
+fast/css/last-child-pseudo-class.html [ Failure ]
+fast/css/only-child-pseudo-class.html [ Failure ]
+fast/css/word-space-extra.html [ Failure ]
+fast/dynamic/text-combine.html [ Failure ]
+fast/encoding/utf-16-big-endian.html [ Failure ]
+fast/encoding/utf-16-little-endian.html [ Failure ]
+fast/forms/basic-buttons.html [ Failure ]
+fast/forms/basic-textareas-quirks.html [ Failure ]
+fast/forms/search-styled.html [ Failure ]
+fast/forms/targeted-frame-submission.html [ Failure ]
+fast/forms/validation-message-in-relative-body.html [ Failure ]
+fast/frames/onlyCommentInIFrame.html [ Failure ]
+fast/hidpi/image-srcset-invalid-descriptor.html [ Failure ]
+fast/html/listing.html [ Failure ]
+fast/invalid/008.html [ Failure ]
+fast/invalid/junk-data.xml [ Failure ]
+fast/invalid/missing-end-tag.xhtml [ Failure ]
+fast/loader/text-document-wrapping.html [ Failure ]
+fast/overflow/003.xml [ Failure ]
+fast/overflow/clip-rects-fixed-ancestor.html [ Failure ]
+fast/overflow/infiniteRecursion.html [ Failure ]
+fast/parser/document-write-option.html [ Failure ]
+fast/parser/entity-comment-in-style.html [ Failure ]
+fast/parser/entity-comment-in-textarea.html [ Failure ]
+fast/parser/fonts.html [ Failure ]
+fast/parser/nofoo-tags-inside-paragraph.html [ Failure ]
+fast/parser/open-comment-in-style.html [ Failure ]
+fast/parser/open-comment-in-textarea.html [ Failure ]
+fast/parser/tabs-in-scripts.html [ Failure ]
+fast/parser/title-error-test.html [ Failure ]
+fast/parser/xhtml-alternate-entities.xml [ Failure ]
+fast/replaced/inline-box-wrapper-handover.html [ Failure ]
+fast/ruby/ruby-beforeafter.html [ Failure ]
+fast/ruby/ruby-length.html [ Failure ]
+fast/ruby/ruby-run-break.html [ Failure ]
+fast/ruby/ruby-runs-spans.html [ Failure ]
+fast/ruby/ruby-runs.html [ Failure ]
+fast/ruby/ruby-trailing.html [ Failure ]
+fast/ruby/rubyDOM-insert-rt.html [ Failure ]
+fast/ruby/rubyDOM-insert-text1.html [ Failure ]
+fast/ruby/rubyDOM-insert-text2.html [ Failure ]
+fast/ruby/rubyDOM-insert-text3.html [ Failure ]
+fast/ruby/rubyDOM-remove-rt1.html [ Failure ]
+fast/ruby/rubyDOM-remove-rt2.html [ Failure ]
+fast/ruby/rubyDOM-remove-text1.html [ Failure ]
+fast/table/border-collapsing/004-vertical.html [ Failure ]
+fast/table/border-collapsing/004.html [ Failure ]
+fast/table/rowindex.html [ Failure ]
+fast/text/basic/generic-family-reset.html [ Failure ]
+fast/text/international/002.html [ Failure ]
+fast/text/international/003.html [ Failure ]
+fast/text/international/bidi-explicit-embedding.html [ Failure ]
+fast/text/international/bidi-layout-across-linebreak.html [ Failure ]
+fast/text/international/hebrew-vowels.html [ Failure ]
+fast/text/international/khmer-selection.html [ Failure ]
+fast/text/international/text-combine-image-test.html [ Failure ]
+fast/text/international/thai-line-breaks.html [ Failure ]
+fast/text/whitespace/024.html [ Failure ]
+fast/text/whitespace/030.html [ Failure ]
+fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
+fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
+fast/writing-mode/broken-ideographic-font.html [ Failure ]
+fast/writing-mode/japanese-rl-text-with-broken-font.html [ Failure ]
+fast/writing-mode/text-orientation-basic.html [ Failure ]
+fast/xsl/xslt-extra-content-at-end.xml [ Failure ]
+fast/xsl/xslt-missing-namespace-in-xslt.xml [ Failure ]
+fast/box-decoration-break/box-decoration-break-clone-line-break.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
+fast/multicol/nested-filter-in-columns.html [ ImageOnlyFailure ]
 
 # LayoutTests/fast tests that time out:
 fast/block/positioning/absolute-appended-to-inline.html
@@ -1365,21 +1406,6 @@ fast/shapes/shape-outside-floats/shape-outside-shape-margin-animation.html
 fast/text/reset-drag-on-mouse-down.html
 fast/text/simple-lines-hover-after.html
 fast/text/simple-lines-hover-underline.html
-fast/workers/shared-worker-context-gc.html
-fast/workers/shared-worker-event-listener.html
-fast/workers/shared-worker-exception.html
-fast/workers/shared-worker-frame-lifecycle.html
-fast/workers/shared-worker-gc.html
-fast/workers/shared-worker-in-iframe.html
-fast/workers/shared-worker-lifecycle.html
-fast/workers/shared-worker-load-error.html
-fast/workers/shared-worker-location.html
-fast/workers/shared-worker-messageevent-source.html
-fast/workers/shared-worker-navigator.html
-fast/workers/shared-worker-replace-global-constructor.html
-fast/workers/shared-worker-replace-self.html
-fast/workers/shared-worker-shared.html
-fast/workers/shared-worker-simple.html
 fast/workers/worker-cloneport.html
 fast/borders/bidi-009a.html
 fast/box-shadow/box-shadow-currentcolor.html
@@ -1422,6 +1448,19 @@ fast/loader/dynamic-iframe-extra-back-forward-item.html
 fast/events/mouse-cursor-change.html
 fast/history/history-back-initial-vs-final-url.html
 fast/loader/form-submission-before-load-get.html
+
+# LayoutTests/fast tests that are flaky:
+fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ ImageOnlyFailure Pass ]
+fast/dom/call-a-constructor-as-a-function.html [ Failure Pass ]
+fast/events/frame-programmatic-focus.html [ Failure Pass ]
+fast/forms/autofocus-input-css-style-change.html [ Failure Pass ]
+fast/parser/innerhtml-with-prefixed-elements.xhtml [ Failure Pass ]
+fast/parser/style-script-head-test.html [ Failure Pass ]
+fast/ruby/ruby-svg-crash.html [ Failure Pass ]
+fast/text/font-size-zero.html [ Failure Pass ]
+fast/text/soft-hyphen-min-preferred-width.html [ ImageOnlyFailure Pass ]
+fast/text/word-space-nbsp.html [ ImageOnlyFailure Pass ]
+fast/workers/worker-crash-with-invalid-location.html [ Failure Pass ]
 
 # HTML table tests that fail:
 tables/mozilla/bugs/bug149275-1.html [ Failure ]
@@ -1695,7 +1734,6 @@ editing/selection/extend-selection-after-double-click.html [ Failure ]
 editing/selection/extend-selection-bidi.html [ Failure ]
 editing/selection/extend-selection-enclosing-block-mac.html [ Failure ]
 editing/selection/extend-selection-enclosing-block-win.html [ Failure ]
-editing/selection/extend-selection-home-end.html [ Failure ]
 editing/selection/extend-selection-word.html [ Failure ]
 editing/selection/extend-to-line-boundary.html [ Failure ]
 editing/selection/fake-drag.html [ Failure ]
@@ -1745,7 +1783,6 @@ editing/selection/user-select-all-with-single-click.html [ Failure ]
 editing/spelling/centering-misspelling-dots.html [ Failure ]
 editing/spelling/context-menu-suggestions.html [ Failure ]
 editing/spelling/misspelling-dots-dont-extend-beyond-words.html [ Failure ]
-editing/spelling/spellcheck-async-mutation.html [ Failure ]
 editing/spelling/spellcheck-input-search-crash.html [ Failure ]
 editing/spelling/spelling-unified-emulation.html [ Failure ]
 editing/style/apply-through-end-of-document.html [ Failure ]
@@ -1806,12 +1843,10 @@ editing/spelling/inline-spelling-markers-hidpi.html
 editing/spelling/inline-spelling-markers.html
 editing/spelling/markers.html
 editing/spelling/move-cursor-around-misspelled-word.html
-editing/spelling/spellcheck-async.html
 editing/spelling/spellcheck-attribute.html
 editing/spelling/spellcheck-paste-continuous-disabled.html
 editing/spelling/spellcheck-paste-disabled.html
 editing/spelling/spellcheck-paste.html
-editing/spelling/spellcheck-queue.html
 editing/spelling/spelling-attribute-at-child.html
 editing/spelling/spelling-attribute-change.html
 editing/spelling/spelling-backspace-between-lines.html
@@ -1922,35 +1957,6 @@ editing/unsupported-content/table-type-after.html [ Failure Pass ]
 editing/unsupported-content/table-type-before.html [ Failure Pass ]
 
 # iOS-specific tests that fail:
-platform/ios-simulator/ios/compositing/overlap-page-scale.html [ Failure ]
-platform/ios-simulator/ios/fast/fixed/absolute-over-fixed.html [ Failure ]
-platform/ios-simulator/ios/fast/fixed/fixed-in-transform.html [ Failure ]
-platform/ios-simulator/ios/fast/fixed/four-bars.html [ Failure ]
-platform/ios-simulator/ios/fast/fixed/frame-with-fixed.html [ Failure ]
-platform/ios-simulator/ios/fast/fixed/overlay-fixed.html [ Failure ]
-platform/ios-simulator/ios/fast/forms/borderless-input-gradient.html [ Failure ]
-platform/ios-simulator/ios/fast/forms/date-input-decorations.html [ Failure ]
-platform/ios-simulator/ios/fast/forms/form-controls-on-backgrounds.html [ Failure ]
-platform/ios-simulator/ios/fast/text/emoji-complextext.html [ Failure ]
-platform/ios-simulator/ios/fast/text/emoji-text.html [ Failure ]
-platform/ios-simulator/ios/fast/text/line-breaking-with-kerning.html [ Failure ]
-platform/ios-simulator/ios/fast/text/mid-word-break-before-combining-mark.html [ Failure ]
-platform/ios-simulator/ios/fast/text/opticalFont.html [ Failure ]
-platform/ios-simulator/ios/fast/text/opticalFontWithTextStyle.html [ Failure ]
-platform/ios-simulator/ios/fast/text/opticalFontWithWeight.html [ Failure ]
-platform/ios-simulator/ios/fast/text/textStylesWithSizes.html [ Failure ]
-platform/ios-simulator/ios/fixed/absolute-inside-fixed.html [ Failure ]
-platform/ios-simulator/ios/fixed/four-bars.html [ Failure ]
-platform/ios-simulator/ios/fixed/nested-fixed.html [ Failure ]
-platform/ios-simulator/ios/fixed/percentage-inside-fixed.html [ Failure ]
-platform/ios-simulator/ios/scrolling/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Failure ]
-platform/ios-simulator/ios/scrolling/overflow-scroll-touch.html [ Failure ]
-platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip-size.html [ Failure ]
-platform/ios-simulator/ios/scrolling/overflow-scrolling-ancestor-clip.html [ Failure ]
-platform/ios-simulator/ios/scrolling/scrollbar-hiding.html [ Failure ]
-platform/ios-simulator/ios/scrolling/scrolling-content-clip-to-viewport.html [ Failure ]
-platform/ios-simulator/ios/scrolling/textarea-scroll-touch.html [ Failure ]
-platform/ios-simulator/ios/scrolling/touch-stacking.html [ Failure ]
 platform/ios-simulator/ios/storage/domstorage/5mb-quota-expected.txt [ Failure ]
 
 # iOS-specific tests that time out:
@@ -1979,11 +1985,6 @@ platform/ios-simulator/ios/fast/forms/range-input-touches.html
 platform/ios-simulator/ios/fast/html/textarea-auto-sizing-disable.html
 platform/ios-simulator/ios/fast/text/data-detectors/phone-disabled.html
 platform/ios-simulator/ios/fast/text/data-detectors/phone.html
-
-# iOS tests that assert:
-platform/ios-simulator/ios/fast/text/combining-enclosing-keycap.html
-platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe-no-height-or-width.html
-platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html
 
 # Flaky tests:
 compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants.html [ Failure Pass ]
@@ -2191,9 +2192,6 @@ js/regress/polymorphic-put-by-id.html
 sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A5.html
 sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A6.html
 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html
-sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html
-sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html
-sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html
 sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.19_String.prototype.toLocaleUpperCase/S15.5.4.19_A1_T1.html
 storage/websql/change-version.html
 

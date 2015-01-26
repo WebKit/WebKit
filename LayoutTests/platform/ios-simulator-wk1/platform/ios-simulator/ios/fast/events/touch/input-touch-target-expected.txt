@@ -1,0 +1,12 @@
+Tests that input elements can receive touch events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.type is "touchstart"
+PASS event.touches[0].target.id is "target"
+PASS event.touches[0].target.nodeName is "INPUT"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

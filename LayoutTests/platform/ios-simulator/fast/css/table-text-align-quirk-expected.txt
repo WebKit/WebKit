@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 555x19
+          text run at (0,0) width 555: "The text below should be left-justified since text-align does not inherit in quirks mode."
+      RenderBlock {DIV} at (0,20) size 784x28
+        RenderTable {TABLE} at (0,0) size 108x28 [border: (1px solid #000000)]
+          RenderTableSection {TBODY} at (1,1) size 106x26
+            RenderTableRow {TR} at (0,2) size 106x22
+              RenderTableCell {TD} at (2,2) size 102x22 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 36x19
+                  text run at (1,1) width 36: "hello."

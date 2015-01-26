@@ -2,6 +2,811 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
+# <rdar://problem/19593910> Many LayoutTests/http tests time out in DumpRenderTree
+http
+
+# <rdar://problem/6501130> LayoutTests: Enable editing tests after we support editing
+editing/deleting/4922367.html
+editing/deleting/5126166.html
+editing/deleting/5144139-2.html
+editing/deleting/5206311-1.html
+editing/deleting/5433862-2.html
+editing/deleting/5483370.html
+editing/deleting/backspace-at-table-cell-beginning.html
+editing/deleting/delete-and-cleanup.html
+editing/deleting/delete-at-start-or-end.html
+editing/deleting/delete-block-merge-contents-025.html
+editing/deleting/delete-br-in-last-table-cell.html
+editing/deleting/delete-cell-contents.html
+editing/deleting/delete-empty-table.html
+editing/deleting/delete-last-char-in-table.html
+editing/deleting/delete-select-all-001.html
+editing/deleting/delete-table-cell-contents.html
+editing/deleting/delete-to-select-table.html
+editing/deleting/forward-delete-empty-table-cell.html
+editing/deleting/paste-with-transparent-background-color.html
+editing/deleting/smart-delete-across-editable-boundaries.html
+editing/deleting/table-cells.html
+editing/execCommand/5119244.html
+editing/execCommand/5432254-1.html
+editing/execCommand/5432254-2.html
+editing/execCommand/5543472-1.html
+editing/execCommand/5543472-2.html
+editing/execCommand/5543472-3.html
+editing/execCommand/5658933-2.html
+editing/execCommand/5658933-3.html
+editing/execCommand/format-block-table.html
+editing/execCommand/indent-empty-table-cell.html
+editing/execCommand/indent-images-2.html
+editing/execCommand/indent-images.html
+editing/execCommand/indent-right-after-table.html
+editing/execCommand/remove-format-in-table-cell.html
+editing/inserting/5058163-1.html
+editing/inserting/6609479-1.html
+editing/inserting/6609479.html
+editing/inserting/insert-3786362-fix.html
+editing/inserting/insert-3907422-fix.html
+editing/inserting/insert-images-in-pre-x-crash.html
+editing/inserting/insert-paragraph-01.html
+editing/inserting/insert-paragraph-02.html
+editing/inserting/insert-without-enclosing-block.html
+editing/inserting/paragraph-separator-in-table-1.html
+editing/inserting/paragraph-separator-in-table-2.html
+editing/inserting/typing-003.html
+editing/pasteboard/19644-2.html
+editing/pasteboard/4242293-1.html
+editing/pasteboard/4922709.html
+editing/pasteboard/5065605.html
+editing/pasteboard/5156401-1.html
+editing/pasteboard/5387578.html
+editing/pasteboard/5761530-1.html
+editing/pasteboard/5780697-1.html
+editing/pasteboard/5780697-2.html
+editing/pasteboard/avoid-copying-body-with-background.html
+editing/pasteboard/block-wrappers-necessary.html
+editing/pasteboard/contenteditable-pre-2.html
+editing/pasteboard/copy-inside-h1-preserves-h1.html
+editing/pasteboard/copy-paste-bidi.html
+editing/pasteboard/copy-paste-content-starting-and-ending-canvas.html
+editing/pasteboard/copy-paste-converts-fixed.html
+editing/pasteboard/copy-paste-converts-sticky.html
+editing/pasteboard/copy-paste-doesnt-convert-sticky-and-fixed-during-partial-copy.html
+editing/pasteboard/copy-paste-inserts-clearing-div.html
+editing/pasteboard/copy-paste-with-important-rules.html
+editing/pasteboard/copy-paste-wraps-position-absolute.html
+editing/pasteboard/copy-text-with-backgroundcolor.html
+editing/pasteboard/copy-text-with-wrapped-tag.html
+editing/pasteboard/display-block-on-spans.html
+editing/pasteboard/do-not-copy-unnecessary-styles-2.html
+editing/pasteboard/do-not-copy-unnecessary-styles.html
+editing/pasteboard/heading-crash.html
+editing/pasteboard/line-feed-between-br-and-b-should-not-reorder-pasted-content.html
+editing/pasteboard/paste-4039777-fix.html
+editing/pasteboard/paste-TIFF.html
+editing/pasteboard/paste-code-in-pre.html
+editing/pasteboard/paste-into-anchor-text.html
+editing/pasteboard/paste-into-table-cell-2.html
+editing/pasteboard/paste-into-table-cell.html
+editing/pasteboard/paste-list-001.html
+editing/pasteboard/paste-list-002.html
+editing/pasteboard/paste-list-003.html
+editing/pasteboard/paste-noplugin.html
+editing/pasteboard/paste-noscript-xhtml.xhtml
+editing/pasteboard/paste-table-001.html
+editing/pasteboard/paste-table-003.html
+editing/pasteboard/paste-table-cells.html
+editing/pasteboard/paste-text-001.html
+editing/pasteboard/paste-text-005.html
+editing/pasteboard/paste-text-006.html
+editing/pasteboard/paste-text-007.html
+editing/pasteboard/paste-text-010.html
+editing/pasteboard/paste-text-011.html
+editing/pasteboard/paste-text-015.html
+editing/pasteboard/paste-text-017.html
+editing/pasteboard/paste-text-018.html
+editing/pasteboard/paste-text-with-style-2.html
+editing/pasteboard/paste-text-with-style-3.html
+editing/pasteboard/paste-text-with-style-4.html
+editing/pasteboard/paste-text-with-style-5.html
+editing/pasteboard/paste-text-with-style.html
+editing/pasteboard/paste-unrendered-select.html
+editing/pasteboard/paste-wrapped-blockquote-into-nonblockquote.html
+editing/pasteboard/pasting-into-p-should-not-nest-p.html
+editing/pasteboard/preserve-line-break-at-end-of-pasted-content.html
+editing/pasteboard/preserve-underline-color.html
+editing/pasteboard/simplfiying-markup-should-not-strip-content.html
+editing/pasteboard/smart-paste-003-trailing-whitespace.html
+editing/pasteboard/style-from-rules.html
+editing/pasteboard/testcase-9507.html
+editing/pasteboard/undoable-fragment-removes.html
+editing/selection/3690703-2.html
+editing/selection/3690703.html
+editing/selection/3690719.html
+editing/selection/4895428-1.html
+editing/selection/4895428-4.html
+editing/selection/5076323-1.html
+editing/selection/5076323-2.html
+editing/selection/5076323-3.html
+editing/selection/7152-2.html
+editing/selection/caret-after-keypress.html
+editing/selection/caret-before-select.html
+editing/selection/editable-non-editable-crash.html
+editing/selection/move-by-line-001.html
+editing/selection/move-by-line-cycles-in-table.html
+editing/selection/move-left-right.html
+editing/selection/skip-non-editable-1.html
+editing/selection/table-caret-3.html
+editing/selection/table-lineboundary.html
+editing/spelling/context-menu-suggestions-subword-selection.html
+editing/spelling/spelling-with-whitespace-selection.html
+editing/style/background-color-retained.html
+editing/style/non-inheritable-styles.html
+editing/style/remove-underline-across-paragraph-in-bold.html
+editing/style/remove-underline-across-paragraph.html
+editing/style/remove-underline-after-paragraph-in-bold.html
+editing/style/remove-underline-after-paragraph.html
+editing/style/remove-underline-from-stylesheet.html
+editing/style/remove-underline-in-bold.html
+editing/style/remove-underline.html
+editing/style/table-selection.html
+editing/style/typing-style-003.html
+editing/style/unbold-in-bold.html
+editing/style/underline.html
+editing/undo/undo-after-event-edited.html
+editing/unsupported-content/table-type-after.html
+editing/unsupported-content/table-type-before.html
+
+# FIXME: Tests that fail due to lack of textInputController <rdar://problem/5106287>
+editing/inserting/insert-composition-whitespace.html [ Failure ]
+
+# FIXME: Tests failing because they produce the wrong markup <rdar://problem/10127241> 
+editing/inserting/insert-before-link-1.html [ Failure ]
+editing/inserting/insert-paragraph-03.html [ Failure ]
+editing/inserting/insert-paragraph-04.html [ Failure ]
+editing/inserting/multiple-lines-selected.html [ Failure ]
+editing/inserting/paragraph-outside-nested-divs.html [ Failure ]
+editing/inserting/paragraph-separator-03.html [ Failure ]
+editing/inserting/return-key-in-hidden-field.html [ Failure ]
+editing/inserting/typing-tab-designmode-forms.html [ Failure ]
+editing/inserting/typing-tab-designmode.html [ Failure ]
+
+# Editing tests that time out:
+editing/deleting/delete-button-background-image-none.html
+editing/input/page-up-down-scrolls.html
+editing/input/reveal-contenteditable-on-input-vertically.html
+editing/pasteboard/copy-backslash-with-euc.html
+editing/pasteboard/copy-standalone-image-crash.html
+editing/selection/caret-at-bidi-boundary.html
+editing/spelling/context-menu-suggestions-multiword-selection.html
+editing/spelling/delete-into-misspelled-word.html
+editing/spelling/design-mode-spellcheck-off.html
+editing/spelling/editing-word-with-marker-2.html
+editing/spelling/grammar-edit-word.html
+editing/spelling/grammar-markers-hidpi.html
+editing/spelling/grammar-markers.html
+editing/spelling/grammar.html
+editing/spelling/inline-spelling-markers-hidpi.html
+editing/spelling/inline-spelling-markers.html
+editing/spelling/markers.html
+editing/spelling/move-cursor-around-misspelled-word.html
+editing/spelling/spellcheck-attribute.html
+editing/spelling/spellcheck-paste-continuous-disabled.html
+editing/spelling/spellcheck-paste-disabled.html
+editing/spelling/spellcheck-paste.html
+editing/spelling/spelling-attribute-at-child.html
+editing/spelling/spelling-attribute-change.html
+editing/spelling/spelling-backspace-between-lines.html
+editing/spelling/spelling-backward.html
+editing/spelling/spelling-changed-text.html
+editing/spelling/spelling-double-clicked-word.html
+editing/spelling/spelling-exactly-selected-word.html
+editing/spelling/spelling-hasspellingmarker.html
+editing/spelling/spelling-insert-html.html
+editing/spelling/spelling-linebreak.html
+editing/spelling/spelling-marker-description.html
+editing/spelling/spelling-with-punctuation-selection.html
+editing/style/apply-style-join-child-text-nodes-crash.html
+
+# Editing tests that fail:
+editing/deleting/4875189.html [ Failure ]
+editing/deleting/4916235-1.html [ Failure ]
+editing/deleting/5032066.html [ Failure ]
+editing/deleting/5206311-2.html [ Failure ]
+editing/deleting/backspace-avoid-preceding-style.html [ Failure ]
+editing/deleting/collapse-whitespace-3587601-fix.html [ Failure ]
+editing/deleting/delete-3608430-fix.html [ Failure ]
+editing/deleting/delete-3608445-fix.html [ Failure ]
+editing/deleting/delete-3608462-fix.html [ Failure ]
+editing/deleting/delete-3775172-fix.html [ Failure ]
+editing/deleting/delete-3800834-fix.html [ Failure ]
+editing/deleting/delete-3857753-fix.html [ Failure ]
+editing/deleting/delete-3865854-fix.html [ Failure ]
+editing/deleting/delete-3928305-fix.html [ Failure ]
+editing/deleting/delete-3959464-fix.html [ Failure ]
+editing/deleting/delete-4038408-fix.html [ Failure ]
+editing/deleting/delete-4083333-fix.html [ Failure ]
+editing/deleting/delete-across-editable-content-boundaries-1.html [ Failure ]
+editing/deleting/delete-across-editable-content-boundaries-2.html [ Failure ]
+editing/deleting/delete-across-editable-content-boundaries-3.html [ Failure ]
+editing/deleting/delete-after-span-ws-001.html [ Failure ]
+editing/deleting/delete-after-span-ws-002.html [ Failure ]
+editing/deleting/delete-after-span-ws-003.html [ Failure ]
+editing/deleting/delete-all-text-in-text-field-assertion.html [ Failure ]
+editing/deleting/delete-and-undo.html [ Failure ]
+editing/deleting/delete-at-paragraph-boundaries-001.html [ Failure ]
+editing/deleting/delete-at-paragraph-boundaries-002.html [ Failure ]
+editing/deleting/delete-at-paragraph-boundaries-003.html [ Failure ]
+editing/deleting/delete-at-paragraph-boundaries-004.html [ Failure ]
+editing/deleting/delete-at-paragraph-boundaries-005.html [ Failure ]
+editing/deleting/delete-at-paragraph-boundaries-006.html [ Failure ]
+editing/deleting/delete-at-paragraph-boundaries-007.html [ Failure ]
+editing/deleting/delete-at-paragraph-boundaries-009.html [ Failure ]
+editing/deleting/delete-at-paragraph-boundaries-010.html [ Failure ]
+editing/deleting/delete-at-paragraph-boundaries-011.html [ Failure ]
+editing/deleting/delete-block-contents-001.html [ Failure ]
+editing/deleting/delete-block-contents-002.html [ Failure ]
+editing/deleting/delete-block-merge-contents-008.html [ Failure ]
+editing/deleting/delete-block-merge-contents-015.html [ Failure ]
+editing/deleting/delete-br-002.html [ Failure ]
+editing/deleting/delete-br-004.html [ Failure ]
+editing/deleting/delete-br-005.html [ Failure ]
+editing/deleting/delete-br-006.html [ Failure ]
+editing/deleting/delete-br-009.html [ Failure ]
+editing/deleting/delete-br-011.html [ Failure ]
+editing/deleting/delete-by-word-001.html [ Failure ]
+editing/deleting/delete-by-word-002.html [ Failure ]
+editing/deleting/delete-image-001.html [ Failure ]
+editing/deleting/delete-image-002.html [ Failure ]
+editing/deleting/delete-image-004.html [ Failure ]
+editing/deleting/delete-leading-ws-001.html [ Failure ]
+editing/deleting/delete-ligature-001.html [ Failure ]
+editing/deleting/delete-ligature-003.html [ Failure ]
+editing/deleting/delete-line-003.html [ Failure ]
+editing/deleting/delete-line-009.html [ Failure ]
+editing/deleting/delete-line-011.html [ Failure ]
+editing/deleting/delete-line-end-ws-001.html [ Failure ]
+editing/deleting/delete-line-end-ws-002.html [ Failure ]
+editing/deleting/delete-tab-001.html [ Failure ]
+editing/deleting/delete-tab-004.html [ Failure ]
+editing/deleting/delete-ws-fixup-001.html [ Failure ]
+editing/deleting/forward-delete-key.html [ Failure ]
+editing/deleting/forward-delete.html [ Failure ]
+editing/deleting/merge-paragraph-from-address.html [ Failure ]
+editing/deleting/merge-paragraph-from-h6-with-style-2.html [ Failure ]
+editing/deleting/merge-paragraph-from-h6-with-style.html [ Failure ]
+editing/deleting/merge-paragraph-from-h6.html [ Failure ]
+editing/deleting/merge-paragraph-from-listing.html [ Failure ]
+editing/deleting/merge-paragraph-from-p-with-style-2.html [ Failure ]
+editing/deleting/merge-paragraph-from-p-with-style-3.html [ Failure ]
+editing/deleting/merge-paragraph-from-p-with-style.html [ Failure ]
+editing/deleting/merge-paragraph-into-blockquote.html [ Failure ]
+editing/deleting/merge-paragraph-into-h1-with-dir-2.html [ Failure ]
+editing/deleting/merge-paragraph-into-h1-with-dir.html [ Failure ]
+editing/deleting/merge-paragraph-into-h1-with-style.html [ Failure ]
+editing/deleting/merge-paragraph-into-h1.html [ Failure ]
+editing/deleting/merge-paragraph-into-pre.html [ Failure ]
+editing/deleting/paragraph-in-preserveNewline.html [ Failure ]
+editing/deleting/pruning-after-merge-1.html [ Failure ]
+editing/deleting/skip-virama-001.html [ Failure ]
+editing/deleting/smart-delete-002.html [ Failure ]
+editing/deleting/smart-delete-across-editable-boundaries-2.html [ Failure ]
+editing/deleting/smart-editing-disabled-mac.html [ Failure ]
+editing/deleting/whitespace-pre-1.html [ Failure ]
+editing/execCommand/15381.html [ Failure ]
+editing/execCommand/16049.html [ Failure ]
+editing/execCommand/19089.html [ Failure ]
+editing/execCommand/19653-1.html [ Failure ]
+editing/execCommand/19653-2.html [ Failure ]
+editing/execCommand/25256.html [ Failure ]
+editing/execCommand/4128080-1.html [ Failure ]
+editing/execCommand/4580583-1.html [ Failure ]
+editing/execCommand/4580583-2.html [ Failure ]
+editing/execCommand/4747450.html [ Failure ]
+editing/execCommand/4916402.html [ Failure ]
+editing/execCommand/4916541.html [ Failure ]
+editing/execCommand/4924441.html [ Failure ]
+editing/execCommand/5049671.html [ Failure ]
+editing/execCommand/5080333-1.html [ Failure ]
+editing/execCommand/5080333-2.html [ Failure ]
+editing/execCommand/5136770.html [ Failure ]
+editing/execCommand/5138441.html [ Failure ]
+editing/execCommand/5142012-1.html [ Failure ]
+editing/execCommand/5142012-2.html [ Failure ]
+editing/execCommand/5190926.html [ Failure ]
+editing/execCommand/5481523.html [ Failure ]
+editing/execCommand/5482023.html [ Failure ]
+editing/execCommand/5569741.html [ Failure ]
+editing/execCommand/button.html [ Failure ]
+editing/execCommand/convert-style-elements-to-spans.html [ Failure ]
+editing/execCommand/createLink.html [ Failure ]
+editing/execCommand/delete-selection-has-style.html [ Failure ]
+editing/execCommand/format-block-multiple-paragraphs-in-pre.html [ Failure ]
+editing/execCommand/format-block-with-braces.html [ Failure ]
+editing/execCommand/format-block-with-trailing-br.html [ Failure ]
+editing/execCommand/forward-delete-no-scroll.html [ Failure ]
+editing/execCommand/hilitecolor.html [ Failure ]
+editing/execCommand/indent-nested-lists-4.html [ Failure ]
+editing/execCommand/indent-nested-lists-7.html [ Failure ]
+editing/execCommand/indent-pre.html [ Failure ]
+editing/execCommand/indent-selection.html [ Failure ]
+editing/execCommand/insert-line-break-no-scroll.html [ Failure ]
+editing/execCommand/outdent-nested-lists-4.html [ Failure ]
+editing/execCommand/query-command-state.html [ Failure ]
+editing/execCommand/remove-format-multiple-elements-mac.html [ Failure ]
+editing/execCommand/remove-format-multiple-elements-win.html [ Failure ]
+editing/execCommand/remove-formatting-2.html [ Failure ]
+editing/execCommand/remove-list-item-1.html [ Failure ]
+editing/execCommand/selectAll.html [ Failure ]
+editing/execCommand/toggle-link-mac.html [ Failure ]
+editing/execCommand/toggle-unlink-mac.html [ Failure ]
+editing/execCommand/unlink.html [ Failure ]
+editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
+editing/input/caret-at-the-edge-of-input.html [ Failure ]
+editing/input/editable-container-with-word-wrap-normal.html [ Failure ]
+editing/input/emacs-ctrl-o.html [ Failure ]
+editing/input/ime-composition-clearpreedit.html [ Failure ]
+editing/input/option-page-up-down.html [ Failure ]
+editing/input/password-echo-passnode.html [ Failure ]
+editing/input/password-echo-passnode2.html [ Failure ]
+editing/input/password-echo-passnode3.html [ Failure ]
+editing/input/password-echo-textnode.html [ Failure ]
+editing/input/paste-text-ending-with-interchange-newline.html [ Failure ]
+editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
+editing/input/reveal-caret-of-multiline-input.html [ Failure ]
+editing/input/reveal-caret-of-transformed-multiline-input.html [ Failure ]
+editing/input/reveal-contenteditable-on-paste-vertically.html [ Failure ]
+editing/input/reveal-edit-on-input-vertically.html [ Failure ]
+editing/input/reveal-edit-on-paste-vertically.html [ Failure ]
+editing/input/scroll-to-edge-if-line-break-at-end-of-document-contenteditable.html [ Failure ]
+editing/input/scroll-to-edge-if-paragraph-separator-at-end-of-document-contenteditable.html [ Failure ]
+editing/input/scroll-viewport-page-up-down.html [ Failure ]
+editing/input/select-all-clear-input-method.html [ Failure ]
+editing/input/setting-input-value-cancel-ime-composition.html [ Failure ]
+editing/input/style-change-during-input.html [ Failure ]
+editing/inserting/4840662.html [ Failure ]
+editing/inserting/4875189-2.html [ Failure ]
+editing/inserting/4960120-1.html [ Failure ]
+editing/inserting/4960120-2.html [ Failure ]
+editing/inserting/5058163-2.html [ Failure ]
+editing/inserting/5418891.html [ Failure ]
+editing/inserting/5510537.html [ Failure ]
+editing/inserting/5549929-2.html [ Failure ]
+editing/inserting/5549929-3.html [ Failure ]
+editing/inserting/6703873.html [ Failure ]
+editing/inserting/break-blockquote-after-delete.html [ Failure ]
+editing/inserting/editable-inline-element.html [ Failure ]
+editing/inserting/edited-whitespace-1.html [ Failure ]
+editing/inserting/insert-3800346-fix.html [ Failure ]
+editing/inserting/insert-br-007.html [ Failure ]
+editing/inserting/insert-character-in-first-letter-crash.html [ Failure ]
+editing/inserting/insert-paragraph-selection-outside-contenteditable.html [ Failure ]
+editing/inserting/insert-paste-bidi-control.html [ Failure ]
+editing/inserting/insert-tab-001.html [ Failure ]
+editing/inserting/inserting-slash-inside-url-with-smart-link.html [ Failure ]
+editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
+editing/pasteboard/19644-1.html [ Failure ]
+editing/pasteboard/4076267-3.html [ Failure ]
+editing/pasteboard/4944770-1.html [ Failure ]
+editing/pasteboard/4944770-2.html [ Failure ]
+editing/pasteboard/4989774.html [ Failure ]
+editing/pasteboard/5006779.html [ Failure ]
+editing/pasteboard/5028447.html [ Failure ]
+editing/pasteboard/5032095.html [ Failure ]
+editing/pasteboard/5071074-2.html [ Failure ]
+editing/pasteboard/5071074.html [ Failure ]
+editing/pasteboard/5075944.html [ Failure ]
+editing/pasteboard/5134759.html [ Failure ]
+editing/pasteboard/5478250.html [ Failure ]
+editing/pasteboard/5601583-1.html [ Failure ]
+editing/pasteboard/can-read-in-copy-and-cut-events.html [ Failure ]
+editing/pasteboard/cleanup-on-move.html [ Failure ]
+editing/pasteboard/clipboard-customData.html [ Failure ]
+editing/pasteboard/contenteditable-pre.html [ Failure ]
+editing/pasteboard/copy-in-password-field.html [ Failure ]
+editing/pasteboard/copy-null-characters.html [ Failure ]
+editing/pasteboard/copy-resolves-urls.html [ Failure ]
+editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
+editing/pasteboard/copy-without-selection.html [ Failure ]
+editing/pasteboard/cut-text-001.html [ Failure ]
+editing/pasteboard/drag-drop-to-data-url.html [ Failure ]
+editing/pasteboard/emacs-cntl-y-001.html [ Failure ]
+editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure ]
+editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
+editing/pasteboard/emacs-ctrl-k-y-001.html [ Failure ]
+editing/pasteboard/file-input-files-access.html [ Failure ]
+editing/pasteboard/files-during-page-drags.html [ Failure ]
+editing/pasteboard/get-data-text-plain-drop.html [ Failure ]
+editing/pasteboard/input-field-1.html [ Failure ]
+editing/pasteboard/input-with-display-none-div.html [ Failure ]
+editing/pasteboard/input-with-visibility-hidden.html [ Failure ]
+editing/pasteboard/insert-div-text-into-text.html [ Failure ]
+editing/pasteboard/interchange-newline-2.html [ Failure ]
+editing/pasteboard/interchange-newline-4.html [ Failure ]
+editing/pasteboard/merge-end-2.html [ Failure ]
+editing/pasteboard/merge-end-3.html [ Failure ]
+editing/pasteboard/merge-end-4.html [ Failure ]
+editing/pasteboard/merge-end-5.html [ Failure ]
+editing/pasteboard/merge-end-list-2.html [ Failure ]
+editing/pasteboard/merge-end-list.html [ Failure ]
+editing/pasteboard/merge-end-table-2.html [ Failure ]
+editing/pasteboard/merge-end-table.html [ Failure ]
+editing/pasteboard/onpaste-text-html-types.html [ Failure ]
+editing/pasteboard/onpaste-text-html.html [ Failure ]
+editing/pasteboard/page-zoom.html [ Failure ]
+editing/pasteboard/paste-4038267-fix.html [ Failure ]
+editing/pasteboard/paste-and-sanitize.html [ Failure ]
+editing/pasteboard/paste-before-tab-span.html [ Failure ]
+editing/pasteboard/paste-blockquote-3.html [ Failure ]
+editing/pasteboard/paste-blockquote-and-paragraph-break.html [ Failure ]
+editing/pasteboard/paste-global-selection.html [ Failure ]
+editing/pasteboard/paste-line-endings-001.html [ Failure ]
+editing/pasteboard/paste-line-endings-002.html [ Failure ]
+editing/pasteboard/paste-line-endings-003.html [ Failure ]
+editing/pasteboard/paste-line-endings-004.html [ Failure ]
+editing/pasteboard/paste-line-endings-005.html [ Failure ]
+editing/pasteboard/paste-line-endings-006.html [ Failure ]
+editing/pasteboard/paste-line-endings-007.html [ Failure ]
+editing/pasteboard/paste-line-endings-008.html [ Failure ]
+editing/pasteboard/paste-line-endings-009.html [ Failure ]
+editing/pasteboard/paste-line-endings-010.html [ Failure ]
+editing/pasteboard/paste-list-004.html [ Failure ]
+editing/pasteboard/paste-noscript-svg.html [ Failure ]
+editing/pasteboard/paste-noscript.html [ Failure ]
+editing/pasteboard/paste-placeholder-input.html [ Failure ]
+editing/pasteboard/paste-plaintext-user-select-none.html [ Failure ]
+editing/pasteboard/paste-pre-001.html [ Failure ]
+editing/pasteboard/paste-pre-002.html [ Failure ]
+editing/pasteboard/paste-sanitize-crash-1.html [ Failure ]
+editing/pasteboard/paste-sanitize-crash-2.html [ Failure ]
+editing/pasteboard/paste-table-002.html [ Failure ]
+editing/pasteboard/paste-text-002.html [ Failure ]
+editing/pasteboard/paste-text-003.html [ Failure ]
+editing/pasteboard/paste-text-004.html [ Failure ]
+editing/pasteboard/paste-text-008.html [ Failure ]
+editing/pasteboard/paste-text-009.html [ Failure ]
+editing/pasteboard/paste-text-012.html [ Failure ]
+editing/pasteboard/paste-text-013.html [ Failure ]
+editing/pasteboard/paste-text-014.html [ Failure ]
+editing/pasteboard/paste-text-016.html [ Failure ]
+editing/pasteboard/paste-text-at-tabspan-001.html [ Failure ]
+editing/pasteboard/paste-text-at-tabspan-002.html [ Failure ]
+editing/pasteboard/paste-text-at-tabspan-003.html [ Failure ]
+editing/pasteboard/paste-text-events.html [ Failure ]
+editing/pasteboard/paste-visible-script.html [ Failure ]
+editing/pasteboard/paste-without-nesting.html [ Failure ]
+editing/pasteboard/paste-xml.xhtml [ Failure ]
+editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
+editing/pasteboard/quirks-mode-br-1.html [ Failure ]
+editing/pasteboard/select-element-1.html [ Failure ]
+editing/pasteboard/smart-paste-001.html [ Failure ]
+editing/pasteboard/smart-paste-002.html [ Failure ]
+editing/pasteboard/smart-paste-003.html [ Failure ]
+editing/pasteboard/smart-paste-004.html [ Failure ]
+editing/pasteboard/smart-paste-005.html [ Failure ]
+editing/pasteboard/smart-paste-006.html [ Failure ]
+editing/pasteboard/smart-paste-007.html [ Failure ]
+editing/pasteboard/smart-paste-008.html [ Failure ]
+editing/pasteboard/smart-paste-in-text-control.html [ Failure ]
+editing/pasteboard/styled-element-markup.html [ Failure ]
+editing/secure-input/password-input-changed-type.html [ Failure ]
+editing/secure-input/password-input-focusing-to-different-frame.html [ Failure ]
+editing/secure-input/password-input-focusing.html [ Failure ]
+editing/secure-input/removed-password-input.html [ Failure ]
+editing/secure-input/reset-state-on-navigation.html [ Failure ]
+editing/selection/4397952.html [ Failure ]
+editing/selection/4818145.html [ Failure ]
+editing/selection/4866671.html [ Failure ]
+editing/selection/4889598.html [ Failure ]
+editing/selection/4895428-3.html [ Failure ]
+editing/selection/4932260-1.html [ Failure ]
+editing/selection/4932260-2.html [ Failure ]
+editing/selection/4932260-3.html [ Failure ]
+editing/selection/4947387.html [ Failure ]
+editing/selection/4960116.html [ Failure ]
+editing/selection/4975120.html [ Failure ]
+editing/selection/4983858.html [ Failure ]
+editing/selection/5007143-2.html [ Failure ]
+editing/selection/5007143.html [ Failure ]
+editing/selection/5057506-2.html [ Failure ]
+editing/selection/5057506.html [ Failure ]
+editing/selection/5081257-1.html [ Failure ]
+editing/selection/5081257-2.html [ Failure ]
+editing/selection/5099303.html [ Failure ]
+editing/selection/5131716-1.html [ Failure ]
+editing/selection/5131716-2.html [ Failure ]
+editing/selection/5131716-3.html [ Failure ]
+editing/selection/5131716-4.html [ Failure ]
+editing/selection/5195166-1.html [ Failure ]
+editing/selection/5354455-1.html [ Failure ]
+editing/selection/anchor-focus1.html [ Failure ]
+editing/selection/anchor-focus2.html [ Failure ]
+editing/selection/anchor-focus3.html [ Failure ]
+editing/selection/block-cursor-overtype-mode.html [ Failure ]
+editing/selection/caret-alignment-for-vertical-text.html [ Failure ]
+editing/selection/caret-bidi-first-and-last-letters.html [ Failure ]
+editing/selection/caret-in-empty-inline-1.html [ Failure ]
+editing/selection/caret-in-empty-inline-2.html [ Failure ]
+editing/selection/caret-mode-paragraph-keys-navigation.html [ Failure ]
+editing/selection/click-in-focusable-link-should-not-clear-selection.html [ Failure ]
+editing/selection/click-outside-editable-div.html [ Failure ]
+editing/selection/collapse-selection-in-bidi.html [ Failure ]
+editing/selection/context-menu-on-text.html [ Failure ]
+editing/selection/context-menu-text-selection.html [ Failure ]
+editing/selection/directionality-after-undo-replace.html [ Failure ]
+editing/selection/double-click-selection-with-dom-mutation.html [ Failure ]
+editing/selection/doubleclick-beside-cr-span.html [ Failure ]
+editing/selection/doubleclick-crash.html [ Failure ]
+editing/selection/doubleclick-inline-first-last-contenteditable.html [ Failure ]
+editing/selection/doubleclick-japanese-text.html [ Failure ]
+editing/selection/doubleclick-whitespace.html [ Failure ]
+editing/selection/drag-select-rapidly.html [ Failure ]
+editing/selection/drag-start-event-client-x-y.html [ Failure ]
+editing/selection/drag-text-delay.html [ Failure ]
+editing/selection/editable-div-clear-on-keydown.html [ Failure ]
+editing/selection/editable-html-element.html [ Failure ]
+editing/selection/editable-links.html [ Failure ]
+editing/selection/extend-after-mouse-selection.html [ Failure ]
+editing/selection/extend-by-character-006.html [ Failure ]
+editing/selection/extend-by-sentence-001.html [ Failure ]
+editing/selection/extend-by-word-001.html [ Failure ]
+editing/selection/extend-forward-by-word-over-non-editable.html [ Failure ]
+editing/selection/extend-inside-transforms-backward.html [ Failure ]
+editing/selection/extend-inside-transforms-forward.html [ Failure ]
+editing/selection/extend-selection-after-double-click.html [ Failure ]
+editing/selection/extend-selection-bidi.html [ Failure ]
+editing/selection/extend-selection-enclosing-block-mac.html [ Failure ]
+editing/selection/extend-selection-enclosing-block-win.html [ Failure ]
+editing/selection/extend-selection-word.html [ Failure ]
+editing/selection/extend-to-line-boundary.html [ Failure ]
+editing/selection/fake-doubleclick.html [ Failure ]
+editing/selection/fake-drag.html [ Failure ]
+editing/selection/find-yensign-and-backslash.html [ Failure ]
+editing/selection/focus-body.html [ Failure ]
+editing/selection/focus_editable_html.html [ Failure ]
+editing/selection/internal-caret-rect.html [ Failure ]
+editing/selection/last-empty-inline.html [ Failure ]
+editing/selection/modify-up-on-rtl-wrapping-text.html [ Failure ]
+editing/selection/move-begin-end.html [ Failure ]
+editing/selection/move-between-lines-of-different-editabilities.html [ Failure ]
+editing/selection/move-by-word-001.html [ Failure ]
+editing/selection/move-by-word-visually-mac.html [ Failure ]
+editing/selection/move-by-word-visually-multi-line.html [ Failure ]
+editing/selection/programmatic-selection-on-mac-is-directionless.html [ Failure ]
+editing/selection/rtl-move-selection-right-left.html [ Failure ]
+editing/selection/select-all-001.html [ Failure ]
+editing/selection/select-all-002.html [ Failure ]
+editing/selection/select-all-003.html [ Failure ]
+editing/selection/select-all-004.html [ Failure ]
+editing/selection/select-bidi-run.html [ Failure ]
+editing/selection/select-line-break-with-opposite-directionality.html [ Failure ]
+editing/selection/select-out-of-editable.html [ Failure ]
+editing/selection/select-out-of-floated-contenteditable.html [ Failure ]
+editing/selection/select-out-of-floated-input.html [ Failure ]
+editing/selection/select-out-of-floated-textarea.html [ Failure ]
+editing/selection/selection-extend-should-not-move-across-caret-on-mac.html [ Failure ]
+editing/selection/shift-click.html [ Failure ]
+editing/selection/shrink-selection-after-shift-pagedown.html [ Failure ]
+editing/selection/unrendered-001.html [ Failure ]
+editing/selection/unrendered-002.html [ Failure ]
+editing/selection/unrendered-003.html [ Failure ]
+editing/selection/unrendered-004.html [ Failure ]
+editing/selection/unrendered-005.html [ Failure ]
+editing/selection/user-select-all-selection.html [ Failure ]
+editing/selection/user-select-all-with-shift.html [ Failure ]
+editing/spelling/centering-misspelling-dots.html [ Failure ]
+editing/spelling/context-menu-suggestions.html [ Failure ]
+editing/spelling/misspelling-dots-dont-extend-beyond-words.html [ Failure ]
+editing/spelling/spellcheck-input-search-crash.html [ Failure ]
+editing/spelling/spelling-unified-emulation.html [ Failure ]
+editing/spelling/spelling.html [ Failure ]
+editing/style/4230923.html [ Failure ]
+editing/style/5046875-2.html [ Failure ]
+editing/style/5084241.html [ Failure ]
+editing/style/5228141.html [ Failure ]
+editing/style/apply-style-atomic.html [ Failure ]
+editing/style/apply-through-end-of-document.html [ Failure ]
+editing/style/block-style-001.html [ Failure ]
+editing/style/block-style-002.html [ Failure ]
+editing/style/block-style-003.html [ Failure ]
+editing/style/block-styles-007.html [ Failure ]
+editing/style/create-block-for-style-001.html [ Failure ]
+editing/style/create-block-for-style-002.html [ Failure ]
+editing/style/create-block-for-style-003.html [ Failure ]
+editing/style/create-block-for-style-004.html [ Failure ]
+editing/style/create-block-for-style-005.html [ Failure ]
+editing/style/create-block-for-style-006.html [ Failure ]
+editing/style/create-block-for-style-007.html [ Failure ]
+editing/style/create-block-for-style-008.html [ Failure ]
+editing/style/create-block-for-style-009.html [ Failure ]
+editing/style/create-block-for-style-010.html [ Failure ]
+editing/style/create-block-for-style-011.html [ Failure ]
+editing/style/create-block-for-style-012.html [ Failure ]
+editing/style/create-block-for-style-013.html [ Failure ]
+editing/style/designmode.html [ Failure ]
+editing/style/font-family-with-space.html [ Failure ]
+editing/style/fore-color-by-name.html [ Failure ]
+editing/style/make-text-writing-direction-inline-mac.html [ Failure ]
+editing/style/push-down-font-styles-mac.html [ Failure ]
+editing/style/push-down-font-styles-win.html [ Failure ]
+editing/style/push-down-implicit-styles-around-list-mac.html [ Failure ]
+editing/style/push-down-implicit-styles-around-list-win.html [ Failure ]
+editing/style/push-down-implicit-styles-mac.html [ Failure ]
+editing/style/smoosh-styles-001.html [ Failure ]
+editing/style/smoosh-styles-003.html [ Failure ]
+editing/style/style-3681552-fix-001.html [ Failure ]
+editing/style/style-3690704-fix.html [ Failure ]
+editing/style/style-boundary-002.html [ Failure ]
+editing/style/style-boundary-003.html [ Failure ]
+editing/style/style-boundary-005.html [ Failure ]
+editing/style/stylewithcss-without-selection.html [ Failure ]
+editing/style/text-indent.html [ Failure ]
+editing/style/toggle-style-bold-italic-mixed-editability.html [ Failure ]
+editing/style/toggle-style-bold-italic.html [ Failure ]
+editing/style/typing-style-001.html [ Failure ]
+editing/style/typing-style-002.html [ Failure ]
+editing/text-iterator/basic-iteration-shadowdom.html [ Failure ]
+editing/text-iterator/first-letter-word-boundary.html [ Failure ]
+editing/undo/4063751.html [ Failure ]
+editing/undo/5378473.html [ Failure ]
+editing/undo/5658727.html [ Failure ]
+editing/undo/redo-split-text-node.html [ Failure ]
+editing/undo/redo-split-text-with-removal.html [ Failure ]
+editing/undo/redo-style.html [ Failure ]
+editing/undo/redo-typing-001.html [ Failure ]
+editing/undo/remove-css-property-and-remove-style.html [ Failure ]
+editing/undo/replace-by-span-then-remove.html [ Failure ]
+editing/undo/replace-text-in-node-preserving-markers-crash.html [ Failure ]
+editing/undo/undo-after-setting-value.html [ Failure ]
+editing/undo/undo-deleteWord.html [ Failure ]
+editing/undo/undo-iframe-location-change.html [ Failure ]
+editing/undo/undo-indent.html [ Failure ]
+editing/undo/undo-misspellings.html [ Failure ]
+editing/undo/undo-smart-delete-reversed-selection.html [ Failure ]
+editing/undo/undo-smart-delete-word.html [ Failure ]
+editing/undo/undo-typing-001.html [ Failure ]
+editing/unsupported-content/table-delete-002.html [ Failure ]
+editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
+editing/caret/color-span-inside-editable.html [ ImageOnlyFailure ]
+editing/pasteboard/copy-element-with-conflicting-background-color-from-rule.html [ ImageOnlyFailure ]
+
+# <rdar://problem/12068794> Many editing/inserting tests have editing delegate callbacks out of order from baseline
+editing/inserting/4278698.html [ Failure ]
+editing/inserting/before-after-input-element.html [ Failure ]
+editing/inserting/editable-html-element.html [ Failure ]
+editing/inserting/editing-empty-divs.html [ Failure ]
+editing/inserting/insert-3654864-fix.html [ Failure ]
+editing/inserting/insert-3775316-fix.html [ Failure ]
+editing/inserting/insert-3778059-fix.html [ Failure ]
+editing/inserting/insert-3851164-fix.html [ Failure ]
+editing/inserting/insert-after-delete-001.html [ Failure ]
+editing/inserting/insert-at-end-01.html [ Failure ]
+editing/inserting/insert-at-end-02.html [ Failure ]
+editing/inserting/insert-br-001.html [ Failure ]
+editing/inserting/insert-br-002.html [ Failure ]
+editing/inserting/insert-br-003.html [ Failure ]
+editing/inserting/insert-br-004.html [ Failure ]
+editing/inserting/insert-br-005.html [ Failure ]
+editing/inserting/insert-br-006.html [ Failure ]
+editing/inserting/insert-br-008.html [ Failure ]
+editing/inserting/insert-br-at-tabspan-001.html [ Failure ]
+editing/inserting/insert-br-at-tabspan-002.html [ Failure ]
+editing/inserting/insert-br-at-tabspan-003.html [ Failure ]
+editing/inserting/insert-br-quoted-001.html [ Failure ]
+editing/inserting/insert-br-quoted-002.html [ Failure ]
+editing/inserting/insert-br-quoted-003.html [ Failure ]
+editing/inserting/insert-br-quoted-004.html [ Failure ]
+editing/inserting/insert-br-quoted-005.html [ Failure ]
+editing/inserting/insert-br-quoted-006.html [ Failure ]
+editing/inserting/insert-div-001.html [ Failure ]
+editing/inserting/insert-div-002.html [ Failure ]
+editing/inserting/insert-div-003.html [ Failure ]
+editing/inserting/insert-div-004.html [ Failure ]
+editing/inserting/insert-div-005.html [ Failure ]
+editing/inserting/insert-div-006.html [ Failure ]
+editing/inserting/insert-div-007.html [ Failure ]
+editing/inserting/insert-div-008.html [ Failure ]
+editing/inserting/insert-div-009.html [ Failure ]
+editing/inserting/insert-div-012.html [ Failure ]
+editing/inserting/insert-div-014.html [ Failure ]
+editing/inserting/insert-div-016.html [ Failure ]
+editing/inserting/insert-div-017.html [ Failure ]
+editing/inserting/insert-div-018.html [ Failure ]
+editing/inserting/insert-div-020.html [ Failure ]
+editing/inserting/insert-div-021.html [ Failure ]
+editing/inserting/insert-div-022.html [ Failure ]
+editing/inserting/insert-div-023.html [ Failure ]
+editing/inserting/insert-div-024.html [ Failure ]
+editing/inserting/insert-div-025.html [ Failure ]
+editing/inserting/insert-div-026.html [ Failure ]
+editing/inserting/insert-div-027.html [ Failure ]
+editing/inserting/insert-paragraph-at-end-of-line.html [ Failure ]
+editing/inserting/insert-space-in-empty-doc.html [ Failure ]
+editing/inserting/insert-tab-002.html [ Failure ]
+editing/inserting/insert-tab-003.html [ Failure ]
+editing/inserting/insert-tab-004.html [ Failure ]
+editing/inserting/insert-text-at-tabspan-001.html [ Failure ]
+editing/inserting/insert-text-at-tabspan-002.html [ Failure ]
+editing/inserting/insert-text-at-tabspan-003.html [ Failure ]
+editing/inserting/insert-text-with-newlines.html [ Failure ]
+editing/inserting/insert-thai-characters-001.html [ Failure ]
+editing/inserting/return-key-with-selection-003.html [ Failure ]
+editing/inserting/typing-001.html [ Failure ]
+editing/inserting/typing-002.html [ Failure ]
+editing/inserting/typing-around-br-001.html [ Failure ]
+editing/inserting/typing-around-image-001.html [ Failure ]
+editing/unsupported-content/list-type-after.html [ Failure ]
+editing/unsupported-content/list-type-before.html [ Failure ]
+
+# Editing tests that are flaky:
+editing/deleting/25322-2.html [ Failure Pass ]
+editing/deleting/4866671.html [ Failure Pass ]
+editing/deleting/5546763.html [ Failure Pass ]
+editing/deleting/5847330-2.html [ Failure Pass ]
+editing/deleting/delete-before-block-image-1.html [ Failure Pass ]
+editing/execCommand/25320.html [ Failure Pass ]
+editing/execCommand/4786404-2.html [ Failure Pass ]
+editing/execCommand/4916235.html [ Failure Pass ]
+editing/execCommand/4916583.html [ Failure Pass ]
+editing/execCommand/4920488.html [ Failure Pass ]
+editing/execCommand/4920742-1.html [ Failure Pass ]
+editing/execCommand/4928635.html [ Failure Pass ]
+editing/execCommand/5062376.html [ Failure Pass ]
+editing/execCommand/5142012-3.html [ Failure Pass ]
+editing/execCommand/5144139-1.html [ Failure Pass ]
+editing/execCommand/5164796.html [ Failure Pass ]
+editing/execCommand/5207369.html [ Failure Pass ]
+editing/execCommand/5210032.html [ Failure Pass ]
+editing/execCommand/5573879.html [ Failure Pass ]
+editing/execCommand/5604313.html [ Failure Pass ]
+editing/execCommand/enabling-and-selection.html [ Failure Pass ]
+editing/input/insert-wrapping-space-in-textarea.html [ Failure Pass ]
+editing/input/set-value-on-input-and-delete.html [ Failure Pass ]
+editing/input/set-value-on-input-and-forward-delete.html [ Failure Pass ]
+editing/input/set-value-on-input-and-type-input.html [ Failure Pass ]
+editing/input/set-value-on-input-and-type-textarea.html [ Failure Pass ]
+editing/inserting/5378847.html [ Failure Pass ]
+editing/inserting/5607069-1.html [ Failure Pass ]
+editing/inserting/5607069-2.html [ Failure Pass ]
+editing/inserting/5607069-3.html [ Failure Pass ]
+editing/inserting/5685601-1.html [ Failure Pass ]
+editing/inserting/5685601-2.html [ Failure Pass ]
+editing/inserting/5685601-3.html [ Failure Pass ]
+editing/inserting/5803706-1.html [ Failure Pass ]
+editing/inserting/5803706-2.html [ Failure Pass ]
+editing/inserting/5994480-2.html [ Failure Pass ]
+editing/inserting/5994480.html [ Failure Pass ]
+editing/inserting/6104369-2.html [ Failure Pass ]
+editing/inserting/6104369.html [ Failure Pass ]
+editing/inserting/6703873-2.html [ Failure Pass ]
+editing/inserting/caret-position.html [ Failure Pass ]
+editing/pasteboard/4744008.html [ Failure Pass ]
+editing/pasteboard/4840662.html [ Failure Pass ]
+editing/pasteboard/4930986-1.html [ Failure Pass ]
+editing/pasteboard/4930986-2.html [ Failure Pass ]
+editing/pasteboard/5245519.html [ Failure Pass ]
+editing/pasteboard/5480736.html [ Failure Pass ]
+editing/pasteboard/5521237.html [ Failure Pass ]
+editing/pasteboard/5665299.html [ Failure Pass ]
+editing/pasteboard/6018653.html [ Failure Pass ]
+editing/pasteboard/copy-image-with-alt-text.html [ Failure Pass ]
+editing/pasteboard/copy-paste-float.html [ Failure Pass ]
+editing/selection/51344.html [ Failure Pass ]
+editing/selection/find-in-text-control.html [ Failure Pass ]
+editing/selection/hit-test-on-text-with-line-height.html [ Failure Pass ]
+editing/style/apply-font-size-to-multiple-nodes.html [ Failure Pass ]
+editing/style/block-style-004.html [ Failure Pass ]
+editing/style/block-style-005.html [ Failure Pass ]
+editing/style/block-style-006.html [ Failure Pass ]
+editing/style/bold-with-dom-changes.html [ Failure Pass ]
+editing/style/font-face-unquote.html [ Failure Pass ]
+editing/style/fontsize-1.html [ Failure Pass ]
+editing/style/heading-text-after-hr.html [ Failure Pass ]
+editing/style/highlight-insert-paragraph.html [ Failure Pass ]
+editing/text-iterator/rtl-selection-crash.html [ Failure Pass ]
+editing/text-iterator/thai-cursor-movement.html [ Failure Pass ]
+editing/unsupported-content/table-delete-001.html [ Failure Pass ]
+editing/unsupported-content/table-delete-003.html [ Failure Pass ]
+
 # Compositing tests that fail:
 compositing/backing/child-layer-no-backing.html [ Failure ]
 compositing/backing/inline-block-no-backing.html [ Failure ]
@@ -68,7 +873,6 @@ compositing/overflow/clipping-behaviour-change-is-not-propagated-to-descendants2
 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Failure ]
 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
 compositing/overflow/content-gains-scrollbars.html [ Failure ]
-compositing/overflow/overflow-positioning.html [ Failure ]
 compositing/overflow/overflow-scrollbar-layers.html [ Failure ]
 compositing/repaint/fixed-background-scroll.html [ Failure ]
 compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
@@ -119,11 +923,203 @@ compositing/masks/cease-tiled-mask.html [ ImageOnlyFailure Pass ]
 compositing/reflections/repaint-with-reflection.html [ ImageOnlyFailure Pass ]
 compositing/repaint/clipped-layer-size-change.html [ ImageOnlyFailure Pass ]
 
+# CSS tests that fail:
+css2.1/t0805-c5518-brdr-t-01-e.html [ Failure ]
+css2.1/t0805-c5519-brdr-r-00-a.html [ Failure ]
+css2.1/t0805-c5520-brdr-b-01-e.html [ Failure ]
+css2.1/t0805-c5521-brdr-l-00-a.html [ Failure ]
+css2.1/t0805-c5521-brdr-l-01-e.html [ Failure ]
+css2.1/t0805-c5521-ibrdr-l-00-a.html [ Failure ]
+css2.1/t0905-c414-flt-02-c.html [ Failure ]
+css2.1/t0905-c414-flt-03-c.html [ Failure ]
+css2.1/t0905-c414-flt-04-c.html [ Failure ]
+css2.1/t0905-c414-flt-fit-01-d-g.html [ Failure ]
+css2.1/t0905-c5525-fltblck-01-d.html [ Failure ]
+css2.1/t0905-c5525-flthw-00-c-g.html [ Failure ]
+css2.1/t0905-c5525-fltwidth-02-c-g.html [ Failure ]
+css2.1/t0905-c5526-flthw-00-c-g.html [ Failure ]
+css2.1/t090501-c5525-flt-l-00-b-g.html [ Failure ]
+css2.1/t090501-c5525-flt-r-00-b-g.html [ Failure ]
+css2.1/t100304-c43-rpl-bbx-01-d-g.html [ Failure ]
+css2.1/t1202-counter-09-b.html [ Failure ]
+css2.1/t1202-counters-09-b.html [ Failure ]
+
+# Perf tests that fail:
+perf/show-hide-table-rows.html [ Failure ]
+
+# Perf tests that are flaky:
+perf/typing-at-end-of-line.html [ Failure Pass ]
+
+# Scrollbar tests that are flaky:
+scrollbars/scrollbar-click-does-not-blur-content.html [ Failure Pass ]
+
+# MathML tests that time out:
+mathml/opentype/horizontal-munderover.html
+mathml/opentype/horizontal.html
+mathml/opentype/large-operators.html
+mathml/opentype/munderover-layout-resize.html
+mathml/opentype/vertical.html
+mathml/presentation/mo-invisible.html
+
+# MathML tests that fail:
+mathml/presentation/bug97990.html [ ImageOnlyFailure ]
+mathml/presentation/mo-stretch-update.html [ ImageOnlyFailure ]
+mathml/presentation/scripts-subsup.html [ ImageOnlyFailure ]
+mathml/presentation/semantics.html [ ImageOnlyFailure ]
+mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
+
+# SVG tests that fail:
+svg/animations/svglengthlist-animation-3.html [ Failure ]
+svg/custom/svg-fonts-fallback.xhtml [ Failure ]
+svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure ]
+svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure ]
+svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-1.svg [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2a.svg [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2b.svg [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2c.svg [ ImageOnlyFailure ]
+svg/animations/animateMotion-additive-2d.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-by-scale-1.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-by-scale.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-from-by-from-to-comparision.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-from-by-scale.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-rotate-around-point.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-skewX.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-skewY.svg [ ImageOnlyFailure ]
+svg/animations/animateTransform-translate.svg [ ImageOnlyFailure ]
+svg/animations/list-wrapper-assertion.svg [ ImageOnlyFailure ]
+svg/animations/multiple-animateTransform-additive-sum.svg [ ImageOnlyFailure ]
+svg/animations/path-animation.svg [ ImageOnlyFailure ]
+svg/animations/polygon-set.svg [ ImageOnlyFailure ]
+svg/animations/polyline-set.svg [ ImageOnlyFailure ]
+svg/animations/reset-animation-crash.html [ ImageOnlyFailure ]
+svg/animations/svg-two-animate-elements-crash.svg [ ImageOnlyFailure ]
+svg/as-image/svg-as-image-canvas.html [ ImageOnlyFailure ]
+svg/clip-path/clip-path-text-001.svg [ ImageOnlyFailure ]
+svg/clip-path/clip-path-text-002.svg [ ImageOnlyFailure ]
+svg/clip-path/clip-path-text-003.svg [ ImageOnlyFailure ]
+svg/clip-path/clip-path-text-004.svg [ ImageOnlyFailure ]
+svg/clip-path/clip-path-text-005.svg [ ImageOnlyFailure ]
+svg/css/svg-resource-fragment-identifier-img-src.html [ ImageOnlyFailure ]
+svg/custom/hidpi-masking-clipping.svg [ ImageOnlyFailure ]
+svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
+
 # LayoutTests/fast tests that fail:
+fast/block/min-max-height-percent-height-child.html [ Failure ]
 fast/borders/bidi-002.html [ Failure ]
+fast/css/ex-unit-with-no-x-height.html [ Failure ]
+fast/css/line-height-text-autosizing.html [ Failure ]
+fast/css/nested-rounded-corners.html [ Failure ]
+fast/css/relative-positioned-block-crash.html [ Failure ]
+fast/css/word-spacing-between-blocks.html [ ImageOnlyFailure ]
+fast/css/word-spacing-between-inlines.html [ ImageOnlyFailure ]
+fast/css/zoom-body-scroll.html [ Failure ]
+fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html [ Failure ]
+fast/dom/Element/getBoundingClientRect-getClientRects-relative-to-viewport.html [ Failure ]
+fast/dom/Element/scrollLeft-Quirks.html [ Failure ]
+fast/dom/Element/scrollLeft.html [ Failure ]
+fast/dom/Element/scrollTop-Quirks.html [ Failure ]
+fast/dom/Element/scrollTop.html [ Failure ]
 fast/dom/HTMLLinkElement/prefetch-beforeload.html [ Failure ]
+fast/dom/Range/getBoundingClientRect-getClientRects-relative-to-viewport.html [ Failure ]
+fast/dom/Window/Plug-ins.html [ Failure ]
+fast/dom/Window/window-lookup-precedence.html [ Failure ]
+fast/dom/Window/window-postmessage-clone-deep-array.html [ Failure ]
+fast/dom/Window/window-scroll-arguments.html [ Failure ]
+fast/dom/assign-to-window-status.html [ Failure ]
+fast/dom/elementFromPoint-relative-to-viewport.html [ Failure ]
+fast/dom/elementFromPoint-scaled-scrolled.html [ Failure ]
+fast/dom/scroll-element-to-rect.html [ Failure ]
+fast/dom/timer-throttle-on-scrolling-iframe-away.html [ Failure ]
+fast/dom/timer-unthrottle-on-scroll.html [ Failure ]
+fast/dom/zoom-scroll-page-test.html [ Failure ]
+fast/events/controlclick-no-onclick.html [ Failure ]
+fast/events/fire-scroll-event.html [ Failure ]
+fast/events/mousedown-in-subframe-scrollbar.html [ Failure ]
+fast/events/no-blur-on-page-leave.html [ Failure ]
+fast/events/scale-and-scroll-window.html [ Failure ]
 fast/events/touch/gesture/gesture-scrollbar.html [ Failure ]
 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
+fast/forms/caret-rtl.html [ Failure ]
+fast/forms/date/date-interactive-validation-required.html [ Failure ]
+fast/forms/datetime/datetime-interactive-validation-required.html [ Failure ]
+fast/forms/datetimelocal/datetimelocal-interactive-validation-required.html [ Failure ]
+fast/forms/input-maxlength-ime-completed.html [ Failure ]
+fast/forms/input-maxlength-ime-preedit.html [ Failure ]
+fast/forms/input-paste-undo.html [ Failure ]
+fast/forms/interactive-validation-assertion-by-validate-twice.html [ Failure ]
+fast/forms/interactive-validation-prevented.html [ Failure ]
+fast/forms/month/month-interactive-validation-required.html [ Failure ]
+fast/forms/number/number-appearance-rtl.html [ Failure ]
+fast/forms/number/number-interactive-validation-required.html [ Failure ]
+fast/forms/plaintext-mode-1.html [ Failure ]
+fast/forms/textarea-newline.html [ Failure ]
+fast/forms/time/time-interactive-validation-required.html [ Failure ]
+fast/forms/validation-message-on-checkbox.html [ Failure ]
+fast/forms/validation-message-on-listbox.html [ Failure ]
+fast/forms/validation-message-on-menulist.html [ Failure ]
+fast/forms/validation-message-on-radio.html [ Failure ]
+fast/forms/validation-message-on-range.html [ Failure ]
+fast/forms/validation-message-on-textarea.html [ Failure ]
+fast/forms/week/week-interactive-validation-required.html [ Failure ]
+fast/harness/show-modal-dialog.html [ Failure ]
+fast/hidpi/image-srcset-invalid-descriptor.html [ Failure ]
+fast/html/meter-user-modify.html [ Failure ]
+fast/html/set-text-direction.html [ Failure ]
+fast/layers/scroll-rect-to-visible.html [ Failure ]
+fast/loader/file-protocol-fragment.html [ Failure ]
+fast/loader/scroll-position-restored-on-back.html [ Failure ]
+fast/loader/user-stylesheet-fast-path.html [ Failure ]
+fast/overflow/child-100percent-height-inside-fixed-container-with-overflow-auto.html [ Failure ]
+fast/overflow/overflow-focus-ring.html [ Failure ]
+fast/overflow/overflow-update-transform.html [ Failure ]
+fast/overflow/replaced-child-100percent-height-inside-fixed-container-with-overflow-auto.html [ Failure ]
+fast/overflow/scroll-vertical-not-horizontal.html [ Failure ]
+fast/sub-pixel/selection/selection-gaps-at-fractional-offsets.html [ Failure ]
+fast/text/delete-hard-break-character.html [ Failure ]
+fast/transforms/transformed-caret.html [ Failure ]
+fast/transforms/transformed-focused-text-input.html [ Failure ]
+fast/borders/hidpi-border-clipping-right-after-move.html [ ImageOnlyFailure ]
+fast/css/sticky/sticky-overflowing.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ ImageOnlyFailure ]
+fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
+fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
+fast/multicol/nested-filter-in-columns.html [ ImageOnlyFailure ]
+fast/multicol/newmulticol/hide-box-horizontal-bt.html [ ImageOnlyFailure ]
+fast/multicol/newmulticol/hide-box-vertical-lr.html [ ImageOnlyFailure ]
+fast/multicol/newmulticol/hide-box-vertical-rl.html [ ImageOnlyFailure ]
+fast/regions/region-styling/region-style-block-background-color2.html [ ImageOnlyFailure ]
+fast/shapes/shape-outside-floats/shape-outside-floats-circle-000.html [ ImageOnlyFailure ]
+fast/shapes/shape-outside-floats/shape-outside-floats-ellipse-000.html [ ImageOnlyFailure ]
+fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-bottom-left.html [ ImageOnlyFailure ]
+fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-bottom-right.html [ ImageOnlyFailure ]
+fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-large-radius.html [ ImageOnlyFailure ]
+fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-left.html [ ImageOnlyFailure ]
+fast/shapes/shape-outside-floats/shape-outside-floats-inset-rounded-top-right.html [ ImageOnlyFailure ]
+fast/shapes/shape-outside-floats/shape-outside-insert-svg-shape.html [ ImageOnlyFailure ]
+fast/sub-pixel/simple-clipping.html [ ImageOnlyFailure ]
+fast/table/caption-encloses-overhanging-float.html [ ImageOnlyFailure ]
+fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
+fast/text/font-kerning.html [ ImageOnlyFailure ]
+fast/text/simple-lines-hover-after.html [ ImageOnlyFailure ]
+fast/text/small-line-height.html [ ImageOnlyFailure ]
+fast/text/svg-small-caps.html [ ImageOnlyFailure ]
+fast/text/text-rendering-with-input-selection.html [ ImageOnlyFailure ]
+fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
+
+# Inspector protocol tests that fail:
+inspector-protocol/debugger/breakpoint-eval-with-exception.html [ Failure ]
+inspector-protocol/debugger/setBreakpoint-actions.html [ Failure ]
+
+# JavaScripts tests that fail:
+js/dom/deep-recursion-test.html [ Failure ]
+js/large-expressions.html [ Failure ]
+
+# iOS-specific tests that fail:
+platform/ios-simulator/ios/scrolling/scrollTo-at-page-load.html [ Failure ]
+platform/ios-simulator/ios/scrolling/overflow-div-scrolling.html [ Failure ]
+platform/ios-simulator/ios/storage/domstorage/5mb-quota.html [ Failure ]
+platform/ios-simulator/ios/touch/touch-handler-on-window.html [ Failure ]
 
 # LayoutTests/fast test that time out:
 fast/block/positioning/vertical-rl/001.html
@@ -146,3 +1142,99 @@ fast/forms/validation-message-in-relative-body.html
 fast/frames/lots-of-iframes.html
 fast/frames/lots-of-objects.html
 fast/images/animated-gif-webkit-transform.html
+
+# LayoutTests/fast tests that are flaky:
+fast/html/tab-order.html
+fast/block/br-with-clearance-after-collapsing-space.html [ ImageOnlyFailure Pass ]
+fast/dynamic/selection-gets-cleared-when-part-of-it-gets-removed.html [ ImageOnlyFailure Pass ]
+fast/forms/number/number-placeholder-with-unacceptable-value.html [ ImageOnlyFailure Pass ]
+fast/overflow/border-radius-clipping-2.html [ ImageOnlyFailure Pass ]
+fast/dom/HTMLDocument/active-element-frames.html [ Failure Pass ]
+fast/dom/HTMLDocument/activeElement.html [ Failure Pass ]
+fast/dom/remove-body-during-body-replacement2.html [ Failure Pass ]
+fast/events/beforeload-input-time-crash.html [ Failure Pass ]
+fast/events/onsearch-enter.html [ Failure Pass ]
+fast/forms/11423.html [ Failure Pass ]
+fast/forms/25153.html [ Failure Pass ]
+fast/forms/8250.html [ Failure Pass ]
+fast/forms/ValidityState-tooLong-input.html [ Failure Pass ]
+fast/forms/ValidityState-tooLong-textarea.html [ Failure Pass ]
+fast/forms/ValidityState-valueMissing-002.html [ Failure Pass ]
+fast/forms/number/number-blur-twice.html [ Failure Pass ]
+fast/forms/number/number-commit-valid-only.html [ Failure Pass ]
+fast/forms/number/number-keyoperation.html [ Failure Pass ]
+fast/forms/number/number-l10n-input.html [ Failure Pass ]
+fast/frames/detach-frame-during-focus.html [ Failure Pass ]
+fast/images/crossfade-client-not-removed-crash.html [ Failure Pass ]
+
+# SVG tests that are flaky:
+imported/mozilla/svg/as-image/img-dyn-1.html [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-filter-contents-01a.svg [ ImageOnlyFailure Pass ]
+imported/mozilla/svg/dynamic-gradient-contents-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-marker-02.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-marker-03.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-opacity-property-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-small-object-scaled-up-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-text-04.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-text-05.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-text-07.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/dynamic-text-08.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/filters/feConvolveMatrix-1.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/filters/feConvolveMatrix-2.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/filters/feSpecularLighting-1.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/filters/feTurbulence-offset.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/foreignObject-ancestor-style-change-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-opacity-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-opacity-02.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-rotate-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-translate-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-x-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-xy-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/image/image-y-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/non-scaling-stroke-03.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/outer-svg-border-and-padding-01.svg [ ImageOnlyFailure Pass ]
+imported/mozilla/svg/pattern-live-01a.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/smil/anim-feConvolveMatrix-order-01.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/smil/motion/animateMotion-values-paced-1a.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/smil/transform/rotate-angle-1.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/stroke-width-percentage-02a.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/dynamic-dominant-baseline.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/dynamic-font-size-2.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/dynamic-font-size.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/multiple-x-percentages-2-iframe.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/simple-fill-color-dynamic.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/text/text-shadow.svg [ ImageOnlyFailure ]
+
+# Userscripts that fail:
+userscripts/user-script-audio-document.html [ Failure ]
+userscripts/user-script-video-document.html [ Failure ]
+
+# Misc tests that assert:
+compositing/overflow/overflow-positioning.html
+css3/filters/filter-animation-from-none-hw.html
+fast/css/image-set-value-not-removed-crash.html
+fast/css3-text/css3-text-decoration/text-decoration-unprefix.html
+fast/dom/offset-parent-positioned-and-inline.html
+fast/forms/input-live-pseudo-selectors.html
+fast/inline/inline-box-adjust-position-crash2.html
+fast/regions/animated-image-in-region.html
+fast/ruby/text-emphasis.html
+fast/text/emphasis-height-crash.html
+fast/text/emphasis-vertical.html
+fast/text/emphasis.html
+inspector-protocol/debugger/pause-dedicated-worker.html
+inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html
+inspector/css/selector-dynamic-specificity.html
+inspector/model/remote-object-get-properties.html
+transitions/cubic-bezier-overflow-transform.html
+
+# Misc tests that time out:
+editing/execCommand/enabling-and-selection-2.html
+fast/events/autoscroll-should-not-stop-on-keypress.html
+fast/forms/image/image-error-event-modifies-type-crash.html
+fast/images/animated-gif-iframe-webkit-transform.html
+fast/images/animated-gif-window-resizing.html
+fast/images/animated-gif-zooming.html
+fast/loader/recursive-before-unload-crash.html
+security/block-test-no-port.html
+security/block-test.html
