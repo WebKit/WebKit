@@ -50,6 +50,7 @@ enum PropertyWhitelistType {
 class CSSSelector;
 class ContainerNode;
 class MediaQueryEvaluator;
+class Node;
 class StyleResolver;
 class StyleRuleRegion;
 class StyleSheetContents;
@@ -172,7 +173,7 @@ public:
 
     const RuleDataVector* idRules(AtomicStringImpl* key) const { return m_idRules.get(key); }
     const RuleDataVector* classRules(AtomicStringImpl* key) const { return m_classRules.get(key); }
-    const RuleDataVector* tagRules(AtomicStringImpl* key) const { return m_tagRules.get(key); }
+    const RuleDataVector* tagRules(AtomicStringImpl* key, bool isHTMLName) const;
     const RuleDataVector* shadowPseudoElementRules(AtomicStringImpl* key) const { return m_shadowPseudoElementRules.get(key); }
     const RuleDataVector* linkPseudoClassRules() const { return &m_linkPseudoClassRules; }
 #if ENABLE(VIDEO_TRACK)
@@ -193,7 +194,8 @@ private:
 
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;
-    AtomRuleMap m_tagRules;
+    AtomRuleMap m_tagLocalNameRules;
+    AtomRuleMap m_tagLowercaseLocalNameRules;
     AtomRuleMap m_shadowPseudoElementRules;
     RuleDataVector m_linkPseudoClassRules;
 #if ENABLE(VIDEO_TRACK)
@@ -212,6 +214,16 @@ inline RuleSet::RuleSet()
     : m_ruleCount(0)
     , m_autoShrinkToFitEnabled(true)
 {
+}
+
+inline const RuleSet::RuleDataVector* RuleSet::tagRules(AtomicStringImpl* key, bool isHTMLName) const
+{
+    const AtomRuleMap* tagRules;
+    if (isHTMLName)
+        tagRules = &m_tagLowercaseLocalNameRules;
+    else
+        tagRules = &m_tagLocalNameRules;
+    return tagRules->get(key);
 }
 
 } // namespace WebCore

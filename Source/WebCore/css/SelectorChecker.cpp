@@ -543,6 +543,21 @@ static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::CheckingCon
     return false;
 }
 
+static inline bool tagMatches(const Element& element, const CSSSelector& simpleSelector)
+{
+    const QualifiedName& tagQName = simpleSelector.tagQName();
+
+    if (tagQName == anyQName())
+        return true;
+
+    const AtomicString& localName = (element.isHTMLElement() && element.document().isHTMLDocument()) ? simpleSelector.tagLowercaseLocalName() : tagQName.localName();
+
+    if (localName != starAtom && localName != element.localName())
+        return false;
+    const AtomicString& namespaceURI = tagQName.namespaceURI();
+    return namespaceURI == starAtom || namespaceURI == element.namespaceURI();
+}
+
 bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoIdSet& dynamicPseudoIdSet, MatchType& matchType, unsigned& specificity) const
 {
     Element* const & element = context.element;
@@ -553,7 +568,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
     specificity = CSSSelector::addSpecificities(specificity, selector->simpleSelectorSpecificity());
 
     if (selector->match() == CSSSelector::Tag)
-        return SelectorChecker::tagMatches(element, selector->tagQName());
+        return tagMatches(*element, *selector);
 
     if (selector->match() == CSSSelector::Class)
         return element->hasClass() && element->classNames().contains(selector->value());

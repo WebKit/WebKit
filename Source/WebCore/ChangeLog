@@ -1,3 +1,126 @@
+2015-01-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix CSS Selector's tag name matching when mixing HTML and XML
+        https://bugs.webkit.org/show_bug.cgi?id=140878
+
+        Reviewed by Darin Adler.
+
+        Previsouly, WebKit was unable to match any XML element that had
+        any uppercase character if the stylesheet was in a HTML document.
+        This problem was most often reported due to the inability to style
+        SVG-in-HTML.
+
+        The reason was that the tag local name was incorrectly transformed
+        to lowercase at parsing time. Instead, we are supposed to only
+        do case-insensitive match for HTML elements in a HTML document.
+
+        This fix is very similar with how we handle attributes:
+        -Keep both the original and the lowercase versions of the name.
+        -When matching, chose which version to use depending on the element being matched.
+
+        There is one major difference in the way the names are stored.
+        Unlike attribute selectors, tag name selectors are common, and the uppercase
+        version is not that uncommon. I wanted to preserve the dense representation
+        so I specialized CSSSelector specifically for tag names.
+
+        To store the data, if the name is already lowercase, just use the m_data pointer
+        as usual.
+        If the name is not lowercase, allocate a new small structure in the union to store
+        both names.
+
+        Tests: fast/css/tagname-and-namespace-case-sensitivity-xml-in-html.html
+               fast/css/tagname-and-namespace-case-sensitivity-xml-in-xhtml-expected.xhtml
+               fast/css/tagname-and-namespace-case-sensitivity-xml-in-xhtml.xhtml
+               fast/css/tagname-case-sensitivity-svg-in-html.html
+               fast/css/tagname-case-sensitivity-svg-in-xhtml-expected.xhtml
+               fast/css/tagname-case-sensitivity-svg-in-xhtml.xhtml
+               fast/css/tagname-case-sensitivity-xml-in-html.html
+               fast/css/tagname-case-sensitivity-xml-in-xhtml-expected.xhtml
+               fast/css/tagname-case-sensitivity-xml-in-xhtml.xhtml
+               fast/selectors/element-closest-tagname-case-sensitivity-svg-in-html.html
+               fast/selectors/element-closest-tagname-case-sensitivity-svg-in-xhtml.xhtml
+               fast/selectors/element-matches-tagname-case-sensitivity-svg-in-html.html
+               fast/selectors/element-matches-tagname-case-sensitivity-svg-in-xhtml.xhtml
+               fast/selectors/querySelector-tagname-case-sensitivity-svg-in-html.html
+               fast/selectors/querySelector-tagname-case-sensitivity-svg-in-xhtml.xhtml
+               fast/selectors/querySelector-tagname-case-sensitivity-xml-in-html.html
+               fast/selectors/querySelector-tagname-case-sensitivity-xml-in-xhtml.xhtml
+               fast/selectors/tagname-adjacent-backtracking-case-sensitivity-html.html
+               fast/selectors/tagname-descendant-backtracking-case-sensitivity-html.html
+
+        * css/CSSGrammar.y.in:
+        The parser is unaware of anything case related. CSSSelector takes care of that.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::createRareData):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::NameWithCase::NameWithCase):
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::~CSSSelector):
+        (WebCore::CSSSelector::tagQName):
+        (WebCore::CSSSelector::tagLowercaseLocalName):
+        The new representation stores both the original form and the lower case
+        form.
+
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule):
+        (WebCore::RuleSet::shrinkToFit):
+        * css/RuleSet.h:
+        (WebCore::RuleSet::tagRules):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        The tag name partition is now split in two: lowercase and original case.
+        If the matched element is HTML, the lowercase partition is used. 
+
+        * css/SelectorFilter.cpp:
+        (WebCore::collectElementIdentifierHashes):
+        (WebCore::collectDescendantSelectorIdentifierHashes):
+        This is the most annoying part of the patch performance wise:
+        the bloom filter knows the case of the real elements but it cannot know
+        how selectors will match them.
+
+        To make it work, all names are now converted to lowercase.
+        That implies that we can filter less on XML and we may have to pay for
+        converting the tag name to lowercase.
+
+        I expect the performance hit to be small because:
+        -Having two XML elements with the same name but different case is uncommon.
+        -Most elements use lowercase names.
+
+        Still sad...that's the price to pay for correctness.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::tagMatches):
+        (WebCore::SelectorChecker::checkOne):
+        * css/SelectorChecker.h:
+        (WebCore::SelectorChecker::tagMatches): Deleted.
+        Update the legacy matcher, nothing special.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorFragment::SelectorFragment):
+        (WebCore::SelectorCompiler::TagNamePattern::TagNamePattern):
+        (WebCore::SelectorCompiler::constructFragmentsInternal):
+        (WebCore::SelectorCompiler::equalTagNames):
+        (WebCore::SelectorCompiler::equalTagNamePatterns):
+        (WebCore::SelectorCompiler::computeBacktrackingStartOffsetInChain):
+        (WebCore::SelectorCompiler::computeBacktrackingHeightFromDescendant):
+        (WebCore::SelectorCompiler::computeBacktrackingWidthFromIndirectAdjacent):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasTagName):
+        Tag names are used to optimize backtracking; this is quite common for descendant
+        (e.g. div > ul > li).
+        We have to differenciate one new case there: if two tag names are equal
+        when compared case-insensitively but strictly different, they may still
+        be equal if they don't match the same kind of elements or both matches
+        and HTML element.
+
+        * dom/SelectorQuery.cpp:
+        (WebCore::localNameMatches):
+        (WebCore::elementsForLocalName):
+        (WebCore::SelectorDataList::executeSingleTagNameSelectorData):
+        Update the inline versions of SelectorQuery.
+
 2015-01-26  Chris Dumez  <cdumez@apple.com>
 
         Use std::forward() instead of WTF::move() in CSSPrimitiveValue::create(T&& value)

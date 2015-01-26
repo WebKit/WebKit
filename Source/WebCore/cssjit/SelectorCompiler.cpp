@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Yusuke Suzuki <utatane.tea@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -159,7 +159,7 @@ struct SelectorFragment {
         , tagNameMatchedBacktrackingStartWidthFromIndirectAdjacent(invalidWidth)
         , tagNameNotMatchedBacktrackingStartWidthFromIndirectAdjacent(invalidWidth)
         , widthFromIndirectAdjacent(0)
-        , tagName(nullptr)
+        , tagNameSelector(nullptr)
         , id(nullptr)
         , langFilter(nullptr)
         , pseudoElementSelector(nullptr)
@@ -185,7 +185,7 @@ struct SelectorFragment {
 
     // FIXME: the large stack allocation caused by the inline capacity causes memory inefficiency. We should dump
     // the min/max/average of the vectors and pick better inline capacity.
-    const QualifiedName* tagName;
+    const CSSSelector* tagNameSelector;
     const AtomicString* id;
     const AtomicString* langFilter;
     Vector<const AtomicStringImpl*, 8> classNames;
@@ -224,11 +224,11 @@ public:
 
 struct TagNamePattern {
     TagNamePattern()
-        : tagName(nullptr)
+        : tagNameSelector(nullptr)
         , inverted(false)
     {
     }
-    const QualifiedName* tagName;
+    const CSSSelector* tagNameSelector;
     bool inverted;
 };
 
@@ -301,7 +301,7 @@ private:
     void generateElementAttributeValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AttributeMatchingInfo& attributeInfo);
     void generateElementAttributeValueExactMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, bool caseSensitive);
     void generateElementAttributeFunctionCallValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomicString& expectedValue, bool caseSensitive, JSC::FunctionPtr caseSensitiveTest, JSC::FunctionPtr caseInsensitiveTest);
-    void generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch);
+    void generateElementHasTagName(Assembler::JumpList& failureCases, const CSSSelector& tagMatchingSelector);
     void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomicString& idToMatch);
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomicStringImpl*>& classNames);
     void generateElementIsLink(Assembler::JumpList& failureCases);
@@ -913,9 +913,9 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
 
         switch (selector->match()) {
         case CSSSelector::Tag:
-            ASSERT(!fragment->tagName);
-            fragment->tagName = &(selector->tagQName());
-            if (*fragment->tagName != anyQName())
+            ASSERT(!fragment->tagNameSelector);
+            fragment->tagNameSelector = selector;
+            if (fragment->tagNameSelector->tagQName() != anyQName())
                 fragment->onlyMatchesLinksInQuirksMode = false;
             break;
         case CSSSelector::Id: {
@@ -1368,26 +1368,35 @@ enum class TagNameEquality {
     StrictlyEqual
 };
 
-static inline TagNameEquality equalTagNames(const QualifiedName* lhs, const QualifiedName* rhs)
+static inline TagNameEquality equalTagNames(const CSSSelector* lhs, const CSSSelector* rhs)
 {
-    if (!lhs || *lhs == anyQName())
+    if (!lhs || !rhs)
         return TagNameEquality::MaybeEqual;
 
-    if (!rhs || *rhs == anyQName())
+    const QualifiedName& lhsQualifiedName = lhs->tagQName();
+    if (lhsQualifiedName == anyQName())
         return TagNameEquality::MaybeEqual;
 
-    ASSERT(lhs && rhs);
+    const QualifiedName& rhsQualifiedName = rhs->tagQName();
+    if (rhsQualifiedName == anyQName())
+        return TagNameEquality::MaybeEqual;
 
-    const AtomicString& lhsLocalName = lhs->localName();
-    const AtomicString& rhsLocalName = rhs->localName();
+    const AtomicString& lhsLocalName = lhsQualifiedName.localName();
+    const AtomicString& rhsLocalName = rhsQualifiedName.localName();
     if (lhsLocalName != starAtom && rhsLocalName != starAtom) {
-        if (lhsLocalName != rhsLocalName)
+        const AtomicString& lhsLowercaseLocalName = lhs->tagLowercaseLocalName();
+        const AtomicString& rhsLowercaseLocalName = rhs->tagLowercaseLocalName();
+
+        if (lhsLowercaseLocalName != rhsLowercaseLocalName)
             return TagNameEquality::StrictlyNotEqual;
-        return TagNameEquality::StrictlyEqual;
+
+        if (lhsLocalName == lhsLowercaseLocalName && rhsLocalName == rhsLowercaseLocalName)
+            return TagNameEquality::StrictlyEqual;
+        return TagNameEquality::MaybeEqual;
     }
 
-    const AtomicString& lhsNamespaceURI = lhs->namespaceURI();
-    const AtomicString& rhsNamespaceURI = rhs->namespaceURI();
+    const AtomicString& lhsNamespaceURI = lhsQualifiedName.namespaceURI();
+    const AtomicString& rhsNamespaceURI = rhsQualifiedName.namespaceURI();
     if (lhsNamespaceURI != starAtom && rhsNamespaceURI != starAtom) {
         if (lhsNamespaceURI != rhsNamespaceURI)
             return TagNameEquality::StrictlyNotEqual;
@@ -1397,9 +1406,9 @@ static inline TagNameEquality equalTagNames(const QualifiedName* lhs, const Qual
     return TagNameEquality::MaybeEqual;
 }
 
-static inline bool equalTagNamePatterns(const TagNamePattern& lhs, const QualifiedName* rhs)
+static inline bool equalTagNamePatterns(const TagNamePattern& lhs, const TagNamePattern& rhs)
 {
-    TagNameEquality result = equalTagNames(lhs.tagName, rhs);
+    TagNameEquality result = equalTagNames(lhs.tagNameSelector, rhs.tagNameSelector);
     if (result == TagNameEquality::MaybeEqual)
         return true;
 
@@ -1425,7 +1434,7 @@ static inline unsigned computeBacktrackingStartOffsetInChain(const TagNameList& 
         for (unsigned i = 0; i < largestPrefixSize; ++i) {
             unsigned lastIndex = tagNames.size() - 1;
             unsigned currentIndex = lastIndex - i;
-            if (!equalTagNamePatterns(tagNames[currentIndex], tagNames[currentIndex - offsetToLargestPrefix].tagName)) {
+            if (!equalTagNamePatterns(tagNames[currentIndex], tagNames[currentIndex - offsetToLargestPrefix])) {
                 matched = false;
                 break;
             }
@@ -1445,13 +1454,13 @@ static inline void computeBacktrackingHeightFromDescendant(SelectorFragment& fra
         tagNamesForChildChain.clear();
 
         TagNamePattern pattern;
-        pattern.tagName = fragment.tagName;
+        pattern.tagNameSelector = fragment.tagNameSelector;
         tagNamesForChildChain.append(pattern);
         fragment.heightFromDescendant = 0;
         previousChildFragmentInChildChain = nullptr;
     } else if (fragment.relationToRightFragment == FragmentRelation::Child) {
         TagNamePattern pattern;
-        pattern.tagName = fragment.tagName;
+        pattern.tagNameSelector = fragment.tagNameSelector;
         tagNamesForChildChain.append(pattern);
 
         unsigned maxPrefixSize = tagNamesForChildChain.size() - 1;
@@ -1460,7 +1469,7 @@ static inline void computeBacktrackingHeightFromDescendant(SelectorFragment& fra
             maxPrefixSize = tagNamesForChildChain.size() - previousChildFragmentInChildChain->tagNameMatchedBacktrackingStartHeightFromDescendant;
         }
 
-        if (pattern.tagName) {
+        if (pattern.tagNameSelector) {
             // Compute height from descendant in the case that tagName is not matched.
             tagNamesForChildChain.last().inverted = true;
             fragment.tagNameNotMatchedBacktrackingStartHeightFromDescendant = computeBacktrackingStartOffsetInChain(tagNamesForChildChain, maxPrefixSize);
@@ -1493,13 +1502,13 @@ static inline void computeBacktrackingWidthFromIndirectAdjacent(SelectorFragment
         tagNamesForDirectAdjacentChain.clear();
 
         TagNamePattern pattern;
-        pattern.tagName = fragment.tagName;
+        pattern.tagNameSelector = fragment.tagNameSelector;
         tagNamesForDirectAdjacentChain.append(pattern);
         fragment.widthFromIndirectAdjacent = 0;
         previousDirectAdjacentFragmentInDirectAdjacentChain = nullptr;
     } else if (fragment.relationToRightFragment == FragmentRelation::DirectAdjacent) {
         TagNamePattern pattern;
-        pattern.tagName = fragment.tagName;
+        pattern.tagNameSelector = fragment.tagNameSelector;
         tagNamesForDirectAdjacentChain.append(pattern);
 
         unsigned maxPrefixSize = tagNamesForDirectAdjacentChain.size() - 1;
@@ -1508,7 +1517,7 @@ static inline void computeBacktrackingWidthFromIndirectAdjacent(SelectorFragment
             maxPrefixSize = tagNamesForDirectAdjacentChain.size() - previousDirectAdjacentFragmentInDirectAdjacentChain->tagNameMatchedBacktrackingStartWidthFromIndirectAdjacent;
         }
 
-        if (pattern.tagName) {
+        if (pattern.tagNameSelector) {
             // Compute height from descendant in the case that tagName is not matched.
             tagNamesForDirectAdjacentChain.last().inverted = true;
             fragment.tagNameNotMatchedBacktrackingStartWidthFromIndirectAdjacent = computeBacktrackingStartOffsetInChain(tagNamesForDirectAdjacentChain, maxPrefixSize);
@@ -2474,8 +2483,8 @@ void SelectorCodeGenerator::generateBacktrackingTailsIfNeeded(Assembler::JumpLis
 
 void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchingTagNameFailureCases, Assembler::JumpList& matchingPostTagNameFailureCases, const SelectorFragment& fragment)
 {
-    if (fragment.tagName)
-        generateElementHasTagName(matchingTagNameFailureCases, *(fragment.tagName));
+    if (fragment.tagNameSelector)
+        generateElementHasTagName(matchingTagNameFailureCases, *(fragment.tagNameSelector));
 
     generateElementLinkMatching(matchingPostTagNameFailureCases, fragment);
 
@@ -3396,8 +3405,9 @@ void SelectorCodeGenerator::generateElementHasPlaceholderShown(Assembler::JumpLi
     failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 }
 
-inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList& failureCases, const QualifiedName& nameToMatch)
+inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList& failureCases, const CSSSelector& tagMatchingSelector)
 {
+    const QualifiedName& nameToMatch = tagMatchingSelector.tagQName();
     if (nameToMatch == anyQName())
         return;
 
@@ -3407,10 +3417,32 @@ inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList
 
     const AtomicString& selectorLocalName = nameToMatch.localName();
     if (selectorLocalName != starAtom) {
-        // Generate localName == element->localName().
-        LocalRegister constantRegister(m_registerAllocator);
-        m_assembler.move(Assembler::TrustedImmPtr(selectorLocalName.impl()), constantRegister);
-        failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), constantRegister));
+        const AtomicString& lowercaseLocalName = tagMatchingSelector.tagLowercaseLocalName();
+
+        if (selectorLocalName == lowercaseLocalName) {
+            // Generate localName == element->localName().
+            LocalRegister constantRegister(m_registerAllocator);
+            m_assembler.move(Assembler::TrustedImmPtr(selectorLocalName.impl()), constantRegister);
+            failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), constantRegister));
+        } else {
+            Assembler::JumpList caseSensitiveCases;
+            caseSensitiveCases.append(testIsHTMLFlagOnNode(Assembler::Zero, m_assembler, elementAddressRegister));
+            {
+                LocalRegister document(m_registerAllocator);
+                getDocument(m_assembler, elementAddressRegister, document);
+                caseSensitiveCases.append(testIsHTMLClassOnDocument(Assembler::Zero, m_assembler, document));
+            }
+
+            LocalRegister constantRegister(m_registerAllocator);
+            m_assembler.move(Assembler::TrustedImmPtr(lowercaseLocalName.impl()), constantRegister);
+            Assembler::Jump skipCaseSensitiveCase = m_assembler.jump();
+
+            caseSensitiveCases.link(&m_assembler);
+            m_assembler.move(Assembler::TrustedImmPtr(selectorLocalName.impl()), constantRegister);
+            skipCaseSensitiveCase.link(&m_assembler);
+
+            failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), constantRegister));
+        }
     }
 
     const AtomicString& selectorNamespaceURI = nameToMatch.namespaceURI();

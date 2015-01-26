@@ -1,3 +1,55 @@
+2015-01-26  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix CSS Selector's tag name matching when mixing HTML and XML
+        https://bugs.webkit.org/show_bug.cgi?id=140878
+
+        Reviewed by Darin Adler.
+
+        We had very little coverage for XHTML and XML in HTML.
+        I added lots of new tests to cover the basics.
+
+        * fast/dom/css-dom-read-2-expected.txt:
+        * fast/dom/css-dom-read-expected.txt:
+        CSSOM now provide the tagname in the original case instead of lowercase,
+        which is actually what the spec defines:
+        "If the character is not handled by one of the above rules and is greater
+         than or equal to U+0080, is "-" (U+002D) or "_" (U+005F), or is in one
+         of the ranges [0-9] (U+0030 to U+0039), [A-Z] (U+0041 to U+005A),
+         or [a-z] (U+0061 to U+007A), then the character itself."
+
+        * fast/css/tagname-and-namespace-case-sensitivity-xml-in-html-expected.html: Added.
+        * fast/css/tagname-and-namespace-case-sensitivity-xml-in-html.html: Added.
+        * fast/css/tagname-and-namespace-case-sensitivity-xml-in-xhtml-expected.xhtml: Added.
+        * fast/css/tagname-and-namespace-case-sensitivity-xml-in-xhtml.xhtml: Added.
+        * fast/css/tagname-case-sensitivity-svg-in-html-expected.html: Added.
+        * fast/css/tagname-case-sensitivity-svg-in-html.html: Added.
+        * fast/css/tagname-case-sensitivity-svg-in-xhtml-expected.xhtml: Added.
+        * fast/css/tagname-case-sensitivity-svg-in-xhtml.xhtml: Added.
+        * fast/css/tagname-case-sensitivity-xml-in-html-expected.html: Added.
+        * fast/css/tagname-case-sensitivity-xml-in-html.html: Added.
+        * fast/css/tagname-case-sensitivity-xml-in-xhtml-expected.xhtml: Added.
+        * fast/css/tagname-case-sensitivity-xml-in-xhtml.xhtml: Added.
+        * fast/selectors/element-closest-tagname-case-sensitivity-svg-in-html-expected.txt: Added.
+        * fast/selectors/element-closest-tagname-case-sensitivity-svg-in-html.html: Added.
+        * fast/selectors/element-closest-tagname-case-sensitivity-svg-in-xhtml-expected.txt: Added.
+        * fast/selectors/element-closest-tagname-case-sensitivity-svg-in-xhtml.xhtml: Added.
+        * fast/selectors/element-matches-tagname-case-sensitivity-svg-in-html-expected.txt: Added.
+        * fast/selectors/element-matches-tagname-case-sensitivity-svg-in-html.html: Added.
+        * fast/selectors/element-matches-tagname-case-sensitivity-svg-in-xhtml-expected.txt: Added.
+        * fast/selectors/element-matches-tagname-case-sensitivity-svg-in-xhtml.xhtml: Added.
+        * fast/selectors/querySelector-tagname-case-sensitivity-svg-in-html-expected.txt: Added.
+        * fast/selectors/querySelector-tagname-case-sensitivity-svg-in-html.html: Added.
+        * fast/selectors/querySelector-tagname-case-sensitivity-svg-in-xhtml-expected.txt: Added.
+        * fast/selectors/querySelector-tagname-case-sensitivity-svg-in-xhtml.xhtml: Added.
+        * fast/selectors/querySelector-tagname-case-sensitivity-xml-in-html-expected.txt: Added.
+        * fast/selectors/querySelector-tagname-case-sensitivity-xml-in-html.html: Added.
+        * fast/selectors/querySelector-tagname-case-sensitivity-xml-in-xhtml-expected.txt: Added.
+        * fast/selectors/querySelector-tagname-case-sensitivity-xml-in-xhtml.xhtml: Added.
+        * fast/selectors/tagname-adjacent-backtracking-case-sensitivity-html-expected.txt: Added.
+        * fast/selectors/tagname-adjacent-backtracking-case-sensitivity-html.html: Added.
+        * fast/selectors/tagname-descendant-backtracking-case-sensitivity-html-expected.txt: Added.
+        * fast/selectors/tagname-descendant-backtracking-case-sensitivity-html.html: Added.
+
 2015-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Remove references to removed tests from GTK+ TestExpectations.

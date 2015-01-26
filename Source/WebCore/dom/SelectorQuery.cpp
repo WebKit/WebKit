@@ -282,14 +282,32 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
 }
 #endif
 
-template <typename SelectorQueryTrait>
-static inline void elementsForLocalName(const ContainerNode& rootNode, const AtomicString& localName, typename SelectorQueryTrait::OutputType& output)
+static ALWAYS_INLINE bool localNameMatches(const Element& element, const AtomicString& localName, const AtomicString& lowercaseLocalName)
 {
-    for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
-        if (element.tagQName().localName() == localName) {
-            SelectorQueryTrait::appendOutputForElement(output, &element);
-            if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
+    if (element.isHTMLElement() && element.document().isHTMLDocument())
+        return element.localName() == lowercaseLocalName;
+    return element.localName() == localName;
+
+}
+
+template <typename SelectorQueryTrait>
+static inline void elementsForLocalName(const ContainerNode& rootNode, const AtomicString& localName, const AtomicString& lowercaseLocalName, typename SelectorQueryTrait::OutputType& output)
+{
+    if (localName == lowercaseLocalName) {
+        for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
+            if (element.tagQName().localName() == localName) {
+                SelectorQueryTrait::appendOutputForElement(output, &element);
+                if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
                 return;
+            }
+        }
+    } else {
+        for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
+            if (localNameMatches(element, localName, lowercaseLocalName)) {
+                SelectorQueryTrait::appendOutputForElement(output, &element);
+                if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
+                return;
+            }
         }
     }
 }
@@ -313,12 +331,13 @@ ALWAYS_INLINE void SelectorDataList::executeSingleTagNameSelectorData(const Cont
 
     const QualifiedName& tagQualifiedName = selectorData.selector->tagQName();
     const AtomicString& selectorLocalName = tagQualifiedName.localName();
+    const AtomicString& selectorLowercaseLocalName = selectorData.selector->tagLowercaseLocalName();
     const AtomicString& selectorNamespaceURI = tagQualifiedName.namespaceURI();
 
     if (selectorNamespaceURI == starAtom) {
         if (selectorLocalName != starAtom) {
             // Common case: name defined, selectorNamespaceURI is a wildcard.
-            elementsForLocalName<SelectorQueryTrait>(rootNode, selectorLocalName, output);
+            elementsForLocalName<SelectorQueryTrait>(rootNode, selectorLocalName, selectorLowercaseLocalName, output);
         } else {
             // Other fairly common case: both are wildcards.
             anyElement<SelectorQueryTrait>(rootNode, output);
@@ -326,7 +345,7 @@ ALWAYS_INLINE void SelectorDataList::executeSingleTagNameSelectorData(const Cont
     } else {
         // Fallback: NamespaceURI is set, selectorLocalName may be starAtom.
         for (auto& element : elementDescendants(const_cast<ContainerNode&>(rootNode))) {
-            if (element.namespaceURI() == selectorNamespaceURI && (selectorLocalName == starAtom || element.tagQName().localName() == selectorLocalName)) {
+            if (element.namespaceURI() == selectorNamespaceURI && localNameMatches(element, selectorLocalName, selectorLowercaseLocalName)) {
                 SelectorQueryTrait::appendOutputForElement(output, &element);
                 if (SelectorQueryTrait::shouldOnlyMatchFirstElement)
                     return;

@@ -98,7 +98,6 @@ public:
 
     bool match(const CSSSelector*, Element*, const CheckingContext&, unsigned& specificity) const;
 
-    static bool tagMatches(const Element*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);
     static bool matchesFocusPseudoClass(const Element*);
     static bool checkExactAttribute(const Element*, const CSSSelector*, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value);
@@ -129,17 +128,6 @@ inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* sele
         || pseudoType == CSSSelector::PseudoClassAnyLinkDeprecated
         || pseudoType == CSSSelector::PseudoClassVisited
         || pseudoType == CSSSelector::PseudoClassFocus;
-}
-
-inline bool SelectorChecker::tagMatches(const Element* element, const QualifiedName& tagQName)
-{
-    if (tagQName == anyQName())
-        return true;
-    const AtomicString& localName = tagQName.localName();
-    if (localName != starAtom && localName != element->localName())
-        return false;
-    const AtomicString& namespaceURI = tagQName.namespaceURI();
-    return namespaceURI == starAtom || namespaceURI == element->namespaceURI();
 }
 
 inline bool SelectorChecker::checkExactAttribute(const Element* element, const CSSSelector* selector, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value)

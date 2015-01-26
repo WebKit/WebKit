@@ -29,7 +29,7 @@ I {display: block;}
 .two { display: inline; } 
 .three { display: list-item; list-style-type: square; margin-left: 3em; } 
 .four { display: none; color: red; } 
-i { display: block; } 
+I { display: block; } 
 
 @import url("fancyfonts.css") screen;
 @media print { 
@@ -45,6 +45,6 @@ i { display: block; }
 .two { display: inline; }
 .three { display: list-item; list-style-type: square; margin-left: 3em; }
 .four { display: none; color: red; }
-i { display: block; }
+I { display: block; }
 
 

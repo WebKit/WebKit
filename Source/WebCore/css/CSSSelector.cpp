@@ -49,9 +49,35 @@ struct SameSizeAsCSSSelector {
 
 static_assert(sizeof(CSSSelector) == sizeof(SameSizeAsCSSSelector), "CSSSelector should remain small.");
 
+CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
+    : m_relation(Descendant)
+    , m_match(Tag)
+    , m_pseudoType(0)
+    , m_parsedNth(false)
+    , m_isLastInSelectorList(false)
+    , m_isLastInTagHistory(true)
+    , m_hasRareData(false)
+    , m_hasNameWithCase(false)
+    , m_isForPage(false)
+    , m_tagIsForNamespaceRule(tagIsForNamespaceRule)
+    , m_descendantDoubleChildSyntax(false)
+{
+    const AtomicString& tagLocalName = tagQName.localName();
+    const AtomicString tagLocalNameASCIILowercase = tagLocalName.convertToASCIILowercase();
+
+    if (tagLocalName == tagLocalNameASCIILowercase) {
+        m_data.m_tagQName = tagQName.impl();
+        m_data.m_tagQName->ref();
+    } else {
+        m_data.m_nameWithCase = adoptRef(new NameWithCase(tagQName, tagLocalNameASCIILowercase)).leakRef();
+        m_hasNameWithCase = true;
+    }
+}
+
 void CSSSelector::createRareData()
 {
     ASSERT(match() != Tag);
+    ASSERT(!m_hasNameWithCase);
     if (m_hasRareData)
         return;
     // Move the value to the rare data stucture.

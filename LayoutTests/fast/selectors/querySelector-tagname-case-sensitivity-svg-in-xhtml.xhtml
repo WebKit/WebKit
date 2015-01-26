@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="with-renderer">
+        <!-- With renderer -->
+        <rect class="target1"></rect>
+        <Rect class="target2"></Rect>
+        <RECT class="target3"></RECT>
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <rect class="target4"></rect>
+            <Rect class="target5"></Rect>
+            <RECT class="target6"></RECT>
+        </svg>
+    </div>
+    <div id="without-renderer" style="display:none;">
+        <!-- Without renderer -->
+        <rect class="target1"></rect>
+        <Rect class="target2"></Rect>
+        <RECT class="target3"></RECT>
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <rect class="target4"></rect>
+            <Rect class="target5"></Rect>
+            <RECT class="target6"></RECT>
+        </svg>
+    </div>
+</body>
+<script><![CDATA[
+description("Test tagname's case-sensitivity when matching SVG-in-XHTML with querySelector.");
+
+var withRenderer = document.getElementById("with-renderer");
+var withoutRenderer = document.getElementById("without-renderer");
+
+var svgDocument = new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg"><rect class="target7"></rect><Rect class="target8"></Rect><RECT class="target9"></RECT></svg>', 'text/xml');
+withRenderer.appendChild(document.importNode(svgDocument.documentElement, true));
+withoutRenderer.appendChild(document.importNode(svgDocument.documentElement, true));
+
+function testSelector(selector, expectedClasses)
+{
+    shouldBe("document.getElementById('with-renderer').querySelectorAll('" + selector + "').length", '' + expectedClasses.length);
+    shouldBe("document.getElementById('without-renderer').querySelectorAll('" + selector + "').length", '' + expectedClasses.length);
+    for (var i = 0; i < expectedClasses.length; ++i) {
+        shouldBeEqualToString("document.getElementById(\"with-renderer\").querySelectorAll('" + selector + "')[" + i + "].getAttribute('class')", "target" + expectedClasses[i]);
+        shouldBeEqualToString("document.getElementById(\"without-renderer\").querySelectorAll('" + selector + "')[" + i + "].getAttribute('class')", "target" + expectedClasses[i]);
+    }
+}
+
+debug("Basic cases, tagname alone.");
+testSelector("rect", [1, 4, 7]);
+testSelector("Rect", [2, 5, 8]);
+testSelector("RECT", [3, 6, 9]);
+
+debug("");
+debug("Compound selectors.");
+testSelector("rect[class]", [1, 4, 7]);
+testSelector("Rect[class]", [2, 5, 8]);
+testSelector("RECT[class]", [3, 6, 9]);
+testSelector("rect[class^=\"target\"]", [1, 4, 7]);
+testSelector("Rect[class^=\"target\"]", [2, 5, 8]);
+testSelector("RECT[class^=\"target\"]", [3, 6, 9]);
+
+debug("");
+debug("Complex selectors.");
+testSelector("svg > rect[class]", [4, 7]);
+testSelector("svg > Rect[class]", [5, 8]);
+testSelector("svg > RECT[class]", [6, 9]);
+testSelector("svg > rect[class^=\"target\"]", [4, 7]);
+testSelector("svg > Rect[class^=\"target\"]", [5, 8]);
+testSelector("svg > RECT[class^=\"target\"]", [6, 9]);
+
+testSelector("div rect[class]", [1, 4, 7]);
+testSelector("div Rect[class]", [2, 5, 8]);
+testSelector("div RECT[class]", [3, 6, 9]);
+testSelector("div rect[class^=\"target\"]", [1, 4, 7]);
+testSelector("div Rect[class^=\"target\"]", [2, 5, 8]);
+testSelector("div RECT[class^=\"target\"]", [3, 6, 9]);
+
+testSelector(":root div rect[class]", [1, 4, 7]);
+testSelector(":root div Rect[class]", [2, 5, 8]);
+testSelector(":root div RECT[class]", [3, 6, 9]);
+testSelector(":root div rect[class^=\"target\"]", [1, 4, 7]);
+testSelector(":root div Rect[class^=\"target\"]", [2, 5, 8]);
+testSelector(":root div RECT[class^=\"target\"]", [3, 6, 9]);
+
+debug("");
+debug("With functional pseudo classes.");
+testSelector(":root div :matches(not-there, rect[class])", [1, 4, 7]);
+testSelector(":root div :matches(not-there, Rect[class])", [2, 5, 8]);
+testSelector(":root div :matches(not-there, RECT[class])", [3, 6, 9]);
+testSelector(":root div :matches(not-there, rect[class^=\"target\"])", [1, 4, 7]);
+testSelector(":root div :matches(not-there, Rect[class^=\"target\"])", [2, 5, 8]);
+testSelector(":root div :matches(not-there, RECT[class^=\"target\"])", [3, 6, 9]);
+
+testSelector(":root div :nth-child(n of not-there, rect[class])", [1, 4, 7]);
+testSelector(":root div :nth-child(n of not-there, Rect[class])", [2, 5, 8]);
+testSelector(":root div :nth-child(n of not-there, RECT[class])", [3, 6, 9]);
+testSelector(":root div :nth-child(n of not-there, rect[class^=\"target\"])", [1, 4, 7]);
+testSelector(":root div :nth-child(n of not-there, Rect[class^=\"target\"])", [2, 5, 8]);
+testSelector(":root div :nth-child(n of not-there, RECT[class^=\"target\"])", [3, 6, 9]);
+
+// Remove the content otherwise it will appear in the results.
+withRenderer.style.display = 'none';
+]]></script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

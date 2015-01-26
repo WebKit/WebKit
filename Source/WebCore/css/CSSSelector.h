@@ -228,6 +228,8 @@ namespace WebCore {
         const CSSSelector* tagHistory() const { return m_isLastInTagHistory ? 0 : const_cast<CSSSelector*>(this + 1); }
 
         const QualifiedName& tagQName() const;
+        const AtomicString& tagLowercaseLocalName() const;
+
         const AtomicString& value() const;
         const QualifiedName& attribute() const;
         const AtomicString& attributeCanonicalLocalName() const;
@@ -325,6 +327,7 @@ namespace WebCore {
         unsigned m_isLastInSelectorList  : 1;
         unsigned m_isLastInTagHistory    : 1;
         unsigned m_hasRareData           : 1;
+        unsigned m_hasNameWithCase       : 1;
         unsigned m_isForPage             : 1;
         unsigned m_tagIsForNamespaceRule : 1;
         unsigned m_descendantDoubleChildSyntax : 1;
@@ -357,11 +360,24 @@ namespace WebCore {
         };
         void createRareData();
 
+        struct NameWithCase : public RefCounted<NameWithCase> {
+            NameWithCase(const QualifiedName& originalName, const AtomicString& lowercaseName)
+                : m_originalName(originalName)
+                , m_lowercaseLocalName(lowercaseName)
+            {
+                ASSERT(originalName.localName() != lowercaseName);
+            }
+
+            const QualifiedName m_originalName;
+            const AtomicString m_lowercaseLocalName;
+        };
+
         union DataUnion {
             DataUnion() : m_value(0) { }
             AtomicStringImpl* m_value;
             QualifiedName::QualifiedNameImpl* m_tagQName;
             RareData* m_rareData;
+            NameWithCase* m_nameWithCase;
         } m_data;
     };
 
@@ -452,26 +468,11 @@ inline CSSSelector::CSSSelector()
     , m_isLastInSelectorList(false)
     , m_isLastInTagHistory(true)
     , m_hasRareData(false)
+    , m_hasNameWithCase(false)
     , m_isForPage(false)
     , m_tagIsForNamespaceRule(false)
     , m_descendantDoubleChildSyntax(false)
 {
-}
-
-inline CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
-    : m_relation(Descendant)
-    , m_match(Tag)
-    , m_pseudoType(0)
-    , m_parsedNth(false)
-    , m_isLastInSelectorList(false)
-    , m_isLastInTagHistory(true)
-    , m_hasRareData(false)
-    , m_isForPage(false)
-    , m_tagIsForNamespaceRule(tagIsForNamespaceRule)
-    , m_descendantDoubleChildSyntax(false)
-{
-    m_data.m_tagQName = tagQName.impl();
-    m_data.m_tagQName->ref();
 }
 
 inline CSSSelector::CSSSelector(const CSSSelector& o)
@@ -482,16 +483,20 @@ inline CSSSelector::CSSSelector(const CSSSelector& o)
     , m_isLastInSelectorList(o.m_isLastInSelectorList)
     , m_isLastInTagHistory(o.m_isLastInTagHistory)
     , m_hasRareData(o.m_hasRareData)
+    , m_hasNameWithCase(o.m_hasNameWithCase)
     , m_isForPage(o.m_isForPage)
     , m_tagIsForNamespaceRule(o.m_tagIsForNamespaceRule)
     , m_descendantDoubleChildSyntax(o.m_descendantDoubleChildSyntax)
 {
-    if (o.match() == Tag) {
-        m_data.m_tagQName = o.m_data.m_tagQName;
-        m_data.m_tagQName->ref();
-    } else if (o.m_hasRareData) {
+    if (o.m_hasRareData) {
         m_data.m_rareData = o.m_data.m_rareData;
         m_data.m_rareData->ref();
+    } else if (o.m_hasNameWithCase) {
+        m_data.m_nameWithCase = o.m_data.m_nameWithCase;
+        m_data.m_nameWithCase->ref();
+    } if (o.match() == Tag) {
+        m_data.m_tagQName = o.m_data.m_tagQName;
+        m_data.m_tagQName->ref();
     } else if (o.m_data.m_value) {
         m_data.m_value = o.m_data.m_value;
         m_data.m_value->ref();
@@ -500,10 +505,12 @@ inline CSSSelector::CSSSelector(const CSSSelector& o)
 
 inline CSSSelector::~CSSSelector()
 {
-    if (match() == Tag)
-        m_data.m_tagQName->deref();
-    else if (m_hasRareData)
+    if (m_hasRareData)
         m_data.m_rareData->deref();
+    else if (m_hasNameWithCase)
+        m_data.m_nameWithCase->deref();
+    else if (match() == Tag)
+        m_data.m_tagQName->deref();
     else if (m_data.m_value)
         m_data.m_value->deref();
 }
@@ -511,7 +518,16 @@ inline CSSSelector::~CSSSelector()
 inline const QualifiedName& CSSSelector::tagQName() const
 {
     ASSERT(match() == Tag);
+    if (m_hasNameWithCase)
+        return m_data.m_nameWithCase->m_originalName;
     return *reinterpret_cast<const QualifiedName*>(&m_data.m_tagQName);
+}
+
+inline const AtomicString& CSSSelector::tagLowercaseLocalName() const
+{
+    if (m_hasNameWithCase)
+        return m_data.m_nameWithCase->m_lowercaseLocalName;
+    return m_data.m_tagQName->m_localName;
 }
 
 inline const AtomicString& CSSSelector::value() const

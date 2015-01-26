@@ -1214,8 +1214,6 @@ simple_selector_list:
 
 element_name:
     IDENT {
-        if (parser->m_context.isHTMLDocument)
-            $1.lower();
         $$ = $1;
     }
     | '*' {
