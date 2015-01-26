@@ -230,8 +230,8 @@ class IOSSimulatorPort(Port):
             return
         total_bytes_string, unique_leaks = self._leak_detector.count_total_bytes_and_unique_leaks(leaks_files)
         total_leaks = self._leak_detector.count_total_leaks(leaks_files)
-        _log.info("%s total leaks found for a total of %s!" % (total_leaks, total_bytes_string))
-        _log.info("%s unique leaks found!" % unique_leaks)
+        _log.info("%s total leaks found for a total of %s." % (total_leaks, total_bytes_string))
+        _log.info("%s unique leaks found." % unique_leaks)
 
     def _path_to_webcore_library(self):
         return self._build_path('WebCore.framework/Versions/A/WebCore')

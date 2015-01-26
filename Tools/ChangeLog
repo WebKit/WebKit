@@ -1,3 +1,22 @@
+2015-01-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Leaks bot shouldn't run JSC tests
+        https://bugs.webkit.org/show_bug.cgi?id=140877
+
+        Reviewed by Darin Adler.
+
+        Shaves off 48 minutes of time.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (TestLeaksFactory): Slim down the leaks queue.
+
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.print_leaks_summary):
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.print_leaks_summary):
+        Don't yell when leaks are detected.
+
 2015-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Refactor run-javascriptcore-tests

@@ -51,12 +51,12 @@ class MasterCfgTest(unittest.TestCase):
     def test_nrwt_leaks_parsing(self):
         run_webkit_tests = RunWebKitTests()  # pylint is confused by the way we import the module ... pylint: disable-msg=E0602
         log_text = """
-12:44:24.295 77706 13981 total leaks found for a total of 197,936 bytes!
-12:44:24.295 77706 1 unique leaks found!
+12:44:24.295 77706 13981 total leaks found for a total of 197,936 bytes.
+12:44:24.295 77706 1 unique leaks found.
 """
         expected_incorrect_lines = [
-            '13981 total leaks found for a total of 197,936 bytes!',
-            '1 unique leaks found!',
+            '13981 total leaks found for a total of 197,936 bytes.',
+            '1 unique leaks found.',
         ]
         run_webkit_tests._parseRunWebKitTestsOutput(log_text)
         self.assertEqual(run_webkit_tests.incorrectLayoutLines, expected_incorrect_lines)

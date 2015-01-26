@@ -172,8 +172,8 @@ class MacPort(ApplePort):
             return
         total_bytes_string, unique_leaks = self._leak_detector.count_total_bytes_and_unique_leaks(leaks_files)
         total_leaks = self._leak_detector.count_total_leaks(leaks_files)
-        _log.info("%s total leaks found for a total of %s!" % (total_leaks, total_bytes_string))
-        _log.info("%s unique leaks found!" % unique_leaks)
+        _log.info("%s total leaks found for a total of %s." % (total_leaks, total_bytes_string))
+        _log.info("%s unique leaks found." % unique_leaks)
 
     def _check_port_build(self):
         return self.get_option('nojava') or self._build_java_test_support()
