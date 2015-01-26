@@ -1,5 +1,23 @@
 2015-01-25  Alexey Proskuryakov  <ap@apple.com>
 
+        fast/html/marquee-scrollamount.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=140851
+
+        Reviewed by Darin Adler.
+
+        Updated the test to not have a zero delay timer race. Added many comments, because
+        what is being tested here is quite subtle.
+
+        * fast/html/marquee-scrollamount.html:
+
+        * platform/efl/fast/html/marquee-scrollamount-expected.txt:
+        * platform/gtk/fast/html/marquee-scrollamount-expected.txt:
+        * platform/ios-simulator-wk2/fast/html/marquee-scrollamount-expected.txt:
+        * platform/mac/fast/html/marquee-scrollamount-expected.txt:
+        The DOM changed slightly, because we now insert the marquee after load event.
+
+2015-01-25  Alexey Proskuryakov  <ap@apple.com>
+
         Setting HTMLMarqueeElement.trueSpeed doesn't work
         https://bugs.webkit.org/show_bug.cgi?id=140863
 
