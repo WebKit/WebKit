@@ -1,5 +1,14 @@
 2015-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [cmake] Remove compiler version calculate cruft
+        https://bugs.webkit.org/show_bug.cgi?id=140885
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/WebKitHelpers.cmake:
+
+2015-01-26  Csaba Osztrogonác  <ossy@webkit.org>
+
         [cmake] Stop compiling with -Wno-error=uninitialized and -Wno-error=literal-suffix
         https://bugs.webkit.org/show_bug.cgi?id=140886
 
