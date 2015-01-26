@@ -27,6 +27,7 @@ Dashboard = {
     Platform: {
         MacOSXYosemite: { name: "mac-os-x-yosemite", readableName: "OS X Yosemite", order: 10 },
         MacOSXMavericks: { name: "mac-os-x-mavericks", readableName: "OS X Mavericks", order: 20 },
+        iOS8Device: { name: "ios-8", readableName: "iOS 8", order: 30 },
         Windows8: { name: "windows-8", readableName: "Windows 8", order: 50 },
         Windows7: { name: "windows-7", readableName: "Windows 7", order: 60 },
         WindowsXP: { name: "windows-xp", readableName: "Windows XP", order: 70 },

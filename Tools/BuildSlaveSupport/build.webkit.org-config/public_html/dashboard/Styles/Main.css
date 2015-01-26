@@ -165,6 +165,10 @@ table.queue-grid td.logo img.logo {
     left: 26px;
 }
 
+table.queue-grid tr.platform.ios-8 img.logo {
+    content: -webkit-image-set(url(../Images/IOSDevice@2x.png) 2x, url(../Images/IOSDevice.png) 1x);
+}
+
 table.queue-grid tr.platform.mac-os-x-yosemite img.logo {
     content: -webkit-image-set(url(../Images/Yosemite@2x.png) 2x, url(../Images/Yosemite.png) 1x);
 }
