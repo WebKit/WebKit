@@ -1,5 +1,19 @@
 2015-01-25  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r177332.
+
+    2014-12-15  Bartlomiej Gajda  <b.gajda@samsung.com>
+
+        Build fix after r177301.
+        https://bugs.webkit.org/show_bug.cgi?id=139666
+
+        Reviewed by Gyuyoung Kim.
+
+        * WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp:
+        (WebKit::WebPage::findZoomableAreaForPoint):
+
+2015-01-25  David Kilzer  <ddkilzer@apple.com>
+
         Merge r177301.
 
     2014-12-15  Myles C. Maxfield  <mmaxfield@apple.com>

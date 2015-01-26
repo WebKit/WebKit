@@ -73,7 +73,7 @@ void WebPage::findZoomableAreaForPoint(const IntPoint& point, const IntSize& are
             break;
 
         node = node->parentNode();
-        if (RenderObject* renderer = node.renderer())
+        if (RenderObject* renderer = node->renderer())
             zoomableArea.unite(renderer->absoluteBoundingBoxRect());
     }
 
