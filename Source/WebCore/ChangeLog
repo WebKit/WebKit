@@ -1,5 +1,19 @@
 2015-01-26  Andreas Kling  <akling@apple.com>
 
+        Don't let the CSSValuePool's font family cache grow unbounded.
+        <https://webkit.org/b/140894>
+
+        Reviewed by Chris Dumez.
+
+        Darin pointed out to Chris who pointed out to me that the font family cache
+        in CSSValuePool can grow unbounded until we get a system memory pressure
+        notification. Put a limit on it like we did with the font face cache.
+
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createFontFamilyValue):
+
+2015-01-26  Andreas Kling  <akling@apple.com>
+
         Plug leak in jsValueWithDictionaryInContext().
         <https://webkit.org/b/140889>
 

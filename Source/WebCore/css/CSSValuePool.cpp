@@ -121,6 +121,11 @@ Ref<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimitiveValue
 
 Ref<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const String& familyName, FromSystemFontIDOrNot fromSystemFontID)
 {
+    // Remove one entry at random if the cache grows too large.
+    const int maximumFontFamilyCacheSize = 128;
+    if (m_fontFamilyValueCache.size() >= maximumFontFamilyCacheSize)
+        m_fontFamilyValueCache.remove(m_fontFamilyValueCache.begin());
+
     RefPtr<CSSPrimitiveValue>& value = m_fontFamilyValueCache.add({familyName, fromSystemFontID}, nullptr).iterator->value;
     if (!value)
         value = CSSPrimitiveValue::create(CSSFontFamily{familyName, fromSystemFontID});
