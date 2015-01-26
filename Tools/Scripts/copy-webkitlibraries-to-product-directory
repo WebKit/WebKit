@@ -240,11 +240,20 @@ if ($llvm) {
     my $shouldUpdateLLVMLibraryToken = 0;
 
     if ($useOwnLLVM) {
+        my $sdkArg;
+        if (xcodeSDK()) {
+            $sdkArg = "--sdk " . xcodeSDK();
+        } else {
+            $sdkArg = "";
+        }
+        my $sdkRoot = `xcrun $sdkArg --show-sdk-path`;
+        chomp $sdkRoot;
+    
         if (!-e "$ownLLVMDirectory/wkLLVMBuild/Makefile.config") {
             print("Configuring LLVM.\n");
             (system("mkdir -p $ownLLVMDirectory/wkLLVMBuild"));
             my $flags = "--enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-libcpp=yes --enable-zlib=no --enable-terminfo=no --enable-crash-overrides=no";
-            (system("(cd $ownLLVMDirectory/wkLLVMBuild && ../configure $flags)") == 0) or die;
+            (system("(cd $ownLLVMDirectory/wkLLVMBuild && SDKROOT=$sdkRoot ../configure $flags)") == 0) or die;
         }
 
         print("Building LLVM.\n");
@@ -257,7 +266,7 @@ if ($llvm) {
             print "Detected binaries directory; prepending to path: $binariesPath\n";
             $pathCommand = "PATH=\\\$PWD/$binariesDirectory:\\\$PATH";
         }
-        my $makeCommand = "env -i bash -l -c \"$pathCommand make -j `sysctl -n hw.activecpu`\"";
+        my $makeCommand = "env -i bash -l -c \"$pathCommand SDKROOT=$sdkRoot make -j `sysctl -n hw.activecpu`\"";
         print $makeCommand . "\n";
         (system($makeCommand) == 0) or die;
         $ENV{"PATH"} = $oldPath;

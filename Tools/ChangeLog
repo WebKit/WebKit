@@ -1,3 +1,18 @@
+2015-01-26  Filip Pizlo  <fpizlo@apple.com>
+
+        copy-webkitlibraries-to-product-directory's hack to build LLVM from source should be hardened for Xcode deciding it needs SDKROOT set
+        https://bugs.webkit.org/show_bug.cgi?id=140896
+
+        Reviewed by Michael Saboff.
+        
+        I've encountered some Xcode setups where you need to set SDKROOT to get llvm to build. This
+        makes our script do this.
+        
+        Note that an alternative would be to run clang via "xcrun clang" rather than directly, but
+        this would be harder given llvm's autoconf setup.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2015-01-26  Alexey Proskuryakov  <ap@apple.com>
 
         Update bot assignments.
