@@ -1,3 +1,21 @@
+2015-01-26  Fabien Vallée  <fvallee@connected-labs.com>
+
+        AX: crash in accessibilityRootObjectWrapper method (WebPageAccessibilityObjectAtk.cpp)
+        <https://bugs.webkit.org/show_bug.cgi?id=140618>
+
+        Reviewed by Chris Fleizach.
+
+        Check if document()->axObjectCache() is nullptr to fix the crash.
+        Similar patch has been applied on mac port:
+        <http://trac.webkit.org/changeset/167136>
+
+        Crash occured on <http://itv.mit-xperts.com/hbbtvtest/appmanager/>
+        (this page needs CEHTML / HbbTV extensions, conditions cannot
+        be reproduced using regression tests)
+
+        * WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp:
+        (accessibilityRootObjectWrapper):
+
 2015-01-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] gtkdoc does not appear in DevHelp

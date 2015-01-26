@@ -56,7 +56,11 @@ static AtkObject* accessibilityRootObjectWrapper(AtkObject* atkObject)
     if (!coreFrame.document())
         return 0;
 
-    AccessibilityObject* coreRootObject = coreFrame.document()->axObjectCache()->rootObject();
+    AXObjectCache* cache = coreFrame.document()->axObjectCache();
+    if (!cache)
+        return nullptr;
+
+    AccessibilityObject* coreRootObject = cache->rootObject();
     if (!coreRootObject)
         return 0;
 
