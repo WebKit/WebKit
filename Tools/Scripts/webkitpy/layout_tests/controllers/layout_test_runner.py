@@ -74,14 +74,16 @@ class LayoutTestRunner(object):
         self._test_inputs = []
         self._needs_http = None
         self._needs_websockets = None
+        self._needs_web_platform_test_server = None
         self._retrying = False
         self._current_run_results = None
 
-    def run_tests(self, expectations, test_inputs, tests_to_skip, num_workers, needs_http, needs_websockets, retrying):
+    def run_tests(self, expectations, test_inputs, tests_to_skip, num_workers, needs_http, needs_websockets, needs_web_platform_test_server, retrying):
         self._expectations = expectations
         self._test_inputs = test_inputs
         self._needs_http = needs_http
         self._needs_websockets = needs_websockets
+        self._needs_web_platform_test_server = needs_web_platform_test_server
         self._retrying = retrying
 
         # FIXME: rename all variables to test_run_results or some such ...
@@ -101,7 +103,7 @@ class LayoutTestRunner(object):
         self._printer.write_update('Sharding tests ...')
         all_shards = self._sharder.shard_tests(test_inputs, int(self._options.child_processes), self._options.fully_parallel)
 
-        if self._needs_http and self._options.http:
+        if (self._needs_http and self._options.http) or self._needs_web_platform_test_server:
             self.start_servers()
 
         num_workers = min(num_workers, len(all_shards))
@@ -189,6 +191,9 @@ class LayoutTestRunner(object):
         if self._needs_websockets:
             self._printer.write_update('Starting WebSocket server ...')
             self._port.start_websocket_server()
+        if self._needs_web_platform_test_server:
+            self._printer.write_update('Starting Web Platform Test server ...')
+            self._port.start_web_platform_test_server()
 
     def stop_servers(self):
         if self._needs_http:
@@ -197,6 +202,9 @@ class LayoutTestRunner(object):
         if self._needs_websockets:
             self._printer.write_update('Stopping WebSocket server ...')
             self._port.stop_websocket_server()
+        if self._needs_web_platform_test_server:
+            self._printer.write_update('Stopping Web Platform Test server ...')
+            self._port.stop_web_platform_test_server()
 
     def handle(self, name, source, *args):
         method = getattr(self, '_handle_' + name)

@@ -85,7 +85,7 @@ class LayoutTestRunnerTests(unittest.TestCase):
         expectations = TestExpectations(runner._port, tests)
         expectations.parse_all_expectations()
         runner.run_tests(expectations, test_inputs, set(),
-            num_workers=1, needs_http=any('http' in test for test in tests), needs_websockets=any(['websocket' in test for test in tests]), retrying=False)
+            num_workers=1, needs_http=any('http' in test for test in tests), needs_websockets=any(['websocket' in test for test in tests]), needs_web_platform_test_server=any(['imported/w3c' in test for test in tests]), retrying=False)
 
     def test_interrupt_if_at_failure_limits(self):
         runner = self._runner()
@@ -147,49 +147,83 @@ class LayoutTestRunnerTests(unittest.TestCase):
         def start_websocket_server():
             self.websocket_started = True
 
+        def start_web_platform_test_server():
+            self.web_platform_test_server_started = True
+
         def stop_http_server():
             self.http_stopped = True
 
         def stop_websocket_server():
             self.websocket_stopped = True
 
+        def stop_web_platform_test_server():
+            self.web_platform_test_server_stopped = True
+
         host = MockHost()
         port = host.port_factory.get('test-mac-leopard')
         port.start_http_server = start_http_server
         port.start_websocket_server = start_websocket_server
+        port.start_web_platform_test_server = start_web_platform_test_server
         port.stop_http_server = stop_http_server
         port.stop_websocket_server = stop_websocket_server
+        port.stop_web_platform_test_server = stop_web_platform_test_server
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
+        self.web_platform_test_server_started = self.web_platform_test_server_stopped = False
         runner = self._runner(port=port)
         runner._needs_http = True
         runner._needs_websockets = False
+        runner._needs_web_platform_test_server = False
         runner.start_servers()
         self.assertEqual(self.http_started, True)
         self.assertEqual(self.websocket_started, False)
+        self.assertEqual(self.web_platform_test_server_started, False)
         runner.stop_servers()
         self.assertEqual(self.http_stopped, True)
         self.assertEqual(self.websocket_stopped, False)
+        self.assertEqual(self.web_platform_test_server_stopped, False)
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
+        self.web_platform_test_server_started = self.web_platform_test_server_stopped = False
         runner._needs_http = True
         runner._needs_websockets = True
+        runner._needs_web_platform_test_server = False
         runner.start_servers()
         self.assertEqual(self.http_started, True)
         self.assertEqual(self.websocket_started, True)
+        self.assertEqual(self.web_platform_test_server_started, False)
         runner.stop_servers()
         self.assertEqual(self.http_stopped, True)
         self.assertEqual(self.websocket_stopped, True)
+        self.assertEqual(self.web_platform_test_server_stopped, False)
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
+        self.web_platform_test_server_started = self.web_platform_test_server_stopped = False
         runner._needs_http = False
         runner._needs_websockets = False
+        runner._needs_web_platform_test_server = True
         runner.start_servers()
         self.assertEqual(self.http_started, False)
         self.assertEqual(self.websocket_started, False)
+        self.assertEqual(self.web_platform_test_server_started, True)
         runner.stop_servers()
         self.assertEqual(self.http_stopped, False)
         self.assertEqual(self.websocket_stopped, False)
+        self.assertEqual(self.web_platform_test_server_stopped, True)
+
+        self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
+        self.web_platform_test_server_started = self.web_platform_test_server_stopped = False
+        runner._needs_http = False
+        runner._needs_websockets = False
+        runner._needs_web_platform_test_server = False
+        runner.start_servers()
+        self.assertEqual(self.http_started, False)
+        self.assertEqual(self.websocket_started, False)
+        self.assertEqual(self.web_platform_test_server_started, False)
+        runner.stop_servers()
+        self.assertEqual(self.http_stopped, False)
+        self.assertEqual(self.websocket_stopped, False)
+        self.assertEqual(self.web_platform_test_server_stopped, False)
 
 
 class SharderTests(unittest.TestCase):

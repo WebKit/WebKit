@@ -1,0 +1,21 @@
+{"host": "localhost",
+ "ports":{"http":[8800, 8801],
+          "https":[8443],
+          "ws":[49001]},
+ "check_subdomains": false,
+ "log_level":"debug",
+ "bind_hostname": false,
+ "ssl": {"type": "openssl",
+         "encrypt_after_connect": false,
+         "openssl": {
+             "openssl_binary": "openssl",
+             "base_path": "_certs",
+             "force_regenerate": false
+         },
+         "pregenerated": {
+             "host_key_path": null,
+             "host_cert_path": null
+         },
+         "none": {}
+        }
+}

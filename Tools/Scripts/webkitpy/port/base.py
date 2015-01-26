@@ -59,6 +59,7 @@ from webkitpy.port import server_process
 from webkitpy.port.factory import PortFactory
 from webkitpy.layout_tests.servers import apache_http_server
 from webkitpy.layout_tests.servers import http_server
+from webkitpy.layout_tests.servers import web_platform_test_server
 from webkitpy.layout_tests.servers import websocket_server
 
 _log = logging.getLogger(__name__)
@@ -125,6 +126,7 @@ class Port(object):
         self._helper = None
         self._http_server = None
         self._websocket_server = None
+        self._web_platform_test_server = None
         self._image_differ = None
         self._server_process_constructor = server_process.ServerProcess  # overridable for testing
 
@@ -894,6 +896,18 @@ class Port(object):
         server.start()
         self._websocket_server = server
 
+    def start_web_platform_test_server(self, additional_dirs=None, number_of_servers=None):
+        assert not self._web_platform_test_server, 'Already running a Web Platform Test server.'
+
+        self._web_platform_test_server = web_platform_test_server.WebPlatformTestServer(self, "wptwk", self.results_directory())
+        self._web_platform_test_server.start()
+
+    def web_platform_test_server_doc_root(self):
+        return web_platform_test_server.doc_root(self) + self.TEST_PATH_SEPARATOR
+
+    def web_platform_test_server_base_url(self):
+        return web_platform_test_server.base_url(self)
+
     def http_server_supports_ipv6(self):
         # Cygwin is the only platform to still use Apache 1.3, which only supports IPV4.
         # Once it moves to Apache 2, we can drop this method altogether.
@@ -918,6 +932,11 @@ class Port(object):
         if self._websocket_server:
             self._websocket_server.stop()
             self._websocket_server = None
+
+    def stop_web_platform_test_server(self):
+        if self._web_platform_test_server:
+            self._web_platform_test_server.stop()
+            self._web_platform_test_server = None
 
     def exit_code_from_summarized_results(self, unexpected_results):
         """Given summarized results, compute the exit code to be returned by new-run-webkit-tests.

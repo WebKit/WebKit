@@ -37,6 +37,7 @@ import os
 
 from webkitpy.common.system import path
 from webkitpy.common.system.profiler import ProfilerFactory
+from webkitpy.layout_tests.servers.web_platform_test_server import WebPlatformTestServer
 
 
 _log = logging.getLogger(__name__)
@@ -155,6 +156,9 @@ class Driver(object):
         else:
             self._profiler = None
 
+        self.web_platform_test_server_doc_root = self._port.web_platform_test_server_doc_root()
+        self.web_platform_test_server_base_url = self._port.web_platform_test_server_base_url()
+
     def __del__(self):
         self.stop()
 
@@ -238,8 +242,14 @@ class Driver(object):
     def is_http_test(self, test_name):
         return test_name.startswith(self.HTTP_DIR) and not test_name.startswith(self.HTTP_LOCAL_DIR)
 
+    def is_web_platform_test(self, test_name):
+        return test_name.startswith(self.web_platform_test_server_doc_root)
+
     def test_to_uri(self, test_name):
         """Convert a test name to a URI."""
+        if self.is_web_platform_test(test_name):
+            return self.web_platform_test_server_base_url + test_name[len(self.web_platform_test_server_doc_root):]
+
         if not self.is_http_test(test_name):
             return path.abspath_to_uri(self._port.host.platform, self._port.abspath_for_test(test_name))
 
@@ -263,6 +273,8 @@ class Driver(object):
             if not prefix.endswith('/'):
                 prefix += '/'
             return uri[len(prefix):]
+        if uri.startswith(self.web_platform_test_server_base_url):
+            return uri.replace(self.web_platform_test_server_base_url, self.web_platform_test_server_doc_root)
         if uri.startswith("http://"):
             return uri.replace('http://127.0.0.1:8000/', self.HTTP_DIR)
         if uri.startswith("https://"):
@@ -395,7 +407,7 @@ class Driver(object):
         # FIXME: performance tests pass in full URLs instead of test names.
         if driver_input.test_name.startswith('http://') or driver_input.test_name.startswith('https://')  or driver_input.test_name == ('about:blank'):
             command = driver_input.test_name
-        elif self.is_http_test(driver_input.test_name):
+        elif self.is_http_test(driver_input.test_name) or self.is_web_platform_test(driver_input.test_name):
             command = self.test_to_uri(driver_input.test_name)
         else:
             command = self._port.abspath_for_test(driver_input.test_name)

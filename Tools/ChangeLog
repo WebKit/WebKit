@@ -1,3 +1,75 @@
+2015-01-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Integrate WP python server into WebKit test framework
+        https://bugs.webkit.org/show_bug.cgi?id=127094
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds W3C web server (wptserver) as a new HTTP server.
+        wptserver is used to serve all tests inside LayoutTests/imported/w3c/wpt.
+        wptserver implementation should be imported within the import of the Web Platform Test suite (to ensure keeping server and tests in sync) in LayoutTests/imported/w3c/wpt.
+
+        Scripts/webkitpy/layout_tests/servers/web_platform_test_launcher.py serves as main entry point to wpt spawned process.
+        Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py is responsible to start/stop the wpt server process.
+        It also sets up the server config and testharness.js/testharnessreport.js files at start and stop of the wpt server.
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockProcess.communicate):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py: Adding start/stop of web platform test server according boolean parameter.
+        (LayoutTestRunner.__init__):
+        (LayoutTestRunner.run_tests):
+        (LayoutTestRunner.start_servers):
+        (LayoutTestRunner.stop_servers):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py: Updated to check for wpt server start/stop.
+        (LayoutTestRunnerTests._run_tests):
+        (LayoutTestRunnerTests.test_servers_started.start_web_platform_test_server):
+        (LayoutTestRunnerTests.test_servers_started.stop_web_platform_test_server):
+        (LayoutTestRunnerTests):
+        (LayoutTestRunnerTests.test_servers_started):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:  Updated to check whether a test is a wpt test and whether wpt server launch is needed.
+        (Manager.__init__):
+        (Manager._is_http_test):
+        (Manager._is_web_platform_test):
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_needs_servers.get_wpt_doc_root):
+        (ManagerTest.test_needs_servers.get_manager):
+        (ManagerTest.test_needs_servers):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py: Added an option to control the doc_root of the wpt server.
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_launcher.py: Added.
+        (main):
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py: Added.
+        (doc_root):
+        (base_url):
+        (WebPlatformTestServer):
+        (WebPlatformTestServer.__init__):
+        (WebPlatformTestServer._set_start_cmd):
+        (WebPlatformTestServer._copy_webkit_test_files):
+        (WebPlatformTestServer._clean_webkit_test_files):
+        (WebPlatformTestServer._prepare_config):
+        (WebPlatformTestServer._spawn_process):
+        (WebPlatformTestServer._stop_running_server):
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server_unittest.py: Added.
+        (TestWebPlatformTestServer):
+        (TestWebPlatformTestServer.test_start_cmd):
+        * Scripts/webkitpy/port/base.py:
+        (Port.__init__):
+        (Port.to.start_web_platform_test_server):
+        (Port.to):
+        (Port.to.web_platform_test_server_doc_root):
+        (Port.to.web_platform_test_server_base_url):
+        (Port.to.stop_web_platform_test_server):
+        * Scripts/webkitpy/port/driver.py: Updated the test name <-> test URL conversion routines.
+        (Driver.__init__):
+        (Driver.is_web_platform_test):
+        (Driver.test_to_uri):
+        (Driver.uri_to_test):
+        (Driver._command_from_driver_input):
+        * Scripts/webkitpy/port/driver_unittest.py:  Updated tests according new conversion rules.
+        (DriverTest.test_test_to_uri):
+        (DriverTest.test_uri_to_test):
+
 2015-01-26  Daniel Bates  <dabates@apple.com>
 
         Teach run-webkit-app --simulator how to install custom built app

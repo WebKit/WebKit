@@ -1,3 +1,14 @@
+2015-01-26  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Integrate WP python server into WebKit test framework
+        https://bugs.webkit.org/show_bug.cgi?id=127094
+
+        Reviewed by Ryosuke Niwa.
+
+        Contains parameters of web platform test server.
+
+        * resources/config.json: Added.
+
 2015-01-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Move w3c/canvas/resources/ common resources to w3c/resources/.

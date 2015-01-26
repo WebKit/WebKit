@@ -295,6 +295,10 @@ def parse_args(args):
                             "configurations. Does not run any tests.")),
     ]))
 
+    option_group_definitions.append(("Web Platform Test Server Options", [
+        optparse.make_option("--wptserver-doc-root", type="string", help=("Set web platform server document root, relative to LayoutTests directory")),
+    ]))
+
     # FIXME: Move these into json_results_generator.py
     option_group_definitions.append(("Result JSON Options", [
         optparse.make_option("--master-name", help="The name of the buildbot master."),
