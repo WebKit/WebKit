@@ -287,7 +287,7 @@ static bool shouldOverhang(bool firstLine, const RenderObject* renderer, const R
     return style.fontSize() <= rubyBaseStyle.fontSize();
 }
 
-void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, int& startOverhang, int& endOverhang) const
+void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, float& startOverhang, float& endOverhang) const
 {
     ASSERT(!needsLayout());
 
@@ -303,12 +303,12 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
     if (!rubyBase->firstRootBox())
         return;
 
-    int logicalWidth = this->logicalWidth();
-    int logicalLeftOverhang = std::numeric_limits<int>::max();
-    int logicalRightOverhang = std::numeric_limits<int>::max();
+    LayoutUnit logicalWidth = this->logicalWidth();
+    float logicalLeftOverhang = std::numeric_limits<float>::max();
+    float logicalRightOverhang = std::numeric_limits<float>::max();
     for (RootInlineBox* rootInlineBox = rubyBase->firstRootBox(); rootInlineBox; rootInlineBox = rootInlineBox->nextRootBox()) {
-        logicalLeftOverhang = std::min<int>(logicalLeftOverhang, rootInlineBox->logicalLeft());
-        logicalRightOverhang = std::min<int>(logicalRightOverhang, logicalWidth - rootInlineBox->logicalRight());
+        logicalLeftOverhang = std::min<float>(logicalLeftOverhang, rootInlineBox->logicalLeft());
+        logicalRightOverhang = std::min<float>(logicalRightOverhang, logicalWidth - rootInlineBox->logicalRight());
     }
 
     startOverhang = style().isLeftToRightDirection() ? logicalLeftOverhang : logicalRightOverhang;
@@ -323,11 +323,11 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
     // We can overhang the ruby by no more than half the width of the neighboring text
     // and no more than half the font size.
     const RenderStyle& rubyTextStyle = firstLine ? rubyText->firstLineStyle() : rubyText->style();
-    int halfWidthOfFontSize = rubyTextStyle.fontSize() / 2;
+    float halfWidthOfFontSize = rubyTextStyle.fontSize() / 2.;
     if (startOverhang)
-        startOverhang = std::min<int>(startOverhang, std::min<int>(toRenderText(startRenderer)->minLogicalWidth(), halfWidthOfFontSize));
+        startOverhang = std::min(startOverhang, std::min(toRenderText(*startRenderer).minLogicalWidth(), halfWidthOfFontSize));
     if (endOverhang)
-        endOverhang = std::min<int>(endOverhang, std::min<int>(toRenderText(endRenderer)->minLogicalWidth(), halfWidthOfFontSize));
+        endOverhang = std::min(endOverhang, std::min(toRenderText(*endRenderer).minLogicalWidth(), halfWidthOfFontSize));
 }
 
 } // namespace WebCore

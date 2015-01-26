@@ -1,5 +1,28 @@
 2015-01-26  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r177398.
+
+    2014-12-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Ruby overhang uses ints instead of floats
+        https://bugs.webkit.org/show_bug.cgi?id=139624
+
+        Reviewed by Dave Hyatt.
+
+        Simply change the type.
+
+        Updated existing tests.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::setMarginsForRubyRun):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::getOverhang):
+        * rendering/RenderRubyRun.h:
+        * rendering/line/LineWidth.cpp:
+        (WebCore::LineWidth::applyOverhang):
+
+2015-01-26  David Kilzer  <ddkilzer@apple.com>
+
         Merge r177377.
 
     2014-12-16  Myles C. Maxfield  <litherum@gmail.com>
