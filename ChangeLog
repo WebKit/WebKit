@@ -1,3 +1,19 @@
+2015-01-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EFL][GTK] Stop compiling with fno-omit-frame-pointer, -fno-tree-dce
+        https://bugs.webkit.org/show_bug.cgi?id=140609
+
+        Reviewed by Csaba Osztrogonác.
+
+        The latest releases of GCC versions 4.7, 4.8 and 4.9 all compile and
+        run JSC tests fine without the -fno-tree-dce and -fno-omit-frame-pointer
+        compilation flags. Those were added after the jsCStack branch merge, but
+        can now be removed since the -ftree-dce issues were fixed in GCC, and
+        changes in r173282 and r173298 again enable compiling with -fomit-frame-pointer.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-01-26  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179107.
