@@ -43,6 +43,9 @@ void NetworkProcessCreationParameters::encode(IPC::ArgumentEncoder& encoder) con
     encoder << canHandleHTTPSServerTrustEvaluation;
     encoder << diskCacheDirectory;
     encoder << diskCacheDirectoryExtensionHandle;
+#if ENABLE(NETWORK_CACHE)
+    encoder << shouldEnableNetworkCache;
+#endif
     encoder << cookieStorageDirectory;
 #if PLATFORM(IOS)
     encoder << cookieStorageDirectoryExtensionHandle;
@@ -80,6 +83,10 @@ bool NetworkProcessCreationParameters::decode(IPC::ArgumentDecoder& decoder, Net
         return false;
     if (!decoder.decode(result.diskCacheDirectoryExtensionHandle))
         return false;
+#if ENABLE(NETWORK_CACHE)
+    if (!decoder.decode(result.shouldEnableNetworkCache))
+        return false;
+#endif
     if (!decoder.decode(result.cookieStorageDirectory))
         return false;
 #if PLATFORM(IOS)

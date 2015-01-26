@@ -79,6 +79,10 @@ static NSString * const WebKit2HTTPProxyDefaultsKey = @"WebKit2HTTPProxy";
 static NSString * const WebKit2HTTPSProxyDefaultsKey = @"WebKit2HTTPSProxy";
 #endif
 
+#if ENABLE(NETWORK_CACHE)
+static NSString * const WebKitNetworkCacheEnabledDefaultsKey = @"WebKitNetworkCacheEnabled";
+#endif
+
 namespace WebKit {
 
 NSString *SchemeForCustomProtocolRegisteredNotificationName = @"WebKitSchemeForCustomProtocolRegisteredNotification";
@@ -98,6 +102,10 @@ static void registerUserDefaultsIfNeeded()
     
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
+#endif
+
+#if ENABLE(NETWORK_CACHE)
+    [registrationDictionary setObject:[NSNumber numberWithBool:YES] forKey:WebKitNetworkCacheEnabledDefaultsKey];
 #endif
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
@@ -185,7 +193,7 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     parameters.shouldEnableJIT = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCJITEnabledDefaultsKey];
     parameters.shouldEnableFTLJIT = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJSCFTLJITEnabledDefaultsKey];
     parameters.shouldEnableMemoryPressureReliefLogging = [[NSUserDefaults standardUserDefaults] boolForKey:@"LogMemoryJetsamDetails"];
-    
+
 #if HAVE(HOSTED_CORE_ANIMATION)
 #if !PLATFORM(IOS)
     parameters.acceleratedCompositingPort = MachSendRight::create([CARemoteLayerServer sharedServer].serverPort);
@@ -241,6 +249,10 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     parameters.httpProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPProxyDefaultsKey];
     parameters.httpsProxy = [[NSUserDefaults standardUserDefaults] stringForKey:WebKit2HTTPSProxyDefaultsKey];
+
+#if ENABLE(NETWORK_CACHE)
+    parameters.shouldEnableNetworkCache = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitNetworkCacheEnabledDefaultsKey];
+#endif
 }
 #endif
 

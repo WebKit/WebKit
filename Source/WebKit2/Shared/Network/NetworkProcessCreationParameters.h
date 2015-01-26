@@ -56,6 +56,9 @@ struct NetworkProcessCreationParameters {
 
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
+#if ENABLE(NETWORK_CACHE)
+    bool shouldEnableNetworkCache;
+#endif
 
     String cookieStorageDirectory;
 

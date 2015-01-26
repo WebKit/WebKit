@@ -1,3 +1,23 @@
+2015-01-26  Antti Koivisto  <antti@apple.com>
+
+        Add a user default for disabling network cache
+        https://bugs.webkit.org/show_bug.cgi?id=140904
+
+        Reviewed by Andreas Kling
+
+        defaults write com.apple.Safari WebKitNetworkCacheEnabled -bool YES/NO
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2015-01-26  Chris Dumez  <cdumez@apple.com>
 
         First argument to DOM traversal functions should be a reference
