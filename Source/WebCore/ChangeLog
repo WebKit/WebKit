@@ -1,5 +1,77 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r177035.
+
+    2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete Node::boundingBox()
+        https://bugs.webkit.org/show_bug.cgi?id=139333
+
+        Conceptually, boundingBox() should be on RenderInline. In addition,
+        Node::boundingBox() is completely broken for inline elements: it
+        makes a rect from the top left of the first inline child to the
+        bottom right of the last inline child, disregarding the intermediate
+        inline children. This breaks with vertical text and with line
+        breaks.
+
+        What makes this problem worse is that some functions actually rely
+        on this bad behavior. These functions are functions that use the
+        Node's so-called "bounding box" to scroll to an anchor tag.
+
+        This patch goes through all the call sites of Node::boundingBox(),
+        and segregates them into calls that expect the true bounding box
+        and calls that need this false bounding box. This patch then moves
+        this false bounding box into RenderElement, using the name
+        anchorRect(). Callers what want the correct bounding box have been
+        updated to use RenderElement::absoluteBoundingBoxRect().
+
+        Reviewed by Zalan Bujtas.
+
+        No new tests because there should be no behavior change.
+
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySliderThumb::elementRect): Use
+        RenderObject::absoluteBoundingBoxRect()
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getUpperLeftCorner): Deleted.
+        (WebCore::ContainerNode::getLowerRightCorner): Deleted.
+        (WebCore::ContainerNode::boundingBox): Deleted.
+        * dom/ContainerNode.h:
+        * dom/Element.cpp:
+        (WebCore::Element::scrollIntoView): Use RenderElement::anchorRect().
+        (WebCore::Element::scrollIntoViewIfNeeded): Ditto.
+        (WebCore::Element::updateFocusAppearance): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::boundingBox): Deleted.
+        * dom/Node.h:
+        (WebCore::Node::pixelSnappedBoundingBox): Deleted.
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::elementRectRelativeToRootView): Use
+        RenderObject::absoluteBoundingBoxRect()
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters): Ditto.
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree): Ditto.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollElementToRect): Use
+        RenderElement::anchorRect().
+        (WebCore::FrameView::scrollToAnchor): Ditto.
+        * page/SpatialNavigation.cpp:
+        (WebCore::nodeRectInAbsoluteCoordinates): Use
+        RenderObject::absoluteBoundingBoxRect()
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::getUpperLeftCorner): Moved from ContainerNode.
+        (WebCore::RenderElement::getLowerRightCorner): Moved from
+        ContainerNode.
+        (WebCore::RenderElement::anchorRect): Moved from ContainerNode.
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::topOfFirstText): Helper for
+        RenderElement::anchorRect()
+        * rendering/RenderText.h:
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r176725.
 
     2014-12-03  Jer Noble  <jer.noble@apple.com>

@@ -1,3 +1,18 @@
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
+        Merge r177035.
+
+    2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete Node::boundingBox()
+        https://bugs.webkit.org/show_bug.cgi?id=139333
+
+        Reviewed by Zalan Bujtas.
+
+        * WebView/WebActionMenuController.mm:
+        (elementBoundingBoxInWindowCoordinatesFromNode): Use
+        RenderObject::absoluteBoundingBoxRect().
+
 2014-08-06  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r172172. <rdar://problem/17862892>

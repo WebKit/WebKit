@@ -158,6 +158,8 @@ public:
 
     StringView stringView(int start = 0, int stop = -1) const;
 
+    LayoutUnit topOfFirstText() const;
+
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth);
     virtual void willBeDestroyed() override;

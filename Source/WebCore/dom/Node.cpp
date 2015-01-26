@@ -616,13 +616,6 @@ RenderBoxModelObject* Node::renderBoxModelObject() const
     RenderObject* renderer = this->renderer();
     return renderer && renderer->isBoxModelObject() ? toRenderBoxModelObject(renderer) : 0;
 }
-
-LayoutRect Node::boundingBox() const
-{
-    if (renderer())
-        return renderer()->absoluteBoundingBoxRect();
-    return LayoutRect();
-}
     
 LayoutRect Node::renderRect(bool* isReplaced)
 {    
@@ -2236,6 +2229,13 @@ void Node::updateAncestorConnectedSubframeCountForInsertion() const
 bool Node::inRenderedDocument() const
 {
     return inDocument() && document().hasLivingRenderTree();
+}
+
+IntRect rendererBoundingBox(const Node& node)
+{
+    if (RenderObject* renderer = node.renderer())
+        return renderer->absoluteBoundingBoxRect();
+    return IntRect();
 }
 
 } // namespace WebCore

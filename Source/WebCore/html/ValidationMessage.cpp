@@ -178,7 +178,7 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
     m_bubble->setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
     shadowRoot.appendChild(m_bubble.get(), ASSERT_NO_EXCEPTION);
     document.updateLayout();
-    adjustBubblePosition(m_element->boundingBox(), m_bubble.get());
+    adjustBubblePosition(rendererBoundingBox(*m_element), m_bubble.get());
 
     RefPtr<HTMLDivElement> clipper = HTMLDivElement::create(document);
     clipper->setPseudo(AtomicString("-webkit-validation-bubble-arrow-clipper", AtomicString::ConstructFromLiteral));

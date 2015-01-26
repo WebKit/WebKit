@@ -1355,4 +1355,127 @@ void RenderElement::addControlStatesForRenderer(const RenderObject* o, ControlSt
     controlStatesRendererMap().add(o, states);
 }
 
+bool RenderElement::getLeadingCorner(FloatPoint& point) const
+{
+    if (!isInline() || isReplaced()) {
+        point = localToAbsolute(FloatPoint(), UseTransforms);
+        return true;
+    }
+
+    // find the next text/image child, to get a position
+    const RenderObject* o = this;
+    while (o) {
+        const RenderObject* p = o;
+        if (RenderObject* child = o->firstChildSlow())
+            o = child;
+        else if (o->nextSibling())
+            o = o->nextSibling();
+        else {
+            RenderObject* next = 0;
+            while (!next && o->parent()) {
+                o = o->parent();
+                next = o->nextSibling();
+            }
+            o = next;
+
+            if (!o)
+                break;
+        }
+        ASSERT(o);
+
+        if (!o->isInline() || o->isReplaced()) {
+            point = o->localToAbsolute(FloatPoint(), UseTransforms);
+            return true;
+        }
+
+        if (p->node() && p->node() == element() && o->isText() && !toRenderText(*o).firstTextBox()) {
+            // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
+        } else if (o->isText() || o->isReplaced()) {
+            point = FloatPoint();
+            if (o->isText() && toRenderText(*o).firstTextBox())
+                point.move(toRenderText(*o).linesBoundingBox().x(), toRenderText(*o).topOfFirstText());
+            else if (o->isBox())
+                point.moveBy(toRenderBox(*o).location());
+            point = o->container()->localToAbsolute(point, UseTransforms);
+            return true;
+        }
+    }
+    
+    // If the target doesn't have any children or siblings that could be used to calculate the scroll position, we must be
+    // at the end of the document. Scroll to the bottom. FIXME: who said anything about scrolling?
+    if (!o && document().view()) {
+        point = FloatPoint(0, document().view()->contentsHeight());
+        return true;
+    }
+    return false;
+}
+
+bool RenderElement::getTrailingCorner(FloatPoint& point) const
+{
+    if (!isInline() || isReplaced()) {
+        point = localToAbsolute(LayoutPoint(toRenderBox(*this).size()), UseTransforms);
+        return true;
+    }
+
+    // find the last text/image child, to get a position
+    const RenderObject* o = this;
+    while (o) {
+        if (RenderObject* child = o->lastChildSlow())
+            o = child;
+        else if (o->previousSibling())
+            o = o->previousSibling();
+        else {
+            RenderObject* prev = 0;
+            while (!prev) {
+                o = o->parent();
+                if (!o)
+                    return false;
+                prev = o->previousSibling();
+            }
+            o = prev;
+        }
+        ASSERT(o);
+        if (o->isText() || o->isReplaced()) {
+            point = FloatPoint();
+            if (o->isText()) {
+                IntRect linesBox = toRenderText(*o).linesBoundingBox();
+                if (!linesBox.maxX() && !linesBox.maxY())
+                    continue;
+                point.moveBy(linesBox.maxXMaxYCorner());
+            } else
+                point.moveBy(toRenderBox(*o).frameRect().maxXMaxYCorner());
+            point = o->container()->localToAbsolute(point, UseTransforms);
+            return true;
+        }
+    }
+    return true;
+}
+
+LayoutRect RenderElement::anchorRect() const
+{
+    FloatPoint leading, trailing;
+    bool foundLeading = getLeadingCorner(leading);
+    bool foundTrailing = getTrailingCorner(trailing);
+    
+    // If we've found one corner, but not the other,
+    // then we should just return a point at the corner that we did find.
+    if (foundLeading != foundTrailing) {
+        if (foundLeading)
+            foundTrailing = foundLeading;
+        else
+            foundLeading = foundTrailing;
+    }
+
+    FloatPoint upperLeft = leading;
+    FloatPoint lowerRight = trailing;
+
+    // Vertical writing modes might mean the leading point is not in the top left
+    if (!isInline() || isReplaced()) {
+        upperLeft = FloatPoint(std::min(leading.x(), trailing.x()), std::min(leading.y(), trailing.y()));
+        lowerRight = FloatPoint(std::max(leading.x(), trailing.x()), std::max(leading.y(), trailing.y()));
+    } // Otherwise, it's not obvious what to do.
+
+    return enclosingLayoutRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
+}
+
 }

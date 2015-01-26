@@ -502,6 +502,7 @@ bool canScrollInDirection(const Frame* frame, FocusDirection direction)
     }
 }
 
+// FIXME: This is completely broken. This should be deleted and callers should be calling ScrollView::contentsToWindow() instead.
 static LayoutRect rectToAbsoluteCoordinates(Frame* initialFrame, const LayoutRect& initialRect)
 {
     LayoutRect rect = initialRect;
@@ -522,7 +523,8 @@ LayoutRect nodeRectInAbsoluteCoordinates(Node* node, bool ignoreBorder)
 
     if (node->isDocumentNode())
         return frameRectInAbsoluteCoordinates(toDocument(node)->frame());
-    LayoutRect rect = rectToAbsoluteCoordinates(node->document().frame(), node->boundingBox());
+
+    LayoutRect rect = rectToAbsoluteCoordinates(node->document().frame(), rendererBoundingBox(*node));
 
     // For authors that use border instead of outline in their CSS, we compensate by ignoring the border when calculating
     // the rect of the focused element.

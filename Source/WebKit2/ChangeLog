@@ -1,5 +1,23 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r177035.
+
+    2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete Node::boundingBox()
+        https://bugs.webkit.org/show_bug.cgi?id=139333
+
+        Reviewed by Zalan Bujtas.
+
+        * Shared/WebHitTestResult.cpp:
+        (WebKit::WebHitTestResult::Data::elementBoundingBoxInWindowCoordinates):
+        Use RenderObject::absoluteBoundingBoxRect().
+        * WebProcess/WebPage/CoordinatedGraphics/WebPageCoordinatedGraphics.cpp:
+        (WebKit::WebPage::findZoomableAreaForPoint): Use
+        RenderObject::absoluteBoundingBoxRect().
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r176382.
 
     2014-11-19  Yongjun Zhang  <yongjun_zhang@apple.com>

@@ -1909,7 +1909,7 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
         parameters.stepBase = 0;
     }
 
-    parameters.anchorRectInRootView = document().view()->contentsToRootView(pixelSnappedBoundingBox());
+    parameters.anchorRectInRootView = document().view()->contentsToRootView(rendererBoundingBox(*this));
     parameters.currentValue = value();
     parameters.isAnchorElementRTL = computedStyle()->direction() == RTL;
 #if ENABLE(DATALIST_ELEMENT)

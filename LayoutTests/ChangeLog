@@ -1,5 +1,15 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r177035.
+
+        * fast/spatial-navigation/snav-container-white-space-expected.txt:
+        * fast/spatial-navigation/snav-container-white-space.html:
+        * fast/spatial-navigation/snav-imagemap-overlapped-areas-expected.txt:
+        * fast/spatial-navigation/snav-imagemap-overlapped-areas.html:
+        - Update results.
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r176321.
 
     2014-11-19  Chris Fleizach  <cfleizach@apple.com>
