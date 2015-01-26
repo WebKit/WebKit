@@ -1,0 +1,59 @@
+<html>
+<head>
+  <style type="text/css" media="screen">
+    .box {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      top: 20px;
+      left: 20px;
+      background-color: gray;
+      border-radius: 30%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .inner {
+      width: 200px;
+      height: 200px;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .composited {
+      -webkit-transform: translateZ(1px);
+    }
+
+    p {
+      margin-top: 140px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+
+    function doTest() {
+      if (window.testRunner) {
+        document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        testRunner.notifyDone();
+      }
+    }
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+  <div class="box">
+    <div class="composited inner">
+    </div>
+  </div>
+
+  <div class="box" style="left: 220px;">
+    <div class="inner">
+    </div>
+  </div>
+
+  <p>Test CSS clip with composited layers. Left and right sides should look the same. This test should not ASSERT in debug builds.</p>
+  <pre id="layers">In DRT, layer tree goes here.</pre>
+</body>
+</html>

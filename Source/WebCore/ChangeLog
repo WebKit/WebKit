@@ -1,3 +1,19 @@
+2015-01-26  Byungseon Shin  <sun.shin@lge.com>
+
+        Fix Border-radius clipping issue on a composited descendants
+        https://bugs.webkit.org/show_bug.cgi?id=138551 
+
+        Reviewed by Simon Fraser.
+
+        Fix assertion in RenderLayerBacking::paintIntoLayer
+        by not checking out of sync with the GraphicsLayer heirarchy
+        in GraphicsLayerPaintChildClippingMask phase.
+
+        Test: compositing/clipping/border-radius-overflow-hidden-stacking-context.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
 2015-01-26  Chris Dumez  <cdumez@apple.com>
 
         Simplify RenderElement's shouldRepaintForImageAnimation()

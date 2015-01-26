@@ -1,3 +1,15 @@
+2015-01-26  Byungseon Shin  <sun.shin@lge.com>
+
+        Fix Border-radius clipping issue on a composited descendants
+        https://bugs.webkit.org/show_bug.cgi?id=138551
+
+        Reviewed by Simon Fraser.
+
+        Ref test that clips composited descendant by stacking context with border-radius and overflow hidden element.
+
+        * compositing/clipping/border-radius-overflow-hidden-stacking-context-expected.txt: Added.
+        * compositing/clipping/border-radius-overflow-hidden-stacking-context.html: Added.
+
 2015-01-26  Benjamin Poulain  <benjamin@webkit.org>
 
         Fix CSS Selector's tag name matching when mixing HTML and XML
