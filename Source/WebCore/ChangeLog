@@ -1,5 +1,25 @@
 2015-01-26  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r176384.
+
+    2014-11-20  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r172854): Web Viewer in FileMaker does not render a Base64 encoded animated-GIF
+        https://bugs.webkit.org/show_bug.cgi?id=138807
+        <rdar://problem/18829540>
+
+        Reviewed by Simon Fraser.
+
+        Animation gets paused because WebKit thinks the GIF is outside of the view.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::windowClipRect):
+
+        We need to convert to window coordinates in paintsEntireContents mode too so these functions are consistent.
+        This matters with some WK1 API clients.
+
+2015-01-26  David Kilzer  <ddkilzer@apple.com>
+
         Merge r172854.
 
     2014-08-21  Antti Koivisto  <antti@apple.com>
