@@ -168,7 +168,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(CSSPropertyLineHeight + 1);
+static const CSSPropertyID lastHighPriorityProperty = CSSPropertyZoom;
+static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(lastHighPriorityProperty + 1);
 
 class StyleResolver::CascadedProperties {
 public:
@@ -820,7 +821,6 @@ Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle
     // Create the style
     state.setStyle(RenderStyle::clone(elementStyle));
     state.setParentStyle(RenderStyle::clone(elementStyle));
-    state.setLineHeightValue(0);
 
     TextDirection direction;
     WritingMode writingMode;
@@ -831,14 +831,10 @@ Ref<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* elementStyle
     CascadedProperties cascade(direction, writingMode);
     cascade.addMatches(result, false, 0, result.matchedProperties.size() - 1);
 
-    applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
+    applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty);
 
     // If our font got dirtied, go ahead and update it now.
     updateFont();
-
-    // Line-height is set when we are sure we decided on the font-size
-    if (state.lineHeightValue())
-        applyProperty(CSSPropertyLineHeight, state.lineHeightValue());
 
     // Now do rest of the properties.
     applyCascadedProperties(cascade, firstLowPriorityProperty, lastCSSProperty);
@@ -991,7 +987,6 @@ Ref<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 
     PageRuleCollector collector(m_state, m_ruleSets);
     collector.matchAllPageRules(pageIndex);
-    m_state.setLineHeightValue(0);
 
     MatchResult& result = collector.matchedResult();
 
@@ -1002,14 +997,10 @@ Ref<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     CascadedProperties cascade(direction, writingMode);
     cascade.addMatches(result, false, 0, result.matchedProperties.size() - 1);
 
-    applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
+    applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty);
 
     // If our font got dirtied, go ahead and update it now.
     updateFont();
-
-    // Line-height is set when we are sure we decided on the font-size.
-    if (m_state.lineHeightValue())
-        applyProperty(CSSPropertyLineHeight, m_state.lineHeightValue());
 
     applyCascadedProperties(cascade, firstLowPriorityProperty, lastCSSProperty);
 
@@ -1751,7 +1742,6 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         // Find out if there's a -webkit-appearance property in effect from the UA sheet.
         // If so, we cache the border and background styles so that RenderTheme::adjustStyle()
         // can look at them later to figure out if this is a styled form control or not.
-        state.setLineHeightValue(nullptr);
         CascadedProperties cascade(direction, writingMode);
         if (!cascade.addMatches(matchResult, false, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly)
             || !cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly))
@@ -1761,7 +1751,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         adjustStyleForInterCharacterRuby();
 
         // Start by applying properties that other properties may depend on.
-        applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
+        applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty);
     
         updateFont();
         applyCascadedProperties(cascade, firstLowPriorityProperty, lastCSSProperty);
@@ -1776,15 +1766,13 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
         || !cascade.addMatches(matchResult, true, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly))
         return applyMatchedProperties(matchResult, element, DoNotUseMatchedPropertiesCache);
 
-    state.setLineHeightValue(nullptr);
-
     applyCascadedProperties(cascade, CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition);
     
     // Adjust the font size to be smaller if ruby-position is inter-character.
     adjustStyleForInterCharacterRuby();
 
     // Start by applying properties that other properties may depend on.
-    applyCascadedProperties(cascade, firstCSSProperty, CSSPropertyLineHeight);
+    applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty);
 
     // If the effective zoom value changes, we can't use the matched properties cache. Start over.
     if (cacheItem && cacheItem->renderStyle->effectiveZoom() != state.style()->effectiveZoom())
@@ -1792,10 +1780,6 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 
     // If our font got dirtied, go ahead and update it now.
     updateFont();
-
-    // Line-height is set when we are sure we decided on the font-size.
-    if (state.lineHeightValue())
-        applyProperty(CSSPropertyLineHeight, state.lineHeightValue());
 
     // If the font changed, we can't use the matched properties cache. Start over.
     if (cacheItem && cacheItem->renderStyle->fontDescription() != state.style()->fontDescription())
@@ -2099,8 +2083,6 @@ void StyleResolver::initializeFontStyle(Settings* settings)
     fontDescription.setOneFamily(standardFamily);
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
     setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueMedium, false, document()));
-    m_state.style()->setLineHeight(RenderStyle::initialLineHeight());
-    m_state.setLineHeightValue(0);
     setFontDescription(fontDescription);
 }
 
@@ -2687,13 +2669,6 @@ void StyleResolver::CascadedProperties::applyDeferredProperties(StyleResolver& r
 void StyleResolver::CascadedProperties::Property::apply(StyleResolver& resolver)
 {
     State& state = resolver.state();
-
-    // FIXME: It would be nice if line-height were less of a special snowflake.
-    if (id == CSSPropertyLineHeight) {
-        if (auto value = state.style()->insideLink() == NotInsideLink ? cssValue[0] : cssValue[SelectorChecker::MatchLink])
-            state.setLineHeightValue(value);
-        return;
-    }
 
     if (cssValue[0]) {
         state.setApplyPropertyToRegularStyle(true);

@@ -1,3 +1,33 @@
+2015-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Demote 'line-height' to a low priority property.
+        https://bugs.webkit.org/show_bug.cgi?id=140817
+
+        Reviewed by Andreas Kling.
+
+        Our special handling of the 'line-height' property is no longer
+        required, since the 'font' shorthand is now expanded in the parser
+        in all cases (also for system fonts).
+
+        This patch is based on the following Blink revision:
+        https://src.chromium.org/viewvc/blink?revision=184629&view=revision
+
+        No new tests, already covered by:
+        fast/css/font-shorthand-line-height.html
+        fast/css/line-height-font-order.html
+
+        * css/CSSPropertyNames.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::styleForPage):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::initializeFontStyle):
+        (WebCore::StyleResolver::CascadedProperties::Property::apply):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::State):
+        (WebCore::StyleResolver::State::setLineHeightValue): Deleted.
+        (WebCore::StyleResolver::State::lineHeightValue): Deleted.
+
 2015-01-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] gtkdoc does not appear in DevHelp

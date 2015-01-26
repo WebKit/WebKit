@@ -119,13 +119,6 @@ text-rendering [Inherited, FontProperty, NameForMethods=TextRenderingMode]
 -epub-writing-mode = -webkit-writing-mode
 zoom [Custom=All]
 
-// line height needs to be right after the above high-priority properties
-#if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING
-line-height [Inherited, Custom=All]
-#else
-line-height [Inherited, Getter=specifiedLineHeight, ConditionalConverter=LineHeight]
-#endif
-
 // Keep this in between the highest priority props and the lower ones.
 -webkit-ruby-position [Inherited]
 
@@ -244,6 +237,11 @@ kerning [Inherited, SVG, Converter=SVGLength]
 left [Initial=initialOffset, Converter=LengthOrAuto]
 letter-spacing [Inherited, Converter=Spacing]
 lighting-color [SVG, Converter=SVGColor]
+#if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING
+line-height [Inherited, Custom=All]
+#else
+line-height [Inherited, Getter=specifiedLineHeight, ConditionalConverter=LineHeight]
+#endif
 list-style [Inherited, Longhands=list-style-type|list-style-position|list-style-image]
 list-style-image [Inherited, Converter=StyleImage<CSSPropertyListStyleImage>]
 list-style-position [Inherited]
