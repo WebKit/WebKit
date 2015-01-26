@@ -37,11 +37,13 @@ use Cwd qw(realpath);
 use Digest::MD5 qw(md5_hex);
 use FindBin;
 use File::Basename;
+use File::Find;
 use File::Path qw(mkpath rmtree);
 use File::Spec;
 use File::stat;
 use List::Util;
 use POSIX;
+use Time::HiRes qw(usleep);
 use VCSUtils;
 
 BEGIN {
@@ -66,11 +68,11 @@ BEGIN {
        &findOrCreateSimulatorForIOSDevice
        &iosSimulatorDeviceByName
        &nmPath
-       &openIOSSimulator
        &passedConfiguration
        &printHelpAndExitForRunAndDebugWebKitAppIfNeeded
        &productDir
        &quitIOSSimulator
+       &relaunchIOSSimulator
        &runIOSWebKitApp
        &runMacWebKitApp
        &safariPath
@@ -86,6 +88,7 @@ BEGIN {
 
 use constant USE_OPEN_COMMAND => 1; # Used in runMacWebKitApp().
 use constant INCLUDE_OPTIONS_FOR_DEBUGGING => 1;
+use constant SIMULATOR_DEVICE_STATE_SHUTDOWN => "1";
 use constant SIMULATOR_DEVICE_STATE_BOOTED => "3";
 
 our @EXPORT_OK;
@@ -1150,6 +1153,9 @@ sub iOSSimulatorDevices
     } readdir(DEVICES);
     close(DEVICES);
 
+    # FIXME: We should parse the device.plist file ourself and map the dictionary keys in it to known
+    #        dictionary keys so as to decouple our representation of the plist from the actual structure
+    #        of the plist, which may change.
     my @devices = map {
         Foundation::perlRefFromObjectRef(NSDictionary->dictionaryWithContentsOfFile_("$devicesPath/$_/device.plist"));
     } @udids;
@@ -1178,23 +1184,6 @@ sub createiOSSimulatorDevice
         sleep 5;
     }
     die "Device $name $deviceTypeId $runtimeId wasn't found in " . iOSSimulatorDevicesPath();
-}
-
-sub eraseIOSSimulatorDevice($)
-{
-    my $udid = shift;
-    return exitStatus(system("xcrun", "--sdk", "iphonesimulator", "simctl", "erase", $udid)) == 0;
-}
-
-sub bootedIOSSimulatorDevice()
-{
-    my @devices = iOSSimulatorDevices();
-    for my $device (@devices) {
-        if ($device->{state} eq SIMULATOR_DEVICE_STATE_BOOTED) {
-            return $device;
-        }
-    }
-    return undef;
 }
 
 sub willUseIOSDeviceSDKWhenBuilding()
@@ -2063,14 +2052,14 @@ sub plistPathFromBundle($)
 {
     my ($appBundle) = @_;
     return "$appBundle/Info.plist" if -f "$appBundle/Info.plist"; # iOS app bundle
-    return "$appBundle/Contents/Info.plist" if "$appBundle/Contents/Info.plist"; # Mac app bundle
+    return "$appBundle/Contents/Info.plist" if -f "$appBundle/Contents/Info.plist"; # Mac app bundle
     return "";
 }
 
 sub appIdentifierFromBundle($)
 {
     my ($appBundle) = @_;
-    my $plistPath = plistPathFromBundle($appBundle);
+    my $plistPath = File::Spec->rel2abs(plistPathFromBundle($appBundle)); # defaults(1) will complain if the specified path is not absolute.
     chomp(my $bundleIdentifier = `defaults read '$plistPath' CFBundleIdentifier 2> /dev/null`);
     return $bundleIdentifier;
 }
@@ -2078,28 +2067,45 @@ sub appIdentifierFromBundle($)
 sub appDisplayNameFromBundle($)
 {
     my ($appBundle) = @_;
-    my $plistPath = plistPathFromBundle($appBundle);
+    my $plistPath = File::Spec->rel2abs(plistPathFromBundle($appBundle)); # defaults(1) will complain if the specified path is not absolute.
     chomp(my $bundleDisplayName = `defaults read '$plistPath' CFBundleDisplayName 2> /dev/null`);
     return $bundleDisplayName;
 }
 
-sub openIOSSimulator($)
+sub waitUntilIOSSimulatorDeviceIsInState($$)
+{
+    my ($deviceUDID, $waitUntilState) = @_;
+    my $device = iosSimulatorDeviceByUDID($deviceUDID);
+    while ($device->{state} ne $waitUntilState) {
+        usleep(500 * 1000); # Waiting 500ms between file system polls does not make script run-safari feel sluggish.
+        $device = iosSimulatorDeviceByUDID($deviceUDID);
+    }
+}
+
+sub relaunchIOSSimulator($)
 {
     my ($simulatedDevice) = @_;
+    quitIOSSimulator($simulatedDevice->{UDID});
+
     chomp(my $developerDirectory = $ENV{DEVELOPER_DIR} || `xcode-select --print-path`);
     my $iosSimulatorPath = File::Spec->catfile($developerDirectory, "Applications", "iOS Simulator.app");
 
     system("open", "-a", $iosSimulatorPath, "--args", "-CurrentDeviceUDID", $simulatedDevice->{UDID}) == 0 or die "Failed to open $iosSimulatorPath: $!";
-    my $device;
-    do {
-        $device = iosSimulatorDeviceByName($simulatedDevice->{name});
-        sleep(2);
-    } while ($device->{state} ne SIMULATOR_DEVICE_STATE_BOOTED);
+    waitUntilIOSSimulatorDeviceIsInState($simulatedDevice->{UDID}, SIMULATOR_DEVICE_STATE_BOOTED);
 }
 
-sub quitIOSSimulator()
+sub quitIOSSimulator(;$)
 {
-    return system {"osascript"} "osascript", "-e", 'tell application "iOS Simulator" to quit';
+    my ($waitForShutdownOfSimulatedDeviceUDID) = @_;
+    exitStatus(system {"osascript"} "osascript", "-e", 'tell application "iOS Simulator" to quit') == 0 or die "Failed to quit iOS Simulator: $!";
+    if (!defined($waitForShutdownOfSimulatedDeviceUDID)) {
+        return;
+    }
+    # FIXME: We assume that $waitForShutdownOfSimulatedDeviceUDID was not booted using the simctl command line tool.
+    #        Otherwise we will spin indefinitely since quiting the iOS Simulator will not shutdown this device. We
+    #        should add a maximum time limit to wait for a device to shutdown and either return an error or die()
+    #        on expiration of the time limit.
+    waitUntilIOSSimulatorDeviceIsInState($waitForShutdownOfSimulatedDeviceUDID, SIMULATOR_DEVICE_STATE_SHUTDOWN);
 }
 
 sub iosSimulatorDeviceByName($)
@@ -2113,6 +2119,20 @@ sub iosSimulatorDeviceByName($)
         }
     }
     return undef;
+}
+
+sub iosSimulatorDeviceByUDID($)
+{
+    my ($simulatedDeviceUDID) = @_;
+    my $devicePlistPath = File::Spec->catfile(iOSSimulatorDevicesPath(), $simulatedDeviceUDID, "device.plist");
+    if (!-f $devicePlistPath) {
+        return;
+    }
+    # FIXME: We should parse the device.plist file ourself and map the dictionary keys in it to known
+    #        dictionary keys so as to decouple our representation of the plist from the actual structure
+    #        of the plist, which may change.
+    eval "require Foundation";
+    return Foundation::perlRefFromObjectRef(NSDictionary->dictionaryWithContentsOfFile_($devicePlistPath));
 }
 
 sub iosSimulatorRuntime()
@@ -2142,21 +2162,85 @@ sub findOrCreateSimulatorForIOSDevice($)
 sub isIOSSimulatorSystemInstalledApp($)
 {
     my ($appBundle) = @_;
-    my $simulatorApplicationsPath = iosSimulatorApplicationsPath();
+    my $simulatorApplicationsPath = realpath(iosSimulatorApplicationsPath());
     return substr(realpath($appBundle), 0, length($simulatorApplicationsPath)) eq $simulatorApplicationsPath;
+}
+
+sub hasUserInstalledAppInSimulatorDevice($$)
+{
+    my ($appIdentifier, $simulatedDeviceUDID) = @_;
+    my $userInstalledAppPath = File::Spec->catfile($ENV{HOME}, "Library", "Developer", "CoreSimulator", "Devices", $simulatedDeviceUDID, "data", "Containers", "Bundle", "Application");
+    if (!$userInstalledAppPath) {
+        return 0; # No user installed apps.
+    }
+    local @::userInstalledAppBundles;
+    sub wanted {
+        my $file = $_;
+
+        # Ignore hidden files and directories.
+        if ($file =~ /^\../) {
+            $File::Find::prune = 1;
+            return;
+        }
+
+        return if !-d $file || $file !~ /\.app$/;
+        push @::userInstalledAppBundles, $File::Find::name;
+        $File::Find::prune = 1; # Do not traverse contents of app bundle.
+    }
+    find(\&wanted, $userInstalledAppPath);
+    for my $userInstalledAppBundle (@::userInstalledAppBundles) {
+        if (appIdentifierFromBundle($userInstalledAppBundle) eq $appIdentifier) {
+            return 1; # Has user installed app.
+        }
+    }
+    return 0; # Does not have user installed app.
+}
+
+sub isSimulatorDeviceBooted($)
+{
+    my ($simulatedDeviceUDID) = @_;
+    my $device = iosSimulatorDeviceByUDID($simulatedDeviceUDID);
+    return $device && $device->{state} eq SIMULATOR_DEVICE_STATE_BOOTED;
 }
 
 sub runIOSWebKitAppInSimulator($;$)
 {
     my ($appBundle, $simulatorOptions) = @_;
     my $productDir = productDir();
-    my $appDisplayName = appDisplayNameFromBundle($appBundle);;
+    my $appDisplayName = appDisplayNameFromBundle($appBundle);
+    my $appIdentifier = appIdentifierFromBundle($appBundle);
     my $simulatedDevice = findOrCreateSimulatorForIOSDevice("For WebKit Development");
+    my $simulatedDeviceUDID = $simulatedDevice->{UDID};
 
-    my $bootedSimulatorDevice = bootedIOSSimulatorDevice();
-    if (!$bootedSimulatorDevice || $bootedSimulatorDevice->{UDID} ne $simulatedDevice->{UDID}) {
-        quitIOSSimulator();
-        openIOSSimulator($simulatedDevice);
+    my $willUseSystemInstalledApp = isIOSSimulatorSystemInstalledApp($appBundle);
+    if ($willUseSystemInstalledApp) {
+        if (hasUserInstalledAppInSimulatorDevice($appIdentifier, $simulatedDeviceUDID)) {
+            # Restore the system-installed app in the simulator device corresponding to $appBundle as it
+            # was previously overwritten with a custom built version of the app.
+            # FIXME: Only restore the system-installed version of the app instead of erasing all contents and settings.
+            print "Quitting iOS Simulator...\n";
+            quitIOSSimulator($simulatedDeviceUDID);
+            print "Erasing contents and settings for simulator device \"$simulatedDevice->{name}\".\n";
+            exitStatus(system("xcrun", "--sdk", "iphonesimulator", "simctl", "erase", $simulatedDeviceUDID)) == 0 or die;
+        }
+        # FIXME: We assume that if $simulatedDeviceUDID is not booted then iOS Simulator is not open. However
+        #        $simulatedDeviceUDID may have been booted using the simctl command line tool. If $simulatedDeviceUDID
+        #        was booted using simctl then we should shutdown the device and launch iOS Simulator to boot it again.
+        if (!isSimulatorDeviceBooted($simulatedDeviceUDID)) {
+            print "Launching iOS Simulator...\n";
+            relaunchIOSSimulator($simulatedDevice);
+        }
+    } else {
+        # FIXME: We should killall(1) any running instances of $appBundle before installing it to ensure
+        #        that simctl launch opens the latest installed version of the app. For now we quit and
+        #        launch the iOS Simulator again to ensure there are no running instances of $appBundle.
+        print "Quitting and launching iOS Simulator...\n";
+        relaunchIOSSimulator($simulatedDevice);
+
+        print "Installing $appBundle.\n";
+        # Install custom built app, overwriting an app with the same app identifier if one exists.
+        exitStatus(system("xcrun", "--sdk", "iphonesimulator", "simctl", "install", $simulatedDeviceUDID, $appBundle)) == 0 or die;
+
     }
 
     $simulatorOptions = {} unless $simulatorOptions;
@@ -2176,15 +2260,8 @@ sub runIOSWebKitAppInSimulator($;$)
         $ENV{"SIMCTL_CHILD_$key"} = $simulatorENV{$key};
     }
 
-    # FIXME: We should also erase the iOS Simulator device when alternating between running a
-    # custom-built MobileSafari and the system-installed MobileSafari.
-    if (!isIOSSimulatorSystemInstalledApp($appBundle)) {
-        eraseIOSSimulatorDevice($simulatedDevice->{UDID}) or die;
-    }
-
-    my $appIdentifier = appIdentifierFromBundle($appBundle);
     print "Starting $appDisplayName with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-    return exitStatus(system("xcrun", "--sdk", "iphonesimulator", "simctl", "launch", $simulatedDevice->{UDID}, $appIdentifier, @$applicationArguments));
+    return exitStatus(system("xcrun", "--sdk", "iphonesimulator", "simctl", "launch", $simulatedDeviceUDID, $appIdentifier, @$applicationArguments));
 }
 
 sub runIOSWebKitApp($)

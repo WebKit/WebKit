@@ -1,3 +1,55 @@
+2015-01-26  Daniel Bates  <dabates@apple.com>
+
+        Teach run-webkit-app --simulator how to install custom built app
+        https://bugs.webkit.org/show_bug.cgi?id=140691
+
+        Reviewed by David Kilzer.
+
+        We should teach run-webkit-app --simulator how to install a custom built app.
+
+        Currently run-webkit-app --simulator can only run a system app or an app that
+        was installed using the simctl command line tool. For convenience we should
+        teach run-webkit-app --simulator how to install a custom built app.
+
+        As a side effect of this change run-safari --simulator will install and run
+        a custom built of MobileSafari (if it exists).
+
+        * Scripts/webkitdirs.pm:
+        (iOSSimulatorDevices): Added FIXME comment to decouple device representation in
+        Perl from the structure of the device.plist file.
+        (plistPathFromBundle): Fix if-statement condition so that we actually perform a
+        file system check to determine the plist path for a Mac app bundle.
+        (appIdentifierFromBundle): Pass absolute files system path to defaults(1). Otherwise,
+        it will complain that it cannot find the file: "Domain ... does not exist".
+        (appDisplayNameFromBundle): Ditto.
+        (waitUntilIOSSimulatorDeviceIsInState): Added; helper function that does not return
+        until a simulator device is the specified state.
+        (relaunchIOSSimulator): Renamed; formerly named openIOSSimulator. Quits iOS Simulator
+        (if it's open) before opening it again so as to ensure that the iOS Simulator boots
+        the specified device.
+        (quitIOSSimulator): Added optional parameter, $waitForShutdownOfSimulatedDeviceUDID.
+        As implied by its name, this function will not return until the specified simulator
+        device UDID is in the shutdown state.
+        (iosSimulatorDeviceByUDID): Added; returns the device dictionary object for the simulator
+        device with the specified UDID.
+        (isIOSSimulatorSystemInstalledApp): Resolve symbolic links in iosSimulatorApplicationsPath()
+        before using it as part of a prefix match to avoid a mismatch. In the public iOS 8.1 SDK the
+        return value of iosSimulatorApplicationsPath(), which returns a result analogous to the shell
+        expression echo `xcrun --sdk iphonesimulator --show-sdk-path`/Applications/, contains a
+        symbolic link. Specifically, echo `xcrun --sdk iphonesimulator --show-sdk-path` returns
+        /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator8.1.sdk,
+        which is a symbolic link to /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk.
+        (hasUserInstalledAppInSimulatorDevice): Added.
+        (isSimulatorDeviceBooted): Added; returns whether the specified simulator device is in the
+        "Booted" state.
+        (runIOSWebKitAppInSimulator): Modified to install a custom built app (if needed). For now,
+        switching between a system installed app and a custom built version of the same app (e.g.
+        custom build of MobileSafari) will erase all contents and settings in the simulator device.
+        (eraseIOSSimulatorDevice): Deleted; inline implementation into runIOSWebKitAppInSimulator()
+        as that was the only caller of this function.
+        (bootedIOSSimulatorDevice): Deleted.
+        (openIOSSimulator): Deleted.
+
 2015-01-26  Alexey Proskuryakov  <ap@apple.com>
 
         Update bot assignments.
