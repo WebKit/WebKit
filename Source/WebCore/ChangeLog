@@ -1,5 +1,22 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r177041.
+
+        Already fixed by previous merge.
+
+    2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fix iOS build after r177035.
+
+        Unreviewed.
+
+        I accidentally added my line to WebCore.exp.in inside an
+        #IF PLATFORM(MAC) block.
+
+        * WebCore.exp.in:
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r177035.
 
     2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
