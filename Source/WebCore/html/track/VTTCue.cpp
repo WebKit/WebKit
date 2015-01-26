@@ -614,7 +614,7 @@ void VTTCue::determineTextDirection()
     // pre-order, depth-first traversal, excluding WebVTT Ruby Text Objects and
     // their descendants.
     StringBuilder paragraphBuilder;
-    for (Node* node = m_webVTTNodeTree->firstChild(); node; node = NodeTraversal::next(node, m_webVTTNodeTree.get())) {
+    for (Node* node = m_webVTTNodeTree->firstChild(); node; node = NodeTraversal::next(*node, m_webVTTNodeTree.get())) {
         // FIXME: The code does not match the comment above. This does not actually exclude Ruby Text Object descendant.
         if (!node->isTextNode() || node->localName() == rtTag)
             continue;
@@ -755,7 +755,7 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previo
     if (currentTimestamp > movieTime)
         isPastNode = false;
     
-    for (Node* child = root->firstChild(); child; child = NodeTraversal::next(child, root)) {
+    for (Node* child = root->firstChild(); child; child = NodeTraversal::next(*child, root)) {
         if (child->nodeName() == timestampTag) {
             MediaTime currentTimestamp;
             bool check = WebVTTParser::collectTimeStamp(child->nodeValue(), currentTimestamp);

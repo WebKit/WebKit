@@ -132,7 +132,7 @@ inline ElementChildIteratorAdapter<ElementType>::ElementChildIteratorAdapter(Con
 template <typename ElementType>
 inline ElementChildIterator<ElementType> ElementChildIteratorAdapter<ElementType>::begin()
 {
-    return ElementChildIterator<ElementType>(m_parent, Traversal<ElementType>::firstChild(&m_parent));
+    return ElementChildIterator<ElementType>(m_parent, Traversal<ElementType>::firstChild(m_parent));
 }
 
 template <typename ElementType>
@@ -144,13 +144,13 @@ inline ElementChildIterator<ElementType> ElementChildIteratorAdapter<ElementType
 template <typename ElementType>
 inline ElementType* ElementChildIteratorAdapter<ElementType>::first()
 {
-    return Traversal<ElementType>::firstChild(&m_parent);
+    return Traversal<ElementType>::firstChild(m_parent);
 }
 
 template <typename ElementType>
 inline ElementType* ElementChildIteratorAdapter<ElementType>::last()
 {
-    return Traversal<ElementType>::lastChild(&m_parent);
+    return Traversal<ElementType>::lastChild(m_parent);
 }
 
 template <typename ElementType>
@@ -171,7 +171,7 @@ inline ElementChildConstIteratorAdapter<ElementType>::ElementChildConstIteratorA
 template <typename ElementType>
 inline ElementChildConstIterator<ElementType> ElementChildConstIteratorAdapter<ElementType>::begin() const
 {
-    return ElementChildConstIterator<ElementType>(m_parent, Traversal<ElementType>::firstChild(&m_parent));
+    return ElementChildConstIterator<ElementType>(m_parent, Traversal<ElementType>::firstChild(m_parent));
 }
 
 template <typename ElementType>
@@ -183,13 +183,13 @@ inline ElementChildConstIterator<ElementType> ElementChildConstIteratorAdapter<E
 template <typename ElementType>
 inline const ElementType* ElementChildConstIteratorAdapter<ElementType>::first() const
 {
-    return Traversal<ElementType>::firstChild(&m_parent);
+    return Traversal<ElementType>::firstChild(m_parent);
 }
 
 template <typename ElementType>
 inline const ElementType* ElementChildConstIteratorAdapter<ElementType>::last() const
 {
-    return Traversal<ElementType>::lastChild(&m_parent);
+    return Traversal<ElementType>::lastChild(m_parent);
 }
 
 template <typename ElementType>

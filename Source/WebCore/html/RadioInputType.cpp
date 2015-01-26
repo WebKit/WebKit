@@ -79,7 +79,7 @@ void RadioInputType::handleKeydownEvent(KeyboardEvent* event)
     // We can only stay within the form's children if the form hasn't been demoted to a leaf because
     // of malformed HTML.
     Node* node = &element();
-    while ((node = (forward ? NodeTraversal::next(node) : NodeTraversal::previous(node)))) {
+    while ((node = (forward ? NodeTraversal::next(*node) : NodeTraversal::previous(*node)))) {
         // Once we encounter a form element, we know we're through.
         if (is<HTMLFormElement>(*node))
             break;

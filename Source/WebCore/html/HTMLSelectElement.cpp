@@ -785,9 +785,9 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
 
     HTMLOptionElement* foundSelected = 0;
     HTMLOptionElement* firstOption = 0;
-    for (Element* currentElement = ElementTraversal::firstWithin(this); currentElement; ) {
+    for (Element* currentElement = ElementTraversal::firstWithin(*this); currentElement; ) {
         if (!is<HTMLElement>(*currentElement)) {
-            currentElement = ElementTraversal::nextSkippingChildren(currentElement, this);
+            currentElement = ElementTraversal::nextSkippingChildren(*currentElement, this);
             continue;
         }
         HTMLElement& current = downcast<HTMLElement>(*currentElement);
@@ -797,7 +797,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
         // (http://www.w3.org/TR/html401/interact/forms.html#h-17.6)
         if (is<HTMLOptGroupElement>(current)) {
             m_listItems.append(&current);
-            if (Element* nextElement = ElementTraversal::firstWithin(&current)) {
+            if (Element* nextElement = ElementTraversal::firstWithin(current)) {
                 currentElement = nextElement;
                 continue;
             }
@@ -830,7 +830,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
         // with the case where odd tags like a <div> have been added but we
         // handle this because such tags have already been removed from the
         // <select>'s subtree at this point.
-        currentElement = ElementTraversal::nextSkippingChildren(currentElement, this);
+        currentElement = ElementTraversal::nextSkippingChildren(*currentElement, this);
     }
 
     if (!foundSelected && m_size <= 1 && firstOption && !firstOption->selected())

@@ -449,7 +449,7 @@ void TextIterator::advance()
         if (!next) {
             next = m_node->nextSibling();
             if (!next) {
-                bool pastEnd = NodeTraversal::next(m_node) == m_pastEndNode;
+                bool pastEnd = NodeTraversal::next(*m_node) == m_pastEndNode;
                 Node* parentNode = m_node->parentOrShadowHostNode();
                 while (!next && parentNode) {
                     if ((pastEnd && parentNode == m_endContainer) || m_endContainer->isDescendantOf(parentNode))
@@ -861,7 +861,7 @@ static bool shouldEmitNewlineAfterNode(Node& node)
     // Check if this is the very last renderer in the document.
     // If so, then we should not emit a newline.
     Node* subsequentNode = &node;
-    while ((subsequentNode = NodeTraversal::nextSkippingChildren(subsequentNode))) {
+    while ((subsequentNode = NodeTraversal::nextSkippingChildren(*subsequentNode))) {
         if (subsequentNode->renderer())
             return true;
     }

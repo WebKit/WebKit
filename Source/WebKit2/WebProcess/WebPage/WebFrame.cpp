@@ -613,7 +613,7 @@ bool WebFrame::containsAnyFormElements() const
     if (!document)
         return false;
 
-    for (Node* node = document->documentElement(); node; node = NodeTraversal::next(node)) {
+    for (Node* node = document->documentElement(); node; node = NodeTraversal::next(*node)) {
         if (!is<Element>(*node))
             continue;
         if (is<HTMLFormElement>(*node))
@@ -631,7 +631,7 @@ bool WebFrame::containsAnyFormControls() const
     if (!document)
         return false;
 
-    for (Node* node = document->documentElement(); node; node = NodeTraversal::next(node)) {
+    for (Node* node = document->documentElement(); node; node = NodeTraversal::next(*node)) {
         if (!is<Element>(*node))
             continue;
         if (is<HTMLInputElement>(*node) || is<HTMLSelectElement>(*node) || is<HTMLTextAreaElement>(*node))

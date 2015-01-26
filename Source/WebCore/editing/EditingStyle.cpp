@@ -674,7 +674,7 @@ TriState EditingStyle::triStateOfStyle(const VisibleSelection& selection) const
 
     TriState state = FalseTriState;
     bool nodeIsStart = true;
-    for (Node* node = selection.start().deprecatedNode(); node; node = NodeTraversal::next(node)) {
+    for (Node* node = selection.start().deprecatedNode(); node; node = NodeTraversal::next(*node)) {
         if (node->renderer() && node->hasEditableStyle()) {
             ComputedStyleExtractor computedStyle(node);
             TriState nodeState = triStateOfStyle(computedStyle, node->isTextNode() ? EditingStyle::DoNotIgnoreTextOnlyProperties : EditingStyle::IgnoreTextOnlyProperties);
@@ -1306,7 +1306,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
         end = selection.end().upstream();
 
         Node* pastLast = Range::create(*end.document(), position.parentAnchoredEquivalent(), end.parentAnchoredEquivalent())->pastLastNode();
-        for (Node* n = node; n && n != pastLast; n = NodeTraversal::next(n)) {
+        for (Node* n = node; n && n != pastLast; n = NodeTraversal::next(*n)) {
             if (!n->isStyledElement())
                 continue;
 

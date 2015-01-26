@@ -61,14 +61,14 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
     if (is<HTMLFormControlElement>(startNode))
         control = &downcast<HTMLFormControlElement>(startNode);
     else
-        control = Traversal<HTMLFormControlElement>::firstWithin(&startNode);
+        control = Traversal<HTMLFormControlElement>::firstWithin(startNode);
     while (control) {
         control->setAncestorDisabled(isDisabled);
         // Don't call setAncestorDisabled(false) on form contorls inside disabled fieldsets.
         if (is<HTMLFieldSetElement>(*control) && control->fastHasAttribute(disabledAttr))
-            control = Traversal<HTMLFormControlElement>::nextSkippingChildren(control, &startNode);
+            control = Traversal<HTMLFormControlElement>::nextSkippingChildren(*control, &startNode);
         else
-            control = Traversal<HTMLFormControlElement>::next(control, &startNode);
+            control = Traversal<HTMLFormControlElement>::next(*control, &startNode);
     }
 }
 
@@ -92,7 +92,7 @@ void HTMLFieldSetElement::disabledStateChanged()
 
     bool thisFieldsetIsDisabled = fastHasAttribute(disabledAttr);
     bool hasSeenFirstLegendElement = false;
-    for (HTMLElement* control = Traversal<HTMLElement>::firstChild(this); control; control = Traversal<HTMLElement>::nextSibling(control)) {
+    for (HTMLElement* control = Traversal<HTMLElement>::firstChild(*this); control; control = Traversal<HTMLElement>::nextSibling(*control)) {
         if (!hasSeenFirstLegendElement && is<HTMLLegendElement>(*control)) {
             hasSeenFirstLegendElement = true;
             updateFromControlElementsAncestorDisabledStateUnder(*control, false /* isDisabled */);
@@ -108,13 +108,13 @@ void HTMLFieldSetElement::childrenChanged(const ChildChange& change)
     if (!fastHasAttribute(disabledAttr))
         return;
 
-    HTMLLegendElement* legend = Traversal<HTMLLegendElement>::firstChild(this);
+    HTMLLegendElement* legend = Traversal<HTMLLegendElement>::firstChild(*this);
     if (!legend)
         return;
 
     // We only care about the first legend element (in which form contorls are not disabled by this element) changing here.
     updateFromControlElementsAncestorDisabledStateUnder(*legend, false /* isDisabled */);
-    while ((legend = Traversal<HTMLLegendElement>::nextSibling(legend)))
+    while ((legend = Traversal<HTMLLegendElement>::nextSibling(*legend)))
         updateFromControlElementsAncestorDisabledStateUnder(*legend, true);
 }
 

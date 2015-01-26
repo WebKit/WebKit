@@ -1124,18 +1124,18 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             break;
         if (boundaryCrossingRule == CanSkipOverEditingBoundary) {
             while (n && n->hasEditableStyle() != startNode->hasEditableStyle())
-                n = NodeTraversal::previousPostOrder(n, startBlock);
+                n = NodeTraversal::previousPostOrder(*n, startBlock);
             if (!n || !n->isDescendantOf(highestRoot))
                 break;
         }
         RenderObject* r = n->renderer();
         if (!r) {
-            n = NodeTraversal::previousPostOrder(n, startBlock);
+            n = NodeTraversal::previousPostOrder(*n, startBlock);
             continue;
         }
         const RenderStyle& style = r->style();
         if (style.visibility() != VISIBLE) {
-            n = NodeTraversal::previousPostOrder(n, startBlock);
+            n = NodeTraversal::previousPostOrder(*n, startBlock);
             continue;
         }
         
@@ -1158,13 +1158,13 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
             }
             node = n;
             offset = 0;
-            n = NodeTraversal::previousPostOrder(n, startBlock);
+            n = NodeTraversal::previousPostOrder(*n, startBlock);
         } else if (editingIgnoresContent(n) || isRenderedTable(n)) {
             node = n;
             type = Position::PositionIsBeforeAnchor;
-            n = n->previousSibling() ? n->previousSibling() : NodeTraversal::previousPostOrder(n, startBlock);
+            n = n->previousSibling() ? n->previousSibling() : NodeTraversal::previousPostOrder(*n, startBlock);
         } else
-            n = NodeTraversal::previousPostOrder(n, startBlock);
+            n = NodeTraversal::previousPostOrder(*n, startBlock);
     }
 
     if (type == Position::PositionIsOffsetInAnchor) {
@@ -1204,19 +1204,19 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
             break;
         if (boundaryCrossingRule == CanSkipOverEditingBoundary) {
             while (n && n->hasEditableStyle() != startNode->hasEditableStyle())
-                n = NodeTraversal::next(n, stayInsideBlock);
+                n = NodeTraversal::next(*n, stayInsideBlock);
             if (!n || !n->isDescendantOf(highestRoot))
                 break;
         }
 
         RenderObject* r = n->renderer();
         if (!r) {
-            n = NodeTraversal::next(n, stayInsideBlock);
+            n = NodeTraversal::next(*n, stayInsideBlock);
             continue;
         }
         const RenderStyle& style = r->style();
         if (style.visibility() != VISIBLE) {
-            n = NodeTraversal::next(n, stayInsideBlock);
+            n = NodeTraversal::next(*n, stayInsideBlock);
             continue;
         }
         
@@ -1239,13 +1239,13 @@ VisiblePosition endOfParagraph(const VisiblePosition& c, EditingBoundaryCrossing
             }
             node = n;
             offset = r->caretMaxOffset();
-            n = NodeTraversal::next(n, stayInsideBlock);
+            n = NodeTraversal::next(*n, stayInsideBlock);
         } else if (editingIgnoresContent(n) || isRenderedTable(n)) {
             node = n;
             type = Position::PositionIsAfterAnchor;
-            n = NodeTraversal::nextSkippingChildren(n, stayInsideBlock);
+            n = NodeTraversal::nextSkippingChildren(*n, stayInsideBlock);
         } else
-            n = NodeTraversal::next(n, stayInsideBlock);
+            n = NodeTraversal::next(*n, stayInsideBlock);
     }
 
     if (type == Position::PositionIsOffsetInAnchor)

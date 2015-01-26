@@ -87,19 +87,19 @@ struct SelectorChecker::CheckingContextWithStatus : public SelectorChecker::Chec
     bool hasSelectionPseudo;
 };
 
-static inline bool isFirstChildElement(const Element* element)
+static inline bool isFirstChildElement(const Element& element)
 {
     return !ElementTraversal::previousSibling(element);
 }
 
-static inline bool isLastChildElement(const Element* element)
+static inline bool isLastChildElement(const Element& element)
 {
     return !ElementTraversal::nextSibling(element);
 }
 
-static inline bool isFirstOfType(Element* element, const QualifiedName& type, bool isResolvingStyle)
+static inline bool isFirstOfType(Element& element, const QualifiedName& type, bool isResolvingStyle)
 {
-    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
+    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
         if (isResolvingStyle)
             sibling->setAffectsNextSiblingElementStyle();
         if (sibling->hasTagName(type))
@@ -108,19 +108,19 @@ static inline bool isFirstOfType(Element* element, const QualifiedName& type, bo
     return true;
 }
 
-static inline bool isLastOfType(const Element* element, const QualifiedName& type)
+static inline bool isLastOfType(const Element& element, const QualifiedName& type)
 {
-    for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(sibling)) {
+    for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling)) {
         if (sibling->hasTagName(type))
             return false;
     }
     return true;
 }
 
-static inline int countElementsBefore(Element* element, bool isResolvingStyle)
+static inline int countElementsBefore(Element& element, bool isResolvingStyle)
 {
     int count = 0;
-    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
+    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
         if (isResolvingStyle)
             sibling->setAffectsNextSiblingElementStyle();
 
@@ -134,10 +134,10 @@ static inline int countElementsBefore(Element* element, bool isResolvingStyle)
     return count;
 }
 
-static inline int countElementsOfTypeBefore(Element* element, const QualifiedName& type, bool isResolvingStyle)
+static inline int countElementsOfTypeBefore(Element& element, const QualifiedName& type, bool isResolvingStyle)
 {
     int count = 0;
-    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
+    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
         if (isResolvingStyle)
             sibling->setAffectsNextSiblingElementStyle();
 
@@ -147,18 +147,18 @@ static inline int countElementsOfTypeBefore(Element* element, const QualifiedNam
     return count;
 }
 
-static inline int countElementsAfter(const Element* element)
+static inline int countElementsAfter(const Element& element)
 {
     int count = 0;
-    for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(sibling))
+    for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling))
         ++count;
     return count;
 }
 
-static inline int countElementsOfTypeAfter(const Element* element, const QualifiedName& type)
+static inline int countElementsOfTypeAfter(const Element& element, const QualifiedName& type)
 {
     int count = 0;
-    for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(sibling)) {
+    for (const Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(*sibling)) {
         if (sibling->hasTagName(type))
             ++count;
     }
@@ -643,7 +643,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
         case CSSSelector::PseudoClassFirstChild:
             // first-child matches the first child that is an element
             if (Element* parentElement = element->parentElement()) {
-                bool result = isFirstChildElement(element);
+                bool result = isFirstChildElement(*element);
                 if (context.resolvingMode == Mode::ResolvingStyle) {
                     RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
                     parentElement->setChildrenAffectedByFirstChildRules();
@@ -659,13 +659,13 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                 if (context.resolvingMode == Mode::ResolvingStyle)
                     element->setStyleIsAffectedByPreviousSibling();
 
-                return isFirstOfType(element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle);
+                return isFirstOfType(*element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle);
             }
             break;
         case CSSSelector::PseudoClassLastChild:
             // last-child matches the last child that is an element
             if (Element* parentElement = element->parentElement()) {
-                bool result = parentElement->isFinishedParsingChildren() && isLastChildElement(element);
+                bool result = parentElement->isFinishedParsingChildren() && isLastChildElement(*element);
                 if (context.resolvingMode == Mode::ResolvingStyle) {
                     RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
                     parentElement->setChildrenAffectedByLastChildRules();
@@ -682,13 +682,13 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                     parentElement->setChildrenAffectedByBackwardPositionalRules();
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
-                return isLastOfType(element, element->tagQName());
+                return isLastOfType(*element, element->tagQName());
             }
             break;
         case CSSSelector::PseudoClassOnlyChild:
             if (Element* parentElement = element->parentElement()) {
-                bool firstChild = isFirstChildElement(element);
-                bool onlyChild = firstChild && parentElement->isFinishedParsingChildren() && isLastChildElement(element);
+                bool firstChild = isFirstChildElement(*element);
+                bool onlyChild = firstChild && parentElement->isFinishedParsingChildren() && isLastChildElement(*element);
                 if (context.resolvingMode == Mode::ResolvingStyle) {
                     RenderStyle* childStyle = context.elementStyle ? context.elementStyle : element->renderStyle();
                     parentElement->setChildrenAffectedByFirstChildRules();
@@ -710,7 +710,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                 }
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
-                return isFirstOfType(element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle) && isLastOfType(element, element->tagQName());
+                return isFirstOfType(*element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle) && isLastOfType(*element, element->tagQName());
             }
             break;
         case CSSSelector::PseudoClassMatches:
@@ -770,7 +770,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
 
                 int count = 1;
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
-                    for (Element* sibling = ElementTraversal::previousSibling(element); sibling; sibling = ElementTraversal::previousSibling(sibling)) {
+                    for (Element* sibling = ElementTraversal::previousSibling(*element); sibling; sibling = ElementTraversal::previousSibling(*sibling)) {
                         if (context.resolvingMode == Mode::ResolvingStyle)
                             sibling->setAffectsNextSiblingElementStyle();
 
@@ -779,7 +779,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                             ++count;
                     }
                 } else {
-                    count += countElementsBefore(element, context.resolvingMode == Mode::ResolvingStyle);
+                    count += countElementsBefore(*element, context.resolvingMode == Mode::ResolvingStyle);
                     if (context.resolvingMode == Mode::ResolvingStyle)
                         element->setChildIndex(count);
                 }
@@ -796,7 +796,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                 if (context.resolvingMode == Mode::ResolvingStyle)
                     element->setStyleIsAffectedByPreviousSibling();
 
-                int count = 1 + countElementsOfTypeBefore(element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle);
+                int count = 1 + countElementsOfTypeBefore(*element, element->tagQName(), context.resolvingMode == Mode::ResolvingStyle);
                 if (selector->matchNth(count))
                     return true;
             }
@@ -824,13 +824,13 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
 
                 int count = 1;
                 if (const CSSSelectorList* selectorList = selector->selectorList()) {
-                    for (Element* sibling = ElementTraversal::nextSibling(element); sibling; sibling = ElementTraversal::nextSibling(sibling)) {
+                    for (Element* sibling = ElementTraversal::nextSibling(*element); sibling; sibling = ElementTraversal::nextSibling(*sibling)) {
                         unsigned ignoredSpecificity;
                         if (matchSelectorList(context, *sibling, *selectorList, ignoredSpecificity))
                             ++count;
                     }
                 } else
-                    count += countElementsAfter(element);
+                    count += countElementsAfter(*element);
 
                 if (selector->matchNth(count))
                     return true;
@@ -845,7 +845,7 @@ bool SelectorChecker::checkOne(const CheckingContextWithStatus& context, PseudoI
                 if (!parentElement->isFinishedParsingChildren())
                     return false;
 
-                int count = 1 + countElementsOfTypeAfter(element, element->tagQName());
+                int count = 1 + countElementsOfTypeAfter(*element, element->tagQName());
                 if (selector->matchNth(count))
                     return true;
             }

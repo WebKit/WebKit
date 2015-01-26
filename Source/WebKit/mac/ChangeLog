@@ -1,3 +1,13 @@
+2015-01-26  Chris Dumez  <cdumez@apple.com>
+
+        First argument to DOM traversal functions should be a reference
+        https://bugs.webkit.org/show_bug.cgi?id=140895
+
+        Reviewed by Antti Koivisto.
+
+        First argument to DOM traversal functions should be a reference instead
+        of a pointer as it is dereferenced without null-check.
+
 2015-01-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] [SVG -> OTF Converter] Flip the switch off on iOS

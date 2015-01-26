@@ -49,7 +49,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
         oldDocument.incDOMTreeVersion();
     }
 
-    for (Node* node = root; node; node = NodeTraversal::next(node, root)) {
+    for (Node* node = root; node; node = NodeTraversal::next(*node, root)) {
         updateTreeScope(node);
 
         if (willMoveToNewDocument)
@@ -82,7 +82,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
 
 void TreeScopeAdopter::moveShadowTreeToNewDocument(ShadowRoot* shadowRoot, Document* oldDocument, Document* newDocument) const
 {
-    for (Node* node = shadowRoot; node; node = NodeTraversal::next(node, shadowRoot)) {
+    for (Node* node = shadowRoot; node; node = NodeTraversal::next(*node, shadowRoot)) {
         moveNodeToNewDocument(node, oldDocument, newDocument);
         if (ShadowRoot* shadow = node->shadowRoot())
             moveShadowTreeToNewDocument(shadow, oldDocument, newDocument);
@@ -91,7 +91,7 @@ void TreeScopeAdopter::moveShadowTreeToNewDocument(ShadowRoot* shadowRoot, Docum
 
 #ifndef NDEBUG
 static bool didMoveToNewDocumentWasCalled = false;
-static Document* oldDocumentDidMoveToNewDocumentWasCalledWith = 0;
+static Document* oldDocumentDidMoveToNewDocumentWasCalledWith = nullptr;
 
 void TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled(Document* oldDocument)
 {

@@ -348,7 +348,7 @@ String Frame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& regEx
     if (aboveCell) {
         // search within the above cell we found for a match
         size_t lengthSearched = 0;    
-        for (Text* textNode = TextNodeTraversal::firstWithin(aboveCell); textNode; textNode = TextNodeTraversal::next(textNode, aboveCell)) {
+        for (Text* textNode = TextNodeTraversal::firstWithin(*aboveCell); textNode; textNode = TextNodeTraversal::next(*textNode, aboveCell)) {
             if (!textNode->renderer() || textNode->renderer()->style().visibility() != VISIBLE)
                 continue;
             // For each text chunk, run the regexp
@@ -369,8 +369,10 @@ String Frame::searchForLabelsAboveCell(const JSC::Yarr::RegularExpression& regEx
     return String();
 }
 
+// FIXME: This should take an Element&.
 String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
 {
+    ASSERT(element);
     JSC::Yarr::RegularExpression regExp = createRegExpForLabels(labels);
     // We stop searching after we've seen this many chars
     const unsigned int charsSearchedThreshold = 500;
@@ -389,7 +391,7 @@ String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element
     // walk backwards in the node tree, until another element, or form, or end of tree
     int unsigned lengthSearched = 0;
     Node* n;
-    for (n = NodeTraversal::previous(element); n && lengthSearched < charsSearchedThreshold; n = NodeTraversal::previous(n)) {
+    for (n = NodeTraversal::previous(*element); n && lengthSearched < charsSearchedThreshold; n = NodeTraversal::previous(*n)) {
         // We hit another form element or the start of the form - bail out
         if (is<HTMLFormElement>(*n) || is<HTMLFormControlElement>(*n))
             break;

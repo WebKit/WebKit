@@ -133,7 +133,7 @@ inline TypedElementDescendantIteratorAdapter<ElementType>::TypedElementDescendan
 template <typename ElementType>
 inline TypedElementDescendantIterator<ElementType> TypedElementDescendantIteratorAdapter<ElementType>::begin()
 {
-    return TypedElementDescendantIterator<ElementType>(m_root, Traversal<ElementType>::firstWithin(&m_root));
+    return TypedElementDescendantIterator<ElementType>(m_root, Traversal<ElementType>::firstWithin(m_root));
 }
 
 template <typename ElementType>
@@ -155,20 +155,20 @@ inline TypedElementDescendantIterator<ElementType> TypedElementDescendantIterato
     ASSERT(descendant.isDescendantOf(&m_root));
     if (is<ElementType>(descendant))
         return TypedElementDescendantIterator<ElementType>(m_root, downcast<ElementType>(&descendant));
-    ElementType* next = Traversal<ElementType>::next(&descendant, &m_root);
+    ElementType* next = Traversal<ElementType>::next(descendant, &m_root);
     return TypedElementDescendantIterator<ElementType>(m_root, next);
 }
 
 template <typename ElementType>
 inline ElementType* TypedElementDescendantIteratorAdapter<ElementType>::first()
 {
-    return Traversal<ElementType>::firstWithin(&m_root);
+    return Traversal<ElementType>::firstWithin(m_root);
 }
 
 template <typename ElementType>
 inline ElementType* TypedElementDescendantIteratorAdapter<ElementType>::last()
 {
-    return Traversal<ElementType>::lastWithin(&m_root);
+    return Traversal<ElementType>::lastWithin(m_root);
 }
 
 // TypedElementDescendantConstIteratorAdapter
@@ -182,7 +182,7 @@ inline TypedElementDescendantConstIteratorAdapter<ElementType>::TypedElementDesc
 template <typename ElementType>
 inline TypedElementDescendantConstIterator<ElementType> TypedElementDescendantConstIteratorAdapter<ElementType>::begin() const
 {
-    return TypedElementDescendantConstIterator<ElementType>(m_root, Traversal<ElementType>::firstWithin(&m_root));
+    return TypedElementDescendantConstIterator<ElementType>(m_root, Traversal<ElementType>::firstWithin(m_root));
 }
 
 template <typename ElementType>
@@ -204,20 +204,20 @@ inline TypedElementDescendantConstIterator<ElementType> TypedElementDescendantCo
     ASSERT(descendant.isDescendantOf(&m_root));
     if (is<ElementType>(descendant))
         return TypedElementDescendantConstIterator<ElementType>(m_root, downcast<ElementType>(&descendant));
-    const ElementType* next = Traversal<ElementType>::next(&descendant, &m_root);
+    const ElementType* next = Traversal<ElementType>::next(descendant, &m_root);
     return TypedElementDescendantConstIterator<ElementType>(m_root, next);
 }
 
 template <typename ElementType>
 inline const ElementType* TypedElementDescendantConstIteratorAdapter<ElementType>::first() const
 {
-    return Traversal<ElementType>::firstWithin(&m_root);
+    return Traversal<ElementType>::firstWithin(m_root);
 }
 
 template <typename ElementType>
 inline const ElementType* TypedElementDescendantConstIteratorAdapter<ElementType>::last() const
 {
-    return Traversal<ElementType>::lastWithin(&m_root);
+    return Traversal<ElementType>::lastWithin(m_root);
 }
 
 // Standalone functions

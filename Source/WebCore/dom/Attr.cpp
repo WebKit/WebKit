@@ -164,7 +164,7 @@ void Attr::childrenChanged(const ChildChange&)
     invalidateNodeListAndCollectionCachesInAncestors(&qualifiedName(), m_element);
 
     StringBuilder valueBuilder;
-    TextNodeTraversal::appendContents(this, valueBuilder);
+    TextNodeTraversal::appendContents(*this, valueBuilder);
 
     AtomicString oldValue = value();
     AtomicString newValue = valueBuilder.toAtomicString();

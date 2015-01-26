@@ -331,8 +331,8 @@ void ContainerNode::notifyChildInserted(Node& child, ChildChangeSource source)
 {
     ChildChange change;
     change.type = child.isElementNode() ? ElementInserted : child.isTextNode() ? TextInserted : NonContentsChildChanged;
-    change.previousSiblingElement = ElementTraversal::previousSibling(&child);
-    change.nextSiblingElement = ElementTraversal::nextSibling(&child);
+    change.previousSiblingElement = ElementTraversal::previousSibling(child);
+    change.nextSiblingElement = ElementTraversal::nextSibling(child);
     change.source = source;
 
     childrenChanged(change);
@@ -342,8 +342,8 @@ void ContainerNode::notifyChildRemoved(Node& child, Node* previousSibling, Node*
 {
     ChildChange change;
     change.type = is<Element>(child) ? ElementRemoved : is<Text>(child) ? TextRemoved : NonContentsChildChanged;
-    change.previousSiblingElement = (!previousSibling || is<Element>(*previousSibling)) ? downcast<Element>(previousSibling) : ElementTraversal::previousSibling(previousSibling);
-    change.nextSiblingElement = (!nextSibling || is<Element>(*nextSibling)) ? downcast<Element>(nextSibling) : ElementTraversal::nextSibling(nextSibling);
+    change.previousSiblingElement = (!previousSibling || is<Element>(*previousSibling)) ? downcast<Element>(previousSibling) : ElementTraversal::previousSibling(*previousSibling);
+    change.nextSiblingElement = (!nextSibling || is<Element>(*nextSibling)) ? downcast<Element>(nextSibling) : ElementTraversal::nextSibling(*nextSibling);
     change.source = source;
 
     childrenChanged(change);
@@ -809,7 +809,7 @@ static void dispatchChildInsertionEvents(Node& child)
 
     // dispatch the DOMNodeInsertedIntoDocument event to all descendants
     if (c->inDocument() && document->hasListenerType(Document::DOMNODEINSERTEDINTODOCUMENT_LISTENER)) {
-        for (; c; c = NodeTraversal::next(c.get(), &child))
+        for (; c; c = NodeTraversal::next(*c, &child))
             c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeInsertedIntoDocumentEvent, false));
     }
 }
@@ -835,7 +835,7 @@ static void dispatchChildRemovalEvents(Node& child)
 
     // dispatch the DOMNodeRemovedFromDocument event to all descendants
     if (c->inDocument() && document->hasListenerType(Document::DOMNODEREMOVEDFROMDOCUMENT_LISTENER)) {
-        for (; c; c = NodeTraversal::next(c.get(), &child))
+        for (; c; c = NodeTraversal::next(*c, &child))
             c->dispatchScopedEvent(MutationEvent::create(eventNames().DOMNodeRemovedFromDocumentEvent, false));
     }
 }

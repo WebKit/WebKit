@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline void assertRowIsInTable(HTMLTableElement* table, HTMLTableRowElement* row)
+static inline void assertRowIsInTable(HTMLTableElement& table, HTMLTableRowElement* row)
 {
 #if !ASSERT_DISABLED
     UNUSED_PARAM(table);
@@ -46,11 +46,11 @@ static inline void assertRowIsInTable(HTMLTableElement* table, HTMLTableRowEleme
 #else
     if (!row)
         return;
-    if (row->parentNode() == table)
+    if (row->parentNode() == &table)
         return;
     ASSERT(row->parentNode());
     ASSERT(row->parentNode()->hasTagName(theadTag) || row->parentNode()->hasTagName(tbodyTag) || row->parentNode()->hasTagName(tfootTag));
-    ASSERT(row->parentNode()->parentNode() == table);
+    ASSERT(row->parentNode()->parentNode() == &table);
 #endif
 }
 
@@ -61,14 +61,14 @@ static inline bool isInSection(HTMLTableRowElement& row, const HTMLQualifiedName
     return downcast<HTMLElement>(*row.parentNode()).hasTagName(sectionTag);
 }
 
-HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, HTMLTableRowElement* previous)
+HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement& table, HTMLTableRowElement* previous)
 {
     // The HTMLCollection caching mechanism, along with the code in this class, will guarantee that the previous row
     // is an immediate child of either the table, or a table section that is itself an immediate child of the table.
     assertRowIsInTable(table, previous);
 
     // Start by looking for the next row in this section. Continue only if there is none.
-    if (previous && previous->parentNode() != table) {
+    if (previous && previous->parentNode() != &table) {
         auto childRows = childrenOfType<HTMLTableRowElement>(*previous->parentNode());
         auto row = childRows.beginAt(*previous);
         if (++row != childRows.end())
@@ -81,8 +81,8 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
     if (!previous)
         child = ElementTraversal::firstChild(table);
     else if (isInSection(*previous, theadTag))
-        child = ElementTraversal::nextSibling(previous->parentNode());
-    for (; child; child = ElementTraversal::nextSibling(child)) {
+        child = ElementTraversal::nextSibling(*previous->parentNode());
+    for (; child; child = ElementTraversal::nextSibling(*child)) {
         if (child->hasTagName(theadTag)) {
             if (auto row = childrenOfType<HTMLTableRowElement>(*child).first())
                 return row;
@@ -92,11 +92,11 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
     // If still looking at top level and bodies, find the next row in top level or the first in the next body section.
     if (!previous || isInSection(*previous, theadTag))
         child = ElementTraversal::firstChild(table);
-    else if (previous->parentNode() == table)
-        child = ElementTraversal::nextSibling(previous);
+    else if (previous->parentNode() == &table)
+        child = ElementTraversal::nextSibling(*previous);
     else if (isInSection(*previous, tbodyTag))
-        child = ElementTraversal::nextSibling(previous->parentNode());
-    for (; child; child = ElementTraversal::nextSibling(child)) {
+        child = ElementTraversal::nextSibling(*previous->parentNode());
+    for (; child; child = ElementTraversal::nextSibling(*child)) {
         if (is<HTMLTableRowElement>(*child))
             return downcast<HTMLTableRowElement>(child);
         if (child->hasTagName(tbodyTag)) {
@@ -109,8 +109,8 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
     if (!previous || !isInSection(*previous, tfootTag))
         child = ElementTraversal::firstChild(table);
     else
-        child = ElementTraversal::nextSibling(previous->parentNode());
-    for (; child; child = ElementTraversal::nextSibling(child)) {
+        child = ElementTraversal::nextSibling(*previous->parentNode());
+    for (; child; child = ElementTraversal::nextSibling(*child)) {
         if (child->hasTagName(tfootTag)) {
             if (auto row = childrenOfType<HTMLTableRowElement>(*child).first())
                 return row;
@@ -120,16 +120,16 @@ HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, 
     return nullptr;
 }
 
-HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
+HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement& table)
 {
-    for (auto* child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(child)) {
+    for (auto* child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(*child)) {
         if (child->hasTagName(tfootTag)) {
             if (auto* row = childrenOfType<HTMLTableRowElement>(*child).last())
                 return row;
         }
     }
 
-    for (auto* child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(child)) {
+    for (auto* child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(*child)) {
         if (is<HTMLTableRowElement>(*child))
             return downcast<HTMLTableRowElement>(child);
         if (child->hasTagName(tbodyTag)) {
@@ -138,7 +138,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
         }
     }
 
-    for (auto* child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(child)) {
+    for (auto* child = ElementTraversal::lastChild(table); child; child = ElementTraversal::previousSibling(*child)) {
         if (child->hasTagName(theadTag)) {
             if (auto* row = childrenOfType<HTMLTableRowElement>(*child).last())
                 return row;
@@ -161,7 +161,7 @@ Ref<HTMLTableRowsCollection> HTMLTableRowsCollection::create(HTMLTableElement& t
 
 Element* HTMLTableRowsCollection::customElementAfter(Element* previous) const
 {
-    return rowAfter(const_cast<HTMLTableElement*>(&tableElement()), downcast<HTMLTableRowElement>(previous));
+    return rowAfter(const_cast<HTMLTableElement&>(tableElement()), downcast<HTMLTableRowElement>(previous));
 }
 
 }

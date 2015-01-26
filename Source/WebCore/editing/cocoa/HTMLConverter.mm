@@ -1805,7 +1805,7 @@ void HTMLConverter::_processHeadElement(Element& element)
 {
     // FIXME: Should gather data from other sources e.g. Word, but for that we would need to be able to get comments from DOM
     
-    for (HTMLMetaElement* child = Traversal<HTMLMetaElement>::firstChild(&element); child; child = Traversal<HTMLMetaElement>::nextSibling(child)) {
+    for (HTMLMetaElement* child = Traversal<HTMLMetaElement>::firstChild(element); child; child = Traversal<HTMLMetaElement>::nextSibling(*child)) {
         NSString *name = child->name();
         NSString *content = child->content();
         if (name && content)

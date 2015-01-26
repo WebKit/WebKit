@@ -279,9 +279,10 @@ void ReplacementFragment::removeUnrenderedNodes(Node* holder)
 {
     Vector<RefPtr<Node>> unrendered;
 
-    for (Node* node = holder->firstChild(); node; node = NodeTraversal::next(node, holder))
+    for (Node* node = holder->firstChild(); node; node = NodeTraversal::next(*node, holder)) {
         if (!isNodeRendered(node) && !isTableStructureNode(node))
             unrendered.append(node);
+    }
 
     size_t n = unrendered.size();
     for (size_t i = 0; i < n; ++i)
@@ -320,9 +321,9 @@ void ReplacementFragment::removeInterchangeNodes(Node* container)
     
     node = container->firstChild();
     while (node) {
-        RefPtr<Node> next = NodeTraversal::next(node);
+        RefPtr<Node> next = NodeTraversal::next(*node);
         if (isInterchangeConvertedSpaceSpan(node)) {
-            next = NodeTraversal::nextSkippingChildren(node);
+            next = NodeTraversal::nextSkippingChildren(*node);
             removeNodePreservingChildren(node);
         }
         node = next.get();
@@ -343,9 +344,9 @@ inline void ReplaceSelectionCommand::InsertedNodes::respondToNodeInsertion(Node*
 inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNodePreservingChildren(Node* node)
 {
     if (m_firstNodeInserted == node)
-        m_firstNodeInserted = NodeTraversal::next(node);
+        m_firstNodeInserted = NodeTraversal::next(*node);
     if (m_lastNodeInserted == node)
-        m_lastNodeInserted = node->lastChild() ? node->lastChild() : NodeTraversal::nextSkippingChildren(node);
+        m_lastNodeInserted = node->lastChild() ? node->lastChild() : NodeTraversal::nextSkippingChildren(*node);
 }
 
 inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNode(Node* node)
@@ -354,9 +355,9 @@ inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNode(Node* node)
         m_firstNodeInserted = 0;
         m_lastNodeInserted = 0;
     } else if (m_firstNodeInserted == node)
-        m_firstNodeInserted = NodeTraversal::nextSkippingChildren(m_firstNodeInserted.get());
+        m_firstNodeInserted = NodeTraversal::nextSkippingChildren(*m_firstNodeInserted);
     else if (m_lastNodeInserted == node)
-        m_lastNodeInserted = NodeTraversal::previousSkippingChildren(m_lastNodeInserted.get());
+        m_lastNodeInserted = NodeTraversal::previousSkippingChildren(*m_lastNodeInserted);
 }
 
 inline void ReplaceSelectionCommand::InsertedNodes::didReplaceNode(Node* node, Node* newNode)
@@ -479,7 +480,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
     for (RefPtr<Node> node = insertedNodes.firstNodeInserted(); node && node != pastEndNode; node = next) {
         // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
 
-        next = NodeTraversal::next(node.get());
+        next = NodeTraversal::next(*node);
         if (!is<StyledElement>(*node))
             continue;
 
@@ -624,7 +625,7 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
     RefPtr<Node> pastEndNode = insertedNodes.pastLastLeaf();
     RefPtr<Node> next;
     for (RefPtr<Node> node = insertedNodes.firstNodeInserted(); node && node != pastEndNode; node = next) {
-        next = NodeTraversal::next(node.get());
+        next = NodeTraversal::next(*node);
 
         if (!is<HTMLElement>(*node))
             continue;
@@ -776,7 +777,7 @@ void ReplaceSelectionCommand::handleStyleSpans(InsertedNodes& insertedNodes)
     // The style span that contains the source document's default style should be at
     // the top of the fragment, but Mail sometimes adds a wrapper (for Paste As Quotation),
     // so search for the top level style span instead of assuming it's at the top.
-    for (Node* node = insertedNodes.firstNodeInserted(); node; node = NodeTraversal::next(node)) {
+    for (Node* node = insertedNodes.firstNodeInserted(); node; node = NodeTraversal::next(*node)) {
         if (isLegacyAppleStyleSpan(node)) {
             wrappingStyleSpan = downcast<HTMLElement>(node);
             break;

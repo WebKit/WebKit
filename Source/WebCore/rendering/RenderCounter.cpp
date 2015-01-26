@@ -58,9 +58,10 @@ static CounterMaps& counterMaps()
 // including pseudo elements as defined in CSS 2.1.
 static RenderElement* previousInPreOrder(const RenderElement& renderer)
 {
-    Element* previous = ElementTraversal::previousIncludingPseudo(renderer.element());
+    ASSERT(renderer.element());
+    Element* previous = ElementTraversal::previousIncludingPseudo(*renderer.element());
     while (previous && !previous->renderer())
-        previous = ElementTraversal::previousIncludingPseudo(previous);
+        previous = ElementTraversal::previousIncludingPseudo(*previous);
     return previous ? previous->renderer() : 0;
 }
 
@@ -75,9 +76,10 @@ static inline Element* parentOrPseudoHostElement(const RenderElement& renderer)
 // including pseudo elements as defined in CSS 2.1.
 static RenderElement* previousSiblingOrParent(const RenderElement& renderer)
 {
-    Element* previous = ElementTraversal::pseudoAwarePreviousSibling(renderer.element());
+    ASSERT(renderer.element());
+    Element* previous = ElementTraversal::pseudoAwarePreviousSibling(*renderer.element());
     while (previous && !previous->renderer())
-        previous = ElementTraversal::pseudoAwarePreviousSibling(previous);
+        previous = ElementTraversal::pseudoAwarePreviousSibling(*previous);
     if (previous)
         return previous->renderer();
     previous = parentOrPseudoHostElement(renderer);
@@ -93,11 +95,12 @@ static inline bool areRenderersElementsSiblings(const RenderElement& first, cons
 // including pseudo elements as defined in CSS 2.1.
 static RenderElement* nextInPreOrder(const RenderElement& renderer, const Element* stayWithin, bool skipDescendants = false)
 {
-    Element* self = renderer.element();
+    ASSERT(renderer.element());
+    Element& self = *renderer.element();
     Element* next = skipDescendants ? ElementTraversal::nextIncludingPseudoSkippingChildren(self, stayWithin) : ElementTraversal::nextIncludingPseudo(self, stayWithin);
     while (next && !next->renderer())
-        next = skipDescendants ? ElementTraversal::nextIncludingPseudoSkippingChildren(next, stayWithin) : ElementTraversal::nextIncludingPseudo(next, stayWithin);
-    return next ? next->renderer() : 0;
+        next = skipDescendants ? ElementTraversal::nextIncludingPseudoSkippingChildren(*next, stayWithin) : ElementTraversal::nextIncludingPseudo(*next, stayWithin);
+    return next ? next->renderer() : nullptr;
 }
 
 static bool planCounter(RenderElement& renderer, const AtomicString& identifier, bool& isReset, int& value)

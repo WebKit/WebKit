@@ -260,7 +260,7 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
         case DescendantAxis:
             if (context.isAttributeNode()) // In XPath model, attribute nodes do not have children.
                 return;
-            for (Node* node = context.firstChild(); node; node = NodeTraversal::next(node, &context)) {
+            for (Node* node = context.firstChild(); node; node = NodeTraversal::next(*node, &context)) {
                 if (nodeMatches(*node, DescendantAxis, m_nodeTest))
                     nodes.append(node);
             }
@@ -310,7 +310,7 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
         case FollowingAxis:
             if (context.isAttributeNode()) {
                 Node* node = static_cast<Attr&>(context).ownerElement();
-                while ((node = NodeTraversal::next(node))) {
+                while ((node = NodeTraversal::next(*node))) {
                     if (nodeMatches(*node, FollowingAxis, m_nodeTest))
                         nodes.append(node);
                 }
@@ -319,7 +319,7 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
                     for (Node* node = parent->nextSibling(); node; node = node->nextSibling()) {
                         if (nodeMatches(*node, FollowingAxis, m_nodeTest))
                             nodes.append(node);
-                        for (Node* child = node->firstChild(); child; child = NodeTraversal::next(child, node)) {
+                        for (Node* child = node->firstChild(); child; child = NodeTraversal::next(*child, node)) {
                             if (nodeMatches(*child, FollowingAxis, m_nodeTest))
                                 nodes.append(child);
                         }
@@ -334,7 +334,7 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
             else
                 node = &context;
             while (ContainerNode* parent = node->parentNode()) {
-                for (node = NodeTraversal::previous(node); node != parent; node = NodeTraversal::previous(node)) {
+                for (node = NodeTraversal::previous(*node); node != parent; node = NodeTraversal::previous(*node)) {
                     if (nodeMatches(*node, PrecedingAxis, m_nodeTest))
                         nodes.append(node);
                 }
@@ -381,7 +381,7 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
                 nodes.append(&context);
             if (context.isAttributeNode()) // In XPath model, attribute nodes do not have children.
                 return;
-            for (Node* node = context.firstChild(); node; node = NodeTraversal::next(node, &context)) {
+            for (Node* node = context.firstChild(); node; node = NodeTraversal::next(*node, &context)) {
                 if (nodeMatches(*node, DescendantOrSelfAxis, m_nodeTest))
                     nodes.append(node);
             }

@@ -139,7 +139,7 @@ RefPtr<Node> ShadowRoot::cloneNodeInternal(Document&, CloningOperation)
 void ShadowRoot::removeAllEventListeners()
 {
     DocumentFragment::removeAllEventListeners();
-    for (Node* node = firstChild(); node; node = NodeTraversal::next(node))
+    for (Node* node = firstChild(); node; node = NodeTraversal::next(*node))
         node->removeAllEventListeners();
 }
 

@@ -342,9 +342,9 @@ String HTMLOptionElement::collectOptionInnerText() const
             text.append(node->nodeValue());
         // Text nodes inside script elements are not part of the option text.
         if (is<Element>(*node) && toScriptElementIfPossible(downcast<Element>(node)))
-            node = NodeTraversal::nextSkippingChildren(node, this);
+            node = NodeTraversal::nextSkippingChildren(*node, this);
         else
-            node = NodeTraversal::next(node, this);
+            node = NodeTraversal::next(*node, this);
     }
     return text.toString();
 }

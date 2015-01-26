@@ -121,8 +121,8 @@ ALWAYS_INLINE ElementDescendantIterator& ElementDescendantIterator::operator++()
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
 
-    Element* firstChild = ElementTraversal::firstChild(m_current);
-    Element* nextSibling = ElementTraversal::nextSibling(m_current);
+    Element* firstChild = ElementTraversal::firstChild(*m_current);
+    Element* nextSibling = ElementTraversal::nextSibling(*m_current);
 
     if (firstChild) {
         if (nextSibling)
@@ -152,7 +152,7 @@ ALWAYS_INLINE ElementDescendantIterator& ElementDescendantIterator::operator--()
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
 
-    Element* previousSibling = ElementTraversal::previousSibling(m_current);
+    Element* previousSibling = ElementTraversal::previousSibling(*m_current);
 
     if (!previousSibling) {
         m_current = m_current->parentElement();
@@ -163,7 +163,7 @@ ALWAYS_INLINE ElementDescendantIterator& ElementDescendantIterator::operator--()
     }
 
     Element* deepestSibling = previousSibling;
-    while (Element* lastChild = ElementTraversal::lastChild(deepestSibling))
+    while (Element* lastChild = ElementTraversal::lastChild(*deepestSibling))
         deepestSibling = lastChild;
     ASSERT(deepestSibling);
 
@@ -224,8 +224,8 @@ ALWAYS_INLINE ElementDescendantConstIterator& ElementDescendantConstIterator::op
     ASSERT(m_current);
     ASSERT(!m_assertions.domTreeHasMutated());
 
-    Element* firstChild = ElementTraversal::firstChild(m_current);
-    Element* nextSibling = ElementTraversal::nextSibling(m_current);
+    Element* firstChild = ElementTraversal::firstChild(*m_current);
+    Element* nextSibling = ElementTraversal::nextSibling(*m_current);
 
     if (firstChild) {
         if (nextSibling)
@@ -284,7 +284,7 @@ inline ElementDescendantIteratorAdapter::ElementDescendantIteratorAdapter(Contai
 
 inline ElementDescendantIterator ElementDescendantIteratorAdapter::begin()
 {
-    return ElementDescendantIterator(ElementTraversal::firstChild(&m_root));
+    return ElementDescendantIterator(ElementTraversal::firstChild(m_root));
 }
 
 inline ElementDescendantIterator ElementDescendantIteratorAdapter::end()
@@ -294,7 +294,7 @@ inline ElementDescendantIterator ElementDescendantIteratorAdapter::end()
 
 inline ElementDescendantIterator ElementDescendantIteratorAdapter::last()
 {
-    return ElementDescendantIterator(ElementTraversal::lastWithin(&m_root));
+    return ElementDescendantIterator(ElementTraversal::lastWithin(m_root));
 }
 
 // ElementDescendantConstIteratorAdapter
@@ -306,7 +306,7 @@ inline ElementDescendantConstIteratorAdapter::ElementDescendantConstIteratorAdap
 
 inline ElementDescendantConstIterator ElementDescendantConstIteratorAdapter::begin() const
 {
-    return ElementDescendantConstIterator(ElementTraversal::firstChild(&m_root));
+    return ElementDescendantConstIterator(ElementTraversal::firstChild(m_root));
 }
 
 inline ElementDescendantConstIterator ElementDescendantConstIteratorAdapter::end() const
@@ -316,7 +316,7 @@ inline ElementDescendantConstIterator ElementDescendantConstIteratorAdapter::end
 
 inline ElementDescendantConstIterator ElementDescendantConstIteratorAdapter::last() const
 {
-    return ElementDescendantConstIterator(ElementTraversal::lastWithin(&m_root));
+    return ElementDescendantConstIterator(ElementTraversal::lastWithin(m_root));
 }
 
 // Standalone functions

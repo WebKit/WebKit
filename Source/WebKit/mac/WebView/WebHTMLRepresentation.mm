@@ -424,8 +424,10 @@ static RegularExpression* regExpForLabels(NSArray *labels)
     return result;
 }
 
+// FIXME: This should take an Element&.
 static NSString* searchForLabelsBeforeElement(Frame* frame, NSArray* labels, Element* element, size_t* resultDistance, bool* resultIsInCellAbove)
 {
+    ASSERT(element);
     RegularExpression* regExp = regExpForLabels(labels);
     // We stop searching after we've seen this many chars
     const unsigned int charsSearchedThreshold = 500;
@@ -444,9 +446,7 @@ static NSString* searchForLabelsBeforeElement(Frame* frame, NSArray* labels, Ele
     // walk backwards in the node tree, until another element, or form, or end of tree
     unsigned lengthSearched = 0;
     Node* n;
-    for (n = NodeTraversal::previous(element);
-        n && lengthSearched < charsSearchedThreshold;
-        n = NodeTraversal::previous(n)) {
+    for (n = NodeTraversal::previous(*element); n && lengthSearched < charsSearchedThreshold; n = NodeTraversal::previous(*n)) {
         if (is<HTMLFormElement>(*n) || is<HTMLFormControlElement>(*n)) {
             // We hit another form element or the start of the form - bail out
             break;

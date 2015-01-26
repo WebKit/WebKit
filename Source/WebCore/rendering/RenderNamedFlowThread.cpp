@@ -614,12 +614,11 @@ static bool boxIntersectsRegion(LayoutUnit logicalTopForBox, LayoutUnit logicalB
 }
 
 // Retrieve the next node to be visited while computing the ranges inside a region.
-static Node* nextNodeInsideContentElement(const Node* currNode, const Element* contentElement)
+static Node* nextNodeInsideContentElement(const Node& currNode, const Element* contentElement)
 {
-    ASSERT(currNode);
     ASSERT(contentElement && contentElement->isNamedFlowContentNode());
 
-    if (currNode->renderer() && currNode->renderer()->isSVGRoot())
+    if (currNode.renderer() && currNode.renderer()->isSVGRoot())
         return NodeTraversal::nextSkippingChildren(currNode, contentElement);
 
     return NodeTraversal::next(currNode, contentElement);
@@ -660,7 +659,7 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range>>& rangeObjects, const
         bool skipOverOutsideNodes = false;
         Node* lastEndNode = nullptr;
 
-        for (Node* node = contentElement; node; node = nextNodeInsideContentElement(node, contentElement)) {
+        for (Node* node = contentElement; node; node = nextNodeInsideContentElement(*node, contentElement)) {
             RenderObject* renderer = node->renderer();
             if (!renderer)
                 continue;

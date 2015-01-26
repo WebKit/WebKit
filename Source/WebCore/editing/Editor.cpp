@@ -1324,12 +1324,12 @@ void Editor::simplifyMarkup(Node* startNode, Node* endNode)
         // check if start node is before endNode
         Node* node = startNode;
         while (node && node != endNode)
-            node = NodeTraversal::next(node);
+            node = NodeTraversal::next(*node);
         if (!node)
             return;
     }
     
-    applyCommand(SimplifyMarkupCommand::create(document(), startNode, (endNode) ? NodeTraversal::next(endNode) : 0));
+    applyCommand(SimplifyMarkupCommand::create(document(), startNode, endNode ? NodeTraversal::next(*endNode) : nullptr));
 }
 
 void Editor::copyURL(const URL& url, const String& title)

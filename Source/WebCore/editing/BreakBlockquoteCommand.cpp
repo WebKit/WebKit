@@ -109,13 +109,13 @@ void BreakBlockquoteCommand::doApply()
     if (is<Text>(*startNode)) {
         Text& textNode = downcast<Text>(*startNode);
         if ((unsigned)pos.deprecatedEditingOffset() >= textNode.length()) {
-            startNode = NodeTraversal::next(startNode);
+            startNode = NodeTraversal::next(*startNode);
             ASSERT(startNode);
         } else if (pos.deprecatedEditingOffset() > 0)
             splitTextNode(&textNode, pos.deprecatedEditingOffset());
     } else if (pos.deprecatedEditingOffset() > 0) {
         Node* childAtOffset = startNode->traverseToChildAt(pos.deprecatedEditingOffset());
-        startNode = childAtOffset ? childAtOffset : NodeTraversal::next(startNode);
+        startNode = childAtOffset ? childAtOffset : NodeTraversal::next(*startNode);
         ASSERT(startNode);
     }
     

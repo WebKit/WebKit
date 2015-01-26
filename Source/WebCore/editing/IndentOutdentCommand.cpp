@@ -70,8 +70,8 @@ bool IndentOutdentCommand::tryIndentingAsListItem(const Position& start, const P
         return false;
     
     // FIXME: previousElementSibling does not ignore non-rendered content like <span></span>.  Should we?
-    RefPtr<Element> previousList = ElementTraversal::previousSibling(selectedListItem.get());
-    RefPtr<Element> nextList = ElementTraversal::nextSibling(selectedListItem.get());
+    RefPtr<Element> previousList = ElementTraversal::previousSibling(*selectedListItem);
+    RefPtr<Element> nextList = ElementTraversal::nextSibling(*selectedListItem);
 
     RefPtr<Element> newList = document().createElement(listNode->tagQName(), false);
     insertNodeBefore(newList, selectedListItem);

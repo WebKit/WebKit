@@ -126,18 +126,18 @@ static Element* enclosingList(const RenderListItem& listItem)
 // Returns the next list item with respect to the DOM order.
 static RenderListItem* nextListItem(const Element& listNode, const Element& element)
 {
-    for (const Element* next = ElementTraversal::nextIncludingPseudo(&element, &listNode); next; ) {
+    for (const Element* next = ElementTraversal::nextIncludingPseudo(element, &listNode); next; ) {
         auto* renderer = next->renderer();
         if (!renderer || isHTMLListElement(*next)) {
             // We've found a nested, independent list or an unrendered Element : nothing to do here.
-            next = ElementTraversal::nextIncludingPseudoSkippingChildren(next, &listNode);
+            next = ElementTraversal::nextIncludingPseudoSkippingChildren(*next, &listNode);
             continue;
         }
 
         if (is<RenderListItem>(*renderer))
             return downcast<RenderListItem>(renderer);
 
-        next = ElementTraversal::nextIncludingPseudo(next, &listNode);
+        next = ElementTraversal::nextIncludingPseudo(*next, &listNode);
     }
 
     return nullptr;
@@ -156,7 +156,7 @@ static inline RenderListItem* nextListItem(const Element& listNode)
 // Returns the previous list item with respect to the DOM order.
 static RenderListItem* previousListItem(const Element* listNode, const RenderListItem& item)
 {
-    for (const Element* current = ElementTraversal::previousIncludingPseudo(&item.element(), listNode); current; current = ElementTraversal::previousIncludingPseudo(current, listNode)) {
+    for (const Element* current = ElementTraversal::previousIncludingPseudo(item.element(), listNode); current; current = ElementTraversal::previousIncludingPseudo(*current, listNode)) {
         RenderElement* renderer = current->renderer();
         if (!is<RenderListItem>(renderer))
             continue;
@@ -169,7 +169,7 @@ static RenderListItem* previousListItem(const Element* listNode, const RenderLis
         // be a list item itself. We need to examine it, so we do this to counteract
         // the previousIncludingPseudo() that will be done by the loop.
         if (otherList)
-            current = ElementTraversal::nextIncludingPseudo(otherList);
+            current = ElementTraversal::nextIncludingPseudo(*otherList);
     }
     return nullptr;
 }

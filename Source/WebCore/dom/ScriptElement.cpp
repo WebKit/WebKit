@@ -377,7 +377,7 @@ bool ScriptElement::isScriptForEventSupported() const
 
 String ScriptElement::scriptContent() const
 {
-    return TextNodeTraversal::contentsAsString(&m_element);
+    return TextNodeTraversal::contentsAsString(m_element);
 }
 
 ScriptElement* toScriptElementIfPossible(Element* element)

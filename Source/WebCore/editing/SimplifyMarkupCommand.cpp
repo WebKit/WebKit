@@ -52,7 +52,7 @@ void SimplifyMarkupCommand::doApply()
     // without affecting the style. The goal is to produce leaner markup even when starting
     // from a verbose fragment.
     // We look at inline elements as well as non top level divs that don't have attributes. 
-    for (Node* node = m_firstNode.get(); node && node != m_nodeAfterLast; node = NodeTraversal::next(node)) {
+    for (Node* node = m_firstNode.get(); node && node != m_nodeAfterLast; node = NodeTraversal::next(*node)) {
         if (node->firstChild() || (node->isTextNode() && node->nextSibling()))
             continue;
         

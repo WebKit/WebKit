@@ -120,7 +120,7 @@ void SimpleEditCommand::doReapply()
 #ifndef NDEBUG
 void SimpleEditCommand::addNodeAndDescendants(Node* startNode, HashSet<Node*>& nodes)
 {
-    for (Node* node = startNode; node; node = NodeTraversal::next(node, startNode))
+    for (Node* node = startNode; node; node = NodeTraversal::next(*node, startNode))
         nodes.add(node);
 }
 #endif

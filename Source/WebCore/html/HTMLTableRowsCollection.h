@@ -43,8 +43,8 @@ public:
     HTMLTableElement& tableElement() { return downcast<HTMLTableElement>(ownerNode()); }
     const HTMLTableElement& tableElement() const { return downcast<HTMLTableElement>(ownerNode()); }
 
-    static HTMLTableRowElement* rowAfter(HTMLTableElement*, HTMLTableRowElement*);
-    static HTMLTableRowElement* lastRow(HTMLTableElement*);
+    static HTMLTableRowElement* rowAfter(HTMLTableElement&, HTMLTableRowElement*);
+    static HTMLTableRowElement* lastRow(HTMLTableElement&);
 
 private:
     explicit HTMLTableRowsCollection(HTMLTableElement&);

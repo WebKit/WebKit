@@ -97,8 +97,8 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
     if (parentNode()) {
         ContainerNode::ChildChange change = {
             ContainerNode::TextChanged,
-            ElementTraversal::previousSibling(this),
-            ElementTraversal::nextSibling(this),
+            ElementTraversal::previousSibling(*this),
+            ElementTraversal::nextSibling(*this),
             ContainerNode::ChildChangeSourceParser
         };
         parentNode()->childrenChanged(change);
@@ -217,14 +217,14 @@ void CharacterData::dispatchModifiedEvent(const String& oldData)
         if (parentNode()) {
             ContainerNode::ChildChange change = {
                 ContainerNode::TextChanged,
-                ElementTraversal::previousSibling(this),
-                ElementTraversal::nextSibling(this),
+                ElementTraversal::previousSibling(*this),
+                ElementTraversal::nextSibling(*this),
                 ContainerNode::ChildChangeSourceAPI
             };
             parentNode()->childrenChanged(change);
         }
         if (document().hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
-            dispatchScopedEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, 0, oldData, m_data));
+            dispatchScopedEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, nullptr, oldData, m_data));
         dispatchSubtreeModifiedEvent();
     }
 

@@ -207,7 +207,7 @@ void NodeSet::traversalSort() const
     Vector<RefPtr<Node>> sortedNodes;
     sortedNodes.reserveInitialCapacity(nodeCount);
 
-    for (Node* node = findRootNode(m_nodes.first().get()); node; node = NodeTraversal::next(node)) {
+    for (Node* node = findRootNode(m_nodes.first().get()); node; node = NodeTraversal::next(*node)) {
         if (nodes.contains(node))
             sortedNodes.append(node);
 

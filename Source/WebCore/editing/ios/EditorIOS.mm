@@ -230,7 +230,7 @@ const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
         Node* pastEnd = range->pastLastNode();
         // In the loop below, n should eventually match pastEnd and not become nil, but we've seen at least one
         // unreproducible case where this didn't happen, so check for null also.
-        for (Node* node = startNode; node && node != pastEnd; node = NodeTraversal::next(node)) {
+        for (Node* node = startNode; node && node != pastEnd; node = NodeTraversal::next(*node)) {
             auto renderer = node->renderer();
             if (!renderer)
                 continue;

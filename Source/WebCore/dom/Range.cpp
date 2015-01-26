@@ -1071,7 +1071,7 @@ String Range::toString(ExceptionCode& ec) const
     StringBuilder builder;
 
     Node* pastLast = pastLastNode();
-    for (Node* n = firstNode(); n != pastLast; n = NodeTraversal::next(n)) {
+    for (Node* n = firstNode(); n != pastLast; n = NodeTraversal::next(*n)) {
         if (n->nodeType() == Node::TEXT_NODE || n->nodeType() == Node::CDATA_SECTION_NODE) {
             const String& data = static_cast<CharacterData*>(n)->data();
             int length = data.length();
@@ -1513,7 +1513,7 @@ void Range::checkDeleteExtract(ExceptionCode& ec)
         return;
         
     Node* pastLast = pastLastNode();
-    for (Node* n = firstNode(); n != pastLast; n = NodeTraversal::next(n)) {
+    for (Node* n = firstNode(); n != pastLast; n = NodeTraversal::next(*n)) {
         if (n->isReadOnlyNode()) {
             ec = NO_MODIFICATION_ALLOWED_ERR;
             return;
@@ -1546,14 +1546,14 @@ bool Range::containedByReadOnly() const
 Node* Range::firstNode() const
 {
     if (!m_start.container())
-        return 0;
+        return nullptr;
     if (m_start.container()->offsetInCharacters())
         return m_start.container();
     if (Node* child = m_start.container()->traverseToChildAt(m_start.offset()))
         return child;
     if (!m_start.offset())
         return m_start.container();
-    return NodeTraversal::nextSkippingChildren(m_start.container());
+    return NodeTraversal::nextSkippingChildren(*m_start.container());
 }
 
 ShadowRoot* Range::shadowRoot() const
@@ -1564,12 +1564,12 @@ ShadowRoot* Range::shadowRoot() const
 Node* Range::pastLastNode() const
 {
     if (!m_start.container() || !m_end.container())
-        return 0;
+        return nullptr;
     if (m_end.container()->offsetInCharacters())
-        return NodeTraversal::nextSkippingChildren(m_end.container());
+        return NodeTraversal::nextSkippingChildren(*m_end.container());
     if (Node* child = m_end.container()->traverseToChildAt(m_end.offset()))
         return child;
-    return NodeTraversal::nextSkippingChildren(m_end.container());
+    return NodeTraversal::nextSkippingChildren(*m_end.container());
 }
 
 IntRect Range::boundingBox() const
@@ -1598,7 +1598,7 @@ void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight, RangeInFi
     bool someFixed = false;
 
     Node* stopNode = pastLastNode();
-    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
+    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(*node)) {
         RenderObject* renderer = node->renderer();
         if (!renderer)
             continue;
@@ -1634,7 +1634,7 @@ void Range::textQuads(Vector<FloatQuad>& quads, bool useSelectionHeight, RangeIn
     bool someFixed = false;
 
     Node* stopNode = pastLastNode();
-    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
+    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(*node)) {
         RenderObject* renderer = node->renderer();
         if (!renderer)
             continue;
@@ -1715,7 +1715,7 @@ void Range::collectSelectionRects(Vector<SelectionRect>& rects)
     Node* stopNode = pastLastNode();
     bool hasFlippedWritingMode = startContainer->renderer() && startContainer->renderer()->style().isFlippedBlocksWritingMode();
     bool containsDifferentWritingModes = false;
-    for (Node* node = firstNode(); node && node != stopNode; node = NodeTraversal::next(node)) {
+    for (Node* node = firstNode(); node && node != stopNode; node = NodeTraversal::next(*node)) {
         RenderObject* renderer = node->renderer();
         // Only ask leaf render objects for their line box rects.
         if (renderer && !renderer->firstChildSlow() && renderer->style().userSelect() != SELECT_NONE) {
@@ -2197,7 +2197,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
     Node* stopNode = pastLastNode();
 
     HashSet<Node*> selectedElementsSet;
-    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
+    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(*node)) {
         if (node->isElementNode())
             selectedElementsSet.add(node);
     }
@@ -2207,7 +2207,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
     for (Node* parent = lastNode->parentNode(); parent; parent = parent->parentNode())
         selectedElementsSet.remove(parent);
 
-    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(node)) {
+    for (Node* node = firstNode(); node != stopNode; node = NodeTraversal::next(*node)) {
         if (is<Element>(*node) && selectedElementsSet.contains(node) && !selectedElementsSet.contains(node->parentNode())) {
             if (RenderBoxModelObject* renderBoxModelObject = downcast<Element>(*node).renderBoxModelObject()) {
                 Vector<FloatQuad> elementQuads;

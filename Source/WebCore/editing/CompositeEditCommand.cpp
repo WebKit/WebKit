@@ -859,7 +859,7 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
         return;
 
     Vector<RefPtr<Text>> nodes;
-    for (Node* node = start.deprecatedNode(); node; node = NodeTraversal::next(node)) {
+    for (Node* node = start.deprecatedNode(); node; node = NodeTraversal::next(*node)) {
         if (is<Text>(*node))
             nodes.append(downcast<Text>(node));
         if (node == end.deprecatedNode())
@@ -1071,7 +1071,7 @@ void CompositeEditCommand::cloneParagraphUnderNewElement(const Position& start, 
         }
 
         RefPtr<Node> startNode = start.deprecatedNode();
-        for (RefPtr<Node> node = NodeTraversal::nextSkippingChildren(startNode.get(), outerNode.get()); node; node = NodeTraversal::nextSkippingChildren(node.get(), outerNode.get())) {
+        for (RefPtr<Node> node = NodeTraversal::nextSkippingChildren(*startNode, outerNode.get()); node; node = NodeTraversal::nextSkippingChildren(*node, outerNode.get())) {
             // Move lastNode up in the tree as much as node was moved up in the
             // tree by NodeTraversal::nextSkippingChildren, so that the relative depth between
             // node and the original start node is maintained in the clone.
@@ -1350,8 +1350,8 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     if (!newBlock)
         newBlock = createDefaultParagraphElement(document());
 
-    RefPtr<Node> previousListNode = emptyListItem->isElementNode() ? ElementTraversal::previousSibling(emptyListItem.get()): emptyListItem->previousSibling();
-    RefPtr<Node> nextListNode = emptyListItem->isElementNode() ? ElementTraversal::nextSibling(emptyListItem.get()): emptyListItem->nextSibling();
+    RefPtr<Node> previousListNode = emptyListItem->isElementNode() ? ElementTraversal::previousSibling(*emptyListItem): emptyListItem->previousSibling();
+    RefPtr<Node> nextListNode = emptyListItem->isElementNode() ? ElementTraversal::nextSibling(*emptyListItem): emptyListItem->nextSibling();
     if (isListItem(nextListNode.get()) || isListElement(nextListNode.get())) {
         // If emptyListItem follows another list item or nested list, split the list node.
         if (isListItem(previousListNode.get()) || isListElement(previousListNode.get()))

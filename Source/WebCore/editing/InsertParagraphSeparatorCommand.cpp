@@ -378,7 +378,7 @@ void InsertParagraphSeparatorCommand::doApply()
         else {
             Node* splitTo = insertionPosition.containerNode();
             if (splitTo->isTextNode() && insertionPosition.offsetInContainerNode() >= caretMaxOffset(splitTo))
-                splitTo = NodeTraversal::next(splitTo, startBlock.get());
+                splitTo = NodeTraversal::next(*splitTo, startBlock.get());
             ASSERT(splitTo);
             splitTreeToNode(splitTo, startBlock.get());
 

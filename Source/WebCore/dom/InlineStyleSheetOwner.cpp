@@ -94,7 +94,7 @@ void InlineStyleSheetOwner::finishParsingChildren(Element& element)
 
 void InlineStyleSheetOwner::createSheetFromTextContents(Element& element)
 {
-    createSheet(element, TextNodeTraversal::contentsAsString(&element));
+    createSheet(element, TextNodeTraversal::contentsAsString(element));
 }
 
 void InlineStyleSheetOwner::clearSheet()

@@ -235,7 +235,7 @@ static inline bool isMatchingElement(const HTMLCollection& collection, Element& 
 
 static inline Element* previousElement(ContainerNode& base, Element& element, bool onlyIncludeDirectChildren)
 {
-    return onlyIncludeDirectChildren ? ElementTraversal::previousSibling(&element) : ElementTraversal::previous(&element, &base);
+    return onlyIncludeDirectChildren ? ElementTraversal::previousSibling(element) : ElementTraversal::previous(element, &base);
 }
 
 ALWAYS_INLINE Element* HTMLCollection::iterateForPreviousElement(Element* element) const
@@ -251,9 +251,9 @@ ALWAYS_INLINE Element* HTMLCollection::iterateForPreviousElement(Element* elemen
 
 static inline Element* firstMatchingElement(const HTMLCollection& collection, ContainerNode& root)
 {
-    Element* element = ElementTraversal::firstWithin(&root);
+    Element* element = ElementTraversal::firstWithin(root);
     while (element && !isMatchingElement(collection, *element))
-        element = ElementTraversal::next(element, &root);
+        element = ElementTraversal::next(*element, &root);
     return element;
 }
 
@@ -261,7 +261,7 @@ static inline Element* nextMatchingElement(const HTMLCollection& collection, Ele
 {
     Element* next = &element;
     do {
-        next = ElementTraversal::next(next, &root);
+        next = ElementTraversal::next(*next, &root);
     } while (next && !isMatchingElement(collection, *next));
     return next;
 }
@@ -296,9 +296,9 @@ static inline bool nameShouldBeVisibleInDocumentAll(Element& element)
 
 static inline Element* firstMatchingChildElement(const HTMLCollection& nodeList, ContainerNode& root)
 {
-    Element* element = ElementTraversal::firstWithin(&root);
+    Element* element = ElementTraversal::firstWithin(root);
     while (element && !isMatchingElement(nodeList, *element))
-        element = ElementTraversal::nextSibling(element);
+        element = ElementTraversal::nextSibling(*element);
     return element;
 }
 
@@ -306,7 +306,7 @@ static inline Element* nextMatchingSiblingElement(const HTMLCollection& nodeList
 {
     Element* next = &element;
     do {
-        next = ElementTraversal::nextSibling(next);
+        next = ElementTraversal::nextSibling(*next);
     } while (next && !isMatchingElement(nodeList, *next));
     return next;
 }
@@ -359,7 +359,7 @@ Element* HTMLCollection::collectionLast() const
 {
     // FIXME: This should be optimized similarly to the forward case.
     auto& root = rootNode();
-    Element* last = m_shouldOnlyIncludeDirectChildren ? ElementTraversal::lastChild(&root) : ElementTraversal::lastWithin(&root);
+    Element* last = m_shouldOnlyIncludeDirectChildren ? ElementTraversal::lastChild(root) : ElementTraversal::lastWithin(root);
     return iterateForPreviousElement(last);
 }
 
@@ -373,12 +373,12 @@ void HTMLCollection::collectionTraverseBackward(Element*& current, unsigned coun
     // FIXME: This should be optimized similarly to the forward case.
     if (m_shouldOnlyIncludeDirectChildren) {
         for (; count && current; --count)
-            current = iterateForPreviousElement(ElementTraversal::previousSibling(current));
+            current = iterateForPreviousElement(ElementTraversal::previousSibling(*current));
         return;
     }
     auto& root = rootNode();
     for (; count && current; --count)
-        current = iterateForPreviousElement(ElementTraversal::previous(current, &root));
+        current = iterateForPreviousElement(ElementTraversal::previous(*current, &root));
 }
 
 void HTMLCollection::invalidateCache(Document& document) const

@@ -1763,7 +1763,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     DOMRange *previousDOMRange = nil;
     id previousMetadata = nil;
     
-    for (Node* node = root; node; node = NodeTraversal::next(node)) {
+    for (Node* node = root; node; node = NodeTraversal::next(*node)) {
         auto markers = document->markers().markersFor(node);
         for (auto marker : markers) {
 

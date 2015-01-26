@@ -768,7 +768,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
     unsigned combinationsSoFar = 1;
 
     Node* pastLastNode = rangeOfRootContents->pastLastNode();
-    for (Node* node = rangeOfRootContents->firstNode(); node != pastLastNode; node = NodeTraversal::next(node)) {
+    for (Node* node = rangeOfRootContents->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
         for (auto* marker : document()->markers().markersFor(node, DocumentMarker::MarkerTypes(DocumentMarker::DictationPhraseWithAlternatives))) {
             // First, add text that precede the marker.
             if (precedingTextStartPosition != createLegacyEditingPosition(node, marker->startOffset())) {

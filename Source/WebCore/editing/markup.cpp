@@ -367,7 +367,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
     const bool shouldEmit = traversalMode == EmitString;
     Vector<Node*> ancestorsToClose;
     Node* next;
-    Node* lastClosed = 0;
+    Node* lastClosed = nullptr;
     for (Node* n = startNode; n != pastEnd; n = next) {
         // According to <rdar://problem/5730668>, it is possible for n to blow
         // past pastEnd and become null here. This shouldn't be possible.
@@ -377,7 +377,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
         if (!n)
             break;
         
-        next = NodeTraversal::next(n);
+        next = NodeTraversal::next(*n);
         bool openedTag = false;
 
         if (isBlock(n) && canHaveChildrenForEditing(n) && next == pastEnd)
@@ -385,7 +385,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
             continue;
 
         if (!n->renderer() && !enclosingElementWithTag(firstPositionInOrBeforeNode(n), selectTag)) {
-            next = NodeTraversal::nextSkippingChildren(n);
+            next = NodeTraversal::nextSkippingChildren(*n);
             // Don't skip over pastEnd.
             if (pastEnd && pastEnd->isDescendantOf(n))
                 next = pastEnd;

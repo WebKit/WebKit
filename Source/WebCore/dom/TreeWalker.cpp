@@ -257,23 +257,23 @@ Children:
         node = firstChild;
         short acceptNodeResult = acceptNode(state, node.get());
         if (state && state->hadException())
-            return 0;
+            return nullptr;
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
             return setCurrent(node.release());
         if (acceptNodeResult == NodeFilter::FILTER_REJECT)
             break;
     }
-    while (Node* nextSibling = NodeTraversal::nextSkippingChildren(node.get(), root())) {
+    while (Node* nextSibling = NodeTraversal::nextSkippingChildren(*node, root())) {
         node = nextSibling;
         short acceptNodeResult = acceptNode(state, node.get());
         if (state && state->hadException())
-            return 0;
+            return nullptr;
         if (acceptNodeResult == NodeFilter::FILTER_ACCEPT)
             return setCurrent(node.release());
         if (acceptNodeResult == NodeFilter::FILTER_SKIP)
             goto Children;
     }
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore

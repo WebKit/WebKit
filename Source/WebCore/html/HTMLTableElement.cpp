@@ -195,10 +195,10 @@ RefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec)
     RefPtr<HTMLTableRowElement> lastRow = 0;
     RefPtr<HTMLTableRowElement> row = 0;
     if (index == -1)
-        lastRow = HTMLTableRowsCollection::lastRow(this);
+        lastRow = HTMLTableRowsCollection::lastRow(*this);
     else {
         for (int i = 0; i <= index; ++i) {
-            row = HTMLTableRowsCollection::rowAfter(this, lastRow.get());
+            row = HTMLTableRowsCollection::rowAfter(*this, lastRow.get());
             if (!row) {
                 if (i != index) {
                     ec = INDEX_SIZE_ERR;
@@ -233,10 +233,10 @@ void HTMLTableElement::deleteRow(int index, ExceptionCode& ec)
 {
     HTMLTableRowElement* row = 0;
     if (index == -1)
-        row = HTMLTableRowsCollection::lastRow(this);
+        row = HTMLTableRowsCollection::lastRow(*this);
     else {
         for (int i = 0; i <= index; ++i) {
-            row = HTMLTableRowsCollection::rowAfter(this, row);
+            row = HTMLTableRowsCollection::rowAfter(*this, row);
             if (!row)
                 break;
         }

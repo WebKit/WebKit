@@ -1558,18 +1558,18 @@ static void checkForEmptyStyleChange(Element& element)
 
 enum SiblingCheckType { FinishedParsingChildren, SiblingElementRemoved, Other };
 
-static void checkForSiblingStyleChanges(Element* parent, SiblingCheckType checkType, Element* elementBeforeChange, Element* elementAfterChange)
+static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkType, Element* elementBeforeChange, Element* elementAfterChange)
 {
     // :empty selector.
-    checkForEmptyStyleChange(*parent);
+    checkForEmptyStyleChange(parent);
 
-    if (parent->styleChangeType() >= FullStyleChange)
+    if (parent.styleChangeType() >= FullStyleChange)
         return;
 
     // :first-child.  In the parser callback case, we don't have to check anything, since we were right the first time.
     // In the DOM case, we only need to do something if |afterChange| is not 0.
     // |afterChange| is 0 in the parser case, so it works out that we'll skip this block.
-    if (parent->childrenAffectedByFirstChildRules() && elementAfterChange) {
+    if (parent.childrenAffectedByFirstChildRules() && elementAfterChange) {
         // Find our new first child.
         Element* newFirstElement = ElementTraversal::firstChild(parent);
         // Find the first element node following |afterChange|
@@ -1591,7 +1591,7 @@ static void checkForSiblingStyleChanges(Element* parent, SiblingCheckType checkT
 
     // :last-child.  In the parser callback case, we don't have to check anything, since we were right the first time.
     // In the DOM case, we only need to do something if |afterChange| is not 0.
-    if (parent->childrenAffectedByLastChildRules() && elementBeforeChange) {
+    if (parent.childrenAffectedByLastChildRules() && elementBeforeChange) {
         // Find our new last child.
         Element* newLastElement = ElementTraversal::lastChild(parent);
 
@@ -1630,8 +1630,8 @@ static void checkForSiblingStyleChanges(Element* parent, SiblingCheckType checkT
     // |afterChange| is 0 in the parser callback case, so we won't do any work for the forward case if we don't have to.
     // For performance reasons we just mark the parent node as changed, since we don't want to make childrenChanged O(n^2) by crawling all our kids
     // here.  recalcStyle will then force a walk of the children when it sees that this has happened.
-    if (parent->childrenAffectedByBackwardPositionalRules() && elementBeforeChange)
-        parent->setNeedsStyleRecalc();
+    if (parent.childrenAffectedByBackwardPositionalRules() && elementBeforeChange)
+        parent.setNeedsStyleRecalc();
 }
 
 void Element::childrenChanged(const ChildChange& change)
@@ -1641,7 +1641,7 @@ void Element::childrenChanged(const ChildChange& change)
         checkForEmptyStyleChange(*this);
     else {
         SiblingCheckType checkType = change.type == ElementRemoved ? SiblingElementRemoved : Other;
-        checkForSiblingStyleChanges(this, checkType, change.previousSiblingElement, change.nextSiblingElement);
+        checkForSiblingStyleChanges(*this, checkType, change.previousSiblingElement, change.nextSiblingElement);
     }
 
     if (ShadowRoot* shadowRoot = this->shadowRoot())
@@ -1666,7 +1666,7 @@ void Element::finishParsingChildren()
 {
     ContainerNode::finishParsingChildren();
     setIsParsingChildrenFinished();
-    checkForSiblingStyleChanges(this, FinishedParsingChildren, ElementTraversal::lastChild(this), nullptr);
+    checkForSiblingStyleChanges(*this, FinishedParsingChildren, ElementTraversal::lastChild(*this), nullptr);
     if (auto styleResolver = document().styleResolverIfExists())
         styleResolver->popParentElement(this);
 }
@@ -2375,22 +2375,22 @@ void Element::clearAfterPseudoElement()
 // ElementTraversal API
 Element* Element::firstElementChild() const
 {
-    return ElementTraversal::firstChild(this);
+    return ElementTraversal::firstChild(*this);
 }
 
 Element* Element::lastElementChild() const
 {
-    return ElementTraversal::lastChild(this);
+    return ElementTraversal::lastChild(*this);
 }
 
 Element* Element::previousElementSibling() const
 {
-    return ElementTraversal::previousSibling(this);
+    return ElementTraversal::previousSibling(*this);
 }
 
 Element* Element::nextElementSibling() const
 {
-    return ElementTraversal::nextSibling(this);
+    return ElementTraversal::nextSibling(*this);
 }
 
 unsigned Element::childElementCount() const

@@ -756,9 +756,8 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCa
         closest = candidate;
 }
 
-void FocusController::findFocusCandidateInContainer(Node* container, const LayoutRect& startingRect, FocusDirection direction, KeyboardEvent* event, FocusCandidate& closest)
+void FocusController::findFocusCandidateInContainer(Node& container, const LayoutRect& startingRect, FocusDirection direction, KeyboardEvent* event, FocusCandidate& closest)
 {
-    ASSERT(container);
     Node* focusedNode = (focusedFrame() && focusedFrame()->document()) ? focusedFrame()->document()->focusedElement() : 0;
 
     Element* element = ElementTraversal::firstWithin(container);
@@ -769,8 +768,8 @@ void FocusController::findFocusCandidateInContainer(Node* container, const Layou
 
     unsigned candidateCount = 0;
     for (; element; element = (element->isFrameOwnerElement() || canScrollInDirection(element, direction))
-        ? ElementTraversal::nextSkippingChildren(element, container)
-        : ElementTraversal::next(element, container)) {
+        ? ElementTraversal::nextSkippingChildren(*element, &container)
+        : ElementTraversal::next(*element, &container)) {
         if (element == focusedNode)
             continue;
 
@@ -785,7 +784,7 @@ void FocusController::findFocusCandidateInContainer(Node* container, const Layou
             continue;
 
         candidateCount++;
-        candidate.enclosingScrollableBox = container;
+        candidate.enclosingScrollableBox = &container;
         updateFocusCandidateIfNeeded(direction, current, candidate, closest);
     }
 
@@ -809,7 +808,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
 
     // Find the closest node within current container in the direction of the navigation.
     FocusCandidate focusCandidate;
-    findFocusCandidateInContainer(container, newStartingRect, direction, event, focusCandidate);
+    findFocusCandidateInContainer(*container, newStartingRect, direction, event, focusCandidate);
 
     if (focusCandidate.isNull()) {
         // Nothing to focus, scroll if possible.

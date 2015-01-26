@@ -2155,7 +2155,7 @@ void Document::removeAllEventListeners()
 #if ENABLE(IOS_TOUCH_EVENTS)
     clearTouchEventListeners();
 #endif
-    for (Node* node = firstChild(); node; node = NodeTraversal::next(node))
+    for (Node* node = firstChild(); node; node = NodeTraversal::next(*node))
         node->removeAllEventListeners();
 }
 
@@ -3272,7 +3272,7 @@ void Document::updateViewportUnitsOnResize()
     ensureStyleResolver().clearCachedPropertiesAffectedByViewportUnits();
 
     // FIXME: Ideally, we should save the list of elements that have viewport units and only iterate over those.
-    for (Element* element = ElementTraversal::firstWithin(&rootNode()); element; element = ElementTraversal::nextIncludingPseudo(element)) {
+    for (Element* element = ElementTraversal::firstWithin(rootNode()); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
         auto* renderer = element->renderer();
         if (renderer && renderer->style().hasViewportUnits())
             element->setNeedsStyleRecalc(InlineStyleChange);

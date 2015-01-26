@@ -32,25 +32,24 @@
 namespace WebCore {
 namespace TextNodeTraversal {
 
-void appendContents(const ContainerNode* root, StringBuilder& result)
+void appendContents(const ContainerNode& root, StringBuilder& result)
 {
-    for (Text* text = TextNodeTraversal::firstWithin(root); text; text = TextNodeTraversal::next(text, root))
+    for (Text* text = TextNodeTraversal::firstWithin(root); text; text = TextNodeTraversal::next(*text, &root))
         result.append(text->data());
 }
 
-String contentsAsString(const ContainerNode* root)
+String contentsAsString(const ContainerNode& root)
 {
     StringBuilder result;
     appendContents(root, result);
     return result.toString();
 }
 
-String contentsAsString(const Node* root)
+String contentsAsString(const Node& root)
 {
-    ASSERT(root);
-    if (is<Text>(*root))
-        return downcast<Text>(*root).data();
-    if (is<ContainerNode>(*root))
+    if (is<Text>(root))
+        return downcast<Text>(root).data();
+    if (is<ContainerNode>(root))
         return contentsAsString(downcast<ContainerNode>(root));
     return String();
 }

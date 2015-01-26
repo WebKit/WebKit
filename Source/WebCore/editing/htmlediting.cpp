@@ -604,12 +604,12 @@ static bool hasARenderedDescendant(Node* node, Node* excludedNode)
 {
     for (Node* n = node->firstChild(); n;) {
         if (n == excludedNode) {
-            n = NodeTraversal::nextSkippingChildren(n, node);
+            n = NodeTraversal::nextSkippingChildren(*n, node);
             continue;
         }
         if (n->renderer())
             return true;
-        n = NodeTraversal::next(n, node);
+        n = NodeTraversal::next(*n, node);
     }
     return false;
 }

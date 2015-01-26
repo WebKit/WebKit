@@ -404,7 +404,7 @@ Vector<RenderedDocumentMarker*> DocumentMarkerController::markersInRange(Range* 
     ASSERT(endContainer);
 
     Node* pastLastNode = range->pastLastNode();
-    for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(node)) {
+    for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
         for (auto* marker : markersFor(node)) {
             if (!markerTypes.contains(marker->type()))
                 continue;
@@ -629,7 +629,7 @@ void DocumentMarkerController::setMarkersActive(Range* range, bool active)
 
     Node* pastLastNode = range->pastLastNode();
 
-    for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(node)) {
+    for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
         int startOffset = node == startContainer ? range->startOffset() : 0;
         int endOffset = node == endContainer ? range->endOffset() : INT_MAX;
         setMarkersActive(node, startOffset, endOffset, active);
@@ -675,7 +675,7 @@ bool DocumentMarkerController::hasMarkers(Range* range, DocumentMarker::MarkerTy
     ASSERT(endContainer);
 
     Node* pastLastNode = range->pastLastNode();
-    for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(node)) {
+    for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
         for (auto* marker : markersFor(node)) {
             if (!markerTypes.contains(marker->type()))
                 continue;
@@ -699,7 +699,7 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range*
     Node* endContainer = range->endContainer();
 
     Node* pastLastNode = range->pastLastNode();
-    for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(node)) {
+    for (Node* node = range->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
         unsigned startOffset = node == startContainer ? range->startOffset() : 0;
         unsigned endOffset = node == endContainer ? static_cast<unsigned>(range->endOffset()) : std::numeric_limits<unsigned>::max();
         MarkerList* list = m_markers.get(node);

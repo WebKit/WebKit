@@ -431,7 +431,7 @@ static inline void setContainerAndOffsetForRange(Node* node, int offset, Node*& 
 PassRefPtr<Range> HTMLTextFormControlElement::selection() const
 {
     if (!renderer() || !isTextFormControl() || !hasCachedSelection())
-        return 0;
+        return nullptr;
 
     int start = m_cachedSelectionStart;
     int end = m_cachedSelectionEnd;
@@ -439,15 +439,15 @@ PassRefPtr<Range> HTMLTextFormControlElement::selection() const
     ASSERT(start <= end);
     TextControlInnerTextElement* innerText = innerTextElement();
     if (!innerText)
-        return 0;
+        return nullptr;
 
     if (!innerText->firstChild())
         return Range::create(document(), innerText, 0, innerText, 0);
 
     int offset = 0;
-    Node* startNode = 0;
-    Node* endNode = 0;
-    for (Node* node = innerText->firstChild(); node; node = NodeTraversal::next(node, innerText)) {
+    Node* startNode = nullptr;
+    Node* endNode = nullptr;
+    for (Node* node = innerText->firstChild(); node; node = NodeTraversal::next(*node, innerText)) {
         ASSERT(!node->firstChild());
         ASSERT(node->isTextNode() || node->hasTagName(brTag));
         int length = node->isTextNode() ? lastOffsetInNode(node) : 1;
@@ -464,7 +464,7 @@ PassRefPtr<Range> HTMLTextFormControlElement::selection() const
     }
 
     if (!startNode || !endNode)
-        return 0;
+        return nullptr;
 
     return Range::create(document(), startNode, start, endNode, end);
 }
@@ -532,7 +532,7 @@ static void stripTrailingNewline(StringBuilder& result)
 static String innerTextValueFrom(TextControlInnerTextElement& innerText)
 {
     StringBuilder result;
-    for (Node* node = innerText.firstChild(); node; node = NodeTraversal::next(node, &innerText)) {
+    for (Node* node = innerText.firstChild(); node; node = NodeTraversal::next(*node, &innerText)) {
         if (is<HTMLBRElement>(*node))
             result.append(newlineCharacter);
         else if (is<Text>(*node))
@@ -574,7 +574,7 @@ static Position positionForIndex(TextControlInnerTextElement* innerText, unsigne
 {
     unsigned remainingCharactersToMoveForward = index;
     Node* lastBrOrText = innerText;
-    for (Node* node = innerText; node; node = NodeTraversal::next(node, innerText)) {
+    for (Node* node = innerText; node; node = NodeTraversal::next(*node, innerText)) {
         if (node->hasTagName(brTag)) {
             if (!remainingCharactersToMoveForward)
                 return positionBeforeNode(node);
@@ -607,7 +607,7 @@ unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosi
     ASSERT(startNode);
     ASSERT(innerText->contains(startNode));
 
-    for (Node* node = startNode; node; node = NodeTraversal::previous(node, innerText)) {
+    for (Node* node = startNode; node; node = NodeTraversal::previous(*node, innerText)) {
         if (is<Text>(*node)) {
             unsigned length = downcast<Text>(*node).length();
             if (node == passedPosition.containerNode())
@@ -685,7 +685,7 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
     getNextSoftBreak(line, breakNode, breakOffset);
 
     StringBuilder result;
-    for (Node* node = innerText->firstChild(); node; node = NodeTraversal::next(node, innerText)) {
+    for (Node* node = innerText->firstChild(); node; node = NodeTraversal::next(*node, innerText)) {
         if (is<HTMLBRElement>(*node))
             result.append(newlineCharacter);
         else if (is<Text>(*node)) {

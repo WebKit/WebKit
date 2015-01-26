@@ -31,81 +31,81 @@ namespace WebCore {
 
 namespace NodeTraversal {
 
-Node* previousIncludingPseudo(const Node* current, const Node* stayWithin)
+Node* previousIncludingPseudo(const Node& current, const Node* stayWithin)
 {
     Node* previous;
-    if (current == stayWithin)
+    if (&current == stayWithin)
         return nullptr;
-    if ((previous = current->pseudoAwarePreviousSibling())) {
+    if ((previous = current.pseudoAwarePreviousSibling())) {
         while (previous->pseudoAwareLastChild())
             previous = previous->pseudoAwareLastChild();
         return previous;
     }
-    return is<PseudoElement>(*current) ? downcast<PseudoElement>(*current).hostElement() : current->parentNode();
+    return is<PseudoElement>(current) ? downcast<PseudoElement>(current).hostElement() : current.parentNode();
 }
 
-Node* nextIncludingPseudo(const Node* current, const Node* stayWithin)
+Node* nextIncludingPseudo(const Node& current, const Node* stayWithin)
 {
     Node* next;
-    if ((next = current->pseudoAwareFirstChild()))
+    if ((next = current.pseudoAwareFirstChild()))
         return next;
-    if (current == stayWithin)
+    if (&current == stayWithin)
         return nullptr;
-    if ((next = current->pseudoAwareNextSibling()))
+    if ((next = current.pseudoAwareNextSibling()))
         return next;
-    current = is<PseudoElement>(*current) ? downcast<PseudoElement>(*current).hostElement() : current->parentNode();
-    for (; current; current = current->parentNode()) {
-        if (current == stayWithin)
+    const Node* ancestor = is<PseudoElement>(current) ? downcast<PseudoElement>(current).hostElement() : current.parentNode();
+    for (; ancestor; ancestor = ancestor->parentNode()) {
+        if (ancestor == stayWithin)
             return nullptr;
-        if ((next = current->pseudoAwareNextSibling()))
+        if ((next = ancestor->pseudoAwareNextSibling()))
             return next;
     }
     return nullptr;
 }
 
-Node* nextIncludingPseudoSkippingChildren(const Node* current, const Node* stayWithin)
+Node* nextIncludingPseudoSkippingChildren(const Node& current, const Node* stayWithin)
 {
     Node* next;
-    if (current == stayWithin)
+    if (&current == stayWithin)
         return nullptr;
-    if ((next = current->pseudoAwareNextSibling()))
+    if ((next = current.pseudoAwareNextSibling()))
         return next;
-    current = is<PseudoElement>(*current) ? downcast<PseudoElement>(*current).hostElement() : current->parentNode();
-    for (; current; current = current->parentNode()) {
-        if (current == stayWithin)
+    const Node* ancestor = is<PseudoElement>(current) ? downcast<PseudoElement>(current).hostElement() : current.parentNode();
+    for (; ancestor; ancestor = ancestor->parentNode()) {
+        if (ancestor == stayWithin)
             return nullptr;
-        if ((next = current->pseudoAwareNextSibling()))
+        if ((next = ancestor->pseudoAwareNextSibling()))
             return next;
     }
     return nullptr;
 }
 
-Node* nextAncestorSibling(const Node* current)
+Node* nextAncestorSibling(const Node& current)
 {
-    ASSERT(!current->nextSibling());
-    for (current = current->parentNode(); current; current = current->parentNode()) {
-        if (current->nextSibling())
-            return current->nextSibling();
+    ASSERT(!current.nextSibling());
+    for (auto* ancestor = current.parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+        if (ancestor->nextSibling())
+            return ancestor->nextSibling();
     }
-    return 0;
+    return nullptr;
 }
 
-Node* nextAncestorSibling(const Node* current, const Node* stayWithin)
+Node* nextAncestorSibling(const Node& current, const Node* stayWithin)
 {
-    ASSERT(!current->nextSibling());
-    ASSERT(current != stayWithin);
-    for (current = current->parentNode(); current; current = current->parentNode()) {
-        if (current == stayWithin)
-            return 0;
-        if (current->nextSibling())
-            return current->nextSibling();
+    ASSERT(!current.nextSibling());
+    ASSERT(&current != stayWithin);
+    for (auto* ancestor = current.parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+        if (ancestor == stayWithin)
+            return nullptr;
+        if (ancestor->nextSibling())
+            return ancestor->nextSibling();
     }
-    return 0;
+    return nullptr;
 }
 
-Node* last(const ContainerNode* current)
+Node* last(const ContainerNode& current)
 {
-    Node* node = current->lastChild();
+    Node* node = current.lastChild();
     if (!node)
         return nullptr;
     while (node->lastChild())
@@ -113,69 +113,70 @@ Node* last(const ContainerNode* current)
     return node;
 }
 
-Node* deepLastChild(Node* node)
+Node* deepLastChild(Node& node)
 {
-    while (node->lastChild())
-        node = node->lastChild();
-    return node;
+    Node* lastChild = &node;
+    while (lastChild->lastChild())
+        lastChild = lastChild->lastChild();
+    return lastChild;
 }
 
-Node* previousSkippingChildren(const Node* current, const Node* stayWithin)
+Node* previousSkippingChildren(const Node& current, const Node* stayWithin)
 {
-    if (current == stayWithin)
-        return 0;
-    if (current->previousSibling())
-        return current->previousSibling();
-    for (current = current->parentNode(); current; current = current->parentNode()) {
-        if (current == stayWithin)
-            return 0;
-        if (current->previousSibling())
-            return current->previousSibling();
+    if (&current == stayWithin)
+        return nullptr;
+    if (current.previousSibling())
+        return current.previousSibling();
+    for (auto* ancestor = current.parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+        if (ancestor == stayWithin)
+            return nullptr;
+        if (ancestor->previousSibling())
+            return ancestor->previousSibling();
     }
-    return 0;
+    return nullptr;
 }
 
-Node* nextPostOrder(const Node* current, const Node* stayWithin)
+Node* nextPostOrder(const Node& current, const Node* stayWithin)
 {
-    if (current == stayWithin)
-        return 0;
-    if (!current->nextSibling())
-        return current->parentNode();
-    Node* next = current->nextSibling();
+    if (&current == stayWithin)
+        return nullptr;
+    if (!current.nextSibling())
+        return current.parentNode();
+    Node* next = current.nextSibling();
     while (next->firstChild())
         next = next->firstChild();
     return next;
 }
 
-static Node* previousAncestorSiblingPostOrder(const Node* current, const Node* stayWithin)
+static Node* previousAncestorSiblingPostOrder(const Node& current, const Node* stayWithin)
 {
-    ASSERT(!current->previousSibling());
-    for (current = current->parentNode(); current; current = current->parentNode()) {
-        if (current == stayWithin)
-            return 0;
-        if (current->previousSibling())
-            return current->previousSibling();
+    ASSERT(!current.previousSibling());
+    for (auto* ancestor = current.parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+        if (ancestor == stayWithin)
+            return nullptr;
+        if (ancestor->previousSibling())
+            return ancestor->previousSibling();
     }
-    return 0;
+    return nullptr;
 }
 
-Node* previousPostOrder(const Node* current, const Node* stayWithin)
+Node* previousPostOrder(const Node& current, const Node* stayWithin)
 {
-    if (current->lastChild())
-        return current->lastChild();
-    if (current == stayWithin)
-        return 0;
-    if (current->previousSibling())
-        return current->previousSibling();
+    if (current.lastChild())
+        return current.lastChild();
+    if (&current == stayWithin)
+        return nullptr;
+    if (current.previousSibling())
+        return current.previousSibling();
     return previousAncestorSiblingPostOrder(current, stayWithin);
 }
 
-Node* previousSkippingChildrenPostOrder(const Node* current, const Node* stayWithin)
+Node* previousSkippingChildrenPostOrder(const Node& current, const Node* stayWithin)
 {
-    if (current == stayWithin)
-        return 0;
-    if (current->previousSibling())
-        return current->previousSibling();
+    if (&current == stayWithin)
+        return nullptr;
+    if (current.previousSibling())
+        return current.previousSibling();
     return previousAncestorSiblingPostOrder(current, stayWithin);
 }
 

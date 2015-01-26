@@ -111,10 +111,11 @@ String Text::wholeText() const
 {
     const Text* startText = earliestLogicallyAdjacentTextNode(this);
     const Text* endText = latestLogicallyAdjacentTextNode(this);
-    const Node* onePastEndText = TextNodeTraversal::nextSibling(endText);
+    ASSERT(endText);
+    const Node* onePastEndText = TextNodeTraversal::nextSibling(*endText);
 
     StringBuilder result;
-    for (const Text* text = startText; text != onePastEndText; text = TextNodeTraversal::nextSibling(text))
+    for (const Text* text = startText; text != onePastEndText; text = TextNodeTraversal::nextSibling(*text))
         result.append(text->data());
     return result.toString();
 }

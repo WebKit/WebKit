@@ -467,10 +467,10 @@ AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const No
     
     AccessibilityObject* accessibleObject = cache->getOrCreate(node->renderer());
     while (accessibleObject && accessibleObject->accessibilityIsIgnored()) {
-        node = NodeTraversal::next(node);
+        node = NodeTraversal::next(*node);
 
         while (node && !node->renderer())
-            node = NodeTraversal::nextSkippingChildren(node);
+            node = NodeTraversal::nextSkippingChildren(*node);
 
         if (!node)
             return nullptr;

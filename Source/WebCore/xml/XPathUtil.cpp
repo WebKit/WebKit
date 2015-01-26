@@ -51,7 +51,7 @@ String stringValue(Node* node)
             return node->nodeValue();
         default:
             if (isRootDomNode(node) || node->isElementNode())
-                return TextNodeTraversal::contentsAsString(node);
+                return TextNodeTraversal::contentsAsString(*node);
     }
     return String();
 }
