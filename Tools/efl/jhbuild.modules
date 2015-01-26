@@ -277,9 +277,10 @@
   </autotools> 
 
   <autotools id="libseccomp" autogen-sh="configure">
-      <branch module="libseccomp/libseccomp-2.1.0.tar.gz" version="2.1.0"
+      <branch module="libseccomp/libseccomp-2.1.1/libseccomp-2.1.1.tar.gz" version="2.1.1"
           repo="downloads.sourceforge.net"
-          hash="sha256:b0d6e4f0984e6632a04f0cf33c6babdb011674ba15ff208e196f037e0e09905e">
+          hash="sha256:8812c11e407c383f5ad6afb84a88e5a0224477bcfe8ff03f0c548e5abaac841c"
+          md5sum="cf4a6cbf94d636d4f08fd679d5593b86">
         <patch file="libseccomp-pick-up-CC.patch" strip="2"/>
       </branch>
   </autotools>
