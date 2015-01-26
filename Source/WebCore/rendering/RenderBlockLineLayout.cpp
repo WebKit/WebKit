@@ -540,7 +540,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     }
 }
 
-static inline void updateRubyForJustifiedText(RenderRubyRun& rubyRun, BidiRun& r, const Vector<unsigned, 16>& expansionOpportunities, unsigned& expansionOpportunityCount, float& totalLogicalWidth, float availableLogicalWidth, size_t& i)
+void RenderBlockFlow::updateRubyForJustifiedText(RenderRubyRun& rubyRun, BidiRun& r, const Vector<unsigned, 16>& expansionOpportunities, unsigned& expansionOpportunityCount, float& totalLogicalWidth, float availableLogicalWidth, RenderObject* previousObject, const LineInfo& lineInfo, size_t& i)
 {
     if (!rubyRun.rubyBase() || !rubyRun.rubyBase()->firstRootBox() || rubyRun.rubyBase()->firstRootBox()->nextRootBox() || !r.renderer().style().collapseWhiteSpace())
         return;
@@ -563,26 +563,47 @@ static inline void updateRubyForJustifiedText(RenderRubyRun& rubyRun, BidiRun& r
 
     if (totalOpportunitiesInRun) {
         ASSERT(!rubyRun.hasOverrideWidth());
-        rubyRun.setOverrideLogicalContentWidth(rubyRun.logicalWidth() + totalExpansion);
+        float newBaseWidth = rubyRun.logicalWidth() + totalExpansion + marginStartForChild(rubyRun) + marginEndForChild(rubyRun);
+        float newRubyRunWidth = rubyRun.logicalWidth() + totalExpansion;
+        rubyBase.setInitialOffset((newRubyRunWidth - newBaseWidth) / 2);
+        rubyRun.setOverrideLogicalContentWidth(newRubyRunWidth);
         rubyRun.setNeedsLayout(MarkOnlyThis);
+        rootBox.markDirty();
+        if (RenderRubyText* rubyText = rubyRun.rubyText()) {
+            if (RootInlineBox* textRootBox = rubyText->firstRootBox())
+                textRootBox->markDirty();
+        }
         rubyRun.layoutBlock(true);
         rubyRun.clearOverrideLogicalContentWidth();
-        r.box()->setExpansion(totalExpansion);
+        setMarginsForRubyRun(&r, rubyRun, previousObject, lineInfo); // Expanding the base might mean there's less of a need for overhang
+        r.box()->setExpansion(newRubyRunWidth - r.box()->logicalWidth());
+
+        // This relayout caused the size of the RenderRubyText and the RenderRubyBase to change, dependent on the line's current expansion. Next time we relayout the
+        // RenderRubyRun, make sure that we relayout the RenderRubyBase and RenderRubyText as well.
+        rubyBase.setNeedsLayout(MarkOnlyThis);
+        if (RenderRubyText* rubyText = rubyRun.rubyText())
+            rubyText->setNeedsLayout(MarkOnlyThis);
+        if (rubyBase.lastLeafChild() && rubyBase.lastLeafChild()->isText() && r.box() && r.box()->nextLeafChild() && !r.box()->nextLeafChild()->isLineBreak())
+            toRenderText(rubyBase.lastLeafChild())->setContentIsKnownToFollow(true);
 
         totalLogicalWidth += totalExpansion;
         expansionOpportunityCount -= totalOpportunitiesInRun;
     }
 }
 
-static inline void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* trailingSpaceRun, const Vector<unsigned, 16>& expansionOpportunities, unsigned expansionOpportunityCount, float totalLogicalWidth, float availableLogicalWidth)
+void RenderBlockFlow::computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* trailingSpaceRun, const Vector<unsigned, 16>& expansionOpportunities, unsigned expansionOpportunityCount, float totalLogicalWidth, float availableLogicalWidth, const LineInfo& lineInfo)
 {
     if (!expansionOpportunityCount || availableLogicalWidth <= totalLogicalWidth)
         return;
 
+    RenderObject* previousObject = nullptr;
+
     size_t i = 0;
     for (BidiRun* r = firstRun; r; r = r->next()) {
-        if (!r->box() || r == trailingSpaceRun)
+        if (!r->box() || r == trailingSpaceRun) {
+            previousObject = &r->renderer();
             continue;
+        }
         
         if (r->renderer().isText()) {
             unsigned opportunitiesInRun = expansionOpportunities[i++];
@@ -598,7 +619,9 @@ static inline void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* 
             }
             expansionOpportunityCount -= opportunitiesInRun;
         } else if (r->renderer().isRubyRun())
-            updateRubyForJustifiedText(toRenderRubyRun(r->renderer()), *r, expansionOpportunities, expansionOpportunityCount, totalLogicalWidth, availableLogicalWidth, i);
+            updateRubyForJustifiedText(toRenderRubyRun(r->renderer()), *r, expansionOpportunities, expansionOpportunityCount, totalLogicalWidth, availableLogicalWidth, previousObject, lineInfo, i);
+
+        previousObject = &r->renderer();
 
         if (!expansionOpportunityCount)
             break;
@@ -699,7 +722,7 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
     bool needsWordSpacing = false;
     float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
     unsigned expansionOpportunityCount = 0;
-    bool isAfterExpansion = true;
+    bool isAfterExpansion = this->isRubyBase() ? toRenderRubyBase(*this).isAfterExpansion() : true;
     Vector<unsigned, 16> expansionOpportunities;
     RenderObject* previousObject = 0;
 
@@ -731,6 +754,7 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
             if (r->renderer().isRubyRun() && textAlign == JUSTIFY && r != trailingSpaceRun && toRenderRubyRun(r->renderer()).rubyBase()) {
                 auto* rubyBase = toRenderRubyRun(r->renderer()).rubyBase();
                 if (rubyBase->firstRootBox() && !rubyBase->firstRootBox()->nextRootBox() && r->renderer().style().collapseWhiteSpace()) {
+                    rubyBase->setIsAfterExpansion(isAfterExpansion);
                     for (auto* leafChild = rubyBase->firstRootBox()->firstLeafChild(); leafChild; leafChild = leafChild->nextLeafChild()) {
                         if (!leafChild->isInlineTextBox())
                             continue;
@@ -762,13 +786,28 @@ BidiRun* RenderBlockFlow::computeInlineDirectionPositionsForSegment(RootInlineBo
     }
 
     if (isAfterExpansion && !expansionOpportunities.isEmpty()) {
-        expansionOpportunities.last()--;
-        expansionOpportunityCount--;
+        bool shouldShareExpansionsWithContainingLine = true;
+        if (this->isRubyBase()) {
+            if (RenderRubyRun* rubyRun = toRenderRubyBase(*this).rubyRun()) {
+                if (RenderElement* rubyElement = rubyRun->parent()) {
+                    if (rubyElement->style().display() == INLINE) {
+                        if (RenderBlock* containingBlock = rubyElement->containingBlock()) {
+                            if (containingBlock->style().textAlign() == JUSTIFY)
+                                shouldShareExpansionsWithContainingLine = false;
+                        }
+                    }
+                }
+            }
+        }
+        if (shouldShareExpansionsWithContainingLine) {
+            expansionOpportunities.last()--;
+            expansionOpportunityCount--;
+        }
     }
 
     updateLogicalWidthForAlignment(textAlign, lineBox, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth, expansionOpportunityCount);
 
-    computeExpansionForJustifiedText(firstRun, trailingSpaceRun, expansionOpportunities, expansionOpportunityCount, totalLogicalWidth, availableLogicalWidth);
+    computeExpansionForJustifiedText(firstRun, trailingSpaceRun, expansionOpportunities, expansionOpportunityCount, totalLogicalWidth, availableLogicalWidth, lineInfo);
 
     return r;
 }
