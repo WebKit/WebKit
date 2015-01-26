@@ -43,7 +43,7 @@ def configure_logging(verbose):
     else:
         handler.setFormatter(logging.Formatter('%(message)s'))
 
-def get_gtkdoc_module_paths():
+def get_gtkdoc_module_paths(cross_reference_deps):
     dependent_packages = {
         'glib-2.0' : ['glib', 'gobject', 'gio'],
         'libsoup-2.4' : ['libsoup-2.4'],
@@ -59,9 +59,9 @@ def get_gtkdoc_module_paths():
             continue
         for module in modules:
             paths.append(os.path.join(prefix, html_dir, module))
-    # This technically is not needed for the GObject DOM bindings documentation itself,
-    # but adding it doesn't hurt and allows us to avoid a check here.
-    paths.append(common.build_path('Documentation', 'webkitdomgtk', 'html'))
+
+    for local_dep in cross_reference_deps:
+        paths.append(common.build_path('Documentation', local_dep, 'html'))
     return paths
 
 def print_missing_api(generator):
@@ -98,7 +98,7 @@ def files_to_ignore(source_dirs, headers_with_gtkdoc):
     all_files = sum([[os.path.join(dir, file) for file in os.listdir(dir)] for dir in source_dirs], [])
     return filter(file_should_be_ignored, all_files)
 
-def get_generator_for_config(config_file, virtual_root):
+def get_generator_for_config(config_file, virtual_root, cross_reference_deps = []):
     if not os.path.isfile(config_file):
         return None
 
@@ -121,10 +121,11 @@ def get_generator_for_config(config_file, virtual_root):
         'namespace': config.get(module_name, 'namespace'),
         'doc_dir': config.get(module_name, 'doc_dir'),
         'output_dir': common.build_path('Documentation', module_name),
+        'main_sgml_file': config.get(module_name, 'main_sgml_file'),
         'source_dirs': source_dirs,
         'headers': headers,
         'cflags': " ".join(config.get(module_name, 'cflags').split()),
-        'cross_reference_deps': get_gtkdoc_module_paths(),
+        'cross_reference_deps': get_gtkdoc_module_paths(cross_reference_deps),
         'ignored_files': files_to_ignore(source_dirs, headers),
     })
 
@@ -142,12 +143,7 @@ def rebase_doc(generator):
     except Exception:
         print("Rebase did not happen, likely no documentation is present.")
 
-def generate_documentation_for_config(config_file):
-    generator = get_generator_for_config(config_file, arguments.virtual_root)
-    if not generator:
-        print("{0} does not exist! Skipping that documentation.".format(os.path.basename(config_file)))
-        return
-
+def generate_documentation(generator):
     if not arguments.rebase:
         return generate_doc(generator, arguments.skip_html)
 
@@ -197,8 +193,19 @@ if __name__ == "__main__":
 
     prepare_environment_for_gtkdoc_generation()
 
-    webkitdom.write_doc_files()
-    generate_documentation_for_config(common.build_path('gtkdoc-webkitdom.cfg'))
-    saw_warnings = generate_documentation_for_config(common.build_path('gtkdoc-webkit2gtk.cfg'))
+    webkitdom_generator = get_generator_for_config(common.build_path('gtkdoc-webkitdom.cfg'), arguments.virtual_root)
+    if not webkitdom_generator:
+        print("gtkdoc-webkitdom.cfg does not exist! Skipping that documentation")
+        sys.exit(1)
+    webkitdom.write_doc_files(webkitdom_generator.module_name)
+    saw_warnings = generate_documentation(webkitdom_generator)
+    if saw_warnings:
+        sys.exit(saw_warnings)
+
+    webkit2_generator = get_generator_for_config(common.build_path('gtkdoc-webkit2gtk.cfg'), arguments.virtual_root, [webkitdom_generator.module_name])
+    if not webkit2_generator:
+        print("gtkdoc-webkit2gtk.cfg does not exist! Skipping that documentation")
+        sys.exit(1)
+    saw_warnings = generate_documentation(webkit2_generator)
 
     sys.exit(saw_warnings)

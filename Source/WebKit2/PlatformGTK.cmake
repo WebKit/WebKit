@@ -937,7 +937,7 @@ if (ENABLE_INTROSPECTION)
 endif ()
 
 file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkit2gtk.cfg
-    "[webkit2gtk]\n"
+    "[webkit2gtk-${WEBKITGTK_API_VERSION}]\n"
     "pkgconfig_file=${WebKit2_PKGCONFIG_FILE}\n"
     "namespace=webkit\n"
     "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
@@ -949,6 +949,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkit2gtk.cfg
     "            ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk\n"
     "            ${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}\n"
     "headers=${WebKit2GTK_ENUM_GENERATION_HEADERS} ${WebKit2WebExtension_INSTALLED_HEADERS}\n"
+    "main_sgml_file=webkit2gtk-docs.sgml\n"
 )
 
 file(GLOB_RECURSE WebKit2_HEADERS

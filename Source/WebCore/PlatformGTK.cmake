@@ -807,7 +807,7 @@ add_dependencies(GObjectDOMBindings
 )
 
 file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
-    "[webkitdomgtk]\n"
+    "[webkitdomgtk-${WEBKITGTK_API_VERSION}]\n"
     "pkgconfig_file=${WebKit2_PKGCONFIG_FILE}\n"
     "namespace=webkit_dom\n"
     "cflags=-I${CMAKE_SOURCE_DIR}/Source\n"
@@ -818,6 +818,7 @@ file(WRITE ${CMAKE_BINARY_DIR}/gtkdoc-webkitdom.cfg
     "source_dirs=${DERIVED_SOURCES_GOBJECT_DOM_BINDINGS_DIR}\n"
     "            ${WEBCORE_DIR}/bindings/gobject\n"
     "headers=${GObjectDOMBindingsStable_INSTALLED_HEADERS}\n"
+    "main_sgml_file=webkitdomgtk-docs.sgml\n"
 )
 
 install(FILES ${GObjectDOMBindingsStable_INSTALLED_HEADERS}

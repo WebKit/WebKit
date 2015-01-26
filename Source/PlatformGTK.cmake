@@ -9,14 +9,14 @@ list(APPEND DocumentationDependencies
     GObjectDOMBindings
     WebKit2
     "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml"
-    "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt"
+    "${CMAKE_SOURCE_DIR}/Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-${WEBKITGTK_API_VERSION}-sections.txt"
 )
 
 if (ENABLE_GTKDOC)
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk/html/
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/webkit2gtk-${WEBKITGTK_API_VERSION}/html/
             DESTINATION "${CMAKE_INSTALL_DATADIR}/gtk-doc/html/webkit2gtk-${WEBKITGTK_API_VERSION}"
     )
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/webkitdomgtk/html/
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/Documentation/webkitdomgtk-${WEBKITGTK_API_VERSION}/html/
             DESTINATION "${CMAKE_INSTALL_DATADIR}/gtk-doc/html/webkitdomgtk-${WEBKITGTK_API_VERSION}"
     )
 endif ()
