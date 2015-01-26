@@ -709,7 +709,7 @@ webkit.org/b/48750 fast/frames/sandboxed-iframe-storage.html [ Failure ]
 webkit.org/b/48999 js/dom/exceptions-thrown-in-callbacks.html [ Skip ]
 webkit.org/b/48753 http/tests/security/window-events-clear-port.html [ Pass Timeout ]
 webkit.org/b/48753 http/tests/security/window-properties-clear-port.html [ Pass Timeout ]
-
+fast/workers/worker-document-leak.html [ Skip ] # Timeout
 ################################################################################
 ######################        Skip all media tests        ######################
 ################################################################################
@@ -1190,7 +1190,8 @@ webkit.org/b/140796 accessibility/alt-tag-on-image-with-nonimage-role.html [ Ski
 webkit.org/b/140798 accessibility/aria-controls-with-tabs.html [ Skip ]
 
 # The Windows Accessibility implementation is unable to recurse through the document to
-# find elements (in some cases). The following failures are due to this.
+# find elements (in some cases). The following failures are due to this. The maddening
+# thing is that these do not consistently fail:
 webkit.org/b/140798 accessibility/aria-checked-mixed-value.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-controls.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-flowto.html [ Failure ]
@@ -1206,7 +1207,7 @@ webkit.org/b/140798 accessibility/aria-text-role.html [ Failure ]
 webkit.org/b/140798 accessibility/aria-used-on-image-maps.html [ Failure ]
 webkit.org/b/140798 accessibility/auto-filled-value.html [ Failure ]
 webkit.org/b/140798 accessibility/box-styled-lists.html [ Failure ]
-webkit.org/b/140798 accessibility/canvas-fallback-content-2.html [ Failure ]
+webkit.org/b/140798 [ Release ] accessibility/canvas-fallback-content-2.html [ Failure ]
 webkit.org/b/140798 accessibility/empty-image-with-title.html [ Failure ]
 webkit.org/b/140798 accessibility/fieldset-element.html [ Failure ]
 webkit.org/b/140798 accessibility/global-aria-attributes-invalidate-presentational.html [ Failure ]
@@ -1262,13 +1263,13 @@ webkit.org/b/140798 accessibility/aria-hidden-false-works-in-subtrees.html [ Ski
 # The following fail because of missing numerical output support.
 webkit.org/b/140832 accessibility/aria-slider-value-change.html [ Failure ]
 webkit.org/b/140832 accessibility/aria-slider-value.html [ Failure ]
-webkit.org/b/140832 accessibility/combo-box-collapsed-selection-changed.html [ Failure ]
+webkit.org/b/140832 [ Release ] accessibility/combo-box-collapsed-selection-changed.html [ Failure ]
 webkit.org/b/140832 accessibility/meter-element.html [ Failure ]
 webkit.org/b/140832 accessibility/progressbar.html [ Failure ]
 webkit.org/b/140832 accessibility/range-alter-by-step.html [ Failure ]
 webkit.org/b/140832 accessibility/aria-scrollbar-role.html [ Failure ]
-webkit.org/b/140832 accessibility/notification-listeners.html [ Failure ]
-webkit.org/b/140832 accessibility/spinbutton-value.html [ Failure ]
+webkit.org/b/140832 [ Release ] accessibility/notification-listeners.html [ Failure ]
+webkit.org/b/140832 [ Release ] accessibility/spinbutton-value.html [ Failure ]
 webkit.org/b/140832 accessibility/svg-remote-element.html [ Failure ]
 webkit.org/b/140832 accessibility/textarea-line-for-index.html [ Failure ]
 webkit.org/b/140832 accessibility/textarea-selected-text-range.html [ Failure ]
@@ -1288,7 +1289,7 @@ accessibility/image-map2.html [ Failure ]
 accessibility/internal-link-anchors2.html [ Failure ]
 accessibility/language-attribute.html [ Failure ]
 accessibility/lists.html [ Failure ]
-accessibility/multiselect-list-reports-active-option.html [ Failure ]
+[ Release ] accessibility/multiselect-list-reports-active-option.html [ Failure ]
 accessibility/onclick-handlers.html [ Failure ]
 accessibility/parent-delete.html [ Failure ]
 accessibility/placeholder.html [ Failure ]
@@ -1312,11 +1313,6 @@ accessibility/loading-iframe-sends-notification.html [ Failure ]
 platform/win/accessibility/single-select-children-changed.html	[ Skip ]
 
 webkit.org/b/130011 accessibility/aria-setsize-posinset.html [ Skip ]
-
-# ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener
-#webkit.org/b/87426 [ Debug ] accessibility/menu-list-sends-change-notification.html [ Skip ]  # Crashing
-#webkit.org/b/87425 [ Debug ] accessibility/multiselect-list-reports-active-option.html [ Skip ]  # Crashing
-#webkit.org/b/87425 [ Debug ] platform/win/accessibility/detached-object-notification-crash.html [ Skip ]  # Crashing
 
 # Test times out
 webkit.org/b/95405 platform/win/accessibility/single-select-children.html [ Skip ]
@@ -1344,7 +1340,7 @@ accessibility/media-element.html [ Skip ]
 # Timeouts -- not investigated
 accessibility/aria-invalid.html [ Skip ]
 
-# The following fail in debug mode because an assertion is fire:
+# The following fail in debug mode because an assertion is fired:
 webkit.org/b/140867 [ Debug ] accessibility/aria-labelledby-overrides-aria-label.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/aria-tab-role-on-buttons.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/aria-labelledby-overrides-label.html [ Skip ]
@@ -1354,14 +1350,14 @@ webkit.org/b/140867 [ Debug ] accessibility/canvas-fallback-content-2.html [ Ski
 webkit.org/b/140867 [ Debug ] accessibility/aria-tab-roles.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/aria-option-role.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/aria-toggle-button-with-title.html [ Skip ]
-+accessibility/focusable-div.html	crash log sample	history
+webkit.org/b/140867 [ Debug ] accessibility/focusable-div.html [ Skip ]
 
-
-# Crash adding notification listener
+# ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener
 webkit.org/b/140868 [ Debug ] accessibility/notification-listeners.html [ Skip ]
 webkit.org/b/140868 [ Debug ] accessibility/combo-box-collapsed-selection-changed.html [ Skip ]
-webkit.org/b/140868 [ Debug ] accessibility/multiselect-list-reports-active-option.html [ Skip ]
-+accessibility/menu-list-sends-change-notification.html	crash log sample	history
+webkit.org/b/87426 [ Debug ] accessibility/menu-list-sends-change-notification.html [ Skip ]  # Crashing
+webkit.org/b/87426 [ Debug ] accessibility/multiselect-list-reports-active-option.html [ Skip ]  # Crashing
+webkit.org/b/87426 [ Debug ] platform/win/accessibility/detached-object-notification-crash.html [ Skip ]  # Crashing
 
 # Attempt to add a text element that claims NOT to be an accessibility element:
 webkit.org/b/140870 [ Debug ] accessibility/canvas-fallback-content.html [ Skip ]
@@ -1523,6 +1519,7 @@ svg/custom/inline-svg-in-xhtml.xml [ Failure ]
 svg/custom/foreign-object-skew.svg [ Failure ]
 webkit.org/b/140249 fast/css/fontloader-svg-select.svg [ Failure ]
 webkit.org/b/140770 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html [ Failure ]
+svg/custom/relative-sized-shadow-tree-content-with-symbol.xhtml	 [ Failure ]
 ################################################################################
 ###################          End SVG Issues              #######################
 ################################################################################
@@ -1919,11 +1916,13 @@ webkit.org/b/87469 fast/events/domactivate-sets-underlying-click-event-as-handle
 # Inspector Protocol
 webkit.org/b/140510 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]  # Crashing
 webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Pass Failure ]
+inspector-protocol/debugger/pause-on-assert.html [ Skip ]
 
 # Tests that exceed maximum call stack on windows
 fast/dom/Window/window-postmessage-clone-deep-array.html [ Skip ]
 js/dom/deep-recursion-test.html [ Skip ]
 js/dom/global-recursion-on-full-stack.html [ Skip ]
+js/slow-stress/Int32Array-alloc-huge.html [ Pass Failure ]
 
 # <rdar://problem/19526412>
 fast/images/bad-png.html [ Skip ]

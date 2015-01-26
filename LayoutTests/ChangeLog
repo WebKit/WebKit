@@ -1,3 +1,9 @@
+2015-01-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] More test gardening.
+
+        * platform/win/TestExpectations:
+
 2015-01-26  Byungseon Shin  <sun.shin@lge.com>
 
         Fix Border-radius clipping issue on a composited descendants
