@@ -1,5 +1,29 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r177050.
+
+    2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Scrolling to anchor tags does nothing in vertical-rl writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=137838
+
+        Reviewed by David Hyatt.
+
+        When we specify the behavior regarding scrolling to anchor tags, we previously had
+        only described behavior regarding horizontal text. When we have vertical text, we
+        need to switch the horizontal and vertical scrolling policies.
+
+        * fast/events/scroll-to-anchor-vertical-lr-writing-mode-expected.html: Added.
+        * fast/events/scroll-to-anchor-vertical-lr-writing-mode.html: Added.
+        * fast/events/scroll-to-anchor-vertical-writing-mode-contained-2-expected.html: Added.
+        * fast/events/scroll-to-anchor-vertical-writing-mode-contained-2.html: Added.
+        * fast/events/scroll-to-anchor-vertical-writing-mode-contained-expected.html: Added.
+        * fast/events/scroll-to-anchor-vertical-writing-mode-contained.html: Added.
+        * fast/events/scroll-to-anchor-vertical-writing-mode-expected.html: Added.
+        * fast/events/scroll-to-anchor-vertical-writing-mode.html: Added.
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r177035.
 
         * fast/spatial-navigation/snav-container-white-space-expected.txt:

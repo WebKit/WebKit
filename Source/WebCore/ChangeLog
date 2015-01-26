@@ -1,5 +1,28 @@
 2015-01-24  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r177050.
+
+    2014-12-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Scrolling to anchor tags does nothing in vertical-rl writing mode
+        https://bugs.webkit.org/show_bug.cgi?id=137838
+
+        Reviewed by David Hyatt.
+
+        Scroll to a particular tag, and make sure the viewport is rendered as expected.
+
+        Tests: fast/events/scroll-to-anchor-vertical-lr-writing-mode.html
+               fast/events/scroll-to-anchor-vertical-writing-mode-contained-2.html
+               fast/events/scroll-to-anchor-vertical-writing-mode-contained.html
+               fast/events/scroll-to-anchor-vertical-writing-mode.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToAnchor):
+        * rendering/ScrollBehavior.cpp:
+        * rendering/ScrollBehavior.h:
+
+2015-01-24  David Kilzer  <ddkilzer@apple.com>
+
         Merge r177041.
 
         Already fixed by previous merge.
