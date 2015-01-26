@@ -155,7 +155,7 @@ class RunLLINTCLoopTestsTest(unittest.TestCase):
         self.assertResults(FAILURE, ['5 regressions found.'], 1,  '    5 regressions found.')
 
     def test_failure(self):
-        self.assertResults(FAILURE, ['1 regressions found.'], 1,  '    1 regression found.')
+        self.assertResults(FAILURE, ['1 regression found.'], 1,  '    1 regression found.')
 
     def test_no_failure(self):
         self.assertResults(SUCCESS, ['webkit-jsc-cloop-test'], 0,  '    0 regressions found.')
@@ -176,7 +176,7 @@ class Run32bitJSCTestsTest(unittest.TestCase):
         self.assertResults(FAILURE, ['5 regressions found.'], 1,  '    5 failures found.')
 
     def test_failure(self):
-        self.assertResults(FAILURE, ['1 regressions found.'], 1,  '    1 failure found.')
+        self.assertResults(FAILURE, ['1 regression found.'], 1,  '    1 failure found.')
 
     def test_no_failure(self):
         self.assertResults(SUCCESS, ['webkit-32bit-jsc-test'], 0,  '    0 failures found.')
@@ -187,7 +187,8 @@ class RunUnitTestsTest(unittest.TestCase):
         if expected_failure_count:
             rc = 1
             expected_results = FAILURE
-            expected_text = '{0} unit tests failed or timed out'.format(expected_failure_count)
+            plural_suffix = "" if expected_failure_count == 1 else "s"
+            expected_text = '%d unit test%s failed or timed out' % (expected_failure_count, plural_suffix)
         else:
             rc = 0
             expected_results = SUCCESS
