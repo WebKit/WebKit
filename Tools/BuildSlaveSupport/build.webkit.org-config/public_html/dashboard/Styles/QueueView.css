@@ -25,7 +25,6 @@
 
 .queue-view {
     width: 200px;
-    min-height: 200px;
     padding: 10px 20px;
 }
 
@@ -121,7 +120,8 @@
 }
 
 .bubble-server-popover,
-.performance-popover {
+.performance-popover,
+.leaks-popover {
     font-family: "HelveticaNeue-Light", "Helvetica Neue", sans-serif;
     color: rgb(145, 135, 95);
     font-size: 12px;

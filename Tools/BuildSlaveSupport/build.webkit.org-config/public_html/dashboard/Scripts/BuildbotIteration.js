@@ -305,6 +305,14 @@ BuildbotIteration.prototype = {
         var bindingTestResults = collectTestResults.call(this, data, "bindings-generation-tests");
         this.bindingTestResults = bindingTestResults ? new BuildbotTestResults(this, bindingTestResults) : null;
 
+        var masterShellCommandStep = data.steps.findFirst(function(step) { return step.name === "MasterShellCommand"; });
+        this.resultURLs = masterShellCommandStep ? masterShellCommandStep.urls : null;
+        for (var linkName in this.resultURLs) {
+            var url = this.resultURLs[linkName];
+            if (!url.startsWith("http"))
+                this.resultURLs[linkName] = this.queue.buildbot.baseURL + url;
+        }
+
         this.loaded = true;
 
         this._firstFailedStep = data.steps.findFirst(function(step) { return step.results[0] === BuildbotIteration.FAILURE; });

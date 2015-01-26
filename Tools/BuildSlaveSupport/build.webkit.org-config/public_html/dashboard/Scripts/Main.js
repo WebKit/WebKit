@@ -39,13 +39,15 @@ for (var i = 0; i < buildbots.length; ++i) {
             platform.builders = {};
 
         var categoryName;
-        if (queue.builder) {
+        if (queue.builder)
             categoryName = "builders";
-        } else if (queue.tester) {
+        else if (queue.tester)
             categoryName = queue.testCategory;
-        } else if (queue.performance) {
+        else if (queue.performance)
             categoryName = "performance";
-        } else {
+        else if (queue.leaks)
+            categoryName = "leaks";
+        else {
             console.assert("Unknown queue type.");
             continue;
         }
@@ -156,7 +158,6 @@ function documentReady()
 
     if (hasBubbles) {
         // Currently, EWS and commit queues are the only items in Other category.
-        // To add more (e.g. leaks bot), we'll need to refactor view classes.
         var header = document.createElement("th");
         header.textContent = "Other";
         row.appendChild(header);
@@ -217,6 +218,11 @@ function documentReady()
         var cell = document.createElement("td");
         if (platformQueues.performance && platformQueues.performance.release) {
             var view = new BuildbotPerformanceQueueView(platformQueues.performance.release);
+            cell.appendChild(view.element);
+        }
+
+        if (platformQueues.leaks && platformQueues.leaks.debug) {
+            var view = new BuildbotLeaksQueueView(platformQueues.leaks.debug);
             cell.appendChild(view.element);
         }
 

@@ -131,6 +131,7 @@ table.queue-grid tr:nth-child(odd):not(.headers) td:last-child {
 }
 
 table.queue-grid td {
+    height: 200px;
     width: 200px;
     vertical-align: top;
 }

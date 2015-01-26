@@ -39,6 +39,7 @@ BuildbotQueue = function(buildbot, id, info)
     this.builder = info.builder || false;
     this.tester = info.tester || false;
     this.performance = info.performance || false;
+    this.leaks = info.leaks || false;
     this.architecture = info.architecture || null;
     this.testCategory = info.testCategory || null;
     this.performanceTestName = info.performanceTestName || null;
