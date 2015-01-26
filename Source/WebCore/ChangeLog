@@ -1,5 +1,16 @@
 2015-01-25  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r177306.
+
+    2014-12-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unreviewed build fix after r177301
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::elementRectRelativeToRootView):
+
+2015-01-25  David Kilzer  <ddkilzer@apple.com>
+
         Merge r177301.
 
         * html/shadow/TextControlInnerElements.cpp:
