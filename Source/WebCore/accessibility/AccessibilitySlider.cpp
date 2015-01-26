@@ -159,7 +159,7 @@ LayoutRect AccessibilitySliderThumb::elementRect() const
     RenderObject* sliderRenderer = m_parent->renderer();
     if (!sliderRenderer || !sliderRenderer->isSlider())
         return LayoutRect();
-    if (RenderElement* thumbRenderer = toHTMLInputElement(sliderRenderer->node())->sliderThumbElement()->renderer())
+    if (auto* thumbRenderer = toRenderSlider(*sliderRenderer).element().renderer())
         return thumbRenderer->absoluteBoundingBoxRect();
     return LayoutRect();
 }
