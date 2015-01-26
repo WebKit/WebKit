@@ -441,7 +441,7 @@ private:
         DashboardRegion* region;
         CSSBasicShape* shape;
         CSSCalcValue* calc;
-        CSSFontFamily* fontFamily;
+        const CSSFontFamily* fontFamily;
     } m_value;
 };
 

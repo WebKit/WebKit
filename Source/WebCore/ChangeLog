@@ -1,3 +1,18 @@
+2015-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Remove 'font' shorthand property special casing
+        https://bugs.webkit.org/show_bug.cgi?id=140577
+
+        Reviewed by Darin Adler.
+
+        Mark CSSPrimitiveValue::m_value.fontFamily as const as it is not
+        supposed to change. This also makes sure that m_value.fontFamily
+        gets copied instead of moved when constructing a clone in
+        CSSPrimitiveValue::cloneForCSSOM(). This was causing several tests
+        to fail on the bots.
+
+        * css/CSSPrimitiveValue.h:
+
 2015-01-25  Alexey Proskuryakov  <ap@apple.com>
 
         Setting HTMLMarqueeElement.trueSpeed doesn't work
