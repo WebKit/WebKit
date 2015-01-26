@@ -1,5 +1,18 @@
 2015-01-26  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r177408.
+
+    2014-12-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rebaseline Mavericks test result after r177398
+
+        Unreviewed.
+
+        * platform/mac-mavericks/fast/writing-mode/Kusa-Makura-background-canvas-expected.png:
+        * platform/mac-mavericks/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+
+2015-01-26  David Kilzer  <ddkilzer@apple.com>
+
         Merge r177398.
 
     2014-12-16  Myles C. Maxfield  <mmaxfield@apple.com>
