@@ -140,6 +140,7 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
     case CSSPrimitiveValue::CSS_PARSER_IDENTIFIER:
     case CSSPrimitiveValue::CSS_COUNTER_NAME:
     case CSSPrimitiveValue::CSS_SHAPE:
+    case CSSPrimitiveValue::CSS_FONT_FAMILY:
     case CSSPrimitiveValue::CSS_QUAD:
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPrimitiveValue::CSS_LENGTH_REPEAT:

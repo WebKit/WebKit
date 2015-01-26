@@ -2562,6 +2562,7 @@
 		82E3D8DF122EA0D1003AE5BC /* CSSPropertySourceData.h in Headers */ = {isa = PBXBuildFile; fileRef = 82E3D8DD122EA0D1003AE5BC /* CSSPropertySourceData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 832B843319D8E55100B26055 /* SVGAnimateElementBase.h */; };
 		832B843619D8E57400B26055 /* SVGAnimateElementBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */; };
+		83520C7E1A71BFCC006BD2AA /* CSSFontFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = 83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */; };
 		835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D363619FF6193004C93AB /* StyleBuilderCustom.h */; };
 		836FBCEA178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836FBCE9178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp */; };
 		836FBCEC178C117F00B21A15 /* SVGAnimatedProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836FBCEB178C117F00B21A15 /* SVGAnimatedProperty.cpp */; };
@@ -9758,6 +9759,7 @@
 		82E3D8DD122EA0D1003AE5BC /* CSSPropertySourceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertySourceData.h; sourceTree = "<group>"; };
 		832B843319D8E55100B26055 /* SVGAnimateElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimateElementBase.h; sourceTree = "<group>"; };
 		832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimateElementBase.cpp; sourceTree = "<group>"; };
+		83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFamily.h; sourceTree = "<group>"; };
 		835D363619FF6193004C93AB /* StyleBuilderCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderCustom.h; sourceTree = "<group>"; };
 		836FBCE9178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedTypeAnimator.cpp; sourceTree = "<group>"; };
 		836FBCEB178C117F00B21A15 /* SVGAnimatedProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedProperty.cpp; sourceTree = "<group>"; };
@@ -22055,6 +22057,7 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
+				83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */,
 				FBD6AF8415EF21D4008B7110 /* BasicShapeFunctions.cpp */,
 				FBD6AF8515EF21D4008B7110 /* BasicShapeFunctions.h */,
 				A80E6CDA0A1989CA007FB8C5 /* Counter.h */,
@@ -23543,6 +23546,7 @@
 				F59C96001255B23F000623C0 /* BaseDateAndTimeInputType.h in Headers */,
 				F55B3DAE1251F12D003EF269 /* BaseTextInputType.h in Headers */,
 				FBD6AF8A15EF25DF008B7110 /* BasicShapeFunctions.h in Headers */,
+				83520C7E1A71BFCC006BD2AA /* CSSFontFamily.h in Headers */,
 				FBD6AF8C15EF2604008B7110 /* BasicShapes.h in Headers */,
 				BC9462D8107A7B4C00857193 /* BeforeLoadEvent.h in Headers */,
 				AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEvent.h in Headers */,

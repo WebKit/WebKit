@@ -215,6 +215,7 @@ public:
     PassRefPtr<CSSBasicShape> parseBasicShapeInset(CSSParserValueList&);
 
     bool parseFont(bool important);
+    void parseSystemFont(bool important);
     PassRefPtr<CSSValueList> parseFontFamily();
 
     bool parseCounter(CSSPropertyID, int defaultValue, bool important);

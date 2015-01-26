@@ -29,6 +29,7 @@
 
 #include "CSSAspectRatioValue.h"
 #include "CSSCursorImageValue.h"
+#include "CSSFontFamily.h"
 #include "CSSFontValue.h"
 #include "CSSGradientValue.h"
 #include "CSSShadowValue.h"
@@ -72,7 +73,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Cursor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Fill);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(Font);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontFamily);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontSize);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(FontWeight);
@@ -858,9 +858,12 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
         auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
         AtomicString family;
         bool isGenericFamily = false;
-        if (contentValue.isString())
-            family = contentValue.getStringValue();
-        else {
+        if (contentValue.isFontFamily()) {
+            const CSSFontFamily& fontFamily = contentValue.fontFamily();
+            family = fontFamily.familyName;
+            // If the family name was resolved by the CSS parser from a system font ID, then it is generic.
+            isGenericFamily = fontFamily.fromSystemFontID;
+        } else {
             switch (contentValue.getValueID()) {
             case CSSValueWebkitBody:
                 if (Settings* settings = styleResolver.document().settings())
@@ -1288,48 +1291,6 @@ inline void StyleBuilderCustom::applyValueColumnGap(StyleResolver& styleResolver
         styleResolver.style()->setHasNormalColumnGap();
     else
         styleResolver.style()->setColumnGap(StyleBuilderConverter::convertComputedLength<float>(styleResolver, value));
-}
-
-inline void StyleBuilderCustom::applyInitialFont(StyleResolver& styleResolver)
-{
-    Settings* settings = styleResolver.documentSettings();
-    ASSERT(settings); // If we're doing style resolution, this document should always be in a frame and thus have settings
-    styleResolver.initializeFontStyle(settings);
-}
-
-inline void StyleBuilderCustom::applyInheritFont(StyleResolver& styleResolver)
-{
-    FontDescription fontDescription = styleResolver.parentStyle()->fontDescription();
-    styleResolver.style()->setLineHeight(styleResolver.parentStyle()->specifiedLineHeight());
-    styleResolver.state().setLineHeightValue(0);
-    styleResolver.setFontDescription(fontDescription);
-}
-
-inline void StyleBuilderCustom::applyValueFont(StyleResolver& styleResolver, CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        styleResolver.style()->setLineHeight(RenderStyle::initialLineHeight());
-        styleResolver.state().setLineHeightValue(0);
-
-        FontDescription fontDescription;
-        RenderTheme::defaultTheme()->systemFont(downcast<CSSPrimitiveValue>(value).getValueID(), fontDescription);
-
-        // Double-check and see if the theme did anything. If not, don't bother updating the font.
-        if (fontDescription.isAbsoluteSize()) {
-            // Make sure the rendering mode and printer font settings are updated.
-            Settings* settings = styleResolver.documentSettings();
-            ASSERT(settings); // If we're doing style resolution, this document should always be in a frame and thus have settings
-            fontDescription.setRenderingMode(settings->fontRenderingMode());
-            fontDescription.setUsePrinterFont(styleResolver.document().printing() || !settings->screenFontSubstitutionEnabled());
-
-            // Handle the zoom factor.
-            fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(fontDescription.specifiedSize(), fontDescription.isAbsoluteSize(), styleResolver.useSVGZoomRules(), styleResolver.style(), styleResolver.document()));
-            styleResolver.setFontDescription(fontDescription);
-        }
-        return;
-    }
-    if (is<CSSFontValue>(value))
-        styleResolver.applyFont(downcast<CSSFontValue>(value));
 }
 
 inline void StyleBuilderCustom::applyInitialContent(StyleResolver& styleResolver)

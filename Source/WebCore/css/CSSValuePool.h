@@ -26,6 +26,7 @@
 #ifndef CSSValuePool_h
 #define CSSValuePool_h
 
+#include "CSSFontFamily.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSPrimitiveValue.h"
@@ -44,7 +45,7 @@ class CSSValuePool {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PassRefPtr<CSSValueList> createFontFaceValue(const AtomicString&);
-    Ref<CSSPrimitiveValue> createFontFamilyValue(const String&);
+    Ref<CSSPrimitiveValue> createFontFamilyValue(const String&, FromSystemFontIDOrNot = NotFromSystemFontID);
     Ref<CSSInheritedValue> createInheritedValue() { return m_inheritedValue.copyRef(); }
     Ref<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue.copyRef(); }
     Ref<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue.copyRef(); }
@@ -83,7 +84,7 @@ private:
     typedef HashMap<AtomicString, RefPtr<CSSValueList>> FontFaceValueCache;
     FontFaceValueCache m_fontFaceValueCache;
 
-    typedef HashMap<String, RefPtr<CSSPrimitiveValue>> FontFamilyValueCache;
+    typedef HashMap<std::pair<String, bool>, RefPtr<CSSPrimitiveValue>> FontFamilyValueCache;
     FontFamilyValueCache m_fontFamilyValueCache;
 
     friend class WTF::NeverDestroyed<CSSValuePool>;

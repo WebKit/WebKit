@@ -977,11 +977,7 @@ foreach my $name (@names) {
   print SHORTHANDS_CPP "        return " . lcfirst($nameToId{$name}) . "Shorthand();\n";
 }
 
-# FIXME: CSSPropertyFont is currently an exception. It is hard-coded here
-# because it is not marked as a shorthand in CSSPropertyNames.in.
 print SHORTHANDS_CPP << "EOF";
-    case CSSPropertyFont:
-        return fontShorthand();
     default:
         return emptyShorthand;
     }
@@ -1021,7 +1017,7 @@ for my $vector (sort keys %vectorToLonghands) {
 
 print SHORTHANDS_CPP << "EOF";
     default:
-        return matchingCustomShorthandsForLonghand(propertyID);
+        return { };
     }
 }
 EOF

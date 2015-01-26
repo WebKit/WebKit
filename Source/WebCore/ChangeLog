@@ -1,3 +1,129 @@
+2015-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Remove 'font' shorthand property special casing
+        https://bugs.webkit.org/show_bug.cgi?id=140577
+
+        Reviewed by Darin Adler.
+
+        Expand system font values during 'font' property parsing. The 'font'
+        CSS property was the only shorthand that wasn't always expanded in
+        the CSS parser, so it needed a lot of special handling that we can
+        now get rid of.
+
+        This patch is inspired from the following Blink revision:
+        https://src.chromium.org/viewvc/blink?view=rev&revision=184449
+
+        Tests:
+        - fast/css/css2-system-fonts.html (existing)
+        - fast/css/CSSPrimitiveValue-font-family-primitiveType.html (new)
+        - fast/css/font-systemFontID-parsing.html (new)
+        - fast/css/font-shorthand-line-height.html (rebased)
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCalculationValue.cpp:
+        (WebCore::hasDoubleValue):
+        Handle CSS_FONT_FAMILY similarly to CSS_STRING in the switch.
+
+        * css/CSSFontFamily.h: Added.
+        Introduce new CSSFontFamily class to store font families inside
+        CSSPrimitive, instead of using a simple String as previously. We need
+        an additional 'fromSystemFontID' flag in addition to the font family
+        name now that system font ID are expanded during parsing. This
+        information is needed later on by the StyleBuilder (see comment below).
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        Update code dealing with font family CSSPrimitiveValues now that they
+        hold a CSSFontFamily internally instead of a String.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseSystemFont):
+        Expand system font values for the 'font' property by asking the
+        RenderTheme for the system font and using it to set the 'font'
+        longhand properties.
+
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue):
+        Handle CSS_FONT_FAMILY value in the switch.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::primitiveType):
+        Make sure we still expose font family CSSPrimitiveValues to the Web as
+        CSS_STRING, even though we are using a slightly different representation
+        internally. This is so that we don't change web-exposed behavior and I
+        added a new layout test to cover this.
+
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::getStringValue):
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        (WebCore::CSSPrimitiveValue::equals):
+        Handle CSS_FONT_FAMILY type in switches.
+
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isFontFamily):
+        Add method to test if a CSSPrimitiveValue holds a CSSFontFamily
+        internally.
+
+        (WebCore::CSSPrimitiveValue::fontFamily):
+        Add a getter to retrieve the internal CSSFontFamily object if the
+        primitive type is CSS_FONT_FAMILY.
+
+        * css/CSSPropertyNames.in:
+        Treat 'font' as a regular shorthand property. Specify its longhand
+        properties so that makeprop.pl can generate the shorthand code for
+        us. Also demote 'font' to being a low-priority property as it is
+        now always expanded during parsing.
+
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createFontFamilyValue):
+        * css/CSSValuePool.h:
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueFontFamily):
+        - Update the 'font-family' value setter in the StyleBuilder to reflect
+        the changes in the CSS parser. The CSSPrimitiveValues in the list now
+        have CSS_FONT_FAMILY type instead of CSS_STRING.
+        - We also set the 'isGenericFamily' flag if the font-family was expanded
+          from a system font ID (e.g. caption). The 'isGenericFamily' flag is
+          used later on to property set the 'isSpecifiedFont' flag on the
+          FontDescription object. If we don't do this, system font values will
+          be treated as specified fonts, which means that we will no longer use
+          the 'use backslash as Yen sign' hack for those. This is covered by the
+          following layout tests:
+          - fast/text/backslash-to-yen-sign-euc.html
+          - editing/selection/find-yensign-and-backslash.html
+
+        (WebCore::StyleBuilderCustom::applyInitialFont): Deleted.
+        (WebCore::StyleBuilderCustom::applyInheritFont): Deleted.
+        (WebCore::StyleBuilderCustom::applyValueFont): Deleted.
+        Remove StyleBuilder code dealing with the 'font' property. Now that
+        the 'font' property is always expanded during parsing, this code can
+        never be reached.
+
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::isExpandedShorthand):
+        Stop returning false for 'font' as it is now expanded during parsing
+        as well. We should probably consider renaming this method to something
+        else now that all shorthands are expanded, maybe isCSSShorthand() or
+        isShorthandProperty().
+
+        (WebCore::fontShorthand): Deleted.
+        * css/StylePropertyShorthand.h:
+        (WebCore::matchingCustomShorthandsForLonghand): Deleted.
+        Remove custom shorthand code for the 'font' property as it is now
+        generated by makeprop.pl, like other shorthands.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyFont): Deleted.
+        This is unused now that the StyleBuilder code for 'font' has been
+        removed.
+
+        * css/makeprop.pl:
+        Remove custom shorthand code for 'font' as it no longer requires any
+        special handling.
+
 2015-01-25  Timothy Horton  <timothy_horton@apple.com>
 
         Long spins under Frame::rangeForPoint when doing Lookup on feedly.com

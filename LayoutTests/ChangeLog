@@ -1,3 +1,30 @@
+2015-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Remove 'font' shorthand property special casing
+        https://bugs.webkit.org/show_bug.cgi?id=140577
+
+        Reviewed by Darin Adler.
+
+        * fast/css/CSSPrimitiveValue-font-family-primitiveType-expected.txt: Added.
+        * fast/css/CSSPrimitiveValue-font-family-primitiveType.html: Added.
+        Add layout test to make sure that the font-family is still exposed to the
+        Web as a CSSValueList of CSSPrimitiveValues whose primitiveType is
+        CSS_STRING. This is useful because we now use a slightly different
+        representation internally.
+
+        * fast/css/font-shorthand-line-height-expected.txt:
+        * fast/css/font-shorthand-line-height.html:
+        Rebaseline the test. This is a progression. Setting the 'font' property
+        to a system font ID is supposed to reset the line-height property to
+        'normal'. It previously did not because system font IDs were not
+        expanded at parsing time. The new behavior is consistent with Chrome and
+        Firefox as well.
+
+        * fast/css/font-systemFontID-parsing-expected.txt: Added.
+        * fast/css/font-systemFontID-parsing.html: Added.
+        Add a layout test to make sure that the CSS parser is rejecting a 'font'
+        property with more than one system font id.
+
 2015-01-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed gardening.

@@ -33,19 +33,6 @@ StylePropertyShorthand borderAbridgedShorthand()
     return StylePropertyShorthand(CSSPropertyBorder, borderAbridgedProperties, propertiesForInitialization);
 }
 
-StylePropertyShorthand fontShorthand()
-{
-    static const CSSPropertyID fontProperties[] = {
-        CSSPropertyFontFamily,
-        CSSPropertyFontSize,
-        CSSPropertyFontStyle,
-        CSSPropertyFontVariant,
-        CSSPropertyFontWeight,
-        CSSPropertyLineHeight
-    };
-    return StylePropertyShorthand(CSSPropertyFont, fontProperties);
-}
-
 StylePropertyShorthand animationShorthandForParsing(CSSPropertyID propId)
 {
     // When we parse the animation shorthand we need to look for animation-name
@@ -84,13 +71,6 @@ StylePropertyShorthand animationShorthandForParsing(CSSPropertyID propId)
 
 bool isExpandedShorthand(CSSPropertyID id)
 {
-    // The system fonts bypass the normal style resolution by using RenderTheme,
-    // thus we need to special case it here. FIXME: This is a violation of CSS 3 Fonts
-    // as we should still be able to change the longhands.
-    // DON'T ADD ANY SHORTHAND HERE UNLESS IT ISN'T ALWAYS EXPANDED AT PARSE TIME (which is wrong).
-    if (id == CSSPropertyFont)
-        return false;
-
     return shorthandForProperty(id).length();
 }
 

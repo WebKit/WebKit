@@ -201,7 +201,6 @@ public:
 
     void applyPropertyToCurrentStyle(CSSPropertyID, CSSValue*);
 
-    void applyFont(CSSFontValue&);
     void updateFont();
     void initializeFontStyle(Settings*);
 

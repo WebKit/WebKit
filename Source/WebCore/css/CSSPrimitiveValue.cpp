@@ -23,8 +23,10 @@
 
 #include "CSSBasicShapes.h"
 #include "CSSCalculationValue.h"
+#include "CSSFontFamily.h"
 #include "CSSHelper.h"
 #include "CSSParser.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
@@ -123,6 +125,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue::CSS_RGBCOLOR:
     case CSSPrimitiveValue::CSS_SHAPE:
     case CSSPrimitiveValue::CSS_STRING:
+    case CSSPrimitiveValue::CSS_FONT_FAMILY:
     case CSSPrimitiveValue::CSS_UNICODE_RANGE:
     case CSSPrimitiveValue::CSS_UNKNOWN:
     case CSSPrimitiveValue::CSS_URI:
@@ -182,6 +185,11 @@ unsigned short CSSPrimitiveValue::primitiveType() const
 {
     if (m_primitiveUnitType == CSS_PROPERTY_ID || m_primitiveUnitType == CSS_VALUE_ID)
         return CSS_IDENT;
+
+    // Web-exposed content expects font family values to have CSS_STRING primitive type
+    // so we need to map our internal CSS_FONT_FAMILY type here.
+    if (m_primitiveUnitType == CSS_FONT_FAMILY)
+        return CSS_STRING;
 
     if (m_primitiveUnitType != CSSPrimitiveValue::CSS_CALC)
         return m_primitiveUnitType;
@@ -484,6 +492,11 @@ void CSSPrimitiveValue::cleanup()
         break;
     case CSS_SHAPE:
         m_value.shape->deref();
+        break;
+    case CSS_FONT_FAMILY:
+        ASSERT(m_value.fontFamily);
+        delete m_value.fontFamily;
+        m_value.fontFamily = nullptr;
         break;
     case CSS_NUMBER:
     case CSS_PARSER_INTEGER:
@@ -844,6 +857,8 @@ String CSSPrimitiveValue::getStringValue(ExceptionCode& ec) const
     case CSS_ATTR:
     case CSS_URI:
         return m_value.string;
+    case CSS_FONT_FAMILY:
+        return m_value.fontFamily->familyName;
     case CSS_VALUE_ID:
         return valueName(m_value.valueID);
     case CSS_PROPERTY_ID:
@@ -863,6 +878,8 @@ String CSSPrimitiveValue::getStringValue() const
     case CSS_ATTR:
     case CSS_URI:
         return m_value.string;
+    case CSS_FONT_FAMILY:
+        return m_value.fontFamily->familyName;
     case CSS_VALUE_ID:
         return valueName(m_value.valueID);
     case CSS_PROPERTY_ID:
@@ -1026,6 +1043,8 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         // the actual dimension, just the numeric value as a string.
     case CSS_STRING:
         return quoteCSSStringIfNeeded(m_value.string);
+    case CSS_FONT_FAMILY:
+        return quoteCSSStringIfNeeded(m_value.fontFamily->familyName);
     case CSS_URI:
         return "url(" + quoteCSSURLIfNeeded(m_value.string) + ')';
     case CSS_VALUE_ID:
@@ -1203,6 +1222,9 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
     case CSS_COUNTER_NAME:
         result = CSSPrimitiveValue::create(m_value.string, static_cast<UnitTypes>(m_primitiveUnitType));
         break;
+    case CSS_FONT_FAMILY:
+        result = CSSPrimitiveValue::create(*m_value.fontFamily);
+        break;
     case CSS_COUNTER:
         result = CSSPrimitiveValue::create(m_value.counter->cloneForCSSOM());
         break;
@@ -1365,6 +1387,8 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
         return m_value.calc && other.m_value.calc && m_value.calc->equals(*other.m_value.calc);
     case CSS_SHAPE:
         return m_value.shape && other.m_value.shape && m_value.shape->equals(*other.m_value.shape);
+    case CSS_FONT_FAMILY:
+        return fontFamily() == other.fontFamily();
     }
     return false;
 }

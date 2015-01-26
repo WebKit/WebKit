@@ -31,6 +31,7 @@
 #define CSSPrimitiveValueMappings_h
 
 #include "CSSCalculationValue.h"
+#include "CSSFontFamily.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSReflectionDirection.h"
 #include "CSSToLengthConversionData.h"
@@ -4916,6 +4917,13 @@ template<> inline CSSPrimitiveValue::operator SVGWritingMode() const
 
     ASSERT_NOT_REACHED();
     return WM_LRTB;
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CSSFontFamily fontFamily)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_FONT_FAMILY;
+    m_value.fontFamily = new CSSFontFamily(WTF::move(fontFamily));
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVectorEffect e)

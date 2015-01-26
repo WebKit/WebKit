@@ -1,12 +1,13 @@
 /*
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2004-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2015 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2012, 2013 Adobe Systems Incorporated. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,6 +50,7 @@
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertySourceData.h"
 #include "CSSReflectValue.h"
 #include "CSSSelector.h"
@@ -2891,11 +2893,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyFont:
         // [ [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]?
         // 'font-family' ] | caption | icon | menu | message-box | small-caption | status-bar | inherit
-        if (id >= CSSValueCaption && id <= CSSValueStatusBar)
-            validPrimitive = true;
-        else
-            return parseFont(important);
-        break;
+        if (num == 1 && id >= CSSValueCaption && id <= CSSValueStatusBar) {
+            parseSystemFont(important);
+            return true;
+        }
+        return parseFont(important);
     case CSSPropertyListStyle:
         return parseShorthand(propId, listStyleShorthand(), important);
     case CSSPropertyColumns:
@@ -6267,6 +6269,29 @@ bool CSSParser::parseFont(bool important)
         return false;
 
     return true;
+}
+
+void CSSParser::parseSystemFont(bool important)
+{
+    ASSERT(m_valueList->size() == 1);
+    CSSValueID systemFontID = m_valueList->valueAt(0)->id;
+    ASSERT(systemFontID >= CSSValueCaption && systemFontID <= CSSValueStatusBar);
+    m_valueList->next();
+
+    FontDescription fontDescription;
+    RenderTheme::defaultTheme()->systemFont(systemFontID, fontDescription);
+    if (!fontDescription.isAbsoluteSize())
+        return;
+
+    ShorthandScope scope(this, CSSPropertyFont);
+    addProperty(CSSPropertyFontStyle, cssValuePool().createIdentifierValue(fontDescription.italic() == FontItalicOn ? CSSValueItalic : CSSValueNormal), important);
+    addProperty(CSSPropertyFontWeight, cssValuePool().createValue(fontDescription.weight()), important);
+    addProperty(CSSPropertyFontSize, cssValuePool().createValue(fontDescription.specifiedSize(), CSSPrimitiveValue::CSS_PX), important);
+    Ref<CSSValueList> fontFamilyList = CSSValueList::createCommaSeparated();
+    fontFamilyList->append(cssValuePool().createFontFamilyValue(fontDescription.familyAt(0), FromSystemFontID));
+    addProperty(CSSPropertyFontFamily, WTF::move(fontFamilyList), important);
+    addProperty(CSSPropertyFontVariant, cssValuePool().createIdentifierValue(CSSValueNormal), important);
+    addProperty(CSSPropertyLineHeight, cssValuePool().createIdentifierValue(CSSValueNormal), important);
 }
 
 class FontFamilyValueBuilder {
