@@ -30,9 +30,7 @@ macro(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
 
         # Enable errors on warning
         if (OPTION_ENABLE_WERROR)
-            # FIXME: When we use -fno-tree-dce to support the jsCStack branch merge, build error occurs due to the uninitialization. Temporarily we set
-            # uninitialized as build warning in order to support the jsCStack merge. https://bugs.webkit.org/show_bug.cgi?id=127777.
-            set(OLD_COMPILE_FLAGS "-Werror -Wno-error=unused-parameter -Wno-error=uninitialized -Wno-error=literal-suffix ${OLD_COMPILE_FLAGS}")
+            set(OLD_COMPILE_FLAGS "-Werror -Wno-error=unused-parameter ${OLD_COMPILE_FLAGS}")
         endif ()
 
         set_target_properties(${_target} PROPERTIES
