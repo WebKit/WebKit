@@ -1,3 +1,18 @@
+2015-01-26  Beth Dakin  <bdakin@apple.com>
+
+        Blacklist iBooks for WebKit's default immediate actions
+        https://bugs.webkit.org/show_bug.cgi?id=140854
+        -and corresponding-
+        rdar://problem/19489518
+
+        Reviewed by Tim Horton.
+
+        Add a runtime check for iBooks.
+        * WebCore.exp.in:
+        * platform/RuntimeApplicationChecks.cpp:
+        (WebCore::applicationIsIBooks):
+        * platform/RuntimeApplicationChecks.h:
+
 2015-01-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] [SVG -> OTF Converter] Flip the switch off on iOS

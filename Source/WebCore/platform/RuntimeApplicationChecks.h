@@ -32,6 +32,7 @@ WEBCORE_EXPORT bool applicationIsAOLInstantMessenger();
 WEBCORE_EXPORT bool applicationIsAdobeInstaller();
 WEBCORE_EXPORT bool applicationIsAperture();
 WEBCORE_EXPORT bool applicationIsAppleMail();
+WEBCORE_EXPORT bool applicationIsIBooks();
 bool applicationIsITunes();
 WEBCORE_EXPORT bool applicationIsMicrosoftMessenger();
 WEBCORE_EXPORT bool applicationIsMicrosoftMyDay();
