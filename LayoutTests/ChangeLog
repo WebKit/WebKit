@@ -1,3 +1,13 @@
+2015-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline fast/css/css2-system-fonts.html on iOS.
+
+        Rebaseline fast/css/css2-system-fonts.html on iOS after r179168.
+
+        * platform/ios-sim-deprecated/fast/css/css2-system-fonts-expected.txt: Removed.
+        * platform/ios-simulator-wk2/fast/css/css2-system-fonts-expected.txt:
+        * platform/ios-simulator/fast/css/css2-system-fonts-expected.txt: Removed.
+
 2015-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/16801814> Media controls do not appear in 2 DRT tests
