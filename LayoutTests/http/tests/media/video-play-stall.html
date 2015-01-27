@@ -1,41 +1,45 @@
-<video></video>
-<p>Test that stalled, timeupdate and waiting events are sent when media load stalls in the middle.</p>
-<script src=../../media-resources/media-file.js></script>
-<script src=../../media-resources/video-test.js></script>
-<script>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>'stalled' event test</title>
+        <script src=../../media-resources/media-file.js></script>
+        <script src=../../media-resources/video-test.js></script>
+        <script>
 
-    var timeupdateCount = 0;
-    var waitingCount = 0;
+            var playCount = 0;
 
-    waitForEvent('durationchange');
-    waitForEvent('loadedmetadata');
-    waitForEvent('loadeddata');
-    waitForEvent('canplaythrough');
-    waitForEvent('canplay', function () {
+            function start() 
+            {
+                findMediaElement();
+                waitForEvent('durationchange');
+                waitForEvent('loadedmetadata');
+                waitForEvent('loadeddata');
 
-        mediaElement.addEventListener('timeupdate', function () {
-            // timeupdate events are fired as playback progresses so only verify that at least one
-            // event is fired
-            ++timeupdateCount;
-            if (timeupdateCount == 1)
-                consoleWrite("EVENT(timeupdate)");
-        } );
+                mediaElement.addEventListener('canplay', function () {
+                    // 'stalled' takes three seconds to fire, so 'canplay' may fire more than once
+                    // depending on how the engine parses incoming media data.
+                    if (++playCount > 1)
+                        return;
+                    consoleWrite("EVENT(canplay)");
+                    run("video.play()");
+                } );
 
-        waitForEvent('waiting', function () {
-            ++waitingCount;
-            if (waitingCount > 1)
-                failTest("too many 'waiting' events fired.");
+                waitForEvent('stalled', function () {
+                    testExpected("video.currentTime", 0, "!=");
+                    testExpected("video.playbackRate", 1, "===");
+                    testExpected("video.paused", false, "===");
+                    endTest();
+                } );
 
-            waitForEvent('timeupdate');
-        } );
+                var mediaFile = findMediaFile("video", "../../../../media/content/long-test");
+                var mimeType = mimeTypeForFile(mediaFile);
+                video.src = "http://127.0.0.1:8000/media/resources/serve-video.php?name=" + mediaFile + "&type=" + mimeType + "&stallOffset=100000&stallDuration=60&chunkSize=1024";
+            }
 
-        waitForEventAndEnd('stalled');
-    } );
-
-    // Find a supported media file.
-    var mediaFile = findMediaFile("video", "content/test");
-    var mimeType = mimeTypeForFile(mediaFile);
-
-    video.src = "http://127.0.0.1:8000/resources/load-and-stall.cgi?name=../../../media/" + mediaFile + "&mimeType=" + mimeType + "&stallAt=100000&stallFor=6";
-    run("video.play()");
-</script>
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test that a stalled event is sent when media loading stalls.</p>
+    </body>
+</html>

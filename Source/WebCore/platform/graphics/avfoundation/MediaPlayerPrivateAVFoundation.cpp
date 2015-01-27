@@ -229,8 +229,10 @@ void MediaPlayerPrivateAVFoundation::play()
     // or the audio may start playing before we can render video.
     if (!m_cachedHasVideo || hasAvailableVideoFrame())
         platformPlay();
-    else
+    else {
+        LOG(Media, "MediaPlayerPrivateAVFoundation::play(%p) - waiting for first video frame", this);
         m_playWhenFramesAvailable = true;
+    }
 }
 
 void MediaPlayerPrivateAVFoundation::pause()
@@ -523,16 +525,12 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                 break;
 
             case MediaPlayerAVPlayerItemStatusReadyToPlay:
-                // If the readyState is already HaveEnoughData, don't go lower because of this state change.
-                if (m_readyState == MediaPlayer::HaveEnoughData)
-                    break;
-                FALLTHROUGH;
+                if (m_readyState != MediaPlayer::HaveEnoughData && maxTimeLoaded() > currentMediaTime())
+                    m_readyState = MediaPlayer::HaveFutureData;
+                break;
 
             case MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty:
-                if (maxTimeLoaded() > currentMediaTime())
-                    m_readyState = MediaPlayer::HaveFutureData;
-                else
-                    m_readyState = MediaPlayer::HaveCurrentData;
+                m_readyState = MediaPlayer::HaveCurrentData;
                 break;
             }
 
@@ -782,10 +780,12 @@ static const char* notificationName(MediaPlayerPrivateAVFoundation::Notification
 
 void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification notification)
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(%p) - notification %s", this, notificationName(notification));
+    if (notification.type() != Notification::FunctionType)
+        LOG(Media, "MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(%p) - notification %s", this, notificationName(notification));
+
     m_queueMutex.lock();
 
-    // It is important to always process the properties in the order that we are notified, 
+    // It is important to always process the properties in the order that we are notified,
     // so always go through the queue because notifications happen on different threads.
     m_queuedNotifications.append(notification);
 
@@ -802,7 +802,8 @@ void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification
     m_queueMutex.unlock();
 
     if (delayDispatch) {
-        LOG(Media, "MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(%p) - early return", this);
+        if (notification.type() != Notification::FunctionType)
+            LOG(Media, "MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(%p) - early return", this);
         return;
     }
 
@@ -833,7 +834,8 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
             return;
     }
 
-    LOG(Media, "MediaPlayerPrivateAVFoundation::dispatchNotification(%p) - dispatching %s", this, notificationName(notification));
+    if (notification.type() != Notification::FunctionType)
+        LOG(Media, "MediaPlayerPrivateAVFoundation::dispatchNotification(%p) - dispatching %s", this, notificationName(notification));
 
     switch (notification.type()) {
     case Notification::ItemDidPlayToEndTime:

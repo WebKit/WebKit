@@ -1064,8 +1064,9 @@ webkit.org/b/112492 media/track/track-language-preference.html [ Skip ]
 webkit.org/b/112492 media/track/track-prefer-captions.html [ Skip ]
 
 webkit.org/b/136708 http/tests/media/video-play-stall-seek.html
-webkit.org/b/136708 http/tests/media/video-play-stall.html
 webkit.org/b/136708 media/media-fullscreen-not-in-document.html
+
+webkit.org/b/140639 http/tests/media/video-play-waiting.html [ Pass Timeout ]
 
 # This test requires generation of progress events during loading
 webkit.org/b/100984 media/progress-events-generated-correctly.html [ Failure ]

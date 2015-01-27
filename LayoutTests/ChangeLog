@@ -1,3 +1,19 @@
+2015-01-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Simplify http/tests/media/video-play-stall.html
+        https://bugs.webkit.org/show_bug.cgi?id=140630
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/media/video-play-stall-expected.txt:
+        * http/tests/media/video-play-stall.html:
+        * http/tests/media/video-play-waiting-expected.txt: Added.
+        * http/tests/media/video-play-waiting.html: Added.
+        * media/content/long-test.mp4: Added. New media file with 30 second duration.
+        * media/content/long-test.ogv: Ditto.
+        * platform/mac/TestExpectations: Remove video-play-stall.html from the skip list. Mark 
+            video-play-waiting.html as flakey as it sometimes times out.
+
 2015-01-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Another round of bug filing and expectation updates.

@@ -2941,12 +2941,19 @@ NSArray* assetTrackMetadataKeyNames()
     UNUSED_PARAM(object);
     id newValue = [change valueForKey:NSKeyValueChangeNewKey];
 
-    LOG(Media, "WebCoreAVFMovieObserver::observeValueForKeyPath(%p) - keyPath = %s", self, [keyPath UTF8String]);
-
     if (!m_callback)
         return;
 
     bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
+
+#if !LOG_DISABLED
+    if (willChange)
+        LOG(Media, "WebCoreAVFMovieObserver::observeValueForKeyPath(%p) - will change, keyPath = %s", self, [keyPath UTF8String]);
+    else {
+        RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
+        LOG(Media, "WebCoreAVFMovieObserver::observeValueForKeyPath(%p) - did change, keyPath = %s, value = %s", self, [keyPath UTF8String], [valueString.get() UTF8String]);
+    }
+#endif
 
     WTF::Function<void ()> function;
 

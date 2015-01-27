@@ -1,12 +1,14 @@
-Test that stalled, timeupdate and waiting events are sent when media load stalls in the middle.
 
-RUN(video.play())
+Test that a stalled event is sent when media loading stalls.
+
 EVENT(durationchange)
 EVENT(loadedmetadata)
 EVENT(loadeddata)
 EVENT(canplay)
-EVENT(timeupdate)
-EVENT(waiting)
+RUN(video.play())
 EVENT(stalled)
+EXPECTED (video.currentTime != '0') OK
+EXPECTED (video.playbackRate === '1') OK
+EXPECTED (video.paused === 'false') OK
 END OF TEST
 
