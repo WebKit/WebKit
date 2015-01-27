@@ -2027,6 +2027,15 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
 {
     failIfStackOverflow();
     switch (m_token.m_type) {
+    case FUNCTION: {
+        JSTokenLocation location(tokenLocation());
+        unsigned functionKeywordStart = tokenStart();
+        next();
+        ParserFunctionInfo<TreeBuilder> info;
+        info.name = &m_vm->propertyNames->nullIdentifier;
+        failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, FunctionMode, false, info)), "Cannot parse function expression");
+        return context.createFunctionExpr(location, info, functionKeywordStart);
+    }
     case OPENBRACE:
         if (strictMode())
             return parseStrictObjectLiteral(context);
@@ -2163,16 +2172,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         newCount++;
     }
 
-    if (match(FUNCTION)) {
-        unsigned functionKeywordStart = tokenStart();
-        location = tokenLocation();
-        next();
-        ParserFunctionInfo<TreeBuilder> info;
-        info.name = &m_vm->propertyNames->nullIdentifier;
-        failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, FunctionMode, false, info)), "Cannot parse function expression");
-        base = context.createFunctionExpr(location, info, functionKeywordStart);
-    } else
-        base = parsePrimaryExpression(context);
+    base = parsePrimaryExpression(context);
     
     failIfFalse(base, "Cannot parse base expression");
     while (true) {

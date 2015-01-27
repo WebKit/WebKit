@@ -1,3 +1,21 @@
+2015-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Parse a function expression as a primary expression
+        https://bugs.webkit.org/show_bug.cgi?id=140908
+
+        Reviewed by Mark Lam.
+
+        Moved the code to generate an AST node for a function expression from parseMemberExpression
+        to parsePrimaryExpression to match the ES6 specification terminology:
+        https://people.mozilla.org/~jorendorff/es6-draft.html#sec-primary-expression
+
+        There should be no behavior change from this change since parsePrimaryExpression is only
+        called in parseMemberExpression other than the fact failIfStackOverflow() is called.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+
 2015-01-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] [SVG -> OTF Converter] Flip the switch off on iOS
