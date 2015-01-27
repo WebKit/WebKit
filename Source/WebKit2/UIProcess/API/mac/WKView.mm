@@ -4335,6 +4335,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     [self _setTextIndicator:nullptr fadeOut:NO];
 
+    [_data->_immediateActionController dismissContentRelativeChildWindows];
+
     static_cast<PageClient&>(*_data->_pageClient).dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
 }
 
