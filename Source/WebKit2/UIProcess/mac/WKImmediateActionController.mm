@@ -131,6 +131,11 @@ using namespace WebKit;
 
 - (void)didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
 {
+    // If we've already given up on this gesture (either because it was canceled or the
+    // willBeginAnimation timeout expired), we shouldn't build a new animationController for it.
+    if (_state != ImmediateActionState::Pending)
+        return;
+
     // FIXME: This needs to use the WebKit2 callback mechanism to avoid out-of-order replies.
     _state = ImmediateActionState::Ready;
     _hitTestResult = hitTestResult;
