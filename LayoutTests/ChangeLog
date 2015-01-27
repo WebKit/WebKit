@@ -1,3 +1,13 @@
+2015-01-27  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Update test results and test expectations
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/css3/blending/blend-mode-simple-composited-expected.txt:
+        * platform/ios-simulator/css3/blending/blend-mode-simple-expected.txt:
+
 2015-01-26  Sylvain Galineau  <galineau@adobe.com>
 
         CSSKeyframesRule::findRule() and deleteRule() should delete the last matching rule, not the first
