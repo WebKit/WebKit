@@ -1,3 +1,16 @@
+2015-01-27  Benjamin Poulain  <bpoulain@apple.com>
+
+        Modernize some constructors of the CSS JIT
+        https://bugs.webkit.org/show_bug.cgi?id=140903
+
+        Reviewed by Darin Adler.
+
+        Two constructors were still using the old style.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorFragment::SelectorFragment): Deleted.
+        (WebCore::SelectorCompiler::TagNamePattern::TagNamePattern): Deleted.
+
 2015-01-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.

@@ -148,46 +148,28 @@ struct NthChildOfSelectorInfo {
 };
 
 struct SelectorFragment {
-    SelectorFragment()
-        : traversalBacktrackingAction(BacktrackingAction::NoBacktracking)
-        , matchingTagNameBacktrackingAction(BacktrackingAction::NoBacktracking)
-        , matchingPostTagNameBacktrackingAction(BacktrackingAction::NoBacktracking)
-        , backtrackingFlags(0)
-        , tagNameMatchedBacktrackingStartHeightFromDescendant(invalidHeight)
-        , tagNameNotMatchedBacktrackingStartHeightFromDescendant(invalidHeight)
-        , heightFromDescendant(0)
-        , tagNameMatchedBacktrackingStartWidthFromIndirectAdjacent(invalidWidth)
-        , tagNameNotMatchedBacktrackingStartWidthFromIndirectAdjacent(invalidWidth)
-        , widthFromIndirectAdjacent(0)
-        , tagNameSelector(nullptr)
-        , id(nullptr)
-        , langFilter(nullptr)
-        , pseudoElementSelector(nullptr)
-        , onlyMatchesLinksInQuirksMode(true)
-    {
-    }
     FragmentRelation relationToLeftFragment;
     FragmentRelation relationToRightFragment;
     FragmentPositionInRootFragments positionInRootFragments;
 
-    BacktrackingAction traversalBacktrackingAction;
-    BacktrackingAction matchingTagNameBacktrackingAction;
-    BacktrackingAction matchingPostTagNameBacktrackingAction;
-    unsigned char backtrackingFlags;
-    unsigned tagNameMatchedBacktrackingStartHeightFromDescendant;
-    unsigned tagNameNotMatchedBacktrackingStartHeightFromDescendant;
-    unsigned heightFromDescendant;
-    unsigned tagNameMatchedBacktrackingStartWidthFromIndirectAdjacent;
-    unsigned tagNameNotMatchedBacktrackingStartWidthFromIndirectAdjacent;
-    unsigned widthFromIndirectAdjacent;
+    BacktrackingAction traversalBacktrackingAction = BacktrackingAction::NoBacktracking;
+    BacktrackingAction matchingTagNameBacktrackingAction = BacktrackingAction::NoBacktracking;
+    BacktrackingAction matchingPostTagNameBacktrackingAction = BacktrackingAction::NoBacktracking;
+    unsigned char backtrackingFlags = 0;
+    unsigned tagNameMatchedBacktrackingStartHeightFromDescendant = invalidHeight;
+    unsigned tagNameNotMatchedBacktrackingStartHeightFromDescendant = invalidHeight;
+    unsigned heightFromDescendant = 0;
+    unsigned tagNameMatchedBacktrackingStartWidthFromIndirectAdjacent = invalidWidth;
+    unsigned tagNameNotMatchedBacktrackingStartWidthFromIndirectAdjacent = invalidWidth;
+    unsigned widthFromIndirectAdjacent = 0;
 
     FunctionType appendUnoptimizedPseudoClassWithContext(bool (*matcher)(const SelectorChecker::CheckingContext&));
 
     // FIXME: the large stack allocation caused by the inline capacity causes memory inefficiency. We should dump
     // the min/max/average of the vectors and pick better inline capacity.
-    const CSSSelector* tagNameSelector;
-    const AtomicString* id;
-    const AtomicString* langFilter;
+    const CSSSelector* tagNameSelector = nullptr;
+    const AtomicString* id = nullptr;
+    const AtomicString* langFilter = nullptr;
     Vector<const AtomicStringImpl*, 8> classNames;
     HashSet<unsigned> pseudoClasses;
     Vector<JSC::FunctionPtr, 4> unoptimizedPseudoClasses;
@@ -198,7 +180,7 @@ struct SelectorFragment {
     SelectorList notFilters;
     Vector<SelectorList> matchesFilters;
     Vector<Vector<SelectorFragment>> anyFilters;
-    const CSSSelector* pseudoElementSelector;
+    const CSSSelector* pseudoElementSelector = nullptr;
 
     // For quirks mode, follow this: http://quirks.spec.whatwg.org/#the-:active-and-:hover-quirk
     // In quirks mode, a compound selector 'selector' that matches the following conditions must not match elements that would not also match the ':any-link' selector.
@@ -211,7 +193,7 @@ struct SelectorFragment {
     //    selector does not use a pseudo-class selector other than ':active' and ':hover'.
     //    selector does not use a pseudo-element selector.
     //    selector is not part of an argument to a functional pseudo-class or pseudo-element.
-    bool onlyMatchesLinksInQuirksMode;
+    bool onlyMatchesLinksInQuirksMode = true;
 };
 
 class SelectorFragmentList : public Vector<SelectorFragment, 4> {
@@ -223,13 +205,8 @@ public:
 };
 
 struct TagNamePattern {
-    TagNamePattern()
-        : tagNameSelector(nullptr)
-        , inverted(false)
-    {
-    }
-    const CSSSelector* tagNameSelector;
-    bool inverted;
+    const CSSSelector* tagNameSelector = nullptr;
+    bool inverted = false;
 };
 
 typedef JSC::MacroAssembler Assembler;
