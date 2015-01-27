@@ -1,3 +1,20 @@
+2015-01-26  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r177328
+
+    2014-12-15  Chris Dumez  <cdumez@apple.com>
+
+            [iOS] Add feature counting support
+            https://bugs.webkit.org/show_bug.cgi?id=139652
+            <rdar://problem/19255690>
+
+            Reviewed by Gavin Barraclough.
+
+            Link against AppSupport framework on iOS as we need it to implement
+            the new FeatureCounter API in WTF.
+
+            * Configurations/JavaScriptCore.xcconfig:
+
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r176972.

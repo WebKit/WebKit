@@ -1,3 +1,26 @@
+2015-01-26  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r177328
+
+    2014-12-15  Chris Dumez  <cdumez@apple.com>
+
+            [iOS] Add feature counting support
+            https://bugs.webkit.org/show_bug.cgi?id=139652
+            <rdar://problem/19255690>
+
+            Reviewed by Gavin Barraclough.
+
+            Use FeatureCounter API to log PageCache failure reasons
+            as well as its success rate.
+
+            No new tests, no behavior change.
+
+            * history/PageCache.cpp:
+            (WebCore::logCanCacheFrameDecision):
+            (WebCore::logCanCachePageDecision):
+            (WebCore::PageCache::canCache):
+            * platform/FeatureCounterKeys.h: Added.
+
 2015-01-26  David Kilzer  <ddkilzer@apple.com>
 
         Merge r177927.

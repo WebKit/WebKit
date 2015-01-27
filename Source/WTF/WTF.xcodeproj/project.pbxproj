@@ -73,6 +73,9 @@
 		2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */; };
 		2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0F118115C85004DBA70 /* RunLoop.cpp */; };
 		2CDED0F418115C85004DBA70 /* RunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CDED0F218115C85004DBA70 /* RunLoop.h */; };
+		463111841A3F729A00E925A3 /* FeatureCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 463111831A3F729A00E925A3 /* FeatureCounter.h */; };
+		463111861A3F72B800E925A3 /* FeatureCounter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 463111851A3F72B800E925A3 /* FeatureCounter.mm */; };
+		463111881A3F899100E925A3 /* FeatureCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463111871A3F899100E925A3 /* FeatureCounter.cpp */; };
 		7CDD7FF8186D291E007433CD /* IteratorAdaptors.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CDD7FF7186D291E007433CD /* IteratorAdaptors.h */; };
 		7CDD7FFA186D2A54007433CD /* IteratorRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CDD7FF9186D2A54007433CD /* IteratorRange.h */; };
 		7E29C33E15FFD79B00516D61 /* ObjcRuntimeExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E29C33D15FFD79B00516D61 /* ObjcRuntimeExtras.h */; };
@@ -355,6 +358,9 @@
 		2CDED0F118115C85004DBA70 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		2CDED0F218115C85004DBA70 /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
 		44DEE74A152274BB00C6EC37 /* iOS.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
+		463111831A3F729A00E925A3 /* FeatureCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureCounter.h; sourceTree = "<group>"; };
+		463111851A3F72B800E925A3 /* FeatureCounter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FeatureCounter.mm; sourceTree = "<group>"; };
+		463111871A3F899100E925A3 /* FeatureCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeatureCounter.cpp; sourceTree = "<group>"; };
 		5D247B6214689B8600E78B76 /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D247B6E14689C4700E78B76 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D247B7014689C4700E78B76 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -603,6 +609,7 @@
 		1FA47C87152502DA00568D1B /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				463111851A3F72B800E925A3 /* FeatureCounter.mm */,
 				1FA47C88152502DA00568D1B /* WebCoreThread.cpp */,
 				1FA47C89152502DA00568D1B /* WebCoreThread.h */,
 			);
@@ -741,6 +748,8 @@
 				0FD81AC4154FB22E00983E72 /* FastBitVector.h */,
 				A8A472A1151A825A004123FF /* FastMalloc.cpp */,
 				A8A472A2151A825A004123FF /* FastMalloc.h */,
+				463111871A3F899100E925A3 /* FeatureCounter.cpp */,
+				463111831A3F729A00E925A3 /* FeatureCounter.h */,
 				B38FD7BC168953E80065C969 /* FeatureDefines.h */,
 				0F9D335B165DBA73005AD387 /* FilePrintStream.cpp */,
 				0F9D335C165DBA73005AD387 /* FilePrintStream.h */,
@@ -1132,6 +1141,7 @@
 				1AFDE648195201C300C48FFA /* TypeCasts.h in Headers */,
 				A8A47423151A825B004123FF /* SimpleStats.h in Headers */,
 				A8A47424151A825B004123FF /* SinglyLinkedList.h in Headers */,
+				463111841A3F729A00E925A3 /* FeatureCounter.h in Headers */,
 				A748745317A0BDAE00FA04CB /* SixCharacterHash.h in Headers */,
 				A8A47426151A825B004123FF /* Spectrum.h in Headers */,
 				A8A47428151A825B004123FF /* StackBounds.h in Headers */,
@@ -1296,6 +1306,7 @@
 				A8A4739C151A825B004123FF /* CurrentTime.cpp in Sources */,
 				A8A4739E151A825B004123FF /* DataLog.cpp in Sources */,
 				A8A473A0151A825B004123FF /* DateMath.cpp in Sources */,
+				463111861A3F72B800E925A3 /* FeatureCounter.mm in Sources */,
 				A8A473A2151A825B004123FF /* DecimalNumber.cpp in Sources */,
 				A8A473AE151A825B004123FF /* diy-fp.cc in Sources */,
 				A8A473B0151A825B004123FF /* double-conversion.cc in Sources */,
@@ -1316,6 +1327,7 @@
 				CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */,
 				A8A473EC151A825B004123FF /* MetaAllocator.cpp in Sources */,
 				A8A473F4151A825B004123FF /* NumberOfCores.cpp in Sources */,
+				463111881A3F899100E925A3 /* FeatureCounter.cpp in Sources */,
 				A8A473F7151A825B004123FF /* OSAllocatorPosix.cpp in Sources */,
 				A8A473F9151A825B004123FF /* OSRandomSource.cpp in Sources */,
 				A8A47400151A825B004123FF /* PageAllocationAligned.cpp in Sources */,

@@ -38,7 +38,7 @@ OTHER_LDFLAGS_HIDE_SYMBOLS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-u
 
 OTHER_LDFLAGS_BASE = -lobjc -Wl,-Y,3 $(OTHER_LDFLAGS_HIDE_SYMBOLS);
 OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
-OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE);
+OTHER_LDFLAGS_iphoneos = $(OTHER_LDFLAGS_BASE) -framework AppSupport;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
 OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_BASE) -sub_library libobjc -framework CoreServices;
 GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
