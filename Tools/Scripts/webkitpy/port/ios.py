@@ -96,8 +96,6 @@ class IOSSimulatorPort(Port):
             # DumpRenderTree slows down noticably if we run more than about 1000 tests in a batch
             # with MallocStackLogging enabled.
             self.set_option_default("batch_size", 1000)
-        mac_config = port_config.Config(self._executive, self._filesystem, 'mac')
-        self._mac_build_directory = mac_config.build_directory(self.get_option('configuration'))
 
         self._testing_device = None
 
@@ -110,7 +108,8 @@ class IOSSimulatorPort(Port):
 
     @property
     def relay_path(self):
-        return self._filesystem.join(self._mac_build_directory, self.relay_name)
+        mac_config = port_config.Config(self._executive, self._filesystem, 'mac')
+        return self._filesystem.join(mac_config.build_directory(self.get_option('configuration')), self.relay_name)
 
     def default_timeout_ms(self):
         if self.get_option('guard_malloc'):

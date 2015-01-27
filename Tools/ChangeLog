@@ -1,3 +1,25 @@
+2015-01-27  Daniel Bates  <dabates@apple.com>
+
+        [iOS] run-webkit-tests --platform=ios* --lint-test-files does not work
+        https://bugs.webkit.org/show_bug.cgi?id=140949
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add "ios-simulator" and "ios-simulator-wk2" to the list of ports without
+        builders so that run-webkit-tests can lint the appropriate TestExpectation
+        files.
+
+        * Scripts/webkitpy/port/builders.py:
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.__init__): Move logic to query for the Mac build directory from here...
+        (IOSSimulatorPort.relay_path): to here as this is the only caller that makes use of that
+        information to find the LayoutTestRelay tool. Otherwise, "self.assertEqual(len(calls), 1)"
+        in unit test webkitpy.tool.commands.rebaseline_unittest.TestRebaselineExpectations.test_rebaseline_expectations
+        will fail because IOSSimulatorPort.__init__() ultimately calls Tools/Scripts/webkit-build-directory
+        to determine the Mac build directory for each instantiation of IOSSimulatorPort. And this unit
+        test instantiates a port object for each builder listed in file Scripts/webkitpy/port/builders.py.
+
+
 2015-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Update bots on the flakiness dashboard
