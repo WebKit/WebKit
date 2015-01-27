@@ -1,3 +1,14 @@
+2015-01-26  Roger Fong  <roger_fong@apple.com>
+
+        WebGL 2.0: Actually allow for experimental-webgl2 context creation.
+        https://bugs.webkit.org/show_bug.cgi?id=140906
+        <rdar://problem/19606875>.
+
+        Reviewed by Brent Fulgham.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::is3dType): Include "experimental-webgl2" in the list of acceptable 3d context types.
+
 2015-01-26  Chris Dumez  <cdumez@apple.com>
 
         Rename Document::body() to Document::bodyOrFrameset() for clarity
