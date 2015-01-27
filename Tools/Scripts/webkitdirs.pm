@@ -2167,7 +2167,7 @@ sub hasUserInstalledAppInSimulatorDevice($$)
 {
     my ($appIdentifier, $simulatedDeviceUDID) = @_;
     my $userInstalledAppPath = File::Spec->catfile($ENV{HOME}, "Library", "Developer", "CoreSimulator", "Devices", $simulatedDeviceUDID, "data", "Containers", "Bundle", "Application");
-    if (!$userInstalledAppPath) {
+    if (!-d $userInstalledAppPath) {
         return 0; # No user installed apps.
     }
     local @::userInstalledAppBundles;

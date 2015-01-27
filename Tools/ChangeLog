@@ -1,3 +1,14 @@
+2015-01-27  Daniel Bates  <dabates@apple.com>
+
+        Teach run-webkit-app --simulator how to install custom built app
+        https://bugs.webkit.org/show_bug.cgi?id=140691
+
+        Fix inadvertent omission of directory test flag in expression to check for the
+        existence of the iOS simulator device-specific directory for user installed apps.
+
+        * Scripts/webkitdirs.pm:
+        (hasUserInstalledAppInSimulatorDevice):
+
 2015-01-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener
