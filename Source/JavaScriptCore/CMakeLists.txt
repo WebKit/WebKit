@@ -125,7 +125,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGAvailabilityMap.cpp
     dfg/DFGBackwardsPropagationPhase.cpp
     dfg/DFGBasicBlock.cpp
-    dfg/DFGBinarySwitch.cpp
     dfg/DFGBlockInsertionSet.cpp
     dfg/DFGBlockSet.cpp
     dfg/DFGBlockWorklist.cpp
@@ -327,6 +326,7 @@ set(JavaScriptCore_SOURCES
     jit/AccessorCallJITStubRoutine.cpp
     jit/AssemblyHelpers.cpp
     jit/ArityCheckFailReturnThunks.cpp
+    jit/BinarySwitch.cpp
     jit/ClosureCallStubRoutine.cpp
     jit/ExecutableAllocator.cpp
     jit/ExecutableAllocatorFixedVMPool.cpp

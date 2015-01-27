@@ -353,6 +353,8 @@
 		0F63947815DCE34B006A597C /* DFGStructureAbstractValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F63948415E48118006A597C /* DFGArrayMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F63948115E48114006A597C /* DFGArrayMode.cpp */; };
 		0F63948515E4811B006A597C /* DFGArrayMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63948215E48114006A597C /* DFGArrayMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F64B2711A784BAF006E4E66 /* BinarySwitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F64B26F1A784BAF006E4E66 /* BinarySwitch.cpp */; };
+		0F64B2721A784BAF006E4E66 /* BinarySwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64B2701A784BAF006E4E66 /* BinarySwitch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F666EC0183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F666EBE183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F666EC1183566F900D017F1 /* FullBytecodeLiveness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F666EBF183566F900D017F1 /* FullBytecodeLiveness.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F666EC61835672B00D017F1 /* DFGAvailability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F666EC21835672B00D017F1 /* DFGAvailability.cpp */; };
@@ -1244,8 +1246,6 @@
 		A704D90717A0BAA8006BA554 /* DFGMergeMode.h in Headers */ = {isa = PBXBuildFile; fileRef = A704D90217A0BAA8006BA554 /* DFGMergeMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A709F2F017A0AC0400512E98 /* SlowPathCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A709F2EF17A0AC0400512E98 /* SlowPathCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A709F2F217A0AC2A00512E98 /* CommonSlowPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A709F2F117A0AC2A00512E98 /* CommonSlowPaths.cpp */; };
-		A70B083217A0B79B00DAF14B /* DFGBinarySwitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A70B083017A0B79B00DAF14B /* DFGBinarySwitch.cpp */; };
-		A70B083317A0B79B00DAF14B /* DFGBinarySwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = A70B083117A0B79B00DAF14B /* DFGBinarySwitch.h */; };
 		A71236E51195F33C00BD2174 /* JITOpcodes32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */; };
 		A72028B61797601E0098028C /* JSCTestRunnerUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72028B41797601E0098028C /* JSCTestRunnerUtils.cpp */; };
 		A72028B81797601E0098028C /* JSCTestRunnerUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A72028B51797601E0098028C /* JSCTestRunnerUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2023,6 +2023,8 @@
 		0F63947615DCE347006A597C /* DFGStructureAbstractValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureAbstractValue.h; path = dfg/DFGStructureAbstractValue.h; sourceTree = "<group>"; };
 		0F63948115E48114006A597C /* DFGArrayMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGArrayMode.cpp; path = dfg/DFGArrayMode.cpp; sourceTree = "<group>"; };
 		0F63948215E48114006A597C /* DFGArrayMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGArrayMode.h; path = dfg/DFGArrayMode.h; sourceTree = "<group>"; };
+		0F64B26F1A784BAF006E4E66 /* BinarySwitch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinarySwitch.cpp; sourceTree = "<group>"; };
+		0F64B2701A784BAF006E4E66 /* BinarySwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinarySwitch.h; sourceTree = "<group>"; };
 		0F666EBE183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeLivenessAnalysisInlines.h; sourceTree = "<group>"; };
 		0F666EBF183566F900D017F1 /* FullBytecodeLiveness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullBytecodeLiveness.h; sourceTree = "<group>"; };
 		0F666EC21835672B00D017F1 /* DFGAvailability.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAvailability.cpp; path = dfg/DFGAvailability.cpp; sourceTree = "<group>"; };
@@ -2935,8 +2937,6 @@
 		A704D90217A0BAA8006BA554 /* DFGMergeMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGMergeMode.h; path = dfg/DFGMergeMode.h; sourceTree = "<group>"; };
 		A709F2EF17A0AC0400512E98 /* SlowPathCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowPathCall.h; sourceTree = "<group>"; };
 		A709F2F117A0AC2A00512E98 /* CommonSlowPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonSlowPaths.cpp; sourceTree = "<group>"; };
-		A70B083017A0B79B00DAF14B /* DFGBinarySwitch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGBinarySwitch.cpp; path = dfg/DFGBinarySwitch.cpp; sourceTree = "<group>"; };
-		A70B083117A0B79B00DAF14B /* DFGBinarySwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGBinarySwitch.h; path = dfg/DFGBinarySwitch.h; sourceTree = "<group>"; };
 		A71236E41195F33C00BD2174 /* JITOpcodes32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITOpcodes32_64.cpp; sourceTree = "<group>"; };
 		A718F61A11754A21002465A7 /* RegExpJitTables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpJitTables.h; sourceTree = "<group>"; };
 		A718F8211178EB4B002465A7 /* create_regex_tables */ = {isa = PBXFileReference; explicitFileType = text.script.python; fileEncoding = 4; path = create_regex_tables; sourceTree = "<group>"; };
@@ -3744,6 +3744,8 @@
 				0F6B1CC818641DF800845D97 /* ArityCheckFailReturnThunks.h */,
 				0F24E53B17EA9F5900ABB217 /* AssemblyHelpers.cpp */,
 				0F24E53C17EA9F5900ABB217 /* AssemblyHelpers.h */,
+				0F64B26F1A784BAF006E4E66 /* BinarySwitch.cpp */,
+				0F64B2701A784BAF006E4E66 /* BinarySwitch.h */,
 				0F24E53D17EA9F5900ABB217 /* CCallHelpers.h */,
 				0F73D7AB165A142A00ACAB71 /* ClosureCallStubRoutine.cpp */,
 				0F73D7AC165A142A00ACAB71 /* ClosureCallStubRoutine.h */,
@@ -3785,8 +3787,8 @@
 				14A6581A0F4E36F4000150FD /* JITStubs.h */,
 				FEF6835A174343CC00A32E25 /* JITStubsARM.h */,
 				FEF6835B174343CC00A32E25 /* JITStubsARMv7.h */,
-				FEF6835D174343CC00A32E25 /* JITStubsX86.h */,
 				FEF6835C174343CC00A32E25 /* JITStubsX86_64.h */,
+				FEF6835D174343CC00A32E25 /* JITStubsX86.h */,
 				A7A4AE0C17973B4D005612B1 /* JITStubsX86Common.h */,
 				0F5EF91B16878F78003E5C25 /* JITThunks.cpp */,
 				0F5EF91C16878F78003E5C25 /* JITThunks.h */,
@@ -4655,8 +4657,6 @@
 				A7D89CE317A0B8CC00773AD8 /* DFGBasicBlock.cpp */,
 				0F620170143FCD2F0068B77C /* DFGBasicBlock.h */,
 				0FD5652216AB780A00197653 /* DFGBasicBlockInlines.h */,
-				A70B083017A0B79B00DAF14B /* DFGBinarySwitch.cpp */,
-				A70B083117A0B79B00DAF14B /* DFGBinarySwitch.h */,
 				A7D89CE417A0B8CC00773AD8 /* DFGBlockInsertionSet.cpp */,
 				A7D89CE517A0B8CC00773AD8 /* DFGBlockInsertionSet.h */,
 				0FC3CCF519ADA410006AC72A /* DFGBlockMap.h */,
@@ -5555,7 +5555,6 @@
 				0F714CA516EA92F200F3EBEB /* DFGBackwardsPropagationPhase.h in Headers */,
 				0F620176143FCD3B0068B77C /* DFGBasicBlock.h in Headers */,
 				0FFB921A16D02EC50055A5DB /* DFGBasicBlockInlines.h in Headers */,
-				A70B083317A0B79B00DAF14B /* DFGBinarySwitch.h in Headers */,
 				A7D89CF417A0B8CC00773AD8 /* DFGBlockInsertionSet.h in Headers */,
 				0F8364B7164B0C110053329A /* DFGBranchDirection.h in Headers */,
 				86EC9DC51328DF82002B2AD7 /* DFGByteCodeParser.h in Headers */,
@@ -5891,6 +5890,7 @@
 				0F9749711687ADE400A4FF6A /* JSCellInlines.h in Headers */,
 				0F1DD84A18A945BE0026F3FA /* JSCInlines.h in Headers */,
 				BC18C42B0E16F5CD00B34460 /* JSCJSValue.h in Headers */,
+				0F64B2721A784BAF006E4E66 /* BinarySwitch.h in Headers */,
 				865A30F1135007E100CDB49E /* JSCJSValueInlines.h in Headers */,
 				BC18C41D0E16F5CD00B34460 /* JSClassRef.h in Headers */,
 				86E3C613167BABD7006D760A /* JSContext.h in Headers */,
@@ -6820,7 +6820,6 @@
 				0F714CA416EA92F000F3EBEB /* DFGBackwardsPropagationPhase.cpp in Sources */,
 				0F2B9CEC19D0BA7D00B1D1B5 /* DFGPromotedHeapLocation.cpp in Sources */,
 				A7D89CF217A0B8CC00773AD8 /* DFGBasicBlock.cpp in Sources */,
-				A70B083217A0B79B00DAF14B /* DFGBinarySwitch.cpp in Sources */,
 				2A88067819107D5500CB0BBB /* DFGFunctionWhitelist.cpp in Sources */,
 				A7D89CF317A0B8CC00773AD8 /* DFGBlockInsertionSet.cpp in Sources */,
 				86EC9DC41328DF82002B2AD7 /* DFGByteCodeParser.cpp in Sources */,
@@ -6995,6 +6994,7 @@
 				0FF0F19F16B72A17005DF95B /* FunctionExecutableDump.cpp in Sources */,
 				52B310FD1974AE870080857C /* FunctionHasExecutedCache.cpp in Sources */,
 				147F39CC107EC37600427A48 /* FunctionPrototype.cpp in Sources */,
+				0F64B2711A784BAF006E4E66 /* BinarySwitch.cpp in Sources */,
 				0F766D2F15A8DCE0008F363E /* GCAwareJITStubRoutine.cpp in Sources */,
 				C2239D1A16262BDD005AC5FD /* GCThread.cpp in Sources */,
 				C21122E115DD9AB300790E3A /* GCThreadSharedData.cpp in Sources */,

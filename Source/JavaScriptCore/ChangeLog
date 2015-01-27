@@ -1,3 +1,22 @@
+2015-01-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Move DFGBinarySwitch out of the DFG so that all of the JITs can use it
+        https://bugs.webkit.org/show_bug.cgi?id=140959
+
+        Rubber stamped by Geoffrey Garen.
+        
+        I want to use this for polymorphic stubs for https://bugs.webkit.org/show_bug.cgi?id=140660.
+        This code no longer has DFG dependencies so this is a very clean move.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGBinarySwitch.cpp: Removed.
+        * dfg/DFGBinarySwitch.h: Removed.
+        * dfg/DFGSpeculativeJIT.cpp:
+        * jit/BinarySwitch.cpp: Copied from Source/JavaScriptCore/dfg/DFGBinarySwitch.cpp.
+        * jit/BinarySwitch.h: Copied from Source/JavaScriptCore/dfg/DFGBinarySwitch.h.
+
 2015-01-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r179192.

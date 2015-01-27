@@ -29,9 +29,9 @@
 #if ENABLE(DFG_JIT)
 
 #include "Arguments.h"
+#include "BinarySwitch.h"
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGArrayifySlowPathGenerator.h"
-#include "DFGBinarySwitch.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGMayExit.h"
 #include "DFGSaneStringGetByValSlowPathGenerator.h"

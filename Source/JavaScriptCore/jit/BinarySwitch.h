@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DFGBinarySwitch_h
-#define DFGBinarySwitch_h
+#ifndef BinarySwitch_h
+#define BinarySwitch_h
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
 // The BinarySwitch class makes it easy to emit a switch statement over either
 // 32-bit integers or pointers, where the switch uses a tree of branches
@@ -132,9 +132,9 @@ private:
     Type m_type;
 };
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // ENABLE(DFG_JIT)
+#endif // ENABLE(JIT)
 
-#endif // DFGBinarySwitch_h
+#endif // BinarySwitch_h
 

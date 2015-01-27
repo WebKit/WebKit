@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
-#include "DFGBinarySwitch.h"
+#include "BinarySwitch.h"
 
-#if ENABLE(DFG_JIT)
+#if ENABLE(JIT)
 
 #include "JSCInlines.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
 BinarySwitch::BinarySwitch(GPRReg value, const Vector<int64_t>& cases, Type type)
     : m_value(value)
@@ -192,7 +192,7 @@ void BinarySwitch::build(unsigned start, unsigned end)
     } }
 }
 
-} } // namespace JSC::DFG
+} // namespace JSC
 
-#endif // ENABLE(DFG_JIT)
+#endif // ENABLE(JIT)
 

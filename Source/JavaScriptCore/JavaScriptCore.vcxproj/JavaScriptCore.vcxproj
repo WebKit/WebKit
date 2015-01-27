@@ -370,7 +370,6 @@
     <ClCompile Include="..\dfg\DFGAvailabilityMap.cpp" />
     <ClCompile Include="..\dfg\DFGBackwardsPropagationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGBasicBlock.cpp" />
-    <ClCompile Include="..\dfg\DFGBinarySwitch.cpp" />
     <ClCompile Include="..\dfg\DFGBlockInsertionSet.cpp" />
     <ClCompile Include="..\dfg\DFGBlockSet.cpp" />
     <ClCompile Include="..\dfg\DFGBlockWorklist.cpp" />
@@ -598,6 +597,7 @@
     <ClCompile Include="..\jit\AccessorCallJITStubRoutine.cpp" />
     <ClCompile Include="..\jit\ArityCheckFailReturnThunks.cpp" />
     <ClCompile Include="..\jit\AssemblyHelpers.cpp" />
+    <ClCompile Include="..\jit\BinarySwitch.cpp" />
     <ClCompile Include="..\jit\ClosureCallStubRoutine.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocator.cpp" />
     <ClCompile Include="..\jit\GCAwareJITStubRoutine.cpp" />
@@ -1015,7 +1015,6 @@
     <ClInclude Include="..\dfg\DFGBackwardsPropagationPhase.h" />
     <ClInclude Include="..\dfg\DFGBasicBlock.h" />
     <ClInclude Include="..\dfg\DFGBasicBlockInlines.h" />
-    <ClInclude Include="..\dfg\DFGBinarySwitch.h" />
     <ClInclude Include="..\dfg\DFGBlockInsertionSet.h" />
     <ClInclude Include="..\dfg\DFGBlockMap.h" />
     <ClInclude Include="..\dfg\DFGBlockMapInlines.h" />
@@ -1332,6 +1331,7 @@
     <ClInclude Include="..\jit\AccessorCallJITStubRoutine.h" />
     <ClInclude Include="..\jit\ArityCheckFailReturnThunks.h" />
     <ClInclude Include="..\jit\AssemblyHelpers.h" />
+    <ClInclude Include="..\jit\BinarySwitch.h" />
     <ClInclude Include="..\jit\CCallHelpers.h" />
     <ClInclude Include="..\jit\ClosureCallStubRoutine.h" />
     <ClInclude Include="..\jit\CompactJITCodeMap.h" />
