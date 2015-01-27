@@ -37,7 +37,7 @@ struct GetPtrHelperBase;
 template <typename T>
 struct GetPtrHelperBase<T, false /* isSmartPtr */> {
     typedef T* PtrType;
-    static T* getPtr(T& p) { return &p; }
+    static T* getPtr(T& p) { return std::addressof(p); }
 };
 
 template <typename T>

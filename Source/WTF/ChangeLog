@@ -1,3 +1,36 @@
+2015-01-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener
+        https://bugs.webkit.org/show_bug.cgi?id=87426
+        <rdar://problem/11527899>
+
+        Reviewed by Darin Adler.
+
+        Revise internal containers to use std::addressof in preference to
+        to using the '&' operator.
+
+        * wtf/Deque.h:
+        (WTF::inlineCapacity>::append):
+        (WTF::inlineCapacity>::prepend):
+        (WTF::inlineCapacity>::removeFirst):
+        (WTF::inlineCapacity>::removeLast):
+        (WTF::inlineCapacity>::remove):
+        (WTF::inlineCapacity>::after):
+        (WTF::inlineCapacity>::before):
+        * wtf/GetPtr.h:
+        * wtf/HashTable.h:
+        (WTF::HashTableBucketInitializer<false>::initialize):
+        * wtf/HashTraits.h:
+        (WTF::SimpleClassHashTraits::constructDeletedValue):
+        (WTF::CustomHashTraits::constructDeletedValue):
+        * wtf/ListHashSet.h:
+        (WTF::ListHashSetConstIterator::get):
+        * wtf/Vector.h:
+        (WTF::Vector::swap):
+        (WTF::OverflowHandler>::append):
+        (WTF::OverflowHandler>::tryAppend):
+        (WTF::OverflowHandler>::insert):
+
 2015-01-24  Chris Dumez  <cdumez@apple.com>
 
         Provide implementation for WTF::DefaultHash<bool>

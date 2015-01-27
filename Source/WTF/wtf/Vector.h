@@ -753,7 +753,7 @@ public:
     void swap(Vector<T, inlineCapacity, OverflowHandler>& other)
     {
 #if ASAN_ENABLED
-        if (this == &other) // ASan will crash if we try to restrict access to the same buffer twice.
+        if (this == std::addressof(other)) // ASan will crash if we try to restrict access to the same buffer twice.
             return;
 #endif
 
@@ -1170,7 +1170,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::append(const U* data, size_t da
         CRASH();
     asanBufferSizeWillChangeTo(newSize);
     T* dest = end();
-    VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], dest);
+    VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, std::addressof(data[dataSize]), dest);
     m_size = newSize;
 }
 
@@ -1188,7 +1188,7 @@ bool Vector<T, inlineCapacity, OverflowHandler>::tryAppend(const U* data, size_t
         return false;
     asanBufferSizeWillChangeTo(newSize);
     T* dest = end();
-    VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], dest);
+    VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, std::addressof(data[dataSize]), dest);
     m_size = newSize;
     return true;
 }
@@ -1255,7 +1255,7 @@ void Vector<T, inlineCapacity, OverflowHandler>::insert(size_t position, const U
     asanBufferSizeWillChangeTo(newSize);
     T* spot = begin() + position;
     TypeOperations::moveOverlapping(spot, end(), spot + dataSize);
-    VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, &data[dataSize], spot);
+    VectorCopier<std::is_trivial<T>::value, U>::uninitializedCopy(data, std::addressof(data[dataSize]), spot);
     m_size = newSize;
 }
  

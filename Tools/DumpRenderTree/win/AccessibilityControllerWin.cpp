@@ -61,8 +61,8 @@ AccessibilityController::~AccessibilityController()
     if (m_notificationsEventHook)
         UnhookWinEvent(m_notificationsEventHook);
 
-    for (HashMap<PlatformUIElement, JSObjectRef>::iterator it = m_notificationListeners.begin(); it != m_notificationListeners.end(); ++it)
-        JSValueUnprotect(frame->globalContext(), it->value);
+    for (auto& listener : m_notificationListeners.values())
+        JSValueUnprotect(frame->globalContext(), listener);
 }
 
 AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
@@ -337,8 +337,8 @@ void AccessibilityController::removeNotificationListener()
 
 void AccessibilityController::winNotificationReceived(PlatformUIElement element, const string& eventName)
 {
-    for (HashMap<PlatformUIElement, JSObjectRef>::iterator it = m_notificationListeners.begin(); it != m_notificationListeners.end(); ++it) {
-        COMPtr<IServiceProvider> thisServiceProvider(Query, it->key);
+    for (auto& slot : m_notificationListeners) {
+        COMPtr<IServiceProvider> thisServiceProvider(Query, slot.key);
         if (!thisServiceProvider)
             continue;
 
@@ -361,7 +361,7 @@ void AccessibilityController::winNotificationReceived(PlatformUIElement element,
 
         JSRetainPtr<JSStringRef> jsNotification(Adopt, JSStringCreateWithUTF8CString(eventName.c_str()));
         JSValueRef argument = JSValueMakeString(frame->globalContext(), jsNotification.get());
-        JSObjectCallAsFunction(frame->globalContext(), it->value, 0, 1, &argument, 0);
+        JSObjectCallAsFunction(frame->globalContext(), slot.value, 0, 1, &argument, 0);
     }
 }
 

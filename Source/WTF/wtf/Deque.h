@@ -411,7 +411,7 @@ namespace WTF {
     {
         checkValidity();
         expandCapacityIfNeeded();
-        new (NotNull, &m_buffer.buffer()[m_end]) T(std::forward<U>(value));
+        new (NotNull, std::addressof(m_buffer.buffer()[m_end])) T(std::forward<U>(value));
         if (m_end == m_buffer.capacity() - 1)
             m_end = 0;
         else
@@ -428,7 +428,7 @@ namespace WTF {
             m_start = m_buffer.capacity() - 1;
         else
             --m_start;
-        new (NotNull, &m_buffer.buffer()[m_start]) T(std::forward<U>(value));
+        new (NotNull, std::addressof(m_buffer.buffer()[m_start])) T(std::forward<U>(value));
         checkValidity();
     }
 
@@ -438,7 +438,7 @@ namespace WTF {
         checkValidity();
         invalidateIterators();
         ASSERT(!isEmpty());
-        TypeOperations::destruct(&m_buffer.buffer()[m_start], &m_buffer.buffer()[m_start + 1]);
+        TypeOperations::destruct(std::addressof(m_buffer.buffer()[m_start]), std::addressof(m_buffer.buffer()[m_start + 1]));
         if (m_start == m_buffer.capacity() - 1)
             m_start = 0;
         else
@@ -456,7 +456,7 @@ namespace WTF {
             m_end = m_buffer.capacity() - 1;
         else
             --m_end;
-        TypeOperations::destruct(&m_buffer.buffer()[m_end], &m_buffer.buffer()[m_end + 1]);
+        TypeOperations::destruct(std::addressof(m_buffer.buffer()[m_end]), std::addressof(m_buffer.buffer()[m_end + 1]));
         checkValidity();
     }
 
@@ -484,7 +484,7 @@ namespace WTF {
         invalidateIterators();
 
         T* buffer = m_buffer.buffer();
-        TypeOperations::destruct(&buffer[position], &buffer[position + 1]);
+        TypeOperations::destruct(std::addressof(buffer[position]), std::addressof(buffer[position + 1]));
 
         // Find which segment of the circular buffer contained the remove element, and only move elements in that part.
         if (position >= m_start) {
@@ -641,7 +641,7 @@ namespace WTF {
     {
         checkValidity();
         ASSERT(m_index != m_deque->m_end);
-        return &m_deque->m_buffer.buffer()[m_index];
+        return std::addressof(m_deque->m_buffer.buffer()[m_index]);
     }
 
     template<typename T, size_t inlineCapacity>
@@ -650,8 +650,8 @@ namespace WTF {
         checkValidity();
         ASSERT(m_index != m_deque->m_start);
         if (!m_index)
-            return &m_deque->m_buffer.buffer()[m_deque->m_buffer.capacity() - 1];
-        return &m_deque->m_buffer.buffer()[m_index - 1];
+            return std::addressof(m_deque->m_buffer.buffer()[m_deque->m_buffer.capacity() - 1]);
+        return std::addressof(m_deque->m_buffer.buffer()[m_index - 1]);
     }
 
 } // namespace WTF

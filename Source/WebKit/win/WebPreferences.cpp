@@ -161,7 +161,7 @@ WebPreferences* WebPreferences::getInstanceForIdentifier(BSTR identifier)
     if (identifierString.isEmpty())
         return sharedStandardPreferences();
 
-    return webPreferencesInstances().get(identifierString).get();
+    return webPreferencesInstances().get(identifierString);
 }
 
 void WebPreferences::setInstance(WebPreferences* instance, BSTR identifier)
@@ -182,7 +182,7 @@ void WebPreferences::removeReferenceForIdentifier(BSTR identifier)
     WTF::String identifierString(identifier, SysStringLen(identifier));
     if (identifierString.isEmpty())
         return;
-    WebPreferences* webPreference = webPreferencesInstances().get(identifierString).get();
+    WebPreferences* webPreference = webPreferencesInstances().get(identifierString);
     if (webPreference && webPreference->m_refCount == 1)
         webPreferencesInstances().remove(identifierString);
 }

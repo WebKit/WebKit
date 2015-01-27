@@ -1,3 +1,19 @@
+2015-01-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener
+        https://bugs.webkit.org/show_bug.cgi?id=87426
+        <rdar://problem/11527899>
+
+        Reviewed by Darin Adler.
+
+        Revise COMPtr to work better with our HashMap implementation:
+        (1) Add a specialization for IsSmartPtr.
+        (2) Remove PtrHash specialization.
+        (3) Refresh HashTrails specialization for COMPtr to match what we
+        do for RefPtr.
+
+        * platform/win/COMPtr.h:
+
 2015-01-26  Sylvain Galineau  <galineau@adobe.com>
 
         The computed value of line-height:normal is incorrect

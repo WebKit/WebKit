@@ -658,7 +658,7 @@ static void dumpBackForwardListForAllWindows()
     unsigned count = openWindows().size();
     for (unsigned i = 0; i < count; i++) {
         HWND window = openWindows()[i];
-        IWebView* webView = windowToWebViewMap().get(window).get();
+        IWebView* webView = windowToWebViewMap().get(window);
         dumpBackForwardList(webView);
     }
 }

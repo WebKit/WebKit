@@ -254,7 +254,7 @@ public:
 
     const ValueType* get() const
     {
-        return &m_position->m_value;
+        return std::addressof(m_position->m_value);
     }
 
     const ValueType& operator*() const { return *get(); }

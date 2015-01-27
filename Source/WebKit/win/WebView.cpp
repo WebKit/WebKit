@@ -4195,7 +4195,7 @@ HRESULT WebView::setEditable(BOOL flag)
     if (!m_page)
         return S_OK;
 
-    if (m_page->isEditable() == flag)
+    if (m_page->isEditable() == static_cast<bool>(flag))
         return S_OK;
 
     m_page->setEditable(flag);

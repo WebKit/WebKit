@@ -504,7 +504,7 @@ void WebHistory::visitedURL(const URL& url, const String& title, const String& h
     if (urlString.isEmpty())
         return;
 
-    IWebHistoryItem* entry = m_entriesByURL.get(urlString).get();
+    IWebHistoryItem* entry = m_entriesByURL.get(urlString);
     if (!entry) {
         COMPtr<WebHistoryItem> item(AdoptCOM, WebHistoryItem::createInstance());
         if (!item)
