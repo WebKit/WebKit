@@ -577,26 +577,27 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
         if (!handler)
             return;
 
-        auto completionHandler = (void (^)(id, NSError *))handler.get();
-
         if (errorCode != WebKit::ScriptValueCallback::Error::None) {
             auto error = createNSError(callbackErrorCode(errorCode));
             if (errorCode == WebKit::ScriptValueCallback::Error::OwnerWasInvalidated) {
                 // The OwnerWasInvalidated callback is synchronous. We don't want to call the block from within it
                 // because that can trigger re-entrancy bugs in WebKit.
                 // FIXME: It would be even better if GenericCallback did this for us.
-                dispatch_async(dispatch_get_main_queue(), [completionHandler, error] {
-                    completionHandler(nil, error.get());
+                dispatch_async(dispatch_get_main_queue(), [handler, error] {
+                    auto rawHandler = (void (^)(id, NSError *))handler.get();
+                    rawHandler(nil, error.get());
                 });
                 return;
             }
 
-            completionHandler(nil, error.get());
+            auto rawHandler = (void (^)(id, NSError *))handler.get();
+            rawHandler(nil, error.get());
             return;
         }
 
+        auto rawHandler = (void (^)(id, NSError *))handler.get();
         if (!serializedScriptValue) {
-            completionHandler(nil, createNSError(WKErrorJavaScriptExceptionOccurred).get());
+            rawHandler(nil, createNSError(WKErrorJavaScriptExceptionOccurred).get());
             return;
         }
 
@@ -604,7 +605,7 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
         JSValueRef valueRef = serializedScriptValue->deserialize([context JSGlobalContextRef], 0);
         JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:context.get()];
 
-        completionHandler([value toObject], nil);
+        rawHandler([value toObject], nil);
     });
 }
 
