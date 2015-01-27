@@ -75,6 +75,7 @@ developerExtrasEnabled initial=false
 javaScriptExperimentsEnabled initial=false
 scriptMarkupEnabled initial=true
 needsSiteSpecificQuirks initial=false
+featureCounterEnabled initial=false
 webArchiveDebugModeEnabled initial=false, conditional=WEB_ARCHIVE
 localFileContentSniffingEnabled initial=false
 offlineWebApplicationCacheEnabled initial=false

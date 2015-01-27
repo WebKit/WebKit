@@ -41,6 +41,7 @@ typedef NS_ENUM(NSInteger, _WKStorageBlockingPolicy) {
 
 // FIXME: This property should not have the verb "is" in it.
 @property (nonatomic, setter=_setTelephoneNumberDetectionIsEnabled:) BOOL _telephoneNumberDetectionIsEnabled;
+@property (nonatomic, setter=_setFeatureCounterEnabled:) BOOL _featureCounterEnabled WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 @property (nonatomic, setter=_setStorageBlockingPolicy:) _WKStorageBlockingPolicy _storageBlockingPolicy;
 
 @property (nonatomic, setter=_setCompositingBordersVisible:) BOOL _compositingBordersVisible;

@@ -72,7 +72,6 @@
     <ClCompile Include="..\wtf\dtoa\strtod.cc" />
     <ClCompile Include="..\wtf\FastBitVector.cpp" />
     <ClCompile Include="..\wtf\FastMalloc.cpp" />
-    <ClCompile Include="..\wtf\FeatureCounter.cpp" />
     <ClCompile Include="..\wtf\FilePrintStream.cpp" />
     <ClCompile Include="..\wtf\FunctionDispatcher.cpp" />
     <ClCompile Include="..\wtf\gobject\GlibUtilities.cpp">
@@ -195,7 +194,6 @@
     <ClInclude Include="..\wtf\dtoa\utils.h" />
     <ClInclude Include="..\wtf\FastBitVector.h" />
     <ClInclude Include="..\wtf\FastMalloc.h" />
-    <ClInclude Include="..\wtf\FeatureCounter.h" />
     <ClInclude Include="..\wtf\FeatureDefines.h" />
     <ClInclude Include="..\wtf\FilePrintStream.h" />
     <ClInclude Include="..\wtf\FlipBytes.h" />

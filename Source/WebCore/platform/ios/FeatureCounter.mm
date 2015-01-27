@@ -23,17 +23,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FeatureCounter_h
-#define FeatureCounter_h
+#import "config.h"
+#import "FeatureCounter.h"
 
-namespace WTF {
+#if PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
+#import <AppSupport/CPAggregateDictionary.h>
 
-WTF_EXPORT_PRIVATE void incrementFeatureCounterKey(const char* const key);
-WTF_EXPORT_PRIVATE void setFeatureCounterKey(const char* const key, int64_t value);
+namespace WebCore {
 
-#define FEATURE_COUNTER_INCREMENT_KEY(key)   WTF::incrementFeatureCounterKey(key)
-#define FEATURE_COUNTER_SET_KEY(key, value)  WTF::setFeatureCounterKey(key, value)
+void FeatureCounter::incrementKey(Page* page, const char* const key)
+{
+    if (!shouldUseForPage(page))
+        return;
 
-} // namespace WTF
+    NSString *nsKey = [[NSString alloc] initWithCharactersNoCopy:reinterpret_cast<unichar*>(const_cast<char*>(key)) length:strlen(key) freeWhenDone:NO];
+    [[CPAggregateDictionary sharedAggregateDictionary] incrementKey:nsKey];
+}
 
-#endif // FeatureCounter_h
+void FeatureCounter::setKey(Page* page, const char* const key, int64_t value)
+{
+    if (!shouldUseForPage(page))
+        return;
+
+    NSString *nsKey = [[NSString alloc] initWithCharactersNoCopy:reinterpret_cast<unichar*>(const_cast<char*>(key)) length:strlen(key) freeWhenDone:NO];
+    [[CPAggregateDictionary sharedAggregateDictionary] setValue:value forScalarKey:nsKey];
+}
+
+} // namespace WebCore
+
+#endif // PLATFORM(IOS) && USE(APPLE_INTERNAL_SDK)
+

@@ -23,24 +23,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FeatureCounter.h"
+#ifndef FeatureCounter_h
+#define FeatureCounter_h
 
-namespace WTF {
+#include "FeatureCounterKeys.h"
 
-#if !PLATFORM(IOS)
+namespace WebCore {
 
-void incrementFeatureCounterKey(const char* const key)
-{
-    UNUSED_PARAM(key);
-}
+class Page;
 
-void setFeatureCounterKey(const char* const key, int64_t value)
-{
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(value);
-}
+class FeatureCounter {
+public:
+    static void incrementKey(Page*, const char* const key);
+    static void setKey(Page*, const char* const key, int64_t value);
 
-#endif
+private:
+    static bool shouldUseForPage(Page*);
+};
 
-} // namespace WTF
+} // namespace WebCore
+
+#define FEATURE_COUNTER_INCREMENT_KEY(page, key)   WebCore::FeatureCounter::incrementKey(page, key)
+#define FEATURE_COUNTER_SET_KEY(page, key, value)  WebCore::FeatureCounter::setKey(page, key, value)
+
+#endif // FeatureCounter_h

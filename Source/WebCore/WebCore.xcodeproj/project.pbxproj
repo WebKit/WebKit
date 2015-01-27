@@ -1578,6 +1578,9 @@
 		45BAC2B01360BBAB005DA258 /* IconURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 45BAC2AF1360BBAB005DA258 /* IconURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45FEA5CF156DDE8C00654101 /* Decimal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 45FEA5CD156DDE8C00654101 /* Decimal.cpp */; };
 		45FEA5D0156DDE8C00654101 /* Decimal.h in Headers */ = {isa = PBXBuildFile; fileRef = 45FEA5CE156DDE8C00654101 /* Decimal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		467438541A421330000494FB /* FeatureCounter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 467438531A421330000494FB /* FeatureCounter.mm */; };
+		46779CE21A40B97200B6864E /* FeatureCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46779CE01A40B97100B6864E /* FeatureCounter.cpp */; };
+		46779CE31A40B97200B6864E /* FeatureCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 46779CE11A40B97200B6864E /* FeatureCounter.h */; };
 		4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4689F1AE1267BAE100E8D380 /* FileMetadata.h */; };
 		46BD16E30B279473001F0839 /* noneCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46BD16E20B279473001F0839 /* noneCursor.png */; };
 		46D4F2490AF97E810035385A /* cellCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46D4F2460AF97E810035385A /* cellCursor.png */; };
@@ -8643,6 +8646,9 @@
 		45BAC2AF1360BBAB005DA258 /* IconURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconURL.h; sourceTree = "<group>"; };
 		45FEA5CD156DDE8C00654101 /* Decimal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Decimal.cpp; sourceTree = "<group>"; };
 		45FEA5CE156DDE8C00654101 /* Decimal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decimal.h; sourceTree = "<group>"; };
+		467438531A421330000494FB /* FeatureCounter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FeatureCounter.mm; path = ios/FeatureCounter.mm; sourceTree = "<group>"; };
+		46779CE01A40B97100B6864E /* FeatureCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeatureCounter.cpp; sourceTree = "<group>"; };
+		46779CE11A40B97200B6864E /* FeatureCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureCounter.h; sourceTree = "<group>"; };
 		4689F1AE1267BAE100E8D380 /* FileMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMetadata.h; path = platform/FileMetadata.h; sourceTree = "<group>"; };
 		46BD16E20B279473001F0839 /* noneCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noneCursor.png; sourceTree = "<group>"; };
 		46D4F2460AF97E810035385A /* cellCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cellCursor.png; sourceTree = "<group>"; };
@@ -18506,6 +18512,7 @@
 				3140379A124BEA7F00AF40E4 /* DeviceOrientationClientIOS.mm */,
 				0FDA7C22188330A900C954B5 /* DragImageIOS.mm */,
 				26F40D4914904A6300CA67C4 /* EventLoopIOS.mm */,
+				467438531A421330000494FB /* FeatureCounter.mm */,
 				26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */,
 				26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */,
 				265541371489811C000DFC5D /* KeyEventCodesIOS.h */,
@@ -21360,6 +21367,8 @@
 				A7CFB3CF0B7ED10A0070C32D /* DragImage.cpp */,
 				A7CFB3D00B7ED10A0070C32D /* DragImage.h */,
 				1CA19E150DC255CA0065A994 /* EventLoop.h */,
+				46779CE01A40B97100B6864E /* FeatureCounter.cpp */,
+				46779CE11A40B97200B6864E /* FeatureCounter.h */,
 				934FE9E40B5CA539003E4A73 /* FileChooser.cpp */,
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
 				2EF1BFE8121C9F4200C27627 /* FileStream.cpp */,
@@ -23596,6 +23605,7 @@
 				A80E6D040A1989CA007FB8C5 /* Counter.h in Headers */,
 				BC5EB9790E82069200B25965 /* CounterContent.h in Headers */,
 				BC5EB9510E82056B00B25965 /* CounterDirectives.h in Headers */,
+				46779CE31A40B97200B6864E /* FeatureCounter.h in Headers */,
 				9392F14C0AD1861B00691BD4 /* CounterNode.h in Headers */,
 				D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */,
 				514C766E0CE923A1007EF3CD /* Credential.h in Headers */,
@@ -28483,6 +28493,7 @@
 				77A17AA612F28B2A004E02F6 /* JSOESVertexArrayObject.cpp in Sources */,
 				FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */,
 				FDA9326616703BA9008982DC /* JSOfflineAudioContext.cpp in Sources */,
+				46779CE21A40B97200B6864E /* FeatureCounter.cpp in Sources */,
 				FDEA6242152102E200479DF0 /* JSOscillatorNode.cpp in Sources */,
 				FDBD1DFC167FE27D0051A11E /* JSOscillatorNodeCustom.cpp in Sources */,
 				1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */,
@@ -29419,6 +29430,7 @@
 				CD3A496417A9D01B00274E42 /* SourceBufferList.cpp in Sources */,
 				CDC8B5AA18047FF10016E685 /* SourceBufferPrivateAVFObjC.mm in Sources */,
 				84A81F410FC7E02700955300 /* SourceGraphic.cpp in Sources */,
+				467438541A421330000494FB /* FeatureCounter.mm in Sources */,
 				076306D717E149CF005A7C4E /* SourceInfo.cpp in Sources */,
 				D01A27AD10C9BFD800026A42 /* SpaceSplitString.cpp in Sources */,
 				626CDE0E1140424C001E5A68 /* SpatialNavigation.cpp in Sources */,

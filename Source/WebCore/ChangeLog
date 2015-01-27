@@ -1,3 +1,42 @@
+2015-01-27  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r177455
+
+    2014-12-17  Chris Dumez  <cdumez@apple.com>
+
+            [iOS] Make it possible to toggle FeatureCounter support at runtime
+            https://bugs.webkit.org/show_bug.cgi?id=139688
+            <rdar://problem/19266254>
+
+            Reviewed by Andreas Kling.
+
+            Make it possible to toggle FeatureCounter support at runtime by adding
+            a setting (disabled by default) and moving the API to a new
+            FeatureCounter class under WebCore/plattorm which only logs if the
+            setting is enabled. For privacy reasons, FeatureCounter logging is also
+            disabled for private / ephemeral sessions.
+
+            No new tests, no behavior change.
+
+            * CMakeLists.txt:
+            * Configurations/WebCore.xcconfig:
+            * WebCore.vcxproj/WebCore.vcxproj:
+            * WebCore.vcxproj/WebCore.vcxproj.filters:
+            * WebCore.xcodeproj/project.pbxproj:
+            * history/PageCache.cpp:
+            (WebCore::logCanCacheFrameDecision):
+            (WebCore::logCanCachePageDecision):
+            * page/Settings.in:
+            * platform/FeatureCounter.cpp: Renamed from Source/WTF/wtf/FeatureCounter.cpp.
+            (WebCore::FeatureCounter::shouldUseForPage):
+            (WebCore::FeatureCounter::incrementKey):
+            (WebCore::FeatureCounter::setKey):
+            * platform/FeatureCounter.h: Renamed from Source/WTF/wtf/FeatureCounter.h.
+            * platform/FeatureCounterKeys.h:
+            * platform/ios/FeatureCounter.mm: Renamed from Source/WTF/wtf/ios/FeatureCounter.mm.
+            (WebCore::FeatureCounter::incrementKey):
+            (WebCore::FeatureCounter::setKey):
+
 2015-01-26  Lucas Forschler  <lforschler@apple.com>
 
         Merge r177328

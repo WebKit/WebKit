@@ -1977,6 +1977,7 @@ set(WebCore_SOURCES
     platform/DisplaySleepDisabler.cpp
     platform/DragData.cpp
     platform/DragImage.cpp
+    platform/FeatureCounter.cpp
     platform/FileChooser.cpp
     platform/FileStream.cpp
     platform/FileSystem.cpp

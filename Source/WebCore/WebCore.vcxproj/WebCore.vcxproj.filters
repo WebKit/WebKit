@@ -1101,6 +1101,9 @@
     <ClCompile Include="..\platform\DragImage.cpp">
       <Filter>platform</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\FeatureCounter.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\FileChooser.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -8155,6 +8158,9 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\DragImage.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\FeatureCounter.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\EventLoop.h">

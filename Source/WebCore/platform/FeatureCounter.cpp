@@ -23,26 +23,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "FeatureCounter.h"
+#include "config.h"
+#include "FeatureCounter.h"
 
-#if PLATFORM(IOS)
-#import <AppSupport/CPAggregateDictionary.h>
+#include "Page.h"
+#include "Settings.h"
 
-namespace WTF {
+namespace WebCore {
 
-void incrementFeatureCounterKey(const char* const key)
+bool FeatureCounter::shouldUseForPage(Page* page)
 {
-    NSString *nsKey = [[NSString alloc] initWithCharactersNoCopy:reinterpret_cast<unichar*>(const_cast<char*>(key)) length:strlen(key) freeWhenDone:NO];
-    [[CPAggregateDictionary sharedAggregateDictionary] incrementKey:nsKey];
+    if (!page)
+        return false;
+
+    // Log only if the setting is enabled.
+    if (!page->settings().featureCounterEnabled())
+        return false;
+
+    // Do not log if this is a private session.
+    if (page->usesEphemeralSession())
+        return false;
+
+    return true;
 }
 
-void setFeatureCounterKey(const char* const key, int64_t value)
+#if !PLATFORM(IOS) || !USE(APPLE_INTERNAL_SDK)
+
+void FeatureCounter::incrementKey(Page* page, const char* const key)
 {
-    NSString *nsKey = [[NSString alloc] initWithCharactersNoCopy:reinterpret_cast<unichar*>(const_cast<char*>(key)) length:strlen(key) freeWhenDone:NO];
-    [[CPAggregateDictionary sharedAggregateDictionary] setValue:value forScalarKey:nsKey];
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(key);
 }
 
-} // namespace WTF
+void FeatureCounter::setKey(Page* page, const char* const key, int64_t value)
+{
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(value);
+}
 
-#endif // PLATFORM(IOS)
+#endif
+
+} // namespace WebCore

@@ -24,7 +24,6 @@ set(WTF_HEADERS
     DisallowCType.h
     DoublyLinkedList.h
     FastMalloc.h
-    FeatureCounter.h
     FeatureDefines.h
     FilePrintStream.h
     FlipBytes.h
@@ -159,7 +158,6 @@ set(WTF_SOURCES
     DecimalNumber.cpp
     FastBitVector.cpp
     FastMalloc.cpp
-    FeatureCounter.cpp
     FilePrintStream.cpp
     FunctionDispatcher.cpp
     GregorianDateTime.cpp

@@ -1,3 +1,22 @@
+2015-01-27  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r177455
+
+    2014-12-17  Chris Dumez  <cdumez@apple.com>
+
+            [iOS] Make it possible to toggle FeatureCounter support at runtime
+            https://bugs.webkit.org/show_bug.cgi?id=139688
+            <rdar://problem/19266254>
+
+            Reviewed by Andreas Kling.
+
+            Remove FeatureCounter API from WTF and move it to WebCore/platform
+            instead so that it can log conditionally based on a WebCore setting.
+
+            * WTF.vcxproj/WTF.vcxproj:
+            * WTF.xcodeproj/project.pbxproj:
+            * wtf/CMakeLists.txt:
+
 2015-01-26  Lucas Forschler  <lforschler@apple.com>
 
         Merge r177328

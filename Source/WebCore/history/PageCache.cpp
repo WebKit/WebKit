@@ -36,7 +36,7 @@
 #include "DeviceOrientationController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "FeatureCounterKeys.h"
+#include "FeatureCounter.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameLoaderStateMachine.h"
@@ -101,7 +101,7 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
     PCLOG("+---");
     if (!frame->loader().documentLoader()) {
         PCLOG("   -There is no DocumentLoader object");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureNoDocumentLoaderKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureNoDocumentLoaderKey);
         return 1 << NoDocumentLoader;
     }
 
@@ -115,7 +115,7 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
     unsigned rejectReasons = 0;
     if (!frame->loader().documentLoader()->mainDocumentError().isNull()) {
         PCLOG("   -Main document has an error");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureMainDocumentErrorKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureMainDocumentErrorKey);
 #if !PLATFORM(IOS)
         rejectReasons |= 1 << MainDocumentError;
 #else
@@ -127,21 +127,21 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
     }
     if (frame->loader().documentLoader()->substituteData().isValid() && frame->loader().documentLoader()->substituteData().failingURL().isEmpty()) {
         PCLOG("   -Frame is an error page");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureIsErrorPageKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureIsErrorPageKey);
         rejectReasons |= 1 << IsErrorPage;
     }
     if (frame->loader().subframeLoader().containsPlugins() && !frame->page()->settings().pageCacheSupportsPlugins()) {
         PCLOG("   -Frame contains plugins");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureHasPlugins);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureHasPlugins);
         rejectReasons |= 1 << HasPlugins;
     }
     if (frame->document()->url().protocolIs("https")
         && (frame->loader().documentLoader()->response().cacheControlContainsNoCache()
             || frame->loader().documentLoader()->response().cacheControlContainsNoStore())) {
         if (frame->loader().documentLoader()->response().cacheControlContainsNoCache())
-            FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureHTTPSNoCacheKey);
+            FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureHTTPSNoCacheKey);
         if (frame->loader().documentLoader()->response().cacheControlContainsNoStore())
-            FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureHTTPSNoStoreKey);
+            FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureHTTPSNoStoreKey);
         PCLOG("   -Frame is HTTPS, and cache control prohibits caching or storing");
         rejectReasons |= 1 << IsHttpsAndCacheControlled;
     }
@@ -157,50 +157,50 @@ static unsigned logCanCacheFrameDecision(Frame* frame, int indentLevel)
 #if ENABLE(SQL_DATABASE)
     if (DatabaseManager::manager().hasOpenDatabases(frame->document())) {
         PCLOG("   -Frame has open database handles");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureHasOpenDatabasesKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureHasOpenDatabasesKey);
         rejectReasons |= 1 << HasDatabaseHandles;
     }
 #endif
 #if ENABLE(SHARED_WORKERS)
     if (SharedWorkerRepository::hasSharedWorkers(frame->document())) {
         PCLOG("   -Frame has associated SharedWorkers");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureHasSharedWorkersKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureHasSharedWorkersKey);
         rejectReasons |= 1 << HasSharedWorkers;
     }
 #endif
     if (!frame->loader().history().currentItem()) {
         PCLOG("   -No current history item");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureNoCurrentHistoryItemKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureNoCurrentHistoryItemKey);
         rejectReasons |= 1 << NoHistoryItem;
     }
     if (frame->loader().quickRedirectComing()) {
         PCLOG("   -Quick redirect is coming");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureQuirkRedirectComingKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureQuirkRedirectComingKey);
         rejectReasons |= 1 << QuickRedirectComing;
     }
     if (frame->loader().documentLoader()->isLoadingInAPISense()) {
         PCLOG("   -DocumentLoader is still loading in API sense");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureLoadingAPISenseKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureLoadingAPISenseKey);
         rejectReasons |= 1 << IsLoadingInAPISense;
     }
     if (frame->loader().documentLoader()->isStopping()) {
         PCLOG("   -DocumentLoader is in the middle of stopping");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureDocumentLoaderStoppingKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureDocumentLoaderStoppingKey);
         rejectReasons |= 1 << IsStopping;
     }
     if (!frame->document()->canSuspendActiveDOMObjects()) {
         PCLOG("   -The document cannot suspend its active DOM Objects");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureCannotSuspendActiveDOMObjectsKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureCannotSuspendActiveDOMObjectsKey);
         rejectReasons |= 1 << CannotSuspendActiveDOMObjects;
     }
     if (!frame->loader().documentLoader()->applicationCacheHost()->canCacheInPageCache()) {
         PCLOG("   -The DocumentLoader uses an application cache");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureApplicationCacheKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureApplicationCacheKey);
         rejectReasons |= 1 << DocumentLoaderUsesApplicationCache;
     }
     if (!frame->loader().client().canCachePage()) {
         PCLOG("   -The client says this frame cannot be cached");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureDeniedByClientKey);
+        FEATURE_COUNTER_INCREMENT_KEY(frame->page(), FeatureCounterPageCacheFailureDeniedByClientKey);
         rejectReasons |= 1 << ClientDeniesCaching;
     }
 
@@ -252,45 +252,45 @@ static void logCanCachePageDecision(Page* page)
 #if ENABLE(DEVICE_ORIENTATION) && !PLATFORM(IOS)
     if (DeviceMotionController::isActiveAt(page)) {
         PCLOG("   -Page is using DeviceMotion");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureDeviceMotionKey);
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureDeviceMotionKey);
         rejectReasons |= 1 << UsesDeviceMotion;
     }
     if (DeviceOrientationController::isActiveAt(page)) {
         PCLOG("   -Page is using DeviceOrientation");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureDeviceOrientationKey);
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureDeviceOrientationKey);
         rejectReasons |= 1 << UsesDeviceOrientation;
     }
 #endif
 #if ENABLE(PROXIMITY_EVENTS)
     if (DeviceProximityController::isActiveAt(page)) {
         PCLOG("   -Page is using DeviceProximity");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureDeviceProximityKey);
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureDeviceProximityKey);
         rejectReasons |= 1 << UsesDeviceMotion;
     }
 #endif
     FrameLoadType loadType = page->mainFrame().loader().loadType();
     if (loadType == FrameLoadType::Reload) {
         PCLOG("   -Load type is: Reload");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureReloadKey);
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureReloadKey);
         rejectReasons |= 1 << IsReload;
     }
     if (loadType == FrameLoadType::ReloadFromOrigin) {
         PCLOG("   -Load type is: Reload from origin");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureReloadFromOriginKey);
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureReloadFromOriginKey);
         rejectReasons |= 1 << IsReloadFromOrigin;
     }
     if (loadType == FrameLoadType::Same) {
         PCLOG("   -Load type is: Same");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureSameLoadKey);
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureSameLoadKey);
         rejectReasons |= 1 << IsSameLoad;
     }
     
     if (rejectReasons) {
         PCLOG(" Page CANNOT be cached\n--------");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheFailureKey);
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureKey);
     } else {
         PCLOG(" Page CAN be cached\n--------");
-        FEATURE_COUNTER_INCREMENT_KEY(FeatureCounterPageCacheSuccessKey);
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheSuccessKey);
     }
 }
 

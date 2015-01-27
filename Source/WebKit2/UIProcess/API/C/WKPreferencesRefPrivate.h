@@ -121,6 +121,10 @@ WK_EXPORT void WKPreferencesSetFTPDirectoryTemplatePath(WKPreferencesRef prefere
 WK_EXPORT WKStringRef WKPreferencesCopyFTPDirectoryTemplatePath(WKPreferencesRef preferences);
 
 // Defaults to false.
+WK_EXPORT void WKPreferencesSetFeatureCounterEnabled(WKPreferencesRef preferences, bool enabled);
+WK_EXPORT bool WKPreferencesGetFeatureCounterEnabled(WKPreferencesRef preferences);
+
+// Defaults to false.
 WK_EXPORT void WKPreferencesSetWebArchiveDebugModeEnabled(WKPreferencesRef preferences, bool enabled);
 WK_EXPORT bool WKPreferencesGetWebArchiveDebugModeEnabled(WKPreferencesRef preferences);
 
