@@ -180,8 +180,10 @@ inline void FETurbulence::initPaint(PaintingData& paintingData)
         for (int i = 0; i < s_blockSize; ++i) {
             paintingData.latticeSelector[i] = i;
             gradient = paintingData.gradient[channel][i];
-            gradient[0] = static_cast<float>((paintingData.random() % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
-            gradient[1] = static_cast<float>((paintingData.random() % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
+            do {
+                gradient[0] = static_cast<float>((paintingData.random() % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
+                gradient[1] = static_cast<float>((paintingData.random() % (2 * s_blockSize)) - s_blockSize) / s_blockSize;
+            } while (!gradient[0] && !gradient[1]);
             normalizationFactor = sqrtf(gradient[0] * gradient[0] + gradient[1] * gradient[1]);
             gradient[0] /= normalizationFactor;
             gradient[1] /= normalizationFactor;

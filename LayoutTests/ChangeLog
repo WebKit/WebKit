@@ -1,3 +1,17 @@
+2015-01-26  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
+
+        Apply feTurbulence spec change to fix zero length vector generation
+        https://bugs.webkit.org/show_bug.cgi?id=140812
+
+        Reviewed by Darin Adler.
+
+        Ref test that generates a turbulence image which is then coloured black
+        and alpha min/maxxed (>0 becomes 1, 0 stays zero). This allows holes
+        caused by zero length vectors to be easily identified.
+
+        * svg/filters/feTurbulence_bad_seeds-expected.html: Added.
+        * svg/filters/feTurbulence_bad_seeds.html: Added.
+
 2015-01-26  Sylvain Galineau  <galineau@adobe.com>
 
         The computed value of line-height:normal is incorrect
