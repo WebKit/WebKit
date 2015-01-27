@@ -1,5 +1,19 @@
 2015-01-27  Benjamin Poulain  <benjamin@webkit.org>
 
+        Import the layout test style-sharing-type-and-readonly.html from blink
+        https://bugs.webkit.org/show_bug.cgi?id=125280
+
+        Reviewed by Sergio Villar Senin.
+
+        I fixed the bug a while ago but having one more test seems valuable.
+        This test is from blink: https://codereview.chromium.org/27033011
+        by Elliott Sprehn.
+
+        * fast/css/style-sharing-type-and-readonly-expected.txt: Added.
+        * fast/css/style-sharing-type-and-readonly.html: Added.
+
+2015-01-27  Benjamin Poulain  <benjamin@webkit.org>
+
         Import some extra tests for r179132
         https://bugs.webkit.org/show_bug.cgi?id=140930
 
