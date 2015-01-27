@@ -14,7 +14,7 @@ abbr:not([title])
       AXRole: 
       
 abbr[title]
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 address
       AXRole: AXLandmarkContentInfo
@@ -53,7 +53,7 @@ del:not([datetime])
       AXRole: 
       
 del[datetime]
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 dfn
       AXRole: AXDefinition
@@ -206,7 +206,7 @@ ins:not([datetime])
       AXRole: 
       
 ins[datetime]
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 map
       AXRole: 
@@ -230,13 +230,13 @@ mfrac
       AXRole: AXUnknown
       
 mi
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mn
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mo
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mroot
       AXRole: AXUnknown
@@ -248,10 +248,10 @@ mrow
       AXRole: AXGroup
       
 ms
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mtext
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 mtable
       AXRole: AXTable
@@ -326,7 +326,7 @@ span:not([onclick])
       AXRole: 
       
 span[onclick]
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 strong
       AXRole: 
@@ -380,7 +380,7 @@ time:not([datetime])
       AXRole: 
       
 time[datetime]
-      AXRole: AXUnknown
+      AXRole: AXStatic
       
 ul
       AXRole: AXList

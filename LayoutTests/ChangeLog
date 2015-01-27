@@ -1,3 +1,17 @@
+2015-01-27  Michal Poteralski  <m.poteralski@samsung.com>
+
+        [EFL] AX: Update test expectations for test related with AXRole.
+        https://bugs.webkit.org/show_bug.cgi?id=140933
+
+        Unreviewed EFL gardening.
+
+        roles-exposed.html's test expectation changed: for specified elements
+        AXRole value should NOT be equal AXUnknown but AXStatic because for ATK
+        version 2.15.2 there is new ATK_ROLE_STATIC role which should be used
+        instead of ATK_ROLE_UNKNOWN.
+
+        * platform/efl/accessibility/roles-exposed-expected.txt:
+
 2015-01-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline several CSS tests after r179168.
