@@ -110,6 +110,14 @@ using namespace WebCore;
 - (void)_clearImmediateActionState
 {
     [_webView _clearTextIndicator];
+    DDActionsManager *actionsManager = [getDDActionsManagerClass() sharedManager];
+    if ([actionsManager respondsToSelector:@selector(requestBubbleClosureUnanchorOnFailure:)])
+        [actionsManager requestBubbleClosureUnanchorOnFailure:YES];
+
+    if (_currentActionContext && _hasActivatedActionContext) {
+        _hasActivatedActionContext = NO;
+        [getDDActionsManagerClass() didUseActions];
+    }
 
     _type = WebImmediateActionNone;
     _currentActionContext = nil;
