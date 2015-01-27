@@ -1,3 +1,32 @@
+2015-01-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        Import some extra tests for r179132
+        https://bugs.webkit.org/show_bug.cgi?id=140930
+
+        Reviewed by Sam Weinig.
+
+        Add some tests that were done from previous attempts at fixing
+        the bug.
+
+        * fast/dom/SelectorAPI/tag-case-insensitive-expected.txt: Added.
+        * fast/dom/SelectorAPI/tag-case-insensitive.html: Added.
+        * fast/dom/SelectorAPI/tag-case-sensitive-expected.txt: Added.
+        * fast/dom/SelectorAPI/tag-case-sensitive.xhtml: Added.
+        * svg/css/case-sensitive-tags-expected.txt: Added.
+        * svg/css/case-sensitive-tags.html: Added.
+        * svg/dom/tag-case-sensitive-svg-in-html-expected.txt: Added.
+        * svg/dom/tag-case-sensitive-svg-in-html.html: Added.
+        Those tests were created by Alexandru Chiculita for
+        https://bugs.webkit.org/show_bug.cgi?id=83438
+
+        The patch was rejected at the time due to the perf impact.
+        That has been solved since then by the CSS JIT.
+
+        * svg/css/foreignObject-case-styling-expected.html: Added.
+        * svg/css/foreignObject-case-styling.html: Added.
+        This test is from Boris Zbarsky when he reported
+        https://bugs.webkit.org/show_bug.cgi?id=79444.
+
 2015-01-27  Daniel Bates  <dabates@apple.com>
 
         [iOS] Update test results and test expectations
