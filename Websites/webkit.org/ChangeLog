@@ -1,3 +1,17 @@
+2015-01-27  Daniel Bates  <dabates@apple.com>
+
+        Update Xcode requirement and add instructions to build, run, and debug WebKit for iOS Simulator
+
+        Reviewed by David Kilzer.
+
+        * building/build.html: Added instructions to build WebKit for iOS Simulator.
+        * building/debug.html: Added some instructions to debug the UIProcess and WebProcess
+        in the iOS Simulator using command line tools. We should look to add Xcode instructions
+        and simplify these steps once we teach debug-safari about the iOS Simulator.
+        * building/run.html: Added remark to run Safari in the iOS Simulator.
+        * building/tools.html: Require Xcode 6.1.1 (for the iOS 8.1 SDK) to build for iOS Simulator.
+        * css/main.css: Define the .ios-instructions class with the same style as other .*-instructions classes.
+
 2014-09-27  Dan Bernstein  <mitz@apple.com>
 
         WebKit top of tree sources won't build in 10.9 w/ Xcode 6.0.1

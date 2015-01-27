@@ -13,6 +13,14 @@ installed</a> and that you have a copy of the <a href="checkout.html">WebKit sou
 <p>Building on Windows requires a few more steps. For details, see <a href="http://trac.webkit.org/wiki/BuildingOnWindows">http://trac.webkit.org/wiki/BuildingOnWindows</a>.</p>
 </div>
 
+<div class="ios-instructions">
+<h4>iOS Simulator</h4>
+<p>The first time after you install a new Xcode, you will need to run <code>sudo Tools/Scripts/configure-xcode-for-ios-development</code> in the Terminal to enable Xcode to build command line tools for iOS Simulator. Otherwise you will see the error message:</p>
+<p class="code">target specifies product type 'com.apple.product-type.tool', but there's no such product type for the 'iphonesimulator' platform.</p>
+<p>when building target JSCLLIntOffsetsExtractor of project JavaScriptCore.</p>
+<p>Then follow the instructions below, passing the <code>--ios-simulator</code> option, to build WebKit for your first build and all subsequent builds.</p>
+</div>
+
 <ol>
 <li><p>Run the <code>build-webkit</code> <a href="/coding/scripts.html">script</a>
 to build WebKit.</p>
