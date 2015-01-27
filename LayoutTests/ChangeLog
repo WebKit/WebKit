@@ -1,3 +1,40 @@
+2015-01-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unskipping more tests after correcting baselines for Windows widgets.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/events/context-no-deselect-expected.png: Added.
+        * platform/win/fast/events/context-no-deselect-expected.txt: Added.
+        * platform/win/fast/events/dropzone-005-expected.txt: Added.
+        * platform/win/fast/events/ime-composition-events-001-expected.txt:
+        * platform/win/fast/events/key-events-in-input-button-expected.txt: Added.
+        * platform/win/fast/events/mouseup-from-button2-expected.txt: Added.
+        * platform/win/fast/flexbox: Added.
+        * platform/win/fast/flexbox/clear-overflow-before-scroll-update-expected.txt: Added.
+        * platform/win/fast/frames/flattening: Added.
+        * platform/win/fast/frames/flattening/frameset-flattening-simple-expected.txt: Added.
+        * platform/win/fast/multicol/client-rects-expected.png: Added.
+        * platform/win/fast/multicol/client-rects-expected.txt: Added.
+        * platform/win/fast/multicol/client-rects-spanners-complex-expected.png: Added.
+        * platform/win/fast/multicol/client-rects-spanners-complex-expected.txt: Added.
+        * platform/win/fast/multicol/client-rects-spanners-expected.png: Added.
+        * platform/win/fast/multicol/client-rects-spanners-expected.txt: Added.
+        * platform/win/fast/multicol/newmulticol: Added.
+        * platform/win/fast/multicol/newmulticol/client-rects-expected.png: Added.
+        * platform/win/fast/multicol/newmulticol/client-rects-expected.txt: Added.
+        * platform/win/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/win/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/win/fast/parser/bad-xml-slash-expected.txt: Added.
+        * platform/win/fast/parser/document-write-option-expected.txt: Added.
+        * platform/win/fast/repaint/control-clip-expected.txt:
+        * platform/win/fast/replaced/object-with-embed-url-param-expected.txt: Added.
+        * platform/win/fast/replaced/replaced-breaking-expected.txt: Added.
+        * platform/win/fast/replaced/replaced-breaking-mixture-expected.txt: Added.
+        * platform/win/fast/replaced/width100percent-button-expected.txt:
+        * platform/win/fast/replaced/width100percent-checkbox-expected.txt: Added.
+        * platform/win/fast/replaced/width100percent-menulist-expected.txt: Added.
+        * platform/win/fast/replaced/width100percent-radio-expected.txt: Added.
+
 2015-01-26  Nikos Andronikos  <nikos.andronikos-webkit@cisra.canon.com.au>
 
         Apply feTurbulence spec change to fix zero length vector generation
