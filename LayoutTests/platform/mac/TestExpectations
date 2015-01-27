@@ -1199,10 +1199,6 @@ webkit.org/b/138806 [ Yosemite+ ] media/track/track-in-band-cues-added-once.html
 # FIXME: Needs bugzilla (<rdar://problem/16801910>)
 [ Yosemite+ ] fast/replaced/width100percent-textarea.html [ Failure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/16801814>)
-[ Yosemite ] media/controls-after-reload.html [ Failure ]
-[ Yosemite ] media/controls-without-preload.html [ Failure ]
-
 # FIXME: Needs bugzilla (<rdar://problem/15992006>)
 [ Yosemite+ ] fast/text/international/text-combine-image-test.html [ Failure ]
 
@@ -1495,8 +1491,8 @@ webkit.org/b/139968 [ Mavericks+ ] svg/W3C-SVG-1.1/text-intro-05-t.svg [ Pass Fa
 webkit.org/b/139968 [ Mavericks+ ] svg/custom/svg-fonts-without-missing-glyph.xhtml [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] svg/text/text-intro-05-t.svg [ Pass Failure ]
 webkit.org/b/139968 [ Mavericks+ ] tables/mozilla/bugs/bug2479-2.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks ] media/controls-after-reload.html [ Pass Failure ]
-webkit.org/b/139968 [ Mavericks ] media/controls-without-preload.html [ Pass Failure ]
+webkit.org/b/139968 [ Mavericks+ ] media/controls-after-reload.html [ Pass Failure ]
+webkit.org/b/139968 [ Mavericks+ ] media/controls-without-preload.html [ Pass Failure ]
 
 # Tests that fail with the SVG -> OTF font converter, but are lower priority than live-on
 webkit.org/b/140537 fast/css/ex-unit-with-no-x-height.html [ Failure ]

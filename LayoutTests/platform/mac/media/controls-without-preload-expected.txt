@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 312x18
-          text run at (0,0) width 312: "The controls should not depend on preload value."
+        RenderText {#text} at (0,0) size 317x18
+          text run at (0,0) width 317: "The controls should not depend on preload value."
       RenderBlock (anonymous) at (0,34) size 784x240
         RenderText {#text} at (0,0) size 0x0
 layer at (8,42) size 320x240

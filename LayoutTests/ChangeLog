@@ -1,3 +1,13 @@
+2015-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/16801814> Media controls do not appear in 2 DRT tests
+
+        This doesn't appear to happen any more, although the tests are still flaky due to
+        flaky font metrics.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/media/controls-without-preload-expected.txt:
+
 2015-01-27  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed. Rebaseline several editing tests on Mac after r179168.
