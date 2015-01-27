@@ -237,6 +237,9 @@
     <ClCompile Include="..\disassembler\Disassembler.cpp">
       <Filter>disassembler</Filter>
     </ClCompile>
+    <ClCompile Include="..\heap\BlockAllocator.cpp">
+      <Filter>heap</Filter>
+    </ClCompile>
     <ClCompile Include="..\heap\ConservativeRoots.cpp">
       <Filter>heap</Filter>
     </ClCompile>
@@ -304,6 +307,9 @@
       <Filter>heap</Filter>
     </ClCompile>
     <ClCompile Include="..\heap\SlotVisitor.cpp">
+      <Filter>heap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\heap\SuperRegion.cpp">
       <Filter>heap</Filter>
     </ClCompile>
     <ClCompile Include="..\heap\Weak.cpp">
@@ -2042,6 +2048,9 @@
     <ClInclude Include="..\disassembler\Disassembler.h">
       <Filter>disassembler</Filter>
     </ClInclude>
+    <ClInclude Include="..\heap\BlockAllocator.h">
+      <Filter>heap</Filter>
+    </ClInclude>
     <ClInclude Include="..\heap\ConservativeRoots.h">
       <Filter>heap</Filter>
     </ClInclude>
@@ -2180,6 +2189,9 @@
     <ClInclude Include="..\heap\RecursiveAllocationScope.h">
       <Filter>heap</Filter>
     </ClInclude>
+    <ClInclude Include="..\heap\Region.h">
+      <Filter>heap</Filter>
+    </ClInclude>
     <ClInclude Include="..\heap\SlotVisitor.h">
       <Filter>heap</Filter>
     </ClInclude>
@@ -2190,6 +2202,9 @@
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\StrongInlines.h">
+      <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\heap\SuperRegion.h">
       <Filter>heap</Filter>
     </ClInclude>
     <ClInclude Include="..\heap\TinyBloomFilter.h">

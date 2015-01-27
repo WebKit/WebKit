@@ -22,7 +22,9 @@
 #ifndef MarkedBlock_h
 #define MarkedBlock_h
 
+#include "BlockAllocator.h"
 #include "HeapBlock.h"
+
 #include "HeapOperation.h"
 #include "WeakSet.h"
 #include <wtf/Bitmap.h>
@@ -111,7 +113,7 @@ namespace JSC {
         };
 
         enum DestructorType { None, ImmortalStructure, Normal };
-        static MarkedBlock* create(MarkedAllocator*, size_t blockSize, size_t cellSize, DestructorType);
+        static MarkedBlock* create(DeadBlock*, MarkedAllocator*, size_t cellSize, DestructorType);
 
         static bool isAtomAligned(const void*);
         static MarkedBlock* blockFor(const void*);
@@ -192,7 +194,7 @@ namespace JSC {
 
         typedef char Atom[atomSize];
 
-        MarkedBlock(MarkedAllocator*, size_t blockSize, size_t cellSize, DestructorType);
+        MarkedBlock(Region*, MarkedAllocator*, size_t cellSize, DestructorType);
         Atom* atoms();
         size_t atomNumber(const void*);
         template<DestructorType> void callDestructor(JSCell*);
@@ -213,7 +215,6 @@ namespace JSC {
         MarkedAllocator* m_allocator;
         BlockState m_state;
         WeakSet m_weakSet;
-        size_t m_blockSize;
     };
 
     inline MarkedBlock::FreeList::FreeList()
@@ -332,7 +333,7 @@ namespace JSC {
 
     inline size_t MarkedBlock::capacity()
     {
-        return m_blockSize;
+        return region()->blockSize();
     }
 
     inline size_t MarkedBlock::atomNumber(const void* p)

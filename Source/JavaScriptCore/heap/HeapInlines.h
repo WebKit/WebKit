@@ -240,6 +240,11 @@ inline void Heap::ascribeOwner(JSCell* intendedOwner, void* storage)
 #endif
 }
 
+inline BlockAllocator& Heap::blockAllocator()
+{
+    return m_blockAllocator;
+}
+
 #if USE(CF)
 template <typename T>
 inline void Heap::releaseSoon(RetainPtr<T>&& object)

@@ -62,7 +62,7 @@ inline void CopiedBlock::reportLiveBytes(SpinLockHolder&, JSCell* owner, CopyTok
     }
 
     if (!m_workList)
-        m_workList = std::make_unique<CopyWorkList>();
+        m_workList = std::make_unique<CopyWorkList>(Heap::heap(owner)->blockAllocator());
 
     m_workList->append(CopyWorklistItem(owner, token));
 }

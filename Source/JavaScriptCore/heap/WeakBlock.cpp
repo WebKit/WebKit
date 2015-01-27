@@ -34,13 +34,14 @@
 
 namespace JSC {
 
-WeakBlock* WeakBlock::create()
+WeakBlock* WeakBlock::create(DeadBlock* block)
 {
-    return new (NotNull, fastAlignedMalloc(blockSize, blockSize)) WeakBlock();
+    Region* region = block->region();
+    return new (NotNull, block) WeakBlock(region);
 }
 
-WeakBlock::WeakBlock()
-    : HeapBlock<WeakBlock>()
+WeakBlock::WeakBlock(Region* region)
+    : HeapBlock<WeakBlock>(region)
 {
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];

@@ -30,7 +30,6 @@
 #include "APICast.h"
 #include "CallFrame.h"
 #include "Completion.h"
-#include "GCActivityCallback.h"
 #include "InitializeThreading.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"

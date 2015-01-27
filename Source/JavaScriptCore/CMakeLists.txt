@@ -248,6 +248,7 @@ set(JavaScriptCore_SOURCES
     disassembler/LLVMDisassembler.cpp
     disassembler/X86Disassembler.cpp
 
+    heap/BlockAllocator.cpp
     heap/CodeBlockSet.cpp
     heap/ConservativeRoots.cpp
     heap/CopiedSpace.cpp
@@ -273,6 +274,7 @@ set(JavaScriptCore_SOURCES
     heap/MarkedBlock.cpp
     heap/MarkedSpace.cpp
     heap/SlotVisitor.cpp
+    heap/SuperRegion.cpp
     heap/Weak.cpp
     heap/WeakBlock.cpp
     heap/WeakHandleOwner.cpp

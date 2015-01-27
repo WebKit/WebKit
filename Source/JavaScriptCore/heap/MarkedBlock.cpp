@@ -34,20 +34,21 @@
 
 namespace JSC {
 
-MarkedBlock* MarkedBlock::create(MarkedAllocator* allocator, size_t blockSize, size_t cellSize, DestructorType destructorType)
+MarkedBlock* MarkedBlock::create(DeadBlock* block, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
 {
-    return new (NotNull, fastAlignedMalloc(MarkedBlock::blockSize, blockSize)) MarkedBlock(allocator, blockSize, cellSize, destructorType);
+    ASSERT(reinterpret_cast<size_t>(block) == (reinterpret_cast<size_t>(block) & blockMask));
+    Region* region = block->region();
+    return new (NotNull, block) MarkedBlock(region, allocator, cellSize, destructorType);
 }
 
-MarkedBlock::MarkedBlock(MarkedAllocator* allocator, size_t blockSize, size_t cellSize, DestructorType destructorType)
-    : HeapBlock<MarkedBlock>()
+MarkedBlock::MarkedBlock(Region* region, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
+    : HeapBlock<MarkedBlock>(region)
     , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
-    , m_endAtom((allocator->cellSize() ? atomsPerBlock : blockSize / atomSize) - m_atomsPerCell + 1)
+    , m_endAtom((allocator->cellSize() ? atomsPerBlock : region->blockSize() / atomSize) - m_atomsPerCell + 1)
     , m_destructorType(destructorType)
     , m_allocator(allocator)
     , m_state(New) // All cells start out unmarked.
     , m_weakSet(allocator->heap()->vm())
-    , m_blockSize(blockSize)
 {
     ASSERT(allocator);
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);

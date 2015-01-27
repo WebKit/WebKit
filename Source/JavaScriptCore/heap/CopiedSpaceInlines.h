@@ -106,12 +106,12 @@ inline void CopiedSpace::recycleEvacuatedBlock(CopiedBlock* block, HeapOperation
         else
             m_oldGen.fromSpace->remove(block);
     }
-    CopiedBlock::destroy(block);
+    m_heap->blockAllocator().deallocate(CopiedBlock::destroy(block));
 }
 
 inline void CopiedSpace::recycleBorrowedBlock(CopiedBlock* block)
 {
-    CopiedBlock::destroy(block);
+    m_heap->blockAllocator().deallocate(CopiedBlock::destroy(block));
 
     {
         MutexLocker locker(m_loanedBlocksLock);
@@ -126,7 +126,7 @@ inline void CopiedSpace::recycleBorrowedBlock(CopiedBlock* block)
 inline CopiedBlock* CopiedSpace::allocateBlockForCopyingPhase()
 {
     ASSERT(m_inCopyingPhase);
-    CopiedBlock* block = CopiedBlock::createNoZeroFill(CopiedBlock::blockSize);
+    CopiedBlock* block = CopiedBlock::createNoZeroFill(m_heap->blockAllocator().allocate<CopiedBlock>());
 
     {
         MutexLocker locker(m_loanedBlocksLock);
@@ -143,7 +143,7 @@ inline void CopiedSpace::allocateBlock()
 
     m_allocator.resetCurrentBlock();
     
-    CopiedBlock* block = CopiedBlock::create(CopiedBlock::blockSize);
+    CopiedBlock* block = CopiedBlock::create(m_heap->blockAllocator().allocate<CopiedBlock>());
         
     m_newGen.toSpace->push(block);
     m_newGen.blockFilter.add(reinterpret_cast<Bits>(block));
@@ -235,7 +235,7 @@ inline void CopiedSpace::startedCopying()
         } else {
             oversizeBlocks->remove(block);
             m_blockSet.remove(block);
-            CopiedBlock::destroy(block);
+            m_heap->blockAllocator().deallocateCustomSize(CopiedBlock::destroy(block));
         } 
         block = next;
     }

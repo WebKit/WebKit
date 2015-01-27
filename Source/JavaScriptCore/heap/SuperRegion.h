@@ -23,52 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HandleBlockInlines_h
-#define HandleBlockInlines_h
+#ifndef SuperRegion_h
+#define SuperRegion_h
 
-#include "BlockAllocator.h"
-#include "HandleBlock.h"
+#include <wtf/MetaAllocator.h>
+#include <wtf/PageBlock.h>
+#include <wtf/PageReservation.h>
 
 namespace JSC {
 
-inline HandleBlock* HandleBlock::create(DeadBlock* block, HandleSet* handleSet)
-{
-    Region* region = block->region();
-    return new (NotNull, block) HandleBlock(region, handleSet);
-}
+class VM;
 
-inline HandleBlock::HandleBlock(Region* region, HandleSet* handleSet)
-    : HeapBlock<HandleBlock>(region)
-    , m_handleSet(handleSet)
-{
-}
+class SuperRegion : public WTF::MetaAllocator {
+public:
+    SuperRegion();
+    virtual ~SuperRegion();
 
-inline char* HandleBlock::payloadEnd()
-{
-    return reinterpret_cast<char*>(this) + region()->blockSize();
-}
+protected:
+    virtual void* allocateNewSpace(size_t&) override;
+    virtual void notifyNeedPage(void*) override;
+    virtual void notifyPageIsFree(void*) override;
 
-inline char* HandleBlock::payload()
-{
-    return reinterpret_cast<char*>(this) + WTF::roundUpToMultipleOf<sizeof(double)>(sizeof(HandleBlock));
-}
+private:
+    static const uint64_t s_fixedHeapMemoryPoolSize;
 
-inline HandleNode* HandleBlock::nodes()
-{
-    return reinterpret_cast_ptr<HandleNode*>(payload());
-}
+    static void* getAlignedBase(PageReservation&);
 
-inline HandleNode* HandleBlock::nodeAtIndex(unsigned i)
-{
-    ASSERT(i < nodeCapacity());
-    return &nodes()[i];
-}
-
-inline unsigned HandleBlock::nodeCapacity()
-{
-    return (payloadEnd() - payload()) / sizeof(HandleNode);
-}
+    PageReservation m_reservation;
+    void* m_reservationBase;
+};
 
 } // namespace JSC
-    
-#endif // HandleBlockInlines_h
+
+#endif // SuperRegion_h

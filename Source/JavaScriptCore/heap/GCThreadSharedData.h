@@ -40,7 +40,6 @@ namespace JSC {
 
 class GCThread;
 class VM;
-class CopiedBlock;
 class CopiedSpace;
 class CopyVisitor;
 
