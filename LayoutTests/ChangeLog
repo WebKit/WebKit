@@ -1,3 +1,16 @@
+2015-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Document.dir should reflect the 'dir' attribute of the root html element
+        https://bugs.webkit.org/show_bug.cgi?id=140922
+
+        Reviewed by Darin Adler.
+
+        Update fast/dom/document-dir-property.html to reflect the behavior
+        change.
+
+        * fast/dom/document-dir-property-expected.txt:
+        * fast/dom/document-dir-property.html:
+
 2015-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Win] Enable JSC stress tests by default

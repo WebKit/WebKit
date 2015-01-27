@@ -1,3 +1,28 @@
+2015-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Document.dir should reflect the 'dir' attribute of the root html element
+        https://bugs.webkit.org/show_bug.cgi?id=140922
+
+        Reviewed by Darin Adler.
+
+        Document.dir should reflect the 'dir' content attribute of the root
+        <html> element as per the specification:
+        https://html.spec.whatwg.org/multipage/dom.html#dom-document-dir
+
+        Previously, WebKit was reflecting the 'dir' content attribute of the
+        body element. This patch aligns WebKit with the specification and the
+        behavior of other browsers (tested Firefox 28, IE11 and Chrome).
+
+        This patch is based on the following Blink revision by me:
+        https://src.chromium.org/viewvc/blink?revision=171734&view=revision
+
+        Test: fast/dom/document-dir-property.html
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::dir):
+        (WebCore::HTMLDocument::setDir):
+        * html/HTMLDocument.h:
+
 2015-01-26  Darin Adler  <darin@apple.com>
 
         REGRESSION (r179101): SVGUseElement::expandUseElementsInShadowTree has an object lifetime mistake

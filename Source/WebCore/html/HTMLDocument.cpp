@@ -105,17 +105,19 @@ int HTMLDocument::height()
     return frameView ? frameView->contentsHeight() : 0;
 }
 
-String HTMLDocument::dir()
+const AtomicString& HTMLDocument::dir()
 {
-    if (auto* body = bodyOrFrameset())
-        return body->fastGetAttribute(dirAttr);
-    return String();
+    auto* documentElement = this->documentElement();
+    if (!is<HTMLHtmlElement>(*documentElement))
+        return nullAtom;
+    return documentElement->fastGetAttribute(dirAttr);
 }
 
-void HTMLDocument::setDir(const String& value)
+void HTMLDocument::setDir(const AtomicString& value)
 {
-    if (auto* body = bodyOrFrameset())
-        body->setAttribute(dirAttr, value);
+    auto* documentElement = this->documentElement();
+    if (is<HTMLHtmlElement>(documentElement))
+        documentElement->setAttribute(dirAttr, value);
 }
 
 String HTMLDocument::designMode() const

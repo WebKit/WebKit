@@ -7,39 +7,42 @@ var headWriteDocumentDir = document.dir;
 </script>
 </head>
 <body>
-<div id="description"></div>
-<div id="console"></div>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-description("This tests:<br>"
-          + "Bug 9954 REGRESSION: document.dir should return empty string in &lt;head&gt;<br>"
-          + "<a href=\"https://bugs.webkit.org/show_bug.cgi?id=9954\">https://bugs.webkit.org/show_bug.cgi?id=9954</a><br>");
+description("document.dir should reflect the 'dir' content attribute of the &lt;html&gt; element and should be settable in &lt;head&gt;.");
 
 debug("Read document.dir in head");
-shouldBe("headReadDocumentDir", "''");
+shouldBeEqualToString("headReadDocumentDir", "");
 debug("");
 
 debug("Write document.dir in head");
-shouldBe("headWriteDocumentDir", "''");
+shouldBeEqualToString("headWriteDocumentDir", "rtl");
 debug("");
 
 debug("Read document.dir in body");
-shouldBe("document.dir", "''");
+shouldBeEqualToString("document.dir", "rtl");
+debug("");
+
+debug("Read document.documentElement.dir in body");
+shouldBeEqualToString("document.documentElement.dir", "rtl");
 debug("");
 
 debug("Read document.body.dir in body");
-shouldBe("document.body.dir", "''");
+shouldBeEqualToString("document.body.dir", "");
 debug("");
 
 debug("Write document.dir in body");
 document.dir = "ltr";
-shouldBe("document.dir", "'ltr'");
+shouldBeEqualToString("document.dir", "ltr");
+debug("");
+
+debug("Read document.documentElement.dir in body");
+shouldBeEqualToString("document.documentElement.dir", "ltr");
 debug("");
 
 debug("Read document.body.dir in body");
-shouldBe("document.body.dir", "'ltr'");
+shouldBeEqualToString("document.body.dir", "");
 debug("");
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
