@@ -1,3 +1,11 @@
+2015-01-27  Dan Bernstein  <mitz@apple.com>
+
+        Fixed building projects that import WebView.h with WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebView/WebView.h: Added forward declarations of the protocols.
+
 2015-01-26  Anders Carlsson  <andersca@apple.com>
 
         Make it easy to test enabling formal delegate protocols

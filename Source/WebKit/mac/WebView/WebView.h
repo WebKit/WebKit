@@ -54,6 +54,14 @@
 @class WebScriptObject;
 @class WebViewPrivate;
 
+#ifdef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
+@protocol WebDownloadDelegate;
+@protocol WebFrameLoadDelegate;
+@protocol WebPolicyDelegate;
+@protocol WebResourceLoadDelegate;
+@protocol WebUIDelegate;
+#endif
+
 // Element dictionary keys
 extern NSString *WebElementDOMNodeKey;          // DOMNode of the element
 extern NSString *WebElementFrameKey;            // WebFrame of the element
