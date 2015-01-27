@@ -147,7 +147,6 @@ class MacPort(ApplePort):
         return min(supportable_instances, default_count)
 
     def _build_java_test_support(self):
-        return True
         java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")
         build_java = [self.make_command(), "-C", java_tests_path]
         if self._executive.run_command(build_java, return_exit_code=True):  # Paths are absolute, so we don't need to set a cwd.
@@ -176,7 +175,7 @@ class MacPort(ApplePort):
         _log.info("%s unique leaks found." % unique_leaks)
 
     def _check_port_build(self):
-        return self.get_option('nojava') or self._build_java_test_support()
+        return not self.get_option('java') or self._build_java_test_support()
 
     def _path_to_webcore_library(self):
         return self._build_path('WebCore.framework/Versions/A/WebCore')
