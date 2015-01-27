@@ -54,7 +54,7 @@ my $runTestAPI = isAppleMacWebKit() || isAppleWinWebKit() || isWinCairo();
 
 my $runJSCStress = 1;
 
-my $enableFTL = isAppleWebKit();
+my $enableFTL = isAppleMacWebKit();
 my $createTarball = 0;
 my $remoteHost = 0;
 
