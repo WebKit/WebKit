@@ -79,6 +79,20 @@ static const char FeatureCounterNavigationReload[] = "com.apple.WebKit.navigatio
 static const char FeatureCounterNavigationSame[] = "com.apple.WebKit.navigation.same";
 static const char FeatureCounterNavigationReloadFromOrigin[] = "com.apple.WebKit.navigation.reloadFromOrigin";
 
+// Memory cache.
+static const char FeatureCounterResourceRequestInMemoryCacheKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache";
+static const char FeatureCounterResourceRequestNotInMemoryCacheKey[] = "com.apple.WebKit.resourceRequest.notInMemoryCache";
+static const char FeatureCounterResourceRequestInMemoryCacheUnusedKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.unused";
+static const char FeatureCounterResourceRequestInMemoryCacheUsedKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.used";
+static const char FeatureCounterResourceRequestInMemoryCacheRevalidatingKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.revalidating";
+static const char FeatureCounterResourceRequestInMemoryCacheUnusedReasonNoStoreKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.unused.reason.noStore";
+static const char FeatureCounterResourceRequestInMemoryCacheUnusedReasonTypeMismatchKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.unused.reason.typeMismatch";
+static const char FeatureCounterResourceRequestInMemoryCacheUnusedReasonRedirectChainKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.unused.reason.redirectChain";
+static const char FeatureCounterResourceRequestInMemoryCacheUnusedReasonCredentialSettingsKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.unused.reason.credentialSettings";
+static const char FeatureCounterResourceRequestInMemoryCacheUnusedReasonReloadKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.unused.reason.reload";
+static const char FeatureCounterResourceRequestInMemoryCacheUnusedReasonErrorKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.unused.reason.error";
+static const char FeatureCounterResourceRequestInMemoryCacheUnusedReasonMustRevalidateNoValidatorKey[] = "com.apple.WebKit.resourceRequest.inMemoryCache.unused.reason.mustRevalidateNoValidator";
+
 } // namespace WebCore
 
 #endif // FeatureCounterKeys_h
