@@ -460,6 +460,35 @@ static inline bool shouldProhibitSetInnerOuterText(const HTMLElement& element)
         || element.hasTagName(trTag);
 }
 
+// Returns the conforming 'dir' value associated with the state the attribute is in (in its canonical case), if any,
+// or the empty string if the attribute is in a state that has no associated keyword value or if the attribute is
+// not in a defined state (e.g. the attribute is missing and there is no missing value default).
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#limited-to-only-known-values
+static inline const AtomicString& toValidDirValue(const AtomicString& value)
+{
+    static NeverDestroyed<AtomicString> ltrValue("ltr", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> rtlValue("rtl", AtomicString::ConstructFromLiteral);
+    static NeverDestroyed<AtomicString> autoValue("auto", AtomicString::ConstructFromLiteral);
+
+    if (equalIgnoringCase(value, ltrValue))
+        return ltrValue;
+    if (equalIgnoringCase(value, rtlValue))
+        return rtlValue;
+    if (equalIgnoringCase(value, autoValue))
+        return autoValue;
+    return nullAtom;
+}
+
+const AtomicString& HTMLElement::dir() const
+{
+    return toValidDirValue(fastGetAttribute(dirAttr));
+}
+
+void HTMLElement::setDir(const AtomicString& value)
+{
+    setAttribute(dirAttr, value);
+}
+
 void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
 {
     if (ieForbidsInsertHTML()) {

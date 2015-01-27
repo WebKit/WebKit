@@ -1,3 +1,38 @@
+2015-01-27  Chris Dumez  <cdumez@apple.com>
+
+        HTMLElement.dir should only return known values
+        https://bugs.webkit.org/show_bug.cgi?id=140925
+
+        Reviewed by Darin Adler.
+
+        HTMLElement.dir should only return known values according to the HTML
+        specification:
+        https://html.spec.whatwg.org/multipage/dom.html#dom-document-dir
+
+        Chrome and Firefox 28 match the specification. IE11's behavior is
+        slightly different:
+        - When setting an unknown 'dir' value, an exception will be thrown.
+        - Setting a known 'dir' value in a non-canonical case (e.g. "RTL"),
+          the value will be directly converted to its canonical form (e.g.
+          "rtl") before updating the DOM tree. (close to the spec but changing
+          the case upon setting).
+
+        This patch is based on the following Blink revision by me:
+        https://src.chromium.org/viewvc/blink?view=rev&revision=171861
+
+        Test: fast/dom/document-dir-property.html
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::dir):
+        (WebCore::HTMLDocument::setDir):
+        * html/HTMLDocument.h:
+        * html/HTMLElement.cpp:
+        (WebCore::toValidDirValue):
+        (WebCore::HTMLElement::dir):
+        (WebCore::HTMLElement::setDir):
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+
 2015-01-26  Chris Dumez  <cdumez@apple.com>
 
         Introduce Document::body() for call sites interested in the <body> element

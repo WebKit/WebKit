@@ -29,7 +29,7 @@
              [Reflect] attribute DOMString title;
              [Reflect] attribute DOMString lang;
              attribute boolean             translate;
-             [Reflect] attribute DOMString dir;
+             attribute DOMString dir;
 
              attribute long              tabIndex;
              attribute boolean           draggable;

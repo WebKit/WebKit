@@ -81,6 +81,9 @@ public:
 
     HTMLFormElement* form() const { return virtualForm(); }
 
+    const AtomicString& dir() const;
+    void setDir(const AtomicString&);
+
     bool hasDirectionAuto() const;
     TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;
 

@@ -1,3 +1,17 @@
+2015-01-27  Chris Dumez  <cdumez@apple.com>
+
+        HTMLElement.dir should only return known values
+        https://bugs.webkit.org/show_bug.cgi?id=140925
+
+        Reviewed by Darin Adler.
+
+        Update fast/dom/document-dir-property.html to make sure HTMLDocument.dir
+        and HTMLElement.dir only return known values, as per the HTML
+        specification.
+
+        * fast/dom/document-dir-property-expected.txt:
+        * fast/dom/document-dir-property.html:
+
 2015-01-27  Michal Poteralski  <m.poteralski@samsung.com>
 
         [EFL] AX: Update test expectations for test related with AXRole.
