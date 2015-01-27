@@ -89,7 +89,7 @@ def find_request_updates(configurations, lookback_count):
                 if not request_id:
                     continue
 
-                in_progress = build.get('currentStep') and build.get('eta')
+                in_progress = build.get('currentStep')
                 if in_progress:
                     request_updates[request_id] = {'status': 'running', 'url': config['url']}
                     config['scheduledRequests'].discard(request_id)

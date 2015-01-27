@@ -1,3 +1,10 @@
+2015-01-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix. "eta" isn't set on a in-progress build on a newly added builder.
+
+        * tools/sync-with-buildbot.py:
+        (find_request_updates):
+
 2015-01-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf dashboard always assigns the result of A/B testing with build request 1
