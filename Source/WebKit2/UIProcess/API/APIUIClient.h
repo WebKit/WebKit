@@ -70,6 +70,8 @@ public:
 
     virtual PassRefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) { return nullptr; }
     virtual void showPage(WebKit::WebPageProxy*) { }
+    virtual void didEnterFullscreen(WebKit::WebPageProxy*) { }
+    virtual void didExitFullscreen(WebKit::WebPageProxy*) { }
     virtual void close(WebKit::WebPageProxy*) { }
 
     virtual void takeFocus(WebKit::WebPageProxy*, WKFocusDirection) { }

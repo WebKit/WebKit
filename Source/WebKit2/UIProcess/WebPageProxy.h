@@ -259,6 +259,9 @@ public:
     bool addsVisitedLinks() const { return m_addsVisitedLinks; }
     void setAddsVisitedLinks(bool addsVisitedLinks) { m_addsVisitedLinks = addsVisitedLinks; }
 
+    void didEnterFullscreen();
+    void didExitFullscreen();
+
 #if ENABLE(INSPECTOR)
     WebInspectorProxy* inspector();
 #endif

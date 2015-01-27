@@ -126,6 +126,7 @@ void WebVideoFullscreenManagerProxy::requestExitFullscreen()
 void WebVideoFullscreenManagerProxy::didExitFullscreen()
 {
     m_page->send(Messages::WebVideoFullscreenManager::DidExitFullscreen(), m_page->pageID());
+    m_page->didExitFullscreen();
 }
     
 void WebVideoFullscreenManagerProxy::didCleanupFullscreen()
@@ -143,6 +144,7 @@ void WebVideoFullscreenManagerProxy::didSetupFullscreen()
 void WebVideoFullscreenManagerProxy::didEnterFullscreen()
 {
     m_page->send(Messages::WebVideoFullscreenManager::DidEnterFullscreen(), m_page->pageID());
+    m_page->didEnterFullscreen();
 }
 
 void WebVideoFullscreenManagerProxy::play()

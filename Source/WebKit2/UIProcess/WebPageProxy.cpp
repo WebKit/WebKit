@@ -3023,6 +3023,16 @@ void WebPageProxy::showPage()
     m_uiClient->showPage(this);
 }
 
+void WebPageProxy::didEnterFullscreen()
+{
+    m_uiClient->didEnterFullscreen(this);
+}
+
+void WebPageProxy::didExitFullscreen()
+{
+    m_uiClient->didExitFullscreen(this);
+}
+
 void WebPageProxy::closePage(bool stopResponsivenessTimer)
 {
     if (stopResponsivenessTimer)
