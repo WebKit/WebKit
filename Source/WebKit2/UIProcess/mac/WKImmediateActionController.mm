@@ -147,6 +147,7 @@ using namespace WebKit;
 
 - (void)dismissContentRelativeChildWindows
 {
+    _page->setMaintainsInactiveSelection(false);
     [_currentQLPreviewMenuItem close];
 }
 
@@ -157,9 +158,9 @@ using namespace WebKit;
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    _page->setMaintainsInactiveSelection(true);
-
     [_wkView _dismissContentRelativeChildWindows];
+
+    _page->setMaintainsInactiveSelection(true);
 
     _page->performActionMenuHitTestAtLocation([immediateActionRecognizer locationInView:immediateActionRecognizer.view], true);
 
@@ -215,7 +216,6 @@ using namespace WebKit;
         return;
 
     _page->setTextIndicatorAnimationProgress(1);
-    _page->setMaintainsInactiveSelection(false);
 }
 
 - (PassRefPtr<WebHitTestResult>)_webHitTestResult
