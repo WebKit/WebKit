@@ -1,3 +1,16 @@
+2015-01-27  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION(r178591): 20% regression in Octane box2d
+        https://bugs.webkit.org/show_bug.cgi?id=140948
+
+        Reviewed by Geoffrey Garen.
+
+        Added check that we have a lexical environment to the arguments is captured check.
+        It doesn't make sense to resolve "arguments" when it really isn't captured.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::willResolveToArgumentsRegister):
+
 2015-01-26  Geoffrey Garen  <ggaren@apple.com>
 
         Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages

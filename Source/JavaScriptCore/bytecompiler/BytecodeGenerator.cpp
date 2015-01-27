@@ -575,7 +575,7 @@ bool BytecodeGenerator::willResolveToArgumentsRegister(const Identifier& ident)
     if (entry.isNull())
         return false;
 
-    if (m_localArgumentsRegister && isCaptured(m_localArgumentsRegister->index()))
+    if (m_localArgumentsRegister && isCaptured(m_localArgumentsRegister->index()) && m_lexicalEnvironmentRegister)
         return false;
 
     if (m_codeBlock->usesArguments() && m_codeType == FunctionCode && m_localArgumentsRegister)
