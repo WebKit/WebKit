@@ -2829,7 +2829,7 @@ bool FrameLoader::handleBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLoad
         return true;
 
     RefPtr<Document> document = m_frame.document();
-    if (!document->body())
+    if (!document->bodyOrFrameset())
         return true;
     
     RefPtr<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();

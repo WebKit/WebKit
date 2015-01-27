@@ -547,7 +547,7 @@ int Frame::preferredHeight() const
 
     document->updateLayout();
 
-    Node* body = document->body();
+    auto* body = document->bodyOrFrameset();
     if (!body)
         return 0;
 
@@ -744,7 +744,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
     if (!document())
         return nil;
 
-    Element* root = selection().selection().selectionType() == VisibleSelection::NoSelection ? document()->body() : selection().selection().rootEditableElement();
+    auto* root = selection().selection().selectionType() == VisibleSelection::NoSelection ? document()->bodyOrFrameset() : selection().selection().rootEditableElement();
     unsigned rootChildCount = root->countChildNodes();
     RefPtr<Range> rangeOfRootContents = Range::create(*document(), createLegacyEditingPosition(root, 0), createLegacyEditingPosition(root, rootChildCount));
 

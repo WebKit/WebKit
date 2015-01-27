@@ -49,7 +49,7 @@
 
 - (WKDOMElement *)body
 {
-    return WebKit::toWKDOMElement(downcast<WebCore::Document>(*_impl).body());
+    return WebKit::toWKDOMElement(downcast<WebCore::Document>(*_impl).bodyOrFrameset());
 }
 
 @end

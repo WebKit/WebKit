@@ -937,8 +937,8 @@ public:
     static bool hasValidNamespaceForElements(const QualifiedName&);
     static bool hasValidNamespaceForAttributes(const QualifiedName&);
 
-    WEBCORE_EXPORT HTMLElement* body() const;
-    void setBody(PassRefPtr<HTMLElement>, ExceptionCode&);
+    WEBCORE_EXPORT HTMLElement* bodyOrFrameset() const;
+    void setBodyOrFrameset(PassRefPtr<HTMLElement>, ExceptionCode&);
 
     WEBCORE_EXPORT HTMLHeadElement* head();
 

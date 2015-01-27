@@ -310,7 +310,7 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
     // If we didn't find the table element, lets try to append our own to the body
     // If that fails for some reason, cram it on the end of the document as a last
     // ditch effort
-    if (Element* body = document()->body())
+    if (auto* body = document()->bodyOrFrameset())
         body->appendChild(m_tableElement, IGNORE_EXCEPTION);
     else
         document()->appendChild(m_tableElement, IGNORE_EXCEPTION);

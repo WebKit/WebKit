@@ -1,5 +1,21 @@
 2015-01-26  Chris Dumez  <cdumez@apple.com>
 
+        Rename Document::body() to Document::bodyOrFrameset() for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=140902
+
+        Reviewed by Andreas Kling.
+
+        Rename Document::body() to Document::bodyOrFrameset() for clarity. This
+        method does not necessarily return an HTMLBodyElement, it can also
+        return a frameset as per the specification:
+        http://www.w3.org/TR/html5/dom.html#dom-tree-accessors
+
+        This method is often misused internally (the caller is only interested
+        in the <body> element). I will fix these instances in a follow-up patch,
+        this patch is only renaming mechanically.
+
+2015-01-26  Chris Dumez  <cdumez@apple.com>
+
         First argument to DOM traversal functions should be a reference
         https://bugs.webkit.org/show_bug.cgi?id=140895
 

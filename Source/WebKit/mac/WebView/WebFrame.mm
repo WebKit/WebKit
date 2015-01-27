@@ -1043,7 +1043,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     Document* document = _private->coreFrame->document();
     if (!document)
         return nil;
-    HTMLElement* body = document->body();
+    auto* body = document->bodyOrFrameset();
     if (!body)
         return nil;
     RenderObject* bodyRenderer = body->renderer();
@@ -1754,11 +1754,11 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     NSMutableArray *ranges = [NSMutableArray array];
     NSMutableArray *metadatas = [NSMutableArray array];
     
-    Frame *frame = core(self);
-    Document *document = frame->document();
+    Frame* frame = core(self);
+    Document* document = frame->document();
 
     const VisibleSelection& selection = frame->selection().selection();
-    Element *root = selection.selectionType() == VisibleSelection::NoSelection ? frame->document()->body() : selection.rootEditableElement();
+    Element* root = selection.selectionType() == VisibleSelection::NoSelection ? frame->document()->bodyOrFrameset() : selection.rootEditableElement();
     
     DOMRange *previousDOMRange = nil;
     id previousMetadata = nil;
@@ -2333,7 +2333,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
     Element* root;
     const VisibleSelection& selection = coreFrame->selection().selection();
     if (selection.isNone() || !selection.isContentEditable())
-        root = coreFrame->document()->body();
+        root = coreFrame->document()->bodyOrFrameset();
     else {
         // Can't use the focusedNode here because we want the root of the shadow tree for form elements.
         root = selection.rootEditableElement();

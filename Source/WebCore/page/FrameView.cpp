@@ -539,7 +539,7 @@ PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientatio
     Document* doc = frame().document();
 
     // Try the <body> element first as a scrollbar source.
-    Element* body = doc ? doc->body() : 0;
+    Element* body = doc ? doc->bodyOrFrameset() : 0;
     if (body && body->renderer() && body->renderer()->style().hasPseudoStyle(SCROLLBAR))
         return RenderScrollbar::createCustomScrollbar(this, orientation, body);
     
@@ -670,7 +670,7 @@ void FrameView::applyPaginationToViewport()
     auto documentElement = document->documentElement();
     RenderElement* documentRenderer = documentElement ? documentElement->renderer() : nullptr;
     RenderElement* documentOrBodyRenderer = documentRenderer;
-    auto body = document->body();
+    auto body = document->bodyOrFrameset();
     if (body && body->renderer()) {
         if (body->hasTagName(bodyTag))
             documentOrBodyRenderer = documentRenderer->style().overflowX() == OVISIBLE && documentElement->hasTagName(htmlTag) ? body->renderer() : documentRenderer;
@@ -715,7 +715,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         Document* document = frame().document();
         auto documentElement = document->documentElement();
         RenderElement* rootRenderer = documentElement ? documentElement->renderer() : nullptr;
-        auto body = document->body();
+        auto body = document->bodyOrFrameset();
         if (body && body->renderer()) {
             if (body->hasTagName(framesetTag) && !frameFlatteningEnabled()) {
                 vMode = ScrollbarAlwaysOff;
@@ -884,7 +884,7 @@ void FrameView::updateSnapOffsets()
         return;
 
     // FIXME: Should we allow specifying snap points through <html> tags too?
-    HTMLElement* body = frame().document()->body();
+    HTMLElement* body = frame().document()->bodyOrFrameset();
     if (!renderView() || !body || !body->renderer())
         return;
     
@@ -1229,7 +1229,7 @@ void FrameView::layout(bool allowSubtree)
         TemporaryChange<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
 
         if (!m_layoutRoot) {
-            HTMLElement* body = document.body();
+            HTMLElement* body = document.bodyOrFrameset();
             if (body && body->renderer()) {
                 if (body->hasTagName(framesetTag) && !frameFlatteningEnabled()) {
                     body->renderer()->setChildNeedsLayout();
@@ -1284,7 +1284,7 @@ void FrameView::layout(bool allowSubtree)
                 m_needsFullRepaint = true;
                 if (!m_firstLayout) {
                     RenderBox* rootRenderer = document.documentElement() ? document.documentElement()->renderBox() : 0;
-                    RenderBox* bodyRenderer = rootRenderer && document.body() ? document.body()->renderBox() : 0;
+                    RenderBox* bodyRenderer = rootRenderer && document.bodyOrFrameset() ? document.bodyOrFrameset()->renderBox() : 0;
                     if (bodyRenderer && bodyRenderer->stretchesToViewport())
                         bodyRenderer->setChildNeedsLayout();
                     else if (rootRenderer && rootRenderer->stretchesToViewport())
@@ -3521,7 +3521,7 @@ void FrameView::updateScrollCorner()
     if (!cornerRect.isEmpty()) {
         // Try the <body> element first as a scroll corner source.
         Document* doc = frame().document();
-        Element* body = doc ? doc->body() : 0;
+        Element* body = doc ? doc->bodyOrFrameset() : 0;
         if (body && body->renderer()) {
             renderer = body->renderer();
             cornerStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(SCROLLBAR_CORNER), &renderer->style());
@@ -3596,7 +3596,7 @@ Color FrameView::documentBackgroundColor() const
         return Color();
 
     Element* htmlElement = frame().document()->documentElement();
-    Element* bodyElement = frame().document()->body();
+    Element* bodyElement = frame().document()->bodyOrFrameset();
 
     // Start with invalid colors.
     Color htmlBackgroundColor;

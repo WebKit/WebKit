@@ -107,16 +107,15 @@ int HTMLDocument::height()
 
 String HTMLDocument::dir()
 {
-    if (auto* body = this->body())
+    if (auto* body = bodyOrFrameset())
         return body->fastGetAttribute(dirAttr);
     return String();
 }
 
 void HTMLDocument::setDir(const String& value)
 {
-    HTMLElement* b = body();
-    if (b)
-        b->setAttribute(dirAttr, value);
+    if (auto* body = bodyOrFrameset())
+        body->setAttribute(dirAttr, value);
 }
 
 String HTMLDocument::designMode() const
@@ -138,7 +137,7 @@ void HTMLDocument::setDesignMode(const String& value)
 
 const AtomicString& HTMLDocument::bgColor() const
 {
-    HTMLElement* bodyElement = body();
+    HTMLElement* bodyElement = bodyOrFrameset();
     if (!is<HTMLBodyElement>(bodyElement))
         return emptyAtom;
     return bodyElement->fastGetAttribute(bgcolorAttr);
@@ -146,7 +145,7 @@ const AtomicString& HTMLDocument::bgColor() const
 
 void HTMLDocument::setBgColor(const String& value)
 {
-    HTMLElement* bodyElement = body();
+    HTMLElement* bodyElement = bodyOrFrameset();
     if (!is<HTMLBodyElement>(bodyElement))
         return;
     bodyElement->setAttribute(bgcolorAttr, value);
@@ -154,7 +153,7 @@ void HTMLDocument::setBgColor(const String& value)
 
 const AtomicString& HTMLDocument::fgColor() const
 {
-    HTMLElement* bodyElement = body();
+    HTMLElement* bodyElement = bodyOrFrameset();
     if (!is<HTMLBodyElement>(bodyElement))
         return emptyAtom;
     return bodyElement->fastGetAttribute(textAttr);
@@ -162,7 +161,7 @@ const AtomicString& HTMLDocument::fgColor() const
 
 void HTMLDocument::setFgColor(const String& value)
 {
-    HTMLElement* bodyElement = body();
+    HTMLElement* bodyElement = bodyOrFrameset();
     if (!is<HTMLBodyElement>(bodyElement))
         return;
     bodyElement->setAttribute(textAttr, value);
@@ -170,7 +169,7 @@ void HTMLDocument::setFgColor(const String& value)
 
 const AtomicString& HTMLDocument::alinkColor() const
 {
-    HTMLElement* bodyElement = body();
+    HTMLElement* bodyElement = bodyOrFrameset();
     if (!is<HTMLBodyElement>(bodyElement))
         return emptyAtom;
     return bodyElement->fastGetAttribute(alinkAttr);
@@ -178,7 +177,7 @@ const AtomicString& HTMLDocument::alinkColor() const
 
 void HTMLDocument::setAlinkColor(const String& value)
 {
-    HTMLElement* bodyElement = body();
+    HTMLElement* bodyElement = bodyOrFrameset();
     if (!is<HTMLBodyElement>(bodyElement))
         return;
     bodyElement->setAttribute(alinkAttr, value);
@@ -186,7 +185,7 @@ void HTMLDocument::setAlinkColor(const String& value)
 
 const AtomicString& HTMLDocument::linkColor() const
 {
-    HTMLElement* bodyElement = body();
+    HTMLElement* bodyElement = bodyOrFrameset();
     if (!is<HTMLBodyElement>(bodyElement))
         return emptyAtom;
     return bodyElement->fastGetAttribute(linkAttr);
@@ -194,7 +193,7 @@ const AtomicString& HTMLDocument::linkColor() const
 
 void HTMLDocument::setLinkColor(const String& value)
 {
-    HTMLElement* bodyElement = body();
+    HTMLElement* bodyElement = bodyOrFrameset();
     if (!is<HTMLBodyElement>(bodyElement))
         return;
     return bodyElement->setAttribute(linkAttr, value);
@@ -202,7 +201,7 @@ void HTMLDocument::setLinkColor(const String& value)
 
 const AtomicString& HTMLDocument::vlinkColor() const
 {
-    HTMLElement* bodyElement = body();
+    HTMLElement* bodyElement = bodyOrFrameset();
     if (!is<HTMLBodyElement>(bodyElement))
         return emptyAtom;
     return bodyElement->fastGetAttribute(vlinkAttr);
@@ -210,7 +209,7 @@ const AtomicString& HTMLDocument::vlinkColor() const
 
 void HTMLDocument::setVlinkColor(const String& value)
 {
-    HTMLElement* bodyElement = body();
+    HTMLElement* bodyElement = bodyOrFrameset();
     if (!is<HTMLBodyElement>(bodyElement))
         return;
     return bodyElement->setAttribute(vlinkAttr, value);
@@ -339,7 +338,7 @@ void HTMLDocument::clear()
 
 bool HTMLDocument::isFrameSet() const
 {
-    return is<HTMLFrameSetElement>(body());
+    return is<HTMLFrameSetElement>(bodyOrFrameset());
 }
 
 Ref<Document> HTMLDocument::cloneDocumentWithoutChildren() const

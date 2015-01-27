@@ -1859,7 +1859,7 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
         // moment.  If it were more refined, we might be able to do something better.)
         // It's worth noting though that this entire method is a hack, since what we really want to do is
         // suspend JS instead of doing a layout with inaccurate information.
-        HTMLElement* bodyElement = body();
+        HTMLElement* bodyElement = bodyOrFrameset();
         if (bodyElement && !bodyElement->renderer() && m_pendingSheetLayout == NoLayoutWithPendingSheets) {
             m_pendingSheetLayout = DidLayoutWithPendingSheets;
             styleResolverChanged(RecalcStyleImmediately);
@@ -2324,7 +2324,7 @@ void Document::implicitOpen()
     setReadyState(Loading);
 }
 
-HTMLElement* Document::body() const
+HTMLElement* Document::bodyOrFrameset() const
 {
     // If the document element contains both a frameset and a body, the frameset wins.
     auto element = documentElement();
@@ -2335,7 +2335,7 @@ HTMLElement* Document::body() const
     return childrenOfType<HTMLBodyElement>(*element).first();
 }
 
-void Document::setBody(PassRefPtr<HTMLElement> prpNewBody, ExceptionCode& ec)
+void Document::setBodyOrFrameset(PassRefPtr<HTMLElement> prpNewBody, ExceptionCode& ec)
 {
     RefPtr<HTMLElement> newBody = prpNewBody;
 
@@ -2353,7 +2353,7 @@ void Document::setBody(PassRefPtr<HTMLElement> prpNewBody, ExceptionCode& ec)
         newBody = downcast<HTMLElement>(node.get());
     }
 
-    HTMLElement* b = body();
+    HTMLElement* b = bodyOrFrameset();
     if (!b)
         documentElement()->appendChild(newBody.release(), ec);
     else
@@ -2541,7 +2541,7 @@ bool Document::shouldScheduleLayout()
     //    (a) Only schedule a layout once the stylesheets are loaded.
     //    (b) Only schedule layout once we have a body element.
 
-    return (haveStylesheetsLoaded() && body())
+    return (haveStylesheetsLoaded() && bodyOrFrameset())
         || (documentElement() && !documentElement()->hasTagName(htmlTag));
 }
     
@@ -5962,7 +5962,7 @@ Element* eventTargetElementForDocument(Document* document)
     if (!element && is<PluginDocument>(*document))
         element = downcast<PluginDocument>(*document).pluginElement();
     if (!element && is<HTMLDocument>(*document))
-        element = document->body();
+        element = document->bodyOrFrameset();
     if (!element)
         element = document->documentElement();
     return element;
@@ -6294,7 +6294,7 @@ Element* Document::activeElement()
 {
     if (Element* element = treeScope().focusedElement())
         return element;
-    return body();
+    return bodyOrFrameset();
 }
 
 bool Document::hasFocus() const

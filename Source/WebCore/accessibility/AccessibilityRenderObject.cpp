@@ -527,7 +527,7 @@ bool AccessibilityRenderObject::isReadOnly() const
     ASSERT(m_renderer);
     
     if (isWebArea()) {
-        if (HTMLElement* body = m_renderer->document().body()) {
+        if (HTMLElement* body = m_renderer->document().bodyOrFrameset()) {
             if (body->hasEditableStyle())
                 return false;
         }

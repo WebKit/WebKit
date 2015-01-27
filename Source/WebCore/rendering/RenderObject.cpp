@@ -2296,7 +2296,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     
     // CSS regions specification says that region flows should return the body element as their offsetParent.
     if (is<RenderNamedFlowThread>(current))
-        current = document().body() ? document().body()->renderer() : nullptr;
+        current = document().bodyOrFrameset() ? document().bodyOrFrameset()->renderer() : nullptr;
     
     return is<RenderBoxModelObject>(current) ? downcast<RenderBoxModelObject>(current) : nullptr;
 }

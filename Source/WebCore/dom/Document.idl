@@ -149,7 +149,7 @@
 
     [TreatNullAs=NullString, GetterRaisesException, SetterRaisesException] attribute DOMString cookie;
 
-    [SetterRaisesException] attribute HTMLElement body;
+    [SetterRaisesException, ImplementedAs=bodyOrFrameset] attribute HTMLElement body;
 
     readonly attribute HTMLHeadElement head;
     readonly attribute HTMLCollection images;

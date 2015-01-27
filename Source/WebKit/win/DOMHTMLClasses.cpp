@@ -262,7 +262,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::body(
 
     HTMLDocument& htmlDoc = downcast<HTMLDocument>(*m_document);
     COMPtr<IDOMElement> domElement;
-    domElement.adoptRef(DOMHTMLElement::createInstance(htmlDoc.body()));
+    domElement.adoptRef(DOMHTMLElement::createInstance(htmlDoc.bodyOrFrameset()));
     if (domElement)
         return domElement->QueryInterface(IID_IDOMHTMLElement, (void**) bodyElement);
     return E_FAIL;

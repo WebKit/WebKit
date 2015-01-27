@@ -74,7 +74,7 @@ Ref<RenderStyle> resolveForDocument(const Document& document)
         // Use the direction and writing-mode of the body to set the
         // viewport's direction and writing-mode unless the property is set on the document element.
         // If there is no body, then use the document element.
-        RenderObject* bodyRenderer = document.body() ? document.body()->renderer() : 0;
+        RenderObject* bodyRenderer = document.bodyOrFrameset() ? document.bodyOrFrameset()->renderer() : 0;
         if (bodyRenderer && !document.writingModeSetOnDocumentElement())
             documentStyle.get().setWritingMode(bodyRenderer->style().writingMode());
         else

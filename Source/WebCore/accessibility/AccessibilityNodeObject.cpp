@@ -1468,7 +1468,7 @@ String AccessibilityNodeObject::alternativeTextForWebArea() const
     if (!documentTitle.isEmpty())
         return documentTitle;
     
-    if (auto* body = document->body())
+    if (auto* body = document->bodyOrFrameset())
         return body->getNameAttribute();
     
     return String();

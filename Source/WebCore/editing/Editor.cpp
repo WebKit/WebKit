@@ -267,7 +267,7 @@ static HTMLImageElement* imageElementFromImageDocument(Document& document)
     if (!document.isImageDocument())
         return nullptr;
     
-    HTMLElement* body = document.body();
+    HTMLElement* body = document.bodyOrFrameset();
     if (!body)
         return nullptr;
     
@@ -871,9 +871,9 @@ Node* Editor::findEventTargetFrom(const VisibleSelection& selection) const
 {
     Node* target = selection.start().element();
     if (!target)
-        target = document().body();
+        target = document().bodyOrFrameset();
     if (!target)
-        return 0;
+        return nullptr;
 
     return target;
 }

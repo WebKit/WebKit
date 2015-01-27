@@ -233,7 +233,7 @@ void MediaDocument::mediaElementSawUnsupportedTracks()
 
 void MediaDocument::replaceMediaElementTimerFired()
 {
-    HTMLElement* htmlBody = body();
+    auto* htmlBody = bodyOrFrameset();
     if (!htmlBody)
         return;
 

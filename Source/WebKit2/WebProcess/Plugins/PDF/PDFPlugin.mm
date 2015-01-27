@@ -519,7 +519,7 @@ PDFPlugin::PDFPlugin(WebFrame* frame)
         m_annotationStyle->setTextContent(annotationStyle, ASSERT_NO_EXCEPTION);
 
         m_annotationContainer->appendChild(m_annotationStyle.get());
-        document->body()->appendChild(m_annotationContainer.get());
+        document->bodyOrFrameset()->appendChild(m_annotationContainer.get());
     }
 
     m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this]);

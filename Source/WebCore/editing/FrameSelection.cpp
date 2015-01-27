@@ -1696,7 +1696,7 @@ void FrameSelection::selectAll()
             selectStartTarget = root->shadowHost();
         else {
             root = document->documentElement();
-            selectStartTarget = document->body();
+            selectStartTarget = document->bodyOrFrameset();
         }
     }
     if (!root)

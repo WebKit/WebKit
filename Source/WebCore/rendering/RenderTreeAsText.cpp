@@ -810,7 +810,7 @@ static String nodePosition(Node* node)
 {
     StringBuilder result;
 
-    Element* body = node->document().body();
+    Element* body = node->document().bodyOrFrameset();
     Node* parent;
     for (Node* n = node; n; n = parent) {
         parent = n->parentOrShadowHostNode();

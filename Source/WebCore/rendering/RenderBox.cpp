@@ -468,7 +468,7 @@ void RenderBox::updateFromStyle()
             // (2) We are the primary <body> (can be checked by looking at document.body).
             // (3) The root element has visible overflow.
             if (document().documentElement()->hasTagName(htmlTag)
-                && document().body() == element()
+                && document().bodyOrFrameset() == element()
                 && document().documentElement()->renderer()->style().overflowX() == OVISIBLE) {
                 boxHasOverflowClip = false;
             }
