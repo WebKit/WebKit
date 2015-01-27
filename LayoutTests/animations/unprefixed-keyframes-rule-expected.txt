@@ -75,6 +75,41 @@ PASS rules2.item(0).type is window.CSSRule.KEYFRAME_RULE
 PASS rules2.item(0).keyText is '0%'
 PASS rules2.item(1).keyText is '100%'
 
+findRule matching order: from last to first specified
+PASS keyframesFindLast.type is window.CSSRule.KEYFRAMES_RULE
+PASS keyframesFindLast.name is 'test-find-last'
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '10% { left: 10px; }'
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '10% { left: 10px; }'
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+FAIL rule.cssText should be 10%,20%  { left: 10px; }. Was 10%,20% { left: 1020px; }.
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+FAIL rule.cssText should be 10%,20%  { left: 10px; }. Was 10%,20% { left: 1020px; }.
+PASS rule is null
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '0% { left: 0px; }'
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '100% { left: 100px; }'
+
+deleteRule matching order: from last to first specified
+PASS keyframesDeleteLast.type is window.CSSRule.KEYFRAMES_RULE
+PASS keyframesDeleteLast.name is 'test-delete-last'
+PASS rulesDeleteLast.length is 8
+PASS rulesDeleteLast.length is 7
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '10% { left: 10px; }'
+PASS rulesDeleteLast.length is 6
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '10%,20% { left: 1020px; }'
+PASS rulesDeleteLast.length is 6
+PASS rulesDeleteLast.length is 5
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '0% { left: 0px; }'
+PASS rulesDeleteLast.length is 4
+PASS rule.type is window.CSSRule.KEYFRAME_RULE
+PASS rule.cssText is '100% { left: 100px; }'
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

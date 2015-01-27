@@ -15,6 +15,27 @@
     50% { left: 30px; }
     to { left: 20px; }
   }
+  @-webkit-keyframes test-find-last {
+    from { left: -1px;  }
+    0% { left: 0px; }
+    10% { left: -1px; }
+    10% { left: 10px;}
+    10%, 20% { left: -1px;   }
+    10%,20% { left: 1020px; }
+    100% { left: -1px; }
+    to { left: 100px; }
+  }
+  @-webkit-keyframes test-delete-last {
+    from { left: 0px;  }
+    0% { left: -1px; }
+    10% { left: 10px; }
+    10% { left: -1px;}
+    10%, 20% { left: 1020px;   }
+    10%,20% { left: -1px; }
+    100% { left: 100px; }
+    to { left: -1px; }
+  }
+
 </style>
 <script src="../resources/js-test-pre.js"></script>
 </head>
@@ -166,6 +187,68 @@ shouldBe("rules2.length", "2");
 shouldBe("rules2.item(0).type", "window.CSSRule.KEYFRAME_RULE");
 shouldBe("rules2.item(0).keyText", "'0%'");
 shouldBe("rules2.item(1).keyText", "'100%'");
+
+debug("");
+debug("findRule matching order: from last to first specified");
+
+var keyframesFindLast = document.styleSheets.item(0).cssRules.item(3);
+shouldBe("keyframesFindLast.type", "window.CSSRule.KEYFRAMES_RULE");
+shouldBe("keyframesFindLast.name", "'test-find-last'");
+
+
+rule = keyframesFindLast.findRule("10%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10% { left: 10px; }'");
+rule = keyframesFindLast.findRule("10.0%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10% { left: 10px; }'");
+rule = keyframesFindLast.findRule("10%,20%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10%,20%  { left: 10px; }'");
+rule = keyframesFindLast.findRule("   10%, 20% ");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10%,20%  { left: 10px; }'");
+rule = keyframesFindLast.findRule("20%, 10% ");
+shouldBe("rule", "null");
+rule = keyframesFindLast.findRule("from");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'0% { left: 0px; }'");
+rule = keyframesFindLast.findRule("100%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'100% { left: 100px; }'");
+
+debug("");
+debug("deleteRule matching order: from last to first specified");
+
+var keyframesDeleteLast = document.styleSheets.item(0).cssRules.item(4);
+shouldBe("keyframesDeleteLast.type", "window.CSSRule.KEYFRAMES_RULE");
+shouldBe("keyframesDeleteLast.name", "'test-delete-last'");
+
+var rulesDeleteLast = keyframesDeleteLast.cssRules;
+shouldBe("rulesDeleteLast.length", "8");
+
+keyframesDeleteLast.deleteRule("10%");
+shouldBe("rulesDeleteLast.length", "7");
+rule = keyframesDeleteLast.findRule("10%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10% { left: 10px; }'");
+keyframesDeleteLast.deleteRule("10%,20%");
+shouldBe("rulesDeleteLast.length", "6");
+rule = keyframesDeleteLast.findRule("10%,20%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'10%,20% { left: 1020px; }'");
+keyframesDeleteLast.deleteRule("20%, 10% ");
+shouldBe("rulesDeleteLast.length", "6");
+keyframesDeleteLast.deleteRule("from");
+shouldBe("rulesDeleteLast.length", "5");
+rule = keyframesDeleteLast.findRule("from");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'0% { left: 0px; }'");
+keyframesDeleteLast.deleteRule("100%");
+shouldBe("rulesDeleteLast.length", "4");
+rule = keyframesDeleteLast.findRule("100%");
+shouldBe("rule.type", "window.CSSRule.KEYFRAME_RULE");
+shouldBe("rule.cssText", "'100% { left: 100px; }'");
 
 debug("");
 

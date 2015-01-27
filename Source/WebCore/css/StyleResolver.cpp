@@ -890,10 +890,8 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
         keyframeValue.setStyle(styleForKeyframe(elementStyle, keyframe, keyframeValue));
 
         // Add this keyframe style to all the indicated key times
-        Vector<double> keys;
-        keyframe->getKeys(keys);
-        for (size_t keyIndex = 0; keyIndex < keys.size(); ++keyIndex) {
-            keyframeValue.setKey(keys[keyIndex]);
+        for (auto& key: keyframe->keys()) {
+            keyframeValue.setKey(key);
             list.insert(keyframeValue);
         }
     }

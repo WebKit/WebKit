@@ -76,6 +76,8 @@
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGParserUtilities.h"
+#include "SelectorChecker.h"
+#include "SelectorCheckerTestFunctions.h"
 #include "Settings.h"
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
@@ -4680,6 +4682,36 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationProperty(AnimationParseContext& co
         return cssValuePool().createIdentifierValue(CSSValueNone);
     }
     return nullptr;
+}
+
+/* static */
+Vector<double> CSSParser::parseKeyframeSelector(const String& selector) {
+    Vector<double> keys;
+    Vector<String> strings;
+    selector.split(',', strings);
+
+    for (size_t i = 0; i < strings.size(); ++i) {
+        double key = -1;
+        String cur = strings[i].stripWhiteSpace();
+
+        // For now the syntax MUST be 'xxx%' or 'from' or 'to', where xxx is a legal floating point number
+        if (equalIgnoringASCIICase(cur, "from"))
+            key = 0;
+        else if (equalIgnoringASCIICase(cur, "to"))
+            key = 1;
+        else if (cur.endsWith('%')) {
+            double k = cur.substring(0, cur.length() - 1).toDouble();
+            if (k >= 0 && k <= 100)
+                key = k / 100;
+        }
+        if (key < 0) {
+            keys.clear();
+            break;
+        }
+        keys.append(key);
+    }
+
+    return keys;
 }
 
 bool CSSParser::parseTransformOriginShorthand(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2, RefPtr<CSSValue>& value3)

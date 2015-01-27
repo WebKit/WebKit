@@ -26,6 +26,7 @@
 #ifndef CSSKeyframeRule_h
 #define CSSKeyframeRule_h
 
+#include "CSSParser.h"
 #include "CSSRule.h"
 #include "StyleProperties.h"
 
@@ -44,25 +45,21 @@ public:
     }
     ~StyleKeyframe();
 
-    String keyText() const { return m_key; }
-    void setKeyText(const String& s) { m_key = s; }
+    String keyText() const;
+    void setKeyText(const String& text) { m_keys = CSSParser::parseKeyframeSelector(text); }
 
-    void getKeys(Vector<double>& keys) const   { parseKeyString(m_key, keys); }
-    
+    const Vector<double>& keys() const { return m_keys; };
+
     const StyleProperties& properties() const { return m_properties; }
     MutableStyleProperties& mutableProperties();
-    
+
     String cssText() const;
 
 private:
     explicit StyleKeyframe(Ref<StyleProperties>&&);
-    
-    static void parseKeyString(const String&, Vector<double>& keys);
-    
+
     Ref<StyleProperties> m_properties;
-    // FIXME: This should be a parsed vector of floats.
-    // comma separated list of keys
-    String m_key;
+    Vector<double> m_keys;
 };
 
 class CSSKeyframeRule final : public CSSRule {
@@ -73,7 +70,7 @@ public:
     virtual void reattach(StyleRuleBase&) override;
 
     String keyText() const { return m_keyframe->keyText(); }
-    void setKeyText(const String& s) { m_keyframe->setKeyText(s); }
+    void setKeyText(const String& text) { m_keyframe->setKeyText(text); }
 
     CSSStyleDeclaration& style();
 
