@@ -2171,7 +2171,7 @@ sub hasUserInstalledAppInSimulatorDevice($$)
         return 0; # No user installed apps.
     }
     local @::userInstalledAppBundles;
-    sub wanted {
+    my $wantedFunction = sub {
         my $file = $_;
 
         # Ignore hidden files and directories.
@@ -2183,8 +2183,8 @@ sub hasUserInstalledAppInSimulatorDevice($$)
         return if !-d $file || $file !~ /\.app$/;
         push @::userInstalledAppBundles, $File::Find::name;
         $File::Find::prune = 1; # Do not traverse contents of app bundle.
-    }
-    find(\&wanted, $userInstalledAppPath);
+    };
+    find($wantedFunction, $userInstalledAppPath);
     for my $userInstalledAppBundle (@::userInstalledAppBundles) {
         if (appIdentifierFromBundle($userInstalledAppBundle) eq $appIdentifier) {
             return 1; # Has user installed app.
