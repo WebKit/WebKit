@@ -1,3 +1,11 @@
+2015-01-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Adjust some expectations based on test bot display metrics.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/dom/adopt-node-crash-2-expected.txt:
+        * platform/win/fast/ondrop-text-html-expected.txt: Added.
+
 2015-01-27  Chris Dumez  <cdumez@apple.com>
 
         HTMLElement.dir should only return known values
