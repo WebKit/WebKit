@@ -1,3 +1,5 @@
+//@ skip if $hostOS == "windows"
+
 description(
 'This test case tests the Date constructor. ' +
 'In particular, it tests many cases of creating a Date from another Date ' +

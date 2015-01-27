@@ -1,3 +1,13 @@
+2015-01-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Win] Enable JSC stress tests by default
+        https://bugs.webkit.org/show_bug.cgi?id=128307
+
+        Reviewed by Brent Fulgham.
+
+        * js/script-tests/date-constructor.js: Skipped on Windows.
+        * js/script-tests/sort-stability.js: Skipped on Windows.
+
 2015-01-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] More test gardening.

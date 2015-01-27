@@ -1,3 +1,5 @@
+//@ skip if $hostOS == "windows"
+
 description(
 "This tests that sort() is a stable sort."
 );

@@ -1,3 +1,5 @@
+//@ skip if $hostOS == "windows"
+
 function foo(x) {
     return Math.cos(x);
 }
