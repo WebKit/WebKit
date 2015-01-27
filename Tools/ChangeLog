@@ -1,3 +1,13 @@
+2015-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Update bots on the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=140956
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestResultServer/static-dashboards/builders.jsonp:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2015-01-27  Daniel Bates  <dabates@apple.com>
 
         [iOS WK2] Add directory LayoutTests/platform/wk2 to the list of baseline search paths

@@ -43,12 +43,6 @@ var PLATFORMS = {
             'MAC': {
                 expectationsDirectory: 'mac',
                 subPlatforms: {
-                    'MOUNTAINLION': {
-                        subPlatforms: {
-                            'WK1': { fallbackPlatforms: ['APPLE_MAC_MOUNTAINLION', 'APPLE_MAC'] },
-                            'WK2': { fallbackPlatforms: ['APPLE_MAC_MOUNTAINLION', 'APPLE_MAC', 'WK2'], expectationsDirectory: 'mac-wk2'}
-                        }
-                    },
                     'MAVERICKS': {
                         subPlatforms: {
                             'WK1': { fallbackPlatforms: ['APPLE_MAC_MAVERICKS', 'APPLE_MAC'] },
@@ -358,8 +352,6 @@ function determineBuilderPlatform(builderNameUpperCase)
         return determineWKPlatform(builderNameUpperCase, 'APPLE_YOSEMITE');
     if (string.contains(builderNameUpperCase, 'MAVERICKS'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAVERICKS');
-    if (string.contains(builderNameUpperCase, 'MOUNTAINLION'))
-        return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_MOUNTAINLION');
     if (string.contains(builderNameUpperCase, 'LION'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_LION');
     if (string.contains(builderNameUpperCase, 'GTK LINUX'))
@@ -698,7 +690,6 @@ function getParsedExpectations(data)
             'Linux': 'LINUX',
             'SnowLeopard': 'SNOWLEOPARD',
             'Lion': 'LION',
-            'MountainLion': 'MOUNTAINLION',
             'Win7': 'WIN7',
             'XP': 'XP',
             'Vista': 'VISTA',
