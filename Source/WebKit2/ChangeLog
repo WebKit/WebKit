@@ -1,3 +1,18 @@
+2015-01-26  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Fix possible crash when -[WKWebView evaluateJavaScript:completionHandler:] was called then the WKWebView is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=140203
+        rdar://problem/19198492
+
+        Reviewed by Sam Weinig.
+        
+        When handling the OwnerWasInvalidated case in -[WKWebView evaluateJavaScript:completionHandler:],
+        the block passed to dispatch_async() needs to be retained. Fix by passing the RefPtr
+        to the lambda.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+
 2015-01-26  Chris Dumez  <cdumez@apple.com>
 
         Rename Document::body() to Document::bodyOrFrameset() for clarity
