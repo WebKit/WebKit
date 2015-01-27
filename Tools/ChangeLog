@@ -1,5 +1,29 @@
 2015-01-26  Simon Fraser  <simon.fraser@apple.com>
 
+        [iOS] Remove the various aliases for --ios-simulator (--sim, --simulator, --ios-sim) in
+        arguments for build and test scripts
+        https://bugs.webkit.org/show_bug.cgi?id=139748
+
+        Reviewed by Daniel Bates.
+
+        There was much confusion resulting from the multitude of aliases used to build/test for
+        the iOS simulator. Standardize on "--ios-simulator", which is also the name of the layout
+        tests directory.
+
+        This fixes an issue where run-api-tests and some other scripts failed when run with
+        --simulator.
+
+        * Scripts/build-webkit:
+        * Scripts/package-root:
+        (usage):
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+        (determineXcodeSDK):
+        * Scripts/webkitpy/port/factory.py:
+        (platform_options):
+
+2015-01-26  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS WK2] Fix possible crash when -[WKWebView evaluateJavaScript:completionHandler:] was called then the WKWebView is destroyed
         https://bugs.webkit.org/show_bug.cgi?id=140203
         rdar://problem/19198492
