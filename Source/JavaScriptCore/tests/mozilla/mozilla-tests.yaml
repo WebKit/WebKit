@@ -1541,7 +1541,7 @@
       if ($hostOS == "windows")
           skip
       else
-          defaultRunMozillaTest :normal, "../shell.js"
+          defaultRunMozillaTest :normal, "../shell.js", "shell.js"
       end
 - path: ecma_3/Date/15.9.5.7.js
   cmd: defaultRunMozillaTest :skip, "../shell.js", "shell.js"
