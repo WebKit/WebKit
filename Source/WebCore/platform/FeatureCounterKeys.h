@@ -70,6 +70,15 @@ static const char FeatureCounterCachedResourceRevalidationReasonNoStoreKey[] = "
 static const char FeatureCounterCachedResourceRevalidationReasonMustRevalidateIsExpiredKey[] = "com.apple.WebKit.cachedResourceRevalidation.reason.mustRevalidateIsExpired";
 static const char FeatureCounterCachedResourceRevalidationReasonIsExpiredKey[] = "com.apple.WebKit.cachedResourceRevalidation.reason.isExpired";
 
+// Navigation types.
+static const char FeatureCounterNavigationStandard[] = "com.apple.WebKit.navigation.standard";
+static const char FeatureCounterNavigationBack[] = "com.apple.WebKit.navigation.back";
+static const char FeatureCounterNavigationForward[] = "com.apple.WebKit.navigation.forward";
+static const char FeatureCounterNavigationIndexedBackForward[] = "com.apple.WebKit.navigation.indexedBackForward";
+static const char FeatureCounterNavigationReload[] = "com.apple.WebKit.navigation.reload";
+static const char FeatureCounterNavigationSame[] = "com.apple.WebKit.navigation.same";
+static const char FeatureCounterNavigationReloadFromOrigin[] = "com.apple.WebKit.navigation.reloadFromOrigin";
+
 } // namespace WebCore
 
 #endif // FeatureCounterKeys_h

@@ -56,6 +56,7 @@
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "FeatureCounter.h"
 #include "FloatRect.h"
 #include "FormState.h"
 #include "FormSubmission.h"
@@ -1420,6 +1421,39 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
     loadWithDocumentLoader(newDocumentLoader, type, 0);
 }
 
+static void logNavigationWithFeatureCounter(Page* page, FrameLoadType type)
+{
+    const char* key;
+    switch (type) {
+    case FrameLoadType::Standard:
+        key = FeatureCounterNavigationStandard;
+        break;
+    case FrameLoadType::Back:
+        key = FeatureCounterNavigationBack;
+        break;
+    case FrameLoadType::Forward:
+        key = FeatureCounterNavigationForward;
+        break;
+    case FrameLoadType::IndexedBackForward:
+        key = FeatureCounterNavigationIndexedBackForward;
+        break;
+    case FrameLoadType::Reload:
+        key = FeatureCounterNavigationReload;
+        break;
+    case FrameLoadType::Same:
+        key = FeatureCounterNavigationSame;
+        break;
+    case FrameLoadType::ReloadFromOrigin:
+        key = FeatureCounterNavigationReloadFromOrigin;
+        break;
+    case FrameLoadType::Replace:
+    case FrameLoadType::RedirectWithLockedBackForwardList:
+        // Not logging those for now.
+        return;
+    }
+    FEATURE_COUNTER_INCREMENT_KEY(page, key);
+}
+
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, PassRefPtr<FormState> prpFormState)
 {
     // Retain because dispatchBeforeLoadEvent may release the last reference to it.
@@ -1437,6 +1471,10 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     if (m_frame.document())
         m_previousURL = m_frame.document()->url();
+
+    // Log main frame navigation types.
+    if (m_frame.isMainFrame())
+        logNavigationWithFeatureCounter(m_frame.page(), type);
 
     policyChecker().setLoadType(type);
     RefPtr<FormState> formState = prpFormState;

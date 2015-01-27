@@ -1,5 +1,26 @@
 2015-01-27  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r177504
+
+    2014-12-18  Chris Dumez  <cdumez@apple.com>
+
+            [iOS] Log navigation types using FeatureCounter API
+            https://bugs.webkit.org/show_bug.cgi?id=139753
+
+            Reviewed by Darin Adler.
+
+            Log navigation types using FeatureCounter API.
+
+            No new tests, no behavior change other than additional feature
+            counting.
+
+            * loader/FrameLoader.cpp:
+            (WebCore::logNavigationWithFeatureCounter):
+            (WebCore::FrameLoader::loadWithDocumentLoader):
+            * platform/FeatureCounterKeys.h:
+
+2015-01-27  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177499
 
     2014-12-18  Chris Dumez  <cdumez@apple.com>
