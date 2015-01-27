@@ -276,7 +276,7 @@ void WinLauncher::showLastVisitedSites(IWebView& webView)
         allItemsOffset = totalListCount - maxHistorySize;
 
     int currentHistoryItem = 0;
-    for (int i = 0; i < totalListCount; ++i) {
+    for (int i = 0; i < m_historyItems.size() && (allItemsOffset + currentHistoryItem) < m_historyItems.size(); ++i) {
         updateMenuItemForHistoryItem(menu, *(m_historyItems[allItemsOffset + currentHistoryItem]), currentHistoryItem);
         ++currentHistoryItem;
     }

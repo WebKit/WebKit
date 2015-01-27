@@ -1,3 +1,14 @@
+2015-01-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] WinLauncher crashes on eleventh site visited
+        https://bugs.webkit.org/show_bug.cgi?id=140960
+
+        Reviewed by Anders Carlsson.
+
+        * WinLauncher/WinLauncher.cpp:
+        (WinLauncher::showLastVisitedSites): Don't access off the end of
+        the history array.
+
 2015-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Disable building Java applets by default
