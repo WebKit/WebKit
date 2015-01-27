@@ -1,3 +1,15 @@
+2015-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline several CSS tests after r179168.
+
+        Computed line-height is no longer 'normal' but the font's line
+        spacing.
+
+        * fast/css/font-shorthand-line-height-expected.txt:
+        * fast/css/font-shorthand-line-height.html:
+        * platform/mac-mavericks/fast/css/css2-system-fonts-expected.txt:
+        * platform/mac/fast/css/css2-system-fonts-expected.txt:
+
 2015-01-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unskipping more tests after correcting baselines for Windows widgets.
