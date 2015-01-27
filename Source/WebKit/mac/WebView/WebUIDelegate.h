@@ -163,9 +163,12 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 @protocol WebUIDelegate <NSObject>
 
 @optional
+
+#ifndef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
 @end
 
 @interface NSObject (WebUIDelegate)
+#endif
 
 /*!
     @method webView:createWebViewWithRequest:

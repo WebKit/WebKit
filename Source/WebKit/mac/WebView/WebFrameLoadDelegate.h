@@ -53,9 +53,12 @@
 @protocol WebFrameLoadDelegate <NSObject>
 
 @optional
+
+#ifndef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
 @end
 
 @interface NSObject (WebFrameLoadDelegate)
+#endif
 
 /*!
     @method webView:didStartProvisionalLoadForFrame:

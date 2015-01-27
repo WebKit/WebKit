@@ -222,31 +222,51 @@ extern NSString *WebViewProgressFinishedNotification;
     @property UIDelegate
     @abstract The WebView's WebUIDelegate.
 */
+#ifdef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
+@property (nonatomic, assign) id <WebUIDelegate> UIDelegate;
+#else
 @property (nonatomic, assign) id UIDelegate;
+#endif
 
 /*!
     @property resourceLoadDelegate
     @abstract The WebView's WebResourceLoadDelegate.
 */
+#ifdef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
+@property (nonatomic, assign) id <WebResourceLoadDelegate> resourceLoadDelegate;
+#else
 @property (nonatomic, assign) id resourceLoadDelegate;
+#endif
 
 /*!
     @property downloadDelegate
     @abstract The WebView's WebDownloadDelegate.
 */
+#ifdef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
+@property (nonatomic, assign) id <WebDownloadDelegate> downloadDelegate;
+#else
 @property (nonatomic, assign) id downloadDelegate;
+#endif
 
 /*!
     @property frameLoadDelegate
     @abstract The WebView's WebFrameLoadDelegate delegate.
 */
+#ifdef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
+@property (nonatomic, assign) id <WebFrameLoadDelegate> frameLoadDelegate;
+#else
 @property (nonatomic, assign) id frameLoadDelegate;
+#endif
 
 /*!
     @property policyDelegate
     @abstract The WebView's WebPolicyDelegate.
 */
+#ifdef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
+@property (nonatomic, assign) id <WebPolicyDelegate> policyDelegate;
+#else
 @property (nonatomic, assign) id policyDelegate;
+#endif
 
 /*!
     @property mainFrame

@@ -72,6 +72,12 @@
 
 @optional
 
+#ifndef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
+@end
+
+@interface NSObject (WebDownloadDelegate)
+#endif
+
 /*!
     @method downloadWindowForAuthenticationSheet:
     @abstract

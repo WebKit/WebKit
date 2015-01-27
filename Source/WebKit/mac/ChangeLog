@@ -1,3 +1,19 @@
+2015-01-26  Anders Carlsson  <andersca@apple.com>
+
+        Make it easy to test enabling formal delegate protocols
+        https://bugs.webkit.org/show_bug.cgi?id=140892
+
+        Reviewed by Dan Bernstein.
+
+        Add an WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS define that controls whether delegates should be formal protocols.
+
+        * Misc/WebDownload.h:
+        * WebView/WebFrameLoadDelegate.h:
+        * WebView/WebPolicyDelegate.h:
+        * WebView/WebResourceLoadDelegate.h:
+        * WebView/WebUIDelegate.h:
+        * WebView/WebView.h:
+
 2015-01-26  Chris Dumez  <cdumez@apple.com>
 
         Rename Document::body() to Document::bodyOrFrameset() for clarity
