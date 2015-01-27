@@ -1,5 +1,37 @@
 2015-01-27  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r177499
+
+    2014-12-18  Chris Dumez  <cdumez@apple.com>
+
+            [iOS] Log why cached resources are being revalidated using FeatureCounter API
+            https://bugs.webkit.org/show_bug.cgi?id=139759
+            <rdar://problem/19288177>
+
+            Reviewed by Antti Koivisto.
+
+            Log why cached resources are being revalidated using FeatureCounter API.
+            Also log if revalidation is successful or not.
+
+            No new tests, no behavior change.
+
+            * loader/SubresourceLoader.cpp:
+            (WebCore::SubresourceLoader::willSendRequest):
+            (WebCore::SubresourceLoader::didReceiveResponse):
+            * loader/cache/CachedImage.cpp:
+            (WebCore::CachedImage::mustRevalidateDueToCacheHeaders):
+            * loader/cache/CachedImage.h:
+            * loader/cache/CachedResource.cpp:
+            (WebCore::CachedResource::failBeforeStarting):
+            (WebCore::CachedResource::mustRevalidateDueToCacheHeaders):
+            * loader/cache/CachedResource.h:
+            (WebCore::CachedResource::loader):
+            * loader/cache/CachedResourceLoader.cpp:
+            (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+            * platform/FeatureCounterKeys.h:
+
+2015-01-27  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177455
 
     2014-12-17  Chris Dumez  <cdumez@apple.com>

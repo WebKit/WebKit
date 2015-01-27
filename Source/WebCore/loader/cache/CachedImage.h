@@ -83,7 +83,7 @@ public:
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     bool isManuallyCached() const { return m_isManuallyCached; }
-    virtual bool mustRevalidateDueToCacheHeaders(CachePolicy) const;
+    virtual bool mustRevalidateDueToCacheHeaders(const CachedResourceLoader&, CachePolicy) const;
 
 #if ENABLE(DISK_IMAGE_CACHE)
     virtual bool canUseDiskImageCache() const override;

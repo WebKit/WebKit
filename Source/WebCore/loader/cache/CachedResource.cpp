@@ -31,6 +31,7 @@
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "FeatureCounter.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTTPHeaderNames.h"
@@ -761,21 +762,29 @@ bool CachedResource::canUseCacheValidator() const
     return m_response.hasCacheValidatorFields();
 }
 
-bool CachedResource::mustRevalidateDueToCacheHeaders(CachePolicy cachePolicy) const
+bool CachedResource::mustRevalidateDueToCacheHeaders(const CachedResourceLoader& cachedResourceLoader, CachePolicy cachePolicy) const
 {    
     ASSERT(cachePolicy == CachePolicyRevalidate || cachePolicy == CachePolicyCache || cachePolicy == CachePolicyVerify);
 
-    if (cachePolicy == CachePolicyRevalidate)
+    if (cachePolicy == CachePolicyRevalidate) {
+        FEATURE_COUNTER_INCREMENT_KEY(cachedResourceLoader.frame()->page(), FeatureCounterCachedResourceRevalidationReasonReloadKey);
         return true;
+    }
 
     if (m_response.cacheControlContainsNoCache() || m_response.cacheControlContainsNoStore()) {
         LOG(ResourceLoading, "CachedResource %p mustRevalidate because of m_response.cacheControlContainsNoCache() || m_response.cacheControlContainsNoStore()\n", this);
+        if (m_response.cacheControlContainsNoStore())
+            FEATURE_COUNTER_INCREMENT_KEY(cachedResourceLoader.frame()->page(), FeatureCounterCachedResourceRevalidationReasonNoStoreKey);
+        else
+            FEATURE_COUNTER_INCREMENT_KEY(cachedResourceLoader.frame()->page(), FeatureCounterCachedResourceRevalidationReasonNoCacheKey);
+
         return true;
     }
 
     if (cachePolicy == CachePolicyCache) {
         if (m_response.cacheControlContainsMustRevalidate() && isExpired()) {
             LOG(ResourceLoading, "CachedResource %p mustRevalidate because of cachePolicy == CachePolicyCache and m_response.cacheControlContainsMustRevalidate() && isExpired()\n", this);
+            FEATURE_COUNTER_INCREMENT_KEY(cachedResourceLoader.frame()->page(), FeatureCounterCachedResourceRevalidationReasonMustRevalidateIsExpiredKey);
             return true;
         }
         return false;
@@ -784,6 +793,7 @@ bool CachedResource::mustRevalidateDueToCacheHeaders(CachePolicy cachePolicy) co
     // CachePolicyVerify
     if (isExpired()) {
         LOG(ResourceLoading, "CachedResource %p mustRevalidate because of isExpired()\n", this);
+        FEATURE_COUNTER_INCREMENT_KEY(cachedResourceLoader.frame()->page(), FeatureCounterCachedResourceRevalidationReasonIsExpiredKey);
         return true;
     }
 

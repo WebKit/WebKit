@@ -226,7 +226,7 @@ public:
     
     bool canUseCacheValidator() const;
 
-    virtual bool mustRevalidateDueToCacheHeaders(CachePolicy) const;
+    virtual bool mustRevalidateDueToCacheHeaders(const CachedResourceLoader&, CachePolicy) const;
 
     bool isCacheValidator() const { return m_resourceToRevalidate; }
     CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate; }

@@ -568,7 +568,7 @@ bool CachedImage::isOriginClean(SecurityOrigin* securityOrigin)
     return !securityOrigin->taintsCanvas(response().url());
 }
 
-bool CachedImage::mustRevalidateDueToCacheHeaders(CachePolicy policy) const
+bool CachedImage::mustRevalidateDueToCacheHeaders(const CachedResourceLoader& cachedResourceLoader, CachePolicy policy) const
 {
     if (UNLIKELY(isManuallyCached())) {
         // Do not revalidate manually cached images. This mechanism is used as a
@@ -578,7 +578,7 @@ bool CachedImage::mustRevalidateDueToCacheHeaders(CachePolicy policy) const
         // incumbent on the client to only use valid resources.
         return false;
     }
-    return CachedResource::mustRevalidateDueToCacheHeaders(policy);
+    return CachedResource::mustRevalidateDueToCacheHeaders(cachedResourceLoader, policy);
 }
 
 } // namespace WebCore
