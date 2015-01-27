@@ -77,6 +77,7 @@ private:
     RetainPtr<NSString> _groupIdentifier;
 #if PLATFORM(IOS)
     LazyInitialized<WKWebViewContentProviderRegistry> _contentProviderRegistry;
+    BOOL _featureCounterEnabled;
 #endif
 }
 
@@ -88,6 +89,7 @@ private:
 #if PLATFORM(IOS)
     _mediaPlaybackRequiresUserAction = YES;
     _mediaPlaybackAllowsAirPlay = YES;
+    _featureCounterEnabled = NO;
 #endif
     
     return self;
@@ -116,6 +118,7 @@ private:
     configuration->_suppressesIncrementalRendering = self->_suppressesIncrementalRendering;
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
+    configuration->_featureCounterEnabled = self->_featureCounterEnabled;
     configuration->_mediaPlaybackRequiresUserAction = self->_mediaPlaybackRequiresUserAction;
     configuration->_mediaPlaybackAllowsAirPlay = self->_mediaPlaybackAllowsAirPlay;
     configuration->_selectionGranularity = self->_selectionGranularity;
@@ -242,6 +245,18 @@ private:
 {
     _groupIdentifier = groupIdentifier;
 }
+
+#if PLATFORM(IOS)
+- (BOOL)_featureCounterEnabled 
+{ 
+    return _featureCounterEnabled; 
+} 
+ 
+- (void)_setFeatureCounterEnabled:(BOOL)featureCounterEnabled 
+{ 
+    _featureCounterEnabled = featureCounterEnabled; 
+} 
+#endif
 
 @end
 

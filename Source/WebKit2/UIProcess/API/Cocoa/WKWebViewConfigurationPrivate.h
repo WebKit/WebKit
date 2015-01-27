@@ -42,6 +42,10 @@
 
 @property (nonatomic, weak, setter=_setAlternateWebViewForNavigationGestures:) WKWebView *_alternateWebViewForNavigationGestures;
 
+#if TARGET_OS_IPHONE
+@property (nonatomic, setter=_setFeatureCounterEnabled:) BOOL _featureCounterEnabled;
+#endif
+
 @end
 
 #endif

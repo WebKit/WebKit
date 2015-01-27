@@ -1,5 +1,38 @@
 2015-01-27  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r177526
+
+    2014-12-18  Chris Dumez  <cdumez@apple.com>
+
+            [WK2] Stop using WKPreferencesPrivate API to toggle FeatureCounter support
+            https://bugs.webkit.org/show_bug.cgi?id=139794
+            <rdar://problem/19266254>
+
+            Reviewed by Anders Carlsson.
+
+            Stop using WKPreferencesPrivate API to toggle FeatureCounter support
+            and use WKWebViewConfigurationPrivate API instead. FeatureCounter is
+            not meant to change state after the view has been created.
+
+            * UIProcess/API/C/WKPreferences.cpp:
+            (WKPreferencesSetFeatureCounterEnabled): Deleted.
+            (WKPreferencesGetFeatureCounterEnabled): Deleted.
+            * UIProcess/API/C/WKPreferencesRefPrivate.h:
+            * UIProcess/API/Cocoa/WKPreferences.mm:
+            (-[WKPreferences _featureCounterEnabled]): Deleted.
+            (-[WKPreferences _setFeatureCounterEnabled:]): Deleted.
+            * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView initWithFrame:configuration:]):
+            * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+            (-[WKWebViewConfiguration init]):
+            (-[WKWebViewConfiguration copyWithZone:]):
+            (-[WKWebViewConfiguration _featureCounterEnabled]):
+            (-[WKWebViewConfiguration _setFeatureCounterEnabled:]):
+            * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
+2015-01-27  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177455
 
     2014-12-17  Chris Dumez  <cdumez@apple.com>
