@@ -63,10 +63,8 @@ public:
         bool isBreakable = false;
         float width = 0;
     };
-    TextFragment nextTextFragment(unsigned position, float xPosition) const;
+    TextFragment nextTextFragment(float xPosition = 0);
     float textWidth(unsigned from, unsigned to, float xPosition) const;
-    bool isLineBreak(unsigned position) const;
-    bool isEnd(unsigned position) const;
 
     struct Segment {
         unsigned start;
@@ -98,6 +96,8 @@ public:
 private:
     unsigned findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const;
     unsigned findNextBreakablePosition(unsigned position) const;
+    bool isLineBreak(unsigned position) const;
+    bool isEnd(unsigned position) const;
     unsigned segmentIndexForPosition(unsigned position) const;
     unsigned segmentIndexForPositionSlow(unsigned position) const;
 
@@ -109,6 +109,7 @@ private:
 
     mutable LazyLineBreakIterator m_lineBreakIterator;
     mutable unsigned m_lastSegmentIndex;
+    unsigned m_position { 0 };
 };
 
 inline UChar FlowContents::characterAt(unsigned position) const

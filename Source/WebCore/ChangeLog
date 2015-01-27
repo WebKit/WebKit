@@ -1,3 +1,35 @@
+2015-01-27  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Make FlowContents an iterator class.
+        https://bugs.webkit.org/show_bug.cgi?id=140909
+
+        Reviewed by Antti Koivisto.
+
+        This patch transfers content position handling from createLineRuns()/LineState to
+        FlowContents. FlowContents becomes a real iterator class.
+        It tightens content and position information so that we can start supporting
+        no textual content such as <br>.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::commitAndCreateRun): Remove redundant committedLogicalRight.
+        (WebCore::SimpleLineLayout::LineState::addUncommitted): Now that we don't have current
+        positon in LineState, we need to be able to figure out where we start the uncommitted content.
+        This is mainly relevant after collapsed whitespace, when we start a new uncommitted segment.
+        It was previously achieved through LineState::jumpTo().
+        (WebCore::SimpleLineLayout::LineState::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::firstFragment): Return the first fragment for this line.
+        (WebCore::SimpleLineLayout::createLineRuns): Renaming and removing position handling.
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns): Renaming.
+        (WebCore::SimpleLineLayout::createTextRuns):
+        (WebCore::SimpleLineLayout::LineState::jumpTo): Deleted.
+        (WebCore::SimpleLineLayout::initializeNewLine): Deleted. : Move overflow fragment functionality
+        to firstFragment().
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::FlowContents::nextTextFragment):
+        * rendering/SimpleLineLayoutFlowContents.h:
+
 2015-01-27  Chris Dumez  <cdumez@apple.com>
 
         HTMLElement.dir should only return known values

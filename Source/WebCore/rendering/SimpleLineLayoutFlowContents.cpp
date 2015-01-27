@@ -66,17 +66,23 @@ FlowContents::FlowContents(const RenderBlockFlow& flow)
 {
 }
 
-FlowContents::TextFragment FlowContents::nextTextFragment(unsigned position, float xPosition) const
+FlowContents::TextFragment FlowContents::nextTextFragment(float xPosition)
 {
     // A fragment can either be
     // 1. new line character when preserveNewline is on (not considered as whitespace) or
     // 2. whitespace (collasped, non-collapsed multi or single) or
     // 3. non-whitespace characters.
+    // 4. empty, indicating content end.
     TextFragment fragment;
-    fragment.start = position;
+    fragment.start = m_position;
+    if (isEnd(fragment.start)) {
+        fragment.end = fragment.start;
+        return fragment;
+    }
     if (isLineBreak(fragment.start)) {
         fragment.type = TextFragment::LineBreak;
         fragment.end = fragment.start + 1;
+        m_position = fragment.end;
         return fragment;
     }
 
@@ -98,6 +104,7 @@ FlowContents::TextFragment FlowContents::nextTextFragment(unsigned position, flo
             else
                 fragment.width = textWidth(fragment.start, fragment.end, xPosition);
         }
+        m_position = fragment.end;
         return fragment;
     }
 
@@ -105,6 +112,7 @@ FlowContents::TextFragment FlowContents::nextTextFragment(unsigned position, flo
     fragment.isBreakable = m_style.breakWordOnOverflow;
     fragment.end = findNextBreakablePosition(fragment.start + 1);
     fragment.width = textWidth(fragment.start, fragment.end, xPosition);
+    m_position = fragment.end;
     return fragment;
 }
 
