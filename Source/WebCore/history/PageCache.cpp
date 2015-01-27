@@ -464,7 +464,7 @@ void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page& page)
     prune();
 }
 
-std::unique_ptr<CachedPage> PageCache::take(HistoryItem* item)
+std::unique_ptr<CachedPage> PageCache::take(HistoryItem* item, Page* page)
 {
     if (!item)
         return nullptr;
@@ -481,25 +481,27 @@ std::unique_ptr<CachedPage> PageCache::take(HistoryItem* item)
 
     if (cachedPage->hasExpired()) {
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item->url().string().ascii().data());
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureExpiredKey);
         return nullptr;
     }
 
     return cachedPage;
 }
 
-CachedPage* PageCache::get(HistoryItem* item)
+CachedPage* PageCache::get(HistoryItem* item, Page* page)
 {
     if (!item)
-        return 0;
+        return nullptr;
 
     if (CachedPage* cachedPage = item->m_cachedPage.get()) {
         if (!cachedPage->hasExpired())
             return cachedPage;
         
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item->url().string().ascii().data());
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureExpiredKey);
         pageCache()->remove(item);
     }
-    return 0;
+    return nullptr;
 }
 
 void PageCache::remove(HistoryItem* item)

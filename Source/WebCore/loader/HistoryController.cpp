@@ -234,10 +234,10 @@ void HistoryController::restoreDocumentState()
 void HistoryController::invalidateCurrentItemCachedPage()
 {
     // When we are pre-commit, the currentItem is where any page cache data resides.
-    if (!pageCache()->get(currentItem()))
+    if (!pageCache()->get(currentItem(), m_frame.page()))
         return;
 
-    std::unique_ptr<CachedPage> cachedPage = pageCache()->take(currentItem());
+    std::unique_ptr<CachedPage> cachedPage = pageCache()->take(currentItem(), m_frame.page());
 
     // FIXME: This is a grotesque hack to fix <rdar://problem/4059059> Crash in RenderFlow::detach
     // Somehow the PageState object is not properly updated, and is holding onto a stale document.
