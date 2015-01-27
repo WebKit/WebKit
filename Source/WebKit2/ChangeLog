@@ -1,3 +1,17 @@
+2015-01-27  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Remove remaining PLUGIN_ARCHITECTURE(WIN) code blocks from WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=140912
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryLoad):
+        * Shared/Plugins/PluginQuirks.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::userAgent):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+
 2015-01-26  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fix possible crash when -[WKWebView evaluateJavaScript:completionHandler:] was called then the WKWebView is destroyed

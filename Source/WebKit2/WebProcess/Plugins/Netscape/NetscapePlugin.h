@@ -266,11 +266,6 @@ private:
 
     void updateNPNPrivateMode();
 
-#if PLUGIN_ARCHITECTURE(WIN)
-    static BOOL WINAPI hookedTrackPopupMenu(HMENU, UINT uFlags, int x, int y, int nReserved, HWND, const RECT*);
-    void scheduleWindowedGeometryUpdate();
-#endif
-
 #if PLUGIN_ARCHITECTURE(X11)
     bool platformPostInitializeWindowed(bool needsXEmbed, uint64_t windowID);
     bool platformPostInitializeWindowless();
@@ -385,9 +380,6 @@ private:
     RunLoop::Timer<NetscapePlugin> m_nullEventTimer;
     NP_CGContext m_npCGContext;
 #endif
-#elif PLUGIN_ARCHITECTURE(WIN)
-    HWND m_window;
-    HWND m_contextMenuOwnerWindow;
 #elif PLUGIN_ARCHITECTURE(X11)
     Pixmap m_drawable;
     Display* m_pluginDisplay;

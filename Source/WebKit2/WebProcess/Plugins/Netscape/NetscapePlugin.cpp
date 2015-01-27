@@ -147,13 +147,6 @@ const char* NetscapePlugin::userAgent(NPP npp)
 
 const char* NetscapePlugin::userAgent()
 {
-#if PLUGIN_ARCHITECTURE(WIN)
-    static const char* MozillaUserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1) Gecko/20061010 Firefox/2.0";
-    
-    if (quirks().contains(PluginQuirks::WantsMozillaUserAgent))
-        return MozillaUserAgent;
-#endif
-
     if (m_userAgent.isNull()) {
         String userAgent = controller()->userAgent();
         ASSERT(!userAgent.isNull());

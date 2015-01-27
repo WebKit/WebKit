@@ -263,9 +263,6 @@ bool NetscapePluginModule::tryLoad()
 #endif
 
     return result;
-#elif PLUGIN_ARCHITECTURE(WIN)
-    if (getEntryPointsFuncPtr(&m_pluginFuncs) != NPERR_NO_ERROR || initializeFuncPtr(netscapeBrowserFuncs()) != NPERR_NO_ERROR)
-        return false;
 #elif PLUGIN_ARCHITECTURE(X11)
     if (initializeFuncPtr(netscapeBrowserFuncs(), &m_pluginFuncs) != NPERR_NO_ERROR)
         return false;
