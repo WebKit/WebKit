@@ -74,6 +74,7 @@ LayerTreeHostGtk::LayerTreeHostGtk(WebPage* webPage)
     , m_notifyAfterScheduledLayerFlush(false)
     , m_lastImmediateFlushTime(0)
     , m_layerFlushSchedulingEnabled(true)
+    , m_viewOverlayRootLayer(nullptr)
 {
 }
 
@@ -124,8 +125,6 @@ void LayerTreeHostGtk::initialize()
     m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
     static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).layer().setTextureMapper(m_textureMapper.get());
-
-    // FIXME: Cretae page olverlay layers. https://bugs.webkit.org/show_bug.cgi?id=131433.
 
     scheduleLayerFlush();
 }
@@ -179,22 +178,12 @@ void LayerTreeHostGtk::invalidate()
 void LayerTreeHostGtk::setNonCompositedContentsNeedDisplay()
 {
     m_nonCompositedContentLayer->setNeedsDisplay();
-
-    PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
-    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it)
-        it->value->setNeedsDisplay();
-
     scheduleLayerFlush();
 }
 
 void LayerTreeHostGtk::setNonCompositedContentsNeedDisplayInRect(const IntRect& rect)
 {
     m_nonCompositedContentLayer->setNeedsDisplayInRect(rect);
-
-    PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
-    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it)
-        it->value->setNeedsDisplayInRect(rect);
-
     scheduleLayerFlush();
 }
 
@@ -223,10 +212,6 @@ void LayerTreeHostGtk::sizeDidChange(const IntSize& newSize)
         m_nonCompositedContentLayer->setNeedsDisplayInRect(FloatRect(0, oldSize.height(), newSize.width(), newSize.height() - oldSize.height()));
     m_nonCompositedContentLayer->setNeedsDisplay();
 
-    PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
-    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it)
-        it->value->setSize(newSize);
-
     compositeLayersToContext(ForResize);
 }
 
@@ -243,12 +228,8 @@ void LayerTreeHostGtk::forceRepaint()
 
 void LayerTreeHostGtk::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const FloatRect& clipRect)
 {
-    if (graphicsLayer == m_nonCompositedContentLayer.get()) {
+    if (graphicsLayer == m_nonCompositedContentLayer.get())
         m_webPage->drawRect(graphicsContext, enclosingIntRect(clipRect));
-        return;
-    }
-
-    // FIXME: Draw page overlays. https://bugs.webkit.org/show_bug.cgi?id=131433.
 }
 
 static inline bool shouldSkipNextFrameBecauseOfContinousImmediateFlushes(double current, double lastImmediateFlushTime)
@@ -296,12 +277,11 @@ bool LayerTreeHostGtk::flushPendingLayerChanges()
     m_rootLayer->flushCompositingStateForThisLayerOnly();
     m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
 
-    PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
-    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it)
-        it->value->flushCompositingStateForThisLayerOnly();
-
     if (!m_webPage->corePage()->mainFrame().view()->flushCompositingStateIncludingSubframes())
         return false;
+
+    if (m_viewOverlayRootLayer)
+        m_viewOverlayRootLayer->flushCompositingState(FloatRect(FloatPoint(), m_rootLayer->size()));
 
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).updateBackingStoreIncludingSubLayers();
     return true;
@@ -358,31 +338,6 @@ void LayerTreeHostGtk::flushAndRenderLayers()
     }
 }
 
-void LayerTreeHostGtk::createPageOverlayLayer(WebCore::PageOverlay* pageOverlay)
-{
-    std::unique_ptr<GraphicsLayer> layer = GraphicsLayer::create(graphicsLayerFactory(), *this);
-#ifndef NDEBUG
-    layer->setName("LayerTreeHost page overlay content");
-#endif
-
-    layer->setAcceleratesDrawing(m_webPage->corePage()->settings().acceleratedDrawingEnabled());
-    layer->setDrawsContent(true);
-    layer->setSize(m_webPage->size());
-    layer->setShowDebugBorder(m_webPage->corePage()->settings().showDebugBorders());
-    layer->setShowRepaintCounter(m_webPage->corePage()->settings().showRepaintCounter());
-
-    m_rootLayer->addChild(layer.get());
-    m_pageOverlayLayers.add(pageOverlay, WTF::move(layer));
-}
-
-void LayerTreeHostGtk::destroyPageOverlayLayer(WebCore::PageOverlay* pageOverlay)
-{
-    std::unique_ptr<GraphicsLayer> layer = m_pageOverlayLayers.take(pageOverlay);
-    ASSERT(layer);
-
-    layer->removeFromParent();
-}
-
 void LayerTreeHostGtk::scheduleLayerFlush()
 {
     if (!m_layerFlushSchedulingEnabled)
@@ -416,6 +371,13 @@ void LayerTreeHostGtk::pageBackgroundTransparencyChanged()
 void LayerTreeHostGtk::cancelPendingLayerFlush()
 {
     m_layerFlushTimerCallback.cancel();
+}
+
+void LayerTreeHostGtk::setViewOverlayRootLayer(WebCore::GraphicsLayer* viewOverlayRootLayer)
+{
+    m_viewOverlayRootLayer = viewOverlayRootLayer;
+    if (m_viewOverlayRootLayer)
+        m_rootLayer->addChild(m_viewOverlayRootLayer);
 }
 
 } // namespace WebKit

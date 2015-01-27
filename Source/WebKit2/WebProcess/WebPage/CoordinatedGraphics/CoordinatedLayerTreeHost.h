@@ -70,7 +70,7 @@ public:
     virtual void scheduleAnimation() override;
 #endif
 
-    void setViewOverlayRootLayer(WebCore::GraphicsLayer*);
+    virtual void setViewOverlayRootLayer(WebCore::GraphicsLayer*) override;
 
     static PassRefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 

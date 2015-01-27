@@ -39,10 +39,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
-#include "ThreadedCoordinatedLayerTreeHost.h"
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -654,12 +650,9 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 
     graphicsContext->translate(-bounds.x(), -bounds.y());
 
-    for (size_t i = 0; i < rects.size(); ++i) {
-        m_webPage.drawRect(*graphicsContext, rects[i]);
-
-        // FIXME: Draw page olverlays. https://bugs.webkit.org/show_bug.cgi?id=131433.
-
-        updateInfo.updateRects.append(rects[i]);
+    for (const auto& rect : rects) {
+        m_webPage.drawRect(*graphicsContext, rect);
+        updateInfo.updateRects.append(rect);
     }
 
     // Layout can trigger more calls to setNeedsDisplay and we don't want to process them
@@ -669,19 +662,13 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 
 void DrawingAreaImpl::attachViewOverlayGraphicsLayer(WebCore::Frame* frame, WebCore::GraphicsLayer* viewOverlayRootLayer)
 {
-#if USE(COORDINATED_GRAPHICS_THREADED)
     if (!frame->isMainFrame())
         return;
 
     if (!m_layerTreeHost)
         return;
 
-    ThreadedCoordinatedLayerTreeHost* coordinatedLayerTreeHost = static_cast<ThreadedCoordinatedLayerTreeHost*>(m_layerTreeHost.get());
-    coordinatedLayerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);
-#else
-    UNUSED_PARAM(frame);
-    UNUSED_PARAM(viewOverlayRootLayer);
-#endif
+    m_layerTreeHost->setViewOverlayRootLayer(viewOverlayRootLayer);
 }
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK)

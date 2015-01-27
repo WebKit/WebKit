@@ -93,6 +93,8 @@ public:
     virtual void scheduleAnimation() = 0;
 #endif
 
+    virtual void setViewOverlayRootLayer(WebCore::GraphicsLayer*) = 0;
+
 protected:
     explicit LayerTreeHost(WebPage*);
 
