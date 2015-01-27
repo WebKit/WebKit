@@ -1,3 +1,17 @@
+2015-01-26  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r179101): SVGUseElement::expandUseElementsInShadowTree has an object lifetime mistake
+        https://bugs.webkit.org/show_bug.cgi?id=140921
+
+        Reviewed by Alexey Proskuryakov.
+
+        Bug found by running regression tests with Address Sanitizer.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree): Use a Ref to protect
+        the original use element after it's been replaced in the tree; we use it for
+        one more thing after that.
+
 2015-01-26  Roger Fong  <roger_fong@apple.com>
 
         WebGL 2.0: Actually allow for experimental-webgl2 context creation.

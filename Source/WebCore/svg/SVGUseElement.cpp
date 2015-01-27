@@ -609,10 +609,10 @@ void SVGUseElement::expandUseElementsInShadowTree()
     auto descendants = descendantsOfType<SVGUseElement>(*userAgentShadowRoot());
     auto end = descendants.end();
     for (auto it = descendants.begin(); it != end; ) {
-        SVGUseElement& original = *it;
+        Ref<SVGUseElement> original = *it;
         it = end; // Efficiently quiets assertions due to the outstanding iterator.
 
-        ASSERT(!original.cachedDocumentIsStillLoading());
+        ASSERT(!original->cachedDocumentIsStillLoading());
 
         // Spec: In the generated content, the 'use' will be replaced by 'g', where all attributes from the
         // 'use' element except for x, y, width, height and xlink:href are transferred to the generated 'g' element.
@@ -623,11 +623,11 @@ void SVGUseElement::expandUseElementsInShadowTree()
         ASSERT(referencedDocument());
         auto replacement = SVGGElement::create(SVGNames::gTag, *referencedDocument());
 
-        original.transferAttributesToShadowTreeReplacement(replacement.get());
-        original.cloneChildNodes(replacement.ptr());
+        original->transferAttributesToShadowTreeReplacement(replacement.get());
+        original->cloneChildNodes(replacement.ptr());
 
         RefPtr<SVGElement> clonedTarget;
-        Element* targetCandidate = SVGURIReference::targetElementFromIRIString(original.href(), *referencedDocument());
+        Element* targetCandidate = SVGURIReference::targetElementFromIRIString(original->href(), *referencedDocument());
         if (is<SVGElement>(targetCandidate) && !isDisallowedElement(downcast<SVGElement>(*targetCandidate))) {
             SVGElement& originalTarget = downcast<SVGElement>(*targetCandidate);
             clonedTarget = static_pointer_cast<SVGElement>(originalTarget.cloneElementWithChildren(document()));
@@ -641,12 +641,12 @@ void SVGUseElement::expandUseElementsInShadowTree()
         removeDisallowedElementsFromSubtree(replacement.get());
 
         // Replace <use> with the <g> element we created.
-        original.parentNode()->replaceChild(replacement.ptr(), &original);
+        original->parentNode()->replaceChild(replacement.ptr(), original.ptr());
 
         // Call transferSizeAttributesToShadowTreeTargetClone after putting the cloned elements into the
         // shadow tree so it can use SVGElement::correspondingElement without triggering an assertion.
         if (clonedTarget)
-            original.transferSizeAttributesToShadowTreeTargetClone(*clonedTarget);
+            original->transferSizeAttributesToShadowTreeTargetClone(*clonedTarget);
 
         // Continue iterating from the <g> element since the <use> element was replaced.
         it = descendants.from(replacement.get());
