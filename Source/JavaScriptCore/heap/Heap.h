@@ -23,7 +23,6 @@
 #define Heap_h
 
 #include "ArrayBuffer.h"
-#include "BlockAllocator.h"
 #include "CodeBlockSet.h"
 #include "CopyVisitor.h"
 #include "GCIncomingRefCountedSet.h"
@@ -215,7 +214,6 @@ public:
     
     bool isDeferred() const { return !!m_deferralDepth || Options::disableGC(); }
 
-    BlockAllocator& blockAllocator();
     StructureIDTable& structureIDTable() { return m_structureIDTable; }
 
 #if USE(CF)
@@ -245,7 +243,6 @@ private:
     friend class CopyVisitor;
     friend class RecursiveAllocationScope;
     friend class SlotVisitor;
-    friend class SuperRegion;
     friend class IncrementalSweeper;
     friend class HeapStatistics;
     friend class VM;
@@ -342,7 +339,6 @@ private:
     size_t m_totalBytesCopied;
     
     HeapOperation m_operationInProgress;
-    BlockAllocator m_blockAllocator;
     StructureIDTable m_structureIDTable;
     MarkedSpace m_objectSpace;
     CopiedSpace m_storageSpace;

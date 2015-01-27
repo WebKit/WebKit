@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HeapTimer.h"
 
+#include "GCActivityCallback.h"
 #include "IncrementalSweeper.h"
 #include "JSObject.h"
 #include "JSString.h"

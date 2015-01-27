@@ -37,6 +37,10 @@ namespace WTF {
     WTF_EXPORT_PRIVATE size_t fastMallocSize(const void*);
     WTF_EXPORT_PRIVATE size_t fastMallocGoodSize(size_t);
 
+    // Allocations from fastAlignedMalloc() must be freed using fastAlignedFree().
+    WTF_EXPORT_PRIVATE void* fastAlignedMalloc(size_t alignment, size_t);
+    WTF_EXPORT_PRIVATE void fastAlignedFree(void*);
+
     struct TryMallocReturnValue {
         TryMallocReturnValue(void* data)
             : m_data(data)
@@ -231,6 +235,8 @@ using WTF::tryFastCalloc;
 using WTF::tryFastMalloc;
 using WTF::tryFastRealloc;
 using WTF::tryFastZeroedMalloc;
+using WTF::fastAlignedMalloc;
+using WTF::fastAlignedFree;
 
 #ifndef NDEBUG    
 using WTF::fastMallocForbid;

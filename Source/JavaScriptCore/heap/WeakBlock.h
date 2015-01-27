@@ -34,7 +34,6 @@
 
 namespace JSC {
 
-class DeadBlock;
 class HeapRootVisitor;
 class JSValue;
 class WeakHandleOwner;
@@ -56,7 +55,7 @@ public:
         FreeCell* freeList;
     };
 
-    static WeakBlock* create(DeadBlock*);
+    static WeakBlock* create();
 
     static WeakImpl* asWeakImpl(FreeCell*);
 
@@ -73,7 +72,7 @@ public:
 private:
     static FreeCell* asFreeCell(WeakImpl*);
 
-    WeakBlock(Region*);
+    WeakBlock();
     WeakImpl* firstWeakImpl();
     void finalize(WeakImpl*);
     WeakImpl* weakImpls();

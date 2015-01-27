@@ -1,3 +1,15 @@
+2015-01-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages
+        https://bugs.webkit.org/show_bug.cgi?id=140900
+
+        Reviewed by Mark Hahnenberg.
+
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install): Be sure to release other
+        memory after GC and not before, since GC might contribute to free
+        malloc pages now.
+
 2015-01-27  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Make FlowContents an iterator class.

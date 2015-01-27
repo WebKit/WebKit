@@ -530,7 +530,6 @@
     <ClCompile Include="..\ftl\FTLUnwindInfo.cpp" />
     <ClCompile Include="..\ftl\FTLValueFormat.cpp" />
     <ClCompile Include="..\ftl\FTLValueRange.cpp" />
-    <ClCompile Include="..\heap\BlockAllocator.cpp" />
     <ClCompile Include="..\heap\CodeBlockSet.cpp" />
     <ClCompile Include="..\heap\ConservativeRoots.cpp" />
     <ClCompile Include="..\heap\CopiedSpace.cpp" />
@@ -556,7 +555,6 @@
     <ClCompile Include="..\heap\MarkedSpace.cpp" />
     <ClCompile Include="..\heap\MarkStack.cpp" />
     <ClCompile Include="..\heap\SlotVisitor.cpp" />
-    <ClCompile Include="..\heap\SuperRegion.cpp" />
     <ClCompile Include="..\heap\Weak.cpp" />
     <ClCompile Include="..\heap\WeakBlock.cpp" />
     <ClCompile Include="..\heap\WeakHandleOwner.cpp" />
@@ -1218,7 +1216,6 @@
     <ClInclude Include="..\ftl\FTLValueRange.h" />
     <ClInclude Include="..\ftl\FTLWeight.h" />
     <ClInclude Include="..\ftl\FTLWeightedTarget.h" />
-    <ClInclude Include="..\heap\BlockAllocator.h" />
     <ClInclude Include="..\heap\CodeBlockSet.h" />
     <ClInclude Include="..\heap\ConservativeRoots.h" />
     <ClInclude Include="..\heap\CopiedAllocator.h" />
@@ -1268,12 +1265,10 @@
     <ClInclude Include="..\heap\MarkedSpace.h" />
     <ClInclude Include="..\heap\MarkStack.h" />
     <ClInclude Include="..\heap\RecursiveAllocationScope.h" />
-    <ClInclude Include="..\heap\Region.h" />
     <ClInclude Include="..\heap\SlotVisitor.h" />
     <ClInclude Include="..\heap\SlotVisitorInlines.h" />
     <ClInclude Include="..\heap\Strong.h" />
     <ClInclude Include="..\heap\StrongInlines.h" />
-    <ClInclude Include="..\heap\SuperRegion.h" />
     <ClInclude Include="..\heap\TinyBloomFilter.h" />
     <ClInclude Include="..\heap\UnconditionalFinalizer.h" />
     <ClInclude Include="..\heap\Weak.h" />

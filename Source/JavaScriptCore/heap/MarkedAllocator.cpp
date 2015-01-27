@@ -198,9 +198,7 @@ MarkedBlock* MarkedAllocator::allocateBlock(size_t bytes)
 
     size_t cellSize = m_cellSize ? m_cellSize : WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(bytes);
 
-    if (blockSize == MarkedBlock::blockSize)
-        return MarkedBlock::create(m_heap->blockAllocator().allocate<MarkedBlock>(), this, cellSize, m_destructorType);
-    return MarkedBlock::create(m_heap->blockAllocator().allocateCustomSize(blockSize, MarkedBlock::blockSize), this, cellSize, m_destructorType);
+    return MarkedBlock::create(this, blockSize, cellSize, m_destructorType);
 }
 
 void MarkedAllocator::addBlock(MarkedBlock* block)

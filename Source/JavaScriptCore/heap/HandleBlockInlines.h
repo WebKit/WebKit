@@ -26,26 +26,24 @@
 #ifndef HandleBlockInlines_h
 #define HandleBlockInlines_h
 
-#include "BlockAllocator.h"
 #include "HandleBlock.h"
 
 namespace JSC {
 
-inline HandleBlock* HandleBlock::create(DeadBlock* block, HandleSet* handleSet)
+inline HandleBlock* HandleBlock::create(HandleSet* handleSet)
 {
-    Region* region = block->region();
-    return new (NotNull, block) HandleBlock(region, handleSet);
+    return new (NotNull, fastAlignedMalloc(blockSize, blockSize)) HandleBlock(handleSet);
 }
 
-inline HandleBlock::HandleBlock(Region* region, HandleSet* handleSet)
-    : HeapBlock<HandleBlock>(region)
+inline HandleBlock::HandleBlock(HandleSet* handleSet)
+    : HeapBlock<HandleBlock>()
     , m_handleSet(handleSet)
 {
 }
 
 inline char* HandleBlock::payloadEnd()
 {
-    return reinterpret_cast<char*>(this) + region()->blockSize();
+    return reinterpret_cast<char*>(this) + blockSize;
 }
 
 inline char* HandleBlock::payload()

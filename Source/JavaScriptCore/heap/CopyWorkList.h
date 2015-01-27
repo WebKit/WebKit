@@ -27,6 +27,7 @@
 #define CopyWorkList_h
 
 #include "CopyToken.h"
+#include "HeapBlock.h"
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -59,9 +60,9 @@ private:
 
 class CopyWorkListSegment : public HeapBlock<CopyWorkListSegment> {
 public:
-    static CopyWorkListSegment* create(DeadBlock* block)
+    static CopyWorkListSegment* create()
     {
-        return new (NotNull, block) CopyWorkListSegment(block->region());
+        return new (NotNull, fastAlignedMalloc(blockSize, blockSize)) CopyWorkListSegment();
     }
 
     size_t size() { return m_size; }
@@ -78,8 +79,8 @@ public:
     static const size_t blockSize = 512;
 
 private:
-    CopyWorkListSegment(Region* region)
-        : HeapBlock<CopyWorkListSegment>(region)
+    CopyWorkListSegment()
+        : HeapBlock<CopyWorkListSegment>()
         , m_size(0)
     {
     }
@@ -143,7 +144,6 @@ class CopyWorkList {
 public:
     typedef CopyWorkListIterator iterator;
 
-    CopyWorkList(BlockAllocator&);
     ~CopyWorkList();
 
     void append(CopyWorklistItem);
@@ -152,24 +152,18 @@ public:
 
 private:
     DoublyLinkedList<CopyWorkListSegment> m_segments;
-    BlockAllocator& m_blockAllocator;
 };
-
-inline CopyWorkList::CopyWorkList(BlockAllocator& blockAllocator)
-    : m_blockAllocator(blockAllocator)
-{
-}
 
 inline CopyWorkList::~CopyWorkList()
 {
     while (!m_segments.isEmpty())
-        m_blockAllocator.deallocate(CopyWorkListSegment::destroy(m_segments.removeHead()));
+        CopyWorkListSegment::destroy(m_segments.removeHead());
 }
 
 inline void CopyWorkList::append(CopyWorklistItem item)
 {
     if (m_segments.isEmpty() || m_segments.tail()->isFull())
-        m_segments.append(CopyWorkListSegment::create(m_blockAllocator.allocate<CopyWorkListSegment>()));
+        m_segments.append(CopyWorkListSegment::create());
 
     ASSERT(!m_segments.tail()->isFull());
 

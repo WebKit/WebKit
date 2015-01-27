@@ -26,12 +26,12 @@
 #ifndef CopiedBlock_h
 #define CopiedBlock_h
 
-#include "BlockAllocator.h"
 #include "CopyWorkList.h"
 #include "HeapBlock.h"
 #include "JSCJSValue.h"
 #include "Options.h"
 #include <wtf/Atomics.h>
+#include <wtf/TCSpinLock.h>
 
 namespace JSC {
 
@@ -41,8 +41,8 @@ class CopiedBlock : public HeapBlock<CopiedBlock> {
     friend class CopiedSpace;
     friend class CopiedAllocator;
 public:
-    static CopiedBlock* create(DeadBlock*);
-    static CopiedBlock* createNoZeroFill(DeadBlock*);
+    static CopiedBlock* create(size_t);
+    static CopiedBlock* createNoZeroFill(size_t);
 
     void pin();
     bool isPinned();
@@ -86,7 +86,7 @@ public:
     SpinLock& workListLock() { return m_workListLock; }
 
 private:
-    CopiedBlock(Region*);
+    CopiedBlock(size_t);
     void zeroFillWilderness(); // Can be called at any time to zero-fill to the end of the block.
 
     void checkConsistency();
@@ -94,6 +94,7 @@ private:
     SpinLock m_workListLock;
     std::unique_ptr<CopyWorkList> m_workList;
 
+    size_t m_blockSize;
     size_t m_remaining;
     bool m_isPinned : 1;
     bool m_isOld : 1;
@@ -103,15 +104,14 @@ private:
 #endif
 };
 
-inline CopiedBlock* CopiedBlock::createNoZeroFill(DeadBlock* block)
+inline CopiedBlock* CopiedBlock::createNoZeroFill(size_t blockSize)
 {
-    Region* region = block->region();
-    return new(NotNull, block) CopiedBlock(region);
+    return new(NotNull, fastAlignedMalloc(CopiedBlock::blockSize, blockSize)) CopiedBlock(blockSize);
 }
 
-inline CopiedBlock* CopiedBlock::create(DeadBlock* block)
+inline CopiedBlock* CopiedBlock::create(size_t blockSize)
 {
-    CopiedBlock* newBlock = createNoZeroFill(block);
+    CopiedBlock* newBlock = createNoZeroFill(blockSize);
     newBlock->zeroFillWilderness();
     return newBlock;
 }
@@ -128,8 +128,9 @@ inline void CopiedBlock::zeroFillWilderness()
 #endif
 }
 
-inline CopiedBlock::CopiedBlock(Region* region)
-    : HeapBlock<CopiedBlock>(region)
+inline CopiedBlock::CopiedBlock(size_t blockSize)
+    : HeapBlock<CopiedBlock>()
+    , m_blockSize(blockSize)
     , m_remaining(payloadCapacity())
     , m_isPinned(false)
     , m_isOld(false)
@@ -203,7 +204,7 @@ inline void CopiedBlock::didPromote()
 
 inline bool CopiedBlock::isOversize()
 {
-    return region()->isCustomSize();
+    return m_blockSize != blockSize;
 }
 
 inline unsigned CopiedBlock::liveBytes()
@@ -219,7 +220,7 @@ inline char* CopiedBlock::payload()
 
 inline char* CopiedBlock::payloadEnd()
 {
-    return reinterpret_cast<char*>(this) + region()->blockSize();
+    return reinterpret_cast<char*>(this) + m_blockSize;
 }
 
 inline size_t CopiedBlock::payloadCapacity()
@@ -264,7 +265,7 @@ inline size_t CopiedBlock::size()
 
 inline size_t CopiedBlock::capacity()
 {
-    return region()->blockSize();
+    return m_blockSize;
 }
 
 inline bool CopiedBlock::hasWorkList()

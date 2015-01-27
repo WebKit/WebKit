@@ -27,37 +27,31 @@
 #define HeapBlock_h
 
 #include <wtf/DoublyLinkedList.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
 enum AllocationEffort { AllocationCanFail, AllocationMustSucceed };
 
-class Region;
-
 template<typename T>
 class HeapBlock : public DoublyLinkedListNode<T> {
     friend class WTF::DoublyLinkedListNode<T>;
 public:
-    static HeapBlock* destroy(HeapBlock* block) WARN_UNUSED_RETURN
+    static void destroy(HeapBlock* block)
     {
         static_cast<T*>(block)->~T();
-        return block;
+        fastAlignedFree(block);
     }
 
-    HeapBlock(Region* region)
+    HeapBlock()
         : DoublyLinkedListNode<T>()
-        , m_region(region)
         , m_prev(0)
         , m_next(0)
     {
-        ASSERT(m_region);
     }
 
-    Region* region() const { return m_region; }
-
 private:
-    Region* m_region;
     T* m_prev;
     T* m_next;
 };

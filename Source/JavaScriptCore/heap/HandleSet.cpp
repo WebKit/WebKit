@@ -44,12 +44,12 @@ HandleSet::HandleSet(VM* vm)
 HandleSet::~HandleSet()
 {
     while (!m_blockList.isEmpty())
-        m_vm->heap.blockAllocator().deallocate(HandleBlock::destroy(m_blockList.removeHead()));
+        HandleBlock::destroy(m_blockList.removeHead());
 }
 
 void HandleSet::grow()
 {
-    HandleBlock* newBlock = HandleBlock::create(m_vm->heap.blockAllocator().allocate<HandleBlock>(), this);
+    HandleBlock* newBlock = HandleBlock::create(this);
     m_blockList.append(newBlock);
 
     for (int i = newBlock->nodeCapacity() - 1; i >= 0; --i) {

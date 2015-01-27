@@ -31,21 +31,18 @@
 
 namespace JSC {
 
-class BlockAllocator;
-class DeadBlock;
-
 template <typename T>
 class GCArraySegment : public HeapBlock<GCArraySegment<T>> {
 public:
-    GCArraySegment(Region* region)
-        : HeapBlock<GCArraySegment>(region)
+    GCArraySegment()
+        : HeapBlock<GCArraySegment>()
 #if !ASSERT_DISABLED
         , m_top(0)
 #endif
     {
     }
 
-    static GCArraySegment* create(DeadBlock*);
+    static GCArraySegment* create();
 
     T* data()
     {
@@ -66,7 +63,7 @@ class GCSegmentedArray {
     friend class GCSegmentedArrayIterator<T>;
     friend class GCSegmentedArrayIterator<const T>;
 public:
-    GCSegmentedArray(BlockAllocator&);
+    GCSegmentedArray();
     ~GCSegmentedArray();
 
     void append(T);
@@ -101,7 +98,6 @@ protected:
     void validatePrevious();
 
     DoublyLinkedList<GCArraySegment<T>> m_segments;
-    BlockAllocator& m_blockAllocator;
 
     JS_EXPORT_PRIVATE static const size_t s_segmentCapacity = CapacityFromSize<GCArraySegment<T>::blockSize>::value;
     size_t m_top;

@@ -1,3 +1,131 @@
+2015-01-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Use FastMalloc (bmalloc) instead of BlockAllocator for GC pages
+        https://bugs.webkit.org/show_bug.cgi?id=140900
+
+        Reviewed by Mark Hahnenberg.
+
+        Removes some more custom allocation code.
+
+        Looks like a speedup. (See results attached to bugzilla.)
+
+        Will hopefully reduce memory use by improving sharing between the GC and
+        malloc heaps.
+
+        * API/JSBase.cpp:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Feed the compiler.
+
+        * heap/BlockAllocator.cpp: Removed.
+        * heap/BlockAllocator.h: Removed. No need for a custom allocator anymore.
+
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::CodeBlockSet):
+        * heap/CodeBlockSet.h: Feed the compiler.
+
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::createNoZeroFill):
+        (JSC::CopiedBlock::create):
+        (JSC::CopiedBlock::CopiedBlock):
+        (JSC::CopiedBlock::isOversize):
+        (JSC::CopiedBlock::payloadEnd):
+        (JSC::CopiedBlock::capacity):
+        * heap/CopiedBlockInlines.h:
+        (JSC::CopiedBlock::reportLiveBytes): Each copied block now tracks its
+        own size, since we can't rely on Region to tell us our size anymore.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::~CopiedSpace):
+        (JSC::CopiedSpace::tryAllocateOversize):
+        (JSC::CopiedSpace::tryReallocateOversize):
+        * heap/CopiedSpaceInlines.h:
+        (JSC::CopiedSpace::recycleEvacuatedBlock):
+        (JSC::CopiedSpace::recycleBorrowedBlock):
+        (JSC::CopiedSpace::allocateBlockForCopyingPhase):
+        (JSC::CopiedSpace::allocateBlock):
+        (JSC::CopiedSpace::startedCopying): Deallocate blocks directly, rather
+        than pushing them onto the block allocator's free list; the block
+        allocator doesn't exist anymore.
+
+        * heap/CopyWorkList.h:
+        (JSC::CopyWorkListSegment::create):
+        (JSC::CopyWorkListSegment::CopyWorkListSegment):
+        (JSC::CopyWorkList::~CopyWorkList):
+        (JSC::CopyWorkList::append):
+        (JSC::CopyWorkList::CopyWorkList): Deleted.
+        * heap/GCSegmentedArray.h:
+        (JSC::GCArraySegment::GCArraySegment):
+        * heap/GCSegmentedArrayInlines.h:
+        (JSC::GCSegmentedArray<T>::GCSegmentedArray):
+        (JSC::GCSegmentedArray<T>::~GCSegmentedArray):
+        (JSC::GCSegmentedArray<T>::clear):
+        (JSC::GCSegmentedArray<T>::expand):
+        (JSC::GCSegmentedArray<T>::refill):
+        (JSC::GCArraySegment<T>::create):
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::GCThreadSharedData):
+        * heap/GCThreadSharedData.h: Feed the compiler.
+
+        * heap/HandleBlock.h:
+        * heap/HandleBlockInlines.h:
+        (JSC::HandleBlock::create):
+        (JSC::HandleBlock::HandleBlock):
+        (JSC::HandleBlock::payloadEnd):
+        * heap/HandleSet.cpp:
+        (JSC::HandleSet::~HandleSet):
+        (JSC::HandleSet::grow): Same as above.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        * heap/Heap.h: Removed the block allocator since it is unused now.
+
+        * heap/HeapBlock.h:
+        (JSC::HeapBlock::destroy):
+        (JSC::HeapBlock::HeapBlock):
+        (JSC::HeapBlock::region): Deleted. Removed the Region pointer from each
+        HeapBlock since a HeapBlock is just a normal allocation now.
+
+        * heap/HeapInlines.h:
+        (JSC::Heap::blockAllocator): Deleted.
+
+        * heap/HeapTimer.cpp:
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackArray::MarkStackArray):
+        * heap/MarkStack.h: Feed the compiler.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::allocateBlock): No need to use a custom code path
+        based on size, since we use a general purpose allocator now.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::destroy):
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::capacity): Track block size explicitly, like CopiedBlock.
+
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::freeBlock):
+        * heap/MarkedSpace.h:
+
+        * heap/Region.h: Removed.
+
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::SlotVisitor): Removed reference to block allocator.
+
+        * heap/SuperRegion.cpp: Removed.
+        * heap/SuperRegion.h: Removed.
+
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::create):
+        (JSC::WeakBlock::WeakBlock):
+        * heap/WeakBlock.h:
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::~WeakSet):
+        (JSC::WeakSet::addAllocator):
+        (JSC::WeakSet::removeAllocator): Removed reference to block allocator.
+
 2015-01-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [ARM] Typo fix after r176083
