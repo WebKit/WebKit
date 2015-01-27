@@ -1,3 +1,27 @@
+2015-01-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Another round of bug filing and expectation updates.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/selectors: Added.
+        * platform/win/fast/selectors/064-expected.txt: Added.
+        * platform/win/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        * platform/win/fast/text/backslash-to-yen-sign-expected.png: Added.
+        * platform/win/fast/text/drawBidiText-expected.txt: Added.
+        * platform/win/fast/text/fallback-traits-fixup-expected.txt:
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.txt:
+        * platform/win/fast/text/international/hindi-spacing-expected.txt: Added.
+        * platform/win/fast/text/international/synthesized-italic-vertical-latin-expected.txt: Removed property svn:executable.
+        * platform/win/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt: Added.
+        * platform/win/fast/text/unicode-variation-selector-expected.txt:
+        * platform/win/fast/text/whitespace: Added.
+        * platform/win/fast/text/whitespace/normal-after-nowrap-breaking-expected.txt: Added.
+        * platform/win/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+        * platform/win/fast/writing-mode/fieldsets-expected.txt: Added.
+        * platform/win/js/dom/global-constructors-attributes-dedicated-worker-expected.txt: Removed.
+        * platform/win/printing/iframe-print-expected.txt: Added.
+        * platform/win/transforms/2d/zoom-menulist-expected.txt: Added.
+
 2015-01-27  Benjamin Poulain  <benjamin@webkit.org>
 
         Import the layout test style-sharing-type-and-readonly.html from blink

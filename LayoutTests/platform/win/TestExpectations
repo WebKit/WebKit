@@ -706,7 +706,6 @@ webkit.org/b/48455 transitions/cancel-transition.html [ Pass Failure ]
 webkit.org/b/48456 transitions/change-values-during-transition.html [ Pass Failure ]
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Skip ]
 webkit.org/b/48750 fast/frames/sandboxed-iframe-storage.html [ Failure ]
-webkit.org/b/48999 js/dom/exceptions-thrown-in-callbacks.html [ Skip ]
 webkit.org/b/48753 http/tests/security/window-events-clear-port.html [ Pass Timeout ]
 webkit.org/b/48753 http/tests/security/window-properties-clear-port.html [ Pass Timeout ]
 fast/workers/worker-document-leak.html [ Skip ] # Timeout
@@ -1651,6 +1650,9 @@ webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 ################             DOM Issues                  #######################
 ################################################################################
 webkit.org/b/140768 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Failure ]
+
+# Tests that exceed maximum call stack on windows
+fast/dom/Window/window-postmessage-clone-deep-array.html [ Skip ]
 ################################################################################
 #################            End DOM Issues              #######################
 ################################################################################
@@ -1848,6 +1850,59 @@ http/ [ Skip ]
 #################            End HTTP Issues             #######################
 ################################################################################
 
+
+################################################################################
+################           Inspector Issues                   ##################
+################################################################################
+# Some inspector tests timing out after r173992. Skip them.
+webkit.org/b/137157 inspector/css/matched-style-properties.html [ Skip ]
+webkit.org/b/137157 inspector/css/selector-dynamic-specificity.html [ Skip ]
+webkit.org/b/137157 inspector/event-listener-set.html [ Skip ]
+webkit.org/b/137157 inspector/event-listener.html [ Skip ]
+webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Skip ]
+webkit.org/b/137157 inspector/model/remote-object-get-properties.html [ Pass Timeout ]
+webkit.org/b/137157 inspector/page/main-frame-resource.html [ Skip ]
+webkit.org/b/137157 inspector/protocol-promise-result.html [ Skip ]
+inspector/test-harness-trivially-works.html [ Skip ]
+inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
+inspector/css/selector-specificity.html [ Skip ]
+inspector/css/pseudo-element-matches.html [ Skip ]
+
+[ Release ] inspector-protocol/layers/layers-reflected-content.html [ Pass Timeout ]
+[ Release ] inspector-protocol/debugger/setBreakpoint-actions.html [ Pass Timeout ]
+[ Release ] inspector-protocol/dom/focus.html [ Pass Timeout ]
+[ Release ] inspector-protocol/dom/remove-multiple-nodes.html [ Pass Timeout ]
+inspector-protocol/layers/layers-blending-compositing-reasons.html [ Failure ]
+webkit.org/b/140520 inspector-protocol/debugger/setBreakpoint-dfg.html [ Skip ]  # Crashing
+################################################################################
+#################        End Inspector Issues               ####################
+################################################################################
+
+
+################################################################################
+################           JavaScript Issues             #######################
+################################################################################
+
+# Skip tests that fail only in Debug mode 
+webkit.org/b/128789 [ Debug ] js/regress [ Skip ]
+webkit.org/b/140947 [ Debug ] js/slow-stress [ Skip ]
+
+webkit.org/b/140945 js/date-constructor.html [ Failure ]
+webkit.org/b/127492 js/dom/date-big-constructor.html [ Failure ]
+webkit.org/b/140847 js/dom/date-negative-setmonth.html [ Failure ]
+js/dom/dom-static-property-for-in-iteration.html [ Failure ]
+webkit.org/b/48999 js/dom/exceptions-thrown-in-callbacks.html [ Skip ]
+webkit.org/b/140947 js/slow-stress/Int32Array-alloc-huge.html [ Pass Failure ]
+webkit.org/b/140947 js/slow-stress/Int32Array-alloc-huge-long-lived.html [ Pass Failure ]
+webkit.org/b/140947 js/slow-stress/Int32Array-alloc-large-long-lived.html [ Skip ]  # Crashing
+webkit.org/b/140946 js/sort-stability.html [ Failure ]
+
+# The following fails due to DOM exception 18.
+js/dom/callback-function-with-handle-event.html [ Skip ] #  [ Timeout ]
+################################################################################
+#################        End JavaScript Issues           #######################
+################################################################################
+
 webkit.org/b/116564 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Failure ]
 # Skip image only failures that have very low percentage differences
 fast/borders/border-radius-on-html.html [ ImageOnlyFailure ]
@@ -1919,17 +1974,17 @@ webkit.org/b/140510 inspector-protocol/debugger/terminate-dedicated-worker-while
 webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertiesForNode.html [ Pass Failure ]
 inspector-protocol/debugger/pause-on-assert.html [ Skip ]
 
-# Tests that exceed maximum call stack on windows
-fast/dom/Window/window-postmessage-clone-deep-array.html [ Skip ]
-js/dom/deep-recursion-test.html [ Skip ]
-js/dom/global-recursion-on-full-stack.html [ Skip ]
-js/slow-stress/Int32Array-alloc-huge.html [ Pass Failure ]
-
 # <rdar://problem/19526412>
 fast/images/bad-png.html [ Skip ]
 
 webkit.org/b/140703 loader/go-back-cached-main-resource.html [ Failure ]
 webkit.org/b/140703 fast/preloader/scan-body-from-head-script.html [ Failure ]
+
+# These fail because the URL is not available when the loader first runs, so instead of 'didFinishLoading' being
+# attributed to 'block-test.html', it shows up as <unknown>
+webkit.org/b/140703 security/block-test.html [ Failure ]
+webkit.org/b/140703 security/block-test-no-port.html [ Failure ]
+
 webkit.org/b/140707 storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html [ Failure ]
 webkit.org/b/140707 storage/domstorage/storage-close-database-on-idle.html [ Failure ]
 
@@ -1942,8 +1997,6 @@ webkit.org/b/140771 transforms/hittest-translated-content-off-to-infinity-and-ba
 
 # Tests generating new results
 printing/return-from-printing-mode.html
-
-webkit.org/b/140847 js/dom/date-negative-setmonth.html [ Failure ]
 
 webkit.org/b/140866 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 
@@ -1966,8 +2019,6 @@ platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
 [ Debug ] inspector-protocol [ Skip ]
 [ Debug ] transforms/3d/hit-testing [ Skip ]
 [ Debug ] transforms/3d/point-mapping [ Skip ]
-[ Debug ] js/regress [ Skip ]
-[ Debug ] js/slow-stress [ Skip ]
 
 webkit.org/b/117323 animations/animation-delay-changed.html [ Pass Failure Timeout ]
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
@@ -2339,13 +2390,14 @@ webkit.org/b/138025 fast/replaced/width100percent-menulist.html [ Failure ]
 webkit.org/b/138025 fast/replaced/width100percent-checkbox.html [ Failure ]
 webkit.org/b/137962 fast/replaced/replaced-breaking-mixture.html [ Failure ]
 
+# Selection list is not in the right scroll position
 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 
+# Selectors don't seem to work properly
 webkit.org/b/117322 fast/selectors/selection-window-inactive.html [ ImageOnlyFailure ]
 webkit.org/b/140519 [ Debug ] fast/selectors/querySelector-id-with-multiple-elements-with-same-id.html [ Skip ]  # Crashing
 fast/selectors/querySelector-window-inactive.html [ Failure ]
 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
-webkit.org/b/138025 fast/selectors/064.html [ Failure ]
 
 fast/shapes/shape-outside-floats/shape-outside-image-fit-002.html [ Pass ImageOnlyFailure ]
 fast/shapes/shape-outside-floats/shape-outside-floats-layout-after-initial-layout-pass.html [ ImageOnlyFailure ]
@@ -2356,7 +2408,6 @@ fast/table/cell-overflow-simplified-layout.html [ Pass Timeout ]
 fast/table/multiple-captions-crash3.html [ Pass ImageOnlyFailure Timeout ]
 fast/table/table-cell-change-last-row-with-needsCellRecalc-section.html [ Pass Timeout ]
 
-webkit.org/b/138025 fast/text/international/unicode-bidi-plaintext-in-textarea.html [ Failure ]
 fast/text/emphasis-vertical-over-right.html [ Pass Timeout ]
 fast/text/backslash-to-yen-sign-dynamic.html [ Pass Timeout ]
 fast/text/indic.html [ Failure ]
@@ -2364,86 +2415,26 @@ fast/text/khmer-lao-font.html [ Failure ]
 fast/text/line-runs-rounding-simple-lines.html [ Pass Timeout ]
 fast/text/international/content-language-with-subtags.html [ Pass Timeout ]
 fast/text/international/locale-sensitive-fonts.html [ Pass ImageOnlyFailure ]
-webkit.org/b/24810 fast/text/drawBidiText.html [ Failure ]
-fast/text/fallback-traits-fixup.html [ Failure ]
 webkit.org/b/117322 fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 fast/text/international/combining-marks-position.html [ Failure ]
-webkit.org/b/24810 fast/text/international/hindi-spacing.html [ Failure ]
 fast/text/international/text-combine-image-test.html [ Failure ]
-fast/text/unicode-variation-selector.html [ Failure Crash ]
+fast/text/unicode-variation-selector.html [ Pass Crash ]
 fast/text/empty-shadow.html [ ImageOnlyFailure ]
 fast/text/emphasis-combined-text.html [ ImageOnlyFailure ]
-fast/text/backslash-to-yen-sign-euc.html [ Failure ]
 webkit.org/b/138041 fast/text/international/rtl-white-space-pre-wrap.html [ Failure ]
-webkit.org/b/138041 fast/text/whitespace/normal-after-nowrap-breaking.html [ Failure ]
 
 webkit.org/b/140216 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
-webkit.org/b/116564 fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 webkit.org/b/117322 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
-webkit.org/b/138041 fast/writing-mode/fieldsets.html [ Failure ]
-
-html5lib/generated/run-entities01-write.html [ Pass Failure ]
-
-ietestcenter/Javascript/ [ Pass Failure Timeout ]
 
 imported/w3c/html-templates/parsing-html-templates/creating-an-element-for-the-token/template-owner-document.html [ Pass Failure Timeout ]
 
-# Some inspector tests timing out after r173992. Skip them.
-webkit.org/b/137157 inspector/css/matched-style-properties.html [ Skip ]
-webkit.org/b/137157 inspector/css/selector-dynamic-specificity.html [ Skip ]
-webkit.org/b/137157 inspector/event-listener-set.html [ Skip ]
-webkit.org/b/137157 inspector/event-listener.html [ Skip ]
-webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Skip ]
-webkit.org/b/137157 inspector/model/remote-object-get-properties.html [ Pass Timeout ]
-webkit.org/b/137157 inspector/page/main-frame-resource.html [ Skip ]
-webkit.org/b/137157 inspector/protocol-promise-result.html [ Skip ]
-inspector/test-harness-trivially-works.html [ Skip ]
-inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
-inspector/css/selector-specificity.html [ Skip ]
-inspector/css/pseudo-element-matches.html [ Skip ]
-
-[ Release ] inspector-protocol/layers/layers-reflected-content.html [ Pass Timeout ]
-[ Release ] inspector-protocol/debugger/setBreakpoint-actions.html [ Pass Timeout ]
-[ Release ] inspector-protocol/dom/focus.html [ Pass Timeout ]
-[ Release ] inspector-protocol/dom/remove-multiple-nodes.html [ Pass Timeout ]
-inspector-protocol/layers/layers-blending-compositing-reasons.html [ Failure ]
-webkit.org/b/140520 inspector-protocol/debugger/setBreakpoint-dfg.html [ Skip ]  # Crashing
-
-js/dom/const.html [ Pass Timeout ]
-js/kde/comment-1.html [ Pass Timeout ]
-js/dom/callback-function-with-handle-event.html [ Skip ] #  [ Timeout ]
-js/dom/global-constructors-attributes-dedicated-worker.html [ Failure ]
-webkit.org/b/24810 js/sort-stability.html [ Failure ]
-# Don't run these time-outs for now
-js/dom/random-array-gc-stress.html [ Skip ]
-js/slow-stress/Int32Array-alloc-large-long-lived.html [ Skip ]  # Crashing
-# REGRESSION (r159892): Failing JavaScript test
-webkit.org/b/127492 js/dom/date-big-constructor.html [ Failure ]
-webkit.org/b/128789 [ Debug ] js/regress/Int16Array-bubble-sort-with-byteLength.html [ Pass Timeout ]
-webkit.org/b/128789 [ Debug ] js/regress/Int16Array-bubble-sort.html [ Pass Timeout ]
-webkit.org/b/128789 [ Debug ] js/regress/chain-getter-access.html [ Pass Timeout ]
-webkit.org/b/128789 [ Debug ] js/regress/proto-getter-access.html [ Pass Timeout ]
-webkit.org/b/128789 [ Debug ] js/regress/simple-getter-access.html [ Pass Timeout ]
-js/caller-property.html [ Pass Failure ]
-js/mod-crash.html [ Pass Failure ]
-js/date-constructor.html [ Failure ]
-js/dom/dom-static-property-for-in-iteration.html [ Failure ]
-js/slow-stress/emscripten-memops.html [ Pass Timeout ]
-
-printing/iframe-print.html [ Failure ]
-# Flaky test fails on only certain machine configurations
-printing/print-close-crash.html [ Pass Failure ]
 webkit.org/b/117322 printing/quirks-percentage-height-body.html [ ImageOnlyFailure ]
 webkit.org/b/117322 printing/quirks-percentage-height.html [ ImageOnlyFailure ]
 webkit.org/b/117322 printing/standards-percentage-heights.html [ ImageOnlyFailure ]
 
 webkit.org/b/97026 scrollbars/custom-scrollbar-with-incomplete-style.html [ Failure ]
 
-webkit.org/b/24810 security/block-test.html [ Failure ]
-security/block-test-no-port.html [ Failure ]
-security/autocomplete-cleared-on-back.html [ Skip ]
-
-webkit.org/b/24810 transforms/2d/zoom-menulist.html [ Failure ]
+security/autocomplete-cleared-on-back.html [ Skip ]  # Timeout
 
 transitions/move-after-transition.html [ Failure Timeout ]
 
