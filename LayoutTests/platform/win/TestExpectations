@@ -1263,48 +1263,16 @@ webkit.org/b/140798 accessibility/aria-hidden-false-works-in-subtrees.html [ Ski
 # The following fail because of missing numerical output support.
 webkit.org/b/140832 accessibility/aria-slider-value-change.html [ Failure ]
 webkit.org/b/140832 accessibility/aria-slider-value.html [ Failure ]
-webkit.org/b/140832 [ Release ] accessibility/combo-box-collapsed-selection-changed.html [ Failure ]
+webkit.org/b/140832 accessibility/combo-box-collapsed-selection-changed.html [ Failure ]
 webkit.org/b/140832 accessibility/meter-element.html [ Failure ]
 webkit.org/b/140832 accessibility/progressbar.html [ Failure ]
 webkit.org/b/140832 accessibility/range-alter-by-step.html [ Failure ]
 webkit.org/b/140832 accessibility/aria-scrollbar-role.html [ Failure ]
-webkit.org/b/140832 [ Release ] accessibility/notification-listeners.html [ Failure ]
+webkit.org/b/140832 accessibility/notification-listeners.html [ Failure ]
 webkit.org/b/140832 [ Release ] accessibility/spinbutton-value.html [ Failure ]
 webkit.org/b/140832 accessibility/svg-remote-element.html [ Failure ]
 webkit.org/b/140832 accessibility/textarea-line-for-index.html [ Failure ]
 webkit.org/b/140832 accessibility/textarea-selected-text-range.html [ Failure ]
-
-# The following failures have not been investigated.
-accessibility/aria-readonly.html [ Failure ]
-accessibility/aria-required.html [ Failure ]
-accessibility/content-editable.html [ Failure ]
-accessibility/document-attributes.html [ Failure ]
-accessibility/element-haspopup.html [ Failure ]
-accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
-accessibility/heading-level.html [ Failure ]
-accessibility/help-text.html [ Failure ]
-accessibility/html5-required-attribute.html [ Failure ]
-accessibility/image-link.html [ Failure ]
-accessibility/image-map2.html [ Failure ]
-accessibility/internal-link-anchors2.html [ Failure ]
-accessibility/language-attribute.html [ Failure ]
-accessibility/lists.html [ Failure ]
-[ Release ] accessibility/multiselect-list-reports-active-option.html [ Failure ]
-accessibility/onclick-handlers.html [ Failure ]
-accessibility/parent-delete.html [ Failure ]
-accessibility/placeholder.html [ Failure ]
-accessibility/plugin.html [ Failure ]
-accessibility/press-target-uses-text-descendant-node.html [ Failure ]
-accessibility/roles-computedRoleString.html [ Failure ]
-accessibility/roles-exposed.html [ Failure ]
-accessibility/table-attributes.html [ Failure ]
-accessibility/table-detection.html [ Failure ]
-accessibility/table-one-cell.html [ Failure ]
-accessibility/table-roles-hierarchy.html [ Failure ]
-accessibility/table-sections.html [ Failure ]
-accessibility/table-with-rules.html [ Failure ]
-accessibility/transformed-element.html [ Failure ]
-accessibility/visible-elements.html [ Failure ]
 
 # Need to implement global addNotificationListener in Windows DRT
 accessibility/content-editable-as-textarea.html [ Skip ]
@@ -1352,13 +1320,6 @@ webkit.org/b/140867 [ Debug ] accessibility/aria-option-role.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/aria-toggle-button-with-title.html [ Skip ]
 webkit.org/b/140867 [ Debug ] accessibility/focusable-div.html [ Skip ]
 
-# ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener
-webkit.org/b/140868 [ Debug ] accessibility/notification-listeners.html [ Skip ]
-webkit.org/b/140868 [ Debug ] accessibility/combo-box-collapsed-selection-changed.html [ Skip ]
-webkit.org/b/87426 [ Debug ] accessibility/menu-list-sends-change-notification.html [ Skip ]  # Crashing
-webkit.org/b/87426 [ Debug ] accessibility/multiselect-list-reports-active-option.html [ Skip ]  # Crashing
-webkit.org/b/87426 [ Debug ] platform/win/accessibility/detached-object-notification-crash.html [ Skip ]  # Crashing
-
 # Attempt to add a text element that claims NOT to be an accessibility element:
 webkit.org/b/140870 [ Debug ] accessibility/canvas-fallback-content.html [ Skip ]
 webkit.org/b/140870 [ Debug ] accessibility/canvas-accessibilitynodeobject.html [ Skip ]
@@ -1366,6 +1327,37 @@ webkit.org/b/140870 [ Debug ] accessibility/canvas-accessibilitynodeobject.html 
 # Asserts because it does not have a popup menu:
 webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 
+# The following failures have not been investigated.
+accessibility/aria-readonly.html [ Failure ]
+accessibility/aria-required.html [ Failure ]
+accessibility/content-editable.html [ Failure ]
+accessibility/document-attributes.html [ Failure ]
+accessibility/element-haspopup.html [ Failure ]
+accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
+accessibility/heading-level.html [ Failure ]
+accessibility/help-text.html [ Failure ]
+accessibility/html5-required-attribute.html [ Failure ]
+accessibility/image-link.html [ Failure ]
+accessibility/image-map2.html [ Failure ]
+accessibility/internal-link-anchors2.html [ Failure ]
+accessibility/language-attribute.html [ Failure ]
+accessibility/lists.html [ Failure ]
+accessibility/multiselect-list-reports-active-option.html [ Failure ]
+accessibility/onclick-handlers.html [ Failure ]
+accessibility/parent-delete.html [ Failure ]
+accessibility/placeholder.html [ Failure ]
+accessibility/plugin.html [ Failure ]
+accessibility/press-target-uses-text-descendant-node.html [ Failure ]
+accessibility/roles-computedRoleString.html [ Failure ]
+accessibility/roles-exposed.html [ Failure ]
+accessibility/table-attributes.html [ Failure ]
+accessibility/table-detection.html [ Failure ]
+accessibility/table-one-cell.html [ Failure ]
+accessibility/table-roles-hierarchy.html [ Failure ]
+accessibility/table-sections.html [ Failure ]
+accessibility/table-with-rules.html [ Failure ]
+accessibility/transformed-element.html [ Failure ]
+accessibility/visible-elements.html [ Failure ]
 ################################################################################
 #######################   End Accessibility Issues   ###########################
 ################################################################################

@@ -1,5 +1,11 @@
 2015-01-27  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Unskip tests now that r179170 is in place.
+
+        * platform/win/TestExpectations:
+
+2015-01-27  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Adjust some expectations based on test bot display metrics.
 
         * platform/win/TestExpectations:
