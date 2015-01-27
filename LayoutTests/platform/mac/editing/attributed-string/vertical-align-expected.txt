@@ -26,7 +26,11 @@ Alignment 4
     TighteningFactor: 0.05
     HeaderLevel: 0
 [sup element]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 13.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
     NSSuperScript: 1
 NSParagraphStyle:
 Alignment 4
@@ -48,7 +52,11 @@ Alignment 4
     TighteningFactor: 0.05
     HeaderLevel: 0
 [ ]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 NSParagraphStyle:
 Alignment 4
     LineSpacing: 0
@@ -69,7 +77,11 @@ Alignment 4
     TighteningFactor: 0.05
     HeaderLevel: 0
 [sub element]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 13.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
     NSSuperScript: -1
 NSParagraphStyle:
 Alignment 4
@@ -91,15 +103,35 @@ Alignment 4
     TighteningFactor: 0.05
     HeaderLevel: 0
 [ ]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [vertical align super]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
     NSSuperScript: 1
 [ ]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 [vertical align sub]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
     NSSuperScript: -1
 [ vertical align 50% ]
+    NSColor: #000000 (NSDeviceRGBColorSpace)
     NSFont: Times-Roman 16.00 pt.
+    NSKern: 0pt
+    NSStrokeColor: NSDeviceRGBColorSpace 0 0 0 1
+    NSStrokeWidth: 0
 

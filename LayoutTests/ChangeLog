@@ -1,3 +1,10 @@
+2015-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed. Rebaseline several editing tests on Mac after r179168.
+
+        * platform/mac/editing/attributed-string/font-size-expected.txt:
+        * platform/mac/editing/attributed-string/vertical-align-expected.txt:
+
 2015-01-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unskip tests now that r179170 is in place.
