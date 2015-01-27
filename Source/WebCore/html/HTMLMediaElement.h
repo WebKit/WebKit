@@ -795,6 +795,7 @@ private:
     ScanType m_scanType;
     ScanDirection m_scanDirection;
 
+    bool m_firstTimePlaying : 1;
     bool m_playing : 1;
     bool m_isWaitingUntilMediaCanStart : 1;
     bool m_shouldDelayLoadEvent : 1;

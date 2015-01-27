@@ -44,6 +44,7 @@
 #include "ElementIterator.h"
 #include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
+#include "FeatureCounter.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -291,6 +292,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_actionAfterScan(Nothing)
     , m_scanType(Scan)
     , m_scanDirection(Forward)
+    , m_firstTimePlaying(true)
     , m_playing(false)
     , m_isWaitingUntilMediaCanStart(false)
     , m_shouldDelayLoadEvent(false)
@@ -1198,6 +1200,10 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
             return;
         }
     }
+
+    // Log that we started loading a media element.
+    FEATURE_COUNTER_INCREMENT_KEY(document().page(), isVideo() ? FeatureCounterMediaVideoElementLoadingKey : FeatureCounterMediaAudioElementLoadingKey);
+    m_firstTimePlaying = true;
 
     // Set m_currentSrc *before* changing to the cache url, the fact that we are loading from the app
     // cache is an internal detail not exposed through the media element API.
@@ -4543,6 +4549,12 @@ void HTMLMediaElement::updatePlayState()
             // The media engine should just stash the rate and muted values since it isn't already playing.
             m_player->setRate(effectivePlaybackRate());
             m_player->setMuted(muted());
+
+            if (m_firstTimePlaying) {
+                // Log that a media element was played.
+                FEATURE_COUNTER_INCREMENT_KEY(document().page(), isVideo() ? FeatureCounterMediaVideoElementPlayedKey : FeatureCounterMediaAudioElementPlayedKey);
+                m_firstTimePlaying = false;
+            }
 
             m_player->play();
         }
