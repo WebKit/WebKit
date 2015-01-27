@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef WebVTTElement_h
+#define WebVTTElement_h
+
 #if ENABLE(VIDEO_TRACK)
 
 #include "HTMLElement.h"
@@ -87,3 +90,5 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebVTTElement)
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif
+
+#endif // WebVTTElement_h

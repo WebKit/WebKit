@@ -1,3 +1,12 @@
+2015-01-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        Lack of include guards in WebVTTElement.h caused a build failure once we started including
+        this header file from more than one implementation file.
+
+        * html/track/WebVTTElement.h:
+
 2015-01-26  Sylvain Galineau  <galineau@adobe.com>
 
         CSSKeyframesRule::findRule() and deleteRule() should delete the last matching rule, not the first
