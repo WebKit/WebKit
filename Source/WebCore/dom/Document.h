@@ -101,9 +101,10 @@ class FloatQuad;
 class FormController;
 class Frame;
 class FrameView;
+class HTMLAllCollection;
+class HTMLBodyElement;
 class HTMLCanvasElement;
 class HTMLCollection;
-class HTMLAllCollection;
 class HTMLDocument;
 class HTMLElement;
 class HTMLFrameOwnerElement;
@@ -937,6 +938,7 @@ public:
     static bool hasValidNamespaceForElements(const QualifiedName&);
     static bool hasValidNamespaceForAttributes(const QualifiedName&);
 
+    HTMLBodyElement* body() const;
     WEBCORE_EXPORT HTMLElement* bodyOrFrameset() const;
     void setBodyOrFrameset(PassRefPtr<HTMLElement>, ExceptionCode&);
 

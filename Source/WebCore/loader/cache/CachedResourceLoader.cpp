@@ -912,7 +912,10 @@ void CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequ
 
 void CachedResourceLoader::checkForPendingPreloads() 
 {
-    if (m_pendingPreloads.isEmpty() || !m_document->bodyOrFrameset() || !m_document->bodyOrFrameset()->renderer())
+    if (m_pendingPreloads.isEmpty())
+        return;
+    auto* body = m_document->bodyOrFrameset();
+    if (!body || !body->renderer())
         return;
 #if PLATFORM(IOS)
     // We always preload resources on iOS. See <https://bugs.webkit.org/show_bug.cgi?id=91276>.

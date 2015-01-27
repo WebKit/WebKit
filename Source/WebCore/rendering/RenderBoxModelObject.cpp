@@ -790,10 +790,9 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                     // to crawl around a render tree with potential :before/:after content and
                     // anonymous blocks created by inline <body> tags etc.  We can locate the <body>
                     // render object very easily via the DOM.
-                    HTMLElement* body = document().bodyOrFrameset();
-                    if (body) {
+                    if (HTMLElement* body = document().bodyOrFrameset()) {
                         // Can't scroll a frameset document anyway.
-                        isOpaqueRoot = body->hasTagName(framesetTag);
+                        isOpaqueRoot = is<HTMLFrameSetElement>(*body);
                     } else {
                         // SVG documents and XML documents with SVG root nodes are transparent.
                         isOpaqueRoot = !document().hasSVGRootNode();

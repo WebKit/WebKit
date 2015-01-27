@@ -536,8 +536,11 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
 
     // The new position must be in the same editable element. Enforce that first.
     // Unless the descent is from a non-editable html element to an editable body.
-    if (node && node->hasTagName(htmlTag) && !node->hasEditableStyle() && node->document().bodyOrFrameset() && node->document().bodyOrFrameset()->hasEditableStyle())
-        return next.isNotNull() ? next : prev;
+    if (is<HTMLHtmlElement>(node) && !node->hasEditableStyle()) {
+        auto* body = node->document().bodyOrFrameset();
+        if (body && body->hasEditableStyle())
+            return next.isNotNull() ? next : prev;
+    }
 
     Node* editingRoot = editableRootForPosition(position);
         

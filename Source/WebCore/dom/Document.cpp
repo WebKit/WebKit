@@ -2324,13 +2324,21 @@ void Document::implicitOpen()
     setReadyState(Loading);
 }
 
+HTMLBodyElement* Document::body() const
+{
+    auto* element = documentElement();
+    if (!element)
+        return nullptr;
+    return childrenOfType<HTMLBodyElement>(*element).first();
+}
+
 HTMLElement* Document::bodyOrFrameset() const
 {
     // If the document element contains both a frameset and a body, the frameset wins.
-    auto element = documentElement();
+    auto* element = documentElement();
     if (!element)
         return nullptr;
-    if (auto frameset = childrenOfType<HTMLFrameSetElement>(*element).first())
+    if (auto* frameset = childrenOfType<HTMLFrameSetElement>(*element).first())
         return frameset;
     return childrenOfType<HTMLBodyElement>(*element).first();
 }
@@ -2339,6 +2347,9 @@ void Document::setBodyOrFrameset(PassRefPtr<HTMLElement> prpNewBody, ExceptionCo
 {
     RefPtr<HTMLElement> newBody = prpNewBody;
 
+    // FIXME: This does not support setting a <frameset> Element, only a <body>. This does
+    // not match the HTML specification:
+    // https://html.spec.whatwg.org/multipage/dom.html#dom-document-body
     if (!newBody || !documentElement() || !newBody->hasTagName(bodyTag)) { 
         ec = HIERARCHY_REQUEST_ERR;
         return;
@@ -2542,7 +2553,7 @@ bool Document::shouldScheduleLayout()
     //    (b) Only schedule layout once we have a body element.
 
     return (haveStylesheetsLoaded() && bodyOrFrameset())
-        || (documentElement() && !documentElement()->hasTagName(htmlTag));
+        || (documentElement() && !is<HTMLHtmlElement>(*documentElement()));
 }
     
 bool Document::isLayoutTimerActive()

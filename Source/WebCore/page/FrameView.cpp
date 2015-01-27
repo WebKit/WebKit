@@ -46,6 +46,7 @@
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "GraphicsContext.h"
+#include "HTMLBodyElement.h"
 #include "HTMLDocument.h"
 #include "HTMLFrameElement.h"
 #include "HTMLFrameSetElement.h"
@@ -539,12 +540,12 @@ PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientatio
     Document* doc = frame().document();
 
     // Try the <body> element first as a scrollbar source.
-    Element* body = doc ? doc->bodyOrFrameset() : 0;
+    HTMLElement* body = doc ? doc->bodyOrFrameset() : nullptr;
     if (body && body->renderer() && body->renderer()->style().hasPseudoStyle(SCROLLBAR))
         return RenderScrollbar::createCustomScrollbar(this, orientation, body);
     
     // If the <body> didn't have a custom style, then the root element might.
-    Element* docElement = doc ? doc->documentElement() : 0;
+    Element* docElement = doc ? doc->documentElement() : nullptr;
     if (docElement && docElement->renderer() && docElement->renderer()->style().hasPseudoStyle(SCROLLBAR))
         return RenderScrollbar::createCustomScrollbar(this, orientation, docElement);
         
@@ -670,11 +671,9 @@ void FrameView::applyPaginationToViewport()
     auto documentElement = document->documentElement();
     RenderElement* documentRenderer = documentElement ? documentElement->renderer() : nullptr;
     RenderElement* documentOrBodyRenderer = documentRenderer;
-    auto body = document->bodyOrFrameset();
-    if (body && body->renderer()) {
-        if (body->hasTagName(bodyTag))
-            documentOrBodyRenderer = documentRenderer->style().overflowX() == OVISIBLE && documentElement->hasTagName(htmlTag) ? body->renderer() : documentRenderer;
-    }
+    auto* body = document->body();
+    if (body && body->renderer())
+        documentOrBodyRenderer = documentRenderer->style().overflowX() == OVISIBLE && is<HTMLHtmlElement>(*documentElement) ? body->renderer() : documentRenderer;
 
     Pagination pagination;
 
@@ -715,15 +714,15 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         Document* document = frame().document();
         auto documentElement = document->documentElement();
         RenderElement* rootRenderer = documentElement ? documentElement->renderer() : nullptr;
-        auto body = document->bodyOrFrameset();
+        auto* body = document->bodyOrFrameset();
         if (body && body->renderer()) {
-            if (body->hasTagName(framesetTag) && !frameFlatteningEnabled()) {
+            if (is<HTMLFrameSetElement>(*body) && !frameFlatteningEnabled()) {
                 vMode = ScrollbarAlwaysOff;
                 hMode = ScrollbarAlwaysOff;
-            } else if (body->hasTagName(bodyTag)) {
+            } else if (is<HTMLBodyElement>(*body)) {
                 // It's sufficient to just check the X overflow,
                 // since it's illegal to have visible in only one direction.
-                RenderElement* o = rootRenderer->style().overflowX() == OVISIBLE && document->documentElement()->hasTagName(htmlTag) ? body->renderer() : rootRenderer;
+                RenderElement* o = rootRenderer->style().overflowX() == OVISIBLE && is<HTMLHtmlElement>(*document->documentElement()) ? body->renderer() : rootRenderer;
                 applyOverflowToViewport(o, hMode, vMode);
             }
         } else if (rootRenderer)
@@ -1229,11 +1228,11 @@ void FrameView::layout(bool allowSubtree)
         TemporaryChange<bool> changeSchedulingEnabled(m_layoutSchedulingEnabled, false);
 
         if (!m_layoutRoot) {
-            HTMLElement* body = document.bodyOrFrameset();
+            auto* body = document.bodyOrFrameset();
             if (body && body->renderer()) {
-                if (body->hasTagName(framesetTag) && !frameFlatteningEnabled()) {
+                if (is<HTMLFrameSetElement>(*body) && !frameFlatteningEnabled()) {
                     body->renderer()->setChildNeedsLayout();
-                } else if (body->hasTagName(bodyTag)) {
+                } else if (is<HTMLBodyElement>(*body)) {
                     if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox().stretchesToViewport())
                         body->renderer()->setChildNeedsLayout();
                 }
@@ -1283,8 +1282,9 @@ void FrameView::layout(bool allowSubtree)
             if (oldSize != m_size) {
                 m_needsFullRepaint = true;
                 if (!m_firstLayout) {
-                    RenderBox* rootRenderer = document.documentElement() ? document.documentElement()->renderBox() : 0;
-                    RenderBox* bodyRenderer = rootRenderer && document.bodyOrFrameset() ? document.bodyOrFrameset()->renderBox() : 0;
+                    RenderBox* rootRenderer = document.documentElement() ? document.documentElement()->renderBox() : nullptr;
+                    auto* body = document.bodyOrFrameset();
+                    RenderBox* bodyRenderer = rootRenderer && body ? body->renderBox() : nullptr;
                     if (bodyRenderer && bodyRenderer->stretchesToViewport())
                         bodyRenderer->setChildNeedsLayout();
                     else if (rootRenderer && rootRenderer->stretchesToViewport())
@@ -3514,14 +3514,14 @@ void FrameView::updateAnnotatedRegions()
 
 void FrameView::updateScrollCorner()
 {
-    RenderElement* renderer = 0;
+    RenderElement* renderer = nullptr;
     RefPtr<RenderStyle> cornerStyle;
     IntRect cornerRect = scrollCornerRect();
     
     if (!cornerRect.isEmpty()) {
         // Try the <body> element first as a scroll corner source.
         Document* doc = frame().document();
-        Element* body = doc ? doc->bodyOrFrameset() : 0;
+        Element* body = doc ? doc->bodyOrFrameset() : nullptr;
         if (body && body->renderer()) {
             renderer = body->renderer();
             cornerStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(SCROLLBAR_CORNER), &renderer->style());
@@ -3529,7 +3529,7 @@ void FrameView::updateScrollCorner()
         
         if (!cornerStyle) {
             // If the <body> didn't have a custom style, then the root element might.
-            Element* docElement = doc ? doc->documentElement() : 0;
+            Element* docElement = doc ? doc->documentElement() : nullptr;
             if (docElement && docElement->renderer()) {
                 renderer = docElement->renderer();
                 cornerStyle = renderer->getUncachedPseudoStyle(PseudoStyleRequest(SCROLLBAR_CORNER), &renderer->style());
@@ -3595,8 +3595,8 @@ Color FrameView::documentBackgroundColor() const
     if (!frame().document())
         return Color();
 
-    Element* htmlElement = frame().document()->documentElement();
-    Element* bodyElement = frame().document()->bodyOrFrameset();
+    auto* htmlElement = frame().document()->documentElement();
+    auto* bodyElement = frame().document()->bodyOrFrameset();
 
     // Start with invalid colors.
     Color htmlBackgroundColor;

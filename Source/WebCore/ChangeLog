@@ -1,3 +1,20 @@
+2015-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Introduce Document::body() for call sites interested in the <body> element
+        https://bugs.webkit.org/show_bug.cgi?id=140920
+
+        Reviewed by Darin Adler.
+
+        Introduce Document::body() method for call sites interested only in the
+        document's <body> element (not the <frameset>). Also clean up the call
+        sites of Document::bodyOrFrameset() to cache the return value when
+        suitable as this method does a tree traversal.
+
+        This patch does not change behavior, it merely ports calls sites that
+        were calling Document::bodyOrFrameset() then checking if the tag was
+        <body>, to call Document::body() instead. Doing so is more efficient
+        and clearer.
+
 2015-01-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener

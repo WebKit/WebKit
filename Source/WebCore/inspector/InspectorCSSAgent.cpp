@@ -958,10 +958,10 @@ InspectorStyleSheet* InspectorCSSAgent::viaInspectorStyleSheet(Document* documen
     if (!ec) {
         ContainerNode* targetNode;
         // HEAD is absent in ImageDocuments, for example.
-        if (document->head())
-            targetNode = document->head();
-        else if (document->bodyOrFrameset())
-            targetNode = document->bodyOrFrameset();
+        if (auto* head = document->head())
+            targetNode = head;
+        else if (auto* body = document->bodyOrFrameset())
+            targetNode = body;
         else
             return nullptr;
 

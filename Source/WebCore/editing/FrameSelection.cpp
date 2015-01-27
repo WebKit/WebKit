@@ -2108,10 +2108,7 @@ void FrameSelection::setSelectionFromNone()
         return;
 #endif
 
-    auto* documentElement = document->documentElement();
-    if (!documentElement)
-        return;
-    if (auto body = childrenOfType<HTMLBodyElement>(*documentElement).first())
+    if (auto* body = document->body())
         setSelection(VisibleSelection(firstPositionInOrBeforeNode(body), DOWNSTREAM));
 }
 

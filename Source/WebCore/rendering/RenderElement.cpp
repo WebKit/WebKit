@@ -1120,7 +1120,7 @@ RenderElement& RenderElement::rendererForRootBackground()
         // to crawl around a render tree with potential :before/:after content and
         // anonymous blocks created by inline <body> tags etc. We can locate the <body>
         // render object very easily via the DOM.
-        if (auto* body = childrenOfType<HTMLBodyElement>(*element()).first()) {
+        if (auto* body = document().body()) {
             if (auto* renderer = body->renderer())
                 return *renderer;
         }

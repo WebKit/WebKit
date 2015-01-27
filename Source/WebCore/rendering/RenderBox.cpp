@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLBodyElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -467,8 +468,8 @@ void RenderBox::updateFromStyle()
             // (1) The root element is <html>.
             // (2) We are the primary <body> (can be checked by looking at document.body).
             // (3) The root element has visible overflow.
-            if (document().documentElement()->hasTagName(htmlTag)
-                && document().bodyOrFrameset() == element()
+            if (is<HTMLHtmlElement>(*document().documentElement())
+                && document().body() == element()
                 && document().documentElement()->renderer()->style().overflowX() == OVISIBLE) {
                 boxHasOverflowClip = false;
             }

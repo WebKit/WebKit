@@ -57,6 +57,7 @@
 #include "CookieJar.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
+#include "ElementChildIterator.h"
 #include "ExceptionCode.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -139,82 +140,72 @@ void HTMLDocument::setDesignMode(const String& value)
 
 const AtomicString& HTMLDocument::bgColor() const
 {
-    HTMLElement* bodyElement = bodyOrFrameset();
-    if (!is<HTMLBodyElement>(bodyElement))
+    auto* bodyElement = body();
+    if (!bodyElement)
         return emptyAtom;
     return bodyElement->fastGetAttribute(bgcolorAttr);
 }
 
 void HTMLDocument::setBgColor(const String& value)
 {
-    HTMLElement* bodyElement = bodyOrFrameset();
-    if (!is<HTMLBodyElement>(bodyElement))
-        return;
-    bodyElement->setAttribute(bgcolorAttr, value);
+    if (auto* bodyElement = body())
+        bodyElement->setAttribute(bgcolorAttr, value);
 }
 
 const AtomicString& HTMLDocument::fgColor() const
 {
-    HTMLElement* bodyElement = bodyOrFrameset();
-    if (!is<HTMLBodyElement>(bodyElement))
+    auto* bodyElement = body();
+    if (!bodyElement)
         return emptyAtom;
     return bodyElement->fastGetAttribute(textAttr);
 }
 
 void HTMLDocument::setFgColor(const String& value)
 {
-    HTMLElement* bodyElement = bodyOrFrameset();
-    if (!is<HTMLBodyElement>(bodyElement))
-        return;
-    bodyElement->setAttribute(textAttr, value);
+    if (auto* bodyElement = body())
+        bodyElement->setAttribute(textAttr, value);
 }
 
 const AtomicString& HTMLDocument::alinkColor() const
 {
-    HTMLElement* bodyElement = bodyOrFrameset();
-    if (!is<HTMLBodyElement>(bodyElement))
+    auto* bodyElement = body();
+    if (!bodyElement)
         return emptyAtom;
     return bodyElement->fastGetAttribute(alinkAttr);
 }
 
 void HTMLDocument::setAlinkColor(const String& value)
 {
-    HTMLElement* bodyElement = bodyOrFrameset();
-    if (!is<HTMLBodyElement>(bodyElement))
-        return;
-    bodyElement->setAttribute(alinkAttr, value);
+    if (auto* bodyElement = body())
+        bodyElement->setAttribute(alinkAttr, value);
 }
 
 const AtomicString& HTMLDocument::linkColor() const
 {
-    HTMLElement* bodyElement = bodyOrFrameset();
-    if (!is<HTMLBodyElement>(bodyElement))
+    auto* bodyElement = body();
+    if (!bodyElement)
         return emptyAtom;
     return bodyElement->fastGetAttribute(linkAttr);
 }
 
 void HTMLDocument::setLinkColor(const String& value)
 {
-    HTMLElement* bodyElement = bodyOrFrameset();
-    if (!is<HTMLBodyElement>(bodyElement))
-        return;
-    return bodyElement->setAttribute(linkAttr, value);
+    if (auto* bodyElement = body())
+        bodyElement->setAttribute(linkAttr, value);
 }
 
 const AtomicString& HTMLDocument::vlinkColor() const
 {
-    HTMLElement* bodyElement = bodyOrFrameset();
-    if (!is<HTMLBodyElement>(bodyElement))
+    auto* bodyElement = body();
+    if (!bodyElement)
         return emptyAtom;
     return bodyElement->fastGetAttribute(vlinkAttr);
 }
 
 void HTMLDocument::setVlinkColor(const String& value)
 {
-    HTMLElement* bodyElement = bodyOrFrameset();
-    if (!is<HTMLBodyElement>(bodyElement))
-        return;
-    return bodyElement->setAttribute(vlinkAttr, value);
+    if (auto* bodyElement = body())
+        bodyElement->setAttribute(vlinkAttr, value);
 }
 
 void HTMLDocument::captureEvents()
@@ -340,7 +331,9 @@ void HTMLDocument::clear()
 
 bool HTMLDocument::isFrameSet() const
 {
-    return is<HTMLFrameSetElement>(bodyOrFrameset());
+    if (!documentElement())
+        return false;
+    return !!childrenOfType<HTMLFrameSetElement>(*documentElement()).first();
 }
 
 Ref<Document> HTMLDocument::cloneDocumentWithoutChildren() const

@@ -36,6 +36,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
+#include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLMediaElement.h"
@@ -1789,7 +1790,7 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
 
     if (renderer().isRenderView()) {
         // Look to see if the root object has a non-simple background
-        RenderObject* rootObject = renderer().document().documentElement() ? renderer().document().documentElement()->renderer() : 0;
+        auto* rootObject = renderer().document().documentElement() ? renderer().document().documentElement()->renderer() : nullptr;
         if (!rootObject)
             return false;
         
@@ -1799,12 +1800,14 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
             return false;
         
         // Now look at the body's renderer.
-        HTMLElement* body = renderer().document().bodyOrFrameset();
-        RenderObject* bodyObject = (body && body->hasTagName(bodyTag)) ? body->renderer() : 0;
-        if (!bodyObject)
+        auto* body = renderer().document().body();
+        if (!body)
+            return false;
+        auto* bodyRenderer = body->renderer();
+        if (!bodyRenderer)
             return false;
         
-        if (hasBoxDecorationsOrBackgroundImage(bodyObject->style()))
+        if (hasBoxDecorationsOrBackgroundImage(bodyRenderer->style()))
             return false;
     }
 
