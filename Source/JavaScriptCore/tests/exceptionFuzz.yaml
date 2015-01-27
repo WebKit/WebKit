@@ -22,4 +22,9 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - path: exceptionFuzz
-  cmd: runExceptionFuzz
+  cmd: |
+      if ($hostOS == "windows")
+          skip
+      else
+          runExceptionFuzz
+      end

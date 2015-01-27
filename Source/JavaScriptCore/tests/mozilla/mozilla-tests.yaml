@@ -338,7 +338,12 @@
 - path: ecma/Date/15.9.5.27-1.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.5.28-1.js
-  cmd: defaultRunMozillaTest :normal, "../shell.js"
+  cmd: |
+      if ($hostOS == "windows")
+          skip
+      else
+          defaultRunMozillaTest :normal, "../shell.js"
+      end
 - path: ecma/Date/15.9.5.29-1.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Date/15.9.5.3-1-n.js

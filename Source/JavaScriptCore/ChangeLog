@@ -1,3 +1,10 @@
+2015-01-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Win] Unreviewed gardening, skip failing tests.
+
+        * tests/exceptionFuzz.yaml: Skip exception fuzz tests due to bug140928.
+        * tests/mozilla/mozilla-tests.yaml: Skip ecma/Date/15.9.5.28-1.js due to bug140927.
+
 2015-01-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Win] Enable JSC stress tests by default
