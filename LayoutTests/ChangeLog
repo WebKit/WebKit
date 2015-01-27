@@ -1,3 +1,47 @@
+2015-01-26  Sylvain Galineau  <galineau@adobe.com>
+
+        The computed value of line-height:normal is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=133744
+
+        Reviewed by Dean Jackson.
+
+        line-height:normal now computes to a length value.
+        This patch updates the tests to reflect the new computed value, as needed.
+
+        * css3/calc/line-height-expected.txt:
+        * editing/pasteboard/simplfiying-markup-should-not-strip-content-expected.txt:
+        * fast/css/font-calculated-value-expected.txt:
+        * fast/css/font-calculated-value.html:
+        * fast/css/font-shorthand-from-longhands-expected.txt:
+        * fast/css/font-shorthand-from-longhands.html:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-font-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/script-tests/computed-style-font.js:
+        * fast/css/line-height-text-autosizing-expected.txt:
+        * fast/css/line-height-text-autosizing.html:
+        * fast/ruby/ruby-line-height-expected.txt:
+        * fast/ruby/script-tests/ruby-line-height.js:
+        * media/track/track-cue-rendering-on-resize-expected.txt:
+        * media/track/track-cue-rendering-on-resize.html:
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/anchor-element-expected.txt:
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/basic-expected.txt:
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/font-size-expected.txt:
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/font-style-variant-effect-expected.txt:
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/font-weight-expected.txt:
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/letter-spacing-expected.txt:
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/text-decorations-expected.txt:
+        * platform/mac-mavericks/platform/mac/editing/attributed-string/vertical-align-expected.txt:
+        * platform/mac/editing/attributed-string/anchor-element-expected.txt:
+        * platform/mac/editing/attributed-string/basic-expected.txt:
+        * platform/mac/editing/attributed-string/font-size-expected.txt:
+        * platform/mac/editing/attributed-string/font-style-variant-effect-expected.txt:
+        * platform/mac/editing/attributed-string/font-weight-expected.txt:
+        * platform/mac/editing/attributed-string/letter-spacing-expected.txt:
+        * platform/mac/editing/attributed-string/text-decorations-expected.txt:
+        * platform/mac/editing/attributed-string/vertical-align-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2015-01-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Windows gardening (removing more skips).

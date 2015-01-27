@@ -4,6 +4,6 @@ EVENT(canplaythrough)
 EVENT(seeked)
 
 ** Line height of the cue element should be 'normal' **
-EXPECTED (getComputedStyle(multiLineCueDisplayElement).lineHeight == 'normal') OK
+EXPECTED (getComputedStyle(multiLineCueDisplayElement).lineHeight == '14px') OK
 END OF TEST
 

@@ -1,3 +1,18 @@
+2015-01-26  Sylvain Galineau  <galineau@adobe.com>
+
+        The computed value of line-height:normal is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=133744
+
+        Reviewed by Dean Jackson.
+
+        Use font's line spacing as computed line-height value when specified value is 'normal'.
+        This behavior is compatible with all other engines.
+
+        No new tests; all existing tests are updated to reflect the new computed value.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::lineHeightFromStyle): If line-height wasn't set, use the font's line spacing (same as Blink).
+
 2015-01-26  Chris Dumez  <cdumez@apple.com>
 
         Document.dir should reflect the 'dir' attribute of the root html element

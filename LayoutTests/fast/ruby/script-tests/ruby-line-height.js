@@ -9,9 +9,9 @@ function getLineHeight(id)
 }
 
 var div = document.createElement("div");
-div.innerHTML = "<p style='line-height: 300%' id='p'>The line height of this is <ruby id='r'>three times normal<rt id='t'>&quot;line-height: 48px;&quot;</rt></ruby>, but the ruby should have 'line-height: normal'.</p>";
+div.innerHTML = "<p style='line-height: 300%' id='p'>The line height of this is <ruby id='r'>three times normal<rt id='t'>&quot;line-height: 48px;&quot;</rt></ruby>.</p>";
 document.body.appendChild(div);
 
 shouldBeEqualToString("getLineHeight('p')", "48px");
-shouldBeEqualToString("getLineHeight('r')", "normal");
-shouldBeEqualToString("getLineHeight('t')", "normal");
+shouldBeEqualToString("getLineHeight('r')", "48px");
+shouldBeEqualToString("getLineHeight('t')", "10px");

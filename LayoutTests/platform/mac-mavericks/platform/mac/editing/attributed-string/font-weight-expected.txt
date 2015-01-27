@@ -19,7 +19,7 @@ Alignment 4
     HeadIndent: 0
     TailIndent: 0
     FirstLineHeadIndent: 0
-    LineHeight: 0/0
+    LineHeight: 18/0
     LineHeightMultiple: 0
     LineBreakMode: 0
     Tabs: ()

@@ -6,10 +6,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS [object HTMLParagraphElement] is non-null.
 PASS getLineHeight('p') is "48px"
 PASS [object HTMLElement] is non-null.
-FAIL getLineHeight('r') should be normal. Was 48px.
+PASS getLineHeight('r') is "48px"
 PASS [object HTMLElement] is non-null.
-PASS getLineHeight('t') is "normal"
+PASS getLineHeight('t') is "10px"
 PASS successfullyParsed is true
 
 TEST COMPLETE
-The line height of this is three times normal"line-height: 48px;", but the ruby should have 'line-height: normal'.
+The line height of this is three times normal"line-height: 48px;".

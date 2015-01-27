@@ -49,7 +49,7 @@ height: 100px
 image-rendering: auto
 left: auto
 letter-spacing: normal
-line-height: normal
+line-height: 18px
 list-style-image: none
 list-style-position: outside
 list-style-type: disc

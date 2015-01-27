@@ -20,7 +20,7 @@ description("Test the 'line-height' property interaction with '-webkit-text-size
 
 debug("Case without text size adjust.");
 var testDivNoAdjust = document.getElementById("testDivNoAdjust");
-shouldBeEqualToString("window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height')", "normal");
+shouldBeEqualToString("window.getComputedStyle(testDivNoAdjust).getPropertyValue('line-height')", "23px");
 shouldBeEqualToString("window.getComputedStyle(testDivNoAdjust).getPropertyValue('font-size')", "20px");
 evalAndLog("testDivNoAdjust.style['line-height'] = '1.6'");
 // font-size * line-height == 20px * 1.6 == 32px

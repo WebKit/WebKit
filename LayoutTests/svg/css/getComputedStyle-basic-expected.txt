@@ -98,7 +98,7 @@ rect: style.getPropertyValue(left) : auto
 rect: style.getPropertyCSSValue(left) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(letter-spacing) : normal
 rect: style.getPropertyCSSValue(letter-spacing) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(line-height) : normal
+rect: style.getPropertyValue(line-height) : 18px
 rect: style.getPropertyCSSValue(line-height) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(list-style-image) : none
 rect: style.getPropertyCSSValue(list-style-image) : [object CSSPrimitiveValue]
@@ -610,7 +610,7 @@ g: style.getPropertyValue(left) : auto
 g: style.getPropertyCSSValue(left) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(letter-spacing) : normal
 g: style.getPropertyCSSValue(letter-spacing) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(line-height) : normal
+g: style.getPropertyValue(line-height) : 18px
 g: style.getPropertyCSSValue(line-height) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(list-style-image) : none
 g: style.getPropertyCSSValue(list-style-image) : [object CSSPrimitiveValue]
