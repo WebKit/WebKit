@@ -1,3 +1,26 @@
+2015-01-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Windows gardening (removing more skips).
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/block/basic/011-expected.png: Added.
+        * platform/win/fast/block/basic/011-expected.txt: Added.
+        * platform/win/fast/block/float/overhanging-tall-block-expected.png: Added.
+        * platform/win/fast/block/float/overhanging-tall-block-expected.txt: Added.
+        * platform/win/fast/borders/bidi-002-expected.png: Added.
+        * platform/win/fast/borders/bidi-002-expected.txt: Added.
+        * platform/win/fast/borders/bidi-009a-expected.png: Added.
+        * platform/win/fast/borders/bidi-009a-expected.txt: Added.
+        * platform/win/fast/borders/border-fit-expected.txt: Added.
+        * platform/win/fast/dom/HTMLInputElement/input-image-alt-text-expected.png: Added.
+        * platform/win/fast/dom/HTMLInputElement/input-image-alt-text-expected.txt: Added.
+        * platform/win/fast/dom/HTMLInputElement/input-slider-update-expected.txt: Removed property svn:executable.
+        * platform/win/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Removed property svn:executable.
+        * platform/win/fast/dom/HTMLTableColElement: Added.
+        * platform/win/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.png: Added.
+        * platform/win/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt: Added.
+        * platform/win/fast/dom/call-a-constructor-as-a-function-expected.txt: Removed.
+
 2015-01-26  Chris Dumez  <cdumez@apple.com>
 
         Document.dir should reflect the 'dir' attribute of the root html element
