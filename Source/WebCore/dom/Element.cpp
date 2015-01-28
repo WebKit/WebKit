@@ -2273,10 +2273,17 @@ void Element::normalizeAttributes()
 {
     if (!hasAttributes())
         return;
-    for (const Attribute& attribute : attributesIterator()) {
-        if (RefPtr<Attr> attr = attrIfExists(attribute.name()))
-            attr->normalize();
-    }
+
+    auto* attrNodeList = attrNodeListForElement(*this);
+    if (!attrNodeList)
+        return;
+
+    // Copy the Attr Vector because Node::normalize() can fire synchronous JS
+    // events (e.g. DOMSubtreeModified) and a JS listener could add / remove
+    // attributes while we are iterating.
+    auto copyOfAttrNodeList = *attrNodeList;
+    for (auto& attrNode : copyOfAttrNodeList)
+        attrNode->normalize();
 }
 
 PseudoElement* Element::beforePseudoElement() const
