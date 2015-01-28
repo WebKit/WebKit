@@ -46,6 +46,8 @@ typedef NS_ENUM(NSInteger, QLPreviewStyle) {
     QLPreviewStylePopover
 };
 
+- (void)close;
+
 @property (assign) id<QLPreviewMenuItemDelegate> delegate;
 @property QLPreviewStyle previewStyle;
 @end

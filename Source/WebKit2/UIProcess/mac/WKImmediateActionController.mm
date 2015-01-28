@@ -126,6 +126,7 @@ using namespace WebKit;
     _type = kWKImmediateActionNone;
     _currentActionContext = nil;
     _userData = nil;
+    _currentQLPreviewMenuItem = nil;
 }
 
 - (void)didPerformActionMenuHitTest:(const ActionMenuHitTestResult&)hitTestResult userData:(API::Object*)userData
@@ -137,6 +138,11 @@ using namespace WebKit;
 
     [self _updateImmediateActionItem];
     [self _cancelImmediateActionIfNeeded];
+}
+
+- (void)dismissContentRelativeChildWindows
+{
+    [_currentQLPreviewMenuItem close];
 }
 
 #pragma mark NSImmediateActionGestureRecognizerDelegate
@@ -237,6 +243,7 @@ using namespace WebKit;
         RetainPtr<QLPreviewMenuItem> qlPreviewLinkItem = [NSMenuItem standardQuickLookMenuItem];
         [qlPreviewLinkItem setPreviewStyle:QLPreviewStylePopover];
         [qlPreviewLinkItem setDelegate:self];
+        _currentQLPreviewMenuItem = qlPreviewLinkItem.get();
         return (id<NSImmediateActionAnimationController>)qlPreviewLinkItem.get();
     }
 
