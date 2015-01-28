@@ -1,3 +1,18 @@
+2015-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Some NSAccessibility methods we use are deprecated on 10.10
+        https://bugs.webkit.org/show_bug.cgi?id=140966
+
+        Reviewed by Anders Carlsson.
+
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::overrideAttachmentParent):
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper role]):
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        Silence the warnings for now.
+
 2015-01-27  Chris Dumez  <cdumez@apple.com>
 
         Rename isExpandedShorthand() to isShorthandCSSProperty() for clarity

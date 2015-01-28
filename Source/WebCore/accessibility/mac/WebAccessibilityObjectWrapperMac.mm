@@ -1969,8 +1969,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (NSString*)role
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (m_object->isAttachment())
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleAttribute];
+#pragma clang diagnostic pop
     AccessibilityRole role = m_object->roleValue();
     if (role == CanvasRole && m_object->canvasHasFallbackContent())
         role = GroupRole;
@@ -2135,11 +2138,14 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 {
     if (!m_object)
         return nil;
-    
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // attachments have the AXImage role, but a different subrole
     if (m_object->isAttachment())
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
-    
+#pragma clang diagnostic pop
+
     NSString* axRole = [self role];
     
     if ([axRole isEqualToString:NSAccessibilityGroupRole]) {
@@ -3150,6 +3156,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     return paramAttrs;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 - (void)accessibilityPerformPressAction
 {
     if (![self updateObjectBackingStore])
@@ -3182,6 +3191,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     else
         m_object->decrement();
 }
+
+#pragma clang diagnostic pop
 
 - (void)accessibilityPerformShowMenuAction
 {
