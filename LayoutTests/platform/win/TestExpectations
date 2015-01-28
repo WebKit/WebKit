@@ -724,8 +724,8 @@ fast/workers/worker-document-leak.html [ Skip ] # Timeout
 ################################################################################
 ######################        Skip all media tests        ######################
 ################################################################################
-#media/ [ Skip ]
-#media/W3C [ Skip ]
+media/ [ Skip ]
+media/W3C [ Skip ]
 fast/media [ Skip ]
 http/tests/media [ Skip ]
 
