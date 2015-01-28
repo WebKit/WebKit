@@ -3778,6 +3778,7 @@ static void setMenuTargets(NSMenu* menu)
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [[[self _webView] _actionMenuController] webView:[self _webView] didHandleScrollWheel:event];
+    [[[self _webView] _immediateActionController] webView:[self _webView] didHandleScrollWheel:event];
 #endif
 }
 
