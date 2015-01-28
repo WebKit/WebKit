@@ -217,11 +217,18 @@ String PlatformPasteboard::readString(int index, const String& type)
         return String();
 
     id value = [pasteboardItem objectAtIndex:0];
-    ASSERT([value isKindOfClass:[NSString class]]);
-    if (![value isKindOfClass:[NSString class]])
-        return String();
+    
+    if (type == String(kUTTypeText)) {
+        ASSERT([value isKindOfClass:[NSString class]]);
+        if ([value isKindOfClass:[NSString class]])
+            return String(value);
+    } else if (type == String(kUTTypeURL)) {
+        ASSERT([value isKindOfClass:[NSURL class]]);
+        if ([value isKindOfClass:[NSURL class]])
+            return [(NSURL *)value absoluteString];
+    }
 
-    return String(value);
+    return String();
 }
 
 URL PlatformPasteboard::readURL(int index, const String& type)

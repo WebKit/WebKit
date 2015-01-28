@@ -61,8 +61,10 @@
 #import <UIKit/UITextInteractionAssistant_Private.h>
 #import <UIKit/UIWebDocumentView.h> // FIXME: should not include this header.
 #import <UIKit/_UIWebHighlightLongPressGestureRecognizer.h>
+#import <MobileCoreServices/UTCoreTypes.h>
 #import <WebCore/Color.h>
 #import <WebCore/FloatQuad.h>
+#import <WebCore/Pasteboard.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebEvent.h>
 #import <WebCore/_UIHighlightViewSPI.h>
@@ -1182,13 +1184,11 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     static NSMutableArray *plainTextTypes = nil;
     if (!plainTextTypes) {
         plainTextTypes = [[NSMutableArray alloc] init];
-        // FIXME: should add [plainTextTypes addObject:(id)kUTTypeURL];
-        // when we figure out how to share this type between WebCore and WebKit2
+        [plainTextTypes addObject:(id)kUTTypeURL];
         [plainTextTypes addObjectsFromArray:UIPasteboardTypeListString];
 
         richTypes = [[NSMutableArray alloc] init];
-        // FIXME: should add [richTypes addObject:(PasteboardTypes::WebArchivePboardType)];
-        // when we figure out how to share this type between WebCore and WebKit2
+        [richTypes addObject:WebArchivePboardType];
         [richTypes addObjectsFromArray:UIPasteboardTypeListImage];
         [richTypes addObjectsFromArray:plainTextTypes];
     }

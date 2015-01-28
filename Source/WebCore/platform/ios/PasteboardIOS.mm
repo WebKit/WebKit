@@ -169,6 +169,8 @@ void Pasteboard::read(PasteboardPlainText& text)
 {
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
     text.text = strategy.readStringFromPasteboard(0, kUTTypeText);
+    if (text.text.isEmpty())
+        text.text = strategy.readStringFromPasteboard(0, kUTTypeURL);
 }
 
 static NSArray* supportedImageTypes()

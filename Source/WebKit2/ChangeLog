@@ -1,5 +1,24 @@
 2015-01-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r178175
+
+    2015-01-08  Enrica Casucci  <enrica@apple.com>
+
+            [iOS] Cannot paste an image URL in a plain text field in a page.
+            https://bugs.webkit.org/show_bug.cgi?id=140274
+            rdar://problem/18590809
+
+            Reviewed by Alexey Proskuryakov.
+
+            supportedPasteboardTypesForCurrentSelection should include kUTTypeURL for plain
+            text controls and WebArchivePboardType for rich text controls.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView supportedPasteboardTypesForCurrentSelection]): Remove obsolete and
+            incorrect FIXME.
+
+2015-01-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177738
 
     2014-12-25  Chris Dumez  <cdumez@apple.com>

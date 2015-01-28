@@ -1,5 +1,26 @@
 2015-01-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r178175
+
+    2015-01-08  Enrica Casucci  <enrica@apple.com>
+
+            [iOS] Cannot paste an image URL in a plain text field in a page.
+            https://bugs.webkit.org/show_bug.cgi?id=140274
+            rdar://problem/18590809
+
+            Reviewed by Alexey Proskuryakov.
+
+            When we want to get plain text from the pasteboard, we
+            should also try kUTTypeURL if there is no kUTTypeText available.
+
+            * WebCore.exp.in:
+            * platform/ios/PasteboardIOS.mm:
+            (WebCore::Pasteboard::read):
+            * platform/ios/PlatformPasteboardIOS.mm:
+            (WebCore::PlatformPasteboard::readString):
+
+2015-01-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r178038
 
     2015-01-07  Chris Fleizach  <cfleizach@apple.com>
