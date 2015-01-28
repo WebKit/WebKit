@@ -1,5 +1,15 @@
 2015-01-27  Filip Pizlo  <fpizlo@apple.com>
 
+        ExitSiteData saying m_takesSlowPath shouldn't mean early returning takesSlowPath() since for the non-LLInt case we later set m_couldTakeSlowPath, which is more precise
+        https://bugs.webkit.org/show_bug.cgi?id=140980
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+
+2015-01-27  Filip Pizlo  <fpizlo@apple.com>
+
         Move DFGBinarySwitch out of the DFG so that all of the JITs can use it
         https://bugs.webkit.org/show_bug.cgi?id=140959
 

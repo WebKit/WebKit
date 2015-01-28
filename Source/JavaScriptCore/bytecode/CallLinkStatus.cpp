@@ -86,12 +86,13 @@ CallLinkStatus CallLinkStatus::computeFor(
     UNUSED_PARAM(map);
 #if ENABLE(DFG_JIT)
     ExitSiteData exitSiteData = computeExitSiteData(locker, profiledBlock, bytecodeIndex);
-    if (exitSiteData.m_takesSlowPath)
-        return takesSlowPath();
     
     CallLinkInfo* callLinkInfo = map.get(CodeOrigin(bytecodeIndex));
-    if (!callLinkInfo)
+    if (!callLinkInfo) {
+        if (exitSiteData.m_takesSlowPath)
+            return takesSlowPath();
         return computeFromLLInt(locker, profiledBlock, bytecodeIndex);
+    }
     
     return computeFor(locker, profiledBlock, *callLinkInfo, exitSiteData);
 #else
