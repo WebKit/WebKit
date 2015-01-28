@@ -1,3 +1,76 @@
+2015-01-28  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Move FlowContents iterator interface to FlowContentsIterator.
+        https://bugs.webkit.org/show_bug.cgi?id=140944
+
+        Reviewed by Antti Koivisto.
+
+        This patch cleans up FlowContents's interface by moving the iterator functionality
+        to this new FlowContentsIterator class.
+
+        No change in functionality.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::addUncommitted):
+        (WebCore::SimpleLineLayout::LineState::addUncommittedWhitespace):
+        (WebCore::SimpleLineLayout::preWrap):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::splitFragmentToFitLine):
+        (WebCore::SimpleLineLayout::firstFragment):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+        (WebCore::SimpleLineLayout::splitRunsAtRendererBoundary):
+        (WebCore::SimpleLineLayout::createTextRuns):
+        * rendering/SimpleLineLayoutFlowContents.cpp:
+        (WebCore::SimpleLineLayout::FlowContents::FlowContents):
+        (WebCore::SimpleLineLayout::FlowContents::Style::Style): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::nextTextFragment): Deleted.
+        (WebCore::SimpleLineLayout::nextBreakablePosition): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::findNextBreakablePosition): Deleted.
+        (WebCore::SimpleLineLayout::findNextNonWhitespace): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::findNextNonWhitespacePosition): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::textWidth): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::runWidth): Deleted.
+        * rendering/SimpleLineLayoutFlowContents.h:
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::Iterator):
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator*):
+        (WebCore::SimpleLineLayout::FlowContents::begin):
+        (WebCore::SimpleLineLayout::FlowContents::end):
+        (WebCore::SimpleLineLayout::FlowContents::length):
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator++):
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator==):
+        (WebCore::SimpleLineLayout::FlowContents::Iterator::operator!=):
+        (WebCore::SimpleLineLayout::FlowContents::segmentIndexForPosition):
+        (WebCore::SimpleLineLayout::FlowContents::TextFragment::TextFragment): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::TextFragment::isEmpty): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::hasOneSegment): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::style): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::characterAt): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::isLineBreak): Deleted.
+        (WebCore::SimpleLineLayout::FlowContents::isEnd): Deleted.
+        * rendering/SimpleLineLayoutFlowContentsIterator.cpp: Copied from Source/WebCore/rendering/SimpleLineLayoutFlowContents.cpp.
+        (WebCore::SimpleLineLayout::FlowContentsIterator::Style::Style):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::FlowContentsIterator):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::nextTextFragment):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::textWidth):
+        (WebCore::SimpleLineLayout::nextBreakablePosition):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::findNextBreakablePosition):
+        (WebCore::SimpleLineLayout::findNextNonWhitespace):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::findNextNonWhitespacePosition):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::runWidth):
+        * rendering/SimpleLineLayoutFlowContentsIterator.h: Copied from Source/WebCore/rendering/SimpleLineLayoutFlowContents.h.
+        (WebCore::SimpleLineLayout::FlowContentsIterator::TextFragment::TextFragment):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::TextFragment::isEmpty):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::style):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::segmentForPosition):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::characterAt):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::isLineBreak):
+        (WebCore::SimpleLineLayout::FlowContentsIterator::isEnd):
+
 2015-01-28  Beth Dakin  <bdakin@apple.com>
 
         Remove Mountain Lion code from WebCore

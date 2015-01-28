@@ -26,10 +26,7 @@
 #ifndef SimpleLineLayoutFlowContents_h
 #define SimpleLineLayoutFlowContents_h
 
-#include "FontCascade.h"
-#include "RenderStyle.h"
-#include "TextBreakIterator.h"
-#include "break_lines.h"
+#include "RenderText.h"
 
 namespace WebCore {
 class RenderBlockFlow;
@@ -40,32 +37,6 @@ class FlowContents {
 public:
     FlowContents(const RenderBlockFlow&);
 
-    struct TextFragment {
-        TextFragment() = default;
-        TextFragment(unsigned textStart, unsigned textEnd, float textWidth, bool isWhitespaceOnly)
-            : start(textStart)
-            , end(textEnd)
-            , type(isWhitespaceOnly ? Whitespace : NonWhitespace)
-            , width(textWidth)
-        {
-        }
-
-        bool isEmpty() const
-        {
-            return start == end;
-        }
-
-        enum Type { LineBreak, Whitespace, NonWhitespace };
-        unsigned start = 0;
-        unsigned end = 0;
-        Type type = NonWhitespace;
-        bool isCollapsed = false;
-        bool isBreakable = false;
-        float width = 0;
-    };
-    TextFragment nextTextFragment(float xPosition = 0);
-    float textWidth(unsigned from, unsigned to, float xPosition) const;
-
     struct Segment {
         unsigned start;
         unsigned end;
@@ -75,64 +46,57 @@ public:
     const Segment& segmentForPosition(unsigned) const;
     const Segment& segmentForRenderer(const RenderText&) const;
 
-    bool hasOneSegment() const { return m_segments.size() == 1; }
+    class Iterator {
+    public:
+        Iterator(const FlowContents& flowContents, unsigned segmentIndex)
+            : m_flowContents(flowContents)
+            , m_segmentIndex(segmentIndex)
+        {
+        }
+
+        Iterator& operator++();
+        bool operator==(const Iterator& other) const;
+        bool operator!=(const Iterator& other) const;
+        const Segment& operator*() const { return m_flowContents.m_segments[m_segmentIndex]; }
+
+    private:
+        const FlowContents& m_flowContents;
+        unsigned m_segmentIndex;
+    };
+
+    Iterator begin() const { return Iterator(*this, 0); }
+    Iterator end() const { return Iterator(*this, m_segments.size()); }
+
     unsigned length() const { return m_segments.last().end; };
 
-    struct Style {
-        explicit Style(const RenderStyle&);
-
-        const FontCascade& font;
-        ETextAlign textAlign;
-        bool collapseWhitespace;
-        bool preserveNewline;
-        bool wrapLines;
-        bool breakWordOnOverflow;
-        float spaceWidth;
-        unsigned tabWidth;
-        AtomicString locale;
-    };
-    const Style& style() const { return m_style; }
+    unsigned segmentIndexForPosition(unsigned position) const;
 
 private:
-    unsigned findNextNonWhitespacePosition(unsigned position, unsigned& spaceCount) const;
-    unsigned findNextBreakablePosition(unsigned position) const;
-    bool isLineBreak(unsigned position) const;
-    bool isEnd(unsigned position) const;
-    unsigned segmentIndexForPosition(unsigned position) const;
     unsigned segmentIndexForPositionSlow(unsigned position) const;
 
-    UChar characterAt(unsigned position) const;
-    template <typename CharacterType> float runWidth(const String&, unsigned from, unsigned to, float xPosition) const;
-
-    const Style m_style;
     const Vector<Segment, 8> m_segments;
 
-    mutable LazyLineBreakIterator m_lineBreakIterator;
     mutable unsigned m_lastSegmentIndex;
-    unsigned m_position { 0 };
 };
 
-inline UChar FlowContents::characterAt(unsigned position) const
+inline FlowContents::Iterator& FlowContents::Iterator::operator++()
 {
-    auto& segment = segmentForPosition(position);
-    return segment.text[position - segment.start];
+    ++m_segmentIndex;
+    return *this;
 }
 
-inline bool FlowContents::isLineBreak(unsigned position) const
+inline bool FlowContents::Iterator::operator==(const FlowContents::Iterator& other) const
 {
-    if (isEnd(position))
-        return false;
-    return m_style.preserveNewline && characterAt(position) == '\n';
+    return m_segmentIndex == other.m_segmentIndex;
 }
 
-inline bool FlowContents::isEnd(unsigned position) const
+inline bool FlowContents::Iterator::operator!=(const FlowContents::Iterator& other) const
 {
-    return position >= length();
+    return !(*this == other);
 }
 
 inline unsigned FlowContents::segmentIndexForPosition(unsigned position) const
 {
-    ASSERT(!isEnd(position));
     auto& lastSegment = m_segments[m_lastSegmentIndex];
     if (lastSegment.start <= position && position < lastSegment.end)
         return m_lastSegmentIndex;

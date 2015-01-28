@@ -2096,6 +2096,8 @@
 		580371611A66F00A00BAF519 /* ClipRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5803715F1A66F00A00BAF519 /* ClipRect.cpp */; };
 		580371621A66F00A00BAF519 /* ClipRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 580371601A66F00A00BAF519 /* ClipRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		580371641A66F1D300BAF519 /* LayerFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 580371631A66F1D300BAF519 /* LayerFragment.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		582CB0531A78A14B00AFFCC4 /* SimpleLineLayoutFlowContentsIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 582CB0521A78A14B00AFFCC4 /* SimpleLineLayoutFlowContentsIterator.h */; };
+		582CB0551A78A2B200AFFCC4 /* SimpleLineLayoutFlowContentsIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 582CB0541A78A2B200AFFCC4 /* SimpleLineLayoutFlowContentsIterator.cpp */; };
 		585D6DFC1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */; };
 		585D6E031A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 585D6E011A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp */; };
 		585D6E041A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */; };
@@ -9232,6 +9234,8 @@
 		5803715F1A66F00A00BAF519 /* ClipRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClipRect.cpp; sourceTree = "<group>"; };
 		580371601A66F00A00BAF519 /* ClipRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipRect.h; sourceTree = "<group>"; };
 		580371631A66F1D300BAF519 /* LayerFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFragment.h; sourceTree = "<group>"; };
+		582CB0521A78A14B00AFFCC4 /* SimpleLineLayoutFlowContentsIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutFlowContentsIterator.h; sourceTree = "<group>"; };
+		582CB0541A78A2B200AFFCC4 /* SimpleLineLayoutFlowContentsIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutFlowContentsIterator.cpp; sourceTree = "<group>"; };
 		585D6DFB1A15355600FA4F12 /* SimpleLineLayoutResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutResolver.cpp; sourceTree = "<group>"; };
 		585D6E011A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutFlowContents.cpp; sourceTree = "<group>"; };
 		585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutFlowContents.h; sourceTree = "<group>"; };
@@ -22604,6 +22608,8 @@
 				E4C91A0D1802343100A17F6D /* TextPaintStyle.h */,
 				37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */,
 				BCA257141293C010007A263D /* VerticalPositionCache.h */,
+				582CB0521A78A14B00AFFCC4 /* SimpleLineLayoutFlowContentsIterator.h */,
+				582CB0541A78A2B200AFFCC4 /* SimpleLineLayoutFlowContentsIterator.cpp */,
 			);
 			path = rendering;
 			sourceTree = "<group>";
@@ -23543,6 +23549,7 @@
 				379E61CC126CA5C400B63E8D /* BaseCheckableInputType.h in Headers */,
 				F5E0C65C1643C42C00D6CB69 /* BaseChooserOnlyDateAndTimeInputType.h in Headers */,
 				C33EE5C514FB49610002095A /* BaseClickableWithKeyInputType.h in Headers */,
+				582CB0531A78A14B00AFFCC4 /* SimpleLineLayoutFlowContentsIterator.h in Headers */,
 				F59C96001255B23F000623C0 /* BaseDateAndTimeInputType.h in Headers */,
 				F55B3DAE1251F12D003EF269 /* BaseTextInputType.h in Headers */,
 				FBD6AF8A15EF25DF008B7110 /* BasicShapeFunctions.h in Headers */,
@@ -29506,6 +29513,7 @@
 				BC2441C40E8B65D00055320F /* ScrollView.cpp in Sources */,
 				E45390450EAFD637003695C8 /* ScrollViewIOS.mm in Sources */,
 				9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */,
+				582CB0551A78A2B200AFFCC4 /* SimpleLineLayoutFlowContentsIterator.cpp in Sources */,
 				F55B3DD11251F12D003EF269 /* SearchInputType.cpp in Sources */,
 				976F36EA14686225005E93B4 /* SecurityContext.cpp in Sources */,
 				BCD0E0FA0E972C3500265DEA /* SecurityOrigin.cpp in Sources */,

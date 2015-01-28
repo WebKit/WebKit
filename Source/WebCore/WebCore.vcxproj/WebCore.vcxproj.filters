@@ -6775,6 +6775,9 @@
     <ClCompile Include="..\rendering\SimpleLineLayoutFlowContents.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\rendering\SimpleLineLayoutFlowContentsIterator.cpp">
+      <Filter>rendering</Filter>
+    </ClCompile>
     <ClCompile Include="..\rendering\SimpleLineLayoutFunctions.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
