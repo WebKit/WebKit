@@ -1,3 +1,10 @@
+2015-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (OS X 10.10.2): media/track/track-in-band-style.html frequently times out
+        https://bugs.webkit.org/show_bug.cgi?id=140974
+
+        * platform/mac/TestExpectations: Added an expectation.
+
 2015-01-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Re-enable Sputnik.
