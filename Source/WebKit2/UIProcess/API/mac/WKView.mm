@@ -4342,7 +4342,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     [self _setTextIndicator:nullptr fadeOut:NO];
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [_data->_immediateActionController dismissContentRelativeChildWindows];
+#endif
 
     static_cast<PageClient&>(*_data->_pageClient).dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
 }
