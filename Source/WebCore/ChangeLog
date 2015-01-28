@@ -1,3 +1,16 @@
+2015-01-28  Jeremy Jones  <jeremyj@apple.com>
+
+        Prevent implicit animation when setting fullscreen background to clear.
+        https://bugs.webkit.org/show_bug.cgi?id=140888
+
+        Reviewed by Eric Carlson.
+
+        This patch decreases flicker when exiting fullscreen by preventing
+        an implicit animation when changing the background to clear.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::exitFullscreenInternal):
+
 2015-01-28  Dana Burkart  <dburkart@apple.com>
 
         Move ASan flag settings from DebugRelease.xcconfig to Base.xcconfig

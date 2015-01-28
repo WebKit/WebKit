@@ -975,8 +975,13 @@ void WebVideoFullscreenInterfaceAVKit::exitFullscreenInternal(WebCore::IntRect f
         RefPtr<WebVideoFullscreenInterfaceAVKit> strongThis(this);
         [m_playerViewController exitFullScreenWithCompletionHandler:[strongThis] (BOOL, NSError*) {
             strongThis->m_exitCompleted = true;
+
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
             [strongThis->m_videoLayerContainer setBackgroundColor:[[getUIColorClass() clearColor] CGColor]];
             [[strongThis->m_playerViewController view] setBackgroundColor:[getUIColorClass() clearColor]];
+            [CATransaction commit];
+
             WebThreadRun([strongThis] {
                 if (strongThis->m_fullscreenChangeObserver)
                     strongThis->m_fullscreenChangeObserver->didExitFullscreen();
