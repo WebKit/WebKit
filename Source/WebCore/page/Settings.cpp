@@ -523,7 +523,7 @@ void Settings::setUsesPageCache(bool usesPageCache)
         int first = -m_page->backForward().backCount();
         int last = m_page->backForward().forwardCount();
         for (int i = first; i <= last; i++)
-            pageCache()->remove(m_page->backForward().itemAtIndex(i));
+            PageCache::shared().remove(m_page->backForward().itemAtIndex(i));
     }
 }
 

@@ -839,9 +839,9 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     setNeedsRecalcStyleInAllFrames();
 
     mainFrame().deviceOrPageScaleFactorChanged();
-    pageCache()->markPagesForDeviceScaleChanged(this);
+    PageCache::shared().markPagesForDeviceScaleChanged(this);
 
-    pageCache()->markPagesForFullStyleRecalc(this);
+    PageCache::shared().markPagesForFullStyleRecalc(this);
     GraphicsContext::updateDocumentMarkerResources();
 
     mainFrame().pageOverlayController().didChangeDeviceScaleFactor();
@@ -921,7 +921,7 @@ void Page::setPagination(const Pagination& pagination)
     m_pagination = pagination;
 
     setNeedsRecalcStyleInAllFrames();
-    pageCache()->markPagesForFullStyleRecalc(this);
+    PageCache::shared().markPagesForFullStyleRecalc(this);
 }
 
 unsigned Page::pageCount() const
@@ -1661,7 +1661,7 @@ void Page::setVisitedLinkStore(Ref<VisitedLinkStore>&& visitedLinkStore)
     m_visitedLinkStore->addPage(*this);
 
     invalidateStylesForAllLinks();
-    pageCache()->markPagesForFullStyleRecalc(this);
+    PageCache::shared().markPagesForFullStyleRecalc(this);
 }
 
 SessionID Page::sessionID() const

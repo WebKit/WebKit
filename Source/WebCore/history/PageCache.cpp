@@ -51,6 +51,7 @@
 #include "Settings.h"
 #include "SubframeLoader.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
@@ -291,10 +292,10 @@ static void logCanCachePageDecision(Page& page)
     diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), emptyString(), rejectReasons ? DiagnosticLoggingResultFail : DiagnosticLoggingResultPass);
 }
 
-PageCache* pageCache()
+PageCache& PageCache::shared()
 {
-    static PageCache* staticPageCache = new PageCache;
-    return staticPageCache;
+    static NeverDestroyed<PageCache> globalPageCache;
+    return globalPageCache;
 }
 
 PageCache::PageCache()
@@ -507,7 +508,7 @@ CachedPage* PageCache::get(HistoryItem* item, Page* page)
         
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item->url().string().ascii().data());
         logPageCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
-        pageCache()->remove(item);
+        PageCache::shared().remove(item);
     } else if (item->m_pruningReason != PruningReason::None)
         logPageCacheFailureDiagnosticMessage(page, pruningReasonToDiagnosticLoggingKey(item->m_pruningReason));
 

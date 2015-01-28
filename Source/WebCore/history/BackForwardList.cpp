@@ -68,7 +68,7 @@ void BackForwardList::addItem(PassRefPtr<HistoryItem> prpItem)
             RefPtr<HistoryItem> item = m_entries.last();
             m_entries.removeLast();
             m_entryHash.remove(item);
-            pageCache()->remove(item.get());
+            PageCache::shared().remove(item.get());
         }
     }
 
@@ -78,7 +78,7 @@ void BackForwardList::addItem(PassRefPtr<HistoryItem> prpItem)
         RefPtr<HistoryItem> item = m_entries[0];
         m_entries.remove(0);
         m_entryHash.remove(item);
-        pageCache()->remove(item.get());
+        PageCache::shared().remove(item.get());
         m_current--;
     }
 
@@ -175,7 +175,7 @@ void BackForwardList::setCapacity(int size)
         RefPtr<HistoryItem> item = m_entries.last();
         m_entries.removeLast();
         m_entryHash.remove(item);
-        pageCache()->remove(item.get());
+        PageCache::shared().remove(item.get());
     }
 
     if (!size)
@@ -247,7 +247,7 @@ bool BackForwardList::clearAllPageCaches()
         HistoryItem* item = m_entries[i].get();
         if (item->isInPageCache()) {
             didRemoveAtLeastOneItem = true;
-            pageCache()->remove(item);
+            PageCache::shared().remove(item);
         }
     }
     return didRemoveAtLeastOneItem;
@@ -258,7 +258,7 @@ void BackForwardList::close()
 {
     int size = m_entries.size();
     for (int i = 0; i < size; ++i)
-        pageCache()->remove(m_entries[i].get());
+        PageCache::shared().remove(m_entries[i].get());
     m_entries.clear();
     m_entryHash.clear();
     m_page = 0;

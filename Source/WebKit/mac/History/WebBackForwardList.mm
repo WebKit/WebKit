@@ -355,7 +355,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (NSUInteger)pageCacheSize
 {
-    return [kit(core(self)->page()) usesPageCache] ? pageCache()->capacity() : 0;
+    return [kit(core(self)->page()) usesPageCache] ? PageCache::shared().capacity() : 0;
 }
 
 - (int)backListCount

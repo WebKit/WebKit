@@ -235,10 +235,10 @@ void HistoryController::restoreDocumentState()
 void HistoryController::invalidateCurrentItemCachedPage()
 {
     // When we are pre-commit, the currentItem is where any page cache data resides.
-    if (!pageCache()->get(currentItem(), m_frame.page()))
+    if (!PageCache::shared().get(currentItem(), m_frame.page()))
         return;
 
-    std::unique_ptr<CachedPage> cachedPage = pageCache()->take(currentItem(), m_frame.page());
+    std::unique_ptr<CachedPage> cachedPage = PageCache::shared().take(currentItem(), m_frame.page());
 
     // FIXME: This is a grotesque hack to fix <rdar://problem/4059059> Crash in RenderFlow::detach
     // Somehow the PageState object is not properly updated, and is holding onto a stale document.
@@ -334,7 +334,7 @@ void HistoryController::updateForReload()
 #endif
 
     if (m_currentItem) {
-        pageCache()->remove(m_currentItem.get());
+        PageCache::shared().remove(m_currentItem.get());
     
         if (m_frame.loader().loadType() == FrameLoadType::Reload || m_frame.loader().loadType() == FrameLoadType::ReloadFromOrigin)
             saveScrollPositionAndViewStateToItem(m_currentItem.get());

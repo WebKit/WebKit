@@ -43,7 +43,10 @@ namespace WebCore {
     class PageCache {
         WTF_MAKE_NONCOPYABLE(PageCache); WTF_MAKE_FAST_ALLOCATED;
     public:
-        friend PageCache* pageCache();
+        friend class NeverDestroyed<PageCache>;
+
+        // Function to obtain the global page cache.
+        WEBCORE_EXPORT static PageCache& shared();
         
         bool canCache(Page*) const;
 
@@ -75,7 +78,7 @@ namespace WebCore {
         void markPagesForDeviceScaleChanged(Page*);
 
     private:
-        PageCache(); // Use pageCache() instead.
+        PageCache(); // Use shared() instead.
         ~PageCache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.
         
         static bool canCachePageContainingThisFrame(Frame*);
@@ -94,9 +97,6 @@ namespace WebCore {
         
         bool m_shouldClearBackingStores;
      };
-
-    // Function to obtain the global page cache.
-    WEBCORE_EXPORT PageCache* pageCache();
 
 } // namespace WebCore
 

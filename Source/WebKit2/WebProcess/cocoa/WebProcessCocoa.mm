@@ -115,7 +115,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 
     memoryCache().setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache().setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    pageCache()->setCapacity(pageCacheCapacity);
+    PageCache::shared().setCapacity(pageCacheCapacity);
 
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
 

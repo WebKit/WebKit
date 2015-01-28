@@ -1,3 +1,46 @@
+2015-01-28  Chris Dumez  <cdumez@apple.com>
+
+        Rename pageCache() to PageCache::shared() and return a reference
+        https://bugs.webkit.org/show_bug.cgi?id=140983
+
+        Reviewed by Andreas Kling.
+
+        Rename pageCache() to PageCache::shared() as this is a singleton class
+        and have it return a reference instead of a pointer.
+
+        * history/BackForwardList.cpp:
+        (WebCore::BackForwardList::addItem):
+        (WebCore::BackForwardList::setCapacity):
+        (WebCore::BackForwardList::clearAllPageCaches):
+        (WebCore::BackForwardList::close):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::setURL):
+        * history/PageCache.cpp:
+        (WebCore::PageCache::shared):
+        (WebCore::PageCache::get):
+        (WebCore::pageCache): Deleted.
+        * history/PageCache.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::invalidateCurrentItemCachedPage):
+        (WebCore::HistoryController::updateForReload):
+        * page/Frame.cpp:
+        (WebCore::Frame::setPageAndTextZoomFactors):
+        * page/Page.cpp:
+        (WebCore::Page::setDeviceScaleFactor):
+        (WebCore::Page::setPagination):
+        (WebCore::Page::setVisitedLinkStore):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::captionPreferencesChanged):
+        * page/Settings.cpp:
+        (WebCore::Settings::setUsesPageCache):
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseCriticalMemory):
+
 2015-01-28  Darin Adler  <darin@apple.com>
 
         Fix MediaPlayerEngine leaks

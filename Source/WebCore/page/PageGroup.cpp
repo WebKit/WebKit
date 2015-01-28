@@ -111,7 +111,7 @@ void PageGroup::captionPreferencesChanged()
 {
     for (auto it = m_pages.begin(), end = m_pages.end(); it != end; ++it)
         (*it)->captionPreferencesChanged();
-    pageCache()->markPagesForCaptionPreferencesChanged();
+    PageCache::shared().markPagesForCaptionPreferencesChanged();
 }
 
 CaptionUserPreferences* PageGroup::captionPreferences()

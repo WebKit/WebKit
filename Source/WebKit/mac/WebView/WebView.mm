@@ -7935,9 +7935,9 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 
     memoryCache().setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache().setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    pageCache()->setCapacity(pageCacheCapacity);
+    PageCache::shared().setCapacity(pageCacheCapacity);
 #if PLATFORM(IOS)
-    pageCache()->setShouldClearBackingStores(true);
+    PageCache::shared().setShouldClearBackingStores(true);
     nsurlCacheMemoryCapacity = std::max(nsurlCacheMemoryCapacity, [nsurlCache memoryCapacity]);
     CFURLCacheRef cfCache;
     if ([nsurlCache respondsToSelector:@selector(_CFURLCache)] && (cfCache = [nsurlCache _CFURLCache]))

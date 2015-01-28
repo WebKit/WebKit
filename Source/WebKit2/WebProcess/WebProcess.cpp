@@ -1116,7 +1116,7 @@ void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
 
 void WebProcess::releasePageCache()
 {
-    pageCache()->pruneToCapacityNow(0, PruningReason::MemoryPressure);
+    PageCache::shared().pruneToCapacityNow(0, PruningReason::MemoryPressure);
 }
 
 #if !PLATFORM(COCOA)
