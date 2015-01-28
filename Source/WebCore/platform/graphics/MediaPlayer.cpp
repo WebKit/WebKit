@@ -36,6 +36,7 @@
 #include "MediaPlayerPrivate.h"
 #include "PlatformTimeRanges.h"
 #include "Settings.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(VIDEO_TRACK)
@@ -153,20 +154,6 @@ static PassOwnPtr<MediaPlayerPrivateInterface> createNullMediaPlayer(MediaPlayer
 // engine support
 
 struct MediaPlayerFactory {
-    WTF_MAKE_NONCOPYABLE(MediaPlayerFactory); WTF_MAKE_FAST_ALLOCATED;
-public:
-    MediaPlayerFactory(CreateMediaEnginePlayer constructor, MediaEngineSupportedTypes getSupportedTypes, MediaEngineSupportsType supportsTypeAndCodecs,
-        MediaEngineGetSitesInMediaCache getSitesInMediaCache, MediaEngineClearMediaCache clearMediaCache, MediaEngineClearMediaCacheForSite clearMediaCacheForSite, MediaEngineSupportsKeySystem supportsKeySystem)
-        : constructor(constructor)
-        , getSupportedTypes(getSupportedTypes)
-        , supportsTypeAndCodecs(supportsTypeAndCodecs)
-        , getSitesInMediaCache(getSitesInMediaCache)
-        , clearMediaCache(clearMediaCache)
-        , clearMediaCacheForSite(clearMediaCacheForSite)
-        , supportsKeySystem(supportsKeySystem)
-    {
-    }
-
     CreateMediaEnginePlayer constructor;
     MediaEngineSupportedTypes getSupportedTypes;
     MediaEngineSupportsType supportsTypeAndCodecs;
@@ -178,26 +165,16 @@ public:
 
 static void addMediaEngine(CreateMediaEnginePlayer, MediaEngineSupportedTypes, MediaEngineSupportsType, MediaEngineGetSitesInMediaCache, MediaEngineClearMediaCache, MediaEngineClearMediaCacheForSite, MediaEngineSupportsKeySystem);
 
-static MediaPlayerFactory* bestMediaEngineForSupportParameters(const MediaEngineSupportParameters&, MediaPlayerFactory* current = 0);
-static MediaPlayerFactory* nextMediaEngine(MediaPlayerFactory* current);
+static bool haveMediaEnginesVector;
 
-enum RequeryEngineOptions { DoNotResetEngines, ResetEngines };
-static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions requeryFlags = DoNotResetEngines )
+static Vector<MediaPlayerFactory>& mutableInstalledMediaEnginesVector()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(Vector<MediaPlayerFactory*>, installedEngines, ());
-    static bool enginesQueried = false;
+    static NeverDestroyed<Vector<MediaPlayerFactory>> installedEngines;
+    return installedEngines;
+}
 
-    if (requeryFlags == ResetEngines) {
-        installedEngines.clear();
-        enginesQueried = false;
-        return installedEngines;
-    }
-
-    if (enginesQueried)
-        return installedEngines;
-
-    enginesQueried = true;
-
+static void buildMediaEnginesVector()
+{
 #if USE(AVFOUNDATION)
     if (Settings::isAVFoundationEnabled()) {
 #if PLATFORM(COCOA)
@@ -220,7 +197,14 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions r
     PlatformMediaEngineClassName::registerMediaEngine(addMediaEngine);
 #endif
 
-    return installedEngines;
+    haveMediaEnginesVector = true;
+}
+
+static const Vector<MediaPlayerFactory>& installedMediaEngines()
+{
+    if (!haveMediaEnginesVector)
+        buildMediaEnginesVector();
+    return mutableInstalledMediaEnginesVector();
 }
 
 static void addMediaEngine(CreateMediaEnginePlayer constructor, MediaEngineSupportedTypes getSupportedTypes, MediaEngineSupportsType supportsType,
@@ -230,7 +214,7 @@ static void addMediaEngine(CreateMediaEnginePlayer constructor, MediaEngineSuppo
     ASSERT(getSupportedTypes);
     ASSERT(supportsType);
 
-    installedMediaEngines().append(new MediaPlayerFactory(constructor, getSupportedTypes, supportsType, getSitesInMediaCache, clearMediaCache, clearMediaCacheForSite, supportsKeySystem));
+    mutableInstalledMediaEnginesVector().append(MediaPlayerFactory { constructor, getSupportedTypes, supportsType, getSitesInMediaCache, clearMediaCache, clearMediaCacheForSite, supportsKeySystem });
 }
 
 static const AtomicString& applicationOctetStream()
@@ -251,56 +235,51 @@ static const AtomicString& codecs()
     return codecs;
 }
 
-static MediaPlayerFactory* bestMediaEngineForSupportParameters(const MediaEngineSupportParameters& parameters, MediaPlayerFactory* current)
+static const MediaPlayerFactory* bestMediaEngineForSupportParameters(const MediaEngineSupportParameters& parameters, const MediaPlayerFactory* current = nullptr)
 {
     if (parameters.type.isEmpty())
-        return 0;
+        return nullptr;
 
-    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
-    if (engines.isEmpty())
-        return 0;
-
-    // 4.8.10.3 MIME types - In the absence of a specification to the contrary, the MIME type "application/octet-stream" 
+    // 4.8.10.3 MIME types - In the absence of a specification to the contrary, the MIME type "application/octet-stream"
     // when used with parameters, e.g. "application/octet-stream;codecs=theora", is a type that the user agent knows 
     // it cannot render.
     if (parameters.type == applicationOctetStream()) {
         if (!parameters.codecs.isEmpty())
-            return 0;
+            return nullptr;
     }
 
-    MediaPlayerFactory* engine = 0;
+    const MediaPlayerFactory* foundEngine = nullptr;
     MediaPlayer::SupportsType supported = MediaPlayer::IsNotSupported;
-    unsigned count = engines.size();
-    for (unsigned ndx = 0; ndx < count; ndx++) {
+    for (auto& engine : installedMediaEngines()) {
         if (current) {
-            if (current == engines[ndx])
-                current = 0;
+            if (current == &engine)
+                current = nullptr;
             continue;
         }
-        MediaPlayer::SupportsType engineSupport = engines[ndx]->supportsTypeAndCodecs(parameters);
+        MediaPlayer::SupportsType engineSupport = engine.supportsTypeAndCodecs(parameters);
         if (engineSupport > supported) {
             supported = engineSupport;
-            engine = engines[ndx];
+            foundEngine = &engine;
         }
     }
 
-    return engine;
+    return foundEngine;
 }
 
-static MediaPlayerFactory* nextMediaEngine(MediaPlayerFactory* current)
+static const MediaPlayerFactory* nextMediaEngine(const MediaPlayerFactory* current)
 {
-    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
+    auto& engines = installedMediaEngines();
     if (engines.isEmpty())
-        return 0;
+        return nullptr;
 
     if (!current) 
-        return engines.first();
+        return &engines.first();
 
-    size_t currentIndex = engines.find(current);
-    if (currentIndex == WTF::notFound || currentIndex + 1 >= engines.size()) 
-        return 0;
+    size_t currentIndex = current - &engines.first();
+    if (currentIndex + 1 >= engines.size())
+        return nullptr;
 
-    return engines[currentIndex + 1];
+    return &engines[currentIndex + 1];
 }
 
 // media player
@@ -374,7 +353,7 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, MediaSour
 }
 #endif
 
-MediaPlayerFactory* MediaPlayer::nextBestMediaEngine(MediaPlayerFactory* current) const
+const MediaPlayerFactory* MediaPlayer::nextBestMediaEngine(const MediaPlayerFactory* current) const
 {
     MediaEngineSupportParameters parameters;
     parameters.type = m_contentMIMEType;
@@ -390,9 +369,9 @@ MediaPlayerFactory* MediaPlayer::nextBestMediaEngine(MediaPlayerFactory* current
     return bestMediaEngineForSupportParameters(parameters, current);
 }
 
-void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
+void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 {
-    MediaPlayerFactory* engine = 0;
+    const MediaPlayerFactory* engine = nullptr;
 
     if (!m_contentMIMEType.isEmpty())
         engine = nextBestMediaEngine(current);
@@ -782,7 +761,7 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
     if (parameters.type == applicationOctetStream())
         return IsNotSupported;
 
-    MediaPlayerFactory* engine = bestMediaEngineForSupportParameters(parameters);
+    const MediaPlayerFactory* engine = bestMediaEngineForSupportParameters(parameters);
     if (!engine)
         return IsNotSupported;
 
@@ -808,13 +787,8 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
 
 void MediaPlayer::getSupportedTypes(HashSet<String>& types)
 {
-    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
-    if (engines.isEmpty())
-        return;
-
-    unsigned count = engines.size();
-    for (unsigned ndx = 0; ndx < count; ndx++)
-        engines[ndx]->getSupportedTypes(types);
+    for (auto& engine : installedMediaEngines())
+        engine.getSupportedTypes(types);
 } 
 
 bool MediaPlayer::isAvailable()
@@ -966,41 +940,35 @@ void MediaPlayer::reloadTimerFired()
 
 void MediaPlayer::getSitesInMediaCache(Vector<String>& sites)
 {
-    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
-    unsigned size = engines.size();
-    for (unsigned i = 0; i < size; i++) {
-        if (!engines[i]->getSitesInMediaCache)
+    for (auto& engine : installedMediaEngines()) {
+        if (!engine.getSitesInMediaCache)
             continue;
         Vector<String> engineSites;
-        engines[i]->getSitesInMediaCache(engineSites);
+        engine.getSitesInMediaCache(engineSites);
         sites.appendVector(engineSites);
     }
 }
 
 void MediaPlayer::clearMediaCache()
 {
-    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
-    unsigned size = engines.size();
-    for (unsigned i = 0; i < size; i++) {
-        if (engines[i]->clearMediaCache)
-            engines[i]->clearMediaCache();
+    for (auto& engine : installedMediaEngines()) {
+        if (engine.clearMediaCache)
+            engine.clearMediaCache();
     }
 }
 
 void MediaPlayer::clearMediaCacheForSite(const String& site)
 {
-    Vector<MediaPlayerFactory*>& engines = installedMediaEngines();
-    unsigned size = engines.size();
-    for (unsigned i = 0; i < size; i++) {
-        if (engines[i]->clearMediaCacheForSite)
-            engines[i]->clearMediaCacheForSite(site);
+    for (auto& engine : installedMediaEngines()) {
+        if (engine.clearMediaCacheForSite)
+            engine.clearMediaCacheForSite(site);
     }
 }
 
 bool MediaPlayer::supportsKeySystem(const String& keySystem, const String& mimeType)
 {
     for (auto& engine : installedMediaEngines()) {
-        if (engine->supportsKeySystem && engine->supportsKeySystem(keySystem, mimeType))
+        if (engine.supportsKeySystem && engine.supportsKeySystem(keySystem, mimeType))
             return true;
     }
     return false;
@@ -1248,7 +1216,8 @@ PassRefPtr<PlatformTextTrackMenuInterface> MediaPlayer::textTrackMenu()
 
 void MediaPlayer::resetMediaEngines()
 {
-    installedMediaEngines(ResetEngines);
+    mutableInstalledMediaEnginesVector().clear();
+    haveMediaEnginesVector = false;
 }
 
 #if USE(GSTREAMER)

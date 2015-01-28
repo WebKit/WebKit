@@ -1,3 +1,30 @@
+2015-01-28  Darin Adler  <darin@apple.com>
+
+        Fix MediaPlayerEngine leaks
+        https://bugs.webkit.org/show_bug.cgi?id=140992
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::mutableInstalledMediaEnginesVector): Added.
+        (WebCore::buildMediaEnginesVector): Added.
+        (WebCore::installedMediaEngines): Changed this to be a vector of factories
+        instead of a vector of heap-allocated factories. The old code would leak
+        all the factories when this was called with the ResetEngines option.
+        (WebCore::addMediaEngine): Updated for above change.
+        (WebCore::bestMediaEngineForSupportParameters): Ditto.
+        (WebCore::nextMediaEngine): Ditto.
+        (WebCore::MediaPlayer::nextBestMediaEngine): Ditto.
+        (WebCore::MediaPlayer::loadWithNextMediaEngine): Ditto.
+        (WebCore::MediaPlayer::supportsType): Ditto.
+        (WebCore::MediaPlayer::getSupportedTypes): Ditto.
+        (WebCore::MediaPlayer::getSitesInMediaCache): Ditto.
+        (WebCore::MediaPlayer::clearMediaCache): Ditto.
+        (WebCore::MediaPlayer::clearMediaCacheForSite): Ditto.
+        (WebCore::MediaPlayer::supportsKeySystem): Ditto.
+        (WebCore::MediaPlayer::resetMediaEngines): Ditto.
+        * platform/graphics/MediaPlayer.h: Ditto.
+
 2015-01-28  Jeongmin Kim  <jm86.kim@lge.com>
 
         Rename descendentxxx to descendantxxxx in RenderLayerBacking

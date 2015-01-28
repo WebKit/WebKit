@@ -131,8 +131,9 @@ class GraphicsContext3D;
 class IntRect;
 class IntSize;
 class MediaPlayer;
-struct MediaPlayerFactory;
 class PlatformTimeRanges;
+
+struct MediaPlayerFactory;
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
 struct GraphicsDeviceAdapter;
@@ -581,8 +582,8 @@ public:
 
 private:
     MediaPlayer(MediaPlayerClient&);
-    MediaPlayerFactory* nextBestMediaEngine(MediaPlayerFactory*) const;
-    void loadWithNextMediaEngine(MediaPlayerFactory*);
+    const MediaPlayerFactory* nextBestMediaEngine(const MediaPlayerFactory*) const;
+    void loadWithNextMediaEngine(const MediaPlayerFactory*);
     void reloadTimerFired();
 
     static void initializeMediaEngines();
@@ -590,7 +591,7 @@ private:
     MediaPlayerClient& m_client;
     Timer m_reloadTimer;
     OwnPtr<MediaPlayerPrivateInterface> m_private;
-    MediaPlayerFactory* m_currentMediaEngine;
+    const MediaPlayerFactory* m_currentMediaEngine;
     URL m_url;
     String m_contentMIMEType;
     String m_contentTypeCodecs;
