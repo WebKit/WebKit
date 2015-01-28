@@ -1,3 +1,16 @@
+2015-01-28  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile error in media player implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=141004
+
+        Reviewed by Brent Fulgham.
+
+        MediaPlayer::cachedResourceLoader() returns a pointer to the resource loader, not a reference.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::setSize):
+        (WebCore::MediaPlayerPrivateMediaFoundation::createVideoWindow):
+
 2015-01-28  Jeremy Jones  <jeremyj@apple.com>
 
         Prevent implicit animation when setting fullscreen background to clear.
