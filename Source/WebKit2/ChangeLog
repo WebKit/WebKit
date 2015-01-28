@@ -1,3 +1,9 @@
+2015-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing file to WebInspector compilation for GTK+.
+
+        * PlatformGTK.cmake: Add UserInterface/External/ESLint/eslint.js
+
 2015-01-28  Chris Dumez  <cdumez@apple.com>
 
         Rename pageCache() to PageCache::shared() and return a reference
