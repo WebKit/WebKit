@@ -1,5 +1,24 @@
 2015-01-27  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r177666
+
+    2014-12-22  Chris Dumez  <cdumez@apple.com>
+
+            [iOS] Log using FeatureCounter user-triggered zooming
+            https://bugs.webkit.org/show_bug.cgi?id=139879
+            <rdar://problem/19329130>
+
+            Reviewed by Benjamin Poulain.
+
+            Log using FeatureCounter user-triggered zooming on iOS.
+
+            * WebCore.exp.in:
+            * WebCore.xcodeproj/project.pbxproj:
+            * platform/FeatureCounter.h:
+            * platform/FeatureCounterKeys.h:
+
+2015-01-27  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177647
 
     2014-12-22  Chris Dumez  <cdumez@apple.com>
