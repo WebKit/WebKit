@@ -366,7 +366,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         newRequest.setInitiator(m_options.initiator);
 #endif
         ASSERT(!m_resource);
-        m_resource = m_document.cachedResourceLoader()->requestRawResource(newRequest);
+        m_resource = m_document.cachedResourceLoader().requestRawResource(newRequest);
         if (m_resource) {
             if (m_resource->loader()) {
                 unsigned long identifier = m_resource->loader()->identifier();

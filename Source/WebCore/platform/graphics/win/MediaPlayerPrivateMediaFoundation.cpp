@@ -196,8 +196,8 @@ void MediaPlayerPrivateMediaFoundation::setSize(const IntSize& size)
     LayoutSize scrollOffset;
 
     FrameView* view = nullptr;
-    if (m_player && m_player->cachedResourceLoader() && m_player->cachedResourceLoader()->document())
-        view = m_player->cachedResourceLoader()->document()->view();
+    if (m_player && m_player->cachedResourceLoader() && m_player->cachedResourceLoader().document())
+        view = m_player->cachedResourceLoader().document()->view();
     if (view)
         scrollOffset = view->scrollOffsetForFixedPosition();
 
@@ -434,9 +434,9 @@ void MediaPlayerPrivateMediaFoundation::createVideoWindow()
 {
     HWND hWndParent = nullptr;
     FrameView* view = nullptr;
-    if (!m_player || !m_player->cachedResourceLoader() || !m_player->cachedResourceLoader()->document())
+    if (!m_player || !m_player->cachedResourceLoader() || !m_player->cachedResourceLoader().document())
         return;
-    view = m_player->cachedResourceLoader()->document()->view();
+    view = m_player->cachedResourceLoader().document()->view();
     if (!view || !view->hostWindow())
         return;
     hWndParent = view->hostWindow()->platformPageClient();

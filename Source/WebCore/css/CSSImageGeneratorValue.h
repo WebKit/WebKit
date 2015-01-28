@@ -56,7 +56,7 @@ public:
     bool isPending() const;
     bool knownToBeOpaque(const RenderElement*) const;
 
-    void loadSubimages(CachedResourceLoader*);
+    void loadSubimages(CachedResourceLoader&);
 
 protected:
     CSSImageGeneratorValue(ClassType);
@@ -66,7 +66,7 @@ protected:
     const HashCountedSet<RenderElement*>& clients() const { return m_clients; }
 
     // Helper functions for Crossfade and Filter.
-    static CachedImage* cachedImageForCSSValue(CSSValue*, CachedResourceLoader*);
+    static CachedImage* cachedImageForCSSValue(CSSValue*, CachedResourceLoader&);
     static bool subimageIsPending(CSSValue*);
 
 private:

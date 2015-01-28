@@ -185,13 +185,13 @@ void CachedResource::failBeforeStarting()
     error(CachedResource::LoadError);
 }
 
-void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader* cachedResourceLoader)
+void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader& cachedResourceLoader)
 {
     // Note: We skip the Content-Security-Policy check here because we check
     // the Content-Security-Policy at the CachedResourceLoader layer so we can
     // handle different resource types differently.
 
-    FrameLoader& frameLoader = cachedResourceLoader->frame()->loader();
+    FrameLoader& frameLoader = cachedResourceLoader.frame()->loader();
     String outgoingReferrer;
     String outgoingOrigin;
     if (m_resourceRequest.httpReferrer().isNull()) {
@@ -202,7 +202,7 @@ void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader* cachedRes
         outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
     }
 
-    outgoingReferrer = SecurityPolicy::generateReferrerHeader(cachedResourceLoader->document()->referrerPolicy(), m_resourceRequest.url(), outgoingReferrer);
+    outgoingReferrer = SecurityPolicy::generateReferrerHeader(cachedResourceLoader.document()->referrerPolicy(), m_resourceRequest.url(), outgoingReferrer);
     if (outgoingReferrer.isEmpty())
         m_resourceRequest.clearHTTPReferrer();
     else
@@ -212,14 +212,14 @@ void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader* cachedRes
     frameLoader.addExtraFieldsToSubresourceRequest(m_resourceRequest);
 }
 
-void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const ResourceLoaderOptions& options)
+void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
-    if (!cachedResourceLoader->frame()) {
+    if (!cachedResourceLoader.frame()) {
         failBeforeStarting();
         return;
     }
 
-    FrameLoader& frameLoader = cachedResourceLoader->frame()->loader();
+    FrameLoader& frameLoader = cachedResourceLoader.frame()->loader();
     if (options.securityCheck() == DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
         failBeforeStarting();
         return;
@@ -233,7 +233,7 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
         // When QuickLook is invoked to convert a document, it returns a unique URL in the
         // NSURLReponse for the main document. To make safeQLURLForDocumentURLAndResourceURL()
         // work, we need to use the QL URL not the original URL.
-        const URL& documentURL = cachedResourceLoader->frame() ? cachedResourceLoader->frame()->loader().documentLoader()->response().url() : cachedResourceLoader->document()->url();
+        const URL& documentURL = cachedResourceLoader.frame() ? cachedResourceLoader.frame()->loader().documentLoader()->response().url() : cachedResourceLoader.document()->url();
         m_resourceRequest.setURL(safeQLURLForDocumentURLAndResourceURL(documentURL, url()));
     }
 #endif
@@ -248,8 +248,8 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
         const String& lastModified = resourceToRevalidate->response().httpHeaderField(HTTPHeaderName::LastModified);
         const String& eTag = resourceToRevalidate->response().httpHeaderField(HTTPHeaderName::ETag);
         if (!lastModified.isEmpty() || !eTag.isEmpty()) {
-            ASSERT(cachedResourceLoader->cachePolicy(type()) != CachePolicyReload);
-            if (cachedResourceLoader->cachePolicy(type()) == CachePolicyRevalidate)
+            ASSERT(cachedResourceLoader.cachePolicy(type()) != CachePolicyReload);
+            if (cachedResourceLoader.cachePolicy(type()) == CachePolicyRevalidate)
                 m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
             if (!lastModified.isEmpty())
                 m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::IfModifiedSince, lastModified);
@@ -277,7 +277,7 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
         m_fragmentIdentifierForRequest = String();
     }
 
-    m_loader = platformStrategies()->loaderStrategy()->resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->frame(), this, request, options);
+    m_loader = platformStrategies()->loaderStrategy()->resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader.frame(), this, request, options);
     if (!m_loader) {
         failBeforeStarting();
         return;

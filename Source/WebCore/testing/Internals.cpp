@@ -373,7 +373,7 @@ String Internals::description(Deprecated::ScriptValue value)
 bool Internals::isPreloaded(const String& url)
 {
     Document* document = contextDocument();
-    return document->cachedResourceLoader()->isPreloaded(url);
+    return document->cachedResourceLoader().isPreloaded(url);
 }
 
 bool Internals::isLoadingFromMemoryCache(const String& url)
@@ -1685,11 +1685,7 @@ void Internals::garbageCollectDocumentResources(ExceptionCode& ec) const
         ec = INVALID_ACCESS_ERR;
         return;
     }
-
-    CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
-    if (!cachedResourceLoader)
-        return;
-    cachedResourceLoader->garbageCollectDocumentResources();
+    document->cachedResourceLoader().garbageCollectDocumentResources();
 }
 
 void Internals::allowRoundingHacks() const

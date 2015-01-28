@@ -41,7 +41,7 @@ public:
 
     virtual ~CachedSVGDocumentReference();
 
-    void load(CachedResourceLoader*);
+    void load(CachedResourceLoader&);
     bool loadRequested() const { return m_loadRequested; }
 
     CachedSVGDocument* document() { return m_document.get(); }

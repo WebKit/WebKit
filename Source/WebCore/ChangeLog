@@ -1,3 +1,15 @@
+2015-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Use a Ref<CachedResourceLoader> in Document instead of a RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=140971
+
+        Reviewed by Andreas Kling.
+
+        Use a Ref<CachedResourceLoader> in Document instead of a RefPtr as it
+        can never be null. Also have Document::cachedResourceLoader() return a
+        reference instead of a pointer. This gets rid of a lot of unnecessary
+        null-checks.
+
 2015-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         More build fixes for newer clang.

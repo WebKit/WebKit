@@ -62,7 +62,7 @@ public:
     bool isPending() const;
     bool knownToBeOpaque(const RenderElement*) const;
 
-    void loadSubimages(CachedResourceLoader*);
+    void loadSubimages(CachedResourceLoader&);
 
     bool hasFailedOrCanceledSubresources() const;
 

@@ -71,23 +71,21 @@ StyleImage* CSSImageValue::cachedOrPendingImage()
     return m_image.get();
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const ResourceLoaderOptions& options)
+StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
-    ASSERT(loader);
-
     if (!m_accessedImage) {
         m_accessedImage = true;
 
-        CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(m_url)), options);
+        CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)), options);
         if (m_initiatorName.isEmpty())
             request.setInitiator(cachedResourceRequestInitiators().css);
         else
             request.setInitiator(m_initiatorName);
 
         if (options.requestOriginPolicy() == PotentiallyCrossOriginEnabled)
-            updateRequestForAccessControl(request.mutableResourceRequest(), loader->document()->securityOrigin(), options.allowCredentials());
+            updateRequestForAccessControl(request.mutableResourceRequest(), loader.document()->securityOrigin(), options.allowCredentials());
 
-        if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request)) {
+        if (CachedResourceHandle<CachedImage> cachedImage = loader.requestImage(request)) {
             detachPendingImage();
             m_image = StyleCachedImage::create(cachedImage.get());
         }
@@ -96,7 +94,7 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
     return is<StyleCachedImage>(m_image.get()) ? downcast<StyleCachedImage>(m_image.get()) : nullptr;
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
+StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader& loader)
 {
     return cachedImage(loader, CachedResourceLoader::defaultCachedResourceOptions());
 }

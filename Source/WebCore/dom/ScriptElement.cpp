@@ -261,7 +261,7 @@ bool ScriptElement::requestScript(const String& sourceUrl)
         request.setCharset(scriptCharset());
         request.setInitiator(&element());
 
-        m_cachedScript = m_element.document().cachedResourceLoader()->requestScript(request);
+        m_cachedScript = m_element.document().cachedResourceLoader().requestScript(request);
         m_isExternalScript = true;
     }
 

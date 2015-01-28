@@ -540,15 +540,14 @@ void CSSFontSelector::clearDocument()
 
     m_beginLoadingTimer.stop();
 
-    CachedResourceLoader* cachedResourceLoader = m_document->cachedResourceLoader();
-    for (size_t i = 0; i < m_fontsToBeginLoading.size(); ++i) {
+    CachedResourceLoader& cachedResourceLoader = m_document->cachedResourceLoader();
+    for (auto& fontHandle : m_fontsToBeginLoading) {
         // Balances incrementRequestCount() in beginLoadingFontSoon().
-        cachedResourceLoader->decrementRequestCount(m_fontsToBeginLoading[i].get());
+        cachedResourceLoader.decrementRequestCount(fontHandle.get());
     }
-
     m_fontsToBeginLoading.clear();
 
-    m_document = 0;
+    m_document = nullptr;
 }
 
 void CSSFontSelector::beginLoadingFontSoon(CachedFont* font)
@@ -560,7 +559,7 @@ void CSSFontSelector::beginLoadingFontSoon(CachedFont* font)
     // Increment the request count now, in order to prevent didFinishLoad from being dispatched
     // after this font has been requested but before it began loading. Balanced by
     // decrementRequestCount() in beginLoadTimerFired() and in clearDocument().
-    m_document->cachedResourceLoader()->incrementRequestCount(font);
+    m_document->cachedResourceLoader().incrementRequestCount(font);
     m_beginLoadingTimer.startOneShot(0);
 }
 
@@ -572,14 +571,14 @@ void CSSFontSelector::beginLoadTimerFired()
     // CSSFontSelector could get deleted via beginLoadIfNeeded() or loadDone() unless protected.
     Ref<CSSFontSelector> protect(*this);
 
-    CachedResourceLoader* cachedResourceLoader = m_document->cachedResourceLoader();
-    for (size_t i = 0; i < fontsToBeginLoading.size(); ++i) {
-        fontsToBeginLoading[i]->beginLoadIfNeeded(cachedResourceLoader);
+    CachedResourceLoader& cachedResourceLoader = m_document->cachedResourceLoader();
+    for (auto& fontHandle : fontsToBeginLoading) {
+        fontHandle->beginLoadIfNeeded(cachedResourceLoader);
         // Balances incrementRequestCount() in beginLoadingFontSoon().
-        cachedResourceLoader->decrementRequestCount(fontsToBeginLoading[i].get());
+        cachedResourceLoader.decrementRequestCount(fontHandle.get());
     }
     // Ensure that if the request count reaches zero, the frame loader will know about it.
-    cachedResourceLoader->loadDone(0);
+    cachedResourceLoader.loadDone(nullptr);
     // New font loads may be triggered by layout after the document load is complete but before we have dispatched
     // didFinishLoading for the frame. Make sure the delegate is always dispatched by checking explicitly.
     if (m_document && m_document->frame())

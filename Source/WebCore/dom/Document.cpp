@@ -415,6 +415,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_ignorePendingStylesheets(false)
     , m_pendingSheetLayout(NoLayoutWithPendingSheets)
     , m_frame(frame)
+    , m_cachedResourceLoader(m_frame ? Ref<CachedResourceLoader>(m_frame->loader().activeDocumentLoader()->cachedResourceLoader()) : CachedResourceLoader::create(nullptr))
     , m_activeParserCount(0)
     , m_wellFormed(false)
     , m_printing(false)
@@ -528,10 +529,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     if ((frame && frame->ownerElement()) || !url.isEmpty())
         setURL(url);
 
-    if (m_frame)
-        m_cachedResourceLoader = &m_frame->loader().activeDocumentLoader()->cachedResourceLoader();
-    if (!m_cachedResourceLoader)
-        m_cachedResourceLoader = CachedResourceLoader::create(nullptr);
     m_cachedResourceLoader->setDocument(this);
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -625,7 +622,6 @@ Document::~Document()
     // load the initial empty document and the SVGDocument with the same DocumentLoader).
     if (m_cachedResourceLoader->document() == this)
         m_cachedResourceLoader->setDocument(nullptr);
-    m_cachedResourceLoader.clear();
 
     // We must call clearRareData() here since a Document class inherits TreeScope
     // as well as Node. See a comment on TreeScope.h for the reason.
@@ -3816,8 +3812,7 @@ void Document::dispatchWindowLoadEvent()
         return;
     m_domWindow->dispatchLoadEvent();
     m_loadEventFinished = true;
-    if (m_cachedResourceLoader)
-        m_cachedResourceLoader->documentDidFinishLoadEvent();
+    m_cachedResourceLoader->documentDidFinishLoadEvent();
 }
 
 void Document::enqueueWindowEvent(PassRefPtr<Event> event)

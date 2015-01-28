@@ -117,9 +117,9 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const String& ty
         
         if (m_cachedLinkResource) {
             m_cachedLinkResource->removeClient(this);
-            m_cachedLinkResource = 0;
+            m_cachedLinkResource = nullptr;
         }
-        m_cachedLinkResource = document->cachedResourceLoader()->requestLinkResource(type, linkRequest);
+        m_cachedLinkResource = document->cachedResourceLoader().requestLinkResource(type, linkRequest);
         if (m_cachedLinkResource)
             m_cachedLinkResource->addClient(this);
     }

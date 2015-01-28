@@ -130,7 +130,7 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
     return false;
 }
 
-StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
+StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader& loader)
 {
 #if ENABLE(CSS_IMAGE_SET)
     if (is<CSSImageSetValue>(m_imageValue.get()))
@@ -143,9 +143,9 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
         // For SVG images we need to lazily substitute in the correct URL. Rather than attempt
         // to change the URL of the CSSImageValue (which would then change behavior like cssText),
         // we create an alternate CSSImageValue to use.
-        if (isSVGCursor() && loader && loader->document()) {
+        if (isSVGCursor() && loader.document()) {
             // FIXME: This will fail if the <cursor> element is in a shadow DOM (bug 59827)
-            if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(downcast<CSSImageValue>(m_imageValue.get()).url(), *loader->document())) {
+            if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(downcast<CSSImageValue>(m_imageValue.get()).url(), *loader.document())) {
                 detachPendingImage();
                 Ref<CSSImageValue> svgImageValue(CSSImageValue::create(cursorElement->href()));
                 StyleCachedImage* cachedImage = svgImageValue->cachedImage(loader);

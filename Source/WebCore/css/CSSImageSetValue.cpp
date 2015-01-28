@@ -100,11 +100,9 @@ CSSImageSetValue::ImageWithScale CSSImageSetValue::bestImageForScaleFactor()
     return image;
 }
 
-StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* loader, const ResourceLoaderOptions& options)
+StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
-    ASSERT(loader);
-
-    Document* document = loader->document();
+    Document* document = loader.document();
     if (Page* page = document->page())
         m_scaleFactor = page->deviceScaleFactor();
     else
@@ -122,7 +120,7 @@ StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* load
         request.setInitiator(cachedResourceRequestInitiators().css);
         if (options.requestOriginPolicy() == PotentiallyCrossOriginEnabled)
             updateRequestForAccessControl(request.mutableResourceRequest(), document->securityOrigin(), options.allowCredentials());
-        if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request)) {
+        if (CachedResourceHandle<CachedImage> cachedImage = loader.requestImage(request)) {
             detachPendingImage();
             m_imageSet = StyleCachedImageSet::create(cachedImage.get(), image.scaleFactor, this);
             m_accessedBestFitImage = true;
@@ -132,7 +130,7 @@ StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* load
     return is<StyleCachedImageSet>(m_imageSet.get()) ? downcast<StyleCachedImageSet>(m_imageSet.get()) : nullptr;
 }
 
-StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* loader)
+StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader& loader)
 {
     return cachedImageSet(loader, CachedResourceLoader::defaultCachedResourceOptions());
 }

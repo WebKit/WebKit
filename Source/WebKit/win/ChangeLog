@@ -1,3 +1,15 @@
+2015-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Use a Ref<CachedResourceLoader> in Document instead of a RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=140971
+
+        Reviewed by Andreas Kling.
+
+        Use more references instead of pointers.
+
+        * WebDataSource.cpp:
+        (WebDataSource::subresourceForURL):
+
 2015-01-26  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] ASSERTION FAILED !m_ptr under AccessibilityController::winAddNotificationListener

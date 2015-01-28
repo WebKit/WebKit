@@ -53,15 +53,14 @@ CachedSVGDocumentReference::~CachedSVGDocumentReference()
     }
 }
 
-void CachedSVGDocumentReference::load(CachedResourceLoader* loader)
+void CachedSVGDocumentReference::load(CachedResourceLoader& loader)
 {
-    ASSERT(loader);
     if (m_loadRequested)
         return;
 
-    CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(m_url)));
+    CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)));
     request.setInitiator(cachedResourceRequestInitiators().css);
-    m_document = loader->requestSVGDocument(request);
+    m_document = loader.requestSVGDocument(request);
     if (m_document) {
         m_document->setCanReuse(m_canReuseResource);
         m_document->addClient(this);

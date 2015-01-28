@@ -47,7 +47,7 @@ public:
     CachedFont(const ResourceRequest&, SessionID, Type = FontResource);
     virtual ~CachedFont();
 
-    void beginLoadIfNeeded(CachedResourceLoader* dl);
+    void beginLoadIfNeeded(CachedResourceLoader&);
     virtual bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
     virtual bool ensureCustomFontData(bool externalSVG, const AtomicString& remoteURI);
@@ -63,7 +63,7 @@ private:
     virtual void checkNotify() override;
     virtual bool mayTryReplaceEncodedData() const override;
 
-    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&) override;
+    virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&) override;
 
     virtual void didAddClient(CachedResourceClient*) override;
     virtual void finishLoading(SharedBuffer*) override;

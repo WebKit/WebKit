@@ -94,7 +94,7 @@ public:
     CachedResource(const ResourceRequest&, Type, SessionID);
     virtual ~CachedResource();
 
-    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&);
+    virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&);
 
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
@@ -282,7 +282,7 @@ private:
 
     double freshnessLifetime(const ResourceResponse&) const;
 
-    void addAdditionalRequestHeaders(CachedResourceLoader*);
+    void addAdditionalRequestHeaders(CachedResourceLoader&);
     void failBeforeStarting();
 
     HashMap<CachedResourceClient*, std::unique_ptr<Callback>> m_clientsAwaitingCallback;

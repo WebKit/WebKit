@@ -84,7 +84,7 @@ FloatSize CSSCrossfadeValue::fixedSize(const RenderElement* renderer)
     float percentage = m_percentageValue->getFloatValue();
     float inversePercentage = 1 - percentage;
 
-    CachedResourceLoader* cachedResourceLoader = renderer->document().cachedResourceLoader();
+    CachedResourceLoader& cachedResourceLoader = renderer->document().cachedResourceLoader();
     CachedImage* cachedFromImage = cachedImageForCSSValue(m_fromValue.get(), cachedResourceLoader);
     CachedImage* cachedToImage = cachedImageForCSSValue(m_toValue.get(), cachedResourceLoader);
 
@@ -114,7 +114,7 @@ bool CSSCrossfadeValue::knownToBeOpaque(const RenderElement* renderer) const
     return subimageKnownToBeOpaque(*m_fromValue, renderer) && subimageKnownToBeOpaque(*m_toValue, renderer);
 }
 
-void CSSCrossfadeValue::loadSubimages(CachedResourceLoader* cachedResourceLoader)
+void CSSCrossfadeValue::loadSubimages(CachedResourceLoader& cachedResourceLoader)
 {
     CachedResourceHandle<CachedImage> oldCachedFromImage = m_cachedFromImage;
     CachedResourceHandle<CachedImage> oldCachedToImage = m_cachedToImage;
@@ -142,9 +142,9 @@ void CSSCrossfadeValue::loadSubimages(CachedResourceLoader* cachedResourceLoader
 PassRefPtr<Image> CSSCrossfadeValue::image(RenderElement* renderer, const FloatSize& size)
 {
     if (size.isEmpty())
-        return 0;
+        return nullptr;
 
-    CachedResourceLoader* cachedResourceLoader = renderer->document().cachedResourceLoader();
+    CachedResourceLoader& cachedResourceLoader = renderer->document().cachedResourceLoader();
     CachedImage* cachedFromImage = cachedImageForCSSValue(m_fromValue.get(), cachedResourceLoader);
     CachedImage* cachedToImage = cachedImageForCSSValue(m_toValue.get(), cachedResourceLoader);
 

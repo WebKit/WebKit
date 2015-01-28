@@ -169,8 +169,7 @@ bool TextTrackLoader::load(const URL& url, const String& crossOriginMode)
         }
     }
 
-    CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
-    m_resource = cachedResourceLoader->requestTextTrack(cueRequest);
+    m_resource = document->cachedResourceLoader().requestTextTrack(cueRequest);
     if (!m_resource)
         return false;
 

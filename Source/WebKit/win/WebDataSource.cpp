@@ -288,14 +288,14 @@ HRESULT STDMETHODCALLTYPE WebDataSource::subresourceForURL(
         return E_POINTER;
     }
 
-    *resource = 0;
+    *resource = nullptr;
 
-    Document *doc = m_loader->frameLoader()->frame().document();
+    Document* doc = m_loader->frameLoader()->frame().document();
 
     if (!doc)
         return E_FAIL;
 
-    CachedResource *cachedResource = doc->cachedResourceLoader()->cachedResource(String(url));
+    CachedResource* cachedResource = doc->cachedResourceLoader().cachedResource(String(url));
 
     if (!cachedResource)
         return E_FAIL;

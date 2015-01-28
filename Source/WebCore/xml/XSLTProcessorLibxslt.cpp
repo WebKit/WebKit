@@ -288,7 +288,7 @@ static inline String resultMIMEType(xmlDocPtr resultDoc, xsltStylesheetPtr sheet
     // HTML (create an HTML document), XML (create an XML document),
     // and text (wrap in a <pre> and create an XML document).
 
-    const xmlChar* resultType = 0;
+    const xmlChar* resultType = nullptr;
     XSLT_GET_IMPORT_PTR(resultType, sheet, method);
     if (!resultType && resultDoc->type == XML_HTML_DOCUMENT_NODE)
         resultType = (const xmlChar*)"html";
@@ -305,11 +305,11 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
 {
     Ref<Document> ownerDocument(sourceNode.document());
 
-    setXSLTLoadCallBack(docLoaderFunc, this, ownerDocument->cachedResourceLoader());
+    setXSLTLoadCallBack(docLoaderFunc, this, &ownerDocument->cachedResourceLoader());
     xsltStylesheetPtr sheet = xsltStylesheetPointer(m_stylesheet, m_stylesheetRootNode.get());
     if (!sheet) {
-        setXSLTLoadCallBack(0, 0, 0);
-        m_stylesheet = 0;
+        setXSLTLoadCallBack(nullptr, nullptr, nullptr);
+        m_stylesheet = nullptr;
         return false;
     }
     m_stylesheet->clearDocuments();

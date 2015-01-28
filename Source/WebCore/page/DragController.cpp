@@ -487,8 +487,7 @@ bool DragController::concludeEditDrag(DragData& dragData)
     if (!range)
         return false;
 
-    CachedResourceLoader* cachedResourceLoader = range->ownerDocument().cachedResourceLoader();
-    ResourceCacheValidationSuppressor validationSuppressor(cachedResourceLoader);
+    ResourceCacheValidationSuppressor validationSuppressor(range->ownerDocument().cachedResourceLoader());
     if (dragIsMove(innerFrame->selection(), dragData) || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;
         RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, *innerFrame, *range, true, chosePlainText);

@@ -713,8 +713,8 @@ void FrameLoader::didBeginDocument(bool dispatch)
     m_frame.document()->initContentSecurityPolicy();
 
     const Settings& settings = m_frame.settings();
-    m_frame.document()->cachedResourceLoader()->setImagesEnabled(settings.areImagesEnabled());
-    m_frame.document()->cachedResourceLoader()->setAutoLoadImages(settings.loadsImagesAutomatically());
+    m_frame.document()->cachedResourceLoader().setImagesEnabled(settings.areImagesEnabled());
+    m_frame.document()->cachedResourceLoader().setAutoLoadImages(settings.loadsImagesAutomatically());
 
     if (m_documentLoader) {
         String dnsPrefetchControl = m_documentLoader->response().httpHeaderField(HTTPHeaderName::XDNSPrefetchControl);
@@ -811,7 +811,7 @@ void FrameLoader::checkCompleted()
         return;
 
     // Still waiting for images/scripts?
-    if (m_frame.document()->cachedResourceLoader()->requestCount())
+    if (m_frame.document()->cachedResourceLoader().requestCount())
         return;
 
     // Still waiting for elements that don't go through a FrameLoader?
@@ -2447,11 +2447,11 @@ void FrameLoader::checkLoadComplete()
 int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
 {
     if (!recurse)
-        return m_frame.document()->cachedResourceLoader()->requestCount();
+        return m_frame.document()->cachedResourceLoader().requestCount();
 
     int count = 0;
     for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame))
-        count += frame->document()->cachedResourceLoader()->requestCount();
+        count += frame->document()->cachedResourceLoader().requestCount();
     return count;
 }
 

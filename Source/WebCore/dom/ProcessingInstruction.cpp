@@ -147,7 +147,7 @@ void ProcessingInstruction::checkStyleSheet()
             CachedResourceRequest request(ResourceRequest(document().completeURL(href)));
 #if ENABLE(XSLT)
             if (m_isXSL)
-                m_cachedSheet = document().cachedResourceLoader()->requestXSLStyleSheet(request);
+                m_cachedSheet = document().cachedResourceLoader().requestXSLStyleSheet(request);
             else
 #endif
             {
@@ -156,7 +156,7 @@ void ProcessingInstruction::checkStyleSheet()
                     charset = document().charset();
                 request.setCharset(charset);
 
-                m_cachedSheet = document().cachedResourceLoader()->requestCSSStyleSheet(request);
+                m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(request);
             }
             if (m_cachedSheet)
                 m_cachedSheet->addClient(this);

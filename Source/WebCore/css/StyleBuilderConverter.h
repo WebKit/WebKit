@@ -1059,7 +1059,7 @@ inline Vector<RefPtr<MaskImageOperation>> StyleBuilderConverter::convertMaskImag
                 URL url = styleResolver.document().completeURL(cssUrl);
 
                 bool isExternalDocument = SVGURIReference::isExternalURIReference(cssUrl, styleResolver.document());
-                newMaskImage = MaskImageOperation::create(maskImageValue, cssUrl, url.fragmentIdentifier(), isExternalDocument, styleResolver.document().cachedResourceLoader());
+                newMaskImage = MaskImageOperation::create(maskImageValue, cssUrl, url.fragmentIdentifier(), isExternalDocument, &styleResolver.document().cachedResourceLoader());
                 if (isExternalDocument)
                     styleResolver.state().maskImagesWithPendingSVGDocuments().append(newMaskImage);
             }

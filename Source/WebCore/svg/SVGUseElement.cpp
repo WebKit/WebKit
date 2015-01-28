@@ -260,7 +260,7 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
             if (url.hasFragmentIdentifier()) {
                 CachedResourceRequest request(ResourceRequest(url.string()));
                 request.setInitiator(this);
-                setCachedDocument(document().cachedResourceLoader()->requestSVGDocument(request));
+                setCachedDocument(document().cachedResourceLoader().requestSVGDocument(request));
             }
         } else
             setCachedDocument(0);

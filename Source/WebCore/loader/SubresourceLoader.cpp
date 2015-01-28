@@ -54,16 +54,16 @@ namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, subresourceLoaderCounter, ("SubresourceLoader"));
 
-SubresourceLoader::RequestCountTracker::RequestCountTracker(CachedResourceLoader* cachedResourceLoader, CachedResource* resource)
+SubresourceLoader::RequestCountTracker::RequestCountTracker(CachedResourceLoader& cachedResourceLoader, CachedResource* resource)
     : m_cachedResourceLoader(cachedResourceLoader)
     , m_resource(resource)
 {
-    m_cachedResourceLoader->incrementRequestCount(m_resource);
+    m_cachedResourceLoader.incrementRequestCount(m_resource);
 }
 
 SubresourceLoader::RequestCountTracker::~RequestCountTracker()
 {
-    m_cachedResourceLoader->decrementRequestCount(m_resource);
+    m_cachedResourceLoader.decrementRequestCount(m_resource);
 }
 
 SubresourceLoader::SubresourceLoader(Frame* frame, CachedResource* resource, const ResourceLoaderOptions& options)

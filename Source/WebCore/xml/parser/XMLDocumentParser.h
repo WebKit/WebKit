@@ -192,7 +192,7 @@ class Text;
     };
 
 #if ENABLE(XSLT)
-void* xmlDocPtrForString(CachedResourceLoader*, const String& source, const String& url);
+void* xmlDocPtrForString(CachedResourceLoader&, const String& source, const String& url);
 #endif
 
 HashMap<String, String> parseAttributes(const String&, bool& attrsOK);

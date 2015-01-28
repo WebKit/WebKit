@@ -107,10 +107,10 @@ private:
 
     class RequestCountTracker {
     public:
-        RequestCountTracker(CachedResourceLoader*, CachedResource*);
+        RequestCountTracker(CachedResourceLoader&, CachedResource*);
         ~RequestCountTracker();
     private:
-        CachedResourceLoader* m_cachedResourceLoader;
+        CachedResourceLoader& m_cachedResourceLoader;
         CachedResource* m_resource;
     };
 

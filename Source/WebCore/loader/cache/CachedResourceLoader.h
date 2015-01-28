@@ -194,22 +194,18 @@ class ResourceCacheValidationSuppressor {
     WTF_MAKE_NONCOPYABLE(ResourceCacheValidationSuppressor);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ResourceCacheValidationSuppressor(CachedResourceLoader* loader)
+    ResourceCacheValidationSuppressor(CachedResourceLoader& loader)
         : m_loader(loader)
-        , m_previousState(false)
+        , m_previousState(m_loader.m_allowStaleResources)
     {
-        if (m_loader) {
-            m_previousState = m_loader->m_allowStaleResources;
-            m_loader->m_allowStaleResources = true;
-        }
+        m_loader.m_allowStaleResources = true;
     }
     ~ResourceCacheValidationSuppressor()
     {
-        if (m_loader)
-            m_loader->m_allowStaleResources = m_previousState;
+        m_loader.m_allowStaleResources = m_previousState;
     }
 private:
-    CachedResourceLoader* m_loader;
+    CachedResourceLoader& m_loader;
     bool m_previousState;
 };
 

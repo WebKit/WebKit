@@ -60,7 +60,7 @@ String CSSFilterImageValue::customCSSText() const
 
 FloatSize CSSFilterImageValue::fixedSize(const RenderElement* renderer)
 {
-    CachedResourceLoader* cachedResourceLoader = renderer->document().cachedResourceLoader();
+    CachedResourceLoader& cachedResourceLoader = renderer->document().cachedResourceLoader();
     CachedImage* cachedImage = cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader);
 
     if (!cachedImage)
@@ -79,7 +79,7 @@ bool CSSFilterImageValue::knownToBeOpaque(const RenderElement*) const
     return false;
 }
 
-void CSSFilterImageValue::loadSubimages(CachedResourceLoader* cachedResourceLoader)
+void CSSFilterImageValue::loadSubimages(CachedResourceLoader& cachedResourceLoader)
 {
     CachedResourceHandle<CachedImage> oldCachedImage = m_cachedImage;
 
@@ -98,9 +98,9 @@ void CSSFilterImageValue::loadSubimages(CachedResourceLoader* cachedResourceLoad
 PassRefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const FloatSize& size)
 {
     if (size.isEmpty())
-        return 0;
+        return nullptr;
 
-    CachedResourceLoader* cachedResourceLoader = renderer->document().cachedResourceLoader();
+    CachedResourceLoader& cachedResourceLoader = renderer->document().cachedResourceLoader();
     CachedImage* cachedImage = cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader);
 
     if (!cachedImage)

@@ -66,8 +66,7 @@ bool MediaResourceLoader::start(const ResourceRequest& request, LoadOptions opti
 
     m_didPassAccessControlCheck = false;
 
-    CachedResourceLoader* loader = m_document.cachedResourceLoader();
-    m_resource = loader ? loader->requestRawResource(cacheRequest) : nullptr;
+    m_resource = m_document.cachedResourceLoader().requestRawResource(cacheRequest);
     if (!m_resource)
         return false;
 

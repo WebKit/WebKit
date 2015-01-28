@@ -63,7 +63,7 @@ void IconLoader::startLoading()
     request.mutableResourceRequest().setPriority(ResourceLoadPriorityLow);
     request.setInitiator(cachedResourceRequestInitiators().icon);
 
-    m_resource = m_frame.document()->cachedResourceLoader()->requestRawResource(request);
+    m_resource = m_frame.document()->cachedResourceLoader().requestRawResource(request);
     if (m_resource)
         m_resource->addClient(this);
     else
@@ -74,7 +74,7 @@ void IconLoader::stopLoading()
 {
     if (m_resource) {
         m_resource->removeClient(this);
-        m_resource = 0;
+        m_resource = nullptr;
     }
 }
 

@@ -623,7 +623,7 @@ public:
     // auto is specified.
     WEBCORE_EXPORT void pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft);
 
-    CachedResourceLoader* cachedResourceLoader() { return m_cachedResourceLoader.get(); }
+    CachedResourceLoader& cachedResourceLoader() { return m_cachedResourceLoader; }
 
     void didBecomeCurrentDocumentInFrame();
     void destroyRenderTree();
@@ -1395,7 +1395,7 @@ private:
     Frame* m_frame;
     RefPtr<DOMWindow> m_domWindow;
 
-    RefPtr<CachedResourceLoader> m_cachedResourceLoader;
+    Ref<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
     unsigned m_activeParserCount;
 

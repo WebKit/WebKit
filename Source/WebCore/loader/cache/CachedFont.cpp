@@ -62,7 +62,7 @@ CachedFont::~CachedFont()
 {
 }
 
-void CachedFont::load(CachedResourceLoader*, const ResourceLoaderOptions& options)
+void CachedFont::load(CachedResourceLoader&, const ResourceLoaderOptions& options)
 {
     // Don't load the file yet.  Wait for an access before triggering the load.
     setLoading(true);
@@ -84,11 +84,11 @@ void CachedFont::finishLoading(SharedBuffer* data)
     checkNotify();
 }
 
-void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
+void CachedFont::beginLoadIfNeeded(CachedResourceLoader& loader)
 {
     if (!m_loadInitiated) {
         m_loadInitiated = true;
-        CachedResource::load(dl, m_options);
+        CachedResource::load(loader, m_options);
     }
 }
 

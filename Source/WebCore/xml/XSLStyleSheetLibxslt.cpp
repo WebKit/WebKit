@@ -127,8 +127,8 @@ CachedResourceLoader* XSLStyleSheet::cachedResourceLoader()
 {
     Document* document = ownerDocument();
     if (!document)
-        return 0;
-    return document->cachedResourceLoader();
+        return nullptr;
+    return &document->cachedResourceLoader();
 }
 
 bool XSLStyleSheet::parseString(const String& string)

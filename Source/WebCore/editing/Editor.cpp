@@ -1281,8 +1281,7 @@ void Editor::paste(Pasteboard& pasteboard)
     if (!canPaste())
         return;
     updateMarkersForWordsAffectedByEditing(false);
-    CachedResourceLoader* loader = document().cachedResourceLoader();
-    ResourceCacheValidationSuppressor validationSuppressor(loader);
+    ResourceCacheValidationSuppressor validationSuppressor(document().cachedResourceLoader());
     if (m_frame.selection().selection().isContentRichlyEditable())
         pasteWithPasteboard(&pasteboard, true);
     else

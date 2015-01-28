@@ -85,7 +85,7 @@ public:
 
     bool isManuallyCached() const { return m_isManuallyCached; }
     virtual bool mustRevalidateDueToCacheHeaders(const CachedResourceLoader&, CachePolicy) const override;
-    virtual void load(CachedResourceLoader*, const ResourceLoaderOptions&) override;
+    virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&) override;
 
     bool isOriginClean(SecurityOrigin*);
 

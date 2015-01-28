@@ -82,7 +82,7 @@ void SVGFEImageElement::requestImageResource()
 {
     CachedResourceRequest request(ResourceRequest(document().completeURL(href())));
     request.setInitiator(this);
-    m_cachedImage = document().cachedResourceLoader()->requestImage(request);
+    m_cachedImage = document().cachedResourceLoader().requestImage(request);
 
     if (m_cachedImage)
         m_cachedImage->addClient(this);

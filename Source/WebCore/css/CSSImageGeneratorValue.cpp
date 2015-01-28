@@ -200,7 +200,7 @@ bool CSSImageGeneratorValue::knownToBeOpaque(const RenderElement* renderer) cons
     return false;
 }
 
-void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader* cachedResourceLoader)
+void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader& cachedResourceLoader)
 {
     switch (classType()) {
     case CrossfadeClass:
@@ -239,7 +239,7 @@ bool CSSImageGeneratorValue::subimageIsPending(CSSValue* value)
     return false;
 }
 
-CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue* value, CachedResourceLoader* cachedResourceLoader)
+CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue* value, CachedResourceLoader& cachedResourceLoader)
 {
     if (!value)
         return nullptr;

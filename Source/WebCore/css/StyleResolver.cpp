@@ -2229,7 +2229,7 @@ void StyleResolver::loadPendingSVGDocuments()
     if (!hasFilters && !hasMasks)
         return;
 
-    CachedResourceLoader* cachedResourceLoader = state.document().cachedResourceLoader();
+    CachedResourceLoader& cachedResourceLoader = state.document().cachedResourceLoader();
     
     if (hasFilters) {
         for (auto& filterOperation : state.filtersWithPendingSVGDocuments())
