@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html style="background-color: green; width: 1600px; height: 1200px">
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body style="background-image: url('resources/animated.gif'); background-repeat: repeat; position: relative; left: 0px; top: 700px; width: 200px; height: 200px" onload="runTest()">
+<script>
+jsTestIsAsync = true;
+
+function checkBackgroundAnimated() {
+  isBackgroundAnimated = !internals.hasPausedImageAnimations(document.body);
+  shouldBeTrue("isBackgroundAnimated");
+  finishJSTest();
+}
+
+function checkBackgroundNotAnimated() {
+  isBackgroundAnimated = !internals.hasPausedImageAnimations(document.body);
+  description("Make sure the background image of a body element that is outside the viewport is not animated");
+  shouldBeFalse("isBackgroundAnimated");
+
+  debug("Scroll down so that the body becomes visible.");
+  window.scrollBy(0, 600);
+  setTimeout(checkBackgroundAnimated, 0);
+}
+
+function imageLoaded() {
+  setTimeout(checkBackgroundNotAnimated, 200);
+}
+
+function runTest() {
+  if (!window.internals)
+    return;
+
+  var img = new Image();
+  // Make sure the image is loaded before we check if it is animated.
+  img.onload = imageLoaded;
+  img.src = "resources/animated.gif";
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
