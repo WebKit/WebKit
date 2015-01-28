@@ -97,20 +97,20 @@ void VisitedLinkTableController::setVisitedLinkTable(const SharedMemory::Handle&
     m_visitedLinkTable.setSharedMemory(sharedMemory.release());
 
     invalidateStylesForAllLinks();
-    PageCache::shared().markPagesForVistedLinkStyleRecalc();
+    PageCache::shared().markPagesForVisitedLinkStyleRecalc();
 }
 
 void VisitedLinkTableController::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes)
 {
     for (auto linkHash : linkHashes)
         invalidateStylesForLink(linkHash);
-    PageCache::shared().markPagesForVistedLinkStyleRecalc();
+    PageCache::shared().markPagesForVisitedLinkStyleRecalc();
 }
 
 void VisitedLinkTableController::allVisitedLinkStateChanged()
 {
     invalidateStylesForAllLinks();
-    PageCache::shared().markPagesForVistedLinkStyleRecalc();
+    PageCache::shared().markPagesForVisitedLinkStyleRecalc();
 }
 
 void VisitedLinkTableController::removeAllVisitedLinks()
@@ -118,7 +118,7 @@ void VisitedLinkTableController::removeAllVisitedLinks()
     m_visitedLinkTable.clear();
 
     invalidateStylesForAllLinks();
-    PageCache::shared().markPagesForVistedLinkStyleRecalc();
+    PageCache::shared().markPagesForVisitedLinkStyleRecalc();
 }
 
 } // namespace WebKit

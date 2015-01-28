@@ -1,5 +1,21 @@
 2015-01-28  Chris Dumez  <cdumez@apple.com>
 
+        Fix typo in markPagesForVistedLinkStyleRecalc()
+        https://bugs.webkit.org/show_bug.cgi?id=140977
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in:
+        * history/CachedPage.h:
+        (WebCore::CachedPage::markForVisitedLinkStyleRecalc):
+        (WebCore::CachedPage::markForVistedLinkStyleRecalc): Deleted.
+        * history/PageCache.cpp:
+        (WebCore::PageCache::markPagesForVisitedLinkStyleRecalc):
+        (WebCore::PageCache::markPagesForVistedLinkStyleRecalc): Deleted.
+        * history/PageCache.h:
+
+2015-01-28  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed. Remove duplicate friend class statement after r179255.
 
         * history/PageCache.h:

@@ -399,11 +399,11 @@ int PageCache::frameCount() const
     return frameCount;
 }
 
-void PageCache::markPagesForVistedLinkStyleRecalc()
+void PageCache::markPagesForVisitedLinkStyleRecalc()
 {
     for (HistoryItem* current = m_head; current; current = current->m_next) {
         ASSERT(current->m_cachedPage);
-        current->m_cachedPage->markForVistedLinkStyleRecalc();
+        current->m_cachedPage->markForVisitedLinkStyleRecalc();
     }
 }
 

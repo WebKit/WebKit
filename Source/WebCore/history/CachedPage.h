@@ -50,7 +50,7 @@ public:
     
     CachedFrame* cachedMainFrame() { return m_cachedMainFrame.get(); }
 
-    void markForVistedLinkStyleRecalc() { m_needStyleRecalcForVisitedLinks = true; }
+    void markForVisitedLinkStyleRecalc() { m_needStyleRecalcForVisitedLinks = true; }
     void markForFullStyleRecalc() { m_needsFullStyleRecalc = true; }
 #if ENABLE(VIDEO_TRACK)
     void markForCaptionPreferencesChanged() { m_needsCaptionPreferencesChanged = true; }

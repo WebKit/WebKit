@@ -1,3 +1,16 @@
+2015-01-28  Chris Dumez  <cdumez@apple.com>
+
+        Fix typo in markPagesForVistedLinkStyleRecalc()
+        https://bugs.webkit.org/show_bug.cgi?id=140977
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::setVisitedLinkTable):
+        (WebKit::VisitedLinkTableController::visitedLinkStateChanged):
+        (WebKit::VisitedLinkTableController::allVisitedLinkStateChanged):
+        (WebKit::VisitedLinkTableController::removeAllVisitedLinks):
+
 2015-01-27  Antti Koivisto  <antti@apple.com>
 
         http/tests/xmlhttprequest/workers/methods.html sometimes times out with disk cache enabled

@@ -1,5 +1,17 @@
 2015-01-28  Chris Dumez  <cdumez@apple.com>
 
+        Fix typo in markPagesForVistedLinkStyleRecalc()
+        https://bugs.webkit.org/show_bug.cgi?id=140977
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebVisitedLinkStore.mm:
+        (WebVisitedLinkStore::removeAllVisitedLinks):
+        (WebVisitedLinkStore::removeVisitedLink):
+        (WebVisitedLinkStore::addVisitedLinkHash):
+
+2015-01-28  Chris Dumez  <cdumez@apple.com>
+
         Rename pageCache() to PageCache::shared() and return a reference
         https://bugs.webkit.org/show_bug.cgi?id=140983
 
