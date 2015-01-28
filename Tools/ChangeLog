@@ -1,5 +1,20 @@
 2015-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Stop removing color marks from unit tests output
+        https://bugs.webkit.org/show_bug.cgi?id=140996
+
+        Reviewed by Philippe Normand.
+
+        Since r178236 google tests use a custom simplified output without
+        any colors, so we don't need to handle the case of non ttys to
+        remove the color marks.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner.__init__):
+        (TestRunner._run_test_command.parse_line):
+
+2015-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Unit test /webkit2/WebKitWebView/page-visibility from WebKit2Gtk/TestWebKitWebView fails
         https://bugs.webkit.org/show_bug.cgi?id=131731
 
