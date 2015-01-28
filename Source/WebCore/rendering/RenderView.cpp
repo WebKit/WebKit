@@ -1196,6 +1196,9 @@ void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& p
     if (result.innerNode())
         return;
 
+    if (multiColumnFlowThread() && multiColumnFlowThread()->firstMultiColumnSet())
+        return multiColumnFlowThread()->firstMultiColumnSet()->updateHitTestResult(result, point);
+
     Node* node = document().documentElement();
     if (node) {
         result.setInnerNode(node);

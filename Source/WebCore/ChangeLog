@@ -1,5 +1,25 @@
 2015-01-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r179027
+
+    2015-01-23  Enrica Casucci  <enrica@apple.com>
+
+            Hit test returns incorrect results when performed in paginated content over the page gaps.
+            https://bugs.webkit.org/show_bug.cgi?id=140837
+            rdar://problem/17494390
+
+            Reviewed by Dave Hyatt.
+
+            Tests: fast/multicol/pagination/LeftToRight-tb-hittest.html
+                   fast/multicol/pagination/RightToLeft-rl-hittest.html
+
+            When hittesting reaches the RenderView we need to check if we are
+            in paginated content and use the correct class to compute hittest results.
+
+            * rendering/RenderView.cpp:
+            (WebCore::RenderView::updateHitTestResult):
+2015-01-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r178380
 
     2015-01-13  Dean Jackson  <dino@apple.com>
