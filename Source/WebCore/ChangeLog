@@ -1,3 +1,32 @@
+2015-01-28  Zalan Bujtas  <zalan@apple.com>
+
+        Simple line layout: Drop uncommitted/committed terms from LineState.
+        https://bugs.webkit.org/show_bug.cgi?id=141005
+
+        Reviewed by Antti Koivisto.
+
+        Fragments form segments and segments turn into runs on the lines.
+        We add fragments only when they fit so they should not be in 'uncommitted' state at all.
+
+        No change in functionality.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::LineState::createRun):
+        (WebCore::SimpleLineLayout::LineState::addFragment):
+        (WebCore::SimpleLineLayout::LineState::addWhitespace):
+        (WebCore::SimpleLineLayout::LineState::hasWhitespaceOnly):
+        (WebCore::SimpleLineLayout::LineState::width):
+        (WebCore::SimpleLineLayout::LineState::firstCharacterFits):
+        (WebCore::SimpleLineLayout::LineState::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace):
+        (WebCore::SimpleLineLayout::firstFragment):
+        (WebCore::SimpleLineLayout::createLineRuns):
+        (WebCore::SimpleLineLayout::closeLineEndingAndAdjustRuns):
+        (WebCore::SimpleLineLayout::createTextRuns): Unnecessary assert.
+        (WebCore::SimpleLineLayout::LineState::commitAndCreateRun): Deleted.
+        (WebCore::SimpleLineLayout::LineState::addUncommitted): Deleted.
+        (WebCore::SimpleLineLayout::LineState::addUncommittedWhitespace): Deleted.
+
 2015-01-28  Chris Dumez  <cdumez@apple.com>
 
         Regression(r177494): Bad cast to WebKitCSSResourceValue in StyleBuilderConverter::convertMaskImageOperations()
