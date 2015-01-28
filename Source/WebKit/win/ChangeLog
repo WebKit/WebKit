@@ -1,3 +1,15 @@
+2015-01-28  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Message loop is flooded with timer messages when animating in accelerated compositing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=140985
+
+        Reviewed by Brent Fulgham.
+
+        The animation timer has zero timeout, which makes it hard for other messages to slip through.
+
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::scheduleLayerFlush):
+
 2015-01-28  Chris Dumez  <cdumez@apple.com>
 
         Fix typo in markPagesForVistedLinkStyleRecalc()
