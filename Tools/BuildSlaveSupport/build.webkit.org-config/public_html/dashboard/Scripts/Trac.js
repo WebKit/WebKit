@@ -141,6 +141,8 @@ Trac.prototype = {
                 result.release = location.substr(9, location.indexOf("/", 9) - 9);
             else if (location.startsWith("trunk/"))
                 result.branch = "trunk";
+            else if (location.startsWith("submissions/"))
+                ; // These changes are never relevant to the dashboard.
             else {
                 console.assert(false);
                 result.containsBranchLocation = false;
