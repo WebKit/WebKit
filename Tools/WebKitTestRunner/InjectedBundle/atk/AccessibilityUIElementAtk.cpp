@@ -485,6 +485,16 @@ const gchar* roleToString(AtkObject* object)
     case ATK_ROLE_STATIC:
         return "AXStatic";
 #endif
+#if ATK_CHECK_VERSION(2, 15, 4)
+    case ATK_ROLE_MATH_FRACTION:
+        return "AXMathFraction";
+    case ATK_ROLE_MATH_ROOT:
+        return "AXMathRoot";
+    case ATK_ROLE_SUBSCRIPT:
+        return "AXSubscript";
+    case ATK_ROLE_SUPERSCRIPT:
+        return "AXSuperscript";
+#endif
     default:
         // We want to distinguish ATK_ROLE_UNKNOWN from a known AtkRole which
         // our DRT isn't properly handling.

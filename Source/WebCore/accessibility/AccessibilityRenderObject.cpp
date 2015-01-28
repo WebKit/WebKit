@@ -3611,6 +3611,42 @@ bool AccessibilityRenderObject::isMathTableCell() const
 {
     return node() && node()->hasTagName(MathMLNames::mtdTag);
 }
+
+bool AccessibilityRenderObject::isMathScriptObject(AccessibilityMathScriptObjectType type) const
+{
+    AccessibilityObject* parent = parentObjectUnignored();
+    if (!parent)
+        return false;
+
+    return type == Subscript ? this == parent->mathSubscriptObject() : this == parent->mathSuperscriptObject();
+}
+
+bool AccessibilityRenderObject::isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType type) const
+{
+    AccessibilityObject* parent = parentObjectUnignored();
+    if (!parent || !parent->isMathMultiscript())
+        return false;
+
+    // The scripts in a MathML <mmultiscripts> element consist of one or more
+    // subscript, superscript pairs. In order to determine if this object is
+    // a scripted token, we need to examine each set of pairs to see if the
+    // this token is present and in the position corresponding with the type.
+
+    AccessibilityMathMultiscriptPairs pairs;
+    if (type == PreSubscript || type == PreSuperscript)
+        parent->mathPrescripts(pairs);
+    else
+        parent->mathPostscripts(pairs);
+
+    for (const auto& pair : pairs) {
+        if (this == pair.first)
+            return (type == PreSubscript || type == PostSubscript);
+        if (this == pair.second)
+            return (type == PreSuperscript || type == PostSuperscript);
+    }
+
+    return false;
+}
     
 bool AccessibilityRenderObject::isIgnoredElementWithinMathTree() const
 {

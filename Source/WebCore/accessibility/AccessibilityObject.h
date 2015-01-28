@@ -422,6 +422,9 @@ struct AccessibilitySelectTextCriteria {
     { }
 };
 
+enum AccessibilityMathScriptObjectType { Subscript, Superscript };
+enum AccessibilityMathMultiscriptObjectType { PreSubscript, PreSuperscript, PostSubscript, PostSuperscript };
+
 class AccessibilityObject : public RefCounted<AccessibilityObject> {
 protected:
     AccessibilityObject();
@@ -900,6 +903,8 @@ public:
     virtual bool isMathTableCell() const { return false; }
     virtual bool isMathMultiscript() const { return false; }
     virtual bool isMathToken() const { return false; }
+    virtual bool isMathScriptObject(AccessibilityMathScriptObjectType) const { return false; }
+    virtual bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const { return false; }
 
     // Root components.
     virtual AccessibilityObject* mathRadicandObject() { return nullptr; }

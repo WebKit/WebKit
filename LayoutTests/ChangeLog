@@ -1,3 +1,20 @@
+2015-01-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Implement support for new AtkRole types for MathML
+        https://bugs.webkit.org/show_bug.cgi?id=140916
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/math-multiscript-attributes.html: Added.
+        * accessibility/roles-exposed.html: New test cases added.
+        * platform/efl/accessibility/roles-exposed-expected.txt: Updated for new test cases.
+        * platform/gtk/accessibility/math-multiscript-attributes-expected.txt: Added.
+        * platform/gtk/accessibility/roles-exposed-expected.txt: Updated for new test cases.
+        * platform/mac-mavericks/accessibility/roles-exposed-expected.txt: Updated for new test cases.
+        * platform/mac-mountainlion/accessibility/roles-exposed-expected.txt: Updated for new test cases.
+        * platform/mac/accessibility/math-multiscript-attributes-expected.txt: Added.
+        * platform/mac/accessibility/roles-exposed-expected.txt: Updated for new test cases.
+
 2015-01-28  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION: Re-skip media tests. (Unreviewed)

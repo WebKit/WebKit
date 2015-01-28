@@ -1,0 +1,150 @@
+X
+D
+C
+B
+A
+This tests the attributes of the children of a MathML mmultiscripts element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXGroup
+AXSubrole: AXMathIdentifier
+AXRoleDescription: group
+AXChildren: 
+AXHelp: 
+AXParent: 
+AXSize: NSSize: {12, 24}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: 
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: 
+AXEndTextMarker: 
+AXVisited: 0
+AXLinkedUIElements: 
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: 
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: 
+AXElementBusy: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: AXMathIdentifier
+AXRoleDescription: group
+AXChildren: 
+AXHelp: 
+AXParent: 
+AXSize: NSSize: {11, 19}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: 
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: 
+AXEndTextMarker: 
+AXVisited: 0
+AXLinkedUIElements: 
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: 
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: 
+AXElementBusy: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: AXMathIdentifier
+AXRoleDescription: group
+AXChildren: 
+AXHelp: 
+AXParent: 
+AXSize: NSSize: {10, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: 
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: 
+AXEndTextMarker: 
+AXVisited: 0
+AXLinkedUIElements: 
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: 
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: 
+AXElementBusy: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: AXMathIdentifier
+AXRoleDescription: group
+AXChildren: 
+AXHelp: 
+AXParent: 
+AXSize: NSSize: {9, 19}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: 
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: 
+AXEndTextMarker: 
+AXVisited: 0
+AXLinkedUIElements: 
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: 
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: 
+AXElementBusy: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: AXMathIdentifier
+AXRoleDescription: group
+AXChildren: 
+AXHelp: 
+AXParent: 
+AXSize: NSSize: {9, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: 
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: 
+AXEndTextMarker: 
+AXVisited: 0
+AXLinkedUIElements: 
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: 
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: 
+AXElementBusy: 0
+
+------------
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -304,6 +304,8 @@ private:
     virtual bool isMathTableCell() const override;
     virtual bool isMathMultiscript() const override;
     virtual bool isMathToken() const override;
+    virtual bool isMathScriptObject(AccessibilityMathScriptObjectType) const override;
+    virtual bool isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType) const override;
     
     // Generic components.
     virtual AccessibilityObject* mathBaseObject() override;

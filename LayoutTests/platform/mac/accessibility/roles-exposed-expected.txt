@@ -414,6 +414,91 @@ ms
       AXSubrole: AXMathText
       AXRoleDescription: group
       
+msub
+      AXRole: AXGroup
+      AXSubrole: AXMathSubscriptSuperscript
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+msup
+      AXRole: AXGroup
+      AXSubrole: AXMathSubscriptSuperscript
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+msubsup
+      AXRole: AXGroup
+      AXSubrole: AXMathSubscriptSuperscript
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+mmultiscripts
+      AXRole: AXGroup
+      AXSubrole: AXMathMultiscript
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+mprescripts
+      AXRole: 
+      AXSubrole: 
+      AXRoleDescription: 
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
+mi
+      AXRole: AXGroup
+      AXSubrole: AXMathIdentifier
+      AXRoleDescription: group
+      
 mtext
       AXRole: AXGroup
       AXSubrole: AXMathText

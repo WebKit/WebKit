@@ -1,3 +1,31 @@
+2015-01-28  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: [ATK] Implement support for new AtkRole types for MathML
+        https://bugs.webkit.org/show_bug.cgi?id=140916
+
+        Reviewed by Chris Fleizach.
+
+        Expose mfrac as ATK_ROLE_MATH_FRACTION, and both mroot and msqrt as
+        ATK_ROLE_MATH_ROOT. In the case of script elements, expose the container
+        (msub, msup, msubsup, and mmultiscripts) using the generic text block role
+        ATK_ROLE_SECTION. Then expose the actual script child elements using role
+        ATK_ROLE_SUBSCRIPT/ATK_ROLE_SUPERSCRIPT. In the case of mmultiscripts,
+        expose whether it is a prescript or postscript via AtkObject attribute.
+
+        Test: accessibility/math-multiscript-attributes.html
+        Also added additional test cases to accessibility/roles-exposed.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isMathScriptObject): Added.
+        (WebCore::AccessibilityObject::isMathMultiscriptObject): Added.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isMathScriptObject): Added.
+        (WebCore::AccessibilityRenderObject::isMathMultiscriptObject): Added.
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (webkitAccessibleGetAttributes): Expose whether a multiscript object is a prescript or postscript.
+        (atkRole): Map WebCore Accessibility objects to the new ATK roles.
+
 2015-01-28  Chris Dumez  <cdumez@apple.com>
 
         Rename pageCache() to PageCache::shared() and return a reference

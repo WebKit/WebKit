@@ -425,6 +425,13 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
         attributeSet = addToAtkAttributeSet(attributeSet, "level", value.utf8().data());
     }
 
+    if (coreObject->roleValue() == MathElementRole) {
+        if (coreObject->isMathMultiscriptObject(PreSuperscript) || coreObject->isMathMultiscriptObject(PreSubscript))
+            attributeSet = addToAtkAttributeSet(attributeSet, "multiscript-type", "pre");
+        else if (coreObject->isMathMultiscriptObject(PostSuperscript) || coreObject->isMathMultiscriptObject(PostSubscript))
+            attributeSet = addToAtkAttributeSet(attributeSet, "multiscript-type", "post");
+    }
+
     // Set the 'layout-guess' attribute to help Assistive
     // Technologies know when an exposed table is not data table.
     if (is<AccessibilityTable>(*coreObject) && downcast<AccessibilityTable>(*coreObject).isExposableThroughAccessibility() && !coreObject->isDataTable())
@@ -658,6 +665,20 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
             return ATK_ROLE_TABLE_ROW;
         if (coreObject->isMathTableCell())
             return ATK_ROLE_TABLE_CELL;
+        if (coreObject->isMathSubscriptSuperscript() || coreObject->isMathMultiscript())
+            return ATK_ROLE_SECTION;
+#if ATK_CHECK_VERSION(2, 15, 4)
+        if (coreObject->isMathFraction())
+            return ATK_ROLE_MATH_FRACTION;
+        if (coreObject->isMathSquareRoot() || coreObject->isMathRoot())
+            return ATK_ROLE_MATH_ROOT;
+        if (coreObject->isMathScriptObject(Subscript)
+            || coreObject->isMathMultiscriptObject(PreSubscript) || coreObject->isMathMultiscriptObject(PostSubscript))
+            return ATK_ROLE_SUBSCRIPT;
+        if (coreObject->isMathScriptObject(Superscript)
+            || coreObject->isMathMultiscriptObject(PreSuperscript) || coreObject->isMathMultiscriptObject(PostSuperscript))
+            return ATK_ROLE_SUPERSCRIPT;
+#endif
 #if ATK_CHECK_VERSION(2, 15, 2)
         if (coreObject->isMathToken())
             return ATK_ROLE_STATIC;

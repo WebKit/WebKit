@@ -227,7 +227,7 @@ mfenced
       AXRole: AXGroup
       
 mfrac
-      AXRole: AXUnknown
+      AXRole: AXMathFraction
       
 mi
       AXRole: AXStatic
@@ -239,16 +239,67 @@ mo
       AXRole: AXStatic
       
 mroot
-      AXRole: AXUnknown
+      AXRole: AXMathRoot
       
 msqrt
-      AXRole: AXUnknown
+      AXRole: AXMathRoot
       
 mrow
       AXRole: AXGroup
       
 ms
       AXRole: AXStatic
+      
+msub
+      AXRole: AXSection
+      
+mi
+      AXRole: AXStatic
+      
+mi
+      AXRole: AXSubscript
+      
+msup
+      AXRole: AXSection
+      
+mi
+      AXRole: AXStatic
+      
+mi
+      AXRole: AXSuperscript
+      
+msubsup
+      AXRole: AXSection
+      
+mi
+      AXRole: AXStatic
+      
+mi
+      AXRole: AXSubscript
+      
+mi
+      AXRole: AXSuperscript
+      
+mmultiscripts
+      AXRole: AXSection
+      
+mi
+      AXRole: AXStatic
+      
+mi
+      AXRole: AXSubscript
+      
+mi
+      AXRole: AXSuperscript
+      
+mprescripts
+      AXRole: 
+      
+mi
+      AXRole: AXSubscript
+      
+mi
+      AXRole: AXSuperscript
       
 mtext
       AXRole: AXStatic
