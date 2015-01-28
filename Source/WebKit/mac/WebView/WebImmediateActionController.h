@@ -38,7 +38,7 @@
     WebView *_webView;
     WebImmediateActionType _type;
     WebCore::HitTestResult _hitTestResult;
-    NSImmediateActionGestureRecognizer *_immediateActionRecognizer;
+    RetainPtr<NSImmediateActionGestureRecognizer> _immediateActionRecognizer;
 
     RetainPtr<DDActionContext> _currentActionContext;
     BOOL _isShowingTextIndicator;

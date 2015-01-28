@@ -76,7 +76,7 @@ using namespace WebKit;
     _wkView = nil;
     _hitTestResult = ActionMenuHitTestResult();
 
-    id animationController = _immediateActionRecognizer.animationController;
+    id animationController = [_immediateActionRecognizer animationController];
     if ([animationController isKindOfClass:NSClassFromString(@"QLPreviewMenuItem")]) {
         QLPreviewMenuItem *menuItem = (QLPreviewMenuItem *)animationController;
         menuItem.delegate = nil;
@@ -94,15 +94,15 @@ using namespace WebKit;
 - (void)_cancelImmediateAction
 {
     // Reset the recognizer by turning it off and on again.
-    _immediateActionRecognizer.enabled = NO;
-    _immediateActionRecognizer.enabled = YES;
+    [_immediateActionRecognizer setEnabled:NO];
+    [_immediateActionRecognizer setEnabled:YES];
 
     [self _clearImmediateActionState];
 }
 
 - (void)_cancelImmediateActionIfNeeded
 {
-    if (!_immediateActionRecognizer.animationController)
+    if (![_immediateActionRecognizer animationController])
         [self _cancelImmediateAction];
 
     if (_currentActionContext) {
@@ -268,9 +268,9 @@ using namespace WebKit;
         return;
     }
     if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
-        _immediateActionRecognizer.animationController = (id <NSImmediateActionAnimationController>)customClientAnimationController;
+        [_immediateActionRecognizer setAnimationController:(id <NSImmediateActionAnimationController>)customClientAnimationController];
     else
-        _immediateActionRecognizer.animationController = defaultAnimationController;
+        [_immediateActionRecognizer setAnimationController:defaultAnimationController];
 }
 
 #pragma mark QLPreviewMenuItemDelegate implementation
