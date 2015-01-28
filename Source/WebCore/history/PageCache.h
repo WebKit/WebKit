@@ -43,8 +43,6 @@ namespace WebCore {
     class PageCache {
         WTF_MAKE_NONCOPYABLE(PageCache); WTF_MAKE_FAST_ALLOCATED;
     public:
-        friend class NeverDestroyed<PageCache>;
-
         // Function to obtain the global page cache.
         WEBCORE_EXPORT static PageCache& shared();
         

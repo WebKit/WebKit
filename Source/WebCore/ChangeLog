@@ -1,3 +1,9 @@
+2015-01-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed. Remove duplicate friend class statement after r179255.
+
+        * history/PageCache.h:
+
 2015-01-28  Darin Adler  <darin@apple.com>
 
         Make SVGElement::instancesForElement point to elements in the shadow tree, not SVGElementInstance objects
