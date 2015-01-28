@@ -1,3 +1,12 @@
+2015-01-28  Lucas Forschler  <lforschler@apple.com>
+
+        Increase the FileUpload block size in an attempt to improve network performance.
+        
+        Reviewed by Alexey Proskuryakov.
+        
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (UploadBuiltProduct.__init__):
+
 2015-01-28  Dana Burkart  <dburkart@apple.com>
 
         Move ASan flag settings from DebugRelease.xcconfig to Base.xcconfig
