@@ -1,3 +1,9 @@
+2015-01-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening. Reskip some region tests.
+
+        * platform/win/TestExpectations:
+
 2015-01-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Implement support for new AtkRole types for MathML

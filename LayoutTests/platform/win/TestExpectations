@@ -1311,7 +1311,7 @@ accessibility/color-well.html
 
 # Failing Windows-only accessibility tests
 webkit.org/b/127485 [ Debug ] platform/win/accessibility/parent-element.html [ Failure ]
-webkit.org/b/127485 [ Release ] platform/win/accessibility/parent-element.html [ Pass Fail ]
+webkit.org/b/127485 [ Release ] platform/win/accessibility/parent-element.html [ Pass Failure ]
 
 # Skipping on windows, missing implementation of cellForColumnAndRow
 webkit.org/b/129250 accessibility/table-scope.html [ Skip ]
@@ -2174,12 +2174,12 @@ webkit.org/b/128855 fast/regions/overflow/overflow-in-variable-width-regions-inl
 webkit.org/b/128855 fast/regions/overflow/overflow-region-transform.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/selection/selecting-text-including-region.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ] 
-#webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-lr.html [ Failure ] 
-#webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-rl.html [ Failure ] 
-#webkit.org/b/128855 fast/regions/selection/position-for-point-1.html [ Failure ] 
-#webkit.org/b/128855 fast/regions/selection/position-for-point-vert-lr.html [ Failure ] 
-#webkit.org/b/128855 fast/regions/selection/position-for-point-vert-rl.html [ Failure ] 
-#webkit.org/b/128855 fast/regions/selection/position-for-point.html [ Failure ]
+webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-lr.html [ Failure ] 
+webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-rl.html [ Failure ] 
+webkit.org/b/128855 fast/regions/selection/position-for-point-1.html [ Failure ] 
+webkit.org/b/128855 fast/regions/selection/position-for-point-vert-lr.html [ Failure ] 
+webkit.org/b/128855 fast/regions/selection/position-for-point-vert-rl.html [ Failure ] 
+webkit.org/b/128855 fast/regions/selection/position-for-point.html [ Failure ]
 webkit.org/b/128855 fast/regions/selection/selection-direction.html [ Pass Timeout ]
 webkit.org/b/128855 fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Crash Failure Timeout ]
 webkit.org/b/128855 fast/regions/repaint/repaint-absolute-pushed-to-next-region.html [ Failure ]
