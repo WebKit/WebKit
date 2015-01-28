@@ -623,7 +623,7 @@ void WebPageProxy::potentialTapAtPosition(const WebCore::FloatPoint& position, u
 
 void WebPageProxy::commitPotentialTap()
 {
-    process().send(Messages::WebPage::CommitPotentialTap(), m_pageID);
+    process().send(Messages::WebPage::CommitPotentialTap(m_layerTreeTransactionIdAtLastTouchStart), m_pageID);
 }
 
 void WebPageProxy::cancelPotentialTap()
@@ -634,6 +634,11 @@ void WebPageProxy::cancelPotentialTap()
 void WebPageProxy::tapHighlightAtPosition(const WebCore::FloatPoint& position, uint64_t& requestID)
 {
     process().send(Messages::WebPage::TapHighlightAtPosition(requestID, position), m_pageID);
+}
+
+void WebPageProxy::handleTap(const FloatPoint& location)
+{
+    process().send(Messages::WebPage::HandleTap(roundedIntPoint(location), m_layerTreeTransactionIdAtLastTouchStart), m_pageID);
 }
 
 void WebPageProxy::inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint& position)

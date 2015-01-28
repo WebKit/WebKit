@@ -499,8 +499,13 @@ void WebPage::completeSyntheticClick(Node* nodeRespondingToClick, const WebCore:
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
 }
 
-void WebPage::handleTap(const IntPoint& point)
+void WebPage::handleTap(const IntPoint& point, uint64_t lastLayerTreeTranscationId)
 {
+    if (lastLayerTreeTranscationId < m_firstLayerTreeTransactionIDAfterDidCommitLoad) {
+        send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(m_potentialTapLocation)));
+        return;
+    }
+
     FloatPoint adjustedPoint;
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
     handleSyntheticClick(nodeRespondingToClick, adjustedPoint);
@@ -545,9 +550,9 @@ void WebPage::potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoi
     sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get());
 }
 
-void WebPage::commitPotentialTap()
+void WebPage::commitPotentialTap(uint64_t lastLayerTreeTranscationId)
 {
-    if (!m_potentialTapNode || !m_potentialTapNode->renderer()) {
+    if (!m_potentialTapNode || !m_potentialTapNode->renderer() || lastLayerTreeTranscationId < m_firstLayerTreeTransactionIDAfterDidCommitLoad) {
         commitPotentialTapFailed();
         return;
     }

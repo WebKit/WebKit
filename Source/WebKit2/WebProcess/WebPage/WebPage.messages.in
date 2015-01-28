@@ -50,9 +50,9 @@ messages -> WebPage LegacyReceiver {
     DynamicViewportSizeUpdate(WebCore::FloatSize minimumLayoutSize, WebCore::FloatSize minimumLayoutSizeForMinimalUI,  WebCore::FloatSize maximumUnobscuredSize, WebCore::FloatRect targetExposedContentRect, WebCore::FloatRect targetUnobscuredRect, WebCore::FloatRect targetUnobscuredRectInScrollViewCoordinates, double scale, int32_t deviceOrientation)
     SynchronizeDynamicViewportUpdate() -> (double newTargetScale, WebCore::FloatPoint newScrollPosition, uint64_t nextValidLayerTreeTransactionID)
 
-    HandleTap(WebCore::IntPoint point)
+    HandleTap(WebCore::IntPoint point, uint64_t lastLayerTreeTranscationId)
     PotentialTapAtPosition(uint64_t requestID, WebCore::FloatPoint point)
-    CommitPotentialTap()
+    CommitPotentialTap(uint64_t lastLayerTreeTranscationId)
     CancelPotentialTap()
     TapHighlightAtPosition(uint64_t requestID, WebCore::FloatPoint point)
     InspectorNodeSearchMovedToPosition(WebCore::FloatPoint point)

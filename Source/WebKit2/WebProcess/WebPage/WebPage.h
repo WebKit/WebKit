@@ -468,9 +468,9 @@ public:
     bool allowsUserScaling() const;
     bool hasStablePageScaleFactor() const { return m_hasStablePageScaleFactor; }
 
-    void handleTap(const WebCore::IntPoint&);
+    void handleTap(const WebCore::IntPoint&, uint64_t lastLayerTreeTranscationId);
     void potentialTapAtPosition(uint64_t requestID, const WebCore::FloatPoint&);
-    void commitPotentialTap();
+    void commitPotentialTap(uint64_t lastLayerTreeTranscationId);
     void commitPotentialTapFailed();
     void cancelPotentialTap();
     void tapHighlightAtPosition(uint64_t requestID, const WebCore::FloatPoint&);

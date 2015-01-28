@@ -1076,7 +1076,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
-    _page->process().send(Messages::WebPage::HandleTap(IntPoint(location)), _page->pageID());
+    _page->handleTap(location);
 }
 
 - (void)useSelectionAssistantWithMode:(UIWebSelectionMode)selectionMode

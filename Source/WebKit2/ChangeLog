@@ -1,5 +1,69 @@
 2015-01-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r178980
+
+    2015-01-22  Benjamin Poulain  <bpoulain@apple.com>
+
+            [iOS][WK2] Ignore synthetic click initiated on a previous page
+            https://bugs.webkit.org/show_bug.cgi?id=139556
+            rdar://problem/18586008
+
+            Reviewed by David Kilzer.
+
+            Under the right accumulation of bad luck, a synthetic click could be generated
+            on a page that never asked for it.
+
+            What happened was:
+            1) Page Foo listen to touch event.
+            2) In response to touch events, Foo decides to navigate to page Bar
+               *but* it does not cancel the native gesture recognizers with preventDefault().
+            3) Page Bar loads.
+            4) The native gesture recognizer ask us to click, we forward that to the WebProcess
+               and generate a synthetic mouse event.
+            -> Bar receives a click.
+            If you are unlucky enough, it looks like a single tap does a double click.
+
+            There are two ways this patch avoids the problem:
+
+            First, in the UIProcess, we just cancel the HighlightLongPressGestureRecognizer
+            on didCommitLoadForMainFrame. This prevents "fast clicks" from accidentally going through.
+            This is not bullet proof because we get didCommitLoadForMainFrame asynchronously but
+            killing the timer and gesture seems like a good idea.
+
+            Second, we skip any tap command at the WebProcess level when it was issued for
+            the previous page. This is using the same principle we used for VisibleContentRect:
+            any input generated before the current layer tree commit is useless for the current page.
+
+            We track the commit ID in the UIProcess when we decide to do the tracking or not.
+            Note that we keep the ID regardless of the tracking state, it does not matter if we have sent
+            touch events, what matters is what content was on screen when the touch events were handled.
+
+            If the user interaction result in a tap, we send the commit ID along the tap commands.
+            In the WebProcess, we know the actual layer tree commit associated with the current page.
+            If the tap was generated with a layer ID preceding the current page, we fail the command.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::WebPageProxy):
+            (WebKit::WebPageProxy::handleTouchEventSynchronously):
+            (WebKit::WebPageProxy::resetState):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/ios/WKContentView.mm:
+            (-[WKContentView _didCommitLoadForMainFrame]):
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView _attemptClickAtLocation:]):
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::commitPotentialTap):
+            (WebKit::WebPageProxy::handleTap):
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::didCommitLoad):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::handleTap):
+            (WebKit::WebPage::commitPotentialTap):
+
+2015-01-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r178175
 
     2015-01-08  Enrica Casucci  <enrica@apple.com>

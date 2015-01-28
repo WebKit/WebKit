@@ -452,6 +452,7 @@ private:
 - (void)_didCommitLoadForMainFrame
 {
     [self _stopAssistingNode];
+    [self _cancelLongPressGestureRecognizer];
     [_webView _didCommitLoadForMainFrame];
 }
 
