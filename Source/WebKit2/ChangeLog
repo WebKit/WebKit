@@ -1,3 +1,29 @@
+2015-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crash when closing inspected page
+        https://bugs.webkit.org/show_bug.cgi?id=140968
+
+        Reviewed by Timothy Hatcher.
+
+        Handle cases where the corePage could be null. With the Inspector Process
+        in its own process, messages may come to the WebContentProcess after
+        the WebCore::Page has itself been destroyed.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::show):
+        (WebKit::WebInspector::close):
+        (WebKit::WebInspector::openInNewTab):
+        (WebKit::WebInspector::evaluateScriptForTest):
+        (WebKit::WebInspector::showConsole):
+        (WebKit::WebInspector::showResources):
+        (WebKit::WebInspector::showMainResourceForFrame):
+        (WebKit::WebInspector::startPageProfiling):
+        (WebKit::WebInspector::stopPageProfiling):
+        (WebKit::WebInspector::canAttachWindow):
+        (WebKit::WebInspector::sendMessageToBackend):
+        (WebKit::WebInspector::remoteFrontendConnected):
+        (WebKit::WebInspector::remoteFrontendDisconnected):
+
 2015-01-28  Sam Weinig  <sam@webkit.org>
 
         Convert WebPreferences and VisitedLinkProvider to be bridged API::Objects

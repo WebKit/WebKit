@@ -114,17 +114,26 @@ void WebInspector::bringToFront()
 // Called by WebInspector messages
 void WebInspector::show()
 {
+    if (!m_page->corePage())
+        return;
+
     m_page->corePage()->inspectorController().show();
 }
 
 void WebInspector::close()
 {
+    if (!m_page->corePage())
+        return;
+
     m_page->corePage()->inspectorController().close();
 }
 
 void WebInspector::openInNewTab(const String& urlString)
 {
     Page* inspectedPage = m_page->corePage();
+    if (!inspectedPage)
+        return;
+
     Frame& inspectedMainFrame = inspectedPage->mainFrame();
     FrameLoadRequest request(inspectedMainFrame.document()->securityOrigin(), ResourceRequest(urlString), "_blank");
 
@@ -137,17 +146,26 @@ void WebInspector::openInNewTab(const String& urlString)
 
 void WebInspector::evaluateScriptForTest(const String& script)
 {
+    if (!m_page->corePage())
+        return;
+
     m_page->corePage()->inspectorController().evaluateForTestInFrontend(script);
 }
 
 void WebInspector::showConsole()
 {
+    if (!m_page->corePage())
+        return;
+
     m_page->corePage()->inspectorController().show();
     m_frontendConnection->send(Messages::WebInspectorUI::ShowConsole(), 0);
 }
 
 void WebInspector::showResources()
 {
+    if (!m_page->corePage())
+        return;
+
     m_page->corePage()->inspectorController().show();
     m_frontendConnection->send(Messages::WebInspectorUI::ShowResources(), 0);
 }
@@ -158,6 +176,9 @@ void WebInspector::showMainResourceForFrame(uint64_t frameIdentifier)
     if (!frame)
         return;
 
+    if (!m_page->corePage())
+        return;
+
     m_page->corePage()->inspectorController().show();
 
     String inspectorFrameIdentifier = m_page->corePage()->inspectorController().pageAgent()->frameId(frame->coreFrame());
@@ -166,18 +187,27 @@ void WebInspector::showMainResourceForFrame(uint64_t frameIdentifier)
 
 void WebInspector::startPageProfiling()
 {
+    if (!m_page->corePage())
+        return;
+
     m_page->corePage()->inspectorController().show();
     m_frontendConnection->send(Messages::WebInspectorUI::StartPageProfiling(), 0);
 }
 
 void WebInspector::stopPageProfiling()
 {
+    if (!m_page->corePage())
+        return;
+
     m_page->corePage()->inspectorController().show();
     m_frontendConnection->send(Messages::WebInspectorUI::StopPageProfiling(), 0);
 }
 
 bool WebInspector::canAttachWindow()
 {
+    if (!m_page->corePage())
+        return false;
+
     // Don't allow attaching to another inspector -- two inspectors in one window is too much!
     if (m_page->isInspectorPage())
         return false;
@@ -209,6 +239,9 @@ void WebInspector::updateDockingAvailability()
 
 void WebInspector::sendMessageToBackend(const String& message)
 {
+    if (!m_page->corePage())
+        return;
+
     m_page->corePage()->inspectorController().dispatchMessageFromFrontend(message);
 }
 
@@ -226,15 +259,19 @@ bool WebInspector::sendMessageToFrontend(const String& message)
 #if ENABLE(INSPECTOR_SERVER)
 void WebInspector::remoteFrontendConnected()
 {
-    m_remoteFrontendConnected = true;
-    bool isAutomaticInspection = false;
-    m_page->corePage()->inspectorController().connectFrontend(this, isAutomaticInspection);
+    if (m_page->corePage()) {
+        m_remoteFrontendConnected = true;
+        bool isAutomaticInspection = false;
+        m_page->corePage()->inspectorController().connectFrontend(this, isAutomaticInspection);
+    }
 }
 
 void WebInspector::remoteFrontendDisconnected()
 {
     m_remoteFrontendConnected = false;
-    m_page->corePage()->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
+
+    if (m_page->corePage())
+        m_page->corePage()->inspectorController().disconnectFrontend(Inspector::InspectorDisconnectReason::InspectorDestroyed);
 }
 #endif
 
