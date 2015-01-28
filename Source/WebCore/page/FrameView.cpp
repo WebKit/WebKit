@@ -441,6 +441,9 @@ void FrameView::setFrameRect(const IntRect& newRect)
 
     if (frame().isMainFrame())
         frame().mainFrame().pageOverlayController().didChangeViewSize();
+
+    // The frame view was resized, check if we should resume animated images.
+    resumeVisibleImageAnimationsIncludingSubframes();
 }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
