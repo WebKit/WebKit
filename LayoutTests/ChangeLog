@@ -1,3 +1,12 @@
+2015-01-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] More Windows rebaselines.
+
+        * platform/win/fast/events/ondrop-text-htmlt-expected.txt: Added.
+        * platform/win/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        * platform/win/fast/text/fallback-traits-fixup-expected.txt:
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.txt:
+
 2015-01-27  Eric Carlson  <eric.carlson@apple.com>
 
         Simplify http/tests/media/video-play-stall.html
