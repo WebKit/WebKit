@@ -82,6 +82,13 @@ using namespace WebCore;
 - (void)webViewClosed
 {
     _webView = nil;
+
+    id animationController = _immediateActionRecognizer.animationController;
+    if ([animationController isKindOfClass:NSClassFromString(@"QLPreviewMenuItem")]) {
+        QLPreviewMenuItem *menuItem = (QLPreviewMenuItem *)animationController;
+        menuItem.delegate = nil;
+    }
+
     _immediateActionRecognizer = nil;
     _currentActionContext = nil;
 }
