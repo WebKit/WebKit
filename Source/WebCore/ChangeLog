@@ -1,3 +1,44 @@
+2015-01-28  Chris Dumez  <cdumez@apple.com>
+
+        Remove dead code from MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=140964
+
+        Reviewed by Andreas Kling.
+
+        Remove dead code from MemoryCache, make more things private and
+        clean up a little bit.
+
+        * WebCore.exp.in:
+        * inspector/InspectorResourceAgent.cpp:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::MemoryCache):
+        (WebCore::MemoryCache::revalidationSucceeded):
+        (WebCore::MemoryCache::removeImageFromCache):
+        (WebCore::MemoryCache::pruneLiveResources):
+        (WebCore::MemoryCache::pruneDeadResources):
+        (WebCore::MemoryCache::pruneDeadResourcesToSize):
+        (WebCore::MemoryCache::remove):
+        (WebCore::MemoryCache::removeRequestFromSessionCaches):
+        (WebCore::MemoryCache::setDisabled):
+        (WebCore::MemoryCache::resourceForURL): Deleted.
+        (WebCore::MemoryCache::pruneLiveResourcesToPercentage): Deleted.
+        (WebCore::MemoryCache::pruneDeadResourcesToPercentage): Deleted.
+        (WebCore::MemoryCache::evict): Deleted.
+        (WebCore::MemoryCache::removeUrlFromCache): Deleted.
+        (WebCore::MemoryCache::removeRequestFromCache): Deleted.
+        (WebCore::MemoryCache::pruneToPercentage): Deleted.
+        * loader/cache/MemoryCache.h:
+        (WebCore::MemoryCache::LRUList::LRUList): Deleted.
+        (WebCore::MemoryCache::remove): Deleted.
+        (WebCore::MemoryCache::setPruneEnabled): Deleted.
+        (WebCore::MemoryCache::minDeadCapacity): Deleted.
+        (WebCore::MemoryCache::maxDeadCapacity): Deleted.
+        (WebCore::MemoryCache::capacity): Deleted.
+        (WebCore::MemoryCache::liveSize): Deleted.
+        (WebCore::MemoryCache::deadSize): Deleted.
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseCriticalMemory):
+
 2015-01-28  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remove CSS.setPropertyText, CSS.toggleProperty and related dead code

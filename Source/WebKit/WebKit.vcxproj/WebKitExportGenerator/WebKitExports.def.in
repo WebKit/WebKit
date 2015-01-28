@@ -406,7 +406,6 @@ EXPORTS
         symbolWithPointer(?pauseTransitionAtTime@AnimationController@WebCore@@QAE_NPAVRenderElement@2@ABVString@WTF@@N@Z, ?pauseTransitionAtTime@AnimationController@WebCore@@QEAA_NPEAVRenderElement@2@AEBVString@WTF@@N@Z)
         symbolWithPointer(?memoryCache@WebCore@@YAAAVMemoryCache@1@XZ, ?memoryCache@WebCore@@YAAEAVMemoryCache@1@XZ)
         symbolWithPointer(?evictResources@MemoryCache@WebCore@@QAEXXZ, ?evictResources@MemoryCache@WebCore@@QEAAXXZ)
-        symbolWithPointer(?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVURL@2@@Z, ?resourceForURL@MemoryCache@WebCore@@QEAAPEAVCachedResource@2@AEBVURL@2@@Z)
         symbolWithPointer(?nonFastScrollableRects@Page@WebCore@@QAE?AV?$Ref@VClientRectList@WebCore@@@WTF@@PBVFrame@2@@Z, ?nonFastScrollableRects@Page@WebCore@@QEAA?AV?$Ref@VClientRectList@WebCore@@@WTF@@PEBVFrame@2@@Z)
         symbolWithPointer(?numberOfActiveAnimations@AnimationController@WebCore@@QBEIPAVDocument@2@@Z, ?numberOfActiveAnimations@AnimationController@WebCore@@QEBAIPEAVDocument@2@@Z)
         symbolWithPointer(?minDOMTimerInterval@Settings@WebCore@@QAENXZ, ?minDOMTimerInterval@Settings@WebCore@@QEAANXZ)

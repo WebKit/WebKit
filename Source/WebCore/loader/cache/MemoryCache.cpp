@@ -35,8 +35,6 @@
 #include "Image.h"
 #include "Logging.h"
 #include "PublicSuffix.h"
-#include "SecurityOrigin.h"
-#include "SecurityOriginHash.h"
 #include "SharedBuffer.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
@@ -66,7 +64,6 @@ MemoryCache& memoryCache()
 
 MemoryCache::MemoryCache()
     : m_disabled(false)
-    , m_pruneEnabled(true)
     , m_inPruneResources(false)
     , m_capacity(cDefaultCacheCapacity)
     , m_minDeadCapacity(0)
@@ -136,12 +133,12 @@ void MemoryCache::revalidationSucceeded(CachedResource* revalidatingResource, co
     ASSERT(resource->isLoaded());
     ASSERT(revalidatingResource->inCache());
 
-    // Calling evict() can potentially delete revalidatingResource, which we use
+    // Calling remove() can potentially delete revalidatingResource, which we use
     // below. This mustn't be the case since revalidation means it is loaded
     // and so canDelete() is false.
     ASSERT(!revalidatingResource->canDelete());
 
-    evict(revalidatingResource);
+    remove(revalidatingResource);
 
     CachedResourceMap& resources = getSessionMap(resource->sessionID());
 #if ENABLE(CACHE_PARTITIONING)
@@ -177,11 +174,6 @@ void MemoryCache::revalidationFailed(CachedResource* revalidatingResource)
     LOG(ResourceLoading, "Revalidation failed for %p", revalidatingResource);
     ASSERT(revalidatingResource->resourceToRevalidate());
     revalidatingResource->clearResourceToRevalidate();
-}
-
-CachedResource* MemoryCache::resourceForURL(const URL& resourceURL)
-{
-    return resourceForURL(resourceURL, SessionID::defaultSessionID());
 }
 
 CachedResource* MemoryCache::resourceForURL(const URL& resourceURL, SessionID sessionID)
@@ -274,7 +266,7 @@ void MemoryCache::removeImageFromCache(const URL& url, const String& domainForCa
 
     // A resource exists and is not a manually cached image, so just remove it.
     if (!is<CachedImage>(*resource) || !downcast<CachedImage>(*resource).isManuallyCached()) {
-        evict(resource);
+        remove(resource);
         return;
     }
 
@@ -289,9 +281,6 @@ void MemoryCache::removeImageFromCache(const URL& url, const String& domainForCa
 
 void MemoryCache::pruneLiveResources(bool shouldDestroyDecodedDataForAllLiveResources)
 {
-    if (!m_pruneEnabled)
-        return;
-
     unsigned capacity = shouldDestroyDecodedDataForAllLiveResources ? 0 : liveCapacity();
     if (capacity && m_liveSize <= capacity)
         return;
@@ -299,20 +288,6 @@ void MemoryCache::pruneLiveResources(bool shouldDestroyDecodedDataForAllLiveReso
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
 
     pruneLiveResourcesToSize(targetSize, shouldDestroyDecodedDataForAllLiveResources);
-}
-
-void MemoryCache::pruneLiveResourcesToPercentage(float prunePercentage)
-{
-    if (!m_pruneEnabled)
-        return;
-
-    if (prunePercentage < 0.0f  || prunePercentage > 0.95f)
-        return;
-
-    unsigned currentSize = m_liveSize + m_deadSize;
-    unsigned targetSize = static_cast<unsigned>(currentSize * prunePercentage);
-
-    pruneLiveResourcesToSize(targetSize);
 }
 
 void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources)
@@ -362,28 +337,11 @@ void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestr
 
 void MemoryCache::pruneDeadResources()
 {
-    if (!m_pruneEnabled)
-        return;
-
     unsigned capacity = deadCapacity();
     if (capacity && m_deadSize <= capacity)
         return;
 
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
-    pruneDeadResourcesToSize(targetSize);
-}
-
-void MemoryCache::pruneDeadResourcesToPercentage(float prunePercentage)
-{
-    if (!m_pruneEnabled)
-        return;
-
-    if (prunePercentage < 0.0f  || prunePercentage > 0.95f)
-        return;
-
-    unsigned currentSize = m_liveSize + m_deadSize;
-    unsigned targetSize = static_cast<unsigned>(currentSize * prunePercentage);
-
     pruneDeadResourcesToSize(targetSize);
 }
 
@@ -430,7 +388,7 @@ void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
             CachedResourceHandle<CachedResource> previous = current->m_prevInAllResourcesList;
             ASSERT(!previous || previous->inCache());
             if (!current->hasClients() && !current->isPreloaded() && !current->isCacheValidator()) {
-                evict(current);
+                remove(current);
                 if (targetSize && m_deadSize <= targetSize)
                     return;
             }
@@ -458,7 +416,7 @@ void MemoryCache::setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, un
     prune();
 }
 
-void MemoryCache::evict(CachedResource* resource)
+void MemoryCache::remove(CachedResource* resource)
 {
     ASSERT(WTF::isMainThread());
     LOG(ResourceLoading, "Evicting resource %p for '%s' from cache", resource, resource->url().string().latin1().data());
@@ -750,27 +708,6 @@ void MemoryCache::adjustSize(bool live, int delta)
     }
 }
 
-void MemoryCache::removeUrlFromCache(ScriptExecutionContext* context, const String& urlString, SessionID sessionID)
-{
-    removeRequestFromCache(context, ResourceRequest(urlString), sessionID);
-}
-
-void MemoryCache::removeRequestFromCache(ScriptExecutionContext* context, const ResourceRequest& request, SessionID sessionID)
-{
-    ASSERT(context);
-    if (is<WorkerGlobalScope>(*context)) {
-        CrossThreadResourceRequestData* requestData = request.copyData().leakPtr();
-        downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy().postTaskToLoader([requestData, sessionID] (ScriptExecutionContext& context) {
-            OwnPtr<ResourceRequest> request(ResourceRequest::adopt(adoptPtr(requestData)));
-            removeRequestFromCache(&context, *request, sessionID);
-        });
-        return;
-    }
-
-    if (CachedResource* resource = memoryCache().resourceForRequest(request, sessionID))
-        memoryCache().remove(resource);
-}
-
 void MemoryCache::removeRequestFromSessionCaches(ScriptExecutionContext* context, const ResourceRequest& request)
 {
     ASSERT(context);
@@ -785,7 +722,7 @@ void MemoryCache::removeRequestFromSessionCaches(ScriptExecutionContext* context
 
     for (auto& resources : memoryCache().m_sessionResources) {
         if (CachedResource* resource = memoryCache().resourceForRequestImpl(request, *resources.value))
-        memoryCache().remove(resource);
+            memoryCache().remove(resource);
     }
 }
 
@@ -857,9 +794,9 @@ void MemoryCache::setDisabled(bool disabled)
             break;
 #if ENABLE(CACHE_PARTITIONING)
         CachedResourceItem::iterator innerIterator = outerIterator->value->begin();
-        evict(innerIterator->value);
+        remove(innerIterator->value);
 #else
-        evict(outerIterator->value);
+        remove(outerIterator->value);
 #endif
     }
 }
@@ -881,13 +818,6 @@ void MemoryCache::prune()
     pruneDeadResources(); // Prune dead first, in case it was "borrowing" capacity from live.
     pruneLiveResources();
 }
-
-void MemoryCache::pruneToPercentage(float targetPercentLive)
-{
-    pruneDeadResourcesToPercentage(targetPercentLive); // Prune dead first, in case it was "borrowing" capacity from live.
-    pruneLiveResourcesToPercentage(targetPercentLive);
-}
-
 
 #ifndef NDEBUG
 void MemoryCache::dumpStats()
