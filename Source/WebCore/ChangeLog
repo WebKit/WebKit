@@ -1,3 +1,10 @@
+2015-01-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r179247.
+
+        * history/PageCache.h: Need to declare NeverDestroyed specialization as
+        a friend.
+
 2015-01-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] Implement support for new AtkRole types for MathML

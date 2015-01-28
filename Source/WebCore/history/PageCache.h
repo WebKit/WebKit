@@ -96,7 +96,9 @@ namespace WebCore {
         HistoryItem* m_tail;
         
         bool m_shouldClearBackingStores;
-     };
+
+        friend class WTF::NeverDestroyed<PageCache>;
+    };
 
 } // namespace WebCore
 
