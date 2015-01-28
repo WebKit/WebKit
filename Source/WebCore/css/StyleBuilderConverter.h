@@ -1031,6 +1031,14 @@ inline Optional<FilterOperations> StyleBuilderConverter::convertFilterOperations
     return Nullopt;
 }
 
+static inline WebKitCSSResourceValue* maskImageValueFromIterator(CSSValueList& maskImagesList, CSSValueList::iterator it)
+{
+    // May also be a CSSInitialValue.
+    if (it == maskImagesList.end() || !is<WebKitCSSResourceValue>(it->get()))
+        return nullptr;
+    return &downcast<WebKitCSSResourceValue>(it->get());
+}
+
 inline Vector<RefPtr<MaskImageOperation>> StyleBuilderConverter::convertMaskImageOperations(StyleResolver& styleResolver, CSSValue& value)
 {
     Vector<RefPtr<MaskImageOperation>> operations;
@@ -1042,8 +1050,7 @@ inline Vector<RefPtr<MaskImageOperation>> StyleBuilderConverter::convertMaskImag
     else if (is<CSSValueList>(value)) {
         maskImagesList = &downcast<CSSValueList>(value);
         listIterator = maskImagesList->begin();
-        if (listIterator != maskImagesList->end())
-            maskImageValue = &downcast<WebKitCSSResourceValue>(listIterator->get());
+        maskImageValue = maskImageValueFromIterator(*maskImagesList, listIterator);
     }
 
     while (maskImageValue.get()) {
@@ -1074,10 +1081,9 @@ inline Vector<RefPtr<MaskImageOperation>> StyleBuilderConverter::convertMaskImag
 
         operations.append(newMaskImage);
 
-        if (maskImagesList) {
-            ++listIterator;
-            maskImageValue = listIterator != maskImagesList->end() ? &downcast<WebKitCSSResourceValue>(listIterator->get()) : nullptr;
-        } else
+        if (maskImagesList)
+            maskImageValue = maskImageValueFromIterator(*maskImagesList, ++listIterator);
+        else
             maskImageValue = nullptr;
     }
 

@@ -1,5 +1,23 @@
 2015-01-28  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r177494): Bad cast to WebKitCSSResourceValue in StyleBuilderConverter::convertMaskImageOperations()
+        https://bugs.webkit.org/show_bug.cgi?id=140991
+        <rdar://problem/19625305>
+
+        Reviewed by Antti Koivisto.
+
+        convertMaskImageOperations() was assuming that the CSSValueList's values
+        were always WebKitCSSResourceValue values. However, they can be
+        CSSInitialValues as well so we should check before casting.
+
+        Test: css3/masking/mask-image-initial-value-crash.html
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::maskImageValueFromIterator):
+        (WebCore::StyleBuilderConverter::convertMaskImageOperations):
+
+2015-01-28  Chris Dumez  <cdumez@apple.com>
+
         Remove dead code from MemoryCache
         https://bugs.webkit.org/show_bug.cgi?id=140964
 
