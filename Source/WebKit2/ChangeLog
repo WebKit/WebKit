@@ -1,5 +1,20 @@
 2015-01-27  Beth Dakin  <bdakin@apple.com>
 
+        Immediate action gesture recognizer still doesn't work well with IB
+        https://bugs.webkit.org/show_bug.cgi?id=140967
+        -and corresponding-
+        rdar://problem/19621509
+
+        Reviewed by Tim Horton.
+
+        We should add (or remove) the gesture recognizer in viewDidMoveToWindow because 
+        initWithFrame it too early and IB might mess with it.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+
+2015-01-27  Beth Dakin  <bdakin@apple.com>
+
         Invoking an immediate action on link often dismisses selection
         https://bugs.webkit.org/show_bug.cgi?id=140911
         -and corresponding-

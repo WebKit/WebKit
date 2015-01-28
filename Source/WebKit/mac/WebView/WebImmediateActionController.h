@@ -53,6 +53,8 @@
 - (void)webView:(WebView *)webView willHandleMouseDown:(NSEvent *)event;
 - (void)webView:(WebView *)webView didHandleScrollWheel:(NSEvent *)event;
 
+- (NSImmediateActionGestureRecognizer *)immediateActionRecognizer;
+
 @end
 
 #endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000

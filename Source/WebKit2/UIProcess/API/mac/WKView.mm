@@ -2567,6 +2567,11 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         }
 
         [self _accessibilityRegisterUIProcessTokens];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+        if (_data->_immediateActionGestureRecognizer && ![[self gestureRecognizers] containsObject:_data->_immediateActionGestureRecognizer.get()] && !_data->_ignoresNonWheelEvents)
+            [self addGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
+#endif
     } else {
         ViewState::Flags viewStateChanges = ViewState::WindowIsActive | ViewState::IsVisible;
         if ([self isDeferringViewInWindowChanges])
@@ -2579,6 +2584,11 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         _data->_flagsChangedEventMonitor = nil;
 
         [self _dismissContentRelativeChildWindows];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+        if (_data->_immediateActionGestureRecognizer)
+            [self removeGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
+#endif
     }
 
     _data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
@@ -3625,7 +3635,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         _data->_immediateActionGestureRecognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
         _data->_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:*_data->_page view:self recognizer:_data->_immediateActionGestureRecognizer.get()]);
         [_data->_immediateActionGestureRecognizer setDelegate:_data->_immediateActionController.get()];
-        [self addGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
     }
 #endif
 
