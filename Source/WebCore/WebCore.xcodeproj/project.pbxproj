@@ -30362,7 +30362,7 @@
 			buildSettings = {
 				EXPORTED_SYMBOLS_FILE = "";
 				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "$(ASAN_OTHER_LDFLAGS)";
 				PRODUCT_NAME = WebCoreExportFileGenerator;
 				SKIP_INSTALL = YES;
 			};

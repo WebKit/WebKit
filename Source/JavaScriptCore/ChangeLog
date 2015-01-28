@@ -1,3 +1,13 @@
+2015-01-28  Dana Burkart  <dburkart@apple.com>
+
+        Move ASan flag settings from DebugRelease.xcconfig to Base.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=136765
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2015-01-27  Filip Pizlo  <fpizlo@apple.com>
 
         ExitSiteData saying m_takesSlowPath shouldn't mean early returning takesSlowPath() since for the non-LLInt case we later set m_couldTakeSlowPath, which is more precise

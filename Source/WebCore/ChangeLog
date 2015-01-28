@@ -1,3 +1,14 @@
+2015-01-28  Dana Burkart  <dburkart@apple.com>
+
+        Move ASan flag settings from DebugRelease.xcconfig to Base.xcconfig
+        https://bugs.webkit.org/show_bug.cgi?id=136765
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2015-01-28  Chris Dumez  <cdumez@apple.com>
 
         Use an enum class for createFontFamilyValue()'s fromSystemFontID argument
