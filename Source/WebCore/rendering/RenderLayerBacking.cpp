@@ -550,7 +550,7 @@ bool RenderLayerBacking::updateConfiguration()
     if (updateForegroundLayer(compositor().needsContentsCompositingLayer(m_owningLayer)))
         layerConfigChanged = true;
     
-    bool needsDescendentsClippingLayer = compositor().clipsCompositingDescendants(m_owningLayer);
+    bool needsDescendantsClippingLayer = compositor().clipsCompositingDescendants(m_owningLayer);
 
     if (!renderer().view().needsLayout()) {
         bool usesCompositedScrolling;
@@ -561,12 +561,12 @@ bool RenderLayerBacking::updateConfiguration()
 #endif
         // Our scrolling layer will clip.
         if (usesCompositedScrolling)
-            needsDescendentsClippingLayer = false;
+            needsDescendantsClippingLayer = false;
 
         if (updateScrollingLayers(usesCompositedScrolling))
             layerConfigChanged = true;
 
-        if (updateDescendantClippingLayer(needsDescendentsClippingLayer))
+        if (updateDescendantClippingLayer(needsDescendantsClippingLayer))
             layerConfigChanged = true;
     }
 
@@ -586,7 +586,7 @@ bool RenderLayerBacking::updateConfiguration()
 
     updateMaskLayer(renderer().hasMask());
 
-    updateChildClippingStrategy(needsDescendentsClippingLayer);
+    updateChildClippingStrategy(needsDescendantsClippingLayer);
 
     if (m_owningLayer.hasReflection()) {
         if (m_owningLayer.reflectionLayer()->backing()) {
@@ -1016,7 +1016,7 @@ void RenderLayerBacking::updateAfterDescendants()
 
     updateDrawsContent(isSimpleContainer);
 
-    m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || isPaintDestinationForDescendentLayers());
+    m_graphicsLayer->setContentsVisible(m_owningLayer.hasVisibleContent() || isPaintDestinationForDescendantLayers());
 }
 
 void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(LayoutRect& ancestorCompositingBounds, const RenderLayer* compositingAncestor) const
@@ -1445,9 +1445,9 @@ void RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
         m_graphicsLayer->setPaintingPhase(paintingPhaseForPrimaryLayer());
 }
 
-void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendentsClippingLayer)
+void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippingLayer)
 {
-    if (hasClippingLayer() && needsDescendentsClippingLayer) {
+    if (hasClippingLayer() && needsDescendantsClippingLayer) {
         if (is<RenderBox>(renderer()) && (renderer().style().clipPath() || renderer().style().hasBorderRadius())) {
             LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
             FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
@@ -1748,7 +1748,7 @@ bool RenderLayerBacking::paintsChildren() const
     if (m_owningLayer.hasVisibleContent() && m_owningLayer.hasNonEmptyChildRenderers())
         return true;
 
-    if (isPaintDestinationForDescendentLayers())
+    if (isPaintDestinationForDescendantLayers())
         return true;
 
     return false;
@@ -1819,7 +1819,7 @@ static bool compositedWithOwnBackingStore(const RenderLayer* layer)
     return layer->isComposited() && !layer->backing()->paintsIntoCompositedAncestor();
 }
 
-static bool descendentLayerPaintsIntoAncestor(RenderLayer& parent)
+static bool descendantLayerPaintsIntoAncestor(RenderLayer& parent)
 {
     // FIXME: We shouldn't be called with a stale z-order lists. See bug 85512.
     parent.updateLayerListsIfNeeded();
@@ -1833,7 +1833,7 @@ static bool descendentLayerPaintsIntoAncestor(RenderLayer& parent)
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
             if (!compositedWithOwnBackingStore(curLayer)
-                && (curLayer->isVisuallyNonEmpty() || descendentLayerPaintsIntoAncestor(*curLayer)))
+                && (curLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*curLayer)))
                 return true;
         }
     }
@@ -1848,7 +1848,7 @@ static bool descendentLayerPaintsIntoAncestor(RenderLayer& parent)
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = negZOrderList->at(i);
                 if (!compositedWithOwnBackingStore(curLayer)
-                    && (curLayer->isVisuallyNonEmpty() || descendentLayerPaintsIntoAncestor(*curLayer)))
+                    && (curLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*curLayer)))
                     return true;
             }
         }
@@ -1858,7 +1858,7 @@ static bool descendentLayerPaintsIntoAncestor(RenderLayer& parent)
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = posZOrderList->at(i);
                 if (!compositedWithOwnBackingStore(curLayer)
-                    && (curLayer->isVisuallyNonEmpty() || descendentLayerPaintsIntoAncestor(*curLayer)))
+                    && (curLayer->isVisuallyNonEmpty() || descendantLayerPaintsIntoAncestor(*curLayer)))
                     return true;
             }
         }
@@ -1868,9 +1868,9 @@ static bool descendentLayerPaintsIntoAncestor(RenderLayer& parent)
 }
 
 // Conservative test for having no rendered children.
-bool RenderLayerBacking::isPaintDestinationForDescendentLayers() const
+bool RenderLayerBacking::isPaintDestinationForDescendantLayers() const
 {
-    return descendentLayerPaintsIntoAncestor(m_owningLayer);
+    return descendantLayerPaintsIntoAncestor(m_owningLayer);
 }
 
 bool RenderLayerBacking::containsPaintedContent(bool isSimpleContainer) const

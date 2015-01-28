@@ -1,3 +1,23 @@
+2015-01-28  Jeongmin Kim  <jm86.kim@lge.com>
+
+        Rename descendentxxx to descendantxxxx in RenderLayerBacking
+        https://bugs.webkit.org/show_bug.cgi?id=140979
+
+        Reviewed by Martin Robinson.
+
+        Rename descendentxxx to descendantxxxx in RenderLayerBacking
+        for matching other variables and function names.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::updateAfterDescendants):
+        (WebCore::RenderLayerBacking::updateChildClippingStrategy):
+        (WebCore::RenderLayerBacking::paintsChildren):
+        (WebCore::descendantLayerPaintsIntoAncestor):
+        (WebCore::RenderLayerBacking::isPaintDestinationForDescendantLayers):
+        (WebCore::descendentLayerPaintsIntoAncestor): Deleted.
+        (WebCore::RenderLayerBacking::isPaintDestinationForDescendentLayers): Deleted.
+
 2015-01-27  Chris Dumez  <cdumez@apple.com>
 
         Use a Ref<CachedResourceLoader> in Document instead of a RefPtr

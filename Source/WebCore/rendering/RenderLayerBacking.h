@@ -273,7 +273,7 @@ private:
     bool requiresScrollCornerLayer() const;
     bool updateScrollingLayers(bool scrollingLayers);
     void updateDrawsContent(bool isSimpleContainer);
-    void updateChildClippingStrategy(bool needsDescendentsClippingLayer);
+    void updateChildClippingStrategy(bool needsDescendantsClippingLayer);
     
     void updateRootLayerConfiguration();
 
@@ -317,7 +317,7 @@ private:
 
     void resetContentsRect();
 
-    bool isPaintDestinationForDescendentLayers() const;
+    bool isPaintDestinationForDescendantLayers() const;
 
     bool shouldClipCompositedBounds() const;
 
