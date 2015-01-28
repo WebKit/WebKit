@@ -64,7 +64,7 @@ find_package(Gperf 3.0.1 REQUIRED)
 # TODO Enforce version requirement for perl
 find_package(Perl 5.10.0 REQUIRED)
 
-find_package(PythonInterp 2.6.0 REQUIRED)
+find_package(PythonInterp 2.7.0 REQUIRED)
 find_package(Ruby 1.8.7)
 
 # -----------------------------------------------------------------------------
