@@ -1,5 +1,16 @@
 2015-01-28  Matthew  <matthew_hanson@apple.com>
 
+        Merge r179023. rdar://problem/19573674
+
+    2015-01-23  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the pre-Yosemite build.
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView _dismissContentRelativeChildWindows]):
+
+2015-01-28  Matthew  <matthew_hanson@apple.com>
+
         Merge r179014. rdar://problem/19573674
 
     2015-01-23  Timothy Horton  <timothy_horton@apple.com>
