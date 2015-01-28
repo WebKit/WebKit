@@ -69,7 +69,7 @@ StylePropertyShorthand animationShorthandForParsing(CSSPropertyID propId)
     return StylePropertyShorthand(CSSPropertyWebkitAnimation, prefixedAnimationPropertiesForParsing);
 }
 
-bool isExpandedShorthand(CSSPropertyID id)
+bool isShorthandCSSProperty(CSSPropertyID id)
 {
     return shorthandForProperty(id).length();
 }

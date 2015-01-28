@@ -73,7 +73,7 @@ Vector<StylePropertyShorthand> matchingShorthandsForLonghand(CSSPropertyID);
 
 unsigned indexOfShorthandForLonghand(CSSPropertyID, const Vector<StylePropertyShorthand>&);
 
-bool isExpandedShorthand(CSSPropertyID);
+bool isShorthandCSSProperty(CSSPropertyID);
 
 } // namespace WebCore
 

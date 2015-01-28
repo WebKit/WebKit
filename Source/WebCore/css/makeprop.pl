@@ -873,7 +873,7 @@ EOF
 foreach my $name (@names) {
   print STYLEBUILDER "    case CSSProperty" . $nameToId{$name} . ":\n";
   if (exists $propertiesWithStyleBuilderOptions{$name}{"Longhands"}) {
-    print STYLEBUILDER "        ASSERT(isExpandedShorthand(property));\n";
+    print STYLEBUILDER "        ASSERT(isShorthandCSSProperty(property));\n";
     print STYLEBUILDER "        ASSERT_NOT_REACHED();\n";
   } elsif (!exists $propertiesWithStyleBuilderOptions{$name}{"SkipBuilder"}) {
     print STYLEBUILDER "        if (isInitial)\n";

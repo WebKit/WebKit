@@ -1923,7 +1923,7 @@ bool StyleResolver::useSVGZoomRulesForLength()
 
 void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 {
-    ASSERT_WITH_MESSAGE(!isExpandedShorthand(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
+    ASSERT_WITH_MESSAGE(!isShorthandCSSProperty(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
 
     State& state = m_state;
 
