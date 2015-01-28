@@ -30,8 +30,6 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
-sputnik/ [ Skip ]
-
 # <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results:
 #                          - Mac OS X and Windows do not have an Arabic font in common
 fast/text/international/bidi-AN-after-L.html [ Skip ]
@@ -596,6 +594,20 @@ webkit.org/b/35013 svg/zoom/text/ [ Skip ]
 
 
 ################################################################################
+##############                 Sputnik Errors                   ################
+################################################################################
+webkit.org/b/140970 sputnik/Unicode/Unicode_500/S7.6_A5.3_T1.html [ Skip ]  # Crashes
+webkit.org/b/140970 sputnik/Unicode/Unicode_320/S7.6_A2.3.html [ Skip ]  # Crashes
+webkit.org/b/140970 sputnik/Unicode/Unicode_410/S7.6_A3.1.html [ Skip ]  # Crashes
+
+sputnik/Conformance/15_Native_Objects/15.2_Object/15.2.2/S15.2.2.1_A2_T5.html [ Failure ]
+sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html [ Pass Timeout ]
+################################################################################
+##############               End Sputnik Errors                 ################
+################################################################################
+
+
+################################################################################
 ############## No built-in plugin in DRT <rdar://problem/5074411> ##############
 ################################################################################
 plugins/ [ Skip ]
@@ -712,7 +724,7 @@ fast/workers/worker-document-leak.html [ Skip ] # Timeout
 ################################################################################
 ######################        Skip all media tests        ######################
 ################################################################################
-media/ [ Skip ]
+#media/ [ Skip ]
 #media/W3C [ Skip ]
 fast/media [ Skip ]
 http/tests/media [ Skip ]
@@ -741,7 +753,6 @@ media/video-volume-slider.html [ Failure ]
 webkit.org/b/33954 http/tests/media/video-cookie.html [ Skip ]
 webkit.org/b/34447 http/tests/media/video-referer.html [ Failure ]
 
-# VIEW_MODE_CSS_MEDIA is not enabled on Windows.
 # DumpRenderTree requires testRunner.setViewModeMediaFeature()
 fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
 fast/media/media-query-list-02.html [ Failure ]
@@ -1183,7 +1194,10 @@ accessibility/svg-element-press.html [ Skip ]
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X (or Windows)
 accessibility/aria-checkbox-sends-notification.html [ Skip ]
+accessibility/combo-box-collapsed-selection-changed.html [ Skip ]
 accessibility/children-changed-sends-notification.html [ Skip ]
+accessibility/menu-list-sends-change-notification.html [ Skip ]
+accessibility/multiselect-list-reports-active-option.html [ Skip ]
 
 webkit.org/b/140796 accessibility/alt-tag-on-image-with-nonimage-role.html [ Skip ]
 webkit.org/b/140798 accessibility/aria-controls-with-tabs.html [ Skip ]
@@ -1296,7 +1310,8 @@ webkit.org/b/108249 accessibility/corresponding-control-deleted-crash.html [ Fai
 accessibility/color-well.html
 
 # Failing Windows-only accessibility tests
-#webkit.org/b/127485 platform/win/accessibility/parent-element.html [ Failure ]
+webkit.org/b/127485 [ Debug ] platform/win/accessibility/parent-element.html [ Failure ]
+webkit.org/b/127485 [ Release ] platform/win/accessibility/parent-element.html [ Pass Fail ]
 
 # Skipping on windows, missing implementation of cellForColumnAndRow
 webkit.org/b/129250 accessibility/table-scope.html [ Skip ]
@@ -2159,12 +2174,12 @@ webkit.org/b/128855 fast/regions/overflow/overflow-in-variable-width-regions-inl
 webkit.org/b/128855 fast/regions/overflow/overflow-region-transform.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/selection/selecting-text-including-region.html [ ImageOnlyFailure ] 
 webkit.org/b/128855 fast/regions/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ] 
-webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-lr.html [ Failure ] 
-webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-rl.html [ Failure ] 
-webkit.org/b/128855 fast/regions/selection/position-for-point-1.html [ Failure ] 
-webkit.org/b/128855 fast/regions/selection/position-for-point-vert-lr.html [ Failure ] 
-webkit.org/b/128855 fast/regions/selection/position-for-point-vert-rl.html [ Failure ] 
-webkit.org/b/128855 fast/regions/selection/position-for-point.html [ Failure ]
+#webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-lr.html [ Failure ] 
+#webkit.org/b/128855 fast/regions/selection/position-for-point-1-vert-rl.html [ Failure ] 
+#webkit.org/b/128855 fast/regions/selection/position-for-point-1.html [ Failure ] 
+#webkit.org/b/128855 fast/regions/selection/position-for-point-vert-lr.html [ Failure ] 
+#webkit.org/b/128855 fast/regions/selection/position-for-point-vert-rl.html [ Failure ] 
+#webkit.org/b/128855 fast/regions/selection/position-for-point.html [ Failure ]
 webkit.org/b/128855 fast/regions/selection/selection-direction.html [ Pass Timeout ]
 webkit.org/b/128855 fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Crash Failure Timeout ]
 webkit.org/b/128855 fast/regions/repaint/repaint-absolute-pushed-to-next-region.html [ Failure ]

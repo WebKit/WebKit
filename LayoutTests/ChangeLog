@@ -1,3 +1,10 @@
+2015-01-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Re-enable Sputnik.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/text/backslash-to-yen-sign-euc-expected.txt:
+
 2015-01-27  Roger Fong  <roger_fong@apple.com>
 
         WebGL2: Disable various extensions on WebGL2 context that have been promoted to core.
