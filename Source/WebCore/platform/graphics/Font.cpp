@@ -30,7 +30,7 @@
 #include "config.h"
 #include "Font.h"
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
+#if PLATFORM(COCOA)
 #include "CoreTextSPI.h"
 #endif
 #include "FontCache.h"
@@ -384,7 +384,7 @@ bool Font::applyTransforms(GlyphBufferGlyph* glyphs, GlyphBufferAdvance* advance
 {
     // We need to handle transforms on SVG fonts internally, since they are rendered internally.
     ASSERT(!isSVGFont());
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080)
+#if PLATFORM(COCOA)
     CTFontTransformOptions options = (typesettingFeatures & Kerning ? kCTFontTransformApplyPositioning : 0) | (typesettingFeatures & Ligatures ? kCTFontTransformApplyShaping : 0);
     return CTFontTransformGlyphs(m_platformData.ctFont(), glyphs, reinterpret_cast<CGSize*>(advances), glyphCount, options);
 #else

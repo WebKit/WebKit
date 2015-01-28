@@ -1,3 +1,40 @@
+2015-01-28  Beth Dakin  <bdakin@apple.com>
+
+        Remove Mountain Lion code from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=141007
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * page/AlternativeTextClient.h:
+        * page/mac/SettingsMac.mm:
+        (WebCore::Settings::initializeDefaultFontFamilies):
+        * platform/cocoa/SystemVersion.mm:
+        (WebCore::callGestalt): Deleted.
+        (WebCore::createSystemMarketingVersion): Deleted.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::applyTransforms):
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::supportsTypesettingFeatures):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::supportsAcceleratedFilterAnimations):
+        * platform/graphics/ca/PlatformCAFilters.h:
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::platformInit):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::Extensions3DOpenGLCommon):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::phaseForEvent):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::createStreams):
+        * platform/network/cocoa/CredentialCocoa.mm:
+        (WebCore::toCredentialPersistence):
+        * platform/spi/cocoa/CoreTextSPI.h:
+
 2015-01-28  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Compile error in media player implementation.

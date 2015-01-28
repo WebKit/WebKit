@@ -1325,14 +1325,6 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable() const
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded() const
 {
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
-    // AVFoundation on Mountain Lion will occasionally not send a KVO notification
-    // when loadedTimeRanges changes when there is no video output. In that case
-    // update the cached value explicitly.
-    if (!hasLayerRenderer() && !hasContextRenderer())
-        m_cachedLoadedRanges = [m_avPlayerItem loadedTimeRanges];
-#endif
-
     if (!m_cachedLoadedRanges)
         return MediaTime::zeroTime();
 

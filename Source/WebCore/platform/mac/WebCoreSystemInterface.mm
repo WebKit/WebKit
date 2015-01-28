@@ -34,9 +34,7 @@ void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
 void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
 BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
 void (*wkCGContextResetClip)(CGContextRef);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 bool (*wkCGContextDrawsWithCorrectShadowOffsets)(CGContextRef);
-#endif
 CGPatternRef (*wkCGPatternCreateWithImageAndTransform)(CGImageRef, CGAffineTransform, int);
 NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
 CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
@@ -157,15 +155,13 @@ dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
 dispatch_source_t (*wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue)(void);
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
-#endif
 
 void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 
 void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if !PLATFORM(IOS)
 CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
 CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
 CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);

@@ -84,17 +84,6 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
     // or if the vendor is AMD/ATI and the system is 10.7.2 and above.
 
     bool systemSupportsMultisampling = true;
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
-    ASSERT(isMainThread());
-    static SInt32 version;
-    if (!version) {
-        if (Gestalt(gestaltSystemVersion, &version) != noErr)
-            systemSupportsMultisampling = false;
-    }
-    // See https://bugs.webkit.org/show_bug.cgi?id=77922 for more details
-    if (systemSupportsMultisampling)
-        systemSupportsMultisampling = version >= 0x1072;
-#endif // SNOW_LEOPARD and LION
 
     if (m_isAMD && !systemSupportsMultisampling)
         m_maySupportMultisampling = false;
