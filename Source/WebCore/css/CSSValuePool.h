@@ -42,11 +42,13 @@ namespace WebCore {
 
 class CSSValueList;
 
+enum class FromSystemFontID { No, Yes };
+
 class CSSValuePool {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PassRefPtr<CSSValueList> createFontFaceValue(const AtomicString&);
-    Ref<CSSPrimitiveValue> createFontFamilyValue(const String&, FromSystemFontIDOrNot = NotFromSystemFontID);
+    Ref<CSSPrimitiveValue> createFontFamilyValue(const String&, FromSystemFontID = FromSystemFontID::No);
     Ref<CSSInheritedValue> createInheritedValue() { return m_inheritedValue.copyRef(); }
     Ref<CSSInitialValue> createImplicitInitialValue() { return m_implicitInitialValue.copyRef(); }
     Ref<CSSInitialValue> createExplicitInitialValue() { return m_explicitInitialValue.copyRef(); }

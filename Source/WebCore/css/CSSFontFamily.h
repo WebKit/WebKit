@@ -39,11 +39,9 @@ namespace WebCore {
 // FontDescription. This flag is used to determine if we should do the "use backslash as Yen
 // sign" hack.
 
-enum FromSystemFontIDOrNot { NotFromSystemFontID, FromSystemFontID };
-
 struct CSSFontFamily {
     String familyName;
-    FromSystemFontIDOrNot fromSystemFontID;
+    bool fromSystemFontID;
 };
 
 inline bool operator==(const CSSFontFamily& a, const CSSFontFamily& b)

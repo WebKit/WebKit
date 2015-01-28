@@ -6320,7 +6320,7 @@ void CSSParser::parseSystemFont(bool important)
     addProperty(CSSPropertyFontWeight, cssValuePool().createValue(fontDescription.weight()), important);
     addProperty(CSSPropertyFontSize, cssValuePool().createValue(fontDescription.specifiedSize(), CSSPrimitiveValue::CSS_PX), important);
     Ref<CSSValueList> fontFamilyList = CSSValueList::createCommaSeparated();
-    fontFamilyList->append(cssValuePool().createFontFamilyValue(fontDescription.familyAt(0), FromSystemFontID));
+    fontFamilyList->append(cssValuePool().createFontFamilyValue(fontDescription.familyAt(0), FromSystemFontID::Yes));
     addProperty(CSSPropertyFontFamily, WTF::move(fontFamilyList), important);
     addProperty(CSSPropertyFontVariant, cssValuePool().createIdentifierValue(CSSValueNormal), important);
     addProperty(CSSPropertyLineHeight, cssValuePool().createIdentifierValue(CSSValueNormal), important);

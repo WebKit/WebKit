@@ -1,5 +1,27 @@
 2015-01-28  Chris Dumez  <cdumez@apple.com>
 
+        Use an enum class for createFontFamilyValue()'s fromSystemFontID argument
+        https://bugs.webkit.org/show_bug.cgi?id=140981
+
+        Reviewed by Darin Adler.
+
+        Use an enum class for createFontFamilyValue()'s fromSystemFontID argument
+        instead of a simple enum, as suggested by Sam. This is a bit nicer.
+
+        Also, use a boolean type for CSSFontFamily.fromSystemFontID instead of
+        the enum type to facilitate handling. Using a enum (class) for
+        CSSFontFamily's fromSystemFontID member is not useful as it is always
+        accessed by name.
+
+        * css/CSSFontFamily.h:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSystemFont):
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createFontFamilyValue):
+        * css/CSSValuePool.h:
+
+2015-01-28  Chris Dumez  <cdumez@apple.com>
+
         Fix typo in markPagesForVistedLinkStyleRecalc()
         https://bugs.webkit.org/show_bug.cgi?id=140977
 
