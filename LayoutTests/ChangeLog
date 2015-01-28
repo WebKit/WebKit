@@ -1,5 +1,25 @@
 2015-01-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r178380
+
+    2015-01-13  Dean Jackson  <dino@apple.com>
+
+            Filters aren't applied to elements in columns after the first
+            https://bugs.webkit.org/show_bug.cgi?id=140331
+            <rdar://problem/19313858>
+
+            Reviewed by Simon Fraser.
+
+            Tests for filters and clipping on a column other
+            than the first.
+
+            * fast/multicol/clip-in-columns-expected.html: Added.
+            * fast/multicol/clip-in-columns.html: Added.
+            * fast/multicol/filter-in-columns-expected.html: Added.
+            * fast/multicol/filter-in-columns.html: Added.
+
+2015-01-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r178038
 
     2015-01-07  Chris Fleizach  <cfleizach@apple.com>

@@ -3868,23 +3868,35 @@ bool RenderLayer::setupClipPath(GraphicsContext* context, const LayerPaintingInf
 
 #if ENABLE(CSS_FILTERS)
 
-std::unique_ptr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsContext* context, LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
+bool RenderLayer::hasFilterThatIsPainting(GraphicsContext* context, PaintLayerFlags paintFlags) const
 {
     if (context->paintingDisabled())
-        return nullptr;
+        return false;
 
     if (paintFlags & PaintLayerPaintingOverlayScrollbars)
-        return nullptr;
+        return false;
 
     FilterInfo* filterInfo = FilterInfo::getIfExists(*this);
     bool hasPaintedFilter = filterInfo && filterInfo->renderer() && paintsWithFilters();
     if (!hasPaintedFilter)
-        return nullptr;
+        return false;
 
     auto filterPainter = std::make_unique<FilterEffectRendererHelper>(hasPaintedFilter);
     if (!filterPainter->haveFilterEffect())
+        return false;
+
+    return true;
+}
+
+std::unique_ptr<FilterEffectRendererHelper> RenderLayer::setupFilters(GraphicsContext* context, LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags, const LayoutSize& offsetFromRoot, LayoutRect& rootRelativeBounds, bool& rootRelativeBoundsComputed)
+{
+    if (!hasFilterThatIsPainting(context, paintFlags))
         return nullptr;
-    
+
+    FilterInfo* filterInfo = FilterInfo::getIfExists(*this);
+    bool hasPaintedFilter = filterInfo && filterInfo->renderer() && paintsWithFilters();
+    auto filterPainter = std::make_unique<FilterEffectRendererHelper>(hasPaintedFilter);
+
     LayoutRect filterRepaintRect = filterInfo->dirtySourceRect();
     filterRepaintRect.move(offsetFromRoot);
 
@@ -4005,13 +4017,16 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     bool needToAdjustSubpixelQuantization = setupFontSubpixelQuantization(context, didQuantizeFonts);
 
     // Apply clip-path to context.
-    bool hasClipPath = setupClipPath(context, paintingInfo, offsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
+    LayoutSize columnAwareOffsetFromRoot = offsetFromRoot;
+    if (renderer().flowThreadContainingBlock() && (renderer().hasClipPath() || hasFilterThatIsPainting(context, paintFlags)))
+        columnAwareOffsetFromRoot = toLayoutSize(convertToLayerCoords(paintingInfo.rootLayer, LayoutPoint(), AdjustForColumns));
+    bool hasClipPath = setupClipPath(context, paintingInfo, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
 
     LayerPaintingInfo localPaintingInfo(paintingInfo);
 
     GraphicsContext* transparencyLayerContext = context;
 #if ENABLE(CSS_FILTERS)
-    std::unique_ptr<FilterEffectRendererHelper> filterPainter = setupFilters(context, localPaintingInfo, paintFlags, offsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
+    std::unique_ptr<FilterEffectRendererHelper> filterPainter = setupFilters(context, localPaintingInfo, paintFlags, columnAwareOffsetFromRoot, rootRelativeBounds, rootRelativeBoundsComputed);
     if (filterPainter) {
         context = filterPainter->filterContext();
         if (context != transparencyLayerContext && haveTransparency) {

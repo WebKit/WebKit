@@ -1,5 +1,34 @@
 2015-01-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r178380
+
+    2015-01-13  Dean Jackson  <dino@apple.com>
+
+            Filters aren't applied to elements in columns after the first
+            https://bugs.webkit.org/show_bug.cgi?id=140331
+
+            Reviewed by Simon Fraser.
+
+            The important bits of this change came from Simon.
+
+            Filters and clipping were not taking columns into
+            account when using their offset rectangles. The fix
+            is to recalculate the rects if you're in such a
+            situation.
+
+            Tests: fast/multicol/clip-in-columns.html
+                   fast/multicol/filter-in-columns.html
+
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::hasFilterThatIsPainting): New method used
+            to check if we're about to paint a filter.
+            (WebCore::RenderLayer::setupFilters): Use the new helper if possible.
+            (WebCore::RenderLayer::paintLayerContents): If we're in columns,
+            and we either have a clip or a filter, recalculate the offset rectangles.
+            * rendering/RenderLayer.h:
+
+2015-01-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r178175
 
     2015-01-08  Enrica Casucci  <enrica@apple.com>
