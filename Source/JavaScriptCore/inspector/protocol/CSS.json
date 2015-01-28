@@ -318,31 +318,6 @@
             "description": "Sets the new <code>text</code> for the respective style."
         },
         {
-            "name": "setPropertyText",
-            "parameters": [
-                { "name": "styleId", "$ref": "CSSStyleId" },
-                { "name": "propertyIndex", "type": "integer" },
-                { "name": "text", "type": "string" },
-                { "name": "overwrite", "type": "boolean" }
-            ],
-            "returns": [
-                { "name": "style", "$ref": "CSSStyle", "description": "The resulting style after the property text modification." }
-            ],
-            "description": "Sets the new <code>text</code> for a property in the respective style, at offset <code>propertyIndex</code>. If <code>overwrite</code> is <code>true</code>, a property at the given offset is overwritten, otherwise inserted. <code>text</code> entirely replaces the property <code>name: value</code>."
-        },
-        {
-            "name": "toggleProperty",
-            "parameters": [
-                { "name": "styleId", "$ref": "CSSStyleId" },
-                { "name": "propertyIndex", "type": "integer" },
-                { "name": "disable", "type": "boolean" }
-            ],
-            "returns": [
-                { "name": "style", "$ref": "CSSStyle", "description": "The resulting style after the property toggling." }
-            ],
-            "description": "Toggles the property in the respective style, at offset <code>propertyIndex</code>. The <code>disable</code> parameter denotes whether the property should be disabled (i.e. removed from the style declaration). If <code>disable == false</code>, the property gets put back into its original place in the style declaration."
-        },
-        {
             "name": "setRuleSelector",
             "parameters": [
                 { "name": "ruleId", "$ref": "CSSRuleId" },

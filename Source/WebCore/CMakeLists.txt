@@ -1773,7 +1773,6 @@ set(WebCore_SOURCES
     inspector/InspectorPageAgent.cpp
     inspector/InspectorResourceAgent.cpp
     inspector/InspectorStyleSheet.cpp
-    inspector/InspectorStyleTextEditor.cpp
     inspector/InspectorTimelineAgent.cpp
     inspector/InspectorWorkerAgent.cpp
     inspector/InstrumentingAgents.cpp

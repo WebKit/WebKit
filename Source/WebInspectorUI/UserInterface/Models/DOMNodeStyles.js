@@ -248,7 +248,7 @@ WebInspector.DOMNodeStyles.prototype = {
         CSSAgent.getComputedStyleForNode.invoke({nodeId: this._node.id}, fetchedComputedStyle.bind(this));
     },
 
-    addRule: function(selector)
+    addEmptyRule: function()
     {
         function addedRule(error, rulePayload)
         {
@@ -260,7 +260,7 @@ WebInspector.DOMNodeStyles.prototype = {
             this.refresh();
         }
 
-        selector = selector || this._node.appropriateSelectorFor(true);
+        selector = this._node.appropriateSelectorFor(true);
 
         CSSAgent.addRule.invoke({contextNodeId: this._node.id, selector: selector}, addedRule.bind(this));
     },
@@ -451,82 +451,7 @@ WebInspector.DOMNodeStyles.prototype = {
         style.ownerStyleSheet.requestContent().then(fetchedStyleSheetContent.bind(this));
     },
 
-    changeProperty: function(property, name, value, priority)
-    {
-        var text = name ? name + ": " + value + (priority ? " !" + priority : "") + ";" : "";
-        this.changePropertyText(property, text);
-    },
-
-    changePropertyText: function(property, text)
-    {
-        text = text || "";
-
-        var index = property.index;
-        var newProperty = isNaN(index);
-        var overwrite = true;
-
-        // If this is a new property, then give it an index at the end of the current properties.
-        // Also don't overwrite, which will cause the property to be added at that index.
-        if (newProperty) {
-            index = property.ownerStyle.properties.length;
-            overwrite = false;
-        }
-
-        if (text && text.charAt(text.length - 1) !== ";")
-            text += ";";
-
-        this._needsRefresh = true;
-        this._ignoreNextContentDidChangeForStyleSheet = property.ownerStyle.ownerStyleSheet;
-
-        CSSAgent.setPropertyText(property.ownerStyle.id, index, text, overwrite, this._handlePropertyChange.bind(this, property));
-    },
-
-    changePropertyEnabledState: function(property, enabled)
-    {
-        enabled = !!enabled;
-
-        // Can't change a pending property with a NaN index.
-        if (isNaN(property.index))
-            return;
-
-        this._ignoreNextContentDidChangeForStyleSheet = property.ownerStyle.ownerStyleSheet;
-
-        CSSAgent.toggleProperty(property.ownerStyle.id, property.index, !enabled, this._handlePropertyChange.bind(this, property));
-    },
-
-    addProperty: function(property)
-    {
-        // Can't add a property unless it has a NaN index.
-        if (!isNaN(property.index))
-            return;
-
-        // Adding is done by setting the text.
-        this.changePropertyText(property, property.text);
-    },
-
-    removeProperty: function(property)
-    {
-        // Can't remove a pending property with a NaN index.
-        if (isNaN(property.index))
-            return;
-
-        // Removing is done by setting text to an empty string.
-        this.changePropertyText(property, "");
-    },
-
     // Private
-
-    _handlePropertyChange: function(property, error, stylePayload)
-    {
-        if (error)
-            return;
-
-        DOMAgent.markUndoableState();
-
-        // Do a refresh instead of handling stylePayload so computed style is updated and we get valid
-        // styleSheetTextRange values for all the rules after this change.
-        this.refresh();
-    },
 
     _createSourceCodeLocation: function(sourceURL, sourceLine, sourceColumn)
     {

@@ -259,99 +259,6 @@ private:
     String m_oldText;
 };
 
-class InspectorCSSAgent::SetPropertyTextAction final : public InspectorCSSAgent::StyleSheetAction {
-    WTF_MAKE_NONCOPYABLE(SetPropertyTextAction);
-public:
-    SetPropertyTextAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, unsigned propertyIndex, const String& text, bool overwrite)
-        : InspectorCSSAgent::StyleSheetAction(ASCIILiteral("SetPropertyText"), styleSheet)
-        , m_cssId(cssId)
-        , m_propertyIndex(propertyIndex)
-        , m_text(text)
-        , m_overwrite(overwrite)
-    {
-    }
-
-    virtual String toString() override
-    {
-        return mergeId() + ": " + m_oldText + " -> " + m_text;
-    }
-
-    virtual bool perform(ExceptionCode& ec) override
-    {
-        return redo(ec);
-    }
-
-    virtual bool undo(ExceptionCode& ec) override
-    {
-        String placeholder;
-        return m_styleSheet->setPropertyText(m_cssId, m_propertyIndex, m_overwrite ? m_oldText : "", true, &placeholder, ec);
-    }
-
-    virtual bool redo(ExceptionCode& ec) override
-    {
-        String oldText;
-        bool result = m_styleSheet->setPropertyText(m_cssId, m_propertyIndex, m_text, m_overwrite, &oldText, ec);
-        m_oldText = oldText.stripWhiteSpace();
-        // FIXME: remove this once the model handles this case.
-        if (!m_oldText.endsWith(';'))
-            m_oldText.append(';');
-
-        return result;
-    }
-
-    virtual String mergeId() override
-    {
-        return String::format("SetPropertyText %s:%u:%s", m_styleSheet->id().utf8().data(), m_propertyIndex, m_overwrite ? "true" : "false");
-    }
-
-    virtual void merge(std::unique_ptr<Action> action) override
-    {
-        ASSERT(action->mergeId() == mergeId());
-
-        SetPropertyTextAction* other = static_cast<SetPropertyTextAction*>(action.get());
-        m_text = other->m_text;
-    }
-
-private:
-    InspectorCSSId m_cssId;
-    unsigned m_propertyIndex;
-    String m_text;
-    String m_oldText;
-    bool m_overwrite;
-};
-
-class InspectorCSSAgent::TogglePropertyAction final : public InspectorCSSAgent::StyleSheetAction {
-    WTF_MAKE_NONCOPYABLE(TogglePropertyAction);
-public:
-    TogglePropertyAction(InspectorStyleSheet* styleSheet, const InspectorCSSId& cssId, unsigned propertyIndex, bool disable)
-        : InspectorCSSAgent::StyleSheetAction(ASCIILiteral("ToggleProperty"), styleSheet)
-        , m_cssId(cssId)
-        , m_propertyIndex(propertyIndex)
-        , m_disable(disable)
-    {
-    }
-
-    virtual bool perform(ExceptionCode& ec) override
-    {
-        return redo(ec);
-    }
-
-    virtual bool undo(ExceptionCode& ec) override
-    {
-        return m_styleSheet->toggleProperty(m_cssId, m_propertyIndex, !m_disable, ec);
-    }
-
-    virtual bool redo(ExceptionCode& ec) override
-    {
-        return m_styleSheet->toggleProperty(m_cssId, m_propertyIndex, m_disable, ec);
-    }
-
-private:
-    InspectorCSSId m_cssId;
-    unsigned m_propertyIndex;
-    bool m_disable;
-};
-
 class InspectorCSSAgent::SetRuleSelectorAction final : public InspectorCSSAgent::StyleSheetAction {
     WTF_MAKE_NONCOPYABLE(SetRuleSelectorAction);
 public:
@@ -728,38 +635,6 @@ void InspectorCSSAgent::setStyleText(ErrorString& errorString, const RefPtr<Insp
 
     ExceptionCode ec = 0;
     bool success = m_domAgent->history()->perform(std::make_unique<SetStyleTextAction>(inspectorStyleSheet, compoundId, text), ec);
-    if (success)
-        result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
-    errorString = InspectorDOMAgent::toErrorString(ec);
-}
-
-void InspectorCSSAgent::setPropertyText(ErrorString& errorString, const RefPtr<InspectorObject>&& fullStyleId, int propertyIndex, const String& text, bool overwrite, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result)
-{
-    InspectorCSSId compoundId(fullStyleId.copyRef());
-    ASSERT(!compoundId.isEmpty());
-
-    InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, compoundId.styleSheetId());
-    if (!inspectorStyleSheet)
-        return;
-
-    ExceptionCode ec = 0;
-    bool success = m_domAgent->history()->perform(std::make_unique<SetPropertyTextAction>(inspectorStyleSheet, compoundId, propertyIndex, text, overwrite), ec);
-    if (success)
-        result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
-    errorString = InspectorDOMAgent::toErrorString(ec);
-}
-
-void InspectorCSSAgent::toggleProperty(ErrorString& errorString, const RefPtr<InspectorObject>&& fullStyleId, int propertyIndex, bool disable, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result)
-{
-    InspectorCSSId compoundId(fullStyleId.copyRef());
-    ASSERT(!compoundId.isEmpty());
-
-    InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, compoundId.styleSheetId());
-    if (!inspectorStyleSheet)
-        return;
-
-    ExceptionCode ec = 0;
-    bool success = m_domAgent->history()->perform(std::make_unique<TogglePropertyAction>(inspectorStyleSheet, compoundId, propertyIndex, disable), ec);
     if (success)
         result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
     errorString = InspectorDOMAgent::toErrorString(ec);

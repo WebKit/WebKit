@@ -1,3 +1,51 @@
+2015-01-28  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove CSS.setPropertyText, CSS.toggleProperty and related dead code
+        https://bugs.webkit.org/show_bug.cgi?id=140961
+
+        Reviewed by Timothy Hatcher.
+
+        Setters for CSSProperty (except override) are not used, so delete them. These setters
+        and their callees in DOMNodeStyles were the only clients of the removed protocol commands.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WebInspector.CSSProperty.prototype.update):
+        (WebInspector.CSSProperty.prototype.get name):
+        (WebInspector.CSSProperty.prototype.get value):
+        (WebInspector.CSSProperty.prototype.get priority):
+        (WebInspector.CSSProperty.prototype.hasOtherVendorNameOrKeyword):
+        (WebInspector.CSSProperty.prototype.set text): Deleted.
+        (WebInspector.CSSProperty.prototype.set name): Deleted.
+        (WebInspector.CSSProperty.prototype.set value): Deleted.
+        (WebInspector.CSSProperty.prototype.set important): Deleted.
+        (WebInspector.CSSProperty.prototype.set priority): Deleted.
+        (WebInspector.CSSProperty.prototype.set enabled): Deleted.
+        (WebInspector.CSSProperty.prototype.add): Deleted.
+        (WebInspector.CSSProperty.prototype.remove): Deleted.
+        (WebInspector.CSSProperty.prototype._updatePropertySoon.performUpdate): Deleted.
+        (WebInspector.CSSProperty.prototype._updatePropertySoon): Deleted.
+        (WebInspector.CSSProperty.prototype._cancelPendingUpdate): Deleted.
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WebInspector.CSSStyleDeclaration.prototype.addProperty): Deleted.
+        (WebInspector.CSSStyleDeclaration.prototype.removeProperty): Deleted.
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.addEmptyRule):
+        (WebInspector.DOMNodeStyles.prototype.addRule): Deleted.
+        (WebInspector.DOMNodeStyles.prototype.changeProperty): Deleted.
+        (WebInspector.DOMNodeStyles.prototype.changePropertyText): Deleted.
+        (WebInspector.DOMNodeStyles.prototype.changePropertyEnabledState): Deleted.
+        (WebInspector.DOMNodeStyles.prototype.addProperty): Deleted.
+        (WebInspector.DOMNodeStyles.prototype.removeProperty): Deleted.
+        (WebInspector.DOMNodeStyles.prototype._handlePropertyChange): Deleted.
+        * UserInterface/Protocol/Legacy/6.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype._newRuleClicked):
+        * Versions/Inspector-iOS-6.0.json:
+        * Versions/Inspector-iOS-7.0.json:
+        * Versions/Inspector-iOS-8.0.json:
+
 2015-01-28  Dana Burkart  <dburkart@apple.com>
 
         Move ASan flag settings from DebugRelease.xcconfig to Base.xcconfig

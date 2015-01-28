@@ -280,7 +280,7 @@ WebInspector.RulesStyleDetailsPanel.prototype = {
     _newRuleClicked: function(event)
     {
         this._focusNextNewInspectorRule = true;
-        this.nodeStyles.addRule();
+        this.nodeStyles.addEmptyRule();
     }
 };
 

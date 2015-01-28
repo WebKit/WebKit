@@ -116,8 +116,6 @@ public:
     virtual void getStyleSheetText(ErrorString&, const String& styleSheetId, String* result) override;
     virtual void setStyleSheetText(ErrorString&, const String& styleSheetId, const String& text) override;
     virtual void setStyleText(ErrorString&, const RefPtr<Inspector::InspectorObject>&& styleId, const String& text, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result) override;
-    virtual void setPropertyText(ErrorString&, const RefPtr<Inspector::InspectorObject>&& styleId, int propertyIndex, const String& text, bool overwrite, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result) override;
-    virtual void toggleProperty(ErrorString&, const RefPtr<Inspector::InspectorObject>&& styleId, int propertyIndex, bool disable, RefPtr<Inspector::Protocol::CSS::CSSStyle>& result) override;
     virtual void setRuleSelector(ErrorString&, const RefPtr<Inspector::InspectorObject>&& ruleId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result) override;
     virtual void addRule(ErrorString&, int contextNodeId, const String& selector, RefPtr<Inspector::Protocol::CSS::CSSRule>& result) override;
     virtual void getSupportedCSSProperties(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSPropertyInfo>>& result) override;
@@ -128,8 +126,6 @@ private:
     class StyleSheetAction;
     class SetStyleSheetTextAction;
     class SetStyleTextAction;
-    class SetPropertyTextAction;
-    class TogglePropertyAction;
     class SetRuleSelectorAction;
     class AddRuleAction;
 

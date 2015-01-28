@@ -42,6 +42,7 @@ WebInspector.CSSProperty.Event = {
 
 WebInspector.CSSProperty.prototype = {
     constructor: WebInspector.CSSProperty,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 
@@ -113,12 +114,6 @@ WebInspector.CSSProperty.prototype = {
         delete this._canonicalName;
         delete this._hasOtherVendorNameOrKeyword;
 
-        if (!this._updatePropertySoonTimeout) {
-            delete this._pendingName;
-            delete this._pendingValue;
-            delete this._pendingPriority;
-        }
-
         if (changed)
             this.dispatchEventToListeners(WebInspector.CSSProperty.Event.Changed);
     },
@@ -138,59 +133,9 @@ WebInspector.CSSProperty.prototype = {
         return this._text || this.synthesizedText;
     },
 
-    set text(text)
-    {
-        if (!this._ownerStyle || !this._ownerStyle.editable)
-            return;
-
-        if (this._text === text)
-            return;
-
-        if (isNaN(this._index)) {
-            this._text = text || "";
-
-            // Clear the name, value and priority since they might not match the text now.
-            this._name = "";
-            this._value = "";
-            this._priority = "";
-
-            // Ditto for the canonical and pending properties.
-            delete this._canonicalName;
-            delete this._pendingName;
-            delete this._pendingValue;
-            delete this._pendingPriority;
-
-            return;
-        }
-
-        this._cancelPendingUpdate();
-        this._ownerStyle.nodeStyles.changePropertyText(this, text);
-    },
-
     get name()
     {
-        if (isNaN(this._index))
-            return this._pendingName || this._name;
         return this._name;
-    },
-
-    set name(name)
-    {
-        if (!this._ownerStyle || !this._ownerStyle.editable)
-            return;
-
-        if (this._name === name)
-            return;
-
-        if (isNaN(this._index)) {
-            this._name = name;
-            this._text = "";
-
-            delete this._canonicalName;
-        } else {
-            this._pendingName = name;
-            this._updatePropertySoon();
-        }
     },
 
     get canonicalName()
@@ -205,26 +150,7 @@ WebInspector.CSSProperty.prototype = {
 
     get value()
     {
-        if (isNaN(this._index))
-            return this._pendingValue || this._value;
         return this._value;
-    },
-
-    set value(value)
-    {
-        if (!this._ownerStyle || !this._ownerStyle.editable)
-            return;
-
-        if (this._value === value)
-            return;
-
-        if (isNaN(this._index)) {
-            this._value = value;
-            this._text = "";
-        } else {
-            this._pendingValue = value;
-            this._updatePropertySoon();
-        }
     },
 
     get important()
@@ -232,46 +158,14 @@ WebInspector.CSSProperty.prototype = {
         return this.priority === "important";
     },
 
-    set important(important)
-    {
-        this.priority = important ? "important" : "";
-    },
-
     get priority()
     {
-        if (isNaN(this._index))
-            return this._pendingPriority || this._priority;
         return this._priority;
-    },
-
-    set priority(priority)
-    {
-        if (!this._ownerStyle || !this._ownerStyle.editable)
-            return;
-
-        if (this._priority === priority)
-            return;
-
-        if (isNaN(this._index)) {
-            this._priority = priority;
-            this._text = "";
-        } else {
-            this._pendingPriority = priority;
-            this._updatePropertySoon();
-        }
     },
 
     get enabled()
     {
         return this._enabled && this._ownerStyle && (!isNaN(this._index) || this._ownerStyle.type === WebInspector.CSSStyleDeclaration.Type.Computed);
-    },
-
-    set enabled(enabled)
-    {
-        if (!this._ownerStyle || !this._ownerStyle.editable)
-            return;
-
-        this._ownerStyle.nodeStyles.changePropertyEnabledState(this, enabled);
     },
 
     get overridden()
@@ -392,63 +286,5 @@ WebInspector.CSSProperty.prototype = {
         this._hasOtherVendorNameOrKeyword = WebInspector.cssStyleManager.propertyNameHasOtherVendorPrefix(this.name) || WebInspector.cssStyleManager.propertyValueHasOtherVendorKeyword(this.value);
 
         return this._hasOtherVendorNameOrKeyword;
-    },
-
-    add: function()
-    {
-        // We can only add if the index is NaN. Return early otherwise.
-        if (!this._ownerStyle || !this._ownerStyle.editable || !isNaN(this._index))
-            return;
-
-        this._cancelPendingUpdate();
-        this._ownerStyle.addProperty(this);
-    },
-
-    remove: function()
-    {
-        // We can only remove if the index is not NaN. Return early otherwise.
-        if (!this._ownerStyle || !this._ownerStyle.editable || isNaN(this._index))
-            return;
-
-        this._cancelPendingUpdate();
-        this._ownerStyle.removeProperty(this);
-    },
-
-    // Private
-
-    _updatePropertySoon: function()
-    {
-        if (!this._ownerStyle || isNaN(this._index) || this._updatePropertySoonTimeout)
-            return;
-
-        function performUpdate()
-        {
-            delete this._updatePropertySoonTimeout;
-
-            if (!this._ownerStyle || isNaN(this._index))
-                return;
-
-            var name = "_pendingName" in this ? this._pendingName : this._name;
-            var value = "_pendingValue" in this ? this._pendingValue : this._value;
-            var priority = "_pendingPriority" in this ? this._pendingPriority : this._priority;
-
-            delete this._pendingName;
-            delete this._pendingValue;
-            delete this._pendingPriority;
-
-            this._ownerStyle.nodeStyles.changeProperty(this, name, value, priority);
-        }
-
-        this._updatePropertySoonTimeout = setTimeout(performUpdate.bind(this), 0);
-    },
-
-    _cancelPendingUpdate: function()
-    {
-        if (!this._updatePropertySoonTimeout)
-            return;
-        clearTimeout(this._updatePropertySoonTimeout);
-        delete this._updatePropertySoonTimeout;
     }
 };
-
-WebInspector.CSSProperty.prototype.__proto__ = WebInspector.Object.prototype;

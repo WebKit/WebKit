@@ -28,7 +28,6 @@
 #include "CSSPropertySourceData.h"
 #include "CSSStyleDeclaration.h"
 #include "ExceptionCode.h"
-#include "InspectorStyleTextEditor.h"
 #include <inspector/InspectorProtocolObjects.h>
 #include <inspector/InspectorValues.h>
 #include <wtf/HashMap.h>
@@ -134,9 +133,6 @@ public:
     CSSStyleDeclaration* cssStyle() const { return m_style.get(); }
     RefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForStyle() const;
     Ref<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStyleProperty>> buildArrayForComputedStyle() const;
-    bool hasDisabledProperties() const { return !m_disabledProperties.isEmpty(); }
-    bool setPropertyText(unsigned index, const String& text, bool overwrite, String* oldText, ExceptionCode&);
-    bool toggleProperty(unsigned index, bool disable, ExceptionCode&);
 
     bool getText(String* result) const;
     bool setText(const String&, ExceptionCode&);
@@ -154,14 +150,10 @@ private:
     String shorthandValue(const String& shorthandProperty) const;
     String shorthandPriority(const String& shorthandProperty) const;
     Vector<String> longhandProperties(const String& shorthandProperty) const;
-    NewLineAndWhitespace& newLineAndWhitespaceDelimiters() const;
 
     InspectorCSSId m_styleId;
     RefPtr<CSSStyleDeclaration> m_style;
     InspectorStyleSheet* m_parentStyleSheet;
-    Vector<InspectorStyleProperty> m_disabledProperties;
-    mutable std::pair<String, String> m_format;
-    mutable bool m_formatAcquired;
 };
 
 class InspectorStyleSheet : public RefCounted<InspectorStyleSheet> {
@@ -194,8 +186,6 @@ public:
     RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(CSSStyleRule*, Element*);
     RefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForStyle(CSSStyleDeclaration*);
     bool setStyleText(const InspectorCSSId&, const String& text, String* oldText, ExceptionCode&);
-    bool setPropertyText(const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite, String* oldPropertyText, ExceptionCode&);
-    bool toggleProperty(const InspectorCSSId&, unsigned propertyIndex, bool disable, ExceptionCode&);
 
     virtual bool getText(String* result) const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId&) const;
@@ -214,8 +204,6 @@ protected:
     virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const;
     virtual bool ensureParsedDataReady();
     virtual RefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&);
-    virtual void rememberInspectorStyle(RefPtr<InspectorStyle>&&);
-    virtual void forgetInspectorStyle(CSSStyleDeclaration*);
 
     // Also accessed by friend class InspectorStyle.
     virtual bool setStyleText(CSSStyleDeclaration*, const String&, ExceptionCode&);
@@ -231,7 +219,6 @@ private:
     bool ensureSourceData();
     void ensureFlatRules() const;
     bool styleSheetTextWithChangedStyle(CSSStyleDeclaration*, const String& newStyleText, String* result);
-    void revalidateStyle(CSSStyleDeclaration*);
     bool originalStyleSheetText(String* result) const;
     bool resourceStyleSheetText(String* result) const;
     bool inlineStyleSheetText(String* result) const;
@@ -244,9 +231,7 @@ private:
     RefPtr<CSSStyleSheet> m_pageStyleSheet;
     Inspector::Protocol::CSS::StyleSheetOrigin m_origin;
     String m_documentURL;
-    bool m_isRevalidating;
     ParsedStyleSheet* m_parsedStyleSheet;
-    InspectorStyleMap m_inspectorStyles;
     mutable CSSStyleRuleVector m_flatRules;
     Listener* m_listener;
 };
@@ -267,8 +252,6 @@ protected:
     virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const override { return 0; }
     virtual bool ensureParsedDataReady() override;
     virtual RefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&) override;
-    virtual void rememberInspectorStyle(RefPtr<InspectorStyle>&&) override { }
-    virtual void forgetInspectorStyle(CSSStyleDeclaration*) override { }
 
     // Also accessed by friend class InspectorStyle.
     virtual bool setStyleText(CSSStyleDeclaration*, const String&, ExceptionCode&) override;

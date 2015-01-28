@@ -4689,9 +4689,6 @@
     <ClCompile Include="..\inspector\InspectorStyleSheet.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\inspector\InspectorStyleTextEditor.cpp">
-      <Filter>inspector</Filter>
-    </ClCompile>
     <ClCompile Include="..\inspector\InspectorTimelineAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -11896,9 +11893,6 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorStyleSheet.h">
-      <Filter>inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inspector\InspectorStyleTextEditor.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorTimelineAgent.h">

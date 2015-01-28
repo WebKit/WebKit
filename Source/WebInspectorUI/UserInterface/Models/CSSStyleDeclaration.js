@@ -59,6 +59,7 @@ WebInspector.CSSStyleDeclaration.Type = {
 
 WebInspector.CSSStyleDeclaration.prototype = {
     constructor: WebInspector.CSSStyleDeclaration,
+    __proto__: WebInspector.Object.prototype,
 
     // Public
 
@@ -265,40 +266,6 @@ WebInspector.CSSStyleDeclaration.prototype = {
         return newProperty;
     },
 
-    addProperty: function(property)
-    {
-        console.assert(property);
-        if (!property)
-            return;
-
-        console.assert(property.ownerStyle === this);
-        if (property.ownerStyle !== this)
-            return;
-
-        console.assert(this.editable);
-        if (!this.editable)
-            return;
-
-        this._nodeStyles.addProperty(property);
-    },
-
-    removeProperty: function(property)
-    {
-        console.assert(property);
-        if (!property)
-            return;
-
-        console.assert(property.ownerStyle === this);
-        if (property.ownerStyle !== this)
-            return;
-
-        console.assert(this.editable);
-        if (!this.editable)
-            return;
-
-        this._nodeStyles.removeProperty(property);
-    },
-
     // Protected
 
     get nodeStyles()
@@ -306,5 +273,3 @@ WebInspector.CSSStyleDeclaration.prototype = {
         return this._nodeStyles;
     }
 };
-
-WebInspector.CSSStyleDeclaration.prototype.__proto__ = WebInspector.Object.prototype;

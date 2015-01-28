@@ -1,3 +1,39 @@
+2015-01-28  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: remove CSS.setPropertyText, CSS.toggleProperty and related dead code
+        https://bugs.webkit.org/show_bug.cgi?id=140961
+
+        Reviewed by Timothy Hatcher.
+
+        No new tests, no behavior changed.
+
+        * CMakeLists.txt:
+        * WebCore.vcxproj/WebCore.vcxproj:
+        * WebCore.vcxproj/WebCore.vcxproj.filters:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::setPropertyText): Deleted.
+        (WebCore::InspectorCSSAgent::toggleProperty): Deleted.
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::InspectorStyle):
+        (WebCore::InspectorStyle::populateAllProperties):
+        (WebCore::InspectorStyleSheet::InspectorStyleSheet):
+        (WebCore::InspectorStyleSheet::reparseStyleSheet):
+        (WebCore::InspectorStyleSheet::inspectorStyleForId):
+        (WebCore::InspectorStyle::setPropertyText): Deleted.
+        (WebCore::InspectorStyle::toggleProperty): Deleted.
+        (WebCore::InspectorStyle::newLineAndWhitespaceDelimiters): Deleted.
+        (WebCore::InspectorStyleSheet::setPropertyText): Deleted.
+        (WebCore::InspectorStyleSheet::toggleProperty): Deleted.
+        (WebCore::InspectorStyleSheet::rememberInspectorStyle): Deleted.
+        (WebCore::InspectorStyleSheet::forgetInspectorStyle): Deleted.
+        (WebCore::InspectorStyleSheet::revalidateStyle): Deleted.
+        * inspector/InspectorStyleSheet.h:
+        * inspector/InspectorStyleTextEditor.cpp: Removed.
+        * inspector/InspectorStyleTextEditor.h: Removed.
+
 2015-01-28  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Move FlowContents iterator interface to FlowContentsIterator.
