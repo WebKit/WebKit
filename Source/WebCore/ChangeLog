@@ -1,5 +1,23 @@
 2015-01-28  Matthew  <matthew_hanson@apple.com>
 
+        Merge r179086. rdar://problem/19566089
+
+    2015-01-25  Timothy Horton  <timothy_horton@apple.com>
+
+            Long spins under Frame::rangeForPoint when doing Lookup on feedly.com
+            https://bugs.webkit.org/show_bug.cgi?id=140862
+            <rdar://problem/19566089>
+
+            Reviewed by Dan Bernstein.
+
+            * page/Frame.cpp:
+            (WebCore::Frame::rangeForPoint):
+            If there isn't a selectable text node at the given point, rangeForPoint
+            will eventually return null. However, we can make it fail much faster
+            by checking the initial position's text-ness and selectability.
+
+2015-01-28  Matthew  <matthew_hanson@apple.com>
+
         Merge r179014. rdar://problem/19573674
 
     2015-01-23  Timothy Horton  <timothy_horton@apple.com>
