@@ -47,6 +47,11 @@ fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
 # Disable snapshotting tests on WK1 only
 plugins/snapshotting
 
+# Animated image throttling behaves differently on WK1.
+fast/images/animated-gif-body-outside-viewport.html [ Skip ]
+fast/images/animated-gif-window-resizing.html [ Skip ]
+fast/images/animated-gif-zooming.html [ Skip ]
+
 # Mavericks and prior do not support contentInset
 [ MountainLion Mavericks ] platform/mac/fast/events/content-inset-hit-testing.html [ Skip ]
 [ MountainLion Mavericks ] platform/mac/fast/events/content-inset-hit-testing-in-frame.html [ Skip ]
