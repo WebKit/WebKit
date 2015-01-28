@@ -293,19 +293,17 @@ void SVGAnimateMotionElement::applyResultsToTarget()
     if (RenderElement* renderer = targetElement->renderer())
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 
-    AffineTransform* t = targetElement->supplementalTransform();
-    if (!t)
+    AffineTransform* targetSupplementalTransform = targetElement->supplementalTransform();
+    if (!targetSupplementalTransform)
         return;
 
     // ...except in case where we have additional instances in <use> trees.
-    for (auto* instance : targetElement->instancesForElement()) {
-        SVGElement* shadowTreeElement = instance->shadowTreeElement();
-        ASSERT(shadowTreeElement);
-        AffineTransform* transform = shadowTreeElement->supplementalTransform();
-        if (!transform)
+    for (auto* instance : targetElement->instances()) {
+        AffineTransform* transform = instance->supplementalTransform();
+        if (!transform || *transform == *targetSupplementalTransform)
             continue;
-        transform->setMatrix(t->a(), t->b(), t->c(), t->d(), t->e(), t->f());
-        if (RenderElement* renderer = shadowTreeElement->renderer()) {
+        *transform = *targetSupplementalTransform;
+        if (RenderElement* renderer = instance->renderer()) {
             renderer->setNeedsTransformUpdate();
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         }

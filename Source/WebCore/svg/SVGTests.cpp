@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2015 Apple Inc. All right reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,77 +37,52 @@
 
 namespace WebCore {
 
-// Define custom non-animated property 'requiredFeatures'.
-const SVGPropertyInfo* SVGTests::requiredFeaturesPropertyInfo()
-{
-    static const SVGPropertyInfo* s_propertyInfo = 0;
-    if (!s_propertyInfo) {
-        s_propertyInfo = new SVGPropertyInfo(AnimatedUnknown,
-                                             PropertyIsReadWrite,
-                                             SVGNames::requiredFeaturesAttr,
-                                             SVGNames::requiredFeaturesAttr.localName(),
-                                             &SVGElement::synchronizeRequiredFeatures,
-                                             0);
-    }
-    return s_propertyInfo;
-}
-
-// Define custom non-animated property 'requiredExtensions'.
-const SVGPropertyInfo* SVGTests::requiredExtensionsPropertyInfo()
-{
-    static const SVGPropertyInfo* s_propertyInfo = 0;
-    if (!s_propertyInfo) {
-        s_propertyInfo = new SVGPropertyInfo(AnimatedUnknown,
-                                             PropertyIsReadWrite,
-                                             SVGNames::requiredExtensionsAttr,
-                                             SVGNames::requiredExtensionsAttr.localName(),
-                                             &SVGElement::synchronizeRequiredExtensions,
-                                             0);
-    }
-    return s_propertyInfo;
-}
-
-// Define custom non-animated property 'systemLanguage'.
-const SVGPropertyInfo* SVGTests::systemLanguagePropertyInfo()
-{
-    static const SVGPropertyInfo* s_propertyInfo = 0;
-    if (!s_propertyInfo) {
-        s_propertyInfo = new SVGPropertyInfo(AnimatedUnknown,
-                                             PropertyIsReadWrite,
-                                             SVGNames::systemLanguageAttr,
-                                             SVGNames::systemLanguageAttr.localName(),
-                                             &SVGElement::synchronizeSystemLanguage,
-                                             0);
-    }
-    return s_propertyInfo;
-}
+using namespace SVGNames;
 
 SVGTests::SVGTests()
-    : m_requiredFeatures(SVGNames::requiredFeaturesAttr)
-    , m_requiredExtensions(SVGNames::requiredExtensionsAttr)
-    , m_systemLanguage(SVGNames::systemLanguageAttr)
+    : m_requiredFeatures(requiredFeaturesAttr)
+    , m_requiredExtensions(requiredExtensionsAttr)
+    , m_systemLanguage(systemLanguageAttr)
 {
 }
 
-SVGAttributeToPropertyMap& SVGTests::attributeToPropertyMap()
+static SVGPropertyInfo createSVGTestPropertyInfo(const QualifiedName& attributeName, SVGPropertyInfo::SynchronizeProperty synchronizeFunction)
 {
-    static NeverDestroyed<SVGAttributeToPropertyMap> map;
-    if (!map.get().isEmpty())
-        return map;
-    map.get().addProperty(requiredFeaturesPropertyInfo());
-    map.get().addProperty(requiredExtensionsPropertyInfo());
-    map.get().addProperty(systemLanguagePropertyInfo());
+    return { AnimatedUnknown, PropertyIsReadWrite, attributeName, attributeName.localName(), synchronizeFunction, nullptr };
+}
+
+static SVGAttributeToPropertyMap createSVGTextAttributeToPropertyMap()
+{
+    typedef NeverDestroyed<const SVGPropertyInfo> Info;
+
+    SVGAttributeToPropertyMap map;
+
+    static Info requiredFeatures = createSVGTestPropertyInfo(requiredFeaturesAttr, SVGElement::synchronizeRequiredFeatures);
+    map.addProperty(requiredFeatures.get());
+
+    static Info requiredExtensions = createSVGTestPropertyInfo(requiredExtensionsAttr, SVGElement::synchronizeRequiredExtensions);
+    map.addProperty(requiredExtensions.get());
+
+    static Info systemLanguage = createSVGTestPropertyInfo(systemLanguageAttr, SVGElement::synchronizeSystemLanguage);
+    map.addProperty(systemLanguage.get());
+
     return map;
 }
 
-bool SVGTests::hasExtension(const String& extension) const
+const SVGAttributeToPropertyMap& SVGTests::attributeToPropertyMap()
+{
+    static NeverDestroyed<SVGAttributeToPropertyMap> map = createSVGTextAttributeToPropertyMap();
+    return map;
+}
+
+bool SVGTests::hasExtension(const String& extension)
 {
     // We recognize XHTML and MathML, as implemented in Gecko and suggested in the SVG Tiny recommendation (http://www.w3.org/TR/SVG11/struct.html#RequiredExtensionsAttribute).
 #if ENABLE(MATHML)
-    return extension == HTMLNames::xhtmlNamespaceURI || extension == MathMLNames::mathmlNamespaceURI;
-#else
-    return extension == HTMLNames::xhtmlNamespaceURI;
+    if (extension == MathMLNames::mathmlNamespaceURI)
+        return true;
 #endif
+    return extension == HTMLNames::xhtmlNamespaceURI;
 }
 
 bool SVGTests::isValid() const
@@ -115,90 +91,80 @@ bool SVGTests::isValid() const
         if (feature.isEmpty() || !DOMImplementation::hasFeature(feature, String()))
             return false;
     }
-
     for (auto& language : m_systemLanguage.value) {
         if (language != defaultLanguage().substring(0, 2))
             return false;
     }
-
     for (auto& extension : m_requiredExtensions.value) {
         if (!hasExtension(extension))
             return false;
     }
-
     return true;
 }
 
-bool SVGTests::parseAttribute(const QualifiedName& name, const AtomicString& value)
+bool SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomicString& value)
 {
-    if (name == SVGNames::requiredFeaturesAttr) {
+    if (attributeName == requiredFeaturesAttr) {
         m_requiredFeatures.value.reset(value);
         return true;
     }
-    if (name == SVGNames::requiredExtensionsAttr) {
+    if (attributeName == requiredExtensionsAttr) {
         m_requiredExtensions.value.reset(value);
         return true;
     }
-    if (name == SVGNames::systemLanguageAttr) {
+    if (attributeName == systemLanguageAttr) {
         m_systemLanguage.value.reset(value);
         return true;
     }
-    
     return false;
 }
 
-bool SVGTests::isKnownAttribute(const QualifiedName& attrName)
+bool SVGTests::isKnownAttribute(const QualifiedName& attributeName)
 {
-    return attrName == SVGNames::requiredFeaturesAttr
-        || attrName == SVGNames::requiredExtensionsAttr
-        || attrName == SVGNames::systemLanguageAttr;
+    return attributeName == requiredFeaturesAttr
+        || attributeName == requiredExtensionsAttr
+        || attributeName == systemLanguageAttr;
 }
 
-bool SVGTests::handleAttributeChange(SVGElement* targetElement, const QualifiedName& attrName)
+bool SVGTests::handleAttributeChange(SVGElement* targetElement, const QualifiedName& attributeName)
 {
     ASSERT(targetElement);
-    if (!isKnownAttribute(attrName))
+    if (!isKnownAttribute(attributeName))
         return false;
     if (!targetElement->inDocument())
         return true;
-
     targetElement->setNeedsStyleRecalc(ReconstructRenderTree);
-
     return true;
 }
 
 void SVGTests::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
 {
-    supportedAttributes.add(SVGNames::requiredFeaturesAttr);
-    supportedAttributes.add(SVGNames::requiredExtensionsAttr);
-    supportedAttributes.add(SVGNames::systemLanguageAttr);
+    supportedAttributes.add(requiredFeaturesAttr);
+    supportedAttributes.add(requiredExtensionsAttr);
+    supportedAttributes.add(systemLanguageAttr);
+}
+
+void SVGTests::synchronizeAttribute(SVGElement* contextElement, SVGSynchronizableAnimatedProperty<SVGStringList>& property, const QualifiedName& attributeName)
+{
+    ASSERT(contextElement);
+    if (!property.shouldSynchronize)
+        return;
+    m_requiredFeatures.synchronize(contextElement, attributeName, property.value.valueAsString());
 }
 
 void SVGTests::synchronizeRequiredFeatures(SVGElement* contextElement)
 {
-    ASSERT(contextElement);
-    if (!m_requiredFeatures.shouldSynchronize)
-        return;
-    AtomicString value(m_requiredFeatures.value.valueAsString());
-    m_requiredFeatures.synchronize(contextElement, requiredFeaturesPropertyInfo()->attributeName, value);
+    synchronizeAttribute(contextElement, m_requiredFeatures, requiredFeaturesAttr);
 }
 
 void SVGTests::synchronizeRequiredExtensions(SVGElement* contextElement)
 {
-    ASSERT(contextElement);
-    if (!m_requiredExtensions.shouldSynchronize)
-        return;
-    AtomicString value(m_requiredExtensions.value.valueAsString());
-    m_requiredExtensions.synchronize(contextElement, requiredExtensionsPropertyInfo()->attributeName, value);
+    synchronizeAttribute(contextElement, m_requiredExtensions, requiredExtensionsAttr);
 }
 
 void SVGTests::synchronizeSystemLanguage(SVGElement* contextElement)
 {
-    ASSERT(contextElement);
-    if (!m_systemLanguage.shouldSynchronize)
-        return;
-    AtomicString value(m_systemLanguage.value.valueAsString());
-    m_systemLanguage.synchronize(contextElement, systemLanguagePropertyInfo()->attributeName, value);
+    synchronizeAttribute(contextElement, m_systemLanguage, systemLanguageAttr);
 }
 
 SVGStringList& SVGTests::requiredFeatures()

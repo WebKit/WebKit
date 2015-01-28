@@ -35,7 +35,7 @@ class SVGAnimateElementBase : public SVGAnimationElement {
 public:
     virtual ~SVGAnimateElementBase();
 
-    AnimatedPropertyType determineAnimatedPropertyType(SVGElement*) const;
+    AnimatedPropertyType determineAnimatedPropertyType(SVGElement&) const;
 
 protected:
     SVGAnimateElementBase(const QualifiedName&, Document&);

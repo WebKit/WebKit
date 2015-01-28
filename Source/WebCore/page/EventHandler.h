@@ -92,7 +92,6 @@ class RenderElement;
 class RenderLayer;
 class RenderWidget;
 class ScrollableArea;
-class SVGElementInstance;
 class Scrollbar;
 class TextEvent;
 class Touch;
@@ -488,7 +487,6 @@ private:
 #endif
 
     bool m_svgPan;
-    RefPtr<SVGElementInstance> m_lastInstanceUnderMouse;
 
     RenderLayer* m_resizeLayer;
 

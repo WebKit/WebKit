@@ -29,10 +29,6 @@
 namespace WebCore {
 
 struct SVGElementAnimatedProperties {
-    SVGElementAnimatedProperties();
-
-    SVGElementAnimatedProperties(SVGElement*, Vector<RefPtr<SVGAnimatedProperty>>&);
-
     SVGElement* element;
     Vector<RefPtr<SVGAnimatedProperty>> properties;
 };
@@ -62,7 +58,7 @@ public:
     void setContextElement(SVGElement* contextElement) { m_contextElement = contextElement; }
     AnimatedPropertyType type() const { return m_type; }
 
-    SVGElementAnimatedPropertyList findAnimatedPropertiesForAttributeName(SVGElement*, const QualifiedName&);
+    SVGElementAnimatedPropertyList findAnimatedPropertiesForAttributeName(SVGElement&, const QualifiedName&);
 
 protected:
     SVGAnimatedTypeAnimator(AnimatedPropertyType, SVGAnimationElement*, SVGElement*);

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,24 +33,18 @@ class SVGAttributeToPropertyMap {
 public:
     bool isEmpty() const { return m_map.isEmpty(); }
 
+    void addProperty(const SVGPropertyInfo&);
     void addProperties(const SVGAttributeToPropertyMap&);
-    void addProperty(const SVGPropertyInfo*);
 
-    // FIXME: To match WebKit coding style either these functions should have return values instead of out parameters,
-    // or the word "get" should be added as a prefix to their names.
-    void animatedPropertiesForAttribute(SVGElement* contextElement, const QualifiedName& attributeName, Vector<RefPtr<SVGAnimatedProperty>>&);
-    void animatedPropertyTypeForAttribute(const QualifiedName& attributeName, Vector<AnimatedPropertyType>&);
+    Vector<RefPtr<SVGAnimatedProperty>> properties(SVGElement&, const QualifiedName& attributeName) const;
+    Vector<AnimatedPropertyType> types(const QualifiedName& attributeName) const;
 
-    void synchronizeProperties(SVGElement* contextElement);
-    bool synchronizeProperty(SVGElement* contextElement, const QualifiedName& attributeName);
+    void synchronizeProperties(SVGElement&) const;
+    bool synchronizeProperty(SVGElement&, const QualifiedName& attributeName) const;
 
 private:
-    void synchronizeProperty(SVGElement* contextElement, const QualifiedName& attributeName, const SVGPropertyInfo*);
-    PassRefPtr<SVGAnimatedProperty> animatedProperty(SVGElement* contextElement, const QualifiedName& attributeName, const SVGPropertyInfo*);
-
-    typedef Vector<const SVGPropertyInfo*> PropertiesVector;
-    typedef HashMap<QualifiedName, std::unique_ptr<PropertiesVector>> AttributeToPropertiesMap;
-    AttributeToPropertiesMap m_map;
+    typedef Vector<const SVGPropertyInfo*> PropertyInfoVector;
+    HashMap<QualifiedName, PropertyInfoVector> m_map;
 };
 
 }

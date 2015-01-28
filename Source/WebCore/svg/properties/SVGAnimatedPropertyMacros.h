@@ -26,6 +26,7 @@
 #include "SVGAnimatedProperty.h"
 #include "SVGAttributeToPropertyMap.h"
 #include "SVGPropertyTraits.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -70,23 +71,19 @@ struct SVGSynchronizableAnimatedProperty {
 #define BEGIN_REGISTER_ANIMATED_PROPERTIES(OwnerType) \
 SVGAttributeToPropertyMap& OwnerType::attributeToPropertyMap() \
 { \
-    DEPRECATED_DEFINE_STATIC_LOCAL(SVGAttributeToPropertyMap, s_attributeToPropertyMap, ()); \
-    return s_attributeToPropertyMap; \
+    static NeverDestroyed<SVGAttributeToPropertyMap> map; \
+    return map; \
 } \
 \
 static void registerAnimatedPropertiesFor##OwnerType() \
 { \
-    SVGAttributeToPropertyMap& map = OwnerType::attributeToPropertyMap(); \
+    auto& map = OwnerType::attributeToPropertyMap(); \
     if (!map.isEmpty()) \
         return; \
     typedef OwnerType UseOwnerType;
 
-#define REGISTER_LOCAL_ANIMATED_PROPERTY(LowerProperty) \
-     map.addProperty(UseOwnerType::LowerProperty##PropertyInfo());
-
-#define REGISTER_PARENT_ANIMATED_PROPERTIES(ClassName) \
-     map.addProperties(ClassName::attributeToPropertyMap()); \
-
+#define REGISTER_LOCAL_ANIMATED_PROPERTY(LowerProperty) map.addProperty(*UseOwnerType::LowerProperty##PropertyInfo());
+#define REGISTER_PARENT_ANIMATED_PROPERTIES(ClassName) map.addProperties(ClassName::attributeToPropertyMap());
 #define END_REGISTER_ANIMATED_PROPERTIES }
 
 // Property definition helpers (used in SVG*.cpp files)

@@ -101,9 +101,6 @@ SVGElementInstance::SVGElementInstance(SVGUseElement* correspondingUseElement, S
     ASSERT(m_correspondingUseElement);
     ASSERT(m_element);
 
-    // Register as instance for passed element.
-    m_element->mapInstanceToElement(this);
-
 #ifndef NDEBUG
     instanceCounter.increment();
 #endif
@@ -144,9 +141,6 @@ void SVGElementInstance::detach()
     for (SVGElementInstance* node = firstChild(); node; node = node->nextSibling())
         node->detach();
 
-    // Deregister as instance for passed element, if we haven't already.
-    if (m_element->instancesForElement().contains(this))
-        m_element->removeInstanceMapping(this);
     // DO NOT clear ref to m_element because JavaScriptCore uses it for garbage collection
 
     m_shadowTreeElement = 0;
@@ -181,24 +175,19 @@ void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
     if (element->instanceUpdatesBlocked())
         return;
 
-    const HashSet<SVGElementInstance*>& set = element->instancesForElement();
-    if (set.isEmpty())
+    auto& instances = element->instances();
+    if (instances.isEmpty())
         return;
 
     // Mark all use elements referencing 'element' for rebuilding
-    const HashSet<SVGElementInstance*>::const_iterator end = set.end();
-    for (HashSet<SVGElementInstance*>::const_iterator it = set.begin(); it != end; ++it) {
-        ASSERT((*it)->shadowTreeElement());
-        ASSERT((*it)->shadowTreeElement()->correspondingElement());
-        ASSERT((*it)->shadowTreeElement()->correspondingElement() == (*it)->correspondingElement());
-        ASSERT((*it)->correspondingElement() == element);
-        (*it)->shadowTreeElement()->setCorrespondingElement(0);
-
-        if (SVGUseElement* element = (*it)->correspondingUseElement()) {
+    do {
+        SVGElement* instance = *instances.begin();
+        if (SVGUseElement* element = instance->correspondingUseElement()) {
             ASSERT(element->inDocument());
             element->invalidateShadowTree();
         }
-    }
+        instance->setCorrespondingElement(nullptr);
+    } while (!instances.isEmpty());
 
     element->document().updateStyleIfNeeded();
 }

@@ -27,15 +27,6 @@
 
 namespace WebCore {
 
-SVGElementAnimatedProperties::SVGElementAnimatedProperties()
-    : element(0)
-{ }
-
-SVGElementAnimatedProperties::SVGElementAnimatedProperties(SVGElement* element, Vector<RefPtr<SVGAnimatedProperty>>& properties)
-    : element(element)
-    , properties(properties)
-{ }
-
 SVGAnimatedTypeAnimator::SVGAnimatedTypeAnimator(AnimatedPropertyType type, SVGAnimationElement* animationElement, SVGElement* contextElement)
     : m_type(type)
     , m_animationElement(animationElement)
@@ -44,7 +35,8 @@ SVGAnimatedTypeAnimator::SVGAnimatedTypeAnimator(AnimatedPropertyType type, SVGA
 }
 
 SVGAnimatedTypeAnimator::~SVGAnimatedTypeAnimator()
-{ }
+{
+}
 
 void SVGAnimatedTypeAnimator::calculateFromAndToValues(std::unique_ptr<SVGAnimatedType>& from, std::unique_ptr<SVGAnimatedType>& to, const String& fromString, const String& toString)
 {
@@ -59,41 +51,27 @@ void SVGAnimatedTypeAnimator::calculateFromAndByValues(std::unique_ptr<SVGAnimat
     addAnimatedTypes(from.get(), to.get());
 }
 
-SVGElementAnimatedPropertyList SVGAnimatedTypeAnimator::findAnimatedPropertiesForAttributeName(SVGElement* targetElement, const QualifiedName& attributeName)
+SVGElementAnimatedPropertyList SVGAnimatedTypeAnimator::findAnimatedPropertiesForAttributeName(SVGElement& targetElement, const QualifiedName& attributeName)
 {
-    ASSERT(targetElement);
+    SVGElementAnimatedPropertyList result;
 
-    SVGElementAnimatedPropertyList propertiesByInstance;
+    if (!SVGAnimatedType::supportsAnimVal(m_type))
+        return result;
 
-    Vector<RefPtr<SVGAnimatedProperty>> targetProperties;
-    targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(targetElement, attributeName, targetProperties);
+    auto& propertyMap = targetElement.localAttributeToPropertyMap();
+    auto targetProperties = propertyMap.properties(targetElement, attributeName);
 
-    if (!SVGAnimatedType::supportsAnimVal(m_type) || targetProperties.isEmpty())
-        return SVGElementAnimatedPropertyList();
+    if (targetProperties.isEmpty())
+        return result;
 
-    SVGElementAnimatedProperties propertiesPair(targetElement, targetProperties);
-    propertiesByInstance.append(propertiesPair);
+    result.append(SVGElementAnimatedProperties { &targetElement, WTF::move(targetProperties) });
 
-    const HashSet<SVGElementInstance*>& instances = targetElement->instancesForElement();
-    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
-    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
-        SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
-        if (!shadowTreeElement)
-            continue;
-
-        Vector<RefPtr<SVGAnimatedProperty>> instanceProperties;
-        targetElement->localAttributeToPropertyMap().animatedPropertiesForAttribute(shadowTreeElement, attributeName, instanceProperties);
-
-        SVGElementAnimatedProperties instancePropertiesPair(shadowTreeElement, instanceProperties);
-        propertiesByInstance.append(instancePropertiesPair);
-    }
+    for (SVGElement* instance : targetElement.instances())
+        result.append(SVGElementAnimatedProperties { instance, propertyMap.properties(*instance, attributeName) });
 
 #if !ASSERT_DISABLED
-    SVGElementAnimatedPropertyList::const_iterator propertiesEnd = propertiesByInstance.end();
-    for (SVGElementAnimatedPropertyList::const_iterator it = propertiesByInstance.begin(); it != propertiesEnd; ++it) {
-        size_t propertiesSize = it->properties.size();
-        for (size_t i = 0; i < propertiesSize; ++i) {
-            RefPtr<SVGAnimatedProperty> property = it->properties[i];
+    for (auto& animatedProperties : result) {
+        for (auto& property : animatedProperties.properties) {
             if (property->animatedPropertyType() != m_type) {
                 ASSERT(m_type == AnimatedAngle);
                 ASSERT(property->animatedPropertyType() == AnimatedEnumeration);
@@ -102,7 +80,7 @@ SVGElementAnimatedPropertyList SVGAnimatedTypeAnimator::findAnimatedPropertiesFo
     }
 #endif
 
-    return propertiesByInstance;
+    return result;
 }
 
 } // namespace WebCore

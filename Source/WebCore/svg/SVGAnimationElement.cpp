@@ -508,12 +508,9 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
 
     CalcMode calcMode = this->calcMode();
     if (is<SVGAnimateElement>(*this) || is<SVGAnimateColorElement>(*this)) {
-        AnimatedPropertyType attributeType = downcast<SVGAnimateElementBase>(*this).determineAnimatedPropertyType(targetElement());
-        // Fall back to discrete animations for Strings.
-        if (attributeType == AnimatedBoolean
-            || attributeType == AnimatedEnumeration
-            || attributeType == AnimatedPreserveAspectRatio
-            || attributeType == AnimatedString)
+        ASSERT(targetElement());
+        AnimatedPropertyType type = downcast<SVGAnimateElementBase>(*this).determineAnimatedPropertyType(*targetElement());
+        if (type == AnimatedBoolean || type == AnimatedEnumeration || type == AnimatedPreserveAspectRatio || type == AnimatedString)
             calcMode = CalcModeDiscrete;
     }
     if (!m_keyPoints.isEmpty() && calcMode != CalcModePaced)

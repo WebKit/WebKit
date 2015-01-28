@@ -1,5 +1,167 @@
 2015-01-28  Darin Adler  <darin@apple.com>
 
+        Make SVGElement::instancesForElement point to elements in the shadow tree, not SVGElementInstance objects
+        https://bugs.webkit.org/show_bug.cgi?id=140984
+
+        Reviewed by Anders Carlsson.
+
+        Refactoring of code that is pretty well covered by existing tests, so
+        not adding new tests.
+
+        Inspired by work Rob Buis did in Blink:
+
+            http://src.chromium.org/viewvc/blink?view=revision&revision=173275
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear): Removed code to zero m_lastInstanceUnderMouse.
+        (WebCore::instanceAssociatedWithShadowTreeElement): Deleted.
+        (WebCore::EventHandler::updateMouseEventTargetNode): Removed code that used
+        m_lastInstanceUnderMouse to track events on an object after recloning.
+        This behavior doesn't seem to be needed to pass any existing tests, and Rob
+        removed it from Blink, so I'll take it out and we can bring if back, based
+        on the original element rather than on the SVGElementInstance, if we find we
+        need to restore the behavior in the future.
+
+        * page/EventHandler.h: Removed m_lastInstanceUnderMouse.
+
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::determineAnimatedPropertyType):
+        Changed this function to take a reference and to call the updated version
+        of the targetElement.animatedPropertyTypesForAttribute function.
+        (WebCore::SVGAnimateElementBase::calculateAnimatedValue): Updated to pass
+        a reference rather than a pointer.
+        (WebCore::SVGAnimateElementBase::resetAnimatedType): Updated to pass
+        references rather than pointers.
+        (WebCore::applyCSSPropertyToTarget): Updated to take a reference.
+        (WebCore::removeCSSPropertyFromTarget): Ditto.
+        (WebCore::applyCSSPropertyToTargetAndInstances): Ditto. Also use a modern
+        for loop, and iterate over shadow tree instances, not over SVGElementInstance.
+        (WebCore::removeCSSPropertyFromTargetAndInstances): Ditto.
+        (WebCore::notifyTargetAboutAnimValChange): Ditto.
+        (WebCore::notifyTargetAndInstancesAboutAnimValChange): Ditto.
+        (WebCore::SVGAnimateElementBase::clearAnimatedType): More of the same.
+        (WebCore::SVGAnimateElementBase::applyResultsToTarget): Ditto.
+        (WebCore::SVGAnimateElementBase::resetAnimatedPropertyType): Ditto.
+
+        * svg/SVGAnimateElementBase.h: Changed determineAnimatedPropertyType to take
+        a reference rahter than a pointer.
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget): Updated to use the
+        new instances instead of SVGElementInstance. Also added code to skip work if
+        the transform is not changing, and use the assignment operator instead of
+        breaking one matrix down and calling setMatrix on the other.
+
+        * svg/SVGAnimatedTypeAnimator.cpp:
+        (WebCore::SVGAnimatedTypeAnimator::findAnimatedPropertiesForAttributeName):
+        Changed to take a reference rather than a pointer, and rewrote to streamline,
+        using modern for loops and using the new instances set.
+
+        * svg/SVGAnimatedTypeAnimator.h: Removed the constructors from the
+        SVGElementAnimatedProperties struct since we can build them just fine without
+        them. Changed findAnimatedPropertiesForAttributeName to take a reference.
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation): Pass a
+        reference rather than a pointer. Also streamlined the code a bit and removed
+        a comment that tried to say exactly what the code was doing, but was outdated.
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement): Disconnect all instances from this element
+        and also disconnect the corresponding element from this element if it itself
+        is an instance. This guarantees we have no dangling pointers.
+        (WebCore::SVGElement::mapInstanceToElement): Deleted.
+        (WebCore::SVGElement::removeInstanceMapping): Deleted.
+        (WebCore::SVGElement::instances): Renamed from instancesForElement and changed
+        to be a set of SVG element instances in the shadow tree, rather than
+        SVGElementInstance objects.
+        (WebCore::SVGElement::correspondingElement): Tweaked assertion a little and use
+        nullptr instead of 0.
+        (WebCore::SVGElement::correspondingUseElement): Added. Finds the use element
+        that owns the shadow tree this element is in by following the host element
+        pointer from the shadow root.
+        (WebCore::SVGElement::setCorrespondingElement): Added code to insert or remove
+        this element from the instances set of the corresponding element.
+        (WebCore::SVGElement::animatedPropertyTypesForAttribute): Renamed from
+        animatedPropertyTypeForAttribute and switched to use a return value instead of
+        an out argument.
+        (WebCore::SVGElement::addEventListener): Updated to use instances rather than
+        the old instancesForElement.
+        (WebCore::SVGElement::removeEventListener): Ditto.
+        (WebCore::SVGElement::synchronizeAllAnimatedSVGAttribute): Pass a reference.
+        (WebCore::SVGElement::synchronizeAnimatedSVGAttribute): Ditto.
+        (WebCore::SVGElement::isPresentationAttributeWithSVGDOM): Updated to use the
+        new function from AttributeToPropertyMap.
+
+        * svg/SVGElement.h: Changed animatedPropertyTypesForAttribute name to be plural
+        since it returns a vector of types, and made it use a return value instead of
+        an out argument. Added the correspondingUseElement function, and removed the
+        mapInstanceToElement and removeInstanceMapping functions.
+
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::SVGElementInstance): Removed now-unneeded call to
+        mapInstanceToElement. This is now handled entirely by the SVGElement itself.
+        (WebCore::SVGElementInstance::detach): Removed now-unneeded call to
+        removeInstanceMapping. This is now handled entirely by the SVGElement itself.
+        (WebCore::SVGElementInstance::invalidateAllInstancesOfElement): Rewrote to be
+        based on the instances set; logic is different now because we remove each
+        element from that set as we go.
+
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::SVGElementRareData): Removed initialization of
+        pointers since we can do that where they are defined instead.
+        (WebCore::SVGElementRareData::instances): Renamed from elementInstances and
+        changed the type.
+        (WebCore::SVGElementRareData::destroyAnimatedSMILStyleProperties): Deleted.
+        Unneeded since it was already called just before deleting the rare data.
+
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::SVGTests): Took advantage of using namespace.
+        (WebCore::createSVGTestPropertyInfo): Added. Helper for function below.
+        (WebCore::createSVGTextAttributeToPropertyMap): Ditto.
+        (WebCore::SVGTests::attributeToPropertyMap): Changed to use the create function
+        above. No longer allocates objects on the heap.
+        (WebCore::SVGTests::hasExtension): Reworked #if code to make the MathML part
+        independent rather than repeating the return statement.
+        (WebCore::SVGTests::synchronizeAttribute): Added. Helper for functions below.
+        (WebCore::SVGTests::synchronizeRequiredFeatures): Call synchronizeAttribute.
+        (WebCore::SVGTests::synchronizeRequiredExtensions): Ditto.
+        (WebCore::SVGTests::synchronizeSystemLanguage): Ditto.
+
+        * svg/SVGTests.h: Removed unneeded forward declarations. Mark the many functions
+        that do not depend on object state as static so the call sites don't wastefully
+        pass a this pointer. Removed the unneeded requiredFeaturesPropertyInfo,
+        requiredExtensionsPropertyInfo, and systemLanguagePropertyInfo functions.
+        Added synchronizeAttribute helper function.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::invalidateDependentShadowTrees): Updated to use the
+        new instances set and a modern for loop.
+
+        * svg/properties/SVGAnimatedPropertyMacros.h: Pass reference to addProperty and
+        made a few other small refinements.
+
+        * svg/properties/SVGAttributeToPropertyMap.cpp:
+        (WebCore::SVGAttributeToPropertyMap::addProperties): Fixed problems mentioned
+        in FIXME where we did too much hashing and vector resizing.
+        (WebCore::SVGAttributeToPropertyMap::addProperty): Streamlined to use a single
+        hash table lookup.
+        (WebCore::SVGAttributeToPropertyMap::properties): Renamed from
+        animatedPropertiesForAttribute and changed to return a vector rather than using
+        an out argument. Also had to change some since the vectors are in the hash table
+        now rather than allocated on the heap.
+        (WebCore::SVGAttributeToPropertyMap::types): Renamed from
+        animatedPropertyTypeForAttribute and made changes just like the ones above.
+        (WebCore::SVGAttributeToPropertyMap::synchronizeProperties): Use modern for
+        loops, take a reference rather than a pointer, and use the function pointer
+        directly instead of calling through a helper with various assertions.
+        (WebCore::SVGAttributeToPropertyMap::synchronizeProperty): Ditto.
+
+        * svg/properties/SVGAttributeToPropertyMap.h: Updated to match the changes
+        above. Also changed the map to contain vectors instead of pointers to vectors.
+
+2015-01-28  Darin Adler  <darin@apple.com>
+
         REGRESSION (r173698): Leaks of selector lists in CSS parsing
         https://bugs.webkit.org/show_bug.cgi?id=140993
 

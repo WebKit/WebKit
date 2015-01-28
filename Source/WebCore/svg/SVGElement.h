@@ -49,6 +49,7 @@ class SVGDocumentExtensions;
 class SVGElementInstance;
 class SVGElementRareData;
 class SVGSVGElement;
+class SVGUseElement;
 
 void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, CSSPropertyID>* propertyNameToIdMap, const QualifiedName& attrName);
 
@@ -85,7 +86,7 @@ public:
 
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    void animatedPropertyTypeForAttribute(const QualifiedName&, Vector<AnimatedPropertyType>&);
+    Vector<AnimatedPropertyType> animatedPropertyTypesForAttribute(const QualifiedName&);
 
     void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
     void sendSVGLoadEventIfPossibleAsynchronously();
@@ -102,7 +103,8 @@ public:
         setNeedsStyleRecalc(InlineStyleChange);
     }
 
-    const HashSet<SVGElementInstance*>& instancesForElement() const;
+    // The instances of an element are clones made in shadow trees to implement <use>.
+    const HashSet<SVGElement*>& instances() const;
 
     bool getBoundingBox(FloatRect&, SVGLocatable::StyleUpdateStrategy = SVGLocatable::AllowStyleUpdate);
 
@@ -112,6 +114,8 @@ public:
     void cursorImageValueRemoved();
 
     SVGElement* correspondingElement();
+    SVGUseElement* correspondingUseElement() const;
+
     void setCorrespondingElement(SVGElement*);
 
     void synchronizeAnimatedSVGAttribute(const QualifiedName&) const;
@@ -188,9 +192,6 @@ private:
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
 
     virtual void clearTarget() { }
-
-    void mapInstanceToElement(SVGElementInstance*);
-    void removeInstanceMapping(SVGElementInstance*);
 
     void buildPendingResourcesIfNeeded();
     virtual void accessKeyAction(bool sendMouseEvents) override;
