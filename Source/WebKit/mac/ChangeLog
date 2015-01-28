@@ -1,3 +1,15 @@
+2015-01-28  Beth Dakin  <bdakin@apple.com>
+
+        Remove Mountain Lion code from WebKit and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=141010
+
+        Reviewed by Sam Weinig.
+
+        * DOM/WebDOMOperations.mm:
+        (toNSEventPhase):
+        * WebView/WebHTMLView.mm:
+        (isQuickLookEvent):
+
 2015-01-28  Dana Burkart  <dburkart@apple.com>
 
         Move ASan flag settings from DebugRelease.xcconfig to Base.xcconfig

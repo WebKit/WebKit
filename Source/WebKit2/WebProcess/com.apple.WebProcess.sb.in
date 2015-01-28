@@ -122,13 +122,8 @@
 (allow file-read* file-write* (home-literal "/Library/Preferences/com.apple.mediaaccessibility.public.plist"))
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow file* (subpath (param "DARWIN_USER_CACHE_DIR"))))
-#else
-(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
-    (allow file* (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/mds"))))
-#endif
 
 (if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
     (allow file* (subpath (param "DARWIN_USER_TEMP_DIR"))))
@@ -140,8 +135,6 @@
        (iokit-user-client-class "RootDomainUserClient")
        (iokit-user-client-class "IOAudioControlUserClient")
        (iokit-user-client-class "IOAudioEngineUserClient"))
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 
 ;; cookied.
 ;; FIXME: Update for <rdar://problem/13642852>.
@@ -169,8 +162,6 @@
 ;; Audio
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
     (ipc-posix-name-regex #"^AudioIO"))
-
-#endif
 
 ;; Remote Web Inspector
 (allow mach-lookup
@@ -224,10 +215,8 @@
        (home-literal "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain")
        (home-literal "/Library/Preferences/com.apple.security.plist")
        (home-literal "/Library/Preferences/com.apple.security.revocation.plist"))
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 (allow ipc-posix-shm-read* ipc-posix-shm-write-data
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
-#endif
 
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.
 (allow mach-lookup
@@ -290,13 +279,6 @@
 #endif
 
 (deny file-read* file-write* (with no-log)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
-       (home-literal "/Library/Caches/Cache.db") ;; <rdar://problem/9422957>
-#endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1080
-       (home-subpath "/Library/Caches/com.apple.WebProcess") ;; <rdar://problem/12656814>
-#endif
-
        ;; FIXME: Should be removed after <rdar://problem/10463881> is fixed.
        (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
        (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))

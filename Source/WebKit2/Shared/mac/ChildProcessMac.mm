@@ -113,7 +113,6 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     String osVersion = osVersionParts[0] + '.' + osVersionParts[1];
     sandboxParameters.addParameter("_OS_VERSION", osVersion.utf8().data());
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     // Use private temporary and cache directories.
     setenv("DIRHELPER_USER_DIR_SUFFIX", fileSystemRepresentation(sandboxParameters.systemDirectorySuffix()).data(), 0);
     char temporaryDirectory[PATH_MAX];
@@ -122,7 +121,6 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
         exit(EX_NOPERM);
     }
     setenv("TMPDIR", temporaryDirectory, 1);
-#endif
 
     sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR", [[webkit2Bundle bundlePath] stringByDeletingLastPathComponent]);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);

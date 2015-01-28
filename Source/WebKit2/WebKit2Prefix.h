@@ -56,20 +56,6 @@
 
 #endif
 
-#if !(defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080)
-#define WTF_USE_XPC_SERVICES 1
-#endif
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1080 && defined(__OBJC__)
-@interface NSKeyedArchiver (WKDetails)
-- (void)setRequiresSecureCoding:(BOOL)requiresSecureCoding;
-@end
-
-@interface NSKeyedUnarchiver (WKDetails)
-- (void)setRequiresSecureCoding:(BOOL)requiresSecureCoding;
-@end
-#endif
-
 #if PLATFORM(GTK)
 #define ENABLE_NETWORK_PROCESS 1
 #endif

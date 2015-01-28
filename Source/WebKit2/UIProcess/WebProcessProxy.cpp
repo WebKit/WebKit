@@ -503,7 +503,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
     m_processPool->processDidFinishLaunching(this);
 
-#if PLATFORM(IOS) && USE(XPC_SERVICES)
+#if PLATFORM(IOS)
     xpc_connection_t xpcConnection = connection()->xpcConnection();
     ASSERT(xpcConnection);
     m_throttler->didConnnectToProcess(xpc_connection_get_pid(xpcConnection));

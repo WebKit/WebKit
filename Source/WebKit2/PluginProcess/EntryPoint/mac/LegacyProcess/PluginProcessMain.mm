@@ -108,7 +108,6 @@ public:
 
     virtual void doPostRunWork() override
     {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         // If we have private temporary and cache directories, clean them up.
         if (getenv("DIRHELPER_USER_DIR_SUFFIX")) {
             char darwinDirectory[PATH_MAX];
@@ -117,7 +116,6 @@ public:
             if (confstr(_CS_DARWIN_USER_CACHE_DIR, darwinDirectory, sizeof(darwinDirectory)))
                 [[NSFileManager defaultManager] removeItemAtPath:[[NSFileManager defaultManager] stringWithFileSystemRepresentation:darwinDirectory length:strlen(darwinDirectory)] error:nil];
         }
-#endif
     }
 };
 

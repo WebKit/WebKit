@@ -47,11 +47,7 @@ static bool shouldUseXPC()
     if (id value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKit2UseXPCServiceForWebProcess"])
         return [value boolValue];
 
-#if USE(XPC_SERVICES)
     return true;
-#else
-    return false;
-#endif
 }
 
 void NetworkProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)

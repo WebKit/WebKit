@@ -43,7 +43,7 @@ void InitWebCoreSystemInterface(void)
         INIT(CGContextGetShouldSmoothFonts);
         INIT(CGPatternCreateWithImageAndTransform);
         INIT(CGContextResetClip);
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if !PLATFORM(IOS)
         INIT(CGContextDrawsWithCorrectShadowOffsets);
 #endif
         INIT(CopyCONNECTProxyResponse);
@@ -166,7 +166,7 @@ void InitWebCoreSystemInterface(void)
 
         INIT(DestroyRenderingResources);
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if !PLATFORM(IOS)
         INIT(ExecutableWasLinkedOnOrBeforeLion);
 #endif
         
@@ -185,7 +185,7 @@ void InitWebCoreSystemInterface(void)
         INIT(GetVendorNameForNavigator);
 #endif
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if !PLATFORM(IOS)
         INIT(NSElasticDeltaForTimeDelta);
         INIT(NSElasticDeltaForReboundDelta);
         INIT(NSReboundDeltaForElasticDelta);

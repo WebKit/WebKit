@@ -1,3 +1,33 @@
+2015-01-28  Beth Dakin  <bdakin@apple.com>
+
+        Remove Mountain Lion code from WebKit and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=141010
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMain.mm:
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::initializeSandbox):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::phaseForEvent):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView quickLookWithEvent:]):
+        (-[WKView updateLayer]):
+        (-[WKView createFullScreenWindow]):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isViewVisible):
+        * WebKit2Prefix.h:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2015-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Crash when closing inspected page

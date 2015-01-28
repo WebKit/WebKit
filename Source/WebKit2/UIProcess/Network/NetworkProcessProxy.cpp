@@ -41,7 +41,7 @@
 #include "SecItemShimProxy.h"
 #endif
 
-#if PLATFORM(IOS) && USE(XPC_SERVICES)
+#if PLATFORM(IOS)
 #include <wtf/spi/darwin/XPCSPI.h>
 #endif
 
@@ -224,7 +224,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
         setProcessSuppressionEnabled(true);
 #endif
     
-#if PLATFORM(IOS) && USE(XPC_SERVICES)
+#if PLATFORM(IOS)
     if (xpc_connection_t connection = this->connection()->xpcConnection())
         m_assertion = std::make_unique<ProcessAssertion>(xpc_connection_get_pid(connection), AssertionState::Foreground);
 #endif

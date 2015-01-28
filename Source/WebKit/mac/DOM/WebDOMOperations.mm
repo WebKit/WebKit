@@ -242,10 +242,8 @@ static NSEventPhase toNSEventPhase(PlatformWheelEventPhase platformPhase)
         phase |= NSEventPhaseEnded;
     if (platformPhase & PlatformWheelEventPhaseCancelled)
         phase |= NSEventPhaseCancelled;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
     if (platformPhase & PlatformWheelEventPhaseMayBegin)
         phase |= NSEventPhaseMayBegin;
-#endif
 
     return static_cast<NSEventPhase>(phase);
 }

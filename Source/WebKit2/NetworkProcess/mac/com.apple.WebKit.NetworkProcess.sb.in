@@ -71,11 +71,7 @@
 (read-only-and-issue-extensions (extension "com.apple.app-sandbox.read"))
 (read-write-and-issue-extensions (extension "com.apple.app-sandbox.read-write"))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 (allow file-read* file-write* (subpath (param "DARWIN_USER_CACHE_DIR")))
-#else
-(allow file-read* file-write* (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/mds")))
-#endif
 
 (allow file-read* file-write* (subpath (param "DARWIN_USER_TEMP_DIR")))
 
