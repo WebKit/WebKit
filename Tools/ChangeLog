@@ -1,5 +1,12 @@
 2015-01-27  Alexey Proskuryakov  <ap@apple.com>
 
+        Partially revert r178802.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/MountainLion.png:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/MountainLion@2x.png:
+
+2015-01-27  Alexey Proskuryakov  <ap@apple.com>
+
         build.webkit.org/dashboard asserts on some commits
         https://bugs.webkit.org/show_bug.cgi?id=140926
 
