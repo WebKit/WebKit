@@ -1,3 +1,31 @@
+2015-01-28  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r177680
+
+    2014-12-22  Chris Dumez  <cdumez@apple.com>
+
+            [iOS] Log using FeatureCounter when a PacheCache fails due to memory pressure
+            https://bugs.webkit.org/show_bug.cgi?id=139874
+            <rdar://problem/19255690>
+
+            Reviewed by Darin Adler.
+
+            Log using FeatureCounter when a PacheCache fails due to memory
+            pressure. To detect this, a flag is added to HistoryItem to mark
+            items that are no longer in the page becaused they were pruned
+            (either because of a low memory handling or because the page cache
+            reached its maximum capacity).
+
+            * history/HistoryItem.cpp:
+            (WebCore::HistoryItem::HistoryItem):
+            * history/HistoryItem.h:
+            * history/PageCache.cpp:
+            (WebCore::PageCache::add):
+            (WebCore::PageCache::take):
+            (WebCore::PageCache::get):
+            (WebCore::PageCache::prune):
+            * platform/FeatureCounterKeys.h:
+
 2015-01-27  Lucas Forschler  <lforschler@apple.com>
 
         Merge r177666

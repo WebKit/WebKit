@@ -59,6 +59,7 @@ static const char FeatureCounterPageCacheFailureReloadKey[] = "com.apple.WebKit.
 static const char FeatureCounterPageCacheFailureReloadFromOriginKey[] = "com.apple.WebKit.pageCache.failure.reloadFromOrigin";
 static const char FeatureCounterPageCacheFailureSameLoadKey[] = "com.apple.WebKit.pageCache.failure.sameLoad";
 static const char FeatureCounterPageCacheFailureExpiredKey[] = "com.apple.WebKit.pageCache.failure.expired";
+static const char FeatureCounterPageCacheFailureWasPrunedKey[] = "com.apple.WebKit.pageCache.failure.wasPruned";
 static const char FeatureCounterPageCacheFailureKey[] = "com.apple.WebKit.pageCache.failure";
 static const char FeatureCounterPageCacheSuccessKey[] = "com.apple.WebKit.pageCache.success";
 

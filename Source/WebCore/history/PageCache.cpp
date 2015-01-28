@@ -458,6 +458,7 @@ void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page& page)
         remove(item);
 
     item->m_cachedPage = std::make_unique<CachedPage>(page);
+    item->m_wasPruned = false;
     addToLRUList(item);
     ++m_size;
     
@@ -476,8 +477,11 @@ std::unique_ptr<CachedPage> PageCache::take(HistoryItem* item, Page* page)
 
     item->deref(); // Balanced in add().
 
-    if (!cachedPage)
+    if (!cachedPage) {
+        if (item->m_wasPruned)
+            FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureWasPrunedKey);
         return nullptr;
+    }
 
     if (cachedPage->hasExpired()) {
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item->url().string().ascii().data());
@@ -500,7 +504,9 @@ CachedPage* PageCache::get(HistoryItem* item, Page* page)
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item->url().string().ascii().data());
         FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureExpiredKey);
         pageCache()->remove(item);
-    }
+    } else if (item->m_wasPruned)
+        FEATURE_COUNTER_INCREMENT_KEY(page, FeatureCounterPageCacheFailureWasPrunedKey);
+
     return nullptr;
 }
 
@@ -521,6 +527,7 @@ void PageCache::prune()
 {
     while (m_size > m_capacity) {
         ASSERT(m_tail && m_tail->m_cachedPage);
+        m_tail->m_wasPruned = true;
         remove(m_tail);
     }
 }

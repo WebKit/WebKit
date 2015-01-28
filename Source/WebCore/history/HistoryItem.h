@@ -258,6 +258,7 @@ private:
     HistoryItem* m_next;
     HistoryItem* m_prev;
     std::unique_ptr<CachedPage> m_cachedPage;
+    bool m_wasPruned;
 
 #if PLATFORM(IOS)
     FloatRect m_exposedContentRect;
