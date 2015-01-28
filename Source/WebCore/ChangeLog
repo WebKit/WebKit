@@ -1,5 +1,24 @@
 2015-01-28  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r177681
+
+    2014-12-22  Chris Dumez  <cdumez@apple.com>
+
+            [iOS] Log which type of resources are commonly loaded using FeatureCounter
+            https://bugs.webkit.org/show_bug.cgi?id=139890
+
+            Reviewed by Darin Adler.
+
+            Log which type of resources are commonly loaded using FeatureCounter
+            (e.g. stylesheets, scripts, fonts, images, ...).
+
+            * loader/SubresourceLoader.cpp:
+            (WebCore::logResourceLoadedUsingFeatureCounter):
+            (WebCore::SubresourceLoader::didFinishLoading):
+            * platform/FeatureCounterKeys.h:
+
+2015-01-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r177680
 
     2014-12-22  Chris Dumez  <cdumez@apple.com>

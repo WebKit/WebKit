@@ -292,6 +292,47 @@ bool SubresourceLoader::checkForHTTPStatusCodeError()
     return true;
 }
 
+static void logResourceLoadedUsingFeatureCounter(Page* page, CachedResource::Type type)
+{
+    const char* key;
+    switch (type) {
+    case CachedResource::MainResource:
+        key = FeatureCounterResourceLoadedMainResourceKey;
+        break;
+    case CachedResource::ImageResource:
+        key = FeatureCounterResourceLoadedImageKey;
+        break;
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+#endif
+    case CachedResource::CSSStyleSheet:
+        key = FeatureCounterResourceLoadedStyleSheetKey;
+        break;
+    case CachedResource::Script:
+        key = FeatureCounterResourceLoadedScriptKey;
+        break;
+    case CachedResource::FontResource:
+        key = FeatureCounterResourceLoadedFontKey;
+        break;
+    case CachedResource::RawResource:
+        key = FeatureCounterResourceLoadedRawKey;
+        break;
+    case CachedResource::SVGDocumentResource:
+        key = FeatureCounterResourceLoadedSVGDocumentKey;
+        break;
+#if ENABLE(LINK_PREFETCH)
+    case CachedResource::LinkPrefetch:
+    case CachedResource::LinkSubresource:
+#endif
+#if ENABLE(VIDEO_TRACK)
+    case CachedResource::TextTrackResource:
+#endif
+        key = FeatureCounterResourceLoadedOtherKey;
+        break;
+    }
+    FEATURE_COUNTER_INCREMENT_KEY(page, key);
+}
+
 void SubresourceLoader::didFinishLoading(double finishTime)
 {
     if (m_state != Initialized)
@@ -301,6 +342,7 @@ void SubresourceLoader::didFinishLoading(double finishTime)
     // FIXME (129394): We should cancel the load when a decode error occurs instead of continuing the load to completion.
     ASSERT(!m_resource->errorOccurred() || m_resource->status() == CachedResource::DecodeError);
     LOG(ResourceLoading, "Received '%s'.", m_resource->url().string().latin1().data());
+    logResourceLoadedUsingFeatureCounter(m_frame ? m_frame->page() : nullptr, m_resource->type());
 
     Ref<SubresourceLoader> protect(*this);
 
