@@ -40,6 +40,7 @@
 #import <WebCore/NSMenuSPI.h>
 #import <WebCore/NSPopoverSPI.h>
 #import <WebCore/QuickLookMacSPI.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/URL.h>
 
@@ -275,10 +276,13 @@ using namespace WebKit;
 
     RefPtr<WebHitTestResult> hitTestResult = [self _webHitTestResult];
     id customClientAnimationController = [_wkView _immediateActionAnimationControllerForHitTestResult:toAPI(hitTestResult.get()) withType:_type userData:toAPI(_userData.get())];
-    if (customClientAnimationController == [NSNull null]) {
+
+    // FIXME: We should not permanently disable this for iBooks. rdar://problem/19585689
+    if (customClientAnimationController == [NSNull null] || applicationIsIBooks()) {
         [self _cancelImmediateAction];
         return;
     }
+
     if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
         [_immediateActionRecognizer setAnimationController:(id <NSImmediateActionAnimationController>)customClientAnimationController];
     else

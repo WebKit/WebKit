@@ -68,6 +68,12 @@ bool applicationIsAppleMail()
     return isAppleMail;
 }
 
+bool applicationIsIBooks()
+{
+    static bool isIBooks = mainBundleIsEqualTo("com.apple.iBooksX");
+    return isIBooks;
+}
+
 bool applicationIsITunes()
 {
     static bool isITunes = mainBundleIsEqualTo("com.apple.iTunes");
