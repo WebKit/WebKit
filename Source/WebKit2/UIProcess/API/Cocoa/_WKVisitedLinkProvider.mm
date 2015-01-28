@@ -38,9 +38,16 @@
     if (!(self = [super init]))
         return nil;
 
-    _visitedLinkProvider = WebKit::VisitedLinkProvider::create();
+    API::Object::constructInWrapper<WebKit::VisitedLinkProvider>(self);
 
     return self;
+}
+
+- (void)dealloc
+{
+    _visitedLinkProvider->~VisitedLinkProvider();
+
+    [super dealloc];
 }
 
 - (void)addVisitedLinkWithURL:(NSURL *)URL
@@ -53,6 +60,13 @@
 - (void)removeAll
 {
     _visitedLinkProvider->removeAll();
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_visitedLinkProvider;
 }
 
 @end

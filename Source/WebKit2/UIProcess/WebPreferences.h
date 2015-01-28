@@ -47,6 +47,9 @@ public:
     static PassRefPtr<WebPreferences> create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
     static PassRefPtr<WebPreferences> createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
 
+    explicit WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
+    WebPreferences(const WebPreferences&);
+
     virtual ~WebPreferences();
 
     PassRefPtr<WebPreferences> copy() const;
@@ -71,9 +74,6 @@ public:
     static bool anyPagesAreUsingPrivateBrowsing();
 
 private:
-    explicit WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
-    WebPreferences(const WebPreferences&);
-
     void platformInitializeStore();
 
     void update();

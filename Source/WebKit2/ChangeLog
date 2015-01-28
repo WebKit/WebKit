@@ -1,3 +1,56 @@
+2015-01-28  Sam Weinig  <sam@webkit.org>
+
+        Convert WebPreferences and VisitedLinkProvider to be bridged API::Objects
+        https://bugs.webkit.org/show_bug.cgi?id=141002
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/APIObject.h:
+        Add VisitedLinkProvider type.
+        
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        Allocate WebPreferences and VisitedLinkProvider as their Objective-C counterpart.
+        
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences init]):
+        Switch to constructInWrapper.
+
+        (-[WKPreferences dealloc]):
+        Call the WebPreferences destructor.
+        
+        (-[WKPreferences _apiObject]):
+        Add implementation of the WKObject protocol.
+
+        * UIProcess/API/Cocoa/WKPreferencesInternal.h:
+        Convert to using ObjectStorage.
+
+        * UIProcess/API/Cocoa/_WKVisitedLinkProvider.mm:
+        (-[_WKVisitedLinkProvider init]):
+        Switch to constructInWrapper.
+
+        (-[_WKVisitedLinkProvider dealloc]):
+        Call the VisitedLinkProvider destructor.
+
+        (-[_WKVisitedLinkProvider _apiObject]):
+        Add implementation of the WKObject protocol.
+
+        * UIProcess/API/Cocoa/_WKVisitedLinkProviderInternal.h:
+        Convert to using ObjectStorage.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::create):
+        * UIProcess/VisitedLinkProvider.h:
+        Switch create() to return a Ref.
+
+        * UIProcess/WebPreferences.h:
+        Make the constructor public for use by constructInWrapper.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+        * UIProcess/WebProcessPool.h:
+        Store the VisitedLinkProvider in a Ref.
+
 2015-01-28  Dana Burkart  <dburkart@apple.com>
 
         Move ASan flag settings from DebugRelease.xcconfig to Base.xcconfig

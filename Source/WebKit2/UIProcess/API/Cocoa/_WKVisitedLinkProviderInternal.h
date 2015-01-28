@@ -27,15 +27,22 @@
 
 #if WK_API_ENABLED
 
-#import <wtf/RefPtr.h>
+#import "VisitedLinkProvider.h"
+#import "WKObject.h"
 
 namespace WebKit {
-class VisitedLinkProvider;
+
+inline _WKVisitedLinkProvider *wrapper(VisitedLinkProvider& visitedLinkProvider)
+{
+    ASSERT([visitedLinkProvider.wrapper() isKindOfClass:[_WKVisitedLinkProvider class]]);
+    return (_WKVisitedLinkProvider *)visitedLinkProvider.wrapper();
 }
 
-@interface _WKVisitedLinkProvider () {
+}
+
+@interface _WKVisitedLinkProvider () <WKObject> {
 @package
-    RefPtr<WebKit::VisitedLinkProvider> _visitedLinkProvider;
+    API::ObjectStorage<WebKit::VisitedLinkProvider> _visitedLinkProvider;
 }
 
 @end

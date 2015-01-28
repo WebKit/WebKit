@@ -26,6 +26,7 @@
 #ifndef VisitedLinkProvider_h
 #define VisitedLinkProvider_h
 
+#include "APIObject.h"
 #include "MessageReceiver.h"
 #include "VisitedLinkTable.h"
 #include "WebProcessLifetimeObserver.h"
@@ -40,10 +41,12 @@ namespace WebKit {
 class WebPageProxy;
 class WebProcessProxy;
     
-class VisitedLinkProvider : public RefCounted<VisitedLinkProvider>, private IPC::MessageReceiver, public WebProcessLifetimeObserver {
+class VisitedLinkProvider final : public API::ObjectImpl<API::Object::Type::VisitedLinkProvider>, private IPC::MessageReceiver, public WebProcessLifetimeObserver {
 public:
-    static PassRefPtr<VisitedLinkProvider> create();
-    ~VisitedLinkProvider();
+    static Ref<VisitedLinkProvider> create();
+
+    explicit VisitedLinkProvider();
+    virtual ~VisitedLinkProvider();
 
     uint64_t identifier() const { return m_identifier; }
 
@@ -54,8 +57,6 @@ public:
     void removeAll();
 
 private:
-    VisitedLinkProvider();
-
     // IPC::MessageReceiver
     virtual void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;
 

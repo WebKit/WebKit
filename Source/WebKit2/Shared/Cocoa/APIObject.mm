@@ -43,6 +43,7 @@
 #import "WKNSURLRequest.h"
 #import "WKNavigationDataInternal.h"
 #import "WKNavigationInternal.h"
+#import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUserContentControllerInternal.h"
 #import "WKUserScriptInternal.h"
@@ -56,6 +57,7 @@
 #import "_WKDownloadInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKProcessPoolConfigurationInternal.h"
+#import "_WKVisitedLinkProviderInternal.h"
 #import "_WKWebsiteDataStoreInternal.h"
 #import <objc/objc-auto.h>
 
@@ -106,6 +108,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::Connection:
         wrapper = NSAllocateObject([WKConnection self], size, nullptr);
+        break;
+
+    case Type::Preferences:
+        wrapper = [WKPreferences alloc];
         break;
 
     case Type::ProcessPool:
@@ -166,6 +172,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::UserScript:
         wrapper = [WKUserScript alloc];
+        break;
+
+    case Type::VisitedLinkProvider:
+        wrapper = [_WKVisitedLinkProvider alloc];
         break;
 
     case Type::WebsiteDataStore:

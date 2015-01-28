@@ -47,9 +47,9 @@ static uint64_t generateIdentifier()
     return ++identifier;
 }
 
-PassRefPtr<VisitedLinkProvider> VisitedLinkProvider::create()
+Ref<VisitedLinkProvider> VisitedLinkProvider::create()
 {
-    return adoptRef(new VisitedLinkProvider);
+    return adoptRef(*new VisitedLinkProvider);
 }
 
 VisitedLinkProvider::~VisitedLinkProvider()

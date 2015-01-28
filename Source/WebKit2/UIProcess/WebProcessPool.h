@@ -202,7 +202,7 @@ public:
     void registerURLSchemeAsCachePartitioned(const String&);
 #endif
 
-    VisitedLinkProvider& visitedLinkProvider() { return *m_visitedLinkProvider; }
+    VisitedLinkProvider& visitedLinkProvider() { return m_visitedLinkProvider.get(); }
 
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }
@@ -442,7 +442,7 @@ private:
 #if ENABLE(NETSCAPE_PLUGIN_API)
     PluginInfoStore m_pluginInfoStore;
 #endif
-    RefPtr<VisitedLinkProvider> m_visitedLinkProvider;
+    Ref<VisitedLinkProvider> m_visitedLinkProvider;
     bool m_visitedLinksPopulated;
 
     PlugInAutoStartProvider m_plugInAutoStartProvider;

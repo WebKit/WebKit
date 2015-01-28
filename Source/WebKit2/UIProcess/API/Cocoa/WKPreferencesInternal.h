@@ -27,15 +27,22 @@
 
 #if WK_API_ENABLED
 
-#import <wtf/RefPtr.h>
+#import "WKObject.h"
+#import "WebPreferences.h"
 
 namespace WebKit {
-class WebPreferences;
+
+inline WKPreferences *wrapper(WebPreferences& preferences)
+{
+    ASSERT([preferences.wrapper() isKindOfClass:[WKPreferences class]]);
+    return (WKPreferences *)preferences.wrapper();
 }
 
-@interface WKPreferences () {
+}
+
+@interface WKPreferences () <WKObject> {
 @package
-    RefPtr<WebKit::WebPreferences> _preferences;
+    API::ObjectStorage<WebKit::WebPreferences> _preferences;
 }
 
 @end

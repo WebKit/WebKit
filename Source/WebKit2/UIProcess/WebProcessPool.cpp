@@ -842,7 +842,7 @@ PassRefPtr<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, W
     if (!configuration.preferences)
         configuration.preferences = &configuration.pageGroup->preferences();
     if (!configuration.visitedLinkProvider)
-        configuration.visitedLinkProvider = m_visitedLinkProvider.get();
+        configuration.visitedLinkProvider = m_visitedLinkProvider.ptr();
     if (!configuration.websiteDataStore) {
         ASSERT(!configuration.sessionID.isValid());
         configuration.websiteDataStore = m_websiteDataStore.get();

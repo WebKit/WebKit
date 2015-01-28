@@ -39,8 +39,15 @@
     if (!(self = [super init]))
         return nil;
 
-    _preferences = WebKit::WebPreferences::create(String(), "WebKit", "WebKit");
+    API::Object::constructInWrapper<WebKit::WebPreferences>(self, String(), "WebKit", "WebKit");
     return self;
+}
+
+- (void)dealloc
+{
+    _preferences->~WebPreferences();
+
+    [super dealloc];
 }
 
 - (CGFloat)minimumFontSize
@@ -98,6 +105,13 @@
 }
 
 #endif
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_preferences;
+}
 
 @end
 
