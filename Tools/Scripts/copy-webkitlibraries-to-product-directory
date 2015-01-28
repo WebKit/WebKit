@@ -150,7 +150,6 @@ if ($wksi) {
         ));
     } else {
         push(@librariesToCopy, (
-            "libWebKitSystemInterfaceMountainLion.a",
             "libWebKitSystemInterfaceMavericks.a",
             "libWebKitSystemInterfaceYosemite.a"
         ));

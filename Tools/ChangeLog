@@ -1,3 +1,9 @@
+2015-01-28  Sam Weinig  <sam@webkit.org>
+
+        Fix the build.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2015-01-28  Lucas Forschler  <lforschler@apple.com>
 
         Increase the FileUpload block size in an attempt to improve network performance.
