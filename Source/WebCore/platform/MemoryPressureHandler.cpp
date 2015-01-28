@@ -96,9 +96,9 @@ void MemoryPressureHandler::releaseCriticalMemory()
 {
     {
         ReliefLogger log("Empty the PageCache");
-        int savedPageCacheCapacity = pageCache()->capacity();
-        pageCache()->setCapacity(0);
-        pageCache()->setCapacity(savedPageCacheCapacity);
+        // Right now, the only reason we call release critical memory while not under memory pressure is if the process is about to be suspended.
+        PruningReason pruningReason = memoryPressureHandler().isUnderMemoryPressure() ? PruningReason::MemoryPressure : PruningReason::ProcessSuspended;
+        pageCache()->pruneToCapacityNow(0, pruningReason);
     }
 
     {

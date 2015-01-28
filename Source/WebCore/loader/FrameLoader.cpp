@@ -1809,11 +1809,11 @@ void FrameLoader::commitProvisionalLoad()
             LOG(MemoryPressure, "Pruning page cache because under memory pressure at: %s", __PRETTY_FUNCTION__);
             LOG(PageCache, "Pruning page cache to 0 due to memory pressure");
             // Don't cache any page if we are under memory pressure.
-            pageCache()->pruneToCapacityNow(0);
+            pageCache()->pruneToCapacityNow(0, PruningReason::MemoryPressure);
         } else if (systemMemoryLevel() <= memoryLevelThresholdToPrunePageCache) {
             LOG(MemoryPressure, "Pruning page cache because system memory level is %d at: %s", systemMemoryLevel(), __PRETTY_FUNCTION__);
             LOG(PageCache, "Pruning page cache to %d due to low memory (level %d less or equal to %d threshold)", pageCache()->capacity() / 2, systemMemoryLevel(), memoryLevelThresholdToPrunePageCache);
-            pageCache()->pruneToCapacityNow(pageCache()->capacity() / 2);
+            pageCache()->pruneToCapacityNow(pageCache()->capacity() / 2, PruningReason::MemoryPressure);
         }
     }
 #endif
