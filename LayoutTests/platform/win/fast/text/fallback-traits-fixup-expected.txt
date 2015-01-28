@@ -29,4 +29,3 @@ layer at (0,0) size 800x600
           RenderText {#text} at (136,0) size 0x37
             text run at (136,0) width 0: "\x{26AB}"
         RenderText {#text} at (0,0) size 0x0
-

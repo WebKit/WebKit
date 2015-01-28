@@ -1,5 +1,18 @@
 2015-01-28  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] More gardening to get the bot green.
+
+        * css3/scroll-snap/resources: Added.
+        * platform/win/TestExpectations:
+        * platform/win/fast/events/ondrop-text-html-expected.txt: Copied from platform/win/fast/events/ondrop-text-htmlt-expected.txt.
+        * platform/win/fast/events/ondrop-text-htmlt-expected.txt: Removed.
+        * platform/win/fast/html/marquee-scrollamount-expected.txt: Added.
+        * platform/win/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        * platform/win/fast/text/fallback-traits-fixup-expected.txt:
+        * platform/win/fast/text/international/complex-character-based-fallback-expected.txt:
+
+2015-01-28  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed gardening. Reskip some region tests.
 
         * platform/win/TestExpectations:

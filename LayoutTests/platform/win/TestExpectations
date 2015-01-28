@@ -1889,6 +1889,7 @@ inspector/css/pseudo-element-matches.html [ Skip ]
 [ Release ] inspector-protocol/dom/remove-multiple-nodes.html [ Pass Timeout ]
 inspector-protocol/layers/layers-blending-compositing-reasons.html [ Failure ]
 webkit.org/b/140520 inspector-protocol/debugger/setBreakpoint-dfg.html [ Skip ]  # Crashing
+inspector-protocol/debugger/regress-133182.html	[ Skip ]  # Crashing
 ################################################################################
 #################        End Inspector Issues               ####################
 ################################################################################
