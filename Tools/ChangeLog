@@ -1,3 +1,12 @@
+2015-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Make flakiness dashboard OS list actually match test_expectations.py
+        https://bugs.webkit.org/show_bug.cgi?id=140969
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2015-01-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] WinLauncher crashes on eleventh site visited
