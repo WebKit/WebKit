@@ -104,6 +104,11 @@ using namespace WebCore;
     [self _clearImmediateActionState];
 }
 
+- (NSImmediateActionGestureRecognizer *)immediateActionRecognizer
+{
+    return _immediateActionRecognizer.get();
+}
+
 - (void)_cancelImmediateAction
 {
     // Reset the recognizer by turning it off and on again.
