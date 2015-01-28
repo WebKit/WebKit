@@ -1,3 +1,42 @@
+2015-01-28  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r178364
+
+    2015-01-12  Michael Saboff  <msaboff@apple.com>
+
+            Local JSArray* "keys" in objectConstructorKeys() is not marked during garbage collection
+            https://bugs.webkit.org/show_bug.cgi?id=140348
+
+            Reviewed by Mark Lam.
+
+            We used to read registers in MachineThreads::gatherFromCurrentThread(), but that is too late
+            because those registers may have been spilled on the stack and replaced with other values by
+            the time we call down to gatherFromCurrentThread().
+
+            Now we get the register contents at the same place that we demarcate the current top of
+            stack using the address of a local variable, in Heap::markRoots().  The register contents
+            buffer is passed along with the demarcation pointer.  These need to be done at this level 
+            in the call tree and no lower, as markRoots() calls various functions that visit object
+            pointers that may be latter proven dead.  Any of those pointers that are left on the
+            stack or in registers could be incorrectly marked as live if we scan the stack contents
+            from a called function or one of its callees.  The stack demarcation pointer and register
+            saving need to be done in the same function so that we have a consistent stack, active
+            and spilled registers.
+
+            Because we don't want to make unnecessary calls to get the register contents, we use
+            a macro to allocated, and possibly align, the register structure and get the actual
+            register contents.
+
+
+            * heap/Heap.cpp:
+            (JSC::Heap::markRoots):
+            (JSC::Heap::gatherStackRoots):
+            * heap/Heap.h:
+            * heap/MachineStackMarker.cpp:
+            (JSC::MachineThreads::gatherFromCurrentThread):
+            (JSC::MachineThreads::gatherConservativeRoots):
+            * heap/MachineStackMarker.h:
+
 2015-01-27  Lucas Forschler  <lforschler@apple.com>
 
         Merge r177455
