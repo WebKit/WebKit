@@ -1,3 +1,25 @@
+2015-01-27  Antti Koivisto  <antti@apple.com>
+
+        http/tests/xmlhttprequest/workers/methods.html sometimes times out with disk cache enabled
+        https://bugs.webkit.org/show_bug.cgi?id=140976
+
+        Reviewed by Chris Dumez.
+
+        Running
+
+            run-webkit-tests --release -2 http/tests/xmlhttprequest/workers/methods.html --iterations=100
+
+        would usually time out an iteration.
+
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::dispatchRetrieveOperation):
+
+        Using dispatch_io_read with an empty file calls the handler block immediately with done boolean set
+        without it being an error. We failed to call the completion handler and any synchronous xhr would hang.
+        We may see an empty cache file if we are just in process of writing it.
+
+        Fix by handling this case specifically.
+
 2015-01-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Add missing file to WebInspector compilation for GTK+.

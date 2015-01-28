@@ -373,8 +373,12 @@ void NetworkCacheStorage::dispatchRetrieveOperation(const RetrieveOperation& ret
                 removeEntry(retrieve.key);
                 return;
             }
-            if (done)
+            if (done) {
+                // File exists but is empty. Invoke the completion handler as it hasn't been done yet.
+                if (fileData == dispatch_data_empty)
+                    retrieve.completionHandler(nullptr);
                 return;
+            }
             auto entry = decodeEntry(fileData, fd, retrieve.key);
             bool success = retrieve.completionHandler(WTF::move(entry));
             if (!success)
