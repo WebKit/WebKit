@@ -525,6 +525,15 @@ String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)
     return representation;
 }
 
+bool Internals::hasPausedImageAnimations(Element* element, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+    return element->renderer() && element->renderer()->hasPausedImageAnimations();
+}
+
 PassRefPtr<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(Node* node, ExceptionCode& ec) const
 {
     if (!node) {

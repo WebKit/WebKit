@@ -34,6 +34,9 @@ enum PageOverlayType {
 ] interface Internals {
     DOMString address(Node node);
 
+    // Animated image pausing testing.
+    [RaisesException] boolean hasPausedImageAnimations(Element element);
+
     [RaisesException] DOMString elementRenderTreeAsText(Element element);
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
