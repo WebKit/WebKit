@@ -1,3 +1,23 @@
+2015-01-27  Chris Dumez  <cdumez@apple.com>
+
+        Remove unnecessary m_cachedPage null-checks in PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=140965
+
+        Reviewed by Andreas Kling.
+
+        Remove unnecessary m_cachedPage null-checks in PageCache. We initialize
+        m_cachedPage when inserting the HistoryItem in the page cache and clear
+        it when removing it from the page cache. Therefore, it is guaranteed
+        that HistoryItems currently in the page cache have m_cachedPage
+        initialized and there is no need to null-check it.
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::frameCount):
+        (WebCore::PageCache::markPagesForVistedLinkStyleRecalc):
+        (WebCore::PageCache::markPagesForFullStyleRecalc):
+        (WebCore::PageCache::markPagesForDeviceScaleChanged):
+        (WebCore::PageCache::markPagesForCaptionPreferencesChanged):
+
 2015-01-27  Alexey Proskuryakov  <ap@apple.com>
 
         Some NSAccessibility methods we use are deprecated on 10.10

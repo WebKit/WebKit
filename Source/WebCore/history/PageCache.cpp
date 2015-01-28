@@ -392,7 +392,7 @@ int PageCache::frameCount() const
     for (HistoryItem* current = m_head; current; current = current->m_next) {
         ++frameCount;
         ASSERT(current->m_cachedPage);
-        frameCount += current->m_cachedPage ? current->m_cachedPage->cachedMainFrame()->descendantFrameCount() : 0;
+        frameCount += current->m_cachedPage->cachedMainFrame()->descendantFrameCount();
     }
     
     return frameCount;
@@ -401,26 +401,26 @@ int PageCache::frameCount() const
 void PageCache::markPagesForVistedLinkStyleRecalc()
 {
     for (HistoryItem* current = m_head; current; current = current->m_next) {
-        if (current->m_cachedPage)
-            current->m_cachedPage->markForVistedLinkStyleRecalc();
+        ASSERT(current->m_cachedPage);
+        current->m_cachedPage->markForVistedLinkStyleRecalc();
     }
 }
 
 void PageCache::markPagesForFullStyleRecalc(Page* page)
 {
     for (HistoryItem* current = m_head; current; current = current->m_next) {
-        CachedPage* cachedPage = current->m_cachedPage.get();
-        if (cachedPage && &page->mainFrame() == &cachedPage->cachedMainFrame()->view()->frame())
-            cachedPage->markForFullStyleRecalc();
+        CachedPage& cachedPage = *current->m_cachedPage;
+        if (&page->mainFrame() == &cachedPage.cachedMainFrame()->view()->frame())
+            cachedPage.markForFullStyleRecalc();
     }
 }
 
 void PageCache::markPagesForDeviceScaleChanged(Page* page)
 {
     for (HistoryItem* current = m_head; current; current = current->m_next) {
-        CachedPage* cachedPage = current->m_cachedPage.get();
-        if (cachedPage && &page->mainFrame() == &cachedPage->cachedMainFrame()->view()->frame())
-            cachedPage->markForDeviceScaleChanged();
+        CachedPage& cachedPage = *current->m_cachedPage;
+        if (&page->mainFrame() == &cachedPage.cachedMainFrame()->view()->frame())
+            cachedPage.markForDeviceScaleChanged();
     }
 }
 
@@ -428,8 +428,8 @@ void PageCache::markPagesForDeviceScaleChanged(Page* page)
 void PageCache::markPagesForCaptionPreferencesChanged()
 {
     for (HistoryItem* current = m_head; current; current = current->m_next) {
-        if (current->m_cachedPage)
-            current->m_cachedPage->markForCaptionPreferencesChanged();
+        ASSERT(current->m_cachedPage);
+        current->m_cachedPage->markForCaptionPreferencesChanged();
     }
 }
 #endif
