@@ -56,7 +56,7 @@ enum class ImmediateActionState {
     WebKit::ActionMenuHitTestResult _hitTestResult;
     RefPtr<API::Object> _userData;
     _WKImmediateActionType _type;
-    NSImmediateActionGestureRecognizer *_immediateActionRecognizer;
+    RetainPtr<NSImmediateActionGestureRecognizer> _immediateActionRecognizer;
 
     BOOL _hasActivatedActionContext;
     RetainPtr<DDActionContext> _currentActionContext;
