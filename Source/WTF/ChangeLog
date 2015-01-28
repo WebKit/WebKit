@@ -1,3 +1,15 @@
+2015-01-28  Darin Adler  <darin@apple.com>
+
+        Fix small leak in Collator
+        https://bugs.webkit.org/show_bug.cgi?id=140990
+
+        Reviewed by Andreas Kling.
+
+        * wtf/unicode/icu/CollatorICU.cpp:
+        (WTF::Collator::Collator): Use fastStrDup instead of strdup.
+        (WTF::Collator::~Collator): Use fastFree on the collator locale that we
+        are abandoning. The old code instead just called free on a null pointer.
+
 2015-01-27  Geoffrey Garen  <ggaren@apple.com>
 
         Removed WTF_MALLOC_VALIDATION

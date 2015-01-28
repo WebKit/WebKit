@@ -141,24 +141,20 @@ Collator::Collator(const char* locale, bool shouldSortLowercaseFirst)
     ucol_setAttribute(m_collator, UCOL_NORMALIZATION_MODE, UCOL_ON, &status);
     ASSERT(U_SUCCESS(status));
 
-    m_locale = locale ? strdup(locale) : nullptr;
+    m_locale = locale ? fastStrDup(locale) : nullptr;
     m_shouldSortLowercaseFirst = shouldSortLowercaseFirst;
 }
 
 Collator::~Collator()
 {
-    {
-        std::lock_guard<std::mutex> lock(cachedCollatorMutex());
-        if (cachedCollator)
-            ucol_close(cachedCollator);
-        cachedCollator = m_collator;
-        cachedCollatorLocale = m_locale;
-        cachedCollatorShouldSortLowercaseFirst = m_shouldSortLowercaseFirst;
-        m_collator = nullptr;
-        m_locale = nullptr;
+    std::lock_guard<std::mutex> lock(cachedCollatorMutex());
+    if (cachedCollator) {
+        ucol_close(cachedCollator);
+        fastFree(cachedCollatorLocale);
     }
-
-    free(m_locale);
+    cachedCollator = m_collator;
+    cachedCollatorLocale = m_locale;
+    cachedCollatorShouldSortLowercaseFirst = m_shouldSortLowercaseFirst;
 }
 
 static int32_t getIndexLatin1(UCharIterator* iterator, UCharIteratorOrigin origin)
