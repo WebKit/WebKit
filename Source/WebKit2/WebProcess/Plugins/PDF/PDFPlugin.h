@@ -107,7 +107,7 @@ private:
     explicit PDFPlugin(WebFrame*);
 
     // Plugin functions.
-    virtual bool initialize(const Parameters&);
+    virtual bool initialize(const Parameters&) override;
     virtual void destroy() override;
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRectInWindowCoordinates) override { }
     virtual void updateControlTints(WebCore::GraphicsContext*) override;
@@ -200,7 +200,7 @@ private:
     virtual WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar*, const WebCore::IntPoint& scrollbarPoint) const override;
     virtual WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const override;
     virtual bool updatesScrollLayerPositionOnMainThread() const override { return true; }
-    virtual bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const;
+    virtual bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override;
 
     // PDFPlugin functions.
     void updateScrollbars();

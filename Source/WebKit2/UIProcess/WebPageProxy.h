@@ -1140,8 +1140,8 @@ private:
 
 #if ENABLE(INPUT_TYPE_COLOR)
     void showColorPicker(const WebCore::Color& initialColor, const WebCore::IntRect&);
-    void didChooseColor(const WebCore::Color&);
-    void didEndColorPicker();
+    virtual void didChooseColor(const WebCore::Color&) override;
+    virtual void didEndColorPicker() override;
 #endif
 
     void editorStateChanged(const EditorState&);

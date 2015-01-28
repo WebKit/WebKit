@@ -1,3 +1,14 @@
+2015-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        More build fixes for newer clang.
+
+        Rubber-stamped by Anders Carlsson.
+
+        Marked a deprecated accessibility method as such.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame accessibilityRoot]):
+
 2015-01-27  Beth Dakin  <bdakin@apple.com>
 
         Immediate action gesture recognizer still doesn't work well with IB

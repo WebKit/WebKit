@@ -130,8 +130,8 @@ private:
 
 // *** Any Thread ***
 public:
-    WEBCORE_EXPORT virtual bool isOpen() const;
-    WEBCORE_EXPORT virtual String databasePath() const;
+    WEBCORE_EXPORT virtual bool isOpen() const override;
+    WEBCORE_EXPORT virtual String databasePath() const override;
     WEBCORE_EXPORT static String defaultDatabaseFilename();
 
 private:
@@ -178,7 +178,7 @@ private:
 
 // *** Sync Thread Only ***
 public:
-    WEBCORE_EXPORT virtual bool shouldStopThreadActivity() const;
+    WEBCORE_EXPORT virtual bool shouldStopThreadActivity() const override;
 
 private:    
     static void iconDatabaseSyncThreadStart(void *);

@@ -135,7 +135,7 @@ private:
     }
 
 #if PLATFORM(MAC)
-    virtual DDActionContext *actionContextForResultAtPoint(WebPageOverlay& pageOverlay, WebCore::FloatPoint location, RefPtr<WebCore::Range>& rangeHandle)
+    virtual DDActionContext *actionContextForResultAtPoint(WebPageOverlay& pageOverlay, WebCore::FloatPoint location, RefPtr<WebCore::Range>& rangeHandle) override
     {
         if (!m_client.actionContextForResultAtPoint)
             return nil;
@@ -149,7 +149,7 @@ private:
         return actionContext;
     }
 
-    virtual void dataDetectorsDidPresentUI(WebPageOverlay& pageOverlay)
+    virtual void dataDetectorsDidPresentUI(WebPageOverlay& pageOverlay) override
     {
         if (!m_client.dataDetectorsDidPresentUI)
             return;
@@ -157,7 +157,7 @@ private:
         m_client.dataDetectorsDidPresentUI(toAPI(&pageOverlay), m_client.base.clientInfo);
     }
 
-    virtual void dataDetectorsDidChangeUI(WebPageOverlay& pageOverlay)
+    virtual void dataDetectorsDidChangeUI(WebPageOverlay& pageOverlay) override
     {
         if (!m_client.dataDetectorsDidChangeUI)
             return;
@@ -165,7 +165,7 @@ private:
         m_client.dataDetectorsDidChangeUI(toAPI(&pageOverlay), m_client.base.clientInfo);
     }
 
-    virtual void dataDetectorsDidHideUI(WebPageOverlay& pageOverlay)
+    virtual void dataDetectorsDidHideUI(WebPageOverlay& pageOverlay) override
     {
         if (!m_client.dataDetectorsDidHideUI)
             return;

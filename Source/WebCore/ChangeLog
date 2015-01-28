@@ -1,3 +1,11 @@
+2015-01-27  Alexey Proskuryakov  <ap@apple.com>
+
+        More build fixes for newer clang.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * loader/icon/IconDatabase.h: Added missing override keywords.
+
 2015-01-27  Roger Fong  <roger_fong@apple.com>
 
         WebGL2: Disable various extensions on WebGL2 context that have been promoted to core.
