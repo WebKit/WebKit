@@ -65,6 +65,8 @@ struct ScrollAlignment {
     static const ScrollAlignment alignToEdgeIfNeeded;
     static const ScrollAlignment alignCenterAlways;
     static const ScrollAlignment alignTopAlways;
+    static const ScrollAlignment alignRightAlways;
+    static const ScrollAlignment alignLeftAlways;
     static const ScrollAlignment alignBottomAlways;
 
     ScrollBehavior m_rectVisible;
