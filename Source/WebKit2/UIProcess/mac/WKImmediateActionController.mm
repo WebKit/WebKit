@@ -75,6 +75,13 @@ using namespace WebKit;
     _page = nullptr;
     _wkView = nil;
     _hitTestResult = ActionMenuHitTestResult();
+
+    id animationController = _immediateActionRecognizer.animationController;
+    if ([animationController isKindOfClass:NSClassFromString(@"QLPreviewMenuItem")]) {
+        QLPreviewMenuItem *menuItem = (QLPreviewMenuItem *)animationController;
+        menuItem.delegate = nil;
+    }
+
     _immediateActionRecognizer = nil;
     _currentActionContext = nil;
 }
