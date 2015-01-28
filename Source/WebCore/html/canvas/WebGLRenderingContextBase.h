@@ -176,7 +176,7 @@ public:
     WebGLGetInfo getBufferParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);
     PassRefPtr<WebGLContextAttributes> getContextAttributes();
     GC3Denum getError();
-    WebGLExtension* getExtension(const String& name);
+    virtual WebGLExtension* getExtension(const String& name) = 0;
     WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&);
     WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&);
     WebGLGetInfo getProgramParameter(WebGLProgram*, GC3Denum pname, ExceptionCode&);
@@ -186,7 +186,7 @@ public:
     String getShaderInfoLog(WebGLShader*, ExceptionCode&);
     PassRefPtr<WebGLShaderPrecisionFormat> getShaderPrecisionFormat(GC3Denum shaderType, GC3Denum precisionType, ExceptionCode&);
     String getShaderSource(WebGLShader*, ExceptionCode&);
-    Vector<String> getSupportedExtensions();
+    virtual Vector<String> getSupportedExtensions() = 0;
     WebGLGetInfo getTexParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);
     WebGLGetInfo getUniform(WebGLProgram*, const WebGLUniformLocation*, ExceptionCode&);
     PassRefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram*, const String&, ExceptionCode&);
@@ -335,10 +335,9 @@ public:
     void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
 
 protected:
-WebGLRenderingContextBase(HTMLCanvasElement*, GraphicsContext3D::Attributes);
-WebGLRenderingContextBase(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
+    WebGLRenderingContextBase(HTMLCanvasElement*, GraphicsContext3D::Attributes);
+    WebGLRenderingContextBase(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
 
-private:
     friend class WebGLDrawBuffers;
     friend class WebGLFramebuffer;
     friend class WebGLObject;
@@ -350,8 +349,8 @@ private:
     friend class WebGLRenderingContextErrorMessageCallback;
     friend class WebGLVertexArrayObjectOES;
 
-void initializeNewContext();
-void setupFlags();
+    void initializeNewContext();
+    void setupFlags();
 
     // ActiveDOMObject
     virtual bool hasPendingActivity() const override;

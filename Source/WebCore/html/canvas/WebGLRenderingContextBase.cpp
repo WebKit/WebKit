@@ -3095,60 +3095,6 @@ String WebGLRenderingContextBase::getShaderSource(WebGLShader* shader, Exception
     return ensureNotNull(shader->getSource());
 }
 
-Vector<String> WebGLRenderingContextBase::getSupportedExtensions()
-{
-    Vector<String> result;
-
-    if (m_isPendingPolicyResolution)
-        return result;
-
-    if (m_context->getExtensions()->supports("GL_EXT_blend_minmax"))
-        result.append("EXT_blend_minmax");
-    if (m_context->getExtensions()->supports("GL_EXT_sRGB"))
-        result.append("EXT_sRGB");
-    if (m_context->getExtensions()->supports("GL_EXT_frag_depth"))
-        result.append("EXT_frag_depth");
-    if (m_context->getExtensions()->supports("GL_OES_texture_float"))
-        result.append("OES_texture_float");
-    if (m_context->getExtensions()->supports("GL_OES_texture_float_linear"))
-        result.append("OES_texture_float_linear");
-    if (m_context->getExtensions()->supports("GL_OES_texture_half_float"))
-        result.append("OES_texture_half_float");
-    if (m_context->getExtensions()->supports("GL_OES_texture_half_float_linear"))
-        result.append("OES_texture_half_float_linear");
-    if (m_context->getExtensions()->supports("GL_OES_standard_derivatives"))
-        result.append("OES_standard_derivatives");
-    if (m_context->getExtensions()->supports("GL_EXT_shader_texture_lod") || m_context->getExtensions()->supports("GL_ARB_shader_texture_lod"))
-        result.append("EXT_shader_texture_lod");
-    if (m_context->getExtensions()->supports("GL_EXT_texture_filter_anisotropic"))
-        result.append("WEBKIT_EXT_texture_filter_anisotropic");
-    if (m_context->getExtensions()->supports("GL_OES_vertex_array_object"))
-        result.append("OES_vertex_array_object");
-    if (m_context->getExtensions()->supports("GL_OES_element_index_uint"))
-        result.append("OES_element_index_uint");
-    result.append("WEBGL_lose_context");
-    if (WebGLCompressedTextureATC::supported(this))
-        result.append("WEBKIT_WEBGL_compressed_texture_atc");
-    if (WebGLCompressedTexturePVRTC::supported(this))
-        result.append("WEBKIT_WEBGL_compressed_texture_pvrtc");
-    if (WebGLCompressedTextureS3TC::supported(this))
-        result.append("WEBGL_compressed_texture_s3tc");
-    if (WebGLDepthTexture::supported(graphicsContext3D()))
-        result.append("WEBGL_depth_texture");
-    if (supportsDrawBuffers())
-        result.append("WEBGL_draw_buffers");
-    if (ANGLEInstancedArrays::supported(this))
-        result.append("ANGLE_instanced_arrays");
-
-    if (allowPrivilegedExtensions()) {
-        if (m_context->getExtensions()->supports("GL_ANGLE_translated_shader_source"))
-            result.append("WEBGL_debug_shaders");
-        result.append("WEBGL_debug_renderer_info");
-    }
-
-    return result;
-}
-
 WebGLGetInfo WebGLRenderingContextBase::getTexParameter(GC3Denum target, GC3Denum pname, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);

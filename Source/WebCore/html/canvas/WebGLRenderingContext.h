@@ -35,6 +35,9 @@ public:
     WebGLRenderingContext(HTMLCanvasElement*, GraphicsContext3D::Attributes);
     WebGLRenderingContext(HTMLCanvasElement*, PassRefPtr<GraphicsContext3D>, GraphicsContext3D::Attributes);
     virtual bool isWebGL1() const { return true; }
+    
+    virtual WebGLExtension* getExtension(const String&) override;
+    virtual Vector<String> getSupportedExtensions() override;
 };
     
 } // namespace WebCore

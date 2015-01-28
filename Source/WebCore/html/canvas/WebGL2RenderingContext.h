@@ -163,6 +163,10 @@ public:
     void deleteVertexArray(WebGLVertexArrayObject* vertexArray);
     GC3Dboolean isVertexArray(WebGLVertexArrayObject* vertexArray);
     void bindVertexArray(WebGLVertexArrayObject* vertexArray);
+    
+    /* Extensions */
+    virtual WebGLExtension* getExtension(const String&) override;
+    virtual Vector<String> getSupportedExtensions() override;
 };
 
 } // namespace WebCore
