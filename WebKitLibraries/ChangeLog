@@ -1,3 +1,11 @@
+2015-01-28  Sam Weinig  <sam@webkit.org>
+
+        Remove libWebKitSystemInterfaceMountainLion.a
+
+        Reviewed by Mark Rowe.
+
+        * libWebKitSystemInterfaceMountainLion.a: Removed.
+
 2015-01-28  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Enable CSS_SELECTORS_LEVEL4.
