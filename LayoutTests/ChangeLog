@@ -1,5 +1,22 @@
 2015-01-28  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r179027. rdar://problem/19585744
+
+    2015-01-23  Enrica Casucci  <enrica@apple.com>
+
+            Hit test returns incorrect results when performed in paginated content over the page gaps.
+            https://bugs.webkit.org/show_bug.cgi?id=140837
+            rdar://problem/17494390
+
+            Reviewed by Dave Hyatt.
+
+            * fast/multicol/pagination/LeftToRight-tb-hittest-expected.txt: Added.
+            * fast/multicol/pagination/LeftToRight-tb-hittest.html: Added.
+            * fast/multicol/pagination/RightToLeft-rl-hittest-expected.txt: Added.
+            * fast/multicol/pagination/RightToLeft-rl-hittest.html: Added.
+
+2015-01-28  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r178953. rdar://problem/19617631
 
     2015-01-22  Joseph Pecoraro  <pecoraro@apple.com>
