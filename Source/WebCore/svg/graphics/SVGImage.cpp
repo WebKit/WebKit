@@ -249,7 +249,7 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
     if (view->needsLayout())
         view->layout();
 
-    view->paint(context, enclosingIntRect(srcRect));
+    view->paint(context, intersection(context->clipBounds(), enclosingIntRect(srcRect)));
 
     if (compositingRequiresTransparencyLayer)
         context->endTransparencyLayer();

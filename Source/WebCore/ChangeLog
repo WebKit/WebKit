@@ -1,3 +1,25 @@
+2015-01-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Poor performance on IE's Chalkboard benchmark.
+        https://bugs.webkit.org/show_bug.cgi?id=140753.
+
+        Reviewed by Zalan Bujtas.
+
+        Test: PerformanceTests/SVG/UnderTheSeeBenchmark.html
+              PerformanceTests/SVG/WorldcupBenchmark.html
+              
+        The SVG rendering code was not skipping the SVG elements which are outside the
+        clipping rectangle. We were drawing all the SVG elements even if some of them
+        are completely outside the clipping rectangle. The fix is to pass the correct
+        dirty rectangle to the ScrollView which then gets propagated to the SVG renderers.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+        SVGImage::draw() needs to pass the intersection of 'srcRect' and context->clipBounds(),
+        to ScrollView::paint(). This will ensure RenderSVGShape::paint() gets the correct
+        clipping rectangle. If there is no intersection between the boundingBox of the
+        RenderSVGShape and the clipping rectangle, the RenderSVGShape will not be drawn.
+
 2015-01-28  Brent Fulgham  <bfulgham@apple.com>
 
         Scroll snap points do not work in the vertical direction

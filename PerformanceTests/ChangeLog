@@ -1,3 +1,17 @@
+2015-01-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Poor performance on IE's Chalkboard benchmark.
+        https://bugs.webkit.org/show_bug.cgi?id=140753.
+
+        Reviewed by Zalan Bujtas.
+
+        * SVG/UnderTheSeeBenchmark.html: Added
+        * SVG/WorldcupBenchmark.html: Added.
+        * SVG/resources/RenderAnimator.css: Added.
+        * SVG/resources/RenderAnimator.js: Added.
+        These are benchmarks for the SVG rendering. Mainly we want to measure how fast
+        the SVG rendering will be when only a small part of it is drawn.
+        
 2015-01-21  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: support aligned allocation
