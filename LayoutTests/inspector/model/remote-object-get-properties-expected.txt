@@ -1,7 +1,6 @@
 
 -----------------------------------------------------
 EXPRESSION: window.simpleObject
-objectId: {"injectedScriptId":1,"id":1}
 type: object
 description: Object
 
@@ -34,7 +33,6 @@ ALL PROPERTIES:
 
 -----------------------------------------------------
 EXPRESSION: window.loadEvent
-objectId: {"injectedScriptId":1,"id":16}
 type: object
 description: Event
 
@@ -110,7 +108,6 @@ ALL PROPERTIES:
 
 -----------------------------------------------------
 EXPRESSION: window.complexObject
-objectId: {"injectedScriptId":1,"id":41}
 type: object
 description: SuperFoo
 
@@ -155,7 +152,6 @@ ALL PROPERTIES:
 
 -----------------------------------------------------
 EXPRESSION: window.badGetterObject
-objectId: {"injectedScriptId":1,"id":60}
 type: object
 description: ClassWithBadGetter
 
