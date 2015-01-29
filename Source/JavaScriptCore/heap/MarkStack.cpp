@@ -30,8 +30,8 @@
 
 namespace JSC {
 
-MarkStackArray::MarkStackArray(BlockAllocator& blockAllocator)
-    : GCSegmentedArray<const JSCell*>(blockAllocator)
+MarkStackArray::MarkStackArray()
+    : GCSegmentedArray<const JSCell*>()
 {
 }
 

@@ -34,7 +34,7 @@ class JSCell;
 
 class MarkStackArray : public GCSegmentedArray<const JSCell*> {
 public:
-    MarkStackArray(BlockAllocator&);
+    MarkStackArray();
 
     void donateSomeCellsTo(MarkStackArray& other);
     void stealSomeCellsFrom(MarkStackArray& other, size_t idleThreadCount);

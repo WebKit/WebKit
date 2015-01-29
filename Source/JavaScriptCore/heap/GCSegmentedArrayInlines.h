@@ -26,18 +26,16 @@
 #ifndef GCSegmentedArrayInlines_h
 #define GCSegmentedArrayInlines_h
 
-#include "BlockAllocator.h"
 #include "GCSegmentedArray.h"
 
 namespace JSC {
 
 template <typename T>
-GCSegmentedArray<T>::GCSegmentedArray(BlockAllocator& blockAllocator)
-    : m_blockAllocator(blockAllocator)
-    , m_top(0)
+GCSegmentedArray<T>::GCSegmentedArray()
+    : m_top(0)
     , m_numberOfSegments(0)
 {
-    m_segments.push(GCArraySegment<T>::create(m_blockAllocator.allocate<GCArraySegment<T>>()));
+    m_segments.push(GCArraySegment<T>::create());
     m_numberOfSegments++;
 }
 
@@ -46,7 +44,7 @@ GCSegmentedArray<T>::~GCSegmentedArray()
 {
     ASSERT(m_numberOfSegments == 1);
     ASSERT(m_segments.size() == 1);
-    m_blockAllocator.deallocate(GCArraySegment<T>::destroy(m_segments.removeHead()));
+    GCArraySegment<T>::destroy(m_segments.removeHead());
     m_numberOfSegments--;
     ASSERT(!m_numberOfSegments);
     ASSERT(!m_segments.size());
@@ -61,7 +59,7 @@ void GCSegmentedArray<T>::clear()
     for (GCArraySegment<T>* current = m_segments.head(); current->next(); current = next) {
         next = current->next();
         m_segments.remove(current);
-        m_blockAllocator.deallocate(GCArraySegment<T>::destroy(current));
+        GCArraySegment<T>::destroy(current);
     }
     m_top = 0;
     m_numberOfSegments = 1;
@@ -75,7 +73,7 @@ void GCSegmentedArray<T>::expand()
 {
     ASSERT(m_segments.head()->m_top == s_segmentCapacity);
     
-    GCArraySegment<T>* nextSegment = GCArraySegment<T>::create(m_blockAllocator.allocate<GCArraySegment<T>>());
+    GCArraySegment<T>* nextSegment = GCArraySegment<T>::create();
     m_numberOfSegments++;
     
 #if !ASSERT_DISABLED
@@ -93,7 +91,7 @@ bool GCSegmentedArray<T>::refill()
     validatePrevious();
     if (top())
         return true;
-    m_blockAllocator.deallocate(GCArraySegment<T>::destroy(m_segments.removeHead()));
+    GCArraySegment<T>::destroy(m_segments.removeHead());
     ASSERT(m_numberOfSegments > 1);
     m_numberOfSegments--;
     setTopForFullSegment();
@@ -127,9 +125,16 @@ void GCSegmentedArray<T>::fillVector(Vector<T>& vector)
 }
 
 template <typename T>
-inline GCArraySegment<T>* GCArraySegment<T>::create(DeadBlock* block)
+inline GCArraySegment<T>* GCArraySegment<T>::create()
 {
-    return new (NotNull, block) GCArraySegment<T>(block->region());
+    return new (NotNull, fastMalloc(blockSize)) GCArraySegment<T>();
+}
+
+template <typename T>
+inline void GCArraySegment<T>::destroy(GCArraySegment* segment)
+{
+    segment->~GCArraySegment();
+    fastFree(segment);
 }
 
 template <typename T>

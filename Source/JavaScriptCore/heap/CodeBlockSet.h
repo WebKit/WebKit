@@ -36,7 +36,6 @@
 
 namespace JSC {
 
-class BlockAllocator;
 class CodeBlock;
 class Heap;
 class JSCell;
@@ -50,7 +49,7 @@ class CodeBlockSet {
     WTF_MAKE_NONCOPYABLE(CodeBlockSet);
 
 public:
-    CodeBlockSet(BlockAllocator&);
+    CodeBlockSet();
     ~CodeBlockSet();
     
     // Add a CodeBlock. This is only called by CodeBlock constructors.

@@ -35,8 +35,8 @@ namespace JSC {
 
 static const bool verbose = false;
 
-CodeBlockSet::CodeBlockSet(BlockAllocator& blockAllocator)
-    : m_currentlyExecuting(blockAllocator)
+CodeBlockSet::CodeBlockSet()
+    : m_currentlyExecuting()
 {
 }
 
