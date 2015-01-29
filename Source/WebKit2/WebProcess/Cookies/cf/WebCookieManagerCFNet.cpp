@@ -32,8 +32,6 @@
 
 #if PLATFORM(MAC)
 #include <WebKitSystemInterface.h>
-#elif PLATFORM(WIN)
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
 using namespace WebCore;
@@ -44,8 +42,6 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
 {
 #if PLATFORM(MAC)
     CFHTTPCookieStorageRef defaultCookieStorage = WKGetDefaultHTTPCookieStorage();
-#elif PLATFORM(WIN)
-    CFHTTPCookieStorageRef defaultCookieStorage = wkGetDefaultHTTPCookieStorage();
 #endif
 
     CFHTTPCookieStorageSetCookieAcceptPolicy(defaultCookieStorage, policy);

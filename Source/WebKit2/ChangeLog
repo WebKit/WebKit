@@ -1,3 +1,13 @@
+2015-01-28  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Remove remaining PLATFORM(WIN) code blocks from WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=140972
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Cookies/cf/WebCookieManagerCFNet.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+
 2015-01-28  Beth Dakin  <bdakin@apple.com>
 
         Remove Mountain Lion code from WebKit and WebKit2
