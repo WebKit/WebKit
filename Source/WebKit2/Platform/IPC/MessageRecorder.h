@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MessageEncoder_h
-#define MessageEncoder_h
+#ifndef MessageRecorder_h
+#define MessageRecorder_h
 
-#include "ArgumentEncoder.h"
-#include "StringReference.h"
+#include "ProcessType.h"
 #include <uuid/uuid.h>
 #include <wtf/Forward.h>
+#include <wtf/MallocPtr.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
+
+struct WebKitMessageRecord {
+    uint8_t sourceProcessType; // IPC::ProcessType
+    pid_t sourceProcessID;
+
+    uint8_t destinationProcessType; // IPC::ProcessType
+    pid_t destinationProcessID;
+
+    MallocPtr<char> messageReceiverName;
+    MallocPtr<char> messageName;
+    uint64_t destinationID;
+
+    uuid_t UUID;
+
+    double startTime;
+    double endTime;
+
+    bool isSyncMessage;
+    bool shouldDispatchMessageWhenWaitingForSyncReply;
+    bool isIncoming;
+};
 
 namespace IPC {
 
-class StringReference;
+class Connection;
+class MessageDecoder;
+class MessageEncoder;
 
-class MessageEncoder : public ArgumentEncoder {
+class MessageRecorder {
 public:
-    MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
-    MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, const uuid_t&);
-    virtual ~MessageEncoder();
+    static bool isEnabled();
 
-    StringReference messageReceiverName() const { return m_messageReceiverName; }
-    StringReference messageName() const { return m_messageName; }
-    uint64_t destinationID() const { return m_destinationID; }
+    class MessageProcessingToken {
+        WTF_MAKE_NONCOPYABLE(MessageProcessingToken);
+    public:
+        explicit MessageProcessingToken(WebKitMessageRecord);
+        ~MessageProcessingToken();
 
-    void setIsSyncMessage(bool);
-    bool isSyncMessage() const;
+    private:
+        WebKitMessageRecord m_record;
+    };
 
-    void setShouldDispatchMessageWhenWaitingForSyncReply(bool);
-    bool shouldDispatchMessageWhenWaitingForSyncReply() const;
-
-    const uuid_t& UUID() const { return m_UUID; }
+    static std::unique_ptr<MessageRecorder::MessageProcessingToken> recordOutgoingMessage(IPC::Connection&, IPC::MessageEncoder&);
+    static void recordIncomingMessage(IPC::Connection&, IPC::MessageDecoder&);
 
 private:
-    void encodeHeader();
-
-    StringReference m_messageReceiverName;
-    StringReference m_messageName;
-    uint64_t m_destinationID;
-    uuid_t m_UUID;
+    explicit MessageRecorder() { }
 };
 
-} // namespace IPC
+};
 
-#endif // MessageEncoder_h
+#endif // MessageRecorder_h

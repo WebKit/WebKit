@@ -317,7 +317,7 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
         return;
     }
 
-    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
+    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID, incomingMessageDecoder->UUID());
 
     // Hand off both the decoder and encoder to the work queue message receiver.
     workQueueMessageReceiver->didReceiveSyncMessage(*this, *decoder, replyEncoder);
@@ -369,7 +369,7 @@ std::unique_ptr<MessageEncoder> Connection::createSyncMessageEncoder(StringRefer
     return encoder;
 }
 
-bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned messageSendFlags)
+bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned messageSendFlags, bool alreadyRecordedMessage)
 {
     if (!isValid())
         return false;
@@ -378,6 +378,10 @@ bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned m
         && (!m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage
             || m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount))
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(true);
+
+    std::unique_ptr<MessageRecorder::MessageProcessingToken> token;
+    if (!alreadyRecordedMessage)
+        token = MessageRecorder::recordOutgoingMessage(*this, *encoder);
 
     {
         std::lock_guard<std::mutex> lock(m_outgoingMessagesMutex);
@@ -473,8 +477,10 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequest
 
     ++m_inSendSyncCount;
 
+    auto token = MessageRecorder::recordOutgoingMessage(*this, *encoder);
+
     // First send the message.
-    sendMessage(WTF::move(encoder), DispatchMessageEvenWhenWaitingForSyncReply);
+    sendMessage(WTF::move(encoder), DispatchMessageEvenWhenWaitingForSyncReply, true);
 
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.
@@ -515,7 +521,9 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(u
         m_secondaryThreadPendingSyncReplyMap.add(syncRequestID, &pendingReply);
     }
 
-    sendMessage(WTF::move(encoder), 0);
+    auto token = MessageRecorder::recordOutgoingMessage(*this, *encoder);
+
+    sendMessage(WTF::move(encoder), 0, true);
 
     pendingReply.semaphore.wait(currentTime() + (timeout.count() / 1000.0));
 
@@ -768,7 +776,7 @@ void Connection::dispatchSyncMessage(MessageDecoder& decoder)
         return;
     }
 
-    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
+    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID, decoder.UUID());
 
     // Hand off both the decoder and encoder to the client.
     m_client->didReceiveSyncMessage(*this, decoder, replyEncoder);
@@ -815,6 +823,8 @@ void Connection::dispatchMessage(MessageDecoder& decoder)
 
 void Connection::dispatchMessage(std::unique_ptr<MessageDecoder> message)
 {
+    MessageRecorder::recordIncomingMessage(*this, *message);
+
     if (!m_client)
         return;
 

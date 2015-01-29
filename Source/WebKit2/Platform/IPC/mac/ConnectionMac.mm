@@ -609,6 +609,14 @@ void Connection::didReceiveSyncReply(unsigned flags)
     if ((flags & InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
         _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatusRunning);
 #endif
-}    
+}
+
+pid_t Connection::remoteProcessID() const
+{
+    if (!m_xpcConnection)
+        return 0;
+
+    return xpc_connection_get_pid(m_xpcConnection.get());
+}
     
 } // namespace IPC

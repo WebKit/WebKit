@@ -1,3 +1,13 @@
+2015-01-28  Timothy Horton  <timothy_horton@apple.com>
+
+        Add a WebKitMessageRecorder DTrace provider, exposing IPC details to DTrace
+        https://bugs.webkit.org/show_bug.cgi?id=140673
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/dtrace/trace-webkit2-messages.d: Added.
+        Add a DTrace script that outputs a small blob of JSON per message.
+
 2015-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         Removed fastMallocForbid / fastMallocAllow

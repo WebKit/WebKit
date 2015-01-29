@@ -1,3 +1,119 @@
+2015-01-28  Timothy Horton  <timothy_horton@apple.com>
+
+        Add a WebKitMessageRecorder DTrace provider, exposing IPC details to DTrace
+        https://bugs.webkit.org/show_bug.cgi?id=140673
+
+        Reviewed by Sam Weinig.
+
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<uuid_t>::encode):
+        (IPC::ArgumentCoder<uuid_t>::decode):
+        * Platform/IPC/ArgumentCoders.h:
+        Add a uuid_t (simple) argument coder.
+        Fix a mis-named header-guard #ifdef.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        (IPC::Connection::dispatchSyncMessage):
+        Sync message replies inherit the message UUID from the incoming sync message.
+
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::sendSyncMessageFromSecondaryThread):
+        Record outgoing messages. Because sendSyncMessage calls sendMessage,
+        we have to explicitly avoid recording the message twice.
+
+        (IPC::Connection::dispatchMessage):
+        Record the incoming message.
+
+        (IPC::Connection::remoteProcessID):
+        Add remoteProcessID(), which tries to determine the pid of the remote process.
+
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::xpcConnection):
+        This can be const.
+
+        (IPC::Connection::isValid):
+        Make this public.
+
+        * Platform/IPC/MessageDecoder.cpp:
+        (IPC::MessageDecoder::MessageDecoder):
+        * Platform/IPC/MessageDecoder.h:
+        (IPC::MessageDecoder::setMessageProcessingToken):
+        (IPC::MessageDecoder::UUID):
+        Decode and store the message UUID.
+        Store a MessageProcessingToken for the lifetime of the MessageDecoder;
+        this ensures that all time spent processing the incoming message will be
+        counted against that message.
+
+        * Platform/IPC/MessageEncoder.cpp:
+        (IPC::MessageEncoder::MessageEncoder):
+        By default, create a new UUID for the message. Alternatively, allow clients
+        to pass the message UUID in (used for sync message replies).
+        Store the messageReceiverName and messageName.
+
+        (IPC::MessageEncoder::encodeHeader):
+        Factor encodeHeader() out of the constructors so most of their code can be shared.
+
+        (IPC::MessageEncoder::isSyncMessage):
+        (IPC::MessageEncoder::shouldDispatchMessageWhenWaitingForSyncReply):
+        Add getters for these flags.
+
+        * Platform/IPC/MessageEncoder.h:
+        (IPC::MessageEncoder::messageReceiverName):
+        (IPC::MessageEncoder::messageName):
+        (IPC::MessageEncoder::destinationID):
+        (IPC::MessageEncoder::UUID):
+
+        * Platform/IPC/MessageRecorder.h: Added.
+        * Platform/IPC/MessageRecorder.cpp: Added.
+        (MessageRecorder::MessageRecorder):
+        Add a class that interfaces with a custom DTrace provider to log incoming and outgoing messages.
+
+        (MessageRecorder::shared):
+        (MessageRecorder::isEnabled):
+        Determine if either of the message probes are enabled. If not, we'll avoid most of the
+        work associated with MessageRecorder.
+
+        (MessageRecorder::recordOutgoingMessage):
+        (MessageRecorder::recordIncomingMessage):
+        Build a WebKitMessageRecord and MessageProcessingToken from the Message(De|En)coder.
+        Once the MessageProcessingToken is deallocated, the probe will be invoked with the WebKitMessageRecord.
+
+        (MessageRecorder::MessageProcessingToken::MessageProcessingToken):
+        (MessageRecorder::MessageProcessingToken::~MessageProcessingToken):
+        Keep track of when the token is created and destroyed; these are considered the beginning
+        and ending "processing" times of the message (and as such the token should be kept alive for
+        exactly as long as the message is being processed).
+
+        * Platform/IPC/MessageRecorderProbes.d: Added.
+        Add a DTrace provider source file with two probes, message_sent and message_received.
+        The struct must match the struct in MessageRecorder.h.
+        
+        * Platform/IPC/ProcessType.h: Added.
+        Add an enum of process types.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * DatabaseProcess/DatabaseProcess.h:
+        * DatabaseProcess/DatabaseToWebProcessConnection.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkProcess.h:
+        * WebProcess/Databases/WebToDatabaseProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebProcess.h:
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/WebProcessProxy.h:
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/WebProcessConnection.h:
+        Annotate Connection::Clients with process types.
+        
 2015-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Crash closing inspected page with frequent activity

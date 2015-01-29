@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SimpleArgumentCoder_h
-#define SimpleArgumentCoder_h
+#ifndef ArgumentCoders_h
+#define ArgumentCoders_h
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include <utility>
+#include <uuid/uuid.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -296,6 +297,11 @@ template<> struct ArgumentCoder<CString> {
 template<> struct ArgumentCoder<String> {
     static void encode(ArgumentEncoder&, const String&);
     static bool decode(ArgumentDecoder&, String&);
+};
+
+template<> struct ArgumentCoder<uuid_t> {
+    static void encode(ArgumentEncoder&, const uuid_t&);
+    static bool decode(ArgumentDecoder&, uuid_t&);
 };
 
 } // namespace IPC

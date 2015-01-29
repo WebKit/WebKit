@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MessageEncoder_h
-#define MessageEncoder_h
-
-#include "ArgumentEncoder.h"
-#include "StringReference.h"
-#include <uuid/uuid.h>
-#include <wtf/Forward.h>
+#ifndef ProcessType_h
+#define ProcessType_h
 
 namespace IPC {
 
-class StringReference;
-
-class MessageEncoder : public ArgumentEncoder {
-public:
-    MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID);
-    MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, const uuid_t&);
-    virtual ~MessageEncoder();
-
-    StringReference messageReceiverName() const { return m_messageReceiverName; }
-    StringReference messageName() const { return m_messageName; }
-    uint64_t destinationID() const { return m_destinationID; }
-
-    void setIsSyncMessage(bool);
-    bool isSyncMessage() const;
-
-    void setShouldDispatchMessageWhenWaitingForSyncReply(bool);
-    bool shouldDispatchMessageWhenWaitingForSyncReply() const;
-
-    const uuid_t& UUID() const { return m_UUID; }
-
-private:
-    void encodeHeader();
-
-    StringReference m_messageReceiverName;
-    StringReference m_messageName;
-    uint64_t m_destinationID;
-    uuid_t m_UUID;
+enum class ProcessType : uint8_t {
+    UI,
+    Web,
+    Network,
+    Database,
+    Plugin
 };
 
-} // namespace IPC
+};
 
-#endif // MessageEncoder_h
+#endif

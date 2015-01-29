@@ -32,6 +32,7 @@
 #include "MessageDecoder.h"
 #include "MessageEncoder.h"
 #include "MessageReceiver.h"
+#include "ProcessType.h"
 #include "WorkQueue.h"
 #include <atomic>
 #include <condition_variable>
@@ -90,6 +91,8 @@ public:
     public:
         virtual void didClose(Connection&) = 0;
         virtual void didReceiveInvalidMessage(Connection&, StringReference messageReceiverName, StringReference messageName) = 0;
+        virtual IPC::ProcessType localProcessType() = 0;
+        virtual IPC::ProcessType remoteProcessType() = 0;
 
     protected:
         virtual ~Client() { }
@@ -120,8 +123,9 @@ public:
         OSObjectPtr<xpc_connection_t> xpcConnection;
     };
     static bool identifierIsNull(Identifier identifier) { return identifier.port == MACH_PORT_NULL; }
-    xpc_connection_t xpcConnection() { return m_xpcConnection.get(); }
+    xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
     bool getAuditToken(audit_token_t&);
+    pid_t remoteProcessID() const;
 #elif USE(UNIX_DOMAIN_SOCKETS)
     typedef int Identifier;
     static bool identifierIsNull(Identifier identifier) { return !identifier; }
@@ -174,7 +178,7 @@ public:
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags = 0);
 
     std::unique_ptr<MessageEncoder> createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID);
-    bool sendMessage(std::unique_ptr<MessageEncoder>, unsigned messageSendFlags = 0);
+    bool sendMessage(std::unique_ptr<MessageEncoder>, unsigned messageSendFlags = 0, bool alreadyRecordedMessage = false);
     std::unique_ptr<MessageDecoder> sendSyncMessage(uint64_t syncRequestID, std::unique_ptr<MessageEncoder>, std::chrono::milliseconds timeout, unsigned syncSendFlags = 0);
     std::unique_ptr<MessageDecoder> sendSyncMessageFromSecondaryThread(uint64_t syncRequestID, std::unique_ptr<MessageEncoder>, std::chrono::milliseconds timeout);
     bool sendSyncReply(std::unique_ptr<MessageEncoder>);
@@ -193,12 +197,12 @@ public:
     void terminateSoon(double intervalInSeconds);
 #endif
 
+    bool isValid() const { return m_client; }
+
 private:
     Connection(Identifier, bool isServer, Client&, WTF::RunLoop& clientRunLoop);
     void platformInitialize(Identifier);
     void platformInvalidate();
-    
-    bool isValid() const { return m_client; }
     
     std::unique_ptr<MessageDecoder> waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, std::chrono::milliseconds timeout, unsigned waitForMessageFlags);
     

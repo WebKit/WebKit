@@ -27,7 +27,9 @@
 #define MessageDecoder_h
 
 #include "ArgumentDecoder.h"
+#include "MessageRecorder.h"
 #include "StringReference.h"
+#include <uuid/uuid.h>
 
 namespace IPC {
 
@@ -50,6 +52,10 @@ public:
     void setImportanceAssertion(std::unique_ptr<ImportanceAssertion>);
 #endif
 
+    void setMessageProcessingToken(std::unique_ptr<MessageRecorder::MessageProcessingToken> token) { m_processingToken = WTF::move(token); }
+
+    const uuid_t& UUID() const { return m_UUID; }
+
 private:
     uint8_t m_messageFlags;
     StringReference m_messageReceiverName;
@@ -57,9 +63,13 @@ private:
 
     uint64_t m_destinationID;
 
+    uuid_t m_UUID;
+
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     std::unique_ptr<ImportanceAssertion> m_importanceAssertion;
 #endif
+
+    std::unique_ptr<MessageRecorder::MessageProcessingToken> m_processingToken;
 };
 
 } // namespace IPC

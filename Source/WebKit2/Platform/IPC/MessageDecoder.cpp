@@ -53,7 +53,10 @@ MessageDecoder::MessageDecoder(const DataReference& buffer, Vector<Attachment> a
     if (!decode(m_messageName))
         return;
 
-    decode(m_destinationID);
+    if (!decode(m_destinationID))
+        return;
+
+    decode(m_UUID);
 }
 
 bool MessageDecoder::isSyncMessage() const
