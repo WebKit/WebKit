@@ -426,10 +426,11 @@ void CachedImage::finishLoading(SharedBuffer* data)
         return;
     }
 
-    notifyObservers();
     if (m_image)
         setEncodedSize(m_image->data() ? m_image->data()->size() : 0);
-    CachedResource::finishLoading(data);
+
+    setLoading(false);
+    notifyObservers();
 }
 
 void CachedImage::error(CachedResource::Status status)

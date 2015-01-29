@@ -191,8 +191,11 @@ void SVGFEImageElement::removedFrom(ContainerNode& rootParent)
         clearResourceReferences();
 }
 
-void SVGFEImageElement::notifyFinished(CachedResource*)
+void SVGFEImageElement::imageChanged(CachedImage* cachedImage, const IntRect*)
 {
+    if (!cachedImage || !cachedImage->isLoaded())
+        return;
+
     if (!inDocument())
         return;
 

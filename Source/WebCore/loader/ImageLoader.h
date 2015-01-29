@@ -73,7 +73,7 @@ public:
 
 protected:
     explicit ImageLoader(Element&);
-    virtual void notifyFinished(CachedResource*) override;
+    virtual void imageChanged(CachedImage*, const IntRect* = nullptr) override;
 
 private:
     virtual void dispatchLoadEvent() = 0;

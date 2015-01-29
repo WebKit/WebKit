@@ -1,3 +1,71 @@
+2015-01-29  Julien Isorce  <j.isorce@samsung.com>
+
+        CachedImage: ensure clients overrides imageChanged instead of notifyFinished
+        https://bugs.webkit.org/show_bug.cgi?id=140722
+
+        Reviewed by Tim Horton.
+
+        imageChanged is called whenever a frame of an image changes
+        because we got more data from the network.
+
+        notifyFinished was called when the image was entirely loaded.
+
+        The problem was that some clients were implementing only
+        imageChanged (ex: RenderBox), some only notifyFinished and
+        some both (ex: RenderImage) which made the situation difficult
+        to understand and to maintain.
+
+        For example when the image finished loading, both imageChanged
+        and notifyFinished were called with the difference that for the
+        first one isLoaded() returned false.
+        It could result in functions being called twice in a row,
+        ex: contentChanged(ImageChanged).
+
+        So this patch tries to simplify the situation by marking
+        CachedImageClient::notifyFinished final in order to prevent
+        clients from implementing it.
+        Indeed this patch ensure that CachedImage clients implement
+        and only implement imageChanged function.
+
+        Also Clients can now differentiate intermediate and end
+        calls by checking isLoaded() in imageChanged.
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::imageChanged): Added instead
+        of notifyFinished.
+        (WebCore::HTMLImageLoader::notifyFinished): Deleted.
+        * html/HTMLImageLoader.h:
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::imageChanged): Added instead
+        of notifyFinished.
+        (WebCore::ImageLoader::notifyFinished): Deleted.
+        * loader/ImageLoader.h:
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::finishLoading): Explicilty mark image as
+        loaded and before notifying observers. So that it avoids to call
+        notifyFinished (from CachedResource::finishLoading).
+
+        * loader/cache/CachedImageClient.h:
+        Make CachedImageClient::notifyFinished final to make sure
+        sub classes implement imageChanged instead.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::notifyFinished): Deleted.
+        ImageChanged already exists and is more clever than notifyFinished.
+        Indeed invalidateBackgroundObscurationStatus() will be called by
+        RenderReplaced::layout() upon call to setNeedsLayout() in
+        RenderImage::imageDimensionsChanged.
+        Also contentChanged(ImageChanged) is now called only when necessary.
+        * rendering/RenderImage.h:
+
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::imageChanged): Added instead
+        of notifyFinished.
+        (WebCore::SVGFEImageElement::notifyFinished): Deleted.
+        * svg/SVGFEImageElement.h:
+
 2015-01-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Poor performance on IE's Chalkboard benchmark.

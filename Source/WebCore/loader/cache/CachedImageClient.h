@@ -38,10 +38,13 @@ public:
 
     // Called whenever a frame of an image changes because we got more data from the network.
     // If not null, the IntRect is the changed rect of the image.
-    virtual void imageChanged(CachedImage*, const IntRect* = 0) { }
+    virtual void imageChanged(CachedImage*, const IntRect* = nullptr) { }
 
     // Called when GIF animation progresses.
     virtual void newImageAnimationFrameAvailable(CachedImage& image) { imageChanged(&image); }
+
+    // Use imageChanged instead.
+    virtual void notifyFinished(CachedResource*) override final { }
 };
 
 }
