@@ -2857,6 +2857,13 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_data->_ignoresNonWheelEvents)
         return;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+    if (_data->_immediateActionGestureRecognizer) {
+        [super quickLookWithEvent:event];
+        return;
+    }
+#endif
+
     NSPoint locationInViewCoordinates = [self convertPoint:[event locationInWindow] fromView:nil];
     _data->_page->performDictionaryLookupAtLocation(FloatPoint(locationInViewCoordinates.x, locationInViewCoordinates.y));
 }
