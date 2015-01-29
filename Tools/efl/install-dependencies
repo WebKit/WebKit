@@ -99,6 +99,7 @@ function installDependenciesWithApt {
         ragel \
         ruby \
         subversion \
+        uuid-dev \
         x11proto-print-dev
 
     # These are dependencies necessary for building WebKitEFL and not available on ARM64.

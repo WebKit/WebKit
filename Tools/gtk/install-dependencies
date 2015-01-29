@@ -95,6 +95,7 @@ function installDependenciesWithApt {
         libxt-dev \
         libxtst-dev \
         ruby \
+        uuid-dev \
         xfonts-utils
 
     # These are dependencies necessary for running tests.
