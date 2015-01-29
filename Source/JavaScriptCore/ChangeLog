@@ -1,3 +1,43 @@
+2015-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed fastMallocForbid / fastMallocAllow
+        https://bugs.webkit.org/show_bug.cgi?id=141012
+
+        Reviewed by Mark Hahnenberg.
+
+        Copy non-current thread stacks before scanning them instead of scanning
+        them in-place.
+
+        This operation is uncommon (i.e., never in the web content process),
+        and even in a stress test with 4 threads it only copies about 27kB,
+        so I think the performance cost is OK.
+
+        Scanning in-place requires a complex dance where we constrain our GC
+        data structures not to use malloc, free, or any other interesting functions
+        that might acquire locks. We've gotten this wrong many times in the past,
+        and I just got it wrong again yesterday. Since this code path is rarely
+        tested, I want it to just make sense, and not depend on or constrain the
+        details of the rest of the GC heap's design.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::otherThreadStack): Factored out a helper function for dealing with
+        unaligned and/or backwards pointers.
+
+        (JSC::MachineThreads::tryCopyOtherThreadStack): This is now the only
+        constrained function, and it only calls memcpy and low-level thread APIs.
+
+        (JSC::MachineThreads::tryCopyOtherThreadStacks): The design here is that
+        you do one pass over all the threads to compute their combined size,
+        and then a second pass to do all the copying. In theory, the threads may
+        grow in between passes, in which case you'll continue until the threads
+        stop growing. In practice, you never continue.
+
+        (JSC::growBuffer): Helper function for growing.
+
+        (JSC::MachineThreads::gatherConservativeRoots):
+        (JSC::MachineThreads::gatherFromOtherThread): Deleted.
+        * heap/MachineStackMarker.h: Updated for interface changes.
+
 2015-01-28  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: remove CSS.setPropertyText, CSS.toggleProperty and related dead code

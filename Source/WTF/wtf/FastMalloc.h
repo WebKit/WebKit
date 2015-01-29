@@ -76,11 +76,6 @@ namespace WTF {
 
     WTF_EXPORT_PRIVATE void fastFree(void*);
 
-#ifndef NDEBUG    
-    WTF_EXPORT_PRIVATE void fastMallocForbid();
-    WTF_EXPORT_PRIVATE void fastMallocAllow();
-#endif
-
     WTF_EXPORT_PRIVATE void releaseFastMallocFreeMemory();
     
     struct FastMallocStatistics {
@@ -108,11 +103,6 @@ using WTF::tryFastCalloc;
 using WTF::tryFastMalloc;
 using WTF::tryFastRealloc;
 using WTF::tryFastZeroedMalloc;
-
-#ifndef NDEBUG    
-using WTF::fastMallocForbid;
-using WTF::fastMallocAllow;
-#endif
 
 #if COMPILER(GCC) && OS(DARWIN)
 #define WTF_PRIVATE_INLINE __private_extern__ inline __attribute__((always_inline))

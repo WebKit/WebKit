@@ -147,7 +147,10 @@ void stopJavaScriptThreads()
     for (size_t i = 0; i < javaScriptThreadsCount; ++i)
         waitForThreadCompletion(threads[i]);
 
-    javaScriptThreads().clear();
+    {
+        MutexLocker locker(javaScriptThreadsMutex());
+        javaScriptThreads().clear();
+    }
 
     JSContextGroupRelease(javaScriptThreadsGroup);
 }

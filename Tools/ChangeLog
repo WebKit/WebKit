@@ -1,3 +1,16 @@
+2015-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed fastMallocForbid / fastMallocAllow
+        https://bugs.webkit.org/show_bug.cgi?id=141012
+
+        Reviewed by Mark Hahnenberg.
+
+        Fixed a test bug I noticed while testing.
+
+        * DumpRenderTree/JavaScriptThreading.cpp:
+        (stopJavaScriptThreads): Lock the javaScriptThreads lock before
+        accessing javaScriptThreads -- otherwise, you'll ASSERT.
+
 2015-01-28  Dana Burkart  <dburkart@apple.com>
 
         asan.xcconfig should use CLANG_ADDRESS_SANITIZER=YES instead of -fsanitize=address

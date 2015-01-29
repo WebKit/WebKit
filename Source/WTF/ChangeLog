@@ -1,3 +1,27 @@
+2015-01-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed fastMallocForbid / fastMallocAllow
+        https://bugs.webkit.org/show_bug.cgi?id=141012
+
+        Reviewed by Mark Hahnenberg.
+
+        Removed the forbid / allow API because it is no longer used.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::tryFastMalloc):
+        (WTF::fastMalloc):
+        (WTF::tryFastCalloc):
+        (WTF::fastCalloc):
+        (WTF::fastFree):
+        (WTF::tryFastRealloc):
+        (WTF::fastRealloc):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        (WTF::isForbidden): Deleted.
+        (WTF::fastMallocForbid): Deleted.
+        (WTF::fastMallocAllow): Deleted.
+        (WTF::initializeIsForbiddenKey): Deleted.
+        * wtf/FastMalloc.h:
+
 2015-01-28  Dana Burkart  <dburkart@apple.com>
 
         Move ASan flag settings from DebugRelease.xcconfig to Base.xcconfig

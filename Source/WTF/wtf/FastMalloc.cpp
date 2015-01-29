@@ -117,72 +117,6 @@
 // Use a background thread to periodically scavenge memory to release back to the system
 #define USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY 1
 
-#ifndef NDEBUG
-namespace WTF {
-
-#if OS(WINDOWS)
-
-static DWORD isForibiddenTlsIndex = TLS_OUT_OF_INDEXES;
-static const LPVOID kTlsAllowValue = reinterpret_cast<LPVOID>(0); // Must be zero.
-static const LPVOID kTlsForbiddenValue = reinterpret_cast<LPVOID>(1);
-
-#if !ASSERT_DISABLED
-static bool isForbidden()
-{
-    // By default, fastMalloc is allowed so we don't allocate the
-    // tls index unless we're asked to make it forbidden. If TlsSetValue
-    // has not been called on a thread, the value returned by TlsGetValue is 0.
-    return (isForibiddenTlsIndex != TLS_OUT_OF_INDEXES) && (TlsGetValue(isForibiddenTlsIndex) == kTlsForbiddenValue);
-}
-#endif
-
-void fastMallocForbid()
-{
-    if (isForibiddenTlsIndex == TLS_OUT_OF_INDEXES)
-        isForibiddenTlsIndex = TlsAlloc(); // a little racey, but close enough for debug only
-    TlsSetValue(isForibiddenTlsIndex, kTlsForbiddenValue);
-}
-
-void fastMallocAllow()
-{
-    if (isForibiddenTlsIndex == TLS_OUT_OF_INDEXES)
-        return;
-    TlsSetValue(isForibiddenTlsIndex, kTlsAllowValue);
-}
-
-#else // !OS(WINDOWS)
-
-static pthread_key_t isForbiddenKey;
-static pthread_once_t isForbiddenKeyOnce = PTHREAD_ONCE_INIT;
-static void initializeIsForbiddenKey()
-{
-  pthread_key_create(&isForbiddenKey, 0);
-}
-
-#if !ASSERT_DISABLED
-static bool isForbidden()
-{
-    pthread_once(&isForbiddenKeyOnce, initializeIsForbiddenKey);
-    return !!pthread_getspecific(isForbiddenKey);
-}
-#endif
-
-void fastMallocForbid()
-{
-    pthread_once(&isForbiddenKeyOnce, initializeIsForbiddenKey);
-    pthread_setspecific(isForbiddenKey, &isForbiddenKey);
-}
-
-void fastMallocAllow()
-{
-    pthread_once(&isForbiddenKeyOnce, initializeIsForbiddenKey);
-    pthread_setspecific(isForbiddenKey, 0);
-}
-#endif // OS(WINDOWS)
-
-} // namespace WTF
-#endif // NDEBUG
-
 namespace WTF {
 
 void* fastZeroedMalloc(size_t n) 
@@ -230,15 +164,11 @@ size_t fastMallocGoodSize(size_t bytes)
 
 TryMallocReturnValue tryFastMalloc(size_t n) 
 {
-    ASSERT(!isForbidden());
-
     return malloc(n);
 }
 
 void* fastMalloc(size_t n) 
 {
-    ASSERT(!isForbidden());
-
     void* result = malloc(n);
     if (!result)
         CRASH();
@@ -248,14 +178,11 @@ void* fastMalloc(size_t n)
 
 TryMallocReturnValue tryFastCalloc(size_t n_elements, size_t element_size)
 {
-    ASSERT(!isForbidden());
     return calloc(n_elements, element_size);
 }
 
 void* fastCalloc(size_t n_elements, size_t element_size)
 {
-    ASSERT(!isForbidden());
-
     void* result = calloc(n_elements, element_size);
     if (!result)
         CRASH();
@@ -265,19 +192,16 @@ void* fastCalloc(size_t n_elements, size_t element_size)
 
 void fastFree(void* p)
 {
-    ASSERT(!isForbidden());
     free(p);
 }
 
 TryMallocReturnValue tryFastRealloc(void* p, size_t n)
 {
-    ASSERT(!isForbidden());
     return realloc(p, n);
 }
 
 void* fastRealloc(void* p, size_t n)
 {
-    ASSERT(!isForbidden());
     void* result = realloc(p, n);
     if (!result)
         CRASH();
@@ -320,7 +244,6 @@ namespace WTF {
 
 void* fastMalloc(size_t size)
 {
-    ASSERT(!isForbidden());
     return bmalloc::api::malloc(size);
 }
 
@@ -4016,10 +3939,6 @@ template <bool crashOnFailure>
 #endif
 static ALWAYS_INLINE void* do_malloc(size_t size) {
   void* ret = NULL;
-
-#ifdef WTF_CHANGES
-    ASSERT(!isForbidden());
-#endif
 
   // The following call forces module initialization
   TCMalloc_ThreadCache* heap = TCMalloc_ThreadCache::GetCache();

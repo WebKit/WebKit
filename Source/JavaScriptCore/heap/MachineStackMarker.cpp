@@ -413,57 +413,91 @@ static void freePlatformThreadRegisters(PlatformThreadRegisters& regs)
 #endif
 }
 
-void MachineThreads::gatherFromOtherThread(ConservativeRoots& conservativeRoots, Thread* thread, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks)
+static std::pair<void*, size_t> otherThreadStack(void* stackBase, const PlatformThreadRegisters& registers)
 {
-    PlatformThreadRegisters regs;
-    size_t regSize = getPlatformThreadRegisters(thread->platformThread, regs);
-
-    conservativeRoots.add(static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize), jitStubRoutines, codeBlocks);
-
-    void* stackPointer = otherThreadStackPointer(regs);
-    void* stackBase = thread->stackBase;
-    stackPointer = reinterpret_cast<void*>(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(stackPointer)));
-    conservativeRoots.add(stackPointer, stackBase, jitStubRoutines, codeBlocks);
-
-    freePlatformThreadRegisters(regs);
+    void* begin = stackBase;
+    void* end = reinterpret_cast<void*>(
+        WTF::roundUpToMultipleOf<sizeof(void*)>(
+            reinterpret_cast<uintptr_t>(
+                otherThreadStackPointer(registers))));
+    if (begin > end)
+        std::swap(begin, end);
+    return std::make_pair(begin, static_cast<char*>(end) - static_cast<char*>(begin));
 }
 
-void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackCurrent, RegisterState& registers)
+// This function must not call malloc(), free(), or any other function that might
+// acquire a lock. Since 'thread' is suspended, trying to acquire a lock
+// will deadlock if 'thread' holds that lock.
+void MachineThreads::tryCopyOtherThreadStack(Thread* thread, void* buffer, size_t capacity, size_t* size)
 {
-    gatherFromCurrentThread(conservativeRoots, jitStubRoutines, codeBlocks, stackCurrent, registers);
+    PlatformThreadRegisters registers;
+    size_t registersSize = getPlatformThreadRegisters(thread->platformThread, registers);
+    std::pair<void*, size_t> stack = otherThreadStack(thread->stackBase, registers);
 
-    if (m_threadSpecific) {
-        PlatformThread currentPlatformThread = getCurrentPlatformThread();
+    bool canCopy = *size + registersSize + stack.second <= capacity;
 
-        MutexLocker lock(m_registeredThreadsMutex);
+    if (canCopy)
+        memcpy(static_cast<char*>(buffer) + *size, &registers, registersSize);
+    *size += registersSize;
 
-#ifndef NDEBUG
-        // Forbid malloc during the gather phase. The gather phase suspends
-        // threads, so a malloc during gather would risk a deadlock with a
-        // thread that had been suspended while holding the malloc lock.
-        fastMallocForbid();
-#endif
-        for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
-            if (!equalThread(thread->platformThread, currentPlatformThread))
-                suspendThread(thread->platformThread);
-        }
+    if (canCopy)
+        memcpy(static_cast<char*>(buffer) + *size, stack.first, stack.second);
+    *size += stack.second;
 
-        // It is safe to access the registeredThreads list, because we earlier asserted that locks are being held,
-        // and since this is a shared heap, they are real locks.
-        for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
-            if (!equalThread(thread->platformThread, currentPlatformThread))
-                gatherFromOtherThread(conservativeRoots, thread, jitStubRoutines, codeBlocks);
-        }
+    freePlatformThreadRegisters(registers);
+}
 
-        for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
-            if (!equalThread(thread->platformThread, currentPlatformThread))
-                resumeThread(thread->platformThread);
-        }
+bool MachineThreads::tryCopyOtherThreadStacks(MutexLocker&, void* buffer, size_t capacity, size_t* size)
+{
+    *size = 0;
 
-#ifndef NDEBUG
-        fastMallocAllow();
-#endif
+    PlatformThread currentPlatformThread = getCurrentPlatformThread();
+    for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
+        if (!equalThread(thread->platformThread, currentPlatformThread))
+            suspendThread(thread->platformThread);
     }
+
+    for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
+        if (!equalThread(thread->platformThread, currentPlatformThread))
+            tryCopyOtherThreadStack(thread, buffer, capacity, size);
+    }
+
+    for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
+        if (!equalThread(thread->platformThread, currentPlatformThread))
+            resumeThread(thread->platformThread);
+    }
+
+    return *size <= capacity;
+}
+
+static void growBuffer(size_t size, void** buffer, size_t* capacity)
+{
+    if (*buffer)
+        fastFree(*buffer);
+
+    *capacity = WTF::roundUpToMultipleOf(WTF::pageSize(), size * 2);
+    *buffer = fastMalloc(*capacity);
+}
+
+void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoots, JITStubRoutineSet& jitStubRoutines, CodeBlockSet& codeBlocks, void* stackCurrent, RegisterState& currentThreadRegisters)
+{
+    gatherFromCurrentThread(conservativeRoots, jitStubRoutines, codeBlocks, stackCurrent, currentThreadRegisters);
+
+    if (!m_threadSpecific)
+        return;
+
+    size_t size;
+    size_t capacity = 0;
+    void* buffer = nullptr;
+    MutexLocker lock(m_registeredThreadsMutex);
+    while (!tryCopyOtherThreadStacks(lock, buffer, capacity, &size))
+        growBuffer(size, &buffer, &capacity);
+
+    if (!buffer)
+        return;
+
+    conservativeRoots.add(buffer, static_cast<char*>(buffer) + size, jitStubRoutines, codeBlocks);
+    fastFree(buffer);
 }
 
 } // namespace JSC
