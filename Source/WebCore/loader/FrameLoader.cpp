@@ -1761,7 +1761,7 @@ void FrameLoader::commitProvisionalLoad()
             PageCache::shared().pruneToSizeNow(0, PruningReason::MemoryPressure);
         } else if (systemMemoryLevel() <= memoryLevelThresholdToPrunePageCache) {
             LOG(MemoryPressure, "Pruning page cache because system memory level is %d at: %s", systemMemoryLevel(), __PRETTY_FUNCTION__);
-            LOG(PageCache, "Pruning page cache to %d due to low memory (level %d less or equal to %d threshold)", PageCache::shared().capacity() / 2, systemMemoryLevel(), memoryLevelThresholdToPrunePageCache);
+            LOG(PageCache, "Pruning page cache to %d due to low memory (level %d less or equal to %d threshold)", PageCache::shared().maxSize() / 2, systemMemoryLevel(), memoryLevelThresholdToPrunePageCache);
             PageCache::shared().pruneToSizeNow(PageCache::shared().maxSize() / 2, PruningReason::MemoryPressure);
         }
     }
