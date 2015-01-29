@@ -57,10 +57,7 @@ WebInspector.TreeElementStatusButton.prototype = {
 
     set hidden(flag)
     {
-        if (flag)
-            this._element.classList.remove("hidden");
-        else
-            this._element.classList.add("hidden");
+        this._element.classList.toggle("hidden", flag);
     },
 
     get enabled()

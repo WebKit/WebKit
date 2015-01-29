@@ -202,7 +202,12 @@ WebInspector.FrameTreeElement.prototype = {
         if (!this._loadingMainFrameButtons) {
             this._loadingMainFrameButtons = true;
 
-            var tooltip = WebInspector.UIString("Reload page (%s)\nReload ignoring cache (%s)").format(WebInspector._reloadPageKeyboardShortcut.displayName, WebInspector._reloadPageIgnoringCacheKeyboardShortcut.displayName);
+            var tooltip;
+            if (WebInspector.debuggableType === WebInspector.DebuggableType.JavaScript)
+                tooltip = WebInspector.UIString("Restart (%s)").format(WebInspector._reloadPageKeyboardShortcut.displayName);
+            else
+                tooltip = WebInspector.UIString("Reload page (%s)\nReload ignoring cache (%s)").format(WebInspector._reloadPageKeyboardShortcut.displayName, WebInspector._reloadPageIgnoringCacheKeyboardShortcut.displayName);
+
             wrappedSVGDocument(platformImagePath("Reload.svg"), null, tooltip, function(element) {
                 this._reloadButton = new WebInspector.TreeElementStatusButton(element);
                 this._reloadButton.addEventListener(WebInspector.TreeElementStatusButton.Event.Clicked, this._reloadPageClicked, this);
@@ -342,7 +347,7 @@ WebInspector.FrameTreeElement.prototype = {
         if (!this._downloadButton)
             return;
 
-        if (!PageAgent.archive) {
+        if (!PageAgent.archive || WebInspector.debuggableType !== WebInspector.DebuggableType.Web) {
             this._downloadButton.hidden = true;
             return;
         }

@@ -1886,7 +1886,7 @@ WebInspector.archiveMainFrame = function()
 
 WebInspector.canArchiveMainFrame = function()
 {
-    if (!PageAgent.archive)
+    if (!PageAgent.archive || this.debuggableType !== WebInspector.DebuggableType.Web)
         return false;
 
     return WebInspector.Resource.typeFromMIMEType(WebInspector.frameResourceManager.mainFrame.mainResource.mimeType) === WebInspector.Resource.Type.Document;
