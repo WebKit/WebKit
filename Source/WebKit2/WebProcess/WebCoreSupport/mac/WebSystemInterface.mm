@@ -166,11 +166,8 @@ void InitWebCoreSystemInterface(void)
 
         INIT(DestroyRenderingResources);
 
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
         INIT(ExecutableWasLinkedOnOrBeforeLion);
-#endif
-        
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         INIT(CreateMemoryStatusPressureCriticalDispatchOnMainQueue);
 #endif
 

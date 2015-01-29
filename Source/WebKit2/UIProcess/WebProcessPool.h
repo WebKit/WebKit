@@ -489,10 +489,8 @@ private:
     RetainPtr<NSObject> m_enhancedAccessibilityObserver;
     RetainPtr<NSObject> m_automaticTextReplacementNotificationObserver;
     RetainPtr<NSObject> m_automaticSpellingCorrectionNotificationObserver;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<NSObject> m_automaticQuoteSubstitutionNotificationObserver;
     RetainPtr<NSObject> m_automaticDashSubstitutionNotificationObserver;
-#endif
 #endif
 
     String m_overrideApplicationCacheDirectory;

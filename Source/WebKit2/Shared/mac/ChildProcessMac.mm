@@ -51,11 +51,9 @@ extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags,
 #endif
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 typedef bool (^LSServerConnectionAllowedBlock) ( CFDictionaryRef optionsRef );
 extern "C" void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
 extern "C" CFDictionaryRef _LSApplicationCheckIn(int sessionID, CFDictionaryRef applicationInfo);
-#endif
 
 extern "C" OSStatus SetApplicationIsDaemon(Boolean isDaemon);
 
@@ -63,7 +61,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 static void initializeTimerCoalescingPolicy()
 {
     // Set task_latency and task_throughput QOS tiers as appropriate for a visible application.
@@ -71,25 +68,19 @@ static void initializeTimerCoalescingPolicy()
     kern_return_t kr = task_policy_set(mach_task_self(), TASK_BASE_QOS_POLICY, (task_policy_t)&qosinfo, TASK_QOS_POLICY_COUNT);
     ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
 }
-#endif
 
 void ChildProcess::setApplicationIsDaemon()
 {
     OSStatus error = SetApplicationIsDaemon(true);
     ASSERT_UNUSED(error, error == noErr);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     _LSSetApplicationLaunchServicesServerConnectionStatus(0, 0);
     RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(-2, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
-#endif
 }
 
 void ChildProcess::platformInitialize()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     initializeTimerCoalescingPolicy();
-#endif
-
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }
 
@@ -197,7 +188,6 @@ void ChildProcess::stopNSAppRunLoop()
 
 void ChildProcess::setQOS(int latencyQOS, int throughputQOS)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (!latencyQOS && !throughputQOS)
         return;
 
@@ -207,10 +197,6 @@ void ChildProcess::setQOS(int latencyQOS, int throughputQOS)
     };
 
     task_policy_set(mach_task_self(), TASK_OVERRIDE_QOS_POLICY, (task_policy_t)&qosinfo, TASK_QOS_POLICY_COUNT);
-#else
-    UNUSED_PARAM(latencyQOS);
-    UNUSED_PARAM(throughputQOS);
-#endif
 }
 
 } // namespace WebKit

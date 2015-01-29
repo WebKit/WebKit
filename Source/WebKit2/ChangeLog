@@ -1,3 +1,71 @@
+2015-01-29  Beth Dakin  <bdakin@apple.com>
+
+        Remove more Mountain Lion code from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=141052
+
+        Reviewed by Tim Horton.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::sendBufferMaybeAborting):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/mac/NetworkDiskCacheMonitor.mm:
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::willCacheResponseAsync):
+        * Platform/IPC/MessageDecoder.cpp:
+        * Platform/IPC/MessageDecoder.h:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::ConnectionTerminationWatchdog::watchdogTimerFired):
+        (IPC::Connection::open):
+        (IPC::Connection::receiveSourceEventHandler):
+        (IPC::Connection::kill):
+        * Platform/IPC/mac/ImportanceAssertion.h:
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::initializeProcessName):
+        * Shared/WebPreferencesDefinitions.h:
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::initializeTimerCoalescingPolicy):
+        (WebKit::ChildProcess::setApplicationIsDaemon):
+        (WebKit::ChildProcess::platformInitialize):
+        (WebKit::ChildProcess::setQOS):
+        * Shared/mac/CookieStorageShim.mm:
+        (WebKit::CookieStorageShim::initialize):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView addWindowObserversForWindow:]):
+        (-[WKView removeWindowObservers]):
+        (-[WKView _windowDidChangeOcclusionState:]):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        (WebKit::privateBrowsingSession):
+        (WebKit::WebProcessPool::isURLKnownHSTSHost):
+        (WebKit::WebProcessPool::resetHSTSHosts):
+        * UIProcess/Databases/mac/DatabaseProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::shouldAutomaticQuoteSubstitutionBeEnabled):
+        (WebKit::shouldAutomaticDashSubstitutionBeEnabled):
+        (WebKit::TextChecker::didChangeAutomaticQuoteSubstitutionEnabled):
+        (WebKit::TextChecker::didChangeAutomaticDashSubstitutionEnabled):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::applyDebuggingPropertiesToSwipeViews):
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updateActivePages):
+        * WebProcess/com.apple.WebProcess.sb.in:
+        * config.h:
+
 2015-01-29  Sam Weinig  <sam@webkit.org>
 
         Remove support for screen font substitution

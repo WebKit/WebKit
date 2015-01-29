@@ -83,13 +83,11 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 #endif
     }
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());
     if (!cache)
         return;
 
     _CFURLCacheSetMinSizeForVMCachedResource(cache.get(), NetworkResourceLoader::fileBackedResourceMinimumSize());
-#endif
 }
 
 static uint64_t memorySize()

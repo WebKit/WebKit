@@ -26,7 +26,7 @@
 #ifndef ImportanceAssertion_h
 #define ImportanceAssertion_h
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
 
 #if __has_include(<libproc_internal.h>)
 #include <libproc_internal.h>
@@ -71,6 +71,6 @@ private:
 
 }
 
-#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#endif // PLATFORM(MAC)
 
 #endif // ImportanceAssertion_h

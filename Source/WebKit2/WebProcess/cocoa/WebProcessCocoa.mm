@@ -267,7 +267,7 @@ void WebProcess::initializeSandbox(const ChildProcessInitializationParameters& p
 
 void WebProcess::updateActivePages()
 {
-#if USE(APPKIT) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if USE(APPKIT)
     RetainPtr<CFMutableArrayRef> activePageURLs = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
     for (const auto& iter: m_pageMap) {
         WebPage* page = iter.value.get();

@@ -32,8 +32,6 @@
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/CFNetworkSPI.h>
 
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -75,5 +73,3 @@ uint64_t NetworkDiskCacheMonitor::messageSenderDestinationID()
 }
 
 } // namespace WebKit
-
-#endif

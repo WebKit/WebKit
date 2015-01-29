@@ -574,7 +574,6 @@ bool NavigationState::LoaderClient::canAuthenticateAgainstProtectionSpaceInFrame
 
 void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(WebPageProxy&, WebFrameProxy&, AuthenticationChallengeProxy* authenticationChallenge)
 {
-#if !defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler) {
         auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
         if (!navigationDelegate) {
@@ -617,7 +616,6 @@ void NavigationState::LoaderClient::didReceiveAuthenticationChallengeInFrame(Web
         ];
         return;
     }
-#endif
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallenge)
         return;

@@ -51,7 +51,7 @@ public:
     bool isSyncMessage() const;
     bool shouldDispatchMessageWhenWaitingForSyncReply() const;
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
     void setImportanceAssertion(std::unique_ptr<ImportanceAssertion>);
 #endif
 
@@ -73,7 +73,7 @@ private:
     std::unique_ptr<MessageRecorder::MessageProcessingToken> m_processingToken;
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
     std::unique_ptr<ImportanceAssertion> m_importanceAssertion;
 #endif
 };

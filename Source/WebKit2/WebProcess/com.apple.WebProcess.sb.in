@@ -117,10 +117,8 @@
     (allow mach-register (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
 
 ;; MediaAccessibility
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 (allow file-read* (home-literal "/Library/Preferences/com.apple.mediaaccessibility.plist"))
 (allow file-read* file-write* (home-literal "/Library/Preferences/com.apple.mediaaccessibility.public.plist"))
-#endif
 
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow file* (subpath (param "DARWIN_USER_CACHE_DIR"))))
@@ -189,9 +187,7 @@
        (global-name "com.apple.PowerManagement.control")
        (global-name "com.apple.speech.speechsynthesisd")
        (global-name "com.apple.speech.synthesis.console")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
        (global-name "com.apple.coreservices.launchservicesd")
-#endif
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
        (global-name "com.apple.iconservices")
        (global-name "com.apple.iconservices.store")

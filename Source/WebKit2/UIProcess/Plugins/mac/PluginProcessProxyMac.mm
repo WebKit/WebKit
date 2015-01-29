@@ -139,11 +139,7 @@ static bool shouldUseXPC(ProcessLauncher::LaunchOptions& launchOptions, const Pl
     if (launchOptions.executableHeap)
         return false;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     return true;
-#else
-    return false;
-#endif
 }
 
 void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)

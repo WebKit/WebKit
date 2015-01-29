@@ -495,10 +495,8 @@ static bool layerGeometryFlippedToRoot(CALayer *layer)
 
 void ViewGestureController::applyDebuggingPropertiesToSwipeViews()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     CAFilter* filter = [CAFilter filterWithType:kCAFilterColorInvert];
     [m_swipeLayer setFilters:@[ filter ]];
-#endif
     [m_swipeLayer setBackgroundColor:[NSColor blueColor].CGColor];
     [m_swipeLayer setBorderColor:[NSColor yellowColor].CGColor];
     [m_swipeLayer setBorderWidth:4];

@@ -449,10 +449,8 @@ void PluginProcess::initializeProcessName(const ChildProcessInitializationParame
 {
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ (%@ Internet plug-in)", "visible name of the plug-in host process. The first argument is the plug-in name and the second argument is the application name."), [[(NSString *)m_pluginPath lastPathComponent] stringByDeletingPathExtension], (NSString *)parameters.uiProcessName];
     WKSetVisibleApplicationName((CFStringRef)applicationName);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (!m_pluginBundleIdentifier.isEmpty())
         WKSetApplicationInformationItem(kLSPlugInBundleIdentifierKey, m_pluginBundleIdentifier.createCFString().get());
-#endif
 }
 
 void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)

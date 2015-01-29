@@ -522,7 +522,7 @@ bool NetworkResourceLoader::sendBufferMaybeAborting(WebCore::SharedBuffer& buffe
 {
     ASSERT(!isSynchronous());
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
+#if PLATFORM(COCOA)
     ShareableResource::Handle shareableResourceHandle;
     NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(shareableResourceHandle, buffer);
     if (!shareableResourceHandle.isNull()) {

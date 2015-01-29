@@ -71,20 +71,18 @@ static bool shouldAutomaticSpellingCorrectionBeEnabled()
 static bool shouldAutomaticQuoteSubstitutionBeEnabled()
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (![defaults objectForKey:WebAutomaticQuoteSubstitutionEnabled])
         return [NSSpellChecker isAutomaticQuoteSubstitutionEnabled];
-#endif
+
     return [defaults boolForKey:WebAutomaticQuoteSubstitutionEnabled];
 }
 
 static bool shouldAutomaticDashSubstitutionBeEnabled()
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (![defaults objectForKey:WebAutomaticDashSubstitutionEnabled])
         return [NSSpellChecker isAutomaticDashSubstitutionEnabled];
-#endif
+
     return [defaults boolForKey:WebAutomaticDashSubstitutionEnabled];
 }
 
@@ -245,18 +243,14 @@ void TextChecker::didChangeAutomaticSpellingCorrectionEnabled()
 
 void TextChecker::didChangeAutomaticQuoteSubstitutionEnabled()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     textCheckerState.isAutomaticQuoteSubstitutionEnabled = shouldAutomaticQuoteSubstitutionBeEnabled();
     [[NSSpellChecker sharedSpellChecker] updatePanels];
-#endif
 }
 
 void TextChecker::didChangeAutomaticDashSubstitutionEnabled()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     textCheckerState.isAutomaticDashSubstitutionEnabled = shouldAutomaticDashSubstitutionBeEnabled();
     [[NSSpellChecker sharedSpellChecker] updatePanels];
-#endif
 }
 
 bool TextChecker::substitutionsPanelIsShowing()

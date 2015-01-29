@@ -38,8 +38,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-
 static void tryGetShareableHandleFromCFData(ShareableResource::Handle& handle, CFDataRef data)
 {
     RefPtr<SharedMemory> sharedMemory = SharedMemory::createFromVMBuffer((void*)CFDataGetBytePtr(data), CFDataGetLength(data));
@@ -79,8 +77,6 @@ void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResou
     tryGetShareableHandleFromCFData(handle, data);
 }
 
-#endif // IOS || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-
 size_t NetworkResourceLoader::fileBackedResourceMinimumSize()
 {
     return SharedMemory::systemPageSize();
@@ -104,10 +100,8 @@ void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCac
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (m_bytesReceived >= fileBackedResourceMinimumSize())
         NetworkDiskCacheMonitor::monitorFileBackingStoreCreation([nsResponse _CFCachedURLResponse], this);
-#endif
 
     m_handle->continueWillCacheResponse(nsResponse);
 }

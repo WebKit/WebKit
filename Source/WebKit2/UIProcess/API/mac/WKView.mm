@@ -2487,10 +2487,8 @@ static void* keyValueObservingContext = &keyValueObservingContext;
                                                      name:NSWindowDidChangeScreenNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeLayerHosting:)
                                                      name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeOcclusionState:)
                                                      name:NSWindowDidChangeOcclusionStateNotification object:window];
-#endif
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
         [window addObserver:self forKeyPath:@"contentLayoutRect" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
         [window addObserver:self forKeyPath:@"titlebarAppearsTransparent" options:NSKeyValueObservingOptionInitial context:keyValueObservingContext];
@@ -2516,9 +2514,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeBackingPropertiesNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeScreenNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidChangeContentsHostedInLayerSurfaceNotification" object:window];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidChangeOcclusionStateNotification object:window];
-#endif
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     [window removeObserver:self forKeyPath:@"contentLayoutRect" context:keyValueObservingContext];
     [window removeObserver:self forKeyPath:@"titlebarAppearsTransparent" context:keyValueObservingContext];
@@ -2668,12 +2664,10 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     _data->_page->setIntrinsicDeviceScaleFactor(newBackingScaleFactor);
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 - (void)_windowDidChangeOcclusionState:(NSNotification *)notification
 {
     _data->_page->viewStateDidChange(ViewState::IsVisible);
 }
-#endif
 
 - (void)drawRect:(NSRect)rect
 {
