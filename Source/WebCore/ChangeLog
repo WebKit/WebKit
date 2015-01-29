@@ -1,3 +1,26 @@
+2015-01-28  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r178571. rdar://problem/19585723
+
+    2015-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Removing an HTML element spends a lot of time in adjustDirectionalityIfNeededAfterChildrenChanged
+            https://bugs.webkit.org/show_bug.cgi?id=140523
+            <rdar://problem/19464329>
+
+            Reviewed by Chris Dumez.
+
+            The bug was caused by adjustDirectionalityIfNeededAfterChildrenChanged always traversing children to
+            unset selfOrAncestorHasDirAutoAttribute flag while removing a child element.
+
+            Fixed the bug by removing this code. This code was no-op prior to being refactored in r154957 since
+            we only entered a for loop with the invariant "counter < childCountDelta" when "childCountDelta < 0".
+
+            See http://trac.webkit.org/changeset/154957/trunk/Source/WebCore/html/HTMLElement.cpp.
+
+            * html/HTMLElement.cpp:
+            (WebCore::HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged):
+
 2015-01-28  Matthew  <matthew_hanson@apple.com>
 
         Merge r178363. rdar://problem/19617795
