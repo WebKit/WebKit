@@ -1,3 +1,16 @@
+2015-01-28  Timothy Horton  <timothy_horton@apple.com>
+
+        Avoid manually handling quickLookWithEvent: if the immediate action gesture recognizer will do Lookup for us
+        https://bugs.webkit.org/show_bug.cgi?id=141018
+        <rdar://problem/19619999>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView quickLookWithEvent:]):
+        If we have an immediate action gesture recognizer, just call super and
+        avoid WebKit's special quickLookWithEvent: implementation.
+
 2015-01-28  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Remove remaining PLATFORM(WIN) code blocks from WebKit2.
