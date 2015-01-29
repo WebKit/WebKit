@@ -1,3 +1,17 @@
+2015-01-29  Santosh Mahto  <santoshbit2007@gmail.com>
+
+        Refactor String::format to handle unreached va_end.
+        https://bugs.webkit.org/show_bug.cgi?id=140938
+
+        Reviewed by Alexey Proskuryakov.
+
+        Now va_end is called for all platform after getting length
+        of formatted string and again va_start/va_end is called to write
+        formatted string in buffer. This way it ensure va_end is always
+        reached for each va_start.
+
+        * wtf/text/WTFString.cpp:
+
 2015-01-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Move HAVE_DTRACE definition back to Platform.h
