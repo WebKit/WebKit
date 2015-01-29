@@ -1,3 +1,16 @@
+2015-01-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        security/mixedContent/redirect-https-to-http-iframe-in-main-frame test is the same as security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
+        https://bugs.webkit.org/show_bug.cgi?id=140876
+
+        Reviewed by Darin Adler.
+
+        Fix the test so it's not identical to the redirect-http-to-https-iframe-in-main-frame
+        test, and update the expected results.
+
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame-expected.txt:
+        * http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html:
+
 2015-01-28  Benjamin Poulain  <bpoulain@apple.com>
 
         Start fixing the handling of Element's attributes when they contain non-ASCII characters
