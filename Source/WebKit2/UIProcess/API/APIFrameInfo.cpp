@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,64 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKNavigationResponseInternal.h"
+#include "config.h"
+#include "APIFrameInfo.h"
 
-#if WK_API_ENABLED
+#include "WebFrameProxy.h"
 
-#import "WKFrameInfoInternal.h"
+namespace API {
 
-@implementation WKNavigationResponse
-
-- (void)dealloc
+// FIXME: This should use the full request of the frame, not just the URL.
+FrameInfo::FrameInfo(const WebKit::WebFrameProxy& frame)
+    : m_isMainFrame(frame.isMainFrame())
+    , m_request(WebCore::ResourceRequest(frame.url()))
 {
-    _navigationResponse->~NavigationResponse();
-
-    [super dealloc];
 }
 
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; response = %@>", NSStringFromClass(self.class), self, self.response];
-}
-
-- (BOOL)isForMainFrame
-{
-    return _navigationResponse->frame().isMainFrame();
-}
-
-- (NSURLResponse *)response
-{
-    return _navigationResponse->response().nsURLResponse();
-}
-
-- (BOOL)canShowMIMEType
-{
-    return _navigationResponse->canShowMIMEType();
-}
-
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_navigationResponse;
-}
-
-@end
-
-@implementation WKNavigationResponse (WKPrivate)
-
-- (WKFrameInfo *)_frame
-{
-    return wrapper(_navigationResponse->frame());
-}
-
-- (NSURLRequest *)_request
-{
-    return _navigationResponse->request().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
-}
-
-@end
-
-
-#endif
+} // namespace API

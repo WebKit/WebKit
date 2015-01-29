@@ -28,7 +28,9 @@
 
 #if WK_API_ENABLED
 
+#import "APIFrameInfo.h"
 #import "APINavigationData.h"
+#import "APINavigationResponse.h"
 #import "APIString.h"
 #import "APIURL.h"
 #import "AuthenticationDecisionListener.h"
@@ -224,9 +226,9 @@ NavigationState::PolicyClient::~PolicyClient()
 
 void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy&, WebFrameProxy* destinationFrame, const NavigationActionData& navigationActionData, WebFrameProxy* sourceFrame, const WebCore::ResourceRequest& originalRequest, const WebCore::ResourceRequest& request, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
 {
-    RetainPtr<NSURLRequest> nsURLRequest = adoptNS(wrapper(*API::URLRequest::create(request).leakRef()));
-
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler) {
+        RetainPtr<NSURLRequest> nsURLRequest = adoptNS(wrapper(*API::URLRequest::create(request).leakRef()));
+
         if (!destinationFrame) {
             listener->use();
             return;
@@ -251,24 +253,22 @@ void NavigationState::PolicyClient::decidePolicyForNavigationAction(WebPageProxy
     if (!navigationDelegate)
         return;
 
-    auto navigationAction = adoptNS([[WKNavigationAction alloc] _initWithNavigationActionData:navigationActionData]);
+    RefPtr<API::FrameInfo> destinationFrameInfo;
+    RefPtr<API::FrameInfo> sourceFrameInfo;
 
     if (destinationFrame)
-        [navigationAction setTargetFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*destinationFrame]).get()];
+        destinationFrameInfo = API::FrameInfo::create(*destinationFrame);
 
-    if (sourceFrame) {
-        if (sourceFrame == destinationFrame)
-            [navigationAction setSourceFrame:[navigationAction targetFrame]];
-        else
-            [navigationAction setSourceFrame:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:*sourceFrame]).get()];
-    }
+    if (sourceFrame == destinationFrame)
+        sourceFrameInfo = destinationFrameInfo;
+    else if (sourceFrame)
+        sourceFrameInfo = API::FrameInfo::create(*sourceFrame);
 
-    [navigationAction setRequest:nsURLRequest.get()];
-    [navigationAction _setOriginalURL:originalRequest.url()];
+    auto navigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.get(), destinationFrameInfo.get(), request, originalRequest.url());
 
     RefPtr<WebFramePolicyListenerProxy> localListener = WTF::move(listener);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:navigationAction.get() decisionHandler:[localListener, checker](WKNavigationActionPolicy actionPolicy) {
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:wrapper(navigationAction) decisionHandler:[localListener, checker](WKNavigationActionPolicy actionPolicy) {
         checker->didCallCompletionHandler();
 
         switch (actionPolicy) {
@@ -322,16 +322,11 @@ void NavigationState::PolicyClient::decidePolicyForResponse(WebPageProxy&, WebFr
     if (!navigationDelegate)
         return;
 
-    auto navigationResponse = adoptNS([[WKNavigationResponse alloc] init]);
-
-    navigationResponse->_frame = adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:frame]);
-    navigationResponse->_request = resourceRequest.nsURLRequest(WebCore::DoNotUpdateHTTPBody);
-    [navigationResponse setResponse:resourceResponse.nsURLResponse()];
-    [navigationResponse setCanShowMIMEType:canShowMIMEType];
+    auto navigationResponse = API::NavigationResponse::create(API::FrameInfo::create(frame).get(), resourceRequest, resourceResponse, canShowMIMEType);
 
     RefPtr<WebFramePolicyListenerProxy> localListener = WTF::move(listener);
     RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:navigationResponse.get() decisionHandler:[localListener, checker](WKNavigationResponsePolicy responsePolicy) {
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:[localListener, checker](WKNavigationResponsePolicy responsePolicy) {
         checker->didCallCompletionHandler();
 
         switch (responsePolicy) {
@@ -426,7 +421,7 @@ void NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame(WebP
         auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
         auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState.m_webView, webFrameProxy, error);
         // FIXME: Get the main frame's current navigation.
-        [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView navigation:nil didFailProvisionalLoadInSubframe:adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:webFrameProxy]).get() withError:errorWithRecoveryAttempter.get()];
+        [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView navigation:nil didFailProvisionalLoadInSubframe:wrapper(API::FrameInfo::create(webFrameProxy)) withError:errorWithRecoveryAttempter.get()];
 
         return;
     }

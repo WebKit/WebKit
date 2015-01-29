@@ -28,39 +28,40 @@
 
 #if WK_API_ENABLED
 
-#import "WebFrameProxy.h"
-#import <wtf/RetainPtr.h>
+@implementation WKFrameInfo
 
-@implementation WKFrameInfo {
-    RetainPtr<NSURLRequest> _request;
-}
-
-- (instancetype)initWithWebFrameProxy:(WebKit::WebFrameProxy&)webFrameProxy
+- (void)dealloc
 {
-    if (!(self = [super init]))
-        return nil;
+    _frameInfo->~FrameInfo();
 
-    _mainFrame = webFrameProxy.isMainFrame();
-
-    // FIXME: This should use the full request of the frame, not just the URL.
-    _request = [NSURLRequest requestWithURL:[NSURL URLWithString:webFrameProxy.url()]];
-
-    return self;
+    [super dealloc];
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p; isMainFrame = %s; request = %@>", NSStringFromClass(self.class), self, _mainFrame ? "YES" : "NO", _request.get()];
+    return [NSString stringWithFormat:@"<%@: %p; isMainFrame = %s; request = %@>", NSStringFromClass(self.class), self, self.mainFrame ? "YES" : "NO", self.request];
+}
+
+- (BOOL)isMainFrame
+{
+    return _frameInfo->isMainFrame();
 }
 
 - (NSURLRequest *)request
 {
-    return _request.get();
+    return _frameInfo->request().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
     return [self retain];
+}
+
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
+{
+    return *_frameInfo;
 }
 
 @end

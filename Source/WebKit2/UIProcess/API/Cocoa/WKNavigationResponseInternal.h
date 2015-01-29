@@ -27,17 +27,24 @@
 
 #if WK_API_ENABLED
 
-#import <wtf/RetainPtr.h>
+#import "APINavigationResponse.h"
+#import "WKObject.h"
 
-@interface WKNavigationResponse () {
-@package
-    RetainPtr<WKFrameInfo> _frame;
-    RetainPtr<NSURLRequest> _request;
+namespace API {
+
+inline WKNavigationResponse *wrapper(API::NavigationResponse& navigationResponse)
+{
+    ASSERT([navigationResponse.wrapper() isKindOfClass:[WKNavigationResponse class]]);
+
+    return (WKNavigationResponse *)navigationResponse.wrapper();
 }
 
-@property (nonatomic, readwrite, copy) NSURLResponse *response;
-@property (nonatomic, readwrite) BOOL canShowMIMEType;
+}
 
+@interface WKNavigationResponse () <WKObject> {
+@package
+    API::ObjectStorage<API::NavigationResponse> _navigationResponse;
+}
 @end
 
 #endif

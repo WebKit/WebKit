@@ -1,3 +1,58 @@
+2015-01-28  Tim Horton  <timothy_horton@apple.com>
+
+        Add API::{FrameInfo, NavigationAction, NavigationResponse} types
+        https://bugs.webkit.org/show_bug.cgi?id=140982
+
+        Reviewed by Sam Weinig.
+
+        Make C++ API objects for WK{FrameInfo, NavigationAction, NavigationResponse}
+        to wrap around, as a step towards moving Modern API logic down into WebPageProxy.
+
+        * Shared/API/APIObject.h:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * UIProcess/API/APIFrameInfo.cpp: Added.
+        * UIProcess/API/APIFrameInfo.h: Added.
+        * UIProcess/API/APINavigationAction.h: Added.
+        * UIProcess/API/APINavigationResponse.h: Added.
+        Add API::FrameInfo, API::NavigationAction, and API::NavigationResponse.
+
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        * UIProcess/API/Cocoa/WKFrameInfoInternal.h:
+        Make WKFrameInfo a WKObject, wrapping a API::FrameInfo.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        * UIProcess/API/Cocoa/WKNavigationActionInternal.h:
+        Make WKNavigationAction a WKObject, wrapping a API::NavigationAction.
+
+        * UIProcess/API/Cocoa/WKNavigationResponse.mm:
+        * UIProcess/API/Cocoa/WKNavigationResponseInternal.h:
+        Make WKNavigationResponse a WKObject, wrapping a API::NavigationResponse.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        Adopt API::FrameInfo.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::PolicyClient::decidePolicyForNavigationAction):
+        Adopt API::FrameInfo, and reorganize the code slightly.
+        Adopt API::NavigationAction.
+
+        (WebKit::NavigationState::PolicyClient::decidePolicyForResponse):
+        Adopt API::FrameInfo.
+        Adopt API::NavigationResponse.
+
+        (WebKit::NavigationState::LoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        Adopt API::FrameInfo.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        (WebKit::UIDelegate::UIClient::runJavaScriptAlert):
+        (WebKit::UIDelegate::UIClient::runJavaScriptConfirm):
+        (WebKit::UIDelegate::UIClient::runJavaScriptPrompt):
+        Adopt API::FrameInfo.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-01-28  Antti Koivisto  <antti@apple.com>
 
         http/tests/xmlhttprequest/workers/methods.html sometimes times out with disk cache enabled

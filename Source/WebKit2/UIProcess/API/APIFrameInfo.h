@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,64 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKNavigationResponseInternal.h"
+#ifndef APIFrameInfo_h
+#define APIFrameInfo_h
 
-#if WK_API_ENABLED
+#include "APIObject.h"
+#include <WebCore/ResourceRequest.h>
 
-#import "WKFrameInfoInternal.h"
-
-@implementation WKNavigationResponse
-
-- (void)dealloc
-{
-    _navigationResponse->~NavigationResponse();
-
-    [super dealloc];
+namespace WebKit {
+class WebFrameProxy;
 }
 
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; response = %@>", NSStringFromClass(self.class), self, self.response];
-}
+namespace API {
 
-- (BOOL)isForMainFrame
-{
-    return _navigationResponse->frame().isMainFrame();
-}
+class FrameInfo final : public ObjectImpl<Object::Type::FrameInfo> {
+public:
+    static Ref<FrameInfo> create(const WebKit::WebFrameProxy& frame)
+    {
+        return adoptRef(*new FrameInfo(frame));
+    }
 
-- (NSURLResponse *)response
-{
-    return _navigationResponse->response().nsURLResponse();
-}
+    explicit FrameInfo(const WebKit::WebFrameProxy&);
 
-- (BOOL)canShowMIMEType
-{
-    return _navigationResponse->canShowMIMEType();
-}
+    bool isMainFrame() const { return m_isMainFrame; }
+    const WebCore::ResourceRequest& request() const { return m_request; }
 
-#pragma mark WKObject protocol implementation
+private:
+    bool m_isMainFrame;
+    WebCore::ResourceRequest m_request;
+};
 
-- (API::Object&)_apiObject
-{
-    return *_navigationResponse;
-}
+} // namespace API
 
-@end
-
-@implementation WKNavigationResponse (WKPrivate)
-
-- (WKFrameInfo *)_frame
-{
-    return wrapper(_navigationResponse->frame());
-}
-
-- (NSURLRequest *)_request
-{
-    return _navigationResponse->request().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
-}
-
-@end
-
-
-#endif
+#endif // APIFrameInfo_h

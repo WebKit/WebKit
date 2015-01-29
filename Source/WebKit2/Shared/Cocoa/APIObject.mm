@@ -33,6 +33,7 @@
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextGroupInternal.h"
 #import "WKConnectionInternal.h"
+#import "WKFrameInfoInternal.h"
 #import "WKNSArray.h"
 #import "WKNSData.h"
 #import "WKNSDictionary.h"
@@ -41,8 +42,10 @@
 #import "WKNSURL.h"
 #import "WKNSURLAuthenticationChallenge.h"
 #import "WKNSURLRequest.h"
+#import "WKNavigationActionInternal.h"
 #import "WKNavigationDataInternal.h"
 #import "WKNavigationInternal.h"
+#import "WKNavigationResponseInternal.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUserContentControllerInternal.h"
@@ -142,12 +145,24 @@ void* Object::newObject(size_t size, Type type)
         wrapper = [_WKFrameHandle alloc];
         break;
 
+    case Type::FrameInfo:
+        wrapper = [WKFrameInfo alloc];
+        break;
+
     case Type::Navigation:
         wrapper = [WKNavigation alloc];
         break;
 
+    case Type::NavigationAction:
+        wrapper = [WKNavigationAction alloc];
+        break;
+
     case Type::NavigationData:
         wrapper = [WKNavigationData alloc];
+        break;
+
+    case Type::NavigationResponse:
+        wrapper = [WKNavigationResponse alloc];
         break;
 
     case Type::PageGroup:

@@ -27,23 +27,24 @@
 
 #if WK_API_ENABLED
 
-#import <WebCore/FrameLoaderTypes.h>
+#import "APINavigationAction.h"
+#import "WKObject.h"
 
-namespace WebKit {
-struct NavigationActionData;
+namespace API {
+
+inline WKNavigationAction *wrapper(API::NavigationAction& navigationAction)
+{
+    ASSERT([navigationAction.wrapper() isKindOfClass:[WKNavigationAction class]]);
+
+    return (WKNavigationAction *)navigationAction.wrapper();
 }
 
-@interface WKNavigationAction ()
+}
 
-@property (nonatomic, readwrite, copy) WKFrameInfo *sourceFrame;
-@property (nonatomic, readwrite, copy) WKFrameInfo *targetFrame;
-
-@property (nonatomic, readwrite, copy) NSURLRequest *request;
-
-@property (nonatomic, readwrite, copy, setter=_setOriginalURL:) NSURL *_originalURL;
-
-- (instancetype)_initWithNavigationActionData:(const WebKit::NavigationActionData&)navigationActionData;
-
+@interface WKNavigationAction () <WKObject> {
+@package
+    API::ObjectStorage<API::NavigationAction> _navigationAction;
+}
 @end
 
 #endif

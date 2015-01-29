@@ -29,16 +29,10 @@
 #if WK_API_ENABLED
 
 #import "NavigationActionData.h"
+#import "WKFrameInfoInternal.h"
 #import <wtf/RetainPtr.h>
 
-@implementation WKNavigationAction {
-    RetainPtr<WKFrameInfo> _sourceFrame;
-    RetainPtr<WKFrameInfo> _targetFrame;
-    RetainPtr<NSURLRequest> _request;
-    RetainPtr<NSURL> _originalURL;
-    BOOL _userInitiated;
-    BOOL _canHandleRequest;
-}
+@implementation WKNavigationAction
 
 static WKNavigationType toWKNavigationType(WebCore::NavigationType navigationType)
 {
@@ -103,82 +97,79 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 }
 #endif
 
-- (instancetype)_initWithNavigationActionData:(const WebKit::NavigationActionData&)navigationActionData
+- (void)dealloc
 {
-    if (!(self = [super init]))
-        return nil;
+    _navigationAction->~NavigationAction();
 
-    _navigationType = toWKNavigationType(navigationActionData.navigationType);
-
-#if PLATFORM(MAC)
-    _modifierFlags = toNSEventModifierFlags(navigationActionData.modifiers);
-    _buttonNumber = toNSButtonNumber(navigationActionData.mouseButton);
-#endif
-
-    _userInitiated = navigationActionData.isProcessingUserGesture;
-    _canHandleRequest = navigationActionData.canHandleRequest;
-
-    return self;
+    [super dealloc];
 }
 
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; navigationType = %ld; request = %@; sourceFrame = %@; targetFrame = %@>", NSStringFromClass(self.class), self,
-        (long)_navigationType, _request.get(), _sourceFrame.get(), _targetFrame.get()];
+        (long)self.navigationType, self.request, self.sourceFrame, self.targetFrame];
 }
 
 - (WKFrameInfo *)sourceFrame
 {
-    return _sourceFrame.get();
-}
-
-- (void)setSourceFrame:(WKFrameInfo *)sourceFrame
-{
-    _sourceFrame = adoptNS([sourceFrame copy]);
+    if (API::FrameInfo* frameInfo = _navigationAction->sourceFrame())
+        return wrapper(*frameInfo);
+    return nil;
 }
 
 - (WKFrameInfo *)targetFrame
 {
-    return _targetFrame.get();
+    if (API::FrameInfo* frameInfo = _navigationAction->targetFrame())
+        return wrapper(*frameInfo);
+    return nil;
 }
 
-- (void)setTargetFrame:(WKFrameInfo *)targetFrame
+- (WKNavigationType)navigationType
 {
-    _targetFrame = adoptNS([targetFrame copy]);
+    return toWKNavigationType(_navigationAction->navigationType());
 }
 
 - (NSURLRequest *)request
 {
-    return _request.get();
+    return _navigationAction->request().nsURLRequest(WebCore::DoNotUpdateHTTPBody);
 }
 
-- (void)setRequest:(NSURLRequest *)request
+#if PLATFORM(MAC)
+- (NSEventModifierFlags)modifierFlags
 {
-    _request = adoptNS([request copy]);
+    return toNSEventModifierFlags(_navigationAction->modifiers());
 }
 
-- (void)_setOriginalURL:(NSURL *)originalURL
+- (NSInteger)buttonNumber
 {
-    _originalURL = adoptNS([originalURL copy]);
+    return toNSButtonNumber(_navigationAction->mouseButton());
 }
+#endif
 
-- (NSURL *)_originalURL
+#pragma mark WKObject protocol implementation
+
+- (API::Object&)_apiObject
 {
-    return _originalURL.get();
+    return *_navigationAction;
 }
 
 @end
 
 @implementation WKNavigationAction (WKPrivate)
 
+- (NSURL *)_originalURL
+{
+    return _navigationAction->originalURL();
+}
+
 - (BOOL)_isUserInitiated
 {
-    return _userInitiated;
+    return _navigationAction->isProcessingUserGesture();
 }
 
 - (BOOL)_canHandleRequest
 {
-    return _canHandleRequest;
+    return _navigationAction->canHandleRequest();
 }
 
 @end

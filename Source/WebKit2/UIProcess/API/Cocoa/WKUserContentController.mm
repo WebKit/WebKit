@@ -86,7 +86,7 @@ public:
     
     virtual void didPostMessage(WebKit::WebPageProxy& page, WebKit::WebFrameProxy& frame, WebCore::SerializedScriptValue& serializedScriptValue)
     {
-        RetainPtr<WKFrameInfo> frameInfo = adoptNS([[WKFrameInfo alloc] initWithWebFrameProxy:frame]);
+        RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(frame));
 
         RetainPtr<JSContext> context = adoptNS([[JSContext alloc] init]);
         JSValueRef valueRef = serializedScriptValue.deserialize([context JSGlobalContextRef], 0);
