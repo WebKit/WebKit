@@ -29,7 +29,10 @@
 #include "ArgumentDecoder.h"
 #include "MessageRecorder.h"
 #include "StringReference.h"
+
+#if HAVE(DTRACE)
 #include <uuid/uuid.h>
+#endif
 
 namespace IPC {
 
@@ -52,9 +55,11 @@ public:
     void setImportanceAssertion(std::unique_ptr<ImportanceAssertion>);
 #endif
 
+#if HAVE(DTRACE)
     void setMessageProcessingToken(std::unique_ptr<MessageRecorder::MessageProcessingToken> token) { m_processingToken = WTF::move(token); }
 
     const uuid_t& UUID() const { return m_UUID; }
+#endif
 
 private:
     uint8_t m_messageFlags;
@@ -63,13 +68,14 @@ private:
 
     uint64_t m_destinationID;
 
+#if HAVE(DTRACE)
     uuid_t m_UUID;
+    std::unique_ptr<MessageRecorder::MessageProcessingToken> m_processingToken;
+#endif
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     std::unique_ptr<ImportanceAssertion> m_importanceAssertion;
 #endif
-
-    std::unique_ptr<MessageRecorder::MessageProcessingToken> m_processingToken;
 };
 
 } // namespace IPC

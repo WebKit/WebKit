@@ -317,7 +317,11 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
         return;
     }
 
+#if HAVE(DTRACE)
     auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID, incomingMessageDecoder->UUID());
+#else
+    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
+#endif
 
     // Hand off both the decoder and encoder to the work queue message receiver.
     workQueueMessageReceiver->didReceiveSyncMessage(*this, *decoder, replyEncoder);
@@ -379,9 +383,11 @@ bool Connection::sendMessage(std::unique_ptr<MessageEncoder> encoder, unsigned m
             || m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount))
         encoder->setShouldDispatchMessageWhenWaitingForSyncReply(true);
 
+#if HAVE(DTRACE)
     std::unique_ptr<MessageRecorder::MessageProcessingToken> token;
     if (!alreadyRecordedMessage)
         token = MessageRecorder::recordOutgoingMessage(*this, *encoder);
+#endif
 
     {
         std::lock_guard<std::mutex> lock(m_outgoingMessagesMutex);
@@ -477,7 +483,9 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessage(uint64_t syncRequest
 
     ++m_inSendSyncCount;
 
+#if HAVE(DTRACE)
     auto token = MessageRecorder::recordOutgoingMessage(*this, *encoder);
+#endif
 
     // First send the message.
     sendMessage(WTF::move(encoder), DispatchMessageEvenWhenWaitingForSyncReply, true);
@@ -521,7 +529,9 @@ std::unique_ptr<MessageDecoder> Connection::sendSyncMessageFromSecondaryThread(u
         m_secondaryThreadPendingSyncReplyMap.add(syncRequestID, &pendingReply);
     }
 
+#if HAVE(DTRACE)
     auto token = MessageRecorder::recordOutgoingMessage(*this, *encoder);
+#endif
 
     sendMessage(WTF::move(encoder), 0, true);
 
@@ -776,7 +786,11 @@ void Connection::dispatchSyncMessage(MessageDecoder& decoder)
         return;
     }
 
+#if HAVE(DTRACE)
     auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID, decoder.UUID());
+#else
+    auto replyEncoder = std::make_unique<MessageEncoder>("IPC", "SyncMessageReply", syncRequestID);
+#endif
 
     // Hand off both the decoder and encoder to the client.
     m_client->didReceiveSyncMessage(*this, decoder, replyEncoder);
@@ -823,7 +837,9 @@ void Connection::dispatchMessage(MessageDecoder& decoder)
 
 void Connection::dispatchMessage(std::unique_ptr<MessageDecoder> message)
 {
+#if HAVE(DTRACE)
     MessageRecorder::recordIncomingMessage(*this, *message);
+#endif
 
     if (!m_client)
         return;

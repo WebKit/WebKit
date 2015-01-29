@@ -1,3 +1,33 @@
+2015-01-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL][GTK] Fix the build after r179326
+        https://bugs.webkit.org/show_bug.cgi?id=141027
+
+        Reviewed by Alexey Proskuryakov.
+
+        Guard MessageRecorder implementation with USE(DTRACE)
+        for platforms not supporting DTrace.
+
+        Original patch by Carlos Garcia Campos <cgarcia@igalia.com>
+
+        * Platform/IPC/ArgumentCoders.cpp:
+        * Platform/IPC/ArgumentCoders.h:
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        (IPC::Connection::sendMessage):
+        (IPC::Connection::sendSyncMessage):
+        (IPC::Connection::sendSyncMessageFromSecondaryThread):
+        (IPC::Connection::dispatchSyncMessage):
+        (IPC::Connection::dispatchMessage):
+        * Platform/IPC/MessageDecoder.cpp:
+        (IPC::MessageDecoder::MessageDecoder):
+        * Platform/IPC/MessageDecoder.h:
+        * Platform/IPC/MessageEncoder.cpp:
+        (IPC::MessageEncoder::MessageEncoder):
+        (IPC::MessageEncoder::encodeHeader):
+        * Platform/IPC/MessageEncoder.h:
+        * Platform/IPC/MessageRecorder.h:
+
 2015-01-29  Tim Horton  <timothy_horton@apple.com>
 
         Avoid manually handling quickLookWithEvent: if the immediate action gesture recognizer will do Lookup for us

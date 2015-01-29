@@ -29,12 +29,15 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include <utility>
-#include <uuid/uuid.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
+
+#if HAVE(DTRACE)
+#include <uuid/uuid.h>
+#endif
 
 namespace IPC {
 
@@ -299,10 +302,12 @@ template<> struct ArgumentCoder<String> {
     static bool decode(ArgumentDecoder&, String&);
 };
 
+#if HAVE(DTRACE)
 template<> struct ArgumentCoder<uuid_t> {
     static void encode(ArgumentEncoder&, const uuid_t&);
     static bool decode(ArgumentDecoder&, uuid_t&);
 };
+#endif
 
 } // namespace IPC
 

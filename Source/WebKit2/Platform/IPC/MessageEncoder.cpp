@@ -35,6 +35,7 @@ namespace IPC {
 
 static uint8_t defaultMessageFlags = 0;
 
+#if HAVE(DTRACE)
 MessageEncoder::MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, const uuid_t& UUID)
     : m_messageReceiverName(messageReceiverName)
     , m_messageName(messageName)
@@ -43,13 +44,16 @@ MessageEncoder::MessageEncoder(StringReference messageReceiverName, StringRefere
     uuid_copy(m_UUID, UUID);
     encodeHeader();
 }
+#endif
 
 MessageEncoder::MessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID)
     : m_messageReceiverName(messageReceiverName)
     , m_messageName(messageName)
     , m_destinationID(destinationID)
 {
+#if HAVE(DTRACE)
     uuid_generate(m_UUID);
+#endif
     encodeHeader();
 }
 
@@ -65,7 +69,9 @@ void MessageEncoder::encodeHeader()
     *this << m_messageReceiverName;
     *this << m_messageName;
     *this << m_destinationID;
+#if HAVE(DTRACE)
     *this << m_UUID;
+#endif
 }
 
 bool MessageEncoder::isSyncMessage() const

@@ -26,6 +26,8 @@
 #ifndef MessageRecorder_h
 #define MessageRecorder_h
 
+#if HAVE(DTRACE)
+
 #include "ProcessType.h"
 #include <uuid/uuid.h>
 #include <wtf/Forward.h>
@@ -83,5 +85,7 @@ private:
 };
 
 };
+
+#endif // HAVE(DTRACE)
 
 #endif // MessageRecorder_h
