@@ -1,5 +1,16 @@
 2015-01-29  Julien Isorce  <j.isorce@samsung.com>
 
+        HTMLImageLoader: fix build failure on assert condition after r179340
+        https://bugs.webkit.org/show_bug.cgi?id=140722
+
+        Reviewed by Csaba Osztrogonác.
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::imageChanged): image() directly
+        returns a CachedImage*.
+
+2015-01-29  Julien Isorce  <j.isorce@samsung.com>
+
         CachedImage: ensure clients overrides imageChanged instead of notifyFinished
         https://bugs.webkit.org/show_bug.cgi?id=140722
 

@@ -74,7 +74,7 @@ String HTMLImageLoader::sourceURI(const AtomicString& attr) const
 
 void HTMLImageLoader::imageChanged(CachedImage* cachedImage, const IntRect*)
 {
-    ASSERT(cachedImage == image().get());
+    ASSERT(cachedImage == image());
 
     if (!cachedImage->isLoaded())
         return;
