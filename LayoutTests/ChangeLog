@@ -1,3 +1,16 @@
+2015-01-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Border-radius clipping on a stacking context causes descendants to not render
+        https://bugs.webkit.org/show_bug.cgi?id=140536
+
+        Reviewed by Zalan Bujtas.
+        
+        Ref test that clips out the middle of a composited rounded-rect overflow element,
+        and also tests reflections.
+
+        * compositing/clipping/border-radius-stacking-context-clip-expected.html: Added.
+        * compositing/clipping/border-radius-stacking-context-clip.html: Added.
+
 2015-01-29  Sam Weinig  <sam@webkit.org>
 
         Remove support for screen font substitution

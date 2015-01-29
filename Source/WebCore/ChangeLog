@@ -1,3 +1,48 @@
+2015-01-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Border-radius clipping on a stacking context causes descendants to not render
+        https://bugs.webkit.org/show_bug.cgi?id=140536
+
+        Reviewed by Zalan Bujtas.
+        
+        Fix one of the issues introduced in r178029. The changes in GraphicsLayerCA
+        failed to adhere to the "set a bit and flush later" pattern that this class uses,
+        instead poking the platform layers directly. This caused an issue where the bounds
+        of the clipping layer would later be set to 0x0, causing content to disappear.
+        
+        Fix by changing the "applyClippingBorder" function to "setMasksToBoundsRect"
+        and have it update via a new MasksToBoundsRectChanged dirty bit.
+
+        In order to avoid clobbering the mask layer used to clip contents, we need another
+        shape mask layer, so rename m_shapeMaskLayer to m_contentsShapeMaskLayer, then
+        introduce a new m_shapeMaskLayer which is used for masks-to-bounds clipping. Update
+        the reflection cloning code to correctly clone this layer.
+
+        Test: compositing/clipping/border-radius-stacking-context-clip.html
+
+        * WebCore.exp.in:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::maskToBoundsRect):
+        (WebCore::GraphicsLayer::setMasksToBoundsRect):
+        (WebCore::GraphicsLayer::applyClippingBorder): Deleted.
+        (WebCore::GraphicsLayer::clearClippingBorder): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::willBeDestroyed):
+        (WebCore::GraphicsLayerCA::setMasksToBoundsRect):
+        (WebCore::GraphicsLayerCA::setContentsToSolidColor):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateContentsImage):
+        (WebCore::GraphicsLayerCA::updateContentsRects):
+        (WebCore::GraphicsLayerCA::updateMasksToBoundsRect):
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties):
+        (WebCore::GraphicsLayerCA::applyClippingBorder): Deleted.
+        (WebCore::GraphicsLayerCA::clearClippingBorder): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateChildClippingStrategy): Add a FIXME since
+        this code is trying to access geometry and we may not have done layout yet.
+        Also, to clear the rounded rect, just set a non-rounded rect the size of the layer.
+
 2015-01-29  Sam Weinig  <sam@webkit.org>
 
         Remove support for screen font substitution

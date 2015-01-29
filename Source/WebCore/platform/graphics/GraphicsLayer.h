@@ -365,11 +365,14 @@ public:
     FloatRect contentsRect() const { return m_contentsRect; }
     virtual void setContentsRect(const FloatRect& r) { m_contentsRect = r; }
 
+    // Set a rounded rect that will be used to clip the layer contents.
     FloatRoundedRect contentsClippingRect() const { return m_contentsClippingRect; }
     virtual void setContentsClippingRect(const FloatRoundedRect& roundedRect) { m_contentsClippingRect = roundedRect; }
 
-    virtual bool applyClippingBorder(const FloatRoundedRect&) { return false; }
-    virtual void clearClippingBorder() { return; }
+    // Set a rounded rect that is used to clip this layer and its descendants (implies setting masksToBounds).
+    // Returns false if the platform can't support this rounded clip, and we should fall back to painting a mask.
+    FloatRoundedRect maskToBoundsRect() const { return m_masksToBoundsRect; };
+    virtual bool setMasksToBoundsRect(const FloatRoundedRect& roundedRect) { m_masksToBoundsRect = roundedRect; return false; }
 
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
     static String animationNameForTransition(AnimatedPropertyID);
@@ -592,6 +595,7 @@ protected:
 
     FloatRect m_contentsRect;
     FloatRoundedRect m_contentsClippingRect;
+    FloatRoundedRect m_masksToBoundsRect;
     FloatPoint m_contentsTilePhase;
     FloatSize m_contentsTileSize;
 

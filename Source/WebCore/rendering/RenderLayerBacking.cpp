@@ -1449,10 +1449,11 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
 {
     if (hasClippingLayer() && needsDescendantsClippingLayer) {
         if (is<RenderBox>(renderer()) && (renderer().style().clipPath() || renderer().style().hasBorderRadius())) {
+            // FIXME: we shouldn't get geometry here as layout may not have been udpated.
             LayoutRect boxRect(LayoutPoint(), downcast<RenderBox>(renderer()).size());
             FloatRoundedRect contentsClippingRect = renderer().style().getRoundedInnerBorderFor(boxRect).pixelSnappedRoundedRectForPainting(deviceScaleFactor());
             contentsClippingRect.move(contentOffsetInCompostingLayer());
-            if (clippingLayer()->applyClippingBorder(contentsClippingRect)) {
+            if (clippingLayer()->setMasksToBoundsRect(contentsClippingRect)) {
                 if (m_childClippingMaskLayer) 
                     m_childClippingMaskLayer = nullptr;
                 return;
@@ -1472,7 +1473,7 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
                 clippingLayer()->setMaskLayer(nullptr);
         } else 
             if (hasClippingLayer())
-                clippingLayer()->clearClippingBorder();
+                clippingLayer()->setMasksToBoundsRect(FloatRoundedRect(FloatRect(FloatPoint(), clippingLayer()->size())));
     }
 }
 

@@ -368,7 +368,13 @@ void GraphicsLayerCA::willBeDestroyed()
 
     if (m_contentsClippingLayer)
         m_contentsClippingLayer->setOwner(nullptr);
-        
+
+    if (m_contentsShapeMaskLayer)
+        m_contentsShapeMaskLayer->setOwner(nullptr);
+
+    if (m_shapeMaskLayer)
+        m_shapeMaskLayer->setOwner(nullptr);
+    
     if (m_structuralLayer)
         m_structuralLayer->setOwner(nullptr);
 
@@ -782,6 +788,16 @@ void GraphicsLayerCA::setContentsClippingRect(const FloatRoundedRect& rect)
     noteLayerPropertyChanged(ContentsRectsChanged);
 }
 
+bool GraphicsLayerCA::setMasksToBoundsRect(const FloatRoundedRect& roundedRect)
+{
+    if (roundedRect == m_masksToBoundsRect)
+        return true;
+
+    GraphicsLayer::setMasksToBoundsRect(roundedRect);
+    noteLayerPropertyChanged(MasksToBoundsRectChanged);
+    return true;
+}
+
 bool GraphicsLayerCA::shouldRepaintOnSizeChange() const
 {
     return drawsContent() && !tiledBacking();
@@ -871,7 +887,7 @@ void GraphicsLayerCA::setContentsToSolidColor(const Color& color)
             m_contentsLayerPurpose = ContentsLayerForBackgroundColor;
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
 #ifndef NDEBUG
-            m_contentsLayer->setName("Background Color Layer");
+            m_contentsLayer->setName(String::format("Background Color Layer %llu", m_contentsLayer->layerID()));
 #endif
             contentsLayerChanged = true;
         }
@@ -1365,6 +1381,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     
     if (m_uncommittedChanges & ContentsRectsChanged) // Needs to happen before ChildrenChanged
         updateContentsRects();
+
+    if (m_uncommittedChanges & MasksToBoundsRectChanged) // Needs to happen before ChildrenChanged
+        updateMasksToBoundsRect();
 
     if (m_uncommittedChanges & MaskLayerChanged) {
         updateMaskLayer();
@@ -1968,7 +1987,7 @@ void GraphicsLayerCA::updateContentsImage()
         if (!m_contentsLayer.get()) {
             m_contentsLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
 #ifndef NDEBUG
-            m_contentsLayer->setName("Image Layer");
+            m_contentsLayer->setName(String::format("Image Layer %llu", m_contentsLayer->layerID()));
 #endif
             setupContentsLayer(m_contentsLayer.get());
             // m_contentsLayer will be parented by updateSublayerList
@@ -2026,38 +2045,6 @@ void GraphicsLayerCA::updateContentsColorLayer()
     }
 }
 
-bool GraphicsLayerCA::applyClippingBorder(const FloatRoundedRect& roundedRect)
-{
-    if (roundedRect.radii().isUniformCornerRadius()) {
-        m_layer->setMask(nullptr);
-        m_layer->setMasksToBounds(true);
-        m_layer->setCornerRadius(roundedRect.radii().topLeft().width());
-    } else {
-        if (!m_shapeMaskLayer) {
-            m_shapeMaskLayer = createPlatformCALayer(PlatformCALayer::LayerTypeShapeLayer, this);
-            m_shapeMaskLayer->setAnchorPoint(FloatPoint3D());
-        }
-
-        m_shapeMaskLayer->setPosition(FloatPoint());
-        m_shapeMaskLayer->setBounds(m_layer->bounds());
-    
-        m_layer->setCornerRadius(0);
-        m_layer->setMask(m_shapeMaskLayer.get());
-
-        FloatRoundedRect offsetClippingRoundedRect(m_layer->bounds(), roundedRect.radii());
-        m_shapeMaskLayer->setShapeRoundedRect(offsetClippingRoundedRect);
-    }
-
-    return true;
-}
-
-void GraphicsLayerCA::clearClippingBorder()
-{
-    m_layer->setCornerRadius(0);
-    m_layer->setMasksToBounds(false);
-    m_layer->setMask(nullptr);
-}
-
 // The clipping strategy depends on whether the rounded rect has equal corner radii.
 void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect& roundedRect)
 {
@@ -2105,7 +2092,7 @@ void GraphicsLayerCA::updateContentsRects()
             m_contentsClippingLayer = createPlatformCALayer(PlatformCALayer::LayerTypeLayer, this);
             m_contentsClippingLayer->setAnchorPoint(FloatPoint());
 #ifndef NDEBUG
-            m_contentsClippingLayer->setName("Contents Clipping");
+            m_contentsClippingLayer->setName(String::format("Contents Clipping Layer %llu", m_contentsClippingLayer->layerID()));
 #endif
             gainedOrLostClippingLayer = true;
         }
@@ -2113,7 +2100,7 @@ void GraphicsLayerCA::updateContentsRects()
         m_contentsClippingLayer->setPosition(clippingOrigin);
         m_contentsClippingLayer->setBounds(clippingBounds);
 
-        updateClippingStrategy(*m_contentsClippingLayer, m_shapeMaskLayer, m_contentsClippingRect);
+        updateClippingStrategy(*m_contentsClippingLayer, m_contentsShapeMaskLayer, m_contentsClippingRect);
 
         if (gainedOrLostClippingLayer) {
             m_contentsLayer->removeFromSuperlayer();
@@ -2132,9 +2119,9 @@ void GraphicsLayerCA::updateContentsRects()
             gainedOrLostClippingLayer = true;
         }
 
-        if (m_shapeMaskLayer) {
-            m_shapeMaskLayer->setOwner(nullptr);
-            m_shapeMaskLayer = nullptr;
+        if (m_contentsShapeMaskLayer) {
+            m_contentsShapeMaskLayer->setOwner(nullptr);
+            m_contentsShapeMaskLayer = nullptr;
         }
 
         contentOrigin = m_contentsRect.location();
@@ -2154,17 +2141,39 @@ void GraphicsLayerCA::updateContentsRects()
     }
 
     if (m_contentsClippingLayerClones) {
-        if (!m_shapeMaskLayerClones && m_shapeMaskLayer)
-            m_shapeMaskLayerClones = std::make_unique<LayerMap>();
+        if (!m_contentsShapeMaskLayerClones && m_contentsShapeMaskLayer)
+            m_contentsShapeMaskLayerClones = std::make_unique<LayerMap>();
 
         for (auto& clone : *m_contentsClippingLayerClones) {
+            CloneID cloneID = clone.key;
+            RefPtr<PlatformCALayer> shapeMaskLayerClone;
+            if (m_contentsShapeMaskLayerClones)
+                shapeMaskLayerClone = m_contentsShapeMaskLayerClones->get(cloneID);
+
+            bool hadShapeMask = shapeMaskLayerClone;
+            updateClippingStrategy(*clone.value, shapeMaskLayerClone, m_contentsClippingRect);
+
+            if (!shapeMaskLayerClone && m_contentsShapeMaskLayerClones)
+                m_contentsShapeMaskLayerClones->remove(cloneID);
+            else if (shapeMaskLayerClone && !hadShapeMask)
+                m_contentsShapeMaskLayerClones->add(cloneID, shapeMaskLayerClone);
+        }
+    }
+}
+
+void GraphicsLayerCA::updateMasksToBoundsRect()
+{
+    updateClippingStrategy(*m_layer, m_shapeMaskLayer, m_masksToBoundsRect);
+
+    if (m_layerClones) {
+        for (auto& clone : *m_layerClones) {
             CloneID cloneID = clone.key;
             RefPtr<PlatformCALayer> shapeMaskLayerClone;
             if (m_shapeMaskLayerClones)
                 shapeMaskLayerClone = m_shapeMaskLayerClones->get(cloneID);
 
             bool hadShapeMask = shapeMaskLayerClone;
-            updateClippingStrategy(*clone.value, shapeMaskLayerClone, m_contentsClippingRect);
+            updateClippingStrategy(*clone.value, shapeMaskLayerClone, m_masksToBoundsRect);
 
             if (!shapeMaskLayerClone && m_shapeMaskLayerClones)
                 m_shapeMaskLayerClones->remove(cloneID);
@@ -3082,6 +3091,7 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int inden
         dumpInnerLayer(textStream, "contents clipping layer", m_contentsClippingLayer.get(), indent, behavior);
         dumpInnerLayer(textStream, "shape mask layer", m_shapeMaskLayer.get(), indent, behavior);
         dumpInnerLayer(textStream, "contents layer", m_contentsLayer.get(), indent, behavior);
+        dumpInnerLayer(textStream, "contents shape mask layer", m_contentsShapeMaskLayer.get(), indent, behavior);
         dumpInnerLayer(textStream, "backdrop layer", m_backdropLayer.get(), indent, behavior);
     }
 }
@@ -3239,7 +3249,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::findOrMakeClone(CloneID cloneID, Pl
 }   
 
 void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>& primaryLayer, RefPtr<PlatformCALayer>& structuralLayer,
-    RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, CloneLevel cloneLevel)
+    RefPtr<PlatformCALayer>& contentsLayer, RefPtr<PlatformCALayer>& contentsClippingLayer, RefPtr<PlatformCALayer>& contentsShapeMaskLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, CloneLevel cloneLevel)
 {
     structuralLayer = nullptr;
     contentsLayer = nullptr;
@@ -3256,6 +3266,9 @@ void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>
     if (!m_contentsClippingLayerClones && m_contentsClippingLayer)
         m_contentsClippingLayerClones = std::make_unique<LayerMap>();
 
+    if (!m_contentsShapeMaskLayerClones && m_contentsShapeMaskLayer)
+        m_contentsShapeMaskLayerClones = std::make_unique<LayerMap>();
+
     if (!m_shapeMaskLayerClones && m_shapeMaskLayer)
         m_shapeMaskLayerClones = std::make_unique<LayerMap>();
 
@@ -3263,6 +3276,7 @@ void GraphicsLayerCA::ensureCloneLayers(CloneID cloneID, RefPtr<PlatformCALayer>
     structuralLayer = findOrMakeClone(cloneID, m_structuralLayer.get(), m_structuralLayerClones.get(), cloneLevel);
     contentsLayer = findOrMakeClone(cloneID, m_contentsLayer.get(), m_contentsLayerClones.get(), cloneLevel);
     contentsClippingLayer = findOrMakeClone(cloneID, m_contentsClippingLayer.get(), m_contentsClippingLayerClones.get(), cloneLevel);
+    contentsShapeMaskLayer = findOrMakeClone(cloneID, m_contentsShapeMaskLayer.get(), m_contentsShapeMaskLayerClones.get(), cloneLevel);
     shapeMaskLayer = findOrMakeClone(cloneID, m_shapeMaskLayer.get(), m_shapeMaskLayerClones.get(), cloneLevel);
 }
 
@@ -3272,6 +3286,8 @@ void GraphicsLayerCA::removeCloneLayers()
     m_structuralLayerClones = nullptr;
     m_contentsLayerClones = nullptr;
     m_contentsClippingLayerClones = nullptr;
+    m_contentsShapeMaskLayerClones = nullptr;
+    m_shapeMaskLayerClones = nullptr;
 }
 
 FloatPoint GraphicsLayerCA::positionForCloneRootLayer() const
@@ -3303,8 +3319,9 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
     RefPtr<PlatformCALayer> structuralLayer;
     RefPtr<PlatformCALayer> contentsLayer;
     RefPtr<PlatformCALayer> contentsClippingLayer;
+    RefPtr<PlatformCALayer> contentsShapeMaskLayer;
     RefPtr<PlatformCALayer> shapeMaskLayer;
-    ensureCloneLayers(replicaState.cloneID(), primaryLayer, structuralLayer, contentsLayer, contentsClippingLayer, shapeMaskLayer, cloneLevel);
+    ensureCloneLayers(replicaState.cloneID(), primaryLayer, structuralLayer, contentsLayer, contentsClippingLayer, contentsShapeMaskLayer, shapeMaskLayer, cloneLevel);
 
     if (m_maskLayer) {
         RefPtr<PlatformCALayer> maskClone = downcast<GraphicsLayerCA>(*m_maskLayer).fetchCloneLayers(replicaRoot, replicaState, IntermediateCloneLevel);
@@ -3343,8 +3360,11 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
         contentsClippingLayer->appendSublayer(*contentsLayer);
     }
 
+    if (contentsShapeMaskLayer)
+        contentsClippingLayer->setMask(contentsShapeMaskLayer.get());
+
     if (shapeMaskLayer)
-        contentsClippingLayer->setMask(shapeMaskLayer.get());
+        primaryLayer->setMask(shapeMaskLayer.get());
     
     if (replicaLayer || structuralLayer || contentsLayer || contentsClippingLayer || childLayers.size() > 0) {
         if (structuralLayer) {
