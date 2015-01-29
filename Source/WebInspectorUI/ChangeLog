@@ -1,3 +1,28 @@
+2015-01-28  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r178768. rdar://problem/19617631
+
+    2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Expanding event objects in console shows undefined for most values, it should have real values
+            https://bugs.webkit.org/show_bug.cgi?id=137306
+
+            Reviewed by Timothy Hatcher.
+
+            When first expanding an object, show all the object's own properties and any
+            getter properties that may be on its prototype chain. Now, we only fetch
+            own properties, for __proto__ properties.
+
+            * UserInterface/Protocol/RemoteObject.js:
+            (WebInspector.RemoteObject.prototype.getOwnProperties):
+            (WebInspector.RemoteObject.prototype.getOwnAndGetterProperties):
+            (WebInspector.RemoteObject.prototype.getAllProperties):
+            (WebInspector.RemoteObject.prototype.get hasChildren): Deleted.
+            * UserInterface/Views/ObjectPropertiesSection.js:
+            (WebInspector.ObjectPropertiesSection):
+            (WebInspector.ObjectPropertiesSection.prototype.update):
+            (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate):
+
 2014-11-18  Dana Burkart  <dburkart@apple.com>
 
         Merge r175763. rdar://problem/19005901

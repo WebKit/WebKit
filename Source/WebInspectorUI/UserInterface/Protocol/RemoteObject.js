@@ -118,15 +118,20 @@ WebInspector.RemoteObject.prototype = {
 
     getOwnProperties: function(callback)
     {
-        this._getProperties(true, callback);
+        this._getProperties(true, false, callback);
+    },
+
+    getOwnAndGetterProperties: function(callback)
+    {
+        this._getProperties(false, true, callback);
     },
 
     getAllProperties: function(callback)
     {
-        this._getProperties(false, callback);
+        this._getProperties(false, false, callback);
     },
 
-    _getProperties: function(ownProperties, callback)
+    _getProperties: function(ownProperties, ownAndGetterProperties, callback)
     {
         if (!this._objectId) {
             callback([]);
@@ -152,7 +157,32 @@ WebInspector.RemoteObject.prototype = {
             }
             callback(result);
         }
-        RuntimeAgent.getProperties(this._objectId, ownProperties, remoteObjectBinder);
+
+        // COMPATIBILITY (iOS 8): RuntimeAgent.getProperties did not support ownerAndGetterProperties.
+        // Here we do our best to reimplement it by getting all properties and reducing them down.
+        if (ownAndGetterProperties && !RuntimeAgent.getProperties.supports("ownAndGetterProperties")) {
+            RuntimeAgent.getProperties(this._objectId, function(error, allProperties) {
+                var ownOrGetterPropertiesList = [];
+                if (allProperties) {
+                    for (var property of allProperties) {
+                        if (property.isOwn || property.get || property.name === "__proto__") {
+                            // Own property or getter property in prototype chain.
+                            ownOrGetterPropertiesList.push(property);
+                        } else if (property.value && property.name !== property.name.toUpperCase()) {
+                            var type = property.value.type;
+                            if (type && type !== "function" && property.name !== "constructor") {
+                                // Possible native binding getter property converted to a value. Also, no CONSTANT name style and not "constructor".
+                                ownOrGetterPropertiesList.push(property);
+                            }
+                        }
+                    }
+                }
+                remoteObjectBinder(error, ownOrGetterPropertiesList);
+            }); 
+            return;
+        }
+
+        RuntimeAgent.getProperties(this._objectId, ownProperties, ownAndGetterProperties, remoteObjectBinder);
     },
 
     setPropertyValue: function(name, value, callback)
