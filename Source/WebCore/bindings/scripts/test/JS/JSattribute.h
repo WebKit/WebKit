@@ -30,9 +30,9 @@ namespace WebCore {
 class JSattribute : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
-    static JSattribute* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<attribute> impl)
+    static JSattribute* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<attribute>&& impl)
     {
-        JSattribute* ptr = new (NotNull, JSC::allocateCell<JSattribute>(globalObject->vm().heap)) JSattribute(structure, globalObject, impl);
+        JSattribute* ptr = new (NotNull, JSC::allocateCell<JSattribute>(globalObject->vm().heap)) JSattribute(structure, globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -65,7 +65,7 @@ public:
 private:
     attribute* m_impl;
 protected:
-    JSattribute(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<attribute>);
+    JSattribute(JSC::Structure*, JSDOMGlobalObject*, Ref<attribute>&&);
 
     void finishCreation(JSC::VM& vm)
     {

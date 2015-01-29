@@ -59,7 +59,7 @@ JSValue JSDocument::location(ExecState* exec) const
     if (JSObject* wrapper = getCachedWrapper(globalObject()->world(), location.get()))
         return wrapper;
 
-    JSLocation* jsLocation = JSLocation::create(getDOMStructure<JSLocation>(exec->vm(), globalObject()), globalObject(), location.get());
+    JSLocation* jsLocation = JSLocation::create(getDOMStructure<JSLocation>(exec->vm(), globalObject()), globalObject(), *location);
     cacheWrapper(globalObject()->world(), location.get(), jsLocation);
     return jsLocation;
 }

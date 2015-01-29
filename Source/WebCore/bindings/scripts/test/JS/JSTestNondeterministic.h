@@ -29,9 +29,9 @@ namespace WebCore {
 class JSTestNondeterministic : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
-    static JSTestNondeterministic* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestNondeterministic> impl)
+    static JSTestNondeterministic* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNondeterministic>&& impl)
     {
-        JSTestNondeterministic* ptr = new (NotNull, JSC::allocateCell<JSTestNondeterministic>(globalObject->vm().heap)) JSTestNondeterministic(structure, globalObject, impl);
+        JSTestNondeterministic* ptr = new (NotNull, JSC::allocateCell<JSTestNondeterministic>(globalObject->vm().heap)) JSTestNondeterministic(structure, globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -64,7 +64,7 @@ public:
 private:
     TestNondeterministic* m_impl;
 protected:
-    JSTestNondeterministic(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestNondeterministic>);
+    JSTestNondeterministic(JSC::Structure*, JSDOMGlobalObject*, Ref<TestNondeterministic>&&);
 
     void finishCreation(JSC::VM& vm)
     {

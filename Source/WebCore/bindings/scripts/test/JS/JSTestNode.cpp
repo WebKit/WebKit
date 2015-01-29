@@ -129,8 +129,8 @@ void JSTestNodePrototype::finishCreation(VM& vm)
 
 WEBCORE_EXPORT const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNode) };
 
-JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestNode> impl)
-    : JSNode(structure, globalObject, impl)
+JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNode>&& impl)
+    : JSNode(structure, globalObject, WTF::move(impl))
 {
 }
 

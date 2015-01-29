@@ -29,9 +29,9 @@ namespace WebCore {
 class JSTestNode : public JSNode {
 public:
     typedef JSNode Base;
-    static JSTestNode* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestNode> impl)
+    static JSTestNode* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNode>&& impl)
     {
-        JSTestNode* ptr = new (NotNull, JSC::allocateCell<JSTestNode>(globalObject->vm().heap)) JSTestNode(structure, globalObject, impl);
+        JSTestNode* ptr = new (NotNull, JSC::allocateCell<JSTestNode>(globalObject->vm().heap)) JSTestNode(structure, globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -54,7 +54,7 @@ public:
         return static_cast<TestNode&>(Base::impl());
     }
 protected:
-    JSTestNode(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestNode>);
+    JSTestNode(JSC::Structure*, JSDOMGlobalObject*, Ref<TestNode>&&);
 
     void finishCreation(JSC::VM& vm)
     {

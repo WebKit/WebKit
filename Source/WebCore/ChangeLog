@@ -1,3 +1,29 @@
+2015-01-29  Andreas Kling  <akling@apple.com>
+
+        JavaScript bindings constructors should take Ref<ImplType>&&.
+        <https://webkit.org/b/140952>
+
+        Reviewed by Darin Adler.
+
+        When constructing a JS wrapper object, there is always going to be a
+        corresponding DOM object.
+
+        Tweak the JavaScript DOM bindings generator to spit out constructors
+        that take the DOM object by Ref&& rather than PassRefPtr.
+
+        This avoids generating unnecessary null checks around every instance
+        of wrapper construction.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::createWrapper):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+
 2015-01-29  Chris Dumez  <cdumez@apple.com>
 
         Clean up / modernize PageCache class

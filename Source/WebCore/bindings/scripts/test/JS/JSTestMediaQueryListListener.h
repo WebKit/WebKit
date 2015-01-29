@@ -29,9 +29,9 @@ namespace WebCore {
 class JSTestMediaQueryListListener : public JSDOMWrapper {
 public:
     typedef JSDOMWrapper Base;
-    static JSTestMediaQueryListListener* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestMediaQueryListListener> impl)
+    static JSTestMediaQueryListListener* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestMediaQueryListListener>&& impl)
     {
-        JSTestMediaQueryListListener* ptr = new (NotNull, JSC::allocateCell<JSTestMediaQueryListListener>(globalObject->vm().heap)) JSTestMediaQueryListListener(structure, globalObject, impl);
+        JSTestMediaQueryListListener* ptr = new (NotNull, JSC::allocateCell<JSTestMediaQueryListListener>(globalObject->vm().heap)) JSTestMediaQueryListListener(structure, globalObject, WTF::move(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
@@ -64,7 +64,7 @@ public:
 private:
     TestMediaQueryListListener* m_impl;
 protected:
-    JSTestMediaQueryListListener(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestMediaQueryListListener>);
+    JSTestMediaQueryListListener(JSC::Structure*, JSDOMGlobalObject*, Ref<TestMediaQueryListListener>&&);
 
     void finishCreation(JSC::VM& vm)
     {
