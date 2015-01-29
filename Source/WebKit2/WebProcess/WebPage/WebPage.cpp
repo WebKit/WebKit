@@ -977,7 +977,11 @@ void WebPage::close()
     if (pageGroup()->isVisibleToInjectedBundle() && WebProcess::shared().injectedBundle())
         WebProcess::shared().injectedBundle()->willDestroyPage(this);
 
-    m_inspector = 0;
+    if (m_inspector) {
+        m_inspector->disconnectFromPage();
+        m_inspector = nullptr;
+    }
+
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = 0;
 #endif

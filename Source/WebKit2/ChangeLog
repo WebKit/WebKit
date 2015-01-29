@@ -1,3 +1,18 @@
+2015-01-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crash closing inspected page with frequent activity
+        https://bugs.webkit.org/show_bug.cgi?id=140973
+
+        Reviewed by Timothy Hatcher.
+
+        * WebProcess/WebPage/WebInspector.h:
+        (WebKit::WebInspector::disconnectFromPage):        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        Be sure to close the WebInspector connection through the page
+        when the page is closing so that the WebKit::WebInspector is
+        relinquishes itself as the InspectorFrontendChannel.
+
 2015-01-28  Timothy Horton  <timothy_horton@apple.com>
 
         Avoid manually handling quickLookWithEvent: if the immediate action gesture recognizer will do Lookup for us

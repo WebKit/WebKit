@@ -83,6 +83,8 @@ public:
     void remoteFrontendDisconnected();
 #endif
 
+    void disconnectFromPage() { close(); }
+
 private:
     friend class WebInspectorClient;
 
