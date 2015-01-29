@@ -64,10 +64,10 @@ def archiveTestResults(configuration, platform, layoutTestResultsDir):
     open(os.path.join(layoutTestResultsDir, '.placeholder'), 'w').close()
 
     if platform == 'mac':
-        if subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", layoutTestResultsDir, archiveFile]):
+        if subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", "--zlibCompressionLevel", "2", layoutTestResultsDir, archiveFile]):
             return 1
     elif platform in ('win', 'gtk', 'efl', 'wincairo'):
-        if subprocess.call(["zip", "-r", archiveFile, "."], cwd=layoutTestResultsDir):
+        if subprocess.call(["zip", "-r", "-2", archiveFile, "."], cwd=layoutTestResultsDir):
             return 1
 
     try:
