@@ -902,7 +902,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         RetainPtr<NSImmediateActionGestureRecognizer> recognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] initWithTarget:nil action:NULL]);
         _private->immediateActionController = [[WebImmediateActionController alloc] initWithWebView:self recognizer:recognizer.get()];
         [recognizer setDelegate:_private->immediateActionController];
-        [self addGestureRecognizer:recognizer.get()];
     }
 #endif
 
@@ -5302,6 +5301,17 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 #if !PLATFORM(IOS)
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
+#endif
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    if (_private->immediateActionController) {
+        NSImmediateActionGestureRecognizer *recognizer = [_private->immediateActionController immediateActionRecognizer];
+        if ([self window]) {
+            if (![[self gestureRecognizers] containsObject:recognizer])
+                [self addGestureRecognizer:recognizer];
+        } else
+            [self removeGestureRecognizer:recognizer];
+    }
 #endif
 
     [self _updateActiveState];
