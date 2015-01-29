@@ -71,7 +71,6 @@ function test()
 
         WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, "test", false, true, false, function(remoteObject, wasThrown) {
             InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
-            InspectorTest.log("objectId: " + remoteObject.objectId);
             InspectorTest.log("type: " + remoteObject.type);
             if (remoteObject.subtype)
                 InspectorTest.log("subtype: " + remoteObject.subtype);
