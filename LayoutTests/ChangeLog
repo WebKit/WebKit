@@ -1,3 +1,13 @@
+2015-01-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed gardening. Get rid of misspelled expected file.
+
+        Get rid of the 'ondrop-text-htmlt-expected.txt' file, and commit a new baseline
+        from the test system.
+
+        * platform/win/fast/events/ondrop-text-htmlt-expected.txt: Removed.
+        * platform/win/fast/text/backslash-to-yen-sign-euc-expected.txt:
+
 2015-01-28  Chris Dumez  <cdumez@apple.com>
 
         Regression(r177494): Bad cast to WebKitCSSResourceValue in StyleBuilderConverter::convertMaskImageOperations()
