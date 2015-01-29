@@ -314,7 +314,6 @@
     <ClCompile Include="..\bytecode\BytecodeBasicBlock.cpp" />
     <ClCompile Include="..\bytecode\BytecodeLivenessAnalysis.cpp" />
     <ClCompile Include="..\bytecode\CallEdge.cpp" />
-    <ClCompile Include="..\bytecode\CallEdgeProfile.cpp" />
     <ClCompile Include="..\bytecode\CallLinkInfo.cpp" />
     <ClCompile Include="..\bytecode\CallLinkStatus.cpp" />
     <ClCompile Include="..\bytecode\CallVariant.cpp" />
@@ -598,7 +597,6 @@
     <ClCompile Include="..\jit\ArityCheckFailReturnThunks.cpp" />
     <ClCompile Include="..\jit\AssemblyHelpers.cpp" />
     <ClCompile Include="..\jit\BinarySwitch.cpp" />
-    <ClCompile Include="..\jit\ClosureCallStubRoutine.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocator.cpp" />
     <ClCompile Include="..\jit\GCAwareJITStubRoutine.cpp" />
     <ClCompile Include="..\jit\HostCallReturnValue.cpp" />
@@ -621,6 +619,7 @@
     <ClCompile Include="..\jit\JITStubs.cpp" />
     <ClCompile Include="..\jit\JITThunks.cpp" />
     <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
+    <ClCompile Include="..\jit\PolymorphicCallStubRoutine.cpp" />
     <ClCompile Include="..\jit\Reg.cpp" />
     <ClCompile Include="..\jit\RegisterPreservationWrapperGenerator.cpp" />
     <ClCompile Include="..\jit\RegisterSet.cpp" />
@@ -931,8 +930,6 @@
     <ClInclude Include="..\bytecode\BytecodeLivenessAnalysis.h" />
     <ClInclude Include="..\bytecode\BytecodeUseDef.h" />
     <ClInclude Include="..\bytecode\CallEdge.h" />
-    <ClInclude Include="..\bytecode\CallEdgeProfile.h" />
-    <ClInclude Include="..\bytecode\CallEdgeProfileInlines.h" />
     <ClInclude Include="..\bytecode\CallLinkInfo.h" />
     <ClInclude Include="..\bytecode\CallLinkStatus.h" />
     <ClInclude Include="..\bytecode\CallReturnOffsetToBytecodeOffset.h" />
@@ -1333,7 +1330,6 @@
     <ClInclude Include="..\jit\AssemblyHelpers.h" />
     <ClInclude Include="..\jit\BinarySwitch.h" />
     <ClInclude Include="..\jit\CCallHelpers.h" />
-    <ClInclude Include="..\jit\ClosureCallStubRoutine.h" />
     <ClInclude Include="..\jit\CompactJITCodeMap.h" />
     <ClInclude Include="..\jit\ExecutableAllocator.h" />
     <ClInclude Include="..\jit\FPRInfo.h" />
@@ -1357,6 +1353,7 @@
     <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h" />
     <ClInclude Include="..\jit\JITWriteBarrier.h" />
     <ClInclude Include="..\jit\JSInterfaceJIT.h" />
+    <ClInclude Include="..\jit\PolymorphicCallStubRoutine.h" />
     <ClInclude Include="..\jit\Reg.h" />
     <ClInclude Include="..\jit\RegisterPreservationWrapperGenerator.h" />
     <ClInclude Include="..\jit\RegisterSet.h" />

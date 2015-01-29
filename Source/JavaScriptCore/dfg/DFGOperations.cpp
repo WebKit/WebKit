@@ -1219,6 +1219,11 @@ void JIT_OPERATION triggerTierUpNow(ExecState* exec)
     DeferGC deferGC(vm->heap);
     CodeBlock* codeBlock = exec->codeBlock();
     
+    if (codeBlock->jitType() != JITCode::DFGJIT) {
+        dataLog("Unexpected code block in DFG->FTL tier-up: ", *codeBlock, "\n");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
     JITCode* jitCode = codeBlock->jitCode()->dfg();
     
     if (Options::verboseOSR()) {
@@ -1237,6 +1242,11 @@ char* JIT_OPERATION triggerOSREntryNow(
     NativeCallFrameTracer tracer(vm, exec);
     DeferGC deferGC(vm->heap);
     CodeBlock* codeBlock = exec->codeBlock();
+    
+    if (codeBlock->jitType() != JITCode::DFGJIT) {
+        dataLog("Unexpected code block in DFG->FTL tier-up: ", *codeBlock, "\n");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
     
     JITCode* jitCode = codeBlock->jitCode()->dfg();
     

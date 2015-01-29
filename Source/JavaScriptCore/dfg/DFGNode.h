@@ -1057,8 +1057,6 @@ struct Node {
         case GetMyArgumentByValSafe:
         case Call:
         case Construct:
-        case ProfiledCall:
-        case ProfiledConstruct:
         case NativeCall:
         case NativeConstruct:
         case GetByOffset:

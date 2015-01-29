@@ -54,6 +54,7 @@ namespace JSC {
 //     int value = switch.caseValue();
 //     unsigned index = switch.caseIndex(); // index into casesVector, above
 //     ... // generate code for this case
+//     ... = jit.jump(); // you have to jump out yourself; falling through causes undefined behavior
 // }
 // switch.fallThrough().link(&jit);
 

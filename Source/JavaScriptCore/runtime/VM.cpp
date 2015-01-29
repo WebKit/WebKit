@@ -369,13 +369,6 @@ VM*& VM::sharedInstanceInternal()
     return sharedInstance;
 }
 
-CallEdgeLog& VM::ensureCallEdgeLog()
-{
-    if (!callEdgeLog)
-        callEdgeLog = std::make_unique<CallEdgeLog>();
-    return *callEdgeLog;
-}
-
 #if ENABLE(JIT)
 static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
 {
@@ -459,9 +452,6 @@ void VM::stopSampling()
 
 void VM::prepareToDiscardCode()
 {
-    if (callEdgeLog)
-        callEdgeLog->processLog();
-    
 #if ENABLE(DFG_JIT)
     for (unsigned i = DFG::numberOfWorklists(); i--;) {
         if (DFG::Worklist* worklist = DFG::worklistForIndexOrNull(i))

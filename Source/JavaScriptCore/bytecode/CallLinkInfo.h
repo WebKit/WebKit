@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,12 @@
 #ifndef CallLinkInfo_h
 #define CallLinkInfo_h
 
-#include "CallEdgeProfile.h"
-#include "ClosureCallStubRoutine.h"
 #include "CodeLocation.h"
 #include "CodeSpecializationKind.h"
 #include "JITWriteBarrier.h"
 #include "JSFunction.h"
 #include "Opcode.h"
+#include "PolymorphicCallStubRoutine.h"
 #include "WriteBarrier.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/SentinelLinkedList.h>
@@ -82,15 +81,14 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
     CodeLocationNearCall hotPathOther;
     JITWriteBarrier<JSFunction> callee;
     WriteBarrier<JSFunction> lastSeenCallee;
-    RefPtr<ClosureCallStubRoutine> stub;
+    RefPtr<PolymorphicCallStubRoutine> stub;
     bool isFTL : 1;
     bool hasSeenShouldRepatch : 1;
     bool hasSeenClosure : 1;
     unsigned callType : 5; // CallType
     unsigned calleeGPR : 8;
-    unsigned slowPathCount;
+    uint32_t slowPathCount;
     CodeOrigin codeOrigin;
-    OwnPtr<CallEdgeProfile> callEdgeProfile;
 
     bool isLinked() { return stub || callee; }
     void unlink(RepatchBuffer&);

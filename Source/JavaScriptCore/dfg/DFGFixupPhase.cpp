@@ -1202,8 +1202,6 @@ private:
         case AllocationProfileWatchpoint:
         case Call:
         case Construct:
-        case ProfiledCall:
-        case ProfiledConstruct:
         case ProfileControlFlow:
         case NativeCall:
         case NativeConstruct:
