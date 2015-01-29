@@ -1,3 +1,17 @@
+2015-01-29  Sam Weinig  <sam@webkit.org>
+
+        Remove support for screen font substitution
+        https://bugs.webkit.org/show_bug.cgi?id=141038
+
+        Reviewed by Tim Horton.
+
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::screenFontSubstitutionEnabled):
+        (WebPreferences::setScreenFontSubstitutionEnabled):
+        Remove implementations. Have this setting set on windows didn't have any effect before,
+        so this doesn't change behavior.
+
 2015-01-29  Chris Dumez  <cdumez@apple.com>
 
         Clean up / modernize PageCache class

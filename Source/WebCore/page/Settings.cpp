@@ -177,7 +177,6 @@ Settings::Settings(Page* page)
 #endif
 #endif
     SETTINGS_INITIALIZER_LIST
-    , m_screenFontSubstitutionEnabled(shouldEnableScreenFontSubstitutionByDefault())
     , m_isJavaEnabled(false)
     , m_isJavaEnabledForLocalFiles(true)
     , m_loadsImagesAutomatically(false)
@@ -229,13 +228,6 @@ double Settings::hiddenPageDOMTimerAlignmentInterval()
 {
     return gHiddenPageDOMTimerAlignmentInterval;
 }
-
-#if !PLATFORM(COCOA)
-bool Settings::shouldEnableScreenFontSubstitutionByDefault()
-{
-    return true;
-}
-#endif
 
 #if !PLATFORM(COCOA)
 void Settings::initializeDefaultFontFamilies()
@@ -521,16 +513,6 @@ void Settings::setUsesPageCache(bool usesPageCache)
 
     if (!m_usesPageCache)
         PageCache::shared().pruneToSizeNow(0, PruningReason::None);
-}
-
-void Settings::setScreenFontSubstitutionEnabled(bool enabled)
-{
-    if (m_screenFontSubstitutionEnabled == enabled)
-        return;
-    m_screenFontSubstitutionEnabled = enabled;
-
-    if (m_page)
-        m_page->setNeedsRecalcStyleInAllFrames();
 }
 
 void Settings::setFontRenderingMode(FontRenderingMode mode)

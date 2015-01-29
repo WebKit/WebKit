@@ -1,3 +1,72 @@
+2015-01-29  Sam Weinig  <sam@webkit.org>
+
+        Remove support for screen font substitution
+        https://bugs.webkit.org/show_bug.cgi?id=141038
+
+        Reviewed by Tim Horton.
+
+        - Removes the screen font substitution setting (which was only on in Mountain Lion)
+        - Remove the concept of a printer font, from the family of Font related classes.
+
+        * WebCore.exp.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::initializeFontStyle):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::shouldEnableScreenFontSubstitutionByDefault): Deleted.
+        (WebCore::Settings::setScreenFontSubstitutionEnabled): Deleted.
+        * page/Settings.h:
+        (WebCore::Settings::screenFontSubstitutionEnabled): Deleted.
+        * page/mac/SettingsMac.mm:
+        (WebCore::Settings::shouldEnableScreenFontSubstitutionByDefault): Deleted.
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionFontDataCacheKey::makeFlagKey):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::FontCascade):
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::isPrinterFont): Deleted.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::setWeight):
+        (WebCore::FontDescription::equalForTextAutoSizing):
+        (WebCore::FontDescription::operator==):
+        (WebCore::FontDescription::usePrinterFont): Deleted.
+        (WebCore::FontDescription::setUsePrinterFont): Deleted.
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::isCompositeFontReference):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        (WebCore::FontPlatformData::isPrinterFont): Deleted.
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::supportsTypesettingFeatures):
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::platformDataAssign):
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::FontCache::getSystemFontFallbackForCharacters):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/ios/SimpleFontDataIOS.mm:
+        (WebCore::Font::platformCreateScaledFont):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::systemFallbackForCharacters):
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::Font::compositeFontReferenceFont):
+        (WebCore::Font::platformCreateScaledFont):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::fontFromNSFont):
+        (WebCore::widthWithFont):
+        (WebCore::drawAtPoint):
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
 2015-01-20  David Hyatt  <hyatt@apple.com>
 
         Japanese line breaking rules need to be respected before and after Ruby.

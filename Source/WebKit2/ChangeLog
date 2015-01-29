@@ -1,3 +1,36 @@
+2015-01-29  Sam Weinig  <sam@webkit.org>
+
+        Remove support for screen font substitution
+        https://bugs.webkit.org/show_bug.cgi?id=141038
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKPreferencesSetScreenFontSubstitutionEnabled):
+        (WKPreferencesGetScreenFontSubstitutionEnabled):
+        Move now empty preferences SPI to WKDeprecatedFunctions.
+        
+        * Shared/WebPreferencesDefinitions.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::WebProcessCreationParameters):
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetScreenFontSubstitutionEnabled): Deleted.
+        (WKPreferencesGetScreenFontSubstitutionEnabled): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::presenterApplicationPid):
+        (WebKit::WebProcess::shouldForceScreenFontSubstitution): Deleted.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Stop piping screen font substitution setting to the web process.
+
 2015-01-29  Alexey Proskuryakov  <ap@apple.com>
 
         Frequent kernel panics when running WebKit regression tests

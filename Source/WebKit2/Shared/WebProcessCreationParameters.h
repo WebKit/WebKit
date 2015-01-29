@@ -139,7 +139,6 @@ struct WebProcessCreationParameters {
     String uiProcessBundleResourcePath;
     SandboxExtension::Handle uiProcessBundleResourcePathExtensionHandle;
 
-    bool shouldForceScreenFontSubstitution;
     bool shouldEnableKerningAndLigaturesByDefault;
     bool shouldEnableJIT;
     bool shouldEnableFTLJIT;

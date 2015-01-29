@@ -298,15 +298,6 @@ uint32_t WKPreferencesGetMinimumFontSize(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->minimumFontSize();
 }
 
-void WKPreferencesSetScreenFontSubstitutionEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setScreenFontSubstitutionEnabled(enabled);
-}
-
-bool WKPreferencesGetScreenFontSubstitutionEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->screenFontSubstitutionEnabled();
-}
 
 void WKPreferencesSetCookieEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {

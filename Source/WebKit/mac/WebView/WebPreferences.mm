@@ -543,12 +543,6 @@ public:
         [NSNumber numberWithBool:YES],  WebKitRequestAnimationFrameEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWantsBalancedSetDefersLoadingBehaviorKey,
         [NSNumber numberWithBool:NO],   WebKitDiagnosticLoggingEnabledKey,
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-        [NSNumber numberWithBool:NO],
-#else
-        [NSNumber numberWithBool:YES],
-#endif
-                                        WebKitScreenFontSubstitutionEnabledKey,
         [NSNumber numberWithInt:WebAllowAllStorage], WebKitStorageBlockingPolicyKey,
         [NSNumber numberWithBool:NO],   WebKitPlugInSnapshottingEnabledPreferenceKey,
 
@@ -2354,29 +2348,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setDiagnosticLoggingEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitDiagnosticLoggingEnabledKey];
-}
-
-static bool needsScreenFontsEnabledQuirk()
-{
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    static bool is1PasswordNeedingScreenFontsQuirk = WKExecutableWasLinkedOnOrBeforeMountainLion()
-        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"ws.agile.1Password"];
-    return is1PasswordNeedingScreenFontsQuirk;
-#else
-    return NO;
-#endif
-}
-
-- (BOOL)screenFontSubstitutionEnabled
-{
-    if (needsScreenFontsEnabledQuirk())
-        return YES;
-    return [self _boolValueForKey:WebKitScreenFontSubstitutionEnabledKey];
-}
-
-- (void)setScreenFontSubstitutionEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitScreenFontSubstitutionEnabledKey];
 }
 
 - (void)setStorageBlockingPolicy:(WebStorageBlockingPolicy)storageBlockingPolicy

@@ -53,6 +53,9 @@ WK_EXPORT bool WKPreferencesGetRegionBasedColumnsEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetMultithreadedWebGLEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetMultithreadedWebGLEnabled(WKPreferencesRef);
 
+WK_EXPORT void WKPreferencesSetScreenFontSubstitutionEnabled(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetScreenFontSubstitutionEnabled(WKPreferencesRef);
+
 WK_EXPORT bool WKInspectorIsDebuggingJavaScript(WKInspectorRef);
 WK_EXPORT void WKInspectorToggleJavaScriptDebugging(WKInspectorRef);
 
@@ -102,6 +105,15 @@ void WKPreferencesSetMultithreadedWebGLEnabled(WKPreferencesRef, bool)
 }
 
 bool WKPreferencesGetMultithreadedWebGLEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetScreenFontSubstitutionEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetScreenFontSubstitutionEnabled(WKPreferencesRef)
 {
     return false;
 }

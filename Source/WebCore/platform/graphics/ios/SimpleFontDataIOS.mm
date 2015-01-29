@@ -149,7 +149,7 @@ PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float sc
     CTFontSymbolicTraits fontTraits = CTFontGetSymbolicTraits(m_platformData.font());
     RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontCopyFontDescriptor(m_platformData.font()));
     RetainPtr<CTFontRef> scaledFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
-    FontPlatformData scaledFontData(scaledFont.get(), size, m_platformData.isPrinterFont(), false, false, m_platformData.orientation());
+    FontPlatformData scaledFontData(scaledFont.get(), size, false, false, m_platformData.orientation());
 
     if (scaledFontData.font()) {
         if (m_platformData.m_syntheticBold)

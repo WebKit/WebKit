@@ -193,7 +193,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 
     m_compositingRenderServerPort = WTF::move(parameters.acceleratedCompositingPort);
     m_presenterApplicationPid = parameters.presenterApplicationPid;
-    m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
     FontCascade::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
 
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);

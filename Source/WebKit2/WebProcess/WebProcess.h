@@ -136,7 +136,6 @@ public:
 
 #if PLATFORM(COCOA)
     pid_t presenterApplicationPid() const { return m_presenterApplicationPid; }
-    bool shouldForceScreenFontSubstitution() const { return m_shouldForceScreenFontSubstitution; }
 #endif
     
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
@@ -327,7 +326,6 @@ private:
     WebCore::MachSendRight m_compositingRenderServerPort;
     pid_t m_presenterApplicationPid;
     dispatch_group_t m_clearResourceCachesDispatchGroup;
-    bool m_shouldForceScreenFontSubstitution;
 #endif
 
     bool m_fullKeyboardAccessEnabled;

@@ -248,21 +248,7 @@ void FontCascade::drawGlyphs(GraphicsContext* context, const Font* font, const G
 #endif
 
 #if !PLATFORM(IOS)
-    NSFont* drawFont;
-    if (!isPrinterFont()) {
-        drawFont = [platformData.nsFont() screenFont];
-        if (drawFont != platformData.nsFont()) {
-            // We are getting this in too many places (3406411); use ERROR so it only prints on debug versions for now. (We should debug this also, eventually).
-            LOG_ERROR("Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.",
-                [[[platformData.nsFont() fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
-        }
-    } else {
-        drawFont = [platformData.nsFont() printerFont];
-        if (drawFont != platformData.nsFont()) {
-            NSLog(@"Attempting to set non-printer font (%@) when printing.  Using printer font anyway, may result in incorrect metrics.",
-                [[[platformData.nsFont() fontDescriptor] fontAttributes] objectForKey:NSFontNameAttribute]);
-        }
-    }
+    NSFont* drawFont = [platformData.nsFont() printerFont];
 #endif
     
     CGContextSetFont(cgContext, platformData.cgFont());

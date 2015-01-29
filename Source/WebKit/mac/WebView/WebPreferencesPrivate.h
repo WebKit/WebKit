@@ -394,9 +394,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)diagnosticLoggingEnabled;
 - (void)setDiagnosticLoggingEnabled:(BOOL)enabled;
 
-- (BOOL)screenFontSubstitutionEnabled;
-- (void)setScreenFontSubstitutionEnabled:(BOOL)enabled;
-
 - (void)setStorageBlockingPolicy:(WebStorageBlockingPolicy)storageBlockingPolicy;
 - (WebStorageBlockingPolicy)storageBlockingPolicy;
 

@@ -124,14 +124,13 @@ FontCascade::FontCascade(const FontDescription& fd, float letterSpacing, float w
 }
 
 // FIXME: We should make this constructor platform-independent.
-FontCascade::FontCascade(const FontPlatformData& font, bool isPrinterFont, FontSmoothingMode fontSmoothingMode)
+FontCascade::FontCascade(const FontPlatformData& font, FontSmoothingMode fontSmoothingMode)
     : m_glyphs(FontGlyphs::createForPlatformFont(font))
     , m_letterSpacing(0)
     , m_wordSpacing(0)
     , m_useBackslashAsYenSymbol(false)
     , m_typesettingFeatures(computeTypesettingFeatures())
 {
-    m_fontDescription.setUsePrinterFont(isPrinterFont);
     m_fontDescription.setFontSmoothing(fontSmoothingMode);
 #if PLATFORM(IOS)
     m_fontDescription.setSpecifiedSize(CTFontGetSize(font.font()));
@@ -154,7 +153,6 @@ FontCascade::FontCascade(const FontPlatformData& font, PassRefPtr<FontSelector> 
     m_fontDescription.setComputedSize(CTFontGetSize(primaryFont));
     m_fontDescription.setIsItalic(CTFontGetSymbolicTraits(primaryFont) & kCTFontTraitItalic);
     m_fontDescription.setWeight((CTFontGetSymbolicTraits(primaryFont) & kCTFontTraitBold) ? FontWeightBold : FontWeightNormal);
-    m_fontDescription.setUsePrinterFont(font.isPrinterFont());
     m_glyphs = retrieveOrAddCachedFontGlyphs(m_fontDescription, fontSelector.get());
 }
 #endif

@@ -43,7 +43,7 @@ static WebCore::FontCascade& fontFromNSFont(NSFont *font)
     if ([font isEqual:currentNSFont.get().get()])
         return currentFont;
     currentNSFont.get() = font;
-    currentFont.get() = WebCore::FontCascade(WebCore::FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
+    currentFont.get() = WebCore::FontCascade(WebCore::FontPlatformData(font, [font pointSize]));
     return currentFont;
 }
 

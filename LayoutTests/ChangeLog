@@ -1,3 +1,15 @@
+2015-01-29  Sam Weinig  <sam@webkit.org>
+
+        Remove support for screen font substitution
+        https://bugs.webkit.org/show_bug.cgi?id=141038
+
+        Reviewed by Tim Horton.
+
+        * platform/mac/fast/text/international/hindi-spacing-expected.txt:
+        Update results now that buttons always use printer fonts. We were accidentally
+        allowing buttons to use screen fonts, which usually didn't make a difference,
+        but does with some fallback fonts.
+
 2015-01-20  David Hyatt  <hyatt@apple.com>
 
         Japanese line breaking rules need to be respected before and after Ruby.

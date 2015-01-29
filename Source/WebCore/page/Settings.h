@@ -125,9 +125,6 @@ public:
 
     SETTINGS_GETTERS_AND_SETTERS
 
-    WEBCORE_EXPORT void setScreenFontSubstitutionEnabled(bool);
-    bool screenFontSubstitutionEnabled() const { return m_screenFontSubstitutionEnabled; }
-
     WEBCORE_EXPORT void setJavaEnabled(bool);
     bool isJavaEnabled() const { return m_isJavaEnabled; }
 
@@ -283,7 +280,6 @@ private:
     explicit Settings(Page*);
 
     void initializeDefaultFontFamilies();
-    static bool shouldEnableScreenFontSubstitutionByDefault();
 
     Page* m_page;
 
@@ -300,7 +296,6 @@ private:
 
     SETTINGS_MEMBER_VARIABLES
 
-    bool m_screenFontSubstitutionEnabled : 1;
     bool m_isJavaEnabled : 1;
     bool m_isJavaEnabledForLocalFiles : 1;
     bool m_loadsImagesAutomatically : 1;

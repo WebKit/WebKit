@@ -79,11 +79,10 @@ struct FontDescriptionFontDataCacheKey {
     { }
     static unsigned makeFlagKey(const FontDescription& description)
     {
-        return static_cast<unsigned>(description.widthVariant()) << 5
-            | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 4
-            | static_cast<unsigned>(description.orientation()) << 3
-            | static_cast<unsigned>(description.italic()) << 2
-            | static_cast<unsigned>(description.usePrinterFont()) << 1
+        return static_cast<unsigned>(description.widthVariant()) << 4
+            | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 3
+            | static_cast<unsigned>(description.orientation()) << 2
+            | static_cast<unsigned>(description.italic()) << 1
             | static_cast<unsigned>(description.renderingMode());
     }
     bool operator==(const FontDescriptionFontDataCacheKey& other) const

@@ -842,7 +842,6 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate->setMockScrollbarsEnabled(TRUE);
 
     preferences->setFontSmoothing(FontSmoothingTypeStandard);
-    prefsPrivate->setScreenFontSubstitutionEnabled(TRUE);
 
     setAlwaysAcceptCookies(false);
 }

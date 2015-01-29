@@ -168,8 +168,7 @@ static FontCascade& fontFromNSFont(NSFont *font)
         CFRelease(currentFont);
     currentFont = font;
     CFRetain(currentFont);
-    FontPlatformData f(font, [font pointSize]);
-    currentRenderer = FontCascade(f, ![[NSGraphicsContext currentContext] isDrawingToScreen]);
+    currentRenderer = FontCascade(FontPlatformData(font, [font pointSize]));
     return currentRenderer;
 }
 
@@ -192,7 +191,7 @@ static float widthWithFont(NSString *string, NSFont *font)
     [string getCharacters:buffer.data()];
     
     if (canUseFastRenderer(buffer.data(), length)) {
-        FontCascade webCoreFont(FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
+        FontCascade webCoreFont(FontPlatformData(font, [font pointSize]));
         TextRun run(buffer.data(), length);
         run.disableRoundingHacks();
         return webCoreFont.width(run);
@@ -224,7 +223,7 @@ static void drawAtPoint(NSString *string, NSPoint point, NSFont *font, NSColor *
         if (!flipped)
             CGContextScaleCTM(cgContext, 1, -1);
             
-        FontCascade webCoreFont(FontPlatformData(font, [font pointSize]), ![nsContext isDrawingToScreen], Antialiased);
+        FontCascade webCoreFont(FontPlatformData(font, [font pointSize]), Antialiased);
         TextRun run(buffer.data(), length);
         run.disableRoundingHacks();
 

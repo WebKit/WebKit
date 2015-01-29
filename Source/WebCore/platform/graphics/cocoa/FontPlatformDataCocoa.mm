@@ -41,7 +41,7 @@ namespace WebCore {
 // These CoreText Text Spacing feature selectors are not defined in CoreText.
 enum TextSpacingCTFeatureSelector { TextSpacingProportional, TextSpacingFullWidth, TextSpacingHalfWidth, TextSpacingThirdWidth, TextSpacingQuarterWidth };
 
-FontPlatformData::FontPlatformData(CTFontRef font, float size, bool isPrinterFont, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
+FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
     , m_orientation(orientation)
@@ -51,7 +51,6 @@ FontPlatformData::FontPlatformData(CTFontRef font, float size, bool isPrinterFon
     , m_cgFont(adoptCF(CTFontCopyGraphicsFont(font, NULL)))
     , m_isColorBitmapFont(CTFontGetSymbolicTraits(font) & kCTFontTraitColorGlyphs)
     , m_isCompositeFontReference(CTFontGetSymbolicTraits(font) & kCTFontCompositeTrait)
-    , m_isPrinterFont(isPrinterFont)
 {
     ASSERT_ARG(font, font);
     CFRetain(m_font);
@@ -59,8 +58,8 @@ FontPlatformData::FontPlatformData(CTFontRef font, float size, bool isPrinterFon
 
 #if USE(APPKIT)
 // FIXME: Remove this when all NSFont usage is removed.
-FontPlatformData::FontPlatformData(NSFont *font, float size, bool isPrinterFont, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
-    : FontPlatformData((CTFontRef)font, size, isPrinterFont, syntheticBold, syntheticOblique, orientation, widthVariant)
+FontPlatformData::FontPlatformData(NSFont *font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
+    : FontPlatformData((CTFontRef)font, size, syntheticBold, syntheticOblique, orientation, widthVariant)
 {
 }
 #endif
@@ -80,7 +79,6 @@ void FontPlatformData::platformDataInit(const FontPlatformData& f)
 #endif
     m_cgFont = f.m_cgFont;
     m_ctFont = f.m_ctFont;
-    m_isPrinterFont = f.m_isPrinterFont;
 }
 
 const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformData& f)
@@ -97,7 +95,6 @@ const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformD
         CFRelease(m_font);
     m_font = f.m_font;
     m_ctFont = f.m_ctFont;
-    m_isPrinterFont = f.m_isPrinterFont;
 
     return *this;
 }

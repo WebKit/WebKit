@@ -98,7 +98,6 @@ Ref<RenderStyle> resolveForDocument(const Document& document)
 
     FontDescription fontDescription;
     fontDescription.setScript(localeToScriptCodeForFontSelection(documentStyle.get().locale()));
-    fontDescription.setUsePrinterFont(document.printing() || !settings.screenFontSubstitutionEnabled());
     fontDescription.setRenderingMode(settings.fontRenderingMode());
     fontDescription.setOneFamily(standardFamily);
 

@@ -95,14 +95,13 @@ const Font* Font::compositeFontReferenceFont(NSFont *key) const
 
     auto addResult = m_derivedFontData->compositeFontReferences.add(key, nullptr);
     if (addResult.isNewEntry) {
-        bool isUsingPrinterFont = platformData().isPrinterFont();
-        NSFont *substituteFont = isUsingPrinterFont ? [key printerFont] : [key screenFont];
+        NSFont *substituteFont = [key printerFont];
 
         CTFontSymbolicTraits traits = CTFontGetSymbolicTraits((CTFontRef)substituteFont);
         bool syntheticBold = platformData().syntheticBold() && !(traits & kCTFontBoldTrait);
         bool syntheticOblique = platformData().syntheticOblique() && !(traits & kCTFontItalicTrait);
 
-        FontPlatformData substitutePlatform(substituteFont, platformData().size(), isUsingPrinterFont, syntheticBold, syntheticOblique, platformData().orientation(), platformData().widthVariant());
+        FontPlatformData substitutePlatform(substituteFont, platformData().size(), syntheticBold, syntheticOblique, platformData().orientation(), platformData().widthVariant());
         addResult.iterator->value = Font::create(substitutePlatform, isCustomFont());
     }
     return addResult.iterator->value.get();
@@ -274,7 +273,7 @@ void Font::platformDestroy()
 }
 
 #if !PLATFORM(IOS)
-PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescription, float scaleFactor) const
+PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleFactor) const
 {
     if (isCustomFont()) {
         FontPlatformData scaledFontData(m_platformData);
@@ -284,11 +283,11 @@ PassRefPtr<Font> Font::platformCreateScaledFont(const FontDescription& fontDescr
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     float size = m_platformData.size() * scaleFactor;
-    FontPlatformData scaledFontData([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toSize:size], size, m_platformData.isPrinterFont(), false, false, m_platformData.orientation());
+    FontPlatformData scaledFontData([[NSFontManager sharedFontManager] convertFont:m_platformData.nsFont() toSize:size], size, false, false, m_platformData.orientation());
 
     // AppKit resets the type information (screen/printer) when you convert a font to a different size.
     // We have to fix up the font that we're handed back.
-    scaledFontData.setNSFont(fontDescription.usePrinterFont() ? [scaledFontData.nsFont() printerFont] : [scaledFontData.nsFont() screenFont]);
+    scaledFontData.setNSFont([scaledFontData.nsFont() printerFont]);
 
     if (scaledFontData.font()) {
         NSFontManager *fontManager = [NSFontManager sharedFontManager];

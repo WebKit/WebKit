@@ -85,7 +85,6 @@ public:
         , m_smallCaps(FontSmallCapsOff)
         , m_isAbsoluteSize(false)
         , m_weight(FontWeightNormal)
-        , m_usePrinterFont(false)
         , m_renderingMode(NormalRenderingMode)
         , m_kerning(AutoKerning)
         , m_commonLigaturesState(NormalLigaturesState)
@@ -116,7 +115,6 @@ public:
     FontWeight weight() const { return static_cast<FontWeight>(m_weight); }
     FontWeight lighterWeight() const;
     FontWeight bolderWeight() const;
-    bool usePrinterFont() const { return m_usePrinterFont; }
     // only use fixed default size when there is only one font family, and that family is "monospace"
     bool useFixedDefaultSize() const { return familyCount() == 1 && firstFamily() == monospaceFamily; }
     FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
@@ -153,7 +151,6 @@ public:
     void setIsSmallCaps(bool c) { setSmallCaps(c ? FontSmallCapsOn : FontSmallCapsOff); }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setWeight(FontWeight w) { m_weight = w; }
-    void setUsePrinterFont(bool p) { m_usePrinterFont = p; }
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = mode; }
     void setKerning(Kerning kerning) { m_kerning = kerning; }
     void setCommonLigaturesState(LigaturesState commonLigaturesState) { m_commonLigaturesState = commonLigaturesState; }
@@ -190,7 +187,6 @@ public:
             && m_specifiedSize == other.m_specifiedSize
             && m_smallCaps == other.m_smallCaps
             && m_isAbsoluteSize == other.m_isAbsoluteSize
-            && m_usePrinterFont == other.m_usePrinterFont;
     }
 #endif
 
@@ -219,7 +215,6 @@ private:
     unsigned m_isAbsoluteSize : 1; // Whether or not CSS specified an explicit size
                                   // (logical sizes like "medium" don't count).
     unsigned m_weight : 8; // FontWeight
-    unsigned m_usePrinterFont : 1;
 
     unsigned m_renderingMode : 1;  // Used to switch between CG and GDI text on Windows.
     unsigned m_kerning : 2; // Kerning
@@ -247,7 +242,6 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_smallCaps == other.m_smallCaps
         && m_isAbsoluteSize == other.m_isAbsoluteSize
         && m_weight == other.m_weight
-        && m_usePrinterFont == other.m_usePrinterFont
         && m_renderingMode == other.m_renderingMode
         && m_kerning == other.m_kerning
         && m_commonLigaturesState == other.m_commonLigaturesState

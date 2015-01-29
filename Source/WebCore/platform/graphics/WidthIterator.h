@@ -61,9 +61,6 @@ public:
     static bool supportsTypesettingFeatures(const FontCascade& font)
     {
 #if PLATFORM(COCOA)
-        if (!font.isPrinterFont())
-            return !font.typesettingFeatures();
-
         return !(font.typesettingFeatures() & ~(Kerning | Ligatures));
 #else
         return !font.typesettingFeatures();

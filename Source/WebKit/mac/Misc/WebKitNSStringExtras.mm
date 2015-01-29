@@ -92,7 +92,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
         if (!flipped)
             CGContextScaleCTM(cgContext, 1, -1);
 
-        FontCascade webCoreFont(FontPlatformData(font, [font pointSize]), ![nsContext isDrawingToScreen], fontSmoothingIsAllowed ? AutoSmoothing : Antialiased);
+        FontCascade webCoreFont(FontPlatformData(font, [font pointSize]), fontSmoothingIsAllowed ? AutoSmoothing : Antialiased);
         TextRun run(buffer.data(), length);
         run.disableRoundingHacks();
 
@@ -138,7 +138,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     [self getCharacters:buffer.data()];
 
     if (canUseFastRenderer(buffer.data(), length)) {
-        FontCascade webCoreFont(FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
+        FontCascade webCoreFont(FontPlatformData(font, [font pointSize]));
         TextRun run(buffer.data(), length);
         run.disableRoundingHacks();
         return webCoreFont.width(run);

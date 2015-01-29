@@ -111,7 +111,7 @@ public:
     WEBCORE_EXPORT FontCascade();
     WEBCORE_EXPORT FontCascade(const FontDescription&, float letterSpacing, float wordSpacing);
     // This constructor is only used if the platform wants to start with a native font.
-    WEBCORE_EXPORT FontCascade(const FontPlatformData&, bool isPrinting, FontSmoothingMode = AutoSmoothing);
+    WEBCORE_EXPORT FontCascade(const FontPlatformData&, FontSmoothingMode = AutoSmoothing);
 
     // FIXME: We should make this constructor platform-independent.
 #if PLATFORM(IOS)
@@ -156,7 +156,6 @@ public:
     void setWordSpacing(float s) { m_wordSpacing = s; }
     void setLetterSpacing(float s) { m_letterSpacing = s; }
     bool isFixedPitch() const;
-    bool isPrinterFont() const { return m_fontDescription.usePrinterFont(); }
     
     FontRenderingMode renderingMode() const { return m_fontDescription.renderingMode(); }
 

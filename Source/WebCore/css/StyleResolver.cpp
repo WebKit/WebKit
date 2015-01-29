@@ -2077,7 +2077,6 @@ void StyleResolver::initializeFontStyle(Settings* settings)
 {
     FontDescription fontDescription;
     fontDescription.setRenderingMode(settings->fontRenderingMode());
-    fontDescription.setUsePrinterFont(document().printing() || !settings->screenFontSubstitutionEnabled());
     fontDescription.setOneFamily(standardFamily);
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
     setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueMedium, false, document()));
