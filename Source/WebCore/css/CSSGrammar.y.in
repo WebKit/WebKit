@@ -1506,9 +1506,9 @@ pseudo:
     // Definition of :not().
     | ':' NOTFUNCTION maybe_space nested_selector_list maybe_space ')' {
         $$ = nullptr;
-        if ($4 != invalidSelectorVector) {
+        if ($4) {
             std::unique_ptr<Vector<std::unique_ptr<CSSParserSelector>>> list($4);
-            if (list && selectorListDoesNotMatchAnyPseudoElement(list.get())) {
+            if (selectorListDoesNotMatchAnyPseudoElement(list.get())) {
                 auto selector = std::make_unique<CSSParserSelector>();
                 selector->setMatch(CSSSelector::PseudoClass);
                 selector->setPseudoClassValue($2);
