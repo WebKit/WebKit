@@ -102,8 +102,6 @@ void AxisScrollSnapAnimator::handleWheelEvent(const PlatformWheelEvent& event)
 {
     float wheelDelta = m_axis == ScrollEventAxis::Horizontal ? -event.deltaX() : -event.deltaY();
     WheelEventStatus wheelStatus = toWheelEventStatus(event.phase(), event.momentumPhase());
-    if ((wheelStatus == WheelEventStatus::UserScrolling || wheelStatus == WheelEventStatus::InertialScrolling || wheelStatus == WheelEventStatus::InertialScrollBegin) && !wheelDelta)
-        return;
 
     switch (wheelStatus) {
     case WheelEventStatus::UserScrollBegin:
@@ -134,6 +132,7 @@ void AxisScrollSnapAnimator::handleWheelEvent(const PlatformWheelEvent& event)
         break;
 
     case WheelEventStatus::InertialScrollEnd:
+        beginScrollSnapAnimation(ScrollSnapState::Snapping);
         clearInitialWheelDeltaWindow();
         m_shouldOverrideWheelEvent = false;
         break;

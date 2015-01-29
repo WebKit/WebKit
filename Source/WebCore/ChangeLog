@@ -1,3 +1,26 @@
+2015-01-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Scroll snap points do not work in the vertical direction
+        https://bugs.webkit.org/show_bug.cgi?id=141001
+        <rdar://problem/19632089>
+
+        Reviewed by Beth Dakin.
+
+        New scroll snap tests are being prepared separately. A manual test case is attached to the issue.
+
+        * page/EventHandler.cpp:
+        (WebCore::handleWheelEventInAppropriateEnclosingBoxForSingleAxis): We want to consider momentum end phase
+        when dealing with Scroll Snap Points.
+        * platform/mac/AxisScrollSnapAnimator.mm:
+        (WebCore::AxisScrollSnapAnimator::handleWheelEvent): We do NOT want to bail out early here. In fact, it's strange
+        that this code was like this at all, since it meant a large number of cases were not being used. We also want to
+        trigger the scroll snap animation (when applicable) upon an inertia scroll end.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::gestureShouldBeginSnap): Added.
+        (WebCore::ScrollAnimatorMac::allowsVerticalStretching): If we have automatic elasticity, and we have active scroll
+        snap points, we want to let the scroll snap animator deal with the gesture.
+        (WebCore::ScrollAnimatorMac::allowsHorizontalStretching): Ditto.
+
 2015-01-28  Benjamin Poulain  <bpoulain@apple.com>
 
         Start fixing the handling of Element's attributes when they contain non-ASCII characters
