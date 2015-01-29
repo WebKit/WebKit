@@ -1,5 +1,11 @@
 2015-01-28  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Actually delete the file!
+
+        * platform/win/fast/events/ondrop-text-htmlt-expected.txt: Removed.
+
+2015-01-28  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] Unreviewed gardening. Get rid of misspelled expected file.
 
         Get rid of the 'ondrop-text-htmlt-expected.txt' file, and commit a new baseline
