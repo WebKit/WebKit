@@ -21,7 +21,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-numProcs=`sysctl -n hw.activecpu`
+numProcs=`sysctl -n hw.activecpu 2>/dev/null`
 if [ $? -gt 0 ]
 then
     numProcs=`nproc --all 2>/dev/null`
@@ -36,16 +36,16 @@ testList=".all_tests.txt"
 tempFile=".temp.txt"
 lockDir=".lock_dir"
 
-trap "kill -9 0" SIGINT SIGHUP SIGTERM
+trap "kill -9 0" INT HUP TERM
 
 echo 0 > ${indexFile}
-find . -name 'test_script_*' -depth 1 > ${testList}
+find . -maxdepth 1 -name 'test_script_*' > ${testList}
 
-function lock_test_list() {
+lock_test_list() {
     until mkdir ${lockDir} 2> /dev/null; do sleep 0; done
 }
 
-function unlock_test_list() {
+unlock_test_list() {
     rmdir ${lockDir}
 }
 
