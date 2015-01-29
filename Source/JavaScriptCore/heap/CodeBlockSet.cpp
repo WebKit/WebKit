@@ -36,7 +36,6 @@ namespace JSC {
 static const bool verbose = false;
 
 CodeBlockSet::CodeBlockSet()
-    : m_currentlyExecuting()
 {
 }
 

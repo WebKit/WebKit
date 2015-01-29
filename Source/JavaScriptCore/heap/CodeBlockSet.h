@@ -109,7 +109,7 @@ private:
     // and all, but that seemed like overkill.
     HashSet<CodeBlock*> m_oldCodeBlocks;
     HashSet<CodeBlock*> m_newCodeBlocks;
-    GCSegmentedArray<CodeBlock*> m_currentlyExecuting;
+    Vector<CodeBlock*> m_currentlyExecuting;
 };
 
 } // namespace JSC

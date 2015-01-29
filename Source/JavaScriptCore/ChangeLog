@@ -1,3 +1,20 @@
+2015-01-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Use Vector instead of GCSegmentedArray in CodeBlockSet
+        https://bugs.webkit.org/show_bug.cgi?id=141044
+
+        Reviewed by Ryosuke Niwa.
+
+        This is allowed now that we've gotten rid of fastMallocForbid.
+
+        4kB was a bit overkill for just storing a few pointers.
+
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::CodeBlockSet):
+        * heap/CodeBlockSet.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+
 2015-01-29  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix no-JIT build.
