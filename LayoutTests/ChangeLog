@@ -1,5 +1,16 @@
 2015-01-28  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r178795. rdar://problem/19617631
+
+    2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Unreviewed gardening. Remove variable objectId from output.
+
+            * inspector/model/remote-object-get-properties-expected.txt:
+            * inspector/model/remote-object-get-properties.html:
+
+2015-01-28  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r178768. rdar://problem/19617631
 
     2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
