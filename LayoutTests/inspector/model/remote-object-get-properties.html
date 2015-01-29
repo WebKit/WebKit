@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+// ------------------------------
+//   Setup Test Prototype Chain
+// ------------------------------
+
+function SuperBar() { this._bar = 10; }
+SuperBar.prototype = {
+    __proto__: Object.prototype,
+    constructor: SuperBar,
+    BAR_CONSTANT: 99,
+    get getterProperty() { return 20; },
+    get bar() { return this._bar; },
+    set setterOnly(x) {},
+};
+
+function SuperFoo() { SuperBar.call(this); this._foo = 5; }
+SuperFoo.prototype = {
+    __proto__: SuperBar.prototype,
+    constructor: SuperFoo,
+    get getterProperty() { return 10; },
+    get foo() { return this._foo; }
+};
+
+function ClassWithBadGetter() {}
+ClassWithBadGetter.prototype = {
+    __proto__: Object.prototype,
+    constructor: ClassWithBadGetter,
+    get badGetter() { throw "throw in getter"; }
+};
+
+
+// --------------------
+//   Objects to Debug
+// --------------------
+
+// window.loadEvent is set inside of <body onload="..."> below.
+var simpleObject = {a:1, b:"string"};
+var complexObject = new SuperFoo;
+var badGetterObject = new ClassWithBadGetter;
+
+
+// --------
+//   test
+// --------
+
+function test()
+{
+    var currentStepIndex = 0;
+    var steps = [
+        {expression: "window.simpleObject"},
+        {expression: "window.loadEvent"},
+        {expression: "window.complexObject"},
+        {expression: "window.badGetterObject"},
+    ]
+
+    function runNextStep() {
+        if (currentStepIndex >= steps.length) {
+            InspectorTest.log("DONE");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        var step = steps[currentStepIndex++];
+        InspectorTest.log("");
+        InspectorTest.log("-----------------------------------------------------");
+        InspectorTest.log("EXPRESSION: " + step.expression);
+
+        WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, "test", false, true, false, function(remoteObject, wasThrown) {
+            InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
+            InspectorTest.log("objectId: " + remoteObject.objectId);
+            InspectorTest.log("type: " + remoteObject.type);
+            if (remoteObject.subtype)
+                InspectorTest.log("subtype: " + remoteObject.subtype);
+            InspectorTest.log("description: " + remoteObject.description);
+            remoteObject.getOwnProperties(function(properties) {
+                InspectorTest.log("\nOWN PROPERTIES:");
+                for (var property of properties) {
+                    InspectorTest.assert(property instanceof WebInspector.RemoteObjectProperty);
+                    InspectorTest.log("    " + property.name);
+                }
+            });
+
+            remoteObject.getOwnAndGetterProperties(function(properties) {
+                InspectorTest.log("\nOWN AND GETTER PROPERTIES:");
+                for (var property of properties) {
+                    InspectorTest.assert(property instanceof WebInspector.RemoteObjectProperty);
+                    InspectorTest.log("    " + property.name);
+                }
+            });
+
+            remoteObject.getAllProperties(function(properties) {
+                InspectorTest.log("\nALL PROPERTIES:");
+                for (var property of properties) {
+                    InspectorTest.assert(property instanceof WebInspector.RemoteObjectProperty);
+                    InspectorTest.log("    " + property.name);
+                }
+
+                InspectorTest.log("-----------------------------------------------------");
+                runNextStep();
+            });
+        });
+    }
+
+    runNextStep();
+}
+</script>
+</head>
+<body onload="window.loadEvent = event; runTest()">
+</body>
+</html>

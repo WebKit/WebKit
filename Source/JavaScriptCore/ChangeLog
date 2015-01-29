@@ -1,3 +1,26 @@
+2015-01-28  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r178768. rdar://problem/19617631
+
+    2015-01-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Expanding event objects in console shows undefined for most values, it should have real values
+            https://bugs.webkit.org/show_bug.cgi?id=137306
+
+            Reviewed by Timothy Hatcher.
+
+            Provide another optional parameter to getProperties, to gather a list
+            of all own and getter properties.
+
+            * inspector/InjectedScript.cpp:
+            (Inspector::InjectedScript::getProperties):
+            * inspector/InjectedScript.h:
+            * inspector/InjectedScriptSource.js:
+            * inspector/agents/InspectorRuntimeAgent.cpp:
+            (Inspector::InspectorRuntimeAgent::getProperties):
+            * inspector/agents/InspectorRuntimeAgent.h:
+            * inspector/protocol/Runtime.json:
+
 2015-01-28  Matthew  <matthew_hanson@apple.com>
 
         Merge r178365. rdar://problem/19617809

@@ -1,0 +1,186 @@
+
+-----------------------------------------------------
+EXPRESSION: window.simpleObject
+objectId: {"injectedScriptId":1,"id":1}
+type: object
+description: Object
+
+OWN PROPERTIES:
+    a
+    b
+    __proto__
+
+OWN AND GETTER PROPERTIES:
+    a
+    b
+    __proto__
+
+ALL PROPERTIES:
+    a
+    b
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    constructor
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.loadEvent
+objectId: {"injectedScriptId":1,"id":16}
+type: object
+description: Event
+
+OWN PROPERTIES:
+    clipboardData
+    __proto__
+
+OWN AND GETTER PROPERTIES:
+    clipboardData
+    type
+    target
+    currentTarget
+    eventPhase
+    bubbles
+    cancelable
+    timeStamp
+    defaultPrevented
+    srcElement
+    returnValue
+    cancelBubble
+    __proto__
+
+ALL PROPERTIES:
+    clipboardData
+    constructor
+    type
+    target
+    currentTarget
+    eventPhase
+    bubbles
+    cancelable
+    timeStamp
+    defaultPrevented
+    srcElement
+    returnValue
+    cancelBubble
+    NONE
+    CAPTURING_PHASE
+    AT_TARGET
+    BUBBLING_PHASE
+    MOUSEDOWN
+    MOUSEUP
+    MOUSEOVER
+    MOUSEOUT
+    MOUSEMOVE
+    MOUSEDRAG
+    CLICK
+    DBLCLICK
+    KEYDOWN
+    KEYUP
+    KEYPRESS
+    DRAGDROP
+    FOCUS
+    BLUR
+    SELECT
+    CHANGE
+    stopPropagation
+    preventDefault
+    initEvent
+    stopImmediatePropagation
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.complexObject
+objectId: {"injectedScriptId":1,"id":41}
+type: object
+description: SuperFoo
+
+OWN PROPERTIES:
+    _bar
+    _foo
+    __proto__
+
+OWN AND GETTER PROPERTIES:
+    _bar
+    _foo
+    getterProperty
+    foo
+    bar
+    __proto__
+
+ALL PROPERTIES:
+    _bar
+    _foo
+    constructor
+    get getterProperty
+    set getterProperty
+    get foo
+    set foo
+    BAR_CONSTANT
+    get bar
+    set bar
+    get setterOnly
+    set setterOnly
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.badGetterObject
+objectId: {"injectedScriptId":1,"id":60}
+type: object
+description: ClassWithBadGetter
+
+OWN PROPERTIES:
+    __proto__
+
+OWN AND GETTER PROPERTIES:
+    badGetter
+    __proto__
+
+ALL PROPERTIES:
+    constructor
+    get badGetter
+    set badGetter
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    __proto__
+-----------------------------------------------------
+DONE
+
