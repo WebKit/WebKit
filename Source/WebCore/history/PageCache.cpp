@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,6 @@
 #include "FrameLoaderStateMachine.h"
 #include "FrameView.h"
 #include "HistoryController.h"
-#include "HistoryItem.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "MemoryPressureHandler.h"
@@ -110,7 +109,7 @@ static inline void logPageCacheFailureDiagnosticMessage(Page* page, const String
     logPageCacheFailureDiagnosticMessage(page->mainFrame().diagnosticLoggingClient(), reason);
 }
 
-static unsigned logCanCacheFrameDecision(Frame& frame, DiagnosticLoggingClient& diagnosticLoggingClient, int indentLevel)
+static unsigned logCanCacheFrameDecision(Frame& frame, DiagnosticLoggingClient& diagnosticLoggingClient, unsigned indentLevel)
 {
     PCLOG("+---");
     if (!frame.loader().documentLoader()) {
@@ -234,7 +233,7 @@ static void logCanCachePageDecision(Page& page)
     if (currentURL.isEmpty())
         return;
     
-    int indentLevel = 0;    
+    unsigned indentLevel = 0;
     PCLOG("--------\n Determining if page can be cached:");
     
     unsigned rejectReasons = 0;
@@ -297,26 +296,17 @@ PageCache& PageCache::shared()
     static NeverDestroyed<PageCache> globalPageCache;
     return globalPageCache;
 }
-
-PageCache::PageCache()
-    : m_capacity(0)
-    , m_size(0)
-    , m_head(0)
-    , m_tail(0)
-    , m_shouldClearBackingStores(false)
-{
-}
     
-bool PageCache::canCachePageContainingThisFrame(Frame* frame)
+bool PageCache::canCachePageContainingThisFrame(Frame& frame)
 {
-    for (Frame* child = frame->tree().firstChild(); child; child = child->tree().nextSibling()) {
-        if (!canCachePageContainingThisFrame(child))
+    for (Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+        if (!canCachePageContainingThisFrame(*child))
             return false;
     }
     
-    FrameLoader& frameLoader = frame->loader();
+    FrameLoader& frameLoader = frame.loader();
     DocumentLoader* documentLoader = frameLoader.documentLoader();
-    Document* document = frame->document();
+    Document* document = frame.document();
     
     return documentLoader
 #if !PLATFORM(IOS)
@@ -326,8 +316,8 @@ bool PageCache::canCachePageContainingThisFrame(Frame* frame)
 #endif
         // Do not cache error pages (these can be recognized as pages with substitute data or unreachable URLs).
         && !(documentLoader->substituteData().isValid() && !documentLoader->substituteData().failingURL().isEmpty())
-        && (!frameLoader.subframeLoader().containsPlugins() || frame->page()->settings().pageCacheSupportsPlugins())
-        && !(frame->isMainFrame() && document->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore())
+        && (!frameLoader.subframeLoader().containsPlugins() || frame.page()->settings().pageCacheSupportsPlugins())
+        && !(frame.isMainFrame() && document->url().protocolIs("https") && documentLoader->response().cacheControlContainsNoStore())
         && !DatabaseManager::manager().hasOpenDatabases(document)
         && frameLoader.history().currentItem()
         && !frameLoader.quickRedirectComing()
@@ -357,8 +347,8 @@ bool PageCache::canCache(Page* page) const
     // over it again when we leave that page.
     FrameLoadType loadType = page->mainFrame().loader().loadType();
     
-    return m_capacity > 0
-        && canCachePageContainingThisFrame(&page->mainFrame())
+    return m_maxSize > 0
+        && canCachePageContainingThisFrame(page->mainFrame())
         && page->settings().usesPageCache()
 #if ENABLE(DEVICE_ORIENTATION) && !PLATFORM(IOS)
         && !DeviceMotionController::isActiveAt(page)
@@ -373,27 +363,24 @@ bool PageCache::canCache(Page* page) const
             || loadType == FrameLoadType::IndexedBackForward);
 }
 
-void PageCache::pruneToCapacityNow(int capacity, PruningReason pruningReason)
+void PageCache::pruneToSizeNow(unsigned size, PruningReason pruningReason)
 {
-    TemporaryChange<int>(m_capacity, std::max(capacity, 0));
+    TemporaryChange<unsigned>(m_maxSize, size);
     prune(pruningReason);
 }
 
-void PageCache::setCapacity(int capacity)
+void PageCache::setMaxSize(unsigned maxSize)
 {
-    ASSERT(capacity >= 0);
-    m_capacity = std::max(capacity, 0);
-
+    m_maxSize = maxSize;
     prune(PruningReason::None);
 }
 
-int PageCache::frameCount() const
+unsigned PageCache::frameCount() const
 {
-    int frameCount = 0;
-    for (HistoryItem* current = m_head; current; current = current->m_next) {
-        ++frameCount;
-        ASSERT(current->m_cachedPage);
-        frameCount += current->m_cachedPage->cachedMainFrame()->descendantFrameCount();
+    unsigned frameCount = m_items.size();
+    for (auto& item : m_items) {
+        ASSERT(item->m_cachedPage);
+        frameCount += item->m_cachedPage->cachedMainFrame()->descendantFrameCount();
     }
     
     return frameCount;
@@ -401,26 +388,26 @@ int PageCache::frameCount() const
 
 void PageCache::markPagesForVisitedLinkStyleRecalc()
 {
-    for (HistoryItem* current = m_head; current; current = current->m_next) {
-        ASSERT(current->m_cachedPage);
-        current->m_cachedPage->markForVisitedLinkStyleRecalc();
+    for (auto& item : m_items) {
+        ASSERT(item->m_cachedPage);
+        item->m_cachedPage->markForVisitedLinkStyleRecalc();
     }
 }
 
-void PageCache::markPagesForFullStyleRecalc(Page* page)
+void PageCache::markPagesForFullStyleRecalc(Page& page)
 {
-    for (HistoryItem* current = m_head; current; current = current->m_next) {
-        CachedPage& cachedPage = *current->m_cachedPage;
-        if (&page->mainFrame() == &cachedPage.cachedMainFrame()->view()->frame())
+    for (auto& item : m_items) {
+        CachedPage& cachedPage = *item->m_cachedPage;
+        if (&page.mainFrame() == &cachedPage.cachedMainFrame()->view()->frame())
             cachedPage.markForFullStyleRecalc();
     }
 }
 
-void PageCache::markPagesForDeviceScaleChanged(Page* page)
+void PageCache::markPagesForDeviceScaleChanged(Page& page)
 {
-    for (HistoryItem* current = m_head; current; current = current->m_next) {
-        CachedPage& cachedPage = *current->m_cachedPage;
-        if (&page->mainFrame() == &cachedPage.cachedMainFrame()->view()->frame())
+    for (auto& item : m_items) {
+        CachedPage& cachedPage = *item->m_cachedPage;
+        if (&page.mainFrame() == &cachedPage.cachedMainFrame()->view()->frame())
             cachedPage.markForDeviceScaleChanged();
     }
 }
@@ -428,9 +415,9 @@ void PageCache::markPagesForDeviceScaleChanged(Page* page)
 #if ENABLE(VIDEO_TRACK)
 void PageCache::markPagesForCaptionPreferencesChanged()
 {
-    for (HistoryItem* current = m_head; current; current = current->m_next) {
-        ASSERT(current->m_cachedPage);
-        current->m_cachedPage->markForCaptionPreferencesChanged();
+    for (auto& item : m_items) {
+        ASSERT(item->m_cachedPage);
+        item->m_cachedPage->markForCaptionPreferencesChanged();
     }
 }
 #endif
@@ -442,8 +429,8 @@ static String pruningReasonToDiagnosticLoggingKey(PruningReason pruningReason)
         return DiagnosticLoggingKeys::prunedDueToMemoryPressureKey();
     case PruningReason::ProcessSuspended:
         return DiagnosticLoggingKeys::prunedDueToProcessSuspended();
-    case PruningReason::ReachedCapacity:
-        return DiagnosticLoggingKeys::prunedDueToCapacityReached();
+    case PruningReason::ReachedMaxSize:
+        return DiagnosticLoggingKeys::prunedDueToMaxSizeReached();
     case PruningReason::None:
         break;
     }
@@ -451,45 +438,33 @@ static String pruningReasonToDiagnosticLoggingKey(PruningReason pruningReason)
     return emptyString();
 }
 
-void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page& page)
+void PageCache::add(HistoryItem& item, Page& page)
 {
-    ASSERT(prpItem);
     ASSERT(canCache(&page));
-    
-    HistoryItem* item = prpItem.leakRef(); // Balanced in remove().
 
     // Remove stale cache entry if necessary.
-    if (item->m_cachedPage)
-        remove(item);
+    remove(item);
 
-    item->m_cachedPage = std::make_unique<CachedPage>(page);
-    item->m_pruningReason = PruningReason::None;
-    addToLRUList(item);
-    ++m_size;
+    item.m_cachedPage = std::make_unique<CachedPage>(page);
+    item.m_pruningReason = PruningReason::None;
+    m_items.add(&item);
     
-    prune(PruningReason::ReachedCapacity);
+    prune(PruningReason::ReachedMaxSize);
 }
 
-std::unique_ptr<CachedPage> PageCache::take(HistoryItem* item, Page* page)
+std::unique_ptr<CachedPage> PageCache::take(HistoryItem& item, Page* page)
 {
-    if (!item)
-        return nullptr;
-
-    std::unique_ptr<CachedPage> cachedPage = WTF::move(item->m_cachedPage);
-
-    removeFromLRUList(item);
-    --m_size;
-
-    item->deref(); // Balanced in add().
-
-    if (!cachedPage) {
-        if (item->m_pruningReason != PruningReason::None)
-            logPageCacheFailureDiagnosticMessage(page, pruningReasonToDiagnosticLoggingKey(item->m_pruningReason));
+    if (!item.m_cachedPage) {
+        if (item.m_pruningReason != PruningReason::None)
+            logPageCacheFailureDiagnosticMessage(page, pruningReasonToDiagnosticLoggingKey(item.m_pruningReason));
         return nullptr;
     }
 
+    std::unique_ptr<CachedPage> cachedPage = WTF::move(item.m_cachedPage);
+    m_items.remove(&item);
+
     if (cachedPage->hasExpired()) {
-        LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item->url().string().ascii().data());
+        LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());
         logPageCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
         return nullptr;
     }
@@ -497,78 +472,41 @@ std::unique_ptr<CachedPage> PageCache::take(HistoryItem* item, Page* page)
     return cachedPage;
 }
 
-CachedPage* PageCache::get(HistoryItem* item, Page* page)
+CachedPage* PageCache::get(HistoryItem& item, Page* page) const
 {
-    if (!item)
+    CachedPage* cachedPage = item.m_cachedPage.get();
+    if (!cachedPage) {
+        if (item.m_pruningReason != PruningReason::None)
+            logPageCacheFailureDiagnosticMessage(page, pruningReasonToDiagnosticLoggingKey(item.m_pruningReason));
         return nullptr;
+    }
 
-    if (CachedPage* cachedPage = item->m_cachedPage.get()) {
-        if (!cachedPage->hasExpired())
-            return cachedPage;
-        
-        LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item->url().string().ascii().data());
+    if (cachedPage->hasExpired()) {
+        LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());
         logPageCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
         PageCache::shared().remove(item);
-    } else if (item->m_pruningReason != PruningReason::None)
-        logPageCacheFailureDiagnosticMessage(page, pruningReasonToDiagnosticLoggingKey(item->m_pruningReason));
-
-    return nullptr;
+        return nullptr;
+    }
+    return cachedPage;
 }
 
-void PageCache::remove(HistoryItem* item)
+void PageCache::remove(HistoryItem& item)
 {
     // Safely ignore attempts to remove items not in the cache.
-    if (!item || !item->m_cachedPage)
+    if (!item.m_cachedPage)
         return;
 
-    item->m_cachedPage = nullptr;
-    removeFromLRUList(item);
-    --m_size;
-
-    item->deref(); // Balanced in add().
+    item.m_cachedPage = nullptr;
+    m_items.remove(&item);
 }
 
 void PageCache::prune(PruningReason pruningReason)
 {
-    while (m_size > m_capacity) {
-        ASSERT(m_tail && m_tail->m_cachedPage);
-        m_tail->m_pruningReason = pruningReason;
-        remove(m_tail);
-    }
-}
-
-void PageCache::addToLRUList(HistoryItem* item)
-{
-    item->m_next = m_head;
-    item->m_prev = 0;
-
-    if (m_head) {
-        ASSERT(m_tail);
-        m_head->m_prev = item;
-    } else {
-        ASSERT(!m_tail);
-        m_tail = item;
-    }
-
-    m_head = item;
-}
-
-void PageCache::removeFromLRUList(HistoryItem* item)
-{
-    if (!item->m_next) {
-        ASSERT(item == m_tail);
-        m_tail = item->m_prev;
-    } else {
-        ASSERT(item != m_tail);
-        item->m_next->m_prev = item->m_prev;
-    }
-
-    if (!item->m_prev) {
-        ASSERT(item == m_head);
-        m_head = item->m_next;
-    } else {
-        ASSERT(item != m_head);
-        item->m_prev->m_next = item->m_next;
+    while (pageCount() > maxSize()) {
+        auto& oldestItem = m_items.first();
+        oldestItem->m_cachedPage = nullptr;
+        oldestItem->m_pruningReason = pruningReason;
+        m_items.removeFirst();
     }
 }
 

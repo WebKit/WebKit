@@ -286,7 +286,7 @@ void HistoryItem::setURLString(const String& urlString)
 
 void HistoryItem::setURL(const URL& url)
 {
-    PageCache::shared().remove(this);
+    PageCache::shared().remove(*this);
     setURLString(url.string());
     clearDocumentState();
 }

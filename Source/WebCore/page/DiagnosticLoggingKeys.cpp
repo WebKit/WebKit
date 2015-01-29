@@ -388,7 +388,7 @@ String DiagnosticLoggingKeys::prunedDueToMemoryPressureKey()
     return ASCIILiteral("pruned.memoryPressure");
 }
 
-String DiagnosticLoggingKeys::prunedDueToCapacityReached()
+String DiagnosticLoggingKeys::prunedDueToMaxSizeReached()
 {
     return ASCIILiteral("pruned.capacityReached");
 }

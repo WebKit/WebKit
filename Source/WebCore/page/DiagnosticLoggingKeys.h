@@ -76,7 +76,7 @@ public:
     static String playedKey();
     static String pluginLoadedKey();
     static String pluginLoadingFailedKey();
-    static String prunedDueToCapacityReached();
+    static String prunedDueToMaxSizeReached();
     static String prunedDueToMemoryPressureKey();
     static String prunedDueToProcessSuspended();
     static String quirkRedirectComingKey();

@@ -1,3 +1,15 @@
+2015-01-29  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / modernize PageCache class
+        https://bugs.webkit.org/show_bug.cgi?id=141009
+
+        Reviewed by Darin Adler.
+
+        Clean up / modernize PageCache class.
+
+        * WebView.cpp:
+        (WebView::setCacheModel):
+
 2015-01-28  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Message loop is flooded with timer messages when animating in accelerated compositing mode.

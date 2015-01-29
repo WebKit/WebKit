@@ -1997,7 +1997,7 @@ static bool fastDocumentTeardownEnabled()
     if (!otherBackForwardClient->currentItem())
         return; // empty back forward list, bail
     
-    HistoryItem* newItemToGoTo = 0;
+    HistoryItem* newItemToGoTo = nullptr;
 
     int lastItemIndex = otherBackForwardClient->forwardListCount();
     for (int i = -otherBackForwardClient->backListCount(); i <= lastItemIndex; ++i) {
@@ -2014,7 +2014,7 @@ static bool fastDocumentTeardownEnabled()
     }
     
     ASSERT(newItemToGoTo);
-    _private->page->goToItem(newItemToGoTo, FrameLoadType::IndexedBackForward);
+    _private->page->goToItem(*newItemToGoTo, FrameLoadType::IndexedBackForward);
 }
 
 - (void)_setFormDelegate: (id<WebFormDelegate>)delegate
@@ -5647,7 +5647,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (!_private->page)
         return NO;
 
-    _private->page->goToItem(core(item), FrameLoadType::IndexedBackForward);
+    ASSERT(item);
+    _private->page->goToItem(*core(item), FrameLoadType::IndexedBackForward);
     return YES;
 }
 
@@ -7742,7 +7743,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     unsigned cacheMaxDeadCapacity = 0;
     auto deadDecodedDataDeletionInterval = std::chrono::seconds { 0 };
 
-    unsigned pageCacheCapacity = 0;
+    unsigned pageCacheSize = 0;
 
     NSUInteger nsurlCacheMemoryCapacity = 0;
     NSUInteger nsurlCacheDiskCapacity = 0;
@@ -7753,7 +7754,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     switch (cacheModel) {
     case WebCacheModelDocumentViewer: {
         // Page cache capacity (in pages)
-        pageCacheCapacity = 0;
+        pageCacheSize = 0;
 
         // Object cache capacities (in bytes)
         if (memSize >= 4096)
@@ -7790,13 +7791,13 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     case WebCacheModelDocumentBrowser: {
         // Page cache capacity (in pages)
         if (memSize >= 1024)
-            pageCacheCapacity = 3;
+            pageCacheSize = 3;
         else if (memSize >= 512)
-            pageCacheCapacity = 2;
+            pageCacheSize = 2;
         else if (memSize >= 256)
-            pageCacheCapacity = 1;
+            pageCacheSize = 1;
         else
-            pageCacheCapacity = 0;
+            pageCacheSize = 0;
 
         // Object cache capacities (in bytes)
         if (memSize >= 4096)
@@ -7844,22 +7845,22 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
         // Page cache capacity (in pages)
         // (Research indicates that value / page drops substantially after 3 pages.)
         if (memSize >= 2048)
-            pageCacheCapacity = 5;
+            pageCacheSize = 5;
         else if (memSize >= 1024)
-            pageCacheCapacity = 4;
+            pageCacheSize = 4;
         else if (memSize >= 512)
-            pageCacheCapacity = 3;
+            pageCacheSize = 3;
         else if (memSize >= 256)
-            pageCacheCapacity = 2;
+            pageCacheSize = 2;
         else
-            pageCacheCapacity = 1;
+            pageCacheSize = 1;
 
 #if PLATFORM(IOS)
         // Cache page less aggressively in iOS to reduce the chance of being jettisoned.
         // FIXME (<rdar://problem/11779846>): Avoiding jettisoning should not have to require reducing the page cache capacity.
         // Reducing the capacity by 1 reduces overall back-forward performance.
-        if (pageCacheCapacity > 0)
-            pageCacheCapacity -= 1;
+        if (pageCacheSize > 0)
+            pageCacheSize -= 1;
 #endif
 
         // Object cache capacities (in bytes)
@@ -7935,7 +7936,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 
     memoryCache().setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache().setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    PageCache::shared().setCapacity(pageCacheCapacity);
+    PageCache::shared().setMaxSize(pageCacheSize);
 #if PLATFORM(IOS)
     PageCache::shared().setShouldClearBackingStores(true);
     nsurlCacheMemoryCapacity = std::max(nsurlCacheMemoryCapacity, [nsurlCache memoryCapacity]);

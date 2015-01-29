@@ -1,3 +1,19 @@
+2015-01-29  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / modernize PageCache class
+        https://bugs.webkit.org/show_bug.cgi?id=141009
+
+        Reviewed by Darin Adler.
+
+        Clean up / modernize PageCache class.
+
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList pageCacheSize]):
+        * WebView/WebView.mm:
+        (-[WebView _loadBackForwardListFromOtherView:]):
+        (-[WebView goToBackForwardItem:]):
+        (+[WebView _setCacheModel:]):
+
 2015-01-28  Beth Dakin  <bdakin@apple.com>
 
         Remove Mountain Lion code from WebKit and WebKit2

@@ -132,7 +132,7 @@ void WebBackForwardListProxy::removeItem(uint64_t itemID)
     if (!item)
         return;
         
-    PageCache::shared().remove(item.get());
+    PageCache::shared().remove(*item);
     WebCore::Page::clearPreviousItemFromAllPages(item.get());
     historyItemToIDMap().remove(item);
 }
@@ -216,12 +216,12 @@ int WebBackForwardListProxy::forwardListCount()
 
 void WebBackForwardListProxy::close()
 {
-    HashSet<uint64_t>::iterator end = m_associatedItemIDs.end();
-    for (HashSet<uint64_t>::iterator i = m_associatedItemIDs.begin(); i != end; ++i)
-        WebCore::PageCache::shared().remove(itemForID(*i));
+    for (auto& itemID : m_associatedItemIDs) {
+        if (HistoryItem* item = itemForID(itemID))
+            WebCore::PageCache::shared().remove(*item);
+    }
 
     m_associatedItemIDs.clear();
-
     m_page = nullptr;
 }
 

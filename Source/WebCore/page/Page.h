@@ -150,7 +150,7 @@ public:
     bool openedByDOM() const;
     void setOpenedByDOM();
 
-    WEBCORE_EXPORT void goToItem(HistoryItem*, FrameLoadType);
+    WEBCORE_EXPORT void goToItem(HistoryItem&, FrameLoadType);
 
     WEBCORE_EXPORT void setGroupName(const String&);
     WEBCORE_EXPORT const String& groupName() const;

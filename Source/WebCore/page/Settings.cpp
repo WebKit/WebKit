@@ -519,12 +519,8 @@ void Settings::setUsesPageCache(bool usesPageCache)
     if (!m_page)
         return;
 
-    if (!m_usesPageCache) {
-        int first = -m_page->backForward().backCount();
-        int last = m_page->backForward().forwardCount();
-        for (int i = first; i <= last; i++)
-            PageCache::shared().remove(m_page->backForward().itemAtIndex(i));
-    }
+    if (!m_usesPageCache)
+        PageCache::shared().pruneToSizeNow(0, PruningReason::None);
 }
 
 void Settings::setScreenFontSubstitutionEnabled(bool enabled)

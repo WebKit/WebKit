@@ -530,13 +530,13 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     unsigned cacheMaxDeadCapacity = 0;
     auto deadDecodedDataDeletionInterval = std::chrono::seconds { 0 };
 
-    unsigned pageCacheCapacity = 0;
+    unsigned pageCacheSize = 0;
 
 
     switch (cacheModel) {
     case WebCacheModelDocumentViewer: {
         // Page cache capacity (in pages)
-        pageCacheCapacity = 0;
+        pageCacheSize = 0;
 
         // Object cache capacities (in bytes)
         if (memSize >= 2048)
@@ -563,13 +563,13 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     case WebCacheModelDocumentBrowser: {
         // Page cache capacity (in pages)
         if (memSize >= 1024)
-            pageCacheCapacity = 3;
+            pageCacheSize = 3;
         else if (memSize >= 512)
-            pageCacheCapacity = 2;
+            pageCacheSize = 2;
         else if (memSize >= 256)
-            pageCacheCapacity = 1;
+            pageCacheSize = 1;
         else
-            pageCacheCapacity = 0;
+            pageCacheSize = 0;
 
         // Object cache capacities (in bytes)
         if (memSize >= 2048)
@@ -610,15 +610,15 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
         // Page cache capacity (in pages)
         // (Research indicates that value / page drops substantially after 3 pages.)
         if (memSize >= 2048)
-            pageCacheCapacity = 5;
+            pageCacheSize = 5;
         else if (memSize >= 1024)
-            pageCacheCapacity = 4;
+            pageCacheSize = 4;
         else if (memSize >= 512)
-            pageCacheCapacity = 3;
+            pageCacheSize = 3;
         else if (memSize >= 256)
-            pageCacheCapacity = 2;
+            pageCacheSize = 2;
         else
-            pageCacheCapacity = 1;
+            pageCacheSize = 1;
 
         // Object cache capacities (in bytes)
         // (Testing indicates that value / MB depends heavily on content and
@@ -675,7 +675,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
 
     memoryCache().setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache().setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    PageCache::shared().setCapacity(pageCacheCapacity);
+    PageCache::shared().setMaxSize(pageCacheSize);
 
 #if USE(CFNETWORK)
     // Don't shrink a big disk cache, since that would cause churn.
@@ -3154,7 +3154,7 @@ HRESULT STDMETHODCALLTYPE WebView::goToBackForwardItem(
     if (FAILED(hr))
         return hr;
 
-    m_page->goToItem(webHistoryItem->historyItem(), FrameLoadType::IndexedBackForward);
+    m_page->goToItem(*webHistoryItem->historyItem(), FrameLoadType::IndexedBackForward);
     *succeeded = TRUE;
 
     return S_OK;
@@ -5501,7 +5501,7 @@ HRESULT STDMETHODCALLTYPE WebView::loadBackForwardListFromOtherView(
     }
     
     ASSERT(newItemToGoTo);
-    m_page->goToItem(newItemToGoTo, FrameLoadType::IndexedBackForward);
+    m_page->goToItem(*newItemToGoTo, FrameLoadType::IndexedBackForward);
     return S_OK;
 }
 

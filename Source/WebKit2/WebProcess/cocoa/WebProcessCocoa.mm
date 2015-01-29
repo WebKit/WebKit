@@ -104,18 +104,18 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     unsigned cacheMinDeadCapacity = 0;
     unsigned cacheMaxDeadCapacity = 0;
     auto deadDecodedDataDeletionInterval = std::chrono::seconds { 0 };
-    unsigned pageCacheCapacity = 0;
+    unsigned pageCacheSize = 0;
     unsigned long urlCacheMemoryCapacity = 0;
     unsigned long urlCacheDiskCapacity = 0;
 
     calculateCacheSizes(cacheModel, memSize, diskFreeSize,
         cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
-        pageCacheCapacity, urlCacheMemoryCapacity, urlCacheDiskCapacity);
+        pageCacheSize, urlCacheMemoryCapacity, urlCacheDiskCapacity);
 
 
     memoryCache().setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache().setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    PageCache::shared().setCapacity(pageCacheCapacity);
+    PageCache::shared().setMaxSize(pageCacheSize);
 
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
 

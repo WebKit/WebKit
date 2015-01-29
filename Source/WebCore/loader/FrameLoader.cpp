@@ -921,7 +921,7 @@ void FrameLoader::loadURLIntoChildFrame(const URL& url, const String& referer, F
         HistoryItem* childItem = parentItem->childItemWithTarget(childFrame->tree().uniqueName());
         if (childItem) {
             childFrame->loader().m_requestedHistoryItem = childItem;
-            childFrame->loader().loadDifferentDocumentItem(childItem, loadType(), MayAttemptCacheOnlyLoadForFormSubmissionItem);
+            childFrame->loader().loadDifferentDocumentItem(*childItem, loadType(), MayAttemptCacheOnlyLoadForFormSubmissionItem);
             return;
         }
     }
@@ -1740,8 +1740,8 @@ void FrameLoader::commitProvisionalLoad()
     Ref<Frame> protect(m_frame);
 
     std::unique_ptr<CachedPage> cachedPage;
-    if (m_loadingFromCachedPage)
-        cachedPage = PageCache::shared().take(history().provisionalItem(), m_frame.page());
+    if (m_loadingFromCachedPage && history().provisionalItem())
+        cachedPage = PageCache::shared().take(*history().provisionalItem(), m_frame.page());
 
     LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame.tree().uniqueName().string().utf8().data(),
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "",
@@ -1758,11 +1758,11 @@ void FrameLoader::commitProvisionalLoad()
             LOG(MemoryPressure, "Pruning page cache because under memory pressure at: %s", __PRETTY_FUNCTION__);
             LOG(PageCache, "Pruning page cache to 0 due to memory pressure");
             // Don't cache any page if we are under memory pressure.
-            PageCache::shared().pruneToCapacityNow(0, PruningReason::MemoryPressure);
+            PageCache::shared().pruneToSizeNow(0, PruningReason::MemoryPressure);
         } else if (systemMemoryLevel() <= memoryLevelThresholdToPrunePageCache) {
             LOG(MemoryPressure, "Pruning page cache because system memory level is %d at: %s", systemMemoryLevel(), __PRETTY_FUNCTION__);
             LOG(PageCache, "Pruning page cache to %d due to low memory (level %d less or equal to %d threshold)", PageCache::shared().capacity() / 2, systemMemoryLevel(), memoryLevelThresholdToPrunePageCache);
-            PageCache::shared().pruneToCapacityNow(PageCache::shared().capacity() / 2, PruningReason::MemoryPressure);
+            PageCache::shared().pruneToSizeNow(PageCache::shared().maxSize() / 2, PruningReason::MemoryPressure);
         }
     }
 #endif
@@ -1771,8 +1771,8 @@ void FrameLoader::commitProvisionalLoad()
 
     // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
     // We are doing this here because we know for sure that a new page is about to be loaded.
-    HistoryItem* item = history().currentItem();
-    if (!m_frame.tree().parent() && PageCache::shared().canCache(m_frame.page()) && !item->isInPageCache())
+    HistoryItem& item = *history().currentItem();
+    if (!m_frame.tree().parent() && PageCache::shared().canCache(m_frame.page()) && !item.isInPageCache())
         PageCache::shared().add(item, *m_frame.page());
 
     if (m_loadType != FrameLoadType::Replace)
@@ -3127,14 +3127,14 @@ Frame* FrameLoader::findFrameForNavigation(const AtomicString& name, Document* a
         activeDocument = m_frame.document();
 
     if (!activeDocument->canNavigate(frame))
-        return 0;
+        return nullptr;
 
     return frame;
 }
 
-void FrameLoader::loadSameDocumentItem(HistoryItem* item)
+void FrameLoader::loadSameDocumentItem(HistoryItem& item)
 {
-    ASSERT(item->documentSequenceNumber() == history().currentItem()->documentSequenceNumber());
+    ASSERT(item.documentSequenceNumber() == history().currentItem()->documentSequenceNumber());
 
     // Save user view state to the current history item here since we don't do a normal load.
     // FIXME: Does form state need to be saved here too?
@@ -3142,10 +3142,10 @@ void FrameLoader::loadSameDocumentItem(HistoryItem* item)
     if (FrameView* view = m_frame.view())
         view->setWasScrolledByUser(false);
 
-    history().setCurrentItem(item);
+    history().setCurrentItem(&item);
         
     // loadInSameDocument() actually changes the URL and notifies load delegates of a "fake" load
-    loadInSameDocument(item->url(), item->stateObject(), false);
+    loadInSameDocument(item.url(), item.stateObject(), false);
 
     // Restore user view state from the current history item here since we don't do a normal load.
     history().restoreScrollPositionAndViewState();
@@ -3154,10 +3154,10 @@ void FrameLoader::loadSameDocumentItem(HistoryItem* item)
 // FIXME: This function should really be split into a couple pieces, some of
 // which should be methods of HistoryController and some of which should be
 // methods of FrameLoader.
-void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loadType, FormSubmissionCacheLoadPolicy cacheLoadPolicy)
+void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loadType, FormSubmissionCacheLoadPolicy cacheLoadPolicy)
 {
     // Remember this item so we can traverse any child items as child frames load
-    history().setProvisionalItem(item);
+    history().setProvisionalItem(&item);
 
     if (CachedPage* cachedPage = PageCache::shared().get(item, m_frame.page())) {
         auto documentLoader = cachedPage->documentLoader();
@@ -3167,17 +3167,17 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
         return;
     }
 
-    URL itemURL = item->url();
-    URL itemOriginalURL = item->originalURL();
+    URL itemURL = item.url();
+    URL itemOriginalURL = item.originalURL();
     URL currentURL;
     if (documentLoader())
         currentURL = documentLoader()->url();
-    RefPtr<FormData> formData = item->formData();
+    RefPtr<FormData> formData = item.formData();
 
     ResourceRequest request(itemURL);
 
-    if (!item->referrer().isNull())
-        request.setHTTPReferrer(item->referrer());
+    if (!item.referrer().isNull())
+        request.setHTTPReferrer(item.referrer());
     
     // If this was a repost that failed the page cache, we might try to repost the form.
     NavigationAction action;
@@ -3186,8 +3186,8 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
 
         request.setHTTPMethod("POST");
         request.setHTTPBody(formData);
-        request.setHTTPContentType(item->formContentType());
-        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromString(item->referrer());
+        request.setHTTPContentType(item.formContentType());
+        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::createFromString(item.referrer());
         addHTTPOriginIfNeeded(request, securityOrigin->toString());
 
         // Make sure to add extra fields to the request after the Origin header is added for the FormData case.
@@ -3242,11 +3242,11 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
 }
 
 // Loads content into this frame, as specified by history item
-void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
+void FrameLoader::loadItem(HistoryItem& item, FrameLoadType loadType)
 {
-    m_requestedHistoryItem = item;
+    m_requestedHistoryItem = &item;
     HistoryItem* currentItem = history().currentItem();
-    bool sameDocumentNavigation = currentItem && item->shouldDoSameDocumentNavigationTo(currentItem);
+    bool sameDocumentNavigation = currentItem && item.shouldDoSameDocumentNavigationTo(currentItem);
 
     if (sameDocumentNavigation)
         loadSameDocumentItem(item);
@@ -3260,11 +3260,12 @@ void FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad()
     ASSERT(!m_loadingFromCachedPage);
     // We only use cache-only loads to avoid resubmitting forms.
     ASSERT(isBackForwardLoadType(m_loadType));
+    ASSERT(history().provisionalItem());
     ASSERT(history().provisionalItem()->formData());
     ASSERT(history().provisionalItem() == m_requestedHistoryItem.get());
 
     FrameLoadType loadType = m_loadType;
-    HistoryItem* item = history().provisionalItem();
+    HistoryItem& item = *history().provisionalItem();
 
     stopAllLoaders(ShouldNotClearProvisionalItem);
     loadDifferentDocumentItem(item, loadType, MayNotAttemptCacheOnlyLoadForFormSubmissionItem);

@@ -234,11 +234,13 @@ void HistoryController::restoreDocumentState()
 
 void HistoryController::invalidateCurrentItemCachedPage()
 {
-    // When we are pre-commit, the currentItem is where any page cache data resides.
-    if (!PageCache::shared().get(currentItem(), m_frame.page()))
+    if (!currentItem())
         return;
 
-    std::unique_ptr<CachedPage> cachedPage = PageCache::shared().take(currentItem(), m_frame.page());
+    // When we are pre-commit, the currentItem is where any page cache data resides.
+    std::unique_ptr<CachedPage> cachedPage = PageCache::shared().take(*currentItem(), m_frame.page());
+    if (!cachedPage)
+        return;
 
     // FIXME: This is a grotesque hack to fix <rdar://problem/4059059> Crash in RenderFlow::detach
     // Somehow the PageState object is not properly updated, and is holding onto a stale document.
@@ -265,7 +267,7 @@ bool HistoryController::shouldStopLoadingForHistoryItem(HistoryItem* targetItem)
 
 // Main funnel for navigating to a previous location (back/forward, non-search snap-back)
 // This includes recursion to handle loading into framesets properly
-void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
+void HistoryController::goToItem(HistoryItem& targetItem, FrameLoadType type)
 {
     ASSERT(!m_frame.tree().parent());
     
@@ -276,10 +278,10 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     Page* page = m_frame.page();
     if (!page)
         return;
-    if (!m_frame.loader().client().shouldGoToHistoryItem(targetItem))
+    if (!m_frame.loader().client().shouldGoToHistoryItem(&targetItem))
         return;
     if (m_defersLoading) {
-        m_deferredItem = targetItem;
+        m_deferredItem = &targetItem;
         m_deferredFrameLoadType = type;
         return;
     }
@@ -288,7 +290,7 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     // - plus, it only makes sense for the top level of the operation through the frame tree,
     // as opposed to happening for some/one of the page commits that might happen soon
     RefPtr<HistoryItem> currentItem = page->backForward().currentItem();
-    page->backForward().setCurrentItem(targetItem);
+    page->backForward().setCurrentItem(&targetItem);
     m_frame.loader().client().updateGlobalHistoryItemForPage();
 
     // First set the provisional item of any frames that are not actually navigating.
@@ -305,8 +307,8 @@ void HistoryController::setDefersLoading(bool defer)
 {
     m_defersLoading = defer;
     if (!defer && m_deferredItem) {
-        goToItem(m_deferredItem.get(), m_deferredFrameLoadType);
-        m_deferredItem = 0;
+        goToItem(*m_deferredItem, m_deferredFrameLoadType);
+        m_deferredItem = nullptr;
     }
 }
 
@@ -334,7 +336,7 @@ void HistoryController::updateForReload()
 #endif
 
     if (m_currentItem) {
-        PageCache::shared().remove(m_currentItem.get());
+        PageCache::shared().remove(*m_currentItem);
     
         if (m_frame.loader().loadType() == FrameLoadType::Reload || m_frame.loader().loadType() == FrameLoadType::ReloadFromOrigin)
             saveScrollPositionAndViewStateToItem(m_currentItem.get());
@@ -499,7 +501,7 @@ void HistoryController::recursiveUpdateForCommit()
     // For each frame that already had the content the item requested (based on
     // (a matching URL and frame tree snapshot), just restore the scroll position.
     // Save form state (works from currentItem, since m_frameLoadComplete is true)
-    if (m_currentItem && itemsAreClones(m_currentItem.get(), m_provisionalItem.get())) {
+    if (m_currentItem && itemsAreClones(*m_currentItem, m_provisionalItem.get())) {
         ASSERT(m_frameLoadComplete);
         saveDocumentState();
         saveScrollPositionAndViewStateToItem(m_currentItem.get());
@@ -707,17 +709,15 @@ PassRefPtr<HistoryItem> HistoryController::createItemTree(Frame& targetFrame, bo
 // tracking whether each frame already has the content the item requests.  If there is
 // a match, we set the provisional item and recurse.  Otherwise we will reload that
 // frame and all its kids in recursiveGoToItem.
-void HistoryController::recursiveSetProvisionalItem(HistoryItem* item, HistoryItem* fromItem)
+void HistoryController::recursiveSetProvisionalItem(HistoryItem& item, HistoryItem* fromItem)
 {
-    ASSERT(item);
-
     if (!itemsAreClones(item, fromItem))
         return;
 
     // Set provisional item, which will be committed in recursiveUpdateForCommit.
-    m_provisionalItem = item;
+    m_provisionalItem = &item;
 
-    for (const auto& childItem : item->children()) {
+    for (const auto& childItem : item.children()) {
         const String& childFrameName = childItem->target();
 
         HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
@@ -725,34 +725,32 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem* item, HistoryIt
         Frame* childFrame = m_frame.tree().child(childFrameName);
         ASSERT(childFrame);
 
-        childFrame->loader().history().recursiveSetProvisionalItem(childItem.get(), fromChildItem);
+        childFrame->loader().history().recursiveSetProvisionalItem(*childItem, fromChildItem);
     }
 }
 
 // We now traverse the frame tree and item tree a second time, loading frames that
 // do have the content the item requests.
-void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromItem, FrameLoadType type)
+void HistoryController::recursiveGoToItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadType type)
 {
-    ASSERT(item);
-
     if (!itemsAreClones(item, fromItem)) {
         m_frame.loader().loadItem(item, type);
         return;
     }
 
     // Just iterate over the rest, looking for frames to navigate.
-    for (const auto& childItem : item->children()) {
+    for (const auto& childItem : item.children()) {
         const String& childFrameName = childItem->target();
 
         HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
         ASSERT(fromChildItem);
         Frame* childFrame = m_frame.tree().child(childFrameName);
         ASSERT(childFrame);
-        childFrame->loader().history().recursiveGoToItem(childItem.get(), fromChildItem, type);
+        childFrame->loader().history().recursiveGoToItem(*childItem, fromChildItem, type);
     }
 }
 
-bool HistoryController::itemsAreClones(HistoryItem* item1, HistoryItem* item2) const
+bool HistoryController::itemsAreClones(HistoryItem& item1, HistoryItem* item2) const
 {
     // If the item we're going to is a clone of the item we're at, then we do
     // not need to load it again.  The current frame tree and the frame tree
@@ -761,12 +759,11 @@ bool HistoryController::itemsAreClones(HistoryItem* item1, HistoryItem* item2) c
     // a reload.  Thus, if item1 and item2 are the same, we need to create a
     // new document and should not consider them clones.
     // (See http://webkit.org/b/35532 for details.)
-    return item1
-        && item2
-        && item1 != item2
-        && item1->itemSequenceNumber() == item2->itemSequenceNumber()
-        && currentFramesMatchItem(item1)
-        && item2->hasSameFrames(item1);
+    return item2
+        && &item1 != item2
+        && item1.itemSequenceNumber() == item2->itemSequenceNumber()
+        && currentFramesMatchItem(&item1)
+        && item2->hasSameFrames(&item1);
 }
 
 // Helper method that determines whether the current frame tree matches given history item's.

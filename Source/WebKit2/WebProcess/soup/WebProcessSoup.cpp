@@ -83,7 +83,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     unsigned cacheMinDeadCapacity = 0;
     unsigned cacheMaxDeadCapacity = 0;
     auto deadDecodedDataDeletionInterval = std::chrono::seconds { 0 };
-    unsigned pageCacheCapacity = 0;
+    unsigned pageCacheSize = 0;
 
     unsigned long urlCacheMemoryCapacity = 0;
     unsigned long urlCacheDiskCapacity = 0;
@@ -99,12 +99,12 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     uint64_t memSize = getMemorySize();
     calculateCacheSizes(cacheModel, memSize, diskFreeSize,
                         cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
-                        pageCacheCapacity, urlCacheMemoryCapacity, urlCacheDiskCapacity);
+                        pageCacheSize, urlCacheMemoryCapacity, urlCacheDiskCapacity);
 
     WebCore::memoryCache().setDisabled(cacheModel == CacheModelDocumentViewer);
     WebCore::memoryCache().setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     WebCore::memoryCache().setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    WebCore::PageCache::shared().setCapacity(pageCacheCapacity);
+    WebCore::PageCache::shared().setMaxSize(pageCacheSize);
 
 #if PLATFORM(GTK)
     WebCore::PageCache::shared().setShouldClearBackingStores(true);

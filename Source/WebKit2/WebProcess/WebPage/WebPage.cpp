@@ -1210,7 +1210,7 @@ void WebPage::goForward(uint64_t navigationID, uint64_t backForwardItemID)
     if (!item->isInPageCache())
         m_pendingNavigationID = navigationID;
 
-    m_page->goToItem(item, FrameLoadType::Forward);
+    m_page->goToItem(*item, FrameLoadType::Forward);
 }
 
 void WebPage::goBack(uint64_t navigationID, uint64_t backForwardItemID)
@@ -1226,7 +1226,7 @@ void WebPage::goBack(uint64_t navigationID, uint64_t backForwardItemID)
     if (!item->isInPageCache())
         m_pendingNavigationID = navigationID;
 
-    m_page->goToItem(item, FrameLoadType::Back);
+    m_page->goToItem(*item, FrameLoadType::Back);
 }
 
 void WebPage::goToBackForwardItem(uint64_t navigationID, uint64_t backForwardItemID)
@@ -1242,7 +1242,7 @@ void WebPage::goToBackForwardItem(uint64_t navigationID, uint64_t backForwardIte
     if (!item->isInPageCache())
         m_pendingNavigationID = navigationID;
 
-    m_page->goToItem(item, FrameLoadType::IndexedBackForward);
+    m_page->goToItem(*item, FrameLoadType::IndexedBackForward);
 }
 
 void WebPage::tryRestoreScrollPosition()

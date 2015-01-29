@@ -1,3 +1,30 @@
+2015-01-29  Chris Dumez  <cdumez@apple.com>
+
+        Clean up / modernize PageCache class
+        https://bugs.webkit.org/show_bug.cgi?id=141009
+
+        Reviewed by Darin Adler.
+
+        Clean up / modernize PageCache class:
+        - Use more references instead of pointers
+        - Use a ListHashSet<Ref<HistoryItem>> internally instead of a linked
+          list of HistoryItem*. This avoids having the ref/unref HistoryItems
+          manually and maintaining the list size separately. It also simplifies
+          the code dealing with the container and makes looking up HistoryItems
+          faster as a bonus. Similarly to the previous implementation, we are
+          adding elements to one end and removing from the opposite end when
+          pruning to drop old history items first. Note that even though the
+          previous implementation was called LRUList, it did not move items to
+          the front when accessed. The new implementation doesn't either.
+         - Rename "capacity" to "maxSize" to avoid confusing with containers'
+           capacity (which doesn't limit the size of the container).
+         - Use unsigned instead of int for all values that are supposed to be
+           positive.
+         - Do not explicitely define the default constructor and let the
+           compiler generate it for us (and use in-class initialization for
+           members)
+         - Fix indentation in the header.
+
 2015-01-29  Julien Isorce  <j.isorce@samsung.com>
 
         HTMLImageLoader: fix build failure on assert condition after r179340
