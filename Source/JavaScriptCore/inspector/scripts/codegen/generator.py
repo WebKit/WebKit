@@ -50,6 +50,7 @@ _TYPES_NEEDING_RUNTIME_CASTS = set([
     "Runtime.RemoteObject",
     "Runtime.PropertyDescriptor",
     "Runtime.InternalPropertyDescriptor",
+    "Runtime.CollectionEntry",
     "Debugger.FunctionDetails",
     "Debugger.CallFrame",
     "Canvas.TraceLog",

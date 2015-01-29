@@ -42,6 +42,9 @@ WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, ty
     this._customFormatters = {
         "object": this._formatParameterAsObject,
         "error": this._formatParameterAsObject,
+        "map": this._formatParameterAsObject,
+        "set": this._formatParameterAsObject,
+        "weakmap": this._formatParameterAsObject,
         "array":  this._formatParameterAsArray,
         "node":   this._formatParameterAsNode,
         "string": this._formatParameterAsString
@@ -276,7 +279,17 @@ WebInspector.ConsoleMessageImpl.prototype = {
         var titleElement = document.createElement("span");
         if (includePreview && obj.preview) {
             titleElement.classList.add("console-object-preview");
-            var lossless = this._appendObjectPreview(titleElement, obj);
+
+            // COMPATIBILITY (iOS 8): iOS 7 and 8 did not have type/subtype/description on
+            // Runtime.ObjectPreview. Copy them over from the RemoteObject.
+            var preview = obj.preview;
+            if (!preview.type) {
+                preview.type = obj.type;
+                preview.subtype = obj.subtype;
+                preview.description = obj.description;
+            }
+
+            var lossless = this._appendPreview(titleElement, preview);
             if (lossless) {
                 titleElement.classList.add("console-object-preview-lossless");
                 elem.appendChild(titleElement);
@@ -289,23 +302,58 @@ WebInspector.ConsoleMessageImpl.prototype = {
         elem.appendChild(section.element);
     },
 
-    _appendObjectPreview: function(titleElement, obj)
+    _appendPreview: function(element, preview)
     {
-        var preview = obj.preview;
-        var isArray = obj.subtype === "array";
-
-        if (obj.description && !isArray) {
+        if (preview.type === "object" && preview.subtype !== "null" && preview.subtype !== "array") {
             var previewObjectNameElement = document.createElement("span");
             previewObjectNameElement.classList.add("console-object-preview-name");
-            if (obj.description === "Object")
+            if (preview.description === "Object")
                 previewObjectNameElement.classList.add("console-object-preview-name-Object");
 
-            previewObjectNameElement.textContent = obj.description + " ";
-            titleElement.appendChild(previewObjectNameElement);
+            previewObjectNameElement.textContent = preview.description + " ";
+            element.appendChild(previewObjectNameElement);
         }
 
-        var bodyElement = titleElement.createChild("span", "console-object-preview-body");
-        bodyElement.appendChild(document.createTextNode(isArray ? "[" : "{"));
+        var bodyElement = element.createChild("span", "console-object-preview-body");
+        if (preview.entries)
+            return this._appendEntryPreviews(bodyElement, preview);
+        if (preview.properties)
+            return this._appendPropertyPreviews(bodyElement, preview);
+        return this._appendValuePreview(bodyElement, preview);
+    },
+
+    _appendEntryPreviews: function(element, preview)
+    {
+        var lossless = preview.lossless && !preview.properties.length;
+
+        element.appendChild(document.createTextNode("{"));
+
+        for (var i = 0; i < preview.entries.length; ++i) {
+            if (i > 0)
+                element.appendChild(document.createTextNode(", "));
+
+            var entry = preview.entries[i];
+            if (entry.key) {
+                this._appendPreview(element, entry.key);
+                element.appendChild(document.createTextNode(" => "));
+            }
+
+            this._appendPreview(element, entry.value);
+        }
+
+        if (preview.overflow)
+            element.createChild("span").textContent = "\u2026";
+        element.appendChild(document.createTextNode("}"));
+
+        return lossless;
+    },
+
+    _appendPropertyPreviews: function(element, preview)
+    {
+        var isArray = preview.subtype === "array";
+
+        element.appendChild(document.createTextNode(isArray ? "[" : "{"));
+
         for (var i = 0; i < preview.properties.length; ++i) {
             var property = preview.properties[i];
 
@@ -318,14 +366,14 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 continue;
 
             if (i > 0)
-                bodyElement.appendChild(document.createTextNode(", "));
+                element.appendChild(document.createTextNode(", "));
     
             if (!isArray || property.name != i) {
-                bodyElement.createChild("span", "name").textContent = property.name;
-                bodyElement.appendChild(document.createTextNode(": "));
+                element.createChild("span", "name").textContent = property.name;
+                element.appendChild(document.createTextNode(": "));
             }
 
-            var span = bodyElement.createChild("span", "console-formatted-" + property.type);
+            var span = element.createChild("span", "console-formatted-" + property.type);
             if (property.type === "object") {
                 if (property.subtype === "node")
                     span.classList.add("console-formatted-preview-node");
@@ -340,10 +388,18 @@ WebInspector.ConsoleMessageImpl.prototype = {
             else
                 span.textContent = property.value;
         }
+
         if (preview.overflow)
-            bodyElement.createChild("span").textContent = "\u2026";
-        bodyElement.appendChild(document.createTextNode(isArray ? "]" : "}"));
+            element.createChild("span").textContent = "\u2026";
+
+        element.appendChild(document.createTextNode(isArray ? "]" : "}"));
+
         return preview.lossless;
+    },
+
+    _appendValuePreview: function(element, preview)
+    {
+        element.appendChild(document.createTextNode(preview.description));
     },
 
     _formatParameterAsNode: function(object, elem)

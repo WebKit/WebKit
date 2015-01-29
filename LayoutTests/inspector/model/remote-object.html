@@ -69,6 +69,8 @@ function test()
         {expression: "[1, 2]"},
         {expression: "[[1],[2],[3]]"},
         {expression: "[true, 1, 1.234, 'string', /regex/]"},
+        {expression: "[{a:1}, {b:2}, {c:2}]"},
+        {expression: "[[{a:1}, {b:2}, {c:2}]]"},
         {expression: "arr = []; arr.length = 100; arr"}, // 100 empty elements
         {expression: "arr = []; arr.length = 100; arr.fill(1)"}, // 100 full elements
         {expression: "arr = []; arr.length = 100; arr[10] = 1; arr"}, // sparse
@@ -117,7 +119,7 @@ function test()
         {expression: "map = new Map; map.set(1, 2); map.set('key', 'value'); map"},
         {expression: "map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]); map"},
         {expression: "map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map"},
-        {expression: "map = new WeakMap; map.set({id:1}, [1,2]); map"},
+        {expression: "map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); map"},
 
         // Set
         {expression: "new Set"},

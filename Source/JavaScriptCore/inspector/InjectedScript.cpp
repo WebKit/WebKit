@@ -137,8 +137,25 @@ void InjectedScript::getInternalProperties(ErrorString& errorString, const Strin
     }
 
     auto array = BindingTraits<Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>::runtimeCast(WTF::move(result));
-    if (array->length() > 0)
-        *properties = array;
+    *properties = array->length() > 0 ? array : nullptr;
+}
+
+void InjectedScript::getCollectionEntries(ErrorString& errorString, const String& objectId, const String& objectGroup, int startIndex, int numberToFetch, RefPtr<Protocol::Array<Protocol::Runtime::CollectionEntry>>* entries)
+{
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getCollectionEntries"), inspectorEnvironment()->functionCallHandler());
+    function.appendArgument(objectId);
+    function.appendArgument(objectGroup);
+    function.appendArgument(startIndex);
+    function.appendArgument(numberToFetch);
+
+    RefPtr<InspectorValue> result;
+    makeCall(function, &result);
+    if (!result || result->type() != InspectorValue::Type::Array) {
+        errorString = ASCIILiteral("Internal error");
+        return;
+    }
+
+    *entries = BindingTraits<Array<Protocol::Runtime::CollectionEntry>>::runtimeCast(WTF::move(result));
 }
 
 Ref<Array<Inspector::Protocol::Debugger::CallFrame>> InjectedScript::wrapCallFrames(const Deprecated::ScriptValue& callFrames)

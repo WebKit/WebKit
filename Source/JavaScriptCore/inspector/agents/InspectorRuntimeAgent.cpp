@@ -178,6 +178,20 @@ void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String
     setPauseOnExceptionsState(m_scriptDebugServer, previousPauseOnExceptionsState);
 }
 
+void InspectorRuntimeAgent::getCollectionEntries(ErrorString& errorString, const String& objectId, const String* objectGroup, const int* startIndex, const int* numberToFetch, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::CollectionEntry>>& entries)
+{
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
+    if (injectedScript.hasNoValue()) {
+        errorString = ASCIILiteral("Inspected frame has gone");
+        return;
+    }
+
+    int start = startIndex && *startIndex >= 0 ? *startIndex : 0;
+    int fetch = numberToFetch && *numberToFetch >= 0 ? *numberToFetch : 0;
+
+    injectedScript.getCollectionEntries(errorString, objectId, objectGroup ? *objectGroup : String(), start, fetch, &entries);
+}
+
 void InspectorRuntimeAgent::releaseObject(ErrorString&, const String& objectId)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);

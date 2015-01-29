@@ -43,17 +43,18 @@ WebInspector.ObjectPropertiesSection.prototype = {
 
     update: function()
     {
-        var self = this;
         function callback(properties)
         {
             if (!properties)
                 return;
-            self.updateProperties(properties);
+
+            this.updateProperties(properties);
         }
+
         if (this.getAllProperties)
-            this.object.getAllProperties(callback);
+            this.object.getAllProperties(callback.bind(this));
         else
-            this.object.getOwnAndGetterProperties(callback);
+            this.object.getOwnAndGetterProperties(callback.bind(this));
     },
 
     updateProperties: function(properties, rootTreeElementConstructor, rootPropertyComparer)
@@ -85,6 +86,9 @@ WebInspector.ObjectPropertiesSection.prototype = {
             this.propertiesTreeOutline.appendChild(infoElement);
         }
         this.propertiesForTest = properties;
+
+        if (this.object.isCollectionType())
+            this.propertiesTreeOutline.appendChild(new WebInspector.CollectionEntriesMainTreeElement(this.object));
 
         this.dispatchEventToListeners(WebInspector.Section.Event.VisibleContentDidChange);
     }
@@ -153,15 +157,17 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         if (this.children.length && !this.shouldRefreshChildren)
             return;
 
-        var callback = function(properties) {
+        function callback(properties) {
             this.removeChildren();
             if (!properties)
                 return;
 
             properties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
-            for (var i = 0; i < properties.length; ++i) {
+            for (var i = 0; i < properties.length; ++i)
                 this.appendChild(new this.treeOutline.section.treeElementConstructor(properties[i]));
-            }
+
+            if (this.property.value.isCollectionType())
+                this.appendChild(new WebInspector.CollectionEntriesMainTreeElement(this.property.value));
         };
 
         if (this.property.name === "__proto__")
@@ -345,3 +351,188 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 };
 
 WebInspector.ObjectPropertyTreeElement.prototype.__proto__ = TreeElement.prototype;
+
+WebInspector.CollectionEntriesMainTreeElement = function(remoteObject)
+{
+    TreeElement.call(this, "<entries>", null, false);
+
+    console.assert(remoteObject);
+
+    this._remoteObject = remoteObject;
+    this._requestingEntries = false;
+    this._trackingEntries = false;
+
+    this.toggleOnClick = true;
+    this.selectable = false;
+    this.hasChildren = true;
+    this.expand();
+
+    // FIXME: When a parent TreeElement is collapsed, we do not get a chance
+    // to releaseWeakCollectionEntries. We should.
+}
+
+WebInspector.CollectionEntriesMainTreeElement.prototype = {
+    constructor: WebInspector.CollectionEntriesMainTreeElement,
+    __proto__: TreeElement.prototype,
+
+    onexpand: function()
+    {
+        if (this.children.length && !this.shouldRefreshChildren)
+            return;
+
+        if (this._requestingEntries)
+            return;
+
+        this._requestingEntries = true;
+
+        function callback(entries) {
+            this._requestingEntries = false;
+
+            this.removeChildren();
+
+            if (!entries || !entries.length) {
+                this.appendChild(new WebInspector.EmptyCollectionTreeElement);
+                return;
+            }
+
+            this._trackWeakEntries();
+
+            for (var i = 0; i < entries.length; ++i) {
+                var entry = entries[i];
+                if (entry.key)
+                    this.appendChild(new WebInspector.CollectionEntryTreeElement(entry, i));
+                else {
+                    this.appendChild(new WebInspector.ObjectPropertyTreeElement({
+                        name: "" + i,
+                        value: WebInspector.RemoteObject.fromPayload(entry.value),
+                        enumerable: true,
+                        writable: false,
+                    }));
+                }
+            }
+        }
+        
+        this._remoteObject.getCollectionEntries(0, 100, callback.bind(this));
+    },
+
+    oncollapse: function()
+    {
+        this._untrackWeakEntries();
+    },
+
+    ondetach: function()
+    {
+        this._untrackWeakEntries();
+    },
+
+    // Private.
+
+    _trackWeakEntries: function()
+    {
+        if (!this._remoteObject.isWeakCollection())
+            return;
+
+        if (this._trackingEntries)
+            return;
+
+        this._trackingEntries = true;
+
+        WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.Cleared, this._untrackWeakEntries, this);
+        WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._untrackWeakEntries, this);
+        WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.SessionStarted, this._untrackWeakEntries, this);
+    },
+
+    _untrackWeakEntries: function()
+    {
+        if (!this._remoteObject.isWeakCollection())
+            return;
+
+        if (!this._trackingEntries)
+            return;
+
+        this._trackingEntries = false;
+
+        this._remoteObject.releaseWeakCollectionEntries();
+
+        WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.Cleared, this._untrackWeakEntries, this);
+        WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.ActiveLogCleared, this._untrackWeakEntries, this);
+        WebInspector.logManager.removeEventListener(WebInspector.LogManager.Event.SessionStarted, this._untrackWeakEntries, this);
+
+        this.removeChildren();
+
+        if (this.expanded)
+            this.collapse();
+    },
+}
+
+WebInspector.CollectionEntryTreeElement = function(entry, index)
+{
+    TreeElement.call(this, "", null, false);
+
+    console.assert(entry);
+
+    this._name = "" + index;
+    this._key = WebInspector.RemoteObject.fromPayload(entry.key);
+    this._value = WebInspector.RemoteObject.fromPayload(entry.value);
+
+    this.toggleOnClick = true;
+    this.selectable = false;
+    this.hasChildren = true;
+}
+
+WebInspector.CollectionEntryTreeElement.prototype = {
+    constructor: WebInspector.CollectionEntryTreeElement,
+    __proto__: TreeElement.prototype,
+
+    onpopulate: function()
+    {
+        if (this.children.length && !this.shouldRefreshChildren)
+            return;
+
+        this.appendChild(new WebInspector.ObjectPropertyTreeElement({
+            name: "key",
+            value: this._key,
+            enumerable: true,
+            writable: false,
+        }));
+
+        this.appendChild(new WebInspector.ObjectPropertyTreeElement({
+            name: "value",
+            value: this._value,
+            enumerable: true,
+            writable: false,
+        }));
+    },
+
+    onattach: function()
+    {
+        var nameElement = document.createElement("span");
+        nameElement.className = "name";
+        nameElement.textContent = "" + this._name;
+
+        var separatorElement = document.createElement("span");
+        separatorElement.className = "separator";
+        separatorElement.textContent = ": ";
+
+        var valueElement = document.createElement("span");
+        valueElement.className = "value";
+        valueElement.textContent = "{" + this._key.description + " => " + this._value.description + "}";
+
+        this.listItemElement.removeChildren();
+        this.listItemElement.appendChild(nameElement);
+        this.listItemElement.appendChild(separatorElement);
+        this.listItemElement.appendChild(valueElement);
+    }
+}
+
+WebInspector.EmptyCollectionTreeElement = function()
+{
+    TreeElement.call(this, WebInspector.UIString("Empty Collection"), null, false);
+
+    this.selectable = false;
+}
+
+WebInspector.EmptyCollectionTreeElement.prototype = {
+    constructor: WebInspector.EmptyCollectionTreeElement,
+    __proto__: TreeElement.prototype
+}

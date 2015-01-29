@@ -1,3 +1,21 @@
+2015-01-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ES6: Improved Console Format for Set and Map Objects (like Arrays)
+        https://bugs.webkit.org/show_bug.cgi?id=122867
+
+        Reviewed by Timothy Hatcher.
+
+        * TestExpectations:
+        Inspector tests are still flakey on bots, so skip the test.
+
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+        Update based on Runtime.ObjectPreview changes.
+
+        * inspector/model/remote-object-weak-collection-expected.txt: Added.
+        * inspector/model/remote-object-weak-collection.html: Added.
+        New test for weak collection handling.
+
 2015-01-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         security/mixedContent/redirect-https-to-http-iframe-in-main-frame test is the same as security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html

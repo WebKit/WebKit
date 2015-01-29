@@ -95,6 +95,7 @@ webkit.org/b/137131 inspector/debugger [ Skip ]
 webkit.org/b/137130 inspector/replay [ Skip ]
 webkit.org/b/137131 inspector/timeline [ Skip ]
 inspector/model/remote-object-get-properties.html [ Skip ]
+inspector/model/remote-object-weak-collection.html [ Skip ]
 inspector/model/remote-object.html [ Skip ]
 
 # Doesn't work yet, relies on network replay functionality (webkit.org/b/130728, webkit.org/b/129391)

@@ -1,3 +1,79 @@
+2015-01-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ES6: Improved Console Format for Set and Map Objects (like Arrays)
+        https://bugs.webkit.org/show_bug.cgi?id=122867
+
+        Reviewed by Timothy Hatcher.
+
+        This includes Set/Map/WeakMap previews:
+
+            - Set previews: Set {1, 2, 3}
+            - Map/WeakMap previews: Map {1 => 2, "key" => "value"}
+
+        For WeakMaps:
+        
+            - the preview itself shows up to 5 key/value pairs from when the object was logged
+            - the previews are strings only, and thus do not retain the actual keys/values
+            - when expanding, we get RemoteObjects and strongly retain the keys/values
+            - when collapsing / clearing, we release the RemoteObjects so they can get collected
+
+        Currently you collapse the <entries> section, and re-expand later the
+        collection may show you knew keys/values. The UI for this will change.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.isCollectionType):
+        (WebInspector.RemoteObject.prototype.isWeakCollection):
+        (WebInspector.RemoteObject.prototype.getCollectionEntries):
+        (WebInspector.RemoteObject.prototype.releaseWeakCollectionEntries):
+        (WebInspector.RemoteObject.prototype.arrayLength):
+        (WebInspector.RemoteObject.prototype._weakCollectionObjectGroup):
+        High level functions for dealing with a RemoteObject that may be a
+        collection / weak collection.
+
+        * UserInterface/Views/ConsoleMessageImpl.js:
+        (WebInspector.ConsoleMessageImpl):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsObject):
+        Include default formatters for collection types.
+
+        (WebInspector.ConsoleMessageImpl.prototype._appendPreview):
+        (WebInspector.ConsoleMessageImpl.prototype._appendEntryPreviews):
+        (WebInspector.ConsoleMessageImpl.prototype._appendPropertyPreviews):
+        (WebInspector.ConsoleMessageImpl.prototype._appendValuePreview):
+        (WebInspector.ConsoleMessageImpl.prototype._appendObjectPreview): Deleted.
+        Refactor preview generation a bit and include a specific path for
+        generation the output of a preview with "entries".
+
+        * UserInterface/Views/LogContentView.css:
+        (.console-object-preview-body .console-object-preview-name.console-object-preview-name-Object):
+        With nested Object previews ("Map {{a:1} => 1}") don't show "Object" for the inner
+        object preview. Only show it if it has a unique type ("Map {Foo {a:1} => 1}")
+
+        (.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap):
+        (:matches(.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap) .section):
+        (:matches(.console-formatted-object, .console-formatted-node, .console-formatted-error, .console-formatted-map, .console-formatted-set, .console-formatted-weakmap) .properties):
+        Make map/set/weakmap display like Objects.
+
+        * UserInterface/Views/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection.prototype.update):
+        (WebInspector.ObjectPropertiesSection.prototype.updateProperties):
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate.callback):
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate):
+        (WebInspector.CollectionEntriesMainTreeElement):
+        (WebInspector.CollectionEntriesMainTreeElement.prototype.onexpand.callback):
+        (WebInspector.CollectionEntriesMainTreeElement.prototype.onexpand):
+        (WebInspector.CollectionEntriesMainTreeElement.prototype.oncollapse):
+        (WebInspector.CollectionEntriesMainTreeElement.prototype.ondetach):
+        (WebInspector.CollectionEntriesMainTreeElement.prototype._trackWeakEntries):
+        (WebInspector.CollectionEntriesMainTreeElement.prototype._untrackWeakEntries):
+        (WebInspector.CollectionEntryTreeElement):
+        (WebInspector.CollectionEntryTreeElement.prototype.onpopulate):
+        (WebInspector.CollectionEntryTreeElement.prototype.onattach):
+        (WebInspector.EmptyCollectionTreeElement):
+        (WebInspector.ObjectPropertiesSection.prototype.update.callback): Deleted.
+        Add a quick UI for exploring the entries of a collection. We are actively
+        changing the styles of objects in the Console, so this should change soon.
+
 2015-01-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Change Main Frame Status Buttons when debugging Augmented JSContext

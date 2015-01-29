@@ -13,7 +13,7 @@
             "description": "Mirror object referencing original JavaScript object.",
             "properties": [
                 { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean"], "description": "Object type." },
-                { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date", "error"], "description": "Object subtype hint. Specified for <code>object</code> type values only." },
+                { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date", "error", "map", "set", "weakmap"], "description": "Object subtype hint. Specified for <code>object</code> type values only." },
                 { "name": "className", "type": "string", "optional": true, "description": "Object class (constructor) name. Specified for <code>object</code> type values only." },
                 { "name": "value", "type": "any", "optional": true, "description": "Remote object value (in case of primitive values or JSON values if it was requested)." },
                 { "name": "description", "type": "string", "optional": true, "description": "String representation of the object." },
@@ -26,9 +26,13 @@
             "type": "object",
             "description": "Object containing abbreviated remote object value.",
             "properties": [
+                { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean"], "description": "Object type." },
+                { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date", "error", "map", "set", "weakmap"], "description": "Object subtype hint. Specified for <code>object</code> type values only." },
+                { "name": "description", "type": "string", "optional": true, "description": "String representation of the object." },
                 { "name": "lossless", "type": "boolean", "description": "Determines whether preview is lossless (contains all information of the original object)." },
-                { "name": "overflow", "type": "boolean", "description": "True iff some of the properties of the original did not fit." },
-                { "name": "properties", "type": "array", "items": { "$ref": "PropertyPreview" }, "description": "List of the properties." }
+                { "name": "overflow", "type": "boolean", "optional": true, "description": "True iff some of the properties of the original did not fit." },
+                { "name": "properties", "type": "array", "items": { "$ref": "PropertyPreview" }, "optional": true, "description": "List of the properties." },
+                { "name": "entries", "type": "array", "items": { "$ref": "EntryPreview" }, "optional": true, "description": "List of the entries. Specified for <code>map</code> and <code>set</code> subtype values only." }
             ]
         },
         {
@@ -37,9 +41,25 @@
             "properties": [
                 { "name": "name", "type": "string", "description": "Property name." },
                 { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean", "accessor"], "description": "Object type." },
-                { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date", "error"], "description": "Object subtype hint. Specified for <code>object</code> type values only." },
+                { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date", "error", "map", "set", "weakmap"], "description": "Object subtype hint. Specified for <code>object</code> type values only." },
                 { "name": "value", "type": "string", "optional": true, "description": "User-friendly property value string." },
                 { "name": "valuePreview", "$ref": "ObjectPreview", "optional": true, "description": "Nested value preview." }
+            ]
+        },
+        {
+            "id": "EntryPreview",
+            "type": "object",
+            "properties": [
+                { "name": "key", "$ref": "ObjectPreview", "optional": true, "description": "Entry key. Specified for map-like collection entries." },
+                { "name": "value", "$ref": "ObjectPreview", "description": "Entry value." }
+            ]
+        },
+        {
+            "id": "CollectionEntry",
+            "type": "object",
+            "properties": [
+                { "name": "key", "$ref": "Runtime.RemoteObject", "optional": true, "description": "Entry key of a map-like collection, otherwise not provided." },
+                { "name": "value", "$ref": "Runtime.RemoteObject", "description": "Entry value." }
             ]
         },
         {
@@ -223,6 +243,19 @@
                 { "name": "internalProperties", "optional": true, "type": "array", "items": { "$ref": "InternalPropertyDescriptor"}, "description": "Internal object properties." }
             ],
             "description": "Returns properties of a given object. Object group of the result is inherited from the target object."
+        },
+        {
+            "name": "getCollectionEntries",
+            "description": "Returns entries of given Map / Set collection.",
+            "parameters": [
+                { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "Id of the collection to get entries for." },
+                { "name": "objectGroup", "optional": true, "type": "string", "description": "Symbolic group name that can be used to release multiple. If not provided, it will be the same objectGroup as the RemoteObject determined from <code>objectId</code>. This is useful for WeakMap to release the collection entries." },
+                { "name": "startIndex", "optional": true, "type": "integer", "description": "If provided skip to this index before collecting values. Otherwise, 0." },
+                { "name": "numberToFetch", "optional": true, "type": "integer", "description": "If provided only return <code>numberToFetch</code> values. Otherwise, return values all the way to the end." }
+            ],
+            "returns": [
+                { "name": "entries", "type": "array", "items": { "$ref": "CollectionEntry" }, "description": "Array of collection entries." }
+            ]
         },
         {
             "name": "releaseObject",

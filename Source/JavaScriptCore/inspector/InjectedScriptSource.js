@@ -38,7 +38,7 @@ function toString(obj)
 {
     return "" + obj;
 }
-    
+
 function isUInt32(obj)
 {
     if (typeof obj === "number")
@@ -229,6 +229,27 @@ InjectedScript.prototype = {
         }
 
         return descriptors;
+    },
+
+    getCollectionEntries: function(objectId, objectGroupName, startIndex, numberToFetch)
+    {
+        var parsedObjectId = this._parseObjectId(objectId);
+        var object = this._objectForId(parsedObjectId);
+        var objectGroupName = objectGroupName || this._idToObjectGroupName[parsedObjectId.id];
+        if (!this._isDefined(object))
+            return;
+
+        if (typeof object !== "object")
+            return;
+
+        var entries = this._getCollectionEntries(object, InjectedScriptHost.subtype(object), startIndex, numberToFetch);
+        
+        return entries.map(function(entry) {
+            entry.value = injectedScript._wrapObject(entry.value, objectGroupName, false, true);
+            if ("key" in entry)
+                entry.key = injectedScript._wrapObject(entry.key, objectGroupName, false, true);
+            return entry;
+        });
     },
 
     getFunctionDetails: function(functionId)
@@ -579,7 +600,7 @@ InjectedScript.prototype = {
             if (ownProperties)
                 break;
         }
-        
+
         // Include __proto__ at the end.
         try {
             if (object.__proto__)
@@ -677,6 +698,61 @@ InjectedScript.prototype = {
         }
 
         return className;
+    },
+
+    _getSetEntries: function(object, skip, numberToFetch)
+    {
+        var entries = [];
+
+        for (var value of object) {
+            if (skip > 0) {
+                skip--;
+                continue;
+            }
+
+            entries.push({value: value});
+
+            if (numberToFetch && entries.length === numberToFetch)
+                break;
+        }
+
+        return entries;
+    },
+
+    _getMapEntries: function(object, skip, numberToFetch)
+    {
+        var entries = [];
+
+        for (var [key, value] of object) {
+            if (skip > 0) {
+                skip--;
+                continue;
+            }
+
+            entries.push({key: key, value: value});
+
+            if (numberToFetch && entries.length === numberToFetch)
+                break;
+        }
+
+        return entries;
+    },
+
+    _getWeakMapEntries: function(object, numberToFetch)
+    {
+        return InjectedScriptHost.weakMapEntries(object, numberToFetch);
+    },
+
+    _getCollectionEntries: function(object, subtype, startIndex, numberToFetch)
+    {
+        if (subtype === "set")
+            return this._getSetEntries(object, startIndex, numberToFetch);
+        if (subtype === "map")
+            return this._getMapEntries(object, startIndex, numberToFetch);
+        if (subtype === "weakmap")
+            return this._getWeakMapEntries(object, numberToFetch);
+
+        throw "unexpected type";
     }
 }
 
@@ -695,7 +771,7 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType, 
         if (this.type !== "undefined")
             this.value = object;
 
-        // Null object is object with 'null' subtype'
+        // Null object is object with 'null' subtype.
         if (object === null)
             this.subtype = "null";
 
@@ -706,6 +782,7 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType, 
     }
 
     this.objectId = injectedScript._bind(object, objectGroupName);
+
     var subtype = injectedScript._subtype(object);
     if (subtype)
         this.subtype = subtype;
@@ -718,12 +795,41 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType, 
 }
 
 InjectedScript.RemoteObject.prototype = {
+    _emptyPreview: function()
+    {
+        var preview = {
+            type: this.type,
+            description: this.description || toString(this.value),
+            lossless: true,
+        };
+
+        if (this.subtype) {
+            preview.subtype = this.subtype;
+            if (this.subtype !== "null") {
+                preview.overflow = false;
+                preview.properties = [];
+            }
+        }
+
+        return preview;
+    },
+
+    _createObjectPreviewForValue: function(value)
+    {
+        var remoteObject = new InjectedScript.RemoteObject(value, undefined, false, true, undefined);
+        if (remoteObject.objectId)
+            injectedScript.releaseObject(remoteObject.objectId);
+
+        return remoteObject.preview || remoteObject._emptyPreview();
+    },
+
     _generatePreview: function(object, firstLevelKeys, secondLevelKeys)
     {
-        var preview = {};
-        preview.lossless = true;
-        preview.overflow = false;
-        preview.properties = [];
+        var preview = this._emptyPreview();
+
+        // Primitives just have a value.
+        if (this.type !== "object")
+            return;
 
         var isTableRowsRequest = secondLevelKeys === null || secondLevelKeys;
         var firstLevelKeysCount = firstLevelKeys ? firstLevelKeys.length : 0;
@@ -734,14 +840,19 @@ InjectedScript.RemoteObject.prototype = {
         };
 
         try {
-            // All properties.
+            // Maps and Sets have entries.
+            if (this.subtype === "map" || this.subtype === "set" || this.subtype === "weakmap")
+                this._appendEntryPreviews(object, preview);
+
+            // Properties.
+            preview.properties = [];
             var descriptors = injectedScript._propertyDescriptors(object);
-            this._appendPropertyDescriptors(preview, descriptors, propertiesThreshold, secondLevelKeys);
+            this._appendPropertyPreviews(preview, descriptors, propertiesThreshold, secondLevelKeys);
             if (propertiesThreshold.indexes < 0 || propertiesThreshold.properties < 0)
                 return preview;
 
             // FIXME: Internal properties.
-            // FIXME: Map/Set/Iterator entries.
+            // FIXME: Iterator entries.
         } catch (e) {
             preview.lossless = false;
         }
@@ -749,7 +860,7 @@ InjectedScript.RemoteObject.prototype = {
         return preview;
     },
 
-    _appendPropertyDescriptors: function(preview, descriptors, propertiesThreshold, secondLevelKeys)
+    _appendPropertyPreviews: function(preview, descriptors, propertiesThreshold, secondLevelKeys)
     {
         for (var descriptor of descriptors) {
             // Seen enough.
@@ -849,6 +960,27 @@ InjectedScript.RemoteObject.prototype = {
         }
 
         preview.properties.push(property);
+    },
+
+    _appendEntryPreviews: function(object, preview)
+    {
+        // Fetch 6, but only return 5, so we can tell if we overflowed.
+        var entries = injectedScript._getCollectionEntries(object, this.subtype, 0, 6);
+        if (!entries)
+            return;
+
+        if (entries.length > 5) {
+            entries.pop();
+            preview.overflow = true;
+            preview.lossless = false;
+        }
+
+        preview.entries = entries.map(function(entry) {
+            entry.value = this._createObjectPreviewForValue(entry.value);
+            if ("key" in entry)
+                entry.key = this._createObjectPreviewForValue(entry.key);
+            return entry;
+        }, this);
     },
 
     _abbreviateString: function(string, maxLength, middle)

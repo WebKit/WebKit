@@ -63,6 +63,10 @@ public:
 
     static const unsigned StructureFlags = StructureIsImmortal | Base::StructureFlags;
 
+    typedef HashMap<JSObject*, WriteBarrier<Unknown>> MapType;
+    MapType::const_iterator begin() const { return m_map.begin(); }
+    MapType::const_iterator end() const { return m_map.end(); }
+
 private:
     WeakMapData(VM&);
     static void destroy(JSCell*);
@@ -82,7 +86,6 @@ private:
         WeakMapData* m_target;
     };
     DeadKeyCleaner m_deadKeyCleaner;
-    typedef HashMap<JSObject*, WriteBarrier<Unknown>> MapType;
     MapType m_map;
 };
 

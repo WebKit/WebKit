@@ -231,7 +231,10 @@ EXPRESSION: / /
   "_objectId": "<filtered>",
   "_description": "/ /",
   "_preview": {
+    "type": "object",
+    "description": "/ /",
     "lossless": true,
+    "subtype": "regexp",
     "overflow": false,
     "properties": [
       {
@@ -271,7 +274,10 @@ EXPRESSION: /(?:)/
   "_objectId": "<filtered>",
   "_description": "/(?:)/",
   "_preview": {
+    "type": "object",
+    "description": "/(?:)/",
     "lossless": true,
+    "subtype": "regexp",
     "overflow": false,
     "properties": [
       {
@@ -311,7 +317,10 @@ EXPRESSION: /^r(e)g[e]{1,}x+/
   "_objectId": "<filtered>",
   "_description": "/^r(e)g[e]{1,}x+/",
   "_preview": {
+    "type": "object",
+    "description": "/^r(e)g[e]{1,}x+/",
     "lossless": true,
+    "subtype": "regexp",
     "overflow": false,
     "properties": [
       {
@@ -351,7 +360,10 @@ EXPRESSION: /^r(e)g[e]{1,}x+/ig
   "_objectId": "<filtered>",
   "_description": "/^r(e)g[e]{1,}x+/gi",
   "_preview": {
+    "type": "object",
+    "description": "/^r(e)g[e]{1,}x+/gi",
     "lossless": true,
+    "subtype": "regexp",
     "overflow": false,
     "properties": [
       {
@@ -391,7 +403,10 @@ EXPRESSION: new RegExp('')
   "_objectId": "<filtered>",
   "_description": "/(?:)/",
   "_preview": {
+    "type": "object",
+    "description": "/(?:)/",
     "lossless": true,
+    "subtype": "regexp",
     "overflow": false,
     "properties": [
       {
@@ -431,7 +446,10 @@ EXPRESSION: new RegExp('test', 'i')
   "_objectId": "<filtered>",
   "_description": "/test/i",
   "_preview": {
+    "type": "object",
+    "description": "/test/i",
     "lossless": true,
+    "subtype": "regexp",
     "overflow": false,
     "properties": [
       {
@@ -471,7 +489,10 @@ EXPRESSION: []
   "_objectId": "<filtered>",
   "_description": "Array[0]",
   "_preview": {
+    "type": "object",
+    "description": "Array[0]",
     "lossless": true,
+    "subtype": "array",
     "overflow": false,
     "properties": []
   }
@@ -485,7 +506,10 @@ EXPRESSION: [1, 2]
   "_objectId": "<filtered>",
   "_description": "Array[2]",
   "_preview": {
+    "type": "object",
+    "description": "Array[2]",
     "lossless": true,
+    "subtype": "array",
     "overflow": false,
     "properties": [
       {
@@ -510,7 +534,10 @@ EXPRESSION: [[1],[2],[3]]
   "_objectId": "<filtered>",
   "_description": "Array[3]",
   "_preview": {
+    "type": "object",
+    "description": "Array[3]",
     "lossless": false,
+    "subtype": "array",
     "overflow": false,
     "properties": [
       {
@@ -543,7 +570,10 @@ EXPRESSION: [true, 1, 1.234, 'string', /regex/]
   "_objectId": "<filtered>",
   "_description": "Array[5]",
   "_preview": {
+    "type": "object",
+    "description": "Array[5]",
     "lossless": false,
+    "subtype": "array",
     "overflow": false,
     "properties": [
       {
@@ -577,6 +607,63 @@ EXPRESSION: [true, 1, 1.234, 'string', /regex/]
 }
 
 -----------------------------------------------------
+EXPRESSION: [{a:1}, {b:2}, {c:2}]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array[3]",
+  "_preview": {
+    "type": "object",
+    "description": "Array[3]",
+    "lossless": false,
+    "subtype": "array",
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "object",
+        "value": "Object"
+      },
+      {
+        "name": "1",
+        "type": "object",
+        "value": "Object"
+      },
+      {
+        "name": "2",
+        "type": "object",
+        "value": "Object"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
+EXPRESSION: [[{a:1}, {b:2}, {c:2}]]
+{
+  "_type": "object",
+  "_subtype": "array",
+  "_objectId": "<filtered>",
+  "_description": "Array[1]",
+  "_preview": {
+    "type": "object",
+    "description": "Array[1]",
+    "lossless": false,
+    "subtype": "array",
+    "overflow": false,
+    "properties": [
+      {
+        "name": "0",
+        "type": "object",
+        "subtype": "array",
+        "value": "Array[3]"
+      }
+    ]
+  }
+}
+
+-----------------------------------------------------
 EXPRESSION: arr = []; arr.length = 100; arr
 {
   "_type": "object",
@@ -584,7 +671,10 @@ EXPRESSION: arr = []; arr.length = 100; arr
   "_objectId": "<filtered>",
   "_description": "Array[100]",
   "_preview": {
+    "type": "object",
+    "description": "Array[100]",
     "lossless": true,
+    "subtype": "array",
     "overflow": false,
     "properties": []
   }
@@ -598,7 +688,10 @@ EXPRESSION: arr = []; arr.length = 100; arr.fill(1)
   "_objectId": "<filtered>",
   "_description": "Array[100]",
   "_preview": {
+    "type": "object",
+    "description": "Array[100]",
     "lossless": true,
+    "subtype": "array",
     "overflow": false,
     "properties": [
       {
@@ -1113,7 +1206,10 @@ EXPRESSION: arr = []; arr.length = 100; arr[10] = 1; arr
   "_objectId": "<filtered>",
   "_description": "Array[100]",
   "_preview": {
+    "type": "object",
+    "description": "Array[100]",
     "lossless": true,
+    "subtype": "array",
     "overflow": false,
     "properties": [
       {
@@ -1133,7 +1229,10 @@ EXPRESSION: a = null; (function() { a = arguments; })(1, '2', /3/); a
   "_objectId": "<filtered>",
   "_description": "Arguments[3]",
   "_preview": {
+    "type": "object",
+    "description": "Arguments[3]",
     "lossless": false,
+    "subtype": "array",
     "overflow": false,
     "properties": [
       {
@@ -1164,7 +1263,10 @@ EXPRESSION: new Int32Array(new ArrayBuffer(16))
   "_objectId": "<filtered>",
   "_description": "Int32Array[4]",
   "_preview": {
+    "type": "object",
+    "description": "Int32Array[4]",
     "lossless": false,
+    "subtype": "array",
     "overflow": false,
     "properties": [
       {
@@ -1214,7 +1316,10 @@ EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; 
   "_objectId": "<filtered>",
   "_description": "Int32Array[4]",
   "_preview": {
+    "type": "object",
+    "description": "Int32Array[4]",
     "lossless": false,
+    "subtype": "array",
     "overflow": false,
     "properties": [
       {
@@ -1263,8 +1368,9 @@ EXPRESSION: ({})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
+    "type": "object",
+    "description": "Object",
     "lossless": true,
-    "overflow": false,
     "properties": []
   }
 }
@@ -1276,8 +1382,9 @@ EXPRESSION: ({a: 1})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
+    "type": "object",
+    "description": "Object",
     "lossless": true,
-    "overflow": false,
     "properties": [
       {
         "name": "a",
@@ -1295,8 +1402,9 @@ EXPRESSION: ({a: 1, b: "string", c :/regex/})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
+    "type": "object",
+    "description": "Object",
     "lossless": false,
-    "overflow": false,
     "properties": [
       {
         "name": "a",
@@ -1325,8 +1433,9 @@ EXPRESSION: ({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
+    "type": "object",
+    "description": "Object",
     "lossless": false,
-    "overflow": false,
     "properties": [
       {
         "name": "a",
@@ -1357,8 +1466,9 @@ EXPRESSION: function Foo() {}; new Foo
   "_objectId": "<filtered>",
   "_description": "Foo",
   "_preview": {
+    "type": "object",
+    "description": "Foo",
     "lossless": true,
-    "overflow": false,
     "properties": []
   }
 }
@@ -1370,8 +1480,9 @@ EXPRESSION: function Bar() { this._x = 5 }; Bar.prototype = {constructor: Bar, g
   "_objectId": "<filtered>",
   "_description": "Bar",
   "_preview": {
+    "type": "object",
+    "description": "Bar",
     "lossless": false,
-    "overflow": false,
     "properties": [
       {
         "name": "_x",
@@ -1398,8 +1509,9 @@ EXPRESSION: window.loadEvent
   "_objectId": "<filtered>",
   "_description": "Event",
   "_preview": {
+    "type": "object",
+    "description": "Event",
     "lossless": false,
-    "overflow": true,
     "properties": [
       {
         "name": "clipboardData",
@@ -1427,7 +1539,8 @@ EXPRESSION: window.loadEvent
         "type": "number",
         "value": "2"
       }
-    ]
+    ],
+    "overflow": true
   }
 }
 
@@ -1438,8 +1551,9 @@ EXPRESSION: new ArrayBuffer(16)
   "_objectId": "<filtered>",
   "_description": "ArrayBuffer",
   "_preview": {
+    "type": "object",
+    "description": "ArrayBuffer",
     "lossless": true,
-    "overflow": false,
     "properties": [
       {
         "name": "byteLength",
@@ -1457,8 +1571,9 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
   "_objectId": "<filtered>",
   "_description": "DataView",
   "_preview": {
+    "type": "object",
+    "description": "DataView",
     "lossless": false,
-    "overflow": false,
     "properties": [
       {
         "name": "byteOffset",
@@ -1487,7 +1602,10 @@ EXPRESSION: document.body
   "_objectId": "<filtered>",
   "_description": "body",
   "_preview": {
+    "type": "object",
+    "description": "body",
     "lossless": false,
+    "subtype": "node",
     "overflow": true,
     "properties": [
       {
@@ -1527,7 +1645,10 @@ EXPRESSION: div = document.createElement('div'); div.className = 'foo bar'; div
   "_objectId": "<filtered>",
   "_description": "div.foo.bar",
   "_preview": {
+    "type": "object",
+    "description": "div.foo.bar",
     "lossless": false,
+    "subtype": "node",
     "overflow": true,
     "properties": [
       {
@@ -1567,7 +1688,10 @@ EXPRESSION: span = document.createElement('span'); span.id = 'foo'; span
   "_objectId": "<filtered>",
   "_description": "span#foo",
   "_preview": {
+    "type": "object",
+    "description": "span#foo",
     "lossless": false,
+    "subtype": "node",
     "overflow": true,
     "properties": [
       {
@@ -1607,7 +1731,10 @@ EXPRESSION: document.createTextNode('text')
   "_objectId": "<filtered>",
   "_description": "#text",
   "_preview": {
+    "type": "object",
+    "description": "#text",
     "lossless": false,
+    "subtype": "node",
     "overflow": true,
     "properties": [
       {
@@ -1647,7 +1774,10 @@ EXPRESSION: document.head.children
   "_objectId": "<filtered>",
   "_description": "HTMLCollection[3]",
   "_preview": {
+    "type": "object",
+    "description": "HTMLCollection[3]",
     "lossless": false,
+    "subtype": "array",
     "overflow": false,
     "properties": [
       {
@@ -1690,7 +1820,10 @@ EXPRESSION: document.getElementsByClassName('my-test')
   "_objectId": "<filtered>",
   "_description": "NodeList[3]",
   "_preview": {
+    "type": "object",
+    "description": "NodeList[3]",
     "lossless": false,
+    "subtype": "array",
     "overflow": false,
     "properties": [
       {
@@ -1733,7 +1866,10 @@ EXPRESSION: document.querySelectorAll('.my-test')
   "_objectId": "<filtered>",
   "_description": "NodeList[3]",
   "_preview": {
+    "type": "object",
+    "description": "NodeList[3]",
     "lossless": false,
+    "subtype": "array",
     "overflow": false,
     "properties": [
       {
@@ -1776,7 +1912,10 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
   "_objectId": "<filtered>",
   "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
   "_preview": {
+    "type": "object",
+    "description": "TypeError: undefined is not an object (evaluating '[].x.x')",
     "lossless": true,
+    "subtype": "error",
     "overflow": false,
     "properties": [
       {
@@ -1811,7 +1950,10 @@ EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
   "_objectId": "<filtered>",
   "_description": "SyntaxError: Unexpected token ')'",
   "_preview": {
+    "type": "object",
+    "description": "SyntaxError: Unexpected token ')'",
     "lossless": true,
+    "subtype": "error",
     "overflow": false,
     "properties": [
       {
@@ -1846,7 +1988,10 @@ EXPRESSION: error = null; try { document.createTextNode('').splitText(100); } ca
   "_objectId": "<filtered>",
   "_description": "Error: IndexSizeError: DOM Exception 1",
   "_preview": {
+    "type": "object",
+    "description": "Error: IndexSizeError: DOM Exception 1",
     "lossless": false,
+    "subtype": "error",
     "overflow": true,
     "properties": [
       {
@@ -1885,8 +2030,9 @@ EXPRESSION: Object.seal({})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
+    "type": "object",
+    "description": "Object",
     "lossless": true,
-    "overflow": false,
     "properties": []
   }
 }
@@ -1898,8 +2044,9 @@ EXPRESSION: Object.freeze({})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
+    "type": "object",
+    "description": "Object",
     "lossless": true,
-    "overflow": false,
     "properties": []
   }
 }
@@ -1908,12 +2055,17 @@ EXPRESSION: Object.freeze({})
 EXPRESSION: new Map
 {
   "_type": "object",
+  "_subtype": "map",
   "_objectId": "<filtered>",
   "_description": "Map",
   "_preview": {
+    "type": "object",
+    "description": "Map",
     "lossless": true,
+    "subtype": "map",
     "overflow": false,
-    "properties": []
+    "properties": [],
+    "entries": []
   }
 }
 
@@ -1921,12 +2073,42 @@ EXPRESSION: new Map
 EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map
 {
   "_type": "object",
+  "_subtype": "map",
   "_objectId": "<filtered>",
   "_description": "Map",
   "_preview": {
+    "type": "object",
+    "description": "Map",
     "lossless": true,
+    "subtype": "map",
     "overflow": false,
-    "properties": []
+    "properties": [],
+    "entries": [
+      {
+        "key": {
+          "type": "number",
+          "description": "1",
+          "lossless": true
+        },
+        "value": {
+          "type": "number",
+          "description": "2",
+          "lossless": true
+        }
+      },
+      {
+        "key": {
+          "type": "string",
+          "description": "key",
+          "lossless": true
+        },
+        "value": {
+          "type": "string",
+          "description": "value",
+          "lossless": true
+        }
+      }
+    ]
   }
 }
 
@@ -1934,12 +2116,99 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map
 EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]); map
 {
   "_type": "object",
+  "_subtype": "map",
   "_objectId": "<filtered>",
   "_description": "Map",
   "_preview": {
+    "type": "object",
+    "description": "Map",
     "lossless": true,
+    "subtype": "map",
     "overflow": false,
-    "properties": []
+    "properties": [],
+    "entries": [
+      {
+        "key": {
+          "type": "object",
+          "description": "Object",
+          "lossless": true,
+          "properties": [
+            {
+              "name": "a",
+              "type": "number",
+              "value": "1"
+            }
+          ]
+        },
+        "value": {
+          "type": "object",
+          "description": "Object",
+          "lossless": true,
+          "properties": [
+            {
+              "name": "b",
+              "type": "number",
+              "value": "2"
+            }
+          ]
+        }
+      },
+      {
+        "key": {
+          "type": "object",
+          "description": "body",
+          "lossless": false,
+          "subtype": "node",
+          "overflow": true,
+          "properties": [
+            {
+              "name": "aLink",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "background",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "bgColor",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "link",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "text",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        },
+        "value": {
+          "type": "object",
+          "description": "Array[2]",
+          "lossless": true,
+          "subtype": "array",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "0",
+              "type": "number",
+              "value": "1"
+            },
+            {
+              "name": "1",
+              "type": "number",
+              "value": "2"
+            }
+          ]
+        }
+      }
+    ]
   }
 }
 
@@ -1947,25 +2216,130 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
 EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
 {
   "_type": "object",
+  "_subtype": "map",
   "_objectId": "<filtered>",
   "_description": "Map",
   "_preview": {
-    "lossless": true,
-    "overflow": false,
-    "properties": []
+    "type": "object",
+    "description": "Map",
+    "lossless": false,
+    "subtype": "map",
+    "overflow": true,
+    "properties": [],
+    "entries": [
+      {
+        "key": {
+          "type": "number",
+          "description": "0",
+          "lossless": true
+        },
+        "value": {
+          "type": "number",
+          "description": "0",
+          "lossless": true
+        }
+      },
+      {
+        "key": {
+          "type": "number",
+          "description": "1",
+          "lossless": true
+        },
+        "value": {
+          "type": "number",
+          "description": "1",
+          "lossless": true
+        }
+      },
+      {
+        "key": {
+          "type": "number",
+          "description": "2",
+          "lossless": true
+        },
+        "value": {
+          "type": "number",
+          "description": "2",
+          "lossless": true
+        }
+      },
+      {
+        "key": {
+          "type": "number",
+          "description": "3",
+          "lossless": true
+        },
+        "value": {
+          "type": "number",
+          "description": "3",
+          "lossless": true
+        }
+      },
+      {
+        "key": {
+          "type": "number",
+          "description": "4",
+          "lossless": true
+        },
+        "value": {
+          "type": "number",
+          "description": "4",
+          "lossless": true
+        }
+      }
+    ]
   }
 }
 
 -----------------------------------------------------
-EXPRESSION: map = new WeakMap; map.set({id:1}, [1,2]); map
+EXPRESSION: map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); map
 {
   "_type": "object",
+  "_subtype": "weakmap",
   "_objectId": "<filtered>",
   "_description": "WeakMap",
   "_preview": {
+    "type": "object",
+    "description": "WeakMap",
     "lossless": true,
+    "subtype": "weakmap",
     "overflow": false,
-    "properties": []
+    "properties": [],
+    "entries": [
+      {
+        "key": {
+          "type": "object",
+          "description": "Object",
+          "lossless": true,
+          "properties": [
+            {
+              "name": "id",
+              "type": "number",
+              "value": "1"
+            }
+          ]
+        },
+        "value": {
+          "type": "object",
+          "description": "Array[2]",
+          "lossless": true,
+          "subtype": "array",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "0",
+              "type": "number",
+              "value": "1"
+            },
+            {
+              "name": "1",
+              "type": "number",
+              "value": "2"
+            }
+          ]
+        }
+      }
+    ]
   }
 }
 
@@ -1973,12 +2347,17 @@ EXPRESSION: map = new WeakMap; map.set({id:1}, [1,2]); map
 EXPRESSION: new Set
 {
   "_type": "object",
+  "_subtype": "set",
   "_objectId": "<filtered>",
   "_description": "Set",
   "_preview": {
+    "type": "object",
+    "description": "Set",
     "lossless": true,
+    "subtype": "set",
     "overflow": false,
-    "properties": []
+    "properties": [],
+    "entries": []
   }
 }
 
@@ -1986,12 +2365,39 @@ EXPRESSION: new Set
 EXPRESSION: set = new Set; set.add(1); set.add(2); set.add('key'); set
 {
   "_type": "object",
+  "_subtype": "set",
   "_objectId": "<filtered>",
   "_description": "Set",
   "_preview": {
+    "type": "object",
+    "description": "Set",
     "lossless": true,
+    "subtype": "set",
     "overflow": false,
-    "properties": []
+    "properties": [],
+    "entries": [
+      {
+        "value": {
+          "type": "number",
+          "description": "1",
+          "lossless": true
+        }
+      },
+      {
+        "value": {
+          "type": "number",
+          "description": "2",
+          "lossless": true
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "description": "key",
+          "lossless": true
+        }
+      }
+    ]
   }
 }
 
@@ -1999,12 +2405,89 @@ EXPRESSION: set = new Set; set.add(1); set.add(2); set.add('key'); set
 EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]); set
 {
   "_type": "object",
+  "_subtype": "set",
   "_objectId": "<filtered>",
   "_description": "Set",
   "_preview": {
+    "type": "object",
+    "description": "Set",
     "lossless": true,
+    "subtype": "set",
     "overflow": false,
-    "properties": []
+    "properties": [],
+    "entries": [
+      {
+        "value": {
+          "type": "object",
+          "description": "Object",
+          "lossless": true,
+          "properties": [
+            {
+              "name": "a",
+              "type": "number",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      {
+        "value": {
+          "type": "object",
+          "description": "body",
+          "lossless": false,
+          "subtype": "node",
+          "overflow": true,
+          "properties": [
+            {
+              "name": "aLink",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "background",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "bgColor",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "link",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "text",
+              "type": "string",
+              "value": ""
+            }
+          ]
+        }
+      },
+      {
+        "value": {
+          "type": "object",
+          "description": "Array[2]",
+          "lossless": true,
+          "subtype": "array",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "0",
+              "type": "number",
+              "value": "1"
+            },
+            {
+              "name": "1",
+              "type": "number",
+              "value": "2"
+            }
+          ]
+        }
+      }
+    ]
   }
 }
 
@@ -2012,12 +2495,53 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
 EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
 {
   "_type": "object",
+  "_subtype": "set",
   "_objectId": "<filtered>",
   "_description": "Set",
   "_preview": {
-    "lossless": true,
-    "overflow": false,
-    "properties": []
+    "type": "object",
+    "description": "Set",
+    "lossless": false,
+    "subtype": "set",
+    "overflow": true,
+    "properties": [],
+    "entries": [
+      {
+        "value": {
+          "type": "number",
+          "description": "0",
+          "lossless": true
+        }
+      },
+      {
+        "value": {
+          "type": "number",
+          "description": "1",
+          "lossless": true
+        }
+      },
+      {
+        "value": {
+          "type": "number",
+          "description": "2",
+          "lossless": true
+        }
+      },
+      {
+        "value": {
+          "type": "number",
+          "description": "3",
+          "lossless": true
+        }
+      },
+      {
+        "value": {
+          "type": "number",
+          "description": "4",
+          "lossless": true
+        }
+      }
+    ]
   }
 }
 
@@ -2028,8 +2552,9 @@ EXPRESSION: new Promise(function(){})
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
+    "type": "object",
+    "description": "Promise",
     "lossless": true,
-    "overflow": false,
     "properties": []
   }
 }
@@ -2041,8 +2566,9 @@ EXPRESSION: Promise.reject()
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
+    "type": "object",
+    "description": "Promise",
     "lossless": true,
-    "overflow": false,
     "properties": []
   }
 }
@@ -2054,8 +2580,9 @@ EXPRESSION: Promise.resolve()
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
+    "type": "object",
+    "description": "Promise",
     "lossless": true,
-    "overflow": false,
     "properties": []
   }
 }

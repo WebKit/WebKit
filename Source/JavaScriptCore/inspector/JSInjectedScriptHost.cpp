@@ -30,14 +30,18 @@
 #include "Error.h"
 #include "InjectedScriptHost.h"
 #include "JSArray.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSInjectedScriptHostPrototype.h"
+#include "JSMap.h"
+#include "JSSet.h"
 #include "JSTypedArrays.h"
+#include "JSWeakMap.h"
 #include "ObjectConstructor.h"
-#include "JSCInlines.h"
 #include "RegExpObject.h"
 #include "SourceCode.h"
 #include "TypedArrayInlines.h"
+#include "WeakMapData.h"
 
 using namespace JSC;
 
@@ -129,6 +133,14 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
         return jsNontrivialString(exec, ASCIILiteral("date"));
     if (value.inherits(RegExpObject::info()))
         return jsNontrivialString(exec, ASCIILiteral("regexp"));
+
+    if (value.inherits(JSMap::info()))
+        return jsNontrivialString(exec, ASCIILiteral("map"));
+    if (value.inherits(JSSet::info()))
+        return jsNontrivialString(exec, ASCIILiteral("set"));
+    if (value.inherits(JSWeakMap::info()))
+        return jsNontrivialString(exec, ASCIILiteral("weakmap"));
+
     if (value.inherits(JSInt8Array::info()) || value.inherits(JSInt16Array::info()) || value.inherits(JSInt32Array::info()))
         return jsNontrivialString(exec, ASCIILiteral("array"));
     if (value.inherits(JSUint8Array::info()) || value.inherits(JSUint16Array::info()) || value.inherits(JSUint32Array::info()))
@@ -183,6 +195,37 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState*)
 {
     // FIXME: <https://webkit.org/b/94533> [JSC] expose object inner properties to debugger
     return jsUndefined();
+}
+
+JSValue JSInjectedScriptHost::weakMapEntries(ExecState* exec)
+{
+    if (exec->argumentCount() < 1)
+        return jsUndefined();
+
+    JSValue value = exec->uncheckedArgument(0);
+    JSWeakMap* weakMap = jsDynamicCast<JSWeakMap*>(value);
+    if (!weakMap)
+        return jsUndefined();
+
+    unsigned fetched = 0;
+    unsigned numberToFetch = 100;
+
+    JSValue numberToFetchArg = exec->argument(1);
+    double fetchDouble = numberToFetchArg.toInteger(exec);
+    if (fetchDouble >= 0)
+        numberToFetch = static_cast<unsigned>(fetchDouble);
+
+    JSArray* array = constructEmptyArray(exec, nullptr);
+    for (auto it = weakMap->weakMapData()->begin(); it != weakMap->weakMapData()->end(); ++it) {
+        JSObject* entry = constructEmptyObject(exec);
+        entry->putDirect(exec->vm(), Identifier(exec, "key"), it->key);
+        entry->putDirect(exec->vm(), Identifier(exec, "value"), it->value.get());
+        array->putDirectIndex(exec, fetched++, entry);
+        if (numberToFetch && fetched >= numberToFetch)
+            break;
+    }
+
+    return array;
 }
 
 JSValue toJS(ExecState* exec, JSGlobalObject* globalObject, InjectedScriptHost* impl)
