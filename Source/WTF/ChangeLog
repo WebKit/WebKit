@@ -1,3 +1,17 @@
+2015-01-28  Namhoon Kim  <namkim@ea.com>
+
+        Windows return -1 when calling vsnprintf with arguments that exceed target buffer size
+        https://bugs.webkit.org/show_bug.cgi?id=140917
+
+        Reviewed by Brent Fulgham.
+
+        Fix return value of vsnprintf when windows API return -1 to denote
+        requested buffer exceeded. Replace return value by calling vscprintf.
+
+        * wtf/StringExtras.h:
+        (snprintf): Fix return value by calling vscprintf when buffer exceeded.
+        (wtf_vsnprintf): Ditto.
+
 2015-01-28  Geoffrey Garen  <ggaren@apple.com>
 
         Removed fastMallocForbid / fastMallocAllow

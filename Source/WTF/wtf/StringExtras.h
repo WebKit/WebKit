@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Electronic Arts, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,12 +38,16 @@
 #if COMPILER(MSVC)
 // FIXME: why a COMPILER check instead of OS? also, these should be HAVE checks
 
+#include <errno.h>
+
 inline int snprintf(char* buffer, size_t count, const char* format, ...) 
 {
     int result;
     va_list args;
     va_start(args, format);
     result = _vsnprintf(buffer, count, format, args);
+    if (result < 0 && errno != EINVAL)
+        result = _vscprintf(format, args);
     va_end(args);
 
     // In the case where the string entirely filled the buffer, _vsnprintf will not
@@ -56,6 +61,8 @@ inline int snprintf(char* buffer, size_t count, const char* format, ...)
 inline double wtf_vsnprintf(char* buffer, size_t count, const char* format, va_list args)
 {
     int result = _vsnprintf(buffer, count, format, args);
+    if (result < 0 && errno != EINVAL)
+        result = _vscprintf(format, args);
 
     // In the case where the string entirely filled the buffer, _vsnprintf will not
     // null-terminate it, but vsnprintf must.
