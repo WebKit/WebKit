@@ -288,7 +288,7 @@ ALWAYS_INLINE unsigned ElementData::findAttributeIndexByName(const AtomicString&
 {
     const Attribute* attributes = attributeBase();
     bool doSlowCheck = shouldIgnoreAttributeCase;
-    const AtomicString& caseAdjustedName = shouldIgnoreAttributeCase ? name.lower() : name;
+    const AtomicString& caseAdjustedName = shouldIgnoreAttributeCase ? name.convertToASCIILowercase() : name;
 
     // Optimize for the case where the attribute exists and its name exactly matches.
     for (unsigned i = 0, count = length(); i < count; ++i) {

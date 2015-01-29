@@ -1,3 +1,32 @@
+2015-01-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        Start fixing the handling of Element's attributes when they contain non-ASCII characters
+        https://bugs.webkit.org/show_bug.cgi?id=141016
+
+        Reviewed by Ryosuke Niwa.
+
+        Start some basic testing.
+
+        Some tests are failing due to the more complicated case being handled incorrectly, this will
+        be fixed in follow ups.
+
+        * fast/css/attribute-ascii-case-insensitive-html-expected.html: Added.
+        * fast/css/attribute-ascii-case-insensitive-html.html: Added.
+        * fast/css/attribute-ascii-case-insensitive-xhtml-expected.xhtml: Added.
+        * fast/css/attribute-ascii-case-insensitive-xhtml.xhtml: Added.
+        * fast/css/attribute-ascii-case-insensitive-xml-in-html-expected.html: Added.
+        * fast/css/attribute-ascii-case-insensitive-xml-in-html.html: Added.
+        * fast/dom/Element/attribute-ascii-case-insensitive-1-expected.txt: Added.
+        * fast/dom/Element/attribute-ascii-case-insensitive-1.html: Added.
+        * fast/dom/Element/attribute-ascii-case-insensitive-2-expected.txt: Added.
+        * fast/dom/Element/attribute-ascii-case-insensitive-2.html: Added.
+        * fast/selectors/attribute-ascii-case-insensitive-style-update-expected.txt: Added.
+        * fast/selectors/attribute-ascii-case-insensitive-style-update.html: Added.
+        * fast/selectors/element-matches-attribute-ascii-case-insensitive-html-expected.txt: Added.
+        * fast/selectors/element-matches-attribute-ascii-case-insensitive-html.html: Added.
+        * fast/selectors/querySelector-attribute-ascii-case-insensitive-html-expected.txt: Added.
+        * fast/selectors/querySelector-attribute-ascii-case-insensitive-html.html: Added.
+
 2015-01-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Actually delete the file!

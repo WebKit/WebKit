@@ -180,6 +180,7 @@ bool ElementData::isEquivalent(const ElementData* other) const
 
 unsigned ElementData::findAttributeIndexByNameSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
+    // FIXME: this should use ASCII case-insensitive, not unicode case-insensitive.
     // Continue to checking case-insensitively and/or full namespaced names if necessary:
     const Attribute* attributes = attributeBase();
     unsigned length = this->length();

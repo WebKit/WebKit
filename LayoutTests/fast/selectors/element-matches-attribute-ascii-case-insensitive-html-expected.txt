@@ -1,0 +1,105 @@
+Attribute matching is ASCII case-insensitive in HTML.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll('[id^=target]')[0].matches('[data-æøå]') is true
+PASS document.querySelectorAll('[id^=target]')[1].matches('[data-æøå]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches('[data-æøå]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches('[data-æøå]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches('[data-Æøå]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches('[data-Æøå]') is true
+PASS document.querySelectorAll('[id^=target]')[2].matches('[data-Æøå]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches('[data-Æøå]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches('[data-ÆØÅ]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches('[data-ÆØÅ]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches('[data-ÆØÅ]') is true
+PASS document.querySelectorAll('[id^=target]')[3].matches('[data-ÆØÅ]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches('[data-æØå]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches('[data-æØå]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches('[data-æØå]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches('[data-æØå]') is false
+PASS document.querySelectorAll('[id^=target]')[0].matches('[Data-æøå="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[1].matches('[Data-æøå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches('[Data-æøå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches('[Data-æøå="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches('[Data-Æøå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches('[Data-Æøå="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[2].matches('[Data-Æøå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches('[Data-Æøå="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches('[Data-ÆØÅ="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches('[Data-ÆØÅ="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches('[Data-ÆØÅ="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[3].matches('[Data-ÆØÅ="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches('[Data-æØå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches('[Data-æØå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches('[Data-æØå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches('[Data-æØå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[0].matches('[DATA-æøå^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[1].matches('[DATA-æøå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches('[DATA-æøå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches('[DATA-æøå^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches('[DATA-Æøå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches('[DATA-Æøå^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[2].matches('[DATA-Æøå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches('[DATA-Æøå^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches('[DATA-ÆØÅ^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches('[DATA-ÆØÅ^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches('[DATA-ÆØÅ^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[3].matches('[DATA-ÆØÅ^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches('[DATA-æØå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches('[DATA-æØå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches('[DATA-æØå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches('[DATA-æØå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [data-æøå]') is true
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [data-æøå]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [data-æøå]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [data-æøå]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [data-Æøå]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [data-Æøå]') is true
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [data-Æøå]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [data-Æøå]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [data-ÆØÅ]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [data-ÆØÅ]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [data-ÆØÅ]') is true
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [data-ÆØÅ]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [data-æØå]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [data-æØå]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [data-æØå]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [data-æØå]') is false
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [Data-æøå="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [Data-æøå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [Data-æøå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [Data-æøå="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [Data-Æøå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [Data-Æøå="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [Data-Æøå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [Data-Æøå="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [Data-ÆØÅ="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [Data-ÆØÅ="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [Data-ÆØÅ="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [Data-ÆØÅ="WebKit!"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [Data-æØå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [Data-æØå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [Data-æØå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [Data-æØå="WebKit!"]') is false
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [DATA-æøå^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [DATA-æøå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [DATA-æøå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [DATA-æøå^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [DATA-Æøå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [DATA-Æøå^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [DATA-Æøå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [DATA-Æøå^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [DATA-ÆØÅ^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [DATA-ÆØÅ^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [DATA-ÆØÅ^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [DATA-ÆØÅ^="Web"]') is true
+PASS document.querySelectorAll('[id^=target]')[0].matches(':root >> :matches(body, html) >> [DATA-æØå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[1].matches(':root >> :matches(body, html) >> [DATA-æØå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[2].matches(':root >> :matches(body, html) >> [DATA-æØå^="Web"]') is false
+PASS document.querySelectorAll('[id^=target]')[3].matches(':root >> :matches(body, html) >> [DATA-æØå^="Web"]') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

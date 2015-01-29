@@ -1,3 +1,42 @@
+2015-01-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        Start fixing the handling of Element's attributes when they contain non-ASCII characters
+        https://bugs.webkit.org/show_bug.cgi?id=141016
+
+        Reviewed by Ryosuke Niwa.
+
+        Attribute handling does not work properly when the attribute name contains non-ASCII character.
+
+        The HTML parser tokenize those names as ASCII lowercase. Some of the code is CSS and Element use
+        unicode lowercase for the names. This breaks all the APIs as soon as a name contains a character
+        that is non-ASCII and uppercase since some APIs change it, other don't.
+
+        This patch is a first step toward fixing this mess, it only address the simple cases.
+        The HTML spec says the names should be compared ASCII case-insensitive, to I spread that behavior
+        to places that were using unicode.
+
+        Tests: fast/css/attribute-ascii-case-insensitive-html.html
+               fast/css/attribute-ascii-case-insensitive-xhtml-expected.xhtml
+               fast/css/attribute-ascii-case-insensitive-xhtml.xhtml
+               fast/css/attribute-ascii-case-insensitive-xml-in-html.html
+               fast/dom/Element/attribute-ascii-case-insensitive-1.html
+               fast/dom/Element/attribute-ascii-case-insensitive-2.html
+               fast/selectors/attribute-ascii-case-insensitive-style-update.html
+               fast/selectors/element-matches-attribute-ascii-case-insensitive-html.html
+               fast/selectors/querySelector-attribute-ascii-case-insensitive-html.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::setAttribute):
+        * dom/Element.cpp:
+        (WebCore::Element::synchronizeAttribute):
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::hasAttribute):
+        * dom/ElementData.cpp:
+        (WebCore::ElementData::findAttributeIndexByNameSlowCase):
+        * dom/ElementData.h:
+        (WebCore::ElementData::findAttributeIndexByName):
+
 2015-01-28  Zalan Bujtas  <zalan@apple.com>
 
         Simple line layout: Drop uncommitted/committed terms from LineState.

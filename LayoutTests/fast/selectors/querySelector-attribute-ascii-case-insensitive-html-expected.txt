@@ -1,0 +1,69 @@
+Attribute matching is ASCII case-insensitive in HTML.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll('[data-æøå]').length is 2
+PASS document.querySelectorAll('[data-æøå]')[0].id is "target1"
+PASS document.querySelectorAll('[data-æøå]')[1].id is "target4"
+PASS document.querySelectorAll('[data-Æøå]').length is 2
+PASS document.querySelectorAll('[data-Æøå]')[0].id is "target2"
+PASS document.querySelectorAll('[data-Æøå]')[1].id is "target4"
+PASS document.querySelectorAll('[data-ÆØÅ]').length is 2
+PASS document.querySelectorAll('[data-ÆØÅ]')[0].id is "target3"
+PASS document.querySelectorAll('[data-ÆØÅ]')[1].id is "target4"
+PASS document.querySelectorAll('[data-æØå]').length is 0
+PASS document.querySelectorAll('[Data-æøå="WebKit!"]').length is 2
+PASS document.querySelectorAll('[Data-æøå="WebKit!"]')[0].id is "target1"
+PASS document.querySelectorAll('[Data-æøå="WebKit!"]')[1].id is "target4"
+PASS document.querySelectorAll('[Data-Æøå="WebKit!"]').length is 2
+PASS document.querySelectorAll('[Data-Æøå="WebKit!"]')[0].id is "target2"
+PASS document.querySelectorAll('[Data-Æøå="WebKit!"]')[1].id is "target4"
+PASS document.querySelectorAll('[Data-ÆØÅ="WebKit!"]').length is 2
+PASS document.querySelectorAll('[Data-ÆØÅ="WebKit!"]')[0].id is "target3"
+PASS document.querySelectorAll('[Data-ÆØÅ="WebKit!"]')[1].id is "target4"
+PASS document.querySelectorAll('[Data-æØå="WebKit!"]').length is 0
+PASS document.querySelectorAll('[DATA-æøå^="Web"]').length is 2
+PASS document.querySelectorAll('[DATA-æøå^="Web"]')[0].id is "target1"
+PASS document.querySelectorAll('[DATA-æøå^="Web"]')[1].id is "target4"
+PASS document.querySelectorAll('[DATA-Æøå^="Web"]').length is 2
+PASS document.querySelectorAll('[DATA-Æøå^="Web"]')[0].id is "target2"
+PASS document.querySelectorAll('[DATA-Æøå^="Web"]')[1].id is "target4"
+PASS document.querySelectorAll('[DATA-ÆØÅ^="Web"]').length is 2
+PASS document.querySelectorAll('[DATA-ÆØÅ^="Web"]')[0].id is "target3"
+PASS document.querySelectorAll('[DATA-ÆØÅ^="Web"]')[1].id is "target4"
+PASS document.querySelectorAll('[DATA-æØå^="Web"]').length is 0
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [data-æøå]').length is 2
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [data-æøå]')[0].id is "target1"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [data-æøå]')[1].id is "target4"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [data-Æøå]').length is 2
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [data-Æøå]')[0].id is "target2"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [data-Æøå]')[1].id is "target4"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [data-ÆØÅ]').length is 2
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [data-ÆØÅ]')[0].id is "target3"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [data-ÆØÅ]')[1].id is "target4"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [data-æØå]').length is 0
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [Data-æøå="WebKit!"]').length is 2
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [Data-æøå="WebKit!"]')[0].id is "target1"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [Data-æøå="WebKit!"]')[1].id is "target4"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [Data-Æøå="WebKit!"]').length is 2
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [Data-Æøå="WebKit!"]')[0].id is "target2"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [Data-Æøå="WebKit!"]')[1].id is "target4"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [Data-ÆØÅ="WebKit!"]').length is 2
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [Data-ÆØÅ="WebKit!"]')[0].id is "target3"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [Data-ÆØÅ="WebKit!"]')[1].id is "target4"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [Data-æØå="WebKit!"]').length is 0
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [DATA-æøå^="Web"]').length is 2
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [DATA-æøå^="Web"]')[0].id is "target1"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [DATA-æøå^="Web"]')[1].id is "target4"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [DATA-Æøå^="Web"]').length is 2
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [DATA-Æøå^="Web"]')[0].id is "target2"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [DATA-Æøå^="Web"]')[1].id is "target4"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [DATA-ÆØÅ^="Web"]').length is 2
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [DATA-ÆØÅ^="Web"]')[0].id is "target3"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [DATA-ÆØÅ^="Web"]')[1].id is "target4"
+PASS document.querySelectorAll(':root >> :matches(body, html) >> [DATA-æØå^="Web"]').length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

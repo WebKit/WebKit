@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+    <div id="target1" data-æøå="WebKit!"></div>
+    <div id="target2" data-Æøå="WebKit!"></div>
+    <div id="target3" data-ÆØÅ="WebKit!"></div>
+    <div id="target4" data-æøå="WebKit!" data-Æøå="WebKit!" data-ÆØÅ="WebKit!"></div>
+</div>
+</body>
+<script>
+description('Attribute matching is ASCII case-insensitive in HTML.');
+
+function testSelector(selector, expected) {
+    shouldBe('document.querySelectorAll(\'' + selector + '\').length', '' + expected.length);
+    for (var i = 0; i < expected.length; ++i) {
+        shouldBeEqualToString('document.querySelectorAll(\'' + selector + '\')[' + i + '].id', 'target' + expected[i]);
+    }
+}
+
+// Simple selectors.
+testSelector('[data-æøå]', [1, 4]);
+testSelector('[data-Æøå]', [2, 4]);
+testSelector('[data-ÆØÅ]', [3, 4]);
+testSelector('[data-æØå]', []);
+
+testSelector('[Data-æøå="WebKit!"]', [1, 4]);
+testSelector('[Data-Æøå="WebKit!"]', [2, 4]);
+testSelector('[Data-ÆØÅ="WebKit!"]', [3, 4]);
+testSelector('[Data-æØå="WebKit!"]', []);
+
+testSelector('[DATA-æøå^="Web"]', [1, 4]);
+testSelector('[DATA-Æøå^="Web"]', [2, 4]);
+testSelector('[DATA-ÆØÅ^="Web"]', [3, 4]);
+testSelector('[DATA-æØå^="Web"]', []);
+
+// Complex selectors.
+testSelector(':root >> :matches(body, html) >> [data-æøå]', [1, 4]);
+testSelector(':root >> :matches(body, html) >> [data-Æøå]', [2, 4]);
+testSelector(':root >> :matches(body, html) >> [data-ÆØÅ]', [3, 4]);
+testSelector(':root >> :matches(body, html) >> [data-æØå]', []);
+
+testSelector(':root >> :matches(body, html) >> [Data-æøå="WebKit!"]', [1, 4]);
+testSelector(':root >> :matches(body, html) >> [Data-Æøå="WebKit!"]', [2, 4]);
+testSelector(':root >> :matches(body, html) >> [Data-ÆØÅ="WebKit!"]', [3, 4]);
+testSelector(':root >> :matches(body, html) >> [Data-æØå="WebKit!"]', []);
+
+testSelector(':root >> :matches(body, html) >> [DATA-æøå^="Web"]', [1, 4]);
+testSelector(':root >> :matches(body, html) >> [DATA-Æøå^="Web"]', [2, 4]);
+testSelector(':root >> :matches(body, html) >> [DATA-ÆØÅ^="Web"]', [3, 4]);
+testSelector(':root >> :matches(body, html) >> [DATA-æØå^="Web"]', []);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>
