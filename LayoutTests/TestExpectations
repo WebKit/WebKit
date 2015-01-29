@@ -98,6 +98,7 @@ webkit.org/b/131919 inspector/dom [ Skip ]
 # Disabled the expectations because these tests are also skipped above.
 # webkit.org/b/129817 inspector/dom/content-flow-list.html [ Pass Failure ]
 # webkit.org/b/129817 inspector/dom/content-flow-content-removal.html [ Pass Failure ]
+inspector/model/remote-object-get-properties.html [ Skip ]
 
 # Collecting region's children in a named flow not supported yet
 webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]
