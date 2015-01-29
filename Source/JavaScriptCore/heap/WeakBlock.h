@@ -26,7 +26,7 @@
 #ifndef WeakBlock_h
 #define WeakBlock_h
 
-#include "HeapBlock.h"
+#include <wtf/DoublyLinkedList.h>
 #include "WeakHandleOwner.h"
 #include "WeakImpl.h"
 #include <wtf/DoublyLinkedList.h>
@@ -34,14 +34,13 @@
 
 namespace JSC {
 
-class DeadBlock;
 class HeapRootVisitor;
 class JSValue;
 class WeakHandleOwner;
 
-class WeakBlock : public HeapBlock<WeakBlock> {
+class WeakBlock : public DoublyLinkedListNode<WeakBlock> {
 public:
-    friend class WTF::DoublyLinkedListNode<WeakBlock>;
+    friend class DoublyLinkedListNode<WeakBlock>;
     static const size_t blockSize = 4 * KB; // 5% of MarkedBlock size
 
     struct FreeCell {
@@ -56,7 +55,8 @@ public:
         FreeCell* freeList;
     };
 
-    static WeakBlock* create(DeadBlock*);
+    static WeakBlock* create();
+    static void destroy(WeakBlock*);
 
     static WeakImpl* asWeakImpl(FreeCell*);
 
@@ -73,13 +73,15 @@ public:
 private:
     static FreeCell* asFreeCell(WeakImpl*);
 
-    WeakBlock(Region*);
+    WeakBlock();
     WeakImpl* firstWeakImpl();
     void finalize(WeakImpl*);
     WeakImpl* weakImpls();
     size_t weakImplCount();
     void addToFreeList(FreeCell**, WeakImpl*);
 
+    WeakBlock* m_prev;
+    WeakBlock* m_next;
     SweepResult m_sweepResult;
 };
 
