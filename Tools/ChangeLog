@@ -1,3 +1,12 @@
+2015-01-28  Dana Burkart  <dburkart@apple.com>
+
+        asan.xcconfig should use CLANG_ADDRESS_SANITIZER=YES instead of -fsanitize=address
+        https://bugs.webkit.org/show_bug.cgi?id=141015
+
+        Reviewed by Alexey Proskuryakov.
+
+        * asan/asan.xcconfig:
+
 2015-01-28  Sam Weinig  <sam@webkit.org>
 
         Fix the build.

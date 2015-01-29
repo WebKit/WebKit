@@ -10,8 +10,9 @@ GCC_OPTIMIZATION_LEVEL_Debug = 0;
 GCC_OPTIMIZATION_LEVEL_Production = 1;
 GCC_OPTIMIZATION_LEVEL_Release = 1;
 
-ASAN_OTHER_CFLAGS = -fsanitize=address -fsanitize-blacklist=$(ASAN_IGNORE) -fno-omit-frame-pointer -g;
+CLANG_ADDRESS_SANITIZER=YES
+
+ASAN_OTHER_CFLAGS = -fsanitize-blacklist=$(ASAN_IGNORE) -fno-omit-frame-pointer -g;
 ASAN_OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CFLAGS);
-ASAN_OTHER_LDFLAGS = -fsanitize=address;
 
 GCC_ENABLE_OBJC_GC = NO;
