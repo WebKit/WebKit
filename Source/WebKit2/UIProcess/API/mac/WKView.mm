@@ -2857,7 +2857,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     if (_data->_ignoresNonWheelEvents)
         return;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (_data->_immediateActionGestureRecognizer) {
         [super quickLookWithEvent:event];
         return;
