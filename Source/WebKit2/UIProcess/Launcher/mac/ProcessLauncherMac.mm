@@ -177,14 +177,18 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API)
     case ProcessLauncher::PluginProcess:
-        if (forDevelopment)
-            return "com.apple.WebKit.Plugin.Development";
-
         // FIXME: Support plugins that require an executable heap.
-        if (launchOptions.architecture == CPU_TYPE_X86)
-            return "com.apple.WebKit.Plugin.32";
-        if (launchOptions.architecture == CPU_TYPE_X86_64)
-            return "com.apple.WebKit.Plugin.64";
+        if (forDevelopment) {
+            if (launchOptions.architecture == CPU_TYPE_X86)
+                return "com.apple.WebKit.Plugin.32.Development";
+            if (launchOptions.architecture == CPU_TYPE_X86_64)
+                return "com.apple.WebKit.Plugin.64.Development";
+        } else {
+            if (launchOptions.architecture == CPU_TYPE_X86)
+                return "com.apple.WebKit.Plugin.32";
+            if (launchOptions.architecture == CPU_TYPE_X86_64)
+                return "com.apple.WebKit.Plugin.64";
+        }
 
         ASSERT_NOT_REACHED();
         return 0;

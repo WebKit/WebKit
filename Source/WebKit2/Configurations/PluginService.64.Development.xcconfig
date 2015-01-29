@@ -23,20 +23,18 @@
 
 #include "BaseXPCService.xcconfig"
 
-WK_XPC_SERVICE_VARIANT = Normal;
+WK_XPC_SERVICE_VARIANT = Development;
 
 VALID_ARCHS[sdk=macosx*] = $(VALID_ARCHS_macosx_$(ONLY_ACTIVE_ARCH));
 VALID_ARCHS_macosx_YES = $(VALID_ARCHS);
-VALID_ARCHS_macosx_NO = i386;
+VALID_ARCHS_macosx_NO = x86_64;
 
-PRODUCT_NAME = com.apple.WebKit.Plugin.32;
-INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist;
-
-FRAMEWORK_LDFLAGS = -framework Foundation -framework WebKit2;
-
-OTHER_LDFLAGS = $(FRAMEWORK_LDFLAGS) $(OTHER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH);
-OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework AppKit;
+PRODUCT_NAME = com.apple.WebKit.Plugin.64.Development;
+INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/Info.plist;
 
 CODE_SIGN_ENTITLEMENTS = Configurations/PluginService.entitlements;
 
 SKIP_INSTALL[sdk=iphone*] = YES;
+
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH) $(OTHER_LDFLAGS_PLATFORM);
+OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework AppKit;

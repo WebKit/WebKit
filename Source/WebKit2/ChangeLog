@@ -1,3 +1,34 @@
+2015-01-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Frequent kernel panics when running WebKit regression tests
+        https://bugs.webkit.org/show_bug.cgi?id=141043
+
+        Reviewed by Sam Weinig.
+
+        Split PluginService.Development into 32-bit and 64-bit variants, to better match
+        production variant. When building FAT, we'll have the right architecture from
+        the start now, so no need to re-exec into a different architecture.        
+
+        * Configurations/PluginService.Development.xcconfig: Removed.
+        * Configurations/PluginService.32.Development.xcconfig: Copied from Source/WebKit2/Configurations/PluginService.Development.xcconfig.
+        * Configurations/PluginService.64.Development.xcconfig: Copied from Source/WebKit2/Configurations/PluginService.Development.xcconfig.
+        Changed to use ONLY_ACTIVE_ARCH instead of CONFIGURATION, so that we build the
+        right thing even in debug FAT builds.
+
+        * Configurations/PluginService.32.xcconfig:
+        * Configurations/PluginService.64.xcconfig:
+        While at it, applied the same changes as in Development variants. This means that
+        FAT builds will now build only the correct architecture for PluginService.64
+        (it used to build FAT, unnecessarily).
+
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/Info.plist:
+        Updated to support multiple product names.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm: (WebKit::serviceName): Launch the
+        right development service.
+
+        * WebKit2.xcodeproj/project.pbxproj: Split the Plugin.Development target into two.
+
 2015-01-29  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build with newer Clang

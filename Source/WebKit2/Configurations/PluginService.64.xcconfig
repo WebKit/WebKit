@@ -25,19 +25,14 @@
 
 WK_XPC_SERVICE_VARIANT = Normal;
 
-ARCHS[sdk=macosx*] = x86_64;
+VALID_ARCHS[sdk=macosx*] = $(VALID_ARCHS_macosx_$(ONLY_ACTIVE_ARCH));
+VALID_ARCHS_macosx_YES = $(VALID_ARCHS);
+VALID_ARCHS_macosx_NO = x86_64;
 
 PRODUCT_NAME = com.apple.WebKit.Plugin.64;
 INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist;
 
-// Since this service is only used in production builds, in debug and release builds
-// we don't link against WebKit2, to avoid linking errors due to not having a WebKit2
-// of the right architecture.
-
-FRAMEWORK_LDFLAGS = -framework Foundation $(FRAMEWORK_LDFLAGS_$(DEBUG_OR_RELEASE));
-FRAMEWORK_LDFLAGS_ = -framework WebKit2;
-FRAMEWORK_LDFLAGS_NO = -framework WebKit2;
-FRAMEWORK_LDFLAGS_YES = ;
+FRAMEWORK_LDFLAGS = -framework Foundation -framework WebKit2;
 
 OTHER_LDFLAGS = $(FRAMEWORK_LDFLAGS) $(OTHER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM) $(OTHER_LDFLAGS_VERSIONED_FRAMEWORK_PATH);
 OTHER_LDFLAGS_PLATFORM[sdk=macosx*] = -framework AppKit;
