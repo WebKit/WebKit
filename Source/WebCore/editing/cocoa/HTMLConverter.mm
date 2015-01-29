@@ -1722,13 +1722,7 @@ static inline NSDate *_dateForString(NSString *string)
         return nil;
     [dateComponents setSecond:component];
     
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
-    NSString *calendarIdentifier = NSCalendarIdentifierGregorian;
-#else
-    NSString *calendarIdentifier = NSGregorianCalendar;
-#endif
-
-    return [[[[NSCalendar alloc] initWithCalendarIdentifier:calendarIdentifier] autorelease] dateFromComponents:dateComponents.get()];
+    return [[[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian] autorelease] dateFromComponents:dateComponents.get()];
 }
 
 static NSInteger _colCompare(id block1, id block2, void *)

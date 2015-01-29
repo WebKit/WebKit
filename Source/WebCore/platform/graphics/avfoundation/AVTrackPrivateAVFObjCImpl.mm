@@ -234,11 +234,7 @@ String AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(AVAssetTrack* track)
 
 String AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption(AVMediaSelectionOption* option)
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     NSString *language = [option extendedLanguageTag];
-#else
-    NSString *language = nil;
-#endif
 
     // If the language code is stored as a QuickTime 5-bit packed code there aren't enough bits for a full
     // RFC 4646 language tag so extendedLanguageTag returns NULL. In this case languageCode will return the

@@ -153,40 +153,28 @@ GraphicsContext& IOSurface::ensureGraphicsContext()
 
 IOSurface::SurfaceState IOSurface::state() const
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     uint32_t previousState = 0;
     IOReturn ret = IOSurfaceSetPurgeable(m_surface.get(), kIOSurfacePurgeableKeepCurrent, &previousState);
     ASSERT_UNUSED(ret, ret == kIOReturnSuccess);
     return previousState == kIOSurfacePurgeableEmpty ? IOSurface::SurfaceState::Empty : IOSurface::SurfaceState::Valid;
-#else
-    return SurfaceState::Valid;
-#endif
 }
 
 bool IOSurface::isVolatile() const
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     uint32_t previousState = 0;
     IOReturn ret = IOSurfaceSetPurgeable(m_surface.get(), kIOSurfacePurgeableKeepCurrent, &previousState);
     ASSERT_UNUSED(ret, ret == kIOReturnSuccess);
     return previousState != kIOSurfacePurgeableNonVolatile;
-#else
-    return false;
-#endif
 }
 
 IOSurface::SurfaceState IOSurface::setIsVolatile(bool isVolatile)
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     uint32_t previousState = 0;
     IOReturn ret = IOSurfaceSetPurgeable(m_surface.get(), isVolatile ? kIOSurfacePurgeableVolatile : kIOSurfacePurgeableNonVolatile, &previousState);
     ASSERT_UNUSED(ret, ret == kIOReturnSuccess);
 
     if (previousState == kIOSurfacePurgeableEmpty)
         return IOSurface::SurfaceState::Empty;
-#else
-    UNUSED_PARAM(isVolatile);
-#endif
 
     return IOSurface::SurfaceState::Valid;
 }

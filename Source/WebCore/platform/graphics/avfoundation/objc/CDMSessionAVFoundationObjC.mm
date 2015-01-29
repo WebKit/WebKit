@@ -26,7 +26,7 @@
 #import "config.h"
 #import "CDMSessionAVFoundationObjC.h"
 
-#if ENABLE(ENCRYPTED_MEDIA_V2) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if ENABLE(ENCRYPTED_MEDIA_V2)
 
 #import "CDM.h"
 #import "CDMSession.h"

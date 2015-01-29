@@ -54,9 +54,7 @@ public:
 
     static bool platformCompare(const ProtectionSpace& a, const ProtectionSpace& b);
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     WEBCORE_EXPORT bool encodingRequiresPlatformData() const { return m_nsSpace && encodingRequiresPlatformData(m_nsSpace.get()); }
-#endif
 
     WEBCORE_EXPORT bool receivesCredentialSecurely() const;
 
@@ -66,9 +64,7 @@ public:
     WEBCORE_EXPORT NSURLProtectionSpace *nsSpace() const;
 
 private:
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     WEBCORE_EXPORT static bool encodingRequiresPlatformData(NSURLProtectionSpace *);
-#endif
 
     mutable RetainPtr<NSURLProtectionSpace> m_nsSpace;
 };

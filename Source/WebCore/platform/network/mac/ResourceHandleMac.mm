@@ -206,11 +206,9 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         [streamProperties setObject:@TRUE forKey:@"_WebKitSynchronousRequest"];
     }
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     RetainPtr<CFDataRef> sourceApplicationAuditData = d->m_context->sourceApplicationAuditData();
     if (sourceApplicationAuditData)
         [streamProperties setObject:(NSData *)sourceApplicationAuditData.get() forKey:@"kCFStreamPropertySourceApplication"];
-#endif
 
 #if PLATFORM(IOS)
     NSMutableDictionary *propertyDictionary = [NSMutableDictionary dictionaryWithDictionary:connectionProperties];

@@ -595,7 +595,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
         if (!m_videoLayer)
             createAVPlayerLayer();
 
-#if USE(VIDEOTOOLBOX) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if USE(VIDEOTOOLBOX)
         if (!m_videoOutput)
             createVideoOutput();
 #endif
@@ -2011,11 +2011,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
         return;
 
 #if USE(VIDEOTOOLBOX)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     NSDictionary* attributes = nil;
-#else
-    NSDictionary* attributes = @{ (NSString*)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_422YpCbCr8) };
-#endif
 #else
     NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA], kCVPixelBufferPixelFormatTypeKey,
                                 nil];

@@ -30,7 +30,7 @@ namespace WebCore {
 
 bool Settings::shouldEnableScreenFontSubstitutionByDefault()
 {
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
     return false;
 #else
     return true;
@@ -40,13 +40,8 @@ bool Settings::shouldEnableScreenFontSubstitutionByDefault()
 void Settings::initializeDefaultFontFamilies()
 {
 #if !PLATFORM(IOS)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     setStandardFontFamily("Songti TC", USCRIPT_TRADITIONAL_HAN);
     setSerifFontFamily("Songti TC", USCRIPT_TRADITIONAL_HAN);
-#else
-    setStandardFontFamily("Apple LiSung", USCRIPT_TRADITIONAL_HAN);
-    setSerifFontFamily("Apple LiSung", USCRIPT_TRADITIONAL_HAN);
-#endif
 #else
     // There is no serif Chinese font in default iOS installation.
     setStandardFontFamily("Heiti TC", USCRIPT_TRADITIONAL_HAN);
@@ -56,13 +51,8 @@ void Settings::initializeDefaultFontFamilies()
     setSansSerifFontFamily("Heiti TC", USCRIPT_TRADITIONAL_HAN);
 
 #if !PLATFORM(IOS)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     setStandardFontFamily("Songti SC", USCRIPT_SIMPLIFIED_HAN);
     setSerifFontFamily("Songti SC", USCRIPT_SIMPLIFIED_HAN);
-#else
-    setStandardFontFamily("STSong", USCRIPT_SIMPLIFIED_HAN);
-    setSerifFontFamily("STSong", USCRIPT_SIMPLIFIED_HAN);
-#endif
 #else
     // There is no serif Chinese font in default iOS installation.
     setStandardFontFamily("Heiti SC", USCRIPT_SIMPLIFIED_HAN);

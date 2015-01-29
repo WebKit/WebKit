@@ -200,11 +200,9 @@ bool ProtectionSpace::receivesCredentialSecurely() const
     return nsSpace().receivesCredentialSecurely;
 }
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 bool ProtectionSpace::encodingRequiresPlatformData(NSURLProtectionSpace *space)
 {
     return space.distinguishedNames || space.serverTrust;
 }
-#endif
 
 } // namespace WebCore

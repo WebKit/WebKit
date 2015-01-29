@@ -297,7 +297,7 @@ extern void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSStrin
 extern dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
 #endif
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
 extern dispatch_source_t (*wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue)(void);
 #endif
     

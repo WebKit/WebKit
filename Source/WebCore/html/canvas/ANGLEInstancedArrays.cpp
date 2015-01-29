@@ -50,7 +50,7 @@ WebGLExtension::ExtensionName ANGLEInstancedArrays::getName() const
 
 bool ANGLEInstancedArrays::supported(WebGLRenderingContextBase* context)
 {
-#if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(COCOA)
     UNUSED_PARAM(context);
     return true;
 #elif PLATFORM(GTK)

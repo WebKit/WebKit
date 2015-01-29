@@ -35,10 +35,7 @@
 using namespace WebCore;
 
 static const size_t kWebAudioBufferSize = 128;
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 static const size_t kLowPowerVideoBufferSize = 4096;
-#endif
 
 void MediaSessionManager::updateSessionState()
 {
@@ -46,7 +43,6 @@ void MediaSessionManager::updateSessionState()
 
     if (has(MediaSession::WebAudio))
         AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     else if ((has(MediaSession::Video) || has(MediaSession::Audio)) && Settings::lowPowerVideoAudioBufferSizeEnabled()) {
         // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
         // causes media LayoutTests to fail on 10.8.
@@ -59,7 +55,6 @@ void MediaSessionManager::updateSessionState()
 
         AudioSession::sharedSession().setPreferredBufferSize(bufferSize);
     }
-#endif
 
 #if PLATFORM(IOS)
     if (activeAudioSessionRequired())

@@ -46,7 +46,7 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
     }
 
     CCCryptorRef cryptor;
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(COCOA)
     CCAlgorithm aesAlgorithm = kCCAlgorithmAES;
 #else
     CCAlgorithm aesAlgorithm = kCCAlgorithmAES128;

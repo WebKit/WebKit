@@ -328,7 +328,6 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
 #if !USE(CFNETWORK)
 NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLConnection *connection, NSURLRequest *newRequest, NSURLResponse *redirectResponse)
 {
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (redirectResponse)
         return redirectResponse;
 
@@ -339,11 +338,6 @@ NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLConnection *connection
     // This is critical for HSTS (<rdar://problem/14241270>).
     NSDictionary *synthesizedResponseHeaderFields = @{ @"Location": [[newRequest URL] absoluteString], @"Cache-Control": @"no-store" };
     return [[[NSHTTPURLResponse alloc] initWithURL:[[connection currentRequest] URL] statusCode:302 HTTPVersion:(NSString *)kCFHTTPVersion1_1 headerFields:synthesizedResponseHeaderFields] autorelease];
-#else
-    UNUSED_PARAM(connection);
-    UNUSED_PARAM(newRequest);
-    return redirectResponse;
-#endif
 }
 #endif
 

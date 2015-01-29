@@ -166,7 +166,7 @@ void Font::platformInit()
         initFontData(this);
     }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
     // Work around <rdar://problem/19433490>
     CGGlyph dummyGlyphs[] = {0, 0};
     CGSize dummySize[] = {CGSizeMake(0, 0), CGSizeMake(0, 0)};

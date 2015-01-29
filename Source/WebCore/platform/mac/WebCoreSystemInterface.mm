@@ -151,7 +151,7 @@ void(*wkDestroyRenderingResources)(void);
 
 dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(MAC)
 dispatch_source_t (*wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue)(void);
 #endif
 

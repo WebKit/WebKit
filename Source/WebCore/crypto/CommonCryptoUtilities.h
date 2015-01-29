@@ -38,7 +38,7 @@
 #endif
 #endif
 
-#if defined(__has_include) && (PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
+#if defined(__has_include) && PLATFORM(COCOA)
 #if __has_include(<CommonCrypto/CommonRandomSPI.h>)
 #include <CommonCrypto/CommonRandomSPI.h>
 #endif

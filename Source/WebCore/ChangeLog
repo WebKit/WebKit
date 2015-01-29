@@ -1,3 +1,64 @@
+2015-01-28  Beth Dakin  <bdakin@apple.com>
+
+        Remove more Mountain Lion code from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=141014
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetSpelling):
+        (AXAttributedStringAppendText):
+        * crypto/CommonCryptoUtilities.h:
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        (WebCore::transformAES_CBC):
+        * editing/cocoa/HTMLConverter.mm:
+        (_dateForString):
+        * html/canvas/ANGLEInstancedArrays.cpp:
+        (WebCore::ANGLEInstancedArrays::supported):
+        * loader/cocoa/DiskCacheMonitorCocoa.mm:
+        * page/mac/SettingsMac.mm:
+        (WebCore::Settings::shouldEnableScreenFontSubstitutionByDefault):
+        (WebCore::Settings::initializeDefaultFontFamilies):
+        * platform/audio/mac/MediaSessionManagerMac.cpp:
+        (MediaSessionManager::updateSessionState):
+        * platform/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WebCore::MemoryPressureHandler::install):
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformLog):
+        (WebCore::MemoryPressureHandler::ReliefLogger::platformMemoryUsage): Deleted.
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        (WebCore::AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+        * platform/graphics/cocoa/IOSurface.mm:
+        (IOSurface::state):
+        (IOSurface::isVolatile):
+        (IOSurface::setIsVolatile):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::Font::platformInit):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::drawArraysInstanced):
+        (WebCore::Extensions3DOpenGL::drawElementsInstanced):
+        (WebCore::Extensions3DOpenGL::vertexAttribDivisor):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+        * platform/network/cocoa/ProtectionSpaceCocoa.h:
+        (WebCore::ProtectionSpace::encodingRequiresPlatformData):
+        * platform/network/cocoa/ProtectionSpaceCocoa.mm:
+        (WebCore::ProtectionSpace::encodingRequiresPlatformData):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::synthesizeRedirectResponseIfNecessary):
+        * platform/spi/cf/CFNetworkSPI.h:
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::LocaleMac):
+
 2015-01-29  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove an extraneous check from the parser of :not()

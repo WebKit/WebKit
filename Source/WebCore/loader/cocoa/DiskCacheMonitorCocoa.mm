@@ -41,8 +41,6 @@
 #include "WebCoreThreadRun.h"
 #endif
 
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)
-
 namespace WebCore {
 
 // The maximum number of seconds we'll try to wait for a resource to be disk cached before we forget the request.
@@ -123,5 +121,3 @@ void DiskCacheMonitor::resourceBecameFileBacked(SharedBuffer& fileBackedBuffer)
 
 
 } // namespace WebCore
-
-#endif // (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090)

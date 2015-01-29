@@ -68,7 +68,7 @@ EXTERN_C void CFURLRequestSetShouldStartSynchronously(CFURLRequestRef, Boolean);
 EXTERN_C CFURLCacheRef CFURLCacheCopySharedURLCache();
 EXTERN_C void CFURLCacheSetMemoryCapacity(CFURLCacheRef, CFIndex memoryCapacity);
 EXTERN_C void _CFURLCachePurgeMemoryCache(CFURLCacheRef);
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(COCOA)
 EXTERN_C CFBooleanRef _CFURLCacheIsResponseDataMemMapped(CFURLCacheRef, CFDataRef);
 EXTERN_C void _CFURLCacheSetMinSizeForVMCachedResource(CFURLCacheRef, CFIndex);
 
@@ -78,12 +78,12 @@ EXTERN_C void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef);
 
 EXTERN_C void CFHTTPCookieStorageDeleteAllCookies(CFHTTPCookieStorageRef);
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if PLATFORM(COCOA)
 EXTERN_C CFDataRef _CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef);
 #ifdef __BLOCKS__
 EXTERN_C void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef, CFCachedURLResponseCallBackBlock, dispatch_queue_t);
 #endif
-#endif // PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#endif // PLATFORM(COCOA)
 
 EXTERN_C void CFURLConnectionInvalidateConnectionCache();
 
