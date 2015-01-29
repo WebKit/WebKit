@@ -1,3 +1,18 @@
+2015-01-28  Antti Koivisto  <antti@apple.com>
+
+        http/tests/xmlhttprequest/workers/methods.html sometimes times out with disk cache enabled
+        https://bugs.webkit.org/show_bug.cgi?id=140976
+
+        Reviewed by Chris Dumez.
+
+        The previous fix sometimes invoked the completion handler twice. Explicitly track if we
+        have called it or not.
+
+        * NetworkProcess/cache/NetworkCacheStorageCocoa.mm:
+        (WebKit::NetworkCacheStorage::dispatchRetrieveOperation):
+
+        Also move the error case to the done branch. According to the documentation 'done' is always set on error.
+
 2015-01-28  Timothy Horton  <timothy_horton@apple.com>
 
         Add a WebKitMessageRecorder DTrace provider, exposing IPC details to DTrace

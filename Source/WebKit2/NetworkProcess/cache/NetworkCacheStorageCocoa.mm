@@ -362,25 +362,25 @@ void NetworkCacheStorage::dispatchRetrieveOperation(const RetrieveOperation& ret
         int fd;
         auto channel = createIOChannelForKey(retrieve.key, IOChannelType::Read, cachePathCapture.string(), fd);
 
-        dispatch_io_read(channel.get(), 0, std::numeric_limits<size_t>::max(), dispatch_get_main_queue(), [this, fd, retrieve](bool done, dispatch_data_t fileData, int error) {
+        bool didCallCompletionHandler = false;
+        dispatch_io_read(channel.get(), 0, std::numeric_limits<size_t>::max(), dispatch_get_main_queue(), [this, fd, retrieve, didCallCompletionHandler](bool done, dispatch_data_t fileData, int error) mutable {
             if (done) {
                 ASSERT(m_activeRetrieveOperationCount);
                 --m_activeRetrieveOperationCount;
                 dispatchPendingRetrieveOperations();
             }
-            if (error) {
-                retrieve.completionHandler(nullptr);
-                removeEntry(retrieve.key);
-                return;
-            }
             if (done) {
-                // File exists but is empty. Invoke the completion handler as it hasn't been done yet.
-                if (fileData == dispatch_data_empty)
+                if (!didCallCompletionHandler)
                     retrieve.completionHandler(nullptr);
+                if (error)
+                    removeEntry(retrieve.key);
                 return;
             }
+            ASSERT(!didCallCompletionHandler); // We are requesting maximum sized chunk so we should never get called more than once with data.
+
             auto entry = decodeEntry(fileData, fd, retrieve.key);
             bool success = retrieve.completionHandler(WTF::move(entry));
+            didCallCompletionHandler = true;
             if (!success)
                 removeEntry(retrieve.key);
         });
