@@ -280,7 +280,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_init_global_const)
 
         DEFINE_OP(op_ret)
-        DEFINE_OP(op_ret_object_or_this)
         DEFINE_OP(op_rshift)
         DEFINE_OP(op_unsigned)
         DEFINE_OP(op_urshift)

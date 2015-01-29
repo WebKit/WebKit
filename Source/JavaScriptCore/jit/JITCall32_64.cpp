@@ -64,28 +64,6 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     ret();
 }
 
-void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
-{
-    unsigned result = currentInstruction[1].u.operand;
-    unsigned thisReg = currentInstruction[2].u.operand;
-
-    emitLoad(result, regT1, regT0);
-    Jump notJSCell = branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag));
-    Jump notObject = emitJumpIfCellNotObject(regT0);
-
-    checkStackPointerAlignment();
-    emitFunctionEpilogue();
-    ret();
-
-    notJSCell.link(this);
-    notObject.link(this);
-    emitLoad(thisReg, regT1, regT0);
-
-    checkStackPointerAlignment();
-    emitFunctionEpilogue();
-    ret();
-}
-
 void JIT::emitSlow_op_call(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     compileOpCallSlowCase(op_call, currentInstruction, iter, m_callLinkInfoIndex++);

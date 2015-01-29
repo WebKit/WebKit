@@ -1332,13 +1332,6 @@ void CodeBlock::dumpBytecode(
             printLocationOpAndRegisterOperand(out, exec, location, it, "ret", r0);
             break;
         }
-        case op_ret_object_or_this: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "constructor_ret");
-            out.printf("%s %s", registerName(r0).data(), registerName(r1).data());
-            break;
-        }
         case op_construct: {
             printCallOp(out, exec, location, it, "construct", DumpCaches, hasPrintedProfiling, callLinkInfos);
             break;

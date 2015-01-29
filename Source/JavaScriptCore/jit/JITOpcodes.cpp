@@ -251,31 +251,6 @@ void JIT::emit_op_ret(Instruction* currentInstruction)
     ret();
 }
 
-void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
-{
-    ASSERT(callFrameRegister != regT1);
-    ASSERT(regT1 != returnValueGPR);
-    ASSERT(returnValueGPR != callFrameRegister);
-
-    // Return the result in %eax.
-    emitGetVirtualRegister(currentInstruction[1].u.operand, returnValueGPR);
-    Jump notJSCell = emitJumpIfNotJSCell(returnValueGPR);
-    Jump notObject = emitJumpIfCellNotObject(returnValueGPR);
-
-    // Return.
-    emitFunctionEpilogue();
-    ret();
-
-    // Return 'this' in %eax.
-    notJSCell.link(this);
-    notObject.link(this);
-    emitGetVirtualRegister(currentInstruction[2].u.operand, returnValueGPR);
-
-    // Return.
-    emitFunctionEpilogue();
-    ret();
-}
-
 void JIT::emit_op_to_primitive(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;

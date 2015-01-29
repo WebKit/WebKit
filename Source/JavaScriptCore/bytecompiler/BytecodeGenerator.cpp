@@ -1994,14 +1994,31 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
         instructions().append(m_lexicalEnvironmentRegister ? m_lexicalEnvironmentRegister->index() : emitLoad(0, JSValue())->index());
     }
 
-    // Constructors use op_ret_object_or_this to check the result is an
-    // object, unless we can trivially determine the check is not
-    // necessary (currently, if the return value is 'this').
-    if (isConstructor() && (src->index() != m_thisRegister.index())) {
-        emitOpcode(op_ret_object_or_this);
+    if (isConstructor() && src->index() != m_thisRegister.index()) {
+        RefPtr<Label> isObjectLabel = newLabel();
+        RefPtr<RegisterID> isObjectRegister = newTemporary();
+
+        emitOpcode(op_is_object);
+        instructions().append(isObjectRegister->index());
         instructions().append(src->index());
-        instructions().append(m_thisRegister.index());
-        return src;
+
+        size_t begin = instructions().size();
+        emitOpcode(op_jtrue);
+        instructions().append(isObjectRegister->index());
+        instructions().append(isObjectLabel->bind(begin, instructions().size()));
+
+        emitOpcode(op_is_function);
+        instructions().append(isObjectRegister->index());
+        instructions().append(src->index());
+
+        begin = instructions().size();
+        emitOpcode(op_jtrue);
+        instructions().append(isObjectRegister->index());
+        instructions().append(isObjectLabel->bind(begin, instructions().size()));
+
+        emitUnaryNoDstOp(op_ret, &m_thisRegister);
+
+        emitLabel(isObjectLabel.get());
     }
     return emitUnaryNoDstOp(op_ret, src);
 }

@@ -1,3 +1,40 @@
+2015-01-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed op_ret_object_or_this
+        https://bugs.webkit.org/show_bug.cgi?id=141048
+
+        Reviewed by Michael Saboff.
+
+        op_ret_object_or_this was one opcode that would keep us out of the
+        optimizing compilers.
+
+        We don't need a special-purpose opcode; we can just use a branch.
+
+        * bytecode/BytecodeBasicBlock.cpp:
+        (JSC::isTerminal): Removed.
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset): Removed.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode): Removed.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitReturn): Use an explicit branch to determine
+        if we need to substitute 'this' for the return value. Our engine no longer
+        benefits from fused opcodes that dispatch less in the interpreter.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_ret_object_or_this): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_ret_object_or_this): Deleted.
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm: Removed.
+
 2015-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Implement ES6 class syntax without inheritance support

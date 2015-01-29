@@ -1970,21 +1970,6 @@ _llint_op_ret:
     doReturn()
 
 
-_llint_op_ret_object_or_this:
-    traceExecution()
-    checkSwitchToJITForEpilogue()
-    loadi 4[PC], t2
-    loadConstantOrVariable(t2, t1, t0)
-    bineq t1, CellTag, .opRetObjectOrThisNotObject
-    bbb JSCell::m_type[t0], ObjectType, .opRetObjectOrThisNotObject
-    doReturn()
-
-.opRetObjectOrThisNotObject:
-    loadi 8[PC], t2
-    loadConstantOrVariable(t2, t1, t0)
-    doReturn()
-
-
 _llint_op_to_primitive:
     traceExecution()
     loadi 8[PC], t2

@@ -75,7 +75,6 @@ void computeUsesForBytecodeOffset(
     }
     case op_create_arguments:
     case op_new_func:
-    case op_ret_object_or_this:
     case op_jlesseq:
     case op_jgreater:
     case op_jgreatereq:
@@ -253,7 +252,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     case op_throw_static_error:
     case op_debug:
     case op_ret:
-    case op_ret_object_or_this:
     case op_jmp:
     case op_jtrue:
     case op_jfalse:

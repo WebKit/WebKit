@@ -1827,21 +1827,6 @@ _llint_op_ret:
     doReturn()
 
 
-_llint_op_ret_object_or_this:
-    traceExecution()
-    checkSwitchToJITForEpilogue()
-    loadisFromInstruction(1, t2)
-    loadConstantOrVariable(t2, t0)
-    btqnz t0, tagMask, .opRetObjectOrThisNotObject
-    bbb JSCell::m_type[t0], ObjectType, .opRetObjectOrThisNotObject
-    doReturn()
-
-.opRetObjectOrThisNotObject:
-    loadisFromInstruction(2, t2)
-    loadConstantOrVariable(t2, t0)
-    doReturn()
-
-
 _llint_op_to_primitive:
     traceExecution()
     loadisFromInstruction(2, t2)

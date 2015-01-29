@@ -73,7 +73,6 @@ static bool isTerminal(OpcodeID opcodeID)
 {
     switch (opcodeID) {
     case op_ret:
-    case op_ret_object_or_this:
     case op_end:
         return true;
     default:

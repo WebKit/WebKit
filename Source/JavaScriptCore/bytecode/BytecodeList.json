@@ -100,7 +100,6 @@
             { "name" : "op_call_varargs", "length" : 9 },
             { "name" : "op_tear_off_arguments", "length" : 3 },
             { "name" : "op_ret", "length" : 2 },
-            { "name" : "op_ret_object_or_this", "length" : 3 },
             { "name" : "op_construct", "length" : 9 },
             { "name" : "op_construct_varargs", "length" : 9 },
             { "name" : "op_strcat", "length" : 4 },
