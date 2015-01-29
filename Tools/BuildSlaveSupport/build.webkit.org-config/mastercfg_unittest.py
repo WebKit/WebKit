@@ -122,21 +122,21 @@ class RunJavaScriptCoreTestsTest(unittest.TestCase):
     OK.""")
 
     def test_mozilla_failure_old_output(self):
-        self.assertResults(FAILURE, ["jscore-test", '1 failing Mozilla test '], 1, """Results for Mozilla tests:
+        self.assertResults(FAILURE, ["1 JSC test failed"], 1, """Results for Mozilla tests:
     1 regression found.
     0 tests fixed.""")
 
     def test_mozilla_failures_old_output(self):
-        self.assertResults(FAILURE, ["jscore-test", '2 failing Mozilla tests '], 1, """Results for Mozilla tests:
+        self.assertResults(FAILURE, ["2 JSC tests failed"], 1, """Results for Mozilla tests:
     2 regressions found.
     0 tests fixed.""")
 
     def test_jsc_stress_failure_new_output(self):
-        self.assertResults(FAILURE, ["jscore-test", '1 failing JSC stress test '], 1,  """Results for JSC stress tests:
+        self.assertResults(FAILURE, ["1 JSC test failed"], 1,  """Results for JSC stress tests:
     1 failure found.""")
 
     def test_jsc_stress_failures_new_output(self):
-        self.assertResults(FAILURE, ["jscore-test", '5 failing JSC stress tests '], 1,  """Results for JSC stress tests:
+        self.assertResults(FAILURE, ["5 JSC tests failed"], 1,  """Results for JSC stress tests:
     5 failures found.""")
 
 

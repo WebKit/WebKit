@@ -1,5 +1,25 @@
 2015-01-29  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [buildbot] Simplify jscore-test buildstep
+        https://bugs.webkit.org/show_bug.cgi?id=140821
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunJavaScriptCoreTests): Inherited from TestWithFailureCount and removed useless actual.html logfile.
+        (RunJavaScriptCoreTests.countFailures): Added.
+        (RunJavaScriptCoreTests.commandComplete): Deleted.
+        (RunJavaScriptCoreTests.evaluateCommand): Deleted.
+        (RunJavaScriptCoreTests.getText): Deleted.
+        (RunJavaScriptCoreTests.getText2): Deleted.
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py: Updated.
+        (RunJavaScriptCoreTestsTest.test_mozilla_failure_old_output):
+        (RunJavaScriptCoreTestsTest.test_mozilla_failures_old_output):
+        (RunJavaScriptCoreTestsTest.test_jsc_stress_failure_new_output):
+        (RunJavaScriptCoreTestsTest.test_jsc_stress_failures_new_output):
+
+2015-01-29  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed, revert r179337, we don't need this dependency.
 
         * efl/install-dependencies:
