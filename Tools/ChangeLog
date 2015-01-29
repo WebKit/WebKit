@@ -1,3 +1,10 @@
+2015-01-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, revert r179337, we don't need this dependency.
+
+        * efl/install-dependencies:
+        * gtk/install-dependencies:
+
 2015-01-28  Shivakumar JM  <shiva.jm@samsung.com>
 
         Unreviewed. Moving myself to the committer section.
