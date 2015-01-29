@@ -457,7 +457,9 @@ protected:
     
     virtual void computeColumnCountAndWidth();
     virtual bool requiresColumns(int) const;
-
+    
+    virtual void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) {};
+    
 private:
     bool recomputeLogicalWidthAndColumnWidth();
     LayoutUnit columnGap() const;

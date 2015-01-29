@@ -67,6 +67,14 @@ public:
 
     static RenderRubyRun* staticCreateRubyRun(const RenderObject* parentRuby);
     
+    void updatePriorContextFromCachedBreakIterator(LazyLineBreakIterator&) const;
+    void setCachedPriorCharacters(UChar last, UChar secondToLast)
+    {
+        m_lastCharacter = last;
+        m_secondToLastCharacter = secondToLast;
+    }
+    bool canBreakBefore(const LazyLineBreakIterator&) const;
+    
 protected:
     RenderRubyBase* createRubyBase() const;
 
@@ -75,6 +83,10 @@ private:
     virtual const char* renderName() const override { return "RenderRubyRun (anonymous)"; }
     virtual bool createsAnonymousWrapper() const override { return true; }
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) override { }
+
+private:
+    UChar m_lastCharacter;
+    UChar m_secondToLastCharacter;
 };
 
 } // namespace WebCore
