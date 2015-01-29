@@ -1,3 +1,10 @@
+2015-01-29  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build with newer Clang
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        These should be 'override's.
+
 2015-01-29  Chris Dumez  <cdumez@apple.com>
 
         Clean up / modernize PageCache class
