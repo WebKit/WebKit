@@ -216,12 +216,7 @@ InjectedScript.prototype = {
         return result;
     },
 
-    /**
-     * @param {string} objectId
-     * @param {boolean} ownProperties
-     * @return {Array.<RuntimeAgent.PropertyDescriptor>|boolean}
-     */
-    getProperties: function(objectId, ownProperties)
+    getProperties: function(objectId, ownProperties, ownAndGetterProperties)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
@@ -229,7 +224,8 @@ InjectedScript.prototype = {
 
         if (!this._isDefined(object))
             return false;
-        var descriptors = this._propertyDescriptors(object, ownProperties);
+
+        var descriptors = this._propertyDescriptors(object, ownProperties, ownAndGetterProperties);
 
         // Go over properties, wrap object values.
         for (var i = 0; i < descriptors.length; ++i) {
@@ -245,6 +241,7 @@ InjectedScript.prototype = {
             if (!("enumerable" in descriptor))
                 descriptor.enumerable = false;
         }
+
         return descriptors;
     },
 
@@ -315,70 +312,6 @@ InjectedScript.prototype = {
     {
         delete this._idToWrappedObject[id];
         delete this._idToObjectGroupName[id];
-    },
-
-    /**
-     * @param {Object} object
-     * @param {boolean} ownProperties
-     * @return {Array.<Object>}
-     */
-    _propertyDescriptors: function(object, ownProperties)
-    {
-        var descriptors = [];
-        var nameProcessed = {};
-        nameProcessed["__proto__"] = null;
-        for (var o = object; this._isDefined(o); o = o.__proto__) {
-            var names = Object.getOwnPropertyNames(/** @type {!Object} */ (o));
-            for (var i = 0; i < names.length; ++i) {
-                var name = names[i];
-                if (nameProcessed[name])
-                    continue;
-
-                try {
-                    nameProcessed[name] = true;
-                    var descriptor = Object.getOwnPropertyDescriptor(/** @type {!Object} */ (object), name);
-                    if (!descriptor) {
-                        // Not all bindings provide proper descriptors. Fall back to the writable, configurable property.
-                        try {
-                            descriptor = { name: name, value: object[name], writable: false, configurable: false, enumerable: false};
-                            if (o === object)
-                                descriptor.isOwn = true;
-                            descriptors.push(descriptor);
-                        } catch (e) {
-                            // Silent catch.
-                        }
-                        continue;
-                    }
-                    if (descriptor.hasOwnProperty("get") && descriptor.hasOwnProperty("set") && !descriptor.get && !descriptor.set) {
-                        // Not all bindings provide proper descriptors. Fall back to the writable, configurable property.
-                        try {
-                            descriptor = { name: name, value: object[name], writable: false, configurable: false, enumerable: false};
-                            if (o === object)
-                                descriptor.isOwn = true;
-                            descriptors.push(descriptor);
-                        } catch (e) {
-                            // Silent catch.
-                        }
-                        continue;
-                    }
-                } catch (e) {
-                    var descriptor = {};
-                    descriptor.value = e;
-                    descriptor.wasThrown = true;
-                }
-
-                descriptor.name = name;
-                if (o === object)
-                    descriptor.isOwn = true;
-                descriptors.push(descriptor);
-            }
-            if (ownProperties) {
-                if (object.__proto__)
-                    descriptors.push({ name: "__proto__", value: object.__proto__, writable: true, configurable: true, enumerable: false, isOwn: true});
-                break;
-            }
-        }
-        return descriptors;
     },
 
     /**
@@ -677,6 +610,109 @@ InjectedScript.prototype = {
         var module = moduleFunction.call(inspectedGlobalObject, InjectedScriptHost, inspectedGlobalObject, injectedScriptId, this, host);
         this._modules[name] = module;
         return module;
+    },
+
+    _propertyDescriptors: function(object, ownProperties, ownAndGetterProperties)
+    {
+        // Modes:
+        //  - ownProperties - only own properties and __proto__
+        //  - ownAndGetterProperties - own properties, __proto__, and getters in the prototype chain
+        //  - neither - get all properties in the prototype chain, exclude __proto__
+
+        var descriptors = [];
+        var nameProcessed = {};
+        nameProcessed["__proto__"] = null;
+
+        function createFakeValueDescriptor(name, descriptor, isOwnProperty)
+        {
+            try {
+                return {name: name, value: object[name], writable: descriptor.writable, configurable: descriptor.configurable, enumerable: descriptor.enumerable};
+            } catch (e) {
+                var errorDescriptor = {name: name, value: e, wasThrown: true};
+                if (isOwnProperty)
+                    errorDescriptor.isOwn = true;
+                return errorDescriptor;
+            }
+        }
+
+        function processDescriptor(descriptor, isOwnProperty)
+        {
+            // Own properties only.
+            if (ownProperties) {
+                if (isOwnProperty)
+                    descriptors.push(descriptor);
+                return;
+            }
+
+            // Own and getter properties.
+            if (ownAndGetterProperties) {
+                if (isOwnProperty) {
+                    // Own property, include the descriptor as is.
+                    descriptors.push(descriptor);
+                } else if (descriptor.hasOwnProperty("get") && descriptor.get) {
+                    // Getter property in the prototype chain. Create a fake value descriptor.
+                    descriptors.push(createFakeValueDescriptor(descriptor.name, descriptor, isOwnProperty));
+                } else if (descriptor.possibleNativeBindingGetter) {
+                    // Possible getter property in the prototype chain.
+                    descriptors.push(descriptor);
+                }
+                return;
+            }
+
+            // All properties.
+            descriptors.push(descriptor);
+        }
+
+        function processPropertyNames(o, names, isOwnProperty)
+        {
+            for (var i = 0; i < names.length; ++i) {
+                var name = names[i];
+                if (nameProcessed[name] || name === "__proto__")
+                    continue;
+
+                nameProcessed[name] = true;
+
+                var descriptor = Object.getOwnPropertyDescriptor(o, name);
+                if (!descriptor) {
+                    // FIXME: Bad descriptor. Can we get here?
+                    // Fall back to very restrictive settings.
+                    var fakeDescriptor = createFakeValueDescriptor(name, {writable: false, configurable: false, enumerable: false}, isOwnProperty);
+                    processDescriptor(fakeDescriptor, isOwnProperty);
+                    continue;
+                }
+
+                if (descriptor.hasOwnProperty("get") && descriptor.hasOwnProperty("set") && !descriptor.get && !descriptor.set) {
+                    // FIXME: <https://webkit.org/b/140575> Web Inspector: Native Bindings Descriptors are Incomplete
+                    // Developers may create such a descriptors, so we should be resilient:
+                    // var x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
+                    var fakeDescriptor = createFakeValueDescriptor(name, descriptor, isOwnProperty);
+                    fakeDescriptor.possibleNativeBindingGetter = true; // Native bindings.
+                    processDescriptor(fakeDescriptor, isOwnProperty);
+                    continue;
+                }
+
+                descriptor.name = name;
+                if (isOwnProperty)
+                    descriptor.isOwn = true;
+                processDescriptor(descriptor, isOwnProperty);
+            }
+        }
+
+        // Iterate prototype chain.
+        for (var o = object; this._isDefined(o); o = o.__proto__) {
+            var isOwnProperty = o === object;
+            processPropertyNames(o, Object.getOwnPropertyNames(o), isOwnProperty);
+            if (ownProperties)
+                break;
+        }
+        
+        // Include __proto__ at the end.
+        try {
+            if (object.__proto__)
+                descriptors.push({name: "__proto__", value: object.__proto__, writable: true, configurable: true, enumerable: false, isOwn: true});
+        } catch (e) {}
+
+        return descriptors;
     },
 
     /**
