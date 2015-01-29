@@ -1,5 +1,19 @@
 2015-01-29  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r179339. rdar://problem/19619999
+
+    2015-01-29  Tim Horton  <timothy_horton@apple.com>
+
+            Avoid manually handling quickLookWithEvent: if the immediate action gesture recognizer will do Lookup for us
+            https://bugs.webkit.orgshow_bug.cgi?id=141018
+            <rdar://problem/19619999>
+
+            * UIProcess/API/mac/WKView.mm:
+            (-[WKView quickLookWithEvent:]):
+            Yosemite is 101000, not 10100.
+
+2015-01-29  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r179320. rdar://problem/19619999
 
     2015-01-28  Timothy Horton  <timothy_horton@apple.com>
