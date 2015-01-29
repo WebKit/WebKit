@@ -1,3 +1,9 @@
+2015-01-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix no-JIT build.
+
+        * jit/PolymorphicCallStubRoutine.cpp:
+
 2015-01-28  Filip Pizlo  <fpizlo@apple.com>
 
         Polymorphic call inlining should be based on polymorphic call inline caching rather than logging

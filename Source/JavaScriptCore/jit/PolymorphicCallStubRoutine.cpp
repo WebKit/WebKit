@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PolymorphicCallStubRoutine.h"
 
+#if ENABLE(JIT)
+
 #include "CallLinkInfo.h"
 #include "CodeBlock.h"
 #include "JSCInlines.h"
@@ -112,3 +114,4 @@ void PolymorphicCallStubRoutine::markRequiredObjectsInternal(SlotVisitor& visito
 
 } // namespace JSC
 
+#endif // ENABLE(JIT)
