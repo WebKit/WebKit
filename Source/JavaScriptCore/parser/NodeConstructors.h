@@ -768,6 +768,24 @@ inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifie
         m_body->finishParsing(source, parameter, ident, FunctionDeclaration);
     }
 
+#if ENABLE(ES6_CLASS_SYNTAX)
+    inline ClassDeclNode::ClassDeclNode(const JSTokenLocation& location, ExpressionNode* classDeclaration)
+        : StatementNode(location)
+        , m_classDeclaration(classDeclaration)
+    {
+    }
+
+    inline ClassExprNode::ClassExprNode(const JSTokenLocation& location, const Identifier& name, ExpressionNode* constructorExpression, ExpressionNode* parentClassExpression, PropertyListNode* instanceMethods, PropertyListNode* staticMethods)
+        : ExpressionNode(location)
+        , m_name(name)
+        , m_constructorExpression(constructorExpression)
+        , m_parentClassExpression(parentClassExpression)
+        , m_instanceMethods(instanceMethods)
+        , m_staticMethods(staticMethods)
+    {
+    }
+#endif
+
     inline CaseClauseNode::CaseClauseNode(ExpressionNode* expr, SourceElements* statements)
         : m_expr(expr)
         , m_statements(statements)

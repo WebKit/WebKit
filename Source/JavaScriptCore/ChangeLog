@@ -1,3 +1,64 @@
+2015-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Implement ES6 class syntax without inheritance support
+        https://bugs.webkit.org/show_bug.cgi?id=140918
+
+        Reviewed by Geoffrey Garen.
+
+        Added the most basic support for ES6 class syntax. After this patch, we support basic class definition like:
+        class A {
+            constructor() { }
+            someMethod() { }
+        }
+
+        We'll add the support for "extends" keyword and automatically generating a constructor in follow up patches.
+        We also don't support block scoping of a class declaration.
+
+        We support both class declaration and class expression. A class expression is implemented by the newly added
+        ClassExprNode AST node. A class declaration is implemented by ClassDeclNode, which is a thin wrapper around
+        AssignResolveNode.
+
+        Tests: js/class-syntax-declaration.html
+               js/class-syntax-expression.html
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ObjectLiteralNode::emitBytecode): Create a new object instead of delegating the work to PropertyListNode.
+        Also fixed the 5-space indentation.
+        (JSC::PropertyListNode::emitBytecode): Don't create a new object now that ObjectLiteralNode does this.
+        (JSC::ClassDeclNode::emitBytecode): Added. Just let the AssignResolveNode node emit the byte code.
+        (JSC::ClassExprNode::emitBytecode): Create the class constructor and add static methods to the constructor by
+        emitting the byte code for PropertyListNode. Add instance methods to the class's prototype object the same way.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createClassExpr): Added. Creates a ClassExprNode.
+        (JSC::ASTBuilder::createClassDeclStatement): Added. Creates a AssignResolveNode and wraps it by a ClassDeclNode.
+
+        * parser/NodeConstructors.h:
+        (JSC::ClassDeclNode::ClassDeclNode): Added.
+        (JSC::ClassExprNode::ClassExprNode): Added.
+
+        * parser/Nodes.h:
+        (JSC::ClassExprNode): Added.
+        (JSC::ClassDeclNode): Added.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseStatement): Added the support for class declaration.
+        (JSC::stringForFunctionMode): Return "method" for MethodMode.
+        (JSC::Parser<LexerType>::parseClassDeclaration): Added. Uses parseClass to create a class expression and wraps
+        it with ClassDeclNode as described above.
+        (JSC::Parser<LexerType>::parseClass): Parses a class expression.
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseGetterSetter): Extracted from parseProperty to share the code between parseProperty
+        and parseClass.
+        (JSC::Parser<LexerType>::parsePrimaryExpression): Added the support for class expression.
+
+        * parser/Parser.h:
+        (FunctionParseMode): Added MethodMode.
+
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createClassExpr): Added.
+        (JSC::SyntaxChecker::createClassDeclStatement): Added.
+
 2015-01-29  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the Windows build.

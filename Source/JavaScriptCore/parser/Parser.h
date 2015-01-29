@@ -70,6 +70,9 @@ class SourceCode;
 #define TreeArguments typename TreeBuilder::Arguments
 #define TreeArgumentsList typename TreeBuilder::ArgumentsList
 #define TreeFunctionBody typename TreeBuilder::FunctionBody
+#if ENABLE(ES6_CLASS_SYNTAX)
+#define TreeClassExpression typename TreeBuilder::ClassExpression
+#endif
 #define TreeProperty typename TreeBuilder::Property
 #define TreePropertyList typename TreeBuilder::PropertyList
 #define TreeDeconstructionPattern typename TreeBuilder::DeconstructionPattern
@@ -78,7 +81,14 @@ COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 
 enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
 enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
-enum FunctionParseMode { FunctionMode, GetterMode, SetterMode };
+enum FunctionParseMode {
+    FunctionMode,
+    GetterMode,
+    SetterMode,
+#if ENABLE(ES6_CLASS_SYNTAX)
+    MethodMode
+#endif
+};
 enum DeconstructionKind {
     DeconstructToVariables,
     DeconstructToParameters,
@@ -693,6 +703,9 @@ private:
     
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
+#if ENABLE(ES6_CLASS_SYNTAX)
+    template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&);
+#endif
     template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseVarDeclaration(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseConstDeclaration(TreeBuilder&);
@@ -726,6 +739,7 @@ private:
     enum SpreadMode { AllowSpread, DontAllowSpread };
     template <class TreeBuilder> ALWAYS_INLINE TreeArguments parseArguments(TreeBuilder&, SpreadMode);
     template <class TreeBuilder> TreeProperty parseProperty(TreeBuilder&, bool strict);
+    template <class TreeBuilder> TreeProperty parseGetterSetter(TreeBuilder&, bool strict, PropertyNode::Type, unsigned getterOrSetterStartOffset);
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&);
     template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, TreeDeconstructionPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd);
@@ -736,6 +750,9 @@ private:
     template <class TreeBuilder> NEVER_INLINE TreeDeconstructionPattern tryParseDeconstructionPatternExpression(TreeBuilder&);
 
     template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, FunctionParseMode, bool nameIsInContainingScope, ParserFunctionInfo<TreeBuilder>&);
+#if ENABLE(ES6_CLASS_SYNTAX)
+    template <class TreeBuilder> NEVER_INLINE TreeClassExpression parseClass(TreeBuilder&, FunctionRequirements);
+#endif
 
     ALWAYS_INLINE int isBinaryOperator(JSTokenType);
     bool allowAutomaticSemicolon();

@@ -1,0 +1,26 @@
+PASS constructorCallCount is 0
+PASS A.someStaticMethod() is staticMethodValue
+PASS (new A).someInstanceMethod() is instanceMethodValue
+PASS constructorCallCount is 1
+PASS (new A).someGetter is getterValue
+PASS constructorCallCount is 2
+PASS (new A).someGetter is getterValue
+PASS setterValue is undefined
+PASS (new A).someSetter = 789 did not throw exception.
+PASS setterValue is 789
+PASS (new A).__proto__ is A.prototype
+PASS A.prototype.constructor is A
+PASS x = class threw exception SyntaxError: Unexpected end of script.
+PASS x = class { threw exception SyntaxError: Unexpected end of script.
+PASS x = class { ( } threw exception SyntaxError: Unexpected token '('. Expected an indentifier..
+PASS x = class {} threw exception SyntaxError: Class declaration without a constructor is not supported yet..
+PASS x = class { constructor() {} constructor() {} } threw exception SyntaxError: Cannot declare multiple constructors in a single class..
+PASS x = class { constructor() {} static constructor() { return staticMethodValue; } } did not throw exception.
+PASS x.constructor() is staticMethodValue
+PASS x = class { constructor() {} static prototype() {} } threw exception SyntaxError: Cannot declare a static method named 'prototype'..
+PASS x = class { constructor() {} prototype() { return instanceMethodValue; } } did not throw exception.
+PASS (new x).prototype() is instanceMethodValue
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

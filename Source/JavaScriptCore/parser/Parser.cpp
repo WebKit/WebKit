@@ -1150,6 +1150,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     case CONSTTOKEN:
         result = parseConstDeclaration(context);
         break;
+#if ENABLE(ES6_CLASS_SYNTAX)
+    case CLASSTOKEN:
+        failIfFalse(m_statementDepth == 1, "Class declaration is not allowed in a lexically nested statement");
+        result = parseClassDeclaration(context);
+        break;
+#endif
     case FUNCTION:
         failIfFalseIfStrict(m_statementDepth == 1, "Strict mode does not allow function declarations in a lexically nested statement");
         result = parseFunctionDeclaration(context);
@@ -1267,6 +1273,10 @@ static const char* stringForFunctionMode(FunctionParseMode mode)
         return "setter";
     case FunctionMode:
         return "function";
+#if ENABLE(ES6_CLASS_SYNTAX)
+    case MethodMode:
+        return "method";
+#endif
     }
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;
@@ -1403,6 +1413,129 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseFunctionDecla
     failIfFalseIfStrict(declareVariable(info.name), "Cannot declare a function named '", info.name->impl(), "' in strict mode");
     return context.createFuncDeclStatement(location, info, functionKeywordStart);
 }
+
+#if ENABLE(ES6_CLASS_SYNTAX)
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseClassDeclaration(TreeBuilder& context)
+{
+    ASSERT(match(CLASSTOKEN));
+    JSTokenLocation location(tokenLocation());
+    JSTextPosition classStart = tokenStartPosition();
+    unsigned classStartLine = tokenLine();
+
+    TreeClassExpression classExpr = parseClass(context, FunctionNeedsName);
+    failIfFalse(classExpr, "Failed to parse class");
+
+    JSTextPosition classEnd = lastTokenEndPosition();
+    unsigned classEndLine = tokenLine();
+
+    return context.createClassDeclStatement(location, classExpr, classStart, classEnd, classStartLine, classEndLine);
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(TreeBuilder& context, FunctionRequirements requirements)
+{
+    ASSERT(match(CLASSTOKEN));
+    JSTokenLocation location(tokenLocation());
+    next();
+
+    AutoPopScopeRef classScope(this, pushScope());
+    classScope->setStrictMode();
+
+    const Identifier* className = nullptr;
+    if (match(IDENT)) {
+        className = m_token.m_data.ident;
+        next();
+        failIfFalse(classScope->declareVariable(className), "'", className->impl(), "' is not a valid class name");
+    } else if (requirements == FunctionNeedsName) {
+        semanticFailureDueToKeyword("class name");
+        failDueToUnexpectedToken();
+    } else
+        className = &m_vm->propertyNames->nullIdentifier;
+    ASSERT(className);
+
+    TreeExpression parentClass = 0;
+    if (consume(EXTENDS)) {
+        parentClass = parsePrimaryExpression(context);
+        failIfFalse(parentClass, "Cannot parse the parent class name");
+        failWithMessage("Inheritance is not supported yet");
+    }
+
+    consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings, "Expected opening '{' at the start of a class body");
+
+    TreeExpression constructor = 0;
+    TreePropertyList staticMethods = 0;
+    TreePropertyList instanceMethods = 0;
+    TreePropertyList instanceMethodsTail = 0;
+    TreePropertyList staticMethodsTail = 0;
+    while (!match(CLOSEBRACE)) {
+        if (match(SEMICOLON))
+            next();
+
+        JSTokenLocation methodLocation(tokenLocation());
+        unsigned methodStart = tokenStart();
+
+        bool isStaticMethod = match(STATICTOKEN);
+        if (isStaticMethod)
+            next();
+
+        matchOrFail(IDENT, "Expected an indentifier");
+
+        const CommonIdentifiers& propertyNames = *m_vm->propertyNames;
+        const Identifier& ident = *m_token.m_data.ident;
+        bool isGetter = ident == propertyNames.get;
+        bool isSetter = ident == propertyNames.set;
+
+        TreeProperty property;
+        const bool alwaysStrictInsideClass = true;
+        if (isGetter || isSetter) {
+            semanticFailIfTrue(isStaticMethod, "Cannot declare a static", stringForFunctionMode(isGetter ? GetterMode : SetterMode));
+            nextExpectIdentifier(LexerFlagsIgnoreReservedWords);
+            property = parseGetterSetter(context, alwaysStrictInsideClass, isGetter ? PropertyNode::Getter : PropertyNode::Setter, methodStart);
+            failIfFalse(property, "Cannot parse this method");
+        } else {
+            ParserFunctionInfo<TreeBuilder> methodInfo;
+            failIfFalse((parseFunctionInfo(context, FunctionNeedsName, FunctionMode, false, methodInfo)), "Cannot parse this method");
+            failIfFalse(methodInfo.name, "method must have a name");
+            failIfFalse(declareVariable(methodInfo.name), "Cannot declare a method named '", methodInfo.name->impl(), "'");
+
+            bool isConstructor = !isStaticMethod && *methodInfo.name == propertyNames.constructor;
+            if (isConstructor)
+                methodInfo.name = className;
+
+            TreeExpression method = context.createFunctionExpr(methodLocation, methodInfo, methodStart);
+            if (isConstructor) {
+                semanticFailIfTrue(constructor, "Cannot declare multiple constructors in a single class");
+                constructor = method;
+                continue;
+            }
+
+            // FIXME: Syntax error when super() is called
+            semanticFailIfTrue(isStaticMethod && *methodInfo.name == propertyNames.prototype,
+                "Cannot declare a static method named 'prototype'");
+            property = context.createProperty(methodInfo.name, method, PropertyNode::Constant, alwaysStrictInsideClass);
+        }
+
+        TreePropertyList& tail = isStaticMethod ? staticMethodsTail : instanceMethodsTail;
+        if (tail)
+            tail = context.createPropertyList(methodLocation, property, tail);
+        else {
+            tail = context.createPropertyList(methodLocation, property);
+            if (isStaticMethod)
+                staticMethods = tail;
+            else
+                instanceMethods = tail;
+        }
+    }
+
+    // FIXME: Create a Miranda function instead.
+    semanticFailIfFalse(constructor, "Class declaration without a constructor is not supported yet");
+
+    consumeOrFail(CLOSEBRACE, "Expected a closing '}' after a class body");
+
+    return context.createClassExpr(location, *className, constructor, parentClass, instanceMethods, staticMethods);
+}
+#endif
 
 struct LabelInfo {
     LabelInfo(const Identifier* ident, const JSTextPosition& start, const JSTextPosition& end)
@@ -1802,27 +1935,7 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
             type = PropertyNode::Setter;
         else
             failWithMessage("Expected a ':' following the property name '", ident->impl(), "'");
-        const Identifier* stringPropertyName = 0;
-        double numericPropertyName = 0;
-        if (m_token.m_type == IDENT || m_token.m_type == STRING)
-            stringPropertyName = m_token.m_data.ident;
-        else if (m_token.m_type == NUMBER)
-            numericPropertyName = m_token.m_data.doubleValue;
-        else
-            failDueToUnexpectedToken();
-        JSTokenLocation location(tokenLocation());
-        next();
-        ParserFunctionInfo<TreeBuilder> info;
-        if (type == PropertyNode::Getter) {
-            failIfFalse(match(OPENPAREN), "Expected a parameter list for getter definition");
-            failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, GetterMode, false, info)), "Cannot parse getter definition");
-        } else {
-            failIfFalse(match(OPENPAREN), "Expected a parameter list for setter definition");
-            failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, SetterMode, false, info)), "Cannot parse setter definition");
-        }
-        if (stringPropertyName)
-            return context.createGetterOrSetterProperty(location, type, complete, stringPropertyName, info, getterOrSetterStartOffset);
-        return context.createGetterOrSetterProperty(const_cast<VM*>(m_vm), m_parserArena, location, type, complete, numericPropertyName, info, getterOrSetterStartOffset);
+        return parseGetterSetter(context, complete, type, getterOrSetterStartOffset);
     }
     case NUMBER: {
         double propertyName = m_token.m_data.doubleValue;
@@ -1849,6 +1962,32 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeB
         failIfFalse(m_token.m_type & KeywordTokenFlag, "Expected a property name");
         goto namedProperty;
     }
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(TreeBuilder& context, bool strict, PropertyNode::Type type, unsigned getterOrSetterStartOffset)
+{
+    const Identifier* stringPropertyName = 0;
+    double numericPropertyName = 0;
+    if (m_token.m_type == IDENT || m_token.m_type == STRING)
+        stringPropertyName = m_token.m_data.ident;
+    else if (m_token.m_type == NUMBER)
+        numericPropertyName = m_token.m_data.doubleValue;
+    else
+        failDueToUnexpectedToken();
+    JSTokenLocation location(tokenLocation());
+    next();
+    ParserFunctionInfo<TreeBuilder> info;
+    if (type == PropertyNode::Getter) {
+        failIfFalse(match(OPENPAREN), "Expected a parameter list for getter definition");
+        failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, GetterMode, false, info)), "Cannot parse getter definition");
+    } else {
+        failIfFalse(match(OPENPAREN), "Expected a parameter list for setter definition");
+        failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, SetterMode, false, info)), "Cannot parse setter definition");
+    }
+    if (stringPropertyName)
+        return context.createGetterOrSetterProperty(location, type, strict, stringPropertyName, info, getterOrSetterStartOffset);
+    return context.createGetterOrSetterProperty(const_cast<VM*>(m_vm), m_parserArena, location, type, strict, numericPropertyName, info, getterOrSetterStartOffset);
 }
 
 template <typename LexerType>
@@ -2036,6 +2175,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         failIfFalse((parseFunctionInfo(context, FunctionNoRequirements, FunctionMode, false, info)), "Cannot parse function expression");
         return context.createFunctionExpr(location, info, functionKeywordStart);
     }
+#if ENABLE(ES6_CLASS_SYNTAX)
+    case CLASSTOKEN:
+        return parseClass(context, FunctionNoRequirements);
+#endif
     case OPENBRACE:
         if (strictMode())
             return parseStrictObjectLiteral(context);

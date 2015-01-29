@@ -73,7 +73,7 @@ public:
     enum { NoneExpr = 0,
         ResolveEvalExpr, ResolveExpr, NumberExpr, StringExpr,
         ThisExpr, NullExpr, BoolExpr, RegExpExpr, ObjectLiteralExpr,
-        FunctionExpr, BracketExpr, DotExpr, CallExpr,
+        FunctionExpr, ClassExpr, BracketExpr, DotExpr, CallExpr,
         NewExpr, PreExpr, PostExpr, UnaryExpr, BinaryExpr,
         ConditionalExpr, AssignmentExpr, TypeofExpr,
         DeleteExpr, ArrayLiteralExpr, BindingDeconstruction,
@@ -113,6 +113,9 @@ public:
     typedef int ArgumentsList;
     typedef int FormalParameterList;
     typedef int FunctionBody;
+#if ENABLE(ES6_CLASS_SYNTAX)
+    typedef int ClassExpression;
+#endif
     typedef int Statement;
     typedef int ClauseList;
     typedef int Clause;
@@ -160,6 +163,9 @@ public:
     ExpressionType createConditionalExpr(const JSTokenLocation&, ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }
     ExpressionType createAssignResolve(const JSTokenLocation&, const Identifier&, ExpressionType, int, int, int) { return AssignmentExpr; }
     ExpressionType createEmptyVarExpression(const JSTokenLocation&, const Identifier&) { return AssignmentExpr; }
+#if ENABLE(ES6_CLASS_SYNTAX)
+    ClassExpression createClassExpr(const JSTokenLocation&, const Identifier&, ExpressionType, ExpressionType, PropertyList, PropertyList) { return ClassExpr; }
+#endif
     ExpressionType createFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&, int) { return FunctionExpr; }
     int createFunctionBody(const JSTokenLocation&, const JSTokenLocation&, int, int, bool) { return FunctionBodyResult; }
     void setFunctionNameStart(int, int) { }
@@ -195,7 +201,10 @@ public:
     int createClauseList(int) { return ClauseListResult; }
     int createClauseList(int, int) { return ClauseListResult; }
     int createFuncDeclStatement(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&, int) { return StatementResult; }
-    int createClassDeclStatement(const JSTokenLocation&, const Identifier&, ExpressionType, ExpressionType, PropertyList, PropertyList, int, int) { return StatementResult; }
+#if ENABLE(ES6_CLASS_SYNTAX)
+    int createClassDeclStatement(const JSTokenLocation&, ClassExpression,
+        const JSTextPosition&, const JSTextPosition&, int, int) { return StatementResult; }
+#endif
     int createBlockStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createExprStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createIfStatement(const JSTokenLocation&, int, int, int, int) { return StatementResult; }

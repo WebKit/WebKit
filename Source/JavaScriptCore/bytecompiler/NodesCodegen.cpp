@@ -273,26 +273,24 @@ ArgumentListNode* ArrayNode::toArgumentList(ParserArena& parserArena, int lineNu
 
 RegisterID* ObjectLiteralNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-     if (!m_list) {
-         if (dst == generator.ignoredResult())
-             return 0;
-         return generator.emitNewObject(generator.finalDestination(dst));
-     }
-     return generator.emitNode(dst, m_list);
+    if (!m_list) {
+        if (dst == generator.ignoredResult())
+            return 0;
+        return generator.emitNewObject(generator.finalDestination(dst));
+    }
+    RefPtr<RegisterID> newObj = generator.emitNewObject(generator.tempDestination(dst));
+    generator.emitNode(newObj.get(), m_list);
+    return generator.moveToDestinationIfNeeded(dst, newObj.get());
 }
 
 // ------------------------------ PropertyListNode -----------------------------
 
 RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> newObj = generator.tempDestination(dst);
-    
-    generator.emitNewObject(newObj.get());
-    
     // Fast case: this loop just handles regular value properties.
     PropertyListNode* p = this;
     for (; p && p->m_node->m_type == PropertyNode::Constant; p = p->m_next)
-        emitPutConstantProperty(generator, newObj.get(), *p->m_node);
+        emitPutConstantProperty(generator, dst, *p->m_node);
 
     // Were there any get/set properties?
     if (p) {
@@ -318,7 +316,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 
             // Handle regular values.
             if (node->m_type == PropertyNode::Constant) {
-                emitPutConstantProperty(generator, newObj.get(), *node);
+                emitPutConstantProperty(generator, dst, *node);
                 continue;
             }
 
@@ -359,11 +357,11 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 }
             }
 
-            generator.emitPutGetterSetter(newObj.get(), *node->name(), getterReg.get(), setterReg.get());
+            generator.emitPutGetterSetter(dst, *node->name(), getterReg.get(), setterReg.get());
         }
     }
 
-    return generator.moveToDestinationIfNeeded(dst, newObj.get());
+    return dst;
 }
 
 void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, RegisterID* newObj, PropertyNode& node)
@@ -2753,6 +2751,33 @@ RegisterID* FuncExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
 {
     return generator.emitNewFunctionExpression(generator.finalDestination(dst), this);
 }
+
+#if ENABLE(ES6_CLASS_SYNTAX)
+// ------------------------------ ClassDeclNode ---------------------------------
+
+void ClassDeclNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    generator.emitNode(dst, m_classDeclaration);
+}
+
+// ------------------------------ ClassExprNode ---------------------------------
+
+RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ASSERT(!m_parentClassExpression);
+
+    RefPtr<RegisterID> constructor = generator.emitNode(dst, m_constructorExpression);
+    RefPtr<RegisterID> prototype = generator.emitGetById(generator.newTemporary(), constructor.get(), generator.propertyNames().prototype);
+
+    if (m_staticMethods)
+        generator.emitNode(constructor.get(), m_staticMethods);
+
+    if (m_instanceMethods)
+        generator.emitNode(prototype.get(), m_instanceMethods);
+
+    return generator.moveToDestinationIfNeeded(dst, constructor.get());
+}
+#endif
     
 // ------------------------------ DeconstructingAssignmentNode -----------------
 RegisterID* DeconstructingAssignmentNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)

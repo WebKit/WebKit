@@ -1,3 +1,20 @@
+2015-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Implement ES6 class syntax without inheritance support
+        https://bugs.webkit.org/show_bug.cgi?id=140918
+
+        Reviewed by Geoffrey Garen.
+
+        Added two tests for class declarations and class expressions.
+
+        * TestExpectations:
+        * js/class-syntax-declaration-expected.txt: Added.
+        * js/class-syntax-declaration.html: Added.
+        * js/class-syntax-expression-expected.txt: Added.
+        * js/class-syntax-expression.html: Added.
+        * js/script-tests/class-syntax-declaration.js: Added.
+        * js/script-tests/class-syntax-expression.js: Added.
+
 2015-01-29  Simon Fraser  <simon.fraser@apple.com>
 
         Border-radius clipping on a stacking context causes descendants to not render

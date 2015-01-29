@@ -66,6 +66,10 @@ webkit.org/b/126166 [ Debug ] js/dfg-uint32array-overflow-values.html [ Skip ]
 
 webkit.org/b/127860 [ Debug ] js/function-apply-aliased.html [ Skip ]
 
+# ES6 class syntax hasn't been enabled yet.
+webkit.org/b/140491 js/class-syntax-declaration.html [ Failure ]
+webkit.org/b/140491 js/class-syntax-expression.html [ Failure ]
+
 # This test verifies dynamic manipulation of the mroot and msqrt elements.
 mathml/roots-removeChild.html [ ImageOnlyFailure ]
 

@@ -1611,6 +1611,25 @@ namespace JSC {
         FunctionBodyNode* m_body;
     };
 
+#if ENABLE(ES6_CLASS_SYNTAX)
+    class ClassExprNode final : public ExpressionNode {
+    public:
+        ClassExprNode(const JSTokenLocation&, const Identifier&, ExpressionNode* constructorExpresssion,
+            ExpressionNode* parentClass, PropertyListNode* instanceMethods, PropertyListNode* staticMethods);
+
+        const Identifier& name() { return m_name; }
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        const Identifier& m_name;
+        ExpressionNode* m_constructorExpression;
+        ExpressionNode* m_parentClassExpression;
+        PropertyListNode* m_instanceMethods;
+        PropertyListNode* m_staticMethods;
+    };
+#endif
+
     class DeconstructionPatternNode : public RefCounted<DeconstructionPatternNode> {
         WTF_MAKE_NONCOPYABLE(DeconstructionPatternNode);
         WTF_MAKE_FAST_ALLOCATED;
@@ -1723,6 +1742,18 @@ namespace JSC {
 
         FunctionBodyNode* m_body;
     };
+
+#if ENABLE(ES6_CLASS_SYNTAX)
+    class ClassDeclNode final : public StatementNode {
+    public:
+        ClassDeclNode(const JSTokenLocation&, ExpressionNode* classExpression);
+
+    private:
+        virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        ExpressionNode* m_classDeclaration;
+    };
+#endif
 
     class CaseClauseNode : public ParserArenaFreeable {
     public:
