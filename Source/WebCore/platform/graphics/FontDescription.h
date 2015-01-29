@@ -186,7 +186,7 @@ public:
         return familiesEqualForTextAutoSizing(other)
             && m_specifiedSize == other.m_specifiedSize
             && m_smallCaps == other.m_smallCaps
-            && m_isAbsoluteSize == other.m_isAbsoluteSize
+            && m_isAbsoluteSize == other.m_isAbsoluteSize;
     }
 #endif
 

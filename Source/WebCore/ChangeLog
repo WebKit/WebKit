@@ -1,3 +1,10 @@
+2015-01-29  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build after r179368
+
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::equalForTextAutoSizing):
+
 2015-01-29  Simon Fraser  <simon.fraser@apple.com>
 
         Border-radius clipping on a stacking context causes descendants to not render
