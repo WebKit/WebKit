@@ -1,3 +1,10 @@
+2015-01-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed, gardening on EFL port. some tests aren't flaky anymore.
+        Unskip those tests on EFL port.
+
+        * platform/efl/TestExpectations:
+
 2015-01-29  Darin Adler  <darin@apple.com>
 
         Remove SVGUseElement.instanceRoot and all tests that depend on it
