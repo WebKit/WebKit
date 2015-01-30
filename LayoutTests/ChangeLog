@@ -1,5 +1,12 @@
 2015-01-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed EFL port gardening. Some tests have been passed since r172999 though,
+        those have marked with "Failure".
+
+        * platform/efl/TestExpectations:
+
+2015-01-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Unreviewed, gardening on EFL port. Unskip tests which don't come to crash or
         timeout anymore.
 
