@@ -33,6 +33,7 @@ use strict;
 use version;
 use warnings;
 use Config;
+use Cwd qw(realpath);
 use Digest::MD5 qw(md5_hex);
 use FindBin;
 use File::Basename;
@@ -61,7 +62,6 @@ BEGIN {
        &currentSVNRevision
        &debugSafari
        &findOrCreateSimulatorForIOSDevice
-       &installAndLaunchIOSWebKitAppInSimulator
        &iosSimulatorDeviceByName
        &nmPath
        &openIOSSimulator
@@ -84,6 +84,7 @@ BEGIN {
 
 use constant USE_OPEN_COMMAND => 1; # Used in runMacWebKitApp().
 use constant INCLUDE_OPTIONS_FOR_DEBUGGING => 1;
+use constant SIMULATOR_DEVICE_STATE_BOOTED => "3";
 
 our @EXPORT_OK;
 
@@ -99,7 +100,6 @@ my $configurationProductDir;
 my $sourceDir;
 my $currentSVNRevision;
 my $debugger;
-my $iPhoneSimulatorVersion;
 my $didLoadIPhoneSimulatorNotification;
 my $nmPath;
 my $osXVersion;
@@ -390,6 +390,7 @@ sub argumentsForConfiguration()
     push(@args, '--release') if ($configuration =~ "^Release");
     push(@args, '--device') if (defined $xcodeSDK && $xcodeSDK =~ /^iphoneos/);
     push(@args, '--sim') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/);
+    push(@args, '--ios-simulator') if (defined $xcodeSDK && $xcodeSDK =~ /^iphonesimulator/);
     push(@args, '--32-bit') if ($architecture ne "x86_64" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
     push(@args, '--gtk') if isGtk();
@@ -408,10 +409,12 @@ sub determineXcodeSDK
         $xcodeSDK = $sdk;
     }
     if (checkForArgumentAndRemoveFromARGV("--device")) {
-        $xcodeSDK ||= 'iphoneos.internal';
+        my $hasInternalSDK = exitStatus(system("xcrun --sdk iphoneos.internal --show-sdk-version > /dev/null 2>&1")) == 0;
+        $xcodeSDK ||= $hasInternalSDK ? "iphoneos.internal" : "iphoneos";
     }
     if (checkForArgumentAndRemoveFromARGV("--sim") ||
-        checkForArgumentAndRemoveFromARGV("--simulator")) {
+        checkForArgumentAndRemoveFromARGV("--simulator") ||
+        checkForArgumentAndRemoveFromARGV("--ios-simulator")) {
         $xcodeSDK ||= 'iphonesimulator';
     }
 }
@@ -1178,10 +1181,21 @@ sub createiOSSimulatorDevice
     die "Device $name $deviceTypeId $runtimeId wasn't found in " . iOSSimulatorDevicesPath();
 }
 
-sub deleteiOSSimulatorDevice
+sub eraseIOSSimulatorDevice($)
 {
     my $udid = shift;
-    return system("xcrun", "--sdk", "iphonesimulator", "simctl", "delete", $udid);
+    return exitStatus(system("xcrun", "--sdk", "iphonesimulator", "simctl", "erase", $udid)) == 0;
+}
+
+sub bootedIOSSimulatorDevice()
+{
+    my @devices = iOSSimulatorDevices();
+    for my $device (@devices) {
+        if ($device->{state} eq SIMULATOR_DEVICE_STATE_BOOTED) {
+            return $device;
+        }
+    }
+    return undef;
 }
 
 sub willUseIOSDeviceSDKWhenBuilding()
@@ -1198,48 +1212,6 @@ sub isIOSWebKit()
 {
     determineXcodeSDK();
     return isAppleMacWebKit() && (willUseIOSDeviceSDKWhenBuilding() || willUseIOSSimulatorSDKWhenBuilding());
-}
-
-sub isPerianInstalled()
-{
-    if (!isAppleWebKit()) {
-        return 0;
-    }
-
-    if (-d "/Library/QuickTime/Perian.component") {
-        return 1;
-    }
-
-    if (-d "$ENV{HOME}/Library/QuickTime/Perian.component") {
-        return 1;
-    }
-
-    return 0;
-}
-
-sub determineIPhoneSimulatorVersion()
-{
-    return if $iPhoneSimulatorVersion;
-
-    if (!isIOSWebKit()) {
-        $iPhoneSimulatorVersion = -1;
-        return;
-    }
-
-    my $version = `/usr/local/bin/psw_vers -productVersion`;
-    my @splitVersion = split(/\./, $version);
-    @splitVersion >= 2 or die "Invalid version $version";
-    $iPhoneSimulatorVersion = {
-            "major" => $splitVersion[0],
-            "minor" => $splitVersion[1],
-            "subminor" => defined($splitVersion[2] ? $splitVersion[2] : 0),
-    };
-}
-
-sub iPhoneSimulatorVersion()
-{
-    determineIPhoneSimulatorVersion();
-    return $iPhoneSimulatorVersion;
 }
 
 sub determineNmPath()
@@ -1282,16 +1254,6 @@ sub osXVersion()
 {
     determineOSXVersion();
     return $osXVersion;
-}
-
-sub isSnowLeopard()
-{
-    return isDarwin() && osXVersion()->{"minor"} == 6;
-}
-
-sub isLion()
-{
-    return isDarwin() && osXVersion()->{"minor"} == 7;
 }
 
 sub isWindowsNT()
@@ -1741,6 +1703,9 @@ sub buildXCodeProject($$@)
         push(@extraOptions, "clean");
     }
 
+    push(@extraOptions, ("-sdk", xcodeSDK())) if isIOSWebKit();
+
+    chomp($ENV{DSYMUTIL_NUM_THREADS} = `sysctl -n hw.activecpu`);
     return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
 }
 
@@ -1760,7 +1725,7 @@ sub buildVisualStudioProject
     dieIfWindowsPlatformSDKNotInstalled() if $willUseVCExpressWhenBuilding;
 
     chomp($project = `cygpath -w "$project"`) if isCygwin();
-    
+
     my $action = "/build";
     if ($clean) {
         $action = "/clean";
@@ -2143,9 +2108,14 @@ sub setupIOSWebKitEnvironment($)
     setUpGuardMallocIfNeeded();
 }
 
+sub iosSimulatorApplicationsPath()
+{
+    return File::Spec->catdir(XcodeSDKPath(), "Applications");
+}
+
 sub installedMobileSafariBundle()
 {
-    return File::Spec->catfile(XcodeSDKPath(), "Applications", "MobileSafari.app");
+    return File::Spec->catfile(iosSimulatorApplicationsPath(), "MobileSafari.app");
 }
 
 sub mobileSafariBundle()
@@ -2183,30 +2153,18 @@ sub appDisplayNameFromBundle($)
     return $bundleDisplayName;
 }
 
-sub loadIPhoneSimulatorNotificationIfNeeded()
+sub openIOSSimulator($)
 {
-    return if $didLoadIPhoneSimulatorNotification;
-    push(@INC, productDir() . "/lib/perl5/darwin-thread-multi-2level");
-    require IPhoneSimulatorNotification;
-    $didLoadIPhoneSimulatorNotification = 1;
-}
-
-sub openIOSSimulator()
-{
+    my ($simulatedDevice) = @_;
     chomp(my $developerDirectory = $ENV{DEVELOPER_DIR} || `xcode-select --print-path`);
     my $iosSimulatorPath = File::Spec->catfile($developerDirectory, "Applications", "iOS Simulator.app");
 
-    loadIPhoneSimulatorNotificationIfNeeded();
-
-    my $iPhoneSimulatorNotification = new IPhoneSimulatorNotification;
-    $iPhoneSimulatorNotification->startObservingReadyNotification();
-    system("open", "-a", $iosSimulatorPath, "--args", "-SessionOnLaunch", "NO") == 0 or die "Failed to open $iosSimulatorPath: $!";
-    while (!$iPhoneSimulatorNotification->hasReceivedReadyNotification()) {
-        my $date = NSDate->alloc()->initWithTimeIntervalSinceNow_(0.1);
-        NSRunLoop->currentRunLoop->runUntilDate_($date);
-        $date->release();
-    }
-    $iPhoneSimulatorNotification->stopObservingReadyNotification();
+    system("open", "-a", $iosSimulatorPath, "--args", "-CurrentDeviceUDID", $simulatedDevice->{UDID}) == 0 or die "Failed to open $iosSimulatorPath: $!";
+    my $device;
+    do {
+        $device = iosSimulatorDeviceByName($simulatedDevice->{name});
+        sleep(2);
+    } while ($device->{state} ne SIMULATOR_DEVICE_STATE_BOOTED);
 }
 
 sub quitIOSSimulator()
@@ -2217,15 +2175,14 @@ sub quitIOSSimulator()
 sub iosSimulatorDeviceByName($)
 {
     my ($simulatorName) = @_;
-    my @devices = grep {$_->{name} eq $simulatorName} iOSSimulatorDevices();
-    my $deviceToUse = $devices[0];
-    if (@devices > 1) {
-        print "Warning: Found more than one simulator device named '$simulatorName'.\n";
-        print "         Using simulator device with UDID: $deviceToUse->{UDID}.\n";
-        print "         To see the list of simulator devices, run:\n";
-        print "         xcrun --sdk iphonesimulator simctl list\n";
+    my $simulatorRuntime = iosSimulatorRuntime();
+    my @devices = iOSSimulatorDevices();
+    for my $device (@devices) {
+        if ($device->{name} eq $simulatorName && $device->{runtime} eq $simulatorRuntime) {
+            return $device;
+        }
     }
-    return $deviceToUse;
+    return undef;
 }
 
 sub iosSimulatorRuntime()
@@ -2252,12 +2209,25 @@ sub findOrCreateSimulatorForIOSDevice($)
     return createiOSSimulatorDevice($simulatorName, $simulatorDeviceType, iosSimulatorRuntime());
 }
 
+sub isIOSSimulatorSystemInstalledApp($)
+{
+    my ($appBundle) = @_;
+    my $simulatorApplicationsPath = iosSimulatorApplicationsPath();
+    return substr(realpath($appBundle), 0, length($simulatorApplicationsPath)) eq $simulatorApplicationsPath;
+}
+
 sub runIOSWebKitAppInSimulator($;$)
 {
     my ($appBundle, $simulatorOptions) = @_;
     my $productDir = productDir();
-    my $appDisplayName = appDisplayNameFromBundle($appBundle);
-    print "Starting $appDisplayName with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+    my $appDisplayName = appDisplayNameFromBundle($appBundle);;
+    my $simulatedDevice = findOrCreateSimulatorForIOSDevice("For WebKit Development");
+
+    my $bootedSimulatorDevice = bootedIOSSimulatorDevice();
+    if (!$bootedSimulatorDevice || $bootedSimulatorDevice->{UDID} ne $simulatedDevice->{UDID}) {
+        quitIOSSimulator();
+        openIOSSimulator($simulatedDevice);
+    }
 
     $simulatorOptions = {} unless $simulatorOptions;
 
@@ -2268,79 +2238,23 @@ sub runIOSWebKitAppInSimulator($;$)
         setupIOSWebKitEnvironment($productDir);
         %simulatorENV = %ENV;
     }
-    $simulatorOptions->{applicationEnvironment} = \%simulatorENV;
-    return installAndLaunchIOSWebKitAppInSimulator($appBundle, findOrCreateSimulatorForIOSDevice("For WebKit Development"), $simulatorOptions) <= 0;
-}
-
-# Launches the iOS WebKit-based application in the specified simulator device and dynamically
-# linked against the built WebKit. The application will be installed if applicable.
-#
-# Args:
-#   $appBundle: the path to the app bundle to launch.
-#   $simulatedDevice: the simulator device to use to run the app.
-#   $simulatorOptions: a hash reference representing optional simulator options.
-#     sessionUUID: a unique identifer to use for the iOS Simulator session. Defaults to an identifer
-#                  of the form "theAwesomeUniqueSessionIdentifierForX" where X is the display name of
-#                  the specified app.
-#     applicationArguments: an array reference representing the arguments to pass to the app (defaults to \@ARGV).
-#     applicationEnvironment: a hash reference representing the environment variables to use when launching the app (defaults to {}).
-#
-# Returns the process identifier of the launched app.
-sub installAndLaunchIOSWebKitAppInSimulator($$;$)
-{
-    my ($appBundle, $simulatedDevice, $simulatorOptions) = @_;
-
-    loadIPhoneSimulatorNotificationIfNeeded();
-
-    my $makeNSDictionaryFromHash = sub {
-        my ($dict) = @_;
-        my $result = NSMutableDictionary->alloc()->initWithCapacity_(scalar(keys %{$dict}));
-        for my $key (keys %{$dict}) {
-            $result->setObject_forKey_(NSString->stringWithCString_($dict->{$key}), NSString->stringWithCString_($key));
-        }
-        return $result->autorelease();
-    };
-    my $makeNSArrayFromArray = sub {
-        my ($array) = @_;
-        my $result = NSMutableArray->alloc()->initWithCapacity_(scalar(@{$array}));
-        for my $item (@{$array}) {
-            $result->addObject_(NSString->stringWithCString_($item));
-        }
-        return $result->autorelease();
-    };
-
-    my $simulatorENVHashRef = {};
-    $simulatorENVHashRef = $simulatorOptions->{applicationEnvironment} if $simulatorOptions && $simulatorOptions->{applicationEnvironment};
     my $applicationArguments = \@ARGV;
     $applicationArguments = $simulatorOptions->{applicationArguments} if $simulatorOptions && $simulatorOptions->{applicationArguments};
-    my $sessionUUID;
-    if ($simulatorOptions && $simulatorOptions->{sessionUUID}) {
-        $sessionUUID = $simulatorOptions->{sessionUUID};
-    } else {
-        $sessionUUID = "theAwesomeUniqueSessionIdentifierFor" . appDisplayNameFromBundle($appBundle);
-    }
-    # FIXME: We should have the iOS application adopt the files descriptors for our standard output and error streams.
-    my $sessionInfo = {
-        applicationArguments => &$makeNSArrayFromArray($applicationArguments),
-        applicationEnvironment => &$makeNSDictionaryFromHash($simulatorENVHashRef),
-        applicationIdentifier => NSString->stringWithCString_(appIdentiferFromBundle($appBundle)),
-        applicationPath => NSString->stringWithCString_($appBundle),
-        deviceUDID => NSString->stringWithCString_($simulatedDevice->{UDID}),
-        sessionUUID => NSString->stringWithCString_($sessionUUID),
-    };
 
-    openIOSSimulator();
-
-    my $iPhoneSimulatorNotification = new IPhoneSimulatorNotification;
-    $iPhoneSimulatorNotification->startObservingApplicationLaunchedNotification();
-    $iPhoneSimulatorNotification->postStartSessionNotification($sessionInfo);
-    while (!$iPhoneSimulatorNotification->hasReceivedApplicationLaunchedNotification()) {
-        my $date = NSDate->alloc()->initWithTimeIntervalSinceNow_(0.1);
-        NSRunLoop->currentRunLoop->runUntilDate_($date);
-        $date->release();
+    # Prefix the environment variables with SIMCTL_CHILD_ per `xcrun simctl help launch`.
+    foreach my $key (keys %simulatorENV) {
+        $ENV{"SIMCTL_CHILD_$key"} = $simulatorENV{$key};
     }
-    $iPhoneSimulatorNotification->stopObservingApplicationLaunchedNotification();
-    return $iPhoneSimulatorNotification->applicationLaunchedApplicationPID();
+
+    # FIXME: We should also erase the iOS Simulator device when alternating between running a
+    # custom-built MobileSafari and the system-installed MobileSafari.
+    if (!isIOSSimulatorSystemInstalledApp($appBundle)) {
+        eraseIOSSimulatorDevice($simulatedDevice->{UDID}) or die;
+    }
+
+    my $appIdentifier = appIdentifierFromBundle($appBundle);
+    print "Starting $appDisplayName with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+    return exitStatus(system("xcrun", "--sdk", "iphonesimulator", "simctl", "launch", $simulatedDevice->{UDID}, $appIdentifier, @$applicationArguments));
 }
 
 sub runIOSWebKitApp($)

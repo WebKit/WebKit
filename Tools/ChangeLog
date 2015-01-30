@@ -1,3 +1,1333 @@
+2015-01-28  David Kilzer  <ddkilzer@apple.com>
+
+        run-webkit-tests: Merge 46 commits from trunk to make it work
+
+        r171686, r171687, r171789, r171800, r171967, r171968, r171969,
+        r172115, r172117, r172118, r172174, r172602, r172942, r172967,
+        r173129, r173452, r173647, r173937, r174406, r174626, r174628,
+        r174634, r174642, r174650, r174702, r174728, r174824, r174835,
+        r174844, r175204, r176669, r176677, r176872, r176880, r176885,
+        r176897, r177129, r177363, r177370, r177510, r178444, r178570,
+        r178601, r178656, r178867, r178925
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+        (appendIntToVector): Deleted.
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::TestRunner):
+        (TestRunner::create):
+        (TestRunner::waitToDumpWatchdogTimerFired):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner::testURL):
+        (TestRunner::setCustomTimeout):
+        (TestRunner::audioResult): Deleted.
+        * DumpRenderTree/config.h:
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupport.c: Removed.
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupportPregenerated.pm: Removed.
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupport_wrapPregenerated.c: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/Changes: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/IPhoneSimulatorNotification.xs: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/MANIFEST: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/Makefile.PL: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/README: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/lib/IPhoneSimulatorNotification.pm: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/ppport.h: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/t/IPhoneSimulatorNotification.t: Removed.
+        * DumpRenderTree/ios/PerlSupport/Makefile: Removed.
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (BitmapContext::createFromUIImage):
+        (BitmapContext::pixelData):
+        (BitmapContext::BitmapContext):
+        (computeMD5HashStringForBitmapContext):
+        (dumpBitmap):
+        (createBitmapContextFromWebView):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (writeCrashedMessageOnFatalError):
+        (dumpRenderTree):
+        (-[DumpRenderTree applicationDidEnterBackground:]):
+        (DumpRenderTreeMain):
+        (sizeWebViewForCurrentTest):
+        (updateDisplay):
+        (dump):
+        (testPathFromURL):
+        (runTest):
+        (displayWebView):
+        (dumpBackForwardListForWebView): Deleted.
+        (dumpBackForwardListForAllWindows): Deleted.
+        (invalidateAnyPreviousWaitToDumpWatchdog): Deleted.
+        * DumpRenderTree/mac/DumpRenderTreeMac.h:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow initWithLayer:]):
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (resourceRootAbsolutePath):
+        (TestRunner::pathToLocalResource):
+        (TestRunner::setWaitToDump):
+        (TestRunner::queueLoad): Deleted.
+        (TestRunner::setAlwaysAcceptCookies): Deleted.
+        (TestRunner::findString): Deleted.
+        (TestRunner::setCacheModel): Deleted.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (sizeWebViewForCurrentTest):
+        (runTest):
+        (resetWebViewToConsistentStateBeforeTesting): Deleted.
+        * LayoutTestRelay/Configurations/Base.xcconfig: Added.
+        * LayoutTestRelay/Configurations/DebugRelease.xcconfig: Added.
+        * LayoutTestRelay/LayoutTestRelay.xcodeproj/project.pbxproj: Added.
+        * LayoutTestRelay/LayoutTestRelay/LTPipeRelay.h: Copied from Tools/WebKitTestRunner/ios/mainIOS.mm.
+        * LayoutTestRelay/LayoutTestRelay/LTPipeRelay.m: Added.
+        (-[LTPipeRelay inPipePath]):
+        (-[LTPipeRelay outPipePath]):
+        (-[LTPipeRelay errorPipePath]):
+        (-[LTPipeRelay outputStream]):
+        (-[LTPipeRelay initWithPrefix:]):
+        (-[LTPipeRelay setup]):
+        (-[LTPipeRelay tearDown]):
+        (-[LTPipeRelay connect]):
+        (-[LTPipeRelay disconnect]):
+        (-[LTPipeRelay createFIFOs]):
+        (-[LTPipeRelay destroyFIFOs]):
+        (-[LTPipeRelay relayStream:]):
+        (-[LTPipeRelay stream:handleEvent:]):
+        * LayoutTestRelay/LayoutTestRelay/LTRelay.h: Copied from Tools/WebKitTestRunner/ios/mainIOS.mm.
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.h: Copied from Tools/WebKitTestRunner/ios/mainIOS.mm.
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m: Added.
+        (-[LTRelayController initWithDevice:productDir:appPath:identifierSuffix:dumpToolArguments:]):
+        (-[LTRelayController uniqueAppPath]):
+        (-[LTRelayController uniqueAppURL]):
+        (-[LTRelayController uniqueAppIdentifier]):
+        (-[LTRelayController processName]):
+        (-[LTRelayController didReceiveStdoutData:]):
+        (-[LTRelayController didReceiveStderrData:]):
+        (-[LTRelayController didDisconnect]):
+        (-[LTRelayController didConnect]):
+        (-[LTRelayController didCrashWithMessage:]):
+        (-[LTRelayController createUniqueApp]):
+        (-[LTRelayController killApp]):
+        (-[LTRelayController launchApp]):
+        (-[LTRelayController start]):
+        (-[LTRelayController finish]):
+        * LayoutTestRelay/LayoutTestRelay/main.m: Added.
+        (usage):
+        (getTestingSimDevice):
+        (getRequiredStringArgument):
+        (getDumpToolArguments):
+        (finish):
+        (receivedSignal):
+        (main):
+        * LayoutTestRelay/Makefile: Added.
+        * Scripts/build-dumprendertree:
+        * Scripts/build-imagediff: Copied from Tools/Scripts/build-dumprendertree.
+        * Scripts/build-layouttestrelay: Copied from Tools/Scripts/build-webkittestrunner.
+        * Scripts/build-webkit:
+        * Scripts/build-webkittestrunner:
+        * Scripts/configure-xcode-for-ios-development: Added.
+        (wanted):
+        (writeXcodeSpecification):
+        (readXcodeSpecificationById):
+        (xcodeSDKSpecificationsPath):
+        (createXcodeSpecificationFromSpecificationAndId):
+        * Scripts/old-run-webkit-tests: Removed.
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+        (determineXcodeSDK):
+        (eraseIOSSimulatorDevice):
+        (bootedIOSSimulatorDevice):
+        (buildXCodeProject):
+        (buildVisualStudioProject):
+        (iosSimulatorApplicationsPath):
+        (installedMobileSafariBundle):
+        (openIOSSimulator):
+        (iosSimulatorDeviceByName):
+        (isIOSSimulatorSystemInstalledApp):
+        (runIOSWebKitAppInSimulator):
+        (createiOSSimulatorDevice): Deleted.
+        (willUseIOSDeviceSDKWhenBuilding): Deleted.
+        (willUseIOSSimulatorSDKWhenBuilding): Deleted.
+        (isIOSWebKit): Deleted.
+        (determineNmPath): Deleted.
+        (nmPath): Deleted.
+        (determineOSXVersion): Deleted.
+        (debugger): Deleted.
+        (determineDebugger): Deleted.
+        (shouldRemoveCMakeCache): Deleted.
+        (runIOSWebKitApp): Deleted.
+        (runMacWebKitApp): Deleted.
+        (execMacWebKitAppForDebugging): Deleted.
+        (debugSafari): Deleted.
+        (runSafari): Deleted.
+        (runMiniBrowser): Deleted.
+        (debugMiniBrowser): Deleted.
+        (runWebKitTestRunner): Deleted.
+        (debugWebKitTestRunner): Deleted.
+        (readRegistryString): Deleted.
+        (writeRegistryString): Deleted.
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.kill_process):
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.serial_test_kill_process):
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.write_text_file):
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__):
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (summarize_results):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        (_set_up_derived_options):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_full_results_html):
+        (RunTest.test_failed_text_with_missing_pixel_results_on_retry):
+        (RunTest.test_keyboard_interrupt): Deleted.
+        (RunTest): Deleted.
+        (RunTest.test_no_tests_found): Deleted.
+        (RunTest.test_no_tests_found_2): Deleted.
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py:
+        (BuildBotPrinter.print_unexpected_results.add_result):
+        (BuildBotPrinter):
+        * Scripts/webkitpy/port/base.py:
+        (Port.additional_drt_flag): Deleted.
+        (Port): Deleted.
+        (Port.supports_per_test_timeout): Deleted.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.__init__):
+        (Driver.run_test):
+        (Driver.cmd_line):
+        (Driver._check_for_driver_timeout):
+        (Driver._check_for_driver_crash):
+        (IOSSimulatorDriver):
+        (IOSSimulatorDriver.cmd_line):
+        (IOSSimulatorDriver._setup_environ_for_driver):
+        * Scripts/webkitpy/port/factory.py:
+        (platform_options):
+        (PortFactory):
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer.stop):
+        (IOSSimulatorImageDiffer):
+        (IOSSimulatorImageDiffer._start):
+        * Scripts/webkitpy/port/ios.py: Added.
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.__init__):
+        (IOSSimulatorPort.driver_name):
+        (IOSSimulatorPort.relay_path):
+        (IOSSimulatorPort.default_timeout_ms):
+        (IOSSimulatorPort.supports_per_test_timeout):
+        (IOSSimulatorPort._check_relay):
+        (IOSSimulatorPort._check_build_relay):
+        (IOSSimulatorPort.check_build):
+        (IOSSimulatorPort._build_relay):
+        (IOSSimulatorPort._build_driver):
+        (IOSSimulatorPort._build_driver_flags):
+        (IOSSimulatorPort.should_retry_crashes):
+        (IOSSimulatorPort._generate_all_test_configurations):
+        (IOSSimulatorPort._driver_class):
+        (IOSSimulatorPort.default_baseline_search_path):
+        (IOSSimulatorPort._port_specific_expectations_files):
+        (IOSSimulatorPort.setup_test_run):
+        (IOSSimulatorPort.clean_up_test_run):
+        (IOSSimulatorPort.setup_environ_for_server):
+        (IOSSimulatorPort.operating_system):
+        (IOSSimulatorPort.check_for_leaks):
+        (IOSSimulatorPort.print_leaks_summary):
+        (IOSSimulatorPort._path_to_webcore_library):
+        (IOSSimulatorPort.show_results_html_file):
+        (IOSSimulatorPort.acquire_http_lock):
+        (IOSSimulatorPort.release_http_lock):
+        (IOSSimulatorPort.sample_file_path):
+        (IOSSimulatorPort._get_crash_log):
+        (IOSSimulatorPort.testing_device):
+        (IOSSimulatorPort.simulator_path):
+        (IOSSimulatorPort.look_for_new_crash_logs):
+        (IOSSimulatorPort.look_for_new_samples):
+        (IOSSimulatorPort.sample_process):
+        (IOSSimulatorPort._path_to_helper):
+        (IOSSimulatorPort.diff_image):
+        (IOSSimulatorPort.reset_preferences):
+        (IOSSimulatorPort.make_command):
+        (IOSSimulatorPort.nm_command):
+        (IOSSimulatorPort.xcrun_find):
+        (IOSSimulatorPort.developer_dir):
+        (IOSSimulatorPort.logging_patterns_to_strip):
+        * Scripts/webkitpy/port/test.py:
+        * Scripts/webkitpy/xcode/__init__.py: Added.
+        * Scripts/webkitpy/xcode/simulator.py: Added.
+        (DeviceType):
+        (DeviceType.__init__):
+        (DeviceType.from_name):
+        (DeviceType.from_identifier):
+        (DeviceType.__eq__):
+        (DeviceType.__ne__):
+        (DeviceType.__repr__):
+        (Runtime):
+        (Runtime.__init__):
+        (Runtime.from_identifier):
+        (Runtime.__eq__):
+        (Runtime.__ne__):
+        (Runtime.__repr__):
+        (Device):
+        (Device.__init__):
+        (Device.path):
+        (Device.create):
+        (Device.__eq__):
+        (Device.__ne__):
+        (Device.__repr__):
+        (Simulator):
+        (Simulator.__init__):
+        (Simulator.refresh):
+        (Simulator._parse_device_types):
+        (Simulator._parse_runtimes):
+        (Simulator._parse_devices):
+        (Simulator.device_type):
+        (Simulator.runtime):
+        (Simulator.find_device_by_udid):
+        (Simulator.device):
+        (Simulator.available_runtimes):
+        (Simulator.devices):
+        (Simulator.latest_available_runtime):
+        (Simulator.lookup_or_create_device):
+        (Simulator.__repr__):
+        (Simulator.__str__):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didStartProvisionalLoadForFrame):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::TestRunner):
+        (WTR::TestRunner::create): Deleted.
+        (WTR::TestRunner::notifyDone): Deleted.
+        (WTR::TestRunner::addUserScript): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::testURL):
+        (WTR::TestRunner::setTestURL):
+        (WTR::TestRunner::setCustomTimeout):
+        * WebKitTestRunner/InjectedBundle/cocoa/InjectedBundlePageCocoa.mm:
+        (WTR::InjectedBundlePage::platformDidStartProvisionalLoadForFrame):
+        * WebKitTestRunner/InjectedBundle/efl/TestRunnerEfl.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        (WTR::TestRunner::pathToLocalResource): Deleted.
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerWin.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        (WTR::TestController::runUntil):
+        (WTR::TestController::~TestController): Deleted.
+        (WTR::TestController::createOtherPage): Deleted.
+        (WTR::CommandTokenizer::hasNext): Deleted.
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::shouldUseRemoteLayerTree): Deleted.
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::shouldLogFrameLoadDelegates): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        (WTR::TestInvocation::setCustomTimeout):
+        (WTR::TestInvocation::customTimeout):
+        * WebKitTestRunner/cocoa/CrashReporterInfo.mm:
+        (WTR::setCrashReportApplicationSpecificInformationToURL):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformInitialize):
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        * WebKitTestRunner/ios/mainIOS.mm:
+        (-[WebKitTestRunnerApp applicationDidEnterBackground:]):
+        (main):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+
+    2015-01-22  Daniel Bates  <dabates@apple.com>
+
+        [iOS] run-webkit-tests --ios-sim dies with an error; fails to parse Apple Internal
+        runtime in simctl output
+        https://bugs.webkit.org/show_bug.cgi?id=140751
+
+        Reviewed by David Kilzer.
+
+        Following the fix for <rdar://problem/19444383>, run-webkit-tests --ios-sim dies
+        with an error because it does not know how to parse the output of the simctl tool
+        to identify an Apple Internal runtime.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Runtime.__init__): Add parameter is_internal_runtime (defaults to False).
+        (Runtime.__eq__): Take is_internal_runtime when comparing two Runtime objects for equality.
+        (Runtime.__repr__): Update printable representation of Runtime object to indicate whether
+        the runtime is an internal runtime.
+        (Simulator): Update regular expressions runtime_re and version_re to match an internal runtime.
+        (Simulator._parse_runtimes): Pass is_internal_runtime to the Runtime constructor with the
+        appropriate value.
+        (Simulator._parse_devices): Pass argument is_internal_runtime to Simulator.runtime() so that
+        it updates the appropriate Runtime object.
+        (Simulator.runtime): Added optional parameter, is_internal_runtime. Modified to support
+        looking up a Runtime object for an internal runtime.
+
+    2015-01-21  Daniel Bates  <dabates@apple.com>
+
+        Add iOS WebKit1 TestExpectation file
+        https://bugs.webkit.org/show_bug.cgi?id=140739
+
+        Reviewed by David Kilzer.
+
+        Teach run-webkit-tests to look for iOS WebKit1-specific test results and
+        expectations in directory LayoutTests/platform/ios-simulator-wk1.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.default_baseline_search_path):
+
+    2015-01-19  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Do not hard-code iphoneos.internal SDK in buildXCodeProject()
+        <http://webkit.org/b/140623>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/build-webkit: Update help for --device switch.
+        * Scripts/webkitdirs.pm:
+        (determineXcodeSDK): When passing --device, prefer the internal
+        iOS SDK if it exists, else fall back to the external iOS SDK.
+        (buildXCodeProject): Use xcodeSDK() as -sdk argument for
+        xcodebuild instead of trying to sanitize values.
+
+    2015-01-16  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r171968): run-safari --simulator fails to launch Safari on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=135589
+
+        Reviewed by David Kilzer.
+
+        Derived from a patch by David Farler.
+
+        Following the removal IPhoneSimulatorNotification.pm in <http://trac.webkit.org/changeset/171968>
+        run-safari --simulator fails to launch Safari on iOS. We need to implement run-safari
+        in terms of the simctl command line utility.
+
+        * Scripts/webkitdirs.pm: Added constant SIMULATOR_DEVICE_STATE_BOOTED.
+        (eraseIOSSimulatorDevice): Added.
+        (bootedIOSSimulatorDevice): Added.
+        (iosSimulatorApplicationsPath): Added.
+        (installedMobileSafariBundle): Implemented in terms of iosSimulatorApplicationsPath().
+        (openIOSSimulator): Modified to launch iOS Simulator using OPEN(1).
+        (quitIOSSimulator): Added.
+        (iosSimulatorDeviceByName): Modified to find the first simulator device that matches
+        the specified name and currently selected iOS runtime.
+        (isIOSSimulatorSystemInstalledApp): Added.
+        (runIOSWebKitAppInSimulator): Modified to use simctl launch to launch an app in the simulator.
+        (deleteiOSSimulatorDevice): Deleted.
+        (loadIPhoneSimulatorNotificationIfNeeded): Deleted.
+        (installAndLaunchIOSWebKitAppInSimulator): Deleted.
+
+    2015-01-15  Daniel Bates  <dabates@apple.com>
+
+        [iOS] REGRESSION (r174642): DumpRenderTree.app test may dump result twice
+        https://bugs.webkit.org/show_bug.cgi?id=139685
+        <rdar://problem/19281317>
+
+        Reviewed by Simon Fraser.
+
+        Fixes an issue where a test in DumpRenderTree.app may dump its result twice. In particular,
+        the test LayoutTests/fast/dom/gc-10.html may dump its result twice.
+
+        Following <http://trac.webkit.org/changeset/174642>, we dump the test result asynchronously
+        as opposed to synchronously. So, the WebThread or the main thread may perform other tasks
+        before DRT dumps the output of a test. In particular, the WebThread may start a new page
+        load (say, as a result of continued JavaScript execution), which will ultimately lead to
+        dumping the test result again. Instead we want DRT to dump the test result synchronously
+        such that we capture the state of the web page either when the page is loaded or when
+        window.testRunner.notifyDone() is called.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (createBitmapContextFromWebView): Moved logic to re-enable tile painting and update the
+        state of the display from here to updateDisplay(). Added call to -[CATransaction flush] to
+        flush CA transactions to the window.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (updateDisplay): Added iOS-specific code to update tiles and tell WebKit to flush
+        compositing changes to ensure that we have up-to-date tile content for a pixel/ref-test.
+        (dump): Renamed; formerly named dumpTestResults().
+        (displayWebView): Removed outdated FIXME comment. Added FIXME comment to investigate
+        enabling repaint support on iOS.
+        (-[DumpRenderTree _deferDumpToMainThread]): Deleted.
+        (-[DumpRenderTree _waitForWebThreadThenDump]): Deleted.
+        (dumpTestResults): Deleted.
+
+    2015-01-14  Daniel Bates  <dabates@apple.com>
+
+        [iOS] run-webkit-tests --ios hangs trying to launch iOS Simulator with unavailable runtime
+        https://bugs.webkit.org/show_bug.cgi?id=140301
+        <rdar://problem/19389266>
+
+        Reviewed by Jon Honeycutt.
+
+        Fixes an issue where run-webkit-tests --ios will hang when trying to launch iOS Simulator
+        with an unavailable runtime.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options): Modified to access property Simulator.latest_available_runtime,
+        which was formerly called Simulator.latest_runtime. Additionally, raise an exception if the
+        specified runtime cannot be used because it is unavailable.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.testing_device): Modified to call Simulator.lookup_or_create_device(),
+        which was formerly named testing_device.
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Device.create): Modified to lookup created device by the UDID returned by simctl, which is
+        more robust than looking up the simulator device by name and runtime. This approach also
+        avoids returning the wrong device due to <rdar://problem/19444383> (simctl list shows
+        unavailable runtimes under the same iOS heading it would use to show it as available).
+        (Simulator.find_device_by_udid): Added.
+        (Simulator.device): Added optional parameter should_ignore_unavailable_devices (defaults
+        to False) to ignore devices that are unavailable (say, because their runtime is unavailable).
+        (Simulator.available_runtimes): Added.
+        (Simulator.latest_available_runtime): Renamed; formerly named latest_runtime. Take advantage
+        of the reverse=True argument to sorted() to sort the list of available runtimes such that the
+        first element of the sorted list is the runtime with the highest version number.
+        (Simulator.lookup_or_create_device): Renamed; formerly named testing_device.
+
+    2014-12-18  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Remove the various aliases for --ios-simulator (--sim, --simulator, --ios-sim) in arguments for build and test scripts
+        https://bugs.webkit.org/show_bug.cgi?id=139748
+
+        Reviewed by Daniel Bates.
+        
+        Staging change to support --ios-sim and --ios-simulator temporarily until the bots
+        have all been updated.
+
+        * Scripts/webkitpy/port/factory.py:
+        (platform_options):
+
+    2014-12-16  Alexey Proskuryakov  <ap@apple.com>
+
+        Sort out timeout implementations in DRT and WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=139671
+
+        Remove an obsolete test that doesn't capture how run-webkit-tests interacts
+        with the tool.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_hung_thread):
+
+    2014-12-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Sort out timeout implementations in DRT and WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=139671
+
+        Reviewed by Simon Fraser.
+
+        Test timeout implementation had many deficiencies, please see the bug for details.
+        Most notably, we shouldn't have the tool confused about timeouts vs. failures, and
+        [ Slow ] modifiers should work a lot better.
+
+        * DumpRenderTree/TestRunner.cpp: (TestRunner::TestRunner):
+        * DumpRenderTree/TestRunner.h: (TestRunner::setCustomTimeout):
+        * DumpRenderTree/mac/DumpRenderTree.mm: (runTest):
+        * DumpRenderTree/mac/TestRunnerMac.mm: (TestRunner::setWaitToDump):
+        DumpRenderTree already read the --timeout option from command line, and webkitpy
+        was already configured to pass it on Mac and iOS. Let's actually use it.
+        TestCommand already had the same 30 second default, so this doesn't change behavior
+        when DRT is ran manually without the option.
+        Windows DumpRenderTree will need to be fixed separately (that's easy).
+
+        * DumpRenderTree/TestRunner.cpp: (TestRunner::waitToDumpWatchdogTimerFired()):
+        Don't print the timeout message to stdout to match WebKitTestRunner. It would be
+        slightly better to use stderr in both, as this is an out of band message, but
+        that's a larger refactoring, and the difference is minimal in practice.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner.__init__): Ensure that script and tool timeouts are substantially
+        different. We want the tool to reliably detect timeouts that can be detected, and
+        not race with the script for that.
+
+        * Scripts/webkitpy/port/base.py: (Port.default_timeout_ms): Don't make WebKit2
+        timeout longer than WebKit1 one, I doubt that this is necessary. Now that the value
+        is honored inmore cases, that could make tests run slower.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.__init__):
+        (Driver.run_test):
+        (Driver.cmd_line):
+        (Driver._check_for_driver_timeout):
+        Detect tests that have the timeout output, and make these have the proper Timeout result.
+
+        * Scripts/webkitpy/port/ios.py: (IOSSimulatorPort.default_timeout_ms): Remove an
+        incorrect recent change - 80 * 1000 is 80 seconds, not 80 milliseconds.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setCustomTimeout): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::setCustomTimeout):
+        * WebKitTestRunner/InjectedBundle/efl/TestRunnerEfl.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/mac/TestRunnerMac.mm:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/win/TestRunnerWin.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        * WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp:
+        (WTR::TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded):
+        Updated to use a timeout passed from UI process, which used to be ignored.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::runUntil):
+        (WTR::TestController::getCustomTimeout): Deleted.
+        * WebKitTestRunner/TestController.h:
+        Delete unused m_timeout. First, it was always 0, and second, we don't need it at all.
+        Changed default message timeouts to match new run-webkit-tests timeout. These don't
+        affect ports where timeout is passed per test (shouldn't they all be like that?).
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::setCustomTimeout): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        (WTR::TestInvocation::setCustomTimeout):
+        (WTR::TestInvocation::customTimeout):
+        Ditto.
+
+    2014-12-10  Daniel Bates  <dabates@apple.com>
+
+        [iOS] REGRESSION (r174642): Watchdog timer expiration reported as DumpRenderTree.app
+        timeout instead of test failure
+        https://bugs.webkit.org/show_bug.cgi?id=139525
+
+        Reviewed by Zalan Bujtas.
+
+        Increase the default process timeout limit in run-webkit-tests to 80ms to prevent
+        run-webkit-tests from prematurely terminating DumpRenderTree.app before it dumps
+        output.
+
+        Following <http://trac.webkit.org/changeset/174642>, DumpRenderTree.app waits
+        for the WebThread to spin its run loop before dumping its output. A test that
+        calls testRunner.waitUntilDone() and does not subsequently call testRunner.notifyDone()
+        before DumpRenderTree.app's watchdog timer expires may be incorrectly reported
+        by run-webkit-tests as a DumpRenderTree.app timeout instead of a test failure
+        because run-webkit-tests may terminate a DumpRenderTree.app process when it
+        exceeds its process time limit (defaults to 35ms) regardless of whether such
+        a DumpRenderTree.app process was waiting for the WebThread to run so as to dump output.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.default_timeout_ms):
+
+    2014-12-05  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Query -[WAKWindow screenScale] instead of using WKGetScreenScaleFactor()
+        https://bugs.webkit.org/show_bug.cgi?id=139326
+
+        Reviewed by Anders Carlsson.
+
+        Ask the window for its screen scale factor instead of calling WKGetScreenScaleFactor()
+        to query the OS for it. This approach will ensure DumpRenderTree takes the snapshot
+        using the same scale factor as used in WebKit.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (createBitmapContextFromWebView):
+
+    2014-12-05  Anders Carlsson  <andersca@apple.com>
+
+        REGRESSION (r176677): All tests crash on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=139321
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+        Don't call CFRelease on the url while we have an outstanding pointer to its string,
+        and use the right number of bytes when allocating the testURL buffer.
+
+    2014-12-05  Daniel Bates  <dabates@apple.com>
+
+        [iOS] DumpRenderTree produces many reference test mismatches
+        https://bugs.webkit.org/show_bug.cgi?id=139314
+
+        Reviewed by Simon Fraser.
+
+        Fixes an issue where the scale factor used to render the snapshot taken by
+        DumpRenderTree may differ from the device scale factor. In particular, the
+        scale factor used to render a snapshot of a test may differ from the scale
+        factor used to render the snapshot of its expected result.
+
+        Currently DumpRenderTree uses SPI, -[UIView newSnapshotForRect], on iOS to
+        snapshot the UIWebBrowserView. This SPI always render using a scale factor
+        of one when the backing store for the LegacyTileLayer objects were out-of-
+        date regardless of the device scale factor. Instead we should use UIImage
+        and CALayer API to perform the snapshot with respect to the device scale
+        factor.
+
+        Additionally write iOS pixel dump support logic in terms of existing
+        DumpRenderTree abstractions so as to support generating and comparing
+        pixel dump checksums as well as make the iOS code more consistent with
+        the logic used by other ports.
+
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        (dumpWebViewAsPixelsAndCompareWithExpected): Removed !PLATFORM(IOS)-guard.
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (BitmapContext::createFromUIImage): Added.
+        (BitmapContext::pixelData): Added.
+        (BitmapContext::BitmapContext): Added.
+        (computeMD5HashStringForBitmapContext): Added.
+        (dumpBitmap): Added.
+        (createBitmapContextFromWebView): Moved logic from dumpWebViewAsPixelsAndCompareWithExpected() to here.
+        (dumpWebViewAsPixelsAndCompareWithExpected): Deleted.
+
+    2014-12-05  Daniel Bates  <dabates@apple.com>
+
+        [iOS] DumpRenderTree fails to render every other test when pixel tests are on
+        https://bugs.webkit.org/show_bug.cgi?id=137581
+        <rdar://problem/18642906>
+
+        Reviewed by Simon Fraser.
+
+        Fixes an issue where the DumpRenderTree snapshot may reflect the rendered content
+        of the test that proceeded the currently running test.
+
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (dumpWebViewAsPixelsAndCompareWithExpected): Ensure that UIKit has performed a layout
+        of the UIWebBrowserView view. Also, remove unnecessary call to -[UIWebDocumentView layoutTilesNow]
+        as -[UIWebDocumentView newSnapshotWithRect] will layout the tiles.
+
+    2014-12-02  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac, iOS] Crash log application information contains latest main frame URL instead of test URL
+        https://bugs.webkit.org/show_bug.cgi?id=139174
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/TestRunner.cpp:
+        * DumpRenderTree/TestRunner.h:
+        Renamed testPathOrURL to testURL, because this variable always contains a URL.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (sizeWebViewForCurrentTest): Updated for testPathOrURL renaming.
+        (testPathFromURL): Moved from FrameLoadDelegate.mm.
+        (runTest): Set crash reporter information here, as we know the exact test URL.
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]): Don't set crash
+        reporter information here.
+
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        Updated for testPathOrURL renaming.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didStartProvisionalLoadForFrame): WebProcess doesn't know
+        test URL until load starts, so save it into TestRunner now. A new TestRunner object
+        is created for each test.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (WTR::TestRunner::testURL):
+        (WTR::TestRunner::setTestURL):
+        Make TestRunner know the test name. For now, it's good enough to have it once load
+        starts, but if we ever need it earlier, we can send it with BeginTest message.
+
+        * WebKitTestRunner/InjectedBundle/cocoa/InjectedBundlePageCocoa.mm:
+        (WTR::InjectedBundlePage::platformDidStartProvisionalLoadForFrame):
+        Use test URL, not currently loading URL for CrashReporter.
+
+        * WebKitTestRunner/cocoa/CrashReporterInfo.mm:
+        (WTR::setCrashReportApplicationSpecificInformationToURL): Added a space after colon
+        (WebKit1 already had it right).
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (sizeWebViewForCurrentTest):
+        (runTest):
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::willSendRequest):
+        Changed Windows DumpRenderTree to also use URL in TestRunner.
+
+    2014-12-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] run-webkit-tests records most DumpRenderTree.app crashes as time-outs
+        https://bugs.webkit.org/show_bug.cgi?id=139143
+
+        Reviewed by David Kilzer.
+
+        Similar to the Windows-specific fix in <https://bugs.webkit.org/show_bug.cgi?id=37859>,
+        teach DumpRenderTree for iOS to write "#CRASHED" to the standard error stream when it
+        crashes. Run-webkit-tests will record as crashing the test associated with the
+        DumpRenderTree instance that wrote that string.
+
+        Currently almost all of the DumpRenderTree.app crashes are recorded by run-
+        webkit-tests as a time-out because ReportCrash(8) delays delivery of the
+        process exit notification for DumpRenderTree.app to LayoutTestRelay, which
+        launched DumpRenderTree.app, past the time-out time limit. Notice LayoutTestRelay
+        was launched by run-webkit-tests. So, run-webkit-tests kills LayoutTestRelay
+        (since it exceeded the time-out time limit) before it can inform rub-webkit-tests
+        about a crash.
+
+        Additionally, update the crash message format written to standard error when LayoutTestRelay
+        detects that {WebKitTestRunner, DumpRenderTree}.app crashed so as to be similar to the
+        crash message format used by WebKitTestRunner when it detects that the WebProcess crashed.
+        Then run-webkit-tests will collect the crash logs for {WebKitTestRunner, DumpRenderTree}.app
+        when they crash in their test machinery logic/UI process code.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (writeCrashedMessageOnFatalError): Added.
+        (dumpRenderTree): Register signal handler, writeCrashedMessageOnFatalError(), for signals:
+        SIGILL, SIGFPE, SIGBUS and SIGSEGV.
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController didCrashWithMessage:]): Emit a crash message with a format
+        similar to the format used by WebKitTestRunner so that run-webkit-tests will collect
+        the crash logs for WebKitTestRunner/DumpRenderTree.app.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.__init__): Update comment.
+        (Driver._check_for_driver_crash): Ditto.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort): Add class constant SUBPROCESS_CRASH_REGEX, which represents a compiled
+        regular expression. This constant is used as an optimization to avoid compiling the same
+        regular expression across invocations of _get_crash_log().
+        (IOSSimulatorPort._get_crash_log): Modified to parse the WebKitTestRunner-like crash message
+        for the subprocess name and pid. Also, moved variables crash_log, crash_logs, and now to be
+        closer to where they are used.
+
+    2014-10-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Test regressions are not detected when image result is missing
+        https://bugs.webkit.org/show_bug.cgi?id=138070
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py:
+        Count these as regressions, not as flaky tests.
+
+        * Scripts/webkitpy/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        Test it.
+
+    2014-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix typo: should be ios-simulator-wk2, not ios-simulator_wk2.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.default_baseline_search_path):
+
+    2014-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Simplify test fallback paths for iOS Simulator testing
+        https://bugs.webkit.org/show_bug.cgi?id=137830
+
+        Reviewed by Zalan Bujtas.
+        
+        Make the fallback paths be:
+            ios-simulator -> generic
+            ios-simulator-wk2->ios-simulator -> generic
+        
+        so don't include mac in the fallback path. Also remove the
+        version handling for simplicity.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.default_baseline_search_path):
+
+    2014-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Turn off font autosizing for iOS WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=137806
+
+        Reviewed by Sam Weinig.
+
+        Confusingly, WKPreferencesSetTextAutosizingEnabled() does nothing on iOS.
+        Instead, we have to add WKPreferencesSetMinimumZoomFontSize() and set it to 0
+        to disable font autosizing.
+        
+        Add platformResetPreferencesToConsistentValues() and implement it in the iOS
+        test controller to set platform-specific prefs.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues):
+
+    2014-10-13  David Farler  <dfarler@apple.com>
+
+        [iOS] LayoutTestRelay: Detect broken pipe when reading simulator app's stdout and stderr.
+        https://bugs.webkit.org/show_bug.cgi?id=137662
+
+        Reviewed by Darin Adler.
+
+        The layout test harness can close LayoutTestRelay's subprocess
+        stdout and stderr in the case of a timeout or if a run is
+        cancelled and the FIFOs are cleaned up. If LayoutTestRelay
+        finds that no one is listening to its stdout/stderr (broken
+        pipe), then just exit(1), there is nothing to report.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController didReceiveStdoutData:]):
+        Add @try/@catch for NSFileHandleOperationException.
+        (-[LTRelayController didReceiveStderrData:]):
+        Add @try/@catch for NSFileHandleOperationException.
+
+    2014-10-14  Simon Fraser  <simon.fraser@apple.com>
+
+        [Mac] DRT stderr logging after the test completes gets attributed to the next test
+
+        Reviewed by Alexey Proskuryakov.
+        
+        DRT would send "#EOF" to stderr just after doing so to stdout, which cause any later
+        logging to stderr to get associated with the next test.
+        
+        Fix by logging #EOF to stderr later, after we've completely finished with this test.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpTestResults):
+        (runTest):
+
+    2014-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS DRT snapshots are limited to the page visible area
+        https://bugs.webkit.org/show_bug.cgi?id=137650
+
+        Reviewed by Daniel Bates.
+        
+        LegacyTileCache drawing was limited to the window's visible area, found by
+        crawling up the layer hierarchy to the root layer. This caused test snapshots to
+        be missing non-composited content outside the iPhone visible area, which hinders
+        testing.
+        
+        Fix by adding a test-only mode where the window visible area is the entire window.
+        
+        * DumpRenderTree/ios/PixelDumpSupportIOS.mm:
+        (dumpWebViewAsPixelsAndCompareWithExpected): Drive-by RetainPtr fix.
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow initWithLayer:]): Call setEntireWindowVisibleForTesting:YES
+        for the DRT window.
+        
+
+    2014-10-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Page not fully rendered in iOS DRT snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=137638
+
+        Reviewed by Tim Horton.
+        
+        In iOS DumpRenderTree, we need to wait for a cycle of the WebThread runloop
+        to ensure that the page has laid out and is rendered by the time we take
+        the snapshot.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (-[DumpRenderTree _webThreadEventLoopHasRun]): Moved.
+        (-[DumpRenderTree _webThreadInvoked]): Moved.
+        (-[DumpRenderTree _waitForWebThreadThenDump]):
+        (dump): Use a performSelectorOnMainThread:withObject:waitUntilDone:NO to wait
+        for a cycle of the WebThrewd runloop. We can't just call _waitForWebThread because
+        that blocks on a delegate callback, and we can't dispatch_async because _waitForWebThread
+        relies on dispatch_async too, and the inner block won't complete until the outer block
+        has completed.
+        (dumpTestResults): Move the guts of dump() here.
+        (runTest): Whitespace.
+
+    2014-10-11  Simon Fraser  <simon.fraser@apple.com>
+
+        After r174628 we send the test process a SIGTERM before the SIGKILL.
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.serial_test_kill_process):
+
+    2014-10-10  David Farler  <dfarler@apple.com>
+
+        [iOS] LayoutTestRelay should ensure its DRT/WKTR dies when receiving kill/term signals
+        https://bugs.webkit.org/show_bug.cgi?id=137528
+
+        Reviewed by Simon Fraser.
+
+        Catch SIGINT and SIGTERM signals in the LayoutTestRelay
+        and SIGKILL the paired simulator app before exiting cleanly.
+
+        webkitpy only uses SIGKILL to kill processes which you cannot
+        catch. Send SIGTERM to the process and give it chance to do
+        its thing before sending SIGKILL. Sending a SIGKILL to an already
+        dead PID is safe.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.h:
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController finish]):
+        * LayoutTestRelay/LayoutTestRelay/main.m:
+        (receivedSignal):
+        (main):
+
+    2014-10-10  David Farler  <dfarler@apple.com>
+
+        [iOS] LayoutTestRelay should detect EOF and properly signal underlying DRT/WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=137527
+
+        Reviewed by Simon Fraser.
+
+        NSFileHandle doesn't notify of EOF in its readability handler.
+        Use a dispatch_source_t and an event handler that is called when reading is possible.
+        In the handler block, do a run-of-the-mill read(2) from standard input and
+        detect EOF in the usual way by checking that zero bytes were read.
+
+        Once an EOF is received, the FIFOs are disconnected, the simulator app
+        is killed, and the relay exits with status 0.
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController initWithDevice:productDir:appPath:identifierSuffix:dumpToolArguments:]):
+        (-[LTRelayController didDisconnect]):
+        (-[LTRelayController didConnect]):
+        (-[LTRelayController launchApp]):
+        Rename "dispatchSource" to "simulatorAppExitDispatchSource" to prevent any
+        confusion with this new dispatch source, called "standardInputDispatchSource".
+        (-[LTRelayController finish]): Added.
+        (-[LTRelayController readFileHandle:]): Deleted.
+
+    2014-10-07  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Teach run-webkit-tests to honor TestExpectation file for iOS Simulator 64-bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=137499
+
+        Reviewed by Simon Fraser.
+
+        Fixes an issue where the TestExpectation file for the iOS Simulator platform was only
+        honored when running run-webkit-tests with a 32-bit simulator build of iOS WebKit. We
+        should honor the TestExpectation file for the iOS Simulator platform for both 32- and 64-
+        bit simulator builds of iOS WebKit.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort._generate_all_test_configurations):
+
+    2014-09-23  David Farler  <dfarler@apple.com>
+
+        [iOS] run-webkit-tests should support minor versions under devices and create a testing device under the right runtime
+        https://bugs.webkit.org/show_bug.cgi?id=136895
+
+        Reviewed by David Kilzer.
+
+        Create Device, DeviceType, and Runtime data classes.
+        Create Simulator class represent simctl output.
+
+        Wherever possible, use structured data classes anywhere a raw
+        identifier or UDID string was used for a cleaner implementation
+        and to encapsulate the inherent fragility of scraping simctl output.
+
+        Create a suitably named testing device if one doesn't exist.
+
+        Finally, accurately handle having multiple simulator runtimes (SDKs)
+        installed in the active Xcode.app bundle.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        * Scripts/webkitpy/port/driver.py:
+        (IOSSimulatorDriver.cmd_line):
+        Construct DeviceType and Runtime objects from identifiers passed at the
+        command line, still providing sensible defaults for 32- and 64-bit testing.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.__init__):
+        (IOSSimulatorPort.setup_test_run):
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.testing_device):
+        Cache the testing device once it is created or found.
+        (IOSSimulatorPort.reset_preferences):
+        Get the device path from the Device object instead of consructing it
+        in the port class.
+        (IOSSimulatorPort.simulator_udid): Deleted.
+        Get the UDID from the testing_device :: Device object itself.
+        * Scripts/webkitpy/xcode/simulator.py:
+        Created Device, DeviceType, Runtime, and Simulator classes.
+        (get_runtimes): Deleted.
+        (get_devices): Deleted.
+        (get_device_types): Deleted.
+        (get_latest_runtime): Deleted.
+
+    2014-09-15  Tibor Meszaros  <tmeszaros.u-szeged@partner.samsung.com>
+
+        Remove ORWT related crufts from webkitdirs.pm
+        https://bugs.webkit.org/show_bug.cgi?id=136821
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/webkitdirs.pm:
+        (isPerianInstalled): Deleted.
+        (determineIPhoneSimulatorVersion): Deleted.
+        (iPhoneSimulatorVersion): Deleted.
+        (isSnowLeopard): Deleted.
+        (isLion): Deleted.
+        (quitIOSSimulator): Deleted.
+
+    2014-08-05  David Farler  <dfarler@apple.com>
+
+        iOS Simulator: run-webkit-tests chokes on unterminated UTF-8 when writing a test result
+        https://bugs.webkit.org/show_bug.cgi?id=135551
+
+        Reviewed by Daniel Bates.
+
+        Prevent printing invalid Unicode strings going to stderr.
+        Also, make filesystem.py more tolerant about receiving
+        Unicode (encoded as UTF-8) when writing to files, in the
+        rare case that an NSError description will make it to
+        stderr, such as -[LTRelayController createUniqueApp].
+
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m:
+        (-[LTRelayController launchSimulator]): Removed.
+        (-[LTRelayController createUniqueApp]):
+        Don't explicitly try to uninstall the app. It is automatically handled
+        when installing an app with the same bundle identifier.
+        (-[LTRelayController start]):
+        (-[LTRelayController bootDevice]): Removed.
+        The device already boots as a part of starting the simulator. Attempting
+        to boot a second time may cause spurious stderr output.
+        * Scripts/webkitpy/port/driver.py:
+        (IOSSimulatorDriver._setup_environ_for_driver):
+        Explicitly set DEVELOPER_DIR once so xcode-select isn't called.
+        Open the iOS Simulator once instead of the LayoutTestRelay trying
+        to do it.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort._get_crash_log):
+        Make sure stderr is at least an empty string.
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.developer_dir):
+        New property for setting up DEVELOPER_DIR in the driver environment.
+
+    2014-08-29  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Configure Xcode to build a command line tool for the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=136388
+
+        Reviewed by David Kilzer.
+
+        Add a script, called configure-xcode-for-ios-development, to configure Xcode to
+        support building a command line tool for the iOS Simulator. You must run this
+        script as root.
+
+        The script uses the xcspec files in the OS X SDK to create xcspec files in the
+        iOS Simulator SDK with the product- and package- type definitions to build a
+        command line tool, if applicable.
+
+        * Scripts/configure-xcode-for-ios-development: Added.
+
+    2014-08-26  Daniel Bates  <dabates@apple.com>
+
+        Only define WEBCORE_EXPORT when building DumpRenderTree for Windows and iOS
+
+        Rubber-stamped by Tim Horton.
+
+        The Windows and iOS ports are the only ports that make use of WebCore headers
+        in DumpRenderTree.
+
+        * DumpRenderTree/config.h:
+
+    2014-08-25  Daniel Bates  <dabates@apple.com>
+
+        Fix the iOS DumpRenderTree build after <http://trac.webkit.org/changeset/172814/>
+        (https://bugs.webkit.org/show_bug.cgi?id=136108)
+
+        Use a similar approach as in TestWebKitAPI/config.h and define a stub for the macro define WEBCORE_EXPORT
+        so that we can compile DumpRenderTree for iOS.
+
+        * DumpRenderTree/config.h:
+
+    2014-08-05  David Farler  <dfarler@apple.com>
+
+        [iOS] run-webkit-tests runs webkit-build-directory on every test
+        https://bugs.webkit.org/show_bug.cgi?id=135409
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.__init__): Cache Mac build directory.
+        (IOSSimulatorPort.relay_path): Use cached build directory.
+        (IOSSimulatorPort._path_to_image_diff): Use cached build directory.
+
+    2014-08-06  David Farler  <dfarler@apple.com>
+
+        Set DSYMUTIL_NUM_THREADS to the number of logical cores
+        https://bugs.webkit.org/show_bug.cgi?id=135655
+
+        Reviewed by Mark Rowe.
+
+        * Scripts/webkitdirs.pm:
+        (buildXCodeProject): Set before calling xcodebuild.
+
+    2014-08-05  David Farler  <dfarler@apple.com>
+
+        [iOS] Run ImageDiff in the sim bootstrap
+        https://bugs.webkit.org/show_bug.cgi?id=135624
+
+        Reviewed by David Kilzer.
+
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer.stop):
+        (IOSSimulatorImageDiffer):
+        (IOSSimulatorImageDiffer._start):
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.diff_image):
+
+    2014-08-05  David Farler  <dfarler@apple.com>
+
+        [iOS] run-webkit-tests: defaults for --runtime and --device-type flags
+        https://bugs.webkit.org/show_bug.cgi?id=135441
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        (_set_up_derived_options):
+        If using the ios-simulator platform and runtime or device-type
+        aren't defined, get the latest runtime from the active Xcode.app
+        and pick a default device type based on the desired architecture:
+        iPhone 5 for i386 and iPhone 5s for x86_64.
+        * Scripts/webkitpy/xcode/__init__.py: Added.
+        * Scripts/webkitpy/xcode/simulator.py: Added.
+
+    2014-08-05  David Farler  <dfarler@apple.com>
+
+        [iOS] simctl can hang if run quickly after shutting down CoreSimulator services
+        https://bugs.webkit.org/show_bug.cgi?id=135626
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort.setup_test_run):
+        Remove call to simctl shutdown <device> - telling the simulator app to quit
+        will shut down all booted devices.
+
+    2014-07-30  David Farler  <dfarler@apple.com>
+
+        build-webkittestrunner doesn't build the app target for iOS SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=135433
+
+        Reviewed by Dan Bernstein.
+
+        * Scripts/build-dumprendertree: Build the app target on iOS.
+        * Scripts/build-webkittestrunner: Build the app target on iOS.
+        * Scripts/webkitdirs.pm: Add -sdk flags when building for iOS.
+        (buildXCodeProject):
+        * Scripts/webkitpy/port/ios.py: Use --sdk flags instead of SDKROOT.
+        (IOSSimulatorPort._build_driver_flags):
+
+    2014-07-30  David Farler  <dfarler@apple.com>
+
+        Remove iOS Perl DumpRenderTree support target
+        https://bugs.webkit.org/show_bug.cgi?id=135271
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Remove the target.
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupport.c: Removed.
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupportPregenerated.pm: Removed.
+        * DumpRenderTree/ios/PerlSupport/DumpRenderTreeSupport_wrapPregenerated.c: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/Changes: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/IPhoneSimulatorNotification.xs: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/MANIFEST: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/Makefile.PL: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/README: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/lib/IPhoneSimulatorNotification.pm: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/ppport.h: Removed.
+        * DumpRenderTree/ios/PerlSupport/IPhoneSimulatorNotification/t/IPhoneSimulatorNotification.t: Removed.
+        * DumpRenderTree/ios/PerlSupport/Makefile: Removed.
+
+    2014-07-30  David Farler  <dfarler@apple.com>
+
+        Remove old-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=135374
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/old-run-webkit-tests: Removed.
+
+    2014-07-29  David Farler  <dfarler@apple.com>
+
+        iOS Simulator LayoutTestRelay
+        https://bugs.webkit.org/show_bug.cgi?id=135269
+
+        Reviewed by David Kilzer.
+
+        * LayoutTestRelay/Configurations/Base.xcconfig: Added.
+        * LayoutTestRelay/Configurations/DebugRelease.xcconfig: Added.
+        * LayoutTestRelay/LayoutTestRelay.xcodeproj/project.pbxproj: Added.
+        * LayoutTestRelay/LayoutTestRelay/LTPipeRelay.h: Added.
+        * LayoutTestRelay/LayoutTestRelay/LTPipeRelay.m: Added.
+        (-[LTPipeRelay inPipePath]):
+        (-[LTPipeRelay outPipePath]):
+        (-[LTPipeRelay errorPipePath]):
+        (-[LTPipeRelay outputStream]):
+        (-[LTPipeRelay initWithPrefix:]):
+        (-[LTPipeRelay setup]):
+        (-[LTPipeRelay tearDown]):
+        (-[LTPipeRelay connect]):
+        (-[LTPipeRelay disconnect]):
+        (-[LTPipeRelay createFIFOs]):
+        (-[LTPipeRelay destroyFIFOs]):
+        (-[LTPipeRelay relayStream:]):
+        (-[LTPipeRelay stream:handleEvent:]):
+        * LayoutTestRelay/LayoutTestRelay/LTRelay.h: Added.
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.h: Added.
+        * LayoutTestRelay/LayoutTestRelay/LTRelayController.m: Added.
+        (-[LTRelayController uniqueAppPath]):
+        (-[LTRelayController uniqueAppURL]):
+        (-[LTRelayController uniqueAppIdentifier]):
+        (-[LTRelayController processName]):
+        (-[LTRelayController initWithDevice:productDir:appPath:identifierSuffix:dumpToolArguments:]):
+        (-[LTRelayController readFileHandle:]):
+        (-[LTRelayController receivedStandardOutputData:]):
+        (-[LTRelayController receivedStandardErrorData:]):
+        (-[LTRelayController disconnected]):
+        (-[LTRelayController connected]):
+        (-[LTRelayController crashWithMessage:]):
+        (-[LTRelayController launchSimulator]):
+        (-[LTRelayController bootDevice]):
+        (-[LTRelayController createUniqueApp]):
+        (-[LTRelayController killApp]):
+        (-[LTRelayController launchApp]):
+        (-[LTRelayController start]):
+        * LayoutTestRelay/LayoutTestRelay/main.m: Added.
+        (usage):
+        (getTestingSimDevice):
+        (getRequiredStringArgument):
+        (getRemainderArguments):
+        (main):
+        * LayoutTestRelay/Makefile: Added.
+        * Tools/Scripts/build-layouttestrelay: Added.
+
+    2014-07-24  David Farler  <dfarler@apple.com>
+
+        Add knowledge of the iOS Simulator to webkitpy
+        http://bugs.webkit.org/show_bug.cgi?id=133963
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration): Add --ios-sim*
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        --runtime and --device-type args added.
+        * Scripts/webkitpy/port/base.py:
+        * Scripts/webkitpy/port/driver.py: Add simulator driver.
+        (IOSSimulatorDriver): Added.
+        * Scripts/webkitpy/port/factory.py: Add simulator platform.
+        * Scripts/webkitpy/port/ios.py: Added.
+
+    2014-07-24  David Farler  <dfarler@apple.com>
+
+        Allow for multiple DumpRenderTree and WebKitTestRunner instances in the iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=135272
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpRenderTree): Remove hard-coding of FIFO paths.
+        (-[DumpRenderTree applicationDidEnterBackground:]): Create background task.
+        (DumpRenderTreeMain): Set DumpRenderTree as UIApplication delegate.
+        * DumpRenderTree/mac/DumpRenderTreeMac.h: bgTask ivar.
+        * Scripts/old-run-webkit-tests: Update FIFO paths for ORWT.
+        * WebKitTestRunner/TestController.cpp: Remove hard-coding of FIFO paths.
+        * WebKitTestRunner/ios/TestControllerIOS.mm: Move dup2 calls to platformInitialize
+        * WebKitTestRunner/ios/mainIOS.mm: bgTask ivar.
+        (-[WebKitTestRunnerApp applicationDidEnterBackground:]): Create background task.
+        (main): Set WebKitTestRunnerApp as UIApplication delegate.
+
+    2014-07-24  David Farler  <dfarler@apple.com>
+
+        ImageDiff builds for the simulator when running iOS layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=135270
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/build-imagediff: Added.
+
 2015-01-21  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r176904.

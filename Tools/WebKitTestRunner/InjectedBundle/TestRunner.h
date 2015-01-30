@@ -56,6 +56,8 @@ public:
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
     // The basics.
+    WKURLRef testURL() const { return m_testURL.get(); }
+    void setTestURL(WKURLRef url) { m_testURL = url; }
     void dumpAsText(bool dumpPixels);
     void waitForPolicyDelegate();
     void dumpChildFramesAsText() { m_whatToDump = AllFramesText; }
@@ -257,7 +259,7 @@ public:
 
     bool callShouldCloseOnWebView();
 
-    void setCustomTimeout(int duration);
+    void setCustomTimeout(int duration) { m_timeout = duration; }
 
     // Work queue.
     void queueBackNavigation(unsigned howFarBackward);
@@ -274,12 +276,12 @@ public:
     JSValueRef neverInlineFunction(JSValueRef theFunction);
 
 private:
-    static const double waitToDumpWatchdogTimerInterval;
-
     TestRunner();
 
     void platformInitialize();
     void initializeWaitToDumpWatchdogTimerIfNeeded();
+
+    WKRetainPtr<WKURLRef> m_testURL; // Set by InjectedBundlePage once provisional load starts.
 
     WhatToDump m_whatToDump;
     bool m_shouldDumpAllFrameScrollPositions;

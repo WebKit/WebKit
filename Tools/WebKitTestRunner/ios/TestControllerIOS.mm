@@ -27,10 +27,12 @@
 #import "TestController.h"
 
 #import "CrashReporterInfo.h"
+#import <Foundation/Foundation.h>
 #import "PlatformWebView.h"
 #import "TestInvocation.h"
+#import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKStringCF.h>
-#include <wtf/MainThread.h>
+#import <wtf/MainThread.h>
 
 namespace WTR {
 
@@ -40,6 +42,17 @@ void TestController::notifyDone()
 
 void TestController::platformInitialize()
 {
+    NSString *identifier = [[NSBundle mainBundle] bundleIdentifier];
+    const char *stdinPath = [[NSString stringWithFormat:@"/tmp/%@_IN", identifier] UTF8String];
+    const char *stdoutPath = [[NSString stringWithFormat:@"/tmp/%@_OUT", identifier] UTF8String];
+    const char *stderrPath = [[NSString stringWithFormat:@"/tmp/%@_ERROR", identifier] UTF8String];
+
+    int infd = open(stdinPath, O_RDWR);
+    dup2(infd, STDIN_FILENO);
+    int outfd = open(stdoutPath, O_RDWR);
+    dup2(outfd, STDOUT_FILENO);
+    int errfd = open(stderrPath, O_RDWR | O_NONBLOCK);
+    dup2(errfd, STDERR_FILENO);
 }
 
 void TestController::platformDestroy()
@@ -65,6 +78,13 @@ void TestController::platformWillRunTest(const TestInvocation& testInvocation)
 static bool shouldMakeViewportFlexible(const char* pathOrURL)
 {
     return strstr(pathOrURL, "viewport/");
+}
+
+void TestController::platformResetPreferencesToConsistentValues()
+{
+    WKPreferencesRef preferences = WKPageGroupGetPreferences(m_pageGroup.get());
+    // Note that WKPreferencesSetTextAutosizingEnabled has no effect on iOS.
+    WKPreferencesSetMinimumZoomFontSize(preferences, 0);
 }
 
 void TestController::platformConfigureViewForTest(const TestInvocation& test)

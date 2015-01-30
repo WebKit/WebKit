@@ -81,8 +81,10 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 #else
 - (id)initWithLayer:(CALayer *)layer
 {
-    if ((self = [super initWithLayer:layer]))
+    if ((self = [super initWithLayer:layer])) {
+        [self setEntireWindowVisibleForTesting:YES];
         [self _addToOpenWindows];
+    }
 
     return self;
 }

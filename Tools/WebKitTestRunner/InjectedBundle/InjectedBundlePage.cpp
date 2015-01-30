@@ -650,6 +650,11 @@ void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
     if (!InjectedBundle::shared().isTestRunning())
         return;
 
+    if (!InjectedBundle::shared().testRunner()->testURL()) {
+        WKRetainPtr<WKURLRef> testURL = adoptWK(WKBundleFrameCopyProvisionalURL(frame));
+        InjectedBundle::shared().testRunner()->setTestURL(testURL.get());
+    }
+
     platformDidStartProvisionalLoadForFrame(frame);
 
     if (InjectedBundle::shared().testRunner()->shouldDumpFrameLoadCallbacks())

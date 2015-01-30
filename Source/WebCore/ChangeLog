@@ -1,3 +1,39 @@
+2015-01-28  David Kilzer  <ddkilzer@apple.com>
+
+        run-webkit-tests: Merge 46 commits from trunk to make it work
+
+        r171686, r171687, r171789, r171800, r171967, r171968, r171969,
+        r172115, r172117, r172118, r172174, r172602, r172942, r172967,
+        r173129, r173452, r173647, r173937, r174406, r174626, r174628,
+        r174634, r174642, r174650, r174702, r174728, r174824, r174835,
+        r174844, r175204, r176669, r176677, r176872, r176880, r176885,
+        r176897, r177129, r177363, r177370, r177510, r178444, r178570,
+        r178601, r178656, r178867, r178925
+
+        * platform/ios/wak/WAKWindow.h:
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow setEntireWindowVisibleForTesting:]):
+        (-[WAKWindow _visibleRectRespectingMasksToBounds:]):
+
+    2014-10-13  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS DRT snapshots are limited to the page visible area
+        https://bugs.webkit.org/show_bug.cgi?id=137650
+
+        Reviewed by Daniel Bates.
+
+        LegacyTileCache drawing was limited to the window's visible area, found by
+        crawling up the layer hierarchy to the root layer. This caused test snapshots to
+        be missing non-composited content outside the iPhone visible area, which hinders
+        testing.
+        
+        Fix by adding a test-only mode where the window visible area is the entire window.
+
+        * platform/ios/wak/WAKWindow.h:
+        * platform/ios/wak/WAKWindow.mm:
+        (-[WAKWindow setEntireWindowVisibleForTesting:]):
+        (-[WAKWindow _visibleRectRespectingMasksToBounds:]):
+
 2015-01-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r179027

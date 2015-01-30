@@ -180,7 +180,7 @@ class ExecutiveTest(unittest.TestCase):
             # cygwin seems to give us either SIGABRT or SIGKILL
             self.assertIn(process.wait(), (-signal.SIGABRT, -signal.SIGKILL))
         else:
-            expected_exit_code = -signal.SIGKILL
+            expected_exit_code = -signal.SIGTERM
             self.assertEqual(process.wait(), expected_exit_code)
 
         # Killing again should fail silently.

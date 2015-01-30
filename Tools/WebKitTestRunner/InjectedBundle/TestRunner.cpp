@@ -55,8 +55,6 @@
 
 namespace WTR {
 
-const double TestRunner::waitToDumpWatchdogTimerInterval = 30;
-
 PassRefPtr<TestRunner> TestRunner::create()
 {
     return adoptRef(new TestRunner);
@@ -93,6 +91,7 @@ TestRunner::TestRunner()
     , m_policyDelegatePermissive(false)
     , m_globalFlag(false)
     , m_customFullScreenBehavior(false)
+    , m_timeout(30000)
     , m_databaseDefaultQuota(-1)
     , m_databaseMaxQuota(-1)
     , m_userStyleSheetEnabled(false)
@@ -162,11 +161,6 @@ void TestRunner::notifyDone()
         InjectedBundle::shared().page()->dump();
 
     m_waitToDump = false;
-}
-
-void TestRunner::setCustomTimeout(int timeout)
-{
-    m_timeout = timeout;
 }
 
 void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)

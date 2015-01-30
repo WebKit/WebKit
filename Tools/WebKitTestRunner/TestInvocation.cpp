@@ -117,11 +117,6 @@ void TestInvocation::setIsPixelTest(const std::string& expectedPixelHash)
     m_expectedPixelHash = expectedPixelHash;
 }
 
-void TestInvocation::setCustomTimeout(int timeout)
-{
-    m_timeout = timeout;
-}
-
 static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
 {
     return strstr(pathOrURL, "loading/");
@@ -163,8 +158,6 @@ void TestInvocation::invoke()
 
     WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), beginTestMessageBody.get());
 
-    TestController::TimeoutDuration timeoutToUse = TestController::LongTimeout;
-
     TestController::shared().runUntil(m_gotInitialResponse, TestController::ShortTimeout);
     if (!m_gotInitialResponse) {
         m_errorMessage = "Timed out waiting for initial response from web process\n";
@@ -176,12 +169,7 @@ void TestInvocation::invoke()
 
     WKPageLoadURL(TestController::shared().mainWebView()->page(), m_url.get());
 
-    if (TestController::shared().useWaitToDumpWatchdogTimer()) {
-        if (m_timeout > 0)
-            timeoutToUse = TestController::CustomTimeout;
-    } else
-        timeoutToUse = TestController::NoTimeout;
-    TestController::shared().runUntil(m_gotFinalMessage, timeoutToUse);
+    TestController::shared().runUntil(m_gotFinalMessage, TestController::NoTimeout);
 
     if (!m_gotFinalMessage) {
         m_errorMessage = "Timed out waiting for final message from web process\n";

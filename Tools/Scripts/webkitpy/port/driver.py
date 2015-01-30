@@ -124,12 +124,14 @@ class Driver(object):
         self._no_timeout = no_timeout
 
         self._driver_tempdir = None
-        # WebKitTestRunner can report back subprocess crashes by printing
-        # "#CRASHED - PROCESSNAME".  Since those can happen at any time
-        # and ServerProcess won't be aware of them (since the actual tool
-        # didn't crash, just a subprocess) we record the crashed subprocess name here.
+        # WebKitTestRunner/LayoutTestRelay can report back subprocess crashes by printing
+        # "#CRASHED - PROCESSNAME".  Since those can happen at any time and ServerProcess
+        # won't be aware of them (since the actual tool didn't crash, just a subprocess)
+        # we record the crashed subprocess name here.
         self._crashed_process_name = None
         self._crashed_pid = None
+
+        self._driver_timed_out = False
 
         # WebKitTestRunner can report back subprocesses that became unresponsive
         # This could mean they crashed.
@@ -166,6 +168,7 @@ class Driver(object):
         start_time = time.time()
         self.start(driver_input.should_run_pixel_test, driver_input.args)
         test_begin_time = time.time()
+        self._driver_timed_out = False
         self.error_from_test = str()
         self.err_seen_eof = False
 
@@ -178,6 +181,7 @@ class Driver(object):
 
         crashed = self.has_crashed()
         timed_out = self._server_process.timed_out
+        driver_timed_out = self._driver_timed_out
         pid = self._server_process.pid()
 
         if stop_when_done or crashed or timed_out:
@@ -193,7 +197,6 @@ class Driver(object):
         crash_log = None
         if crashed:
             self.error_from_test, crash_log = self._get_crash_log(text, self.error_from_test, newer_than=start_time)
-
             # If we don't find a crash log use a placeholder error message instead.
             if not crash_log:
                 pid_str = str(self._crashed_pid) if self._crashed_pid else "unknown pid"
@@ -208,7 +211,7 @@ class Driver(object):
 
         return DriverOutput(text, image, actual_image_hash, audio,
             crash=crashed, test_time=time.time() - test_begin_time, measurements=self._measurements,
-            timeout=timed_out, error=self.error_from_test,
+            timeout=timed_out or driver_timed_out, error=self.error_from_test,
             crashed_process_name=self._crashed_process_name,
             crashed_pid=self._crashed_pid, crash_log=crash_log, pid=pid)
 
@@ -344,7 +347,6 @@ class Driver(object):
             cmd.append('--threaded')
         if self._no_timeout:
             cmd.append('--no-timeout')
-        # FIXME: We need to pass --timeout=SECONDS to WebKitTestRunner for WebKit2.
 
         cmd.extend(self._port.get_option('additional_drt_flag', []))
         cmd.extend(self._port.additional_drt_flag())
@@ -354,15 +356,19 @@ class Driver(object):
         cmd.append('-')
         return cmd
 
+    def _check_for_driver_timeout(self, out_line):
+        if out_line == "FAIL: Timed out waiting for notifyDone to be called":
+            self._driver_timed_out = True
+
     def _check_for_driver_crash(self, error_line):
         if error_line == "#CRASHED\n":
-            # This is used on Windows to report that the process has crashed
+            # This is used on Windows and iOS to report that the process has crashed
             # See http://trac.webkit.org/changeset/65537.
             self._crashed_process_name = self._server_process.name()
             self._crashed_pid = self._server_process.pid()
         elif (error_line.startswith("#CRASHED - ")
             or error_line.startswith("#PROCESS UNRESPONSIVE - ")):
-            # WebKitTestRunner uses this to report that the WebProcess subprocess crashed.
+            # WebKitTestRunner/LayoutTestRelay uses this to report that the subprocess (e.g. WebProcess) crashed.
             match = re.match('#(?:CRASHED|PROCESS UNRESPONSIVE) - (\S+)', error_line)
             self._crashed_process_name = match.group(1) if match else 'WebProcess'
             match = re.search('pid (\d+)', error_line)
@@ -494,6 +500,29 @@ class Driver(object):
         # This checks if the required system dependencies for the driver are met.
         # Since this is the generic class implementation, just return True.
         return True
+
+
+class IOSSimulatorDriver(Driver):
+    def cmd_line(self, pixel_tests, per_test_args):
+        cmd = super(IOSSimulatorDriver, self).cmd_line(pixel_tests, per_test_args)
+        relay_tool = self._port.relay_path
+        dump_tool = cmd[0]
+        dump_tool_args = cmd[1:]
+        product_dir = self._port._build_path()
+        runtime = self._port.get_option('runtime')
+        device_type = self._port.get_option('device_type')
+        relay_args = [
+            '-runtime', runtime.identifier,
+            '-deviceType', device_type.identifier,
+            '-suffix', str(self._worker_number),
+            '-productDir', product_dir,
+            '-app', dump_tool,
+        ]
+        return [relay_tool] + relay_args + ['--'] + dump_tool_args
+
+    def _setup_environ_for_driver(self, environment):
+        environment['DEVELOPER_DIR'] = self._port.developer_dir
+        return super(IOSSimulatorDriver, self)._setup_environ_for_driver(environment)
 
 
 class ContentBlock(object):

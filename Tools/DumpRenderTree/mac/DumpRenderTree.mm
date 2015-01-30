@@ -41,7 +41,6 @@
 #import "FrameLoadDelegate.h"
 #import "HistoryDelegate.h"
 #import "JavaScriptThreading.h"
-#import "TestRunner.h"
 #import "MockGeolocationProvider.h"
 #import "MockWebNotificationProvider.h"
 #import "NavigationController.h"
@@ -51,6 +50,7 @@
 #import "PolicyDelegate.h"
 #import "ResourceLoadDelegate.h"
 #import "StorageTrackerDelegate.h"
+#import "TestRunner.h"
 #import "UIDelegate.h"
 #import "WebArchiveDumpSupport.h"
 #import "WebCoreTestSupport.h"
@@ -68,8 +68,8 @@
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDatabaseManagerPrivate.h>
-#import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebDeviceOrientationProviderMock.h>
+#import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHistory.h>
@@ -77,19 +77,20 @@
 #import <WebKit/WebInspector.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebPreferenceKeysPrivate.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebPreferenceKeysPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStorageManagerPrivate.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKitSystemInterface.h>
 #import <getopt.h>
 #import <wtf/Assertions.h>
 #import <wtf/FastMalloc.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/Threading.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/OwnPtr.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/Threading.h>
 #import <wtf/text/WTFString.h>
 
 #if !PLATFORM(IOS)
@@ -98,6 +99,7 @@
 #endif
 
 #if PLATFORM(IOS)
+#import "DumpRenderTreeBrowserView.h"
 #import <CoreGraphics/CGFontDB.h>
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIApplication_Private.h>
@@ -109,7 +111,6 @@
 #import <WebKit/WebCoreThreadRun.h>
 #import <WebKit/WebDOMOperations.h>
 #import <fcntl.h>
-#import "DumpRenderTreeBrowserView.h"
 #endif
 
 extern "C" {
@@ -154,7 +155,11 @@ using namespace std;
 @end
 #endif
 
-static void runTest(const string& testPathOrURL);
+@interface WebView (Details)
+- (BOOL)_flushCompositingChanges;
+@end
+
+static void runTest(const string& testURL);
 
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
 // - There is no load in progress
@@ -1115,15 +1120,40 @@ static void prepareConsistentTestingEnvironment()
 #endif
 }
 
+#if PLATFORM(IOS)
+const char crashedMessage[] = "#CRASHED\n";
+
+void writeCrashedMessageOnFatalError(int signalCode)
+{
+    // Reset the default action for the signal so that we run ReportCrash(8) on pending and
+    // subsequent instances of the signal.
+    signal(signalCode, SIG_DFL);
+
+    // WRITE(2) and FSYNC(2) are considered safe to call from a signal handler by SIGACTION(2).
+    write(STDERR_FILENO, &crashedMessage[0], sizeof(crashedMessage) - 1);
+    fsync(STDERR_FILENO);
+}
+#endif
+
 void dumpRenderTree(int argc, const char *argv[])
 {
 #if PLATFORM(IOS)
-    int infd = open("/tmp/DumpRenderTree_IN", O_RDWR);
+    NSString *identifier = [[NSBundle mainBundle] bundleIdentifier];
+    const char *stdinPath = [[NSString stringWithFormat:@"/tmp/%@_IN", identifier] UTF8String];
+    const char *stdoutPath = [[NSString stringWithFormat:@"/tmp/%@_OUT", identifier] UTF8String];
+    const char *stderrPath = [[NSString stringWithFormat:@"/tmp/%@_ERROR", identifier] UTF8String];
+
+    int infd = open(stdinPath, O_RDWR);
     dup2(infd, STDIN_FILENO);
-    int outfd = open("/tmp/DumpRenderTree_OUT", O_RDWR);
+    int outfd = open(stdoutPath, O_RDWR);
     dup2(outfd, STDOUT_FILENO);
-    int errfd = open("/tmp/DumpRenderTree_ERROR", O_RDWR | O_NONBLOCK);
+    int errfd = open(stderrPath, O_RDWR | O_NONBLOCK);
     dup2(errfd, STDERR_FILENO);
+
+    signal(SIGILL, &writeCrashedMessageOnFatalError);
+    signal(SIGFPE, &writeCrashedMessageOnFatalError);
+    signal(SIGBUS, &writeCrashedMessageOnFatalError);
+    signal(SIGSEGV, &writeCrashedMessageOnFatalError);
 #endif
 
     initializeGlobalsFromCommandLineOptions(argc, argv);
@@ -1201,12 +1231,26 @@ static const char **_argv;
     [self performSelectorOnMainThread:@selector(_runDumpRenderTree) withObject:nil waitUntilDone:NO];
 }
 
-- (void)_deferDumpToMainThread
+- (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    ASSERT(WebThreadIsCurrent());
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        dump();
+    /* Apps will get suspended or killed some time after entering the background state but we want to be able to run multiple copies of DumpRenderTree. Periodically check to see if our remaining background time dips below a threshold and create a new background task.
+    */
+    void (^expirationHandler)() = ^ {
+        [application endBackgroundTask:backgroundTaskIdentifier];
+        backgroundTaskIdentifier = UIBackgroundTaskInvalid;
+    };
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+        NSTimeInterval timeRemaining;
+        while (true) {
+            timeRemaining = [application backgroundTimeRemaining];
+            if (timeRemaining <= 10.0 || backgroundTaskIdentifier == UIBackgroundTaskInvalid) {
+                [application endBackgroundTask:backgroundTaskIdentifier];
+                backgroundTaskIdentifier = [application beginBackgroundTaskWithExpirationHandler:expirationHandler];
+            }
+            sleep(5);
+        }
     });
 }
 
@@ -1261,7 +1305,7 @@ int DumpRenderTreeMain(int argc, const char *argv[])
 #else
     _argc = argc;
     _argv = argv;
-    UIApplicationMain(argc, (char**)argv, @"DumpRenderTree", nil);
+    UIApplicationMain(argc, (char**)argv, @"DumpRenderTree", @"DumpRenderTree");
 #endif
     [WebCoreStatistics garbageCollectJavaScriptObjects];
     [WebCoreStatistics emptyCache]; // Otherwise SVGImages trigger false positives for Frame/Node counts
@@ -1454,7 +1498,7 @@ static void sizeWebViewForCurrentTest()
     [uiDelegate resetWindowOrigin];
 
     // W3C SVG tests expect to be 480x360
-    bool isSVGW3CTest = (gTestRunner->testPathOrURL().find("svg/W3C-SVG-1.1") != string::npos);
+    bool isSVGW3CTest = (gTestRunner->testURL().find("svg/W3C-SVG-1.1") != string::npos);
     if (isSVGW3CTest)
         [[mainFrame webView] setFrameSize:NSMakeSize(TestRunner::w3cSVGViewWidth, TestRunner::w3cSVGViewHeight)];
     else
@@ -1517,21 +1561,21 @@ bool shouldSetWaitToDumpWatchdog()
 static void updateDisplay()
 {
     WebView *webView = [mainFrame webView];
-
+#if PLATFORM(IOS)
+    [gWebBrowserView layoutIfNeeded]; // Re-enables tile painting, which was disabled when committing the frame load.
+    [gDrtWindow layoutTilesNow];
+    [webView _flushCompositingChanges];
+#else
     if ([webView _isUsingAcceleratedCompositing])
         [webView display];
     else
         [webView displayIfNeeded];
+#endif
 }
 
 void dump()
 {
 #if PLATFORM(IOS)
-    // This can get called on the web thread if from a JavaScript notifyDone().
-    if (WebThreadIsCurrent()) {
-        [(DumpRenderTree *)UIApp _deferDumpToMainThread];
-        return;
-    }
     WebThreadLock();
 #endif
 
@@ -1595,10 +1639,8 @@ void dump()
         // This is a speculative fix for: https://bugs.webkit.org/show_bug.cgi?id=32339
         invalidateAnyPreviousWaitToDumpWatchdog();
 
-        if (printSeparators) {
+        if (printSeparators)
             puts("#EOF");       // terminate the content block
-            fputs("#EOF\n", stderr);
-        }            
     }
 
     if (dumpPixelsForCurrentTest && gTestRunner->generatePixelResults())
@@ -1606,9 +1648,7 @@ void dump()
         dumpWebViewAsPixelsAndCompareWithExpected(gTestRunner->expectedPixelHash());
 
     puts("#EOF");   // terminate the (possibly empty) pixels block
-
     fflush(stdout);
-    fflush(stderr);
 
     done = YES;
     CFRunLoopStop(CFRunLoopGetMain());
@@ -1735,6 +1775,27 @@ static void WebThreadLockAfterDelegateCallbacksHaveCompleted()
 }
 #endif
 
+static NSString *testPathFromURL(NSURL* url)
+{
+    if ([url isFileURL]) {
+        NSString *filePath = [url path];
+        NSRange layoutTestsRange = [filePath rangeOfString:@"/LayoutTests/"];
+        if (layoutTestsRange.location == NSNotFound)
+            return nil;
+
+        return [filePath substringFromIndex:NSMaxRange(layoutTestsRange)];
+    }
+    
+    // HTTP test URLs look like: http://127.0.0.1:8000/inspector/resource-tree/resource-request-content-after-loading-and-clearing-cache.html
+    if (![[url scheme] isEqualToString:@"http"] && ![[url scheme] isEqualToString:@"https"])
+        return nil;
+
+    if ([[url host] isEqualToString:@"127.0.0.1"] && ([[url port] intValue] == 8000 || [[url port] intValue] == 8443))
+        return [url path];
+
+    return nil;
+}
+
 static void runTest(const string& inputLine)
 {
     ASSERT(!inputLine.empty());
@@ -1759,6 +1820,12 @@ static void runTest(const string& inputLine)
         return;
     }
 
+    NSString *testPath = testPathFromURL(url);
+    if (!testPath)
+        testPath = [url absoluteString];
+    NSString *informationString = [@"CRASHING TEST: " stringByAppendingString:testPath];
+    WKSetCrashReportApplicationSpecificInformation((CFStringRef)informationString);
+
     const char* testURL([[url absoluteString] UTF8String]);
     
     resetWebViewToConsistentStateBeforeTesting();
@@ -1767,6 +1834,7 @@ static void runTest(const string& inputLine)
 #endif
 
     gTestRunner = TestRunner::create(testURL, command.expectedPixelHash);
+    gTestRunner->setCustomTimeout(command.timeout);
     topLoadingFrame = nil;
 #if !PLATFORM(IOS)
     ASSERT(!draggingInfo); // the previous test should have called eventSender.mouseUp to drop!
@@ -1802,6 +1870,7 @@ static void runTest(const string& inputLine)
 
     if ([WebHistory optionalSharedHistory])
         [WebHistory setOptionalSharedHistory:nil];
+
     lastMousePosition = NSZeroPoint;
     lastClickPosition = NSZeroPoint;
 
@@ -1883,6 +1952,9 @@ static void runTest(const string& inputLine)
 
     if (gcBetweenTests)
         [WebCoreStatistics garbageCollectJavaScriptObjects];
+
+    fputs("#EOF\n", stderr);
+    fflush(stderr);
 }
 
 void displayWebView()
@@ -1890,11 +1962,11 @@ void displayWebView()
 #if !PLATFORM(IOS)
     WebView *webView = [mainFrame webView];
     [webView display];
-    
+
+    // FIXME: Tracking repaints is not specific to Mac. We should enable such support on iOS.
     [webView setTracksRepaints:YES];
     [webView resetTrackedRepaints];
 #else
-    // FIXME: <rdar://problem/5106253> DumpRenderTree: fix DRT and ImageDiff to re-enable pixel tests
     [gDrtWindow layoutTilesNow];
     [gDrtWindow setNeedsDisplayInRect:[gDrtWindow frame]];
     [CATransaction flush];

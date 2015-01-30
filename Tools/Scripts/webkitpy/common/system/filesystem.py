@@ -39,6 +39,7 @@ import sys
 import tempfile
 import time
 
+
 class FileSystem(object):
     """FileSystem interface for webkitpy.
 
@@ -223,8 +224,8 @@ class FileSystem(object):
         """Write the contents to the file at the given location.
 
         The file is written encoded as UTF-8 with no BOM."""
-        with codecs.open(path, 'w', 'utf8') as f:
-            f.write(contents)
+        with codecs.open(path, 'w', 'utf-8') as f:
+            f.write(contents.decode('utf-8') if type(contents) == str else contents)
 
     def sha1(self, path):
         contents = self.read_binary_file(path)

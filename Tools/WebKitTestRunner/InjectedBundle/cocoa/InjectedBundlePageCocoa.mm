@@ -27,6 +27,7 @@
 #import "InjectedBundlePage.h"
 
 #import "CrashReporterInfo.h"
+#import "InjectedBundle.h"
 #import <WebKit/WKBundleFrame.h>
 #import <WebKit/WKBundlePagePrivate.h>
 #import <WebKit/WKURLCF.h>
@@ -40,8 +41,7 @@ void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRe
     if (!WKBundleFrameIsMainFrame(frame))
         return;
 
-    WKRetainPtr<WKURLRef> mainFrameURL = adoptWK(WKBundleFrameCopyProvisionalURL(frame));
-    setCrashReportApplicationSpecificInformationToURL(mainFrameURL.get());
+    setCrashReportApplicationSpecificInformationToURL(InjectedBundle::shared().testRunner()->testURL());
 
 #if PLATFORM(IOS)
     WKBundlePageSetUseTestingViewportConfiguration(page(), true);

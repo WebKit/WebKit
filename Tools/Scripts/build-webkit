@@ -89,7 +89,7 @@ Usage: $programName [options] [options to pass to build system]
   --debug                           Compile with Debug configuration
   --release                         Compile with Release configuration
   --sdk=<sdk>                       Use a specific Xcode SDK (iOS and Mac only)
-  --device                          Use the current iphoneos.internal SDK (iOS only)
+  --device                          Use "iphoneos.internal" SDK if installed, else "iphoneos" SDK (iOS only)
   --simulator                       Use the current iphonesimulator SDK (iOS only)
   --coverage                        Enable Code Coverage support (Mac only)
 

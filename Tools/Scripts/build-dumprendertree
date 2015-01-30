@@ -65,7 +65,8 @@ chdir "Tools/DumpRenderTree" or die;
 
 my $result;
 if (isAppleMacWebKit()) {
-    $result = buildXCodeProject("DumpRenderTree", $clean, XcodeOptions(), @ARGV);
+    my @target = isIOSWebKit() ? ("-target", "DumpRenderTree.app") : ();
+    $result = buildXCodeProject("DumpRenderTree", $clean, XcodeOptions(), (@ARGV, @target));
 } elsif (isAppleWinWebKit()) {
     my $drtSolutionPath = "DumpRenderTree.vcxproj/DumpRenderTree.sln";
     $result = buildVisualStudioProject($drtSolutionPath, $clean);

@@ -44,6 +44,12 @@ def platform_options(use_globs=False):
     return [
         optparse.make_option('--platform', action='store',
             help=('Glob-style list of platform/ports to use (e.g., "mac*")' if use_globs else 'Platform to use (e.g., "mac-lion")')),
+        optparse.make_option('--ios-sim', action='store_const', dest='platform',
+            const=('ios-simulator'),
+            help=('Alias for --platform=ios-sim*' if use_globs else 'Alias for --platform=ios-simulator')),
+        optparse.make_option('--ios-simulator', action='store_const', dest='platform',
+            const=('ios-simulator'),
+            help=('Alias for --platform=ios-sim*' if use_globs else 'Alias for --platform=ios-simulator')),
         optparse.make_option('--efl', action='store_const', dest='platform',
             const=('efl*' if use_globs else 'efl'),
             help=('Alias for --platform=efl*' if use_globs else 'Alias for --platform=efl')),
@@ -77,6 +83,7 @@ class PortFactory(object):
     PORT_CLASSES = (
         'efl.EflPort',
         'gtk.GtkPort',
+        'ios.IOSSimulatorPort',
         'mac.MacPort',
         'mock_drt.MockDRTPort',
         'test.TestPort',

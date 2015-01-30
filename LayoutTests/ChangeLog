@@ -1,3 +1,47 @@
+2015-01-28  David Kilzer  <ddkilzer@apple.com>
+
+        run-webkit-tests: Merge 46 commits from trunk to make it work
+
+        r171686, r171687, r171789, r171800, r171967, r171968, r171969,
+        r172115, r172117, r172118, r172174, r172602, r172942, r172967,
+        r173129, r173452, r173647, r173937, r174406, r174626, r174628,
+        r174634, r174642, r174650, r174702, r174728, r174824, r174835,
+        r174844, r175204, r176669, r176677, r176872, r176880, r176885,
+        r176897, r177129, r177363, r177370, r177510, r178444, r178570,
+        r178601, r178656, r178867, r178925
+
+        * fast/block/border-fit-with-right-alignment-expected.html:
+        * platform/ios-simulator-wk1/TestExpectations: Added.
+        * platform/ios-simulator/TestExpectations: Added.
+
+    2015-01-21  Daniel Bates  <dabates@apple.com>
+
+        Add iOS WebKit1 TestExpectation file
+        https://bugs.webkit.org/show_bug.cgi?id=140739
+
+        Reviewed by David Kilzer.
+
+        iOS WebKit1 is different enough from iOS WebKit2 that it would benefit from having its
+        own TestExpectation file. We can work to reduce such differences over time.
+
+        * platform/ios-simulator-wk1/TestExpectations: Added.
+        * platform/ios-simulator/TestExpectations: Move iOS WebKit1-specific test expectation from here
+        to file LayoutTests/platform/ios-simulator-wk1/TestExpectations.
+
+    2014-10-07  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Teach run-webkit-tests to honor TestExpectation file for iOS Simulator 64-bit builds
+        https://bugs.webkit.org/show_bug.cgi?id=137499
+
+        Reviewed by Simon Fraser.
+
+        Add a new platform directory, called ios-simulator, and associated TestExpectation file.
+        For now, there is a single entry to skip all accessibility tests on iOS due to significant
+        API differences. We'll likely update TestExpectations as we rebaseline iOS Simulator
+        layout test results.
+
+        * platform/ios-simulator/TestExpectations: Added.
+
 2015-01-28  Lucas Forschler  <lforschler@apple.com>
 
         Merge r179027

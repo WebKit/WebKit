@@ -58,7 +58,7 @@ void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()
     if (m_waitToDumpWatchdogTimer)
         return;
 
-    m_waitToDumpWatchdogTimer = g_timeout_add(waitToDumpWatchdogTimerInterval * 1000,
+    m_waitToDumpWatchdogTimer = g_timeout_add(m_timeout,
                                               waitToDumpWatchdogTimerCallback, 0);
     g_source_set_name_by_id(m_waitToDumpWatchdogTimer, "[WebKit] waitToDumpWatchdogTimerCallback");
 }
