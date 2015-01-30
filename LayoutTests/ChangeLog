@@ -1,3 +1,9 @@
+2015-01-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed. Further rebaselining after r179368.
+
+        * platform/mac-mavericks/fast/forms/select-visual-hebrew-expected.txt: Added.
+
 2015-01-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, gardening on EFL port. some tests aren't flaky anymore.
