@@ -1,3 +1,10 @@
+2015-01-30  David Kilzer  <ddkilzer@apple.com>
+
+        Fix lint warnings for ios-simulator (wk1) TestExpectations
+
+        * platform/ios-simulator/TestExpectations: Remove tests that
+        don't exist on the branch or are duplicate expectations.
+
 2015-01-28  David Kilzer  <ddkilzer@apple.com>
 
         run-webkit-tests: Merge 46 commits from trunk to make it work
