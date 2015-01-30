@@ -324,6 +324,7 @@ WebInspector.contentLoaded = function()
     this.toolbar.element.addEventListener("mousedown", this._toolbarMouseDown.bind(this));
     document.getElementById("docked-resizer").addEventListener("mousedown", this._dockedResizerMouseDown.bind(this));
 
+    this._updateDockNavigationItems();
     this._updateToolbarHeight();
 
     if (this._navigationSidebarWidthSetting.value)
