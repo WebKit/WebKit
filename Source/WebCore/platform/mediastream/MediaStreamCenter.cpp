@@ -45,7 +45,7 @@ static MediaStreamCenter*& mediaStreamCenterOverride()
     return override;
 }
 
-MediaStreamCenter& MediaStreamCenter::shared()
+MediaStreamCenter& MediaStreamCenter::singleton()
 {
     MediaStreamCenter* override = mediaStreamCenterOverride();
     if (override)

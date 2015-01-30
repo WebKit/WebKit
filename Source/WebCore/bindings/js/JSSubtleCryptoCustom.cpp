@@ -67,7 +67,7 @@ static std::unique_ptr<CryptoAlgorithm> createAlgorithmFromJSValue(ExecState* ex
         return nullptr;
     }
 
-    auto result = CryptoAlgorithmRegistry::shared().create(algorithmIdentifier);
+    auto result = CryptoAlgorithmRegistry::singleton().create(algorithmIdentifier);
     if (!result)
         setDOMException(exec, NOT_SUPPORTED_ERR);
     return result;

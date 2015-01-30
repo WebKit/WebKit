@@ -56,7 +56,7 @@ ViewSnapshotStore::~ViewSnapshotStore()
     discardSnapshotImages();
 }
 
-ViewSnapshotStore& ViewSnapshotStore::shared()
+ViewSnapshotStore& ViewSnapshotStore::singleton()
 {
     static ViewSnapshotStore& store = *new ViewSnapshotStore;
     return store;
@@ -156,7 +156,7 @@ ViewSnapshot::ViewSnapshot(uint32_t slotID, IntSize size, size_t imageSizeInByte
     , m_size(size)
 {
     if (hasImage())
-        ViewSnapshotStore::shared().didAddImageToSnapshot(*this);
+        ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
 }
 
 ViewSnapshot::~ViewSnapshot()
@@ -178,7 +178,7 @@ void ViewSnapshot::clearImage()
     if (!hasImage())
         return;
 
-    ViewSnapshotStore::shared().willRemoveImageFromSnapshot(*this);
+    ViewSnapshotStore::singleton().willRemoveImageFromSnapshot(*this);
 
 #if USE_IOSURFACE_VIEW_SNAPSHOTS
     m_surface = nullptr;

@@ -1741,7 +1741,7 @@ void FrameLoader::commitProvisionalLoad()
 
     std::unique_ptr<CachedPage> cachedPage;
     if (m_loadingFromCachedPage && history().provisionalItem())
-        cachedPage = PageCache::shared().take(*history().provisionalItem(), m_frame.page());
+        cachedPage = PageCache::singleton().take(*history().provisionalItem(), m_frame.page());
 
     LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame.tree().uniqueName().string().utf8().data(),
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "",
@@ -1758,11 +1758,12 @@ void FrameLoader::commitProvisionalLoad()
             LOG(MemoryPressure, "Pruning page cache because under memory pressure at: %s", __PRETTY_FUNCTION__);
             LOG(PageCache, "Pruning page cache to 0 due to memory pressure");
             // Don't cache any page if we are under memory pressure.
-            PageCache::shared().pruneToSizeNow(0, PruningReason::MemoryPressure);
+            PageCache::singleton().pruneToSizeNow(0, PruningReason::MemoryPressure);
         } else if (systemMemoryLevel() <= memoryLevelThresholdToPrunePageCache) {
             LOG(MemoryPressure, "Pruning page cache because system memory level is %d at: %s", systemMemoryLevel(), __PRETTY_FUNCTION__);
-            LOG(PageCache, "Pruning page cache to %d due to low memory (level %d less or equal to %d threshold)", PageCache::shared().maxSize() / 2, systemMemoryLevel(), memoryLevelThresholdToPrunePageCache);
-            PageCache::shared().pruneToSizeNow(PageCache::shared().maxSize() / 2, PruningReason::MemoryPressure);
+            auto& pageCache = PageCache::singleton();
+            LOG(PageCache, "Pruning page cache to %d due to low memory (level %d less or equal to %d threshold)", pageCache.maxSize() / 2, systemMemoryLevel(), memoryLevelThresholdToPrunePageCache);
+            pageCache.pruneToSizeNow(pageCache.maxSize() / 2, PruningReason::MemoryPressure);
         }
     }
 #endif
@@ -1772,8 +1773,8 @@ void FrameLoader::commitProvisionalLoad()
     // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
     // We are doing this here because we know for sure that a new page is about to be loaded.
     HistoryItem& item = *history().currentItem();
-    if (!m_frame.tree().parent() && PageCache::shared().canCache(m_frame.page()) && !item.isInPageCache())
-        PageCache::shared().add(item, *m_frame.page());
+    if (!m_frame.tree().parent() && PageCache::singleton().canCache(m_frame.page()) && !item.isInPageCache())
+        PageCache::singleton().add(item, *m_frame.page());
 
     if (m_loadType != FrameLoadType::Replace)
         closeOldDataSources();
@@ -3159,7 +3160,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
     // Remember this item so we can traverse any child items as child frames load
     history().setProvisionalItem(&item);
 
-    if (CachedPage* cachedPage = PageCache::shared().get(item, m_frame.page())) {
+    if (CachedPage* cachedPage = PageCache::singleton().get(item, m_frame.page())) {
         auto documentLoader = cachedPage->documentLoader();
         documentLoader->setTriggeringAction(NavigationAction(documentLoader->request(), loadType, false));
         documentLoader->setLastCheckedRequest(ResourceRequest());

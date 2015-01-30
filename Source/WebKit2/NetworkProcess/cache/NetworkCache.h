@@ -44,7 +44,7 @@ namespace WebKit {
 class NetworkCache {
     WTF_MAKE_NONCOPYABLE(NetworkCache);
 public:
-    static NetworkCache& shared();
+    static NetworkCache& singleton();
 
     NetworkCache();
 

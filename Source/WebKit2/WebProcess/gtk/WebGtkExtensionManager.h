@@ -39,7 +39,7 @@ class WebGtkExtensionManager {
     WTF_MAKE_NONCOPYABLE(WebGtkExtensionManager);
 
 public:
-    WK_EXPORT static WebGtkExtensionManager& shared();
+    WK_EXPORT static WebGtkExtensionManager& singleton();
 
     WK_EXPORT void initialize(WKBundleRef, WKTypeRef);
 

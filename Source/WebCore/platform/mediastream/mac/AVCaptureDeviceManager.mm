@@ -117,7 +117,7 @@ static Vector<CaptureDevice>& captureDeviceList()
     if (firstTime && !captureDeviceList.size()) {
         firstTime = false;
         refreshCaptureDeviceList();
-        AVCaptureDeviceManager::shared().registerForDeviceNotifications();
+        AVCaptureDeviceManager::singleton().registerForDeviceNotifications();
     }
 
     return captureDeviceList;
@@ -174,7 +174,7 @@ bool AVCaptureDeviceManager::isAvailable()
     return AVFoundationLibrary();
 }
 
-AVCaptureDeviceManager& AVCaptureDeviceManager::shared()
+AVCaptureDeviceManager& AVCaptureDeviceManager::singleton()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(AVCaptureDeviceManager, manager, ());
     return manager;

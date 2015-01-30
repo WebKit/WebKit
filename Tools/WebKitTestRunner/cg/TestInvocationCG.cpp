@@ -156,7 +156,7 @@ static void paintRepaintRectOverlay(CGContextRef context, WKImageRef image, WKAr
 
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image, WKArrayRef repaintRects)
 {
-    PlatformWebView* webView = TestController::shared().mainWebView();
+    PlatformWebView* webView = TestController::singleton().mainWebView();
     WKRetainPtr<WKImageRef> windowSnapshot = webView->windowSnapshotImage();
 
     RetainPtr<CGContextRef> context;

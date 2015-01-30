@@ -50,7 +50,7 @@ class PluginProcess : public ChildProcess, private WebCore::AudioHardwareListene
     WTF_MAKE_NONCOPYABLE(PluginProcess);
     friend class NeverDestroyed<PluginProcess>;
 public:
-    static PluginProcess& shared();
+    static PluginProcess& singleton();
 
     void removeWebProcessConnection(WebProcessConnection*);
 

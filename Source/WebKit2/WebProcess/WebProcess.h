@@ -93,7 +93,7 @@ class WebToDatabaseProcessConnection;
 class WebProcess : public ChildProcess, public WebOriginDataManagerSupplement, private DownloadManager::Client {
     friend class NeverDestroyed<DownloadManager>;
 public:
-    static WebProcess& shared();
+    static WebProcess& singleton();
 
     template <typename T>
     T* supplement()

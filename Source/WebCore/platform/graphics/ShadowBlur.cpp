@@ -127,7 +127,7 @@ public:
         m_purgeTimer.startOneShot(scratchBufferPurgeInterval);
     }
     
-    static ScratchBuffer& shared();
+    static ScratchBuffer& singleton();
 
 private:
     void timerFired()
@@ -159,7 +159,7 @@ private:
 #endif
 };
 
-ScratchBuffer& ScratchBuffer::shared()
+ScratchBuffer& ScratchBuffer::singleton()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(ScratchBuffer, scratchBuffer, ());
     return scratchBuffer;
@@ -567,7 +567,7 @@ void ShadowBlur::drawInsetShadow(GraphicsContext* graphicsContext, const FloatRe
 
 void ShadowBlur::drawRectShadowWithoutTiling(GraphicsContext* graphicsContext, const FloatRoundedRect& shadowedRect, const IntRect& layerRect)
 {
-    m_layerImage = ScratchBuffer::shared().getScratchBuffer(layerRect.size());
+    m_layerImage = ScratchBuffer::singleton().getScratchBuffer(layerRect.size());
     if (!m_layerImage)
         return;
 
@@ -575,7 +575,7 @@ void ShadowBlur::drawRectShadowWithoutTiling(GraphicsContext* graphicsContext, c
     bufferRelativeShadowedRect.move(m_layerContextTranslation);
 
     // Only redraw in the scratch buffer if its cached contents don't match our needs
-    bool redrawNeeded = ScratchBuffer::shared().setCachedShadowValues(m_blurRadius, Color::black, ColorSpaceDeviceRGB, bufferRelativeShadowedRect, shadowedRect.radii(), m_layerSize);
+    bool redrawNeeded = ScratchBuffer::singleton().setCachedShadowValues(m_blurRadius, Color::black, ColorSpaceDeviceRGB, bufferRelativeShadowedRect, shadowedRect.radii(), m_layerSize);
     if (redrawNeeded) {
         GraphicsContext* shadowContext = m_layerImage->context();
         GraphicsContextStateSaver stateSaver(*shadowContext);
@@ -597,12 +597,12 @@ void ShadowBlur::drawRectShadowWithoutTiling(GraphicsContext* graphicsContext, c
     
     drawShadowBuffer(graphicsContext);
     m_layerImage = 0;
-    ScratchBuffer::shared().scheduleScratchBufferPurge();
+    ScratchBuffer::singleton().scheduleScratchBufferPurge();
 }
 
 void ShadowBlur::drawInsetShadowWithoutTiling(GraphicsContext* graphicsContext, const FloatRect& rect, const FloatRoundedRect& holeRect, const IntRect& layerRect)
 {
-    m_layerImage = ScratchBuffer::shared().getScratchBuffer(layerRect.size());
+    m_layerImage = ScratchBuffer::singleton().getScratchBuffer(layerRect.size());
     if (!m_layerImage)
         return;
 
@@ -613,7 +613,7 @@ void ShadowBlur::drawInsetShadowWithoutTiling(GraphicsContext* graphicsContext, 
     bufferRelativeHoleRect.move(m_layerContextTranslation);
 
     // Only redraw in the scratch buffer if its cached contents don't match our needs
-    bool redrawNeeded = ScratchBuffer::shared().setCachedInsetShadowValues(m_blurRadius, Color::black, ColorSpaceDeviceRGB, bufferRelativeRect, bufferRelativeHoleRect, holeRect.radii());
+    bool redrawNeeded = ScratchBuffer::singleton().setCachedInsetShadowValues(m_blurRadius, Color::black, ColorSpaceDeviceRGB, bufferRelativeRect, bufferRelativeHoleRect, holeRect.radii());
     if (redrawNeeded) {
         GraphicsContext* shadowContext = m_layerImage->context();
         GraphicsContextStateSaver stateSaver(*shadowContext);
@@ -638,7 +638,7 @@ void ShadowBlur::drawInsetShadowWithoutTiling(GraphicsContext* graphicsContext, 
     
     drawShadowBuffer(graphicsContext);
     m_layerImage = 0;
-    ScratchBuffer::shared().scheduleScratchBufferPurge();
+    ScratchBuffer::singleton().scheduleScratchBufferPurge();
 }
 
 /*
@@ -675,7 +675,7 @@ void ShadowBlur::drawInsetShadowWithoutTiling(GraphicsContext* graphicsContext, 
 
 void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext* graphicsContext, const FloatRect& rect, const FloatRoundedRect& holeRect, const IntSize& templateSize, const IntSize& edgeSize)
 {
-    m_layerImage = ScratchBuffer::shared().getScratchBuffer(templateSize);
+    m_layerImage = ScratchBuffer::singleton().getScratchBuffer(templateSize);
     if (!m_layerImage)
         return;
 
@@ -684,7 +684,7 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext* graphicsContext, con
     FloatRect templateHole = FloatRect(edgeSize.width(), edgeSize.height(), templateSize.width() - 2 * edgeSize.width(), templateSize.height() - 2 * edgeSize.height());
 
     // Only redraw in the scratch buffer if its cached contents don't match our needs
-    bool redrawNeeded = ScratchBuffer::shared().setCachedInsetShadowValues(m_blurRadius, m_color, m_colorSpace, templateBounds, templateHole, holeRect.radii());
+    bool redrawNeeded = ScratchBuffer::singleton().setCachedInsetShadowValues(m_blurRadius, m_color, m_colorSpace, templateBounds, templateHole, holeRect.radii());
     if (redrawNeeded) {
         // Draw shadow into a new ImageBuffer.
         GraphicsContext* shadowContext = m_layerImage->context();
@@ -735,19 +735,20 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext* graphicsContext, con
     drawLayerPieces(graphicsContext, destHoleBounds, holeRect.radii(), edgeSize, templateSize, InnerShadow);
 
     m_layerImage = 0;
-    ScratchBuffer::shared().scheduleScratchBufferPurge();
+    ScratchBuffer::singleton().scheduleScratchBufferPurge();
 }
 
 void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, const FloatRoundedRect& shadowedRect, const IntSize& templateSize, const IntSize& edgeSize)
 {
-    m_layerImage = ScratchBuffer::shared().getScratchBuffer(templateSize);
+    auto& scratchBuffer = ScratchBuffer::singleton();
+    m_layerImage = scratchBuffer.getScratchBuffer(templateSize);
     if (!m_layerImage)
         return;
 
     FloatRect templateShadow = FloatRect(edgeSize.width(), edgeSize.height(), templateSize.width() - 2 * edgeSize.width(), templateSize.height() - 2 * edgeSize.height());
 
     // Only redraw in the scratch buffer if its cached contents don't match our needs
-    bool redrawNeeded = ScratchBuffer::shared().setCachedShadowValues(m_blurRadius, m_color, m_colorSpace, templateShadow, shadowedRect.radii(), m_layerSize);
+    bool redrawNeeded = scratchBuffer.setCachedShadowValues(m_blurRadius, m_color, m_colorSpace, templateShadow, shadowedRect.radii(), m_layerSize);
     if (redrawNeeded) {
         // Draw shadow into the ImageBuffer.
         GraphicsContext* shadowContext = m_layerImage->context();
@@ -780,7 +781,7 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
     drawLayerPieces(graphicsContext, shadowBounds, shadowedRect.radii(), edgeSize, templateSize, OuterShadow);
 
     m_layerImage = 0;
-    ScratchBuffer::shared().scheduleScratchBufferPurge();
+    ScratchBuffer::singleton().scheduleScratchBufferPurge();
 }
 
 void ShadowBlur::drawLayerPieces(GraphicsContext* graphicsContext, const FloatRect& shadowBounds, const FloatRoundedRect::Radii& radii, const IntSize& bufferPadding, const IntSize& templateSize, ShadowDirection direction)
@@ -891,12 +892,13 @@ GraphicsContext* ShadowBlur::beginShadowLayer(GraphicsContext *context, const Fl
     IntRect layerRect = calculateLayerBoundingRect(context, layerArea, context->clipBounds());
 
     if (layerRect.isEmpty())
-        return 0;
+        return nullptr;
 
     // We reset the scratch buffer values here, because the buffer will no longer contain
     // data from any previous rectangle or inset shadows drawn via the tiling path.
-    ScratchBuffer::shared().setCachedShadowValues(FloatSize(), Color::black, ColorSpaceDeviceRGB, IntRect(), FloatRoundedRect::Radii(), m_layerSize);
-    m_layerImage = ScratchBuffer::shared().getScratchBuffer(layerRect.size());
+    auto& scratchBuffer = ScratchBuffer::singleton();
+    scratchBuffer.setCachedShadowValues(FloatSize(), Color::black, ColorSpaceDeviceRGB, IntRect(), FloatRoundedRect::Radii(), m_layerSize);
+    m_layerImage = scratchBuffer.getScratchBuffer(layerRect.size());
 
     GraphicsContext* shadowContext = m_layerImage->context();
     shadowContext->save();
@@ -919,7 +921,7 @@ void ShadowBlur::endShadowLayer(GraphicsContext* context)
     context->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, FloatRect(roundedIntPoint(m_layerOrigin), m_layerSize), FloatRect(FloatPoint(), m_layerSize), context->compositeOperation());
 
     m_layerImage = 0;
-    ScratchBuffer::shared().scheduleScratchBufferPurge();
+    ScratchBuffer::singleton().scheduleScratchBufferPurge();
 }
 
 } // namespace WebCore

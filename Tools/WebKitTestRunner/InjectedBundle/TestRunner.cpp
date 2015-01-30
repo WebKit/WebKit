@@ -111,7 +111,7 @@ JSClassRef TestRunner::wrapperClass()
 
 void TestRunner::display()
 {
-    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     WKBundlePageForceRepaint(page);
     WKBundlePageSetTracksRepaints(page, true);
     WKBundlePageResetTrackedRepaints(page);
@@ -129,7 +129,7 @@ void TestRunner::setCustomPolicyDelegate(bool enabled, bool permissive)
     m_policyDelegateEnabled = enabled;
     m_policyDelegatePermissive = permissive;
 
-    InjectedBundle::shared().setCustomPolicyDelegate(enabled, permissive);
+    InjectedBundle::singleton().setCustomPolicyDelegate(enabled, permissive);
 }
 
 void TestRunner::waitForPolicyDelegate()
@@ -141,24 +141,26 @@ void TestRunner::waitForPolicyDelegate()
 void TestRunner::waitUntilDone()
 {
     m_waitToDump = true;
-    if (InjectedBundle::shared().useWaitToDumpWatchdogTimer())
+    if (InjectedBundle::singleton().useWaitToDumpWatchdogTimer())
         initializeWaitToDumpWatchdogTimerIfNeeded();
 }
 
 void TestRunner::waitToDumpWatchdogTimerFired()
 {
     invalidateWaitToDumpWatchdogTimer();
-    InjectedBundle::shared().outputText("FAIL: Timed out waiting for notifyDone to be called\n\n");
-    InjectedBundle::shared().done();
+    auto& injectedBundle = InjectedBundle::singleton();
+    injectedBundle.outputText("FAIL: Timed out waiting for notifyDone to be called\n\n");
+    injectedBundle.done();
 }
 
 void TestRunner::notifyDone()
 {
-    if (!InjectedBundle::shared().isTestRunning())
+    auto& injectedBundle = InjectedBundle::singleton();
+    if (!injectedBundle.isTestRunning())
         return;
 
-    if (m_waitToDump && !InjectedBundle::shared().topLoadingFrame())
-        InjectedBundle::shared().page()->dump();
+    if (m_waitToDump && !injectedBundle.topLoadingFrame())
+        injectedBundle.page()->dump();
 
     // We don't call invalidateWaitToDumpWatchdogTimer() here, even if we continue to wait for a load to finish.
     // The test is still subject to timeout checking - it is better to detect an async timeout inside WebKitTestRunner
@@ -172,7 +174,8 @@ void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFram
     WKRetainPtr<WKStringRef> sourceWK = toWK(source);
     WKRetainPtr<WKBundleScriptWorldRef> scriptWorld(AdoptWK, WKBundleScriptWorldCreateWorld());
 
-    WKBundleAddUserScript(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleAddUserScript(injectedBundle.bundle(), injectedBundle.pageGroup(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
         (runAtStart ? kWKInjectAtDocumentStart : kWKInjectAtDocumentEnd),
         (allFrames ? kWKInjectInAllFrames : kWKInjectInTopFrameOnly));
 }
@@ -182,25 +185,27 @@ void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
     WKRetainPtr<WKStringRef> sourceWK = toWK(source);
     WKRetainPtr<WKBundleScriptWorldRef> scriptWorld(AdoptWK, WKBundleScriptWorldCreateWorld());
 
-    WKBundleAddUserStyleSheet(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleAddUserStyleSheet(injectedBundle.bundle(), injectedBundle.pageGroup(), scriptWorld.get(), sourceWK.get(), 0, 0, 0,
         (allFrames ? kWKInjectInAllFrames : kWKInjectInTopFrameOnly));
 }
 
 void TestRunner::keepWebHistory()
 {
-    InjectedBundle::shared().postSetAddsVisitedLinks(true);
+    InjectedBundle::singleton().postSetAddsVisitedLinks(true);
 }
 
 void TestRunner::execCommand(JSStringRef name, JSStringRef argument)
 {
-    WKBundlePageExecuteEditingCommand(InjectedBundle::shared().page()->page(), toWK(name).get(), toWK(argument).get());
+    WKBundlePageExecuteEditingCommand(InjectedBundle::singleton().page()->page(), toWK(name).get(), toWK(argument).get());
 }
 
 bool TestRunner::findString(JSStringRef target, JSValueRef optionsArrayAsValue)
 {
     WKFindOptions options = 0;
 
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(injectedBundle.page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSRetainPtr<JSStringRef> lengthPropertyName(Adopt, JSStringCreateWithUTF8CString("length"));
     JSObjectRef optionsArray = JSValueToObject(context, optionsArrayAsValue, 0);
@@ -231,37 +236,37 @@ bool TestRunner::findString(JSStringRef target, JSValueRef optionsArrayAsValue)
         }
     }
 
-    return WKBundlePageFindString(InjectedBundle::shared().page()->page(), toWK(target).get(), options);
+    return WKBundlePageFindString(injectedBundle.page()->page(), toWK(target).get(), options);
 }
 
 void TestRunner::clearAllDatabases()
 {
-    WKBundleClearAllDatabases(InjectedBundle::shared().bundle());
+    WKBundleClearAllDatabases(InjectedBundle::singleton().bundle());
 }
 
 void TestRunner::setDatabaseQuota(uint64_t quota)
 {
-    return WKBundleSetDatabaseQuota(InjectedBundle::shared().bundle(), quota);
+    return WKBundleSetDatabaseQuota(InjectedBundle::singleton().bundle(), quota);
 }
 
 void TestRunner::clearAllApplicationCaches()
 {
-    WKBundleClearApplicationCache(InjectedBundle::shared().bundle());
+    WKBundleClearApplicationCache(InjectedBundle::singleton().bundle());
 }
 
 void TestRunner::clearApplicationCacheForOrigin(JSStringRef origin)
 {
-    WKBundleClearApplicationCacheForOrigin(InjectedBundle::shared().bundle(), toWK(origin).get());
+    WKBundleClearApplicationCacheForOrigin(InjectedBundle::singleton().bundle(), toWK(origin).get());
 }
 
 void TestRunner::setAppCacheMaximumSize(uint64_t size)
 {
-    WKBundleSetAppCacheMaximumSize(InjectedBundle::shared().bundle(), size);
+    WKBundleSetAppCacheMaximumSize(InjectedBundle::singleton().bundle(), size);
 }
 
 long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef origin)
 {
-    return WKBundleGetAppCacheUsageForOrigin(InjectedBundle::shared().bundle(), toWK(origin).get());
+    return WKBundleGetAppCacheUsageForOrigin(InjectedBundle::singleton().bundle(), toWK(origin).get());
 }
 
 void TestRunner::disallowIncreaseForApplicationCacheQuota()
@@ -286,9 +291,10 @@ static inline JSValueRef stringArrayToJS(JSContextRef context, WKArrayRef string
 
 JSValueRef TestRunner::originsWithApplicationCache()
 {
-    WKRetainPtr<WKArrayRef> origins(AdoptWK, WKBundleCopyOriginsWithApplicationCache(InjectedBundle::shared().bundle()));
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKRetainPtr<WKArrayRef> origins(AdoptWK, WKBundleCopyOriginsWithApplicationCache(injectedBundle.bundle()));
 
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(injectedBundle.page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 
     return stringArrayToJS(context, origins.get());
@@ -296,7 +302,7 @@ JSValueRef TestRunner::originsWithApplicationCache()
 
 bool TestRunner::isCommandEnabled(JSStringRef name)
 {
-    return WKBundlePageIsEditingCommandEnabled(InjectedBundle::shared().page()->page(), toWK(name).get());
+    return WKBundlePageIsEditingCommandEnabled(InjectedBundle::singleton().page()->page(), toWK(name).get());
 }
 
 void TestRunner::setCanOpenWindows(bool)
@@ -308,58 +314,67 @@ void TestRunner::setCanOpenWindows(bool)
 void TestRunner::setXSSAuditorEnabled(bool enabled)
 {
     WKRetainPtr<WKStringRef> key(AdoptWK, WKStringCreateWithUTF8CString("WebKitXSSAuditorEnabled"));
-    WKBundleOverrideBoolPreferenceForTestRunner(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), key.get(), enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), key.get(), enabled);
 }
 
 void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
-    WKBundleSetAllowUniversalAccessFromFileURLs(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleSetAllowUniversalAccessFromFileURLs(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
 void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
 {
-    WKBundleSetAllowFileAccessFromFileURLs(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleSetAllowFileAccessFromFileURLs(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
 void TestRunner::setPluginsEnabled(bool enabled)
 {
-    WKBundleSetPluginsEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleSetPluginsEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
 void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
 {
-     WKBundleSetJavaScriptCanAccessClipboard(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+     WKBundleSetJavaScriptCanAccessClipboard(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
 void TestRunner::setPrivateBrowsingEnabled(bool enabled)
 {
-     WKBundleSetPrivateBrowsingEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+     WKBundleSetPrivateBrowsingEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
 void TestRunner::setPopupBlockingEnabled(bool enabled)
 {
-     WKBundleSetPopupBlockingEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+     WKBundleSetPopupBlockingEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
 void TestRunner::setAuthorAndUserStylesEnabled(bool enabled)
 {
-     WKBundleSetAuthorAndUserStylesEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+     WKBundleSetAuthorAndUserStylesEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
 void TestRunner::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
 {
-    WKBundleAddOriginAccessWhitelistEntry(InjectedBundle::shared().bundle(), toWK(sourceOrigin).get(), toWK(destinationProtocol).get(), toWK(destinationHost).get(), allowDestinationSubdomains);
+    WKBundleAddOriginAccessWhitelistEntry(InjectedBundle::singleton().bundle(), toWK(sourceOrigin).get(), toWK(destinationProtocol).get(), toWK(destinationHost).get(), allowDestinationSubdomains);
 }
 
 void TestRunner::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
 {
-    WKBundleRemoveOriginAccessWhitelistEntry(InjectedBundle::shared().bundle(), toWK(sourceOrigin).get(), toWK(destinationProtocol).get(), toWK(destinationHost).get(), allowDestinationSubdomains);
+    WKBundleRemoveOriginAccessWhitelistEntry(InjectedBundle::singleton().bundle(), toWK(sourceOrigin).get(), toWK(destinationProtocol).get(), toWK(destinationHost).get(), allowDestinationSubdomains);
 }
 
 bool TestRunner::isPageBoxVisible(int pageIndex)
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
-    return WKBundleIsPageBoxVisible(InjectedBundle::shared().bundle(), mainFrame, pageIndex);
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(injectedBundle.page()->page());
+    return WKBundleIsPageBoxVisible(injectedBundle.bundle(), mainFrame, pageIndex);
 }
 
 void TestRunner::setValueForUser(JSContextRef context, JSValueRef element, JSStringRef value)
@@ -373,21 +388,22 @@ void TestRunner::setValueForUser(JSContextRef context, JSValueRef element, JSStr
 
 void TestRunner::setAudioResult(JSContextRef context, JSValueRef data)
 {
+    auto& injectedBundle = InjectedBundle::singleton();
     // FIXME (123058): Use a JSC API to get buffer contents once such is exposed.
-    WKRetainPtr<WKDataRef> audioData(AdoptWK, WKBundleCreateWKDataFromUInt8Array(InjectedBundle::shared().bundle(), context, data));
-    InjectedBundle::shared().setAudioResult(audioData.get());
+    WKRetainPtr<WKDataRef> audioData(AdoptWK, WKBundleCreateWKDataFromUInt8Array(injectedBundle.bundle(), context, data));
+    injectedBundle.setAudioResult(audioData.get());
     m_whatToDump = Audio;
     m_dumpPixels = false;
 }
 
 unsigned TestRunner::windowCount()
 {
-    return InjectedBundle::shared().pageCount();
+    return InjectedBundle::singleton().pageCount();
 }
 
 void TestRunner::clearBackForwardList()
 {
-    WKBundleBackForwardListClear(WKBundlePageGetBackForwardList(InjectedBundle::shared().page()->page()));
+    WKBundleBackForwardListClear(WKBundlePageGetBackForwardList(InjectedBundle::singleton().page()->page()));
 }
 
 // Object Creation
@@ -399,18 +415,18 @@ void TestRunner::makeWindowObject(JSContextRef context, JSObjectRef windowObject
 
 void TestRunner::showWebInspector()
 {
-    WKBundleInspectorShow(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()));
+    WKBundleInspectorShow(WKBundlePageGetInspector(InjectedBundle::singleton().page()->page()));
 }
 
 void TestRunner::closeWebInspector()
 {
-    WKBundleInspectorClose(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()));
+    WKBundleInspectorClose(WKBundlePageGetInspector(InjectedBundle::singleton().page()->page()));
 }
 
 void TestRunner::evaluateInWebInspector(JSStringRef script)
 {
     WKRetainPtr<WKStringRef> scriptWK = toWK(script);
-    WKBundleInspectorEvaluateScriptForTest(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), scriptWK.get());
+    WKBundleInspectorEvaluateScriptForTest(WKBundlePageGetInspector(InjectedBundle::singleton().page()->page()), scriptWK.get());
 }
 
 typedef WTF::HashMap<unsigned, WKRetainPtr<WKBundleScriptWorldRef> > WorldMap;
@@ -447,7 +463,7 @@ void TestRunner::evaluateScriptInIsolatedWorld(JSContextRef context, unsigned wo
 
     WKBundleFrameRef frame = WKBundleFrameForJavaScriptContext(context);
     if (!frame)
-        frame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+        frame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
 
     JSGlobalContextRef jsContext = WKBundleFrameGetJavaScriptContextForWorld(frame, world.get());
     JSEvaluateScript(jsContext, script, 0, 0, 0, 0); 
@@ -462,28 +478,28 @@ void TestRunner::setPOSIXLocale(JSStringRef locale)
 
 void TestRunner::setTextDirection(JSStringRef direction)
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     return WKBundleFrameSetTextDirection(mainFrame, toWK(direction).get());
 }
     
 void TestRunner::setShouldStayOnPageAfterHandlingBeforeUnload(bool shouldStayOnPage)
 {
-    InjectedBundle::shared().postNewBeforeUnloadReturnValue(!shouldStayOnPage);
+    InjectedBundle::singleton().postNewBeforeUnloadReturnValue(!shouldStayOnPage);
 }
 
 void TestRunner::setDefersLoading(bool shouldDeferLoading)
 {
-    WKBundlePageSetDefersLoading(InjectedBundle::shared().page()->page(), shouldDeferLoading);
+    WKBundlePageSetDefersLoading(InjectedBundle::singleton().page()->page(), shouldDeferLoading);
 }
 
 void TestRunner::setPageVisibility(JSStringRef state)
 {
-    InjectedBundle::shared().setHidden(JSStringIsEqualToUTF8CString(state, "hidden") || JSStringIsEqualToUTF8CString(state, "prerender"));
+    InjectedBundle::singleton().setHidden(JSStringIsEqualToUTF8CString(state, "hidden") || JSStringIsEqualToUTF8CString(state, "prerender"));
 }
 
 void TestRunner::resetPageVisibility()
 {
-    InjectedBundle::shared().setHidden(false);
+    InjectedBundle::singleton().setHidden(false);
 }
 
 typedef WTF::HashMap<unsigned, JSValueRef> CallbackMap;
@@ -505,7 +521,7 @@ static void cacheTestRunnerCallback(unsigned index, JSValueRef callback)
     if (!callback)
         return;
 
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSValueProtect(context, callback);
     callbackMap().add(index, callback);
@@ -515,7 +531,7 @@ static void callTestRunnerCallback(unsigned index)
 {
     if (!callbackMap().contains(index))
         return;
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     JSObjectRef callback = JSValueToObject(context, callbackMap().take(index), 0);
     JSObjectCallAsFunction(context, callback, JSContextGetGlobalObject(context), 0, 0, 0);
@@ -525,30 +541,30 @@ static void callTestRunnerCallback(unsigned index)
 void TestRunner::addChromeInputField(JSValueRef callback)
 {
     cacheTestRunnerCallback(AddChromeInputFieldCallbackID, callback);
-    InjectedBundle::shared().postAddChromeInputField();
+    InjectedBundle::singleton().postAddChromeInputField();
 }
 
 void TestRunner::removeChromeInputField(JSValueRef callback)
 {
     cacheTestRunnerCallback(RemoveChromeInputFieldCallbackID, callback);
-    InjectedBundle::shared().postRemoveChromeInputField();
+    InjectedBundle::singleton().postRemoveChromeInputField();
 }
 
 void TestRunner::focusWebView(JSValueRef callback)
 {
     cacheTestRunnerCallback(FocusWebViewCallbackID, callback);
-    InjectedBundle::shared().postFocusWebView();
+    InjectedBundle::singleton().postFocusWebView();
 }
 
 void TestRunner::setBackingScaleFactor(double backingScaleFactor, JSValueRef callback)
 {
     cacheTestRunnerCallback(SetBackingScaleFactorCallbackID, callback);
-    InjectedBundle::shared().postSetBackingScaleFactor(backingScaleFactor);
+    InjectedBundle::singleton().postSetBackingScaleFactor(backingScaleFactor);
 }
 
 void TestRunner::setWindowIsKey(bool isKey)
 {
-    InjectedBundle::shared().postSetWindowIsKey(isKey);
+    InjectedBundle::singleton().postSetWindowIsKey(isKey);
 }
 
 void TestRunner::callAddChromeInputFieldCallback()
@@ -578,13 +594,14 @@ static inline bool toBool(JSStringRef value)
 
 void TestRunner::overridePreference(JSStringRef preference, JSStringRef value)
 {
+    auto& injectedBundle = InjectedBundle::singleton();
     // FIXME: handle non-boolean preferences.
-    WKBundleOverrideBoolPreferenceForTestRunner(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), toWK(preference).get(), toBool(value));
+    WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), toWK(preference).get(), toBool(value));
 }
 
 void TestRunner::setAlwaysAcceptCookies(bool accept)
 {
-    WKBundleSetAlwaysAcceptCookies(InjectedBundle::shared().bundle(), accept);
+    WKBundleSetAlwaysAcceptCookies(InjectedBundle::singleton().bundle(), accept);
 }
 
 double TestRunner::preciseTime()
@@ -598,7 +615,8 @@ void TestRunner::setUserStyleSheetEnabled(bool enabled)
 
     WKRetainPtr<WKStringRef> emptyUrl = adoptWK(WKStringCreateWithUTF8CString(""));
     WKStringRef location = enabled ? m_userStyleSheetLocation.get() : emptyUrl.get();
-    WKBundleSetUserStyleSheetLocation(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), location);
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleSetUserStyleSheetLocation(injectedBundle.bundle(), injectedBundle.pageGroup(), location);
 }
 
 void TestRunner::setUserStyleSheetLocation(JSStringRef location)
@@ -611,68 +629,76 @@ void TestRunner::setUserStyleSheetLocation(JSStringRef location)
 
 void TestRunner::setSpatialNavigationEnabled(bool enabled)
 {
-    WKBundleSetSpatialNavigationEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleSetSpatialNavigationEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(bool enabled)
 {
-    WKBundleSetTabKeyCyclesThroughElements(InjectedBundle::shared().bundle(), InjectedBundle::shared().page()->page(), enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleSetTabKeyCyclesThroughElements(injectedBundle.bundle(), injectedBundle.page()->page(), enabled);
 }
 
 void TestRunner::setSerializeHTTPLoads()
 {
-    WKBundleSetSerialLoadingEnabled(InjectedBundle::shared().bundle(), true);
+    WKBundleSetSerialLoadingEnabled(InjectedBundle::singleton().bundle(), true);
 }
 
 void TestRunner::dispatchPendingLoadRequests()
 {
-    WKBundleDispatchPendingLoadRequests(InjectedBundle::shared().bundle());
+    WKBundleDispatchPendingLoadRequests(InjectedBundle::singleton().bundle());
 }
 
 void TestRunner::setCacheModel(int model)
 {
-    WKBundleSetCacheModel(InjectedBundle::shared().bundle(), model);
+    WKBundleSetCacheModel(InjectedBundle::singleton().bundle(), model);
 }
 
 void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)
 {
-    WKBundleSetAsynchronousSpellCheckingEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleSetAsynchronousSpellCheckingEnabled(injectedBundle.bundle(), injectedBundle.pageGroup(), enabled);
 }
 
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
     WKRetainPtr<WKStringRef> originWK = toWK(origin);
-    WKBundleSetWebNotificationPermission(InjectedBundle::shared().bundle(), InjectedBundle::shared().page()->page(), originWK.get(), true);
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleSetWebNotificationPermission(injectedBundle.bundle(), injectedBundle.page()->page(), originWK.get(), true);
 }
 
 void TestRunner::denyWebNotificationPermission(JSStringRef origin)
 {
     WKRetainPtr<WKStringRef> originWK = toWK(origin);
-    WKBundleSetWebNotificationPermission(InjectedBundle::shared().bundle(), InjectedBundle::shared().page()->page(), originWK.get(), false);
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleSetWebNotificationPermission(injectedBundle.bundle(), injectedBundle.page()->page(), originWK.get(), false);
 }
 
 void TestRunner::removeAllWebNotificationPermissions()
 {
-    WKBundleRemoveAllWebNotificationPermissions(InjectedBundle::shared().bundle(), InjectedBundle::shared().page()->page());
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleRemoveAllWebNotificationPermissions(injectedBundle.bundle(), injectedBundle.page()->page());
 }
 
 void TestRunner::simulateWebNotificationClick(JSValueRef notification)
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(injectedBundle.page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
-    uint64_t notificationID = WKBundleGetWebNotificationID(InjectedBundle::shared().bundle(), context, notification);
-    InjectedBundle::shared().postSimulateWebNotificationClick(notificationID);
+    uint64_t notificationID = WKBundleGetWebNotificationID(injectedBundle.bundle(), context, notification);
+    injectedBundle.postSimulateWebNotificationClick(notificationID);
 }
 
 void TestRunner::setGeolocationPermission(bool enabled)
 {
     // FIXME: this should be done by frame.
-    InjectedBundle::shared().setGeolocationPermission(enabled);
+    InjectedBundle::singleton().setGeolocationPermission(enabled);
 }
 
 void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, JSValueRef jsAltitude, JSValueRef jsAltitudeAccuracy, JSValueRef jsHeading, JSValueRef jsSpeed)
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(injectedBundle.page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 
     bool providesAltitude = false;
@@ -703,44 +729,45 @@ void TestRunner::setMockGeolocationPosition(double latitude, double longitude, d
         speed = JSValueToNumber(context, jsSpeed, 0);
     }
 
-    InjectedBundle::shared().setMockGeolocationPosition(latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
+    injectedBundle.setMockGeolocationPosition(latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
 }
 
 void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
 {
     WKRetainPtr<WKStringRef> messageWK = toWK(message);
-    InjectedBundle::shared().setMockGeolocationPositionUnavailableError(messageWK.get());
+    InjectedBundle::singleton().setMockGeolocationPositionUnavailableError(messageWK.get());
 }
 
 void TestRunner::setUserMediaPermission(bool enabled)
 {
     // FIXME: this should be done by frame.
-    InjectedBundle::shared().setUserMediaPermission(enabled);
+    InjectedBundle::singleton().setUserMediaPermission(enabled);
 }
 
 bool TestRunner::callShouldCloseOnWebView()
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     return WKBundleFrameCallShouldCloseOnWebView(mainFrame);
 }
 
 void TestRunner::queueBackNavigation(unsigned howFarBackward)
 {
-    InjectedBundle::shared().queueBackNavigation(howFarBackward);
+    InjectedBundle::singleton().queueBackNavigation(howFarBackward);
 }
 
 void TestRunner::queueForwardNavigation(unsigned howFarForward)
 {
-    InjectedBundle::shared().queueForwardNavigation(howFarForward);
+    InjectedBundle::singleton().queueForwardNavigation(howFarForward);
 }
 
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 {
-    WKRetainPtr<WKURLRef> baseURLWK(AdoptWK, WKBundleFrameCopyURL(WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page())));
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKRetainPtr<WKURLRef> baseURLWK(AdoptWK, WKBundleFrameCopyURL(WKBundlePageGetMainFrame(injectedBundle.page()->page())));
     WKRetainPtr<WKURLRef> urlWK(AdoptWK, WKURLCreateWithBaseURL(baseURLWK.get(), toWTFString(toWK(url)).utf8().data()));
     WKRetainPtr<WKStringRef> urlStringWK(AdoptWK, WKURLCopyString(urlWK.get()));
 
-    InjectedBundle::shared().queueLoad(urlStringWK.get(), toWK(target).get());
+    injectedBundle.queueLoad(urlStringWK.get(), toWK(target).get());
 }
 
 void TestRunner::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL, JSStringRef unreachableURL)
@@ -749,45 +776,45 @@ void TestRunner::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL, J
     WKRetainPtr<WKStringRef> baseURLWK = baseURL ? toWK(baseURL) : WKRetainPtr<WKStringRef>();
     WKRetainPtr<WKStringRef> unreachableURLWK = unreachableURL ? toWK(unreachableURL) : WKRetainPtr<WKStringRef>();
 
-    InjectedBundle::shared().queueLoadHTMLString(contentWK.get(), baseURLWK.get(), unreachableURLWK.get());
+    InjectedBundle::singleton().queueLoadHTMLString(contentWK.get(), baseURLWK.get(), unreachableURLWK.get());
 }
 
 void TestRunner::queueReload()
 {
-    InjectedBundle::shared().queueReload();
+    InjectedBundle::singleton().queueReload();
 }
 
 void TestRunner::queueLoadingScript(JSStringRef script)
 {
     WKRetainPtr<WKStringRef> scriptWK = toWK(script);
-    InjectedBundle::shared().queueLoadingScript(scriptWK.get());
+    InjectedBundle::singleton().queueLoadingScript(scriptWK.get());
 }
 
 void TestRunner::queueNonLoadingScript(JSStringRef script)
 {
     WKRetainPtr<WKStringRef> scriptWK = toWK(script);
-    InjectedBundle::shared().queueNonLoadingScript(scriptWK.get());
+    InjectedBundle::singleton().queueNonLoadingScript(scriptWK.get());
 }
 
 void TestRunner::setHandlesAuthenticationChallenges(bool handlesAuthenticationChallenges)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetHandlesAuthenticationChallenge"));
     WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(handlesAuthenticationChallenges));
-    WKBundlePostMessage(InjectedBundle::shared().bundle(), messageName.get(), messageBody.get());
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
 }
 
 void TestRunner::setAuthenticationUsername(JSStringRef username)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetAuthenticationUsername"));
     WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithJSString(username));
-    WKBundlePostMessage(InjectedBundle::shared().bundle(), messageName.get(), messageBody.get());
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
 }
 
 void TestRunner::setAuthenticationPassword(JSStringRef password)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetAuthenticationPassword"));
     WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithJSString(password));
-    WKBundlePostMessage(InjectedBundle::shared().bundle(), messageName.get(), messageBody.get());
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
 }
 
 bool TestRunner::secureEventInputIsEnabled() const
@@ -795,7 +822,7 @@ bool TestRunner::secureEventInputIsEnabled() const
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SecureEventInputIsEnabled"));
     WKTypeRef returnData = 0;
 
-    WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), messageName.get(), 0, &returnData);
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, &returnData);
     return WKBooleanGetValue(static_cast<WKBooleanRef>(returnData));
 }
 
@@ -803,19 +830,19 @@ void TestRunner::setBlockAllPlugins(bool shouldBlock)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetBlockAllPlugins"));
     WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(shouldBlock));
-    WKBundlePostMessage(InjectedBundle::shared().bundle(), messageName.get(), messageBody.get());
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
 }
 
 JSValueRef TestRunner::numberOfDFGCompiles(JSValueRef theFunction)
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     return JSC::numberOfDFGCompiles(context, theFunction);
 }
 
 JSValueRef TestRunner::neverInlineFunction(JSValueRef theFunction)
 {
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
     return JSC::setNeverInline(context, theFunction);
 }

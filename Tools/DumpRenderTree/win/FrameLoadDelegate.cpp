@@ -197,7 +197,7 @@ void FrameLoadDelegate::processWork()
         return;
 
     // if we finish all the commands, we're ready to dump state
-    if (WorkQueue::shared()->processWork() && !::gTestRunner->waitToDump())
+    if (WorkQueue::singleton().processWork() && !::gTestRunner->waitToDump())
         dump();
 }
 
@@ -233,13 +233,14 @@ void FrameLoadDelegate::locationChangeDone(IWebError*, IWebFrame* frame)
     if (frame != topLoadingFrame)
         return;
 
-    topLoadingFrame = 0;
-    WorkQueue::shared()->setFrozen(true);
+    topLoadingFrame = nullptr;
+    auto& workQueue = WorkQueue::singleton();
+    workQueue.setFrozen(true);
 
     if (::gTestRunner->waitToDump())
         return;
 
-    if (WorkQueue::shared()->count()) {
+    if (workQueue.count()) {
         if (!processWorkTimerID)
             processWorkTimerID = ::SetTimer(0, 0, 0, processWorkTimer);
         delegatesWithDelayedWork().append(this);

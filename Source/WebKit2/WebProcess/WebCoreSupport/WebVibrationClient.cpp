@@ -38,12 +38,12 @@ namespace WebKit {
 
 void WebVibrationClient::vibrate(const unsigned& vibrationTime)
 {
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebVibrationProxy::Vibrate(vibrationTime), m_page->pageID());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebVibrationProxy::Vibrate(vibrationTime), m_page->pageID());
 }
 
 void WebVibrationClient::cancelVibration()
 {
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebVibrationProxy::CancelVibration(), m_page->pageID());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebVibrationProxy::CancelVibration(), m_page->pageID());
 }
 
 void WebVibrationClient::vibrationDestroyed()

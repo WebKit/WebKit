@@ -88,7 +88,7 @@ RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() con
 {
 #if PLATFORM(IOS)
     audit_token_t auditToken;
-    if (!WebProcess::shared().parentProcessConnection()->getAuditToken(auditToken))
+    if (!WebProcess::singleton().parentProcessConnection()->getAuditToken(auditToken))
         return nullptr;
     return adoptCF(CFDataCreate(0, (const UInt8*)&auditToken, sizeof(auditToken)));
 #else

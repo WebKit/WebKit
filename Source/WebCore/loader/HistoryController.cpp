@@ -238,7 +238,7 @@ void HistoryController::invalidateCurrentItemCachedPage()
         return;
 
     // When we are pre-commit, the currentItem is where any page cache data resides.
-    std::unique_ptr<CachedPage> cachedPage = PageCache::shared().take(*currentItem(), m_frame.page());
+    std::unique_ptr<CachedPage> cachedPage = PageCache::singleton().take(*currentItem(), m_frame.page());
     if (!cachedPage)
         return;
 
@@ -336,7 +336,7 @@ void HistoryController::updateForReload()
 #endif
 
     if (m_currentItem) {
-        PageCache::shared().remove(*m_currentItem);
+        PageCache::singleton().remove(*m_currentItem);
     
         if (m_frame.loader().loadType() == FrameLoadType::Reload || m_frame.loader().loadType() == FrameLoadType::ReloadFromOrigin)
             saveScrollPositionAndViewStateToItem(m_currentItem.get());

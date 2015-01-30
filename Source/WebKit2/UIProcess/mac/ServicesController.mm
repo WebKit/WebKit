@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-ServicesController& ServicesController::shared()
+ServicesController& ServicesController::singleton()
 {
     static NeverDestroyed<ServicesController> sharedController;
     return sharedController;

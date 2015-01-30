@@ -110,7 +110,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage, WKArra
 {
 #if PLATFORM(EFL) || PLATFORM(GTK)
     UNUSED_PARAM(wkImage);
-    cairo_surface_t* surface = WKImageCreateCairoSurface(TestController::shared().mainWebView()->windowSnapshotImage().get());
+    cairo_surface_t* surface = WKImageCreateCairoSurface(TestController::singleton().mainWebView()->windowSnapshotImage().get());
 #else
     cairo_surface_t* surface = WKImageCreateCairoSurface(wkImage);
 #endif

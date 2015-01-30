@@ -37,7 +37,7 @@
 
 namespace WebKit {
 
-SecItemShimProxy& SecItemShimProxy::shared()
+SecItemShimProxy& SecItemShimProxy::singleton()
 {
     static SecItemShimProxy* proxy;
     static dispatch_once_t once;

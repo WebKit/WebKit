@@ -114,7 +114,7 @@ void UserMediaRequest::start()
 {
     // 1 - make sure the system is capable of supporting the audio and video constraints. We don't want to ask for
     // user permission if the constraints can not be suported.
-    MediaStreamCenter::shared().validateRequestConstraints(this, m_audioConstraints, m_videoConstraints);
+    MediaStreamCenter::singleton().validateRequestConstraints(this, m_audioConstraints, m_videoConstraints);
 }
 
     
@@ -133,7 +133,7 @@ void UserMediaRequest::userMediaAccessGranted()
     RefPtr<UserMediaRequest> protectedThis(this);
     callOnMainThread([protectedThis] {
         // 3 - the user granted access, ask platform to create the media stream descriptors.
-        MediaStreamCenter::shared().createMediaStream(protectedThis.get(), protectedThis->m_audioConstraints, protectedThis->m_videoConstraints);
+        MediaStreamCenter::singleton().createMediaStream(protectedThis.get(), protectedThis->m_audioConstraints, protectedThis->m_videoConstraints);
     });
 }
 

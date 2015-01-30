@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-MockPageOverlayClient& MockPageOverlayClient::shared()
+MockPageOverlayClient& MockPageOverlayClient::singleton()
 {
     static NeverDestroyed<MockPageOverlayClient> sharedClient;
     return sharedClient.get();

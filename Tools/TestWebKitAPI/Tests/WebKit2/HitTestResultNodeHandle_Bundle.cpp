@@ -49,7 +49,7 @@ public:
         if (!nodeHandle)
             return;
         
-        WKBundlePostMessage(InjectedBundleController::shared().bundle(), Util::toWK("HitTestResultNodeHandleTestDoneMessageName").get(), Util::toWK("HitTestResultNodeHandleTestDoneMessageBody").get());
+        WKBundlePostMessage(InjectedBundleController::singleton().bundle(), Util::toWK("HitTestResultNodeHandleTestDoneMessageName").get(), Util::toWK("HitTestResultNodeHandleTestDoneMessageBody").get());
     }
 
     virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)

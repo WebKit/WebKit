@@ -92,7 +92,7 @@ static WKDataRef copyWebCryptoMasterKey(WKContextRef, const void*)
 
 static TestController* controller;
 
-TestController& TestController::shared()
+TestController& TestController::singleton()
 {
     ASSERT(controller);
     return *controller;
@@ -150,7 +150,7 @@ static void setWindowFrame(WKPageRef page, WKRect frame, const void* clientInfo)
 static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKFrameRef frame, const void*)
 {
     printf("CONFIRM NAVIGATION: %s\n", toSTD(message).c_str());
-    return TestController::shared().beforeUnloadReturnValue();
+    return TestController::singleton().beforeUnloadReturnValue();
 }
 
 void TestController::runModal(WKPageRef page, const void* clientInfo)
@@ -183,12 +183,12 @@ static void unfocus(WKPageRef page, const void* clientInfo)
 
 static void decidePolicyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKGeolocationPermissionRequestRef permissionRequest, const void* clientInfo)
 {
-    TestController::shared().handleGeolocationPermissionRequest(permissionRequest);
+    TestController::singleton().handleGeolocationPermissionRequest(permissionRequest);
 }
 
 static void decidePolicyForUserMediaPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKUserMediaPermissionRequestRef permissionRequest, const void* clientInfo)
 {
-    TestController::shared().handleUserMediaPermissionRequest(permissionRequest);
+    TestController::singleton().handleUserMediaPermissionRequest(permissionRequest);
 }
 
 WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
@@ -258,7 +258,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
 
     WKPageLoaderClientV5 pageLoaderClient = {
-        { 5, &TestController::shared() },
+        { 5, &TestController::singleton() },
         0, // didStartProvisionalLoadForFrame
         0, // didReceiveServerRedirectForProvisionalLoadForFrame
         0, // didFailProvisionalLoadWithErrorForFrame
@@ -302,7 +302,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
     WKPageSetPageLoaderClient(view->page(), &pageLoaderClient.base);
 
     WKPagePolicyClientV1 pagePolicyClient = {
-        { 1, &TestController::shared() },
+        { 1, &TestController::singleton() },
         0, // decidePolicyForNavigationAction_deprecatedForUseWithV0
         0, // decidePolicyForNewWindowAction
         0, // decidePolicyForResponse_deprecatedForUseWithV0
@@ -314,7 +314,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
 
     view->didInitializeClients();
 
-    TestController::shared().updateWindowScaleForTest(view, *TestController::shared().m_currentInvocation);
+    TestController::singleton().updateWindowScaleForTest(view, *TestController::singleton().m_currentInvocation);
 
     WKRetain(newPage);
     return newPage;
@@ -674,11 +674,11 @@ bool TestController::resetStateToConsistentValues()
     WKRetainPtr<WKBooleanRef> shouldGCValue = adoptWK(WKBooleanCreate(m_gcBetweenTests));
     WKDictionarySetItem(resetMessageBody.get(), shouldGCKey.get(), shouldGCValue.get());
 
-    WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), resetMessageBody.get());
+    WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), resetMessageBody.get());
 
-    WKContextSetShouldUseFontSmoothing(TestController::shared().context(), false);
+    WKContextSetShouldUseFontSmoothing(TestController::singleton().context(), false);
 
-    WKContextSetCacheModel(TestController::shared().context(), kWKCacheModelDocumentBrowser);
+    WKContextSetCacheModel(TestController::singleton().context(), kWKCacheModelDocumentBrowser);
 
     // FIXME: This function should also ensure that there is only one page open.
 
@@ -1342,7 +1342,7 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
         return;
 
     m_doneResetting = true;
-    shared().notifyDone();
+    singleton().notifyDone();
 }
 
 void TestController::didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef frame, WKAuthenticationChallengeRef authenticationChallenge)
@@ -1475,7 +1475,7 @@ void TestController::decidePolicyForGeolocationPermissionRequestIfPossible()
 
 void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef page, WKSecurityOriginRef origin, WKNotificationPermissionRequestRef request, const void*)
 {
-    TestController::shared().decidePolicyForNotificationPermissionRequest(page, origin, request);
+    TestController::singleton().decidePolicyForNotificationPermissionRequest(page, origin, request);
 }
 
 void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef, WKSecurityOriginRef, WKNotificationPermissionRequestRef request)

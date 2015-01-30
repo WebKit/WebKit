@@ -297,7 +297,7 @@ Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest&, const
 
 #if USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)
     if (newWebView)
-        WebKit::NetscapePluginHostManager::shared().didCreateWindow();
+        WebKit::NetscapePluginHostManager::singleton().didCreateWindow();
 #endif
     
     return core(newWebView);

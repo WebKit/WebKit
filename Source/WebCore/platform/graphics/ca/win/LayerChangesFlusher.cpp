@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-LayerChangesFlusher& LayerChangesFlusher::shared()
+LayerChangesFlusher& LayerChangesFlusher::singleton()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(LayerChangesFlusher, flusher, ());
     return flusher;
@@ -74,7 +74,7 @@ LRESULT LayerChangesFlusher::hookCallback(int code, WPARAM wParam, LPARAM lParam
     // crash for debugging purposes if an exception is hit. 
     ExceptionRegistration registrationStruct; // Note: must be stack allocated.
     StructuredExceptionHandlerSuppressor supressor(registrationStruct);
-    return shared().hookFired(code, wParam, lParam);
+    return singleton().hookFired(code, wParam, lParam);
 }
 
 LRESULT LayerChangesFlusher::hookFired(int code, WPARAM wParam, LPARAM lParam)

@@ -50,7 +50,7 @@ static const int gMaxRequestsToQueue = 64;
 // If there were queued names that couldn't be sent simultaneously, check the state of resolvers after this delay.
 static const double gRetryResolvingInSeconds = 0.1;
 
-DNSResolveQueue& DNSResolveQueue::shared()
+DNSResolveQueue& DNSResolveQueue::singleton()
 {
     static NeverDestroyed<DNSResolveQueue> queue;
 

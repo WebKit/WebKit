@@ -54,7 +54,7 @@ class Printer : public ::testing::EmptyTestEventListener {
     std::string failures;
 };
 
-TestsController& TestsController::shared()
+TestsController& TestsController::singleton()
 {
     static NeverDestroyed<TestsController> shared;
     return shared;

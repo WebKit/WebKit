@@ -122,7 +122,7 @@ void WebProcessPool::updateProcessSuppressionState()
     if (!m_processSuppressionDisabledForPageCounter.value())
         m_pluginProcessManagerProcessSuppressionDisabledToken = nullptr;
     else if (!m_pluginProcessManagerProcessSuppressionDisabledToken)
-        m_pluginProcessManagerProcessSuppressionDisabledToken = PluginProcessManager::shared().processSuppressionDisabledToken();
+        m_pluginProcessManagerProcessSuppressionDisabledToken = PluginProcessManager::singleton().processSuppressionDisabledToken();
 #endif
 }
 
@@ -140,7 +140,7 @@ void WebProcessPool::platformInitialize()
     registerNotificationObservers();
 
 #if PLATFORM(IOS)
-    WebKit::WebMemoryPressureHandler::shared();
+    WebKit::WebMemoryPressureHandler::singleton();
 #endif
 }
 

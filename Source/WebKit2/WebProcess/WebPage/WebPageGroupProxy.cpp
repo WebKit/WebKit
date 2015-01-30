@@ -38,8 +38,8 @@ PassRefPtr<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& 
 {
     RefPtr<WebPageGroupProxy> pageGroup = adoptRef(new WebPageGroupProxy(data));
     
-    if (pageGroup->isVisibleToInjectedBundle() && WebProcess::shared().injectedBundle())
-        WebProcess::shared().injectedBundle()->didInitializePageGroup(pageGroup.get());
+    if (pageGroup->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
+        WebProcess::singleton().injectedBundle()->didInitializePageGroup(pageGroup.get());
 
     return pageGroup.release();
 }

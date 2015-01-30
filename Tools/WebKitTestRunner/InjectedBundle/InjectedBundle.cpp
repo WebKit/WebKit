@@ -41,7 +41,7 @@
 
 namespace WTR {
 
-InjectedBundle& InjectedBundle::shared()
+InjectedBundle& InjectedBundle::singleton()
 {
     static InjectedBundle& shared = *new InjectedBundle;
     return shared;

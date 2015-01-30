@@ -304,7 +304,7 @@ void Internals::resetToConsistentState(Page* page)
     AXObjectCache::disableAccessibility();
 #endif
 
-    MockPageOverlayClient::shared().uninstallAllOverlays();
+    MockPageOverlayClient::singleton().uninstallAllOverlays();
 }
 
 Internals::Internals(Document* document)
@@ -2431,7 +2431,7 @@ void Internals::installMockPageOverlay(const String& overlayType, ExceptionCode&
         return;
     }
 
-    MockPageOverlayClient::shared().installOverlay(document->frame()->mainFrame(), overlayType == "view" ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
+    MockPageOverlayClient::singleton().installOverlay(document->frame()->mainFrame(), overlayType == "view" ? PageOverlay::OverlayType::View : PageOverlay::OverlayType::Document);
 }
 
 String Internals::pageOverlayLayerTreeAsText(ExceptionCode& ec) const
@@ -2444,7 +2444,7 @@ String Internals::pageOverlayLayerTreeAsText(ExceptionCode& ec) const
 
     document->updateLayout();
 
-    return MockPageOverlayClient::shared().layerTreeAsText(document->frame()->mainFrame());
+    return MockPageOverlayClient::singleton().layerTreeAsText(document->frame()->mainFrame());
 }
 
 void Internals::setPageMuted(bool muted)

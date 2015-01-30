@@ -48,7 +48,7 @@ public:
     public:
         Register(const std::string& test)
         {
-            InjectedBundleController::shared().registerCreateInjectedBundleTestFunction(test, Register::create);
+            InjectedBundleController::singleton().registerCreateInjectedBundleTestFunction(test, Register::create);
         }
 
     private:

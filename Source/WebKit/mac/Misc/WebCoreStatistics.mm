@@ -224,12 +224,12 @@ using namespace WebCore;
 
 + (int)cachedPageCount
 {
-    return PageCache::shared().pageCount();
+    return PageCache::singleton().pageCount();
 }
 
 + (int)cachedFrameCount
 {
-    return PageCache::shared().frameCount();
+    return PageCache::singleton().frameCount();
 }
 
 // Deprecated

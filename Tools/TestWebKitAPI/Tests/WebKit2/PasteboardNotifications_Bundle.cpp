@@ -49,7 +49,7 @@ static InjectedBundleTest::Register<PasteboardNotificationsTest> registrar("Past
 static void willWriteToPasteboard(WKBundlePageRef page, WKBundleRangeHandleRef range,  const void*)
 {
     if (!range)
-        WKBundlePostMessage(InjectedBundleController::shared().bundle(), Util::toWK("PasteboardNotificationTestDoneMessageName").get(), Util::toWK("willWritetoPasteboardFail").get());
+        WKBundlePostMessage(InjectedBundleController::singleton().bundle(), Util::toWK("PasteboardNotificationTestDoneMessageName").get(), Util::toWK("willWritetoPasteboardFail").get());
 }
 
 static void getPasteboardDataForRange(WKBundlePageRef, WKBundleRangeHandleRef range, WKArrayRef* pasteboardTypes, WKArrayRef* pasteboardData, const void*)
@@ -62,7 +62,7 @@ static void getPasteboardDataForRange(WKBundlePageRef, WKBundleRangeHandleRef ra
 
 static void didWriteToPasteboard(WKBundlePageRef, const void*)
 {
-    WKBundlePostMessage(InjectedBundleController::shared().bundle(), Util::toWK("PasteboardNotificationTestDoneMessageName").get(), Util::toWK("didWriteToPasteboard").get());
+    WKBundlePostMessage(InjectedBundleController::singleton().bundle(), Util::toWK("PasteboardNotificationTestDoneMessageName").get(), Util::toWK("didWriteToPasteboard").get());
 }
 
 PasteboardNotificationsTest::PasteboardNotificationsTest(const std::string& identifier)

@@ -39,7 +39,7 @@ namespace WebKit {
 
 static const char separator = '\t';
 
-WebMemorySampler* WebMemorySampler::shared()
+WebMemorySampler* WebMemorySampler::singleton()
 {
     static WebMemorySampler* sharedMemorySampler;
     if (!sharedMemorySampler)

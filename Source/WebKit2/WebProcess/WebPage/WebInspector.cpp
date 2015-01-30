@@ -92,12 +92,12 @@ void WebInspector::createInspectorPage(bool underTest)
     m_frontendConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this, RunLoop::main());
     m_frontendConnection->open();
 
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::CreateInspectorPage(connectionClientPort, canAttachWindow(), underTest), m_page->pageID());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::CreateInspectorPage(connectionClientPort, canAttachWindow(), underTest), m_page->pageID());
 }
 
 void WebInspector::closeFrontend()
 {
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::DidClose(), m_page->pageID());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::DidClose(), m_page->pageID());
 
     m_frontendConnection->invalidate();
     m_frontendConnection = nullptr;
@@ -108,7 +108,7 @@ void WebInspector::closeFrontend()
 
 void WebInspector::bringToFront()
 {
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::BringToFront(), m_page->pageID());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::BringToFront(), m_page->pageID());
 }
 
 // Called by WebInspector messages
@@ -172,7 +172,7 @@ void WebInspector::showResources()
 
 void WebInspector::showMainResourceForFrame(uint64_t frameIdentifier)
 {
-    WebFrame* frame = WebProcess::shared().webFrame(frameIdentifier);
+    WebFrame* frame = WebProcess::singleton().webFrame(frameIdentifier);
     if (!frame)
         return;
 
@@ -234,7 +234,7 @@ void WebInspector::updateDockingAvailability()
 
     m_previousCanAttach = canAttachWindow;
 
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::AttachAvailabilityChanged(canAttachWindow), m_page->pageID());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::AttachAvailabilityChanged(canAttachWindow), m_page->pageID());
 }
 
 void WebInspector::sendMessageToBackend(const String& message)
@@ -249,7 +249,7 @@ bool WebInspector::sendMessageToFrontend(const String& message)
 {
 #if ENABLE(INSPECTOR_SERVER)
     if (m_remoteFrontendConnected)
-        WebProcess::shared().parentProcessConnection()->send(Messages::WebInspectorProxy::SendMessageToRemoteFrontend(message), m_page->pageID());
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SendMessageToRemoteFrontend(message), m_page->pageID());
     else
 #endif
         m_frontendConnection->send(Messages::WebInspectorUI::SendMessageToFrontend(message), 0);

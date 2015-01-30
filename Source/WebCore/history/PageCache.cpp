@@ -291,7 +291,7 @@ static void logCanCachePageDecision(Page& page)
     diagnosticLoggingClient.logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageCacheKey(), emptyString(), rejectReasons ? DiagnosticLoggingResultFail : DiagnosticLoggingResultPass);
 }
 
-PageCache& PageCache::shared()
+PageCache& PageCache::singleton()
 {
     static NeverDestroyed<PageCache> globalPageCache;
     return globalPageCache;
@@ -484,7 +484,7 @@ CachedPage* PageCache::get(HistoryItem& item, Page* page) const
     if (cachedPage->hasExpired()) {
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item.url().string().ascii().data());
         logPageCacheFailureDiagnosticMessage(page, DiagnosticLoggingKeys::expiredKey());
-        PageCache::shared().remove(item);
+        PageCache::singleton().remove(item);
         return nullptr;
     }
     return cachedPage;

@@ -102,11 +102,11 @@ Vector<String> PluginInfoStore::individualPluginPaths()
 bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
 #if PLATFORM(GTK)
-    if (PluginInfoCache::shared().getPluginInfo(pluginPath, plugin))
+    if (PluginInfoCache::singleton().getPluginInfo(pluginPath, plugin))
         return true;
 
     if (NetscapePluginModule::getPluginInfo(pluginPath, plugin)) {
-        PluginInfoCache::shared().updatePluginInfo(pluginPath, plugin);
+        PluginInfoCache::singleton().updatePluginInfo(pluginPath, plugin);
         return true;
     }
     return false;

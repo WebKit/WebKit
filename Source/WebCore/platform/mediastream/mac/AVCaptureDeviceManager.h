@@ -45,7 +45,7 @@ class CaptureDevice;
 
 class AVCaptureDeviceManager {
 public:
-    static AVCaptureDeviceManager& shared();
+    static AVCaptureDeviceManager& singleton();
     static bool isAvailable();
 
     Vector<RefPtr<TrackSourceInfo>> getSourcesInfo(const String&);

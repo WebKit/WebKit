@@ -36,7 +36,7 @@ class InjectedBundleTest;
 
 class InjectedBundleController {
 public:
-    static InjectedBundleController& shared();
+    static InjectedBundleController& singleton();
 
     void initialize(WKBundleRef, WKTypeRef);
 

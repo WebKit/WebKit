@@ -36,7 +36,7 @@
 
 namespace TestWebKitAPI {
 
-InjectedBundleController& InjectedBundleController::shared()
+InjectedBundleController& InjectedBundleController::singleton()
 {
     static InjectedBundleController& shared = *new InjectedBundleController;
     return shared;

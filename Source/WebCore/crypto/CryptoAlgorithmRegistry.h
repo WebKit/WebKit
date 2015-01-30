@@ -45,7 +45,7 @@ class CryptoAlgorithmRegistry {
     friend class NeverDestroyed<CryptoAlgorithmRegistry>;
 
 public:
-    static CryptoAlgorithmRegistry& shared();
+    static CryptoAlgorithmRegistry& singleton();
 
     bool getIdentifierForName(const String&, CryptoAlgorithmIdentifier&);
     String nameForIdentifier(CryptoAlgorithmIdentifier);

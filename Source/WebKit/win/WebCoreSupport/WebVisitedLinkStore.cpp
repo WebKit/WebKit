@@ -34,7 +34,7 @@ using namespace WebCore;
 
 static bool s_shouldTrackVisitedLinks;
 
-WebVisitedLinkStore& WebVisitedLinkStore::shared()
+WebVisitedLinkStore& WebVisitedLinkStore::singleton()
 {
     static WebVisitedLinkStore& visitedLinkStore = *adoptRef(new WebVisitedLinkStore).leakRef();
     
@@ -62,8 +62,8 @@ void WebVisitedLinkStore::setShouldTrackVisitedLinks(bool shouldTrackVisitedLink
 
 void WebVisitedLinkStore::removeAllVisitedLinks()
 {
-    shared().removeVisitedLinkHashes();
-    PageCache::shared().markPagesForVisitedLinkStyleRecalc();
+    WebVisitedLinkStore::singleton().removeVisitedLinkHashes();
+    PageCache::singleton().markPagesForVisitedLinkStyleRecalc();
 }
 
 void WebVisitedLinkStore::addVisitedLink(const String& urlString)
@@ -116,7 +116,7 @@ void WebVisitedLinkStore::addVisitedLinkHash(LinkHash linkHash)
     m_visitedLinkHashes.add(linkHash);
 
     invalidateStylesForLink(linkHash);
-    PageCache::shared().markPagesForVisitedLinkStyleRecalc();
+    PageCache::singleton().markPagesForVisitedLinkStyleRecalc();
 }
 
 void WebVisitedLinkStore::removeVisitedLinkHashes()

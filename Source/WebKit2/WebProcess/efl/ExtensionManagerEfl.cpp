@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-ExtensionManagerEfl& ExtensionManagerEfl::shared()
+ExtensionManagerEfl& ExtensionManagerEfl::singleton()
 {
     static NeverDestroyed<ExtensionManagerEfl> extensionManager;
     return extensionManager;

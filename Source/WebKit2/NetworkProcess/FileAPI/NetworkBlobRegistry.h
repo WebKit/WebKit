@@ -46,7 +46,7 @@ class NetworkBlobRegistry {
 WTF_MAKE_NONCOPYABLE(NetworkBlobRegistry);
 public:
     NetworkBlobRegistry();
-    static NetworkBlobRegistry& shared();
+    static NetworkBlobRegistry& singleton();
 
     void registerFileBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, const String& path, PassRefPtr<SandboxExtension>, const String& contentType);
     void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, Vector<WebCore::BlobPart>, const String& contentType);

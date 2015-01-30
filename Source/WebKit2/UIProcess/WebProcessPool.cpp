@@ -675,10 +675,11 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
     parameters.memoryCacheDisabled = m_memoryCacheDisabled;
 
 #if ENABLE(SERVICE_CONTROLS)
-    parameters.hasImageServices = ServicesController::shared().hasImageServices();
-    parameters.hasSelectionServices = ServicesController::shared().hasSelectionServices();
-    parameters.hasRichContentServices = ServicesController::shared().hasRichContentServices();
-    ServicesController::shared().refreshExistingServices();
+    auto& serviceController = ServicesController::singleton();
+    parameters.hasImageServices = serviceController.hasImageServices();
+    parameters.hasSelectionServices = serviceController.hasSelectionServices();
+    parameters.hasRichContentServices = serviceController.hasRichContentServices();
+    serviceController.refreshExistingServices();
 #endif
 
     // Add any platform specific parameters
@@ -715,7 +716,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
 
 #if ENABLE(REMOTE_INSPECTOR)
     // Initialize remote inspector connection now that we have a sub-process that is hosting one of our web views.
-    Inspector::RemoteInspector::shared(); 
+    Inspector::RemoteInspector::singleton(); 
 #endif
 
     return process;
@@ -1105,7 +1106,7 @@ void WebProcessPool::startMemorySampler(const double interval)
     
     // For UIProcess
 #if ENABLE(MEMORY_SAMPLER)
-    WebMemorySampler::shared()->start(interval);
+    WebMemorySampler::singleton()->start(interval);
 #endif
     
     // For WebProcess
@@ -1124,7 +1125,7 @@ void WebProcessPool::stopMemorySampler()
     
     // For UIProcess
 #if ENABLE(MEMORY_SAMPLER)
-    WebMemorySampler::shared()->stop();
+    WebMemorySampler::singleton()->stop();
 #endif
 
     sendToAllProcesses(Messages::WebProcess::StopMemorySampler());

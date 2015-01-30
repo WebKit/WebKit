@@ -35,7 +35,7 @@ namespace WebKit {
 class WebMemoryPressureHandler {
     friend class NeverDestroyed<WebMemoryPressureHandler>;
 public:
-    static WebMemoryPressureHandler& shared();
+    static WebMemoryPressureHandler& singleton();
 
 private:
     WebMemoryPressureHandler();

@@ -40,22 +40,21 @@ ScrollingThread::ScrollingThread()
 
 bool ScrollingThread::isCurrentThread()
 {
-    if (!shared().m_threadIdentifier)
-        return false;
-
-    return currentThread() == shared().m_threadIdentifier;
+    auto threadIdentifier = ScrollingThread::singleton().m_threadIdentifier;
+    return threadIdentifier && currentThread() == threadIdentifier;
 }
 
 void ScrollingThread::dispatch(std::function<void ()> function)
 {
-    shared().createThreadIfNeeded();
+    auto& scrollingThread = ScrollingThread::singleton();
+    scrollingThread.createThreadIfNeeded();
 
     {
-        std::lock_guard<std::mutex> lock(shared().m_functionsMutex);
-        shared().m_functions.append(function);
+        std::lock_guard<std::mutex> lock(singleton().m_functionsMutex);
+        scrollingThread.m_functions.append(function);
     }
 
-    shared().wakeUpRunLoop();
+    scrollingThread.wakeUpRunLoop();
 }
 
 void ScrollingThread::dispatchBarrier(std::function<void ()> function)
@@ -65,7 +64,7 @@ void ScrollingThread::dispatchBarrier(std::function<void ()> function)
     });
 }
 
-ScrollingThread& ScrollingThread::shared()
+ScrollingThread& ScrollingThread::singleton()
 {
     static NeverDestroyed<ScrollingThread> scrollingThread;
 

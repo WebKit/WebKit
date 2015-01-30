@@ -116,32 +116,34 @@ void InjectedBundle::initializeClient(const WKBundleClientBase* client)
 
 void InjectedBundle::postMessage(const String& messageName, API::Object* messageBody)
 {
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebProcessPool::HandleMessage(messageName, UserData(WebProcess::shared().transformObjectsToHandles(messageBody))), 0);
+    auto& webProcess = WebProcess::singleton();
+    webProcess.parentProcessConnection()->send(Messages::WebProcessPool::HandleMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), 0);
 }
 
 void InjectedBundle::postSynchronousMessage(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
 {
     UserData returnUserData;
 
-    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebProcessPool::HandleSynchronousMessage(messageName, UserData(WebProcess::shared().transformObjectsToHandles(messageBody))), Messages::WebProcessPool::HandleSynchronousMessage::Reply(returnUserData), 0))
+    auto& webProcess = WebProcess::singleton();
+    if (!webProcess.parentProcessConnection()->sendSync(Messages::WebProcessPool::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), Messages::WebProcessPool::HandleSynchronousMessage::Reply(returnUserData), 0))
         returnData = nullptr;
     else
-        returnData = WebProcess::shared().transformHandlesToObjects(returnUserData.object());
+        returnData = webProcess.transformHandlesToObjects(returnUserData.object());
 }
 
 WebConnection* InjectedBundle::webConnectionToUIProcess() const
 {
-    return WebProcess::shared().webConnectionToUIProcess();
+    return WebProcess::singleton().webConnectionToUIProcess();
 }
 
 void InjectedBundle::setAlwaysAcceptCookies(bool accept)
 {
-    WebProcess::shared().supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(accept ? HTTPCookieAcceptPolicyAlways : HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
+    WebProcess::singleton().supplement<WebCookieManager>()->setHTTPCookieAcceptPolicy(accept ? HTTPCookieAcceptPolicyAlways : HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
 }
 
 void InjectedBundle::setCacheModel(uint32_t cacheModel)
 {
-    WebProcess::shared().setCacheModel(cacheModel);
+    WebProcess::singleton().setCacheModel(cacheModel);
 }
 
 void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* pageGroup, const String& preference, bool enabled)
@@ -342,19 +344,19 @@ void InjectedBundle::setAsynchronousSpellCheckingEnabled(WebPageGroupProxy* page
 
 void InjectedBundle::clearAllDatabases()
 {
-    WebProcess::shared().supplement<WebDatabaseManager>()->deleteAllDatabases();
+    WebProcess::singleton().supplement<WebDatabaseManager>()->deleteAllDatabases();
 }
 
 void InjectedBundle::setDatabaseQuota(uint64_t quota)
 {
     // Historically, we've used the following (somewhat non-sensical) string
     // for the databaseIdentifier of local files.
-    WebProcess::shared().supplement<WebDatabaseManager>()->setQuotaForOrigin("file__0", quota);
+    WebProcess::singleton().supplement<WebDatabaseManager>()->setQuotaForOrigin("file__0", quota);
 }
 
 void InjectedBundle::clearApplicationCache()
 {
-    WebProcess::shared().supplement<WebApplicationCacheManager>()->deleteAllEntries();
+    WebProcess::singleton().supplement<WebApplicationCacheManager>()->deleteAllEntries();
 }
 
 void InjectedBundle::clearApplicationCacheForOrigin(const String& originString)
@@ -365,7 +367,7 @@ void InjectedBundle::clearApplicationCacheForOrigin(const String& originString)
 
 void InjectedBundle::setAppCacheMaximumSize(uint64_t size)
 {
-    WebProcess::shared().supplement<WebApplicationCacheManager>()->setAppCacheMaximumSize(size);
+    WebProcess::singleton().supplement<WebApplicationCacheManager>()->setAppCacheMaximumSize(size);
 }
 
 uint64_t InjectedBundle::appCacheUsageForOrigin(const String& originString)
@@ -586,7 +588,7 @@ uint64_t InjectedBundle::webNotificationID(JSContextRef jsContext, JSValueRef js
     WebCore::Notification* notification = JSNotification::toWrapped(toJS(toJS(jsContext), jsNotification));
     if (!notification)
         return 0;
-    return WebProcess::shared().supplement<WebNotificationManager>()->notificationIDForTesting(notification);
+    return WebProcess::singleton().supplement<WebNotificationManager>()->notificationIDForTesting(notification);
 #else
     UNUSED_PARAM(jsContext);
     UNUSED_PARAM(jsNotification);

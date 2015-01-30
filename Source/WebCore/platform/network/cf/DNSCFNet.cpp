@@ -77,7 +77,7 @@ bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
 
 static void clientCallback(CFHostRef theHost, CFHostInfoType, const CFStreamError*, void*)
 {
-    DNSResolveQueue::shared().decrementRequestCount(); // It's ok to call shared() from a secondary thread, the static variable has already been initialized by now.
+    DNSResolveQueue::singleton().decrementRequestCount(); // It's ok to call singleton() from a secondary thread, the static variable has already been initialized by now.
     CFRelease(theHost);
 }
 
@@ -109,7 +109,7 @@ void prefetchDNS(const String& hostname)
     ASSERT(isMainThread());
     if (hostname.isEmpty())
         return;
-    DNSResolveQueue::shared().add(hostname);
+    DNSResolveQueue::singleton().add(hostname);
 }
 
 }

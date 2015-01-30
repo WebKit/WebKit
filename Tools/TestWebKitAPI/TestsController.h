@@ -32,7 +32,7 @@ namespace TestWebKitAPI {
 
 class TestsController {
 public:
-    static TestsController& shared();
+    static TestsController& singleton();
 
     bool run(int argc, char** argv);
 

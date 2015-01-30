@@ -205,7 +205,7 @@ void EventDispatcher::dispatchTouchEvents()
     }
 
     for (auto& slot : localCopy) {
-        if (WebPage* webPage = WebProcess::shared().webPage(slot.key))
+        if (WebPage* webPage = WebProcess::singleton().webPage(slot.key))
             webPage->dispatchAsynchronousTouchEvents(slot.value);
     }
 }
@@ -215,7 +215,7 @@ void EventDispatcher::dispatchWheelEvent(uint64_t pageID, const WebWheelEvent& w
 {
     ASSERT(RunLoop::isMain());
 
-    WebPage* webPage = WebProcess::shared().webPage(pageID);
+    WebPage* webPage = WebProcess::singleton().webPage(pageID);
     if (!webPage)
         return;
 
@@ -225,7 +225,7 @@ void EventDispatcher::dispatchWheelEvent(uint64_t pageID, const WebWheelEvent& w
 #if ENABLE(ASYNC_SCROLLING)
 void EventDispatcher::sendDidReceiveEvent(uint64_t pageID, const WebEvent& event, bool didHandleEvent)
 {
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(event.type()), didHandleEvent), pageID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(event.type()), didHandleEvent), pageID);
 }
 #endif
 

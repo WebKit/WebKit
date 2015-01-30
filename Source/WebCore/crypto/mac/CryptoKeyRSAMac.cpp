@@ -181,7 +181,7 @@ void CryptoKeyRSA::buildAlgorithmDescription(CryptoAlgorithmDescriptionBuilder& 
 
     if (m_restrictedToSpecificHash) {
         auto hashDescriptionBuilder = builder.createEmptyClone();
-        hashDescriptionBuilder->add("name", CryptoAlgorithmRegistry::shared().nameForIdentifier(m_hash));
+        hashDescriptionBuilder->add("name", CryptoAlgorithmRegistry::singleton().nameForIdentifier(m_hash));
         builder.add("hash", *hashDescriptionBuilder);
     }
 }

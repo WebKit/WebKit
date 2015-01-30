@@ -49,7 +49,7 @@ class MediaStreamCenter {
 public:
     virtual ~MediaStreamCenter();
 
-    static MediaStreamCenter& shared();
+    static MediaStreamCenter& singleton();
     static void setSharedStreamCenter(MediaStreamCenter*);
 
     virtual void validateRequestConstraints(PassRefPtr<MediaStreamCreationClient>, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints) = 0;

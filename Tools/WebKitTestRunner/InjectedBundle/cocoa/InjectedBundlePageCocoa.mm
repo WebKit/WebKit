@@ -42,7 +42,7 @@ void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRe
     if (!WKBundleFrameIsMainFrame(frame))
         return;
 
-    setCrashReportApplicationSpecificInformationToURL(InjectedBundle::shared().testRunner()->testURL());
+    setCrashReportApplicationSpecificInformationToURL(InjectedBundle::singleton().testRunner()->testURL());
 
 #if PLATFORM(IOS)
     WKBundlePageSetUseTestingViewportConfiguration(page(), true);

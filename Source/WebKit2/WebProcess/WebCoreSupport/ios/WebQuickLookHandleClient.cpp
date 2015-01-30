@@ -39,7 +39,7 @@ WebQuickLookHandleClient::WebQuickLookHandleClient(const WebCore::QuickLookHandl
     , m_uti(handle.previewUTI())
     , m_pageID(pageID)
 {
-    WebProcess::shared().send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(m_fileName, m_uti), m_pageID);
+    WebProcess::singleton().send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(m_fileName, m_uti), m_pageID);
 }
 
 void WebQuickLookHandleClient::didReceiveDataArray(CFArrayRef dataArray)
@@ -52,7 +52,7 @@ void WebQuickLookHandleClient::didReceiveDataArray(CFArrayRef dataArray)
 
 void WebQuickLookHandleClient::didFinishLoading()
 {
-    WebProcess::shared().send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(m_data), m_pageID);
+    WebProcess::singleton().send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(m_data), m_pageID);
     m_data.clear();
 }
 

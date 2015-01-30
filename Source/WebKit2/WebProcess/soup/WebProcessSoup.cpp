@@ -104,10 +104,10 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     WebCore::memoryCache().setDisabled(cacheModel == CacheModelDocumentViewer);
     WebCore::memoryCache().setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     WebCore::memoryCache().setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    WebCore::PageCache::shared().setMaxSize(pageCacheSize);
+    WebCore::PageCache::singleton().setMaxSize(pageCacheSize);
 
 #if PLATFORM(GTK)
-    WebCore::PageCache::shared().setShouldClearBackingStores(true);
+    WebCore::PageCache::singleton().setShouldClearBackingStores(true);
 #endif
 
     if (!usesNetworkProcess()) {

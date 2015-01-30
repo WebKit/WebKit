@@ -129,13 +129,13 @@ static bool shouldLogHistoryClientCallbacks(const char* pathOrURL)
 
 void TestInvocation::invoke()
 {
-    TestController::shared().configureViewForTest(*this);
+    TestController::singleton().configureViewForTest(*this);
 
-    WKPageSetAddsVisitedLinks(TestController::shared().mainWebView()->page(), false);
+    WKPageSetAddsVisitedLinks(TestController::singleton().mainWebView()->page(), false);
 
     m_textOutput.clear();
 
-    TestController::shared().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks(m_pathOrURL.c_str()));
+    TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks(m_pathOrURL.c_str()));
 
     // FIXME: We should clear out visited links here.
 
@@ -151,16 +151,16 @@ void TestInvocation::invoke()
     WKDictionarySetItem(beginTestMessageBody.get(), dumpPixelsKey.get(), dumpPixelsValue.get());
 
     WKRetainPtr<WKStringRef> useWaitToDumpWatchdogTimerKey = adoptWK(WKStringCreateWithUTF8CString("UseWaitToDumpWatchdogTimer"));
-    WKRetainPtr<WKBooleanRef> useWaitToDumpWatchdogTimerValue = adoptWK(WKBooleanCreate(TestController::shared().useWaitToDumpWatchdogTimer()));
+    WKRetainPtr<WKBooleanRef> useWaitToDumpWatchdogTimerValue = adoptWK(WKBooleanCreate(TestController::singleton().useWaitToDumpWatchdogTimer()));
     WKDictionarySetItem(beginTestMessageBody.get(), useWaitToDumpWatchdogTimerKey.get(), useWaitToDumpWatchdogTimerValue.get());
 
     WKRetainPtr<WKStringRef> timeoutKey = adoptWK(WKStringCreateWithUTF8CString("Timeout"));
     WKRetainPtr<WKUInt64Ref> timeoutValue = adoptWK(WKUInt64Create(m_timeout));
     WKDictionarySetItem(beginTestMessageBody.get(), timeoutKey.get(), timeoutValue.get());
 
-    WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), beginTestMessageBody.get());
+    WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), beginTestMessageBody.get());
 
-    TestController::shared().runUntil(m_gotInitialResponse, TestController::shortTimeout);
+    TestController::singleton().runUntil(m_gotInitialResponse, TestController::shortTimeout);
     if (!m_gotInitialResponse) {
         m_errorMessage = "Timed out waiting for initial response from web process\n";
         m_webProcessIsUnresponsive = true;
@@ -169,9 +169,9 @@ void TestInvocation::invoke()
     if (m_error)
         goto end;
 
-    WKPageLoadURL(TestController::shared().mainWebView()->page(), m_url.get());
+    WKPageLoadURL(TestController::singleton().mainWebView()->page(), m_url.get());
 
-    TestController::shared().runUntil(m_gotFinalMessage, TestController::noTimeout);
+    TestController::singleton().runUntil(m_gotFinalMessage, TestController::noTimeout);
     if (m_error)
         goto end;
 
@@ -180,17 +180,17 @@ void TestInvocation::invoke()
 end:
 #if !PLATFORM(IOS)
     if (m_gotInitialResponse)
-        WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
+        WKInspectorClose(WKPageGetInspector(TestController::singleton().mainWebView()->page()));
 #endif // !PLATFORM(IOS)
 
     if (m_webProcessIsUnresponsive)
         dumpWebProcessUnresponsiveness();
-    else if (!TestController::shared().resetStateToConsistentValues()) {
+    else if (!TestController::singleton().resetStateToConsistentValues()) {
         // The process froze while loading about:blank, let's start a fresh one.
         // It would be nice to report that the previous test froze after dumping results, but we have no way to do that.
-        TestController::shared().terminateWebContentProcess();
+        TestController::singleton().terminateWebContentProcess();
         // Make sure that we have a process, as invoke() will need one to send bundle messages for the next test.
-        TestController::shared().reattachPageToWebProcess();
+        TestController::singleton().reattachPageToWebProcess();
     }
 }
 
@@ -203,7 +203,7 @@ void TestInvocation::dumpWebProcessUnresponsiveness(const char* errorMessage)
 {
     char errorMessageToStderr[1024];
 #if PLATFORM(COCOA)
-    pid_t pid = WKPageGetProcessIdentifier(TestController::shared().mainWebView()->page());
+    pid_t pid = WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page());
     sprintf(errorMessageToStderr, "#PROCESS UNRESPONSIVE - %s (pid %ld)\n", TestController::webProcessName(), static_cast<long>(pid));
 #else
     sprintf(errorMessageToStderr, "#PROCESS UNRESPONSIVE - %s", TestController::webProcessName());
@@ -232,7 +232,7 @@ void TestInvocation::forceRepaintDoneCallback(WKErrorRef, void* context)
 {
     TestInvocation* testInvocation = static_cast<TestInvocation*>(context);
     testInvocation->m_gotRepaint = true;
-    TestController::shared().notifyDone();
+    TestController::singleton().notifyDone();
 }
 
 void TestInvocation::dumpResults()
@@ -245,8 +245,8 @@ void TestInvocation::dumpResults()
     if (m_dumpPixels && m_pixelResult) {
         if (PlatformWebView::windowSnapshotEnabled()) {
             m_gotRepaint = false;
-            WKPageForceRepaint(TestController::shared().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
-            TestController::shared().runUntil(m_gotRepaint, TestController::shortTimeout);
+            WKPageForceRepaint(TestController::singleton().mainWebView()->page(), this, TestInvocation::forceRepaintDoneCallback);
+            TestController::singleton().runUntil(m_gotRepaint, TestController::shortTimeout);
             if (!m_gotRepaint) {
                 m_errorMessage = "Timed out waiting for pre-pixel dump repaint\n";
                 m_webProcessIsUnresponsive = true;
@@ -300,7 +300,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         m_gotFinalMessage = true;
         m_error = true;
         m_errorMessage = "FAIL\n";
-        TestController::shared().notifyDone();
+        TestController::singleton().notifyDone();
         return;
     }
 
@@ -309,7 +309,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKStringRef messageBodyString = static_cast<WKStringRef>(messageBody);
         if (WKStringIsEqualToUTF8CString(messageBodyString, "BeginTest")) {
             m_gotInitialResponse = true;
-            TestController::shared().notifyDone();
+            TestController::singleton().notifyDone();
             return;
         }
 
@@ -331,7 +331,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         m_audioResult = static_cast<WKDataRef>(WKDictionaryGetItemForKey(messageBodyDictionary, audioResultKey.get()));
 
         m_gotFinalMessage = true;
-        TestController::shared().notifyDone();
+        TestController::singleton().notifyDone();
         return;
     }
 
@@ -345,59 +345,59 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     if (WKStringIsEqualToUTF8CString(messageName, "BeforeUnloadReturnValue")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef beforeUnloadReturnValue = static_cast<WKBooleanRef>(messageBody);
-        TestController::shared().setBeforeUnloadReturnValue(WKBooleanGetValue(beforeUnloadReturnValue));
+        TestController::singleton().setBeforeUnloadReturnValue(WKBooleanGetValue(beforeUnloadReturnValue));
         return;
     }
     
     if (WKStringIsEqualToUTF8CString(messageName, "AddChromeInputField")) {
-        TestController::shared().mainWebView()->addChromeInputField();
+        TestController::singleton().mainWebView()->addChromeInputField();
         WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallAddChromeInputFieldCallback"));
-        WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+        WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), 0);
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "RemoveChromeInputField")) {
-        TestController::shared().mainWebView()->removeChromeInputField();
+        TestController::singleton().mainWebView()->removeChromeInputField();
         WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallRemoveChromeInputFieldCallback"));
-        WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+        WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), 0);
         return;
     }
     
     if (WKStringIsEqualToUTF8CString(messageName, "FocusWebView")) {
-        TestController::shared().mainWebView()->makeWebViewFirstResponder();
+        TestController::singleton().mainWebView()->makeWebViewFirstResponder();
         WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallFocusWebViewCallback"));
-        WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+        WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), 0);
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetBackingScaleFactor")) {
         ASSERT(WKGetTypeID(messageBody) == WKDoubleGetTypeID());
         double backingScaleFactor = WKDoubleGetValue(static_cast<WKDoubleRef>(messageBody));
-        WKPageSetCustomBackingScaleFactor(TestController::shared().mainWebView()->page(), backingScaleFactor);
+        WKPageSetCustomBackingScaleFactor(TestController::singleton().mainWebView()->page(), backingScaleFactor);
 
         WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallSetBackingScaleFactorCallback"));
-        WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+        WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), 0);
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SimulateWebNotificationClick")) {
         ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
         uint64_t notificationID = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
-        TestController::shared().simulateWebNotificationClick(notificationID);
+        TestController::singleton().simulateWebNotificationClick(notificationID);
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetAddsVisitedLinks")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef enabledWK = static_cast<WKBooleanRef>(messageBody);
-        WKPageSetAddsVisitedLinks(TestController::shared().mainWebView()->page(), WKBooleanGetValue(enabledWK));
+        WKPageSetAddsVisitedLinks(TestController::singleton().mainWebView()->page(), WKBooleanGetValue(enabledWK));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetGeolocationPermission")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef enabledWK = static_cast<WKBooleanRef>(messageBody);
-        TestController::shared().setGeolocationPermission(WKBooleanGetValue(enabledWK));
+        TestController::singleton().setGeolocationPermission(WKBooleanGetValue(enabledWK));
         return;
     }
 
@@ -449,21 +449,21 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKDoubleRef speedWK = static_cast<WKDoubleRef>(WKDictionaryGetItemForKey(messageBodyDictionary, speedKeyWK.get()));
         double speed = WKDoubleGetValue(speedWK);
 
-        TestController::shared().setMockGeolocationPosition(latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
+        TestController::singleton().setMockGeolocationPosition(latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetMockGeolocationPositionUnavailableError")) {
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         WKStringRef errorMessage = static_cast<WKStringRef>(messageBody);
-        TestController::shared().setMockGeolocationPositionUnavailableError(errorMessage);
+        TestController::singleton().setMockGeolocationPositionUnavailableError(errorMessage);
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetUserMediaPermission")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef enabledWK = static_cast<WKBooleanRef>(messageBody);
-        TestController::shared().setUserMediaPermission(WKBooleanGetValue(enabledWK));
+        TestController::singleton().setUserMediaPermission(WKBooleanGetValue(enabledWK));
         return;
     }
 
@@ -479,7 +479,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKBooleanRef permissiveWK = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, permissiveKeyWK.get()));
         bool permissive = WKBooleanGetValue(permissiveWK);
 
-        TestController::shared().setCustomPolicyDelegate(enabled, permissive);
+        TestController::singleton().setCustomPolicyDelegate(enabled, permissive);
         return;
     }
 
@@ -491,14 +491,14 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKBooleanRef hiddenWK = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, isInitialKeyWK.get()));
         bool hidden = WKBooleanGetValue(hiddenWK);
 
-        TestController::shared().setHidden(hidden);
+        TestController::singleton().setHidden(hidden);
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "ProcessWorkQueue")) {
-        if (TestController::shared().workQueueManager().processWorkQueue()) {
+        if (TestController::singleton().workQueueManager().processWorkQueue()) {
             WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("WorkQueueProcessedCallback"));
-            WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+            WKContextPostMessageToInjectedBundle(TestController::singleton().context(), messageName.get(), 0);
         }
         return;
     }
@@ -506,14 +506,14 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     if (WKStringIsEqualToUTF8CString(messageName, "QueueBackNavigation")) {
         ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
         uint64_t stepCount = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
-        TestController::shared().workQueueManager().queueBackNavigation(stepCount);
+        TestController::singleton().workQueueManager().queueBackNavigation(stepCount);
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "QueueForwardNavigation")) {
         ASSERT(WKGetTypeID(messageBody) == WKUInt64GetTypeID());
         uint64_t stepCount = WKUInt64GetValue(static_cast<WKUInt64Ref>(messageBody));
-        TestController::shared().workQueueManager().queueForwardNavigation(stepCount);
+        TestController::singleton().workQueueManager().queueForwardNavigation(stepCount);
         return;
     }
 
@@ -527,7 +527,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKRetainPtr<WKStringRef> targetKey(AdoptWK, WKStringCreateWithUTF8CString("target"));
         WKStringRef targetWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(loadDataDictionary, targetKey.get()));
 
-        TestController::shared().workQueueManager().queueLoad(toWTFString(urlWK), toWTFString(targetWK));
+        TestController::singleton().workQueueManager().queueLoad(toWTFString(urlWK), toWTFString(targetWK));
         return;
     }
 
@@ -544,54 +544,54 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKRetainPtr<WKStringRef> unreachableURLKey(AdoptWK, WKStringCreateWithUTF8CString("unreachableURL"));
         WKStringRef unreachableURLWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(loadDataDictionary, unreachableURLKey.get()));
 
-        TestController::shared().workQueueManager().queueLoadHTMLString(toWTFString(contentWK), baseURLWK ? toWTFString(baseURLWK) : String(), unreachableURLWK ? toWTFString(unreachableURLWK) : String());
+        TestController::singleton().workQueueManager().queueLoadHTMLString(toWTFString(contentWK), baseURLWK ? toWTFString(baseURLWK) : String(), unreachableURLWK ? toWTFString(unreachableURLWK) : String());
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "QueueReload")) {
-        TestController::shared().workQueueManager().queueReload();
+        TestController::singleton().workQueueManager().queueReload();
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "QueueLoadingScript")) {
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         WKStringRef script = static_cast<WKStringRef>(messageBody);
-        TestController::shared().workQueueManager().queueLoadingScript(toWTFString(script));
+        TestController::singleton().workQueueManager().queueLoadingScript(toWTFString(script));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "QueueNonLoadingScript")) {
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         WKStringRef script = static_cast<WKStringRef>(messageBody);
-        TestController::shared().workQueueManager().queueNonLoadingScript(toWTFString(script));
+        TestController::singleton().workQueueManager().queueNonLoadingScript(toWTFString(script));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetHandlesAuthenticationChallenge")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
-        TestController::shared().setHandlesAuthenticationChallenges(WKBooleanGetValue(value));
+        TestController::singleton().setHandlesAuthenticationChallenges(WKBooleanGetValue(value));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetAuthenticationUsername")) {
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         WKStringRef username = static_cast<WKStringRef>(messageBody);
-        TestController::shared().setAuthenticationUsername(toWTFString(username));
+        TestController::singleton().setAuthenticationUsername(toWTFString(username));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetAuthenticationPassword")) {
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
         WKStringRef password = static_cast<WKStringRef>(messageBody);
-        TestController::shared().setAuthenticationPassword(toWTFString(password));
+        TestController::singleton().setAuthenticationPassword(toWTFString(password));
         return;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetBlockAllPlugins")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef shouldBlock = static_cast<WKBooleanRef>(messageBody);
-        TestController::shared().setBlockAllPlugins(WKBooleanGetValue(shouldBlock));
+        TestController::singleton().setBlockAllPlugins(WKBooleanGetValue(shouldBlock));
         return;
     }
 
@@ -603,12 +603,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "SetWindowIsKey")) {
         ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
         WKBooleanRef isKeyValue = static_cast<WKBooleanRef>(messageBody);
-        TestController::shared().mainWebView()->setWindowIsKey(WKBooleanGetValue(isKeyValue));
+        TestController::singleton().mainWebView()->setWindowIsKey(WKBooleanGetValue(isKeyValue));
         return 0;
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "IsWorkQueueEmpty")) {
-        bool isEmpty = TestController::shared().workQueueManager().isWorkQueueEmpty();
+        bool isEmpty = TestController::singleton().workQueueManager().isWorkQueueEmpty();
         WKRetainPtr<WKTypeRef> result(AdoptWK, WKBooleanCreate(isEmpty));
         return result;
     }

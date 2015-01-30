@@ -37,7 +37,7 @@ class SecItemRequestData;
 class SecItemShimProxy : public IPC::Connection::WorkQueueMessageReceiver {
 WTF_MAKE_NONCOPYABLE(SecItemShimProxy);
 public:
-    static SecItemShimProxy& shared();
+    static SecItemShimProxy& singleton();
 
     void initializeConnection(IPC::Connection&);
 

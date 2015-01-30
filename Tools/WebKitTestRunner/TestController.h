@@ -43,7 +43,7 @@ class EventSenderProxy;
 // FIXME: Rename this TestRunner?
 class TestController {
 public:
-    static TestController& shared();
+    static TestController& singleton();
 
     static const unsigned viewWidth;
     static const unsigned viewHeight;

@@ -81,12 +81,12 @@ DrawingArea::DrawingArea(DrawingAreaType type, WebPage& webPage)
     , m_nativeSurfaceHandleForCompositing(0)
 #endif
 {
-    WebProcess::shared().addMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_webPage.pageID(), *this);
+    WebProcess::singleton().addMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_webPage.pageID(), *this);
 }
 
 DrawingArea::~DrawingArea()
 {
-    WebProcess::shared().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_webPage.pageID());
+    WebProcess::singleton().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_webPage.pageID());
 }
 
 void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()> function)

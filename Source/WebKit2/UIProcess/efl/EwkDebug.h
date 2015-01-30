@@ -29,10 +29,10 @@
 
 #include "ewk_main_private.h"
 
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(EwkMain::shared().logDomainId(), __VA_ARGS__)
-#define ERR(...) EINA_LOG_DOM_ERR(EwkMain::shared().logDomainId(), __VA_ARGS__)
-#define WARN(...) EINA_LOG_DOM_WARN(EwkMain::shared().logDomainId(), __VA_ARGS__)
-#define INFO(...) EINA_LOG_DOM_INFO(EwkMain::shared().logDomainId(), __VA_ARGS__)
-#define DBG(...) EINA_LOG_DOM_DBG(EwkMain::shared().logDomainId(), __VA_ARGS__)
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(EwkMain::singleton().logDomainId(), __VA_ARGS__)
+#define ERR(...) EINA_LOG_DOM_ERR(EwkMain::singleton().logDomainId(), __VA_ARGS__)
+#define WARN(...) EINA_LOG_DOM_WARN(EwkMain::singleton().logDomainId(), __VA_ARGS__)
+#define INFO(...) EINA_LOG_DOM_INFO(EwkMain::singleton().logDomainId(), __VA_ARGS__)
+#define DBG(...) EINA_LOG_DOM_DBG(EwkMain::singleton().logDomainId(), __VA_ARGS__)
 
 #endif // EwkDebug_h

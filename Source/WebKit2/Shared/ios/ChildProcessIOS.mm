@@ -66,7 +66,7 @@ void ChildProcess::setApplicationIsDaemon()
 
 void ChildProcess::platformInitialize()
 {
-    FloatingPointEnvironment& floatingPointEnvironment = FloatingPointEnvironment::shared(); 
+    FloatingPointEnvironment& floatingPointEnvironment = FloatingPointEnvironment::singleton(); 
     floatingPointEnvironment.enableDenormalSupport(); 
     floatingPointEnvironment.saveMainThreadEnvironment(); 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];

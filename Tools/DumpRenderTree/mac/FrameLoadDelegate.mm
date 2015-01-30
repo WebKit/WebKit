@@ -146,7 +146,7 @@
 #endif
 
     // if we finish all the commands, we're ready to dump state
-    if (WorkQueue::shared()->processWork() && !gTestRunner->waitToDump())
+    if (WorkQueue::singleton().processWork() && !gTestRunner->waitToDump())
         dump();
 }
 
@@ -159,9 +159,10 @@
 {
     if ([dataSource webFrame] == topLoadingFrame) {
         topLoadingFrame = nil;
-        WorkQueue::shared()->setFrozen(true); // first complete load freezes the queue for the rest of this test
+        auto& workQueue = WorkQueue::singleton();
+        workQueue.setFrozen(true); // first complete load freezes the queue for the rest of this test
         if (!gTestRunner->waitToDump()) {
-            if (WorkQueue::shared()->count())
+            if (workQueue.count())
                 [self performSelector:@selector(processWork:) withObject:nil afterDelay:0];
             else
                 dump();

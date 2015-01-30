@@ -84,7 +84,7 @@ static AtkObject* childElementById(AtkObject* parent, const char* id)
 
 PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef id)
 {
-    AtkObject* root = ATK_OBJECT(WKAccessibilityRootObject(InjectedBundle::shared().page()->page()));
+    AtkObject* root = ATK_OBJECT(WKAccessibilityRootObject(InjectedBundle::singleton().page()->page()));
     if (!root)
         return nullptr;
 
@@ -107,7 +107,7 @@ JSRetainPtr<JSStringRef> AccessibilityController::platformName()
 
 PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement()
 {
-    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     void* root = WKAccessibilityRootObject(page);
 
     return AccessibilityUIElement::create(static_cast<AtkObject*>(root));
@@ -115,7 +115,7 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::rootElement()
 
 PassRefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
 {
-    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     void* root = WKAccessibilityFocusedObject(page);
 
     return AccessibilityUIElement::create(static_cast<AtkObject*>(root));

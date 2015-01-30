@@ -141,7 +141,7 @@ void WorkerThread::workerThread()
 {
     // Propagate the mainThread's fenv to workers.
 #if PLATFORM(IOS)
-    FloatingPointEnvironment::shared().propagateMainThreadEnvironment();
+    FloatingPointEnvironment::singleton().propagateMainThreadEnvironment();
 #endif
 
     {

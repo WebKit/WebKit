@@ -1870,8 +1870,9 @@ static void runTest(const string& inputLine)
     [prevTestBFItem release];
     prevTestBFItem = [[[[mainFrame webView] backForwardList] currentItem] retain];
 
-    WorkQueue::shared()->clear();
-    WorkQueue::shared()->setFrozen(false);
+    auto& workQueue = WorkQueue::singleton();
+    workQueue.clear();
+    workQueue.setFrozen(false);
 
     bool ignoreWebCoreNodeLeaks = shouldIgnoreWebCoreNodeLeaks(testURL);
     if (ignoreWebCoreNodeLeaks)
@@ -1895,7 +1896,7 @@ static void runTest(const string& inputLine)
     [EventSendingController clearSavedEvents];
     [[mainFrame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
 
-    WorkQueue::shared()->clear();
+    workQueue.clear();
 
     if (gTestRunner->closeRemainingWindowsWhenComplete()) {
         NSArray* array = [DumpRenderTreeWindow openWindows];

@@ -43,12 +43,12 @@ void WindowServerConnection::applicationWindowModificationsStopped(bool stopped)
 
 void WindowServerConnection::applicationWindowModificationsStarted(uint32_t, void*, uint32_t, void*, uint32_t)
 {
-    WindowServerConnection::shared().applicationWindowModificationsStopped(false);
+    WindowServerConnection::singleton().applicationWindowModificationsStopped(false);
 }
 
 void WindowServerConnection::applicationWindowModificationsStopped(uint32_t, void*, uint32_t, void*, uint32_t)
 {
-    WindowServerConnection::shared().applicationWindowModificationsStopped(true);
+    WindowServerConnection::singleton().applicationWindowModificationsStopped(true);
 }
 
 void WindowServerConnection::windowServerConnectionStateChanged()
@@ -59,7 +59,7 @@ void WindowServerConnection::windowServerConnectionStateChanged()
 
 #endif
 
-WindowServerConnection& WindowServerConnection::shared()
+WindowServerConnection& WindowServerConnection::singleton()
 {
     static WindowServerConnection& windowServerConnection = *new WindowServerConnection;
     return windowServerConnection;

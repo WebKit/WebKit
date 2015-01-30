@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-WebTextChecker* WebTextChecker::shared()
+WebTextChecker* WebTextChecker::singleton()
 {
     static WebTextChecker* textChecker = adoptRef(new WebTextChecker).leakRef();
     return textChecker;

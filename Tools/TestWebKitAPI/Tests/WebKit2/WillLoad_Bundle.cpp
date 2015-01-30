@@ -50,7 +50,7 @@ private:
         WKDictionarySetItem(messageBody.get(), Util::toWK("URLRequestReturn").get(), request);
         WKDictionarySetItem(messageBody.get(), Util::toWK("UserDataReturn").get(), userData);
 
-        WKBundlePostMessage(InjectedBundleController::shared().bundle(), Util::toWK("WillLoadURLRequestReturn").get(), messageBody.get());
+        WKBundlePostMessage(InjectedBundleController::singleton().bundle(), Util::toWK("WillLoadURLRequestReturn").get(), messageBody.get());
     }
 
     static void willLoadDataRequest(WKBundlePageRef page, WKURLRequestRef request, WKDataRef data, WKStringRef MIMEType, WKStringRef encodingName, WKURLRef unreachableURL, WKTypeRef userData, const void *clientInfo)
@@ -64,7 +64,7 @@ private:
         WKDictionarySetItem(messageBody.get(), Util::toWK("UnreachableURLReturn").get(), unreachableURL);
         WKDictionarySetItem(messageBody.get(), Util::toWK("UserDataReturn").get(), userData);
 
-        WKBundlePostMessage(InjectedBundleController::shared().bundle(), Util::toWK("WillLoadDataRequestReturn").get(), messageBody.get());
+        WKBundlePostMessage(InjectedBundleController::singleton().bundle(), Util::toWK("WillLoadDataRequestReturn").get(), messageBody.get());
 
     }
 

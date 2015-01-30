@@ -210,7 +210,7 @@ void RegionOverlay::recomputeRegion()
         m_overlay->setNeedsDisplay();
 }
 
-DebugPageOverlays& DebugPageOverlays::shared()
+DebugPageOverlays& DebugPageOverlays::singleton()
 {
     if (!sharedDebugOverlays)
         sharedDebugOverlays = new DebugPageOverlays;
@@ -296,7 +296,7 @@ void DebugPageOverlays::settingsChanged(MainFrame& frame)
     if (!activeOverlayRegions && !hasOverlays(frame))
         return;
 
-    DebugPageOverlays::shared().updateOverlayRegionVisibility(frame, activeOverlayRegions);
+    DebugPageOverlays::singleton().updateOverlayRegionVisibility(frame, activeOverlayRegions);
 }
 
 }

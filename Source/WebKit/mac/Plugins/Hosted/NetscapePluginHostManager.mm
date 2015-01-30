@@ -49,7 +49,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NetscapePluginHostManager& NetscapePluginHostManager::shared()
+NetscapePluginHostManager& NetscapePluginHostManager::singleton()
 {
     DEPRECATED_DEFINE_STATIC_LOCAL(NetscapePluginHostManager, pluginHostManager, ());
     

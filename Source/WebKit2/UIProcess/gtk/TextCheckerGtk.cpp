@@ -43,7 +43,7 @@ const TextCheckerState& TextChecker::state()
     if (didInitializeState)
         return textCheckerState;
 
-    WebTextCheckerClient& client = WebTextChecker::shared()->client();
+    WebTextCheckerClient& client = WebTextChecker::singleton()->client();
     textCheckerState.isContinuousSpellCheckingEnabled = client.continuousSpellCheckingEnabled();
     textCheckerState.isGrammarCheckingEnabled =  client.grammarCheckingEnabled();
 
@@ -54,7 +54,7 @@ const TextCheckerState& TextChecker::state()
   
 bool TextChecker::isContinuousSpellCheckingAllowed()
 {
-    return WebTextChecker::shared()->client().continuousSpellCheckingAllowed();
+    return WebTextChecker::singleton()->client().continuousSpellCheckingAllowed();
 }
 
 void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellCheckingEnabled)
@@ -62,7 +62,7 @@ void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellChecki
     if (state().isContinuousSpellCheckingEnabled == isContinuousSpellCheckingEnabled)
         return;
     textCheckerState.isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
-    WebTextChecker::shared()->client().setContinuousSpellCheckingEnabled(isContinuousSpellCheckingEnabled);
+    WebTextChecker::singleton()->client().setContinuousSpellCheckingEnabled(isContinuousSpellCheckingEnabled);
 }
 
 void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
@@ -70,7 +70,7 @@ void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
     if (state().isGrammarCheckingEnabled == isGrammarCheckingEnabled)
         return;
     textCheckerState.isGrammarCheckingEnabled = isGrammarCheckingEnabled;
-    WebTextChecker::shared()->client().setGrammarCheckingEnabled(isGrammarCheckingEnabled);
+    WebTextChecker::singleton()->client().setGrammarCheckingEnabled(isGrammarCheckingEnabled);
 }
 
 void TextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
@@ -85,57 +85,57 @@ void TextChecker::grammarCheckingEnabledStateChanged(bool enabled)
 
 int64_t TextChecker::uniqueSpellDocumentTag(WebPageProxy* page)
 {
-    return WebTextChecker::shared()->client().uniqueSpellDocumentTag(page);
+    return WebTextChecker::singleton()->client().uniqueSpellDocumentTag(page);
 }
 
 void TextChecker::closeSpellDocumentWithTag(int64_t tag)
 {
-    WebTextChecker::shared()->client().closeSpellDocumentWithTag(tag);
+    WebTextChecker::singleton()->client().closeSpellDocumentWithTag(tag);
 }
 
 void TextChecker::checkSpellingOfString(int64_t spellDocumentTag, StringView text, int32_t& misspellingLocation, int32_t& misspellingLength)
 {
-    WebTextChecker::shared()->client().checkSpellingOfString(spellDocumentTag, text.toStringWithoutCopying(), misspellingLocation, misspellingLength);
+    WebTextChecker::singleton()->client().checkSpellingOfString(spellDocumentTag, text.toStringWithoutCopying(), misspellingLocation, misspellingLength);
 }
 
 void TextChecker::checkGrammarOfString(int64_t spellDocumentTag, StringView text, Vector<WebCore::GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
 {
-    WebTextChecker::shared()->client().checkGrammarOfString(spellDocumentTag, text.toStringWithoutCopying(), grammarDetails, badGrammarLocation, badGrammarLength);
+    WebTextChecker::singleton()->client().checkGrammarOfString(spellDocumentTag, text.toStringWithoutCopying(), grammarDetails, badGrammarLocation, badGrammarLength);
 }
 
 bool TextChecker::spellingUIIsShowing()
 {
-    return WebTextChecker::shared()->client().spellingUIIsShowing();
+    return WebTextChecker::singleton()->client().spellingUIIsShowing();
 }
 
 void TextChecker::toggleSpellingUIIsShowing()
 {
-    WebTextChecker::shared()->client().toggleSpellingUIIsShowing();
+    WebTextChecker::singleton()->client().toggleSpellingUIIsShowing();
 }
 
 void TextChecker::updateSpellingUIWithMisspelledWord(int64_t spellDocumentTag, const String& misspelledWord)
 {
-    WebTextChecker::shared()->client().updateSpellingUIWithMisspelledWord(spellDocumentTag, misspelledWord);
+    WebTextChecker::singleton()->client().updateSpellingUIWithMisspelledWord(spellDocumentTag, misspelledWord);
 }
 
 void TextChecker::updateSpellingUIWithGrammarString(int64_t spellDocumentTag, const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
-    WebTextChecker::shared()->client().updateSpellingUIWithGrammarString(spellDocumentTag, badGrammarPhrase, grammarDetail);
+    WebTextChecker::singleton()->client().updateSpellingUIWithGrammarString(spellDocumentTag, badGrammarPhrase, grammarDetail);
 }
 
 void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& /* context */, Vector<String>& guesses)
 {
-    WebTextChecker::shared()->client().guessesForWord(spellDocumentTag, word, guesses);
+    WebTextChecker::singleton()->client().guessesForWord(spellDocumentTag, word, guesses);
 }
 
 void TextChecker::learnWord(int64_t spellDocumentTag, const String& word)
 {
-    WebTextChecker::shared()->client().learnWord(spellDocumentTag, word);
+    WebTextChecker::singleton()->client().learnWord(spellDocumentTag, word);
 }
 
 void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
 {
-    WebTextChecker::shared()->client().ignoreWord(spellDocumentTag, word);
+    WebTextChecker::singleton()->client().ignoreWord(spellDocumentTag, word);
 }
 
 void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion>)

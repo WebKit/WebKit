@@ -63,7 +63,7 @@ void WebToDatabaseProcessConnection::didReceiveMessage(IPC::Connection& connecti
 
 void WebToDatabaseProcessConnection::didClose(IPC::Connection& connection)
 {
-    WebProcess::shared().webToDatabaseProcessConnectionClosed(this);
+    WebProcess::singleton().webToDatabaseProcessConnectionClosed(this);
 }
 
 void WebToDatabaseProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)

@@ -55,7 +55,7 @@ gboolean axObjectEventListener(GSignalInvocationHint* signalHint, unsigned numPa
         return true;
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
-    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
 #else
@@ -150,7 +150,7 @@ void AccessibilityNotificationHandler::setNotificationFunctionCallback(JSValueRe
     m_notificationFunctionCallback = notificationFunctionCallback;
 
 #if PLATFORM(GTK) || PLATFORM(EFL)
-    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
 #else
@@ -181,7 +181,7 @@ void AccessibilityNotificationHandler::setNotificationFunctionCallback(JSValueRe
 void AccessibilityNotificationHandler::removeAccessibilityNotificationHandler()
 {
 #if PLATFORM(GTK) || PLATFORM(EFL)
-    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
     JSContextRef jsContext = WKBundleFrameGetJavaScriptContext(mainFrame);
 #else
@@ -231,7 +231,7 @@ void AccessibilityNotificationHandler::connectAccessibilityCallbacks()
         unsigned id = atk_add_global_event_listener(axObjectEventListener, *signalName);
         if (!id) {
             String message = String::format("atk_add_global_event_listener failed for signal %s\n", *signalName);
-            InjectedBundle::shared().outputText(message);
+            InjectedBundle::singleton().outputText(message);
             continue;
         }
 

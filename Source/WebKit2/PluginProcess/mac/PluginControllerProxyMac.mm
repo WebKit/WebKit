@@ -52,12 +52,12 @@ void PluginControllerProxy::setComplexTextInputState(PluginComplexTextInputState
 
 const MachSendRight& PluginControllerProxy::compositingRenderServerPort()
 {
-    return PluginProcess::shared().compositingRenderServerPort();
+    return PluginProcess::singleton().compositingRenderServerPort();
 }
 
 void PluginControllerProxy::openPluginPreferencePane()
 {
-    PluginProcess::shared().parentProcessConnection()->send(Messages::PluginProcessProxy::OpenPluginPreferencePane(), 0);
+    PluginProcess::singleton().parentProcessConnection()->send(Messages::PluginProcessProxy::OpenPluginPreferencePane(), 0);
 }
 
 void PluginControllerProxy::platformInitialize(const PluginCreationParameters& creationParameters)
@@ -130,7 +130,7 @@ void PluginControllerProxy::updateLayerHostingContext(LayerHostingMode layerHost
 
     switch (layerHostingMode) {
         case LayerHostingMode::InProcess:
-            m_layerHostingContext = LayerHostingContext::createForPort(PluginProcess::shared().compositingRenderServerPort());
+            m_layerHostingContext = LayerHostingContext::createForPort(PluginProcess::singleton().compositingRenderServerPort());
             break;
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
         case LayerHostingMode::OutOfProcess:

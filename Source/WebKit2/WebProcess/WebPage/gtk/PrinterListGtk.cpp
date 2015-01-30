@@ -34,7 +34,7 @@ namespace WebKit {
 
 PrinterListGtk* PrinterListGtk::s_sharedPrinterList = nullptr;
 
-RefPtr<PrinterListGtk> PrinterListGtk::shared()
+RefPtr<PrinterListGtk> PrinterListGtk::singleton()
 {
     if (s_sharedPrinterList)
         return s_sharedPrinterList;

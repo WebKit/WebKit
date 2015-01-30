@@ -31,5 +31,5 @@
 extern "C"
 void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
 {
-    WTR::InjectedBundle::shared().initialize(bundle, initializationUserData);
+    WTR::InjectedBundle::singleton().initialize(bundle, initializationUserData);
 }

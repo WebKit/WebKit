@@ -32,5 +32,5 @@ using namespace WebKit;
 
 extern "C" void WKBundleInitialize(WKBundleRef bundle, WKTypeRef userData)
 {
-    ExtensionManagerEfl::shared().initialize(bundle, userData);
+    ExtensionManagerEfl::singleton().initialize(bundle, userData);
 }

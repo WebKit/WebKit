@@ -170,49 +170,50 @@ bool JSCryptoKeySerializationJWK::reconcileAlgorithm(std::unique_ptr<CryptoAlgor
         return true;
     }
 
+    auto& algorithmRegisty = CryptoAlgorithmRegistry::singleton();
     std::unique_ptr<CryptoAlgorithm> algorithm;
     std::unique_ptr<CryptoAlgorithmParameters> parameters;
     if (m_jwkAlgorithmName == "HS256") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::HMAC);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::HMAC);
         parameters = createHMACParameters(CryptoAlgorithmIdentifier::SHA_256);
     } else if (m_jwkAlgorithmName == "HS384") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::HMAC);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::HMAC);
         parameters = createHMACParameters(CryptoAlgorithmIdentifier::SHA_384);
     } else if (m_jwkAlgorithmName == "HS512") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::HMAC);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::HMAC);
         parameters = createHMACParameters(CryptoAlgorithmIdentifier::SHA_512);
     } else if (m_jwkAlgorithmName == "RS256") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5);
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_256);
     } else if (m_jwkAlgorithmName == "RS384") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5);
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_384);
     } else if (m_jwkAlgorithmName == "RS512") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5);
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_512);
     } else if (m_jwkAlgorithmName == "RSA1_5") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5);
         parameters = std::make_unique<CryptoAlgorithmParameters>();
     } else if (m_jwkAlgorithmName == "RSA-OAEP") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::RSA_OAEP);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::RSA_OAEP);
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_1);
     } else if (m_jwkAlgorithmName == "A128CBC") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_CBC);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_CBC);
         parameters = std::make_unique<CryptoAlgorithmParameters>();
     } else if (m_jwkAlgorithmName == "A192CBC") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_CBC);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_CBC);
         parameters = std::make_unique<CryptoAlgorithmParameters>();
     } else if (m_jwkAlgorithmName == "A256CBC") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_CBC);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_CBC);
         parameters = std::make_unique<CryptoAlgorithmParameters>();
     } else if (m_jwkAlgorithmName == "A128KW") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_KW);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_KW);
         parameters = std::make_unique<CryptoAlgorithmParameters>();
     } else if (m_jwkAlgorithmName == "A192KW") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_KW);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_KW);
         parameters = std::make_unique<CryptoAlgorithmParameters>();
     } else if (m_jwkAlgorithmName == "A256KW") {
-        algorithm = CryptoAlgorithmRegistry::shared().create(CryptoAlgorithmIdentifier::AES_KW);
+        algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_KW);
         parameters = std::make_unique<CryptoAlgorithmParameters>();
     } else {
         throwTypeError(m_exec, "Unsupported JWK algorithm " + m_jwkAlgorithmName);

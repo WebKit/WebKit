@@ -151,7 +151,7 @@ const AtomicString& MediaStreamTrack::readyState() const
 void MediaStreamTrack::getSources(ScriptExecutionContext* context, PassRefPtr<MediaStreamTrackSourcesCallback> callback, ExceptionCode& ec)
 {
     RefPtr<MediaStreamTrackSourcesRequest> request = MediaStreamTrackSourcesRequest::create(context, callback);
-    if (!MediaStreamCenter::shared().getMediaStreamTrackSources(request.release()))
+    if (!MediaStreamCenter::singleton().getMediaStreamTrackSources(request.release()))
         ec = NOT_SUPPORTED_ERR;
 }
 

@@ -675,7 +675,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
 
     memoryCache().setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache().setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    PageCache::shared().setMaxSize(pageCacheSize);
+    PageCache::singleton().setMaxSize(pageCacheSize);
 
 #if USE(CFNETWORK)
     // Don't shrink a big disk cache, since that would cause churn.
@@ -2805,10 +2805,10 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     configuration.dragClient = new WebDragClient(this);
     configuration.inspectorClient = m_inspectorClient;
     configuration.loaderClientForMainFrame = new WebFrameLoaderClient;
-    configuration.databaseProvider = &WebDatabaseProvider::shared();
+    configuration.databaseProvider = &WebDatabaseProvider::singleton();
     configuration.storageNamespaceProvider = WebStorageNamespaceProvider::create(localStorageDatabasePath(m_preferences.get()));
     configuration.progressTrackerClient = static_cast<WebFrameLoaderClient*>(configuration.loaderClientForMainFrame);
-    configuration.visitedLinkStore = &WebVisitedLinkStore::shared();
+    configuration.visitedLinkStore = &WebVisitedLinkStore::singleton();
 
     m_page = new Page(configuration);
     provideGeolocationTo(m_page, new WebGeolocationClient(this));
@@ -6464,7 +6464,7 @@ HRESULT WebView::historyDelegate(IWebHistoryDelegate** historyDelegate)
 
 HRESULT WebView::addVisitedLinks(BSTR* visitedURLs, unsigned visitedURLCount)
 {
-    auto& visitedLinkStore = WebVisitedLinkStore::shared();
+    auto& visitedLinkStore = WebVisitedLinkStore::singleton();
     PageGroup& group = core(this)->group();
     
     for (unsigned i = 0; i < visitedURLCount; ++i) {

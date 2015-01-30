@@ -115,7 +115,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 
     memoryCache().setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache().setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    PageCache::shared().setMaxSize(pageCacheSize);
+    PageCache::singleton().setMaxSize(pageCacheSize);
 
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
 
@@ -144,7 +144,7 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
 #if USE(APPKIT)
 static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
 {
-    WebPage* page = WebProcess::shared().focusedWebPage();
+    WebPage* page = WebProcess::singleton().focusedWebPage();
     if (!page || !page->accessibilityRemoteObject())
         return 0;
 
@@ -226,7 +226,7 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
     WKAXRegisterRemoteApp();
 
 #if ENABLE(SEC_ITEM_SHIM)
-    SecItemShim::shared().initialize(this);
+    SecItemShim::singleton().initialize(this);
 #endif
 }
 

@@ -52,17 +52,17 @@ JSClassRef GCController::wrapperClass()
 
 void GCController::collect()
 {
-    WKBundleGarbageCollectJavaScriptObjects(InjectedBundle::shared().bundle());
+    WKBundleGarbageCollectJavaScriptObjects(InjectedBundle::singleton().bundle());
 }
 
 void GCController::collectOnAlternateThread(bool waitUntilDone)
 {
-    WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(InjectedBundle::shared().bundle(), waitUntilDone);
+    WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(InjectedBundle::singleton().bundle(), waitUntilDone);
 }
 
 size_t GCController::getJSObjectCount()
 {
-    return WKBundleGetJavaScriptObjectsCount(InjectedBundle::shared().bundle());
+    return WKBundleGetJavaScriptObjectsCount(InjectedBundle::singleton().bundle());
 }
 
 // Object Creation

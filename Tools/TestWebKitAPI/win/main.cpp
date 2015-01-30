@@ -50,7 +50,7 @@ int main(int argc, char** argv)
     // FIXME: Remove this line once <http://webkit.org/b/32867> is fixed.
     ::OleInitialize(0);
 
-    bool passed = TestWebKitAPI::TestsController::shared().run(argc, argv);
+    bool passed = TestWebKitAPI::TestsController::singleton().run(argc, argv);
 
     return passed ? EXIT_SUCCESS : EXIT_FAILURE;
 }

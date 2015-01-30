@@ -47,7 +47,7 @@ static NavigatorGamepad* navigatorGamepadFromDOMWindow(DOMWindow* window)
     return NavigatorGamepad::from(navigator);
 }
 
-GamepadManager& GamepadManager::shared()
+GamepadManager& GamepadManager::singleton()
 {
     static NeverDestroyed<GamepadManager> sharedManager;
     return sharedManager;
@@ -61,7 +61,7 @@ GamepadManager::GamepadManager()
 void GamepadManager::platformGamepadConnected(PlatformGamepad& platformGamepad)
 {
     // Notify blind Navigators and Windows about all gamepads except for this one.
-    for (auto* gamepad : GamepadProvider::shared().platformGamepads()) {
+    for (auto* gamepad : GamepadProvider::singleton().platformGamepads()) {
         if (!gamepad || gamepad == &platformGamepad)
             continue;
 
@@ -119,7 +119,7 @@ void GamepadManager::platformGamepadInputActivity()
     if (m_gamepadBlindNavigators.isEmpty() && m_gamepadBlindDOMWindows.isEmpty())
         return;
 
-    for (auto* gamepad : GamepadProvider::shared().platformGamepads())
+    for (auto* gamepad : GamepadProvider::singleton().platformGamepads())
         makeGamepadVisible(*gamepad, m_gamepadBlindNavigators, m_gamepadBlindDOMWindows);
 
     m_gamepadBlindNavigators.clear();
@@ -218,7 +218,7 @@ void GamepadManager::maybeStartMonitoringGamepads()
     if (!m_navigators.isEmpty() || !m_domWindows.isEmpty()) {
         LOG(Gamepad, "GamepadManager has %i NavigatorGamepads and %i DOMWindows registered, is starting gamepad monitoring", m_navigators.size(), m_domWindows.size());
         m_isMonitoringGamepads = true;
-        GamepadProvider::shared().startMonitoringGamepads(this);
+        GamepadProvider::singleton().startMonitoringGamepads(this);
     }
 }
 
@@ -230,7 +230,7 @@ void GamepadManager::maybeStopMonitoringGamepads()
     if (m_navigators.isEmpty() && m_domWindows.isEmpty()) {
         LOG(Gamepad, "GamepadManager has no NavigatorGamepads or DOMWindows registered, is stopping gamepad monitoring");
         m_isMonitoringGamepads = false;
-        GamepadProvider::shared().stopMonitoringGamepads(this);
+        GamepadProvider::singleton().stopMonitoringGamepads(this);
     }
 }
 

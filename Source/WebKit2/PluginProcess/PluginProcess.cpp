@@ -48,7 +48,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PluginProcess& PluginProcess::shared()
+PluginProcess& PluginProcess::singleton()
 {
     static NeverDestroyed<PluginProcess> pluginProcess;
     return pluginProcess;
@@ -70,8 +70,9 @@ PluginProcess::~PluginProcess()
 void PluginProcess::lowMemoryHandler(bool critical)
 {
     UNUSED_PARAM(critical);
-    if (shared().shouldTerminate())
-        shared().terminate();
+    auto& pluginProcess = PluginProcess::singleton();
+    if (pluginProcess.shouldTerminate())
+        pluginProcess.terminate();
 }
 
 void PluginProcess::initializeProcess(const ChildProcessInitializationParameters& parameters)

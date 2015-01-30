@@ -109,7 +109,7 @@ bool PluginControllerProxy::initialize(const PluginCreationParameters& creationP
     ASSERT(!m_isInitializing);
     m_isInitializing = true; // Cannot use TemporaryChange here, because this object can be deleted before the function returns.
 
-    m_plugin = NetscapePlugin::create(PluginProcess::shared().netscapePluginModule());
+    m_plugin = NetscapePlugin::create(PluginProcess::singleton().netscapePluginModule());
     if (!m_plugin) {
         // This will delete the plug-in controller proxy object.
         m_connection->removePluginControllerProxy(this, 0);

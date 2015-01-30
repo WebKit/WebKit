@@ -265,7 +265,7 @@ size_t TestRunner::webHistoryItemCount()
 void TestRunner::notifyDone()
 {
     // Same as on mac.  This can be shared.
-    if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())
+    if (m_waitToDump && !topLoadingFrame && !WorkQueue::singleton()->count())
         dump();
     m_waitToDump = false;
 }
@@ -317,7 +317,7 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     wstring wAbsoluteURL = responseURL + TEXT("/") + wURL;
     JSRetainPtr<JSStringRef> jsAbsoluteURL(Adopt, JSStringCreateWithCharacters(wAbsoluteURL.data(), wAbsoluteURL.length()));
 
-    WorkQueue::shared()->queue(new LoadItem(jsAbsoluteURL.get(), target));
+    WorkQueue::singleton()->queue(new LoadItem(jsAbsoluteURL.get(), target));
 }
 
 void TestRunner::setAcceptsEditing(bool acceptsEditing)

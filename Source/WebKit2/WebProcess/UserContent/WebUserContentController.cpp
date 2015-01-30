@@ -70,14 +70,14 @@ WebUserContentController::WebUserContentController(uint64_t identifier)
     : m_identifier(identifier)
     , m_userContentController(*UserContentController::create())
 {
-    WebProcess::shared().addMessageReceiver(Messages::WebUserContentController::messageReceiverName(), m_identifier, *this);
+    WebProcess::singleton().addMessageReceiver(Messages::WebUserContentController::messageReceiverName(), m_identifier, *this);
 }
 
 WebUserContentController::~WebUserContentController()
 {
     ASSERT(userContentControllers().contains(m_identifier));
 
-    WebProcess::shared().removeMessageReceiver(Messages::WebUserContentController::messageReceiverName(), m_identifier);
+    WebProcess::singleton().removeMessageReceiver(Messages::WebUserContentController::messageReceiverName(), m_identifier);
 
     userContentControllers().remove(m_identifier);
 }
@@ -133,7 +133,7 @@ public:
         if (!webPage)
             return;
 
-        WebProcess::shared().parentProcessConnection()->send(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->pageID(), webFrame->frameID(), m_identifier, IPC::DataReference(value->data())), m_controller->identifier());
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->pageID(), webFrame->frameID(), m_identifier, IPC::DataReference(value->data())), m_controller->identifier());
     }
 
     WebCore::UserMessageHandlerDescriptor& descriptor() { return *m_descriptor; }

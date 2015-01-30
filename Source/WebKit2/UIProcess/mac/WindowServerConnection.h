@@ -30,7 +30,7 @@ namespace WebKit {
 
 class WindowServerConnection {
 public:
-    static WindowServerConnection& shared();
+    static WindowServerConnection& singleton();
 
     bool applicationWindowModificationsHaveStopped() const { return m_applicationWindowModificationsHaveStopped; }
 

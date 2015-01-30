@@ -42,17 +42,17 @@ RemoteInspectorDebuggable::RemoteInspectorDebuggable()
 
 RemoteInspectorDebuggable::~RemoteInspectorDebuggable()
 {
-    RemoteInspector::shared().unregisterDebuggable(this);
+    RemoteInspector::singleton().unregisterDebuggable(this);
 }
 
 void RemoteInspectorDebuggable::init()
 {
-    RemoteInspector::shared().registerDebuggable(this);
+    RemoteInspector::singleton().registerDebuggable(this);
 }
 
 void RemoteInspectorDebuggable::update()
 {
-    RemoteInspector::shared().updateDebuggable(this);
+    RemoteInspector::singleton().updateDebuggable(this);
 }
 
 void RemoteInspectorDebuggable::setRemoteDebuggingAllowed(bool allowed)
@@ -63,9 +63,9 @@ void RemoteInspectorDebuggable::setRemoteDebuggingAllowed(bool allowed)
     m_allowed = allowed;
 
     if (m_allowed && automaticInspectionAllowed())
-        RemoteInspector::shared().updateDebuggableAutomaticInspectCandidate(this);
+        RemoteInspector::singleton().updateDebuggableAutomaticInspectCandidate(this);
     else
-        RemoteInspector::shared().updateDebuggable(this);
+        RemoteInspector::singleton().updateDebuggable(this);
 }
 
 RemoteInspectorDebuggableInfo RemoteInspectorDebuggable::info() const
@@ -87,13 +87,13 @@ void RemoteInspectorDebuggable::pauseWaitingForAutomaticInspection()
     ASSERT(automaticInspectionAllowed());
 
     EventLoop loop;
-    while (RemoteInspector::shared().waitingForAutomaticInspection(identifier()) && !loop.ended())
+    while (RemoteInspector::singleton().waitingForAutomaticInspection(identifier()) && !loop.ended())
         loop.cycle();
 }
 
 void RemoteInspectorDebuggable::unpauseForInitializedInspector()
 {
-    RemoteInspector::shared().setupCompleted(identifier());
+    RemoteInspector::singleton().setupCompleted(identifier());
 }
 
 } // namespace Inspector

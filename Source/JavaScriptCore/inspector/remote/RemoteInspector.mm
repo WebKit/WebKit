@@ -91,7 +91,7 @@ void RemoteInspector::startDisabled()
     RemoteInspector::startEnabled = false;
 }
 
-RemoteInspector& RemoteInspector::shared()
+RemoteInspector& RemoteInspector::singleton()
 {
     static NeverDestroyed<RemoteInspector> shared;
 
@@ -309,7 +309,7 @@ void RemoteInspector::start()
     });
 
     notify_register_dispatch(WIRServiceAvailableNotification, &m_notifyToken, m_xpcQueue, ^(int) {
-        RemoteInspector::shared().setupXPCConnectionIfNeeded();
+        RemoteInspector::singleton().setupXPCConnectionIfNeeded();
     });
 
     notify_post(WIRServiceAvailabilityCheckNotification);

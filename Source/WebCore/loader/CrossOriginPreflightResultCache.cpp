@@ -151,7 +151,7 @@ bool CrossOriginPreflightResultCacheItem::allowsRequest(StoredCredentials includ
     return true;
 }
 
-CrossOriginPreflightResultCache& CrossOriginPreflightResultCache::shared()
+CrossOriginPreflightResultCache& CrossOriginPreflightResultCache::singleton()
 {
     ASSERT(isMainThread());
 

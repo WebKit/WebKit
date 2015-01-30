@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-ConnectionStack& ConnectionStack::shared()
+ConnectionStack& ConnectionStack::singleton()
 {
     static NeverDestroyed<ConnectionStack> connectionStack;
     return connectionStack;

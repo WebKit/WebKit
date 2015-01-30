@@ -255,7 +255,7 @@ bool PageClientImpl::isViewInWindow()
 
 bool PageClientImpl::isVisuallyIdle()
 {
-    return WindowServerConnection::shared().applicationWindowModificationsHaveStopped() || !isViewVisible();
+    return WindowServerConnection::singleton().applicationWindowModificationsHaveStopped() || !isViewVisible();
 }
 
 LayerHostingMode PageClientImpl::viewLayerHostingMode()

@@ -77,7 +77,7 @@
 {
     [self stopObserving];
 
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::shared().page()->page());
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 
     JSValueUnprotect(context, m_notificationFunctionCallback);
@@ -91,7 +91,7 @@
     if (!callback)
         return;
 
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::shared().page()->page());
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 
     if (m_notificationFunctionCallback)
@@ -125,7 +125,7 @@
     if (m_platformElement && m_platformElement != [notification object])
         return;
 
-    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::shared().page()->page());
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 
     JSRetainPtr<JSStringRef> jsNotification(Adopt, [notificationName createJSStringRef]);

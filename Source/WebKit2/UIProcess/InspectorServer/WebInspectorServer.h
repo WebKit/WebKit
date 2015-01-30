@@ -41,7 +41,7 @@ class WebInspectorProxy;
 class WebInspectorServer : public WebSocketServer, public WebSocketServerClient {
 public:
     typedef HashMap<unsigned, WebInspectorProxy*> ClientMap;
-    static WebInspectorServer& shared();
+    static WebInspectorServer& singleton();
 
     // Page registry to manage known pages.
     int registerPage(WebInspectorProxy* client);

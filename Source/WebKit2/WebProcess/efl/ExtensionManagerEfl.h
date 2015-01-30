@@ -40,7 +40,7 @@ class Module;
 class ExtensionManagerEfl {
     WTF_MAKE_NONCOPYABLE(ExtensionManagerEfl);
 public:
-    WK_EXPORT static ExtensionManagerEfl& shared();
+    WK_EXPORT static ExtensionManagerEfl& singleton();
     WK_EXPORT void initialize(WKBundleRef, WKTypeRef);
 private:
     ExtensionManagerEfl();

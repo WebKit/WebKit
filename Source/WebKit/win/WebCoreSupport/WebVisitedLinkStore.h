@@ -32,7 +32,7 @@
 
 class WebVisitedLinkStore final : public WebCore::VisitedLinkStore {
 public:
-    static WebVisitedLinkStore& shared();
+    static WebVisitedLinkStore& singleton();
     WebVisitedLinkStore();
     virtual ~WebVisitedLinkStore();
 

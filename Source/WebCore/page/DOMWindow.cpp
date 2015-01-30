@@ -453,7 +453,7 @@ DOMWindow::~DOMWindow()
 
 #if ENABLE(GAMEPAD)
     if (m_gamepadEventListenerCount)
-        GamepadManager::shared().unregisterDOMWindow(this);
+        GamepadManager::singleton().unregisterDOMWindow(this);
 #endif
 }
 
@@ -519,7 +519,7 @@ void DOMWindow::willDetachDocumentFromFrame()
 void DOMWindow::incrementGamepadEventListenerCount()
 {
     if (++m_gamepadEventListenerCount == 1)
-        GamepadManager::shared().registerDOMWindow(this);
+        GamepadManager::singleton().registerDOMWindow(this);
 }
 
 void DOMWindow::decrementGamepadEventListenerCount()
@@ -527,7 +527,7 @@ void DOMWindow::decrementGamepadEventListenerCount()
     ASSERT(m_gamepadEventListenerCount);
 
     if (!--m_gamepadEventListenerCount)
-        GamepadManager::shared().unregisterDOMWindow(this);
+        GamepadManager::singleton().unregisterDOMWindow(this);
 }
 #endif
 

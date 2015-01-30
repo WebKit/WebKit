@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-FloatingPointEnvironment& FloatingPointEnvironment::shared()
+FloatingPointEnvironment& FloatingPointEnvironment::singleton()
 {
     static NeverDestroyed<FloatingPointEnvironment> floatingPointEnvironment;
     return floatingPointEnvironment;

@@ -31,5 +31,5 @@ extern "C"
 #endif
 void WKBundleInitialize(WKBundleRef bundle, WKTypeRef userData)
 {
-    WebGtkExtensionManager::shared().initialize(bundle, userData);
+    WebGtkExtensionManager::singleton().initialize(bundle, userData);
 }

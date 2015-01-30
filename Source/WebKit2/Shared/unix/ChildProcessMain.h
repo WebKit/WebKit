@@ -57,7 +57,7 @@ int ChildProcessMain(int argc, char** argv)
     if (!childMain.parseCommandLine(argc, argv))
         return EXIT_FAILURE;
 
-    ChildProcessType::shared().initialize(childMain.initializationParameters());
+    ChildProcessType::singleton().initialize(childMain.initializationParameters());
     RunLoop::run();
     childMain.platformFinalize();
 

@@ -45,7 +45,7 @@ static InjectedBundleTest::Register<WillSendSubmitEventTest> registrar("WillSend
 
 static void willSendSubmitEvent(WKBundlePageRef, WKBundleNodeHandleRef, WKBundleFrameRef, WKBundleFrameRef, WKDictionaryRef values, const void*)
 {
-    WKBundlePostMessage(InjectedBundleController::shared().bundle(), Util::toWK("DidReceiveWillSendSubmitEvent").get(), values);
+    WKBundlePostMessage(InjectedBundleController::singleton().bundle(), Util::toWK("DidReceiveWillSendSubmitEvent").get(), values);
 }
 
 WillSendSubmitEventTest::WillSendSubmitEventTest(const std::string& identifier)

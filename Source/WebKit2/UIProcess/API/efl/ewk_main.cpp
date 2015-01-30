@@ -62,7 +62,7 @@ EwkMain::EwkMain()
 {
 }
 
-EwkMain& EwkMain::shared()
+EwkMain& EwkMain::singleton()
 {
     static EwkMain instance;
     return instance;
@@ -209,10 +209,10 @@ using namespace WebKit;
 
 int ewk_init()
 {
-    return EwkMain::shared().initialize();
+    return EwkMain::singleton().initialize();
 }
 
 int ewk_shutdown()
 {
-    return EwkMain::shared().finalize();
+    return EwkMain::singleton().finalize();
 }

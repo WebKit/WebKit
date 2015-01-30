@@ -72,7 +72,7 @@ static BlockingResponseMap<SecItemResponseData>& responseMap()
 
 static ChildProcess* sharedProcess;
 
-SecItemShim& SecItemShim::shared()
+SecItemShim& SecItemShim::singleton()
 {
     static SecItemShim* shim;
     static dispatch_once_t once;

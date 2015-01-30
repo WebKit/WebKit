@@ -44,7 +44,7 @@ class GamepadManager : public GamepadProviderClient {
     WTF_MAKE_NONCOPYABLE(GamepadManager);
     friend class NeverDestroyed<GamepadManager>;
 public:
-    static GamepadManager& shared();
+    static GamepadManager& singleton();
 
     virtual void platformGamepadConnected(PlatformGamepad&) override final;
     virtual void platformGamepadDisconnected(PlatformGamepad&) override final;

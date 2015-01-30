@@ -33,7 +33,7 @@ int main(int argc, char** argv)
     [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
     [NSApplication sharedApplication];
 
-    bool passed = TestWebKitAPI::TestsController::shared().run(argc, argv);
+    bool passed = TestWebKitAPI::TestsController::singleton().run(argc, argv);
 
     [pool drain];
 

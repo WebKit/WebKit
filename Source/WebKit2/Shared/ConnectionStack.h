@@ -36,7 +36,7 @@ namespace WebKit {
 
 class ConnectionStack {
 public:
-    static ConnectionStack& shared();
+    static ConnectionStack& singleton();
 
     IPC::Connection* current()
     {

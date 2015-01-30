@@ -42,7 +42,7 @@ class NetscapePluginHostProxy;
 
 class NetscapePluginHostManager {
 public:
-    static NetscapePluginHostManager& shared();
+    static NetscapePluginHostManager& singleton();
     
     PassRefPtr<NetscapePluginInstanceProxy> instantiatePlugin(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, WebHostedNetscapePluginView *, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled, bool hostLayersInWindowServer);
 

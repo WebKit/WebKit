@@ -82,14 +82,14 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     if (resourceCachesToClear == InMemoryResourceCachesOnly)
         return;
 #if ENABLE(NETWORK_CACHE)
-    NetworkCache::shared().clear();
+    NetworkCache::singleton().clear();
 #endif
 }
 
 void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
 #if ENABLE(SEC_ITEM_SHIM)
-    SecItemShim::shared().initialize(this);
+    SecItemShim::singleton().initialize(this);
 #endif
     platformInitializeNetworkProcessCocoa(parameters);
 }

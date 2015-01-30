@@ -44,7 +44,7 @@ class InjectedBundlePage;
 
 class InjectedBundle {
 public:
-    static InjectedBundle& shared();
+    static InjectedBundle& singleton();
 
     // Initialize the InjectedBundle.
     void initialize(WKBundleRef, WKTypeRef initializationUserData);

@@ -30,7 +30,7 @@ namespace WTR {
 
 static Eina_Bool waitToDumpWatchdogTimerCallback(void*)
 {
-    InjectedBundle::shared().testRunner()->waitToDumpWatchdogTimerFired();
+    InjectedBundle::singleton().testRunner()->waitToDumpWatchdogTimerFired();
     return false;
 }
 

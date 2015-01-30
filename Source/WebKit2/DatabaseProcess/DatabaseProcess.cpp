@@ -47,7 +47,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DatabaseProcess& DatabaseProcess::shared()
+DatabaseProcess& DatabaseProcess::singleton()
 {
     static NeverDestroyed<DatabaseProcess> databaseProcess;
     return databaseProcess;

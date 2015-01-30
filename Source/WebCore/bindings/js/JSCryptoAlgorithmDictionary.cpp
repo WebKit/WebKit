@@ -79,7 +79,7 @@ bool JSCryptoAlgorithmDictionary::getAlgorithmIdentifier(ExecState* exec, JSValu
         return false;
     }
 
-    if (!CryptoAlgorithmRegistry::shared().getIdentifierForName(algorithmName, algorithmIdentifier)) {
+    if (!CryptoAlgorithmRegistry::singleton().getIdentifierForName(algorithmName, algorithmIdentifier)) {
         setDOMException(exec, NOT_SUPPORTED_ERR);
         return false;
     }

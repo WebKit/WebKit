@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-PluginProcessManager& PluginProcessManager::shared()
+PluginProcessManager& PluginProcessManager::singleton()
 {
     static NeverDestroyed<PluginProcessManager> pluginProcessManager;
     return pluginProcessManager;

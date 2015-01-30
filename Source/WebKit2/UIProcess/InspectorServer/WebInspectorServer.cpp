@@ -51,7 +51,7 @@ static unsigned pageIdFromRequestPath(const String& path)
     return number;
 }
 
-WebInspectorServer& WebInspectorServer::shared()
+WebInspectorServer& WebInspectorServer::singleton()
 {
     static WebInspectorServer& server = *new WebInspectorServer;
     return server;

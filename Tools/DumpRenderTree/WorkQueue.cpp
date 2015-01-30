@@ -31,6 +31,7 @@
 
 #include "WorkQueueItem.h"
 #include <wtf/Assertions.h>
+#include <wtf/NeverDestroyed.h>
 
 static const unsigned queueLength = 1024;
 
@@ -38,9 +39,9 @@ static WorkQueueItem* theQueue[queueLength];
 static unsigned startOfQueue;
 static unsigned endOfQueue;
 
-WorkQueue* WorkQueue::shared()
+WorkQueue& WorkQueue::singleton()
 {
-    static WorkQueue* sharedInstance = new WorkQueue;
+    static NeverDestroyed<WorkQueue> sharedInstance;
     return sharedInstance;
 }
 

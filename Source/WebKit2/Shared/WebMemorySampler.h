@@ -71,7 +71,7 @@ struct WebMemoryStatistics {
 class WebMemorySampler {
     WTF_MAKE_NONCOPYABLE(WebMemorySampler);
 public:
-    static WebMemorySampler* shared();
+    static WebMemorySampler* singleton();
     void start(const double interval = 0);
     void start(const SandboxExtension::Handle&, const String&, const double interval = 0);
     void stop();

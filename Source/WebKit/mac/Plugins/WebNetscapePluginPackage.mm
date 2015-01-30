@@ -221,7 +221,7 @@ using namespace WebCore;
 
 - (void)createPropertyListFile
 {
-    NetscapePluginHostManager::shared().createPropertyListFile(path, pluginHostArchitecture, [self bundleIdentifier]);
+    NetscapePluginHostManager::singleton().createPropertyListFile(path, pluginHostArchitecture, [self bundleIdentifier]);
 }
 
 #endif

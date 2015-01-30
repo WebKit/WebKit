@@ -161,7 +161,7 @@ bool RemoteInspectorDebuggableConnection::setup(bool isAutomaticInspection)
         {
             std::lock_guard<std::mutex> lock(m_debuggableMutex);
             if (!m_debuggable || !m_debuggable->remoteDebuggingAllowed() || m_debuggable->hasLocalDebugger()) {
-                RemoteInspector::shared().setupFailed(identifier());
+                RemoteInspector::singleton().setupFailed(identifier());
                 m_debuggable = nullptr;
             } else {
                 m_debuggable->connect(this, isAutomaticInspection);
@@ -220,7 +220,7 @@ void RemoteInspectorDebuggableConnection::sendMessageToBackend(NSString *message
 
 bool RemoteInspectorDebuggableConnection::sendMessageToFrontend(const String& message)
 {
-    RemoteInspector::shared().sendMessageToRemoteFrontend(identifier(), message);
+    RemoteInspector::singleton().sendMessageToRemoteFrontend(identifier(), message);
 
     return true;
 }

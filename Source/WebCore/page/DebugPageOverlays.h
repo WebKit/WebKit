@@ -37,7 +37,7 @@ class RegionOverlay;
 
 class DebugPageOverlays {
 public:
-    static DebugPageOverlays& shared();
+    static DebugPageOverlays& singleton();
 
     enum class RegionType {
         WheelEventHandlers,

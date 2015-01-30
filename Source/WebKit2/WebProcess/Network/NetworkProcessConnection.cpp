@@ -56,7 +56,7 @@ NetworkProcessConnection::~NetworkProcessConnection()
 void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::WebResourceLoader::messageReceiverName()) {
-        if (WebResourceLoader* webResourceLoader = WebProcess::shared().webResourceLoadScheduler().webResourceLoaderForIdentifier(decoder.destinationID()))
+        if (WebResourceLoader* webResourceLoader = WebProcess::singleton().webResourceLoadScheduler().webResourceLoaderForIdentifier(decoder.destinationID()))
             webResourceLoader->didReceiveWebResourceLoaderMessage(connection, decoder);
         
         return;
@@ -73,7 +73,7 @@ void NetworkProcessConnection::didReceiveSyncMessage(IPC::Connection&, IPC::Mess
 void NetworkProcessConnection::didClose(IPC::Connection&)
 {
     // The NetworkProcess probably crashed.
-    WebProcess::shared().networkProcessConnectionClosed(this);
+    WebProcess::singleton().networkProcessConnectionClosed(this);
 }
 
 void NetworkProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)

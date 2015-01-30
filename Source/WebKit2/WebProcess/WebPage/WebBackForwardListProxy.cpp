@@ -91,7 +91,7 @@ void WebBackForwardListProxy::setHighestItemIDFromUIProcess(uint64_t itemID)
 
 static void updateBackForwardItem(uint64_t itemID, uint64_t pageID, HistoryItem* item)
 {
-    WebProcess::shared().parentProcessConnection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, pageID, toPageState(*item)), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, pageID, toPageState(*item)), 0);
 }
 
 void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem> prpItem, uint64_t pageID)
@@ -132,7 +132,7 @@ void WebBackForwardListProxy::removeItem(uint64_t itemID)
     if (!item)
         return;
         
-    PageCache::shared().remove(*item);
+    PageCache::singleton().remove(*item);
     WebCore::Page::clearPreviousItemFromAllPages(item.get());
     historyItemToIDMap().remove(item);
 }
@@ -181,7 +181,7 @@ HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
         return 0;
 
     uint64_t itemID = 0;
-    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page->pageID()))
+    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page->pageID()))
         return 0;
 
     if (!itemID)
@@ -196,7 +196,7 @@ int WebBackForwardListProxy::backListCount()
         return 0;
 
     int backListCount = 0;
-    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardBackListCount(), Messages::WebPageProxy::BackForwardBackListCount::Reply(backListCount), m_page->pageID()))
+    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardBackListCount(), Messages::WebPageProxy::BackForwardBackListCount::Reply(backListCount), m_page->pageID()))
         return 0;
 
     return backListCount;
@@ -208,7 +208,7 @@ int WebBackForwardListProxy::forwardListCount()
         return 0;
 
     int forwardListCount = 0;
-    if (!WebProcess::shared().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardForwardListCount(), Messages::WebPageProxy::BackForwardForwardListCount::Reply(forwardListCount), m_page->pageID()))
+    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardForwardListCount(), Messages::WebPageProxy::BackForwardForwardListCount::Reply(forwardListCount), m_page->pageID()))
         return 0;
 
     return forwardListCount;
@@ -218,7 +218,7 @@ void WebBackForwardListProxy::close()
 {
     for (auto& itemID : m_associatedItemIDs) {
         if (HistoryItem* item = itemForID(itemID))
-            WebCore::PageCache::shared().remove(*item);
+            WebCore::PageCache::singleton().remove(*item);
     }
 
     m_associatedItemIDs.clear();

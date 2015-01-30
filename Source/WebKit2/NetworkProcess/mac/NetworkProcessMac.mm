@@ -103,7 +103,7 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     platformInitializeNetworkProcessCocoa(parameters);
 
 #if ENABLE(SEC_ITEM_SHIM)
-    SecItemShim::shared().initialize(this);
+    SecItemShim::singleton().initialize(this);
 #endif
 
     if (!parameters.httpProxy.isNull() || !parameters.httpsProxy.isNull())

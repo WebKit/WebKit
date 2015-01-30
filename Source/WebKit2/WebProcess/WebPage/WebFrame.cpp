@@ -154,7 +154,7 @@ WebFrame::WebFrame(std::unique_ptr<WebFrameLoaderClient> frameLoaderClient)
     , m_frameID(generateFrameID())
 {
     m_frameLoaderClient->setWebFrame(this);
-    WebProcess::shared().addWebFrame(m_frameID, this);
+    WebProcess::singleton().addWebFrame(m_frameID, this);
 
 #ifndef NDEBUG
     webFrameCounter.increment();
@@ -192,7 +192,7 @@ WebFrame* WebFrame::fromCoreFrame(Frame& frame)
 
 void WebFrame::invalidate()
 {
-    WebProcess::shared().removeWebFrame(m_frameID);
+    WebProcess::singleton().removeWebFrame(m_frameID);
     m_coreFrame = 0;
 }
 
@@ -250,14 +250,15 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request)
     uint64_t policyDownloadID = m_policyDownloadID;
     m_policyDownloadID = 0;
 
+    auto& webProcess = WebProcess::singleton();
 #if ENABLE(NETWORK_PROCESS)
-    if (WebProcess::shared().usesNetworkProcess()) {
-        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(page()->sessionID(), policyDownloadID, request), 0);
+    if (webProcess.usesNetworkProcess()) {
+        webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::StartDownload(page()->sessionID(), policyDownloadID, request), 0);
         return;
     }
 #endif
 
-    WebProcess::shared().downloadManager().startDownload(policyDownloadID, request);
+    webProcess.downloadManager().startDownload(policyDownloadID, request);
 }
 
 void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader, const ResourceRequest& request, const ResourceResponse& response)
@@ -269,8 +270,9 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
 
     ResourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 
+    auto& webProcess = WebProcess::singleton();
 #if ENABLE(NETWORK_PROCESS)
-    if (WebProcess::shared().usesNetworkProcess()) {
+    if (webProcess.usesNetworkProcess()) {
         // Use 0 to indicate that there is no main resource loader.
         // This can happen if the main resource is in the WebCore memory cache.
         uint64_t mainResourceLoadIdentifier;
@@ -279,18 +281,18 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
         else
             mainResourceLoadIdentifier = 0;
 
-        WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(mainResourceLoadIdentifier, policyDownloadID, request, response), 0);
+        webProcess.networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(mainResourceLoadIdentifier, policyDownloadID, request, response), 0);
         return;
     }
 #endif
 
     if (!mainResourceLoader) {
         // The main resource has already been loaded. Start a new download instead.
-        WebProcess::shared().downloadManager().startDownload(policyDownloadID, request);
+        webProcess.downloadManager().startDownload(policyDownloadID, request);
         return;
     }
 
-    WebProcess::shared().downloadManager().convertHandleToDownload(policyDownloadID, documentLoader->mainResourceLoader()->handle(), request, response);
+    webProcess.downloadManager().convertHandleToDownload(policyDownloadID, documentLoader->mainResourceLoader()->handle(), request, response);
 }
 
 String WebFrame::source() const 

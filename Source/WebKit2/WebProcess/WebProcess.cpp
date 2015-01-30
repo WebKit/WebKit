@@ -143,7 +143,7 @@ static const double nonVisibleProcessCleanupDelay = 10;
 
 namespace WebKit {
 
-WebProcess& WebProcess::shared()
+WebProcess& WebProcess::singleton()
 {
     static WebProcess& process = *new WebProcess;
     return process;
@@ -231,7 +231,7 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 #endif
 
 #if ENABLE(SEC_ITEM_SHIM)
-    SecItemShim::shared().initializeConnection(connection);
+    SecItemShim::singleton().initializeConnection(connection);
 #endif
     
     WebProcessSupplementMap::const_iterator it = m_supplements.begin();
@@ -353,7 +353,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
 #if PLATFORM(COCOA)
     if (usesNetworkProcess())
-        CookieStorageShim::shared().initialize();
+        CookieStorageShim::singleton().initialize();
 #endif
 #endif
     setTerminationTimeout(parameters.terminationTimeout);
@@ -372,7 +372,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     audit_token_t auditToken;
     if (parentProcessConnection()->getAuditToken(auditToken)) {
         RetainPtr<CFDataRef> auditData = adoptCF(CFDataCreate(nullptr, (const UInt8*)&auditToken, sizeof(auditToken)));
-        Inspector::RemoteInspector::shared().setParentProcessInformation(presenterApplicationPid(), auditData);
+        Inspector::RemoteInspector::singleton().setParentProcessInformation(presenterApplicationPid(), auditData);
     }
 #endif
 }
@@ -708,7 +708,7 @@ void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear
     memoryCache().evictResources();
 
     // Empty the cross-origin preflight cache.
-    CrossOriginPreflightResultCache::shared().empty();
+    CrossOriginPreflightResultCache::singleton().empty();
 }
 
 void WebProcess::clearApplicationCache()
@@ -951,7 +951,7 @@ void WebProcess::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
 
 void WebProcess::handleInjectedBundleMessage(const String& messageName, const UserData& messageBody)
 {
-    InjectedBundle* injectedBundle = WebProcess::shared().injectedBundle();
+    InjectedBundle* injectedBundle = WebProcess::singleton().injectedBundle();
     if (!injectedBundle)
         return;
 
@@ -960,7 +960,7 @@ void WebProcess::handleInjectedBundleMessage(const String& messageName, const Us
 
 void WebProcess::setInjectedBundleParameter(const String& key, const IPC::DataReference& value)
 {
-    InjectedBundle* injectedBundle = WebProcess::shared().injectedBundle();
+    InjectedBundle* injectedBundle = WebProcess::singleton().injectedBundle();
     if (!injectedBundle)
         return;
 
@@ -1079,7 +1079,7 @@ void WebProcess::setEnhancedAccessibility(bool flag)
 void WebProcess::startMemorySampler(const SandboxExtension::Handle& sampleLogFileHandle, const String& sampleLogFilePath, const double interval)
 {
 #if ENABLE(MEMORY_SAMPLER)    
-    WebMemorySampler::shared()->start(sampleLogFileHandle, sampleLogFilePath, interval);
+    WebMemorySampler::singleton()->start(sampleLogFileHandle, sampleLogFilePath, interval);
 #else
     UNUSED_PARAM(sampleLogFileHandle);
     UNUSED_PARAM(sampleLogFilePath);
@@ -1090,7 +1090,7 @@ void WebProcess::startMemorySampler(const SandboxExtension::Handle& sampleLogFil
 void WebProcess::stopMemorySampler()
 {
 #if ENABLE(MEMORY_SAMPLER)
-    WebMemorySampler::shared()->stop();
+    WebMemorySampler::singleton()->stop();
 #endif
 }
 
@@ -1116,7 +1116,7 @@ void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
 
 void WebProcess::releasePageCache()
 {
-    PageCache::shared().pruneToSizeNow(0, PruningReason::MemoryPressure);
+    PageCache::singleton().pruneToSizeNow(0, PruningReason::MemoryPressure);
 }
 
 #if !PLATFORM(COCOA)

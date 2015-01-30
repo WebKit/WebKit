@@ -512,7 +512,7 @@ void Settings::setUsesPageCache(bool usesPageCache)
         return;
 
     if (!m_usesPageCache)
-        PageCache::shared().pruneToSizeNow(0, PruningReason::None);
+        PageCache::singleton().pruneToSizeNow(0, PruningReason::None);
 }
 
 void Settings::setFontRenderingMode(FontRenderingMode mode)

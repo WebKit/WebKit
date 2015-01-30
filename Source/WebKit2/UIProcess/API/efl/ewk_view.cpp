@@ -80,7 +80,7 @@ Eina_Bool ewk_view_smart_class_set(Ewk_View_Smart_Class* api)
 
 Evas_Object* EWKViewCreate(WKContextRef context, WKPageGroupRef pageGroup, Evas* canvas, Evas_Smart* smart)
 {
-    if (!EwkMain::shared().isInitialized()) {
+    if (!EwkMain::singleton().isInitialized()) {
         EINA_LOG_CRIT("EWebKit has not been initialized. You must call ewk_init() before creating view.");
         return nullptr;
     }

@@ -140,7 +140,7 @@ static void SIGSYSHandler(int signal, siginfo_t* info, void* data)
     if (!ucontext)
         CRASH();
 
-    SeccompBrokerClient* client = &SeccompBrokerClient::shared();
+    SeccompBrokerClient* client = &SeccompBrokerClient::singleton();
 
     if (client->handleIfOpeningOnlineCPUCount(&ucontext->uc_mcontext))
         return;

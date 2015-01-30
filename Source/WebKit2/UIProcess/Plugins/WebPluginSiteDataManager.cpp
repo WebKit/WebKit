@@ -56,7 +56,7 @@ public:
             return;
         }
 
-        PluginProcessManager::shared().getSitesWithData(m_plugins.last(), m_webPluginSiteDataManager, m_callbackID);
+        PluginProcessManager::singleton().getSitesWithData(m_plugins.last(), m_webPluginSiteDataManager, m_callbackID);
         m_plugins.removeLast();
     }
 
@@ -94,7 +94,7 @@ public:
             return;
         }
 
-        PluginProcessManager::shared().clearSiteData(m_plugins.last(), m_webPluginSiteDataManager, m_sites, m_flags, m_maxAgeInSeconds, m_callbackID);
+        PluginProcessManager::singleton().clearSiteData(m_plugins.last(), m_webPluginSiteDataManager, m_sites, m_flags, m_maxAgeInSeconds, m_callbackID);
         m_plugins.removeLast();
     }
 

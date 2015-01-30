@@ -37,7 +37,7 @@ extern "C"
 #endif
 void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
 {
-    TestWebKitAPI::InjectedBundleController::shared().initialize(bundle, initializationUserData);
+    TestWebKitAPI::InjectedBundleController::singleton().initialize(bundle, initializationUserData);
 }
 
 #endif

@@ -38,7 +38,7 @@ namespace WebKit {
 
 class PrinterListGtk: public RefCounted<PrinterListGtk> {
 public:
-    static RefPtr<PrinterListGtk> shared();
+    static RefPtr<PrinterListGtk> singleton();
     ~PrinterListGtk();
 
     GtkPrinter* findPrinter(const char*) const;

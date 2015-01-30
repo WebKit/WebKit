@@ -71,7 +71,7 @@ void DatabaseProcessIDBConnection::disconnectedFromWebProcess()
 
 void DatabaseProcessIDBConnection::establishConnection(const String& databaseName, const SecurityOriginData& openingOrigin, const SecurityOriginData& mainFrameOrigin)
 {
-    m_uniqueIDBDatabase = DatabaseProcess::shared().getOrCreateUniqueIDBDatabase(UniqueIDBDatabaseIdentifier(databaseName, openingOrigin, mainFrameOrigin));
+    m_uniqueIDBDatabase = DatabaseProcess::singleton().getOrCreateUniqueIDBDatabase(UniqueIDBDatabaseIdentifier(databaseName, openingOrigin, mainFrameOrigin));
     m_uniqueIDBDatabase->registerConnection(*this);
 }
 

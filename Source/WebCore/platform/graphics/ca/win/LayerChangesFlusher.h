@@ -37,7 +37,7 @@ class AbstractCACFLayerTreeHost;
 class LayerChangesFlusher {
     WTF_MAKE_NONCOPYABLE(LayerChangesFlusher);
 public:
-    static LayerChangesFlusher& shared();
+    static LayerChangesFlusher& singleton();
 
     void flushPendingLayerChangesSoon(AbstractCACFLayerTreeHost*);
     void cancelPendingFlush(AbstractCACFLayerTreeHost*);

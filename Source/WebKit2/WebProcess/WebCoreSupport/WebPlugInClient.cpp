@@ -50,12 +50,12 @@ void WebPlugInClient::pageDestroyed()
 
 bool WebPlugInClient::shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
 {
-    return WebProcess::shared().shouldPlugInAutoStartFromOrigin(m_webPage, pageOrigin, pluginOrigin, mimeType);
+    return WebProcess::singleton().shouldPlugInAutoStartFromOrigin(m_webPage, pageOrigin, pluginOrigin, mimeType);
 }
 
 void WebPlugInClient::didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType, WebCore::SessionID sessionID)
 {
-    WebProcess::shared().plugInDidStartFromOrigin(pageOrigin, pluginOrigin, mimeType, sessionID);
+    WebProcess::singleton().plugInDidStartFromOrigin(pageOrigin, pluginOrigin, mimeType, sessionID);
 }
 
 } // namespace WebKit

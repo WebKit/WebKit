@@ -36,7 +36,7 @@ namespace WebKit {
 
 static const unsigned gSchemaVersion = 2;
 
-PluginInfoCache& PluginInfoCache::shared()
+PluginInfoCache& PluginInfoCache::singleton()
 {
     static NeverDestroyed<PluginInfoCache> pluginInfoCache;
     return pluginInfoCache;

@@ -69,7 +69,7 @@ UniqueIDBDatabase::UniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifi
     // Each unique Indexed Database exists in a directory named for the database, which exists in a directory representing its opening origin.
     m_databaseRelativeDirectory = pathByAppendingComponent(databaseFilenameIdentifier(identifier.openingOrigin()), filenameForDatabaseName());
 
-    DatabaseProcess::shared().ensureIndexedDatabaseRelativePathExists(m_databaseRelativeDirectory);
+    DatabaseProcess::singleton().ensureIndexedDatabaseRelativePathExists(m_databaseRelativeDirectory);
 }
 
 UniqueIDBDatabase::~UniqueIDBDatabase()
@@ -118,7 +118,7 @@ void UniqueIDBDatabase::unregisterConnection(DatabaseProcessIDBConnection& conne
 
     if (m_connections.isEmpty() && m_pendingTransactionRollbacks.isEmpty()) {
         shutdown(UniqueIDBDatabaseShutdownType::NormalShutdown);
-        DatabaseProcess::shared().removeUniqueIDBDatabase(*this);
+        DatabaseProcess::singleton().removeUniqueIDBDatabase(*this);
     }
 }
 
@@ -1125,7 +1125,7 @@ void UniqueIDBDatabase::finalizeRollback(const WebKit::IDBIdentifier& transactio
         resetTransaction(transactionId, [this, transactionId](bool) {
             if (m_acceptingNewRequests && m_connections.isEmpty() && m_pendingTransactionRollbacks.isEmpty()) {
                 shutdown(UniqueIDBDatabaseShutdownType::NormalShutdown);
-                DatabaseProcess::shared().removeUniqueIDBDatabase(*this);
+                DatabaseProcess::singleton().removeUniqueIDBDatabase(*this);
             }
         });
     });
@@ -1134,7 +1134,7 @@ void UniqueIDBDatabase::finalizeRollback(const WebKit::IDBIdentifier& transactio
 String UniqueIDBDatabase::absoluteDatabaseDirectory() const
 {
     ASSERT(RunLoop::isMain());
-    return DatabaseProcess::shared().absoluteIndexedDatabasePathFromDatabaseRelativePath(m_databaseRelativeDirectory);
+    return DatabaseProcess::singleton().absoluteIndexedDatabasePathFromDatabaseRelativePath(m_databaseRelativeDirectory);
 }
 
 void UniqueIDBDatabase::postMainThreadTask(std::unique_ptr<AsyncTask> task, DatabaseTaskType taskType)
@@ -1189,7 +1189,7 @@ void UniqueIDBDatabase::postDatabaseTask(std::unique_ptr<AsyncTask> task, Databa
     m_databaseTasks.append(WTF::move(task));
 
     RefPtr<UniqueIDBDatabase> database(this);
-    DatabaseProcess::shared().queue().dispatch([database] {
+    DatabaseProcess::singleton().queue().dispatch([database] {
         database->performNextDatabaseTask();
     });
 }

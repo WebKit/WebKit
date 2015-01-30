@@ -849,7 +849,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     if (initialized)
         return;
 
-    GamepadProvider::shared().setSharedProvider(HIDGamepadProvider::shared());
+    GamepadProvider::singleton().setSharedProvider(HIDGamepadProvider::singleton());
     initialized = true;
 }
 #endif
@@ -957,7 +957,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.alternativeTextClient = new WebAlternativeTextClient(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
-    pageConfiguration.databaseProvider = &WebDatabaseProvider::shared();
+    pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();
     pageConfiguration.userContentController = &_private->group->userContentController();
     pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();
@@ -1190,7 +1190,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);
-    pageConfiguration.databaseProvider = &WebDatabaseProvider::shared();
+    pageConfiguration.databaseProvider = &WebDatabaseProvider::singleton();
     pageConfiguration.storageNamespaceProvider = &_private->group->storageNamespaceProvider();
     pageConfiguration.userContentController = &_private->group->userContentController();
     pageConfiguration.visitedLinkStore = &_private->group->visitedLinkStore();
@@ -1868,12 +1868,12 @@ static bool fastDocumentTeardownEnabled()
 #if ENABLE(REMOTE_INSPECTOR)
 + (void)_enableRemoteInspector
 {
-    RemoteInspector::shared().start();
+    RemoteInspector::singleton().start();
 }
 
 + (void)_disableRemoteInspector
 {
-    RemoteInspector::shared().stop();
+    RemoteInspector::singleton().stop();
 }
 
 + (void)_disableAutoStartRemoteInspector
@@ -1883,12 +1883,12 @@ static bool fastDocumentTeardownEnabled()
 
 + (BOOL)_isRemoteInspectorEnabled
 {
-    return RemoteInspector::shared().enabled();
+    return RemoteInspector::singleton().enabled();
 }
 
 + (BOOL)_hasRemoteInspectorSession
 {
-    return RemoteInspector::shared().hasActiveDebugSession();
+    return RemoteInspector::singleton().hasActiveDebugSession();
 }
 
 - (BOOL)allowsRemoteInspection
@@ -1926,7 +1926,7 @@ static bool fastDocumentTeardownEnabled()
 - (void)_setHostApplicationProcessIdentifier:(pid_t)pid auditToken:(audit_token_t)auditToken
 {
     RetainPtr<CFDataRef> auditData = adoptCF(CFDataCreate(nullptr, (const UInt8*)&auditToken, sizeof(auditToken)));
-    RemoteInspector::shared().setParentProcessInformation(pid, auditData);
+    RemoteInspector::singleton().setParentProcessInformation(pid, auditData);
 }
 #endif // PLATFORM(IOS)
 #endif // ENABLE(REMOTE_INSPECTOR)
@@ -7915,9 +7915,11 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 
     memoryCache().setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache().setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    PageCache::shared().setMaxSize(pageCacheSize);
+
+    auto& pageCache = PageCache::singleton();
+    pageCache.setMaxSize(pageCacheSize);
 #if PLATFORM(IOS)
-    PageCache::shared().setShouldClearBackingStores(true);
+    pageCache.setShouldClearBackingStores(true);
     nsurlCacheMemoryCapacity = std::max(nsurlCacheMemoryCapacity, [nsurlCache memoryCapacity]);
     CFURLCacheRef cfCache;
     if ([nsurlCache respondsToSelector:@selector(_CFURLCache)] && (cfCache = [nsurlCache _CFURLCache]))

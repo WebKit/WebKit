@@ -39,7 +39,7 @@ class DNSResolveQueue {
     friend NeverDestroyed<DNSResolveQueue>;
 
 public:
-    static DNSResolveQueue& shared();
+    static DNSResolveQueue& singleton();
 
     void add(const String& hostname);
     void decrementRequestCount()

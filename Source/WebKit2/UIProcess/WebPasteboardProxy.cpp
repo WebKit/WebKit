@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-WebPasteboardProxy& WebPasteboardProxy::shared()
+WebPasteboardProxy& WebPasteboardProxy::singleton()
 {
     static std::once_flag onceFlag;
     static LazyNeverDestroyed<WebPasteboardProxy> proxy;

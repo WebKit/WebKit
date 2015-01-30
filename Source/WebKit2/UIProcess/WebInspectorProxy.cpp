@@ -59,7 +59,7 @@ const unsigned WebInspectorProxy::initialWindowHeight = 650;
 
 class WebInspectorPageGroups {
 public:
-    static WebInspectorPageGroups& shared()
+    static WebInspectorPageGroups& singleton()
     {
         static NeverDestroyed<WebInspectorPageGroups> instance;
         return instance;
@@ -145,7 +145,7 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     , m_remoteInspectionPageId(0)
 #endif
 {
-    m_level = WebInspectorPageGroups::shared().inspectorLevel(m_page->pageGroup());
+    m_level = WebInspectorPageGroups::singleton().inspectorLevel(m_page->pageGroup());
     m_page->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID(), *this);
 }
 
@@ -155,14 +155,14 @@ WebInspectorProxy::~WebInspectorProxy()
 
 WebPageGroup* WebInspectorProxy::inspectorPageGroup() const
 {
-    return WebInspectorPageGroups::shared().inspectorPageGroupForLevel(m_level);
+    return WebInspectorPageGroups::singleton().inspectorPageGroupForLevel(m_level);
 }
 
 void WebInspectorProxy::invalidate()
 {
 #if ENABLE(INSPECTOR_SERVER)
     if (m_remoteInspectionPageId)
-        WebInspectorServer::shared().unregisterPage(m_remoteInspectionPageId);
+        WebInspectorServer::singleton().unregisterPage(m_remoteInspectionPageId);
 #endif
 
     m_page->process().removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID());
@@ -357,7 +357,7 @@ void WebInspectorProxy::togglePageProfiling()
 
 bool WebInspectorProxy::isInspectorPage(WebPageProxy& page)
 {
-    return WebInspectorPageGroups::shared().isInspectorPageGroup(page.pageGroup());
+    return WebInspectorPageGroups::singleton().isInspectorPageGroup(page.pageGroup());
 }
 
 WebProcessPool& WebInspectorProxy::inspectorProcessPool()
@@ -430,7 +430,7 @@ static void decidePolicyForNavigationAction(WKPageRef, WKFrameRef frameRef, WKFr
 void WebInspectorProxy::enableRemoteInspection()
 {
     if (!m_remoteInspectionPageId)
-        m_remoteInspectionPageId = WebInspectorServer::shared().registerPage(this);
+        m_remoteInspectionPageId = WebInspectorServer::singleton().registerPage(this);
 }
 
 void WebInspectorProxy::remoteFrontendConnected()
@@ -640,7 +640,7 @@ bool WebInspectorProxy::shouldOpenAttached()
 void WebInspectorProxy::sendMessageToRemoteFrontend(const String& message)
 {
     ASSERT(m_remoteInspectionPageId);
-    WebInspectorServer::shared().sendMessageOverConnection(m_remoteInspectionPageId, message);
+    WebInspectorServer::singleton().sendMessageOverConnection(m_remoteInspectionPageId, message);
 }
 #endif
 

@@ -87,7 +87,7 @@ int ChildProcessMain(int argc, char** argv)
         if (!delegate.getExtraInitializationData(parameters.extraInitializationData))
             return EXIT_FAILURE;
 
-        ChildProcessType::shared().initialize(parameters);
+        ChildProcessType::singleton().initialize(parameters);
     }
 
     delegate.startRunLoop();

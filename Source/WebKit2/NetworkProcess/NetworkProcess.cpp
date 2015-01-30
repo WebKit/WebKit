@@ -60,7 +60,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NetworkProcess& NetworkProcess::shared()
+NetworkProcess& NetworkProcess::singleton()
 {
     static NeverDestroyed<NetworkProcess> networkProcess;
     return networkProcess;
@@ -191,7 +191,7 @@ void NetworkProcess::initializeConnection(IPC::Connection* connection)
     ChildProcess::initializeConnection(connection);
 
 #if ENABLE(SEC_ITEM_SHIM)
-    SecItemShim::shared().initializeConnection(connection);
+    SecItemShim::singleton().initializeConnection(connection);
 #endif
 
     NetworkProcessSupplementMap::const_iterator it = m_supplements.begin();
@@ -288,14 +288,15 @@ void NetworkProcess::setCanHandleHTTPSServerTrustEvaluation(bool value)
 
 void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)
 {
-    NetworkResourceLoadScheduler& scheduler = NetworkProcess::shared().networkResourceLoadScheduler();
+    NetworkResourceLoadScheduler& scheduler = NetworkProcess::singleton().networkResourceLoadScheduler();
 
     StatisticsData data;
 
+    auto& networkProcess = NetworkProcess::singleton();
     data.statisticsNumbers.set("LoadsPendingCount", scheduler.loadsPendingCount());
     data.statisticsNumbers.set("LoadsActiveCount", scheduler.loadsActiveCount());
-    data.statisticsNumbers.set("DownloadsActiveCount", shared().downloadManager().activeDownloadCount());
-    data.statisticsNumbers.set("OutstandingAuthenticationChallengesCount", shared().authenticationManager().outstandingAuthenticationChallengeCount());
+    data.statisticsNumbers.set("DownloadsActiveCount", networkProcess.downloadManager().activeDownloadCount());
+    data.statisticsNumbers.set("OutstandingAuthenticationChallengesCount", networkProcess.authenticationManager().outstandingAuthenticationChallengeCount());
 
     parentProcessConnection()->send(Messages::WebProcessPool::DidGetStatistics(data, callbackID), 0);
 }

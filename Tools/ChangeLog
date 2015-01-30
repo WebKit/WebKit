@@ -1,3 +1,13 @@
+2015-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Rename shared() static member functions to singleton() for singleton classes.
+        https://bugs.webkit.org/show_bug.cgi?id=141088
+
+        Reviewed by Ryosuke Niwa and Benjamin Poulain.
+
+        Rename shared() static member functions to singleton() for singleton
+        classes as per the recent coding style change.
+
 2015-01-30  Antti Koivisto  <antti@apple.com>
 
         OSObjectPtr does not work with dispatch_data_t on Maverics

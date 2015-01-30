@@ -55,7 +55,7 @@ static uint64_t generateServerConnectionIdentifier()
 PassRefPtr<WebIDBServerConnection> WebIDBServerConnection::create(const String& databaseName, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin)
 {
     RefPtr<WebIDBServerConnection> result = adoptRef(new WebIDBServerConnection(databaseName, openingOrigin, mainFrameOrigin));
-    WebProcess::shared().webToDatabaseProcessConnection()->registerWebIDBServerConnection(*result);
+    WebProcess::singleton().webToDatabaseProcessConnection()->registerWebIDBServerConnection(*result);
     return result.release();
 }
 
@@ -71,7 +71,7 @@ WebIDBServerConnection::WebIDBServerConnection(const String& databaseName, const
 
 WebIDBServerConnection::~WebIDBServerConnection()
 {
-    WebProcess::shared().webToDatabaseProcessConnection()->removeWebIDBServerConnection(*this);
+    WebProcess::singleton().webToDatabaseProcessConnection()->removeWebIDBServerConnection(*this);
 
     for (const auto& it : m_serverRequests)
         it.value->requestAborted();
@@ -705,7 +705,7 @@ void WebIDBServerConnection::cursorIterate(IDBCursorBackend&, const CursorIterat
 
 IPC::Connection* WebIDBServerConnection::messageSenderConnection()
 {
-    return WebProcess::shared().webToDatabaseProcessConnection()->connection();
+    return WebProcess::singleton().webToDatabaseProcessConnection()->connection();
 }
 
 } // namespace WebKit

@@ -85,7 +85,7 @@ void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launc
 void NetworkProcessProxy::connectionWillOpen(IPC::Connection& connection)
 {
 #if ENABLE(SEC_ITEM_SHIM)
-    SecItemShimProxy::shared().initializeConnection(connection);
+    SecItemShimProxy::singleton().initializeConnection(connection);
 #else
     UNUSED_PARAM(connection);
 #endif

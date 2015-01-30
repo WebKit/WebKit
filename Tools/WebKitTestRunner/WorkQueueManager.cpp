@@ -37,7 +37,7 @@ namespace WTR {
 
 static inline WKPageRef mainPage()
 {
-    return TestController::shared().mainWebView()->page();
+    return TestController::singleton().mainWebView()->page();
 }
 
 static inline bool goToItemAtIndex(int index)

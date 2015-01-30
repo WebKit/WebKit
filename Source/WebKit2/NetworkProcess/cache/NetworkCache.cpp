@@ -43,7 +43,7 @@
 
 namespace WebKit {
 
-NetworkCache& NetworkCache::shared()
+NetworkCache& NetworkCache::singleton()
 {
     static NeverDestroyed<NetworkCache> instance;
     return instance;

@@ -130,7 +130,7 @@ extern "C" {
     acceleratedCompositingEnabled = [[[self webView] preferences] acceleratedCompositingEnabled];
     _hostsLayersInWindowServer = [self windowHostsLayersInWindowServer];
 
-    _proxy = NetscapePluginHostManager::shared().instantiatePlugin([_pluginPackage.get() path], [_pluginPackage.get() pluginHostArchitecture], [_pluginPackage.get() bundleIdentifier], self, _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get(),
+    _proxy = NetscapePluginHostManager::singleton().instantiatePlugin([_pluginPackage.get() path], [_pluginPackage.get() pluginHostArchitecture], [_pluginPackage.get() bundleIdentifier], self, _MIMEType.get(), _attributeKeys.get(), _attributeValues.get(), userAgent, _sourceURL.get(),
                                                                    _mode == NP_FULL, _isPrivateBrowsingEnabled, acceleratedCompositingEnabled, _hostsLayersInWindowServer);
     if (!_proxy) 
         return NO;

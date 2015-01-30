@@ -240,8 +240,8 @@ PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParame
 {
     RefPtr<WebPage> page = adoptRef(new WebPage(pageID, parameters));
 
-    if (page->pageGroup()->isVisibleToInjectedBundle() && WebProcess::shared().injectedBundle())
-        WebProcess::shared().injectedBundle()->didCreatePage(page.get());
+    if (page->pageGroup()->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
+        WebProcess::singleton().injectedBundle()->didCreatePage(page.get());
 
     return page.release();
 }
@@ -347,7 +347,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     // 4ms should be adopted project-wide now, https://bugs.webkit.org/show_bug.cgi?id=61214
     Settings::setDefaultMinDOMTimerInterval(0.004);
 
-    m_pageGroup = WebProcess::shared().webPageGroup(parameters.pageGroupData);
+    m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
 #if PLATFORM(IOS)
     Settings::setShouldManageAudioSessionCategory(true);
@@ -474,16 +474,17 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     // We use the DidFirstVisuallyNonEmptyLayout milestone to determine when to unfreeze the layer tree.
     m_page->addLayoutMilestones(DidFirstLayout | DidFirstVisuallyNonEmptyLayout);
 
-    WebProcess::shared().addMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID, *this);
+    auto& webProcess = WebProcess::singleton();
+    webProcess.addMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID, *this);
 
     // FIXME: This should be done in the object constructors, and the objects themselves should be message receivers.
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    WebProcess::shared().addMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID, *this);
+    webProcess.addMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID, *this);
 #endif
-    WebProcess::shared().addMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID, *this);
-    WebProcess::shared().addMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID, *this);
+    webProcess.addMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID, *this);
+    webProcess.addMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID, *this);
 #if ENABLE(FULLSCREEN_API)
-    WebProcess::shared().addMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID, *this);
+    webProcess.addMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID, *this);
 #endif
 
 #ifndef NDEBUG
@@ -492,7 +493,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
 #if ENABLE(ASYNC_SCROLLING)
     if (m_useAsyncScrolling)
-        WebProcess::shared().eventDispatcher().addScrollingTreeForPage(this);
+        webProcess.eventDispatcher().addScrollingTreeForPage(this);
 #endif
 
     for (auto& mimeType : parameters.mimeTypesWithCustomContentProviders)
@@ -500,7 +501,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    if (WebMediaKeyStorageManager* manager = WebProcess::shared().supplement<WebMediaKeyStorageManager>())
+    if (WebMediaKeyStorageManager* manager = webProcess.supplement<WebMediaKeyStorageManager>())
         m_page->settings().setMediaKeysStorageDirectory(manager->mediaKeyStorageDirectory());
 #endif
 }
@@ -539,9 +540,10 @@ WebPage::~WebPage()
 
     ASSERT(!m_page);
 
+    auto& webProcess = WebProcess::singleton();
 #if ENABLE(ASYNC_SCROLLING)
     if (m_useAsyncScrolling)
-        WebProcess::shared().eventDispatcher().removeScrollingTreeForPage(this);
+        webProcess.eventDispatcher().removeScrollingTreeForPage(this);
 #endif
 
     platformDetach();
@@ -558,16 +560,16 @@ WebPage::~WebPage()
         m_footerBanner->detachFromPage();
 #endif // !PLATFORM(IOS)
 
-    WebProcess::shared().removeMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID);
+    webProcess.removeMessageReceiver(Messages::WebPage::messageReceiverName(), m_pageID);
 
     // FIXME: This should be done in the object destructors, and the objects themselves should be message receivers.
 #if USE(COORDINATED_GRAPHICS_MULTIPROCESS)
-    WebProcess::shared().removeMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID);
+    webProcess.removeMessageReceiver(Messages::CoordinatedLayerTreeHost::messageReceiverName(), m_pageID);
 #endif
-    WebProcess::shared().removeMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID);
-    WebProcess::shared().removeMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID);
+    webProcess.removeMessageReceiver(Messages::WebInspector::messageReceiverName(), m_pageID);
+    webProcess.removeMessageReceiver(Messages::WebInspectorUI::messageReceiverName(), m_pageID);
 #if ENABLE(FULLSCREEN_API)
-    WebProcess::shared().removeMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID);
+    webProcess.removeMessageReceiver(Messages::WebFullScreenManager::messageReceiverName(), m_pageID);
 #endif
 
 #ifndef NDEBUG
@@ -581,7 +583,7 @@ void WebPage::dummy(bool&)
 
 IPC::Connection* WebPage::messageSenderConnection()
 {
-    return WebProcess::shared().parentProcessConnection();
+    return WebProcess::singleton().parentProcessConnection();
 }
 
 uint64_t WebPage::messageSenderDestinationID()
@@ -974,8 +976,8 @@ void WebPage::close()
     if (!mainWebFrame()->url().isEmpty())
         reportUsedFeatures();
 
-    if (pageGroup()->isVisibleToInjectedBundle() && WebProcess::shared().injectedBundle())
-        WebProcess::shared().injectedBundle()->willDestroyPage(this);
+    if (pageGroup()->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
+        WebProcess::singleton().injectedBundle()->willDestroyPage(this);
 
     if (m_inspector) {
         m_inspector->disconnectFromPage();
@@ -1039,7 +1041,7 @@ void WebPage::close()
     m_isRunningModal = false;
 
     // The WebPage can be destroyed by this call.
-    WebProcess::shared().removeWebPage(m_pageID);
+    WebProcess::singleton().removeWebPage(m_pageID);
 
     if (isRunningModal)
         RunLoop::main().stop();
@@ -1064,7 +1066,7 @@ void WebPage::sendClose()
 
 void WebPage::loadURLInFrame(const String& url, uint64_t frameID)
 {
-    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
 
@@ -1081,7 +1083,7 @@ void WebPage::loadRequest(uint64_t navigationID, const ResourceRequest& request,
 
     // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
     // to all the client to set up any needed state.
-    m_loaderClient.willLoadURLRequest(this, request, WebProcess::shared().transformHandlesToObjects(userData.object()).get());
+    m_loaderClient.willLoadURLRequest(this, request, WebProcess::singleton().transformHandlesToObjects(userData.object()).get());
 
     // Initate the load in WebCore.
     corePage()->userInputBridge().loadRequest(FrameLoadRequest(m_mainFrame->coreFrame(), request));
@@ -1100,7 +1102,7 @@ void WebPage::loadDataImpl(uint64_t navigationID, PassRefPtr<SharedBuffer> share
 
     // Let the InjectedBundle know we are about to start the load, passing the user data from the UIProcess
     // to all the client to set up any needed state.
-    m_loaderClient.willLoadDataRequest(this, request, const_cast<SharedBuffer*>(substituteData.content()), substituteData.mimeType(), substituteData.textEncoding(), substituteData.failingURL(), WebProcess::shared().transformHandlesToObjects(userData.object()).get());
+    m_loaderClient.willLoadDataRequest(this, request, const_cast<SharedBuffer*>(substituteData.content()), substituteData.mimeType(), substituteData.textEncoding(), substituteData.failingURL(), WebProcess::singleton().transformHandlesToObjects(userData.object()).get());
 
     // Initate the load in WebCore.
     m_mainFrame->coreFrame()->loader().load(FrameLoadRequest(m_mainFrame->coreFrame(), request, substituteData));
@@ -1162,7 +1164,7 @@ void WebPage::navigateToURLWithSimulatedClick(const String& url, IntPoint docume
 
 void WebPage::stopLoadingFrame(uint64_t frameID)
 {
-    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
 
@@ -1616,11 +1618,12 @@ void WebPage::setGapBetweenPages(double gap)
 
 void WebPage::postInjectedBundleMessage(const String& messageName, const UserData& userData)
 {
-    InjectedBundle* injectedBundle = WebProcess::shared().injectedBundle();
+    auto& webProcess = WebProcess::singleton();
+    InjectedBundle* injectedBundle = webProcess.injectedBundle();
     if (!injectedBundle)
         return;
 
-    injectedBundle->didReceiveMessageToPage(this, messageName, WebProcess::shared().transformHandlesToObjects(userData.object()).get());
+    injectedBundle->didReceiveMessageToPage(this, messageName, webProcess.transformHandlesToObjects(userData.object()).get());
 }
 
 #if !PLATFORM(IOS)
@@ -2154,7 +2157,7 @@ void WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent, bool& handled)
 void WebPage::touchEventSync(const WebTouchEvent& touchEvent, bool& handled)
 {
     EventDispatcher::TouchEventQueue queuedEvents;
-    WebProcess::shared().eventDispatcher().getQueuedTouchEventsForPage(*this, queuedEvents);
+    WebProcess::singleton().eventDispatcher().getQueuedTouchEventsForPage(*this, queuedEvents);
     dispatchAsynchronousTouchEvents(queuedEvents);
 
     dispatchTouchEvent(touchEvent, handled);
@@ -2331,7 +2334,7 @@ void WebPage::updateIsInWindow(bool isInitialState)
         
         // The WebProcess does not yet know about this page; no need to tell it we're leaving the window.
         if (!isInitialState)
-            WebProcess::shared().pageWillLeaveWindow(m_pageID);
+            WebProcess::singleton().pageWillLeaveWindow(m_pageID);
     } else {
         // Defer the call to Page::setCanStartMedia() since it ends up sending a synchronous message to the UI process
         // in order to get plug-in connections, and the UI process will be waiting for the Web process to update the backing
@@ -2339,7 +2342,7 @@ void WebPage::updateIsInWindow(bool isInitialState)
         if (m_mayStartMediaWhenInWindow)
             m_setCanStartMediaTimer.startOneShot(0);
 
-        WebProcess::shared().pageDidEnterWindow(m_pageID);
+        WebProcess::singleton().pageDidEnterWindow(m_pageID);
     }
 
     if (isInWindow)
@@ -2377,13 +2380,13 @@ void WebPage::setLayerHostingMode(unsigned layerHostingMode)
 void WebPage::setSessionID(SessionID sessionID)
 {
     if (sessionID.isEphemeral())
-        WebProcess::shared().ensurePrivateBrowsingSession(sessionID);
+        WebProcess::singleton().ensurePrivateBrowsingSession(sessionID);
     m_page->setSessionID(sessionID);
 }
 
 void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t navigationID, uint64_t downloadID)
 {
-    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
     frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), navigationID, downloadID);
@@ -2495,7 +2498,7 @@ IntRect WebPage::windowResizerRect() const
 
 KeyboardUIMode WebPage::keyboardUIMode()
 {
-    bool fullKeyboardAccessEnabled = WebProcess::shared().fullKeyboardAccessEnabled();
+    bool fullKeyboardAccessEnabled = WebProcess::singleton().fullKeyboardAccessEnabled();
     return static_cast<KeyboardUIMode>((fullKeyboardAccessEnabled ? KeyboardAccessFull : KeyboardAccessDefault) | (m_tabToLinks ? KeyboardAccessTabsToLinks : 0));
 }
 
@@ -2581,7 +2584,7 @@ void WebPage::getSelectionOrContentsAsString(uint64_t callbackID)
 void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
 {
     String resultString;
-    if (WebFrame* frame = WebProcess::shared().webFrame(frameID))
+    if (WebFrame* frame = WebProcess::singleton().webFrame(frameID))
        resultString = frame->source();
 
     send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
@@ -2590,7 +2593,7 @@ void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
 void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
 {
     RefPtr<SharedBuffer> buffer;
-    if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
+    if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
         if (PluginView* pluginView = pluginViewForFrame(frame->coreFrame()))
             buffer = pluginView->liveResourceData();
         if (!buffer) {
@@ -2622,7 +2625,7 @@ static PassRefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& re
 void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceURLString, uint64_t callbackID)
 {
     RefPtr<SharedBuffer> buffer;
-    if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
+    if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
         URL resourceURL(URL(), resourceURLString);
         buffer = resourceDataForFrame(frame->coreFrame(), resourceURL);
         if (!buffer) {
@@ -2642,7 +2645,7 @@ void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
-    if (WebFrame* frame = WebProcess::shared().webFrame(frameID))
+    if (WebFrame* frame = WebProcess::singleton().webFrame(frameID))
         data = frame->webArchiveData(nullptr, nullptr);
 #else
     UNUSED_PARAM(frameID);
@@ -3768,7 +3771,7 @@ RetainPtr<PDFDocument> WebPage::pdfDocumentForPrintingFrame(Frame* coreFrame)
 
 void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
 {
-    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
 
@@ -3833,7 +3836,7 @@ void WebPage::computePagesForPrintingImpl(uint64_t frameID, const PrintInfo& pri
 #if PLATFORM(COCOA)
 void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, uint64_t callbackID)
 {
-    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     Frame* coreFrame = frame ? frame->coreFrame() : 0;
 
     RefPtr<WebImage> image;
@@ -3885,7 +3888,7 @@ void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint3
 
 void WebPage::drawPagesToPDFImpl(uint64_t frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData)
 {
-    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     Frame* coreFrame = frame ? frame->coreFrame() : 0;
 
     pdfPageData = adoptCF(CFDataCreateMutable(0, 0));
@@ -4549,7 +4552,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     cancelPotentialTap();
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    WebProcess::shared().eventDispatcher().clearQueuedTouchEventsForPage(*this);
+    WebProcess::singleton().eventDispatcher().clearQueuedTouchEventsForPage(*this);
 #endif
 
     resetViewportDefaultConfiguration(frame);
@@ -4563,7 +4566,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     resetPrimarySnapshottedPlugIn();
 #endif
 
-    WebProcess::shared().updateActivePages();
+    WebProcess::singleton().updateActivePages();
 
     updateMainFrameScrollOffsetPinning();
 }

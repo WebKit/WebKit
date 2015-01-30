@@ -57,7 +57,7 @@ private:
 
     ScrollingThread();
 
-    static ScrollingThread& shared();
+    static ScrollingThread& singleton();
 
     void createThreadIfNeeded();
     static void threadCallback(void* scrollingThread);

@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-WebMemoryPressureHandler& WebMemoryPressureHandler::shared()
+WebMemoryPressureHandler& WebMemoryPressureHandler::singleton()
 {
     static NeverDestroyed<WebMemoryPressureHandler> memoryPressureHandler;
     return memoryPressureHandler;
@@ -48,7 +48,7 @@ WebMemoryPressureHandler::WebMemoryPressureHandler()
     dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYSTATUS, 0, DISPATCH_MEMORYSTATUS_PRESSURE_WARN, dispatch_get_main_queue());
     dispatch_set_context(source, this);
     dispatch_source_set_event_handler(source, ^{
-        ViewSnapshotStore::shared().discardSnapshotImages();
+        ViewSnapshotStore::singleton().discardSnapshotImages();
     });
     dispatch_resume(source);
 }

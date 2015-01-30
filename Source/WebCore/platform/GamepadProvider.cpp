@@ -33,7 +33,7 @@ namespace WebCore {
 
 static GamepadProvider* sharedProvider = nullptr;
 
-GamepadProvider& GamepadProvider::shared()
+GamepadProvider& GamepadProvider::singleton()
 {
     if (!sharedProvider) {
         static NeverDestroyed<GamepadProvider> defaultProvider;

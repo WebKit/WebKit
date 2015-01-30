@@ -32,7 +32,7 @@
 class WebDatabaseProvider final : public WebCore::DatabaseProvider {
     friend class NeverDestroyed<WebDatabaseProvider>;
 public:
-    static WebDatabaseProvider& shared();
+    static WebDatabaseProvider& singleton();
     virtual ~WebDatabaseProvider();
 
 private:

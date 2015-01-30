@@ -73,7 +73,7 @@ static void deviceValuesChangedCallback(void* context, IOReturn result, void*, I
     listener->valuesChanged(value);
 }
 
-HIDGamepadProvider& HIDGamepadProvider::shared()
+HIDGamepadProvider& HIDGamepadProvider::singleton()
 {
     static NeverDestroyed<HIDGamepadProvider> sharedListener;
     return sharedListener;

@@ -39,7 +39,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-NetworkBlobRegistry& NetworkBlobRegistry::shared()
+NetworkBlobRegistry& NetworkBlobRegistry::singleton()
 {
     ASSERT(RunLoop::isMain());
     static NeverDestroyed<NetworkBlobRegistry> registry;

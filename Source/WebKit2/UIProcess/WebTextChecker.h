@@ -37,7 +37,7 @@ class WebPageProxy;
 
 class WebTextChecker : public API::ObjectImpl<API::Object::Type::TextChecker> {
 public:
-    static WebTextChecker* shared();
+    static WebTextChecker* singleton();
 
     void setClient(const WKTextCheckerClientBase*);
     WebTextCheckerClient& client() { return m_client; }

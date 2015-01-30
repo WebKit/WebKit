@@ -146,7 +146,7 @@ void NetscapePluginHostProxy::pluginHostDied()
     for (PluginInstanceMap::const_iterator it = instances.begin(); it != end; ++it)
         it->value->pluginHostDied();
     
-    NetscapePluginHostManager::shared().pluginHostDied(this);
+    NetscapePluginHostManager::singleton().pluginHostDied(this);
     
     // The plug-in crashed while its menu bar was hidden. Make sure to show it.
     if (!m_menuBarIsVisible)

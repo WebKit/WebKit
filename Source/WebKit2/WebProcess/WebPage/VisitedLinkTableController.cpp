@@ -59,14 +59,14 @@ PassRefPtr<VisitedLinkTableController> VisitedLinkTableController::getOrCreate(u
 VisitedLinkTableController::VisitedLinkTableController(uint64_t identifier)
     : m_identifier(identifier)
 {
-    WebProcess::shared().addMessageReceiver(Messages::VisitedLinkTableController::messageReceiverName(), m_identifier, *this);
+    WebProcess::singleton().addMessageReceiver(Messages::VisitedLinkTableController::messageReceiverName(), m_identifier, *this);
 }
 
 VisitedLinkTableController::~VisitedLinkTableController()
 {
     ASSERT(visitedLinkTableControllers().contains(m_identifier));
 
-    WebProcess::shared().removeMessageReceiver(Messages::VisitedLinkTableController::messageReceiverName(), m_identifier);
+    WebProcess::singleton().removeMessageReceiver(Messages::VisitedLinkTableController::messageReceiverName(), m_identifier);
 
     visitedLinkTableControllers().remove(m_identifier);
 }
@@ -85,7 +85,7 @@ void VisitedLinkTableController::addVisitedLink(Page& page, LinkHash linkHash)
     if (!webPage)
         return;
 
-    WebProcess::shared().parentProcessConnection()->send(Messages::VisitedLinkProvider::AddVisitedLinkHashFromPage(webPage->pageID(), linkHash), m_identifier);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::VisitedLinkProvider::AddVisitedLinkHashFromPage(webPage->pageID(), linkHash), m_identifier);
 }
 
 void VisitedLinkTableController::setVisitedLinkTable(const SharedMemory::Handle& handle)
@@ -97,20 +97,20 @@ void VisitedLinkTableController::setVisitedLinkTable(const SharedMemory::Handle&
     m_visitedLinkTable.setSharedMemory(sharedMemory.release());
 
     invalidateStylesForAllLinks();
-    PageCache::shared().markPagesForVisitedLinkStyleRecalc();
+    PageCache::singleton().markPagesForVisitedLinkStyleRecalc();
 }
 
 void VisitedLinkTableController::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes)
 {
     for (auto linkHash : linkHashes)
         invalidateStylesForLink(linkHash);
-    PageCache::shared().markPagesForVisitedLinkStyleRecalc();
+    PageCache::singleton().markPagesForVisitedLinkStyleRecalc();
 }
 
 void VisitedLinkTableController::allVisitedLinkStateChanged()
 {
     invalidateStylesForAllLinks();
-    PageCache::shared().markPagesForVisitedLinkStyleRecalc();
+    PageCache::singleton().markPagesForVisitedLinkStyleRecalc();
 }
 
 void VisitedLinkTableController::removeAllVisitedLinks()
@@ -118,7 +118,7 @@ void VisitedLinkTableController::removeAllVisitedLinks()
     m_visitedLinkTable.clear();
 
     invalidateStylesForAllLinks();
-    PageCache::shared().markPagesForVisitedLinkStyleRecalc();
+    PageCache::singleton().markPagesForVisitedLinkStyleRecalc();
 }
 
 } // namespace WebKit

@@ -40,7 +40,7 @@ public:
     WEBCORE_EXPORT void saveMainThreadEnvironment();
     void propagateMainThreadEnvironment();
 
-    WEBCORE_EXPORT static FloatingPointEnvironment& shared();
+    WEBCORE_EXPORT static FloatingPointEnvironment& singleton();
 
 private:
 

@@ -29,11 +29,15 @@
 #ifndef WorkQueue_h
 #define WorkQueue_h
 
+#include <wtf/Forward.h>
+
 class WorkQueueItem;
 
 class WorkQueue {
+friend class WTF::NeverDestroyed<WorkQueue>;
+
 public:
-    static WorkQueue* shared();
+    static WorkQueue& singleton();
 
     void queue(WorkQueueItem*);
     WorkQueueItem* dequeue();

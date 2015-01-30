@@ -67,7 +67,7 @@ void WebContextMenu::show()
 
     // Mark the WebPage has having a shown context menu then notify the UIProcess.
     m_page->contextMenuShowing();
-    m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(controller.hitTestResult().roundedPointInInnerNodeFrame()), contextMenuContextData, menuItems, UserData(WebProcess::shared().transformObjectsToHandles(userData.get()).get())));
+    m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(controller.hitTestResult().roundedPointInInnerNodeFrame()), contextMenuContextData, menuItems, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
 void WebContextMenu::itemSelected(const WebContextMenuItemData& item)

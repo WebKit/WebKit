@@ -4093,14 +4093,14 @@ class WebKitStyleTest(CppStyleTestBase):
             '}\n',
             '')
         self.assert_multi_line_lint(
-            '#define TEST_ASSERT(expression) do { if (!(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); return; } } while (0)\n',
+            '#define TEST_ASSERT(expression) do { if (!(expression)) { TestsController::singleton().testFailed(__FILE__, __LINE__, #expression); return; } } while (0)\n',
             '')
         self.assert_multi_line_lint(
-            '#define TEST_ASSERT(expression) do { if ( !(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); return; } } while (0)\n',
+            '#define TEST_ASSERT(expression) do { if ( !(expression)) { TestsController::singleton().testFailed(__FILE__, __LINE__, #expression); return; } } while (0)\n',
             'Extra space after ( in if  [whitespace/parens] [5]')
         # FIXME: currently we only check first conditional, so we cannot detect errors in next ones.
         # self.assert_multi_line_lint(
-        #     '#define TEST_ASSERT(expression) do { if (!(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); return; } } while (0 )\n',
+        #     '#define TEST_ASSERT(expression) do { if (!(expression)) { TestsController::singleton().testFailed(__FILE__, __LINE__, #expression); return; } } while (0 )\n',
         #     'Mismatching spaces inside () in if  [whitespace/parens] [5]')
         self.assert_multi_line_lint(
             'WTF_MAKE_NONCOPYABLE(ClassName); WTF_MAKE_FAST_ALLOCATED;\n',

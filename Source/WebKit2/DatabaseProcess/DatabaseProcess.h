@@ -48,7 +48,7 @@ class DatabaseProcess : public ChildProcess, public WebOriginDataManagerSuppleme
     WTF_MAKE_NONCOPYABLE(DatabaseProcess);
     friend class NeverDestroyed<DatabaseProcess>;
 public:
-    static DatabaseProcess& shared();
+    static DatabaseProcess& singleton();
     ~DatabaseProcess();
 
     const String& indexedDatabaseDirectory() const { return m_indexedDatabaseDirectory; }

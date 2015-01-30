@@ -55,7 +55,7 @@ class PluginProcessManager {
     WTF_MAKE_NONCOPYABLE(PluginProcessManager);
     friend class NeverDestroyed<PluginProcessManager>;
 public:
-    static PluginProcessManager& shared();
+    static PluginProcessManager& singleton();
 
     uint64_t pluginProcessToken(const PluginModuleInfo&, PluginProcessType, PluginProcessSandboxPolicy);
 

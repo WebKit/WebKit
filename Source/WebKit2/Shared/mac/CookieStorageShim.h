@@ -37,7 +37,7 @@ class CookieStorageShim {
     WTF_MAKE_NONCOPYABLE(CookieStorageShim);
     friend class NeverDestroyed<CookieStorageShim>;
 public:
-    static CookieStorageShim& shared();
+    static CookieStorageShim& singleton();
 
     void initialize();
 

@@ -39,7 +39,7 @@ class GamepadProvider {
 public:
     virtual ~GamepadProvider() { }
 
-    WEBCORE_EXPORT static GamepadProvider& shared();
+    WEBCORE_EXPORT static GamepadProvider& singleton();
     WEBCORE_EXPORT static void setSharedProvider(GamepadProvider&);
 
     virtual void startMonitoringGamepads(GamepadProviderClient*);

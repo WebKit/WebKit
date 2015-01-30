@@ -215,7 +215,7 @@ HRESULT STDMETHODCALLTYPE WebCache::empty( void)
     WebCore::cacheStorage().empty();
 
     // Empty the Cross-Origin Preflight cache
-    WebCore::CrossOriginPreflightResultCache::shared().empty();
+    WebCore::CrossOriginPreflightResultCache::singleton().empty();
 
     return S_OK;
 }

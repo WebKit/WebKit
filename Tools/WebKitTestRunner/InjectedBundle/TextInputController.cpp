@@ -59,22 +59,22 @@ void TextInputController::makeWindowObject(JSContextRef context, JSObjectRef win
 
 void TextInputController::setMarkedText(JSStringRef text, int from, int length)
 {
-    WKBundlePageSetComposition(InjectedBundle::shared().page()->page(), toWK(text).get(), from, length);
+    WKBundlePageSetComposition(InjectedBundle::singleton().page()->page(), toWK(text).get(), from, length);
 }
 
 bool TextInputController::hasMarkedText()
 {
-    return WKBundlePageHasComposition(InjectedBundle::shared().page()->page());
+    return WKBundlePageHasComposition(InjectedBundle::singleton().page()->page());
 }
 
 void TextInputController::unmarkText()
 {
-    WKBundlePageConfirmComposition(InjectedBundle::shared().page()->page());
+    WKBundlePageConfirmComposition(InjectedBundle::singleton().page()->page());
 }
 
 void TextInputController::insertText(JSStringRef text)
 {
-    WKBundlePageConfirmCompositionWithText(InjectedBundle::shared().page()->page(), toWK(text).get());
+    WKBundlePageConfirmCompositionWithText(InjectedBundle::singleton().page()->page(), toWK(text).get());
 }
 
 } // namespace WTR

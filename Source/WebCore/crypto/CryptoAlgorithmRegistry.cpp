@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-CryptoAlgorithmRegistry& CryptoAlgorithmRegistry::shared()
+CryptoAlgorithmRegistry& CryptoAlgorithmRegistry::singleton()
 {
     static NeverDestroyed<CryptoAlgorithmRegistry> registry;
 

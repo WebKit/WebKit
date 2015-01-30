@@ -32,5 +32,5 @@ int main(int argc, char** argv)
 {
     gtk_init(&argc, &argv);
 
-    return TestWebKitAPI::TestsController::shared().run(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE;
+    return TestWebKitAPI::TestsController::singleton().run(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

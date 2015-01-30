@@ -411,7 +411,7 @@ void WebContextMenuProxyMac::setupServicesMenu(const ContextMenuContextData& con
     // If there is no services menu, then the existing services on the system have changed, so refresh that list of services.
     // If <rdar://problem/17954709> is resolved then we can more accurately keep the list up to date without this call.
     if (!m_servicesMenu)
-        ServicesController::shared().refreshExistingServices();
+        ServicesController::singleton().refreshExistingServices();
 }
 
 void WebContextMenuProxyMac::clearServicesMenu()

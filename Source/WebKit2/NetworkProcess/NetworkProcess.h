@@ -53,7 +53,7 @@ class NetworkProcess : public ChildProcess, private DownloadManager::Client {
     friend class NeverDestroyed<NetworkProcess>;
     friend class NeverDestroyed<DownloadManager>;
 public:
-    static NetworkProcess& shared();
+    static NetworkProcess& singleton();
 
     template <typename T>
     T* supplement()

@@ -44,7 +44,7 @@ void TestRunner::invalidateWaitToDumpWatchdogTimer()
 
 static void waitUntilDoneWatchdogTimerFired(CFRunLoopTimerRef timer, void* info)
 {
-    InjectedBundle::shared().testRunner()->waitToDumpWatchdogTimerFired();
+    InjectedBundle::singleton().testRunner()->waitToDumpWatchdogTimerFired();
 }
 
 void TestRunner::initializeWaitToDumpWatchdogTimerIfNeeded()

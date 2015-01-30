@@ -36,7 +36,7 @@ class MainFrame;
 class MockPageOverlayClient final : public PageOverlay::Client {
     friend class NeverDestroyed<MockPageOverlayClient>;
 public:
-    static MockPageOverlayClient& shared();
+    static MockPageOverlayClient& singleton();
 
     explicit MockPageOverlayClient();
 

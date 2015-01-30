@@ -175,7 +175,7 @@ public:
         RefPtr<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply> reply;
     };
 
-    static ExceededDatabaseQuotaRecords& shared();
+    static ExceededDatabaseQuotaRecords& singleton();
 
     std::unique_ptr<Record> createRecord(uint64_t frameID, String originIdentifier,
         String databaseName, String displayName, uint64_t currentQuota,
@@ -194,7 +194,7 @@ private:
     std::unique_ptr<Record> m_currentRecord;
 };
 
-ExceededDatabaseQuotaRecords& ExceededDatabaseQuotaRecords::shared()
+ExceededDatabaseQuotaRecords& ExceededDatabaseQuotaRecords::singleton()
 {
     static NeverDestroyed<ExceededDatabaseQuotaRecords> records;
     return records;
@@ -984,7 +984,7 @@ void WebPageProxy::recordNavigationSnapshot(WebBackForwardListItem& item)
         return;
 
 #if PLATFORM(COCOA)
-    ViewSnapshotStore::shared().recordSnapshot(*this, item);
+    ViewSnapshotStore::singleton().recordSnapshot(*this, item);
 #else
     UNUSED_PARAM(item);
 #endif
@@ -1753,7 +1753,7 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
         return;
     }
 
-    pluginProcessToken = PluginProcessManager::shared().pluginProcessToken(plugin, static_cast<PluginProcessType>(processType), pluginProcessSandboxPolicy);
+    pluginProcessToken = PluginProcessManager::singleton().pluginProcessToken(plugin, static_cast<PluginProcessType>(processType), pluginProcessSandboxPolicy);
 }
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
@@ -4761,7 +4761,7 @@ void WebPageProxy::didReceiveAuthenticationChallengeProxy(uint64_t frameID, Pass
 
 void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, PassRefPtr<Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply> reply)
 {
-    ExceededDatabaseQuotaRecords& records = ExceededDatabaseQuotaRecords::shared();
+    ExceededDatabaseQuotaRecords& records = ExceededDatabaseQuotaRecords::singleton();
     std::unique_ptr<ExceededDatabaseQuotaRecords::Record> newRecord = records.createRecord(frameID,
         originIdentifier, databaseName, displayName, currentQuota, currentOriginUsage,
         currentDatabaseUsage, expectedUsage, reply);

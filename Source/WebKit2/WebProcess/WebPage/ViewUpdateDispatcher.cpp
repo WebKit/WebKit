@@ -84,7 +84,7 @@ void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
     }
 
     for (auto& slot : update) {
-        if (WebPage* webPage = WebProcess::shared().webPage(slot.key))
+        if (WebPage* webPage = WebProcess::singleton().webPage(slot.key))
             webPage->updateVisibleContentRects(slot.value.visibleContentRectUpdateInfo, slot.value.oldestTimestamp);
     }
 }

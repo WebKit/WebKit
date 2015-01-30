@@ -989,7 +989,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     }
 
     if (isMainFrame())
-        PageCache::shared().markPagesForFullStyleRecalc(*page);
+        PageCache::singleton().markPagesForFullStyleRecalc(*page);
 }
 
 float Frame::frameScaleFactor() const

@@ -72,7 +72,7 @@ void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellChecki
     textCheckerState.isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
 
     // Notify the client about the setting change.
-    WebTextChecker::shared()->client().setContinuousSpellCheckingEnabled(isContinuousSpellCheckingEnabled);
+    WebTextChecker::singleton()->client().setContinuousSpellCheckingEnabled(isContinuousSpellCheckingEnabled);
 #else
     UNUSED_PARAM(isContinuousSpellCheckingEnabled);
 #endif
@@ -103,7 +103,7 @@ void TextChecker::grammarCheckingEnabledStateChanged(bool)
 int64_t TextChecker::uniqueSpellDocumentTag(WebPageProxy* page)
 {
 #if ENABLE(SPELLCHECK)
-    return WebTextChecker::shared()->client().uniqueSpellDocumentTag(page);
+    return WebTextChecker::singleton()->client().uniqueSpellDocumentTag(page);
 #else
     UNUSED_PARAM(page);
     return 0;
@@ -113,7 +113,7 @@ int64_t TextChecker::uniqueSpellDocumentTag(WebPageProxy* page)
 void TextChecker::closeSpellDocumentWithTag(int64_t tag)
 {
 #if ENABLE(SPELLCHECK)
-    WebTextChecker::shared()->client().closeSpellDocumentWithTag(tag);
+    WebTextChecker::singleton()->client().closeSpellDocumentWithTag(tag);
 #else
     UNUSED_PARAM(tag);
 #endif
@@ -194,7 +194,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
 void TextChecker::checkSpellingOfString(int64_t spellDocumentTag, StringView text, int32_t& misspellingLocation, int32_t& misspellingLength)
 {
 #if ENABLE(SPELLCHECK)
-    WebTextChecker::shared()->client().checkSpellingOfString(spellDocumentTag, text.toStringWithoutCopying(), misspellingLocation, misspellingLength);
+    WebTextChecker::singleton()->client().checkSpellingOfString(spellDocumentTag, text.toStringWithoutCopying(), misspellingLocation, misspellingLength);
 #else
     UNUSED_PARAM(spellDocumentTag);
     UNUSED_PARAM(text);
@@ -233,7 +233,7 @@ void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String&, cons
 void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& , Vector<String>& guesses)
 {
 #if ENABLE(SPELLCHECK)
-    WebTextChecker::shared()->client().guessesForWord(spellDocumentTag, word, guesses);
+    WebTextChecker::singleton()->client().guessesForWord(spellDocumentTag, word, guesses);
 #else
     UNUSED_PARAM(spellDocumentTag);
     UNUSED_PARAM(word);
@@ -244,7 +244,7 @@ void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word
 void TextChecker::learnWord(int64_t spellDocumentTag, const String& word)
 {
 #if ENABLE(SPELLCHECK)
-    WebTextChecker::shared()->client().learnWord(spellDocumentTag, word);
+    WebTextChecker::singleton()->client().learnWord(spellDocumentTag, word);
 #else
     UNUSED_PARAM(spellDocumentTag);
     UNUSED_PARAM(word);
@@ -254,7 +254,7 @@ void TextChecker::learnWord(int64_t spellDocumentTag, const String& word)
 void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
 {
 #if ENABLE(SPELLCHECK)
-    WebTextChecker::shared()->client().ignoreWord(spellDocumentTag, word);
+    WebTextChecker::singleton()->client().ignoreWord(spellDocumentTag, word);
 #else
     UNUSED_PARAM(spellDocumentTag);
     UNUSED_PARAM(word);

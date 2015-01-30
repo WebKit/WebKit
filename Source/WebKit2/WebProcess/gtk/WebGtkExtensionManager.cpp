@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-WebGtkExtensionManager& WebGtkExtensionManager::shared()
+WebGtkExtensionManager& WebGtkExtensionManager::singleton()
 {
     static NeverDestroyed<WebGtkExtensionManager> extensionManager;
     return extensionManager;

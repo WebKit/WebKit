@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 
     useX11Window = checkForUseX11WindowArgument(argc, argv);
 
-    int returnCode = TestWebKitAPI::TestsController::shared().run(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE;
+    int returnCode = TestWebKitAPI::TestsController::singleton().run(argc, argv) ? EXIT_SUCCESS : EXIT_FAILURE;
 
     ewk_shutdown();
 

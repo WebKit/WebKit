@@ -261,7 +261,7 @@ size_t TestRunner::webHistoryItemCount()
 
 void TestRunner::notifyDone()
 {
-    if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())
+    if (m_waitToDump && !topLoadingFrame && !WorkQueue::singleton().count())
         dump();
     m_waitToDump = false;
 }
@@ -339,7 +339,7 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     NSString *nsurlString = [nsurl absoluteString];
 
     JSRetainPtr<JSStringRef> absoluteURL(Adopt, JSStringCreateWithUTF8CString([nsurlString UTF8String]));
-    WorkQueue::shared()->queue(new LoadItem(absoluteURL.get(), target));
+    WorkQueue::singleton().queue(new LoadItem(absoluteURL.get(), target));
 }
 
 void TestRunner::setAcceptsEditing(bool newAcceptsEditing)

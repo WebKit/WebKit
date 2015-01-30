@@ -40,7 +40,7 @@ class PluginInfoCache {
     WTF_MAKE_NONCOPYABLE(PluginInfoCache);
     friend class NeverDestroyed<PluginInfoCache>;
 public:
-    static PluginInfoCache& shared();
+    static PluginInfoCache& singleton();
 
     bool getPluginInfo(const String& pluginPath, PluginModuleInfo&);
     void updatePluginInfo(const String& pluginPath, const PluginModuleInfo&);

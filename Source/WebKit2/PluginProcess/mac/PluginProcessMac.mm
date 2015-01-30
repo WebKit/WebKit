@@ -114,7 +114,7 @@ template<typename T> void FullscreenWindowTracker::windowShown(T window)
     
     // If this is the first full screen window to be shown, notify the UI process.
     if (windowSetWasEmpty)
-        PluginProcess::shared().setFullscreenWindowIsShowing(true);
+        PluginProcess::singleton().setFullscreenWindowIsShowing(true);
 }
 
 template<typename T> void FullscreenWindowTracker::windowHidden(T window)
@@ -128,7 +128,7 @@ template<typename T> void FullscreenWindowTracker::windowHidden(T window)
 
     // If this was the last full screen window that was visible, notify the UI process.
     if (m_windows.isEmpty())
-        PluginProcess::shared().setFullscreenWindowIsShowing(false);
+        PluginProcess::singleton().setFullscreenWindowIsShowing(false);
 }
 
 static FullscreenWindowTracker& fullscreenWindowTracker()
@@ -195,7 +195,7 @@ static void carbonWindowHidden(WindowRef window)
 static bool openCFURLRef(CFURLRef url, int32_t& status, CFURLRef* launchedURL)
 {
     String launchedURLString;
-    if (!PluginProcess::shared().openURL(URL(url).string(), status, launchedURLString))
+    if (!PluginProcess::singleton().openURL(URL(url).string(), status, launchedURLString))
         return false;
 
     if (!launchedURLString.isNull() && launchedURL)
@@ -207,7 +207,7 @@ static bool openCFURLRef(CFURLRef url, int32_t& status, CFURLRef* launchedURL)
 
 static void setModal(bool modalWindowIsShowing)
 {
-    PluginProcess::shared().setModalWindowIsShowing(modalWindowIsShowing);
+    PluginProcess::singleton().setModalWindowIsShowing(modalWindowIsShowing);
 }
 
 static unsigned modalCount = 0;
@@ -275,7 +275,7 @@ static void replacedNSConcreteTask_launch(NSTask *self, SEL _cmd)
     for (NSString *argument in self.arguments)
         arguments.uncheckedAppend(argument);
 
-    if (PluginProcess::shared().launchProcess(launchPath, arguments))
+    if (PluginProcess::singleton().launchProcess(launchPath, arguments))
         return;
 
     NSConcreteTask_launch(self, _cmd);
@@ -295,7 +295,7 @@ static NSRunningApplication *replacedNSWorkspace_launchApplicationAtURL_options_
         }
     }
 
-    if (PluginProcess::shared().launchApplicationAtURL(URL(url).string(), arguments)) {
+    if (PluginProcess::singleton().launchApplicationAtURL(URL(url).string(), arguments)) {
         if (error)
             *error = nil;
         return nil;
@@ -308,7 +308,7 @@ static BOOL (*NSWorkspace_openFile)(NSWorkspace *, SEL, NSString *);
 
 static BOOL replacedNSWorkspace_openFile(NSWorkspace *self, SEL _cmd, NSString *fullPath)
 {
-    if (PluginProcess::shared().openFile(fullPath))
+    if (PluginProcess::singleton().openFile(fullPath))
         return true;
 
     return NSWorkspace_openFile(self, _cmd, fullPath);

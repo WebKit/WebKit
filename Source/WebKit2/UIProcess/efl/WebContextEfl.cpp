@@ -70,7 +70,7 @@ static void initializeInspectorServer()
         } else
             LOG_ERROR("Couldn't parse %s, wrong format? Using 127.0.0.1:2999 instead.", serverAddress.utf8().data());
 
-        if (!WebInspectorServer::shared().listen(bindAddress, port))
+        if (!WebInspectorServer::singleton().listen(bindAddress, port))
             LOG_ERROR("Couldn't start listening on: IP address=%s, port=%d.", bindAddress.utf8().data(), port);
 
         return;

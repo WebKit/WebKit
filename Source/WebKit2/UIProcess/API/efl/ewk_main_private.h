@@ -32,7 +32,7 @@ enum class EFLModuleInitFailure;
 
 class EwkMain {
 public:
-    static EwkMain& shared();
+    static EwkMain& singleton();
     ~EwkMain();
     int initialize();
     int finalize();
