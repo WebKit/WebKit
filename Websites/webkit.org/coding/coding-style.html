@@ -1119,6 +1119,38 @@ public:
 </li>
 </ol>
 
+<h3 id="singleton">Singleton pattern</h3>
+
+<ol>
+<li id="singleton-static-member">
+Use a static member function named "singleton()" to access the instance of the singleton.
+<h4 class="right">Right:</h4>
+<pre class="code">
+class MySingleton {
+public:
+    static MySingleton& singleton();
+...
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+class MySingleton {
+public:
+    static MySingleton& shared();
+...
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+class MySingleton {
+...
+};
+
+MySingleton& mySingleton(); // free function.
+</pre>
+</li>
+</ol>
+
 <h3 id="comments">Comments</h3>
 <ol>
 <li id="comments-eol">Use only <i>one</i> space before end of line comments and in between sentences in comments.
